@@ -22,10 +22,6 @@ TEST(MathGpu, kernel_construction) {
   cl::Kernel dummy2 = stan::math::opencl_context.get_kernel("dummy2");
 }
 
-TEST(opencl_context, construction) {
-  stan::math::opencl_context.debug(std::cout);
-}
-
 TEST(opencl_context, platform) {
   std::vector<cl::Platform> all_platforms;
   cl::Platform::get(&all_platforms);

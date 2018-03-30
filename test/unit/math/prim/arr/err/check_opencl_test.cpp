@@ -1,5 +1,4 @@
 #ifdef STAN_OPENCL
-#include <stan/math/prim/mat.hpp>
 #include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
 

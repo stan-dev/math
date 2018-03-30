@@ -228,13 +228,6 @@ class opencl_context {
     return kernels()[kernel_name];
   }
 
-  // FIXME:(Steve/Dan) should probably be deleted before merge
-  void debug(std::ostream& s) {
-    s << "inside opencl_context" << std::endl;
-    s << " * platform_name_: "
-      << opencl_context_base::getInstance().platform_name_ << std::endl;
-  }
-
   /**
    * Returns the description of the OpenCL platform and device that is used.
    * Devices will be a GPU and Platforms are a specific OpenCL implimenation
