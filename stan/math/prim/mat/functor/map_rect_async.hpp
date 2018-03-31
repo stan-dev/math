@@ -51,12 +51,14 @@ map_rect_async(
   const int num_jobs_min = num_threads - num_jobs_per_thread_remainder;
   int job_start = 0;
   for (int j = 0; j < num_threads; j++) {
-    int job_end = j == num_threads - 1 ? num_jobs : job_start + num_jobs_per_thread;
+    int job_end = job_start + num_jobs_per_thread;
     // the excess jobs are assigned to the last processes
     if (j >= num_jobs_min && num_jobs_per_thread_remainder > 0) {
       job_end++;
       num_jobs_per_thread_remainder--;
     }
+    if (j == num_threads-1)
+      job_end = num_jobs;
     // we only defer the first chunk such that the main thread is not
     // blocking
     futures.emplace_back(std::async(j==0 ? std::launch::deferred : std::launch::async,
