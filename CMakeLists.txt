@@ -14,6 +14,17 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 # symbols are optimized out. See #806.
 
 
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER MATCHES "[Cc]lang")
+  # This is a workaround for an old clang bug.
+  # See https://bugs.llvm.org/show_bug.cgi?id=13530 for info on the clang bug.
+  # The non-cmake build works around this by specifying a different libstdc++,
+  # which is incorrect for many configurations, including some configurations
+  # with clang < 3.9.
+  if (CLANG_VERSION_STRING VERSION_LESS 3.9)
+    add_compile_options("-D__STRICT_ANSI__")
+  endif()
+endif()
+
 ### googletest include
 add_subdirectory(lib/gtest_1.7.0)
 
