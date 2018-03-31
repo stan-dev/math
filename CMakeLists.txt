@@ -9,6 +9,10 @@ endif()
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+# Setting -O3 to work around linking issue which also affects the non-cmake build
+# Dependencies aren't correctly specified, so the build only succeeds if certain
+# symbols are optimized out. See #806.
+
 
 ### googletest include
 add_subdirectory(lib/gtest_1.7.0)
