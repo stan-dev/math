@@ -30,7 +30,7 @@ class sum_v_vari : public vari {
   explicit sum_v_vari(const std::vector<var>& v1)
       : vari(sum_of_val(v1)),
         v_(reinterpret_cast<vari**>(
-            ChainableStack::memalloc_.alloc(v1.size() * sizeof(vari*)))),
+            ChainableStack::context().memalloc_.alloc(v1.size() * sizeof(vari*)))),
         length_(v1.size()) {
     for (size_t i = 0; i < length_; i++)
       v_[i] = v1[i].vi_;
