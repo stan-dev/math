@@ -53,6 +53,8 @@ include_directories(
   ${CMAKE_SOURCE_DIR}
 )
 
+enable_testing()
+
 file(GLOB_RECURSE EXECUTABLES RELATIVE ${CMAKE_SOURCE_DIR} test/unit/*_test.cpp)
 
 foreach(testsourcefile ${EXECUTABLES})
@@ -61,4 +63,5 @@ foreach(testsourcefile ${EXECUTABLES})
   add_executable(${testname} ${testsourcefile})
   target_link_libraries (${testname} gtest gtest_main sundials_cvodes_static
     sundials_nvecserial_static)
+  add_test(NAME ${testname} COMMAND ${testname})
 endforeach(testsourcefile ${EXECUTABLES})
