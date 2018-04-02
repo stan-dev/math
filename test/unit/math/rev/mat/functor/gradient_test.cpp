@@ -60,8 +60,8 @@ TEST(AgradAutoDiff, gradient_threaded) {
     // the use pattern in stan-math will be to defer the first job in
     // order to make the main thread to some work which is why we
     // alter the execution policy here
-    ad_futures.emplace_back(std::async( i == 0 ? std::launch::deferred : std::launch::async,
-                                        thread_job));
+    ad_futures.emplace_back(std::async(i == 0 ? std::launch::deferred : std::launch::async,
+                                       thread_job));
   }
 
   for (std::size_t i=0; i < 100; i++) {
