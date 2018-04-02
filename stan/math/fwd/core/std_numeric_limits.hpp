@@ -58,74 +58,72 @@ struct numeric_limits<stan::math::fvar<T> > {
 };
 
 template <typename T>
-  const bool numeric_limits<stan::math::fvar<T> >::is_specialized = true;
+const bool numeric_limits<stan::math::fvar<T> >::is_specialized = true;
 template <typename T>
-  const int numeric_limits<stan::math::fvar<T> >::digits
+const int numeric_limits<stan::math::fvar<T> >::digits
     = numeric_limits<double>::digits;
 template <typename T>
-  const int numeric_limits<stan::math::fvar<T> >::digits10
+const int numeric_limits<stan::math::fvar<T> >::digits10
     = numeric_limits<double>::digits10;
 template <typename T>
-  const bool numeric_limits<stan::math::fvar<T> >::is_signed
+const bool numeric_limits<stan::math::fvar<T> >::is_signed
     = numeric_limits<double>::is_signed;
 template <typename T>
-  const bool numeric_limits<stan::math::fvar<T> >::is_integer
+const bool numeric_limits<stan::math::fvar<T> >::is_integer
     = numeric_limits<double>::is_integer;
 template <typename T>
-  const bool numeric_limits<stan::math::fvar<T> >::is_exact
+const bool numeric_limits<stan::math::fvar<T> >::is_exact
     = numeric_limits<double>::is_exact;
 template <typename T>
-  const int numeric_limits<stan::math::fvar<T> >::radix
+const int numeric_limits<stan::math::fvar<T> >::radix
     = numeric_limits<double>::radix;
 template <typename T>
-  const int numeric_limits<stan::math::fvar<T> >::min_exponent
+const int numeric_limits<stan::math::fvar<T> >::min_exponent
     = numeric_limits<double>::min_exponent;
 template <typename T>
-  const int numeric_limits<stan::math::fvar<T> >::min_exponent10
+const int numeric_limits<stan::math::fvar<T> >::min_exponent10
     = numeric_limits<double>::min_exponent10;
 template <typename T>
-  const int numeric_limits<stan::math::fvar<T> >::max_exponent
+const int numeric_limits<stan::math::fvar<T> >::max_exponent
     = numeric_limits<double>::max_exponent;
 template <typename T>
-  const int numeric_limits<stan::math::fvar<T> >::max_exponent10
+const int numeric_limits<stan::math::fvar<T> >::max_exponent10
     = numeric_limits<double>::max_exponent10;
 
-
-
 template <typename T>
-  const bool numeric_limits<stan::math::fvar<T> >::has_infinity
+const bool numeric_limits<stan::math::fvar<T> >::has_infinity
     = numeric_limits<double>::has_infinity;
 template <typename T>
-  const bool numeric_limits<stan::math::fvar<T> >::has_quiet_NaN
+const bool numeric_limits<stan::math::fvar<T> >::has_quiet_NaN
     = numeric_limits<double>::has_quiet_NaN;
 template <typename T>
-  const bool numeric_limits<stan::math::fvar<T> >::has_signaling_NaN
+const bool numeric_limits<stan::math::fvar<T> >::has_signaling_NaN
     = numeric_limits<double>::has_signaling_NaN;
 template <typename T>
-  const float_denorm_style numeric_limits<stan::math::fvar<T> >::has_denorm
+const float_denorm_style numeric_limits<stan::math::fvar<T> >::has_denorm
     = numeric_limits<double>::has_denorm;
 template <typename T>
-  const bool numeric_limits<stan::math::fvar<T> >::has_denorm_loss
+const bool numeric_limits<stan::math::fvar<T> >::has_denorm_loss
     = numeric_limits<double>::has_denorm_loss;
 
 template <typename T>
-  const bool numeric_limits<stan::math::fvar<T> >::is_iec559
+const bool numeric_limits<stan::math::fvar<T> >::is_iec559
     = numeric_limits<double>::is_iec559;
 template <typename T>
-  const bool numeric_limits<stan::math::fvar<T> >::is_bounded
+const bool numeric_limits<stan::math::fvar<T> >::is_bounded
     = numeric_limits<double>::is_bounded;
 template <typename T>
-  const bool numeric_limits<stan::math::fvar<T> >::is_modulo
+const bool numeric_limits<stan::math::fvar<T> >::is_modulo
     = numeric_limits<double>::is_modulo;
 
 template <typename T>
-  const bool numeric_limits<stan::math::fvar<T> >::traps
+const bool numeric_limits<stan::math::fvar<T> >::traps
     = numeric_limits<double>::traps;
 template <typename T>
-  const bool numeric_limits<stan::math::fvar<T> >::tinyness_before
+const bool numeric_limits<stan::math::fvar<T> >::tinyness_before
     = numeric_limits<double>::tinyness_before;
 template <typename T>
-  const float_round_style numeric_limits<stan::math::fvar<T> >::round_style
+const float_round_style numeric_limits<stan::math::fvar<T> >::round_style
     = numeric_limits<double>::round_style;
 
 }  // namespace std
