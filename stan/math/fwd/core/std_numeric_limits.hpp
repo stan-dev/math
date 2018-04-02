@@ -9,8 +9,12 @@ namespace std {
 template <typename T>
 struct numeric_limits<stan::math::fvar<T> > {
   static const bool is_specialized;
-  static constexpr stan::math::fvar<T> min() { return numeric_limits<double>::min(); }
-  static constexpr stan::math::fvar<T> max() { return numeric_limits<double>::max(); }
+  static constexpr stan::math::fvar<T> min() {
+    return numeric_limits<double>::min();
+  }
+  static constexpr stan::math::fvar<T> max() {
+    return numeric_limits<double>::max();
+  }
   static const int digits;
   static const int digits10;
   static const bool is_signed;
