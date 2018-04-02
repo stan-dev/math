@@ -25,7 +25,8 @@ static void set_zero_all_adjoints_nested() {
        i < ChainableStack::context().var_stack_.size(); ++i)
     ChainableStack::context().var_stack_[i]->set_zero_adjoint();
 
-  size_t start2 = ChainableStack::context().nested_var_nochain_stack_sizes_.back();
+  size_t start2
+      = ChainableStack::context().nested_var_nochain_stack_sizes_.back();
   for (size_t i = (start2 == 0U) ? 0U : (start2 - 1);
        i < ChainableStack::context().var_nochain_stack_.size(); ++i) {
     ChainableStack::context().var_nochain_stack_[i]->set_zero_adjoint();

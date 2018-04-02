@@ -27,10 +27,11 @@ class sum_eigen_v_vari : public sum_v_vari {
  public:
   template <int R1, int C1>
   explicit sum_eigen_v_vari(const Eigen::Matrix<var, R1, C1>& v1)
-      : sum_v_vari(sum_of_val(v1),
-                   reinterpret_cast<vari**>(ChainableStack::context().memalloc_.alloc(
-                       v1.size() * sizeof(vari*))),
-                   v1.size()) {
+      : sum_v_vari(
+            sum_of_val(v1),
+            reinterpret_cast<vari**>(ChainableStack::context().memalloc_.alloc(
+                v1.size() * sizeof(vari*))),
+            v1.size()) {
     for (size_t i = 0; i < length_; i++)
       v_[i] = v1(i).vi_;
   }

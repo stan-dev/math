@@ -48,7 +48,7 @@ TEST(AgradAutoDiff, gradient_threaded) {
     double fx;
     VectorXd grad_fx;
     stan::math::gradient(fun1(), x, fx, grad_fx);
-    VectorXd res(1+grad_fx.size());
+    VectorXd res(1 + grad_fx.size());
     res(0) = fx;
     res.tail(grad_fx.size()) = grad_fx;
     return res;
@@ -56,18 +56,18 @@ TEST(AgradAutoDiff, gradient_threaded) {
 
   std::vector<std::future<VectorXd>> ad_futures;
 
-  for (std::size_t i=0; i < 100; i++) {
+  for (std::size_t i = 0; i < 100; i++) {
     // the use pattern in stan-math will be to defer the first job in
     // order to make the main thread to some work which is why we
     // alter the execution policy here
-    ad_futures.emplace_back(std::async(i == 0 ? std::launch::deferred : std::launch::async,
-                                       thread_job));
+    ad_futures.emplace_back(std::async(
+        i == 0 ? std::launch::deferred : std::launch::async, thread_job));
   }
 
-  for (std::size_t i=0; i < 100; i++) {
+  for (std::size_t i = 0; i < 100; i++) {
     const VectorXd& ad_result = ad_futures[i].get();
     double fx_job = ad_result(0);
-    VectorXd grad_fx_job = ad_result.tail(ad_result.size()-1);
+    VectorXd grad_fx_job = ad_result.tail(ad_result.size() - 1);
 
     EXPECT_FLOAT_EQ(fx_ref, fx_job);
     EXPECT_EQ(grad_fx_ref.size(), grad_fx_job.size());
@@ -99,5 +99,6 @@ TEST(AgradAutoDiff, RecoverMemory) {
   }
   // depends on starting allocation of 65K not being exceeded
   // without recovery_memory in autodiff::apply_recover(), takes 67M
-  EXPECT_LT(stan::math::ChainableStack::context().memalloc_.bytes_allocated(), 100000);
+  EXPECT_LT(stan::math::ChainableStack::context().memalloc_.bytes_allocated(),
+            100000);
 }

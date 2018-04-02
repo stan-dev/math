@@ -49,11 +49,13 @@ TEST(AgradRevErrorHandlingScalar, CheckLessVarCheckUnivariate) {
   EXPECT_EQ(1U, stack_size);
   EXPECT_THROW(check_less(function, "a", a, 2.0), std::domain_error);
 
-  size_t stack_size_after_call = stan::math::ChainableStack::context().var_stack_.size();
+  size_t stack_size_after_call
+      = stan::math::ChainableStack::context().var_stack_.size();
   EXPECT_EQ(1U, stack_size_after_call);
 
   EXPECT_NO_THROW(check_less(function, "a", a, 10.0));
-  stack_size_after_call = stan::math::ChainableStack::context().var_stack_.size();
+  stack_size_after_call
+      = stan::math::ChainableStack::context().var_stack_.size();
   EXPECT_EQ(1U, stack_size_after_call);
 
   stan::math::recover_memory();

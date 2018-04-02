@@ -14,7 +14,8 @@ namespace math {
 static void set_zero_all_adjoints() {
   for (size_t i = 0; i < ChainableStack::context().var_stack_.size(); ++i)
     ChainableStack::context().var_stack_[i]->set_zero_adjoint();
-  for (size_t i = 0; i < ChainableStack::context().var_nochain_stack_.size(); ++i)
+  for (size_t i = 0; i < ChainableStack::context().var_nochain_stack_.size();
+       ++i)
     ChainableStack::context().var_nochain_stack_[i]->set_zero_adjoint();
 }
 

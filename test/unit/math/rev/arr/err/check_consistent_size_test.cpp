@@ -19,7 +19,8 @@ TEST(AgradRevErrorHandlingScalar, CheckConsistentSizeVarCheckVectorized) {
   EXPECT_EQ(5U, stack_size);
   EXPECT_NO_THROW(check_consistent_size(function, "a", a, 5U));
 
-  size_t stack_size_after_call = stan::math::ChainableStack::context().var_stack_.size();
+  size_t stack_size_after_call
+      = stan::math::ChainableStack::context().var_stack_.size();
   EXPECT_EQ(5U, stack_size_after_call);
   stan::math::recover_memory();
 }
