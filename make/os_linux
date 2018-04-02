@@ -10,6 +10,9 @@ ifeq (g++,$(CC_TYPE))
   LDFLAGS += -lpthread
   GTEST_CXXFLAGS += -DGTEST_HAS_PTHREAD=0
 endif
+ifeq (clang++,$(CC_TYPE))
+  LDFLAGS += -lsupc++
+endif
 ifeq (mingw32-g++,$(CC_TYPE))
   GTEST_CXXFLAGS += -DGTEST_HAS_PTHREAD=0
   LDLIBS_STANC += -static
