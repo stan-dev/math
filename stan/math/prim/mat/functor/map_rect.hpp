@@ -10,8 +10,7 @@
 #ifdef STAN_MPI
 #error "MPI not yet supported"
 #else
-//#include <stan/math/prim/mat/functor/map_rect_serial.hpp>
-#include <stan/math/prim/mat/functor/map_rect_async.hpp>
+#include <stan/math/prim/mat/functor/map_rect_serial.hpp>
 #endif
 
 #include <vector>
@@ -156,7 +155,7 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
 #ifdef STAN_MPI
 #error "MPI not yet supported"
 #else
-  return internal::map_rect_async<call_id, F, T_shared_param, T_job_param>(
+  return internal::map_rect_serial<call_id, F, T_shared_param, T_job_param>(
       shared_params, job_params, x_r, x_i, msgs);
 #endif
 }
