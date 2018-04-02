@@ -19,6 +19,7 @@ ifeq (mingw32-g++,$(CC_TYPE))
   WINE = wine
 endif
 ifeq (clang++,$(CC_TYPE))
+  LDFLAGS += -lpthread
   GTEST_CXXFLAGS += -DGTEST_HAS_PTHREAD=0
 endif
 
