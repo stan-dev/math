@@ -9,18 +9,22 @@ namespace std {
 template <typename T>
 struct numeric_limits<stan::math::fvar<T> > {
   static const bool is_specialized;
-  static stan::math::fvar<T> min() { return numeric_limits<double>::min(); }
-  static stan::math::fvar<T> max() { return numeric_limits<double>::max(); }
+  static constexpr stan::math::fvar<T> min() {
+    return numeric_limits<double>::min();
+  }
+  static constexpr stan::math::fvar<T> max() {
+    return numeric_limits<double>::max();
+  }
   static const int digits;
   static const int digits10;
   static const bool is_signed;
   static const bool is_integer;
   static const bool is_exact;
   static const int radix;
-  static stan::math::fvar<T> epsilon() {
+  static constexpr stan::math::fvar<T> epsilon() {
     return numeric_limits<double>::epsilon();
   }
-  static stan::math::fvar<T> round_error() {
+  static constexpr stan::math::fvar<T> round_error() {
     return numeric_limits<double>::round_error();
   }
 
@@ -35,16 +39,16 @@ struct numeric_limits<stan::math::fvar<T> > {
 
   static const float_denorm_style has_denorm;
   static const bool has_denorm_loss;
-  static stan::math::fvar<T> infinity() {
+  static constexpr stan::math::fvar<T> infinity() {
     return numeric_limits<double>::infinity();
   }
-  static stan::math::fvar<T> quiet_NaN() {
+  static constexpr stan::math::fvar<T> quiet_NaN() {
     return numeric_limits<double>::quiet_NaN();
   }
-  static stan::math::fvar<T> signaling_NaN() {
+  static constexpr stan::math::fvar<T> signaling_NaN() {
     return numeric_limits<double>::signaling_NaN();
   }
-  static stan::math::fvar<T> denorm_min() {
+  static constexpr stan::math::fvar<T> denorm_min() {
     return numeric_limits<double>::denorm_min();
   }
 
