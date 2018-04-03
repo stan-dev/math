@@ -2,16 +2,6 @@ cmake_minimum_required(VERSION 3.5)
 project(math)
 
 set(CMAKE_CXX_STANDARD 14)
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
-endif()
-
-set(CMAKE_CXX_FLAGS_DEBUG "-g")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-# Setting -O3 to work around linking issue which also affects the non-cmake build
-# Dependencies aren't correctly specified, so the build only succeeds if certain
-# symbols are optimized out. See #806.
-
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER MATCHES "[Cc]lang")
   # This is a workaround for an old clang bug.
