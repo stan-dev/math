@@ -39,7 +39,12 @@ include_directories(
 
 # FIND_PACKAGE( Boost 1.66.0 COMPONENTS program_options REQUIRED )
 
-### boost include
+add_compile_options("-DBOOST_RESULT_OF_USE_TR1")
+add_compile_options("-DBOOST_NO_DECLTYPE")
+add_compile_options("-DBOOST_DISABLE_ASSERTS")
+add_compile_options("-DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION")
+
+### end boost include
 
 # TODO: don't build all of cvodes.
 add_subdirectory(lib/cvodes-3.1.0)
