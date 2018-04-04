@@ -19,7 +19,7 @@ class sum_v_vari : public vari {
   inline static double sum_of_val(const std::vector<var>& v) {
     double result = 0;
     for (auto x : v)
-        result += x.val();
+      result += x.val();
     return result;
   }
 

@@ -46,7 +46,7 @@ void grad_F32(T* g, const T& a1, const T& a2, const T& a3, const T& b1,
     g[i] = 0.0;
 
   T log_g_old[6];
-  for (auto &x : log_g_old)
+  for (auto& x : log_g_old)
     x = -std::numeric_limits<double>::infinity();
 
   T log_t_old = 0.0;

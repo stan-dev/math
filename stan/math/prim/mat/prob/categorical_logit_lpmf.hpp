@@ -44,7 +44,7 @@ typename boost::math::tools::promote_args<T_prob>::type categorical_logit_lpmf(
     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
   static const char* function = "categorical_logit_lpmf";
 
-  for (const auto & x : ns)
+  for (const auto& x : ns)
     check_bounded(function, "categorical outcome out of support", x, 1,
                   beta.size());
   check_finite(function, "log odds parameter", beta);

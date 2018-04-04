@@ -9,7 +9,6 @@
 namespace stan {
 namespace math {
 
-
 /**
  * Returns the partial derivative of the regularized
  * incomplete beta function, I_{z}(a, b) with respect to a.

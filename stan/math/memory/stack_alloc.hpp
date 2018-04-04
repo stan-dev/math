@@ -142,7 +142,7 @@ class stack_alloc {
    */
   ~stack_alloc() {
     // free ALL blocks
-    for (auto &block : blocks_)
+    for (auto& block : blocks_)
       if (block)
         free(block);
   }
