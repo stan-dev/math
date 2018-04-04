@@ -81,7 +81,8 @@ class dot_product_vari : public vari {
       v1[i]->adj_ += adj_ * v2_[i];
     }
   }
-  inline void initialize(vari**& mem_v, const var* inv, vari** shared = nullptr) {
+  inline void initialize(vari**& mem_v, const var* inv,
+                         vari** shared = nullptr) {
     if (shared == nullptr) {
       mem_v = reinterpret_cast<vari**>(
           ChainableStack::memalloc_.alloc(length_ * sizeof(vari*)));

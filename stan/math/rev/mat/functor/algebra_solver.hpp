@@ -133,7 +133,7 @@ Eigen::VectorXd algebra_solver(
     check_finite("algebra_solver", "parameter vector", y(i));
   for (double i : dat)
     check_finite("algebra_solver", "continuous data", i);
-  for (const auto & x: dat_int)
+  for (int x : dat_int)
     check_finite("algebra_solver", "integer data", x);
 
   if (relative_tolerance < 0)
