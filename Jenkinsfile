@@ -2,15 +2,15 @@
 @Library('StanUtils')
 import org.stan.Utils
 
-def setupCC(Boolean failOnError = true) {
+def setupCXX(Boolean failOnError = true) {
     errorStr = failOnError ? "-Werror " : ""
-    "echo CC=${env.CXX} ${errorStr}> make/local"
+    "echo CXX=${env.CXX} ${errorStr}> make/local"
 }
 
 def setup(Boolean failOnError = true) {
     sh """
         git clean -xffd
-        ${setupCC(failOnError)}
+        ${setupCXX(failOnError)}
     """
 }
 
@@ -119,7 +119,7 @@ pipeline {
                     retry(3) { checkout scm }
                     setup(false)
                     stash 'MathSetup'
-                    sh setupCC()
+                    sh setupCXX()
                     parallel(
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh 'make test-math-dependencies' } ,
@@ -142,7 +142,7 @@ pipeline {
                     agent any
                     steps {
                         unstash 'MathSetup'
-                        sh setupCC()
+                        sh setupCXX()
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -152,7 +152,7 @@ pipeline {
                     steps {
                         unstash 'MathSetup'
                         sh """
-                            ${setupCC(false)}
+                            ${setupCXX(false)}
                             echo 'O=0' >> make/local
                             echo N_TESTS=${env.N_TESTS} >> make/local
                             """

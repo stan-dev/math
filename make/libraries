@@ -1,15 +1,5 @@
 ##
-# Library locations
-##
-EIGEN ?= $(MATH)lib/eigen_3.3.3
-BOOST ?= $(MATH)lib/boost_1.66.0
-GTEST ?= $(MATH)lib/gtest_1.7.0
-CPPLINT ?= $(MATH)lib/cpplint_4.45
-IDAS ?= $(MATH)lib/idas-2.1.0
-CVODES ?= $(MATH)lib/cvodes-3.1.0
-
-##
-# Build rules for cvodes
+# Build rules for CVODES
 ##
 
 SUNDIALS_CVODES := $(patsubst %.c,%.o,\
@@ -24,9 +14,7 @@ SUNDIALS_NVECSERIAL := $(patsubst %.c,%.o,\
   $(addprefix $(CVODES)/src/, nvec_ser/nvector_serial.c sundials/sundials_math.c))
 
 
-$(sort $(SUNDIALS_CVODES) $(SUNDIALS_NVECSERIAL)) : %.o : %.c
-	@mkdir -p $(dir $@)
-	$(COMPILE.c) -x c -O$(O) -isystem $(CVODES)/include $< -o $@
+$(SUNDIALS_CVODES) $(SUNDIALS_NVECSERIAL): CFLAGS += -DNO_FPRINTF_OUTPUT -pipe -O$(O) $(INC_CVODES)
 
 $(CVODES)/lib/libsundials_cvodes.a: $(SUNDIALS_CVODES)
 	@mkdir -p $(dir $@)
@@ -36,7 +24,7 @@ $(CVODES)/lib/libsundials_nvecserial.a: $(SUNDIALS_NVECSERIAL)
 	@mkdir -p $(dir $@)
 	$(AR) -rs $@ $^
 
-LIBCVODES = $(CVODES)/lib/libsundials_nvecserial.a $(CVODES)/lib/libsundials_cvodes.a
+LIBCVODES := $(CVODES)/lib/libsundials_nvecserial.a $(CVODES)/lib/libsundials_cvodes.a
 
 STAN_CVODES_HEADERS := $(shell find stan -name *cvodes*.hpp)
 $(STAN_CVODES_HEADERS) : $(LIBCVODES)

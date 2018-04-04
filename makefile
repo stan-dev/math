@@ -1,73 +1,44 @@
-# Makefile for Stan.
+##
+# Stan Math Library
+# -----------------
+#
+# To customize your build, set make variables in either:
+#    ~/.config/stan/make.local
+#    make/local
+# Variables in make/local is loaded after ~/.config/stan/make.local
 ##
 
-# The default target of this Makefile is...
+# 'help' is the default make target.
 help:
 
-## Disable implicit rules.
-SUFIXES:
+-include $(HOME)/.config/stan/make.local  # user-defined variables
+-include make/local                       # user-defined variables
 
-include make/default_compiler_options
-
-##
-# Library locations
-##
-MATH ?=
+include make/defaults
 include make/libraries
+include make/tests
+include make/cpplint
 
--include $(HOME)/.config/stan/make.local  # define local variables
--include make/local                       # overwrite local variables
-
-CXX = $(CC)
-
-##
-# Get information about the compiler used.
-# - CC_TYPE: {g++, clang++, mingw32-g++, other}
-# - CC_MAJOR: major version of CC
-# - CC_MINOR: minor version of CC
-##
--include make/detect_cc
-
-# OS_TYPE is set automatically by this script
-##
-# These includes should update the following variables
-# based on the OS:
-#   - CFLAGS
-#   - GTEST_CXXFLAGS
-#   - EXE
-##
--include make/detect_os
-
-include make/tests    # tests
-include make/cpplint  # cpplint
-
-##
-# Dependencies
-##
-ifneq (,$(filter-out test-headers generate-tests clean% %-test %.d,$(MAKECMDGOALS)))
-  -include $(addsuffix .d,$(subst $(EXE),,$(MAKECMDGOALS)))
-endif
 
 
 .PHONY: help
 help:
 	@echo '--------------------------------------------------------------------------------'
-	@echo 'Stan Math makefile:'
+	@echo 'Stan Math Library'
+	@echo '  https://github.com/stan-dev/math'
+	@echo ''
 	@echo '  Current configuration:'
-	@echo '  - OS_TYPE (Operating System): ' $(OS_TYPE)
-	@echo '  - CC (Compiler):              ' $(CC)
-	@echo '  - CC_TYPE                     ' $(CC_TYPE)
-	@echo '  - Compiler version:           ' $(CC_MAJOR).$(CC_MINOR)
-	@echo '  - O (Optimization Level):     ' $(O)
-	@echo '  - O_STANC (Opt for stanc):    ' $(O_STANC)
-ifdef TEMPLATE_DEPTH
-	@echo '  - TEMPLATE_DEPTH:             ' $(TEMPLATE_DEPTH)
-endif
+	@echo '  - CXX                            ' $(CXX)
+	@echo '  - O (optimization level):        ' $(O)
+	@echo '  - CXXFLAGS:                      ' $(CXXFLAGS)
+	@echo '  - AR (archiver):                 ' $(AR)
+	@echo '  - OS                             ' $(OS)
+	@echo ''
 	@echo '  Library configuration:'
 	@echo '  - EIGEN                       ' $(EIGEN)
 	@echo '  - BOOST                       ' $(BOOST)
-	@echo '  - CVODES                      ' $(CVODES)
 	@echo '  - IDAS                        ' $(IDAS)
+	@echo '  - CVODES                      ' $(CVODES)
 	@echo '  - GTEST                       ' $(GTEST)
 	@echo ''
 	@echo 'Tests:'
@@ -120,7 +91,7 @@ doxygen:
 ##
 .PHONY: clean clean-doxygen clean-deps clean-all
 clean:
-	@echo '  removing test executables'
+	@echo 'removing test executables'
 	$(shell find test -type f -name "*_test$(EXE)" -exec rm {} +)
 	$(shell find test -type f -name "*_test.d" -exec rm {} +)
 	$(shell find test -type f -name "*_test.d.*" -exec rm {} +)
@@ -132,12 +103,12 @@ clean-doxygen:
 	$(RM) -r doc/api
 
 clean-deps:
-	@echo '  removing dependency files'
+	@echo 'removing dependency files'
 	$(shell find . -type f -name '*.d' -exec rm {} +)
 	$(shell find . -type f -name '*.d.*' -exec rm {} +)
 	$(RM) $(shell find stan -type f -name '*.dSYM') $(shell find stan -type f -name '*.d.*')
 
 clean-all: clean clean-doxygen clean-deps clean-libraries
-	@echo '  removing generated test files'
+	@echo 'removing generated test files'
 	$(shell find test/prob -name '*_generated_*_test.cpp' -type f -exec rm {} +)
 	$(RM) $(wildcard test/prob/generate_tests$(EXE))
