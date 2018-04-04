@@ -14,7 +14,7 @@ integrate_ode_bdf(const F& f, const std::vector<T_initial>& y0, double t0,
                   const std::vector<double>& ts,
                   const std::vector<T_param>& theta,
                   const std::vector<double>& x, const std::vector<int>& x_int,
-                  std::ostream* msgs = 0, double relative_tolerance = 1e-10,
+                  std::ostream* msgs = nullptr, double relative_tolerance = 1e-10,
                   double absolute_tolerance = 1e-10,
                   long int max_num_steps = 1e8) {  // NOLINT(runtime/int)
   stan::math::cvodes_integrator<CV_BDF> integrator;

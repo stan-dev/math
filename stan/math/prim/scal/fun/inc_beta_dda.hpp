@@ -9,8 +9,6 @@
 namespace stan {
 namespace math {
 
-template <typename T>
-T inc_beta_ddb(T a, T b, T z, T digamma_b, T digamma_ab);
 
 /**
  * Returns the partial derivative of the regularized
