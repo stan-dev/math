@@ -39,7 +39,8 @@ TEST(AgradAutoDiff, gradient_threaded) {
   double fx_ref;
   Matrix<double, Dynamic, 1> grad_fx_ref;
   stan::math::gradient(f, x_ref, fx_ref, grad_fx_ref);
-  EXPECT_FLOAT_EQ(x_ref(0) * x_ref(0) * x_ref(1) + 3 * x_ref(1) * x_ref(1), fx_ref);
+  EXPECT_FLOAT_EQ(x_ref(0) * x_ref(0) * x_ref(1) + 3 * x_ref(1) * x_ref(1),
+                  fx_ref);
   EXPECT_EQ(2, grad_fx_ref.size());
   EXPECT_FLOAT_EQ(2 * x_ref(0) * x_ref(1), grad_fx_ref(0));
   EXPECT_FLOAT_EQ(x_ref(0) * x_ref(0) + 3 * 2 * x_ref(1), grad_fx_ref(1));
@@ -63,8 +64,9 @@ TEST(AgradAutoDiff, gradient_threaded) {
     // the use pattern in stan-math will be to defer the first job in
     // order to make the main thread do some work which is why we
     // alter the execution policy here
-    ad_futures_ref.emplace_back(std::async(
-                                           i == 0 ? std::launch::deferred : std::launch::async, thread_job, x_ref(0), x_ref(1)));
+    ad_futures_ref.emplace_back(
+        std::async(i == 0 ? std::launch::deferred : std::launch::async,
+                   thread_job, x_ref(0), x_ref(1)));
   }
 
   // and schedule a bunch of jobs which all do different things (all
@@ -72,8 +74,9 @@ TEST(AgradAutoDiff, gradient_threaded) {
   std::vector<std::future<VectorXd>> ad_futures_local;
 
   for (std::size_t i = 0; i < 100; i++) {
-    ad_futures_local.emplace_back(std::async(
-                                             i == 0 ? std::launch::deferred : std::launch::async, thread_job, 1.0*i, 2.0*i));
+    ad_futures_local.emplace_back(
+        std::async(i == 0 ? std::launch::deferred : std::launch::async,
+                   thread_job, 1.0 * i, 2.0 * i));
   }
 
   for (std::size_t i = 0; i < 100; i++) {
@@ -86,18 +89,21 @@ TEST(AgradAutoDiff, gradient_threaded) {
     EXPECT_FLOAT_EQ(grad_fx_ref(0), grad_fx_job(0));
     EXPECT_FLOAT_EQ(grad_fx_ref(1), grad_fx_job(1));
   }
-  
+
   for (std::size_t i = 0; i < 100; i++) {
     const VectorXd& ad_result = ad_futures_local[i].get();
     double fx_job = ad_result(0);
     VectorXd x_local(2);
-    x_local << 1.0*i, 2.0*i;
+    x_local << 1.0 * i, 2.0 * i;
     VectorXd grad_fx_job = ad_result.tail(ad_result.size() - 1);
 
-    EXPECT_FLOAT_EQ(x_local(0) * x_local(0) * x_local(1) + 3 * x_local(1) * x_local(1), fx_job);
+    EXPECT_FLOAT_EQ(
+        x_local(0) * x_local(0) * x_local(1) + 3 * x_local(1) * x_local(1),
+        fx_job);
     EXPECT_EQ(2, grad_fx_job.size());
     EXPECT_FLOAT_EQ(2 * x_local(0) * x_local(1), grad_fx_job(0));
-    EXPECT_FLOAT_EQ(x_local(0) * x_local(0) + 3 * 2 * x_local(1), grad_fx_job(1));
+    EXPECT_FLOAT_EQ(x_local(0) * x_local(0) + 3 * 2 * x_local(1),
+                    grad_fx_job(1));
   }
 }
 
