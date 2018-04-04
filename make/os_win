@@ -35,5 +35,6 @@ ifeq (mingw32-g++,$(CC_TYPE))
 #  LDLIBS += -static-libstdc++
 endif
 ifeq (clang++,$(CC_TYPE))
+  CXXFLAGS += -stdlib=libc++
 endif
 

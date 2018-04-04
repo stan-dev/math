@@ -12,4 +12,7 @@ ifeq (clang++,$(CC_TYPE))
   CXXFLAGS += -Wno-unknown-warning-option
   CXXFLAGS += -Wno-tautological-compare
   CXXFLAGS += -Wsign-compare
+  CXXFLAGS += -stdlib=libc++
+## TODO(wds15): we should only emulate TLS on older compilers (pre Sierra)
+  CXXFLAGS += -femulated-tls
 endif

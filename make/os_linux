@@ -7,7 +7,6 @@
 ##
 
 ifeq (g++,$(CC_TYPE))
-  LDFLAGS += -lpthread
   CXXFLAGS += -pthread
   GTEST_CXXFLAGS += -DGTEST_HAS_PTHREAD=0
 endif
@@ -22,5 +21,6 @@ endif
 ifeq (clang++,$(CC_TYPE))
   LDFLAGS += -lpthread
   GTEST_CXXFLAGS += -DGTEST_HAS_PTHREAD=0
+  CXXFLAGS += -stdlib=libstdc++
 endif
 
