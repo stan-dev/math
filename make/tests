@@ -12,9 +12,9 @@ GTEST_CXXFLAGS += -isystem $(GTEST)/include -isystem $(GTEST) -O$O
 $(GTEST)/src/gtest-all.o: CXXFLAGS += $(GTEST_CXXFLAGS)
 
 ## on Linux/clang (pre 4.0 clang) we need an extra dependency
-ifeq (linux-clang++,$(OS_TYPE)-$(CC_TYPE))
-   GTEST_MAIN += $(GTEST)/src/tls-linux-clang.cpp
-endif
+#ifeq (linux-clang++,$(OS_TYPE)-$(CC_TYPE))
+#   GTEST_MAIN += $(GTEST)/src/tls-linux-clang.cpp
+#endif
 
 test/%$(EXE) : CXXFLAGS += $(GTEST_CXXFLAGS)
 test/%$(EXE) : test/%.o $(GTEST_MAIN) $(GTEST)/src/gtest-all.o
