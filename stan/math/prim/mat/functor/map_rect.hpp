@@ -110,7 +110,8 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
          const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&
              job_params,
          const std::vector<std::vector<double>>& x_r,
-         const std::vector<std::vector<int>>& x_i, std::ostream* msgs = 0) {
+         const std::vector<std::vector<int>>& x_i,
+         std::ostream* msgs = nullptr) {
   static const char* function = "map_rect";
   typedef Eigen::Matrix<
       typename stan::return_type<T_shared_param, T_job_param>::type,
