@@ -26,7 +26,7 @@ namespace math {
  * @param e The error number
  *
  */
-inline void check_ocl_error(const char *function, const cl::Error &e) {
+inline void check_opencl_error(const char *function, const cl::Error &e) {
   switch (e.err()) {
     case 0:
       // CL_SUCCESS - no need to throw

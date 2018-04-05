@@ -38,6 +38,17 @@ CXX = $(CC)
 ##
 -include make/detect_os
 
+# If STAN_OPENCL is defined
+##
+# Adds the following to CXXFLAGS
+# link to OpenCL
+# Defines:
+#  STAN_OPENCL
+# OPENCL_DEVICE_ID - The ID of the GPU (default: 0)
+# OPENCL_PLATFORM_ID The ID of the OpenCL platform (default: 0)
+# Both IDs can be found through installing and calling clinfo
+-include make/setup_gpu
+
 include make/tests    # tests
 include make/cpplint  # cpplint
 

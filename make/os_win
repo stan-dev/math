@@ -43,5 +43,6 @@ endif
 
 ifdef STAN_OPENCL
   LDLIBS_OPENCL ?= -lOpenCL
-  OPENCL_DEVICE ?= 0
+  OPENCL_DEVICE_ID ?= 0
+  OPENCL_PLATFORM_ID ?= 0
 endif
