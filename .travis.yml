@@ -11,11 +11,11 @@ before_script:
 
 linux_clang: &linux_clang
   os: linux
-  compiler: "clang-4.0"
+  compiler: "clang-3.8"
   addons: 
     apt:
-      sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-4.0' ]
-      packages: [ 'clang-4.0', 'libc++-dev' ]
+      sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8' ]
+      packages: [ 'clang-3.8', 'libc++-dev' ]
 
 linux_gcc: &linux_gcc
   os: linux
@@ -30,43 +30,43 @@ matrix:
   include:
     - <<: *linux_clang
       env:
-        - MATRIX_EVAL="CXX=clang++-4.0"
+        - MATRIX_EVAL="CXX=clang++-3.8"
           TESTFOLDER="test/unit/math/memory test/unit/math/prim/scal test/unit/math/prim/arr"
     - <<: *linux_clang
       env:
-        - MATRIX_EVAL="CXX=clang++-4.0"
+        - MATRIX_EVAL="CXX=clang++-3.8"
           TESTFOLDER="test/unit/math/prim/mat/err test/unit/math/prim/mat/meta test/unit/math/prim/mat/vectorize"
     - <<: *linux_clang
       env:
-        - MATRIX_EVAL="CXX=clang++-4.0"
+        - MATRIX_EVAL="CXX=clang++-3.8"
           TESTFOLDER=test/unit/math/prim/mat/prob
     - <<: *linux_clang
       env:
-        - MATRIX_EVAL="CXX=clang++-4.0"
+        - MATRIX_EVAL="CXX=clang++-3.8"
           TESTFOLDER=test/unit/math/prim/mat/fun
     - <<: *linux_clang
       env:
-        - MATRIX_EVAL="CXX=clang++-4.0"
+        - MATRIX_EVAL="CXX=clang++-3.8"
           TESTFOLDER="test/unit/math/rev/scal test/unit/math/rev/arr"
     - <<: *linux_clang
       env:
-        - MATRIX_EVAL="CXX=clang++-4.0"
+        - MATRIX_EVAL="CXX=clang++-3.8"
           TESTFOLDER=test/unit/math/rev/mat/fun
     - <<: *linux_clang
       env:
-        - MATRIX_EVAL="CXX=clang++-4.0"
+        - MATRIX_EVAL="CXX=clang++-3.8"
           TESTFOLDER="test/unit/math/rev/mat/err test/unit/math/rev/mat/functor test/unit/math/rev/mat/vectorize"
     - <<: *linux_clang
       env:
-        - MATRIX_EVAL="CXX=clang++-4.0"
+        - MATRIX_EVAL="CXX=clang++-3.8"
           TESTFOLDER="test/unit/math/rev/mat/meta test/unit/math/rev/mat/prob"
     - <<: *linux_clang
       env:
-        - MATRIX_EVAL="CXX=clang++-4.0"
+        - MATRIX_EVAL="CXX=clang++-3.8"
           TESTFOLDER=test/unit/math/fwd/mat
     - <<: *linux_clang
       env:
-        - MATRIX_EVAL="CXX=clang++-4.0"
+        - MATRIX_EVAL="CXX=clang++-3.8"
           TESTFOLDER="test/unit/math/fwd/arr test/unit/math/fwd/core test/unit/math/fwd/scal"
     - <<: *linux_gcc
       env:
