@@ -122,7 +122,7 @@ matrix:
           TESTFOLDER="test/unit/math/mix/mat/fun/[m-z]*"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9 -DSTAN_THREADS"
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER="test/unit/math/mix/scal test/unit/math/mix/mat/functor test/unit/math/mix/mat/meta test/unit/math/mix/mat/prob test/unit/math/mix/mat/util test/unit/math/mix/mat/vectorize"
 
  # - TESTFOLDER=test/unit/math/mix # times out on travis
