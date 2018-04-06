@@ -18,8 +18,8 @@ class sum_v_vari : public vari {
 
   inline static double sum_of_val(const std::vector<var>& v) {
     double result = 0;
-    for (size_t i = 0; i < v.size(); i++)
-      result += v[i].val();
+    for (auto x : v)
+      result += x.val();
     return result;
   }
 
@@ -50,7 +50,7 @@ class sum_v_vari : public vari {
  * @return Sum of vector entries.
  */
 inline var sum(const std::vector<var>& m) {
-  if (m.size() == 0)
+  if (m.empty())
     return 0.0;
   return var(new sum_v_vari(m));
 }

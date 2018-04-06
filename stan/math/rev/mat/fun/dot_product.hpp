@@ -81,8 +81,9 @@ class dot_product_vari : public vari {
       v1[i]->adj_ += adj_ * v2_[i];
     }
   }
-  inline void initialize(vari**& mem_v, const var* inv, vari** shared = NULL) {
-    if (shared == NULL) {
+  inline void initialize(vari**& mem_v, const var* inv,
+                         vari** shared = nullptr) {
+    if (shared == nullptr) {
       mem_v = reinterpret_cast<vari**>(
           ChainableStack::context().memalloc_.alloc(length_ * sizeof(vari*)));
       for (size_t i = 0; i < length_; i++)
@@ -93,8 +94,8 @@ class dot_product_vari : public vari {
   }
   template <typename Derived>
   inline void initialize(vari**& mem_v, const Eigen::DenseBase<Derived>& inv,
-                         vari** shared = NULL) {
-    if (shared == NULL) {
+                         vari** shared = nullptr) {
+    if (shared == nullptr) {
       mem_v = reinterpret_cast<vari**>(
           ChainableStack::context().memalloc_.alloc(length_ * sizeof(vari*)));
       for (size_t i = 0; i < length_; i++)
@@ -105,8 +106,8 @@ class dot_product_vari : public vari {
   }
 
   inline void initialize(double*& mem_d, const double* ind,
-                         double* shared = NULL) {
-    if (shared == NULL) {
+                         double* shared = nullptr) {
+    if (shared == nullptr) {
       mem_d = reinterpret_cast<double*>(
           ChainableStack::context().memalloc_.alloc(length_ * sizeof(double)));
       for (size_t i = 0; i < length_; i++)
@@ -117,8 +118,8 @@ class dot_product_vari : public vari {
   }
   template <typename Derived>
   inline void initialize(double*& mem_d, const Eigen::DenseBase<Derived>& ind,
-                         double* shared = NULL) {
-    if (shared == NULL) {
+                         double* shared = nullptr) {
+    if (shared == nullptr) {
       mem_d = reinterpret_cast<double*>(
           ChainableStack::context().memalloc_.alloc(length_ * sizeof(double)));
       for (size_t i = 0; i < length_; i++)
