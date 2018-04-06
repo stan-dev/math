@@ -70,7 +70,7 @@ matrix:
           TESTFOLDER="test/unit/math/fwd/arr test/unit/math/fwd/core test/unit/math/fwd/scal"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="\"CXX=g++-4.9 -DSTAN_THREADS\""
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER="test/unit/math/memory test/unit/math/prim/scal test/unit/math/prim/arr"
     - <<: *linux_gcc
       env:
