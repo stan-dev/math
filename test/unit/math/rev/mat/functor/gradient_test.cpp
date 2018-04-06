@@ -31,7 +31,7 @@ TEST(AgradAutoDiff, gradient) {
   EXPECT_FLOAT_EQ(x(0) * x(0) + 3 * 2 * x(1), grad_fx(1));
 }
 
-// test threaded AD
+// test threaded AD if enabled
 TEST(AgradAutoDiff, gradient_threaded) {
   fun1 f;
   Matrix<double, Dynamic, 1> x_ref(2);
@@ -65,7 +65,12 @@ TEST(AgradAutoDiff, gradient_threaded) {
     // order to make the main thread do some work which is why we
     // alter the execution policy here
     ad_futures_ref.emplace_back(
-        std::async(i == 0 ? std::launch::deferred : std::launch::async,
+        std::async(i == 0 ? std::launch::deferred
+#ifndef STAN_THREADS
+                   : std::launch::deferred,
+#else
+                   : std::launch::async,
+#endif
                    thread_job, x_ref(0), x_ref(1)));
   }
 
@@ -75,7 +80,12 @@ TEST(AgradAutoDiff, gradient_threaded) {
 
   for (std::size_t i = 0; i < 100; i++) {
     ad_futures_local.emplace_back(
-        std::async(i == 0 ? std::launch::deferred : std::launch::async,
+        std::async(i == 0 ? std::launch::deferred
+#ifndef STAN_THREADS
+                   : std::launch::deferred,
+#else
+                   : std::launch::async,
+#endif
                    thread_job, 1.0 * i, 2.0 * i));
   }
 
