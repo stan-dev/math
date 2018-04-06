@@ -14,8 +14,7 @@ struct AutodiffStackStorage {
 
   static AutodiffStackStorage_t& context() {
 #ifndef STAN_THREADS
-    static AutodiffStackStorage_t ad_stack
-        = AutodiffStackStorage_t();
+    static AutodiffStackStorage_t ad_stack = AutodiffStackStorage_t();
 #else
     static thread_local AutodiffStackStorage_t ad_stack
         = AutodiffStackStorage_t();
