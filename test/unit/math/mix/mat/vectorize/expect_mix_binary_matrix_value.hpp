@@ -7,8 +7,8 @@
 #include <test/unit/math/fwd/mat/vectorize/build_fwd_binary_matrix.hpp>
 #include <test/unit/math/prim/mat/vectorize/build_template_matrix.hpp>
 #include <test/unit/math/mix/mat/vectorize/expect_binary_val_deriv_eq.hpp>
-#include <vector>
 #include <Eigen/Dense>
+#include <vector>
 
 template <typename F, typename FV, typename matrix_t1, typename matrix_t2>
 void expect_mix_binary_matrix_matrix_eq(const matrix_t1& template_m1,
@@ -24,8 +24,7 @@ void expect_mix_binary_matrix_matrix_eq(const matrix_t1& template_m1,
     if (seed_one) {
       input_ma1 = build_fwd_binary_matrix1<F>(template_m1, i);
       input_ma2 = build_fwd_binary_matrix1<F>(template_m1, i);
-    }
-    else {
+    } else {
       input_ma1 = build_fwd_binary_matrix1<F>(template_m1);
       input_ma2 = build_fwd_binary_matrix1<F>(template_m1);
     }
@@ -34,8 +33,7 @@ void expect_mix_binary_matrix_matrix_eq(const matrix_t1& template_m1,
     if (seed_two) {
       input_mb1 = build_fwd_binary_matrix2<F>(template_m2, i);
       input_mb2 = build_fwd_binary_matrix2<F>(template_m2, i);
-    }
-    else {
+    } else {
       input_mb1 = build_fwd_binary_matrix2<F>(template_m2);
       input_mb2 = build_fwd_binary_matrix2<F>(template_m2);
     }
@@ -80,8 +78,7 @@ void expect_mix_binary_std_vector_matrix_std_vector_matrix_eq(
         if (seed_one && k == i) {
           input_mva1.push_back(build_fwd_binary_matrix1<F>(template_m1, j));
           input_mva2.push_back(build_fwd_binary_matrix1<F>(template_m1, j));
-        }
-        else {
+        } else {
           input_mva1.push_back(build_fwd_binary_matrix1<F>(template_m1));
           input_mva2.push_back(build_fwd_binary_matrix1<F>(template_m1));
         }
@@ -92,8 +89,7 @@ void expect_mix_binary_std_vector_matrix_std_vector_matrix_eq(
         if (seed_one && k == i) {
           input_mvb1.push_back(build_fwd_binary_matrix2<F>(template_m2, j));
           input_mvb2.push_back(build_fwd_binary_matrix2<F>(template_m2, j));
-        }
-        else {
+        } else {
           input_mvb1.push_back(build_fwd_binary_matrix2<F>(template_m2));
           input_mvb2.push_back(build_fwd_binary_matrix2<F>(template_m2));
         }

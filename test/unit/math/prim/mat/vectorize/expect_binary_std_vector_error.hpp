@@ -41,7 +41,6 @@ void expect_binary_std_vector_std_vector_err_throw(
 
 template <typename F, typename T>
 void expect_binary_std_vector_size_error() {
-
   using std::vector;
   vector<T> badsize_tv1(4);
   vector<T> badsize_tv2(9);
@@ -57,12 +56,10 @@ void expect_binary_std_vector_size_error() {
                std::invalid_argument);
   EXPECT_THROW(F::template apply<vector<T> >(badsize_tv1, badsize_tv2),
                std::invalid_argument);
-
 }
 
 template <typename F, typename T>
 void expect_binary_std_vector_value_error() {
-
   using std::vector;
   vector<double> invalid_inputs1 = F::invalid_inputs1();
   if (invalid_inputs1.size() == 0) return;

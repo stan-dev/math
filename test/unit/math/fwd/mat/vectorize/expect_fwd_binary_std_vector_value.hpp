@@ -2,9 +2,9 @@
 #define TEST_UNIT_MATH_FWD_MAT_VECTORIZE_EXPECT_FWD_BINARY_STD_VECTOR_VALUE_HPP
 
 #include <stan/math/fwd/core/fvar.hpp>
-#include <vector>
 #include <test/unit/math/fwd/mat/vectorize/build_binary_vector.hpp>
 #include <test/unit/math/fwd/mat/vectorize/expect_val_deriv_eq.hpp>
+#include <vector>
 
 template <typename F, typename FV, typename input_t1, typename input_t2>
 void expect_fwd_binary_std_vector_std_vector_eq(

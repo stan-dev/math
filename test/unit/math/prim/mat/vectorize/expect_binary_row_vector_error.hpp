@@ -1,11 +1,12 @@
 #ifndef TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_ROW_VECTOR_ERROR_HPP
 #define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_ROW_VECTOR_ERROR_HPP
 
+#include <gtest/gtest.h>
 #include <test/unit/math/prim/mat/vectorize/expect_binary_scalar_matrix_err_throw.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_binary_scalar_std_vector_matrix_err_throw.hpp>
 #include <Eigen/Dense>
 #include <stdexcept>
-#include <gtest/gtest.h>
+#include <vector>
 
 template <typename F, typename V>
 void expect_row_vector_error() {

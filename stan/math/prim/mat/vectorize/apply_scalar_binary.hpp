@@ -113,15 +113,15 @@ namespace stan {
       static inline return_t apply(
           const Eigen::Block<Eigen::Matrix<T1, R1, C1> >& x,
           const Eigen::Block<Eigen::Matrix<T2, R2, C2> >& y) {
-        check_matching_dims<true>("binary vectorization", "x", 
+        check_matching_dims<true>("binary vectorization", "x",
                                   static_cast<Eigen::Matrix<T1, R1, C1> >(
-                                      x.eval()), 
-                                  "y", 
+                                      x.eval()),
+                                  "y",
                                   static_cast<Eigen::Matrix<T1, R1, C1> >(
-                                      x.eval())); 
+                                      x.eval()));
         return_t result(x.rows(), x.cols());
         for (int i = 0; i < x.size(); ++i)
-          result(i) = apply_scalar_binary<F, T1, T2>::apply(x.eval()(i), 
+          result(i) = apply_scalar_binary<F, T1, T2>::apply(x.eval()(i),
                                                             y.eval()(i));
         return result;
       }

@@ -3,8 +3,8 @@
 
 #include <test/unit/math/prim/mat/vectorize/expect_val_eq.hpp>
 #include <test/unit/math/prim/mat/vectorize/build_template_matrix.hpp>
-#include <vector>
 #include <Eigen/Dense>
+#include <vector>
 
 template <typename F, typename matrix_t>
 void expect_prim_binary_matrix_matrix_eq(const matrix_t& input_m1,

@@ -6,8 +6,8 @@
 #include <test/unit/math/rev/mat/vectorize/build_rev_binary_matrix.hpp>
 #include <test/unit/math/prim/mat/vectorize/build_template_matrix.hpp>
 #include <test/unit/math/rev/mat/vectorize/expect_binary_val_deriv_eq.hpp>
-#include <vector>
 #include <Eigen/Dense>
+#include <vector>
 
 template <typename F, typename matrix_t1, typename matrix_t2>
 void expect_rev_binary_matrix_matrix_eq(const matrix_t1& template_m1,
@@ -88,7 +88,6 @@ void expect_rev_binary_std_vector_matrix_std_vector_matrix_eq(
 
 template <typename F, int R, int C> void
 expect_rev_binary_matrix_value(Eigen::Matrix<double, R, C> template_m) {
-
   using stan::math::var;
   using std::vector;
 

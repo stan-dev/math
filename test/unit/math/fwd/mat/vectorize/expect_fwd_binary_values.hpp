@@ -7,7 +7,7 @@
 #include <test/unit/math/fwd/mat/vectorize/expect_fwd_binary_matrix_value.hpp>
 #include <Eigen/Dense>
 
-//Also will test derivatives
+// Also will test derivatives
 template <typename F>
 void expect_fwd_binary_values() {
   using stan::math::fvar;

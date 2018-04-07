@@ -25,8 +25,8 @@ TYPED_TEST_P(fwd_scalar_binary_test, expect_scalar_types) {
   expect_binary_types<TypeParam, int, fvar<fvar<double> > >();
   expect_binary_types<TypeParam, fvar<fvar<double> >, double>();
   expect_binary_types<TypeParam, double, fvar<fvar<double> > >();
-  expect_binary_types<TypeParam, fvar<fvar<double> >, 
-  fvar<fvar<double> > >();
+  expect_binary_types<TypeParam, fvar<fvar<double> >,
+                      fvar<fvar<double> > >();
 }
 
 TYPED_TEST_P(fwd_scalar_binary_test, expect_values) {

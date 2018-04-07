@@ -17,7 +17,7 @@ namespace stan {
      * @tparam T_result_expected  Expected result type.
      * @tparam T_arg Argument type.
      */
-    template <typename F, typename T_result_expected, 
+    template <typename F, typename T_result_expected,
               typename T_arg1, typename T_arg2>
     void expect_binary_match_return_t() {
       using stan::math::apply_scalar_binary;
@@ -29,5 +29,3 @@ namespace stan {
   }
 }
 #endif
-
-

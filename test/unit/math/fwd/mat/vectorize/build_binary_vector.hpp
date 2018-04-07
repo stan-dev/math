@@ -19,7 +19,6 @@ build_binary_vector1(std::vector<stan::math::fvar<FV> > fvar_vector,
     template_v2 = build_binary_vector1<F>(vector<FV>(), seed_index);
   vector<fvar<FV> > result_v;
   for (size_t i = 0; i < template_v1.size(); ++i) {
-
     // For fvar<fvar<double> >, this will fill in
     // all four components
     if (seed_index == static_cast<int>(i))
@@ -44,7 +43,6 @@ build_binary_vector2(std::vector<stan::math::fvar<FV> > fvar_vector,
     template_v2 = build_binary_vector2<F>(vector<FV>(), seed_index);
   vector<fvar<FV> > result_v;
   for (size_t i = 0; i < template_v1.size(); ++i) {
-
     // For fvar<fvar<double> >, this will fill in
     // all four components
     if (seed_index == static_cast<int>(i))

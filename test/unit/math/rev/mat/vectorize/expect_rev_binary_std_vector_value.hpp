@@ -2,10 +2,10 @@
 #define TEST_UNIT_MATH_REV_MAT_VECTORIZE_EXPECT_REV_BINARY_STD_VECTOR_VALUE_HPP
 
 #include <stan/math/rev/core/var.hpp>
-#include <vector>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/vectorize/build_binary_vector.hpp>
 #include <test/unit/math/rev/mat/vectorize/expect_binary_val_deriv_eq.hpp>
+#include <vector>
 
 template <typename F, typename input_t1, typename input_t2> void
 expect_rev_binary_std_vector_std_vector_eq(

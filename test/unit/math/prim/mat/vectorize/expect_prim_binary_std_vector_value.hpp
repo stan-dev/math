@@ -1,9 +1,9 @@
 #ifndef TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_PRIM_BINARY_STD_VECTOR_VALUE_HPP
 #define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_PRIM_BINARY_STD_VECTOR_VALUE_HPP
 
+#include <gtest/gtest.h>
 #include <test/unit/math/prim/mat/vectorize/expect_val_eq.hpp>
 #include <vector>
-#include <gtest/gtest.h>
 
 template <typename F, typename vector_t1, typename vector_t2>
 void expect_binary_std_vector_std_vector_eq(
@@ -70,7 +70,7 @@ void expect_prim_binary_std_vector_value() {
   b2.push_back(valid_inputs2);
   b2.push_back(valid_inputs2);
 
-  //vector<vector>, vector<vector> tests
+  // vector<vector>, vector<vector> tests
   expect_binary_std_vector_std_vector_std_vector_std_vector_eq<F>(a1, b2);
   expect_binary_std_vector_std_vector_std_vector_std_vector_eq<F>(b1, a2);
   expect_binary_std_vector_std_vector_std_vector_std_vector_eq<F>(a1, a2);

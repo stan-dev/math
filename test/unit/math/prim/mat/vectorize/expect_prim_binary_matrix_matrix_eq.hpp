@@ -7,7 +7,7 @@
 
 
 template <typename F, typename matrix_t>
-void expect_prim_binary_matrix_matrix_eq(const matrix_t& input_m1, 
+void expect_prim_binary_matrix_matrix_eq(const matrix_t& input_m1,
                                          const matrix_t& input_m2) {
   matrix_t fa = F::template apply<matrix_t>(input_m1, input_m2);
   EXPECT_EQ(input_m1.size(), fa.size());
@@ -15,6 +15,6 @@ void expect_prim_binary_matrix_matrix_eq(const matrix_t& input_m1,
   for (int i = 0; i < input_m1.size(); ++i) {
     double exp_v = F::apply_base(input_m1(i), input_m2(i));
     expect_val_eq(exp_v, fa(i));
-  }    
+  }
 }
 #endif

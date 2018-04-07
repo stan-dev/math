@@ -1,8 +1,8 @@
 #ifndef TEST_UNIT_MATH_MIX_MAT_VECTORIZE_EXPECT_MIX_BINARY_ERRORS_HPP
 #define TEST_UNIT_MATH_MIX_MAT_VECTORIZE_EXPECT_MIX_BINARY_ERRORS_HPP
 
-#include <stan/math/rev/core/var.hpp> 
-#include <stan/math/fwd/core/fvar.hpp> 
+#include <stan/math/rev/core/var.hpp>
+#include <stan/math/fwd/core/fvar.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_binary_scalar_error.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_binary_std_vector_error.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_binary_matrix_error.hpp>
@@ -16,7 +16,7 @@
  *
  * Tests integer, scalar, standard vector, Eigen matrix, Eigen vector,
  * and Eigen row vecor cases, and nested standard vectors of Eigen
- * types. 
+ * types.
  *
  * @tparam F Test class used to define test case.
  */

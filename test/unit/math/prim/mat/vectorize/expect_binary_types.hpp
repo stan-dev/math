@@ -1,10 +1,10 @@
 #ifndef TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_BINARY_TYPES_HPP
 #define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_BINARY_TYPES_HPP
 
-#include <test/unit/math/prim/mat/vectorize/expect_binary_match_return_t.hpp>
 #include <boost/math/tools/promotion.hpp>
-#include <vector>
+#include <test/unit/math/prim/mat/vectorize/expect_binary_match_return_t.hpp>
 #include <Eigen/Dense>
+#include <vector>
 
 template <typename F>
 void expect_int_binary_types() {
@@ -12,18 +12,18 @@ void expect_int_binary_types() {
   using stan::test::expect_binary_match_return_t;
 
   expect_binary_match_return_t<F, double, int, int>();
-  expect_binary_match_return_t<F, vector<double>, vector<int>, 
+  expect_binary_match_return_t<F, vector<double>, vector<int>,
                                vector<int> >();
-  expect_binary_match_return_t<F, vector<vector<double> >, 
-                               vector<vector<int> >, 
+  expect_binary_match_return_t<F, vector<vector<double> >,
+                               vector<vector<int> >,
                                vector<vector<int> > >();
 }
 
 template <typename F, typename T1, typename T2>
 void expect_binary_types() {
-  using stan::test::expect_binary_match_return_t;
   using std::vector;
-  using Eigen::Matrix; 
+  using stan::test::expect_binary_match_return_t;
+  using Eigen::Matrix;
   typedef Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> matrix_t1;
   typedef Eigen::Matrix<T1, Eigen::Dynamic, 1> vector_t1;
   typedef Eigen::Matrix<T1, 1, Eigen::Dynamic> row_vector_t1;
@@ -37,22 +37,22 @@ void expect_binary_types() {
   typedef Eigen::Matrix<result_t, 1, Eigen::Dynamic> result_row_vector_t;
 
   expect_binary_match_return_t<F, result_t, T1, T2>();
-  expect_binary_match_return_t<F, vector<result_t>, vector<T1>, 
+  expect_binary_match_return_t<F, vector<result_t>, vector<T1>,
                                vector<T2> >();
-  expect_binary_match_return_t<F, vector<vector<result_t> >, 
-                               vector<vector<T1> >, 
+  expect_binary_match_return_t<F, vector<vector<result_t> >,
+                               vector<vector<T1> >,
                                vector< vector<T2> > >();
-  expect_binary_match_return_t<F, result_matrix_t, matrix_t1, matrix_t2>(); 
-  expect_binary_match_return_t<F, vector<result_matrix_t>, 
-                               vector<matrix_t1>, vector<matrix_t2> >(); 
-  expect_binary_match_return_t<F, result_vector_t, vector_t1, vector_t2>(); 
-  expect_binary_match_return_t<F, vector<result_vector_t>, 
-                               vector<vector_t1>, vector<vector_t2> >(); 
-  expect_binary_match_return_t<F, result_row_vector_t, row_vector_t1, 
-                               row_vector_t2>(); 
-  expect_binary_match_return_t<F, vector<result_row_vector_t>, 
-                               vector<row_vector_t1>, 
-                               vector<row_vector_t2> >(); 
+  expect_binary_match_return_t<F, result_matrix_t, matrix_t1, matrix_t2>();
+  expect_binary_match_return_t<F, vector<result_matrix_t>,
+                               vector<matrix_t1>, vector<matrix_t2> >();
+  expect_binary_match_return_t<F, result_vector_t, vector_t1, vector_t2>();
+  expect_binary_match_return_t<F, vector<result_vector_t>,
+                               vector<vector_t1>, vector<vector_t2> >();
+  expect_binary_match_return_t<F, result_row_vector_t, row_vector_t1,
+                               row_vector_t2>();
+  expect_binary_match_return_t<F, vector<result_row_vector_t>,
+                               vector<row_vector_t1>,
+                               vector<row_vector_t2> >();
 }
 
 #endif

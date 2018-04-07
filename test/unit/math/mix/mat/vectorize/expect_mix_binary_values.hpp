@@ -8,7 +8,7 @@
 #include <test/unit/math/mix/mat/vectorize/expect_mix_binary_matrix_value.hpp>
 #include <Eigen/Dense>
 
-//Also will test derivatives
+// Also will test derivatives
 template <typename F>
 void expect_mix_binary_values() {
   using stan::math::var;

@@ -21,16 +21,14 @@ void expect_mix_binary_std_vector_std_vector_eq(
     if (seed_one) {
       input_a1 = build_binary_vector1<F>(template_v1, i);
       input_a2 = build_binary_vector1<F>(template_v1, i);
-    }
-    else {
+    } else {
       input_a1 = build_binary_vector1<F>(template_v1);
       input_a2 = build_binary_vector1<F>(template_v1);
     }
     if (seed_two) {
       input_b1 = build_binary_vector2<F>(template_v2, i);
       input_b2 = build_binary_vector2<F>(template_v2, i);
-    }
-    else {
+    } else {
       input_b1 = build_binary_vector2<F>(template_v2);
       input_b2 = build_binary_vector2<F>(template_v2);
     }
@@ -59,8 +57,7 @@ void expect_mix_binary_std_vector_std_vector_std_vector_std_vector_eq(
         if (seed_one && k == i) {
           input_va1.push_back(build_binary_vector1<F>(template_v1, j));
           input_va2.push_back(build_binary_vector1<F>(template_v1, j));
-        }
-        else {
+        } else {
           input_va1.push_back(build_binary_vector1<F>(template_v1));
           input_va2.push_back(build_binary_vector1<F>(template_v1));
         }
@@ -71,8 +68,7 @@ void expect_mix_binary_std_vector_std_vector_std_vector_std_vector_eq(
         if (seed_two && k == i) {
           input_vb1.push_back(build_binary_vector2<F>(template_v2, j));
           input_vb2.push_back(build_binary_vector2<F>(template_v2, j));
-        }
-        else {
+        } else {
           input_vb1.push_back(build_binary_vector2<F>(template_v2));
           input_vb2.push_back(build_binary_vector2<F>(template_v2));
         }

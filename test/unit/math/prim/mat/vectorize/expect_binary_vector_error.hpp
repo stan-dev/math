@@ -12,7 +12,7 @@ template <typename F, typename T, typename VT>
 void expect_binary_vector_size_error() {
   using std::vector;
   using Eigen::VectorXd;
-  typedef Eigen::Matrix<T, VT::RowsAtCompileTime, VT::ColsAtCompileTime> 
+  typedef Eigen::Matrix<T, VT::RowsAtCompileTime, VT::ColsAtCompileTime>
   vector_t;
   vector_t badsize_tm1(4);
   vector_t badsize_tm2(9);
@@ -32,7 +32,7 @@ template <typename F, typename T, typename VT>
 void expect_binary_vector_value_error() {
   using std::vector;
   using Eigen::VectorXd;
-  typedef Eigen::Matrix<T, VT::RowsAtCompileTime, VT::ColsAtCompileTime> 
+  typedef Eigen::Matrix<T, VT::RowsAtCompileTime, VT::ColsAtCompileTime>
   vector_t;
 
   vector<double> invalid_inputs1 = F::invalid_inputs1();
@@ -58,40 +58,40 @@ void expect_binary_vector_value_error() {
   for (int i = 0; i < b2.size(); ++i) {
       b2(i) = invalid_inputs2[i];
   }
-  //scalar, matrix
-  //int, T
+  // scalar, matrix
+  // int, T
   expect_binary_scalar_matrix_err_throw<F, T>(int_invalid_inputs1, b2);
   expect_binary_matrix_scalar_err_throw<F, T>(b1, int_invalid_inputs2);
-  //double, T
+  // double, T
   expect_binary_scalar_matrix_err_throw<F, T>(y1, a2);
   expect_binary_matrix_scalar_err_throw<F, T>(a1, y2);
   expect_binary_scalar_matrix_err_throw<F, T>(invalid_inputs1, b2);
   expect_binary_matrix_scalar_err_throw<F, T>(b1, invalid_inputs2);
-  //T, T
+  // T, T
   expect_binary_scalar_matrix_err_throw<F, T>(y1, b2);
   expect_binary_matrix_scalar_err_throw<F, T>(b1, y2);
-  //matrix, matrix
+  // matrix, matrix
   EXPECT_THROW(F::template apply<vector_t>(a1, b2), std::domain_error);
   EXPECT_THROW(F::template apply<vector_t>(b1, a2), std::domain_error);
   EXPECT_THROW(F::template apply<vector_t>(b1, b2), std::domain_error);
 
-  //scalar, vector<matrix>
-  //int, T
+  // scalar, vector<matrix>
+  // int, T
   expect_binary_scalar_std_vector_matrix_err_throw<F, T>(
   int_invalid_inputs1, b2);
   expect_binary_std_vector_matrix_scalar_err_throw<F, T>(
   b1, int_invalid_inputs2);
-  //double, T
+  // double, T
   expect_binary_scalar_std_vector_matrix_err_throw<F, T>(y1, a2);
   expect_binary_std_vector_matrix_scalar_err_throw<F, T>(a1, y2);
   expect_binary_scalar_std_vector_matrix_err_throw<F, T>(
   invalid_inputs1, b2);
   expect_binary_std_vector_matrix_scalar_err_throw<F, T>(
   b1, invalid_inputs2);
-  //T, T
+  // T, T
   expect_binary_scalar_std_vector_matrix_err_throw<F, T>(y1, b2);
   expect_binary_std_vector_matrix_scalar_err_throw<F, T>(b1, y2);
-  //vector<matrix>, vector<matrix>
+  // vector<matrix>, vector<matrix>
   vector<VT> d1;
   d1.push_back(a1);
   d1.push_back(a1);
@@ -104,11 +104,11 @@ void expect_binary_vector_value_error() {
   vector<vector_t> e2;
   e2.push_back(b2);
   e2.push_back(b2);
-  EXPECT_THROW(F::template apply<vector<vector_t> >(e1, d2), 
+  EXPECT_THROW(F::template apply<vector<vector_t> >(e1, d2),
   std::domain_error);
-  EXPECT_THROW(F::template apply<vector<vector_t> >(d1, e2), 
+  EXPECT_THROW(F::template apply<vector<vector_t> >(d1, e2),
   std::domain_error);
-  EXPECT_THROW(F::template apply<vector<vector_t> >(e1, e2), 
+  EXPECT_THROW(F::template apply<vector<vector_t> >(e1, e2),
   std::domain_error);
 }
 

@@ -7,18 +7,18 @@
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_binary_test.hpp>
 #include <test/unit/math/prim/mat/vectorize/binary_foo_fun.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
+#include <vector>
 
 /**
- * This is the structure for testing mock function binary_foo 
- * (defined in the * testing framework). 
+ * This is the structure for testing mock function binary_foo
+ * (defined in the * testing framework).
  */
 struct binary_foo_test {
-
   /**
    * Redefinition of function brought in from stan::math.  The reason
    * to do this is that it wraps it up in this static template class.
    *
-   * This is the version that's being tested.  
+   * This is the version that's being tested.
    *
    * WARNING:  assumes that the scalar values for all instantiations
    * (prim, rev, fwd, mix) ***have already been tested***.
@@ -54,7 +54,7 @@ struct binary_foo_test {
   template <typename T1, typename T2>
   static typename boost::math::tools::promote_args<T1, T2>::type
   apply_base(const T1& x, const T2& y) {
-    return apply<typename boost::math::tools::promote_args<T1, T2>::type, 
+    return apply<typename boost::math::tools::promote_args<T1, T2>::type,
                  T1, T2>(x, y);
   }
 

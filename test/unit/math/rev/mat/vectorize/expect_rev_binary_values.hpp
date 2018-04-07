@@ -6,7 +6,7 @@
 #include <test/unit/math/rev/mat/vectorize/expect_rev_binary_matrix_value.hpp>
 #include <Eigen/Dense>
 
-//Also will test derivatives
+// Also will test derivatives
 template <typename F>
 void expect_rev_binary_values() {
   expect_rev_binary_scalar_value<F>();
