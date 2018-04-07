@@ -63,7 +63,7 @@ $(IDAS_TESTS) : $(LIBIDAS)
 ##
 
 OPENCL_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *opencl*_test.cpp))
-$(OPENCL_TESTS) : LDFLAGS += $(LDLIBS_OPENCL)
+$(OPENCL_TESTS) : LDFLAGS += $(LDFLAGS_OPENCL)
 
 ############################################################
 #
