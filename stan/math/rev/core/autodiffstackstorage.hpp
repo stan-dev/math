@@ -9,43 +9,29 @@ namespace math {
 
 template <typename ChainableT, typename ChainableAllocT>
 struct AutodiffStackStorage {
-  static std::vector<ChainableT*> var_stack_;
-  static std::vector<ChainableT*> var_nochain_stack_;
-  static std::vector<ChainableAllocT*> var_alloc_stack_;
-  static stack_alloc memalloc_;
+  typedef AutodiffStackStorage<ChainableT, ChainableAllocT>
+      AutodiffStackStorage_t;
+
+  static AutodiffStackStorage_t& context() {
+#ifndef STAN_THREADS
+    static AutodiffStackStorage_t ad_stack = AutodiffStackStorage_t();
+#else
+    static thread_local AutodiffStackStorage_t ad_stack
+        = AutodiffStackStorage_t();
+#endif
+    return ad_stack;
+  }
+
+  std::vector<ChainableT*> var_stack_;
+  std::vector<ChainableT*> var_nochain_stack_;
+  std::vector<ChainableAllocT*> var_alloc_stack_;
+  stack_alloc memalloc_;
 
   // nested positions
-  static std::vector<size_t> nested_var_stack_sizes_;
-  static std::vector<size_t> nested_var_nochain_stack_sizes_;
-  static std::vector<size_t> nested_var_alloc_stack_starts_;
+  std::vector<size_t> nested_var_stack_sizes_;
+  std::vector<size_t> nested_var_nochain_stack_sizes_;
+  std::vector<size_t> nested_var_alloc_stack_starts_;
 };
-
-template <typename ChainableT, typename ChainableAllocT>
-std::vector<ChainableT*>
-    AutodiffStackStorage<ChainableT, ChainableAllocT>::var_stack_;
-
-template <typename ChainableT, typename ChainableAllocT>
-std::vector<ChainableT*>
-    AutodiffStackStorage<ChainableT, ChainableAllocT>::var_nochain_stack_;
-
-template <typename ChainableT, typename ChainableAllocT>
-std::vector<ChainableAllocT*>
-    AutodiffStackStorage<ChainableT, ChainableAllocT>::var_alloc_stack_;
-
-template <typename ChainableT, typename ChainableAllocT>
-stack_alloc AutodiffStackStorage<ChainableT, ChainableAllocT>::memalloc_;
-
-template <typename ChainableT, typename ChainableAllocT>
-std::vector<size_t>
-    AutodiffStackStorage<ChainableT, ChainableAllocT>::nested_var_stack_sizes_;
-
-template <typename ChainableT, typename ChainableAllocT>
-std::vector<size_t> AutodiffStackStorage<
-    ChainableT, ChainableAllocT>::nested_var_nochain_stack_sizes_;
-
-template <typename ChainableT, typename ChainableAllocT>
-std::vector<size_t> AutodiffStackStorage<
-    ChainableT, ChainableAllocT>::nested_var_alloc_stack_starts_;
 
 }  // namespace math
 }  // namespace stan
