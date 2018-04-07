@@ -163,7 +163,7 @@ class opencl_context {
   inline void compile_kernel_group(const char* kernel_name) {
     char temp[100];
     int local = 32;
-    int gpu_local_max = sqrt(max_workgroup_size());
+    int gpu_local_max = std::sqrt(max_workgroup_size());
     if (gpu_local_max < local)
       local = gpu_local_max;
     snprintf(temp, sizeof(temp), "-D TS=%d -D TS1=%d -D TS2=%d ", local, local,
