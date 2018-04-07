@@ -134,3 +134,30 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultiMixInt) {
 
   EXPECT_FLOAT_EQ(10.0, v);
 }
+
+
+TEST(MetaTraits, partials_type) {
+  using stan::math::fvar;
+  using stan::math::var;
+  using stan::is_constant_struct;
+  using stan::math::operands_and_partials;
+
+  fvar<var> a(2.0, 2.0);
+
+  Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1> avec(3);
+  avec << a, a, a;
+
+  Eigen::Matrix<double, Eigen::Dynamic, 1> bvec(3);
+  bvec << 2.0, 2.0, 2.0;
+
+  Eigen::Matrix<double, Eigen::Dynamic, 1> dxvec(3);
+  dxvec << 5.0, 5.0, 5.0;
+
+  operands_and_partials<Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1>,
+                        Eigen::Matrix<double, Eigen::Dynamic, 1>> o(avec, bvec);
+  o.edge1_.partials_vec_[0] = dxvec;
+  if (!is_constant_struct<Eigen::Matrix<double, Eigen::Dynamic, 1>>::value)
+    o.edge2_.partials_vec_[0] = dxvec;
+
+  o.build(-1.0);
+}

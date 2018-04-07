@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/scal/meta/broadcast_array.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/scal/meta/scalar_type.hpp>
+#include <stan/math/prim/scal/meta/partials_type.hpp>
 #include <stan/math/fwd/core/fvar.hpp>
 
 namespace stan {
@@ -59,11 +61,21 @@ template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5,
           typename Dx>
 class operands_and_partials<Op1, Op2, Op3, Op4, Op5, fvar<Dx> > {
  public:
-  internal::ops_partials_edge<Dx, Op1> edge1_;
-  internal::ops_partials_edge<Dx, Op2> edge2_;
-  internal::ops_partials_edge<Dx, Op3> edge3_;
-  internal::ops_partials_edge<Dx, Op4> edge4_;
-  internal::ops_partials_edge<Dx, Op5> edge5_;
+  internal::ops_partials_edge<
+      typename partials_type<typename scalar_type<Op1>::type>::type, Op1>
+      edge1_;
+  internal::ops_partials_edge<
+      typename partials_type<typename scalar_type<Op2>::type>::type, Op2>
+      edge2_;
+  internal::ops_partials_edge<
+      typename partials_type<typename scalar_type<Op3>::type>::type, Op3>
+      edge3_;
+  internal::ops_partials_edge<
+      typename partials_type<typename scalar_type<Op4>::type>::type, Op4>
+      edge4_;
+  internal::ops_partials_edge<
+      typename partials_type<typename scalar_type<Op5>::type>::type, Op5>
+      edge5_;
   typedef fvar<Dx> T_return_type;
   explicit operands_and_partials(const Op1& o1) : edge1_(o1) {}
   operands_and_partials(const Op1& o1, const Op2& o2)
