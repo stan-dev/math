@@ -46,3 +46,7 @@ ifdef STAN_OPENCL
   OPENCL_DEVICE_ID ?= 0
   OPENCL_PLATFORM_ID ?= 0
 endif
+
+ifdef STAN_MPI
+  $(error MPI is not supported on Windows.)
+endif

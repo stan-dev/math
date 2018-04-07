@@ -97,10 +97,27 @@ def makeTest(name, j):
     """Run the make command for a given single test."""
     doCommand('make -j%d %s' % (j or 1, name))
 
-def runTest(name, run_all=False):
+def commandExists(command):
+    p = subprocess.Popen(command, shell=True,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE)
+    p.wait()
+    return p.returncode != 127
+
+def runTest(name, run_all=False, mpi=False, j=1):
     executable = mungeName(name).replace("/", os.sep)
     xml = mungeName(name).replace(winsfx, "")
     command = '%s --gtest_output="xml:%s.xml"' % (executable, xml)
+    if mpi:
+        if not commandExists("mpirun"):
+            stopErr("Error: need to have mpi (and mpirun) installed to run mpi tests"
+                    + "\nCheck https://github.com/stan-dev/stan/wiki/Parallelism-using-MPI-in-Stan for more details."
+                    , -1)
+        if "mpi_" in name:
+            j = j > 2 and j or 2
+        else:
+            j = 1
+        command = "mpirun -np {} {}".format(j, command)
     doCommand(command, not run_all)
 
 def findTests(base_path, filter_names):
@@ -125,6 +142,12 @@ def batched(tests):
 def main():
     inputs = processCLIArgs()
 
+    try:
+        with open("make/local") as f:
+            stan_mpi =  "STAN_MPI" in f.read()
+    except IOError:
+        stan_mpi = False
+
     # pass 0: generate all auto-generated tests
     if any(['test/prob' in arg for arg in inputs.tests]):
         generateTests(inputs.j)
@@ -144,7 +167,7 @@ def main():
         for t in tests:
             if inputs.debug:
                 print("run single test: %s" % testname)
-            runTest(t, inputs.run_all)
+            runTest(t, inputs.run_all, mpi = stan_mpi, j = inputs.j)
 
 
 if __name__ == "__main__":

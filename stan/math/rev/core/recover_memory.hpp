@@ -22,8 +22,8 @@ static inline void recover_memory() {
         " before calling recover_memory()");
   ChainableStack::var_stack_.clear();
   ChainableStack::var_nochain_stack_.clear();
-  for (size_t i = 0; i < ChainableStack::var_alloc_stack_.size(); ++i) {
-    delete ChainableStack::var_alloc_stack_[i];
+  for (auto &x : ChainableStack::var_alloc_stack_) {
+    delete x;
   }
   ChainableStack::var_alloc_stack_.clear();
   ChainableStack::memalloc_.recover_all();
