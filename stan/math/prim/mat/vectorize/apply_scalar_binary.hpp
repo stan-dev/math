@@ -80,7 +80,7 @@ namespace stan {
        */
       static inline return_t apply(const Eigen::Matrix<T1, R1, C1>& x,
                                    const Eigen::Matrix<T2, R2, C2>& y) {
-        check_matching_dims("binary vectorization", "x", x, "y", y);
+        check_matching_dims<true>("binary vectorization", "x", x, "y", y);
         return_t result(x.rows(), x.cols());
         for (int i = 0; i < x.size(); ++i)
           result(i) = apply_scalar_binary<F, T1, T2>::apply(x(i), y(i));
@@ -113,12 +113,19 @@ namespace stan {
       static inline return_t apply(
           const Eigen::Block<Eigen::Matrix<T1, R1, C1> >& x,
           const Eigen::Block<Eigen::Matrix<T2, R2, C2> >& y) {
-        return apply_scalar_binary<F, Eigen::Matrix<T1, R1, C1>,
-                                   Eigen::Matrix<T2, R2, C2> >::apply(
-            static_cast<Eigen::Matrix<T1, R1, C1> >(x),
-            static_cast<Eigen::Matrix<T2, R2, C2> >(y));
+        check_matching_dims<true>("binary vectorization", "x", 
+                                  static_cast<Eigen::Matrix<T1, R1, C1> >(
+                                      x.eval()), 
+                                  "y", 
+                                  static_cast<Eigen::Matrix<T1, R1, C1> >(
+                                      x.eval())); 
+        return_t result(x.rows(), x.cols());
+        for (int i = 0; i < x.size(); ++i)
+          result(i) = apply_scalar_binary<F, T1, T2>::apply(x.eval()(i), 
+                                                            y.eval()(i));
+        return result;
       }
-    };
+   };
 
     template <typename F, typename T1, typename T2>
     struct apply_scalar_binary<F, std::vector<T1>, std::vector<T2> > {
