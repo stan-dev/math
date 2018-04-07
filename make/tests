@@ -11,10 +11,10 @@ GTEST_CXXFLAGS += -isystem $(GTEST)/include -isystem $(GTEST) -O$O
 ##
 $(GTEST)/src/gtest-all.o: CXXFLAGS += $(GTEST_CXXFLAGS)
 
-## on Linux/clang we need an extra dependency
-ifeq (linux-clang++,$(OS_TYPE)-$(CC_TYPE))
-   GTEST_MAIN += $(GTEST)/src/tls-linux-clang.cpp
-endif
+## on Linux/clang (pre 4.0 clang) we need an extra dependency
+#ifeq (linux-clang++,$(OS_TYPE)-$(CC_TYPE))
+#   GTEST_MAIN += $(GTEST)/src/tls-linux-clang.cpp
+#endif
 
 test/%$(EXE) : CXXFLAGS += $(GTEST_CXXFLAGS)
 test/%$(EXE) : test/%.o $(GTEST_MAIN) $(GTEST)/src/gtest-all.o
@@ -62,6 +62,18 @@ $(CVODES_TESTS) : $(LIBCVODES)
 IDAS_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *idas*_test.cpp) $(shell find test -name *_dae_*_test.cpp))
 $(IDAS_TESTS) : $(LIBIDAS)
 
+
+############################################################
+#
+# MPI tests
+##
+
+ifdef STAN_MPI
+  MPI_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *mpi_*test.cpp))
+  $(MPI_TESTS): LDFLAGS += $(LDFLAGS_MPI)
+  $(MPI_TESTS): CXXFLAGS += $(CXXFLAGS_MPI)
+  $(MPI_TESTS): $(BOOST)/stage/lib/libboost_mpi$(DLL) $(BOOST)/stage/lib/libboost_serialization$(DLL)
+endif
 
 ############################################################
 #

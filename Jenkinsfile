@@ -147,6 +147,16 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
+                stage('Unit with MPI') {
+                    agent any
+                    steps {
+                        unstash 'MathSetup'
+                        sh "echo CC=${MPICXX} -cxx=${CXX} >> make/local"
+                        sh "echo STAN_MPI=true >> make/local"
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
                     steps {

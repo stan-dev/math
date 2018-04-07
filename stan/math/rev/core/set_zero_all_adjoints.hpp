@@ -12,11 +12,10 @@ namespace math {
  * Reset all adjoint values in the stack to zero.
  */
 static void set_zero_all_adjoints() {
-  for (size_t i = 0; i < ChainableStack::context().var_stack_.size(); ++i)
-    ChainableStack::context().var_stack_[i]->set_zero_adjoint();
-  for (size_t i = 0; i < ChainableStack::context().var_nochain_stack_.size();
-       ++i)
-    ChainableStack::context().var_nochain_stack_[i]->set_zero_adjoint();
+  for (auto &x : ChainableStack::context().var_stack_)
+    x->set_zero_adjoint();
+  for (auto &x : ChainableStack::context().var_nochain_stack_)
+    x->set_zero_adjoint();
 }
 
 }  // namespace math
