@@ -10,7 +10,7 @@ TEST(MathGpu, getInfo) {
   EXPECT_NE("", stan::math::opencl_context.capabilities());
   // auto foo = stan::math::opencl_context.capabilities();
   // std::cout << foo << std::endl;
-  EXPECT_EQ(1024, stan::math::opencl_context.max_workgroup_size());
+  EXPECT_EQ(256, stan::math::opencl_context.max_workgroup_size());
   cl::Context cv = stan::math::opencl_context.context();
   cl::CommandQueue cq = stan::math::opencl_context.queue();
   std::vector<cl::Device> dv = stan::math::opencl_context.device();
@@ -49,8 +49,8 @@ TEST(opencl_context, devices) {
     msg << "- device name: " << device.getInfo<CL_DEVICE_NAME>() << std::endl;
   }
 
-  EXPECT_EQ(1, all_devices.size())
-      << "expecting to find one device" << std::endl
+  EXPECT_EQ(2, all_devices.size())
+      << "expecting to find two devices" << std::endl
       << msg.str();
 
   msg.str("");
