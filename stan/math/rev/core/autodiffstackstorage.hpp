@@ -9,7 +9,6 @@ namespace math {
 
 template <typename ChainableT, typename ChainableAllocT>
 struct AutodiffStackStorage {
-
   std::vector<ChainableT*> var_stack_;
   std::vector<ChainableT*> var_nochain_stack_;
   std::vector<ChainableAllocT*> var_alloc_stack_;

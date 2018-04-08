@@ -26,9 +26,8 @@ class determinant_vari : public vari {
         cols_(A.cols()),
         A_(reinterpret_cast<double*>(ChainableStack.memalloc_.alloc(
             sizeof(double) * A.rows() * A.cols()))),
-        adjARef_(
-            reinterpret_cast<vari**>(ChainableStack.memalloc_.alloc(
-                sizeof(vari*) * A.rows() * A.cols()))) {
+        adjARef_(reinterpret_cast<vari**>(ChainableStack.memalloc_.alloc(
+            sizeof(vari*) * A.rows() * A.cols()))) {
     size_t pos = 0;
     for (size_type j = 0; j < cols_; j++) {
       for (size_type i = 0; i < rows_; i++) {

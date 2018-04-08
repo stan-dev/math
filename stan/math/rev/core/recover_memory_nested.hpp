@@ -31,8 +31,7 @@ static inline void recover_memory_nested() {
       ChainableStack.nested_var_nochain_stack_sizes_.back());
   ChainableStack.nested_var_nochain_stack_sizes_.pop_back();
 
-  for (size_t i
-       = ChainableStack.nested_var_alloc_stack_starts_.back();
+  for (size_t i = ChainableStack.nested_var_alloc_stack_starts_.back();
        i < ChainableStack.var_alloc_stack_.size(); ++i) {
     delete ChainableStack.var_alloc_stack_[i];
   }

@@ -95,8 +95,7 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
     size_t size = edge1_.size() + edge2_.size() + edge3_.size() + edge4_.size()
                   + edge5_.size();
     vari** varis = ChainableStack.memalloc_.alloc_array<vari*>(size);
-    double* partials
-        = ChainableStack.memalloc_.alloc_array<double>(size);
+    double* partials = ChainableStack.memalloc_.alloc_array<double>(size);
     int idx = 0;
     edge1_.dump_operands(&varis[idx]);
     edge1_.dump_partials(&partials[idx]);

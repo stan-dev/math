@@ -42,13 +42,11 @@ inline var log_determinant_spd(const Eigen::Matrix<var, R, C>& m) {
   check_finite("log_determinant_spd",
                "log determininant of the matrix argument", val);
 
-  vari** operands
-      = ChainableStack.memalloc_.alloc_array<vari*>(m.size());
+  vari** operands = ChainableStack.memalloc_.alloc_array<vari*>(m.size());
   for (int i = 0; i < m.size(); ++i)
     operands[i] = m(i).vi_;
 
-  double* gradients
-      = ChainableStack.memalloc_.alloc_array<double>(m.size());
+  double* gradients = ChainableStack.memalloc_.alloc_array<double>(m.size());
   for (int i = 0; i < m.size(); ++i)
     gradients[i] = m_d(i);
 

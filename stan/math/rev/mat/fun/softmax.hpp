@@ -67,9 +67,8 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
 
   Matrix<double, Dynamic, 1> softmax_alpha_d = softmax(alpha_d);
 
-  double* softmax_alpha_d_array
-      = reinterpret_cast<double*>(ChainableStack.memalloc_.alloc(
-          sizeof(double) * alpha_d.size()));
+  double* softmax_alpha_d_array = reinterpret_cast<double*>(
+      ChainableStack.memalloc_.alloc(sizeof(double) * alpha_d.size()));
   for (int i = 0; i < alpha_d.size(); ++i)
     softmax_alpha_d_array[i] = softmax_alpha_d(i);
 
