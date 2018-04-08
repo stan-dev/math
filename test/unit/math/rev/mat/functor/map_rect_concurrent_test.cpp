@@ -1,5 +1,5 @@
-// the tests here check that map_rect_serial works correct as such we
-// enforce that STAN_MPI is NOT defined
+// the tests here check that map_rect_concurrent works correct as such
+// we enforce that STAN_MPI is NOT defined
 
 #ifdef STAN_MPI
 #undef STAN_MPI
