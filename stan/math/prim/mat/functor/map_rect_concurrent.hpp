@@ -31,13 +31,14 @@ map_rect_concurrent(
   const int num_jobs = job_params.size();
   const vector_d shared_params_dbl = value_of(shared_params);
   std::vector<std::future<std::vector<matrix_d>>> futures;
-  
+
   auto chunk_job = [&](int start, int end) {
     const int size = end - start;
     std::vector<matrix_d> chunk_f_out;
     chunk_f_out.reserve(size);
     for (int i = start; i != end; i++)
-      chunk_f_out.push_back(ReduceF()(shared_params_dbl, value_of(job_params[i]), x_r[i], x_i[i], msgs));
+      chunk_f_out.push_back(ReduceF()(
+          shared_params_dbl, value_of(job_params[i]), x_r[i], x_i[i], msgs));
     return chunk_f_out;
   };
 
@@ -45,7 +46,7 @@ map_rect_concurrent(
 
 #ifdef STAN_THREADS
   const char* env_stan_num_threads = std::getenv("STAN_NUM_THREADS");
-  if(env_stan_num_threads != nullptr) {
+  if (env_stan_num_threads != nullptr) {
     const int env_num_threads = std::atoi(env_stan_num_threads);
     if (env_num_threads > 0)
       num_threads = env_num_threads;
@@ -66,15 +67,15 @@ map_rect_concurrent(
       job_end++;
       num_jobs_per_thread_remainder--;
     }
-    if (j == num_threads-1)
+    if (j == num_threads - 1)
       job_end = num_jobs;
     // we only defer the first chunk such that the main thread is not
     // blocking if we use threading
-    futures.emplace_back(std::async(j==0 ? std::launch::deferred :
+    futures.emplace_back(std::async(j == 0 ? std::launch::deferred :
 #ifndef STAN_THREADS
-                                    std::launch::deferred,
+                                           std::launch::deferred,
 #else
-                                    std::launch::async,
+                                           std::launch::async,
 #endif
                                     chunk_job, job_start, job_end));
     job_start = job_end;
@@ -88,12 +89,13 @@ map_rect_concurrent(
   for (int j = 0, offset = 0; j < num_threads; j++) {
     const std::vector<matrix_d>& chunk_result = futures[j].get();
     if (j == 0)
-      world_output.resize(chunk_result[0].rows(), num_jobs * chunk_result[0].cols());
-    
+      world_output.resize(chunk_result[0].rows(),
+                          num_jobs * chunk_result[0].cols());
+
     for (const auto& job_result : chunk_result) {
       const int num_job_outputs = job_result.cols();
       world_f_out.push_back(num_job_outputs);
-      
+
       if (world_output.cols() < offset + num_job_outputs)
         world_output.conservativeResize(Eigen::NoChange,
                                         2 * (offset + num_job_outputs));
