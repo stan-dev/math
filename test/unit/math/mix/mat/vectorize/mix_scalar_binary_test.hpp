@@ -10,14 +10,13 @@
 #include <gtest/gtest.h>
 
 template <typename T>
-class mix_scalar_binary_test : public ::testing::Test {
-};
+class mix_scalar_binary_test : public ::testing::Test {};
 
 TYPED_TEST_CASE_P(mix_scalar_binary_test);
 
 TYPED_TEST_P(mix_scalar_binary_test, expect_scalar_types) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
   expect_binary_types<TypeParam, fvar<var>, int>();
   expect_binary_types<TypeParam, int, fvar<var> >();
   expect_binary_types<TypeParam, fvar<var>, double>();
@@ -27,8 +26,7 @@ TYPED_TEST_P(mix_scalar_binary_test, expect_scalar_types) {
   expect_binary_types<TypeParam, int, fvar<fvar<var> > >();
   expect_binary_types<TypeParam, fvar<fvar<var> >, double>();
   expect_binary_types<TypeParam, double, fvar<fvar<var> > >();
-  expect_binary_types<TypeParam, fvar<fvar<var> >,
-  fvar<fvar<var> > >();
+  expect_binary_types<TypeParam, fvar<fvar<var> >, fvar<fvar<var> > >();
 }
 
 TYPED_TEST_P(mix_scalar_binary_test, expect_values) {
@@ -39,8 +37,6 @@ TYPED_TEST_P(mix_scalar_binary_test, expect_errors) {
   expect_mix_binary_errors<TypeParam>();
 }
 
-REGISTER_TYPED_TEST_CASE_P(mix_scalar_binary_test,
-                           expect_scalar_types,
-                           expect_values,
-                           expect_errors);
+REGISTER_TYPED_TEST_CASE_P(mix_scalar_binary_test, expect_scalar_types,
+                           expect_values, expect_errors);
 #endif

@@ -7,8 +7,7 @@
 #include <gtest/gtest.h>
 
 template <typename T>
-class prim_scalar_binary_test : public ::testing::Test {
-};
+class prim_scalar_binary_test : public ::testing::Test {};
 
 TYPED_TEST_CASE_P(prim_scalar_binary_test);
 
@@ -30,9 +29,6 @@ TYPED_TEST_P(prim_scalar_binary_test, expect_errors) {
   expect_prim_binary_errors<TypeParam>();
 }
 
-REGISTER_TYPED_TEST_CASE_P(prim_scalar_binary_test,
-                           expect_int_types,
-                           expect_scalar_types,
-                           expect_values,
-                           expect_errors);
+REGISTER_TYPED_TEST_CASE_P(prim_scalar_binary_test, expect_int_types,
+                           expect_scalar_types, expect_values, expect_errors);
 #endif

@@ -5,7 +5,6 @@
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
 
-
 template <typename F, typename matrix_t>
 void expect_prim_binary_matrix_matrix_eq(const matrix_t& input_m1,
                                          const matrix_t& input_m2) {

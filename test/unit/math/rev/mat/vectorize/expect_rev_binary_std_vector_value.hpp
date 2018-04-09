@@ -7,11 +7,11 @@
 #include <test/unit/math/rev/mat/vectorize/expect_binary_val_deriv_eq.hpp>
 #include <vector>
 
-template <typename F, typename input_t1, typename input_t2> void
-expect_rev_binary_std_vector_std_vector_eq(
+template <typename F, typename input_t1, typename input_t2>
+void expect_rev_binary_std_vector_std_vector_eq(
     std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
-  using std::vector;
   using stan::math::var;
+  using std::vector;
 
   for (size_t i = 0; i < template_v1.size(); ++i) {
     vector<input_t1> input_va1 = build_binary_vector1<F>(template_v1);
@@ -22,17 +22,16 @@ expect_rev_binary_std_vector_std_vector_eq(
     EXPECT_EQ(input_va2.size(), fa.size());
     EXPECT_EQ(input_vb2.size(), fa.size());
     expect_binary_val_deriv_eq(F::apply_base(input_va1[i], input_vb1[i]),
-                               input_va1[i], input_vb1[i],
-                               fa[i], input_va2[i], input_vb2[i]);
+                               input_va1[i], input_vb1[i], fa[i], input_va2[i],
+                               input_vb2[i]);
   }
 }
 
-template <typename F, typename input_t1, typename input_t2> void
-expect_rev_binary_std_vector_std_vector_std_vector_std_vector_eq(
+template <typename F, typename input_t1, typename input_t2>
+void expect_rev_binary_std_vector_std_vector_std_vector_std_vector_eq(
     std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
-
-  using std::vector;
   using stan::math::var;
+  using std::vector;
 
   for (size_t i = 0; i < 2; ++i) {
     for (size_t j = 0; j < template_v1.size(); ++j) {
@@ -48,29 +47,28 @@ expect_rev_binary_std_vector_std_vector_std_vector_std_vector_eq(
       vector<vector<input_t2> > input_vb2;
       input_vb2.push_back(build_binary_vector2<F>(template_v2));
       input_vb2.push_back(build_binary_vector2<F>(template_v2));
-      vector<vector<var> > fa = F::template apply<vector<vector<var> > >(
-        input_va2, input_vb2);
+      vector<vector<var> > fa
+          = F::template apply<vector<vector<var> > >(input_va2, input_vb2);
       EXPECT_EQ(input_va2.size(), fa.size());
       EXPECT_EQ(input_vb2.size(), fa.size());
       EXPECT_EQ(input_va2[i].size(), fa[i].size());
       EXPECT_EQ(input_vb2[i].size(), fa[i].size());
-      expect_binary_val_deriv_eq(F::apply_base(input_va1[i][j],
-                                               input_vb1[i][j]),
-                                 input_va1[i][j], input_vb1[i][j], fa[i][j],
-                                 input_va2[i][j], input_vb2[i][j]);
+      expect_binary_val_deriv_eq(
+          F::apply_base(input_va1[i][j], input_vb1[i][j]), input_va1[i][j],
+          input_vb1[i][j], fa[i][j], input_va2[i][j], input_vb2[i][j]);
     }
   }
 }
 
-template <typename F, typename input_t1, typename input_t2> void
-expect_rev_binary_std_vector_std_vector_all_eq(
+template <typename F, typename input_t1, typename input_t2>
+void expect_rev_binary_std_vector_std_vector_all_eq(
     std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
   expect_rev_binary_std_vector_std_vector_eq<F>(template_v1, template_v2);
   expect_rev_binary_std_vector_std_vector_eq<F>(template_v2, template_v1);
 }
 
-template <typename F, typename input_t1, typename input_t2> void
-expect_rev_binary_std_vector_std_vector_std_vector_std_vector_all_eq(
+template <typename F, typename input_t1, typename input_t2>
+void expect_rev_binary_std_vector_std_vector_std_vector_std_vector_all_eq(
     std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
   expect_rev_binary_std_vector_std_vector_std_vector_std_vector_eq<F>(
       template_v1, template_v2);
@@ -80,8 +78,8 @@ expect_rev_binary_std_vector_std_vector_std_vector_std_vector_all_eq(
 
 template <typename F>
 void expect_rev_binary_std_vector_value() {
-  using std::vector;
   using stan::math::var;
+  using std::vector;
 
   vector<int> int_template_v;
   vector<double> d_template_v;

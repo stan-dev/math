@@ -32,8 +32,8 @@ static inline matrix_t build_rev_binary_matrix2(const matrix_t& x) {
 }
 
 template <typename T, int R, int C>
-static inline Eigen::Matrix<T, R, C>
-build_rev_binary_matrix(T val, const Eigen::Matrix<T, R, C>& x) {
+static inline Eigen::Matrix<T, R, C> build_rev_binary_matrix(
+    T val, const Eigen::Matrix<T, R, C>& x) {
   return Eigen::Matrix<T, R, C>::Constant(x.rows(), x.cols(), val);
 }
 #endif
