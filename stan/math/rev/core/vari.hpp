@@ -31,6 +31,13 @@ class vari {
  private:
   friend class var;
 
+ protected:
+#ifndef STAN_THREADS
+  static ChainableStack& ad_stack_;
+#else
+  thread_local static ChainableStack& ad_stack_;
+#endif
+  
  public:
   /**
    * The value of this variable.
@@ -56,14 +63,14 @@ class vari {
    * @param x Value of the constructed variable.
    */
   explicit vari(double x) : val_(x), adj_(0.0) {
-    ChainableStack::context().var_stack_.push_back(this);
+    ad_stack_.var_stack_.push_back(this);
   }
 
   vari(double x, bool stacked) : val_(x), adj_(0.0) {
     if (stacked)
-      ChainableStack::context().var_stack_.push_back(this);
+      ad_stack_.var_stack_.push_back(this);
     else
-      ChainableStack::context().var_nochain_stack_.push_back(this);
+      ad_stack_.var_nochain_stack_.push_back(this);
   }
 
   /**
@@ -123,7 +130,7 @@ class vari {
    * @return Pointer to allocated bytes.
    */
   static inline void* operator new(size_t nbytes) {
-    return ChainableStack::context().memalloc_.alloc(nbytes);
+    return ad_stack_.memalloc_.alloc(nbytes);
   }
 
   /**
@@ -140,6 +147,12 @@ class vari {
   static inline void operator delete(void* /* ignore arg */) { /* no op */
   }
 };
+
+#ifndef STAN_THREADS
+ChainableStack& vari::ad_stack_ = ChainableStack::context();
+#else
+thread_local ChainableStack& vari::ad_stack_ = ChainableStack::context();
+#endif
 
 }  // namespace math
 }  // namespace stan
