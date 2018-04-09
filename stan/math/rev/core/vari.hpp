@@ -37,7 +37,7 @@ class vari {
 #else
   thread_local static ChainableStack& ad_stack_;
 #endif
-  
+
  public:
   /**
    * The value of this variable.
