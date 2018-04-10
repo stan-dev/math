@@ -1,44 +1,53 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BERNOULLI_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BERNOULLI_RNG_HPP
 
-#include <boost/random/bernoulli_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/inv_logit.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/length.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <boost/random/bernoulli_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
 
 /**
- * Return pseudorandom Bernoulli draw with specified chance of success
- * using the specified random number generator.
+ * Return a Bernoulli random variate with specified chance of success
+ * parameter using the specified random number generator.
  *
+ * theta can be a scalar or a one-dimensional container.
+ *
+ * @tparam T_theta type of chance of success parameter
  * @tparam RNG type of random number generator
- * @param theta chance of success parameter
+ * @param theta (Sequence of) chance of success parameter(s)
  * @param rng random number generator
- * @return Bernoulli random variate
- * @throw std::domain_error if probability parameter is invalid.
+ * @return (Sequence of) Bernoulli random variate(s)
+ * @throw std::domain_error if chance of success parameter is less than zero or
+ * greater than one.
  */
-template <class RNG>
-inline int bernoulli_rng(double theta, RNG& rng) {
+template <typename T_theta, class RNG>
+inline typename VectorBuilder<true, int, T_theta>::type bernoulli_rng(
+    const T_theta& theta, RNG& rng) {
   using boost::bernoulli_distribution;
   using boost::variate_generator;
 
   static const char* function = "bernoulli_rng";
 
   check_finite(function, "Probability parameter", theta);
-  check_bounded(function, "Probability parameter", theta, 0, 1);
+  check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
 
-  variate_generator<RNG&, bernoulli_distribution<> > bernoulli_rng(
-      rng, bernoulli_distribution<>(theta));
-  return bernoulli_rng();
+  scalar_seq_view<T_theta> theta_vec(theta);
+  size_t N = length(theta);
+  VectorBuilder<true, int, T_theta> output(N);
+
+  for(size_t n = 0; n < N; ++n) {
+    variate_generator<RNG&, bernoulli_distribution<> > bernoulli_rng(
+        rng, bernoulli_distribution<>(theta_vec[n]));
+    output[n] = bernoulli_rng();
+  }
+
+  return output.data();
 }
 
 }  // namespace math

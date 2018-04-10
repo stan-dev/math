@@ -1,13 +1,11 @@
 #include <gtest/gtest.h>
 #include <boost/math/distributions.hpp>
-#include <boost/random/mersenne_twister.hpp>
 #include <stan/math/prim/mat.hpp>
 #include <test/unit/math/prim/mat/prob/vector_rng_test_helper.hpp>
-#include <test/unit/math/prim/mat/prob/VectorRNGTestRig.hpp>
 #include <limits>
 #include <vector>
 
-class NormalTestRig : public VectorRNGTestRig {
+class NormalTestRig : public VectorRealRNGTestRig {
  public:
   /*
    * The default NormalTestRig constructor initializes the TestRig with
@@ -15,7 +13,7 @@ class NormalTestRig : public VectorRNGTestRig {
    * arguments.
    */
   NormalTestRig()
-      : VectorRNGTestRig(
+      : VectorRealRNGTestRig(
             10000,  // Number of samples used for quantiles tests
             10,     // Length of vectors for vectorization tests
             {-2.5, -1.7, -0.1, 0.0, 2.0, 5.8},  // Valid values for p1
@@ -65,7 +63,7 @@ TEST(ProbDistributionsNormal, errorCheck) {
   check_dist_throws_all_types(NormalTestRig());
 }
 
-TEST(ProbDistributionsNormal, chiSquareGoodnessFitTest) {
+TEST(ProbDistributionsNormal, distributionTest) {
   /*
    * This test checks that the normal_rng is actually generating numbers from
    * the correct distributions. Quantiles are computed from

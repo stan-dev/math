@@ -17,11 +17,6 @@ class ParetoType2TestRig : public VectorRNGTestRig {
                         T_rng& rng) const {
     return stan::math::pareto_type_2_rng(mu, lambda, alpha, rng);
   }
-
-  std::vector<double> generate_quantiles(double mu, double lambda,
-                                         double alpha) const {
-    return std::vector<double>();
-  }
 };
 
 TEST(ProbDistributionsParetoType2, errorCheck) {

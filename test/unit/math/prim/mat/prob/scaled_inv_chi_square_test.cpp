@@ -6,13 +6,13 @@
 #include <limits>
 #include <vector>
 
-class ScaledInvChiSquareTestRig : public VectorRNGTestRig {
+class ScaledInvChiSquareTestRig : public VectorRealRNGTestRig {
  public:
   ScaledInvChiSquareTestRig()
-      : VectorRNGTestRig(10000, 10, {0.5, 1.3, 2.0, 5.8}, {1, 2, 3, 6},
-                         {-2.5, -1.7, -0.1, 0.0}, {-3, -2, -1, 0},
-                         {0.1, 1.0, 2.5, 4.0}, {1, 2, 3, 4},
-                         {-2.7, -1.5, -0.5, 0.0}, {-3, -2, -1, 0}) {}
+      : VectorRealRNGTestRig(10000, 10, {0.5, 1.3, 2.0, 5.8}, {1, 2, 3, 6},
+                             {-2.5, -1.7, -0.1, 0.0}, {-3, -2, -1, 0},
+                             {0.1, 1.0, 2.5, 4.0}, {1, 2, 3, 4},
+                             {-2.7, -1.5, -0.5, 0.0}, {-3, -2, -1, 0}) {}
 
   template <typename T1, typename T2, typename T3, typename T_rng>
   auto generate_samples(const T1& nu, const T2& sigma, const T3&,
@@ -40,6 +40,6 @@ TEST(ProbDistributionsScaledInvChiSquare, errorCheck) {
   check_dist_throws_all_types(ScaledInvChiSquareTestRig());
 }
 
-TEST(ProbDistributionsScaledInvChiSquare, chiSquareGoodnessFitTest) {
+TEST(ProbDistributionsScaledInvChiSquare, distributionTest) {
   check_quantiles_all_types(ScaledInvChiSquareTestRig());
 }

@@ -6,13 +6,13 @@
 #include <limits>
 #include <vector>
 
-class ParetoTestRig : public VectorRNGTestRig {
+class ParetoTestRig : public VectorRealRNGTestRig {
  public:
   ParetoTestRig()
-      : VectorRNGTestRig(10000, 10, {0.5, 1.0, 1.3, 2.0}, {1, 2, 3},
-                         {-2.5, -1.7, -0.1, 0.0}, {-3, -2, -1, 0},
-                         {0.1, 1.0, 1.7, 2.1}, {1, 2, 3, 4},
-                         {-2.7, -1.5, -0.5, 0.0}, {-3, -2, -1, 0}) {}
+      : VectorRealRNGTestRig(10000, 10, {0.5, 1.0, 1.3, 2.0}, {1, 2, 3},
+                             {-2.5, -1.7, -0.1, 0.0}, {-3, -2, -1, 0},
+                             {0.1, 1.0, 1.7, 2.1}, {1, 2, 3, 4},
+                             {-2.7, -1.5, -0.5, 0.0}, {-3, -2, -1, 0}) {}
 
   template <typename T1, typename T2, typename T3, typename T_rng>
   auto generate_samples(const T1& ymin, const T2& alpha, const T3&,
@@ -40,6 +40,6 @@ TEST(ProbDistributionsPareto, errorCheck) {
   check_dist_throws_all_types(ParetoTestRig());
 }
 
-TEST(ProbDistributionsPareto, chiSquareGoodnessFitTest) {
+TEST(ProbDistributionsPareto, distributionTest) {
   check_quantiles_all_types(ParetoTestRig());
 }

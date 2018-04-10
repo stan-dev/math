@@ -6,13 +6,13 @@
 #include <limits>
 #include <vector>
 
-class FrechetTestRig : public VectorRNGTestRig {
+class FrechetTestRig : public VectorRealRNGTestRig {
  public:
   FrechetTestRig()
-      : VectorRNGTestRig(10000, 10, {0.5, 1.0, 1.3, 2.0}, {1, 2, 3},
-                         {-2.5, -1.7, -0.1, 0.0}, {-3, -2, -1, 0},
-                         {0.1, 1.0, 1.7, 2.1}, {1, 2, 3, 4},
-                         {-2.7, -1.5, -0.5, 0.0}, {-3, -2, -1, 0}) {}
+      : VectorRealRNGTestRig(10000, 10, {0.5, 1.0, 1.3, 2.0}, {1, 2, 3},
+                             {-2.5, -1.7, -0.1, 0.0}, {-3, -2, -1, 0},
+                             {0.1, 1.0, 1.7, 2.1}, {1, 2, 3, 4},
+                             {-2.7, -1.5, -0.5, 0.0}, {-3, -2, -1, 0}) {}
 
   /*
    * Since boost does not have a Frechet distribution, generate values from
@@ -45,6 +45,6 @@ TEST(ProbDistributionsFrechet, errorCheck) {
   check_dist_throws_all_types(FrechetTestRig());
 }
 
-TEST(ProbDistributionsFrechet, chiSquareGoodnessFitTest) {
+TEST(ProbDistributionsFrechet, distributionTest) {
   check_quantiles_all_types(FrechetTestRig());
 }
