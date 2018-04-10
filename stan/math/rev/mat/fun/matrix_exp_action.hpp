@@ -353,6 +353,18 @@ namespace math {
     }
   };
 
+/**
+ * Return product of exp(At) and B, where A is a NxN matrix,
+ * B is a NxCb matrix, and t is a double
+ * @tparam Ta scalar type matrix A
+ * @tparam N Rows and cols matrix A, also rows of matrix B
+ * @tparam Tb scalar type matrix B
+ * @tparam Cb Columns matrix B
+ * @param[in] A Matrix
+ * @param[in] B Matrix
+ * @param[in] t double
+ * @return exponential of At multiplies B
+ */
   template <typename Ta, int N, typename Tb, int Cb>
   inline
   typename boost::enable_if_c<boost::is_same<Ta, var>::value
@@ -361,11 +373,6 @@ namespace math {
   matrix_exp_action(const Eigen::Matrix<Ta, N, N>& A,
                     const Eigen::Matrix<Tb, N, Cb>& B,
                     const double& t = 1.0) {
-    const char* fun = "matrix_exp_action";
-    check_multiplicable(fun, "A", A, "B", B);
-    // check_not_nan(fun, "A", A);
-    // check_not_nan(fun, "B", B);
-
     matrix_exp_action_vari<Ta, N, Tb, Cb>* baseVari
       = new matrix_exp_action_vari<Ta, N, Tb, Cb>(A, B, t);
     Eigen::Matrix<var, N, Cb> expAB_v(A.rows(), B.cols());
@@ -375,17 +382,22 @@ namespace math {
     return expAB_v;
   }
 
+/**
+ * Return product of exp(At) and B, where A is a NxN double matrix,
+ * B is a NxCb double matrix, and t is a double
+ * @tparam N Rows and cols matrix A, also rows of matrix B
+ * @tparam Cb Columns matrix B
+ * @param[in] A Matrix
+ * @param[in] B Matrix
+ * @param[in] t double
+ * @return exponential of At multiplies B
+ */
   template <int N, int Cb>
   inline
   Eigen::Matrix<double, N, Cb> 
   matrix_exp_action(const Eigen::Matrix<double, N, N>& A,
                     const Eigen::Matrix<double, N, Cb>& B,
                     const double& t = 1.0) {
-    const char* fun = "matrix_exp_action";
-    check_multiplicable(fun, "A", A, "B", B);
-    // check_not_nan(fun, "A", A);
-    // check_not_nan(fun, "B", B);
-
     Eigen::Matrix<double, N, Cb> expAB;
     matrix_exp_action_handler handle;
     expAB = handle.action(A, B, t);
