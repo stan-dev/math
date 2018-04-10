@@ -15,41 +15,65 @@
 namespace stan {
 namespace math {
 
+  /**
+   * Calculate adjoint of matrix exponential action
+   * exp(At)*B when A is data and B is var
+   *
+   * @param Ad double array pointer to the data of matrix A
+   * @param n integer rows and cols of matrix A
+   * @param adjexpAB MatrixXd adjoint of exp(At)*B
+   * @param t double time data
+   */
+  template<int N>
   Eigen::MatrixXd exp_action_chain_dv(double* Ad,
-                                      const int n,
                                       const Eigen::MatrixXd& adjexpAB,
                                       const double t) {
       using Eigen::Map;
       matrix_exp_action_handler handle;
-      return handle.action(Map<Eigen::MatrixXd>(Ad, n, n).transpose(), 
+      return handle.action(Map<Eigen::MatrixXd>(Ad, N, N).transpose(), 
                              adjexpAB, t);
   }
 
-  Eigen::MatrixXd exp_action_chain_vd(double* Ad,
-                                      const int n,
+  /**
+   * Calculate adjoint of matrix exponential action
+   * exp(At)*B when A is var and B is data
+   *
+   * @param Ad double array pointer to the data of matrix A
+   * @param n integer rows and cols of matrix A
+   * @param adjexpAB MatrixXd adjoint of exp(At)*B
+   * @param t double time data
+   */
+  template<int N, int M>
+  Eigen::MatrixXd exp_action_chain_vd(double* Ad, double* Bd,
                                       const Eigen::MatrixXd& adjexpAB,
                                       const double t) {
-    Eigen::MatrixXd adjA = Eigen::MatrixXd::Zero(n, n);
-    // TODO(yizhang): a better way like complex step approximation
+    using Eigen::Map;
+    using Eigen::Matrix;
+    using Eigen::MatrixXd;
+    Eigen::MatrixXd adjexpA = Eigen::MatrixXd::Zero(N, N);
+    Eigen::MatrixXd adjA = Eigen::MatrixXd::Zero(N, N);
+
+    // TODO(yizhang): a better way such as complex step approximation
     try {
       start_nested();
+      
+      adjexpA = adjexpAB * Map<Matrix<double, N, M> >(Bd).transpose();
       Eigen::Matrix<stan::math::var,
                     Eigen::Dynamic,
-                    Eigen::Dynamic> A_temp(n, n);
-      std::vector<stan::math::var> Avar;
-      std::vector<double> g;
-      for (int i = 0; i < n * n; ++i) {
-        A_temp(i) = to_var(Ad[i]);
-        Avar.push_back(A_temp(i));
+                    Eigen::Dynamic> Av(N, N);
+      for (int i = 0; i < Av.size(); ++i) {
+        Av(i) = to_var(Ad[i]);
       }
+      std::vector<stan::math::var> Avec(Av.data(), Av.data() + Av.size());
       Eigen::Matrix<stan::math::var,
                     Eigen::Dynamic,
-                    Eigen::Dynamic> expA = matrix_exp(A_temp);
+                    Eigen::Dynamic> expA = matrix_exp(Av);
+      std::vector<double> g;
       for (size_type i = 0; i < expA.size(); ++i) {
         stan::math::set_zero_all_adjoints_nested();
-        expA.coeffRef(i).grad(Avar, g);
-        for (size_type j = 0; j < n * n; ++j) {
-          adjA(j) += adjexpAB(i) * g[j];
+        expA.coeffRef(i).grad(Avec, g);
+        for (size_type j = 0; j < adjA.size(); ++j) {
+          adjA(j) += adjexpA(i) * g[j];
         }
       }
     } catch (const std::exception& e) {
@@ -60,6 +84,22 @@ namespace math {
     return adjA;
 }
 
+/**
+ * This is a subclass of the vari class for matrix 
+ * exponential action exp(At) * B where A is a double
+ * NxN matrix and B is a NxCb matrix.
+ *
+ * The class stores the structure of each matrix,
+ * the double values of A and B, and pointers to
+ * the varis for A and B if A or B is a var. It
+ * also instantiates and stores pointers to
+ * varis for all elements of A * B.
+ *
+ * @tparam Ta Scalar type of matrix A
+ * @tparam N rows and cols of A
+ * @tparam Tb Scalar type for matrix B
+ * @tparam Cb cols for matrix B
+ */
   template <typename Ta, int N, typename Tb, int Cb>
   class matrix_exp_action_vari : public vari {
   public:
@@ -115,8 +155,8 @@ namespace math {
       for (size_type i = 0; i < adjexpAB.size(); ++i)
         adjexpAB(i) = variRefexpAB_[i]->adj_;
 
-      MatrixXd adjA = exp_action_chain_dv(Ad_, n_, adjexpAB, t_);
-      MatrixXd adjB = exp_action_chain_dv(Ad_, n_, adjexpAB, t_);
+      MatrixXd adjA = exp_action_chain_vd<N, Cb>(Ad_, Bd_, adjexpAB, t_);
+      MatrixXd adjB = exp_action_chain_dv<N>(Ad_, adjexpAB, t_);
 
       for (size_type i = 0; i < A_size_; ++i) {
         variRefA_[i]->adj_ += adjA(i);
@@ -128,6 +168,21 @@ namespace math {
   };
   
 
+/**
+ * This is a subclass of the vari class for matrix
+ * exponential action exp(At) * B where A is an N by N
+ * matrix of double, B is N by Cb, and t is data(time)
+ *
+ * The class stores the structure of each matrix,
+ * the double values of A and B, and pointers to
+ * the varis for A and B if B is a var. It
+ * also instantiates and stores pointers to
+ * varis for all elements of exp(At) * B.
+ *
+ * @tparam N Rows and cols for matrix A, also rows for B
+ * @tparam Tb Scalar type for matrix B
+ * @tparam Cb Columns for matrix B
+ */
   template <int N, typename Tb, int Cb>
   class matrix_exp_action_vari<double, N, Tb, Cb> : public vari {
   public:
@@ -141,6 +196,23 @@ namespace math {
     vari** variRefB_;
     vari** variRefexpAB_;
 
+  /**
+   * Constructor for matrix_exp_action_vari.
+   *
+   * All memory allocated in
+   * ChainableStack's stack_alloc arena.
+   *
+   * It is critical for the efficiency of this object
+   * that the constructor create new varis that aren't
+   * popped onto the var_stack_, but rather are
+   * popped onto the var_nochain_stack_. This is
+   * controlled to the second argument to
+   * vari's constructor.
+   *
+   * @param A matrix
+   * @param B matrix
+   * @param t double
+   */
     matrix_exp_action_vari(const Eigen::Matrix<double, N, N>& A,
                            const Eigen::Matrix<Tb, N, Cb>& B,
                            const double& t)
@@ -180,7 +252,7 @@ namespace math {
       for (size_type i = 0; i < adjexpAB.size(); ++i)
         adjexpAB(i) = variRefexpAB_[i]->adj_;
 
-      MatrixXd adjB = exp_action_chain_dv(Ad_, n_, adjexpAB, t_);
+      MatrixXd adjB = exp_action_chain_dv<N>(Ad_, adjexpAB, t_);
 
       for (size_type i = 0; i < B_size_; ++i) {
         variRefB_[i]->adj_ += adjB(i);
@@ -188,6 +260,21 @@ namespace math {
     }
   };
   
+/**
+ * This is a subclass of the vari class for matrix
+ * exponential action exp(At) * B where A is an N by N
+ * matrix, B is N by Cb matrix of double, and t is data(time)
+ *
+ * The class stores the structure of each matrix,
+ * the double values of A and B, and pointers to
+ * the varis for A and B if B is a var. It
+ * also instantiates and stores pointers to
+ * varis for all elements of exp(At) * B.
+ *
+ * @tparam Ta Scalar type for matrix A
+ * @tparam N Rows and cols for matrix A, also rows for B
+ * @tparam Cb Columns for matrix B
+ */
   template <typename Ta, int N, int Cb>
   class matrix_exp_action_vari<Ta, N, double, Cb> : public vari {
   public:
@@ -201,6 +288,23 @@ namespace math {
     vari** variRefA_;
     vari** variRefexpAB_;
 
+  /**
+   * Constructor for matrix_exp_action_vari.
+   *
+   * All memory allocated in
+   * ChainableStack's stack_alloc arena.
+   *
+   * It is critical for the efficiency of this object
+   * that the constructor create new varis that aren't
+   * popped onto the var_stack_, but rather are
+   * popped onto the var_nochain_stack_. This is
+   * controlled to the second argument to
+   * vari's constructor.
+   *
+   * @param A matrix
+   * @param B matrix
+   * @param t double
+   */
     matrix_exp_action_vari(const Eigen::Matrix<Ta, N, N>& A,
                            const Eigen::Matrix<double, N, Cb>& B,
                            const double& t)
@@ -241,7 +345,7 @@ namespace math {
       for (size_type i = 0; i < adjexpAB.size(); ++i)
         adjexpAB(i) = variRefexpAB_[i]->adj_;
 
-      MatrixXd adjA = exp_action_chain_dv(Ad_, n_, adjexpAB, t_);
+      MatrixXd adjA = exp_action_chain_vd<N, Cb>(Ad_, Bd_, adjexpAB, t_);
 
       for (size_type i = 0; i < A_size_; ++i) {
         variRefA_[i]->adj_ += adjA(i);
