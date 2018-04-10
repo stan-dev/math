@@ -5,12 +5,12 @@
 #include <stan/math/rev/mat/fun/matrix_exp_action_handler.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/mat/fun/to_var.hpp>
-#include <stan/math/rev/core.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits.hpp>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -30,7 +30,7 @@ namespace math {
                                       const double t) {
       using Eigen::Map;
       matrix_exp_action_handler handle;
-      return handle.action(Map<Eigen::MatrixXd>(Ad, N, N).transpose(), 
+      return handle.action(Map<Eigen::MatrixXd>(Ad, N, N).transpose(),
                              adjexpAB, t);
   }
 
@@ -56,7 +56,7 @@ namespace math {
     // TODO(yizhang): a better way such as complex step approximation
     try {
       start_nested();
-      
+
       adjexpA = adjexpAB * Map<Matrix<double, N, M> >(Bd).transpose();
       Eigen::Matrix<stan::math::var,
                     Eigen::Dynamic,
@@ -113,7 +113,7 @@ namespace math {
     vari** variRefA_;
     vari** variRefB_;
     vari** variRefexpAB_;
-    
+
     matrix_exp_action_vari(const Eigen::Matrix<Ta, N, N>& A,
                            const Eigen::Matrix<Tb, N, Cb>& B,
                            const double& t)
@@ -166,7 +166,6 @@ namespace math {
       }
     }
   };
-  
 
 /**
  * This is a subclass of the vari class for matrix
@@ -259,7 +258,6 @@ namespace math {
       }
     }
   };
-  
 /**
  * This is a subclass of the vari class for matrix
  * exponential action exp(At) * B where A is an N by N
@@ -334,7 +332,6 @@ namespace math {
                                      t_);
       for (size_type i = 0; i < expAB.size(); ++i)
         variRefexpAB_[i] = new vari(expAB.coeffRef(i), false);
-
     }
 
     virtual void chain() {
@@ -394,7 +391,7 @@ namespace math {
  */
   template <int N, int Cb>
   inline
-  Eigen::Matrix<double, N, Cb> 
+  Eigen::Matrix<double, N, Cb>
   matrix_exp_action(const Eigen::Matrix<double, N, N>& A,
                     const Eigen::Matrix<double, N, Cb>& B,
                     const double& t = 1.0) {
