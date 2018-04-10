@@ -65,7 +65,7 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
     double rho = 0.5 * (r - std::pow(2 * r, 0.5)) / kappa_vec[n];
     double s = 0.5 * (1 + rho * rho) / rho;
 
-    bool done = 0;
+    bool done = false;
     double W;
     while (!done) {
       double Z = std::cos(pi() * uniform_rng());

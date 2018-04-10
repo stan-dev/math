@@ -1,5 +1,8 @@
 language: cpp
 
+git:
+  depth: 2
+
 before_script:
   - eval "${MATRIX_EVAL}"
   - echo ${CXX}
@@ -32,7 +35,11 @@ matrix:
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
-          TESTFOLDER="test/unit/math/prim/mat/err test/unit/math/prim/mat/meta test/unit/math/prim/mat/prob test/unit/math/prim/mat/vectorize"
+          TESTFOLDER="test/unit/math/prim/mat/err test/unit/math/prim/mat/meta test/unit/math/prim/mat/vectorize"
+    - <<: *linux_clang
+      env:
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER=test/unit/math/prim/mat/prob
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
@@ -48,7 +55,11 @@ matrix:
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
-          TESTFOLDER="test/unit/math/rev/mat/err test/unit/math/rev/mat/functor test/unit/math/rev/mat/meta test/unit/math/rev/mat/prob test/unit/math/rev/mat/vectorize"
+          TESTFOLDER="test/unit/math/rev/mat/err test/unit/math/rev/mat/functor test/unit/math/rev/mat/vectorize"
+    - <<: *linux_clang
+      env:
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER="test/unit/math/rev/mat/meta test/unit/math/rev/mat/prob"
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
@@ -59,51 +70,59 @@ matrix:
           TESTFOLDER="test/unit/math/fwd/arr test/unit/math/fwd/core test/unit/math/fwd/scal"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER="test/unit/math/memory test/unit/math/prim/scal test/unit/math/prim/arr"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
-          TESTFOLDER="test/unit/math/prim/mat/err test/unit/math/prim/mat/meta test/unit/math/prim/mat/prob test/unit/math/prim/mat/vectorize"
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
+          TESTFOLDER="test/unit/math/prim/mat/err test/unit/math/prim/mat/meta test/unit/math/prim/mat/vectorize"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
+          TESTFOLDER=test/unit/math/prim/mat/prob
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER=test/unit/math/prim/mat/fun
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER="test/unit/math/rev/scal test/unit/math/rev/arr"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER=test/unit/math/rev/mat/fun
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
-          TESTFOLDER="test/unit/math/rev/mat/err test/unit/math/rev/mat/functor test/unit/math/rev/mat/meta test/unit/math/rev/mat/prob test/unit/math/rev/mat/vectorize"
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
+          TESTFOLDER="test/unit/math/rev/mat/err test/unit/math/rev/mat/functor test/unit/math/rev/mat/vectorize"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
+          TESTFOLDER="test/unit/math/rev/mat/meta test/unit/math/rev/mat/prob"
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER=test/unit/math/fwd/mat
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER="test/unit/math/fwd/arr test/unit/math/fwd/core test/unit/math/fwd/scal"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER="test/unit/math/mix/arr test/unit/math/mix/core"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER="test/unit/math/mix/mat/fun/[A-l]*"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER="test/unit/math/mix/mat/fun/[m-z]*"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER="test/unit/math/mix/scal test/unit/math/mix/mat/functor test/unit/math/mix/mat/meta test/unit/math/mix/mat/prob test/unit/math/mix/mat/util test/unit/math/mix/mat/vectorize"
 
  # - TESTFOLDER=test/unit/math/mix # times out on travis

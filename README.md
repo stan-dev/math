@@ -4,21 +4,23 @@ The <b>Stan Math Library</b> is a C++, reverse-mode automatic differentiation li
 
 Licensing
 ---------
-The Stan Math Library is licensed under the [new BSD license](https://raw.githubusercontent.com/stan-dev/math/develop/licenses/stan-math-library-license.txt).
+The Stan Math Library is licensed under the [new BSD license](LICENSE.md).
 
 Required Libraries
 ------------------
-Stan Math depends on three libraries:
+Stan Math depends on four libraries:
 
-- Boost (version 1.65.1): [Boost Home Page](http://www.boost.org)
+- Boost (version 1.66.0): [Boost Home Page](http://www.boost.org)
 - Eigen (version 3.3.3): [Eigen Home Page](http://eigen.tuxfamily.org/index.php?title=Main_Page)
-- CVODES (version 2.9.0): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
+- CVODES (version 3.1.0): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
+- IDAS (version 2.1.0): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
 
-These are distributed under the `lib/` subdirectory. Only these three versions of the dependent libraries have been tested with Stan Math.
+These are distributed under the `lib/` subdirectory. Only these versions of the dependent libraries have been tested with Stan Math.
 
 Installation
 ------------
-The Stan Math Library is a header-only C++ library.
+The Stan Math Library is largely a header-only C++ library, with
+exceptions for the Sundials code.
 
 A simple hello world program using Stan Math is as follows:
 
@@ -52,10 +54,10 @@ The `-I` includes provide paths pointing to the four necessary includes:
 Note that the paths should *not* include the final directories `stan`, `Eigen`, or `boost` on the paths.  An example of a real instantiation:
 
 ```
-clang++ -std=c++11 -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.3.3/ -I ~/stan-dev/math/lib/boost_1.65.1/ -I ~/stan-dev/math/lib/cvodes_2.9.0/include foo.cpp
+clang++ -std=c++11 -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.3.3/ -I ~/stan-dev/math/lib/boost_1.66.0/ -I ~/stan-dev/math/lib/cvodes_2.9.0/include foo.cpp
 ```
 
-The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.3.3/Eigen` and `~stan-dev/math/lib/boost_1.65.1/boost` and `~stan-dev/math/lib/cvodes_2.9.0/include`.
+The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.3.3/Eigen` and `~stan-dev/math/lib/boost_1.66.0/boost` and `~stan-dev/math/lib/cvodes_2.9.0/include`.
 
 Other Compilers
 ---------------

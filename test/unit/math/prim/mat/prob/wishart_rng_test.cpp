@@ -55,9 +55,9 @@ TEST(ProbDistributionsWishart, marginalTwoChiSquareGoodnessFitTest) {
   MatrixXd a(sigma.rows(), sigma.rows());
   for (int count = 0; count < N; ++count) {
     a = wishart_rng(5.0, sigma, rng);
-    avg += log(determinant(a)) / N;
-    count++;
+    avg += log(determinant(a));
   }
+  avg /= N;
   double chi = (expect - avg) * (expect - avg) / expect;
   chi_squared mydist(1);
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
