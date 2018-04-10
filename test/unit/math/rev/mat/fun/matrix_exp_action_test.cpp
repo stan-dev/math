@@ -325,3 +325,30 @@ TEST(MathMatrix, matrix_exp_action_vv) {
   test_matrix_exp_action_vv<5, 1>();
   test_matrix_exp_action_vd<5, 5>();
 }
+
+
+// TEST(MathMatrix, matrix_exp_action_clock) {
+//   using Eigen::MatrixXd;
+//   using stan::math::var;
+//   using stan::math::value_of;
+//   stan::math::matrix_exp_action_handler handler;
+//   std::srand(2999);
+
+  
+//   for (int i = 1; i < 50; ++i) {
+//     MatrixXd A = MatrixXd::Random(i*5, i*5);
+//     MatrixXd B = MatrixXd::Random(i*5, 1);
+
+//     auto start = std::chrono::system_clock::now();
+//     auto expAB = stan::math::matrix_exp_action(A, B);
+//     auto end = std::chrono::system_clock::now();
+//     std::chrono::duration<double> elapsed_seconds = end-start;
+//     std::cout << i*5 << "\t" << elapsed_seconds.count() << "\t";
+  
+//     start = std::chrono::system_clock::now();
+//     expAB = stan::math::multiply(stan::math::matrix_exp(A), B);
+//     end = std::chrono::system_clock::now();
+//     elapsed_seconds = end-start;
+//     std::cout << elapsed_seconds.count() << "\n";    
+//   }
+// }
