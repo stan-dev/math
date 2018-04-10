@@ -102,7 +102,7 @@ TEST(MathMatrix, matrix_exp_action_matrix) {
 
   for (int i = 0; i < N; ++i) {
     for (int j = 0; j < M; ++j) {    
-      EXPECT_NEAR(res(i, j), expb(i, j), 1.e-6);          
+      EXPECT_FLOAT_EQ(res(i, j), expb(i, j));
     }
   }
 
@@ -144,7 +144,6 @@ void test_matrix_exp_action_dv() {
   std::vector<stan::math::var> Bvec(Bv.data(), Bv.data() + Bv.size());
   std::vector<stan::math::var> Avec(Av.data(), Av.data() + Av.size());
   Eigen::Matrix<double, N, N> A = value_of(Av);
-  Eigen::Matrix<double, N, M> B = value_of(Bv);
 
   // brute force
   Eigen::Matrix<double, N, N> expA = stan::math::matrix_exp(A);
@@ -160,7 +159,10 @@ void test_matrix_exp_action_dv() {
 
   // matrix_exp_action
   Eigen::Matrix<var, N, M> res_dv = stan::math::matrix_exp_action(A, Bv);
-
+  for (int l = 0; l < res_dv.size(); ++l) {
+    EXPECT_FLOAT_EQ(res_dv(l).val(), expAB(l).val());
+  }
+  
   // compare adjoints
   std::vector<double> g, g0;
   for (int l = 0; l < M; ++l) {
@@ -170,7 +172,7 @@ void test_matrix_exp_action_dv() {
       stan::math::set_zero_all_adjoints();
       expAB(k, l).grad(Bvec, g0);
       for (size_t j = 0; j < g.size(); ++j) {
-        EXPECT_NEAR(g[j], g0[j], 1.e-6);
+        EXPECT_FLOAT_EQ(g[j], g0[j]);
       }
     }
   }
@@ -183,7 +185,7 @@ void test_matrix_exp_action_dv() {
   stan::math::set_zero_all_adjoints();
   f0.grad(Bvec, g0);
   for (size_t j = 0; j < g.size(); ++j) {
-    EXPECT_NEAR(g[j], g0[j], 1.e-6);
+    EXPECT_FLOAT_EQ(g[j], g0[j]);
   }
 }
 
@@ -206,7 +208,6 @@ void test_matrix_exp_action_vd() {
   Eigen::Matrix<var, N, M> Bv = Eigen::Matrix<var, N, M>::Random();
   std::vector<stan::math::var> Bvec(Bv.data(), Bv.data() + Bv.size());
   std::vector<stan::math::var> Avec(Av.data(), Av.data() + Av.size());
-  Eigen::Matrix<double, N, N> A = value_of(Av);
   Eigen::Matrix<double, N, M> B = value_of(Bv);
 
   // brute force
@@ -223,6 +224,9 @@ void test_matrix_exp_action_vd() {
 
   // matrix_exp_action
   Eigen::Matrix<var, N, M> res_vd = stan::math::matrix_exp_action(Av, B);
+  for (int l = 0; l < res_vd.size(); ++l) {
+    EXPECT_FLOAT_EQ(res_vd(l).val(), expAB(l).val());
+  }
 
   // compare adjoints
   std::vector<double> g, g0;
@@ -233,7 +237,7 @@ void test_matrix_exp_action_vd() {
       stan::math::set_zero_all_adjoints();
       expAB(k, l).grad(Avec, g0);
       for (size_t j = 0; j < g.size(); ++j) {
-        EXPECT_NEAR(g[j], g0[j], 1.e-6);
+        EXPECT_FLOAT_EQ(g[j], g0[j]);
       }
     }
   }
@@ -246,7 +250,7 @@ void test_matrix_exp_action_vd() {
   stan::math::set_zero_all_adjoints();
   f0.grad(Avec, g0);
   for (size_t j = 0; j < g.size(); ++j) {
-    EXPECT_NEAR(g[j], g0[j], 1.e-6);
+    EXPECT_FLOAT_EQ(g[j], g0[j]);
   }
 }
 
@@ -284,6 +288,9 @@ void test_matrix_exp_action_vv() {
 
   // matrix_exp_action
   Eigen::Matrix<var, N, M> res_vv = stan::math::matrix_exp_action(Av, Bv);
+  for (int l = 0; l < res_vv.size(); ++l) {
+    EXPECT_FLOAT_EQ(res_vv(l).val(), expAB(l).val());
+  }
   Avec.insert( Avec.end(), Bvec.begin(), Bvec.end());
 
   // compare adjoints
@@ -295,7 +302,7 @@ void test_matrix_exp_action_vv() {
       stan::math::set_zero_all_adjoints();
       expAB(k, l).grad(Avec, g0);
       for (size_t j = 0; j < g.size(); ++j) {
-        EXPECT_NEAR(g[j], g0[j], 1.e-6);
+        EXPECT_FLOAT_EQ(g[j], g0[j]);
       }
     }
   }
@@ -308,7 +315,7 @@ void test_matrix_exp_action_vv() {
   stan::math::set_zero_all_adjoints();
   f0.grad(Avec, g0);
   for (size_t j = 0; j < g.size(); ++j) {
-    EXPECT_NEAR(g[j], g0[j], 1.e-6);
+    EXPECT_FLOAT_EQ(g[j], g0[j]);
   }
 }
 
