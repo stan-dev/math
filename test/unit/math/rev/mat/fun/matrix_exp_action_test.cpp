@@ -6,7 +6,7 @@
 #include <stan/math/rev/mat/fun/matrix_exp_action_handler.hpp>
 #include <stan/math/rev/mat/fun/matrix_exp_action.hpp>
 #include <stan/math/rev/mat/fun/to_var.hpp>
-
+#include <vector>
 
 TEST(MathMatrix, matrix_exp_action_diag) {
   using MatrixType = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
@@ -47,7 +47,7 @@ TEST(MathMatrix, matrix_exp_action_diag) {
 
   {
     std::srand(999);
-    double t = double(std::rand())/RAND_MAX;
+    double t = static_cast<double>((std::rand())/RAND_MAX);
     VectorType b = VectorType::Random(5);
     VectorType d = VectorType::Random(5);
     MatrixType m = d.asDiagonal();
@@ -82,7 +82,6 @@ TEST(MathMatrix, matrix_exp_action_vector) {
     EXPECT_EQ(m1, m2);
     EXPECT_EQ(s1, s2);
   }
-
 }
 
 TEST(MathMatrix, matrix_exp_action_matrix) {
@@ -101,11 +100,10 @@ TEST(MathMatrix, matrix_exp_action_matrix) {
   Eigen::Matrix<double, N, M> expb = expa * B;
 
   for (int i = 0; i < N; ++i) {
-    for (int j = 0; j < M; ++j) {    
+    for (int j = 0; j < M; ++j) {
       EXPECT_FLOAT_EQ(res(i, j), expb(i, j));
     }
   }
-
 }
 
 TEST(MathMatrix, matrix_exp_action_matrix_transpose) {
@@ -124,12 +122,11 @@ TEST(MathMatrix, matrix_exp_action_matrix_transpose) {
   Eigen::Matrix<double, N, M> expb = expa * B;
 
   for (int i = 0; i < N; ++i) {
-    for (int j = 0; j < M; ++j) {    
+    for (int j = 0; j < M; ++j) {
       EXPECT_NEAR(res(i, j), expb(i, j), 1.e-6);
     }
   }
 }
-
 
 template<int N, int M>
 inline
@@ -148,7 +145,7 @@ void test_matrix_exp_action_dv() {
   // brute force
   Eigen::Matrix<double, N, N> expA = stan::math::matrix_exp(A);
   Eigen::Matrix<var, N, M> expAB;
-  for (int i = 0; i < N; ++i) {    
+  for (int i = 0; i < N; ++i) {
     for (int j = 0; j < M; ++j) {
       expAB(i, j) = 0.0;
       for (int k = 0; k < N; ++k) {
@@ -162,13 +159,12 @@ void test_matrix_exp_action_dv() {
   for (int l = 0; l < res_dv.size(); ++l) {
     EXPECT_FLOAT_EQ(res_dv(l).val(), expAB(l).val());
   }
-  
   // compare adjoints
   std::vector<double> g, g0;
   for (int l = 0; l < M; ++l) {
     for (int k = 0; k < N; ++k) {
       stan::math::set_zero_all_adjoints();
-      res_dv(k, l).grad(Bvec, g);      
+      res_dv(k, l).grad(Bvec, g);
       stan::math::set_zero_all_adjoints();
       expAB(k, l).grad(Bvec, g0);
       for (size_t j = 0; j < g.size(); ++j) {
@@ -180,7 +176,7 @@ void test_matrix_exp_action_dv() {
   // test a single function of expA*B
   var f = sum(res_dv);
   var f0 = sum(expAB);
-  stan::math::set_zero_all_adjoints(); 
+  stan::math::set_zero_all_adjoints();
   f.grad(Bvec, g);
   stan::math::set_zero_all_adjoints();
   f0.grad(Bvec, g0);
@@ -213,7 +209,7 @@ void test_matrix_exp_action_vd() {
   // brute force
   Eigen::Matrix<var, N, N> expA = stan::math::matrix_exp(Av);
   Eigen::Matrix<var, N, M> expAB;
-  for (int i = 0; i < N; ++i) {    
+  for (int i = 0; i < N; ++i) {
     for (int j = 0; j < M; ++j) {
       expAB(i, j) = 0.0;
       for (int k = 0; k < N; ++k) {
@@ -221,7 +217,6 @@ void test_matrix_exp_action_vd() {
       }
     }
   }
-
   // matrix_exp_action
   Eigen::Matrix<var, N, M> res_vd = stan::math::matrix_exp_action(Av, B);
   for (int l = 0; l < res_vd.size(); ++l) {
@@ -233,7 +228,7 @@ void test_matrix_exp_action_vd() {
   for (int l = 0; l < M; ++l) {
     for (int k = 0; k < N; ++k) {
       stan::math::set_zero_all_adjoints();
-      res_vd(k, l).grad(Avec, g);      
+      res_vd(k, l).grad(Avec, g);
       stan::math::set_zero_all_adjoints();
       expAB(k, l).grad(Avec, g0);
       for (size_t j = 0; j < g.size(); ++j) {
@@ -245,7 +240,7 @@ void test_matrix_exp_action_vd() {
   // test a single function of expA*B
   var f = sum(res_vd);
   var f0 = sum(expAB);
-  stan::math::set_zero_all_adjoints(); 
+  stan::math::set_zero_all_adjoints();
   f.grad(Avec, g);
   stan::math::set_zero_all_adjoints();
   f0.grad(Avec, g0);
@@ -277,7 +272,7 @@ void test_matrix_exp_action_vv() {
   // brute force
   Eigen::Matrix<var, N, N> expA = stan::math::matrix_exp(Av);
   Eigen::Matrix<var, N, M> expAB;
-  for (int i = 0; i < N; ++i) {    
+  for (int i = 0; i < N; ++i) {
     for (int j = 0; j < M; ++j) {
       expAB(i, j) = 0.0;
       for (int k = 0; k < N; ++k) {
@@ -291,14 +286,13 @@ void test_matrix_exp_action_vv() {
   for (int l = 0; l < res_vv.size(); ++l) {
     EXPECT_FLOAT_EQ(res_vv(l).val(), expAB(l).val());
   }
-  Avec.insert( Avec.end(), Bvec.begin(), Bvec.end());
-
+  Avec.insert(Avec.end(), Bvec.begin(), Bvec.end());
   // compare adjoints
   std::vector<double> g, g0;
   for (int l = 0; l < M; ++l) {
     for (int k = 0; k < N; ++k) {
       stan::math::set_zero_all_adjoints();
-      res_vv(k, l).grad(Avec, g);      
+      res_vv(k, l).grad(Avec, g);
       stan::math::set_zero_all_adjoints();
       expAB(k, l).grad(Avec, g0);
       for (size_t j = 0; j < g.size(); ++j) {
@@ -310,7 +304,7 @@ void test_matrix_exp_action_vv() {
   // test a single function of expA*B
   var f = sum(res_vv);
   var f0 = sum(expAB);
-  stan::math::set_zero_all_adjoints(); 
+  stan::math::set_zero_all_adjoints();
   f.grad(Avec, g);
   stan::math::set_zero_all_adjoints();
   f0.grad(Avec, g0);
@@ -334,7 +328,6 @@ TEST(MathMatrix, matrix_exp_action_vv) {
 //   stan::math::matrix_exp_action_handler handler;
 //   std::srand(2999);
 
-  
 //   for (int i = 1; i < 50; ++i) {
 //     MatrixXd A = MatrixXd::Random(i*5, i*5);
 //     MatrixXd B = MatrixXd::Random(i*5, 1);
@@ -344,11 +337,11 @@ TEST(MathMatrix, matrix_exp_action_vv) {
 //     auto end = std::chrono::system_clock::now();
 //     std::chrono::duration<double> elapsed_seconds = end-start;
 //     std::cout << i*5 << "\t" << elapsed_seconds.count() << "\t";
-  
+
 //     start = std::chrono::system_clock::now();
 //     expAB = stan::math::multiply(stan::math::matrix_exp(A), B);
 //     end = std::chrono::system_clock::now();
 //     elapsed_seconds = end-start;
-//     std::cout << elapsed_seconds.count() << "\n";    
+//     std::cout << elapsed_seconds.count() << "\n";
 //   }
 // }
