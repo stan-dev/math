@@ -15,77 +15,72 @@
 namespace stan {
 namespace math {
 
-  /**
-   * Calculate adjoint of matrix exponential action
-   * exp(At)*B when A is data and B is var
-   *
-   * @param Ad double array pointer to the data of matrix A
-   * @param n integer rows and cols of matrix A
-   * @param adjexpAB MatrixXd adjoint of exp(At)*B
-   * @param t double time data
-   */
-  template<int N>
-  Eigen::MatrixXd exp_action_chain_dv(double* Ad,
-                                      const Eigen::MatrixXd& adjexpAB,
-                                      const double t) {
-      using Eigen::Map;
-      matrix_exp_action_handler handle;
-      return handle.action(Map<Eigen::MatrixXd>(Ad, N, N).transpose(),
-                             adjexpAB, t);
-  }
-
-  /**
-   * Calculate adjoint of matrix exponential action
-   * exp(At)*B when A is var and B is data
-   *
-   * @param Ad double array pointer to the data of matrix A
-   * @param n integer rows and cols of matrix A
-   * @param adjexpAB MatrixXd adjoint of exp(At)*B
-   * @param t double time data
-   */
-  template<int N, int M>
-  Eigen::MatrixXd exp_action_chain_vd(double* Ad, double* Bd,
-                                      const Eigen::MatrixXd& adjexpAB,
-                                      const double t) {
-    using Eigen::Map;
-    using Eigen::Matrix;
-    using Eigen::MatrixXd;
-    Eigen::MatrixXd adjexpA = Eigen::MatrixXd::Zero(N, N);
-    Eigen::MatrixXd adjA = Eigen::MatrixXd::Zero(N, N);
-
-    // TODO(yizhang): a better way such as complex step approximation
-    try {
-      start_nested();
-
-      adjexpA = adjexpAB * Map<Matrix<double, N, M> >(Bd).transpose();
-      Eigen::Matrix<stan::math::var,
-                    Eigen::Dynamic,
-                    Eigen::Dynamic> Av(N, N);
-      for (int i = 0; i < Av.size(); ++i) {
-        Av(i) = to_var(Ad[i]);
-      }
-      std::vector<stan::math::var> Avec(Av.data(), Av.data() + Av.size());
-      Eigen::Matrix<stan::math::var,
-                    Eigen::Dynamic,
-                    Eigen::Dynamic> expA = matrix_exp(Av);
-      std::vector<double> g;
-      for (size_type i = 0; i < expA.size(); ++i) {
-        stan::math::set_zero_all_adjoints_nested();
-        expA.coeffRef(i).grad(Avec, g);
-        for (size_type j = 0; j < adjA.size(); ++j) {
-          adjA(j) += adjexpA(i) * g[j];
-        }
-      }
-    } catch (const std::exception& e) {
-      recover_memory_nested();
-      throw;
-    }
-    recover_memory_nested();
-    return adjA;
+/**
+ * Calculate adjoint of matrix exponential action
+ * exp(At)*B when A is data and B is var
+ *
+ * @param Ad double array pointer to the data of matrix A
+ * @param n integer rows and cols of matrix A
+ * @param adjexpAB MatrixXd adjoint of exp(At)*B
+ * @param t double time data
+ */
+template <int N>
+Eigen::MatrixXd exp_action_chain_dv(double* Ad, const Eigen::MatrixXd& adjexpAB,
+                                    const double t) {
+  using Eigen::Map;
+  matrix_exp_action_handler handle;
+  return handle.action(Map<Eigen::MatrixXd>(Ad, N, N).transpose(), adjexpAB, t);
 }
 
 /**
- * This is a subclass of the vari class for matrix 
+ * Calculate adjoint of matrix exponential action
+ * exp(At)*B when A is var and B is data
+ *
+ * @param Ad double array pointer to the data of matrix A
+ * @param n integer rows and cols of matrix A
+ * @param adjexpAB MatrixXd adjoint of exp(At)*B
+ * @param t double time data
+ */
+template <int N, int M>
+Eigen::MatrixXd exp_action_chain_vd(double* Ad, double* Bd,
+                                    const Eigen::MatrixXd& adjexpAB,
+                                    const double t) {
+  using Eigen::Map;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  Eigen::MatrixXd adjexpA = Eigen::MatrixXd::Zero(N, N);
+  Eigen::MatrixXd adjA = Eigen::MatrixXd::Zero(N, N);
+
+  // TODO(yizhang): a better way such as complex step approximation
+  try {
+    start_nested();
+
+    adjexpA = adjexpAB * Map<Matrix<double, N, M> >(Bd).transpose();
+    Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> Av(N, N);
+    for (int i = 0; i < Av.size(); ++i) {
+      Av(i) = to_var(Ad[i]);
+    }
+    std::vector<stan::math::var> Avec(Av.data(), Av.data() + Av.size());
+    Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> expA
+        = matrix_exp(Av);
+    std::vector<double> g;
+    for (size_type i = 0; i < expA.size(); ++i) {
+      stan::math::set_zero_all_adjoints_nested();
+      expA.coeffRef(i).grad(Avec, g);
+      for (size_type j = 0; j < adjA.size(); ++j) {
+        adjA(j) += adjexpA(i) * g[j];
+      }
+    }
+  } catch (const std::exception& e) {
+    recover_memory_nested();
+    throw;
+  }
+  recover_memory_nested();
+  return adjA;
+}
+
+/**
+ * This is a subclass of the vari class for matrix
  * exponential action exp(At) * B where A is a double
  * NxN matrix and B is a NxCb matrix.
  *
@@ -100,23 +95,22 @@ namespace math {
  * @tparam Tb Scalar type for matrix B
  * @tparam Cb cols for matrix B
  */
-  template <typename Ta, int N, typename Tb, int Cb>
-  class matrix_exp_action_vari : public vari {
-  public:
-    int n_;
-    int B_cols_;
-    int A_size_;
-    int B_size_;
-    double t_;
-    double* Ad_;
-    double* Bd_;
-    vari** variRefA_;
-    vari** variRefB_;
-    vari** variRefexpAB_;
+template <typename Ta, int N, typename Tb, int Cb>
+class matrix_exp_action_vari : public vari {
+ public:
+  int n_;
+  int B_cols_;
+  int A_size_;
+  int B_size_;
+  double t_;
+  double* Ad_;
+  double* Bd_;
+  vari** variRefA_;
+  vari** variRefB_;
+  vari** variRefexpAB_;
 
-    matrix_exp_action_vari(const Eigen::Matrix<Ta, N, N>& A,
-                           const Eigen::Matrix<Tb, N, Cb>& B,
-                           const double& t)
+  matrix_exp_action_vari(const Eigen::Matrix<Ta, N, N>& A,
+                         const Eigen::Matrix<Tb, N, Cb>& B, const double& t)
       : vari(0.0),
         n_(A.rows()),
         B_cols_(B.cols()),
@@ -127,45 +121,43 @@ namespace math {
         Bd_(ChainableStack::memalloc_.alloc_array<double>(B_size_)),
         variRefA_(ChainableStack::memalloc_.alloc_array<vari*>(A_size_)),
         variRefB_(ChainableStack::memalloc_.alloc_array<vari*>(B_size_)),
-        variRefexpAB_(
-            ChainableStack::memalloc_.alloc_array<vari*>(B_size_)) {
-      using Eigen::Map;
-      using Eigen::MatrixXd;
-      for (size_type i = 0; i < A.size(); ++i) {
-        variRefA_[i] = A.coeffRef(i).vi_;
-        Ad_[i] = A.coeffRef(i).val();
-      }
-      for (size_type i = 0; i < B.size(); ++i) {
-        variRefB_[i] = B.coeffRef(i).vi_;
-        Bd_[i] = B.coeffRef(i).val();
-      }
-      matrix_exp_action_handler handle;
-      MatrixXd expAB = handle.action(Map<MatrixXd>(Ad_, n_, n_),
-                                     Map<MatrixXd>(Bd_, n_, B_cols_),
-                                     t_);
-      for (size_type i = 0; i < expAB.size(); ++i)
-        variRefexpAB_[i] = new vari(expAB.coeffRef(i), false);
+        variRefexpAB_(ChainableStack::memalloc_.alloc_array<vari*>(B_size_)) {
+    using Eigen::Map;
+    using Eigen::MatrixXd;
+    for (size_type i = 0; i < A.size(); ++i) {
+      variRefA_[i] = A.coeffRef(i).vi_;
+      Ad_[i] = A.coeffRef(i).val();
     }
-
-    virtual void chain() {
-      using Eigen::Map;
-      using Eigen::MatrixXd;
-      MatrixXd adjexpAB(n_, B_cols_);
-
-      for (size_type i = 0; i < adjexpAB.size(); ++i)
-        adjexpAB(i) = variRefexpAB_[i]->adj_;
-
-      MatrixXd adjA = exp_action_chain_vd<N, Cb>(Ad_, Bd_, adjexpAB, t_);
-      MatrixXd adjB = exp_action_chain_dv<N>(Ad_, adjexpAB, t_);
-
-      for (size_type i = 0; i < A_size_; ++i) {
-        variRefA_[i]->adj_ += adjA(i);
-      }
-      for (size_type i = 0; i < B_size_; ++i) {
-        variRefB_[i]->adj_ += adjB(i);
-      }
+    for (size_type i = 0; i < B.size(); ++i) {
+      variRefB_[i] = B.coeffRef(i).vi_;
+      Bd_[i] = B.coeffRef(i).val();
     }
-  };
+    matrix_exp_action_handler handle;
+    MatrixXd expAB = handle.action(Map<MatrixXd>(Ad_, n_, n_),
+                                   Map<MatrixXd>(Bd_, n_, B_cols_), t_);
+    for (size_type i = 0; i < expAB.size(); ++i)
+      variRefexpAB_[i] = new vari(expAB.coeffRef(i), false);
+  }
+
+  virtual void chain() {
+    using Eigen::Map;
+    using Eigen::MatrixXd;
+    MatrixXd adjexpAB(n_, B_cols_);
+
+    for (size_type i = 0; i < adjexpAB.size(); ++i)
+      adjexpAB(i) = variRefexpAB_[i]->adj_;
+
+    MatrixXd adjA = exp_action_chain_vd<N, Cb>(Ad_, Bd_, adjexpAB, t_);
+    MatrixXd adjB = exp_action_chain_dv<N>(Ad_, adjexpAB, t_);
+
+    for (size_type i = 0; i < A_size_; ++i) {
+      variRefA_[i]->adj_ += adjA(i);
+    }
+    for (size_type i = 0; i < B_size_; ++i) {
+      variRefB_[i]->adj_ += adjB(i);
+    }
+  }
+};
 
 /**
  * This is a subclass of the vari class for matrix
@@ -182,18 +174,18 @@ namespace math {
  * @tparam Tb Scalar type for matrix B
  * @tparam Cb Columns for matrix B
  */
-  template <int N, typename Tb, int Cb>
-  class matrix_exp_action_vari<double, N, Tb, Cb> : public vari {
-  public:
-    int n_;
-    int B_cols_;
-    int A_size_;
-    int B_size_;
-    double t_;
-    double* Ad_;
-    double* Bd_;
-    vari** variRefB_;
-    vari** variRefexpAB_;
+template <int N, typename Tb, int Cb>
+class matrix_exp_action_vari<double, N, Tb, Cb> : public vari {
+ public:
+  int n_;
+  int B_cols_;
+  int A_size_;
+  int B_size_;
+  double t_;
+  double* Ad_;
+  double* Bd_;
+  vari** variRefB_;
+  vari** variRefexpAB_;
 
   /**
    * Constructor for matrix_exp_action_vari.
@@ -212,9 +204,8 @@ namespace math {
    * @param B matrix
    * @param t double
    */
-    matrix_exp_action_vari(const Eigen::Matrix<double, N, N>& A,
-                           const Eigen::Matrix<Tb, N, Cb>& B,
-                           const double& t)
+  matrix_exp_action_vari(const Eigen::Matrix<double, N, N>& A,
+                         const Eigen::Matrix<Tb, N, Cb>& B, const double& t)
       : vari(0.0),
         n_(A.rows()),
         B_cols_(B.cols()),
@@ -224,40 +215,38 @@ namespace math {
         Ad_(ChainableStack::memalloc_.alloc_array<double>(A_size_)),
         Bd_(ChainableStack::memalloc_.alloc_array<double>(B_size_)),
         variRefB_(ChainableStack::memalloc_.alloc_array<vari*>(B_size_)),
-        variRefexpAB_(
-                      ChainableStack::memalloc_.alloc_array<vari*>(B_size_)) {
-      using Eigen::Map;
-      using Eigen::MatrixXd;
-      for (size_type i = 0; i < A.size(); ++i)
-        Ad_[i] = A.coeffRef(i);
-      for (size_type i = 0; i < B.size(); ++i) {
-        variRefB_[i] = B.coeffRef(i).vi_;
-        Bd_[i] = B.coeffRef(i).val();
-      }
-      matrix_exp_action_handler handle;
-      MatrixXd expAB = handle.action(Map<MatrixXd>(Ad_, n_, n_),
-                                     Map<MatrixXd>(Bd_, n_, B_cols_),
-                                     t_);
-      for (size_type i = 0; i < expAB.size(); ++i)
-        variRefexpAB_[i] = new vari(expAB.coeffRef(i), false);
+        variRefexpAB_(ChainableStack::memalloc_.alloc_array<vari*>(B_size_)) {
+    using Eigen::Map;
+    using Eigen::MatrixXd;
+    for (size_type i = 0; i < A.size(); ++i)
+      Ad_[i] = A.coeffRef(i);
+    for (size_type i = 0; i < B.size(); ++i) {
+      variRefB_[i] = B.coeffRef(i).vi_;
+      Bd_[i] = B.coeffRef(i).val();
     }
+    matrix_exp_action_handler handle;
+    MatrixXd expAB = handle.action(Map<MatrixXd>(Ad_, n_, n_),
+                                   Map<MatrixXd>(Bd_, n_, B_cols_), t_);
+    for (size_type i = 0; i < expAB.size(); ++i)
+      variRefexpAB_[i] = new vari(expAB.coeffRef(i), false);
+  }
 
-    virtual void chain() {
-      using Eigen::Map;
-      using Eigen::MatrixXd;
-      MatrixXd adjexpAB(n_, B_cols_);
-      // MatrixXd adjB(n_, B_cols_);
+  virtual void chain() {
+    using Eigen::Map;
+    using Eigen::MatrixXd;
+    MatrixXd adjexpAB(n_, B_cols_);
+    // MatrixXd adjB(n_, B_cols_);
 
-      for (size_type i = 0; i < adjexpAB.size(); ++i)
-        adjexpAB(i) = variRefexpAB_[i]->adj_;
+    for (size_type i = 0; i < adjexpAB.size(); ++i)
+      adjexpAB(i) = variRefexpAB_[i]->adj_;
 
-      MatrixXd adjB = exp_action_chain_dv<N>(Ad_, adjexpAB, t_);
+    MatrixXd adjB = exp_action_chain_dv<N>(Ad_, adjexpAB, t_);
 
-      for (size_type i = 0; i < B_size_; ++i) {
-        variRefB_[i]->adj_ += adjB(i);
-      }
+    for (size_type i = 0; i < B_size_; ++i) {
+      variRefB_[i]->adj_ += adjB(i);
     }
-  };
+  }
+};
 /**
  * This is a subclass of the vari class for matrix
  * exponential action exp(At) * B where A is an N by N
@@ -273,18 +262,18 @@ namespace math {
  * @tparam N Rows and cols for matrix A, also rows for B
  * @tparam Cb Columns for matrix B
  */
-  template <typename Ta, int N, int Cb>
-  class matrix_exp_action_vari<Ta, N, double, Cb> : public vari {
-  public:
-    int n_;
-    int B_cols_;
-    int A_size_;
-    int B_size_;
-    double t_;
-    double* Ad_;
-    double* Bd_;
-    vari** variRefA_;
-    vari** variRefexpAB_;
+template <typename Ta, int N, int Cb>
+class matrix_exp_action_vari<Ta, N, double, Cb> : public vari {
+ public:
+  int n_;
+  int B_cols_;
+  int A_size_;
+  int B_size_;
+  double t_;
+  double* Ad_;
+  double* Bd_;
+  vari** variRefA_;
+  vari** variRefexpAB_;
 
   /**
    * Constructor for matrix_exp_action_vari.
@@ -303,9 +292,8 @@ namespace math {
    * @param B matrix
    * @param t double
    */
-    matrix_exp_action_vari(const Eigen::Matrix<Ta, N, N>& A,
-                           const Eigen::Matrix<double, N, Cb>& B,
-                           const double& t)
+  matrix_exp_action_vari(const Eigen::Matrix<Ta, N, N>& A,
+                         const Eigen::Matrix<double, N, Cb>& B, const double& t)
       : vari(0.0),
         n_(A.rows()),
         B_cols_(B.cols()),
@@ -315,40 +303,38 @@ namespace math {
         Ad_(ChainableStack::memalloc_.alloc_array<double>(A_size_)),
         Bd_(ChainableStack::memalloc_.alloc_array<double>(B_size_)),
         variRefA_(ChainableStack::memalloc_.alloc_array<vari*>(A_size_)),
-        variRefexpAB_(
-                      ChainableStack::memalloc_.alloc_array<vari*>(B_size_)) {
-      using Eigen::Map;
-      using Eigen::MatrixXd;
-      for (size_type i = 0; i < A.size(); ++i) {
-        variRefA_[i] = A.coeffRef(i).vi_;
-        Ad_[i] = A.coeffRef(i).val();
-      }
-      for (size_type i = 0; i < B.size(); ++i) {
-        Bd_[i] = B.coeffRef(i);
-      }
-      matrix_exp_action_handler handle;
-      MatrixXd expAB = handle.action(Map<MatrixXd>(Ad_, n_, n_),
-                                     Map<MatrixXd>(Bd_, n_, B_cols_),
-                                     t_);
-      for (size_type i = 0; i < expAB.size(); ++i)
-        variRefexpAB_[i] = new vari(expAB.coeffRef(i), false);
+        variRefexpAB_(ChainableStack::memalloc_.alloc_array<vari*>(B_size_)) {
+    using Eigen::Map;
+    using Eigen::MatrixXd;
+    for (size_type i = 0; i < A.size(); ++i) {
+      variRefA_[i] = A.coeffRef(i).vi_;
+      Ad_[i] = A.coeffRef(i).val();
     }
-
-    virtual void chain() {
-      using Eigen::Map;
-      using Eigen::MatrixXd;
-      MatrixXd adjexpAB(n_, B_cols_);
-
-      for (size_type i = 0; i < adjexpAB.size(); ++i)
-        adjexpAB(i) = variRefexpAB_[i]->adj_;
-
-      MatrixXd adjA = exp_action_chain_vd<N, Cb>(Ad_, Bd_, adjexpAB, t_);
-
-      for (size_type i = 0; i < A_size_; ++i) {
-        variRefA_[i]->adj_ += adjA(i);
-      }
+    for (size_type i = 0; i < B.size(); ++i) {
+      Bd_[i] = B.coeffRef(i);
     }
-  };
+    matrix_exp_action_handler handle;
+    MatrixXd expAB = handle.action(Map<MatrixXd>(Ad_, n_, n_),
+                                   Map<MatrixXd>(Bd_, n_, B_cols_), t_);
+    for (size_type i = 0; i < expAB.size(); ++i)
+      variRefexpAB_[i] = new vari(expAB.coeffRef(i), false);
+  }
+
+  virtual void chain() {
+    using Eigen::Map;
+    using Eigen::MatrixXd;
+    MatrixXd adjexpAB(n_, B_cols_);
+
+    for (size_type i = 0; i < adjexpAB.size(); ++i)
+      adjexpAB(i) = variRefexpAB_[i]->adj_;
+
+    MatrixXd adjA = exp_action_chain_vd<N, Cb>(Ad_, Bd_, adjexpAB, t_);
+
+    for (size_type i = 0; i < A_size_; ++i) {
+      variRefA_[i]->adj_ += adjA(i);
+    }
+  }
+};
 
 /**
  * Return product of exp(At) and B, where A is a NxN matrix,
@@ -362,22 +348,20 @@ namespace math {
  * @param[in] t double
  * @return exponential of At multiplies B
  */
-  template <typename Ta, int N, typename Tb, int Cb>
-  inline
-  typename boost::enable_if_c<boost::is_same<Ta, var>::value
-                              || boost::is_same<Tb, var>::value,
-                              Eigen::Matrix<var, N, Cb> >::type
-  matrix_exp_action(const Eigen::Matrix<Ta, N, N>& A,
-                    const Eigen::Matrix<Tb, N, Cb>& B,
-                    const double& t = 1.0) {
-    matrix_exp_action_vari<Ta, N, Tb, Cb>* baseVari
+template <typename Ta, int N, typename Tb, int Cb>
+inline typename boost::enable_if_c<boost::is_same<Ta, var>::value
+                                       || boost::is_same<Tb, var>::value,
+                                   Eigen::Matrix<var, N, Cb> >::type
+matrix_exp_action(const Eigen::Matrix<Ta, N, N>& A,
+                  const Eigen::Matrix<Tb, N, Cb>& B, const double& t = 1.0) {
+  matrix_exp_action_vari<Ta, N, Tb, Cb>* baseVari
       = new matrix_exp_action_vari<Ta, N, Tb, Cb>(A, B, t);
-    Eigen::Matrix<var, N, Cb> expAB_v(A.rows(), B.cols());
-    for (size_type i = 0; i < expAB_v.size(); ++i) {
-      expAB_v.coeffRef(i).vi_ = baseVari->variRefexpAB_[i];
-    }
-    return expAB_v;
+  Eigen::Matrix<var, N, Cb> expAB_v(A.rows(), B.cols());
+  for (size_type i = 0; i < expAB_v.size(); ++i) {
+    expAB_v.coeffRef(i).vi_ = baseVari->variRefexpAB_[i];
   }
+  return expAB_v;
+}
 
 /**
  * Return product of exp(At) and B, where A is a NxN double matrix,
@@ -389,17 +373,15 @@ namespace math {
  * @param[in] t double
  * @return exponential of At multiplies B
  */
-  template <int N, int Cb>
-  inline
-  Eigen::Matrix<double, N, Cb>
-  matrix_exp_action(const Eigen::Matrix<double, N, N>& A,
-                    const Eigen::Matrix<double, N, Cb>& B,
-                    const double& t = 1.0) {
-    Eigen::Matrix<double, N, Cb> expAB;
-    matrix_exp_action_handler handle;
-    expAB = handle.action(A, B, t);
-    return expAB;
-  }
+template <int N, int Cb>
+inline Eigen::Matrix<double, N, Cb> matrix_exp_action(
+    const Eigen::Matrix<double, N, N>& A, const Eigen::Matrix<double, N, Cb>& B,
+    const double& t = 1.0) {
+  Eigen::Matrix<double, N, Cb> expAB;
+  matrix_exp_action_handler handle;
+  expAB = handle.action(A, B, t);
+  return expAB;
+}
 
 }  // namespace math
 }  // namespace stan

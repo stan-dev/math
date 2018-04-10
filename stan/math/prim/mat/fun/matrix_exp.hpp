@@ -30,9 +30,8 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_exp(
              : matrix_exp_pade(A);
 }
 
-  template <typename T, int N>
-inline Eigen::Matrix<T, N, N> matrix_exp(
-    const Eigen::Matrix<T, N, N>& A) {
+template <typename T, int N>
+inline Eigen::Matrix<T, N, N> matrix_exp(const Eigen::Matrix<T, N, N>& A) {
   check_nonzero_size("matrix_exp", "input matrix", A);
 
   return (N == 2
@@ -44,9 +43,7 @@ inline Eigen::Matrix<T, N, N> matrix_exp(
 }
 
 template <typename T>
-inline Eigen::Matrix<T, 1, 1> matrix_exp(
-    const Eigen::Matrix<T, 1, 1>& A) {
-
+inline Eigen::Matrix<T, 1, 1> matrix_exp(const Eigen::Matrix<T, 1, 1>& A) {
   Eigen::Matrix<T, 1, 1> res;
   res << stan::math::exp(A(0));
   return res;

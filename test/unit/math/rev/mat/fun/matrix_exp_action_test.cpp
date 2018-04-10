@@ -30,8 +30,8 @@ TEST(MathMatrix, matrix_exp_action_diag) {
     VectorType b = VectorType::Random(2);
     m1 << 1, 0, 0, 2;
     auto res = handler.action(m1, b, t);
-    EXPECT_NEAR(res(0), b(0)*M_E, 1.e-8);
-    EXPECT_NEAR(res(1), b(1)*M_E*M_E, 1.e-8);
+    EXPECT_NEAR(res(0), b(0) * M_E, 1.e-8);
+    EXPECT_NEAR(res(1), b(1) * M_E * M_E, 1.e-8);
   }
 
   {
@@ -41,13 +41,13 @@ TEST(MathMatrix, matrix_exp_action_diag) {
     VectorType b = VectorType::Random(2);
     m1 << -4.0, 0, 0, -5.0;
     auto res = handler.action(m1, b, t);
-    EXPECT_NEAR(res(0), b(0)/(M_E*M_E*M_E*M_E), 1.e-8);
-    EXPECT_NEAR(res(1), b(1)/(M_E*M_E*M_E*M_E*M_E), 1.e-8);
+    EXPECT_NEAR(res(0), b(0) / (M_E * M_E * M_E * M_E), 1.e-8);
+    EXPECT_NEAR(res(1), b(1) / (M_E * M_E * M_E * M_E * M_E), 1.e-8);
   }
 
   {
     std::srand(999);
-    double t = static_cast<double>((std::rand())/RAND_MAX);
+    double t = static_cast<double>((std::rand()) / RAND_MAX);
     VectorType b = VectorType::Random(5);
     VectorType d = VectorType::Random(5);
     MatrixType m = d.asDiagonal();
@@ -128,11 +128,10 @@ TEST(MathMatrix, matrix_exp_action_matrix_transpose) {
   }
 }
 
-template<int N, int M>
-inline
-void test_matrix_exp_action_dv() {
-  using stan::math::var;
+template <int N, int M>
+inline void test_matrix_exp_action_dv() {
   using stan::math::value_of;
+  using stan::math::var;
   stan::math::matrix_exp_action_handler handler;
   std::srand(1999);
 
@@ -192,11 +191,10 @@ TEST(MathMatrix, matrix_exp_action_dv) {
   test_matrix_exp_action_dv<5, 5>();
 }
 
-template<int N, int M>
-inline
-void test_matrix_exp_action_vd() {
-  using stan::math::var;
+template <int N, int M>
+inline void test_matrix_exp_action_vd() {
   using stan::math::value_of;
+  using stan::math::var;
   stan::math::matrix_exp_action_handler handler;
   std::srand(1999);
 
@@ -256,11 +254,10 @@ TEST(MathMatrix, matrix_exp_action_vd) {
   test_matrix_exp_action_vd<5, 5>();
 }
 
-template<int N, int M>
-inline
-void test_matrix_exp_action_vv() {
-  using stan::math::var;
+template <int N, int M>
+inline void test_matrix_exp_action_vv() {
   using stan::math::value_of;
+  using stan::math::var;
   stan::math::matrix_exp_action_handler handler;
   std::srand(2999);
 
@@ -319,7 +316,6 @@ TEST(MathMatrix, matrix_exp_action_vv) {
   test_matrix_exp_action_vv<5, 1>();
   test_matrix_exp_action_vd<5, 5>();
 }
-
 
 // TEST(MathMatrix, matrix_exp_action_clock) {
 //   using Eigen::MatrixXd;

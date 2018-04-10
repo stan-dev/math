@@ -7,7 +7,7 @@ TEST(MathMatrix, matrix_exp_2x2_1) {
   a.val_ = 3.0;
   a.d_ = 1.0;
 
-  {                             // dynamic mat
+  {  // dynamic mat
     stan::math::matrix_fd input(2, 2), output(2, 2);
     input << a, 0, 0, 4;
     output = stan::math::matrix_exp_2x2(input);
@@ -23,8 +23,8 @@ TEST(MathMatrix, matrix_exp_2x2_1) {
     EXPECT_FLOAT_EQ(0, output(1, 1).d_);
   }
 
-  {                             // fixed mat
-    Eigen::Matrix<stan::math::fvar, 2, 2>  input(2, 2), output(2, 2);
+  {  // fixed mat
+    Eigen::Matrix<stan::math::fvar, 2, 2> input(2, 2), output(2, 2);
     input << a, 0, 0, 4;
     output = stan::math::matrix_exp_2x2(input);
 
@@ -48,7 +48,7 @@ TEST(MathMatrix, matrix_exp_2x2_2) {
   a.d_ = 1.0;
   b.d_ = 1.0;
 
-  {                             // dynamic mat
+  {  // dynamic mat
     stan::math::matrix_fd input(2, 2);
     input << -2 * a + 3 * b, 1.5 * a - 1.5 * b, -4 * a + 4 * b, 3 * a - 2 * b;
 
@@ -69,7 +69,7 @@ TEST(MathMatrix, matrix_exp_2x2_2) {
     EXPECT_FLOAT_EQ(1.103638, output(1, 1).d_);
   }
 
-  {                             // fixed mat
+  {  // fixed mat
     Eigen::Matrix<stan::math::fvar, 2, 2> input;
     input << -2 * a + 3 * b, 1.5 * a - 1.5 * b, -4 * a + 4 * b, 3 * a - 2 * b;
 
