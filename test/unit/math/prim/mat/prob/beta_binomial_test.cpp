@@ -42,5 +42,5 @@ TEST(ProbDistributionsBetaBinomial, errorCheck) {
 }
 
 TEST(ProbDistributionsBetaBinomial, distributionCheck) {
-  check_counts_int_first_argument(BetaBinomialTestRig());
+  check_counts_int_real_real(BetaBinomialTestRig());
 }

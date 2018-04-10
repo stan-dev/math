@@ -41,5 +41,5 @@ TEST(ProbDistributionsInvGamma, errorCheck) {
 }
 
 TEST(ProbDistributionsInvGamma, distributionTest) {
-  check_quantiles_all_types(InvGammaTestRig());
+  check_quantiles_real_real(InvGammaTestRig());
 }

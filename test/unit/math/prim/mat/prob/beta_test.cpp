@@ -41,5 +41,5 @@ TEST(ProbDistributionsBeta, errorCheck) {
 }
 
 TEST(ProbDistributionsBeta, distributionTest) {
-  check_quantiles_all_types(BetaTestRig());
+  check_quantiles_real_real(BetaTestRig());
 }

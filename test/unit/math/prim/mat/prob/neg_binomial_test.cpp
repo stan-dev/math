@@ -36,5 +36,5 @@ TEST(ProbDistributionsNegativeBinomial, errorCheck) {
 }
 
 TEST(ProbDistributionsNegativeBinomial, distributionCheck) {
-  check_counts_all_types(NegativeBinomialTestRig());
+  check_counts_real_real(NegativeBinomialTestRig());
 }

@@ -35,5 +35,5 @@ TEST(ProbDistributionsBernoulli, errorCheck) {
 }
 
 TEST(ProbDistributionsBernoulli, distributionCheck) {
-  check_counts_all_types(BernoulliTestRig());
+  check_counts_real(BernoulliTestRig());
 }

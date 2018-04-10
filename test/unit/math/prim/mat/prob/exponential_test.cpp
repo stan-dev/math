@@ -38,5 +38,5 @@ TEST(ProbDistributionsExponential, errorCheck) {
 }
 
 TEST(ProbDistributionsExponential, distributionTest) {
-  check_quantiles_all_types(ExponentialTestRig());
+  check_quantiles_real(ExponentialTestRig());
 }

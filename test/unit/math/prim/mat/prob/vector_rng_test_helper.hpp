@@ -272,8 +272,8 @@ struct check_dist_throws {
 
 /*
  * This function calls check_dist_throws with the given test_rig
- * and all combinations of double, std::vector<double>, Eigen::VectorXd,
- * and Eigen::RowVectorXd as template arguments
+ * and all combinations of int, std::vector<int>, double, std::vector<double>,
+ * Eigen::VectorXd, and Eigen::RowVectorXd as template arguments
  *
  * @tparam T_rig Test rig type for random number generator
  * @param T_rig Test rig for random number generator
@@ -284,6 +284,15 @@ void check_dist_throws_all_types(const T_rig& rig) {
       (check_dist_throws{}, rig);
 }
 
+/*
+ * This function calls check_dist_throws with the given test_rig
+ * where the first argument can only be an int or a std::vector<int> and
+ * the other arguments can be any combination of int, std::vector<int>,
+ * double, std::vector<double>, Eigen::VectorXd, or Eigen::RowVectorXd
+ *
+ * @tparam T_rig Test rig type for random number generator
+ * @param T_rig Test rig for random number generator
+ */
 template <typename T_rig>
 void check_dist_throws_int_first_argument(const T_rig& rig) {
   apply_template_permutations< std::tuple<int, std::vector<int> >,
@@ -380,14 +389,43 @@ struct check_quantiles {
 };
 
 /*
- * Call check_quantiles on the given test rig with all combinations of
- * double, std::vector<double>, Eigen::VectorXd, and Eigen::RowVectorXd
+ * Call check_quantiles on the given test rig for a continuous distribution that
+ * has one parameter that can be an int, std::vector<int>,
+ * double, std::vector<double>, Eigen::VectorXd, or an Eigen::RowVectorXd
  *
  * @tparam T_rig Type of test rig for random number generator
  * @param T_rig Test rig for random number generator
  */
 template <typename T_rig>
-void check_quantiles_all_types(const T_rig& rig) {
+void check_quantiles_real(const T_rig& rig) {
+  apply_template_permutations<ArgumentTypes, std::tuple<double>, std::tuple<double> >
+      (check_quantiles{}, rig);
+}
+
+/*
+ * Call check_quantiles on the given test rig for a continuous distribution that
+ * has two parameters that can each be an int, std::vector<int>,
+ * double, std::vector<double>, Eigen::VectorXd, or an Eigen::RowVectorXd
+ *
+ * @tparam T_rig Type of test rig for random number generator
+ * @param T_rig Test rig for random number generator
+ */
+template <typename T_rig>
+void check_quantiles_real_real(const T_rig& rig) {
+  apply_template_permutations<ArgumentTypes, ArgumentTypes, std::tuple<double> >
+      (check_quantiles{}, rig);
+}
+
+/*
+ * Call check_quantiles on the given test rig for a continuous distribution that
+ * has three parameters that can each be an int, std::vector<int>,
+ * double, std::vector<double>, Eigen::VectorXd, or an Eigen::RowVectorXd
+ *
+ * @tparam T_rig Type of test rig for random number generator
+ * @param T_rig Test rig for random number generator
+ */
+template <typename T_rig>
+void check_quantiles_real_real_real(const T_rig& rig) {
   apply_template_permutations<ArgumentTypes, ArgumentTypes, ArgumentTypes>
       (check_quantiles{}, rig);
 }
@@ -502,33 +540,77 @@ struct check_counts {
 };
 
 /*
- * Call check_counts on the given test rig with all combinations of
- * int, std::vector<int>, double, std::vector<double>, Eigen::VectorXd,
- * and Eigen::RowVectorXd
+ * Call check_counts on the given test rig for a pmf that takes one
+ * argument that can be an int, std::vector<int>, double,
+ * std::vector<double>, Eigen::VectorXd, or an Eigen::RowVectorXd
  *
  * @tparam T_rig Type of test rig for random number generator
  * @param T_rig Test rig for random number generator
  */
 template <typename T_rig>
-void check_counts_all_types(const T_rig& rig) {
+void check_counts_real(const T_rig& rig) {
+  apply_template_permutations<ArgumentTypes, std::tuple<double>, std::tuple<double> >
+      (check_counts{}, rig);
+}
+
+/*
+ * Call check_counts on the given test rig for a pmf that takes two
+ * arguments that can each be an int, std::vector<int>, double,
+ * std::vector<double>, Eigen::VectorXd, or an Eigen::RowVectorXd
+ *
+ * @tparam T_rig Type of test rig for random number generator
+ * @param T_rig Test rig for random number generator
+ */
+template <typename T_rig>
+void check_counts_real_real(const T_rig& rig) {
+  apply_template_permutations<ArgumentTypes, ArgumentTypes, std::tuple<double> >
+      (check_counts{}, rig);
+}
+
+/*
+ * Call check_counts on the given test rig for a pmf that takes three
+ * arguments that can each be an int, std::vector<int>, double,
+ * std::vector<double>, Eigen::VectorXd, or an Eigen::RowVectorXd
+ *
+ * @tparam T_rig Type of test rig for random number generator
+ * @param T_rig Test rig for random number generator
+ */
+template <typename T_rig>
+void check_counts_real_real_real(const T_rig& rig) {
   apply_template_permutations<ArgumentTypes, ArgumentTypes, ArgumentTypes>
       (check_counts{}, rig);
 }
 
 /*
- * Call check_counts on the given test rig with the first argument being either
- * an int or a std::vector<int> and the other arguments being all combinations
- * of int, std::vector<int>, double, std::vector<double>, Eigen::VectorXd, and
- * Eigen::RowVectorXd
+ * Call check_counts on the given test rig for a pmf that takes for the first
+ * argument either an int or a std::vector<int> and then for its second
+ * argument an int, std::vector<int>, double, std::vector<double>,
+ * Eigen::VectorXd, or an Eigen::RowVectorXd
  *
  * @tparam T_rig Type of test rig for random number generator
  * @param T_rig Test rig for random number generator
  */
 template <typename T_rig>
-void check_counts_int_first_argument(const T_rig& rig) {
-  apply_template_permutations< std::tuple<int, std::vector<int> >,
-                               ArgumentTypes, ArgumentTypes>(check_counts{},
-                                                             rig);
+void check_counts_int_real(const T_rig& rig) {
+  apply_template_permutations<std::tuple<int, std::vector<int> >,
+                              ArgumentTypes, std::tuple<double> >
+      (check_counts{}, rig);
+}
+
+/*
+ * Call check_counts on the given test rig for a pmf that takes for the first
+ * argument either an int or a std::vector<int> and then for each of its second
+ * or third arguments an int, std::vector<int>, double, std::vector<double>,
+ * Eigen::VectorXd, or an Eigen::RowVectorXd
+ *
+ * @tparam T_rig Type of test rig for random number generator
+ * @param T_rig Test rig for random number generator
+ */
+template <typename T_rig>
+void check_counts_int_real_real(const T_rig& rig) {
+  apply_template_permutations<std::tuple<int, std::vector<int> >,
+                              ArgumentTypes, ArgumentTypes>
+      (check_counts{}, rig);
 }
 
 #endif

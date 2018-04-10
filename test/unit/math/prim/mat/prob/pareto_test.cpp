@@ -41,5 +41,5 @@ TEST(ProbDistributionsPareto, errorCheck) {
 }
 
 TEST(ProbDistributionsPareto, distributionTest) {
-  check_quantiles_all_types(ParetoTestRig());
+  check_quantiles_real_real(ParetoTestRig());
 }

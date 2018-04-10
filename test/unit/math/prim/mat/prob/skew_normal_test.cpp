@@ -42,5 +42,5 @@ TEST(ProbDistributionsSkewNormal, errorCheck) {
 }
 
 TEST(ProbDistributionsSkewNormal, distributionTest) {
-  check_quantiles_all_types(SkewNormalTestRig());
+  check_quantiles_real_real_real(SkewNormalTestRig());
 }

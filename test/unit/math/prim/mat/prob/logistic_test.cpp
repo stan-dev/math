@@ -41,5 +41,5 @@ TEST(ProbDistributionsLogistic, errorCheck) {
 }
 
 TEST(ProbDistributionsLogistic, distributionTest) {
-  check_quantiles_all_types(LogisticTestRig());
+  check_quantiles_real_real(LogisticTestRig());
 }

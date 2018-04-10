@@ -37,5 +37,5 @@ TEST(ProbDistributionsChiSquare, errorCheck) {
 }
 
 TEST(ProbDistributionsChiSquare, distributionTest) {
-  check_quantiles_all_types(ChiSquareTestRig());
+  check_quantiles_real(ChiSquareTestRig());
 }

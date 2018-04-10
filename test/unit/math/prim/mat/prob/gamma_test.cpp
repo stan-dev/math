@@ -41,5 +41,5 @@ TEST(ProbDistributionsGamma, errorCheck) {
 }
 
 TEST(ProbDistributionsGamma, distributionTest) {
-  check_quantiles_all_types(GammaTestRig());
+  check_quantiles_real_real(GammaTestRig());
 }

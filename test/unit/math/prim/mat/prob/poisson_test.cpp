@@ -34,5 +34,5 @@ TEST(ProbDistributionsPoisson, errorCheck) {
 }
 
 TEST(ProbDistributionsPoisson, distributionCheck) {
-  check_counts_all_types(PoissonTestRig());
+  check_counts_real(PoissonTestRig());
 }

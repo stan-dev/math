@@ -41,5 +41,5 @@ TEST(ProbDistributionsGumbel, errorCheck) {
 }
 
 TEST(ProbDistributionsGumbel, distributionTest) {
-  check_quantiles_all_types(GumbelTestRig());
+  check_quantiles_real_real(GumbelTestRig());
 }

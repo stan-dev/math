@@ -41,5 +41,5 @@ TEST(ProbDistributionsWeibull, errorCheck) {
 }
 
 TEST(ProbDistributionsWeibull, distributionTest) {
-  check_quantiles_all_types(WeibullTestRig());
+  check_quantiles_real_real(WeibullTestRig());
 }

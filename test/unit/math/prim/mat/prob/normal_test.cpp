@@ -71,5 +71,5 @@ TEST(ProbDistributionsNormal, distributionTest) {
    *
    * It does so for all possible combinations of calling arguments.
    */
-  check_quantiles_all_types(NormalTestRig());
+  check_quantiles_real_real(NormalTestRig());
 }

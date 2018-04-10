@@ -43,5 +43,5 @@ TEST(ProbDistributionsStudentT, errorCheck) {
 }
 
 TEST(ProbDistributionsStudentT, distributionTest) {
-  check_quantiles_all_types(StudentTTestRig());
+  check_quantiles_real_real_real(StudentTTestRig());
 }

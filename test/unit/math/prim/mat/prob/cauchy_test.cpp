@@ -41,5 +41,5 @@ TEST(ProbDistributionsCauchy, errorCheck) {
 }
 
 TEST(ProbDistributionsCauchy, distributionTest) {
-  check_quantiles_all_types(CauchyTestRig());
+  check_quantiles_real_real(CauchyTestRig());
 }

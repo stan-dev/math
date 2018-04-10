@@ -62,14 +62,14 @@ TEST(ProbDistributionsUniform, errorCheck) {
 }
 
 TEST(ProbDistributionsUniform, distributionTest) {
-  check_quantiles_all_types(UniformTestRig({-1.7, -0.1, 0.0, 0.5},
+  check_quantiles_real_real(UniformTestRig({-1.7, -0.1, 0.0, 0.5},
                                            {-2, -1, 0, 1},
                                            {}, {},
                                            {1.1, 3.8},
                                            {2, 6},
                                            {}, {}));
   
-  check_quantiles_all_types(UniformTestRig({-7.5, -5.1, -4.0},
+  check_quantiles_real_real(UniformTestRig({-7.5, -5.1, -4.0},
                                            {-7, -6, -4},
                                            {}, {},
                                            {-2.2, 0.0, 1.0},

@@ -38,5 +38,5 @@ TEST(ProbDistributionsRayleigh, errorCheck) {
 }
 
 TEST(ProbDistributionsRayleigh, distributionTest) {
-  check_quantiles_all_types(RayleighTestRig());
+  check_quantiles_real(RayleighTestRig());
 }

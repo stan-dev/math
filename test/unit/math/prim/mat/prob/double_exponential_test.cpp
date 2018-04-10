@@ -41,5 +41,5 @@ TEST(ProbDistributionsDoubleExponential, errorCheck) {
 }
 
 TEST(ProbDistributionsDoubleExponential, distributionTest) {
-  check_quantiles_all_types(DoubleExponentialTestRig());
+  check_quantiles_real_real(DoubleExponentialTestRig());
 }

@@ -41,5 +41,5 @@ TEST(ProbDistributionsScaledInvChiSquare, errorCheck) {
 }
 
 TEST(ProbDistributionsScaledInvChiSquare, distributionTest) {
-  check_quantiles_all_types(ScaledInvChiSquareTestRig());
+  check_quantiles_real_real(ScaledInvChiSquareTestRig());
 }

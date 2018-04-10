@@ -46,5 +46,5 @@ TEST(ProbDistributionsFrechet, errorCheck) {
 }
 
 TEST(ProbDistributionsFrechet, distributionTest) {
-  check_quantiles_all_types(FrechetTestRig());
+  check_quantiles_real_real(FrechetTestRig());
 }
