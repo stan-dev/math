@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -16,7 +17,6 @@ namespace math {
   // }
 
   class matrix_exp_action_handler {
-
     static constexpr int p_max = 8;
     static constexpr int m_max = 55;
     static constexpr double tol = 1.1e-16;
@@ -41,7 +41,7 @@ namespace math {
 
       Eigen::MatrixXd res(A.rows(), b.cols());
 
-      for (long col = 0; col < b.cols(); ++col) {
+      for (int col = 0; col < b.cols(); ++col) {
         bool conv = false;
         Eigen::VectorXd B = b.col(col);
         Eigen::VectorXd F = B;
@@ -61,11 +61,11 @@ namespace math {
             }
           }
           F *= eta;
-          B = F;          
+          B = F;
           if (conv) break;
         }
         res.col(col) = F;
-      } // loop b columns
+      }     // loop b columns
       return res;
     }
 
@@ -90,7 +90,6 @@ namespace math {
         s = (c < 1 ? 1 : c);
       }
     }
-
   };
 
   const std::vector<double>
