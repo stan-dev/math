@@ -33,7 +33,7 @@ class gevv_vvv_vari : public vari {
     alpha_ = alpha->vi_;
     // TODO(carpenter): replace this with array alloc fun call
     v1_ = reinterpret_cast<vari**>(
-        ChainableStack::context().memalloc_.alloc(2 * length_ * sizeof(vari*)));
+        chainable_stack().memalloc_.alloc(2 * length_ * sizeof(vari*)));
     v2_ = v1_ + length_;
     for (size_t i = 0; i < length_; i++)
       v1_[i] = v1[i * stride1].vi_;

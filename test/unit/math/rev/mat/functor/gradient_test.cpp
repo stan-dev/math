@@ -138,6 +138,6 @@ TEST(AgradAutoDiff, RecoverMemory) {
   }
   // depends on starting allocation of 65K not being exceeded
   // without recovery_memory in autodiff::apply_recover(), takes 67M
-  EXPECT_LT(stan::math::ChainableStack::context().memalloc_.bytes_allocated(),
+  EXPECT_LT(stan::math::chainable_stack().memalloc_.bytes_allocated(),
             100000);
 }

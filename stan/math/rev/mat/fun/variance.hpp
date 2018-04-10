@@ -15,7 +15,7 @@ namespace {
 
 inline var calc_variance(size_t size, const var* dtrs) {
   vari** varis = reinterpret_cast<vari**>(
-      ChainableStack::context().memalloc_.alloc(size * sizeof(vari*)));
+      chainable_stack().memalloc_.alloc(size * sizeof(vari*)));
   for (size_t i = 0; i < size; ++i)
     varis[i] = dtrs[i].vi_;
   double sum = 0.0;
@@ -29,7 +29,7 @@ inline var calc_variance(size_t size, const var* dtrs) {
   }
   double variance = sum_of_squares / (size - 1);
   double* partials = reinterpret_cast<double*>(
-      ChainableStack::context().memalloc_.alloc(size * sizeof(double)));
+      chainable_stack().memalloc_.alloc(size * sizeof(double)));
   double two_over_size_m1 = 2 / (size - 1);
   for (size_t i = 0; i < size; ++i)
     partials[i] = two_over_size_m1 * (dtrs[i].vi_->val_ - mean);

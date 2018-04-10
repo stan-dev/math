@@ -44,12 +44,12 @@ class squared_distance_vv_vari : public vari {
                            const Eigen::Matrix<var, R2, C2>& v2)
       : vari(var_squared_distance(v1, v2)), length_(v1.size()) {
     v1_ = reinterpret_cast<vari**>(
-        ChainableStack::context().memalloc_.alloc(length_ * sizeof(vari*)));
+        chainable_stack().memalloc_.alloc(length_ * sizeof(vari*)));
     for (size_t i = 0; i < length_; i++)
       v1_[i] = v1(i).vi_;
 
     v2_ = reinterpret_cast<vari**>(
-        ChainableStack::context().memalloc_.alloc(length_ * sizeof(vari*)));
+        chainable_stack().memalloc_.alloc(length_ * sizeof(vari*)));
     for (size_t i = 0; i < length_; i++)
       v2_[i] = v2(i).vi_;
   }
@@ -88,12 +88,12 @@ class squared_distance_vd_vari : public vari {
                            const Eigen::Matrix<double, R2, C2>& v2)
       : vari(var_squared_distance(v1, v2)), length_(v1.size()) {
     v1_ = reinterpret_cast<vari**>(
-        ChainableStack::context().memalloc_.alloc(length_ * sizeof(vari*)));
+        chainable_stack().memalloc_.alloc(length_ * sizeof(vari*)));
     for (size_t i = 0; i < length_; i++)
       v1_[i] = v1(i).vi_;
 
     v2_ = reinterpret_cast<double*>(
-        ChainableStack::context().memalloc_.alloc(length_ * sizeof(double)));
+        chainable_stack().memalloc_.alloc(length_ * sizeof(double)));
     for (size_t i = 0; i < length_; i++)
       v2_[i] = v2(i);
   }

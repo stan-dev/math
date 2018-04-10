@@ -11,6 +11,11 @@ class chainable_alloc;
 
 typedef AutodiffStackStorage<vari, chainable_alloc> ChainableStack;
 
+ChainableStack& chainable_stack() {
+  static ChainableStack stack;
+  return stack;
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

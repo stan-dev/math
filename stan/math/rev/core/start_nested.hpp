@@ -11,13 +11,13 @@ namespace math {
  * can find it.
  */
 static inline void start_nested() {
-  ChainableStack::context().nested_var_stack_sizes_.push_back(
-      ChainableStack::context().var_stack_.size());
-  ChainableStack::context().nested_var_nochain_stack_sizes_.push_back(
-      ChainableStack::context().var_nochain_stack_.size());
-  ChainableStack::context().nested_var_alloc_stack_starts_.push_back(
-      ChainableStack::context().var_alloc_stack_.size());
-  ChainableStack::context().memalloc_.start_nested();
+  chainable_stack().nested_var_stack_sizes_.push_back(
+      chainable_stack().var_stack_.size());
+  chainable_stack().nested_var_nochain_stack_sizes_.push_back(
+      chainable_stack().var_nochain_stack_.size());
+  chainable_stack().nested_var_alloc_stack_starts_.push_back(
+      chainable_stack().var_alloc_stack_.size());
+  chainable_stack().memalloc_.start_nested();
 }
 
 }  // namespace math

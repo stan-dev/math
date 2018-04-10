@@ -37,31 +37,31 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckUnivariate) {
   const char* function = "check_nonnegative";
   var a(5.0);
 
-  size_t stack_size = stan::math::ChainableStack::context().var_stack_.size();
+  size_t stack_size = stan::math::chainable_stack().var_stack_.size();
 
   EXPECT_EQ(1U, stack_size);
   EXPECT_NO_THROW(check_nonnegative(function, "a", a));
 
   size_t stack_size_after_call
-      = stan::math::ChainableStack::context().var_stack_.size();
+      = stan::math::chainable_stack().var_stack_.size();
   EXPECT_EQ(1U, stack_size_after_call);
 
   a = std::numeric_limits<double>::infinity();
   EXPECT_NO_THROW(check_nonnegative(function, "a", a));
   stack_size_after_call
-      = stan::math::ChainableStack::context().var_stack_.size();
+      = stan::math::chainable_stack().var_stack_.size();
   EXPECT_EQ(2U, stack_size_after_call);
 
   a = 0.0;
   EXPECT_NO_THROW(check_nonnegative(function, "a", a));
   stack_size_after_call
-      = stan::math::ChainableStack::context().var_stack_.size();
+      = stan::math::chainable_stack().var_stack_.size();
   EXPECT_EQ(3U, stack_size_after_call);
 
   a = -1.1;
   EXPECT_THROW(check_nonnegative(function, "a", a), std::domain_error);
   stack_size_after_call
-      = stan::math::ChainableStack::context().var_stack_.size();
+      = stan::math::chainable_stack().var_stack_.size();
   EXPECT_EQ(4U, stack_size_after_call);
   stan::math::recover_memory();
 }
