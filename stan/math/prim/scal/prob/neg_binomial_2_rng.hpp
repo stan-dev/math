@@ -53,6 +53,12 @@ neg_binomial_2_rng(const T_loc& mu, const T_prec& phi, RNG& rng) {
   for (size_t n = 0; n < N; ++n) {
     double mu_div_phi = static_cast<double>(mu_vec[n]) / phi_vec[n];
 
+    // gamma_rng params must be positive and finite
+    check_positive_finite(function,
+                          "Location parameter divided by the "
+                          "precision parameter",
+                          mu_div_phi);
+
     double rng_from_gamma = variate_generator<RNG&, gamma_distribution<> >(
         rng, gamma_distribution<>(phi_vec[n], mu_div_phi))();
 

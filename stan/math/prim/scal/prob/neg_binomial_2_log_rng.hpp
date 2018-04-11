@@ -54,6 +54,12 @@ neg_binomial_2_log_rng(const T_loc& eta, const T_inv& phi, RNG& rng) {
     double exp_eta_div_phi = std::exp(static_cast<double>(eta_vec[n])) /
                              phi_vec[n];
 
+    // gamma_rng params must be positive and finite
+    check_positive_finite(function,
+                          "Exponential of the log-location parameter "
+                          "divided by the precision parameter",
+                          exp_eta_div_phi);
+
     double rng_from_gamma = variate_generator<RNG&, gamma_distribution<> >(
         rng, gamma_distribution<>(phi_vec[n], exp_eta_div_phi))();
 
