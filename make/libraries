@@ -20,10 +20,18 @@ SUNDIALS_CVODES := $(patsubst %.c,%.o,\
   $(wildcard $(SUNDIALS)/src/sunlinsol_band/*.c) \
   $(wildcard $(SUNDIALS)/src/sunlinsol_dense/*.c))
 
+SUNDIALS_IDAS := $(patsubst %.c,%.o,\
+  $(addprefix $(SUNDIALS)/src/idas/, idaa.c idaa_io.c idas.c idas_bbdpre.c idas_direct.c idas_ic.c idas_io.c idas_spils.c) \
+  $(wildcard $(SUNDIALS)/src/sundials/*.c) \
+  $(wildcard $(SUNDIALS)/src/sunmat_band/*.c) \
+  $(wildcard $(SUNDIALS)/src/sunmat_dense/*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol_band/*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol_dense/*.c))
+
 SUNDIALS_NVECSERIAL := $(patsubst %.c,%.o,\
   $(addprefix $(SUNDIALS)/src/, nvec_ser/nvector_serial.c sundials/sundials_math.c))
 
-$(sort $(SUNDIALS_CVODES) $(SUNDIALS_NVECSERIAL)) : %.o : %.c
+$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL)) : %.o : %.c
 	@mkdir -p $(dir $@)
 	$(COMPILE.c) -x c -O$(O) -isystem $(SUNDIALS)/include $< -o $@
 
@@ -31,42 +39,21 @@ $(SUNDIALS)/lib/libsundials_cvodes.a: $(SUNDIALS_CVODES)
 	@mkdir -p $(dir $@)
 	$(AR) -rs $@ $^
 
+$(SUNDIALS)/lib/libsundials_idas.a: $(SUNDIALS_IDAS)
+	@mkdir -p $(dir $@)
+	$(AR) -rs $@ $^
+
 $(SUNDIALS)/lib/libsundials_nvecserial.a: $(SUNDIALS_NVECSERIAL)
 	@mkdir -p $(dir $@)
 	$(AR) -rs $@ $^
 
-LIBSUNDIALS = $(SUNDIALS)/lib/libsundials_nvecserial.a $(SUNDIALS)/lib/libsundials_cvodes.a
+LIBSUNDIALS = $(SUNDIALS)/lib/libsundials_nvecserial.a $(SUNDIALS)/lib/libsundials_cvodes.a $(SUNDIALS)/lib/libsundials_idas.a
 
 STAN_CVODES_HEADERS := $(shell find stan -name *cvodes*.hpp)
 $(STAN_CVODES_HEADERS) : $(LIBSUNDIALS)
 
-##
-# Build rules for IDAS
-##
-
-SUNDIALS_IDAS := $(patsubst %.c,%.o,\
-  $(addprefix $(IDAS)/src/idas/, idaa.c idaa_io.c idas.c idas_bbdpre.c idas_direct.c idas_ic.c idas_io.c idas_spils.c) \
-  $(wildcard $(IDAS)/src/sundials/*.c))
-
-SUNDIALS_IDAS_NVECSERIAL := $(patsubst %.c,%.o,\
-  $(addprefix $(IDAS)/src/, nvec_ser/nvector_serial.c sundials/sundials_math.c))
-
-$(sort $(SUNDIALS_IDAS) $(SUNDIALS_IDAS_NVECSERIAL)) : %.o : %.c
-	@mkdir -p $(dir $@)
-	$(COMPILE.c) -x c -O$(O) -isystem $(IDAS)/include $< -o $@
-
-$(IDAS)/lib/libsundials_idas.a: $(SUNDIALS_IDAS)
-	@mkdir -p $(dir $@)
-	$(AR) -rs $@ $^
-
-$(IDAS)/lib/libsundials_nvecserial.a: $(SUNDIALS_IDAS_NVECSERIAL)
-	@mkdir -p $(dir $@)
-	$(AR) -rs $@ $^
-
-LIBIDAS = $(IDAS)/lib/libsundials_nvecserial.a $(IDAS)/lib/libsundials_idas.a
-
 STAN_IDAS_HEADERS := $(shell find stan -name *idas*.hpp)
-$(STAN_IDAS_HEADERS) : $(LIBIDAS)
+$(STAN_IDAS_HEADERS) : $(LIBSUNDIALS)
 
 ##
 # Build rules for MPI
@@ -93,7 +80,7 @@ $(BOOST)/stage/lib/libboost_mpi.dylib: $(BOOST)/stage/lib/mpi.so
 
 .PHONY: clean-libraries
 clean-libraries:
-	$(RM) $(sort $(SUNDIALS_CVODES) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS) $(SUNDIALS_IDAS) $(SUNDIALS_IDAS_NVECSERIAL) $(LIBIDAS))
+	$(RM) $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS))
 	$(RM) $(BOOST)/stage/lib/*  
 	$(RM) -rf $(BOOST)/bin.v2  
 
