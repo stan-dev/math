@@ -45,7 +45,7 @@ inline Eigen::Matrix<T, N, N> matrix_exp(const Eigen::Matrix<T, N, N>& A) {
 template <typename T>
 inline Eigen::Matrix<T, 1, 1> matrix_exp(const Eigen::Matrix<T, 1, 1>& A) {
   Eigen::Matrix<T, 1, 1> res;
-  res << stan::math::exp(A(0));
+  res << exp(A(0));
   return res;
 }
 }  // namespace math

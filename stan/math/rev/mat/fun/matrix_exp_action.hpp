@@ -5,6 +5,7 @@
 #include <stan/math/rev/mat/fun/matrix_exp_action_handler.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/mat/fun/to_var.hpp>
+#include <stan/math/prim/mat/fun/matrix_exp.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <boost/math/tools/promotion.hpp>
@@ -118,11 +119,11 @@ class matrix_exp_action_vari : public vari {
         A_size_(A.size()),
         B_size_(B.size()),
         t_(t),
-        Ad_(ChainableStack::memalloc_.alloc_array<double>(A_size_)),
-        Bd_(ChainableStack::memalloc_.alloc_array<double>(B_size_)),
-        variRefA_(ChainableStack::memalloc_.alloc_array<vari*>(A_size_)),
-        variRefB_(ChainableStack::memalloc_.alloc_array<vari*>(B_size_)),
-        variRefexpAB_(ChainableStack::memalloc_.alloc_array<vari*>(B_size_)) {
+        Ad_(ChainableStack::context().memalloc_.alloc_array<double>(A_size_)),
+        Bd_(ChainableStack::context().memalloc_.alloc_array<double>(B_size_)),
+        variRefA_(ChainableStack::context().memalloc_.alloc_array<vari*>(A_size_)),
+        variRefB_(ChainableStack::context().memalloc_.alloc_array<vari*>(B_size_)),
+        variRefexpAB_(ChainableStack::context().memalloc_.alloc_array<vari*>(B_size_)) {
     using Eigen::Map;
     using Eigen::MatrixXd;
     for (size_type i = 0; i < A.size(); ++i) {
@@ -213,10 +214,10 @@ class matrix_exp_action_vari<double, N, Tb, Cb> : public vari {
         A_size_(A.size()),
         B_size_(B.size()),
         t_(t),
-        Ad_(ChainableStack::memalloc_.alloc_array<double>(A_size_)),
-        Bd_(ChainableStack::memalloc_.alloc_array<double>(B_size_)),
-        variRefB_(ChainableStack::memalloc_.alloc_array<vari*>(B_size_)),
-        variRefexpAB_(ChainableStack::memalloc_.alloc_array<vari*>(B_size_)) {
+        Ad_(ChainableStack::context().memalloc_.alloc_array<double>(A_size_)),
+        Bd_(ChainableStack::context().memalloc_.alloc_array<double>(B_size_)),
+        variRefB_(ChainableStack::context().memalloc_.alloc_array<vari*>(B_size_)),
+        variRefexpAB_(ChainableStack::context().memalloc_.alloc_array<vari*>(B_size_)) {
     using Eigen::Map;
     using Eigen::MatrixXd;
     for (size_type i = 0; i < A.size(); ++i)
@@ -301,10 +302,10 @@ class matrix_exp_action_vari<Ta, N, double, Cb> : public vari {
         A_size_(A.size()),
         B_size_(B.size()),
         t_(t),
-        Ad_(ChainableStack::memalloc_.alloc_array<double>(A_size_)),
-        Bd_(ChainableStack::memalloc_.alloc_array<double>(B_size_)),
-        variRefA_(ChainableStack::memalloc_.alloc_array<vari*>(A_size_)),
-        variRefexpAB_(ChainableStack::memalloc_.alloc_array<vari*>(B_size_)) {
+        Ad_(ChainableStack::context().memalloc_.alloc_array<double>(A_size_)),
+        Bd_(ChainableStack::context().memalloc_.alloc_array<double>(B_size_)),
+        variRefA_(ChainableStack::context().memalloc_.alloc_array<vari*>(A_size_)),
+        variRefexpAB_(ChainableStack::context().memalloc_.alloc_array<vari*>(B_size_)) {
     using Eigen::Map;
     using Eigen::MatrixXd;
     for (size_type i = 0; i < A.size(); ++i) {
