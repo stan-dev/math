@@ -19,8 +19,8 @@ namespace math {
  * Calculate adjoint of matrix exponential action
  * exp(At)*B when A is data and B is var
  *
+ * @tparam N integer rows and cols of matrix A
  * @param Ad double array pointer to the data of matrix A
- * @param n integer rows and cols of matrix A
  * @param adjexpAB MatrixXd adjoint of exp(At)*B
  * @param t double time data
  */
@@ -36,8 +36,9 @@ Eigen::MatrixXd exp_action_chain_dv(double* Ad, const Eigen::MatrixXd& adjexpAB,
  * Calculate adjoint of matrix exponential action
  * exp(At)*B when A is var and B is data
  *
+ * @tparam N integer rows and cols of matrix A
  * @param Ad double array pointer to the data of matrix A
- * @param n integer rows and cols of matrix A
+ * @param Bd double array pointer to the data of matrix B
  * @param adjexpAB MatrixXd adjoint of exp(At)*B
  * @param t double time data
  */
