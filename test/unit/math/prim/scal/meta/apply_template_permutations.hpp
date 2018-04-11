@@ -27,15 +27,15 @@ struct apply_template_permutations_helper {
         param);
 
     apply_template_permutations_helper<T_typelist1, T_typelist2, T_typelist3,
-                                       T_functor, T_param, I, J, K - 1>{}
-    (func, param);
+                                       T_functor, T_param, I, J, K - 1>{}(
+        func, param);
   }
 };
 
 /*
  * This edge case catches when the paramht-most argument has completed one
- * iteration through all types. It computes func<types1[I], types2[J], types3[0]>,
- * carries from the second argument, and continues the recursion.
+ * iteration through all types. It computes func<types1[I], types2[J],
+ * types3[0]>, carries from the second argument, and continues the recursion.
  *
  * tparam T_typelist1 Tuple with list of types for first argument
  * tparam T_typelist2 Tuple with list of types for second argument
@@ -56,17 +56,16 @@ struct apply_template_permutations_helper<T_typelist1, T_typelist2, T_typelist3,
                              typename std::tuple_element<0, T_typelist3>::type>(
         param);
 
-    apply_template_permutations_helper<T_typelist1, T_typelist2, T_typelist3,
-                                       T_functor, T_param, I, J - 1,
-                                       std::tuple_size<T_typelist3>::value - 1>{}
-    (func, param);
+    apply_template_permutations_helper<
+        T_typelist1, T_typelist2, T_typelist3, T_functor, T_param, I, J - 1,
+        std::tuple_size<T_typelist3>::value - 1>{}(func, param);
   }
 };
 
 /*
  * This edge case catches when the second argument has completed one iteration
- * through all types. It computes func<types1[I], types2[0], types3[0]>, carries from
- * the left-most argument and continues the recursion.
+ * through all types. It computes func<types1[I], types2[0], types3[0]>, carries
+ * from the left-most argument and continues the recursion.
  *
  * tparam T_typelist1 Tuple with list of types for first argument
  * tparam T_typelist2 Tuple with list of types for second argument
@@ -85,18 +84,17 @@ struct apply_template_permutations_helper<T_typelist1, T_typelist2, T_typelist3,
                              typename std::tuple_element<0, T_typelist3>::type>(
         param);
 
-    apply_template_permutations_helper<T_typelist1, T_typelist2, T_typelist3,
-                                       T_functor, T_param, I - 1,
-                                       std::tuple_size<T_typelist2>::value - 1,
-                                       std::tuple_size<T_typelist3>::value - 1>{}
-    (func, param);
+    apply_template_permutations_helper<
+        T_typelist1, T_typelist2, T_typelist3, T_functor, T_param, I - 1,
+        std::tuple_size<T_typelist2>::value - 1,
+        std::tuple_size<T_typelist3>::value - 1>{}(func, param);
   }
 };
 
 /*
  * This edge case catches when all types have been iterated through for each
- * template argument. It computes func<types1[0], types2[0], types3[0]> and ends the
- * recursion.
+ * template argument. It computes func<types1[0], types2[0], types3[0]> and ends
+ * the recursion.
  *
  * tparam T_typelist1 Tuple with list of types for first argument
  * tparam T_typelist2 Tuple with list of types for second argument

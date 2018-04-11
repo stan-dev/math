@@ -17,10 +17,7 @@ void assert_chi_squared(const std::vector<int>& counts,
   double chi = 0;
   for (int i = 0; i < bins; ++i) {
     double discrepancy = expected[i] - counts[i];
-    if(discrepancy == 0 && expected[i] == 0)
-      chi += 0;
-    else
-      chi += discrepancy * discrepancy / expected[i];
+    chi += discrepancy * discrepancy / expected[i];
   }
   boost::math::chi_squared dist(bins - 1);
   double chi_threshold = quantile(complement(dist, tolerance));

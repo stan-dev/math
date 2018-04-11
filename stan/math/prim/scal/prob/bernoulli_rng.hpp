@@ -41,7 +41,7 @@ inline typename VectorBuilder<true, int, T_theta>::type bernoulli_rng(
   size_t N = length(theta);
   VectorBuilder<true, int, T_theta> output(N);
 
-  for(size_t n = 0; n < N; ++n) {
+  for (size_t n = 0; n < N; ++n) {
     variate_generator<RNG&, bernoulli_distribution<> > bernoulli_rng(
         rng, bernoulli_distribution<>(theta_vec[n]));
     output[n] = bernoulli_rng();

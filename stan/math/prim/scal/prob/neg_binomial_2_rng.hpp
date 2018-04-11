@@ -67,7 +67,8 @@ neg_binomial_2_rng(const T_loc& mu, const T_prec& phi, RNG& rng) {
                rng_from_gamma, POISSON_MAX_RATE);
     check_not_nan(function, "Random number that came from gamma distribution",
                   rng_from_gamma);
-    check_nonnegative(function, "Random number that came from gamma distribution",
+    check_nonnegative(function,
+                      "Random number that came from gamma distribution",
                       rng_from_gamma);
 
     output[n] = variate_generator<RNG&, poisson_distribution<> >(

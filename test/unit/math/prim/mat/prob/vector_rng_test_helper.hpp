@@ -10,12 +10,13 @@
 #include <test/unit/math/prim/mat/prob/VectorRealRNGTestRig.hpp>
 #include <test/unit/math/prim/mat/prob/VectorIntRNGTestRig.hpp>
 #include <algorithm>
+#include <map>
 #include <tuple>
 #include <vector>
 
-using ArgumentTypes = std::tuple<int, double, std::vector<int>,
-                                 std::vector<double>, Eigen::VectorXd,
-                                 Eigen::RowVectorXd>;
+using ArgumentTypes
+    = std::tuple<int, double, std::vector<int>, std::vector<double>,
+                 Eigen::VectorXd, Eigen::RowVectorXd>;
 
 /*
  * Fill the vector-like variable params with values from the values argument.
@@ -280,8 +281,8 @@ struct check_dist_throws {
  */
 template <typename T_rig>
 void check_dist_throws_all_types(const T_rig& rig) {
-  apply_template_permutations<ArgumentTypes, ArgumentTypes, ArgumentTypes>
-      (check_dist_throws{}, rig);
+  apply_template_permutations<ArgumentTypes, ArgumentTypes, ArgumentTypes>(
+      check_dist_throws{}, rig);
 }
 
 /*
@@ -295,9 +296,8 @@ void check_dist_throws_all_types(const T_rig& rig) {
  */
 template <typename T_rig>
 void check_dist_throws_int_first_argument(const T_rig& rig) {
-  apply_template_permutations< std::tuple<int, std::vector<int> >,
-                               ArgumentTypes, ArgumentTypes>
-      (check_dist_throws{}, rig);
+  apply_template_permutations<std::tuple<int, std::vector<int> >, ArgumentTypes,
+                              ArgumentTypes>(check_dist_throws{}, rig);
 }
 
 /*
@@ -398,8 +398,8 @@ struct check_quantiles {
  */
 template <typename T_rig>
 void check_quantiles_real(const T_rig& rig) {
-  apply_template_permutations<ArgumentTypes, std::tuple<double>, std::tuple<double> >
-      (check_quantiles{}, rig);
+  apply_template_permutations<ArgumentTypes, std::tuple<double>,
+                              std::tuple<double> >(check_quantiles{}, rig);
 }
 
 /*
@@ -412,8 +412,8 @@ void check_quantiles_real(const T_rig& rig) {
  */
 template <typename T_rig>
 void check_quantiles_real_real(const T_rig& rig) {
-  apply_template_permutations<ArgumentTypes, ArgumentTypes, std::tuple<double> >
-      (check_quantiles{}, rig);
+  apply_template_permutations<ArgumentTypes, ArgumentTypes,
+                              std::tuple<double> >(check_quantiles{}, rig);
 }
 
 /*
@@ -426,8 +426,8 @@ void check_quantiles_real_real(const T_rig& rig) {
  */
 template <typename T_rig>
 void check_quantiles_real_real_real(const T_rig& rig) {
-  apply_template_permutations<ArgumentTypes, ArgumentTypes, ArgumentTypes>
-      (check_quantiles{}, rig);
+  apply_template_permutations<ArgumentTypes, ArgumentTypes, ArgumentTypes>(
+      check_quantiles{}, rig);
 }
 
 /*
@@ -437,12 +437,19 @@ void check_quantiles_real_real_real(const T_rig& rig) {
  *
  * It isn't possible to do this when the random number has infinite support,
  * so the check is actually performed on a transformed random variable f(x):
- *   f(x) = { x ,             if x is in rig.test_points_
- *            not_test_point, if x not in rig.test_points_ }
+ *   f(x) = { x ,              if x is in rig.test_points_
+ *            not_test_point,  if x not in rig.test_points_ }
  *
  * The transformed random variable has the support
  *   { rig.test_points_[0], rig.test_points_[1], ..., rig.test_points_[M - 1],
  *     not_test_point }
+ *
+ *   pmf of f = { pmf(f),        if f(x) is in the support of the tested
+ *                               distribution
+ *                0.0,           if f(x) is not in the support of the tested
+ *                               distribution (this should be enforced by the
+ *                               implementation of rig.pmf)
+ *                the remainder, if f(x) == not_test_point }
  *
  * After generating for each set of parameters rig.N_ random numbers, the exact
  * and empirical pdfs with assert_chi_squared.
@@ -506,8 +513,9 @@ struct check_counts {
       std::vector<double> epmf;
       double total = 0.0;
       for (int n = 0; n < rig.test_points_.size(); ++n) {
-        double e = rig.N_ * rig.pmf(rig.test_points_[n], p1_vec[m], p2_vec[m],
-                                    p3_vec[m]);
+        double e
+            = rig.N_
+              * rig.pmf(rig.test_points_[n], p1_vec[m], p2_vec[m], p3_vec[m]);
         epmf.push_back(e);
         total += e;
       }
@@ -520,7 +528,7 @@ struct check_counts {
         count_map[rig.test_points_[n]] = 0;
       for (int n = 0; n < samples_to_test.size(); ++n) {
         int sample = samples_to_test[n];
-        if(count_map.find(sample) != count_map.end()) {
+        if (count_map.find(sample) != count_map.end()) {
           count_map[sample] += 1;
         } else {
           remainder += 1;
@@ -534,7 +542,22 @@ struct check_counts {
       }
       counts.push_back(remainder);
 
-      assert_chi_squared(counts, epmf, 1e-6);
+      // Trim the zero probability outputs
+      std::vector<int> counts_trimmed;
+      std::vector<double> epmf_trimmed;
+      for (int n = 0; n < counts.size(); ++n) {
+        if (epmf[n] > 0.0) {
+          counts_trimmed.push_back(counts[n]);
+          epmf_trimmed.push_back(epmf[n]);
+        }
+      }
+
+      // If there's only one non-zero probability output, just sanity check it
+      if (counts_trimmed.size() == 1) {
+        EXPECT_EQ(static_cast<double>(counts_trimmed[0]), epmf_trimmed[0]);
+      } else {
+        assert_chi_squared(counts_trimmed, epmf_trimmed, 1e-6);
+      }
     }
   }
 };
@@ -549,8 +572,8 @@ struct check_counts {
  */
 template <typename T_rig>
 void check_counts_real(const T_rig& rig) {
-  apply_template_permutations<ArgumentTypes, std::tuple<double>, std::tuple<double> >
-      (check_counts{}, rig);
+  apply_template_permutations<ArgumentTypes, std::tuple<double>,
+                              std::tuple<double> >(check_counts{}, rig);
 }
 
 /*
@@ -563,8 +586,8 @@ void check_counts_real(const T_rig& rig) {
  */
 template <typename T_rig>
 void check_counts_real_real(const T_rig& rig) {
-  apply_template_permutations<ArgumentTypes, ArgumentTypes, std::tuple<double> >
-      (check_counts{}, rig);
+  apply_template_permutations<ArgumentTypes, ArgumentTypes,
+                              std::tuple<double> >(check_counts{}, rig);
 }
 
 /*
@@ -577,8 +600,8 @@ void check_counts_real_real(const T_rig& rig) {
  */
 template <typename T_rig>
 void check_counts_real_real_real(const T_rig& rig) {
-  apply_template_permutations<ArgumentTypes, ArgumentTypes, ArgumentTypes>
-      (check_counts{}, rig);
+  apply_template_permutations<ArgumentTypes, ArgumentTypes, ArgumentTypes>(
+      check_counts{}, rig);
 }
 
 /*
@@ -592,9 +615,8 @@ void check_counts_real_real_real(const T_rig& rig) {
  */
 template <typename T_rig>
 void check_counts_int_real(const T_rig& rig) {
-  apply_template_permutations<std::tuple<int, std::vector<int> >,
-                              ArgumentTypes, std::tuple<double> >
-      (check_counts{}, rig);
+  apply_template_permutations<std::tuple<int, std::vector<int> >, ArgumentTypes,
+                              std::tuple<double> >(check_counts{}, rig);
 }
 
 /*
@@ -608,9 +630,8 @@ void check_counts_int_real(const T_rig& rig) {
  */
 template <typename T_rig>
 void check_counts_int_real_real(const T_rig& rig) {
-  apply_template_permutations<std::tuple<int, std::vector<int> >,
-                              ArgumentTypes, ArgumentTypes>
-      (check_counts{}, rig);
+  apply_template_permutations<std::tuple<int, std::vector<int> >, ArgumentTypes,
+                              ArgumentTypes>(check_counts{}, rig);
 }
 
 #endif

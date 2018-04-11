@@ -10,18 +10,14 @@
 class NegativeBinomialTestRig : public VectorIntRNGTestRig {
  public:
   NegativeBinomialTestRig()
-      : VectorIntRNGTestRig(
-            10000,
-            10,
-            {0, 1, 2, 3, 4, 5, 6},
-            {0.1, 1.7, 3.99}, {1, 2, 3},
-            {-2.1, -0.5, 0.0}, {-3, -1, 0},
-            {0.1, 1.1, 4.99}, {1, 2, 3},
-            {-3.0, -2.0, 0.0}, {-3, -1, 0}) {}
+      : VectorIntRNGTestRig(10000, 10, {0, 1, 2, 3, 4, 5, 6}, {0.1, 1.7, 3.99},
+                            {1, 2, 3}, {-2.1, -0.5, 0.0}, {-3, -1, 0},
+                            {0.1, 1.1, 4.99}, {1, 2, 3}, {-3.0, -2.0, 0.0},
+                            {-3, -1, 0}) {}
 
   template <typename T1, typename T2, typename T3, typename T_rng>
-  auto generate_samples(const T1& alpha, const T2& beta, const T3&, T_rng& rng) const
-  {
+  auto generate_samples(const T1& alpha, const T2& beta, const T3&,
+                        T_rng& rng) const {
     return stan::math::neg_binomial_rng(alpha, beta, rng);
   }
 

@@ -31,8 +31,8 @@ namespace math {
  * @throw std::domain_error if theta is not a valid probability
  */
 template <typename T_N, typename T_theta, class RNG>
-inline typename VectorBuilder<true, int, T_N, T_theta>::type
-binomial_rng(const T_N& N, const T_theta& theta, RNG& rng) {
+inline typename VectorBuilder<true, int, T_N, T_theta>::type binomial_rng(
+    const T_N& N, const T_theta& theta, RNG& rng) {
   using boost::binomial_distribution;
   using boost::variate_generator;
 
@@ -48,7 +48,7 @@ binomial_rng(const T_N& N, const T_theta& theta, RNG& rng) {
   size_t M = max_size(N, theta);
   VectorBuilder<true, int, T_N, T_theta> output(M);
 
-  for(size_t m = 0; m < M; ++m) {
+  for (size_t m = 0; m < M; ++m) {
     variate_generator<RNG&, binomial_distribution<> > binomial_rng(
         rng, binomial_distribution<>(N_vec[m], theta_vec[m]));
 

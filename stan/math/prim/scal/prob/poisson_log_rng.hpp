@@ -41,7 +41,7 @@ inline typename VectorBuilder<true, int, T_rate>::type poisson_log_rng(
   size_t N = length(alpha);
   VectorBuilder<true, int, T_rate> output(N);
 
-  for(size_t n = 0; n < N; ++n) {
+  for (size_t n = 0; n < N; ++n) {
     variate_generator<RNG&, poisson_distribution<> > poisson_rng(
         rng, poisson_distribution<>(std::exp(alpha_vec[n])));
     output[n] = poisson_rng();

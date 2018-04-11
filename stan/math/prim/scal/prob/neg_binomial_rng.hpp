@@ -32,8 +32,8 @@ namespace math {
  * sizes
  */
 template <typename T_shape, typename T_inv, class RNG>
-inline typename VectorBuilder<true, int, T_shape, T_inv>::type
-neg_binomial_rng(const T_shape& alpha, const T_inv& beta, RNG& rng) {
+inline typename VectorBuilder<true, int, T_shape, T_inv>::type neg_binomial_rng(
+    const T_shape& alpha, const T_inv& beta, RNG& rng) {
   using boost::gamma_distribution;
   using boost::random::poisson_distribution;
   using boost::variate_generator;
@@ -60,7 +60,8 @@ neg_binomial_rng(const T_shape& alpha, const T_inv& beta, RNG& rng) {
                rng_from_gamma, POISSON_MAX_RATE);
     check_not_nan(function, "Random number that came from gamma distribution",
                   rng_from_gamma);
-    check_nonnegative(function, "Random number that came from gamma distribution",
+    check_nonnegative(function,
+                      "Random number that came from gamma distribution",
                       rng_from_gamma);
 
     output[n] = variate_generator<RNG&, poisson_distribution<> >(

@@ -10,16 +10,12 @@
 class PoissonLogTestRig : public VectorIntRNGTestRig {
  public:
   PoissonLogTestRig()
-      : VectorIntRNGTestRig(
-            10000,
-            10,
-            {0, 1, 2, 3, 4, 5, 6},
-            {-0.5, 0.0, 0.1, 1.7}, {-2, 0, 1, 2},
-            {}, {}) {}
+      : VectorIntRNGTestRig(10000, 10, {0, 1, 2, 3, 4, 5, 6},
+                            {-0.5, 0.0, 0.1, 1.7}, {-2, 0, 1, 2}, {}, {}) {}
 
   template <typename T1, typename T2, typename T3, typename T_rng>
-  auto generate_samples(const T1& alpha, const T2&, const T3&, T_rng& rng) const
-  {
+  auto generate_samples(const T1& alpha, const T2&, const T3&,
+                        T_rng& rng) const {
     return stan::math::poisson_log_rng(alpha, rng);
   }
 

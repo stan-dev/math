@@ -51,8 +51,8 @@ neg_binomial_2_log_rng(const T_loc& eta, const T_inv& phi, RNG& rng) {
   VectorBuilder<true, int, T_loc, T_inv> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    double exp_eta_div_phi = std::exp(static_cast<double>(eta_vec[n])) /
-                             phi_vec[n];
+    double exp_eta_div_phi
+        = std::exp(static_cast<double>(eta_vec[n])) / phi_vec[n];
 
     // gamma_rng params must be positive and finite
     check_positive_finite(function,
@@ -68,7 +68,8 @@ neg_binomial_2_log_rng(const T_loc& eta, const T_inv& phi, RNG& rng) {
                rng_from_gamma, POISSON_MAX_RATE);
     check_not_nan(function, "Random number that came from gamma distribution",
                   rng_from_gamma);
-    check_nonnegative(function, "Random number that came from gamma distribution",
+    check_nonnegative(function,
+                      "Random number that came from gamma distribution",
                       rng_from_gamma);
 
     output[n] = variate_generator<RNG&, poisson_distribution<> >(

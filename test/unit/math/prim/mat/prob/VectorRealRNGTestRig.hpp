@@ -34,29 +34,29 @@ class VectorRealRNGTestRig : public VectorRNGTestRig {
   virtual std::vector<double> generate_quantiles(double p1, double p2,
                                                  double p3) const = 0;
 
-  VectorRealRNGTestRig(int N, int M,
-                       std::vector<double> good_p1, std::vector<int> good_p1_int,
-                       std::vector<double> bad_p1, std::vector<int> bad_p1_int,
-                       std::vector<double> good_p2, std::vector<int> good_p2_int,
-                       std::vector<double> bad_p2, std::vector<int> bad_p2_int,
-                       std::vector<double> good_p3, std::vector<int> good_p3_int,
-                       std::vector<double> bad_p3, std::vector<int> bad_p3_int)
-  : VectorRNGTestRig(N, M, good_p1, good_p1_int, bad_p1, bad_p1_int,
-                     good_p2, good_p2_int, bad_p2, bad_p2_int,
-                     good_p3, good_p3_int, bad_p3, bad_p3_int) {}
+  VectorRealRNGTestRig(int N, int M, std::vector<double> good_p1,
+                       std::vector<int> good_p1_int, std::vector<double> bad_p1,
+                       std::vector<int> bad_p1_int, std::vector<double> good_p2,
+                       std::vector<int> good_p2_int, std::vector<double> bad_p2,
+                       std::vector<int> bad_p2_int, std::vector<double> good_p3,
+                       std::vector<int> good_p3_int, std::vector<double> bad_p3,
+                       std::vector<int> bad_p3_int)
+      : VectorRNGTestRig(N, M, good_p1, good_p1_int, bad_p1, bad_p1_int,
+                         good_p2, good_p2_int, bad_p2, bad_p2_int, good_p3,
+                         good_p3_int, bad_p3, bad_p3_int) {}
 
-  VectorRealRNGTestRig(int N, int M,
-                       std::vector<double> good_p1, std::vector<int> good_p1_int,
-                       std::vector<double> bad_p1, std::vector<int> bad_p1_int,
-                       std::vector<double> good_p2, std::vector<int> good_p2_int,
-                       std::vector<double> bad_p2, std::vector<int> bad_p2_int)
+  VectorRealRNGTestRig(int N, int M, std::vector<double> good_p1,
+                       std::vector<int> good_p1_int, std::vector<double> bad_p1,
+                       std::vector<int> bad_p1_int, std::vector<double> good_p2,
+                       std::vector<int> good_p2_int, std::vector<double> bad_p2,
+                       std::vector<int> bad_p2_int)
       : VectorRNGTestRig(N, M, good_p1, good_p1_int, bad_p1, bad_p1_int,
                          good_p2, good_p2_int, bad_p2, bad_p2_int, {}, {}, {},
                          {}) {}
 
-  VectorRealRNGTestRig(int N, int M,
-                       std::vector<double> good_p1, std::vector<int> good_p1_int,
-                       std::vector<double> bad_p1, std::vector<int> bad_p1_int)
+  VectorRealRNGTestRig(int N, int M, std::vector<double> good_p1,
+                       std::vector<int> good_p1_int, std::vector<double> bad_p1,
+                       std::vector<int> bad_p1_int)
       : VectorRNGTestRig(N, M, good_p1, good_p1_int, bad_p1, bad_p1_int, {}, {},
                          {}, {}, {}, {}, {}, {}) {}
 };
