@@ -14,25 +14,25 @@
 namespace stan {
 namespace math {
 
-   /**
-     * Returns a dot product kernel.
-     *
-     * @tparam T_x type of std::vector of elements
-     * @tparam T_sigma type of sigma
-     *
-     * @param x std::vector of elements that can be used in dot product
-     *    This function assumes each element of x is the same size.
-     * @param sigma
-     * @return dot product kernel
-     * @throw std::domain_error if sigma < 0, nan, inf or
-     *   x is nan or infinite
-     */
+/**
+ * Returns a dot product kernel.
+ *
+ * @tparam T_x type of std::vector of elements
+ * @tparam T_sigma type of sigma
+ *
+ * @param x std::vector of elements that can be used in dot product
+ *    This function assumes each element of x is the same size.
+ * @param sigma
+ * @return dot product kernel
+ * @throw std::domain_error if sigma < 0, nan, inf or
+ *   x is nan or infinite
+ */
 template <typename T_x, typename T_sigma>
 inline typename Eigen::Matrix<typename stan::return_type<T_x, T_sigma>::type,
-                             Eigen::Dynamic, Eigen::Dynamic>
+                              Eigen::Dynamic, Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
-  using stan::math::square;
   using stan::math::dot_product;
+  using stan::math::square;
 
   check_not_nan("gp_dot_prod_cov", "sigma", sigma);
   check_nonnegative("gp_dot_prod_cov", "sigma", sigma);
@@ -59,31 +59,31 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
       cov(j, i) = cov(i, j);
     }
   }
-  cov(x_size - 1, x_size - 1) =
-      sigma_sq + dot_product(x[x_size - 1], x[x_size - 1]);
+  cov(x_size - 1, x_size - 1)
+      = sigma_sq + dot_product(x[x_size - 1], x[x_size - 1]);
   return cov;
 }
 
 /**
-     * Returns a dot product kernel.
-     *
-     * @tparam T_x type of std::vector of double
-     * @tparam T_sigma type of sigma
-     *
-     * @param x std::vector of elements that can be used in transpose
-     *   and multiply
-     *    This function assumes each element of x is the same size.
-     * @param sigma
-     * @return dot product kernel
-     * @throw std::domain_error if sigma < 0, nan, inf or
-     *   x is nan or infinite
-     */
+ * Returns a dot product kernel.
+ *
+ * @tparam T_x type of std::vector of double
+ * @tparam T_sigma type of sigma
+ *
+ * @param x std::vector of elements that can be used in transpose
+ *   and multiply
+ *    This function assumes each element of x is the same size.
+ * @param sigma
+ * @return dot product kernel
+ * @throw std::domain_error if sigma < 0, nan, inf or
+ *   x is nan or infinite
+ */
 template <typename T_sigma>
 inline typename Eigen::Matrix<typename stan::return_type<double, T_sigma>::type,
                               Eigen::Dynamic, Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<double> &x, const T_sigma &sigma) {
-  using stan::math::square;
   using stan::math::dot_product;
+  using stan::math::square;
 
   check_not_nan("gp_dot_prod_cov", "sigma", sigma);
   check_nonnegative("gp_dot_prod_cov", "sigma", sigma);
@@ -134,8 +134,8 @@ inline typename Eigen::Matrix<
     Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 const T_sigma &sigma) {
-  using stan::math::square;
   using stan::math::dot_product;
+  using stan::math::square;
 
   check_not_nan("gp_dot_prod_cov", "sigma", sigma);
   check_nonnegative("gp_dot_prod_cov", "sigma", sigma);
@@ -158,11 +158,11 @@ gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   T_sigma sigma_sq = square(sigma);
 
-    for (size_t i = 0; i < x1.size(); ++i) {
-      for (size_t j = 0; j < x2.size(); ++j) {
-        cov(i, j) = sigma_sq + dot_product(x1[i], x2[j]);
-      }
+  for (size_t i = 0; i < x1.size(); ++i) {
+    for (size_t j = 0; j < x2.size(); ++j) {
+      cov(i, j) = sigma_sq + dot_product(x1[i], x2[j]);
     }
+  }
   return cov;
 }
 
@@ -215,6 +215,6 @@ gp_dot_prod_cov(const std::vector<double> &x1, const std::vector<double> &x2,
   }
   return cov;
 }
-}  // math
-}  // stan
+}  // namespace math
+}  // namespace stan
 #endif
