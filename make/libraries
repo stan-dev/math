@@ -6,40 +6,39 @@ BOOST ?= $(MATH)lib/boost_1.66.0
 GTEST ?= $(MATH)lib/gtest_1.7.0
 CPPLINT ?= $(MATH)lib/cpplint_4.45
 IDAS ?= $(MATH)lib/idas-2.1.0
-CVODES ?= $(MATH)lib/cvodes-3.1.0
+SUNDIALS ?= $(MATH)lib/sundials-3.1.0
 
 ##
 # Build rules for cvodes
 ##
 
 SUNDIALS_CVODES := $(patsubst %.c,%.o,\
-  $(addprefix $(CVODES)/src/cvodes/, cvodes.c cvodes_io.c cvodea.c cvodea_io.c cvodes_direct.c cvodes_diag.c cvodes_spils.c cvodes_bandpre.c cvodes_bbdpre.c) \
-  $(wildcard $(CVODES)/src/sundials/*.c) \
-  $(wildcard $(CVODES)/src/sunmat_band/*.c) \
-  $(wildcard $(CVODES)/src/sunmat_dense/*.c) \
-  $(wildcard $(CVODES)/src/sunlinsol_band/*.c) \
-  $(wildcard $(CVODES)/src/sunlinsol_dense/*.c))
+  $(addprefix $(SUNDIALS)/src/cvodes/, cvodes.c cvodes_io.c cvodea.c cvodea_io.c cvodes_direct.c cvodes_diag.c cvodes_spils.c cvodes_bandpre.c cvodes_bbdpre.c) \
+  $(wildcard $(SUNDIALS)/src/sundials/*.c) \
+  $(wildcard $(SUNDIALS)/src/sunmat_band/*.c) \
+  $(wildcard $(SUNDIALS)/src/sunmat_dense/*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol_band/*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol_dense/*.c))
 
 SUNDIALS_NVECSERIAL := $(patsubst %.c,%.o,\
-  $(addprefix $(CVODES)/src/, nvec_ser/nvector_serial.c sundials/sundials_math.c))
-
+  $(addprefix $(SUNDIALS)/src/, nvec_ser/nvector_serial.c sundials/sundials_math.c))
 
 $(sort $(SUNDIALS_CVODES) $(SUNDIALS_NVECSERIAL)) : %.o : %.c
 	@mkdir -p $(dir $@)
-	$(COMPILE.c) -x c -O$(O) -isystem $(CVODES)/include $< -o $@
+	$(COMPILE.c) -x c -O$(O) -isystem $(SUNDIALS)/include $< -o $@
 
-$(CVODES)/lib/libsundials_cvodes.a: $(SUNDIALS_CVODES)
+$(SUNDIALS)/lib/libsundials_cvodes.a: $(SUNDIALS_CVODES)
 	@mkdir -p $(dir $@)
 	$(AR) -rs $@ $^
 
-$(CVODES)/lib/libsundials_nvecserial.a: $(SUNDIALS_NVECSERIAL)
+$(SUNDIALS)/lib/libsundials_nvecserial.a: $(SUNDIALS_NVECSERIAL)
 	@mkdir -p $(dir $@)
 	$(AR) -rs $@ $^
 
-LIBCVODES = $(CVODES)/lib/libsundials_nvecserial.a $(CVODES)/lib/libsundials_cvodes.a
+LIBSUNDIALS = $(SUNDIALS)/lib/libsundials_nvecserial.a $(SUNDIALS)/lib/libsundials_cvodes.a
 
 STAN_CVODES_HEADERS := $(shell find stan -name *cvodes*.hpp)
-$(STAN_CVODES_HEADERS) : $(LIBCVODES)
+$(STAN_CVODES_HEADERS) : $(LIBSUNDIALS)
 
 ##
 # Build rules for IDAS
@@ -94,7 +93,7 @@ $(BOOST)/stage/lib/libboost_mpi.dylib: $(BOOST)/stage/lib/mpi.so
 
 .PHONY: clean-libraries
 clean-libraries:
-	$(RM) $(sort $(SUNDIALS_CVODES) $(SUNDIALS_NVECSERIAL) $(LIBCVODES) $(SUNDIALS_IDAS) $(SUNDIALS_IDAS_NVECSERIAL) $(LIBIDAS))
+	$(RM) $(sort $(SUNDIALS_CVODES) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS) $(SUNDIALS_IDAS) $(SUNDIALS_IDAS_NVECSERIAL) $(LIBIDAS))
 	$(RM) $(BOOST)/stage/lib/*  
 	$(RM) -rf $(BOOST)/bin.v2  
 
