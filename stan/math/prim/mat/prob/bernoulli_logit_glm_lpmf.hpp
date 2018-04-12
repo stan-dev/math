@@ -62,7 +62,7 @@ typename return_type<T_x, T_beta, T_alpha>::type bernoulli_logit_glm_lpmf(
   T_partials_return logp(0.0);
 
   check_bounded(function, "Vector of dependent variables", n, 0, 1);
-  check_finite(function, "Matrix of independent variables", x);
+  check_finite(function, "Matrix of independent variables", x); // minor bottleneck
   check_finite(function, "Weight vector", beta);
   check_finite(function, "Intercept", alpha);
   check_consistent_sizes(function, "Rows in matrix of independent variables",
@@ -93,7 +93,7 @@ typename return_type<T_x, T_beta, T_alpha>::type bernoulli_logit_glm_lpmf(
 	Eigen::Array<T_partials_return, Dynamic, 1> ntheta = signs.array()
 							* (value_of(x) * beta_dbl
 								 + Matrix<double, Dynamic, 1>::Ones(N, 1) * value_of(alpha))
-										.array();  //bottleneck
+										.array();  // major bottleneck 2 -- it seems to be the value_of(x), because it constructs a new eigen object. meanwhile that is unneccessary here.
 
   Eigen::Array<T_partials_return, Dynamic, 1> exp_m_ntheta = (-ntheta).exp();
 
@@ -110,7 +110,7 @@ typename return_type<T_x, T_beta, T_alpha>::type bernoulli_logit_glm_lpmf(
   }
 
   // Compute the necessary derivatives.
-  operands_and_partials<T_x, T_beta, T_alpha> ops_partials(x, beta, alpha); //bottleneck
+  operands_and_partials<T_x, T_beta, T_alpha> ops_partials(x, beta, alpha); // major bottleneck 1
   if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
         && is_constant_struct<T_alpha>::value)) {
     Matrix<T_partials_return, Dynamic, 1> theta_derivative(N, 1);
@@ -125,10 +125,101 @@ typename return_type<T_x, T_beta, T_alpha>::type bernoulli_logit_glm_lpmf(
     }
     if (!is_constant_struct<T_beta>::value) {
 			assign_to_matrix_or_broadcast_array(ops_partials.edge2_.partials_,
-			value_of(x).transpose() * theta_derivative);
+			value_of(x).transpose() * theta_derivative); // minor bottleneck
     }
     if (!is_constant_struct<T_x>::value) {
       ops_partials.edge1_.partials_ = theta_derivative * beta_dbl.transpose();
+    }
+    if (!is_constant_struct<T_alpha>::value) {
+      ops_partials.edge3_.partials_[0] = theta_derivative.sum();
+    }
+  }
+
+  return ops_partials.build(logp);
+}
+
+template <bool propto, typename T_n, typename T_beta,
+          typename T_alpha>
+typename return_type<T_beta, T_alpha>::type bernoulli_logit_glm_lpmf(
+    const T_n &n, const Eigen::MatrixXd&x, const T_beta &beta, const T_alpha &alpha) {
+  static const char *function = "bernoulli_logit_glm_lpmf";
+  typedef typename stan::partials_return_type<T_n, T_beta, T_alpha>::type
+      T_partials_return;
+
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::exp;
+
+  if (size_zero(n, x, beta))
+    return 0.0;
+
+  T_partials_return logp(0.0);
+
+  check_bounded(function, "Vector of dependent variables", n, 0, 1);
+  check_finite(function, "Matrix of independent variables", x); // minor bottleneck
+  check_finite(function, "Weight vector", beta);
+  check_finite(function, "Intercept", alpha);
+  check_consistent_sizes(function, "Rows in matrix of independent variables",
+                         x.col(0), "Vector of dependent variables", n);
+  check_consistent_sizes(function, "Columns in matrix of independent variables",
+                         x.row(0), "Weight vector", beta);
+
+  if (!include_summand<propto, T_beta, T_alpha>::value)
+    return 0.0;
+
+  const size_t N = x.col(0).size();
+  const size_t M = x.row(0).size();
+
+  Matrix<T_partials_return, Dynamic, 1> signs(N, 1);
+  {
+    scalar_seq_view<T_n> n_vec(n);
+    for (size_t n = 0; n < N; ++n) {
+      signs[n] = 2 * n_vec[n] - 1;
+    }
+  }
+  Matrix<T_partials_return, Dynamic, 1> beta_dbl(M, 1);
+  {
+    scalar_seq_view<T_beta> beta_vec(beta);
+    for (size_t m = 0; m < M; ++m) {
+      beta_dbl[m] = value_of(beta_vec[m]);
+    }
+  }
+	Eigen::Array<T_partials_return, Dynamic, 1> ntheta = signs.array()
+							* (x * beta_dbl
+								 + Matrix<double, Dynamic, 1>::Ones(N, 1) * value_of(alpha))
+										.array();  // major bottleneck 2 -- it seems to be the value_of(x), because it constructs a new eigen object. meanwhile that is unneccessary here.
+
+  Eigen::Array<T_partials_return, Dynamic, 1> exp_m_ntheta = (-ntheta).exp();
+
+  static const double cutoff = 20.0;
+  for (size_t n = 0; n < N; ++n) {
+    // Compute the log-density and handle extreme values gracefully
+    // using Taylor approximations.
+    if (ntheta[n] > cutoff)
+      logp -= exp_m_ntheta[n];
+    else if (ntheta[n] < -cutoff)
+      logp += ntheta[n];
+    else
+      logp -= log1p(exp_m_ntheta[n]);
+  }
+
+  // Compute the necessary derivatives.
+  operands_and_partials<Eigen::MatrixXd, T_beta, T_alpha> ops_partials(x, beta, alpha); // major bottleneck 1
+  if (!(is_constant_struct<T_beta>::value
+        && is_constant_struct<T_alpha>::value)) {
+    Matrix<T_partials_return, Dynamic, 1> theta_derivative(N, 1);
+    for (size_t n = 0; n < N; ++n) {
+      if (ntheta[n] > cutoff)
+        theta_derivative[n] = -exp_m_ntheta[n];
+      else if (ntheta[n] < -cutoff)
+        theta_derivative[n] = signs[n];
+      else
+        theta_derivative[n]
+            = signs[n] * exp_m_ntheta[n] / (exp_m_ntheta[n] + 1);
+    }
+    if (!is_constant_struct<T_beta>::value) {
+			assign_to_matrix_or_broadcast_array(ops_partials.edge2_.partials_,
+			x.transpose() * theta_derivative); // minor bottleneck
     }
     if (!is_constant_struct<T_alpha>::value) {
       ops_partials.edge3_.partials_[0] = theta_derivative.sum();
