@@ -15,7 +15,6 @@
 namespace stan {
 namespace math {
 
-
 /**
  * Return a uniform random variate for the given upper and lower bounds using
  * the specified random number generator.
