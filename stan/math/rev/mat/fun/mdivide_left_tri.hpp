@@ -33,15 +33,12 @@ class mdivide_left_tri_vv_vari : public vari {
             sizeof(double) * A.rows() * A.cols()))),
         C_(reinterpret_cast<double *>(chainable_stack.memalloc_.alloc(
             sizeof(double) * B.rows() * B.cols()))),
-        variRefA_(
-            reinterpret_cast<vari **>(chainable_stack.memalloc_.alloc(
-                sizeof(vari *) * A.rows() * (A.rows() + 1) / 2))),
-        variRefB_(
-            reinterpret_cast<vari **>(chainable_stack.memalloc_.alloc(
-                sizeof(vari *) * B.rows() * B.cols()))),
-        variRefC_(
-            reinterpret_cast<vari **>(chainable_stack.memalloc_.alloc(
-                sizeof(vari *) * B.rows() * B.cols()))) {
+        variRefA_(reinterpret_cast<vari **>(chainable_stack.memalloc_.alloc(
+            sizeof(vari *) * A.rows() * (A.rows() + 1) / 2))),
+        variRefB_(reinterpret_cast<vari **>(chainable_stack.memalloc_.alloc(
+            sizeof(vari *) * B.rows() * B.cols()))),
+        variRefC_(reinterpret_cast<vari **>(chainable_stack.memalloc_.alloc(
+            sizeof(vari *) * B.rows() * B.cols()))) {
     using Eigen::Map;
     using Eigen::Matrix;
 
@@ -144,12 +141,10 @@ class mdivide_left_tri_dv_vari : public vari {
             sizeof(double) * A.rows() * A.cols()))),
         C_(reinterpret_cast<double *>(chainable_stack.memalloc_.alloc(
             sizeof(double) * B.rows() * B.cols()))),
-        variRefB_(
-            reinterpret_cast<vari **>(chainable_stack.memalloc_.alloc(
-                sizeof(vari *) * B.rows() * B.cols()))),
-        variRefC_(
-            reinterpret_cast<vari **>(chainable_stack.memalloc_.alloc(
-                sizeof(vari *) * B.rows() * B.cols()))) {
+        variRefB_(reinterpret_cast<vari **>(chainable_stack.memalloc_.alloc(
+            sizeof(vari *) * B.rows() * B.cols()))),
+        variRefC_(reinterpret_cast<vari **>(chainable_stack.memalloc_.alloc(
+            sizeof(vari *) * B.rows() * B.cols()))) {
     using Eigen::Map;
     using Eigen::Matrix;
 
@@ -227,12 +222,10 @@ class mdivide_left_tri_vd_vari : public vari {
             sizeof(double) * A.rows() * A.cols()))),
         C_(reinterpret_cast<double *>(chainable_stack.memalloc_.alloc(
             sizeof(double) * B.rows() * B.cols()))),
-        variRefA_(
-            reinterpret_cast<vari **>(chainable_stack.memalloc_.alloc(
-                sizeof(vari *) * A.rows() * (A.rows() + 1) / 2))),
-        variRefC_(
-            reinterpret_cast<vari **>(chainable_stack.memalloc_.alloc(
-                sizeof(vari *) * B.rows() * B.cols()))) {
+        variRefA_(reinterpret_cast<vari **>(chainable_stack.memalloc_.alloc(
+            sizeof(vari *) * A.rows() * (A.rows() + 1) / 2))),
+        variRefC_(reinterpret_cast<vari **>(chainable_stack.memalloc_.alloc(
+            sizeof(vari *) * B.rows() * B.cols()))) {
     using Eigen::Map;
     using Eigen::Matrix;
 

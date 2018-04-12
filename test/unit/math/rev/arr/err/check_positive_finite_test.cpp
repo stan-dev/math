@@ -72,14 +72,12 @@ TEST(AgradRevErrorHandlingScalar, CheckPositiveFiniteVarCheckVectorized) {
   EXPECT_THROW(check_positive_finite(function, "a", a), std::domain_error);
   EXPECT_NO_THROW(check_positive_finite(function, "a", a[2]));
 
-  size_t stack_size_after_call
-      = stan::math::chainable_stack.var_stack_.size();
+  size_t stack_size_after_call = stan::math::chainable_stack.var_stack_.size();
   EXPECT_EQ(5U, stack_size_after_call);
 
   a[2] = std::numeric_limits<double>::infinity();
   EXPECT_THROW(check_positive_finite(function, "a", a), std::domain_error);
-  stack_size_after_call
-      = stan::math::chainable_stack.var_stack_.size();
+  stack_size_after_call = stan::math::chainable_stack.var_stack_.size();
   EXPECT_EQ(6U, stack_size_after_call);
   stan::math::recover_memory();
 }
