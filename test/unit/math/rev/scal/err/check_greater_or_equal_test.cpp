@@ -45,17 +45,17 @@ TEST(AgradRevErrorHandlingScalar, CheckGreaterOrEqualVarCheckUnivariate) {
   const char* function = "check_greater_or_equal";
   var a(5.0);
 
-  size_t stack_size = stan::math::ChainableStack::var_stack_.size();
+  size_t stack_size = stan::math::chainable_stack.var_stack_.size();
 
   EXPECT_EQ(1U, stack_size);
   EXPECT_NO_THROW(check_greater_or_equal(function, "a", a, 2.0));
 
-  size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
+  size_t stack_size_after_call = stan::math::chainable_stack.var_stack_.size();
   EXPECT_EQ(1U, stack_size_after_call);
 
   EXPECT_THROW(check_greater_or_equal(function, "a", a, 10.0),
                std::domain_error);
-  stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
+  stack_size_after_call = stan::math::chainable_stack.var_stack_.size();
   EXPECT_EQ(1U, stack_size_after_call);
 
   stan::math::recover_memory();

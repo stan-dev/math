@@ -58,7 +58,7 @@ Eigen::Matrix<var, R, C> unit_vector_constrain(
   check_nonzero_size("unit_vector", "y", y);
 
   vari** y_vi_array = reinterpret_cast<vari**>(
-      ChainableStack::memalloc_.alloc(sizeof(vari*) * y.size()));
+      chainable_stack.memalloc_.alloc(sizeof(vari*) * y.size()));
   for (int i = 0; i < y.size(); ++i)
     y_vi_array[i] = y.coeff(i).vi_;
 
@@ -71,7 +71,7 @@ Eigen::Matrix<var, R, C> unit_vector_constrain(
   Eigen::VectorXd unit_vector_d = y_d / norm;
 
   double* unit_vector_y_d_array = reinterpret_cast<double*>(
-      ChainableStack::memalloc_.alloc(sizeof(double) * y_d.size()));
+      chainable_stack.memalloc_.alloc(sizeof(double) * y_d.size()));
   for (int i = 0; i < y_d.size(); ++i)
     unit_vector_y_d_array[i] = unit_vector_d.coeff(i);
 
