@@ -3,9 +3,9 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_finite.gpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/rev/mat/fun/dot_product.hpp>
@@ -59,8 +59,8 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
       cov(j, i) = cov(i, j);
     }
   }
-  cov(x_size - 1, x_size - 1)
-      = sigma_sq + dot_product(x[x_size - 1], x[x_size - 1]);
+  cov(x_size - 1, x_size - 1) =
+      sigma_sq + dot_product(x[x_size - 1], x[x_size - 1]);
   return cov;
 }
 
@@ -215,6 +215,6 @@ gp_dot_prod_cov(const std::vector<double> &x1, const std::vector<double> &x2,
   }
   return cov;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif
