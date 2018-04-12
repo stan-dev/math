@@ -24,7 +24,7 @@ TEST(MathMatrix, matrix_exp_2x2_1) {
   }
 
   {  // fixed mat
-    Eigen::Matrix<stan::math::fvar, 2, 2> input(2, 2), output(2, 2);
+    Eigen::Matrix<stan::math::fvar<double>, 2, 2> input(2, 2), output(2, 2);
     input << a, 0, 0, 4;
     output = stan::math::matrix_exp_2x2(input);
 
@@ -70,7 +70,7 @@ TEST(MathMatrix, matrix_exp_2x2_2) {
   }
 
   {  // fixed mat
-    Eigen::Matrix<stan::math::fvar, 2, 2> input;
+    Eigen::Matrix<stan::math::fvar<double>, 2, 2> input;
     input << -2 * a + 3 * b, 1.5 * a - 1.5 * b, -4 * a + 4 * b, 3 * a - 2 * b;
 
     stan::math::matrix_fd output;
