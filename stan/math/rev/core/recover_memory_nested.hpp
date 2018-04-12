@@ -23,24 +23,24 @@ static inline void recover_memory_nested() {
         "empty_nested() must be false"
         " before calling recover_memory_nested()");
 
-  ChainableStack::context().var_stack_.resize(
-      ChainableStack::context().nested_var_stack_sizes_.back());
-  ChainableStack::context().nested_var_stack_sizes_.pop_back();
+  chainable_stack.var_stack_.resize(
+      chainable_stack.nested_var_stack_sizes_.back());
+  chainable_stack.nested_var_stack_sizes_.pop_back();
 
-  ChainableStack::context().var_nochain_stack_.resize(
-      ChainableStack::context().nested_var_nochain_stack_sizes_.back());
-  ChainableStack::context().nested_var_nochain_stack_sizes_.pop_back();
+  chainable_stack.var_nochain_stack_.resize(
+      chainable_stack.nested_var_nochain_stack_sizes_.back());
+  chainable_stack.nested_var_nochain_stack_sizes_.pop_back();
 
   for (size_t i
-       = ChainableStack::context().nested_var_alloc_stack_starts_.back();
-       i < ChainableStack::context().var_alloc_stack_.size(); ++i) {
-    delete ChainableStack::context().var_alloc_stack_[i];
+       = chainable_stack.nested_var_alloc_stack_starts_.back();
+       i < chainable_stack.var_alloc_stack_.size(); ++i) {
+    delete chainable_stack.var_alloc_stack_[i];
   }
-  ChainableStack::context().var_alloc_stack_.resize(
-      ChainableStack::context().nested_var_alloc_stack_starts_.back());
-  ChainableStack::context().nested_var_alloc_stack_starts_.pop_back();
+  chainable_stack.var_alloc_stack_.resize(
+      chainable_stack.nested_var_alloc_stack_starts_.back());
+  chainable_stack.nested_var_alloc_stack_starts_.pop_back();
 
-  ChainableStack::context().memalloc_.recover_nested();
+  chainable_stack.memalloc_.recover_nested();
 }
 
 }  // namespace math
