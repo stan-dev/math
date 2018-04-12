@@ -15,10 +15,10 @@
 
 #define DEVICE_FILTER CL_DEVICE_TYPE_GPU
 #ifndef OPENCL_DEVICE_ID
-#define OPENCL_DEVICE_ID 0
+#error "OPENCL_DEVICE_ID must be set!"
 #endif
 #ifndef OPENCL_PLATFORM_ID
-#define OPENCL_PLATFORM_ID 0
+#error "OPENCL_PLATFORM_ID must be set!"
 #endif
 
 /**
@@ -29,7 +29,6 @@
  *    3. set up command queue
  *    4. initialize kernel groups
  */
-
 namespace stan {
 namespace math {
 
@@ -105,7 +104,6 @@ class opencl_context_base {
     kernel_info["dummy2"] = {
         false, "timing", "__kernel void dummy2(__global const int* foo) { };"};
   }
-  static opencl_context_base instance_;
 
  protected:
   cl::Context context_;  // Manages the the device, queue, platform, memory,etc.

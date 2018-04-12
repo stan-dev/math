@@ -8,9 +8,10 @@ TEST(MathGpu, getInfo) {
   cl::Context cl = stan::math::opencl_context.context();
   EXPECT_NE("", stan::math::opencl_context.description());
   EXPECT_NE("", stan::math::opencl_context.capabilities());
-  // auto foo = stan::math::opencl_context.capabilities();
-  // std::cout << foo << std::endl;
-  EXPECT_EQ(256, stan::math::opencl_context.max_workgroup_size());
+  EXPECT_GT(stan::math::opencl_context.max_workgroup_size(), 0);
+}
+
+TEST(MathGpu, context_construction) {
   cl::Context cv = stan::math::opencl_context.context();
   cl::CommandQueue cq = stan::math::opencl_context.queue();
   std::vector<cl::Device> dv = stan::math::opencl_context.device();
@@ -18,8 +19,8 @@ TEST(MathGpu, getInfo) {
 }
 
 TEST(MathGpu, kernel_construction) {
-  cl::Kernel dummy = stan::math::opencl_context.get_kernel("dummy");
-  cl::Kernel dummy2 = stan::math::opencl_context.get_kernel("dummy2");
+  EXPECT_NO_THROW(stan::math::opencl_context.get_kernel("dummy"));
+  EXPECT_NO_THROW(stan::math::opencl_context.get_kernel("dummy2"));
 }
 
 TEST(opencl_context, platform) {
@@ -33,8 +34,8 @@ TEST(opencl_context, platform) {
         << std::endl;
   }
 
-  EXPECT_EQ(1, all_platforms.size())
-      << "expecting to find one platform" << std::endl
+  EXPECT_GE(all_platforms.size(), 1)
+      << "expecting to find at least one platform" << std::endl
       << msg.str();
 }
 
@@ -49,8 +50,8 @@ TEST(opencl_context, devices) {
     msg << "- device name: " << device.getInfo<CL_DEVICE_NAME>() << std::endl;
   }
 
-  EXPECT_EQ(2, all_devices.size())
-      << "expecting to find two devices" << std::endl
+  EXPECT_GE(all_devices.size(), 1)
+      << "expecting to find at least one device" << std::endl
       << msg.str();
 
   msg.str("");
