@@ -59,8 +59,8 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
       cov(j, i) = cov(i, j);
     }
   }
-  cov(x_size - 1, x_size - 1) =
-      sigma_sq + dot_product(x[x_size - 1], x[x_size - 1]);
+  cov(x_size - 1, x_size - 1)
+      = sigma_sq + dot_product(x[x_size - 1], x[x_size - 1]);
   return cov;
 }
 
@@ -215,6 +215,6 @@ gp_dot_prod_cov(const std::vector<double> &x1, const std::vector<double> &x2,
   }
   return cov;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
