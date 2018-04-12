@@ -10,7 +10,7 @@ namespace math {
  * Return true if there is no nested autodiff being executed.
  */
 static inline bool empty_nested() {
-  return ChainableStack::context().nested_var_stack_sizes_.empty();
+  return chainable_stack.nested_var_stack_sizes_.empty();
 }
 
 }  // namespace math

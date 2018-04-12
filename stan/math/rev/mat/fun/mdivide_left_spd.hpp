@@ -37,15 +37,12 @@ class mdivide_left_spd_vv_vari : public vari {
       : vari(0.0),
         M_(A.rows()),
         N_(B.cols()),
-        variRefA_(
-            reinterpret_cast<vari **>(ChainableStack::context().memalloc_.alloc(
-                sizeof(vari *) * A.rows() * A.cols()))),
-        variRefB_(
-            reinterpret_cast<vari **>(ChainableStack::context().memalloc_.alloc(
-                sizeof(vari *) * B.rows() * B.cols()))),
-        variRefC_(
-            reinterpret_cast<vari **>(ChainableStack::context().memalloc_.alloc(
-                sizeof(vari *) * B.rows() * B.cols()))),
+        variRefA_(reinterpret_cast<vari **>(chainable_stack.memalloc_.alloc(
+            sizeof(vari *) * A.rows() * A.cols()))),
+        variRefB_(reinterpret_cast<vari **>(chainable_stack.memalloc_.alloc(
+            sizeof(vari *) * B.rows() * B.cols()))),
+        variRefC_(reinterpret_cast<vari **>(chainable_stack.memalloc_.alloc(
+            sizeof(vari *) * B.rows() * B.cols()))),
         alloc_(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
     using Eigen::Map;
     using Eigen::Matrix;
@@ -123,12 +120,10 @@ class mdivide_left_spd_dv_vari : public vari {
       : vari(0.0),
         M_(A.rows()),
         N_(B.cols()),
-        variRefB_(
-            reinterpret_cast<vari **>(ChainableStack::context().memalloc_.alloc(
-                sizeof(vari *) * B.rows() * B.cols()))),
-        variRefC_(
-            reinterpret_cast<vari **>(ChainableStack::context().memalloc_.alloc(
-                sizeof(vari *) * B.rows() * B.cols()))),
+        variRefB_(reinterpret_cast<vari **>(chainable_stack.memalloc_.alloc(
+            sizeof(vari *) * B.rows() * B.cols()))),
+        variRefC_(reinterpret_cast<vari **>(chainable_stack.memalloc_.alloc(
+            sizeof(vari *) * B.rows() * B.cols()))),
         alloc_(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
     using Eigen::Map;
     using Eigen::Matrix;
@@ -188,12 +183,10 @@ class mdivide_left_spd_vd_vari : public vari {
       : vari(0.0),
         M_(A.rows()),
         N_(B.cols()),
-        variRefA_(
-            reinterpret_cast<vari **>(ChainableStack::context().memalloc_.alloc(
-                sizeof(vari *) * A.rows() * A.cols()))),
-        variRefC_(
-            reinterpret_cast<vari **>(ChainableStack::context().memalloc_.alloc(
-                sizeof(vari *) * B.rows() * B.cols()))),
+        variRefA_(reinterpret_cast<vari **>(chainable_stack.memalloc_.alloc(
+            sizeof(vari *) * A.rows() * A.cols()))),
+        variRefC_(reinterpret_cast<vari **>(chainable_stack.memalloc_.alloc(
+            sizeof(vari *) * B.rows() * B.cols()))),
         alloc_(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
     using Eigen::Map;
     using Eigen::Matrix;
