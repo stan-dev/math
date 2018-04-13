@@ -50,7 +50,7 @@ class cov_exp_quad_vari : public vari {
    * Constructor for cov_exp_quad.
    *
    * All memory allocated in
-   * ChainableStack's stack_alloc arena.
+   * ChainableStack::instance.s stack_alloc arena.
    *
    * It is critical for the efficiency of this object
    * that the constructor create new varis that aren't
@@ -72,14 +72,14 @@ class cov_exp_quad_vari : public vari {
         l_d_(value_of(l)),
         sigma_d_(value_of(sigma)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
-        dist_(chainable_stack.memalloc_.alloc_array<double>(
+        dist_(ChainableStack::instance.memalloc_.alloc_array<double>(
             size_ltri_)),
         l_vari_(l.vi_),
         sigma_vari_(sigma.vi_),
         cov_lower_(
-            chainable_stack.memalloc_.alloc_array<vari*>(size_ltri_)),
+            ChainableStack::instance.memalloc_.alloc_array<vari*>(size_ltri_)),
         cov_diag_(
-            chainable_stack.memalloc_.alloc_array<vari*>(size_)) {
+            ChainableStack::instance.memalloc_.alloc_array<vari*>(size_)) {
     double inv_half_sq_l_d = 0.5 / (l_d_ * l_d_);
     size_t pos = 0;
     for (size_t j = 0; j < size_ - 1; ++j) {
@@ -143,7 +143,7 @@ class cov_exp_quad_vari<T_x, double, T_l> : public vari {
    * Constructor for cov_exp_quad.
    *
    * All memory allocated in
-   * ChainableStack's stack_alloc arena.
+   * ChainableStack::instance.s stack_alloc arena.
    *
    * It is critical for the efficiency of this object
    * that the constructor create new varis that aren't
@@ -164,13 +164,13 @@ class cov_exp_quad_vari<T_x, double, T_l> : public vari {
         l_d_(value_of(l)),
         sigma_d_(value_of(sigma)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
-        dist_(chainable_stack.memalloc_.alloc_array<double>(
+        dist_(ChainableStack::instance.memalloc_.alloc_array<double>(
             size_ltri_)),
         l_vari_(l.vi_),
         cov_lower_(
-            chainable_stack.memalloc_.alloc_array<vari*>(size_ltri_)),
+            ChainableStack::instance.memalloc_.alloc_array<vari*>(size_ltri_)),
         cov_diag_(
-            chainable_stack.memalloc_.alloc_array<vari*>(size_)) {
+            ChainableStack::instance.memalloc_.alloc_array<vari*>(size_)) {
     double inv_half_sq_l_d = 0.5 / (l_d_ * l_d_);
     size_t pos = 0;
     for (size_t j = 0; j < size_ - 1; ++j) {

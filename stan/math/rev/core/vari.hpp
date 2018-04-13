@@ -56,14 +56,14 @@ class vari {
    * @param x Value of the constructed variable.
    */
   explicit vari(double x) : val_(x), adj_(0.0) {
-    chainable_stack.var_stack_.push_back(this);
+    ChainableStack::instance.var_stack_.push_back(this);
   }
 
   vari(double x, bool stacked) : val_(x), adj_(0.0) {
     if (stacked)
-      chainable_stack.var_stack_.push_back(this);
+      ChainableStack::instance.var_stack_.push_back(this);
     else
-      chainable_stack.var_nochain_stack_.push_back(this);
+      ChainableStack::instance.var_nochain_stack_.push_back(this);
   }
 
   /**
@@ -123,7 +123,7 @@ class vari {
    * @return Pointer to allocated bytes.
    */
   static inline void* operator new(size_t nbytes) {
-    return chainable_stack.memalloc_.alloc(nbytes);
+    return ChainableStack::instance.memalloc_.alloc(nbytes);
   }
 
   /**

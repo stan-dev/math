@@ -9,19 +9,7 @@ namespace math {
 class vari;
 class chainable_alloc;
 
-typedef AutodiffStackStorage<vari, chainable_alloc> ChainableStack;
-
-struct ADStack {
-#ifdef STAN_THREADS
-  thread_local
-#endif
-  static ChainableStack instance;
-};
-
-#ifdef STAN_THREADS
-thread_local
-#endif
-ChainableStack ADStack::instance;
+typedef ADStacks<vari, chainable_alloc> ChainableStack;
 
 }  // namespace math
 }  // namespace stan

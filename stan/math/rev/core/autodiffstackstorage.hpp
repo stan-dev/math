@@ -20,6 +20,20 @@ struct AutodiffStackStorage {
   std::vector<size_t> nested_var_alloc_stack_starts_;
 };
 
+template <typename ChainableT, typename ChainableAllocT>
+struct ADStacks {
+#ifdef STAN_THREADS
+  thread_local
+#endif
+  static AutodiffStackStorage<ChainableT, ChainableAllocT> instance;
+};
+
+template <typename ChainableT, typename ChainableAllocT>
+#ifdef STAN_THREADS
+thread_local
+#endif
+AutodiffStackStorage<ChainableT, ChainableAllocT> ADStacks<ChainableT, ChainableAllocT>::instance;
+
 }  // namespace math
 }  // namespace stan
 #endif

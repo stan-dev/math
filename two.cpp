@@ -4,6 +4,6 @@
 extern int sassy();
 
 int main() {
-  std::cout << "Two's: " << &stan::math::ADStack::instance.memalloc_ << std::endl;
+  std::cout << "Two's: " << &stan::math::ChainableStack::instance.memalloc_ << std::endl;
   return sassy();
 }

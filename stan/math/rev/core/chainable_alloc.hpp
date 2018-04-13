@@ -16,7 +16,7 @@ namespace math {
 class chainable_alloc {
  public:
   chainable_alloc() {
-    chainable_stack.var_alloc_stack_.push_back(this);
+    ChainableStack::instance.var_alloc_stack_.push_back(this);
   }
   virtual ~chainable_alloc() {}
 };

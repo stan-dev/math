@@ -18,14 +18,14 @@ namespace math {
  * @param o ostream to modify
  */
 inline void print_stack(std::ostream& o) {
-  o << "STACK, size=" << chainable_stack.var_stack_.size()
+  o << "STACK, size=" << ChainableStack::instance.var_stack_.size()
     << std::endl;
   // TODO(carpenter): this shouldn't need to be cast any more
-  for (size_t i = 0; i < chainable_stack.var_stack_.size(); ++i)
-    o << i << "  " << chainable_stack.var_stack_[i] << "  "
-      << (static_cast<vari*>(chainable_stack.var_stack_[i]))->val_
+  for (size_t i = 0; i < ChainableStack::instance.var_stack_.size(); ++i)
+    o << i << "  " << ChainableStack::instance.var_stack_[i] << "  "
+      << (static_cast<vari*>(ChainableStack::instance.var_stack_[i]))->val_
       << " : "
-      << (static_cast<vari*>(chainable_stack.var_stack_[i]))->adj_
+      << (static_cast<vari*>(ChainableStack::instance.var_stack_[i]))->adj_
       << std::endl;
 }
 
