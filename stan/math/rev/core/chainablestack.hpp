@@ -18,6 +18,11 @@ struct ADStack {
   static ChainableStack instance;
 };
 
+#ifdef STAN_THREADS
+thread_local
+#endif
+ChainableStack ADStack::instance;
+
 }  // namespace math
 }  // namespace stan
 #endif
