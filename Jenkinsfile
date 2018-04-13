@@ -153,6 +153,8 @@ pipeline {
                         unstash 'MathSetup'
                         sh setupCC()
                         sh "echo STAN_OPENCL=true>> make/local"
+                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
+                        sh "echo OPENCL_DEVICE_ID=0>> make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }

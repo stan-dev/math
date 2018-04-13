@@ -15,10 +15,10 @@
 
 #define DEVICE_FILTER CL_DEVICE_TYPE_GPU
 #ifndef OPENCL_DEVICE_ID
-#error "OPENCL_DEVICE_ID must be set!"
+#error "OPENCL_DEVICE_ID_NOT_SET"
 #endif
 #ifndef OPENCL_PLATFORM_ID
-#error "OPENCL_PLATFORM_ID must be set!"
+#error "OPENCL_PLATFORM_ID_NOT_SET"
 #endif
 
 /**
