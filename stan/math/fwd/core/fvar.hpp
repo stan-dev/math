@@ -287,6 +287,18 @@ struct fvar {
   }
 };
 
+// this should probably be moved to something _parallel_ to:
+// stan/math/rev/scal/fun/boost_isfinite
+// needed for fullPivLu() method on non-Hermitian Eigen matrix types
+// used in stan's complex test
+// called from Eigen::internal::isfinite_impl via ADL
+template <class T>
+bool isfinite(fvar<T> const& v){
+ using std::isfinite;
+ using boost::math::isfinite;
+ return isfinite(v.val());
+}
+
 namespace internal {
 
 /**
@@ -300,6 +312,12 @@ struct z_fvar : fvar<T> {
   using fvar<T>::fvar;                           ///< inherit all ctors
   z_fvar(fvar<T> const& z = 0.) : fvar<T>(z){};  ///< converting ctor from fvar
 };
+
+///variables are arithmetic, a trait used in complex
+template <class T>
+struct is_arith<fvar<T>> : std::true_type {};
+template <class T>
+struct is_arith<z_fvar<T>> : std::true_type {};
 
 }  // namespace internal
 
@@ -320,4 +338,5 @@ struct complex<stan::math::fvar<T>>
 };
 
 }  // namespace std
+
 #endif

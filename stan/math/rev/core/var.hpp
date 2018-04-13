@@ -498,6 +498,12 @@ struct z_var : var {
   z_var(Z const z = 0) : var(z){};
 };
 
+///variables are arithmetic, a trait used in complex
+template <>
+struct is_arith<var> : std::true_type {};
+template <>
+struct is_arith<z_var> : std::true_type {};
+
 }  // namespace internal
 
 }  // namespace math
