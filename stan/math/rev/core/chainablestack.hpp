@@ -11,10 +11,12 @@ class chainable_alloc;
 
 typedef AutodiffStackStorage<vari, chainable_alloc> ChainableStack;
 
+struct ADStack {
 #ifdef STAN_THREADS
-thread_local
+  thread_local
 #endif
-static ChainableStack chainable_stack;
+  static ChainableStack instance;
+};
 
 }  // namespace math
 }  // namespace stan
