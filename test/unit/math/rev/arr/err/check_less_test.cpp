@@ -17,18 +17,18 @@ TEST(AgradRevErrorHandlingScalar, CheckLessVarCheckVectorized) {
   for (int i = 0; i < N; ++i)
     a.push_back(var(i));
 
-  size_t stack_size = stan::math::ChainableStack::context().var_stack_.size();
+  size_t stack_size = stan::math::ChainableStack::instance.var_stack_.size();
 
   EXPECT_EQ(5U, stack_size);
   EXPECT_NO_THROW(check_less(function, "a", a, 10.0));
 
   size_t stack_size_after_call
-      = stan::math::ChainableStack::context().var_stack_.size();
+      = stan::math::ChainableStack::instance.var_stack_.size();
   EXPECT_EQ(5U, stack_size_after_call);
 
   EXPECT_THROW(check_less(function, "a", a, 2.0), std::domain_error);
   stack_size_after_call
-      = stan::math::ChainableStack::context().var_stack_.size();
+      = stan::math::ChainableStack::instance.var_stack_.size();
   EXPECT_EQ(5U, stack_size_after_call);
 
   stan::math::recover_memory();

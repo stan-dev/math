@@ -24,10 +24,10 @@ class determinant_vari : public vari {
       : vari(determinant_vari_calc(A)),
         rows_(A.rows()),
         cols_(A.cols()),
-        A_(reinterpret_cast<double*>(ChainableStack::context().memalloc_.alloc(
+        A_(reinterpret_cast<double*>(ChainableStack::instance.memalloc_.alloc(
             sizeof(double) * A.rows() * A.cols()))),
         adjARef_(
-            reinterpret_cast<vari**>(ChainableStack::context().memalloc_.alloc(
+            reinterpret_cast<vari**>(ChainableStack::instance.memalloc_.alloc(
                 sizeof(vari*) * A.rows() * A.cols()))) {
     size_t pos = 0;
     for (size_type j = 0; j < cols_; j++) {
