@@ -1,8 +1,8 @@
 # Makefile for Stan.
 ##
 
-two: one.o
-	$(CXX) $(CXXFLAGS) -o two two.cpp one.o
+main: one.o two.o
+	$(CXX) $(CXXFLAGS) -o main $^
 
 # The default target of this Makefile is...
 help:
