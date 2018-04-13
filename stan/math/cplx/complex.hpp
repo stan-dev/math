@@ -18,13 +18,30 @@ class complex;  // forward declaration of stan's complex
 
 /// trait to see if the template parameter is std's or stan's complex
 template <class>
-struct is_cplx : std::false_type {};
+struct is_cplx_helper : std::false_type {};
 template <class T>
-struct is_cplx<std::complex<T>> : std::true_type {};
+struct is_cplx_helper<std::complex<T>> : std::true_type {};
 template <class T>
-struct is_cplx<complex<T>> : std::true_type {};
+struct is_cplx_helper<complex<T>> : std::true_type {};
+template <class T>
+struct is_cplx : is_cplx_helper<std::decay_t<T>> {};
 template <class T>
 inline constexpr bool is_cplx_v = is_cplx<T>::value;
+
+/// trait to see if the template parameter is an arithmetic type
+/// enforces value semantics
+/// fvar and var specialize this trait
+template <class T>
+struct is_arith : std::is_arithmetic<T> {};
+template <class T>
+inline constexpr bool is_arith_v = is_arith<T>::value;
+
+/// trait to see if the template parameter is complex or arithmetic
+template <class T>
+struct is_cplx_or_arith :
+ std::integral_constant<bool, is_cplx_v<T> || is_arith_v<T>> {};
+template <class T>
+inline constexpr bool is_cplx_or_arith_v = is_cplx_or_arith<T>::value;
 
 /// trait to remove the complex wrapper around a type
 template <class T>
@@ -42,12 +59,6 @@ struct rm_cplx<complex<T>> {
 template <class T>
 using rm_cplx_t = typename rm_cplx<T>::type;
 
-/// trait to disentangle eigen from complex
-template <class T>
-struct is_eigen : std::is_base_of<Eigen::EigenBase<std::remove_cv_t<T>>, T> {};
-template <class T>
-inline constexpr bool is_eigen_v = is_eigen<T>::value;
-
 /// This class exists purely to forward the interface of std::complex and serve
 /// as a tag for the free functions below. Without this class, the free
 /// functions  would have to be written to extend std::complex, which would
@@ -62,12 +73,12 @@ struct complex : std::complex<T> {
    * std::complex template requires the argument type to match the template
    * type. This is the same reason why std::complex<double> can't be multiplied
    * by an int.
-   * tparam R type of real argument. Won't fire if complex or Eigen.
+   * tparam R type of real argument. Won't fire on non-arithmetic types.
    * tparam I type of imaginary argument.
    * param[in] real, the pure real component of the complex number.
    * param[in] imag, the pure imaginary component of the complex number*/
   template <class R = T, class I = T,
-            std::enable_if_t<!is_cplx_v<R> && !is_eigen_v<R>>* = nullptr>
+            std::enable_if_t<is_arith_v<R>>* = nullptr>
   complex(const R real = 0, const I imag = 0) : std::complex<T>(real, imag) {}
 };
 
@@ -174,17 +185,20 @@ namespace Eigen {
 
 /// Eigen scalar op traits specialization for complex variables.
 template<class T1,class T2,template<class,class>class OP>
-struct ScalarBinaryOpTraits<T1,std::enable_if_t<!std::is_same_v<T1,T2> &&
- !stan::math::internal::is_eigen_v<T1>&& !stan::math::internal::is_eigen_v<T2>&&
- ((stan::math::internal::is_cplx_v<T1>&& //next boolean avoids Eigen's template
+struct ScalarBinaryOpTraits<T1,std::enable_if_t<
+ stan::math::internal::is_cplx_or_arith_v<T1> && //!is_eigen VectorBlock
+ stan::math::internal::is_cplx_or_arith_v<T2> && //!is_eigen VectorBlock
+ !std::is_same_v<T1,T2> && //avoid Eigen's template
+ ((stan::math::internal::is_cplx_v<T1>&& //next boolean avoids Eigen
     !std::is_same_v<stan::math::internal::rm_cplx_t<T1>,T2>) ||
-  (stan::math::internal::is_cplx_v<T2>&& //next boolean avoids Eigen's template
+  (stan::math::internal::is_cplx_v<T2>&& //next boolean avoids Eigen
     !std::is_same_v<T1,stan::math::internal::rm_cplx_t<T2>>)),T2>,
  OP<T1,T2>>{
   typedef std::complex<typename boost::math::tools::promote_args<
-      stan::math::internal::rm_cplx_t<T1>,
-      stan::math::internal::rm_cplx_t<T2>>::type>
-      ReturnType;
+   //decay_t is deliberately omitted above to match & avoid Eigen
+   stan::math::internal::rm_cplx_t<std::decay_t<T1>>,
+   stan::math::internal::rm_cplx_t<std::decay_t<T2>>>::type>
+   ReturnType;
 };
 
 }  // namespace Eigen
