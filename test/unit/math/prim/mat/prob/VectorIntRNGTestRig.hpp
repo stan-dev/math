@@ -42,9 +42,9 @@ class VectorIntRNGTestRig : public VectorRNGTestRig {
                       std::vector<double> bad_p2, std::vector<int> bad_p2_int,
                       std::vector<double> good_p3, std::vector<int> good_p3_int,
                       std::vector<double> bad_p3, std::vector<int> bad_p3_int)
-      : VectorRNGTestRig(N, M, good_p1, good_p1_int, bad_p1,
-                         bad_p1_int, good_p2, good_p2_int, bad_p2, bad_p2_int,
-                         good_p3, good_p3_int, bad_p3, bad_p3_int),
+      : VectorRNGTestRig(N, M, good_p1, good_p1_int, bad_p1, bad_p1_int,
+                         good_p2, good_p2_int, bad_p2, bad_p2_int, good_p3,
+                         good_p3_int, bad_p3, bad_p3_int),
         test_points_(test_points) {}
 
   VectorIntRNGTestRig(int N, int M, std::vector<int> test_points,
@@ -57,8 +57,8 @@ class VectorIntRNGTestRig : public VectorRNGTestRig {
                             bad_p2_int, {}, {}, {}, {}) {}
 
   VectorIntRNGTestRig(int N, int M, std::vector<int> test_points,
-                   std::vector<double> good_p1, std::vector<int> good_p1_int,
-                   std::vector<double> bad_p1, std::vector<int> bad_p1_int)
+                      std::vector<double> good_p1, std::vector<int> good_p1_int,
+                      std::vector<double> bad_p1, std::vector<int> bad_p1_int)
       : VectorIntRNGTestRig(N, M, test_points, good_p1, good_p1_int, bad_p1,
                             bad_p1_int, {}, {}, {}, {}, {}, {}, {}, {}) {}
 };

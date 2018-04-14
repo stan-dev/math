@@ -84,8 +84,8 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
     //  it's really an fmod() with a positivity constraint
     output[n]
         = sign * std::acos(W)
-        + std::fmod(std::fmod(mu_vec[n], 2 * pi()) + 2 * stan::math::pi(),
-                    2 * pi());
+          + std::fmod(std::fmod(mu_vec[n], 2 * pi()) + 2 * stan::math::pi(),
+                      2 * pi());
   }
 
   return output.data();
