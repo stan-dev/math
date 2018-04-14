@@ -32,9 +32,10 @@ struct AutodiffStackStorage {
  * [1] and [2] and the discussions those PRs link to as well.
  *
  * These are thread_local only if the user asks for it with -DSTAN_THREADS. This
- * is because Apple clang compilers before 2016 don't support thread_local. We
- * have proposed removing support for those[3], and will remove this ifdef at
- * that time.
+ * is primarily because Apple clang compilers before 2016 don't support
+ * thread_local. We have proposed removing support for those[3], and
+ * at that time we should evaluate the performance of a switch to thread_local.
+ * If there is no loss in performance, we can remove this ifdef.
  *
  * [0] https://isocpp.org/wiki/faq/ctors#static-init-order
  * [1] https://github.com/stan-dev/math/pull/840
