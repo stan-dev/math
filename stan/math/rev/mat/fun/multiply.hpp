@@ -161,8 +161,7 @@ class multiply_mat_vari<Ta, 1, Ca, Tb, 1> : public vari {
         size_(A.cols()),
         Ad_(ChainableStack::instance.memalloc_.alloc_array<double>(size_)),
         Bd_(ChainableStack::instance.memalloc_.alloc_array<double>(size_)),
-        variRefA_(
-            ChainableStack::instance.memalloc_.alloc_array<vari*>(size_)),
+        variRefA_(ChainableStack::instance.memalloc_.alloc_array<vari*>(size_)),
         variRefB_(
             ChainableStack::instance.memalloc_.alloc_array<vari*>(size_)) {
     using Eigen::Map;

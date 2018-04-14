@@ -25,14 +25,16 @@ struct ADStacks {
 #ifdef STAN_THREADS
   thread_local
 #endif
-  static AutodiffStackStorage<ChainableT, ChainableAllocT> instance;
+      static AutodiffStackStorage<ChainableT, ChainableAllocT>
+          instance;
 };
 
 template <typename ChainableT, typename ChainableAllocT>
 #ifdef STAN_THREADS
 thread_local
 #endif
-AutodiffStackStorage<ChainableT, ChainableAllocT> ADStacks<ChainableT, ChainableAllocT>::instance;
+    AutodiffStackStorage<ChainableT, ChainableAllocT>
+        ADStacks<ChainableT, ChainableAllocT>::instance;
 
 }  // namespace math
 }  // namespace stan

@@ -72,8 +72,8 @@ class cov_exp_quad_vari : public vari {
         l_d_(value_of(l)),
         sigma_d_(value_of(sigma)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
-        dist_(ChainableStack::instance.memalloc_.alloc_array<double>(
-            size_ltri_)),
+        dist_(
+            ChainableStack::instance.memalloc_.alloc_array<double>(size_ltri_)),
         l_vari_(l.vi_),
         sigma_vari_(sigma.vi_),
         cov_lower_(
@@ -164,8 +164,8 @@ class cov_exp_quad_vari<T_x, double, T_l> : public vari {
         l_d_(value_of(l)),
         sigma_d_(value_of(sigma)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
-        dist_(ChainableStack::instance.memalloc_.alloc_array<double>(
-            size_ltri_)),
+        dist_(
+            ChainableStack::instance.memalloc_.alloc_array<double>(size_ltri_)),
         l_vari_(l.vi_),
         cov_lower_(
             ChainableStack::instance.memalloc_.alloc_array<vari*>(size_ltri_)),
