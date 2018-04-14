@@ -57,6 +57,13 @@ $(CVODES_TESTS) : $(LIBCVODES)
 IDAS_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *idas*_test.cpp) $(shell find test -name *_dae_*_test.cpp))
 $(IDAS_TESTS) : $(LIBIDAS)
 
+############################################################
+#
+# OpenCL tests
+##
+
+OPENCL_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *opencl*_test.cpp))
+$(OPENCL_TESTS) : LDFLAGS += $(LDFLAGS_OPENCL)
 
 ############################################################
 #
