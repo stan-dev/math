@@ -25,11 +25,11 @@ struct AutodiffStackStorage {
  * This is useful in a pretty limited set of circumstances, not just because
  * it's thread_local, but also because of "the static init order fiasco"[0].
  * Anywhere this is used, we must be absolutely positive that it doesn't matter
- * when the singleton will get initialized relative to other static variables. In
- * exchange, we get a much more performant singleton pattern than is available
- * with the standard C++11 singleton pattern relying on a function wrapping a
- * static local variable. There has been some discussion on this; see [1] and
- * [2] and the discussions those PRs link to as well.
+ * when the singleton will get initialized relative to other static variables.
+ * In exchange, we get a much more performant singleton pattern than is
+ * available with the standard C++11 singleton pattern relying on a function
+ * wrapping a static local variable. There has been some discussion on this; see
+ * [1] and [2] and the discussions those PRs link to as well.
  *
  * These are thread_local only if the user asks for it with -DSTAN_THREADS. This
  * is because Apple clang compilers before 2016 don't support thread_local. We
