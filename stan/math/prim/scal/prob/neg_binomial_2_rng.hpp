@@ -23,8 +23,8 @@ namespace math {
  * @tparam T_loc Type of location parameter
  * @tparam T_prec Type of precision parameter
  * @tparam RNG type of random number generator
- * @param alpha (Sequence of) positive location parameter(s)
- * @param beta (Sequence of) positive precision parameter(s)
+ * @param mu (Sequence of) positive location parameter(s)
+ * @param phi (Sequence of) positive precision parameter(s)
  * @param rng random number generator
  * @return (Sequence of) negative binomial random variate(s)
  * @throw std::domain_error if mu or phi are nonpositive

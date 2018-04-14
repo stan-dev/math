@@ -23,8 +23,8 @@ namespace math {
  * @tparam T_loc Type of log-location parameter
  * @tparam T_inv Type of inverse overdispersion parameter
  * @tparam RNG type of random number generator
- * @param alpha (Sequence of) positive log-location parameter(s)
- * @param beta (Sequence of) positive inverse overdispersion parameter(s)
+ * @param eta (Sequence of) positive log-location parameter(s)
+ * @param phi (Sequence of) positive inverse dispersion parameter(s)
  * @param rng random number generator
  * @return (Sequence of) negative binomial random variate(s)
  * @throw std::domain_error if eta is non-finite or phi is nonpositive
