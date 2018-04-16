@@ -7,8 +7,12 @@
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/max_size.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <cmath>
+#include <boost/random/uniform_real_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
@@ -42,8 +46,9 @@ namespace math {
  * sizes
  */
 template <typename T_loc, typename T_conc, class RNG>
-inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
-    const T_loc& mu, const T_conc& kappa, RNG& rng) {
+inline typename VectorBuilder<true, double, T_loc, T_conc>::type
+von_mises_rng(const T_loc& mu, const T_conc& kappa, RNG& rng) {
+  using boost::random::uniform_real_distribution;
   using boost::variate_generator;
   static const char* function = "von_mises_rng";
 
@@ -57,8 +62,8 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
   size_t N = max_size(mu, kappa);
   VectorBuilder<true, double, T_loc, T_conc> output(N);
 
-  variate_generator<RNG&, std::uniform_real_distribution<> > uniform_rng(
-      rng, std::uniform_real_distribution<>(0.0, 1.0));
+  variate_generator<RNG&, uniform_real_distribution<> > uniform_rng(
+      rng, uniform_real_distribution<>(0.0, 1.0));
 
   for (size_t n = 0; n < N; ++n) {
     double r = 1 + std::pow((1 + 4 * kappa_vec[n] * kappa_vec[n]), 0.5);
