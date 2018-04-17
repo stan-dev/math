@@ -46,8 +46,8 @@ namespace math {
  * sizes
  */
 template <typename T_loc, typename T_conc, class RNG>
-inline typename VectorBuilder<true, double, T_loc, T_conc>::type
-von_mises_rng(const T_loc& mu, const T_conc& kappa, RNG& rng) {
+inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
+    const T_loc& mu, const T_conc& kappa, RNG& rng) {
   using boost::random::uniform_real_distribution;
   using boost::variate_generator;
   static const char* function = "von_mises_rng";
