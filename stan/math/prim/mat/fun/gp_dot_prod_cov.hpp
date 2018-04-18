@@ -16,12 +16,12 @@ namespace math {
 
 /**
  * Returns a dot product covariance matrix.
- * 
+ *
  * $k(x,x') = \sigma^2 + x * x'$
  *
- * A dot product covariance matrix is the same covariance matrix 
+ * A dot product covariance matrix is the same covariance matrix
  * as in bayesian regression with N(0,1) priors on regression coefficients
- * and a N(0,\sigma^2) prior on the constant function. See Rasmussen and 
+ * and a N(0,\sigma^2) prior on the constant function. See Rasmussen and
  * Williams et al 2006, Chapter 4.
  *
  * @tparam T_x type of std::vector of elements
@@ -30,7 +30,8 @@ namespace math {
  * @param x std::vector of elements that can be used in dot product.
  *    This function assumes each element of x is the same size.
  * @param sigma is the constant function that can be used in stan::math::square
- * @return dot product dot product covariance matrix that is positive semi-definite
+ * @return dot product dot product covariance matrix that is positive
+ * semi-definite
  * @throw std::domain_error if sigma < 0, nan, inf or
  *   x is nan or infinite
  */
@@ -46,7 +47,7 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
   check_finite("gp_dot_prod_cov", "sigma", sigma);
 
   size_t x_size = x.size();
-  for(size_t i = 0; i < x_size; ++i)
+  for (size_t i = 0; i < x_size; ++i)
     check_not_nan("gp_dot_prod_cov", "x", x[i]);
 
   check_finite("gp_dot_prod_cov", "x", x);
@@ -75,11 +76,11 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
  *
  * $k(x,x') = \sigma^2 + x * x'$
  *
- * A dot product covariance matrix is the same covariance matrix 
+ * A dot product covariance matrix is the same covariance matrix
  * as in bayesian regression with N(0,1) priors on regression coefficients
- * and a N(0,\sigma^2) prior on the constant function. See Rasmussen and 
+ * and a N(0,\sigma^2) prior on the constant function. See Rasmussen and
  * Williams et al 2006, Chapter 4.
- * 
+ *
  * @tparam T_x type of std::vector of double
  * @tparam T_sigma type of sigma
  *
@@ -103,7 +104,7 @@ gp_dot_prod_cov(const std::vector<double> &x, const T_sigma &sigma) {
   check_finite("gp_dot_prod_cov", "sigma", sigma);
 
   size_t x_size = x.size();
-  for(size_t i = 0; i < x_size; ++i)
+  for (size_t i = 0; i < x_size; ++i)
     check_not_nan("gp_dot_prod_cov", "x", x[i]);
 
   check_finite("gp_dot_prod_cov", "x", x);
@@ -128,14 +129,14 @@ gp_dot_prod_cov(const std::vector<double> &x, const T_sigma &sigma) {
 }
 
 /**
- * Returns a dot product covariance matrix of differing 
+ * Returns a dot product covariance matrix of differing
  * x lengths.
  *
  * $k(x,x') = \sigma^2 + x * x'$
  *
- * A dot product covariance matrix is the same covariance matrix 
+ * A dot product covariance matrix is the same covariance matrix
  * as in bayesian regression with N(0,1) priors on regression coefficients
- * and a N(0,\sigma^2) prior on the constant function. See Rasmussen and 
+ * and a N(0,\sigma^2) prior on the constant function. See Rasmussen and
  * Williams et al 2006, Chapter 4.
  *
  * @tparam T_x1 type of first std::vector of elements
@@ -164,12 +165,12 @@ gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
-  for(size_t i = 0; i < x1_size; ++i)
+  for (size_t i = 0; i < x1_size; ++i)
     check_not_nan("gp_dot_prod_cov", "x1", x1[i]);
 
   check_finite("gp_dot_prod_cov", "x1", x1);
 
-  for(size_t i = 0; i < x2_size; ++i)
+  for (size_t i = 0; i < x2_size; ++i)
     check_not_nan("gp_dot_prod_cov", "x2", x2[i]);
 
   check_finite("gp_dot_prod_cov", "x2", x2);
@@ -197,9 +198,9 @@ gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  *
  * $k(x,x') = \sigma^2 + x * x'$
  *
- * A dot product covariance matrix is the same covariance matrix 
+ * A dot product covariance matrix is the same covariance matrix
  * as in bayesian regression with N(0,1) priors on regression coefficients
- * and a N(0,\sigma^2) prior on the constant function. See Rasmussen and 
+ * and a N(0,\sigma^2) prior on the constant function. See Rasmussen and
  * Williams et al 2006, Chapter 4.
  *
  * @tparam T_x1 type of first std::vector of double
@@ -226,12 +227,12 @@ gp_dot_prod_cov(const std::vector<double> &x1, const std::vector<double> &x2,
 
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
-  for(size_t i = 0; i < x1_size; ++i)
+  for (size_t i = 0; i < x1_size; ++i)
     check_not_nan("gp_dot_prod_cov", "x1", x1[i]);
 
   check_finite("gp_dot_prod_cov", "x1", x1);
 
-  for(size_t i = 0; i < x2_size; ++i)
+  for (size_t i = 0; i < x2_size; ++i)
     check_not_nan("gp_dot_prod_cov", "x2", x2[i]);
 
   check_finite("gp_dot_prod_cov", "x2", x2);
