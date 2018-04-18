@@ -10,7 +10,6 @@ TEST(AgradRevMatrix, logSoftmaxLeak) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::log_softmax;
-  using stan::math::log_softmax;
   using stan::math::var;
   using stan::math::vector_v;
 
@@ -23,7 +22,7 @@ TEST(AgradRevMatrix, logSoftmaxLeak) {
     }
     Matrix<var, Dynamic, 1> theta = log_softmax(x);
   }
-  EXPECT_GT(stan::math::ChainableStack::context().memalloc_.bytes_allocated(),
+  EXPECT_GT(stan::math::ChainableStack::instance_.memalloc_.bytes_allocated(),
             4000000);
 }
 
