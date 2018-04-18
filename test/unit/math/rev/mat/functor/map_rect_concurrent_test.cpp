@@ -37,7 +37,7 @@ struct map_rect : public ::testing::Test {
   }
 };
 
-TEST_F(map_rect, serial_eval_ok_vd) {
+TEST_F(map_rect, concurrent_eval_ok_vd) {
   stan::math::vector_v shared_params_v = stan::math::to_var(shared_params_d);
   stan::math::vector_v res1 = stan::math::map_rect<0, hard_work>(
       shared_params_v, job_params_d, x_r, x_i);
@@ -63,7 +63,7 @@ TEST_F(map_rect, serial_eval_ok_vd) {
   }
 }
 
-TEST_F(map_rect, serial_eval_ok_dv) {
+TEST_F(map_rect, concurrent_eval_ok_dv) {
   std::vector<stan::math::vector_v> job_params_v;
 
   for (std::size_t i = 0; i < N; i++)
@@ -109,7 +109,7 @@ TEST_F(map_rect, serial_eval_ok_dv) {
   }
 }
 
-TEST_F(map_rect, serial_eval_ok_vv) {
+TEST_F(map_rect, concurrent_eval_ok_vv) {
   stan::math::vector_v shared_params_v = stan::math::to_var(shared_params_d);
   std::vector<stan::math::vector_v> job_params_v;
 

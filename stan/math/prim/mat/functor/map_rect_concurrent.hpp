@@ -32,7 +32,7 @@ map_rect_concurrent(
   const vector_d shared_params_dbl = value_of(shared_params);
   std::vector<std::future<std::vector<matrix_d>>> futures;
 
-  auto chunk_job = [&](int start, int end) {
+  auto chunk_job = [&](int start, int end) -> std::vector<matrix_d> {
     const int size = end - start;
     std::vector<matrix_d> chunk_f_out;
     chunk_f_out.reserve(size);
@@ -42,9 +42,10 @@ map_rect_concurrent(
     return chunk_f_out;
   };
 
-  int num_threads = 1;
+  int num_threads = 10;
 
 #ifdef STAN_THREADS
+  /*
   const char* env_stan_num_threads = std::getenv("STAN_NUM_THREADS");
   if (env_stan_num_threads != nullptr) {
     const int env_num_threads = std::atoi(env_stan_num_threads);
@@ -54,6 +55,7 @@ map_rect_concurrent(
       num_threads = std::thread::hardware_concurrency();
     // anything else will use 1 thread.
   }
+  */
 #endif
 
   const int num_jobs_per_thread = num_jobs / num_threads;
