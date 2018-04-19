@@ -26,7 +26,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsUniMixMat) {
   d_dxs.push_back(dxm1(2));
   d_dxs.push_back(dxm1(3));
 
-  operands_and_partials<Eigen::Matrix<fvar<var>, -1, -1> > ops_partials(m1);
+  operands_and_partials<Eigen::Matrix<fvar<var>, -1, -1>> ops_partials(m1);
 
   // Do normal math on the fvar<var>, do addition to partials,
   ops_partials.edge1_.partials_vec_[0] += dxm1;
@@ -46,10 +46,10 @@ TEST(AgradPartialsVari, OperandsAndPartialsUniMixMat) {
 }
 
 TEST(AgradPartialsVari, OperandsAndPartialsUniMixMat_dbl) {
-  using stan::math::fvar;
-  using stan::math::var;
   using stan::is_constant_struct;
+  using stan::math::fvar;
   using stan::math::operands_and_partials;
+  using stan::math::var;
 
   std::vector<var> val_dxs;
   val_dxs.push_back(1.0);
@@ -57,14 +57,14 @@ TEST(AgradPartialsVari, OperandsAndPartialsUniMixMat_dbl) {
   val_dxs.push_back(3.0);
   val_dxs.push_back(4.0);
 
-  Eigen::Matrix<fvar<var>, -1, -1> m1(2,2);
-  m1 << fvar<var>(val_dxs[0],1.0), fvar<var>(val_dxs[1],0.0),
-        fvar<var>(val_dxs[2],0.0), fvar<var>(val_dxs[3],0.0);
+  Eigen::Matrix<fvar<var>, -1, -1> m1(2, 2);
+  m1 << fvar<var>(val_dxs[0], 1.0), fvar<var>(val_dxs[1], 0.0),
+      fvar<var>(val_dxs[2], 0.0), fvar<var>(val_dxs[3], 0.0);
 
-  Eigen::Matrix<double, -1, -1> m2(2,2);
+  Eigen::Matrix<double, -1, -1> m2(2, 2);
   m2 << 2.0, 2.0, 2.0, 2.0;
 
-  Eigen::Matrix<var, -1, -1> dxm1(2,2);
+  Eigen::Matrix<var, -1, -1> dxm1(2, 2);
   dxm1 << 4.0, 5.0, 6.0, 7.0;
   std::vector<var> d_dxs;
   d_dxs.push_back(dxm1(0));
@@ -72,8 +72,9 @@ TEST(AgradPartialsVari, OperandsAndPartialsUniMixMat_dbl) {
   d_dxs.push_back(dxm1(2));
   d_dxs.push_back(dxm1(3));
 
-
-  operands_and_partials<Eigen::Matrix<fvar<var>, -1, -1>, Eigen::Matrix<double, -1, -1>> ops_partials(m1, m2);
+  operands_and_partials<Eigen::Matrix<fvar<var>, -1, -1>,
+                        Eigen::Matrix<double, -1, -1>>
+      ops_partials(m1, m2);
 
   // Do normal math on the fvar<var>, do addition to partials,
   ops_partials.edge1_.partials_vec_[0] += dxm1;
@@ -134,7 +135,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultiMix) {
   d_dxs.push_back(dxm1(2));
   d_dxs.push_back(dxm1(3));
 
-  operands_and_partials<std::vector<uni_mat_t> > ops_partials(multi_mat);
+  operands_and_partials<std::vector<uni_mat_t>> ops_partials(multi_mat);
 
   // Do normal math on the fvar<var>, do addition to partials,
   ops_partials.edge1_.partials_vec_[0] += dxm1;
@@ -188,7 +189,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultiMix_dbl) {
   multi_mat.push_back(m1);
   multi_mat.push_back(m2);
 
-  Eigen::Matrix<double, -1, -1> m3(2,2);
+  Eigen::Matrix<double, -1, -1> m3(2, 2);
   m3 << 2.0, 2.0, 2.0, 2.0;
 
   Eigen::Matrix<var, -1, -1> dxm1(2, 2);
@@ -199,7 +200,8 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultiMix_dbl) {
   d_dxs.push_back(dxm1(2));
   d_dxs.push_back(dxm1(3));
 
-  operands_and_partials<std::vector<uni_mat_t>, Eigen::Matrix<double, -1, -1> > ops_partials(multi_mat, m3);
+  operands_and_partials<std::vector<uni_mat_t>, Eigen::Matrix<double, -1, -1>>
+      ops_partials(multi_mat, m3);
 
   // Do normal math on the fvar<var>, do addition to partials,
   ops_partials.edge1_.partials_vec_[0] += dxm1;
@@ -224,7 +226,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultiStdMix) {
   using stan::math::operands_and_partials;
   using stan::math::var;
 
-  typedef std::vector<fvar<var> > uni_std_t;
+  typedef std::vector<fvar<var>> uni_std_t;
   std::vector<var> val_dxs;
   val_dxs.push_back(1.0);
   val_dxs.push_back(2.0);
@@ -265,7 +267,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultiStdMix) {
   d_dxs.push_back(dxm1[2]);
   d_dxs.push_back(dxm1[3]);
 
-  operands_and_partials<std::vector<uni_std_t> > ops_partials(multi_std);
+  operands_and_partials<std::vector<uni_std_t>> ops_partials(multi_std);
 
   // Do normal math on the fvar<var>, do addition to partials,
   ops_partials.edge1_.partials_vec_[0] = dxm1;
@@ -290,7 +292,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultiStdMix_dbl) {
   using stan::math::operands_and_partials;
   using stan::math::var;
 
-  typedef std::vector<fvar<var> > uni_std_t;
+  typedef std::vector<fvar<var>> uni_std_t;
   std::vector<var> val_dxs;
   val_dxs.push_back(1.0);
   val_dxs.push_back(2.0);
@@ -319,7 +321,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultiStdMix_dbl) {
   multi_std.push_back(m1);
   multi_std.push_back(m2);
 
-  Eigen::Matrix<double, -1, -1> m3(2,2);
+  Eigen::Matrix<double, -1, -1> m3(2, 2);
   m3 << 2.0, 2.0, 2.0, 2.0;
 
   std::vector<var> dxm1(4);
@@ -334,7 +336,8 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultiStdMix_dbl) {
   d_dxs.push_back(dxm1[2]);
   d_dxs.push_back(dxm1[3]);
 
-  operands_and_partials<std::vector<uni_std_t>, Eigen::Matrix<double, -1, -1> > ops_partials(multi_std,m3);
+  operands_and_partials<std::vector<uni_std_t>, Eigen::Matrix<double, -1, -1>>
+      ops_partials(multi_std, m3);
 
   // Do normal math on the fvar<var>, do addition to partials,
   ops_partials.edge1_.partials_vec_[0] = dxm1;
@@ -405,10 +408,11 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultiMixInt_dbl) {
   multi_mat.push_back(m1);
   multi_mat.push_back(m2);
 
-  Eigen::Matrix<double, -1, -1> m3(2,2);
+  Eigen::Matrix<double, -1, -1> m3(2, 2);
   m3 << 2.0, 2.0, 2.0, 2.0;
 
-  operands_and_partials<std::vector<uni_mat_t>, Eigen::Matrix<double, -1, -1> > ops_partials(multi_mat);
+  operands_and_partials<std::vector<uni_mat_t>, Eigen::Matrix<double, -1, -1>>
+      ops_partials(multi_mat);
 
   double v = ops_partials.build(10.0);
 

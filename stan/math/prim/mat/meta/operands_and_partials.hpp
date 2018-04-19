@@ -40,8 +40,7 @@ class ops_partials_edge<ViewElt, std::vector<Eigen::Matrix<Op, R, C>>> {
   typedef empty_broadcast_array<ViewElt, Eigen::Matrix<Op, R, C>> partials_t;
   empty_broadcast_array<partials_t, Eigen::Matrix<Op, R, C>> partials_vec_;
   ops_partials_edge() {}
-  explicit ops_partials_edge(const std::vector<Eigen::Matrix<Op, R, C>> ops) {
-  }
+  explicit ops_partials_edge(const std::vector<Eigen::Matrix<Op, R, C>> ops) {}
 
  private:
   template <typename, typename, typename, typename, typename, typename>
@@ -59,8 +58,7 @@ class ops_partials_edge<ViewElt, std::vector<std::vector<Op>>> {
   typedef empty_broadcast_array<ViewElt, std::vector<std::vector<Op>>>
       partials_t;
   partials_t partials_;
-  empty_broadcast_array<partials_t, std::vector<std::vector<Op>>>
-      partials_vec_;
+  empty_broadcast_array<partials_t, std::vector<std::vector<Op>>> partials_vec_;
   ops_partials_edge() {}
   explicit ops_partials_edge(const std::vector<std::vector<Op>> ops) {}
 

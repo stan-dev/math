@@ -791,7 +791,6 @@ TEST(AgradMixMatrixLogMix, d_ffv) {
   d_ffv_vec_test(std_vecd_prob, std_vecffv_dens);
 }
 
-
 TEST(AgradMixMatrixLogMix, fv_fv_old) {
   auto mix_fv_fv = [](auto a, auto b) {
     a[0].val_ = 0.15;
