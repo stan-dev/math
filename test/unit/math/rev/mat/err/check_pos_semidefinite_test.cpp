@@ -51,11 +51,13 @@ TEST(AgradRevErrorHandlingMatrix, CheckPosDefiniteMatrixVarCheck) {
   y.resize(3, 3);
   y << 2, -1, 0, -1, 2, -1, 0, -1, 2;
 
-  size_t stack_before_call = stan::math::ChainableStack::var_stack_.size();
+  size_t stack_before_call
+      = stan::math::ChainableStack::instance_.var_stack_.size();
   EXPECT_EQ(10U, stack_before_call);
 
   EXPECT_NO_THROW(check_pos_semidefinite("checkPosDefiniteMatrix", "y", y));
-  size_t stack_after_call = stan::math::ChainableStack::var_stack_.size();
+  size_t stack_after_call
+      = stan::math::ChainableStack::instance_.var_stack_.size();
 
   EXPECT_EQ(10U, stack_after_call);
 }
