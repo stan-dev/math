@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <vector>
+#include <memory>
 
 MPI_TEST(mpi_cluster, chunk_mapping) {
   if (rank != 0)
@@ -145,7 +146,7 @@ MPI_TEST(mpi_cluster, communication_command) {
 
   const double common = 2 * 3.14;
 
-  boost::shared_ptr<stan::math::mpi_command> command(new shared_secret(common));
+  std::shared_ptr<stan::math::mpi_command> command(new shared_secret(common));
   std::unique_lock<std::mutex> cluster_lock;
   EXPECT_NO_THROW((cluster_lock = stan::math::mpi_broadcast_command(command)));
 

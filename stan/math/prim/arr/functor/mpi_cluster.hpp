@@ -20,6 +20,7 @@
 
 #include <mutex>
 #include <vector>
+#include <memory>
 
 namespace stan {
 namespace math {
@@ -155,7 +156,7 @@ struct mpi_cluster {
       // workers must fail
       std::unique_lock<std::mutex> worker_lock(in_use_);
       while (1) {
-        boost::shared_ptr<mpi_command> work;
+        std::shared_ptr<mpi_command> work;
 
         boost::mpi::broadcast(world_, work, 0);
 
@@ -199,7 +200,7 @@ std::mutex mpi_cluster::in_use_;
  * @return A unique_lock instance locking the mpi_cluster
  */
 inline std::unique_lock<std::mutex> mpi_broadcast_command(
-    boost::shared_ptr<mpi_command>& command) {
+    std::shared_ptr<mpi_command>& command) {
   boost::mpi::communicator world;
 
   if (world.rank() != 0)
@@ -228,7 +229,7 @@ inline std::unique_lock<std::mutex> mpi_broadcast_command(
  */
 template <typename T>
 std::unique_lock<std::mutex> mpi_broadcast_command() {
-  boost::shared_ptr<mpi_command> command(new T);
+  std::shared_ptr<mpi_command> command(new T);
 
   return mpi_broadcast_command(command);
 }
