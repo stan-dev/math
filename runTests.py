@@ -97,11 +97,22 @@ def makeTest(name, j):
     """Run the make command for a given single test."""
     doCommand('make -j%d %s' % (j or 1, name))
 
+def commandExists(command):
+    p = subprocess.Popen(command, shell=True,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE)
+    p.wait()
+    return p.returncode != 127
+
 def runTest(name, run_all=False, mpi=False, j=1):
     executable = mungeName(name).replace("/", os.sep)
     xml = mungeName(name).replace(winsfx, "")
     command = '%s --gtest_output="xml:%s.xml"' % (executable, xml)
     if mpi:
+        if not commandExists("mpirun"):
+            stopErr("Error: need to have mpi (and mpirun) installed to run mpi tests"
+                    + "\nCheck https://github.com/stan-dev/stan/wiki/Parallelism-using-MPI-in-Stan for more details."
+                    , -1)
         if "mpi_" in name:
             j = j > 2 and j or 2
         else:
