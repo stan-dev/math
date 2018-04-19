@@ -20,13 +20,13 @@ static inline void recover_memory() {
     throw std::logic_error(
         "empty_nested() must be true"
         " before calling recover_memory()");
-  ChainableStack::var_stack_.clear();
-  ChainableStack::var_nochain_stack_.clear();
-  for (size_t i = 0; i < ChainableStack::var_alloc_stack_.size(); ++i) {
-    delete ChainableStack::var_alloc_stack_[i];
+  ChainableStack::instance_.var_stack_.clear();
+  ChainableStack::instance_.var_nochain_stack_.clear();
+  for (auto &x : ChainableStack::instance_.var_alloc_stack_) {
+    delete x;
   }
-  ChainableStack::var_alloc_stack_.clear();
-  ChainableStack::memalloc_.recover_all();
+  ChainableStack::instance_.var_alloc_stack_.clear();
+  ChainableStack::instance_.memalloc_.recover_all();
 }
 
 }  // namespace math

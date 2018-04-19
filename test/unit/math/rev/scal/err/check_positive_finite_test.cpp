@@ -37,12 +37,13 @@ TEST(AgradRevErrorHandlingScalar, CheckPositiveFiniteVarCheckUnivariate) {
   const char* function = "check_positive_finite";
   var a(5.0);
 
-  size_t stack_size = stan::math::ChainableStack::var_stack_.size();
+  size_t stack_size = stan::math::ChainableStack::instance_.var_stack_.size();
 
   EXPECT_EQ(1U, stack_size);
   EXPECT_NO_THROW(check_positive_finite(function, "a", a));
 
-  size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
+  size_t stack_size_after_call
+      = stan::math::ChainableStack::instance_.var_stack_.size();
   EXPECT_EQ(1U, stack_size_after_call);
 
   stan::math::recover_memory();

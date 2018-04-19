@@ -37,8 +37,8 @@ static void grad(vari* vi) {
 
   typedef std::vector<vari*>::reverse_iterator it_t;
   vi->init_dependent();
-  it_t begin = ChainableStack::var_stack_.rbegin();
-  it_t end = empty_nested() ? ChainableStack::var_stack_.rend()
+  it_t begin = ChainableStack::instance_.var_stack_.rbegin();
+  it_t end = empty_nested() ? ChainableStack::instance_.var_stack_.rend()
                             : begin + nested_size();
   for (it_t it = begin; it < end; ++it) {
     (*it)->chain();
