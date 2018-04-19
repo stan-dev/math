@@ -25,10 +25,12 @@ namespace math {
  */
 template <typename F>
 struct mpi_distributed_apply : public mpi_command {
+  // declarations needed for boost.serialization (see
+  // https://www.boost.org/doc/libs/1_66_0/libs/serialization/doc/index.html)
   friend class boost::serialization::access;
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar& BOOST_SERIALIZATION_BASE_OBJECT_NVP(mpi_command);
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(mpi_command);
   }
 
   /**

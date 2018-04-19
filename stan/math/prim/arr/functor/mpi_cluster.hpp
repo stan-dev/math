@@ -53,8 +53,6 @@ struct mpi_stop_worker : public mpi_command {
   }
   void run() const {
     boost::mpi::communicator world;
-    // TODO(wds15): Remove debugging print
-    std::cout << "Terminating worker " << world.rank() << std::endl;
     throw mpi_stop_listen();
   }
 };
@@ -88,10 +86,10 @@ inline std::vector<int> mpi_map_chunks(std::size_t num_jobs,
 
   std::vector<int> chunks(world_size, num_jobs / world_size);
 
-  for (std::size_t r = 0; r != num_jobs % world_size; r++)
+  for (std::size_t r = 0; r != num_jobs % world_size; ++r)
     ++chunks[r + 1];
 
-  for (std::size_t i = 0; i != world_size; i++)
+  for (std::size_t i = 0; i != world_size; ++i)
     chunks[i] *= chunk_size;
 
   return chunks;
@@ -150,9 +148,6 @@ struct mpi_cluster {
     if (rank_ == 0) {
       return;
     }
-    // TODO(wds15): Remove debugging print
-    std::cout << "Worker " << rank_ << " listening for commands..."
-              << std::endl;
 
     try {
       // lock on the workers the cluster as MPI commands must be
@@ -167,8 +162,6 @@ struct mpi_cluster {
         work->run();
       }
     } catch (const mpi_stop_listen& e) {
-      // TODO(wds15): Remove debugging print
-      std::cout << "Wrapping up MPI on worker " << rank_ << " ..." << std::endl;
     }
   }
 
@@ -206,7 +199,7 @@ std::mutex mpi_cluster::in_use_;
  * @return A unique_lock instance locking the mpi_cluster
  */
 inline std::unique_lock<std::mutex> mpi_broadcast_command(
-    boost::shared_ptr<mpi_command> command) {
+    boost::shared_ptr<mpi_command>& command) {
   boost::mpi::communicator world;
 
   if (world.rank() != 0)

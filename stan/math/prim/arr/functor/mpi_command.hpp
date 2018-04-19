@@ -30,9 +30,12 @@ namespace math {
  * called in the root namespace.
  */
 struct mpi_command {
+  // declarations needed for boost.serialization (see
+  // https://www.boost.org/doc/libs/1_66_0/libs/serialization/doc/index.html)
   friend class boost::serialization::access;
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {}
+
   virtual void run() const = 0;
 };
 
