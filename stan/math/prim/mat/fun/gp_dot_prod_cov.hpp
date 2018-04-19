@@ -254,6 +254,6 @@ gp_dot_prod_cov(const std::vector<double> &x1, const std::vector<double> &x2,
   }
   return cov;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
