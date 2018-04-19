@@ -512,7 +512,7 @@ struct check_counts {
       // Generated expected number of counts of transformed random variable
       std::vector<double> epmf;
       double total = 0.0;
-      for (int n = 0; n < rig.test_points_.size(); ++n) {
+      for (size_t n = 0; n < rig.test_points_.size(); ++n) {
         double e
             = rig.N_
               * rig.pmf(rig.test_points_[n], p1_vec[m], p2_vec[m], p3_vec[m]);
@@ -524,9 +524,9 @@ struct check_counts {
       // Generate samples of transformed random variable
       std::map<int, int> count_map;
       int remainder = 0;
-      for (int n = 0; n < rig.test_points_.size(); ++n)
+      for (size_t n = 0; n < rig.test_points_.size(); ++n)
         count_map[rig.test_points_[n]] = 0;
-      for (int n = 0; n < samples_to_test.size(); ++n) {
+      for (size_t n = 0; n < samples_to_test.size(); ++n) {
         int sample = samples_to_test[n];
         if (count_map.find(sample) != count_map.end()) {
           count_map[sample] += 1;
@@ -537,7 +537,7 @@ struct check_counts {
 
       // Transform to vector
       std::vector<int> counts;
-      for (int n = 0; n < rig.test_points_.size(); ++n) {
+      for (size_t n = 0; n < rig.test_points_.size(); ++n) {
         counts.push_back(count_map[rig.test_points_[n]]);
       }
       counts.push_back(remainder);
@@ -545,7 +545,7 @@ struct check_counts {
       // Trim the zero probability outputs
       std::vector<int> counts_trimmed;
       std::vector<double> epmf_trimmed;
-      for (int n = 0; n < counts.size(); ++n) {
+      for (size_t n = 0; n < counts.size(); ++n) {
         if (epmf[n] > 0.0) {
           counts_trimmed.push_back(counts[n]);
           epmf_trimmed.push_back(epmf[n]);
