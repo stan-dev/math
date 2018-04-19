@@ -15,13 +15,14 @@ namespace stan {
 namespace math {
 
 /**
- * Returns a dot product covariance matrix.
+ * Returns a dot product covariance matrix. A member of Stan's Gaussian Process
+ * Library.
  *
- * $k(x,x') = \sigma^2 + x * x'$
+ * \f$k(x,x') = \sigma^2 + x \cdot x'\f$
  *
  * A dot product covariance matrix is the same covariance matrix
- * as in bayesian regression with N(0,1) priors on regression coefficients
- * and a N(0,\sigma^2) prior on the constant function. See Rasmussen and
+ * as in bayesian regression with \f$N(0,1)\f$ priors on regression coefficients
+ * and a \f$N(0,\sigma^2)\f$ prior on the constant function. See Rasmussen and
  * Williams et al 2006, Chapter 4.
  *
  * @tparam T_x type of std::vector of elements
@@ -29,9 +30,8 @@ namespace math {
  *
  * @param x std::vector of elements that can be used in dot product.
  *    This function assumes each element of x is the same size.
- * @param sigma is the constant function that can be used in stan::math::square
- * @return dot product dot product covariance matrix that is positive
- * semi-definite
+ * @param sigma constant function that can be used in stan::math::square
+ * @return dot product covariance matrix that is positive semi-definite
  * @throw std::domain_error if sigma < 0, nan, inf or
  *   x is nan or infinite
  */
@@ -72,13 +72,14 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
 }
 
 /**
- * Returns a dot product covariance matrix.
+ * Returns a dot product covariance matrix. A member of Stan's Gaussian
+ * Process Library.
  *
- * $k(x,x') = \sigma^2 + x * x'$
+ * \f$k(x,x') = \sigma^2 + x \cdot x'\f$
  *
  * A dot product covariance matrix is the same covariance matrix
- * as in bayesian regression with N(0,1) priors on regression coefficients
- * and a N(0,\sigma^2) prior on the constant function. See Rasmussen and
+ * as in bayesian regression with \f$N(0,1)\f$ priors on regression coefficients
+ * and a \f$N(0,\sigma^2)\f$ prior on the constant function. See Rasmussen and
  * Williams et al 2006, Chapter 4.
  *
  * @tparam T_x type of std::vector of double
@@ -87,7 +88,7 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
  * @param x std::vector of elements that can be used in transpose
  *   and multiply
  *    This function assumes each element of x is the same size.
- * @param sigma is the constant function that can be used in stan::math::square
+ * @param sigma constant function that can be used in stan::math::square
  * @return dot product covariance matrix that is positive semi-definite
  * @throw std::domain_error if sigma < 0, nan, inf or
  *   x is nan or infinite
@@ -130,13 +131,13 @@ gp_dot_prod_cov(const std::vector<double> &x, const T_sigma &sigma) {
 
 /**
  * Returns a dot product covariance matrix of differing
- * x lengths.
+ * x's. A member of Stan's Gaussian Process Library.
  *
- * $k(x,x') = \sigma^2 + x * x'$
+ * \f$k(x,x') = \sigma^2 + x \cdot x'\f$
  *
  * A dot product covariance matrix is the same covariance matrix
- * as in bayesian regression with N(0,1) priors on regression coefficients
- * and a N(0,\sigma^2) prior on the constant function. See Rasmussen and
+ * as in bayesian regression with \f$N(0,1)\f$ priors on regression coefficients
+ * and a \f$N(0,\sigma^2)\f$ prior on the constant function. See Rasmussen and
  * Williams et al 2006, Chapter 4.
  *
  * @tparam T_x1 type of first std::vector of elements
@@ -145,8 +146,8 @@ gp_dot_prod_cov(const std::vector<double> &x, const T_sigma &sigma) {
  *
  * @param x1 std::vector of elements that can be used in dot_product
  * @param x2 std::vector of elements that can be used in dot_product
- * @param sigma is the constant function that can be used in stan::math::square
- * @return dot product covariance matrix, that is non-symmetric
+ * @param sigma constant function that can be used in stan::math::square
+ * @return dot product covariance matrix that is not always symmetric
  * @throw std::domain_error if sigma < 0, nan or inf
  *   or if x1 or x2 are nan or inf
  */
@@ -194,13 +195,13 @@ gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
 /**
  * Returns a dot product covariance matrix of
- * differing x lengths.
+ * differing x's. A member of Stan's Gaussian Process Library.
  *
- * $k(x,x') = \sigma^2 + x * x'$
+ * \f$k(x,x') = \sigma^2 + x \cdot x'\f$
  *
  * A dot product covariance matrix is the same covariance matrix
- * as in bayesian regression with N(0,1) priors on regression coefficients
- * and a N(0,\sigma^2) prior on the constant function. See Rasmussen and
+ * as in bayesian regression with \f$N(0,1)\f$ priors on regression coefficients
+ * and a \f$N(0,\sigma^2)\f$ prior on the constant function. See Rasmussen and
  * Williams et al 2006, Chapter 4.
  *
  * @tparam T_x1 type of first std::vector of double
@@ -210,7 +211,7 @@ gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * @param x1 std::vector of elements that can be used in dot_product
  * @param x2 std::vector of elements that can be used in dot_product
  * @param sigma is the constant function that can be used in stan::math::square
- * @return dot product covariance matrix that is non-symmetric
+ * @return dot product covariance matrix that is not always symmetric
  * @throw std::domain_error if sigma < 0, nan or inf
  *   or if x1 or x2 are nan or inf
  */
@@ -253,6 +254,6 @@ gp_dot_prod_cov(const std::vector<double> &x1, const std::vector<double> &x2,
   }
   return cov;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif
