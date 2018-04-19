@@ -15,14 +15,14 @@ namespace internal {
 /* This class will be used for both multivariate (nested container)
    operands_and_partials edges as well as for the univariate case.
  */
-template <typename T_op, typename T_part, int R, int C>
-class ops_partials_edge<T_part, Eigen::Matrix<T_op, R, C>> {
+template <typename Op, typename ViewElt, int R, int C>
+class ops_partials_edge<ViewElt, Eigen::Matrix<Op, R, C>> {
  public:
-  typedef empty_broadcast_array<T_part, Eigen::Matrix<T_op, R, C>> partials_t;
+  typedef empty_broadcast_array<ViewElt, Eigen::Matrix<Op, R, C>> partials_t;
   partials_t partials_;
-  empty_broadcast_array<partials_t, Eigen::Matrix<T_op, R, C>> partials_vec_;
+  empty_broadcast_array<partials_t, Eigen::Matrix<Op, R, C>> partials_vec_;
   ops_partials_edge() {}
-  explicit ops_partials_edge(const Eigen::Matrix<T_op, R, C> ops) {}
+  explicit ops_partials_edge(const Eigen::Matrix<Op, R, C> ops) {}
 
  private:
   template <typename, typename, typename, typename, typename, typename>
@@ -34,13 +34,13 @@ class ops_partials_edge<T_part, Eigen::Matrix<T_op, R, C>> {
   int size() const { return 0; }
 };
 
-template <typename T_op, typename T_part, int R, int C>
-class ops_partials_edge<T_part, std::vector<Eigen::Matrix<T_op, R, C>>> {
+template <typename Op, typename ViewElt, int R, int C>
+class ops_partials_edge<ViewElt, std::vector<Eigen::Matrix<Op, R, C>>> {
  public:
-  typedef empty_broadcast_array<T_part, Eigen::Matrix<T_op, R, C>> partials_t;
-  empty_broadcast_array<partials_t, Eigen::Matrix<T_op, R, C>> partials_vec_;
+  typedef empty_broadcast_array<ViewElt, Eigen::Matrix<Op, R, C>> partials_t;
+  empty_broadcast_array<partials_t, Eigen::Matrix<Op, R, C>> partials_vec_;
   ops_partials_edge() {}
-  explicit ops_partials_edge(const std::vector<Eigen::Matrix<T_op, R, C>> ops) {
+  explicit ops_partials_edge(const std::vector<Eigen::Matrix<Op, R, C>> ops) {
   }
 
  private:
@@ -53,16 +53,16 @@ class ops_partials_edge<T_part, std::vector<Eigen::Matrix<T_op, R, C>>> {
   int size() const { return 0; }
 };
 
-template <typename T_op, typename T_part>
-class ops_partials_edge<T_part, std::vector<std::vector<T_op>>> {
+template <typename Op, typename ViewElt>
+class ops_partials_edge<ViewElt, std::vector<std::vector<Op>>> {
  public:
-  typedef empty_broadcast_array<T_part, std::vector<std::vector<T_op>>>
+  typedef empty_broadcast_array<ViewElt, std::vector<std::vector<Op>>>
       partials_t;
   partials_t partials_;
-  empty_broadcast_array<partials_t, std::vector<std::vector<T_op>>>
+  empty_broadcast_array<partials_t, std::vector<std::vector<Op>>>
       partials_vec_;
   ops_partials_edge() {}
-  explicit ops_partials_edge(const std::vector<std::vector<T_op>> ops) {}
+  explicit ops_partials_edge(const std::vector<std::vector<Op>> ops) {}
 
  private:
   template <typename, typename, typename, typename, typename, typename>
