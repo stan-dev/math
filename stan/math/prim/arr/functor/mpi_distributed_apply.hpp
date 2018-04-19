@@ -30,7 +30,7 @@ struct mpi_distributed_apply : public mpi_command {
   friend class boost::serialization::access;
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(mpi_command);
+    ar& BOOST_SERIALIZATION_BASE_OBJECT_NVP(mpi_command);
   }
 
   /**
