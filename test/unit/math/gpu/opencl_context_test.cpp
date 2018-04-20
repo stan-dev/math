@@ -40,9 +40,10 @@ TEST(opencl_context, platform) {
 }
 
 TEST(opencl_context, devices) {
-  cl::Platform platform = cl::Platform::get();
+  std::vector<cl::Platform> all_platforms;
+  cl::Platform::get(&all_platforms);
   std::vector<cl::Device> all_devices;
-  platform.getDevices(DEVICE_FILTER, &all_devices);
+  all_platforms[OPENCL_PLATFORM_ID].getDevices(DEVICE_FILTER, &all_devices);
 
   std::stringstream msg;
   msg << "all_devices: " << all_devices.size() << std::endl;

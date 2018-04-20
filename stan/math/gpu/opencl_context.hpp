@@ -303,30 +303,36 @@ class opencl_context {
       msg << "Platform Vendor: " << platform.getInfo<CL_PLATFORM_VENDOR>()
           << "\n";
 
-      std::vector<cl::Device> all_devices;
-      platform.getDevices(CL_DEVICE_TYPE_GPU, &all_devices);
+      try {
+        std::vector<cl::Device> all_devices;
+        platform.getDevices(CL_DEVICE_TYPE_GPU, &all_devices);
 
-      for (auto device_iter : all_devices) {
-        cl::Device device(device_iter);
+        for (auto device_iter : all_devices) {
+          cl::Device device(device_iter);
 
-        msg << "\tDevice " << device_id++ << ": "
-            << "\n";
-        msg << "\t\tDevice Name: " << device.getInfo<CL_DEVICE_NAME>() << "\n";
-        msg << "\t\tDevice Type: " << device.getInfo<CL_DEVICE_TYPE>() << "\n";
-        msg << "\t\tDevice Vendor: " << device.getInfo<CL_DEVICE_VENDOR>()
-            << "\n";
-        msg << "\t\tDevice Max Compute Units: "
-            << device.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() << "\n";
-        msg << "\t\tDevice Global Memory: "
-            << device.getInfo<CL_DEVICE_GLOBAL_MEM_SIZE>() << "\n";
-        msg << "\t\tDevice Max Clock Frequency: "
-            << device.getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>() << "\n";
-        msg << "\t\tDevice Max Allocateable Memory: "
-            << device.getInfo<CL_DEVICE_MAX_MEM_ALLOC_SIZE>() << "\n";
-        msg << "\t\tDevice Local Memory: "
-            << device.getInfo<CL_DEVICE_LOCAL_MEM_SIZE>() << "\n";
-        msg << "\t\tDevice Available: " << device.getInfo<CL_DEVICE_AVAILABLE>()
-            << "\n";
+          msg << "\tDevice " << device_id++ << ": "
+              << "\n";
+          msg << "\t\tDevice Name: " <<
+            device.getInfo<CL_DEVICE_NAME>() << "\n";
+          msg << "\t\tDevice Type: " <<
+            device.getInfo<CL_DEVICE_TYPE>() << "\n";
+          msg << "\t\tDevice Vendor: " <<
+            device.getInfo<CL_DEVICE_VENDOR>() << "\n";
+          msg << "\t\tDevice Max Compute Units: "
+              << device.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() << "\n";
+          msg << "\t\tDevice Global Memory: "
+              << device.getInfo<CL_DEVICE_GLOBAL_MEM_SIZE>() << "\n";
+          msg << "\t\tDevice Max Clock Frequency: "
+              << device.getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>() << "\n";
+          msg << "\t\tDevice Max Allocateable Memory: "
+              << device.getInfo<CL_DEVICE_MAX_MEM_ALLOC_SIZE>() << "\n";
+          msg << "\t\tDevice Local Memory: "
+              << device.getInfo<CL_DEVICE_LOCAL_MEM_SIZE>() << "\n";
+          msg << "\t\tDevice Available: " <<
+              device.getInfo<CL_DEVICE_AVAILABLE>() << "\n";
+        }
+      } catch (const cl::Error& e) {
+        msg << "\tno GPU devices in the specified platform" << "\n";
       }
     }
     return msg.str();
