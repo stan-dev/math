@@ -312,12 +312,12 @@ class opencl_context {
 
           msg << "\tDevice " << device_id++ << ": "
               << "\n";
-          msg << "\t\tDevice Name: " <<
-            device.getInfo<CL_DEVICE_NAME>() << "\n";
-          msg << "\t\tDevice Type: " <<
-            device.getInfo<CL_DEVICE_TYPE>() << "\n";
-          msg << "\t\tDevice Vendor: " <<
-            device.getInfo<CL_DEVICE_VENDOR>() << "\n";
+          msg << "\t\tDevice Name: " << device.getInfo<CL_DEVICE_NAME>()
+              << "\n";
+          msg << "\t\tDevice Type: " << device.getInfo<CL_DEVICE_TYPE>()
+              << "\n";
+          msg << "\t\tDevice Vendor: " << device.getInfo<CL_DEVICE_VENDOR>()
+              << "\n";
           msg << "\t\tDevice Max Compute Units: "
               << device.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() << "\n";
           msg << "\t\tDevice Global Memory: "
@@ -328,11 +328,12 @@ class opencl_context {
               << device.getInfo<CL_DEVICE_MAX_MEM_ALLOC_SIZE>() << "\n";
           msg << "\t\tDevice Local Memory: "
               << device.getInfo<CL_DEVICE_LOCAL_MEM_SIZE>() << "\n";
-          msg << "\t\tDevice Available: " <<
-              device.getInfo<CL_DEVICE_AVAILABLE>() << "\n";
+          msg << "\t\tDevice Available: "
+              << device.getInfo<CL_DEVICE_AVAILABLE>() << "\n";
         }
       } catch (const cl::Error& e) {
-        msg << "\tno GPU devices in the specified platform" << "\n";
+        msg << "\tno GPU devices in the specified platform"
+            << "\n";
       }
     }
     return msg.str();
