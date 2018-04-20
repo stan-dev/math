@@ -37,3 +37,6 @@ endif
 ifeq (clang++,$(CC_TYPE))
 endif
 
+ifdef STAN_MPI
+  $(error MPI is not supported on Windows.)
+endif
