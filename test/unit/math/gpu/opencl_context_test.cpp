@@ -64,7 +64,7 @@ TEST(opencl_context, devices) {
       msg << "- work_group_size: " << work_group_size << std::endl;
     }
   } catch (const cl::Error& e) {
-      stan::math::check_opencl_error("listing_devices_test", e);
+    stan::math::check_opencl_error("listing_devices_test", e);
   }
 }
 
