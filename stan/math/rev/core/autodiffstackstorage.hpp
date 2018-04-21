@@ -9,9 +9,9 @@ namespace math {
 
 template <typename ChainableT, typename ChainableAllocT>
 struct AutodiffStackStorage {
-  std::vector<ChainableT*> var_stack_;
-  std::vector<ChainableT*> var_nochain_stack_;
-  std::vector<ChainableAllocT*> var_alloc_stack_;
+  std::vector<ChainableT *> var_stack_;
+  std::vector<ChainableT *> var_nochain_stack_;
+  std::vector<ChainableAllocT *> var_alloc_stack_;
   stack_alloc memalloc_;
 
   // nested positions
@@ -45,19 +45,30 @@ struct AutodiffStackStorage {
  */
 template <typename ChainableT, typename ChainableAllocT>
 struct AutodiffStackSingleton {
+  typedef AutodiffStackSingleton<ChainableT, ChainableAllocT>
+      AutodiffStackSingleton_t;
+
+  AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
+  AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
+
+  static inline AutodiffStackSingleton_t &instance() {
 #ifdef STAN_THREADS
-  thread_local
+    thread_local static AutodiffStackStorage_t instance_;
 #endif
-      static AutodiffStackStorage<ChainableT, ChainableAllocT>
-          instance_;
+    return instance_;
+  }
+
+#ifndef STAN_THREADS
+ private:
+  static AutodiffStackStorage_t instance_;
+#endif
 };
 
+#ifndef STAN_THREADS
 template <typename ChainableT, typename ChainableAllocT>
-#ifdef STAN_THREADS
-thread_local
+thread_local AutodiffStackStorage<ChainableT, ChainableAllocT>
+    AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_;
 #endif
-    AutodiffStackStorage<ChainableT, ChainableAllocT>
-        AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_;
 
 }  // namespace math
 }  // namespace stan
