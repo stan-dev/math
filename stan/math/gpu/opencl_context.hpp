@@ -73,12 +73,20 @@ class opencl_context_base {
     try {
       // platform
       cl::Platform::get(&platforms_);
+      if (OPENCL_PLATFORM_ID >= platforms_.size()) {
+        system_error("OpenCL Initialization", "[Platform]", -1,
+                       "CL_INVALID_PLATFORM");
+      }
       platform_ = platforms_[OPENCL_PLATFORM_ID];
       platform_name_ = platform_.getInfo<CL_PLATFORM_NAME>();
       platform_.getDevices(DEVICE_FILTER, &devices_);
       if (devices_.size() == 0) {
         system_error("OpenCL Initialization", "[Device]", -1,
                      "CL_DEVICE_NOT_FOUND");
+      }
+      if (OPENCL_DEVICE_ID >= devices_.size()) {
+        system_error("OpenCL Initialization", "[Device]", -1,
+                       "CL_INVALID_DEVICE");
       }
       device_ = devices_[OPENCL_DEVICE_ID];
       // context and queue
@@ -312,12 +320,12 @@ class opencl_context {
 
           msg << "\tDevice " << device_id++ << ": "
               << "\n";
-          msg << "\t\tDevice Name: " << device.getInfo<CL_DEVICE_NAME>()
-              << "\n";
-          msg << "\t\tDevice Type: " << device.getInfo<CL_DEVICE_TYPE>()
-              << "\n";
-          msg << "\t\tDevice Vendor: " << device.getInfo<CL_DEVICE_VENDOR>()
-              << "\n";
+          msg << "\t\tDevice Name: " <<
+            device.getInfo<CL_DEVICE_NAME>() << "\n";
+          msg << "\t\tDevice Type: " <<
+            device.getInfo<CL_DEVICE_TYPE>() << "\n";
+          msg << "\t\tDevice Vendor: " <<
+            device.getInfo<CL_DEVICE_VENDOR>() << "\n";
           msg << "\t\tDevice Max Compute Units: "
               << device.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() << "\n";
           msg << "\t\tDevice Global Memory: "
@@ -328,12 +336,12 @@ class opencl_context {
               << device.getInfo<CL_DEVICE_MAX_MEM_ALLOC_SIZE>() << "\n";
           msg << "\t\tDevice Local Memory: "
               << device.getInfo<CL_DEVICE_LOCAL_MEM_SIZE>() << "\n";
-          msg << "\t\tDevice Available: "
-              << device.getInfo<CL_DEVICE_AVAILABLE>() << "\n";
+          msg << "\t\tDevice Available: " <<
+              device.getInfo<CL_DEVICE_AVAILABLE>() << "\n";
         }
       } catch (const cl::Error& e) {
-        msg << "\tno GPU devices in the specified platform"
-            << "\n";
+        msg << "\tno GPU devices in the platform with ID "
+              << platform_id << "\n";
       }
     }
     return msg.str();

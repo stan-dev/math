@@ -40,29 +40,32 @@ TEST(opencl_context, platform) {
 }
 
 TEST(opencl_context, devices) {
-  std::vector<cl::Platform> all_platforms;
-  cl::Platform::get(&all_platforms);
-  std::vector<cl::Device> all_devices;
-  all_platforms[OPENCL_PLATFORM_ID].getDevices(DEVICE_FILTER, &all_devices);
+  try {
+    std::vector<cl::Platform> all_platforms;
+    cl::Platform::get(&all_platforms);
+    std::vector<cl::Device> all_devices;
+    all_platforms[OPENCL_PLATFORM_ID].getDevices(DEVICE_FILTER, &all_devices);
 
-  std::stringstream msg;
-  msg << "all_devices: " << all_devices.size() << std::endl;
-  for (auto device : all_devices) {
-    msg << "- device name: " << device.getInfo<CL_DEVICE_NAME>() << std::endl;
+    std::stringstream msg;
+    msg << "all_devices: " << all_devices.size() << std::endl;
+    for (auto device : all_devices) {
+      msg << "- device name: " << device.getInfo<CL_DEVICE_NAME>() << std::endl;
+    }
+
+    EXPECT_GE(all_devices.size(), 1)
+        << "expecting to find at least one device" << std::endl
+        << msg.str();
+
+    msg.str("");
+    msg << "max_workgroup_sizes: " << std::endl;
+    for (auto device : all_devices) {
+      size_t work_group_size;
+      device.getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE, &work_group_size);
+      msg << "- work_group_size: " << work_group_size << std::endl;
+    }
+  } catch (const cl::Error& e) {
+      stan::math::check_opencl_error("listing_devices_test", e);
   }
-
-  EXPECT_GE(all_devices.size(), 1)
-      << "expecting to find at least one device" << std::endl
-      << msg.str();
-
-  msg.str("");
-  msg << "max_workgroup_sizes: " << std::endl;
-  for (auto device : all_devices) {
-    size_t work_group_size;
-    device.getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE, &work_group_size);
-    msg << "- work_group_size: " << work_group_size << std::endl;
-  }
-  // std::cout << msg.str() << std::endl;
 }
 
 TEST(opencl_context, compile_kernel_rawcode) {
