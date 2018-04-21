@@ -39,8 +39,13 @@ namespace math {
  * http://discourse.mc-stan.org/t/potentially-dropping-support-for-older-versions-of-apples-version-of-clang/3780/
  */
 template <typename ChainableT, typename ChainableAllocT>
-class AutodiffStackSingleton {
+struct AutodiffStackSingleton {
+  typedef AutodiffStackSingleton<ChainableT, ChainableAllocT>
+      AutodiffStackSingleton_t;
+
   struct AutodiffStackStorage {
+    AutodiffStackStorage &operator=(const AutodiffStackStorage &) = delete;
+
     std::vector<ChainableT *> var_stack_;
     std::vector<ChainableT *> var_nochain_stack_;
     std::vector<ChainableAllocT *> var_alloc_stack_;
@@ -52,10 +57,6 @@ class AutodiffStackSingleton {
     std::vector<size_t> nested_var_alloc_stack_starts_;
   };
 
-  typedef AutodiffStackSingleton<ChainableT, ChainableAllocT>
-      AutodiffStackSingleton_t;
-
- public:
   AutodiffStackSingleton() = delete;
   AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
   AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
