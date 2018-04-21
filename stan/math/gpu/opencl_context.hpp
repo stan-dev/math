@@ -340,13 +340,13 @@ class opencl_context {
               << device.getInfo<CL_DEVICE_AVAILABLE>() << "\n";
         }
       } catch (const cl::Error& e) {
-        //if one of the platforms have no devices that match the device type
-        //it will throw the error == -1 (DEVICE_NOT_FOUND)
-        //other errors will throw a system error
+        // if one of the platforms have no devices that match the device type
+        // it will throw the error == -1 (DEVICE_NOT_FOUND)
+        // other errors will throw a system error
         if (e.err() == -1) {
           msg << "\tno GPU devices in the platform with ID " << platform_id
               << "\n";
-        }else{
+        } else {
           check_opencl_error("capabilities", e);
         }
       }
