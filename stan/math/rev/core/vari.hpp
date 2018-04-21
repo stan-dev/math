@@ -31,9 +31,8 @@ class var;
  * time-critical. For the threading case the static local function
  * variable design is used which ensure safe and translational unit
  * (TU) independent access to the AD stack. However, it also comes at
- * a performance penalty which we avoid here by adding a TU local
- * reference to this class in the form of a static global variable
- * which is thread_local if needed.
+ * a performance penalty which we avoid here by adding static function
+ * local references where needed.
  */
 class vari {
  private:
