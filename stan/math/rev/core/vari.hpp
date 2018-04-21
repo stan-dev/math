@@ -38,10 +38,6 @@ class var;
 class vari {
  private:
   friend class var;
-#ifdef STAN_THREADS
-  thread_local
-#endif
-      static ChainableStack::AutodiffStackStorage& ad_stack_;
 
  public:
   /**
@@ -68,14 +64,24 @@ class vari {
    * @param x Value of the constructed variable.
    */
   explicit vari(double x) : val_(x), adj_(0.0) {
-    ad_stack_.var_stack_.push_back(this);
+#ifdef STAN_THREADS
+    thread_local
+#endif
+        static ChainableStack::AutodiffStackStorage& ad_stack
+        = ChainableStack::instance();
+    ad_stack.var_stack_.push_back(this);
   }
 
   vari(double x, bool stacked) : val_(x), adj_(0.0) {
+#ifdef STAN_THREADS
+    thread_local
+#endif
+        static ChainableStack::AutodiffStackStorage& ad_stack
+        = ChainableStack::instance();
     if (stacked)
-      ad_stack_.var_stack_.push_back(this);
+      ad_stack.var_stack_.push_back(this);
     else
-      ad_stack_.var_nochain_stack_.push_back(this);
+      ad_stack.var_nochain_stack_.push_back(this);
   }
 
   /**
@@ -135,7 +141,12 @@ class vari {
    * @return Pointer to allocated bytes.
    */
   static inline void* operator new(size_t nbytes) {
-    return ad_stack_.memalloc_.alloc(nbytes);
+#ifdef STAN_THREADS
+    thread_local
+#endif
+        static ChainableStack::AutodiffStackStorage& ad_stack
+        = ChainableStack::instance();
+    return ad_stack.memalloc_.alloc(nbytes);
   }
 
   /**
@@ -152,12 +163,6 @@ class vari {
   static inline void operator delete(void* /* ignore arg */) { /* no op */
   }
 };
-
-#ifdef STAN_THREADS
-thread_local
-#endif
-    ChainableStack::AutodiffStackStorage& vari::ad_stack_
-    = ChainableStack::instance();
 
 }  // namespace math
 }  // namespace stan
