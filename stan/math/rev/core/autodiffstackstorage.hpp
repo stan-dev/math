@@ -58,7 +58,7 @@ struct AutodiffStackSingleton {
   };
 
   AutodiffStackSingleton() = delete;
-  AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
+  explicit AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
   AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
 
   static inline AutodiffStackStorage &instance() {
@@ -69,6 +69,7 @@ struct AutodiffStackSingleton {
   }
 
 #ifndef STAN_THREADS
+
  private:
   static AutodiffStackStorage instance_;
 #endif
