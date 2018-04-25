@@ -9,17 +9,18 @@
 namespace stan {
 namespace math {
 
-/** Returns a Matern 3/2 Kernel with one input vector
+/** Returns a Matern 3/2 covariance matrix with one input vector
  *
- * \f$ k(x, x') = \sigma^2(1 + \gamma \sqrt{3} \\
- *  \frac{\abs{x - x'}}{l}exp(-\gamma\sqrt{3}\frac{\sqrt{(x - x')^2}}{l})  \f$
+ * \f[ k(x, x') = \sigma^2(1 + \gamma \sqrt{3}
+ *  \frac{\sqrt{(x - x')^2}}{l}exp(-\gamma\sqrt{3}\frac{\sqrt{(x - x')^2}}{l})  \f]
  *
+ * See Rausmussen & Williams et al 2006 Chapter 4.
+ * 
  * @param x std::vector of elements that can be used in stan::math::distance
+ * @param length_scale length scale
  * @param sigma standard deviation that can be used in stan::math::square
  * @param gamma
- * @param length_scale length scale
- * @param squared distance
- * @throw std::domain error if sigma <= 0, l <= l, or x is nan of inf.
+ * @throw std::domain error if sigma <= 0, l <= 0, or x or gamma are nan of inf
  *
  */
 template <typename T_x, typename T_l, typename T_s, typename T_g>
@@ -70,20 +71,19 @@ inline
 }
 
 /** Returns a Matern 3/2 Kernel with one input vector,
- * with ARD priors.
+ * with automatic relevance determination (ARD) priors
  *
- * CHECK THIS FORMULA:
- * \f$ k(x, x') = \sigma^2(1 + \gamma \sqrt{3} \\
+ * \f[ k(x, x') = \sigma^2(1 + \gamma \sqrt{3} 
  *   \frac{\sum_{k=1}^{K}\sqrt{(x - x')^2}}{l_k}
- *   exp(-\gamma\sqrt{3}\sum_{k=1}^{K}\frac{\abs{x - x'}}{l}) \f$
+ *   exp(-\gamma\sqrt{3}\sum_{k=1}^{K}\frac{\sqrt{(x - x')^2}}{l_k}) \f]
+ *
+ * See Rausmussen & Williams et al 2006 Chapter 4.
  *
  * @param x std::vector of elements that can be used in stan::math::distance
+ * @param length_scale length scale
  * @param sigma standard deviation that can be used in stan::math::square
  * @param gamma
- * @param length_scale length scale
- * @param squared distance
- * @throw std::domain error if sigma <= 0, l <= l, or x is nan of inf.
- *
+ * @throw std::domain error if sigma <= 0, l <= 0, or x or gamma are nan of inf
  */
 template <typename T_x, typename T_l, typename T_s, typename T_g>
 inline
@@ -95,7 +95,6 @@ inline
   using std::pow;
   using std::abs;
   using std::exp;
-  
   
   size_t x_size = x.size();
   size_t l_size = length_scale.size();
@@ -137,17 +136,19 @@ inline
   return cov;
 }
 
-/** Returns a Matern 3/2 Kernel with two input vectors
+/** Returns a Matern 3/2 covariance matrix with two input vectors
  *
- * \f$ k(x, x') = \sigma^2(1 + \gamma \sqrt{3} \\
- *  \frac{\abs{x - x'}}{l}exp(-\gamma\sqrt{3}\frac{\sqrt{(x - x')^2}}{l})  \f$
+ * \f[ k(x, x') = \sigma^2(1 + \gamma \sqrt{3} 
+ *  \frac{\sqrt{(x - x')^2}}{l}exp(-\gamma\sqrt{3}\frac{\sqrt{(x - x')^2}}{l})  \f]
  *
- * @param x std::vector of elements that can be used in stan::math::distance
+ * See Rausmussen & Williams et al 2006 Chapter 4.
+ *
+ * @param x1 std::vector of elements that can be used in stan::math::distance
+ * @param x2 std::vector of elements that can be used in stan::math::distance
+ * @param length_scale length scale
  * @param sigma standard deviation that can be used in stan::math::square
  * @param gamma
- * @param length_scale length scale
- * @param squared distance
- * @throw std::domain error if sigma <= 0, l <= l, or x is nan of inf.
+ * @throw std::domain error if sigma <= 0, l <= 0, or x or gamma are nan of inf
  *
  */
 template <typename T_x1, typename T_x2, typename T_l, typename T_s,
@@ -200,18 +201,21 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   return cov;
 }
 
-/** Returns a Matern 3/2 Kernel with two input vectors with ARD priors
+/** Returns a Matern 3/2 Kernel with two input vectors with automatic 
+ * relevance determination (ARD) priors
  *
- * \f$ k(x, x') = \sigma^2(1 + \gamma \sqrt{3} \\
+ * \f[ k(x, x') = \sigma^2(1 + \gamma \sqrt{3}
  *   \frac{\sum_{k=1}^{K}\sqrt{(x - x')^2}}{l_k}
- *   exp(-\gamma\sqrt{3}\sum_{k=1}^{K}\frac{\abs{x - x'}}{l}) \f$
+ *   exp(-\gamma\sqrt{3}\sum_{k=1}^{K}\frac{\sqrt{(x - x')^2}}{l_k}) \f]
  *
- * @param x std::vector of elements that can be used in stan::math::distance
+ * See Rausmussen & Williams et al 2006 Chapter 4.
+ *
+ * @param x1 std::vector of elements that can be used in stan::math::distance
+ * @param x2 std::vector of elements that can be used in stan::math::distance
+ * @param length_scale length scale
  * @param sigma standard deviation that can be used in stan::math::square
  * @param gamma
- * @param length_scale length scale
- * @param squared distance
- * @throw std::domain error if sigma <= 0, l <= l, or x is nan of inf.
+ * @throw std::domain error if sigma <= 0, l <= 0, or x or gamma are nan of inf
  *
  */
 template <typename T_x1, typename T_x2, typename T_l, typename T_s,
