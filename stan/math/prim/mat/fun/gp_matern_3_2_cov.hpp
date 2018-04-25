@@ -14,7 +14,7 @@ namespace math {
 /** Returns a Matern 3/2 covariance matrix with one input vector
  *
  * \f[ k(x, x') = \sigma^2(1 + \gamma \sqrt{3}
- *  \frac{\sqrt{(x - x')^2}}{l}exp(-\gamma\sqrt{3}\frac{\sqrt{(x - x')^2}}{l})
+ *  \frac{\sqrt{(x - x')^2}}{l})exp(-\gamma\sqrt{3}\frac{\sqrt{(x - x')^2}}{l})
  * \f]
  *
  * See Rausmussen & Williams et al 2006 Chapter 4.
@@ -78,7 +78,7 @@ inline
  * with automatic relevance determination (ARD) priors
  *
  * \f[ k(x, x') = \sigma^2(1 + \gamma \sqrt{3}
- *   \frac{\sum_{k=1}^{K}\sqrt{(x - x')^2}}{l_k}
+ *   \frac{\sum_{k=1}^{K}\sqrt{(x - x')^2}}{l_k})
  *   exp(-\gamma\sqrt{3}\sum_{k=1}^{K}\frac{\sqrt{(x - x')^2}}{l_k}) \f]
  *
  * See Rausmussen & Williams et al 2006 Chapter 4.
@@ -143,7 +143,7 @@ inline
 /** Returns a Matern 3/2 covariance matrix with two input vectors
  *
  * \f[ k(x, x') = \sigma^2(1 + \gamma \sqrt{3}
- *  \frac{\sqrt{(x - x')^2}}{l}exp(-\gamma\sqrt{3}\frac{\sqrt{(x - x')^2}}{l})
+ *  \frac{\sqrt{(x - x')^2}}{l})exp(-\gamma\sqrt{3}\frac{\sqrt{(x - x')^2}}{l})
  * \f]
  *
  * See Rausmussen & Williams et al 2006 Chapter 4.
@@ -212,7 +212,7 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * relevance determination (ARD) priors
  *
  * \f[ k(x, x') = \sigma^2(1 + \gamma \sqrt{3}
- *   \frac{\sum_{k=1}^{K}\sqrt{(x - x')^2}}{l_k}
+ *   \frac{\sum_{k=1}^{K}\sqrt{(x - x')^2}}{l_k})
  *   exp(-\gamma\sqrt{3}\sum_{k=1}^{K}\frac{\sqrt{(x - x')^2}}{l_k}) \f]
  *
  * See Rausmussen & Williams et al 2006 Chapter 4.
