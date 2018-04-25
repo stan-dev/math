@@ -31,10 +31,10 @@ inline
                            Eigen::Dynamic, Eigen::Dynamic>
     gp_matern_3_2_cov(const std::vector<T_x> &x, const T_l &length_scale,
                       const T_s &sigma = 1.0, const T_g &gamma = 1.0) {
-  using std::pow;
+  using stan::math::squared_distance;
   using std::abs;
   using std::exp;
-  using stan::math::squared_distance;
+  using std::pow;
 
   size_t x_size = x.size();
   check_positive("gp_matern_3_2_cov", "length-scale", length_scale);
@@ -62,9 +62,10 @@ inline
   for (size_t i = 0; i < (x_size - 1); ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
-      cov(i, j) = sigma_sq *
-                  (1.0 + root_3_inv_l * gamma * squared_distance(x[i], x[j])) *
-                  exp(neg_gamma * root_3_inv_l * squared_distance(x[i], x[j]));
+      cov(i, j)
+          = sigma_sq
+            * (1.0 + root_3_inv_l * gamma * squared_distance(x[i], x[j]))
+            * exp(neg_gamma * root_3_inv_l * squared_distance(x[i], x[j]));
       cov(j, i) = cov(i, j);
     }
   }
@@ -94,9 +95,9 @@ inline
     gp_matern_3_2_cov(const std::vector<T_x> &x,
                       const std::vector<T_l> &length_scale,
                       const T_s &sigma = 1.0, const T_g &gamma = 1.0) {
-  using std::pow;
   using std::abs;
   using std::exp;
+  using std::pow;
 
   size_t x_size = x.size();
   size_t l_size = length_scale.size();
@@ -130,8 +131,8 @@ inline
       for (size_t k = 0; k < l_size; ++k) {
         temp += squared_distance(x[i], x[j]) / length_scale[k];
       }
-      cov(i, j) = sigma_sq * (1.0 + root_3 * gamma * pow(temp, 0.5)) *
-                  exp(neg_gamma * root_3 * pow(temp, 0.5));
+      cov(i, j) = sigma_sq * (1.0 + root_3 * gamma * pow(temp, 0.5))
+                  * exp(neg_gamma * root_3 * pow(temp, 0.5));
       cov(j, i) = cov(i, j);
     }
   }
@@ -162,10 +163,10 @@ inline typename Eigen::Matrix<
 gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                   const T_l &length_scale, const T_s &sigma = 1.0,
                   const T_g &gamma = 1.0) {
-  using std::pow;
+  using stan::math::squared_distance;
   using std::abs;
   using std::exp;
-  using stan::math::squared_distance;
+  using std::pow;
 
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
@@ -197,10 +198,10 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      cov(i, j) =
-          sigma_sq *
-          (1.0 + root_3_inv_l * gamma * squared_distance(x1[i], x2[j])) *
-          exp(neg_gamma * root_3_inv_l * squared_distance(x1[i], x2[j]));
+      cov(i, j)
+          = sigma_sq
+            * (1.0 + root_3_inv_l * gamma * squared_distance(x1[i], x2[j]))
+            * exp(neg_gamma * root_3_inv_l * squared_distance(x1[i], x2[j]));
     }
   }
   return cov;
@@ -231,10 +232,10 @@ inline typename Eigen::Matrix<
 gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                   const std::vector<T_l> &length_scale, const T_s &sigma = 1.0,
                   const T_g &gamma = 1.0) {
-  using std::pow;
+  using stan::math::squared_distance;
   using std::abs;
   using std::exp;
-  using stan::math::squared_distance;
+  using std::pow;
 
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
@@ -272,8 +273,8 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
       for (size_t k = 0; k < l_size; ++k) {
         temp += squared_distance(x1[i], x2[j]) / length_scale[k];
       }
-      cov(i, j) = sigma_sq * (1.0 + root_3 * gamma * pow(temp, 0.5)) *
-                  exp(neg_gamma * root_3 * pow(temp, 0.5));
+      cov(i, j) = sigma_sq * (1.0 + root_3 * gamma * pow(temp, 0.5))
+                  * exp(neg_gamma * root_3 * pow(temp, 0.5));
     }
   }
   return cov;
