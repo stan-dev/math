@@ -194,7 +194,8 @@ class opencl_context {
       // and mark them as compiled.
       for (auto kern : kernel_info()) {
         if (strcmp(kern.second.group, kernel_group) == 0) {
-          opencl_context_base::getInstance().kernels[(kern.first)] = cl::Kernel(program_, kern.first, &err);
+          opencl_context_base::getInstance().kernels[(kern.first)]
+              = cl::Kernel(program_, kern.first, &err);
           kern.second.exists = true;
         }
       }

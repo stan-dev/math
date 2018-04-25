@@ -21,11 +21,11 @@ TEST(MathGpu, context_construction) {
 TEST(MathGpu, kernel_construction) {
   EXPECT_NO_THROW(stan::math::opencl_context.get_kernel("dummy"));
   EXPECT_NO_THROW(stan::math::opencl_context.get_kernel("dummy2"));
-  
-  cl::Kernel dummy = stan::math::opencl_context.get_kernel("dummy");  
+
+  cl::Kernel dummy = stan::math::opencl_context.get_kernel("dummy");
   EXPECT_STREQ("dummy", dummy.getInfo<CL_KERNEL_FUNCTION_NAME>().c_str());
-  
-  cl::Kernel dummy2 = stan::math::opencl_context.get_kernel("dummy2");  
+
+  cl::Kernel dummy2 = stan::math::opencl_context.get_kernel("dummy2");
   EXPECT_STREQ("dummy2", dummy2.getInfo<CL_KERNEL_FUNCTION_NAME>().c_str());
 }
 
