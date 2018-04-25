@@ -1,10 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_GP_MATERN_3_2_COV_HPP
 #define STAN_MATH_PRIM_MAT_FUN_GP_MATERN_3_2_COV_HPP
 
-#include <cmath>
 #include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
+#include <cmath>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -12,10 +13,11 @@ namespace math {
 /** Returns a Matern 3/2 covariance matrix with one input vector
  *
  * \f[ k(x, x') = \sigma^2(1 + \gamma \sqrt{3}
- *  \frac{\sqrt{(x - x')^2}}{l}exp(-\gamma\sqrt{3}\frac{\sqrt{(x - x')^2}}{l})  \f]
+ *  \frac{\sqrt{(x - x')^2}}{l}exp(-\gamma\sqrt{3}\frac{\sqrt{(x - x')^2}}{l})
+ * \f]
  *
  * See Rausmussen & Williams et al 2006 Chapter 4.
- * 
+ *
  * @param x std::vector of elements that can be used in stan::math::distance
  * @param length_scale length scale
  * @param sigma standard deviation that can be used in stan::math::square
@@ -42,7 +44,7 @@ inline
   check_not_nan("gp_matern_3_2_cov", "marginal variance", sigma);
 
   check_not_nan("gp_matern_3_2_cov", "gamma", gamma);
-  
+
   for (size_t n = 0; n < x_size; ++n)
     check_not_nan("gp_matern_3_2_cov", "x", x[n]);
 
@@ -60,9 +62,9 @@ inline
   for (size_t i = 0; i < (x_size - 1); ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
-      cov(i, j) = sigma_sq * (1.0 + root_3_inv_l * gamma *
-                              squared_distance(x[i], x[j])) *
-        exp(neg_gamma * root_3_inv_l * squared_distance(x[i], x[j]));
+      cov(i, j) = sigma_sq *
+                  (1.0 + root_3_inv_l * gamma * squared_distance(x[i], x[j])) *
+                  exp(neg_gamma * root_3_inv_l * squared_distance(x[i], x[j]));
       cov(j, i) = cov(i, j);
     }
   }
@@ -73,7 +75,7 @@ inline
 /** Returns a Matern 3/2 Kernel with one input vector,
  * with automatic relevance determination (ARD) priors
  *
- * \f[ k(x, x') = \sigma^2(1 + \gamma \sqrt{3} 
+ * \f[ k(x, x') = \sigma^2(1 + \gamma \sqrt{3}
  *   \frac{\sum_{k=1}^{K}\sqrt{(x - x')^2}}{l_k}
  *   exp(-\gamma\sqrt{3}\sum_{k=1}^{K}\frac{\sqrt{(x - x')^2}}{l_k}) \f]
  *
@@ -95,7 +97,7 @@ inline
   using std::pow;
   using std::abs;
   using std::exp;
-  
+
   size_t x_size = x.size();
   size_t l_size = length_scale.size();
 
@@ -106,7 +108,7 @@ inline
   check_not_nan("gp_matern_3_2_cov", "marginal variance", sigma);
 
   check_not_nan("gp_matern_3_2_cov", "gamma", gamma);
-  
+
   for (size_t n = 0; n < x_size; ++n)
     check_not_nan("gp_matern_3_2_cov", "x", x[n]);
 
@@ -129,7 +131,7 @@ inline
         temp += squared_distance(x[i], x[j]) / length_scale[k];
       }
       cov(i, j) = sigma_sq * (1.0 + root_3 * gamma * pow(temp, 0.5)) *
-        exp(neg_gamma * root_3 * pow(temp, 0.5));
+                  exp(neg_gamma * root_3 * pow(temp, 0.5));
       cov(j, i) = cov(i, j);
     }
   }
@@ -138,8 +140,9 @@ inline
 
 /** Returns a Matern 3/2 covariance matrix with two input vectors
  *
- * \f[ k(x, x') = \sigma^2(1 + \gamma \sqrt{3} 
- *  \frac{\sqrt{(x - x')^2}}{l}exp(-\gamma\sqrt{3}\frac{\sqrt{(x - x')^2}}{l})  \f]
+ * \f[ k(x, x') = \sigma^2(1 + \gamma \sqrt{3}
+ *  \frac{\sqrt{(x - x')^2}}{l}exp(-\gamma\sqrt{3}\frac{\sqrt{(x - x')^2}}{l})
+ * \f]
  *
  * See Rausmussen & Williams et al 2006 Chapter 4.
  *
@@ -163,14 +166,14 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   using std::abs;
   using std::exp;
   using stan::math::squared_distance;
-  
+
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
 
   // add check same size
   check_positive("gp_matern_3_2_cov", "length-scale", length_scale);
   check_not_nan("gp_matern_3_2_cov", "length-scale", length_scale);
-  
+
   check_positive("gp_matern_3_2_cov", "marginal variance", sigma);
   check_not_nan("gp_matern_3_2_cov", "marginal variance", sigma);
 
@@ -194,14 +197,16 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      cov(i, j) = sigma_sq * (1.0 + root_3_inv_l * gamma * squared_distance(x1[i], x2[j])) *
-        exp(neg_gamma * root_3_inv_l * squared_distance(x1[i], x2[j]));
+      cov(i, j) =
+          sigma_sq *
+          (1.0 + root_3_inv_l * gamma * squared_distance(x1[i], x2[j])) *
+          exp(neg_gamma * root_3_inv_l * squared_distance(x1[i], x2[j]));
     }
   }
   return cov;
 }
 
-/** Returns a Matern 3/2 Kernel with two input vectors with automatic 
+/** Returns a Matern 3/2 Kernel with two input vectors with automatic
  * relevance determination (ARD) priors
  *
  * \f[ k(x, x') = \sigma^2(1 + \gamma \sqrt{3}
@@ -230,7 +235,7 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   using std::abs;
   using std::exp;
   using stan::math::squared_distance;
-  
+
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
   size_t l_size = length_scale.size();
@@ -238,12 +243,12 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   check_positive("gp_matern_3_2_cov", "length-scale", length_scale);
   check_not_nan("gp_matern_3_2_cov", "length-scale", length_scale);
-  
+
   check_positive("gp_matern_3_2_cov", "marginal variance", sigma);
   check_not_nan("gp_matern_3_2_cov", "marginal variance", sigma);
 
   check_not_nan("gp_matern_3_2_cov", "gamma", gamma);
-  
+
   for (size_t n = 0; n < x1_size; ++n)
     check_not_nan("gp_matern_3_2_cov", "x1", x1[n]);
   for (size_t n = 0; n < x2_size; ++n)
@@ -268,11 +273,11 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
         temp += squared_distance(x1[i], x2[j]) / length_scale[k];
       }
       cov(i, j) = sigma_sq * (1.0 + root_3 * gamma * pow(temp, 0.5)) *
-        exp(neg_gamma * root_3 * pow(temp, 0.5));
+                  exp(neg_gamma * root_3 * pow(temp, 0.5));
     }
   }
   return cov;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
