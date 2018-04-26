@@ -177,7 +177,8 @@ struct coupled_ode_system<F, double, var> {
    * @param y coupled states after solving the ode
    */
   std::vector<std::vector<var> > decouple_states(
-      const std::vector<std::vector<double> >& y) const {
+      const std::vector<std::vector<double> >& y,
+      const std::vector<double>& time_steps) const {
     std::vector<var> temp_vars(N_);
     std::vector<double> temp_gradients(M_);
     std::vector<std::vector<var> > y_return(y.size());
@@ -190,6 +191,35 @@ struct coupled_ode_system<F, double, var> {
           temp_gradients[k] = y[i][y0_dbl_.size() + y0_dbl_.size() * k + j];
 
         temp_vars[j] = precomputed_gradients(y[i][j], theta_, temp_gradients);
+      }
+      y_return[i] = temp_vars;
+    }
+    return y_return;
+  }
+
+  std::vector<std::vector<var> > decouple_states(
+      const std::vector<std::vector<double> >& y,
+      const std::vector<var>& time_steps) const {
+    std::vector<var> temp_vars(N_);
+    std::vector<double> temp_gradients(M_ + 1);
+    std::vector<std::vector<var> > y_return(y.size());
+    std::vector<stan::math::var> theta_aug;
+    theta_aug.reserve(M_ + 1);
+    theta_aug.insert(theta_aug.end(), theta_.begin(), theta_.end());
+    theta_aug.push_back(time_steps.front());
+    std::vector<double> rhs_eval(N_);
+
+    for (size_t i = 0; i < y.size(); i++) {
+      rhs_eval = f_(value_of(time_steps[i]), y[i], theta_dbl_, x_, x_int_, msgs_);
+      theta_aug[M_] = time_steps[i];
+      // iterate over number of equations
+      for (size_t j = 0; j < N_; j++) { 
+        // iterate over parameters for each equation
+        for (size_t k = 0; k < M_; k++)
+          temp_gradients[k] = y[i][y0_dbl_.size() + y0_dbl_.size() * k + j];
+
+        temp_gradients[M_] = rhs_eval[j];
+        temp_vars[j] = precomputed_gradients(y[i][j], theta_aug, temp_gradients);
       }
       y_return[i] = temp_vars;
     }
@@ -357,7 +387,8 @@ struct coupled_ode_system<F, var, double> {
    * @param y the vector of the coupled states after solving the ode
    */
   std::vector<std::vector<var> > decouple_states(
-      const std::vector<std::vector<double> >& y) const {
+      const std::vector<std::vector<double> >& y,
+      const std::vector<double>& time_steps) const {
     using std::vector;
 
     vector<var> temp_vars(N_);
@@ -378,6 +409,39 @@ struct coupled_ode_system<F, var, double> {
 
     return y_return;
   }
+
+  std::vector<std::vector<var> > decouple_states(
+      const std::vector<std::vector<double> >& y,
+      const std::vector<var>& time_steps) const {
+    using std::vector;
+
+    vector<var> temp_vars(N_);
+    vector<double> temp_gradients(N_+1);
+    vector<vector<var> > y_return(y.size());
+    std::vector<stan::math::var> theta_aug;
+    theta_aug.reserve(N_ + 1);
+    theta_aug.insert(theta_aug.end(), y0_.begin(), y0_.end());
+    theta_aug.push_back(time_steps.front());
+    std::vector<double> rhs_eval(N_);
+
+    for (size_t i = 0; i < y.size(); i++) {
+      rhs_eval = f_(value_of(time_steps[i]), y[i], theta_dbl_, x_, x_int_, msgs_);
+      theta_aug[N_] = time_steps[i];
+      // iterate over number of equations
+      for (size_t j = 0; j < N_; j++) {
+        // iterate over parameters for each equation
+        for (size_t k = 0; k < N_; k++)
+          temp_gradients[k] = y[i][y0_.size() + y0_.size() * k + j];
+
+        temp_gradients[N_] = rhs_eval[j];
+        temp_vars[j] = precomputed_gradients(y[i][j], theta_aug, temp_gradients);
+      }
+      y_return[i] = temp_vars;
+    }
+
+    return y_return;
+  }
+
 };
 
 /**
@@ -555,7 +619,8 @@ struct coupled_ode_system<F, var, var> {
    * @param y the vector of the coupled states after solving the ode
    */
   std::vector<std::vector<var> > decouple_states(
-      const std::vector<std::vector<double> >& y) const {
+      const std::vector<std::vector<double> >& y,
+      const std::vector<double>& time_steps) const {
     using std::vector;
 
     vector<var> vars = y0_;
@@ -573,6 +638,41 @@ struct coupled_ode_system<F, var, var> {
           temp_gradients[k] = y[i][N_ + N_ * k + j];
 
         temp_vars[j] = precomputed_gradients(y[i][j], vars, temp_gradients);
+      }
+      y_return[i] = temp_vars;
+    }
+
+    return y_return;
+  }
+
+  std::vector<std::vector<var> > decouple_states(
+      const std::vector<std::vector<double> >& y,
+      const std::vector<var>& time_steps) const {
+    using std::vector;
+
+    vector<var> vars = y0_;
+    vars.insert(vars.end(), theta_.begin(), theta_.end());
+
+    vector<var> temp_vars(N_);
+    vector<double> temp_gradients(N_ + M_ + 1);
+    vector<vector<var> > y_return(y.size());
+    std::vector<stan::math::var> theta_aug;
+    theta_aug.reserve(N_ + M_ + 1);
+    theta_aug.insert(theta_aug.end(), vars.begin(), vars.end());
+    theta_aug.push_back(time_steps.front());
+    std::vector<double> rhs_eval(N_);
+
+    for (size_t i = 0; i < y.size(); i++) {
+      rhs_eval = f_(value_of(time_steps[i]), y[i], theta_dbl_, x_, x_int_, msgs_);
+      theta_aug[N_ + M_] = time_steps[i];
+      // iterate over number of equations
+      for (size_t j = 0; j < N_; j++) {
+        // iterate over parameters for each equation
+        for (size_t k = 0; k < N_ + M_; k++)
+          temp_gradients[k] = y[i][N_ + N_ * k + j];
+
+        temp_gradients[N_ + M_] = rhs_eval[j];
+        temp_vars[j] = precomputed_gradients(y[i][j], theta_aug, temp_gradients);
       }
       y_return[i] = temp_vars;
     }

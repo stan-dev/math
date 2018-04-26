@@ -65,10 +65,11 @@ namespace math {
  * @return a vector of states, each state being a vector of the
  * same size as the state variable, corresponding to a time in ts.
  */
-template <typename F, typename T1, typename T2>
+  template <typename F, typename T1, typename T2, typename T_ts>
 std::vector<std::vector<typename stan::return_type<T1, T2>::type> >
 integrate_ode_rk45(const F& f, const std::vector<T1>& y0, double t0,
-                   const std::vector<double>& ts, const std::vector<T2>& theta,
+                   const std::vector<T_ts>& time_steps,
+                   const std::vector<T2>& theta,
                    const std::vector<double>& x, const std::vector<int>& x_int,
                    std::ostream* msgs = nullptr,
                    double relative_tolerance = 1e-6,
@@ -77,6 +78,8 @@ integrate_ode_rk45(const F& f, const std::vector<T1>& y0, double t0,
   using boost::numeric::odeint::make_dense_output;
   using boost::numeric::odeint::max_step_checker;
   using boost::numeric::odeint::runge_kutta_dopri5;
+
+  const std::vector<double> ts = value_of(time_steps);
 
   check_finite("integrate_ode_rk45", "initial state", y0);
   check_finite("integrate_ode_rk45", "initial time", t0);
@@ -126,7 +129,7 @@ integrate_ode_rk45(const F& f, const std::vector<T1>& y0, double t0,
   y_coupled.erase(y_coupled.begin());
 
   // the coupled system also encapsulates the decoupling operation
-  return coupled_system.decouple_states(y_coupled);
+  return coupled_system.decouple_states(y_coupled, time_steps);
 }
 
 }  // namespace math

@@ -132,8 +132,31 @@ class coupled_ode_system<F, double, double> {
    * @return the decoupled states
    */
   std::vector<std::vector<double> > decouple_states(
-      const std::vector<std::vector<double> >& y) const {
+      const std::vector<std::vector<double> >& y,
+      const std::vector<double>& time_steps) const {
     return y;
+  }
+
+  std::vector<std::vector<var> > decouple_states(
+      const std::vector<std::vector<double> >& y,
+      const std::vector<var>& time_steps) const {
+    const size_t n = y.size();
+    std::vector<std::vector<var>> y_var(n);
+
+    std::vector<var> temp_vars(N_);
+    std::vector<double> temp_gradients(1);
+    std::vector<var> par(1);
+    std::vector<double> rhs_eval(N_);
+    for (size_t i = 0; i < n; i++) {
+      rhs_eval = f_(value_of(time_steps[i]), y[i], theta_dbl_, x_, x_int_, msgs_);
+      for (size_t j = 0; j < N_; j++) { 
+        temp_gradients[0] = rhs_eval[j];
+        par[0] = time_steps[i];
+        temp_vars[j] = precomputed_gradients(y[i][j], par, temp_gradients);
+      }
+      y_var[i] = temp_vars;
+    }
+    return y_var;
   }
 };
 

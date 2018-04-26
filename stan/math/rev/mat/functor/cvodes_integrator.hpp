@@ -68,17 +68,20 @@ class cvodes_integrator {
    * @return a vector of states, each state being a vector of the
    * same size as the state variable, corresponding to a time in ts.
    */
-  template <typename F, typename T_initial, typename T_param>
+  template <typename F, typename T_initial, typename T_param, typename T_ts>
   std::vector<
       std::vector<typename stan::return_type<T_initial, T_param>::type> >
   integrate(const F& f, const std::vector<T_initial>& y0, double t0,
-            const std::vector<double>& ts, const std::vector<T_param>& theta,
+            const std::vector<T_ts>& time_steps,
+            const std::vector<T_param>& theta,
             const std::vector<double>& x, const std::vector<int>& x_int,
             std::ostream* msgs, double relative_tolerance,
             double absolute_tolerance,
             long int max_num_steps) {  // NOLINT(runtime/int)
     typedef stan::is_var<T_initial> initial_var;
     typedef stan::is_var<T_param> param_var;
+
+    const std::vector<double> ts = value_of(time_steps);
 
     const char* fun = "integrate_ode_cvodes";
 
@@ -175,7 +178,7 @@ class cvodes_integrator {
 
     CVodeFree(&cvodes_mem);
 
-    return cvodes_data.coupled_ode_.decouple_states(y_coupled);
+    return cvodes_data.coupled_ode_.decouple_states(y_coupled, time_steps);
   }
 };  // cvodes integrator
 }  // namespace math
