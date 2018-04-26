@@ -1,8 +1,8 @@
+#include <cmath>
 #include <gtest/gtest.h>
+#include <limits>
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <cmath>
-#include <limits>
 #include <string>
 #include <vector>
 
