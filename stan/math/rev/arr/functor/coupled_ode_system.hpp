@@ -175,6 +175,7 @@ struct coupled_ode_system<F, double, var> {
    * specified coupled system state.
    *
    * @param y coupled states after solving the ode
+   * @param time_steps the vector of the observation times
    */
   std::vector<std::vector<var> > decouple_states(
       const std::vector<std::vector<double> >& y,
@@ -197,6 +198,13 @@ struct coupled_ode_system<F, double, var> {
     return y_return;
   }
 
+  /**
+   * Returns the base ODE system state corresponding to the
+   * specified coupled system state.
+   *
+   * @param y coupled states after solving the ode
+   * @param time_steps the vector of the observation times
+   */
   std::vector<std::vector<var> > decouple_states(
       const std::vector<std::vector<double> >& y,
       const std::vector<var>& time_steps) const {
@@ -210,16 +218,18 @@ struct coupled_ode_system<F, double, var> {
     std::vector<double> rhs_eval(N_);
 
     for (size_t i = 0; i < y.size(); i++) {
-      rhs_eval = f_(value_of(time_steps[i]), y[i], theta_dbl_, x_, x_int_, msgs_);
+      rhs_eval = f_(value_of(time_steps[i]),
+                    y[i], theta_dbl_, x_, x_int_, msgs_);
       theta_aug[M_] = time_steps[i];
       // iterate over number of equations
-      for (size_t j = 0; j < N_; j++) { 
+      for (size_t j = 0; j < N_; j++) {
         // iterate over parameters for each equation
         for (size_t k = 0; k < M_; k++)
           temp_gradients[k] = y[i][y0_dbl_.size() + y0_dbl_.size() * k + j];
 
         temp_gradients[M_] = rhs_eval[j];
-        temp_vars[j] = precomputed_gradients(y[i][j], theta_aug, temp_gradients);
+        temp_vars[j] = precomputed_gradients(y[i][j],
+                                             theta_aug, temp_gradients);
       }
       y_return[i] = temp_vars;
     }
@@ -380,11 +390,11 @@ struct coupled_ode_system<F, var, double> {
   }
 
   /**
-   * Return the solutions to the basic ODE system, including
-   * appropriate autodiff partial derivatives, given the specified
-   * coupled system solution.
+   * Returns the base ODE system state corresponding to the
+   * specified coupled system state.
    *
-   * @param y the vector of the coupled states after solving the ode
+   * @param y coupled states after solving the ode
+   * @param time_steps the vector of the observation times
    */
   std::vector<std::vector<var> > decouple_states(
       const std::vector<std::vector<double> >& y,
@@ -410,6 +420,13 @@ struct coupled_ode_system<F, var, double> {
     return y_return;
   }
 
+  /**
+   * Returns the base ODE system state corresponding to the
+   * specified coupled system state.
+   *
+   * @param y coupled states after solving the ode
+   * @param time_steps the vector of the observation times
+   */
   std::vector<std::vector<var> > decouple_states(
       const std::vector<std::vector<double> >& y,
       const std::vector<var>& time_steps) const {
@@ -425,7 +442,8 @@ struct coupled_ode_system<F, var, double> {
     std::vector<double> rhs_eval(N_);
 
     for (size_t i = 0; i < y.size(); i++) {
-      rhs_eval = f_(value_of(time_steps[i]), y[i], theta_dbl_, x_, x_int_, msgs_);
+      rhs_eval = f_(value_of(time_steps[i]),
+                    y[i], theta_dbl_, x_, x_int_, msgs_);
       theta_aug[N_] = time_steps[i];
       // iterate over number of equations
       for (size_t j = 0; j < N_; j++) {
@@ -434,14 +452,14 @@ struct coupled_ode_system<F, var, double> {
           temp_gradients[k] = y[i][y0_.size() + y0_.size() * k + j];
 
         temp_gradients[N_] = rhs_eval[j];
-        temp_vars[j] = precomputed_gradients(y[i][j], theta_aug, temp_gradients);
+        temp_vars[j] = precomputed_gradients(y[i][j],
+                                             theta_aug, temp_gradients);
       }
       y_return[i] = temp_vars;
     }
 
     return y_return;
   }
-
 };
 
 /**
@@ -612,11 +630,11 @@ struct coupled_ode_system<F, var, var> {
   }
 
   /**
-   * Return the basic ODE solutions given the specified coupled
-   * system solutions, including the partials versus the
-   * parameters encoded in the autodiff results.
+   * Returns the base ODE system state corresponding to the
+   * specified coupled system state.
    *
-   * @param y the vector of the coupled states after solving the ode
+   * @param y coupled states after solving the ode
+   * @param time_steps the vector of the observation times
    */
   std::vector<std::vector<var> > decouple_states(
       const std::vector<std::vector<double> >& y,
@@ -645,6 +663,13 @@ struct coupled_ode_system<F, var, var> {
     return y_return;
   }
 
+  /**
+   * Returns the base ODE system state corresponding to the
+   * specified coupled system state.
+   *
+   * @param y coupled states after solving the ode
+   * @param time_steps the vector of the observation times
+   */
   std::vector<std::vector<var> > decouple_states(
       const std::vector<std::vector<double> >& y,
       const std::vector<var>& time_steps) const {
@@ -663,7 +688,8 @@ struct coupled_ode_system<F, var, var> {
     std::vector<double> rhs_eval(N_);
 
     for (size_t i = 0; i < y.size(); i++) {
-      rhs_eval = f_(value_of(time_steps[i]), y[i], theta_dbl_, x_, x_int_, msgs_);
+      rhs_eval = f_(value_of(time_steps[i]), y[i],
+                    theta_dbl_, x_, x_int_, msgs_);
       theta_aug[N_ + M_] = time_steps[i];
       // iterate over number of equations
       for (size_t j = 0; j < N_; j++) {
@@ -672,7 +698,8 @@ struct coupled_ode_system<F, var, var> {
           temp_gradients[k] = y[i][N_ + N_ * k + j];
 
         temp_gradients[N_ + M_] = rhs_eval[j];
-        temp_vars[j] = precomputed_gradients(y[i][j], theta_aug, temp_gradients);
+        temp_vars[j] = precomputed_gradients(y[i][j],
+                                             theta_aug, temp_gradients);
       }
       y_return[i] = temp_vars;
     }

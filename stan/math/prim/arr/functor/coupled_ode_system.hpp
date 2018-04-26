@@ -125,11 +125,13 @@ class coupled_ode_system<F, double, double> {
   /**
    * Returns the base portion of the coupled state.
    *
-   * <p>In this class's implementation, the coupled system is
+   * <p>In In this class, when time steps are also data,
+   * the coupled system is
    * equivalent to the base system, so this function just returns
    * its input.
    *
    * @param y the vector of the coupled states after solving the ode
+   * @param time_steps the vector of the observation times
    * @return the decoupled states
    */
   std::vector<std::vector<double> > decouple_states(
@@ -138,6 +140,20 @@ class coupled_ode_system<F, double, double> {
     return y;
   }
 
+  /**
+   * Returns the base portion of the coupled state.
+   *
+   * <p>In In this class, when time steps are parameters,
+   * The function returns vars with gradients being the RHS
+   * of the ODE system. So that for ODE system
+   * du/dt = f(u, t)
+   * the sensitivity of u with respective to observation
+   * time ti is f(ui, ti).
+   *
+   * @param y the vector of the coupled states after solving the ode
+   * @param time_steps the vector of the observation times
+   * @return the decoupled states
+   */
   std::vector<std::vector<stan::math::var> > decouple_states(
       const std::vector<std::vector<double> >& y,
       const std::vector<stan::math::var>& time_steps) const {
@@ -149,9 +165,11 @@ class coupled_ode_system<F, double, double> {
     std::vector<stan::math::var> par(1);
     std::vector<double> rhs_eval(N_);
     for (size_t i = 0; i < n; i++) {
-      rhs_eval = f_(value_of(time_steps[i]), y[i], theta_dbl_, x_, x_int_, msgs_);
-      for (size_t j = 0; j < N_; j++) { 
+      rhs_eval = f_(value_of(time_steps[i]), y[i],
+                    theta_dbl_, x_, x_int_, msgs_);
+      for (size_t j = 0; j < N_; j++) {
         temp_gradients[0] = rhs_eval[j];
+        // only integration ends can be parameters
         par[0] = time_steps[i];
         temp_vars[j] = precomputed_gradients(y[i][j], par, temp_gradients);
       }
