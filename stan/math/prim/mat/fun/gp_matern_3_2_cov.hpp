@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_GP_MATERN_3_2_COV_HPP
 #define STAN_MATH_PRIM_MAT_FUN_GP_MATERN_3_2_COV_HPP
 
-#include <cmath>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
+#include <cmath>
 #include <vector>
 
 namespace stan {
