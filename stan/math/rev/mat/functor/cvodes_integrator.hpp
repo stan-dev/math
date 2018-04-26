@@ -52,10 +52,11 @@ class cvodes_integrator {
    * @tparam F type of ODE system function.
    * @tparam T_initial type of scalars for initial values.
    * @tparam T_param type of scalars for parameters.
+   * @tparam T_ts type of scalars for time steps.
    * @param[in] f functor for the base ordinary differential equation.
    * @param[in] y0 initial state.
    * @param[in] t0 initial time.
-   * @param[in] ts times of the desired solutions, in strictly
+   * @param[in] time_steps times of the desired solutions, in strictly
    * increasing order, all greater than the initial time.
    * @param[in] theta parameter vector for the ODE.
    * @param[in] x continuous data vector for the ODE.
