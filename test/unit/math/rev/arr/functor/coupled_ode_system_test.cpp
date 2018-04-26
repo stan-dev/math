@@ -76,7 +76,8 @@ TEST_F(StanAgradRevOde, decouple_states_dv) {
   }
 
   std::vector<std::vector<var> > ys;
-  ys = coupled_system.decouple_states(ys_coupled);
+  std::vector<double> ts_dummy;
+  ys = coupled_system.decouple_states(ys_coupled, ts_dummy);
 
   ASSERT_EQ(T, ys.size());
   for (size_t t = 0; t < T; t++)
@@ -250,7 +251,8 @@ TEST_F(StanAgradRevOde, decouple_states_vd) {
   }
 
   std::vector<std::vector<var> > ys;
-  ys = coupled_system.decouple_states(ys_coupled);
+  std::vector<double> ts_dummy;
+  ys = coupled_system.decouple_states(ys_coupled, ts_dummy);
 
   ASSERT_EQ(T, ys.size());
   for (size_t t = 0; t < T; t++)
@@ -431,7 +433,8 @@ TEST_F(StanAgradRevOde, decouple_states_vv) {
   }
 
   std::vector<std::vector<var> > ys;
-  ys = coupled_system.decouple_states(ys_coupled);
+  std::vector<double> ts_dummy;
+  ys = coupled_system.decouple_states(ys_coupled, ts_dummy);
 
   ASSERT_EQ(T, ys.size());
   for (size_t t = 0; t < T; t++)

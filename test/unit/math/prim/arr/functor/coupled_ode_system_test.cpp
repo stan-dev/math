@@ -39,7 +39,8 @@ TEST_F(StanMathOde, decouple_states_dd) {
   }
 
   std::vector<std::vector<double> > ys;
-  ys = coupled_system.decouple_states(ys_coupled);
+  std::vector<double> ts_dummy;
+  ys = coupled_system.decouple_states(ys_coupled, ts_dummy);
 
   ASSERT_EQ(T, ys.size());
   for (int t = 0; t < T; t++)
