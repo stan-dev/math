@@ -6,14 +6,12 @@
 #include <vector>
 
 template <typename F, typename FV>
-static inline std::vector<stan::math::fvar<FV> >
-build_binary_vector1(std::vector<stan::math::fvar<FV> > fvar_vector,
-                     int seed_index = -1) {
-  using std::vector;
+static inline std::vector<stan::math::fvar<FV> > build_binary_vector1(
+    std::vector<stan::math::fvar<FV> > fvar_vector, int seed_index = -1) {
   using stan::math::fvar;
+  using std::vector;
 
-  vector<FV> template_v1 = build_binary_vector1<F>(vector<FV>(),
-                                                   seed_index);
+  vector<FV> template_v1 = build_binary_vector1<F>(vector<FV>(), seed_index);
   vector<FV> template_v2;
   if (seed_index != -1)
     template_v2 = build_binary_vector1<F>(vector<FV>(), seed_index);
@@ -30,14 +28,12 @@ build_binary_vector1(std::vector<stan::math::fvar<FV> > fvar_vector,
 }
 
 template <typename F, typename FV>
-static inline std::vector<stan::math::fvar<FV> >
-build_binary_vector2(std::vector<stan::math::fvar<FV> > fvar_vector,
-                     int seed_index = -1) {
-  using std::vector;
+static inline std::vector<stan::math::fvar<FV> > build_binary_vector2(
+    std::vector<stan::math::fvar<FV> > fvar_vector, int seed_index = -1) {
   using stan::math::fvar;
+  using std::vector;
 
-  vector<FV> template_v1 = build_binary_vector2<F>(vector<FV>(),
-                                                   seed_index);
+  vector<FV> template_v1 = build_binary_vector2<F>(vector<FV>(), seed_index);
   vector<FV> template_v2;
   if (seed_index != -1)
     template_v2 = build_binary_vector2<F>(vector<FV>(), seed_index);

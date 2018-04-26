@@ -52,10 +52,10 @@ struct binary_foo_test {
    * WARNING:  this is *not an independent test of the underlying function*.
    */
   template <typename T1, typename T2>
-  static typename boost::math::tools::promote_args<T1, T2>::type
-  apply_base(const T1& x, const T2& y) {
-    return apply<typename boost::math::tools::promote_args<T1, T2>::type,
-                 T1, T2>(x, y);
+  static typename boost::math::tools::promote_args<T1, T2>::type apply_base(
+      const T1& x, const T2& y) {
+    return apply<typename boost::math::tools::promote_args<T1, T2>::type, T1,
+                 T2>(x, y);
   }
 
   /**
@@ -66,8 +66,16 @@ struct binary_foo_test {
    */
   static std::vector<double> valid_inputs1() {
     return test::math::vector_builder<double>()
-      .add(0.7).add(2.3).add(3.5).add(0).add(0).add(0)
-      .add(-0.3).add(-5.3).add(-3.7).build();
+        .add(0.7)
+        .add(2.3)
+        .add(3.5)
+        .add(0)
+        .add(0)
+        .add(0)
+        .add(-0.3)
+        .add(-5.3)
+        .add(-3.7)
+        .build();
   }
 
   /**
@@ -78,8 +86,16 @@ struct binary_foo_test {
    */
   static std::vector<double> valid_inputs2() {
     return test::math::vector_builder<double>()
-      .add(1.3).add(-2.6).add(0).add(-1.2).add(2.3).add(0)
-      .add(-3.7).add(0).add(2.3).build();
+        .add(1.3)
+        .add(-2.6)
+        .add(0)
+        .add(-1.2)
+        .add(2.3)
+        .add(0)
+        .add(-3.7)
+        .add(0)
+        .add(2.3)
+        .build();
   }
 
   /**
@@ -90,7 +106,13 @@ struct binary_foo_test {
    */
   static std::vector<double> invalid_inputs1() {
     return test::math::vector_builder<double>()
-      .add(2.7).add(12.3).add(0).add(-5.3).add(10.4).add(15.2).build();
+        .add(2.7)
+        .add(12.3)
+        .add(0)
+        .add(-5.3)
+        .add(10.4)
+        .add(15.2)
+        .build();
   }
 
   /**
@@ -101,7 +123,13 @@ struct binary_foo_test {
    */
   static std::vector<double> invalid_inputs2() {
     return test::math::vector_builder<double>()
-      .add(10.7).add(2.3).add(15.2).add(26.3).add(0).add(-2.6).build();
+        .add(10.7)
+        .add(2.3)
+        .add(15.2)
+        .add(26.3)
+        .add(0)
+        .add(-2.6)
+        .build();
   }
 
   /**
@@ -112,8 +140,16 @@ struct binary_foo_test {
    */
   static std::vector<int> int_valid_inputs1() {
     return test::math::vector_builder<int>()
-      .add(6).add(3).add(7).add(0).add(0).add(0)
-      .add(-2).add(-5).add(-4).build();
+        .add(6)
+        .add(3)
+        .add(7)
+        .add(0)
+        .add(0)
+        .add(0)
+        .add(-2)
+        .add(-5)
+        .add(-4)
+        .build();
   }
 
   /**
@@ -124,8 +160,16 @@ struct binary_foo_test {
    */
   static std::vector<int> int_valid_inputs2() {
     return test::math::vector_builder<int>()
-      .add(3).add(-2).add(0).add(5).add(0).add(-4)
-      .add(0).add(6).add(-3).build();
+        .add(3)
+        .add(-2)
+        .add(0)
+        .add(5)
+        .add(0)
+        .add(-4)
+        .add(0)
+        .add(6)
+        .add(-3)
+        .build();
   }
 
   /**
@@ -136,7 +180,13 @@ struct binary_foo_test {
    */
   static std::vector<int> int_invalid_inputs1() {
     return test::math::vector_builder<int>()
-      .add(3).add(12).add(0).add(-5).add(11).add(15).build();
+        .add(3)
+        .add(12)
+        .add(0)
+        .add(-5)
+        .add(11)
+        .add(15)
+        .build();
   }
 
   /**
@@ -147,7 +197,13 @@ struct binary_foo_test {
    */
   static std::vector<int> int_invalid_inputs2() {
     return test::math::vector_builder<int>()
-      .add(11).add(2).add(15).add(26).add(0).add(-2).build();
+        .add(11)
+        .add(2)
+        .add(15)
+        .add(26)
+        .add(0)
+        .add(-2)
+        .build();
   }
 };
 

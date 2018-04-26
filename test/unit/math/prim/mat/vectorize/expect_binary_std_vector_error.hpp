@@ -5,21 +5,18 @@
 #include <stdexcept>
 #include <vector>
 
-template <typename F, typename result_t, typename vector_t1,
-          typename vector_t2>
+template <typename F, typename result_t, typename vector_t1, typename vector_t2>
 void expect_binary_std_vector_err_throw(std::vector<vector_t1> input_v1,
                                         std::vector<vector_t2> input_v2) {
   using std::vector;
   for (size_t i = 0; i < input_v1.size(); ++i) {
     vector<vector_t1> a(5, input_v1[i]);
     vector<vector_t2> b(5, input_v2[i]);
-    EXPECT_THROW(F::template apply<vector<result_t> >(a, b),
-                 std::domain_error);
+    EXPECT_THROW(F::template apply<vector<result_t> >(a, b), std::domain_error);
   }
 }
 
-template <typename F, typename result_t, typename vector_t1,
-          typename vector_t2>
+template <typename F, typename result_t, typename vector_t1, typename vector_t2>
 void expect_binary_std_vector_std_vector_err_throw(
     std::vector<vector_t1> input_v1, std::vector<vector_t2> input_v2) {
   using std::vector;
@@ -62,7 +59,8 @@ template <typename F, typename T>
 void expect_binary_std_vector_value_error() {
   using std::vector;
   vector<double> invalid_inputs1 = F::invalid_inputs1();
-  if (invalid_inputs1.size() == 0) return;
+  if (invalid_inputs1.size() == 0)
+    return;
   vector<double> invalid_inputs2 = F::invalid_inputs2();
   vector<int> int_invalid_inputs1 = F::int_invalid_inputs1();
   vector<int> int_invalid_inputs2 = F::int_invalid_inputs2();
@@ -75,14 +73,10 @@ void expect_binary_std_vector_value_error() {
   expect_binary_std_vector_err_throw<F, T>(invalid_inputs1, y2);
   expect_binary_std_vector_err_throw<F, T>(y1, y2);
 
-  expect_binary_std_vector_std_vector_err_throw<F, T>(
-      y1, int_invalid_inputs2);
-  expect_binary_std_vector_std_vector_err_throw<F, T>(
-      int_invalid_inputs1, y2);
-  expect_binary_std_vector_std_vector_err_throw<F, T>(
-      y1, invalid_inputs2);
-  expect_binary_std_vector_std_vector_err_throw<F, T>(
-      invalid_inputs1, y2);
+  expect_binary_std_vector_std_vector_err_throw<F, T>(y1, int_invalid_inputs2);
+  expect_binary_std_vector_std_vector_err_throw<F, T>(int_invalid_inputs1, y2);
+  expect_binary_std_vector_std_vector_err_throw<F, T>(y1, invalid_inputs2);
+  expect_binary_std_vector_std_vector_err_throw<F, T>(invalid_inputs1, y2);
   expect_binary_std_vector_std_vector_err_throw<F, T>(y1, y2);
 }
 

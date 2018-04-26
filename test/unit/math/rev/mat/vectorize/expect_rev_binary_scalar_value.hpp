@@ -22,11 +22,11 @@ void expect_rev_binary_scalar_value() {
     var y = valid_inputs1[i];
     var z = valid_inputs2[i];
     var fz = F::template apply<var>(y, input2);
-    expect_binary_val_deriv_eq(F::apply_base(y, input2), y, input2,
-                               fz, y, input2);
+    expect_binary_val_deriv_eq(F::apply_base(y, input2), y, input2, fz, y,
+                               input2);
     fz = F::template apply<var>(input1, z);
-    expect_binary_val_deriv_eq(F::apply_base(input1, z), input1, z,
-                               fz, input1, z);
+    expect_binary_val_deriv_eq(F::apply_base(input1, z), input1, z, fz, input1,
+                               z);
   }
   // var, double
   for (size_t i = 0; i < valid_inputs1.size(); ++i) {
@@ -35,11 +35,11 @@ void expect_rev_binary_scalar_value() {
     var y = valid_inputs1[i];
     var z = valid_inputs2[i];
     var fz = F::template apply<var>(y, input2);
-    expect_binary_val_deriv_eq(F::apply_base(y, input2), y, input2,
-                               fz, y, input2);
+    expect_binary_val_deriv_eq(F::apply_base(y, input2), y, input2, fz, y,
+                               input2);
     fz = F::template apply<var>(input1, z);
-    expect_binary_val_deriv_eq(F::apply_base(input1, z), input1, z,
-                               fz, input1, z);
+    expect_binary_val_deriv_eq(F::apply_base(input1, z), input1, z, fz, input1,
+                               z);
   }
   // var, var
   for (size_t i = 0; i < valid_inputs1.size(); ++i) {

@@ -18,14 +18,14 @@ void expect_prim_binary_matrix_matrix_eq(const matrix_t& input_m1,
   }
 }
 
-template <typename F, typename matrix_t> void
-expect_prim_binary_std_vector_matrix_std_vector_matrix_eq(
+template <typename F, typename matrix_t>
+void expect_prim_binary_std_vector_matrix_std_vector_matrix_eq(
     const std::vector<matrix_t>& input_mv1,
     const std::vector<matrix_t>& input_mv2) {
   using std::vector;
 
-  std::vector<matrix_t> fa = F::template apply<vector<matrix_t> >(
-      input_mv1, input_mv2);
+  std::vector<matrix_t> fa
+      = F::template apply<vector<matrix_t> >(input_mv1, input_mv2);
   EXPECT_EQ(input_mv1.size(), fa.size());
   EXPECT_EQ(input_mv2.size(), fa.size());
   for (size_t i = 0; i < input_mv1.size(); ++i) {
@@ -48,12 +48,12 @@ void expect_prim_binary_matrix_value(matrix_t template_m) {
 
   matrix_t a1 = build_template_matrix(template_m, valid_inputs1.size(), 3);
   for (int i = 0; i < a1.size(); ++i) {
-    a1(i) =  valid_inputs1[(i % valid_inputs1.size())];
+    a1(i) = valid_inputs1[(i % valid_inputs1.size())];
   }
 
   matrix_t a2 = build_template_matrix(template_m, valid_inputs1.size(), 3);
   for (int i = 0; i < a2.size(); ++i) {
-    a2(i) =  valid_inputs2[(i % valid_inputs2.size())];
+    a2(i) = valid_inputs2[(i % valid_inputs2.size())];
   }
 
   expect_prim_binary_matrix_matrix_eq<F>(a1, a2);
