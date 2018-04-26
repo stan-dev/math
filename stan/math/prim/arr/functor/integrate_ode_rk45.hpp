@@ -66,7 +66,7 @@ namespace math {
  * same size as the state variable, corresponding to a time in ts.
  */
   template <typename F, typename T1, typename T2, typename T_ts>
-std::vector<std::vector<typename stan::return_type<T1, T2>::type> >
+std::vector<std::vector<typename stan::return_type<T1, T2, T_ts>::type> >
 integrate_ode_rk45(const F& f, const std::vector<T1>& y0, double t0,
                    const std::vector<T_ts>& time_steps,
                    const std::vector<T2>& theta,

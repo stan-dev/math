@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 
 #include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/rev/core.hpp>
 #include <ostream>
 #include <vector>
 
@@ -137,15 +138,15 @@ class coupled_ode_system<F, double, double> {
     return y;
   }
 
-  std::vector<std::vector<var> > decouple_states(
+  std::vector<std::vector<stan::math::var> > decouple_states(
       const std::vector<std::vector<double> >& y,
-      const std::vector<var>& time_steps) const {
+      const std::vector<stan::math::var>& time_steps) const {
     const size_t n = y.size();
-    std::vector<std::vector<var>> y_var(n);
+    std::vector<std::vector<stan::math::var> > y_var(n);
 
-    std::vector<var> temp_vars(N_);
+    std::vector<stan::math::var> temp_vars(N_);
     std::vector<double> temp_gradients(1);
-    std::vector<var> par(1);
+    std::vector<stan::math::var> par(1);
     std::vector<double> rhs_eval(N_);
     for (size_t i = 0; i < n; i++) {
       rhs_eval = f_(value_of(time_steps[i]), y[i], theta_dbl_, x_, x_int_, msgs_);
