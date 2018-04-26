@@ -1,10 +1,14 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_GP_MATERN_3_2_COV_HPP
 #define STAN_MATH_PRIM_MAT_FUN_GP_MATERN_3_2_COV_HPP
 
-#include <cmath>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/err/check_nonnegative.hpp>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
+#include <cmath>
 #include <vector>
 
 namespace stan {
@@ -13,7 +17,7 @@ namespace math {
 /** Returns a Matern 3/2 covariance matrix with one input vector
  *
  * \f[ k(x, x') = \sigma^2(1 + \sqrt{3}
- *  \frac{\sqrt{(x - x')^2}}{l}exp(-\sqrt{3}\frac{\sqrt{(x - x')^2}}{l})
+ *  \frac{\sqrt{(x - x')^2}}{l})exp(-\sqrt{3}\frac{\sqrt{(x - x')^2}}{l})
  * \f]
  *
  * See Rausmussen & Williams et al 2006 Chapter 4.
@@ -59,8 +63,9 @@ gp_matern_3_2_cov(const std::vector<T_x> &x, const T_s &sigma,
   for (size_t i = 0; i < (x_size - 1); ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
-      cov(i, j) = sigma_sq * (1.0 + root_3_inv_l * squared_distance(x[i], x[j]))
-                  * exp(neg_root_3_inv_l * squared_distance(x[i], x[j]));
+      cov(i, j) = sigma_sq *
+                  (1.0 + root_3_inv_l * squared_distance(x[i], x[j])) *
+                  exp(neg_root_3_inv_l * squared_distance(x[i], x[j]));
       cov(j, i) = cov(i, j);
     }
   }
@@ -182,9 +187,9 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      cov(i, j) = sigma_sq
-                  * (1.0 + root_3_inv_l * squared_distance(x1[i], x2[j]))
-                  * exp(neg_root_3_inv_l * squared_distance(x1[i], x2[j]));
+      cov(i, j) = sigma_sq *
+                  (1.0 + root_3_inv_l * squared_distance(x1[i], x2[j])) *
+                  exp(neg_root_3_inv_l * squared_distance(x1[i], x2[j]));
     }
   }
   return cov;
@@ -256,6 +261,6 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   }
   return cov;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif
