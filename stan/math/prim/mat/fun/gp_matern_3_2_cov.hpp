@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_GP_MATERN_3_2_COV_HPP
 #define STAN_MATH_PRIM_MAT_FUN_GP_MATERN_3_2_COV_HPP
 
+#include <cmath>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -8,7 +9,6 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <cmath>
 #include <vector>
 
 namespace stan {
@@ -17,7 +17,7 @@ namespace math {
 /** Returns a Matern 3/2 covariance matrix with one input vector
  *
  * \f[ k(x, x') = \sigma^2(1 + \sqrt{3}
- *  \frac{\sqrt{(x - x')^2}}{l})exp(-\sqrt{3}\frac{\sqrt{(x - x')^2}}{l})
+ *  \frac{\sqrt{(x - x')^2}}{l^2})exp(-\sqrt{3}\frac{\sqrt{(x - x')^2}}{l^2})
  * \f]
  *
  * See Rausmussen & Williams et al 2006 Chapter 4.
@@ -76,8 +76,8 @@ gp_matern_3_2_cov(const std::vector<T_x> &x, const T_s &sigma,
  * with automatic relevance determination (ARD) priors
  *
  * \f[ k(x, x') = \sigma^2(1 + \sqrt{3}
- *   \frac{\sum_{k=1}^{K}\sqrt{(x - x')^2}}{l_k})
- *   exp(-\sqrt{3}\sum_{k=1}^{K}\frac{\sqrt{(x - x')^2}}{l_k}) \f]
+ *   \sum_{k=1}^{K}\frac{\sqrt{(x - x')^2}}{l_k^2})
+ *   exp(-\sqrt{3}\sum_{k=1}^{K}\frac{\sqrt{(x - x')^2}}{l_k^2}) \f]
  *
  * See Rausmussen & Williams et al 2006 Chapter 4.
  *
@@ -138,7 +138,7 @@ gp_matern_3_2_cov(const std::vector<T_x> &x, const T_s &sigma,
 /** Returns a Matern 3/2 covariance matrix with two input vectors
  *
  * \f[ k(x, x') = \sigma^2(1 + \sqrt{3}
- *  \frac{\sqrt{(x - x')^2}}{l})exp(-\sqrt{3}\frac{\sqrt{(x - x')^2}}{l})
+ *  \frac{\sqrt{(x - x')^2}}{l^2})exp(-\sqrt{3}\frac{\sqrt{(x - x')^2}}{l^2})
  * \f]
  *
  * See Rausmussen & Williams et al 2006 Chapter 4.
@@ -199,8 +199,8 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * relevance determination (ARD) priors
  *
  * \f[ k(x, x') = \sigma^2(1 + \sqrt{3}
- *   \frac{\sum_{k=1}^{K}\sqrt{(x - x')^2}}{l_k})
- *   exp(-\sqrt{3}\sum_{k=1}^{K}\frac{\sqrt{(x - x')^2}}{l_k}) \f]
+ *   \sum_{k=1}^{K}\frac{\sqrt{(x - x')^2}}{l_k^2})
+ *   exp(-\sqrt{3}\sum_{k=1}^{K}\frac{\sqrt{(x - x')^2}}{l_k^2}) \f]
  *
  * See Rausmussen & Williams et al 2006 Chapter 4.
  *
@@ -263,6 +263,6 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   }
   return cov;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif
