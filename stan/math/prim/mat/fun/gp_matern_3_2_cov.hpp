@@ -34,20 +34,19 @@ inline typename Eigen::Matrix<typename stan::return_type<T_x, T_s, T_l>::type,
 gp_matern_3_2_cov(const std::vector<T_x> &x, const T_s &sigma,
                   const T_l &length_scale) {
   using stan::math::squared_distance;
-  using std::abs;
+  using stan::math::square;
   using std::exp;
   using std::pow;
 
   size_t x_size = x.size();
+  for (size_t n = 0; n < x_size; ++n)
+    check_not_nan("gp_matern_3_2_cov", "x", x[n]);
 
   check_positive("gp_matern_3_2_cov", "marginal variance", sigma);
   check_not_nan("gp_matern_3_2_cov", "marginal variance", sigma);
 
   check_positive("gp_matern_3_2_cov", "length-scale", length_scale);
   check_not_nan("gp_matern_3_2_cov", "length-scale", length_scale);
-
-  for (size_t n = 0; n < x_size; ++n)
-    check_not_nan("gp_matern_3_2_cov", "x", x[n]);
 
   Eigen::Matrix<typename stan::return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
                 Eigen::Dynamic>
@@ -57,15 +56,15 @@ gp_matern_3_2_cov(const std::vector<T_x> &x, const T_s &sigma,
     return cov;
 
   T_s sigma_sq = square(sigma);
-  T_l root_3_inv_l = pow(3, 0.5) / length_scale;
-  T_l neg_root_3_inv_l = -1.0 * pow(3, 0.5) / length_scale;
+  T_l root_3_inv_l_sq = pow(3, 0.5) / square(length_scale);
+  T_l neg_root_3_inv_l_sq = -1.0 * pow(3, 0.5) / square(length_scale);
 
   for (size_t i = 0; i < (x_size - 1); ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
       cov(i, j) = sigma_sq *
-                  (1.0 + root_3_inv_l * squared_distance(x[i], x[j])) *
-                  exp(neg_root_3_inv_l * squared_distance(x[i], x[j]));
+                  (1.0 + root_3_inv_l_sq * squared_distance(x[i], x[j])) *
+                  exp(neg_root_3_inv_l_sq * squared_distance(x[i], x[j]));
       cov(j, i) = cov(i, j);
     }
   }
@@ -92,21 +91,23 @@ inline typename Eigen::Matrix<typename stan::return_type<T_x, T_s, T_l>::type,
                               Eigen::Dynamic, Eigen::Dynamic>
 gp_matern_3_2_cov(const std::vector<T_x> &x, const T_s &sigma,
                   const std::vector<T_l> &length_scale) {
-  using std::abs;
+  using stan::math::squared_distance;
+  using stan::math::square;
   using std::exp;
   using std::pow;
 
   size_t x_size = x.size();
   size_t l_size = length_scale.size();
+  for (size_t n = 0; n < x_size; ++n)
+    check_not_nan("gp_matern_3_2_cov", "x", x[n]);
 
   check_positive("gp_matern_3_2_cov", "marginal variance", sigma);
   check_not_nan("gp_matern_3_2_cov", "marginal variance", sigma);
 
   check_positive("gp_matern_3_2_cov", "length-scale", length_scale);
-  check_not_nan("gp_matern_3_2_cov", "length-scale", length_scale);
 
   for (size_t n = 0; n < x_size; ++n)
-    check_not_nan("gp_matern_3_2_cov", "x", x[n]);
+    check_not_nan("gp_matern_3_2_cov", "length-scale", length_scale[n]);
 
   Eigen::Matrix<typename stan::return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
                 Eigen::Dynamic>
@@ -124,7 +125,7 @@ gp_matern_3_2_cov(const std::vector<T_x> &x, const T_s &sigma,
     for (size_t j = i; j < x_size; ++j) {
       temp = 0;
       for (size_t k = 0; k < l_size; ++k) {
-        temp += squared_distance(x[i], x[j]) / length_scale[k];
+        temp += squared_distance(x[i], x[j]) / square(length_scale[k]);
       }
       temp = pow(temp, 0.5);
       cov(i, j) = sigma_sq * (1.0 + root_3 * temp) * exp(neg_root_3 * temp);
@@ -156,23 +157,22 @@ inline typename Eigen::Matrix<
 gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                   const T_s &sigma, const T_l &length_scale) {
   using stan::math::squared_distance;
-  using std::abs;
+  using stan::math::square;
   using std::exp;
   using std::pow;
 
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
+  for (size_t n = 0; n < x1_size; ++n)
+    check_not_nan("gp_matern_3_2_cov", "x1", x1[n]);
+  for (size_t n = 0; n < x2_size; ++n)
+    check_not_nan("gp_matern_3_2_cov", "x2", x2[n]);
 
   check_positive("gp_matern_3_2_cov", "marginal variance", sigma);
   check_not_nan("gp_matern_3_2_cov", "marginal variance", sigma);
 
   check_positive("gp_matern_3_2_cov", "length-scale", length_scale);
   check_not_nan("gp_matern_3_2_cov", "length-scale", length_scale);
-
-  for (size_t n = 0; n < x1_size; ++n)
-    check_not_nan("gp_matern_3_2_cov", "x1", x1[n]);
-  for (size_t n = 0; n < x2_size; ++n)
-    check_not_nan("gp_matern_3_2_cov", "x2", x2[n]);
 
   Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_s, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
@@ -182,14 +182,14 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     return cov;
 
   T_s sigma_sq = square(sigma);
-  T_l root_3_inv_l = pow(3.0, 0.5) / length_scale;
-  T_l neg_root_3_inv_l = -1.0 * pow(3.0, 0.5) / length_scale;
+  T_l root_3_inv_l_sq = pow(3.0, 0.5) / square(length_scale);
+  T_l neg_root_3_inv_l_sq = -1.0 * pow(3.0, 0.5) / square(length_scale);
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
       cov(i, j) = sigma_sq *
-                  (1.0 + root_3_inv_l * squared_distance(x1[i], x2[j])) *
-                  exp(neg_root_3_inv_l * squared_distance(x1[i], x2[j]));
+                  (1.0 + root_3_inv_l_sq * squared_distance(x1[i], x2[j])) *
+                  exp(neg_root_3_inv_l_sq * squared_distance(x1[i], x2[j]));
     }
   }
   return cov;
@@ -218,7 +218,7 @@ inline typename Eigen::Matrix<
 gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                   const T_s &sigma, const std::vector<T_l> &length_scale) {
   using stan::math::squared_distance;
-  using std::abs;
+  using stan::math::square;
   using std::exp;
   using std::pow;
 
@@ -226,16 +226,18 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   size_t x2_size = x2.size();
   size_t l_size = length_scale.size();
 
-  check_positive("gp_matern_3_2_cov", "marginal variance", sigma);
-  check_not_nan("gp_matern_3_2_cov", "marginal variance", sigma);
-
-  check_positive("gp_matern_3_2_cov", "length-scale", length_scale);
-  check_not_nan("gp_matern_3_2_cov", "length-scale", length_scale);
-
   for (size_t n = 0; n < x1_size; ++n)
     check_not_nan("gp_matern_3_2_cov", "x1", x1[n]);
   for (size_t n = 0; n < x2_size; ++n)
     check_not_nan("gp_matern_3_2_cov", "x2", x2[n]);
+
+  check_positive("gp_matern_3_2_cov", "marginal variance", sigma);
+  check_not_nan("gp_matern_3_2_cov", "marginal variance", sigma);
+
+  check_positive("gp_matern_3_2_cov", "length-scale", length_scale);
+
+  for (size_t n = 0; n < l_size; ++n)
+    check_not_nan("gp_matern_3_2_cov", "length-scale", length_scale[n]);
 
   Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_s, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
@@ -253,7 +255,7 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     for (size_t j = 0; j < x2_size; ++j) {
       temp = 0;
       for (size_t k = 0; k < l_size; ++k) {
-        temp += squared_distance(x1[i], x2[j]) / length_scale[k];
+        temp += squared_distance(x1[i], x2[j]) / square(length_scale[k]);
       }
       temp = pow(temp, 0.5);
       cov(i, j) = sigma_sq * (1.0 + root_3 * temp) * exp(neg_root_3 * temp);
@@ -261,6 +263,6 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   }
   return cov;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
