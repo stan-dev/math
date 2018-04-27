@@ -63,24 +63,14 @@ class vari {
    * @param x Value of the constructed variable.
    */
   explicit vari(double x) : val_(x), adj_(0.0) {
-#ifdef STAN_THREADS
-    thread_local
-#endif
-        static ChainableStack::AutodiffStackStorage& ad_stack
-        = ChainableStack::instance();
-    ad_stack.var_stack_.push_back(this);
+    ChainableStack::instance().var_stack_.push_back(this);
   }
 
   vari(double x, bool stacked) : val_(x), adj_(0.0) {
-#ifdef STAN_THREADS
-    thread_local
-#endif
-        static ChainableStack::AutodiffStackStorage& ad_stack
-        = ChainableStack::instance();
     if (stacked)
-      ad_stack.var_stack_.push_back(this);
+      ChainableStack::instance().var_stack_.push_back(this);
     else
-      ad_stack.var_nochain_stack_.push_back(this);
+      ChainableStack::instance().var_nochain_stack_.push_back(this);
   }
 
   /**
@@ -140,12 +130,7 @@ class vari {
    * @return Pointer to allocated bytes.
    */
   static inline void* operator new(size_t nbytes) {
-#ifdef STAN_THREADS
-    thread_local
-#endif
-        static ChainableStack::AutodiffStackStorage& ad_stack
-        = ChainableStack::instance();
-    return ad_stack.memalloc_.alloc(nbytes);
+    return ChainableStack::instance().memalloc_.alloc(nbytes);
   }
 
   /**
