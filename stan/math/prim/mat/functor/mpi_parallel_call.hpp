@@ -17,17 +17,37 @@ namespace math {
 
 namespace internal {
 
+/**
+ * Container for locally cached data which is essentially implemented
+ * as singleton. That is, the static data is labelled by the user with
+ * call_id which forms a type in the program. As we have to associate
+ * multiple data items with a given call_id the member integer is used
+ * to allow for multiple items per call_id. Think of this as a
+ * singleton per static data.
+ *
+ * The singleton must be initialized with data once using the store
+ * method. After calling the store method the state of the object is
+ * valid and the data can be read using the data function which
+ * returns a const reference to the data.
+ *
+ * @tparam call_id label of static data defined by the user
+ * @tparam member labels a specific data item for the call_id context
+ * @tparam T the type of the object stored
+ */
 template <int call_id, int member, typename T>
 class mpi_parallel_call_cache {
-  // static members to hold locally cached data
-  // of placing the cache inside mpi_parallel_call is that we will
-  // cache the data multiple times (once for each ReduceF
-  // type).
   static T local_;
   static bool is_valid_;
 
  public:
   typedef const T cache_t;
+
+  mpi_parallel_call_cache() = delete;
+  mpi_parallel_call_cache(const mpi_parallel_call_cache<call_id, member, T>&)
+      = delete;
+  mpi_parallel_call_cache& operator=(
+      const mpi_parallel_call_cache<call_id, member, T>&)
+      = delete;
 
   static bool is_valid() { return is_valid_; }
 
@@ -53,8 +73,70 @@ bool mpi_parallel_call_cache<call_id, member, T>::is_valid_ = false;
 
 }  // namespace internal
 
-// utility class to store and cache static data and output size
-// per job; manages memory allocation and cluster communication
+/**
+ * The MPI parallel call class manages the a distributed evaluation of
+ * collection of tasks following the map - reduce - combine
+ * pattern. The class organizes the distribution of all job related
+ * information from the root node to all worker nodes. The class
+ * discriminates between parameters and static data. The static data
+ * is only transmitted a single time and cached on each worker locally
+ * after the inital transfer.
+ *
+ * The flow of commands are:
+ *
+ * 1. The constructor of this class must be called on the root node where
+ *    all parameters and static data is passed to the class.
+ * 2. The constructor then tries to allocate the MPI cluster ressource
+ *    to obtain control over all workers in the cluster. If the
+ *    cluster is locked already, then an exception is fired.
+ * 3. The worker nodes are instructed to run the static
+ *    distributed_apply method of this class. This static method then
+ *    instantiates a mpi_parallel_call instance on the workers.
+ * 4. The root then broadcasts and scatters all necessary data to the
+ *    cluster. Static data (including meta information on data shapes)
+ *    are locally cached such that static data is only transferred on
+ *    the first evaluation. Note that the work is equally distributed
+ *    among the workers. That is N jobs are distributed ot a cluster
+ *    of size W in N/W chunks (the remainder is allocated to node 1
+ *    onwards which ensures that the root node 0 has one job less).
+ * 5. Once the parameters and static data is distributed, the reduce
+ *    operation is applied per defined job. Each job is allowed to
+ *    return a different number of outputs such that the resulting
+ *    data structure is a ragged array. The ragged array structure
+ *    becomes known to mpi_parallel_call during the first evaluation
+ *    and must not change for future calls.
+ * 6. Finally the local results are given to the combine functor along
+ *    with the ragged array data structure.
+ *
+ * The MPI cluster resource is aquired with construction of
+ * mpi_parallel_call and is freed once the mpi_parallel_call goes out
+ * of scope (that is, deconstructed).
+ *
+ * Note 1: During MPI operation everything must run synchronous. That
+ * is, if a job fails on any of the workers then the execution must
+ * still continue on all other workers. In order to maintain a
+ * synchronized state, even the worker with a failed job must return a
+ * valid output chunk since the gather commands issued on the root to
+ * collect results would otherwise fail. Thus, if a job fails on any
+ * worker the output will be falgged as "failure" using the maximal
+ * admissable double value.
+ *
+ * Note 2: During the first evaluation of the function the ragged
+ * array sizes need to be collected on the root from all workers. This
+ * is needed on the root such that the root knows how many outputs are
+ * computed on each worker. This information is then cached for all
+ * subsequent evaluations. However, caching this information can only
+ * occur if and only if the evaluation of all functions was
+ * successfull on all workers. Thus, the first evaluation is handled
+ * with special care to ensure that caching of this meta info is only
+ * done when all workers have successfully evaluated the function and
+ * otherwise an exception is raised.
+ *
+ * @tparam call_id label for the static data
+ * @tparam ReduceF reduce function called for each job
+ * @tparam CombineF combine function called on the combined results on
+ * each job along with the ragged data structure information
+ */
 template <int call_id, typename ReduceF, typename CombineF>
 class mpi_parallel_call {
   boost::mpi::communicator world_;
@@ -104,7 +186,7 @@ class mpi_parallel_call {
                          "integer data", x_i);
 
     // in case we have already cached data available for this
-    // callsite id, do further checks
+    // call_id, do further checks
     if (cache_chunks::is_valid()) {
       typename cache_chunks::cache_t& job_chunks = cache_chunks::data();
       const int cached_num_jobs = sum(job_chunks);
@@ -200,11 +282,10 @@ class mpi_parallel_call {
       // We abort processing only and flag that things went
       // wrong. We have to keep processing to keep the cluster in
       // sync and let the gather_outputs method detect on the root
-      // that things went wrong
+      // that things went wrong (and only throw on the root)
       if (local_output.rows() == 0)
         local_output.conservativeResize(1, Eigen::NoChange);
       local_output(0, offset) = std::numeric_limits<double>::max();
-      // local_f_out[num_local_jobs-1] = -1;
     }
 
     // during first execution we distribute the output sizes from
