@@ -9,7 +9,7 @@ namespace math {
 
 /**
  * Provides a thread_local singleton if needed. Read warnings below!
- * For performance reasons the singletong is a global static for the
+ * For performance reasons the singleton is a global static for the
  * case of no threading which is returned by a function. This design
  * should allow the compiler to apply necessary inlining to get
  * maximal performance. However, this design suffers from "the static
@@ -19,7 +19,7 @@ namespace math {
  * we get a more performant singleton pattern for the non-threading
  * case. In the threading case we use the defacto standard C++11
  * singleton pattern relying on a function wrapping a static local
- * variable. This is standard pattern is expected to be well supported
+ * variable. This standard pattern is expected to be well supported
  * by the major compilers (as its standard), but it does incur some
  * performance penalty.  There has been some discussion on this; see
  * [1] and [2] and the discussions those PRs link to as well.

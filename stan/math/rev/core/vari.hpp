@@ -18,21 +18,14 @@ class var;
  * constants.
  *
  * A variable implementation is constructed with a constant
- * value.  It also stores the adjoint for storing the partial
+ * value. It also stores the adjoint for storing the partial
  * derivative with respect to the root of the derivative tree.
  *
- * The chain() method applies the chain rule.  Concrete extensions
+ * The chain() method applies the chain rule. Concrete extensions
  * of this class will represent base variables or the result
- * of operations such as addition or subtraction.  These extended
+ * of operations such as addition or subtraction. These extended
  * classes will store operand variables and propagate derivative
  * information via an implementation of chain().
- *
- * Note: Access from this class to the auto-diff stack is extremley
- * time-critical. For the threading case the static local function
- * variable design is used which ensure safe and translational unit
- * (TU) independent access to the AD stack. However, it also comes at
- * a performance penalty which we avoid here by adding static function
- * local references where needed.
  */
 class vari {
  private:
