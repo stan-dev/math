@@ -16,9 +16,11 @@ namespace math {
 
 /** Returns a Matern 3/2 covariance matrix with one input vector
  *
- * \f[ k(x, x') = \sigma^2(1 + \sqrt{3}
- *  \frac{\sqrt{(x - x')^2}}{l^2})exp(-\sqrt{3}\frac{\sqrt{(x - x')^2}}{l^2})
+ * \f[ k(x, x') = \sigma^2(1 +
+ *  \frac{\sqrt{3}d(x, x')}{l})exp(-\frac{\sqrt{3}d(x, x')}{l})
  * \f]
+ *
+ * where \f$ d(x, x') \f$ is the squared distace, or dot product.
  *
  * See Rausmussen & Williams et al 2006 Chapter 4.
  *
@@ -56,15 +58,15 @@ gp_matern_3_2_cov(const std::vector<T_x> &x, const T_s &sigma,
     return cov;
 
   T_s sigma_sq = square(sigma);
-  T_l root_3_inv_l_sq = pow(3, 0.5) / square(length_scale);
-  T_l neg_root_3_inv_l_sq = -1.0 * pow(3, 0.5) / square(length_scale);
+  T_l root_3_inv_l = pow(3, 0.5) / length_scale;
+  T_l neg_root_3_inv_l = -1.0 * pow(3, 0.5) / length_scale;
 
   for (size_t i = 0; i < (x_size - 1); ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
       cov(i, j) = sigma_sq
-                  * (1.0 + root_3_inv_l_sq * squared_distance(x[i], x[j]))
-                  * exp(neg_root_3_inv_l_sq * squared_distance(x[i], x[j]));
+                  * (1.0 + root_3_inv_l * squared_distance(x[i], x[j]))
+                  * exp(neg_root_3_inv_l * squared_distance(x[i], x[j]));
       cov(j, i) = cov(i, j);
     }
   }
@@ -76,9 +78,10 @@ gp_matern_3_2_cov(const std::vector<T_x> &x, const T_s &sigma,
  * with automatic relevance determination (ARD) priors
  *
  * \f[ k(x, x') = \sigma^2(1 + \sqrt{3}
- *   \sum_{k=1}^{K}\frac{\sqrt{(x - x')^2}}{l_k^2})
- *   exp(-\sqrt{3}\sum_{k=1}^{K}\frac{\sqrt{(x - x')^2}}{l_k^2}) \f]
+ *   \sum_{k=1}^{K}\frac{d{(x, x')}}{l_k})
+ *   exp(-\sqrt{3}\sum_{k=1}^{K}\frac{d(x, x')}{l_k}) \f]
  *
+ * where \f$d(x, x')\f$ is the squared distance, or dot product.
  * See Rausmussen & Williams et al 2006 Chapter 4.
  *
  * @param x std::vector of elements that can be used in stan::math::distance
@@ -125,7 +128,7 @@ gp_matern_3_2_cov(const std::vector<T_x> &x, const T_s &sigma,
     for (size_t j = i; j < x_size; ++j) {
       temp = 0;
       for (size_t k = 0; k < l_size; ++k) {
-        temp += squared_distance(x[i], x[j]) / square(length_scale[k]);
+        temp += squared_distance(x[i], x[j]) / length_scale[k];
       }
       temp = pow(temp, 0.5);
       cov(i, j) = sigma_sq * (1.0 + root_3 * temp) * exp(neg_root_3 * temp);
@@ -137,10 +140,11 @@ gp_matern_3_2_cov(const std::vector<T_x> &x, const T_s &sigma,
 
 /** Returns a Matern 3/2 covariance matrix with two input vectors
  *
- * \f[ k(x, x') = \sigma^2(1 + \sqrt{3}
- *  \frac{\sqrt{(x - x')^2}}{l^2})exp(-\sqrt{3}\frac{\sqrt{(x - x')^2}}{l^2})
+ * \f[ k(x, x') = \sigma^2(1 +
+ *  \frac{\sqrt{3}d(x, x')}{l})exp(-\sqrt{3}\frac{d(x, x')}{l})
  * \f]
  *
+ * where \f$d(x, x')\f$ is the squared distance, or dot product.
  * See Rausmussen & Williams et al 2006 Chapter 4.
  *
  * @param x1 std::vector of elements that can be used in stan::math::distance
@@ -182,8 +186,8 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     return cov;
 
   T_s sigma_sq = square(sigma);
-  T_l root_3_inv_l_sq = pow(3.0, 0.5) / square(length_scale);
-  T_l neg_root_3_inv_l_sq = -1.0 * pow(3.0, 0.5) / square(length_scale);
+  T_l root_3_inv_l_sq = pow(3.0, 0.5) / length_scale;
+  T_l neg_root_3_inv_l_sq = -1.0 * pow(3.0, 0.5) / length_scale;
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
@@ -199,9 +203,10 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * relevance determination (ARD) priors
  *
  * \f[ k(x, x') = \sigma^2(1 + \sqrt{3}
- *   \sum_{k=1}^{K}\frac{\sqrt{(x - x')^2}}{l_k^2})
- *   exp(-\sqrt{3}\sum_{k=1}^{K}\frac{\sqrt{(x - x')^2}}{l_k^2}) \f]
+ *   \sum_{k=1}^{K}\frac{d(x, x')}{l_k})
+ *   exp(-\sqrt{3}\sum_{k=1}^{K}\frac{d(x, x')}{l_k}) \f]
  *
+ * where \f$d(x, x')\f$ is the squared distance, or dot product. 
  * See Rausmussen & Williams et al 2006 Chapter 4.
  *
  * @param x1 std::vector of elements that can be used in stan::math::distance
@@ -255,7 +260,7 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     for (size_t j = 0; j < x2_size; ++j) {
       temp = 0;
       for (size_t k = 0; k < l_size; ++k) {
-        temp += squared_distance(x1[i], x2[j]) / square(length_scale[k]);
+        temp += squared_distance(x1[i], x2[j]) / length_scale[k];
       }
       temp = pow(temp, 0.5);
       cov(i, j) = sigma_sq * (1.0 + root_3 * temp) * exp(neg_root_3 * temp);
