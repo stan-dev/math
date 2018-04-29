@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_GP_MATERN_5_2_COV_HPP
 #define STAN_MATH_PRIM_MAT_FUN_GP_MATERN_5_2_COV_HPP
 
-#include <cmath>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -9,11 +8,27 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <cmath>
 #include <vector>
 
 namespace stan {
 namespace math {
 
+/** Returns a Matern 5/2 covariance matrix with one input vector
+ *
+ * \f[ k(x, x') = \sigma^2(1 +
+ *  \frac{\sqrt{5}d(x, x')}{l})exp(-\frac{5 d(x, x')^2}{3l^2})
+ * \f]
+ *
+ * where \f$ d(x, x') \f$ is the squared distace, or dot product.
+ * See Rausmussen & Williams et al 2006 Chapter 4.
+ *
+ * @param x std::vector of elements that can be used in stan::math::distance
+ * @param length_scale length scale
+ * @param sigma standard deviation that can be used in stan::math::square
+ * @throw std::domain error if sigma <= 0, l <= 0, or x is nan or inf
+ *
+ */
 template <typename T_x, typename T_s, typename T_l>
 inline typename Eigen::Matrix<typename stan::return_type<T_x, T_s, T_l>::type,
                               Eigen::Dynamic, Eigen::Dynamic>
@@ -60,6 +75,23 @@ gp_matern_5_2_cov(const std::vector<T_x> &x, const T_s &sigma,
   return cov;
 }
 
+/** Returns a Matern 5/2 covariance matrix with one input vector
+ *  with automatic relevance determination (ARD) priors.
+ *
+ * \f[ k(x, x') = \sigma^2(1 +
+ *  \sqrt{5}\sum_{k=1}^{K} \frac{d(x, x')}{l_k})
+ *  exp(-\frac{5}{3}(\sum_{k=1}^K{\frac{d(x, x')}{l_k}})^2)
+ * \f]
+ *
+ * where \f$ d(x, x') \f$ is the squared distace, or dot product.
+ * See Rausmussen & Williams et al 2006 Chapter 4.
+ *
+ * @param x std::vector of elements that can be used in stan::math::distance
+ * @param length_scale length scale
+ * @param sigma standard deviation that can be used in stan::math::square
+ * @throw std::domain error if sigma <= 0, l <= 0, or x is nan or inf
+ *
+ */
 template <typename T_x, typename T_s, typename T_l>
 inline typename Eigen::Matrix<typename stan::return_type<T_x, T_s, T_l>::type,
                               Eigen::Dynamic, Eigen::Dynamic>
@@ -99,7 +131,7 @@ gp_matern_5_2_cov(const std::vector<T_x> &x, const T_s &sigma,
     for (size_t j = i + 1; j < x_size; ++j) {
       temp = 0;
       for (size_t k = 0; k < l_size; ++k)
-        temp += squared_distance(x[i], x[j]) / square(length_scale[k]);
+        temp += squared_distance(x[i], x[j]) / length_scale[k];
       cov(i, j) = sigma_sq *
                   (1.0 + root_5 * temp + five_thirds * square(temp)) *
                   exp(neg_root_5 * temp);
@@ -110,6 +142,22 @@ gp_matern_5_2_cov(const std::vector<T_x> &x, const T_s &sigma,
   return cov;
 }
 
+/** Returns a Matern 5/2 covariance matrix with two different input vectors
+ *
+ * \f[ k(x, x') = \sigma^2(1 +
+ *  \frac{\sqrt{5}d(x, x')}{l})exp(-\frac{5 d(x, x')^2}{3l^2})
+ * \f]
+ *
+ * where \f$ d(x, x') \f$ is the squared distace, or dot product.
+ * See Rausmussen & Williams et al 2006 Chapter 4.
+ *
+ * @param x1 std::vector of elements that can be used in stan::math::distance
+ * @param x2 std::vector of elements that can be used in stan::math::distance
+ * @param length_scale length scale
+ * @param sigma standard deviation that can be used in stan::math::square
+ * @throw std::domain error if sigma <= 0, l <= 0, or x is nan or inf
+ *
+ */
 template <typename T_x1, typename T_x2, typename T_s, typename T_l>
 inline typename Eigen::Matrix<
     typename stan::return_type<T_x1, T_x2, T_s, T_l>::type, Eigen::Dynamic,
@@ -158,6 +206,24 @@ gp_matern_5_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   return cov;
 }
 
+/** Returns a Matern 5/2 covariance matrix with two input vectors
+ *  with automatic relevance determination (ARD) priors.
+ *
+ * \f[ k(x, x') = \sigma^2(1 +
+ *  \sqrt{5}\sum_{k=1}^{K} \frac{d(x, x')}{l_k})
+ *  exp(-\frac{5}{3}(\sum_{k=1}^K{\frac{d(x, x')}{l_k}})^2)
+ * \f]
+ *
+ * where \f$ d(x, x') \f$ is the squared distace, or dot product.
+ * See Rausmussen & Williams et al 2006 Chapter 4.
+ *
+ * @param x1 std::vector of elements that can be used in stan::math::distance
+ * @param x2 std::vector of elements that can be used in stan::math::distance
+ * @param length_scale length scale
+ * @param sigma standard deviation that can be used in stan::math::square
+ * @throw std::domain error if sigma <= 0, l <= 0, or x is nan or inf
+ *
+ */
 template <typename T_x1, typename T_x2, typename T_s, typename T_l>
 inline typename Eigen::Matrix<
     typename stan::return_type<T_x1, T_x2, T_s, T_l>::type, Eigen::Dynamic,
@@ -202,7 +268,7 @@ gp_matern_5_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     for (size_t j = 0; j < x2_size; ++j) {
       temp = 0;
       for (size_t k = 0; k < l_size; ++k)
-        temp += squared_distance(x1[i], x2[j]) / square(length_scale[k]);
+        temp += squared_distance(x1[i], x2[j]) / length_scale[k];
       cov(i, j) = sigma_sq *
                   (1.0 + root_5 * temp + five_thirds * square(temp)) *
                   exp(neg_root_5 * temp);
@@ -210,6 +276,6 @@ gp_matern_5_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   }
   return cov;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
