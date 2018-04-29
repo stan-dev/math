@@ -9,6 +9,11 @@ before_script:
   - ${CXX} --version
   - echo "CC=$CXX" > make/local
 
+osx_clang: &osx_clang
+  os: osx
+  compiler: "clang"
+  osx_image: xcode9.3
+
 linux_clang: &linux_clang
   os: linux
   compiler: "clang-3.8"
@@ -19,15 +24,19 @@ linux_clang: &linux_clang
 
 linux_gcc: &linux_gcc
   os: linux
-  compiler: "gcc-5"
+  compiler: "gcc-4.9"
   addons:
     apt:
       sources: [ 'ubuntu-toolchain-r-test' ]
-      packages: [ 'g++-5' ]
+      packages: [ 'g++-4.9' ]
 
 matrix:
   fast_finish: true
   include:
+    - <<: *osx_clang
+      env:
+        - MATRIX_EVAL="CXX=\"clang++ -DSTAN_THREADS\""
+          TESTFOLDER="test/unit/math/rev/core test/unit/math/rev/mat/functor"      
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
@@ -70,64 +79,64 @@ matrix:
           TESTFOLDER="test/unit/math/fwd/arr test/unit/math/fwd/core test/unit/math/fwd/scal"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=\"g++-5 -DSTAN_THREADS\""
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER="test/unit/math/memory test/unit/math/prim/scal test/unit/math/prim/arr"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=\"g++-5 -DSTAN_THREADS\""
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER="test/unit/math/prim/mat/err test/unit/math/prim/mat/meta test/unit/math/prim/mat/vectorize"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=\"g++-5 -DSTAN_THREADS\""
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER=test/unit/math/prim/mat/prob
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=\"g++-5 -DSTAN_THREADS\""
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER=test/unit/math/prim/mat/fun
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=\"g++-5 -DSTAN_THREADS\""
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER="test/unit/math/rev/scal test/unit/math/rev/arr"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=\"g++-5 -DSTAN_THREADS\""
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER=test/unit/math/rev/mat/fun
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=\"g++-5 -DSTAN_THREADS\""
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER="test/unit/math/rev/mat/err test/unit/math/rev/mat/functor test/unit/math/rev/mat/vectorize"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=\"g++-5 -DSTAN_THREADS\""
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER="test/unit/math/rev/mat/meta test/unit/math/rev/mat/prob"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=\"g++-5 -DSTAN_THREADS\""
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER=test/unit/math/fwd/mat
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=\"g++-5 -DSTAN_THREADS\""
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER="test/unit/math/fwd/arr test/unit/math/fwd/core test/unit/math/fwd/scal"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=\"g++-5 -DSTAN_THREADS\""
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER="test/unit/math/mix/arr test/unit/math/mix/core"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=\"g++-5 -DSTAN_THREADS\""
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER="test/unit/math/mix/mat/fun/[A-l]*"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=\"g++-5 -DSTAN_THREADS\""
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER="test/unit/math/mix/mat/fun/[m-z]*"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=\"g++-5 -DSTAN_THREADS\""
+        - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
           TESTFOLDER="test/unit/math/mix/scal test/unit/math/mix/mat/functor test/unit/math/mix/mat/meta test/unit/math/mix/mat/prob test/unit/math/mix/mat/util test/unit/math/mix/mat/vectorize"
 
  # - TESTFOLDER=test/unit/math/mix # times out on travis
 
-script: STAN_NUM_THREADS=-1 ./runTests.py -j2 $TESTFOLDER
+script: ./runTests.py -j2 $TESTFOLDER
 
 sudo: false
 dist: trusty
