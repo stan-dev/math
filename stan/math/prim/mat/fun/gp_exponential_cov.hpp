@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_GP_EXPONENTIAL_COV_HPP
 #define STAN_MATH_PRIM_MAT_FUN_GP_EXPONENTIAL_COV_HPP
 
+#include <cmath>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <cmath>
 #include <vector>
 
 namespace stan {
@@ -16,7 +16,7 @@ namespace math {
  * \f[ k(x, x') = \sigma^2 exp(-\frac{d(x, x')}{l}) \f]
  *
  * where \f$ d(x, x') \f$ is the squared distance, or the dot product.
- * 
+ *
  * See Rausmussen & Williams et al 2006 Chapter 4.
  *
  * @param x std::vector of elements that can be used in stan::math::distance
@@ -72,7 +72,7 @@ gp_exponential_cov(const std::vector<T_x> &x, const T_s &sigma,
  * \f[ k(x, x') = \sigma^2 exp(-\sum_{k=1}^K\frac{d(x, x')}{l_k}) \f]
  *
  * where \f$ d(x, x') \f$ is the squared distance, or dot product.
- * 
+ *
  * See Rausmussen & Williams et al 2006 Chapter 4.
  *
  * @param x std::vector of elements that can be used in stan::math::distance
@@ -131,7 +131,7 @@ gp_exponential_cov(const std::vector<T_x> &x, const T_s &sigma,
  * \f[ k(x, x') = \sigma^2 exp(-\frac{d(x, x')}{l}) \f]
  *
  * where \f$ d(x, x') \f$ is the squared distance, or dot product.
- * 
+ *
  * See Rausmussen & Williams et al 2006 Chapter 4.
  *
  * @param x1 std::vector of elements that can be used in stan::math::distance
@@ -190,7 +190,7 @@ gp_exponential_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * \f[ k(x, x') = \sigma^2 exp(-\sum_{k=1}^K\frac{d(x, x')}{l_k}) \f]
  *
  * where \f$ d(x, x') \f$ is the squared distance, or dot product.
- * 
+ *
  * See Rausmussen & Williams et al 2006 Chapter 4.
  *
  * @param x1 std::vector of elements that can be used in stan::math::distance
