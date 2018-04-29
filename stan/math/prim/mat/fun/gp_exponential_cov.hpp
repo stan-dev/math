@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_GP_EXPONENTIAL_COV_HPP
 #define STAN_MATH_PRIM_MAT_FUN_GP_EXPONENTIAL_COV_HPP
 
-#include <cmath>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <cmath>
 #include <vector>
 
 namespace stan {
@@ -13,8 +13,10 @@ namespace math {
 
 /** Returns a Matern exponential covariance matrix with one input vector
  *
- * \f[ k(x, x') = \sigma^2 exp(-\frac{\sqrt{(x - x')^2}}{l^2}) \f]
+ * \f[ k(x, x') = \sigma^2 exp(-\frac{d(x, x')}{l}) \f]
  *
+ * where \f$ d(x, x') \f$ is the squared distance, or the dot product.
+ * 
  * See Rausmussen & Williams et al 2006 Chapter 4.
  *
  * @param x std::vector of elements that can be used in stan::math::distance
@@ -51,12 +53,12 @@ gp_exponential_cov(const std::vector<T_x> &x, const T_s &sigma,
     return cov;
 
   T_s sigma_sq = square(sigma);
-  T_l neg_inv_l_sq = -1.0 / square(length_scale);
+  T_l neg_inv_l = -1.0 / length_scale;
 
   for (size_t i = 0; i < (x_size - 1); ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
-      cov(i, j) = sigma_sq * exp(neg_inv_l_sq * squared_distance(x[i], x[j]));
+      cov(i, j) = sigma_sq * exp(neg_inv_l * squared_distance(x[i], x[j]));
       cov(j, i) = cov(i, j);
     }
   }
@@ -67,8 +69,10 @@ gp_exponential_cov(const std::vector<T_x> &x, const T_s &sigma,
 /** Returns a Matern exponential covariance matrix with one input vector
  *  with automatic relevance determination (ARD) priors
  *
- * \f[ k(x, x') = \sigma^2 exp(-\sum_{k=1}^K\frac{\sqrt{(x - x')^2}}{l_k^2}) \f]
+ * \f[ k(x, x') = \sigma^2 exp(-\sum_{k=1}^K\frac{d(x, x')}{l_k}) \f]
  *
+ * where \f$ d(x, x') \f$ is the squared distance, or dot product.
+ * 
  * See Rausmussen & Williams et al 2006 Chapter 4.
  *
  * @param x std::vector of elements that can be used in stan::math::distance
@@ -113,7 +117,7 @@ gp_exponential_cov(const std::vector<T_x> &x, const T_s &sigma,
     for (size_t j = i + 1; j < x_size; ++j) {
       temp = 0;
       for (size_t k = 0; k < l_size; ++k)
-        temp += squared_distance(x[i], x[j]) / square(length_scale[k]);
+        temp += squared_distance(x[i], x[j]) / length_scale[k];
       cov(i, j) = sigma_sq * exp(-1.0 * temp);
       cov(j, i) = cov(i, j);
     }
@@ -124,8 +128,10 @@ gp_exponential_cov(const std::vector<T_x> &x, const T_s &sigma,
 
 /** Returns a Matern exponential covariance matrix with two input vectors
  *
- * \f[ k(x, x') = \sigma^2 exp(-\frac{\sqrt{(x - x')^2}}{l^2}) \f]
+ * \f[ k(x, x') = \sigma^2 exp(-\frac{d(x, x')}{l}) \f]
  *
+ * where \f$ d(x, x') \f$ is the squared distance, or dot product.
+ * 
  * See Rausmussen & Williams et al 2006 Chapter 4.
  *
  * @param x1 std::vector of elements that can be used in stan::math::distance
@@ -168,11 +174,11 @@ gp_exponential_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     return cov;
 
   T_s sigma_sq = square(sigma);
-  T_l neg_inv_l_sq = -1.0 / square(length_scale);
+  T_l neg_inv_l = -1.0 / length_scale;
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      cov(i, j) = sigma_sq * exp(neg_inv_l_sq * squared_distance(x1[i], x2[j]));
+      cov(i, j) = sigma_sq * exp(neg_inv_l * squared_distance(x1[i], x2[j]));
     }
   }
   return cov;
@@ -181,8 +187,10 @@ gp_exponential_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 /** Returns a Matern exponential covariance matrix with two input vectors
  *  with automatic relevance determination (ARD) priors
  *
- * \f[ k(x, x') = \sigma^2 exp(-\sum_{k=1}^K\frac{\sqrt{(x - x')^2}}{l_k^2}) \f]
+ * \f[ k(x, x') = \sigma^2 exp(-\sum_{k=1}^K\frac{d(x, x')}{l_k}) \f]
  *
+ * where \f$ d(x, x') \f$ is the squared distance, or dot product.
+ * 
  * See Rausmussen & Williams et al 2006 Chapter 4.
  *
  * @param x1 std::vector of elements that can be used in stan::math::distance
@@ -233,7 +241,7 @@ gp_exponential_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     for (size_t j = 0; j < x2_size; ++j) {
       temp = 0;
       for (size_t k = 0; k < l_size; ++k)
-        temp += squared_distance(x1[i], x2[j]) / square(length_scale[k]);
+        temp += squared_distance(x1[i], x2[j]) / length_scale[k];
       cov(i, j) = sigma_sq * exp(-1.0 * temp);
     }
   }
