@@ -187,18 +187,12 @@ pipeline {
         }
         stage('Upstream tests') {
             parallel {
-                stage('CmdStan Upstream Tests') {
-                    when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
-                    steps {
-                        build(job: "CmdStan/${params.cmdstan_pr}",
-                              parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
-                    }
-                }
                 stage('Stan Upstream Tests') {
                     when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
                     steps {
                         build(job: "Stan/${params.stan_pr}",
-                              parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
+                              parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
+                                           string(name: 'cmdstan_pr', value: params.cmdstan_pr)])
                     }
                 }
             }
