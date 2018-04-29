@@ -64,8 +64,7 @@ gp_matern_3_2_cov(const std::vector<T_x> &x, const T_s &sigma,
   for (size_t i = 0; i < (x_size - 1); ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
-      cov(i, j) = sigma_sq
-                  * (1.0 + root_3_inv_l * squared_distance(x[i], x[j]))
+      cov(i, j) = sigma_sq * (1.0 + root_3_inv_l * squared_distance(x[i], x[j]))
                   * exp(neg_root_3_inv_l * squared_distance(x[i], x[j]));
       cov(j, i) = cov(i, j);
     }
@@ -206,7 +205,7 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  *   \sum_{k=1}^{K}\frac{d(x, x')}{l_k})
  *   exp(-\sqrt{3}\sum_{k=1}^{K}\frac{d(x, x')}{l_k}) \f]
  *
- * where \f$d(x, x')\f$ is the squared distance, or dot product. 
+ * where \f$d(x, x')\f$ is the squared distance, or dot product.
  * See Rausmussen & Williams et al 2006 Chapter 4.
  *
  * @param x1 std::vector of elements that can be used in stan::math::distance
