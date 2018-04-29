@@ -30,8 +30,8 @@ inline typename Eigen::Matrix<typename stan::return_type<T_x, T_s, T_l>::type,
                               Eigen::Dynamic, Eigen::Dynamic>
 gp_exponential_cov(const std::vector<T_x> &x, const T_s &sigma,
                    const T_l &length_scale) {
-  using stan::math::squared_distance;
   using stan::math::square;
+  using stan::math::squared_distance;
   using std::exp;
   using std::pow;
 
@@ -86,8 +86,8 @@ inline typename Eigen::Matrix<typename stan::return_type<T_x, T_s, T_l>::type,
                               Eigen::Dynamic, Eigen::Dynamic>
 gp_exponential_cov(const std::vector<T_x> &x, const T_s &sigma,
                    const std::vector<T_l> &length_scale) {
-  using stan::math::squared_distance;
   using stan::math::square;
+  using stan::math::squared_distance;
   using std::exp;
   using std::pow;
 
@@ -147,8 +147,8 @@ inline typename Eigen::Matrix<
     Eigen::Dynamic>
 gp_exponential_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                    const T_s &sigma, const T_l &length_scale) {
-  using stan::math::squared_distance;
   using stan::math::square;
+  using stan::math::squared_distance;
   using std::exp;
   using std::pow;
 
@@ -206,8 +206,8 @@ inline typename Eigen::Matrix<
     Eigen::Dynamic>
 gp_exponential_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                    const T_s &sigma, const std::vector<T_l> &length_scale) {
-  using stan::math::squared_distance;
   using stan::math::square;
+  using stan::math::squared_distance;
   using std::exp;
   using std::pow;
 
