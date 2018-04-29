@@ -42,10 +42,9 @@ map_rect_concurrent(
     return chunk_f_out;
   };
 
-  int num_threads = 10;
+  int num_threads = 1;
 
 #ifdef STAN_THREADS
-  /*
   const char* env_stan_num_threads = std::getenv("STAN_NUM_THREADS");
   if (env_stan_num_threads != nullptr) {
     const int env_num_threads = std::atoi(env_stan_num_threads);
@@ -55,7 +54,6 @@ map_rect_concurrent(
       num_threads = std::thread::hardware_concurrency();
     // anything else will use 1 thread.
   }
-  */
 #endif
 
   const int num_jobs_per_thread = num_jobs / num_threads;
