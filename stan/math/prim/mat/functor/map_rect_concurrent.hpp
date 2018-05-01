@@ -103,7 +103,8 @@ map_rect_concurrent(
   world_f_out.reserve(num_jobs);
   matrix_d world_output(0, 0);
 
-  for (int i = 0, offset = 0; i < futures.size(); ++i) {
+  int offset = 0;
+  for (std::size_t i = 0; i < futures.size(); ++i) {
     const std::vector<matrix_d>& chunk_result = futures[i].get();
     if (i == 0)
       world_output.resize(chunk_result[0].rows(),
