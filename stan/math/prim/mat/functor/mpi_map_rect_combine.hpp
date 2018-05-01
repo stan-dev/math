@@ -3,8 +3,11 @@
 #ifndef STAN_MATH_PRIM_MAT_FUNCTOR_MPI_MAP_RECT_COMBINE_HPP
 #define STAN_MATH_PRIM_MAT_FUNCTOR_MPI_MAP_RECT_COMBINE_HPP
 
-#include <boost/mpi.hpp>
 #include <stan/math/prim/mat/functor/map_rect_combine.hpp>
+
+#include <boost/mpi.hpp>
+
+#include <vector>
 
 namespace stan {
 namespace math {

@@ -11,6 +11,7 @@
 #include <test/unit/math/prim/mat/functor/faulty_functor.hpp>
 
 #include <iostream>
+#include <vector>
 
 using stan::math::matrix_d;
 using stan::math::vector_d;

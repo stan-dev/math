@@ -12,6 +12,7 @@
 #include <test/unit/math/prim/mat/functor/faulty_functor.hpp>
 
 #include <iostream>
+#include <vector>
 
 STAN_REGISTER_MAP_RECT(1, faulty_functor)
 STAN_REGISTER_MAP_RECT(2, faulty_functor)

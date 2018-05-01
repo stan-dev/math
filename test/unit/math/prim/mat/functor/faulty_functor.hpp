@@ -1,5 +1,7 @@
-#pragma once
+#ifndef TEST_UNIT_MATH_PRIM_MAT_FUNCTOR_FAULTY_FUNCTOR_HPP
+#define TEST_UNIT_MATH_PRIM_MAT_FUNCTOR_FAULTY_FUNCTOR_HPP
 
+#include <vector>
 #include <stdexcept>
 
 struct faulty_functor {
@@ -22,3 +24,5 @@ struct faulty_functor {
     return (res);
   }
 };
+
+#endif

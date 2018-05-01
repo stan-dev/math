@@ -9,6 +9,7 @@
 #include <stan/math/prim/mat/fun/dims.hpp>
 
 #include <mutex>
+#include <algorithm>
 #include <vector>
 #include <type_traits>
 
