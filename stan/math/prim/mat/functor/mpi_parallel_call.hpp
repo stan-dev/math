@@ -74,7 +74,7 @@ bool mpi_parallel_call_cache<call_id, member, T>::is_valid_ = false;
 }  // namespace internal
 
 /**
- * The MPI parallel call class manages the a distributed evaluation of
+ * The MPI parallel call class manages the distributed evaluation of a
  * collection of tasks following the map - reduce - combine
  * pattern. The class organizes the distribution of all job related
  * information from the root node to all worker nodes. The class
@@ -179,7 +179,6 @@ class mpi_parallel_call {
     if (rank_ != 0)
       throw std::runtime_error("problem sizes can only defined on the root.");
 
-    check_nonzero_size("mpi_parallel_call", "job parameters", job_params);
     check_matching_sizes("mpi_parallel_call", "job parameters", job_params,
                          "continuous data", x_r);
     check_matching_sizes("mpi_parallel_call", "job parameters", job_params,
@@ -201,7 +200,7 @@ class mpi_parallel_call {
     const std::vector<int> job_dims = dims(job_params);
 
     const size_type num_jobs = job_dims[0];
-    const size_type num_job_params = job_dims[1];
+    const size_type num_job_params = num_jobs == 0 ? 0 : job_dims[1];
 
     const vector_d shared_params_dbl = value_of(shared_params);
     matrix_d job_params_dbl(num_job_params, num_jobs);
@@ -239,7 +238,8 @@ class mpi_parallel_call {
       start_job += job_chunks[n];
 
     const int num_local_jobs = local_job_params_dbl_.cols();
-    matrix_d local_output(num_outputs_per_job_, num_local_jobs);
+    matrix_d local_output(num_outputs_per_job_ == -1 ? 0 : num_outputs_per_job_,
+                          num_local_jobs);
     std::vector<int> local_f_out(num_local_jobs, -1);
 
     typename cache_x_r::cache_t& local_x_r = cache_x_r::data();
@@ -255,6 +255,7 @@ class mpi_parallel_call {
     }
 
     int offset = 0;
+    int local_ok = 1;
 
     try {
       for (std::size_t i = 0; i < num_local_jobs; ++i) {
@@ -263,7 +264,7 @@ class mpi_parallel_call {
                         local_x_r[i], local_x_i[i], 0);
         local_f_out[i] = job_output.cols();
 
-        if (unlikely(num_outputs_per_job_ == 0)) {
+        if (unlikely(num_outputs_per_job_ == -1)) {
           num_outputs_per_job_ = job_output.rows();
           local_output.conservativeResize(num_outputs_per_job_,
                                           Eigen::NoChange);
@@ -279,13 +280,7 @@ class mpi_parallel_call {
         offset += local_f_out[i];
       }
     } catch (const std::exception& e) {
-      // We abort processing only and flag that things went
-      // wrong. We have to keep processing to keep the cluster in
-      // sync and let the gather_outputs method detect on the root
-      // that things went wrong (and only throw on the root)
-      if (local_output.rows() == 0)
-        local_output.conservativeResize(1, Eigen::NoChange);
-      local_output(0, offset) = std::numeric_limits<double>::max();
+      local_ok = 0;
     }
 
     // during first execution we distribute the output sizes from
@@ -324,9 +319,23 @@ class mpi_parallel_call {
     // check that cached sizes are the same as just collected from
     // this evaluation
     for (std::size_t i = 0; i < num_local_jobs; ++i) {
-      if (unlikely(world_f_out[start_job + i] != local_f_out[i])) {
-        local_output(0, 0) = std::numeric_limits<double>::max();
+      if (world_f_out[start_job + i] != local_f_out[i]) {
+        local_ok = 0;
         break;
+      }
+    }
+
+    // let everyone know if all went fine (slow due to all_gather?)
+    std::vector<int> all_ok(world_size_);
+    boost::mpi::all_gather(world_, local_ok, all_ok);
+    // in case something went wrong we throw on the root, but let
+    // workers return to their listening state
+    for (std::size_t i = 0; i < world_size_; ++i) {
+      if (!all_ok[i]) {
+        if (rank_ == 0)
+          throw std::domain_error("Error during MPI evaluation.");
+        else
+          return result_t();
       }
     }
 
@@ -447,7 +456,7 @@ class mpi_parallel_call {
 
 template <int call_id, typename ReduceF, typename CombineF>
 std::size_t mpi_parallel_call<call_id, ReduceF, CombineF>::num_outputs_per_job_
-    = 0;
+    = -1;
 
 }  // namespace math
 }  // namespace stan
