@@ -83,8 +83,8 @@ MPI_TEST_F(MpiJob, hard_work_vv) {
 
   EXPECT_EQ(result_mpi.rows(), result_serial.rows());
 
-  for (int i = 0, ij = 0; i < job_params_v_vec.size(); ++i) {
-    for (int j = 0; j < 2; ++j, ++ij) {
+  for (std::size_t i = 0, ij = 0; i < job_params_v_vec.size(); ++i) {
+    for (std::size_t j = 0; j < 2; ++j, ++ij) {
       EXPECT_DOUBLE_EQ(stan::math::value_of(result_mpi(ij)),
                        stan::math::value_of(result_serial(ij)));
 
@@ -129,7 +129,7 @@ MPI_TEST_F(MpiJob, always_faulty_functor_vv) {
   // upon the second evaluation throwing is handled internally different
   EXPECT_THROW_MSG((result = stan::math::map_rect<1, faulty_functor>(
                         shared_params_v, job_params_v, x_r, x_i)),
-                   std::domain_error, "Error.");
+                   std::domain_error, "Error during MPI evaluation.");
 
   // throwing on the very first evaluation
   EXPECT_THROW_MSG((result = stan::math::map_rect<2, faulty_functor>(
@@ -154,7 +154,7 @@ MPI_TEST_F(MpiJob, always_faulty_functor_vd) {
   // upon the second evaluation throwing is handled internally different
   EXPECT_THROW_MSG((result = stan::math::map_rect<1, faulty_functor>(
                         shared_params_v, job_params_d, x_r, x_i)),
-                   std::domain_error, "Error.");
+                   std::domain_error, "Error during MPI evaluation.");
 
   // throwing on the very first evaluation
   EXPECT_THROW_MSG((result = stan::math::map_rect<2, faulty_functor>(
@@ -179,7 +179,7 @@ MPI_TEST_F(MpiJob, always_faulty_functor_dv) {
   // upon the second evaluation throwing is handled internally different
   EXPECT_THROW_MSG((result = stan::math::map_rect<1, faulty_functor>(
                         shared_params_d, job_params_v, x_r, x_i)),
-                   std::domain_error, "Error.");
+                   std::domain_error, "Error during MPI evaluation.");
 
   // throwing on the very first evaluation
   EXPECT_THROW_MSG((result = stan::math::map_rect<2, faulty_functor>(

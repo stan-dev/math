@@ -76,7 +76,7 @@ MPI_TEST_F(MpiJob, always_faulty_functor) {
   // different
   EXPECT_THROW_MSG((result = stan::math::map_rect<1, faulty_functor>(
                         shared_params_d, job_params_d, x_r, x_i)),
-                   std::domain_error, "Error.");
+                   std::domain_error, "Error during MPI evaluation.");
 
   // thorwing on the very first evaluation
   EXPECT_THROW_MSG((result = stan::math::map_rect<2, faulty_functor>(

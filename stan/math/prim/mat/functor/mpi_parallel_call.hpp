@@ -106,7 +106,8 @@ bool mpi_parallel_call_cache<call_id, member, T>::is_valid_ = false;
  *    data structure is a ragged array. The ragged array structure
  *    becomes known to mpi_parallel_call during the first evaluation
  *    and must not change for future calls.
- * 6. Finally the local results are given to the combine functor along
+ * 6. Finally the local results are gathered on the root node over MPI
+ *    and given on the root node to the combine functor along
  *    with the ragged array data structure.
  *
  * The MPI cluster resource is aquired with construction of
@@ -119,8 +120,8 @@ bool mpi_parallel_call_cache<call_id, member, T>::is_valid_ = false;
  * synchronized state, even the worker with a failed job must return a
  * valid output chunk since the gather commands issued on the root to
  * collect results would otherwise fail. Thus, if a job fails on any
- * worker the output will be falgged as "failure" using the maximal
- * admissable double value.
+ * worker the a respective status flag will be transferred after the
+ * reduce and the results gather step.
  *
  * Note 2: During the first evaluation of the function the ragged
  * array sizes need to be collected on the root from all workers. This
@@ -128,10 +129,10 @@ bool mpi_parallel_call_cache<call_id, member, T>::is_valid_ = false;
  * computed on each worker. This information is then cached for all
  * subsequent evaluations. However, caching this information can only
  * occur if and only if the evaluation of all functions was
- * successfull on all workers. Thus, the first evaluation is handled
- * with special care to ensure that caching of this meta info is only
- * done when all workers have successfully evaluated the function and
- * otherwise an exception is raised.
+ * successfull on all workers during the first run. Thus, the first
+ * evaluation is handled with special care to ensure that caching of
+ * this meta info is only done when all workers have successfully
+ * evaluated the function and otherwise an exception is raised.
  *
  * @tparam call_id label for the static data
  * @tparam ReduceF reduce function called for each job
@@ -158,9 +159,9 @@ class mpi_parallel_call {
       cache_chunks;
 
   // # of outputs for given call_id+ReduceF+CombineF case
-  static std::size_t num_outputs_per_job_;
+  static int num_outputs_per_job_;
 
-  CombineF mpi_combine_;
+  CombineF combine_;
 
   typedef typename CombineF::result_t result_t;
 
@@ -176,7 +177,7 @@ class mpi_parallel_call {
           job_params,
       const std::vector<std::vector<double>>& x_r,
       const std::vector<std::vector<int>>& x_i)
-      : mpi_combine_(shared_params, job_params) {
+      : combine_(shared_params, job_params) {
     if (rank_ != 0)
       throw std::runtime_error("problem sizes can only defined on the root.");
 
@@ -206,14 +207,14 @@ class mpi_parallel_call {
     const vector_d shared_params_dbl = value_of(shared_params);
     matrix_d job_params_dbl(num_job_params, num_jobs);
 
-    for (std::size_t j = 0; j < num_jobs; ++j)
+    for (int j = 0; j < num_jobs; ++j)
       job_params_dbl.col(j) = value_of(job_params[j]);
 
     setup_call(shared_params_dbl, job_params_dbl, x_r, x_i);
   }
 
   // called on remote sites
-  mpi_parallel_call() : mpi_combine_() {
+  mpi_parallel_call() : combine_() {
     if (rank_ == 0)
       throw std::runtime_error("problem sizes must be defined on the root.");
 
@@ -225,11 +226,11 @@ class mpi_parallel_call {
     // call constructor for the remotes
     mpi_parallel_call<call_id, ReduceF, CombineF> job_chunk;
 
-    job_chunk.reduce();
+    job_chunk.reduce_combine();
   }
 
   // all data is cached and local parameters are also available
-  result_t reduce() {
+  result_t reduce_combine() {
     const std::vector<int>& job_chunks = cache_chunks::data();
     const int num_jobs = sum(job_chunks);
 
@@ -239,6 +240,8 @@ class mpi_parallel_call {
       start_job += job_chunks[n];
 
     const int num_local_jobs = local_job_params_dbl_.cols();
+    if (num_local_jobs == 0)
+      num_outputs_per_job_ = 0;
     matrix_d local_output(num_outputs_per_job_ == -1 ? 0 : num_outputs_per_job_,
                           num_local_jobs);
     std::vector<int> local_f_out(num_local_jobs, -1);
@@ -250,16 +253,15 @@ class mpi_parallel_call {
     if (cache_f_out::is_valid()) {
       typename cache_f_out::cache_t& f_out = cache_f_out::data();
       int num_outputs = 0;
-      for (std::size_t j = start_job; j < start_job + num_local_jobs; ++j)
+      for (int j = start_job; j < start_job + num_local_jobs; ++j)
         num_outputs += f_out[j];
-      local_output.resize(num_outputs_per_job_, num_outputs);
+      local_output.resize(Eigen::NoChange, num_outputs);
     }
 
-    int offset = 0;
     int local_ok = 1;
-
     try {
-      for (std::size_t i = 0; i < num_local_jobs; ++i) {
+      for (int i = 0, offset = 0; i < num_local_jobs;
+           offset += local_f_out[i], ++i) {
         const matrix_d job_output
             = ReduceF()(local_shared_params_dbl_, local_job_params_dbl_.col(i),
                         local_x_r[i], local_x_i[i], 0);
@@ -277,8 +279,6 @@ class mpi_parallel_call {
 
         local_output.block(0, offset, local_output.rows(), local_f_out[i])
             = job_output;
-
-        offset += local_f_out[i];
       }
     } catch (const std::exception& e) {
       local_ok = 0;
@@ -300,7 +300,7 @@ class mpi_parallel_call {
       // check on the root that everything was ok and broadcast
       // that info. Only then we locally cache the output sizes.
       bool all_ok = true;
-      for (std::size_t i = 0; i < num_jobs; ++i)
+      for (int i = 0; i < num_jobs; ++i)
         if (world_f_out[i] == -1)
           all_ok = false;
       boost::mpi::broadcast(world_, all_ok, 0);
@@ -319,28 +319,42 @@ class mpi_parallel_call {
 
     // check that cached sizes are the same as just collected from
     // this evaluation
-    for (std::size_t i = 0; i < num_local_jobs; ++i) {
+    for (int i = 0; i < num_local_jobs; ++i) {
       if (world_f_out[start_job + i] != local_f_out[i]) {
         local_ok = 0;
         break;
       }
     }
 
-    // let everyone know if all went fine (slow due to all_gather?)
+    const std::size_t size_world_f_out = sum(world_f_out);
+    matrix_d world_result(num_outputs_per_job_, size_world_f_out);
+
+    std::vector<int> chunks_result(world_size_, 0);
+    for (std::size_t i = 0, ij = 0; i != world_size_; ++i)
+      for (int j = 0; j != job_chunks[i]; ++j, ++ij)
+        chunks_result[i] += world_f_out[ij] * num_outputs_per_job_;
+
+    // collect results on root
+    boost::mpi::gatherv(world_, local_output.data(), chunks_result[rank_],
+                        world_result.data(), chunks_result, 0);
+
+    // let root know if all went fine
     std::vector<int> all_ok(world_size_);
-    boost::mpi::all_gather(world_, local_ok, all_ok);
-    // in case something went wrong we throw on the root, but let
-    // workers return to their listening state
+    boost::mpi::gather(world_, local_ok, all_ok, 0);
+
+    // on the workers all is done now.
+    if (rank_ != 0)
+      return result_t();
+
+    // in case something went wrong we throw on the root instead of
+    // combining
     for (std::size_t i = 0; i < world_size_; ++i) {
       if (!all_ok[i]) {
-        if (rank_ == 0)
-          throw std::domain_error("Error during MPI evaluation.");
-        else
-          return result_t();
+        throw std::domain_error("Error during MPI evaluation.");
       }
     }
 
-    return mpi_combine_(local_output, world_f_out, job_chunks);
+    return combine_(world_result, world_f_out);
   }
 
  private:
@@ -370,7 +384,7 @@ class mpi_parallel_call {
 
     std::vector<decltype(flat_data)> local_data;
     auto local_iter = local_flat_data.begin();
-    for (std::size_t i = 0; i != job_chunks[rank_]; ++i) {
+    for (int i = 0; i != job_chunks[rank_]; ++i) {
       typename T_cache::cache_t::value_type const data_elem(
           local_iter, local_iter + data_dims[1]);
       local_data.push_back(data_elem);
@@ -456,8 +470,7 @@ class mpi_parallel_call {
 };
 
 template <int call_id, typename ReduceF, typename CombineF>
-std::size_t mpi_parallel_call<call_id, ReduceF, CombineF>::num_outputs_per_job_
-    = -1;
+int mpi_parallel_call<call_id, ReduceF, CombineF>::num_outputs_per_job_ = -1;
 
 }  // namespace math
 }  // namespace stan

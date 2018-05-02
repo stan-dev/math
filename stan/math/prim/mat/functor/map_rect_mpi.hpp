@@ -6,7 +6,7 @@
 #include <stan/math/prim/mat/functor/map_rect_serial.hpp>
 #include <stan/math/prim/arr/functor/mpi_distributed_apply.hpp>
 #include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
-#include <stan/math/prim/mat/functor/mpi_map_rect_combine.hpp>
+#include <stan/math/prim/mat/functor/map_rect_combine.hpp>
 #include <stan/math/prim/mat/functor/mpi_parallel_call.hpp>
 
 #include <vector>
@@ -26,8 +26,7 @@ map_rect_mpi(
     const std::vector<std::vector<double>>& x_r,
     const std::vector<std::vector<int>>& x_i, std::ostream* msgs = nullptr) {
   typedef internal::map_rect_reduce<F, T_shared_param, T_job_param> ReduceF;
-  typedef internal::mpi_map_rect_combine<F, T_shared_param, T_job_param>
-      CombineF;
+  typedef internal::map_rect_combine<F, T_shared_param, T_job_param> CombineF;
 
   // whenever the cluster is already busy with some command we fall
   // back to serial execution (possible if map_rect calls are nested
@@ -36,7 +35,7 @@ map_rect_mpi(
     mpi_parallel_call<call_id, ReduceF, CombineF> job_chunk(
         shared_params, job_params, x_r, x_i);
 
-    return job_chunk.reduce();
+    return job_chunk.reduce_combine();
   } catch (const mpi_is_in_use& e) {
     return map_rect_serial<call_id, F>(shared_params, job_params, x_r, x_i,
                                        msgs);
@@ -53,8 +52,7 @@ map_rect_mpi(
   typedef FUNCTOR mpi_mr_##CALLID##_##SHARED##_##JOB##_;                       \
   typedef map_rect_reduce<mpi_mr_##CALLID##_##SHARED##_##JOB##_, SHARED, JOB>  \
       mpi_mr_##CALLID##_##SHARED##_##JOB##_red_;                               \
-  typedef mpi_map_rect_combine<mpi_mr_##CALLID##_##SHARED##_##JOB##_, SHARED,  \
-                               JOB>                                            \
+  typedef map_rect_combine<mpi_mr_##CALLID##_##SHARED##_##JOB##_, SHARED, JOB> \
       mpi_mr_##CALLID##_##SHARED##_##JOB##_comb_;                              \
   typedef mpi_parallel_call<CALLID, mpi_mr_##CALLID##_##SHARED##_##JOB##_red_, \
                             mpi_mr_##CALLID##_##SHARED##_##JOB##_comb_>        \

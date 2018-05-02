@@ -32,24 +32,23 @@ struct mock_reduce {
 };
 
 template <typename F, typename T_shared_param, typename T_job_param>
-struct mock_mpi_combine {
+struct mock_combine {
  public:
   typedef matrix_d result_t;
 
-  mock_mpi_combine() {}
-  mock_mpi_combine(
+  mock_combine() {}
+  mock_combine(
       const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
       const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&
           job_params) {}
 
-  result_t operator()(const matrix_d local_result,
-                      const std::vector<int>& world_f_out,
-                      const std::vector<int>& job_chunks) {
+  result_t operator()(const matrix_d& local_result,
+                      const std::vector<int>& world_f_out) {
     return local_result;
   }
 };
 
-typedef mock_mpi_combine<faulty_functor, double, double> mock_combine_dd;
+typedef mock_combine<faulty_functor, double, double> mock_combine_dd;
 
 typedef stan::math::mpi_parallel_call<0, mock_reduce, mock_combine_dd>
     mock0_call_t;
@@ -93,7 +92,7 @@ MPI_TEST_F(MpiJob, no_job_input_ok_dd) {
   EXPECT_NO_THROW((call = std::shared_ptr<mock0_call_t>(new mock0_call_t(
                        shared_params_d, job_params_d, x_r, x_i))));
 
-  matrix_d res = call->reduce();
+  matrix_d res = call->reduce_combine();
 
   EXPECT_EQ(res.size(), 0);
 }
@@ -145,7 +144,7 @@ MPI_TEST_F(MpiJob, recover_on_first_evaluation_dd) {
   EXPECT_NO_THROW((call = std::shared_ptr<mock_call_t>(new mock_call_t(
                        shared_params_d, job_params_d, x_r, x_i))));
 
-  EXPECT_THROW(call->reduce(), std::domain_error);
+  EXPECT_THROW(call->reduce_combine(), std::domain_error);
 
   // get rid of call object to free MPI resource
   call.reset();
@@ -155,7 +154,7 @@ MPI_TEST_F(MpiJob, recover_on_first_evaluation_dd) {
   EXPECT_NO_THROW((call = std::shared_ptr<mock_call_t>(new mock_call_t(
                        shared_params_d, job_params_d, x_r, x_i))));
 
-  EXPECT_NO_THROW(call->reduce());
+  EXPECT_NO_THROW(call->reduce_combine());
 
   // note: tests below have data already cached for mock_call_t !
 }
@@ -168,7 +167,7 @@ MPI_TEST_F(MpiJob, MPI_busy) {
   EXPECT_NO_THROW((call1 = std::shared_ptr<mock_call_t>(new mock_call_t(
                        shared_params_d, job_params_d, x_r, x_i))));
 
-  EXPECT_NO_THROW(call1->reduce());
+  EXPECT_NO_THROW(call1->reduce_combine());
 
   // we still hold a reference to mpi_parallel_call which blocks the
   // MPI resource until its deallocated
@@ -183,7 +182,7 @@ MPI_TEST_F(MpiJob, MPI_busy) {
   // now it works
   EXPECT_NO_THROW((call2 = std::shared_ptr<mock_call_t>(new mock_call_t(
                        shared_params_d, job_params_d, x_r, x_i))));
-  EXPECT_NO_THROW(call2->reduce());
+  EXPECT_NO_THROW(call2->reduce_combine());
 }
 
 MPI_TEST_F(MpiJob, size_mismatch_cached_jobs_dd) {
@@ -195,7 +194,7 @@ MPI_TEST_F(MpiJob, size_mismatch_cached_jobs_dd) {
   EXPECT_NO_THROW((call = std::shared_ptr<mock_call_t>(new mock_call_t(
                        shared_params_d, job_params_d, x_r, x_i))));
 
-  call->reduce();
+  call->reduce_combine();
 
   job_params_d.pop_back();
 
