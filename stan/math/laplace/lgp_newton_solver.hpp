@@ -15,39 +15,44 @@ namespace math {
   struct lgp_newton_solver_vari : public vari {
     /** global parameter */
     vari** phi_;
-    /** vector of solution */
-    vari** theta_;
     /** size of solution */
     int theta_size_;
+    /** vector of solution */
+    vari** theta_;
     /** Jacobian of the solution with respect to the global parameter */
-    double* J_;
+    Eigen::VectorXd J_;
+    // double* J_;
 
     lgp_newton_solver_vari(const T& phi,
-                           const lgp_conditional_system<T>& system,
+                           const lgp_conditional_system<double>& system,
                            const Eigen::VectorXd& theta_dbl)
       : vari(theta_dbl(0)),
-        phi_(ChainableStack::instance_.memalloc_.alloc_array<vari*>(
-            theta.size())),
-        theta_size_(theta.size()),
+        phi_(ChainableStack::instance_.memalloc_.alloc_array<vari*>(1)),
+        theta_size_(theta_dbl.size()),
         theta_(ChainableStack::instance_.memalloc_.alloc_array<vari*>(
           theta_size_)) {
       using Eigen::Map;
-      using Eigen::MatrixXd;
+      using Eigen::VectorXd;
 
-      phi_ = phi.vi_;
+      *phi_ = phi.vi_;  // CHECK - should be phi_ = phi.vi_?
 
       theta_[0] = this;
-      for (int i = 0; i < theta.size; i++)
+      for (int i = 0; i < theta_size_; i++)
         theta_[i] = new vari(theta_dbl(i), false);
 
       // Compute the Jacobian and store in array, using
       // the operator in the lgp_conditional_system structure.
-      Map<VectorXd>(&J_[0], theta_size_) = system.solver_gradient(theta_);
+      J_ = system.solver_gradient(theta_dbl);
+
+      // CHECK - more memory efficient?
+      // std::cout << system.solver_gradient(theta_dbl) << std::endl;
+      // Map<VectorXd>(&J_[0], theta_size_) = system.solver_gradient(theta_dbl);
+      // std::cout << "marker d" << std::endl;
     }
 
     void chain() {
       for (int i = 0; i < theta_size_; i++)
-        phi_[i]->adj_ += theta_[i]->adj_ * J_[i];
+        phi_[0]->adj_ += theta_[i]->adj_ * J_[i];
     }
   };
   
@@ -60,13 +65,15 @@ namespace math {
   Eigen::Matrix<T, Eigen::Dynamic, 1> lgp_newton_solver(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta_0,  // initial guess
     const lgp_conditional_system<double>& system,
-    double tol,
-    long int max_num_steps) {  // NOLINT(runtime/int)
+    double tol = 1e-3,
+    long int max_num_steps = 100) {  // NOLINT(runtime/int)
 
-    Eigen::VectorXd theta_dbl = value_of(theta);
-    Eigen::VectorXd gradient; 
+    Eigen::VectorXd theta_dbl = value_of(theta_0);
+    Eigen::MatrixXd gradient; 
 
     for (int i = 0; i <= max_num_steps; i++) {
+
+      // std::cout << "Iteration: " << i << " yields theta = " << theta_dbl << std::endl;
 
       // check if the max number of steps has been reached
       if (i == max_num_steps) {
@@ -76,8 +83,15 @@ namespace math {
         throw boost::math::evaluation_error(message.str());
       }
 
-      gradient = system.cond_gradient(theta));
-      theta -= mdivide_left(gradient, system.cond_hessian(theta));
+      gradient = system.cond_gradient(theta_dbl);
+      theta_dbl -= elt_divide(gradient, system.cond_hessian(theta_dbl));
+
+      // std::cout << "gradient: " << gradient << std::endl;
+      // std::cout << "cond_hessian: " << system.cond_hessian(theta_dbl) << std::endl;
+
+      // Should really be an mdivide. However, the hessian is diagonal and 
+      // stored as a vector, so need to use elt_divide.
+      // theta_dbl -= mdivide_left(gradient, system.cond_hessian(theta_dbl));
 
       // Check solution is a root of the gradient
       if (gradient.norm() <= tol) break;
@@ -94,21 +108,21 @@ namespace math {
   Eigen::Matrix<T2, Eigen::Dynamic, 1> lgp_newton_solver(
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_0,  // initial guess
     const lgp_conditional_system<T2>& system,
-    double tol,
-    long int max_num_steps) {  // NOLINT(runtime/int)
+    double tol = 1e-6,
+    long int max_num_steps = 100) {  // NOLINT(runtime/int)
 
     lgp_conditional_system<double> 
       system_dbl(value_of(system.get_phi()),
                  system.get_n_samples(), 
                  system.get_sums());
 
-    Eigen::VectorXd theta_dbl = lgp_newton_solver(theta_0, system_dbl,
-                                                  tol, max_num_steps);
+    Eigen::VectorXd theta_dbl 
+      = lgp_newton_solver(value_of(theta_0), system_dbl, tol, max_num_steps);
 
     // construct vari
-    lgp_newton_solver_vari<T>* vi0
-      = new lgp_solver_vari<T>(system.get_phi(), system, theta_dbl);
-    
+    lgp_newton_solver_vari<T2>* vi0
+      = new lgp_newton_solver_vari<T2>(system.get_phi(), system_dbl, theta_dbl);
+
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta(theta_dbl.size());
     theta(0) = var(vi0->theta_[0]);
     for (int i = 1; i < theta_dbl.size(); i++)

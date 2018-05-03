@@ -50,9 +50,9 @@ namespace math {
     /**
      * Functions which retun class members
      */
-    T0 get_phi() { return phi_; }
-    Eigen::VectorXd get_n_samples() { return n_samples; }
-    Eigen::VectorXd get_sums() { return sums_; }
+    T0 get_phi() const { return phi_; }
+    Eigen::VectorXd get_n_samples() const { return n_samples_; }
+    Eigen::VectorXd get_sums() const { return sums_; }
     
     /**
      * An operator that returns the conditional density.
@@ -63,8 +63,8 @@ namespace math {
      */
     template <typename T1>
     Eigen::Matrix<typename stan::return_type<T0, T1>::type, 
-                         Eigen::Dynamic, 1>
-    cond_gradient(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta) {
+                         Eigen::Dynamic, Eigen::Dynamic>
+    cond_gradient(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta) const {
       return sums_ - elt_multiply(n_samples_, exp(theta))
         - theta / (phi_ * phi_);
     }
@@ -75,8 +75,8 @@ namespace math {
      */
     template <typename T1>
     Eigen::Matrix<typename stan::return_type<T0, T1>::type, 
-                         Eigen::Dynamic, 1>
-    cond_hessian(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta) {
+                         Eigen::Dynamic, Eigen::Dynamic>
+    cond_hessian(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta) const {
       // addition to vector is element-wise.
       return - add(elt_multiply(n_samples_, exp(theta)), 1/(phi_ * phi_));
     }
@@ -90,9 +90,10 @@ namespace math {
     template<typename T1>
     Eigen::Matrix<typename stan::return_type<T0, T1>::type,
                   Eigen::Dynamic, 1>
-    solver_gradient(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta) {
-      return - 2 / (phi_ * phi_ * phi_) 
-        * elt_divide(theta, add(n_samples_ - 1 / (phi * phi));
+    solver_gradient(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta) const {
+      return 2 / (phi_ * phi_ * phi_) 
+        * elt_divide(theta, add(elt_multiply(n_samples_, exp(theta)),
+                                1 / (phi_ * phi_)));
     }
   };
 
