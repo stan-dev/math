@@ -7,6 +7,7 @@
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/log1m_exp.hpp>
 #include <stan/math/prim/scal/fun/log1p_exp.hpp>
+#include <stan/math/prim/scal/fun/log_inv_logit_diff.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
@@ -25,12 +26,6 @@
 
 namespace stan {
 namespace math {
-
-template <typename T>
-inline T log_inv_logit_diff(const T& alpha, const T& beta) {
-  using std::exp;
-  return beta + log1m_exp(alpha - beta) - log1p_exp(alpha) - log1p_exp(beta);
-}
 
 /**
  * Returns the (natural) log probability of the specified integer
@@ -80,7 +75,7 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
   } else if (y == K) {
     logp_n -= log1p_exp(c[K - 2] - lambda);
   } else {
-    logp_n += log_inv_logit_diff(c[y - 2] - lambda, c[y - 1] - lambda);
+    logp_n += log_inv_logit_diff(lambda-c[y - 2], lambda-c[y - 1]);
   }
   return logp_n;
 }
@@ -146,8 +141,8 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
     } else if (y[i] == K) {
       logp_n -= log1p_exp(c[K - 2] - lambda[i]);
     } else {
-      logp_n += log_inv_logit_diff(c[y[i] - 2] - lambda[i],
-                                   c[y[i] - 1] - lambda[i]);
+      logp_n += log_inv_logit_diff(lambda[i]-c[y[i] - 2],
+                                   lambda[i]-c[y[i] - 1]);
     }
   }
   return logp_n;
@@ -223,8 +218,8 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
     } else if (y[i] == K) {
       logp_n -= log1p_exp(c[i][K - 2] - lambda[i]);
     } else {
-      logp_n += log_inv_logit_diff(c[i][y[i] - 2] - lambda[i],
-                                   c[i][y[i] - 1] - lambda[i]);
+      logp_n += log_inv_logit_diff(lambda[i]-c[i][y[i] - 2],
+                                   lambda[i]-c[i][y[i] - 1]);
     }
   }
   return logp_n;
