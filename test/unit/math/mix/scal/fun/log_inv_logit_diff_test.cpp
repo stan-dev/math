@@ -1,9 +1,9 @@
 #include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 
-  using stan::math::fvar;
-  using stan::math::var;
-  using stan::math::log_inv_logit_diff;
+using stan::math::fvar;
+using stan::math::log_inv_logit_diff;
+using stan::math::var;
 
 TEST(AgradFwdLogInvLogitDiff, FvarVar) {
   fvar<var> x(0.5, 1.0);
@@ -57,7 +57,8 @@ TEST(AgradFwdLogInvLogitDiff, FvarFVarVar_Dbl) {
   double a = 0.5;
   fvar<fvar<var>> b(-1.0, 1.0);
   fvar<fvar<var>> c = log_inv_logit_diff(a, b);
-  c.d_.val_.grad();;
+  c.d_.val_.grad();
+  ;
 
   EXPECT_FLOAT_EQ(-0.556158338159, b.d_.val_.adj());
   EXPECT_FLOAT_EQ(b.d_.val_.adj(), c.d_.val_.val());

@@ -6,7 +6,7 @@
 
 namespace stan {
 namespace math {
-  using std::exp;
+using std::exp;
 
 namespace {
 
@@ -15,11 +15,13 @@ class log_inv_logit_diff_vv_vari : public op_vv_vari {
   log_inv_logit_diff_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(log_inv_logit_diff(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
-    avi_->adj_ += adj_ * (-exp(avi_->val_)/(exp(bvi_->val_) - exp(avi_->val_))
-                          - exp(avi_->val_)/(exp(avi_->val_) + 1.0));
+    avi_->adj_ += adj_
+                  * (-exp(avi_->val_) / (exp(bvi_->val_) - exp(avi_->val_))
+                     - exp(avi_->val_) / (exp(avi_->val_) + 1.0));
 
-    bvi_->adj_ += adj_ * (-exp(bvi_->val_)/(exp(avi_->val_) - exp(bvi_->val_))
-                          - exp(bvi_->val_)/(exp(bvi_->val_) + 1.0));
+    bvi_->adj_ += adj_
+                  * (-exp(bvi_->val_) / (exp(avi_->val_) - exp(bvi_->val_))
+                     - exp(bvi_->val_) / (exp(bvi_->val_) + 1.0));
   }
 };
 
@@ -28,8 +30,9 @@ class log_inv_logit_diff_vd_vari : public op_vd_vari {
   log_inv_logit_diff_vd_vari(vari* avi, double b)
       : op_vd_vari(log_inv_logit_diff(avi->val_, b), avi, b) {}
   void chain() {
-    avi_->adj_ += adj_ * (-exp(avi_->val_)/(exp(bd_) - exp(avi_->val_))
-                          - exp(avi_->val_)/(exp(avi_->val_) + 1.0));
+    avi_->adj_ += adj_
+                  * (-exp(avi_->val_) / (exp(bd_) - exp(avi_->val_))
+                     - exp(avi_->val_) / (exp(avi_->val_) + 1.0));
   }
 };
 
@@ -38,8 +41,9 @@ class log_inv_logit_diff_dv_vari : public op_dv_vari {
   log_inv_logit_diff_dv_vari(double a, vari* bvi)
       : op_dv_vari(log_inv_logit_diff(a, bvi->val_), a, bvi) {}
   void chain() {
-    bvi_->adj_ += adj_ * (-exp(bvi_->val_)/(exp(ad_) - exp(bvi_->val_))
-                          - exp(bvi_->val_)/(exp(bvi_->val_) + 1.0));
+    bvi_->adj_ += adj_
+                  * (-exp(bvi_->val_) / (exp(ad_) - exp(bvi_->val_))
+                     - exp(bvi_->val_) / (exp(bvi_->val_) + 1.0));
   }
 };
 }  // namespace

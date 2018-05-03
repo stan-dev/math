@@ -75,7 +75,7 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
   } else if (y == K) {
     logp_n -= log1p_exp(c[K - 2] - lambda);
   } else {
-    logp_n += log_inv_logit_diff(lambda-c[y - 2], lambda-c[y - 1]);
+    logp_n += log_inv_logit_diff(lambda - c[y - 2], lambda - c[y - 1]);
   }
   return logp_n;
 }
@@ -141,8 +141,8 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
     } else if (y[i] == K) {
       logp_n -= log1p_exp(c[K - 2] - lambda[i]);
     } else {
-      logp_n += log_inv_logit_diff(lambda[i]-c[y[i] - 2],
-                                   lambda[i]-c[y[i] - 1]);
+      logp_n += log_inv_logit_diff(lambda[i] - c[y[i] - 2],
+                                   lambda[i] - c[y[i] - 1]);
     }
   }
   return logp_n;
@@ -218,8 +218,8 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
     } else if (y[i] == K) {
       logp_n -= log1p_exp(c[i][K - 2] - lambda[i]);
     } else {
-      logp_n += log_inv_logit_diff(lambda[i]-c[i][y[i] - 2],
-                                   lambda[i]-c[i][y[i] - 1]);
+      logp_n += log_inv_logit_diff(lambda[i] - c[i][y[i] - 2],
+                                   lambda[i] - c[i][y[i] - 1]);
     }
   }
   return logp_n;

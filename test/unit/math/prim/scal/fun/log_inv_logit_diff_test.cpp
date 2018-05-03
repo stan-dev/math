@@ -14,6 +14,6 @@ TEST(MathFunctions, log_inv_logit_diff_nan) {
   using stan::math::NOT_A_NUMBER;
   using stan::math::log_inv_logit_diff;
 
- EXPECT_PRED1(boost::math::isnan<double>,
-                log_inv_logit_diff(NOT_A_NUMBER, 2.16));
+  EXPECT_PRED1(boost::math::isnan<double>,
+               log_inv_logit_diff(NOT_A_NUMBER, 2.16));
 }
