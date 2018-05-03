@@ -6,6 +6,7 @@
 
 namespace stan {
 namespace math {
+  using std::exp;
 
 namespace {
 
