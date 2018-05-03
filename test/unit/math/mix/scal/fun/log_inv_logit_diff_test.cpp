@@ -58,7 +58,6 @@ TEST(AgradFwdLogInvLogitDiff, FvarFVarVar_Dbl) {
   fvar<fvar<var>> b(-1.0, 1.0);
   fvar<fvar<var>> c = log_inv_logit_diff(a, b);
   c.d_.val_.grad();
-  ;
 
   EXPECT_FLOAT_EQ(-0.556158338159, b.d_.val_.adj());
   EXPECT_FLOAT_EQ(b.d_.val_.adj(), c.d_.val_.val());
