@@ -18,6 +18,10 @@ namespace math {
    \f]
 
    \f[
+    \frac{\partial }{\partial x} = -\frac{e^x}{e^y-e^x}-\frac{e^x}{e^x+1}
+   \f]
+
+   \f[
     \frac{\partial }{\partial x} = -\frac{e^y}{e^x-e^y}-\frac{e^y}{e^y+1}
    \f]
  *
