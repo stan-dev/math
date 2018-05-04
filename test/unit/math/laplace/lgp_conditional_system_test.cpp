@@ -145,8 +145,36 @@ TEST(laplace, lgp_newton_solver) {
     VEC g;
     theta(k).grad(parameters, g);
     EXPECT_FLOAT_EQ(solver_gradient[k], g[0]);
-//    std::cout << "gradient[" << k << "] : " << g[0] << std::endl;
+    
+    // check solution (redundant)
+    EXPECT_FLOAT_EQ(powell_solution[0], value_of(theta(0)));
+    EXPECT_FLOAT_EQ(powell_solution[1], value_of(theta(1)));
   }
 
+  std::vector<int> n_samples_array(2);
+  n_samples_array[0] = 5;
+  n_samples_array[1] = 5;
+  
+  std::vector<int> sums_array(2);
+  sums_array[0] = 3;
+  sums_array[1] = 10;
+  
+  // Test newton solver wrapper
+  for (int k = 0; k < dim_theta; k++) {
+    var phi = 2;
+    Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> theta
+      = lgp_newton_solver(theta_0, phi, n_samples_array, sums_array);
+    
+    AVEC parameters = createAVEC(phi);
+    VEC g;
+    theta(k).grad(parameters, g);
+    EXPECT_FLOAT_EQ(solver_gradient[k], g[0]);
+    
+    // check solution (redundant)
+    EXPECT_FLOAT_EQ(powell_solution[0], value_of(theta(0)));
+    EXPECT_FLOAT_EQ(powell_solution[1], value_of(theta(1)));
+  }
+  
+  
 }
 

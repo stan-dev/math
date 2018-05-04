@@ -57,9 +57,9 @@ namespace math {
   };
   
   /**
-   * Newton solver for lgp Newton solver.
-   * First definition of the function considers the case where
-   * the global parameter, phi, has type double.
+   * Newton solver for lgp model.
+   * In this instantiation, the global parameter phi has type double.
+   * The initial guess can be passed as a parameter or fixed data.
    */
   template<typename T>  // template for variables
   Eigen::Matrix<T, Eigen::Dynamic, 1> lgp_newton_solver(
@@ -102,7 +102,8 @@ namespace math {
 
   /**
    * lgp Newton solver.
-   * Case where the global parameter is a var.
+   * In this instantiation, phi is of type var.
+   * The initial guess can be passed as a parameter or fixed data.
    */
   template <typename T1, typename T2>
   Eigen::Matrix<T2, Eigen::Dynamic, 1> lgp_newton_solver(
@@ -129,6 +130,25 @@ namespace math {
       theta(i) = var(vi0->theta_[i]);
 
     return theta;
+  }
+
+  /**
+   * Wrapper of the lgp solver for use in the Stan language. This is
+   * because we cannot pass an object of type lgp_conditional_system.
+   * Note the wrapper automatically handles cases where phi is double
+   * or var.
+   */
+  template <typename T1, typename T2>
+  Eigen::Matrix<T2, Eigen::Dynamic, 1> lgp_newton_solver(
+    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_0,  // initial guess
+    const T2& phi,
+    const std::vector<int>& n_samples,
+    const std::vector<int>& sums) {
+
+    return lgp_newton_solver(theta_0, 
+                             lgp_conditional_system<T2>(phi, 
+                                                        to_vector(n_samples), 
+                                                        to_vector(sums)));
   }
 
 }  // namespace math

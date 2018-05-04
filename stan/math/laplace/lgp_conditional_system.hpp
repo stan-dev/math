@@ -53,7 +53,7 @@ namespace math {
     T0 get_phi() const { return phi_; }
     Eigen::VectorXd get_n_samples() const { return n_samples_; }
     Eigen::VectorXd get_sums() const { return sums_; }
-    
+
     /**
      * An operator that returns the conditional density.
      */
@@ -80,7 +80,7 @@ namespace math {
       // addition to vector is element-wise.
       return - add(elt_multiply(n_samples_, exp(theta)), 1/(phi_ * phi_));
     }
-    
+
     /**
      * An operator that returns the Jacobian of theta with respect
      * to phi. This is done using the implicit function theorem.
