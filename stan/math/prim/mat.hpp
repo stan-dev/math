@@ -1,6 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_HPP
 #define STAN_MATH_PRIM_MAT_HPP
 
+#ifdef STAN_OPENCL
+#include <stan/math/gpu/opencl_context.hpp>
+#endif
+
 #include <stan/math/prim/arr/meta/get.hpp>
 #include <stan/math/prim/arr/meta/index_type.hpp>
 #include <stan/math/prim/arr/meta/is_vector.hpp>
@@ -119,6 +123,7 @@
 #include <stan/math/prim/mat/fun/get_base1.hpp>
 #include <stan/math/prim/mat/fun/get_base1_lhs.hpp>
 #include <stan/math/prim/mat/fun/get_lp.hpp>
+#include <stan/math/prim/mat/fun/gp_dot_prod_cov.hpp>
 #include <stan/math/prim/mat/fun/head.hpp>
 #include <stan/math/prim/mat/fun/initialize.hpp>
 #include <stan/math/prim/mat/fun/inv.hpp>

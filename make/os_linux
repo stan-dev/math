@@ -23,6 +23,12 @@ ifeq (clang++,$(CC_TYPE))
   GTEST_CXXFLAGS += -DGTEST_HAS_PTHREAD=0
 endif
 
+ifdef STAN_OPENCL
+  LDFLAGS_OPENCL ?= -lOpenCL
+  OPENCL_DEVICE_ID ?= 0
+  OPENCL_PLATFORM_ID ?= 0
+endif
+
 DLL = .so
 
 ifdef STAN_MPI
