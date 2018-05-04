@@ -143,12 +143,16 @@ namespace math {
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_0,  // initial guess
     const T2& phi,
     const std::vector<int>& n_samples,
-    const std::vector<int>& sums) {
+    const std::vector<int>& sums,
+    double tol = 1e-6,
+    long int max_num_steps = 100) {  // NOLINT(runtime/int)
 
     return lgp_newton_solver(theta_0, 
                              lgp_conditional_system<T2>(phi, 
                                                         to_vector(n_samples), 
-                                                        to_vector(sums)));
+                                                        to_vector(sums)),
+                                                        tol,
+                                                        max_num_steps);
   }
 
 }  // namespace math

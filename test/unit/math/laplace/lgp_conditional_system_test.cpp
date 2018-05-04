@@ -175,6 +175,23 @@ TEST(laplace, lgp_newton_solver) {
     EXPECT_FLOAT_EQ(powell_solution[1], value_of(theta(1)));
   }
   
-  
+  // Test newton solver wrapper with tuning parameters
+  int max_num_steps = 100;
+  double tol = 1e-6;
+  for (int k = 0; k < dim_theta; k++) {
+    var phi = 2;
+    Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> theta
+    = lgp_newton_solver(theta_0, phi, n_samples_array, sums_array,
+                        tol, max_num_steps);
+
+    AVEC parameters = createAVEC(phi);
+    VEC g;
+    theta(k).grad(parameters, g);
+    EXPECT_FLOAT_EQ(solver_gradient[k], g[0]);
+
+    // check solution (redundant)
+    EXPECT_FLOAT_EQ(powell_solution[0], value_of(theta(0)));
+    EXPECT_FLOAT_EQ(powell_solution[1], value_of(theta(1)));
+  }
 }
 
