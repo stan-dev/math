@@ -11,29 +11,22 @@ using std::exp;
 
 template <typename T>
 inline fvar<T> log_inv_logit_diff(const fvar<T>& x, const fvar<T>& y) {
-  return fvar<T>(log_inv_logit_diff(x.val_, y.val_),
-                 x.d_
-                         * (-exp(x.val_) / (exp(y.val_) - exp(x.val_))
-                            - exp(x.val_) / (exp(x.val_) + 1.0))
-                     + y.d_
-                           * (-exp(y.val_) / (exp(x.val_) - exp(y.val_))
-                              - exp(y.val_) / (exp(y.val_) + 1.0)));
+  return fvar<T>(
+      log_inv_logit_diff(x.val_, y.val_),
+      -x.d_ * (inv(expm1(y.val_ - x.val_)) + inv_logit(x.val_))
+        -y.d_ * (inv(expm1(x.val_ - y.val_)) + inv_logit(y.val_)));
 }
 
 template <typename T>
 inline fvar<T> log_inv_logit_diff(const fvar<T>& x, double y) {
   return fvar<T>(log_inv_logit_diff(x.val_, y),
-                 x.d_
-                     * (-exp(x.val_) / (exp(y) - exp(x.val_))
-                        - exp(x.val_) / (exp(x.val_) + 1.0)));
+                 -x.d_ * (inv(expm1(y - x.val_)) + inv_logit(x.val_)));
 }
 
 template <typename T>
 inline fvar<T> log_inv_logit_diff(double x, const fvar<T>& y) {
   return fvar<T>(log_inv_logit_diff(x, y.val_),
-                 y.d_
-                     * (-exp(y.val_) / (exp(x) - exp(y.val_))
-                        - exp(y.val_) / (exp(y.val_) + 1.0)));
+                 -y.d_ * (inv(expm1(x - y.val_)) + inv_logit(y.val_)));
 }
 
 }  // namespace math
