@@ -14,7 +14,7 @@ inline fvar<T> log_inv_logit_diff(const fvar<T>& x, const fvar<T>& y) {
   return fvar<T>(
       log_inv_logit_diff(x.val_, y.val_),
       -x.d_ * (inv(expm1(y.val_ - x.val_)) + inv_logit(x.val_))
-        -y.d_ * (inv(expm1(x.val_ - y.val_)) + inv_logit(y.val_)));
+          - y.d_ * (inv(expm1(x.val_ - y.val_)) + inv_logit(y.val_)));
 }
 
 template <typename T>
