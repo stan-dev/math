@@ -3,6 +3,9 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/scal/fun/log_inv_logit_diff.hpp>
+#include <stan/math/prim/scal/fun/inv_logit.hpp>
+#include <stan/math/prim/scal/fun/inv.hpp>
+#include <stan/math/prim/scal/fun/expm1.hpp>
 
 namespace stan {
 namespace math {
