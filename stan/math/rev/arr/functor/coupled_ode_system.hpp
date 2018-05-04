@@ -218,8 +218,9 @@ struct coupled_ode_system<F, double, var> {
     std::vector<double> rhs_eval(N_);
 
     for (size_t i = 0; i < y.size(); i++) {
+      std::vector<double> y0_temp(y[i].begin(), y[i].begin() + N_);
       rhs_eval = f_(value_of(time_steps[i]),
-                    y[i], theta_dbl_, x_, x_int_, msgs_);
+                    y0_temp, theta_dbl_, x_, x_int_, msgs_);
       theta_aug[M_] = time_steps[i];
       // iterate over number of equations
       for (size_t j = 0; j < N_; j++) {
@@ -442,8 +443,9 @@ struct coupled_ode_system<F, var, double> {
     std::vector<double> rhs_eval(N_);
 
     for (size_t i = 0; i < y.size(); i++) {
+      std::vector<double> y0_temp(y[i].begin(), y[i].begin() + N_);
       rhs_eval = f_(value_of(time_steps[i]),
-                    y[i], theta_dbl_, x_, x_int_, msgs_);
+                    y0_temp, theta_dbl_, x_, x_int_, msgs_);
       theta_aug[N_] = time_steps[i];
       // iterate over number of equations
       for (size_t j = 0; j < N_; j++) {
@@ -688,7 +690,8 @@ struct coupled_ode_system<F, var, var> {
     std::vector<double> rhs_eval(N_);
 
     for (size_t i = 0; i < y.size(); i++) {
-      rhs_eval = f_(value_of(time_steps[i]), y[i],
+      std::vector<double> y0_temp(y[i].begin(), y[i].begin() + N_);
+      rhs_eval = f_(value_of(time_steps[i]), y0_temp,
                     theta_dbl_, x_, x_int_, msgs_);
       theta_aug[N_ + M_] = time_steps[i];
       // iterate over number of equations
