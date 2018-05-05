@@ -55,6 +55,10 @@ typedef stan::math::mpi_parallel_call<0, mock_reduce, mock_combine_dd>
 STAN_REGISTER_MPI_DISTRIBUTED_APPLY(mock0_call_t)
 
 typedef stan::math::mpi_parallel_call<1, mock_reduce, mock_combine_dd>
+    mock1_call_t;
+STAN_REGISTER_MPI_DISTRIBUTED_APPLY(mock1_call_t)
+
+typedef stan::math::mpi_parallel_call<2, mock_reduce, mock_combine_dd>
     mock_call_t;
 STAN_REGISTER_MPI_DISTRIBUTED_APPLY(mock_call_t)
 
@@ -95,6 +99,25 @@ MPI_TEST_F(MpiJob, no_job_input_ok_dd) {
   matrix_d res = call->reduce_combine();
 
   EXPECT_EQ(res.size(), 0);
+}
+
+MPI_TEST_F(MpiJob, one_job_input_ok_dd) {
+  if (rank != 0)
+    return;
+
+  job_params_d.resize(1);
+  x_i.resize(1);
+  x_r.resize(1);
+
+  std::shared_ptr<mock1_call_t> call;
+  EXPECT_NO_THROW((call = std::shared_ptr<mock1_call_t>(new mock1_call_t(
+                       shared_params_d, job_params_d, x_r, x_i))));
+
+  matrix_d res = call->reduce_combine();
+
+  EXPECT_EQ(res.size(), 0);
+  EXPECT_EQ(res.cols(), 0);
+  EXPECT_EQ(res.rows(), 3);
 }
 
 MPI_TEST_F(MpiJob, size_mismatch_job_params_dd) {

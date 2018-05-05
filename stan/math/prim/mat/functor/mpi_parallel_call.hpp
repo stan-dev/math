@@ -240,10 +240,10 @@ class mpi_parallel_call {
       start_job += job_chunks[n];
 
     const int num_local_jobs = local_job_params_dbl_.cols();
-    if (num_local_jobs == 0)
-      num_outputs_per_job_ = 0;
-    matrix_d local_output(num_outputs_per_job_ == -1 ? 0 : num_outputs_per_job_,
-                          num_local_jobs);
+    int local_outputs_per_job = num_local_jobs == 0 ? 0 : num_outputs_per_job_;
+    matrix_d local_output(
+        local_outputs_per_job == -1 ? 0 : local_outputs_per_job,
+        num_local_jobs);
     std::vector<int> local_f_out(num_local_jobs, -1);
 
     typename cache_x_r::cache_t& local_x_r = cache_x_r::data();
@@ -267,9 +267,9 @@ class mpi_parallel_call {
                         local_x_r[i], local_x_i[i], 0);
         local_f_out[i] = job_output.cols();
 
-        if (unlikely(num_outputs_per_job_ == -1)) {
-          num_outputs_per_job_ = job_output.rows();
-          local_output.conservativeResize(num_outputs_per_job_,
+        if (local_outputs_per_job == -1) {
+          local_outputs_per_job = job_output.rows();
+          local_output.conservativeResize(local_outputs_per_job,
                                           Eigen::NoChange);
         }
 
@@ -287,6 +287,24 @@ class mpi_parallel_call {
     // during first execution we distribute the output sizes from
     // local jobs to the root
     if (!cache_f_out::is_valid()) {
+      // Before we can cache the sizes locally we must ensure
+      // that no exception has been fired from any node. Hence,
+      // check on the root that everything was ok and broadcast
+      // that info. Only then we locally cache the output sizes.
+      std::vector<int> world_ok(world_size_);
+      boost::mpi::all_gather(world_, local_ok, world_ok);
+      bool all_ok = sum(world_ok) == static_cast<int>(world_size_);
+      if (!all_ok) {
+        // err out on the root
+        if (rank_ == 0) {
+          throw std::domain_error("MPI error on first evaluation.");
+        } else {
+          // and ensure on the workers that they return into their
+          // listening state
+          return result_t();
+        }
+      }
+      // ok, now all is fine everywhere, collect sizes and cache info
       std::vector<int> world_f_out(num_jobs, 0);
       boost::mpi::gatherv(world_, local_f_out.data(), num_local_jobs,
                           world_f_out.data(), job_chunks, 0);
@@ -295,23 +313,6 @@ class mpi_parallel_call {
       // node in order to cache this information locally.
       std::copy(local_f_out.begin(), local_f_out.end(),
                 world_f_out.begin() + start_job);
-      // Before we can cache these sizes locally we must ensure
-      // that no exception has been fired from any node. Hence,
-      // check on the root that everything was ok and broadcast
-      // that info. Only then we locally cache the output sizes.
-      bool all_ok = true;
-      for (int i = 0; i < num_jobs; ++i)
-        if (world_f_out[i] == -1)
-          all_ok = false;
-      boost::mpi::broadcast(world_, all_ok, 0);
-      if (!all_ok) {
-        // err out on the root
-        if (rank_ == 0)
-          throw std::domain_error("MPI error on first evaluation.");
-        // and ensure on the workers that they return into their
-        // listening state
-        return result_t();
-      }
       cache_f_out::store(world_f_out);
     }
 
@@ -326,6 +327,28 @@ class mpi_parallel_call {
       }
     }
 
+    // let everyone know if all went fine everywhere
+    std::vector<int> world_ok(world_size_);
+    boost::mpi::all_gather(world_, local_ok, world_ok);
+
+    // in case something went wrong we throw on the root and on the
+    // workers we just return. All results are discarded.
+    bool all_ok = sum(world_ok) == static_cast<int>(world_size_);
+    if (!all_ok) {
+      if (rank_ == 0) {
+        throw std::domain_error("Error during MPI evaluation.");
+      } else {
+        return result_t();
+      }
+    }
+
+    // execution was ok everywhere such that we can now distribute the
+    // outputs per job as recorded on the root on the first execution
+    if (num_outputs_per_job_ == -1) {
+      boost::mpi::broadcast(world_, local_outputs_per_job, 0);
+      num_outputs_per_job_ = local_outputs_per_job;
+    }
+
     const std::size_t size_world_f_out = sum(world_f_out);
     matrix_d world_result(num_outputs_per_job_, size_world_f_out);
 
@@ -338,21 +361,9 @@ class mpi_parallel_call {
     boost::mpi::gatherv(world_, local_output.data(), chunks_result[rank_],
                         world_result.data(), chunks_result, 0);
 
-    // let root know if all went fine
-    std::vector<int> all_ok(world_size_);
-    boost::mpi::gather(world_, local_ok, all_ok, 0);
-
     // on the workers all is done now.
     if (rank_ != 0)
       return result_t();
-
-    // in case something went wrong we throw on the root instead of
-    // combining
-    for (std::size_t i = 0; i < world_size_; ++i) {
-      if (!all_ok[i]) {
-        throw std::domain_error("Error during MPI evaluation.");
-      }
-    }
 
     return combine_(world_result, world_f_out);
   }

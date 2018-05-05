@@ -73,7 +73,8 @@ struct mpi_stop_worker : public mpi_command {
  *
  * The remainder jobs num_jobs % num_workers are assigned to rank
  * >=1 workers such that the root (rank = 0) has a little less
- * assigned chunks.
+ * assigned chunks unless num_jobs < num_workes in which case the
+ * first num_jobs nodes recieve a job (including the root).
  *
  * @param num_jobs Total number of jobs to dispatch
  * @param chunk_size Chunk size per job
@@ -87,8 +88,10 @@ inline std::vector<int> mpi_map_chunks(std::size_t num_jobs,
 
   std::vector<int> chunks(world_size, num_jobs / world_size);
 
+  const std::size_t delta_r = chunks[0] == 0 ? 0 : 1;
+
   for (std::size_t r = 0; r != num_jobs % world_size; ++r)
-    ++chunks[r + 1];
+    ++chunks[r + delta_r];
 
   for (std::size_t i = 0; i != world_size; ++i)
     chunks[i] *= chunk_size;
