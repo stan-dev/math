@@ -37,9 +37,24 @@ namespace math {
  * ... ]'.
  *
  * The function is implemented with serial execution and with
- * parallelism (TODO) using MPI. The MPI version is only available if
- * STAN_MPI is defined. For the MPI version to work this function
- * has these special non-standard conventions:
+ * parallelism using threading or MPI (TODO). The threading version is
+ * used if the compiler flag STAN_THREADS is set during compilation
+ * while the MPI version is only available if STAN_MPI is defined. The
+ * MPI parallelism takes precedence over serial or threading execution
+ * of the function.
+ *
+ * For the threaded parallelism the N jobs are chunked into T blocks
+ * which are executed asynchronously using the async C++11
+ * facility. This ensure that at most T threads are used, but the
+ * actual number of threads is controlled by the implementation of
+ * async provided by the compiler. Note that nested calls of map_rect
+ * will lead to a multiplicative increase in the number of job chunks
+ * generated. The number of threads T is controlled at runtime via the
+ * STAN_NUM_threads environment variable, see the get_num_threads
+ * function for details.
+ *
+ * For the MPI version to work this function has these special
+ * non-standard conventions:
  *
  * - The call_id template parameter is considered as a label for the
  *   functor F and data combination. Since MPI communication is
