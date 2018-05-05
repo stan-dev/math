@@ -285,12 +285,12 @@ class mpi_parallel_call {
     }
 
     // during first execution we distribute the output sizes from
-    // local jobs to the root
-    if (!cache_f_out::is_valid()) {
-      // Before we can cache the sizes locally we must ensure
+    // local jobs to the root. This needs to be done for the number of
+    // outputs of each result and the number of outputs per job.
+    if (num_outputs_per_job_ == -1) {
+      // before we can cache the sizes locally we must ensure
       // that no exception has been fired from any node. Hence,
-      // check on the root that everything was ok and broadcast
-      // that info. Only then we locally cache the output sizes.
+      // share the info about the current status across all nodes.
       std::vector<int> world_ok(world_size_);
       boost::mpi::all_gather(world_, local_ok, world_ok);
       bool all_ok = sum(world_ok) == static_cast<int>(world_size_);
@@ -304,16 +304,24 @@ class mpi_parallel_call {
           return result_t();
         }
       }
-      // ok, now all is fine everywhere, collect sizes and cache info
-      std::vector<int> world_f_out(num_jobs, 0);
-      boost::mpi::gatherv(world_, local_f_out.data(), num_local_jobs,
-                          world_f_out.data(), job_chunks, 0);
-      // on the root we now have all sizes from all childs. Copy
-      // over the local sizes to the world vector on each local
-      // node in order to cache this information locally.
-      std::copy(local_f_out.begin(), local_f_out.end(),
-                world_f_out.begin() + start_job);
-      cache_f_out::store(world_f_out);
+
+      // execution was ok everywhere such that we can now distribute the
+      // outputs per job as recorded on the root on the first execution
+      boost::mpi::broadcast(world_, local_outputs_per_job, 0);
+      num_outputs_per_job_ = local_outputs_per_job;
+
+      if (!cache_f_out::is_valid()) {
+        // ok, now all is fine everywhere, collect sizes and cache info
+        std::vector<int> world_f_out(num_jobs, 0);
+        boost::mpi::gatherv(world_, local_f_out.data(), num_local_jobs,
+                            world_f_out.data(), job_chunks, 0);
+        // on the root we now have all sizes from all childs. Copy
+        // over the local sizes to the world vector on each local
+        // node in order to cache this information locally.
+        std::copy(local_f_out.begin(), local_f_out.end(),
+                  world_f_out.begin() + start_job);
+        cache_f_out::store(world_f_out);
+      }
     }
 
     typename cache_f_out::cache_t& world_f_out = cache_f_out::data();
@@ -325,28 +333,6 @@ class mpi_parallel_call {
         local_ok = 0;
         break;
       }
-    }
-
-    // let everyone know if all went fine everywhere
-    std::vector<int> world_ok(world_size_);
-    boost::mpi::all_gather(world_, local_ok, world_ok);
-
-    // in case something went wrong we throw on the root and on the
-    // workers we just return. All results are discarded.
-    bool all_ok = sum(world_ok) == static_cast<int>(world_size_);
-    if (!all_ok) {
-      if (rank_ == 0) {
-        throw std::domain_error("Error during MPI evaluation.");
-      } else {
-        return result_t();
-      }
-    }
-
-    // execution was ok everywhere such that we can now distribute the
-    // outputs per job as recorded on the root on the first execution
-    if (num_outputs_per_job_ == -1) {
-      boost::mpi::broadcast(world_, local_outputs_per_job, 0);
-      num_outputs_per_job_ = local_outputs_per_job;
     }
 
     const std::size_t size_world_f_out = sum(world_f_out);
@@ -361,9 +347,17 @@ class mpi_parallel_call {
     boost::mpi::gatherv(world_, local_output.data(), chunks_result[rank_],
                         world_result.data(), chunks_result, 0);
 
+    // let root know if all went fine everywhere
+    std::vector<int> world_ok(world_size_);
+    boost::mpi::gather(world_, local_ok, world_ok, 0);
+
     // on the workers all is done now.
     if (rank_ != 0)
       return result_t();
+
+    // in case something went wrong we throw on the root
+    if (sum(world_ok) != static_cast<int>(world_size_))
+      throw std::domain_error("Error during MPI evaluation.");
 
     return combine_(world_result, world_f_out);
   }
