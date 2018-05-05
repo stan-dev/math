@@ -74,19 +74,19 @@ MPI_TEST_F(MpiJob, hard_work_vv) {
   stan::math::vector_v result_mpi = stan::math::map_rect<0, hard_work>(
       shared_params_v, job_params_v, x_r, x_i, 0);
 
-  stan::math::vector_v result_serial
-      = stan::math::internal::map_rect_serial<0, hard_work>(
+  stan::math::vector_v result_concurrent
+      = stan::math::internal::map_rect_concurrent<0, hard_work>(
           shared_params_v2, job_params_v2, x_r, x_i, 0);
 
   std::vector<double> z_grad1;
   std::vector<double> z_grad2;
 
-  EXPECT_EQ(result_mpi.rows(), result_serial.rows());
+  EXPECT_EQ(result_mpi.rows(), result_concurrent.rows());
 
   for (std::size_t i = 0, ij = 0; i < job_params_v_vec.size(); ++i) {
     for (std::size_t j = 0; j < 2; ++j, ++ij) {
       EXPECT_DOUBLE_EQ(stan::math::value_of(result_mpi(ij)),
-                       stan::math::value_of(result_serial(ij)));
+                       stan::math::value_of(result_concurrent(ij)));
 
       std::vector<stan::math::var> z_var1, z_var2;
 
@@ -101,7 +101,7 @@ MPI_TEST_F(MpiJob, hard_work_vv) {
                     job_params_v2_vec[i].end());
 
       result_mpi(ij).grad(z_var1, z_grad1);
-      result_serial(ij).grad(z_var2, z_grad2);
+      result_concurrent(ij).grad(z_var2, z_grad2);
 
       stan::math::set_zero_all_adjoints();
 

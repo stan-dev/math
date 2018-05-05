@@ -69,14 +69,14 @@ MPI_TEST_F(MpiJob, hard_work_dd) {
 
   Eigen::VectorXd result_mpi = stan::math::map_rect<0, hard_work>(
       shared_params_d, job_params_d, x_r, x_i);
-  Eigen::VectorXd result_serial
-      = stan::math::internal::map_rect_serial<0, hard_work>(
+  Eigen::VectorXd result_concurrent
+      = stan::math::internal::map_rect_concurrent<0, hard_work>(
           shared_params_d, job_params_d, x_r, x_i);
 
-  EXPECT_EQ(result_mpi.rows(), result_serial.rows());
+  EXPECT_EQ(result_mpi.rows(), result_concurrent.rows());
 
   for (int i = 0; i < result_mpi.rows(); ++i) {
-    EXPECT_DOUBLE_EQ(result_mpi(i), result_serial(i));
+    EXPECT_DOUBLE_EQ(result_mpi(i), result_concurrent(i));
   }
 }
 
@@ -87,14 +87,14 @@ MPI_TEST_F(MpiJobSmallWorld, hard_work_dd) {
 
   Eigen::VectorXd result_mpi = stan::math::map_rect<1, hard_work>(
       shared_params_d, job_params_d, x_r, x_i);
-  Eigen::VectorXd result_serial
-      = stan::math::internal::map_rect_serial<1, hard_work>(
+  Eigen::VectorXd result_concurrent
+      = stan::math::internal::map_rect_concurrent<1, hard_work>(
           shared_params_d, job_params_d, x_r, x_i);
 
-  EXPECT_EQ(result_mpi.rows(), result_serial.rows());
+  EXPECT_EQ(result_mpi.rows(), result_concurrent.rows());
 
   for (int i = 0; i < result_mpi.rows(); ++i) {
-    EXPECT_DOUBLE_EQ(result_mpi(i), result_serial(i));
+    EXPECT_DOUBLE_EQ(result_mpi(i), result_concurrent(i));
   }
 }
 

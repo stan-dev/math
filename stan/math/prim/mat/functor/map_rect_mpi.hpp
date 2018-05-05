@@ -3,7 +3,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_MPI_HPP
 #define STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_MPI_HPP
 
-#include <stan/math/prim/mat/functor/map_rect_serial.hpp>
+#include <stan/math/prim/mat/functor/map_rect_concurrent.hpp>
 #include <stan/math/prim/arr/functor/mpi_distributed_apply.hpp>
 #include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
 #include <stan/math/prim/mat/functor/map_rect_combine.hpp>
@@ -37,8 +37,8 @@ map_rect_mpi(
 
     return job_chunk.reduce_combine();
   } catch (const mpi_is_in_use& e) {
-    return map_rect_serial<call_id, F>(shared_params, job_params, x_r, x_i,
-                                       msgs);
+    return map_rect_concurrent<call_id, F>(shared_params, job_params, x_r, x_i,
+                                           msgs);
   }
 }
 }  // namespace internal
