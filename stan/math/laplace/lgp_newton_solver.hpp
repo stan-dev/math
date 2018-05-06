@@ -66,14 +66,14 @@ namespace math {
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta_0,  // initial guess
     const lgp_conditional_system<double>& system,
     double tol = 1e-3,
-    long int max_num_steps = 100) {  // NOLINT(runtime/int)
+    long int max_num_steps = 100,
+    bool line_search = false) {  // NOLINT(runtime/int)
 
     Eigen::VectorXd theta_dbl = value_of(theta_0);
     Eigen::MatrixXd gradient; 
+    Eigen::MatrixXd direction;
 
     for (int i = 0; i <= max_num_steps; i++) {
-
-      // std::cout << "Iteration: " << i << " yields theta = " << theta_dbl << std::endl;
 
       // check if the max number of steps has been reached
       if (i == max_num_steps) {
@@ -84,10 +84,27 @@ namespace math {
       }
 
       gradient = system.cond_gradient(theta_dbl);
-      theta_dbl -= elt_divide(gradient, system.cond_hessian(theta_dbl));
+      direction = - elt_divide(gradient, system.cond_hessian(theta_dbl));
 
-      // std::cout << "gradient: " << gradient << std::endl;
-      // std::cout << "cond_hessian: " << system.cond_hessian(theta_dbl) << std::endl;
+      if (line_search == false) {
+        theta_dbl += direction;
+      } else {
+        // do line search using Armijo's method (and tuning parameters from
+        // his paper).
+        double alpha = 1;  // max step size
+        double c = 0.5; 
+        double tau = 0.5;
+        double m = multiply(transpose(direction), gradient)(0);
+        Eigen::VectorXd theta_candidate = theta_dbl + alpha * direction;
+
+        while (system.log_density(theta_candidate) 
+                 > system.log_density(theta_dbl) + c * m) {
+          alpha = tau * alpha;
+          theta_candidate = theta_dbl + alpha * direction;
+        }
+
+        theta_dbl = theta_candidate;
+      }
 
       // Should really be an mdivide. However, the hessian is diagonal and 
       // stored as a vector, so need to use elt_divide.
@@ -110,7 +127,8 @@ namespace math {
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_0,  // initial guess
     const lgp_conditional_system<T2>& system,
     double tol = 1e-6,
-    long int max_num_steps = 100) {  // NOLINT(runtime/int)
+    long int max_num_steps = 100,  // NOLINT(runtime/int)
+    bool line_search = false) {
 
     lgp_conditional_system<double> 
       system_dbl(value_of(system.get_phi()),
@@ -118,7 +136,8 @@ namespace math {
                  system.get_sums());
 
     Eigen::VectorXd theta_dbl 
-      = lgp_newton_solver(value_of(theta_0), system_dbl, tol, max_num_steps);
+      = lgp_newton_solver(value_of(theta_0), system_dbl, tol, max_num_steps,
+                          line_search);
 
     // construct vari
     lgp_newton_solver_vari<T2>* vi0
@@ -145,14 +164,16 @@ namespace math {
     const std::vector<int>& n_samples,
     const std::vector<int>& sums,
     double tol = 1e-6,
-    long int max_num_steps = 100) {  // NOLINT(runtime/int)
+    long int max_num_steps = 100,  // NOLINT(runtime/int)
+    int is_line_search = 0) {
 
-    return lgp_newton_solver(theta_0, 
+    return lgp_newton_solver(theta_0,
                              lgp_conditional_system<T2>(phi, 
                                                         to_vector(n_samples), 
                                                         to_vector(sums)),
-                                                        tol,
-                                                        max_num_steps);
+                              tol,
+                              max_num_steps,
+                              is_line_search);
   }
 
 }  // namespace math

@@ -52,6 +52,9 @@ TEST(Laplace, lgp_conditional_system) {
 
   lgp_conditional_system<double> system(phi, n_samples, sums);
 
+  // Test evaluation of the density
+  EXPECT_FLOAT_EQ(6.595955, system.log_density(theta));
+  
   // Test evaluation of the gradient
   Eigen::VectorXd cond_grad = system.cond_gradient(theta);
   EXPECT_FLOAT_EQ(0.7644863, cond_grad(0));
@@ -127,6 +130,15 @@ TEST(laplace, lgp_newton_solver) {
   EXPECT_FLOAT_EQ(powell_solution[0], theta_dbl(0));
   EXPECT_FLOAT_EQ(powell_solution[1], theta_dbl(1));
 
+  // Test newton solver with only double argument, and line search method.
+  double tol = 1e-3;
+  int max_num_steps = 100;
+  bool line_search = true;
+  theta_dbl = lgp_newton_solver(theta_0, system,
+                                tol, max_num_steps, line_search);
+  EXPECT_FLOAT_EQ(powell_solution[0], theta_dbl(0));
+  EXPECT_FLOAT_EQ(powell_solution[1], theta_dbl(1));
+
   // Test lgp_conditional_system computes the correct gradient
   Eigen::VectorXd solution(2);
   solution << -0.472228, 0.6761;
@@ -176,13 +188,30 @@ TEST(laplace, lgp_newton_solver) {
   }
   
   // Test newton solver wrapper with tuning parameters
-  int max_num_steps = 100;
-  double tol = 1e-6;
+  int is_line_search = 0;
   for (int k = 0; k < dim_theta; k++) {
     var phi = 2;
     Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> theta
     = lgp_newton_solver(theta_0, phi, n_samples_array, sums_array,
-                        tol, max_num_steps);
+                        tol, max_num_steps, is_line_search);
+
+    AVEC parameters = createAVEC(phi);
+    VEC g;
+    theta(k).grad(parameters, g);
+    EXPECT_FLOAT_EQ(solver_gradient[k], g[0]);
+
+    // check solution (redundant)
+    EXPECT_FLOAT_EQ(powell_solution[0], value_of(theta(0)));
+    EXPECT_FLOAT_EQ(powell_solution[1], value_of(theta(1)));
+  }
+  
+  // Repeat test, this time using line_search
+  is_line_search = 1;
+  for (int k = 0; k < dim_theta; k++) {
+    var phi = 2;
+    Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> theta
+      = lgp_newton_solver(theta_0, phi, n_samples_array, sums_array,
+                          tol, max_num_steps, is_line_search);
 
     AVEC parameters = createAVEC(phi);
     VEC g;

@@ -56,7 +56,13 @@ namespace math {
 
     /**
      * An operator that returns the conditional density.
+     * Takes in a vector of double for theta (as this is the only
+     * instance where we would compute a density.)
      */
+    T0 log_density(const Eigen::VectorXd theta) const {
+      Eigen::VectorXd element = elt_multiply(sums_, theta) - exp(theta);
+      return sum(element) - theta.squaredNorm() / (2 * phi_ * phi_);
+    }
 
     /**
      * An operator that returns the gradient of the conditional density.
