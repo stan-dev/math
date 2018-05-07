@@ -257,7 +257,6 @@
 #include <stan/math/prim/mat/functor/map_rect_concurrent.hpp>
 #include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
 #include <stan/math/prim/mat/functor/map_rect_combine.hpp>
-#include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
 #include <stan/math/prim/mat/functor/map_rect_serial.hpp>
 
 #include <stan/math/prim/mat/prob/bernoulli_logit_glm_lpmf.hpp>
