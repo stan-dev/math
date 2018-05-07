@@ -47,8 +47,8 @@ TEST(MathPrimMat, vec_double_gp_exponential_cov1) {
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 3; j++)
       EXPECT_FLOAT_EQ(
-          sigma * sigma *
-              std::exp(-1.0 * stan::math::squared_distance(x[i], x[j]) / l),
+          sigma * sigma
+              * std::exp(-1.0 * stan::math::squared_distance(x[i], x[j]) / l),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
 }
@@ -99,8 +99,8 @@ TEST(MathPrimMat, vec_eigen_gp_exponential_cov1) {
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
-          sigma * sigma *
-              std::exp(-1.0 * stan::math::squared_distance(x1[i], x1[j]) / l),
+          sigma * sigma
+              * std::exp(-1.0 * stan::math::squared_distance(x1[i], x1[j]) / l),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -128,8 +128,8 @@ TEST(MathPrimMat, vec_eigen_eigen_gp_exponential_cov1) {
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
-          sigma * sigma *
-              std::exp(-1.0 * stan::math::squared_distance(x1[i], x2[j]) / l),
+          sigma * sigma
+              * std::exp(-1.0 * stan::math::squared_distance(x1[i], x2[j]) / l),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -155,8 +155,8 @@ TEST(MathPrimMat, vec_double_double_gp_exponential_cov1) {
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 3; j++)
       EXPECT_FLOAT_EQ(
-          sigma * sigma *
-              std::exp(-1.0 * stan::math::squared_distance(x1[i], x2[j]) / l),
+          sigma * sigma
+              * std::exp(-1.0 * stan::math::squared_distance(x1[i], x2[j]) / l),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
 }
@@ -277,8 +277,8 @@ TEST(MathPrimMat, rvec_eigen_gp_exponential_cov1) {
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
-          sigma * sigma *
-              std::exp(-1.0 * stan::math::squared_distance(x1[i], x1[j]) / l),
+          sigma * sigma
+              * std::exp(-1.0 * stan::math::squared_distance(x1[i], x1[j]) / l),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -306,8 +306,8 @@ TEST(MathPrimMat, vec_eigen_rvec_eigen_gp_exponential_cov1) {
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
-          sigma * sigma *
-              std::exp(-1.0 * stan::math::squared_distance(x1[i], x2[j]) / l),
+          sigma * sigma
+              * std::exp(-1.0 * stan::math::squared_distance(x1[i], x2[j]) / l),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -317,8 +317,8 @@ TEST(MathPrimMat, vec_eigen_rvec_eigen_gp_exponential_cov1) {
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
-          sigma * sigma *
-              std::exp(-1.0 * stan::math::squared_distance(x2[i], x1[j]) / l),
+          sigma * sigma
+              * std::exp(-1.0 * stan::math::squared_distance(x2[i], x1[j]) / l),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -393,8 +393,8 @@ TEST(MathPrimMat, rvec_eigen_rvec_eigen_gp_exponential_cov1) {
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
-          sigma * sigma *
-              std::exp(-1.0 * stan::math::squared_distance(x1[i], x2[j]) / l),
+          sigma * sigma
+              * std::exp(-1.0 * stan::math::squared_distance(x1[i], x2[j]) / l),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -404,8 +404,8 @@ TEST(MathPrimMat, rvec_eigen_rvec_eigen_gp_exponential_cov1) {
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
-          sigma * sigma *
-              std::exp(-1.0 * stan::math::squared_distance(x2[i], x1[j]) / l),
+          sigma * sigma
+              * std::exp(-1.0 * stan::math::squared_distance(x2[i], x1[j]) / l),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -491,128 +491,136 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_exponential_cov2) {
     x2_vec[i] << 2 * i, 3 * i, 4 * i;
   }
   Eigen::MatrixXd cov;
-  EXPECT_NO_THROW(
-      cov = stan::math::gp_exponential_cov(x1_rvec, x2_vec, sigma, l));
+  EXPECT_NO_THROW(cov
+                  = stan::math::gp_exponential_cov(x1_rvec, x2_vec, sigma, l));
   EXPECT_EQ(3, cov.rows());
   EXPECT_EQ(4, cov.cols());
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
-          sigma * sigma *
-              std::exp(-1.0 *
-                       stan::math::squared_distance(x1_rvec[i], x2_vec[j]) / l),
+          sigma * sigma
+              * std::exp(-1.0
+                         * stan::math::squared_distance(x1_rvec[i], x2_vec[j])
+                         / l),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }
   }
 
   Eigen::MatrixXd cov7;
-  EXPECT_NO_THROW(
-      cov7 = stan::math::gp_exponential_cov(x2_vec, x1_rvec, sigma, l));
+  EXPECT_NO_THROW(cov7
+                  = stan::math::gp_exponential_cov(x2_vec, x1_rvec, sigma, l));
   EXPECT_EQ(4, cov7.rows());
   EXPECT_EQ(3, cov7.cols());
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
-          sigma * sigma *
-              std::exp(-1.0 *
-                       stan::math::squared_distance(x2_vec[i], x1_rvec[j]) / l),
+          sigma * sigma
+              * std::exp(-1.0
+                         * stan::math::squared_distance(x2_vec[i], x1_rvec[j])
+                         / l),
           cov7(i, j))
           << "index: (" << i << ", " << j << ")";
     }
   }
 
   Eigen::MatrixXd cov2;
-  EXPECT_NO_THROW(
-      cov2 = stan::math::gp_exponential_cov(x1_vec, x2_rvec, sigma, l));
+  EXPECT_NO_THROW(cov2
+                  = stan::math::gp_exponential_cov(x1_vec, x2_rvec, sigma, l));
   EXPECT_EQ(3, cov2.rows());
   EXPECT_EQ(4, cov2.cols());
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
-          sigma * sigma *
-              std::exp(-1.0 *
-                       stan::math::squared_distance(x1_vec[i], x2_rvec[j]) / l),
+          sigma * sigma
+              * std::exp(-1.0
+                         * stan::math::squared_distance(x1_vec[i], x2_rvec[j])
+                         / l),
           cov2(i, j))
           << "index: (" << i << ", " << j << ")";
     }
   }
 
   Eigen::MatrixXd cov8;
-  EXPECT_NO_THROW(
-      cov8 = stan::math::gp_exponential_cov(x2_rvec, x1_vec, sigma, l));
+  EXPECT_NO_THROW(cov8
+                  = stan::math::gp_exponential_cov(x2_rvec, x1_vec, sigma, l));
   EXPECT_EQ(4, cov8.rows());
   EXPECT_EQ(3, cov8.cols());
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
-          sigma * sigma *
-              std::exp(-1.0 *
-                       stan::math::squared_distance(x2_rvec[i], x1_vec[j]) / l),
+          sigma * sigma
+              * std::exp(-1.0
+                         * stan::math::squared_distance(x2_rvec[i], x1_vec[j])
+                         / l),
           cov8(i, j))
           << "index: (" << i << ", " << j << ")";
     }
   }
 
   Eigen::MatrixXd cov3;
-  EXPECT_NO_THROW(
-      cov3 = stan::math::gp_exponential_cov(x2_vec, x2_rvec, sigma, l));
+  EXPECT_NO_THROW(cov3
+                  = stan::math::gp_exponential_cov(x2_vec, x2_rvec, sigma, l));
   EXPECT_EQ(4, cov3.rows());
   EXPECT_EQ(4, cov3.cols());
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
-          sigma * sigma *
-              std::exp(-1.0 *
-                       stan::math::squared_distance(x2_vec[i], x2_rvec[j]) / l),
+          sigma * sigma
+              * std::exp(-1.0
+                         * stan::math::squared_distance(x2_vec[i], x2_rvec[j])
+                         / l),
           cov3(i, j))
           << "index: (" << i << ", " << j << ")";
     }
   }
 
   Eigen::MatrixXd cov4;
-  EXPECT_NO_THROW(
-      cov4 = stan::math::gp_exponential_cov(x2_rvec, x2_vec, sigma, l));
+  EXPECT_NO_THROW(cov4
+                  = stan::math::gp_exponential_cov(x2_rvec, x2_vec, sigma, l));
   EXPECT_EQ(4, cov4.rows());
   EXPECT_EQ(4, cov4.cols());
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
-          sigma * sigma *
-              std::exp(-1.0 *
-                       stan::math::squared_distance(x2_rvec[i], x2_vec[j]) / l),
+          sigma * sigma
+              * std::exp(-1.0
+                         * stan::math::squared_distance(x2_rvec[i], x2_vec[j])
+                         / l),
           cov4(i, j))
           << "index: (" << i << ", " << j << ")";
     }
   }
 
   Eigen::MatrixXd cov5;
-  EXPECT_NO_THROW(
-      cov5 = stan::math::gp_exponential_cov(x1_rvec, x1_vec, sigma, l));
+  EXPECT_NO_THROW(cov5
+                  = stan::math::gp_exponential_cov(x1_rvec, x1_vec, sigma, l));
   EXPECT_EQ(3, cov5.rows());
   EXPECT_EQ(3, cov5.cols());
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
-          sigma * sigma *
-              std::exp(-1.0 *
-                       stan::math::squared_distance(x1_rvec[i], x1_vec[j]) / l),
+          sigma * sigma
+              * std::exp(-1.0
+                         * stan::math::squared_distance(x1_rvec[i], x1_vec[j])
+                         / l),
           cov5(i, j))
           << "index: (" << i << ", " << j << ")";
     }
   }
 
   Eigen::MatrixXd cov6;
-  EXPECT_NO_THROW(
-      cov6 = stan::math::gp_exponential_cov(x1_vec, x1_rvec, sigma, l));
+  EXPECT_NO_THROW(cov6
+                  = stan::math::gp_exponential_cov(x1_vec, x1_rvec, sigma, l));
   EXPECT_EQ(3, cov6.rows());
   EXPECT_EQ(3, cov6.cols());
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
-          sigma * sigma *
-              std::exp(-1.0 *
-                       stan::math::squared_distance(x1_vec[i], x1_rvec[j]) / l),
+          sigma * sigma
+              * std::exp(-1.0
+                         * stan::math::squared_distance(x1_vec[i], x1_rvec[j])
+                         / l),
           cov6(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -655,8 +663,8 @@ TEST(MathPrimMat, vec_eigen_mixed_ard_gp_exponential_cov2) {
     x2_vec[i] << 2 * i, 3 * i, 4 * i;
   }
   Eigen::MatrixXd cov;
-  EXPECT_NO_THROW(
-      cov = stan::math::gp_exponential_cov(x1_rvec, x2_vec, sigma, l));
+  EXPECT_NO_THROW(cov
+                  = stan::math::gp_exponential_cov(x1_rvec, x2_vec, sigma, l));
   EXPECT_EQ(3, cov.rows());
   EXPECT_EQ(4, cov.cols());
   for (int i = 0; i < 3; i++) {
@@ -672,8 +680,8 @@ TEST(MathPrimMat, vec_eigen_mixed_ard_gp_exponential_cov2) {
   }
 
   Eigen::MatrixXd cov7;
-  EXPECT_NO_THROW(
-      cov7 = stan::math::gp_exponential_cov(x2_vec, x1_rvec, sigma, l));
+  EXPECT_NO_THROW(cov7
+                  = stan::math::gp_exponential_cov(x2_vec, x1_rvec, sigma, l));
   EXPECT_EQ(4, cov7.rows());
   EXPECT_EQ(3, cov7.cols());
   for (int i = 0; i < 3; i++) {
@@ -689,8 +697,8 @@ TEST(MathPrimMat, vec_eigen_mixed_ard_gp_exponential_cov2) {
   }
 
   Eigen::MatrixXd cov2;
-  EXPECT_NO_THROW(
-      cov2 = stan::math::gp_exponential_cov(x1_vec, x2_rvec, sigma, l));
+  EXPECT_NO_THROW(cov2
+                  = stan::math::gp_exponential_cov(x1_vec, x2_rvec, sigma, l));
   EXPECT_EQ(3, cov2.rows());
   EXPECT_EQ(4, cov2.cols());
   for (int i = 0; i < 3; i++) {
@@ -705,8 +713,8 @@ TEST(MathPrimMat, vec_eigen_mixed_ard_gp_exponential_cov2) {
   }
 
   Eigen::MatrixXd cov8;
-  EXPECT_NO_THROW(
-      cov8 = stan::math::gp_exponential_cov(x2_rvec, x1_vec, sigma, l));
+  EXPECT_NO_THROW(cov8
+                  = stan::math::gp_exponential_cov(x2_rvec, x1_vec, sigma, l));
   EXPECT_EQ(4, cov8.rows());
   EXPECT_EQ(3, cov8.cols());
   for (int i = 0; i < 3; i++) {
@@ -722,8 +730,8 @@ TEST(MathPrimMat, vec_eigen_mixed_ard_gp_exponential_cov2) {
   }
 
   Eigen::MatrixXd cov3;
-  EXPECT_NO_THROW(
-      cov3 = stan::math::gp_exponential_cov(x2_vec, x2_rvec, sigma, l));
+  EXPECT_NO_THROW(cov3
+                  = stan::math::gp_exponential_cov(x2_vec, x2_rvec, sigma, l));
   EXPECT_EQ(4, cov3.rows());
   EXPECT_EQ(4, cov3.cols());
   for (int i = 0; i < 3; i++) {
@@ -739,8 +747,8 @@ TEST(MathPrimMat, vec_eigen_mixed_ard_gp_exponential_cov2) {
   }
 
   Eigen::MatrixXd cov4;
-  EXPECT_NO_THROW(
-      cov4 = stan::math::gp_exponential_cov(x2_rvec, x2_vec, sigma, l));
+  EXPECT_NO_THROW(cov4
+                  = stan::math::gp_exponential_cov(x2_rvec, x2_vec, sigma, l));
   EXPECT_EQ(4, cov4.rows());
   EXPECT_EQ(4, cov4.cols());
   for (int i = 0; i < 3; i++) {
@@ -756,8 +764,8 @@ TEST(MathPrimMat, vec_eigen_mixed_ard_gp_exponential_cov2) {
   }
 
   Eigen::MatrixXd cov5;
-  EXPECT_NO_THROW(
-      cov5 = stan::math::gp_exponential_cov(x1_rvec, x1_vec, sigma, l));
+  EXPECT_NO_THROW(cov5
+                  = stan::math::gp_exponential_cov(x1_rvec, x1_vec, sigma, l));
   EXPECT_EQ(3, cov5.rows());
   EXPECT_EQ(3, cov5.cols());
   for (int i = 0; i < 3; i++) {
@@ -773,8 +781,8 @@ TEST(MathPrimMat, vec_eigen_mixed_ard_gp_exponential_cov2) {
   }
 
   Eigen::MatrixXd cov6;
-  EXPECT_NO_THROW(
-      cov6 = stan::math::gp_exponential_cov(x1_vec, x1_rvec, sigma, l));
+  EXPECT_NO_THROW(cov6
+                  = stan::math::gp_exponential_cov(x1_vec, x1_rvec, sigma, l));
   EXPECT_EQ(3, cov6.rows());
   EXPECT_EQ(3, cov6.cols());
   for (int i = 0; i < 3; i++) {
