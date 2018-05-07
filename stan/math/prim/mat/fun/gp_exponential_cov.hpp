@@ -35,6 +35,7 @@ gp_exponential_cov(const std::vector<T_x> &x, const T_s &sigma,
   using std::exp;
   using std::pow;
 
+  //  std::cout << "blah blah\n";
   size_t x_size = x.size();
   for (size_t n = 0; n < x_size; ++n)
     check_not_nan("gp_exponential_cov", "x", x[n]);
