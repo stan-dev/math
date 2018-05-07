@@ -129,24 +129,24 @@ void SUNBandMatrix_Print(SUNMatrix A, FILE* outfile)
     return;
 
   /* perform operation */
-  fprintf(outfile,"\n");
+  STAN_SUNDIALS_FPRINTF(outfile,"\n");
   for (i=0; i<SM_ROWS_B(A); i++) {
     start = SUNMAX(0, i-SM_LBAND_B(A));
     finish = SUNMIN(SM_COLUMNS_B(A)-1, i+SM_UBAND_B(A));
     for (j=0; j<start; j++)
-      fprintf(outfile,"%12s  ","");
+      STAN_SUNDIALS_FPRINTF(outfile,"%12s  ","");
     for (j=start; j<=finish; j++) {
 #if defined(SUNDIALS_EXTENDED_PRECISION)
-      fprintf(outfile,"%12Lg  ", SM_ELEMENT_B(A,i,j));
+      STAN_SUNDIALS_FPRINTF(outfile,"%12Lg  ", SM_ELEMENT_B(A,i,j));
 #elif defined(SUNDIALS_DOUBLE_PRECISION)
-      fprintf(outfile,"%12g  ", SM_ELEMENT_B(A,i,j));
+      STAN_SUNDIALS_FPRINTF(outfile,"%12g  ", SM_ELEMENT_B(A,i,j));
 #else
-      fprintf(outfile,"%12g  ", SM_ELEMENT_B(A,i,j));
+      STAN_SUNDIALS_FPRINTF(outfile,"%12g  ", SM_ELEMENT_B(A,i,j));
 #endif
     }
-    fprintf(outfile,"\n");
+    STAN_SUNDIALS_FPRINTF(outfile,"\n");
   }
-  fprintf(outfile,"\n");
+  STAN_SUNDIALS_FPRINTF(outfile,"\n");
   return;
 }
 

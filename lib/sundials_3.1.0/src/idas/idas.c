@@ -7103,8 +7103,8 @@ void IDAProcessError(IDAMem IDA_mem,
 
   if (IDA_mem == NULL) {    /* We write to stderr */
 #ifndef NO_FPRINTF_OUTPUT
-    fprintf(stderr, "\n[%s ERROR]  %s\n  ", module, fname);
-    fprintf(stderr, "%s\n\n", msg);
+    STAN_SUNDIALS_FPRINTF(stderr, "\n[%s ERROR]  %s\n  ", module, fname);
+    STAN_SUNDIALS_FPRINTF(stderr, "%s\n\n", msg);
 #endif
 
   } else {                 /* We can call ehfun */
@@ -7137,8 +7137,8 @@ void IDAErrHandler(int error_code, const char *module,
 
 #ifndef NO_FPRINTF_OUTPUT
   if (IDA_mem->ida_errfp != NULL) {
-    fprintf(IDA_mem->ida_errfp,"\n[%s %s]  %s\n",module,err_type,function);
-    fprintf(IDA_mem->ida_errfp,"  %s\n\n",msg);
+    STAN_SUNDIALS_FPRINTF(IDA_mem->ida_errfp,"\n[%s %s]  %s\n",module,err_type,function);
+    STAN_SUNDIALS_FPRINTF(IDA_mem->ida_errfp,"  %s\n\n",msg);
   }
 #endif
 

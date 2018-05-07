@@ -325,30 +325,30 @@ void SUNSparseMatrix_Print(SUNMatrix A, FILE* outfile)
     matrixtype = (char*) "CSR";
     break;
   }
-  fprintf(outfile, "\n");
-  fprintf(outfile, "%ld by %ld %s matrix, NNZ: %ld \n",
+  STAN_SUNDIALS_FPRINTF(outfile, "\n");
+  STAN_SUNDIALS_FPRINTF(outfile, "%ld by %ld %s matrix, NNZ: %ld \n",
           (long int) SM_ROWS_S(A), (long int) SM_COLUMNS_S(A), 
           matrixtype, (long int) SM_NNZ_S(A));
   for (j=0; j<SM_NP_S(A); j++) {
-    fprintf(outfile, "%s %ld : locations %ld to %ld\n", indexname,
+    STAN_SUNDIALS_FPRINTF(outfile, "%s %ld : locations %ld to %ld\n", indexname,
             (long int) j, (long int) (SM_INDEXPTRS_S(A))[j],
             (long int) (SM_INDEXPTRS_S(A))[j+1]-1);
-    fprintf(outfile, "  ");
+    STAN_SUNDIALS_FPRINTF(outfile, "  ");
     for (i=(SM_INDEXPTRS_S(A))[j]; i<(SM_INDEXPTRS_S(A))[j+1]; i++) {
 #if defined(SUNDIALS_EXTENDED_PRECISION)
-      fprintf(outfile, "%ld: %.32Lg   ", (long int) (SM_INDEXVALS_S(A))[i],
+      STAN_SUNDIALS_FPRINTF(outfile, "%ld: %.32Lg   ", (long int) (SM_INDEXVALS_S(A))[i],
               (SM_DATA_S(A))[i]);
 #elif defined(SUNDIALS_DOUBLE_PRECISION)
-      fprintf(outfile, "%ld: %.16g   ", (long int) (SM_INDEXVALS_S(A))[i],
+      STAN_SUNDIALS_FPRINTF(outfile, "%ld: %.16g   ", (long int) (SM_INDEXVALS_S(A))[i],
               (SM_DATA_S(A))[i]);
 #else
-      fprintf(outfile, "%ld: %.8g   ", (long int) (SM_INDEXVALS_S(A))[i],
+      STAN_SUNDIALS_FPRINTF(outfile, "%ld: %.8g   ", (long int) (SM_INDEXVALS_S(A))[i],
               (SM_DATA_S(A))[i]);
 #endif
     }
-    fprintf(outfile, "\n");
+    STAN_SUNDIALS_FPRINTF(outfile, "\n");
   }
-  fprintf(outfile, "\n");
+  STAN_SUNDIALS_FPRINTF(outfile, "\n");
   return;
 }
 

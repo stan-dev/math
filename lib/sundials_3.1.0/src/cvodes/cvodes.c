@@ -9154,8 +9154,8 @@ void cvProcessError(CVodeMem cv_mem,
 
   if (cv_mem == NULL) {    /* We write to stderr */
 #ifndef NO_FPRINTF_OUTPUT
-    fprintf(stderr, "\n[%s ERROR]  %s\n  ", module, fname);
-    fprintf(stderr, "%s\n\n", msg);
+    STAN_SUNDIALS_FPRINTF(stderr, "\n[%s ERROR]  %s\n  ", module, fname);
+    STAN_SUNDIALS_FPRINTF(stderr, "%s\n\n", msg);
 #endif
 
   } else {                 /* We can call ehfun */
@@ -9190,8 +9190,8 @@ void cvErrHandler(int error_code, const char *module,
 
 #ifndef NO_FPRINTF_OUTPUT
   if (cv_mem->cv_errfp!=NULL) {
-    fprintf(cv_mem->cv_errfp,"\n[%s %s]  %s\n",module,err_type,function);
-    fprintf(cv_mem->cv_errfp,"  %s\n\n",msg);
+    STAN_SUNDIALS_FPRINTF(cv_mem->cv_errfp,"\n[%s %s]  %s\n",module,err_type,function);
+    STAN_SUNDIALS_FPRINTF(cv_mem->cv_errfp,"  %s\n\n",msg);
   }
 #endif
 

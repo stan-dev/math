@@ -34,7 +34,7 @@ SUNDIALS_NVECSERIAL := $(patsubst %.c,%.o,\
 
 $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL)) : %.o : %.c
 	@mkdir -p $(dir $@)
-	$(COMPILE.c) -x c -O$(O) -isystem $(SUNDIALS)/include $< -o $@
+	$(COMPILE.c) -x c -O$(O) -include $(SUNDIALS)/include/stan_sundials_printf_override.hpp -isystem $(SUNDIALS)/include $< -o $@
 
 $(SUNDIALS)/lib/libsundials_cvodes.a: $(SUNDIALS_CVODES)
 	@mkdir -p $(dir $@)

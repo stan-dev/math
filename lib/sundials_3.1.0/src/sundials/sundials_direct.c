@@ -308,43 +308,43 @@ void PrintMat(DlsMat A, FILE *outfile)
 
   case SUNDIALS_DENSE:
 
-    fprintf(outfile, "\n");
+    STAN_SUNDIALS_FPRINTF(outfile, "\n");
     for (i=0; i < A->M; i++) {
       for (j=0; j < A->N; j++) {
 #if defined(SUNDIALS_EXTENDED_PRECISION)
-        fprintf(outfile, "%12Lg  ", DENSE_ELEM(A,i,j));
+        STAN_SUNDIALS_FPRINTF(outfile, "%12Lg  ", DENSE_ELEM(A,i,j));
 #elif defined(SUNDIALS_DOUBLE_PRECISION)
-        fprintf(outfile, "%12g  ", DENSE_ELEM(A,i,j));
+        STAN_SUNDIALS_FPRINTF(outfile, "%12g  ", DENSE_ELEM(A,i,j));
 #else
-        fprintf(outfile, "%12g  ", DENSE_ELEM(A,i,j));
+        STAN_SUNDIALS_FPRINTF(outfile, "%12g  ", DENSE_ELEM(A,i,j));
 #endif
       }
-      fprintf(outfile, "\n");
+      STAN_SUNDIALS_FPRINTF(outfile, "\n");
     }
-    fprintf(outfile, "\n");
+    STAN_SUNDIALS_FPRINTF(outfile, "\n");
     
     break;
 
   case SUNDIALS_BAND:
 
     a = A->cols;
-    fprintf(outfile, "\n");
+    STAN_SUNDIALS_FPRINTF(outfile, "\n");
     for (i=0; i < A->N; i++) {
       start = SUNMAX(0,i-A->ml);
       finish = SUNMIN(A->N-1,i+A->mu);
-      for (j=0; j < start; j++) fprintf(outfile, "%12s  ","");
+      for (j=0; j < start; j++) STAN_SUNDIALS_FPRINTF(outfile, "%12s  ","");
       for (j=start; j <= finish; j++) {
 #if defined(SUNDIALS_EXTENDED_PRECISION)
-        fprintf(outfile, "%12Lg  ", a[j][i-j+A->s_mu]);
+        STAN_SUNDIALS_FPRINTF(outfile, "%12Lg  ", a[j][i-j+A->s_mu]);
 #elif defined(SUNDIALS_DOUBLE_PRECISION)
-        fprintf(outfile, "%12g  ", a[j][i-j+A->s_mu]);
+        STAN_SUNDIALS_FPRINTF(outfile, "%12g  ", a[j][i-j+A->s_mu]);
 #else
-        fprintf(outfile, "%12g  ", a[j][i-j+A->s_mu]);
+        STAN_SUNDIALS_FPRINTF(outfile, "%12g  ", a[j][i-j+A->s_mu]);
 #endif
       }
-      fprintf(outfile, "\n");
+      STAN_SUNDIALS_FPRINTF(outfile, "\n");
     }
-    fprintf(outfile, "\n");
+    STAN_SUNDIALS_FPRINTF(outfile, "\n");
     
     break;
 

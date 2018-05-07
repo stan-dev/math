@@ -256,14 +256,14 @@ void N_VPrintFile_Cuda(N_Vector x, FILE *outfile)
 
   for (i = 0; i < xd->size(); i++) {
 #if defined(SUNDIALS_EXTENDED_PRECISION)
-    fprintf(outfile, "%35.32Lg\n", xd->host()[i]);
+    STAN_SUNDIALS_FPRINTF(outfile, "%35.32Lg\n", xd->host()[i]);
 #elif defined(SUNDIALS_DOUBLE_PRECISION)
-    fprintf(outfile, "%19.16g\n", xd->host()[i]);
+    STAN_SUNDIALS_FPRINTF(outfile, "%19.16g\n", xd->host()[i]);
 #else
-    fprintf(outfile, "%11.8g\n", xd->host()[i]);
+    STAN_SUNDIALS_FPRINTF(outfile, "%11.8g\n", xd->host()[i]);
 #endif
   }
-  fprintf(outfile, "\n");
+  STAN_SUNDIALS_FPRINTF(outfile, "\n");
 
   return;
 }
