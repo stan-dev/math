@@ -5,6 +5,9 @@
 
 #include <stan/math/prim/arr/err/check_opencl.hpp>
 #include <stan/math/prim/scal/err/system_error.hpp>
+
+#include <stan/math/gpu/kernels/basic_matrix_kernels.hpp>
+
 #include <CL/cl.hpp>
 #include <string>
 #include <cmath>
@@ -111,6 +114,8 @@ class opencl_context_base {
         false, "timing", "__kernel void dummy(__global const int* foo) { };"};
     kernel_info["dummy2"] = {
         false, "timing", "__kernel void dummy2(__global const int* foo) { };"};
+    kernel_info["copy"] = {
+        false, "basic_matrix", copy_matrix_kernel.c_str() };
   }
 
  protected:
