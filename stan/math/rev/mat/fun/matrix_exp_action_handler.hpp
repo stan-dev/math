@@ -12,16 +12,16 @@ double l1norm(const Eigen::MatrixXd& m) {
 namespace stan {
 namespace math {
 
-  /*
-   * The implemention of the work by Awad H. Al-Mohy and Nicholas J. Higham
-   * "Computing the Action of the Matrix Exponential,
-   * with an Application to Exponential Integrators"
-   * Read More: https://epubs.siam.org/doi/abs/10.1137/100788860
-   *
-   * Calculates exp(mat*t)*b, where mat & b are matrices,
-   * and t is double.
-   *
-   */
+/*
+ * The implemention of the work by Awad H. Al-Mohy and Nicholas J. Higham
+ * "Computing the Action of the Matrix Exponential,
+ * with an Application to Exponential Integrators"
+ * Read More: https://epubs.siam.org/doi/abs/10.1137/100788860
+ *
+ * Calculates exp(mat*t)*b, where mat & b are matrices,
+ * and t is double.
+ *
+ */
 class matrix_exp_action_handler {
   static constexpr int p_max = 8;
   static constexpr int m_max = 55;
@@ -102,7 +102,7 @@ class matrix_exp_action_handler {
   }
 };
 
-  // table 3.1 in the reference 
+// table 3.1 in the reference
 const std::vector<double> matrix_exp_action_handler::theta_m_single_precision{
     1.3e-1, 1.0e0, 2.2e0, 3.6e0, 4.9e0, 6.3e0,
     7.7e0,  9.1e0, 1.1e1, 1.2e1, 1.3e1};
