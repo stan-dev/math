@@ -18,12 +18,12 @@ class var;
  * constants.
  *
  * A variable implementation is constructed with a constant
- * value.  It also stores the adjoint for storing the partial
+ * value. It also stores the adjoint for storing the partial
  * derivative with respect to the root of the derivative tree.
  *
- * The chain() method applies the chain rule.  Concrete extensions
+ * The chain() method applies the chain rule. Concrete extensions
  * of this class will represent base variables or the result
- * of operations such as addition or subtraction.  These extended
+ * of operations such as addition or subtraction. These extended
  * classes will store operand variables and propagate derivative
  * information via an implementation of chain().
  */
@@ -56,14 +56,14 @@ class vari {
    * @param x Value of the constructed variable.
    */
   explicit vari(double x) : val_(x), adj_(0.0) {
-    ChainableStack::context().var_stack_.push_back(this);
+    ChainableStack::instance().var_stack_.push_back(this);
   }
 
   vari(double x, bool stacked) : val_(x), adj_(0.0) {
     if (stacked)
-      ChainableStack::context().var_stack_.push_back(this);
+      ChainableStack::instance().var_stack_.push_back(this);
     else
-      ChainableStack::context().var_nochain_stack_.push_back(this);
+      ChainableStack::instance().var_nochain_stack_.push_back(this);
   }
 
   /**
@@ -123,7 +123,7 @@ class vari {
    * @return Pointer to allocated bytes.
    */
   static inline void* operator new(size_t nbytes) {
-    return ChainableStack::context().memalloc_.alloc(nbytes);
+    return ChainableStack::instance().memalloc_.alloc(nbytes);
   }
 
   /**
