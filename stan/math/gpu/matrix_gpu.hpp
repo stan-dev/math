@@ -61,7 +61,7 @@ namespace stan {
           // this check is needed because creating OpenCL
           // buffers of size throws an OpenCL exception
           if ( a.size() > 0 ) {
-            // retrieve the kernel that copies memory from the 
+            // retrieve the kernel that copies memory from thea
             // input matrix a
             cl::Kernel kernel = opencl_context.get_kernel("copy");
             // the queue is needed to enqueue the kernel
@@ -108,7 +108,6 @@ namespace stan {
             }
           }
         }
-        
         /**
          * Constructor for the matrix_gpu that 
          * only allocates the buffer on the GPU.
