@@ -61,10 +61,10 @@ namespace stan {
           // this check is needed because creating OpenCL
           // buffers of size throws an OpenCL exception
           if ( a.size() > 0 ) {
-            // retrieve the kernel that copies memory from thea
+            // retrieves the kernel that copies memory from the
             // input matrix a
             cl::Kernel kernel = opencl_context.get_kernel("copy");
-            // the queue is needed to enqueue the kernel
+            // the queue is needed to enqueue the kernel for execution
             cl::CommandQueue& cmdQueue = opencl_context.queue();
             // the context is needed to create the buffer object
             cl::Context& ctx = opencl_context.context();
@@ -73,27 +73,27 @@ namespace stan {
               // in the provided context
               oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE,
                sizeof(double) * size());
-              /** sets the arguments for the kernel. see copy_matrix_kernel in 
-                * kernels/basic_matrix_gpu_kernels.hpp for the kernel code
-                * the arguments are the source & destination matrices 
-                * and the size in rows&columns
+              /** Sets the arguments for the kernel. See copy_matrix_kernel in 
+                * kernels/basic_matrix_gpu_kernels.hpp for the kernel code.
+                * The arguments are the source & destination matrices 
+                * and the size in rows and columns.
                 */
               kernel.setArg(0, a.buffer());
               kernel.setArg(1, buffer());
               kernel.setArg(2, rows());
               kernel.setArg(3, cols());
-              /** runs the specified kernel with provided number of threads
-                * the first argument is the kernel object
-                * the second argument is the thread offset that is used for
-                * calculating the global thread ID, NULL here, meaning the 
-                * offset is 0,0
-                * the third argument specifies the amount of threads to create
-                * in 2D (rows, columns)
-                * the fourth argument specifies the size of the thread block,
-                * NULL here, meaning the OpenCL driver determines the size 
-                * the last two arguments are for tracking events associated 
-                * with the kernel (enqueue,start, stop,...) for profiling. 
-                * Not needed here.
+              /** Runs the specified kernel with provided number of threads.
+                * - the first argument is the kernel object
+                * - the second argument is the thread offset that is used for
+                *   calculating the global thread ID, NULL here, meaning the 
+                *   offset is 0,0
+                * - the third argument specifies the amount of threads to create
+                *   in 2D (rows, columns)
+                * - the fourth argument specifies the size of the thread block,
+                *   NULL here, meaning the OpenCL driver determines the size 
+                * - the last two arguments are for tracking events associated 
+                *   with the kernel (enqueue,start, stop,...) for profiling. 
+                *   Not needed here.
                 * 
                 */
               cmdQueue.enqueueNDRangeKernel(
@@ -155,11 +155,12 @@ namespace stan {
               // matrix to the OpenCL device
               oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE,
                sizeof(double) * A.size());
-              /** writes the contents of A to the OpenCL buffer
-                * starting at the offset 0
-                * CL_TRUE denotes that the call is blocking 
-                * We do not want to execute any further kernels
-                * on the device until we are sure that the data is transferred)
+              /** Writes the contents of A to the OpenCL buffer
+                * starting at the offset 0.
+                * CL_TRUE denotes that the call is blocking as
+                * we do not want to execute any further kernels
+                * on the device until we are sure that the data
+                * is finished transfering)
                 */
               queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0,
                sizeof(T) * A.size(), A.data());
