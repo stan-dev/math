@@ -39,7 +39,7 @@ If this is in the file `/path/to/foo/foo.cpp`, then you can compile and run this
 
 ```
 > cd /path/to/foo
-> clang++ -std=c++11 -I /path/to/stan-math -I /path/to/Eigen -I /path/to/boost -I /path/to/cvodes foo.cpp
+> clang++ -std=c++11 -I /path/to/stan-math -I /path/to/Eigen -I /path/to/boost -I /path/to/sundials foo.cpp
 > ./a.out
 log normal(1 | 2, 3)=-2.07311
 ```
@@ -49,15 +49,15 @@ The `-I` includes provide paths pointing to the four necessary includes:
 * Stan Math Library:  path to source directory that contains `stan` as a subdirectory
 * Eigen C++ Matrix Library:  path to source directory that contains `Eigen` as a subdirectory
 * Boost C++ Library:  path to source directory that contains `boost` as a subdirectory
-* CVODES: path to source directory that contains `cvodes` as a subdirectory
+* SUNDIALS: path to source directory that contains `cvodes` and `idas` as a subdirectory
 
 Note that the paths should *not* include the final directories `stan`, `Eigen`, or `boost` on the paths.  An example of a real instantiation:
 
 ```
-clang++ -std=c++11 -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.3.3/ -I ~/stan-dev/math/lib/boost_1.66.0/ -I ~/stan-dev/math/lib/cvodes_2.9.0/include foo.cpp
+clang++ -std=c++11 -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.3.3/ -I ~/stan-dev/math/lib/boost_1.66.0/ -I ~/stan-dev/math/lib/sundials_3.1.0/include foo.cpp
 ```
 
-The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.3.3/Eigen` and `~stan-dev/math/lib/boost_1.66.0/boost` and `~stan-dev/math/lib/cvodes_2.9.0/include`.
+The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.3.3/Eigen` and `~stan-dev/math/lib/boost_1.66.0/boost` and `~stan-dev/math/lib/sundials_3.1.0/include`.
 
 Other Compilers
 ---------------
