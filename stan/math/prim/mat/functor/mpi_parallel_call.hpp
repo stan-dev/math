@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <vector>
 #include <type_traits>
+#include <functional>
 
 namespace stan {
 namespace math {
@@ -291,9 +292,10 @@ class mpi_parallel_call {
       // before we can cache the sizes locally we must ensure
       // that no exception has been fired from any node. Hence,
       // share the info about the current status across all nodes.
-      std::vector<int> world_ok(world_size_);
-      boost::mpi::all_gather(world_, local_ok, world_ok);
-      bool all_ok = sum(world_ok) == static_cast<int>(world_size_);
+      int cluster_status = 0;
+      boost::mpi::reduce(world_, local_ok, cluster_status, std::plus<int>(), 0);
+      bool all_ok = cluster_status == static_cast<int>(world_size_);
+      boost::mpi::broadcast(world_, all_ok, 0);
       if (!all_ok) {
         // err out on the root
         if (rank_ == 0) {
@@ -348,15 +350,16 @@ class mpi_parallel_call {
                         world_result.data(), chunks_result, 0);
 
     // let root know if all went fine everywhere
-    std::vector<int> world_ok(world_size_);
-    boost::mpi::gather(world_, local_ok, world_ok, 0);
+    int cluster_status = 0;
+    boost::mpi::reduce(world_, local_ok, cluster_status, std::plus<int>(), 0);
+    bool all_ok = cluster_status == static_cast<int>(world_size_);
 
     // on the workers all is done now.
     if (rank_ != 0)
       return result_t();
 
     // in case something went wrong we throw on the root
-    if (sum(world_ok) != static_cast<int>(world_size_))
+    if (cluster_status != static_cast<int>(world_size_))
       throw std::domain_error("Error during MPI evaluation.");
 
     return combine_(world_result, world_f_out);
