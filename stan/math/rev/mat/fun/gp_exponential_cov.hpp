@@ -64,14 +64,11 @@ class gp_exponential_cov_vari : public vari {
         l_d_(value_of(length_scale)),
         sigma_d_(value_of(sigma)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
-        dist_(ChainableStack::memalloc_.alloc_array<double>(
-            size_ltri_)),
+        dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
         l_vari_(length_scale.vi_),
         sigma_vari_(sigma.vi_),
-        cov_lower_(ChainableStack::memalloc_.alloc_array<vari*>(
-            size_ltri_)),
-        cov_diag_(
-            ChainableStack::memalloc_.alloc_array<vari*>(size_)) {
+        cov_lower_(ChainableStack::memalloc_.alloc_array<vari *>(size_ltri_)),
+        cov_diag_(ChainableStack::memalloc_.alloc_array<vari *>(size_)) {
     double neg_inv_l = -1.0 / l_d_;
     size_t pos = 0;
     for (size_t j = 0; j < size_ - 1; ++j) {
@@ -154,13 +151,10 @@ class gp_exponential_cov_vari<T_x, double, T_l> : public vari {
         l_d_(value_of(length_scale)),
         sigma_d_(value_of(sigma)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
-        dist_(ChainableStack::memalloc_.alloc_array<double>(
-            size_ltri_)),
+        dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
         l_vari_(length_scale.vi_),
-        cov_lower_(ChainableStack::memalloc_.alloc_array<vari*>(
-            size_ltri_)),
-        cov_diag_(
-            ChainableStack::memalloc_.alloc_array<vari*>(size_)) {
+        cov_lower_(ChainableStack::memalloc_.alloc_array<vari *>(size_ltri_)),
+        cov_diag_(ChainableStack::memalloc_.alloc_array<vari *>(size_)) {
     double neg_inv_l = -1.0 / l_d_;
     size_t pos = 0;
     for (size_t j = 0; j < size_ - 1; ++j) {
@@ -236,12 +230,9 @@ class gp_exponential_cov_vari<T_x, T_s, double> : public vari {
         l_d_(value_of(length_scale)),
         sigma_d_(value_of(sigma)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
-        dist_(ChainableStack::memalloc_.alloc_array<double>(
-            size_ltri_)),
-        cov_lower_(ChainableStack::memalloc_.alloc_array<vari*>(
-            size_ltri_)),
-        cov_diag_(
-            ChainableStack::memalloc_.alloc_array<vari*>(size_)) {
+        dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
+        cov_lower_(ChainableStack::memalloc_.alloc_array<vari *>(size_ltri_)),
+        cov_diag_(ChainableStack::memalloc_.alloc_array<vari *>(size_)) {
     double neg_inv_l = -1.0 / l_d_;
     size_t pos = 0;
     for (size_t j = 0; j < size_ - 1; ++j) {
