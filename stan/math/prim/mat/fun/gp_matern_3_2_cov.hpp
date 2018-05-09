@@ -64,8 +64,9 @@ gp_matern_3_2_cov(const std::vector<T_x> &x, const T_s &sigma,
   for (size_t i = 0; i < (x_size - 1); ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
-      cov(i, j) = sigma_sq * (1.0 + root_3_inv_l * squared_distance(x[i], x[j]))
-                  * exp(neg_root_3_inv_l * squared_distance(x[i], x[j]));
+      cov(i, j) = sigma_sq *
+                  (1.0 + root_3_inv_l * squared_distance(x[i], x[j])) *
+                  exp(neg_root_3_inv_l * squared_distance(x[i], x[j]));
       cov(j, i) = cov(i, j);
     }
   }
@@ -190,9 +191,9 @@ gp_matern_3_2_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      cov(i, j) = sigma_sq
-                  * (1.0 + root_3_inv_l_sq * squared_distance(x1[i], x2[j]))
-                  * exp(neg_root_3_inv_l_sq * squared_distance(x1[i], x2[j]));
+      cov(i, j) = sigma_sq *
+                  (1.0 + root_3_inv_l_sq * squared_distance(x1[i], x2[j])) *
+                  exp(neg_root_3_inv_l_sq * squared_distance(x1[i], x2[j]));
     }
   }
   return cov;
