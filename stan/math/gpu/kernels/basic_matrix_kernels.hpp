@@ -4,7 +4,7 @@
 #include <string>
 
 /**
- *  @file stan/math/gpu/basic_matrix_kernels.hpp
+ *  @file stan/math/gpu/kernels/basic_matrix_kernels.hpp
  *  @brief Kernel sources for basic matrix operations on the gpu:
  *    copy, copy lower/upper triangular, copy triangular transposed,
  *    copy submatrix, init to zeros, init to identity,
