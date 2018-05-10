@@ -114,8 +114,7 @@ class opencl_context_base {
         false, "timing", "__kernel void dummy(__global const int* foo) { };"};
     kernel_info["dummy2"] = {
         false, "timing", "__kernel void dummy2(__global const int* foo) { };"};
-    kernel_info["copy"] = {
-        false, "basic_matrix", copy_matrix_kernel.c_str() };
+    kernel_info["copy"] = {false, "basic_matrix", copy_matrix_kernel.c_str()};
   }
 
  protected:

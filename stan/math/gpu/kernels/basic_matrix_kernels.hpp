@@ -12,23 +12,22 @@
  */
 
 namespace stan {
-  namespace math {
+namespace math {
 
-  std::string copy_matrix_kernel =
-  "#define A(i,j)  A[j*rows+i] \n"
-  "#define B(i,j)  B[j*rows+i] \n"
-  " __kernel void copy( \n"
-  "      __global double *A, \n"
-  "      __global double *B, \n"
-  "      unsigned int rows, \n"
-  "      unsigned int cols) { \n"
-  "  int i = get_global_id(0); \n"
-  "  int j = get_global_id(1); \n"
-  "  if ( i < rows && j < cols ) { \n"
-  "   B(i,j) = A(i,j); \n"
-  "  }\n"
-  "}\n";
-
-  }
+std::string copy_matrix_kernel
+    = "#define A(i,j)  A[j*rows+i] \n"
+      "#define B(i,j)  B[j*rows+i] \n"
+      " __kernel void copy( \n"
+      "      __global double *A, \n"
+      "      __global double *B, \n"
+      "      unsigned int rows, \n"
+      "      unsigned int cols) { \n"
+      "  int i = get_global_id(0); \n"
+      "  int j = get_global_id(1); \n"
+      "  if ( i < rows && j < cols ) { \n"
+      "   B(i,j) = A(i,j); \n"
+      "  }\n"
+      "}\n";
 }
+}  // namespace stan
 #endif

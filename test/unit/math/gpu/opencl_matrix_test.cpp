@@ -32,8 +32,7 @@ TEST(MathMatrixGPU, matrix_gpu_copy) {
   d2_a.resize(2, 3);
   d2_b.resize(2, 3);
 
-  d2 << 1, 2, 3,
-        4, 5, 6;
+  d2 << 1, 2, 3, 4, 5, 6;
   // vector
   stan::math::matrix_gpu d11(3, 1);
   stan::math::matrix_gpu d111(3, 1);
@@ -69,31 +68,31 @@ TEST(MathMatrixGPU, matrix_gpu_copy) {
 }
 
 TEST(MathMatrixGPU, barebone_buffer_copy) {
-    // a barebone OpenCL example of copying
-    // a vector of doubles to the GPU and back
-    size_t size = 512;
-    std::vector<double> cpu_buffer(size);
-    for (unsigned int i = 0; i < size; i++) {
-      cpu_buffer[i] = i*1.0;
-    }
-    std::vector<double> cpu_dst_buffer(size);
-    // retrieve the command queue
-    cl::CommandQueue queue = stan::math::opencl_context.queue();
-    // retrieve the context
-    cl::Context& ctx = stan::math::opencl_context.context();
-    // create the gpu buffer of the same size
-    cl::Buffer gpu_buffer = cl::Buffer(ctx,
-      CL_MEM_READ_WRITE, sizeof(double) * size);
+  // a barebone OpenCL example of copying
+  // a vector of doubles to the GPU and back
+  size_t size = 512;
+  std::vector<double> cpu_buffer(size);
+  for (unsigned int i = 0; i < size; i++) {
+    cpu_buffer[i] = i * 1.0;
+  }
+  std::vector<double> cpu_dst_buffer(size);
+  // retrieve the command queue
+  cl::CommandQueue queue = stan::math::opencl_context.queue();
+  // retrieve the context
+  cl::Context& ctx = stan::math::opencl_context.context();
+  // create the gpu buffer of the same size
+  cl::Buffer gpu_buffer
+      = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size);
 
-    // write the cpu_buffer to the GPU (gpu_buffer)
-    queue.enqueueWriteBuffer(gpu_buffer, CL_TRUE, 0,
-           sizeof(double) * size, &cpu_buffer[0]);
+  // write the cpu_buffer to the GPU (gpu_buffer)
+  queue.enqueueWriteBuffer(gpu_buffer, CL_TRUE, 0, sizeof(double) * size,
+                           &cpu_buffer[0]);
 
-    // write the gpu buffer back to the cpu_dst_buffer
-    queue.enqueueReadBuffer(gpu_buffer,  CL_TRUE,  0,
-            sizeof(double) * size,  &cpu_dst_buffer[0]);
+  // write the gpu buffer back to the cpu_dst_buffer
+  queue.enqueueReadBuffer(gpu_buffer, CL_TRUE, 0, sizeof(double) * size,
+                          &cpu_dst_buffer[0]);
 
-    for (unsigned int i = 0; i < size; i++) {
-      EXPECT_EQ(i*1.0, cpu_dst_buffer[i]);
-    }
+  for (unsigned int i = 0; i < size; i++) {
+    EXPECT_EQ(i * 1.0, cpu_dst_buffer[i]);
+  }
 }
