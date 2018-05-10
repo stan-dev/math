@@ -52,7 +52,7 @@ matrix:
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
-          TESTFOLDER=test/unit/math/prim/mat/fun
+          TESTFOLDER="test/unit/math/prim/mat/fun test/unit/math/prim/mat/functor"
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
@@ -100,10 +100,12 @@ matrix:
     - <<: *linux_gcc
       env:
         - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
-          TESTFOLDER=test/unit/math/rev/mat/fun
+          STAN_NUM_THREADS="-1"
+          TESTFOLDER="test/unit/math/rev/mat/fun test/unit/math/prim/mat/functor"
     - <<: *linux_gcc
       env:
         - MATRIX_EVAL="CXX=\"g++-4.9 -DSTAN_THREADS\""
+          STAN_NUM_THREADS="-1"
           TESTFOLDER="test/unit/math/rev/mat/err test/unit/math/rev/mat/functor test/unit/math/rev/mat/vectorize"
     - <<: *linux_gcc
       env:
