@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 /*
- *  @file stan/math/prim/mat/fun/matrix_gpu.hpp
+ *  @file stan/math/gpu/matrix_gpu.hpp
  *    @brief The matrix_gpu class - allocates memory space on the GPU,
  *      functions for transfering matrices to and from the GPU
  */
