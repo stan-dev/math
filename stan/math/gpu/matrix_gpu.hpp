@@ -1,6 +1,6 @@
 #ifndef STAN_MATH_GPU_MATRIX_GPU_HPP
 #define STAN_MATH_GPU_MATRIX_GPU_HPP
-
+#ifdef STAN_OPENCL
 #include <stan/math/gpu/opencl_context.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
@@ -12,8 +12,8 @@
 #include <vector>
 /*
  *  @file stan/math/gpu/matrix_gpu.hpp
- *    @brief The matrix_gpu class - allocates memory space on the GPU,
- *      functions for transfering matrices to and from the GPU
+ *  @brief The matrix_gpu class - allocates memory space on the GPU,
+ *    functions for transfering matrices to and from the GPU
  */
 
 namespace stan {
@@ -279,4 +279,5 @@ inline void copy(matrix_gpu& src, matrix_gpu& dst) {  // NOLINT
 }  // namespace math
 }  // namespace stan
 
+#endif
 #endif
