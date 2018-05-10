@@ -1,6 +1,6 @@
 #ifndef STAN_MATH_GPU_BASIC_MATRIX_KERNELS_HPP
 #define STAN_MATH_GPU_BASIC_MATRIX_KERNELS_HPP
-
+#ifdef STAN_OPENCL
 #include <string>
 
 /**
@@ -30,4 +30,5 @@ std::string copy_matrix_kernel
       "}\n";
 }
 }  // namespace stan
+#endif
 #endif
