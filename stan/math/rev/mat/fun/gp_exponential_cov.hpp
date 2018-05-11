@@ -32,7 +32,7 @@ namespace math {
  */
 template <typename T_x, typename T_s, typename T_l>
 class gp_exponential_cov_vari : public vari {
-public:
+ public:
   const size_t size_;
   const size_t size_ltri_;
   const double l_d_;
@@ -63,12 +63,16 @@ public:
    */
   gp_exponential_cov_vari(const std::vector<T_x> &x, const T_s &sigma,
                           const T_l &length_scale)
-      : vari(0.0), size_(x.size()), size_ltri_(size_ * (size_ - 1) / 2),
-        l_d_(value_of(length_scale)), sigma_d_(value_of(sigma)),
+      : vari(0.0),
+        size_(x.size()),
+        size_ltri_(size_ * (size_ - 1) / 2),
+        l_d_(value_of(length_scale)),
+        sigma_d_(value_of(sigma)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
         dist_(ChainableStack::instance().memalloc_.alloc_array<double>(
             size_ltri_)),
-        l_vari_(length_scale.vi_), sigma_vari_(sigma.vi_),
+        l_vari_(length_scale.vi_),
+        sigma_vari_(sigma.vi_),
         cov_lower_(ChainableStack::instance().memalloc_.alloc_array<vari *>(
             size_ltri_)),
         cov_diag_(
@@ -79,8 +83,8 @@ public:
       for (size_t i = j + 1; i < size_; ++i) {
         double dist_sq = squared_distance(x[i], x[j]);
         dist_[pos] = dist_sq;
-        cov_lower_[pos] =
-            new vari(sigma_sq_d_ * exp(dist_sq * neg_inv_l), false);
+        cov_lower_[pos]
+            = new vari(sigma_sq_d_ * exp(dist_sq * neg_inv_l), false);
         ++pos;
       }
     }
@@ -118,7 +122,7 @@ public:
  */
 template <typename T_x, typename T_l>
 class gp_exponential_cov_vari<T_x, double, T_l> : public vari {
-public:
+ public:
   const size_t size_;
   const size_t size_ltri_;
   const double l_d_;
@@ -149,8 +153,11 @@ public:
    */
   gp_exponential_cov_vari(const std::vector<T_x> &x, double sigma,
                           const T_l &length_scale)
-      : vari(0.0), size_(x.size()), size_ltri_(size_ * (size_ - 1) / 2),
-        l_d_(value_of(length_scale)), sigma_d_(value_of(sigma)),
+      : vari(0.0),
+        size_(x.size()),
+        size_ltri_(size_ * (size_ - 1) / 2),
+        l_d_(value_of(length_scale)),
+        sigma_d_(value_of(sigma)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
         dist_(ChainableStack::instance().memalloc_.alloc_array<double>(
             size_ltri_)),
@@ -165,8 +172,8 @@ public:
       for (size_t i = j + 1; i < size_; ++i) {
         double dist_sq = squared_distance(x[i], x[j]);
         dist_[pos] = dist_sq;
-        cov_lower_[pos] =
-            new vari(sigma_sq_d_ * exp(dist_sq * neg_inv_l), false);
+        cov_lower_[pos]
+            = new vari(sigma_sq_d_ * exp(dist_sq * neg_inv_l), false);
         ++pos;
       }
     }
@@ -197,7 +204,7 @@ public:
  */
 template <typename T_x, typename T_s>
 class gp_exponential_cov_vari<T_x, T_s, double> : public vari {
-public:
+ public:
   const size_t size_;
   const size_t size_ltri_;
   const double l_d_;
@@ -228,8 +235,11 @@ public:
    */
   gp_exponential_cov_vari(const std::vector<T_x> &x, const T_s &sigma,
                           double length_scale)
-      : vari(0.0), size_(x.size()), size_ltri_(size_ * (size_ - 1) / 2),
-        l_d_(value_of(length_scale)), sigma_d_(value_of(sigma)),
+      : vari(0.0),
+        size_(x.size()),
+        size_ltri_(size_ * (size_ - 1) / 2),
+        l_d_(value_of(length_scale)),
+        sigma_d_(value_of(sigma)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
         dist_(ChainableStack::instance().memalloc_.alloc_array<double>(
             size_ltri_)),
@@ -243,8 +253,8 @@ public:
       for (size_t i = j + 1; i < size_; ++i) {
         double dist_sq = squared_distance(x[i], x[j]);
         dist_[pos] = dist_sq;
-        cov_lower_[pos] =
-            new vari(sigma_sq_d_ * exp(dist_sq * neg_inv_l), false);
+        cov_lower_[pos]
+            = new vari(sigma_sq_d_ * exp(dist_sq * neg_inv_l), false);
         ++pos;
       }
     }
@@ -291,8 +301,8 @@ gp_exponential_cov(const std::vector<T_x> &x, const var &sigma, const var &l) {
   if (x_size == 0)
     return cov;
 
-  gp_exponential_cov_vari<T_x, var, var> *baseVari =
-      new gp_exponential_cov_vari<T_x, var, var>(x, sigma, l);
+  gp_exponential_cov_vari<T_x, var, var> *baseVari
+      = new gp_exponential_cov_vari<T_x, var, var>(x, sigma, l);
 
   size_t pos = 0;
   for (size_t j = 0; j < x_size - 1; ++j) {
@@ -306,7 +316,7 @@ gp_exponential_cov(const std::vector<T_x> &x, const var &sigma, const var &l) {
   cov.coeffRef(x_size - 1, x_size - 1).vi_ = baseVari->cov_diag_[x_size - 1];
   return cov;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif
