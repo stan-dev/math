@@ -1,6 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_HPP
 #define STAN_MATH_PRIM_MAT_HPP
 
+#ifdef STAN_OPENCL
+#include <stan/math/gpu/opencl_context.hpp>
+#endif
+
 #include <stan/math/prim/arr/meta/get.hpp>
 #include <stan/math/prim/arr/meta/index_type.hpp>
 #include <stan/math/prim/arr/meta/is_vector.hpp>
@@ -249,7 +253,7 @@
 #include <stan/math/prim/mat/functor/finite_diff_gradient.hpp>
 #include <stan/math/prim/mat/functor/finite_diff_hessian.hpp>
 #include <stan/math/prim/mat/functor/map_rect.hpp>
-#include <stan/math/prim/mat/functor/map_rect_serial.hpp>
+#include <stan/math/prim/mat/functor/map_rect_concurrent.hpp>
 #include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
 #include <stan/math/prim/mat/functor/map_rect_combine.hpp>
 
