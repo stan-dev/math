@@ -68,7 +68,7 @@ TEST(MathPrimMat, vec_double_ard_gp_exponential_cov1) {
   l[2] = 0.3;
   l[3] = 0.4;
   l[4] = 0.5;
-
+  
   Eigen::MatrixXd cov;
   cov = stan::math::gp_exponential_cov(x, sigma, l);
   for (int i = 0; i < 3; i++) {
@@ -77,7 +77,6 @@ TEST(MathPrimMat, vec_double_ard_gp_exponential_cov1) {
       for (int k = 0; k < 5; k++) {
         temp += stan::math::squared_distance(x[i], x[j]) / l[k];
       }
-
       EXPECT_FLOAT_EQ(sigma * sigma * std::exp(-1.0 * temp), cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -496,7 +495,7 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_exponential_cov2) {
   EXPECT_EQ(3, cov.rows());
   EXPECT_EQ(4, cov.cols());
   for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
+    for (int j = 0; j < 4; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
               * std::exp(-1.0
@@ -512,7 +511,7 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_exponential_cov2) {
                   = stan::math::gp_exponential_cov(x2_vec, x1_rvec, sigma, l));
   EXPECT_EQ(4, cov7.rows());
   EXPECT_EQ(3, cov7.cols());
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
@@ -530,7 +529,7 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_exponential_cov2) {
   EXPECT_EQ(3, cov2.rows());
   EXPECT_EQ(4, cov2.cols());
   for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
+    for (int j = 0; j < 4; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
               * std::exp(-1.0
@@ -546,7 +545,7 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_exponential_cov2) {
                   = stan::math::gp_exponential_cov(x2_rvec, x1_vec, sigma, l));
   EXPECT_EQ(4, cov8.rows());
   EXPECT_EQ(3, cov8.cols());
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
@@ -563,8 +562,8 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_exponential_cov2) {
                   = stan::math::gp_exponential_cov(x2_vec, x2_rvec, sigma, l));
   EXPECT_EQ(4, cov3.rows());
   EXPECT_EQ(4, cov3.cols());
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
               * std::exp(-1.0
@@ -580,8 +579,8 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_exponential_cov2) {
                   = stan::math::gp_exponential_cov(x2_rvec, x2_vec, sigma, l));
   EXPECT_EQ(4, cov4.rows());
   EXPECT_EQ(4, cov4.cols());
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
               * std::exp(-1.0

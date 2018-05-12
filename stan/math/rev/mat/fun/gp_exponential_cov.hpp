@@ -5,11 +5,10 @@
 #include <boost/type_traits.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
@@ -290,9 +289,11 @@ template <typename T_x>
 inline typename boost::enable_if_c<
     boost::is_same<typename scalar_type<T_x>::type, double>::value,
     Eigen::Matrix<var, -1, -1>>::type
+// inline typename Eigen::Matrix<typename stan::return_type<T_x, double, var>::type,
+//                               Eigen::Dynamic, Eigen::Dynamic>
 gp_exponential_cov(const std::vector<T_x> &x, const var &sigma, const var &l) {
-  check_positive("gp_exponential_cov", "sigma", sigma);
-  check_positive("gp_exponential_cov", "l", l);
+  check_positive_finite("gp_exponential_cov", "sigma", sigma);
+  check_positive_finite("gp_exponential_cov", "l", l);
   size_t x_size = x.size();
   for (size_t i = 0; i < x_size; ++i)
     check_not_nan("gp_exponential_cov", "x", x[i]);
