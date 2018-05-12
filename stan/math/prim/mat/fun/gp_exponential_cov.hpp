@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-/** 
+/**
  * Returns a Matern exponential covariance matrix with one input vector
  *
  * \f[ k(x, x') = \sigma^2 exp(-\frac{d(x, x')}{l}) \f]
@@ -39,9 +39,9 @@ gp_exponential_cov(const std::vector<T_x> &x, const T_s &sigma,
   for (size_t n = 0; n < x_size; ++n)
     check_not_nan("gp_exponential_cov", "x", x[n]);
 
-  check_positive_finite("gp_exponential_cov", "marginal variance", sigma);  
+  check_positive_finite("gp_exponential_cov", "marginal variance", sigma);
   check_positive_finite("gp_exponential_cov", "length-scale", length_scale);
-  
+
   Eigen::Matrix<typename stan::return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x_size, x_size);
@@ -94,7 +94,7 @@ gp_exponential_cov(const std::vector<T_x> &x, const T_s &sigma,
 
   check_positive_finite("gp_exponential_cov", "marginal variance", sigma);
   check_positive_finite("gp_exponential_cov", "length-scale", length_scale);
-  
+
   Eigen::Matrix<typename stan::return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x_size, x_size);
@@ -154,7 +154,7 @@ gp_exponential_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   check_positive_finite("gp_exponential_cov", "marginal variance", sigma);
   check_positive_finite("gp_exponential_cov", "length-scale", length_scale);
-  
+
   Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_s, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x1_size, x2_size);
@@ -202,15 +202,15 @@ gp_exponential_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
   size_t l_size = length_scale.size();
-  
+
   for (size_t n = 0; n < x1_size; ++n)
     check_not_nan("gp_exponential_cov", "x1", x1[n]);
   for (size_t n = 0; n < x2_size; ++n)
     check_not_nan("gp_exponential_cov", "x2", x2[n]);
 
-  check_positive_finite("gp_exponential_cov", "marginal variance", sigma);  
+  check_positive_finite("gp_exponential_cov", "marginal variance", sigma);
   check_positive_finite("gp_exponential_cov", "length-scale", length_scale);
-  
+
   Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_s, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x1_size, x2_size);

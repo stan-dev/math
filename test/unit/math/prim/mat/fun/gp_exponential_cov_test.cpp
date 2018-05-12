@@ -68,7 +68,7 @@ TEST(MathPrimMat, vec_double_ard_gp_exponential_cov1) {
   l[2] = 0.3;
   l[3] = 0.4;
   l[4] = 0.5;
-  
+
   Eigen::MatrixXd cov;
   cov = stan::math::gp_exponential_cov(x, sigma, l);
   for (int i = 0; i < 3; i++) {

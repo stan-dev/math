@@ -289,7 +289,8 @@ template <typename T_x>
 inline typename boost::enable_if_c<
     boost::is_same<typename scalar_type<T_x>::type, double>::value,
     Eigen::Matrix<var, -1, -1>>::type
-// inline typename Eigen::Matrix<typename stan::return_type<T_x, double, var>::type,
+// inline typename Eigen::Matrix<typename stan::return_type<T_x, double,
+// var>::type,
 //                               Eigen::Dynamic, Eigen::Dynamic>
 gp_exponential_cov(const std::vector<T_x> &x, const var &sigma, const var &l) {
   check_positive_finite("gp_exponential_cov", "sigma", sigma);
