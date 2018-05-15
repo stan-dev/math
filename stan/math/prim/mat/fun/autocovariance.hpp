@@ -63,9 +63,7 @@ template <typename T, typename DerivedA, typename DerivedB>
 void autocovariance(const Eigen::MatrixBase<DerivedA>& y,
                     Eigen::MatrixBase<DerivedB>& acov, Eigen::FFT<T>& fft) {
   autocorrelation(y, acov, fft);
-
-  T var = (y.array() - y.mean()).square().sum() / y.size();
-  acov = acov.array() * var;
+  acov = acov.array() * (y.array() - y.mean()).square().sum() / y.size();
 }
 
 /**

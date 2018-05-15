@@ -19,11 +19,7 @@ TEST(ProbAutocovariance, test1) {
 
   // 10K 1K-length AC in 2.9s with g++ -O3 on Bob's Macbook Air
   std::vector<double> ac;
-
-  size_t ITS = 1;  // only need one for test
-  for (size_t n = 0; n < ITS; ++n) {
-    stan::math::autocovariance(y, ac);
-  }
+  stan::math::autocovariance(y, ac);
 
   EXPECT_EQ(1000U, ac.size());
 
@@ -49,11 +45,7 @@ TEST(ProbAutocovariance, test2) {
 
   // 10K 1K-length AC in 2.9s with g++ -O3 on Bob's Macbook Air
   Eigen::VectorXd ac(1000);
-
-  size_t ITS = 1;  // only need one for test
-  for (size_t n = 0; n < ITS; ++n) {
-    stan::math::autocovariance<double>(y, ac);
-  }
+  stan::math::autocovariance<double>(y, ac);
 
   EXPECT_EQ(1000U, ac.size());
 

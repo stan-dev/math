@@ -79,23 +79,6 @@ void autocorrelation(const std::vector<T>& y, std::vector<T>& ac,
   fft.inv(ac, freqvec);
   ac.resize(N);
 
-  /*
-    vector<T> mask_correction_factors;
-    vector<T> mask;
-    mask.insert(mask.end(), N, 1.0);
-    mask.insert(mask.end(), N, 0.0);
-
-    freqvec.resize(0);
-    fft.fwd(freqvec, mask);
-    for (size_t i = 0; i < Nt2; ++i)
-    freqvec[i] = complex<T>(norm(freqvec[i]), 0.0);
-
-    fft.inv(mask_correction_factors, freqvec);
-
-    for (size_t i = 0; i < N; ++i) {
-    ac[i] /= mask_correction_factors[i];
-    }
-  */
   for (size_t i = 0; i < N; ++i) {
     ac[i] /= (N - i);
   }
