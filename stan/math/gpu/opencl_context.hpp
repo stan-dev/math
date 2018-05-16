@@ -6,11 +6,11 @@
 #include <stan/math/prim/arr/err/check_opencl.hpp>
 #include <stan/math/prim/scal/err/system_error.hpp>
 
-#include <stan/math/gpu/kernels/basic_matrix_kernels.hpp>
 
 #include <CL/cl.hpp>
 #include <string>
 #include <cmath>
+#include <iostream>
 #include <fstream>
 #include <map>
 #include <vector>
@@ -104,17 +104,33 @@ class opencl_context_base {
       check_opencl_error("opencl_context", e);
     }
   }
+
+  // Helper func for reading in kernels
+  inline const char* read_kernel(const char* file_name) {
+    std::ifstream kernel_buff(file_name);
+    static std::string kernel;
+    kernel_buff.seekg(0, std::ios::end);
+    kernel.reserve(copy_matrix_kernel_buff.tellg());
+    kernel_buff.seekg(0, std::ios::beg);
+    kernel.assign((
+      std::istreambuf_iterator<char>(kernel_buff)),
+      std::istreambuf_iterator<char>());
+    return kernel.c_str();
+  }
+
   /**
    * Initializes the <code> kernel_info </code> where each kernel is mapped to
    * a logical flag to mark if the kernel was already compiled,
    * the name of the kernel group, and the OpenCL kernel sources.
    */
   inline void init_kernel_groups() {
+    const char* copy_matrix_kernel =
+     read_kernel("stan/math/gpu/kernels/basic_matrix_kernels.cl");
     kernel_info["dummy"] = {
         false, "timing", "__kernel void dummy(__global const int* foo) { };"};
     kernel_info["dummy2"] = {
         false, "timing", "__kernel void dummy2(__global const int* foo) { };"};
-    kernel_info["copy"] = {false, "basic_matrix", copy_matrix_kernel.c_str()};
+    kernel_info["copy"] = {false, "basic_matrix", copy_matrix_kernel};
   }
 
  protected:
