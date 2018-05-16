@@ -154,11 +154,9 @@ void autocorrelation(const std::vector<T>& y, std::vector<T>& ac) {
   Eigen::FFT<T> fft;
   size_t N = y.size();
 
-  const Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1> >
-    y_map(&y[0], N);
+  const Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1> > y_map(&y[0], N);
 
-  Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> >
-    ac_map(&ac[0], N);
+  Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > ac_map(&ac[0], N);
 
   autocorrelation<T>(y_map, ac_map, fft);
 }
