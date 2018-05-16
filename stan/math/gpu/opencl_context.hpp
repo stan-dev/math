@@ -6,7 +6,6 @@
 #include <stan/math/prim/arr/err/check_opencl.hpp>
 #include <stan/math/prim/scal/err/system_error.hpp>
 
-
 #include <CL/cl.hpp>
 #include <string>
 #include <cmath>
@@ -112,9 +111,8 @@ class opencl_context_base {
     kernel_buff.seekg(0, std::ios::end);
     kernel.reserve(copy_matrix_kernel_buff.tellg());
     kernel_buff.seekg(0, std::ios::beg);
-    kernel.assign((
-      std::istreambuf_iterator<char>(kernel_buff)),
-      std::istreambuf_iterator<char>());
+    kernel.assign((std::istreambuf_iterator<char>(kernel_buff)),
+                  std::istreambuf_iterator<char>());
     return kernel.c_str();
   }
 
@@ -124,8 +122,8 @@ class opencl_context_base {
    * the name of the kernel group, and the OpenCL kernel sources.
    */
   inline void init_kernel_groups() {
-    const char* copy_matrix_kernel =
-     read_kernel("stan/math/gpu/kernels/basic_matrix_kernels.cl");
+    const char* copy_matrix_kernel
+        = read_kernel("stan/math/gpu/kernels/basic_matrix_kernels.cl");
     kernel_info["dummy"] = {
         false, "timing", "__kernel void dummy(__global const int* foo) { };"};
     kernel_info["dummy2"] = {
