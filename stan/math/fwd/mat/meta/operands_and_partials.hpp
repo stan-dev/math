@@ -91,6 +91,35 @@ class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C> > > {
     return derivative;
   }
 };
+
+template <typename Dx>
+class ops_partials_edge<Dx, std::vector<std::vector<fvar<Dx> > > > {
+ public:
+  typedef std::vector<std::vector<fvar<Dx> > > Op;
+  typedef std::vector<Dx> partial_t;
+  std::vector<partial_t> partials_vec_;
+  explicit ops_partials_edge(const Op& ops)
+      : partials_vec_(length(ops)), operands_(ops) {
+    for (size_t i = 0; i < length(ops); ++i) {
+      partials_vec_[i] = partial_t(length(ops[i]), 0.0);
+    }
+  }
+
+ private:
+  template <typename, typename, typename, typename, typename, typename>
+  friend class stan::math::operands_and_partials;
+  const Op& operands_;
+
+  Dx dx() {
+    Dx derivative(0);
+    for (size_t i = 0; i < this->operands_.size(); ++i) {
+      for (size_t j = 0; j < this->operands_[i].size(); ++j) {
+        derivative += this->partials_vec_[i][j] * this->operands_[i][j].d_;
+      }
+    }
+    return derivative;
+  }
+};
 }  // namespace internal
 }  // namespace math
 }  // namespace stan

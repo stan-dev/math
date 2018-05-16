@@ -1,4 +1,4 @@
-// the tests here check that map_rect_serial works correct as such we
+// the tests here check that map_rect_concurrent works correct as such we
 // enforce that STAN_MPI is NOT defined
 
 #ifdef STAN_MPI
@@ -38,7 +38,7 @@ struct map_rect : public ::testing::Test {
   }
 };
 
-TEST_F(map_rect, serial_ragged_return_size_dd) {
+TEST_F(map_rect, concurrent_ragged_return_size_dd) {
   Eigen::VectorXd res1 = stan::math::map_rect<0, hard_work>(
       shared_params_d, job_params_d, x_r, x_i);
 
@@ -52,7 +52,7 @@ TEST_F(map_rect, serial_ragged_return_size_dd) {
   EXPECT_EQ(res2.size(), 2 * N + 1);
 }
 
-TEST_F(map_rect, serial_eval_ok_dd) {
+TEST_F(map_rect, concurrent_eval_ok_dd) {
   Eigen::VectorXd res1 = stan::math::map_rect<0, hard_work>(
       shared_params_d, job_params_d, x_r, x_i);
   for (int i = 0, j = 0; i < N; i++) {
