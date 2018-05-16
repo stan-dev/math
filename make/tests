@@ -13,9 +13,7 @@ $(GTEST)/src/gtest-all.o: CXXFLAGS += $(GTEST_CXXFLAGS)
 
 test/%$(EXE) : CXXFLAGS += $(GTEST_CXXFLAGS)
 test/%$(EXE) : test/%.o $(GTEST_MAIN) $(GTEST)/src/gtest-all.o
-	$(LINK.cpp) -o $@ $^
-
-
+	$(LINK.cpp) -o $@ $^ $(LDFLAGS_OPENCL)
 
 
 ##
@@ -59,6 +57,25 @@ $(CVODES_TESTS) : $(LIBCVODES)
 IDAS_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *idas*_test.cpp) $(shell find test -name *_dae_*_test.cpp))
 $(IDAS_TESTS) : $(LIBIDAS)
 
+############################################################
+#
+# OpenCL tests
+##
+
+OPENCL_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *opencl*_test.cpp))
+$(OPENCL_TESTS) : LDFLAGS += $(LDFLAGS_OPENCL)
+
+############################################################
+#
+# MPI tests
+##
+
+ifdef STAN_MPI
+  MPI_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *mpi_*test.cpp))
+  $(MPI_TESTS): LDFLAGS += $(LDFLAGS_MPI)
+  $(MPI_TESTS): CXXFLAGS += $(CXXFLAGS_MPI)
+  $(MPI_TESTS): $(BOOST)/stage/lib/libboost_mpi$(DLL) $(BOOST)/stage/lib/libboost_serialization$(DLL)
+endif
 
 ############################################################
 #

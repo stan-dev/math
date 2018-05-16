@@ -44,12 +44,13 @@ struct algebra_solver_vari : public vari {
                       const Eigen::VectorXd& theta_dbl, Fx& fx,
                       std::ostream* msgs)
       : vari(theta_dbl(0)),
-        y_(ChainableStack::memalloc_.alloc_array<vari*>(y.size())),
+        y_(ChainableStack::instance().memalloc_.alloc_array<vari*>(y.size())),
         y_size_(y.size()),
         x_size_(x.size()),
-        theta_(ChainableStack::memalloc_.alloc_array<vari*>(x_size_)),
-        Jx_y_(
-            ChainableStack::memalloc_.alloc_array<double>(x_size_ * y_size_)) {
+        theta_(
+            ChainableStack::instance().memalloc_.alloc_array<vari*>(x_size_)),
+        Jx_y_(ChainableStack::instance().memalloc_.alloc_array<double>(
+            x_size_ * y_size_)) {
     using Eigen::Map;
     using Eigen::MatrixXd;
     for (int i = 0; i < y.size(); ++i)
@@ -123,7 +124,7 @@ template <typename F, typename T>
 Eigen::VectorXd algebra_solver(
     const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
     const Eigen::VectorXd& y, const std::vector<double>& dat,
-    const std::vector<int>& dat_int, std::ostream* msgs = 0,
+    const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
     double relative_tolerance = 1e-10, double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
   check_nonzero_size("algebra_solver", "initial guess", x);
@@ -131,10 +132,10 @@ Eigen::VectorXd algebra_solver(
     check_finite("algebra_solver", "initial guess", x(i));
   for (int i = 0; i < y.size(); i++)
     check_finite("algebra_solver", "parameter vector", y(i));
-  for (size_t i = 0; i < dat.size(); i++)
-    check_finite("algebra_solver", "continuous data", dat[i]);
-  for (size_t i = 0; i < dat_int.size(); i++)
-    check_finite("algebra_solver", "integer data", dat_int[i]);
+  for (double i : dat)
+    check_finite("algebra_solver", "continuous data", i);
+  for (int x : dat_int)
+    check_finite("algebra_solver", "integer data", x);
 
   if (relative_tolerance < 0)
     invalid_argument("algebra_solver", "relative_tolerance,",
@@ -236,7 +237,7 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver(
     const F& f, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
     const std::vector<double>& dat, const std::vector<int>& dat_int,
-    std::ostream* msgs = 0, double relative_tolerance = 1e-10,
+    std::ostream* msgs = nullptr, double relative_tolerance = 1e-10,
     double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
   Eigen::VectorXd theta_dbl
