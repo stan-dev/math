@@ -1,3 +1,4 @@
+#ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/gpu/opencl_context.hpp>
 #include <stan/math/gpu/matrix_gpu.hpp>
@@ -96,3 +97,4 @@ TEST(MathMatrixGPU, barebone_buffer_copy) {
     EXPECT_EQ(i * 1.0, cpu_dst_buffer[i]);
   }
 }
+#ifdef STAN_OPENCL
