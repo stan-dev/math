@@ -97,4 +97,4 @@ TEST(MathMatrixGPU, barebone_buffer_copy) {
     EXPECT_EQ(i * 1.0, cpu_dst_buffer[i]);
   }
 }
-#ifdef STAN_OPENCL
+#endif

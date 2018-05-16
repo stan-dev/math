@@ -109,7 +109,7 @@ class opencl_context_base {
     std::ifstream kernel_buff(file_name);
     static std::string kernel;
     kernel_buff.seekg(0, std::ios::end);
-    kernel.reserve(copy_matrix_kernel_buff.tellg());
+    kernel.reserve(kernel_buff.tellg());
     kernel_buff.seekg(0, std::ios::beg);
     kernel.assign((std::istreambuf_iterator<char>(kernel_buff)),
                   std::istreambuf_iterator<char>());
