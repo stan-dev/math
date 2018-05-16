@@ -10,15 +10,16 @@ TEST(ProbAutocovariance, test1) {
   //   > x[1] <- rnorm(1, 0, 1)
   //   > for (n in 2:1000) x[n] <- rnorm(1, 0.8 * x[n-1], 1)
   std::fstream f("test/unit/math/prim/mat/fun/ar1.csv");
+  size_t N = 1000;
   std::vector<double> y;
-  for (size_t i = 0; i < 1000; ++i) {
+  for (size_t i = 0; i < N; ++i) {
     double temp;
     f >> temp;
     y.push_back(temp);
   }
 
   // 10K 1K-length AC in 2.9s with g++ -O3 on Bob's Macbook Air
-  std::vector<double> ac(1000);
+  std::vector<double> ac(N);
   stan::math::autocovariance(y, ac);
 
   EXPECT_EQ(1000U, ac.size());
@@ -36,15 +37,16 @@ TEST(ProbAutocovariance, test2) {
   //   > x[1] <- rnorm(1, 0, 1)
   //   > for (n in 2:1000) x[n] <- rnorm(1, 0.8 * x[n-1], 1)
   std::fstream f("test/unit/math/prim/mat/fun/ar1.csv");
-  Eigen::VectorXd y(1000);
-  for (size_t i = 0; i < 1000; ++i) {
+  size_t N = 1000;
+  Eigen::VectorXd y(N);
+  for (size_t i = 0; i < N; ++i) {
     double temp;
     f >> temp;
     y(i) = temp;
   }
 
   // 10K 1K-length AC in 2.9s with g++ -O3 on Bob's Macbook Air
-  Eigen::VectorXd ac(1000);
+  Eigen::VectorXd ac(N);
   stan::math::autocovariance<double>(y, ac);
 
   EXPECT_EQ(1000U, ac.size());
