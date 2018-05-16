@@ -85,7 +85,9 @@ void autocovariance(const Eigen::MatrixBase<DerivedA>& y,
 template <typename T>
 void autocovariance(const std::vector<T>& y, std::vector<T>& acov) {
   Eigen::FFT<T> fft;
-  autocovariance(y, acov, fft);
+  const Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > y_map(&y[0], y.size());
+  Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > acov_map(&acov[0], acov.size());
+  autocovariance(y_map, acov_map, fft);
 }
 
 /**

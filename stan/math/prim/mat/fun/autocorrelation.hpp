@@ -114,24 +114,23 @@ void autocorrelation(const Eigen::MatrixBase<DerivedA>& y,
   size_t M = fft_next_good_size(N);
   size_t Mt2 = 2 * M;
 
-  Eigen::Matrix<std::complex<T>, Eigen::Dynamic, 1> freqvec;
-
   // centered_signal = y-mean(y) followed by N zeros
   Eigen::Matrix<T, Eigen::Dynamic, 1> centered_signal(Mt2);
   centered_signal.setZero();
   centered_signal.head(N) = y.array() - y.mean();
 
+  Eigen::Matrix<std::complex<T>, Eigen::Dynamic, 1> freqvec(Mt2);
   fft.fwd(freqvec, centered_signal);
   // cwiseAbs2 == norm
   freqvec = freqvec.cwiseAbs2();
 
-  fft.inv(ac, freqvec);
-  ac.derived().conservativeResize(N);
+  Eigen::Matrix<std::complex<T>, Eigen::Dynamic, 1> ac_tmp(Mt2);
+  fft.inv(ac_tmp, freqvec);
 
   for (size_t i = 0; i < N; ++i)
-    ac(i) /= (N - i);
-  T var = ac(0);
-  ac = ac.array() / var;
+    ac_tmp(i) /= (N - i);
+
+  ac = ac_tmp.head(N).real().array() / ac_tmp(0).real();
 }
 
 /**
@@ -153,7 +152,15 @@ void autocorrelation(const Eigen::MatrixBase<DerivedA>& y,
 template <typename T>
 void autocorrelation(const std::vector<T>& y, std::vector<T>& ac) {
   Eigen::FFT<T> fft;
-  return autocorrelation(y, ac, fft);
+  size_t N = y.size();
+
+  const Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1> >
+    y_map(&y[0], N);
+
+  Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> >
+    ac_map(&ac[0], N);
+
+  autocorrelation<T>(y_map, ac_map, fft);
 }
 
 /**
@@ -176,7 +183,7 @@ template <typename T, typename DerivedA, typename DerivedB>
 void autocorrelation(const Eigen::MatrixBase<DerivedA>& y,
                      Eigen::MatrixBase<DerivedB>& ac) {
   Eigen::FFT<T> fft;
-  return autocorrelation(y, ac, fft);
+  autocorrelation(y, ac, fft);
 }
 
 }  // namespace math
