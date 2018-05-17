@@ -77,7 +77,11 @@ void autocovariance(const Eigen::MatrixBase<DerivedA>& y,
  * followed by a normalization, followed by an inverse transform.
  *
  * <p>This method is just a light wrapper around the three-argument
- * autocovariance function
+ * autocovariance function.  Internally, Eigen::Maps wrap the
+ * std::vector arguments.  The std::vector arguments must be
+ * initialized to a sufficient size prior to calling this function,
+ * for the Eigen::Maps to write to the std::vectors' memory
+ * appropriately.
  *
  * @tparam T Scalar type.
  * @param y Input sequence.
