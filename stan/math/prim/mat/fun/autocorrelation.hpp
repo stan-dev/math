@@ -143,11 +143,7 @@ void autocorrelation(const Eigen::MatrixBase<DerivedA>& y,
  * followed by a normalization, followed by an inverse transform.
  *
  * <p>This method is just a light wrapper around the three-argument
- * autocorrelation function.  Internally, Eigen::Maps wrap the
- * std::vector arguments.  The std::vector arguments must be
- * initialized to a sufficient size prior to calling this function,
- * for the Eigen::Maps to write to the std::vectors' memory
- * appropriately.
+ * autocorrelation function.
  *
  * @tparam T Scalar type.
  * @param y Input sequence.
@@ -157,6 +153,7 @@ template <typename T>
 void autocorrelation(const std::vector<T>& y, std::vector<T>& ac) {
   Eigen::FFT<T> fft;
   size_t N = y.size();
+  ac.resize(N);
 
   const Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1> > y_map(&y[0], N);
   Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > ac_map(&ac[0], N);

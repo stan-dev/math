@@ -19,7 +19,7 @@ TEST(ProbAutocovariance, test1) {
   }
 
   // 10K 1K-length AC in 2.9s with g++ -O3 on Bob's Macbook Air
-  std::vector<double> ac(N);
+  std::vector<double> ac;
   stan::math::autocovariance(y, ac);
 
   EXPECT_EQ(1000U, ac.size());
