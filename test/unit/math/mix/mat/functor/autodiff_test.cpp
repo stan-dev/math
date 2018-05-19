@@ -3,6 +3,7 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <iostream>
 #include <stdexcept>
+#include <type_traits>
 #include <vector>
 
 using Eigen::Dynamic;
@@ -277,4 +278,76 @@ TEST(AgradAutoDiff, GradientHessian) {
         EXPECT_FLOAT_EQ(poly_grad_hess_analytic[i](j, k),
                         poly_grad_hess_agrad[i](j, k));
       }
+}
+
+{// begin scope of using declarations for static_assert checks
+ // do not use anonymous namespace (unique per TU & injects names)
+ using cScal = std::complex<double>;
+ using cT = Eigen::VectorBlock<Eigen::Block<
+  Eigen::Matrix<std::complex<double>, 2, 2, 0, 2, 2>,1, 2, false>,-1>;
+ static_assert(!stan::math::internal::is_cplx_or_arith_v<cT>);
+ //ensure Eigen still thinks complex VectorBlocks aren't scalar operands
+ static_assert(!Eigen::internal::has_ReturnType<
+  Eigen::ScalarBinaryOpTraits<cScal,cT,
+   Eigen::internal::scalar_product_op<cScal,cT>>>::value);
+}// end scope of using declarations for static_assert checks
+
+// helper functions for variable conversion to double
+double val_help(stan::math::var const v){return v.val();}
+template<class T> T val_help(stan::math::fvar<T> const& f){return f.val();}
+
+template<class S,class V> S val(V const& v){
+ if constexpr(std::is_same_v<S,V>) return v;
+ return val<S>(val_help(v));
+}
+
+template<class S,class V> std::complex<S> val(std::complex<V>const&v){
+ if constexpr(std::is_same_v<S,V>) return v;
+ return std::complex<S>(val<S>(v.real()),val<S>(v.imag()));
+}
+
+TEST(AgradAutoDiff, ComplexEigenvalueOfRotationGradientHessian) {
+ auto tol([](auto d){return pow(2.,-53./2.)*(fabs(d)+1.0);});//tolerance
+ auto equal([tol](auto l,auto r){return fabs(l-r)<tol(l);});//equality
+ auto dbl([&](auto e){return val<double>(e);});
+
+ //return an eigenvalue of rotation by angle alpha
+ auto rotation_eigenvalue([equal,dbl](auto alpha){
+  auto c(cos(alpha));//cosine of rotation angle alpha
+  auto s(sin(alpha));//sine of rotation angle alpha
+  //rotation matrix
+  auto r((Eigen::Matrix<decltype(c),2,2>()<<c,-s,s,c).finished());
+  Eigen::EigenSolver<decltype(r)> es(r);//complex eigensolution
+  auto vtr(es.eigenvectors().transpose().eval()); //eigenvectors v^T
+  //rv=vD; (rv)^T=(vD)^T; v^T r^T = D^T v^T = D v^T; r^T = v^T^-1 D v^T
+  auto r_check((vtr.fullPivLu().solve(es.eigenvalues().asDiagonal()*vtr)).
+   transpose().eval()); // ScalarType=std::complex<...>
+  auto r_err_mat((r.unaryExpr(dbl)-r_check.unaryExpr(dbl)).eval());
+  auto r_err(fabs(r_err_mat.norm()));//check re-composition error
+  EXPECT_TRUE(equal(r_err,0.0)); //tight tolerance residual
+  return es.eigenvalues()[0];//return whatever eigenvalue is first
+ }); // end of rotation_eigenvalue
+
+ auto f([&](auto x){//objective critical min=0 when real = imag
+  auto rv(rotation_eigenvalue(x[0]));//cplx eigenvalue of rotation
+  return pow(rv.real()-rv.imag(),2);//delta^2 of real and imag parts
+ }); // end of f
+
+ auto x((Eigen::VectorXd(1)<<3.*M_PI/8.).finished());// note: cplx eig
+ double fx(f(x));//objective function value
+ EXPECT_FALSE(equal(fx,0.));
+ auto rv_ini(rotation_eigenvalue(x[0]);
+ EXPECT_FALSE(equal(rv_ini.real(),rv_ini.imag()));
+ auto g((Eigen::VectorXd(1)<<1.).finished());//gradient
+ auto h((Eigen::MatrixXd(1,1)<<0.).finished());//hessian
+ auto fx_old(fx+2.*tol(fx));//old f(x) value offset to enter loop
+ for(auto i(0u);i<9u&&!(equal(fx,fx_old)&&equal(g.norm(),0.));i++){//KKT
+  fx_old=fx;
+  stan::math::hessian(f,x,fx,g,h);
+  x-=h.fullPivLu().solve(g);//newton's method for minimization
+ }
+ EXPECT_TRUE(equal(x[0],M_PI/4.));
+ EXPECT_TRUE(equal(fx,0.));
+ auto rv_fin(rotation_eigenvalue(x[0]);
+ EXPECT_TRUE(equal(rv_fin.real(),rv_fin.imag()));
 }

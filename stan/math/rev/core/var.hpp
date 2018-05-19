@@ -498,11 +498,15 @@ struct z_var : var {
   z_var(Z const z = 0) : var(z){};
 };
 
-///variables are arithmetic, a trait used in complex
+///helper type traits to avoid forward declarations in other headers
 template <>
-struct is_arith<var> : std::true_type {};
+struct is_fr_var_helper<var> : std::true_type {};
 template <>
-struct is_arith<z_var> : std::true_type {};
+struct is_fr_var_helper<z_var> : std::true_type {};
+template <>
+struct to_arith_helper<z_var> {
+ typedef var type;
+};
 
 }  // namespace internal
 

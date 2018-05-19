@@ -34,6 +34,15 @@ namespace math {
  */
 template <typename F, typename T>
 struct apply_scalar_unary {
+ static_assert(std::is_base_of<Eigen::EigenBase<
+   typename Eigen::internal::remove_all<T>::type>,
+   typename Eigen::internal::remove_all<T>::type>::value,
+   "If this fires, it is likely that apply_scalar_unary has no specialization "
+   "for T *OR* that the function F isn't defined for T and has thus tried the "
+   "matrix overload. In any case, this unconstrained template struct "
+   "only works for Eigen types."
+  );
+
   /**
    * Type of underlying scalar for the matrix type T.
    */
@@ -140,6 +149,7 @@ struct apply_scalar_unary<F, std::complex<T>> {
    */
   static inline return_t apply(std::complex<T> x) { return F::fun(x); }
 };
+
 
 /**
  * Template specialization for vectorized functions applying to
