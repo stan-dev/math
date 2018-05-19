@@ -293,10 +293,10 @@ struct fvar {
 // used in stan's complex test
 // called from Eigen::internal::isfinite_impl via ADL
 template <class T>
-bool isfinite(fvar<T> const& v){
- using std::isfinite;
- using boost::math::isfinite;
- return isfinite(v.val());
+bool isfinite(fvar<T> const& v) {
+  using boost::math::isfinite;
+  using std::isfinite;
+  return isfinite(v.val());
 }
 
 namespace internal {
@@ -313,14 +313,14 @@ struct z_fvar : fvar<T> {
   z_fvar(fvar<T> const& z = 0.) : fvar<T>(z){};  ///< converting ctor from fvar
 };
 
-///helper type traits to avoid forward declarations in other headers
+/// helper type traits to avoid forward declarations in other headers
 template <class T>
 struct is_fr_var_helper<fvar<T>> : std::true_type {};
 template <class T>
 struct is_fr_var_helper<z_fvar<T>> : std::true_type {};
 template <class T>
-struct to_arith_helper<z_fvar<T>>{
- typedef fvar<to_arith_t<T>> type;
+struct to_arith_helper<z_fvar<T>> {
+  typedef fvar<to_arith_t<T>> type;
 };
 
 }  // namespace internal
