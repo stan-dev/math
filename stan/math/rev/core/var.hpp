@@ -498,14 +498,14 @@ struct z_var : var {
   z_var(Z const z = 0) : var(z){};
 };
 
-///helper type traits to avoid forward declarations in other headers
+/// helper type traits to avoid forward declarations in other headers
 template <>
 struct is_fr_var_helper<var> : std::true_type {};
 template <>
 struct is_fr_var_helper<z_var> : std::true_type {};
 template <>
 struct to_arith_helper<z_var> {
- typedef var type;
+  typedef var type;
 };
 
 }  // namespace internal
