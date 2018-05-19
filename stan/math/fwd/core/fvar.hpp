@@ -313,11 +313,15 @@ struct z_fvar : fvar<T> {
   z_fvar(fvar<T> const& z = 0.) : fvar<T>(z){};  ///< converting ctor from fvar
 };
 
-///variables are arithmetic, a trait used in complex
+///helper type traits to avoid forward declarations in other headers
 template <class T>
-struct is_arith<fvar<T>> : std::true_type {};
+struct is_fr_var_helper<fvar<T>> : std::true_type {};
 template <class T>
-struct is_arith<z_fvar<T>> : std::true_type {};
+struct is_fr_var_helper<z_fvar<T>> : std::true_type {};
+template <class T>
+struct to_arith_helper<z_fvar<T>>{
+ typedef fvar<to_arith_t<T>> type;
+};
 
 }  // namespace internal
 
