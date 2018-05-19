@@ -306,8 +306,8 @@ template <class T1, class T2, template <class, class> class OP>
 struct ScalarBinaryOpTraits<
     T1,
     std::enable_if_t<
-        stan::math::internal::is_cplx_or_arith_v<T1> &&  //! is_eigen
-                                                         //! VectorBlock
+        stan::math::internal::is_cplx_or_arith_v<T1> &&      //! is_eigen
+                                                             //! VectorBlock
             stan::math::internal::is_cplx_or_arith_v<T2> &&  //! is_eigen
                                                              //! VectorBlock
             !std::is_same_v<T1, T2> &&                // avoid Eigen's template
