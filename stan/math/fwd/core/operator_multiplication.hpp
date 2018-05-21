@@ -45,34 +45,6 @@ inline fvar<T> operator*(const fvar<T>& x, double y) {
   return fvar<T>(x.val_ * y, x.d_ * y);
 }
 
-/**
- * Return the product of the two arguments.
- *
- * @tparam value and tangent type for variables
- * @param[in] x first argument
- * @param[in] y second argument
- * @return product of arguments
- */
-template <typename T>
-inline std::complex<fvar<T>> operator*(const fvar<T>& x,
-                                       const std::complex<double>& y) {
-  return std::complex<fvar<T>>(x * y.real(), x * y.imag());
-}
-
-/**
- * Return the product of the two arguments.
- *
- * @tparam value and tangent type for variables
- * @param[in] x first argument
- * @param[in] y second argument
- * @return product of arguments
- */
-template <typename T>
-inline std::complex<fvar<T>> operator*(const std::complex<double>& x,
-                                       const fvar<T>& y) {
-  return std::complex<fvar<T>>(x.real() * y, x.imag() * y);
-}
-
 }  // namespace math
 }  // namespace stan
 #endif
