@@ -495,7 +495,7 @@ namespace internal {
  */
 struct z_var : var {
   template <class Z = var>
-  z_var(Z const z = 0) : var(z){}  // NOLINT
+  z_var(Z const z = 0) : var(z) {}  // NOLINT
 };
 
 /// helper type traits to avoid forward declarations in other headers
