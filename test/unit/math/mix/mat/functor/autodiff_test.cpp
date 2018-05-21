@@ -350,17 +350,17 @@ TEST(AgradAutoDiff, ComplexEigenvalueOfRotationGradientHessian) {
   double fx(f(x));  // objective function value
   EXPECT_FALSE(equal(fx, 0.));
  auto rv_ini(rotation_eigenvalue(x[0]);
- EXPECT_FALSE(equal(rv_ini.real(),rv_ini.imag()));
- auto g((Eigen::VectorXd(1)<<1.).finished());//gradient
- auto h((Eigen::MatrixXd(1,1)<<0.).finished());//hessian
- auto fx_old(fx+2.*tol(fx));//old f(x) value offset to enter loop
- for(auto i(0u);i<9u&&!(equal(fx,fx_old)&&equal(g.norm(),0.));i++){//KKT
+ EXPECT_FALSE(equal(rv_ini.real(), rv_ini.imag()));
+ auto g((Eigen::VectorXd(1) << 1.).finished());  // gradient
+ auto h((Eigen::MatrixXd(1, 1) << 0.).finished());  // hessian
+ auto fx_old(fx+2.*tol(fx));  // old f(x) value offset to enter loop
+ for (auto i(0u); i < 9u && !(equal(fx, fx_old) && equal(g.norm(), 0.)); i++) {
     fx_old = fx;
     stan::math::hessian(f, x, fx, g, h);
     x -= h.fullPivLu().solve(g);  // newton's method for minimization
  }
- EXPECT_TRUE(equal(x[0],M_PI/4.));
- EXPECT_TRUE(equal(fx,0.));
+ EXPECT_TRUE(equal(x[0], M_PI/4.));
+ EXPECT_TRUE(equal(fx, 0.));
  auto rv_fin(rotation_eigenvalue(x[0]);
- EXPECT_TRUE(equal(rv_fin.real(),rv_fin.imag()));
+ EXPECT_TRUE(equal(rv_fin.real(), rv_fin.imag()));
 }

@@ -36,25 +36,14 @@ struct is_fr_var : is_fr_var_helper<std::decay_t<T>> {};
 template <class T>
 constexpr bool is_fr_var_v = is_fr_var<T>::value;
 
-<<<<<<< HEAD
 /// trait check if any parameter is_fr_var
 template <class, class, class = void>
-struct any_fr_var : std::false_type {};
-template <class T, class U>
-struct any_fr_var<T, U, std::enable_if_t<is_fr_var_v<T> || is_fr_var_v<U>>>
-    : std::true_type {};
-template <class T, class U>
-inline constexpr bool any_fr_var_v = any_fr_var<T, U>::value;
-=======
-///trait check if any parameter is_fr_var
-template <class,class,class = void>
 struct any_fr_var: std::false_type {};
-template <class T,class U>
-struct any_fr_var<T,U,std::enable_if_t<is_fr_var_v<T>||
+template <class T, class U>
+struct any_fr_var<T, U, std::enable_if_t<is_fr_var_v<T>||
  is_fr_var_v<U>>>: std::true_type {};
-template <class T,class U>
-constexpr bool any_fr_var_v = any_fr_var<T,U>::value;
->>>>>>> removed inline from type trait value convenience booleans
+template <class T, class U>
+constexpr bool any_fr_var_v = any_fr_var<T, U>::value;
 
 /// trait check for arithmetic types
 template <class T>
@@ -115,8 +104,9 @@ using to_cplx_t = typename to_cplx<T>::type;
 template <class T>
 struct complex : std::complex<T> {
   using std::complex<T>::complex;  ///< inherit all std::complex ctors
+  // NOLINTNEXTLINE
   complex(const std::complex<T>& t)
-      : std::complex<T>(t){};  ///< allow promotion
+      : std::complex<T>(t) {}  ///< allow promotion
   /**without this converting ctor, copy initialization of std::complex<z_(f)var>
    * from an (f)var fails, because the default implementation in the
    * std::complex template requires the argument type to match the template
@@ -128,6 +118,7 @@ struct complex : std::complex<T> {
    * param[in] imag, the pure imaginary component of the complex number*/
   template <class R = T, class I = T,
             std::enable_if_t<is_arith_v<R>>* = nullptr>
+  // NOLINTNEXTLINE
   complex(const R real = 0, const I imag = 0) : std::complex<T>(real, imag) {}
 };
 
@@ -242,77 +233,7 @@ inline auto operator/(U const& u, std::complex<T> const& t) {
   return decltype(r)(1.0) / r;
 }
 
-<<<<<<< HEAD
-/*template <class T, class U>
-inline bool
-operator==(std::complex<T>const&t, std::complex<U>const&u) {
-  return t.real() == u.real() && t.imag() == u.imag();
-}
-
-template <class T, class U>
-inline bool
-operator==(std::complex<T>const&t, std::complex<U>const&u) {
-  return complex<T>(u) == t;
-}
-
-template <class T, class U>
-inline bool
-operator==(std::complex<U>const&u, std::complex<T>const&t) {
-  return complex<T>(u) == t;
-}
-
-template <class T, class U,
- std::enable_if_t<is_cplx_or_arith_v<U>>* =nullptr>
-inline bool
-operator==(std::complex<T>const&t, U u) {
-  return t.real() == u && t.imag() == T();
-}
-
-template <class T, class U,
- std::enable_if_t<is_arith_v<U>>* =nullptr>
-inline bool
-operator==(U u, std::complex<T>const&t) {
-  return t.real() == u && t.imag() == T();
-}
-
-template <class T, class U,
- std::enable_if_t<is_cplx_or_arith_v<U>>* =nullptr>
-inline bool
-operator!=(std::complex<T>const&t, U u) {
-  return !(t == u);
-}
-
-template <class T, class U,
- std::enable_if_t<is_arith_v<U>>* =nullptr>
-inline bool
-operator!=(U u, std::complex<T>const&t) {
-  return !(t == u);
-}
-
-template <class T, class U>
-inline to_cplx_t<complex<T>>
-pow(std::complex<T> t, std::complex<U> u) {
-  using std::exp;
-  using std::log;
-  return t == T() ? T() : exp(u * log(t));
-}
-
-template <class T>
-inline to_arith_t<T> abs(complex<T>const&t){
- using std::abs;
- return abs(std::complex<T>(t));
-}
-
-template <class T>
-inline std::complex<T> sqrt(complex<T>const&t){
- using std::sqrt;
- return sqrt(std::complex<T>(t));
-}*/
-
 }  // namespace std
-=======
-} // namespace std
->>>>>>> removed inline from type trait value convenience booleans
 
 namespace Eigen {
 
