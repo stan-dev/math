@@ -38,10 +38,10 @@ constexpr bool is_fr_var_v = is_fr_var<T>::value;
 
 /// trait check if any parameter is_fr_var
 template <class, class, class = void>
-struct any_fr_var: std::false_type {};
+struct any_fr_var : std::false_type {};
 template <class T, class U>
-struct any_fr_var<T, U, std::enable_if_t<is_fr_var_v<T>||
- is_fr_var_v<U>>>: std::true_type {};
+struct any_fr_var<T, U, std::enable_if_t<is_fr_var_v<T> || is_fr_var_v<U>>>
+    : std::true_type {};
 template <class T, class U>
 constexpr bool any_fr_var_v = any_fr_var<T, U>::value;
 
