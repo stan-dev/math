@@ -34,10 +34,10 @@ template <typename T_x, typename T_s, typename T_l>
 inline typename Eigen::Matrix<typename stan::return_type<T_x, T_s, T_l>::type,
                               Eigen::Dynamic, Eigen::Dynamic>
 gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
-                  const T_l &length_scale) {
+                const T_l &length_scale) {
+  using stan::math::sqrt;
   using stan::math::square;
   using stan::math::squared_distance;
-  using stan::math::sqrt;
   using std::exp;
   using std::pow;
 
@@ -47,7 +47,7 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
 
   check_positive_finite("gp_matern52_cov", "marginal variance", sigma);
   check_positive_finite("gp_matern52_cov", "length-scale", length_scale);
-  
+
   Eigen::Matrix<typename stan::return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x_size, x_size);
@@ -63,10 +63,10 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
   for (size_t i = 0; i < (x_size - 1); ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
-      cov(i, j) = sigma_sq *
-        (1.0 + root_5_inv_l * sqrt(squared_distance(x[i], x[j])) +
-         inv_l_sq_5_3 * squared_distance(x[i], x[j])) *
-        exp(neg_root_5_inv_l * sqrt(squared_distance(x[i], x[j])));
+      cov(i, j) = sigma_sq
+                  * (1.0 + root_5_inv_l * sqrt(squared_distance(x[i], x[j]))
+                     + inv_l_sq_5_3 * squared_distance(x[i], x[j]))
+                  * exp(neg_root_5_inv_l * sqrt(squared_distance(x[i], x[j])));
       cov(j, i) = cov(i, j);
     }
   }
@@ -94,10 +94,10 @@ template <typename T_x, typename T_s, typename T_l>
 inline typename Eigen::Matrix<typename stan::return_type<T_x, T_s, T_l>::type,
                               Eigen::Dynamic, Eigen::Dynamic>
 gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
-                  const std::vector<T_l> &length_scale) {
+                const std::vector<T_l> &length_scale) {
+  using stan::math::sqrt;
   using stan::math::square;
   using stan::math::squared_distance;
-  using stan::math::sqrt;
   using std::exp;
   using std::pow;
 
@@ -108,7 +108,7 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
 
   check_positive_finite("gp_matern52_cov", "marginal variance", sigma);
   check_positive_finite("gp_matern52_cov", "length-scale", length_scale);
-  
+
   Eigen::Matrix<typename stan::return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x_size, x_size);
@@ -128,10 +128,10 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
       temp = 0;
       for (size_t k = 0; k < l_size; ++k)
         temp += 1.0 / square(length_scale[k]);
-      cov(i, j) = sigma_sq *
-        (1.0 + root_5 * sqrt(squared_distance(x[i], x[j]) * temp)
-         + five_thirds * squared_distance(x[i], x[j]) * temp)
-        * exp(neg_root_5 * sqrt(squared_distance(x[i], x[j]) * temp));
+      cov(i, j) = sigma_sq
+                  * (1.0 + root_5 * sqrt(squared_distance(x[i], x[j]) * temp)
+                     + five_thirds * squared_distance(x[i], x[j]) * temp)
+                  * exp(neg_root_5 * sqrt(squared_distance(x[i], x[j]) * temp));
       cov(j, i) = cov(i, j);
     }
   }
@@ -159,7 +159,7 @@ inline typename Eigen::Matrix<
     typename stan::return_type<T_x1, T_x2, T_s, T_l>::type, Eigen::Dynamic,
     Eigen::Dynamic>
 gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
-                  const T_s &sigma, const T_l &length_scale) {
+                const T_s &sigma, const T_l &length_scale) {
   using stan::math::square;
   using stan::math::squared_distance;
   using std::exp;
@@ -175,7 +175,7 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   check_positive_finite("gp_matern52_cov", "marginal variance", sigma);
   check_positive_finite("gp_matern52_cov", "length-scale", length_scale);
-  
+
   Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_s, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x1_size, x2_size);
@@ -190,10 +190,11 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      cov(i, j) = sigma_sq *
-        (1.0 + root_5_inv_l * sqrt(squared_distance(x1[i], x2[j])) +
-         inv_l_sq_5_3 * squared_distance(x1[i], x2[j])) *
-        exp(neg_root_5_inv_l * sqrt(squared_distance(x1[i], x2[j])));
+      cov(i, j)
+          = sigma_sq
+            * (1.0 + root_5_inv_l * sqrt(squared_distance(x1[i], x2[j]))
+               + inv_l_sq_5_3 * squared_distance(x1[i], x2[j]))
+            * exp(neg_root_5_inv_l * sqrt(squared_distance(x1[i], x2[j])));
     }
   }
   return cov;
@@ -221,10 +222,10 @@ inline typename Eigen::Matrix<
     typename stan::return_type<T_x1, T_x2, T_s, T_l>::type, Eigen::Dynamic,
     Eigen::Dynamic>
 gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
-                  const T_s &sigma, const std::vector<T_l> &length_scale) {
+                const T_s &sigma, const std::vector<T_l> &length_scale) {
+  using stan::math::sqrt;
   using stan::math::square;
   using stan::math::squared_distance;
-  using stan::math::sqrt;
   using std::exp;
   using std::pow;
 
@@ -240,7 +241,6 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   check_positive_finite("gp_matern52_cov", "marginal variance", sigma);
   check_positive_finite("gp_matern52_cov", "length-scale", length_scale);
 
-  
   Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_s, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x1_size, x2_size);
@@ -259,14 +259,15 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
       temp = 0;
       for (size_t k = 0; k < l_size; ++k)
         temp += 1.0 / square(length_scale[k]);
-      cov(i, j) = sigma_sq *
-        (1.0 + root_5 * sqrt(squared_distance(x1[i], x2[j]) * temp) +
-         five_thirds * squared_distance(x1[i], x2[j]) * temp) *
-        exp(neg_root_5 * sqrt(squared_distance(x1[i], x2[j]) * temp));
+      cov(i, j)
+          = sigma_sq
+            * (1.0 + root_5 * sqrt(squared_distance(x1[i], x2[j]) * temp)
+               + five_thirds * squared_distance(x1[i], x2[j]) * temp)
+            * exp(neg_root_5 * sqrt(squared_distance(x1[i], x2[j]) * temp));
     }
   }
   return cov;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
