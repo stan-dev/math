@@ -76,7 +76,7 @@ TEST(AgradFwdAbs, complexNotNullIssue123) {
   EXPECT_TRUE(std::complex<double>(1, 1) == q);
   EXPECT_TRUE(r == std::complex<double>(1, 1));
   EXPECT_TRUE(std::complex<double>(1, 1) == r);
-  EXPECT_TRUE(q == r);  // note q and r have different types
+  EXPECT_TRUE(q == r);
   EXPECT_TRUE(r == q);
 
   EXPECT_NEAR((abs(q) * abs(r)).val(), 2, 1E-8);
