@@ -106,12 +106,7 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
   for (size_t n = 0; n < x_size; ++n)
     check_not_nan("gp_matern52_cov", "x", x[n]);
 
-  // check_positive("gp_matern52_cov", "marginal variance", sigma);
-  // check_not_nan("gp_matern52_cov", "marginal variance", sigma);
   check_positive_finite("gp_matern52_cov", "marginal variance", sigma);
-  
-  // check_positive("gp_matern52_cov", "length-scale", length_scale);
-  // check_not_nan("gp_matern52_cov", "length-scale", length_scale);
   check_positive_finite("gp_matern52_cov", "length-scale", length_scale);
   
   Eigen::Matrix<typename stan::return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
@@ -178,12 +173,7 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   for (size_t n = 0; n < x2_size; ++n)
     check_not_nan("gp_matern52_cov", "x1", x2[n]);
 
-  // check_positive("gp_matern52_cov", "marginal variance", sigma);
-  // check_not_nan("gp_matern52_cov", "marginal variance", sigma);
   check_positive_finite("gp_matern52_cov", "marginal variance", sigma);
-  
-  // check_positive("gp_matern52_cov", "length-scale", length_scale);
-  // check_not_nan("gp_matern52_cov", "length-scale", length_scale);
   check_positive_finite("gp_matern52_cov", "length-scale", length_scale);
   
   Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_s, T_l>::type,
@@ -248,10 +238,6 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     check_not_nan("gp_matern52_cov", "x1", x2[n]);
 
   check_positive_finite("gp_matern52_cov", "marginal variance", sigma);
-  
-  // check_positive("gp_matern52_cov", "length-scale", length_scale);
-  // for (size_t n = 0; n < l_size; ++n)
-  //   check_not_nan("gp_matern52_cov", "length-scale", length_scale[n]);
   check_positive_finite("gp_matern52_cov", "length-scale", length_scale);
 
   
