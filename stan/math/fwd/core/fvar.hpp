@@ -310,7 +310,7 @@ namespace internal {
 template <class T = double>
 struct z_fvar : fvar<T> {
   using fvar<T>::fvar;                           ///< inherit all ctors
-  z_fvar(fvar<T> const& z = 0.) : fvar<T>(z){};  ///< converting ctor from fvar
+  z_fvar(fvar<T> const& z = 0.) : fvar<T>(z){}  // NOLINT
 };
 
 /// helper type traits to avoid forward declarations in other headers
