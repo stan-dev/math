@@ -26,7 +26,7 @@ struct is_cplx_helper<complex<T>> : std::true_type {};
 template <class T>
 struct is_cplx : is_cplx_helper<std::decay_t<T>> {};
 template <class T>
-inline constexpr bool is_cplx_v = is_cplx<T>::value;
+constexpr bool is_cplx_v = is_cplx<T>::value;
 
 /// trait check for forward or reverse variable (helper must be specialized)
 template <class>
@@ -34,8 +34,9 @@ struct is_fr_var_helper : std::false_type {};
 template <class T>
 struct is_fr_var : is_fr_var_helper<std::decay_t<T>> {};
 template <class T>
-inline constexpr bool is_fr_var_v = is_fr_var<T>::value;
+constexpr bool is_fr_var_v = is_fr_var<T>::value;
 
+<<<<<<< HEAD
 /// trait check if any parameter is_fr_var
 template <class, class, class = void>
 struct any_fr_var : std::false_type {};
@@ -44,6 +45,16 @@ struct any_fr_var<T, U, std::enable_if_t<is_fr_var_v<T> || is_fr_var_v<U>>>
     : std::true_type {};
 template <class T, class U>
 inline constexpr bool any_fr_var_v = any_fr_var<T, U>::value;
+=======
+///trait check if any parameter is_fr_var
+template <class,class,class = void>
+struct any_fr_var: std::false_type {};
+template <class T,class U>
+struct any_fr_var<T,U,std::enable_if_t<is_fr_var_v<T>||
+ is_fr_var_v<U>>>: std::true_type {};
+template <class T,class U>
+constexpr bool any_fr_var_v = any_fr_var<T,U>::value;
+>>>>>>> removed inline from type trait value convenience booleans
 
 /// trait check for arithmetic types
 template <class T>
@@ -52,14 +63,14 @@ struct is_arith
           bool, is_fr_var_v<T> || std::is_arithmetic<std::decay_t<T>>::value> {
 };
 template <class T>
-inline constexpr bool is_arith_v = is_arith<T>::value;
+constexpr bool is_arith_v = is_arith<T>::value;
 
 /// trait to see if the template parameter is complex or arithmetic
 template <class T>
 struct is_cplx_or_arith
     : std::integral_constant<bool, is_cplx_v<T> || is_arith_v<T>> {};
 template <class T>
-inline constexpr bool is_cplx_or_arith_v = is_cplx_or_arith<T>::value;
+constexpr bool is_cplx_or_arith_v = is_cplx_or_arith<T>::value;
 
 /// trait to remove the complex wrapper around a type
 template <class T>
@@ -231,6 +242,7 @@ inline auto operator/(U const& u, std::complex<T> const& t) {
   return decltype(r)(1.0) / r;
 }
 
+<<<<<<< HEAD
 /*template <class T, class U>
 inline bool
 operator==(std::complex<T>const&t, std::complex<U>const&u) {
@@ -298,6 +310,9 @@ inline std::complex<T> sqrt(complex<T>const&t){
 }*/
 
 }  // namespace std
+=======
+} // namespace std
+>>>>>>> removed inline from type trait value convenience booleans
 
 namespace Eigen {
 
