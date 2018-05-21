@@ -25,26 +25,21 @@ namespace math {
  * @throw std::domain_error if any element of theta is less than 0.
  * @throw std::domain_error if the sum of theta is not 1.
  * @tparam T_prob Type of scalar.
- * @tparam T_prior_sample_size Type of prior sample sizes.
+ * @tparam T_prior_size Type of prior sample sizes.
  */
-template <bool propto, typename T_prob, typename T_prior_sample_size>
-typename boost::math::tools::promote_args<T_prob, T_prior_sample_size>::type
-dirichlet_log(
-    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta,
-    const Eigen::Matrix<T_prior_sample_size, Eigen::Dynamic, 1>& alpha) {
-  return dirichlet_lpmf<propto, T_prob, T_prior_sample_size>(theta, alpha);
+template <bool propto, typename T_prob, typename T_prior_size>
+typename return_type<T_prob, T_prior_size>::type dirichlet_log(
+    const T_prob& theta, const T_prior_size& alpha) {
+  return dirichlet_lpmf<propto, T_prob, T_prior_size>(theta, alpha);
 }
 
 /**
  * @deprecated use <code>dirichlet_lpmf</code>
  */
-template <typename T_prob, typename T_prior_sample_size>
-inline
-    typename boost::math::tools::promote_args<T_prob, T_prior_sample_size>::type
-    dirichlet_log(
-        const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta,
-        const Eigen::Matrix<T_prior_sample_size, Eigen::Dynamic, 1>& alpha) {
-  return dirichlet_lpmf<T_prob, T_prior_sample_size>(theta, alpha);
+template <typename T_prob, typename T_prior_size>
+typename return_type<T_prob, T_prior_size>::type dirichlet_log(
+    const T_prob& theta, const T_prior_size& alpha) {
+  return dirichlet_lpmf<T_prob, T_prior_size>(theta, alpha);
 }
 
 }  // namespace math
