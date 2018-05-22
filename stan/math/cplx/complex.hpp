@@ -239,15 +239,15 @@ namespace Eigen {
 
 /// Eigen scalar op traits specialization for complex variables.
 template <class T1, class T2, template <class, class> class OP,
-         class CompatibilityT1>
+          class CompatibilityT1>
 struct ScalarBinaryOpTraits<
     T1,
     std::enable_if_t<
-        std::is_same<T1, CompatibilityT1>::value &&
-        stan::math::internal::is_cplx_or_arith_v<T1> &&      // !is_eigen
-                                                             // !VectorBlock
-            stan::math::internal::is_cplx_or_arith_v<T2> &&  // !is_eigen
-                                                             // !VectorBlock
+        std::is_same<T1, CompatibilityT1>::value
+            && stan::math::internal::is_cplx_or_arith_v<T1> &&  // !is_eigen
+                                                                // !VectorBlock
+            stan::math::internal::is_cplx_or_arith_v<T2> &&     // !is_eigen
+                                                                // !VectorBlock
             !std::is_same<T1, T2>::value &&           // avoid Eigen's template
             ((stan::math::internal::is_cplx_v<T1> &&  // next boolean avoids
                                                       // Eigen
