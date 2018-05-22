@@ -1,0 +1,81 @@
+# -*- mode: makefile -*-
+# -----------------------------------------------------------------
+# Programmer: Slaven Peles @ LLNL
+# -----------------------------------------------------------------
+# LLNS Copyright Start
+# Copyright (c) 2014, Lawrence Livermore National Security
+# This work was performed under the auspices of the U.S. Department 
+# of Energy by Lawrence Livermore National Laboratory in part under 
+# Contract W-7405-Eng-48 and in part under Contract DE-AC52-07NA27344.
+# Produced at the Lawrence Livermore National Laboratory.
+# All rights reserved.
+# For details, see the LICENSE file.
+# LLNS Copyright End
+# -----------------------------------------------------------------
+# Makefile for @SOLVER@ CUDA examples
+#
+# This file is generated from a template using various variables
+# set at configuration time. It can be used as a template for
+# other user Makefiles.
+# -----------------------------------------------------------------
+
+SHELL = @SHELL@
+
+prefix       = @prefix@
+exec_prefix  = @exec_prefix@
+includedir   = @includedir@
+libdir       = @libdir@
+
+NVCC     = @CUDA_NVCC_EXECUTABLE@
+NVCCFLAGS = 
+CPP      = @CPP@
+CPPFLAGS = @CPPFLAGS@
+CXX      = @CXX@
+CXXFLAGS = @CXXFLAGS@
+LDFLAGS  = @LDFLAGS@
+LIBS     = @LIBS@
+CUDALIBS = @CUDA_CUDART_LIBRARY@
+
+LINKFLAGS = -Xlinker ,-rpath,@libdir@
+
+TMP_INCS = ${includedir}
+INCLUDES = $(addprefix -I, ${TMP_INCS})
+
+TMP_LIBRARIES_SUNDIALS = @SOLVER_LIB@ sundials_nveccuda
+LIBRARIES_SUNDIALS = ${addprefix -l, ${TMP_LIBRARIES_SUNDIALS}}
+
+LIBRARIES = ${LIBRARIES_SUNDIALS} ${LIBS}
+
+EXAMPLES = @EXAMPLES@ @EXAMPLES_BL@
+EXAMPLES_DEPENDENCIES = @EXAMPLES_DEPENDENCIES@
+
+OBJECTS = ${EXAMPLES:=.o}
+OBJECTS_DEPENDENCIES = ${EXAMPLES_DEPENDENCIES:=.o}
+
+# -----------------------------------------------------------------------------------------
+
+.SUFFIXES : .o .cu
+
+.c.o :
+	${NVCC} ${CPPFLAGS} ${NVCCFLAGS} ${INCLUDES} -c $<
+
+.cu.o :
+	${NVCC} ${CPPFLAGS} ${NVCCFLAGS} ${INCLUDES} -c $<
+
+# -----------------------------------------------------------------------------------------
+
+all: ${OBJECTS}
+	@for i in ${EXAMPLES} ; do \
+	  echo "${NVCC} -o $${i} $${i}.o ${OBJECTS_DEPENDENCIES} ${NVCCFLAGS} ${LDFLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LINKFLAGS}" ; \
+	  ${NVCC} -o $${i} $${i}.o ${OBJECTS_DEPENDENCIES} ${NVCCFLAGS} ${LDFLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${CUDALIBS} ${LINKFLAGS} ; \
+	done
+
+${OBJECTS}: ${OBJECTS_DEPENDENCIES}
+
+clean:
+	rm -f ${OBJECTS_DEPENDENCIES}
+	rm -f ${OBJECTS}
+	rm -f ${EXAMPLES}
+
+# -----------------------------------------------------------------------------------------
+

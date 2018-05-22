@@ -51,6 +51,8 @@ def processCLIArgs():
                         action="store_true", help="Don't run tests, just try to make them.")
     parser.add_argument("--run-all", dest="run_all", action="store_true",
                         help="Don't stop at the first test failure, run all of them.")
+    parser.add_argument("--cmake", dest="cmake", action="store_true",
+                        help="Use cmake to build tests.")
 
     # And parse the command line against those rules
     return parser.parse_args()
@@ -96,6 +98,12 @@ def generateTests(j):
 def makeTest(name, j):
     """Run the make command for a given single test."""
     doCommand('make -j%d %s' % (j or 1, name))
+
+def cmakeTest(tests, j):
+    doCommand('mkdir -p build && cd build && cmake -G "Ninja" ..')
+    tests = [t.replace("/", "_") for t in tests]
+    doCommand('cd build && ninja {}'.format(" ".join(tests)))
+    return ["build/" + t for t in tests]
 
 def commandExists(command):
     p = subprocess.Popen(command, shell=True,
@@ -156,11 +164,14 @@ def main():
     if not tests:
         stopErr("No matching tests found.", -1)
 
-    # pass 1: make test executables
-    for batch in batched(tests):
-        if inputs.debug:
-            print("Test batch: ", batch)
-        makeTest(" ".join(batch), inputs.j)
+    if inputs.cmake:
+        tests = cmakeTest(tests, inputs.j)
+    else:
+        # pass 1: make test executables
+        for batch in batched(tests):
+            if inputs.debug:
+                print("Test batch: ", batch)
+            makeTest(" ".join(batch), inputs.j)
 
     if not inputs.make_only:
         # pass 2: run test targets
