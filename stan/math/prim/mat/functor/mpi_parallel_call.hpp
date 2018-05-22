@@ -51,8 +51,17 @@ class mpi_parallel_call_cache {
       const mpi_parallel_call_cache<call_id, member, T>&)
       = delete;
 
+  /**
+   * Query if cache is in valid which it is once data has been stored.
+   * @return flag if cache has been initialized.
+   */
   static bool is_valid() { return is_valid_; }
 
+  /**
+   * Store data to be cached locally. Must be called a single time
+   * only. Once data is stored the cache is marked as valid. As there
+   * is no within-process parallelism no locking is used here.
+   */
   static void store(const T& data) {
     if (is_valid_)
       throw std::runtime_error("Cache can only store a single data item.");
@@ -60,6 +69,11 @@ class mpi_parallel_call_cache {
     is_valid_ = true;
   }
 
+  /**
+   * Obtain const reference to locally cached data if cache is valid
+   * (throws otherwise).
+   * @return const reference to stored data of type T
+   */
   static cache_t& data() {
     if (unlikely(!is_valid_))
       throw std::runtime_error("Cache not yet valid.");
@@ -128,7 +142,7 @@ bool mpi_parallel_call_cache<call_id, member, T>::is_valid_ = false;
  * array sizes need to be collected on the root from all workers. This
  * is needed on the root such that the root knows how many outputs are
  * computed on each worker. This information is then cached for all
- * subsequent evaluations. However, caching this information can only
+ * subsequent evaluations. However, caching this information can
  * occur if and only if the evaluation of all functions was
  * successfull on all workers during the first run. Thus, the first
  * evaluation is handled with special care to ensure that caching of
@@ -136,9 +150,11 @@ bool mpi_parallel_call_cache<call_id, member, T>::is_valid_ = false;
  * evaluated the function and otherwise an exception is raised.
  *
  * @tparam call_id label for the static data
- * @tparam ReduceF reduce function called for each job
+ * @tparam ReduceF reduce function called for each job, \see
+ * internal::map_rect_reduce
  * @tparam CombineF combine function called on the combined results on
- * each job along with the ragged data structure information
+ * each job along with the ragged data structure information, \see
+ * internal::map_rect_combine
  */
 template <int call_id, typename ReduceF, typename CombineF>
 class mpi_parallel_call {
@@ -146,6 +162,8 @@ class mpi_parallel_call {
   const std::size_t rank_ = world_.rank();
   const std::size_t world_size_ = world_.size();
   std::unique_lock<std::mutex> cluster_lock_;
+
+  typedef typename CombineF::result_t result_t;
 
   // local caches which hold local slices of data
   typedef internal::mpi_parallel_call_cache<call_id, 1,
@@ -164,13 +182,23 @@ class mpi_parallel_call {
 
   CombineF combine_;
 
-  typedef typename CombineF::result_t result_t;
-
   vector_d local_shared_params_dbl_;
   matrix_d local_job_params_dbl_;
 
  public:
-  // called on root
+  /**
+   * Initiates a parallel MPI call on the root. The constructor
+   * allocates the MPI ressource and initiates on all workers the MPI
+   * parallel call which mirror the communication and execute a chunk
+   * of the overall work.
+   *
+   * @tparam T_shared_param type of shared parameters
+   * @tparam T_job_param type of job-specific parameters
+   * @param shared_params shared parameter vector
+   * @param job_params array of job-specifc parameter vectors
+   * @param x_r array of job-specifc real arrays (data only argument)
+   * @param x_i array of job-specifc int arrays (data only argument)
+   */
   template <typename T_shared_param, typename T_job_param>
   mpi_parallel_call(
       const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
@@ -180,23 +208,21 @@ class mpi_parallel_call {
       const std::vector<std::vector<int>>& x_i)
       : combine_(shared_params, job_params) {
     if (rank_ != 0)
-      throw std::runtime_error("problem sizes can only defined on the root.");
+      throw std::runtime_error(
+          "problem sizes may only be defined on the root.");
 
     check_matching_sizes("mpi_parallel_call", "job parameters", job_params,
                          "continuous data", x_r);
     check_matching_sizes("mpi_parallel_call", "job parameters", job_params,
                          "integer data", x_i);
 
-    // in case we have already cached data available for this
-    // call_id, do further checks
     if (cache_chunks::is_valid()) {
-      typename cache_chunks::cache_t& job_chunks = cache_chunks::data();
-      const int cached_num_jobs = sum(job_chunks);
+      int cached_num_jobs = sum(cache_chunks::data());
       check_size_match("mpi_parallel_call", "cached number of jobs",
                        cached_num_jobs, "number of jobs", job_params.size());
     }
 
-    // make childs aware of upcoming job & obtain cluster lock
+    // make children aware of upcoming job & obtain cluster lock
     cluster_lock_ = mpi_broadcast_command<stan::math::mpi_distributed_apply<
         mpi_parallel_call<call_id, ReduceF, CombineF>>>();
 
@@ -223,6 +249,9 @@ class mpi_parallel_call {
                std::vector<std::vector<int>>());
   }
 
+  /**
+   * Entry point on the workers for the mpi_parallel_call.
+   */
   static void distributed_apply() {
     // call constructor for the remotes
     mpi_parallel_call<call_id, ReduceF, CombineF> job_chunk;
@@ -230,16 +259,18 @@ class mpi_parallel_call {
     job_chunk.reduce_combine();
   }
 
-  // all data is cached and local parameters are also available
+  /**
+   * Once all data is distributed and cached the reduce_combine
+   * evaluates all assigned function evaluations locally, transfers
+   * all results back to the root and finally combines on the root all
+   * results.
+   */
   result_t reduce_combine() {
     const std::vector<int>& job_chunks = cache_chunks::data();
     const int num_jobs = sum(job_chunks);
 
-    // id of first job out of all
-    int start_job = 0;
-    for (std::size_t n = 0; n < rank_; ++n)
-      start_job += job_chunks[n];
-
+    const int first_job
+        = std::accumulate(job_chunks.begin(), job_chunks.begin() + rank_, 0);
     const int num_local_jobs = local_job_params_dbl_.cols();
     int local_outputs_per_job = num_local_jobs == 0 ? 0 : num_outputs_per_job_;
     matrix_d local_output(
@@ -253,9 +284,9 @@ class mpi_parallel_call {
     // check if we know already output sizes
     if (cache_f_out::is_valid()) {
       typename cache_f_out::cache_t& f_out = cache_f_out::data();
-      int num_outputs = 0;
-      for (int j = start_job; j < start_job + num_local_jobs; ++j)
-        num_outputs += f_out[j];
+      const int num_outputs
+          = std::accumulate(f_out.begin() + first_job,
+                            f_out.begin() + first_job + num_local_jobs, 0);
       local_output.resize(Eigen::NoChange, num_outputs);
     }
 
@@ -270,11 +301,13 @@ class mpi_parallel_call {
 
         if (local_outputs_per_job == -1) {
           local_outputs_per_job = job_output.rows();
+          // changing rows, but leave column size as is
           local_output.conservativeResize(local_outputs_per_job,
                                           Eigen::NoChange);
         }
 
         if (local_output.cols() < offset + local_f_out[i])
+          // leave row size, but change columns size
           local_output.conservativeResize(Eigen::NoChange,
                                           2 * (offset + local_f_out[i]));
 
@@ -282,6 +315,8 @@ class mpi_parallel_call {
             = job_output;
       }
     } catch (const std::exception& e) {
+      // see note 1 above for an explanation why we do not rethrow
+      // here, but mereley flag it to keep the cluster synchronized
       local_ok = 0;
     }
 
@@ -300,11 +335,10 @@ class mpi_parallel_call {
         // err out on the root
         if (rank_ == 0) {
           throw std::domain_error("MPI error on first evaluation.");
-        } else {
-          // and ensure on the workers that they return into their
-          // listening state
-          return result_t();
         }
+        // and ensure on the workers that they return into their
+        // listening state
+        return result_t();
       }
 
       // execution was ok everywhere such that we can now distribute the
@@ -312,16 +346,17 @@ class mpi_parallel_call {
       boost::mpi::broadcast(world_, local_outputs_per_job, 0);
       num_outputs_per_job_ = local_outputs_per_job;
 
+      // the f_out cache may not yet be synchronized which we can do
+      // now given that this first execution was just fine
       if (!cache_f_out::is_valid()) {
-        // ok, now all is fine everywhere, collect sizes and cache info
         std::vector<int> world_f_out(num_jobs, 0);
         boost::mpi::gatherv(world_, local_f_out.data(), num_local_jobs,
                             world_f_out.data(), job_chunks, 0);
-        // on the root we now have all sizes from all childs. Copy
-        // over the local sizes to the world vector on each local
-        // node in order to cache this information locally.
+        // on the root we now have all sizes from all children. Copy
+        // over the local sizes to the world vector on each local node
+        // in order to cache this information locally.
         std::copy(local_f_out.begin(), local_f_out.end(),
-                  world_f_out.begin() + start_job);
+                  world_f_out.begin() + first_job);
         cache_f_out::store(world_f_out);
       }
     }
@@ -331,7 +366,9 @@ class mpi_parallel_call {
     // check that cached sizes are the same as just collected from
     // this evaluation
     for (int i = 0; i < num_local_jobs; ++i) {
-      if (world_f_out[start_job + i] != local_f_out[i]) {
+      if (world_f_out[first_job + i] != local_f_out[i]) {
+        // in case of a mismatch we mark so, but flag the error only
+        // on the root, see note 1 above.
         local_ok = 0;
         break;
       }
@@ -341,9 +378,9 @@ class mpi_parallel_call {
     matrix_d world_result(num_outputs_per_job_, size_world_f_out);
 
     std::vector<int> chunks_result(world_size_, 0);
-    for (std::size_t i = 0, ij = 0; i != world_size_; ++i)
-      for (int j = 0; j != job_chunks[i]; ++j, ++ij)
-        chunks_result[i] += world_f_out[ij] * num_outputs_per_job_;
+    for (std::size_t i = 0, k = 0; i != world_size_; ++i)
+      for (int j = 0; j != job_chunks[i]; ++j, ++k)
+        chunks_result[i] += world_f_out[k] * num_outputs_per_job_;
 
     // collect results on root
     boost::mpi::gatherv(world_, local_output.data(), chunks_result[rank_],
@@ -359,18 +396,34 @@ class mpi_parallel_call {
       return result_t();
 
     // in case something went wrong we throw on the root
-    if (cluster_status != static_cast<int>(world_size_))
+    if (!all_ok)
       throw std::domain_error("Error during MPI evaluation.");
 
     return combine_(world_result, world_f_out);
   }
 
  private:
+  /**
+   * Performs a cached scatter of a 2D array (nested std::vector). On the
+   * first call the data on the root is scattered to all workers and
+   * is stored in the cache locally. Each worker only recieves its
+   * respective chunk and marks the cache as valid such that
+   * any subsequent calls will immediatley return the cached
+   * chunk. Thus, after calling this function it is guranteed that
+   * on all workers a call to T_cache::data() will return the same
+   * chunk within each process of the cluster.
+   *
+   * @tparam T_cache static data storage type for the 2D array
+   * @param data 2D array to be scattered from the root and a dummy
+   * argument on workers
+   * @return 2D array chunk of the worker
+   */
   template <typename T_cache>
-  void scatter_array_2d_cached(typename T_cache::cache_t& data) {
+  typename T_cache::cache_t& scatter_array_2d_cached(
+      typename T_cache::cache_t& data) {
     // distribute data only if not in cache yet
     if (T_cache::is_valid()) {
-      return;
+      return T_cache::data();
     }
 
     // number of elements of each data item must be transferred to
@@ -401,33 +454,60 @@ class mpi_parallel_call {
 
     // finally we cache it locally
     T_cache::store(local_data);
+    return T_cache::data();
   }
 
+  /**
+   * Performs a cached broadcast of a 1D array (std::vector). On the
+   * first call the data on the root is broadcasted to all workers and
+   * is stored in the cache locally. This marks the cache as valid and
+   * any subsequent calls will immediatley return the cached
+   * results. Thus, after calling this function it is guranteed that
+   * on all workers a call to T_cache::data() will return the same
+   * vector within each process of the cluster.
+   *
+   * @tparam T_cache static data storage type for the 1D array
+   * @param data vector to be broadcasted from the root and a dummy
+   * argument on workers
+   * @return broadcasted vector originating from the root
+   */
   template <typename T_cache>
-  void broadcast_1d_cached(typename T_cache::cache_t& data) {
+  typename T_cache::cache_t& broadcast_array_1d_cached(
+      typename T_cache::cache_t& data) {
     if (T_cache::is_valid()) {
-      return;
+      return T_cache::data();
     }
 
     std::size_t data_size = data.size();
     boost::mpi::broadcast(world_, data_size, 0);
 
-    typename std::remove_cv<typename T_cache::cache_t>::type local_data = data;
+    std::vector<typename T_cache::cache_t::value_type> local_data = data;
     local_data.resize(data_size);
 
     boost::mpi::broadcast(world_, local_data.data(), data_size, 0);
     T_cache::store(local_data);
+    return T_cache::data();
   }
 
+  /**
+   * Broadcasts an Eigen vector to the cluster. Meta
+   * information as the data shape is treated as static data and only
+   * transferred on the first call and read from cache
+   * subsequently. This static shape data is stored with the
+   * meta_cache_id label.
+   *
+   * @tparam meta_cache_id item label for static shape data
+   * @param data vector to be broadcasted from the root and a dummy
+   * argument on workers
+   * @return broadcasted vector originating from the root
+   */
   template <int meta_cache_id>
   vector_d broadcast_vector(const vector_d& data) {
     typedef internal::mpi_parallel_call_cache<call_id, meta_cache_id,
                                               std::vector<size_type>>
         meta_cache;
-    std::vector<size_type> meta_info = {data.size()};
-    broadcast_1d_cached<meta_cache>(meta_info);
-
-    const std::vector<size_type>& data_size = meta_cache::data();
+    const std::vector<size_type>& data_size
+        = broadcast_array_1d_cached<meta_cache>({data.size()});
 
     vector_d local_data = data;
     local_data.resize(data_size[0]);
@@ -437,19 +517,25 @@ class mpi_parallel_call {
     return local_data;
   }
 
-  // scatters an Eigen matrix column wise over the cluster. Meta
-  // information as the data size is treated as static data and
-  // only transferred on the first call and read from cache
-  // subsequently.
+  /**
+   * Scatters an Eigen matrix column wise over the cluster. Meta
+   * information as the data shape is treated as static data and only
+   * transferred on the first call and read from cache
+   * subsequently. This static shape data is stored with the
+   * meta_cache_id label.
+   *
+   * @tparam meta_cache_id item label for static shape data
+   * @param data matrix to be scattered column-wise and a dummy
+   * argument on workers.
+   * @return matrix chunk for a given worker.
+   */
   template <int meta_cache_id>
   matrix_d scatter_matrix(const matrix_d& data) {
     typedef internal::mpi_parallel_call_cache<call_id, meta_cache_id,
                                               std::vector<size_type>>
         meta_cache;
-    std::vector<size_type> meta_info = {data.rows(), data.cols()};
-    broadcast_1d_cached<meta_cache>(meta_info);
-
-    const std::vector<size_type>& dims = meta_cache::data();
+    const std::vector<size_type>& dims
+        = broadcast_array_1d_cached<meta_cache>({data.rows(), data.cols()});
     const size_type rows = dims[0];
     const size_type total_cols = dims[1];
 
@@ -466,7 +552,7 @@ class mpi_parallel_call {
                   const std::vector<std::vector<double>>& x_r,
                   const std::vector<std::vector<int>>& x_i) {
     std::vector<int> job_chunks = mpi_map_chunks(job_params.cols(), 1);
-    broadcast_1d_cached<cache_chunks>(job_chunks);
+    broadcast_array_1d_cached<cache_chunks>(job_chunks);
 
     local_shared_params_dbl_ = broadcast_vector<-1>(shared_params);
     local_job_params_dbl_ = scatter_matrix<-2>(job_params);

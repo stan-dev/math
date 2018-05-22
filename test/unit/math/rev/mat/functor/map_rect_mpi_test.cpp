@@ -100,10 +100,10 @@ MPI_TEST_F(MpiJob, hard_work_vv) {
       z_var2.insert(z_var2.end(), job_params_v2_vec[i].begin(),
                     job_params_v2_vec[i].end());
 
+      stan::math::set_zero_all_adjoints();
+
       result_mpi(ij).grad(z_var1, z_grad1);
       result_concurrent(ij).grad(z_var2, z_grad2);
-
-      stan::math::set_zero_all_adjoints();
 
       for (std::size_t k = 0; k < z_grad1.size(); ++k) {
         EXPECT_DOUBLE_EQ(z_grad1[k], z_grad2[k]);
