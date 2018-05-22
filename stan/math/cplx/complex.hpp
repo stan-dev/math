@@ -238,7 +238,6 @@ inline auto operator/(U const& u, std::complex<T> const& t) {
 namespace Eigen {
 
 /// Eigen scalar op traits specialization for complex variables.
-<<<<<<< HEAD
 template <class T1, class T2, template <class, class> class OP,
          class CompatibilityT1>
 struct ScalarBinaryOpTraits<
