@@ -239,20 +239,23 @@ namespace Eigen {
 
 /// Eigen scalar op traits specialization for complex variables.
 template <class T1, class T2, template <class, class> class OP>
-struct ScalarBinaryOpTraits<T1,
- std::enable_if_t<
-  stan::math::internal::is_cplx_or_arith_v<T1> &&  // !is_eigen
-                                                   // !VectorBlock
-  stan::math::internal::is_cplx_or_arith_v<T2> &&  // !is_eigen
-                                                   // !VectorBlock
-  !std::is_same<T1, T2>::value &&           // avoid Eigen's template
-  ((stan::math::internal::is_cplx_v<T1> &&  // next boolean avoids
-                                            // Eigen
-     !std::is_same<stan::math::internal::rm_cplx_t<T1>, T2>::value)
-    ||(stan::math::internal::is_cplx_v<T2> &&  // next boolean avoids
-                                               // Eigen
-     !std::is_same<T1, stan::math::internal::rm_cplx_t<T2>>::value)),
-  T2>, OP<T1, T2>> {
+struct ScalarBinaryOpTraits<
+    T1,
+    std::enable_if_t<
+        stan::math::internal::is_cplx_or_arith_v<T1> &&      // !is_eigen
+                                                             // !VectorBlock
+            stan::math::internal::is_cplx_or_arith_v<T2> &&  // !is_eigen
+                                                             // !VectorBlock
+            !std::is_same<T1, T2>::value &&           // avoid Eigen's template
+            ((stan::math::internal::is_cplx_v<T1> &&  // next boolean avoids
+                                                      // Eigen
+              !std::is_same<stan::math::internal::rm_cplx_t<T1>, T2>::value)
+             || (stan::math::internal::is_cplx_v<T2> &&  // next boolean avoids
+                                                         // Eigen
+                 !std::is_same<T1,
+                               stan::math::internal::rm_cplx_t<T2>>::value)),
+        T2>,
+    OP<T1, T2>> {
   typedef std::complex<stan::math::internal::to_arith_t<
       typename boost::math::tools::promote_args<
           stan::math::internal::rm_cplx_t<std::decay_t<T1>>,
