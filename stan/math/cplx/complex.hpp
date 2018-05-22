@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_CPLX_COMPLEX_HPP
 #define STAN_MATH_CPLX_COMPLEX_HPP
 
+#include <Eigen/Dense>
 #include <boost/math/tools/promotion.hpp>
-
 #include <complex>
 #include <type_traits>
 
@@ -238,13 +238,12 @@ inline auto operator/(U const& u, std::complex<T> const& t) {
 namespace Eigen {
 
 /// Eigen scalar op traits specialization for complex variables.
-template <class T1, class T2, template <class, class> class OP,
-          class CompatibilityT1>
+template <class T1, class T2, template <class, class> class OP>
 struct ScalarBinaryOpTraits<
     T1,
     std::enable_if_t<
-        std::is_same<T1, CompatibilityT1>::value
-            && stan::math::internal::is_cplx_or_arith_v<T1> &&  // !is_eigen
+        
+            stan::math::internal::is_cplx_or_arith_v<T1> &&  // !is_eigen
                                                                 // !VectorBlock
             stan::math::internal::is_cplx_or_arith_v<T2> &&     // !is_eigen
                                                                 // !VectorBlock
