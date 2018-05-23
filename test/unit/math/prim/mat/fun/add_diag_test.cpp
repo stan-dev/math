@@ -1,10 +1,8 @@
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat.hpp>
 #include <limits>
+#include <stan/math/prim/mat.hpp>
 #include <string>
 #include <vector>
-
-
 
 template <typename T_m, typename T_a>
 std::string pull_msg(Eigen::Matrix<T_m, -1, -1> &mat, T_a to_add) {
@@ -19,28 +17,28 @@ std::string pull_msg(Eigen::Matrix<T_m, -1, -1> &mat, T_a to_add) {
   return message;
 }
 
-TEST(MathPrimMat, double_mat_double_add_diag){
+TEST(MathPrimMat, double_mat_double_add_diag) {
   // Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> mat(2, 3);
   // mat << 1, 1, 1, 1, 1, 1;
-  
+
   // double jitter = 1e-10;
 
   // Eigen::MatrixXd out_mat;
   // EXPECT_NO_THROW(out_mat = stan::math::add_diag(mat, jitter));
   // for (int i = 0; i < 2; ++i)
   //   EXPECT_FLOAT_EQ(1.0 + jitter, out_mat(i, i))
-  //     << "index: ( " << i << ", " << i << ")";    
+  //     << "index: ( " << i << ", " << i << ")";
 }
 
-TEST(MathPrimMat, var_mat_double_add_diag){
+TEST(MathPrimMat, var_mat_double_add_diag) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> mat(2, 3);
   mat << 1, 1, 1, 1, 1, 1;
-  
+
   double jitter = 1e-10;
 
   Eigen::MatrixXd out_mat;
   EXPECT_NO_THROW(out_mat = stan::math::add_diag(mat, jitter));
   // for (int i = 0; i < 2; ++i)
   //   EXPECT_FLOAT_EQ(1.0 + jitter, out_mat(i, i))
-  //     << "index: ( " << i << ", " << i << ")";    
+  //     << "index: ( " << i << ", " << i << ")";
 }

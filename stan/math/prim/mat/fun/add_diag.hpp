@@ -15,7 +15,7 @@ inline typename Eigen::Matrix<typename return_type<T_m, T_a>::type, -1, -1>
 add_diag(const Eigen::Matrix<T_m, -1, -1> &mat, const T_a &to_add) {
   // check matrix non-empty
   // check nrow, ncol >= 1
-  // check to_add not nan, not inf, 
+  // check to_add not nan, not inf,
 
   size_t length_diag;
   length_diag = fmin(mat.rows(), mat.cols()); // or use Eigen's function?
@@ -25,17 +25,16 @@ add_diag(const Eigen::Matrix<T_m, -1, -1> &mat, const T_a &to_add) {
   //  Eigen::Matrix<typename return_type<T_m, T_a>::type, 1, -1> temp_vec;
 
   // Eigen::Matrix<T_m, 1, -1> temp_vec;
-  // temp_vec = mat.diagonal(); //  so we need not call .diagonal() more than once
-  
+  // temp_vec = mat.diagonal(); //  so we need not call .diagonal() more than
+  // once
+
   // for (size_t i = 0; i < length_diag; ++i)
   //   out(i, i) = temp_vec[i] + to_add;
-    //    temp_vec[i] += to_add;
+  //    temp_vec[i] += to_add;
   //  return out;
   return mat;
 }
-
 }
 }
-
 
 #endif
