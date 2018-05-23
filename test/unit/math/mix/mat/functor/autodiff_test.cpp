@@ -294,34 +294,13 @@ TEST(AgradAutoDiff, GradientHessian) {
           cScal, cT, Eigen::internal::scalar_product_op<cScal, cT>>>::value);
 }  // end scope of using declarations for static_assert checks
 
-// helper functions for variable conversion to double
-double val_help(stan::math::var const v) { return v.val(); }
-template <class T>
-T val_help(stan::math::fvar<T> const& f) {
-  return f.val();
-}
-
-template <class S, class V>
-S val(V const& v) {
-  if constexpr (std::is_same_v<S, V>)
-    return v;
-  return val<S>(val_help(v));
-}
-
-template <class S, class V>
-std::complex<S> val(std::complex<V> const& v) {
-  if constexpr (std::is_same_v<S, V>)
-    return v;
-  return std::complex<S>(val<S>(v.real()), val<S>(v.imag()));
-}
-
 TEST(AgradAutoDiff, ComplexEigenvalueOfRotationGradientHessian) {
   auto tol([](auto d) {
     return pow(2., -53. / 2.) * (fabs(d) + 1.0);
   });  // tolerance
   auto equal(
       [tol](auto l, auto r) { return fabs(l - r) < tol(l); });  // equality
-  auto dbl([&](auto e) { return val<double>(e); });
+  auto dbl([&](auto e) { return stan::math::internal::rval<double>(e); });
 
   // return an eigenvalue of rotation by angle alpha
   auto rotation_eigenvalue([equal, dbl](auto alpha) {

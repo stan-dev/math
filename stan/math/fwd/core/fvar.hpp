@@ -323,6 +323,12 @@ struct to_arith_helper<z_fvar<T>> {
   typedef fvar<to_arith_t<T>> type;
 };
 
+/// helper functions to avoid forward declarations in other headers
+template <class T>
+T rval_help(stan::math::fvar<T> const& f) {
+  return f.val();
+}
+
 }  // namespace internal
 
 }  // namespace math
