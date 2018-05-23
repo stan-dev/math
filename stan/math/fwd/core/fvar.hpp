@@ -5,8 +5,8 @@
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/fwd/scal/meta/ad_promotable.hpp>
 #include <stan/math/cplx/complex.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <ostream>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -101,9 +101,9 @@ struct fvar {
    * @param[in] dummy value given by default with enable-if
    *   metaprogramming
    */
-  template <typename V>
-  fvar(const V& v,
-       typename boost::enable_if_c<ad_promotable<V, T>::value>::type* dummy = 0)
+  template <typename V,
+   typename std::enable_if_t<ad_promotable<V, T>::value>* = 0>
+  fvar(const V& v)
       : val_(v), d_(0.0) {
     if (unlikely(is_nan(v)))
       d_ = v;

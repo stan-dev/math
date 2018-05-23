@@ -26,7 +26,7 @@ struct is_cplx_helper<complex<T>> : std::true_type {};
 template <class T>
 struct is_cplx : is_cplx_helper<std::decay_t<T>> {};
 template <class T>
-constexpr bool is_cplx_v = is_cplx<T>::value;
+bool const is_cplx_v = is_cplx<T>::value;
 
 /// trait check for forward or reverse variable (helper must be specialized)
 template <class>
@@ -34,7 +34,7 @@ struct is_fr_var_helper : std::false_type {};
 template <class T>
 struct is_fr_var : is_fr_var_helper<std::decay_t<T>> {};
 template <class T>
-constexpr bool is_fr_var_v = is_fr_var<T>::value;
+bool const is_fr_var_v = is_fr_var<T>::value;
 
 /// trait check if any parameter is_fr_var
 template <class, class, class = void>
@@ -43,7 +43,7 @@ template <class T, class U>
 struct any_fr_var<T, U, std::enable_if_t<is_fr_var_v<T> || is_fr_var_v<U>>>
     : std::true_type {};
 template <class T, class U>
-constexpr bool any_fr_var_v = any_fr_var<T, U>::value;
+bool const any_fr_var_v = any_fr_var<T, U>::value;
 
 /// trait check for arithmetic types
 template <class T>
@@ -52,14 +52,14 @@ struct is_arith
           bool, is_fr_var_v<T> || std::is_arithmetic<std::decay_t<T>>::value> {
 };
 template <class T>
-constexpr bool is_arith_v = is_arith<T>::value;
+bool const is_arith_v = is_arith<T>::value;
 
 /// trait to see if the template parameter is complex or arithmetic
 template <class T>
 struct is_cplx_or_arith
     : std::integral_constant<bool, is_cplx_v<T> || is_arith_v<T>> {};
 template <class T>
-constexpr bool is_cplx_or_arith_v = is_cplx_or_arith<T>::value;
+bool const is_cplx_or_arith_v = is_cplx_or_arith<T>::value;
 
 /// trait to remove the complex wrapper around a type
 template <class T>
@@ -242,7 +242,6 @@ template <class T1, class T2, template <class, class> class OP>
 struct ScalarBinaryOpTraits<
     T1,
     std::enable_if_t<
-
         stan::math::internal::is_cplx_or_arith_v<T1> &&      // !is_eigen
                                                              // !VectorBlock
             stan::math::internal::is_cplx_or_arith_v<T2> &&  // !is_eigen
