@@ -53,6 +53,7 @@
 #include <stan/math/prim/mat/fun/acos.hpp>
 #include <stan/math/prim/mat/fun/acosh.hpp>
 #include <stan/math/prim/mat/fun/add.hpp>
+#include <stan/math/prim/mat/fun/add_diag.hpp>
 #include <stan/math/prim/mat/fun/append_array.hpp>
 #include <stan/math/prim/mat/fun/append_col.hpp>
 #include <stan/math/prim/mat/fun/append_row.hpp>
