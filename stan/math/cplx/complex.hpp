@@ -131,6 +131,23 @@ auto cplx_promote(std::complex<T> const& t) {
   return std::complex<AP>(t.real(), t.imag());
 }
 
+// recursive helper functions for variable conversion for boolean functions
+template <class T, std::enable_if_t<
+ std::is_arithmetic<T>::value>* = nullptr>
+double rval_help(T const& t) { return t; }
+
+template <class S, class V>
+S rval(V const& v) {
+  if (std::is_same<S, V>::value) return v;
+  return rval<S>(rval_help(v));
+}
+
+template <class S, class V>
+std::complex<S> rval(std::complex<V> const& v) {
+  if (std::is_same<S, V>::value) return v;
+  return std::complex<S>(rval<S>(v.real()), rval<S>(v.imag()));
+}
+
 }  // namespace internal
 }  // namespace math
 }  // namespace stan
@@ -231,6 +248,66 @@ inline auto operator/(U const& u, std::complex<T> const& t) {
   auto r(stan::math::internal::cplx_promote<T, U>(t));
   r /= u;
   return decltype(r)(1.0) / r;
+}
+
+template <class T, class U, std::enable_if_t<
+ !std::is_same<T, U>::value &&  // avoid base function
+ stan::math::internal::any_fr_var_v<T, U> &&
+ stan::math::internal::is_arith_v<T> &&  // symmetric
+ stan::math::internal::is_arith_v<U>>* = nullptr>
+inline bool
+operator==(std::complex<T>const&t, std::complex<U>const&u) {
+  return t.real() == u.real() && t.imag() == u.imag();
+}
+
+template <class T, class U,
+          std::enable_if_t<
+              stan::math::internal::any_fr_var_v<
+                  T, U> && stan::math::internal::is_arith_v<U>>* = nullptr>
+inline bool
+operator==(std::complex<T>const&t, U const&u) {
+  return stan::math::internal::rval<double>(t) ==
+   stan::math::internal::rval<double>(u);  // avoid promotions
+}
+
+template <class T, class U,
+          std::enable_if_t<
+              stan::math::internal::any_fr_var_v<
+                  T, U> && stan::math::internal::is_arith_v<U>>* = nullptr>
+inline bool
+operator==(U const&u, std::complex<T>const&t) {
+  return stan::math::internal::rval<double>(t) ==
+   stan::math::internal::rval<double>(u);  // avoid promotions
+}
+
+template <class T, class U, std::enable_if_t<
+ !std::is_same<T, U>::value &&  // avoid base function
+ stan::math::internal::any_fr_var_v<T, U> &&
+ stan::math::internal::is_arith_v<T> &&  // symmetric
+ stan::math::internal::is_arith_v<U>>* = nullptr>
+inline bool
+operator!=(std::complex<T>const&t, std::complex<U>const&u) {
+  return t.real() != u.real() || t.imag() != u.imag();
+}
+
+template <class T, class U,
+          std::enable_if_t<
+              stan::math::internal::any_fr_var_v<
+                  T, U> && stan::math::internal::is_arith_v<U>>* = nullptr>
+inline bool
+operator!=(std::complex<T>const&t, U const&u) {
+  return stan::math::internal::rval<double>(t) !=
+   stan::math::internal::rval<double>(u);  // avoid promotions
+}
+
+template <class T, class U,
+          std::enable_if_t<
+              stan::math::internal::any_fr_var_v<
+                  T, U> && stan::math::internal::is_arith_v<U>>* = nullptr>
+inline bool
+operator!=(U const&u, std::complex<T>const&t) {
+  return stan::math::internal::rval<double>(t) !=
+   stan::math::internal::rval<double>(u);  // avoid promotions
 }
 
 }  // namespace std
