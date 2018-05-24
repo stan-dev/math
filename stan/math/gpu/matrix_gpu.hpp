@@ -140,8 +140,7 @@ class matrix_gpu {
       try {
         // creates the OpenCL buffer to copy the Eigen
         // matrix to the OpenCL device
-        oclBuffer_
-            = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
+        oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
         /**
          * Writes the contents of A to the OpenCL buffer
          * starting at the offset 0.
