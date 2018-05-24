@@ -110,9 +110,9 @@ class opencl_context_base {
    * the name of the kernel group, and the OpenCL kernel sources.
    */
   inline void init_kernel_groups() {
-    const char* copy_matrix_kernel = 
-     #include <stan/math/gpu/kernels/basic_matrix_kernels.cl>
-     ;
+    const char* copy_matrix_kernel =
+#include <stan/math/gpu/kernels/basic_matrix_kernels.cl>
+        ;
     kernel_info["dummy"] = {
         false, "timing", "__kernel void dummy(__global const int* foo) { };"};
     kernel_info["dummy2"] = {
