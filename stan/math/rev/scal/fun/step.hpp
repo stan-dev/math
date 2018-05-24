@@ -22,9 +22,7 @@ namespace math {
  * @return The constant variable with value 1.0 if the argument's
  * value is greater than or equal to 0.0, and value 0.0 otherwise.
  */
-inline var step(const var& a) {
-  return var(new vari(a.vi_->val_ < 0.0 ? 0.0 : 1.0));
-}
+inline var step(const var& a) { return var(new vari(a.vi_->val_ > 0.0)); }
 
 }  // namespace math
 }  // namespace stan

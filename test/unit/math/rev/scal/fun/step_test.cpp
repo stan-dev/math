@@ -18,7 +18,7 @@ TEST(AgradRev, step) {
 TEST(AgradRev, step_2) {
   AVAR a = 0.0;
   AVAR f = stan::math::step(a);
-  EXPECT_FLOAT_EQ(1.0, f.val());
+  EXPECT_FLOAT_EQ(0.0, f.val());
 
   AVEC x = createAVEC(a);
   VEC grad_f;
@@ -39,7 +39,7 @@ TEST(AgradRev, step_3) {
 TEST(AgradRev, step_nan) {
   stan::math::var nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_EQ(1U, stan::math::step(nan).val());
+  EXPECT_EQ(0.0, stan::math::step(nan).val());
 }
 
 TEST(AgradRev, check_varis_on_stack) {
