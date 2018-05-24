@@ -655,7 +655,7 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_matern32_cov2) {
                                                                   x2_rvec[j])))
               * std::exp(-1.0 * (pow(3.0, 0.5) / l)
                       * stan::math::sqrt(stan::math::squared_distance(x1_vec[i],
-                                                                      x2_rvec[j]))),
+                                                                  x2_rvec[j]))),
           cov2(i, j))
           << "index: (" << i << ", " << j << ")";
     }

@@ -58,7 +58,7 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
   T_l root_3_inv_l = sqrt(3.0) / length_scale;
   T_l neg_root_3_inv_l = -1.0 * sqrt(3.0) / length_scale;
   typename return_type<T_x>::type distance;
-  
+
   for (size_t i = 0; i < x_size; ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
@@ -120,7 +120,7 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
   T_l neg_root_3 = -1.0 * sqrt(3.0);
   T_l temp;
   typename return_type<T_x>::type sq_distance;
-  
+
   for (size_t i = 0; i < x_size; ++i) {
     for (size_t j = i; j < x_size; ++j) {
       temp = 0;
@@ -186,7 +186,7 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   T_l root_3_inv_l_sq = sqrt(3.0) / length_scale;
   T_l neg_root_3_inv_l_sq = -1.0 * sqrt(3.0) / length_scale;
   typename return_type<T_x1, T_x2>::type distance;
-  
+
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
       distance = sqrt(squared_distance(x1[i], x2[j]));
@@ -254,7 +254,7 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   T_l neg_root_3 = -1.0 * sqrt(3.0);
   T_l temp;
   typename return_type<T_x1, T_x2>::type sq_distance;
-  
+
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
       temp = 0;
