@@ -102,9 +102,8 @@ struct fvar {
    *   metaprogramming
    */
   template <typename V>
-  fvar(const V& v,
-   typename std::enable_if_t<ad_promotable<V, T>::value>* = 0)
-   : val_(v), d_(0.0) {
+  fvar(const V& v, typename std::enable_if_t<ad_promotable<V, T>::value>* = 0)
+      : val_(v), d_(0.0) {
     if (unlikely(is_nan(v)))
       d_ = v;
   }
