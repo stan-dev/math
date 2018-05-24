@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat.hpp>
 #include <limits>
+#include <stan/math/prim/mat.hpp>
 #include <string>
 #include <vector>
 
@@ -27,7 +27,7 @@ TEST(MathPrimMat, double_mat_double_add_diag) {
   EXPECT_NO_THROW(out_mat = stan::math::add_diag(mat, jitter));
   for (int i = 0; i < 2; ++i)
     EXPECT_FLOAT_EQ(1.0 + jitter, out_mat(i, i))
-      << "index: ( " << i << ", " << i << ")";
+        << "index: ( " << i << ", " << i << ")";
 }
 
 TEST(MathPrimMat, var_mat_double_add_diag) {
@@ -40,7 +40,7 @@ TEST(MathPrimMat, var_mat_double_add_diag) {
   EXPECT_NO_THROW(out_mat = stan::math::add_diag(mat, jitter));
   for (int i = 0; i < 2; ++i)
     EXPECT_FLOAT_EQ(1.0 + jitter, value_of(out_mat(i, i)))
-      << "index: ( " << i << ", " << i << ")";
+        << "index: ( " << i << ", " << i << ")";
 }
 
 TEST(MathPrimMat, double_mat_var_add_diag) {
@@ -53,7 +53,7 @@ TEST(MathPrimMat, double_mat_var_add_diag) {
   EXPECT_NO_THROW(out_mat = stan::math::add_diag(mat, jitter));
   for (int i = 0; i < 2; ++i)
     EXPECT_FLOAT_EQ(1.0 + value_of(jitter), value_of(out_mat(i, i)))
-      << "index: ( " << i << ", " << i << ")";
+        << "index: ( " << i << ", " << i << ")";
 }
 
 TEST(MathPrimMat, var_mat_var_add_diag) {
@@ -66,7 +66,7 @@ TEST(MathPrimMat, var_mat_var_add_diag) {
   EXPECT_NO_THROW(out_mat = stan::math::add_diag(mat, jitter));
   for (int i = 0; i < 2; ++i)
     EXPECT_FLOAT_EQ(1.0 + value_of(jitter), value_of(out_mat(i, i)))
-      << "index: ( " << i << ", " << i << ")";
+        << "index: ( " << i << ", " << i << ")";
 }
 
 //  add vector to diag
@@ -82,7 +82,7 @@ TEST(MathPrimMat, double_mat_double_vec_add_diag) {
   EXPECT_NO_THROW(out_mat = stan::math::add_diag(mat, to_add));
   for (int i = 0; i < 2; ++i)
     EXPECT_FLOAT_EQ(1 + to_add[i], out_mat(i, i))
-      << "index: ( " << i << ", " << i << ")";
+        << "index: ( " << i << ", " << i << ")";
 }
 
 TEST(MathPrimMat, double_mat_double_rvec_add_diag) {
@@ -96,7 +96,7 @@ TEST(MathPrimMat, double_mat_double_rvec_add_diag) {
   EXPECT_NO_THROW(out_mat = stan::math::add_diag(mat, to_add));
   for (int i = 0; i < 2; ++i)
     EXPECT_FLOAT_EQ(1 + to_add[i], out_mat(i, i))
-      << "index: ( " << i << ", " << i << ")";
+        << "index: ( " << i << ", " << i << ")";
 }
 
 TEST(MathPrimMat, var_mat_double_vec_add_diag) {
@@ -110,7 +110,7 @@ TEST(MathPrimMat, var_mat_double_vec_add_diag) {
   EXPECT_NO_THROW(out_mat = stan::math::add_diag(mat, to_add));
   for (int i = 0; i < 2; ++i)
     EXPECT_FLOAT_EQ(1 + to_add[i], value_of(out_mat(i, i)))
-      << "index: ( " << i << ", " << i << ")";
+        << "index: ( " << i << ", " << i << ")";
 }
 
 TEST(MathPrimMat, var_mat_double_rvec_add_diag) {
@@ -124,7 +124,7 @@ TEST(MathPrimMat, var_mat_double_rvec_add_diag) {
   EXPECT_NO_THROW(out_mat = stan::math::add_diag(mat, to_add));
   for (int i = 0; i < 2; ++i)
     EXPECT_FLOAT_EQ(1 + to_add[i], value_of(out_mat(i, i)))
-      << "index: ( " << i << ", " << i << ")";
+        << "index: ( " << i << ", " << i << ")";
 }
 
 TEST(MathPrimMat, double_mat_var_vec_add_diag) {
@@ -138,7 +138,7 @@ TEST(MathPrimMat, double_mat_var_vec_add_diag) {
   EXPECT_NO_THROW(out_mat = stan::math::add_diag(mat, to_add));
   for (int i = 0; i < 2; ++i)
     EXPECT_FLOAT_EQ(1 + value_of(to_add[i]), value_of(out_mat(i, i)))
-      << "index: ( " << i << ", " << i << ")";
+        << "index: ( " << i << ", " << i << ")";
 }
 
 TEST(MathPrimMat, double_mat_var_rvec_add_diag) {
@@ -152,5 +152,5 @@ TEST(MathPrimMat, double_mat_var_rvec_add_diag) {
   EXPECT_NO_THROW(out_mat = stan::math::add_diag(mat, to_add));
   for (int i = 0; i < 2; ++i)
     EXPECT_FLOAT_EQ(1 + value_of(to_add[i]), value_of(out_mat(i, i)))
-      << "index: ( " << i << ", " << i << ")";
+        << "index: ( " << i << ", " << i << ")";
 }
