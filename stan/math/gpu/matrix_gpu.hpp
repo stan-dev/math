@@ -27,7 +27,8 @@ namespace math {
  */
 class matrix_gpu {
  private:
-  /** cl::Buffer provides functionality for working with OpenCL buffer.
+  /**
+   * cl::Buffer provides functionality for working with OpenCL buffer.
    * An OpenCL buffer allocates the memory in the device that
    * is provided by the context.
    */
@@ -48,11 +49,8 @@ class matrix_gpu {
 
   matrix_gpu(const matrix_gpu& a) : rows_(a.rows()), cols_(a.cols()) {
     // this check is needed because creating OpenCL
-    // buffers of size throws an OpenCL exception
+    // buffers of size 0 throws an OpenCL exception
     if (a.size() > 0) {
-      // retrieves the kernel that copies memory from the
-      // input matrix a
-      cl::Kernel kernel = opencl_context.get_kernel("copy");
       // the queue is needed to enqueue the kernel for execution
       cl::CommandQueue& cmdQueue = opencl_context.queue();
       // the context is needed to create the buffer object
@@ -62,16 +60,21 @@ class matrix_gpu {
         // in the provided context
         oclBuffer_
             = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size());
-        /** Sets the arguments for the kernel. See copy_matrix_kernel in
+        /**
+         * Sets the arguments for the kernel. See copy_matrix_kernel in
          * kernels/basic_matrix_gpu_kernels.hpp for the kernel code.
          * The arguments are the source & destination matrices
          * and the size in rows and columns.
          */
+        // retrieves the kernel that copies memory from the
+        // input matrix a
+        cl::Kernel kernel = opencl_context.get_kernel("copy");
         kernel.setArg(0, a.buffer());
         kernel.setArg(1, buffer());
         kernel.setArg(2, rows());
         kernel.setArg(3, cols());
-        /** Runs the specified kernel with provided number of threads.
+        /**
+         * Runs the specified kernel with provided number of threads.
          * - the first argument is the kernel object
          * - the second argument is the thread offset that is used for
          *   calculating the global thread ID, NULL here, meaning the
@@ -138,8 +141,9 @@ class matrix_gpu {
         // creates the OpenCL buffer to copy the Eigen
         // matrix to the OpenCL device
         oclBuffer_
-            = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
-        /** Writes the contents of A to the OpenCL buffer
+            = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
+        /**
+         * Writes the contents of A to the OpenCL buffer
          * starting at the offset 0.
          * CL_TRUE denotes that the call is blocking as
          * we do not want to execute any further kernels
@@ -186,7 +190,8 @@ void copy(const Eigen::Matrix<T, R, C>& src, matrix_gpu& dst) {
   if (src.size() > 0) {
     cl::CommandQueue queue = opencl_context.queue();
     try {
-      /** writes the contents of src to the OpenCL buffer
+      /**
+       * Writes the contents of src to the OpenCL buffer
        * starting at the offset 0
        * CL_TRUE denotes that the call is blocking
        * We do not want to execute any further kernels
@@ -222,7 +227,8 @@ void copy(matrix_gpu& src, Eigen::Matrix<T, R, C>& dst) {
   if (src.size() > 0) {
     cl::CommandQueue queue = opencl_context.queue();
     try {
-      /** reads the contents of the OpenCL buffer
+      /**
+       * Reads the contents of the OpenCL buffer
        * starting at the offset 0 to the Eigen
        * matrix
        * CL_TRUE denotes that the call is blocking
@@ -249,14 +255,15 @@ void copy(matrix_gpu& src, Eigen::Matrix<T, R, C>& dst) {
  * matrices do not have matching dimensions
  *
  */
-inline void copy(matrix_gpu& src, matrix_gpu& dst) {  // NOLINT
+inline void copy(matrix_gpu& src, matrix_gpu& dst) {
   check_size_match("copy (GPU -> GPU)", "src.rows()", src.rows(), "dst.rows()",
                    dst.rows());
   check_size_match("copy (GPU -> GPU)", "src.cols()", src.cols(), "dst.cols()",
                    dst.cols());
   if (src.size() > 0) {
     try {
-      /** copies the contents of the src buffer to the dst buffer
+      /**
+       * Copies the contents of the src buffer to the dst buffer
        * see the matrix_gpu(matrix_gpu&) constructor
        *  for explanation
        */
