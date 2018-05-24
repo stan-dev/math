@@ -44,24 +44,6 @@ inline double gradient_of_f(const F& f, const double x,
 }
 
 /**
- * Calculate gradient of f(x, param, std::ostream&)
- * with respect to the nth parameter. Uses forward mode autodiff
- */
-template <typename F>
-inline double gradient_of_f_fwd(const F& f, const double x,
-                                const std::vector<double>& theta_vals,
-                                const std::vector<double>& x_r, const std::vector<int>& x_i,
-                                size_t n, std::ostream& msgs) {
-  std::vector< fvar<double> > theta_fvar(theta_vals.size());
-  for(size_t i = 0; i < theta_vals.size(); i++) {
-    theta_fvar[i].val_ = theta_vals[i];
-  }
-  theta_fvar[n].d_ = 1.0;
-
-  return f(x, theta_fvar, x_r, x_i, msgs).d_;
-}
-
-/**
  * Compute the integral of the single variable function f from a to b to within a
  * specified tolerance. a and b can be finite or infinite.
  *
