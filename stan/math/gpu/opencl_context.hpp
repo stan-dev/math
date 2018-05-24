@@ -104,26 +104,15 @@ class opencl_context_base {
     }
   }
 
-  // Helper func for reading in kernels
-  inline const char* read_kernel(const char* file_name) {
-    std::ifstream kernel_buff(file_name);
-    static std::string kernel;
-    kernel_buff.seekg(0, std::ios::end);
-    kernel.reserve(kernel_buff.tellg());
-    kernel_buff.seekg(0, std::ios::beg);
-    kernel.assign((std::istreambuf_iterator<char>(kernel_buff)),
-                  std::istreambuf_iterator<char>());
-    return kernel.c_str();
-  }
-
   /**
    * Initializes the <code> kernel_info </code> where each kernel is mapped to
    * a logical flag to mark if the kernel was already compiled,
    * the name of the kernel group, and the OpenCL kernel sources.
    */
   inline void init_kernel_groups() {
-    const char* copy_matrix_kernel
-        = read_kernel("stan/math/gpu/kernels/basic_matrix_kernels.cl");
+    const char* copy_matrix_kernel = 
+     #include <stan/math/gpu/kernels/basic_matrix_kernels.cl>
+     ;
     kernel_info["dummy"] = {
         false, "timing", "__kernel void dummy(__global const int* foo) { };"};
     kernel_info["dummy2"] = {
