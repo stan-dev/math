@@ -356,10 +356,9 @@ TEST(StanMathOde_integrate_ode_adams, error_conditions_bad_ode) {
   std::vector<int> x_int(2, 0);
 
   std::string error_msg
-      = "ode_system: size of state vector y (2) and derivative vector dy_dt "
-        "(3) "
-        "in the ODE functor do not match in size.";
+      = "cvodes_ode_data: dz_dt (3) and states (2) must match in size";
+
   EXPECT_THROW_MSG(integrate_ode_adams(harm_osc, y0, t0, ts, theta, x, x_int, 0,
                                        1e-8, 1e-10, 1e6),
-                   std::runtime_error, error_msg);
+                   std::invalid_argument, error_msg);
 }

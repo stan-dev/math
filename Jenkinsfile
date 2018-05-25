@@ -60,7 +60,7 @@ pipeline {
                 not { branch 'develop' }
                 not { branch 'master' }
             }
-            steps { 
+            steps {
                 script {
                     utils.killOldBuilds()
                 }
@@ -147,9 +147,31 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
+                stage('Unit with GPU') {
+                    agent { label "gelman-group-mac" }
+                    steps {
+                        unstash 'MathSetup'
+                        sh setupCC()
+                        sh "echo STAN_OPENCL=true>> make/local"
+                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
+                        sh "echo OPENCL_DEVICE_ID=0>> make/local"
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Unit with MPI') {
+                    agent any
+                    steps {
+                        unstash 'MathSetup'
+                        sh "echo CC=${MPICXX} -cxx=${CXX} >> make/local"
+                        sh "echo STAN_MPI=true >> make/local"
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
-                    steps { 
+                    steps {
                         unstash 'MathSetup'
                         sh """
                             ${setupCC(false)}
@@ -177,21 +199,39 @@ pipeline {
         }
         stage('Upstream tests') {
             parallel {
-                stage('CmdStan Upstream Tests') {
-                    when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
-                    steps {
-                        build(job: "CmdStan/${params.cmdstan_pr}",
-                                    parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
-                    }
-                }
                 stage('Stan Upstream Tests') {
                     when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
                     steps {
                         build(job: "Stan/${params.stan_pr}",
-                                    parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
+                              parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
+                                           string(name: 'cmdstan_pr', value: params.cmdstan_pr)])
                     }
                 }
             }
+        }
+        stage('Upload doxygen') {
+            agent any
+            when { branch 'master'}
+            steps {
+                retry(3) { checkout scm }
+                withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
+                                                  usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                    sh """#!/bin/bash
+                        set -x
+                        make doxygen
+                        git config --global user.email "mc.stanislaw@gmail.com"
+                        git config --global user.name "Stan Jenkins"
+                        git checkout --detach
+                        git branch -D gh-pages
+                        git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git :gh-pages
+                        git checkout --orphan gh-pages
+                        git add -f doc
+                        git commit -m "auto generated docs from Jenkins"
+                        git subtree push --prefix doc/api/html https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git gh-pages
+                        """
+                }
+            }
+            post { always { deleteDir() } }
         }
     }
     post {

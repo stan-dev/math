@@ -40,6 +40,6 @@ TEST_F(StanMathOdeCVode, recover_exception) {
 
   double t = 10;
 
-  EXPECT_THROW_MSG(ode_data_dd.ode_rhs(t, nv_y, nv_dy_dt, &ode_data_dd),
+  EXPECT_THROW_MSG(ode_data_dd.cv_rhs(t, nv_y, nv_dy_dt, &ode_data_dd),
                    std::logic_error, message);
 }
