@@ -3,8 +3,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/opencl_context.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/arr/fun/value_of.hpp>
-#include <stan/math/prim/mat/err/check_matching_dims.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <CL/cl.hpp>
 #include <iostream>
@@ -131,8 +129,8 @@ class matrix_gpu {
    * matrices do not have matching dimensions
    *
    */
-  template <typename T, int R, int C>
-  explicit matrix_gpu(const Eigen::Matrix<T, R, C>& A)
+  template <int R, int C>
+  explicit matrix_gpu(const Eigen::Matrix<double, R, C>& A)
       : rows_(A.rows()), cols_(A.cols()) {
     if (size() > 0) {
       cl::Context& ctx = opencl_context.context();
@@ -140,7 +138,8 @@ class matrix_gpu {
       try {
         // creates the OpenCL buffer to copy the Eigen
         // matrix to the OpenCL device
-        oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
+        oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE,
+           sizeof(double) * A.size());
         /**
          * Writes the contents of A to the OpenCL buffer
          * starting at the offset 0.
@@ -149,7 +148,8 @@ class matrix_gpu {
          * on the device until we are sure that the data
          * is finished transfering)
          */
-        queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0, sizeof(T) * A.size(),
+        queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0,
+           sizeof(double) * A.size(),
                                  A.data());
       } catch (const cl::Error& e) {
         check_opencl_error("matrix constructor", e);
@@ -167,120 +167,6 @@ class matrix_gpu {
   }
 };
 
-/**
- * Copies the source Eigen matrix to
- * the destination matrix that is stored
- * on the GPU.
- *
- * @tparam T type of data in the Eigen matrix
- * @param src source Eigen matrix
- * @param dst destination matrix on the GPU
- *
- * @throw <code>std::invalid_argument</code> if the
- * matrices do not have matching dimensions
- *
- */
-template <typename T, int R, int C>
-void copy(const Eigen::Matrix<T, R, C>& src, matrix_gpu& dst) {
-  check_size_match("copy (Eigen -> GPU)", "src.rows()", src.rows(),
-                   "dst.rows()", dst.rows());
-  check_size_match("copy (Eigen -> GPU)", "src.cols()", src.cols(),
-                   "dst.cols()", dst.cols());
-  if (src.size() > 0) {
-    cl::CommandQueue queue = opencl_context.queue();
-    try {
-      /**
-       * Writes the contents of src to the OpenCL buffer
-       * starting at the offset 0
-       * CL_TRUE denotes that the call is blocking
-       * We do not want to execute any further kernels
-       * on the device until we are sure that the data is transferred)
-       */
-      queue.enqueueWriteBuffer(dst.buffer(), CL_TRUE, 0, sizeof(T) * dst.size(),
-                               src.data());
-    } catch (const cl::Error& e) {
-      check_opencl_error("copy Eigen->GPU", e);
-    }
-  }
-}
-
-/**
- * Copies the source matrix that is stored
- * on the GPU to the destination Eigen
- * matrix.
- *
- * @tparam T type of data in the Eigen matrix
- * @param src source matrix on the GPU
- * @param dst destination Eigen matrix
- *
- * @throw <code>std::invalid_argument</code> if the
- * matrices do not have matching dimensions
- *
- */
-template <typename T, int R, int C>
-void copy(matrix_gpu& src, Eigen::Matrix<T, R, C>& dst) {
-  check_size_match("copy (GPU -> Eigen)", "src.rows()", src.rows(),
-                   "dst.rows()", dst.rows());
-  check_size_match("copy (GPU -> Eigen)", "src.cols()", src.cols(),
-                   "dst.cols()", dst.cols());
-  if (src.size() > 0) {
-    cl::CommandQueue queue = opencl_context.queue();
-    try {
-      /**
-       * Reads the contents of the OpenCL buffer
-       * starting at the offset 0 to the Eigen
-       * matrix
-       * CL_TRUE denotes that the call is blocking
-       * We do not want to execute any further kernels
-       * on the device until we are sure that the data is transferred)
-       */
-      queue.enqueueReadBuffer(src.buffer(), CL_TRUE, 0, sizeof(T) * dst.size(),
-                              dst.data());
-    } catch (const cl::Error& e) {
-      check_opencl_error("copy GPU->Eigen", e);
-    }
-  }
-}
-
-/**
- * Copies the source matrix to the
- * destination matrix. Both matrices
- * are stored on the GPU.
- *
- * @param src source matrix
- * @param dst destination matrix
- *
- * @throw <code>std::invalid_argument</code> if the
- * matrices do not have matching dimensions
- *
- */
-inline void copy(matrix_gpu& src, matrix_gpu& dst) {
-  check_size_match("copy (GPU -> GPU)", "src.rows()", src.rows(), "dst.rows()",
-                   dst.rows());
-  check_size_match("copy (GPU -> GPU)", "src.cols()", src.cols(), "dst.cols()",
-                   dst.cols());
-  if (src.size() > 0) {
-    try {
-      /**
-       * Copies the contents of the src buffer to the dst buffer
-       * see the matrix_gpu(matrix_gpu&) constructor
-       *  for explanation
-       */
-      cl::CommandQueue& cmdQueue = opencl_context.queue();
-      cl::Kernel kernel = opencl_context.get_kernel("copy");
-      kernel.setArg(0, src.buffer());
-      kernel.setArg(1, dst.buffer());
-      kernel.setArg(2, dst.rows());
-      kernel.setArg(3, dst.cols());
-      cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
-                                    cl::NDRange(dst.rows(), dst.cols()),
-                                    cl::NullRange, NULL, NULL);
-    } catch (const cl::Error& e) {
-      std::cout << e.err() << std::endl;
-      check_opencl_error("copy GPU->GPU", e);
-    }
-  }
-}
 
 }  // namespace math
 }  // namespace stan
