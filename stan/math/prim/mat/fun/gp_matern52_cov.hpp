@@ -16,7 +16,7 @@
 namespace stan {
 namespace math {
 
-/** 
+/**
  * Returns a Matern 5/2 covariance matrix with one input vector
  *
  * \f[ k(x, x') = \sigma^2\bigg(1 +
@@ -70,9 +70,9 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
     for (size_t j = i + 1; j < x_size; ++j) {
       sq_distance = squared_distance(x[i], x[j]);
       distance = sqrt(sq_distance);
-      cov(i, j) = sigma_sq *
-                  (1.0 + root_5_inv_l * distance + inv_l_sq_5_3 * sq_distance) *
-                  exp(neg_root_5_inv_l * distance);
+      cov(i, j) = sigma_sq
+                  * (1.0 + root_5_inv_l * distance + inv_l_sq_5_3 * sq_distance)
+                  * exp(neg_root_5_inv_l * distance);
       cov(j, i) = cov(i, j);
     }
   }
@@ -141,10 +141,10 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
         temp += 1.0 / square(length_scale[k]);
       sq_distance = squared_distance(x[i], x[j]);
       root_temp_sq_distance = sqrt(sq_distance * temp);
-      cov(i, j) = sigma_sq *
-        (1.0 + root_5 * root_temp_sq_distance + five_thirds * sq_distance *
-         temp) *
-         exp(neg_root_5 * root_temp_sq_distance);
+      cov(i, j) = sigma_sq
+                  * (1.0 + root_5 * root_temp_sq_distance
+                     + five_thirds * sq_distance * temp)
+                  * exp(neg_root_5 * root_temp_sq_distance);
       cov(j, i) = cov(i, j);
     }
   }
@@ -174,9 +174,8 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
  *
  */
 template <typename T_x1, typename T_x2, typename T_s, typename T_l>
-inline typename Eigen::Matrix<
-    typename return_type<T_x1, T_x2, T_s, T_l>::type, Eigen::Dynamic,
-    Eigen::Dynamic>
+inline typename Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
+                              Eigen::Dynamic, Eigen::Dynamic>
 gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 const T_s &sigma, const T_l &length_scale) {
   using std::exp;
@@ -211,9 +210,9 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     for (size_t j = 0; j < x2_size; ++j) {
       sq_distance = squared_distance(x1[i], x2[j]);
       distance = sqrt(sq_distance);
-      cov(i, j) = sigma_sq *
-                  (1.0 + root_5_inv_l * distance + inv_l_sq_5_3 * sq_distance) *
-                  exp(neg_root_5_inv_l * distance);
+      cov(i, j) = sigma_sq
+                  * (1.0 + root_5_inv_l * distance + inv_l_sq_5_3 * sq_distance)
+                  * exp(neg_root_5_inv_l * distance);
     }
   }
   return cov;
@@ -287,10 +286,10 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
         temp += 1.0 / square(length_scale[k]);
       sq_distance = squared_distance(x1[i], x2[j]);
       root_temp_sq_distance = sqrt(sq_distance * temp);
-      cov(i, j) = sigma_sq *
-                  (1.0 + root_5 * root_temp_sq_distance + five_thirds *
-                   sq_distance * temp) *
-                  exp(neg_root_5 * root_temp_sq_distance);
+      cov(i, j) = sigma_sq
+                  * (1.0 + root_5 * root_temp_sq_distance
+                     + five_thirds * sq_distance * temp)
+                  * exp(neg_root_5 * root_temp_sq_distance);
     }
   }
   return cov;
