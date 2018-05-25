@@ -138,8 +138,8 @@ class matrix_gpu {
       try {
         // creates the OpenCL buffer to copy the Eigen
         // matrix to the OpenCL device
-        oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE,
-           sizeof(double) * A.size());
+        oclBuffer_
+            = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
         /**
          * Writes the contents of A to the OpenCL buffer
          * starting at the offset 0.
@@ -149,8 +149,7 @@ class matrix_gpu {
          * is finished transfering)
          */
         queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0,
-           sizeof(double) * A.size(),
-                                 A.data());
+                                 sizeof(double) * A.size(), A.data());
       } catch (const cl::Error& e) {
         check_opencl_error("matrix constructor", e);
       }
@@ -166,7 +165,6 @@ class matrix_gpu {
     return *this;
   }
 };
-
 
 }  // namespace math
 }  // namespace stan

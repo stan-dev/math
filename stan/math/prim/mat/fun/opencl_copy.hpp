@@ -44,8 +44,7 @@ void copy(const Eigen::Matrix<double, R, C>& src, matrix_gpu& dst) {
        * on the device until we are sure that the data is transferred)
        */
       queue.enqueueWriteBuffer(dst.buffer(), CL_TRUE, 0,
-       sizeof(double) * dst.size(),
-                               src.data());
+                               sizeof(double) * dst.size(), src.data());
     } catch (const cl::Error& e) {
       check_opencl_error("copy Eigen->GPU", e);
     }
@@ -83,7 +82,7 @@ void copy(matrix_gpu& src, Eigen::Matrix<double, R, C>& dst) {
        * on the device until we are sure that the data is transferred)
        */
       queue.enqueueReadBuffer(src.buffer(), CL_TRUE, 0,
-       sizeof(double) * dst.size(), dst.data());
+                              sizeof(double) * dst.size(), dst.data());
     } catch (const cl::Error& e) {
       check_opencl_error("copy GPU->Eigen", e);
     }
