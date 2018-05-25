@@ -25,41 +25,30 @@ template <class T>
 struct is_cplx_helper<complex<T>> : std::true_type {};
 template <class T>
 struct is_cplx : is_cplx_helper<std::decay_t<T>> {};
-template <class T>
-bool const is_cplx_v = is_cplx<T>::value;
 
 /// trait check for forward or reverse variable (helper must be specialized)
 template <class>
 struct is_fr_var_helper : std::false_type {};
 template <class T>
 struct is_fr_var : is_fr_var_helper<std::decay_t<T>> {};
-template <class T>
-bool const is_fr_var_v = is_fr_var<T>::value;
 
 /// trait check if any parameter is_fr_var
 template <class, class, class = void>
 struct any_fr_var : std::false_type {};
 template <class T, class U>
-struct any_fr_var<T, U, std::enable_if_t<is_fr_var_v<T> || is_fr_var_v<U>>>
-    : std::true_type {};
-template <class T, class U>
-bool const any_fr_var_v = any_fr_var<T, U>::value;
+struct any_fr_var<T, U, std::enable_if_t<is_fr_var<T>::value || 
+ is_fr_var<U>::value>> : std::true_type {};
 
 /// trait check for arithmetic types
 template <class T>
-struct is_arith
-    : std::integral_constant<
-          bool, is_fr_var_v<T> || std::is_arithmetic<std::decay_t<T>>::value> {
+struct is_arith : std::integral_constant<bool,
+ is_fr_var<T>::value || std::is_arithmetic<std::decay_t<T>>::value> {
 };
-template <class T>
-bool const is_arith_v = is_arith<T>::value;
 
 /// trait to see if the template parameter is complex or arithmetic
 template <class T>
-struct is_cplx_or_arith
-    : std::integral_constant<bool, is_cplx_v<T> || is_arith_v<T>> {};
-template <class T>
-bool const is_cplx_or_arith_v = is_cplx_or_arith<T>::value;
+struct is_cplx_or_arith : std::integral_constant<bool,
+ is_cplx<T>::value || is_arith<T>::value> {};
 
 /// trait to remove the complex wrapper around a type
 template <class T>
@@ -84,7 +73,7 @@ template <class T>
 struct to_arith_helper {  // helper must be specialized by zvars
   typedef T type;
 };
-template <class T, std::enable_if_t<is_arith_v<std::decay_t<T>>>* = nullptr>
+template <class T, std::enable_if_t<is_arith<std::decay_t<T>>::value>* = nullptr>
 struct to_arith {
   typedef typename to_arith_helper<std::decay_t<T>>::type type;
 };
@@ -94,7 +83,7 @@ using to_arith_t = typename to_arith<T>::type;
 /// trait to enforce std::complex<var> and related return types
 template <class T>
 struct to_cplx {
-  typedef std::enable_if_t<is_cplx_v<T>, std::complex<to_arith_t<rm_cplx_t<T>>>>
+  typedef std::enable_if_t<is_cplx<T>::value, std::complex<to_arith_t<rm_cplx_t<T>>>>
       type;
 };
 template <class T>
@@ -117,7 +106,7 @@ struct complex : std::complex<T> {
    * param[in] real, the pure real component of the complex number.
    * param[in] imag, the pure imaginary component of the complex number*/
   template <class R = T, class I = T,
-            std::enable_if_t<is_arith_v<R>>* = nullptr>
+            std::enable_if_t<is_arith<R>::value>* = nullptr>
   // NOLINTNEXTLINE
   complex(const R real = 0, const I imag = 0) : std::complex<T>(real, imag) {}
 };
@@ -175,8 +164,8 @@ namespace std {
 
 template <class T, class U,
           std::enable_if_t<
-              stan::math::internal::any_fr_var_v<
-                  T, U> && stan::math::internal::is_arith_v<U>>* = nullptr>
+              stan::math::internal::any_fr_var<
+                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline auto operator+(std::complex<T> const& t, U const& u) {
   auto r(stan::math::internal::cplx_promote<T, U>(t));
   r += u;
@@ -185,8 +174,8 @@ inline auto operator+(std::complex<T> const& t, U const& u) {
 
 template <class T, class U,
           std::enable_if_t<
-              stan::math::internal::any_fr_var_v<
-                  T, U> && stan::math::internal::is_arith_v<U>>* = nullptr>
+              stan::math::internal::any_fr_var<
+                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline auto operator+(U const& u, std::complex<T> const& t) {
   auto r(stan::math::internal::cplx_promote<T, U>(t));
   r += u;
@@ -195,8 +184,8 @@ inline auto operator+(U const& u, std::complex<T> const& t) {
 
 template <class T, class U,
           std::enable_if_t<
-              stan::math::internal::any_fr_var_v<
-                  T, U> && stan::math::internal::is_arith_v<U>>* = nullptr>
+              stan::math::internal::any_fr_var<
+                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline auto operator*(std::complex<T> const& t, U const& u) {
   auto r(stan::math::internal::cplx_promote<T, U>(t));
   r *= u;
@@ -205,8 +194,8 @@ inline auto operator*(std::complex<T> const& t, U const& u) {
 
 template <class T, class U,
           std::enable_if_t<
-              stan::math::internal::any_fr_var_v<
-                  T, U> && stan::math::internal::is_arith_v<U>>* = nullptr>
+              stan::math::internal::any_fr_var<
+                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline auto operator*(U const& u, std::complex<T> const& t) {
   auto r(stan::math::internal::cplx_promote<T, U>(t));
   r *= u;
@@ -215,8 +204,8 @@ inline auto operator*(U const& u, std::complex<T> const& t) {
 
 template <class T, class U,
           std::enable_if_t<
-              stan::math::internal::any_fr_var_v<
-                  T, U> && stan::math::internal::is_arith_v<U>>* = nullptr>
+              stan::math::internal::any_fr_var<
+                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline auto operator-(std::complex<T> const& t, U const& u) {
   auto r(stan::math::internal::cplx_promote<T, U>(t));
   r -= u;
@@ -225,8 +214,8 @@ inline auto operator-(std::complex<T> const& t, U const& u) {
 
 template <class T, class U,
           std::enable_if_t<
-              stan::math::internal::any_fr_var_v<
-                  T, U> && stan::math::internal::is_arith_v<U>>* = nullptr>
+              stan::math::internal::any_fr_var<
+                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline auto operator-(U const& u, std::complex<T> const& t) {
   auto r(stan::math::internal::cplx_promote<T, U>(t));
   r -= u;
@@ -235,8 +224,8 @@ inline auto operator-(U const& u, std::complex<T> const& t) {
 
 template <class T, class U,
           std::enable_if_t<
-              stan::math::internal::any_fr_var_v<
-                  T, U> && stan::math::internal::is_arith_v<U>>* = nullptr>
+              stan::math::internal::any_fr_var<
+                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline auto operator/(std::complex<T> const& t, U const& u) {
   auto r(stan::math::internal::cplx_promote<T, U>(t));
   r /= u;
@@ -245,8 +234,8 @@ inline auto operator/(std::complex<T> const& t, U const& u) {
 
 template <class T, class U,
           std::enable_if_t<
-              stan::math::internal::any_fr_var_v<
-                  T, U> && stan::math::internal::is_arith_v<U>>* = nullptr>
+              stan::math::internal::any_fr_var<
+                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline auto operator/(U const& u, std::complex<T> const& t) {
   auto r(stan::math::internal::cplx_promote<T, U>(t));
   r /= u;
@@ -256,17 +245,17 @@ inline auto operator/(U const& u, std::complex<T> const& t) {
 template <class T, class U,
           std::enable_if_t<
               !std::is_same<T, U>::value &&  // avoid base function
-              stan::math::internal::any_fr_var_v<
-                  T, U> && stan::math::internal::is_arith_v<T> &&  // symmetric
-              stan::math::internal::is_arith_v<U>>* = nullptr>
+              stan::math::internal::any_fr_var<
+                  T, U>::value && stan::math::internal::is_arith<T>::value &&  // symmetric
+              stan::math::internal::is_arith<U>::value>* = nullptr>
 inline bool operator==(std::complex<T> const& t, std::complex<U> const& u) {
   return t.real() == u.real() && t.imag() == u.imag();
 }
 
 template <class T, class U,
           std::enable_if_t<
-              stan::math::internal::any_fr_var_v<
-                  T, U> && stan::math::internal::is_arith_v<U>>* = nullptr>
+              stan::math::internal::any_fr_var<
+                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline bool operator==(std::complex<T> const& t, U const& u) {
   return stan::math::internal::rval<double>(t)
          == stan::math::internal::rval<double>(u);  // avoid promotions
@@ -274,8 +263,8 @@ inline bool operator==(std::complex<T> const& t, U const& u) {
 
 template <class T, class U,
           std::enable_if_t<
-              stan::math::internal::any_fr_var_v<
-                  T, U> && stan::math::internal::is_arith_v<U>>* = nullptr>
+              stan::math::internal::any_fr_var<
+                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline bool operator==(U const& u, std::complex<T> const& t) {
   return stan::math::internal::rval<double>(t)
          == stan::math::internal::rval<double>(u);  // avoid promotions
@@ -284,17 +273,17 @@ inline bool operator==(U const& u, std::complex<T> const& t) {
 template <class T, class U,
           std::enable_if_t<
               !std::is_same<T, U>::value &&  // avoid base function
-              stan::math::internal::any_fr_var_v<
-                  T, U> && stan::math::internal::is_arith_v<T> &&  // symmetric
-              stan::math::internal::is_arith_v<U>>* = nullptr>
+              stan::math::internal::any_fr_var<
+                  T, U>::value && stan::math::internal::is_arith<T>::value &&  // symmetric
+              stan::math::internal::is_arith<U>::value>* = nullptr>
 inline bool operator!=(std::complex<T> const& t, std::complex<U> const& u) {
   return t.real() != u.real() || t.imag() != u.imag();
 }
 
 template <class T, class U,
           std::enable_if_t<
-              stan::math::internal::any_fr_var_v<
-                  T, U> && stan::math::internal::is_arith_v<U>>* = nullptr>
+              stan::math::internal::any_fr_var<
+                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline bool operator!=(std::complex<T> const& t, U const& u) {
   return stan::math::internal::rval<double>(t)
          != stan::math::internal::rval<double>(u);  // avoid promotions
@@ -302,8 +291,8 @@ inline bool operator!=(std::complex<T> const& t, U const& u) {
 
 template <class T, class U,
           std::enable_if_t<
-              stan::math::internal::any_fr_var_v<
-                  T, U> && stan::math::internal::is_arith_v<U>>* = nullptr>
+              stan::math::internal::any_fr_var<
+                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline bool operator!=(U const& u, std::complex<T> const& t) {
   return stan::math::internal::rval<double>(t)
          != stan::math::internal::rval<double>(u);  // avoid promotions
@@ -318,15 +307,15 @@ template <class T1, class T2, template <class, class> class OP>
 struct ScalarBinaryOpTraits<
     T1,
     std::enable_if_t<
-        stan::math::internal::is_cplx_or_arith_v<T1> &&      // !is_eigen
+        stan::math::internal::is_cplx_or_arith<T1>::value &&      // !is_eigen
                                                              // !VectorBlock
-            stan::math::internal::is_cplx_or_arith_v<T2> &&  // !is_eigen
+            stan::math::internal::is_cplx_or_arith<T2>::value &&  // !is_eigen
                                                              // !VectorBlock
             !std::is_same<T1, T2>::value &&           // avoid Eigen's template
-            ((stan::math::internal::is_cplx_v<T1> &&  // next boolean avoids
+            ((stan::math::internal::is_cplx<T1>::value &&  // next boolean avoids
                                                       // Eigen
               !std::is_same<stan::math::internal::rm_cplx_t<T1>, T2>::value)
-             || (stan::math::internal::is_cplx_v<T2> &&  // next boolean avoids
+             || (stan::math::internal::is_cplx<T2>::value &&  // next boolean avoids
                                                          // Eigen
                  !std::is_same<T1,
                                stan::math::internal::rm_cplx_t<T2>>::value)),
