@@ -36,19 +36,21 @@ struct is_fr_var : is_fr_var_helper<std::decay_t<T>> {};
 template <class, class, class = void>
 struct any_fr_var : std::false_type {};
 template <class T, class U>
-struct any_fr_var<T, U, std::enable_if_t<is_fr_var<T>::value || 
- is_fr_var<U>::value>> : std::true_type {};
+struct any_fr_var<T, U,
+                  std::enable_if_t<is_fr_var<T>::value || is_fr_var<U>::value>>
+    : std::true_type {};
 
 /// trait check for arithmetic types
 template <class T>
-struct is_arith : std::integral_constant<bool,
- is_fr_var<T>::value || std::is_arithmetic<std::decay_t<T>>::value> {
+struct is_arith : std::integral_constant<
+                      bool, is_fr_var<T>::value
+                                || std::is_arithmetic<std::decay_t<T>>::value> {
 };
 
 /// trait to see if the template parameter is complex or arithmetic
 template <class T>
-struct is_cplx_or_arith : std::integral_constant<bool,
- is_cplx<T>::value || is_arith<T>::value> {};
+struct is_cplx_or_arith
+    : std::integral_constant<bool, is_cplx<T>::value || is_arith<T>::value> {};
 
 /// trait to remove the complex wrapper around a type
 template <class T>
@@ -73,7 +75,8 @@ template <class T>
 struct to_arith_helper {  // helper must be specialized by zvars
   typedef T type;
 };
-template <class T, std::enable_if_t<is_arith<std::decay_t<T>>::value>* = nullptr>
+template <class T,
+          std::enable_if_t<is_arith<std::decay_t<T>>::value>* = nullptr>
 struct to_arith {
   typedef typename to_arith_helper<std::decay_t<T>>::type type;
 };
@@ -83,7 +86,8 @@ using to_arith_t = typename to_arith<T>::type;
 /// trait to enforce std::complex<var> and related return types
 template <class T>
 struct to_cplx {
-  typedef std::enable_if_t<is_cplx<T>::value, std::complex<to_arith_t<rm_cplx_t<T>>>>
+  typedef std::enable_if_t<is_cplx<T>::value,
+                           std::complex<to_arith_t<rm_cplx_t<T>>>>
       type;
 };
 template <class T>
@@ -162,80 +166,80 @@ namespace std {
 // rather than stan's complex because templates (which match names exactly) and
 // some namespace ADL features in other packages like Eigen depend on it.
 
-template <class T, class U,
-          std::enable_if_t<
-              stan::math::internal::any_fr_var<
-                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
+template <
+    class T, class U,
+    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
+                     && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline auto operator+(std::complex<T> const& t, U const& u) {
   auto r(stan::math::internal::cplx_promote<T, U>(t));
   r += u;
   return r;
 }
 
-template <class T, class U,
-          std::enable_if_t<
-              stan::math::internal::any_fr_var<
-                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
+template <
+    class T, class U,
+    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
+                     && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline auto operator+(U const& u, std::complex<T> const& t) {
   auto r(stan::math::internal::cplx_promote<T, U>(t));
   r += u;
   return r;
 }
 
-template <class T, class U,
-          std::enable_if_t<
-              stan::math::internal::any_fr_var<
-                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
+template <
+    class T, class U,
+    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
+                     && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline auto operator*(std::complex<T> const& t, U const& u) {
   auto r(stan::math::internal::cplx_promote<T, U>(t));
   r *= u;
   return r;
 }
 
-template <class T, class U,
-          std::enable_if_t<
-              stan::math::internal::any_fr_var<
-                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
+template <
+    class T, class U,
+    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
+                     && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline auto operator*(U const& u, std::complex<T> const& t) {
   auto r(stan::math::internal::cplx_promote<T, U>(t));
   r *= u;
   return r;
 }
 
-template <class T, class U,
-          std::enable_if_t<
-              stan::math::internal::any_fr_var<
-                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
+template <
+    class T, class U,
+    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
+                     && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline auto operator-(std::complex<T> const& t, U const& u) {
   auto r(stan::math::internal::cplx_promote<T, U>(t));
   r -= u;
   return r;
 }
 
-template <class T, class U,
-          std::enable_if_t<
-              stan::math::internal::any_fr_var<
-                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
+template <
+    class T, class U,
+    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
+                     && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline auto operator-(U const& u, std::complex<T> const& t) {
   auto r(stan::math::internal::cplx_promote<T, U>(t));
   r -= u;
   return -r;
 }
 
-template <class T, class U,
-          std::enable_if_t<
-              stan::math::internal::any_fr_var<
-                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
+template <
+    class T, class U,
+    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
+                     && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline auto operator/(std::complex<T> const& t, U const& u) {
   auto r(stan::math::internal::cplx_promote<T, U>(t));
   r /= u;
   return r;
 }
 
-template <class T, class U,
-          std::enable_if_t<
-              stan::math::internal::any_fr_var<
-                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
+template <
+    class T, class U,
+    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
+                     && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline auto operator/(U const& u, std::complex<T> const& t) {
   auto r(stan::math::internal::cplx_promote<T, U>(t));
   r /= u;
@@ -243,56 +247,56 @@ inline auto operator/(U const& u, std::complex<T> const& t) {
 }
 
 template <class T, class U,
-          std::enable_if_t<
-              !std::is_same<T, U>::value &&  // avoid base function
-              stan::math::internal::any_fr_var<
-                  T, U>::value && stan::math::internal::is_arith<T>::value &&  // symmetric
-              stan::math::internal::is_arith<U>::value>* = nullptr>
+          std::enable_if_t<!std::is_same<T, U>::value &&  // avoid base function
+                           stan::math::internal::any_fr_var<T, U>::value
+                           && stan::math::internal::is_arith<T>::value
+                           &&  // symmetric
+                           stan::math::internal::is_arith<U>::value>* = nullptr>
 inline bool operator==(std::complex<T> const& t, std::complex<U> const& u) {
   return t.real() == u.real() && t.imag() == u.imag();
 }
 
-template <class T, class U,
-          std::enable_if_t<
-              stan::math::internal::any_fr_var<
-                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
+template <
+    class T, class U,
+    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
+                     && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline bool operator==(std::complex<T> const& t, U const& u) {
   return stan::math::internal::rval<double>(t)
          == stan::math::internal::rval<double>(u);  // avoid promotions
 }
 
-template <class T, class U,
-          std::enable_if_t<
-              stan::math::internal::any_fr_var<
-                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
+template <
+    class T, class U,
+    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
+                     && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline bool operator==(U const& u, std::complex<T> const& t) {
   return stan::math::internal::rval<double>(t)
          == stan::math::internal::rval<double>(u);  // avoid promotions
 }
 
 template <class T, class U,
-          std::enable_if_t<
-              !std::is_same<T, U>::value &&  // avoid base function
-              stan::math::internal::any_fr_var<
-                  T, U>::value && stan::math::internal::is_arith<T>::value &&  // symmetric
-              stan::math::internal::is_arith<U>::value>* = nullptr>
+          std::enable_if_t<!std::is_same<T, U>::value &&  // avoid base function
+                           stan::math::internal::any_fr_var<T, U>::value
+                           && stan::math::internal::is_arith<T>::value
+                           &&  // symmetric
+                           stan::math::internal::is_arith<U>::value>* = nullptr>
 inline bool operator!=(std::complex<T> const& t, std::complex<U> const& u) {
   return t.real() != u.real() || t.imag() != u.imag();
 }
 
-template <class T, class U,
-          std::enable_if_t<
-              stan::math::internal::any_fr_var<
-                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
+template <
+    class T, class U,
+    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
+                     && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline bool operator!=(std::complex<T> const& t, U const& u) {
   return stan::math::internal::rval<double>(t)
          != stan::math::internal::rval<double>(u);  // avoid promotions
 }
 
-template <class T, class U,
-          std::enable_if_t<
-              stan::math::internal::any_fr_var<
-                  T, U>::value && stan::math::internal::is_arith<U>::value>* = nullptr>
+template <
+    class T, class U,
+    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
+                     && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline bool operator!=(U const& u, std::complex<T> const& t) {
   return stan::math::internal::rval<double>(t)
          != stan::math::internal::rval<double>(u);  // avoid promotions
@@ -307,16 +311,19 @@ template <class T1, class T2, template <class, class> class OP>
 struct ScalarBinaryOpTraits<
     T1,
     std::enable_if_t<
-        stan::math::internal::is_cplx_or_arith<T1>::value &&      // !is_eigen
-                                                             // !VectorBlock
-            stan::math::internal::is_cplx_or_arith<T2>::value &&  // !is_eigen
-                                                             // !VectorBlock
-            !std::is_same<T1, T2>::value &&           // avoid Eigen's template
-            ((stan::math::internal::is_cplx<T1>::value &&  // next boolean avoids
-                                                      // Eigen
+        stan::math::internal::is_cplx_or_arith<T1>::value &&  // !is_eigen
+                                                              // !VectorBlock
+            stan::math::internal::is_cplx_or_arith<T2>::value
+            &&                               // !is_eigen
+                                             // !VectorBlock
+            !std::is_same<T1, T2>::value &&  // avoid Eigen's template
+            ((stan::math::internal::is_cplx<T1>::value
+              &&  // next boolean avoids
+                  // Eigen
               !std::is_same<stan::math::internal::rm_cplx_t<T1>, T2>::value)
-             || (stan::math::internal::is_cplx<T2>::value &&  // next boolean avoids
-                                                         // Eigen
+             || (stan::math::internal::is_cplx<T2>::value
+                 &&  // next boolean avoids
+                     // Eigen
                  !std::is_same<T1,
                                stan::math::internal::rm_cplx_t<T2>>::value)),
         T2>,
