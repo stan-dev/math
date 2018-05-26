@@ -3,12 +3,10 @@
 
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <stan/math/prim/mat/fun/trace_inv_quad_form_ldlt.hpp>
-#include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
+#include <stan/math/prim/mat/meta/vector_seq_view.hpp>
+#include <stan/math/prim/scal/meta/StdVectorBuilder.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -16,23 +14,23 @@ namespace stan {
 namespace math {
 
 /**
- * Return a pseudo-random vector with a multi-variate normal
- * distribution given the specified location parameter and
- * covariance matrix and pseudo-random number generator.
+ * Return a multivariate normal random variate with the given location and
+ * covariance using the specified random number generator.
  *
- * If calculating more than one multivariate-normal random draw
- * then it is more efficient to calculate the Cholesky factor of
- * the covariance matrix and use the function
- * <code>stan::math::multi_normal_cholesky_rng</code>.
+ * mu can be either an Eigen::VectorXd, an Eigen::RowVectorXd, or a std::vector
+ * of either of those types.
  *
- * @tparam RNG Type of pseudo-random number generator.
- * @param mu Location parameter.
- * @param S Covariance parameter.
- * @param rng Pseudo-random number generator.
+ * @tparam T_loc Type of location paramater
+ * @tparam RNG Type of pseudo-random number generator
+ * @param mu (Sequence of) location parameter(s)
+ * @param S Covariance matrix
+ * @param rng random number generator
+ * @throw std::domain_error if S is not positive definite, or std::invalid_argument
+ *   if the length of (each) mu is not equal to the number of rows and columns in S
  */
-template <class RNG>
-inline Eigen::VectorXd multi_normal_rng(const Eigen::VectorXd& mu,
-                                        const Eigen::MatrixXd& S, RNG& rng) {
+template <typename T_loc, class RNG>
+inline typename StdVectorBuilder<true, Eigen::VectorXd, T_loc>::type
+multi_normal_rng(const T_loc& mu, const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S, RNG& rng) {
   using boost::normal_distribution;
   using boost::variate_generator;
 
@@ -40,20 +38,45 @@ inline Eigen::VectorXd multi_normal_rng(const Eigen::VectorXd& mu,
 
   check_positive(function, "Covariance matrix rows", S.rows());
   check_symmetric(function, "Covariance matrix", S);
-  check_finite(function, "Location parameter", mu);
-
   Eigen::LLT<Eigen::MatrixXd> llt_of_S = S.llt();
   check_pos_definite("multi_normal_rng", "covariance matrix argument",
                      llt_of_S);
 
+  vector_seq_view<T_loc> mu_vec(mu);
+  size_t size_mu = mu_vec[0].size();
+
+  size_t N = length_mvt(mu);
+  int size_mu_old = size_mu;
+  for (size_t i = 1; i < N; i++) {
+    int size_mu_new = mu_vec[i].size();
+    check_size_match(function,
+                     "Size of one of the vectors of "
+                     "the location variable",
+                     size_mu_new,
+                     "Size of another vector of the "
+                     "location variable",
+                     size_mu_old);
+    size_mu_old = size_mu_new;
+  }
+
+  for (size_t i = 0; i < N; i++) {
+    check_finite(function, "Location parameter", mu_vec[i]);
+  }
+
+  StdVectorBuilder<true, Eigen::VectorXd, T_loc> output(N);
+
   variate_generator<RNG&, normal_distribution<> > std_normal_rng(
       rng, normal_distribution<>(0, 1));
 
-  Eigen::VectorXd z(S.cols());
-  for (int i = 0; i < S.cols(); i++)
-    z(i) = std_normal_rng();
+  for (size_t n = 0; n < N; ++n) {
+    Eigen::VectorXd z(S.cols());
+    for (int i = 0; i < S.cols(); i++)
+      z(i) = std_normal_rng();
 
-  return mu + llt_of_S.matrixL() * z;
+    output[n] = Eigen::VectorXd(mu_vec[n]) + llt_of_S.matrixL() * z;
+  }
+
+  return output.data();
 }
 
 }  // namespace math
