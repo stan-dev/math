@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 
-
 TEST(MathPrimMat, var_mat_double_add_diag) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> mat(2, 3);
   mat << 1, 1, 1, 1, 1, 1;
