@@ -113,6 +113,16 @@ struct complex : std::complex<T> {
             std::enable_if_t<is_arith<R>::value>* = nullptr>
   // NOLINTNEXTLINE
   complex(const R real = 0, const I imag = 0) : std::complex<T>(real, imag) {}
+
+ // override clang's implementation using logb and scalbn
+ inline std::complex<T>&
+ operator/=(complex<T> const& z) {
+  T const n(std::abs(z));
+  T const r((this->real() * z.real() + this->imag() * z.imag()) / n);
+  this->imag((this->imag() * z.real() - this->real() * z.imag()) / n);
+  this->real(r);
+  return *this;
+ }
 };
 
 /// complex promotion when std::complex<double> is combined with a var
@@ -122,6 +132,12 @@ template <class T, class U, class AT = to_arith_t<T>, class AU = to_arith_t<U>,
           class AP = typename boost::math::tools::promote_args<AT, AU>::type>
 auto cplx_promote(std::complex<T> const& t) {
   return std::complex<AP>(t.real(), t.imag());
+}
+
+template <class T, class U, class AT = to_arith_t<T>, class AU = to_arith_t<U>,
+          class AP = typename boost::math::tools::promote_args<AT, AU>::type>
+auto cplx_promote(U const& u) {
+  return std::complex<AP>(u);
 }
 
 // recursive helper functions for variable conversion for boolean functions
@@ -241,16 +257,16 @@ template <
     std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
                      && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline auto operator/(U const& u, std::complex<T> const& t) {
-  auto r(stan::math::internal::cplx_promote<T, U>(t));
-  r /= u;
-  return decltype(r)(1.0) / r;
+  auto r(stan::math::internal::cplx_promote<T, U>(u));
+  r /= t;
+  return r;
 }
 
 template <class T, class U,
           std::enable_if_t<!std::is_same<T, U>::value &&  // avoid base function
                            stan::math::internal::any_fr_var<T, U>::value
                            && stan::math::internal::is_arith<T>::value
-                           &&  // symmetric
+                           &&  // symmetric is_arith
                            stan::math::internal::is_arith<U>::value>* = nullptr>
 inline bool operator==(std::complex<T> const& t, std::complex<U> const& u) {
   return t.real() == u.real() && t.imag() == u.imag();
