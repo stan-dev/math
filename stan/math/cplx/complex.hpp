@@ -141,7 +141,7 @@ auto cplx_promote(U const& u) {
 
 // recursive helper functions for variable conversion for boolean functions
 template <class T, std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
-double rval_help(T const& t) {
+inline double rval_help(T const& t) {
   return t;
 }
 
