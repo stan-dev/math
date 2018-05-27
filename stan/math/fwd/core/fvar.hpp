@@ -101,8 +101,8 @@ struct fvar {
    * @param[in] dummy value given by default with enable-if
    *   metaprogramming
    */
-  template <typename V,
-            typename std::enable_if<ad_promotable<V, T>::value>::type* = nullptr>
+  template <typename V, typename std::enable_if<
+                            ad_promotable<V, T>::value>::type* = nullptr>
   fvar(const V& v) : val_(v), d_(0.0) {
     if (unlikely(is_nan(v)))
       d_ = v;
