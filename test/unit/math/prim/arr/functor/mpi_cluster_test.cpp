@@ -13,14 +13,16 @@ MPI_TEST(mpi_cluster, chunk_mapping) {
   if (rank != 0)
     return;
 
+  // when we have less jobs than workers, then the work is distributed
+  // starting from the root
   std::vector<int> small_load = stan::math::mpi_map_chunks(world_size - 1, 1);
 
   EXPECT_EQ(world_size, small_load.size());
 
   if (world_size > 1)
-    EXPECT_EQ(0, small_load[0]);
+    EXPECT_EQ(0, small_load[world_size - 1]);
 
-  for (std::size_t i = 1; i < world_size; ++i)
+  for (std::size_t i = 0; i < world_size - 1; ++i)
     EXPECT_EQ(1, small_load[i]);
 
   std::vector<int> med_load = stan::math::mpi_map_chunks(world_size + 1, 2);
