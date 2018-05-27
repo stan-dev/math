@@ -98,8 +98,6 @@ struct fvar {
    * @tparam V type of value (must be assignable to the value and
    *   tangent type T)
    * @param[in] v value
-   * @param[in] dummy value given by default with enable-if
-   *   metaprogramming
    */
   template <typename V, typename std::enable_if<
                             ad_promotable<V, T>::value>::type* = nullptr>
@@ -338,7 +336,7 @@ namespace std {
 /** Template specialization to std::complex<fvar> to inherit the shared
  * extended-but-hidden interface of stan::math::complex<z_fvar>. In this way,
  * z_fvar is hidden from end user code.*/
-template <>
+// template <>
 template <class T>
 struct complex<stan::math::fvar<T>>
     : stan::math::internal::complex<stan::math::internal::z_fvar<T>> {
