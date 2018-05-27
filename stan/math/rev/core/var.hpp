@@ -509,7 +509,7 @@ struct to_arith_helper<z_var> {
 };
 
 /// helper functions to avoid forward declarations in other headers
-double rval_help(var const v) { return v.val(); }
+inline double rval_help(var const v) { return v.val(); }
 
 }  // namespace internal
 
