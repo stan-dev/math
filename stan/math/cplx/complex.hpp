@@ -114,15 +114,14 @@ struct complex : std::complex<T> {
   // NOLINTNEXTLINE
   complex(const R real = 0, const I imag = 0) : std::complex<T>(real, imag) {}
 
- // override clang's implementation using logb and scalbn
- inline std::complex<T>&
- operator/=(complex<T> const& z) {
-  T const n(std::abs(z));
-  T const r((this->real() * z.real() + this->imag() * z.imag()) / n);
-  this->imag((this->imag() * z.real() - this->real() * z.imag()) / n);
-  this->real(r);
-  return *this;
- }
+  // override clang's implementation using logb and scalbn
+  inline std::complex<T>& operator/=(complex<T> const& z) {
+    T const n(std::abs(z));
+    T const r((this->real() * z.real() + this->imag() * z.imag()) / n);
+    this->imag((this->imag() * z.real() - this->real() * z.imag()) / n);
+    this->real(r);
+    return *this;
+  }
 };
 
 /// complex promotion when std::complex<double> is combined with a var
