@@ -25,12 +25,15 @@ namespace math {
  * @param mu (Sequence of) location parameter(s)
  * @param S Covariance matrix
  * @param rng random number generator
- * @throw std::domain_error if S is not positive definite, or std::invalid_argument
- *   if the length of (each) mu is not equal to the number of rows and columns in S
+ * @throw std::domain_error if S is not positive definite, or
+ * std::invalid_argument if the length of (each) mu is not equal to the number
+ * of rows and columns in S
  */
 template <typename T_loc, class RNG>
 inline typename StdVectorBuilder<true, Eigen::VectorXd, T_loc>::type
-multi_normal_rng(const T_loc& mu, const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S, RNG& rng) {
+multi_normal_rng(const T_loc& mu,
+                 const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S,
+                 RNG& rng) {
   using boost::normal_distribution;
   using boost::variate_generator;
 

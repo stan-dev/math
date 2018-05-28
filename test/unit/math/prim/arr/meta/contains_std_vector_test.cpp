@@ -11,17 +11,23 @@ TEST(MetaTraits, contains_vector_true) {
   EXPECT_TRUE(contains_std_vector<std::vector<const double> >::value);
   EXPECT_TRUE(contains_std_vector<std::vector<const int> >::value);
 
-  bool r = contains_std_vector<std::vector<double>, double, double, double, double, double>::value;
+  bool r = contains_std_vector<std::vector<double>, double, double, double,
+                               double, double>::value;
   EXPECT_TRUE(r);
-  r = contains_std_vector<double, std::vector<double>, double, double, double, double>::value;
+  r = contains_std_vector<double, std::vector<double>, double, double, double,
+                          double>::value;
   EXPECT_TRUE(r);
-  r = contains_std_vector<double, double, std::vector<double>, double, double, double>::value;
+  r = contains_std_vector<double, double, std::vector<double>, double, double,
+                          double>::value;
   EXPECT_TRUE(r);
-  r = contains_std_vector<double, double, double, std::vector<double>, double, double>::value;
+  r = contains_std_vector<double, double, double, std::vector<double>, double,
+                          double>::value;
   EXPECT_TRUE(r);
-  r = contains_std_vector<double, double, double, double, std::vector<double>, double>::value;
+  r = contains_std_vector<double, double, double, double, std::vector<double>,
+                          double>::value;
   EXPECT_TRUE(r);
-  r = contains_std_vector<double, double, double, double, double, std::vector<double> >::value;
+  r = contains_std_vector<double, double, double, double, double,
+                          std::vector<double> >::value;
   EXPECT_TRUE(r);
 }
 

@@ -145,7 +145,8 @@ TEST(ProbDistributionsMultiNormal, SigmaMultiRow) {
   // wrong dimensions
   Matrix<double, Dynamic, 1> z(3, 1);
   z << 2.0, -2.0, 1.0;
-  EXPECT_THROW(stan::math::multi_normal_log(z, mu, Sigma), std::invalid_argument);
+  EXPECT_THROW(stan::math::multi_normal_log(z, mu, Sigma),
+               std::invalid_argument);
 
   // non-symmetric
   Sigma(0, 1) = -2.5;

@@ -1,11 +1,12 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(MetaTraits, StdVectorBuilder_false_false) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::StdVectorBuilder;
   using stan::length;
+  using stan::StdVectorBuilder;
 
   Matrix<double, Dynamic, 1> a_vector(4);
   Matrix<double, 1, Dynamic> a_row_vector(5);
@@ -22,8 +23,8 @@ TEST(MetaTraits, StdVectorBuilder_false_false) {
 TEST(MetaTraits, StdVectorBuilder_true_false) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::StdVectorBuilder;
   using stan::length;
+  using stan::StdVectorBuilder;
 
   Matrix<double, Dynamic, 1> a_vector(4);
   Matrix<double, 1, Dynamic> a_row_vector(5);
@@ -46,19 +47,28 @@ TEST(MetaTraits, StdVectorBuilder_true_false) {
 }
 
 TEST(MetaTraits, StdVectorBuilder_type_check) {
-  using stan::StdVectorBuilder;
   using stan::is_std_vector;
+  using stan::StdVectorBuilder;
 
-  bool r = is_std_vector<StdVectorBuilder<true, double, std::vector<Eigen::VectorXd>>::type>::value;
+  bool r = is_std_vector<StdVectorBuilder<
+      true, double, std::vector<Eigen::VectorXd>>::type>::value;
   EXPECT_TRUE(r);
-  r = is_std_vector<StdVectorBuilder<true, double, std::vector<Eigen::RowVectorXd>>::type>::value;
+  r = is_std_vector<StdVectorBuilder<
+      true, double, std::vector<Eigen::RowVectorXd>>::type>::value;
   EXPECT_TRUE(r);
-  r = is_std_vector<StdVectorBuilder<true, double, std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>>::type>::value;
+  r = is_std_vector<StdVectorBuilder<
+      true, double,
+      std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>>::
+                        type>::value;
   EXPECT_TRUE(r);
-  r = is_std_vector<StdVectorBuilder<true, double, Eigen::VectorXd>::type>::value;
+  r = is_std_vector<
+      StdVectorBuilder<true, double, Eigen::VectorXd>::type>::value;
   EXPECT_FALSE(r);
-  r = is_std_vector<StdVectorBuilder<true, double, Eigen::RowVectorXd>::type>::value;
+  r = is_std_vector<
+      StdVectorBuilder<true, double, Eigen::RowVectorXd>::type>::value;
   EXPECT_FALSE(r);
-  r = is_std_vector<StdVectorBuilder<true, double, Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>::type>::value;
+  r = is_std_vector<StdVectorBuilder<
+      true, double,
+      Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>::type>::value;
   EXPECT_FALSE(r);
 }

@@ -13,7 +13,8 @@ namespace math {
 
 /**
  * Return a multivariate normal random variate with the given location and
- * Cholesky factorization of the covariance using the specified random number generator.
+ * Cholesky factorization of the covariance using the specified random number
+ * generator.
  *
  * mu can be either an Eigen::VectorXd, an Eigen::RowVectorXd, or a std::vector
  * of either of those types.
@@ -28,7 +29,9 @@ namespace math {
  */
 template <typename T_loc, class RNG>
 inline typename StdVectorBuilder<true, Eigen::VectorXd, T_loc>::type
-multi_normal_cholesky_rng(const T_loc& mu, const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& L, RNG& rng) {
+multi_normal_cholesky_rng(
+    const T_loc& mu,
+    const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& L, RNG& rng) {
   using boost::normal_distribution;
   using boost::variate_generator;
 

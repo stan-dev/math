@@ -12,7 +12,8 @@ TEST(MetaTraits, contains_vector_true) {
   EXPECT_TRUE(contains_std_vector<std::vector<const int> >::value);
   EXPECT_TRUE(contains_std_vector<std::vector<Eigen::VectorXd> >::value);
   EXPECT_TRUE(contains_std_vector<std::vector<Eigen::RowVectorXd> >::value);
-  bool r = contains_std_vector<std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > >::value;
+  bool r = contains_std_vector<std::vector<
+      Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > >::value;
   EXPECT_TRUE(r);
 }
 
@@ -21,6 +22,7 @@ TEST(MetaTraits, contains_vector_false) {
 
   EXPECT_FALSE(contains_std_vector<Eigen::VectorXd>::value);
   EXPECT_FALSE(contains_std_vector<Eigen::RowVectorXd>::value);
-  bool r = contains_std_vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> >::value;
+  bool r = contains_std_vector<
+      Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> >::value;
   EXPECT_FALSE(r);
 }

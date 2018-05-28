@@ -16,8 +16,8 @@ namespace stan {
 namespace math {
 
 /**
- * Return a multivariate student-t random variate with the given degrees of freedom
- * location and covariance using the specified random number generator.
+ * Return a multivariate student-t random variate with the given degrees of
+ * freedom location and covariance using the specified random number generator.
  *
  * mu can be either an Eigen::VectorXd, an Eigen::RowVectorXd, or a std::vector
  * of either of those types.
@@ -35,11 +35,12 @@ namespace math {
  */
 template <typename T_loc, class RNG>
 inline typename StdVectorBuilder<true, Eigen::VectorXd, T_loc>::type
-multi_student_t_rng(double nu, const T_loc& mu,
-                    const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S, RNG& rng) {
+multi_student_t_rng(
+    double nu, const T_loc& mu,
+    const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S, RNG& rng) {
   using boost::normal_distribution;
-  using boost::random::gamma_distribution;
   using boost::variate_generator;
+  using boost::random::gamma_distribution;
 
   static const char* function = "multi_student_t_rng";
 
@@ -48,8 +49,7 @@ multi_student_t_rng(double nu, const T_loc& mu,
   check_positive(function, "Covariance matrix rows", S.rows());
   check_symmetric(function, "Covariance matrix", S);
   Eigen::LLT<Eigen::MatrixXd> llt_of_S = S.llt();
-  check_pos_definite(function, "covariance matrix argument",
-                     llt_of_S);
+  check_pos_definite(function, "covariance matrix argument", llt_of_S);
 
   vector_seq_view<T_loc> mu_vec(mu);
   size_t size_mu = mu_vec[0].size();
