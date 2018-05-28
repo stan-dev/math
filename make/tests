@@ -13,8 +13,7 @@ $(GTEST)/src/gtest-all.o: CXXFLAGS += $(GTEST_CXXFLAGS)
 
 test/%$(EXE) : CXXFLAGS += $(GTEST_CXXFLAGS)
 test/%$(EXE) : test/%.o $(GTEST_MAIN) $(GTEST)/src/gtest-all.o
-	$(LINK.cpp) -o $@ $^
-
+	$(LINK.cpp) -o $@ $^ $(LDFLAGS_OPENCL)
 
 ##
 # Rule for generating dependencies.
@@ -47,7 +46,8 @@ test/unit/multiple_translation_units_test.cpp : test/unit/libmultiple.so
 ##
 
 CVODES_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *cvodes*_test.cpp) $(shell find test -name *_bdf_*_test.cpp) $(shell find test -name *_adams_*_test.cpp))
-$(CVODES_TESTS) : $(LIBCVODES)
+$(CVODES_TESTS) : $(LIBSUNDIALS)
+
 
 ############################################################
 #
@@ -55,8 +55,15 @@ $(CVODES_TESTS) : $(LIBCVODES)
 ##
 
 IDAS_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *idas*_test.cpp) $(shell find test -name *_dae_*_test.cpp))
-$(IDAS_TESTS) : $(LIBIDAS)
+$(IDAS_TESTS) : $(LIBSUNDIALS)
 
+############################################################
+#
+# OpenCL tests
+##
+
+OPENCL_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *opencl*_test.cpp))
+$(OPENCL_TESTS) : LDFLAGS += $(LDFLAGS_OPENCL)
 
 ############################################################
 #
