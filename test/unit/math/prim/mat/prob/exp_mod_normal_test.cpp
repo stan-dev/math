@@ -32,7 +32,7 @@ TEST(ProbDistributionsExpModNormal, chiSquareGoodnessFitTest) {
   int N = 10000;
 
   double mu = 2.0;
-  double sigma = 2.0;
+  double sigma = 1.0;
   double lambda = 3.0;
 
   std::vector<double> loc = {

@@ -1,7 +1,7 @@
-#ifndef STAN_MATH_PRIM_SCAL_META_CONTAINS_STD_VECTOR_HPP
-#define STAN_MATH_PRIM_SCAL_META_CONTAINS_STD_VECTOR_HPP
+#ifndef STAN_MATH_PRIM_ARR_META_CONTAINS_STD_VECTOR_HPP
+#define STAN_MATH_PRIM_ARR_META_CONTAINS_STD_VECTOR_HPP
 
-#include <stan/math/prim/scal/meta/is_std_vector.hpp>
+#include <stan/math/prim/arr/meta/is_std_vector.hpp>
 
 namespace stan {
 

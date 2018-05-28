@@ -43,7 +43,7 @@ class VectorBuilderHelper<T1, true, false> {
   T1 x_;
 
  public:
-  explicit VectorBuilderHelper(size_t /* n */) {}
+  explicit VectorBuilderHelper(size_t /* n */) : x_(0) {}
   T1& operator[](size_t /* i */) { return x_; }
 
   typedef T1 type;
