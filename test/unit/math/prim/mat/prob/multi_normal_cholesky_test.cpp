@@ -163,7 +163,7 @@ TEST(ProbDistributionsMultiNormalCholesky,
   Matrix<double, Dynamic, Dynamic> sigma(3, 3);
   sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 1.0, 0.0, 1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> L = sigma.llt().matrixL();
-  std::vector< Matrix<double, 1, Dynamic> > mu(3);
+  std::vector<Matrix<double, 1, Dynamic> > mu(3);
   mu[0].resize(3);
   mu[1].resize(3);
   mu[2].resize(3);

@@ -3,8 +3,8 @@
 #include <vector>
 
 TEST(MetaTraits, StdVectorBuilder_false_false) {
-  using stan::length;
   using stan::StdVectorBuilder;
+  using stan::length;
   using std::vector;
 
   std::vector<double> a_std_vector(3);
@@ -15,8 +15,8 @@ TEST(MetaTraits, StdVectorBuilder_false_false) {
 }
 
 TEST(MetaTraits, StdVectorBuilder_true_false) {
-  using stan::length;
   using stan::StdVectorBuilder;
+  using stan::length;
   using std::vector;
 
   std::vector<double> a_std_vector(3);
@@ -31,8 +31,8 @@ TEST(MetaTraits, StdVectorBuilder_true_false) {
 }
 
 TEST(MetaTraits, StdVectorBuilder_type_check) {
-  using stan::is_std_vector;
   using stan::StdVectorBuilder;
+  using stan::is_std_vector;
 
   bool r = is_std_vector<
       StdVectorBuilder<true, double, std::vector<int>>::type>::value;

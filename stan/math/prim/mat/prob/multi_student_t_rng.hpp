@@ -39,8 +39,8 @@ multi_student_t_rng(
     double nu, const T_loc& mu,
     const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S, RNG& rng) {
   using boost::normal_distribution;
-  using boost::variate_generator;
   using boost::random::gamma_distribution;
+  using boost::variate_generator;
 
   static const char* function = "multi_student_t_rng";
 

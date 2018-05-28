@@ -5,8 +5,8 @@
 TEST(MetaTraits, StdVectorBuilder_false_false) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::length;
   using stan::StdVectorBuilder;
+  using stan::length;
 
   Matrix<double, Dynamic, 1> a_vector(4);
   Matrix<double, 1, Dynamic> a_row_vector(5);
@@ -23,8 +23,8 @@ TEST(MetaTraits, StdVectorBuilder_false_false) {
 TEST(MetaTraits, StdVectorBuilder_true_false) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::length;
   using stan::StdVectorBuilder;
+  using stan::length;
 
   Matrix<double, Dynamic, 1> a_vector(4);
   Matrix<double, 1, Dynamic> a_row_vector(5);
@@ -47,8 +47,8 @@ TEST(MetaTraits, StdVectorBuilder_true_false) {
 }
 
 TEST(MetaTraits, StdVectorBuilder_type_check) {
-  using stan::is_std_vector;
   using stan::StdVectorBuilder;
+  using stan::is_std_vector;
 
   bool r = is_std_vector<StdVectorBuilder<
       true, double, std::vector<Eigen::VectorXd>>::type>::value;
