@@ -189,6 +189,7 @@ TEST(MathMatrix, matrix_exp_action_dv) {
   test_matrix_exp_action_dv<1, 5>();
   test_matrix_exp_action_dv<5, 1>();
   test_matrix_exp_action_dv<5, 5>();
+  test_matrix_exp_action_dv<20, 20>();
 }
 
 template <int N, int M>
