@@ -20,7 +20,6 @@ namespace math {
  *
  * Calculates exp(mat*t)*b, where mat & b are matrices,
  * and t is double.
- *
  */
 class matrix_exp_action_handler {
   static constexpr int p_max = 8;
@@ -30,6 +29,8 @@ class matrix_exp_action_handler {
   static const std::vector<double> theta_m_double_precision;
 
  public:
+  /* Constructor
+   */
   matrix_exp_action_handler() {}
 
   /* Perform the matrix exponential action exp(A*t)*B
@@ -81,9 +82,22 @@ class matrix_exp_action_handler {
     return res;
   }
 
+  /* Approximation is based on parameter "m" and "s",
+   * proposed in CODE FRAGMENT 3.1 of the reference. The
+   * parameters depend on matrix A, as well as limits
+   * "m_max" & "p_max", defined in table 3.1 and eq. 3.11,
+   * respectively. Ideally one can choose "m_max" and
+   * "p_max" to suite the specific computing precision needs,
+   * here we just use the one suggested in the paper
+   * (paragraph between eq. 3.11 & eq. 3.12).
+   *
+   * @param [in] mat matrix A
+   * @param [in] t double t in exp(A*t)*B
+   * @param [out] m int parameter m
+   * @param [out] s int parameter s
+   */
   inline void set_approximation_parameter(const Eigen::MatrixXd& mat,
                                           const double& t, int& m, int& s) {
-    // to simply the process, always use m_max
     if (l1norm(mat) < tol || t < tol) {
       m = 0;
       s = 1;
