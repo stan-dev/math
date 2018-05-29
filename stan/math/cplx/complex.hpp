@@ -259,12 +259,11 @@ inline auto operator/(U const& u, std::complex<T> const& t) {
   return r;
 }
 
-//another attempt at overriding clang
+// another attempt at overriding clang
 template <class T>
-inline std::complex<T>
-operator/(stan::math::internal::complex<T> const& t,
- stan::math::internal::complex<T> const& u) {
- return t/=u;
+inline std::complex<T> operator/(stan::math::internal::complex<T> const& t,
+                                 stan::math::internal::complex<T> const& u) {
+  return t /= u;
 }
 
 template <class T, class U,
