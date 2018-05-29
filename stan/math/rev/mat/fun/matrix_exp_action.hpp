@@ -18,12 +18,13 @@ namespace math {
 
 /**
  * Calculate adjoint of matrix exponential action
- * exp(At)*B when A is data and B is var
+ * exp(At)*B when A is data and B is var, used for chaining action.
  *
  * @tparam N integer rows and cols of matrix A
  * @param Ad double array pointer to the data of matrix A
  * @param adjexpAB MatrixXd adjoint of exp(At)*B
  * @param t double time data
+ * @return MatrixXd The adjoint of B.
  */
 template <int N>
 Eigen::MatrixXd exp_action_chain_dv(double* Ad, const Eigen::MatrixXd& adjexpAB,
@@ -35,13 +36,14 @@ Eigen::MatrixXd exp_action_chain_dv(double* Ad, const Eigen::MatrixXd& adjexpAB,
 
 /**
  * Calculate adjoint of matrix exponential action
- * exp(At)*B when A is var and B is data
+ * exp(At)*B when A is var and B is data, used for chaining action.
  *
  * @tparam N integer rows and cols of matrix A
  * @param Ad double array pointer to the data of matrix A
  * @param Bd double array pointer to the data of matrix B
  * @param adjexpAB MatrixXd adjoint of exp(At)*B
  * @param t double time data
+ * @return MatrixXd The adjoint of A.
  */
 template <int N, int M>
 Eigen::MatrixXd exp_action_chain_vd(double* Ad, double* Bd,
@@ -111,6 +113,12 @@ class matrix_exp_action_vari : public vari {
   vari** variRefB_;
   vari** variRefexpAB_;
 
+/**
+ * Constructor: vari child-class of matrix_exp_action_vari.
+ * @param A statically-sized matirx
+ * @param B statically-sized matirx
+ * @param t double scalar time.
+ */
   matrix_exp_action_vari(const Eigen::Matrix<Ta, N, N>& A,
                          const Eigen::Matrix<Tb, N, Cb>& B, const double& t)
       : vari(0.0),
@@ -144,6 +152,9 @@ class matrix_exp_action_vari : public vari {
       variRefexpAB_[i] = new vari(expAB.coeffRef(i), false);
   }
 
+  /**
+   * Chain command for the adjoint of matrix exp action.
+   */
   virtual void chain() {
     using Eigen::Map;
     using Eigen::MatrixXd;
@@ -238,6 +249,9 @@ class matrix_exp_action_vari<double, N, Tb, Cb> : public vari {
       variRefexpAB_[i] = new vari(expAB.coeffRef(i), false);
   }
 
+/**
+ * Chain for matrix_exp_action_vari.
+ */
   virtual void chain() {
     using Eigen::Map;
     using Eigen::MatrixXd;
@@ -254,10 +268,11 @@ class matrix_exp_action_vari<double, N, Tb, Cb> : public vari {
     }
   }
 };
+
 /**
  * This is a subclass of the vari class for matrix
  * exponential action exp(At) * B where A is an N by N
- * matrix, B is N by Cb matrix of double, and t is data(time)
+ * matrix of var, B is N by Cb matrix of double, and t is data(time)
  *
  * The class stores the structure of each matrix,
  * the double values of A and B, and pointers to
