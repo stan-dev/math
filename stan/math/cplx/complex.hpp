@@ -149,13 +149,11 @@ template <class S, class V>
 S rval(V const& v) {
   if (std::is_same<S, V>::value)
     return v;
-  return rval<S>(rval_help(v));
+  return rval<S>(stan::math::internal::rval_help(v));
 }
 
 template <class S, class V>
 std::complex<S> rval(std::complex<V> const& v) {
-  if (std::is_same<S, V>::value)
-    return v;
   return std::complex<S>(rval<S>(v.real()), rval<S>(v.imag()));
 }
 
@@ -259,6 +257,14 @@ inline auto operator/(U const& u, std::complex<T> const& t) {
   auto r(stan::math::internal::cplx_promote<T, U>(u));
   r /= t;
   return r;
+}
+
+//another attempt at overriding clang
+template <class T>
+inline std::complex<T>
+operator/(stan::math::internal::complex<T> const& t,
+ stan::math::internal::complex<T> const& u) {
+ return t/=u;
 }
 
 template <class T, class U,
