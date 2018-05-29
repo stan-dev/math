@@ -280,19 +280,20 @@ TEST(AgradAutoDiff, GradientHessian) {
       }
 }
 
-{  // begin scope of using declarations for static_assert checks
-  // do not use anonymous namespace (unique per TU & injects names)
-  using cScal = std::complex<double>;
-  using cT = Eigen::VectorBlock<
-      Eigen::Block<Eigen::Matrix<std::complex<double>, 2, 2, 0, 2, 2>, 1, 2,
-                   false>,
-      -1>;
-  static_assert(!stan::math::internal::is_cplx_or_arith_v<cT>);
-  // ensure Eigen still thinks complex VectorBlocks aren't scalar operands
-  static_assert(
-      !Eigen::internal::has_ReturnType<Eigen::ScalarBinaryOpTraits<
-          cScal, cT, Eigen::internal::scalar_product_op<cScal, cT>>>::value);
-}  // end scope of using declarations for static_assert checks
+// using declarations for static_assert checks
+// do not use anonymous namespace (unique per TU & injects names)
+using cScal = std::complex<double>;
+using cT = Eigen::VectorBlock<
+    Eigen::Block<Eigen::Matrix<std::complex<double>, 2, 2, 0, 2, 2>, 1, 2,
+                 false>,
+    -1>;
+static_assert(!stan::math::internal::is_cplx_or_arith<cT>::value, "");
+// ensure Eigen still thinks complex VectorBlocks aren't scalar operands
+static_assert(
+    !Eigen::internal::has_ReturnType<Eigen::ScalarBinaryOpTraits<
+        cScal, cT, Eigen::internal::scalar_product_op<cScal, cT>>>::value,
+    "");
+
 
 TEST(AgradAutoDiff, ComplexEigenvalueOfRotationGradientHessian) {
   auto tol([](auto d) {
@@ -328,7 +329,7 @@ TEST(AgradAutoDiff, ComplexEigenvalueOfRotationGradientHessian) {
   auto x((Eigen::VectorXd(1) << 3. * M_PI / 8.).finished());  // note: cplx eig
   double fx(f(x));  // objective function value
   EXPECT_FALSE(equal(fx, 0.));
- auto rv_ini(rotation_eigenvalue(x[0]);
+ auto rv_ini(rotation_eigenvalue(x[0]));
  EXPECT_FALSE(equal(rv_ini.real(), rv_ini.imag()));
  auto g((Eigen::VectorXd(1) << 1.).finished());  // gradient
  auto h((Eigen::MatrixXd(1, 1) << 0.).finished());  // hessian
@@ -340,6 +341,6 @@ TEST(AgradAutoDiff, ComplexEigenvalueOfRotationGradientHessian) {
  }
  EXPECT_TRUE(equal(x[0], M_PI/4.));
  EXPECT_TRUE(equal(fx, 0.));
- auto rv_fin(rotation_eigenvalue(x[0]);
+ auto rv_fin(rotation_eigenvalue(x[0]));
  EXPECT_TRUE(equal(rv_fin.real(), rv_fin.imag()));
 }
