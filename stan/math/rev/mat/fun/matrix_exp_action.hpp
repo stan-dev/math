@@ -113,12 +113,12 @@ class matrix_exp_action_vari : public vari {
   vari** variRefB_;
   vari** variRefexpAB_;
 
-/**
- * Constructor: vari child-class of matrix_exp_action_vari.
- * @param A statically-sized matirx
- * @param B statically-sized matirx
- * @param t double scalar time.
- */
+  /**
+   * Constructor: vari child-class of matrix_exp_action_vari.
+   * @param A statically-sized matirx
+   * @param B statically-sized matirx
+   * @param t double scalar time.
+   */
   matrix_exp_action_vari(const Eigen::Matrix<Ta, N, N>& A,
                          const Eigen::Matrix<Tb, N, Cb>& B, const double& t)
       : vari(0.0),
@@ -249,9 +249,9 @@ class matrix_exp_action_vari<double, N, Tb, Cb> : public vari {
       variRefexpAB_[i] = new vari(expAB.coeffRef(i), false);
   }
 
-/**
- * Chain for matrix_exp_action_vari.
- */
+  /**
+   * Chain for matrix_exp_action_vari.
+   */
   virtual void chain() {
     using Eigen::Map;
     using Eigen::MatrixXd;
