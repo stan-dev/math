@@ -130,7 +130,6 @@ class idas_integrator {
    * constructor
    * @param[in] rtol double relative tolerance.
    * @param[in] atol double absolute tolerance.
-   * @param[in] max_num_steps max nb. of times steps.
    */
   idas_integrator(const double rtol, const double atol)
       : rtol_(rtol), atol_(atol), max_num_steps_(IDAS_MAX_STEPS) {
