@@ -1,0 +1,7 @@
+DEBUG ?= 0
+ifeq ($(DEBUG), 1)
+	CXXFLAGS:=$(filter-out -O${O},$(CXXFLAGS))
+	GTEST_CXXFLAGS:=$(filter-out -O${O},$(GTEST_CXXFLAGS))
+	CXXFLAGS +=-DDEBUG -g -O0
+	CFLAGS +=-DDEBUG -g -O0
+endif
