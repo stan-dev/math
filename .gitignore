@@ -60,3 +60,6 @@
 
 # local make include
 /make/local
+
+# python byte code
+*.pyc
