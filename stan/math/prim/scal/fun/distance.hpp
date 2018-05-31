@@ -17,8 +17,7 @@ namespace math {
  * @throw std::domain_error If the arguments are not finite.
  */
 template <typename T1, typename T2>
-inline typename return_type<T1, T2>::type distance(
-    const T1& x1, const T2& x2) {
+inline typename return_type<T1, T2>::type distance(const T1& x1, const T2& x2) {
   check_finite("distance", "x1", x1);
   check_finite("distance", "x2", x2);
   return abs(x1 - x2);
