@@ -9,11 +9,11 @@
 TEST(MathMatrixGPU, matrix_gpu_copy) {
   stan::math::vector_d d1;
   stan::math::vector_d d1_a;
-  stan::math::vector_d d1_b;
+  stan::math::vector_d d1_b;  
   stan::math::matrix_d d2;
   stan::math::matrix_d d2_a;
   stan::math::matrix_d d2_b;
-
+  stan::math::matrix_d d0;
   d1.resize(3);
   d1_a.resize(3);
   d1_b.resize(3);
@@ -21,15 +21,14 @@ TEST(MathMatrixGPU, matrix_gpu_copy) {
   d2.resize(2, 3);
   d2_a.resize(2, 3);
   d2_b.resize(2, 3);
-
   d2 << 1, 2, 3, 4, 5, 6;
   // vector
   stan::math::matrix_gpu d11(3, 1);
   stan::math::matrix_gpu d111(3, 1);
-  EXPECT_NO_THROW(stan::math::copy(d1, d11));
-  EXPECT_NO_THROW(stan::math::copy(d11, d111));
-  EXPECT_NO_THROW(stan::math::copy(d11, d1_a));
-  EXPECT_NO_THROW(stan::math::copy(d111, d1_b));
+  EXPECT_NO_THROW(stan::math::copy(d11, d1));
+  EXPECT_NO_THROW(stan::math::copy(d111, d11));
+  EXPECT_NO_THROW(stan::math::copy(d1_a, d11));
+  EXPECT_NO_THROW(stan::math::copy(d1_b, d111));  
   EXPECT_EQ(1, d1_a(0));
   EXPECT_EQ(2, d1_a(1));
   EXPECT_EQ(3, d1_a(2));
@@ -37,12 +36,14 @@ TEST(MathMatrixGPU, matrix_gpu_copy) {
   EXPECT_EQ(2, d1_b(1));
   EXPECT_EQ(3, d1_b(2));
   // matrix
+  stan::math::matrix_gpu d00;
+  stan::math::matrix_gpu d000;
   stan::math::matrix_gpu d22(2, 3);
   stan::math::matrix_gpu d222(2, 3);
-  EXPECT_NO_THROW(stan::math::copy(d2, d22));
-  EXPECT_NO_THROW(stan::math::copy(d22, d222));
-  EXPECT_NO_THROW(stan::math::copy(d22, d2_a));
-  EXPECT_NO_THROW(stan::math::copy(d222, d2_b));
+  EXPECT_NO_THROW(stan::math::copy(d22, d2));
+  EXPECT_NO_THROW(stan::math::copy(d222, d22));
+  EXPECT_NO_THROW(stan::math::copy(d2_a, d22));
+  EXPECT_NO_THROW(stan::math::copy(d2_b, d222));  
   EXPECT_EQ(1, d2_a(0, 0));
   EXPECT_EQ(2, d2_a(0, 1));
   EXPECT_EQ(3, d2_a(0, 2));
@@ -55,6 +56,10 @@ TEST(MathMatrixGPU, matrix_gpu_copy) {
   EXPECT_EQ(4, d2_b(1, 0));
   EXPECT_EQ(5, d2_b(1, 1));
   EXPECT_EQ(6, d2_b(1, 2));
+  // zero sized copy
+  EXPECT_NO_THROW(stan::math::copy(d00, d0));
+  EXPECT_NO_THROW(stan::math::copy(d0, d00));
+  EXPECT_NO_THROW(stan::math::copy(d000, d00));
 }
 
 TEST(MathMatrixGPU, barebone_buffer_copy) {

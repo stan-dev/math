@@ -25,10 +25,9 @@ namespace math {
  *
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
- *
  */
 template <int R, int C>
-void copy(const Eigen::Matrix<double, R, C>& src, matrix_gpu& dst) {
+void copy(matrix_gpu& dst, const Eigen::Matrix<double, R, C>& src) {
   check_size_match("copy (Eigen -> GPU)", "src.rows()", src.rows(),
                    "dst.rows()", dst.rows());
   check_size_match("copy (Eigen -> GPU)", "src.cols()", src.cols(),
@@ -62,10 +61,9 @@ void copy(const Eigen::Matrix<double, R, C>& src, matrix_gpu& dst) {
  *
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
- *
  */
 template <int R, int C>
-void copy(matrix_gpu& src, Eigen::Matrix<double, R, C>& dst) {
+void copy(Eigen::Matrix<double, R, C>& dst, matrix_gpu& src) {
   check_size_match("copy (GPU -> Eigen)", "src.rows()", src.rows(),
                    "dst.rows()", dst.rows());
   check_size_match("copy (GPU -> Eigen)", "src.cols()", src.cols(),
@@ -99,9 +97,8 @@ void copy(matrix_gpu& src, Eigen::Matrix<double, R, C>& dst) {
  *
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
- *
  */
-inline void copy(matrix_gpu& src, matrix_gpu& dst) {
+inline void copy(matrix_gpu& dst, matrix_gpu& src) {
   check_size_match("copy (GPU -> GPU)", "src.rows()", src.rows(), "dst.rows()",
                    dst.rows());
   check_size_match("copy (GPU -> GPU)", "src.cols()", src.cols(), "dst.cols()",
