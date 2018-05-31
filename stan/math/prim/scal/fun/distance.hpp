@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/fun/abs.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
 
 namespace stan {
 namespace math {
@@ -16,7 +17,7 @@ namespace math {
  * @throw std::domain_error If the arguments are not finite.
  */
 template <typename T1, typename T2>
-inline typename boost::math::tools::promote_args<T1, T2>::type distance(
+inline typename return_type<T1, T2>::type distance(
     const T1& x1, const T2& x2) {
   check_finite("distance", "x1", x1);
   check_finite("distance", "x2", x2);
