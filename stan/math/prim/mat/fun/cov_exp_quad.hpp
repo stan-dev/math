@@ -88,14 +88,16 @@ inline
                  const std::vector<T_l>& length_scale) {
   using std::exp;
 
-  check_positive("cov_exp_quad", "marginal variance", sigma);
+  // TODO add check length scale as dimension D
+  // TODO fix ARD calculation
+
+  char* str = "cov_exp_quad";
+  
+  check_positive(char, "marginal variance", sigma);
   for (size_t n = 0; n < x.size(); ++n) {
     check_not_nan("cov_exp_quad", "x", x[n]);
   }
-  for (size_t n = 0; n < length_scale.size(); ++n) {
-    check_positive("cov_exp_quad", "length-scale", length_scale[n]);
-    check_not_nan("cov_exp_quad", "length-scale", length_scale[n]);
-  }
+  check_postive_finite(char, "length scale", length_scale);
 
   Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
@@ -112,10 +114,8 @@ inline
   for (int j = 0; j < (x_size - 1); ++j) {
     cov(j, j) = sigma_sq;
     for (int i = j + 1; i < x_size; ++i) {
-      temp_exp = 0;
       for (int k = 0; k < l_size; ++k) {
         temp_exp += squared_distance(x[i], x[j]) / square(length_scale[k]);
-      }
       cov(i, j) = sigma_sq * exp(-0.5 * temp_exp);
       cov(j, i) = cov(i, j);
     }
