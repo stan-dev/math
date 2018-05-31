@@ -26,9 +26,30 @@ struct is_cplx_helper<complex<T>> : std::true_type {};
 template <class T>
 struct is_cplx : is_cplx_helper<std::decay_t<T>> {};
 
+/// trait to remove the complex wrapper around a type
+template <class T>
+struct rm_cplx_helper {
+  typedef T type;
+};
+template <class T>
+struct rm_cplx_helper<std::complex<T>> {
+  typedef T type;
+};
+template <class T>
+struct rm_cplx_helper<complex<T>> {
+  typedef T type;
+};
+template <class T>
+struct rm_cplx : rm_cplx_helper<std::decay_t<T>> {};
+template <class T>
+using rm_cplx_t = typename rm_cplx<T>::type;
+
 /// trait check for forward or reverse variable (helper must be specialized)
-template <class>
+template <class, class = void>
 struct is_fr_var_helper : std::false_type {};
+template <class T>
+struct is_fr_var_helper<T, std::enable_if_t<is_cplx<T>::value>>
+ : is_fr_var_helper<rm_cplx_t<T>> {};
 template <class T>
 struct is_fr_var : is_fr_var_helper<std::decay_t<T>> {};
 
@@ -51,24 +72,6 @@ struct is_arith : std::integral_constant<
 template <class T>
 struct is_cplx_or_arith
     : std::integral_constant<bool, is_cplx<T>::value || is_arith<T>::value> {};
-
-/// trait to remove the complex wrapper around a type
-template <class T>
-struct rm_cplx_helper {
-  typedef T type;
-};
-template <class T>
-struct rm_cplx_helper<std::complex<T>> {
-  typedef T type;
-};
-template <class T>
-struct rm_cplx_helper<complex<T>> {
-  typedef T type;
-};
-template <class T>
-struct rm_cplx : rm_cplx_helper<std::decay_t<T>> {};
-template <class T>
-using rm_cplx_t = typename rm_cplx<T>::type;
 
 /// trait to enforce var and related return types, not zvars
 template <class T>
@@ -115,13 +118,13 @@ struct complex : std::complex<T> {
   complex(const R real = 0, const I imag = 0) : std::complex<T>(real, imag) {}
 
   // override clang's implementation using logb and scalbn
-  inline std::complex<T>& operator/=(complex<T> const& z) {
-    T const n(std::abs(z));
-    T const r((this->real() * z.real() + this->imag() * z.imag()) / n);
-    this->imag((this->imag() * z.real() - this->real() * z.imag()) / n);
-    this->real(r);
-    return *this;
-  }
+//  inline std::complex<T>& operator/=(complex<T> const& z) {
+//    T const n(std::abs(z));
+//    T const r((this->real() * z.real() + this->imag() * z.imag()) / n);
+//    this->imag((this->imag() * z.real() - this->real() * z.imag()) / n);
+//    this->real(r);
+//    return *this;
+//  }
 };
 
 /// complex promotion when std::complex<double> is combined with a var
@@ -145,11 +148,14 @@ inline double rval_help(T const& t) {
   return t;
 }
 
-template <class S, class V>
+template <class S, class V, std::enable_if_t<std::is_same<S, V>::value>* = nullptr>
+S rval(V const& v){
+ return v;
+}
+
+template <class S, class V, std::enable_if_t<!std::is_same<S, V>::value>* = nullptr>
 S rval(V const& v) {
-  if (std::is_same<S, V>::value)
-    return v;
-  return rval<S>(stan::math::internal::rval_help(v));
+  return rval<S>(rval_help(v));
 }
 
 template <class S, class V>
@@ -194,8 +200,8 @@ template <
     std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
                      && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline auto operator+(U const& u, std::complex<T> const& t) {
-  auto r(stan::math::internal::cplx_promote<T, U>(t));
-  r += u;
+  auto r(stan::math::internal::cplx_promote<T, U>(u));
+  r += t;
   return r;
 }
 
@@ -214,8 +220,8 @@ template <
     std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
                      && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline auto operator*(U const& u, std::complex<T> const& t) {
-  auto r(stan::math::internal::cplx_promote<T, U>(t));
-  r *= u;
+  auto r(stan::math::internal::cplx_promote<T, U>(u));
+  r *= t;
   return r;
 }
 
@@ -234,9 +240,9 @@ template <
     std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
                      && stan::math::internal::is_arith<U>::value>* = nullptr>
 inline auto operator-(U const& u, std::complex<T> const& t) {
-  auto r(stan::math::internal::cplx_promote<T, U>(t));
-  r -= u;
-  return -r;
+  auto r(stan::math::internal::cplx_promote<T, U>(u));
+  r -= t;
+  return r;
 }
 
 template <
@@ -260,11 +266,11 @@ inline auto operator/(U const& u, std::complex<T> const& t) {
 }
 
 // another attempt at overriding clang
-template <class T>
-inline std::complex<T> operator/(stan::math::internal::complex<T> const& t,
-                                 stan::math::internal::complex<T> const& u) {
-  return t /= u;
-}
+//template <class T>
+//inline std::complex<T> operator/(stan::math::internal::complex<T> const& t,
+//                                 stan::math::internal::complex<T> const& u) {
+//  return t /= u;
+//}
 
 template <class T, class U,
           std::enable_if_t<!std::is_same<T, U>::value &&  // avoid base function

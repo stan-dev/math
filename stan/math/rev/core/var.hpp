@@ -508,10 +508,11 @@ struct to_arith_helper<z_var> {
   typedef var type;
 };
 
-/// helper functions to avoid forward declarations in other headers
-inline double rval_help(var const v) { return v.val(); }
-
 }  // namespace internal
+
+/// helper functions to avoid forward declarations in other headers
+// declared here because it depends on ADL from an uncontrolled type
+inline double rval_help(var const v) { return v.val(); }
 
 }  // namespace math
 }  // namespace stan
