@@ -9,7 +9,7 @@
 TEST(MathMatrixGPU, matrix_gpu_copy) {
   stan::math::vector_d d1;
   stan::math::vector_d d1_a;
-  stan::math::vector_d d1_b;  
+  stan::math::vector_d d1_b;
   stan::math::matrix_d d2;
   stan::math::matrix_d d2_a;
   stan::math::matrix_d d2_b;
@@ -28,7 +28,7 @@ TEST(MathMatrixGPU, matrix_gpu_copy) {
   EXPECT_NO_THROW(stan::math::copy(d11, d1));
   EXPECT_NO_THROW(stan::math::copy(d111, d11));
   EXPECT_NO_THROW(stan::math::copy(d1_a, d11));
-  EXPECT_NO_THROW(stan::math::copy(d1_b, d111));  
+  EXPECT_NO_THROW(stan::math::copy(d1_b, d111));
   EXPECT_EQ(1, d1_a(0));
   EXPECT_EQ(2, d1_a(1));
   EXPECT_EQ(3, d1_a(2));
@@ -43,7 +43,7 @@ TEST(MathMatrixGPU, matrix_gpu_copy) {
   EXPECT_NO_THROW(stan::math::copy(d22, d2));
   EXPECT_NO_THROW(stan::math::copy(d222, d22));
   EXPECT_NO_THROW(stan::math::copy(d2_a, d22));
-  EXPECT_NO_THROW(stan::math::copy(d2_b, d222));  
+  EXPECT_NO_THROW(stan::math::copy(d2_b, d222));
   EXPECT_EQ(1, d2_a(0, 0));
   EXPECT_EQ(2, d2_a(0, 1));
   EXPECT_EQ(3, d2_a(0, 2));

@@ -54,8 +54,7 @@ class matrix_gpu {
     try {
       // creates a read&write object for "size" double values
       // in the provided context
-      oclBuffer_
-        = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size());
+      oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size());
       /**
        * Sets the arguments for the kernel. See copy_matrix_kernel in
        * kernels/basic_matrix_gpu_kernels.hpp for the kernel code.
@@ -84,8 +83,8 @@ class matrix_gpu {
        *   Not needed here.
        */
       cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
-                                    cl::NDRange(rows(), cols()),
-                                    cl::NullRange, NULL, NULL);
+                                    cl::NDRange(rows(), cols()), cl::NullRange,
+                                    NULL, NULL);
     } catch (const cl::Error& e) {
       check_opencl_error("copy GPU->GPU", e);
     }
