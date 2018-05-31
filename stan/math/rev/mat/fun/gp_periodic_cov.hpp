@@ -4,6 +4,7 @@
 #include <boost/math/tools/promotion.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/utility/enable_if.hpp>
+#include <cmath>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
@@ -12,7 +13,6 @@
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
-#include <cmath>
 #include <vector>
 
 namespace stan {
@@ -54,7 +54,7 @@ namespace math {
  */
 template <typename T_x, typename T_sigma, typename T_l, typename T_p>
 class gp_periodic_cov_vari : public vari {
- public:
+public:
   const size_t size_;
   const size_t size_ltri_;
   const double l_d_;
@@ -91,12 +91,8 @@ class gp_periodic_cov_vari : public vari {
    */
   gp_periodic_cov_vari(const std::vector<T_x> &x, const T_sigma &sigma,
                        const T_l &l, const T_p &p)
-      : vari(0.0),
-        size_(x.size()),
-        size_ltri_(size_ * (size_ - 1) / 2),
-        l_d_(value_of(l)),
-        sigma_d_(value_of(sigma)),
-        p_d_(value_of(p)),
+      : vari(0.0), size_(x.size()), size_ltri_(size_ * (size_ - 1) / 2),
+        l_d_(value_of(l)), sigma_d_(value_of(sigma)), p_d_(value_of(p)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
         dist_(ChainableStack::instance().memalloc_.alloc_array<double>(
             size_ltri_)),
@@ -104,9 +100,7 @@ class gp_periodic_cov_vari : public vari {
             size_ltri_)),
         sin_dist_sq_(ChainableStack::instance().memalloc_.alloc_array<double>(
             size_ltri_)),
-        l_vari_(l.vi_),
-        sigma_vari_(sigma.vi_),
-        p_vari_(p.vi_),
+        l_vari_(l.vi_), sigma_vari_(sigma.vi_), p_vari_(p.vi_),
         cov_lower_(ChainableStack::instance().memalloc_.alloc_array<vari *>(
             size_ltri_)),
         cov_diag_(
@@ -188,7 +182,7 @@ class gp_periodic_cov_vari : public vari {
  */
 template <typename T_x, typename T_l, typename T_p>
 class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
- public:
+public:
   const size_t size_;
   const size_t size_ltri_;
   const double l_d_;
@@ -224,12 +218,8 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
    */
   gp_periodic_cov_vari(const std::vector<T_x> &x, double sigma, const T_l &l,
                        const T_p &p)
-      : vari(0.0),
-        size_(x.size()),
-        size_ltri_(size_ * (size_ - 1) / 2),
-        l_d_(value_of(l)),
-        sigma_d_(sigma),
-        p_d_(value_of(p)),
+      : vari(0.0), size_(x.size()), size_ltri_(size_ * (size_ - 1) / 2),
+        l_d_(value_of(l)), sigma_d_(sigma), p_d_(value_of(p)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
         dist_(ChainableStack::instance().memalloc_.alloc_array<double>(
             size_ltri_)),
@@ -237,8 +227,7 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
             size_ltri_)),
         sin_dist_sq_(ChainableStack::instance().memalloc_.alloc_array<double>(
             size_ltri_)),
-        l_vari_(l.vi_),
-        p_vari_(p.vi_),
+        l_vari_(l.vi_), p_vari_(p.vi_),
         cov_lower_(ChainableStack::instance().memalloc_.alloc_array<vari *>(
             size_ltri_)),
         cov_diag_(
@@ -316,8 +305,8 @@ gp_periodic_cov(const std::vector<T_x> &x, const var &sigma, const var &l,
   if (x_size == 0)
     return cov;
 
-  gp_periodic_cov_vari<T_x, var, var, var> *baseVari
-      = new gp_periodic_cov_vari<T_x, var, var, var>(x, sigma, l, p);
+  gp_periodic_cov_vari<T_x, var, var, var> *baseVari =
+      new gp_periodic_cov_vari<T_x, var, var, var>(x, sigma, l, p);
 
   size_t pos = 0;
   for (size_t j = 0; j < x_size; ++j) {
@@ -368,8 +357,8 @@ gp_periodic_cov(const std::vector<T_x> &x, double sigma, const var &l,
   if (x_size == 0)
     return cov;
 
-  gp_periodic_cov_vari<T_x, double, var, var> *baseVari
-      = new gp_periodic_cov_vari<T_x, double, var, var>(x, sigma, l, p);
+  gp_periodic_cov_vari<T_x, double, var, var> *baseVari =
+      new gp_periodic_cov_vari<T_x, double, var, var>(x, sigma, l, p);
 
   size_t pos = 0;
   for (size_t j = 0; j < x_size - 1; ++j) {
@@ -383,6 +372,6 @@ gp_periodic_cov(const std::vector<T_x> &x, double sigma, const var &l,
   cov.coeffRef(x_size - 1, x_size - 1).vi_ = baseVari->cov_diag_[x_size - 1];
   return cov;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif
