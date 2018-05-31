@@ -40,14 +40,6 @@ test/unit/libmultiple.so : test/unit/multiple_translation_units1.o test/unit/mul
 
 test/unit/multiple_translation_units_test.cpp : test/unit/libmultiple.so
 
-
-DEBUG_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *debug_*test.cpp))
-ifeq ($(DEBUG), 1)
-  $(DEBUG_TESTS): CXXFLAGS += $(GTEST_CXXFLAGS)
-  $(DEBUG_TESTS): CXXFLAGS := $(filter-out -O${O}, $(CXXFLAGS))
-  $(DEBUG_TESTS): CXXFLAGS +=-DDEBUG -g -O0
-endif
-
 ############################################################
 #
 # CVODES tests
