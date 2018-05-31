@@ -323,9 +323,11 @@ struct to_arith_helper<z_fvar<T>> {
 }  // namespace internal
 
 /// helper functions to avoid forward declarations in other headers
-//declared here because it depends on ADL from an uncontrolled type
+// declared here because it depends on ADL from an uncontrolled type
 template <class T>
-inline T rval_help(fvar<T> const& f) { return f.val(); }
+inline T rval_help(fvar<T> const& f) {
+  return f.val();
+}
 
 }  // namespace math
 }  // namespace stan
