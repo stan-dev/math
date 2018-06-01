@@ -111,7 +111,7 @@ class opencl_context_base {
    */
   inline void init_kernel_groups() {
     const char* copy_matrix_kernel =
-#include <stan/math/gpu/kernels/basic_matrix_kernels.cl>
+#include <stan/math/gpu/kernels/copy_matrix_kernel.cl>
         ;  // NOLINT
     kernel_info["dummy"] = {
         false, "timing", "__kernel void dummy(__global const int* foo) { };"};
