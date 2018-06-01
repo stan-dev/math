@@ -20,8 +20,8 @@ namespace math {
  * on the GPU.
  *
  * @tparam T type of data in the Eigen matrix
- * @param src source Eigen matrix
  * @param dst destination matrix on the GPU
+ * @param src source Eigen matrix
  *
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
@@ -56,14 +56,14 @@ void copy(matrix_gpu& dst, const Eigen::Matrix<double, R, C>& src) {
  * matrix.
  *
  * @tparam T type of data in the Eigen matrix
- * @param src source matrix on the GPU
  * @param dst destination Eigen matrix
+ * @param src source matrix on the GPU
  *
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
 template <int R, int C>
-void copy(Eigen::Matrix<double, R, C>& dst, matrix_gpu& src) {
+void copy(Eigen::Matrix<double, R, C>& dst, const matrix_gpu& src) {
   check_size_match("copy (GPU -> Eigen)", "src.rows()", src.rows(),
                    "dst.rows()", dst.rows());
   check_size_match("copy (GPU -> Eigen)", "src.cols()", src.cols(),
@@ -92,13 +92,13 @@ void copy(Eigen::Matrix<double, R, C>& dst, matrix_gpu& src) {
  * destination matrix. Both matrices
  * are stored on the GPU.
  *
- * @param src source matrix
  * @param dst destination matrix
+ * @param src source matrix
  *
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
-inline void copy(matrix_gpu& dst, matrix_gpu& src) {
+inline void copy(matrix_gpu& dst, const matrix_gpu& src) {
   check_size_match("copy (GPU -> GPU)", "src.rows()", src.rows(), "dst.rows()",
                    dst.rows());
   check_size_match("copy (GPU -> GPU)", "src.cols()", src.cols(), "dst.cols()",
