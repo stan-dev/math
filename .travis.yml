@@ -8,7 +8,7 @@ before_script:
   - echo ${CXX}
   - ${CXX} --version
   - echo "CC=$CXX" > make/local
-  - if [ ! -z ${STAN_MPI} ]; then echo "STAN_MPI=true" >> make/local; fi
+  - if [ ! -z ${STAN_MPI} ]; then echo "STAN_MPI=true" >> make/local; echo "Testing MPI"; fi
 
 osx_clang: &osx_clang
   os: osx
@@ -41,6 +41,7 @@ matrix:
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=\"mpicxx -cxx=clang++-3.8\""
+          STAN_MPI=true
           TESTFOLDER="test/unit/math/rev/mat/functor test/unit/math/prim/mat/functor test/unit/math/prim/arr/functor"
 #    - <<: *linux_clang
 #      env:
