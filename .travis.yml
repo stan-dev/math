@@ -8,6 +8,7 @@ before_script:
   - echo ${CXX}
   - ${CXX} --version
   - echo "CC=$CXX" > make/local
+  - [[ ! -z "$STAN_MPI" ]] && echo "STAN_MPI=true" >> make/local
 
 osx_clang: &osx_clang
   os: osx
