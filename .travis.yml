@@ -8,7 +8,6 @@ before_script:
   - echo ${CXX}
   - ${CXX} --version
   - echo "CC=$CXX" > make/local
-  - if [ ! -z ${STAN_MPI} ]; then echo "STAN_MPI=true" >> make/local; echo "Testing MPI"; fi
 
 osx_clang: &osx_clang
   os: osx
@@ -21,7 +20,7 @@ linux_clang: &linux_clang
   addons: 
     apt:
       sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8' ]
-      packages: [ 'clang-3.8', 'libc++-dev', 'mpich', 'libmpich-dev' ]
+      packages: [ 'clang-3.8', 'libc++-dev' ]
 
 linux_gcc: &linux_gcc
   os: linux
@@ -31,6 +30,22 @@ linux_gcc: &linux_gcc
       sources: [ 'ubuntu-toolchain-r-test' ]
       packages: [ 'g++-4.9' ]
 
+mpi_linux_clang: &mpi_linux_clang
+  os: linux
+  compiler: "clang-3.8"
+  addons: 
+    apt:
+      sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8' ]
+      packages: [ 'clang-3.8', 'libc++-dev', 'mpich', 'libmpich-dev' ]
+
+mpi_linux_gcc: &mpi_linux_gcc
+  os: linux
+  compiler: "gcc-4.9"
+  addons:
+    apt:
+      sources: [ 'ubuntu-toolchain-r-test' ]
+      packages: [ 'g++-4.9', 'mpich', 'libmpich-dev' ]
+
 matrix:
   fast_finish: true
   include:
@@ -38,9 +53,14 @@ matrix:
 #      env:
 #        - MATRIX_EVAL="CXX=\"clang++ -DSTAN_THREADS\""
 #          TESTFOLDER="test/unit/math/rev/core test/unit/math/rev/mat/functor"      
-    - <<: *linux_clang
+    - <<: *mpi_linux_clang
       env:
         - MATRIX_EVAL="CXX=\"mpicxx -cxx=clang++-3.8\""
+          STAN_MPI=true
+          TESTFOLDER="test/unit/math/rev/mat/functor test/unit/math/prim/mat/functor test/unit/math/prim/arr/functor"
+    - <<: *mpi_linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=\"mpicxx -cxx=g++-4.9\""
           STAN_MPI=true
           TESTFOLDER="test/unit/math/rev/mat/functor test/unit/math/prim/mat/functor test/unit/math/prim/arr/functor"
 #    - <<: *linux_clang
@@ -140,7 +160,9 @@ matrix:
 #
  # - TESTFOLDER=test/unit/math/mix # times out on travis
 
-script: ./runTests.py -j2 $TESTFOLDER
+script: 
+  - if [ ! -z ${STAN_MPI} ]; then echo "STAN_MPI=true" >> make/local; echo "Testing MPI"; fi
+  - ./runTests.py -j2 $TESTFOLDER
 
 sudo: false
 dist: trusty
