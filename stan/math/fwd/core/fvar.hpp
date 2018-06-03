@@ -345,14 +345,13 @@ struct complex<stan::math::fvar<T>>
   using stan::math::internal::complex<stan::math::internal::z_fvar<T>>::complex;
 };
 
-///override clang's division, because it uses logb and scalbn
+/// override clang's division, because it uses logb and scalbn
 template <>
 template <class T>
-inline std::complex<stan::math::fvar<T>>
-operator/ <stan::math::fvar<T>> (
- std::complex<stan::math::fvar<T>> const& t,
- std::complex<stan::math::fvar<T>> const& u) {
- return stan::math::internal::division(t,u);
+inline std::complex<stan::math::fvar<T>> operator/<stan::math::fvar<T>>(
+    std::complex<stan::math::fvar<T>> const& t,
+    std::complex<stan::math::fvar<T>> const& u) {
+  return stan::math::internal::division(t, u);
 }
 
 }  // namespace std
