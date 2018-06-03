@@ -118,14 +118,14 @@ struct complex : std::complex<T> {
   complex(const R real = 0, const I imag = 0) : std::complex<T>(real, imag) {}
 };
 
-//override clang's implementation using logb and scalbn
+// override clang's implementation using logb and scalbn
 template <class T>
-inline std::complex<T>
-division(std::complex<T> const& t, std::complex<T> const& z) {
- T const n(std::abs(z));
- T const r((t.real() * z.real() + t.imag() * z.imag()) / n);
- T const i((t.imag() * z.real() - t.real() * z.imag()) / n);
- return std::complex<T>(r,i);
+inline std::complex<T> division(std::complex<T> const& t,
+                                std::complex<T> const& z) {
+  T const n(std::abs(z));
+  T const r((t.real() * z.real() + t.imag() * z.imag()) / n);
+  T const i((t.imag() * z.real() - t.real() * z.imag()) / n);
+  return std::complex<T>(r, i);
 }
 
 /// complex promotion when std::complex<double> is combined with a var

@@ -18,7 +18,7 @@ namespace math {
  * autodiff variable.
  */
 template <typename F, typename T>
-struct apply_scalar_unary<F, fvar<T> > {
+struct apply_scalar_unary<F, fvar<T>> {
   /**
    * Function return type, which is same as the argument type for
    * the function, <code>fvar&lt;T&gt;</code>.
@@ -50,7 +50,7 @@ struct apply_scalar_unary<F, internal::z_fvar<T>> {
    * Function return type, the base class of the argument type
    * for the function, <code>internalz_fvar&lt;T&gt;</code>.
    */
- typedef fvar<T> return_t;
+  typedef fvar<T> return_t;
 
   /**
    * Apply the function specified by F to the specified argument.
@@ -58,10 +58,9 @@ struct apply_scalar_unary<F, internal::z_fvar<T>> {
    * @param x Argument variable.
    * @return Function applied to the variable.
    */
- static inline return_t
- apply(const fvar<T>& x) {  // handle through base
-  return F::fun(x);
- }
+  static inline return_t apply(const fvar<T>& x) {  // handle through base
+    return F::fun(x);
+  }
 };
 
 }  // namespace math
