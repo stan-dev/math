@@ -31,7 +31,7 @@ linux_gcc: &linux_gcc
       sources: [ 'ubuntu-toolchain-r-test' ]
       packages: [ 'g++-4.9' ]
 
-linux_gcc_mpi: &linux_gcc_mpi
+mpi_linux_gcc_mpi: &mpi_linux_gcc
   os: linux
   compiler: "gcc-4.9"
   addons:
@@ -46,7 +46,7 @@ matrix:
       env:
         - MATRIX_EVAL="CXX=\"clang++ -DSTAN_THREADS\""
           TESTFOLDER="test/unit/math/rev/core test/unit/math/rev/mat/functor"
-    - <<: *linux_gcc_mpi
+    - <<: *mpi_linux_gcc
       env:
         - MATRIX_EVAL="CXX=\"mpicxx\""
           MPICXX=mpicxx
