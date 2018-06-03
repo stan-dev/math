@@ -113,11 +113,15 @@ class opencl_context_base {
     const char* copy_matrix_kernel =
 #include <stan/math/gpu/kernels/copy_matrix_kernel.cl>
         ;  // NOLINT
+    const char* transpose_matrix_kernel =
+#include <stan/math/gpu/kernels/transpose_matrix_kernel.cl>
+        ;  // NOLINT
     kernel_info["dummy"] = {
         false, "timing", "__kernel void dummy(__global const int* foo) { };"};
     kernel_info["dummy2"] = {
         false, "timing", "__kernel void dummy2(__global const int* foo) { };"};
     kernel_info["copy"] = {false, "basic_matrix", copy_matrix_kernel};
+    kernel_info["transpose"] = {false, "basic_matrix", transpose_matrix_kernel};
   }
 
  protected:
