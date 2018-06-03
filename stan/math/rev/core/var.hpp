@@ -531,6 +531,14 @@ struct complex<stan::math::var>
   using stan::math::internal::complex<stan::math::internal::z_var>::complex;
 };
 
-}  // namespace std
+///override clang's division, because it uses logb and scalbn
+template <>
+inline std::complex<stan::math::var>
+operator/ <stan::math::var> (
+ std::complex<stan::math::var> const& t,
+ std::complex<stan::math::var> const& u) {
+ return stan::math::internal::division(t,u);
+}
 
+}  // namespace std
 #endif

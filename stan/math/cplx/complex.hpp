@@ -116,16 +116,17 @@ struct complex : std::complex<T> {
             std::enable_if_t<is_arith<R>::value>* = nullptr>
   // NOLINTNEXTLINE
   complex(const R real = 0, const I imag = 0) : std::complex<T>(real, imag) {}
-
-  // override clang's implementation using logb and scalbn
-  //  inline std::complex<T>& operator/=(complex<T> const& z) {
-  //    T const n(std::abs(z));
-  //    T const r((this->real() * z.real() + this->imag() * z.imag()) / n);
-  //    this->imag((this->imag() * z.real() - this->real() * z.imag()) / n);
-  //    this->real(r);
-  //    return *this;
-  //  }
 };
+
+//override clang's implementation using logb and scalbn
+template <class T>
+inline std::complex<T>
+division(std::complex<T> const& t, std::complex<T> const& z) {
+ T const n(std::abs(z));
+ T const r((t.real() * z.real() + t.imag() * z.imag()) / n);
+ T const i((t.imag() * z.real() - t.real() * z.imag()) / n);
+ return std::complex<T>(r,i);
+}
 
 /// complex promotion when std::complex<double> is combined with a var
 // always set to fire because it also does decay conversions
