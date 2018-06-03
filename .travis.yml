@@ -51,7 +51,7 @@ matrix:
         - MATRIX_EVAL="CXX=\"mpicxx\""
           MPICXX=mpicxx
           STAN_MPI=true
-          TESTFOLDER="test/unit/math/rev/core test/unit/math/rev/mat/functor"      
+          TESTFOLDER="test/unit/math/prim/arr/functor test/unit/math/prim/mat/functor test/unit/math/rev/mat/functor"
 #    - <<: *linux_clang
 #      env:
 #        - MATRIX_EVAL="CXX=clang++-3.8"
