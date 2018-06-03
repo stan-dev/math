@@ -6,9 +6,9 @@ git:
 before_script:
   - eval "${MATRIX_EVAL}"
   - echo ${CXX}
-#  - ${CXX} --version
+  - ${CXX} --version
   - echo "CC=$CXX" > make/local
-  - echo "STAN_MPI=true" >> make/local
+  - if [ ! -z ${STAN_MPI} ]; then echo "STAN_MPI=true" >> make/local; fi
 
 osx_clang: &osx_clang
   os: osx
