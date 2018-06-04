@@ -1,3 +1,4 @@
+#ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/gpu/err/check_matrix_gpu.hpp>
 #include <gtest/gtest.h>
@@ -83,3 +84,4 @@ TEST(ErrorHandlingScalarGPU, check_m_symmetric) {
                std::domain_error);
   EXPECT_NO_THROW(check_symmetric(function, "m_symm_mat1", mm_ok));
 }
+#endif
