@@ -168,6 +168,7 @@ const double LOG_TWO_PI = LOG_TWO + LOG_PI;
 
 const double NEG_LOG_TWO_PI = -LOG_TWO_PI;
 
+const double LOG_EPSILON = std::log(EPSILON);
 }  // namespace math
 }  // namespace stan
 
