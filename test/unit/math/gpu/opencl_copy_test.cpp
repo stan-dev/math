@@ -1,3 +1,4 @@
+#ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/gpu/basic_matrix_gpu.hpp>
 #include <gtest/gtest.h>
@@ -102,4 +103,4 @@ TEST(MathMatrixGPU, copy_submatrix_exception) {
   EXPECT_THROW(stan::math::copy_submatrix(d11, d22,
     1, 1, 3, 3, 3, 3), std::domain_error);
 }
-
+#endif

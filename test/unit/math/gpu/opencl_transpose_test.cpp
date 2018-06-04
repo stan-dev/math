@@ -1,3 +1,4 @@
+#ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/gpu/basic_matrix_gpu.hpp>
 #include <gtest/gtest.h>
@@ -71,3 +72,4 @@ TEST(MathGpu, transpose) {
   EXPECT_EQ(m0(2, 1), m0_dst(1, 2));
   EXPECT_EQ(m0(2, 2), m0_dst(2, 2));
 }
+#endif

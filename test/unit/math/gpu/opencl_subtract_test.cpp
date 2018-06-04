@@ -1,3 +1,4 @@
+#ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/gpu/basic_matrix_gpu.hpp>
 #include <gtest/gtest.h>
@@ -127,3 +128,4 @@ TEST(MathMatrixGPU, subtract_exception) {
   EXPECT_THROW(rv33 = subtract(rv11, rv22), std::invalid_argument);
   EXPECT_THROW(m33 = subtract(m11, m22), std::invalid_argument);
 }
+#endif

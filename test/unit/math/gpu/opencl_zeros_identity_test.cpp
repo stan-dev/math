@@ -1,3 +1,4 @@
+#ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/gpu/basic_matrix_gpu.hpp>
 #include <gtest/gtest.h>
@@ -64,3 +65,4 @@ TEST(MathMatrixGPU, identity_m_value_check) {
   EXPECT_EQ(0, m0(1, 0));
   EXPECT_EQ(1, m0(1, 1));
 }
+#endif
