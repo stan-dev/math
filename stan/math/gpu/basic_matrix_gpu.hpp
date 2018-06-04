@@ -4,13 +4,9 @@
 #include <stan/math/gpu/matrix_gpu.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
-//#include <stan/math/gpu/err/check_matrix_gpu.hpp>
-#include <stan/math/prim/mat/err/check_matching_dims.hpp>
-#include <stan/math/prim/arr/fun/value_of.hpp>
+//#include <stan/math/prim/mat/err/check_matching_dims.hpp>
+//#include <stan/math/prim/arr/fun/value_of.hpp>
 #include <CL/cl.hpp>
-#include <iostream>
-#include <string>
-#include <map>
 
 /** @file stan/math/gpu/basic_matrix_gpu.hpp
 *    @brief basic_matrix_gpu - basic matrix operations:
@@ -71,7 +67,7 @@ namespace stan {
      * if the parameter is not specified, 
      * zeros are assigned to the whole matrix.
      * 
-     *//*
+     */
     inline void zeros(matrix_gpu & A, triangularity part = NONE) {
       cl::Kernel kernel = opencl_context.get_kernel("zeros");
       cl::CommandQueue cmdQueue = opencl_context.queue();
@@ -90,7 +86,7 @@ namespace stan {
       } catch (const cl::Error& e) {
         check_opencl_error("zeros", e);
       }
-    }*/
+    }
 
     /**
      * Returns the identity matrix stored on the GPU
@@ -99,7 +95,7 @@ namespace stan {
      * 
      * @return the identity matrix
      * 
-     *//*
+     */
     inline matrix_gpu identity(int rows_cols) {
       matrix_gpu A(rows_cols, rows_cols);
       if (rows_cols == 0) {
@@ -123,7 +119,7 @@ namespace stan {
         check_opencl_error("identity", e);
       }
       return A;
-    }*/
+    }
 
     /**
      * Copies the lower or upper 
@@ -139,7 +135,7 @@ namespace stan {
      * 
      * @return the matrix with the copied content
      * 
-     *//*
+     */
     inline matrix_gpu copy_triangular(matrix_gpu & src,
      triangularity lower_upper) {
       if (src.size() == 0) {
@@ -168,7 +164,7 @@ namespace stan {
         check_opencl_error("copy_triangular", e);
       }
       return dst;
-    }*/
+    }
      /**
      * Copies a submatrix of the source matrix to 
      * the destination matrix. The submatrix to copy 
@@ -190,7 +186,7 @@ namespace stan {
      * @throw <code>std::invalid_argument</code> if 
      * 
      * 
-     *//*
+     */
     inline void copy_submatrix(matrix_gpu & src,
      matrix_gpu & dst, int src_offset_rows, int src_offset_cols,
      int dst_offset_rows, int dst_offset_cols, int size_rows, int size_cols) {
@@ -237,7 +233,7 @@ namespace stan {
       } catch (const cl::Error& e) {
         check_opencl_error("copy_submatrix", e);
       }
-    }*/
+    }
 
     /**
      * Copies the lower triangular 
@@ -255,7 +251,7 @@ namespace stan {
      * @throw <code>std::invalid_argument</code> if the 
      * matrices do not have matching dimensions
      * 
-     *//*
+     */
     inline void copy_triangular_transposed(matrix_gpu & A,
      copy_transposed_triangular lower_upper) {
       if (A.size() == 0) {
@@ -264,7 +260,7 @@ namespace stan {
       if (A.size() == 1) {
         return;
       }
-      check_square("copy_triangular_transposed (GPU)", "A", A);
+      check_size_match("copy_triangular_transposed (GPU)", "A.cols()", A.cols(), "A.rows()", A.rows());
       cl::Kernel kernel =
         opencl_context.get_kernel("copy_triangular_transposed");
       cl::CommandQueue cmdQueue = opencl_context.queue();
@@ -283,7 +279,7 @@ namespace stan {
       } catch (const cl::Error& e) {
         check_opencl_error("copy_triangular_transposed", e);
       }
-    }*/
+    }
     /**
      * Matrix addition on the GPU
      * Adds the first two matrices and stores 

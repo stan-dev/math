@@ -116,12 +116,32 @@ class opencl_context_base {
     const char* transpose_matrix_kernel =
 #include <stan/math/gpu/kernels/transpose_matrix_kernel.cl>
         ;  // NOLINT
+    const char* zeros_matrix_kernel =
+#include <stan/math/gpu/kernels/zeros_matrix_kernel.cl>
+        ;  // NOLINT
+    const char* identity_matrix_kernel =
+#include <stan/math/gpu/kernels/identity_matrix_kernel.cl>
+        ;  // NOLINT
+    const char* copy_triangular_matrix_kernel =
+#include <stan/math/gpu/kernels/copy_triangular_matrix_kernel.cl>
+        ;  // NOLINT
+    const char* copy_triangular_transposed_matrix_kernel =
+#include <stan/math/gpu/kernels/copy_triangular_transposed_matrix_kernel.cl>
+        ;  // NOLINT
+    const char* copy_submatrix_kernel =
+#include <stan/math/gpu/kernels/copy_submatrix_kernel.cl>
+        ;  // NOLINT
     kernel_info["dummy"] = {
         false, "timing", "__kernel void dummy(__global const int* foo) { };"};
     kernel_info["dummy2"] = {
         false, "timing", "__kernel void dummy2(__global const int* foo) { };"};
     kernel_info["copy"] = {false, "basic_matrix", copy_matrix_kernel};
     kernel_info["transpose"] = {false, "basic_matrix", transpose_matrix_kernel};
+    kernel_info["zeros"] = {false, "basic_matrix", zeros_matrix_kernel};
+    kernel_info["identity"] = {false, "basic_matrix", identity_matrix_kernel};
+    kernel_info["copy_triangular"] = {false, "basic_matrix", copy_triangular_matrix_kernel};
+    kernel_info["copy_triangular_transposed"] = {false, "basic_matrix", copy_triangular_transposed_matrix_kernel};
+    kernel_info["copy_submatrix"] = {false, "basic_matrix", copy_submatrix_kernel};
   }
 
  protected:
