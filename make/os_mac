@@ -23,7 +23,7 @@ endif
 DLL := .dylib
 
 ifdef STAN_MPI
-  LDFLAGS_MPI := -L$(BOOST)/stage/lib -lboost_serialization -lboost_mpi -Wl,-rpath,$(BOOST)/stage/lib
-  CXXFLAGS_MPI := -DSTAN_MPI
-  LIBMPI = $(BOOST_LIB_ABS)/libboost_mpi$(DLL) $(BOOST_LIB_ABS)/libboost_serialization$(DLL)
+  LDFLAGS_MPI = -L$(BOOST_LIB) -lboost_serialization -lboost_mpi -Wl,-rpath,$(BOOST_LIB_ABS)
+  CXXFLAGS_MPI = -DSTAN_MPI
+  LIBMPI = $(BOOST_LIB)/libboost_mpi$(DLL) $(BOOST_LIB)/libboost_serialization$(DLL)
 endif
