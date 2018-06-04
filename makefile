@@ -154,3 +154,5 @@ clean-all: clean clean-doxygen clean-deps clean-libraries
 	@echo '  removing generated test files'
 	$(shell find test/prob -name '*_generated_*_test.cpp' -type f -exec rm {} +)
 	$(RM) $(wildcard test/prob/generate_tests$(EXE))
+
+print-%  : ; @echo $* = $($*)
