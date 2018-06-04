@@ -494,7 +494,8 @@ namespace internal {
  * inherited from var.
  */
 struct z_var : var {
-  template <class Z = var>
+  template <class Z = double,
+   std::enable_if_t<is_arith<Z>::value>* = nullptr>
   z_var(Z const z = 0) : var(z) {}  // NOLINT
 };
 
