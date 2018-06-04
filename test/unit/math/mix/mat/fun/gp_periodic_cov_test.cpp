@@ -10812,7 +10812,6 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
       std::domain_error);
 }
 
-
 TEST(AgradMixMath, ffv_gp_periodic_cov1_vec_invalid_values) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
@@ -18329,7 +18328,6 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_2) {
       std::domain_error);
 }
 
-
 TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
   using stan::math::fvar;
   using stan::math::gp_periodic_cov;
@@ -19076,7 +19074,6 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p_d_bad),
       std::domain_error);
 }
-
 
 TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
   using stan::math::fvar;
