@@ -306,8 +306,7 @@ namespace internal {
  */
 template <class T = double>
 struct z_fvar : fvar<T> {
-  template<class Z,
-   std::enable_if_t<is_arith<Z>::value>* = nullptr>
+  template <class Z, std::enable_if_t<is_arith<Z>::value>* = nullptr>
   z_fvar(Z const& z = 0) : fvar<T>(z) {}  // NOLINT
 };
 
