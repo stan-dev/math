@@ -1,11 +1,10 @@
 #ifndef STAN_MATH_GPU_BASIC_MATRIX_GPU_HPP
 #define STAN_MATH_GPU_BASIC_MATRIX_GPU_HPP
-
+#ifdef STAN_OPENCL
 #include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/gpu/err/check_matrix_gpu.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
-//#include <stan/math/prim/mat/err/check_matching_dims.hpp>
-//#include <stan/math/prim/arr/fun/value_of.hpp>
 #include <CL/cl.hpp>
 
 /** @file stan/math/gpu/basic_matrix_gpu.hpp
@@ -260,7 +259,7 @@ namespace stan {
       if (A.size() == 1) {
         return;
       }
-      check_size_match("copy_triangular_transposed (GPU)", "A.cols()", A.cols(), "A.rows()", A.rows());
+      check_square("copy_triangular_transposed (GPU)", "A", A);
       cl::Kernel kernel =
         opencl_context.get_kernel("copy_triangular_transposed");
       cl::CommandQueue cmdQueue = opencl_context.queue();
@@ -293,7 +292,7 @@ namespace stan {
      * @throw <code>std::invalid_argument</code> if the 
      * input matrices do not have matching dimensions
      * 
-     *//*
+     */
     inline matrix_gpu add(matrix_gpu& A,
      matrix_gpu& B) {
       check_matching_dims("add (GPU)", "A", A, "B", B);
@@ -320,7 +319,7 @@ namespace stan {
         check_opencl_error("add", e);
       }
       return C;
-    }*/
+    }
 
     /**
      * Matrix subtraction on the GPU
@@ -336,7 +335,7 @@ namespace stan {
      * @throw <code>std::invalid_argument</code> if the 
      * input matrices do not have matching dimensions
      * 
-     *//*
+     */
     inline matrix_gpu subtract(matrix_gpu & A, matrix_gpu & B) {
       check_matching_dims("subtract (GPU)", "A", A, "B", B);
       matrix_gpu C(A.rows(), A.cols());
@@ -363,9 +362,9 @@ namespace stan {
         check_opencl_error("subtract", e);
       }
       return C;
-    }*/
+    }
   }
 }
 
 #endif
-
+#endif

@@ -130,6 +130,7 @@ class opencl_context_base {
         ;  // NOLINT
     const char* copy_submatrix_kernel =
 #include <stan/math/gpu/kernels/copy_submatrix_kernel.cl>
+        ;  // NOLINT
     const char* check_nan_kernel =
 #include <stan/math/gpu/kernels/check_nan_kernel.cl>
         ;  // NOLINT
@@ -138,6 +139,12 @@ class opencl_context_base {
         ;  // NOLINT
     const char* check_symmetric_kernel =
 #include <stan/math/gpu/kernels/check_symmetric_kernel.cl>
+        ;  // NOLINT
+    const char* subtract_symmetric_kernel =
+#include <stan/math/gpu/kernels/subtract_matrix_kernel.cl>
+        ;  // NOLINT
+    const char* add_symmetric_kernel =
+#include <stan/math/gpu/kernels/add_matrix_kernel.cl>
         ;  // NOLINT
     kernel_info["dummy"] = {
         false, "timing", "__kernel void dummy(__global const int* foo) { };"};
@@ -150,6 +157,8 @@ class opencl_context_base {
     kernel_info["copy_triangular"] = {false, "basic_matrix", copy_triangular_matrix_kernel};
     kernel_info["copy_triangular_transposed"] = {false, "basic_matrix", copy_triangular_transposed_matrix_kernel};
     kernel_info["copy_submatrix"] = {false, "basic_matrix", copy_submatrix_kernel};
+    kernel_info["add"] = {false, "basic_matrix", add_symmetric_kernel};
+    kernel_info["subtract"] = {false, "basic_matrix", subtract_symmetric_kernel};
     kernel_info["check_nan"] = {false, "check", check_nan_kernel};
     kernel_info["check_diagonal_zeros"] = {false, "check", check_diagonal_zeros_kernel};
     kernel_info["check_symmetric"] = {false, "check", check_symmetric_kernel};
