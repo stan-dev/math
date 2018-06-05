@@ -63,11 +63,11 @@ struct any_fr_var<T, U,
 
 /// trait check for arithmetic types
 template <class T>
-struct is_arith : std::integral_constant<
-                      bool, !is_cplx<T>::value && 
-		             ( is_fr_var<T>::value
-                               || std::is_arithmetic<std::decay_t<T>>::value)> {
-};
+struct is_arith
+    : std::integral_constant<
+          bool, !is_cplx<T>::value
+                    && (is_fr_var<T>::value
+                        || std::is_arithmetic<std::decay_t<T>>::value)> {};
 
 /// trait to see if the template parameter is complex or arithmetic
 template <class T>
@@ -122,17 +122,15 @@ struct complex : std::complex<T> {
 /// complex promotion when std::complex<double> is combined with a var
 // always set to fire because it also does decay conversions
 // could be specialized later to short circuit
-template <class T, class U, 
-	  class AT = to_arith_t<rm_cplx_t<T>>,
-	  class AU = to_arith_t<rm_cplx_t<U>>,
+template <class T, class U, class AT = to_arith_t<rm_cplx_t<T>>,
+          class AU = to_arith_t<rm_cplx_t<U>>,
           class AP = typename boost::math::tools::promote_args<AT, AU>::type>
 auto cplx_promote(std::complex<T> const& t) {
   return std::complex<AP>(t.real(), t.imag());
 }
 
-template <class T, class U,
-	  class AT = to_arith_t<rm_cplx_t<T>>,
-	  class AU = to_arith_t<rm_cplx_t<U>>,
+template <class T, class U, class AT = to_arith_t<rm_cplx_t<T>>,
+          class AU = to_arith_t<rm_cplx_t<U>>,
           class AP = typename boost::math::tools::promote_args<AT, AU>::type>
 auto cplx_promote(U const& u) {
   return std::complex<AP>(u);
@@ -178,57 +176,57 @@ std::complex<S> rval(std::complex<V> const& v) {
 // some namespace ADL features in other packages like Eigen depend on it.
 
 template <class T, class U,
-    std::enable_if_t<any_fr_var<T, U>::value
-                     && is_cplx_or_arith<U>::value>* = nullptr>
+          std::enable_if_t<any_fr_var<T, U>::value
+                           && is_cplx_or_arith<U>::value>* = nullptr>
 inline auto operator+(std::complex<T> const& t, U const& u) {
   return cplx_promote<T, U>(t) += u;
 }
 
-template <class T, class U,
-    std::enable_if_t<any_fr_var<T, U>::value
-                     && is_arith<U>::value>* = nullptr>
+template <
+    class T, class U,
+    std::enable_if_t<any_fr_var<T, U>::value && is_arith<U>::value>* = nullptr>
 inline auto operator+(U const& u, std::complex<T> const& t) {
   return cplx_promote<T, U>(u) += t;
 }
 
 template <class T, class U,
-    std::enable_if_t<any_fr_var<T, U>::value
-                     && is_cplx_or_arith<U>::value>* = nullptr>
+          std::enable_if_t<any_fr_var<T, U>::value
+                           && is_cplx_or_arith<U>::value>* = nullptr>
 inline auto operator-(std::complex<T> const& t, U const& u) {
   return cplx_promote<T, U>(t) -= u;
 }
 
-template <class T, class U,
-    std::enable_if_t<any_fr_var<T, U>::value
-                     && is_arith<U>::value>* = nullptr>
+template <
+    class T, class U,
+    std::enable_if_t<any_fr_var<T, U>::value && is_arith<U>::value>* = nullptr>
 inline auto operator-(U const& u, std::complex<T> const& t) {
   return cplx_promote<T, U>(u) -= t;
 }
 
 template <class T, class U,
-    std::enable_if_t<any_fr_var<T, U>::value
-                     && is_cplx_or_arith<U>::value>* = nullptr>
+          std::enable_if_t<any_fr_var<T, U>::value
+                           && is_cplx_or_arith<U>::value>* = nullptr>
 inline auto operator*(std::complex<T> const& t, U const& u) {
   return cplx_promote<T, U>(t) *= u;
 }
 
-template <class T, class U,
-    std::enable_if_t<any_fr_var<T, U>::value
-                     && is_arith<U>::value>* = nullptr>
+template <
+    class T, class U,
+    std::enable_if_t<any_fr_var<T, U>::value && is_arith<U>::value>* = nullptr>
 inline auto operator*(U const& u, std::complex<T> const& t) {
   return cplx_promote<T, U>(u) *= t;
 }
 
 template <class T, class U,
-    std::enable_if_t<any_fr_var<T, U>::value
-                     && is_cplx_or_arith<U>::value>* = nullptr>
+          std::enable_if_t<any_fr_var<T, U>::value
+                           && is_cplx_or_arith<U>::value>* = nullptr>
 inline auto operator/(std::complex<T> const& t, U const& u) {
   return cplx_promote<T, U>(t) /= u;
 }
 
-template <class T, class U,
-    std::enable_if_t<any_fr_var<T, U>::value
-                     && is_arith<U>::value>* = nullptr>
+template <
+    class T, class U,
+    std::enable_if_t<any_fr_var<T, U>::value && is_arith<U>::value>* = nullptr>
 inline auto operator/(U const& u, std::complex<T> const& t) {
   return cplx_promote<T, U>(u) /= t;
 }
@@ -237,9 +235,8 @@ inline auto operator/(U const& u, std::complex<T> const& t) {
 // this template relies on more specific templates for
 // z_fvar and z_var to trigger the override
 template <class T>
-inline std::complex<to_arith_t<T>>
-division(std::complex<T> const& t,
-          std::complex<T> const& z) {
+inline std::complex<to_arith_t<T>> division(std::complex<T> const& t,
+                                            std::complex<T> const& z) {
   using std::abs;
   T const n(abs(z));
   T const r((t.real() * z.real() + t.imag() * z.imag()) / n);
@@ -268,44 +265,42 @@ inline bool operator==(std::complex<T> const& t, std::complex<U> const& u) {
 }
 
 template <class T, class U,
-    std::enable_if_t<stan::math::cplx::any_fr_var<T, U>::value
-                     && stan::math::cplx::is_arith<U>::value>* = nullptr>
+          std::enable_if_t<stan::math::cplx::any_fr_var<T, U>::value
+                           && stan::math::cplx::is_arith<U>::value>* = nullptr>
 inline bool operator==(std::complex<T> const& t, U const& u) {
   return stan::math::cplx::rval<double>(t)
          == stan::math::cplx::rval<double>(u);  // avoid promotions
 }
 
 template <class T, class U,
-    std::enable_if_t<stan::math::cplx::any_fr_var<T, U>::value
-                     && stan::math::cplx::is_arith<U>::value>* = nullptr>
+          std::enable_if_t<stan::math::cplx::any_fr_var<T, U>::value
+                           && stan::math::cplx::is_arith<U>::value>* = nullptr>
 inline bool operator==(U const& u, std::complex<T> const& t) {
   return stan::math::cplx::rval<double>(t)
          == stan::math::cplx::rval<double>(u);  // avoid promotions
 }
 
-template <class T, class U,
-          std::enable_if_t<!std::is_same<T, U>::value &&  // avoid base function
-                           stan::math::cplx::any_fr_var<T, U>::value
-                           && stan::math::cplx::is_arith<T>::value
-                           &&  // symmetric
-                           stan::math::cplx::is_arith<U>::value>* = nullptr>
+template <
+    class T, class U,
+    std::enable_if_t<!std::is_same<T, U>::value &&  // avoid base function
+                     stan::math::cplx::any_fr_var<T, U>::value
+                     && stan::math::cplx::is_arith<T>::value &&  // symmetric
+                     stan::math::cplx::is_arith<U>::value>* = nullptr>
 inline bool operator!=(std::complex<T> const& t, std::complex<U> const& u) {
   return t.real() != u.real() || t.imag() != u.imag();
 }
 
-template <
-    class T, class U,
-    std::enable_if_t<stan::math::cplx::any_fr_var<T, U>::value
-                     && stan::math::cplx::is_arith<U>::value>* = nullptr>
+template <class T, class U,
+          std::enable_if_t<stan::math::cplx::any_fr_var<T, U>::value
+                           && stan::math::cplx::is_arith<U>::value>* = nullptr>
 inline bool operator!=(std::complex<T> const& t, U const& u) {
   return stan::math::cplx::rval<double>(t)
          != stan::math::cplx::rval<double>(u);  // avoid promotions
 }
 
-template <
-    class T, class U,
-    std::enable_if_t<stan::math::cplx::any_fr_var<T, U>::value
-                     && stan::math::cplx::is_arith<U>::value>* = nullptr>
+template <class T, class U,
+          std::enable_if_t<stan::math::cplx::any_fr_var<T, U>::value
+                           && stan::math::cplx::is_arith<U>::value>* = nullptr>
 inline bool operator!=(U const& u, std::complex<T> const& t) {
   return stan::math::cplx::rval<double>(t)
          != stan::math::cplx::rval<double>(u);  // avoid promotions
@@ -320,25 +315,21 @@ template <class T1, class T2, template <class, class> class OP>
 struct ScalarBinaryOpTraits<
     T1,
     std::enable_if_t<
-        stan::math::cplx::is_cplx_or_arith<T1>::value &&  // !is_eigen
+        stan::math::cplx::is_cplx_or_arith<T1>::value &&      // !is_eigen
                                                               // !VectorBlock
-            stan::math::cplx::is_cplx_or_arith<T2>::value
-            &&                               // !is_eigen
-                                             // !VectorBlock
-            !std::is_same<T1, T2>::value &&  // avoid Eigen's template
-            ((stan::math::cplx::is_cplx<T1>::value
-              &&  // next boolean avoids
-                  // Eigen
+            stan::math::cplx::is_cplx_or_arith<T2>::value &&  // !is_eigen
+                                                              // !VectorBlock
+            !std::is_same<T1, T2>::value &&            // avoid Eigen's template
+            ((stan::math::cplx::is_cplx<T1>::value &&  // next boolean avoids
+                                                       // Eigen
               !std::is_same<stan::math::cplx::rm_cplx_t<T1>, T2>::value)
-             || (stan::math::cplx::is_cplx<T2>::value
-                 &&  // next boolean avoids
-                     // Eigen
-                 !std::is_same<T1,
-                               stan::math::cplx::rm_cplx_t<T2>>::value)),
+             || (stan::math::cplx::is_cplx<T2>::value &&  // next boolean avoids
+                                                          // Eigen
+                 !std::is_same<T1, stan::math::cplx::rm_cplx_t<T2>>::value)),
         T2>,
     OP<T1, T2>> {
-  typedef std::complex<stan::math::cplx::to_arith_t<
-      typename boost::math::tools::promote_args<
+  typedef std::complex<
+      stan::math::cplx::to_arith_t<typename boost::math::tools::promote_args<
           stan::math::cplx::rm_cplx_t<std::decay_t<T1>>,
           stan::math::cplx::rm_cplx_t<std::decay_t<T2>>>::type>>
       ReturnType;

@@ -99,8 +99,8 @@ struct fvar {
    *   tangent type T)
    * @param[in] v value
    */
-  template <typename V, typename std::enable_if_t<
-                            ad_promotable<V, T>::value>* = nullptr>
+  template <typename V,
+            typename std::enable_if_t<ad_promotable<V, T>::value>* = nullptr>
   fvar(const V& v) : val_(v), d_(0.0) {  // NOLINT(runtime/explicit)
     if (unlikely(is_nan(v)))
       d_ = v;
@@ -306,8 +306,7 @@ namespace cplx {
  */
 template <class T = double>
 struct z_fvar : fvar<T> {
-  template<class Z = double,
-   std::enable_if_t<is_arith<Z>::value>* = nullptr>
+  template <class Z = double, std::enable_if_t<is_arith<Z>::value>* = nullptr>
   z_fvar(Z const& z = 0) : fvar<T>(z) {}  // NOLINT
 };
 
@@ -346,10 +345,9 @@ struct complex<stan::math::fvar<T>>
   using stan::math::cplx::complex<stan::math::cplx::z_fvar<T>>::complex;
 };
 
-//override clang's division, which uses scalbn and logb
+// override clang's division, which uses scalbn and logb
 template <class T>
-inline std::complex<stan::math::fvar<T>>
-operator/ (
+inline std::complex<stan::math::fvar<T>> operator/(
     std::complex<stan::math::cplx::z_fvar<T>> const& t,
     std::complex<stan::math::cplx::z_fvar<T>> const& u) {
   return stan::math::cplx::division(t, u);
@@ -357,67 +355,59 @@ operator/ (
 
 }  // namespace std
 
-namespace stan{
-namespace math{
+namespace stan {
+namespace math {
 
-//these forwards allow movement of several (target) function
-//template std::complex overloads out of the std namespace
-//and into the stan::math::cplx namespace, even though the
-//target function templates are already tightly constrained
+// these forwards allow movement of several (target) function
+// template std::complex overloads out of the std namespace
+// and into the stan::math::cplx namespace, even though the
+// target function templates are already tightly constrained
 template <class T, class U,
- std::enable_if_t<std::is_arithmetic<U>::value>* = nullptr>
-inline auto
-operator+(fvar<T> const& t, std::complex<U> const& u) {
-  return stan::math::cplx::operator+(t,u);
+          std::enable_if_t<std::is_arithmetic<U>::value>* = nullptr>
+inline auto operator+(fvar<T> const& t, std::complex<U> const& u) {
+  return stan::math::cplx::operator+(t, u);
 }
 
 template <class T, class U,
- std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
-inline auto
-operator+(std::complex<T> const& t, fvar<U> const& u) {
- return stan::math::cplx::operator+(t,u);
+          std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
+inline auto operator+(std::complex<T> const& t, fvar<U> const& u) {
+  return stan::math::cplx::operator+(t, u);
 }
 
 template <class T, class U,
- std::enable_if_t<std::is_arithmetic<U>::value>* = nullptr>
-inline auto
-operator-(fvar<T> const& t, std::complex<U> const& u) {
-  return stan::math::cplx::operator-(t,u);
+          std::enable_if_t<std::is_arithmetic<U>::value>* = nullptr>
+inline auto operator-(fvar<T> const& t, std::complex<U> const& u) {
+  return stan::math::cplx::operator-(t, u);
 }
 
 template <class T, class U,
- std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
-inline auto
-operator-(std::complex<T> const& t, fvar<U> const& u) {
- return stan::math::cplx::operator-(t,u);
+          std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
+inline auto operator-(std::complex<T> const& t, fvar<U> const& u) {
+  return stan::math::cplx::operator-(t, u);
 }
 
 template <class T, class U,
- std::enable_if_t<std::is_arithmetic<U>::value>* = nullptr>
-inline auto
-operator*(fvar<T> const& t, std::complex<U> const& u) {
-  return stan::math::cplx::operator*(t,u);
+          std::enable_if_t<std::is_arithmetic<U>::value>* = nullptr>
+inline auto operator*(fvar<T> const& t, std::complex<U> const& u) {
+  return stan::math::cplx::operator*(t, u);
 }
 
 template <class T, class U,
- std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
-inline auto
-operator*(std::complex<T> const& t, fvar<U> const& u) {
- return stan::math::cplx::operator*(t,u);
+          std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
+inline auto operator*(std::complex<T> const& t, fvar<U> const& u) {
+  return stan::math::cplx::operator*(t, u);
 }
 
 template <class T, class U,
- std::enable_if_t<std::is_arithmetic<U>::value>* = nullptr>
-inline auto
-operator/(fvar<T> const& t, std::complex<U> const& u) {
-  return stan::math::cplx::operator/(t,u);
+          std::enable_if_t<std::is_arithmetic<U>::value>* = nullptr>
+inline auto operator/(fvar<T> const& t, std::complex<U> const& u) {
+  return stan::math::cplx::operator/(t, u);
 }
 
 template <class T, class U,
- std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
-inline auto
-operator/(std::complex<T> const& t, fvar<U> const& u) {
- return stan::math::cplx::operator/(t,u);
+          std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
+inline auto operator/(std::complex<T> const& t, fvar<U> const& u) {
+  return stan::math::cplx::operator/(t, u);
 }
 
 }  // namespace math
