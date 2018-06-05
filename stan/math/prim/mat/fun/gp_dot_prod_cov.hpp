@@ -8,7 +8,7 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/rev/mat/fun/dot_product.hpp>
+#include <stan/math/prim/mat/fun/dot_product.hpp>
 #include <vector>
 
 namespace stan {

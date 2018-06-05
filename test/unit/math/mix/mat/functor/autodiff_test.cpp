@@ -287,7 +287,7 @@ using cT = Eigen::VectorBlock<
     Eigen::Block<Eigen::Matrix<std::complex<double>, 2, 2, 0, 2, 2>, 1, 2,
                  false>,
     -1>;
-static_assert(!stan::math::internal::is_cplx_or_arith<cT>::value, "");
+static_assert(!stan::math::cplx::is_cplx_or_arith<cT>::value, "");
 // ensure Eigen still thinks complex VectorBlocks aren't scalar operands
 static_assert(
     !Eigen::internal::has_ReturnType<Eigen::ScalarBinaryOpTraits<
@@ -300,7 +300,7 @@ TEST(AgradAutoDiff, ComplexEigenvalueOfRotationGradientHessian) {
   });  // tolerance
   auto equal(
       [tol](auto l, auto r) { return fabs(l - r) < tol(l); });  // equality
-  auto dbl([&](auto e) { return stan::math::internal::rval<double>(e); });
+  auto dbl([&](auto e) { return stan::math::cplx::rval<double>(e); });
 
   // return an eigenvalue of rotation by angle alpha
   auto rotation_eigenvalue([equal, dbl](auto alpha) {
