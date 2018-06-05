@@ -3,6 +3,7 @@
 
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/opencl_context.hpp>
+#include <stan/math/prim/mat/fun/opencl_copy.hpp>
 #endif
 
 #include <stan/math/prim/arr/meta/get.hpp>
