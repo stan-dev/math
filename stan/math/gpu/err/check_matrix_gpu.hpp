@@ -189,7 +189,7 @@ namespace stan {
       }
     }
      /**
-     * Check if the specified matrix on the GPU has NaN values
+     * Check if the specified matrix on the GPU is positive definite
      *
      * @param function Function name (for error messages)
      * @param name Variable name (for error messages)
@@ -210,7 +210,7 @@ namespace stan {
      * Check if the two matrices on the GPU are of the same size.
      *
      * This function checks the runtime sizes only.
-     *     
+     *
      *
      * @param function Function name (for error messages)
      * @param name1 Variable name for the first matrix (for error messages)
