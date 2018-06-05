@@ -128,7 +128,8 @@ class opencl_context_base {
         false, "timing", "__kernel void dummy2(__global const int* foo) { };"};
     kernel_info["copy"] = {false, "basic_matrix", copy_matrix_kernel};
     kernel_info["check_nan"] = {false, "check", check_nan_kernel};
-    kernel_info["check_diagonal_zeros"] = {false, "check", check_diagonal_zeros_kernel};
+    kernel_info["check_diagonal_zeros"]
+        = {false, "check", check_diagonal_zeros_kernel};
     kernel_info["check_symmetric"] = {false, "check", check_symmetric_kernel};
   }
 

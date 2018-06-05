@@ -16,7 +16,7 @@ TEST(ErrorHandlingScalarGPU, Check_nan_Matrix) {
   matrix_gpu xx(x);
 
   ASSERT_NO_THROW(check_nan(function, "xx", xx))
-    << "check_nan should be true with finite xx";
+      << "check_nan should be true with finite xx";
 }
 
 TEST(ErrorHandlingScalarGPU, Check_nan_Matrix_quit_nan) {
@@ -28,7 +28,7 @@ TEST(ErrorHandlingScalarGPU, Check_nan_Matrix_quit_nan) {
   x << -1, 0, std::numeric_limits<double>::quiet_NaN();
   matrix_gpu xx(x);
   EXPECT_THROW(check_nan(function, "xx", xx), std::domain_error)
-    << "check_nan should throw exception on NaN";
+      << "check_nan should throw exception on NaN";
 }
 
 TEST(ErrorHandlingScalarGPU, Check_nan_positions) {
@@ -38,18 +38,15 @@ TEST(ErrorHandlingScalarGPU, Check_nan_positions) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> x_mat(3);
   x_mat << nan, 0, 1;
   matrix_gpu xx_mat1(x_mat);
-  EXPECT_THROW(check_nan(function, "xx_mat1", xx_mat1),
-               std::domain_error);
+  EXPECT_THROW(check_nan(function, "xx_mat1", xx_mat1), std::domain_error);
 
   x_mat << 1, nan, 1;
   matrix_gpu xx_mat2(x_mat);
-  EXPECT_THROW(check_nan(function, "xx_mat2", xx_mat2),
-               std::domain_error);
+  EXPECT_THROW(check_nan(function, "xx_mat2", xx_mat2), std::domain_error);
 
   x_mat << 1, 0, nan;
   matrix_gpu xx_mat3(x_mat);
-  EXPECT_THROW(check_nan(function, "xx_mat3", xx_mat3),
-               std::domain_error);
+  EXPECT_THROW(check_nan(function, "xx_mat3", xx_mat3), std::domain_error);
 }
 
 TEST(ErrorHandlingScalarGPU, check_rv_v_symmetric_gpu) {
@@ -72,13 +69,9 @@ TEST(ErrorHandlingScalarGPU, check_m_symmetric) {
 
   stan::math::matrix_d m_ok(3, 3);
   stan::math::matrix_d m_fail(3, 3);
-  m_fail << 1, 2, 3,
-       2, 4, -5,
-       3, 5, 6;
+  m_fail << 1, 2, 3, 2, 4, -5, 3, 5, 6;
   stan::math::matrix_gpu mm_fail(m_fail);
-  m_ok << 1, 2, 3,
-       2, 4, 5,
-       3, 5, 6;
+  m_ok << 1, 2, 3, 2, 4, 5, 3, 5, 6;
   stan::math::matrix_gpu mm_ok(m_ok);
   EXPECT_THROW(check_symmetric(function, "m_non_symm", mm_fail),
                std::domain_error);
