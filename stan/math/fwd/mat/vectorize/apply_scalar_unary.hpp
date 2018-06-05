@@ -45,10 +45,10 @@ struct apply_scalar_unary<F, fvar<T>> {
  * autodiff variable.
  */
 template <typename F, typename T>
-struct apply_scalar_unary<F, internal::z_fvar<T>> {
+struct apply_scalar_unary<F, cplx::z_fvar<T>> {
   /**
    * Function return type, the base class of the argument type
-   * for the function, <code>internalz_fvar&lt;T&gt;</code>.
+   * for the function, <code>fvar&lt;T&gt;</code>.
    */
   typedef fvar<T> return_t;
 

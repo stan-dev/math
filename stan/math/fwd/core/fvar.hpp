@@ -99,8 +99,8 @@ struct fvar {
    *   tangent type T)
    * @param[in] v value
    */
-  template <typename V, typename std::enable_if<
-                            ad_promotable<V, T>::value>::type* = nullptr>
+  template <typename V, typename std::enable_if_t<
+                            ad_promotable<V, T>::value>* = nullptr>
   fvar(const V& v) : val_(v), d_(0.0) {  // NOLINT(runtime/explicit)
     if (unlikely(is_nan(v)))
       d_ = v;
@@ -288,7 +288,7 @@ struct fvar {
 // stan/math/rev/scal/fun/boost_isfinite
 // needed for fullPivLu() method on non-Hermitian Eigen matrix types
 // used in stan's complex test
-// called from Eigen::internal::isfinite_impl via ADL
+// called from Eigen::cplx::isfinite_impl via ADL
 template <class T>
 bool isfinite(fvar<T> const& v) {
   using boost::math::isfinite;
@@ -296,7 +296,7 @@ bool isfinite(fvar<T> const& v) {
   return isfinite(v.val());
 }
 
-namespace internal {
+namespace cplx {
 
 /**
  * Fvar for std::complex<fvar>.
@@ -306,7 +306,8 @@ namespace internal {
  */
 template <class T = double>
 struct z_fvar : fvar<T> {
-  template <class Z, std::enable_if_t<is_arith<Z>::value>* = nullptr>
+  template<class Z = double,
+   std::enable_if_t<is_arith<Z>::value>* = nullptr>
   z_fvar(Z const& z = 0) : fvar<T>(z) {}  // NOLINT
 };
 
@@ -320,7 +321,7 @@ struct to_arith_helper<z_fvar<T>> {
   typedef fvar<to_arith_t<T>> type;
 };
 
-}  // namespace internal
+}  // namespace cplx
 
 /// helper functions to avoid forward declarations in other headers
 // declared here because it depends on ADL from an uncontrolled type
@@ -340,19 +341,85 @@ namespace std {
 // template <>
 template <class T>
 struct complex<stan::math::fvar<T>>
-    : stan::math::internal::complex<stan::math::internal::z_fvar<T>> {
+    : stan::math::cplx::complex<stan::math::cplx::z_fvar<T>> {
   /// inherit all ctors
-  using stan::math::internal::complex<stan::math::internal::z_fvar<T>>::complex;
+  using stan::math::cplx::complex<stan::math::cplx::z_fvar<T>>::complex;
 };
 
-/// override clang's division, because it uses logb and scalbn
-template <>
+//override clang's division, which uses scalbn and logb
 template <class T>
-inline std::complex<stan::math::fvar<T>> operator/<stan::math::fvar<T>>(
-    std::complex<stan::math::fvar<T>> const& t,
-    std::complex<stan::math::fvar<T>> const& u) {
-  return stan::math::internal::division(t, u);
+inline std::complex<stan::math::fvar<T>>
+operator/ (
+    std::complex<stan::math::cplx::z_fvar<T>> const& t,
+    std::complex<stan::math::cplx::z_fvar<T>> const& u) {
+  return stan::math::cplx::division(t, u);
 }
 
 }  // namespace std
+
+namespace stan{
+namespace math{
+
+//these forwards allow movement of several (target) function
+//template std::complex overloads out of the std namespace
+//and into the stan::math::cplx namespace, even though the
+//target function templates are already tightly constrained
+template <class T, class U,
+ std::enable_if_t<std::is_arithmetic<U>::value>* = nullptr>
+inline auto
+operator+(fvar<T> const& t, std::complex<U> const& u) {
+  return stan::math::cplx::operator+(t,u);
+}
+
+template <class T, class U,
+ std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
+inline auto
+operator+(std::complex<T> const& t, fvar<U> const& u) {
+ return stan::math::cplx::operator+(t,u);
+}
+
+template <class T, class U,
+ std::enable_if_t<std::is_arithmetic<U>::value>* = nullptr>
+inline auto
+operator-(fvar<T> const& t, std::complex<U> const& u) {
+  return stan::math::cplx::operator-(t,u);
+}
+
+template <class T, class U,
+ std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
+inline auto
+operator-(std::complex<T> const& t, fvar<U> const& u) {
+ return stan::math::cplx::operator-(t,u);
+}
+
+template <class T, class U,
+ std::enable_if_t<std::is_arithmetic<U>::value>* = nullptr>
+inline auto
+operator*(fvar<T> const& t, std::complex<U> const& u) {
+  return stan::math::cplx::operator*(t,u);
+}
+
+template <class T, class U,
+ std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
+inline auto
+operator*(std::complex<T> const& t, fvar<U> const& u) {
+ return stan::math::cplx::operator*(t,u);
+}
+
+template <class T, class U,
+ std::enable_if_t<std::is_arithmetic<U>::value>* = nullptr>
+inline auto
+operator/(fvar<T> const& t, std::complex<U> const& u) {
+  return stan::math::cplx::operator/(t,u);
+}
+
+template <class T, class U,
+ std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
+inline auto
+operator/(std::complex<T> const& t, fvar<U> const& u) {
+ return stan::math::cplx::operator/(t,u);
+}
+
+}  // namespace math
+}  // namespace stan
 #endif
