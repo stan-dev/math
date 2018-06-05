@@ -66,7 +66,7 @@ inline void check_nan(const char* function, const char* name,
                                 &nan_flag);
     //  if NaN values were found in the matrix
     if (nan_flag) {
-        domain_error(function, name, "has NaN values", "");
+      domain_error(function, name, "has NaN values", "");
     }
   } catch (const cl::Error& e) {
     check_opencl_error("nan_check", e);
@@ -116,7 +116,6 @@ inline void check_symmetric(const char* function, const char* name,
   } catch (const cl::Error& e) {
     check_opencl_error("symmetric_check", e);
   }
-
 }
 /**
  * Check if the <code>matrix_gpu</code> has zeros on the diagonal
@@ -154,7 +153,7 @@ inline void check_diagonal_zeros(const char* function, const char* name,
     cmd_queue.enqueueReadBuffer(buffer_flag, CL_TRUE, 0, sizeof(int), &flag);
     //  if zeros were found on the diagonal
     if (flag) {
-        domain_error(function, name, "has zeros on the diagonal.", "");
+      domain_error(function, name, "has zeros on the diagonal.", "");
     }
 
   } catch (const cl::Error& e) {
