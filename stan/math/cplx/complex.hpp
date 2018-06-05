@@ -11,7 +11,7 @@
 
 namespace stan {
 namespace math {
-namespace internal {
+namespace cplx {
 
 template <class T>
 struct complex;  // forward declaration of stan's complex
@@ -64,8 +64,9 @@ struct any_fr_var<T, U,
 /// trait check for arithmetic types
 template <class T>
 struct is_arith : std::integral_constant<
-                      bool, is_fr_var<T>::value
-                                || std::is_arithmetic<std::decay_t<T>>::value> {
+                      bool, !is_cplx<T>::value && 
+		             ( is_fr_var<T>::value
+                               || std::is_arithmetic<std::decay_t<T>>::value)> {
 };
 
 /// trait to see if the template parameter is complex or arithmetic
@@ -118,26 +119,20 @@ struct complex : std::complex<T> {
   complex(const R real = 0, const I imag = 0) : std::complex<T>(real, imag) {}
 };
 
-// override clang's implementation using logb and scalbn
-template <class T>
-inline std::complex<T> division(std::complex<T> const& t,
-                                std::complex<T> const& z) {
-  T const n(std::abs(z));
-  T const r((t.real() * z.real() + t.imag() * z.imag()) / n);
-  T const i((t.imag() * z.real() - t.real() * z.imag()) / n);
-  return std::complex<T>(r, i);
-}
-
 /// complex promotion when std::complex<double> is combined with a var
 // always set to fire because it also does decay conversions
 // could be specialized later to short circuit
-template <class T, class U, class AT = to_arith_t<T>, class AU = to_arith_t<U>,
+template <class T, class U, 
+	  class AT = to_arith_t<rm_cplx_t<T>>,
+	  class AU = to_arith_t<rm_cplx_t<U>>,
           class AP = typename boost::math::tools::promote_args<AT, AU>::type>
 auto cplx_promote(std::complex<T> const& t) {
   return std::complex<AP>(t.real(), t.imag());
 }
 
-template <class T, class U, class AT = to_arith_t<T>, class AU = to_arith_t<U>,
+template <class T, class U,
+	  class AT = to_arith_t<rm_cplx_t<T>>,
+	  class AU = to_arith_t<rm_cplx_t<U>>,
           class AP = typename boost::math::tools::promote_args<AT, AU>::type>
 auto cplx_promote(U const& u) {
   return std::complex<AP>(u);
@@ -166,12 +161,6 @@ std::complex<S> rval(std::complex<V> const& v) {
   return std::complex<S>(rval<S>(v.real()), rval<S>(v.imag()));
 }
 
-}  // namespace internal
-}  // namespace math
-}  // namespace stan
-
-namespace std {
-
 // The free functions that follow extend std::complex. This is necessary because
 // the std::complex template from which stan inherits does not allow simple
 // operations such as std::complex<double>()*2, because 2 is an int, and the
@@ -188,147 +177,138 @@ namespace std {
 // rather than stan's complex because templates (which match names exactly) and
 // some namespace ADL features in other packages like Eigen depend on it.
 
-template <
-    class T, class U,
-    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
-                     && stan::math::internal::is_arith<U>::value>* = nullptr>
+template <class T, class U,
+    std::enable_if_t<any_fr_var<T, U>::value
+                     && is_cplx_or_arith<U>::value>* = nullptr>
 inline auto operator+(std::complex<T> const& t, U const& u) {
-  auto r(stan::math::internal::cplx_promote<T, U>(t));
-  r += u;
-  return r;
+  return cplx_promote<T, U>(t) += u;
 }
-
-template <
-    class T, class U,
-    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
-                     && stan::math::internal::is_arith<U>::value>* = nullptr>
-inline auto operator+(U const& u, std::complex<T> const& t) {
-  auto r(stan::math::internal::cplx_promote<T, U>(u));
-  r += t;
-  return r;
-}
-
-template <
-    class T, class U,
-    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
-                     && stan::math::internal::is_arith<U>::value>* = nullptr>
-inline auto operator*(std::complex<T> const& t, U const& u) {
-  auto r(stan::math::internal::cplx_promote<T, U>(t));
-  r *= u;
-  return r;
-}
-
-template <
-    class T, class U,
-    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
-                     && stan::math::internal::is_arith<U>::value>* = nullptr>
-inline auto operator*(U const& u, std::complex<T> const& t) {
-  auto r(stan::math::internal::cplx_promote<T, U>(u));
-  r *= t;
-  return r;
-}
-
-template <
-    class T, class U,
-    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
-                     && stan::math::internal::is_arith<U>::value>* = nullptr>
-inline auto operator-(std::complex<T> const& t, U const& u) {
-  auto r(stan::math::internal::cplx_promote<T, U>(t));
-  r -= u;
-  return r;
-}
-
-template <
-    class T, class U,
-    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
-                     && stan::math::internal::is_arith<U>::value>* = nullptr>
-inline auto operator-(U const& u, std::complex<T> const& t) {
-  auto r(stan::math::internal::cplx_promote<T, U>(u));
-  r -= t;
-  return r;
-}
-
-template <
-    class T, class U,
-    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
-                     && stan::math::internal::is_arith<U>::value>* = nullptr>
-inline auto operator/(std::complex<T> const& t, U const& u) {
-  auto r(stan::math::internal::cplx_promote<T, U>(t));
-  r /= u;
-  return r;
-}
-
-template <
-    class T, class U,
-    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
-                     && stan::math::internal::is_arith<U>::value>* = nullptr>
-inline auto operator/(U const& u, std::complex<T> const& t) {
-  auto r(stan::math::internal::cplx_promote<T, U>(u));
-  r /= t;
-  return r;
-}
-
-// another attempt at overriding clang
-// template <class T>
-// inline std::complex<T> operator/(stan::math::internal::complex<T> const& t,
-//                                 stan::math::internal::complex<T> const& u) {
-//  return t /= u;
-//}
 
 template <class T, class U,
+    std::enable_if_t<any_fr_var<T, U>::value
+                     && is_arith<U>::value>* = nullptr>
+inline auto operator+(U const& u, std::complex<T> const& t) {
+  return cplx_promote<T, U>(u) += t;
+}
+
+template <class T, class U,
+    std::enable_if_t<any_fr_var<T, U>::value
+                     && is_cplx_or_arith<U>::value>* = nullptr>
+inline auto operator-(std::complex<T> const& t, U const& u) {
+  return cplx_promote<T, U>(t) -= u;
+}
+
+template <class T, class U,
+    std::enable_if_t<any_fr_var<T, U>::value
+                     && is_arith<U>::value>* = nullptr>
+inline auto operator-(U const& u, std::complex<T> const& t) {
+  return cplx_promote<T, U>(u) -= t;
+}
+
+template <class T, class U,
+    std::enable_if_t<any_fr_var<T, U>::value
+                     && is_cplx_or_arith<U>::value>* = nullptr>
+inline auto operator*(std::complex<T> const& t, U const& u) {
+  return cplx_promote<T, U>(t) *= u;
+}
+
+template <class T, class U,
+    std::enable_if_t<any_fr_var<T, U>::value
+                     && is_arith<U>::value>* = nullptr>
+inline auto operator*(U const& u, std::complex<T> const& t) {
+  return cplx_promote<T, U>(u) *= t;
+}
+
+template <class T, class U,
+    std::enable_if_t<any_fr_var<T, U>::value
+                     && is_cplx_or_arith<U>::value>* = nullptr>
+inline auto operator/(std::complex<T> const& t, U const& u) {
+  return cplx_promote<T, U>(t) /= u;
+}
+
+template <class T, class U,
+    std::enable_if_t<any_fr_var<T, U>::value
+                     && is_arith<U>::value>* = nullptr>
+inline auto operator/(U const& u, std::complex<T> const& t) {
+  return cplx_promote<T, U>(u) /= t;
+}
+
+// override clang's implementation using logb and scalbn
+// this template relies on more specific templates for
+// z_fvar and z_var to trigger the override
+template <class T>
+inline std::complex<to_arith_t<T>>
+division(std::complex<T> const& t,
+          std::complex<T> const& z) {
+  using std::abs;
+  T const n(abs(z));
+  T const r((t.real() * z.real() + t.imag() * z.imag()) / n);
+  T const i((t.imag() * z.real() - t.real() * z.imag()) / n);
+  return std::complex<to_arith_t<T>>(r, i);
+}
+
+}  // namespace cplx
+}  // namespace math
+}  // namespace stan
+
+namespace std {
+
+// the equality tests do not need to template specialize a clang
+// function with a fully defined type (looking at you, Eigen),
+// so they don't require forwards from stan::math, nor ADL
+// base class namespace lookups to find implementations in stan::math::cplx
+template <class T, class U,
           std::enable_if_t<!std::is_same<T, U>::value &&  // avoid base function
-                           stan::math::internal::any_fr_var<T, U>::value
-                           && stan::math::internal::is_arith<T>::value
+                           stan::math::cplx::any_fr_var<T, U>::value
+                           && stan::math::cplx::is_arith<T>::value
                            &&  // symmetric is_arith
-                           stan::math::internal::is_arith<U>::value>* = nullptr>
+                           stan::math::cplx::is_arith<U>::value>* = nullptr>
 inline bool operator==(std::complex<T> const& t, std::complex<U> const& u) {
   return t.real() == u.real() && t.imag() == u.imag();
 }
 
-template <
-    class T, class U,
-    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
-                     && stan::math::internal::is_arith<U>::value>* = nullptr>
+template <class T, class U,
+    std::enable_if_t<stan::math::cplx::any_fr_var<T, U>::value
+                     && stan::math::cplx::is_arith<U>::value>* = nullptr>
 inline bool operator==(std::complex<T> const& t, U const& u) {
-  return stan::math::internal::rval<double>(t)
-         == stan::math::internal::rval<double>(u);  // avoid promotions
+  return stan::math::cplx::rval<double>(t)
+         == stan::math::cplx::rval<double>(u);  // avoid promotions
 }
 
-template <
-    class T, class U,
-    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
-                     && stan::math::internal::is_arith<U>::value>* = nullptr>
+template <class T, class U,
+    std::enable_if_t<stan::math::cplx::any_fr_var<T, U>::value
+                     && stan::math::cplx::is_arith<U>::value>* = nullptr>
 inline bool operator==(U const& u, std::complex<T> const& t) {
-  return stan::math::internal::rval<double>(t)
-         == stan::math::internal::rval<double>(u);  // avoid promotions
+  return stan::math::cplx::rval<double>(t)
+         == stan::math::cplx::rval<double>(u);  // avoid promotions
 }
 
 template <class T, class U,
           std::enable_if_t<!std::is_same<T, U>::value &&  // avoid base function
-                           stan::math::internal::any_fr_var<T, U>::value
-                           && stan::math::internal::is_arith<T>::value
+                           stan::math::cplx::any_fr_var<T, U>::value
+                           && stan::math::cplx::is_arith<T>::value
                            &&  // symmetric
-                           stan::math::internal::is_arith<U>::value>* = nullptr>
+                           stan::math::cplx::is_arith<U>::value>* = nullptr>
 inline bool operator!=(std::complex<T> const& t, std::complex<U> const& u) {
   return t.real() != u.real() || t.imag() != u.imag();
 }
 
 template <
     class T, class U,
-    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
-                     && stan::math::internal::is_arith<U>::value>* = nullptr>
+    std::enable_if_t<stan::math::cplx::any_fr_var<T, U>::value
+                     && stan::math::cplx::is_arith<U>::value>* = nullptr>
 inline bool operator!=(std::complex<T> const& t, U const& u) {
-  return stan::math::internal::rval<double>(t)
-         != stan::math::internal::rval<double>(u);  // avoid promotions
+  return stan::math::cplx::rval<double>(t)
+         != stan::math::cplx::rval<double>(u);  // avoid promotions
 }
 
 template <
     class T, class U,
-    std::enable_if_t<stan::math::internal::any_fr_var<T, U>::value
-                     && stan::math::internal::is_arith<U>::value>* = nullptr>
+    std::enable_if_t<stan::math::cplx::any_fr_var<T, U>::value
+                     && stan::math::cplx::is_arith<U>::value>* = nullptr>
 inline bool operator!=(U const& u, std::complex<T> const& t) {
-  return stan::math::internal::rval<double>(t)
-         != stan::math::internal::rval<double>(u);  // avoid promotions
+  return stan::math::cplx::rval<double>(t)
+         != stan::math::cplx::rval<double>(u);  // avoid promotions
 }
 
 }  // namespace std
@@ -340,30 +320,29 @@ template <class T1, class T2, template <class, class> class OP>
 struct ScalarBinaryOpTraits<
     T1,
     std::enable_if_t<
-        stan::math::internal::is_cplx_or_arith<T1>::value &&  // !is_eigen
+        stan::math::cplx::is_cplx_or_arith<T1>::value &&  // !is_eigen
                                                               // !VectorBlock
-            stan::math::internal::is_cplx_or_arith<T2>::value
+            stan::math::cplx::is_cplx_or_arith<T2>::value
             &&                               // !is_eigen
                                              // !VectorBlock
             !std::is_same<T1, T2>::value &&  // avoid Eigen's template
-            ((stan::math::internal::is_cplx<T1>::value
+            ((stan::math::cplx::is_cplx<T1>::value
               &&  // next boolean avoids
                   // Eigen
-              !std::is_same<stan::math::internal::rm_cplx_t<T1>, T2>::value)
-             || (stan::math::internal::is_cplx<T2>::value
+              !std::is_same<stan::math::cplx::rm_cplx_t<T1>, T2>::value)
+             || (stan::math::cplx::is_cplx<T2>::value
                  &&  // next boolean avoids
                      // Eigen
                  !std::is_same<T1,
-                               stan::math::internal::rm_cplx_t<T2>>::value)),
+                               stan::math::cplx::rm_cplx_t<T2>>::value)),
         T2>,
     OP<T1, T2>> {
-  typedef std::complex<stan::math::internal::to_arith_t<
+  typedef std::complex<stan::math::cplx::to_arith_t<
       typename boost::math::tools::promote_args<
-          stan::math::internal::rm_cplx_t<std::decay_t<T1>>,
-          stan::math::internal::rm_cplx_t<std::decay_t<T2>>>::type>>
+          stan::math::cplx::rm_cplx_t<std::decay_t<T1>>,
+          stan::math::cplx::rm_cplx_t<std::decay_t<T2>>>::type>>
       ReturnType;
 };
 
 }  // namespace Eigen
-
 #endif

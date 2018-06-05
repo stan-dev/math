@@ -31,6 +31,35 @@ struct apply_scalar_unary<F, var> {
   static inline return_t apply(const var& x) { return F::fun(x); }
 };
 
+/**
+ * Template specialization to z_var for handling a unary scalar
+ * function.  This is a base scalar specialization.  It applies
+ * the function specified by the template parameter to the
+ * argument.
+ *
+ * @tparam F Type of function to apply.
+ * @tparam T Value and tangent type for for forward-mode
+ * autodiff variable.
+ */
+template <typename F>
+struct apply_scalar_unary<F, cplx::z_var> {
+  /**
+   * Function return type, the base class of the argument type
+   * for the function, <code>var</code>.
+   */
+  typedef var return_t;
+
+  /**
+   * Apply the function specified by F to the specified argument.
+   *
+   * @param x Argument variable.
+   * @return Function applied to the variable.
+   */
+  static inline return_t apply(const var& x) {  // handle through base
+    return F::fun(x);
+  }
+};
+
 }  // namespace math
 }  // namespace stan
 #endif

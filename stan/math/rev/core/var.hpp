@@ -476,7 +476,7 @@ class var {
   }
 };
 
-namespace internal {
+namespace cplx {
 
 /**
  * Var for std::complex that always initializes its pointer to implementation.
@@ -508,7 +508,14 @@ struct to_arith_helper<z_var> {
   typedef var type;
 };
 
-}  // namespace internal
+static_assert(std::is_same<to_arith_t<z_var>,var>::value);
+static_assert(std::is_same<typename boost::math::tools::promote_args<var, double>::type,var>::value);
+template <class T, class U, class AT = to_arith_t<T>, class AU = to_arith_t<U>,
+          class AP = typename boost::math::tools::promote_args<AT, AU>::type>
+auto icp(U const& u) {return AP(u);}
+static_assert(std::is_same<decltype(icp<var,double>(1.0)),var>::value);
+static_assert(!is_arith<std::complex<var>>::value);
+}  // namespace cplx
 
 /// helper functions to avoid forward declarations in other headers
 // declared here because it depends on ADL from an uncontrolled type
@@ -526,18 +533,84 @@ namespace std {
  * hidden from end user code.*/
 template <>
 struct complex<stan::math::var>
-    : stan::math::internal::complex<stan::math::internal::z_var> {
+    : stan::math::cplx::complex<stan::math::cplx::z_var> {
   /// inherit all ctors
-  using stan::math::internal::complex<stan::math::internal::z_var>::complex;
+  using stan::math::cplx::complex<stan::math::cplx::z_var>::complex;
 };
 
-/// override clang's division, because it uses logb and scalbn
-template <>
-inline std::complex<stan::math::var> operator/<stan::math::var>(
-    std::complex<stan::math::var> const& t,
-    std::complex<stan::math::var> const& u) {
-  return stan::math::internal::division(t, u);
+//override clang's division, which uses scalbn and logb
+inline std::complex<stan::math::var>
+operator/ (
+    std::complex<stan::math::cplx::z_var> const& t,
+    std::complex<stan::math::cplx::z_var> const& u) {
+  return stan::math::cplx::division(t, u);
 }
 
 }  // namespace std
+
+namespace stan{
+namespace math{
+
+//these forwards allow movement of several (target) function
+//template std::complex overloads out of the std namespace
+//and into the stan::math::cplx namespace, even though the
+//target function templates are already tightly constrained
+template <class U,
+ std::enable_if_t<std::is_arithmetic<U>::value>* = nullptr>
+inline auto
+operator+(var const& t, std::complex<U> const& u) {
+  return stan::math::cplx::operator+(t,u);
+}
+
+template <class T,
+ std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
+inline auto
+operator+(std::complex<T> const& t, var const& u) {
+ return stan::math::cplx::operator+(t,u);
+}
+
+template <class U,
+ std::enable_if_t<std::is_arithmetic<U>::value>* = nullptr>
+inline auto
+operator-(var const& t, std::complex<U> const& u) {
+  return stan::math::cplx::operator-(t,u);
+}
+
+template <class T,
+ std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
+inline auto
+operator-(std::complex<T> const& t, var const& u) {
+ return stan::math::cplx::operator-(t,u);
+}
+
+template <class U,
+ std::enable_if_t<std::is_arithmetic<U>::value>* = nullptr>
+inline auto
+operator*(var const& t, std::complex<U> const& u) {
+  return stan::math::cplx::operator*(t,u);
+}
+
+template <class T,
+ std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
+inline auto
+operator*(std::complex<T> const& t, var const& u) {
+ return stan::math::cplx::operator*(t,u);
+}
+
+template <class U,
+ std::enable_if_t<std::is_arithmetic<U>::value>* = nullptr>
+inline auto
+operator/(var const& t, std::complex<U> const& u) {
+  return stan::math::cplx::operator/(t,u);
+}
+
+template <class T,
+ std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
+inline auto
+operator/(std::complex<T> const& t, var const& u) {
+ return stan::math::cplx::operator/(t,u);
+}
+
+}  // namespace math
+}  // namespace stan
 #endif
