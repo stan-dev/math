@@ -176,7 +176,7 @@ inline void check_diagonal_zeros(const char* function, const char* name,
   }
 }
 /**
- * Check if the specified matrix on the GPU has NaN values
+ * Check if the specified matrix on the GPU is positive definite
  *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
