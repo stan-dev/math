@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+
 template <typename T_x1, typename T_x2, typename T_sigma, typename T_l,
           typename T_p>
 std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2, T_sigma sigma,
