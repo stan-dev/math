@@ -180,7 +180,6 @@ inline void check_diagonal_zeros(const char* function, const char* name,
     if (flag) {
       domain_error(function, name, "has zeros on the diagonal.", "");
     }
-
   } catch (const cl::Error& e) {
     check_opencl_error("diag_zeros_check", e);
   }
