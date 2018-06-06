@@ -160,6 +160,15 @@ class opencl_context_base {
         ;  // NOLINT
     const char* multiply_lower_triangular_kernel =
 #include <stan/math/gpu/kernels/multiply_lower_triangular_kernel.cl>
+        ;  // NOLINT        
+    const char* lower_tri_inverse_step1_kernel =
+#include <stan/math/gpu/kernels/lower_tri_inverse_step1_kernel.cl>
+        ;  // NOLINT
+    const char* lower_tri_inverse_step2_kernel =
+#include <stan/math/gpu/kernels/lower_tri_inverse_step2_kernel.cl>
+        ;  // NOLINT
+    const char* lower_tri_inverse_step3_kernel =
+#include <stan/math/gpu/kernels/lower_tri_inverse_step3_kernel.cl>
         ;  // NOLINT
     kernel_info["dummy"] = {
         false, "timing", "__kernel void dummy(__global const int* foo) { };"};
@@ -183,6 +192,9 @@ class opencl_context_base {
     kernel_info["multiply_self_transposed"] = {false, "multiply", multiply_self_transposed_kernel};
     kernel_info["matrix_multiply"] = {false, "multiply", matrix_multiply_kernel};
     kernel_info["multiply_lower_triangular"] = {false, "multiply", multiply_lower_triangular_kernel};
+    kernel_info["lower_tri_inverse_step1"] = {false, "inverse", lower_tri_inverse_step1_kernel};
+    kernel_info["lower_tri_inverse_step2"] = {false, "inverse", lower_tri_inverse_step2_kernel};
+    kernel_info["lower_tri_inverse_step3"] = {false, "inverse", lower_tri_inverse_step3_kernel};
   }
 
  protected:
