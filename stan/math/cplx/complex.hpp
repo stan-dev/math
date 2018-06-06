@@ -237,8 +237,7 @@ inline auto operator/(U const& u, std::complex<T> const& t) {
 template <class T>
 inline std::complex<to_arith_t<T>> division(std::complex<T> const& t,
                                             std::complex<T> const& z) {
-  using std::abs;
-  T const n(abs(z));
+  T const n(pow(z.real(), 2) + pow(z.imag(), 2));
   T const r((t.real() * z.real() + t.imag() * z.imag()) / n);
   T const i((t.imag() * z.real() - t.real() * z.imag()) / n);
   return std::complex<to_arith_t<T>>(r, i);
