@@ -39,7 +39,7 @@ TEST(MathMatrix, multiply_c_m) {
   EXPECT_FLOAT_EQ(10.0, m(1, 1));
   EXPECT_FLOAT_EQ(12.0, m(1, 2));
 }
-/*
+
 TEST(MathMatrix, multiply_rv_v_exception_pass_vec) {
   stan::math::row_vector_d rv;
   stan::math::vector_d v;
@@ -149,7 +149,7 @@ TEST(MathMatrix, multiply_rv_m_exception_fail_dims) {
   stan::math::matrix_gpu ans_mm(1, 3);
   EXPECT_THROW(ans_mm = stan::math::multiply(rvv, mm), std::invalid_argument);
 }
-*/
+
 TEST(MathMatrix, multiply_m_exception_pass_diagonal_mul) {
   stan::math::matrix_d m0;
   m0.resize(3, 2);
@@ -158,7 +158,7 @@ TEST(MathMatrix, multiply_m_exception_pass_diagonal_mul) {
   stan::math::matrix_gpu mm(m0);
   EXPECT_NO_THROW(stan::math::diagonal_multiply(mm, 1.0));
 }
-/*
+
 TEST(MathMatrix, multiply_m_m_exception_pass_dim) {
   stan::math::matrix_d m1, m2;
 
@@ -197,7 +197,7 @@ TEST(MathMatrix, multiply_m_m_exception_fail_dim) {
   stan::math::matrix_gpu mm3(3, 3);
   EXPECT_THROW(mm3 = stan::math::multiply(mm1, mm2), std::invalid_argument);
 }
-*/
+
 TEST(MathMatrix, multiply_zero_size) {
   stan::math::vector_d v0;
   stan::math::row_vector_d rv0;
@@ -215,9 +215,9 @@ TEST(MathMatrix, multiply_zero_size) {
   EXPECT_NO_THROW(multiply(2.0, v00));
   EXPECT_NO_THROW(multiply(2.0, rv00));
   EXPECT_NO_THROW(multiply(2.0, m00));
-  //EXPECT_NO_THROW(multiply_with_self_transposed(v00));
-  //EXPECT_NO_THROW(multiply_with_self_transposed(rv00));
-  //EXPECT_NO_THROW(multiply_with_self_transposed(m00));
+  EXPECT_NO_THROW(multiply_with_self_transposed(v00));
+  EXPECT_NO_THROW(multiply_with_self_transposed(rv00));
+  EXPECT_NO_THROW(multiply_with_self_transposed(m00));
 }
 
 
@@ -247,7 +247,7 @@ TEST(AgradRevMatrix, multiply_vector_int) {
   EXPECT_EQ(4.0, prod_vec[1]);
   EXPECT_EQ(6.0, prod_vec[2]);
 }
-/*
+
 TEST(AgradRevMatrix, multiply_small) {
   using stan::math::multiply;
   stan::math::matrix_d m1, m2, m3, m3_gpu;
@@ -268,7 +268,7 @@ TEST(AgradRevMatrix, multiply_small) {
 
   m33 = stan::math::multiply(m11, m22);
 
-  stan::math::copy(m33, m3_gpu);
+  stan::math::copy(m3_gpu, m33);
 
   for (int i = 0; i < 3; i++)
   for (int j = 0; j < 3; j++)
@@ -300,7 +300,7 @@ TEST(AgradRevMatrix, multiply_big) {
 
   m33 = stan::math::multiply(m11, m22);
 
-  stan::math::copy(m33, m3_gpu);
+  stan::math::copy(m3_gpu, m33);
 
   for (int i = 0; i < size; i++)
   for (int j = 0; j < size; j++)
@@ -324,7 +324,7 @@ TEST(AgradRevMatrix, multiply_self_transposed_small) {
 
   m22 = stan::math::multiply_with_self_transposed(m11);
 
-  stan::math::copy(m22, m2_gpu);
+  stan::math::copy(m2_gpu, m22);
 
   for (int i = 0; i < 3; i++)
   for (int j = 0; j < 3; j++)
@@ -353,7 +353,7 @@ TEST(AgradRevMatrix, multiply_self_transposed_big) {
 
   m22 = stan::math::multiply_with_self_transposed(m11);
 
-  stan::math::copy(m22, m2_gpu);
+  stan::math::copy(m2_gpu, m22);
 
   for (int i = 0; i < size; i++)
   for (int j = 0; j < size; j++)
@@ -385,11 +385,12 @@ TEST(AgradRevMatrix, lower_triangular_multiply_small) {
 
   m33 = stan::math::multiply_lower_triangular(m11, m22);
 
-  stan::math::copy(m33, m3_gpu);
+  stan::math::copy(m3_gpu, m33);
 
   for (int i = 0; i < 3; i++)
   for (int j = 0; j <= i; j++)
     EXPECT_NEAR(m3(i, j), m3_gpu(i, j), 1e-10);
+  
 }
 
 TEST(AgradRevMatrix, lower_triangular_multiply_big) {
@@ -407,6 +408,9 @@ TEST(AgradRevMatrix, lower_triangular_multiply_big) {
   for (int j = 0; j < size; j++) {
     if (j >= i)
       m1(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
+    else
+      m1(i, j) = 0.0;
+      
     if (i <= j) {
       m2(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
       m2(j, i) = m2(i, j);
@@ -421,10 +425,10 @@ TEST(AgradRevMatrix, lower_triangular_multiply_big) {
 
   m33 = stan::math::multiply_lower_triangular(m11, m22);
 
-  stan::math::copy(m33, m3_gpu);
+  stan::math::copy(m3_gpu, m33);
 
   for (int i = 0; i < size; i++)
   for (int j = 0; j <= i; j++)
     EXPECT_NEAR(m3(i, j), m3_gpu(i, j), 1e-10);
 }
-*/
+

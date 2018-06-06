@@ -107,14 +107,14 @@ namespace stan {
      * 
      * @throw <code>std::invalid_argument</code> if the 
      *   number of columns in A and rows in B do not match
-     *//*
+     */
     inline matrix_gpu multiply(matrix_gpu & A, matrix_gpu & B) {
       check_size_match("multiply (GPU)", "A.cols()", A.cols(),
        "B.rows()", B.rows());
       matrix_gpu temp(A.rows(), B.cols());
       if ( temp.size() == 0 )
         return temp;
-      cl::Kernel kernel = opencl_context.get_kernel("basic_multiply");
+      cl::Kernel kernel = opencl_context.get_kernel("matrix_multiply");
       cl::CommandQueue& cmdQueue = opencl_context.queue();
       int local = 32;
       int gpu_local_max = sqrt(opencl_context.max_workgroup_size());
@@ -142,7 +142,7 @@ namespace stan {
         check_opencl_error("multiply", e);
       }
       return temp;
-    }*/
+    }
     /**
      * Computes the product of the specified GPU matrix with its transpose. 
 	 * The input matrix must me squared and the output matrix must be the
@@ -154,7 +154,7 @@ namespace stan {
      * 
      * @return the product of the matrix and its transpose
      * 
-     *//*
+     */
     inline matrix_gpu multiply_with_self_transposed(matrix_gpu & A) {
       // TODO(Rok): added a check if A is square
       matrix_gpu temp(A.rows(), A.rows());
@@ -189,7 +189,7 @@ namespace stan {
         check_opencl_error("multiply with self transposed", e);
       }
       return temp;
-    }*/
+    }
 	/**
      * Computes the lower triangular part of the product of the two specified
      * GPU matrices, where the first matrix is lower triangular. The number of
@@ -208,7 +208,7 @@ namespace stan {
      * 
      * @throw <code>std::invalid_argument</code> if the 
      *   number of columns in L and rows in B do not match
-     *//*
+     */
     inline matrix_gpu multiply_lower_triangular(matrix_gpu & L,
         matrix_gpu & B) {
       check_size_match("lower triangular multiply (GPU)",
@@ -245,7 +245,7 @@ namespace stan {
         check_opencl_error("lower triangular multiply", e);
       }
       return temp;
-    }*/
+    }
   }
 }
 

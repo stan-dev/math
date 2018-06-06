@@ -152,6 +152,15 @@ class opencl_context_base {
     const char* scalar_mul_kernel =
 #include <stan/math/gpu/kernels/scalar_mul_kernel.cl>
         ;  // NOLINT
+    const char* matrix_multiply_kernel =
+#include <stan/math/gpu/kernels/matrix_multiply_kernel.cl>
+        ;  // NOLINT
+    const char* multiply_self_transposed_kernel =
+#include <stan/math/gpu/kernels/multiply_self_transposed_kernel.cl>
+        ;  // NOLINT
+    const char* multiply_lower_triangular_kernel =
+#include <stan/math/gpu/kernels/multiply_lower_triangular_kernel.cl>
+        ;  // NOLINT
     kernel_info["dummy"] = {
         false, "timing", "__kernel void dummy(__global const int* foo) { };"};
     kernel_info["dummy2"] = {
@@ -171,6 +180,9 @@ class opencl_context_base {
     kernel_info["check_symmetric"] = {false, "check", check_symmetric_kernel};
     kernel_info["scalar_mul_diagonal"] = {false, "multiply", scalar_mul_diagonal_kernel};
     kernel_info["scalar_mul"] = {false, "multiply", scalar_mul_kernel};
+    kernel_info["multiply_self_transposed"] = {false, "multiply", multiply_self_transposed_kernel};
+    kernel_info["matrix_multiply"] = {false, "multiply", matrix_multiply_kernel};
+    kernel_info["multiply_lower_triangular"] = {false, "multiply", multiply_lower_triangular_kernel};
   }
 
  protected:
