@@ -245,6 +245,12 @@ inline std::complex<to_arith_t<T>> division(std::complex<T> const& t,
 }
 
 }  // namespace cplx
+
+template <class T>
+inline auto copysign(T const& x, T const& y) {
+ return fabs(x)*sign(y);
+}
+
 }  // namespace math
 }  // namespace stan
 

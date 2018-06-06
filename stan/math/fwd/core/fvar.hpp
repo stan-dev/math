@@ -348,6 +348,14 @@ struct complex<stan::math::fvar<T>>
 // override clang's division, which uses scalbn and logb
 template <class T>
 inline std::complex<stan::math::fvar<T>> operator/(
+    std::complex<stan::math::fvar<T>> const& t,
+    std::complex<stan::math::fvar<T>> const& u) {
+  return stan::math::cplx::division(t, u);
+}
+
+// override clang's division, which uses scalbn and logb
+template <class T>
+inline std::complex<stan::math::fvar<T>> operator/(
     std::complex<stan::math::cplx::z_fvar<T>> const& t,
     std::complex<stan::math::cplx::z_fvar<T>> const& u) {
   return stan::math::cplx::division(t, u);

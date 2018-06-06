@@ -18,4 +18,13 @@ namespace std {
 inline int isnan(const stan::math::var& a) { return isnan(a.val()); }
 
 }  // namespace std
+
+namespace stan {
+namespace math {
+
+// forwarding for ADL
+inline auto isnan(const var& a) { return std::isnan(a); }
+
+}  // namespace math
+}  // namespace stan
 #endif

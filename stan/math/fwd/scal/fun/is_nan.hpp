@@ -20,6 +20,10 @@ inline int is_nan(const fvar<T>& x) {
   return is_nan(x.val());
 }
 
+// forwarding for ADL
+template <class T>
+inline auto isnan(const fvar<T>& a) { return is_nan(a); }
+
 }  // namespace math
 }  // namespace stan
 #endif
