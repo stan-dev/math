@@ -10,10 +10,9 @@
 /** @file stan/math/gpu/basic_matrix_gpu.hpp
 *    @brief basic_matrix_gpu - basic matrix operations:
 *    copy, copy lower/upper triangular, copy triangular transposed,
-*    copy submatrix, init to zeros, init to identity,
+*    copy submatrix, init matrix with zeros, create an identity matrix,
 *    add, subtract, transpose
 */
-
 namespace stan {
   namespace math {
     enum triangularity {LOWER = 0, UPPER = 1, NONE = 2 };
@@ -68,6 +67,7 @@ namespace stan {
      * 
      */
     inline void zeros(matrix_gpu & A, triangularity part = NONE) {
+      if ( A.size() == 0 ) return;
       cl::Kernel kernel = opencl_context.get_kernel("zeros");
       cl::CommandQueue cmdQueue = opencl_context.queue();
       try {
@@ -201,8 +201,6 @@ namespace stan {
         domain_error("copy_submatrix", "submatrix in src" ,
          " is out of bounds", "");
       }
-      if (size_rows == 0 || size_cols == 0)
-        return;
       cl::Kernel kernel = opencl_context.get_kernel("copy_submatrix");
       cl::CommandQueue cmdQueue = opencl_context.queue();
       try {

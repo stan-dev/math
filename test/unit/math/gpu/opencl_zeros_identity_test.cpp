@@ -7,8 +7,14 @@
 TEST(MathMatrixGPU, zero_m_exception_pass) {
   stan::math::matrix_gpu m(1, 1);
 
+  EXPECT_NO_THROW(stan::math::zeros(m));
   EXPECT_NO_THROW(stan::math::zeros(m, stan::math::UPPER));
   EXPECT_NO_THROW(stan::math::zeros(m, stan::math::LOWER));
+  
+  stan::math::matrix_gpu m0;
+  EXPECT_NO_THROW(stan::math::zeros(m0));
+  EXPECT_NO_THROW(stan::math::zeros(m0, stan::math::LOWER));
+  EXPECT_NO_THROW(stan::math::zeros(m0, stan::math::UPPER));
 }
 
 TEST(MathMatrixGPU, identity_m_exception_pass) {
@@ -22,8 +28,7 @@ TEST(MathMatrixGPU, identity_m_exception_pass) {
 TEST(MathMatrixGPU, zero_m_value_check) {
   stan::math::matrix_d m0(2, 2);
   stan::math::matrix_d m0_dst(2, 2);
-  m0 << 2, 2,
-        2, 2;
+  m0 << 2, 2, 2, 2;
   stan::math::matrix_gpu m(m0);
   stan::math::matrix_gpu m_upper(m0);
   stan::math::matrix_gpu m_lower(m0);
@@ -53,8 +58,7 @@ TEST(MathMatrixGPU, zero_m_value_check) {
 
 TEST(MathMatrixGPU, identity_m_value_check) {
   stan::math::matrix_d m0(2, 2);
-  m0 << 2, 2,
-        2, 2;
+  m0 << 2, 2, 2, 2;
   stan::math::matrix_gpu m(m0);
 
   EXPECT_NO_THROW(m = stan::math::identity(2));
