@@ -22,7 +22,9 @@ inline int is_inf(const fvar<T>& x) {
 
 // forwarding for ADL
 template <class T>
-inline auto isinf(const fvar<T>& a) { return is_inf(a); }
+inline auto isinf(const fvar<T>& a) {
+  return is_inf(a);
+}
 
 }  // namespace math
 }  // namespace stan
