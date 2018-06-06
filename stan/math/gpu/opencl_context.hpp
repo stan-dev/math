@@ -160,7 +160,8 @@ class opencl_context_base {
     kernel_info["add"] = {false, "basic_matrix", add_symmetric_kernel};
     kernel_info["subtract"] = {false, "basic_matrix", subtract_symmetric_kernel};
     kernel_info["check_nan"] = {false, "check", check_nan_kernel};
-    kernel_info["check_diagonal_zeros"] = {false, "check", check_diagonal_zeros_kernel};
+    kernel_info["check_diagonal_zeros"]
+        = {false, "check", check_diagonal_zeros_kernel};
     kernel_info["check_symmetric"] = {false, "check", check_symmetric_kernel};
   }
 

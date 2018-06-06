@@ -1,6 +1,6 @@
 R"(
 #ifndef A
-#define A(i,j)  A[j*rows+i]
+#define A(i, j)  A[j * rows + i]
 #endif
 __kernel void check_diagonal_zeros(
         __global double *A,
@@ -8,8 +8,8 @@ __kernel void check_diagonal_zeros(
         int cols,
         __global int *flag) {
   const int i = get_global_id(0);
-  if( i < rows && i < cols ) { 
-    if (A(i,i) == 0) {
+  if (i < rows && i < cols) {
+    if (A(i, i) == 0) {
       flag[0] = 1;
     }
   }
