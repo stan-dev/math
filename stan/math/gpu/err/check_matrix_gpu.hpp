@@ -14,9 +14,6 @@ namespace math {
 /**
  * Check if the <code>matrix_gpu</code> is square.
  *
- * This check allows 0x0 matrices.
- *
- *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y <code>matrix_gpu</code> to test
