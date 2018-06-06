@@ -62,7 +62,7 @@ $(STAN_IDAS_HEADERS) : $(LIBSUNDIALS)
 ##
 
 # turn BOOST_LIB into absolute path
-BOOST_LIB_ABS := $(shell cd -- "${BOOST_LIB}" && echo $(PWD))
+BOOST_LIB_ABS = $(shell cd -- "${BOOST_LIB}" && echo $(PWD))
 
 $(BOOST_LIB)/mpi.so:
 	@mkdir -p $(dir $@)
