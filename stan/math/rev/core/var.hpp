@@ -508,17 +508,6 @@ struct to_arith_helper<z_var> {
   typedef var type;
 };
 
-static_assert(std::is_same<to_arith_t<z_var>, var>::value);
-static_assert(
-    std::is_same<typename boost::math::tools::promote_args<var, double>::type,
-                 var>::value);
-template <class T, class U, class AT = to_arith_t<T>, class AU = to_arith_t<U>,
-          class AP = typename boost::math::tools::promote_args<AT, AU>::type>
-auto icp(U const& u) {
-  return AP(u);
-}
-static_assert(std::is_same<decltype(icp<var, double>(1.0)), var>::value);
-static_assert(!is_arith<std::complex<var>>::value);
 }  // namespace cplx
 
 /// helper functions to avoid forward declarations in other headers
