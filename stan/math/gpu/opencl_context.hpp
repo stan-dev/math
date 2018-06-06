@@ -146,6 +146,12 @@ class opencl_context_base {
     const char* add_symmetric_kernel =
 #include <stan/math/gpu/kernels/add_matrix_kernel.cl>
         ;  // NOLINT
+    const char* scalar_mul_diagonal_kernel =
+#include <stan/math/gpu/kernels/scalar_mul_diagonal_kernel.cl>
+        ;  // NOLINT
+    const char* scalar_mul_kernel =
+#include <stan/math/gpu/kernels/scalar_mul_kernel.cl>
+        ;  // NOLINT
     kernel_info["dummy"] = {
         false, "timing", "__kernel void dummy(__global const int* foo) { };"};
     kernel_info["dummy2"] = {
@@ -163,6 +169,8 @@ class opencl_context_base {
     kernel_info["check_diagonal_zeros"]
         = {false, "check", check_diagonal_zeros_kernel};
     kernel_info["check_symmetric"] = {false, "check", check_symmetric_kernel};
+    kernel_info["scalar_mul_diagonal"] = {false, "multiply", scalar_mul_diagonal_kernel};
+    kernel_info["scalar_mul"] = {false, "multiply", scalar_mul_kernel};
   }
 
  protected:
