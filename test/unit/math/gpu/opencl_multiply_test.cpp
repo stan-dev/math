@@ -1,3 +1,4 @@
+#ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/gpu/multiply_matrix_gpu.hpp>
 #include <boost/random/mersenne_twister.hpp>
@@ -431,4 +432,4 @@ TEST(AgradRevMatrix, lower_triangular_multiply_big) {
   for (int j = 0; j <= i; j++)
     EXPECT_NEAR(m3(i, j), m3_gpu(i, j), 1e-10);
 }
-
+#endif

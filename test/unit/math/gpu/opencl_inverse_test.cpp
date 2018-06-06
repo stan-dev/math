@@ -1,3 +1,4 @@
+#ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/gpu/basic_matrix_gpu.hpp>
 #include <stan/math/gpu/multiply_matrix_gpu.hpp>
@@ -63,3 +64,4 @@ TEST(MathMatrixGPU, inverse_gpu_big) {
       EXPECT_NEAR(m1_dst(i, j), m1a(i, j), 1e-10);
   }
 }
+#endif

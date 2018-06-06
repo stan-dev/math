@@ -1,6 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MATRIX_INVERSE_GPU_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MATRIX_INVERSE_GPU_HPP
-
+#ifdef STAN_OPENCL
 #include <stan/math/gpu/matrix_gpu.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/gpu/err/check_matrix_gpu.hpp>
@@ -129,4 +129,5 @@ namespace stan {
   }
 }
 
+#endif
 #endif
