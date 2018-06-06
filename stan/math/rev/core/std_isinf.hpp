@@ -18,4 +18,13 @@ inline int isinf(const stan::math::var& a) {
 }
 
 }  // namespace std
+
+namespace stan {
+namespace math {
+
+// forwarding for ADL
+inline auto isinf(const var& a) { return std::isinf(a); }
+
+}  // namespace math
+}  // namespace stan
 #endif

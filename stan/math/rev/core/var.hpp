@@ -533,6 +533,13 @@ struct complex<stan::math::var>
 
 // override clang's division, which uses scalbn and logb
 inline std::complex<stan::math::var> operator/(
+    std::complex<stan::math::var> const& t,
+    std::complex<stan::math::var> const& u) {
+  return stan::math::cplx::division(t, u);
+}
+
+// override clang's division, which uses scalbn and logb
+inline std::complex<stan::math::var> operator/(
     std::complex<stan::math::cplx::z_var> const& t,
     std::complex<stan::math::cplx::z_var> const& u) {
   return stan::math::cplx::division(t, u);
