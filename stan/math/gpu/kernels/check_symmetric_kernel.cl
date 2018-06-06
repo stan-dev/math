@@ -1,6 +1,6 @@
 R"(
 #ifndef A
-#define A(i,j)  A[j*rows+i]
+#define A(i, j)  A[j * rows + i]
 #endif
 __kernel void check_symmetric(
       __global double *A,
@@ -10,9 +10,9 @@ __kernel void check_symmetric(
       double tolerance) {
   const int i = get_global_id(0);
   const int j = get_global_id(1);
-  if( i < rows && j < cols ) { 
-    double diff = fabs(A(i,j)-A(j,i));
-    if ( diff > tolerance ) {
+  if (i < rows && j < cols) {
+    double diff = fabs(A(i, j) - A(j, i));
+    if (diff > tolerance) {
       flag[0] = 1;
     }
   }
