@@ -221,8 +221,7 @@ pipeline {
     post {
         always {
             node("osx || linux") {
-                warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
-                warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
+                warnings failedTotalAll: '0', canRunOnFailed: true, consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)'], [parserName: 'Clang (LLVM based)']]
             }
         }
         success {
