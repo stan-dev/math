@@ -163,7 +163,7 @@ TEST(StanAgradRevOde_integrate_ode, lorenz_finite_diff) {
   test_ode_cvode(lorenz, t0, ts, y0, theta, x, x_int, 1e-8, 1e-1);
 }
 
-TEST(StanAgradRevOde_integrate_ode_bdf, rate_as_param) {
+TEST(StanAgradRevOde_integrate_ode_bdf, time_steps_as_param) {
   using stan::math::integrate_ode_bdf;
   using stan::math::to_var;
 
@@ -196,7 +196,7 @@ TEST(StanAgradRevOde_integrate_ode_bdf, rate_as_param) {
   test_val();
 }
 
-TEST(StanAgradRevOde_integrate_ode_bdf, rate_as_param_AD) {
+TEST(StanAgradRevOde_integrate_ode_bdf, time_steps_as_param_AD) {
   using stan::math::integrate_ode_bdf;
   using stan::math::to_var;
   using stan::math::value_of;

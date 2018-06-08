@@ -136,7 +136,7 @@ TEST(StanAgradRevOde_integrate_ode, harmonic_oscillator_error) {
   sho_error_test<var, var>(harm_osc, y0, t0, ts, theta, x, x_int, error_msg);
 }
 
-TEST(StanAgradRevOde_integrate_ode_adams, rate_as_param) {
+TEST(StanAgradRevOde_integrate_ode_adams, time_steps_as_param) {
   using stan::math::integrate_ode_adams;
   using stan::math::to_var;
 
@@ -169,7 +169,7 @@ TEST(StanAgradRevOde_integrate_ode_adams, rate_as_param) {
   test_val();
 }
 
-TEST(StanAgradRevOde_integrate_ode_adams, rate_as_param_AD) {
+TEST(StanAgradRevOde_integrate_ode_adams, time_steps_as_param_AD) {
   using stan::math::integrate_ode_adams;
   using stan::math::to_var;
   using stan::math::value_of;

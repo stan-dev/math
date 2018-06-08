@@ -144,7 +144,7 @@ class coupled_ode_system<F, double, double> {
   /**
    * Returns the base portion of the coupled state.
    *
-   * <p>In In this class, when time steps are parameters,
+   * <p>In this class, when time steps are parameters,
    * The function returns vars with gradients being the RHS
    * of the ODE system. So that for ODE system
    * du/dt = f(u, t)
@@ -170,7 +170,13 @@ class coupled_ode_system<F, double, double> {
                     x_int_, msgs_);
       for (size_t j = 0; j < N_; j++) {
         temp_gradients[0] = rhs_eval[j];
-        // only integration ends can be parameters
+
+        // only integration ends can be parameters. In other
+        // words, numerical solution at step i is only
+        // dependent on the init time point of that step. It
+        // does not explicitly dependent on other time step
+        // points. In particular, it does not deppend on
+        // future steps.
         par[0] = time_steps[i];
         temp_vars[j] = precomputed_gradients(y[i][j], par, temp_gradients);
       }

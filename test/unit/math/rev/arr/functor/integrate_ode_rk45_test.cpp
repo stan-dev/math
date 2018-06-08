@@ -117,7 +117,7 @@ TEST(StanAgradRevOde_integrate_ode_rk45, lorenz_finite_diff) {
   test_ode(lorenz, t0, ts, y0, theta, x, x_int, 1e-8, 1e-1);
 }
 
-TEST(StanAgradRevOde_integrate_ode_rk45, rate_as_param) {
+TEST(StanAgradRevOde_integrate_ode_rk45, time_steps_as_param) {
   using stan::math::integrate_ode_rk45;
   using stan::math::to_var;
 
@@ -134,6 +134,10 @@ TEST(StanAgradRevOde_integrate_ode_rk45, rate_as_param) {
   std::vector<stan::math::var> thetav = to_var(theta);
 
   std::vector<std::vector<stan::math::var> > res;
+
+  // here we only test first & last steps, and reply on the
+  // fact that results in-between affect the initial
+  // condition of the last step to check their validity.
   auto test_val = [&res]() {
     EXPECT_NEAR(0.995029, res[0][0].val(), 1e-5);
     EXPECT_NEAR(-0.0990884, res[0][1].val(), 1e-5);
@@ -150,7 +154,7 @@ TEST(StanAgradRevOde_integrate_ode_rk45, rate_as_param) {
   test_val();
 }
 
-TEST(StanAgradRevOde_integrate_ode_rk45, rate_as_param_AD) {
+TEST(StanAgradRevOde_integrate_ode_rk45, time_steps_as_param_AD) {
   using stan::math::integrate_ode_rk45;
   using stan::math::to_var;
   using stan::math::value_of;
