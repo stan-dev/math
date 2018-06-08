@@ -222,30 +222,3 @@ TEST(StanAgradRevOde_integrate_ode_adams, time_steps_as_param_AD) {
   res = integrate_ode_adams(ode, y0v, t0, ts, thetav, x, x_int);
   test_ad();
 }
-
-// TODO(Yi Zhang): failure
-// TEST(StanAgradRevOde_integrate_ode, lorenz_finite_diff) {
-//   lorenz_ode_fun lorenz;
-
-//   std::vector<double> y0;
-//   std::vector<double> theta;
-//   double t0;
-//   std::vector<double> ts;
-
-//   t0 = 0;
-
-//   theta.push_back(10.0);
-//   theta.push_back(28.0);
-//   theta.push_back(8.0 / 3.0);
-//   y0.push_back(10.0);
-//   y0.push_back(1.0);
-//   y0.push_back(1.0);
-
-//   std::vector<double> x;
-//   std::vector<int> x_int;
-
-//   for (int i = 0; i < 100; i++)
-//     ts.push_back(0.1 * (i + 1));
-
-//   test_ode_cvode(lorenz, t0, ts, y0, theta, x, x_int, 1e-8, 1e-1);
-// }
