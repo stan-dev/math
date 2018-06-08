@@ -74,10 +74,9 @@ class cvodes_integrator {
       std::vector<typename stan::return_type<T_initial, T_param, T_ts>::type> >
   integrate(const F& f, const std::vector<T_initial>& y0, double t0,
             const std::vector<T_ts>& time_steps,
-            const std::vector<T_param>& theta,
-            const std::vector<double>& x, const std::vector<int>& x_int,
-            std::ostream* msgs, double relative_tolerance,
-            double absolute_tolerance,
+            const std::vector<T_param>& theta, const std::vector<double>& x,
+            const std::vector<int>& x_int, std::ostream* msgs,
+            double relative_tolerance, double absolute_tolerance,
             long int max_num_steps) {  // NOLINT(runtime/int)
     typedef stan::is_var<T_initial> initial_var;
     typedef stan::is_var<T_param> param_var;

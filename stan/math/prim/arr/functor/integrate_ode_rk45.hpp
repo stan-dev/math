@@ -66,13 +66,12 @@ namespace math {
  * @return a vector of states, each state being a vector of the
  * same size as the state variable, corresponding to a time in ts.
  */
-  template <typename F, typename T1, typename T2, typename T_ts>
+template <typename F, typename T1, typename T2, typename T_ts>
 std::vector<std::vector<typename stan::return_type<T1, T2, T_ts>::type> >
 integrate_ode_rk45(const F& f, const std::vector<T1>& y0, double t0,
                    const std::vector<T_ts>& time_steps,
-                   const std::vector<T2>& theta,
-                   const std::vector<double>& x, const std::vector<int>& x_int,
-                   std::ostream* msgs = nullptr,
+                   const std::vector<T2>& theta, const std::vector<double>& x,
+                   const std::vector<int>& x_int, std::ostream* msgs = nullptr,
                    double relative_tolerance = 1e-6,
                    double absolute_tolerance = 1e-6, int max_num_steps = 1E6) {
   using boost::numeric::odeint::integrate_times;

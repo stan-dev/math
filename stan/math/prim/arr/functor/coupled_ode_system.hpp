@@ -166,8 +166,8 @@ class coupled_ode_system<F, double, double> {
     std::vector<stan::math::var> par(1);
     std::vector<double> rhs_eval(N_);
     for (size_t i = 0; i < n; i++) {
-      rhs_eval = f_(stan::math::value_of(time_steps[i]), y[i],
-                    theta_dbl_, x_, x_int_, msgs_);
+      rhs_eval = f_(stan::math::value_of(time_steps[i]), y[i], theta_dbl_, x_,
+                    x_int_, msgs_);
       for (size_t j = 0; j < N_; j++) {
         temp_gradients[0] = rhs_eval[j];
         // only integration ends can be parameters

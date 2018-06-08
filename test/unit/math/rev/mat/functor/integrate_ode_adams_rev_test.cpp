@@ -142,10 +142,11 @@ TEST(StanAgradRevOde_integrate_ode_adams, rate_as_param) {
 
   const double t0 = 0.0;
   harm_osc_ode_fun ode;
-  std::vector<double> theta {0.15};
-  std::vector<double> y0 {1.0, 0.0};
+  std::vector<double> theta{0.15};
+  std::vector<double> y0{1.0, 0.0};
   std::vector<stan::math::var> ts;
-  for (int i = 0; i < 100; i++) ts.push_back(t0 + 0.1 * (i + 1));
+  for (int i = 0; i < 100; i++)
+    ts.push_back(t0 + 0.1 * (i + 1));
   std::vector<double> x;
   std::vector<int> x_int;
   std::vector<stan::math::var> y0v = to_var(y0);
@@ -153,31 +154,35 @@ TEST(StanAgradRevOde_integrate_ode_adams, rate_as_param) {
 
   std::vector<std::vector<stan::math::var> > res;
   auto test_val = [&res]() {
-    EXPECT_NEAR(0.995029   , res[0][0].val(), 1e-5);
-    EXPECT_NEAR(-0.0990884 , res[0][1].val(), 1e-5);
-    EXPECT_NEAR(-0.421907  , res[99][0].val(), 1e-5);
-    EXPECT_NEAR(0.246407   , res[99][1].val(), 1e-5);
+    EXPECT_NEAR(0.995029, res[0][0].val(), 1e-5);
+    EXPECT_NEAR(-0.0990884, res[0][1].val(), 1e-5);
+    EXPECT_NEAR(-0.421907, res[99][0].val(), 1e-5);
+    EXPECT_NEAR(0.246407, res[99][1].val(), 1e-5);
   };
-  res = integrate_ode_adams(ode, y0, t0, ts, theta, x, x_int)   ; test_val();
-  res = integrate_ode_adams(ode, y0v, t0, ts, theta, x, x_int)  ; test_val();
-  res = integrate_ode_adams(ode, y0, t0, ts, thetav, x, x_int)  ; test_val();
-  res = integrate_ode_adams(ode, y0v, t0, ts, thetav, x, x_int) ; test_val();
+  res = integrate_ode_adams(ode, y0, t0, ts, theta, x, x_int);
+  test_val();
+  res = integrate_ode_adams(ode, y0v, t0, ts, theta, x, x_int);
+  test_val();
+  res = integrate_ode_adams(ode, y0, t0, ts, thetav, x, x_int);
+  test_val();
+  res = integrate_ode_adams(ode, y0v, t0, ts, thetav, x, x_int);
+  test_val();
 }
 
 TEST(StanAgradRevOde_integrate_ode_adams, rate_as_param_AD) {
-  using stan::math::var;
   using stan::math::integrate_ode_adams;
   using stan::math::to_var;
   using stan::math::value_of;
+  using stan::math::var;
   const double t0 = 0.0;
-  const int nt = 100;           // nb. of time steps
-  const int ns = 2;             // nb. of states
+  const int nt = 100;  // nb. of time steps
+  const int ns = 2;    // nb. of states
   std::ostream* msgs = NULL;
 
   harm_osc_ode_fun ode;
 
-  std::vector<double> theta {0.15};
-  std::vector<double> y0 {1.0, 0.0};
+  std::vector<double> theta{0.15};
+  std::vector<double> y0{1.0, 0.0};
   std::vector<stan::math::var> ts;
   for (int i = 0; i < nt; i++)
     ts.push_back(t0 + 0.1 * (i + 1));
@@ -208,12 +213,15 @@ TEST(StanAgradRevOde_integrate_ode_adams, rate_as_param_AD) {
       }
     }
   };
-  res = integrate_ode_adams(ode, y0, t0, ts, theta, x, x_int)   ; test_ad();
-  res = integrate_ode_adams(ode, y0v, t0, ts, theta, x, x_int)  ; test_ad();
-  res = integrate_ode_adams(ode, y0, t0, ts, thetav, x, x_int)  ; test_ad();
-  res = integrate_ode_adams(ode, y0v, t0, ts, thetav, x, x_int) ; test_ad();
+  res = integrate_ode_adams(ode, y0, t0, ts, theta, x, x_int);
+  test_ad();
+  res = integrate_ode_adams(ode, y0v, t0, ts, theta, x, x_int);
+  test_ad();
+  res = integrate_ode_adams(ode, y0, t0, ts, thetav, x, x_int);
+  test_ad();
+  res = integrate_ode_adams(ode, y0v, t0, ts, thetav, x, x_int);
+  test_ad();
 }
-
 
 // TODO(Yi Zhang): failure
 // TEST(StanAgradRevOde_integrate_ode, lorenz_finite_diff) {

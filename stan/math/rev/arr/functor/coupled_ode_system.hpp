@@ -219,8 +219,8 @@ struct coupled_ode_system<F, double, var> {
 
     for (size_t i = 0; i < y.size(); i++) {
       std::vector<double> y0_temp(y[i].begin(), y[i].begin() + N_);
-      rhs_eval = f_(value_of(time_steps[i]),
-                    y0_temp, theta_dbl_, x_, x_int_, msgs_);
+      rhs_eval
+          = f_(value_of(time_steps[i]), y0_temp, theta_dbl_, x_, x_int_, msgs_);
       theta_aug[M_] = time_steps[i];
       // iterate over number of equations
       for (size_t j = 0; j < N_; j++) {
@@ -229,8 +229,8 @@ struct coupled_ode_system<F, double, var> {
           temp_gradients[k] = y[i][y0_dbl_.size() + y0_dbl_.size() * k + j];
 
         temp_gradients[M_] = rhs_eval[j];
-        temp_vars[j] = precomputed_gradients(y[i][j],
-                                             theta_aug, temp_gradients);
+        temp_vars[j]
+            = precomputed_gradients(y[i][j], theta_aug, temp_gradients);
       }
       y_return[i] = temp_vars;
     }
@@ -434,7 +434,7 @@ struct coupled_ode_system<F, var, double> {
     using std::vector;
 
     vector<var> temp_vars(N_);
-    vector<double> temp_gradients(N_+1);
+    vector<double> temp_gradients(N_ + 1);
     vector<vector<var> > y_return(y.size());
     std::vector<stan::math::var> theta_aug;
     theta_aug.reserve(N_ + 1);
@@ -444,8 +444,8 @@ struct coupled_ode_system<F, var, double> {
 
     for (size_t i = 0; i < y.size(); i++) {
       std::vector<double> y0_temp(y[i].begin(), y[i].begin() + N_);
-      rhs_eval = f_(value_of(time_steps[i]),
-                    y0_temp, theta_dbl_, x_, x_int_, msgs_);
+      rhs_eval
+          = f_(value_of(time_steps[i]), y0_temp, theta_dbl_, x_, x_int_, msgs_);
       theta_aug[N_] = time_steps[i];
       // iterate over number of equations
       for (size_t j = 0; j < N_; j++) {
@@ -454,8 +454,8 @@ struct coupled_ode_system<F, var, double> {
           temp_gradients[k] = y[i][y0_.size() + y0_.size() * k + j];
 
         temp_gradients[N_] = rhs_eval[j];
-        temp_vars[j] = precomputed_gradients(y[i][j],
-                                             theta_aug, temp_gradients);
+        temp_vars[j]
+            = precomputed_gradients(y[i][j], theta_aug, temp_gradients);
       }
       y_return[i] = temp_vars;
     }
@@ -691,8 +691,8 @@ struct coupled_ode_system<F, var, var> {
 
     for (size_t i = 0; i < y.size(); i++) {
       std::vector<double> y0_temp(y[i].begin(), y[i].begin() + N_);
-      rhs_eval = f_(value_of(time_steps[i]), y0_temp,
-                    theta_dbl_, x_, x_int_, msgs_);
+      rhs_eval
+          = f_(value_of(time_steps[i]), y0_temp, theta_dbl_, x_, x_int_, msgs_);
       theta_aug[N_ + M_] = time_steps[i];
       // iterate over number of equations
       for (size_t j = 0; j < N_; j++) {
@@ -701,8 +701,8 @@ struct coupled_ode_system<F, var, var> {
           temp_gradients[k] = y[i][N_ + N_ * k + j];
 
         temp_gradients[N_ + M_] = rhs_eval[j];
-        temp_vars[j] = precomputed_gradients(y[i][j],
-                                             theta_aug, temp_gradients);
+        temp_vars[j]
+            = precomputed_gradients(y[i][j], theta_aug, temp_gradients);
       }
       y_return[i] = temp_vars;
     }
