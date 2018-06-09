@@ -66,6 +66,29 @@ inline Eigen::Matrix<T, 1, 1> matrix_exp(const Eigen::Matrix<T, 1, 1>& A) {
   res << exp(A(0));
   return res;
 }
+
+  /**
+   * Overload matrix_exp function to perform matrix_exp_action.
+   * This simplifies stan UI: we only expose
+   * matrix_exp_action through the following signatures
+   * - matrix_exp(A, B)
+   * - matrix_exp(A, B, t)
+   *
+   * @tparam N Rows and cols matrix A, also rows of matrix B
+   * @tparam Cb Columns matrix B
+   * @param[in] A Matrix
+   * @param[in] B Matrix
+   * @param[in] t double
+   * @return exponential of At multiplies B
+   */
+  template <int N, int Cb>
+  inline Eigen::Matrix<double, N, Cb>
+  matrix_exp(const Eigen::Matrix<double, N, N>& A,
+             const Eigen::Matrix<double, N, Cb>& B,
+             const double& t = 1.0) {
+    return matrix_exp_action(A, B, t);
+  }
+
 }  // namespace math
 }  // namespace stan
 #endif
