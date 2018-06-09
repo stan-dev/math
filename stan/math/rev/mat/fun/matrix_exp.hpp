@@ -16,31 +16,30 @@
 namespace stan {
 namespace math {
 
-  /**
-   * Overload matrix_exp function to perform matrix_exp_action.
-   * This simplifies stan UI: we only expose
-   * matrix_exp_action through the following signatures
-   * - matrix_exp(A, B)
-   * - matrix_exp(A, B, t)
-   *
-   * @tparam Ta scalar type matrix A
-   * @tparam N Rows and cols matrix A, also rows of matrix B
-   * @tparam Tb scalar type matrix B
-   * @tparam Cb Columns matrix B
-   * @param[in] A Matrix
-   * @param[in] B Matrix
-   * @param[in] t double
-   * @return exponential of At multiplies B
-   */
-  template <typename Ta, int N, typename Tb, int Cb>
-  inline typename boost::enable_if_c<boost::is_same<Ta, var>::value
-                                     || boost::is_same<Tb, var>::value,
-                                     Eigen::Matrix<var, N, Cb> >::type
-  matrix_exp(const Eigen::Matrix<Ta, N, N>& A,
-             const Eigen::Matrix<Tb, N, Cb>& B,
-             const double& t = 1.0) {
-    return matrix_exp_action(A, B, t);
-  }
+/**
+ * Overload matrix_exp function to perform matrix_exp_action.
+ * This simplifies stan UI: we only expose
+ * matrix_exp_action through the following signatures
+ * - matrix_exp(A, B)
+ * - matrix_exp(A, B, t)
+ *
+ * @tparam Ta scalar type matrix A
+ * @tparam N Rows and cols matrix A, also rows of matrix B
+ * @tparam Tb scalar type matrix B
+ * @tparam Cb Columns matrix B
+ * @param[in] A Matrix
+ * @param[in] B Matrix
+ * @param[in] t double
+ * @return exponential of At multiplies B
+ */
+template <typename Ta, int N, typename Tb, int Cb>
+inline typename boost::enable_if_c<boost::is_same<Ta, var>::value
+                                       || boost::is_same<Tb, var>::value,
+                                   Eigen::Matrix<var, N, Cb> >::type
+matrix_exp(const Eigen::Matrix<Ta, N, N>& A, const Eigen::Matrix<Tb, N, Cb>& B,
+           const double& t = 1.0) {
+  return matrix_exp_action(A, B, t);
+}
 
 }  // namespace math
 }  // namespace stan
