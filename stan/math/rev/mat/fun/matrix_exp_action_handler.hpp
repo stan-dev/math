@@ -25,8 +25,14 @@ class matrix_exp_action_handler {
   static constexpr int p_max = 8;
   static constexpr int m_max = 55;
   static constexpr double tol = 1.1e-16;
-  static const std::vector<double> theta_m_single_precision;
-  static const std::vector<double> theta_m_double_precision;
+
+// table 3.1 in the reference
+  const std::vector<double>
+  theta_m_single_precision {1.3e-1, 1.0e0, 2.2e0, 3.6e0, 4.9e0, 6.3e0,
+      7.7e0,  9.1e0, 1.1e1, 1.2e1, 1.3e1 };
+  const std::vector<double>
+  theta_m_double_precision {2.4e-3, 1.4e-1, 6.4e-1, 1.4e0, 2.4e0, 3.5e0,
+      4.7e0,  6.0e0,  7.2e0,  8.5e0, 9.9e0 };
 
  public:
   /* Constructor
@@ -115,15 +121,6 @@ class matrix_exp_action_handler {
     }
   }
 };
-
-// table 3.1 in the reference
-const std::vector<double> matrix_exp_action_handler::theta_m_single_precision{
-    1.3e-1, 1.0e0, 2.2e0, 3.6e0, 4.9e0, 6.3e0,
-    7.7e0,  9.1e0, 1.1e1, 1.2e1, 1.3e1};
-
-const std::vector<double> matrix_exp_action_handler::theta_m_double_precision{
-    2.4e-3, 1.4e-1, 6.4e-1, 1.4e0, 2.4e0, 3.5e0,
-    4.7e0,  6.0e0,  7.2e0,  8.5e0, 9.9e0};
 
 }  // namespace math
 }  // namespace stan

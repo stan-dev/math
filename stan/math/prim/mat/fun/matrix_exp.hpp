@@ -83,7 +83,8 @@ inline Eigen::Matrix<T, 1, 1> matrix_exp(const Eigen::Matrix<T, 1, 1>& A) {
  */
 template <int N, int Cb>
 inline Eigen::Matrix<double, N, Cb> matrix_exp(
-    const Eigen::Matrix<double, N, N>& A, const Eigen::Matrix<double, N, Cb>& B,
+    const Eigen::Matrix<double, N, N>& A,
+    const Eigen::Matrix<double, N, Cb>& B,
     const double& t = 1.0) {
   return matrix_exp_action(A, B, t);
 }
