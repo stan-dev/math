@@ -35,10 +35,10 @@ namespace math {
 template <typename Ta, int N, typename Tb, int Cb>
 inline typename boost::enable_if_c<boost::is_same<Ta, var>::value
                                        || boost::is_same<Tb, var>::value,
-                                   Eigen::Matrix<var, N, Cb> >::type
-inline matrix_exp(const Eigen::Matrix<Ta, N, N>& A,
-                  const Eigen::Matrix<Tb, N, Cb>& B,
-                  const double& t = 1.0) {
+                                   Eigen::Matrix<var, N, Cb> >::
+    type inline matrix_exp(const Eigen::Matrix<Ta, N, N>& A,
+                           const Eigen::Matrix<Tb, N, Cb>& B,
+                           const double& t = 1.0) {
   return matrix_exp_action(A, B, t);
 }
 
