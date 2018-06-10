@@ -12,7 +12,7 @@ GTEST_CXXFLAGS += -isystem $(GTEST)/include -isystem $(GTEST) -O$O
 $(GTEST)/src/gtest-all.o: CXXFLAGS += $(GTEST_CXXFLAGS)
 
 test/%$(EXE) : CXXFLAGS += $(GTEST_CXXFLAGS)
-test/%$(EXE) : test/%.o $(GTEST_MAIN) $(GTEST)/src/gtest-all.o
+test/%$(EXE) : test/%.o $(GTEST_MAIN) $(GTEST)/src/gtest-all.o $(LIBMPI)
 	$(LINK.cpp) -o $@ $^ $(LDFLAGS_OPENCL) $(LDFLAGS_MPI)
 
 ##
