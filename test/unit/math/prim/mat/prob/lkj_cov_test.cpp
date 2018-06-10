@@ -3,7 +3,7 @@
 #include <random>
 
 TEST(ProbDistributionsLkjCorr, testIdentity) {
-  std::random_device rd;
+  std::mt19937 rd(1);
   std::mt19937 mt(rd());
   unsigned int K = 4;
   Eigen::MatrixXd Sigma(K, K);
@@ -18,7 +18,7 @@ TEST(ProbDistributionsLkjCorr, testIdentity) {
 }
 
 TEST(ProbDistributionsLkjCorr, testHalf) {
-  std::random_device rd;
+  std::mt19937 rd(1);
   std::mt19937 mt(rd());
   unsigned int K = 4;
   Eigen::MatrixXd Sigma(K, K);
@@ -34,7 +34,7 @@ TEST(ProbDistributionsLkjCorr, testHalf) {
 }
 
 TEST(ProbDistributionsLkjCorr, Sigma) {
-  std::random_device rd;
+  std::mt19937 rd(1);
   std::mt19937 mt(rd());
   unsigned int K = 4;
   Eigen::MatrixXd Sigma(K, K);
