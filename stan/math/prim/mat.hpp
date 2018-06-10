@@ -186,6 +186,8 @@
 #include <stan/math/prim/mat/fun/promote_scalar_type.hpp>
 #include <stan/math/prim/mat/fun/qr_Q.hpp>
 #include <stan/math/prim/mat/fun/qr_R.hpp>
+#include <stan/math/prim/mat/fun/qr_thin_Q.hpp>
+#include <stan/math/prim/mat/fun/qr_thin_R.hpp>
 #include <stan/math/prim/mat/fun/quad_form.hpp>
 #include <stan/math/prim/mat/fun/quad_form_diag.hpp>
 #include <stan/math/prim/mat/fun/quad_form_sym.hpp>
