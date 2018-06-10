@@ -23,7 +23,7 @@ test/%.d : test/%.cpp
 	@mkdir -p $(dir $@)
 	@set -e; \
 	rm -f $@; \
-	$(COMPILE.cpp) -MM $< > $@.$$$$; \
+	$(COMPILE.cpp) $< -MM > $@.$$$$; \
 	sed -e 's,\($(*F)\)\.o[ :]*,$(@D)/\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
