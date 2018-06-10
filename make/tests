@@ -12,8 +12,8 @@ GTEST_CXXFLAGS += -isystem $(GTEST)/include -isystem $(GTEST) -O$O
 $(GTEST)/src/gtest-all.o: CXXFLAGS += $(GTEST_CXXFLAGS)
 
 test/%$(EXE) : CXXFLAGS += $(GTEST_CXXFLAGS)
-test/%$(EXE) : test/%.o $(GTEST_MAIN) $(GTEST)/src/gtest-all.o
-	$(LINK.cpp) -o $@ $^ $(LDFLAGS_OPENCL)
+test/%$(EXE) : test/%.o $(GTEST_MAIN) $(GTEST)/src/gtest-all.o $(LIBMPI)
+	$(LINK.cpp) -o $@ $^ $(LDFLAGS_OPENCL) $(LDFLAGS_MPI)
 
 ##
 # Rule for generating dependencies.
@@ -68,14 +68,18 @@ $(OPENCL_TESTS) : LDFLAGS += $(LDFLAGS_OPENCL)
 ############################################################
 #
 # MPI tests
+#
+# note: Since gtest main must manage the MPI ressource, currently all tests
+# are linked against MPI
 ##
 
-ifdef STAN_MPI
-  MPI_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *mpi_*test.cpp))
-  $(MPI_TESTS): LDFLAGS += $(LDFLAGS_MPI)
-  $(MPI_TESTS): CXXFLAGS += $(CXXFLAGS_MPI)
-  $(MPI_TESTS): $(LIBMPI)
-endif
+#ifdef STAN_MPI
+#  MPI_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *mpi_*test.cpp))
+#  $(MPI_TESTS): LDFLAGS += $(LDFLAGS_MPI)
+#  $(MPI_TESTS): CXXFLAGS += $(CXXFLAGS_MPI)
+#  $(MPI_TESTS): $(LIBMPI)
+#  GTEST_CXXFLAGS += $(CXXFLAGS_MPI)
+#endif
 
 ############################################################
 #

@@ -49,6 +49,15 @@ CXX = $(CC)
 # Both IDs can be found through installing and calling clinfo
 -include make/setup_gpu
 
+##
+# If STAN_MPI is defined
+##
+# Adds the following to CXXFLAGS
+# link to MPI
+# Defines
+#  STAN_MPI
+-include make/setup_mpi
+
 include make/tests    # tests
 include make/cpplint  # cpplint
 
