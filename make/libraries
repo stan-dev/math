@@ -73,15 +73,15 @@ $(BOOST_LIB)/mpi.so:
 $(BOOST_LIB)/libboost_serialization.so: $(BOOST_LIB)/mpi.so
 
 $(BOOST_LIB)/libboost_serialization.dylib: $(BOOST_LIB)/mpi.so
-	install_name_tool -add_rpath $(BOOST_LIB_ABS) $(BOOST_LIB)/libboost_serialization.dylib
-	install_name_tool -id @rpath/libboost_serialization.dylib $(BOOST_LIB)/libboost_serialization.dylib
+	install_name_tool -add_rpath "$(BOOST_LIB_ABS)" "$(BOOST_LIB)/libboost_serialization.dylib"
+	install_name_tool -id @rpath/libboost_serialization.dylib "$(BOOST_LIB)/libboost_serialization.dylib"
 
 $(BOOST_LIB)/libboost_mpi.so: $(BOOST_LIB)/mpi.so
 
 $(BOOST_LIB)/libboost_mpi.dylib: $(BOOST_LIB)/mpi.so
-	install_name_tool -add_rpath $(BOOST_LIB_ABS) $(BOOST_LIB)/libboost_mpi.dylib
-	install_name_tool -change libboost_serialization.dylib @rpath/libboost_serialization.dylib $(BOOST_LIB)/libboost_mpi.dylib
-	install_name_tool -id @rpath/libboost_mpi.dylib $(BOOST_LIB)/libboost_mpi.dylib
+	install_name_tool -add_rpath "$(BOOST_LIB_ABS)" "$(BOOST_LIB)/libboost_mpi.dylib"
+	install_name_tool -change libboost_serialization.dylib @rpath/libboost_serialization.dylib "$(BOOST_LIB)/libboost_mpi.dylib"
+	install_name_tool -id @rpath/libboost_mpi.dylib "$(BOOST_LIB)/libboost_mpi.dylib"
 
 .PHONY: clean-libraries
 clean-libraries:
