@@ -5,10 +5,6 @@
 #include <stan/math/rev/core.hpp>
 #include <vector>
 
-double l1norm(const Eigen::MatrixXd& m) {
-  return m.colwise().lpNorm<1>().maxCoeff();
-}
-
 namespace stan {
 namespace math {
 
@@ -33,6 +29,10 @@ class matrix_exp_action_handler {
   const std::vector<double> theta_m_double_precision{
       2.4e-3, 1.4e-1, 6.4e-1, 1.4e0, 2.4e0, 3.5e0,
       4.7e0,  6.0e0,  7.2e0,  8.5e0, 9.9e0};
+
+  double l1norm(const Eigen::MatrixXd& m) {
+    return m.colwise().lpNorm<1>().maxCoeff();
+  }
 
  public:
   /* Constructor
