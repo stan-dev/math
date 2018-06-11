@@ -34,7 +34,7 @@ namespace math {
 template <typename T1, typename T2>
 inline typename boost::math::tools::promote_args<T1, T2>::type
 log_inv_logit_diff(const T1& x, const T2& y) {
-  return x + log1m_exp(y - x) - log1p_exp(y) - log1p_exp(x);
+  return x - log1p_exp(x) + log1m_exp(y - x) - log1p_exp(y);
 }
 
 }  // namespace math
