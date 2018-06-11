@@ -3,7 +3,6 @@
 
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/rev/core.hpp>
 #include <ostream>
 #include <vector>
 
