@@ -51,6 +51,7 @@ CXX = $(CC)
 
 include make/tests    # tests
 include make/cpplint  # cpplint
+include make/debug    # debug
 
 ##
 # Dependencies

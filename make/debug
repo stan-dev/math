@@ -1,0 +1,9 @@
+# Add DEBUG = 1 in make/local for debug build. Note the
+# 3rd-party libraries will not be compiled with debug flags.
+DEBUG ?= 0
+ifeq ($(DEBUG), 1)
+	CXXFLAGS := $(filter-out -O${O}, $(CXXFLAGS))
+	GTEST_CXXFLAGS :=$(filter-out -O${O}, $(GTEST_CXXFLAGS))
+	CXXFLAGS +=-DDEBUG -g -O0
+	CFLAGS +=-DDEBUG -g -O0
+endif
