@@ -124,7 +124,7 @@ TEST(MathMatrix, matrix_exp_25x25) {
 
   int size = 25;
 
-  std::random_device rd;
+  std::mt19937 rd(1);
   std::mt19937 mt(rd());
 
   // Randomly construct input matrix

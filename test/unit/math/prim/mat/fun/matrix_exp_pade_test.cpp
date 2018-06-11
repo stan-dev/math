@@ -49,7 +49,7 @@ TEST(MathMatrix, matrix_exp_100x100) {
   Matrix<double, Dynamic, Dynamic> S = Eigen::MatrixXd::Identity(size, size),
                                    I = Eigen::MatrixXd::Identity(size, size);
   int col1, col2;
-  std::random_device rd;
+  std::mt19937 rd(1);
   std::mt19937 mt(rd());
   for (int i = 0; i < 5 * size; i++) {
     col1 = rd() % size;

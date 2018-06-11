@@ -140,7 +140,7 @@ TEST(MathMatrix, matrix_exp_100x100) {
   using stan::math::matrix_fd;
 
   int size = 100;
-  std::random_device rd;
+  std::mt19937 rd(1);
   std::mt19937 mt(rd());
   Matrix<double, Dynamic, Dynamic> S = Eigen::MatrixXd::Identity(size, size),
                                    I = Eigen::MatrixXd::Identity(size, size);

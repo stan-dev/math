@@ -48,7 +48,7 @@ typedef Eigen::Matrix<ffv, Eigen::Dynamic, Eigen::Dynamic> Mffv;
  */
 template <typename T1>
 void build(int n1, int n0, T1& z) {
-  std::random_device rd;
+  std::mt19937 rd(1);
   std::mt19937 mt(rd());
   z = T1(rd());
 }
@@ -230,7 +230,7 @@ void checkv() {
   std::vector<T2> y;
   std::vector<T3> result;
 
-  std::random_device rd;
+  std::mt19937 rd(1);
   std::mt19937 mt(rd());
 
   int r1 = rd() % 5, r2 = rd() % 5 + 1, r3 = rd() % 5 + 1, r4 = rd() % 5;
@@ -260,7 +260,7 @@ void checkvv() {
   std::vector<std::vector<T2> > y;
   std::vector<std::vector<T3> > result;
 
-  std::random_device rd;
+  std::mt19937 rd(1);
   std::mt19937 mt(rd());
 
   int r1 = rd() % 5, r2 = rd() % 5 + 1, r3 = rd() % 5 + 1, r4 = rd() % 5 + 1,
