@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 
 TEST(AgradFwdLogInvLogitDiff, FvarVar) {
-  using stan::math::log_inv_logit_diff;
   using stan::math::fvar;
+  using stan::math::log_inv_logit_diff;
   using stan::math::var;
 
   fvar<var> x(0.5, 1.0);
@@ -17,8 +17,8 @@ TEST(AgradFwdLogInvLogitDiff, FvarVar) {
 }
 
 TEST(AgradFwdLogInvLogitDiff, FvarVar_Dbl) {
-  using stan::math::log_inv_logit_diff;
   using stan::math::fvar;
+  using stan::math::log_inv_logit_diff;
   using stan::math::var;
 
   fvar<var> x(0.5, 1.0);
@@ -39,8 +39,8 @@ TEST(AgradFwdLogInvLogitDiff, FvarVar_Dbl) {
 }
 
 TEST(AgradFwdLogInvLogitDiff, FvarFvarVar) {
-  using stan::math::log_inv_logit_diff;
   using stan::math::fvar;
+  using stan::math::log_inv_logit_diff;
   using stan::math::var;
 
   fvar<fvar<var>> x(0.5, 1.0);
@@ -54,8 +54,8 @@ TEST(AgradFwdLogInvLogitDiff, FvarFvarVar) {
 }
 
 TEST(AgradFwdLogInvLogitDiff, FvarFVarVar_Dbl) {
-  using stan::math::log_inv_logit_diff;
   using stan::math::fvar;
+  using stan::math::log_inv_logit_diff;
   using stan::math::var;
 
   fvar<fvar<var>> x(0.5, 1.0);
