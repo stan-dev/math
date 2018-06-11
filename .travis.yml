@@ -66,6 +66,10 @@ matrix:
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER="test/unit/math/memory test/unit/math/prim/scal test/unit/math/prim/arr"
+    - <<: *linux_clang
+      env:
+        - MATRIX_EVAL="CXX=clang++-3.8"
           TESTFOLDER="test/unit/math/prim/mat/err test/unit/math/prim/mat/meta test/unit/math/prim/mat/vectorize"
     - <<: *linux_clang
       env:
