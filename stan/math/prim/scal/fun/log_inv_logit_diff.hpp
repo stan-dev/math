@@ -13,7 +13,7 @@ namespace math {
  * inverse logits of the specified arguments.
  *
    \f[
-     \mbox{log_inv_logit_diff}(x,y) =
+     \mathrm{log\_inv\_logit\_diff}(x,y) =
       \ln\left(\frac{1}{1+\exp(-x)}-\frac{1}{1+\exp(-y)}\right)
    \f]
 
@@ -29,7 +29,7 @@ namespace math {
  * @tparam T2 Type of y argument.
  * @param x Argument.
  * @param y Argument.
- * @return Result of log difference inverse logits of arguments.
+ * @return Result of log difference of inverse logits of arguments.
  */
 template <typename T1, typename T2>
 inline typename boost::math::tools::promote_args<T1, T2>::type

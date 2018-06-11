@@ -10,6 +10,30 @@
 namespace stan {
 namespace math {
 
+/**
+ * Returns the natural logarithm of the difference of the
+ * inverse logits of the specified arguments and its gradients.
+ *
+   \f[
+     \mathrm{log\_inv\_logit\_diff}(x,y) =
+      \ln\left(\frac{1}{1+\exp(-x)}-\frac{1}{1+\exp(-y)}\right)
+   \f]
+
+   \f[
+    \frac{\partial }{\partial x} = -\frac{e^x}{e^y-e^x}-\frac{e^x}{e^x+1}
+   \f]
+
+   \f[
+    \frac{\partial }{\partial x} = -\frac{e^y}{e^x-e^y}-\frac{e^y}{e^y+1}
+   \f]
+ *
+ * @tparam T1 Type of x argument.
+ * @tparam T2 Type of y argument.
+ * @param x Argument.
+ * @param y Argument.
+ * @return Result of log difference of inverse logits of arguments
+ *          and gradients.
+ */
 namespace {
 class log_inv_logit_diff_vv_vari : public op_vv_vari {
  public:
