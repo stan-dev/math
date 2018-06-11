@@ -9,10 +9,8 @@
 
 namespace stan {
 namespace math {
-using std::exp;
 
 namespace {
-
 class log_inv_logit_diff_vv_vari : public op_vv_vari {
  public:
   log_inv_logit_diff_vv_vari(vari* avi, vari* bvi)

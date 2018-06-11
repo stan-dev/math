@@ -1,11 +1,11 @@
 #include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 
-using stan::math::fvar;
-using stan::math::log_inv_logit_diff;
-using stan::math::var;
-
 TEST(AgradFwdLogInvLogitDiff, FvarVar) {
+  using stan::math::log_inv_logit_diff;
+  using stan::math::fvar;
+  using stan::math::var;
+
   fvar<var> x(0.5, 1.0);
   fvar<var> y(-1.0, 1.0);
   fvar<var> z = log_inv_logit_diff(x, y);
@@ -17,6 +17,10 @@ TEST(AgradFwdLogInvLogitDiff, FvarVar) {
 }
 
 TEST(AgradFwdLogInvLogitDiff, FvarVar_Dbl) {
+  using stan::math::log_inv_logit_diff;
+  using stan::math::fvar;
+  using stan::math::var;
+
   fvar<var> x(0.5, 1.0);
   double y = -1.0;
   fvar<var> z = log_inv_logit_diff(x, y);
@@ -35,6 +39,10 @@ TEST(AgradFwdLogInvLogitDiff, FvarVar_Dbl) {
 }
 
 TEST(AgradFwdLogInvLogitDiff, FvarFvarVar) {
+  using stan::math::log_inv_logit_diff;
+  using stan::math::fvar;
+  using stan::math::var;
+
   fvar<fvar<var>> x(0.5, 1.0);
   fvar<fvar<var>> y(-1.0, 1.0);
   fvar<fvar<var>> z = log_inv_logit_diff(x, y);
@@ -46,6 +54,10 @@ TEST(AgradFwdLogInvLogitDiff, FvarFvarVar) {
 }
 
 TEST(AgradFwdLogInvLogitDiff, FvarFVarVar_Dbl) {
+  using stan::math::log_inv_logit_diff;
+  using stan::math::fvar;
+  using stan::math::var;
+
   fvar<fvar<var>> x(0.5, 1.0);
   double y = -1.0;
   fvar<fvar<var>> z = log_inv_logit_diff(x, y);

@@ -10,8 +10,6 @@
 namespace stan {
 namespace math {
 
-using std::exp;
-
 template <typename T>
 inline fvar<T> log_inv_logit_diff(const fvar<T>& x, const fvar<T>& y) {
   return fvar<T>(
