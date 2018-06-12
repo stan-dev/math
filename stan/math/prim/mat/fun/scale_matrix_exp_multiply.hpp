@@ -16,14 +16,12 @@ namespace math {
  * @param[in] t double
  * @return exponential of At multiplies B
  */
-template <int N, int Cb>
-inline Eigen::Matrix<double, N, Cb> scale_matrix_exp_multiply(
-    const double& t, const Eigen::Matrix<double, N, N>& A,
-    const Eigen::Matrix<double, N, Cb>& B) {
-  Eigen::Matrix<double, N, Cb> expAB;
-  stan::math::matrix_exp_action_handler handle;
-  expAB = handle.action(A, B, t);
-  return expAB;
+template <int Cb>
+inline Eigen::Matrix<double, -1, Cb> scale_matrix_exp_multiply(
+    const double& t,
+    const Eigen::MatrixXd& A,
+    const Eigen::Matrix<double, -1, Cb>& B) {
+  return matrix_exp_action_handler().action(A, B, t);
 }
 
 }  // namespace math

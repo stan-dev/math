@@ -13,6 +13,8 @@
 #include <boost/type_traits.hpp>
 #include <vector>
 
+#include <stan/debug.hpp>
+
 namespace stan {
 namespace math {
 
@@ -26,12 +28,13 @@ namespace math {
  * @param t double time data
  * @return MatrixXd The adjoint of B.
  */
-template <int N>
-Eigen::MatrixXd exp_action_chain_dv(double* Ad, const Eigen::MatrixXd& adjexpAB,
+Eigen::MatrixXd exp_action_chain_dv(double* Ad,
+                                    const int& n,
+                                    const Eigen::MatrixXd& adjexpAB,
                                     const double t) {
   using Eigen::Map;
   matrix_exp_action_handler handle;
-  return handle.action(Map<Eigen::MatrixXd>(Ad, N, N).transpose(), adjexpAB, t);
+  return handle.action(Map<Eigen::MatrixXd>(Ad, n, n).transpose(), adjexpAB, t);
 }
 
 /**
@@ -45,22 +48,22 @@ Eigen::MatrixXd exp_action_chain_dv(double* Ad, const Eigen::MatrixXd& adjexpAB,
  * @param t double time data
  * @return MatrixXd The adjoint of A.
  */
-template <int N, int M>
 Eigen::MatrixXd exp_action_chain_vd(double* Ad, double* Bd,
-                                    const Eigen::MatrixXd& adjexpAB,
-                                    const double t) {
+                                      const int& n, const int& m,
+                                      const Eigen::MatrixXd& adjexpAB,
+                                      const double t) {
   using Eigen::Map;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
-  Eigen::MatrixXd adjexpA = Eigen::MatrixXd::Zero(N, N);
-  Eigen::MatrixXd adjA = Eigen::MatrixXd::Zero(N, N);
+  Eigen::MatrixXd adjexpA = Eigen::MatrixXd::Zero(n, n);
+  Eigen::MatrixXd adjA = Eigen::MatrixXd::Zero(n, n);
 
   // TODO(yizhang): a better way such as complex step approximation
   try {
     start_nested();
 
-    adjexpA = adjexpAB * Map<Matrix<double, N, M> >(Bd).transpose();
-    Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> Av(N, N);
+    adjexpA = adjexpAB * Map<MatrixXd>(Bd, n, m).transpose();
+    Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> Av(n, n);
     for (int i = 0; i < Av.size(); ++i) {
       Av(i) = to_var(Ad[i]);
     }
@@ -163,8 +166,8 @@ class matrix_exp_action_vari : public vari {
     for (size_type i = 0; i < adjexpAB.size(); ++i)
       adjexpAB(i) = variRefexpAB_[i]->adj_;
 
-    MatrixXd adjA = exp_action_chain_vd<N, Cb>(Ad_, Bd_, adjexpAB, t_);
-    MatrixXd adjB = exp_action_chain_dv<N>(Ad_, adjexpAB, t_);
+    MatrixXd adjA = exp_action_chain_vd(Ad_, Bd_, n_, B_cols_, adjexpAB, t_);
+    MatrixXd adjB = exp_action_chain_dv(Ad_, n_, adjexpAB, t_);
 
     for (size_type i = 0; i < A_size_; ++i) {
       variRefA_[i]->adj_ += adjA(i);
@@ -261,7 +264,7 @@ class matrix_exp_action_vari<double, N, Tb, Cb> : public vari {
     for (size_type i = 0; i < adjexpAB.size(); ++i)
       adjexpAB(i) = variRefexpAB_[i]->adj_;
 
-    MatrixXd adjB = exp_action_chain_dv<N>(Ad_, adjexpAB, t_);
+    MatrixXd adjB = exp_action_chain_dv(Ad_, n_, adjexpAB, t_);
 
     for (size_type i = 0; i < B_size_; ++i) {
       variRefB_[i]->adj_ += adjB(i);
@@ -352,7 +355,7 @@ class matrix_exp_action_vari<Ta, N, double, Cb> : public vari {
     for (size_type i = 0; i < adjexpAB.size(); ++i)
       adjexpAB(i) = variRefexpAB_[i]->adj_;
 
-    MatrixXd adjA = exp_action_chain_vd<N, Cb>(Ad_, Bd_, adjexpAB, t_);
+    MatrixXd adjA = exp_action_chain_vd(Ad_, Bd_, n_, B_cols_, adjexpAB, t_);
 
     for (size_type i = 0; i < A_size_; ++i) {
       variRefA_[i]->adj_ += adjA(i);
@@ -397,12 +400,12 @@ matrix_exp_action(const Eigen::Matrix<Ta, N, N>& A,
  * @param[in] B Matrix
  * @return exponential of A multiplies B
  */
-template <typename Ta, int N, typename Tb, int Cb>
+template <typename Ta, typename Tb, int Cb>
 inline typename boost::enable_if_c<boost::is_same<Ta, var>::value
                                        || boost::is_same<Tb, var>::value,
-                                   Eigen::Matrix<var, N, Cb> >::type
-matrix_exp_multiply(const Eigen::Matrix<Ta, N, N>& A,
-                    const Eigen::Matrix<Tb, N, Cb>& B) {
+                                   Eigen::Matrix<var, -1, Cb> >::type
+matrix_exp_multiply(const Eigen::Matrix<Ta, -1, -1>& A,
+                    const Eigen::Matrix<Tb, -1, Cb>& B) {
   return matrix_exp_action(A, B);
 }
 

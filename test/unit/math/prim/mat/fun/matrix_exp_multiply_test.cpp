@@ -12,24 +12,17 @@ inline void test_matrix_exp_multiply() {
 
   std::srand(1999);
 
-  Eigen::Matrix<double, N, N> A = Eigen::Matrix<double, N, N>::Random();
-  Eigen::Matrix<double, N, M> B = Eigen::Matrix<double, N, M>::Random();
+  Eigen::MatrixXd A = Eigen::MatrixXd::Random(N, N);
+  Eigen::Matrix<double, -1, M> B = Eigen::MatrixXd::Random(N, M);
   Eigen::Matrix<double, Dynamic, Dynamic> A0 = A;
 
-  // brute force
-  Eigen::Matrix<double, N, N> expA = stan::math::matrix_exp(A0);
-  Eigen::Matrix<double, N, M> expAB;
-  for (int i = 0; i < N; ++i) {
-    for (int j = 0; j < M; ++j) {
-      expAB(i, j) = 0.0;
-      for (int k = 0; k < N; ++k) {
-        expAB(i, j) += expA(i, k) * B(k, j);
-      }
-    }
-  }
+  // brute force 
+  Eigen::Matrix<double, N, M> expAB =
+    stan::math::multiply(stan::math::matrix_exp(A0), B);
 
   // matrix_exp_multiply
   Eigen::Matrix<double, N, M> res = matrix_exp_multiply(A, B);
+  EXPECT_EQ(res.size(), expAB.size());
   for (int l = 0; l < res.size(); ++l) {
     EXPECT_FLOAT_EQ(res(l), expAB(l));
   }

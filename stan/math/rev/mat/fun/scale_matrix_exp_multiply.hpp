@@ -22,12 +22,13 @@ namespace math {
  * @param[in] t double
  * @return exponential of At multiplies B
  */
-template <typename Ta, int N, typename Tb, int Cb>
+template <typename Ta, typename Tb, int Cb>
 inline typename boost::enable_if_c<boost::is_same<Ta, var>::value
                                        || boost::is_same<Tb, var>::value,
-                                   Eigen::Matrix<var, N, Cb> >::type
-scale_matrix_exp_multiply(const double& t, const Eigen::Matrix<Ta, N, N>& A,
-                          const Eigen::Matrix<Tb, N, Cb>& B) {
+                                   Eigen::Matrix<var, -1, Cb> >::type
+scale_matrix_exp_multiply(const double& t,
+                          const Eigen::Matrix<Ta, -1, -1>& A,
+                          const Eigen::Matrix<Tb, -1, Cb>& B) {
   return matrix_exp_action(A, B, t);
 }
 

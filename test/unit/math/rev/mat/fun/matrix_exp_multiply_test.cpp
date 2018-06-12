@@ -7,36 +7,31 @@
 #include <stan/math/rev/mat/fun/to_var.hpp>
 #include <vector>
 
-template <int N, int M>
-inline void test_matrix_exp_multiply_dv() {
+#include <stan/debug.hpp>
+
+inline void test_matrix_exp_multiply_dv(int N, int M) {
   using stan::math::value_of;
   using stan::math::var;
 
   std::srand(1999);
 
-  Eigen::Matrix<var, N, N> Av = Eigen::Matrix<var, N, N>::Random();
-  Eigen::Matrix<var, N, M> Bv = Eigen::Matrix<var, N, M>::Random();
-  std::vector<stan::math::var> Bvec(Bv.data(), Bv.data() + Bv.size());
-  std::vector<stan::math::var> Avec(Av.data(), Av.data() + Av.size());
-  Eigen::Matrix<double, N, N> A = value_of(Av);
+  Eigen::Matrix<var, -1, -1> Av = Eigen::Matrix<var, -1, -1>::Random(N, N);
+  Eigen::Matrix<var, -1, -1> Bv = Eigen::Matrix<var, -1, -1>::Random(N, M);
+  std::vector<stan::math::var> Avec = stan::math::to_array_1d(Av);
+  std::vector<stan::math::var> Bvec = stan::math::to_array_1d(Bv);
+  Eigen::MatrixXd A = value_of(Av);
 
   // brute force
-  Eigen::Matrix<double, N, N> expA = stan::math::matrix_exp(A);
-  Eigen::Matrix<var, N, M> expAB;
-  for (int i = 0; i < N; ++i) {
-    for (int j = 0; j < M; ++j) {
-      expAB(i, j) = 0.0;
-      for (int k = 0; k < N; ++k) {
-        expAB(i, j) += expA(i, k) * Bv(k, j);
-      }
-    }
-  }
+  Eigen::Matrix<var, -1, -1> expAB =
+    stan::math::multiply(stan::math::matrix_exp(A), Bv);
 
   // matrix_exp_multiply
-  Eigen::Matrix<var, N, M> res_dv = stan::math::matrix_exp_multiply(A, Bv);
+  Eigen::Matrix<var, -1, -1> res_dv = stan::math::matrix_exp_multiply(A, Bv);
+  EXPECT_EQ(res_dv.size(), expAB.size());
   for (int l = 0; l < res_dv.size(); ++l) {
     EXPECT_FLOAT_EQ(res_dv(l).val(), expAB(l).val());
   }
+
   // compare adjoints
   std::vector<double> g, g0;
   for (int l = 0; l < M; ++l) {
@@ -64,38 +59,31 @@ inline void test_matrix_exp_multiply_dv() {
 }
 
 TEST(MathMatrix, matrix_exp_multiply_dv) {
-  test_matrix_exp_multiply_dv<1, 1>();
-  test_matrix_exp_multiply_dv<1, 5>();
-  test_matrix_exp_multiply_dv<5, 1>();
-  test_matrix_exp_multiply_dv<5, 5>();
+  test_matrix_exp_multiply_dv(1, 1);
+  test_matrix_exp_multiply_dv(1, 5);
+  test_matrix_exp_multiply_dv(5, 1);
+  test_matrix_exp_multiply_dv(5, 5);
 }
 
-template <int N, int M>
-inline void test_matrix_exp_multiply_vd() {
+inline void test_matrix_exp_multiply_vd(int N, int M) {
   using stan::math::value_of;
   using stan::math::var;
 
   std::srand(1999);
 
-  Eigen::Matrix<var, N, N> Av = Eigen::Matrix<var, N, N>::Random();
-  Eigen::Matrix<var, N, M> Bv = Eigen::Matrix<var, N, M>::Random();
-  std::vector<stan::math::var> Bvec(Bv.data(), Bv.data() + Bv.size());
-  std::vector<stan::math::var> Avec(Av.data(), Av.data() + Av.size());
-  Eigen::Matrix<double, N, M> B = value_of(Bv);
+  Eigen::Matrix<var, -1, -1> Av = Eigen::Matrix<var, -1, -1>::Random(N, N);
+  Eigen::Matrix<var, -1, -1> Bv = Eigen::Matrix<var, -1, -1>::Random(N, M);
+  std::vector<stan::math::var> Avec = stan::math::to_array_1d(Av);
+  std::vector<stan::math::var> Bvec = stan::math::to_array_1d(Bv);
+  Eigen::MatrixXd B = value_of(Bv);
 
   // brute force
-  Eigen::Matrix<var, N, N> expA = stan::math::matrix_exp(Av);
-  Eigen::Matrix<var, N, M> expAB;
-  for (int i = 0; i < N; ++i) {
-    for (int j = 0; j < M; ++j) {
-      expAB(i, j) = 0.0;
-      for (int k = 0; k < N; ++k) {
-        expAB(i, j) += expA(i, k) * B(k, j);
-      }
-    }
-  }
+  Eigen::Matrix<var, -1, -1> expAB =
+    stan::math::multiply(stan::math::matrix_exp(Av), B);
+
   // matrix_exp_multiply
-  Eigen::Matrix<var, N, M> res_vd = stan::math::matrix_exp_multiply(Av, B);
+  Eigen::Matrix<var, -1, -1> res_vd = stan::math::matrix_exp_multiply(Av, B);
+  EXPECT_EQ(res_vd.size(), expAB.size());
   for (int l = 0; l < res_vd.size(); ++l) {
     EXPECT_FLOAT_EQ(res_vd(l).val(), expAB(l).val());
   }
@@ -127,43 +115,36 @@ inline void test_matrix_exp_multiply_vd() {
 }
 
 TEST(MathMatrix, matrix_exp_multiply_vd) {
-  test_matrix_exp_multiply_vd<1, 1>();
-  test_matrix_exp_multiply_vd<1, 5>();
-  test_matrix_exp_multiply_vd<5, 1>();
-  test_matrix_exp_multiply_vd<5, 5>();
+  test_matrix_exp_multiply_vd(1, 1);
+  test_matrix_exp_multiply_vd(1, 5);
+  test_matrix_exp_multiply_vd(5, 1);
+  test_matrix_exp_multiply_vd(5, 5);
 }
 
-template <int N, int M>
-inline void test_matrix_exp_multiply_vv() {
+inline void test_matrix_exp_multiply_vv(int N, int M) {
   using stan::math::value_of;
   using stan::math::var;
 
   std::srand(2999);
 
-  Eigen::Matrix<var, N, N> Av = Eigen::Matrix<var, N, N>::Random();
-  Eigen::Matrix<var, N, M> Bv = Eigen::Matrix<var, N, M>::Random();
-  std::vector<stan::math::var> Bvec(Bv.data(), Bv.data() + Bv.size());
-  std::vector<stan::math::var> Avec(Av.data(), Av.data() + Av.size());
+  Eigen::Matrix<var, -1, -1> Av = Eigen::Matrix<var, -1, -1>::Random(N, N);
+  Eigen::Matrix<var, -1, -1> Bv = Eigen::Matrix<var, -1, -1>::Random(N, M);
+  std::vector<stan::math::var> Avec = stan::math::to_array_1d(Av);
+  std::vector<stan::math::var> Bvec = stan::math::to_array_1d(Bv);
 
   // brute force
-  Eigen::Matrix<var, N, N> expA = stan::math::matrix_exp(Av);
-  Eigen::Matrix<var, N, M> expAB;
-  for (int i = 0; i < N; ++i) {
-    for (int j = 0; j < M; ++j) {
-      expAB(i, j) = 0.0;
-      for (int k = 0; k < N; ++k) {
-        expAB(i, j) += expA(i, k) * Bv(k, j);
-      }
-    }
-  }
+  Eigen::Matrix<var, -1, -1> expAB =
+    stan::math::multiply(stan::math::matrix_exp(Av), Bv);
 
   // matrix_exp_multiply
-  Eigen::Matrix<var, N, M> res_vv = stan::math::matrix_exp_multiply(Av, Bv);
+  Eigen::Matrix<var, -1, -1> res_vv = stan::math::matrix_exp_multiply(Av, Bv);
+  EXPECT_EQ(res_vv.size(), expAB.size());
   for (int l = 0; l < res_vv.size(); ++l) {
     EXPECT_FLOAT_EQ(res_vv(l).val(), expAB(l).val());
   }
-  Avec.insert(Avec.end(), Bvec.begin(), Bvec.end());
+
   // compare adjoints
+  Avec.insert(Avec.end(), Bvec.begin(), Bvec.end());
   std::vector<double> g, g0;
   for (int l = 0; l < M; ++l) {
     for (int k = 0; k < N; ++k) {
@@ -190,11 +171,11 @@ inline void test_matrix_exp_multiply_vv() {
 }
 
 TEST(MathMatrix, matrix_exp_multiply_vv) {
-  test_matrix_exp_multiply_vv<1, 1>();
-  test_matrix_exp_multiply_vv<1, 5>();
-  test_matrix_exp_multiply_vv<5, 1>();
-  test_matrix_exp_multiply_vv<5, 5>();
-  test_matrix_exp_multiply_vv<10, 2>();
+  test_matrix_exp_multiply_vv(1, 1);
+  test_matrix_exp_multiply_vv(1, 5);
+  test_matrix_exp_multiply_vv(5, 1);
+  test_matrix_exp_multiply_vv(5, 5);
+  test_matrix_exp_multiply_vv(8, 2);
 }
 
 // TEST(MathMatrix, matrix_exp_multiply_clock) {
