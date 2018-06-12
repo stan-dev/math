@@ -14,7 +14,6 @@ namespace math {
 /**
  * Wrapper of matrix_exp_action function for a more literal name.
  * @tparam Ta scalar type matrix A
- * @tparam N Rows and cols matrix A, also rows of matrix B
  * @tparam Tb scalar type matrix B
  * @tparam Cb Columns matrix B
  * @param[in] A Matrix
@@ -23,9 +22,7 @@ namespace math {
  * @return exponential of At multiplies B
  */
 template <typename Ta, typename Tb, int Cb>
-inline typename boost::enable_if_c<boost::is_same<Ta, var>::value
-                                       || boost::is_same<Tb, var>::value,
-                                   Eigen::Matrix<var, -1, Cb> >::type
+inline Eigen::Matrix<typename stan::return_type<Ta, Tb>::type, -1, Cb>
 scale_matrix_exp_multiply(const double& t,
                           const Eigen::Matrix<Ta, -1, -1>& A,
                           const Eigen::Matrix<Tb, -1, Cb>& B) {

@@ -9,7 +9,6 @@ namespace math {
 /**
  * Return product of exp(A) and B, where A is a NxN double matrix,
  * B is a NxCb double matrix, and t is a double
- * @tparam N Rows and cols matrix A, also rows of matrix B
  * @tparam Cb Columns matrix B
  * @param[in] A Matrix
  * @param[in] B Matrix
