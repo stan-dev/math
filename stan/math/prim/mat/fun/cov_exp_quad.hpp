@@ -17,8 +17,6 @@
 ///////////// testing
 #include <stan/math/prim/mat/meta/is_vector_like.hpp>
 
-
-
 namespace stan {
 namespace math {
 
@@ -95,7 +93,7 @@ inline
                  const std::vector<T_l> &length_scale) {
   using std::exp;
 
-  const char* function_name = "cov_exp_quad";
+  const char *function_name = "cov_exp_quad";
   // check_size_match(function_name, "x", x.size(), "length scale",
   //                  length_scale.size());
   check_positive_finite(function_name, "marginal variance", sigma);
@@ -114,20 +112,19 @@ inline
   typename return_type<T_x, T_l>::type r;
 
   std::cout << typename is_vector_like<T_x>::type << "\n";
-  
+
   // this bad, because it's not indexing over dimensions
   // for (size_t d = 0; d < l_size; ++d)
   //   divide(x[d], length_scale[d]);
 
-    // for (size_t d = 0; d < l_size; ++d) {
-    //   divide(T_x[d], length_scale[d]);
-  
+  // for (size_t d = 0; d < l_size; ++d) {
+  //   divide(T_x[d], length_scale[d]);
+
   for (size_t j = 0; j < (x_size - 1); ++j) {
     cov(j, j) = sigma_sq;
     for (size_t i = j + 1; i < x_size; ++i) {
       for (size_t k = 0; k < l_size; ++k) {
-        cov(i, j) =
-            sigma_sq * exp(-0.5 * squared_distance(x[i], x[j]));
+        cov(i, j) = sigma_sq * exp(-0.5 * squared_distance(x[i], x[j]));
         cov(j, i) = cov(i, j);
       }
     }
@@ -217,7 +214,7 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     check_not_nan(function_name, "x2", x2[i]);
   check_positive_finite(function_name, "marginal variance", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
-  
+
   Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x1_size, x2_size);
@@ -232,7 +229,7 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     x1_ard[d] = divide(x1[d], length_scale[d]);
     x2_ard[d] = divide(x2[d], length_scale[d]);
   }
-  
+
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
       cov(i, j) = sigma_sq * exp(-0.5 * squared_distance(x1[i], x2[j]));

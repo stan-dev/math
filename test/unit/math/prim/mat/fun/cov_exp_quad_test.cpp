@@ -1,12 +1,13 @@
-#include <stan/math/prim/mat.hpp>
-#include <stan/math/prim/mat/fun/squared_distance.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim/mat/fun/squared_distance.hpp>
 #include <string>
 #include <vector>
 
 // template <typename T_x1, typename T_x2, typename T_sigma, typename T_l>
-// std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2, T_sigma sigma,
+// std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2, T_sigma
+// sigma,
 //                      T_l l) {
 //   std::string message;
 //   try {
@@ -78,7 +79,8 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 
 //   for (int i = 0; i < 3; i++)
 //     for (int j = 0; j < 3; j++)
-//       EXPECT_FLOAT_EQ(sigma * sigma * exp(pow(x[i] - x[j], 2) / (-2.0 * l * l)),
+//       EXPECT_FLOAT_EQ(sigma * sigma * exp(pow(x[i] - x[j], 2) / (-2.0 * l *
+//       l)),
 //                       cov(i, j))
 //           << "index: (" << i << ", " << j << ")";
 // }
@@ -179,7 +181,8 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //   for (int i = 0; i < 3; i++)
 //     for (int j = 0; j < 4; j++)
 //       EXPECT_FLOAT_EQ(
-//           sigma * sigma * exp(squared_distance(x1[i], x2[j]) / (-2.0 * l * l)),
+//           sigma * sigma * exp(squared_distance(x1[i], x2[j]) / (-2.0 * l *
+//           l)),
 //           cov(i, j))
 //           << "index: (" << i << ", " << j << ")";
 
@@ -190,7 +193,8 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //   for (int i = 0; i < 4; i++)
 //     for (int j = 0; j < 3; j++) {
 //       EXPECT_FLOAT_EQ(
-//           sigma * sigma * exp(squared_distance(x2[i], x1[j]) / (-2.0 * l * l)),
+//           sigma * sigma * exp(squared_distance(x2[i], x1[j]) / (-2.0 * l *
+//           l)),
 //           cov2(i, j))
 //           << "index: (" << i << ", " << j << ")";
 //       EXPECT_FLOAT_EQ(cov2(i, j), cov(j, i));
@@ -222,7 +226,8 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //   for (int i = 0; i < 3; i++)
 //     for (int j = 0; j < 4; j++)
 //       EXPECT_FLOAT_EQ(
-//           sigma * sigma * exp(squared_distance(x1[i], x2[j]) / (-2.0 * l * l)),
+//           sigma * sigma * exp(squared_distance(x1[i], x2[j]) / (-2.0 * l *
+//           l)),
 //           cov(i, j))
 //           << "index: (" << i << ", " << j << ")";
 
@@ -233,7 +238,8 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //   for (int i = 0; i < 4; i++)
 //     for (int j = 0; j < 3; j++) {
 //       EXPECT_FLOAT_EQ(
-//           sigma * sigma * exp(squared_distance(x2[i], x1[j]) / (-2.0 * l * l)),
+//           sigma * sigma * exp(squared_distance(x2[i], x1[j]) / (-2.0 * l *
+//           l)),
 //           cov2(i, j))
 //           << "index: (" << i << ", " << j << ")";
 //       EXPECT_FLOAT_EQ(cov2(i, j), cov(j, i));
@@ -279,97 +285,112 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //     for (int j = 0; j < 4; j++)
 //       EXPECT_FLOAT_EQ(
 //           sigma * sigma
-//               * exp(squared_distance(x1_rvec[i], x2_vec[j]) / (-2.0 * l * l)),
+//               * exp(squared_distance(x1_rvec[i], x2_vec[j]) / (-2.0 * l *
+//               l)),
 //           cov(i, j))
 //           << "index: (" << i << ", " << j << ")";
 
 //   Eigen::MatrixXd cov7;
-//   EXPECT_NO_THROW(cov7 = stan::math::cov_exp_quad(x2_vec, x1_rvec, sigma, l));
+//   EXPECT_NO_THROW(cov7 = stan::math::cov_exp_quad(x2_vec, x1_rvec, sigma,
+//   l));
 //   EXPECT_EQ(4, cov7.rows());
 //   EXPECT_EQ(3, cov7.cols());
 //   for (int i = 0; i < 4; i++)
 //     for (int j = 0; j < 3; j++) {
 //       EXPECT_FLOAT_EQ(
 //           sigma * sigma
-//               * exp(squared_distance(x2_vec[i], x1_rvec[j]) / (-2.0 * l * l)),
+//               * exp(squared_distance(x2_vec[i], x1_rvec[j]) / (-2.0 * l *
+//               l)),
 //           cov7(i, j))
 //           << "index: (" << i << ", " << j << ")";
 //       EXPECT_FLOAT_EQ(cov7(i, j), cov(j, i));
 //     }
 
 //   Eigen::MatrixXd cov2;
-//   EXPECT_NO_THROW(cov2 = stan::math::cov_exp_quad(x1_vec, x2_rvec, sigma, l));
+//   EXPECT_NO_THROW(cov2 = stan::math::cov_exp_quad(x1_vec, x2_rvec, sigma,
+//   l));
 //   EXPECT_EQ(3, cov2.rows());
 //   EXPECT_EQ(4, cov2.cols());
 //   for (int i = 0; i < 3; i++)
 //     for (int j = 0; j < 4; j++)
 //       EXPECT_FLOAT_EQ(
 //           sigma * sigma
-//               * exp(squared_distance(x1_vec[i], x2_rvec[j]) / (-2.0 * l * l)),
+//               * exp(squared_distance(x1_vec[i], x2_rvec[j]) / (-2.0 * l *
+//               l)),
 //           cov2(i, j))
 //           << "index: (" << i << ", " << j << ")";
 
 //   Eigen::MatrixXd cov8;
-//   EXPECT_NO_THROW(cov8 = stan::math::cov_exp_quad(x2_rvec, x1_vec, sigma, l));
+//   EXPECT_NO_THROW(cov8 = stan::math::cov_exp_quad(x2_rvec, x1_vec, sigma,
+//   l));
 //   EXPECT_EQ(4, cov8.rows());
 //   EXPECT_EQ(3, cov8.cols());
 //   for (int i = 0; i < 4; i++)
 //     for (int j = 0; j < 3; j++) {
 //       EXPECT_FLOAT_EQ(
 //           sigma * sigma
-//               * exp(squared_distance(x2_rvec[i], x1_vec[j]) / (-2.0 * l * l)),
+//               * exp(squared_distance(x2_rvec[i], x1_vec[j]) / (-2.0 * l *
+//               l)),
 //           cov8(i, j))
 //           << "index: (" << i << ", " << j << ")";
 //       EXPECT_FLOAT_EQ(cov8(i, j), cov2(j, i));
 //     }
 
 //   Eigen::MatrixXd cov3;
-//   EXPECT_NO_THROW(cov3 = stan::math::cov_exp_quad(x2_vec, x2_rvec, sigma, l));
+//   EXPECT_NO_THROW(cov3 = stan::math::cov_exp_quad(x2_vec, x2_rvec, sigma,
+//   l));
 //   EXPECT_EQ(4, cov3.rows());
 //   EXPECT_EQ(4, cov3.cols());
 //   for (int i = 0; i < 4; i++)
 //     for (int j = 0; j < 4; j++)
 //       EXPECT_FLOAT_EQ(
 //           sigma * sigma
-//               * exp(squared_distance(x2_vec[i], x2_rvec[j]) / (-2.0 * l * l)),
+//               * exp(squared_distance(x2_vec[i], x2_rvec[j]) / (-2.0 * l *
+//               l)),
 //           cov3(i, j))
 //           << "index: (" << i << ", " << j << ")";
 
 //   Eigen::MatrixXd cov4;
-//   EXPECT_NO_THROW(cov4 = stan::math::cov_exp_quad(x2_rvec, x2_vec, sigma, l));
+//   EXPECT_NO_THROW(cov4 = stan::math::cov_exp_quad(x2_rvec, x2_vec, sigma,
+//   l));
 //   EXPECT_EQ(4, cov4.rows());
 //   EXPECT_EQ(4, cov4.cols());
 //   for (int i = 0; i < 4; i++)
 //     for (int j = 0; j < 4; j++) {
 //       EXPECT_FLOAT_EQ(
 //           sigma * sigma
-//               * exp(squared_distance(x2_rvec[i], x2_vec[j]) / (-2.0 * l * l)),
+//               * exp(squared_distance(x2_rvec[i], x2_vec[j]) / (-2.0 * l *
+//               l)),
 //           cov4(i, j))
 //           << "index: (" << i << ", " << j << ")";
 //       EXPECT_FLOAT_EQ(cov4(i, j), cov3(i, j));
 //     }
 
 //   Eigen::MatrixXd cov5;
-//   EXPECT_NO_THROW(cov5 = stan::math::cov_exp_quad(x1_rvec, x1_vec, sigma, l));
+//   EXPECT_NO_THROW(cov5 = stan::math::cov_exp_quad(x1_rvec, x1_vec, sigma,
+//   l));
 //   EXPECT_EQ(3, cov5.rows());
 //   EXPECT_EQ(3, cov5.cols());
 //   for (int i = 0; i < 3; i++)
 //     for (int j = 0; j < 3; j++)
 //       EXPECT_FLOAT_EQ(
 //           sigma * sigma
-//               * exp(squared_distance(x1_rvec[i], x1_vec[j]) / (-2.0 * l * l)),
+//               * exp(squared_distance(x1_rvec[i], x1_vec[j]) / (-2.0 * l *
+//               l)),
 //           cov5(i, j))
 //           << "index: (" << i << ", " << j << ")";
 
 //   Eigen::MatrixXd cov6;
-//   EXPECT_NO_THROW(cov6 = stan::math::cov_exp_quad(x1_vec, x1_rvec, sigma, l));
+//   EXPECT_NO_THROW(cov6 = stan::math::cov_exp_quad(x1_vec, x1_rvec, sigma,
+//   l));
 //   EXPECT_EQ(3, cov6.rows());
 //   EXPECT_EQ(3, cov6.cols());
 //   for (int i = 0; i < 3; i++)
 //     for (int j = 0; j < 3; j++) {
 //       EXPECT_FLOAT_EQ(
 //           sigma * sigma
-//               * exp(squared_distance(x1_vec[i], x1_rvec[j]) / (-2.0 * l * l)),
+//               * exp(squared_distance(x1_vec[i], x1_rvec[j]) / (-2.0 * l *
+//               l)),
 //           cov6(i, j))
 //           << "index: (" << i << ", " << j << ")";
 //       EXPECT_FLOAT_EQ(cov6(i, j), cov5(i, j));
@@ -413,13 +434,17 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma_bad, l_bad),
 //                std::domain_error);
 
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma, l_bad), std::domain_error);
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma_bad, l), std::domain_error);
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma, l_bad),
+//   std::domain_error);
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma_bad, l),
+//   std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma_bad, l_bad),
 //                std::domain_error);
 
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma, l_bad), std::domain_error);
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma_bad, l), std::domain_error);
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma, l_bad),
+//   std::domain_error);
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma_bad, l),
+//   std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma_bad, l_bad),
 //                std::domain_error);
 // }
@@ -477,11 +502,14 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_bad, sigma_bad, l_bad),
 //                std::domain_error);
 
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma, l_bad), std::domain_error);
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma_bad, l), std::domain_error);
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma, l_bad),
+//   std::domain_error);
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma_bad, l),
+//   std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma_bad, l_bad),
 //                std::domain_error);
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_bad_2, sigma, l), std::domain_error);
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_bad_2, sigma, l),
+//   std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_bad_2, sigma_bad, l),
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_bad_2, sigma, l_bad),
@@ -489,11 +517,14 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_bad_2, sigma_bad, l_bad),
 //                std::domain_error);
 
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma, l_bad), std::domain_error);
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma_bad, l), std::domain_error);
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma, l_bad),
+//   std::domain_error);
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma_bad, l),
+//   std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma_bad, l_bad),
 //                std::domain_error);
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_bad_3, sigma, l), std::domain_error);
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_bad_3, sigma, l),
+//   std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_bad_3, sigma_bad, l),
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_bad_3, sigma, l_bad),
@@ -570,7 +601,8 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_rvec_2, sigma, l_bad),
 //                std::domain_error);
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_rvec_2, sigma_bad, l_bad),
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_rvec_2, sigma_bad,
+//   l_bad),
 //                std::domain_error);
 
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1, x_rvec_2, sigma_bad, l),
@@ -656,7 +688,8 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_rvec_2, sigma, l_bad),
 //                std::domain_error);
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_rvec_2, sigma_bad, l_bad),
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_rvec_2, sigma_bad,
+//   l_bad),
 //                std::domain_error);
 
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1, x_rvec_2, sigma_bad, l),
@@ -706,7 +739,8 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_rvec_2_bad, sigma, l),
 //                std::domain_error);
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1_bad, x_rvec_2_bad, sigma, l),
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1_bad, x_rvec_2_bad, sigma,
+//   l),
 //                std::domain_error);
 
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1_bad, x_rvec_2, sigma, l),
@@ -799,7 +833,8 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 // }
 
 // template <typename T_x1, typename T_x2, typename T_sigma, typename T_l>
-// std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2, T_sigma sigma,
+// std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2, T_sigma
+// sigma,
 //                      std::vector<T_l> l) {
 //   std::string message;
 //   try {
@@ -813,7 +848,8 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 // }
 
 // template <typename T_x1, typename T_sigma, typename T_l>
-// std::string pull_msg(std::vector<T_x1> x1, T_sigma sigma, std::vector<T_l> l) {
+// std::string pull_msg(std::vector<T_x1> x1, T_sigma sigma, std::vector<T_l> l)
+// {
 //   std::string message;
 //   try {
 //     stan::math::cov_exp_quad(x1, sigma, l);
@@ -1113,7 +1149,8 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //     for (int j = 0; j < 4; j++) {
 //       exponential = 0;
 //       for (int k = 0; k < 5; k++) {
-//         exponential += squared_distance(x1_rvec[i], x2_rvec[j]) / (l[k] * l[k]);
+//         exponential += squared_distance(x1_rvec[i], x2_rvec[j]) / (l[k] *
+//         l[k]);
 //       }
 //       exponential *= -0.5;
 //       EXPECT_FLOAT_EQ(sigma * sigma * exp(exponential), cov(i, j))
@@ -1122,14 +1159,16 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //   }
 
 //   Eigen::MatrixXd cov7;
-//   EXPECT_NO_THROW(cov7 = stan::math::cov_exp_quad(x2_vec, x1_rvec, sigma, l));
+//   EXPECT_NO_THROW(cov7 = stan::math::cov_exp_quad(x2_vec, x1_rvec, sigma,
+//   l));
 //   EXPECT_EQ(4, cov7.rows());
 //   EXPECT_EQ(3, cov7.cols());
 //   for (int i = 0; i < 4; i++) {
 //     for (int j = 0; j < 3; j++) {
 //       exponential = 0;
 //       for (int k = 0; k < 5; k++) {
-//         exponential += squared_distance(x2_rvec[i], x1_rvec[j]) / (l[k] * l[k]);
+//         exponential += squared_distance(x2_rvec[i], x1_rvec[j]) / (l[k] *
+//         l[k]);
 //       }
 //       exponential *= -0.5;
 //       EXPECT_FLOAT_EQ(sigma * sigma * exp(exponential), cov7(i, j))
@@ -1139,14 +1178,16 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //   }
 
 //   Eigen::MatrixXd cov2;
-//   EXPECT_NO_THROW(cov2 = stan::math::cov_exp_quad(x1_vec, x2_rvec, sigma, l));
+//   EXPECT_NO_THROW(cov2 = stan::math::cov_exp_quad(x1_vec, x2_rvec, sigma,
+//   l));
 //   EXPECT_EQ(3, cov2.rows());
 //   EXPECT_EQ(4, cov2.cols());
 //   for (int i = 0; i < 3; i++) {
 //     for (int j = 0; j < 4; j++) {
 //       exponential = 0;
 //       for (int k = 0; k < 5; k++) {
-//         exponential += squared_distance(x1_vec[i], x2_rvec[j]) / (l[k] * l[k]);
+//         exponential += squared_distance(x1_vec[i], x2_rvec[j]) / (l[k] *
+//         l[k]);
 //       }
 //       exponential *= -0.5;
 //       EXPECT_FLOAT_EQ(sigma * sigma * exp(exponential), cov2(i, j))
@@ -1155,14 +1196,16 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //   }
 
 //   Eigen::MatrixXd cov8;
-//   EXPECT_NO_THROW(cov8 = stan::math::cov_exp_quad(x2_rvec, x1_vec, sigma, l));
+//   EXPECT_NO_THROW(cov8 = stan::math::cov_exp_quad(x2_rvec, x1_vec, sigma,
+//   l));
 //   EXPECT_EQ(4, cov8.rows());
 //   EXPECT_EQ(3, cov8.cols());
 //   for (int i = 0; i < 4; i++) {
 //     for (int j = 0; j < 3; j++) {
 //       exponential = 0;
 //       for (int k = 0; k < 5; k++) {
-//         exponential += squared_distance(x2_rvec[i], x1_vec[j]) / (l[k] * l[k]);
+//         exponential += squared_distance(x2_rvec[i], x1_vec[j]) / (l[k] *
+//         l[k]);
 //       }
 //       exponential *= -0.5;
 //       EXPECT_FLOAT_EQ(sigma * sigma * exp(exponential), cov8(i, j))
@@ -1172,14 +1215,16 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //   }
 
 //   Eigen::MatrixXd cov3;
-//   EXPECT_NO_THROW(cov3 = stan::math::cov_exp_quad(x2_vec, x2_rvec, sigma, l));
+//   EXPECT_NO_THROW(cov3 = stan::math::cov_exp_quad(x2_vec, x2_rvec, sigma,
+//   l));
 //   EXPECT_EQ(4, cov3.rows());
 //   EXPECT_EQ(4, cov3.cols());
 //   for (int i = 0; i < 4; i++) {
 //     for (int j = 0; j < 4; j++) {
 //       exponential = 0;
 //       for (int k = 0; k < 5; k++) {
-//         exponential += squared_distance(x2_vec[i], x2_rvec[j]) / (l[k] * l[k]);
+//         exponential += squared_distance(x2_vec[i], x2_rvec[j]) / (l[k] *
+//         l[k]);
 //       }
 //       exponential *= -0.5;
 //       EXPECT_FLOAT_EQ(sigma * sigma * exp(exponential), cov3(i, j))
@@ -1188,14 +1233,16 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //   }
 
 //   Eigen::MatrixXd cov4;
-//   EXPECT_NO_THROW(cov4 = stan::math::cov_exp_quad(x2_rvec, x2_vec, sigma, l));
+//   EXPECT_NO_THROW(cov4 = stan::math::cov_exp_quad(x2_rvec, x2_vec, sigma,
+//   l));
 //   EXPECT_EQ(4, cov4.rows());
 //   EXPECT_EQ(4, cov4.cols());
 //   for (int i = 0; i < 4; i++) {
 //     for (int j = 0; j < 4; j++) {
 //       exponential = 0;
 //       for (int k = 0; k < 5; k++) {
-//         exponential += squared_distance(x2_rvec[i], x2_vec[j]) / (l[k] * l[k]);
+//         exponential += squared_distance(x2_rvec[i], x2_vec[j]) / (l[k] *
+//         l[k]);
 //       }
 //       exponential *= -0.5;
 //       EXPECT_FLOAT_EQ(sigma * sigma * exp(exponential), cov4(i, j))
@@ -1205,14 +1252,16 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //   }
 
 //   Eigen::MatrixXd cov5;
-//   EXPECT_NO_THROW(cov5 = stan::math::cov_exp_quad(x1_rvec, x1_vec, sigma, l));
+//   EXPECT_NO_THROW(cov5 = stan::math::cov_exp_quad(x1_rvec, x1_vec, sigma,
+//   l));
 //   EXPECT_EQ(3, cov5.rows());
 //   EXPECT_EQ(3, cov5.cols());
 //   for (int i = 0; i < 3; i++) {
 //     for (int j = 0; j < 3; j++) {
 //       exponential = 0;
 //       for (int k = 0; k < 5; k++) {
-//         exponential += squared_distance(x1_rvec[i], x1_vec[j]) / (l[k] * l[k]);
+//         exponential += squared_distance(x1_rvec[i], x1_vec[j]) / (l[k] *
+//         l[k]);
 //       }
 //       exponential *= -0.5;
 //       EXPECT_FLOAT_EQ(sigma * sigma * exp(exponential), cov5(i, j))
@@ -1221,14 +1270,16 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //   }
 
 //   Eigen::MatrixXd cov6;
-//   EXPECT_NO_THROW(cov6 = stan::math::cov_exp_quad(x1_vec, x1_rvec, sigma, l));
+//   EXPECT_NO_THROW(cov6 = stan::math::cov_exp_quad(x1_vec, x1_rvec, sigma,
+//   l));
 //   EXPECT_EQ(3, cov6.rows());
 //   EXPECT_EQ(3, cov6.cols());
 //   for (int i = 0; i < 3; i++) {
 //     for (int j = 0; j < 3; j++) {
 //       exponential = 0;
 //       for (int k = 0; k < 5; k++) {
-//         exponential += squared_distance(x1_vec[i], x1_rvec[j]) / (l[k] * l[k]);
+//         exponential += squared_distance(x1_vec[i], x1_rvec[j]) / (l[k] *
+//         l[k]);
 //       }
 //       exponential *= -0.5;
 //       EXPECT_FLOAT_EQ(sigma * sigma * exp(exponential), cov6(i, j))
@@ -1284,13 +1335,17 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma_bad, l_bad),
 //                std::domain_error);
 
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma, l_bad), std::domain_error);
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma_bad, l), std::domain_error);
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma, l_bad),
+//   std::domain_error);
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma_bad, l),
+//   std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma_bad, l_bad),
 //                std::domain_error);
 
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma, l_bad), std::domain_error);
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma_bad, l), std::domain_error);
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma, l_bad),
+//   std::domain_error);
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma_bad, l),
+//   std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma_bad, l_bad),
 //                std::domain_error);
 // }
@@ -1349,7 +1404,8 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_bad, sigma_bad, l_bad),
 //                std::domain_error);
 
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma, l_bad), std::domain_error);
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma, l_bad),
+//   std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma_bad, l_bad),
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_bad_2, sigma, l_bad),
@@ -1357,7 +1413,8 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_bad_2, sigma_bad, l_bad),
 //                std::domain_error);
 
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma, l_bad), std::domain_error);
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma, l_bad),
+//   std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma_bad, l_bad),
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_bad_3, sigma, l_bad),
@@ -1581,7 +1638,8 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_rvec_2, sigma, l_bad0),
 //                std::domain_error);
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_rvec_2, sigma_bad, l_bad0),
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_rvec_2, sigma_bad,
+//   l_bad0),
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_rvec_2, sigma, l_bad1),
 //                std::domain_error);
@@ -1596,7 +1654,8 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1, x_rvec_2, sigma, l_bad0),
 //                std::domain_error);
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1, x_rvec_2, sigma_bad, l_bad0),
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1, x_rvec_2, sigma_bad,
+//   l_bad0),
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1, x_rvec_2, sigma, l_bad1),
 //                std::domain_error);
@@ -1611,7 +1670,8 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_vec_2, sigma, l_bad0),
 //                std::domain_error);
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_vec_2, sigma_bad, l_bad0),
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_vec_2, sigma_bad,
+//   l_bad0),
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_vec_2, sigma, l_bad1),
 //                std::domain_error);
@@ -1655,7 +1715,8 @@ TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_rvec_2_bad, sigma, l),
 //                std::domain_error);
-//   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1_bad, x_rvec_2_bad, sigma, l),
+//   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1_bad, x_rvec_2_bad, sigma,
+//   l),
 //                std::domain_error);
 
 //   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1_bad, x_rvec_2, sigma, l),
