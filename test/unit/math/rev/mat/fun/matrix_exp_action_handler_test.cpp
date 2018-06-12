@@ -8,14 +8,14 @@
 #include <vector>
 
 TEST(MathMatrix, matrix_exp_action_diag) {
-  using MatrixType = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
-  using VectorType = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
   stan::math::matrix_exp_action_handler handler;
 
   {
     double t = 0.5;
-    MatrixType m1(2, 2);
-    VectorType b(2);
+    MatrixXd m1(2, 2);
+    VectorXd b(2);
     m1 << 2, 0, 0, 2;
     b << 1, 1;
     auto res = handler.action(m1, b, t);
@@ -25,8 +25,8 @@ TEST(MathMatrix, matrix_exp_action_diag) {
 
   {
     double t = 1.0;
-    MatrixType m1(2, 2);
-    VectorType b = VectorType::Random(2);
+    MatrixXd m1(2, 2);
+    VectorXd b = VectorXd::Random(2);
     m1 << 1, 0, 0, 2;
     auto res = handler.action(m1, b, t);
     EXPECT_NEAR(res(0), b(0) * M_E, 1.e-8);
@@ -36,8 +36,8 @@ TEST(MathMatrix, matrix_exp_action_diag) {
   {
     double t = 1.0;
     std::srand(1299);
-    MatrixType m1(2, 2);
-    VectorType b = VectorType::Random(2);
+    MatrixXd m1(2, 2);
+    VectorXd b = VectorXd::Random(2);
     m1 << -4.0, 0, 0, -5.0;
     auto res = handler.action(m1, b, t);
     EXPECT_NEAR(res(0), b(0) / (M_E * M_E * M_E * M_E), 1.e-8);
@@ -47,9 +47,9 @@ TEST(MathMatrix, matrix_exp_action_diag) {
   {
     std::srand(999);
     double t = static_cast<double>((std::rand()) / RAND_MAX);
-    VectorType b = VectorType::Random(5);
-    VectorType d = VectorType::Random(5);
-    MatrixType m = d.asDiagonal();
+    VectorXd b = VectorXd::Random(5);
+    VectorXd d = VectorXd::Random(5);
+    MatrixXd m = d.asDiagonal();
     auto res = handler.action(m, b, t);
     for (int i = 0; i < 5; ++i) {
       EXPECT_NEAR(res(i), b(i) * std::exp(t * d(i)), 1.e-8);
@@ -58,17 +58,17 @@ TEST(MathMatrix, matrix_exp_action_diag) {
 }
 
 TEST(MathMatrix, matrix_exp_action_vector) {
-  using MatrixType = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
-  using VectorType = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
   stan::math::matrix_exp_action_handler handler;
   std::srand(999);
 
   for (size_t n = 2; n < 10; ++n) {
-    MatrixType A = MatrixType::Random(n, n);
-    VectorType b = VectorType::Random(n);
-    VectorType res = handler.action(A, b);
-    MatrixType expA = stan::math::matrix_exp(A);
-    VectorType expb = expA * b;
+    MatrixXd A = MatrixXd::Random(n, n);
+    VectorXd b = VectorXd::Random(n);
+    VectorXd res = handler.action(A, b);
+    MatrixXd expA = stan::math::matrix_exp(A);
+    VectorXd expb = expA * b;
     for (size_t i = 0; i < n; ++i) {
       EXPECT_NEAR(res(i), expb(i), 1.e-6);
     }
@@ -84,7 +84,7 @@ TEST(MathMatrix, matrix_exp_action_vector) {
 }
 
 TEST(MathMatrix, matrix_exp_action_matrix) {
-  using MatrixType = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
+  using Eigen::MatrixXd;
   stan::math::matrix_exp_action_handler handler;
   std::srand(999);
 
@@ -94,8 +94,8 @@ TEST(MathMatrix, matrix_exp_action_matrix) {
   Eigen::Matrix<double, N, M> B = Eigen::Matrix<double, N, M>::Random();
 
   Eigen::Matrix<double, N, M> res = handler.action(A, B);
-  MatrixType Ad(A);
-  MatrixType expa = stan::math::matrix_exp(Ad);
+  MatrixXd Ad(A);
+  MatrixXd expa = stan::math::matrix_exp(Ad);
   Eigen::Matrix<double, N, M> expb = expa * B;
 
   for (int i = 0; i < N; ++i) {
@@ -106,7 +106,7 @@ TEST(MathMatrix, matrix_exp_action_matrix) {
 }
 
 TEST(MathMatrix, matrix_exp_action_matrix_transpose) {
-  using MatrixType = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
+  using Eigen::MatrixXd;
   stan::math::matrix_exp_action_handler handler;
   std::srand(1999);
 
@@ -116,8 +116,8 @@ TEST(MathMatrix, matrix_exp_action_matrix_transpose) {
   Eigen::Matrix<double, N, M> B = Eigen::Matrix<double, N, M>::Random();
 
   Eigen::Matrix<double, N, M> res = handler.action(A.transpose(), B);
-  MatrixType Ad(A);
-  MatrixType expa = stan::math::matrix_exp(Ad).transpose();
+  MatrixXd Ad(A);
+  MatrixXd expa = stan::math::matrix_exp(Ad).transpose();
   Eigen::Matrix<double, N, M> expb = expa * B;
 
   for (int i = 0; i < N; ++i) {
