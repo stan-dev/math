@@ -32,7 +32,5 @@ endif
 DLL := .so
 
 ifdef STAN_MPI
-  LDFLAGS_MPI = -L"$(BOOST_LIB)" -lboost_serialization -lboost_mpi -Wl,-rpath,"$(BOOST_LIB_ABS)"
-  CXXFLAGS_MPI = -DSTAN_MPI
-  LIBMPI = $(BOOST_LIB)/libboost_mpi$(DLL) $(BOOST_LIB)/libboost_serialization$(DLL)
+  LDFLAGS_MPI ?= -L"$(BOOST_LIB)" -lboost_serialization -lboost_mpi -Wl,-rpath,"$(BOOST_LIB_ABS)"
 endif
