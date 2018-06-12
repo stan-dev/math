@@ -1,0 +1,12 @@
+##
+# If STAN_MPI is defined
+##
+# Adds the following to CXXFLAGS
+# link to MPI
+# Defines
+#  STAN_MPI
+ifdef STAN_MPI
+  CXXFLAGS += -DSTAN_MPI
+  LDFLAGS += $(LDFLAGS_MPI)
+  LIBMPI = $(BOOST_LIB)/libboost_mpi$(DLL) $(BOOST_LIB)/libboost_serialization$(DLL) $(MATH)src/math/prim/arr/mpi_cluster.o
+endif

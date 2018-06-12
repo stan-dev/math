@@ -12,8 +12,8 @@ GTEST_CXXFLAGS += -isystem $(GTEST)/include -isystem $(GTEST) -O$O
 $(GTEST)/src/gtest-all.o: CXXFLAGS += $(GTEST_CXXFLAGS)
 
 test/%$(EXE) : CXXFLAGS += $(GTEST_CXXFLAGS)
-test/%$(EXE) : test/%.o $(GTEST_MAIN) $(GTEST)/src/gtest-all.o
-	$(LINK.cpp) -o $@ $^ $(LDFLAGS_OPENCL)
+test/%$(EXE) : test/%.o $(GTEST_MAIN) $(GTEST)/src/gtest-all.o $(LIBMPI)
+	$(LINK.cpp) -o $@ $^ $(LDFLAGS_OPENCL) $(LDFLAGS_MPI)
 
 ##
 # Rule for generating dependencies.
@@ -23,7 +23,7 @@ test/%.d : test/%.cpp
 	@mkdir -p $(dir $@)
 	@set -e; \
 	rm -f $@; \
-	$(COMPILE.cpp) -MM $< > $@.$$$$; \
+	$(COMPILE.cpp) $< -MM > $@.$$$$; \
 	sed -e 's,\($(*F)\)\.o[ :]*,$(@D)/\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
@@ -35,7 +35,7 @@ test/%.d : test/%.cpp
 test/unit/multiple_translation_units%.o : test/unit/multiple_translation_units%.cpp
 	$(COMPILE.cpp) -fPIC -O$O $< $(OUTPUT_OPTION)
 
-test/unit/libmultiple.so : test/unit/multiple_translation_units1.o test/unit/multiple_translation_units2.o
+test/unit/libmultiple.so : test/unit/multiple_translation_units1.o test/unit/multiple_translation_units2.o $(LIBMPI)
 	$(LINK.cpp) -shared -fPIC $(OUTPUT_OPTION) $^
 
 test/unit/multiple_translation_units_test.cpp : test/unit/libmultiple.so
@@ -68,14 +68,18 @@ $(OPENCL_TESTS) : LDFLAGS += $(LDFLAGS_OPENCL)
 ############################################################
 #
 # MPI tests
+#
+# note: Since gtest main must manage the MPI ressource, currently all tests
+# are linked against MPI
 ##
 
-ifdef STAN_MPI
-  MPI_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *mpi_*test.cpp))
-  $(MPI_TESTS): LDFLAGS += $(LDFLAGS_MPI)
-  $(MPI_TESTS): CXXFLAGS += $(CXXFLAGS_MPI)
-  $(MPI_TESTS): $(LIBMPI)
-endif
+#ifdef STAN_MPI
+#  MPI_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *mpi_*test.cpp))
+#  $(MPI_TESTS): LDFLAGS += $(LDFLAGS_MPI)
+#  $(MPI_TESTS): CXXFLAGS += $(CXXFLAGS_MPI)
+#  $(MPI_TESTS): $(LIBMPI)
+#  GTEST_CXXFLAGS += $(CXXFLAGS_MPI)
+#endif
 
 ############################################################
 #
