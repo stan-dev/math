@@ -6,9 +6,9 @@
 
 template <int N, int M>
 inline void test_matrix_exp_multiply() {
-  using stan::math::matrix_exp_multiply;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::matrix_exp_multiply;
 
   std::srand(1999);
 

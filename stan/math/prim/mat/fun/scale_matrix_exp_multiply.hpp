@@ -17,10 +17,9 @@ namespace math {
  * @return exponential of At multiplies B
  */
 template <int N, int Cb>
-inline Eigen::Matrix<double, N, Cb>
-scale_matrix_exp_multiply(const double& t,
-                          const Eigen::Matrix<double, N, N>& A,
-                          const Eigen::Matrix<double, N, Cb>& B) {
+inline Eigen::Matrix<double, N, Cb> scale_matrix_exp_multiply(
+    const double& t, const Eigen::Matrix<double, N, N>& A,
+    const Eigen::Matrix<double, N, Cb>& B) {
   Eigen::Matrix<double, N, Cb> expAB;
   stan::math::matrix_exp_action_handler handle;
   expAB = handle.action(A, B, t);

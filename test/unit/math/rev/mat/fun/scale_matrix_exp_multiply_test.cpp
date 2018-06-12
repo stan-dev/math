@@ -9,9 +9,9 @@
 
 template <int N, int M>
 inline void test_scale_matrix_exp_multiply_dv() {
+  using stan::math::scale_matrix_exp_multiply;
   using stan::math::value_of;
   using stan::math::var;
-  using stan::math::scale_matrix_exp_multiply;
 
   std::srand(1999);
 
@@ -74,9 +74,9 @@ TEST(MathMatrix, scale_matrix_exp_multiply_dv) {
 
 template <int N, int M>
 inline void test_scale_matrix_exp_multiply_vd() {
+  using stan::math::scale_matrix_exp_multiply;
   using stan::math::value_of;
   using stan::math::var;
-  using stan::math::scale_matrix_exp_multiply;
 
   std::srand(1999);
 
@@ -139,9 +139,9 @@ TEST(MathMatrix, scale_matrix_exp_multiply_vd) {
 
 template <int N, int M>
 inline void test_scale_matrix_exp_multiply_vv() {
+  using stan::math::scale_matrix_exp_multiply;
   using stan::math::value_of;
   using stan::math::var;
-  using stan::math::scale_matrix_exp_multiply;
 
   std::srand(2999);
 

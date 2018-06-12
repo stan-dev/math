@@ -387,7 +387,6 @@ matrix_exp_action(const Eigen::Matrix<Ta, N, N>& A,
   return expAB_v;
 }
 
-
 /**
  * Wrapper of matrix_exp_action function for a more literal name
  * @tparam Ta scalar type matrix A
@@ -400,7 +399,7 @@ matrix_exp_action(const Eigen::Matrix<Ta, N, N>& A,
  */
 template <typename Ta, int N, typename Tb, int Cb>
 inline typename boost::enable_if_c<boost::is_same<Ta, var>::value
-                                   || boost::is_same<Tb, var>::value,
+                                       || boost::is_same<Tb, var>::value,
                                    Eigen::Matrix<var, N, Cb> >::type
 matrix_exp_multiply(const Eigen::Matrix<Ta, N, N>& A,
                     const Eigen::Matrix<Tb, N, Cb>& B) {
