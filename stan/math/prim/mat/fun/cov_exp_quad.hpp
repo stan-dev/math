@@ -93,44 +93,38 @@ inline
                  const std::vector<T_l> &length_scale) {
   using std::exp;
 
+  size_t x_size = x.size();
   const char *function_name = "cov_exp_quad";
-  // check_size_match(function_name, "x", x.size(), "length scale",
-  //                  length_scale.size());
   check_positive_finite(function_name, "marginal variance", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
 
   Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
-      cov(x.size(), x.size());
+      cov(x_size, x_size);
 
-  size_t x_size = x.size();
   size_t l_size = length_scale.size();
   if (x_size == 0)
     return cov;
 
   T_sigma sigma_sq = square(sigma);
-  typename return_type<T_x, T_l>::type r;
+  std::vector<Eigen::Matrix<T_l, -1, 1>> x_new(x_size);
 
-  std::cout << typename is_vector_like<T_x>::type << "\n";
+  for (size_t n = 0; n < x_size; ++n) {
+    for (size_t d = 0; d < l_size; ++d) {
+      x_new[n].resize(l_size, 1);
+      x_new[n][d] = divide(x[n][d], length_scale[d]);
+    }
+  }
 
-  // this bad, because it's not indexing over dimensions
-  // for (size_t d = 0; d < l_size; ++d)
-  //   divide(x[d], length_scale[d]);
-
-  // for (size_t d = 0; d < l_size; ++d) {
-  //   divide(T_x[d], length_scale[d]);
-
-  for (size_t j = 0; j < (x_size - 1); ++j) {
+  // this could be more efficient
+  for (size_t j = 0; j < x_size; ++j) {
     cov(j, j) = sigma_sq;
     for (size_t i = j + 1; i < x_size; ++i) {
-      for (size_t k = 0; k < l_size; ++k) {
-        cov(i, j) = sigma_sq * exp(-0.5 * squared_distance(x[i], x[j]));
+        cov(i, j) = sigma_sq * exp(-0.5 * squared_distance(x_new[i], x_new[j]));
         cov(j, i) = cov(i, j);
-      }
     }
-    cov(x_size - 1, x_size - 1) = sigma_sq;
-    return cov;
   }
+  return cov;
 }
 /**
  * Returns a squared exponential kernel.
@@ -223,16 +217,26 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   T_sigma sigma_sq = square(sigma);
 
-  std::vector<T_x1> x1_ard;
-  std::vector<T_x2> x2_ard;
-  for (size_t d = 0; d < l_size; ++d) {
-    x1_ard[d] = divide(x1[d], length_scale[d]);
-    x2_ard[d] = divide(x2[d], length_scale[d]);
+  std::vector<Eigen::Matrix<T_l, -1, 1>> x1_new(x1_size);
+  std::vector<Eigen::Matrix<T_l, -1, 1>> x2_new(x2_size);
+
+  for (size_t n = 0; n < x1_size; ++n) {
+    for (size_t d = 0; d < l_size; ++d) {
+      x1_new[n].resize(l_size, 1);
+      x1_new[n][d] = divide(x1[n][d], length_scale[d]);
+    }
+  }
+
+  for (size_t n = 0; n < x2_size; ++n) {
+    for (size_t d = 0; d < l_size; ++d) {
+      x2_new[n].resize(l_size, 1);
+      x2_new[n][d] = divide(x2[n][d], length_scale[d]);
+    }
   }
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      cov(i, j) = sigma_sq * exp(-0.5 * squared_distance(x1[i], x2[j]));
+      cov(i, j) = sigma_sq * exp(-0.5 * squared_distance(x1_new[i], x2_new[j]));
     }
   }
   return cov;

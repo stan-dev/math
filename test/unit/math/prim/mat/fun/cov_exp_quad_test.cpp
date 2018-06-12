@@ -33,34 +33,37 @@
 //   return message;
 // }
 
-TEST(MathPrimMat, vec_length_scale_double_cov_exp_quad1) {
+TEST(MathPrimMat, ard_double_cov_exp_quad1) {
   double sigma = 0.2;
   double exponential = 0;
 
-  std::vector<double> x(3);
-  x[0] = -2;
-  x[1] = -1;
-  x[2] = -0.5;
+  // std::vector<double> x(3);
+  // x[0] = -2;
+  // x[1] = -1;
+  // x[2] = -0.5;
 
   std::vector<double> l(3);
   for (int i = 0; i < 3; ++i) {
     l[i] = i + 1;
   }
 
+  std::vector<Eigen::Matrix<double, -1, 1> > x(3);
+  for (size_t i = 0; i < x.size(); ++i) {
+    x[i].resize(3, 1);
+    x[i] << 1 * i, 2 * i, 3 * i;
+  }
+  
   Eigen::MatrixXd cov;
-  cov = stan::math::cov_exp_quad(x, sigma, l);
+  //  cov = stan::math::cov_exp_quad(x, sigma, l);
   EXPECT_NO_THROW(cov = stan::math::cov_exp_quad(x, sigma, l));
 
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
-      exponential = 0;
-      for (int k = 0; k < 5; k++) {
-        exponential += pow(x[i] - x[j], 2) / (l[k] * l[k]);
-      }
-      exponential *= -0.5;
+      std::cout << cov(i, j) << " ";
       // EXPECT_FLOAT_EQ(sigma * sigma * exp(exponential), cov(i, j))
       //     << "index: (" << i << ", " << j << ")";
     }
+    std::cout << "\n";
   }
 }
 
