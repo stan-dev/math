@@ -4,7 +4,8 @@
 # - O: Optimization level. Valid values are {0, 1, 2, 3}.
 # - AR: archiver (must specify for cross-compiling)
 ##
-CC = clang++
+##CC = clang++
+CC = g++
 O = 3
 O_STANC = 0
 AR = ar

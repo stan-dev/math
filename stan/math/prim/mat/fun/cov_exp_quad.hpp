@@ -14,6 +14,10 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <vector>
+///////////// testing
+#include <stan/math/prim/mat/meta/is_vector_like.hpp>
+
+
 
 namespace stan {
 namespace math {
@@ -107,10 +111,17 @@ inline
     return cov;
 
   T_sigma sigma_sq = square(sigma);
+  typename return_type<T_x, T_l>::type r;
 
-  for (size_t d = 0; d < l_size; ++d)
-    divide(x[d], length_scale[d]);
+  std::cout << typename is_vector_like<T_x>::type << "\n";
+  
+  // this bad, because it's not indexing over dimensions
+  // for (size_t d = 0; d < l_size; ++d)
+  //   divide(x[d], length_scale[d]);
 
+    // for (size_t d = 0; d < l_size; ++d) {
+    //   divide(T_x[d], length_scale[d]);
+  
   for (size_t j = 0; j < (x_size - 1); ++j) {
     cov(j, j) = sigma_sq;
     for (size_t i = j + 1; i < x_size; ++i) {
