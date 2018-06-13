@@ -27,9 +27,10 @@ namespace math {
  * @param t double time data
  * @return MatrixXd The adjoint of B.
  */
-Eigen::MatrixXd exp_action_chain_dv(double* Ad, const int& n,
-                                    const Eigen::MatrixXd& adjexpAB,
-                                    const double t) {
+  inline Eigen::MatrixXd
+  exp_action_chain_dv(double* Ad, const int& n,
+                      const Eigen::MatrixXd& adjexpAB,
+                      const double t) {
   using Eigen::Map;
   matrix_exp_action_handler handle;
   return handle.action(Map<Eigen::MatrixXd>(Ad, n, n).transpose(), adjexpAB, t);
@@ -47,10 +48,11 @@ Eigen::MatrixXd exp_action_chain_dv(double* Ad, const int& n,
  * @param t double time data
  * @return MatrixXd The adjoint of A.
  */
-Eigen::MatrixXd exp_action_chain_vd(double* Ad, double* Bd, const int& n,
-                                    const int& m,
-                                    const Eigen::MatrixXd& adjexpAB,
-                                    const double t) {
+  inline Eigen::MatrixXd
+  exp_action_chain_vd(double* Ad, double* Bd, const int& n,
+                      const int& m,
+                      const Eigen::MatrixXd& adjexpAB,
+                      const double t) {
   using Eigen::Map;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
