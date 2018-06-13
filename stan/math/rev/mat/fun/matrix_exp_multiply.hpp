@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUN_MATRIX_EXP_MULTIPLY_HPP
 #define STAN_MATH_REV_MAT_FUN_MATRIX_EXP_MULTIPLY_HPP
 
+#include <stan/math/rev/mat.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp_action_handler.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
