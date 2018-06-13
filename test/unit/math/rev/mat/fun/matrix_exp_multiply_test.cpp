@@ -20,8 +20,8 @@ inline void test_matrix_exp_multiply_dv(int N, int M) {
   Eigen::MatrixXd A = value_of(Av);
 
   // brute force
-  Eigen::Matrix<var, -1, -1> expAB =
-    stan::math::multiply(stan::math::matrix_exp(A), Bv);
+  Eigen::Matrix<var, -1, -1> expAB
+      = stan::math::multiply(stan::math::matrix_exp(A), Bv);
 
   // matrix_exp_multiply
   Eigen::Matrix<var, -1, -1> res_dv = stan::math::matrix_exp_multiply(A, Bv);
@@ -76,8 +76,8 @@ inline void test_matrix_exp_multiply_vd(int N, int M) {
   Eigen::MatrixXd B = value_of(Bv);
 
   // brute force
-  Eigen::Matrix<var, -1, -1> expAB =
-    stan::math::multiply(stan::math::matrix_exp(Av), B);
+  Eigen::Matrix<var, -1, -1> expAB
+      = stan::math::multiply(stan::math::matrix_exp(Av), B);
 
   // matrix_exp_multiply
   Eigen::Matrix<var, -1, -1> res_vd = stan::math::matrix_exp_multiply(Av, B);
@@ -131,8 +131,8 @@ inline void test_matrix_exp_multiply_vv(int N, int M) {
   std::vector<stan::math::var> Bvec = stan::math::to_array_1d(Bv);
 
   // brute force
-  Eigen::Matrix<var, -1, -1> expAB =
-    stan::math::multiply(stan::math::matrix_exp(Av), Bv);
+  Eigen::Matrix<var, -1, -1> expAB
+      = stan::math::multiply(stan::math::matrix_exp(Av), Bv);
 
   // matrix_exp_multiply
   Eigen::Matrix<var, -1, -1> res_vv = stan::math::matrix_exp_multiply(Av, Bv);
@@ -177,22 +177,22 @@ TEST(MathMatrix, matrix_exp_multiply_vv) {
 }
 
 TEST(MathMatrix, matrix_exp_multiply_exception) {
-  using stan::math::var;
   using stan::math::matrix_exp_multiply;
-  {                             // nonzero size
+  using stan::math::var;
+  {  // nonzero size
     Eigen::Matrix<var, -1, -1> A(0, 0);
     Eigen::Matrix<var, -1, -1> B = Eigen::Matrix<var, -1, -1>::Random(1, 2);
     EXPECT_THROW(matrix_exp_multiply(A, B), std::invalid_argument);
     EXPECT_THROW(matrix_exp_multiply(B, A), std::invalid_argument);
   }
 
-  {                             // multiplicable
+  {  // multiplicable
     Eigen::Matrix<var, -1, -1> A = Eigen::Matrix<var, -1, -1>::Random(2, 2);
     Eigen::Matrix<var, -1, -1> B = Eigen::Matrix<var, -1, -1>::Random(3, 2);
     EXPECT_THROW(matrix_exp_multiply(A, B), std::invalid_argument);
   }
 
-  {                             // square
+  {  // square
     Eigen::Matrix<var, -1, -1> A = Eigen::Matrix<var, -1, -1>::Random(2, 3);
     Eigen::Matrix<var, -1, -1> B = Eigen::Matrix<var, -1, -1>::Random(3, 2);
     EXPECT_THROW(matrix_exp_multiply(A, B), std::invalid_argument);

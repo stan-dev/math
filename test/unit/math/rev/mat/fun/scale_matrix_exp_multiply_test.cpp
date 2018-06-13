@@ -20,13 +20,13 @@ inline void test_scale_matrix_exp_multiply_dv(int N, int M) {
   Eigen::MatrixXd A = value_of(Av);
 
   // brute force
-  Eigen::Matrix<var, -1, -1> expAB =
-    stan::math::multiply(stan::math::matrix_exp(A), Bv);
+  Eigen::Matrix<var, -1, -1> expAB
+      = stan::math::multiply(stan::math::matrix_exp(A), Bv);
 
   // matrix_exp_multiply
   const double t = 1.0;
-  Eigen::Matrix<var, -1, -1> res_dv =
-    stan::math::scale_matrix_exp_multiply(t, A, Bv);
+  Eigen::Matrix<var, -1, -1> res_dv
+      = stan::math::scale_matrix_exp_multiply(t, A, Bv);
   EXPECT_EQ(res_dv.size(), expAB.size());
   for (int l = 0; l < res_dv.size(); ++l) {
     EXPECT_FLOAT_EQ(res_dv(l).val(), expAB(l).val());
@@ -78,13 +78,13 @@ inline void test_scale_matrix_exp_multiply_vd(int N, int M) {
   Eigen::MatrixXd B = value_of(Bv);
 
   // brute force
-  Eigen::Matrix<var, -1, -1> expAB =
-    stan::math::multiply(stan::math::matrix_exp(Av), B);
+  Eigen::Matrix<var, -1, -1> expAB
+      = stan::math::multiply(stan::math::matrix_exp(Av), B);
 
   // matrix_exp_multiply
   const double t = 1.0;
-  Eigen::Matrix<var, -1, -1> res_vd =
-    stan::math::scale_matrix_exp_multiply(t, Av, B);
+  Eigen::Matrix<var, -1, -1> res_vd
+      = stan::math::scale_matrix_exp_multiply(t, Av, B);
   EXPECT_EQ(res_vd.size(), expAB.size());
   for (int l = 0; l < res_vd.size(); ++l) {
     EXPECT_FLOAT_EQ(res_vd(l).val(), expAB(l).val());
@@ -135,13 +135,13 @@ inline void test_scale_matrix_exp_multiply_vv(int N, int M) {
   std::vector<stan::math::var> Bvec = stan::math::to_array_1d(Bv);
 
   // brute force
-  Eigen::Matrix<var, -1, -1> expAB =
-    stan::math::multiply(stan::math::matrix_exp(Av), Bv);
+  Eigen::Matrix<var, -1, -1> expAB
+      = stan::math::multiply(stan::math::matrix_exp(Av), Bv);
 
   // matrix_exp_multiply
   const double t = 1.0;
-  Eigen::Matrix<var, -1, -1> res_vv =
-    stan::math::scale_matrix_exp_multiply(t, Av, Bv);
+  Eigen::Matrix<var, -1, -1> res_vv
+      = stan::math::scale_matrix_exp_multiply(t, Av, Bv);
   EXPECT_EQ(res_vv.size(), expAB.size());
   for (int l = 0; l < res_vv.size(); ++l) {
     EXPECT_FLOAT_EQ(res_vv(l).val(), expAB(l).val());
@@ -185,20 +185,20 @@ TEST(MathMatrix, scale_matrix_exp_multiply_vv) {
 TEST(MathMatrix, scale_matrix_exp_multiply_exception) {
   using stan::math::var;
   const double t = 1.0;
-  {                             // nonzero size
+  {  // nonzero size
     Eigen::Matrix<var, -1, -1> A(0, 0);
     Eigen::Matrix<var, -1, -1> B = Eigen::Matrix<var, -1, -1>::Random(1, 2);
     EXPECT_THROW(scale_matrix_exp_multiply(t, A, B), std::invalid_argument);
     EXPECT_THROW(scale_matrix_exp_multiply(t, B, A), std::invalid_argument);
   }
 
-  {                             // multiplicable
+  {  // multiplicable
     Eigen::Matrix<var, -1, -1> A = Eigen::Matrix<var, -1, -1>::Random(2, 2);
     Eigen::Matrix<var, -1, -1> B = Eigen::Matrix<var, -1, -1>::Random(3, 2);
     EXPECT_THROW(scale_matrix_exp_multiply(t, A, B), std::invalid_argument);
   }
 
-  {                             // square
+  {  // square
     Eigen::Matrix<var, -1, -1> A = Eigen::Matrix<var, -1, -1>::Random(2, 3);
     Eigen::Matrix<var, -1, -1> B = Eigen::Matrix<var, -1, -1>::Random(3, 2);
     EXPECT_THROW(scale_matrix_exp_multiply(t, A, B), std::invalid_argument);
