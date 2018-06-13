@@ -13,8 +13,6 @@
 #include <boost/type_traits.hpp>
 #include <vector>
 
-#include <stan/debug.hpp>
-
 namespace stan {
 namespace math {
 
@@ -403,6 +401,10 @@ template <typename Ta, typename Tb, int Cb>
 inline Eigen::Matrix<typename stan::return_type<Ta, Tb>::type, -1, Cb>
 matrix_exp_multiply(const Eigen::Matrix<Ta, -1, -1>& A,
                     const Eigen::Matrix<Tb, -1, Cb>& B) {
+  check_nonzero_size("matrix_exp_multiply", "input matrix", A);
+  check_nonzero_size("matrix_exp_multiply", "input matrix", B);
+  check_multiplicable("matrix_exp_multiply", "A", A, "B", B);
+  check_square("matrix_exp_multiply", "input matrix", A);
   return matrix_exp_action(A, B);
 }
 

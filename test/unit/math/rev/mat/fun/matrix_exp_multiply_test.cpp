@@ -7,8 +7,6 @@
 #include <stan/math/rev/mat/fun/to_var.hpp>
 #include <vector>
 
-#include <stan/debug.hpp>
-
 inline void test_matrix_exp_multiply_dv(int N, int M) {
   using stan::math::value_of;
   using stan::math::var;
@@ -176,6 +174,29 @@ TEST(MathMatrix, matrix_exp_multiply_vv) {
   test_matrix_exp_multiply_vv(5, 1);
   test_matrix_exp_multiply_vv(5, 5);
   test_matrix_exp_multiply_vv(8, 2);
+}
+
+TEST(MathMatrix, matrix_exp_multiply_exception) {
+  using stan::math::var;
+  using stan::math::matrix_exp_multiply;
+  {                             // nonzero size
+    Eigen::Matrix<var, -1, -1> A(0, 0);
+    Eigen::Matrix<var, -1, -1> B = Eigen::Matrix<var, -1, -1>::Random(1, 2);
+    EXPECT_THROW(matrix_exp_multiply(A, B), std::invalid_argument);
+    EXPECT_THROW(matrix_exp_multiply(B, A), std::invalid_argument);
+  }
+
+  {                             // multiplicable
+    Eigen::Matrix<var, -1, -1> A = Eigen::Matrix<var, -1, -1>::Random(2, 2);
+    Eigen::Matrix<var, -1, -1> B = Eigen::Matrix<var, -1, -1>::Random(3, 2);
+    EXPECT_THROW(matrix_exp_multiply(A, B), std::invalid_argument);
+  }
+
+  {                             // square
+    Eigen::Matrix<var, -1, -1> A = Eigen::Matrix<var, -1, -1>::Random(2, 3);
+    Eigen::Matrix<var, -1, -1> B = Eigen::Matrix<var, -1, -1>::Random(3, 2);
+    EXPECT_THROW(matrix_exp_multiply(A, B), std::invalid_argument);
+  }
 }
 
 // TEST(MathMatrix, matrix_exp_multiply_clock) {

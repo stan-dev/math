@@ -16,7 +16,7 @@ inline void test_scale_matrix_exp_multiply() {
   Eigen::Matrix<double, -1, M> B = Eigen::MatrixXd::Random(N, M);
   Eigen::Matrix<double, Dynamic, Dynamic> A0 = A;
 
-  // brute force 
+  // brute force
   Eigen::Matrix<double, N, M> expAB =
     stan::math::multiply(stan::math::matrix_exp(A0), B);
 
@@ -35,4 +35,27 @@ TEST(MathMatrix, scale_matrix_exp_multiply) {
   test_scale_matrix_exp_multiply<5, 1>();
   test_scale_matrix_exp_multiply<5, 5>();
   test_scale_matrix_exp_multiply<20, 2>();
+}
+
+TEST(MathMatrix, scale_matrix_exp_multiply_exception) {
+  using stan::math::scale_matrix_exp_multiply;
+  const double t = 1.0;
+  {                             // nonzero size
+    Eigen::MatrixXd A(0, 0);
+    Eigen::MatrixXd B = Eigen::MatrixXd::Random(1, 2);
+    EXPECT_THROW(scale_matrix_exp_multiply(t, A, B), std::invalid_argument);
+    EXPECT_THROW(scale_matrix_exp_multiply(t, B, A), std::invalid_argument);
+  }
+
+  {                             // multiplicable
+    Eigen::MatrixXd A = Eigen::MatrixXd::Random(2, 2);
+    Eigen::MatrixXd B = Eigen::MatrixXd::Random(3, 2);
+    EXPECT_THROW(scale_matrix_exp_multiply(t, A, B), std::invalid_argument);
+  }
+
+  {                             // square
+    Eigen::MatrixXd A = Eigen::MatrixXd::Random(2, 3);
+    Eigen::MatrixXd B = Eigen::MatrixXd::Random(3, 2);
+    EXPECT_THROW(scale_matrix_exp_multiply(t, A, B), std::invalid_argument);
+  }
 }

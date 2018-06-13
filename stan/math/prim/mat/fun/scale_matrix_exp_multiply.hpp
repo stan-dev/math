@@ -20,6 +20,10 @@ inline Eigen::Matrix<double, -1, Cb> scale_matrix_exp_multiply(
     const double& t,
     const Eigen::MatrixXd& A,
     const Eigen::Matrix<double, -1, Cb>& B) {
+  check_nonzero_size("scale_matrix_exp_multiply", "input matrix", A);
+  check_nonzero_size("scale_matrix_exp_multiply", "input matrix", B);
+  check_multiplicable("scale_matrix_exp_multiply", "A", A, "B", B);
+  check_square("scale_matrix_exp_multiply", "input matrix", A);
   return matrix_exp_action_handler().action(A, B, t);
 }
 
