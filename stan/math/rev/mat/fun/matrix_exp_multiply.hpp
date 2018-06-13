@@ -2,7 +2,7 @@
 #define STAN_MATH_REV_MAT_FUN_MATRIX_EXP_MULTIPLY_HPP
 
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/mat/fun/matrix_exp_action_handler.hpp>
+#include <stan/math/prim/mat/fun/matrix_exp_action_handler.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/mat/fun/to_var.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp.hpp>

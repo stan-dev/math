@@ -1,8 +1,7 @@
-#ifndef STAN_MATH_REV_MAT_FUN_MATRIX_EXP_ACTION_HANDLER_HPP
-#define STAN_MATH_REV_MAT_FUN_MATRIX_EXP_ACTION_HANDLER_HPP
+#ifndef STAN_MATH_PRIM_MAT_FUN_MATRIX_EXP_ACTION_HANDLER_HPP
+#define STAN_MATH_PRIM_MAT_FUN_MATRIX_EXP_ACTION_HANDLER_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/rev/core.hpp>
 #include <vector>
 
 namespace stan {
