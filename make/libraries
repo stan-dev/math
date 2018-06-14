@@ -7,8 +7,8 @@ BOOST_LIB ?= $(MATH)lib/boost_1.66.0/stage/lib
 GTEST ?= $(MATH)lib/gtest_1.7.0
 CPPLINT ?= $(MATH)lib/cpplint_4.45
 OPENCL ?= $(MATH)lib/opencl_1.2.8
-IDAS ?= $(MATH)lib/idas-2.1.0
 SUNDIALS ?= $(MATH)lib/sundials_3.1.0
+BOOST_PARALLEL_BUILD ?= $(PARALLEL)
 
 ##
 # Build rules for cvodes
@@ -68,7 +68,7 @@ $(BOOST_LIB)/mpi.so:
 	@mkdir -p $(dir $@)
 	cd $(BOOST); ./bootstrap.sh
 	cd $(BOOST); echo "using mpi ;" >> user-config.jam
-	cd $(BOOST); ./b2 --user-config=user-config.jam --with-mpi --with-serialization
+	cd $(BOOST); ./b2 --user-config=user-config.jam --layout=system --with-mpi --with-serialization -j$(or $(BOOST_PARALLEL_BUILD),1) variant=release link=shared threading=multi runtime-link=shared
 
 $(BOOST_LIB)/libboost_serialization.so: $(BOOST_LIB)/mpi.so
 
@@ -85,6 +85,6 @@ $(BOOST_LIB)/libboost_mpi.dylib: $(BOOST_LIB)/mpi.so
 
 .PHONY: clean-libraries
 clean-libraries:
-	$(RM) $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS))
-	$(RM) -rf $(BOOST_LIB)/*  
-	$(RM) -rf $(BOOST)/bin.v2  
+	$(RM) $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS) $(LIBMPI))
+	$(RM) -rf $(BOOST_LIB)/*
+	$(RM) -rf $(BOOST)/bin.v2 $(BOOST)/tools/build/src/engine/bootstrap/ $(BOOST)/tools/build/src/engine/bin.* $(BOOST)/project-config.jam* $(BOOST)/b2 $(BOOST)/bjam $(BOOST)/bootstrap.log
