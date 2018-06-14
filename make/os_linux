@@ -29,9 +29,8 @@ ifdef STAN_OPENCL
   OPENCL_PLATFORM_ID ?= 0
 endif
 
-DLL = .so
+DLL := .so
 
 ifdef STAN_MPI
-  LDFLAGS_MPI := -L$(BOOST)/stage/lib -lboost_serialization -lboost_mpi -Wl,-rpath,$(BOOST)/stage/lib
-  CXXFLAGS_MPI := -DSTAN_MPI
+  LDFLAGS_MPI ?= -L"$(BOOST_LIB)" -lboost_serialization -lboost_mpi -Wl,-rpath,"$(BOOST_LIB_ABS)"
 endif
