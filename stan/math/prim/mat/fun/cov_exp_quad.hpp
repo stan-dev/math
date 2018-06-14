@@ -17,7 +17,6 @@
 ///////////// testing
 #include <stan/math/prim/mat/meta/is_vector_like.hpp>
 
-
 namespace stan {
 namespace math {
 /**
