@@ -17,9 +17,9 @@
 ///////////// testing
 #include <stan/math/prim/mat/meta/is_vector_like.hpp>
 
+
 namespace stan {
 namespace math {
-
 /**
  * Returns a squared exponential kernel.
  *
@@ -120,12 +120,13 @@ inline
   for (size_t j = 0; j < x_size; ++j) {
     cov(j, j) = sigma_sq;
     for (size_t i = j + 1; i < x_size; ++i) {
-        cov(i, j) = sigma_sq * exp(-0.5 * squared_distance(x_new[i], x_new[j]));
-        cov(j, i) = cov(i, j);
+      cov(i, j) = sigma_sq * exp(-0.5 * squared_distance(x_new[i], x_new[j]));
+      cov(j, i) = cov(i, j);
     }
   }
   return cov;
 }
+
 /**
  * Returns a squared exponential kernel.
  *
