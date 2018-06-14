@@ -138,7 +138,7 @@ matrix:
 
  # - TESTFOLDER=test/unit/math/mix # times out on travis
 
-script: ./runTests.py -j2 $TESTFOLDER
+script: PARALLEL=2 ./runTests.py -j2 $TESTFOLDER
 
 sudo: false
 dist: trusty
