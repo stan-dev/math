@@ -33,4 +33,14 @@ TEST(MathMatrix, qr_thin_R) {
       EXPECT_NEAR(m1(i, j), m3(j, i), 1e-12);
     }
   }
+
+  stan::math::matrix_d m4(3, 3);
+  m4 << -1, -2, -3, -4, -5, -6, -7, -8, -9;
+  stan::math::matrix_d m5(3, 3);
+  m5 = qr_thin_Q(m4) * qr_thin_R(m4);
+  for (unsigned int i = 0; i < m4.rows(); i++) {
+    for (unsigned int j = 0; j < m4.cols(); j++) {
+      EXPECT_NEAR(m4(i, j), m5(i, j), 1e-12);
+    }
+  }
 }
