@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_REV_SCAL_HPP
 #define STAN_MATH_REV_SCAL_HPP
 
+#include <stan/math/rev/cplx.hpp>
+
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/meta/ad_promotable.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>

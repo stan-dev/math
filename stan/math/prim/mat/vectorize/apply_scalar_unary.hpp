@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
 #define STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
 
+#include <stan/math/prim/scal/meta/rm_zeroing.hpp>
 #include <Eigen/Dense>
 #include <complex>
 #include <vector>
@@ -138,7 +139,7 @@ struct apply_scalar_unary<F, std::complex<T>> {
   /**
    * The return type, complex.
    */
-  typedef std::complex<T> return_t;
+  typedef std::complex<rm_zeroing_t<T>> return_t;
 
   /**
    * Apply the function specified by F to the specified argument.
@@ -149,7 +150,61 @@ struct apply_scalar_unary<F, std::complex<T>> {
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
    */
-  static inline return_t apply(std::complex<T> x) { return F::fun(x); }
+  static inline return_t apply(return_t x) { return F::fun(x); }
+};
+
+template <class>
+struct complex;  // forward declare stan's complex
+
+/**
+ * Template specialization for vectorized functions applying to
+ * stan's complex arguments.
+ *
+ * @tparam F Type of function defining static apply function.
+ * @tparam T Underlying type of the complex type
+ */
+template <typename F, class T>
+struct apply_scalar_unary<F, stan::math::complex<T>> {
+  /**
+   * The return type, complex.
+   */
+  typedef std::complex<rm_zeroing_t<T>> return_t;
+
+  /**
+   * Apply the function specified by F to the specified argument.
+   * This is defined through a direct application of
+   * <code>F::fun()</code>, which must be defined for
+   * std::complex arguments.
+   *
+   * @param x Argument scalar. (implictly upcast through ctor)
+   * @return Result of applying F to the scalar.
+   */
+  static inline return_t apply(return_t x) { return F::fun(x); }
+};
+
+/**
+ * Template specialization for vectorized functions applying
+ * to zeroing variable arguments.
+ *
+ * @tparam F Class defining a static apply function
+ * @tparam T wrapped type of the zeroing variable
+ */
+template <typename F, typename T>
+struct apply_scalar_unary<F, zeroing<T>> {
+  /**
+   * Function return type, <code>T</code>.
+   */
+  typedef T return_t;
+
+  /**
+   * Apply the function specified by F to the specified argument.
+   *
+   * @param x Argument variable
+   * @return Function applied to the variable
+   */
+  static inline return_t apply(const T& x) {
+    return F::fun(x);
+  }
 };
 
 /**
