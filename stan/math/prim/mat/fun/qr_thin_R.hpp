@@ -10,11 +10,17 @@
 namespace stan {
 namespace math {
 
+/**
+ * Returns the upper triangular factor of the thin QR decomposition
+ * @param m Matrix.
+ * @tparam T scalar type
+ * @return Upper triangular matrix with minimal rows
+ */
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> qr_thin_R(
     const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
   typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
-  check_nonzero_size("qr_R", "m", m);
+  check_nonzero_size("qr_thin_R", "m", m);
   Eigen::HouseholderQR<matrix_t> qr(m.rows(), m.cols());
   qr.compute(m);
   const int min_size = std::min(m.rows(), m.cols());

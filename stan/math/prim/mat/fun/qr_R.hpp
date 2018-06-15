@@ -10,6 +10,12 @@
 namespace stan {
 namespace math {
 
+/**
+ * Returns the upper triangular factor of the fat QR decomposition
+ * @param m Matrix.
+ * @tparam T scalar type
+ * @return Upper triangular matrix with maximal rows
+ */
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> qr_R(
     const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
