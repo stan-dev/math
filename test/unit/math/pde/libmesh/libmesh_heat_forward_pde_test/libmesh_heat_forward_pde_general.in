@@ -1,0 +1,131 @@
+
+# General FEMSystem related configuration options
+
+# The timestep to start on (0 unless this is a restart)
+initial_timestep = 0
+
+# The number of timesteps to take
+n_timesteps = 10
+
+# Solve a transient instead of a steady problem?
+transient = true
+
+# The interval between our timesteps
+deltat = 0.1
+
+# The tolerance to use with adaptive timestepping
+# Make this 0 to use a constant deltat
+timesolver_tolerance = 0.
+
+# The theta to use (i.e. 0.5 = Crank-Nicholson, 1.0 = Backward Euler)
+timesolver_theta = 1.0
+
+# Solve a 2D or 3D problem?
+#dimension = 3
+dimension = 2
+
+# On what size domain?
+domain_edge_length = 1.0
+
+# The coarse grid size from which to start adaptivity
+coarsegridx = 4
+coarsegridy = 4
+coarsegridz = 4
+
+# The number of uniform refinements to immediately perform on that grid
+coarserefinements = 0
+
+# The number of extra uniform refinements to perform after setting ICs
+extrarefinements = 4
+
+# Should the time solver produce verbose messages?
+time_solver_quiet = false
+
+# Should the nonlinear solver produce verbose messages?
+solver_quiet = false
+
+# Should the quasiNewton scheme do substepping?
+require_residual_reduction = true
+
+# How many iterations before the linear solver gives up?
+max_linear_iterations = 10000
+
+# How many iterations before the nonlinear solver gives up?
+max_nonlinear_iterations = 2
+
+# How much step size reduction should indicate convergence?
+relative_step_tolerance = 1.e-8
+
+# How much residual reduction should indicate convergence?
+relative_residual_tolerance = 1.e-9
+
+# What should the largest relative linear tolerance be?
+initial_linear_tolerance = 1.e-16
+
+# How should it relate to the nonlinear residual in future steps?
+linear_tolerance_multiplier = 1.e-3
+
+# The desired number of active mesh elements
+# Make this nonzero to solve to a specified mesh size
+#nelem_target = 32798
+nelem_target = 1024
+
+# The global FEM error tolerance at each timestep
+# Make this nonzero to solve to a specified tolerance
+# This will probably break with KellyErrorIndicator
+# const Real global_tolerance = 1.e-3;
+global_tolerance = 1.e-3
+
+# Indicator type
+indicator_type = 'exact'
+
+# Type of error you want computed
+sobolev_order = 0
+
+# Max number of refinements at each step
+refine_fraction = 0.3
+
+# Max number of coarsenings at each step
+coarsen_fraction = 0.3
+
+# Coarsen threshold factor for refinement trading
+coarsen_threshold = 5
+
+# The maximum number of adaptive steps per timestep
+max_adaptivesteps = 0
+
+# Write out every nth timestep to file(s).
+write_interval = 1
+
+# Write out error vectors to files
+write_gmv_error = false
+write_tecplot_error = false
+
+# Output format(s)
+output_xda = false
+output_xdr = false
+output_gmv = false
+output_tecplot = false
+output_exodus = false
+
+# Run postprocessing calc?
+run_postprocess = false
+
+# Use what finite element space?
+fe_family = LAGRANGE
+fe_order = 1
+
+# Use analytic jacobians instead of numerical ones?
+analytic_jacobians = true
+
+# Verify analytic jacobians against numerical ones?
+# verify_analytic_jacobians = 1.e-9
+verify_analytic_jacobians = 0
+
+# Detailed debugging options
+print_solution_norms = false
+print_solutions = false
+print_residual_norms = false
+print_residuals = false
+print_jacobian_norms = false
+print_jacobians = false

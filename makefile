@@ -63,6 +63,17 @@ include make/libstanmath_mpi # bin/libstanmath_mpi.a
 include make/tests    # tests
 include make/cpplint  # cpplint
 
+# pde solvers
+WITH_LIBMESH ?= 0
+ifeq ($(WITH_LIBMESH), 1)
+	include make/pde_libs/libmesh/libmesh.mk
+endif
+
+WITH_MFEM ?= 0
+ifeq ($(WITH_MFEM), 1)
+	include make/pde_libs/mfem/mfem.mk
+endif
+
 ##
 # Dependencies
 ##
