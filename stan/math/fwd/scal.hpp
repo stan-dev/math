@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_FWD_SCAL_HPP
 #define STAN_MATH_FWD_SCAL_HPP
 
+#include <stan/math/fwd/cplx.hpp>
+
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/scal/meta/ad_promotable.hpp>
 #include <stan/math/fwd/scal/meta/is_fvar.hpp>
