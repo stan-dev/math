@@ -10,6 +10,7 @@
 
 using stan::math::quadratic_optimizer;
 using stan::math::quadratic_optimizer_analytical;
+using stan::math::f_theta;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 using Eigen::Dynamic;
@@ -120,26 +121,26 @@ struct fb {
   }
 };
 
-template <typename F1, typename F2, typename F3, typename F4>
-struct f_theta {
-  VectorXd delta_;
-  VectorXd x_;
-
-  // structure to be passed to the stan::math::jacobian function
-  f_theta(const F1& fh,
-          const F2& fv,
-          const F3& fa,
-          const F4& fb,
-          const VectorXd& delta,
-          const VectorXd& x) : delta_(delta), x_(x) {}
-
-  template<typename T>
-  Eigen::Matrix<T, Eigen::Dynamic, 1>
-  inline operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta) const {
-    return quadratic_optimizer_analytical(fh(), fv(), fa(), fb(),
-                                          theta, delta_, x_);
-  }
-};
+// template <typename F1, typename F2, typename F3, typename F4>
+// struct f_theta {
+//   VectorXd delta_;
+//   VectorXd x_;
+// 
+//   // structure to be passed to the stan::math::jacobian function
+//   f_theta(const F1& fh,
+//           const F2& fv,
+//           const F3& fa,
+//           const F4& fb,
+//           const VectorXd& delta,
+//           const VectorXd& x) : delta_(delta), x_(x) {}
+// 
+//   template<typename T>
+//   Eigen::Matrix<T, Eigen::Dynamic, 1>
+//   inline operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta) const {
+//     return quadratic_optimizer_analytical(fh(), fv(), fa(), fb(),
+//                                           theta, delta_, x_);
+//   }
+// };
 
 TEST(MathMatrix, quadratic_optimizer) {
   VectorXd theta(2);
