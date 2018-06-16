@@ -1,6 +1,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/functor/quadratic_optimizer.hpp>
-#include <stan/math/rev/mat/functor/eiquadprog.hpp>
+// #include <stan/math/rev/mat/functor/eiquadprog.hpp>
+#include <stan/math/rev/mat/functor/jacobian.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
@@ -119,6 +120,27 @@ struct fb {
   }
 };
 
+template <typename F1, typename F2, typename F3, typename F4>
+struct f_theta {
+  VectorXd delta_;
+  VectorXd x_;
+
+  // structure to be passed to the stan::math::jacobian function
+  f_theta(const F1& fh,
+          const F2& fv,
+          const F3& fa,
+          const F4& fb,
+          const VectorXd& delta,
+          const VectorXd& x) : delta_(delta), x_(x) {}
+
+  template<typename T>
+  Eigen::Matrix<T, Eigen::Dynamic, 1>
+  inline operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta) const {
+    return quadratic_optimizer_analytical(fh(), fv(), fa(), fb(),
+                                          theta, delta_, x_);
+  }
+};
+
 TEST(MathMatrix, quadratic_optimizer) {
   VectorXd theta(2);
   theta << 0, -1;
@@ -140,6 +162,13 @@ TEST(MathMatrix, quadratic_optimizer) {
                                      theta, delta, x);
   EXPECT_EQ(x_an(0), -theta(0));
   EXPECT_EQ(x_an(1), -theta(1));
+
+  // Test gradient computation with analytical solution
+  f_theta<fh, fv, fa, fb> f(fh(), fv(), fa(), fb(), delta, x);
+  VectorXd f_eval;
+  MatrixXd J;
+  stan::math::jacobian(f, theta, f_eval, J);
+  cout << J << "\n";
   
   // theta << -1, 0;
   // std::cout << "Finite diff test \n"
