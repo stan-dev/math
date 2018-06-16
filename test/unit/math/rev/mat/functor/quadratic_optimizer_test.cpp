@@ -8,6 +8,7 @@
 #include <vector>
 
 using stan::math::quadratic_optimizer;
+using stan::math::quadratic_optimizer_analytical;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 using Eigen::Dynamic;
@@ -128,10 +129,17 @@ TEST(MathMatrix, quadratic_optimizer) {
   EXPECT_EQ(x(0), 0);
   EXPECT_EQ(x(1), 1);
 
-  theta << -1, -1;
+  theta << -5, -3;
   x = quadratic_optimizer(fh(), fv(), fa(), fb(), theta, delta, n);
-  EXPECT_EQ(x(0), 1);
-  EXPECT_EQ(x(1), 1);
+  EXPECT_EQ(x(0), -theta(0));
+  EXPECT_EQ(x(1), -theta(1));
+  
+  // Test analytical solution
+  VectorXd x_an
+    = quadratic_optimizer_analytical(fh(), fv(), fa(), fb(),
+                                     theta, delta, x);
+  EXPECT_EQ(x_an(0), -theta(0));
+  EXPECT_EQ(x_an(1), -theta(1));
   
   // theta << -1, 0;
   // std::cout << "Finite diff test \n"
@@ -159,9 +167,9 @@ TEST(MathMatrix, quadratic_optimizer) {
   // which returns x = {-1, 1}.
 
   // test the inequality constraint.
-  theta << 0, 1;
-  x = quadratic_optimizer(fh(), fv(), fa_0(), fb(), theta, delta, n);
-  std::cout << "Inequality constraint test:\n" << x << "\n \n";
+  // theta << 0, 1;
+  // x = quadratic_optimizer(fh(), fv(), fa_0(), fb(), theta, delta, n);
+  // std::cout << "Inequality constraint test:\n" << x << "\n \n";
 }
 
 
