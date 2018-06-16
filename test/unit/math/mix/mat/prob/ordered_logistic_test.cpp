@@ -4,13 +4,13 @@
 #include <vector>
 
 TEST(ProbDistributionsOrdLog, fv_fv) {
-  using stan::math::ordered_logistic_lpmf;
   using stan::math::fvar;
+  using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
+  using stan::math::vector_d;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::vector_fv;
-  using stan::math::vector_d;
 
   int y = 1;
 
@@ -56,13 +56,13 @@ TEST(ProbDistributionsOrdLog, fv_fv) {
 }
 
 TEST(ProbDistributionsOrdLog, fv_d) {
-  using stan::math::ordered_logistic_lpmf;
   using stan::math::fvar;
+  using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
+  using stan::math::vector_d;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::vector_fv;
-  using stan::math::vector_d;
 
   int y = 1;
 
@@ -125,13 +125,13 @@ TEST(ProbDistributionsOrdLog, fv_d) {
 }
 
 TEST(ProbDistributionsOrdLog, fv_fv_vec) {
-  using stan::math::ordered_logistic_lpmf;
   using stan::math::fvar;
+  using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
+  using stan::math::vector_d;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::vector_fv;
-  using stan::math::vector_d;
 
   std::vector<int> y{1, 2, 3, 4};
 
@@ -191,13 +191,13 @@ TEST(ProbDistributionsOrdLog, fv_fv_vec) {
 }
 
 TEST(ProbDistributionsOrdLog, fv_d_vec) {
-  using stan::math::ordered_logistic_lpmf;
   using stan::math::fvar;
+  using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
+  using stan::math::vector_d;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::vector_fv;
-  using stan::math::vector_d;
 
   std::vector<int> y{1, 2, 3, 4};
 
@@ -275,13 +275,13 @@ TEST(ProbDistributionsOrdLog, fv_d_vec) {
 }
 
 TEST(ProbDistributionsOrdLog, fv_fv_stvec) {
-  using stan::math::ordered_logistic_lpmf;
   using stan::math::fvar;
+  using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
+  using stan::math::vector_d;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::vector_fv;
-  using stan::math::vector_d;
 
   std::vector<int> y{1, 2, 3, 4};
 
@@ -404,13 +404,13 @@ TEST(ProbDistributionsOrdLog, fv_fv_stvec) {
 }
 
 TEST(ProbDistributionsOrdLog, fv_d_stvec) {
-  using stan::math::ordered_logistic_lpmf;
   using stan::math::fvar;
+  using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
+  using stan::math::vector_d;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::vector_fv;
-  using stan::math::vector_d;
 
   std::vector<int> y{1, 2, 3, 4};
 

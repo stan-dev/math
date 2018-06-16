@@ -25,70 +25,71 @@ namespace math {
 
 template <typename T>
 struct ordLog_helper {
-/**
- * Returns the (natural) log probability of the specified integer
- * outcome given the continuous location and specified cutpoints
- * in an ordered logistic model.
- *
- * Error-checking handled by main distribution functions, with this
- * function only called once inputs have been validated.
- *
- * @tparam T Type of location & cutpoint variables.
- * @param y Outcome.
- * @param K Number of categories.
- * @param lambda Location.
- * @param c Positive increasing vector of cutpoints.
- * @return Log probability of outcome given location and
- * cutpoints.
- */
+  /**
+   * Returns the (natural) log probability of the specified integer
+   * outcome given the continuous location and specified cutpoints
+   * in an ordered logistic model.
+   *
+   * Error-checking handled by main distribution functions, with this
+   * function only called once inputs have been validated.
+   *
+   * @tparam T Type of location & cutpoint variables.
+   * @param y Outcome.
+   * @param K Number of categories.
+   * @param lambda Location.
+   * @param c Positive increasing vector of cutpoints.
+   * @return Log probability of outcome given location and
+   * cutpoints.
+   */
   T logp(const int& y, const int& K, const T& lambda,
          const Eigen::Matrix<T, Eigen::Dynamic, 1>& c) {
-      if (y == 1)
-        return -log1p_exp(lambda - c[0]);
-      else if (y == K)
-        return -log1p_exp(c[K - 2] - lambda);
-      else
-        return log_inv_logit_diff(lambda-c[y-2], lambda-c[y-1]);
+    if (y == 1)
+      return -log1p_exp(lambda - c[0]);
+    else if (y == K)
+      return -log1p_exp(c[K - 2] - lambda);
+    else
+      return log_inv_logit_diff(lambda - c[y - 2], lambda - c[y - 1]);
   }
 
-/**
- * Returns a vector with the gradients of the the continuous location 
- * and ordered cutpoints in an ordered logistic model. The first element
- * of the vector contains the gradient for the location variable (lambda),
- * followed by the gradients for the ordered cutpoints (c).
- *
- * Error-checking handled by main distribution functions, with this
- * function only called once inputs have been validated.
- *
- * @tparam T Type of location & cutpoint variables.
- * @param y Outcome.
- * @param K Number of categories.
- * @param lambda Location.
- * @param c Positive increasing vector of cutpoints.
- * @return Vector of gradients.
- */
-  Eigen::Matrix<T, Eigen::Dynamic, 1>
-    deriv(const int& y, const int& K, const T& lambda,
-          const Eigen::Matrix<T, Eigen::Dynamic, 1>& c){
-      using std::exp;
+  /**
+   * Returns a vector with the gradients of the the continuous location
+   * and ordered cutpoints in an ordered logistic model. The first element
+   * of the vector contains the gradient for the location variable (lambda),
+   * followed by the gradients for the ordered cutpoints (c).
+   *
+   * Error-checking handled by main distribution functions, with this
+   * function only called once inputs have been validated.
+   *
+   * @tparam T Type of location & cutpoint variables.
+   * @param y Outcome.
+   * @param K Number of categories.
+   * @param lambda Location.
+   * @param c Positive increasing vector of cutpoints.
+   * @return Vector of gradients.
+   */
+  Eigen::Matrix<T, Eigen::Dynamic, 1> deriv(
+      const int& y, const int& K, const T& lambda,
+      const Eigen::Matrix<T, Eigen::Dynamic, 1>& c) {
+    using std::exp;
 
-      Eigen::Matrix<T, Eigen::Dynamic, 1>
-        d(Eigen::Matrix<T, Eigen::Dynamic, 1>::Zero(K));
+    Eigen::Matrix<T, Eigen::Dynamic, 1> d(
+        Eigen::Matrix<T, Eigen::Dynamic, 1>::Zero(K));
 
-      if (y == 1) {
-        d[0] -= inv_logit(lambda-c[0]);
-        d[1] -= d[0];
-        return d;
-      } else if (y == K) {
-        d[0] += inv_logit(c[K-2]-lambda);
-        d[K-1] -= d[0];
-        return d;
-      } else {
-        d[y-1] += inv(1-exp(c[y-1]-c[y-2])) - inv_logit(c[y-2]-lambda);
-        d[y] += inv(1-exp(c[y-2]-c[y-1])) - inv_logit(c[y-1]-lambda);
-        d[0] -= d[y] + d[y-1];
-        return d;
-      }
+    if (y == 1) {
+      d[0] -= inv_logit(lambda - c[0]);
+      d[1] -= d[0];
+      return d;
+    } else if (y == K) {
+      d[0] += inv_logit(c[K - 2] - lambda);
+      d[K - 1] -= d[0];
+      return d;
+    } else {
+      d[y - 1]
+          += inv(1 - exp(c[y - 1] - c[y - 2])) - inv_logit(c[y - 2] - lambda);
+      d[y] += inv(1 - exp(c[y - 2] - c[y - 1])) - inv_logit(c[y - 1] - lambda);
+      d[0] -= d[y] + d[y - 1];
+      return d;
+    }
   }
 };
 
@@ -121,10 +122,8 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
     const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
   static const char* function = "ordered_logistic";
 
-  typedef typename
-    stan::partials_return_type<T_loc,
-                               Eigen::Matrix<T_cut, Eigen::Dynamic, 1>>::type
-      T_partials_return;
+  typedef typename stan::partials_return_type<
+      T_loc, Eigen::Matrix<T_cut, Eigen::Dynamic, 1>>::type T_partials_return;
 
   typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
 
@@ -141,21 +140,21 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
   T_partials_return lam_dbl = value_of(lam_vec[0]);
 
   vector_seq_view<Eigen::Matrix<T_cut, Eigen::Dynamic, 1>> c_vec(c);
-  T_partials_vec c_dbl((K-1));
-    c_dbl = value_of(c_vec[0]).template cast<T_partials_return>();
+  T_partials_vec c_dbl((K - 1));
+  c_dbl = value_of(c_vec[0]).template cast<T_partials_return>();
 
   ordLog_helper<T_partials_return> ordhelp;
 
   T_partials_vec d = ordhelp.deriv(y, K, lam_dbl, c_dbl);
 
   operands_and_partials<T_loc, Eigen::Matrix<T_cut, Eigen::Dynamic, 1>>
-    ops_partials(lambda, c);
+      ops_partials(lambda, c);
 
   if (!is_constant_struct<T_loc>::value)
     ops_partials.edge1_.partials_[0] = d[0];
 
   if (!is_constant_struct<Eigen::Matrix<T_cut, Eigen::Dynamic, 1>>::value)
-    ops_partials.edge2_.partials_ = d.tail(K-1);
+    ops_partials.edge2_.partials_ = d.tail(K - 1);
 
   return ops_partials.build(ordhelp.logp(y, K, lam_dbl, c_dbl));
 }
@@ -199,10 +198,9 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
     const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
   static const char* function = "ordered_logistic";
 
-  typedef typename
-    stan::partials_return_type<Eigen::Matrix<T_loc, Eigen::Dynamic, 1>,
-                               Eigen::Matrix<T_cut, Eigen::Dynamic, 1>>::type
-      T_partials_return;
+  typedef typename stan::partials_return_type<
+      Eigen::Matrix<T_loc, Eigen::Dynamic, 1>,
+      Eigen::Matrix<T_cut, Eigen::Dynamic, 1>>::type T_partials_return;
 
   typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
 
@@ -219,29 +217,29 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
 
   vector_seq_view<Eigen::Matrix<T_loc, Eigen::Dynamic, 1>> lam_vec(lambda);
   T_partials_vec lam_dbl
-    = value_of(lam_vec[0]).template cast<T_partials_return>();
+      = value_of(lam_vec[0]).template cast<T_partials_return>();
 
   vector_seq_view<Eigen::Matrix<T_cut, Eigen::Dynamic, 1>> c_vec(c);
-  T_partials_vec c_dbl((K-1));
-    c_dbl = value_of(c_vec[0]).template cast<T_partials_return>();
+  T_partials_vec c_dbl((K - 1));
+  c_dbl = value_of(c_vec[0]).template cast<T_partials_return>();
 
   ordLog_helper<T_partials_return> ordhelp;
 
   T_partials_return logp(0.0);
   T_partials_vec lam_deriv(N);
-  T_partials_vec c_deriv(T_partials_vec::Zero(K-1));
+  T_partials_vec c_deriv(T_partials_vec::Zero(K - 1));
 
   for (int n = 0; n < N; ++n) {
     T_partials_vec d = ordhelp.deriv(y[n], K, lam_dbl[n], c_dbl);
 
     logp += ordhelp.logp(y[n], K, lam_dbl[n], c_dbl);
     lam_deriv[n] = d[0];
-    c_deriv += d.tail(K-1);
+    c_deriv += d.tail(K - 1);
   }
 
   operands_and_partials<Eigen::Matrix<T_loc, Eigen::Dynamic, 1>,
                         Eigen::Matrix<T_cut, Eigen::Dynamic, 1>>
-    ops_partials(lambda, c);
+      ops_partials(lambda, c);
 
   if (!is_constant_struct<Eigen::Matrix<T_loc, Eigen::Dynamic, 1>>::value)
     ops_partials.edge1_.partials_ = lam_deriv;
@@ -291,13 +289,12 @@ template <bool propto, typename T_loc, typename T_cut>
 typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
     const std::vector<int>& y,
     const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
-    const std::vector<Eigen::Matrix<T_cut, Eigen::Dynamic, 1> >& c) {
+    const std::vector<Eigen::Matrix<T_cut, Eigen::Dynamic, 1>>& c) {
   static const char* function = "ordered_logistic";
 
-  typedef typename
-    stan::partials_return_type<Eigen::Matrix<T_loc, Eigen::Dynamic, 1>,
-                               std::vector<Eigen::Matrix<T_cut,
-                                      Eigen::Dynamic, 1>>>::type
+  typedef typename stan::partials_return_type<
+      Eigen::Matrix<T_loc, Eigen::Dynamic, 1>,
+      std::vector<Eigen::Matrix<T_cut, Eigen::Dynamic, 1>>>::type
       T_partials_return;
 
   typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
@@ -317,10 +314,10 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
 
   vector_seq_view<Eigen::Matrix<T_loc, Eigen::Dynamic, 1>> lam_vec(lambda);
   T_partials_vec lam_dbl
-    = value_of(lam_vec[0]).template cast<T_partials_return>();
+      = value_of(lam_vec[0]).template cast<T_partials_return>();
 
-  vector_seq_view<
-    std::vector<Eigen::Matrix<T_cut, Eigen::Dynamic, 1> >> c_vec(c);
+  vector_seq_view<std::vector<Eigen::Matrix<T_cut, Eigen::Dynamic, 1>>> c_vec(
+      c);
   std::vector<T_partials_vec> c_dbl(N);
   for (int n = 0; n < N; ++n)
     c_dbl[n] = value_of(c_vec[n]).template cast<T_partials_return>();
@@ -336,18 +333,18 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
 
     logp += ordhelp.logp(y[n], K, lam_dbl[n], c_dbl[n]);
     lam_deriv[n] = d[0];
-    c_deriv[n] = d.tail(K-1);
+    c_deriv[n] = d.tail(K - 1);
   }
 
   operands_and_partials<Eigen::Matrix<T_loc, Eigen::Dynamic, 1>,
-                        std::vector<Eigen::Matrix<T_cut, Eigen::Dynamic, 1> >>
-    ops_partials(lambda, c);
+                        std::vector<Eigen::Matrix<T_cut, Eigen::Dynamic, 1>>>
+      ops_partials(lambda, c);
 
   if (!is_constant_struct<Eigen::Matrix<T_loc, Eigen::Dynamic, 1>>::value)
     ops_partials.edge1_.partials_ = lam_deriv;
 
   if (!is_constant_struct<
-        std::vector<Eigen::Matrix<T_cut, Eigen::Dynamic, 1> >>::value) {
+          std::vector<Eigen::Matrix<T_cut, Eigen::Dynamic, 1>>>::value) {
     for (int n = 0; n < N; ++n)
       ops_partials.edge2_.partials_vec_[n] = c_deriv[n];
   }
@@ -359,7 +356,7 @@ template <typename T_loc, typename T_cut>
 typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
     const std::vector<int>& y,
     const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
-    const std::vector<Eigen::Matrix<T_cut, Eigen::Dynamic, 1> >& c) {
+    const std::vector<Eigen::Matrix<T_cut, Eigen::Dynamic, 1>>& c) {
   return ordered_logistic_lpmf<false>(y, lambda, c);
 }
 }  // namespace math

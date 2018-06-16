@@ -2,7 +2,6 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-
 TEST(ProbDistributionsOrdLog, fd_fd) {
   using stan::math::fvar;
   using stan::math::ordered_logistic_lpmf;
