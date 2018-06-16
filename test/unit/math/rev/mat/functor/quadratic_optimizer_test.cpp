@@ -85,43 +85,36 @@ struct fv {
 
 struct fa_0 {
   template <typename T0>
-  Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic>
+  Eigen::Matrix<T0, Eigen::Dynamic, 1>
   inline operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
                     const Eigen::VectorXd& delta) const {
     int n = 2;
-    Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic> linear_constraint(n, n);
-    linear_constraint(0, 0) = 0;
-    linear_constraint(0, 1) = 0;
-    linear_constraint(1, 0) = 0;
-    linear_constraint(1, 1) = 0;
+    Eigen::Matrix<T0, Eigen::Dynamic, 1> linear_constraint(n);
+    linear_constraint(0) = 0;
+    linear_constraint(1) = 0;
     return linear_constraint;
   }
 };
 
 struct fa {
   template <typename T0>
-  Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic>
+  Eigen::Matrix<T0, Eigen::Dynamic, 1>
   inline operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
                   const Eigen::VectorXd& delta) const {
     int n = 2;
-    Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic> linear_constraint(n, n);
-    linear_constraint(0, 0) = 1;
-    linear_constraint(0, 1) = 0;
-    linear_constraint(1, 0) = 0;
-    linear_constraint(1, 1) = 0;
+    Eigen::Matrix<T0, Eigen::Dynamic, 1> linear_constraint(n);
+    linear_constraint(0) = 1;
+    linear_constraint(1) = 0;
     return linear_constraint;
   }
 };
 
 struct fb {
   template <typename T0>
-  Eigen::Matrix<T0, Eigen::Dynamic, 1>
+  T0
   inline operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
                     const Eigen::VectorXd& delta) const {
-    Eigen::Matrix<T0, Eigen::Dynamic, 1> b(2);
-    b(0) = theta(0);
-    b(1) = 0;
-    return b;
+    return theta(0);
   }
 };
 
@@ -134,21 +127,41 @@ TEST(MathMatrix, quadratic_optimizer) {
   VectorXd x = quadratic_optimizer(fh(), fv(), fa_0(), fb(), theta, delta, n);
   EXPECT_EQ(x(0), 0);
   EXPECT_EQ(x(1), 1);
-  
+
   theta << -1, -1;
   x = quadratic_optimizer(fh(), fv(), fa(), fb(), theta, delta, n);
   EXPECT_EQ(x(0), 1);
   EXPECT_EQ(x(1), 1);
   
+  // theta << -1, 0;
+  // std::cout << "Finite diff test \n"
+  //           << quadratic_optimizer(fh(), fv(), fa(), fb(), theta, delta, n)
+  //           << "\n \n";
+  // 
+  // double finite_diff = 1e-10;  // , finite_diff_2 = 1e-10;
+  // VectorXd theta_lb = theta, theta_ub = theta;
+  // theta_lb(1) = theta(1) - finite_diff;
+  // theta_ub(1) = theta(1) + finite_diff;
+  // 
+  // VectorXd
+  //   x_lb = quadratic_optimizer(fh(), fv(), fa(), fb(), theta_lb, delta, n),
+  //   x_ub = quadratic_optimizer(fh(), fv(), fa(), fb(), theta_ub, delta, n);
+  // 
+  // std::cout << x_lb << "\n \n";
+  // std::cout << x_ub << "\n \n";
+  // 
+  // std::cout << "dx_2 / d_theta_2 = "
+  //           << (x_lb(1) - x_ub(1)) / (2 * finite_diff) << "\n \n";
+
   // note: if constraint forces theta = -1, then inequality constraint
   // is overritten. Not sure if this should be concerning.
   // This can be seen by writing the test with theta << 1, -1,
   // which returns x = {-1, 1}.
-  
+
   // test the inequality constraint.
   theta << 0, 1;
   x = quadratic_optimizer(fh(), fv(), fa_0(), fb(), theta, delta, n);
-  std::cout << x << "\n \n";
+  std::cout << "Inequality constraint test:\n" << x << "\n \n";
 }
 
 

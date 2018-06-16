@@ -143,6 +143,7 @@ inline double solve_quadprog(const MatrixXd & G,  const VectorXd & g0,
 {
   using std::abs;
   int i, j, k, l; /* indices */
+  i = 0; j = 0; k = 0; l = 0;  // silence warning
   int ip, me, mi;
   int n=g0.size();  int p=ce0.size();  int m=ci0.size();  
   MatrixXd R(G.rows(),G.cols()), J(G.rows(),G.cols());
@@ -465,6 +466,7 @@ inline bool add_constraint(MatrixXd& R, MatrixXd& J, VectorXd& d, int& iq, doubl
   std::cerr << "Add constraint " << iq << '/';
 #endif
 	int i, j, k;
+	i = 0; j = 0; k = 0;  // silence warning
 	double cc, ss, h, t1, t2, xny;
 	
   /* we have to find the Givens rotation which will reduce the element
