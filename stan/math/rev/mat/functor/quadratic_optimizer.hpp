@@ -156,12 +156,12 @@ struct quadratic_optimizer_vari : public vari {
  * Return the solution to the specified quadratic optimization
  * problem. Evaluation function with theta a parameter of doubles.
  */
-template <typename F1, typename F2, typename F3, typename F4>
+template <typename Fh, typename Fv, typename Fa, typename Fb>
 Eigen::VectorXd
-quadratic_optimizer(const F1& fh, 
-                    const F2& fv, 
-                    const F3& fa, 
-                    const F4& fb,
+quadratic_optimizer(const Fh& fh, 
+                    const Fv& fv, 
+                    const Fa& fa, 
+                    const Fb& fb,
                     const Eigen::VectorXd& theta,
                     const Eigen::VectorXd& delta,
                     int n) {
@@ -182,6 +182,36 @@ quadratic_optimizer(const F1& fh,
                                   Eigen::MatrixXd::Identity(n, n),
                                   Eigen::VectorXd::Zero(n),
                                   x);
+  return x;
+}
+
+/**
+ * Return the solution to the specified quadratic optimization
+ * problem. Evaluation of the function with theta a parameter of var.
+ */
+template <typename Fh, typename Fv, typename Fa, typename Fb, typename T>
+Eigen::Matrix<T, Eigen::Dynamic, 1>
+quadratic_optimizer(const Fh& fh,
+                    const Fv& fv,
+                    const Fa& fa,
+                    const Fb& fb,
+                    const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta,
+                    const Eigen::VectorXd& delta,
+                    int n) {
+  Eigen::Matrix<T, Eigen::Dynamic, 1>
+    x_dbl = quadratic_optimizer(fh, fv, fa, fb, value_of(theta), delta, n);
+
+  // Construct vari
+  typedef f_theta<Fh, Fv, Fa, Fb> f_vari;
+  quadratic_optimizer_vari<f_vari, T>* vi0
+    = new quadratic_optimizer_vari<f_vari, T>(theta, x_dbl,
+      f(fh, fv, fa, fb, theta, delta, x_dbl));
+
+  Eigen::Matrix<var, Eigen::Dynamic, 1> x(x_dbl.size());
+  x(0) = var(vi0->x_[0]);
+  for (int i = 1; i < x.size(); i++)
+    x(i) = var(vi0->x_[i]);
+
   return x;
 }
 
