@@ -158,7 +158,35 @@ struct quadratic_optimizer_vari : public vari {
 
 /**
  * Return the solution to the specified quadratic optimization
- * problem. Evaluation function with theta a parameter of doubles.
+ * problem. The objective function we wish to optimize has the form
+ * 0.5 x'Hx + vx, where x' is the transpose of x, H is a matrix,
+ * and v a vector. We minimize this function for x. In addition,
+ * the solution is subject to the constraints:
+ * (i) ax + b = 0, where a is a vector and b a scalar.
+ * (ii) x > 0, that is all solutions are positive.
+ * The variables H, v, a, and b are passed as functions of
+ * model parameters theta, and fixed variables delta (real data)
+ * and delta_int (integer data).
+ * 
+ * This implementation is based on eiquadprog.
+ * See http://www.labri.fr/perso/guenneba/code/QuadProg/
+ * 
+ * @tparam Fh type of functor which returns H
+ * @tparam Fv type of functor which returns v
+ * @tparam Fa type of functor which returns a
+ * @tparam Fb type of functor which returns b
+ * @param[in] fh functor which returns H
+ * @param[in] fv functor which returns a
+ * @param[in] fa functor which returns v
+ * @param[in] fb functor which returns b
+ * @param[in] theta vector of parameters for the objective function
+ * @param[in] delta continuous data array for objective function
+ * @param[in] delta_int integer data array for objective function
+ * @param[in] n the number of unknowns we solve for
+ * @param[in, out] msgs the print stream for warning messages (??)
+ * @param[in] tol the tolerance level; if the optimizer returns a solution
+ *                below the this level, this solution is set to 0. This
+ *                plays a critical role in the calculation of derivatives.
  */
 template <typename Fh, typename Fv, typename Fa, typename Fb>
 Eigen::VectorXd
@@ -172,6 +200,7 @@ quadratic_optimizer(const Fh& fh,
                     int n,
                     std::ostream* msgs = nullptr,
                     double tol = 1e-10) {
+  // TODO: make sure msgs stream works and write debuging message.
   using Eigen::VectorXd;
 
   VectorXd x;
