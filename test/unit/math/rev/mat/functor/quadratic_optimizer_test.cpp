@@ -46,12 +46,6 @@ TEST(MathMatrix, eiquadprog) {
 
   VectorXd ci0(4);
   ci0 << 0, 0, 0, 10;
-  // VectorXd ci0(3);
-  // ci0 << -2, -2, -2;  // test inequality constraint
-  
-  // MatrixXd CI = Eigen::MatrixXd::Identity(3, 3);
-  // VectorXd ci0(3);
-  // ci0 << -1, -1, -1;
 
   VectorXd x;
   double f = solve_quadprog(G, g0, CE, ce0, CI, ci0, x);
@@ -60,9 +54,6 @@ TEST(MathMatrix, eiquadprog) {
   EXPECT_NEAR(0, x(0), 1e-12);  // Need to deal with floating point precision
   EXPECT_FLOAT_EQ(2, x(1));
   EXPECT_FLOAT_EQ(0, x(2));
-  
-  // cout << "f: " << solve_quadprog(G, g0, CE, ce0, CI, ci0, x) << "\n"
-  //      << "x: " << x << "\n";
 }
 
 
@@ -70,7 +61,8 @@ struct fh {
   template <typename T0>
   inline Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic> 
     operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
-               const Eigen::VectorXd& delta) const {
+               const std::vector<double>& delta,
+               const std::vector<int>& delta_int) const {
       int n = 2;
       return Eigen::MatrixXd::Identity(n, n);
     }
@@ -80,7 +72,8 @@ struct fv {
   template <typename T0>
   inline Eigen::Matrix<T0, Eigen::Dynamic, 1>
     operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
-               const Eigen::VectorXd& delta) const {
+               const std::vector<double>& delta,
+               const std::vector<int>& delta_int) const {
       int n = 2;
       Eigen::Matrix<T0, Eigen::Dynamic, 1> linear_term(n);
       linear_term(0) = 0;
@@ -93,7 +86,8 @@ struct fa_0 {
   template <typename T0>
   Eigen::Matrix<T0, Eigen::Dynamic, 1>
   inline operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
-                    const Eigen::VectorXd& delta) const {
+                    const std::vector<double>& delta,
+                    const std::vector<int>& delta_int) const {
     int n = 2;
     Eigen::Matrix<T0, Eigen::Dynamic, 1> linear_constraint(n);
     linear_constraint(0) = 0;
@@ -106,7 +100,8 @@ struct fa {
   template <typename T0>
   Eigen::Matrix<T0, Eigen::Dynamic, 1>
   inline operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
-                  const Eigen::VectorXd& delta) const {
+                    const std::vector<double>& delta,
+                    const std::vector<int>& delta_int) const {
     int n = 2;
     Eigen::Matrix<T0, Eigen::Dynamic, 1> linear_constraint(n);
     linear_constraint(0) = 1;
@@ -119,7 +114,8 @@ struct fb {
   template <typename T0>
   T0
   inline operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
-                    const Eigen::VectorXd& delta) const {
+                    const std::vector<double>& delta,
+                    const std::vector<int>& delta_int) const {
     return theta(0);
   }
 };
@@ -148,22 +144,26 @@ struct fb {
 TEST(MathMatrix, quadratic_optimizer_double) {
   VectorXd theta(2);
   theta << 0, -1;
-  VectorXd delta;
+  std::vector<double> delta;
+  std::vector<int> delta_int;
+  double tol = 1e-10;
   int n = 2;
 
-  VectorXd x = quadratic_optimizer(fh(), fv(), fa_0(), fb(), theta, delta, n);
+  VectorXd x = quadratic_optimizer(fh(), fv(), fa_0(), fb(), theta, 
+                                   delta, delta_int, n, 0, tol);
   EXPECT_EQ(x(0), 0);
   EXPECT_EQ(x(1), 1);
 
   theta << -5, -3;
-  x = quadratic_optimizer(fh(), fv(), fa(), fb(), theta, delta, n);
+  x = quadratic_optimizer(fh(), fv(), fa(), fb(), theta,
+                          delta, delta_int, n);
   EXPECT_EQ(x(0), -theta(0));
   EXPECT_EQ(x(1), -theta(1));
   
   // Test analytical solution
   VectorXd x_an
     = quadratic_optimizer_analytical(fh(), fv(), fa(), fb(),
-                                     theta, delta, x);
+                                     theta, delta, delta_int, x);
   EXPECT_EQ(x_an(0), -theta(0));
   EXPECT_EQ(x_an(1), -theta(1));
 
@@ -172,14 +172,14 @@ TEST(MathMatrix, quadratic_optimizer_double) {
                 0, -1;
   
   // Test gradient computation with analytical solution
-  f_theta<fh, fv, fa, fb> f(fh(), fv(), fa(), fb(), delta, x);
+  f_theta<fh, fv, fa, fb> f(fh(), fv(), fa(), fb(), delta, delta_int, x);
   VectorXd f_eval;
   MatrixXd J;
   stan::math::jacobian(f, theta, f_eval, J);
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++) EXPECT_EQ(J_solution(i, j), J(i, j));
 
-    // cout << J << "\n";
+  // cout << J << "\n";
   
   // theta << -1, 0;
   // std::cout << "Finite diff test \n"
@@ -213,7 +213,8 @@ TEST(MathMatrix, quadratic_optimizer_double) {
 }
 
 TEST(MathMatrix, quadratic_optimizer_var) {
-  VectorXd delta;
+  std::vector<double> delta;
+  std::vector<int> delta_int;
   int n_x = 2;
   int n_theta = 2;
   
@@ -225,7 +226,8 @@ TEST(MathMatrix, quadratic_optimizer_var) {
     Matrix<var, Dynamic, 1> theta(n_theta);
     theta << -5, -3;
     Matrix<var, Dynamic, 1> x = quadratic_optimizer(fh(), fv(), fa(), fb(),
-                                                    theta, delta, n_x);
+                                                    theta, delta, delta_int,
+                                                    n_x);
     EXPECT_EQ(-theta(0), x(0).val());
     EXPECT_EQ(-theta(1), x(1).val());
   
@@ -236,6 +238,3 @@ TEST(MathMatrix, quadratic_optimizer_var) {
     EXPECT_EQ(J(k, 1), g[1]);
   }
 }
-
-
-
