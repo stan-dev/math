@@ -33,8 +33,7 @@ struct ordLog_helper {
  * Error-checking handled by main distribution functions, with this
  * function only called once inputs have been validated.
  *
- * @tparam T_loc Location type.
- * @tparam T_cut Cut-point type.
+ * @tparam T Type of location & cutpoint variables.
  * @param y Outcome.
  * @param K Number of categories.
  * @param lambda Location.
@@ -61,8 +60,7 @@ struct ordLog_helper {
  * Error-checking handled by main distribution functions, with this
  * function only called once inputs have been validated.
  *
- * @tparam T_loc Location type.
- * @tparam T_cut Cut-point type.
+ * @tparam T Type of location & cutpoint variables.
  * @param y Outcome.
  * @param K Number of categories.
  * @param lambda Location.
