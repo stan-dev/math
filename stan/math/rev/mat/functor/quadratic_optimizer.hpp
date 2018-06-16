@@ -89,7 +89,7 @@ struct f_theta {
           const Fb& fb,
           const Eigen::VectorXd& delta,
           const Eigen::VectorXd& x) : delta_(delta), x_(x),
-          fh_(), fv_(), fa_(), fb_() {}
+          fh_(fh), fv_(fv), fa_(fa), fb_(fb) {}
 
   template<typename T>
   Eigen::Matrix<T, Eigen::Dynamic, 1>
@@ -126,7 +126,7 @@ struct quadratic_optimizer_vari : public vari {
       theta_size_(theta.size()),
       x_(ChainableStack::instance().memalloc_.alloc_array<vari*>(x.size())),
       x_size_(x.size()),
-      f_(),
+      f_(f),
       Jx_theta_(ChainableStack::instance().memalloc_.alloc_array<double>(
         x_size_ * theta_size_)) {
     using Eigen::Map;
@@ -140,9 +140,9 @@ struct quadratic_optimizer_vari : public vari {
     // Compute the Jacobian matrix and store in array.
     Eigen::VectorXd f_eval;  // dummy argument required by jacobian function.
     MatrixXd J;
-    jacobian(f_, value_of(theta_), f_eval, J);
+    jacobian(f_, value_of(theta), f_eval, J);
 
-    Map<MatrixXd>(&Jx_theta_[0], x_size_ * theta_size_) = J;
+    Map<MatrixXd>(&Jx_theta_[0], x_size_, theta_size_) = J;
   }
 
   void chain() {
@@ -198,14 +198,14 @@ quadratic_optimizer(const Fh& fh,
                     const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta,
                     const Eigen::VectorXd& delta,
                     int n) {
-  Eigen::Matrix<T, Eigen::Dynamic, 1>
+  Eigen::VectorXd
     x_dbl = quadratic_optimizer(fh, fv, fa, fb, value_of(theta), delta, n);
 
   // Construct vari
   typedef f_theta<Fh, Fv, Fa, Fb> f_vari;
   quadratic_optimizer_vari<f_vari, T>* vi0
     = new quadratic_optimizer_vari<f_vari, T>(theta, x_dbl,
-      f(fh, fv, fa, fb, theta, delta, x_dbl));
+      f_vari(fh, fv, fa, fb, delta, x_dbl));
 
   Eigen::Matrix<var, Eigen::Dynamic, 1> x(x_dbl.size());
   x(0) = var(vi0->x_[0]);

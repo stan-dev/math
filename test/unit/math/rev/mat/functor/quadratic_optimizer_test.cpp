@@ -1,7 +1,8 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/functor/quadratic_optimizer.hpp>
-// #include <stan/math/rev/mat/functor/eiquadprog.hpp>
+#include <stan/math/rev/mat/functor/eiquadprog.hpp>
 #include <stan/math/rev/mat/functor/jacobian.hpp>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
@@ -11,8 +12,10 @@
 using stan::math::quadratic_optimizer;
 using stan::math::quadratic_optimizer_analytical;
 using stan::math::f_theta;
+using stan::math::var;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
+using Eigen::Matrix;
 using Eigen::Dynamic;
 using std::cout;
 
@@ -142,7 +145,7 @@ struct fb {
 //   }
 // };
 
-TEST(MathMatrix, quadratic_optimizer) {
+TEST(MathMatrix, quadratic_optimizer_double) {
   VectorXd theta(2);
   theta << 0, -1;
   VectorXd delta;
@@ -164,12 +167,19 @@ TEST(MathMatrix, quadratic_optimizer) {
   EXPECT_EQ(x_an(0), -theta(0));
   EXPECT_EQ(x_an(1), -theta(1));
 
+  MatrixXd J_solution(2, 2);
+  J_solution << -1, 0,
+                0, -1;
+  
   // Test gradient computation with analytical solution
   f_theta<fh, fv, fa, fb> f(fh(), fv(), fa(), fb(), delta, x);
   VectorXd f_eval;
   MatrixXd J;
   stan::math::jacobian(f, theta, f_eval, J);
-  cout << J << "\n";
+  for (int i = 0; i < 2; i++)
+    for (int j = 0; j < 2; j++) EXPECT_EQ(J_solution(i, j), J(i, j));
+
+    // cout << J << "\n";
   
   // theta << -1, 0;
   // std::cout << "Finite diff test \n"
@@ -200,6 +210,31 @@ TEST(MathMatrix, quadratic_optimizer) {
   // theta << 0, 1;
   // x = quadratic_optimizer(fh(), fv(), fa_0(), fb(), theta, delta, n);
   // std::cout << "Inequality constraint test:\n" << x << "\n \n";
+}
+
+TEST(MathMatrix, quadratic_optimizer_var) {
+  VectorXd delta;
+  int n_x = 2;
+  int n_theta = 2;
+  
+  MatrixXd J(2, 2);
+  J << -1, 0, 
+       0, -1;
+
+  for (int k = 0; k < n_x; k++) {
+    Matrix<var, Dynamic, 1> theta(n_theta);
+    theta << -5, -3;
+    Matrix<var, Dynamic, 1> x = quadratic_optimizer(fh(), fv(), fa(), fb(),
+                                                    theta, delta, n_x);
+    EXPECT_EQ(-theta(0), x(0).val());
+    EXPECT_EQ(-theta(1), x(1).val());
+  
+    AVEC parameter_vec = createAVEC(theta(0), theta(1));
+    VEC g;
+    x(k).grad(parameter_vec, g);
+    EXPECT_EQ(J(k, 0), g[0]);
+    EXPECT_EQ(J(k, 1), g[1]);
+  }
 }
 
 
