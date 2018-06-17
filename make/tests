@@ -69,17 +69,14 @@ $(OPENCL_TESTS) : LDFLAGS += $(LDFLAGS_OPENCL)
 #
 # MPI tests
 #
-# note: Since gtest main must manage the MPI ressource, currently all tests
-# are linked against MPI
+# note: Since gtest main must manage the MPI ressource, we include in all tests
+# MPI
 ##
 
-#ifdef STAN_MPI
+ifdef STAN_MPI
 #  MPI_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *mpi_*test.cpp))
-#  $(MPI_TESTS): LDFLAGS += $(LDFLAGS_MPI)
-#  $(MPI_TESTS): CXXFLAGS += $(CXXFLAGS_MPI)
-#  $(MPI_TESTS): $(LIBMPI)
-#  GTEST_CXXFLAGS += $(CXXFLAGS_MPI)
-#endif
+  GTEST_CXXFLAGS += $(CXXFLAGS_MPI)
+endif
 
 ############################################################
 #
