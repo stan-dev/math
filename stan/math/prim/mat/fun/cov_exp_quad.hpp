@@ -6,7 +6,7 @@
 #include <stan/math/prim/mat/fun/divide.hpp>
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
+//#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/fun/divide.hpp>
@@ -42,7 +42,7 @@ inline
                  const T_l &length_scale) {
   using std::exp;
   check_positive("cov_exp_quad", "magnitude", sigma);
-  check_positive("cov_exp_quad", "length-scale", length_scale);
+  check_positive("cov_exp_quad", "length scale", length_scale);
   for (size_t n = 0; n < x.size(); ++n)
     check_not_nan("cov_exp_quad", "x", x[n]);
 
@@ -93,12 +93,13 @@ inline
   using std::exp;
 
   size_t x_size = x.size();
-  size_t D_x = T_x.size();
+  //  size_t D_x = T_x.size();
+  //  size_t D_x = sizeof(T_x);
   
-  const char *function_name = "cov_exp_quad";
-  const char *len_scale_name = "length_scale";
-  check_positive_finite(function_name, "magitude", sigma);
-  check_positive_finite(function_name, "length scale", len_scale_name);
+  //  const char *function_name = "cov_exp_quad";
+  //  const char *len_scale_name = "length_scale";
+  check_positive_finite("cov_exp_quad", "magnitude", sigma);
+  check_positive_finite("cov_exp_quad", "length scale", length_scale);
 
   // add check size match
   //  check_size_match(function_name, "x", x, x_size, len_scale_name, 
@@ -156,7 +157,7 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
              const T_sigma &sigma, const T_l &length_scale) {
   using std::exp;
   check_positive("cov_exp_quad", "magnitude", sigma);
-  check_positive("cov_exp_quad", "length-scale", length_scale);
+  check_positive("cov_exp_quad", "length scale", length_scale);
   for (size_t n = 0; n < x1.size(); ++n)
     check_not_nan("cov_exp_quad", "x1", x1[n]);
   for (size_t n = 0; n < x2.size(); ++n)
