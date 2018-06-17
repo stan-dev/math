@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 #include <limits>
 #include <string>
@@ -11,7 +11,7 @@ std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2, T_sigma sigma,
   std::string message;
   try {
     stan::math::cov_exp_quad(x1, x2, sigma, l);
-  } catch (std::domain_error& e) {
+  } catch (std::domain_error &e) {
     message = e.what();
   } catch (...) {
     message = "Threw the wrong exception";
@@ -24,7 +24,7 @@ std::string pull_msg(std::vector<T_x1> x1, T_sigma sigma, T_l l) {
   std::string message;
   try {
     stan::math::cov_exp_quad(x1, sigma, l);
-  } catch (std::domain_error& e) {
+  } catch (std::domain_error &e) {
     message = e.what();
   } catch (...) {
     message = "Threw the wrong exception";
@@ -64,9 +64,9 @@ TEST(RevMath, cov_exp_quad_vvv) {
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
           << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(
-          sigma.val() * sigma.val() * exp_val * sq_distance / (sq_l * l.val()),
-          grad[1])
+      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * sq_distance /
+                          (sq_l * l.val()),
+                      grad[1])
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * -distance / sq_l,
                       grad[2])
@@ -232,9 +232,9 @@ TEST(RevMath, cov_exp_quad_dvv) {
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
           << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(
-          sigma.val() * sigma.val() * exp_val * sq_distance / (sq_l * l.val()),
-          grad[1])
+      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * sq_distance /
+                          (sq_l * l.val()),
+                      grad[1])
           << "index: (" << i << ", " << j << ")";
 
       stan::math::recover_memory();
@@ -356,9 +356,9 @@ TEST(RevMath, cov_exp_quad_vector_vvv) {
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
           << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(
-          sigma.val() * sigma.val() * exp_val * sq_distance / (sq_l * l.val()),
-          grad[1])
+      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * sq_distance /
+                          (sq_l * l.val()),
+                      grad[1])
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](0).val() - x[j](0).val()) / sq_l,
                       grad[2])
@@ -726,7 +726,7 @@ TEST(RevMath, cov_exp_quad1_vec_eigen_rvec) {
   var sigma = 0.2;
   var l = 5;
 
-  std::vector<Eigen::Matrix<var, 1, -1> > x1(3);
+  std::vector<Eigen::Matrix<var, 1, -1>> x1(3);
 
   for (size_t i = 0; i < x1.size(); ++i) {
     x1[i].resize(1, 3);
@@ -739,9 +739,9 @@ TEST(RevMath, cov_exp_quad1_vec_eigen_rvec) {
   EXPECT_EQ(3, cov.cols());
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 3; j++)
-      EXPECT_FLOAT_EQ(sigma.val() * sigma.val()
-                          * exp(squared_distance(x1[i], x1[j]).val()
-                                / (-2.0 * l.val() * l.val())),
+      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() *
+                          exp(squared_distance(x1[i], x1[j]).val() /
+                              (-2.0 * l.val() * l.val())),
                       cov(i, j).val())
           << "index: (" << i << ", " << j << ")";
 }
@@ -752,8 +752,8 @@ TEST(RevMath, cov_exp_quad2_vec_eigen_rvec) {
   var sigma = 0.2;
   var l = 5;
 
-  std::vector<Eigen::Matrix<var, 1, -1> > x1(3);
-  std::vector<Eigen::Matrix<var, 1, -1> > x2(4);
+  std::vector<Eigen::Matrix<var, 1, -1>> x1(3);
+  std::vector<Eigen::Matrix<var, 1, -1>> x2(4);
 
   for (size_t i = 0; i < x1.size(); ++i) {
     x1[i].resize(1, 3);
@@ -771,9 +771,9 @@ TEST(RevMath, cov_exp_quad2_vec_eigen_rvec) {
   EXPECT_EQ(4, cov.cols());
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 4; j++)
-      EXPECT_FLOAT_EQ(sigma.val() * sigma.val()
-                          * exp(squared_distance(x1[i], x2[j]).val()
-                                / (-2.0 * l.val() * l.val())),
+      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() *
+                          exp(squared_distance(x1[i], x2[j]).val() /
+                              (-2.0 * l.val() * l.val())),
                       cov(i, j).val())
           << "index: (" << i << ", " << j << ")";
 
@@ -783,9 +783,9 @@ TEST(RevMath, cov_exp_quad2_vec_eigen_rvec) {
   EXPECT_EQ(3, cov2.cols());
   for (int i = 0; i < 4; i++)
     for (int j = 0; j < 3; j++) {
-      EXPECT_FLOAT_EQ(sigma.val() * sigma.val()
-                          * exp(squared_distance(x2[i], x1[j]).val()
-                                / (-2.0 * l.val() * l.val())),
+      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() *
+                          exp(squared_distance(x2[i], x1[j]).val() /
+                              (-2.0 * l.val() * l.val())),
                       cov2(i, j).val())
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(cov2(i, j).val(), cov(j, i).val());
@@ -798,8 +798,8 @@ TEST(RevMath, cov_exp_quad2_vec_eigen_mixed) {
   var sigma = 0.2;
   var l = 5;
 
-  std::vector<Eigen::Matrix<var, 1, -1> > x1_rvec(3);
-  std::vector<Eigen::Matrix<var, 1, -1> > x2_rvec(4);
+  std::vector<Eigen::Matrix<var, 1, -1>> x1_rvec(3);
+  std::vector<Eigen::Matrix<var, 1, -1>> x2_rvec(4);
 
   for (size_t i = 0; i < x1_rvec.size(); ++i) {
     x1_rvec[i].resize(1, 3);
@@ -811,8 +811,8 @@ TEST(RevMath, cov_exp_quad2_vec_eigen_mixed) {
     x2_rvec[i] << 2 * i, 3 * i, 4 * i;
   }
 
-  std::vector<Eigen::Matrix<var, -1, 1> > x1_vec(3);
-  std::vector<Eigen::Matrix<var, -1, 1> > x2_vec(4);
+  std::vector<Eigen::Matrix<var, -1, 1>> x1_vec(3);
+  std::vector<Eigen::Matrix<var, -1, 1>> x2_vec(4);
 
   for (size_t i = 0; i < x1_vec.size(); ++i) {
     x1_vec[i].resize(3, 1);
@@ -830,9 +830,9 @@ TEST(RevMath, cov_exp_quad2_vec_eigen_mixed) {
   EXPECT_EQ(4, cov.cols());
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 4; j++)
-      EXPECT_FLOAT_EQ(sigma.val() * sigma.val()
-                          * exp(squared_distance(x1_rvec[i], x2_vec[j]).val()
-                                / (-2.0 * l.val() * l.val())),
+      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() *
+                          exp(squared_distance(x1_rvec[i], x2_vec[j]).val() /
+                              (-2.0 * l.val() * l.val())),
                       cov(i, j).val())
           << "index: (" << i << ", " << j << ")";
 
@@ -842,9 +842,9 @@ TEST(RevMath, cov_exp_quad2_vec_eigen_mixed) {
   EXPECT_EQ(3, cov7.cols());
   for (int i = 0; i < 4; i++)
     for (int j = 0; j < 3; j++) {
-      EXPECT_FLOAT_EQ(sigma.val() * sigma.val()
-                          * exp(squared_distance(x2_vec[i], x1_rvec[j]).val()
-                                / (-2.0 * l.val() * l.val())),
+      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() *
+                          exp(squared_distance(x2_vec[i], x1_rvec[j]).val() /
+                              (-2.0 * l.val() * l.val())),
                       cov7(i, j).val())
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(cov7(i, j).val(), cov(j, i).val());
@@ -856,9 +856,9 @@ TEST(RevMath, cov_exp_quad2_vec_eigen_mixed) {
   EXPECT_EQ(4, cov2.cols());
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 4; j++)
-      EXPECT_FLOAT_EQ(sigma.val() * sigma.val()
-                          * exp(squared_distance(x1_vec[i], x2_rvec[j]).val()
-                                / (-2.0 * l.val() * l.val())),
+      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() *
+                          exp(squared_distance(x1_vec[i], x2_rvec[j]).val() /
+                              (-2.0 * l.val() * l.val())),
                       cov2(i, j).val())
           << "index: (" << i << ", " << j << ")";
 
@@ -868,9 +868,9 @@ TEST(RevMath, cov_exp_quad2_vec_eigen_mixed) {
   EXPECT_EQ(3, cov8.cols());
   for (int i = 0; i < 4; i++)
     for (int j = 0; j < 3; j++) {
-      EXPECT_FLOAT_EQ(sigma.val() * sigma.val()
-                          * exp(squared_distance(x2_rvec[i], x1_vec[j]).val()
-                                / (-2.0 * l.val() * l.val())),
+      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() *
+                          exp(squared_distance(x2_rvec[i], x1_vec[j]).val() /
+                              (-2.0 * l.val() * l.val())),
                       cov8(i, j).val())
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(cov8(i, j).val(), cov2(j, i).val());
@@ -882,9 +882,9 @@ TEST(RevMath, cov_exp_quad2_vec_eigen_mixed) {
   EXPECT_EQ(4, cov3.cols());
   for (int i = 0; i < 4; i++)
     for (int j = 0; j < 4; j++)
-      EXPECT_FLOAT_EQ(sigma.val() * sigma.val()
-                          * exp(squared_distance(x2_vec[i], x2_rvec[j]).val()
-                                / (-2.0 * l.val() * l.val())),
+      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() *
+                          exp(squared_distance(x2_vec[i], x2_rvec[j]).val() /
+                              (-2.0 * l.val() * l.val())),
                       cov3(i, j).val())
           << "index: (" << i << ", " << j << ")";
 
@@ -894,9 +894,9 @@ TEST(RevMath, cov_exp_quad2_vec_eigen_mixed) {
   EXPECT_EQ(4, cov4.cols());
   for (int i = 0; i < 4; i++)
     for (int j = 0; j < 4; j++) {
-      EXPECT_FLOAT_EQ(sigma.val() * sigma.val()
-                          * exp(squared_distance(x2_rvec[i], x2_vec[j]).val()
-                                / (-2.0 * l.val() * l.val())),
+      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() *
+                          exp(squared_distance(x2_rvec[i], x2_vec[j]).val() /
+                              (-2.0 * l.val() * l.val())),
                       cov4(i, j).val())
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(cov4(i, j).val(), cov3(i, j).val());
@@ -908,9 +908,9 @@ TEST(RevMath, cov_exp_quad2_vec_eigen_mixed) {
   EXPECT_EQ(3, cov5.cols());
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 3; j++)
-      EXPECT_FLOAT_EQ(sigma.val() * sigma.val()
-                          * exp(squared_distance(x1_rvec[i], x1_vec[j]).val()
-                                / (-2.0 * l.val() * l.val())),
+      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() *
+                          exp(squared_distance(x1_rvec[i], x1_vec[j]).val() /
+                              (-2.0 * l.val() * l.val())),
                       cov5(i, j).val())
           << "index: (" << i << ", " << j << ")";
 
@@ -920,9 +920,9 @@ TEST(RevMath, cov_exp_quad2_vec_eigen_mixed) {
   EXPECT_EQ(3, cov6.cols());
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 3; j++) {
-      EXPECT_FLOAT_EQ(sigma.val() * sigma.val()
-                          * exp(squared_distance(x1_vec[i], x1_rvec[j]).val()
-                                / (-2.0 * l.val() * l.val())),
+      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() *
+                          exp(squared_distance(x1_vec[i], x1_rvec[j]).val() /
+                              (-2.0 * l.val() * l.val())),
                       cov6(i, j).val())
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(cov6(i, j).val(), cov5(i, j).val());
@@ -939,13 +939,13 @@ TEST(RevMath, cov_exp_quad_domain_error_training) {
   x[1] = -1;
   x[2] = -0.5;
 
-  std::vector<Eigen::Matrix<var, -1, 1> > x_2(3);
+  std::vector<Eigen::Matrix<var, -1, 1>> x_2(3);
   for (size_t i = 0; i < x_2.size(); ++i) {
     x_2[i].resize(3, 1);
     x_2[i] << 1, 2, 3;
   }
 
-  std::vector<Eigen::Matrix<var, 1, -1> > x_3(3);
+  std::vector<Eigen::Matrix<var, 1, -1>> x_3(3);
   for (size_t i = 0; i < x_3.size(); ++i) {
     x_3[i].resize(1, 3);
     x_3[i] << 1, 2, 3;
@@ -988,13 +988,13 @@ TEST(RevMath, cov_exp_quad_nan_error_training) {
   x[1] = -1;
   x[2] = -0.5;
 
-  std::vector<Eigen::Matrix<var, -1, 1> > x_2(3);
+  std::vector<Eigen::Matrix<var, -1, 1>> x_2(3);
   for (size_t i = 0; i < x_2.size(); ++i) {
     x_2[i].resize(3, 1);
     x_2[i] << 1, 2, 3;
   }
 
-  std::vector<Eigen::Matrix<var, 1, -1> > x_3(3);
+  std::vector<Eigen::Matrix<var, 1, -1>> x_3(3);
   for (size_t i = 0; i < x_3.size(); ++i) {
     x_3[i].resize(1, 3);
     x_3[i] << 1, 2, 3;
@@ -1003,10 +1003,10 @@ TEST(RevMath, cov_exp_quad_nan_error_training) {
   std::vector<var> x_bad(x);
   x_bad[1] = std::numeric_limits<var>::quiet_NaN();
 
-  std::vector<Eigen::Matrix<var, -1, 1> > x_bad_2(x_2);
+  std::vector<Eigen::Matrix<var, -1, 1>> x_bad_2(x_2);
   x_bad_2[1](1) = std::numeric_limits<var>::quiet_NaN();
 
-  std::vector<Eigen::Matrix<var, 1, -1> > x_bad_3(x_3);
+  std::vector<Eigen::Matrix<var, 1, -1>> x_bad_3(x_3);
   x_bad_3[1](1) = std::numeric_limits<var>::quiet_NaN();
 
   var sigma_bad = std::numeric_limits<var>::quiet_NaN();
@@ -1091,13 +1091,13 @@ TEST(RevMath, cov_exp_quad_domain_error) {
   EXPECT_THROW(stan::math::cov_exp_quad(x1, x2, sigma_bad, l_bad),
                std::domain_error);
 
-  std::vector<Eigen::Matrix<var, -1, 1> > x_vec_1(3);
+  std::vector<Eigen::Matrix<var, -1, 1>> x_vec_1(3);
   for (size_t i = 0; i < x_vec_1.size(); ++i) {
     x_vec_1[i].resize(3, 1);
     x_vec_1[i] << 1, 2, 3;
   }
 
-  std::vector<Eigen::Matrix<var, -1, 1> > x_vec_2(4);
+  std::vector<Eigen::Matrix<var, -1, 1>> x_vec_2(4);
   for (size_t i = 0; i < x_vec_2.size(); ++i) {
     x_vec_2[i].resize(3, 1);
     x_vec_2[i] << 4, 1, 3;
@@ -1110,13 +1110,13 @@ TEST(RevMath, cov_exp_quad_domain_error) {
   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1, x_vec_2, sigma_bad, l_bad),
                std::domain_error);
 
-  std::vector<Eigen::Matrix<var, 1, -1> > x_rvec_1(3);
+  std::vector<Eigen::Matrix<var, 1, -1>> x_rvec_1(3);
   for (size_t i = 0; i < x_rvec_1.size(); ++i) {
     x_rvec_1[i].resize(1, 3);
     x_rvec_1[i] << 1, 2, 3;
   }
 
-  std::vector<Eigen::Matrix<var, 1, -1> > x_rvec_2(4);
+  std::vector<Eigen::Matrix<var, 1, -1>> x_rvec_2(4);
   for (size_t i = 0; i < x_rvec_2.size(); ++i) {
     x_rvec_2[i].resize(1, 3);
     x_rvec_2[i] << 4, 1, 3;
@@ -1170,13 +1170,13 @@ TEST(RevMath, cov_exp_quad2_nan_domain_error) {
   EXPECT_THROW(stan::math::cov_exp_quad(x1, x2, sigma_bad, l_bad),
                std::domain_error);
 
-  std::vector<Eigen::Matrix<var, -1, 1> > x_vec_1(3);
+  std::vector<Eigen::Matrix<var, -1, 1>> x_vec_1(3);
   for (size_t i = 0; i < x_vec_1.size(); ++i) {
     x_vec_1[i].resize(3, 1);
     x_vec_1[i] << 1, 2, 3;
   }
 
-  std::vector<Eigen::Matrix<var, -1, 1> > x_vec_2(4);
+  std::vector<Eigen::Matrix<var, -1, 1>> x_vec_2(4);
   for (size_t i = 0; i < x_vec_2.size(); ++i) {
     x_vec_2[i].resize(3, 1);
     x_vec_2[i] << 4, 1, 3;
@@ -1189,13 +1189,13 @@ TEST(RevMath, cov_exp_quad2_nan_domain_error) {
   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1, x_vec_2, sigma_bad, l_bad),
                std::domain_error);
 
-  std::vector<Eigen::Matrix<var, 1, -1> > x_rvec_1(3);
+  std::vector<Eigen::Matrix<var, 1, -1>> x_rvec_1(3);
   for (size_t i = 0; i < x_rvec_1.size(); ++i) {
     x_rvec_1[i].resize(1, 3);
     x_rvec_1[i] << 1, 2, 3;
   }
 
-  std::vector<Eigen::Matrix<var, 1, -1> > x_rvec_2(4);
+  std::vector<Eigen::Matrix<var, 1, -1>> x_rvec_2(4);
   for (size_t i = 0; i < x_rvec_2.size(); ++i) {
     x_rvec_2[i].resize(1, 3);
     x_rvec_2[i] << 4, 1, 3;
@@ -1227,14 +1227,14 @@ TEST(RevMath, cov_exp_quad2_nan_domain_error) {
   std::vector<var> x2_bad(x2);
   x2_bad[1] = std::numeric_limits<var>::quiet_NaN();
 
-  std::vector<Eigen::Matrix<var, -1, 1> > x_vec_1_bad(x_vec_1);
+  std::vector<Eigen::Matrix<var, -1, 1>> x_vec_1_bad(x_vec_1);
   x_vec_1_bad[1](1) = std::numeric_limits<var>::quiet_NaN();
-  std::vector<Eigen::Matrix<var, -1, 1> > x_vec_2_bad(x_vec_2);
+  std::vector<Eigen::Matrix<var, -1, 1>> x_vec_2_bad(x_vec_2);
   x_vec_2_bad[1](1) = std::numeric_limits<var>::quiet_NaN();
 
-  std::vector<Eigen::Matrix<var, 1, -1> > x_rvec_1_bad(x_rvec_1);
+  std::vector<Eigen::Matrix<var, 1, -1>> x_rvec_1_bad(x_rvec_1);
   x_rvec_1_bad[1](1) = std::numeric_limits<var>::quiet_NaN();
-  std::vector<Eigen::Matrix<var, 1, -1> > x_rvec_2_bad(x_rvec_2);
+  std::vector<Eigen::Matrix<var, 1, -1>> x_rvec_2_bad(x_rvec_2);
   x_rvec_2_bad[1](1) = std::numeric_limits<var>::quiet_NaN();
 
   EXPECT_THROW(stan::math::cov_exp_quad(x1_bad, x2, sigma, l),
@@ -1277,13 +1277,13 @@ TEST(RevMath, cov_exp_quad2_dim_mismatch_vec_eigen_vec) {
   var sigma = 0.2;
   var l = 5;
 
-  std::vector<Eigen::Matrix<var, -1, 1> > x_vec_1(3);
+  std::vector<Eigen::Matrix<var, -1, 1>> x_vec_1(3);
   for (size_t i = 0; i < x_vec_1.size(); ++i) {
     x_vec_1[i].resize(3, 1);
     x_vec_1[i] << 1, 2, 3;
   }
 
-  std::vector<Eigen::Matrix<var, -1, 1> > x_vec_2(4);
+  std::vector<Eigen::Matrix<var, -1, 1>> x_vec_2(4);
   for (size_t i = 0; i < x_vec_2.size(); ++i) {
     x_vec_2[i].resize(4, 1);
     x_vec_2[i] << 4, 1, 3, 1;
@@ -1298,13 +1298,13 @@ TEST(RevMath, cov_exp_quad2_dim_mismatch_vec_eigen_rvec) {
   var sigma = 0.2;
   var l = 5;
 
-  std::vector<Eigen::Matrix<var, 1, -1> > x_vec_1(3);
+  std::vector<Eigen::Matrix<var, 1, -1>> x_vec_1(3);
   for (size_t i = 0; i < x_vec_1.size(); ++i) {
     x_vec_1[i].resize(1, 3);
     x_vec_1[i] << 1, 2, 3;
   }
 
-  std::vector<Eigen::Matrix<var, 1, -1> > x_vec_2(4);
+  std::vector<Eigen::Matrix<var, 1, -1>> x_vec_2(4);
   for (size_t i = 0; i < x_vec_2.size(); ++i) {
     x_vec_2[i].resize(1, 4);
     x_vec_2[i] << 4, 1, 3, 1;
@@ -1319,25 +1319,25 @@ TEST(RevMath, cov_exp_quad2_dim_mismatch_vec_eigen_mixed) {
   var sigma = 0.2;
   var l = 5;
 
-  std::vector<Eigen::Matrix<var, 1, -1> > x_rvec_1(3);
+  std::vector<Eigen::Matrix<var, 1, -1>> x_rvec_1(3);
   for (size_t i = 0; i < x_rvec_1.size(); ++i) {
     x_rvec_1[i].resize(1, 3);
     x_rvec_1[i] << 1, 2, 3;
   }
 
-  std::vector<Eigen::Matrix<var, -1, 1> > x_vec_1(4);
+  std::vector<Eigen::Matrix<var, -1, 1>> x_vec_1(4);
   for (size_t i = 0; i < x_vec_1.size(); ++i) {
     x_vec_1[i].resize(4, 1);
     x_vec_1[i] << 4, 1, 3, 1;
   }
 
-  std::vector<Eigen::Matrix<var, -1, 1> > x_vec_2(3);
+  std::vector<Eigen::Matrix<var, -1, 1>> x_vec_2(3);
   for (size_t i = 0; i < x_vec_2.size(); ++i) {
     x_vec_2[i].resize(3, 1);
     x_vec_2[i] << 1, 2, 3;
   }
 
-  std::vector<Eigen::Matrix<var, 1, -1> > x_rvec_2(4);
+  std::vector<Eigen::Matrix<var, 1, -1>> x_rvec_2(4);
   for (size_t i = 0; i < x_rvec_2.size(); ++i) {
     x_rvec_2[i].resize(1, 4);
     x_rvec_2[i] << 1, 2, 3, 4;

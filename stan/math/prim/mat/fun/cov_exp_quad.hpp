@@ -1,21 +1,19 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_COV_EXP_QUAD_HPP
 #define STAN_MATH_PRIM_MAT_FUN_COV_EXP_QUAD_HPP
 
-#include <cmath>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/divide.hpp>
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
-//#include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/fun/divide.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <cmath>
 #include <vector>
-///////////// testing
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
 
 namespace stan {
 namespace math {
@@ -78,6 +76,7 @@ inline
  *
  * @param x std::vector of elements that can be used in square distance.
  *    This function assumes each element of x is the same size.
+ *    This function assumes the dimension if x and l are the same.
  * @param sigma standard deviation
  * @param length_scale std::vector length scale
  * @return squared distance
@@ -93,17 +92,9 @@ inline
   using std::exp;
 
   size_t x_size = x.size();
-  //  size_t D_x = T_x.size();
-  //  size_t D_x = sizeof(T_x);
-  
-  //  const char *function_name = "cov_exp_quad";
-  //  const char *len_scale_name = "length_scale";
   check_positive_finite("cov_exp_quad", "magnitude", sigma);
   check_positive_finite("cov_exp_quad", "length scale", length_scale);
 
-  // add check size match
-  //  check_size_match(function_name, "x", x, x_size, len_scale_name, 
-  
   Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
@@ -122,7 +113,6 @@ inline
     }
   }
 
-  // this could be more efficient
   for (size_t j = 0; j < x_size; ++j) {
     cov(j, j) = sigma_sq;
     for (size_t i = j + 1; i < x_size; ++i) {
@@ -193,6 +183,7 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * @param x2 std::vector of elements that can be used in square distance
  * @param sigma standard deviation
  * @param length_scale std::vector of length scale
+ *    This function assumes the dimension if x1, x2 and l are the same.
  * @return squared distance
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
@@ -248,6 +239,6 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   }
   return cov;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
