@@ -41,7 +41,7 @@ inline
     cov_exp_quad(const std::vector<T_x> &x, const T_sigma &sigma,
                  const T_l &length_scale) {
   using std::exp;
-  check_positive("cov_exp_quad", "marginal variance", sigma);
+  check_positive("cov_exp_quad", "magnitude", sigma);
   check_positive("cov_exp_quad", "length-scale", length_scale);
   for (size_t n = 0; n < x.size(); ++n)
     check_not_nan("cov_exp_quad", "x", x[n]);
@@ -93,10 +93,16 @@ inline
   using std::exp;
 
   size_t x_size = x.size();
+  size_t D_x = T_x.size();
+  
   const char *function_name = "cov_exp_quad";
-  check_positive_finite(function_name, "marginal variance", sigma);
-  check_positive_finite(function_name, "length scale", length_scale);
+  const char *len_scale_name = "length_scale";
+  check_positive_finite(function_name, "magitude", sigma);
+  check_positive_finite(function_name, "length scale", len_scale_name);
 
+  // add check size match
+  //  check_size_match(function_name, "x", x, x_size, len_scale_name, 
+  
   Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
@@ -149,7 +155,7 @@ inline typename Eigen::Matrix<
 cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
              const T_sigma &sigma, const T_l &length_scale) {
   using std::exp;
-  check_positive("cov_exp_quad", "marginal variance", sigma);
+  check_positive("cov_exp_quad", "magnitude", sigma);
   check_positive("cov_exp_quad", "length-scale", length_scale);
   for (size_t n = 0; n < x1.size(); ++n)
     check_not_nan("cov_exp_quad", "x1", x1[n]);
@@ -206,7 +212,7 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     check_not_nan(function_name, "x1", x1[i]);
   for (size_t i = 0; i < x2_size; ++i)
     check_not_nan(function_name, "x2", x2[i]);
-  check_positive_finite(function_name, "marginal variance", sigma);
+  check_positive_finite(function_name, "magnitude", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
 
   Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type,
