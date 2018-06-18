@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat.hpp>
 #include <limits>
+#include <stan/math/prim/mat.hpp>
 #include <string>
 #include <vector>
 

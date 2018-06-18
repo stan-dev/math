@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
-#include <stan/math/rev/mat.hpp>
-#include <test/unit/math/rev/mat/util.hpp>
 #include <limits>
+#include <stan/math/rev/mat.hpp>
 #include <string>
+#include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
 
 template <typename T_x1, typename T_x2, typename T_sigma, typename T_l>
