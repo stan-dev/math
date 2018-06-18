@@ -19,7 +19,7 @@ namespace math {
  * @return value of promoted type
  */
 template <class N, class D, class P = typename 
- return_type<rm_complex_t<D>,
+ return_type<rm_complex_t<N>,
              rm_complex_t<D>>::type>
 inline auto
 complex_promote(std::complex<D> const& d) {
@@ -37,7 +37,7 @@ complex_promote(std::complex<D> const& d) {
  * @return value of promoted type
  */
 template <class N, class D, class P = typename 
- return_type<rm_complex_t<D>,
+ return_type<rm_complex_t<N>,
              rm_complex_t<D>>::type>
 inline auto
 complex_promote(D const& d) {

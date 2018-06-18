@@ -24,7 +24,7 @@ namespace math {
 template <class T, class U, std::enable_if_t<is_fr_var<T, U>::value
  && (is_complex<U>::value || is_arith_like<U>::value)>* = nullptr>
 inline auto operator-(std::complex<T> const& t, U const& u) {
-  return complex_promote<T, U>(t) -= u;
+  return complex_promote<U>(t) -= u;
 }
 
 /**
@@ -39,7 +39,7 @@ inline auto operator-(std::complex<T> const& t, U const& u) {
 template <class T, class U, std::enable_if_t<is_fr_var<T, U>::value
  && is_arith_like<T>::value>* = nullptr>
 inline auto operator-(T const& t, std::complex<U> const& u) {
-  return complex_promote<T, U>(t) -= u;
+  return complex_promote<U>(t) -= u;
 }
 
 }  // namespace math
