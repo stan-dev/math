@@ -58,8 +58,8 @@ inline
   for (size_t j = 0; j < (x_size - 1); ++j) {
     cov(j, j) = sigma_sq;
     for (size_t i = j + 1; i < x_size; ++i) {
-      cov(i, j) =
-          sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
+      cov(i, j)
+          = sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
       cov(j, i) = cov(i, j);
     }
   }
@@ -164,8 +164,8 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   for (size_t i = 0; i < x1.size(); ++i) {
     for (size_t j = 0; j < x2.size(); ++j) {
-      cov(i, j) =
-          sigma_sq * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
+      cov(i, j)
+          = sigma_sq * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
     }
   }
   return cov;
