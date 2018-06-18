@@ -14,10 +14,11 @@ namespace math {
  */
 template <class T = double>
 struct zeroing : T {
+  using T::T;  // inherit ctors
   template <std::enable_if_t<
    stan::is_arith_like<T>::value>* = nullptr>
   zeroing(T const& t =0) : T(t) {}  // NOLINT(runtime/explicit)
-  operator T() const {return *this;}  ///< upcast
+  operator T() const { return *static_cast<T*>(this); }  // upcast
 };
 
 }  // namespace math

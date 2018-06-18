@@ -40,12 +40,15 @@ struct complex : std::complex<zeroing<T>> {
    * param[in] real, the pure real component of the complex number.
    * param[in] imag, the pure imaginary component of the complex number
    */
-  template <class R = zeroing<T>, class I = zeroing<T>,
+  template <class R = double, class I = double,
             std::enable_if_t<is_arith_like<R>::value>* = nullptr>
   // NOLINTNEXTLINE(runtime/explicit)
   complex(R const& real =0, I const& imag =0) 
       : std::complex<zeroing<T>>(real, imag) {}
-  operator std::complex<T>() const {return *this;}  ///< downcast
+  // downcast
+  operator std::complex<T>() const {
+   return *static_cast<std::complex<T>*>(this);
+  }
 };
 
 }  // namespace math
