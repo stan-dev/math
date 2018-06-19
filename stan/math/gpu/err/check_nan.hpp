@@ -21,7 +21,7 @@ inline void check_nan(const char* function, const char* name,
   if (y.size() == 0)
     return;
 
-  cl::Kernel kernel_check_nan = opencl_context.get_kernel("check_nan");
+  cl::Kernel kernel_check_nan = opencl_context.get_kernel("is_nan");
   cl::CommandQueue cmd_queue = opencl_context.queue();
   cl::Context& ctx = opencl_context.context();
   try {

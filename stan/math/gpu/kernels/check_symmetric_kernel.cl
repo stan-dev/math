@@ -2,7 +2,7 @@ R"(
 #ifndef A
 #define A(i, j)  A[j * rows + i]
 #endif
-__kernel void check_symmetric(
+__kernel void is_symmetric(
       __global double *A,
       int rows,
       int cols,
@@ -13,7 +13,7 @@ __kernel void check_symmetric(
   if (i < rows && j < cols) {
     double diff = fabs(A(i, j) - A(j, i));
     if (diff > tolerance) {
-      flag[0] = 1;
+      flag[0] = 0;
     }
   }
 };)"

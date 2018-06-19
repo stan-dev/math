@@ -22,11 +22,11 @@ inline void check_symmetric(const char* function, const char* name,
     return;
   check_square(function, name, y);
   cl::Kernel kernel_check_symmetric
-      = opencl_context.get_kernel("check_symmetric");
+      = opencl_context.get_kernel("is_symmetric");
   cl::CommandQueue cmd_queue = opencl_context.queue();
   cl::Context& ctx = opencl_context.context();
   try {
-    int symmetric_flag = 0;
+    int symmetric_flag = 1;
     cl::Buffer buffer_symmetric_flag(ctx, CL_MEM_READ_WRITE, sizeof(int));
     cmd_queue.enqueueWriteBuffer(buffer_symmetric_flag, CL_TRUE, 0, sizeof(int),
                                  &symmetric_flag);
@@ -44,7 +44,7 @@ inline void check_symmetric(const char* function, const char* name,
     cmd_queue.enqueueReadBuffer(buffer_symmetric_flag, CL_TRUE, 0, sizeof(int),
                                 &symmetric_flag);
     //  if the matrix is not symmetric
-    if (symmetric_flag) {
+    if (!symmetric_flag) {
       domain_error(function, name, "is not symmetric", "");
     }
   } catch (const cl::Error& e) {
