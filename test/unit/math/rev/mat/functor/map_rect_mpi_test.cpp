@@ -6,8 +6,6 @@
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
-#include <test/unit/math/prim/mat/functor/mpi_test_env.hpp>
-
 #include <test/unit/math/prim/mat/functor/hard_work.hpp>
 #include <test/unit/math/prim/mat/functor/faulty_functor.hpp>
 
@@ -54,10 +52,7 @@ struct MpiJob : public ::testing::Test {
   }
 };
 
-MPI_TEST_F(MpiJob, hard_work_vv) {
-  if (rank != 0)
-    return;
-
+TEST_F(MpiJob, hard_work_vv) {
   std::vector<stan::math::var> shared_params_v_vec
       = stan::math::to_array_1d(shared_params_v);
   std::vector<stan::math::var> shared_params_v2_vec
@@ -112,10 +107,7 @@ MPI_TEST_F(MpiJob, hard_work_vv) {
   }
 }
 
-MPI_TEST_F(MpiJob, always_faulty_functor_vv) {
-  if (rank != 0)
-    return;
-
+TEST_F(MpiJob, always_faulty_functor_vv) {
   stan::math::vector_v result;
 
   EXPECT_NO_THROW((result = stan::math::map_rect<1, faulty_functor>(
@@ -137,10 +129,7 @@ MPI_TEST_F(MpiJob, always_faulty_functor_vv) {
                    std::domain_error, "MPI error on first evaluation.");
 }
 
-MPI_TEST_F(MpiJob, always_faulty_functor_vd) {
-  if (rank != 0)
-    return;
-
+TEST_F(MpiJob, always_faulty_functor_vd) {
   stan::math::vector_v result;
 
   EXPECT_NO_THROW((result = stan::math::map_rect<1, faulty_functor>(
@@ -162,10 +151,7 @@ MPI_TEST_F(MpiJob, always_faulty_functor_vd) {
                    std::domain_error, "MPI error on first evaluation.");
 }
 
-MPI_TEST_F(MpiJob, always_faulty_functor_dv) {
-  if (rank != 0)
-    return;
-
+TEST_F(MpiJob, always_faulty_functor_dv) {
   stan::math::vector_v result;
 
   EXPECT_NO_THROW((result = stan::math::map_rect<1, faulty_functor>(

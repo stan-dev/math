@@ -31,7 +31,18 @@
 
 #include "gtest/gtest.h"
 
+#include <stan/math/prim/arr/functor/mpi_cluster.hpp>
+
+
 GTEST_API_ int main(int argc, char **argv) {
+#ifdef STAN_MPI
+  // for MPI testing we test with all workers in listen mode. No
+  // output is generated from the workers.
+  stan::math::mpi_cluster cluster;
+  cluster.listen();
+  if (cluster.rank_ != 0)
+    return 0;
+#endif
   printf("Running main() from gtest_main.cc\n");
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
