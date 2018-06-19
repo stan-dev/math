@@ -60,10 +60,10 @@ TEST(AgradFwdAbs, complexNotNullIssue123) {
   z.imag(y);
   EXPECT_TRUE(z.imag().val());
   auto zabs(abs(z));
-  EXPECT_EQ(zabs.val(), 5);
+  EXPECT_FLOAT_EQ(zabs.val(), 5);
   // z^2 = x^2 + (x+1)^2 = 2x^2+2x+1 ==> 2z dz/dx = 4x + 2
   // dz/dx = (4x + 2)/(2 z) = (4 * 3 + 2)/(2 * 5) = 1.4
-  EXPECT_EQ(zabs.tangent(), 1.4);
+  EXPECT_FLOAT_EQ(zabs.tangent(), 1.4);
 
   // the following are complex var left and right op parameter coercions
   // (i.e. checks for correct instantiations)
@@ -72,12 +72,8 @@ TEST(AgradFwdAbs, complexNotNullIssue123) {
   auto q(8 / ((1 + z) * 2));
   q += std::complex<double>(.5, 1.5);             // 0.5-0.5i + .5+1.5i = 1+1i
   std::complex<fvar<double>> r(2 * (z + 1) / 8);  // 2*(3+4i+1)/8  = 1+1i
-  EXPECT_TRUE(q == std::complex<double>(1, 1));
-  EXPECT_TRUE(std::complex<double>(1, 1) == q);
-  EXPECT_TRUE(r == std::complex<double>(1, 1));
-  EXPECT_TRUE(std::complex<double>(1, 1) == r);
-  EXPECT_TRUE(q == r);
-  EXPECT_TRUE(r == q);
+  EXPECT_FLOAT_EQ(abs(q - std::complex<double>(1, 1)).val(), 0.0);
+  EXPECT_FLOAT_EQ(abs(r - std::complex<double>(1, 1)).val(), 0.0);
 
   EXPECT_NEAR((abs(q) * abs(r)).val(), 2, 1E-8);
   EXPECT_NEAR((abs(r) * abs(q)).val(), 2, 1E-8);
