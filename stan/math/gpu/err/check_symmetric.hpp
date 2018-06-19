@@ -21,8 +21,7 @@ inline void check_symmetric(const char* function, const char* name,
   if (y.size() == 0)
     return;
   check_square(function, name, y);
-  cl::Kernel kernel_check_symmetric
-      = opencl_context.get_kernel("is_symmetric");
+  cl::Kernel kernel_check_symmetric = opencl_context.get_kernel("is_symmetric");
   cl::CommandQueue cmd_queue = opencl_context.queue();
   cl::Context& ctx = opencl_context.context();
   try {
