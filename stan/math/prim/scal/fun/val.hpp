@@ -8,10 +8,26 @@
 namespace stan {
 namespace math {
 
+// helper descent function arithmetic case
+template <class T, std::enable_if_t<
+ std::is_arithmetic<T>::value>* =nullptr>
+inline auto
+val_helper (T const& t) {
+ return t;
+}
+
+// helper descent function for stan object
+template <class T, std::enable_if_t<
+ !std::is_arithmetic<T>::value>* =nullptr>
+inline auto
+val_helper (T const& t) {
+ return t.val();
+}
+
 /**
  * Returns the underlying value of the
- * stan type, multiple levels deep if
- * required by template parameter S.
+ * stan type, zero or multiple levels deep
+ * if required by template parameter S.
  *
  * This is the termination condition
  * of the function template.
@@ -22,16 +38,17 @@ namespace math {
  * @param s optional return type arg
  * @return underlying value
  */
-template <class T, class S = T,
-          std::enable_if_t<!is_fr_var<T>::value>* = nullptr>
-inline S val(T const& t, S const& = S()) {
-  return t;
+template <class T, class S = decltype(val_helper(T())),
+ std::enable_if_t<std::is_same<T, S>::value>* =nullptr>
+inline S
+val(T const& t, S const& = S()) {
+  return t;  // terminate descent regardless of type T
 }
 
 /**
  * Returns the underlying value of the
- * (f)var type, multiple levels deep if
- * required by template parameter S.
+ * (f)var type, zero or multiple levels deep
+ * if required by template parameter S.
  *
  * @tparam T type argument
  * @tparam S return type sought
@@ -39,12 +56,13 @@ inline S val(T const& t, S const& = S()) {
  * @param s optional return type arg
  * @return value of variable.
  */
-template <class T, class S = T,
-          std::enable_if_t<is_fr_var<T>::value>* = nullptr>
-inline S val(T const& t, S const& s = S()) {
+template <class T, class S = decltype(val_helper(T())),
+ std::enable_if_t<!std::is_same<T, S>::value>* =nullptr>
+inline S
+val(T const& t, S const& s = S()) {
   // fundamental types require
   // val to be fully qualified
-  return stan::math::val(t.val(), s);
+  return stan::math::val(val_helper(t), s);
 }
 
 /**
@@ -58,12 +76,14 @@ inline S val(T const& t, S const& s = S()) {
  * @param s optional return type arg
  * @return underlying value
  */
-template <class T, class S = T>
-inline std::complex<S> val(std::complex<T> const& t, S const& s = S()) {
+template <class T, class S = decltype(val_helper(T()))>
+inline std::complex<S>
+val(std::complex<T> const& t, S const& s = S()) {
   return std::complex<S>(
       // fundamental types require
       // val to be fully qualified
-      stan::math::val(t.real(), s), stan::math::val(t.imag(), s));
+      stan::math::val(t.real(), s),
+      stan::math::val(t.imag(), s));
 }
 
 }  // namespace math
