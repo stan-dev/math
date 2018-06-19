@@ -93,10 +93,10 @@ TEST_F(AgradRev, complexNotNullIssue123) {
   z.imag(y);
   EXPECT_TRUE(z.imag().val());
   auto zabs(abs(z));
-  EXPECT_EQ(zabs.val(), 5);
+  EXPECT_FLOAT_EQ(zabs.val(), 5);
   zabs.grad();  // z^2 = x^2 + (x+1)^2 = 2x^2+2x+1 ==> 2z dz/dx = 4x + 2
   // dz/dx = (4x + 2)/(2 z) = (4 * 3 + 2)/(2 * 5) = 1.4
-  EXPECT_EQ(x.adj(), 1.4);
+  EXPECT_FLOAT_EQ(x.adj(), 1.4);
 
   // the following are complex var left and right op parameter coercions
   // (i.e. checks for correct instantiations)
@@ -105,8 +105,8 @@ TEST_F(AgradRev, complexNotNullIssue123) {
   auto q(8 / ((1 + z) * 2));
   q += std::complex<double>(.5, 1.5);     // 0.5-0.5i + .5+1.5i = 1+1i
   std::complex<AVAR> r(2 * (z + 1) / 8);  // 2*(3+4i+1)/8  = 1+1i
-  EXPECT_EQ(abs(q - std::complex<double>(1, 1)), 0.0);
-  EXPECT_EQ(abs(r - std::complex<double>(1, 1)), 0.0);
+  EXPECT_FLOAT_EQ(abs(q - std::complex<double>(1, 1)).val(), 0.0);
+  EXPECT_FLOAT_EQ(abs(r - std::complex<double>(1, 1)).val(), 0.0);
   stan::math::recover_memory_nested();
 }
 
