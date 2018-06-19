@@ -4,22 +4,25 @@
 # - CC_MAJOR: major version of CC
 # - CC_MINOR: minor version of CC
 ##
-ifneq (,$(findstring clang++,$(CC)))
-  CC_TYPE ?= clang++
+ifneq (,$(findstring clang,$(CC)))
+  CC_TYPE ?= clang
   # Clang often seems to find the wrong gcc installation, especially on travis.
   # To deal with that we force it to use llvm's bundled libc++ replacement for
   # gcc's stdlibc++ here. Plus it's better to rely on just one compiler if we
   # can.
   CXXFLAGS += -stdlib=libc++
 endif
-ifneq (,$(findstring mingw32-g++,$(CC)))
-  CC_TYPE ?= mingw32-g++
+ifneq (,$(findstring mingw32-g,$(CC)))
+  CC_TYPE ?= mingw32-gcc
 endif
 ifneq (,$(findstring i686-w64-mingw32-g++,$(CC)))
   CXXFLAGS += -m32
 endif
+ifneq (,$(findstring gcc,$(CC)))
+  CC_TYPE ?= gcc
+endif
 ifneq (,$(findstring g++,$(CC)))
-  CC_TYPE ?= g++
+  CC_TYPE ?= gcc
 endif
 CC_TYPE ?= other
 CC_MAJOR := $(shell $(CC) -dumpversion 2>&1 | cut -d'.' -f1)

@@ -68,6 +68,7 @@ $(BOOST_LIB)/mpi.so:
 	@mkdir -p $(dir $@)
 	cd $(BOOST); ./bootstrap.sh
 	cd $(BOOST); echo "using mpi ;" >> user-config.jam
+	cd $(BOOST); echo "using $(CC_TYPE) : : $(CC);" >> user-config.jam
 	cd $(BOOST); ./b2 --user-config=user-config.jam --with-mpi --with-serialization
 
 $(BOOST_LIB)/libboost_serialization.so: $(BOOST_LIB)/mpi.so

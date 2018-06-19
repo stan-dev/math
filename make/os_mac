@@ -4,11 +4,11 @@
 #   - CXXFLAGS
 #   - GTEST_CXXFLAGS
 
-ifeq (g++,$(CC_TYPE))
+ifeq (gcc,$(CC_TYPE))
   VERSION := $(CC_MAJOR).$(CC_MINOR)
 endif
 
-ifeq (clang++,$(CC_TYPE))
+ifeq (clang,$(CC_TYPE))
   CXXFLAGS += -Wno-unknown-warning-option
   CXXFLAGS += -Wno-tautological-compare
   CXXFLAGS += -Wsign-compare
