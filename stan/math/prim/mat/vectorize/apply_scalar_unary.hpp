@@ -202,9 +202,7 @@ struct apply_scalar_unary<F, zeroing<T>> {
    * @param x Argument variable
    * @return Function applied to the variable
    */
-  static inline return_t apply(const T& x) {
-    return F::fun(x);
-  }
+  static inline return_t apply(const T& x) { return F::fun(x); }
 };
 
 /**

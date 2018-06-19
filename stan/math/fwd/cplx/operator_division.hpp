@@ -19,9 +19,8 @@ namespace math {
  * @return first argument divided by second argument
  */
 template <class T>
-inline std::complex<fvar<T>> operator/(
-    std::complex<fvar<T>> const& t,
-    std::complex<fvar<T>> const& u) {
+inline std::complex<fvar<T>> operator/(std::complex<fvar<T>> const& t,
+                                       std::complex<fvar<T>> const& u) {
   return stan::math::operator_division(t, u);  // no recursion
 }
 

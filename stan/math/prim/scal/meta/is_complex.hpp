@@ -13,16 +13,13 @@ struct complex;  // forward declare stan's complex
 
 /// trait to see if the template parameter is complex
 template <class>
-struct is_complex : 
- std::false_type {};
+struct is_complex : std::false_type {};
 
 template <class T>
-struct is_complex<std::complex<T>> 
- : std::true_type {};
+struct is_complex<std::complex<T>> : std::true_type {};
 
 template <class T>
-struct is_complex<stan::math::complex<T>>
- : std::true_type {};
+struct is_complex<stan::math::complex<T>> : std::true_type {};
 
 }  // namespace stan
 #endif
