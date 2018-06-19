@@ -22,7 +22,9 @@ namespace math {
  * @param s optional return type arg
  * @return underlying value
  */
-template <class T, class S = T>
+template <class T, class S = T,
+ std::enable_if_t<
+  !is_fr_var<T>::value>* =nullptr>
 inline S
 val(T const& t, S const& = S()) {
  return t;

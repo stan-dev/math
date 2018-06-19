@@ -24,8 +24,8 @@ struct is_arith_like_helper
  * or arithmetic. Restriction on complex matches
  * std::is_arithmetic.
  */
-template <class T, class U = double, class V = double,
- class W = double, class X = double, class Y = double>
+template <class T, class U = void, class V = void,
+ class W = void, class X = void, class Y = void>
 struct is_arith_like :
  std::integral_constant<bool,
   is_arith_like_helper<T>::value
