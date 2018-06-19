@@ -16,19 +16,25 @@
 namespace Eigen {
 
 template <class T1, class T2, template <class, class> class OP>
-struct ScalarBinaryOpTraits<T1, std::enable_if_t<
-// !VectorBlock !is_eigen
- (stan::is_complex<T1>::value || stan::is_arith_like<T1>::value) &&
- (stan::is_complex<T2>::value || stan::is_arith_like<T2>::value) &&
- !std::is_same<T1, T2>::value &&  // avoid Eigen's template
-  ((stan::is_complex<T1>::value &&  // next boolean avoids Eigen
-    !std::is_same<stan::rm_complex_t<T1>, stan::rm_zeroing_t<T2>>::value)
-   || (stan::is_complex<T2>::value &&  // next bool avoids Eigen
-    !std::is_same<stan::rm_zeroing_t<T1>, stan::rm_complex_t<T2>>::value)), 
- T2>, OP<T1, T2>> {
- typedef std::complex<typename stan::return_type<
-  stan::rm_complex_t<T1>, stan::rm_complex_t<T2>>::type> ReturnType;
-};           
+struct ScalarBinaryOpTraits<
+    T1,
+    std::enable_if_t<
+        // !VectorBlock !is_eigen
+        (stan::is_complex<T1>::value || stan::is_arith_like<T1>::value)
+            && (stan::is_complex<T2>::value || stan::is_arith_like<T2>::value)
+            && !std::is_same<T1, T2>::value &&  // avoid Eigen's template
+            ((stan::is_complex<T1>::value &&    // next boolean avoids Eigen
+              !std::is_same<stan::rm_complex_t<T1>,
+                            stan::rm_zeroing_t<T2>>::value)
+             || (stan::is_complex<T2>::value &&  // next bool avoids Eigen
+                 !std::is_same<stan::rm_zeroing_t<T1>,
+                               stan::rm_complex_t<T2>>::value)),
+        T2>,
+    OP<T1, T2>> {
+  typedef std::complex<typename stan::return_type<stan::rm_complex_t<T1>,
+                                                  stan::rm_complex_t<T2>>::type>
+      ReturnType;
+};
 
 }  // namespace Eigen
 #endif

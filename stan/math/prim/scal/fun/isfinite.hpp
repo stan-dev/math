@@ -9,10 +9,10 @@ namespace math {
 
 /**
  * Checks if the given number has finite value.
- * 
+ *
  * Return <code>true</code> if the specified variable's
  * value is finite.
- * 
+ *
  * Termination happens when a non-stan type is
  * returned from val, preventing ADL from finding
  * this declaration of isfinite again.
@@ -26,8 +26,7 @@ namespace math {
  * @return <code>true</code> if variable is finite.
  */
 template <class T>
-inline bool
-isfinite(T const& t) {
+inline bool isfinite(T const& t) {
   return isfinite(val(t));
 }
 

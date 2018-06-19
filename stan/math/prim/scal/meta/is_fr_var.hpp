@@ -8,31 +8,28 @@
 
 namespace stan {
 
- /**
-  * Is std::true_type if T is fvar or var.
-  * Strips outer complex types.
-  * Note rm_complex also does rm_zeroing.
-  */
+/**
+ * Is std::true_type if T is fvar or var.
+ * Strips outer complex types.
+ * Note rm_complex also does rm_zeroing.
+ */
 template <class T>
-struct is_fr_var_helper :
- std::integral_constant<bool,
-  is_fvar<rm_complex_t<T>>::value
-  || is_var<rm_complex_t<T>>::value> {};
+struct is_fr_var_helper
+    : std::integral_constant<bool, is_fvar<rm_complex_t<T>>::value
+                                       || is_var<rm_complex_t<T>>::value> {};
 
 /**
  * Is std::true_type if any parameter is fvar or var.
  * Strips outer complex types..
  */
-template <class T, class U = double, class V = double,
- class W = double, class X = double, class Y = double>
-struct is_fr_var :
- std::integral_constant<bool,
-  is_fr_var_helper<T>::value
-  || is_fr_var_helper<U>::value
-  || is_fr_var_helper<V>::value
-  || is_fr_var_helper<W>::value
-  || is_fr_var_helper<X>::value
-  || is_fr_var_helper<Y>::value> {};
+template <class T, class U = double, class V = double, class W = double,
+          class X = double, class Y = double>
+struct is_fr_var
+    : std::integral_constant<
+          bool, is_fr_var_helper<T>::value || is_fr_var_helper<U>::value
+                    || is_fr_var_helper<V>::value || is_fr_var_helper<W>::value
+                    || is_fr_var_helper<X>::value
+                    || is_fr_var_helper<Y>::value> {};
 
 }  // namespace stan
 #endif

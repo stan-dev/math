@@ -18,11 +18,10 @@ namespace math {
  * @param d complex argument
  * @return value of promoted type
  */
-template <class N, class D, class P = typename 
- return_type<rm_complex_t<N>,
-             rm_complex_t<D>>::type>
-inline auto
-complex_promote(std::complex<D> const& d) {
+template <class N, class D,
+          class P
+          = typename return_type<rm_complex_t<N>, rm_complex_t<D>>::type>
+inline auto complex_promote(std::complex<D> const& d) {
   return std::complex<P>(d.real(), d.imag());
 }
 
@@ -36,11 +35,10 @@ complex_promote(std::complex<D> const& d) {
  * @param d argument
  * @return value of promoted type
  */
-template <class N, class D, class P = typename 
- return_type<rm_complex_t<N>,
-             rm_complex_t<D>>::type>
-inline auto
-complex_promote(D const& d) {
+template <class N, class D,
+          class P
+          = typename return_type<rm_complex_t<N>, rm_complex_t<D>>::type>
+inline auto complex_promote(D const& d) {
   return std::complex<P>(d);
 }
 

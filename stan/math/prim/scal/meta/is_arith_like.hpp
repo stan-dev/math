@@ -14,26 +14,24 @@ namespace stan {
  */
 template <class T>
 struct is_arith_like_helper
- : std::integral_constant<bool,
-    !is_complex<T>::value
-    && (is_fr_var<T>::value
-     || std::is_arithmetic<T>::value)> {};
+    : std::integral_constant<bool, !is_complex<T>::value
+                                       && (is_fr_var<T>::value
+                                           || std::is_arithmetic<T>::value)> {};
 
 /**
- * std::true_type if any parameter is fvar, var, 
+ * std::true_type if any parameter is fvar, var,
  * or arithmetic. Restriction on complex matches
  * std::is_arithmetic.
  */
-template <class T, class U = void, class V = void,
- class W = void, class X = void, class Y = void>
-struct is_arith_like :
- std::integral_constant<bool,
-  is_arith_like_helper<T>::value
-  || is_arith_like_helper<U>::value
-  || is_arith_like_helper<V>::value
-  || is_arith_like_helper<W>::value
-  || is_arith_like_helper<X>::value
-  || is_arith_like_helper<Y>::value> {};
+template <class T, class U = void, class V = void, class W = void,
+          class X = void, class Y = void>
+struct is_arith_like
+    : std::integral_constant<bool, is_arith_like_helper<T>::value
+                                       || is_arith_like_helper<U>::value
+                                       || is_arith_like_helper<V>::value
+                                       || is_arith_like_helper<W>::value
+                                       || is_arith_like_helper<X>::value
+                                       || is_arith_like_helper<Y>::value> {};
 
 }  // namespace stan
 #endif

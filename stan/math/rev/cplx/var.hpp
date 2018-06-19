@@ -13,8 +13,7 @@ namespace std {
  *  are provided there.
  */
 template <>
-struct complex<stan::math::var>
-    : stan::math::complex<stan::math::var> {
+struct complex<stan::math::var> : stan::math::complex<stan::math::var> {
   using stan::math::complex<stan::math::var>::complex;
 };
 

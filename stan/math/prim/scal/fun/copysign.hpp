@@ -6,7 +6,7 @@ namespace math {
 
 /**
  * Returns the magnitude of x with the sign of y
- * 
+ *
  * Needed for libc++'s implementation of
  * complex multiplication on stan types
  *
@@ -16,8 +16,7 @@ namespace math {
  * @return magnitude of x with the sign of y
  */
 template <class T>
-inline auto
-copysign(T const& x, T const& y) {
+inline auto copysign(T const& x, T const& y) {
   return fabs(x) * sign(y);
 }
 

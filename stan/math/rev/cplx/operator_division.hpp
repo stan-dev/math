@@ -18,9 +18,8 @@ namespace math {
  * @param u second argument
  * @return first argument divided by second argument
  */
-inline std::complex<var> operator/(
-    std::complex<var> const& t,
-    std::complex<var> const& u) {
+inline std::complex<var> operator/(std::complex<var> const& t,
+                                   std::complex<var> const& u) {
   return stan::math::operator_division(t, u);  // no recursion
 }
 

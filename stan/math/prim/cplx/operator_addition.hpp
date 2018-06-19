@@ -11,7 +11,7 @@
 
 namespace stan {
 namespace math {
- 
+
 /**
  * Return the sum of the specified arguments
  *
@@ -21,8 +21,10 @@ namespace math {
  * @param u second argument
  * @return sum
  */
-template <class T, class U, std::enable_if_t<is_fr_var<T, U>::value
- && (is_complex<U>::value || is_arith_like<U>::value)>* = nullptr>
+template <class T, class U,
+          std::enable_if_t<is_fr_var<T, U>::value
+                           && (is_complex<U>::value
+                               || is_arith_like<U>::value)>* = nullptr>
 inline auto operator+(std::complex<T> const& t, U const& u) {
   return complex_promote<U>(t) += u;
 }
@@ -36,8 +38,9 @@ inline auto operator+(std::complex<T> const& t, U const& u) {
  * @param u complex second argument
  * @return sum
  */
-template <class T, class U, std::enable_if_t<is_fr_var<T, U>::value
- && is_arith_like<T>::value>* = nullptr>
+template <class T, class U,
+          std::enable_if_t<is_fr_var<T, U>::value
+                           && is_arith_like<T>::value>* = nullptr>
 inline auto operator+(T const& t, std::complex<U> const& u) {
   return complex_promote<U>(t) += u;
 }

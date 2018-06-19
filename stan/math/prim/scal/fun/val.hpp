@@ -23,11 +23,9 @@ namespace math {
  * @return underlying value
  */
 template <class T, class S = T,
- std::enable_if_t<
-  !is_fr_var<T>::value>* =nullptr>
-inline S
-val(T const& t, S const& = S()) {
- return t;
+          std::enable_if_t<!is_fr_var<T>::value>* = nullptr>
+inline S val(T const& t, S const& = S()) {
+  return t;
 }
 
 /**
@@ -42,11 +40,9 @@ val(T const& t, S const& = S()) {
  * @return value of variable.
  */
 template <class T, class S = T,
- std::enable_if_t<
-  is_fr_var<T>::value>* =nullptr>
-inline S
-val(T const& t, S const& s = S()) {
-  // fundamental types require 
+          std::enable_if_t<is_fr_var<T>::value>* = nullptr>
+inline S val(T const& t, S const& s = S()) {
+  // fundamental types require
   // val to be fully qualified
   return stan::math::val(t.val(), s);
 }
@@ -63,14 +59,11 @@ val(T const& t, S const& s = S()) {
  * @return underlying value
  */
 template <class T, class S = T>
-inline std::complex<S>
-val(std::complex<T> const& t,
- S const& s = S()) {
- return std::complex<S>(
-  // fundamental types require 
-  // val to be fully qualified
-  stan::math::val(t.real(), s), 
-  stan::math::val(t.imag(), s));
+inline std::complex<S> val(std::complex<T> const& t, S const& s = S()) {
+  return std::complex<S>(
+      // fundamental types require
+      // val to be fully qualified
+      stan::math::val(t.real(), s), stan::math::val(t.imag(), s));
 }
 
 }  // namespace math
