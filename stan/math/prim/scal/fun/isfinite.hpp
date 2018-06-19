@@ -27,6 +27,7 @@ namespace math {
  */
 template <class T>
 inline bool isfinite(T const& t) {
+  using std::isfinite;
   return isfinite(val(t));
 }
 
