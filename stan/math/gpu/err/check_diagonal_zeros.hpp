@@ -22,26 +22,30 @@ inline void check_diagonal_zeros(const char* function, const char* name,
     return;
 
   cl::Kernel kernel_check_diagonal_zeros
-      = opencl_context.get_kernel("check_diagonal_zeros");
+      = opencl_context.get_kernel("is_zero_on_diagonal");
   cl::CommandQueue cmd_queue = opencl_context.queue();
   cl::Context ctx = opencl_context.context();
   try {
-    int flag = 0;
+    int zero_on_diagonal_flag = 0;
     cl::Buffer buffer_flag(ctx, CL_MEM_READ_WRITE, sizeof(int));
-    cmd_queue.enqueueWriteBuffer(buffer_flag, CL_TRUE, 0, sizeof(int), &flag);
+    cmd_queue.enqueueWriteBuffer(buffer_flag, CL_TRUE,
+                                 0, sizeof(int),
+                                 &zero_on_diagonal_flag);
 
     kernel_check_diagonal_zeros.setArg(0, y.buffer());
     kernel_check_diagonal_zeros.setArg(1, y.rows());
     kernel_check_diagonal_zeros.setArg(2, y.cols());
     kernel_check_diagonal_zeros.setArg(3, buffer_flag);
 
-    cmd_queue.enqueueNDRangeKernel(kernel_check_diagonal_zeros, cl::NullRange,
+    cmd_queue.enqueueNDRangeKernel(kernel_check_diagonal_zeros,
+                                   cl::NullRange,
                                    cl::NDRange(y.rows(), y.cols()),
                                    cl::NullRange);
 
-    cmd_queue.enqueueReadBuffer(buffer_flag, CL_TRUE, 0, sizeof(int), &flag);
+    cmd_queue.enqueueReadBuffer(buffer_flag, CL_TRUE, 0, sizeof(int),
+                                &zero_on_diagonal_flag);
     //  if zeros were found on the diagonal
-    if (flag) {
+    if (zero_on_diagonal_flag) {
       domain_error(function, name, "has zeros on the diagonal.", "");
     }
   } catch (const cl::Error& e) {

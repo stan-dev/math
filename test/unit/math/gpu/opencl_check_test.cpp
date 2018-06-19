@@ -91,8 +91,9 @@ TEST(ErrorHandlingScalarGPU, check_m_diagonal_zeros) {
   m_fail << 1, 2, 3, 2, 0, -5, 3, 5, 6;
   stan::math::matrix_gpu mm_ok(m_ok);
   stan::math::matrix_gpu mm_fail(m_fail);
-  EXPECT_NO_THROW(check_diagonal_zeros(function, "mm_ok",mm_ok));
-  EXPECT_THROW(check_diagonal_zeros(function, "mm_fail",mm_fail), std::domain_error);
+  EXPECT_NO_THROW(check_diagonal_zeros(function, "mm_ok", mm_ok));
+  EXPECT_THROW(check_diagonal_zeros(function, "mm_fail", mm_fail),
+                                    std::domain_error);
 }
 
 #endif
