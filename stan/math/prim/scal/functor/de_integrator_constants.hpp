@@ -196,7 +196,7 @@ static const double de_weights[] = {
     1.6939457789411646876e-10, 7.4967397573818224522e-11,
     3.230446433325236576e-11, 1.3542512912336274432e-11,
     5.5182369468174885821e-12, 2.1835922099233609052e-12};
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif
