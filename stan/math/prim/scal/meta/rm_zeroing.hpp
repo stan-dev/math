@@ -9,12 +9,19 @@ struct zeroing;  // forward declare
 
 }  // namespace math
 
-/// trait to change z_fvar to fvar and z<var> to var
+/**
+ * trait to change z_fvar to fvar and z<var> to var
+ * 
+ * this is the end condition
+ */
 template <class T>
 struct rm_zeroing {
   typedef T type;
 };
 
+/**
+ * trait to change z_fvar to fvar and z<var> to var
+ */
 template <class T>
 struct rm_zeroing<math::zeroing<T>> {
   typedef T type;
