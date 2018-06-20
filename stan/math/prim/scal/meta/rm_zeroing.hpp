@@ -11,7 +11,7 @@ struct zeroing;  // forward declare
 
 /**
  * trait to change z_fvar to fvar and z<var> to var
- * 
+ *
  * this is the end condition
  */
 template <class T>
