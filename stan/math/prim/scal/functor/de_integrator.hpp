@@ -86,16 +86,17 @@ inline double de_integrator(const F &f, double a, double b, double tolerance) {
 
   int i;
   for (i = offsets[0]; i != offsets[1]; ++i)
-    integral += de_weights[i] *
-                (f(c * de_abcissas[i] + d) + f(-c * de_abcissas[i] + d));
+    integral += de_weights[i]
+                * (f(c * de_abcissas[i] + d) + f(-c * de_abcissas[i] + d));
 
   int level;
   for (level = 1; level != num_levels; ++level) {
     h *= 0.5;
     new_contribution = 0.0;
     for (i = offsets[level]; i != offsets[level + 1]; ++i)
-      new_contribution += de_weights[i] * (f(c * de_abcissas[i] + d) +
-                                           f(-c * de_abcissas[i] + d));
+      new_contribution
+          += de_weights[i]
+             * (f(c * de_abcissas[i] + d) + f(-c * de_abcissas[i] + d));
     new_contribution *= h;
 
     // difference in consecutive integral estimates
@@ -153,6 +154,6 @@ inline double de_integrator(const F &f, double a, double b, double tolerance) {
   error_estimate *= c;
   return c * integral;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
