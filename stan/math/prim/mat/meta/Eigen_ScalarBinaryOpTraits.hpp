@@ -11,7 +11,7 @@
 #include <type_traits>
 
 namespace Eigen {
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+/// @cond DO_NOT_DOCUMENT
 // Eigen scalar op traits specialization for complex variables
 template <class T1, class T2, template <class, class> class OP>
 struct ScalarBinaryOpTraits<
@@ -33,6 +33,6 @@ struct ScalarBinaryOpTraits<
                                                   stan::rm_complex_t<T2>>::type>
       ReturnType;
 };
-#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+/// @endcond
 }  // namespace Eigen
 #endif
