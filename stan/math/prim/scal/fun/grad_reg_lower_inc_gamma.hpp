@@ -119,6 +119,7 @@ typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
     return 0.0;
   check_positive_finite("grad_reg_lower_inc_gamma", "z", z);
 
+  using std::sqrt;
   if ((a < 0.8 && z > 15.0) || (a < 12.0 && z > 30.0)
       || a < sqrt(-756 - value_of_rec(z) * value_of_rec(z)
                   + 60 * value_of_rec(z))) {
