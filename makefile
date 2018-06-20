@@ -38,6 +38,26 @@ CXX = $(CC)
 ##
 -include make/detect_os
 
+# If STAN_OPENCL is defined
+##
+# Adds the following to CXXFLAGS
+# link to OpenCL
+# Defines:
+#  STAN_OPENCL
+# OPENCL_DEVICE_ID - The ID of the GPU (default: 0)
+# OPENCL_PLATFORM_ID The ID of the OpenCL platform (default: 0)
+# Both IDs can be found through installing and calling clinfo
+-include make/setup_gpu
+
+##
+# If STAN_MPI is defined
+##
+# Adds the following to CXXFLAGS
+# link to MPI
+# Defines
+#  STAN_MPI
+-include make/setup_mpi
+
 include make/tests    # tests
 include make/cpplint  # cpplint
 
@@ -69,6 +89,7 @@ endif
 	@echo '  - CVODES                      ' $(CVODES)
 	@echo '  - IDAS                        ' $(IDAS)
 	@echo '  - GTEST                       ' $(GTEST)
+	@echo '  - OPENCL                      ' $(OPENCL)
 	@echo ''
 	@echo 'Tests:'
 	@echo ''
@@ -126,6 +147,7 @@ clean:
 	$(shell find test -type f -name "*_test.d.*" -exec rm {} +)
 	$(shell find test -type f -name "*_test.xml" -exec rm {} +)
 	$(shell find test -type f -name "*.o" -exec rm {} +)
+	$(shell find lib  -type f -name "*.o" -exec rm {} +)
 	$(shell find test -type f -name "lib*.so" -exec rm {} +)
 
 clean-doxygen:
@@ -141,3 +163,6 @@ clean-all: clean clean-doxygen clean-deps clean-libraries
 	@echo '  removing generated test files'
 	$(shell find test/prob -name '*_generated_*_test.cpp' -type f -exec rm {} +)
 	$(RM) $(wildcard test/prob/generate_tests$(EXE))
+
+print-%  : ; @echo $* = $($*)
+

@@ -10,15 +10,22 @@
 
 TEST(MathMatrix, matrix_exp_1x1) {
   stan::math::matrix_v m1(1, 1), m2(1, 1), m1_exp;
+  Eigen::Matrix<stan::math::var, 1, 1> m3, m3_exp;
   m1 << 0;
   m2 << 1;
   m1_exp = matrix_exp(m1);
+  m3 = m1;
+  m3_exp = matrix_exp(m3);
   expect_matrix_eq(m2, m1_exp);
 
   AVEC x = createAVEC(m1(0, 0));
+  AVEC y = createAVEC(m3(0, 0));
   VEC g;
   m1_exp(0, 0).grad(x, g);
   EXPECT_FLOAT_EQ(m1_exp(0, 0).val(), g[0]);
+  stan::math::set_zero_all_adjoints();
+  m3_exp(0, 0).grad(y, g);
+  EXPECT_FLOAT_EQ(m3_exp(0, 0).val(), g[0]);
 }
 
 TEST(MathMatrix, matrix_exp_2x2) {
@@ -146,7 +153,7 @@ TEST(MathMatrix, matrix_exp_25x25) {
   Matrix<double, Dynamic, Dynamic> exp_A
       = S * exp_diag_elements.asDiagonal() * S_inv;
 
-  double rel_err = 1e-10
+  double rel_err = 1e-6
                    * std::max(exp_A.cwiseAbs().maxCoeff(),
                               expm_A.cwiseAbs().maxCoeff().val());
 
@@ -170,7 +177,7 @@ TEST(MathMatrix, matrix_exp_25x25) {
         dA(k, k) = exp(diag_elements(k));
         dA_exp = S * dA * S_inv;
         rel_err = std::max(dA_exp.cwiseAbs().maxCoeff(), stan::math::max(g_abs))
-                  * 1e-10;
+                  * 1e-6;
         EXPECT_NEAR(dA_exp(i, j), diag_elements_var(k).adj(), rel_err);
       }
     }

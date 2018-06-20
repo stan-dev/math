@@ -13,3 +13,11 @@ ifeq (clang++,$(CC_TYPE))
   CXXFLAGS += -Wno-tautological-compare
   CXXFLAGS += -Wsign-compare
 endif
+
+ifdef STAN_OPENCL
+  LDFLAGS_OPENCL ?= -framework OpenCL
+  OPENCL_DEVICE_ID ?= 0
+  OPENCL_PLATFORM_ID ?= 0
+endif
+
+DLL := .dylib

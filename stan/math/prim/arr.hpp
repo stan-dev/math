@@ -13,6 +13,9 @@
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
+#ifdef STAN_OPENCL
+#include <stan/math/prim/arr/err/check_opencl.hpp>
+#endif
 
 #include <stan/math/prim/arr/fun/array_builder.hpp>
 #include <stan/math/prim/arr/fun/common_type.hpp>
@@ -37,6 +40,9 @@
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/arr/functor/integrate_ode_rk45.hpp>
 #include <stan/math/prim/arr/functor/integrate_1d.hpp>
+#include <stan/math/prim/arr/functor/mpi_command.hpp>
+#include <stan/math/prim/arr/functor/mpi_distributed_apply.hpp>
+#include <stan/math/prim/arr/functor/mpi_cluster.hpp>
 
 #include <stan/math/prim/scal.hpp>
 

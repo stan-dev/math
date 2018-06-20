@@ -2,8 +2,8 @@
 #define STAN_MATH_REV_MAT_FUNCTOR_CVODES_UTILS_HPP
 
 #include <cvodes/cvodes.h>
-#include <cvodes/cvodes_band.h>
-#include <cvodes/cvodes_dense.h>
+#include <cvodes/cvodes_direct.h>
+#include <sundials/sundials_dense.h>
 #include <nvector/nvector_serial.h>
 #include <sstream>
 #include <stdexcept>
@@ -30,7 +30,7 @@ inline void cvodes_set_options(void* cvodes_mem, double rel_tol, double abs_tol,
                                // NOLINTNEXTLINE(runtime/int)
                                long int max_num_steps) {
   // forward CVode errors to noop error handler
-  CVodeSetErrHandlerFn(cvodes_mem, cvodes_silent_err_handler, 0);
+  CVodeSetErrHandlerFn(cvodes_mem, cvodes_silent_err_handler, nullptr);
 
   // Initialize solver parameters
   cvodes_check_flag(CVodeSStolerances(cvodes_mem, rel_tol, abs_tol),
