@@ -25,9 +25,11 @@ namespace math {
  * with respect to param_n (which must be an element of param)
  */
 template <typename F>
-inline double gradient_of_f(const F& f, const double x, const std::vector<var>& param,
-                            const std::vector<double>& x_r, const std::vector<int>& x_i,
-                            const var& param_n, std::ostream& msgs) {
+inline double gradient_of_f(const F& f, const double x,
+                            const std::vector<var>& param,
+                            const std::vector<double>& x_r,
+                            const std::vector<int>& x_i, const var& param_n,
+                            std::ostream& msgs) {
   set_zero_all_adjoints_nested();
   f(x, param, x_r, x_i, msgs).grad();
   return param_n.adj();
@@ -73,10 +75,11 @@ inline double gradient_of_f(const F& f, const double x, const std::vector<var>& 
  * @return numeric integral of function f
  */
 template <typename F, typename var>
-inline var integrate_1d
-(const F& f, const double a, const double b, const std::vector<var>& param,
- const std::vector<double>& x_r, const std::vector<int>& x_i, std::ostream& msgs,
-    const double tolerance = 1e-6) {
+inline var integrate_1d(const F& f, const double a, const double b,
+                        const std::vector<var>& param,
+                        const std::vector<double>& x_r,
+                        const std::vector<int>& x_i, std::ostream& msgs,
+                        const double tolerance = 1e-6) {
   using std::placeholders::_1;
   static const char* function = "integrate_1d";
 
@@ -98,11 +101,10 @@ inline var integrate_1d
       auto clean_param = to_var(value_of(param));
 
       for (size_t n = 0; n < N; n++)
-        results[n] = de_integrator
-          (std::bind<double>(gradient_of_f<F>, f,
-                             _1, clean_param, x_r, x_i, clean_param[n],
-                             std::ref(msgs)),
-           a, b, tolerance);
+        results[n] = de_integrator(
+            std::bind<double>(gradient_of_f<F>, f, _1, clean_param, x_r, x_i,
+                              clean_param[n], std::ref(msgs)),
+            a, b, tolerance);
     } catch (const std::exception& e) {
       recover_memory_nested();
       throw;

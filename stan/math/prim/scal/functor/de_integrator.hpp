@@ -61,7 +61,7 @@ inline double de_integrator(const F& f, double a, double b, double tolerance) {
   double c = 0.5 * (b - a);
 
   // If size of integral is zero, handle this specially to avoid divide by zero
-  if(c == 0.0) {
+  if (c == 0.0) {
     return 0.0;
   }
 
@@ -140,10 +140,13 @@ inline double de_integrator(const F& f, double a, double b, double tolerance) {
       break;
   }
 
-  if(level == num_levels) {
-    check_less_or_equal("de_integrator", "max integration level reached, but error estimate", error_estimate * c, tolerance * c);
+  if (level == num_levels) {
+    check_less_or_equal("de_integrator",
+                        "max integration level reached, but error estimate",
+                        error_estimate * c, tolerance * c);
   } else {
-    check_less_or_equal("de_integrator", "error estimate", error_estimate * c, tolerance * c);
+    check_less_or_equal("de_integrator", "error estimate", error_estimate * c,
+                        tolerance * c);
   }
 
   num_function_evaluations = 2 * i - 1;

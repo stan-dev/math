@@ -51,10 +51,11 @@ namespace math {
  * @return numeric integral of function f
  */
 template <typename F>
-inline double integrate_1d
-(const F& f, const double a, const double b, const std::vector<double>& param,
- const std::vector<double>& x_r, const std::vector<int>& x_i, std::ostream& msgs,
-    const double tolerance = 1e-6) {
+inline double integrate_1d(const F& f, const double a, const double b,
+                           const std::vector<double>& param,
+                           const std::vector<double>& x_r,
+                           const std::vector<int>& x_i, std::ostream& msgs,
+                           const double tolerance = 1e-6) {
   using std::placeholders::_1;
   static const char* function = "integrate_1d";
 
@@ -62,9 +63,9 @@ inline double integrate_1d
   stan::math::check_finite(function, "upper limit", b);
   stan::math::check_less_or_equal(function, "lower limit", a, b);
 
-  double val_ = de_integrator
-    (std::bind<double>(f, _1, param, x_r, x_i, std::ref(msgs)), a, b,
-     tolerance);
+  double val_
+      = de_integrator(std::bind<double>(f, _1, param, x_r, x_i, std::ref(msgs)),
+                      a, b, tolerance);
 
   return val_;
 }
