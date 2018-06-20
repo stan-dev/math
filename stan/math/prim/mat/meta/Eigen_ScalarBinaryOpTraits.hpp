@@ -10,11 +10,11 @@
 #include <complex>
 #include <type_traits>
 
+namespace Eigen {
+
 /**
  * Eigen scalar op traits specialization for complex variables
  */
-namespace Eigen {
-
 template <class T1, class T2, template <class, class> class OP>
 struct ScalarBinaryOpTraits<
     T1,
