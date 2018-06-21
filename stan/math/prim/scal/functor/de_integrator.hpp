@@ -29,31 +29,30 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  */
-#ifndef STAN_MATH_REV_MAT_FUNCTOR_DEINTEGRATOR_HPP
-#define STAN_MATH_REV_MAT_FUNCTOR_DEINTEGRATOR_HPP
+#ifndef STAN_MATH_PRIM_SCAL_FUNCTOR_DEINTEGRATOR_HPP
+#define STAN_MATH_PRIM_SCAL_FUNCTOR_DEINTEGRATOR_HPP
 
-#include <stan/math/rev/mat/functor/de_integrator_constants.hpp>
-#include <cmath>
+#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
+#include <stan/math/prim/scal/functor/de_integrator_constants.hpp>
 #include <cfloat>
+#include <cmath>
 
 namespace stan {
 
 namespace math {
 
 /**
- * Double Exponential Integrator.
+ * Double Exponential Integrator
  *
- * @tparam T Type of f.
- * @param f a functor with signature double (double).
- * @param a lower limit of integration, must be double type.
- * @param b upper limit of integration, must be double type.
- * @param tre target relative error.
- * @param tae target absolute error.
- * @return numeric integral of function f.
+ * @tparam T Type of f
+ * @param f a functor with signature double (double)
+ * @param a lower limit of integration, must be double type
+ * @param b upper limit of integration, must be double type
+ * @param tolerance target absolute error
+ * @return numeric integral of function f
  */
 template <typename F>
-inline double de_integrator(const F& f, double a, double b, double tre,
-                            double tae) {
+inline double de_integrator(const F &f, double a, double b, double tolerance) {
   using std::fabs;
   using std::log;
 
@@ -61,10 +60,16 @@ inline double de_integrator(const F& f, double a, double b, double tre,
   // $$\int_a^b f(x) dx = c \int_{-1}^1 f( ct + d ) dt$$
   // c = (b-a)/2, d = (a+b)/2
   double c = 0.5 * (b - a);
+
+  // If size of integral is zero, handle this specially to avoid divide by zero
+  if (c == 0.0) {
+    return 0.0;
+  }
+
   double d = 0.5 * (a + b);
   int num_function_evaluations;
 
-  tae /= c;
+  tolerance /= c;
 
   // Offsets to where each level's integration constants start.
   // The last element is not a beginning but an end.
@@ -73,7 +78,6 @@ inline double de_integrator(const F& f, double a, double b, double tre,
 
   double new_contribution = 0.0;
   double integral = 0.0;
-  double previous_integral = 0.0;
   double error_estimate = DBL_MAX;
   double h = 1.0;
   double previous_delta, current_delta = DBL_MAX;
@@ -85,7 +89,8 @@ inline double de_integrator(const F& f, double a, double b, double tre,
     integral += de_weights[i]
                 * (f(c * de_abcissas[i] + d) + f(-c * de_abcissas[i] + d));
 
-  for (int level = 1; level != num_levels; ++level) {
+  int level;
+  for (level = 1; level != num_levels; ++level) {
     h *= 0.5;
     new_contribution = 0.0;
     for (i = offsets[level]; i != offsets[level + 1]; ++i)
@@ -97,7 +102,6 @@ inline double de_integrator(const F& f, double a, double b, double tre,
     // difference in consecutive integral estimates
     previous_delta = current_delta;
     current_delta = fabs(0.5 * integral - new_contribution);
-    previous_integral = integral;
     integral = 0.5 * integral + new_contribution;
 
     // Once convergence kicks in, error is approximately squared
@@ -133,9 +137,17 @@ inline double de_integrator(const F& f, double a, double b, double tre,
       error_estimate = current_delta;
     }
 
-    if (error_estimate < 0.1 * tae
-        && fabs(1 - integral / previous_integral) < tre)
+    if (error_estimate < tolerance)
       break;
+  }
+
+  if (level == num_levels) {
+    check_less_or_equal("de_integrator",
+                        "max integration level reached, but error estimate",
+                        error_estimate * c, tolerance * c);
+  } else {
+    check_less_or_equal("de_integrator", "error estimate", error_estimate * c,
+                        tolerance * c);
   }
 
   num_function_evaluations = 2 * i - 1;
