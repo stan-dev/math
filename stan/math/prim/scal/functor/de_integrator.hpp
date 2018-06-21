@@ -32,10 +32,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUNCTOR_DEINTEGRATOR_HPP
 #define STAN_MATH_PRIM_SCAL_FUNCTOR_DEINTEGRATOR_HPP
 
-#include <cfloat>
-#include <cmath>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/functor/de_integrator_constants.hpp>
+#include <cfloat>
+#include <cmath>
 
 namespace stan {
 
