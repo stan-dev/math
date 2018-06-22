@@ -29,3 +29,16 @@ TEST(AgradRev, check_varis_on_stack) {
   stan::math::var x = 4.0;
   test::check_varis_on_stack(stan::math::log10(x));
 }
+
+TEST(AgradRev, complex) {
+  stan::math::var x = stan::math::pi();
+
+  double h = 1e-8;
+  std::complex<stan::math::var> z(x, h);
+  auto f = log10(z);
+
+  AVEC v = createAVEC(real(z));
+  VEC g;
+  real(f).grad(v, g);
+  EXPECT_FLOAT_EQ(g[0], imag(f).val() / h);
+}

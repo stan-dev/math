@@ -62,3 +62,8 @@ TEST(AgradRev, check_varis_on_stack) {
   AVAR a(5.0);
   test::check_varis_on_stack(stan::math::sqrt(a));
 }
+
+TEST(AgradRev, complex) {
+  std::complex<stan::math::var> z(4, -5);
+  EXPECT_TRUE(std::sqrt(std::conj(z)) == std::conj(std::sqrt(z)));
+}
