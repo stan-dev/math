@@ -46,3 +46,18 @@ TEST(AgradRev, check_varis_on_stack) {
   AVAR a(5.0);
   test::check_varis_on_stack(stan::math::log(a));
 }
+
+TEST(AgradRev, complex) {
+  stan::math::var x = stan::math::pi();
+  std::complex<stan::math::var> z(x, 2.0 / 3);
+  EXPECT_TRUE(log(conj(z)) == conj(log(z)));
+
+  double h = 1e-8;
+  z = std::complex<stan::math::var>(x, h);
+  auto f = log(z);
+
+  AVEC v = createAVEC(real(z));
+  VEC g;
+  real(f).grad(v, g);
+  EXPECT_FLOAT_EQ(g[0], imag(f).val() / h);
+}

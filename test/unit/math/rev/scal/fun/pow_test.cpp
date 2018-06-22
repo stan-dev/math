@@ -102,3 +102,9 @@ TEST(AgradRev, check_varis_on_stack) {
   test::check_varis_on_stack(stan::math::pow(3.0, b));
   test::check_varis_on_stack(stan::math::pow(a, 4.0));
 }
+
+TEST(AgradRev, complex) {
+  std::complex<stan::math::var> i(0, 1);
+  auto f = pow(i, i);
+  EXPECT_EQ(real(f).val(), exp(-stan::math::pi() / 2));
+}
