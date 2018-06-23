@@ -21,7 +21,6 @@ TEST(MathMatrix, qr_R) {
       EXPECT_NEAR(m1(i, j).val(), m2(i, j).val(), 1e-8);
     }
   }
-  EXPECT_THROW(qr_R(transpose(m1)), std::domain_error);
 }
 TEST(AgradRevMatrix, check_varis_on_stack) {
   stan::math::matrix_v m1(3, 2);
