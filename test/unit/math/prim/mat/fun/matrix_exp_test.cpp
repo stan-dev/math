@@ -82,7 +82,7 @@ TEST(MathMatrix, matrix_exp_100x100) {
       expm_A = stan::math::matrix_exp(A);
 
   double rel_err
-      = 1e-10
+      = 1e-6
         * std::max(exp_A.cwiseAbs().maxCoeff(), expm_A.cwiseAbs().maxCoeff());
 
   for (int i = 0; i < size; i++)

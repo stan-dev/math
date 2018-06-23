@@ -2,7 +2,7 @@ R"(
 #ifndef A
 #define A(i, j)  A[j * rows + i]
 #endif
-__kernel void check_diagonal_zeros(
+__kernel void is_zero_on_diagonal(
         __global double *A,
         int rows,
         int cols,
