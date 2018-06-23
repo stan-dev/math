@@ -4,8 +4,8 @@
 #include <stan/math/prim/scal/meta/likely.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/fwd/scal/meta/ad_promotable.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <ostream>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -97,13 +97,10 @@ struct fvar {
    * @tparam V type of value (must be assignable to the value and
    *   tangent type T)
    * @param[in] v value
-   * @param[in] dummy value given by default with enable-if
-   *   metaprogramming
    */
-  template <typename V>
-  fvar(const V& v,
-       typename boost::enable_if_c<ad_promotable<V, T>::value>::type* dummy = 0)
-      : val_(v), d_(0.0) {
+  template <typename V,
+            typename std::enable_if_t<ad_promotable<V, T>::value>* = nullptr>
+  fvar(const V& v) : val_(v), d_(0.0) {  // NOLINT(runtime/explicit)
     if (unlikely(is_nan(v)))
       d_ = v;
   }
@@ -285,6 +282,7 @@ struct fvar {
     return os << v.val_;
   }
 };
+
 }  // namespace math
 }  // namespace stan
 #endif

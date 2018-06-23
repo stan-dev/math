@@ -108,6 +108,7 @@ typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
   using std::exp;
   using std::log;
   using std::pow;
+  using std::sqrt;
   typedef typename return_type<T1, T2>::type TP;
 
   if (is_nan(a) || is_nan(z))

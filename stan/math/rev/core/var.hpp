@@ -4,10 +4,10 @@
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/grad.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
+#include <stan/math/prim/cplx/complex.hpp>
 #include <boost/math/tools/config.hpp>
 #include <ostream>
 #include <vector>
-#include <complex>
 #include <string>
 #include <exception>
 

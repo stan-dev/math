@@ -1,7 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
 #define STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
 
+#include <stan/math/prim/scal/meta/rm_zeroing.hpp>
 #include <Eigen/Dense>
+#include <complex>
 #include <vector>
 
 namespace stan {
@@ -33,6 +35,17 @@ namespace math {
  */
 template <typename F, typename T>
 struct apply_scalar_unary {
+  static_assert(
+      std::is_base_of<
+          Eigen::EigenBase<typename Eigen::internal::remove_all<T>::type>,
+          typename Eigen::internal::remove_all<T>::type>::value,
+      "If this fires, it is likely that apply_scalar_unary has no "
+      "specialization "
+      "for T *OR* that the function F isn't defined for T and has thus tried "
+      "the "
+      "matrix overload. In any case, this unconstrained template struct "
+      "only works for Eigen types.");
+
   /**
    * Type of underlying scalar for the matrix type T.
    */
@@ -116,6 +129,84 @@ struct apply_scalar_unary<F, int> {
 
 /**
  * Template specialization for vectorized functions applying to
+ * complex arguments.
+ *
+ * @tparam F Type of function defining static apply function.
+ * @tparam T Underlying type of the complex type
+ */
+template <typename F, class T>
+struct apply_scalar_unary<F, std::complex<T>> {
+  /**
+   * The return type, complex.
+   */
+  typedef std::complex<rm_zeroing_t<T>> return_t;
+
+  /**
+   * Apply the function specified by F to the specified argument.
+   * This is defined through a direct application of
+   * <code>F::fun()</code>, which must be defined for complex
+   * arguments.
+   *
+   * @param x Argument scalar.
+   * @return Result of applying F to the scalar.
+   */
+  static inline return_t apply(return_t x) { return F::fun(x); }
+};
+
+template <class>
+struct complex;  // forward declare stan's complex
+
+/**
+ * Template specialization for vectorized functions applying to
+ * stan's complex arguments.
+ *
+ * @tparam F Type of function defining static apply function.
+ * @tparam T Underlying type of the complex type
+ */
+template <typename F, class T>
+struct apply_scalar_unary<F, stan::math::complex<T>> {
+  /**
+   * The return type, complex.
+   */
+  typedef std::complex<rm_zeroing_t<T>> return_t;
+
+  /**
+   * Apply the function specified by F to the specified argument.
+   * This is defined through a direct application of
+   * <code>F::fun()</code>, which must be defined for
+   * std::complex arguments.
+   *
+   * @param x Argument scalar. (implictly upcast through ctor)
+   * @return Result of applying F to the scalar.
+   */
+  static inline return_t apply(return_t x) { return F::fun(x); }
+};
+
+/**
+ * Template specialization for vectorized functions applying
+ * to zeroing variable arguments.
+ *
+ * @tparam F Class defining a static apply function
+ * @tparam T wrapped type of the zeroing variable
+ */
+template <typename F, typename T>
+struct apply_scalar_unary<F, zeroing<T>> {
+  /**
+   * Function return type, <code>T</code>.
+   */
+  typedef T return_t;
+
+  /**
+   * Apply the function specified by F to the specified argument.
+   *
+   * @param x Argument variable
+   * @return Function applied to the variable
+   */
+  static inline return_t apply(const T& x) { return F::fun(x); }
+};
+
+/**
+ * Template specialization for vectorized functions applying to
  * standard vector containers.  The lowest-level scalar type of
  * the argument will determine the return type.  Integers are
  * promoted to double values.
@@ -124,7 +215,7 @@ struct apply_scalar_unary<F, int> {
  * @tparam T Type of element contained in standard vector.
  */
 template <typename F, typename T>
-struct apply_scalar_unary<F, std::vector<T> > {
+struct apply_scalar_unary<F, std::vector<T>> {
   /**
    * Return type, which is calculated recursively as a standard
    * vector of the return type of the contained type T.

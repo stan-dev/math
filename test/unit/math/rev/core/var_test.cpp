@@ -81,6 +81,35 @@ TEST_F(AgradRev, ctorOverloads) {
   EXPECT_THROW(var(std::complex<long double>(37, 10)), std::invalid_argument);
 }
 
+TEST_F(AgradRev, complexNotNullIssue123) {
+  stan::math::start_nested();
+  AVAR x = 3;
+  std::complex<AVAR> z = x;
+  ASSERT_TRUE(z.imag().operator->() != nullptr);
+  EXPECT_TRUE(z.real().val());
+  EXPECT_FALSE(z.imag().val());
+  auto y(z.real() + 1);
+  // gradient back propagates partly through imaginary -> y -> real -> x
+  z.imag(y);
+  EXPECT_TRUE(z.imag().val());
+  auto zabs(abs(z));
+  EXPECT_FLOAT_EQ(zabs.val(), 5);
+  zabs.grad();  // z^2 = x^2 + (x+1)^2 = 2x^2+2x+1 ==> 2z dz/dx = 4x + 2
+  // dz/dx = (4x + 2)/(2 z) = (4 * 3 + 2)/(2 * 5) = 1.4
+  EXPECT_FLOAT_EQ(x.adj(), 1.4);
+
+  // the following are complex var left and right op parameter coercions
+  // (i.e. checks for correct instantiations)
+
+  // 8/((1+3+4i)*2) = 1/(1+1i) * (1-i)/(1-i) = (1-i)/2
+  auto q(8 / ((1 + z) * 2));
+  q += std::complex<double>(.5, 1.5);     // 0.5-0.5i + .5+1.5i = 1+1i
+  std::complex<AVAR> r(2 * (z + 1) / 8);  // 2*(3+4i+1)/8  = 1+1i
+  EXPECT_FLOAT_EQ(abs(q - std::complex<double>(1, 1)).val(), 0.0);
+  EXPECT_FLOAT_EQ(abs(r - std::complex<double>(1, 1)).val(), 0.0);
+  stan::math::recover_memory_nested();
+}
+
 TEST_F(AgradRev, a_eq_x) {
   AVAR a = 5.0;
   EXPECT_FLOAT_EQ(5.0, a.val());
