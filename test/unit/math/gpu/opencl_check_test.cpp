@@ -1,13 +1,17 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
-#include <stan/math/gpu/err/check_matrix_gpu.hpp>
+#include <stan/math/gpu/err/check_diagonal_zeros.hpp>
+#include <stan/math/gpu/err/check_matching_dims.hpp>
+#include <stan/math/gpu/err/check_nan.hpp>
+#include <stan/math/gpu/err/check_square.hpp>
+#include <stan/math/gpu/err/check_symmetric.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 
 using stan::math::check_nan;
 
 // ---------- check_nan: matrix tests ----------
-TEST(ErrorHandlingScalarGPU, Check_nan_Matrix) {
+TEST(ErrorHandlingScalarGPU, check_nan_Matrix) {
   const char* function = "check_nan";
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
   using stan::math::matrix_gpu;
@@ -19,7 +23,7 @@ TEST(ErrorHandlingScalarGPU, Check_nan_Matrix) {
       << "check_nan should be true with finite xx";
 }
 
-TEST(ErrorHandlingScalarGPU, Check_nan_Matrix_quit_nan) {
+TEST(ErrorHandlingScalarGPU, check_nan_Matrix_quit_nan) {
   const char* function = "check_nan";
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
   using stan::math::matrix_gpu;
@@ -31,7 +35,7 @@ TEST(ErrorHandlingScalarGPU, Check_nan_Matrix_quit_nan) {
       << "check_nan should throw exception on NaN";
 }
 
-TEST(ErrorHandlingScalarGPU, Check_nan_positions) {
+TEST(ErrorHandlingScalarGPU, check_nan_positions) {
   const char* function = "check_nan";
   double nan = std::numeric_limits<double>::quiet_NaN();
   using stan::math::matrix_gpu;
@@ -77,4 +81,19 @@ TEST(ErrorHandlingScalarGPU, check_m_symmetric) {
                std::domain_error);
   EXPECT_NO_THROW(check_symmetric(function, "m_symm_mat1", mm_ok));
 }
+
+TEST(ErrorHandlingScalarGPU, check_m_diagonal_zeros) {
+  const char* function = "check_diagonal_zeros";
+
+  stan::math::matrix_d m_ok(3, 3);
+  stan::math::matrix_d m_fail(3, 3);
+  m_ok << 1, 2, 3, 2, 4, -5, 3, 5, 6;
+  m_fail << 1, 2, 3, 2, 0, -5, 3, 5, 6;
+  stan::math::matrix_gpu mm_ok(m_ok);
+  stan::math::matrix_gpu mm_fail(m_fail);
+  EXPECT_NO_THROW(check_diagonal_zeros(function, "mm_ok", mm_ok));
+  EXPECT_THROW(check_diagonal_zeros(function, "mm_fail", mm_fail),
+               std::domain_error);
+}
+
 #endif

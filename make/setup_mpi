@@ -1,0 +1,12 @@
+##
+# If STAN_MPI is defined
+##
+# Sets up MPI CXXFLAGS_MPI and LDFLAGS_MPI to compile and
+# link to MPI
+# Defines
+#  STAN_MPI
+ifdef STAN_MPI
+  LIBMPI = $(MATH)src/math/prim/arr/mpi_cluster.o $(BOOST_LIB)/libboost_mpi$(DLL) $(BOOST_LIB)/libboost_serialization$(DLL)
+  CXXFLAGS_MPI = -DSTAN_MPI
+  LDFLAGS_MPI ?= -Wl,-lboost_mpi -Wl,-lboost_serialization -Wl,-L,"$(BOOST_LIB_ABS)" -Wl,-rpath,"$(BOOST_LIB_ABS)"
+endif

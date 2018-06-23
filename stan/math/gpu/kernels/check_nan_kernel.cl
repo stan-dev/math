@@ -2,7 +2,7 @@ R"(
 #ifndef A
 #define A(i, j)  A[j * rows + i]
 #endif
-__kernel void check_nan(
+__kernel void is_nan(
       __global double *A,
       int rows,
       int cols,

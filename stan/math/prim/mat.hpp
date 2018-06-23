@@ -158,6 +158,7 @@
 #include <stan/math/prim/mat/fun/logit.hpp>
 #include <stan/math/prim/mat/fun/make_nu.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp.hpp>
+#include <stan/math/prim/mat/fun/matrix_exp_multiply.hpp>
 #include <stan/math/prim/mat/fun/max.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>
@@ -186,6 +187,8 @@
 #include <stan/math/prim/mat/fun/promote_scalar_type.hpp>
 #include <stan/math/prim/mat/fun/qr_Q.hpp>
 #include <stan/math/prim/mat/fun/qr_R.hpp>
+#include <stan/math/prim/mat/fun/qr_thin_Q.hpp>
+#include <stan/math/prim/mat/fun/qr_thin_R.hpp>
 #include <stan/math/prim/mat/fun/quad_form.hpp>
 #include <stan/math/prim/mat/fun/quad_form_diag.hpp>
 #include <stan/math/prim/mat/fun/quad_form_sym.hpp>
@@ -203,6 +206,7 @@
 #include <stan/math/prim/mat/fun/rows.hpp>
 #include <stan/math/prim/mat/fun/rows_dot_product.hpp>
 #include <stan/math/prim/mat/fun/rows_dot_self.hpp>
+#include <stan/math/prim/mat/fun/scale_matrix_exp_multiply.hpp>
 #include <stan/math/prim/mat/fun/sd.hpp>
 #include <stan/math/prim/mat/fun/segment.hpp>
 #include <stan/math/prim/mat/fun/simplex_constrain.hpp>
