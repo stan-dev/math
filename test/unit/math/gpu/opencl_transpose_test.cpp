@@ -1,6 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
-#include <stan/math/gpu/basic_matrix_gpu.hpp>
+#include <stan/math/gpu/transpose_opencl.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 
