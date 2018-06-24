@@ -113,8 +113,8 @@ TEST(MathMatrixGPU, subtract_exception) {
   stan::math::matrix_d m2(3, 2);
   m2 << 10, 100, 1000, 0, -10, -12;
 
-  using stan::math::subtract;
   using stan::math::matrix_gpu;
+  using stan::math::subtract;
   matrix_gpu v11(v1);
   matrix_gpu v22(v2);
   matrix_gpu v33(v1);

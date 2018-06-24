@@ -3,7 +3,6 @@
 #include <stan/math/gpu/add_opencl.hpp>
 #include <gtest/gtest.h>
 
-
 TEST(MathMatrixGPU, add_v_exception_pass) {
   stan::math::vector_d d1, d2;
 

@@ -17,7 +17,6 @@ TEST(MathMatrixGPU, zero_m_exception_pass) {
   EXPECT_NO_THROW(stan::math::zeros(m0, stan::math::UPPER));
 }
 
-
 TEST(MathMatrixGPU, zero_m_value_check) {
   stan::math::matrix_d m0(2, 2);
   stan::math::matrix_d m0_dst(2, 2);

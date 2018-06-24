@@ -26,5 +26,4 @@ TEST(MathMatrixGPU, identity_m_value_check) {
   EXPECT_EQ(1, m0(1, 1));
 }
 
-
 #endif
