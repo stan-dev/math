@@ -61,5 +61,6 @@
 #include <stan/math/rev/mat/functor/integrate_ode_adams.hpp>
 #include <stan/math/rev/mat/functor/integrate_ode_bdf.hpp>
 #include <stan/math/rev/mat/functor/map_rect_reduce.hpp>
+#include <stan/math/rev/mat/functor/quadratic_optimizer.hpp>
 
 #endif
