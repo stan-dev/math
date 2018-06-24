@@ -113,6 +113,16 @@ struct f10 {
   }
 };
 
+struct f11 {
+  template <typename T1, typename T2>
+  inline typename stan::return_type<T1, T2>::type operator()(
+      const T1& x, const T1& xc, const std::vector<T2>& theta,
+      const std::vector<double>& x_r, const std::vector<int>& x_i,
+      std::ostream& msgs) const {
+    return (std::isnan(xc)) ? xc : 0.0;
+  }
+};
+
 /*
  * test_integration is a helper function to make it easy to test the
  * integrate_1d function.
@@ -195,6 +205,23 @@ TEST(StanMath_integrate_1d, TestThrows) {
                                std::numeric_limits<double>::infinity(),
                                std::vector<double>(), {}, {}, msgs, 1e-6),
       std::domain_error);
+  // xc should be nan if there are infinite limits
+  EXPECT_THROW(stan::math::integrate_1d(
+                   f11{}, 0.0, std::numeric_limits<double>::infinity(),
+                   std::vector<double>(), {}, {}, msgs, 1e-6),
+               std::domain_error);
+  EXPECT_THROW(
+      stan::math::integrate_1d(f11{}, std::numeric_limits<double>::infinity(),
+                               0.0, std::vector<double>(), {}, {}, msgs, 1e-6),
+      std::domain_error);
+  EXPECT_THROW(
+      stan::math::integrate_1d(f11{}, std::numeric_limits<double>::infinity(),
+                               std::numeric_limits<double>::infinity(),
+                               std::vector<double>(), {}, {}, msgs, 1e-6),
+      std::domain_error);
+  // But not otherwise
+  EXPECT_NO_THROW(stan::math::integrate_1d(
+      f11{}, 0.0, 1.0, std::vector<double>(), {}, {}, msgs, 1e-6));
 }
 
 TEST(StanMath_integrate_1d, test1) {
