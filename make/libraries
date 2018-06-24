@@ -78,7 +78,7 @@ $(BOOST_LIB)/libboost_serialization.dylib: $(BOOST_LIB)/mpi.so
 
 $(BOOST_LIB)/libboost_mpi.so: $(BOOST_LIB)/mpi.so
 
-$(BOOST_LIB)/libboost_mpi.dylib: $(BOOST_LIB)/mpi.so
+$(BOOST_LIB)/libboost_mpi.dylib: $(BOOST_LIB)/mpi.so $(BOOST_LIB)/libboost_serialization.dylib
 	install_name_tool -add_rpath "$(BOOST_LIB_ABS)" "$(BOOST_LIB)/libboost_mpi.dylib"
 	install_name_tool -change libboost_serialization.dylib @rpath/libboost_serialization.dylib "$(BOOST_LIB)/libboost_mpi.dylib"
 	install_name_tool -id @rpath/libboost_mpi.dylib "$(BOOST_LIB)/libboost_mpi.dylib"
@@ -88,3 +88,4 @@ clean-libraries:
 	$(RM) $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS) $(LIBMPI))
 	$(RM) -rf $(BOOST_LIB)/*
 	$(RM) -rf $(BOOST)/bin.v2 $(BOOST)/tools/build/src/engine/bootstrap/ $(BOOST)/tools/build/src/engine/bin.* $(BOOST)/project-config.jam* $(BOOST)/b2 $(BOOST)/bjam $(BOOST)/bootstrap.log
+	$(RM) -rf bin
