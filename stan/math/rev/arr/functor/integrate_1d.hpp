@@ -18,7 +18,7 @@ namespace math {
  * with respect to the nth parameter. Uses nested reverse mode autodiff
  */
 template <typename F>
-inline double gradient_of_f(const F& f, const double x,
+inline double gradient_of_f(const F& f, const double& x, const double& xc,
                             const std::vector<double>& theta_vals,
                             const std::vector<double>& x_r,
                             const std::vector<int>& x_i, size_t n,
@@ -29,7 +29,7 @@ inline double gradient_of_f(const F& f, const double x,
   try {
     for (size_t i = 0; i < theta_vals.size(); i++)
       theta_var[i] = theta_vals[i];
-    f(x, theta_var, x_r, x_i, msgs).grad();
+    f(x, xc, theta_var, x_r, x_i, msgs).grad();
     gradient = theta_var[n].adj();
   } catch (const std::exception& e) {
     recover_memory_nested();
@@ -46,11 +46,23 @@ inline double gradient_of_f(const F& f, const double x,
  * parameters.
  *
  * f should be compatible with reverse mode autodiff and have the signature:
- *   var foo(double x, std::vector<var> theta, std::vector<double> x_r,
- *     std::vector<int> x_i, std::ostream& msgs)
+ *   var foo(double x, double xc, std::vector<var> theta, std::vector<double>
+ * x_r, std::vector<int> x_i, std::ostream& msgs)
  *
  * It should return the value of the function evaluated at x. Any errors
  * should be printed to the msgs stream.
+ *
+ * Integrals that cross zero are broken into two, and the separate integrals are
+ * each integrated to the given tolerance.
+ *
+ * For integrals with finite limits, the xc argument is the distance to the
+ * nearest boundary. So for a > 0, b > 0, it will be a - x for x closer to a,
+ * and b - x for x closer to b. xc is computed in a way that avoids the
+ * precision loss of computing a - x or b - x manually. For integrals that cross
+ * zero, xc can take values a - x, -x, or b - x depending on which integration
+ * limit it is nearest.
+ *
+ * If either limit is infinite, xc is set to NaN
  *
  * Boost decides the integration is converged when subsequent estimates of the
  * integral are less than tolerance * abs(integral). This means the tolerance is
@@ -83,10 +95,10 @@ inline var integrate_1d(const F& f, const double a, const double b,
       domain_error(function, "Integration endpoints are both", a, "", "");
     return var(0.0);
   } else {
-    double integral
-        = integrate(std::bind<double>(f, std::placeholders::_1, value_of(theta),
-                                      x_r, x_i, std::ref(msgs)),
-                    a, b, tolerance);
+    double integral = integrate(
+        std::bind<double>(f, std::placeholders::_1, std::placeholders::_2,
+                          value_of(theta), x_r, x_i, std::ref(msgs)),
+        a, b, tolerance);
 
     size_t N = theta.size();
     std::vector<double> dintegral_dtheta(N);
@@ -95,7 +107,8 @@ inline var integrate_1d(const F& f, const double a, const double b,
     for (size_t n = 0; n < N; ++n) {
       dintegral_dtheta[n] = integrate(
           std::bind<double>(gradient_of_f<F>, f, std::placeholders::_1,
-                            theta_vals, x_r, x_i, n, std::ref(msgs)),
+                            std::placeholders::_2, theta_vals, x_r, x_i, n,
+                            std::ref(msgs)),
           a, b, tolerance);
     }
 

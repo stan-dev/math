@@ -18,7 +18,7 @@ namespace math {
  * tolerance. This function assumes a is less than b.
  *
  * The signature for f should be:
- *   double foo(double x)
+ *   double foo(double x, double xc)
  *
  * It should return the value of the function evaluated at x.
  *
@@ -28,6 +28,15 @@ namespace math {
  *
  * Integrals that cross zero are broken into two, and the separate integrals are
  * each integrated to the given tolerance.
+ *
+ * For integrals with finite limits, the xc argument is the distance to the
+ * nearest boundary. So for a > 0, b > 0, it will be a - x for x closer to a,
+ * and b - x for x closer to b. xc is computed in a way that avoids the
+ * precision loss of computing a - x or b - x manually. For integrals that cross
+ * zero, xc can take values a - x, -x, or b - x depending on which integration
+ * limit it is nearest.
+ *
+ * If either limit is infinite, xc is set to NaN
  *
  * @tparam T Type of f
  * @param f the function to be integrated
@@ -46,7 +55,9 @@ inline double integrate(const F& f, double a, double b, double tolerance) {
   size_t levels;
   double Q = 0.0;
   if (std::isinf(a) && std::isinf(b)) {
-    auto f_wrap = [&](double x) { return f(x); };
+    auto f_wrap = [&](double x) {
+      return f(x, std::numeric_limits<double>::quiet_NaN());
+    };
     boost::math::quadrature::sinh_sinh<double> integrator;
     Q = integrator.integrate(f_wrap, tolerance, &error1, &L1, &levels);
   } else if (std::isinf(a)) {
@@ -57,11 +68,15 @@ inline double integrate(const F& f, double a, double b, double tolerance) {
      * https://www.boost.org/doc/libs/1_66_0/libs/math/doc/html/math_toolkit/double_exponential/de_caveats.html)
      */
     if (b <= 0.0) {
-      auto f_wrap = [&](double x) { return f(-(x + b)); };
+      auto f_wrap = [&](double x) {
+        return f(-(x + b), std::numeric_limits<double>::quiet_NaN());
+      };
       Q = integrator.integrate(f_wrap, tolerance, &error1, &L1, &levels);
     } else {
       boost::math::quadrature::tanh_sinh<double> integrator_right;
-      auto f_wrap = [&](double x) { return f(-x); };
+      auto f_wrap = [&](double x) {
+        return f(-x, std::numeric_limits<double>::quiet_NaN());
+      };
       Q = integrator.integrate(f_wrap, tolerance, &error1, &L1, &levels)
           + integrator_right.integrate(f_wrap, -b, 0, tolerance, &error2, &L2,
                                        &levels);
@@ -70,18 +85,22 @@ inline double integrate(const F& f, double a, double b, double tolerance) {
   } else if (std::isinf(b)) {
     boost::math::quadrature::exp_sinh<double> integrator;
     if (a >= 0.0) {
-      auto f_wrap = [&](double x) { return f(x + a); };
+      auto f_wrap = [&](double x) {
+        return f(x + a, std::numeric_limits<double>::quiet_NaN());
+      };
       Q = integrator.integrate(f_wrap, tolerance, &error1, &L1, &levels);
     } else {
       boost::math::quadrature::tanh_sinh<double> integrator_right;
-      auto f_wrap = [&](double x) { return f(x); };
+      auto f_wrap = [&](double x) {
+        return f(x, std::numeric_limits<double>::quiet_NaN());
+      };
       Q = integrator.integrate(f_wrap, tolerance, &error1, &L1, &levels)
           + integrator_right.integrate(f_wrap, a, 0, tolerance, &error2, &L2,
                                        &levels);
       used_two_integrals = true;
     }
   } else {
-    auto f_wrap = [&](double x) { return f(x); };
+    auto f_wrap = [&](double x, double xc) { return f(x, xc); };
     boost::math::quadrature::tanh_sinh<double> integrator;
     if (a < 0.0 && b > 0.0) {
       Q = integrator.integrate(f_wrap, a, 0.0, tolerance, &error1, &L1, &levels)
@@ -119,11 +138,23 @@ inline double integrate(const F& f, double a, double b, double tolerance) {
  * a specified tolerance. a and b can be finite or infinite.
  *
  * The signature for f should be:
- *   double foo(double x, std::vector<double> theta, std::vector<double> x_r,
- *     std::vector<int> x_i, std::ostream& msgs)
+ *   double foo(double x, double xc, std::vector<double> theta,
+ * std::vector<double> x_r, std::vector<int> x_i, std::ostream& msgs)
  *
  * It should return the value of the function evaluated at x. Any errors
  * should be printed to the msgs stream.
+ *
+ * Integrals that cross zero are broken into two, and the separate integrals are
+ * each integrated to the given tolerance.
+ *
+ * For integrals with finite limits, the xc argument is the distance to the
+ * nearest boundary. So for a > 0, b > 0, it will be a - x for x closer to a,
+ * and b - x for x closer to b. xc is computed in a way that avoids the
+ * precision loss of computing a - x or b - x manually. For integrals that cross
+ * zero, xc can take values a - x, -x, or b - x depending on which integration
+ * limit it is nearest.
+ *
+ * If either limit is infinite, xc is set to NaN
  *
  * Boost decides the integration is converged when subsequent estimates of the
  * integral are less than tolerance * abs(integral). This means the tolerance is
@@ -156,9 +187,10 @@ inline double integrate_1d(const F& f, const double a, const double b,
       domain_error(function, "Integration endpoints are both", a, "", "");
     return 0.0;
   } else {
-    return integrate(std::bind<double>(f, std::placeholders::_1, theta, x_r,
-                                       x_i, std::ref(msgs)),
-                     a, b, tolerance);
+    return integrate(
+        std::bind<double>(f, std::placeholders::_1, std::placeholders::_2,
+                          theta, x_r, x_i, std::ref(msgs)),
+        a, b, tolerance);
   }
 }
 
