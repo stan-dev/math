@@ -5,13 +5,6 @@
 #include <stan/math/gpu/err/check_matching_dims.hpp>
 #include <CL/cl.hpp>
 
-/** @file stan/math/gpu/basic_matrix_gpu.hpp
-*    @brief basic_matrix_gpu - basic matrix operations:
-*    copy, copy lower/upper triangular, copy triangular transposed,
-*    copy submatrix, init matrix with zeros, create an identity matrix,
-*    add, subtract, transpose
-*/
-
 namespace stan {
   namespace math {
 

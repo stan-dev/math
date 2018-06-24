@@ -4,13 +4,6 @@
 #include <stan/math/gpu/matrix_gpu.hpp>
 #include <CL/cl.hpp>
 
-/** @file stan/math/gpu/basic_matrix_gpu.hpp
-*    @brief basic_matrix_gpu - basic matrix operations:
-*    copy, copy lower/upper triangular, copy triangular transposed,
-*    copy submatrix, init matrix with zeros, create an identity matrix,
-*    add, subtract, transpose
-*/
-
 namespace stan {
   namespace math {
     enum triangularity {LOWER = 0, UPPER = 1, NONE = 2 };
