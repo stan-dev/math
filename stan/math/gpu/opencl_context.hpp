@@ -154,11 +154,15 @@ class opencl_context_base {
     kernel_info["transpose"] = {false, "basic_matrix", transpose_matrix_kernel};
     kernel_info["zeros"] = {false, "basic_matrix", zeros_matrix_kernel};
     kernel_info["identity"] = {false, "basic_matrix", identity_matrix_kernel};
-    kernel_info["copy_triangular"] = {false, "basic_matrix", copy_triangular_matrix_kernel};
-    kernel_info["copy_triangular_transposed"] = {false, "basic_matrix", copy_triangular_transposed_matrix_kernel};
-    kernel_info["copy_submatrix"] = {false, "basic_matrix", copy_submatrix_kernel};
+    kernel_info["copy_triangular"] = {false, "basic_matrix",
+     copy_triangular_matrix_kernel};
+    kernel_info["copy_triangular_transposed"] = {false, "basic_matrix",
+     copy_triangular_transposed_matrix_kernel};
+    kernel_info["copy_submatrix"] = {false, "basic_matrix",
+     copy_submatrix_kernel};
     kernel_info["add"] = {false, "basic_matrix", add_symmetric_kernel};
-    kernel_info["subtract"] = {false, "basic_matrix", subtract_symmetric_kernel};
+    kernel_info["subtract"] = {false, "basic_matrix",
+     subtract_symmetric_kernel};
     kernel_info["is_nan"] = {false, "check", check_nan_kernel};
     kernel_info["is_zero_on_diagonal"]
         = {false, "check", check_diagonal_zeros_kernel};
