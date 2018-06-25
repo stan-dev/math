@@ -3,99 +3,89 @@
 ##
 EIGEN ?= $(MATH)lib/eigen_3.3.3
 BOOST ?= $(MATH)lib/boost_1.66.0
+BOOST_LIB ?= $(MATH)lib/boost_1.66.0/stage/lib
 GTEST ?= $(MATH)lib/gtest_1.7.0
 CPPLINT ?= $(MATH)lib/cpplint_4.45
 OPENCL ?= $(MATH)lib/opencl_1.2.8
-IDAS ?= $(MATH)lib/idas-2.1.0
-CVODES ?= $(MATH)lib/cvodes-3.1.0
+SUNDIALS ?= $(MATH)lib/sundials_3.1.0
+BOOST_PARALLEL_BUILD ?= $(or $(PARALLEL),1)
 
 ##
 # Build rules for cvodes
 ##
 
 SUNDIALS_CVODES := $(patsubst %.c,%.o,\
-  $(addprefix $(CVODES)/src/cvodes/, cvodes.c cvodes_io.c cvodea.c cvodea_io.c cvodes_direct.c cvodes_diag.c cvodes_spils.c cvodes_bandpre.c cvodes_bbdpre.c) \
-  $(wildcard $(CVODES)/src/sundials/*.c) \
-  $(wildcard $(CVODES)/src/sunmat_band/*.c) \
-  $(wildcard $(CVODES)/src/sunmat_dense/*.c) \
-  $(wildcard $(CVODES)/src/sunlinsol_band/*.c) \
-  $(wildcard $(CVODES)/src/sunlinsol_dense/*.c))
-
-SUNDIALS_NVECSERIAL := $(patsubst %.c,%.o,\
-  $(addprefix $(CVODES)/src/, nvec_ser/nvector_serial.c sundials/sundials_math.c))
-
-
-$(sort $(SUNDIALS_CVODES) $(SUNDIALS_NVECSERIAL)) : %.o : %.c
-	@mkdir -p $(dir $@)
-	$(COMPILE.c) -x c -O$(O) -isystem $(CVODES)/include $< -o $@
-
-$(CVODES)/lib/libsundials_cvodes.a: $(SUNDIALS_CVODES)
-	@mkdir -p $(dir $@)
-	$(AR) -rs $@ $^
-
-$(CVODES)/lib/libsundials_nvecserial.a: $(SUNDIALS_NVECSERIAL)
-	@mkdir -p $(dir $@)
-	$(AR) -rs $@ $^
-
-LIBCVODES = $(CVODES)/lib/libsundials_nvecserial.a $(CVODES)/lib/libsundials_cvodes.a
-
-STAN_CVODES_HEADERS := $(shell find stan -name *cvodes*.hpp)
-$(STAN_CVODES_HEADERS) : $(LIBCVODES)
-
-##
-# Build rules for IDAS
-##
+  $(addprefix $(SUNDIALS)/src/cvodes/, cvodes.c cvodes_io.c cvodea.c cvodea_io.c cvodes_direct.c cvodes_diag.c cvodes_spils.c cvodes_bandpre.c cvodes_bbdpre.c) \
+  $(wildcard $(SUNDIALS)/src/sundials/*.c) \
+  $(wildcard $(SUNDIALS)/src/sunmat_band/*.c) \
+  $(wildcard $(SUNDIALS)/src/sunmat_dense/*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol_band/*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol_dense/*.c))
 
 SUNDIALS_IDAS := $(patsubst %.c,%.o,\
-  $(addprefix $(IDAS)/src/idas/, idaa.c idaa_io.c idas.c idas_bbdpre.c idas_direct.c idas_ic.c idas_io.c idas_spils.c) \
-  $(wildcard $(IDAS)/src/sundials/*.c))
+  $(addprefix $(SUNDIALS)/src/idas/, idaa.c idaa_io.c idas.c idas_bbdpre.c idas_direct.c idas_ic.c idas_io.c idas_spils.c) \
+  $(wildcard $(SUNDIALS)/src/sundials/*.c) \
+  $(wildcard $(SUNDIALS)/src/sunmat_band/*.c) \
+  $(wildcard $(SUNDIALS)/src/sunmat_dense/*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol_band/*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol_dense/*.c))
 
-SUNDIALS_IDAS_NVECSERIAL := $(patsubst %.c,%.o,\
-  $(addprefix $(IDAS)/src/, nvec_ser/nvector_serial.c sundials/sundials_math.c))
+SUNDIALS_NVECSERIAL := $(patsubst %.c,%.o,\
+  $(addprefix $(SUNDIALS)/src/, nvec_ser/nvector_serial.c sundials/sundials_math.c))
 
-$(sort $(SUNDIALS_IDAS) $(SUNDIALS_IDAS_NVECSERIAL)) : %.o : %.c
+$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL)) : %.o : %.c
 	@mkdir -p $(dir $@)
-	$(COMPILE.c) -x c -O$(O) -isystem $(IDAS)/include $< -o $@
+	$(COMPILE.c) -x c -O$(O) -include $(SUNDIALS)/include/stan_sundials_printf_override.hpp -isystem $(SUNDIALS)/include $< -o $@
 
-$(IDAS)/lib/libsundials_idas.a: $(SUNDIALS_IDAS)
+$(SUNDIALS)/lib/libsundials_cvodes.a: $(SUNDIALS_CVODES)
 	@mkdir -p $(dir $@)
 	$(AR) -rs $@ $^
 
-$(IDAS)/lib/libsundials_nvecserial.a: $(SUNDIALS_IDAS_NVECSERIAL)
+$(SUNDIALS)/lib/libsundials_idas.a: $(SUNDIALS_IDAS)
 	@mkdir -p $(dir $@)
 	$(AR) -rs $@ $^
 
-LIBIDAS = $(IDAS)/lib/libsundials_nvecserial.a $(IDAS)/lib/libsundials_idas.a
+$(SUNDIALS)/lib/libsundials_nvecserial.a: $(SUNDIALS_NVECSERIAL)
+	@mkdir -p $(dir $@)
+	$(AR) -rs $@ $^
+
+LIBSUNDIALS = $(SUNDIALS)/lib/libsundials_nvecserial.a $(SUNDIALS)/lib/libsundials_cvodes.a $(SUNDIALS)/lib/libsundials_idas.a
+
+STAN_CVODES_HEADERS := $(shell find stan -name *cvodes*.hpp)
+$(STAN_CVODES_HEADERS) : $(LIBSUNDIALS)
 
 STAN_IDAS_HEADERS := $(shell find stan -name *idas*.hpp)
-$(STAN_IDAS_HEADERS) : $(LIBIDAS)
+$(STAN_IDAS_HEADERS) : $(LIBSUNDIALS)
 
 ##
 # Build rules for MPI
 ##
 
-$(BOOST)/stage/lib/mpi.so:
+# turn BOOST_LIB into absolute path
+BOOST_LIB_ABS = $(shell mkdir -p "$(BOOST_LIB)" && cd -- "$(BOOST_LIB)" && pwd)
+
+$(BOOST_LIB)/mpi.so:
 	@mkdir -p $(dir $@)
 	cd $(BOOST); ./bootstrap.sh
 	cd $(BOOST); echo "using mpi ;" >> user-config.jam
-	cd $(BOOST); ./b2 --user-config=user-config.jam --with-mpi --with-serialization
+	cd $(BOOST); ./b2 --user-config=user-config.jam --layout=system --with-mpi --with-serialization -j$(BOOST_PARALLEL_BUILD) variant=release link=shared threading=multi runtime-link=shared
 
-$(BOOST)/stage/lib/libboost_serialization.so: $(BOOST)/stage/lib/mpi.so
+$(BOOST_LIB)/libboost_serialization.so: $(BOOST_LIB)/mpi.so
 
-$(BOOST)/stage/lib/libboost_serialization.dylib: $(BOOST)/stage/lib/mpi.so
-	install_name_tool -add_rpath $(BOOST)/stage/lib/ $(BOOST)/stage/lib/libboost_serialization.dylib
-	install_name_tool -id @rpath/libboost_serialization.dylib $(BOOST)/stage/lib/libboost_serialization.dylib
+$(BOOST_LIB)/libboost_serialization.dylib: $(BOOST_LIB)/mpi.so
+	install_name_tool -add_rpath "$(BOOST_LIB_ABS)" "$(BOOST_LIB)/libboost_serialization.dylib"
+	install_name_tool -id @rpath/libboost_serialization.dylib "$(BOOST_LIB)/libboost_serialization.dylib"
 
-$(BOOST)/stage/lib/libboost_mpi.so: $(BOOST)/stage/lib/mpi.so
+$(BOOST_LIB)/libboost_mpi.so: $(BOOST_LIB)/mpi.so
 
-$(BOOST)/stage/lib/libboost_mpi.dylib: $(BOOST)/stage/lib/mpi.so
-	install_name_tool -add_rpath $(BOOST)/stage/lib/ $(BOOST)/stage/lib/libboost_mpi.dylib
-	install_name_tool -change libboost_serialization.dylib @rpath/libboost_serialization.dylib $(BOOST)/stage/lib/libboost_mpi.dylib
-	install_name_tool -id @rpath/libboost_mpi.dylib $(BOOST)/stage/lib/libboost_mpi.dylib
+$(BOOST_LIB)/libboost_mpi.dylib: $(BOOST_LIB)/mpi.so $(BOOST_LIB)/libboost_serialization.dylib
+	install_name_tool -add_rpath "$(BOOST_LIB_ABS)" "$(BOOST_LIB)/libboost_mpi.dylib"
+	install_name_tool -change libboost_serialization.dylib @rpath/libboost_serialization.dylib "$(BOOST_LIB)/libboost_mpi.dylib"
+	install_name_tool -id @rpath/libboost_mpi.dylib "$(BOOST_LIB)/libboost_mpi.dylib"
 
 .PHONY: clean-libraries
 clean-libraries:
-	$(RM) $(sort $(SUNDIALS_CVODES) $(SUNDIALS_NVECSERIAL) $(LIBCVODES) $(SUNDIALS_IDAS) $(SUNDIALS_IDAS_NVECSERIAL) $(LIBIDAS))
-	$(RM) $(BOOST)/stage/lib/*  
-	$(RM) -rf $(BOOST)/bin.v2  
-
+	$(RM) $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS) $(LIBMPI))
+	$(RM) -rf $(BOOST_LIB)/*
+	$(RM) -rf $(BOOST)/bin.v2 $(BOOST)/tools/build/src/engine/bootstrap/ $(BOOST)/tools/build/src/engine/bin.* $(BOOST)/project-config.jam* $(BOOST)/b2 $(BOOST)/bjam $(BOOST)/bootstrap.log
+	$(RM) -rf bin

@@ -73,7 +73,8 @@ struct mpi_stop_worker : public mpi_command {
  *
  * The remainder jobs num_jobs % num_workers are assigned to rank
  * >=1 workers such that the root (rank = 0) has a little less
- * assigned chunks.
+ * assigned chunks unless num_jobs < num_workes in which case the
+ * first num_jobs nodes recieve a job (including the root).
  *
  * @param num_jobs Total number of jobs to dispatch
  * @param chunk_size Chunk size per job
@@ -87,8 +88,10 @@ inline std::vector<int> mpi_map_chunks(std::size_t num_jobs,
 
   std::vector<int> chunks(world_size, num_jobs / world_size);
 
+  const std::size_t delta_r = chunks[0] == 0 ? 0 : 1;
+
   for (std::size_t r = 0; r != num_jobs % world_size; ++r)
-    ++chunks[r + 1];
+    ++chunks[r + delta_r];
 
   for (std::size_t i = 0; i != world_size; ++i)
     chunks[i] *= chunk_size;
@@ -124,7 +127,6 @@ struct mpi_cluster {
   boost::mpi::environment env;
   boost::mpi::communicator world_;
   std::size_t const rank_ = world_.rank();
-  static std::mutex in_use_;
 
   mpi_cluster() {}
 
@@ -145,7 +147,7 @@ struct mpi_cluster {
    * mpi_command is executed using the virtual run method.
    */
   void listen() {
-    mpi_cluster::cluster_listens_ = true;
+    listening_status() = true;
     if (rank_ == 0) {
       return;
     }
@@ -154,7 +156,7 @@ struct mpi_cluster {
       // lock on the workers the cluster as MPI commands must be
       // initiated from the root and any attempt to do this on the
       // workers must fail
-      std::unique_lock<std::mutex> worker_lock(in_use_);
+      std::unique_lock<std::mutex> worker_lock(in_use());
       while (1) {
         std::shared_ptr<mpi_command> work;
 
@@ -172,23 +174,28 @@ struct mpi_cluster {
    * mpi_stop_worker command.
    */
   void stop_listen() {
-    if (rank_ == 0 && mpi_cluster::cluster_listens_) {
+    if (rank_ == 0 && listening_status()) {
       mpi_broadcast_command<mpi_stop_worker>();
     }
-    mpi_cluster::cluster_listens_ = false;
+    listening_status() = false;
   }
 
   /**
    * Returns the current listening state of the cluster.
    */
-  static bool is_listening() { return cluster_listens_; }
+  static bool& listening_status() {
+    static bool listening_status = false;
+    return listening_status;
+  }
 
- private:
-  static bool cluster_listens_;
+  /**
+   * Returns a reference to the global in use mutex
+   */
+  static std::mutex& in_use() {
+    static std::mutex in_use_mutex;
+    return in_use_mutex;
+  }
 };
-
-bool mpi_cluster::cluster_listens_ = false;
-std::mutex mpi_cluster::in_use_;
 
 /**
  * Broadcasts a command instance to the listening cluster. This
@@ -206,10 +213,10 @@ inline std::unique_lock<std::mutex> mpi_broadcast_command(
   if (world.rank() != 0)
     throw std::runtime_error("only root may broadcast commands.");
 
-  if (!mpi_cluster::is_listening())
+  if (!mpi_cluster::listening_status())
     throw std::runtime_error("cluster is not listening to commands.");
 
-  std::unique_lock<std::mutex> cluster_lock(mpi_cluster::in_use_,
+  std::unique_lock<std::mutex> cluster_lock(mpi_cluster::in_use(),
                                             std::try_to_lock);
 
   if (!cluster_lock.owns_lock())
@@ -236,9 +243,6 @@ std::unique_lock<std::mutex> mpi_broadcast_command() {
 
 }  // namespace math
 }  // namespace stan
-
-// register stop worker command
-STAN_REGISTER_MPI_COMMAND(stan::math::mpi_stop_worker)
 
 #endif
 

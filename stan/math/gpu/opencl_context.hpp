@@ -5,9 +5,11 @@
 
 #include <stan/math/prim/arr/err/check_opencl.hpp>
 #include <stan/math/prim/scal/err/system_error.hpp>
+
 #include <CL/cl.hpp>
 #include <string>
 #include <cmath>
+#include <iostream>
 #include <fstream>
 #include <map>
 #include <vector>
@@ -101,16 +103,34 @@ class opencl_context_base {
       check_opencl_error("opencl_context", e);
     }
   }
+
   /**
    * Initializes the <code> kernel_info </code> where each kernel is mapped to
    * a logical flag to mark if the kernel was already compiled,
    * the name of the kernel group, and the OpenCL kernel sources.
    */
   inline void init_kernel_groups() {
+    const char* copy_matrix_kernel =
+#include <stan/math/gpu/kernels/copy_matrix_kernel.cl>
+        ;  // NOLINT
+    const char* check_nan_kernel =
+#include <stan/math/gpu/kernels/check_nan_kernel.cl>
+        ;  // NOLINT
+    const char* check_diagonal_zeros_kernel =
+#include <stan/math/gpu/kernels/check_diagonal_zeros_kernel.cl>
+        ;  // NOLINT
+    const char* check_symmetric_kernel =
+#include <stan/math/gpu/kernels/check_symmetric_kernel.cl>
+        ;  // NOLINT
     kernel_info["dummy"] = {
         false, "timing", "__kernel void dummy(__global const int* foo) { };"};
     kernel_info["dummy2"] = {
         false, "timing", "__kernel void dummy2(__global const int* foo) { };"};
+    kernel_info["copy"] = {false, "basic_matrix", copy_matrix_kernel};
+    kernel_info["is_nan"] = {false, "check", check_nan_kernel};
+    kernel_info["is_zero_on_diagonal"]
+        = {false, "check", check_diagonal_zeros_kernel};
+    kernel_info["is_symmetric"] = {false, "check", check_symmetric_kernel};
   }
 
  protected:
