@@ -1,8 +1,9 @@
-#ifndef STAN_MATH_REV_MAT_FUN_MATRIX_EXP_ACTION_HPP
-#define STAN_MATH_REV_MAT_FUN_MATRIX_EXP_ACTION_HPP
+#ifndef STAN_MATH_REV_MAT_FUN_MATRIX_EXP_MULTIPLY_HPP
+#define STAN_MATH_REV_MAT_FUN_MATRIX_EXP_MULTIPLY_HPP
 
+#include <stan/math/rev/mat.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/mat/fun/matrix_exp_action_handler.hpp>
+#include <stan/math/prim/mat/fun/matrix_exp_action_handler.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/mat/fun/to_var.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp.hpp>
@@ -20,47 +21,48 @@ namespace math {
  * Calculate adjoint of matrix exponential action
  * exp(At)*B when A is data and B is var, used for chaining action.
  *
- * @tparam N integer rows and cols of matrix A
  * @param Ad double array pointer to the data of matrix A
+ * @param n dim of square matrix A
  * @param adjexpAB MatrixXd adjoint of exp(At)*B
  * @param t double time data
  * @return MatrixXd The adjoint of B.
  */
-template <int N>
-Eigen::MatrixXd exp_action_chain_dv(double* Ad, const Eigen::MatrixXd& adjexpAB,
-                                    const double t) {
+inline Eigen::MatrixXd exp_action_chain_dv(double* Ad, const int& n,
+                                           const Eigen::MatrixXd& adjexpAB,
+                                           const double t) {
   using Eigen::Map;
   matrix_exp_action_handler handle;
-  return handle.action(Map<Eigen::MatrixXd>(Ad, N, N).transpose(), adjexpAB, t);
+  return handle.action(Map<Eigen::MatrixXd>(Ad, n, n).transpose(), adjexpAB, t);
 }
 
 /**
  * Calculate adjoint of matrix exponential action
  * exp(At)*B when A is var and B is data, used for chaining action.
  *
- * @tparam N integer rows and cols of matrix A
  * @param Ad double array pointer to the data of matrix A
  * @param Bd double array pointer to the data of matrix B
+ * @param n dim(nb. of rows) of square matrix A
+ * @param m nb. of cols of matrix B
  * @param adjexpAB MatrixXd adjoint of exp(At)*B
  * @param t double time data
  * @return MatrixXd The adjoint of A.
  */
-template <int N, int M>
-Eigen::MatrixXd exp_action_chain_vd(double* Ad, double* Bd,
-                                    const Eigen::MatrixXd& adjexpAB,
-                                    const double t) {
+inline Eigen::MatrixXd exp_action_chain_vd(double* Ad, double* Bd, const int& n,
+                                           const int& m,
+                                           const Eigen::MatrixXd& adjexpAB,
+                                           const double t) {
   using Eigen::Map;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
-  Eigen::MatrixXd adjexpA = Eigen::MatrixXd::Zero(N, N);
-  Eigen::MatrixXd adjA = Eigen::MatrixXd::Zero(N, N);
+  Eigen::MatrixXd adjexpA = Eigen::MatrixXd::Zero(n, n);
+  Eigen::MatrixXd adjA = Eigen::MatrixXd::Zero(n, n);
 
   // TODO(yizhang): a better way such as complex step approximation
   try {
     start_nested();
 
-    adjexpA = adjexpAB * Map<Matrix<double, N, M> >(Bd).transpose();
-    Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> Av(N, N);
+    adjexpA = adjexpAB * Map<MatrixXd>(Bd, n, m).transpose();
+    Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> Av(n, n);
     for (int i = 0; i < Av.size(); ++i) {
       Av(i) = to_var(Ad[i]);
     }
@@ -163,8 +165,8 @@ class matrix_exp_action_vari : public vari {
     for (size_type i = 0; i < adjexpAB.size(); ++i)
       adjexpAB(i) = variRefexpAB_[i]->adj_;
 
-    MatrixXd adjA = exp_action_chain_vd<N, Cb>(Ad_, Bd_, adjexpAB, t_);
-    MatrixXd adjB = exp_action_chain_dv<N>(Ad_, adjexpAB, t_);
+    MatrixXd adjA = exp_action_chain_vd(Ad_, Bd_, n_, B_cols_, adjexpAB, t_);
+    MatrixXd adjB = exp_action_chain_dv(Ad_, n_, adjexpAB, t_);
 
     for (size_type i = 0; i < A_size_; ++i) {
       variRefA_[i]->adj_ += adjA(i);
@@ -261,7 +263,7 @@ class matrix_exp_action_vari<double, N, Tb, Cb> : public vari {
     for (size_type i = 0; i < adjexpAB.size(); ++i)
       adjexpAB(i) = variRefexpAB_[i]->adj_;
 
-    MatrixXd adjB = exp_action_chain_dv<N>(Ad_, adjexpAB, t_);
+    MatrixXd adjB = exp_action_chain_dv(Ad_, n_, adjexpAB, t_);
 
     for (size_type i = 0; i < B_size_; ++i) {
       variRefB_[i]->adj_ += adjB(i);
@@ -352,7 +354,7 @@ class matrix_exp_action_vari<Ta, N, double, Cb> : public vari {
     for (size_type i = 0; i < adjexpAB.size(); ++i)
       adjexpAB(i) = variRefexpAB_[i]->adj_;
 
-    MatrixXd adjA = exp_action_chain_vd<N, Cb>(Ad_, Bd_, adjexpAB, t_);
+    MatrixXd adjA = exp_action_chain_vd(Ad_, Bd_, n_, B_cols_, adjexpAB, t_);
 
     for (size_type i = 0; i < A_size_; ++i) {
       variRefA_[i]->adj_ += adjA(i);
@@ -388,23 +390,23 @@ matrix_exp_action(const Eigen::Matrix<Ta, N, N>& A,
 }
 
 /**
- * Return product of exp(At) and B, where A is a NxN double matrix,
- * B is a NxCb double matrix, and t is a double
- * @tparam N Rows and cols matrix A, also rows of matrix B
+ * Wrapper of matrix_exp_action function for a more literal name
+ * @tparam Ta scalar type matrix A
+ * @tparam Tb scalar type matrix B
  * @tparam Cb Columns matrix B
  * @param[in] A Matrix
  * @param[in] B Matrix
- * @param[in] t double
- * @return exponential of At multiplies B
+ * @return exponential of A multiplies B
  */
-template <int N, int Cb>
-inline Eigen::Matrix<double, N, Cb> matrix_exp_action(
-    const Eigen::Matrix<double, N, N>& A, const Eigen::Matrix<double, N, Cb>& B,
-    const double& t = 1.0) {
-  Eigen::Matrix<double, N, Cb> expAB;
-  matrix_exp_action_handler handle;
-  expAB = handle.action(A, B, t);
-  return expAB;
+template <typename Ta, typename Tb, int Cb>
+inline Eigen::Matrix<typename stan::return_type<Ta, Tb>::type, -1, Cb>
+matrix_exp_multiply(const Eigen::Matrix<Ta, -1, -1>& A,
+                    const Eigen::Matrix<Tb, -1, Cb>& B) {
+  check_nonzero_size("matrix_exp_multiply", "input matrix", A);
+  check_nonzero_size("matrix_exp_multiply", "input matrix", B);
+  check_multiplicable("matrix_exp_multiply", "A", A, "B", B);
+  check_square("matrix_exp_multiply", "input matrix", A);
+  return matrix_exp_action(A, B);
 }
 
 }  // namespace math

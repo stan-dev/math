@@ -6,8 +6,6 @@
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
-#include <test/unit/math/prim/mat/functor/mpi_test_env.hpp>
-
 #include <test/unit/math/prim/mat/functor/hard_work.hpp>
 #include <test/unit/math/prim/mat/functor/faulty_functor.hpp>
 
@@ -44,7 +42,9 @@ struct MpiJob : public ::testing::Test {
 struct MpiJobSmallWorld : public ::testing::Test {
   Eigen::VectorXd shared_params_d;
   std::vector<Eigen::VectorXd> job_params_d;
-  const std::size_t N = world_size > 1 ? world_size - 1 : 1;
+  boost::mpi::communicator world_;
+  const std::size_t world_size_ = world_.size();
+  const std::size_t N = world_size_ > 1 ? world_size_ - 1 : 1;
   std::vector<std::vector<double>> x_r
       = std::vector<std::vector<double>>(N, std::vector<double>(1, 1.0));
   std::vector<std::vector<int>> x_i
@@ -63,10 +63,7 @@ struct MpiJobSmallWorld : public ::testing::Test {
   }
 };
 
-MPI_TEST_F(MpiJob, hard_work_dd) {
-  if (rank != 0)
-    return;
-
+TEST_F(MpiJob, hard_work_dd) {
   Eigen::VectorXd result_mpi = stan::math::map_rect<0, hard_work>(
       shared_params_d, job_params_d, x_r, x_i);
   Eigen::VectorXd result_concurrent
@@ -81,10 +78,7 @@ MPI_TEST_F(MpiJob, hard_work_dd) {
 }
 
 // execute fewer jobs than the cluster size
-MPI_TEST_F(MpiJobSmallWorld, hard_work_dd) {
-  if (rank != 0)
-    return;
-
+TEST_F(MpiJobSmallWorld, hard_work_dd) {
   Eigen::VectorXd result_mpi = stan::math::map_rect<1, hard_work>(
       shared_params_d, job_params_d, x_r, x_i);
   Eigen::VectorXd result_concurrent
@@ -98,10 +92,7 @@ MPI_TEST_F(MpiJobSmallWorld, hard_work_dd) {
   }
 }
 
-MPI_TEST_F(MpiJob, always_faulty_functor) {
-  if (rank != 0)
-    return;
-
+TEST_F(MpiJob, always_faulty_functor) {
   Eigen::VectorXd result;
 
   EXPECT_NO_THROW((result = stan::math::map_rect<2, faulty_functor>(

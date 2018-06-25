@@ -49,6 +49,17 @@ CXX = $(CC)
 # Both IDs can be found through installing and calling clinfo
 -include make/setup_gpu
 
+##
+# If STAN_MPI is defined
+##
+# Adds the following to CXXFLAGS
+# link to MPI
+# Defines
+#  STAN_MPI
+-include make/setup_mpi
+
+include make/libstanmath_mpi # bin/libstanmath_mpi.a
+
 include make/tests    # tests
 include make/cpplint  # cpplint
 
@@ -154,3 +165,6 @@ clean-all: clean clean-doxygen clean-deps clean-libraries
 	@echo '  removing generated test files'
 	$(shell find test/prob -name '*_generated_*_test.cpp' -type f -exec rm {} +)
 	$(RM) $(wildcard test/prob/generate_tests$(EXE))
+
+print-%  : ; @echo $* = $($*)
+

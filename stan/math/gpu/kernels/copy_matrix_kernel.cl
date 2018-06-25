@@ -1,6 +1,6 @@
 R"(
-#define A(i, j)  A[j*rows+i]
-#define B(i, j)  B[j*rows+i]
+#define A(i, j)  A[j * rows + i]
+#define B(i, j)  B[j * rows + i]
 __kernel void copy(
       __global double *A,
       __global double *B,
