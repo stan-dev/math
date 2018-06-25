@@ -1,29 +1,29 @@
-#include <stan/math.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/util.hpp>
 #include <iostream>
 #include <limits>
 #include <sstream>
+#include <stan/math.hpp>
+#include <test/unit/util.hpp>
 #include <vector>
 
 std::ostringstream msgs;
 
 struct f1 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
     return exp(-x) / sqrt(x);
   }
 };
 
 struct f2 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
     if (x <= 0.5) {
       return sqrt(x) / sqrt(1 - x * x);
     } else {
@@ -34,92 +34,152 @@ struct f2 {
 
 struct f3 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
     return exp(-x);
   }
 };
 
 struct f4 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
     return exp(x) + theta[0];
   }
 };
 
 struct f5 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
     return exp(x) + pow(theta[0], 2) + pow(theta[1], 3);
   }
 };
 
 struct f6 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
     return exp(x) + pow(x_i[0], 2) + pow(theta[0], 4) + 3 * theta[1];
   }
 };
 
 struct f7 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
     return exp(x) + pow(x_r[0], 2) + pow(x_r[1], 5) + 3 * x_r[2];
   }
 };
 
 struct f8 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
     return exp(-pow(x - theta[0], x_i[0]) / pow(x_r[0], x_i[0]));
   }
 };
 
 struct f9 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
     return 1.0 / (1.0 + pow(x, x_i[0]) / theta[0]);
   }
 };
 
 struct f10 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
-    return pow(x, theta[0] - 1.0)
-           * pow((x > 0.5) ? xc : (1 - x), theta[1] - 1.0);
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
+    return pow(x, theta[0] - 1.0) *
+           pow((x > 0.5) ? xc : (1 - x), theta[1] - 1.0);
   }
 };
 
 struct f11 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
     return (std::isnan(xc)) ? xc : 0.0;
+  }
+};
+
+struct f12 {
+  template <typename T1, typename T2>
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
+    T1 out = stan::math::modified_bessel_second_kind(0, x);
+    if (out > 0)
+      return 2 * x * out;
+    return out;
+  }
+};
+
+struct f13 {
+  template <typename T1, typename T2>
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
+    T1 out = stan::math::modified_bessel_second_kind(0, x);
+    if (out > 0)
+      return 2 * x * stan::math::square(out);
+    return out;
+  }
+};
+
+struct f14 {
+  template <typename T1, typename T2>
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
+    return exp(x) * stan::math::inv_sqrt(x > 0.5 ? xc : 1 - x);
+  }
+};
+
+struct f15 {
+  template <typename T1, typename T2>
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
+    T1 x2 = x * x;
+    T1 numer = x2 * log(x);
+    T1 denom = x < 0.5 ? (x + 1) * (x - 1) : (x + 1) * -xc;
+    denom *= x2 * x2 + 1;
+    return numer / denom;
+  }
+};
+
+struct f16 {
+  template <typename T1, typename T2>
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
+    return x * sin(x) / (1 + stan::math::square(cos(x)));
   }
 };
 
@@ -150,26 +210,27 @@ struct f11 {
  * @param val correct value of integral
  */
 template <typename F>
-void test_integration(const F& f, double a, double b,
+void test_integration(const F &f, double a, double b,
                       std::vector<double> thetas,
-                      const std::vector<double>& x_r,
-                      const std::vector<int>& x_i, double val) {
+                      const std::vector<double> &x_r,
+                      const std::vector<int> &x_i, double val) {
   using stan::math::integrate_1d;
 
   std::vector<double> tolerances = {1e-4, 1e-6, 1e-8};
 
   for (auto tolerance : tolerances) {
-    EXPECT_LE(std::abs(integrate_1d(f, a, b, thetas, x_r, x_i, msgs, tolerance)
-                       - val),
-              tolerance);
+    EXPECT_LE(
+        std::abs(integrate_1d(f, a, b, thetas, x_r, x_i, msgs, tolerance) -
+                 val),
+        tolerance);
     // Flip the domain of integration and check that the integral is working
     auto flipped =
-        [&](const double& x, const double& xc, const std::vector<double>& theta,
-            const std::vector<double>& x_r, const std::vector<int>& x_i,
-            std::ostream& msgs) { return f(-x, -xc, theta, x_r, x_i, msgs); };
+        [&](const double &x, const double &xc, const std::vector<double> &theta,
+            const std::vector<double> &x_r, const std::vector<int> &x_i,
+            std::ostream &msgs) { return f(-x, -xc, theta, x_r, x_i, msgs); };
     EXPECT_LE(std::abs(integrate_1d(flipped, -b, -a, thetas, x_r, x_i, msgs,
-                                    tolerance)
-                       - val),
+                                    tolerance) -
+                       val),
               tolerance);
   }
 }
@@ -256,4 +317,21 @@ TEST(StanMath_integrate_1d, test1) {
   test_integration(f10{}, 0.0, 1.0, {0.1, 0.5}, {}, {}, 11.32308697521577);
   test_integration(f10{}, 0.0, 1.0, {0.5, 0.1}, {}, {}, 11.32308697521577);
   test_integration(f10{}, 0.0, 1.0, {5.0, 3.0}, {}, {}, 0.00952380952380952);
+
+  // Integrals from
+  // http://crd-legacy.lbl.gov/~dhbailey/dhbpapers/dhb-tanh-sinh.pdf
+  test_integration(f12{}, 0.0, std::numeric_limits<double>::infinity(), {}, {},
+                   {}, 2.0);
+  test_integration(f13{}, 0.0, std::numeric_limits<double>::infinity(), {}, {},
+                   {}, 1.0);
+  test_integration(f14{}, 0.0, 1.0, {}, {}, {},
+                   exp(1) * sqrt(stan::math::pi()) * stan::math::erf(1.0));
+
+  // Integrals from http://crd-legacy.lbl.gov/~dhbailey/dhbpapers/quadrature.pdf
+  // works normally but not to tolerance when limits of integration are flipped
+  //  test_integration(f15{}, 0.0, 1.0, {}, {}, {},
+  //                   stan::math::square(stan::math::pi()) * (2 - sqrt(2.0)) /
+  //                   32);
+  test_integration(f16{}, 0.0, stan::math::pi(), {}, {}, {},
+                   stan::math::square(stan::math::pi()) / 4);
 }
