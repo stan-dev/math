@@ -13,9 +13,7 @@ enum copy_transposed_triangular {
 };
 
 /**
- * Copies the lower triangular
- * to the upper triangular of the
- * matrix on the GPU.
+ * Copies a lower/upper triangular of a matrix to it's upper/lower.
  *
  * @param A matrix
  * @param lower_upper enum to describe
@@ -25,8 +23,7 @@ enum copy_transposed_triangular {
  * UPPER_TO_LOWER_TRIANGULAR - copes the upper
  *  triangular to the lower triangular
  *
- * @throw <code>std::invalid_argument</code> if the
- * matrices do not have matching dimensions
+ * @throw <code>std::invalid_argument</code> if the matrix is not square.
  *
  */
 inline void copy_triangular_transposed(matrix_gpu& A,

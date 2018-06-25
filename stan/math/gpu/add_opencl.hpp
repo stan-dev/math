@@ -10,8 +10,6 @@ namespace math {
 
 /**
  * Matrix addition on the GPU
- * Adds the first two matrices and stores
- * the result in the third matrix (C=A+B)
  *
  * @param A first matrix
  * @param B second matrix

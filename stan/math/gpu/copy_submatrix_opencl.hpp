@@ -24,7 +24,8 @@ namespace math {
  * @param size_rows the number of rows in the submatrix
  * @param size_cols the number of columns in the submatrix
  *
- * @throw <code>std::invalid_argument</code> if
+ * @throw <code>std::domain_error</code> if the submatrix dimensions are out
+ *  of bounds of the original matrix
  *
  *
  */

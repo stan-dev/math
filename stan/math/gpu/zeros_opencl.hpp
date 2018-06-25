@@ -9,16 +9,14 @@ namespace math {
 enum triangularity { LOWER = 0, UPPER = 1, NONE = 2 };
 /**
  * Stores zeros in the matrix on the GPU.
- * It support writing the zeros to lower
- * triangular, upper triangular or the
- * whole matrix.
+ * Supports writing zeroes to the lower and upper triangular or
+ * the whole matrix.
  *
  * @param A matrix
- * @param part optional parameter
- * that describes where to assign zeros:
+ * @param part optional parameter that describes where to assign zeros:
  * LOWER - lower triangular
  * UPPER - upper triangular
- * if the parameter is not specified,
+ * if the part parameter is not specified,
  * zeros are assigned to the whole matrix.
  *
  */

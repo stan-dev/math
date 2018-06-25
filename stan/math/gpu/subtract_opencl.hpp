@@ -20,7 +20,7 @@ namespace math {
  * @return subtraction result matrix
  *
  * @throw <code>std::invalid_argument</code> if the
- * input matrices do not have matching dimensions
+ * input matrices do not have matching dimensions.
  *
  */
 inline matrix_gpu subtract(matrix_gpu& A, matrix_gpu& B) {

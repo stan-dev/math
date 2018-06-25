@@ -7,9 +7,7 @@
 namespace stan {
 namespace math {
 /**
- * Stores the tranpose of the second matrix
- * to the first matrix. Both matrices
- * are on the  GPU.
+ * Takes the transpose of the matrix on the GPU.
  *
  * @param src the input matrix
  *
