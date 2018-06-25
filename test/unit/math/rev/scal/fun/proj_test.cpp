@@ -12,12 +12,11 @@ TEST(AgradRev, proj_test) {
   std::complex<stan::math::var> z2(positive_infinity(), -1);
   f = proj(z2);
   EXPECT_TRUE(f == std::complex<stan::math::var>(positive_infinity(), -0))
-    << f << std::endl;
+      << f << std::endl;
 
   using stan::math::negative_infinity;
   std::complex<stan::math::var> z3(0, negative_infinity());
   f = proj(z3);
   EXPECT_TRUE(f == std::complex<stan::math::var>(positive_infinity(), -0))
-    << f << std::endl;
+      << f << std::endl;
 }
-
