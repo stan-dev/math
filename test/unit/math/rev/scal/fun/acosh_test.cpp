@@ -63,7 +63,7 @@ TEST(AgradRev, check_varis_on_stack) {
 }
 
 TEST(AgradRev, complex) {
-  stan::math::var x = 2.0 / 3;
+  stan::math::var x = 3.0 / 2;
 
   double h = 1e-8;
   std::complex<stan::math::var> z(x, h);
