@@ -1,124 +1,136 @@
-#include <stan/math.hpp>
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/util.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <iostream>
 #include <limits>
 #include <sstream>
+#include <stan/math.hpp>
+#include <stan/math/mix/mat.hpp>
+#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/util.hpp>
 #include <vector>
 
 std::ostringstream msgs;
 
 struct f1 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
     return exp(x) + theta[0];
   }
 };
 
 struct f2 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
     return exp(theta[0] * cos(2 * 3.141593 * x)) + theta[0];
   }
 };
 
 struct f3 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
-    return exp(x) + pow(theta[0], x_r[0]) + 2 * pow(theta[1], x_r[1])
-           + 2 * theta[2];
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
+    return exp(x) + pow(theta[0], x_r[0]) + 2 * pow(theta[1], x_r[1]) +
+           2 * theta[2];
   }
 };
 
 struct f4 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
     return exp(-x) / sqrt(x);
   }
 };
 
 struct f5 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
     return exp(-theta[0] * x) / sqrt(theta[1] * x);
   }
 };
 
 struct f6 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
     return sqrt(x / (1 - theta[0] * x * x));
   }
 };
 
 struct f7 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
     return exp(-theta[0] * x);
   }
 };
 
 struct f8 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
     return exp(theta[0] * x);
   }
 };
 
 struct f9 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
     return exp(-pow(x - x_r[0], x_i[0]) / pow(x_r[1], x_i[0]));
   }
 };
 
 struct f10 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
     return 1 / (1 + pow(x, x_i[0]) / x_r[0]);
   }
 };
 
 struct f11 {
   template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1& x, const T1& xc, const std::vector<T2>& theta,
-      const std::vector<double>& x_r, const std::vector<int>& x_i,
-      std::ostream& msgs) const {
-    return pow(x, theta[0] - 1.0)
-           * pow((x > 0.5) ? xc : (1 - x), theta[1] - 1.0);
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
+    return pow(x, theta[0] - 1.0) *
+           pow((x > 0.5) ? xc : (1 - x), theta[1] - 1.0);
+  }
+};
+
+struct f12 {
+  template <typename T1, typename T2>
+  inline typename stan::return_type<T1, T2>::type
+  operator()(const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream &msgs) const {
+    T2 sigma = theta[0];
+    return exp(-0.5 * stan::math::square(x / sigma)) /
+           (sigma * sqrt(2.0 * stan::math::pi()));
   }
 };
 
@@ -152,10 +164,10 @@ struct f11 {
  * @param grad correct value of gradients
  */
 template <typename F>
-void test_derivatives(const F& f, double a, double b,
+void test_derivatives(const F &f, double a, double b,
                       std::vector<double> thetas,
-                      const std::vector<double>& x_r,
-                      const std::vector<int>& x_i, double val,
+                      const std::vector<double> &x_r,
+                      const std::vector<int> &x_i, double val,
                       std::vector<double> grad) {
   using stan::math::var;
 
@@ -191,8 +203,8 @@ TEST(StanMath_integrate_1d, TestDerivatives) {
   test_derivatives(f2{}, 1.0, 1.0, {0.5}, {}, {}, 0.0, {0.0});
   // Zero crossing integral + test x_r
   test_derivatives(f3{}, -1.0, 1.0, {0.5, 1.75, 3.9}, {2.5, 3.0}, {},
-                   2.350402387287579 + 2.0 * pow(0.5, 2.5)
-                       + 4.0 * pow(1.75, 3.0) + 4.0 * 3.9,
+                   2.350402387287579 + 2.0 * pow(0.5, 2.5) +
+                       4.0 * pow(1.75, 3.0) + 4.0 * 3.9,
                    {5 * pow(0.5, 1.5), 12 * 1.75 * 1.75, 4.0});
   // Tricky integral from Boost docs + limit at infinity + no gradients
   test_derivatives(f4{}, 0.0, std::numeric_limits<double>::infinity(), {}, {},
@@ -230,4 +242,8 @@ TEST(StanMath_integrate_1d, TestDerivatives) {
                    {-0.004852607709750566, -0.01040816326530613});
   test_derivatives(f11{}, 0.0, 1.0, {3.0, 5.0}, {}, {}, 0.00952380952380952,
                    {-0.01040816326530613, -0.004852607709750566});
+
+  test_derivatives(f12{}, -std::numeric_limits<double>::infinity(),
+                   std::numeric_limits<double>::infinity(), {1}, {}, {}, 1.0,
+                   {0});
 }
