@@ -26,7 +26,7 @@ namespace math {
  * @return <code>true</code> if variable is finite.
  */
 template <class T>
-inline bool isfinite(T const& t) {
+inline auto isfinite(T const& t) {
   using std::isfinite;
   return isfinite(val(t));
 }

@@ -1,6 +1,9 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_COPYSIGN_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_COPYSIGN_HPP
 
+#include <stan/math/prim/scal/fun/signbit.hpp>
+#include <cmath>
+
 namespace stan {
 namespace math {
 
@@ -16,11 +19,14 @@ namespace math {
  * @tparam U type of object
  * @param t magnitude reference
  * @param u sign reference
- * @return magnitude of x with the sign of y
+ * @return magnitude of t with the sign of u
  */
 template <class T, class U = T>
 inline auto copysign(T const& t, U const& u) {
-  return fabs(t) * sign(u);
+  using std::fabs;
+  using std::signbit;
+  auto sign(signbit(u) ? -1 : 1);
+  return fabs(t) * sign;
 }
 
 }  // namespace math
