@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
-#include <iostream>
-#include <limits>
-#include <sstream>
 #include <stan/math.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/util.hpp>
+#include <iostream>
+#include <limits>
+#include <sstream>
 #include <vector>
 
 std::ostringstream msgs;
@@ -219,10 +219,11 @@ void test_derivatives(const F &f, double a, double b,
                                             tolerance);
     integral.grad();
     EXPECT_LE(std::abs(val - integral.val()), tolerance);
-    if (stan::is_var<T_theta>::value)
+    if (stan::is_var<T_theta>::value) {
       for (size_t i = 0; i < grad.size(); ++i)
         EXPECT_LE(std::abs(grad[i] - get_adjoint_if_var(thetas_[i])),
                   tolerance);
+    }
     if (stan::is_var<T_a>::value)
       EXPECT_LE(std::abs(d_a - get_adjoint_if_var(a_)), tolerance);
     if (stan::is_var<T_b>::value)

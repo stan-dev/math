@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
+#include <stan/math.hpp>
+#include <test/unit/util.hpp>
 #include <iostream>
 #include <limits>
 #include <sstream>
-#include <stan/math.hpp>
-#include <test/unit/util.hpp>
 #include <vector>
 
 std::ostringstream msgs;
