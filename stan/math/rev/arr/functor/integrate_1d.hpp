@@ -42,8 +42,7 @@ inline double gradient_of_f(const F& f, const double& x, const double& xc,
 
 /**
  * Compute the integral of the single variable function f from a to b to within
- * a specified tolerance. a and b can be finite or infinite. a and b cannot be
- * parameters.
+ * a specified tolerance. a and b can be finite or infinite.
  *
  * f should be compatible with reverse mode autodiff and have the signature:
  *   var foo(double x, double xc, std::vector<var> theta, std::vector<double>
@@ -70,6 +69,9 @@ inline double gradient_of_f(const F& f, const double& x, const double& xc,
  * split into two. In this case, each integral is separately integrated to the
  * given tolerance.
  *
+ * @tparam T_a type of first limit
+ * @tparam T_b type of second limit
+ * @tparam T_theta type of parameters
  * @tparam T Type of f
  * @param f the functor to integrate
  * @param a lower limit of integration
@@ -81,38 +83,56 @@ inline double gradient_of_f(const F& f, const double& x, const double& xc,
  * @param tolerance integrator tolerance passed to Boost quadrature
  * @return numeric integral of function f
  */
-template <typename F>
-inline var integrate_1d(const F& f, const double a, const double b,
-                        const std::vector<var>& theta,
+template <typename F, typename T_a, typename T_b, typename T_theta>
+inline var integrate_1d(const F& f, const T_a& a, const T_b& b,
+                        const std::vector<T_theta>& theta,
                         const std::vector<double>& x_r,
                         const std::vector<int>& x_i, std::ostream& msgs,
                         const double tolerance = 1e-6) {
   static const char* function = "integrate_1d";
   check_less_or_equal(function, "lower limit", a, b);
 
-  if (a == b) {
-    if (std::isinf(a))
-      domain_error(function, "Integration endpoints are both", a, "", "");
+  if (value_of(a) == value_of(b)) {
+    if (is_inf(a))
+      domain_error(function, "Integration endpoints are both", value_of(a), "",
+                   "");
     return var(0.0);
   } else {
     double integral = integrate(
         std::bind<double>(f, std::placeholders::_1, std::placeholders::_2,
                           value_of(theta), x_r, x_i, std::ref(msgs)),
-        a, b, tolerance);
+        value_of(a), value_of(b), tolerance);
 
-    size_t N = theta.size();
-    std::vector<double> dintegral_dtheta(N);
-    std::vector<double> theta_vals = value_of(theta);
+    size_t N_theta_vars = is_var<T_theta>::value ? theta.size() : 0;
+    std::vector<double> dintegral_dtheta(N_theta_vars);
+    std::vector<var> theta_concat(N_theta_vars);
 
-    for (size_t n = 0; n < N; ++n) {
-      dintegral_dtheta[n] = integrate(
-          std::bind<double>(gradient_of_f<F>, f, std::placeholders::_1,
-                            std::placeholders::_2, theta_vals, x_r, x_i, n,
-                            std::ref(msgs)),
-          a, b, tolerance);
+    if (N_theta_vars > 0) {
+      std::vector<double> theta_vals = value_of(theta);
+
+      for (size_t n = 0; n < N_theta_vars; ++n) {
+        dintegral_dtheta[n] = integrate(
+            std::bind<double>(gradient_of_f<F>, f, std::placeholders::_1,
+                              std::placeholders::_2, theta_vals, x_r, x_i, n,
+                              std::ref(msgs)),
+            value_of(a), value_of(b), tolerance);
+        theta_concat[n] = theta[n];
+      }
     }
 
-    return precomputed_gradients(integral, theta, dintegral_dtheta);
+    if (!is_inf(a) && is_var<T_a>::value) {
+      theta_concat.push_back(a);
+      dintegral_dtheta.push_back(
+          -value_of(f(value_of(a), 0.0, theta, x_r, x_i, msgs)));
+    }
+
+    if (!is_inf(b) && is_var<T_b>::value) {
+      theta_concat.push_back(b);
+      dintegral_dtheta.push_back(
+          value_of(f(value_of(b), 0.0, theta, x_r, x_i, msgs)));
+    }
+
+    return precomputed_gradients(integral, theta_concat, dintegral_dtheta);
   }
 }
 
