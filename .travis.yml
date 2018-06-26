@@ -20,7 +20,7 @@ linux_clang: &linux_clang
   addons: 
     apt:
       sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8' ]
-      packages: [ 'clang-3.8' ]
+      packages: [ 'clang-3.8', 'libc++-dev' ]
 
 linux_gcc: &linux_gcc
   os: linux
@@ -36,7 +36,7 @@ mpi_linux_clang: &mpi_linux_clang
   addons: 
     apt:
       sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8' ]
-      packages: [ 'clang-3.8', 'mpich', 'libmpich-dev' ]
+      packages: [ 'clang-3.8', 'libc++-dev', 'mpich', 'libmpich-dev' ]
 
 mpi_linux_gcc: &mpi_linux_gcc
   os: linux
