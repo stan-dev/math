@@ -166,6 +166,7 @@
 #include <stan/math/prim/scal/fun/Phi_approx.hpp>
 #include <stan/math/prim/scal/fun/positive_constrain.hpp>
 #include <stan/math/prim/scal/fun/positive_free.hpp>
+#include <stan/math/prim/scal/fun/pow.hpp>
 #include <stan/math/prim/scal/fun/primitive_value.hpp>
 #include <stan/math/prim/scal/fun/prob_constrain.hpp>
 #include <stan/math/prim/scal/fun/prob_free.hpp>
@@ -175,6 +176,7 @@
 #include <stan/math/prim/scal/fun/rising_factorial.hpp>
 #include <stan/math/prim/scal/fun/round.hpp>
 #include <stan/math/prim/scal/fun/sign.hpp>
+#include <stan/math/prim/scal/fun/signbit.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
