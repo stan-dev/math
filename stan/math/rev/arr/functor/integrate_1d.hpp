@@ -5,6 +5,7 @@
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
+#include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/prim/arr/functor/integrate_1d.hpp>
 #include <functional>
 #include <ostream>
