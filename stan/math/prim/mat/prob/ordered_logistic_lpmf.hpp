@@ -124,10 +124,9 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
     const T_y& y, const T_loc& lambda, const T_cut& c) {
   static const char* function = "ordered_logistic";
 
-  typedef typename stan::partials_return_type<T_loc, T_cut>::type
-    T_partials_return;
-  typedef typename Eigen::Matrix<T_partials_return, -1, 1>
-    T_partials_vec;
+  typedef
+      typename stan::partials_return_type<T_loc, T_cut>::type T_partials_return;
+  typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
 
   scalar_seq_view<T_loc> lam_vec(lambda);
   scalar_seq_view<T_y> y_vec(y);
@@ -158,17 +157,17 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
   for (int n = 0; n < N; ++n) {
     for (size_t i = 0, size_ = length(c_vec); i < size_; i++) {
       T_partials_return lam_dbl = value_of(lam_vec[n]);
-      T_partials_vec c_dbl = value_of(c_vec[i]).template
-                                                  cast<T_partials_return>();
+      T_partials_vec c_dbl
+          = value_of(c_vec[i]).template cast<T_partials_return>();
       T_partials_vec d = ordhelp.deriv(y_vec[n], K, lam_dbl, c_dbl);
 
       logp += ordhelp.logp(y_vec[n], K, lam_dbl, c_dbl);
 
-    if (!is_constant_struct<T_loc>::value)
-      ops_partials.edge1_.partials_[n] = d[0];
+      if (!is_constant_struct<T_loc>::value)
+        ops_partials.edge1_.partials_[n] = d[0];
 
-    if (!is_constant_struct<T_cut>::value)
-      ops_partials.edge2_.partials_vec_[n] += d.tail(K - 1);
+      if (!is_constant_struct<T_cut>::value)
+        ops_partials.edge2_.partials_vec_[n] += d.tail(K - 1);
     }
   }
   return ops_partials.build(logp);
