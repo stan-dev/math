@@ -24,12 +24,12 @@ inline auto pow(std::complex<T> const& t, U const& u) {
   return pow(complex_promote<U>(t), complex_promote<T>(u));
 }
 
-template <class T, class U, std::enable_if_t<
-// avoid declaration above in case both t & u are complex
-// !std::is_same<rm_complex_t<T>, rm_complex_t<U>>::value &&
- !is_complex<T>::value>* =nullptr>
-inline auto
-pow(T const& t, std::complex<U> const& u) {
+template <class T, class U,
+          std::enable_if_t<
+              // avoid declaration above in case both t & u are complex
+              // !std::is_same<rm_complex_t<T>, rm_complex_t<U>>::value &&
+              !is_complex<T>::value>* = nullptr>
+inline auto pow(T const& t, std::complex<U> const& u) {
   return pow(complex_promote<U>(t), complex_promote<T>(u));
 }
 
