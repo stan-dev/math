@@ -64,11 +64,15 @@ $(STAN_IDAS_HEADERS) : $(LIBSUNDIALS)
 # turn BOOST_LIB into absolute path
 BOOST_LIB_ABS = $(shell mkdir -p "$(BOOST_LIB)" && cd -- "$(BOOST_LIB)" && pwd)
 
-$(BOOST_LIB)/mpi.so:
+$(BOOST)/user-config.jam:
+	echo "# In case of a compiler mismatch used by mpicxx and" >> $(BOOST)/user-config.jam
+	echo "# the compiler used for Stan, consider configuring" >> $(BOOST)/user-config.jam
+	echo "# the boost toolset here" >> $(BOOST)/user-config.jam
+	echo "using mpi ;" >> $(BOOST)/user-config.jam
+
+$(BOOST_LIB)/mpi.so: $(BOOST)/user-config.jam
 	@mkdir -p $(dir $@)
 	cd $(BOOST); ./bootstrap.sh
-	cd $(BOOST); echo "using mpi ;" > user-config.jam
-	cd $(BOOST); echo "using $(CC_TYPE) : : $(CC) ;" >> user-config.jam
 	cd $(BOOST); ./b2 --user-config=user-config.jam --layout=system --with-mpi --with-serialization -j$(BOOST_PARALLEL_BUILD) variant=release link=shared threading=multi runtime-link=shared
 
 $(BOOST_LIB)/libboost_serialization.so: $(BOOST_LIB)/mpi.so
