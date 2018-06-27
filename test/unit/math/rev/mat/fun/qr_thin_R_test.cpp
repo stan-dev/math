@@ -8,14 +8,14 @@ TEST(MathMatrix, qr_R) {
   stan::math::matrix_v m1(3, 2);
   m1 << 1, 2, 3, 4, 5, 6;
 
-  using stan::math::qr_Q;
-  using stan::math::qr_R;
+  using stan::math::qr_thin_Q;
+  using stan::math::qr_thin_R;
   using stan::math::transpose;
-  EXPECT_THROW(qr_R(m0), std::invalid_argument);
-  EXPECT_NO_THROW(qr_R(m1));
+  EXPECT_THROW(qr_thin_R(m0), std::invalid_argument);
+  EXPECT_NO_THROW(qr_thin_R(m1));
 
   stan::math::matrix_v m2(3, 2);
-  m2 = qr_Q(m1) * qr_R(m1);
+  m2 = qr_thin_Q(m1) * qr_thin_R(m1);
   for (unsigned int i = 0; i < m1.rows(); i++) {
     for (unsigned int j = 0; j < m1.cols(); j++) {
       EXPECT_NEAR(m1(i, j).val(), m2(i, j).val(), 1e-8);
@@ -25,5 +25,5 @@ TEST(MathMatrix, qr_R) {
 TEST(AgradRevMatrix, check_varis_on_stack) {
   stan::math::matrix_v m1(3, 2);
   m1 << 1, 2, 3, 4, 5, 6;
-  test::check_varis_on_stack(stan::math::qr_R(m1));
+  test::check_varis_on_stack(stan::math::qr_thin_R(m1));
 }

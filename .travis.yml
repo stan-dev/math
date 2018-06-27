@@ -166,7 +166,7 @@ matrix:
 
 script: 
   - if [ ! -z ${STAN_MPI} ]; then echo "STAN_MPI=true" >> make/local; echo "Testing MPI"; fi
-  - ./runTests.py -j2 $TESTFOLDER
+  - PARALLEL=2 ./runTests.py -j2 $TESTFOLDER
 
 sudo: false
 dist: trusty

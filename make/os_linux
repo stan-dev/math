@@ -30,7 +30,3 @@ ifdef STAN_OPENCL
 endif
 
 DLL := .so
-
-ifdef STAN_MPI
-  LDFLAGS_MPI ?= -L"$(BOOST_LIB)" -lboost_serialization -lboost_mpi -Wl,-rpath,"$(BOOST_LIB_ABS)"
-endif
