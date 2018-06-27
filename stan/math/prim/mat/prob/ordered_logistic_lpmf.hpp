@@ -137,7 +137,7 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
 
   check_consistent_sizes(function, "Integers", y, "Locations", lambda);
 
-  for (size_t n = 0; n < N; n++) {
+  for (int n = 0; n < N; n++) {
     check_bounded(function, "Random variable", y_vec[n], 1, K);
     check_finite(function, "Location parameter", lam_vec[n]);
   }
