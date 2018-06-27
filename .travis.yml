@@ -55,7 +55,7 @@ matrix:
           TESTFOLDER="test/unit/math/rev/core test/unit/math/rev/mat/functor"      
     - <<: *mpi_linux_clang
       env:
-        - MATRIX_EVAL="CXX=\"mpicxx -cxx=\\"clang++-3.8 -stdlib=libc++\\"\""
+        - MATRIX_EVAL="CXX=\"mpicxx -cxx=\\\"clang++-3.8 -stdlib=libc++\\\"\""
           STAN_MPI=true
           TESTFOLDER="test/unit/math/rev/mat/functor test/unit/math/prim/mat/functor test/unit/math/prim/arr/functor"
 
