@@ -36,6 +36,7 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lcdf(
   static const char* function = "pareto_type_2_lcdf";
 
   using std::log;
+  using std::pow;
 
   T_partials_return P(0.0);
 
