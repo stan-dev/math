@@ -13,7 +13,8 @@ struct make_I {
       for (int j = 0; j < K; j++)
         A(i, j) = a[pos++];
     Eigen::ComplexSchur<matrix_t> cs(A);
-    matrix_t I = (cs.matrixU().adjoint() * cs.matrixU()).real();
+    auto M = (cs.matrixU().adjoint() * cs.matrixU()).eval();
+    matrix_t I = M.real() + M.imag();
     I.resize(K * K, 1);
     return I;
   }
