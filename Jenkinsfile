@@ -70,6 +70,8 @@ pipeline {
             }
             steps {
                 script {
+                    if (!params.cmdstan_pr) params.cmdstan_pr = "downstream tests"
+                    if (!params.stan_pr) params.stan_pr = "downstream tests"
                     utils.killOldBuilds()
                 }
             }
