@@ -42,7 +42,7 @@ class map_rect_reduce<F, double, double> {
                       const vector_d& job_specific_params,
                       const std::vector<double>& x_r,
                       const std::vector<int>& x_i,
-                      std::ostream* msgs = 0) const {
+                      std::ostream* msgs = nullptr) const {
     return F()(shared_params, job_specific_params, x_r, x_i, msgs).transpose();
   }
 };

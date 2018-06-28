@@ -40,7 +40,7 @@ inline double von_mises_rng(double mu, double kappa, RNG& rng) {
   double rho = 0.5 * (r - pow(2 * r, 0.5)) / kappa;
   double s = 0.5 * (1 + rho * rho) / rho;
 
-  bool done = 0;
+  bool done = false;
   double W;
   while (!done) {
     double Z = std::cos(pi() * uniform_rng(0.0, 1.0, rng));

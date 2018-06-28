@@ -15,12 +15,20 @@ def setup(Boolean failOnError = true) {
 }
 
 def mailBuildResults(String label, additionalEmails='') {
-    emailext (
-        subject: "[StanJenkins] ${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-        body: """${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]': Check console output at ${env.BUILD_URL}""",
-        recipientProviders: [[$class: 'RequesterRecipientProvider']],
-        to: "${env.CHANGE_AUTHOR_EMAIL}, ${additionalEmails}"
-    )
+    script {
+        try {
+            emailext (
+                subject: "[StanJenkins] ${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: """${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]': Check console output at ${env.BUILD_URL}""",
+                recipientProviders: [[$class: 'RequesterRecipientProvider']],
+                to: "${env.CHANGE_AUTHOR_EMAIL}, ${additionalEmails}"
+            )
+        } catch (all) {
+            println "Encountered the following exception sending email; please ignore:"
+            println all
+            println "End ignoreable email-sending exception."
+        }
+    }
 }
 
 def runTests(String testPath) {
@@ -147,6 +155,28 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
+                stage('Unit with GPU') {
+                    agent { label "gelman-group-mac" }
+                    steps {
+                        unstash 'MathSetup'
+                        sh setupCC()
+                        sh "echo STAN_OPENCL=true>> make/local"
+                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
+                        sh "echo OPENCL_DEVICE_ID=0>> make/local"
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Unit with MPI') {
+                    agent any
+                    steps {
+                        unstash 'MathSetup'
+                        sh "echo CC=${MPICXX} -cxx=${CXX} >> make/local"
+                        sh "echo STAN_MPI=true >> make/local"
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
                     steps {
@@ -177,18 +207,12 @@ pipeline {
         }
         stage('Upstream tests') {
             parallel {
-                stage('CmdStan Upstream Tests') {
-                    when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
-                    steps {
-                        build(job: "CmdStan/${params.cmdstan_pr}",
-                              parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
-                    }
-                }
                 stage('Stan Upstream Tests') {
                     when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
                     steps {
                         build(job: "Stan/${params.stan_pr}",
-                              parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
+                              parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
+                                           string(name: 'cmdstan_pr', value: params.cmdstan_pr)])
                     }
                 }
             }

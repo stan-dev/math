@@ -5,7 +5,7 @@
 #   - GTEST_CXXFLAGS
 #   - OPT
 #   - EXE
-# 
+#
 # Additionally, set the following variables to build
 # demo/lang using the Microsoft Visual Studio compiler.
 #   - CC_STANC
@@ -29,11 +29,24 @@ ifeq (g++,$(CC_TYPE))
   CXXFLAGS += -Wno-unused-but-set-variable
   LDLIBS += -static-libgcc
   LDLIBS += -static-libstdc++
+  ifdef STAN_OPENCL
+    LDFLAGS += -lOpenCL
+  endif
 endif
 ifeq (mingw32-g++,$(CC_TYPE))
   LDLIBS += -static-libgcc
 #  LDLIBS += -static-libstdc++
-endif
-ifeq (clang++,$(CC_TYPE))
+  ifdef STAN_OPENCL
+    LDFLAGS += -lOpenCL
+  endif
 endif
 
+ifdef STAN_OPENCL
+  LDFLAGS_OPENCL ?= -lOpenCL
+  OPENCL_DEVICE_ID ?= 0
+  OPENCL_PLATFORM_ID ?= 0
+endif
+
+ifdef STAN_MPI
+  $(error MPI is not supported on Windows.)
+endif
