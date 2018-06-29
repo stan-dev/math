@@ -58,6 +58,8 @@ CXX = $(CC)
 #  STAN_MPI
 -include make/setup_mpi
 
+include make/libstanmath_mpi # bin/libstanmath_mpi.a
+
 include make/tests    # tests
 include make/cpplint  # cpplint
 

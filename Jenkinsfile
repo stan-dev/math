@@ -15,12 +15,20 @@ def setup(Boolean failOnError = true) {
 }
 
 def mailBuildResults(String label, additionalEmails='') {
-    emailext (
-        subject: "[StanJenkins] ${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-        body: """${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]': Check console output at ${env.BUILD_URL}""",
-        recipientProviders: [[$class: 'RequesterRecipientProvider']],
-        to: "${env.CHANGE_AUTHOR_EMAIL}, ${additionalEmails}"
-    )
+    script {
+        try {
+            emailext (
+                subject: "[StanJenkins] ${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: """${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]': Check console output at ${env.BUILD_URL}""",
+                recipientProviders: [[$class: 'RequesterRecipientProvider']],
+                to: "${env.CHANGE_AUTHOR_EMAIL}, ${additionalEmails}"
+            )
+        } catch (all) {
+            println "Encountered the following exception sending email; please ignore:"
+            println all
+            println "End ignoreable email-sending exception."
+        }
+    }
 }
 
 def runTests(String testPath) {
@@ -41,6 +49,8 @@ def alsoNotify() {
 def isPR() { env.CHANGE_URL != null }
 def fork() { env.CHANGE_FORK ?: "stan-dev" }
 def branchName() { isPR() ? env.CHANGE_BRANCH :env.BRANCH_NAME }
+def cmdstan_pr() { params.cmdstan_pr || "downstream tests" }
+def stan_pr() { params.stan_pr || "downstream tests" }
 
 pipeline {
     agent none
@@ -202,9 +212,9 @@ pipeline {
                 stage('Stan Upstream Tests') {
                     when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
                     steps {
-                        build(job: "Stan/${params.stan_pr}",
+                        build(job: "Stan/${stan_pr()}",
                               parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
-                                           string(name: 'cmdstan_pr', value: params.cmdstan_pr)])
+                                           string(name: 'cmdstan_pr', value: cmdstan_pr())])
                     }
                 }
             }

@@ -1,0 +1,12 @@
+MPI_TEMPLATE_INSTANTIATION_CPP := $(shell find stan -type f -name 'mpi_*_inst.cpp') $(shell find stan -type f -name 'mpi_*_def.cpp')
+MPI_TEMPLATE_INSTANTIATION := $(MPI_TEMPLATE_INSTANTIATION_CPP:stan/%.cpp=bin/%.o)
+
+# linking in MPI definitions via a static library does not work
+#bin/libstanmath_mpi.a : $(MPI_TEMPLATE_INSTANTIATION)
+#	@mkdir -p $(dir $@)
+#	$(AR) -rs bin/libstanmath_mpi.a $(MPI_TEMPLATE_INSTANTIATION)
+
+$(MPI_TEMPLATE_INSTANTIATION) : bin/%.o : stan/%.cpp
+	@mkdir -p $(dir $@)
+	$(COMPILE.cc) -c -O$(O_STANC) $(OUTPUT_OPTION) $(CXXFLAGS_MPI) $<
+

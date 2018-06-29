@@ -5,8 +5,9 @@
 # link to MPI
 # Defines
 #  STAN_MPI
+# 
 ifdef STAN_MPI
-  LIBMPI = $(MATH)src/math/prim/arr/mpi_cluster.o $(BOOST_LIB)/libboost_mpi$(DLL) $(BOOST_LIB)/libboost_serialization$(DLL)
+  LIBMPI = $(BOOST_LIB)/libboost_serialization$(DLL) $(BOOST_LIB)/libboost_mpi$(DLL) bin/math/prim/arr/functor/mpi_cluster_inst.o
   CXXFLAGS_MPI = -DSTAN_MPI
   LDFLAGS_MPI ?= -Wl,-lboost_mpi -Wl,-lboost_serialization -Wl,-L,"$(BOOST_LIB_ABS)" -Wl,-rpath,"$(BOOST_LIB_ABS)"
 endif
