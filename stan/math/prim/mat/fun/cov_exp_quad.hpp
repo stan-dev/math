@@ -20,14 +20,18 @@ namespace math {
 /**
  * Returns a squared exponential kernel.
  *
+ *  \f$k(x,x') = \sigma^2 exp( \frac{d(x, x')^2}{2l^2})  \f$
+ * 
+ *  where \f$d(x, x)\f$ is euclidean distance.
+ * 
  * @tparam T_x type of std::vector of elements
  * @tparam T_sigma type of sigma
  * @tparam T_l type of length scale
  *
  * @param x std::vector of elements that can be used in square distance.
  *    This function assumes each element of x is the same size.
- * @param sigma standard deviation
- * @param length_scale length scale
+ * @param sigma marginal standard deviation, or magnitude.
+ * @param length_scale characteristic length scale
  * @return squared distance
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
@@ -68,7 +72,13 @@ inline
 }
 
 /**
- * Returns a squared exponential kernel.
+ * Returns a squared exponential kernel, with automatic relevance determination,
+ * (ARD), a seperate length scale for each dimension. 
+ *
+ *  \f$k(x,x') = \sigma^2 exp( \frac{d(x, x')^2}{2l_d^2})  \f$
+ * 
+ *  where \f$d(x, x)\f$ is euclidean distance, and \f$d\f$ is a subscript for
+ *  each dimension.
  *
  * @tparam T_x type of std::vector of elements
  * @tparam T_sigma type of sigma
@@ -77,7 +87,7 @@ inline
  * @param x std::vector of elements that can be used in square distance.
  *    This function assumes each element of x is the same size.
  *    This function assumes the dimension if x and l are the same.
- * @param sigma standard deviation
+ * @param sigma marginal standard deviation, or magnitude. 
  * @param length_scale std::vector length scale
  * @return squared distance
  * @throw std::domain_error if sigma <= 0, l <= 0, or
@@ -126,6 +136,10 @@ inline
 /**
  * Returns a squared exponential kernel.
  *
+ *  \f$k(x,x') = \sigma^2 exp( \frac{d(x, x')^2}{2l^2})  \f$
+ * 
+ *  where \f$d(x, x)\f$ is euclidean distance.
+ *
  * @tparam T_x1 type of first std::vector of elements
  * @tparam T_x2 type of second std::vector of elements
  * @tparam T_sigma type of sigma
@@ -133,7 +147,7 @@ inline
  *
  * @param x1 std::vector of elements that can be used in square distance
  * @param x2 std::vector of elements that can be used in square distance
- * @param sigma standard deviation
+ * @param sigma marginal standard deviation, or magnitude.
  * @param length_scale length scale
  * @return squared distance
  * @throw std::domain_error if sigma <= 0, l <= 0, or
@@ -172,7 +186,13 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 }
 
 /**
- * Returns a squared exponential kernel.
+ * Returns a squared exponential kernel, with automatic relevance determination,
+ * (ARD), a seperate length scale for each dimension. 
+ *
+ *  \f$k(x,x') = \sigma^2 exp( \frac{d(x, x')^2}{2l_d^2})  \f$
+ * 
+ *  where \f$d(x, x)\f$ is euclidean distance, and \f$d\f$ is a subscript for
+ *  each dimension.
  *
  * @tparam T_x1 type of first std::vector of elements
  * @tparam T_x2 type of second std::vector of elements
@@ -181,7 +201,7 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  *
  * @param x1 std::vector of elements that can be used in square distance
  * @param x2 std::vector of elements that can be used in square distance
- * @param sigma standard deviation
+ * @param sigma marginal standard deviation, or magnitude.
  * @param length_scale std::vector of length scale
  *    This function assumes the dimension if x1, x2 and l are the same.
  * @return squared distance
@@ -239,6 +259,6 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   }
   return cov;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
