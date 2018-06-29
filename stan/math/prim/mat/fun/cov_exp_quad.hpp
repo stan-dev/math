@@ -21,9 +21,9 @@ namespace math {
  * Returns a squared exponential kernel.
  *
  *  \f$k(x,x') = \sigma^2 exp( \frac{d(x, x')^2}{2l^2})  \f$
- * 
+ *
  *  where \f$d(x, x)\f$ is euclidean distance.
- * 
+ *
  * @tparam T_x type of std::vector of elements
  * @tparam T_sigma type of sigma
  * @tparam T_l type of length scale
@@ -62,8 +62,8 @@ inline
   for (size_t j = 0; j < (x_size - 1); ++j) {
     cov(j, j) = sigma_sq;
     for (size_t i = j + 1; i < x_size; ++i) {
-      cov(i, j)
-          = sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
+      cov(i, j) =
+          sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
       cov(j, i) = cov(i, j);
     }
   }
@@ -73,10 +73,10 @@ inline
 
 /**
  * Returns a squared exponential kernel, with automatic relevance determination,
- * (ARD), a seperate length scale for each dimension. 
+ * (ARD), a seperate length scale for each dimension.
  *
  *  \f$k(x,x') = \sigma^2 exp( \frac{d(x, x')^2}{2l_d^2})  \f$
- * 
+ *
  *  where \f$d(x, x)\f$ is euclidean distance, and \f$d\f$ is a subscript for
  *  each dimension.
  *
@@ -87,7 +87,7 @@ inline
  * @param x std::vector of elements that can be used in square distance.
  *    This function assumes each element of x is the same size.
  *    This function assumes the dimension if x and l are the same.
- * @param sigma marginal standard deviation, or magnitude. 
+ * @param sigma marginal standard deviation, or magnitude.
  * @param length_scale std::vector length scale
  * @return squared distance
  * @throw std::domain_error if sigma <= 0, l <= 0, or
@@ -137,7 +137,7 @@ inline
  * Returns a squared exponential kernel.
  *
  *  \f$k(x,x') = \sigma^2 exp( \frac{d(x, x')^2}{2l^2})  \f$
- * 
+ *
  *  where \f$d(x, x)\f$ is euclidean distance.
  *
  * @tparam T_x1 type of first std::vector of elements
@@ -178,8 +178,8 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   for (size_t i = 0; i < x1.size(); ++i) {
     for (size_t j = 0; j < x2.size(); ++j) {
-      cov(i, j)
-          = sigma_sq * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
+      cov(i, j) =
+          sigma_sq * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
     }
   }
   return cov;
@@ -187,10 +187,10 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
 /**
  * Returns a squared exponential kernel, with automatic relevance determination,
- * (ARD), a seperate length scale for each dimension. 
+ * (ARD), a seperate length scale for each dimension.
  *
  *  \f$k(x,x') = \sigma^2 exp( \frac{d(x, x')^2}{2l_d^2})  \f$
- * 
+ *
  *  where \f$d(x, x)\f$ is euclidean distance, and \f$d\f$ is a subscript for
  *  each dimension.
  *
@@ -259,6 +259,6 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   }
   return cov;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif
