@@ -7,7 +7,7 @@ namespace stan {
 namespace math {
 
 /**
- *  zeroing<T> is a zeroing T that std::complex<T> implicitly 
+ *  zeroing<T> is a zeroing T that std::complex<T> implicitly
  *  uses  when inheriting from stan::math::complex. It has the
  *  property that zeroing() results in T(0). See stan's
  *  complex class for details. Without this, in libstdc++'s
