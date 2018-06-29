@@ -10,6 +10,7 @@
 #include <stan/math/prim/scal/fun/log1p_exp.hpp>
 #include <stan/math/prim/scal/fun/log_inv_logit_diff.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
@@ -66,6 +67,16 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
   int N = length(lambda);
 
   check_consistent_sizes(function, "Integers", y, "Locations", lambda);
+
+  int size_c_old = c_vec[0].size();
+  for (size_t i = 1, size_ = length_mvt(c); i < size_; i++) {
+    int size_c_new = c_vec[i].size();
+
+    check_size_match(function,
+                     "Size of one of the vectors of cutpoints ", size_c_new,
+                     "Size of another vector of the cutpoints ", size_c_old);
+    size_c_old = size_c_new;
+  }
 
   for (int n = 0; n < N; n++) {
     check_bounded(function, "Random variable", y_vec[n], 1, K);
