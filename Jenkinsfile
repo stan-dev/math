@@ -49,6 +49,8 @@ def alsoNotify() {
 def isPR() { env.CHANGE_URL != null }
 def fork() { env.CHANGE_FORK ?: "stan-dev" }
 def branchName() { isPR() ? env.CHANGE_BRANCH :env.BRANCH_NAME }
+def cmdstan_pr() { params.cmdstan_pr || "downstream tests" }
+def stan_pr() { params.stan_pr || "downstream tests" }
 
 pipeline {
     agent none
@@ -210,9 +212,9 @@ pipeline {
                 stage('Stan Upstream Tests') {
                     when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
                     steps {
-                        build(job: "Stan/${params.stan_pr}",
+                        build(job: "Stan/${stan_pr()}",
                               parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
-                                           string(name: 'cmdstan_pr', value: params.cmdstan_pr)])
+                                           string(name: 'cmdstan_pr', value: cmdstan_pr())])
                     }
                 }
             }
