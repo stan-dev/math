@@ -63,23 +63,26 @@ TEST(AgradRevSoftmax, gradient_check) {
   using Eigen::Matrix;
   using stan::math::softmax;
   using stan::math::var;
-  std::vector<std::vector<double> > inputs = { { 0.5, -1.0, 3.0 }, {4.0, 3.0, -2.0 } };
-  std::vector<double> vals = { 0.07459555713221443, 0.729736214118415 };
-  std::vector<std::vector<double> > grads = { { 0.06903105998834897, -0.001241607138856182, -0.06778945284949277 }, { 0.1972212719225377, -0.1959012993504623, -0.001319972572075391 } };
+  std::vector<std::vector<double> > inputs
+      = {{0.5, -1.0, 3.0}, {4.0, 3.0, -2.0}};
+  std::vector<double> vals = {0.07459555713221443, 0.729736214118415};
+  std::vector<std::vector<double> > grads
+      = {{0.06903105998834897, -0.001241607138856182, -0.06778945284949277},
+         {0.1972212719225377, -0.1959012993504623, -0.001319972572075391}};
   for (size_t i = 0; i < inputs.size(); ++i) {
     for (int j = 0; j < 3; ++j) {
       stan::math::set_zero_all_adjoints();
-      
+
       Matrix<AVAR, Dynamic, 1> alpha(3);
-      for(int k = 0; k < 3; ++k)
-	alpha((j + k) % 3) = inputs[i][k];
-      
+      for (int k = 0; k < 3; ++k)
+        alpha((j + k) % 3) = inputs[i][k];
+
       Matrix<AVAR, Dynamic, 1> theta = softmax(alpha);
       theta(j).grad();
-      
+
       EXPECT_NEAR(vals[i], theta(j).val(), 1e-10);
       for (size_t k = 0; k < 3; ++k)
-	EXPECT_NEAR(grads[i][k], alpha((j + k) % 3).adj(), 1e-10);
+        EXPECT_NEAR(grads[i][k], alpha((j + k) % 3).adj(), 1e-10);
     }
   }
 }
