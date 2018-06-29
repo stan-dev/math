@@ -4,6 +4,7 @@
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/size.hpp>
 #include <stan/math/prim/mat/meta/vector_seq_view.hpp>
+#include <stan/math/prim/mat/meta/length_mvt.hpp>
 #include <stan/math/prim/mat/err/check_ordered.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
 #include <stan/math/prim/scal/fun/log1p_exp.hpp>
@@ -22,76 +23,6 @@
 
 namespace stan {
 namespace math {
-
-template <typename T>
-struct ordLog_helper {
-  /**
-   * Returns the (natural) log probability of the specified integer
-   * outcome given the continuous location and specified cutpoints
-   * in an ordered logistic model.
-   *
-   * Error-checking handled by main distribution functions, with this
-   * function only called once inputs have been validated.
-   *
-   * @tparam T Type of location & cutpoint variables.
-   * @param y Outcome.
-   * @param K Number of categories.
-   * @param lambda Location.
-   * @param c Positive increasing vector of cutpoints.
-   * @return Log probability of outcome given location and
-   * cutpoints.
-   */
-  T logp(const int& y, const int& K, const T& lambda,
-         const Eigen::Matrix<T, Eigen::Dynamic, 1>& c) {
-    if (y == 1)
-      return -log1p_exp(lambda - c[0]);
-    else if (y == K)
-      return -log1p_exp(c[K - 2] - lambda);
-    else
-      return log_inv_logit_diff(lambda - c[y - 2], lambda - c[y - 1]);
-  }
-
-  /**
-   * Returns a vector with the gradients of the the continuous location
-   * and ordered cutpoints in an ordered logistic model. The first element
-   * of the vector contains the gradient for the location variable (lambda),
-   * followed by the gradients for the ordered cutpoints (c).
-   *
-   * Error-checking handled by main distribution functions, with this
-   * function only called once inputs have been validated.
-   *
-   * @tparam T Type of location & cutpoint variables.
-   * @param y Outcome.
-   * @param K Number of categories.
-   * @param lambda Location.
-   * @param c Positive increasing vector of cutpoints.
-   * @return Vector of gradients.
-   */
-  Eigen::Matrix<T, Eigen::Dynamic, 1> deriv(
-      const int& y, const int& K, const T& lambda,
-      const Eigen::Matrix<T, Eigen::Dynamic, 1>& c) {
-    using std::exp;
-
-    Eigen::Matrix<T, Eigen::Dynamic, 1> d(
-        Eigen::Matrix<T, Eigen::Dynamic, 1>::Zero(K));
-
-    if (y == 1) {
-      d[0] -= inv_logit(lambda - c[0]);
-      d[1] -= d[0];
-      return d;
-    } else if (y == K) {
-      d[0] += inv_logit(c[K - 2] - lambda);
-      d[K - 1] -= d[0];
-      return d;
-    } else {
-      d[y - 1]
-          += inv(1 - exp(c[y - 1] - c[y - 2])) - inv_logit(c[y - 2] - lambda);
-      d[y] += inv(1 - exp(c[y - 2] - c[y - 1])) - inv_logit(c[y - 1] - lambda);
-      d[0] -= d[y] + d[y - 1];
-      return d;
-    }
-  }
-};
 
 /**
  * Returns the (natural) log probability of the specified array
@@ -118,7 +49,6 @@ struct ordLog_helper {
  * @throw std::invalid_argument If y and lambda are different
  * lengths.
  */
-
 template <bool propto, typename T_y, typename T_loc, typename T_cut>
 typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
     const T_y& y, const T_loc& lambda, const T_cut& c) {
@@ -142,33 +72,46 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
     check_finite(function, "Location parameter", lam_vec[n]);
   }
 
-  for (size_t i = 0, size_ = length(c_vec); i < size_; i++) {
+  for (size_t i = 0, size_ = length_mvt(c); i < size_; i++) {
     check_ordered(function, "Cut-points", c_vec[i]);
     check_greater(function, "Size of cut points parameter", c_vec[i].size(), 0);
     check_finite(function, "Final cut-point", c_vec[i](c_vec[i].size() - 1));
     check_finite(function, "First cut-point", c_vec[i](0));
   }
 
-  ordLog_helper<T_partials_return> ordhelp;
   operands_and_partials<T_loc, T_cut> ops_partials(lambda, c);
 
   T_partials_return logp(0.0);
 
   for (int n = 0; n < N; ++n) {
-    for (size_t i = 0, size_ = length(c_vec); i < size_; i++) {
-      T_partials_return lam_dbl = value_of(lam_vec[n]);
-      T_partials_vec c_dbl
-          = value_of(c_vec[i]).template cast<T_partials_return>();
-      T_partials_vec d = ordhelp.deriv(y_vec[n], K, lam_dbl, c_dbl);
+    int i = length_mvt(c) == 1 ? 0 : n;
+    T_partials_vec c_dbl
+        = value_of(c_vec[i]).template cast<T_partials_return>();
+    T_partials_return lam_dbl = value_of(lam_vec[n]);
+    T_partials_vec d(T_partials_vec::Zero(K-1));
 
-      logp += ordhelp.logp(y_vec[n], K, lam_dbl, c_dbl);
-
-      if (!is_constant_struct<T_loc>::value)
-        ops_partials.edge1_.partials_[n] = d[0];
-
-      if (!is_constant_struct<T_cut>::value)
-        ops_partials.edge2_.partials_vec_[n] += d.tail(K - 1);
+    if (y_vec[n] == 1) {
+      d[0] = inv_logit(lam_dbl - c_dbl[0]);
+      logp -= log1p_exp(lam_dbl - c_dbl[0]);
+    } else if (y_vec[n] == K) {
+      d[K - 2] -= inv_logit(c_dbl[K - 2] - lam_dbl);
+      logp -= log1p_exp(c_dbl[K - 2] - lam_dbl);
+    } else {
+      d[y_vec[n] - 2]
+          += inv(1 - exp(c_dbl[y_vec[n] - 1] - c_dbl[y_vec[n] - 2]))
+              - inv_logit(c_dbl[y_vec[n] - 2] - lam_dbl);
+      d[y_vec[n] - 1]
+          += inv(1 - exp(c_dbl[y_vec[n] - 2] - c_dbl[y_vec[n] - 1]))
+              - inv_logit(c_dbl[y_vec[n] - 1] - lam_dbl);
+      logp += log_inv_logit_diff(lam_dbl - c_dbl[y_vec[n] - 2],
+                                  lam_dbl - c_dbl[y_vec[n] - 1]);
     }
+
+    if (!is_constant_struct<T_loc>::value)
+      ops_partials.edge1_.partials_[n] -= d.sum();
+
+    if (!is_constant_struct<T_cut>::value)
+      ops_partials.edge2_.partials_vec_[n] += d;
   }
   return ops_partials.build(logp);
 }
