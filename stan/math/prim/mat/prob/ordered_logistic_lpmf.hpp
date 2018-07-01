@@ -94,8 +94,7 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
   operands_and_partials<T_loc, T_cut> ops_partials(lambda, c);
 
   T_partials_return logp(0.0);
-  T_partials_vec c_dbl
-      = value_of(c_vec[0]).template cast<T_partials_return>();
+  T_partials_vec c_dbl = value_of(c_vec[0]).template cast<T_partials_return>();
 
   for (int n = 0; n < N; ++n) {
     if (C_l > 1)
@@ -120,15 +119,15 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
         ops_partials.edge1_.partials_[n] = d;
 
       if (!is_constant_struct<T_cut>::value)
-        ops_partials.edge2_.partials_vec_[n](K-2) -= d;
+        ops_partials.edge2_.partials_vec_[n](K - 2) -= d;
 
     } else {
       T_partials_return d1
-        = inv(1 - exp(c_dbl[y_vec[n] - 1] - c_dbl[y_vec[n] - 2]))
-                         - inv_logit(c_dbl[y_vec[n] - 2] - lam_dbl);
+          = inv(1 - exp(c_dbl[y_vec[n] - 1] - c_dbl[y_vec[n] - 2]))
+            - inv_logit(c_dbl[y_vec[n] - 2] - lam_dbl);
       T_partials_return d2
-        = inv(1 - exp(c_dbl[y_vec[n] - 2] - c_dbl[y_vec[n] - 1]))
-                         - inv_logit(c_dbl[y_vec[n] - 1] - lam_dbl);
+          = inv(1 - exp(c_dbl[y_vec[n] - 2] - c_dbl[y_vec[n] - 1]))
+            - inv_logit(c_dbl[y_vec[n] - 1] - lam_dbl);
       logp += log_inv_logit_diff(lam_dbl - c_dbl[y_vec[n] - 2],
                                  lam_dbl - c_dbl[y_vec[n] - 1]);
 
@@ -136,8 +135,8 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
         ops_partials.edge1_.partials_[n] -= d1 + d2;
 
       if (!is_constant_struct<T_cut>::value) {
-        ops_partials.edge2_.partials_vec_[n](y_vec[n]-2) += d1;
-        ops_partials.edge2_.partials_vec_[n](y_vec[n]-1) += d2;
+        ops_partials.edge2_.partials_vec_[n](y_vec[n] - 2) += d1;
+        ops_partials.edge2_.partials_vec_[n](y_vec[n] - 1) += d2;
       }
     }
   }
