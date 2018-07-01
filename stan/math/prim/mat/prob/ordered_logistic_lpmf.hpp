@@ -65,11 +65,12 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
 
   int K = c_vec[0].size() + 1;
   int N = length(lambda);
+  int C_l = length_mvt(c);
 
   check_consistent_sizes(function, "Integers", y, "Locations", lambda);
 
   int size_c_old = c_vec[0].size();
-  for (size_t i = 1, size_ = length_mvt(c); i < size_; i++) {
+  for (size_t i = 1, size_ = C_l; i < size_; i++) {
     int size_c_new = c_vec[i].size();
 
     check_size_match(function, "Size of one of the vectors of cutpoints ",
@@ -83,7 +84,7 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
     check_finite(function, "Location parameter", lam_vec[n]);
   }
 
-  for (size_t i = 0, size_ = length_mvt(c); i < size_; i++) {
+  for (size_t i = 0, size_ = C_l; i < size_; i++) {
     check_ordered(function, "Cut-points", c_vec[i]);
     check_greater(function, "Size of cut points parameter", c_vec[i].size(), 0);
     check_finite(function, "Final cut-point", c_vec[i](c_vec[i].size() - 1));
@@ -93,34 +94,52 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
   operands_and_partials<T_loc, T_cut> ops_partials(lambda, c);
 
   T_partials_return logp(0.0);
+  T_partials_vec c_dbl
+      = value_of(c_vec[0]).template cast<T_partials_return>();
 
   for (int n = 0; n < N; ++n) {
-    int i = length_mvt(c) == 1 ? 0 : n;
-    T_partials_vec c_dbl
-        = value_of(c_vec[i]).template cast<T_partials_return>();
+    if (C_l > 1)
+      c_dbl = value_of(c_vec[n]).template cast<T_partials_return>();
     T_partials_return lam_dbl = value_of(lam_vec[n]);
-    T_partials_vec d(T_partials_vec::Zero(K - 1));
 
     if (y_vec[n] == 1) {
-      d[0] = inv_logit(lam_dbl - c_dbl[0]);
       logp -= log1p_exp(lam_dbl - c_dbl[0]);
+      T_partials_return d = inv_logit(lam_dbl - c_dbl[0]);
+
+      if (!is_constant_struct<T_loc>::value)
+        ops_partials.edge1_.partials_[n] -= d;
+
+      if (!is_constant_struct<T_cut>::value)
+        ops_partials.edge2_.partials_vec_[n](0) = d;
+
     } else if (y_vec[n] == K) {
-      d[K - 2] -= inv_logit(c_dbl[K - 2] - lam_dbl);
       logp -= log1p_exp(c_dbl[K - 2] - lam_dbl);
+      T_partials_return d = inv_logit(c_dbl[K - 2] - lam_dbl);
+
+      if (!is_constant_struct<T_loc>::value)
+        ops_partials.edge1_.partials_[n] = d;
+
+      if (!is_constant_struct<T_cut>::value)
+        ops_partials.edge2_.partials_vec_[n](K-2) -= d;
+
     } else {
-      d[y_vec[n] - 2] += inv(1 - exp(c_dbl[y_vec[n] - 1] - c_dbl[y_vec[n] - 2]))
+      T_partials_return d1
+        = inv(1 - exp(c_dbl[y_vec[n] - 1] - c_dbl[y_vec[n] - 2]))
                          - inv_logit(c_dbl[y_vec[n] - 2] - lam_dbl);
-      d[y_vec[n] - 1] += inv(1 - exp(c_dbl[y_vec[n] - 2] - c_dbl[y_vec[n] - 1]))
+      T_partials_return d2
+        = inv(1 - exp(c_dbl[y_vec[n] - 2] - c_dbl[y_vec[n] - 1]))
                          - inv_logit(c_dbl[y_vec[n] - 1] - lam_dbl);
       logp += log_inv_logit_diff(lam_dbl - c_dbl[y_vec[n] - 2],
                                  lam_dbl - c_dbl[y_vec[n] - 1]);
+
+      if (!is_constant_struct<T_loc>::value)
+        ops_partials.edge1_.partials_[n] -= d1 + d2;
+
+      if (!is_constant_struct<T_cut>::value) {
+        ops_partials.edge2_.partials_vec_[n](y_vec[n]-2) += d1;
+        ops_partials.edge2_.partials_vec_[n](y_vec[n]-1) += d2;
+      }
     }
-
-    if (!is_constant_struct<T_loc>::value)
-      ops_partials.edge1_.partials_[n] -= d.sum();
-
-    if (!is_constant_struct<T_cut>::value)
-      ops_partials.edge2_.partials_vec_[n] += d;
   }
   return ops_partials.build(logp);
 }
