@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_COV_EXP_QUAD_HPP
 #define STAN_MATH_PRIM_MAT_FUN_COV_EXP_QUAD_HPP
 
+#include <boost/utility/enable_if.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/divide.hpp>
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
@@ -11,6 +12,7 @@
 #include <stan/math/prim/scal/fun/divide.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <cmath>
 #include <vector>
@@ -86,30 +88,34 @@ inline
  *
  * @param x std::vector of elements that can be used in square distance.
  *    This function assumes each element of x is the same size.
- *    This function assumes the dimension if x and l are the same.
  * @param sigma marginal standard deviation, or magnitude.
  * @param length_scale std::vector length scale
  * @return squared distance
- * @throw std::domain_error if sigma <= 0, l <= 0, or
+ * @throw std::domain_error if sigma <= 0, length_scale <= 0, or
  *   x is nan or infinite
+ * @throw std::invald_arguemnt if dimension of x is not the same
+ *   length as length_scale
  */
 template <typename T_x, typename T_sigma, typename T_l>
-inline
-    typename Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
-                           Eigen::Dynamic, Eigen::Dynamic>
+inline typename
+boost::enable_if_c<is_vector_like<T_x>::value,
+                   Eigen::Matrix<typename return_type<T_x, T_sigma, T_l>::type,
+                                 Eigen::Dynamic, Eigen::Dynamic> >::type
     cov_exp_quad(const std::vector<T_x> &x, const T_sigma &sigma,
                  const std::vector<T_l> &length_scale) {
   using std::exp;
 
   size_t x_size = x.size();
+  size_t l_size = length_scale.size();
   check_positive_finite("cov_exp_quad", "magnitude", sigma);
   check_positive_finite("cov_exp_quad", "length scale", length_scale);
-
+  check_size_match("cov_exp_quad", "x dimension", x[0].size(),
+                   "number of length scales", l_size);
+  
   Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
 
-  size_t l_size = length_scale.size();
   if (x_size == 0)
     return cov;
 
@@ -203,15 +209,18 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * @param x2 std::vector of elements that can be used in square distance
  * @param sigma marginal standard deviation, or magnitude.
  * @param length_scale std::vector of length scale
- *    This function assumes the dimension if x1, x2 and l are the same.
  * @return squared distance
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
+ * @throw std::invalid_argument if dimension of x1 or dimension of x2 is not the
+ *   same length as the length scale
  */
 template <typename T_x1, typename T_x2, typename T_sigma, typename T_l>
-inline typename Eigen::Matrix<
-    typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type, Eigen::Dynamic,
-    Eigen::Dynamic>
+inline typename
+boost::enable_if_c<is_vector_like<T_x1>::value,
+                   Eigen::Matrix<typename return_type<T_x1, T_x2, T_sigma, T_l>::type,
+                                 Eigen::Dynamic, Eigen::Dynamic> >::type
+
 cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
              const T_sigma &sigma, const std::vector<T_l> &length_scale) {
   using std::exp;
@@ -226,7 +235,12 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     check_not_nan(function_name, "x2", x2[i]);
   check_positive_finite(function_name, "magnitude", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
+  check_size_match("cov_exp_quad", "x1 dimension", x1[0].size(),
+                   "number of length scales", l_size);
+  check_size_match("cov_exp_quad", "x2 dimension", x2[0].size(),
+                   "number of length scales", l_size);
 
+  
   Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x1_size, x2_size);

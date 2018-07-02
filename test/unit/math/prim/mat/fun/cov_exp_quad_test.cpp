@@ -2,7 +2,9 @@
 #include <stan/math/prim/mat.hpp>
 #include <limits>
 #include <string>
+#include <stdexcept>
 #include <vector>
+
 
 template <typename T_x1, typename T_x2, typename T_sigma, typename T_l>
 std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2, T_sigma sigma,
@@ -1083,7 +1085,7 @@ TEST(MathPrimMat, vec_length_scale_vec_eigen_mixed_cov_exp_quad2) {
   Eigen::MatrixXd cov;
   EXPECT_NO_THROW(cov = stan::math::cov_exp_quad(x1_rvec, x2_vec, sigma, l));
   EXPECT_EQ(3, cov.rows());
-  EXPECT_EQ(4, cov.cols());
+  EXPECT_EQ(4, cov.cols());  
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 4; j++) {
       EXPECT_FLOAT_EQ(sigma * sigma
@@ -1555,4 +1557,29 @@ TEST(MathPrimMat, nan_domain_error_cov_exp_quad2_vec_length_scale) {
                std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1_bad, x_vec_2_bad, sigma, l),
                std::domain_error);
+}
+
+TEST(MathPrimMat, ard_size_err_cov_exp_quad) {
+  double sigma = 0.2;
+
+  std::vector<double> l(7);
+  for (int i = 0; i < 7; ++i)
+    l[i] = i + 1;
+
+  std::vector<Eigen::Matrix<double, -1, 1>> x_vec_1(3);
+  for (size_t i = 0; i < x_vec_1.size(); ++i) {
+    x_vec_1[i].resize(3, 1);
+    x_vec_1[i] << 1, 2, 3;
+  }
+
+  std::vector<Eigen::Matrix<double, -1, 1>> x_vec_2(3);
+  for (size_t i = 0; i < x_vec_2.size(); ++i) {
+    x_vec_2[i].resize(3, 1);
+    x_vec_2[i] << 1, 2, 3;
+  }
+
+  EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1, sigma, l),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1, x_vec_2, sigma, l),
+               std::invalid_argument);
 }
