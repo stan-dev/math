@@ -41,16 +41,16 @@ def utils = new org.stan.Utils()
 
 def isBranch(String b) { env.BRANCH_NAME == b }
 
-def alsoNotify() {
+String alsoNotify() {
     if (isBranch('master') || isBranch('develop')) {
         "stan-buildbot@googlegroups.com"
     } else ""
 }
-def isPR() { env.CHANGE_URL != null }
-def fork() { env.CHANGE_FORK ?: "stan-dev" }
-def branchName() { isPR() ? env.CHANGE_BRANCH :env.BRANCH_NAME }
-def cmdstan_pr() { params.cmdstan_pr || "downstream tests" }
-def stan_pr() { params.stan_pr || "downstream tests" }
+Boolean isPR() { env.CHANGE_URL != null }
+String fork() { env.CHANGE_FORK ?: "stan-dev" }
+String branchName() { isPR() ? env.CHANGE_BRANCH :env.BRANCH_NAME }
+String cmdstan_pr() { params.cmdstan_pr ?: "downstream tests" }
+String stan_pr() { params.stan_pr ?: "downstream tests" }
 
 pipeline {
     agent none
