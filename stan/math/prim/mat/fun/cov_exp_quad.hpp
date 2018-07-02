@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_MAT_FUN_COV_EXP_QUAD_HPP
 
 #include <boost/utility/enable_if.hpp>
-#include <cmath>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/divide.hpp>
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
@@ -15,6 +14,7 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <cmath>
 #include <vector>
 
 namespace stan {
@@ -64,8 +64,8 @@ inline
   for (size_t j = 0; j < (x_size - 1); ++j) {
     cov(j, j) = sigma_sq;
     for (size_t i = j + 1; i < x_size; ++i) {
-      cov(i, j)
-          = sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
+      cov(i, j) =
+          sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
       cov(j, i) = cov(i, j);
     }
   }
@@ -97,12 +97,12 @@ inline
  *   length as length_scale
  */
 template <typename T_x, typename T_sigma, typename T_l>
-inline typename boost::enable_if_c<
-    is_vector_like<T_x>::value,
-    Eigen::Matrix<typename return_type<T_x, T_sigma, T_l>::type, Eigen::Dynamic,
-                  Eigen::Dynamic>>::type
-cov_exp_quad(const std::vector<T_x> &x, const T_sigma &sigma,
-             const std::vector<T_l> &length_scale) {
+inline typename
+boost::enable_if_c<is_vector_like<T_x>::value,
+                   Eigen::Matrix<typename return_type<T_x, T_sigma, T_l>::type,
+                                 Eigen::Dynamic, Eigen::Dynamic> >::type
+    cov_exp_quad(const std::vector<T_x> &x, const T_sigma &sigma,
+                 const std::vector<T_l> &length_scale) {
   using std::exp;
 
   size_t x_size = x.size();
@@ -184,8 +184,8 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   for (size_t i = 0; i < x1.size(); ++i) {
     for (size_t j = 0; j < x2.size(); ++j) {
-      cov(i, j)
-          = sigma_sq * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
+      cov(i, j) =
+          sigma_sq * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
     }
   }
   return cov;
@@ -216,10 +216,11 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  *   same length as the length scale
  */
 template <typename T_x1, typename T_x2, typename T_sigma, typename T_l>
-inline typename boost::enable_if_c<
-    is_vector_like<T_x1>::value,
-    Eigen::Matrix<typename return_type<T_x1, T_x2, T_sigma, T_l>::type,
-                  Eigen::Dynamic, Eigen::Dynamic>>::type
+inline typename
+boost::enable_if_c<is_vector_like<T_x1>::value,
+                   Eigen::Matrix<typename return_type<T_x1, T_x2,
+                                                      T_sigma, T_l>::type,
+                                 Eigen::Dynamic, Eigen::Dynamic> >::type
 
 cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
              const T_sigma &sigma, const std::vector<T_l> &length_scale) {
@@ -272,6 +273,6 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   }
   return cov;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
