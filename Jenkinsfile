@@ -49,8 +49,20 @@ def alsoNotify() {
 def isPR() { env.CHANGE_URL != null }
 def fork() { env.CHANGE_FORK ?: "stan-dev" }
 def branchName() { isPR() ? env.CHANGE_BRANCH :env.BRANCH_NAME }
-def cmdstan_pr() { params.cmdstan_pr || "downstream tests" }
-def stan_pr() { params.stan_pr || "downstream tests" }
+def cmdstan_pr() {
+    if (params.cmdstan_pr) {
+        params.cmdstan_pr
+    } else {
+        "downstream tests"
+    }
+}
+def stan_pr() {
+    if (params.stan_pr) {
+        params.stan_pr
+    } else {
+        "downstream tests"
+    }
+}
 
 pipeline {
     agent none
