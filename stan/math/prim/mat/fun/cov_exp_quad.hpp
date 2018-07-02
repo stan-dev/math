@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_COV_EXP_QUAD_HPP
 
 #include <boost/utility/enable_if.hpp>
+#include <cmath>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/divide.hpp>
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
@@ -14,7 +15,6 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <cmath>
 #include <vector>
 
 namespace stan {
@@ -97,12 +97,12 @@ inline
  *   length as length_scale
  */
 template <typename T_x, typename T_sigma, typename T_l>
-inline typename
-boost::enable_if_c<is_vector_like<T_x>::value,
-                   Eigen::Matrix<typename return_type<T_x, T_sigma, T_l>::type,
-                                 Eigen::Dynamic, Eigen::Dynamic> >::type
-    cov_exp_quad(const std::vector<T_x> &x, const T_sigma &sigma,
-                 const std::vector<T_l> &length_scale) {
+inline typename boost::enable_if_c<
+    is_vector_like<T_x>::value,
+    Eigen::Matrix<typename return_type<T_x, T_sigma, T_l>::type, Eigen::Dynamic,
+                  Eigen::Dynamic>>::type
+cov_exp_quad(const std::vector<T_x> &x, const T_sigma &sigma,
+             const std::vector<T_l> &length_scale) {
   using std::exp;
 
   size_t x_size = x.size();
@@ -111,7 +111,7 @@ boost::enable_if_c<is_vector_like<T_x>::value,
   check_positive_finite("cov_exp_quad", "length scale", length_scale);
   check_size_match("cov_exp_quad", "x dimension", x[0].size(),
                    "number of length scales", l_size);
-  
+
   Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
@@ -216,10 +216,10 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  *   same length as the length scale
  */
 template <typename T_x1, typename T_x2, typename T_sigma, typename T_l>
-inline typename
-boost::enable_if_c<is_vector_like<T_x1>::value,
-                   Eigen::Matrix<typename return_type<T_x1, T_x2, T_sigma, T_l>::type,
-                                 Eigen::Dynamic, Eigen::Dynamic> >::type
+inline typename boost::enable_if_c<
+    is_vector_like<T_x1>::value,
+    Eigen::Matrix<typename return_type<T_x1, T_x2, T_sigma, T_l>::type,
+                  Eigen::Dynamic, Eigen::Dynamic>>::type
 
 cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
              const T_sigma &sigma, const std::vector<T_l> &length_scale) {
@@ -240,7 +240,6 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   check_size_match("cov_exp_quad", "x2 dimension", x2[0].size(),
                    "number of length scales", l_size);
 
-  
   Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x1_size, x2_size);
@@ -273,6 +272,6 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   }
   return cov;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif
