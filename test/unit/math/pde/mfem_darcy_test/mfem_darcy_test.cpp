@@ -1,3 +1,5 @@
+#ifdef STAN_MFEM
+
 // Based on MFEM Example 5
 //
 // Sample runs:  ex5 -m ../data/square-disc.mesh
@@ -403,3 +405,5 @@ TEST(pde_solvers, mfem_darcy) {
   const double sens_exact = 2.1105776;
   ASSERT_FLOAT_EQ(g[0], sens_exact);
 }
+
+#endif
