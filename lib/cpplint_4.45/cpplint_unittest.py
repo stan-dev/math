@@ -306,7 +306,8 @@ class CpplintTest(CpplintTestBase):
   def testGetLineWidth(self):
     self.assertEquals(0, cpplint.GetLineWidth(''))
     self.assertEquals(10, cpplint.GetLineWidth(u'x' * 10))
-
+    self.assertEquals(16, cpplint.GetLineWidth(u'都|道|府|県|支庁'))
+    
   def testGetTextInside(self):
     self.assertEquals('', cpplint._GetTextInside('fun()', r'fun\('))
     self.assertEquals('x, y', cpplint._GetTextInside('f(x, y)', r'f\('))
