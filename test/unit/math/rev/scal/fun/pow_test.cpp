@@ -103,8 +103,13 @@ TEST(AgradRev, check_varis_on_stack) {
   test::check_varis_on_stack(stan::math::pow(a, 4.0));
 }
 
+#if __GNUC__ == 4 && __GNUC_MINOR__ >= 3
+// this test is removed on gcc < 5 because of a gcc bug
+// see https://github.com/stan-dev/math/pull/789
+#else
 TEST(AgradRev, complex) {
   std::complex<stan::math::var> i(0, 1);
   auto f = pow(i, i);
   EXPECT_EQ(real(f).val(), exp(-stan::math::pi() / 2));
 }
+#endif
