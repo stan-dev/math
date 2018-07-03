@@ -2,6 +2,12 @@
 #define STAN_MATH_REV_SCAL_FUN_POW_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/scal/fun/abs.hpp>
+#include <stan/math/rev/scal/fun/atan2.hpp>
+#include <stan/math/rev/scal/fun/cos.hpp>
+#include <stan/math/rev/scal/fun/exp.hpp>
+#include <stan/math/rev/scal/fun/log.hpp>
+#include <stan/math/rev/scal/fun/sin.hpp>
 #include <stan/math/rev/scal/fun/inv.hpp>
 #include <stan/math/rev/scal/fun/inv_sqrt.hpp>
 #include <stan/math/rev/scal/fun/inv_square.hpp>
@@ -148,6 +154,17 @@ inline var pow(const var& base, double exponent) {
 inline var pow(double base, const var& exponent) {
   return var(new pow_dv_vari(base, exponent.vi_));
 }
+
+#if defined(__GNUC__) && __GNUC__ == 4 && __GNUC_MINOR__ == 9
+inline std::complex<stan::math::var>
+pow(const std::complex<stan::math::var>& base,
+    const std::complex<stan::math::var>& exponent) {
+  auto z = exponent * log(base);
+  auto a = real(z);
+  auto b = imag(z);
+  return exp(a) * std::complex<stan::math::var>(cos(b), sin(b));
+}
+#endif
 
 }  // namespace math
 }  // namespace stan
