@@ -156,8 +156,8 @@ inline var pow(double base, const var& exponent) {
 }
 
 #if defined(__GNUC__) && __GNUC__ == 4 && __GNUC_MINOR__ == 9
-inline std::complex<stan::math::var>
-pow(const std::complex<stan::math::var>& base,
+inline std::complex<stan::math::var> pow(
+    const std::complex<stan::math::var>& base,
     const std::complex<stan::math::var>& exponent) {
   auto z = exponent * log(base);
   auto a = real(z);
