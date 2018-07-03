@@ -10,9 +10,8 @@ struct zeroing;  // forward declare
 }  // namespace math
 
 /**
- * trait to change z_fvar to fvar and z<var> to var
- *
- * this is the end condition
+ * rm_zeroing replaces <code>zeroing<T></code> with
+ * T. This is the general version of the trait.
  */
 template <class T>
 struct rm_zeroing {
@@ -20,7 +19,8 @@ struct rm_zeroing {
 };
 
 /**
- * trait to change z_fvar to fvar and z<var> to var
+ * rm_zeroing replaces <code>zeroing<t></code> with
+ * T. This is the removal version of the trait.
  */
 template <class T>
 struct rm_zeroing<math::zeroing<T>> {
