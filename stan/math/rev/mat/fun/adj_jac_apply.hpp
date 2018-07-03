@@ -2,7 +2,8 @@
 #define STAN_MATH_REV_MAT_FUN_ADJ_JAC_APPLY_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/rev/mat.hpp>
+#include <stan/math/prim/mat.hpp>
+#include <stan/math/rev/core.hpp>
 #include <vector>
 
 namespace stan {
