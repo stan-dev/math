@@ -31,6 +31,10 @@ TEST(AgradRev, check_varis_on_stack) {
   test::check_varis_on_stack(stan::math::exp(a));
 }
 
+#if __GNUC__ == 4 && __GNUC_MINOR__ >= 3
+// this test is removed on gcc < 5 because of a gcc bug
+// see https://github.com/stan-dev/math/pull/789
+#else
 TEST(AgradRev, euler) {
   std::complex<stan::math::var> z
       = std::complex<stan::math::var>(0.0, stan::math::pi());
@@ -42,3 +46,4 @@ TEST(AgradRev, euler) {
   real(f).grad(x, g);
   EXPECT_FLOAT_EQ(1 + g[0], 1);
 }
+#endif
