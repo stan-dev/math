@@ -6,11 +6,11 @@
 #   - EXE
 ##
 
-ifeq (g++,$(CC_TYPE))
+ifeq (gcc,$(CC_TYPE))
   CXXFLAGS += -pthread
   GTEST_CXXFLAGS += -DGTEST_HAS_PTHREAD=0
 endif
-ifeq (mingw32-g++,$(CC_TYPE))
+ifeq (mingw32-gcc,$(CC_TYPE))
   GTEST_CXXFLAGS += -DGTEST_HAS_PTHREAD=0
   LDLIBS_STANC += -static
   LDFLAGS += -static
@@ -18,7 +18,7 @@ ifeq (mingw32-g++,$(CC_TYPE))
   EXE = .exe
   WINE = wine
 endif
-ifeq (clang++,$(CC_TYPE))
+ifeq (clang,$(CC_TYPE))
   LDFLAGS += -lpthread
   GTEST_CXXFLAGS += -DGTEST_HAS_PTHREAD=0
 endif
