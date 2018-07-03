@@ -1,8 +1,8 @@
-#ifndef STAN_MATH_REV_MAT_FUN_ADJ_JAC_HPP
-#define STAN_MATH_REV_MAT_FUN_ADJ_JAC_HPP
+#ifndef STAN_MATH_REV_MAT_FUN_ADJ_JAC_APPLY_HPP
+#define STAN_MATH_REV_MAT_FUN_ADJ_JAC_APPLY_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <vector>
 
 namespace stan {
@@ -21,22 +21,25 @@ namespace math {
  */
 template <typename F>
 struct adj_jac_vari : public vari {
-  F* f_;
+  F f_;
   int N_;
   vari** x_vi_;
   int M_;
   vari** y_vi_;
 
-  adj_jac_vari(F* f, const Eigen::Matrix<var, Eigen::Dynamic, 1>& x, int M,
-               vari** y_vi)
-      : vari(0.0),
-        f_(f),
-        N_(x.size()),
-        x_vi_(ChainableStack::instance().memalloc_.alloc_array<vari*>(N_)),
-        M_(M),
-        y_vi_(y_vi) {
-    for (int n = 0; n < N_; ++n)
-      x_vi_[n] = x(n).vi_;
+  adj_jac_vari(const Eigen::Matrix<var, Eigen::Dynamic, 1>& x)
+    : vari(0),  // The val_ in this vari is unused
+      N_(x.size()),
+      x_vi_(build_vari_array(x)),
+      M_(0),
+      y_vi_(NULL) {
+    Eigen::Matrix<double, Eigen::Dynamic, 1> val_y = f_(value_of(x));
+
+    M_ = val_y.size();
+    y_vi_ = ChainableStack::instance().memalloc_.alloc_array<vari*>(M_);
+    for (int m = 0; m < M_; ++m) {
+      y_vi_[m] = new vari(val_y(m), false);
+    }
   }
 
   void chain() {
@@ -44,29 +47,30 @@ struct adj_jac_vari : public vari {
     for (int m = 0; m < M_; ++m)
       y_adj(m) = y_vi_[m]->adj_;
     Eigen::Matrix<double, Eigen::Dynamic, 1> y_adj_jac
-        = f_->multiply_adjoint_jacobian(y_adj);
+        = f_.multiply_adjoint_jacobian(y_adj);
     for (int n = 0; n < N_; ++n)
       x_vi_[n]->adj_ += y_adj_jac(n);
   }
 };
 
 /*
- * adj_jac_apply makes it possible to write reasonably efficient reverse-mode
+ * Return the result of applying the function defined by a nullary construction of F to the specified input argument
+ *
+ * adj_jac_apply makes it possible to write efficient reverse-mode
  * autodiff code without ever touching Stan's autodiff internals
  *
  * Mathematically, to use a function in reverse mode autodiff, you need to be
  * able to evaluate the function (y = f(x)) and the Jacobian of that function
- * (df(x)/dx).
+ * (df(x)/dx) times a vector.
  *
- * Pretend there exists some large, complicated function, L(x), which contains
+ * As an example, pretend there exists some large, complicated function, L(x), which contains
  * our smaller function f(x). The goal of autodiff is to compute dL/dx. If we
  * break the large function into pieces:
  *
  * y = f(x)
  * L = g(y)
  *
- * Then if we were given dL/dy, then we could compute dL/dx by the product dL/dy
- * * dy/dx
+ * If we were given dL/dy we could compute dL/dx by the product dL/dy * dy/dx
  *
  * Because y = f(x), dy/dx is just df(x)/dx, the Jacobian of the function we're
  * trying to define. In vector form,
@@ -76,16 +80,19 @@ struct adj_jac_vari : public vari {
  * So implementing f(x) and the product above is all that is required
  * mathematically to implement reverse-mode autodiff for a function.
  *
- * adj_jac_apply takes as a template argument a functor that supplies:
- *   Eigen::VectorXd apply(const Eigen::VectorXd& x) and,
- *   Eigen::VectorXd multiply_adjoint_jacobian(const Eigen::VectorXd& adj)
+ * adj_jac_apply takes as a template argument a functor F that supplies the non-static member functions:
+ *   (required) Eigen::VectorXd operator()(const Eigen::VectorXd& x),
+ *   (required) Eigen::VectorXd multiply_adjoint_jacobian(const Eigen::VectorXd& adj) and,
+ *   (optional) a nullary constructor
  *
- *  apply is f(x) and multiply_adjoint_jacobian is responsible for computing the
+ * operator() is responsible for computing f(x) and multiply_adjoint_jacobian is responsible for computing the
  * adjoint transpose Jacobian product (which frequently does not require the
  * calculation of the full Jacobian).
  *
- * The functor supplied to adj_jac_apply must be careful to allocate itself as
- * well as any other variables it defines on the autodiff memory stack because
+ * operator() will be called before multiply_adjoint_jacobian is called, and is only called once in the lifetime of the functor
+ * multiply_adjoint_jacobian is called after operator() and may be called multiple times for any single functor
+ *
+ * The functor supplied to adj_jac_apply must be careful to allocate any variables it defines on the autodiff memory stack because
  * its destructor will never be called! (and so memory will leak if allocated
  * anywhere else)
  *
@@ -96,18 +103,11 @@ struct adj_jac_vari : public vari {
 template <class F>
 Eigen::Matrix<var, Eigen::Dynamic, 1> adj_jac_apply(
     const Eigen::Matrix<var, Eigen::Dynamic, 1>& x) {
-  F* f = new F();
-  Eigen::Matrix<double, Eigen::Dynamic, 1> val_y = f->apply(value_of(x));
+  adj_jac_vari<F> *vi = new adj_jac_vari<F>(x);
+  Eigen::Matrix<var, Eigen::Dynamic, 1> y(vi->M_);
 
-  int M = val_y.size();
-  vari** y_vi = ChainableStack::instance().memalloc_.alloc_array<vari*>(M);
-  Eigen::Matrix<var, Eigen::Dynamic, 1> y(M);
-  for (int m = 0; m < M; ++m) {
-    y_vi[m] = new vari(val_y(m), false);
-    y(m) = var(y_vi[m]);
-  }
-
-  new adj_jac_vari<F>(f, x, M, y_vi);
+  for (int m = 0; m < vi->M_; ++m)
+    y(m) = var((vi->y_vi_)[m]);
   return y;
 }
 

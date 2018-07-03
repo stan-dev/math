@@ -4,29 +4,6 @@
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
 
-TEST(AgradRevMatrix, softmaxLeak) {
-  // FIXME: very brittle test depending on unrelated constants of
-  //        block sizes/growth in stan::math::stack_alloc
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-  using stan::math::softmax;
-  using stan::math::var;
-  using stan::math::vector_v;
-
-  int SIZE = 20;
-  int NUM = 112;  // alloc on stack: 458752; bug fix used: = 196608
-  Matrix<var, Dynamic, 1> x(SIZE);
-  for (int i = 0; i < NUM; ++i) {
-    for (int n = 0; n < x.size(); ++n) {
-      x(n) = 0.1 * n;
-    }
-    Matrix<var, Dynamic, 1> theta = softmax(x);
-  }
-  // test is greater than because leak is on heap, not stack
-  EXPECT_GT(stan::math::ChainableStack::instance().memalloc_.bytes_allocated(),
-            200000);
-}
-
 TEST(AgradRevMatrix, softmax) {
   using Eigen::Dynamic;
   using Eigen::Matrix;

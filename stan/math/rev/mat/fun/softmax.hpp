@@ -11,22 +11,24 @@ namespace stan {
 namespace math {
 
 namespace {
-class softmax_op {
-  int N;
+class SoftmaxOp {
+  int N_;
   double* y_mem_;  // Holds the results of the softmax
  public:
+  SoftmaxOp() : N_(0), y_mem_(NULL) {}
+  
   /*
    * Compute the softmax of the unconstrained input vector
    *
    * @param alpha Unconstrained input vector.
    * @return Softmax of the input.
    */
-  Eigen::VectorXd apply(const Eigen::VectorXd& alpha) {
-    N = alpha.size();
-    y_mem_ = ChainableStack::instance().memalloc_.alloc_array<double>(N);
+  Eigen::VectorXd operator()(const Eigen::VectorXd& alpha) {
+    N_ = alpha.size();
+    y_mem_ = ChainableStack::instance().memalloc_.alloc_array<double>(N_);
 
     auto y = softmax(alpha);
-    for (int n = 0; n < N; ++n)
+    for (int n = 0; n < N_; ++n)
       y_mem_[n] = y(n);
     return y;
   }
@@ -41,25 +43,16 @@ class softmax_op {
    * @return Eigen::VectorXd of adjoints propagated through softmax operation
    */
   Eigen::VectorXd multiply_adjoint_jacobian(const Eigen::VectorXd& adj) const {
-    Eigen::VectorXd adj_times_jac(N);
-
-    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1> > y(y_mem_, N);
+    Eigen::VectorXd adj_times_jac(N_);
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1> > y(y_mem_, N_);
 
     double adj_dot_y = adj.dot(y);
-    for (int n = 0; n < N; ++n) {
+    for (int n = 0; n < N_; ++n) {
       adj_times_jac(n) = -y(n) * adj_dot_y + y(n) * adj(n);
     }
 
     return adj_times_jac;
   }
-
-  //  Allocate on the autodiff stack
-  static inline void* operator new(size_t nbytes) {
-    return ChainableStack::instance().memalloc_.alloc(nbytes);
-  }
-
-  //  No need to call the destructor, that'll get handled elsewhere
-  static inline void operator delete(void*) {}
 };
 }  // namespace
 
@@ -75,7 +68,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
     const Eigen::Matrix<var, Eigen::Dynamic, 1>& alpha) {
   check_nonzero_size("softmax", "alpha", alpha);
 
-  return adj_jac_apply<softmax_op>(alpha);
+  return adj_jac_apply<SoftmaxOp>(alpha);
 }
 
 }  // namespace math
