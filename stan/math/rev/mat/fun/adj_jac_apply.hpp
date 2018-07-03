@@ -27,12 +27,12 @@ struct adj_jac_vari : public vari {
   int M_;
   vari** y_vi_;
 
-  adj_jac_vari(const Eigen::Matrix<var, Eigen::Dynamic, 1>& x)
-    : vari(0),  // The val_ in this vari is unused
-      N_(x.size()),
-      x_vi_(build_vari_array(x)),
-      M_(0),
-      y_vi_(NULL) {
+  explicit adj_jac_vari(const Eigen::Matrix<var, Eigen::Dynamic, 1>& x)
+      : vari(0),  // The val_ in this vari is unused
+        N_(x.size()),
+        x_vi_(build_vari_array(x)),
+        M_(0),
+        y_vi_(NULL) {
     Eigen::Matrix<double, Eigen::Dynamic, 1> val_y = f_(value_of(x));
 
     M_ = val_y.size();
@@ -54,7 +54,8 @@ struct adj_jac_vari : public vari {
 };
 
 /*
- * Return the result of applying the function defined by a nullary construction of F to the specified input argument
+ * Return the result of applying the function defined by a nullary construction
+ * of F to the specified input argument
  *
  * adj_jac_apply makes it possible to write efficient reverse-mode
  * autodiff code without ever touching Stan's autodiff internals
@@ -63,9 +64,9 @@ struct adj_jac_vari : public vari {
  * able to evaluate the function (y = f(x)) and the Jacobian of that function
  * (df(x)/dx) times a vector.
  *
- * As an example, pretend there exists some large, complicated function, L(x), which contains
- * our smaller function f(x). The goal of autodiff is to compute dL/dx. If we
- * break the large function into pieces:
+ * As an example, pretend there exists some large, complicated function, L(x),
+ * which contains our smaller function f(x). The goal of autodiff is to compute
+ * dL/dx. If we break the large function into pieces:
  *
  * y = f(x)
  * L = g(y)
@@ -80,21 +81,24 @@ struct adj_jac_vari : public vari {
  * So implementing f(x) and the product above is all that is required
  * mathematically to implement reverse-mode autodiff for a function.
  *
- * adj_jac_apply takes as a template argument a functor F that supplies the non-static member functions:
- *   (required) Eigen::VectorXd operator()(const Eigen::VectorXd& x),
- *   (required) Eigen::VectorXd multiply_adjoint_jacobian(const Eigen::VectorXd& adj) and,
- *   (optional) a nullary constructor
+ * adj_jac_apply takes as a template argument a functor F that supplies the
+ * non-static member functions: (required) Eigen::VectorXd operator()(const
+ * Eigen::VectorXd& x), (required) Eigen::VectorXd
+ * multiply_adjoint_jacobian(const Eigen::VectorXd& adj) and, (optional) a
+ * nullary constructor
  *
- * operator() is responsible for computing f(x) and multiply_adjoint_jacobian is responsible for computing the
- * adjoint transpose Jacobian product (which frequently does not require the
- * calculation of the full Jacobian).
+ * operator() is responsible for computing f(x) and multiply_adjoint_jacobian is
+ * responsible for computing the adjoint transpose Jacobian product (which
+ * frequently does not require the calculation of the full Jacobian).
  *
- * operator() will be called before multiply_adjoint_jacobian is called, and is only called once in the lifetime of the functor
- * multiply_adjoint_jacobian is called after operator() and may be called multiple times for any single functor
+ * operator() will be called before multiply_adjoint_jacobian is called, and is
+ * only called once in the lifetime of the functor multiply_adjoint_jacobian is
+ * called after operator() and may be called multiple times for any single
+ * functor
  *
- * The functor supplied to adj_jac_apply must be careful to allocate any variables it defines on the autodiff memory stack because
- * its destructor will never be called! (and so memory will leak if allocated
- * anywhere else)
+ * The functor supplied to adj_jac_apply must be careful to allocate any
+ * variables it defines on the autodiff memory stack because its destructor will
+ * never be called! (and so memory will leak if allocated anywhere else)
  *
  * @tparam F functor to be connected to the autodiff stack
  * @param x input to the functor
@@ -103,7 +107,7 @@ struct adj_jac_vari : public vari {
 template <class F>
 Eigen::Matrix<var, Eigen::Dynamic, 1> adj_jac_apply(
     const Eigen::Matrix<var, Eigen::Dynamic, 1>& x) {
-  adj_jac_vari<F> *vi = new adj_jac_vari<F>(x);
+  adj_jac_vari<F>* vi = new adj_jac_vari<F>(x);
   Eigen::Matrix<var, Eigen::Dynamic, 1> y(vi->M_);
 
   for (int m = 0; m < vi->M_; ++m)

@@ -3,10 +3,10 @@
 #include <sstream>
 
 TEST(AgradRev, build_vari_array) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::var;
   using stan::math::vari;
-  using Eigen::Matrix;
-  using Eigen::Dynamic;
 
   Matrix<var, Dynamic, Dynamic> mdd(3, 2);
   Matrix<var, 1, Dynamic> mvd(5);
@@ -30,18 +30,22 @@ TEST(AgradRev, build_vari_array) {
 
   for (int i = 0; i < mdd.size(); ++i) {
     EXPECT_EQ(mdd.data()[i].vi_, vdd[i]);
-    EXPECT_TRUE(stan::math::ChainableStack::instance().memalloc_.in_stack(vdd[i]));
+    EXPECT_TRUE(
+        stan::math::ChainableStack::instance().memalloc_.in_stack(vdd[i]));
   }
   for (int i = 0; i < mvd.size(); ++i) {
     EXPECT_EQ(mvd.data()[i].vi_, vvd[i]);
-    EXPECT_TRUE(stan::math::ChainableStack::instance().memalloc_.in_stack(vvd[i]));
+    EXPECT_TRUE(
+        stan::math::ChainableStack::instance().memalloc_.in_stack(vvd[i]));
   }
   for (int i = 0; i < mdv.size(); ++i) {
     EXPECT_EQ(mdv.data()[i].vi_, vdv[i]);
-    EXPECT_TRUE(stan::math::ChainableStack::instance().memalloc_.in_stack(vdv[i]));
+    EXPECT_TRUE(
+        stan::math::ChainableStack::instance().memalloc_.in_stack(vdv[i]));
   }
   for (int i = 0; i < mvv.size(); ++i) {
     EXPECT_EQ(mvv.data()[i].vi_, vvv[i]);
-    EXPECT_TRUE(stan::math::ChainableStack::instance().memalloc_.in_stack(vvv[i]));
+    EXPECT_TRUE(
+        stan::math::ChainableStack::instance().memalloc_.in_stack(vvv[i]));
   }
 }

@@ -16,7 +16,7 @@ class SoftmaxOp {
   double* y_mem_;  // Holds the results of the softmax
  public:
   SoftmaxOp() : N_(0), y_mem_(NULL) {}
-  
+
   /*
    * Compute the softmax of the unconstrained input vector
    *

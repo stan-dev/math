@@ -1,15 +1,17 @@
 #include <stan/math/rev/core.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 #include <gtest/gtest.h>
 #include <sstream>
-#include <test/unit/math/rev/mat/util.hpp>
 
 struct SinFunctor {
   int N_;
-  double* x_mem_;
+  double *x_mem_;
   Eigen::VectorXd operator()(const Eigen::VectorXd &x) {
     N_ = x.size();
     Eigen::VectorXd out(N_);
-    x_mem_ = stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(N_);
+    x_mem_
+        = stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
+            N_);
 
     for (int n = 0; n < N_; ++n) {
       x_mem_[n] = x(n);
@@ -88,5 +90,5 @@ TEST(AgradRev, test_multiple_jac) {
   sum_y2.grad();
   EXPECT_NEAR(x1(0).adj(), 0.0, 1e-10);
   EXPECT_NEAR(x2(0).adj(), 1.73 * -0.4161468365471424, 1e-10);
-  EXPECT_NEAR(x2(1).adj(), 1.57 * 0.5403023058681398, 1e-10);  
+  EXPECT_NEAR(x2(1).adj(), 1.57 * 0.5403023058681398, 1e-10);
 }
