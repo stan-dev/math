@@ -47,7 +47,7 @@ struct complex : std::complex<zeroing<T>> {
       : std::complex<zeroing<T>>(real, imag) {}
   // downcast
   operator std::complex<T>() const {
-    return *static_cast<std::complex<T> const *>(this);
+    return *static_cast<std::complex<T> const*>(this);
   }
 };
 
