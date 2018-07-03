@@ -2,6 +2,8 @@
 #define STAN_MATH_REV_SCAL_FUN_EXP_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/scal/fun/cos.hpp>
+#include <stan/math/rev/scal/fun/sin.hpp>
 #include <cmath>
 
 namespace stan {
@@ -38,6 +40,14 @@ class exp_vari : public op_v_vari {
  * @return Exponentiated variable.
  */
 inline var exp(const var& a) { return var(new exp_vari(a.vi_)); }
+
+#if defined(__GNUC__) && __GNUC__ == 4 && __GNUC_MINOR__ == 9
+inline std::complex<stan::math::var>
+exp(const std::complex<stan::math::var>& a) {
+  return exp(real(a))
+    * std::complex<stan::math::var>(cos(imag(a)), sin(imag(a)));
+}
+#endif
 
 }  // namespace math
 }  // namespace stan
