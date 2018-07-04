@@ -80,6 +80,7 @@ pipeline {
             agent any
             steps {
                 sh "printenv"
+                deleteDir()
                 retry(3) { checkout scm }
                 withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
                     usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
@@ -126,6 +127,7 @@ pipeline {
             agent any
             steps {
                 script {
+                    deleteDir()
                     retry(3) { checkout scm }
                     setup(false)
                     stash 'MathSetup'
@@ -151,6 +153,7 @@ pipeline {
                 stage('Unit') {
                     agent any
                     steps {
+                        deleteDir()
                         unstash 'MathSetup'
                         sh setupCC()
                         runTests("test/unit")
@@ -160,6 +163,7 @@ pipeline {
                 stage('Unit with GPU') {
                     agent { label "gelman-group-mac" }
                     steps {
+                        deleteDir()
                         unstash 'MathSetup'
                         sh setupCC()
                         sh "echo STAN_OPENCL=true>> make/local"
@@ -172,6 +176,7 @@ pipeline {
                 stage('Unit with MPI') {
                     agent any
                     steps {
+                        deleteDir()
                         unstash 'MathSetup'
                         sh "echo CC=${MPICXX} >> make/local"
                         sh "echo STAN_MPI=true >> make/local"
@@ -182,6 +187,7 @@ pipeline {
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
                     steps {
+                        deleteDir()
                         unstash 'MathSetup'
                         sh """
                             ${setupCC(false)}
@@ -223,6 +229,7 @@ pipeline {
             agent any
             when { branch 'master'}
             steps {
+                deleteDir()
                 retry(3) { checkout scm }
                 withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
                                                   usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
