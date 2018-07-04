@@ -1,14 +1,16 @@
 #ifndef STAN_MATH_REV_ARR_FUNCTOR_integrate_1d_HPP
 #define STAN_MATH_REV_ARR_FUNCTOR_integrate_1d_HPP
 
-#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/prim/arr/fun/value_of.hpp>
-#include <stan/math/rev/scal/meta/is_var.hpp>
-#include <stan/math/prim/arr/functor/integrate_1d.hpp>
 #include <functional>
 #include <ostream>
+#include <stan/math/prim/arr/fun/value_of.hpp>
+#include <stan/math/prim/arr/functor/integrate_1d.hpp>
+#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/rev/scal/fun/is_nan.hpp>
+#include <stan/math/rev/scal/fun/value_of.hpp>
+#include <stan/math/rev/scal/meta/is_var.hpp>
+#include <string>
 #include <vector>
 
 namespace stan {
@@ -19,20 +21,28 @@ namespace math {
  * with respect to the nth parameter. Uses nested reverse mode autodiff
  */
 template <typename F>
-inline double gradient_of_f(const F& f, const double& x, const double& xc,
-                            const std::vector<double>& theta_vals,
-                            const std::vector<double>& x_r,
-                            const std::vector<int>& x_i, size_t n,
-                            std::ostream& msgs) {
+inline double gradient_of_f(const F &f, const double &x, const double &xc,
+                            const std::vector<double> &theta_vals,
+                            const std::vector<double> &x_r,
+                            const std::vector<int> &x_i, size_t n,
+                            std::ostream &msgs) {
   double gradient = 0.0;
   start_nested();
   std::vector<var> theta_var(theta_vals.size());
   try {
     for (size_t i = 0; i < theta_vals.size(); i++)
       theta_var[i] = theta_vals[i];
-    f(x, xc, theta_var, x_r, x_i, msgs).grad();
+    var fx = f(x, xc, theta_var, x_r, x_i, msgs);
+    fx.grad();
     gradient = theta_var[n].adj();
-  } catch (const std::exception& e) {
+    if (is_nan(gradient)) {
+      if (fx.val() == 0)
+        gradient = 0;
+      else
+        throw std::domain_error(
+            std::string("derivative of integral is nan for parameter ", n));
+    }
+  } catch (const std::exception &e) {
     recover_memory_nested();
     throw;
   }
@@ -85,12 +95,12 @@ inline double gradient_of_f(const F& f, const double& x, const double& xc,
  * @return numeric integral of function f
  */
 template <typename F, typename T_a, typename T_b, typename T_theta>
-inline var integrate_1d(const F& f, const T_a& a, const T_b& b,
-                        const std::vector<T_theta>& theta,
-                        const std::vector<double>& x_r,
-                        const std::vector<int>& x_i, std::ostream& msgs,
+inline var integrate_1d(const F &f, const T_a &a, const T_b &b,
+                        const std::vector<T_theta> &theta,
+                        const std::vector<double> &x_r,
+                        const std::vector<int> &x_i, std::ostream &msgs,
                         const double tolerance = 1e-6) {
-  static const char* function = "integrate_1d";
+  static const char *function = "integrate_1d";
   check_less_or_equal(function, "lower limit", a, b);
 
   if (value_of(a) == value_of(b)) {
@@ -137,7 +147,7 @@ inline var integrate_1d(const F& f, const T_a& a, const T_b& b,
   }
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif
