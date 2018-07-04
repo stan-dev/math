@@ -24,7 +24,7 @@ ifeq ($(PROCESSOR_ARCHITECTURE)$(PROCESSOR_ARCHITEW6432),x86)
 else
   BIT?=64
 endif
-ifeq (g++,$(CC_TYPE))
+ifeq (gcc,$(CC_TYPE))
   CXXFLAGS += -m$(BIT)
   CXXFLAGS += -Wno-unused-but-set-variable
   LDLIBS += -static-libgcc
@@ -33,7 +33,7 @@ ifeq (g++,$(CC_TYPE))
     LDFLAGS += -lOpenCL
   endif
 endif
-ifeq (mingw32-g++,$(CC_TYPE))
+ifeq (mingw32-gcc,$(CC_TYPE))
   LDLIBS += -static-libgcc
 #  LDLIBS += -static-libstdc++
   ifdef STAN_OPENCL
