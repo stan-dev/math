@@ -147,7 +147,7 @@ inline var integrate_1d(const F &f, const T_a &a, const T_b &b,
   }
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif
