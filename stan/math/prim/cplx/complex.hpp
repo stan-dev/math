@@ -18,9 +18,10 @@ namespace math {
  *  std::complex<zeroing<T>>. This causes stan::math to be pulled into
  *  ADL on operations involving std::complex<var>, to handle, e.g.
  *  division operations that the base std::complex doesn't have
- *  defined usably for var, and, since zeroing<var> zero-initializes
- *  itself, will also correctly work with the remaining algorithms
- *  in std::complex<T> that require the expression T() to be 0.
+ *  defined usably for var, and, since stan::math::zeroing<var> zero
+ *  initializes itself, will also correctly work with the remaining
+ *  algorithms in std::complex<T> that require the expression T() to
+ *  be 0.
  */
 template <class T>
 struct complex : std::complex<zeroing<T>> {
