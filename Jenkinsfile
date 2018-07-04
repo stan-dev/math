@@ -180,9 +180,15 @@ pipeline {
                         unstash 'MathSetup'
                         sh "echo CC=${MPICXX} >> make/local"
                         sh "echo STAN_MPI=true >> make/local"
+                        sh "make -j${env.PARALLEL} build-mpi > build-mpi.log 2>&1"
                         runTests("test/unit")
                     }
-                    post { always { retry(3) { deleteDir() } } }
+                    post {
+                        always {
+                            archiveArtifacts 'build-mpi.log'
+                            retry(3) { deleteDir() }
+                        }
+                    }
                 }
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }

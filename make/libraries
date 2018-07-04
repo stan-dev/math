@@ -88,6 +88,8 @@ $(BOOST_LIB)/libboost_mpi.dylib: $(BOOST_LIB)/mpi.so $(BOOST_LIB)/libboost_seria
 	install_name_tool -change libboost_serialization.dylib @rpath/libboost_serialization.dylib "$(BOOST_LIB)/libboost_mpi.dylib"
 	install_name_tool -id @rpath/libboost_mpi.dylib "$(BOOST_LIB)/libboost_mpi.dylib"
 
+build-mpi: $(BOOST_LIB)/mpi.so
+
 .PHONY: clean-libraries
 clean-libraries:
 	$(RM) $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS) $(LIBMPI))
