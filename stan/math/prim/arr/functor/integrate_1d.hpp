@@ -175,11 +175,12 @@ inline double integrate(const F& f, double a, double b, double tolerance) {
  * @return numeric integral of function f
  */
 template <typename F>
-inline double integrate_1d(const F& f, const double a, const double b,
-                           const std::vector<double>& theta,
-                           const std::vector<double>& x_r,
-                           const std::vector<int>& x_i, std::ostream& msgs,
-                           const double tolerance = 1e-6) {
+inline double integrate_1d(
+    const F& f, const double a, const double b,
+    const std::vector<double>& theta, const std::vector<double>& x_r,
+    const std::vector<int>& x_i, std::ostream& msgs,
+    const double tolerance
+    = std::sqrt(std::numeric_limits<double>::epsilon())) {
   static const char* function = "integrate_1d";
   check_less_or_equal(function, "lower limit", a, b);
 

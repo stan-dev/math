@@ -99,7 +99,8 @@ inline var integrate_1d(const F &f, const T_a &a, const T_b &b,
                         const std::vector<T_theta> &theta,
                         const std::vector<double> &x_r,
                         const std::vector<int> &x_i, std::ostream &msgs,
-                        const double tolerance = 1e-6) {
+                        const double tolerance
+                        = std::sqrt(std::numeric_limits<double>::epsilon())) {
   static const char *function = "integrate_1d";
   check_less_or_equal(function, "lower limit", a, b);
 
