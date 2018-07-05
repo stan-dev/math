@@ -142,7 +142,7 @@ TEST(AgradRevMatrix, compute) {
   EXPECT_NO_THROW(ldlt_A.compute(A));
   ASSERT_TRUE(ldlt_A.success());
 
-  EXPECT_NO_THROW(mat = ldlt_A.alloc_->ldlt_.matrixLDLT());
+  EXPECT_NO_THROW(mat = ldlt_A.ldltP_->matrixLDLT());
   expected_mat = ldlt_double.matrixLDLT();
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++)

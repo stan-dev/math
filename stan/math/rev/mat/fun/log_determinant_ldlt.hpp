@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/mat/fun/LDLT_alloc.hpp>
 #include <stan/math/rev/mat/fun/LDLT_factor.hpp>
 
 namespace stan {
@@ -23,23 +22,28 @@ template <int R, int C>
 class log_det_ldlt_vari : public vari {
  public:
   explicit log_det_ldlt_vari(const LDLT_factor<var, R, C> &A)
-      : vari(A.alloc_->log_abs_det()), alloc_ldlt_(A.alloc_) {}
+      : vari(A.log_abs_det()),
+        invA_mem_(ChainableStack::instance().memalloc_.alloc_array<double>(
+            A.rows() * A.cols())),
+        A_(A) {
+    Eigen::Map<Eigen::Matrix<double, R, C>> invA(invA_mem_, A_.N_, A_.N_);
+
+    invA.setIdentity();
+    A_.ldltP_->solveInPlace(invA);
+  }
 
   virtual void chain() {
-    Eigen::Matrix<double, R, C> invA;
+    Eigen::Map<Eigen::Matrix<double, R, C>> invA(invA_mem_, A_.N_, A_.N_);
 
-    // If we start computing Jacobians, this may be a bit inefficient
-    invA.setIdentity(alloc_ldlt_->N_, alloc_ldlt_->N_);
-    alloc_ldlt_->ldlt_.solveInPlace(invA);
-
-    for (size_t j = 0; j < alloc_ldlt_->N_; j++) {
-      for (size_t i = 0; i < alloc_ldlt_->N_; i++) {
-        alloc_ldlt_->variA_(i, j)->adj_ += adj_ * invA(i, j);
+    for (size_t j = 0; j < A_.N_; j++) {
+      for (size_t i = 0; i < A_.N_; i++) {
+        A_.get_variA(i, j)->adj_ += adj_ * invA(i, j);
       }
     }
   }
 
-  const LDLT_alloc<R, C> *alloc_ldlt_;
+  double *invA_mem_;
+  LDLT_factor<var, R, C> A_;
 };
 }  // namespace
 

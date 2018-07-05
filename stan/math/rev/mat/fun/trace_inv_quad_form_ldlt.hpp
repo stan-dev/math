@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/mat/fun/LDLT_alloc.hpp>
 #include <stan/math/rev/mat/fun/LDLT_factor.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
@@ -107,7 +106,7 @@ class trace_inv_quad_form_ldlt_vari : public vari {
 
     for (int j = 0; j < aA.cols(); j++)
       for (int i = 0; i < aA.rows(); i++)
-        impl->ldlt_.alloc_->variA_(i, j)->adj_ += aA(i, j);
+        impl->ldlt_.get_variA(i, j)->adj_ += aA(i, j);
   }
   static inline void chainB(
       double adj,
