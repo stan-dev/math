@@ -4,16 +4,19 @@
 TEST(MathMatrix, mdivide_right_ldlt_val) {
   stan::math::LDLT_factor<double, -1, -1> ldlt_Ad;
   stan::math::matrix_d Ad(2, 2);
-  stan::math::matrix_d I;
+  Eigen::Matrix<double, 1, Eigen::Dynamic> b(2);
 
   Ad << 2.0, 3.0, 3.0, 7.0;
+  b << 5.0, 6.0;
 
   ldlt_Ad.compute(Ad);
   ASSERT_TRUE(ldlt_Ad.success());
 
-  I = mdivide_right_ldlt(Ad, ldlt_Ad);
-  EXPECT_NEAR(1.0, I(0, 0), 1.0E-12);
-  EXPECT_NEAR(0.0, I(0, 1), 1.0E-12);
-  EXPECT_NEAR(0.0, I(1, 0), 1.0E-12);
-  EXPECT_NEAR(1.0, I(1, 1), 1.0e-12);
+  auto res = mdivide_right_ldlt(b, ldlt_Ad);
+
+  EXPECT_EQ(b.cols(), res.cols());
+  EXPECT_EQ(b.rows(), res.rows());
+
+  EXPECT_NEAR(res(0), 3.4, 1e-12);
+  EXPECT_NEAR(res(1), -0.6, 1e-12);
 }

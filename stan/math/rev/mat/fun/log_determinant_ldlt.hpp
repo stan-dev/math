@@ -29,7 +29,7 @@ class log_det_ldlt_vari : public vari {
     Eigen::Map<Eigen::Matrix<double, R, C>> invA(invA_mem_, A_.N_, A_.N_);
 
     invA.setIdentity();
-    A_.ldltP_->solveInPlace(invA);
+    A_.solveInPlace(invA);
   }
 
   virtual void chain() {

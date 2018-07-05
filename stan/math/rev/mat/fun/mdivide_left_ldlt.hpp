@@ -9,20 +9,6 @@
 namespace stan {
 namespace math {
 namespace {
-template <int R1, int C1, int R2, int C2>
-class mdivide_left_ldlt_alloc : public chainable_alloc {
- public:
-  virtual ~mdivide_left_ldlt_alloc() {}
-
-  /**
-   * This share_ptr is used to prevent copying the LDLT factorizations
-   * for mdivide_left_ldlt(ldltA, b) when ldltA is a LDLT_factor<double>.
-   * The pointer is shared with the LDLT_factor<double> class.
-   **/
-  boost::shared_ptr<Eigen::LDLT<Eigen::Matrix<double, R1, C1> > > ldltP_;
-  Eigen::Matrix<double, R2, C2> C_;
-};
-
 /**
  * The vari for mdivide_left_ldlt(A, b) which handles the chain() call
  * for all elements of the result.  This vari follows the pattern
@@ -67,7 +53,7 @@ class mdivide_left_ldlt_vv_vari : public vari {
       }
     }
 
-    A_.ldltP_->solveInPlace(C);
+    A_.solveInPlace(C);
 
     pos = 0;
     for (int j = 0; j < N_; j++) {
@@ -88,7 +74,7 @@ class mdivide_left_ldlt_vv_vari : public vari {
       for (int i = 0; i < M_; i++)
         adjB(i, j) = variRefC_[pos++]->adj_;
 
-    A_.ldltP_->solveInPlace(adjB);
+    A_.solveInPlace(adjB);
     adjA.noalias() = -adjB * C.transpose();
 
     for (int j = 0; j < M_; j++)
@@ -146,7 +132,7 @@ class mdivide_left_ldlt_dv_vari : public vari {
       }
     }
 
-    A_.ldltP_->solveInPlace(C);
+    A_.solveInPlace(C);
 
     pos = 0;
     for (int j = 0; j < N_; j++) {
@@ -165,7 +151,7 @@ class mdivide_left_ldlt_dv_vari : public vari {
       for (int i = 0; i < adjB.rows(); i++)
         adjB(i, j) = variRefC_[pos++]->adj_;
 
-    A_.ldltP_->solveInPlace(adjB);
+    A_.solveInPlace(adjB);
 
     pos = 0;
     for (int j = 0; j < adjB.cols(); j++)
@@ -206,7 +192,7 @@ class mdivide_left_ldlt_vd_vari : public vari {
             ChainableStack::instance().memalloc_.alloc_array<double>(M_ * N_)) {
     Eigen::Map<Eigen::MatrixXd> C(C_mem_, M_, N_);
     C = B;
-    A.ldltP_->solveInPlace(C);
+    A.solveInPlace(C);
 
     int pos = 0;
     for (int j = 0; j < N_; j++) {
@@ -227,7 +213,7 @@ class mdivide_left_ldlt_vd_vari : public vari {
       for (int i = 0; i < adjC.rows(); i++)
         adjC(i, j) = variRefC_[pos++]->adj_;
 
-    adjA = -A_.ldltP_->solve(adjC * C.transpose());
+    adjA = -A_.solve(adjC * C.transpose());
 
     for (int j = 0; j < adjA.cols(); j++)
       for (int i = 0; i < adjA.rows(); i++)

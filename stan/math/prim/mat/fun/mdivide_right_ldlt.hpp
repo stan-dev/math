@@ -34,7 +34,7 @@ inline Eigen::Matrix<double, R1, C2> mdivide_right_ldlt(
     const Eigen::Matrix<double, R1, C1> &b,
     const LDLT_factor<double, R2, C2> &A) {
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A);
-  return A.solveRight(b);
+  return A.solve(b.transpose()).transpose();
 }
 
 }  // namespace math

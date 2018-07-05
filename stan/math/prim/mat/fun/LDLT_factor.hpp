@@ -65,9 +65,12 @@ class LDLT_factor {
   typedef Eigen::Matrix<T, Eigen::Dynamic, 1> vector_t;
   typedef Eigen::Matrix<T, R, C> matrix_t;
   typedef Eigen::LDLT<matrix_t> ldlt_t;
-  typedef size_t size_type;
-  typedef double value_type;
 
+ private:
+  int N_;
+  boost::shared_ptr<ldlt_t> ldltP_;
+
+ public:
   LDLT_factor() : N_(0), ldltP_(new ldlt_t()) {}
 
   explicit LDLT_factor(const matrix_t& A) : N_(0), ldltP_(new ldlt_t()) {
@@ -94,38 +97,37 @@ class LDLT_factor {
 
   inline T log_abs_det() const { return ldltP_->vectorD().array().log().sum(); }
 
-  inline void inverse(matrix_t& invA) const {
+  /*inline void inverse(matrix_t& invA) const {
     invA.setIdentity(N_);
     ldltP_->solveInPlace(invA);
-  }
+    }*/
 
-#if EIGEN_VERSION_AT_LEAST(3, 3, 0)
   template <typename Rhs>
   inline const Eigen::Solve<ldlt_t, Rhs> solve(
       const Eigen::MatrixBase<Rhs>& b) const {
     return ldltP_->solve(b);
   }
-#else
-  template <typename Rhs>
-  inline const Eigen::internal::solve_retval<ldlt_t, Rhs> solve(
-      const Eigen::MatrixBase<Rhs>& b) const {
-    return ldltP_->solve(b);
-  }
-#endif
 
-  inline matrix_t solveRight(const matrix_t& B) const {
-    return ldltP_->solve(B.transpose()).transpose();
+  /**
+   * Solve the system inv(A) * b in place (store solution where b was
+   * originally)
+   *
+   * template Rhs Type of right hand side
+   * @param b Right hand side of equation
+   */
+  template <typename Rhs>
+  inline void solveInPlace(Eigen::MatrixBase<Rhs>& b) const {
+    ldltP_->solveInPlace(b);
   }
+
+  /*inline matrix_t solveRight(const matrix_t& B) const {
+    return ldltP_->solve(B.transpose()).transpose();
+    }*/
 
   inline vector_t vectorD() const { return ldltP_->vectorD(); }
 
-  inline ldlt_t matrixLDLT() const { return ldltP_->matrixLDLT(); }
-
-  inline size_t rows() const { return N_; }
-  inline size_t cols() const { return N_; }
-
-  size_t N_;
-  boost::shared_ptr<ldlt_t> ldltP_;
+  inline int rows() const { return N_; }
+  inline int cols() const { return N_; }
 };
 
 }  // namespace math

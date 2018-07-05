@@ -43,11 +43,12 @@ namespace math {
  */
 template <int R, int C>
 class LDLT_factor<var, R, C> {
- public:
+ private:
   int N_;
   Eigen::LDLT<Eigen::Ref<Eigen::Map<Eigen::Matrix<double, R, C> > > > *ldltP_;
   vari **variA_mem_;
 
+ public:
   /**
    * Default constructor.  The caller *MUST* call compute() after this.  Any
    * calls which use the LDLT_factor without calling compute() run the risk
@@ -78,8 +79,8 @@ class LDLT_factor<var, R, C> {
 
     N_ = A.rows();
 
-    for (size_t j = 0; j < A.cols(); j++) {
-      for (size_t i = 0; i < A.rows(); i++) {
+    for (int j = 0; j < A.cols(); j++) {
+      for (int i = 0; i < A.rows(); i++) {
         ldlt_matrix(i, j) = A(i, j).val();
         variA_mem_[i + N_ * j] = A(i, j).vi_;
       }
@@ -126,6 +127,18 @@ class LDLT_factor<var, R, C> {
   }
 
   /**
+   * Solve the system inv(A) * b in place (store solution where b was
+   * originally)
+   *
+   * template Rhs Type of right hand side
+   * @param b Right hand side of equation
+   */
+  template <typename Rhs>
+  inline void solveInPlace(Eigen::MatrixBase<Rhs> &b) const {
+    ldltP_->solveInPlace(b);
+  }
+
+  /**
    * Determine whether the most recent factorization succeeded.  This should
    * always be called after the object is constructed (with a matrix) or
    * after compute() is called.
@@ -148,11 +161,8 @@ class LDLT_factor<var, R, C> {
    */
   inline Eigen::VectorXd vectorD() const { return ldltP_->vectorD(); }
 
-  inline size_t rows() const { return N_; }
-  inline size_t cols() const { return N_; }
-
-  typedef size_t size_type;
-  typedef var value_type;
+  inline int rows() const { return N_; }
+  inline int cols() const { return N_; }
 };
 
 }  // namespace math
