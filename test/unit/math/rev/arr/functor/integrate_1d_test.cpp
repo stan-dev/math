@@ -599,11 +599,9 @@ TEST(StanMath_integrate_1d, TestLogNormal) {
   var sigma = 13.0 / 7;
   AVEC theta = {mu, sigma};
   double b = std::numeric_limits<double>::infinity();
-  double a = a;
+  double a = 0;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
                 std::ostream &msgs) {
-    if (x <= 0)
-      return 0.0 * theta[0];
     return exp(stan::math::lognormal_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
