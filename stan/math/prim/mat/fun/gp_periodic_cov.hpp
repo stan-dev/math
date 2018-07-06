@@ -11,6 +11,7 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/inv_square.hpp>
 #include <stan/math/prim/scal/fun/inv.hpp>
+#include <math.h>
 #include <vector>
 #include <cmath>
 
@@ -55,7 +56,7 @@ gp_periodic_cov(const std::vector<T_x>& x, const T_sigma& sigma, const T_l& l,
   check_positive(fun, "period", p);
   for (size_t n = 0; n < x.size(); ++n)
     check_not_nan(fun, "element of x", x[n]);
-
+  
   Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l, T_p>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x.size(), x.size());
@@ -66,8 +67,8 @@ gp_periodic_cov(const std::vector<T_x>& x, const T_sigma& sigma, const T_l& l,
 
   T_sigma sigma_sq = square(sigma);
   T_l neg_two_inv_l_sq = -2.0 * inv_square(l);
-  T_p pi_div_p = M_PI / p;
-
+  T_p pi_div_p = 3.14159265358979323846 / p;
+  
   for (size_t j = 0; j < x_size; ++j) {
     cov(j, j) = sigma_sq;
     for (size_t i = j + 1; i < x_size; ++i) {
@@ -136,7 +137,7 @@ gp_periodic_cov(const std::vector<T_x1>& x1, const std::vector<T_x2>& x2,
 
   T_sigma sigma_sq = square(sigma);
   T_l neg_two_inv_l_sq = -2.0 * inv_square(l);
-  T_p pi_div_p = M_PI / p;
+  T_p pi_div_p = 3.14159265358979323846 / p;
 
   for (size_t i = 0; i < x1.size(); ++i) {
     for (size_t j = 0; j < x2.size(); ++j) {

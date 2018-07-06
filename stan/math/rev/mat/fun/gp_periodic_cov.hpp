@@ -112,7 +112,7 @@ class gp_periodic_cov_vari : public vari {
         cov_diag_(
             ChainableStack::instance().memalloc_.alloc_array<vari *>(size_)) {
     double neg_two_inv_l_sq = -2.0 / (l_d_ * l_d_);
-    double pi_div_p = M_PI / p_d_;
+    double pi_div_p = 3.14159265358979323846 / p_d_;
 
     size_t pos = 0;
     for (size_t j = 0; j < size_; ++j) {
@@ -150,7 +150,7 @@ class gp_periodic_cov_vari : public vari {
     double l_d_sq = l_d_ * l_d_;
     l_vari_->adj_ += adjl * 4 / (l_d_sq * l_d_);
     sigma_vari_->adj_ += adjsigma * 2 / sigma_d_;
-    p_vari_->adj_ += adjp * 2 * M_PI / l_d_sq / (p_d_ * p_d_);
+    p_vari_->adj_ += adjp * 2 * 3.14159265358979323846 / l_d_sq / (p_d_ * p_d_);
   }
 };
 
@@ -244,7 +244,7 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
         cov_diag_(
             ChainableStack::instance().memalloc_.alloc_array<vari *>(size_)) {
     double neg_two_inv_l_sq = -2.0 / (l_d_ * l_d_);
-    double pi_div_p = M_PI / p_d_;
+    double pi_div_p = 3.14159265358979323846 / p_d_;
 
     size_t pos = 0;
     for (size_t j = 0; j < size_; ++j) {
@@ -275,7 +275,7 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
     }
     double l_d_sq = l_d_ * l_d_;
     l_vari_->adj_ += adjl * 4 / (l_d_sq * l_d_);
-    p_vari_->adj_ += adjp * 2 * M_PI / l_d_sq / (p_d_ * p_d_);
+    p_vari_->adj_ += adjp * 2 * 3.14159265358979323846 / l_d_sq / (p_d_ * p_d_);
   }
 };
 
