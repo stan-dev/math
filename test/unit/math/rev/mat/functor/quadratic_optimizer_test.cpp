@@ -238,3 +238,137 @@ TEST(MathMatrix, quadratic_optimizer_var) {
     EXPECT_EQ(J(k, 1), g[1]);
   }
 }
+
+// Shosh unit tests start here
+struct fh_s1 {
+  template <typename T0>
+  inline Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic>
+    operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
+               const std::vector<double>& delta,
+               const std::vector<int>& delta_int) const {
+      // declare "data"
+      int n = 2;
+      // VectorXd qa(2);
+      // qa << 1.5,2;
+      // VectorXd qe(2);
+      // qe << 1,1;
+      // VectorXd co(2);
+      // co << 5,10;
+      // double s = 82.5;
+
+
+      // theta signiature: (gamma, sigma1sq,sigma2sq, alpha)
+      // Eigen::Matrix<T0, Eigen::Dynamic, 2> H_mat(n,n) = MatrixXf::Zero();
+      // H_mat = Identity(n, n);
+      Eigen::Matrix<T0, Eigen::Dynamic, 2> H_mat(n,n);
+      H_mat(0,0) = pow(theta(0), 2) * theta(1);
+      H_mat(1,1) = pow(theta(0), 2) * theta(2);
+      H_mat(0,1) = 0;
+      H_mat(1,0) = 0;
+      return H_mat;
+    }
+};
+
+struct fv_s1 {
+  template <typename T0>
+  inline Eigen::Matrix<T0, Eigen::Dynamic, 1>
+    operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
+               const std::vector<double>& delta,
+               const std::vector<int>& delta_int) const {
+
+     // declare "data"
+     int n = 2;
+     VectorXd qa(2);
+     qa << 1.5,2;
+     // VectorXd qe(2);
+     // qe << 1,1;
+     VectorXd co(2);
+     co << 5,10;
+     // double s = 82.5;
+
+     // theta signiature: (gamma, sigma1sq,sigma2sq, alpha)
+      Eigen::Matrix<T0, Eigen::Dynamic, 1> linear_term(n);
+      linear_term(0) = -( theta(0)*qa(0) + pow(theta(0),2)*theta(1)*theta(3)*co(0) );
+      linear_term(1) = -( theta(0)*qa(1) + pow(theta(0),2)*theta(2)*theta(3)*co(1) );
+      return linear_term;
+    }
+};
+
+struct fa_s1 {
+  template <typename T0>
+  Eigen::Matrix<T0, Eigen::Dynamic, 1>
+  inline operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
+                    const std::vector<double>& delta,
+                    const std::vector<int>& delta_int) const {
+    // declare "data"
+    int n = 2;
+    VectorXd qe(2);
+    qe << 1,1;
+
+    // theta signiature: (gamma, sigma1sq,sigma2sq, alpha)
+    Eigen::Matrix<T0, Eigen::Dynamic, 1> linear_constraint(n);
+    linear_constraint(0) = qe(0);
+    linear_constraint(1) = qe(1);
+    return linear_constraint;
+  }
+};
+
+struct fb_s1 {
+  template <typename T0>
+  T0
+  inline operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
+                    const std::vector<double>& delta,
+                    const std::vector<int>& delta_int) const {
+    // double s = 82.5;
+    // double minus_s = -s;
+    return -82.5;
+  }
+};
+
+TEST(MathMatrix, quadratic_optimizer_s1) {
+  VectorXd theta(4);
+  theta << 1.5, 0.2, 0.8, 1.3;
+  std::vector<double> delta;
+  std::vector<int> delta_int;
+  double tol = 1e-10;
+  int n = 2;
+
+  VectorXd x = quadratic_optimizer(fh_s1(), fv_s1(), fa_s1(), fb_s1(), theta,
+                                   delta, delta_int, n, 0, tol);
+
+  // std::cout << "x opt: " << x;
+  EXPECT_NEAR(x(0), 56.5667, 0.0001);
+  EXPECT_NEAR(x(1), 25.9333,0.0001);
+}
+
+TEST(MathMatrix, quadratic_optimizer_var_s1) {
+  std::vector<double> delta;
+  std::vector<int> delta_int;
+  int n_x = 2;
+  int n_theta = 4;
+  // theta signiature: (gamma, sigma1sq,sigma2sq, alpha)
+
+  MatrixXd J(4, 2);
+  J << 0.333333, -0.33333,
+  		240.363, 40.0296,
+		5.42407, 17.4241,
+	 	 -7.0, 7.0;
+
+  for (int k = 0; k < n_x; k++) {
+    Matrix<var, Dynamic, 1> theta(n_theta);
+    theta << 1.5, 0.2, 0.8, 1.3;
+    Matrix<var, Dynamic, 1> x = quadratic_optimizer(fh_s1(), fv_s1(), fa_s1(), fb_s1(), theta,
+                                   delta, delta_int, n_x);
+
+	EXPECT_NEAR(x(0).val(), 56.5667, 0.0001);
+	EXPECT_NEAR(x(1).val(), 25.9333,0.0001);
+
+    AVEC parameter_vec = createAVEC(theta(0), theta(1), theta(2), theta(3));
+    VEC g;
+    x(k).grad(parameter_vec, g);
+    EXPECT_NEAR(J(k, 0), g[0],0.0001);
+    EXPECT_NEAR(J(k, 1), g[1],0.0001);
+    EXPECT_NEAR(J(k, 2), g[2],0.0001);
+	
+  }
+}
