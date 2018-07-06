@@ -12,18 +12,25 @@ R"(
 #endif
 
 #ifndef A
-#define A(i, j)  A[j*rows+i]
+#define A(i, j)  A[j * rows + i]
 #endif
-
-#ifndef BT
-#define BT(i, j)  B[j*cols+i] 
-#endif
-
-__kernel void zeros(
-        __global double *A,
-        unsigned int rows,
-        unsigned int cols,
-        unsigned int part) {
+/**
+ * Stores zeros in the matrix on the GPU.
+ * Supports writing zeroes to the lower and upper triangular or
+ * the whole matrix.
+ *
+ * @param A (write) matrix
+ * @param rows Number of rows for matrix A
+ * @param cols Number of columns for matrix A
+ * @param part optional parameter that describes where to assign zeros:
+ *  LOWER - lower triangular
+ *  UPPER - upper triangular
+ * if the part parameter is not specified,
+ * zeros are assigned to the whole matrix.
+ *
+ */
+__kernel void zeros(__global double *A, unsigned int rows, unsigned int cols,
+  unsigned int part) {
   int i = get_global_id(0);
   int j = get_global_id(1);
   if (i < rows && j < cols) {
