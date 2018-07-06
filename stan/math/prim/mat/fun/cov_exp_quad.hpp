@@ -100,8 +100,8 @@ template <typename T_x, typename T_sigma, typename T_l>
 inline
     typename Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
                            Eigen::Dynamic, Eigen::Dynamic>
-cov_exp_quad(const std::vector<T_x> &x, const T_sigma &sigma,
-             const std::vector<T_l> &length_scale) {
+    cov_exp_quad(const std::vector<T_x> &x, const T_sigma &sigma,
+                 const std::vector<T_l> &length_scale) {
   using std::exp;
 
   size_t x_size = x.size();
@@ -159,9 +159,9 @@ cov_exp_quad(const std::vector<T_x> &x, const T_sigma &sigma,
  *   x is nan or infinite
  */
 template <typename T_x1, typename T_x2, typename T_sigma, typename T_l>
-inline
-typename Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type,
-                           Eigen::Dynamic, Eigen::Dynamic>
+inline typename Eigen::Matrix<
+    typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type, Eigen::Dynamic,
+    Eigen::Dynamic>
 cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
              const T_sigma &sigma, const T_l &length_scale) {
   using std::exp;
@@ -215,9 +215,9 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  *   same length as the length scale
  */
 template <typename T_x1, typename T_x2, typename T_sigma, typename T_l>
-inline
-typename Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type,
-                           Eigen::Dynamic, Eigen::Dynamic>
+inline typename Eigen::Matrix<
+    typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type, Eigen::Dynamic,
+    Eigen::Dynamic>
 cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
              const T_sigma &sigma, const std::vector<T_l> &length_scale) {
   using std::exp;
