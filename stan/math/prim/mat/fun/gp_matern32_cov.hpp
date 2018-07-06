@@ -8,6 +8,8 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/scal/fun/divide.hpp>
 #include <vector>
 
 namespace stan {
@@ -108,6 +110,9 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
   for (size_t n = 0; n < x_size; ++n)
     check_not_nan("gp_matern32_cov", "length scale", length_scale[n]);
 
+  check_size_match("cov_exp_quad", "x dimension", x[0].size(),
+                   "number of length scales", l_size);
+  
   Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x_size, x_size);
@@ -118,18 +123,21 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
   T_s sigma_sq = square(sigma);
   T_l root_3 = sqrt(3.0);
   T_l neg_root_3 = -1.0 * sqrt(3.0);
-  T_l temp;
-  typename return_type<T_x>::type sq_distance;
+  typename return_type<T_x>::type distance;
+
+  std::vector<Eigen::Matrix<T_l, -1, 1>> x_new(x_size);
+  for (size_t n = 0; n < x_size; ++n) {
+    for (size_t d = 0; d < l_size; ++d) {
+      x_new[n].resize(l_size, 1);
+      x_new[n][d] = divide(x[n][d], length_scale[d]);
+    }
+  }
 
   for (size_t i = 0; i < x_size; ++i) {
     for (size_t j = i; j < x_size; ++j) {
-      temp = 0;
-      sq_distance = squared_distance(x[i], x[j]);
-      for (size_t k = 0; k < l_size; ++k) {
-        temp += 1.0 / square(length_scale[k]);
-      }
-      cov(i, j) = sigma_sq * (1.0 + root_3 * sqrt(sq_distance * temp)) *
-                  exp(neg_root_3 * sqrt(sq_distance * temp));
+      distance = sqrt(squared_distance(x_new[i], x_new[j]));
+      cov(i, j) = sigma_sq * (1.0 + root_3 * distance) *
+        exp(neg_root_3 * distance);
       cov(j, i) = cov(i, j);
     }
   }
@@ -186,6 +194,7 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   T_l neg_root_3_inv_l_sq = -1.0 * sqrt(3.0) / length_scale;
   typename return_type<T_x1, T_x2>::type distance;
 
+
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
       distance = sqrt(squared_distance(x1[i], x2[j]));
@@ -240,6 +249,11 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   for (size_t n = 0; n < l_size; ++n)
     check_not_nan("gp_matern32_cov", "length scale", length_scale[n]);
 
+  check_size_match("cov_exp_quad", "x1 dimension", x1[0].size(),
+                   "number of length scales", l_size);
+  check_size_match("cov_exp_quad", "x2 dimension", x2[0].size(),
+                   "number of length scales", l_size);
+
   Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x1_size, x2_size);
@@ -250,18 +264,30 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   T_s sigma_sq = square(sigma);
   T_l root_3 = sqrt(3.0);
   T_l neg_root_3 = -1.0 * sqrt(3.0);
-  T_l temp;
-  typename return_type<T_x1, T_x2>::type sq_distance;
+  typename return_type<T_x1, T_x2>::type distance;
+
+  std::vector<Eigen::Matrix<T_l, -1, 1>> x1_new(x1_size);
+  std::vector<Eigen::Matrix<T_l, -1, 1>> x2_new(x2_size);
+
+  for (size_t n = 0; n < x1_size; ++n) {
+    for (size_t d = 0; d < l_size; ++d) {
+      x1_new[n].resize(l_size, 1);
+      x1_new[n][d] = divide(x1[n][d], length_scale[d]);
+    }
+  }
+
+  for (size_t n = 0; n < x2_size; ++n) {
+    for (size_t d = 0; d < l_size; ++d) {
+      x2_new[n].resize(l_size, 1);
+      x2_new[n][d] = divide(x2[n][d], length_scale[d]);
+    }
+  }
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      temp = 0;
-      sq_distance = squared_distance(x1[i], x2[j]);
-      for (size_t k = 0; k < l_size; ++k) {
-        temp += 1.0 / square(length_scale[k]);
-      }
-      cov(i, j) = sigma_sq * (1.0 + root_3 * sqrt(sq_distance * temp)) *
-                  exp(neg_root_3 * sqrt(sq_distance * temp));
+      distance = sqrt(squared_distance(x1_new[i], x2_new[j]));
+      cov(i, j) = sigma_sq * (1.0 + root_3 * distance) *
+                  exp(neg_root_3 * distance);
     }
   }
   return cov;
