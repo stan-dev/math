@@ -63,3 +63,13 @@
 
 # python byte code
 *.pyc
+
+lib/boost_*/b2
+lib/boost_*/bin.v2/
+lib/boost_*/bjam
+lib/boost_*/bootstrap.log
+lib/boost_*/project-config.jam
+lib/boost_*/project-config.jam.1
+lib/boost_*/stage/
+lib/boost_*/tools/build/*
+lib/boost_*/user-config.jam
