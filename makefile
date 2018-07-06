@@ -22,7 +22,7 @@ CXX = $(CC)
 
 ##
 # Get information about the compiler used.
-# - CC_TYPE: {g++, clang++, mingw32-g++, other}
+# - CC_TYPE: {gcc, clang, mingw32-gcc, other}
 # - CC_MAJOR: major version of CC
 # - CC_MINOR: minor version of CC
 ##
@@ -57,6 +57,8 @@ CXX = $(CC)
 # Defines
 #  STAN_MPI
 -include make/setup_mpi
+
+include make/libstanmath_mpi # bin/libstanmath_mpi.a
 
 include make/tests    # tests
 include make/cpplint  # cpplint
