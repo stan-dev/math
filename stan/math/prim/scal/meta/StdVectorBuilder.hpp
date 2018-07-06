@@ -26,7 +26,7 @@ namespace stan {
  *
  *  @tparam used boolean variable indicating whether this instance
  *      is used. If this is false, there is no storage allocated
- *      and operator[] throws.
+ *      and operator[] throws a std::logic_error.
  *  @tparam T1 Type of vector to build
  */
 
