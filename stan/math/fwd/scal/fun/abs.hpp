@@ -30,11 +30,9 @@ inline fvar<T> abs(const fvar<T>& x) {
 namespace std {
 // constrained complex overload to forward zeroing fvar to std::abs
 template <class T>
-inline std::complex<stan::math::fvar<T>>
-abs(std::complex<stan::math::fvar<T>> const& t) {
- return abs(
-  std::complex<stan::math::zeroing<stan::math::fvar<T>>>(t)
- );
+inline std::complex<stan::math::fvar<T>> abs(
+    std::complex<stan::math::fvar<T>> const& t) {
+  return abs(std::complex<stan::math::zeroing<stan::math::fvar<T>>>(t));
 }
 }  // namespace std
 #endif
