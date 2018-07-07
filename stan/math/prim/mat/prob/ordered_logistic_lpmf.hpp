@@ -40,7 +40,7 @@ namespace math {
     \\
     -\mathrm{logit}^{-1}(\lambda - c_1) & \mbox{if } k = 1,
     \\
-    ((1-e^{c_{k-1}-c_{k-2}})^{-1} - \mathrm{logit}^{-1}(c_{k-2}-\lambda)) + 
+    ((1-e^{c_{k-1}-c_{k-2}})^{-1} - \mathrm{logit}^{-1}(c_{k-2}-\lambda)) +
     ((1-e^{c_{k-2}-c_{k-1}})^{-1} - \mathrm{logit}^{-1}(c_{k-1}-\lambda))
     & \mathrm{if } 1 < k < K, \mathrm{and}
     \\
@@ -54,10 +54,10 @@ namespace math {
     \\
     \mathrm{logit}^{-1}(\lambda - c_1) & \mbox{if } k = 1,
     \\
-    \frac{\partial }{\partial \mathrm{c_{K-2}}} = 
+    \frac{\partial }{\partial \mathrm{c_{K-2}}} =
       ((1-e^{c_{k-1}-c_{k-2}})^{-1} - \mathrm{logit}^{-1}(c_{k-2}-\lambda))
     \\
-    \frac{\partial }{\partial \mathrm{c_{K-1}}} = 
+    \frac{\partial }{\partial \mathrm{c_{K-1}}} =
     ((1-e^{c_{k-2}-c_{k-1}})^{-1} - \mathrm{logit}^{-1}(c_{k-1}-\lambda))
     & \mathrm{if } 1 < k < K, \mathrm{and}
     \\
@@ -102,7 +102,7 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
   check_consistent_sizes(function, "Integers", y, "Locations", lambda);
   if (C_l > 1)
     check_size_match(function, "Length of location variables ", N,
-                      "Number of cutpoint vectors ", C_l);
+                     "Number of cutpoint vectors ", C_l);
 
   int size_c_old = c_vec[0].size();
   for (int i = 1; i < C_l; i++) {
