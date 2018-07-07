@@ -348,19 +348,21 @@ TEST(MathMatrix, quadratic_optimizer_var_s1) {
   int n_theta = 4;
   // theta signiature: (gamma, sigma1sq,sigma2sq, alpha)
 
-  MatrixXd J(4, 2);
-  J << 0.333333, -0.33333,
-  		240.363, 40.0296,
-		5.42407, 17.4241,
-	 	 -7.0, 7.0;
-  
+  MatrixXd J(2, 4);
+  // Jacobian worked out by Shosh
+//   J << 0.333333, -0.33333,
+//   		240.363, 40.0296,
+// 		5.42407, 17.4241,
+// 	 	 -7.0, 7.0;
+
+  // Jacobian worked with finite-diff (which is in agreement with autodiff)
+  J << 0.222222, -50.0667, 12.9333, -7,
+       -0.222222, 50.0667, -12.9333, 7;
+
   // to get results with finite differentiation
-  var diff = 1e-8;
+  // var diff = 1e-8;
 
   for (int k = 0; k < n_x; k++) {
-    
-    std::cout << "\n k: " << k << "\n";
-    
     Matrix<var, Dynamic, 1> theta(n_theta);
     theta << 1.5, 0.2, 0.8, 1.3;
 
@@ -373,37 +375,132 @@ TEST(MathMatrix, quadratic_optimizer_var_s1) {
     AVEC parameter_vec = createAVEC(theta(0), theta(1), theta(2), theta(3));
     VEC g;
     x(k).grad(parameter_vec, g);
-    
-    cout << "autodiff derivative: " << g[0] << " " << g[1] << " " 
-         << g[2] << " " << g[3] <<  "\n";
-    cout << "expected derivative: " << J(0, k) << " " << J(1, k) 
-         << " " << J(2, k) << " " << J(3, k) << "\n \n";
-    
-    // EXPECT_NEAR(J(k, 0), g[0], 0.0001);
-    // EXPECT_NEAR(J(k, 1), g[1], 0.0001);
-    // EXPECT_NEAR(J(k, 2), g[2], 0.0001);
-    // EXPECT_NEAR(J(k, 3), g[3], 0.0001);
+
+    EXPECT_NEAR(J(k, 0), g[0], 0.0001);
+    EXPECT_NEAR(J(k, 1), g[1], 0.0001);
+    EXPECT_NEAR(J(k, 2), g[2], 0.0001);
+    EXPECT_NEAR(J(k, 3), g[3], 0.0001);
 
     // Comparision with finite differentiation
-    for (int l = 0; l < n_theta; l++) {
-      Matrix<var, Dynamic, 1> theta_lb = theta;
-      Matrix<var, Dynamic, 1> theta_ub = theta;
-      theta_lb(l) = theta(l) - diff;
-      theta_ub(l) = theta(l) + diff;
-
-      Matrix<var,Dynamic, 1> x_lb, x_ub;
-      x_lb = quadratic_optimizer(fh_s1(), fv_s1(), fa_s1(), fb_s1(),
-                                 theta_lb, delta, delta_int, n_x);
-      x_ub = quadratic_optimizer(fh_s1(), fv_s1(), fa_s1(), fb_s1(),
-                                 theta_ub, delta, delta_int, n_x);
-      
-      // compute the derivative of the first solution with respect
-      // to the first parameter (i.e. element (1, 1) of the Jacobian).
-      double derivative = (x_ub(k).val() - x_lb(k).val()) / (2 * diff.val());
-      cout << "finite diff derivative: " << derivative << "\n";
+    // for (int l = 0; l < n_theta; l++) {
+    //   Matrix<var, Dynamic, 1> theta_lb = theta;
+    //   Matrix<var, Dynamic, 1> theta_ub = theta;
+    //   theta_lb(l) = theta(l) - diff;
+    //   theta_ub(l) = theta(l) + diff;
+    // 
+    //   Matrix<var,Dynamic, 1> x_lb, x_ub;
+    //   x_lb = quadratic_optimizer(fh_s1(), fv_s1(), fa_s1(), fb_s1(),
+    //                              theta_lb, delta, delta_int, n_x);
+    //   x_ub = quadratic_optimizer(fh_s1(), fv_s1(), fa_s1(), fb_s1(),
+    //                              theta_ub, delta, delta_int, n_x);
+    //   
+    //   // compute the derivative of the first solution with respect
+    //   // to the first parameter (i.e. element (1, 1) of the Jacobian).
+    //   double derivative = (x_ub(k).val() - x_lb(k).val()) / (2 * diff.val());
+    //   cout << "finite diff derivative: " << derivative << "\n";
 
       // << "with x_ub = " << x_ub << "\n"
       // << "and x_lb = " << x_lb << "\n";
-    }
+    // }
   }
+
+  // Check analytical solution (need to redeclare variables which
+  // were declared in the FOR loop scope)
+  // VectorXd theta(n_theta);
+  // theta << 1.5, 0.2, 0.8, 1.3;
+  // Matrix<double, Dynamic, 1> 
+  //   x = quadratic_optimizer(fh_s1(), fv_s1(), fa_s1(), fb_s1(),
+  //                           theta, delta, delta_int, n_x);
+  // 
+  // VectorXd
+  //   x_an = quadratic_optimizer_analytical(fh_s1(), fv_s1(), fa_s1(), fb_s1(),
+  //                                         theta, delta, delta_int,
+  //                                         x);
+  // std::cout << "\n" << "analytical form: " << x_an << "\n \n";
+  // 
+  // // finite diff test
+  // for (int k = 0; k < n_theta; k++) {
+  //   double diff_dbl = 1e-8;
+  //   VectorXd theta_lb = theta, theta_ub = theta;
+  //   theta_lb(k) = theta(k) - diff_dbl;
+  //   theta_ub(k) = theta(k) + diff_dbl;
+  // 
+  //   VectorXd
+  //     x_an_lb = quadratic_optimizer_analytical(fh_s1(), fv_s1(), fa_s1(), fb_s1(),
+  //                                              theta_lb, delta, delta_int,
+  //                                              x);
+  //   VectorXd
+  //      x_an_ub = quadratic_optimizer_analytical(fh_s1(), fv_s1(), fa_s1(), fb_s1(),
+  //                                               theta_ub, delta, delta_int,
+  //                                               x);
+  // 
+  //   double finite_diff = (x_an_ub(0) - x_an_lb(0)) / (2 * diff_dbl);
+  //   std::cout << "finite diff: " << finite_diff << "\n";
+  // }
+
+  // Check autodiff on analytical function
+  // {  // declare variables inside its own scope.
+  //   stan::math::start_nested();
+  //   std::cout << "\n" << "ANALYTICAL SOLUTIONS \n";
+  //   Matrix<var, Dynamic, 1> theta_v(n_theta);
+  //   theta_v << 1.5, 0.2, 0.8, 1.3;
+  // 
+  //   Matrix<var, Dynamic, 1>
+  //     x_an_v = quadratic_optimizer_analytical(fh_s1(), fv_s1(), fa_s1(), fb_s1(),
+  //                                             theta_v, delta, delta_int,
+  //                                             x);
+  //   std::cout << "x_an_v: " << x_an_v(0).val() << " " << x_an_v(1).val() << "\n";
+  // 
+  //   AVEC parameter_vec = createAVEC(theta_v(0), theta_v(1), theta_v(2),
+  //                                   theta_v(3));
+  //   VEC g;
+  //   x_an_v(0).grad(parameter_vec, g);
+  //   std::cout << "g: " << g[0] << " " << g[1] << " " << g[2] << " " << g[3] << "\n";
+  // 
+  //   stan::math::recover_memory_nested();
+  //   // This clearly shows autodiff and finite diff are in agreement.
+  //   // Manually tested for both outputs, indexed 0 and 1.
+  // }
 }
+ 
+// TEST(Math_matrix, quadratic_optimizer_cm1) { 
+//   // Check autodiff for original function
+//   std::vector<double> delta;
+//   std::vector<int> delta_int;
+//   int n_x = 2;
+//   int n_theta = 4;
+// 
+//   {  // declare variables inside its own scope.
+//     stan::math::start_nested();
+//     std::cout << "\n" << "NUMERICAL SOLUTIONS \n";
+//     Matrix<var, Dynamic, 1> theta_v(n_theta);
+//     theta_v << 1.5, 0.2, 0.8, 1.3;
+// 
+//     Matrix<var, Dynamic, 1>
+//       x_an_v = quadratic_optimizer(fh_s1(), fv_s1(), fa_s1(), fb_s1(),
+//                                    theta_v, delta, delta_int,
+//                                    n_x);
+//     std::cout << "x_an_v: " << x_an_v(0).val() << " " << x_an_v(1).val() << "\n";
+// 
+//     AVEC parameter_vec = createAVEC(theta_v(0), theta_v(1), theta_v(2),
+//                                     theta_v(3));
+// 
+//     // std::cout << "x before grad: " << x_an_v(0).adj() 
+//     //           << " " << x_an_v(1).adj() << "\n";
+// 
+//     VEC g;
+//     x_an_v(0).grad(parameter_vec, g);
+//     std::cout << "g: " << g[0] << " " << g[1] << " " << g[2] << " " << g[3] << "\n";
+//     // Does NOT return the same gradient as above !!!
+// 
+//     stan::math::recover_memory_nested();
+//     // This clearly shows autodiff and finite diff are in agreement.
+//     // Manually tested for both outputs, indexed 0 and 1.
+//   }
+// }
+
+
+
+
+
+

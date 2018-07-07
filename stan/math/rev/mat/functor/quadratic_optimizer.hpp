@@ -145,14 +145,14 @@ struct quadratic_optimizer_vari : public vari {
     Eigen::VectorXd f_eval;  // dummy argument required by jacobian function.
     MatrixXd J;
     jacobian(f_, value_of(theta), f_eval, J);
-
     Map<MatrixXd>(&Jx_theta_[0], x_size_, theta_size_) = J;
   }
 
   void chain() {
     for (int j = 0; j < theta_size_; j++)
-      for (int i = 0; i < x_size_; i++)
-        theta_[i]->adj_ += x_[i]->adj_ * Jx_theta_[j * x_size_ + i];
+      for (int i = 0; i < x_size_; i++) {
+        theta_[j]->adj_ += x_[i]->adj_ * Jx_theta_[j * x_size_ + i];
+      }
   }
 };
 
