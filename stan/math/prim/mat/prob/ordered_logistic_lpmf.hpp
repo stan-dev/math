@@ -32,9 +32,41 @@ namespace math {
  *
  * <p>Typically the continous location
  * will be the dot product of a vector of regression coefficients
- * and a vector of predictors for the outcome.
+ * and a vector of predictors for the outcome
+ *
+  \f[
+    \frac{\partial }{\partial \lambda} =
+    \left\{\begin{array}
+    \\
+    -\mathrm{logit}^{-1}(\lambda - c_1) & \mbox{if } k = 1,
+    \\
+    ((1-e^{c_{k-1}-c_{k-2}})^{-1} - \mathrm{logit}^{-1}(c_{k-2}-\lambda)) + 
+    ((1-e^{c_{k-2}-c_{k-1}})^{-1} - \mathrm{logit}^{-1}(c_{k-1}-\lambda))
+    & \mathrm{if } 1 < k < K, \mathrm{and}
+    \\
+    \mathrm{logit}^{-1}(c_{K-2}-\lambda) & \mathrm{if } k = K.
+    \end{array}\right.
+  \f]
+
+  \f[
+    \frac{\partial }{\partial \mathrm{c_{K}}} =
+    \left\{\begin{array}
+    \\
+    \mathrm{logit}^{-1}(\lambda - c_1) & \mbox{if } k = 1,
+    \\
+    \frac{\partial }{\partial \mathrm{c_{K-2}}} = 
+      ((1-e^{c_{k-1}-c_{k-2}})^{-1} - \mathrm{logit}^{-1}(c_{k-2}-\lambda))
+    \\
+    \frac{\partial }{\partial \mathrm{c_{K-1}}} = 
+    ((1-e^{c_{k-2}-c_{k-1}})^{-1} - \mathrm{logit}^{-1}(c_{k-1}-\lambda))
+    & \mathrm{if } 1 < k < K, \mathrm{and}
+    \\
+    -\mathrm{logit}^{-1}(c_{K-2}-\lambda) & \mathrm{if } k = K.
+    \end{array}\right.
+  \f]
  *
  * @tparam propto True if calculating up to a proportion.
+ * @tparam T_y Y variable type (integer or array of integers).
  * @tparam T_loc Location type.
  * @tparam T_cut Cut-point type.
  * @param y Array of integers
@@ -68,15 +100,17 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
   int C_l = length_mvt(c);
 
   check_consistent_sizes(function, "Integers", y, "Locations", lambda);
+  if (C_l > 1)
+    check_size_match(function, "Length of location variables ", N,
+                      "Number of cutpoint vectors ", C_l);
 
   int size_c_old = c_vec[0].size();
-  for (size_t i = 1, size_ = C_l; i < size_; i++) {
+  for (int i = 1; i < C_l; i++) {
     int size_c_new = c_vec[i].size();
 
     check_size_match(function, "Size of one of the vectors of cutpoints ",
                      size_c_new, "Size of another vector of the cutpoints ",
                      size_c_old);
-    size_c_old = size_c_new;
   }
 
   for (int n = 0; n < N; n++) {
@@ -84,7 +118,7 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
     check_finite(function, "Location parameter", lam_vec[n]);
   }
 
-  for (size_t i = 0, size_ = C_l; i < size_; i++) {
+  for (int i = 0; i < C_l; i++) {
     check_ordered(function, "Cut-points", c_vec[i]);
     check_greater(function, "Size of cut points parameter", c_vec[i].size(), 0);
     check_finite(function, "Final cut-point", c_vec[i](c_vec[i].size() - 1));
