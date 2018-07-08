@@ -4,11 +4,11 @@
 #   - CXXFLAGS
 #   - GTEST_CXXFLAGS
 
-ifeq (g++,$(CC_TYPE))
+ifeq (gcc,$(CC_TYPE))
   VERSION := $(CC_MAJOR).$(CC_MINOR)
 endif
 
-ifeq (clang++,$(CC_TYPE))
+ifeq (clang,$(CC_TYPE))
   CXXFLAGS += -Wno-unknown-warning-option
   CXXFLAGS += -Wno-tautological-compare
   CXXFLAGS += -Wsign-compare
@@ -20,9 +20,4 @@ ifdef STAN_OPENCL
   OPENCL_PLATFORM_ID ?= 0
 endif
 
-DLL = .dylib
-
-ifdef STAN_MPI
-  LDFLAGS_MPI := -L$(BOOST)/stage/lib -lboost_serialization -lboost_mpi -Wl,-rpath,$(BOOST)/stage/lib
-  CXXFLAGS_MPI := -DSTAN_MPI
-endif
+DLL := .dylib
