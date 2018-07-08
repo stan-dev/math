@@ -26,17 +26,19 @@ class log_det_ldlt_vari : public vari {
         invA_mem_(ChainableStack::instance().memalloc_.alloc_array<double>(
             A.rows() * A.cols())),
         A_(A) {
-    Eigen::Map<Eigen::Matrix<double, R, C>> invA(invA_mem_, A_.N_, A_.N_);
+    Eigen::Map<Eigen::Matrix<double, R, C>> invA(invA_mem_, A_.rows(),
+                                                 A_.cols());
 
     invA.setIdentity();
     A_.solveInPlace(invA);
   }
 
   virtual void chain() {
-    Eigen::Map<Eigen::Matrix<double, R, C>> invA(invA_mem_, A_.N_, A_.N_);
+    Eigen::Map<Eigen::Matrix<double, R, C>> invA(invA_mem_, A_.rows(),
+                                                 A_.cols());
 
-    for (size_t j = 0; j < A_.N_; j++) {
-      for (size_t i = 0; i < A_.N_; i++) {
+    for (int j = 0; j < A_.rows(); j++) {
+      for (int i = 0; i < A_.cols(); i++) {
         A_.get_variA(i, j)->adj_ += adj_ * invA(i, j);
       }
     }

@@ -133,6 +133,8 @@ TEST(AgradRevMatrix, compute) {
   A_double << 2, 1, 1, 2;
 
   Eigen::LDLT<Eigen::Matrix<double, -1, -1> > ldlt_double(A_double);
+  Eigen::Matrix<double, -1, -1> b(2, 2);
+  b << 1, 0, 0, 1;
   Eigen::Matrix<double, -1, -1> expected_mat, mat;
 
   LDLT_factor<var, -1, -1> ldlt_A;
@@ -142,8 +144,8 @@ TEST(AgradRevMatrix, compute) {
   EXPECT_NO_THROW(ldlt_A.compute(A));
   ASSERT_TRUE(ldlt_A.success());
 
-  EXPECT_NO_THROW(mat = ldlt_A.ldltP_->matrixLDLT());
-  expected_mat = ldlt_double.matrixLDLT();
+  EXPECT_NO_THROW(mat = ldlt_A.solve(b));
+  expected_mat = ldlt_double.solve(b);
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++)
       EXPECT_FLOAT_EQ(expected_mat(i, j), mat(i, j))
