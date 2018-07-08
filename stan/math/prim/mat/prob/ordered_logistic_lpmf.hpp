@@ -40,8 +40,8 @@ namespace math {
     \\
     -\mathrm{logit}^{-1}(\lambda - c_1) & \mbox{if } k = 1,
     \\
-    ((1-e^{c_{k-1}-c_{k-2}})^{-1} - \mathrm{logit}^{-1}(c_{k-2}-\lambda)) +
-    ((1-e^{c_{k-2}-c_{k-1}})^{-1} - \mathrm{logit}^{-1}(c_{k-1}-\lambda))
+    -(((1-e^{c_{k-1}-c_{k-2}})^{-1} - \mathrm{logit}^{-1}(c_{k-2}-\lambda)) +
+    ((1-e^{c_{k-2}-c_{k-1}})^{-1} - \mathrm{logit}^{-1}(c_{k-1}-\lambda)))
     & \mathrm{if } 1 < k < K, \mathrm{and}
     \\
     \mathrm{logit}^{-1}(c_{K-2}-\lambda) & \mathrm{if } k = K.
@@ -58,7 +58,7 @@ namespace math {
       ((1-e^{c_{k-1}-c_{k-2}})^{-1} - \mathrm{logit}^{-1}(c_{k-2}-\lambda))
     \\
     \frac{\partial }{\partial \mathrm{c_{K-1}}} =
-    ((1-e^{c_{k-2}-c_{k-1}})^{-1} - \mathrm{logit}^{-1}(c_{k-1}-\lambda))
+      ((1-e^{c_{k-2}-c_{k-1}})^{-1} - \mathrm{logit}^{-1}(c_{k-1}-\lambda))
     & \mathrm{if } 1 < k < K, \mathrm{and}
     \\
     -\mathrm{logit}^{-1}(c_{K-2}-\lambda) & \mathrm{if } k = K.
