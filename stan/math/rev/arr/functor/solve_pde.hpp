@@ -30,9 +30,9 @@ namespace math {
  */
 template <typename F_pde, typename T>
 inline std::vector<T> solve_pde(const F_pde& pde, const std::vector<T>& theta,
-                                  const std::vector<double>& x_r,
-                                  const std::vector<int>& x_i,
-                                  std::ostream* msgs = nullptr) {
+                                const std::vector<double>& x_r,
+                                const std::vector<int>& x_i,
+                                std::ostream* msgs = nullptr) {
   stan::math::check_not_nan("solve_pde", "theta", theta);
 
   const int need_sens = 1;
