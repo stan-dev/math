@@ -25,7 +25,7 @@ public:
              const std::vector<int>& x_i,
              std::ostream* msgs = nullptr) const {
     std::vector<std::vector<double> > res;
-    if(need_sens)
+    if (need_sens)
       res = {{coef_ * theta[0] + coef_ * theta[1] * theta[1],
               coef_,
               coef_ * 2.0 * theta[1]}};

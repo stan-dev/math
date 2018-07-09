@@ -4,6 +4,9 @@
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 
+#include <algorithm>
+#include <vector>
+
 namespace stan {
 namespace math {
 
@@ -35,16 +38,17 @@ namespace math {
 
     const int need_sens = 1;
     std::vector<double> theta_d = stan::math::value_of(theta);
-    std::vector<std::vector<double> > raw = pde(theta_d, need_sens, x_r, x_i, msgs);
+    std::vector<std::vector<double> > raw =
+      pde(theta_d, need_sens, x_r, x_i, msgs);
     std::vector<T> res(raw.size());
     std::transform(raw.begin(), raw.end(),
                    res.begin(), [&theta](std::vector<double>& qoi_grad)
                    -> T {
                      double qoi = qoi_grad[0];
-                     std::vector<double> g(qoi_grad.begin() + 1, 
+                     std::vector<double> g(qoi_grad.begin() + 1,
                                            qoi_grad.end());
                      return stan::math::precomputed_gradients(qoi, theta, g);
-                   } );
+                   });
     return res;
   }
 
