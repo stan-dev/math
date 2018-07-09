@@ -2,10 +2,10 @@
 #include <stan/math/prim/arr/functor/forward_pde.hpp>
 #include <stan/math/rev/arr/functor/forward_pde.hpp>
 #include <gtest/gtest.h>
+#include <sys/time.h>
 
 #include <vector>
 #include <iostream>
-#include <sys/time.h>
 #include <iomanip>
 
 
