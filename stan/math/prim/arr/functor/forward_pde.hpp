@@ -7,31 +7,23 @@
 namespace stan {
 namespace math {
 
+#ifdef STAN_EXTERN_PDE
+
 /**
- * Return the solutions for the specified PDE problem at
- * specified location.
+ * Return the solutions for the quantities of interest(QoI)
+ * of the specified PDE problem.
  *
  * This function is templated to allow various PDE library
- * interfaces and corresponding input deck.
+ * interfaces and corresponding input deck. This is
+ * data-only version of the function. Therefore there is no
+ * sensitivity is requested.
  *
- * @tparam F_pde type of PDE system interface.
- * @param[in] f functor for the base ordinary differential equation.
- * @param[in] y0 initial state.
- * @param[in] t0 initial time.
- * @param[in] ts times of the desired solutions, in strictly
- * increasing order, all greater than the initial time.
- * @param[in] theta parameter vector for the ODE.
- * @param[in] x continuous data vector for the ODE.
- * @param[in] x_int integer data vector for the ODE.
+ * @param[in] pde functor for the partial differential equation.
+ * @param[in] theta parameter vector for the PDE.
+ * @param[in] x_r continuous data vector for the PDE.
+ * @param[in] x_i integer data vector for the PDE.
  * @param[out] msgs the print stream for warning messages.
- * @param[in] relative_tolerance relative tolerance parameter
- *   for Boost's ode solver. Defaults to 1e-6.
- * @param[in] absolute_tolerance absolute tolerance parameter
- *   for Boost's ode solver. Defaults to 1e-6.
- * @param[in] max_num_steps maximum number of steps to take within
- *   the Boost ode solver.
- * @return a vector of states, each state being a vector of the
- * same size as the state variable, corresponding to a time in ts.
+ * @return a vector of quantities of interest.
  */
   template<typename F_pde>
   inline std::vector<double> forward_pde(const F_pde& pde,
@@ -49,6 +41,7 @@ namespace math {
     return res;
   }
 
+#endif
 }
 }
 
