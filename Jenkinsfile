@@ -254,10 +254,12 @@ pipeline {
             }
         }
         success {
-            script { utils.updateUpstream(env, 'stan') }
-            utils.mailBuildResults("SUCCESSFUL")
+            script {
+                utils.updateUpstream(env, 'stan')
+                utils.mailBuildResults("SUCCESSFUL")
+            }
         }
-        unstable { utils.mailBuildResults("UNSTABLE", alsoNotify()) }
-        failure { utils.mailBuildResults("FAILURE", alsoNotify()) }
+        unstable { script { utils.mailBuildResults("UNSTABLE", alsoNotify()) } }
+        failure { script { utils.mailBuildResults("FAILURE", alsoNotify()) } }
     }
 }
