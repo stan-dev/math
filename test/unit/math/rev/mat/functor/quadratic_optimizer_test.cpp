@@ -350,9 +350,9 @@ TEST(MathMatrix, quadratic_optimizer_var_s1) {
 
   MatrixXd J(2, 4);
   // Jacobian worked out by Shosh
-//   J << 0.333333, -0.33333,
-//   		240.363, 40.0296,
-// 		5.42407, 17.4241,
+//   J << 0.222222, -0.222222,
+//   		-50.0667, 50.0667,
+// 		12.9333, -12.9333,
 // 	 	 -7.0, 7.0;
 
   // Jacobian worked with finite-diff (which is in agreement with autodiff)
@@ -500,7 +500,161 @@ TEST(MathMatrix, quadratic_optimizer_var_s1) {
 // }
 
 
+// Shosh unit test 2 start here
+struct fh_s2 {
+  template <typename T0>
+  inline Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic>
+    operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
+               const std::vector<double>& delta,
+               const std::vector<int>& delta_int) const {
+      // declare "data"
+      int n = 3;
+      // VectorXd qa(3);
+      // qa << 1.5,2,4;
+      // VectorXd qe(3);
+      // qe << 1,1,0.8;
+      // VectorXd co(3);
+      // co << 5,10,7;
+      // double s = 130;
 
 
+      // theta signiature: (gamma, sigma1sq,sigma2sq,sigma3sq, alpha)
+      // Eigen::Matrix<T0, Eigen::Dynamic, 2> H_mat(n,n) = MatrixXf::Zero();
+      // H_mat = Identity(n, n);
+      Eigen::Matrix<T0, Eigen::Dynamic, 2> H_mat(n,n);
+      H_mat(0,0) = pow(theta(0), 2) * theta(1);
+      H_mat(1,1) = pow(theta(0), 2) * theta(2);
+      H_mat(2,2) = pow(theta(0), 2) * theta(3);
+      H_mat(0,1) = 0;
+      H_mat(1,0) = 0;
+	  H_mat(0,2) = 0;
+	  H_mat(1,2) = 0;
+	  H_mat(2,0) = 0;
+	  H_mat(2,1) = 0;
+      return H_mat;
+    }
+};
 
+struct fv_s2 {
+  template <typename T0>
+  inline Eigen::Matrix<T0, Eigen::Dynamic, 1>
+    operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
+               const std::vector<double>& delta,
+               const std::vector<int>& delta_int) const {
 
+     // declare "data"
+     int n = 3;
+     VectorXd qa(3);
+     qa << 1.5,2,4;
+     // VectorXd qe(3);
+     // qe << 1,1,0.8;
+     VectorXd co(3);
+     co << 5,10,7;
+     // double s = 130;
+
+     // theta signiature: (gamma, sigma1sq,sigma2sq, alpha)
+      Eigen::Matrix<T0, Eigen::Dynamic, 1> linear_term(n);
+      linear_term(0) = -( theta(0)*qa(0) + pow(theta(0),2)*theta(1)*theta(3)*co(0) );
+      linear_term(1) = -( theta(0)*qa(1) + pow(theta(0),2)*theta(2)*theta(3)*co(1) );
+      linear_term(2) = -( theta(0)*qa(2) + pow(theta(0),2)*theta(3)*theta(3)*co(2) );
+	  
+      return linear_term;
+    }
+};
+
+struct fa_s2 {
+  template <typename T0>
+  Eigen::Matrix<T0, Eigen::Dynamic, 1>
+  inline operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
+                    const std::vector<double>& delta,
+                    const std::vector<int>& delta_int) const {
+    // declare "data"
+    int n = 3;
+    // VectorXd qa(3);
+    // qa << 1.5,2,4;
+    VectorXd qe(3);
+    qe << 1,1,0.8;
+    // VectorXd co(3);
+    // co << 5,10,7;
+    // double s = 130;
+
+    // theta signiature: (gamma, sigma1sq,sigma2sq, alpha)
+    Eigen::Matrix<T0, Eigen::Dynamic, 1> linear_constraint(n);
+    linear_constraint(0) = qe(0);
+    linear_constraint(1) = qe(1);
+    linear_constraint(2) = qe(2);
+	
+    return linear_constraint;
+  }
+};
+
+struct fb_s2 {
+  template <typename T0>
+  T0
+  inline operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
+                    const std::vector<double>& delta,
+                    const std::vector<int>& delta_int) const {
+
+    return -130;
+  }
+};
+
+TEST(MathMatrix, quadratic_optimizer_s2) {
+  VectorXd theta(5);
+  theta << 1.5, 0.2, 0.8, 1, 1.3;
+  std::vector<double> delta;
+  std::vector<int> delta_int;
+  double tol = 1e-10;
+  int n = 3;
+
+  VectorXd x = quadratic_optimizer(fh_s2(), fv_s2(), fa_s2(), fb_s2(), theta,
+                                   delta, delta_int, n, 0, tol);
+
+ std::cout << "x opt: " << x;
+ // EXPECT_NEAR(x(0).val(), 80.0196, 0.0001);
+ // EXPECT_NEAR(x(1).val(), 31.7966, 0.0001);
+ // EXPECT_NEAR(x(2).val(), 22.7298, 0.0001);
+
+}
+
+// TEST(MathMatrix, quadratic_optimizer_var_s2) {
+//   std::vector<double> delta;
+//   std::vector<int> delta_int;
+//   int n_x = 3;
+//   int n_theta = 5;
+//   // theta signiature: (gamma, sigma1sq,sigma2sq,sigma3, alpha)
+//
+//   MatrixXd J(3, 5);
+//   // Jacobian worked out by Shosh
+//   J << 0.924045, -100.836, 17.0506, 7.9128, -9.9492,
+//        -0.0467667, 66.6905, -19.2331, 1.9782, 6.2627,
+// 	   -1.0966, 42.6819, 2.72809, -12.3638, 4.60813;
+//
+//   // to get results with finite differentiation
+//   // var diff = 1e-8;
+//
+//   for (int k = 0; k < n_x; k++) {
+//     Matrix<var, Dynamic, 1> theta(n_theta);
+//     theta << 1.5, 0.2, 0.8, 1, 1.3;
+//
+//     Matrix<var, Dynamic, 1> x = quadratic_optimizer(fh_s2(), fv_s2(), fa_s2(), fb_s2(),
+//                                                     theta, delta, delta_int, n_x);
+//
+// 	  EXPECT_NEAR(x(0).val(), 80.0196, 0.0001);
+// 	  EXPECT_NEAR(x(1).val(), 31.7966, 0.0001);
+// 	  EXPECT_NEAR(x(2).val(), 22.7298, 0.0001);
+//
+//     AVEC parameter_vec = createAVEC(theta(0), theta(1), theta(2), theta(3), theta(4));
+//     VEC g;
+//     x(k).grad(parameter_vec, g);
+//
+//     EXPECT_NEAR(J(k, 0), g[0], 0.0001);
+//     EXPECT_NEAR(J(k, 1), g[1], 0.0001);
+//     EXPECT_NEAR(J(k, 2), g[2], 0.0001);
+//     EXPECT_NEAR(J(k, 3), g[3], 0.0001);
+//     EXPECT_NEAR(J(k, 4), g[4], 0.0001);
+//
+//
+// 	}
+// }
+//
