@@ -65,7 +65,7 @@ class SoftmaxOp {
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
-Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
+inline Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
     const Eigen::Matrix<var, Eigen::Dynamic, 1>& alpha) {
   check_nonzero_size("softmax", "alpha", alpha);
 
