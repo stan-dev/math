@@ -192,18 +192,20 @@ TEST(MathPrimMat, vec_eigen_ard_gp_matern52_cov1) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * (1 + std::pow(5.0, 0.5) *
-            stan::math::sqrt(stan::math::squared_distance(x_new[i], x_new[j])) +
-                 (5.0 / 3.0) * stan::math::squared_distance(x_new[i], x_new[j]))
-          * std::exp(-1.0 * pow(5.0, 0.5) *
-                     stan::math::sqrt(stan::math::squared_distance(x_new[i],
-                                                                   x_new[j]))),
+              * (1
+                 + std::pow(5.0, 0.5)
+                       * stan::math::sqrt(
+                             stan::math::squared_distance(x_new[i], x_new[j]))
+                 + (5.0 / 3.0)
+                       * stan::math::squared_distance(x_new[i], x_new[j]))
+              * std::exp(-1.0 * pow(5.0, 0.5)
+                         * stan::math::sqrt(stan::math::squared_distance(
+                               x_new[i], x_new[j]))),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }
   }
 }
-
 
 TEST(MathPrimMat, vec_eigen_eigen_ard_gp_matern52_cov1) {
   double sigma = 0.2;
@@ -243,11 +245,15 @@ TEST(MathPrimMat, vec_eigen_eigen_ard_gp_matern52_cov1) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * (1 + std::pow(5.0, 0.5) *
-         stan::math::sqrt(stan::math::squared_distance(x1_new[i], x2_new[j])) +
-              (5.0 / 3.0) * stan::math::squared_distance(x1_new[i], x2_new[j]))
-          * std::exp(-1.0 * pow(5.0, 0.5) *
-          stan::math::sqrt(stan::math::squared_distance(x1_new[i], x2_new[j]))),
+              * (1
+                 + std::pow(5.0, 0.5)
+                       * stan::math::sqrt(
+                             stan::math::squared_distance(x1_new[i], x2_new[j]))
+                 + (5.0 / 3.0)
+                       * stan::math::squared_distance(x1_new[i], x2_new[j]))
+              * std::exp(-1.0 * pow(5.0, 0.5)
+                         * stan::math::sqrt(stan::math::squared_distance(
+                               x1_new[i], x2_new[j]))),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -312,12 +318,15 @@ TEST(MathPrimMat, rvec_eigen_ard_gp_matern52_cov1) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * (1 + std::pow(5.0, 0.5) *
-            stan::math::sqrt(stan::math::squared_distance(x_new[i], x_new[j])) +
-                 (5.0 / 3.0) * stan::math::squared_distance(x_new[i], x_new[j]))
-          * std::exp(-1.0 * pow(5.0, 0.5) *
-                     stan::math::sqrt(stan::math::squared_distance(x_new[i],
-                                                                   x_new[j]))),
+              * (1
+                 + std::pow(5.0, 0.5)
+                       * stan::math::sqrt(
+                             stan::math::squared_distance(x_new[i], x_new[j]))
+                 + (5.0 / 3.0)
+                       * stan::math::squared_distance(x_new[i], x_new[j]))
+              * std::exp(-1.0 * pow(5.0, 0.5)
+                         * stan::math::sqrt(stan::math::squared_distance(
+                               x_new[i], x_new[j]))),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -401,7 +410,7 @@ TEST(MathPrimMat, vec_eigen_rvec_eigen_ard_gp_matern52_cov1) {
     x2[i] << 2 * i, 3 * i, 4 * i;
   }
 
-    std::vector<Eigen::Matrix<double, -1, 1>> x1_new(3);
+  std::vector<Eigen::Matrix<double, -1, 1>> x1_new(3);
   for (size_t i = 0; i < x1_new.size(); ++i) {
     x1_new[i].resize(3, 1);
     x1_new[i] << 1 * i / l[0], 2 * i / l[1], 3 * i / l[2];
@@ -419,12 +428,15 @@ TEST(MathPrimMat, vec_eigen_rvec_eigen_ard_gp_matern52_cov1) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * (1 + std::pow(5.0, 0.5) *
-          stan::math::sqrt(stan::math::squared_distance(x1_new[i], x2_new[j])) +
-               (5.0 / 3.0) * stan::math::squared_distance(x1_new[i], x2_new[j]))
-          * std::exp(-1.0 * pow(5.0, 0.5) *
-                     stan::math::sqrt(stan::math::squared_distance(x1_new[i],
-                                                                   x2_new[j]))),
+              * (1
+                 + std::pow(5.0, 0.5)
+                       * stan::math::sqrt(
+                             stan::math::squared_distance(x1_new[i], x2_new[j]))
+                 + (5.0 / 3.0)
+                       * stan::math::squared_distance(x1_new[i], x2_new[j]))
+              * std::exp(-1.0 * pow(5.0, 0.5)
+                         * stan::math::sqrt(stan::math::squared_distance(
+                               x1_new[i], x2_new[j]))),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -436,12 +448,15 @@ TEST(MathPrimMat, vec_eigen_rvec_eigen_ard_gp_matern52_cov1) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * (1 + std::pow(5.0, 0.5) *
-          stan::math::sqrt(stan::math::squared_distance(x2_new[i], x1_new[j])) +
-               (5.0 / 3.0) * stan::math::squared_distance(x2_new[i], x1_new[j]))
-          * std::exp(-1.0 * pow(5.0, 0.5) *
-                     stan::math::sqrt(stan::math::squared_distance(x2_new[i],
-                                                                  x1_new[j]))),
+              * (1
+                 + std::pow(5.0, 0.5)
+                       * stan::math::sqrt(
+                             stan::math::squared_distance(x2_new[i], x1_new[j]))
+                 + (5.0 / 3.0)
+                       * stan::math::squared_distance(x2_new[i], x1_new[j]))
+              * std::exp(-1.0 * pow(5.0, 0.5)
+                         * stan::math::sqrt(stan::math::squared_distance(
+                               x2_new[i], x1_new[j]))),
           cov2(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -526,7 +541,7 @@ TEST(MathPrimMat, rvec_eigen_rvec_eigen_ard_gp_matern52_cov1) {
     x2[i] << 2 * i, 3 * i, 4 * i;
   }
 
-    std::vector<Eigen::Matrix<double, -1, 1>> x1_new(3);
+  std::vector<Eigen::Matrix<double, -1, 1>> x1_new(3);
   for (size_t i = 0; i < x1_new.size(); ++i) {
     x1_new[i].resize(3, 1);
     x1_new[i] << 1 * i / l[0], 2 * i / l[1], 3 * i / l[2];
@@ -544,12 +559,15 @@ TEST(MathPrimMat, rvec_eigen_rvec_eigen_ard_gp_matern52_cov1) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * (1 + std::pow(5.0, 0.5) *
-          stan::math::sqrt(stan::math::squared_distance(x1_new[i], x2_new[j])) +
-               (5.0 / 3.0) * stan::math::squared_distance(x1_new[i], x2_new[j]))
-          * std::exp(-1.0 * pow(5.0, 0.5) *
-                     stan::math::sqrt(stan::math::squared_distance(x1_new[i],
-                                                                   x2_new[j]))),
+              * (1
+                 + std::pow(5.0, 0.5)
+                       * stan::math::sqrt(
+                             stan::math::squared_distance(x1_new[i], x2_new[j]))
+                 + (5.0 / 3.0)
+                       * stan::math::squared_distance(x1_new[i], x2_new[j]))
+              * std::exp(-1.0 * pow(5.0, 0.5)
+                         * stan::math::sqrt(stan::math::squared_distance(
+                               x1_new[i], x2_new[j]))),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -561,12 +579,15 @@ TEST(MathPrimMat, rvec_eigen_rvec_eigen_ard_gp_matern52_cov1) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * (1 + std::pow(5.0, 0.5) *
-          stan::math::sqrt(stan::math::squared_distance(x2_new[i], x1_new[j])) +
-               (5.0 / 3.0) * stan::math::squared_distance(x2_new[i], x1_new[j]))
-          * std::exp(-1.0 * pow(5.0, 0.5) *
-                     stan::math::sqrt(stan::math::squared_distance(x2_new[i],
-                                                                   x1_new[j]))),
+              * (1
+                 + std::pow(5.0, 0.5)
+                       * stan::math::sqrt(
+                             stan::math::squared_distance(x2_new[i], x1_new[j]))
+                 + (5.0 / 3.0)
+                       * stan::math::squared_distance(x2_new[i], x1_new[j]))
+              * std::exp(-1.0 * pow(5.0, 0.5)
+                         * stan::math::sqrt(stan::math::squared_distance(
+                               x2_new[i], x1_new[j]))),
           cov2(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -869,14 +890,16 @@ TEST(MathPrimMat, vec_eigen_mixed_ard_gp_matern52_cov2) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * (1 + std::pow(5.0, 0.5) *
-          stan::math::sqrt(stan::math::squared_distance(x1_rvec_new[i],
-                                                        x2_vec_new[j]))
-           + (5.0 / 3.0) * stan::math::squared_distance(x1_rvec_new[i],
-                                                        x2_vec_new[j]))
-      * std::exp(-1.0 * pow(5.0, 0.5) *
-        stan::math::sqrt(stan::math::squared_distance(x1_rvec_new[i],
-                                                      x2_vec_new[j]))),
+              * (1
+                 + std::pow(5.0, 0.5)
+                       * stan::math::sqrt(stan::math::squared_distance(
+                             x1_rvec_new[i], x2_vec_new[j]))
+                 + (5.0 / 3.0)
+                       * stan::math::squared_distance(x1_rvec_new[i],
+                                                      x2_vec_new[j]))
+              * std::exp(-1.0 * pow(5.0, 0.5)
+                         * stan::math::sqrt(stan::math::squared_distance(
+                               x1_rvec_new[i], x2_vec_new[j]))),
           cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -891,14 +914,16 @@ TEST(MathPrimMat, vec_eigen_mixed_ard_gp_matern52_cov2) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * (1 + std::pow(5.0, 0.5) *
-      stan::math::sqrt(stan::math::squared_distance(x2_vec_new[i],
-                                                    x1_rvec_new[j]))
-                 + (5.0 / 3.0) * stan::math::squared_distance(x2_vec_new[i],
-                                                              x1_rvec_new[j]))
-              * std::exp(-1.0 * pow(5.0, 0.5) *
-      stan::math::sqrt(stan::math::squared_distance(x2_vec_new[i],
-                                                    x1_rvec_new[j]))),
+              * (1
+                 + std::pow(5.0, 0.5)
+                       * stan::math::sqrt(stan::math::squared_distance(
+                             x2_vec_new[i], x1_rvec_new[j]))
+                 + (5.0 / 3.0)
+                       * stan::math::squared_distance(x2_vec_new[i],
+                                                      x1_rvec_new[j]))
+              * std::exp(-1.0 * pow(5.0, 0.5)
+                         * stan::math::sqrt(stan::math::squared_distance(
+                               x2_vec_new[i], x1_rvec_new[j]))),
           cov7(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -913,13 +938,16 @@ TEST(MathPrimMat, vec_eigen_mixed_ard_gp_matern52_cov2) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * (1 + std::pow(5.0, 0.5) *
-  stan::math::sqrt(stan::math::squared_distance(x1_vec_new[i], x2_rvec_new[j]))
-                 + (5.0 / 3.0) * stan::math::squared_distance(x1_vec_new[i],
-                                                              x2_rvec_new[j]))
-              * std::exp(-1.0 * pow(5.0, 0.5) *
-     stan::math::sqrt(stan::math::squared_distance(x1_vec_new[i],
-                                                   x2_rvec_new[j]))),
+              * (1
+                 + std::pow(5.0, 0.5)
+                       * stan::math::sqrt(stan::math::squared_distance(
+                             x1_vec_new[i], x2_rvec_new[j]))
+                 + (5.0 / 3.0)
+                       * stan::math::squared_distance(x1_vec_new[i],
+                                                      x2_rvec_new[j]))
+              * std::exp(-1.0 * pow(5.0, 0.5)
+                         * stan::math::sqrt(stan::math::squared_distance(
+                               x1_vec_new[i], x2_rvec_new[j]))),
           cov2(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -934,12 +962,16 @@ TEST(MathPrimMat, vec_eigen_mixed_ard_gp_matern52_cov2) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * (1 + std::pow(5.0, 0.5) *
-stan::math::sqrt(stan::math::squared_distance(x2_rvec_new[i], x1_vec_new[j]))
-                 + (5.0 / 3.0) *
-                 stan::math::squared_distance(x2_rvec_new[i], x1_vec_new[j]))
-              * std::exp(-1.0 * pow(5.0, 0.5) *
-stan::math::sqrt(stan::math::squared_distance(x2_rvec_new[i], x1_vec_new[j]))),
+              * (1
+                 + std::pow(5.0, 0.5)
+                       * stan::math::sqrt(stan::math::squared_distance(
+                             x2_rvec_new[i], x1_vec_new[j]))
+                 + (5.0 / 3.0)
+                       * stan::math::squared_distance(x2_rvec_new[i],
+                                                      x1_vec_new[j]))
+              * std::exp(-1.0 * pow(5.0, 0.5)
+                         * stan::math::sqrt(stan::math::squared_distance(
+                               x2_rvec_new[i], x1_vec_new[j]))),
           cov8(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -954,14 +986,16 @@ stan::math::sqrt(stan::math::squared_distance(x2_rvec_new[i], x1_vec_new[j]))),
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * (1 + std::pow(5.0, 0.5) *
-      stan::math::sqrt(stan::math::squared_distance(x2_vec_new[i],
-                                                    x2_rvec_new[j]))
-                 + (5.0 / 3.0) * stan::math::squared_distance(x2_vec_new[i],
-                                                              x2_rvec_new[j]))
-          * std::exp(-1.0 * pow(5.0, 0.5) *
-     stan::math::sqrt(stan::math::squared_distance(x2_vec_new[i],
-                                                   x2_rvec_new[j]))),
+              * (1
+                 + std::pow(5.0, 0.5)
+                       * stan::math::sqrt(stan::math::squared_distance(
+                             x2_vec_new[i], x2_rvec_new[j]))
+                 + (5.0 / 3.0)
+                       * stan::math::squared_distance(x2_vec_new[i],
+                                                      x2_rvec_new[j]))
+              * std::exp(-1.0 * pow(5.0, 0.5)
+                         * stan::math::sqrt(stan::math::squared_distance(
+                               x2_vec_new[i], x2_rvec_new[j]))),
           cov3(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -976,14 +1010,16 @@ stan::math::sqrt(stan::math::squared_distance(x2_rvec_new[i], x1_vec_new[j]))),
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * (1 + std::pow(5.0, 0.5) *
-    stan::math::sqrt(stan::math::squared_distance(x2_rvec_new[i],
-                                                  x2_vec_new[j]))
-                 + (5.0 / 3.0) *
-     stan::math::squared_distance(x2_rvec_new[i], x2_vec_new[j]))
-              * std::exp(-1.0 * pow(5.0, 0.5) *
-    stan::math::sqrt(stan::math::squared_distance(x2_rvec_new[i],
-                                                  x2_vec_new[j]))),
+              * (1
+                 + std::pow(5.0, 0.5)
+                       * stan::math::sqrt(stan::math::squared_distance(
+                             x2_rvec_new[i], x2_vec_new[j]))
+                 + (5.0 / 3.0)
+                       * stan::math::squared_distance(x2_rvec_new[i],
+                                                      x2_vec_new[j]))
+              * std::exp(-1.0 * pow(5.0, 0.5)
+                         * stan::math::sqrt(stan::math::squared_distance(
+                               x2_rvec_new[i], x2_vec_new[j]))),
           cov4(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -998,14 +1034,16 @@ stan::math::sqrt(stan::math::squared_distance(x2_rvec_new[i], x1_vec_new[j]))),
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * (1 + std::pow(5.0, 0.5) *
-      stan::math::sqrt(stan::math::squared_distance(x1_rvec_new[i],
-                                                    x1_vec_new[j]))
-                 + (5.0 / 3.0) *
-      stan::math::squared_distance(x1_rvec_new[i], x1_vec_new[j]))
-              * std::exp(-1.0 * pow(5.0, 0.5) *
-      stan::math::sqrt(stan::math::squared_distance(x1_rvec_new[i],
-                                                    x1_vec_new[j]))),
+              * (1
+                 + std::pow(5.0, 0.5)
+                       * stan::math::sqrt(stan::math::squared_distance(
+                             x1_rvec_new[i], x1_vec_new[j]))
+                 + (5.0 / 3.0)
+                       * stan::math::squared_distance(x1_rvec_new[i],
+                                                      x1_vec_new[j]))
+              * std::exp(-1.0 * pow(5.0, 0.5)
+                         * stan::math::sqrt(stan::math::squared_distance(
+                               x1_rvec_new[i], x1_vec_new[j]))),
           cov5(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -1020,12 +1058,16 @@ stan::math::sqrt(stan::math::squared_distance(x2_rvec_new[i], x1_vec_new[j]))),
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(
           sigma * sigma
-              * (1 + std::pow(5.0, 0.5) *
-   stan::math::sqrt(stan::math::squared_distance(x1_vec_new[i], x1_rvec_new[j]))
-                 + (5.0 / 3.0) *
-    stan::math::squared_distance(x1_vec_new[i], x1_rvec_new[j]))
-              * std::exp(-1.0 * pow(5.0, 0.5) *
- stan::math::sqrt(stan::math::squared_distance(x1_vec_new[i], x1_rvec_new[j]))),
+              * (1
+                 + std::pow(5.0, 0.5)
+                       * stan::math::sqrt(stan::math::squared_distance(
+                             x1_vec_new[i], x1_rvec_new[j]))
+                 + (5.0 / 3.0)
+                       * stan::math::squared_distance(x1_vec_new[i],
+                                                      x1_rvec_new[j]))
+              * std::exp(-1.0 * pow(5.0, 0.5)
+                         * stan::math::sqrt(stan::math::squared_distance(
+                               x1_vec_new[i], x1_rvec_new[j]))),
           cov6(i, j))
           << "index: (" << i << ", " << j << ")";
     }
@@ -1335,7 +1377,6 @@ TEST(MathPrimMat, ard_size_err_gp_matern52_cov) {
                std::invalid_argument);
 }
 
-
 TEST(MathPrimMat, blahblah) {
   std::vector<Eigen::Matrix<double, -1, 1>> x_vec_1(3);
   for (size_t i = 0; i < x_vec_1.size(); ++i) {
@@ -1348,7 +1389,7 @@ TEST(MathPrimMat, blahblah) {
     x_vec_1[i].resize(3, 1);
     x_vec_1[i] << 1, 2, 3;
   }
-  
+
   std::vector<double> x(4);
   for (int i = 0; i < 4; ++i)
     x[i] = i;

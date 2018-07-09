@@ -148,10 +148,10 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
     for (size_t j = i + 1; j < x_size; ++j) {
       sq_distance = squared_distance(x_new[i], x_new[j]);
       root_sq_distance = sqrt(sq_distance);
-      cov(i, j) = sigma_sq
-                  * (1.0 + root_5 * root_sq_distance
-                     + five_thirds * sq_distance)
-                  * exp(neg_root_5 * root_sq_distance);
+      cov(i, j)
+          = sigma_sq
+            * (1.0 + root_5 * root_sq_distance + five_thirds * sq_distance)
+            * exp(neg_root_5 * root_sq_distance);
       cov(j, i) = cov(i, j);
     }
   }
@@ -275,7 +275,6 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   check_size_match("gp_matern52_cov", "x dimension", x2[0].size(),
                    "number of length scales", l_size);
 
-
   Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x1_size, x2_size);
@@ -311,10 +310,10 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     for (size_t j = 0; j < x2_size; ++j) {
       sq_distance = squared_distance(x1_new[i], x2_new[j]);
       root_sq_distance = sqrt(sq_distance);
-      cov(i, j) = sigma_sq
-                  * (1.0 + root_5 * root_sq_distance
-                     + five_thirds * sq_distance)
-                  * exp(neg_root_5 * root_sq_distance);
+      cov(i, j)
+          = sigma_sq
+            * (1.0 + root_5 * root_sq_distance + five_thirds * sq_distance)
+            * exp(neg_root_5 * root_sq_distance);
     }
   }
   return cov;
