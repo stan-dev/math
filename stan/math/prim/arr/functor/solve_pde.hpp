@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_ARR_FUNCTOR_FORWARD_PDE_HPP
-#define STAN_MATH_PRIM_ARR_FUNCTOR_FORWARD_PDE_HPP
+#ifndef STAN_MATH_PRIM_ARR_FUNCTOR_SOLVE_PDE_HPP
+#define STAN_MATH_PRIM_ARR_FUNCTOR_SOLVE_PDE_HPP
 
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
@@ -29,12 +29,12 @@ namespace math {
  * @return a vector of quantities of interest.
  */
 template <typename F_pde>
-inline std::vector<double> forward_pde(const F_pde& pde,
+inline std::vector<double> solve_pde(const F_pde& pde,
                                        const std::vector<double>& theta,
                                        const std::vector<double>& x_r,
                                        const std::vector<int>& x_i,
                                        std::ostream* msgs = nullptr) {
-  stan::math::check_not_nan("forward_pde", "theta", theta);
+  stan::math::check_not_nan("solve_pde", "theta", theta);
   const int need_sens = 0;
   std::vector<std::vector<double> > raw = pde(theta, need_sens, x_r, x_i, msgs);
   std::vector<double> res(raw.size());
