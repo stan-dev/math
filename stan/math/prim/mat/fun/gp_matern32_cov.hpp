@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_GP_MATERN32_COV_HPP
 #define STAN_MATH_PRIM_MAT_FUN_GP_MATERN32_COV_HPP
 
-
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
