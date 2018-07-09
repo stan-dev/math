@@ -1,3 +1,5 @@
+#ifdef STAN_OPENSEES
+
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 
@@ -146,3 +148,5 @@ TEST(pde_solvers, opensees_sensitivity) {
   // const double sens_exact = 2.1105776;
   // ASSERT_FLOAT_EQ(g[0], sens_exact);
 }
+
+#endif
