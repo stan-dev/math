@@ -40,7 +40,7 @@ inline var abs(const var& a) { return fabs(a); }
 
 namespace std {
 // constrained complex overload to forward zeroing var to std::abs
-inline std::complex<stan::math::var> abs(
+inline stan::math::var abs(
     std::complex<stan::math::var> const& t) {
   return abs(std::complex<stan::math::zeroing<stan::math::var>>(t));
 }
