@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MULTIPY_GPU_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MULTIPY_GPU_HPP
 #ifdef STAN_OPENCL
-#include <stan/math/gpu/basic_matrix_gpu.hpp>
+#include <stan/math/gpu/transpose.hpp>
 #include <Eigen/Dense>
 
 /** @file stan/math/prim/mat/fun/multiply_gpu.hpp
