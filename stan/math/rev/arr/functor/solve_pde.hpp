@@ -1,6 +1,9 @@
 #ifndef STAN_MATH_REV_ARR_FUNCTOR_SOLVE_PDE_HPP
 #define STAN_MATH_REV_ARR_FUNCTOR_SOLVE_PDE_HPP
 
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/arr/fun/value_of.hpp>
+#include <stan/math/rev/core/precomputed_gradients.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 
