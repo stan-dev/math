@@ -4,7 +4,6 @@
 #include <boost/math/tools/promotion.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/utility/enable_if.hpp>
-#include <cmath>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
@@ -14,6 +13,7 @@
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
+#include <cmath>
 #include <vector>
 
 namespace stan {
