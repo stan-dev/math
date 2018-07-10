@@ -1,20 +1,20 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_GP_PERIODIC_COV_HPP
 #define STAN_MATH_PRIM_MAT_FUN_GP_PERIODIC_COV_HPP
 
-#include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <cmath>
+#include <math.h>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/distance.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/distance.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/fun/inv_square.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/distance.hpp>
 #include <stan/math/prim/scal/fun/inv.hpp>
-#include <math.h>
+#include <stan/math/prim/scal/fun/inv_square.hpp>
+#include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <vector>
-#include <cmath>
 
 namespace stan {
 namespace math {
@@ -48,16 +48,16 @@ template <typename T_x, typename T_sigma, typename T_l, typename T_p>
 inline typename Eigen::Matrix<
     typename stan::return_type<T_x, T_sigma, T_l, T_p>::type, Eigen::Dynamic,
     Eigen::Dynamic>
-gp_periodic_cov(const std::vector<T_x>& x, const T_sigma& sigma, const T_l& l,
-                const T_p& p) {
+gp_periodic_cov(const std::vector<T_x> &x, const T_sigma &sigma, const T_l &l,
+                const T_p &p) {
   using std::exp;
-  const char* fun = "gp_periodic_cov";
+  const char *fun = "gp_periodic_cov";
   check_positive(fun, "signal standard deviation", sigma);
   check_positive(fun, "length-scale", l);
   check_positive(fun, "period", p);
   for (size_t n = 0; n < x.size(); ++n)
     check_not_nan(fun, "element of x", x[n]);
-  
+
   Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l, T_p>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x.size(), x.size());
@@ -69,13 +69,12 @@ gp_periodic_cov(const std::vector<T_x>& x, const T_sigma& sigma, const T_l& l,
   T_sigma sigma_sq = square(sigma);
   T_l neg_two_inv_l_sq = -2.0 * inv_square(l);
   T_p pi_div_p = pi() / p;
-  
+
   for (size_t j = 0; j < x_size; ++j) {
     cov(j, j) = sigma_sq;
     for (size_t i = j + 1; i < x_size; ++i) {
-      cov(i, j) = sigma_sq
-                  * exp(square(sin(pi_div_p * distance(x[i], x[j])))
-                        * neg_two_inv_l_sq);
+      cov(i, j) = sigma_sq * exp(square(sin(pi_div_p * distance(x[i], x[j]))) *
+                                 neg_two_inv_l_sq);
       cov(j, i) = cov(i, j);
     }
   }
@@ -118,10 +117,10 @@ template <typename T_x1, typename T_x2, typename T_sigma, typename T_l,
 inline typename Eigen::Matrix<
     typename stan::return_type<T_x1, T_x2, T_sigma, T_l, T_p>::type,
     Eigen::Dynamic, Eigen::Dynamic>
-gp_periodic_cov(const std::vector<T_x1>& x1, const std::vector<T_x2>& x2,
-                const T_sigma& sigma, const T_l& l, const T_p& p) {
+gp_periodic_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
+                const T_sigma &sigma, const T_l &l, const T_p &p) {
   using std::exp;
-  const char* fun = "gp_periodic_cov";
+  const char *fun = "gp_periodic_cov";
   check_positive(fun, "signal standard deviation", sigma);
   check_positive(fun, "length-scale", l);
   check_positive(fun, "period", p);
@@ -142,14 +141,14 @@ gp_periodic_cov(const std::vector<T_x1>& x1, const std::vector<T_x2>& x2,
 
   for (size_t i = 0; i < x1.size(); ++i) {
     for (size_t j = 0; j < x2.size(); ++j) {
-      cov(i, j) = sigma_sq
-                  * exp(square(sin(pi_div_p * distance(x1[i], x2[j])))
-                        * neg_two_inv_l_sq);
+      cov(i, j) =
+          sigma_sq * exp(square(sin(pi_div_p * distance(x1[i], x2[j]))) *
+                         neg_two_inv_l_sq);
     }
   }
   return cov;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif
