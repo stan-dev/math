@@ -25,10 +25,12 @@ enum triangularity { LOWER = 0, UPPER = 1, NONE = 2 };
  */
 inline matrix_gpu copy_triangular(matrix_gpu& src, triangularity lower_upper) {
   if (src.size() == 0) {
-    return src;
+    matrix_gpu dst(src);
+    return dst;
   }
   if (src.size() == 1) {
-    return src;
+    matrix_gpu dst(src);
+    return dst;
   }
   matrix_gpu dst(src.rows(), src.cols());
   cl::Kernel kernel = opencl_context.get_kernel("copy_triangular");
