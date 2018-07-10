@@ -5,6 +5,7 @@
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/distance.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/distance.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
@@ -67,7 +68,7 @@ gp_periodic_cov(const std::vector<T_x>& x, const T_sigma& sigma, const T_l& l,
 
   T_sigma sigma_sq = square(sigma);
   T_l neg_two_inv_l_sq = -2.0 * inv_square(l);
-  T_p pi_div_p = 3.14159265358979323846 / p;
+  T_p pi_div_p = pi() / p;
   
   for (size_t j = 0; j < x_size; ++j) {
     cov(j, j) = sigma_sq;
@@ -137,7 +138,7 @@ gp_periodic_cov(const std::vector<T_x1>& x1, const std::vector<T_x2>& x2,
 
   T_sigma sigma_sq = square(sigma);
   T_l neg_two_inv_l_sq = -2.0 * inv_square(l);
-  T_p pi_div_p = 3.14159265358979323846 / p;
+  T_p pi_div_p = pi() / p;
 
   for (size_t i = 0; i < x1.size(); ++i) {
     for (size_t j = 0; j < x2.size(); ++j) {
