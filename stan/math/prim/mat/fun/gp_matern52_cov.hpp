@@ -10,6 +10,7 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <stan/math/prim/scal/fun/divide.hpp>
 #include <cmath>
 #include <vector>
@@ -28,7 +29,7 @@ namespace math {
  * where \f$ d(x, x') \f$ is the Euclidean distance.
  *
  * @tparam T_x type of elements contained in vector x
- * @tparam type of element of sigma, marginal standard deviation
+ * @tparam T_s type of element of sigma, marginal standard deviation
  * @tparam T_l type of elements of length scale
  *
  * @param x std::vector of elements that can be used in stan::math::distance
@@ -43,7 +44,6 @@ inline typename Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type,
 gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
                 const T_l &length_scale) {
   using std::exp;
-  using std::pow;
 
   size_t x_size = x.size();
   for (size_t n = 0; n < x_size; ++n)
@@ -60,20 +60,21 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
     return cov;
 
   T_s sigma_sq = square(sigma);
-  T_l root_5_inv_l = pow(5.0, 0.5) / length_scale;
+  T_l root_5_inv_l = sqrt(5.0) / length_scale;
   T_l inv_l_sq_5_3 = 5.0 / (3.0 * square(length_scale));
-  T_l neg_root_5_inv_l = -1.0 * pow(5.0, 0.5) / length_scale;
-  typename return_type<T_x>::type sq_distance;
-  typename return_type<T_x>::type distance;
+  T_l neg_root_5_inv_l = -sqrt(5.0) / length_scale;
 
   for (size_t i = 0; i < x_size; ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
-      sq_distance = squared_distance(x[i], x[j]);
-      distance = sqrt(sq_distance);
+      typename return_type<T_x>::type sq_distance =
+        squared_distance(x[i], x[j]);
+      typename return_type<T_x>::type root_sq_distance =
+        sqrt(sq_distance);
       cov(i, j) = sigma_sq
-                  * (1.0 + root_5_inv_l * distance + inv_l_sq_5_3 * sq_distance)
-                  * exp(neg_root_5_inv_l * distance);
+                  * (1.0 + root_5_inv_l * root_sq_distance +
+                     inv_l_sq_5_3 * sq_distance)
+                  * exp(neg_root_5_inv_l * root_sq_distance);
       cov(j, i) = cov(i, j);
     }
   }
@@ -94,7 +95,7 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
  * where \f$ d(x, x') \f$ is the Euclidean distance.
  *
  * @tparam T_x type of elements contained in vector x
- * @tparam type of element of sigma, marginal standard deviation
+ * @tparam T_s type of element of sigma, marginal standard deviation
  * @tparam T_l type of elements in vector of length scale
  *
  * @param x std::vector of elements that can be used in stan::math::distance
@@ -109,7 +110,6 @@ inline typename Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type,
 gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
                 const std::vector<T_l> &length_scale) {
   using std::exp;
-  using std::pow;
 
   size_t x_size = x.size();
   size_t l_size = length_scale.size();
@@ -129,11 +129,9 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
     return cov;
 
   T_s sigma_sq = square(sigma);
-  T_l root_5 = pow(5.0, 0.5);
+  T_l root_5 = sqrt(5.0);
   T_l five_thirds = 5.0 / 3.0;
-  T_l neg_root_5 = -1.0 * pow(5.0, 0.5);
-  typename return_type<T_x>::type sq_distance;
-  typename return_type<T_x>::type root_sq_distance;
+  T_l neg_root_5 = -sqrt(5.0);
 
   std::vector<Eigen::Matrix<T_l, -1, 1>> x_new(x_size);
   for (size_t n = 0; n < x_size; ++n) {
@@ -146,8 +144,9 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
   for (size_t i = 0; i < x_size; ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
-      sq_distance = squared_distance(x_new[i], x_new[j]);
-      root_sq_distance = sqrt(sq_distance);
+      typename scalar_type<T_x>::type sq_distance =
+        squared_distance(x_new[i], x_new[j]);
+      typename scalar_type<T_x>::type root_sq_distance = sqrt(sq_distance);
       cov(i, j)
           = sigma_sq
             * (1.0 + root_5 * root_sq_distance + five_thirds * sq_distance)
@@ -170,7 +169,7 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
  *
  * @tparam T_x1 type of elements contained in vector x1
  * @tparam T_x2 type of elements contained in vector x2
- * @tparam type of element of sigma, marginal standard deviation
+ * @tparam T_s type of element of sigma, marginal standard deviation
  * @tparam T_l type of elements of length scale
  *
  * @param x1 std::vector of elements that can be used in stan::math::distance
@@ -186,7 +185,6 @@ inline typename Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
 gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 const T_s &sigma, const T_l &length_scale) {
   using std::exp;
-  using std::pow;
 
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
@@ -207,19 +205,20 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     return cov;
 
   T_s sigma_sq = square(sigma);
-  T_l root_5_inv_l = pow(5.0, 0.5) / length_scale;
+  T_l root_5_inv_l = sqrt(5.0) / length_scale;
   T_l inv_l_sq_5_3 = 5.0 / (3.0 * square(length_scale));
-  T_l neg_root_5_inv_l = -1.0 * pow(5.0, 0.5) / length_scale;
-  typename return_type<T_x1, T_x2>::type sq_distance;
-  typename return_type<T_x1, T_x2>::type distance;
+  T_l neg_root_5_inv_l = -sqrt(5.0) / length_scale;
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      sq_distance = squared_distance(x1[i], x2[j]);
-      distance = sqrt(sq_distance);
+      typename return_type<T_x1, T_x2>::type sq_distance =
+        squared_distance(x1[i], x2[j]);;
+      typename return_type<T_x1, T_x2>::type root_sq_distance =
+        sqrt(sq_distance);
       cov(i, j) = sigma_sq
-                  * (1.0 + root_5_inv_l * distance + inv_l_sq_5_3 * sq_distance)
-                  * exp(neg_root_5_inv_l * distance);
+                  * (1.0 + root_5_inv_l * root_sq_distance +
+                     inv_l_sq_5_3 * sq_distance)
+                  * exp(neg_root_5_inv_l * root_sq_distance);
     }
   }
   return cov;
@@ -240,7 +239,7 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  *
  * @tparam T_x1 type of elements contained in vector x1
  * @tparam T_x2 type of elements contained in vector x2
- * @tparam type of element of sigma, marginal standard deviation
+ * @tparam T_s type of element of sigma, marginal standard deviation
  * @tparam T_l type of elements in vector of length scale
  *
  * @param x1 std::vector of elements that can be used in stan::math::distance
@@ -257,7 +256,6 @@ inline typename Eigen::Matrix<
 gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 const T_s &sigma, const std::vector<T_l> &length_scale) {
   using std::exp;
-  using std::pow;
 
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
@@ -283,22 +281,18 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     return cov;
 
   T_s sigma_sq = square(sigma);
-  T_l root_5 = pow(5.0, 0.5);
+  T_l root_5 = sqrt(5.0);
   T_l five_thirds = 5.0 / 3.0;
-  T_l neg_root_5 = -1.0 * pow(5.0, 0.5);
-  typename return_type<T_x1, T_x2>::type sq_distance;
-  typename return_type<T_x1, T_x2>::type root_sq_distance;
+  T_l neg_root_5 = -sqrt(5.0);
 
   std::vector<Eigen::Matrix<T_l, -1, 1>> x1_new(x1_size);
-  std::vector<Eigen::Matrix<T_l, -1, 1>> x2_new(x2_size);
-
   for (size_t n = 0; n < x1_size; ++n) {
     for (size_t d = 0; d < l_size; ++d) {
       x1_new[n].resize(l_size, 1);
       x1_new[n][d] = divide(x1[n][d], length_scale[d]);
     }
   }
-
+  std::vector<Eigen::Matrix<T_l, -1, 1>> x2_new(x2_size);
   for (size_t n = 0; n < x2_size; ++n) {
     for (size_t d = 0; d < l_size; ++d) {
       x2_new[n].resize(l_size, 1);
@@ -308,8 +302,10 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      sq_distance = squared_distance(x1_new[i], x2_new[j]);
-      root_sq_distance = sqrt(sq_distance);
+      typename return_type<T_x1, T_x2>::type sq_distance =
+        squared_distance(x1_new[i], x2_new[j]);
+      typename return_type<T_x1, T_x2>::type root_sq_distance =
+        sqrt(sq_distance);
       cov(i, j)
           = sigma_sq
             * (1.0 + root_5 * root_sq_distance + five_thirds * sq_distance)
