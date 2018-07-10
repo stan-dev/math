@@ -5,10 +5,10 @@ R"(
 /**
  * Check if the <code>matrix_gpu</code> has zeros on the diagonal
  *
- * @param A Matrix to check.
+ * @param[in] A Matrix to check.
  * @param rows The number of rows for A.
  * @param cols The number of cols of A.
- * @param flag (write) the flag to be written to if any diagonal is zero.
+ * @param[out] flag the flag to be written to if any diagonal is zero.
  *
  * @note Kernel for stan/math/gpu/err/check_diagonal_zeros.hpp
  */

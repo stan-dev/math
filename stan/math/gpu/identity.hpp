@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_GPU_IDENTITY_OPENCL_HPP
-#define STAN_MATH_GPU_IDENTITY_OPENCL_HPP
+#ifndef STAN_MATH_GPU_IDENTITY_HPP
+#define STAN_MATH_GPU_IDENTITY_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/matrix_gpu.hpp>
 #include <CL/cl.hpp>

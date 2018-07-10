@@ -8,8 +8,8 @@ R"(
 #endif
 /**
  * Copy one matrix to another
- * @param A (read) The matrix to copy.
- * @param B (write) The matrix to copy A to.
+ * @param[in] A The matrix to copy.
+ * @param[out] B The matrix to copy A to.
  * @param rows The number of rows in A.
  * @param cols The number of cols in A.
  *

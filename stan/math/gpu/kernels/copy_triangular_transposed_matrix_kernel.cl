@@ -18,7 +18,7 @@ R"(
 /**
  * Copies a lower/upper triangular of a matrix to it's upper/lower.
  *
- * @param A (read/write) The matrix.
+ * @param[in,out] A The matrix.
  * @param rows The number of rows in A.
  * @param cols The number of cols in A.
  * @param copy_direction A value of zero or one specifying

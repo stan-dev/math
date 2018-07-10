@@ -14,8 +14,8 @@ R"(
  * destination matrix starting at
  * (dst_offset_rows, dst_offset_cols)
  *
- * @param src (read) The source matrix.
- * @param dst (write) The destination submatrix.
+ * @param[in] src The source matrix.
+ * @param[out] dst The destination submatrix.
  * @param src_offset_i The offset row in src.
  * @param src_offset_j The offset column in src.
  * @param dst_offset_i The offset row in dst.
