@@ -107,7 +107,7 @@ public:
         cov_diag_(
             ChainableStack::instance().memalloc_.alloc_array<vari *>(size_)) {
     double neg_two_inv_l_sq = -2.0 / (l_d_ * l_d_);
-    double pi_div_p = 3.14159265358979323846 / p_d_;
+    double pi_div_p = pi() / p_d_;
 
     size_t pos = 0;
     for (size_t j = 0; j < size_; ++j) {

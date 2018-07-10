@@ -41,21 +41,23 @@ def utils = new org.stan.Utils()
 
 def isBranch(String b) { env.BRANCH_NAME == b }
 
-def alsoNotify() {
+String alsoNotify() {
     if (isBranch('master') || isBranch('develop')) {
         "stan-buildbot@googlegroups.com"
     } else ""
 }
-def isPR() { env.CHANGE_URL != null }
-def fork() { env.CHANGE_FORK ?: "stan-dev" }
-def branchName() { isPR() ? env.CHANGE_BRANCH :env.BRANCH_NAME }
+Boolean isPR() { env.CHANGE_URL != null }
+String fork() { env.CHANGE_FORK ?: "stan-dev" }
+String branchName() { isPR() ? env.CHANGE_BRANCH :env.BRANCH_NAME }
+String cmdstan_pr() { params.cmdstan_pr ?: "downstream_tests" }
+String stan_pr() { params.stan_pr ?: "downstream_tests" }
 
 pipeline {
     agent none
     parameters {
-        string(defaultValue: 'downstream tests', name: 'cmdstan_pr',
+        string(defaultValue: 'downstream_tests', name: 'cmdstan_pr',
           description: 'PR to test CmdStan upstream against e.g. PR-630')
-        string(defaultValue: 'downstream tests', name: 'stan_pr',
+        string(defaultValue: 'downstream_tests', name: 'stan_pr',
           description: 'PR to test Stan upstream against e.g. PR-630')
         booleanParam(defaultValue: false, description:
         'Run additional distribution tests on RowVectors (takes 5x as long)',
@@ -78,6 +80,7 @@ pipeline {
             agent any
             steps {
                 sh "printenv"
+                deleteDir()
                 retry(3) { checkout scm }
                 withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
                     usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
@@ -124,6 +127,7 @@ pipeline {
             agent any
             steps {
                 script {
+                    deleteDir()
                     retry(3) { checkout scm }
                     setup(false)
                     stash 'MathSetup'
@@ -149,6 +153,7 @@ pipeline {
                 stage('Unit') {
                     agent any
                     steps {
+                        deleteDir()
                         unstash 'MathSetup'
                         sh setupCC()
                         runTests("test/unit")
@@ -158,6 +163,7 @@ pipeline {
                 stage('Unit with GPU') {
                     agent { label "gelman-group-mac" }
                     steps {
+                        deleteDir()
                         unstash 'MathSetup'
                         sh setupCC()
                         sh "echo STAN_OPENCL=true>> make/local"
@@ -170,8 +176,9 @@ pipeline {
                 stage('Unit with MPI') {
                     agent any
                     steps {
+                        deleteDir()
                         unstash 'MathSetup'
-                        sh "echo CC=${MPICXX} -cxx=${CXX} >> make/local"
+                        sh "echo CC=${MPICXX} >> make/local"
                         sh "echo STAN_MPI=true >> make/local"
                         runTests("test/unit")
                     }
@@ -180,6 +187,7 @@ pipeline {
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
                     steps {
+                        deleteDir()
                         unstash 'MathSetup'
                         sh """
                             ${setupCC(false)}
@@ -210,9 +218,9 @@ pipeline {
                 stage('Stan Upstream Tests') {
                     when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
                     steps {
-                        build(job: "Stan/${params.stan_pr}",
+                        build(job: "Stan/${stan_pr()}",
                               parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
-                                           string(name: 'cmdstan_pr', value: params.cmdstan_pr)])
+                                           string(name: 'cmdstan_pr', value: cmdstan_pr())])
                     }
                 }
             }
@@ -221,6 +229,7 @@ pipeline {
             agent any
             when { branch 'master'}
             steps {
+                deleteDir()
                 retry(3) { checkout scm }
                 withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
                                                   usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
