@@ -191,14 +191,23 @@ class opencl_context_base {
     kernel_info["is_zero_on_diagonal"]
         = {false, "check", check_diagonal_zeros_kernel};
     kernel_info["is_symmetric"] = {false, "check", check_symmetric_kernel};
-    kernel_info["scalar_mul_diagonal"] = {false, "multiply", scalar_mul_diagonal_kernel};
-    kernel_info["scalar_mul"] = {false, "multiply", scalar_mul_kernel};
-    kernel_info["multiply_self_transposed"] = {false, "multiply", multiply_self_transposed_kernel};
-    kernel_info["matrix_multiply"] = {false, "multiply", matrix_multiply_kernel};
-    kernel_info["multiply_lower_triangular"] = {false, "multiply", multiply_lower_triangular_kernel};
-    kernel_info["lower_tri_inverse_step1"] = {false, "inverse", lower_tri_inverse_step1_kernel};
-    kernel_info["lower_tri_inverse_step2"] = {false, "inverse", lower_tri_inverse_step2_kernel};
-    kernel_info["lower_tri_inverse_step3"] = {false, "inverse", lower_tri_inverse_step3_kernel};
+    kernel_info["scalar_mul_diagonal"]
+        = {false, "multiply", scalar_mul_diagonal_kernel};
+    kernel_info["scalar_mul"]
+        = {false, "multiply", scalar_mul_kernel};
+    kernel_info["multiply_self_transposed"]
+        = {false, "multiply", multiply_self_transposed_kernel};
+    kernel_info["matrix_multiply"]
+        = {false, "multiply", matrix_multiply_kernel};
+    kernel_info["multiply_lower_triangular"]
+        = {false, "multiply", multiply_lower_triangular_kernel};
+    kernel_info["lower_tri_inverse_step1"]
+        = {false, "inverse", lower_tri_inverse_step1_kernel};
+    kernel_info["lower_tri_inverse_step2"]
+        = {false, "inverse", lower_tri_inverse_step2_kernel};
+    kernel_info["lower_tri_inverse_step3"]
+        = {false, "inverse", lower_tri_inverse_step3_kernel};
+
   }
 
  protected:

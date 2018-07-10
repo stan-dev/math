@@ -391,7 +391,6 @@ TEST(AgradRevMatrix, lower_triangular_multiply_small) {
   for (int i = 0; i < 3; i++)
   for (int j = 0; j <= i; j++)
     EXPECT_NEAR(m3(i, j), m3_gpu(i, j), 1e-10);
-  
 }
 
 TEST(AgradRevMatrix, lower_triangular_multiply_big) {
@@ -411,7 +410,6 @@ TEST(AgradRevMatrix, lower_triangular_multiply_big) {
       m1(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
     else
       m1(i, j) = 0.0;
-      
     if (i <= j) {
       m2(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
       m2(j, i) = m2(i, j);
