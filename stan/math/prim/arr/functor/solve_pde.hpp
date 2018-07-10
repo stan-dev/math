@@ -21,6 +21,20 @@ namespace math {
  * data-only version of the function. Therefore there is no
  * sensitivity is requested.
  *
+ * @tparam F_pde type of PDE system interface. The functor
+ * signature should follow
+ * operator()(const vector<double>&, // theta
+ *            const int,             // calculate sensitivity?
+ *            const vector<double>&, // x_r
+ *            const vector<int>&,    // x_i
+ *            std::ostream*) -> std::vector<std::vector<double> >
+ * It returns a vector of vectors, with each member vector
+ * in the form
+ *
+ * {QoI}
+ *
+ * namely, a single-element vector of the quantity of interest.
+ *
  * @param[in] pde functor for the partial differential equation.
  * @param[in] theta parameter vector for the PDE.
  * @param[in] x_r continuous data vector for the PDE.

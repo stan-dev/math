@@ -19,7 +19,20 @@ namespace math {
  * This function is templated to allow various PDE library
  * interfaces and corresponding input deck.
  *
- * @tparam F_pde type of PDE system interface.
+ * @tparam F_pde type of PDE system interface. The functor
+ * signature should follow
+ * operator()(const vector<double>&, // theta
+ *            const int,             // calculate sensitivity?
+ *            const vector<double>&, // x_r
+ *            const vector<int>&,    // x_i
+ *            std::ostream*) -> std::vector<std::vector<double> >
+ * It returns a vector of vectors, with each member vector
+ * in the form
+ *
+ * {QoI, d(QoI)/d(theta1), d(QoI)/d(theta2), ...},
+ *
+ * namely, the first component is the quantity of interest,
+ * and the rest are its derivatives with respect to theta.
  * @tparam T type of parameter.
  * @param[in] pde functor for the partial differential equation.
  * @param[in] theta parameter vector for the PDE.
