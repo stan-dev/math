@@ -1,6 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
-#include <stan/math/gpu/add_opencl.hpp>
+#include <stan/math/gpu/add.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathMatrixGPU, add_v_exception_pass) {

@@ -19,7 +19,7 @@ R"(
  * Supports writing zeroes to the lower and upper triangular or
  * the whole matrix.
  *
- * @param A (write) matrix
+ * @param[out] A matrix
  * @param rows Number of rows for matrix A
  * @param cols Number of columns for matrix A
  * @param part optional parameter that describes where to assign zeros:

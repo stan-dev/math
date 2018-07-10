@@ -5,10 +5,10 @@ R"(
 /**
  * Check if the <code>matrix_gpu</code> has NaN values
  *
- * @param A The matrix to check.
+ * @param[in] A The matrix to check.
  * @param rows The number of rows in matrix A.
  * @param cols The number of columns in matrix A.
- * @param flag (write) the flag to be written to if any diagonal is zero.
+ * @param[out] flag the flag to be written to if any diagonal is zero.
  *
  * @note Kernel for stan/math/gpu/err/check_nan.hpp
  */

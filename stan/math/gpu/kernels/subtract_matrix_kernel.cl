@@ -13,9 +13,9 @@ R"(
  * Matrix subtraction on the GPU Subtracts the second matrix
  * from the first matrix and stores the result in the third matrix (C=A-B).
  *
- * @param C (write) The output matrix.
- * @param B (read) RHS input matrix.
- * @param A (read) LHS input matrix.
+ * @param[out] C The output matrix.
+ * @param[in] B RHS input matrix.
+ * @param[in] A LHS input matrix.
  * @param rows The number of rows for matrix A.
  * @param cols The number of columns for matrix A.
  *
