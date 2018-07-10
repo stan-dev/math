@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_GPU_SUBTRACT_OPENCL_HPP
-#define STAN_MATH_GPU_SUBTRACT_OPENCL_HPP
+#ifndef STAN_MATH_GPU_ADD_HPP
+#define STAN_MATH_GPU_ADD_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/matrix_gpu.hpp>
 #include <stan/math/gpu/err/check_matching_dims.hpp>
@@ -9,29 +9,25 @@ namespace stan {
 namespace math {
 
 /**
- * Matrix subtraction on the GPU
- * Subtracts the second matrix
- * from the first matrix and stores
- * the result in the third matrix (C=A-B)
+ * Matrix addition on the GPU
  *
  * @param A first matrix
  * @param B second matrix
  *
- * @return subtraction result matrix
+ * @return sum of A and B
  *
  * @throw <code>std::invalid_argument</code> if the
- * input matrices do not have matching dimensions.
+ * input matrices do not have matching dimensions
  *
  */
-inline matrix_gpu subtract(matrix_gpu& A, matrix_gpu& B) {
-  check_matching_dims("subtract (GPU)", "A", A, "B", B);
+inline matrix_gpu add(matrix_gpu& A, matrix_gpu& B) {
+  check_matching_dims("add (GPU)", "A", A, "B", B);
   matrix_gpu C(A.rows(), A.cols());
-  if (A.size() == 0) {
+  if (C.size() == 0) {
     return C;
   }
-  cl::Kernel kernel = opencl_context.get_kernel("subtract");
+  cl::Kernel kernel = opencl_context.get_kernel("add");
   cl::CommandQueue cmdQueue = opencl_context.queue();
-
   try {
     kernel.setArg(0, C.buffer());
     kernel.setArg(1, A.buffer());
@@ -41,8 +37,8 @@ inline matrix_gpu subtract(matrix_gpu& A, matrix_gpu& B) {
     cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
                                   cl::NDRange(A.rows(), A.cols()),
                                   cl::NullRange, NULL, NULL);
-  } catch (cl::Error& e) {
-    check_opencl_error("subtract", e);
+  } catch (const cl::Error& e) {
+    check_opencl_error("add", e);
   }
   return C;
 }

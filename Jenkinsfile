@@ -136,19 +136,32 @@ pipeline {
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh 'make test-math-dependencies' } ,
                         Documentation: { sh 'make doxygen' },
-                        Headers: { sh "make -j${env.PARALLEL} test-headers" }
                     )
                 }
             }
             post {
                 always {
                     warnings consoleParsers: [[parserName: 'CppLint']], canRunOnFailed: true
+                    deleteDir()
+                }
+            }
+        }
+        stage('Headers check') {
+            agent any
+            steps {
+                deleteDir()
+                unstash 'MathSetup'
+                sh setupCC()
+                sh "make -j${env.PARALLEL} test-headers"
+            }
+            post {
+                always {
                     warnings consoleParsers: [[parserName: 'math-dependencies']], canRunOnFailed: true
                     deleteDir()
                 }
             }
         }
-        stage('Tests') {
+        stage('Vanilla tests') {
             parallel {
                 stage('Unit') {
                     agent any
@@ -156,30 +169,6 @@ pipeline {
                         deleteDir()
                         unstash 'MathSetup'
                         sh setupCC()
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Unit with GPU') {
-                    agent { label "gelman-group-mac" }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh setupCC()
-                        sh "echo STAN_OPENCL=true>> make/local"
-                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
-                        sh "echo OPENCL_DEVICE_ID=0>> make/local"
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Unit with MPI') {
-                    agent any
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CC=${MPICXX} >> make/local"
-                        sh "echo STAN_MPI=true >> make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -210,6 +199,34 @@ pipeline {
                             echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
                         }
                     }
+                }
+            }
+        }
+        stage('Modded tests') {
+            parallel {
+                stage('Unit with GPU') {
+                    agent { label "gelman-group-mac" }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh setupCC()
+                        sh "echo STAN_OPENCL=true>> make/local"
+                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
+                        sh "echo OPENCL_DEVICE_ID=0>> make/local"
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Unit with MPI') {
+                    agent any
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh "echo CC=${MPICXX} >> make/local"
+                        sh "echo STAN_MPI=true >> make/local"
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
                 }
             }
         }
@@ -254,8 +271,7 @@ pipeline {
     post {
         always {
             node("osx || linux") {
-                warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
-                warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
+                warnings canRunOnFailed: true, consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)'], [parserName: 'Clang (LLVM based)']]
             }
         }
         success {

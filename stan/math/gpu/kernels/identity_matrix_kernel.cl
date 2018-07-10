@@ -6,7 +6,7 @@ R"(
 /**
  * Makes an identity matrix on the GPU
  *
- * @param A (write) The identity matrix output.
+ * @param[in,out] A The identity matrix output.
  * @param rows The number of rows for A.
  * @param cols The number of cols for A.
  *

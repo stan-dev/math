@@ -15,8 +15,8 @@ namespace math {
  * destination matrix starting at
  * (dst_offset_rows, dst_offset_cols)
  *
- * @param src the source matrix
- * @param dst the destination submatrix
+ * @param[in] src the source matrix
+ * @param[out] dst the destination submatrix
  * @param src_offset_rows the offset row in src
  * @param src_offset_cols the offset column in src
  * @param dst_offset_rows the offset row in dst

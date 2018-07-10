@@ -12,8 +12,8 @@ R"(
  * the destination matrix.
  * Both matrices are stored on the GPU.
  *
- * @param A (write) Output matrix to copy triangular to.
- * @param B (read) The matrix to copy the triangular from.
+ * @param[out] A Output matrix to copy triangular to.
+ * @param[in] B The matrix to copy the triangular from.
  * @param rows The number of rows of B.
  * @param cols The number of cols of B.
  * @param lower_upper enum to describe

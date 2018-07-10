@@ -8,8 +8,8 @@ R"(
 /**
  * Takes the transpose of the matrix on the GPU.
  *
- * @param B (write) The output matrix to hold transpose of A.
- * @param A (read) The input matrix to transpose into B.
+ * @param[out] B The output matrix to hold transpose of A.
+ * @param[in] A The input matrix to transpose into B.
  * @param rows The number of rows for A.
  * @param cols The number of columns for A.
  *
