@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-#ifdef STAN_EXTERN_PDE
+// #ifdef STAN_EXTERN_PDE
 
 /**
  * Return the solutions for the quantities of interest(QoI)
@@ -45,7 +45,7 @@ inline std::vector<double> solve_pde(const F_pde& pde,
   return res;
 }
 
-#endif
+// #endif
 }
 }  // namespace stan
 
