@@ -63,7 +63,7 @@ inline std::vector<T> solve_pde(const F_pde& pde, const std::vector<T>& theta,
 }
 
 // #endif
-}
+}  // namespace math
 }  // namespace stan
 
 #endif

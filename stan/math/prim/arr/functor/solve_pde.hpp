@@ -60,7 +60,7 @@ inline std::vector<double> solve_pde(const F_pde& pde,
 }
 
 // #endif
-}
+}  // namespace math
 }  // namespace stan
 
 #endif
