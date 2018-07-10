@@ -30,7 +30,11 @@ quad_form_sym(const Eigen::Matrix<Ta, Ra, Ca>& A,
   quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>* baseVari
       = new quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>(A, B, true);
 
-  return baseVari->impl_->C_;
+  Eigen::Matrix<var, Cb, Cb> C(baseVari->C_rows_, baseVari->C_rows_);
+  for (int i = 0; i < baseVari->C_rows_ * baseVari->C_rows_; ++i)
+    C.data()[i] = baseVari->C_mem_[i];
+
+  return C;
 }
 
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb>
@@ -45,7 +49,7 @@ quad_form_sym(const Eigen::Matrix<Ta, Ra, Ca>& A,
   quad_form_vari<Ta, Ra, Ca, Tb, Rb, 1>* baseVari
       = new quad_form_vari<Ta, Ra, Ca, Tb, Rb, 1>(A, B, true);
 
-  return baseVari->impl_->C_(0, 0);
+  return baseVari->C_mem_[0];
 }
 
 }  // namespace math
