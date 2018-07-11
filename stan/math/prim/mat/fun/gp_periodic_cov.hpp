@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_MAT_FUN_GP_PERIODIC_COV_HPP
 
 #include <math.h>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/distance.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
