@@ -63,29 +63,13 @@ include make/libstanmath_mpi # bin/libstanmath_mpi.a
 include make/tests    # tests
 include make/cpplint  # cpplint
 
-WITH_EXTERN_PDE ?= 0
-ifeq ($(WITH_EXTERN_PDE), 1)
-	CXXFLAGS += -DSTAN_EXTERN_PDE
-ifndef EXTERN_PDE_MAKEFILE
-$(error EXTERN_PDE_MAKEFILE is not set)
-endif
-	include $(EXTERN_PDE_MAKEFILE)
-endif
-
-# # pde solvers
-# WITH_LIBMESH ?= 0
-# ifeq ($(WITH_LIBMESH), 1)
-# 	include make/pde_libs/libmesh/libmesh.mk
+# WITH_EXTERN_PDE ?= 0
+# ifeq ($(WITH_EXTERN_PDE), 1)
+# 	CXXFLAGS += -DSTAN_EXTERN_PDE
+# ifndef EXTERN_PDE_MAKEFILE
+# $(error EXTERN_PDE_MAKEFILE is not set)
 # endif
-
-# WITH_MFEM ?= 0
-# ifeq ($(WITH_MFEM), 1)
-# 	include make/pde_libs/mfem/mfem.mk
-# endif
-
-# WITH_OPENSEES ?= 0
-# ifeq ($(WITH_OPENSEES), 1)
-# 	include make/pde_libs/opensees/opensees.mk
+# 	include $(EXTERN_PDE_MAKEFILE)
 # endif
 
 ##
