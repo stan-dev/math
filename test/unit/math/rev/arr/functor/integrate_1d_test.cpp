@@ -15,7 +15,7 @@ struct f1 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return exp(x) + theta[0];
   }
 };
@@ -25,7 +25,7 @@ struct f2 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return exp(theta[0] * cos(2 * 3.141593 * x)) + theta[0];
   }
 };
@@ -35,7 +35,7 @@ struct f3 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return exp(x) + pow(theta[0], x_r[0]) + 2 * pow(theta[1], x_r[1])
            + 2 * theta[2];
   }
@@ -46,7 +46,7 @@ struct f4 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return exp(-x) / sqrt(x);
   }
 };
@@ -56,7 +56,7 @@ struct f5 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return exp(-theta[0] * x) / sqrt(theta[1] * x);
   }
 };
@@ -66,7 +66,7 @@ struct f6 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return sqrt(x / (1 - theta[0] * x * x));
   }
 };
@@ -76,7 +76,7 @@ struct f7 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return exp(-theta[0] * x);
   }
 };
@@ -86,7 +86,7 @@ struct f8 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return exp(theta[0] * x);
   }
 };
@@ -96,7 +96,7 @@ struct f10 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return 1 / (1 + pow(x, x_i[0]) / x_r[0]);
   }
 };
@@ -106,7 +106,7 @@ struct f11 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return pow(x, theta[0] - 1.0)
            * pow((x > 0.5) ? xc : (1 - x), theta[1] - 1.0);
   }
@@ -117,7 +117,7 @@ struct f12 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     T2 mu = theta[0];
     T2 sigma = theta[1];
     return exp(-0.5 * stan::math::square((x - mu) / sigma))
@@ -130,7 +130,7 @@ struct f13 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return x + theta[0] + theta[1];
   }
 };
@@ -230,6 +230,17 @@ void test_derivatives(const F &f, double a, double b,
     if (stan::is_var<T_b>::value)
       EXPECT_LE(std::abs(d_b - get_adjoint_if_var(b_)), tolerance);
   }
+}
+
+TEST(StanMath_integrate_1d, test_integer_arguments) {
+  stan::math::var v;
+  std::vector<stan::math::var> theta = {0.5};
+  EXPECT_NO_THROW(v = stan::math::integrate_1d(f2{}, 0, 1, theta,
+					       {}, {}, msgs, 1e-6));
+  EXPECT_NO_THROW(v = stan::math::integrate_1d(f2{}, 0.0, 1, theta,
+                                        {}, {}, msgs, 1e-6));
+  EXPECT_NO_THROW(v = stan::math::integrate_1d(f2{}, 0, 1.0, theta,
+                                        {}, {}, msgs, 1e-6));
 }
 
 TEST(StanMath_integrate_1d, TestDerivatives) {
@@ -336,7 +347,7 @@ TEST(StanMath_integrate_1d, TestBeta) {
   var beta = 13.0 / 7;
   AVEC theta = {alpha, beta};
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream &msgs) {
+                std::ostream *msgs) {
     return exp(stan::math::beta_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d(pdf, 0.0, 1.0, theta, {}, {}, msgs, 1e-8);
@@ -360,7 +371,7 @@ TEST(StanMath_integrate_1d, TestCauchy) {
   double b = std::numeric_limits<double>::infinity();
   double a = -b;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream &msgs) {
+                std::ostream *msgs) {
     return exp(stan::math::cauchy_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
@@ -383,7 +394,7 @@ TEST(StanMath_integrate_1d, TestChiSquare) {
   double b = std::numeric_limits<double>::infinity();
   double a = 0;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream &msgs) {
+                std::ostream *msgs) {
     return exp(stan::math::chi_square_lpdf(x, theta[0]));
   };
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
@@ -406,7 +417,7 @@ TEST(StanMath_integrate_1d, TestDoubleExponential) {
   double a = -std::numeric_limits<double>::infinity();
   double b = mu.val();
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream &msgs) {
+                std::ostream *msgs) {
     return exp(stan::math::double_exponential_lpdf(x, theta[0], theta[1]));
   };
   // requires two subintervals to achieve numerical accuracy
@@ -421,35 +432,6 @@ TEST(StanMath_integrate_1d, TestDoubleExponential) {
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
 }
 
-/*
-TEST(StanMath_integrate_1d, TestExpModNormal) {
-  using stan::math::var;
-  using stan::math::integrate_1d;
-  using stan::math::exp;
-
-  var mu = 9.0 / 5;
-  var sigma = 13.0 / 7;
-  var lambda = 11.0 / 9;
-  AVEC theta = {mu, sigma, lambda};
-  double b = std::numeric_limits<double>::infinity();
-  double a = -b;
-  auto pdf = [](auto x, auto xc, auto theta,
-                auto x_r, auto x_i, std::ostream& msgs) {
-     return exp(stan::math::exp_mod_normal_lpdf(x,
-                  theta[0], theta[1], theta[2]));
-  };
-  var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
-  EXPECT_FLOAT_EQ(1, I.val());
-
-  AVEC x = createAVEC(mu, sigma, lambda);
-  VEC g;
-  I.grad(x, g);
-  EXPECT_FLOAT_EQ(1, 1 + g[0]);
-  EXPECT_FLOAT_EQ(1, 1 + g[1]);
-  EXPECT_FLOAT_EQ(1, 1 + g[2]);
-}
-*/
-
 TEST(StanMath_integrate_1d, TestExponential) {
   using stan::math::exp;
   using stan::math::integrate_1d;
@@ -460,7 +442,7 @@ TEST(StanMath_integrate_1d, TestExponential) {
   double b = std::numeric_limits<double>::infinity();
   double a = 0;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream &msgs) {
+                std::ostream *msgs) {
     return exp(stan::math::exponential_lpdf(x, theta[0]));
   };
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
@@ -483,7 +465,7 @@ TEST(StanMath_integrate_1d, TestFrechet) {
   double b = std::numeric_limits<double>::infinity();
   double a = 0;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream &msgs) {
+                std::ostream *msgs) {
     return exp(stan::math::frechet_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
@@ -507,7 +489,7 @@ TEST(StanMath_integrate_1d, TestGamma) {
   double b = std::numeric_limits<double>::infinity();
   double a = 0;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream &msgs) {
+                std::ostream *msgs) {
     return exp(stan::math::gamma_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
@@ -531,7 +513,7 @@ TEST(StanMath_integrate_1d, TestGumbel) {
   double b = std::numeric_limits<double>::infinity();
   double a = -b;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream &msgs) {
+                std::ostream *msgs) {
     return exp(stan::math::gumbel_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
@@ -554,7 +536,7 @@ TEST(StanMath_integrate_1d, TestInvChiSquared) {
   double b = std::numeric_limits<double>::infinity();
   double a = 0;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream &msgs) {
+                std::ostream *msgs) {
     return exp(stan::math::inv_chi_square_lpdf(x, theta[0]));
   };
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
@@ -577,7 +559,7 @@ TEST(StanMath_integrate_1d, TestLogistic) {
   double b = std::numeric_limits<double>::infinity();
   double a = -b;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream &msgs) {
+                std::ostream *msgs) {
     return exp(stan::math::logistic_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
@@ -601,7 +583,7 @@ TEST(StanMath_integrate_1d, TestLogNormal) {
   double b = std::numeric_limits<double>::infinity();
   double a = 0;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream &msgs) {
+                std::ostream *msgs) {
     return exp(stan::math::lognormal_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
@@ -625,7 +607,7 @@ TEST(StanMath_integrate_1d, TestNormal) {
   double b = std::numeric_limits<double>::infinity();
   double a = -b;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream &msgs) {
+                std::ostream *msgs) {
     return exp(stan::math::normal_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
@@ -638,38 +620,6 @@ TEST(StanMath_integrate_1d, TestNormal) {
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
 }
 
-/*
-TEST(StanMath_integrate_1d, TestNormalSufficient) {
-  using stan::math::var;
-  using stan::math::integrate_1d;
-  using stan::math::exp;
-
-  var mu = 9.0 / 5;
-  var sigma = 13.0 / 7;
-  AVEC theta = {mu, sigma};
-  double b = std::numeric_limits<double>::infinity();
-  double a = -b;
-  auto pdf = [&](auto x, auto xc, auto theta,
-                 auto x_r, auto x_i, std::ostream& msgs) {
-     return integrate_1d([&x](auto s, auto xc, auto theta,
-                            auto x_r, auto x_i,
-                            std::ostream& msgs) {
-       return exp(stan::math::normal_sufficient_lpdf(x, s, 10,
-                    theta[0], theta[1]));
-       }, 0, std::numeric_limits<double>::infinity(),
-          theta, {}, {}, std::cout, 1e-8);
-  };
-  var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
-  EXPECT_FLOAT_EQ(1, I.val());
-
-  AVEC x = createAVEC(mu, sigma);
-  VEC g;
-  I.grad(x, g);
-  EXPECT_FLOAT_EQ(1, 1 + g[0]);
-  EXPECT_FLOAT_EQ(1, 1 + g[1]);
-}
-*/
-
 TEST(StanMath_integrate_1d, TestPareto) {
   using stan::math::exp;
   using stan::math::integrate_1d;
@@ -681,7 +631,7 @@ TEST(StanMath_integrate_1d, TestPareto) {
   double b = std::numeric_limits<double>::infinity();
   var a = m;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream &msgs) {
+                std::ostream *msgs) {
     return exp(stan::math::pareto_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
@@ -706,7 +656,7 @@ TEST(StanMath_integrate_1d, TestPareto2) {
   double b = std::numeric_limits<double>::infinity();
   var a = mu;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream &msgs) {
+                std::ostream *msgs) {
     return exp(stan::math::pareto_type_2_lpdf(x, theta[0], theta[1], theta[2]));
   };
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
@@ -730,7 +680,7 @@ TEST(StanMath_integrate_1d, TestRayleigh) {
   double b = std::numeric_limits<double>::infinity();
   double a = 0;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream &msgs) {
+                std::ostream *msgs) {
     return exp(stan::math::rayleigh_lpdf(x, theta[0]));
   };
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
@@ -753,7 +703,7 @@ TEST(StanMath_integrate_1d, TestScaledInvChiSquare) {
   double b = std::numeric_limits<double>::infinity();
   double a = 0;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream &msgs) {
+                std::ostream *msgs) {
     return exp(stan::math::scaled_inv_chi_square_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
@@ -765,35 +715,6 @@ TEST(StanMath_integrate_1d, TestScaledInvChiSquare) {
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
 }
-
-/*
-TEST(StanMath_integrate_1d, TestSkewNormal) {
-  using stan::math::var;
-  using stan::math::integrate_1d;
-  using stan::math::exp;
-
-  var mu = 9.0 / 5;
-  var sigma = 13.0 / 7;
-  var alpha = 11.0 / 3;
-  AVEC theta = {mu, sigma, alpha};
-  double b = std::numeric_limits<double>::infinity();
-  double a = -b;
-  auto pdf = [](auto x, auto xc, auto theta,
-                auto x_r, auto x_i, std::ostream& msgs) {
-     return exp(stan::math::skew_normal_lpdf(x, theta[0],
-                theta[1], theta[2]));
-  };
-  var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
-  EXPECT_FLOAT_EQ(1, I.val());
-
-  AVEC x = createAVEC(mu, sigma, alpha);
-  VEC g;
-  I.grad(x, g);
-  EXPECT_FLOAT_EQ(1, 1 + g[0]);
-  EXPECT_FLOAT_EQ(1, 1 + g[1]);
-  EXPECT_FLOAT_EQ(1, 1 + g[2]);
-}
-*/
 
 TEST(StanMath_integrate_1d, TestStudentT) {
   using stan::math::exp;
@@ -807,7 +728,7 @@ TEST(StanMath_integrate_1d, TestStudentT) {
   double b = std::numeric_limits<double>::infinity();
   double a = -b;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream &msgs) {
+                std::ostream *msgs) {
     return exp(stan::math::student_t_lpdf(x, theta[0], theta[1], theta[2]));
   };
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
@@ -830,7 +751,7 @@ TEST(StanMath_integrate_1d, TestUniform) {
   var b = 13.0 / 7;
   AVEC theta = {a, b};
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream &msgs) {
+                std::ostream *msgs) {
     return exp(stan::math::uniform_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
@@ -854,7 +775,7 @@ TEST(StanMath_integrate_1d, TestVonMises) {
   double b = stan::math::pi() * 2;
   double a = 0;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream &msgs) {
+                std::ostream *msgs) {
     return exp(stan::math::von_mises_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
@@ -878,7 +799,7 @@ TEST(StanMath_integrate_1d, TestWeibull) {
   double b = std::numeric_limits<double>::infinity();
   double a = 0;
   auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream &msgs) {
+                std::ostream *msgs) {
     return exp(stan::math::weibull_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
