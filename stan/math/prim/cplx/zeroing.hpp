@@ -18,9 +18,9 @@ namespace math {
  */
 template <class T = double>
 struct zeroing : T {
-  using T::T;  // inherit ctors
-  template <std::enable_if_t<stan::is_arith_like<T>::value>* = nullptr>
-  zeroing(T const& t = 0) : T(t) {}  // NOLINT(runtime/explicit)
+  template <class U = T,
+   std::enable_if_t<stan::is_arith_like<U>::value>* = nullptr>
+  zeroing(U const& t = 0) : T(t) {}  // NOLINT(runtime/explicit)
 };
 
 }  // namespace math
