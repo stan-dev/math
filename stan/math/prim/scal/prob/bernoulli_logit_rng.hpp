@@ -13,7 +13,8 @@ namespace stan {
 namespace math {
 
 /**
- * Return a Bernoulli random variate with logit-parameterized chance of success using the specified random number generator.
+ * Return a Bernoulli random variate with logit-parameterized chance of success
+ * using the specified random number generator.
  *
  * t can be a scalar or a one-dimensional container.
  *
@@ -22,10 +23,12 @@ namespace math {
  * @param t (Sequence of) logit-parameterized chance of success parameter(s)
  * @param rng random number generator
  * @return (Sequence of) Bernoulli random variate(s)
- * @throw std::domain_error if logit-parameterized chance of success parameter is not finite
+ * @throw std::domain_error if logit-parameterized chance of success parameter
+ * is not finite
  */
 template <typename T_t, class RNG>
-inline typename VectorBuilder<true, int, T_t>::type bernoulli_logit_rng(const T_t& t, RNG& rng) {
+inline typename VectorBuilder<true, int, T_t>::type bernoulli_logit_rng(
+    const T_t& t, RNG& rng) {
   using boost::bernoulli_distribution;
   using boost::variate_generator;
   using stan::math::inv_logit;
@@ -39,7 +42,7 @@ inline typename VectorBuilder<true, int, T_t>::type bernoulli_logit_rng(const T_
 
   for (size_t n = 0; n < N; ++n) {
     variate_generator<RNG&, bernoulli_distribution<> > bernoulli_rng(
-      rng, bernoulli_distribution<>(inv_logit(t_vec[n])));
+        rng, bernoulli_distribution<>(inv_logit(t_vec[n])));
     output[n] = bernoulli_rng();
   }
 
