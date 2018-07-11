@@ -235,12 +235,12 @@ void test_derivatives(const F &f, double a, double b,
 TEST(StanMath_integrate_1d, test_integer_arguments) {
   stan::math::var v;
   std::vector<stan::math::var> theta = {0.5};
-  EXPECT_NO_THROW(v = stan::math::integrate_1d(f2{}, 0, 1, theta,
-					       {}, {}, msgs, 1e-6));
-  EXPECT_NO_THROW(v = stan::math::integrate_1d(f2{}, 0.0, 1, theta,
-                                        {}, {}, msgs, 1e-6));
-  EXPECT_NO_THROW(v = stan::math::integrate_1d(f2{}, 0, 1.0, theta,
-                                        {}, {}, msgs, 1e-6));
+  EXPECT_NO_THROW(
+      v = stan::math::integrate_1d(f2{}, 0, 1, theta, {}, {}, msgs, 1e-6));
+  EXPECT_NO_THROW(
+      v = stan::math::integrate_1d(f2{}, 0.0, 1, theta, {}, {}, msgs, 1e-6));
+  EXPECT_NO_THROW(
+      v = stan::math::integrate_1d(f2{}, 0, 1.0, theta, {}, {}, msgs, 1e-6));
 }
 
 TEST(StanMath_integrate_1d, TestDerivatives) {
