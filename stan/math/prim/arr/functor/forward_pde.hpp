@@ -45,10 +45,10 @@ namespace math {
  */
 template <typename F_pde>
 inline std::vector<double> forward_pde(const F_pde& pde,
-                                     const std::vector<double>& theta,
-                                     const std::vector<double>& x_r,
-                                     const std::vector<int>& x_i,
-                                     std::ostream* msgs = nullptr) {
+                                       const std::vector<double>& theta,
+                                       const std::vector<double>& x_r,
+                                       const std::vector<int>& x_i,
+                                       std::ostream* msgs = nullptr) {
   stan::math::check_not_nan("forward_pde", "theta", theta);
   const int need_sens = 0;
   std::vector<std::vector<double> > raw = pde(theta, need_sens, x_r, x_i, msgs);
