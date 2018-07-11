@@ -19,7 +19,7 @@ namespace math {
  *
  * @tparam T_t type of logit-parameterized chance of success parameter
  * @tparam RNG type of random number generator
- * @param theta (Sequence of) logit-parameterized chance of success parameter(s)
+ * @param t (Sequence of) logit-parameterized chance of success parameter(s)
  * @param rng random number generator
  * @return (Sequence of) Bernoulli random variate(s)
  * @throw std::domain_error if logit-parameterized chance of success parameter is not finite
