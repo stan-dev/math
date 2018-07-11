@@ -10,12 +10,12 @@
 class BernoulliLogitTestRig : public VectorIntRNGTestRig {
  public:
   BernoulliLogitTestRig()
-    : VectorIntRNGTestRig(10000, 10, {0, 1}, {-5.7, -1.0, 0.0, 0.2, 1.0, 10.0},
-                            {-3, -2, 0, 1}, {}, {}) {}
+      : VectorIntRNGTestRig(10000, 10, {0, 1},
+                            {-5.7, -1.0, 0.0, 0.2, 1.0, 10.0}, {-3, -2, 0, 1},
+                            {}, {}) {}
 
   template <typename T1, typename T2, typename T3, typename T_rng>
-  auto generate_samples(const T1& t, const T2&, const T3&,
-                        T_rng& rng) const {
+  auto generate_samples(const T1& t, const T2&, const T3&, T_rng& rng) const {
     return stan::math::bernoulli_logit_rng(t, rng);
   }
 
