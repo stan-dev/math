@@ -46,7 +46,8 @@ namespace math {
  * @return a vector of quantities of interest.
  */
 template <typename F_pde_qoi, typename T>
-inline std::vector<T> forward_pde(const F_pde_qoi& pde_qoi, const std::vector<T>& theta,
+inline std::vector<T> forward_pde(const F_pde_qoi& pde_qoi,
+                                  const std::vector<T>& theta,
                                   const std::vector<double>& x_r,
                                   const std::vector<int>& x_i,
                                   std::ostream* msgs = nullptr) {
