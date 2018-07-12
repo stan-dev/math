@@ -43,7 +43,7 @@ inline typename std::vector<Eigen::Matrix<T_x, R, C>> divide_columns(
  * @tparam C   number of columns in the submatrix of x
  *
  * @param x std::vector of elements representing a matrix
- * @param vector a vector type of elements
+ * @param vec a vector type of elements
  * @throw std::invalid argument if D != length of vector
  *
  */
