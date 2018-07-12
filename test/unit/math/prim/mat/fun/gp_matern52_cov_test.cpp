@@ -864,7 +864,7 @@ TEST(MathPrimMat, vec_eigen_mixed_ard_gp_matern52_cov2) {
     x1_vec_new[i] << 1 * i / l[0], 2 * i / l[1], 3 * i / l[2];
   }
 
-  std::vector<Eigen::Matrix<double, -1, 1>> x2_vec_new(3);
+  std::vector<Eigen::Matrix<double, -1, 1>> x2_vec_new(4);
   for (size_t i = 0; i < x2_vec_new.size(); ++i) {
     x2_vec_new[i].resize(3, 1);
     x2_vec_new[i] << 2 * i / l[0], 3 * i / l[1], 4 * i / l[2];
@@ -876,7 +876,7 @@ TEST(MathPrimMat, vec_eigen_mixed_ard_gp_matern52_cov2) {
     x1_rvec_new[i] << 1 * i / l[0], 2 * i / l[1], 3 * i / l[2];
   }
 
-  std::vector<Eigen::Matrix<double, -1, 1>> x2_rvec_new(3);
+  std::vector<Eigen::Matrix<double, -1, 1>> x2_rvec_new(4);
   for (size_t i = 0; i < x2_rvec_new.size(); ++i) {
     x2_rvec_new[i].resize(3, 1);
     x2_rvec_new[i] << 2 * i / l[0], 3 * i / l[1], 4 * i / l[2];
@@ -908,8 +908,6 @@ TEST(MathPrimMat, vec_eigen_mixed_ard_gp_matern52_cov2) {
   Eigen::MatrixXd cov7;
   EXPECT_NO_THROW(cov7
                   = stan::math::gp_matern52_cov(x2_vec, x1_rvec, sigma, l));
-  EXPECT_EQ(4, cov7.rows());
-  EXPECT_EQ(3, cov7.cols());
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(

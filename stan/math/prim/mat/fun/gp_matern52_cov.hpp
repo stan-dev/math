@@ -12,6 +12,7 @@
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <stan/math/prim/scal/fun/divide.hpp>
+#include <stan/math/prim/mat/fun/divide_columns.hpp>
 #include <cmath>
 #include <vector>
 
@@ -133,13 +134,7 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
   T_l five_thirds = 5.0 / 3.0;
   T_l neg_root_5 = -sqrt(5.0);
 
-  std::vector<Eigen::Matrix<T_l, -1, 1>> x_new(x_size);
-  for (size_t n = 0; n < x_size; ++n) {
-    for (size_t d = 0; d < l_size; ++d) {
-      x_new[n].resize(l_size, 1);
-      x_new[n][d] = divide(x[n][d], length_scale[d]);
-    }
-  }
+  std::vector<T_x> x_new = divide_columns(x, length_scale);
 
   for (size_t i = 0; i < x_size; ++i) {
     cov(i, i) = sigma_sq;
@@ -285,20 +280,8 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   T_l five_thirds = 5.0 / 3.0;
   T_l neg_root_5 = -sqrt(5.0);
 
-  std::vector<Eigen::Matrix<T_l, -1, 1>> x1_new(x1_size);
-  for (size_t n = 0; n < x1_size; ++n) {
-    for (size_t d = 0; d < l_size; ++d) {
-      x1_new[n].resize(l_size, 1);
-      x1_new[n][d] = divide(x1[n][d], length_scale[d]);
-    }
-  }
-  std::vector<Eigen::Matrix<T_l, -1, 1>> x2_new(x2_size);
-  for (size_t n = 0; n < x2_size; ++n) {
-    for (size_t d = 0; d < l_size; ++d) {
-      x2_new[n].resize(l_size, 1);
-      x2_new[n][d] = divide(x2[n][d], length_scale[d]);
-    }
-  }
+  std::vector<T_x1> x1_new = divide_columns(x1, length_scale);
+  std::vector<T_x2> x2_new = divide_columns(x2, length_scale);
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
