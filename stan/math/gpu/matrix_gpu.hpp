@@ -186,8 +186,8 @@ class matrix_gpu {
       kernel.setArg(2, cols());
       kernel.setArg(3, TriView);
       cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
-                                    cl::NDRange(rows(), cols()),
-                                    cl::NullRange, NULL, NULL);
+                                    cl::NDRange(rows(), cols()), cl::NullRange,
+                                    NULL, NULL);
     } catch (const cl::Error& e) {
       check_opencl_error("zeros", e);
     }
@@ -216,8 +216,8 @@ class matrix_gpu {
       return;
     }
     check_size_match("copy_triangular_transposed (GPU)",
-      "Expecting a square matrix; rows of ", "A",
-      rows(), "columns of ", "A", cols());
+                     "Expecting a square matrix; rows of ", "A", rows(),
+                     "columns of ", "A", cols());
     cl::Kernel kernel = opencl_context.get_kernel("copy_triangular_transposed");
     cl::CommandQueue cmdQueue = opencl_context.queue();
     try {
@@ -226,8 +226,8 @@ class matrix_gpu {
       kernel.setArg(2, cols());
       kernel.setArg(3, CopyDirection);
       cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
-                                    cl::NDRange(rows(), cols()),
-                                    cl::NullRange, NULL, NULL);
+                                    cl::NDRange(rows(), cols()), cl::NullRange,
+                                    NULL, NULL);
     } catch (const cl::Error& e) {
       check_opencl_error("copy_triangular_transposed", e);
     }
