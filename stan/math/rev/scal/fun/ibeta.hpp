@@ -91,10 +91,10 @@ class ibeta_vdv_vari : public op_vdv_vari {
     double b = bd_;
     double c = cvi_->val_;
 
-    using boost::math::constants::pi;
     using boost::math::digamma;
     using boost::math::ibeta;
     using boost::math::tgamma;
+    using boost::math::constants::pi;
     using std::log;
     using std::pow;
     using std::sin;
@@ -114,10 +114,10 @@ class ibeta_vdd_vari : public op_vdd_vari {
     double b = bd_;
     double c = cd_;
 
-    using boost::math::constants::pi;
     using boost::math::digamma;
     using boost::math::ibeta;
     using boost::math::tgamma;
+    using boost::math::constants::pi;
     using std::log;
     using std::pow;
     using std::sin;
@@ -136,10 +136,10 @@ class ibeta_dvv_vari : public op_dvv_vari {
     double b = bvi_->val_;
     double c = cvi_->val_;
 
-    using boost::math::constants::pi;
     using boost::math::digamma;
     using boost::math::ibeta;
     using boost::math::tgamma;
+    using boost::math::constants::pi;
     using std::log;
     using std::pow;
     using std::sin;
@@ -161,10 +161,10 @@ class ibeta_dvd_vari : public op_dvd_vari {
     double b = bvi_->val_;
     double c = cd_;
 
-    using boost::math::constants::pi;
     using boost::math::digamma;
     using boost::math::ibeta;
     using boost::math::tgamma;
+    using boost::math::constants::pi;
     using std::log;
     using std::pow;
     using std::sin;

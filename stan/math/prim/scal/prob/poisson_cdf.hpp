@@ -46,7 +46,6 @@ typename return_type<T_rate>::type poisson_cdf(const T_n& n,
   size_t size = max_size(n, lambda);
 
   using std::exp;
-  using std::exp;
   using std::pow;
 
   operands_and_partials<T_rate> ops_partials(lambda);

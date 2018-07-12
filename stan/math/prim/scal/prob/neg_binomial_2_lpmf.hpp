@@ -54,7 +54,6 @@ typename return_type<T_location, T_precision>::type neg_binomial_2_lpmf(
     return 0.0;
 
   using std::log;
-  using std::log;
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_location> mu_vec(mu);
