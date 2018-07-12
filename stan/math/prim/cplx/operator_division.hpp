@@ -58,14 +58,14 @@ inline auto operator/(T const& t, std::complex<U> const& u) {
  * @param u second argument
  * @return first argument divided by second argument
  */
-template <class T>
+template <class T, class RZT = rm_zeroing_t<T>>
 inline auto operator_division(std::complex<T> const& t,
                               std::complex<T> const& u) {
   using std::pow;
-  T const n(pow(u.real(), 2) + pow(u.imag(), 2));
+  T const n(pow(RZT(u.real()), 2) + pow(RZT(u.imag()), 2));
   T const r((t.real() * u.real() + t.imag() * u.imag()) / n);
   T const i((t.imag() * u.real() - t.real() * u.imag()) / n);
-  return std::complex<rm_zeroing_t<T>>(r, i);
+  return std::complex<RZT>(r, i);
 }
 
 /**
