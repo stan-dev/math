@@ -196,7 +196,7 @@ class matrix_gpu {
   /**
    * Copies a lower/upper triangular of a matrix to it's upper/lower.
    *
-   * @tparam CopyDirection Specifies if the copy is 
+   * @tparam CopyDirection Specifies if the copy is
    * lower-to-upper or upper-to-lower triangular with possible values
    * stan:math::LowerToUpper and stan::math::UpperToLower
    *
