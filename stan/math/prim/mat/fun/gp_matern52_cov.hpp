@@ -1,19 +1,19 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_GP_MATERN52_COV_HPP
 #define STAN_MATH_PRIM_MAT_FUN_GP_MATERN52_COV_HPP
 
+#include <cmath>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/divide_columns.hpp>
 #include <stan/math/prim/mat/fun/sqrt.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/fun/divide.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
-#include <stan/math/prim/scal/fun/divide.hpp>
-#include <stan/math/prim/mat/fun/divide_columns.hpp>
-#include <cmath>
 #include <vector>
 
 namespace stan {
@@ -69,13 +69,11 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
       typename return_type<T_x>::type sq_distance =
-        squared_distance(x[i], x[j]);
-      typename return_type<T_x>::type root_sq_distance =
-        sqrt(sq_distance);
-      cov(i, j) = sigma_sq
-                  * (1.0 + root_5_inv_l * root_sq_distance +
-                     inv_l_sq_5_3 * sq_distance)
-                  * exp(neg_root_5_inv_l * root_sq_distance);
+          squared_distance(x[i], x[j]);
+      typename return_type<T_x>::type root_sq_distance = sqrt(sq_distance);
+      cov(i, j) = sigma_sq * (1.0 + root_5_inv_l * root_sq_distance +
+                              inv_l_sq_5_3 * sq_distance) *
+                  exp(neg_root_5_inv_l * root_sq_distance);
       cov(j, i) = cov(i, j);
     }
   }
@@ -140,12 +138,11 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
       typename scalar_type<T_x>::type sq_distance =
-        squared_distance(x_new[i], x_new[j]);
+          squared_distance(x_new[i], x_new[j]);
       typename scalar_type<T_x>::type root_sq_distance = sqrt(sq_distance);
-      cov(i, j)
-          = sigma_sq
-            * (1.0 + root_5 * root_sq_distance + five_thirds * sq_distance)
-            * exp(neg_root_5 * root_sq_distance);
+      cov(i, j) = sigma_sq * (1.0 + root_5 * root_sq_distance +
+                              five_thirds * sq_distance) *
+                  exp(neg_root_5 * root_sq_distance);
       cov(j, i) = cov(i, j);
     }
   }
@@ -207,13 +204,13 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
       typename return_type<T_x1, T_x2>::type sq_distance =
-        squared_distance(x1[i], x2[j]);;
+          squared_distance(x1[i], x2[j]);
+      ;
       typename return_type<T_x1, T_x2>::type root_sq_distance =
-        sqrt(sq_distance);
-      cov(i, j) = sigma_sq
-                  * (1.0 + root_5_inv_l * root_sq_distance +
-                     inv_l_sq_5_3 * sq_distance)
-                  * exp(neg_root_5_inv_l * root_sq_distance);
+          sqrt(sq_distance);
+      cov(i, j) = sigma_sq * (1.0 + root_5_inv_l * root_sq_distance +
+                              inv_l_sq_5_3 * sq_distance) *
+                  exp(neg_root_5_inv_l * root_sq_distance);
     }
   }
   return cov;
@@ -286,17 +283,16 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
       typename return_type<T_x1, T_x2>::type sq_distance =
-        squared_distance(x1_new[i], x2_new[j]);
+          squared_distance(x1_new[i], x2_new[j]);
       typename return_type<T_x1, T_x2>::type root_sq_distance =
-        sqrt(sq_distance);
-      cov(i, j)
-          = sigma_sq
-            * (1.0 + root_5 * root_sq_distance + five_thirds * sq_distance)
-            * exp(neg_root_5 * root_sq_distance);
+          sqrt(sq_distance);
+      cov(i, j) = sigma_sq * (1.0 + root_5 * root_sq_distance +
+                              five_thirds * sq_distance) *
+                  exp(neg_root_5 * root_sq_distance);
     }
   }
   return cov;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

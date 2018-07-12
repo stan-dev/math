@@ -1,12 +1,10 @@
+#include <cmath>
 #include <gtest/gtest.h>
+#include <limits>
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <cmath>
-#include <limits>
 #include <string>
 #include <vector>
-
-
 
 TEST(MathPrimMat, vec_of_vec_scalar) {
   std::vector<Eigen::Matrix<double, 1, -1>> x(3);
@@ -53,7 +51,7 @@ TEST(MathPrimMat, vec_of_vec_vec) {
   for (int i = 0; i < 3; ++i) {
     for (int j = 0; j < 3; ++j) {
       EXPECT_FLOAT_EQ(out[i][j], 1.0 / (j + 1.0))
-        << "index : ( " << i << ",  " << j << ")";
+          << "index : ( " << i << ",  " << j << ")";
     }
   }
 }
@@ -73,7 +71,7 @@ TEST(MathPrimMat, vec_of_rvec_vec) {
   for (int i = 0; i < 3; ++i) {
     for (int j = 0; j < 3; ++j) {
       EXPECT_FLOAT_EQ(out[i][j], 1.0 / (j + 1.0))
-        << "index : ( " << i << ",  " << j << ")";
+          << "index : ( " << i << ",  " << j << ")";
     }
   }
 }
@@ -88,5 +86,4 @@ TEST(MathPrimMat, err_size_match) {
   vec[0] = 2.0;
   vec[1] = 3.0;
   EXPECT_THROW(stan::math::divide_columns(x, vec), std::invalid_argument);
-  
 }
