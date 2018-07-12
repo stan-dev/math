@@ -102,7 +102,7 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
  * @param length_scale length scale
  * @param sigma standard deviation that can be used in stan::math::square
  * @throw std::domain error if sigma <= 0, l <= 0, or x is nan or inf
- *
+ * @throw std::invalid_argument if length scale size != dimension of x
  */
 template <typename T_x, typename T_s, typename T_l>
 inline typename Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type,
@@ -241,6 +241,7 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * @param length_scale length scale
  * @param sigma standard deviation that can be used in stan::math::square
  * @throw std::domain error if sigma <= 0, l <= 0, or x is nan or inf
+ * @throw std::invalid_argument if length scale size != dimension of x1 or x2
  *
  */
 template <typename T_x1, typename T_x2, typename T_s, typename T_l>
