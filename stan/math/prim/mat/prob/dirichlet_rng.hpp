@@ -43,10 +43,10 @@ namespace math {
 template <class RNG>
 inline Eigen::VectorXd dirichlet_rng(
     const Eigen::Matrix<double, Eigen::Dynamic, 1>& alpha, RNG& rng) {
-  using Eigen::VectorXd;
   using boost::gamma_distribution;
-  using boost::random::uniform_real_distribution;
   using boost::variate_generator;
+  using boost::random::uniform_real_distribution;
+  using Eigen::VectorXd;
   using std::exp;
   using std::log;
 

@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 
 TEST(MetaTraits, partials_return_type) {
-  using stan::math::fvar;
   using stan::partials_return_type;
+  using stan::math::fvar;
 
   partials_return_type<double, fvar<fvar<double> > >::type b(3.0, 2.0);
   EXPECT_EQ(3.0, b.val_);

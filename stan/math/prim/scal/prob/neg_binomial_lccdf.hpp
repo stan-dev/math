@@ -52,7 +52,6 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_lccdf(
   size_t size = max_size(n, alpha, beta);
 
   using std::exp;
-  using std::exp;
   using std::log;
   using std::pow;
 

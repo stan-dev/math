@@ -49,7 +49,6 @@ exp_mod_normal_lcdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
 
   using std::exp;
   using std::log;
-  using std::log;
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);

@@ -35,7 +35,6 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lpdf(
           T_partials_return;
 
   using std::log;
-  using std::log;
 
   if (size_zero(y, mu, lambda, alpha))
     return 0.0;
