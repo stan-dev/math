@@ -196,13 +196,9 @@ class matrix_gpu {
   /**
    * Copies a lower/upper triangular of a matrix to it's upper/lower.
    *
-   * @param A matrix
-   * @param lower_upper enum to describe
-   * which copy operation to perform
-   * LOWER_TO_UPPER_TRIANGULAR - copies the lower
-   *   triangular to the upper triangular
-   * UPPER_TO_LOWER_TRIANGULAR - copes the upper
-   *  triangular to the lower triangular
+   * @param A matrix. Specify lower-to-upper triangular or
+   * upper-to-lower triangular copy with CopyDirection being
+   * stan:math::LowerToUpper or stan::math::UpperToLower
    *
    * @throw <code>std::invalid_argument</code> if the matrix is not square.
    *
