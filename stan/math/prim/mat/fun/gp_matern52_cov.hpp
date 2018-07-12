@@ -205,7 +205,6 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     for (size_t j = 0; j < x2_size; ++j) {
       typename return_type<T_x1, T_x2>::type sq_distance =
           squared_distance(x1[i], x2[j]);
-      ;
       typename return_type<T_x1, T_x2>::type root_sq_distance =
           sqrt(sq_distance);
       cov(i, j) = sigma_sq * (1.0 + root_5_inv_l * root_sq_distance +
