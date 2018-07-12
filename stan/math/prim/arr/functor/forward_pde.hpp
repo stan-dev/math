@@ -22,7 +22,7 @@ namespace math {
  * data-only version of the function. Therefore there is no
  * sensitivity is requested.
  *
- * @tparam F_pde type of PDE system interface. The functor
+ * @tparam F_pde_qoi type of PDE system interface. The functor
  * signature should follow
  * operator()(const vector<double>&, // theta
  *            const int,             // calculate sensitivity?
@@ -36,22 +36,22 @@ namespace math {
  *
  * namely, a single-element vector of the quantity of interest.
  *
- * @param[in] pde functor for the partial differential equation.
+ * @param[in] pde_qoi functor for the partial differential equation.
  * @param[in] theta parameter vector for the PDE.
  * @param[in] x_r continuous data vector for the PDE.
  * @param[in] x_i integer data vector for the PDE.
  * @param[out] msgs the print stream for warning messages.
  * @return a vector of quantities of interest.
  */
-template <typename F_pde>
-inline std::vector<double> forward_pde(const F_pde& pde,
+template <typename F_pde_qoi>
+inline std::vector<double> forward_pde(const F_pde_qoi& pde_qoi,
                                        const std::vector<double>& theta,
                                        const std::vector<double>& x_r,
                                        const std::vector<int>& x_i,
                                        std::ostream* msgs = nullptr) {
   stan::math::check_not_nan("forward_pde", "theta", theta);
   const int need_sens = 0;
-  std::vector<std::vector<double> > raw = pde(theta, need_sens, x_r, x_i, msgs);
+  std::vector<std::vector<double> > raw = pde_qoi(theta, need_sens, x_r, x_i, msgs);
   std::vector<double> res(raw.size());
   std::transform(raw.begin(), raw.end(), res.begin(),
                  [&theta](std::vector<double>& qoi_grad) -> double {

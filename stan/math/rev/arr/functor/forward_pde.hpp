@@ -22,7 +22,7 @@ namespace math {
  * This function is templated to allow various PDE library
  * interfaces and corresponding input deck.
  *
- * @tparam F_pde type of PDE system interface. The functor
+ * @tparam F_pde_qoi type of PDE system interface. The functor
  * signature should follow
  * operator()(const vector<double>&, // theta
  *            const int,             // calculate sensitivity?
@@ -37,15 +37,16 @@ namespace math {
  * namely, the first component is the quantity of interest,
  * and the rest are its derivatives with respect to theta.
  * @tparam T type of parameter.
- * @param[in] pde functor for the partial differential equation.
+ * @param[in] pde_qoi functor for the partial differential
+ * equation's QoI calculation.
  * @param[in] theta parameter vector for the PDE.
  * @param[in] x_r continuous data vector for the PDE.
  * @param[in] x_i integer data vector for the PDE.
  * @param[out] msgs the print stream for warning messages.
  * @return a vector of quantities of interest.
  */
-template <typename F_pde, typename T>
-inline std::vector<T> forward_pde(const F_pde& pde, const std::vector<T>& theta,
+template <typename F_pde_qoi, typename T>
+inline std::vector<T> forward_pde(const F_pde_qoi& pde_qoi, const std::vector<T>& theta,
                                   const std::vector<double>& x_r,
                                   const std::vector<int>& x_i,
                                   std::ostream* msgs = nullptr) {
@@ -54,7 +55,7 @@ inline std::vector<T> forward_pde(const F_pde& pde, const std::vector<T>& theta,
   const int need_sens = 1;
   std::vector<double> theta_d = stan::math::value_of(theta);
   std::vector<std::vector<double> > raw
-      = pde(theta_d, need_sens, x_r, x_i, msgs);
+      = pde_qoi(theta_d, need_sens, x_r, x_i, msgs);
   std::vector<T> res(raw.size());
   std::transform(raw.begin(), raw.end(), res.begin(),
                  [&theta](std::vector<double>& qoi_grad) -> T {
