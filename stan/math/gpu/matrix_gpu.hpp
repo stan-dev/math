@@ -168,9 +168,9 @@ class matrix_gpu {
    * Supports writing zeroes to the lower and upper triangular or
    * the whole matrix.
    *
-   * @param A matrix. Specify if zeros are assigned to
+   * @tparam TriView Specifies if zeros are assigned to
    * the entire matrix, lower triangular or upper triangular with
-   * setting TriView to stan::math:Entire, stan::math:Lower or
+   * possible values stan::math:Entire, stan::math:Lower or
    * stan::math::Upper
    *
    */
@@ -196,9 +196,9 @@ class matrix_gpu {
   /**
    * Copies a lower/upper triangular of a matrix to it's upper/lower.
    *
-   * @param A matrix. Specify lower-to-upper triangular or
-   * upper-to-lower triangular copy with CopyDirection being
-   * stan:math::LowerToUpper or stan::math::UpperToLower
+   * @tparam CopyDirection Specifies if the copy is 
+   * lower-to-upper or upper-to-lower triangular with possible values
+   * stan:math::LowerToUpper and stan::math::UpperToLower
    *
    * @throw <code>std::invalid_argument</code> if the matrix is not square.
    *
