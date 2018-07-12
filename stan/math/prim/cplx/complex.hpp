@@ -45,7 +45,7 @@ struct complex : std::complex<zeroing<T>> {
             std::enable_if_t<is_arith_like<R>::value>* = nullptr>
   // NOLINTNEXTLINE(runtime/explicit)
   complex(R const& real = 0, I const& imag = 0)
-   : std::complex<zeroing<T>>(zeroing<T>(real), zeroing<T>(imag)) {}
+      : std::complex<zeroing<T>>(zeroing<T>(real), zeroing<T>(imag)) {}
   // downcast
   operator std::complex<T>() const {
     return *static_cast<std::complex<T> const*>(this);
