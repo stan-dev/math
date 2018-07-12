@@ -1,14 +1,14 @@
 R"(
 #ifndef LOWER
-#define LOWER 0
+#define LOWER 1
 #endif
 
 #ifndef UPPER
-#define UPPER 1
+#define UPPER 2
 #endif
 
 #ifndef ALL
-#define ALL 2
+#define ALL 0
 #endif
 
 #ifndef A

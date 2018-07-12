@@ -16,7 +16,11 @@
  */
 namespace stan {
 namespace math {
-
+const int Entire = 0;
+const int Lower = 1;
+const int Upper = 2;
+const int LowerToUpper = 0;
+const int UpperToLower = 1;
 /**
  * This class represents a matrix on the GPU.
  *
@@ -157,6 +161,76 @@ class matrix_gpu {
                      "destination.cols()", cols());
     oclBuffer_ = a.buffer();
     return *this;
+  }
+
+  /**
+   * Stores zeros in the matrix on the GPU.
+   * Supports writing zeroes to the lower and upper triangular or
+   * the whole matrix.
+   *
+   * @param A matrix. Specify if zeros are assigned to
+   * the entire matrix, lower triangular or upper triangular with
+   * setting TriView to stan::math:Entire, stan::math:Lower or
+   * stan::math::Upper
+   *
+   */
+  template <int TriView>
+  void zeros() {
+    if (size() == 0)
+      return;
+    cl::Kernel kernel = opencl_context.get_kernel("zeros");
+    cl::CommandQueue cmdQueue = opencl_context.queue();
+    try {
+      kernel.setArg(0, buffer());
+      kernel.setArg(1, rows());
+      kernel.setArg(2, cols());
+      kernel.setArg(3, TriView);
+      cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
+                                    cl::NDRange(rows(), cols()),
+                                    cl::NullRange, NULL, NULL);
+    } catch (const cl::Error& e) {
+      check_opencl_error("zeros", e);
+    }
+  }
+
+  /**
+   * Copies a lower/upper triangular of a matrix to it's upper/lower.
+   *
+   * @param A matrix
+   * @param lower_upper enum to describe
+   * which copy operation to perform
+   * LOWER_TO_UPPER_TRIANGULAR - copies the lower
+   *   triangular to the upper triangular
+   * UPPER_TO_LOWER_TRIANGULAR - copes the upper
+   *  triangular to the lower triangular
+   *
+   * @throw <code>std::invalid_argument</code> if the matrix is not square.
+   *
+   */
+  template <int CopyDirection>
+  void copy_triangular_transposed() {
+    if (size() == 0) {
+      return;
+    }
+    if (size() == 1) {
+      return;
+    }
+    check_size_match("copy_triangular_transposed (GPU)",
+      "Expecting a square matrix; rows of ", "A",
+      rows(), "columns of ", "A", cols());
+    cl::Kernel kernel = opencl_context.get_kernel("copy_triangular_transposed");
+    cl::CommandQueue cmdQueue = opencl_context.queue();
+    try {
+      kernel.setArg(0, buffer());
+      kernel.setArg(1, rows());
+      kernel.setArg(2, cols());
+      kernel.setArg(3, CopyDirection);
+      cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
+                                    cl::NDRange(rows(), cols()),
+                                    cl::NullRange, NULL, NULL);
+    } catch (const cl::Error& e) {
+      check_opencl_error("copy_triangular_transposed", e);
+    }
   }
 };
 
