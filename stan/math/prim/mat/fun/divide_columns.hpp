@@ -4,6 +4,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/divide.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
+#include <vector>
 
 namespace stan {
 namespace math {
