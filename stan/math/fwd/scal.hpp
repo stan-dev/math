@@ -81,6 +81,7 @@
 #include <stan/math/fwd/scal/fun/Phi_approx.hpp>
 #include <stan/math/fwd/scal/fun/pow.hpp>
 #include <stan/math/fwd/scal/fun/primitive_value.hpp>
+#include <stan/math/fwd/scal/fun/proj.hpp>
 #include <stan/math/fwd/scal/fun/rising_factorial.hpp>
 #include <stan/math/fwd/scal/fun/round.hpp>
 #include <stan/math/fwd/scal/fun/sin.hpp>

@@ -171,6 +171,7 @@
 #include <stan/math/prim/scal/fun/primitive_value.hpp>
 #include <stan/math/prim/scal/fun/prob_constrain.hpp>
 #include <stan/math/prim/scal/fun/prob_free.hpp>
+#include <stan/math/prim/scal/fun/proj.hpp>
 #include <stan/math/prim/scal/fun/promote_elements.hpp>
 #include <stan/math/prim/scal/fun/promote_scalar.hpp>
 #include <stan/math/prim/scal/fun/promote_scalar_type.hpp>
