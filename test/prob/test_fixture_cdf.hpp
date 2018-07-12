@@ -10,9 +10,9 @@ using Eigen::Matrix;
 using stan::is_constant;
 using stan::is_constant_struct;
 using stan::is_vector;
-using stan::scalar_type;
 using stan::math::value_of;
 using stan::math::var;
+using stan::scalar_type;
 using std::vector;
 
 class AgradCdfTest {

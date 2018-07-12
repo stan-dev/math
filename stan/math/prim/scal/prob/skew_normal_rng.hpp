@@ -38,8 +38,8 @@ template <typename T_loc, typename T_scale, typename T_shape, class RNG>
 inline typename VectorBuilder<true, double, T_loc, T_scale, T_shape>::type
 skew_normal_rng(const T_loc& mu, const T_scale& sigma, const T_shape& alpha,
                 RNG& rng) {
-  using boost::variate_generator;
   using boost::random::normal_distribution;
+  using boost::variate_generator;
   static const char* function = "skew_normal_rng";
 
   check_finite(function, "Location parameter", mu);

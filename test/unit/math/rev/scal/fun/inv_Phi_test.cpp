@@ -6,8 +6,8 @@
 #include <limits>
 
 TEST(MathFunctions, inv_Phi) {
-  using stan::math::inv_Phi;
   using stan::math::Phi;
+  using stan::math::inv_Phi;
   using stan::math::var;
   EXPECT_FLOAT_EQ(0.0, inv_Phi(0.5));
   var p = 0.123456789;

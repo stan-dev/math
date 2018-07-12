@@ -35,9 +35,9 @@ namespace math {
 template <typename T_shape1, typename T_shape2, class RNG>
 inline typename VectorBuilder<true, double, T_shape1, T_shape2>::type beta_rng(
     const T_shape1 &alpha, const T_shape2 &beta, RNG &rng) {
-  using boost::variate_generator;
   using boost::random::gamma_distribution;
   using boost::random::uniform_real_distribution;
+  using boost::variate_generator;
   static const char *function = "beta_rng";
 
   check_positive_finite(function, "First shape parameter", alpha);
