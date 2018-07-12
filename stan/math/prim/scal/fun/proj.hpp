@@ -22,11 +22,10 @@ namespace math {
  */
 
 template <class T>
-inline std::complex<T>
-proj(std::complex<T> const& t) {
- if (is_inf(t.real()) || is_inf(t.imag()))
-  return std::complex<T>(INFINITY, copysign(T(0), t.imag()));
- return t;
+inline std::complex<T> proj(std::complex<T> const& t) {
+  if (is_inf(t.real()) || is_inf(t.imag()))
+    return std::complex<T>(INFINITY, copysign(T(0), t.imag()));
+  return t;
 }
 
 }  // namespace math

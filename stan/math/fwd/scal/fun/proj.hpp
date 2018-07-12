@@ -2,7 +2,7 @@
 #define STAN_MATH_FWD_SCAL_FUN_PROJ_HPP
 
 #include <stan/math/fwd/cplx.hpp>
-#include <stan/math/fwd/scal/fun/is_inf.hpp> 
+#include <stan/math/fwd/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/proj.hpp>
 
 namespace std {
@@ -19,8 +19,8 @@ namespace std {
  * @return projection onto Riemann sphere
  */
 template <class T>
-inline std::complex<stan::math::fvar<T>>
-proj(std::complex<stan::math::fvar<T>> const& t) {
+inline std::complex<stan::math::fvar<T>> proj(
+    std::complex<stan::math::fvar<T>> const& t) {
   return stan::math::proj(t);
 }
 
