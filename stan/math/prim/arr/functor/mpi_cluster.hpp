@@ -130,6 +130,15 @@ struct mpi_cluster {
 
   mpi_cluster() {}
 
+  /*
+   * @c mpi_cluster can also be constructed given a
+   * communicator and its kind, used to in the constructor
+   * of @c boost::mpi::communicator. This allows using @c mpi_cluster
+   * in more complex MPI communication patterns.
+   *
+   * @param comm MPI communicator
+   * @param kind the kind of communicator
+   */
   mpi_cluster(const MPI_Comm & comm, boost::mpi::comm_create_kind kind) :
     world_(comm, kind)
   {}
