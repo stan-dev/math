@@ -139,9 +139,8 @@ struct mpi_cluster {
    * @param comm MPI communicator
    * @param kind the kind of communicator
    */
-  mpi_cluster(const MPI_Comm & comm, boost::mpi::comm_create_kind kind) :
-    world_(comm, kind)
-  {}
+  mpi_cluster(const MPI_Comm& comm, boost::mpi::comm_create_kind kind)
+      : world_(comm, kind) {}
 
   ~mpi_cluster() {
     // the destructor will ensure that the childs are being
