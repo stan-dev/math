@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/matrix_gpu.hpp>
 #include <stan/math/gpu/err/check_matching_dims.hpp>
+#include <stan/math/gpu/set_kernel_args.hpp>
 #include <CL/cl.hpp>
 
 namespace stan {
@@ -29,11 +30,8 @@ inline matrix_gpu add(matrix_gpu& A, matrix_gpu& B) {
   cl::Kernel kernel = opencl_context.get_kernel("add");
   cl::CommandQueue cmdQueue = opencl_context.queue();
   try {
-    kernel.setArg(0, C.buffer());
-    kernel.setArg(1, A.buffer());
-    kernel.setArg(2, B.buffer());
-    kernel.setArg(3, A.rows());
-    kernel.setArg(4, A.cols());
+    set_kernel_args(kernel, C.buffer(), A.buffer(), B.buffer(),
+     A.rows(), A.cols());
     cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
                                   cl::NDRange(A.rows(), A.cols()),
                                   cl::NullRange, NULL, NULL);

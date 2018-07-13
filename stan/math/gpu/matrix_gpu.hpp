@@ -2,8 +2,10 @@
 #define STAN_MATH_GPU_MATRIX_GPU_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/opencl_context.hpp>
+#include <stan/math/gpu/set_kernel_args.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <CL/cl.hpp>
 #include <iostream>
 #include <string>
@@ -48,8 +50,8 @@ class matrix_gpu {
 
   matrix_gpu() : rows_(0), cols_(0) {}
 
-  matrix_gpu(const matrix_gpu& a) : rows_(a.rows()), cols_(a.cols()) {
-    if (a.size() == 0)
+  matrix_gpu(const matrix_gpu& A) : rows_(A.rows()), cols_(A.cols()) {
+    if (A.size() == 0)
       return;
     // the queue is needed to enqueue the kernel for execution
     cl::CommandQueue& cmdQueue = opencl_context.queue();
@@ -68,10 +70,7 @@ class matrix_gpu {
       // retrieves the kernel that copies memory from the
       // input matrix a
       cl::Kernel kernel = opencl_context.get_kernel("copy");
-      kernel.setArg(0, a.buffer());
-      kernel.setArg(1, buffer());
-      kernel.setArg(2, rows());
-      kernel.setArg(3, cols());
+      set_kernel_args(kernel, A.buffer(), this->buffer(), rows_, cols_);
       /**
        * Runs the specified kernel with provided number of threads.
        * - the first argument is the kernel object
@@ -181,13 +180,11 @@ class matrix_gpu {
     cl::Kernel kernel = opencl_context.get_kernel("zeros");
     cl::CommandQueue cmdQueue = opencl_context.queue();
     try {
-      kernel.setArg(0, buffer());
-      kernel.setArg(1, rows());
-      kernel.setArg(2, cols());
-      kernel.setArg(3, TriView);
+      set_kernel_args(kernel, this->buffer(), this->rows(), this->cols(),
+       TriView);
       cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
-                                    cl::NDRange(rows(), cols()), cl::NullRange,
-                                    NULL, NULL);
+                                    cl::NDRange(this->rows(), this->cols()),
+                                     cl::NullRange, NULL, NULL);
     } catch (const cl::Error& e) {
       check_opencl_error("zeros", e);
     }
@@ -204,29 +201,56 @@ class matrix_gpu {
    *
    */
   template <int CopyDirection>
-  void copy_triangular_transposed() {
+  void triangular_transpose() {
     if (size() == 0) {
       return;
     }
     if (size() == 1) {
       return;
     }
-    check_size_match("copy_triangular_transposed (GPU)",
+    check_size_match("triangular_transpose (GPU)",
                      "Expecting a square matrix; rows of ", "A", rows(),
                      "columns of ", "A", cols());
     cl::Kernel kernel = opencl_context.get_kernel("copy_triangular_transposed");
     cl::CommandQueue cmdQueue = opencl_context.queue();
     try {
-      kernel.setArg(0, buffer());
-      kernel.setArg(1, rows());
-      kernel.setArg(2, cols());
-      kernel.setArg(3, CopyDirection);
+      set_kernel_args(kernel, this->buffer(), this->rows(), this->cols(),
+        CopyDirection);
       cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
-                                    cl::NDRange(rows(), cols()), cl::NullRange,
-                                    NULL, NULL);
+                                    cl::NDRange(this->rows(), this->cols()),
+                                     cl::NullRange, NULL, NULL);
     } catch (const cl::Error& e) {
-      check_opencl_error("copy_triangular_transposed", e);
+      check_opencl_error("triangular_transpose", e);
     }
+  }
+  /**
+   * Write the context of A into
+   * <code>this</code> starting at the top left of <code>this</code>
+   * @param i the offset row in A
+   * @param j the offset column in A
+   * @param nrows the number of rows in the submatrix
+   * @param ncols the number of columns in the submatrix
+   */
+  void sub_block(const matrix_gpu& A, int i, int j, int nrows, int ncols) {
+      if (nrows == 0 || ncols == 0) {
+        return ;
+      }
+      if ((i + nrows) > A.rows() || (j + ncols) > this->cols()) {
+        domain_error("copy_submatrix", "submatrix in *this",
+         " is out of bounds", "");
+      }
+      cl::Kernel kernel = opencl_context.get_kernel("copy_submatrix");
+      cl::CommandQueue cmdQueue = opencl_context.queue();
+      try {
+        set_kernel_args(kernel, A.buffer(), this->buffer(), i, j, nrows, ncols,
+          A.rows(), A.cols(), this->rows(), this->cols());
+
+        cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
+                                      cl::NDRange(nrows, ncols),
+                                      cl::NullRange, NULL, NULL);
+      } catch (const cl::Error& e) {
+        check_opencl_error("copy_submatrix", e);
+      }
   }
 };
 

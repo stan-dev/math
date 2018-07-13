@@ -2,6 +2,7 @@
 #define STAN_MATH_GPU_COPY_TRIANGULAR_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/gpu/set_kernel_args.hpp>
 #include <CL/cl.hpp>
 
 namespace stan {
@@ -36,11 +37,8 @@ inline matrix_gpu copy_triangular(matrix_gpu& src, triangularity lower_upper) {
   cl::Kernel kernel = opencl_context.get_kernel("copy_triangular");
   cl::CommandQueue cmdQueue = opencl_context.queue();
   try {
-    kernel.setArg(0, dst.buffer());
-    kernel.setArg(1, src.buffer());
-    kernel.setArg(2, dst.rows());
-    kernel.setArg(3, dst.cols());
-    kernel.setArg(4, lower_upper);
+    set_kernel_args(kernel, dst.buffer(), src.buffer(), dst.rows(), dst.cols(),
+     lower_upper);
     cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
                                   cl::NDRange(dst.rows(), dst.cols()),
                                   cl::NullRange, NULL, NULL);
