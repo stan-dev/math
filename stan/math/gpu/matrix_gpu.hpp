@@ -182,10 +182,10 @@ class matrix_gpu {
     cl::CommandQueue cmdQueue = opencl_context.queue();
     try {
       set_kernel_args(kernel, this->buffer(), this->rows(), this->cols(),
-       triangular_view);
+                      triangular_view);
       cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
                                     cl::NDRange(this->rows(), this->cols()),
-                                     cl::NullRange, NULL, NULL);
+                                    cl::NullRange, NULL, NULL);
     } catch (const cl::Error& e) {
       check_opencl_error("zeros", e);
     }
@@ -216,10 +216,10 @@ class matrix_gpu {
     cl::CommandQueue cmdQueue = opencl_context.queue();
     try {
       set_kernel_args(kernel, this->buffer(), this->rows(), this->cols(),
-        triangular_map);
+                      triangular_map);
       cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
                                     cl::NDRange(this->rows(), this->cols()),
-                                     cl::NullRange, NULL, NULL);
+                                    cl::NullRange, NULL, NULL);
     } catch (const cl::Error& e) {
       check_opencl_error("triangular_transpose", e);
     }
@@ -233,25 +233,25 @@ class matrix_gpu {
    * @param ncols the number of columns in the submatrix
    */
   void sub_block(const matrix_gpu& A, int i, int j, int nrows, int ncols) {
-      if (nrows == 0 || ncols == 0) {
-        return ;
-      }
-      if ((i + nrows) > A.rows() || (j + ncols) > this->cols()) {
-        domain_error("copy_submatrix", "submatrix in *this",
-         " is out of bounds", "");
-      }
-      cl::Kernel kernel = opencl_context.get_kernel("copy_submatrix");
-      cl::CommandQueue cmdQueue = opencl_context.queue();
-      try {
-        set_kernel_args(kernel, A.buffer(), this->buffer(), i, j, nrows, ncols,
-          A.rows(), A.cols(), this->rows(), this->cols());
+    if (nrows == 0 || ncols == 0) {
+      return;
+    }
+    if ((i + nrows) > A.rows() || (j + ncols) > this->cols()) {
+      domain_error("copy_submatrix", "submatrix in *this", " is out of bounds",
+                   "");
+    }
+    cl::Kernel kernel = opencl_context.get_kernel("copy_submatrix");
+    cl::CommandQueue cmdQueue = opencl_context.queue();
+    try {
+      set_kernel_args(kernel, A.buffer(), this->buffer(), i, j, nrows, ncols,
+                      A.rows(), A.cols(), this->rows(), this->cols());
 
-        cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
-                                      cl::NDRange(nrows, ncols),
-                                      cl::NullRange, NULL, NULL);
-      } catch (const cl::Error& e) {
-        check_opencl_error("copy_submatrix", e);
-      }
+      cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
+                                    cl::NDRange(nrows, ncols), cl::NullRange,
+                                    NULL, NULL);
+    } catch (const cl::Error& e) {
+      check_opencl_error("copy_submatrix", e);
+    }
   }
 };
 

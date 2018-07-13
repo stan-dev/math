@@ -30,8 +30,8 @@ inline matrix_gpu add(matrix_gpu& A, matrix_gpu& B) {
   cl::Kernel kernel = opencl_context.get_kernel("add");
   cl::CommandQueue cmdQueue = opencl_context.queue();
   try {
-    set_kernel_args(kernel, C.buffer(), A.buffer(), B.buffer(),
-     A.rows(), A.cols());
+    set_kernel_args(kernel, C.buffer(), A.buffer(), B.buffer(), A.rows(),
+                    A.cols());
     cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
                                   cl::NDRange(A.rows(), A.cols()),
                                   cl::NullRange, NULL, NULL);

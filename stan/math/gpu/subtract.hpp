@@ -34,8 +34,8 @@ inline matrix_gpu subtract(matrix_gpu& A, matrix_gpu& B) {
   cl::CommandQueue cmdQueue = opencl_context.queue();
 
   try {
-    set_kernel_args(kernel,C.buffer(), A.buffer(), B.buffer(),
-     A.rows(), A.cols());
+    set_kernel_args(kernel, C.buffer(), A.buffer(), B.buffer(), A.rows(),
+                    A.cols());
     cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
                                   cl::NDRange(A.rows(), A.cols()),
                                   cl::NullRange, NULL, NULL);
