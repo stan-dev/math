@@ -235,7 +235,7 @@ class matrix_gpu {
    * @param ncols the number of columns in the submatrix
    */
   void sub_block(const matrix_gpu& A, int A_i, int A_j, int this_i, int this_j,
-    int nrows, int ncols) {
+                 int nrows, int ncols) {
     if (nrows == 0 || ncols == 0) {
       return;
     }
@@ -247,7 +247,8 @@ class matrix_gpu {
     cl::CommandQueue cmdQueue = opencl_context.queue();
     try {
       set_kernel_args(kernel, A.buffer(), this->buffer(), A_i, A_j, this_i,
-       this_j, nrows, ncols, A.rows(), A.cols(), this->rows(), this->cols());
+                      this_j, nrows, ncols, A.rows(), A.cols(), this->rows(),
+                      this->cols());
 
       cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
                                     cl::NDRange(nrows, ncols), cl::NullRange,
