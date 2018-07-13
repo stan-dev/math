@@ -39,6 +39,7 @@ GTEST_API_ int main(int argc, char **argv) {
   // for MPI testing we test with all workers in listen mode. No
   // output is generated from the workers.
   stan::math::mpi_cluster cluster;
+  stan::math::mpi_cluster cluster2(MPI_COMM_WORLD, boost::mpi::comm_attach);
   cluster.listen();
   if (cluster.rank_ != 0)
     return 0;
