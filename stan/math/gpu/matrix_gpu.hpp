@@ -18,9 +18,10 @@
  */
 namespace stan {
 namespace math {
-const int Entire = 0;
-const int Lower = 1;
-const int Upper = 2;
+const int Lower = 0;
+const int Upper = 1;
+const int Entire = 2;
+
 const int LowerToUpper = 0;
 const int UpperToLower = 1;
 /**
@@ -167,13 +168,13 @@ class matrix_gpu {
    * Supports writing zeroes to the lower and upper triangular or
    * the whole matrix.
    *
-   * @tparam TriView Specifies if zeros are assigned to
+   * @tparam triangular_view Specifies if zeros are assigned to
    * the entire matrix, lower triangular or upper triangular with
    * possible values stan::math:Entire, stan::math:Lower or
    * stan::math::Upper
    *
    */
-  template <int TriView>
+  template <int triangular_view>
   void zeros() {
     if (size() == 0)
       return;
@@ -181,7 +182,7 @@ class matrix_gpu {
     cl::CommandQueue cmdQueue = opencl_context.queue();
     try {
       set_kernel_args(kernel, this->buffer(), this->rows(), this->cols(),
-       TriView);
+       triangular_view);
       cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
                                     cl::NDRange(this->rows(), this->cols()),
                                      cl::NullRange, NULL, NULL);
@@ -193,14 +194,14 @@ class matrix_gpu {
   /**
    * Copies a lower/upper triangular of a matrix to it's upper/lower.
    *
-   * @tparam CopyDirection Specifies if the copy is
+   * @tparam triangular_map Specifies if the copy is
    * lower-to-upper or upper-to-lower triangular with possible values
    * stan:math::LowerToUpper and stan::math::UpperToLower
    *
    * @throw <code>std::invalid_argument</code> if the matrix is not square.
    *
    */
-  template <int CopyDirection>
+  template <int triangular_map>
   void triangular_transpose() {
     if (size() == 0) {
       return;
@@ -215,7 +216,7 @@ class matrix_gpu {
     cl::CommandQueue cmdQueue = opencl_context.queue();
     try {
       set_kernel_args(kernel, this->buffer(), this->rows(), this->cols(),
-        CopyDirection);
+        triangular_map);
       cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
                                     cl::NDRange(this->rows(), this->cols()),
                                      cl::NullRange, NULL, NULL);
