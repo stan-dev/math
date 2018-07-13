@@ -129,7 +129,7 @@ class opencl_context_base {
 #include <stan/math/gpu/kernels/copy_triangular_transposed_matrix_kernel.cl>
         ;  // NOLINT
     const char* copy_submatrix_kernel =
-#include <stan/math/gpu/kernels/copy_submatrix_kernel.cl>
+#include <stan/math/gpu/kernels/sub_block_kernel.cl>
         ;  // NOLINT
     const char* check_nan_kernel =
 #include <stan/math/gpu/kernels/check_nan_kernel.cl>

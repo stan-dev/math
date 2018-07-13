@@ -16,7 +16,7 @@ TEST(MathMatrixGPU, sub_block_pass) {
 
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
-  EXPECT_NO_THROW(d22.sub_block(d11, 0, 0, 3, 3));
+  EXPECT_NO_THROW(d22.sub_block(d11, 0, 0, 0, 0, 2, 2));
   stan::math::copy(d2, d22);
   EXPECT_EQ(1, d2(0, 0));
   EXPECT_EQ(2, d2(0, 1));
@@ -32,8 +32,8 @@ TEST(MathMatrixGPU, sub_block_exception) {
   d2.resize(4, 4);
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
-  EXPECT_THROW(d22.sub_block(d11, 1, 1, 4, 4), std::domain_error);
-  EXPECT_THROW(d22.sub_block(d11, 4, 4, 2, 2), std::domain_error);
+  EXPECT_THROW(d22.sub_block(d11, 1, 1, 0, 0, 4, 4), std::domain_error);
+  EXPECT_THROW(d22.sub_block(d11, 4, 4, 0, 0, 2, 2), std::domain_error);
 }
 
 #endif

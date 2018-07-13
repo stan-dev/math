@@ -227,24 +227,27 @@ class matrix_gpu {
   /**
    * Write the context of A into
    * <code>this</code> starting at the top left of <code>this</code>
-   * @param i the offset row in A
-   * @param j the offset column in A
+   * @param A_i the offset row in A
+   * @param A_j the offset column in A
+   * @param this_i the offset row for the matrix to be subset into
+   * @param this_j the offset col for the matrix to be subset into
    * @param nrows the number of rows in the submatrix
    * @param ncols the number of columns in the submatrix
    */
-  void sub_block(const matrix_gpu& A, int i, int j, int nrows, int ncols) {
+  void sub_block(const matrix_gpu& A, int A_i, int A_j, int this_i, int this_j,
+    int nrows, int ncols) {
     if (nrows == 0 || ncols == 0) {
       return;
     }
-    if ((i + nrows) > A.rows() || (j + ncols) > this->cols()) {
+    if ((A_i + nrows) > A.rows() || (A_j + ncols) > this->cols()) {
       domain_error("copy_submatrix", "submatrix in *this", " is out of bounds",
                    "");
     }
     cl::Kernel kernel = opencl_context.get_kernel("copy_submatrix");
     cl::CommandQueue cmdQueue = opencl_context.queue();
     try {
-      set_kernel_args(kernel, A.buffer(), this->buffer(), i, j, nrows, ncols,
-                      A.rows(), A.cols(), this->rows(), this->cols());
+      set_kernel_args(kernel, A.buffer(), this->buffer(), A_i, A_j, this_i,
+       this_j, nrows, ncols, A.rows(), A.cols(), this->rows(), this->cols());
 
       cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
                                     cl::NDRange(nrows, ncols), cl::NullRange,
