@@ -81,6 +81,7 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lccdf(
                                                                       beta);
 
   using std::exp;
+  using std::exp;
   using std::log;
   using std::pow;
 

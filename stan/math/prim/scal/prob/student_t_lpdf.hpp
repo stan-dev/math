@@ -87,6 +87,7 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lpdf(
   size_t N = max_size(y, nu, mu, sigma);
 
   using std::log;
+  using std::log;
 
   VectorBuilder<include_summand<propto, T_y, T_dof, T_loc, T_scale>::value,
                 T_partials_return, T_dof>

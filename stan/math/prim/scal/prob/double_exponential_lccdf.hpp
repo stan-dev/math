@@ -56,6 +56,7 @@ typename return_type<T_y, T_loc, T_scale>::type double_exponential_lccdf(
                          mu, "Scale Parameter", sigma);
 
   using std::exp;
+  using std::exp;
   using std::log;
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);

@@ -4,9 +4,9 @@
 #include <limits>
 
 TEST(MathFunctions, inv_Phi) {
+  using stan::math::Phi;
   using stan::math::fvar;
   using stan::math::inv_Phi;
-  using stan::math::Phi;
   EXPECT_FLOAT_EQ(0.0, inv_Phi(0.5));
   fvar<double> p = 0.123456789;
   EXPECT_FLOAT_EQ(p.val_, Phi(inv_Phi(p)).val_);
@@ -40,9 +40,9 @@ TEST(MathFunctions, inv_Phi_nan) {
 }
 
 TEST(AgradFwdinv_Phi, Fvar) {
+  using stan::math::Phi;
   using stan::math::fvar;
   using stan::math::inv_Phi;
-  using stan::math::Phi;
 
   fvar<double> x = 0.1;
   x.d_ = 1.0;
@@ -53,9 +53,9 @@ TEST(AgradFwdinv_Phi, Fvar) {
   EXPECT_FLOAT_EQ(1.0, y.d_);
 }
 TEST(AgradFwdinv_Phi, FvarFvarDouble) {
+  using stan::math::Phi;
   using stan::math::fvar;
   using stan::math::inv_Phi;
-  using stan::math::Phi;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 0.1;

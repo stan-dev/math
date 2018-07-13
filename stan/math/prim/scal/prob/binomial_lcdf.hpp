@@ -70,6 +70,7 @@ typename return_type<T_prob>::type binomial_lcdf(const T_n& n, const T_N& N,
   size_t size = max_size(n, N, theta);
 
   using std::exp;
+  using std::exp;
   using std::log;
   using std::pow;
 

@@ -3,6 +3,7 @@
 
 TEST(AgradRev, value_of) {
   using stan::math::value_of;
+  using stan::math::value_of;
   using stan::math::var;
 
   var a = 5.0;

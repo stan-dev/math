@@ -60,6 +60,7 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_lpdf(
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
   using std::log;
+  using std::log;
 
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>

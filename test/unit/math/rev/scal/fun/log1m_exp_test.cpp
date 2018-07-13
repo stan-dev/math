@@ -40,6 +40,7 @@ TEST(AgradRev, log1m_exp) {
 
 TEST(AgradRev, log1m_exp_exception) {
   using stan::math::log1m_exp;
+  using stan::math::log1m_exp;
   EXPECT_NO_THROW(log1m_exp(AVAR(-3)));
   EXPECT_NO_THROW(log1m_exp(AVAR(3)));
 }

@@ -18,6 +18,7 @@ TEST(AgradFwdBinomialCoefficientLog, Fvar) {
 
 TEST(AgradFwdBinomialCoefficientLog, FvarFvarDouble) {
   using stan::math::binomial_coefficient_log;
+  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
 
   fvar<fvar<double> > x;
