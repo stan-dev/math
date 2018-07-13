@@ -15,7 +15,7 @@ namespace math {
  * Both matrices are stored on the GPU.
  *
  * @param src the source matrix
- * @param triangular_map int to describe
+ * @tparam triangular_map int to describe
  * which part of the matrix to copy:
  * Lower - copies the lower triangular
  * Upper - copes the upper triangular
