@@ -1,32 +1,34 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BERNOULLI_LOGIT_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BERNOULLI_LOGIT_RNG_HPP
 
+#include <stan/math/prim/scal/fun/inv_logit.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/meta/length.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/bernoulli_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/inv_logit.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
 namespace math {
 
 /**
- * A Bernoulli random number generator which takes as its argument the
- * often more convenient logit-parametrization.
+ * Return a Bernoulli random variate with logit-parameterized chance of success
+ * using the specified random number generator.
  *
- * @tparam RNG Random number generator type.
- * @param t logit-transformed probability parameter.
- * @param rng pseudorandom number generator.
- * @return Bernoulli(logit^{-1}(t)) generated random number, either 0 or 1.
+ * t can be a scalar or a one-dimensional container.
+ *
+ * @tparam T_t type of logit-parameterized chance of success parameter
+ * @tparam RNG type of random number generator
+ * @param t (Sequence of) logit-parameterized chance of success parameter(s)
+ * @param rng random number generator
+ * @return (Sequence of) Bernoulli random variate(s)
+ * @throw std::domain_error if logit-parameterized chance of success parameter
+ * is not finite
  */
-template <class RNG>
-inline int bernoulli_logit_rng(double t, RNG& rng) {
+template <typename T_t, class RNG>
+inline typename VectorBuilder<true, int, T_t>::type bernoulli_logit_rng(
+    const T_t& t, RNG& rng) {
   using boost::bernoulli_distribution;
   using boost::variate_generator;
   using stan::math::inv_logit;
@@ -34,9 +36,17 @@ inline int bernoulli_logit_rng(double t, RNG& rng) {
   check_finite("bernoulli_logit_rng", "Logit transformed probability parameter",
                t);
 
-  variate_generator<RNG&, bernoulli_distribution<> > bernoulli_rng(
-      rng, bernoulli_distribution<>(inv_logit(t)));
-  return bernoulli_rng();
+  scalar_seq_view<T_t> t_vec(t);
+  size_t N = length(t);
+  VectorBuilder<true, int, T_t> output(N);
+
+  for (size_t n = 0; n < N; ++n) {
+    variate_generator<RNG&, bernoulli_distribution<> > bernoulli_rng(
+        rng, bernoulli_distribution<>(inv_logit(t_vec[n])));
+    output[n] = bernoulli_rng();
+  }
+
+  return output.data();
 }
 
 }  // namespace math
