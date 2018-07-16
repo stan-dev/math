@@ -146,8 +146,18 @@ pipeline {
         }
         stage('Vanilla tests') {
             parallel {
-                stage('Unit') {
-                    agent any
+                stage('Linux Unit') {
+                    agent { label 'linux' }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh setupCC()
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Mac Unit') {
+                    agent  { label 'osx' }
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
@@ -207,6 +217,17 @@ pipeline {
                         unstash 'MathSetup'
                         sh "echo CC=${MPICXX} >> make/local"
                         sh "echo STAN_MPI=true >> make/local"
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Unit with threading') {
+                    agent any
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh setupCC()
+                        sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
