@@ -2,6 +2,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/gpu/add.hpp>
 #include <gtest/gtest.h>
+#include <algorithm>
 
 TEST(MathMatrixGPU, add_v_exception_pass) {
   stan::math::vector_d d1, d2;
@@ -166,17 +167,17 @@ TEST(MathMatrixGPU, add_value_check) {
   EXPECT_NO_THROW(v33 = add(v11, v22));
   EXPECT_NO_THROW(rv33 = add(rv11, rv22));
   EXPECT_NO_THROW(m33 = add(m11, m22));
-  
+
   stan::math::copy(v3, v33);
   EXPECT_EQ(11, v3(0));
   EXPECT_EQ(102, v3(1));
   EXPECT_EQ(1003, v3(2));
-  
+
   stan::math::copy(rv3, rv33);
   EXPECT_EQ(11, rv3(0));
   EXPECT_EQ(102, rv3(1));
   EXPECT_EQ(1003, rv3(2));
-  
+
   stan::math::copy(m3, m33);
   EXPECT_EQ(11, m3(0, 0));
   EXPECT_EQ(102, m3(0, 1));

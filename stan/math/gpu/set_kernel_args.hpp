@@ -5,7 +5,15 @@
 
 namespace stan {
 namespace math {
-inline void _set_kernel_args(cl::Kernel &k, int i) {}  // terminating function
+/**
+ * Terminating function for recursively setting arguments in an OpenCL kernel.
+ *
+ * @param k An OpenCL kernel.
+ * @param i The <code>i</code>th argument to the kernel.
+ * @note This function definition serves to end the recursive call for
+ * <code>set_kernel_args()</code>
+ */
+inline void _set_kernel_args(cl::Kernel &k, int i) {}
 
 /**
  * Used in <code>set_kernel_args()</code> to add arguments to an OpenCL kernel.

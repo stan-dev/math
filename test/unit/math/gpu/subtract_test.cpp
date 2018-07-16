@@ -2,6 +2,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/gpu/subtract.hpp>
 #include <gtest/gtest.h>
+#include <algorithm>
 
 TEST(MathMatrixGPU, subtract_v_exception_pass) {
   stan::math::vector_d d1, d2;
@@ -163,17 +164,17 @@ TEST(MathMatrixGPU, subtract_value_check) {
   EXPECT_NO_THROW(v33 = subtract(v11, v22));
   EXPECT_NO_THROW(rv33 = subtract(rv11, rv22));
   EXPECT_NO_THROW(m33 = subtract(m11, m22));
-  
+
   stan::math::copy(v3, v33);
   EXPECT_EQ(-9, v3(0));
   EXPECT_EQ(-98, v3(1));
   EXPECT_EQ(-997, v3(2));
-  
+
   stan::math::copy(rv3, rv33);
   EXPECT_EQ(-9, rv3(0));
   EXPECT_EQ(-98, rv3(1));
   EXPECT_EQ(-997, rv3(2));
-  
+
   stan::math::copy(m3, m33);
   EXPECT_EQ(-9, m3(0, 0));
   EXPECT_EQ(-98, m3(0, 1));
