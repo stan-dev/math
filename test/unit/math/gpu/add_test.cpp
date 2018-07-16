@@ -156,13 +156,13 @@ TEST(MathMatrixGPU, add_value_check) {
   using stan::math::matrix_gpu;
   matrix_gpu v11(v1);
   matrix_gpu v22(v2);
-  matrix_gpu v33(3,1);
+  matrix_gpu v33(3, 1);
   matrix_gpu rv11(rv1);
   matrix_gpu rv22(rv2);
-  matrix_gpu rv33(1,3);
+  matrix_gpu rv33(1, 3);
   matrix_gpu m11(m1);
   matrix_gpu m22(m2);
-  matrix_gpu m33(3,3);
+  matrix_gpu m33(3, 3);
 
   EXPECT_NO_THROW(v33 = add(v11, v22));
   EXPECT_NO_THROW(rv33 = add(rv11, rv22));

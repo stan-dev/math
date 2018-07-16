@@ -149,17 +149,17 @@ TEST(MathMatrixGPU, subtract_value_check) {
   m2 << 10, 100, 1000, 0, -10, -12, 2, 4, 8;
   stan::math::matrix_d m3(3, 3);
 
-  using stan::math::subtract;
   using stan::math::matrix_gpu;
+  using stan::math::subtract;
   matrix_gpu v11(v1);
   matrix_gpu v22(v2);
-  matrix_gpu v33(3,1);
+  matrix_gpu v33(3, 1);
   matrix_gpu rv11(rv1);
   matrix_gpu rv22(rv2);
-  matrix_gpu rv33(1,3);
+  matrix_gpu rv33(1, 3);
   matrix_gpu m11(m1);
   matrix_gpu m22(m2);
-  matrix_gpu m33(3,3);
+  matrix_gpu m33(3, 3);
 
   EXPECT_NO_THROW(v33 = subtract(v11, v22));
   EXPECT_NO_THROW(rv33 = subtract(rv11, rv22));
