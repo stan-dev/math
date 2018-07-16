@@ -21,8 +21,8 @@ namespace math {
  * input matrices do not have matching dimensions
  *
  */
-inline matrix_gpu add(matrix_gpu& A, matrix_gpu& B) {
-  check_matching_dims("add (GPU)", "A", A, "B", B);
+inline matrix_gpu add(const matrix_gpu& A, const matrix_gpu& B) {
+  check_matching_dims("add", "A", A, "B", B);
   matrix_gpu C(A.rows(), A.cols());
   if (C.size() == 0) {
     return C;

@@ -24,12 +24,8 @@ namespace math {
  *
  */
 template <int triangular_map>
-inline matrix_gpu copy_triangular(matrix_gpu& src) {
-  if (src.size() == 0) {
-    matrix_gpu dst(src);
-    return dst;
-  }
-  if (src.size() == 1) {
+inline matrix_gpu copy_triangular(const matrix_gpu& src) {
+  if (src.size() == 0 || src.size() == 1) {
     matrix_gpu dst(src);
     return dst;
   }

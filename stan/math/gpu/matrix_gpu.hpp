@@ -203,10 +203,7 @@ class matrix_gpu {
    */
   template <int triangular_map>
   void triangular_transpose() {
-    if (size() == 0) {
-      return;
-    }
-    if (size() == 1) {
+    if (size() == 0 || size() == 1) {
       return;
     }
     check_size_match("triangular_transpose (GPU)",

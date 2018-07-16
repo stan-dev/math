@@ -15,7 +15,7 @@ namespace math {
  * @return transposed input matrix
  *
  */
-inline matrix_gpu transpose(matrix_gpu& src) {
+inline matrix_gpu transpose(const matrix_gpu& src) {
   matrix_gpu dst(src.cols(), src.rows());
   if (dst.size() == 0)
     return dst;

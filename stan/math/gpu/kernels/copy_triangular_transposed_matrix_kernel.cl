@@ -11,14 +11,10 @@ R"(
 #define A(i, j)  A[j * rows + i]
 #endif
 
-#ifndef AT
-#define AT(i, j)  A[j * cols + i]
-#endif
-
 /**
  * Copies a lower/upper triangular of a matrix to it's upper/lower.
  *
- * @param[in,out] A The matrix.
+ * @param[in,out] A The matrix. The matrix should be square.
  * @param rows The number of rows in A.
  * @param cols The number of cols in A.
  * @param copy_direction A value of zero or one specifying
@@ -34,9 +30,9 @@ __kernel void copy_triangular_transposed(__global double *A, unsigned int rows,
   int j = get_global_id(1);
   if (i < rows && j < cols) {
     if (copy_direction == LOWER_TO_UPPER && j > i) {
-      AT(j, i) = A(i, j);
+      A(j, i) = A(i, j);
     } else if (copy_direction == UPPER_TO_LOWER && j > i) {
-      A(i, j) = AT(j, i);
+      A(i, j) = A(j, i);
     }
   }
 };)"
