@@ -155,28 +155,28 @@ TEST(MathMatrixGPU, add_value_check) {
   using stan::math::matrix_gpu;
   matrix_gpu v11(v1);
   matrix_gpu v22(v2);
-  matrix_gpu v33(3,1);
+  matrix_gpu v33(3, 1);
   matrix_gpu rv11(rv1);
   matrix_gpu rv22(rv2);
-  matrix_gpu rv33(1,3);
+  matrix_gpu rv33(1, 3);
   matrix_gpu m11(m1);
   matrix_gpu m22(m2);
-  matrix_gpu m33(3,3);
+  matrix_gpu m33(3, 3);
 
   EXPECT_NO_THROW(v33 = add(v11, v22));
   EXPECT_NO_THROW(rv33 = add(rv11, rv22));
   EXPECT_NO_THROW(m33 = add(m11, m22));
-  
+
   stan::math::copy(v3, v33);
   EXPECT_EQ(11, v3(0));
   EXPECT_EQ(102, v3(1));
   EXPECT_EQ(1003, v3(2));
-  
+
   stan::math::copy(rv3, rv33);
   EXPECT_EQ(11, rv3(0));
   EXPECT_EQ(102, rv3(1));
   EXPECT_EQ(1003, rv3(2));
-  
+
   stan::math::copy(m3, m33);
   EXPECT_EQ(11, m3(0, 0));
   EXPECT_EQ(102, m3(0, 1));

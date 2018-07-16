@@ -7,17 +7,21 @@
 TEST(MathMatrixGPU, triangular_transpose_m_exception_pass) {
   stan::math::matrix_gpu m1(1, 1);
   stan::math::matrix_gpu m0;
-  stan::math::matrix_gpu m2(5,3);
-  stan::math::matrix_gpu m3(3,4);
+  stan::math::matrix_gpu m2(5, 3);
+  stan::math::matrix_gpu m3(3, 4);
 
   EXPECT_NO_THROW(m0.triangular_transpose<stan::math::LowerToUpper>());
   EXPECT_NO_THROW(m0.triangular_transpose<stan::math::UpperToLower>());
   EXPECT_NO_THROW(m1.triangular_transpose<stan::math::LowerToUpper>());
   EXPECT_NO_THROW(m1.triangular_transpose<stan::math::UpperToLower>());
-  EXPECT_THROW(m2.triangular_transpose<stan::math::LowerToUpper>(), std::invalid_argument);
-  EXPECT_THROW(m2.triangular_transpose<stan::math::UpperToLower>(), std::invalid_argument);
-  EXPECT_THROW(m3.triangular_transpose<stan::math::LowerToUpper>(), std::invalid_argument);
-  EXPECT_THROW(m3.triangular_transpose<stan::math::UpperToLower>(), std::invalid_argument);
+  EXPECT_THROW(m2.triangular_transpose<stan::math::LowerToUpper>(),
+               std::invalid_argument);
+  EXPECT_THROW(m2.triangular_transpose<stan::math::UpperToLower>(),
+               std::invalid_argument);
+  EXPECT_THROW(m3.triangular_transpose<stan::math::LowerToUpper>(),
+               std::invalid_argument);
+  EXPECT_THROW(m3.triangular_transpose<stan::math::UpperToLower>(),
+               std::invalid_argument);
 }
 
 TEST(MathMatrixGPU, triangular_transpose_m_pass) {
