@@ -146,26 +146,6 @@ pipeline {
         }
         stage('Vanilla tests') {
             parallel {
-                stage('Linux Unit') {
-                    agent { label 'linux' }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh setupCC()
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Mac Unit') {
-                    agent  { label 'osx' }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh setupCC()
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
                     steps {
@@ -192,6 +172,26 @@ pipeline {
                             echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
                         }
                     }
+                }
+                stage('Linux Unit') {
+                    agent { label 'linux' }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh setupCC()
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Mac Unit') {
+                    agent  { label 'osx' }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh setupCC()
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
                 }
             }
         }
