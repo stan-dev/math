@@ -21,6 +21,7 @@
 #include <stan/math/rev/mat/fun/divide.hpp>
 #include <stan/math/rev/mat/fun/dot_product.hpp>
 #include <stan/math/rev/mat/fun/dot_self.hpp>
+#include <stan/math/rev/mat/fun/gp_periodic_cov.hpp>
 #include <stan/math/rev/mat/fun/grad.hpp>
 #include <stan/math/rev/mat/fun/initialize_variable.hpp>
 #include <stan/math/rev/mat/fun/LDLT_alloc.hpp>
@@ -56,7 +57,6 @@
 #include <stan/math/rev/mat/fun/variance.hpp>
 #include <stan/math/rev/mat/functor/algebra_solver.hpp>
 #include <stan/math/rev/mat/functor/gradient.hpp>
-#include <stan/math/rev/mat/functor/integrate_1d_tsc.hpp>
 #include <stan/math/rev/mat/functor/jacobian.hpp>
 #include <stan/math/rev/mat/functor/cvodes_utils.hpp>
 #include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>
