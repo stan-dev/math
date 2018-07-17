@@ -4,130 +4,170 @@
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <boost/shared_ptr.hpp>
 
 namespace stan {
 namespace math {
 
 /**
- * LDLT_factor is a thin wrapper on Eigen::LDLT to allow for
- * reusing factorizations and efficient autodiff of things like
- * log determinants and solutions to linear systems.
+ * LDLT_factor is a wrapper on Eigen::LDLT which factorizes the matrix A into P
+ * * L * D * L^T * P^T where P is a permutation matrix (permuting the rows of
+ * the matrix it is multiplied with), L is a lower triangular matrix and, D is a
+ * diagonal matrix
  *
- * Memory is allocated in the constructor and stored in a
- * <code>boost::shared_ptr</code>, which ensures that is freed
- * when the object is released.
+ * In this implementation, the matrix A must be positive definite
  *
- * After the constructor and/or compute() is called users of
- * LDLT_factor are responsible for calling success() to
- * check whether the factorization has succeeded.  Use of an LDLT_factor
- * object (e.g., in mdivide_left_ldlt) is undefined if success() is false.
+ * The two usage patterns are:
  *
- * It's usage pattern is:
+ * Eigen::Matrix<T, R, C> A;
+ * LDLT_factor<T, R, C> ldlt1(A);
  *
- * ~~~
- * Eigen::Matrix<T, R, C> A1, A2;
+ * which computes the factorization in the constructor and
  *
- * LDLT_factor<T, R, C> ldlt_A1(A1);
- * LDLT_factor<T, R, C> ldlt_A2;
- * ldlt_A2.compute(A2);
- * ~~~
+ * LDLT_factor<T, R, C> ldlt2;
+ * ldlt2.compute(A);
  *
- * The caller should check that ldlt_A1.success() and ldlt_A2.success()
- * are true or abort accordingly.  Alternatively, call check_ldlt_factor().
+ * which defers the factorization until later.
  *
- * Note that ldlt_A1 and ldlt_A2 are completely equivalent.  They simply
- * demonstrate two different ways to construct the factorization.
- *
- * The caller can use the LDLT_factor objects as needed.  For
- * instance
- *
- * ~~~
- * x1 = mdivide_left_ldlt(ldlt_A1, b1);
- * x2 = mdivide_right_ldlt(b2, ldlt_A2);
- *
- * d1 = log_determinant_ldlt(ldlt_A1);
- * d2 = log_determinant_ldlt(ldlt_A2);
- * ~~~
- *
- * This class is conceptually similar to the corresponding Eigen
- * class.  Any symmetric, positive-definite matrix A can be
- * decomposed as LDL' where L is unit lower-triangular and D is
- * diagonal with positive diagonal elements.
- *
- * @tparam T scalare type held in the matrix
- * @tparam R rows (as in Eigen)
- * @tparam C columns (as in Eigen)
+ * @tparam T scalar type of matrix
+ * @tparam R row type of matrix (as in Eigen)
+ * @tparam C column type of matrix (as in Eigen)
  */
 template <typename T, int R, int C>
 class LDLT_factor {
- public:
-  typedef Eigen::Matrix<T, Eigen::Dynamic, 1> vector_t;
-  typedef Eigen::Matrix<T, R, C> matrix_t;
-  typedef Eigen::LDLT<matrix_t> ldlt_t;
-
  private:
   int N_;
-  boost::shared_ptr<ldlt_t> ldltP_;
+  Eigen::LDLT<Eigen::Matrix<T, R, C> > ldlt_;
+  bool success_;
 
  public:
-  LDLT_factor() : N_(0), ldltP_(new ldlt_t()) {}
+  LDLT_factor() : N_(0), success_(false) {}
 
-  explicit LDLT_factor(const matrix_t& A) : N_(0), ldltP_(new ldlt_t()) {
+  /**
+   * Construct a new LDLT_factor that contains the LDLT factorization of the
+   * matrix A
+   *
+   * @param A matrix to factorize
+   */
+  explicit LDLT_factor(const Eigen::Matrix<T, R, C>& A)
+      : N_(A.rows()), success_(false) {
     compute(A);
   }
 
-  inline void compute(const matrix_t& A) {
+  /**
+   * @return number of rows of factorized matrix
+   */
+  inline int rows() const { return N_; }
+
+  /**
+   * @return number of columns of factorized matrix
+   */
+  inline int cols() const { return N_; }
+
+  /**
+   * Compute the LDLT factorization of the matrix A
+   *
+   * @param A matrix to factorize
+   * @throw std::domain_error if the Eigen LDLT factorization fails, A is not
+   * positive-semidefinite, or the diagonal in the factorization contains NaNs
+   */
+  inline void compute(const Eigen::Matrix<T, R, C>& A) {
     check_square("LDLT_factor", "A", A);
+
     N_ = A.rows();
-    ldltP_->compute(A);
-  }
+    ldlt_.compute(A);
+    success_ = false;
 
-  inline bool success() const {
-    if (ldltP_->info() != Eigen::Success)
-      return false;
-    if (!(ldltP_->isPositive()))
-      return false;
-    vector_t ldltP_diag(ldltP_->vectorD());
-    for (int i = 0; i < ldltP_diag.size(); ++i)
-      if (ldltP_diag(i) <= 0 || is_nan(ldltP_diag(i)))
-        return false;
-    return true;
-  }
+    if (ldlt_.info() != Eigen::Success) {
+      domain_error("compute", "A", "", "Eigen failed to compute ldlt for A",
+                   "");
+    }
 
-  inline T log_abs_det() const { return ldltP_->vectorD().array().log().sum(); }
+    if (!ldlt_.isPositive()) {
+      domain_error("compute", "A", "", "is not positive semidefinite", "");
+    }
 
-  /*inline void inverse(matrix_t& invA) const {
-    invA.setIdentity(N_);
-    ldltP_->solveInPlace(invA);
-    }*/
+    Eigen::VectorXd ldlt_diag(ldlt_.vectorD());
+    for (int i = 0; i < ldlt_diag.size(); ++i) {
+      if (is_nan(ldlt_diag(i))) {
+        domain_error("compute", "Diagonal of factorization", "", "contains NaN",
+                     "");
+      }
 
-  template <typename Rhs>
-  inline const Eigen::Solve<ldlt_t, Rhs> solve(
-      const Eigen::MatrixBase<Rhs>& b) const {
-    return ldltP_->solve(b);
+      if (ldlt_diag(i) <= 0.0) {
+        domain_error("compute", "Diagonal of factorization", "",
+                     "should be positive", "");
+      }
+    }
+
+    success_ = true;
   }
 
   /**
-   * Solve the system inv(A) * b in place (store solution where b was
-   * originally)
+   * Return the log of the absolute value of the determinant
+   * of the factorized matrix
    *
-   * template Rhs Type of right hand side
-   * @param b Right hand side of equation
+   * @return log(abs(determinant(A)))
    */
-  template <typename Rhs>
-  inline void solveInPlace(Eigen::MatrixBase<Rhs>& b) const {
-    ldltP_->solveInPlace(b);
+  inline T log_abs_det() const { return ldlt_.vectorD().array().log().sum(); }
+
+  /**
+   * Solve the system A x = b for x
+   *
+   * Store the result in dst. dst should already be the right
+   * size to hold the solution
+   *
+   * @tparam RhsType type of right hand side
+   * @tparam DstType type of solution
+   * @param rhs right hand side of equation (b)
+   * @param dst solution (x)
+   */
+  template <typename RhsType, typename DstType>
+  inline void solve(const Eigen::MatrixBase<RhsType>& rhs,
+                    Eigen::MatrixBase<DstType>& dst) const {
+    dst = ldlt_.solve(rhs);
   }
 
-  /*inline matrix_t solveRight(const matrix_t& B) const {
-    return ldltP_->solve(B.transpose()).transpose();
-    }*/
+  /**
+   * Solve the system A x = b for x and return the result
+   *
+   * @tparam RhsType type of right hand side
+   * @param rhs right hand side of equation (b)
+   * @return solution (x)
+   */
+  template <typename RhsType>
+  inline Eigen::Matrix<T, R, C> solve(
+      const Eigen::MatrixBase<RhsType>& rhs) const {
+    return ldlt_.solve(rhs);
+  }
 
-  inline vector_t vectorD() const { return ldltP_->vectorD(); }
+  /**
+   * Solve the system A x = b for x in place
+   *
+   * @tparam RhsType Type of right hand side
+   * @param[in, out] rhs on input rhs is b and on output it is x
+   */
+  template <typename RhsType>
+  inline void solveInPlace(Eigen::MatrixBase<RhsType>& rhs) const {
+    ldlt_.solveInPlace(rhs);
+  }
 
-  inline int rows() const { return N_; }
-  inline int cols() const { return N_; }
+  /*
+   * Return true if:
+   *  1. Eigen reported no errors in factorization
+   *  2. Matrix is positive semi-definite
+   *  3. There are no NaNs in the diagnonal of the factorization
+   *
+   * @return whether or not decomposition was a success
+   */
+  inline bool success() const { return success_; }
+
+  /*
+   * Return the non-zero values of diagonal matrix D in the LDL^T decomposition
+   * of A
+   *
+   * @return non-zero values of D
+   */
+  inline Eigen::VectorXd vectorD() const { return ldlt_.vectorD(); }
 };
 
 }  // namespace math
