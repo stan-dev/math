@@ -86,7 +86,7 @@ class LDLT_factor {
       domain_error("compute", "A", "", "is not positive semidefinite", "");
     }
 
-    Eigen::VectorXd ldlt_diag(ldlt_.vectorD());
+    Eigen::Matrix<T, Eigen::Dynamic, 1> ldlt_diag(ldlt_.vectorD());
     for (int i = 0; i < ldlt_diag.size(); ++i) {
       if (is_nan(ldlt_diag(i))) {
         domain_error("compute", "Diagonal of factorization", "", "contains NaN",

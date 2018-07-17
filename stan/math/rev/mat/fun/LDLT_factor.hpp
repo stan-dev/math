@@ -4,6 +4,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/mat/fun/LDLT_factor.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
+#include <limits>
 
 namespace stan {
 namespace math {
