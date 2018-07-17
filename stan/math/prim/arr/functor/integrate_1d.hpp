@@ -43,11 +43,13 @@ namespace math {
  * @param f the function to be integrated
  * @param a lower limit of integration
  * @param b upper limit of integration
- * @param relative_tolerance target relative tolerance passed to Boost quadrature
+ * @param relative_tolerance target relative tolerance passed to Boost
+ * quadrature
  * @return numeric integral of function f
  */
 template <typename F>
-inline double integrate(const F& f, double a, double b, double relative_tolerance) {
+inline double integrate(const F& f, double a, double b,
+                        double relative_tolerance) {
   double error1 = 0.0;
   double error2 = 0.0;
   double L1 = 0.0;
@@ -72,15 +74,17 @@ inline double integrate(const F& f, double a, double b, double relative_toleranc
       auto f_wrap = [&](double x) {
         return f(-(x + b), std::numeric_limits<double>::quiet_NaN());
       };
-      Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1, &levels);
+      Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1,
+                               &levels);
     } else {
       boost::math::quadrature::tanh_sinh<double> integrator_right;
       auto f_wrap = [&](double x) {
         return f(-x, std::numeric_limits<double>::quiet_NaN());
       };
-      Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1, &levels)
-          + integrator_right.integrate(f_wrap, -b, 0, relative_tolerance, &error2, &L2,
-                                       &levels);
+      Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1,
+                               &levels)
+          + integrator_right.integrate(f_wrap, -b, 0, relative_tolerance,
+                                       &error2, &L2, &levels);
       used_two_integrals = true;
     }
   } else if (std::isinf(b)) {
@@ -89,27 +93,31 @@ inline double integrate(const F& f, double a, double b, double relative_toleranc
       auto f_wrap = [&](double x) {
         return f(x + a, std::numeric_limits<double>::quiet_NaN());
       };
-      Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1, &levels);
+      Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1,
+                               &levels);
     } else {
       boost::math::quadrature::tanh_sinh<double> integrator_right;
       auto f_wrap = [&](double x) {
         return f(x, std::numeric_limits<double>::quiet_NaN());
       };
-      Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1, &levels)
-          + integrator_right.integrate(f_wrap, a, 0, relative_tolerance, &error2, &L2,
-                                       &levels);
+      Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1,
+                               &levels)
+          + integrator_right.integrate(f_wrap, a, 0, relative_tolerance,
+                                       &error2, &L2, &levels);
       used_two_integrals = true;
     }
   } else {
     auto f_wrap = [&](double x, double xc) { return f(x, xc); };
     boost::math::quadrature::tanh_sinh<double> integrator;
     if (a < 0.0 && b > 0.0) {
-      Q = integrator.integrate(f_wrap, a, 0.0, relative_tolerance, &error1, &L1, &levels)
-          + integrator.integrate(f_wrap, 0.0, b, relative_tolerance, &error2, &L2,
-                                 &levels);
+      Q = integrator.integrate(f_wrap, a, 0.0, relative_tolerance, &error1, &L1,
+                               &levels)
+          + integrator.integrate(f_wrap, 0.0, b, relative_tolerance, &error2,
+                                 &L2, &levels);
       used_two_integrals = true;
     } else {
-      Q = integrator.integrate(f_wrap, a, b, relative_tolerance, &error1, &L1, &levels);
+      Q = integrator.integrate(f_wrap, a, b, relative_tolerance, &error1, &L1,
+                               &levels);
     }
   }
 
@@ -118,17 +126,20 @@ inline double integrate(const F& f, double a, double b, double relative_toleranc
     if (error1 > relative_tolerance * L1) {
       domain_error(function, "error estimate of integral below zero", error1,
                    "",
-                   " exceeds the given relative tolerance times norm of integral below zero");
+                   " exceeds the given relative tolerance times norm of "
+                   "integral below zero");
     }
     if (error2 > relative_tolerance * L2) {
       domain_error(function, "error estimate of integral above zero", error2,
                    "",
-                   " exceeds the given relative tolerance times norm of integral above zero");
+                   " exceeds the given relative tolerance times norm of "
+                   "integral above zero");
     }
   } else {
     if (error1 > relative_tolerance * L1) {
-      domain_error(function, "error estimate of integral", error1, "",
-                   " exceeds the given relative tolerance times norm of integral");
+      domain_error(
+          function, "error estimate of integral", error1, "",
+          " exceeds the given relative tolerance times norm of integral");
     }
   }
   return Q;
@@ -140,7 +151,8 @@ inline double integrate(const F& f, double a, double b, double relative_toleranc
  *
  * The signature for f should be:
  *   double f(double x, double xc, const std::vector<double>& theta,
- *     const std::vector<double>& x_r, const std::vector<int>& x_i, std::ostream* msgs)
+ *     const std::vector<double>& x_r, const std::vector<int>& x_i,
+ * std::ostream* msgs)
  *
  * It should return the value of the function evaluated at x. Any errors
  * should be printed to the msgs stream.
@@ -161,8 +173,8 @@ inline double integrate(const F& f, double a, double b, double relative_toleranc
  *   \f[
  *     \frac{{|I_{n + 1} - I_n|}}{{|I|_{n + 1}}} < \text{relative tolerance}
  *   \f]
- * where \f$I_{n}\f$ is the nth estimate of the integral and \f$|I|_{n}\f$ is the
- * nth estimate of the norm of the integral.
+ * where \f$I_{n}\f$ is the nth estimate of the integral and \f$|I|_{n}\f$ is
+ * the nth estimate of the norm of the integral.
  *
  * Integrals that cross zero are
  * split into two. In this case, each integral is separately integrated to the
