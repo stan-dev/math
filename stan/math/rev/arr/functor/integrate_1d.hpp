@@ -42,11 +42,11 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
     fx.grad();
     gradient = theta_var[n].adj();
     if (is_nan(gradient)) {
-      if (fx.val() == 0)
+      if (fx.val() == 0) {
         gradient = 0;
-      else
-        throw std::domain_error(
-            std::string("derivative of integral is nan for parameter ", n));
+      } else {
+        domain_error("gradient_of_f", "The gradient of f", n, "is nan for parameter ", "");
+      }
     }
   } catch (const std::exception &e) {
     recover_memory_nested();
