@@ -38,25 +38,3 @@ test-math-dependencies:
              'stan::math::var', 'File uses stan::math::var.')
 	@$(call math_warnings, 'fwd', 'stan/math/fwd',\
              '<stan/math/mix/', 'File includes a stan/math/mix header file.')
-## Check for files inside stan/math/*/scal that contain
-##   stan/math/*/arr or stan/math/*/mat
-	@$(call math_warnings, 'scal', stan/math/*/scal,\
-             '<stan/math/.*/arr/', 'File includes an array header file.')
-	@$(call math_warnings, 'scal', stan/math/*/scal,\
-             '<vector>', 'File includes an std::vector header.')
-	@$(call math_warnings, 'scal', stan/math/*/scal,\
-             'std::vector', 'File uses std::vector.')
-	@$(call math_warnings, 'scal', stan/math/*/scal,\
-             '<stan/math/.*/mat/', 'File includes a matrix header file.')
-	@$(call math_warnings, 'scal', stan/math/*/scal,\
-             '<Eigen', 'File includes an Eigen header.')
-	@$(call math_warnings, 'scal', stan/math/*/scal,\
-             'Eigen::', 'File uses Eigen.')
-## Check for files inside stan/math/*/arr that contain
-##   stan/math/*/mat
-	@$(call math_warnings, 'arr', stan/math/*/arr,\
-             '<stan/math/.*/mat/', 'File includes an matrix header file.')
-	@$(call math_warnings, 'arr', stan/math/*/arr,\
-             '<Eigen', 'File includes an Eigen header.')
-	@$(call math_warnings, 'arr', stan/math/*/arr,\
-             'Eigen::', 'File uses Eigen.')
