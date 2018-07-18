@@ -463,8 +463,8 @@ TEST(AgradMixMatrixMdivideRightLDLT, fv_exceptions) {
   using stan::math::vector_fv;
 
   matrix_fv fv1_(3, 3), fv2_(4, 4);
-  fv1_ << 1, 2, 3, 4, 5, 6, 7, 8, 9;
-  fv2_ << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16;
+  fv1_ << 1, 0, 0, 0, 1, 0, 0, 0, 1;
+  fv2_ << 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1;
   vector_fv rvf1(3), rvf2(4);
   rvf1.setZero();
   rvf2.setZero();
@@ -472,8 +472,8 @@ TEST(AgradMixMatrixMdivideRightLDLT, fv_exceptions) {
   vf1.setZero();
   vf2.setZero();
   matrix_d fd1_(3, 3), fd2_(4, 4);
-  fd1_ << 1, 2, 3, 4, 5, 6, 7, 8, 9;
-  fd2_ << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16;
+  fd1_ << 1, 0, 0, 0, 1, 0, 0, 0, 1;
+  fd2_ << 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1;
   vector_d rvd1(3), rvd2(4);
   rvd1.setZero();
   rvd2.setZero();
@@ -1423,8 +1423,8 @@ TEST(AgradMixMatrixMdivideRightLDLT, ffv_exceptions) {
   using stan::math::vector_ffv;
 
   matrix_ffv fv1_(3, 3), fv2_(4, 4);
-  fv1_ << 1, 2, 3, 4, 5, 6, 7, 8, 9;
-  fv2_ << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16;
+  fv1_ << 1, 0, 0, 0, 1, 0, 0, 0, 1;
+  fv2_ << 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1;
   vector_ffv rvf1(3), rvf2(4);
   rvf1.setZero();
   rvf2.setZero();
@@ -1432,8 +1432,8 @@ TEST(AgradMixMatrixMdivideRightLDLT, ffv_exceptions) {
   vf1.setZero();
   vf2.setZero();
   matrix_d fd1_(3, 3), fd2_(4, 4);
-  fd1_ << 1, 2, 3, 4, 5, 6, 7, 8, 9;
-  fd2_ << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16;
+  fd1_ << 1, 0, 0, 0, 1, 0, 0, 0, 1;
+  fd2_ << 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1;
   vector_d rvd1(3), rvd2(4);
   rvd1.setZero();
   rvd2.setZero();

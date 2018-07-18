@@ -30,6 +30,12 @@ namespace math {
  *
  * which defers the factorization until later.
  *
+ * The rev LDLT_factor differs from the prim LDLT_factor in that the
+ * functionality exposed here (solve, log_abs_determinant, and vectorD) are not
+ * meant to be autodiffed through. Any vari that uses LDLT_factor should
+ * implement it's own custom reverse mode autodiff. These things can be
+ * autodiffed in the prim implementation however.
+ *
  * @tparam T scalar type of matrix
  * @tparam R row type of matrix (as in Eigen)
  * @tparam C column type of matrix (as in Eigen)
@@ -88,19 +94,20 @@ class LDLT_factor<var, R, C> {
         = ChainableStack::instance().memalloc_.alloc_array<double>(A.size());
     variA_mem_
         = ChainableStack::instance().memalloc_.alloc_array<vari *>(A.size());
-    Eigen::Map<Eigen::MatrixXd> ldlt_matrix(ldlt_mem_, A.rows(), A.cols());
+    Eigen::Matrix<double, R, C> ldlt_matrix(A.rows(), A.cols());
 
     N_ = A.rows();
     success_ = false;
 
-    for (int j = 0; j < A.cols(); j++) {
-      for (int i = 0; i < A.rows(); i++) {
-        ldlt_matrix(i, j) = A(i, j).val();
-        variA_mem_[i + N_ * j] = A(i, j).vi_;
-      }
+    for (int i = 0; i < A.size(); ++i) {
+      ldlt_matrix.data()[i] = A.data()[i].val();
+      variA_mem_[i] = A.data()[i].vi_;
     }
 
     Eigen::LDLT<Eigen::Ref<Eigen::Matrix<double, R, C> > > ldlt(ldlt_matrix);
+    for (int i = 0; i < ldlt_matrix.size(); ++i) {
+      ldlt_mem_[i] = ldlt_matrix.data()[i];
+    }
 
     const auto &transpositions_indices = ldlt.transpositionsP().indices();
     transpositions_mem_
