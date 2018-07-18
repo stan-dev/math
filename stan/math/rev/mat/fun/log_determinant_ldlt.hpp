@@ -39,7 +39,7 @@ class log_det_ldlt_vari : public vari {
 
     for (int j = 0; j < A_.rows(); j++) {
       for (int i = 0; i < A_.cols(); i++) {
-        A_.get_variA(i, j)->adj_ += adj_ * invA(i, j);
+        A_.getVariA(i, j)->adj_ += adj_ * invA(i, j);
       }
     }
   }

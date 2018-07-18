@@ -106,7 +106,7 @@ class trace_inv_quad_form_ldlt_vari : public vari {
 
     for (int j = 0; j < aA.cols(); j++)
       for (int i = 0; i < aA.rows(); i++)
-        impl->ldlt_.get_variA(i, j)->adj_ += aA(i, j);
+        impl->ldlt_.getVariA(i, j)->adj_ += aA(i, j);
   }
   static inline void chainB(
       double adj,

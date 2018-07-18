@@ -168,7 +168,9 @@ class LDLT_factor {
    *
    * @return non-zero values of D
    */
-  inline Eigen::VectorXd vectorD() const { return ldlt_.vectorD(); }
+  inline Eigen::Matrix<T, Eigen::Dynamic, 1> vectorD() const {
+    return ldlt_.vectorD();
+  }
 };
 
 }  // namespace math

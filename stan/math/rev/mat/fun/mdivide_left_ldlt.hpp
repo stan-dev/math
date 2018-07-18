@@ -79,7 +79,7 @@ class mdivide_left_ldlt_vv_vari : public vari {
 
     for (int j = 0; j < M_; j++)
       for (int i = 0; i < M_; i++)
-        A_.get_variA(i, j)->adj_ += adjA(i, j);
+        A_.getVariA(i, j)->adj_ += adjA(i, j);
 
     pos = 0;
     for (int j = 0; j < N_; j++)
@@ -217,7 +217,7 @@ class mdivide_left_ldlt_vd_vari : public vari {
 
     for (int j = 0; j < adjA.cols(); j++)
       for (int i = 0; i < adjA.rows(); i++)
-        A_.get_variA(i, j)->adj_ += adjA(i, j);
+        A_.getVariA(i, j)->adj_ += adjA(i, j);
   }
 };
 }  // namespace
