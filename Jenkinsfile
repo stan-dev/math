@@ -178,7 +178,7 @@ pipeline {
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
-                        sh setupCC()
+                        writeFile(file: "make/local", text: "CC=${GCC}")
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
