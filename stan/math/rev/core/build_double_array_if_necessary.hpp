@@ -14,7 +14,7 @@ namespace math {
  * @param size Number of vars in input
  * @return The new allocated array
  */
-double* build_double_array_if_necessary(var* array, int size) {
+inline double* build_double_array_if_necessary(var* array, int size) {
   double* double_array
       = ChainableStack::instance().memalloc_.alloc_array<double>(size);
 
@@ -32,7 +32,7 @@ double* build_double_array_if_necessary(var* array, int size) {
  * @param size Number of doubles in input
  * @return The input
  */
-double* build_double_array_if_necessary(double* array, int size) {
+inline double* build_double_array_if_necessary(double* array, int size) {
   return array;
 }
 }  // namespace math
