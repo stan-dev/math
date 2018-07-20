@@ -11,7 +11,7 @@ namespace math {
  * of the vars pointed to by array. Return the allocated array
  *
  * @param array Array of vars to extract values from
- * @size size Number of vars in input
+ * @param size Number of vars in input
  * @return The new allocated array
  */
 double* build_double_array_if_necessary(var* array, int size) {
@@ -29,7 +29,7 @@ double* build_double_array_if_necessary(var* array, int size) {
  * of doubles. Return the input
  *
  * @param array Input array
- * @size size Number of doubles in input
+ * @param size Number of doubles in input
  * @return The input
  */
 double* build_double_array_if_necessary(double* array, int size) {
