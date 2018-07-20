@@ -55,7 +55,7 @@ inline std::vector<double> forward_pde(const F_pde_qoi& pde_qoi,
       = pde_qoi(theta, need_sens, x_r, x_i, msgs);
   std::vector<double> res(raw.size());
   std::transform(raw.begin(), raw.end(), res.begin(),
-                 [&theta](std::vector<double>& qoi_grad) -> double {
+                 [](std::vector<double>& qoi_grad) -> double {
                    return qoi_grad[0];
                  });
   return res;
