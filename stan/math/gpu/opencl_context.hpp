@@ -488,8 +488,8 @@ class opencl_context {
    * simpleopencl.blogspot.com/2013/04/calling-kernels-with-large-number-of.html
    */
   template <typename T, typename... Args>
-  inline void recursive_kernel_args(cl::Kernel &kernel, int i, const T &first_arg,
-                               const Args &... extra_args) {
+  inline void recursive_kernel_args(cl::Kernel &kernel, int i,
+     const T &first_arg, const Args &... extra_args) {
     kernel.setArg(i, first_arg);
     recursive_kernel_args(kernel, i + 1, extra_args...);
   }
