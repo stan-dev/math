@@ -31,7 +31,7 @@ inline void check_diagonal_zeros(const char* function, const char* name,
     cmd_queue.enqueueWriteBuffer(buffer_flag, CL_TRUE, 0, sizeof(int),
                                  &zero_on_diagonal_flag);
     opencl_context.set_kernel_args(kernel_check_diagonal_zeros, y.buffer(),
-      y.rows(), y.cols(), buffer_flag);
+                                   y.rows(), y.cols(), buffer_flag);
 
     cmd_queue.enqueueNDRangeKernel(kernel_check_diagonal_zeros, cl::NullRange,
                                    cl::NDRange(y.rows(), y.cols()),

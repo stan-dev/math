@@ -473,10 +473,11 @@ class opencl_context {
    * @note This function definition serves to end the recursive call for
    * <code>set_kernel_args()</code>
    */
-  inline void recursive_kernel_args(cl::Kernel &k, int i) {}
+  inline void recursive_kernel_args(cl::Kernel& k, int i) {}
 
   /**
-   * Used in <code>set_kernel_args()</code> to add arguments to an OpenCL kernel.
+   * Used in <code>set_kernel_args()</code> to add arguments to an OpenCL
+   * kernel.
    *
    * @param kernel An OpenCL kernel.
    * @param i the position of the argument to the OpenCL kernel.
@@ -488,8 +489,9 @@ class opencl_context {
    * simpleopencl.blogspot.com/2013/04/calling-kernels-with-large-number-of.html
    */
   template <typename T, typename... Args>
-  inline void recursive_kernel_args(cl::Kernel &kernel, int i,
-     const T &first_arg, const Args &... extra_args) {
+  inline void recursive_kernel_args(cl::Kernel& kernel, int i,
+                                    const T& first_arg,
+                                    const Args&... extra_args) {
     kernel.setArg(i, first_arg);
     recursive_kernel_args(kernel, i + 1, extra_args...);
   }
@@ -504,7 +506,7 @@ class opencl_context {
    * simpleopencl.blogspot.com/2013/04/calling-kernels-with-large-number-of.html
    */
   template <typename... Args>
-  inline void set_kernel_args(cl::Kernel &kernel, const Args &... args) {
+  inline void set_kernel_args(cl::Kernel& kernel, const Args&... args) {
     recursive_kernel_args(kernel, 0, args...);
   }
 };

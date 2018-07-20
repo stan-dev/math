@@ -33,8 +33,7 @@ inline matrix_gpu copy_triangular(const matrix_gpu& src) {
   cl::CommandQueue cmdQueue = opencl_context.queue();
   try {
     opencl_context.set_kernel_args(kernel, dst.buffer(), src.buffer(),
-     dst.rows(), dst.cols(),
-                    triangular_map);
+                                   dst.rows(), dst.cols(), triangular_map);
     cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
                                   cl::NDRange(dst.rows(), dst.cols()),
                                   cl::NullRange, NULL, NULL);

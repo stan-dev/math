@@ -30,7 +30,8 @@ inline void check_symmetric(const char* function, const char* name,
     cmd_queue.enqueueWriteBuffer(buffer_symmetric_flag, CL_TRUE, 0, sizeof(int),
                                  &symmetric_flag);
     opencl_context.set_kernel_args(kernel_check_symmetric, y.buffer(), y.rows(),
-      y.cols(), buffer_symmetric_flag, math::CONSTRAINT_TOLERANCE);
+                                   y.cols(), buffer_symmetric_flag,
+                                   math::CONSTRAINT_TOLERANCE);
 
     cmd_queue.enqueueNDRangeKernel(kernel_check_symmetric, cl::NullRange,
                                    cl::NDRange(y.rows(), y.cols()),

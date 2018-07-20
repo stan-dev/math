@@ -22,7 +22,7 @@ inline matrix_gpu transpose(const matrix_gpu& src) {
   cl::CommandQueue cmdQueue = opencl_context.queue();
   try {
     opencl_context.set_kernel_args(kernel, dst.buffer(), src.buffer(),
-     src.rows(), src.cols());
+                                   src.rows(), src.cols());
     cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
                                   cl::NDRange(src.rows(), src.cols()),
                                   cl::NullRange, NULL, NULL);
