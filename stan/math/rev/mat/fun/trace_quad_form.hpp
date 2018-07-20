@@ -17,66 +17,64 @@ namespace stan {
 namespace math {
 namespace {
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
-class trace_quad_form_vari_alloc : public chainable_alloc {
- public:
-  trace_quad_form_vari_alloc(const Eigen::Matrix<Ta, Ra, Ca>& A,
-                             const Eigen::Matrix<Tb, Rb, Cb>& B)
-      : A_(A), B_(B) {}
-
-  double compute() { return trace_quad_form(value_of(A_), value_of(B_)); }
-
-  Eigen::Matrix<Ta, Ra, Ca> A_;
-  Eigen::Matrix<Tb, Rb, Cb> B_;
-};
-
-template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
 class trace_quad_form_vari : public vari {
  protected:
-  static inline void chainA(Eigen::Matrix<double, Ra, Ca>& A,
-                            const Eigen::Matrix<double, Rb, Cb>& Bd,
-                            double adjC) {}
-  static inline void chainB(Eigen::Matrix<double, Rb, Cb>& B,
-                            const Eigen::Matrix<double, Ra, Ca>& Ad,
-                            const Eigen::Matrix<double, Rb, Cb>& Bd,
-                            double adjC) {}
+  Ta* A_mem_;
+  const double* Ad_mem_;
+  int A_rows_;
+  Tb* B_mem_;
+  const double* Bd_mem_;
+  int B_rows_;
+  int B_cols_;
 
-  static inline void chainA(Eigen::Matrix<var, Ra, Ca>& A,
-                            const Eigen::Matrix<double, Rb, Cb>& Bd,
-                            double adjC) {
+  static inline void chainA(
+      Eigen::Map<Eigen::Matrix<double, Ra, Ca> >& A,
+      Eigen::Map<const Eigen::Matrix<double, Ra, Ca> >& Ad, double adjC) {}
+  static inline void chainB(
+      Eigen::Map<Eigen::Matrix<double, Rb, Cb> >& B,
+      Eigen::Map<const Eigen::Matrix<double, Ra, Ca> >& Ad,
+      Eigen::Map<const Eigen::Matrix<double, Rb, Cb> >& Bd, double adjC) {}
+
+  static inline void chainA(
+      Eigen::Map<Eigen::Matrix<var, Ra, Ca> >& A,
+      Eigen::Map<const Eigen::Matrix<double, Rb, Cb> >& Bd, double adjC) {
     Eigen::Matrix<double, Ra, Ca> adjA(adjC * Bd * Bd.transpose());
-    for (int j = 0; j < A.cols(); j++)
-      for (int i = 0; i < A.rows(); i++)
-        A(i, j).vi_->adj_ += adjA(i, j);
+    for (int i = 0; i < A.size(); ++i)
+      A.data()[i].vi_->adj_ += adjA.data()[i];
   }
-  static inline void chainB(Eigen::Matrix<var, Rb, Cb>& B,
-                            const Eigen::Matrix<double, Ra, Ca>& Ad,
-                            const Eigen::Matrix<double, Rb, Cb>& Bd,
-                            double adjC) {
+  static inline void chainB(
+      Eigen::Map<Eigen::Matrix<var, Rb, Cb> >& B,
+      Eigen::Map<const Eigen::Matrix<double, Ra, Ca> >& Ad,
+      Eigen::Map<const Eigen::Matrix<double, Rb, Cb> >& Bd, double adjC) {
     Eigen::Matrix<double, Ra, Ca> adjB(adjC * (Ad + Ad.transpose()) * Bd);
-    for (int j = 0; j < B.cols(); j++)
-      for (int i = 0; i < B.rows(); i++)
-        B(i, j).vi_->adj_ += adjB(i, j);
-  }
-
-  inline void chainAB(Eigen::Matrix<Ta, Ra, Ca>& A,
-                      Eigen::Matrix<Tb, Rb, Cb>& B,
-                      const Eigen::Matrix<double, Ra, Ca>& Ad,
-                      const Eigen::Matrix<double, Rb, Cb>& Bd, double adjC) {
-    chainA(A, Bd, adjC);
-    chainB(B, Ad, Bd, adjC);
+    for (int i = 0; i < B.size(); ++i)
+      B.data()[i].vi_->adj_ += adjB.data()[i];
   }
 
  public:
-  explicit trace_quad_form_vari(
-      trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>* impl)
-      : vari(impl->compute()), impl_(impl) {}
+  explicit trace_quad_form_vari(double result, Ta* A_mem, const double* Ad_mem,
+                                int A_rows, Tb* B_mem, const double* Bd_mem,
+                                int B_rows, int B_cols)
+      : vari(result),
+        A_mem_(A_mem),
+        Ad_mem_(Ad_mem),
+        A_rows_(A_rows),
+        B_mem_(B_mem),
+        Bd_mem_(Bd_mem),
+        B_rows_(B_rows),
+        B_cols_(B_cols) {}
 
   virtual void chain() {
-    chainAB(impl_->A_, impl_->B_, value_of(impl_->A_), value_of(impl_->B_),
-            adj_);
-  }
+    Eigen::Map<Eigen::Matrix<Ta, Ra, Ca> > A(A_mem_, A_rows_, A_rows_);
+    Eigen::Map<Eigen::Matrix<Tb, Rb, Cb> > B(B_mem_, B_rows_, B_cols_);
+    Eigen::Map<const Eigen::Matrix<double, Ra, Ca> > Ad(Ad_mem_, A_rows_,
+                                                        A_rows_);
+    Eigen::Map<const Eigen::Matrix<double, Rb, Cb> > Bd(Bd_mem_, B_rows_,
+                                                        B_cols_);
 
-  trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>* impl_;
+    chainA(A, Bd, adj_);
+    chainB(B, Ad, Bd, adj_);
+  }
 };
 }  // namespace
 
@@ -88,10 +86,29 @@ trace_quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
 
-  trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>* baseVari
-      = new trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>(A, B);
+  int A_rows = A.rows();  // A is square
+  int B_rows = B.rows();
+  int B_cols = B.cols();
+  Ta* A_mem = ChainableStack::instance().memalloc_.alloc_array<Ta>(A.size());
+  Tb* B_mem = ChainableStack::instance().memalloc_.alloc_array<Tb>(B.size());
 
-  return var(new trace_quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>(baseVari));
+  for (int i = 0; i < A.size(); ++i)
+    A_mem[i] = A.data()[i];
+  for (int i = 0; i < B.size(); ++i)
+    B_mem[i] = B.data()[i];
+
+  double* Ad_mem = build_double_array_if_necessary(A_mem, A_rows * A_rows);
+  double* Bd_mem = build_double_array_if_necessary(B_mem, B_rows * B_cols);
+
+  Eigen::Matrix<double, Ra, Ca> Ad
+      = Eigen::Map<Eigen::Matrix<double, Ra, Ca> >(Ad_mem, A_rows, A_rows);
+  Eigen::Matrix<double, Ra, Ca> Bd
+      = Eigen::Map<Eigen::Matrix<double, Rb, Cb> >(Bd_mem, B_rows, B_cols);
+
+  double result = trace_quad_form(Ad, Bd);
+
+  return var(new trace_quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>(
+      result, A_mem, Ad_mem, A_rows, B_mem, Bd_mem, B_rows, B_cols));
 }
 
 }  // namespace math
