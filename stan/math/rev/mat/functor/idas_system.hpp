@@ -344,7 +344,6 @@ class idas_system {
     double res0 = std::sqrt(dot_self(res));
     check_less_or_equal(caller, "DAE residual at t0", res0, tol);
   }
-
 };
 
 template <typename F, typename Tyy, typename Typ, typename Tpar>

@@ -57,7 +57,6 @@ integrate_dae(const F& f,
               const int64_t max_num_steps = idas_integrator::IDAS_MAX_STEPS,
               bool check_ic = true,
               std::ostream* msgs = nullptr) {
-
   const std::vector<int> dummy_eq_id(yy0.size(), 0);
   stan::math::idas_integrator solver(rtol, atol, max_num_steps);
   stan::math::idas_forward_system<F, double, double, Tpar> dae{
