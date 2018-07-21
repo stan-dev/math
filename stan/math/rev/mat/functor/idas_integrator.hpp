@@ -31,7 +31,6 @@ class idas_integrator {
   const double rtol_;
   const double atol_;
   const int64_t max_num_steps_;
-
   /**
    * Forward decl
    */
@@ -102,16 +101,18 @@ class idas_integrator {
 
  public:
   static constexpr int IDAS_MAX_STEPS = 500;
-
   /**
    * constructor
    * @param[in] rtol double relative tolerance.
    * @param[in] atol double absolute tolerance.
    * @param[in] max_num_steps max nb. of times steps.
    */
-  idas_integrator(const double rtol, const double atol,
+  idas_integrator(const double rtol,
+                  const double atol,
                   const int64_t max_num_steps)
-      : rtol_(rtol), atol_(atol), max_num_steps_(max_num_steps) {
+      : rtol_(rtol),
+        atol_(atol),
+        max_num_steps_(max_num_steps) {
     if (rtol_ <= 0)
       invalid_argument("idas_integrator", "relative tolerance,", rtol_, "",
                        ", must be greater than 0");
@@ -132,7 +133,9 @@ class idas_integrator {
    * @param[in] atol double absolute tolerance.
    */
   idas_integrator(const double rtol, const double atol)
-      : rtol_(rtol), atol_(atol), max_num_steps_(IDAS_MAX_STEPS) {
+      : rtol_(rtol),
+        atol_(atol),
+        max_num_steps_(IDAS_MAX_STEPS) {
     if (rtol_ <= 0)
       invalid_argument("idas_integrator", "relative tolerance,", rtol_, "",
                        ", must be greater than 0");
@@ -186,7 +189,7 @@ class idas_integrator {
     auto mem = dae.mem();
     auto yy = dae.nv_yy();
     auto yp = dae.nv_yp();
-    auto rr = dae.nv_rr();
+    // auto rr = dae.nv_rr();
     const auto n = dae.n();
 
     typename Dae::return_type res_yy(
@@ -203,14 +206,14 @@ class idas_integrator {
       CHECK_IDAS_CALL(IDASStolerances(mem, rtol_, atol_));
       CHECK_IDAS_CALL(IDASetMaxNumSteps(mem, max_num_steps_));
 
-      // if yy0 & yp0 are not consistent IC, correct yy0
-      if (dae.residual()(t0, yy, yp, rr, dae.to_user_data()) == 0) {
-        if (N_VMaxNorm(rr) > atol_) {
-          CHECK_IDAS_CALL(IDASetId(mem, dae.id()));
-          CHECK_IDAS_CALL(IDACalcIC(mem, IDA_YA_YDP_INIT, ts.front()));
-          CHECK_IDAS_CALL(IDAGetConsistentIC(mem, yy, yp));
-        }
-      }
+      // // if yy0 & yp0 are not consistent IC, correct yy0
+      // if (dae.residual()(t0, yy, yp, rr, dae.to_user_data()) == 0) {
+      //   if (N_VMaxNorm(rr) > atol_) {
+      //     CHECK_IDAS_CALL(IDASetId(mem, dae.id()));
+      //     CHECK_IDAS_CALL(IDACalcIC(mem, IDA_YA_YDP_INIT, ts.front()));
+      //     CHECK_IDAS_CALL(IDAGetConsistentIC(mem, yy, yp));
+      //   }
+      // }
 
       init_sensitivity(dae);
 

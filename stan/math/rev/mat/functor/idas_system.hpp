@@ -305,6 +305,11 @@ class idas_system {
   void* mem() { return mem_; }
 
   /**
+   * return reference to DAE functor
+   */
+  const F& f() { return f_; }
+
+  /**
    * return a closure for IDAS residual callback
    */
   IDAResFn residual() {  // a non-capture lambda
@@ -326,6 +331,20 @@ class idas_system {
       return 0;
     };
   }
+
+  void check_ic_consistency(const double& t0, const double& tol) {
+    using stan::math::value_of;
+    using stan::math::dot_self;
+    const std::vector<double> theta_d(value_of(theta_));
+    const std::vector<double> yy_d(value_of(yy_));
+    const std::vector<double> yp_d(value_of(yp_));
+    std::ostream* msgs = 0;
+    static const char* caller = "idas_integrator";
+    std::vector<double> res(f_(t0, yy_d, yp_d, theta_d, x_r_, x_i_, msgs));
+    double res0 = std::sqrt(dot_self(res));
+    check_less_or_equal(caller, "DAE residual at t0", res0, tol);
+  }
+
 };
 
 template <typename F, typename Tyy, typename Typ, typename Tpar>

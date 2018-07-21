@@ -3,7 +3,6 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <stan/math/rev/mat/functor/idas_forward_system.hpp>
 #include <stan/math/rev/mat/functor/idas_integrator.hpp>
-#include <stan/math/rev/mat/functor/integrate_dae.hpp>
 
 #include <nvector/nvector_serial.h>
 
@@ -52,25 +51,40 @@ struct chemical_kinetics {
   }
 };
 
-TEST(IDAS_integrator, idas_ivp_system_consistent_ic) {
+struct IDASIntegratorTest : public ::testing::Test {
   chemical_kinetics f;
-  std::vector<double> yy0{1.0, 0.0, 0.0};
-  std::vector<double> yp0{-0.04, 0.04, 0.0};
-  std::vector<double> theta{0.040, 1.0e4, 3.0e7};
-  std::vector<double> x_r(3, 1);
-  std::vector<int> x_i(2, 0);
-  std::ostream* msgs = 0;
-
-  const std::vector<int> eq_id{1, 1, 0};
-  stan::math::idas_forward_system<chemical_kinetics, double, double, double>
-      dae{f, eq_id, yy0, yp0, theta, x_r, x_i, msgs};
-  stan::math::idas_integrator solver(1e-4, 1e-8, 1e6);
-  const double t0{0.0};
-  const double h{0.4};
+  std::vector<double> yy0;
+  std::vector<double> yp0;
+  std::vector<double> theta;
+  std::vector<double> x_r;
+  std::vector<int> x_i;
+  std::ostream* msgs;
+  const std::vector<int> eq_id;
+  const double t0;
   std::vector<double> ts;
-  const size_t nout{4};
-  for (size_t i = 0; i < nout; ++i)
-    ts.push_back(h * std::pow(10, i));
+
+  void SetUp() { stan::math::recover_memory(); }
+
+  IDASIntegratorTest()
+    : yy0{1.0, 0.0, 0.0},
+      yp0{-0.04, 0.04, 0.0},
+      theta{0.040, 1.0e4, 3.0e7},
+      msgs{0},
+      eq_id{1, 1, 0},
+      t0(0.0) {
+    const size_t nout{4};
+    const double h{0.4};
+    for (size_t i = 0; i < nout; ++i)
+      ts.push_back(h * std::pow(10, i));
+  }
+};
+
+TEST_F(IDASIntegratorTest, idas_ivp_system_yy0) {
+  using stan::math::idas_forward_system;
+  using stan::math::idas_integrator;
+  idas_forward_system<chemical_kinetics, double, double, double> dae{
+      f, eq_id, yy0, yp0, theta, x_r, x_i, msgs};
+  idas_integrator solver(1e-4, 1e-8, 1e6);
 
   std::vector<std::vector<double> > yy = solver.integrate(dae, t0, ts);
   EXPECT_NEAR(0.985172, yy[0][0], 1e-6);
@@ -79,203 +93,41 @@ TEST(IDAS_integrator, idas_ivp_system_consistent_ic) {
   EXPECT_NEAR(0.0944571, yy[1][2], 1e-6);
 }
 
-TEST(IDAS_integrator, idas_ivp_system_inconsistent_ic) {
-  chemical_kinetics f;
-  std::vector<double> yy0{1.0, 0.0, 0.0};
-  std::vector<double> yp0{0.1, 0.0, 0.0};
-  std::vector<double> theta{0.040, 1.0e4, 3.0e7};
-  std::vector<double> x_r(3, 1);
-  std::vector<int> x_i(2, 0);
-  std::ostream* msgs = 0;
+TEST_F(IDASIntegratorTest, forward_sensitivity_theta) {
+  using stan::math::idas_forward_system;
+  using stan::math::to_var;
+  using stan::math::value_of;
+  using stan::math::var;
 
-  const std::vector<int> eq_id{1, 1, 0};
-  stan::math::idas_forward_system<chemical_kinetics, double, double, double>
-      dae{f, eq_id, yy0, yp0, theta, x_r, x_i, msgs};
-  stan::math::idas_integrator solver(1e-4, 1e-8, 1e6);
-  const double t0{0.0};
-  const double h{0.4};
-  std::vector<double> ts;
-  const size_t nout{4};
-  for (size_t i = 0; i < nout; ++i)
-    ts.push_back(h * std::pow(10, i));
+  stan::math::idas_integrator solver(1e-5, 1e-12, 1e6);
+  std::vector<var> theta_var = to_var(theta);
 
-  std::vector<std::vector<double> > yy = solver.integrate(dae, t0, ts);
-  EXPECT_NEAR(0.985172, yy[0][0], 1e-6);
-  EXPECT_NEAR(0.0147939, yy[0][2], 1e-6);
-  EXPECT_NEAR(0.905521, yy[1][0], 1e-6);
-  EXPECT_NEAR(0.0944571, yy[1][2], 1e-6);
+  idas_forward_system<chemical_kinetics, double, double, var> dae(
+      f, eq_id, yy0, yp0, theta_var, x_r, x_i, msgs);
+  std::vector<std::vector<var> > yy = solver.integrate(dae, t0, ts);
+  EXPECT_NEAR(0.985172, value_of(yy[0][0]), 1e-6);
+  EXPECT_NEAR(0.0147939, value_of(yy[0][2]), 1e-6);
+  EXPECT_NEAR(0.905519, value_of(yy[1][0]), 1e-6);
+  EXPECT_NEAR(0.0944588, value_of(yy[1][2]), 1e-6);
+
+  // test derivatives against central difference results
+  std::vector<double> g;
+  const double h = 1.e-2;
+  const std::vector<double> theta1{theta[0] - theta[0] * h, theta[1], theta[2]};
+  const std::vector<double> theta2{theta[0] + theta[0] * h, theta[1], theta[2]};
+  idas_forward_system<chemical_kinetics, double, double, double> dae1(
+      f, eq_id, yy0, yp0, theta1, x_r, x_i, msgs),
+    dae2(f, eq_id, yy0, yp0, theta2, x_r, x_i, msgs);
+  std::vector<std::vector<double> > yy1 = solver.integrate(dae1, t0, ts);
+  std::vector<std::vector<double> > yy2 = solver.integrate(dae2, t0, ts);
+
+  double yys_finite_diff = (yy2[3][1] - yy1[3][1]) / (2.0 * theta[0] * h);
+  stan::math::set_zero_all_adjoints();
+  yy[3][1].grad(theta_var, g);
+  EXPECT_NEAR(yys_finite_diff, g[0], 5e-6);
 }
 
-TEST(IDAS_integrator, idas_forward_sensitivity_consistent_ic) {
-  chemical_kinetics f;
-  std::vector<double> yy0{1.0, 0.0, 0.0};
-  std::vector<double> yp0{-0.04, 0.04, 0.0};
-  std::vector<double> theta{0.040, 1.0e4, 3.0e7};
-  std::vector<double> x_r(3, 1);
-  std::vector<int> x_i(2, 0);
-  std::ostream* msgs = 0;
-
-  const std::vector<int> eq_id{1, 1, 0};
-  stan::math::idas_integrator solver(1e-4, 1e-10, 1e6);
-  const double t0{0.0};
-  const double h{0.4};
-  std::vector<double> ts;
-  const size_t nout{4};
-  for (size_t i = 0; i < nout; ++i)
-    ts.push_back(h * std::pow(10, i));
-
-  {
-    std::vector<stan::math::var> theta_var = stan::math::to_var(theta);
-    stan::math::idas_forward_system<chemical_kinetics, double, double,
-                                    stan::math::var>
-        dae{f, eq_id, yy0, yp0, theta_var, x_r, x_i, msgs};
-    std::vector<std::vector<stan::math::var> > yy
-        = solver.integrate(dae, t0, ts);
-    EXPECT_NEAR(0.985172, stan::math::value_of(yy[0][0]), 1e-6);
-    EXPECT_NEAR(0.0147939, stan::math::value_of(yy[0][2]), 1e-6);
-    EXPECT_NEAR(0.905520, stan::math::value_of(yy[1][0]), 1e-6);
-    EXPECT_NEAR(0.0944571, stan::math::value_of(yy[1][2]), 1e-6);
-
-    std::vector<double> g;
-    yy[0][0].grad(theta_var, g);
-    EXPECT_NEAR(-0.355942, g[0], 1e-6);
-    EXPECT_NEAR(9.54689e-08 * 1e8, g[1] * 1e8, 1e-6);
-    EXPECT_NEAR(-1.58393e-11 * 1e11, g[2] * 1e11, 1e-5);
-  }
-
-  {
-    std::vector<stan::math::var> theta_var = stan::math::to_var(theta);
-    stan::math::idas_forward_system<chemical_kinetics, double, double,
-                                    stan::math::var>
-        dae{f, eq_id, yy0, yp0, theta_var, x_r, x_i, msgs};
-    std::vector<std::vector<stan::math::var> > yy
-        = solver.integrate(dae, t0, ts);
-    std::vector<double> g;
-    yy[1][1].grad(theta_var, g);
-    EXPECT_NEAR(0.000179251 * 1e4, g[0] * 1e4, 1e-5);
-    EXPECT_NEAR(-5.83021e-10 * 1e10, g[1] * 1e10, 1e-5);
-    EXPECT_NEAR(-2.76228e-13 * 1e13, g[2] * 1e13, 1e-5);
-  }
-
-  {
-    std::vector<stan::math::var> theta_var = stan::math::to_var(theta);
-    stan::math::idas_forward_system<chemical_kinetics, double, double,
-                                    stan::math::var>
-        dae{f, eq_id, yy0, yp0, theta_var, x_r, x_i, msgs};
-    std::vector<std::vector<stan::math::var> > yy
-        = solver.integrate(dae, t0, ts);
-    std::vector<double> g;
-    yy[2][2].grad(theta_var, g);
-    EXPECT_NEAR(4.24741, g[0], 1e-5);
-    EXPECT_NEAR(-1.37296e-05 * 1e5, g[1] * 1e5, 1e-5);
-    EXPECT_NEAR(2.28835e-09 * 1e9, g[2] * 1e9, 1e-5);
-  }
-}
-
-TEST(IDAS_integrator, idas_forward_sensitivity_yy0_par) {
-  chemical_kinetics f;
-  std::vector<double> yy0{1.0, 0.0, 0.0};
-  std::vector<double> yp0{-0.04, 0.04, 0.0};
-  std::vector<double> theta{0.040, 1.0e4, 3.0e7};
-  std::vector<double> x_r(3, 1);
-  std::vector<int> x_i(2, 0);
-  std::ostream* msgs = 0;
-
-  const std::vector<int> eq_id{1, 1, 0};
-  stan::math::idas_integrator solver(1e-4, 1e-8, 1e6);
-  const double t0{0.0};
-  const double h{0.4};
-  std::vector<double> ts;
-  const size_t nout{4};
-  for (size_t i = 0; i < nout; ++i)
-    ts.push_back(h * std::pow(10, i));
-
-  {
-    std::vector<stan::math::var> yy0_var = stan::math::to_var(yy0);
-    stan::math::idas_forward_system<chemical_kinetics, stan::math::var, double,
-                                    double>
-        dae{f, eq_id, yy0_var, yp0, theta, x_r, x_i, msgs};
-    std::vector<std::vector<stan::math::var> > yy
-        = solver.integrate(dae, t0, ts);
-    EXPECT_NEAR(0.985172, stan::math::value_of(yy[0][0]), 1e-6);
-    EXPECT_NEAR(0.0147939, stan::math::value_of(yy[0][2]), 1e-6);
-    EXPECT_NEAR(0.905520, stan::math::value_of(yy[1][0]), 1e-6);
-    EXPECT_NEAR(0.0944571, stan::math::value_of(yy[1][2]), 1e-6);
-
-    std::vector<double> g;
-    yy[0][0].grad(yy0_var, g);
-    EXPECT_NEAR(0.859846, g[0], 1e-6);
-    EXPECT_NEAR(-8.72006e-05 * 1e5, g[1] * 1e5, 1e-5);
-  }
-}
-
-TEST(IDAS_integrator, idas_dae_solver_yy0) {
-  chemical_kinetics f;
-  std::vector<double> yy0{1.0, 0.0, 0.0};
-  std::vector<double> yp0{-0.04, 0.04, 0.0};
-  std::vector<double> theta{0.040, 1.0e4, 3.0e7};
-  std::vector<double> x_r(3, 1);
-  std::vector<int> x_i(2, 0);
-
-  const std::vector<int> eq_id{1, 1, 0};
-  stan::math::idas_integrator solver(1e-4, 1e-8, 1e6);
-  const double t0{0.0};
-  const double h{0.4};
-  std::vector<double> ts;
-  const size_t nout{4};
-  for (size_t i = 0; i < nout; ++i)
-    ts.push_back(h * std::pow(10, i));
-
-  {
-    std::vector<stan::math::var> yy0_var = stan::math::to_var(yy0);
-    std::vector<std::vector<stan::math::var> > yy = integrate_dae(
-        f, eq_id, yy0_var, yp0, t0, ts, theta, x_r, x_i, 1e-4, 1e-8);
-    EXPECT_NEAR(0.985172, stan::math::value_of(yy[0][0]), 1e-6);
-    EXPECT_NEAR(0.0147939, stan::math::value_of(yy[0][2]), 1e-6);
-    EXPECT_NEAR(0.905520, stan::math::value_of(yy[1][0]), 1e-6);
-    EXPECT_NEAR(0.0944571, stan::math::value_of(yy[1][2]), 1e-6);
-
-    std::vector<double> g;
-    yy[0][0].grad(yy0_var, g);
-    EXPECT_NEAR(0.859846, g[0], 1e-6);
-    EXPECT_NEAR(-8.72006e-05 * 1e5, g[1] * 1e5, 1e-5);
-  }
-
-  {
-    std::vector<stan::math::var> yy0_var = stan::math::to_var(yy0);
-    std::vector<stan::math::var> yp0_var = stan::math::to_var(yp0);
-    std::vector<std::vector<stan::math::var> > yy = integrate_dae(
-        f, eq_id, yy0_var, yp0_var, t0, ts, theta, x_r, x_i, 1e-4, 1e-8);
-    EXPECT_NEAR(0.985172, stan::math::value_of(yy[0][0]), 1e-6);
-    EXPECT_NEAR(0.0147939, stan::math::value_of(yy[0][2]), 1e-6);
-    EXPECT_NEAR(0.905520, stan::math::value_of(yy[1][0]), 1e-6);
-    EXPECT_NEAR(0.0944571, stan::math::value_of(yy[1][2]), 1e-6);
-
-    std::vector<double> g;
-    yy[0][0].grad(yy0_var, g);
-    EXPECT_NEAR(0.859846, g[0], 1e-6);
-    EXPECT_NEAR(-8.72006e-05 * 1e5, g[1] * 1e5, 1e-5);
-  }
-
-  {
-    std::vector<stan::math::var> yy0_var = stan::math::to_var(yy0);
-    std::vector<stan::math::var> yp0_var = stan::math::to_var(yp0);
-    std::vector<stan::math::var> theta_var = stan::math::to_var(theta);
-    std::vector<std::vector<stan::math::var> > yy = integrate_dae(
-        f, eq_id, yy0_var, yp0_var, t0, ts, theta_var, x_r, x_i, 1e-4, 1e-8);
-    EXPECT_NEAR(0.985172, stan::math::value_of(yy[0][0]), 1e-6);
-    EXPECT_NEAR(0.0147939, stan::math::value_of(yy[0][2]), 1e-6);
-    EXPECT_NEAR(0.905520, stan::math::value_of(yy[1][0]), 1e-6);
-    EXPECT_NEAR(0.0944571, stan::math::value_of(yy[1][2]), 1e-6);
-
-    std::vector<double> g;
-    yy[0][0].grad(yy0_var, g);
-    EXPECT_NEAR(0.859846, g[0], 1e-6);
-    EXPECT_NEAR(-8.7197700e-05 * 1e5, g[1] * 1e5, 1e-5);
-  }
-}
-
-TEST(IDAS_integrator, constructor_error) {
+TEST_F(IDASIntegratorTest, error_handling) {
   using stan::math::idas_integrator;
   const double rtol = 1e-4;
   const double atol = 1e-8;
@@ -294,4 +146,89 @@ TEST(IDAS_integrator, constructor_error) {
 
   EXPECT_THROW_MSG(idas_integrator(rtol, atol, -100), std::invalid_argument,
                    "max_num_steps");
+}
+
+struct StanIntegrateDAETest : public ::testing::Test {
+  chemical_kinetics f;
+  std::vector<double> yy0;
+  std::vector<double> yp0;
+  std::vector<double> theta;
+  std::vector<double> x_r;
+  std::vector<int> x_i;
+  std::ostream* msgs;
+  const std::vector<int> eq_id;
+  const double t0;
+  std::vector<double> ts;
+
+  void SetUp() { stan::math::recover_memory(); }
+
+  StanIntegrateDAETest()
+    : yy0{1.0, 0.0, 0.0},
+      yp0{-0.04, 0.04, 0.0},
+      theta{0.040, 1.0e4, 3.0e7},
+      msgs{0},
+      eq_id{1, 1, 0},
+      t0(0.0) {
+        const size_t nout{4};
+        const double h{0.4};
+        for (size_t i = 0; i < nout; ++i)
+          ts.push_back(h * std::pow(10, i));
+      }
+};
+
+TEST_F(StanIntegrateDAETest, idas_ivp_system_yy0) {
+  using stan::math::integrate_dae;
+  std::vector<std::vector<double> > yy
+    = integrate_dae(f, yy0, yp0, t0, ts, theta, x_r, x_i, 1e-4, 1e-8);
+  EXPECT_NEAR(0.985172, yy[0][0], 1e-6);
+  EXPECT_NEAR(0.0147939, yy[0][2], 1e-6);
+  EXPECT_NEAR(0.905521, yy[1][0], 1e-6);
+  EXPECT_NEAR(0.0944571, yy[1][2], 1e-6);
+}
+
+TEST_F(StanIntegrateDAETest, forward_sensitivity_theta) {
+  using stan::math::integrate_dae;
+  using stan::math::to_var;
+  using stan::math::value_of;
+  using stan::math::var;
+
+  std::vector<var> theta_var = to_var(theta);
+
+  std::vector<std::vector<var> > yy
+    = integrate_dae(f, yy0, yp0, t0, ts, theta_var, x_r, x_i, 1e-5, 1e-12);
+  EXPECT_NEAR(0.985172, value_of(yy[0][0]), 1e-6);
+  EXPECT_NEAR(0.0147939, value_of(yy[0][2]), 1e-6);
+  EXPECT_NEAR(0.905519, value_of(yy[1][0]), 1e-6);
+  EXPECT_NEAR(0.0944588, value_of(yy[1][2]), 1e-6);
+
+  // test derivatives against central difference results
+  std::vector<double> g;
+  const double h = 1.e-2;
+  const std::vector<double> theta1{theta[0] - theta[0] * h, theta[1], theta[2]};
+  const std::vector<double> theta2{theta[0] + theta[0] * h, theta[1], theta[2]};
+  std::vector<std::vector<double> > yy1
+    = integrate_dae(f, yy0, yp0, t0, ts, theta1, x_r, x_i,
+                    1e-5, 1e-12, 1000, false);
+  std::vector<std::vector<double> > yy2
+    = integrate_dae(f, yy0, yp0, t0, ts, theta2, x_r, x_i,
+                    1e-5, 1e-12, 1000, false);
+
+  double yys_finite_diff = (yy2[3][1] - yy1[3][1]) / (2.0 * theta[0] * h);
+  stan::math::set_zero_all_adjoints();
+  yy[3][1].grad(theta_var, g);
+  EXPECT_NEAR(yys_finite_diff, g[0], 1e-6);
+}
+
+TEST_F(StanIntegrateDAETest, inconsistent_ic_error) {
+  using stan::math::integrate_dae;
+  using stan::math::to_var;
+  using stan::math::value_of;
+  using stan::math::var;
+
+  std::vector<var> theta_var = to_var(theta);
+
+  yy0.back() = -0.1;
+  EXPECT_THROW_MSG(integrate_dae(f, yy0, yp0,
+                                 t0, ts, theta_var, x_r, x_i, 1e-5, 1e-12),
+                   std::domain_error, "DAE residual at t0");
 }
