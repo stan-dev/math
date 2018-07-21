@@ -125,6 +125,7 @@ pipeline {
             post {
                 always {
                     warnings consoleParsers: [[parserName: 'CppLint']], canRunOnFailed: true
+                    warnings consoleParsers: [[parserName: 'math-dependencies']], canRunOnFailed: true
                     deleteDir()
                 }
             }
@@ -139,10 +140,21 @@ pipeline {
             }
             post {
                 always {
-                    warnings consoleParsers: [[parserName: 'math-dependencies']], canRunOnFailed: true
+                    warnings canRunOnFailed: true, consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)'], [parserName: 'Clang (LLVM based)']]
                     deleteDir()
                 }
             }
+        }
+        stage('Linux Unit with MPI') {
+            agent { label 'linux' }
+            steps {
+                deleteDir()
+                unstash 'MathSetup'
+                sh "echo CC=${MPICXX} >> make/local"
+                sh "echo STAN_MPI=true >> make/local"
+                runTests("test/unit")
+            }
+            post { always { retry(3) { deleteDir() } } }
         }
         stage('Vanilla tests') {
             parallel {
@@ -173,29 +185,21 @@ pipeline {
                         }
                     }
                 }
-                stage('Linux Unit') {
-                    agent { label 'linux' }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        writeFile(file: "make/local", text: "CC=${GCC}")
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Mac Unit') {
+                stage('Mac Unit with Threading') {
                     agent  { label 'osx' }
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
                         sh setupCC()
+                        sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
             }
         }
-        stage('Modded tests') {
+        stage('Additional merge tests') {
+            when { anyOf { branch 'develop'; branch 'master' } }
             parallel {
                 stage('Unit with GPU') {
                     agent { label "gelman-group-mac" }
@@ -210,19 +214,8 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                stage('Unit with MPI') {
-                    agent any
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CC=${MPICXX} >> make/local"
-                        sh "echo STAN_MPI=true >> make/local"
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Unit with threading') {
-                    agent any
+                stage('Linux Unit with Threading') {
+                    agent { label 'linux' }
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
