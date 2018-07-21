@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_MAT_FUNCTOR_IDAS_RESIDUAL_HPP
 
 #include <stan/math/prim/arr/fun/value_of.hpp>
+#include <stan/math/prim/arr/fun/dot_self.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
