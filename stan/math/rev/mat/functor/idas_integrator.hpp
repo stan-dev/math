@@ -107,12 +107,9 @@ class idas_integrator {
    * @param[in] atol double absolute tolerance.
    * @param[in] max_num_steps max nb. of times steps.
    */
-  idas_integrator(const double rtol,
-                  const double atol,
+  idas_integrator(const double rtol, const double atol,
                   const int64_t max_num_steps)
-      : rtol_(rtol),
-        atol_(atol),
-        max_num_steps_(max_num_steps) {
+      : rtol_(rtol), atol_(atol), max_num_steps_(max_num_steps) {
     if (rtol_ <= 0)
       invalid_argument("idas_integrator", "relative tolerance,", rtol_, "",
                        ", must be greater than 0");
@@ -133,9 +130,7 @@ class idas_integrator {
    * @param[in] atol double absolute tolerance.
    */
   idas_integrator(const double rtol, const double atol)
-      : rtol_(rtol),
-        atol_(atol),
-        max_num_steps_(IDAS_MAX_STEPS) {
+      : rtol_(rtol), atol_(atol), max_num_steps_(IDAS_MAX_STEPS) {
     if (rtol_ <= 0)
       invalid_argument("idas_integrator", "relative tolerance,", rtol_, "",
                        ", must be greater than 0");

@@ -47,22 +47,20 @@ namespace math {
  * same size as the state variable, corresponding to a time in ts.
  */
 template <typename F, typename Tpar>
-std::vector<std::vector<Tpar> >
-integrate_dae(const F& f,
-              const std::vector<double>& yy0,
-              const std::vector<double>& yp0,
-              double t0, const std::vector<double>& ts,
-              const std::vector<Tpar>& theta, const std::vector<double>& x_r,
-              const std::vector<int>& x_i, const double rtol, const double atol,
-              const int64_t max_num_steps = idas_integrator::IDAS_MAX_STEPS,
-              bool check_ic = true,
-              std::ostream* msgs = nullptr) {
+std::vector<std::vector<Tpar> > integrate_dae(
+    const F& f, const std::vector<double>& yy0, const std::vector<double>& yp0,
+    double t0, const std::vector<double>& ts, const std::vector<Tpar>& theta,
+    const std::vector<double>& x_r, const std::vector<int>& x_i,
+    const double rtol, const double atol,
+    const int64_t max_num_steps = idas_integrator::IDAS_MAX_STEPS,
+    bool check_ic = true, std::ostream* msgs = nullptr) {
   const std::vector<int> dummy_eq_id(yy0.size(), 0);
   stan::math::idas_integrator solver(rtol, atol, max_num_steps);
   stan::math::idas_forward_system<F, double, double, Tpar> dae{
       f, dummy_eq_id, yy0, yp0, theta, x_r, x_i, msgs};
 
-  if (check_ic) dae.check_ic_consistency(t0, atol);
+  if (check_ic)
+    dae.check_ic_consistency(t0, atol);
 
   return solver.integrate(dae, t0, ts);
 }
