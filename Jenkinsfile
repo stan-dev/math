@@ -156,7 +156,7 @@ pipeline {
             }
             post { always { retry(3) { deleteDir() } } }
         }
-        stage('Vanilla tests') {
+        stage('Always-run tests') {
             parallel {
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
@@ -219,7 +219,7 @@ pipeline {
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
-                        sh setupCC()
+                        sh "echo CC=${GCC} >> make/local"
                         sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
                         runTests("test/unit")
                     }
