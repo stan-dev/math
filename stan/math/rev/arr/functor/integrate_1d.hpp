@@ -45,7 +45,8 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
       if (fx.val() == 0) {
         gradient = 0;
       } else {
-        domain_error("gradient_of_f", "The gradient of f", n, "is nan for parameter ", "");
+        domain_error("gradient_of_f", "The gradient of f", n,
+                     "is nan for parameter ", "");
       }
     }
   } catch (const std::exception &e) {
