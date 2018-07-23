@@ -14,23 +14,6 @@ def setup(Boolean failOnError = true) {
     """
 }
 
-def mailBuildResults(String label, additionalEmails='') {
-    script {
-        try {
-            emailext (
-                subject: "[StanJenkins] ${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                body: """${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]': Check console output at ${env.BUILD_URL}""",
-                recipientProviders: [[$class: 'RequesterRecipientProvider']],
-                to: "${env.CHANGE_AUTHOR_EMAIL}, ${additionalEmails}"
-            )
-        } catch (all) {
-            println "Encountered the following exception sending email; please ignore:"
-            println all
-            println "End ignoreable email-sending exception."
-        }
-    }
-}
-
 def runTests(String testPath) {
     sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only"
     try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" }
@@ -231,15 +214,11 @@ pipeline {
             }
         }
         stage('Upstream tests') {
-            parallel {
-                stage('Stan Upstream Tests') {
-                    when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
-                    steps {
-                        build(job: "Stan/${stan_pr()}",
-                              parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
-                                           string(name: 'cmdstan_pr', value: cmdstan_pr())])
-                    }
-                }
+            when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
+            steps {
+                build(job: "Stan/${stan_pr()}",
+                        parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
+                                    string(name: 'cmdstan_pr', value: cmdstan_pr())])
             }
         }
         stage('Upload doxygen') {
@@ -275,10 +254,12 @@ pipeline {
             }
         }
         success {
-            script { utils.updateUpstream(env, 'stan') }
-            mailBuildResults("SUCCESSFUL")
+            script {
+                utils.updateUpstream(env, 'stan')
+                utils.mailBuildResults("SUCCESSFUL")
+            }
         }
-        unstable { mailBuildResults("UNSTABLE", alsoNotify()) }
-        failure { mailBuildResults("FAILURE", alsoNotify()) }
+        unstable { script { utils.mailBuildResults("UNSTABLE", alsoNotify()) } }
+        failure { script { utils.mailBuildResults("FAILURE", alsoNotify()) } }
     }
 }

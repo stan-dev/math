@@ -33,7 +33,14 @@
  */
 namespace stan {
 namespace math {
+namespace gpu {
+const int Lower = 0;
+const int Upper = 1;
+const int Entire = 2;
 
+const int LowerToUpper = 1;
+const int UpperToLower = 0;
+}
 /**
  * The <code>opencl_context_base</code> class represents an OpenCL context
  * in the standard Meyers singleton design pattern.
@@ -126,10 +133,10 @@ class opencl_context_base {
 #include <stan/math/gpu/kernels/copy_triangular_matrix_kernel.cl>
         ;  // NOLINT
     const char* copy_triangular_transposed_matrix_kernel =
-#include <stan/math/gpu/kernels/copy_triangular_transposed_matrix_kernel.cl>
+#include <stan/math/gpu/kernels/triangular_transpose_kernel.cl>
         ;  // NOLINT
     const char* copy_submatrix_kernel =
-#include <stan/math/gpu/kernels/copy_submatrix_kernel.cl>
+#include <stan/math/gpu/kernels/sub_block_kernel.cl>
         ;  // NOLINT
     const char* check_nan_kernel =
 #include <stan/math/gpu/kernels/check_nan_kernel.cl>
@@ -248,13 +255,16 @@ class opencl_context {
    * when compiling the specified kernel group's source code.
    */
   inline void compile_kernel_group(const char* kernel_name) {
-    char temp[100];
+    char temp[256];
     int local = 32;
     int gpu_local_max = std::sqrt(max_workgroup_size());
     if (gpu_local_max < local)
       local = gpu_local_max;
-    snprintf(temp, sizeof(temp), "-D TS=%d -D TS1=%d -D TS2=%d ", local, local,
-             local);
+    snprintf(temp, sizeof(temp), "-D TS=%d -D TS1=%d -D TS2=%d "\
+      "-D LOWER=%d -D UPPER=%d -D ENTIRE=%d " \
+      "-D LOWER_TO_UPPER=%d -D UPPER_TO_LOWER=%d ", local, local,
+             local, gpu::Lower, gpu::Upper, gpu::Entire,
+             gpu::LowerToUpper, gpu::UpperToLower);
     std::string kernel_source = "";
     const char* kernel_group = kernel_info()[kernel_name].group;
     for (auto kern : kernel_info()) {
@@ -489,6 +499,50 @@ class opencl_context {
    */
   inline opencl_context_base::map_kernel kernels() {
     return opencl_context_base::getInstance().kernels;
+  }
+  /**
+   * Terminating function for recursively setting arguments in an OpenCL kernel.
+   *
+   * @param k An OpenCL kernel.
+   * @param i The <code>i</code>th argument to the kernel.
+   * @note This function definition serves to end the recursive call for
+   * <code>set_kernel_args()</code>
+   */
+  inline void recursive_kernel_args(cl::Kernel& k, int i) {}
+
+  /**
+   * Used in <code>set_kernel_args()</code> to add arguments to an OpenCL
+   * kernel.
+   *
+   * @param kernel An OpenCL kernel.
+   * @param i the position of the argument to the OpenCL kernel.
+   * @param first_arg The first argument to go into the OpenCL kernel.
+   * @param extra_args The remaining arguments to go into the OpenCL kernel.
+   * @tparam T the type of <code>first_arg</code>.
+   * @tparam Args The types of <code>extra_args</code>.
+   * @note Comes from:
+   * simpleopencl.blogspot.com/2013/04/calling-kernels-with-large-number-of.html
+   */
+  template <typename T, typename... Args>
+  inline void recursive_kernel_args(cl::Kernel& kernel, int i,
+                                    const T& first_arg,
+                                    const Args&... extra_args) {
+    kernel.setArg(i, first_arg);
+    recursive_kernel_args(kernel, i + 1, extra_args...);
+  }
+
+  /**
+   * Adds arguments to an OpenCL kernel.
+   *
+   * @param kernel An OpenCL kernel.
+   * @param args The arguments to mote to the OpenCL kernel.
+   * @tparam Args The types of <code>extra_args</code>.
+   * @note Comes from:
+   * simpleopencl.blogspot.com/2013/04/calling-kernels-with-large-number-of.html
+   */
+  template <typename... Args>
+  inline void set_kernel_args(cl::Kernel& kernel, const Args&... args) {
+    recursive_kernel_args(kernel, 0, args...);
   }
 };
 static opencl_context opencl_context;

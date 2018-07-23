@@ -11,10 +11,6 @@ R"(
 #define A(i, j)  A[j * rows + i]
 #endif
 
-#ifndef AT
-#define AT(i, j)  A[j * cols + i]
-#endif
-
 /**
  * Copies a lower/upper triangular of a matrix to it's upper/lower.
  *
@@ -33,10 +29,10 @@ __kernel void copy_triangular_transposed(__global double *A, unsigned int rows,
   int i = get_global_id(0);
   int j = get_global_id(1);
   if (i < rows && j < cols) {
-    if (copy_direction == LOWER_TO_UPPER && j > i) {
-      AT(j, i) = A(i, j);
-    } else if (copy_direction == UPPER_TO_LOWER && j > i) {
-      A(i, j) = AT(j, i);
+    if (copy_direction == LOWER_TO_UPPER && i > j) {
+      A(j, i) = A(i, j);
+    } else if (copy_direction == UPPER_TO_LOWER && i > j) {
+      A(i, j) = A(j, i);
     }
   }
 };)"

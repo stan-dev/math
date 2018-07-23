@@ -7,8 +7,8 @@ R"(
 #define UPPER 1
 #endif
 
-#ifndef ALL
-#define ALL 2
+#ifndef ENTIRE
+#define ENTIRE 2
 #endif
 
 #ifndef A
@@ -38,7 +38,7 @@ __kernel void zeros(__global double *A, unsigned int rows, unsigned int cols,
       A(i,j) = 0;
     } else if (part == UPPER && j > i) {
       A(i,j) = 0;
-    } else if (part == ALL) {
+    } else if (part == ENTIRE) {
       A(i,j) = 0;
     }
   }

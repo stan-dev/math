@@ -16,10 +16,10 @@ R"(
  * @param[in] B The matrix to copy the triangular from.
  * @param rows The number of rows of B.
  * @param cols The number of cols of B.
- * @param lower_upper enum to describe
+ * @param lower_upper determines
  * which part of the matrix to copy:
- *  LOWER - copies the lower triangular
- *  UPPER - copes the upper triangular
+ *  LOWER: 0 - copies the lower triangular
+ *  UPPER: 1 - copes the upper triangular
  *
  * @note Used in math/gpu/copy_triangular_opencl.hpp
  */
