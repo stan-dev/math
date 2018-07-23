@@ -10,24 +10,12 @@ namespace stan {
 namespace math {
 
 /*
- * adj_jac_vari interfaces a user supplied functor with the reverse mode
- * autodiff.
- *
- * The functor must supply:
- *  1. Eigen::VectorXd operator()(const Eigen::VectorXd& x) -- which evaluates
- * the function
- *  2. Eigen::VectorXd multiply_adjoint_jacobian(const Eigen::VectorXd& adj) --
- * which computes the result of the product of the transpose of the adjoint
- * times the Jacobian of the function
- *
- * multiply_adjoint_jacobian may be called multiple times during the life of an
- * adj_jac_vari, but operator() will only be called once.
- *
- * The functor may allocate memory in the autodiff arena, but its destructor
- * will not be called
- *
- * adj_jac_vari allows someone to implement functions with custom reverse mode
+ * adj_jac_vari interfaces a user supplied functor  with the reverse mode
+ * autodiff. It allows someone to implement functions with custom reverse mode
  * autodiff without having to deal with autodiff types.
+ *
+ * The requirements on the functor F are described in the documentation for
+ * adj_jac_apply
  *
  * @tparam F class of functor
  */
@@ -66,12 +54,12 @@ struct adj_jac_vari : public vari {
   }
 
   /**
-   * chain propagates the adjoints at the output varis back to the input varis
-   * by calling the multiply_adjoint_jacobian function of the user defined
-   * functor
+   * chain propagates the adjoints at the output varis (y_vi_) back to the input
+   * varis (x_vi_) by using the multiply_adjoint_jacobian function of the user
+   * defined functor
    *
    * Unlike the constructor, this operation may be called multiple times during
-   * the life of the vari.
+   * the life of the vari
    */
   void chain() {
     Eigen::Matrix<double, Eigen::Dynamic, 1> y_adj(M_);
@@ -92,8 +80,8 @@ struct adj_jac_vari : public vari {
  * autodiff code without ever touching Stan's autodiff internals
  *
  * Mathematically, to use a function in reverse mode autodiff, you need to be
- * able to evaluate the function (y = f(x)) and the Jacobian of that function
- * (df(x)/dx) times a vector.
+ * able to evaluate the function (y = f(x)) and multiply the Jacobian of that
+ * function (df(x)/dx) by a vector.
  *
  * As an example, pretend there exists some large, complicated function, L(x),
  * which contains our smaller function f(x). The goal of autodiff is to compute
