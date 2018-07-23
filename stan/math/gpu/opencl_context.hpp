@@ -33,7 +33,14 @@
  */
 namespace stan {
 namespace math {
+namespace gpu {
+const int Lower = 0;
+const int Upper = 1;
+const int Entire = 2;
 
+const int LowerToUpper = 1;
+const int UpperToLower = 0;
+}
 /**
  * The <code>opencl_context_base</code> class represents an OpenCL context
  * in the standard Meyers singleton design pattern.
@@ -126,7 +133,7 @@ class opencl_context_base {
 #include <stan/math/gpu/kernels/copy_triangular_matrix_kernel.cl>
         ;  // NOLINT
     const char* copy_triangular_transposed_matrix_kernel =
-#include <stan/math/gpu/kernels/copy_triangular_transposed_matrix_kernel.cl>
+#include <stan/math/gpu/kernels/triangular_transpose_kernel.cl>
         ;  // NOLINT
     const char* copy_submatrix_kernel =
 #include <stan/math/gpu/kernels/sub_block_kernel.cl>
@@ -223,13 +230,16 @@ class opencl_context {
    * when compiling the specified kernel group's source code.
    */
   inline void compile_kernel_group(const char* kernel_name) {
-    char temp[100];
+    char temp[256];
     int local = 32;
     int gpu_local_max = std::sqrt(max_workgroup_size());
     if (gpu_local_max < local)
       local = gpu_local_max;
-    snprintf(temp, sizeof(temp), "-D TS=%d -D TS1=%d -D TS2=%d ", local, local,
-             local);
+    snprintf(temp, sizeof(temp), "-D TS=%d -D TS1=%d -D TS2=%d "\
+      "-D LOWER=%d -D UPPER=%d -D ENTIRE=%d " \
+      "-D LOWER_TO_UPPER=%d -D UPPER_TO_LOWER=%d ", local, local,
+             local, gpu::Lower, gpu::Upper, gpu::Entire,
+             gpu::LowerToUpper, gpu::UpperToLower);
     std::string kernel_source = "";
     const char* kernel_group = kernel_info()[kernel_name].group;
     for (auto kern : kernel_info()) {

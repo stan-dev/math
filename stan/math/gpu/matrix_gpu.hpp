@@ -17,12 +17,6 @@
  */
 namespace stan {
 namespace math {
-const int Lower = 0;
-const int Upper = 1;
-const int Entire = 2;
-
-const int LowerToUpper = 0;
-const int UpperToLower = 1;
 /**
  * This class represents a matrix on the GPU.
  *
@@ -174,7 +168,7 @@ class matrix_gpu {
    * stan::math::Upper
    *
    */
-  template <int triangular_view>
+  template <int triangular_view = gpu::Entire>
   void zeros() {
     if (size() == 0)
       return;
