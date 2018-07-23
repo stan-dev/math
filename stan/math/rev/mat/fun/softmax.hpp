@@ -13,10 +13,10 @@ namespace math {
 namespace {
 class SoftmaxOp {
   int N_;
-  double* y_mem_;  // Holds the results of the softmax
+  double* y_;  // Holds the results of the softmax
 
  public:
-  SoftmaxOp() : N_(0), y_mem_(NULL) {}
+  SoftmaxOp() : N_(0), y_(NULL) {}
 
   /*
    * Compute the softmax of the unconstrained input vector
@@ -26,11 +26,11 @@ class SoftmaxOp {
    */
   Eigen::VectorXd operator()(const Eigen::VectorXd& alpha) {
     N_ = alpha.size();
-    y_mem_ = ChainableStack::instance().memalloc_.alloc_array<double>(N_);
+    y_ = ChainableStack::instance().memalloc_.alloc_array<double>(N_);
 
     auto y = softmax(alpha);
     for (int n = 0; n < N_; ++n)
-      y_mem_[n] = y(n);
+      y_[n] = y(n);
     return y;
   }
 
@@ -45,7 +45,7 @@ class SoftmaxOp {
    */
   Eigen::VectorXd multiply_adjoint_jacobian(const Eigen::VectorXd& adj) const {
     Eigen::VectorXd adj_times_jac(N_);
-    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1> > y(y_mem_, N_);
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1> > y(y_, N_);
 
     double adj_dot_y = adj.dot(y);
     for (int n = 0; n < N_; ++n) {

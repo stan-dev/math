@@ -8,6 +8,15 @@
 namespace stan {
 namespace math {
 
+/**
+ * Allocates and populates a flat array of vari pointers in the autodiff arena
+ * with the varis pointed to by the vars in the input Eigen matrix
+ *
+ * @tparam R Eigen row type of x
+ * @tparam C Eigen column type of x
+ * @param x Input
+ * @return Flat array of vari pointers
+ */
 template <int R, int C>
 vari** build_vari_array(const Eigen::Matrix<var, R, C>& x) {
   vari** x_vi_

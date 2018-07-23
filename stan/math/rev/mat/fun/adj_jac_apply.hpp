@@ -10,15 +10,26 @@ namespace stan {
 namespace math {
 
 /*
- * The adjoint Jacobian vari is a special vari for wrapping up user defined ops
- * that supply an apply operation (that performs an operation on some input) and
- * a multiply_adjoint_jacobian call (that computes the result of the product of
- * the transpose of the adjoint times the Jacobian of the operator).
+ * adj_jac_vari interfaces a user supplied functor with the reverse mode
+ * autodiff.
  *
- * The adjoint Jacobian vari itself does nothing other than connect the supplied
- * operation to the autodiff stack and coordinate movement of data between all
- * the involved varis so that someone can implement autodiff functions without
- * ever having to deal with autodiff types.
+ * The functor must supply:
+ *  1. Eigen::VectorXd operator()(const Eigen::VectorXd& x) -- which evaluates
+ * the function
+ *  2. Eigen::VectorXd multiply_adjoint_jacobian(const Eigen::VectorXd& adj) --
+ * which computes the result of the product of the transpose of the adjoint
+ * times the Jacobian of the function
+ *
+ * multiply_adjoint_jacobian may be called multiple times during the life of an
+ * adj_jac_vari, but operator() will only be called once.
+ *
+ * The functor may allocate memory in the autodiff arena, but its destructor
+ * will not be called
+ *
+ * adj_jac_vari allows someone to implement functions with custom reverse mode
+ * autodiff without having to deal with autodiff types.
+ *
+ * @tparam F class of functor
  */
 template <typename F>
 struct adj_jac_vari : public vari {
@@ -28,6 +39,17 @@ struct adj_jac_vari : public vari {
   int M_;
   vari** y_vi_;
 
+  /**
+   * The adj_jac_vari constructor
+   *  1. Initializes an instance of the user defined functor F
+   *  2. Calls operator() on the F instance with the double values from the
+   * input x
+   *  3. Saves copies of the varis pointed to by the input vars for subsequent
+   * calls to chain
+   *  4. Allocates varis for the output of the functor F
+   *
+   * @param x Input as vars
+   */
   explicit adj_jac_vari(const Eigen::Matrix<var, Eigen::Dynamic, 1>& x)
       : vari(0),  // The val_ in this vari is unused
         N_(x.size()),
@@ -43,6 +65,14 @@ struct adj_jac_vari : public vari {
     }
   }
 
+  /**
+   * chain propagates the adjoints at the output varis back to the input varis
+   * by calling the multiply_adjoint_jacobian function of the user defined
+   * functor
+   *
+   * Unlike the constructor, this operation may be called multiple times during
+   * the life of the vari.
+   */
   void chain() {
     Eigen::Matrix<double, Eigen::Dynamic, 1> y_adj(M_);
     for (int m = 0; m < M_; ++m)
@@ -98,8 +128,8 @@ struct adj_jac_vari : public vari {
  * functor
  *
  * The functor supplied to adj_jac_apply must be careful to allocate any
- * variables it defines on the autodiff memory stack because its destructor will
- * never be called! (and so memory will leak if allocated anywhere else)
+ * variables it defines in the autodiff arena because its destructor will
+ * never be called and memory will leak if allocated anywhere else.
  *
  * @tparam F functor to be connected to the autodiff stack
  * @param x input to the functor
@@ -111,8 +141,8 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> adj_jac_apply(
   adj_jac_vari<F>* vi = new adj_jac_vari<F>(x);
   Eigen::Matrix<var, Eigen::Dynamic, 1> y(vi->M_);
 
-  for (int m = 0; m < vi->M_; ++m)
-    y(m) = var((vi->y_vi_)[m]);
+  for (int m = 0; m < y.size(); ++m)
+    y(m) = (vi->y_vi_)[m];
   return y;
 }
 
