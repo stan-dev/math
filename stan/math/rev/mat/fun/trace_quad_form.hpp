@@ -28,27 +28,25 @@ class trace_quad_form_vari : public vari {
   int B_cols_;
 
   static inline void chainA(
-      Eigen::Map<Eigen::Matrix<double, Ra, Ca> >& A,
-      Eigen::Map<const Eigen::Matrix<double, Ra, Ca> >& Ad, double adjC) {}
+      const double* A_mem, Eigen::Map<const Eigen::Matrix<double, Ra, Ca> >& Ad,
+      double adjC) {}
   static inline void chainB(
-      Eigen::Map<Eigen::Matrix<double, Rb, Cb> >& B,
-      Eigen::Map<const Eigen::Matrix<double, Ra, Ca> >& Ad,
+      const double* B_mem, Eigen::Map<const Eigen::Matrix<double, Ra, Ca> >& Ad,
       Eigen::Map<const Eigen::Matrix<double, Rb, Cb> >& Bd, double adjC) {}
 
   static inline void chainA(
-      Eigen::Map<Eigen::Matrix<var, Ra, Ca> >& A,
-      Eigen::Map<const Eigen::Matrix<double, Rb, Cb> >& Bd, double adjC) {
+      vari** A_mem, Eigen::Map<const Eigen::Matrix<double, Rb, Cb> >& Bd,
+      double adjC) {
     Eigen::Matrix<double, Ra, Ca> adjA(adjC * Bd * Bd.transpose());
-    for (int i = 0; i < A.size(); ++i)
-      A.data()[i].vi_->adj_ += adjA.data()[i];
+    for (int i = 0; i < adjA.size(); ++i)
+      A_mem[i]->adj_ += adjA.data()[i];
   }
   static inline void chainB(
-      Eigen::Map<Eigen::Matrix<var, Rb, Cb> >& B,
-      Eigen::Map<const Eigen::Matrix<double, Ra, Ca> >& Ad,
+      vari** B_mem, Eigen::Map<const Eigen::Matrix<double, Ra, Ca> >& Ad,
       Eigen::Map<const Eigen::Matrix<double, Rb, Cb> >& Bd, double adjC) {
     Eigen::Matrix<double, Ra, Ca> adjB(adjC * (Ad + Ad.transpose()) * Bd);
-    for (int i = 0; i < B.size(); ++i)
-      B.data()[i].vi_->adj_ += adjB.data()[i];
+    for (int i = 0; i < adjB.size(); ++i)
+      B_mem[i]->adj_ += adjB.data()[i];
   }
 
  public:
@@ -65,15 +63,13 @@ class trace_quad_form_vari : public vari {
         B_cols_(B_cols) {}
 
   virtual void chain() {
-    Eigen::Map<Eigen::Matrix<Ta, Ra, Ca> > A(A_mem_, A_rows_, A_rows_);
-    Eigen::Map<Eigen::Matrix<Tb, Rb, Cb> > B(B_mem_, B_rows_, B_cols_);
     Eigen::Map<const Eigen::Matrix<double, Ra, Ca> > Ad(Ad_mem_, A_rows_,
                                                         A_rows_);
     Eigen::Map<const Eigen::Matrix<double, Rb, Cb> > Bd(Bd_mem_, B_rows_,
                                                         B_cols_);
 
-    chainA(A, Bd, adj_);
-    chainB(B, Ad, Bd, adj_);
+    chainA(A_mem_, Bd, adj_);
+    chainB(B_mem_, Ad, Bd, adj_);
   }
 };
 }  // namespace
@@ -86,29 +82,28 @@ trace_quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
 
-  int A_rows = A.rows();  // A is square
-  int B_rows = B.rows();
-  int B_cols = B.cols();
-  Ta* A_mem = ChainableStack::instance().memalloc_.alloc_array<Ta>(A.size());
-  Tb* B_mem = ChainableStack::instance().memalloc_.alloc_array<Tb>(B.size());
+  auto A_mem = build_vari_pointer_array_if_necessary(A.data(), A.size());
+  auto B_mem = build_vari_pointer_array_if_necessary(B.data(), B.size());
 
-  for (int i = 0; i < A.size(); ++i)
-    A_mem[i] = A.data()[i];
-  for (int i = 0; i < B.size(); ++i)
-    B_mem[i] = B.data()[i];
-
-  double* Ad_mem = build_double_array_if_necessary(A_mem, A_rows * A_rows);
-  double* Bd_mem = build_double_array_if_necessary(B_mem, B_rows * B_cols);
+  const double* Ad_mem = build_double_array_if_necessary(A_mem, A.size());
+  const double* Bd_mem = build_double_array_if_necessary(B_mem, B.size());
 
   Eigen::Matrix<double, Ra, Ca> Ad
-      = Eigen::Map<Eigen::Matrix<double, Ra, Ca> >(Ad_mem, A_rows, A_rows);
-  Eigen::Matrix<double, Ra, Ca> Bd
-      = Eigen::Map<Eigen::Matrix<double, Rb, Cb> >(Bd_mem, B_rows, B_cols);
+      = Eigen::Map<const Eigen::Matrix<double, Ra, Ca> >(Ad_mem, A.rows(),
+                                                         A.cols());
+  Eigen::Matrix<double, Rb, Cb> Bd
+      = Eigen::Map<const Eigen::Matrix<double, Rb, Cb> >(Bd_mem, B.rows(),
+                                                         B.cols());
 
   double result = trace_quad_form(Ad, Bd);
 
-  return var(new trace_quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>(
-      result, A_mem, Ad_mem, A_rows, B_mem, Bd_mem, B_rows, B_cols));
+  auto baseVari
+      = new trace_quad_form_vari<std::remove_pointer_t<decltype(A_mem)>, Ra, Ca,
+                                 std::remove_pointer_t<decltype(B_mem)>, Rb,
+                                 Cb>(result, A_mem, Ad_mem, A.rows(), B_mem,
+                                     Bd_mem, B.rows(), B.cols());
+
+  return var(baseVari);
 }
 
 }  // namespace math

@@ -13,7 +13,7 @@ namespace math {
 
 namespace {
 template <typename T2, int R2, int C2, typename T3, int R3, int C3>
-class trace_inv_quad_form_ldlt_impl {
+class trace_inv_quad_form_ldlt_impl : chainable_alloc {
  protected:
   inline void initializeB(const Eigen::Matrix<var, R3, C3> &B, bool haveD) {
     Eigen::Matrix<double, R3, C3> Bd(B.rows(), B.cols());
