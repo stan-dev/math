@@ -25,10 +25,8 @@ namespace stan {
       if (A.cols() < min_dim)
         min_dim = A.cols();
       try {
-        kernel.setArg(0, A.buffer());
-        kernel.setArg(1, scalar),
-        kernel.setArg(2, A.rows());
-        kernel.setArg(3, A.cols());
+        opencl_context.set_kernel_args(kernel, A.buffer(), scalar,
+                                   A.rows(), A.cols());
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
@@ -58,11 +56,9 @@ namespace stan {
       cl::Kernel kernel = opencl_context.get_kernel("scalar_mul");
       cl::CommandQueue cmdQueue = opencl_context.queue();
       try {
-        kernel.setArg(0, temp.buffer());
-        kernel.setArg(1, A.buffer());
-        kernel.setArg(2, scalar);
-        kernel.setArg(3, A.rows());
-        kernel.setArg(4, A.cols());
+        opencl_context.set_kernel_args(kernel, temp.buffer(),
+                                   A.buffer(), scalar, A.rows(),
+                                   A.cols());
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
@@ -125,12 +121,9 @@ namespace stan {
       int Mpad = ((A.rows() + local-1)/local)*local;
       int Npad = ((B.cols() + local-1)/local)*local;
       try {
-        kernel.setArg(0, A.rows());
-        kernel.setArg(1, B.cols());
-        kernel.setArg(2, B.rows());
-        kernel.setArg(3, A.buffer());
-        kernel.setArg(4, B.buffer());
-        kernel.setArg(5, temp.buffer());
+        opencl_context.set_kernel_args(kernel, A.rows(), B.cols(),
+                                   B.rows(), A.buffer(), B.buffer(),
+                                   temp.buffer());
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
@@ -156,7 +149,6 @@ namespace stan {
      * 
      */
     inline matrix_gpu multiply_with_self_transposed(matrix_gpu & A) {
-      // TODO(Rok): added a check if A is square
       matrix_gpu temp(A.rows(), A.rows());
       if (temp.size() == 0)
         return temp;
@@ -172,12 +164,9 @@ namespace stan {
       int Mpad = ((A.rows() + local-1)/local)*local;
       int Npad = ((AT.cols() + local-1)/local)*local;
       try {
-        kernel.setArg(0, A.rows());
-        kernel.setArg(1, AT.cols());
-        kernel.setArg(2, AT.rows());
-        kernel.setArg(3, A.buffer());
-        kernel.setArg(4, AT.buffer());
-        kernel.setArg(5, temp.buffer());
+        opencl_context.set_kernel_args(kernel, A.rows(), AT.cols(),
+                                   AT.rows(), A.buffer(), AT.buffer(),
+                                   temp.buffer());
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
@@ -228,12 +217,9 @@ namespace stan {
       int Mpad = ((L.rows() + local-1)/local)*local;
       int Npad = ((B.cols() + local-1)/local)*local;
       try {
-        kernel.setArg(0, L.rows());
-        kernel.setArg(1, B.cols());
-        kernel.setArg(2, B.rows());
-        kernel.setArg(3, L.buffer());
-        kernel.setArg(4, B.buffer());
-        kernel.setArg(5, temp.buffer());
+        opencl_context.set_kernel_args(kernel, L.rows(), B.cols(),
+                                   B.rows(), L.buffer(), B.buffer(),
+                                   temp.buffer());
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,

@@ -3,7 +3,7 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
-
+#ifdef STAN_OPENCL
 TEST(MathMatrix, multiply_c_v) {
   stan::math::vector_d v(3);
   v << 1, 2, 3;
@@ -429,4 +429,4 @@ TEST(AgradRevMatrix, lower_triangular_multiply_big) {
   for (int j = 0; j <= i; j++)
     EXPECT_NEAR(m3(i, j), m3_gpu(i, j), 1e-10);
 }
-
+#endif
