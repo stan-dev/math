@@ -5,6 +5,8 @@
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/functor/complex_step_derivative.hpp>
 #include <stan/math/rev/core/precomp_v_vari.hpp>
+#include <stan/math/rev/core/vari.hpp>
+#include <stan/math/rev/core/var.hpp>
 
 #include <vector>
 #include <complex>
