@@ -2,18 +2,6 @@
 @Library('StanUtils')
 import org.stan.Utils
 
-def setupCC(Boolean failOnError = true) {
-    errorStr = failOnError ? "-Werror " : ""
-    "echo CC=${env.CXX} ${errorStr}> make/local"
-}
-
-def setup(Boolean failOnError = true) {
-    sh """
-        git clean -xffd
-        ${setupCC(failOnError)}
-    """
-}
-
 def runTests(String testPath) {
     sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only"
     try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" }
@@ -112,9 +100,9 @@ pipeline {
                 script {
                     deleteDir()
                     retry(3) { checkout scm }
-                    setup(false)
+                    sh "git clean -xffd"
                     stash 'MathSetup'
-                    sh setupCC()
+                    sh "echo CC=${env.CXX} -Werror > make/local"
                     parallel(
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh 'make test-math-dependencies' } ,
@@ -135,7 +123,7 @@ pipeline {
             steps {
                 deleteDir()
                 unstash 'MathSetup'
-                sh setupCC()
+                sh "echo CC=${env.CXX} -Werror > make/local"
                 sh "make -j${env.PARALLEL} test-headers"
             }
             post {
@@ -164,7 +152,7 @@ pipeline {
                         deleteDir()
                         unstash 'MathSetup'
                         sh """
-                            ${setupCC(false)}
+                            echo CC=${env.CXX} > make/local
                             echo 'O=0' >> make/local
                             echo N_TESTS=${env.N_TESTS} >> make/local
                             """
@@ -190,7 +178,7 @@ pipeline {
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
-                        sh setupCC()
+                        sh "echo CC=${env.CXX} -Werror > make/local"
                         sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
                         runTests("test/unit")
                     }
@@ -206,7 +194,7 @@ pipeline {
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
-                        sh setupCC()
+                        sh "echo CC=${env.CXX} -Werror > make/local"
                         sh "echo STAN_OPENCL=true>> make/local"
                         sh "echo OPENCL_PLATFORM_ID=0>> make/local"
                         sh "echo OPENCL_DEVICE_ID=0>> make/local"
