@@ -32,20 +32,20 @@ namespace math {
 template <typename F>
 stan::math::var complex_step_derivative(const F& f,
                                         const stan::math::var& theta,
-                                        const std::vector<double> &x_r,
-                                        const std::vector<int> &x_i,
+                                        const std::vector<double>& x_r,
+                                        const std::vector<int>& x_i,
                                         std::ostream* msgs) {
-  using std::complex;
   using stan::math::var;
+  using std::complex;
   static double h = 1.e-32;
   const double theta_d = theta.val();
   const double res = complex_step_derivative(f, theta_d, x_r, x_i, msgs);
-  const double g = std::imag(f(complex<double>(theta_d, h),
-                               x_r, x_i, msgs)) / h;
+  const double g
+      = std::imag(f(complex<double>(theta_d, h), x_r, x_i, msgs)) / h;
   return var(new stan::math::precomp_v_vari(res, theta.vi_, g));
 }
 
-}
-}
+}  // namespace math
+}  // namespace stan
 
 #endif

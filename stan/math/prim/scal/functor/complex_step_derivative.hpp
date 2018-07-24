@@ -24,15 +24,14 @@ namespace math {
  * @return a var with value f(theta.val()) and derivative at theta.
  */
 template <typename F>
-double complex_step_derivative(const F& f,
-                               const double& theta,
-                               const std::vector<double> &x_r,
-                               const std::vector<int> &x_i,
+double complex_step_derivative(const F& f, const double& theta,
+                               const std::vector<double>& x_r,
+                               const std::vector<int>& x_i,
                                std::ostream* msgs) {
   return f(theta, x_r, x_i, msgs);
 }
 
-}
-}
+}  // namespace math
+}  // namespace stan
 
 #endif

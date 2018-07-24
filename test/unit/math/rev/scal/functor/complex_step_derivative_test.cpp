@@ -10,11 +10,8 @@
 struct ComplexStepDerivativeScalTest : public ::testing::Test {
   struct Fexp {
     template <typename T>
-    inline T operator()(
-                        const T &theta,
-                        const std::vector<double> &x_r,
-                        const std::vector<int> &x_i,
-                        std::ostream* msgs) const {
+    inline T operator()(const T &theta, const std::vector<double> &x_r,
+                        const std::vector<int> &x_i, std::ostream *msgs) const {
       return exp(theta) / sqrt(theta) - 0.5 * exp(theta) * pow(theta, -1.5);
     }
   };
@@ -27,8 +24,8 @@ struct ComplexStepDerivativeScalTest : public ::testing::Test {
 };
 
 TEST_F(ComplexStepDerivativeScalTest, func_exp_sqrt) {
-  using stan::math::var;
   using stan::math::complex_step_derivative;
+  using stan::math::var;
 
   /* f near x = 0 has very large derivative */
   var x = 0.01;
