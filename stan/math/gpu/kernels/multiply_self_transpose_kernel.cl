@@ -1,7 +1,7 @@
 R"(
 #define WPT1 4
 #define RTS1 TS1/WPT1
-__kernel void multiply_self_transposed(const int M,
+__kernel void multiply_self_transpose(const int M,
             const int N, const int K,
             const __global double* A,
             const __global double* B,

@@ -162,11 +162,8 @@ class opencl_context_base {
     const char* matrix_multiply_kernel =
 #include <stan/math/gpu/kernels/matrix_multiply_kernel.cl>
         ;  // NOLINT
-    const char* multiply_self_transposed_kernel =
-#include <stan/math/gpu/kernels/multiply_self_transposed_kernel.cl>
-        ;  // NOLINT
-    const char* multiply_lower_triangular_kernel =
-#include <stan/math/gpu/kernels/multiply_lower_triangular_kernel.cl>
+    const char* multiply_self_transpose_kernel =
+#include <stan/math/gpu/kernels/multiply_self_transpose_kernel.cl>
         ;  // NOLINT
     kernel_info["dummy"] = {
         false, "timing", "__kernel void dummy(__global const int* foo) { };"};
@@ -193,12 +190,10 @@ class opencl_context_base {
         = {false, "multiply", scalar_mul_diagonal_kernel};
     kernel_info["scalar_mul"]
         = {false, "multiply", scalar_mul_kernel};
-    kernel_info["multiply_self_transposed"]
-        = {false, "multiply", multiply_self_transposed_kernel};
+    kernel_info["multiply_self_transpose"]
+        = {false, "multiply", multiply_self_transpose_kernel};
     kernel_info["matrix_multiply"]
         = {false, "multiply", matrix_multiply_kernel};
-    kernel_info["multiply_lower_triangular"]
-        = {false, "multiply", multiply_lower_triangular_kernel};
   }
 
  protected:
@@ -225,6 +220,7 @@ class opencl_context_base {
    * Map of a kernel name (first) and it's meta information (second).
    */
   typedef std::map<const char*, kernel_meta_info> map_kernel_info;
+  typedef std::map<const char*, std::map<const char*, int>> map_kernel_parameters;
   /**
    * map holding compiled kernels.
    */
