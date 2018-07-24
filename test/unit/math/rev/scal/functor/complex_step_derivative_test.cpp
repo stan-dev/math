@@ -44,5 +44,4 @@ TEST_F(ComplexStepDerivativeScalTest, func_exp_sqrt) {
   stan::math::set_zero_all_adjoints();
   y.grad(xv, g);
   ASSERT_FLOAT_EQ(g[0], g1[0]);
-
 }
