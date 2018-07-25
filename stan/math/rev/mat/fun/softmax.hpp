@@ -11,12 +11,12 @@ namespace stan {
 namespace math {
 
 namespace {
-class SoftmaxOp {
+class softmax_op {
   int N_;
   double* y_;  // Holds the results of the softmax
 
  public:
-  SoftmaxOp() : N_(0), y_(NULL) {}
+  softmax_op() : N_(0), y_(NULL) {}
 
   /*
    * Compute the softmax of the unconstrained input vector
@@ -69,7 +69,7 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
     const Eigen::Matrix<var, Eigen::Dynamic, 1>& alpha) {
   check_nonzero_size("softmax", "alpha", alpha);
 
-  return adj_jac_apply<SoftmaxOp>(alpha);
+  return adj_jac_apply<softmax_op>(alpha);
 }
 
 }  // namespace math
