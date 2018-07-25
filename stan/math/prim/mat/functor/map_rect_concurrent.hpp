@@ -35,7 +35,8 @@ namespace internal {
  *
  * @param num_jobs number of jobs
  * @return number of threads to use
- * @throws 
+ * @throws std::runtime_error if the value of STAN_NUM_THREADS env. variable
+ * is invalid
  */
 inline int get_num_threads(int num_jobs) {
   int num_threads = 1;
