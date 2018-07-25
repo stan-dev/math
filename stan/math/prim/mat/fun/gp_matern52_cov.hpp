@@ -30,7 +30,7 @@ namespace math {
  * where \f$ d(x, x') \f$ is the Euclidean distance.
  *
  * @tparam T_x type of elements contained in vector x
- * @tparam T_s type of element of sigma, marginal standard deviation
+ * @tparam T_s type of element of sigma, the magnitude
  * @tparam T_l type of elements of length scale
  *
  * @param x std::vector of elements that can be used in stan::math::distance
@@ -50,7 +50,7 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
   for (size_t n = 0; n < x_size; ++n)
     check_not_nan("gp_matern52_cov", "x", x[n]);
 
-  check_positive_finite("gp_matern52_cov", "marginal variance", sigma);
+  check_positive_finite("gp_matern52_cov", "magnitude", sigma);
   check_positive_finite("gp_matern52_cov", "length scale", length_scale);
 
   Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
@@ -70,11 +70,11 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
     for (size_t j = i + 1; j < x_size; ++j) {
       typename return_type<T_x>::type sq_distance
           = squared_distance(x[i], x[j]);
-      typename return_type<T_x>::type root_sq_distance = sqrt(sq_distance);
+      typename return_type<T_x>::type distance = sqrt(sq_distance);
       cov(i, j) = sigma_sq
-                  * (1.0 + root_5_inv_l * root_sq_distance
+                  * (1.0 + root_5_inv_l * distance
                      + inv_l_sq_5_3 * sq_distance)
-                  * exp(neg_root_5_inv_l * root_sq_distance);
+                  * exp(neg_root_5_inv_l * distance);
       cov(j, i) = cov(i, j);
     }
   }
@@ -95,7 +95,7 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
  * where \f$ d(x, x') \f$ is the Euclidean distance.
  *
  * @tparam T_x type of elements contained in vector x
- * @tparam T_s type of element of sigma, marginal standard deviation
+ * @tparam T_s type of element of sigma, the magnitude
  * @tparam T_l type of elements in vector of length scale
  *
  * @param x std::vector of elements that can be used in stan::math::distance
@@ -116,7 +116,7 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
   for (size_t n = 0; n < x_size; ++n)
     check_not_nan("gp_matern52_cov", "x", x[n]);
 
-  check_positive_finite("gp_matern52_cov", "marginal variance", sigma);
+  check_positive_finite("gp_matern52_cov", "magnitude", sigma);
   check_positive_finite("gp_matern52_cov", "length scale", length_scale);
   check_size_match("gp_matern52_cov", "x dimension", x[0].size(),
                    "number of length scales", l_size);
@@ -129,9 +129,9 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
     return cov;
 
   T_s sigma_sq = square(sigma);
-  T_l root_5 = sqrt(5.0);
-  T_l five_thirds = 5.0 / 3.0;
-  T_l neg_root_5 = -sqrt(5.0);
+  double root_5 = sqrt(5.0);
+  double five_thirds = 5.0 / 3.0;
+  double neg_root_5 = -root_5;
 
   std::vector<T_x> x_new = divide_columns(x, length_scale);
 
@@ -140,11 +140,11 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
     for (size_t j = i + 1; j < x_size; ++j) {
       typename scalar_type<T_x>::type sq_distance
           = squared_distance(x_new[i], x_new[j]);
-      typename scalar_type<T_x>::type root_sq_distance = sqrt(sq_distance);
+      typename scalar_type<T_x>::type distance = sqrt(sq_distance);
       cov(i, j)
           = sigma_sq
-            * (1.0 + root_5 * root_sq_distance + five_thirds * sq_distance)
-            * exp(neg_root_5 * root_sq_distance);
+            * (1.0 + root_5 * distance + five_thirds * sq_distance)
+            * exp(neg_root_5 * distance);
       cov(j, i) = cov(i, j);
     }
   }
@@ -163,7 +163,7 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
  *
  * @tparam T_x1 type of elements contained in vector x1
  * @tparam T_x2 type of elements contained in vector x2
- * @tparam T_s type of element of sigma, marginal standard deviation
+ * @tparam T_s type of element of sigma, the magnitude
  * @tparam T_l type of elements of length scale
  *
  * @param x1 std::vector of elements that can be used in stan::math::distance
@@ -188,7 +188,7 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   for (size_t n = 0; n < x2_size; ++n)
     check_not_nan("gp_matern52_cov", "x1", x2[n]);
 
-  check_positive_finite("gp_matern52_cov", "marginal variance", sigma);
+  check_positive_finite("gp_matern52_cov", "magnitude", sigma);
   check_positive_finite("gp_matern52_cov", "length scale", length_scale);
 
   Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
@@ -207,12 +207,12 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     for (size_t j = 0; j < x2_size; ++j) {
       typename return_type<T_x1, T_x2>::type sq_distance
           = squared_distance(x1[i], x2[j]);
-      typename return_type<T_x1, T_x2>::type root_sq_distance
+      typename return_type<T_x1, T_x2>::type distance
           = sqrt(sq_distance);
       cov(i, j) = sigma_sq
-                  * (1.0 + root_5_inv_l * root_sq_distance
+                  * (1.0 + root_5_inv_l * distance
                      + inv_l_sq_5_3 * sq_distance)
-                  * exp(neg_root_5_inv_l * root_sq_distance);
+                  * exp(neg_root_5_inv_l * distance);
     }
   }
   return cov;
@@ -233,7 +233,7 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  *
  * @tparam T_x1 type of elements contained in vector x1
  * @tparam T_x2 type of elements contained in vector x2
- * @tparam T_s type of element of sigma, marginal standard deviation
+ * @tparam T_s type of element of sigma, the  magnitude
  * @tparam T_l type of elements in vector of length scale
  *
  * @param x1 std::vector of elements that can be used in stan::math::distance
@@ -261,7 +261,7 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   for (size_t n = 0; n < x2_size; ++n)
     check_not_nan("gp_matern52_cov", "x1", x2[n]);
 
-  check_positive_finite("gp_matern52_cov", "marginal variance", sigma);
+  check_positive_finite("gp_matern52_cov", "magnitude", sigma);
   check_positive_finite("gp_matern52_cov", "length scale", length_scale);
   check_size_match("gp_matern52_cov", "x dimension", x1[0].size(),
                    "number of length scales", l_size);
@@ -276,9 +276,9 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     return cov;
 
   T_s sigma_sq = square(sigma);
-  T_l root_5 = sqrt(5.0);
-  T_l five_thirds = 5.0 / 3.0;
-  T_l neg_root_5 = -sqrt(5.0);
+  double root_5 = sqrt(5.0);
+  double five_thirds = 5.0 / 3.0;
+  double neg_root_5 = -root_5;
 
   std::vector<T_x1> x1_new = divide_columns(x1, length_scale);
   std::vector<T_x2> x2_new = divide_columns(x2, length_scale);
@@ -287,12 +287,12 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     for (size_t j = 0; j < x2_size; ++j) {
       typename return_type<T_x1, T_x2>::type sq_distance
           = squared_distance(x1_new[i], x2_new[j]);
-      typename return_type<T_x1, T_x2>::type root_sq_distance
+      typename return_type<T_x1, T_x2>::type distance
           = sqrt(sq_distance);
       cov(i, j)
           = sigma_sq
-            * (1.0 + root_5 * root_sq_distance + five_thirds * sq_distance)
-            * exp(neg_root_5 * root_sq_distance);
+            * (1.0 + root_5 * distance + five_thirds * sq_distance)
+            * exp(neg_root_5 * distance);
     }
   }
   return cov;

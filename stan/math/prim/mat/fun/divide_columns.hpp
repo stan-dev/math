@@ -14,12 +14,12 @@ namespace math {
  * dimension by the specified scalar.
  *
  *
- * @tparam T_x type of elements contained in vector x, usually Eigen::Matrix
+ * @tparam T_x type of elements contained in vector x, a scalar-type
  * @tparam T_s type of element of scalar, usually double or var
  * @tparam R   number of rows in the submatrix of x
  * @tparam C   number of columns in the submatrix of x
  *
- * @param x std::vector of elements representing a matrix
+ * @param x std::vector of elements
  * @param scalar a scalar
  *
  */
@@ -38,12 +38,12 @@ inline typename std::vector<Eigen::Matrix<T_x, R, C>> divide_columns(
  * Takes Stan data type vector[n] x[D] and divides each
  * dimension sequentially by each element of the vector
  *
- * @tparam T_x type of elements contained in vector x, usually Eigen::Matrix
+ * @tparam T_x type of elements contained in vector x, scalar-type
  * @tparam T_v vector of elements
  * @tparam R   number of rows in the submatrix of x
  * @tparam C   number of columns in the submatrix of x
  *
- * @param x std::vector of elements representing a matrix
+ * @param x std::vector of elements
  * @param vec a vector type of elements
  * @throw std::invalid argument if D != length of vector
  *
