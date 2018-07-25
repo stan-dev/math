@@ -68,12 +68,12 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
   for (size_t i = 0; i < x_size; ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
-      typename return_type<T_x>::type sq_distance =
-          squared_distance(x[i], x[j]);
+      typename return_type<T_x>::type sq_distance
+          = squared_distance(x[i], x[j]);
       typename return_type<T_x>::type distance = sqrt(sq_distance);
-      cov(i, j) = sigma_sq *
-                  (1.0 + root_5_inv_l * distance + inv_l_sq_5_3 * sq_distance) *
-                  exp(neg_root_5_inv_l * distance);
+      cov(i, j) = sigma_sq
+                  * (1.0 + root_5_inv_l * distance + inv_l_sq_5_3 * sq_distance)
+                  * exp(neg_root_5_inv_l * distance);
       cov(j, i) = cov(i, j);
     }
   }
@@ -137,12 +137,12 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
   for (size_t i = 0; i < x_size; ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
-      typename scalar_type<T_x>::type sq_distance =
-          squared_distance(x_new[i], x_new[j]);
+      typename scalar_type<T_x>::type sq_distance
+          = squared_distance(x_new[i], x_new[j]);
       typename scalar_type<T_x>::type distance = sqrt(sq_distance);
-      cov(i, j) = sigma_sq *
-                  (1.0 + root_5 * distance + five_thirds * sq_distance) *
-                  exp(neg_root_5 * distance);
+      cov(i, j) = sigma_sq
+                  * (1.0 + root_5 * distance + five_thirds * sq_distance)
+                  * exp(neg_root_5 * distance);
       cov(j, i) = cov(i, j);
     }
   }
@@ -203,12 +203,12 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      typename return_type<T_x1, T_x2>::type sq_distance =
-          squared_distance(x1[i], x2[j]);
+      typename return_type<T_x1, T_x2>::type sq_distance
+          = squared_distance(x1[i], x2[j]);
       typename return_type<T_x1, T_x2>::type distance = sqrt(sq_distance);
-      cov(i, j) = sigma_sq *
-                  (1.0 + root_5_inv_l * distance + inv_l_sq_5_3 * sq_distance) *
-                  exp(neg_root_5_inv_l * distance);
+      cov(i, j) = sigma_sq
+                  * (1.0 + root_5_inv_l * distance + inv_l_sq_5_3 * sq_distance)
+                  * exp(neg_root_5_inv_l * distance);
     }
   }
   return cov;
@@ -281,16 +281,16 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      typename return_type<T_x1, T_x2>::type sq_distance =
-          squared_distance(x1_new[i], x2_new[j]);
+      typename return_type<T_x1, T_x2>::type sq_distance
+          = squared_distance(x1_new[i], x2_new[j]);
       typename return_type<T_x1, T_x2>::type distance = sqrt(sq_distance);
-      cov(i, j) = sigma_sq *
-                  (1.0 + root_5 * distance + five_thirds * sq_distance) *
-                  exp(neg_root_5 * distance);
+      cov(i, j) = sigma_sq
+                  * (1.0 + root_5 * distance + five_thirds * sq_distance)
+                  * exp(neg_root_5 * distance);
     }
   }
   return cov;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
