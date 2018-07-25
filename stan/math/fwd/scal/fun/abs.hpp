@@ -3,6 +3,7 @@
 
 #include <stan/math/fwd/cplx.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/scal/fun/hypot.hpp>
 #include <stan/math/fwd/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/abs.hpp>

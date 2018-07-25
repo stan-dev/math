@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/cplx.hpp>
 #include <stan/math/rev/scal/fun/fabs.hpp>
+#include <stan/math/rev/scal/fun/hypot.hpp>
 
 namespace stan {
 namespace math {
