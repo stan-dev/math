@@ -24,8 +24,9 @@ namespace math {
  *
  */
 template <typename T_x, typename T_s, int R, int C>
-inline typename std::vector<Eigen::Matrix<T_x, R, C>> divide_columns(
-    const std::vector<Eigen::Matrix<T_x, R, C>> &x, const T_s &scalar) {
+inline typename std::vector<Eigen::Matrix<T_x, R, C>>
+divide_columns(const std::vector<Eigen::Matrix<T_x, R, C>> &x,
+               const T_s &scalar) {
   size_t N = x.size();
   std::vector<Eigen::Matrix<T_x, R, C>> out(N);
   for (size_t n = 0; n < N; ++n) {
@@ -49,9 +50,9 @@ inline typename std::vector<Eigen::Matrix<T_x, R, C>> divide_columns(
  *
  */
 template <typename T_x, typename T_v, int R, int C>
-inline typename std::vector<Eigen::Matrix<T_x, R, C>> divide_columns(
-    const std::vector<Eigen::Matrix<T_x, R, C>> &x,
-    const std::vector<T_v> &vec) {
+inline typename std::vector<Eigen::Matrix<T_x, R, C>>
+divide_columns(const std::vector<Eigen::Matrix<T_x, R, C>> &x,
+               const std::vector<T_v> &vec) {
   size_t N = x.size();
   size_t D = x[0].size();
   check_size_match("divide_columns", "x dimension", D, "vector", vec.size());
@@ -65,7 +66,7 @@ inline typename std::vector<Eigen::Matrix<T_x, R, C>> divide_columns(
   }
   return out;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif
