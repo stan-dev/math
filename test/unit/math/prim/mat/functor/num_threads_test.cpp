@@ -1,4 +1,6 @@
-#define STAN_THREADS
+#ifndef STAN_THREADS
+ #define STAN_THREADS
+#endif
 
 #include <stan/math/prim/mat/functor/map_rect_concurrent.hpp>
 #include <gtest/gtest.h>
