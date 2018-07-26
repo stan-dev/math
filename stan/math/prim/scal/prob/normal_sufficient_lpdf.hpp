@@ -64,6 +64,7 @@ typename return_type<T_y, T_s, T_loc, T_scale>::type normal_sufficient_lpdf(
   using stan::math::include_summand;
   using stan::math::value_of;
   using std::log;
+  using std::pow;
 
   // check if any vectors are zero length
   if (size_zero(y_bar, s_squared, n_obs, mu, sigma))
