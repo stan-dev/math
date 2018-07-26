@@ -39,11 +39,10 @@ struct adj_jac_vari : public vari {
    * @param x Input as vars
    */
   explicit adj_jac_vari(const Eigen::Matrix<var, Eigen::Dynamic, 1>& x)
-      : vari(0),  // The val_ in this vari is unused
+      : vari(std::numeric_limits<double>::quiet_NaN()),  // The val_ in this
+                                                         // vari is unused
         N_(x.size()),
-        x_vi_(build_vari_array(x)),
-        M_(0),
-        y_vi_(NULL) {
+        x_vi_(build_vari_array(x)) {
     Eigen::Matrix<double, Eigen::Dynamic, 1> val_y = f_(value_of(x));
 
     M_ = val_y.size();
