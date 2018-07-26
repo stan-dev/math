@@ -31,7 +31,7 @@ TEST(MathMatrix, eigen_decomposition) {
   A.resize(K * K, 1);
   make_I f;
   stan::math::jacobian(f, A, f_x, J);
-  const double TOL = 7e-13;
+  const double TOL = 1e-12;
   int pos = 0;
   for (int j = 0; j < K; j++) {
     for (int i = 0; i < j; i++)
