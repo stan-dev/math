@@ -37,7 +37,7 @@ When a contributor creates a pull request for inclusion to the Math library, her
 
 1. the contribution maintains the Math library's open-source [license](https://github.com/stan-dev/math/wiki/Developer-Doc#licensing): 3-clause BSD
 2. the code base remains stable after merging the pull request; we expect the `develop` branch to always be in a good state
-3. the changes are maintainable. In code review, we look at the design of the proposed code. We also expect documentation.
+3. the changes are maintainable. In code review, we look at the design of the proposed code. We also expect documentation. It should look like idiomatic C++.
 4. the changes are tested. For bugs, we expect at least one test that fails before the patch and is fixed after the patch. For new features, we expect at least one test that shows expected behavior and one test that shows the behavior when there's an error.
 5. the changes adhere to the Math library's [C++ standards](https://github.com/stan-dev/stan/wiki/Code-Quality). Consistency really helps.
 
@@ -52,4 +52,3 @@ See the [Code Review Guidelines](https://github.com/stan-dev/math/wiki/Developer
 ## Discussion
 
 For general questions, please ask on the forums with the ["Developers" tag](http://discourse.mc-stan.org/c/stan-dev).
-

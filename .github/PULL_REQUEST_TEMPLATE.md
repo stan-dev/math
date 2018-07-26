@@ -17,7 +17,7 @@ Thanks for submitting a pull request! Please remove this text when submitting. W
 
 - [ ] the changes are maintainable
 
-    - the code design is standard C++ or there's a good reason it's not
+    - the code design is idiomatic C++ or there's a good reason it's not
     - please include appropriate documentation
 
 - [ ] the changes are tested
@@ -37,7 +37,7 @@ Additional:
 
 
 ## Summary
-Describe the contents of the pull request. The issue describes what should happen. This pull request should show how that happens. 
+Describe the contents of the pull request. The issue describes what should happen. This pull request should show how that happens.
 
 Describe implementation details and any relevant information that would help the code reviewer understand this pull request.
 
