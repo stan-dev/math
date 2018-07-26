@@ -44,7 +44,8 @@ struct adj_jac_vari : public vari {
                                                          // vari is unused
         N_(x.size()),
         x_vi_(build_vari_array(x)) {
-    Eigen::Matrix<double, Eigen::Dynamic, 1> val_y = f_(value_of(x));
+    Eigen::Matrix<double, Eigen::Dynamic, 1> val_x = value_of(x);
+    Eigen::Matrix<double, Eigen::Dynamic, 1> val_y = f_(val_x);
 
     M_ = val_y.size();
     y_vi_ = ChainableStack::instance().memalloc_.alloc_array<vari*>(M_);
