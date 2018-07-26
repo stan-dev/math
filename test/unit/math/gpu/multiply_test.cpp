@@ -1,10 +1,10 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
-#include <stan/math/gpu/multiply_matrix_gpu.hpp>
+#include <stan/math/gpu/multiply.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
-
+#ifdef STAN_OPENCL
 TEST(MathMatrix, multiply_c_v) {
   stan::math::vector_d v(3);
   v << 1, 2, 3;
@@ -133,11 +133,7 @@ TEST(MathMatrix, multiply_rv_m_exception_fail_zero1) {
   stan::math::matrix_gpu mm(m);
   stan::math::matrix_gpu rvv(rv);
   stan::math::matrix_gpu ans_mm1(1, 3);
-  stan::math::matrix_gpu ans_mm2(1, 1);
-  stan::math::matrix_gpu ans_mm3(0, 0);
   EXPECT_NO_THROW(ans_mm1 = stan::math::multiply(rvv, mm));
-  EXPECT_NO_THROW(ans_mm2 = stan::math::multiply_with_self_transposed(rvv));
-  EXPECT_NO_THROW(ans_mm3 = stan::math::multiply_with_self_transposed(mm));
 }
 
 TEST(MathMatrix, multiply_rv_m_exception_fail_dims) {
@@ -151,15 +147,6 @@ TEST(MathMatrix, multiply_rv_m_exception_fail_dims) {
   EXPECT_THROW(ans_mm = stan::math::multiply(rvv, mm), std::invalid_argument);
 }
 
-TEST(MathMatrix, multiply_m_exception_pass_diagonal_mul) {
-  stan::math::matrix_d m0;
-  m0.resize(3, 2);
-  m0 << 1, 1, 1,
-  1, 1, 1;
-  stan::math::matrix_gpu mm(m0);
-  EXPECT_NO_THROW(stan::math::diagonal_multiply(mm, 1.0));
-}
-
 TEST(MathMatrix, multiply_m_m_exception_pass_dim) {
   stan::math::matrix_d m1, m2;
 
@@ -167,12 +154,8 @@ TEST(MathMatrix, multiply_m_m_exception_pass_dim) {
   m2.resize(3, 5);
   stan::math::matrix_gpu mm1(m1);
   stan::math::matrix_gpu mm2(m2);
-  stan::math::matrix_gpu mm3a(1, 5);
-  stan::math::matrix_gpu mm3b(1, 1);
-  stan::math::matrix_gpu mm3c(3, 3);
-  EXPECT_NO_THROW(mm3a = stan::math::multiply(mm1, mm2));
-  EXPECT_NO_THROW(mm3b = stan::math::multiply_with_self_transposed(mm1));
-  EXPECT_NO_THROW(mm3c = stan::math::multiply_with_self_transposed(mm2));
+  stan::math::matrix_gpu mm3(1, 5);
+  EXPECT_NO_THROW(mm3 = stan::math::multiply(mm1, mm2));
 }
 
 TEST(MathMatrix, multiply_m_m_exception_fail_dim_zero) {
@@ -181,12 +164,8 @@ TEST(MathMatrix, multiply_m_m_exception_fail_dim_zero) {
   m2.resize(0, 3);
   stan::math::matrix_gpu mm1(m1);
   stan::math::matrix_gpu mm2(m2);
-  stan::math::matrix_gpu mm3a(2, 3);
-  stan::math::matrix_gpu mm3b(2, 2);
-  stan::math::matrix_gpu mm3c(0, 0);
-  EXPECT_NO_THROW(mm3a = stan::math::multiply(mm1, mm2));
-  EXPECT_NO_THROW(mm3b = stan::math::multiply_with_self_transposed(mm1));
-  EXPECT_NO_THROW(mm3c = stan::math::multiply_with_self_transposed(mm2));
+  stan::math::matrix_gpu mm3(2, 3);
+  EXPECT_NO_THROW(mm3 = stan::math::multiply(mm1, mm2));
 }
 
 TEST(MathMatrix, multiply_m_m_exception_fail_dim) {
@@ -216,9 +195,6 @@ TEST(MathMatrix, multiply_zero_size) {
   EXPECT_NO_THROW(multiply(2.0, v00));
   EXPECT_NO_THROW(multiply(2.0, rv00));
   EXPECT_NO_THROW(multiply(2.0, m00));
-  EXPECT_NO_THROW(multiply_with_self_transposed(v00));
-  EXPECT_NO_THROW(multiply_with_self_transposed(rv00));
-  EXPECT_NO_THROW(multiply_with_self_transposed(m00));
 }
 
 
@@ -307,127 +283,5 @@ TEST(AgradRevMatrix, multiply_big) {
   for (int j = 0; j < size; j++)
     EXPECT_NEAR(m3(i, j), m3_gpu(i, j), 1e-10);
 }
-
-TEST(AgradRevMatrix, multiply_self_transposed_small) {
-  using stan::math::multiply;
-  stan::math::matrix_d m1, m2, m2_gpu;
-
-  m1.resize(3, 3);
-  m2.resize(3, 3);
-  m2_gpu.resize(3, 3);
-
-  m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
-
-  stan::math::matrix_gpu m11(m1);
-  stan::math::matrix_gpu m22(m2);
-
-  m2 = m1*m1.transpose();
-
-  m22 = stan::math::multiply_with_self_transposed(m11);
-
-  stan::math::copy(m2_gpu, m22);
-
-  for (int i = 0; i < 3; i++)
-  for (int j = 0; j < 3; j++)
-    EXPECT_NEAR(m2(i, j), m2_gpu(i, j), 1e-10);
-}
-
-TEST(AgradRevMatrix, multiply_self_transposed_big) {
-  boost::random::mt19937 rng;
-  using stan::math::multiply;
-  stan::math::matrix_d m1, m2, m2_gpu;
-
-  int size = 512;
-  m1.resize(size, size);
-  m2.resize(size, size);
-  m2_gpu.resize(size, size);
-
-  for (int i = 0; i < size; i++)
-  for (int j = 0; j < size; j++) {
-    m1(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
-  }
-
-  stan::math::matrix_gpu m11(m1);
-  stan::math::matrix_gpu m22(m2);
-
-  m2 = m1*m1.transpose();
-
-  m22 = stan::math::multiply_with_self_transposed(m11);
-
-  stan::math::copy(m2_gpu, m22);
-
-  for (int i = 0; i < size; i++)
-  for (int j = 0; j < size; j++)
-    EXPECT_NEAR(m2(i, j), m2_gpu(i, j), 1e-10);
-}
-
-TEST(AgradRevMatrix, lower_triangular_multiply_small) {
-  using stan::math::multiply;
-  stan::math::matrix_d m1, m2, m3, m3_gpu;
-
-  m1.resize(3, 3);
-  m2.resize(3, 3);
-  m3.resize(3, 3);
-  m3_gpu.resize(3, 3);
-
-  m1 << 1, 2, 3,
-        0, 5, 6,
-        0, 0, 9;
-
-  m2 << 1, 2, 3,
-        2, 5, 6,
-        3, 6, 9;
-
-  stan::math::matrix_gpu m11(m1);
-  stan::math::matrix_gpu m22(m2);
-  stan::math::matrix_gpu m33(m3);
-
-  m3 = m1*m2;
-
-  m33 = stan::math::multiply_lower_triangular(m11, m22);
-
-  stan::math::copy(m3_gpu, m33);
-
-  for (int i = 0; i < 3; i++)
-  for (int j = 0; j <= i; j++)
-    EXPECT_NEAR(m3(i, j), m3_gpu(i, j), 1e-10);
-}
-
-TEST(AgradRevMatrix, lower_triangular_multiply_big) {
-  boost::random::mt19937 rng;
-  using stan::math::multiply;
-  stan::math::matrix_d m1, m2, m3, m3_gpu;
-
-  int size = 512;
-  m1.resize(size, size);
-  m2.resize(size, size);
-  m3.resize(size, size);
-  m3_gpu.resize(size, size);
-
-  for (int i = 0; i < size; i++)
-  for (int j = 0; j < size; j++) {
-    if (j >= i)
-      m1(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
-    else
-      m1(i, j) = 0.0;
-    if (i <= j) {
-      m2(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
-      m2(j, i) = m2(i, j);
-    }
-  }
-
-  stan::math::matrix_gpu m11(m1);
-  stan::math::matrix_gpu m22(m2);
-  stan::math::matrix_gpu m33(m3);
-
-  m3 = m1*m2;
-
-  m33 = stan::math::multiply_lower_triangular(m11, m22);
-
-  stan::math::copy(m3_gpu, m33);
-
-  for (int i = 0; i < size; i++)
-  for (int j = 0; j <= i; j++)
-    EXPECT_NEAR(m3(i, j), m3_gpu(i, j), 1e-10);
-}
+#endif
 #endif

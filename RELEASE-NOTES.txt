@@ -1,6 +1,54 @@
 Stan Math Library Release Notes
 ======================================================================
 
+v.2.18.0 (05 September 2017)
+======================================================================
+This is our first release with parallelism (through C++11 threads or MPI)!
+
+New Features
+--------------------------------------------------
+* Support for MPI parallelization with map_rect
+* Support for threaded AD and a threaded map_rect implementation (#809)
+* New periodic covariance function (#921)
+* Integrated Boost's 1 dimensional integrator (#913)
+* Added thin QR decomposition (#900)
+* New `add_diag` function for adding a real or vector to the diagonal of a matrix (#871)
+* New `log_inv_logit_diff` function for the log of the difference of two inverse logits (#856)
+* New dot product kernel for GPs (#834)
+* Vectorized many more RNGs (#833, #722, #622)
+* Add `matrix_exp_action` to calculate `exp(At)*B` (#830)
+* `log_mix` vectorized (#751, #664)
+* New integrators from CVODES (`integrate_ode_adams`, `_bdf`) (#735)
+* New `std_normal` (#609)
+* New `std_normal_log` (#728)
+* New GLM primitive `normal_id_glm` (#665)
+* New `chol2inv` that computes a matrix's inverse from its Cholesky factor (#649)
+* New `poisson_log_glm` poisson regression with log link (#647)
+* New vectorized `ordered_probit` (#645)
+* New `log_modified_bessel_first_kind` that expands where Bessel 1 function can be used (#640)
+* New bernoulli logit GLM (#608)
+
+Bug Fixes
+--------------------------------------------------
+* Rising and falling factorial were not accepting negative arguments (#636)
+* Fix normalizing constant for LKJ distribution (#628)
+
+Other
+--------------------------------------------------
+* Tweaks to `effective_sample_size` for performance and upstream compatibility (#865)
+* Switch to sundials package combining CVODES and IDAS, updating versions (#779, #744)
+* Now publishing the Math doxygen (http://mc-stan.org/math/)
+* Faster `dirichlet_lpdf` accepting more vector types (#788)
+* Upgrade to Boost 1.66 (#766)
+* Improved derivatives for Gamma CDF (#780)
+* Sped up `multi_normal_cholesky` (#753)
+* More efficient `mdivide_right_tri` (#715)
+* More efficient `integrate_ode_rk45_grad_test` (#714)
+* Make algebraic solver easier to use (#703, #697)
+* Begin thinking about internal compatibility for complex numbers (#643)
+* Faster `pow` (#642)
+
+
 v.2.17.0 (05 September 2017)
 ======================================================================
 
@@ -48,7 +96,7 @@ New Features
 
 * Efficient blocking algorithm for gradient of the Cholesky(#384)
 * New distribution functions _lpdf / _lpmf / _lcdf / _lccdf to replace _log function (#320)
-* Univariate normal distribution on sufficient statistics(#38) 
+* Univariate normal distribution on sufficient statistics(#38)
 * New to_matrix function for real arrays(real[]) (#467)
 * New specialization of stan::math::array_builder for matrix types(#496)
 
@@ -184,7 +232,7 @@ New Features
 
 Bug Fixes
 --------------------------------------------------
-* fix elementwise division argument cast problem with 
+* fix elementwise division argument cast problem with
   operator/(matrix, var) not compiling (#290)
 * fix QR decomposition segfault for no-square matrices (#286)
 * fix off-by-one bug in nested Jacobian autodiff in degenerate

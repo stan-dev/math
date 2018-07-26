@@ -17,7 +17,6 @@ import time
 
 winsfx = ".exe"
 testsfx = "_test.cpp"
-batchSize = 25
 
 
 def processCLIArgs():
@@ -66,6 +65,10 @@ def stopErr(msg, returncode):
 def isWin():
     return (platform.system().lower().startswith("windows")
             or os.name.lower().startswith("windows"))
+
+
+batchSize = 20 if isWin() else 200
+
 
 def mungeName(name):
     """Set up the makefile target name"""

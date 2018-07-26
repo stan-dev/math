@@ -24,9 +24,7 @@ inline matrix_gpu identity(int rows_cols) {
   cl::CommandQueue cmdQueue = opencl_context.queue();
 
   try {
-    kernel.setArg(0, A.buffer());
-    kernel.setArg(1, A.rows());
-    kernel.setArg(2, A.cols());
+    opencl_context.set_kernel_args(kernel, A.buffer(), A.rows(), A.cols());
     cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
                                   cl::NDRange(A.rows(), A.cols()),
                                   cl::NullRange, NULL, NULL);

@@ -1,6 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
-#include <stan/math/gpu/multiply_matrix_gpu.hpp>
+#include <stan/math/gpu/multiply.hpp>
 #include <stan/math/gpu/inverse_gpu.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
