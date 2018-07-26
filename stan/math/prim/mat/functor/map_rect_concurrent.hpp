@@ -27,7 +27,7 @@ namespace internal {
  *   specified number
  * - STAN_NUM_THREADS is set to -1 => num_threads is the number of
  *   available cores on the machine
- * - STAN_NUM_THREADS < -1, STAN_NUM_THREADS = 0 or STAN_NUM_THREADS is 
+ * - STAN_NUM_THREADS < -1, STAN_NUM_THREADS = 0 or STAN_NUM_THREADS is
  *   not numeric => throws an exception
  *
  * Should num_threads exceed the number of jobs, then num_threads will
@@ -44,15 +44,16 @@ inline int get_num_threads(int num_jobs) {
   const char* env_stan_num_threads = std::getenv("STAN_NUM_THREADS");
   if (env_stan_num_threads != nullptr) {
     try {
-      const int env_num_threads =
-          boost::lexical_cast<int>(env_stan_num_threads);
+      const int env_num_threads
+          = boost::lexical_cast<int>(env_stan_num_threads);
       if (env_num_threads > 0)
         num_threads = env_num_threads;
       else if (env_num_threads == -1)
         num_threads = std::thread::hardware_concurrency();
       else
-        boost::throw_exception(std::runtime_error(
-          "The STAN_NUM_THREADS environment variable must be positive or -1"));
+        boost::throw_exception(
+            std::runtime_error("The STAN_NUM_THREADS environment variable must "
+                               "be positive or -1"));
       // anything else will use 1 thread.
     } catch (boost::bad_lexical_cast) {
       boost::throw_exception(std::runtime_error(
