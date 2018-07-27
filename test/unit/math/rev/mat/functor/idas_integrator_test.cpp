@@ -150,15 +150,15 @@ TEST_F(IDASIntegratorTest, error_handling) {
   idas_integrator solver(rtol, atol, n);
   double bad_t0 = std::numeric_limits<double>::infinity();
   std::vector<double> bad_ts{std::numeric_limits<double>::infinity()};
-  EXPECT_THROW_MSG(solver.integrate(dae, bad_t0, ts),
-                   std::domain_error, "initial time");
-  EXPECT_THROW_MSG(solver.integrate(dae, t0, bad_ts),
-                   std::domain_error, "times");
+  EXPECT_THROW_MSG(solver.integrate(dae, bad_t0, ts), std::domain_error,
+                   "initial time");
+  EXPECT_THROW_MSG(solver.integrate(dae, t0, bad_ts), std::domain_error,
+                   "times");
   bad_t0 = 0;
   bad_ts[0] = -1;
-  EXPECT_THROW_MSG(solver.integrate(dae, bad_t0, bad_ts),
-                   std::domain_error, "initial time");
+  EXPECT_THROW_MSG(solver.integrate(dae, bad_t0, bad_ts), std::domain_error,
+                   "initial time");
   bad_ts.clear();
-  EXPECT_THROW_MSG(solver.integrate(dae, t0, bad_ts),
-                   std::invalid_argument, "times");  
+  EXPECT_THROW_MSG(solver.integrate(dae, t0, bad_ts), std::invalid_argument,
+                   "times");
 }
