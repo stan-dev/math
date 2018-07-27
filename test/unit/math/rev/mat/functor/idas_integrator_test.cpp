@@ -124,7 +124,7 @@ TEST_F(IDASIntegratorTest, forward_sensitivity_theta) {
     yys_finite_diff = (yy2[i][1] - yy1[i][1]) / (2.0 * theta[0] * h);
     stan::math::set_zero_all_adjoints();
     yy[i][1].grad(theta_var, g);
-    EXPECT_NEAR(yys_finite_diff, g[0], 5e-6);    
+    EXPECT_NEAR(yys_finite_diff, g[0], 5e-6);
   }
 }
 
