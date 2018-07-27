@@ -119,10 +119,13 @@ TEST_F(IDASIntegratorTest, forward_sensitivity_theta) {
   std::vector<std::vector<double> > yy1 = solver.integrate(dae1, t0, ts);
   std::vector<std::vector<double> > yy2 = solver.integrate(dae2, t0, ts);
 
-  double yys_finite_diff = (yy2[3][1] - yy1[3][1]) / (2.0 * theta[0] * h);
-  stan::math::set_zero_all_adjoints();
-  yy[3][1].grad(theta_var, g);
-  EXPECT_NEAR(yys_finite_diff, g[0], 5e-6);
+  double yys_finite_diff;
+  for (size_t i = 0; i < yy.size(); ++i) {
+    yys_finite_diff = (yy2[i][1] - yy1[i][1]) / (2.0 * theta[0] * h);
+    stan::math::set_zero_all_adjoints();
+    yy[i][1].grad(theta_var, g);
+    EXPECT_NEAR(yys_finite_diff, g[0], 5e-6);    
+  }
 }
 
 TEST_F(IDASIntegratorTest, error_handling) {

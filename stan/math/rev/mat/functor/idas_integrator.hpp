@@ -72,7 +72,7 @@ class idas_integrator {
   void solve(Dae& dae, const double& t0, const std::vector<double>& ts,
              typename Dae::return_type& res_yy);
 
-// TODO(yizhang): adjoint sensitivity solver
+  // TODO(yizhang): adjoint sensitivity solver
 
  public:
   static constexpr int IDAS_MAX_STEPS = 500;
