@@ -174,8 +174,8 @@ struct StanIntegrateDAETest : public ::testing::Test {
 };
 
 TEST_F(StanIntegrateDAETest, idas_ivp_system_yy0) {
-  using stan::math::integrate_dae;
   using stan::math::idas_forward_system;
+  using stan::math::integrate_dae;
   std::vector<std::vector<double> > yy
       = integrate_dae(f, yy0, yp0, t0, ts, theta, x_r, x_i, 1e-4, 1e-8);
   EXPECT_NEAR(0.985172, yy[0][0], 1e-6);
@@ -185,9 +185,9 @@ TEST_F(StanIntegrateDAETest, idas_ivp_system_yy0) {
 }
 
 TEST_F(StanIntegrateDAETest, forward_sensitivity_theta) {
-  using stan::math::integrate_dae;
-  using stan::math::idas_integrator;
   using stan::math::idas_forward_system;
+  using stan::math::idas_integrator;
+  using stan::math::integrate_dae;
   using stan::math::to_var;
   using stan::math::value_of;
   using stan::math::var;

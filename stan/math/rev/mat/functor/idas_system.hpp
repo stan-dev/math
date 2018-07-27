@@ -86,7 +86,7 @@ namespace math {
  * equation functor, sensitivity residual equation functor,
  * as well as initial conditions. This is a base type that
  * is intended to contain common values used by forward
- * sensitivity system. 
+ * sensitivity system.
  * TODO(yizhang) adjoint sensitivity system.
  *
  * @tparam F type of functor for DAE residual.
