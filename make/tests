@@ -72,7 +72,7 @@ $(IDAS_TESTS) : $(LIBSUNDIALS)
 ##
 HEADER_TESTS := $(addsuffix -test,$(shell find stan -name '*.hpp' -type f))
 
-ifeq ($(OS_TYPE),win)
+ifeq ($(OS),Windows_NT)
   DEV_NULL = nul
 else
   DEV_NULL = /dev/null
