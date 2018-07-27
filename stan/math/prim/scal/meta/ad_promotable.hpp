@@ -34,51 +34,12 @@ struct ad_promotable<
     typename boost::enable_if<boost::is_arithmetic<T>, T>::type, T> {
   enum { value = true };
 };
-/**
- * A long double may be promoted to a double.
- */
-template <>
-struct ad_promotable<long double, double> {
-  enum { value = true };
-};
 
 /**
- * A double may be promoted to a double.
+ * A bool may be promoted to a double.
  */
 template <>
-struct ad_promotable<double, double> {
-  enum { value = true };
-};
-
-/**
- * A float may be promoted to a double.
- */
-template <>
-struct ad_promotable<float, double> {
-  enum { value = true };
-};
-
-/**
- * A long may be promoted to a double.
- */
-template <>
-struct ad_promotable<long, double> {  // NOLINT(runtime/int)
-  enum { value = true };
-};
-
-/**
- * An int may be promoted to a double.
- */
-template <>
-struct ad_promotable<int, double> {
-  enum { value = true };
-};
-
-/**
- * A short may be promoted to a double.
- */
-template <>
-struct ad_promotable<short, double> {  // NOLINT(runtime/int)
+struct ad_promotable<bool, double> {
   enum { value = true };
 };
 
@@ -91,26 +52,18 @@ struct ad_promotable<char, double> {
 };
 
 /**
- * A bool may be promoted to a double.
+ * An unsigned char may be promoted to a double.
  */
 template <>
-struct ad_promotable<bool, double> {
+struct ad_promotable<unsigned char, double> {
   enum { value = true };
 };
 
 /**
- * An unsigned long may be promoted to a double.
+ * A short may be promoted to a double.
  */
 template <>
-struct ad_promotable<unsigned long, double> {  // NOLINT(runtime/int)
-  enum { value = true };
-};
-
-/**
- * An unsigned int may be promoted to a double.
- */
-template <>
-struct ad_promotable<unsigned int, double> {
+struct ad_promotable<short, double> {  // NOLINT(runtime/int)
   enum { value = true };
 };
 
@@ -123,10 +76,34 @@ struct ad_promotable<unsigned short, double> {  // NOLINT(runtime/int)
 };
 
 /**
- * An unsigned char may be promoted to a double.
+ * An int may be promoted to a double.
  */
 template <>
-struct ad_promotable<unsigned char, double> {
+struct ad_promotable<int, double> {
+  enum { value = true };
+};
+
+/**
+ * An unsigned int may be promoted to a double.
+ */
+template <>
+struct ad_promotable<unsigned int, double> {
+  enum { value = true };
+};
+
+/**
+ * A long may be promoted to a double.
+ */
+template <>
+struct ad_promotable<long, double> {  // NOLINT(runtime/int)
+  enum { value = true };
+};
+
+/**
+ * An unsigned long may be promoted to a double.
+ */
+template <>
+struct ad_promotable<unsigned long, double> {  // NOLINT(runtime/int)
   enum { value = true };
 };
 
@@ -139,10 +116,34 @@ struct ad_promotable<long long, double> {
 };
 
 /**
- * A unsigned long long may be promoted to a double.
+ * An unsigned long long may be promoted to a double.
  */
 template <>
 struct ad_promotable<unsigned long long, double> {
+  enum { value = true };
+};
+
+/**
+ * A float may be promoted to a double.
+ */
+template <>
+struct ad_promotable<float, double> {
+  enum { value = true };
+};
+
+/**
+ * A double may be promoted to a double.
+ */
+template <>
+struct ad_promotable<double, double> {
+  enum { value = true };
+};
+
+/**
+ * A long double may be promoted to a double.
+ */
+template <>
+struct ad_promotable<long double, double> {
   enum { value = true };
 };
 
