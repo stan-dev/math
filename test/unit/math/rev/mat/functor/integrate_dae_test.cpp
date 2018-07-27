@@ -1,8 +1,7 @@
 #include <stan/math.hpp>
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/rev/mat/functor/idas_forward_system.hpp>
-#include <stan/math/rev/mat/functor/idas_integrator.hpp>
+#include <stan/math/rev/mat/functor/integrate_dae.hpp>
 
 #include <nvector/nvector_serial.h>
 
@@ -48,7 +47,7 @@ struct chemical_kinetics {
   }
 };
 
-struct IDASIntegratorTest : public ::testing::Test {
+struct StanIntegrateDAETest : public ::testing::Test {
   chemical_kinetics f;
   std::vector<double> yy0;
   std::vector<double> yp0;
@@ -62,7 +61,7 @@ struct IDASIntegratorTest : public ::testing::Test {
 
   void SetUp() { stan::math::recover_memory(); }
 
-  IDASIntegratorTest()
+  StanIntegrateDAETest()
       : yy0{1.0, 0.0, 0.0},
         yp0{-0.04, 0.04, 0.0},
         theta{0.040, 1.0e4, 3.0e7},
@@ -76,32 +75,29 @@ struct IDASIntegratorTest : public ::testing::Test {
   }
 };
 
-TEST_F(IDASIntegratorTest, idas_ivp_system_yy0) {
+TEST_F(StanIntegrateDAETest, idas_ivp_system_yy0) {
   using stan::math::idas_forward_system;
-  using stan::math::idas_integrator;
-  idas_forward_system<chemical_kinetics, double, double, double> dae{
-      f, eq_id, yy0, yp0, theta, x_r, x_i, msgs};
-  idas_integrator solver(1e-4, 1e-8, 1e6);
-
-  std::vector<std::vector<double> > yy = solver.integrate(dae, t0, ts);
+  using stan::math::integrate_dae;
+  std::vector<std::vector<double> > yy
+      = integrate_dae(f, yy0, yp0, t0, ts, theta, x_r, x_i, 1e-4, 1e-8);
   EXPECT_NEAR(0.985172, yy[0][0], 1e-6);
   EXPECT_NEAR(0.0147939, yy[0][2], 1e-6);
   EXPECT_NEAR(0.905521, yy[1][0], 1e-6);
   EXPECT_NEAR(0.0944571, yy[1][2], 1e-6);
 }
 
-TEST_F(IDASIntegratorTest, forward_sensitivity_theta) {
+TEST_F(StanIntegrateDAETest, forward_sensitivity_theta) {
   using stan::math::idas_forward_system;
+  using stan::math::idas_integrator;
+  using stan::math::integrate_dae;
   using stan::math::to_var;
   using stan::math::value_of;
   using stan::math::var;
 
-  stan::math::idas_integrator solver(1e-5, 1e-12, 1e6);
   std::vector<var> theta_var = to_var(theta);
 
-  idas_forward_system<chemical_kinetics, double, double, var> dae(
-      f, eq_id, yy0, yp0, theta_var, x_r, x_i, msgs);
-  std::vector<std::vector<var> > yy = solver.integrate(dae, t0, ts);
+  std::vector<std::vector<var> > yy
+      = integrate_dae(f, yy0, yp0, t0, ts, theta_var, x_r, x_i, 1e-5, 1e-12);
   EXPECT_NEAR(0.985172, value_of(yy[0][0]), 1e-6);
   EXPECT_NEAR(0.0147939, value_of(yy[0][2]), 1e-6);
   EXPECT_NEAR(0.905519, value_of(yy[1][0]), 1e-6);
@@ -112,6 +108,7 @@ TEST_F(IDASIntegratorTest, forward_sensitivity_theta) {
   const double h = 1.e-2;
   const std::vector<double> theta1{theta[0] - theta[0] * h, theta[1], theta[2]};
   const std::vector<double> theta2{theta[0] + theta[0] * h, theta[1], theta[2]};
+  stan::math::idas_integrator solver(1e-5, 1e-12, 1000);
   idas_forward_system<chemical_kinetics, double, double, double> dae1(
       f, eq_id, yy0, yp0, theta1, x_r, x_i, msgs),
       dae2(f, eq_id, yy0, yp0, theta2, x_r, x_i, msgs);
@@ -121,44 +118,19 @@ TEST_F(IDASIntegratorTest, forward_sensitivity_theta) {
   double yys_finite_diff = (yy2[3][1] - yy1[3][1]) / (2.0 * theta[0] * h);
   stan::math::set_zero_all_adjoints();
   yy[3][1].grad(theta_var, g);
-  EXPECT_NEAR(yys_finite_diff, g[0], 5e-6);
+  EXPECT_NEAR(yys_finite_diff, g[0], 1e-6);
 }
 
-TEST_F(IDASIntegratorTest, error_handling) {
-  using stan::math::idas_forward_system;
-  using stan::math::idas_integrator;
-  const double rtol = 1e-4;
-  const double atol = 1e-8;
-  const int n = 600;
+TEST_F(StanIntegrateDAETest, inconsistent_ic_error) {
+  using stan::math::integrate_dae;
+  using stan::math::to_var;
+  using stan::math::value_of;
+  using stan::math::var;
 
-  ASSERT_NO_THROW(idas_integrator(rtol, atol, n));
+  std::vector<var> theta_var = to_var(theta);
 
-  EXPECT_THROW_MSG(idas_integrator(-1.0E-4, atol, n), std::invalid_argument,
-                   "relative tolerance");
-
-  EXPECT_THROW_MSG(idas_integrator(2.E-3, atol, n), std::invalid_argument,
-                   "relative tolerance");
-
-  EXPECT_THROW_MSG(idas_integrator(rtol, -1.E-9, n), std::invalid_argument,
-                   "absolute tolerance");
-
-  EXPECT_THROW_MSG(idas_integrator(rtol, atol, -100), std::invalid_argument,
-                   "max_num_steps");
-
-  idas_forward_system<chemical_kinetics, double, double, double> dae{
-      f, eq_id, yy0, yp0, theta, x_r, x_i, msgs};
-  idas_integrator solver(rtol, atol, n);
-  double bad_t0 = std::numeric_limits<double>::infinity();
-  std::vector<double> bad_ts{std::numeric_limits<double>::infinity()};
-  EXPECT_THROW_MSG(solver.integrate(dae, bad_t0, ts),
-                   std::domain_error, "initial time");
-  EXPECT_THROW_MSG(solver.integrate(dae, t0, bad_ts),
-                   std::domain_error, "times");
-  bad_t0 = 0;
-  bad_ts[0] = -1;
-  EXPECT_THROW_MSG(solver.integrate(dae, bad_t0, bad_ts),
-                   std::domain_error, "initial time");
-  bad_ts.clear();
-  EXPECT_THROW_MSG(solver.integrate(dae, t0, bad_ts),
-                   std::invalid_argument, "times");  
+  yy0.back() = -0.1;
+  EXPECT_THROW_MSG(
+      integrate_dae(f, yy0, yp0, t0, ts, theta_var, x_r, x_i, 1e-5, 1e-12),
+      std::domain_error, "DAE residual at t0");
 }
