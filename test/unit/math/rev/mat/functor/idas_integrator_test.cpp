@@ -49,15 +49,52 @@ struct chemical_kinetics {
   }
 };
 
+struct prey_predator_harvest {
+  template <typename T0, typename TYY, typename TYP, typename TPAR>
+  inline std::vector<typename stan::return_type<TYY, TYP, TPAR>::type>
+  operator()(const T0& t_in,
+             const std::vector<TYY>& yy,
+             const std::vector<TYP>& yp,
+             const std::vector<TPAR>& theta,
+             const std::vector<double>& x_r,
+             const std::vector<int>& x_i,
+             std::ostream* msgs) const {
+    if (yy.size() != 3 || yp.size() != 3)
+      throw std::domain_error(
+          "this function was called with inconsistent state");
+
+    std::vector<typename stan::return_type<TYY, TYP, TPAR>::type> res(3);
+
+    auto yy1 = yy.at(0);
+    auto yy2 = yy.at(1);
+    auto yy3 = yy.at(2);
+
+    auto yp1 = yp.at(0);
+    auto yp2 = yp.at(1);
+
+    constexpr auto r1  = 1.0;
+    constexpr auto r2  = 3.0;
+    constexpr auto p   = 2.0;
+    auto mu  = theta.at(0);
+
+    res[0]   = yp1 - yy1 * (r1 - yy2);
+    res[1]   = yp2 - yy2 * (r2 - yy2/yy1 - yy3);
+    res[2]   = yy3 * (p * yy2 - 1.0) - mu;
+
+    return res;
+  }
+};
+
 struct IDASIntegratorTest : public ::testing::Test {
   chemical_kinetics f;
+  prey_predator_harvest f2;
   std::vector<double> yy0;
   std::vector<double> yp0;
   std::vector<double> theta;
   std::vector<double> x_r;
   std::vector<int> x_i;
   std::ostream* msgs;
-  const std::vector<int> eq_id;
+  std::vector<int> eq_id;
   const double t0;
   std::vector<double> ts;
 
@@ -91,7 +128,7 @@ TEST_F(IDASIntegratorTest, idas_ivp_system_yy0) {
   EXPECT_NEAR(0.0944571, yy[1][2], 1e-6);
 }
 
-TEST_F(IDASIntegratorTest, forward_sensitivity_theta) {
+TEST_F(IDASIntegratorTest, forward_sensitivity_theta_chemical) {
   using stan::math::idas_forward_system;
   using stan::math::to_var;
   using stan::math::value_of;
@@ -125,6 +162,45 @@ TEST_F(IDASIntegratorTest, forward_sensitivity_theta) {
     stan::math::set_zero_all_adjoints();
     yy[i][1].grad(theta_var, g);
     EXPECT_NEAR(yys_finite_diff, g[0], 5e-6);
+  }
+}
+
+TEST_F(IDASIntegratorTest, forward_sensitivity_theta_prey) {
+  using stan::math::idas_forward_system;
+  using stan::math::to_var;
+  using stan::math::value_of;
+  using stan::math::var;
+
+  yy0[0] = 0.5; yy0[1] = 1.0; yy0[2] = 1.0;
+  std::fill(yp0.begin(), yp0.end(), 0.0);
+  eq_id[0] = 1; eq_id[1] = 1;
+  for (size_t i = 0; i < ts.size(); ++i) ts[i] = (i+1)*0.1;
+  theta[0] = 1.0;
+
+  stan::math::idas_integrator solver(1e-4, 1e-8, 1000);
+  std::vector<var> theta_var = to_var(theta);
+
+  idas_forward_system<prey_predator_harvest, double, double, var> dae(
+      f2, eq_id, yy0, yp0, theta_var, x_r, x_i, msgs);
+  std::vector<std::vector<var> > yy = solver.integrate(dae, t0, ts);
+
+  // test derivatives against central difference results
+  std::vector<double> g;
+  const double h = 1.e-5;
+  const std::vector<double> theta1{theta[0] - theta[0] * h};
+  const std::vector<double> theta2{theta[0] + theta[0] * h};
+  idas_forward_system<prey_predator_harvest, double, double, double> dae1(
+      f2, eq_id, yy0, yp0, theta1, x_r, x_i, msgs),
+      dae2(f2, eq_id, yy0, yp0, theta2, x_r, x_i, msgs);
+  std::vector<std::vector<double> > yy1 = solver.integrate(dae1, t0, ts);
+  std::vector<std::vector<double> > yy2 = solver.integrate(dae2, t0, ts);
+
+  double yys_finite_diff;
+  for (size_t i = 0; i < yy.size(); ++i) {
+    yys_finite_diff = (yy2[i][1] - yy1[i][1]) / (2.0 * theta[0] * h);
+    stan::math::set_zero_all_adjoints();
+    yy[i][1].grad(theta_var, g);
+    EXPECT_NEAR(yys_finite_diff, g[0], 1e-6);
   }
 }
 
