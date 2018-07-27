@@ -72,23 +72,7 @@ class idas_integrator {
   void solve(Dae& dae, const double& t0, const std::vector<double>& ts,
              typename Dae::return_type& res_yy);
 
-  // /**
-  //  * IDAS adjoint system requires different solution process
-  //  * @tparam F type of DAE RHS functor
-  //  * @tparam Tyy type of DAE primary unknowns
-  //  * @tparam Typ type of DAE derivative unknowns
-  //  * @tparam Tpar type of DAE parameters.
-  //  * @param[in/out] dae DAE system
-  //  * @param[in] t0 initial time.
-  //  * @param[in] ts times of the desired solutions, in strictly
-  //  * @param[out] res_yy DAE solutions
-  //  */
-  // template <typename F, typename Tyy, typename Typ, typename Tpar>
-  // void solve(idas_adjoint_system<F, Tyy, Typ, Tpar>& dae, const double& t0,
-  //            const std::vector<double>& ts,
-  //            std::vector<std::vector<double> >& res_yy) {
-  //   // TODO(yizhang): adjoint sensitivity solver
-  // }
+// TODO(yizhang): adjoint sensitivity solver
 
  public:
   static constexpr int IDAS_MAX_STEPS = 500;

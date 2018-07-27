@@ -15,6 +15,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <limits>
 
 struct chemical_kinetics {
   template <typename T0, typename TYY, typename TYP, typename TPAR>
