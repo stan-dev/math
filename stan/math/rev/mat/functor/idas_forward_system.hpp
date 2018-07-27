@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
+#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
@@ -42,14 +43,15 @@ class idas_forward_system : public idas_system<F, Tyy, Typ, Tpar> {
    * Construct IDAS DAE system from initial condition and parameters
    *
    * @param[in] f DAE residual functor
-   * @param[in] eq_id array for DAE's variable ID(1 for *
-   *                  derivative variables, 0 for algebraic variables).
-   * @param[in] yy0 initial condiiton
-   * @param[in] yp0 initial condiiton for derivatives
-   * @param[in] theta parameters of the base DAE.
-   * @param[in] x_r continuous data vector for the DAE.
-   * @param[in] x_i integer data vector for the DAE.
-   * @param[in] msgs stream to which messages are printed.
+   * @param[in] eq_id array for DAE's variable ID, it is a
+   * reference to a constant vector with 1 or 0 as member
+   * entries. 1 for derivative variables, 0 for algebraic variables.
+   * @param[in] yy0 initial condition
+   * @param[in] yp0 initial condition for derivatives
+   * @param[in] theta parameters of the base DAE
+   * @param[in] x_r continuous data vector for the DAE
+   * @param[in] x_i integer data vector for the DAE
+   * @param[in] msgs stream to which messages are printed
    */
   idas_forward_system(const F& f, const std::vector<int>& eq_id,
                       const std::vector<Tyy>& yy0, const std::vector<Typ>& yp0,
@@ -110,8 +112,6 @@ class idas_forward_system : public idas_system<F, Tyy, Typ, Tpar> {
       using DAE = idas_forward_system<F, Tyy, Typ, Tpar>;
       DAE* dae = static_cast<DAE*>(user_data);
 
-      if (!dae->need_sens)
-        return -999;
       static const char* caller = "sensitivity_residual";
       check_greater(caller, "number of parameters", ns, 0);
 

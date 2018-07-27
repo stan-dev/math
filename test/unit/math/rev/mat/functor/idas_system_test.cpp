@@ -107,18 +107,14 @@ void idas_forward_sen_test(chemical_kinetics& f, std::vector<int> eq_id,
   double t = 0.0;
   EXPECT_EQ(residual(t, yy, yp, res, user_data), 0);
 
-  auto sensitivity_residual = dae.sensitivity_residual();
-  auto temp1 = N_VNew_Serial(n);
-  auto temp2 = N_VNew_Serial(n);
-  auto temp3 = N_VNew_Serial(n);
   if (dae.need_sens) {
+    auto sensitivity_residual = dae.sensitivity_residual();
+    auto temp1 = N_VNew_Serial(n);
+    auto temp2 = N_VNew_Serial(n);
+    auto temp3 = N_VNew_Serial(n);
     EXPECT_EQ(sensitivity_residual(ns, t, yy, yp, res, yys, yps, ress,
                                    user_data, temp1, temp2, temp3),
               0);
-  } else {
-    EXPECT_EQ(sensitivity_residual(ns, t, yy, yp, res, yys, yps, ress,
-                                   user_data, temp1, temp2, temp3),
-              -999);
   }
 }
 

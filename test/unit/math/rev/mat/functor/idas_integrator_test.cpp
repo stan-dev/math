@@ -35,7 +35,6 @@ struct chemical_kinetics {
 
     auto yp1 = yp.at(0);
     auto yp2 = yp.at(1);
-    // auto yp3 = yp.at(2);
 
     auto p1 = theta.at(0);
     auto p2 = theta.at(1);
@@ -44,8 +43,6 @@ struct chemical_kinetics {
     res[0] = yp1 + p1 * yy1 - p2 * yy2 * yy3;
     res[1] = yp2 - p1 * yy1 + p2 * yy2 * yy3 + p3 * yy2 * yy2;
     res[2] = yy1 + yy2 + yy3 - 1.0;
-
-    // jacobian respect to yy
 
     return res;
   }
@@ -178,6 +175,7 @@ struct StanIntegrateDAETest : public ::testing::Test {
 
 TEST_F(StanIntegrateDAETest, idas_ivp_system_yy0) {
   using stan::math::integrate_dae;
+  using stan::math::idas_forward_system;
   std::vector<std::vector<double> > yy
       = integrate_dae(f, yy0, yp0, t0, ts, theta, x_r, x_i, 1e-4, 1e-8);
   EXPECT_NEAR(0.985172, yy[0][0], 1e-6);
@@ -188,6 +186,8 @@ TEST_F(StanIntegrateDAETest, idas_ivp_system_yy0) {
 
 TEST_F(StanIntegrateDAETest, forward_sensitivity_theta) {
   using stan::math::integrate_dae;
+  using stan::math::idas_integrator;
+  using stan::math::idas_forward_system;
   using stan::math::to_var;
   using stan::math::value_of;
   using stan::math::var;
@@ -206,10 +206,12 @@ TEST_F(StanIntegrateDAETest, forward_sensitivity_theta) {
   const double h = 1.e-2;
   const std::vector<double> theta1{theta[0] - theta[0] * h, theta[1], theta[2]};
   const std::vector<double> theta2{theta[0] + theta[0] * h, theta[1], theta[2]};
-  std::vector<std::vector<double> > yy1 = integrate_dae(
-      f, yy0, yp0, t0, ts, theta1, x_r, x_i, 1e-5, 1e-12, 1000, false);
-  std::vector<std::vector<double> > yy2 = integrate_dae(
-      f, yy0, yp0, t0, ts, theta2, x_r, x_i, 1e-5, 1e-12, 1000, false);
+  stan::math::idas_integrator solver(1e-5, 1e-12, 1000);
+  idas_forward_system<chemical_kinetics, double, double, double> dae1(
+      f, eq_id, yy0, yp0, theta1, x_r, x_i, msgs),
+      dae2(f, eq_id, yy0, yp0, theta2, x_r, x_i, msgs);
+  std::vector<std::vector<double> > yy1 = solver.integrate(dae1, t0, ts);
+  std::vector<std::vector<double> > yy2 = solver.integrate(dae2, t0, ts);
 
   double yys_finite_diff = (yy2[3][1] - yy1[3][1]) / (2.0 * theta[0] * h);
   stan::math::set_zero_all_adjoints();

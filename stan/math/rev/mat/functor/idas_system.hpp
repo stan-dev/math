@@ -14,8 +14,6 @@
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
-// #include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>
-// #include <stan/math/rev/arr/fun/decouple_ode_states.hpp>
 #include <idas/idas.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
@@ -29,8 +27,8 @@
 /**
  * check IDAS return flag & throw runtime error
  *
- * @param[in] flag routine return flag.
- * @param[in] func routine name.
+ * @param[in] flag routine return flag
+ * @param[in] func routine name
  */
 inline void idas_check(int flag, const char* func) {
   if (flag < 0) {
@@ -88,7 +86,8 @@ namespace math {
  * equation functor, sensitivity residual equation functor,
  * as well as initial conditions. This is a base type that
  * is intended to contain common values used by forward
- * sensitivity system and adjoint sensitivity system.
+ * sensitivity system. 
+ * TODO(yizhang) adjoint sensitivity system.
  *
  * @tparam F type of functor for DAE residual.
  * @tparam Tyy type of initial unknown values.
@@ -191,6 +190,7 @@ class idas_system {
     N_VDestroy_Serial(nv_yy_);
     N_VDestroy_Serial(nv_yp_);
     N_VDestroy_Serial(nv_rr_);
+    N_VDestroy_Serial(id_);
     IDAFree(&mem_);
   }
 
@@ -347,10 +347,7 @@ class idas_system {
   }
 };
 
-template <typename F, typename Tyy, typename Typ, typename Tpar>
-class idas_adjoint_system : public idas_system<F, Tyy, Typ, Tpar> {
-  // TODO(yizhang): adjoint system construction
-};
+// TODO(yizhang): adjoint system construction
 
 }  // namespace math
 }  // namespace stan
