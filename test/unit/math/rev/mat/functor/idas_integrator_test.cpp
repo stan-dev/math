@@ -52,12 +52,9 @@ struct chemical_kinetics {
 struct prey_predator_harvest {
   template <typename T0, typename TYY, typename TYP, typename TPAR>
   inline std::vector<typename stan::return_type<TYY, TYP, TPAR>::type>
-  operator()(const T0& t_in,
-             const std::vector<TYY>& yy,
-             const std::vector<TYP>& yp,
-             const std::vector<TPAR>& theta,
-             const std::vector<double>& x_r,
-             const std::vector<int>& x_i,
+  operator()(const T0& t_in, const std::vector<TYY>& yy,
+             const std::vector<TYP>& yp, const std::vector<TPAR>& theta,
+             const std::vector<double>& x_r, const std::vector<int>& x_i,
              std::ostream* msgs) const {
     if (yy.size() != 3 || yp.size() != 3)
       throw std::domain_error(
@@ -72,14 +69,14 @@ struct prey_predator_harvest {
     auto yp1 = yp.at(0);
     auto yp2 = yp.at(1);
 
-    constexpr auto r1  = 1.0;
-    constexpr auto r2  = 3.0;
-    constexpr auto p   = 2.0;
-    auto mu  = theta.at(0);
+    constexpr auto r1 = 1.0;
+    constexpr auto r2 = 3.0;
+    constexpr auto p = 2.0;
+    auto mu = theta.at(0);
 
-    res[0]   = yp1 - yy1 * (r1 - yy2);
-    res[1]   = yp2 - yy2 * (r2 - yy2/yy1 - yy3);
-    res[2]   = yy3 * (p * yy2 - 1.0) - mu;
+    res[0] = yp1 - yy1 * (r1 - yy2);
+    res[1] = yp2 - yy2 * (r2 - yy2 / yy1 - yy3);
+    res[2] = yy3 * (p * yy2 - 1.0) - mu;
 
     return res;
   }
@@ -171,10 +168,14 @@ TEST_F(IDASIntegratorTest, forward_sensitivity_theta_prey) {
   using stan::math::value_of;
   using stan::math::var;
 
-  yy0[0] = 0.5; yy0[1] = 1.0; yy0[2] = 1.0;
+  yy0[0] = 0.5;
+  yy0[1] = 1.0;
+  yy0[2] = 1.0;
   std::fill(yp0.begin(), yp0.end(), 0.0);
-  eq_id[0] = 1; eq_id[1] = 1;
-  for (size_t i = 0; i < ts.size(); ++i) ts[i] = (i+1)*0.1;
+  eq_id[0] = 1;
+  eq_id[1] = 1;
+  for (size_t i = 0; i < ts.size(); ++i)
+    ts[i] = (i + 1) * 0.1;
   theta[0] = 1.0;
 
   stan::math::idas_integrator solver(1e-4, 1e-8, 1000);
