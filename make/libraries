@@ -1,17 +1,18 @@
-##
+###############################################################################
 # Library locations
-##
-EIGEN ?= $(MATH)lib/eigen_3.3.3
+
+MATH ?=
 BOOST ?= $(MATH)lib/boost_1.66.0
-BOOST_LIB ?= $(MATH)lib/boost_1.66.0/stage/lib
-GTEST ?= $(MATH)lib/gtest_1.7.0
-CPPLINT ?= $(MATH)lib/cpplint_4.45
+BOOST_LIB ?= $(BOOST)/stage/lib
+EIGEN ?= $(MATH)lib/eigen_3.3.3
 OPENCL ?= $(MATH)lib/opencl_1.2.8
 SUNDIALS ?= $(MATH)lib/sundials_3.1.0
-BOOST_PARALLEL_BUILD ?= $(or $(PARALLEL),1)
 
-##
-# Build rules for cvodes
+GTEST ?= $(MATH)lib/gtest_1.7.0
+CPPLINT ?= $(MATH)lib/cpplint_4.45
+
+################################################################################
+# SUNDIALS build rules
 ##
 
 SUNDIALS_CVODES := $(patsubst %.c,%.o,\
@@ -49,20 +50,24 @@ $(SUNDIALS)/lib/libsundials_nvecserial.a: $(SUNDIALS_NVECSERIAL)
 	@mkdir -p $(dir $@)
 	$(AR) -rs $@ $^
 
-LIBSUNDIALS = $(SUNDIALS)/lib/libsundials_nvecserial.a $(SUNDIALS)/lib/libsundials_cvodes.a $(SUNDIALS)/lib/libsundials_idas.a
+LIBSUNDIALS := $(SUNDIALS)/lib/libsundials_nvecserial.a $(SUNDIALS)/lib/libsundials_cvodes.a $(SUNDIALS)/lib/libsundials_idas.a
 
-STAN_CVODES_HEADERS := $(shell find stan -name *cvodes*.hpp)
-$(STAN_CVODES_HEADERS) : $(LIBSUNDIALS)
+STAN_SUNDIALS_HEADERS := $(shell find stan -name *cvodes*.hpp) $(shell find stan -name *idas*.hpp)
+$(STAN_SUNDIALS_HEADERS) : $(LIBSUNDIALS)
 
-STAN_IDAS_HEADERS := $(shell find stan -name *idas*.hpp)
-$(STAN_IDAS_HEADERS) : $(LIBSUNDIALS)
+clean-sundials:
+	$(RM) $(wildcard $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS)))
+
+
+############################################################
+# MPI build rules
+
+ifdef STAN_MPI
 
 ##
-# Build rules for MPI
-##
+# Boost build options
+BOOST_PARALLEL_JOBS ?= 1
 
-# turn BOOST_LIB into absolute path
-BOOST_LIB_ABS = $(shell mkdir -p "$(BOOST_LIB)" && cd -- "$(BOOST_LIB)" && pwd)
 
 $(BOOST)/user-config.jam:
 	echo "# In case of a compiler mismatch used by mpicxx and" >> $(BOOST)/user-config.jam
@@ -73,24 +78,36 @@ $(BOOST)/user-config.jam:
 $(BOOST_LIB)/mpi.so: $(BOOST)/user-config.jam
 	@mkdir -p $(dir $@)
 	cd $(BOOST); ./bootstrap.sh
-	cd $(BOOST); ./b2 --user-config=user-config.jam --layout=system --with-mpi --with-serialization -j$(BOOST_PARALLEL_BUILD) variant=release link=shared threading=multi runtime-link=shared
+	cd $(BOOST); ./b2 --user-config=user-config.jam --layout=system --with-mpi --with-serialization -j$(BOOST_PARALLEL_JOBS) variant=release link=shared threading=multi runtime-link=shared
 
 $(BOOST_LIB)/libboost_serialization.so: $(BOOST_LIB)/mpi.so
-
-$(BOOST_LIB)/libboost_serialization.dylib: $(BOOST_LIB)/mpi.so
-	install_name_tool -add_rpath "$(BOOST_LIB_ABS)" "$(BOOST_LIB)/libboost_serialization.dylib"
-	install_name_tool -id @rpath/libboost_serialization.dylib "$(BOOST_LIB)/libboost_serialization.dylib"
-
 $(BOOST_LIB)/libboost_mpi.so: $(BOOST_LIB)/mpi.so
 
+
+$(BOOST_LIB)/libboost_serialization.dylib: $(BOOST_LIB)/mpi.so
+	install_name_tool -add_rpath "$(BOOST_LIBRARY_ABSOLUTE_PATH)" "$(BOOST_LIB)/libboost_serialization.dylib"
+	install_name_tool -id @rpath/libboost_serialization.dylib "$(BOOST_LIB)/libboost_serialization.dylib"
 $(BOOST_LIB)/libboost_mpi.dylib: $(BOOST_LIB)/mpi.so $(BOOST_LIB)/libboost_serialization.dylib
-	install_name_tool -add_rpath "$(BOOST_LIB_ABS)" "$(BOOST_LIB)/libboost_mpi.dylib"
+	install_name_tool -add_rpath "$(BOOST_LIBRARY_ABSOLUTE_PATH)" "$(BOOST_LIB)/libboost_mpi.dylib"
 	install_name_tool -change libboost_serialization.dylib @rpath/libboost_serialization.dylib "$(BOOST_LIB)/libboost_mpi.dylib"
 	install_name_tool -id @rpath/libboost_mpi.dylib "$(BOOST_LIB)/libboost_mpi.dylib"
 
-.PHONY: clean-libraries
-clean-libraries:
-	$(RM) $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS) $(LIBMPI))
-	$(RM) -rf $(BOOST_LIB)/*
-	$(RM) -rf $(BOOST)/bin.v2 $(BOOST)/tools/build/src/engine/bootstrap/ $(BOOST)/tools/build/src/engine/bin.* $(BOOST)/project-config.jam* $(BOOST)/b2 $(BOOST)/bjam $(BOOST)/bootstrap.log
-	$(RM) -rf bin
+MPI_TEMPLATE_INSTANTIATION_CPP := $(shell find $(MATH)stan -type f -name 'mpi_*_inst.cpp') $(shell find $(MATH)stan -type f -name 'mpi_*_def.cpp')
+MPI_TEMPLATE_INSTANTIATION := $(MPI_TEMPLATE_INSTANTIATION_CPP:%.cpp=%.o)
+
+$(MPI_TEMPLATE_INSTANTIATION) : CXXFLAGS += -fPIC
+
+clean-mpi:
+	$(RM) $(LIBMPI)
+	$(RM) $(MPI_INSTANTIATION)
+	$(RM) -r $(BOOST_LIB)/*
+	$(RM) -r $(BOOST)/bin.v2 $(BOOST)/tools/build/src/engine/bootstrap/ $(BOOST)/tools/build/src/engine/bin.* $(BOOST)/project-config.jam* $(BOOST)/b2 $(BOOST)/bjam $(BOOST)/bootstrap.log
+
+endif
+
+
+############################################################
+# Clean all libraries
+
+.PHONY: clean-libraries clean-sundials clean-mpi
+clean-libraries: clean-sundials clean-mpi

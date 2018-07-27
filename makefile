@@ -1,72 +1,25 @@
-# Makefile for Stan.
 ##
+# Stan Math Library
+# -----------------
+#
+# To customize your build, set make variables in either:
+#    ~/.config/stan/make.local
+#    make/local
+# Variables in make/local is loaded after ~/.config/stan/make.local
 
-# The default target of this Makefile is...
+
+## 'help' is the default make target.
 help:
 
-## Disable implicit rules.
-SUFIXES:
+-include $(HOME)/.config/stan/make.local  # user-defined variables
+-include make/local                       # user-defined variables
 
-include make/default_compiler_options
-
-##
-# Library locations
-##
-MATH ?=
+include make/compiler_flags               # CXX, CXXFLAGS, LDFLAGS set by the end of this file
 include make/libraries
+include make/tests
+include make/cpplint
 
--include $(HOME)/.config/stan/make.local  # define local variables
--include make/local                       # overwrite local variables
-
-CXX = $(CC)
-
-##
-# Get information about the compiler used.
-# - CC_TYPE: {gcc, clang, mingw32-gcc, other}
-# - CC_MAJOR: major version of CC
-# - CC_MINOR: minor version of CC
-##
--include make/detect_cc
-
-# OS_TYPE is set automatically by this script
-##
-# These includes should update the following variables
-# based on the OS:
-#   - CFLAGS
-#   - GTEST_CXXFLAGS
-#   - EXE
-##
--include make/detect_os
-
-# If STAN_OPENCL is defined
-##
-# Adds the following to CXXFLAGS
-# link to OpenCL
-# Defines:
-#  STAN_OPENCL
-# OPENCL_DEVICE_ID - The ID of the GPU (default: 0)
-# OPENCL_PLATFORM_ID The ID of the OpenCL platform (default: 0)
-# Both IDs can be found through installing and calling clinfo
--include make/setup_gpu
-
-##
-# If STAN_MPI is defined
-##
-# Adds the following to CXXFLAGS
-# link to MPI
-# Defines
-#  STAN_MPI
--include make/setup_mpi
-
-include make/libstanmath_mpi # bin/libstanmath_mpi.a
-
-include make/tests    # tests
-include make/cpplint  # cpplint
-
-##
-# Dependencies
-##
-ifneq (,$(filter-out test-headers generate-tests clean% %-test %.d,$(MAKECMDGOALS)))
+ifneq (,$(filter-out test-headers generate-tests clean% %-test %.d print-%,$(MAKECMDGOALS)))
   -include $(addsuffix .d,$(subst $(EXE),,$(MAKECMDGOALS)))
 endif
 
@@ -76,22 +29,32 @@ help:
 	@echo '--------------------------------------------------------------------------------'
 	@echo 'Stan Math makefile:'
 	@echo '  Current configuration:'
-	@echo '  - OS_TYPE (Operating System): ' $(OS_TYPE)
-	@echo '  - CC (Compiler):              ' $(CC)
-	@echo '  - CC_TYPE                     ' $(CC_TYPE)
-	@echo '  - Compiler version:           ' $(CC_MAJOR).$(CC_MINOR)
+	@echo '  - OS (Operating System):      ' $(OS)
+	@echo '  - CXX (Compiler):             ' $(CXX)
+	@echo '  - CXX_TYPE                    ' $(CXX_TYPE)
+	@echo '  - Compiler version:           ' $(CXX_MAJOR).$(CXX_MINOR)
 	@echo '  - O (Optimization Level):     ' $(O)
-	@echo '  - O_STANC (Opt for stanc):    ' $(O_STANC)
-ifdef TEMPLATE_DEPTH
-	@echo '  - TEMPLATE_DEPTH:             ' $(TEMPLATE_DEPTH)
-endif
 	@echo '  Library configuration:'
 	@echo '  - EIGEN                       ' $(EIGEN)
 	@echo '  - BOOST                       ' $(BOOST)
-	@echo '  - CVODES                      ' $(CVODES)
-	@echo '  - IDAS                        ' $(IDAS)
+	@echo '  - SUNDIALS                    ' $(SUNDIALS)
 	@echo '  - GTEST                       ' $(GTEST)
-	@echo '  - OPENCL                      ' $(OPENCL)
+	@echo '  - STAN_OPENCL                 ' $(STAN_OPENCL)
+	@echo '  - STAN_MPI                    ' $(STAN_MPI)
+	@echo '  Compiler flags (each can be overriden separately):'
+	@echo '  - CXXFLAGS_LANG               ' $(CXXFLAGS_LANG)
+	@echo '  - CXXFLAGS_WARNINGS           ' $(CXXFLAGS_WARNINGS)
+	@echo '  - CXXFLAGS_BOOST              ' $(CXXFLAGS_BOOST)
+	@echo '  - CXXFLAGS_EIGEN              ' $(CXXFLAGS_EIGEN)
+	@echo '  - CXXFLAGS_SUNDIALS           ' $(CXXFLAGS_SUNDIALS)
+	@echo '  - CXXFLAGS_OS                 ' $(CXXFLAGS_OS)
+	@echo '  - CXXFLAGS_GTEST              ' $(CXXFLAGS_GTEST)
+	@echo '  - CXXFLAGS_OPENCL             ' $(CXXFLAGS_OPENCL)
+	@echo '  - CXXFLAGS_MPI                ' $(CXXFLAGS_MPI)
+	@echo '  LDLIBS:'
+	@echo '    $(LDLIBS)'
+	@echo '  LDFLAGS:'
+	@echo '    $(LDFLAGS)'
 	@echo ''
 	@echo 'Tests:'
 	@echo ''
@@ -132,7 +95,7 @@ endif
 	@echo ''
 	@echo '--------------------------------------------------------------------------------'
 
-## doxygen
+
 .PHONY: doxygen
 doxygen:
 	mkdir -p doc/api
@@ -166,5 +129,7 @@ clean-all: clean clean-doxygen clean-deps clean-libraries
 	$(shell find test/prob -name '*_generated_*_test.cpp' -type f -exec rm {} +)
 	$(RM) $(wildcard test/prob/generate_tests$(EXE))
 
+##
+# Debug target that allows you to print a variable
+##
 print-%  : ; @echo $* = $($*)
-

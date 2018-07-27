@@ -1,0 +1,170 @@
+# Detect operating system, set default compiler, and detect compiler type
+# The defaults are configured for the compilers we test:
+# https://github.com/stan-dev/stan/wiki/Supported-C---Compilers-and-Language-Features
+
+## Detect operating system
+ifneq ($(OS),Windows_NT)
+  OS := $(shell uname -s)
+endif
+
+## Set default compiler
+ifeq (default,$(origin CXX))
+  ifeq ($(OS),Darwin)  ## Darwin is Mac OS X
+    CXX := clang++
+  endif
+  ifeq ($(OS),Linux)
+    CXX := g++
+  endif
+  ifeq ($(OS),Windows_NT)
+    CXX := g++
+  endif
+endif
+
+# Detect compiler type
+# - CXX_TYPE: {gcc, clang, mingw32-gcc, other}
+# - CXX_MAJOR: major version of CXX
+# - CXX_MINOR: minor version of CXX
+ifneq (,$(findstring clang,$(CXX)))
+  CXX_TYPE ?= clang
+endif
+ifneq (,$(findstring mingw32-g,$(CXX)))
+  CXX_TYPE ?= mingw32-gcc
+endif
+ifneq (,$(findstring gcc,$(CXX)))
+  CXX_TYPE ?= gcc
+endif
+ifneq (,$(findstring g++,$(CXX)))
+  CXX_TYPE ?= gcc
+endif
+CXX_TYPE ?= other
+CXX_MAJOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f1)
+CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
+
+################################################################################
+# Set default compiler flags
+##
+O ?= 3
+
+## includes
+INC ?= -I $(if $(MATH),$(MATH),.) -I $(EIGEN) -I $(BOOST) $(INC_SUNDIALS)
+INC_SUNDIALS ?= -I $(SUNDIALS)/include
+INC_GTEST ?= -I $(GTEST)/include -I $(GTEST)
+
+## CXXFLAGS
+CXXFLAGS_LANG ?= -std=c++1y
+
+ifneq ($(OS),Windows_NT)
+  CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized -Wno-unused-local-typedef
+endif
+
+CXXFLAGS_BOOST ?= -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION
+CXXFLAGS_EIGEN ?=
+CXXFLAGS_SUNDIALS ?= -DNO_FPRINTF_OUTPUT -pipe
+CXXFLAGS_GTEST ?= -DGTEST_USE_OWN_TR1_TUPLE
+CXXFLAGS_OS ?=
+
+## GPU specific flags
+CXXFLAGS_OPENCL ?=
+LDFLAGS_OPENCL ?=
+
+## MPI specific flags
+CXXFLAGS_MPI ?=
+LDFLAGS_MPI ?=
+
+################################################################################
+# Update compiler flags with operating system specific modifications
+##
+ifeq ($(OS),Windows_NT)
+  CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized
+  CXXFLAGS_GTEST += -DGTEST_HAS_PTHREAD=0
+  CXXFLAGS_OS ?= -Wno-unused-but-set-variable -Wno-unused-variable
+  ## Detecting Process Bitness:
+  ## http://blogs.msdn.com/b/david.wang/archive/2006/03/26/howto-detect-process-bitness.aspx
+  ifeq ($(PROCESSOR_ARCHITECTURE)$(PROCESSOR_ARCHITEW6432),x86)
+    CXXFLAGS_OS += -m32
+  else
+    CXXFLAGS_OS += -m64
+  endif
+
+  LDLIBS ?= -static-libgcc
+  ifeq (gcc,$(CXX_TYPE))
+    LDLIBS += -static-libstdc++
+  endif
+
+  EXE := .exe
+endif
+
+ifeq ($(OS),Darwin)
+  ifeq (clang,$(CXX_TYPE))
+    CXXFLAGS_OS ?= -Wno-unknown-warning-option -Wno-tautological-compare -Wsign-compare
+  endif
+endif
+
+ifeq ($(OS),Linux)
+  CXXFLAGS_GTEST += -DGTEST_HAS_PTHREAD=0
+  ifeq (gcc,$(CXX_TYPE))
+    CXXFLAGS_OS += -pthread
+  endif
+  ifeq (mingw32-gcc,$(CXX_TYPE))
+    LDLIBS ?= -static -lwinpthread
+    EXE := .exe
+    WINE ?= wine
+  endif
+  ifeq (clang,$(CXX_TYPE))
+    LDLIBS ?= -lpthread
+    CXXFLAGS += -stdlib=libc++
+  endif
+endif
+
+
+################################################################################
+# Setup GPU
+#
+# Adds the following to CXXFLAGS_OPENCL
+# OPENCL_DEVICE_ID - The ID of the GPU (default: 0)
+# OPENCL_PLATFORM_ID The ID of the OpenCL platform (default: 0)
+# Both IDs can be found through installing and calling clinfo
+
+ifdef STAN_OPENCL
+  ifeq ($(OS),Darwin)  # Mac OS X
+    LDFLAGS_OPENCL ?= -framework OpenCL
+  else
+    LDFLAGS_OPENCL ?= -lOpenCL
+  endif
+  OPENCL_DEVICE_ID ?= 0
+  OPENCL_PLATFORM_ID ?= 0
+
+  CXXFLAGS_OPENCL ?= -I $(OPENCL) -DSTAN_OPENCL -DOPENCL_DEVICE_ID=$(OPENCL_DEVICE_ID) -DOPENCL_PLATFORM_ID=$(OPENCL_PLATFORM_ID)
+endif
+
+################################################################################
+# Setup MPI
+#
+# Sets up MPI CXXFLAGS_MPI and LDFLAGS_MPI to compile and link to MPI
+
+ifdef STAN_MPI
+  ifeq ($(OS),Windows_NT)
+    $(error MPI is not supported on Windows.)
+  endif
+
+  ifeq ($(OS),Darwin)
+    BOOST_LIBRARY_SUFFIX := .dylib
+  endif
+
+  ifeq ($(OS),Linux)
+    BOOST_LIBRARY_SUFFIX := .so
+  endif
+
+  LIBMPI ?= $(addsuffix $(BOOST_LIBRARY_SUFFIX),$(BOOST_LIB)/libboost_serialization $(BOOST_LIB)/libboost_mpi) $(MPI_TEMPLATE_INSTANTIATION)
+  CXXFLAGS_MPI = -DSTAN_MPI
+
+  BOOST_LIBRARY_ABSOLUTE_PATH = $(abspath $(BOOST_LIB))
+
+  LDFLAGS_MPI ?= -Wl,-lboost_mpi -Wl,-lboost_serialization -Wl,-L,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" -Wl,-rpath,"$(BOOST_LIBRARY_ABSOLUTE_PATH)"
+
+endif
+
+
+CXXFLAGS = $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_SUNDIALS) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) -O$(O) $(INC)
+LDFLAGS = $(LDFLAGS_MPI) $(LDFLAGS_OPENCL)
+LDLIBS = $(LIBMPI)
