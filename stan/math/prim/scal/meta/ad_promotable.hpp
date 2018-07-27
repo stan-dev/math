@@ -91,7 +91,7 @@ struct ad_promotable<char, double> {
 };
 
 /**
- * A blool may be promoted to a double.
+ * A bool may be promoted to a double.
  */
 template <>
 struct ad_promotable<bool, double> {
@@ -127,6 +127,22 @@ struct ad_promotable<unsigned short, double> {  // NOLINT(runtime/int)
  */
 template <>
 struct ad_promotable<unsigned char, double> {
+  enum { value = true };
+};
+
+/**
+ * A long long may be promoted to a double.
+ */
+template <>
+struct ad_promotable<long long, double> {
+  enum { value = true };
+};
+
+/**
+ * A unsigned long long may be promoted to a double.
+ */
+template <>
+struct ad_promotable<unsigned long long, double> {
   enum { value = true };
 };
 
