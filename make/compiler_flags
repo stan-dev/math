@@ -45,31 +45,33 @@ CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
 ##
 O ?= 3
 
-## includes
+## setup includes
 INC ?= -I $(if $(MATH),$(MATH),.) -I $(EIGEN) -I $(BOOST) $(INC_SUNDIALS)
 INC_SUNDIALS ?= -I $(SUNDIALS)/include
 INC_GTEST ?= -I $(GTEST)/include -I $(GTEST)
 
-## CXXFLAGS
+## setup compiler flags
 CXXFLAGS_LANG ?= -std=c++1y
-
-ifneq ($(OS),Windows_NT)
-  CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized -Wno-unused-local-typedef
-endif
-
 CXXFLAGS_BOOST ?= -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION
-CXXFLAGS_EIGEN ?=
 CXXFLAGS_SUNDIALS ?= -DNO_FPRINTF_OUTPUT -pipe
 CXXFLAGS_GTEST ?= -DGTEST_USE_OWN_TR1_TUPLE
-CXXFLAGS_OS ?=
+
+## These are the other compiler flags that can be set.
+##
+## They are listed here for documentation and are intentionally
+## commented out.
+
+# CXXFLAGS_OS
+# CXXFLAGS_WARNINGS
+# CXXFLAGS_EIGEN
 
 ## GPU specific flags
-CXXFLAGS_OPENCL ?=
-LDFLAGS_OPENCL ?=
+# CXXFLAGS_OPENCL
+# LDFLAGS_OPENCL
 
 ## MPI specific flags
-CXXFLAGS_MPI ?=
-LDFLAGS_MPI ?=
+# CXXFLAGS_MPI
+# LDFLAGS_MPI
 
 ################################################################################
 # Update compiler flags with operating system specific modifications
