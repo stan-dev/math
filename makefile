@@ -46,11 +46,11 @@ help:
 	@echo '  - CXXFLAGS_WARNINGS           ' $(CXXFLAGS_WARNINGS)
 	@echo '  - CXXFLAGS_BOOST              ' $(CXXFLAGS_BOOST)
 	@echo '  - CXXFLAGS_EIGEN              ' $(CXXFLAGS_EIGEN)
-	@echo '  - CXXFLAGS_SUNDIALS           ' $(CXXFLAGS_SUNDIALS)
 	@echo '  - CXXFLAGS_OS                 ' $(CXXFLAGS_OS)
 	@echo '  - CXXFLAGS_GTEST              ' $(CXXFLAGS_GTEST)
 	@echo '  - CXXFLAGS_OPENCL             ' $(CXXFLAGS_OPENCL)
 	@echo '  - CXXFLAGS_MPI                ' $(CXXFLAGS_MPI)
+	@echo '  - CFLAGS_SUNDIALS             ' $(CFLAGS_SUNDIALS)
 	@echo '  LDLIBS:'
 	@echo '    $(LDLIBS)'
 	@echo '  LDFLAGS:'
