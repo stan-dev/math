@@ -19,11 +19,6 @@ include make/libraries
 include make/tests
 include make/cpplint
 
-ifneq (,$(filter-out test-headers generate-tests clean% %-test %.d print-%,$(MAKECMDGOALS)))
-  -include $(addsuffix .d,$(subst $(EXE),,$(MAKECMDGOALS)))
-endif
-
-
 .PHONY: help
 help:
 	@echo '--------------------------------------------------------------------------------'
