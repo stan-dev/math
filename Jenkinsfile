@@ -102,7 +102,7 @@ pipeline {
                     retry(3) { checkout scm }
                     sh "git clean -xffd"
                     stash 'MathSetup'
-                    sh "echo CC=${env.CXX} -Werror > make/local"
+                    sh "echo CXX=${env.CXX} -Werror > make/local"
                     parallel(
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh 'make test-math-dependencies' } ,
@@ -123,7 +123,7 @@ pipeline {
             steps {
                 deleteDir()
                 unstash 'MathSetup'
-                sh "echo CC=${env.CXX} -Werror > make/local"
+                sh "echo CXX=${env.CXX} -Werror > make/local"
                 sh "make -j${env.PARALLEL} test-headers"
             }
             post {
@@ -138,7 +138,7 @@ pipeline {
             steps {
                 deleteDir()
                 unstash 'MathSetup'
-                sh "echo CC=${MPICXX} >> make/local"
+                sh "echo CXX=${MPICXX} >> make/local"
                 sh "echo STAN_MPI=true >> make/local"
                 runTests("test/unit")
             }
@@ -152,8 +152,8 @@ pipeline {
                         deleteDir()
                         unstash 'MathSetup'
                         sh """
-                            echo CC=${env.CXX} > make/local
-                            echo 'O=0' >> make/local
+                            echo CXX=${env.CXX} > make/local
+                            echo O=0 >> make/local
                             echo N_TESTS=${env.N_TESTS} >> make/local
                             """
                         script {
@@ -178,8 +178,8 @@ pipeline {
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
-                        sh "echo CC=${env.CXX} -Werror > make/local"
-                        sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
+                        sh "echo CXX=${env.CXX} -Werror > make/local"
+                        sh "echo CPPFLAGS=-DSTAN_THREADS >> make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -194,7 +194,7 @@ pipeline {
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
-                        sh "echo CC=${env.CXX} -Werror > make/local"
+                        sh "echo CXX=${env.CXX} -Werror > make/local"
                         sh "echo STAN_OPENCL=true>> make/local"
                         sh "echo OPENCL_PLATFORM_ID=0>> make/local"
                         sh "echo OPENCL_DEVICE_ID=0>> make/local"
@@ -207,8 +207,8 @@ pipeline {
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
-                        sh "echo CC=${GCC} >> make/local"
-                        sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
+                        sh "echo CXX=${GCC} >> make/local"
+                        sh "echo CPPFLAGS=-DSTAN_THREADS >> make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
