@@ -84,7 +84,7 @@ namespace stan {
       if (gpu_local_max < local) {
         local = gpu_local_max;
       }
-      int wpt = 4;
+      int wpt = 8;
       int Mpad = ((A.rows() + local-1)/local)*local;
       int Npad = ((B.cols() + local-1)/local)*local;
       try {
