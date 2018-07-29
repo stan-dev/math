@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <algorithm>
 #ifdef STAN_OPENCL
-/*
+
 TEST(MathMatrix, multiply_c_v) {
   stan::math::vector_d v(3);
   v << 1, 2, 3;
@@ -251,7 +251,7 @@ TEST(AgradRevMatrix, multiply_small) {
   for (int j = 0; j < 3; j++)
     EXPECT_NEAR(m3(i, j), m3_gpu(i, j), 1e-10);
 }
-*/
+
 TEST(AgradRevMatrix, multiply_big) {
   boost::random::mt19937 rng;
   using stan::math::multiply;
@@ -268,7 +268,6 @@ TEST(AgradRevMatrix, multiply_big) {
     m1(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
     m2(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
   }
-
   stan::math::matrix_gpu m11(m1);
   stan::math::matrix_gpu m22(m2);
   stan::math::matrix_gpu m33(size,size);
