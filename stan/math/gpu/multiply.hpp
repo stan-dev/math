@@ -73,24 +73,31 @@ namespace stan {
      */
     inline matrix_gpu multiply(matrix_gpu & A, matrix_gpu & B) {
       check_size_match("multiply (GPU)", "A.cols()", A.cols(),
-       "B.rows()", B.rows());
-      matrix_gpu temp(A.rows(), B.cols());
+       "B.rows()", B.rows());             
+      matrix_gpu temp(A.rows(), B.cols());      
       if ( temp.size() == 0 )
         return temp;
-      cl::Kernel kernel = opencl_context.get_kernel("matrix_multiply");
-      cl::CommandQueue& cmdQueue = opencl_context.queue();
+
       int local = 32;
       int gpu_local_max = sqrt(opencl_context.max_workgroup_size());
       if (gpu_local_max < local) {
         local = gpu_local_max;
       }
-      int wpt = 4;
       int Mpad = ((A.rows() + local-1)/local)*local;
       int Npad = ((B.cols() + local-1)/local)*local;
+      int Kpad = ((A.cols() + local-1)/local)*local;
+      matrix_gpu tempPad(Mpad, Npad);
+      matrix_gpu Apad(Mpad, Kpad);
+      matrix_gpu Bpad(Kpad, Npad);      
+      Apad.sub_block(A, 0, 0, 0, 0, A.rows(), A.cols());
+      Bpad.sub_block(B, 0, 0, 0, 0, B.rows(), B.cols());
+      cl::Kernel kernel = opencl_context.get_kernel("matrix_multiply");
+      cl::CommandQueue& cmdQueue = opencl_context.queue();      
+      int wpt = 8;
       try {
-        opencl_context.set_kernel_args(kernel, A.rows(), B.cols(),
-                                   B.rows(), A.buffer(), B.buffer(),
-                                   temp.buffer());
+        opencl_context.set_kernel_args(kernel, Apad.rows(), Bpad.cols(),
+                                   Bpad.rows(), Apad.buffer(), Bpad.buffer(),
+                                   tempPad.buffer());
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
@@ -101,6 +108,7 @@ namespace stan {
       } catch (cl::Error& e) {
         check_opencl_error("multiply", e);
       }
+      temp.sub_block(tempPad, 0, 0, 0, 0, temp.rows(), temp.cols());      
       return temp;
     }
   }

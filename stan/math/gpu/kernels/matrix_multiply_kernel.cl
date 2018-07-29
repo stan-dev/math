@@ -1,8 +1,8 @@
 R"(
-#define WPT 4
+#define WPT 8
 #define RTS TS/WPT
 __kernel void matrix_multiply(const int M, const int N, const int K,
-            const __global double* A,
+         const __global double* A,
             const __global double* B,
             __global double* C) {
     
@@ -24,16 +24,11 @@ __kernel void matrix_multiply(const int M, const int N, const int K,
     for (int w=0; w<WPT; w++) {
       const int tiled_i = TS*t + row;
       const int tiled_j = TS*t + col;
-      if ( i < M && (tiled_j + w*RTS) < K ) {
-        Asub[col + w*RTS][row] = A[(tiled_j + w*RTS)*M + i];
-      }else{
-        Asub[col + w*RTS][row] = 0.0;
-      }
-      if ( tiled_i < K && (j + w*RTS) < N ) {
-        Bsub[col + w*RTS][row] = B[(j + w*RTS)*K + tiled_i];
-      }else{
-        Bsub[col + w*RTS][row] = 0.0;
-      }
+      
+      Asub[col + w*RTS][row] = A[(tiled_j + w*RTS)*M + i];
+      
+      Bsub[col + w*RTS][row] = B[(j + w*RTS)*K + tiled_i];
+      
     }    
     barrier(CLK_LOCAL_MEM_FENCE);
     for (int k=0; k<TS; k++) {
@@ -44,9 +39,8 @@ __kernel void matrix_multiply(const int M, const int N, const int K,
     barrier(CLK_LOCAL_MEM_FENCE);
   } 
   for (int w=0; w<WPT; w++) {
-    if ( (j + w*RTS) < N && i < M ) {
-    C[(j + w*RTS)*M + i] = acc[w];
-    }
+   C[(j + w*RTS)*M + i] = acc[w];   
   }
-};
+  
+}
 )"
