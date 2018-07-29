@@ -77,7 +77,6 @@ namespace stan {
       matrix_gpu temp(A.rows(), B.cols());      
       if ( temp.size() == 0 )
         return temp;
-
       int local = 32;
       int gpu_local_max = sqrt(opencl_context.max_workgroup_size());
       if (gpu_local_max < local) {

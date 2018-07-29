@@ -24,31 +24,37 @@ namespace stan {
       matrix_gpu temp(A.rows(), A.rows());
       if (temp.size() == 0)
         return temp;
-      cl::Kernel kernel = opencl_context.get_kernel("multiply_self_transpose");
-      cl::CommandQueue& cmdQueue = opencl_context.queue();
-      matrix_gpu AT = stan::math::transpose(A);
       int local = 32;
       int gpu_local_max = sqrt(opencl_context.max_workgroup_size());
       if (gpu_local_max < local) {
         local = gpu_local_max;
       }
-      int wpt = 4;
       int Mpad = ((A.rows() + local-1)/local)*local;
-      int Npad = ((AT.cols() + local-1)/local)*local;
+      int Npad = ((A.cols() + local-1)/local)*local;
+      matrix_gpu tempPad(Mpad, Mpad);
+      matrix_gpu Apad(Mpad, Npad);
+      matrix_gpu ATpad(Npad, Mpad);
+      matrix_gpu AT = stan::math::transpose(A);
+      Apad.sub_block(A, 0, 0, 0, 0, A.rows(), A.cols());
+      ATpad.sub_block(AT, 0, 0, 0, 0, AT.rows(), AT.cols());
+      cl::Kernel kernel = opencl_context.get_kernel("multiply_self_transpose");
+      cl::CommandQueue& cmdQueue = opencl_context.queue();
+      int wpt = 4;
       try {
-        opencl_context.set_kernel_args(kernel, A.rows(), AT.cols(),
-                                   AT.rows(), A.buffer(), AT.buffer(),
-                                   temp.buffer());
+        opencl_context.set_kernel_args(kernel, Apad.rows(), ATpad.cols(),
+                                   ATpad.rows(), Apad.buffer(), ATpad.buffer(),
+                                   tempPad.buffer());
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
-          cl::NDRange(Mpad,  Npad/wpt),
+          cl::NDRange(Mpad,  Mpad/wpt),
           cl::NDRange(local, local/wpt),
           NULL,
           NULL);
       } catch (cl::Error& e) {
         check_opencl_error("multiply self transpose", e);
       }
+      temp.sub_block(tempPad, 0, 0, 0, 0, temp.rows(), temp.cols());      
       return temp;
     }
   }

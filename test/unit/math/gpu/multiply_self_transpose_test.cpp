@@ -87,11 +87,10 @@ TEST(AgradRevMatrix, multiply_self_transposed_big) {
     m1(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
   }
 
-  stan::math::matrix_gpu m11(m1);
-  stan::math::matrix_gpu m22(m2);
-
   m2 = m1*m1.transpose();
-
+  
+  stan::math::matrix_gpu m11(m1);
+  stan::math::matrix_gpu m22(size, size);
   m22 = stan::math::multiply_self_transpose(m11);
 
   stan::math::copy(m2_gpu, m22);

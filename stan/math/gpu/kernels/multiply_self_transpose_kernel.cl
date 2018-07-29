@@ -29,16 +29,8 @@ __kernel void multiply_self_transpose(const int M,
     for (int w=0; w<WPT1; w++) {
       const int tiled_i = TS1*t + row;
       const int tiled_j = TS1*t + col;
-      if ( i < M && (tiled_j + w*RTS1) < K ) {
-        Asub[col + w*RTS1][row] = A[(tiled_j + w*RTS1)*M + i];
-      }else{
-        Asub[col + w*RTS1][row] = 0.0;
-      }
-      if ( tiled_i < K && (j + w*RTS1) < N ) {
-        Bsub[col + w*RTS1][row] = B[(j + w*RTS1)*K + tiled_i];
-      }else{
-        Bsub[col + w*RTS1][row] = 0.0;
-      }
+      Asub[col + w*RTS1][row] = A[(tiled_j + w*RTS1)*M + i];
+      Bsub[col + w*RTS1][row] = B[(j + w*RTS1)*K + tiled_i];      
     }
   }
     
@@ -47,7 +39,7 @@ __kernel void multiply_self_transpose(const int M,
     for (int k=0; k<TS1; k++) {
       for (int w=0; w<WPT1; w++) {
         if((j + w*RTS1)<=i){
-        acc[w] += Asub[k][row] * Bsub[col + w*RTS1][k];
+          acc[w] += Asub[k][row] * Bsub[col + w*RTS1][k];
         }
       }
     }
@@ -56,9 +48,9 @@ __kernel void multiply_self_transpose(const int M,
   }
  
   for (int w=0; w<WPT1; w++) {
-    if ( (j + w*RTS1) < N && i < M  && (j + w*RTS1)<=i ) {
-    C[(j + w*RTS1)*M + i] = acc[w];
-    C[i*M + (j + w*RTS1)] = acc[w];
+    if ( (j + w*RTS1)<=i ) {
+      C[(j + w*RTS1)*M + i] = acc[w];
+      C[i*M + (j + w*RTS1)] = acc[w];
     }
   }
 };
