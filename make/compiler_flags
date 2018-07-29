@@ -46,9 +46,9 @@ CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
 O ?= 3
 
 ## setup includes
-INC ?= -I $(if $(MATH),$(MATH),.) -I $(EIGEN) -I $(BOOST) $(INC_SUNDIALS)
-INC_SUNDIALS ?= -I $(SUNDIALS)/include
-INC_GTEST ?= -I $(GTEST)/include -I $(GTEST)
+INC ?= -I $(if $(MATH),$(MATH),.) -isystem $(EIGEN) -isystem $(BOOST) $(INC_SUNDIALS)
+INC_SUNDIALS ?= -isystem $(SUNDIALS)/include
+INC_GTEST ?= -isystem $(GTEST)/include -isystem $(GTEST)
 
 ## setup compiler flags
 CXXFLAGS_LANG ?= -std=c++1y
@@ -136,7 +136,7 @@ ifdef STAN_OPENCL
   OPENCL_DEVICE_ID ?= 0
   OPENCL_PLATFORM_ID ?= 0
 
-  CXXFLAGS_OPENCL ?= -I $(OPENCL) -DSTAN_OPENCL -DOPENCL_DEVICE_ID=$(OPENCL_DEVICE_ID) -DOPENCL_PLATFORM_ID=$(OPENCL_PLATFORM_ID)
+  CXXFLAGS_OPENCL ?= -isystem $(OPENCL) -DSTAN_OPENCL -DOPENCL_DEVICE_ID=$(OPENCL_DEVICE_ID) -DOPENCL_PLATFORM_ID=$(OPENCL_PLATFORM_ID)
 endif
 
 ################################################################################
