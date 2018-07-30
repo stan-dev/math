@@ -172,10 +172,10 @@ ifdef STAN_MPI
     BOOST_LIBRARY_SUFFIX := .so
   endif
 
-  MPI_TARGETS ?= $(addsuffix $(BOOST_LIBRARY_SUFFIX),$(BOOST_LIB)/libboost_serialization $(BOOST_LIB)/libboost_mpi) $(MPI_TEMPLATE_INSTANTIATION)
+  MPI_TARGETS ?= $(addsuffix $(BOOST_LIBRARY_SUFFIX),$(BOOST)/stage/lib/libboost_serialization $(BOOST)/stage/lib/libboost_mpi) $(MPI_TEMPLATE_INSTANTIATION)
   CPPFLAGS_MPI ?= -DSTAN_MPI
 
-  BOOST_LIBRARY_ABSOLUTE_PATH = $(abspath $(BOOST_LIB))
+  BOOST_LIBRARY_ABSOLUTE_PATH = $(abspath $(BOOST)/stage/lib)
 
   LDLIBS_MPI ?= -Wl,-lboost_mpi -Wl,-lboost_serialization -Wl,-L,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" -Wl,-rpath,"$(BOOST_LIBRARY_ABSOLUTE_PATH)"
 

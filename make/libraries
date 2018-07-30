@@ -3,7 +3,6 @@
 
 MATH ?=
 BOOST ?= $(MATH)lib/boost_1.66.0
-BOOST_LIB ?= $(BOOST)/stage/lib
 EIGEN ?= $(MATH)lib/eigen_3.3.3
 OPENCL ?= $(MATH)lib/opencl_1.2.8
 SUNDIALS ?= $(MATH)lib/sundials_3.1.0
@@ -75,22 +74,22 @@ $(BOOST)/user-config.jam:
 	echo "# the boost toolset here" >> $(BOOST)/user-config.jam
 	echo "using mpi ;" >> $(BOOST)/user-config.jam
 
-$(BOOST_LIB)/mpi.so: $(BOOST)/user-config.jam
+$(BOOST)/stage/lib/mpi.so: $(BOOST)/user-config.jam
 	@mkdir -p $(dir $@)
 	cd $(BOOST); ./bootstrap.sh
 	cd $(BOOST); ./b2 --user-config=user-config.jam --layout=system --with-mpi --with-serialization -j$(BOOST_PARALLEL_JOBS) variant=release link=shared threading=multi runtime-link=shared
 
-$(BOOST_LIB)/libboost_serialization.so: $(BOOST_LIB)/mpi.so
-$(BOOST_LIB)/libboost_mpi.so: $(BOOST_LIB)/mpi.so
+$(BOOST)/stage/lib/libboost_serialization.so: $(BOOST)/stage/lib/mpi.so
+$(BOOST)/stage/lib/libboost_mpi.so: $(BOOST)/stage/lib/mpi.so
 
 
-$(BOOST_LIB)/libboost_serialization.dylib: $(BOOST_LIB)/mpi.so
-	install_name_tool -add_rpath "$(BOOST_LIBRARY_ABSOLUTE_PATH)" "$(BOOST_LIB)/libboost_serialization.dylib"
-	install_name_tool -id @rpath/libboost_serialization.dylib "$(BOOST_LIB)/libboost_serialization.dylib"
-$(BOOST_LIB)/libboost_mpi.dylib: $(BOOST_LIB)/mpi.so $(BOOST_LIB)/libboost_serialization.dylib
-	install_name_tool -add_rpath "$(BOOST_LIBRARY_ABSOLUTE_PATH)" "$(BOOST_LIB)/libboost_mpi.dylib"
-	install_name_tool -change libboost_serialization.dylib @rpath/libboost_serialization.dylib "$(BOOST_LIB)/libboost_mpi.dylib"
-	install_name_tool -id @rpath/libboost_mpi.dylib "$(BOOST_LIB)/libboost_mpi.dylib"
+$(BOOST)/stage/lib/libboost_serialization.dylib: $(BOOST)/stage/lib/mpi.so
+	install_name_tool -add_rpath "$(BOOST_LIBRARY_ABSOLUTE_PATH)" "$(BOOST)/stage/lib/libboost_serialization.dylib"
+	install_name_tool -id @rpath/libboost_serialization.dylib "$(BOOST)/stage/lib/libboost_serialization.dylib"
+$(BOOST)/stage/lib/libboost_mpi.dylib: $(BOOST)/stage/lib/mpi.so $(BOOST)/stage/lib/libboost_serialization.dylib
+	install_name_tool -add_rpath "$(BOOST_LIBRARY_ABSOLUTE_PATH)" "$(BOOST)/stage/lib/libboost_mpi.dylib"
+	install_name_tool -change libboost_serialization.dylib @rpath/libboost_serialization.dylib "$(BOOST)/stage/lib/libboost_mpi.dylib"
+	install_name_tool -id @rpath/libboost_mpi.dylib "$(BOOST)/stage/lib/libboost_mpi.dylib"
 
 MPI_TEMPLATE_INSTANTIATION_CPP := $(shell find $(MATH)stan -type f -name 'mpi_*_inst.cpp') $(shell find $(MATH)stan -type f -name 'mpi_*_def.cpp')
 MPI_TEMPLATE_INSTANTIATION := $(MPI_TEMPLATE_INSTANTIATION_CPP:%.cpp=%.o)
@@ -100,7 +99,7 @@ $(MPI_TEMPLATE_INSTANTIATION) : CXXFLAGS += -fPIC
 clean-mpi:
 	$(RM) $(LIBMPI)
 	$(RM) $(MPI_INSTANTIATION)
-	$(RM) -r $(BOOST_LIB)/*
+	$(RM) -r $(BOOST)/stage/lib/*
 	$(RM) -r $(BOOST)/bin.v2 $(BOOST)/tools/build/src/engine/bootstrap/ $(BOOST)/tools/build/src/engine/bin.* $(BOOST)/project-config.jam* $(BOOST)/b2 $(BOOST)/bjam $(BOOST)/bootstrap.log
 
 endif
