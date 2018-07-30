@@ -42,6 +42,11 @@ CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
 
 ################################################################################
 # Set default compiler flags
+#
+# The options that have been commented are things that the user can set.
+# They are commented because in make, undefined is different than empty;
+# we can test for that everywhere, but it's a lot easier using the set if
+# unassigned operator (`?=`) when it's not set.
 ##
 O ?= 3
 
@@ -50,11 +55,18 @@ INC ?= -I $(if $(MATH),$(MATH),.) -I $(EIGEN) -I $(BOOST) $(INC_SUNDIALS)
 INC_SUNDIALS ?= -I $(SUNDIALS)/include
 INC_GTEST ?= -isystem $(GTEST)/include -isystem $(GTEST)
 
+## setup precompiler options
+CPPFLAGS_BOOST ?= -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION
+CPPFLAGS_SUNDIALS ?= -DNO_FPRINTF_OUTPUT
+CPPFLAGS_GTEST ?= -DGTEST_USE_OWN_TR1_TUPLE
+
+
 ## setup compiler flags
 CXXFLAGS_LANG ?= -std=c++1y
-CXXFLAGS_BOOST ?= -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION
-CFLAGS_SUNDIALS ?= -DNO_FPRINTF_OUTPUT -pipe
-CXXFLAGS_GTEST ?= -DGTEST_USE_OWN_TR1_TUPLE
+#CXXFLAGS_BOOST
+CFLAGS_SUNDIALS ?= -pipe
+#CXXFLAGS_GTEST
+
 
 ## These are the other compiler flags that can be set.
 ##
@@ -80,7 +92,7 @@ CXXFLAGS_GTEST ?= -DGTEST_USE_OWN_TR1_TUPLE
 ##
 ifeq ($(OS),Windows_NT)
   CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized
-  CXXFLAGS_GTEST += -DGTEST_HAS_PTHREAD=0
+  CPPFLAGS_GTEST += -DGTEST_HAS_PTHREAD=0
   CXXFLAGS_OS ?= -Wno-unused-but-set-variable -Wno-unused-variable
   ## Detecting Process Bitness:
   ## http://blogs.msdn.com/b/david.wang/archive/2006/03/26/howto-detect-process-bitness.aspx
@@ -105,7 +117,7 @@ ifeq ($(OS),Darwin)
 endif
 
 ifeq ($(OS),Linux)
-  CXXFLAGS_GTEST += -DGTEST_HAS_PTHREAD=0
+  CPPFLAGS_GTEST += -DGTEST_HAS_PTHREAD=0
   ifeq (gcc,$(CXX_TYPE))
     CXXFLAGS_OS += -pthread
   endif
@@ -138,7 +150,8 @@ ifdef STAN_OPENCL
   OPENCL_DEVICE_ID ?= 0
   OPENCL_PLATFORM_ID ?= 0
 
-  CXXFLAGS_OPENCL ?= -I $(OPENCL) -DSTAN_OPENCL -DOPENCL_DEVICE_ID=$(OPENCL_DEVICE_ID) -DOPENCL_PLATFORM_ID=$(OPENCL_PLATFORM_ID)
+  CPPFLAGS_OPENCL ?= -DSTAN_OPENCL -DOPENCL_DEVICE_ID=$(OPENCL_DEVICE_ID) -DOPENCL_PLATFORM_ID=$(OPENCL_PLATFORM_ID)
+  CXXFLAGS_OPENCL ?= -I $(OPENCL)
 endif
 
 ################################################################################
@@ -160,7 +173,7 @@ ifdef STAN_MPI
   endif
 
   MPI_TARGETS ?= $(addsuffix $(BOOST_LIBRARY_SUFFIX),$(BOOST_LIB)/libboost_serialization $(BOOST_LIB)/libboost_mpi) $(MPI_TEMPLATE_INSTANTIATION)
-  CXXFLAGS_MPI = -DSTAN_MPI
+  CPPFLAGS_MPI ?= -DSTAN_MPI
 
   BOOST_LIBRARY_ABSOLUTE_PATH = $(abspath $(BOOST_LIB))
 
@@ -171,6 +184,7 @@ endif
 
 
 CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) -O$(O) $(INC)
+CPPFLAGS += $(CPPFLAGS_LANG) $(CPPFLAGS_OS) $(CPPFLAGS_WARNINGS) $(CPPFLAGS_BOOST) $(CPPFLAGS_EIGEN) $(CPPFLAGS_OPENCL) $(CPPFLAGS_MPI)
 CFLAGS += $(CFLAGS_SUNDIALS)
 LDFLAGS += $(LDFLAGS_MPI) $(LDFLAGS_OPENCL)
 LDLIBS += $(LDLIBS_MPI) $(LDLIBS_OPENCL)
