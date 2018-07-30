@@ -28,18 +28,18 @@ TEST(num_threads, correct_values) {
 
 TEST(num_threads, incorrect_values) {
   set_n_threads_var("abc");
-  EXPECT_THROW_MSG(stan::math::internal::get_num_threads(5), std::runtime_error,
-                   "is not numeric");
+  EXPECT_THROW_MSG(stan::math::internal::get_num_threads(5),
+                   std::invalid_argument, "positive number or -1");
 
   set_n_threads_var("1c");
-  EXPECT_THROW_MSG(stan::math::internal::get_num_threads(5), std::runtime_error,
-                   "is not numeric");
+  EXPECT_THROW_MSG(stan::math::internal::get_num_threads(5),
+                   std::invalid_argument, "positive number or -1");
 
   set_n_threads_var("-2");
-  EXPECT_THROW_MSG(stan::math::internal::get_num_threads(5), std::runtime_error,
-                   "must be positive or -1");
+  EXPECT_THROW_MSG(stan::math::internal::get_num_threads(5),
+                   std::invalid_argument, "must be positive or -1");
 
   set_n_threads_var("0");
-  EXPECT_THROW_MSG(stan::math::internal::get_num_threads(5), std::runtime_error,
-                   "must be positive or -1");
+  EXPECT_THROW_MSG(stan::math::internal::get_num_threads(5),
+                   std::invalid_argument, "must be positive or -1");
 }

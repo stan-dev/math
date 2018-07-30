@@ -5,8 +5,8 @@
 
 #include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
 #include <stan/math/prim/mat/functor/map_rect_combine.hpp>
+#include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/throw_exception.hpp>
 
 #include <vector>
 #include <thread>
@@ -51,13 +51,13 @@ inline int get_num_threads(int num_jobs) {
       else if (env_num_threads == -1)
         num_threads = std::thread::hardware_concurrency();
       else
-        boost::throw_exception(
-            std::runtime_error("The STAN_NUM_THREADS environment variable must "
-                               "be positive or -1"));
-      // anything else will use 1 thread.
+        invalid_argument("get_num_threads(int)", "STAN_NUM_THREADS",
+          env_stan_num_threads, "The STAN_NUM_THREADS environment variable is '"
+          "' but it must be positive or -1");
     } catch (boost::bad_lexical_cast) {
-      boost::throw_exception(std::runtime_error(
-          "The STAN_NUM_THREADS environment variable is not numeric"));
+        invalid_argument("get_num_threads(int)", "STAN_NUM_THREADS",
+          env_stan_num_threads, "The STAN_NUM_THREADS environment variable is '"
+          "' but it must be a positive number or -1");
     }
   }
   if (num_threads > num_jobs)
