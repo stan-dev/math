@@ -103,6 +103,7 @@ pipeline {
                     sh "git clean -xffd"
                     stash 'MathSetup'
                     sh "echo CXX=${env.CXX} -Werror > make/local"
+                    sh "echo BOOST_PARALLEL_JOBS=${env.PARALLEL} >> make/local"
                     parallel(
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh 'make test-math-dependencies' } ,
