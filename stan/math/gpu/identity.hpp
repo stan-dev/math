@@ -20,12 +20,12 @@ inline matrix_gpu identity(int rows_cols) {
   if (rows_cols == 0) {
     return A;
   }
-  cl::Kernel kernel = opencl_context.get_kernel("identity");
+  kernel_cl kernel("identity");
   cl::CommandQueue cmdQueue = opencl_context.queue();
 
   try {
-    opencl_context.set_kernel_args(kernel, A.buffer(), A.rows(), A.cols());
-    cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
+    kernel.set_args(A.buffer(), A.rows(), A.cols());
+    cmdQueue.enqueueNDRangeKernel(kernel.compiled, cl::NullRange,
                                   cl::NDRange(A.rows(), A.cols()),
                                   cl::NullRange, NULL, NULL);
   } catch (const cl::Error& e) {
