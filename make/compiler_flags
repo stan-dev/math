@@ -46,8 +46,8 @@ CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
 O ?= 3
 
 ## setup includes
-INC ?= -I $(if $(MATH),$(MATH),.) -isystem $(EIGEN) -isystem $(BOOST) $(INC_SUNDIALS)
-INC_SUNDIALS ?= -isystem $(SUNDIALS)/include
+INC ?= -I $(if $(MATH),$(MATH),.) -I $(EIGEN) -I $(BOOST) $(INC_SUNDIALS)
+INC_SUNDIALS ?= -I $(SUNDIALS)/include
 INC_GTEST ?= -isystem $(GTEST)/include -isystem $(GTEST)
 
 ## setup compiler flags
@@ -68,10 +68,12 @@ CXXFLAGS_GTEST ?= -DGTEST_USE_OWN_TR1_TUPLE
 ## GPU specific flags
 # CXXFLAGS_OPENCL
 # LDFLAGS_OPENCL
+# LDLIBS_OPENCL
 
 ## MPI specific flags
 # CXXFLAGS_MPI
 # LDFLAGS_MPI
+# LDLIBS_MPI
 
 ################################################################################
 # Update compiler flags with operating system specific modifications
@@ -129,20 +131,20 @@ endif
 
 ifdef STAN_OPENCL
   ifeq ($(OS),Darwin)  # Mac OS X
-    LDFLAGS_OPENCL ?= -framework OpenCL
+    LDLIBS_OPENCL ?= -framework OpenCL
   else
-    LDFLAGS_OPENCL ?= -lOpenCL
+    LDLIBS_OPENCL ?= -lOpenCL
   endif
   OPENCL_DEVICE_ID ?= 0
   OPENCL_PLATFORM_ID ?= 0
 
-  CXXFLAGS_OPENCL ?= -isystem $(OPENCL) -DSTAN_OPENCL -DOPENCL_DEVICE_ID=$(OPENCL_DEVICE_ID) -DOPENCL_PLATFORM_ID=$(OPENCL_PLATFORM_ID)
+  CXXFLAGS_OPENCL ?= -I $(OPENCL) -DSTAN_OPENCL -DOPENCL_DEVICE_ID=$(OPENCL_DEVICE_ID) -DOPENCL_PLATFORM_ID=$(OPENCL_PLATFORM_ID)
 endif
 
 ################################################################################
 # Setup MPI
 #
-# Sets up MPI CXXFLAGS_MPI and LDFLAGS_MPI to compile and link to MPI
+# Sets up MPI CXXFLAGS_MPI and LDLIBS_MPI to compile and link to MPI
 
 ifdef STAN_MPI
   ifeq ($(OS),Windows_NT)
@@ -157,16 +159,18 @@ ifdef STAN_MPI
     BOOST_LIBRARY_SUFFIX := .so
   endif
 
-  LIBMPI ?= $(addsuffix $(BOOST_LIBRARY_SUFFIX),$(BOOST_LIB)/libboost_serialization $(BOOST_LIB)/libboost_mpi) $(MPI_TEMPLATE_INSTANTIATION)
+  MPI_TARGETS ?= $(addsuffix $(BOOST_LIBRARY_SUFFIX),$(BOOST_LIB)/libboost_serialization $(BOOST_LIB)/libboost_mpi) $(MPI_TEMPLATE_INSTANTIATION)
   CXXFLAGS_MPI = -DSTAN_MPI
 
   BOOST_LIBRARY_ABSOLUTE_PATH = $(abspath $(BOOST_LIB))
 
-  LDFLAGS_MPI ?= -Wl,-lboost_mpi -Wl,-lboost_serialization -Wl,-L,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" -Wl,-rpath,"$(BOOST_LIBRARY_ABSOLUTE_PATH)"
+  LDLIBS_MPI ?= -Wl,-lboost_mpi -Wl,-lboost_serialization -Wl,-L,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" -Wl,-rpath,"$(BOOST_LIBRARY_ABSOLUTE_PATH)"
 
 endif
+
 
 
 CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) -O$(O) $(INC)
 CFLAGS += $(CFLAGS_SUNDIALS)
 LDFLAGS += $(LDFLAGS_MPI) $(LDFLAGS_OPENCL)
+LDLIBS += $(LDLIBS_MPI) $(LDLIBS_OPENCL)
