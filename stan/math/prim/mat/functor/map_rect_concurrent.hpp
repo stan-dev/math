@@ -52,12 +52,14 @@ inline int get_num_threads(int num_jobs) {
         num_threads = std::thread::hardware_concurrency();
       else
         invalid_argument("get_num_threads(int)", "STAN_NUM_THREADS",
-          env_stan_num_threads, "The STAN_NUM_THREADS environment variable is '"
-          "' but it must be positive or -1");
+                         env_stan_num_threads,
+                         "The STAN_NUM_THREADS environment variable is '"
+                         "' but it must be positive or -1");
     } catch (boost::bad_lexical_cast) {
-        invalid_argument("get_num_threads(int)", "STAN_NUM_THREADS",
-          env_stan_num_threads, "The STAN_NUM_THREADS environment variable is '"
-          "' but it must be a positive number or -1");
+      invalid_argument("get_num_threads(int)", "STAN_NUM_THREADS",
+                       env_stan_num_threads,
+                       "The STAN_NUM_THREADS environment variable is '"
+                       "' but it must be a positive number or -1");
     }
   }
   if (num_threads > num_jobs)
