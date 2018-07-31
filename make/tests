@@ -27,7 +27,9 @@ DEPFLAGS = -MT $(patsubst %.d,%.o,$@) -MT $@ -MM -E -MG -MP -MF $@
 test/%.d: test/%.cpp
 	$(COMPILE.cpp) $(DEPFLAGS) $<
 
+ifneq ($(filter test/%,$(MAKECMDGOALS)),)
 -include $(patsubst %$(EXE),%.d,$(filter test/%,$(MAKECMDGOALS)))
+endif
 
 ##
 # Adding a test for multiple translation units. If this fails,
