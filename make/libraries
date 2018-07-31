@@ -53,7 +53,7 @@ $(SUNDIALS)/lib/libsundials_nvecserial.a: $(SUNDIALS_NVECSERIAL)
 
 LIBSUNDIALS := $(SUNDIALS)/lib/libsundials_nvecserial.a $(SUNDIALS)/lib/libsundials_cvodes.a $(SUNDIALS)/lib/libsundials_idas.a
 
-STAN_SUNDIALS_HEADERS := $(shell find stan -name *cvodes*.hpp) $(shell find stan -name *idas*.hpp)
+STAN_SUNDIALS_HEADERS := $(shell find $(MATH)stan -name *cvodes*.hpp) $(shell find $(MATH)stan -name *idas*.hpp)
 $(STAN_SUNDIALS_HEADERS) : $(LIBSUNDIALS)
 
 clean-sundials:
