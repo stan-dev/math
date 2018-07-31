@@ -130,6 +130,7 @@ ifeq ($(OS),Linux)
     LDLIBS ?= -lpthread
     CXXFLAGS += -stdlib=libc++
   endif
+  CXXFLAGS += -Wsign-compare
 endif
 
 
