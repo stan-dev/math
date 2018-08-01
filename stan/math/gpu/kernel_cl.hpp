@@ -3,9 +3,9 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/gpu/opencl_context.hpp>
-#include <stan/math/gpu/constants.hpp>
-#include <map>
+#include <CL/cl.hpp>
 #include <string>
+#include <map>
 #include <vector>
 
 namespace stan {
@@ -14,52 +14,51 @@ namespace math {
 class kernel_cl_base {
   friend class kernel_cl;
 
-private:
+ private:
   const char* copy_matrix_kernel =
-#include <stan/math/gpu/kernels/copy_matrix_kernel.cl>
-      ;  // NOLINT
+#include <stan/math/gpu/kernels/copy_matrix_kernel.cl>  // NOLINT
+      ;                                                 // NOLINT
   const char* transpose_matrix_kernel =
-#include <stan/math/gpu/kernels/transpose_matrix_kernel.cl>
-      ;  // NOLINT
+#include <stan/math/gpu/kernels/transpose_matrix_kernel.cl>  // NOLINT
+      ;                                                      // NOLINT
   const char* zeros_matrix_kernel =
-#include <stan/math/gpu/kernels/zeros_matrix_kernel.cl>
-      ;  // NOLINT
+#include <stan/math/gpu/kernels/zeros_matrix_kernel.cl>  // NOLINT
+      ;                                                  // NOLINT
   const char* identity_matrix_kernel =
-#include <stan/math/gpu/kernels/identity_matrix_kernel.cl>
-      ;  // NOLINT
+#include <stan/math/gpu/kernels/identity_matrix_kernel.cl>  // NOLINT
+      ;                                                     // NOLINT
   const char* copy_triangular_matrix_kernel =
-#include <stan/math/gpu/kernels/copy_triangular_matrix_kernel.cl>
-      ;  // NOLINT
+#include <stan/math/gpu/kernels/copy_triangular_matrix_kernel.cl>  // NOLINT
+      ;                                                            // NOLINT
   const char* copy_triangular_transposed_matrix_kernel =
-#include <stan/math/gpu/kernels/triangular_transpose_kernel.cl>
-      ;  // NOLINT
+#include <stan/math/gpu/kernels/triangular_transpose_kernel.cl>  // NOLINT
+      ;                                                          // NOLINT
   const char* copy_submatrix_kernel =
-#include <stan/math/gpu/kernels/sub_block_kernel.cl>
-      ;  // NOLINT
+#include <stan/math/gpu/kernels/sub_block_kernel.cl>  // NOLINT
+      ;                                               // NOLINT
   const char* check_nan_kernel =
-#include <stan/math/gpu/kernels/check_nan_kernel.cl>
-      ;  // NOLINT
+#include <stan/math/gpu/kernels/check_nan_kernel.cl>  // NOLINT
+      ;                                               // NOLINT
   const char* check_diagonal_zeros_kernel =
-#include <stan/math/gpu/kernels/check_diagonal_zeros_kernel.cl>
-      ;  // NOLINT
+#include <stan/math/gpu/kernels/check_diagonal_zeros_kernel.cl>  // NOLINT
+      ;                                                          // NOLINT
   const char* check_symmetric_kernel =
-#include <stan/math/gpu/kernels/check_symmetric_kernel.cl>
-      ;  // NOLINT
+#include <stan/math/gpu/kernels/check_symmetric_kernel.cl>  // NOLINT
+      ;                                                     // NOLINT
   const char* subtract_symmetric_kernel =
-#include <stan/math/gpu/kernels/subtract_matrix_kernel.cl>
-      ;  // NOLINT
+#include <stan/math/gpu/kernels/subtract_matrix_kernel.cl>  // NOLINT
+      ;                                                     // NOLINT
   const char* add_symmetric_kernel =
-#include <stan/math/gpu/kernels/add_matrix_kernel.cl>
-      ;  // NOLINT
+#include <stan/math/gpu/kernels/add_matrix_kernel.cl>  // NOLINT
+      ;                                                // NOLINT
 
-protected:
+ protected:
   typedef std::map<const char*, int> map_base_opts;
-  const map_base_opts base_opts = {
-  {"LOWER", gpu::Lower},
-  {"UPPER", gpu::Upper},
-  {"ENTIRE", gpu::Entire},
-  {"UPPER_TO_LOWER", gpu::UpperToLower},
-  {"LOWER_TO_UPPER", gpu::LowerToUpper}};
+  const map_base_opts base_opts = {{"LOWER", gpu::Lower},
+                                   {"UPPER", gpu::Upper},
+                                   {"ENTIRE", gpu::Entire},
+                                   {"UPPER_TO_LOWER", gpu::UpperToLower},
+                                   {"LOWER_TO_UPPER", gpu::LowerToUpper}};
 
   /** Holds meta information about a kernel.
    * @param exists a bool to identify whether a kernel has been compiled.
@@ -77,29 +76,41 @@ protected:
    * Map of a kernel name (first) and it's meta information (second).
    */
   typedef std::map<const char*, kernel_meta_info> map_kernel_info;
-  const map_kernel_info kernel_info = {
-  {"dummy", { false, "timing", {},
-     "__kernel void dummy(__global const int* foo) { };"}},
-  {"dummy2", {false, "timing", {},
-     "__kernel void dummy2(__global const int* foo) { };"}},
-  {"copy", {false, "basic_matrix", {}, copy_matrix_kernel}},
-  {"transpose", {false, "basic_matrix", {}, transpose_matrix_kernel}},
-  {"zeros", {false, "basic_matrix",
-     {"LOWER", "UPPER", "ENTIRE"}, zeros_matrix_kernel}},
-  {"identity", {false, "basic_matrix", {}, identity_matrix_kernel}},
-  {"copy_triangular", {false, "basic_matrix", {},
-     copy_triangular_matrix_kernel}},
-  {"copy_triangular_transposed", {false, "basic_matrix",
-     {"LOWER_TO_UPPER", "UPPER_TO_LOWER"},
-     copy_triangular_transposed_matrix_kernel}},
-  {"copy_submatrix", {false, "basic_matrix", {}, copy_submatrix_kernel}},
-  {"add", {false, "basic_matrix", {}, add_symmetric_kernel}},
-  {"subtract", {false, "basic_matrix", {}, subtract_symmetric_kernel}},
-  {"is_nan", {false, "check", {""}, check_nan_kernel}},
-  {"is_zero_on_diagonal", {false, "check", {}, check_diagonal_zeros_kernel}},
-  {"is_symmetric", {false, "check", {}, check_symmetric_kernel}}};
+  const map_kernel_info kernel_info
+      = {{"dummy",
+          {false,
+           "timing",
+           {},
+           "__kernel void dummy(__global const int* foo) { };"}},
+         {"dummy2",
+          {false,
+           "timing",
+           {},
+           "__kernel void dummy2(__global const int* foo) { };"}},
+         {"copy", {false, "basic_matrix", {}, copy_matrix_kernel}},
+         {"transpose", {false, "basic_matrix", {}, transpose_matrix_kernel}},
+         {"zeros",
+          {false,
+           "basic_matrix",
+           {"LOWER", "UPPER", "ENTIRE"},
+           zeros_matrix_kernel}},
+         {"identity", {false, "basic_matrix", {}, identity_matrix_kernel}},
+         {"copy_triangular",
+          {false, "basic_matrix", {}, copy_triangular_matrix_kernel}},
+         {"copy_triangular_transposed",
+          {false,
+           "basic_matrix",
+           {"LOWER_TO_UPPER", "UPPER_TO_LOWER"},
+           copy_triangular_transposed_matrix_kernel}},
+         {"copy_submatrix", {false, "basic_matrix", {}, copy_submatrix_kernel}},
+         {"add", {false, "basic_matrix", {}, add_symmetric_kernel}},
+         {"subtract", {false, "basic_matrix", {}, subtract_symmetric_kernel}},
+         {"is_nan", {false, "check", {""}, check_nan_kernel}},
+         {"is_zero_on_diagonal",
+          {false, "check", {}, check_diagonal_zeros_kernel}},
+         {"is_symmetric", {false, "check", {}, check_symmetric_kernel}}};
   typedef std::map<const char*, cl::Kernel> map_kernel;
-  map_kernel kernels;           // The compiled kernels
+  map_kernel kernels;  // The compiled kernels
 
   static kernel_cl_base& getInstance() {
     static kernel_cl_base instance_;
@@ -111,7 +122,7 @@ protected:
 };
 
 class kernel_cl {
-public:
+ public:
   cl::Kernel compiled_;
   /**
    * Compiles all the kernels in the specified group. The side effect of this
@@ -130,8 +141,8 @@ public:
     std::string kernel_source = "";
     if (this->kernel_info().count(kernel_name) == 0) {
       // throws if the kernel does not exist
-      domain_error("compiling kernels", kernel_name,
-                   " kernel does not exist", "");
+      domain_error("compiling kernels", kernel_name, " kernel does not exist",
+                   "");
     }
     const char* kernel_group = this->kernel_info()[kernel_name].group;
     for (auto kern : this->kernel_info()) {
@@ -139,8 +150,8 @@ public:
         kernel_source += kern.second.raw_code;
         for (auto comp_opts : kern.second.opts) {
           if (strcmp(comp_opts, "") != 0) {
-            kernel_opts += std::string(" -D") + comp_opts + "=" +
-             std::to_string(this->base_options()[comp_opts]);
+            kernel_opts += std::string(" -D") + comp_opts + "="
+                           + std::to_string(this->base_options()[comp_opts]);
           }
         }
       }
@@ -186,7 +197,7 @@ public:
    *
    * @param[in] kernel_name The kernel name.
    */
-   explicit kernel_cl(const char* kernel_name) {
+  explicit kernel_cl(const char* kernel_name) {
     // Compile the kernel group and return the kernel
     if (!this->kernel_info()[kernel_name].exists) {
       this->compile_kernel_group(kernel_name);
@@ -217,9 +228,8 @@ public:
    * simpleopencl.blogspot.com/2013/04/calling-kernels-with-large-number-of.html
    */
   template <typename T, typename... Args>
-  inline void recursive_args(cl::Kernel& kernel, int i,
-                                    const T& first_arg,
-                                    const Args&... extra_args) {
+  inline void recursive_args(cl::Kernel& kernel, int i, const T& first_arg,
+                             const Args&... extra_args) {
     kernel.setArg(i, first_arg);
     this->recursive_args(kernel, i + 1, extra_args...);
   }
@@ -259,8 +269,8 @@ public:
     return kernel_cl_base::getInstance().base_opts;
   }
 };
-}
-}
+}  // namespace math
+}  // namespace stan
 
- #endif
- #endif
+#endif
+#endif
