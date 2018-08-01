@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/gpu/opencl_context.hpp>
+#include <stan/math/gpu/kernel_cl.hpp>
 #include <stan/math/gpu/matrix_gpu.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>

@@ -2,8 +2,8 @@
 #define STAN_MATH_GPU_KERNEL_CL_HPP
 #ifdef STAN_OPENCL
 
-#include <CL/cl.hpp>
 #include <stan/math/gpu/opencl_context.hpp>
+#include <CL/cl.hpp>
 #include <string>
 #include <map>
 #include <iostream>
