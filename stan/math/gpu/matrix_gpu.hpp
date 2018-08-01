@@ -176,7 +176,7 @@ class matrix_gpu {
     kernel_cl kernel("zeros");
     cl::CommandQueue cmdQueue = opencl_context.queue();
     try {
-      kernel.set_args(kernel, this->buffer(), this->rows(),
+      kernel.set_args(this->buffer(), this->rows(),
                                      this->cols(), triangular_view);
       cmdQueue.enqueueNDRangeKernel(kernel.compiled_, cl::NullRange,
                                     cl::NDRange(this->rows(), this->cols()),
@@ -232,7 +232,8 @@ class matrix_gpu {
     if (nrows == 0 || ncols == 0) {
       return;
     }
-    if ((A_i + nrows) > A.rows() || (A_j + ncols) > this->cols()) {
+    if ((A_i + nrows) > A.rows() || (A_j + ncols) > A.cols() ||
+        (this_i + nrows) > this->rows() || (this_j + ncols) > this->cols()) {
       domain_error("copy_submatrix", "submatrix in *this", " is out of bounds",
                    "");
     }
