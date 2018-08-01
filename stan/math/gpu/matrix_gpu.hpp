@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/opencl_context.hpp>
 #include <stan/math/gpu/kernel_cl.hpp>
+#include <stan/math/gpu/constants.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
@@ -80,7 +81,7 @@ class matrix_gpu {
        *   with the kernel (enqueue, start, stop,...) for profiling.
        *   Not needed here.
        */
-      cmdQueue.enqueueNDRangeKernel(kernel.compiled, cl::NullRange,
+      cmdQueue.enqueueNDRangeKernel(kernel.compiled_, cl::NullRange,
                                     cl::NDRange(rows(), cols()), cl::NullRange,
                                     NULL, NULL);
     } catch (const cl::Error& e) {
@@ -177,7 +178,7 @@ class matrix_gpu {
     try {
       kernel.set_args(kernel, this->buffer(), this->rows(),
                                      this->cols(), triangular_view);
-      cmdQueue.enqueueNDRangeKernel(kernel.compiled, cl::NullRange,
+      cmdQueue.enqueueNDRangeKernel(kernel.compiled_, cl::NullRange,
                                     cl::NDRange(this->rows(), this->cols()),
                                     cl::NullRange, NULL, NULL);
     } catch (const cl::Error& e) {
@@ -195,7 +196,7 @@ class matrix_gpu {
    * @throw <code>std::invalid_argument</code> if the matrix is not square.
    *
    */
-  template <int triangular_map>
+  template <int triangular_map = gpu::LowerToUpper>
   void triangular_transpose() {
     if (size() == 0 || size() == 1) {
       return;
@@ -206,9 +207,9 @@ class matrix_gpu {
     kernel_cl kernel("copy_triangular_transposed");
     cl::CommandQueue cmdQueue = opencl_context.queue();
     try {
-      kernel.set_args(this->buffer(), this->rows(),
-                                     this->cols(), triangular_map);
-      cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
+      kernel.set_args(this->buffer(), this->rows(), this->cols(),
+       triangular_map);
+      cmdQueue.enqueueNDRangeKernel(kernel.compiled_, cl::NullRange,
                                     cl::NDRange(this->rows(), this->cols()),
                                     cl::NullRange, NULL, NULL);
     } catch (const cl::Error& e) {
@@ -240,7 +241,7 @@ class matrix_gpu {
     try {
       kernel.set_args(A.buffer(), this->buffer(), A_i, A_j, this_i, this_j,
        nrows, ncols, A.rows(), A.cols(), this->rows(), this->cols());
-      cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
+      cmdQueue.enqueueNDRangeKernel(kernel.compiled_, cl::NullRange,
                                     cl::NDRange(nrows, ncols), cl::NullRange,
                                     NULL, NULL);
     } catch (const cl::Error& e) {

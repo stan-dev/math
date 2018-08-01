@@ -6,8 +6,9 @@
 #include <stan/math/gpu/opencl_context.hpp>
 #include <string>
 #include <map>
+#include <iostream>
 #include <vector>
-
+#include <cstring>
 
 namespace stan {
 namespace math {
@@ -53,14 +54,13 @@ private:
 #include <stan/math/gpu/kernels/add_matrix_kernel.cl>
       ;  // NOLINT
 protected:
-  typedef std::map<const char*, int> map_base_opts;
+  typedef std::map<const char*, const char*> map_base_opts;
   const map_base_opts base_opts = {
-  {"LOWER", 0},
-  {"UPPER", 0},
-  {"ENTIRE", 0},
-  {"UPPER_TO_LOWER", 0},
-  {"LOWER_TO_UPPER", 0},
-  };
+  {"LOWER", "0"},
+  {"UPPER", "1"},
+  {"ENTIRE", "2"},
+  {"UPPER_TO_LOWER", "0"},
+  {"LOWER_TO_UPPER", "1"},};
 
   /** Holds meta information about a kernel.
    * @param exists a bool to identify whether a kernel has been compiled.
@@ -108,7 +108,7 @@ protected:
 class kernel_cl {
 
 public:
-  cl::Kernel compiled;
+  cl::Kernel compiled_;
   /**
    * Compiles all the kernels in the specified group. The side effect of this
    *  method places all compiled kernels for a group inside of <code> kernels
@@ -126,8 +126,10 @@ public:
     for (auto kern : this->kernel_info()) {
       if (strcmp(kern.second.group, kernel_group) == 0) {
         kernel_source += kern.second.raw_code;
-        kernel_opts += " -D" + this->base_options()[kern.second.opts].first + "="
-         this->base_options()[kern.second.opts].second;
+        for (auto comp_opts : kern.second.opts) {
+          kernel_opts += std::string(" -D") + comp_opts + "=" +
+           this->base_options()[comp_opts];
+        }
       }
     }
 
@@ -176,7 +178,7 @@ public:
     if (!this->kernel_info()[kernel_name].exists) {
       this->compile_kernel_group(kernel_name);
     }
-    compiled = kernel_cl_base::getInstance().kernels[(kernel_name)]
+    compiled_ = kernel_cl_base::getInstance().kernels[(kernel_name)];
   }
   /**
    * Terminating function for recursively setting arguments in an OpenCL kernel.
@@ -220,11 +222,11 @@ public:
    */
   template <typename... Args>
   inline void set_args(cl::Kernel& kernel, const Args&... args) {
-    this->recursive_kernel_args(kernel, 0, args...);
+    this->recursive_args(kernel, 0, args...);
   }
   template <typename... Args>
   inline void set_args(const Args&... args) {
-    this->recursive_kernel_args(this->compiled_, 0, args...);
+    this->recursive_args(this->compiled_, 0, args...);
   }
   /**
    * return information on the kernel_source
@@ -245,7 +247,6 @@ public:
   }
 
 };
-
 }
 }
 

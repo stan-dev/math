@@ -21,7 +21,6 @@ inline void check_nan(const char* function, const char* name,
   if (y.size() == 0)
     return;
 
-  cl::Kernel kernel_check_nan = opencl_context.get_kernel("is_nan");
   cl::CommandQueue cmd_queue = opencl_context.queue();
   cl::Context& ctx = opencl_context.context();
   try {
@@ -29,10 +28,9 @@ inline void check_nan(const char* function, const char* name,
     cl::Buffer buffer_nan_flag(ctx, CL_MEM_READ_WRITE, sizeof(int));
     cmd_queue.enqueueWriteBuffer(buffer_nan_flag, CL_TRUE, 0, sizeof(int),
                                  &nan_flag);
-    opencl_context.set_kernel_args(kernel_check_nan, y.buffer(), y.rows(),
-                                   y.cols(), buffer_nan_flag);
-
-    cmd_queue.enqueueNDRangeKernel(kernel_check_nan, cl::NullRange,
+    kernel_cl kernel("is_nan");
+    kernel.set_args(y.buffer(), y.rows(), y.cols(), buffer_nan_flag);
+    cmd_queue.enqueueNDRangeKernel(kernel.compiled_, cl::NullRange,
                                    cl::NDRange(y.rows(), y.cols()),
                                    cl::NullRange);
 

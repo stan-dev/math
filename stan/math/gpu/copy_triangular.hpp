@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_GPU_COPY_TRIANGULAR_HPP
 #define STAN_MATH_GPU_COPY_TRIANGULAR_HPP
 #ifdef STAN_OPENCL
+#include <stan/math/gpu/constants.hpp>
 #include <stan/math/gpu/matrix_gpu.hpp>
 #include <CL/cl.hpp>
 
@@ -22,19 +23,19 @@ namespace math {
  * @return the matrix with the copied content
  *
  */
-template <int triangular_map>
+template <int triangular_map = gpu::Lower>
 inline matrix_gpu copy_triangular(const matrix_gpu& src) {
   if (src.size() == 0 || src.size() == 1) {
     matrix_gpu dst(src);
     return dst;
   }
   matrix_gpu dst(src.rows(), src.cols());
-  cl::Kernel kernel = opencl_context.get_kernel("copy_triangular");
   cl::CommandQueue cmdQueue = opencl_context.queue();
   try {
-    opencl_context.set_kernel_args(kernel, dst.buffer(), src.buffer(),
-                                   dst.rows(), dst.cols(), triangular_map);
-    cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
+    kernel_cl kernel("copy_triangular");
+    kernel.set_args(dst.buffer(), src.buffer(), dst.rows(), dst.cols(),
+     triangular_map);
+    cmdQueue.enqueueNDRangeKernel(kernel.compiled_, cl::NullRange,
                                   cl::NDRange(dst.rows(), dst.cols()),
                                   cl::NullRange, NULL, NULL);
   } catch (const cl::Error& e) {
