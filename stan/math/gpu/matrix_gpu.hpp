@@ -176,7 +176,7 @@ class matrix_gpu {
     kernel_cl kernel("zeros");
     cl::CommandQueue cmdQueue = opencl_context.queue();
     try {
-      kernel.set_args(kernel, this->buffer(), this->rows(),
+      kernel.set_args(this->buffer(), this->rows(),
                                      this->cols(), triangular_view);
       cmdQueue.enqueueNDRangeKernel(kernel.compiled_, cl::NullRange,
                                     cl::NDRange(this->rows(), this->cols()),
