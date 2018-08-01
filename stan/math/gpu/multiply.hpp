@@ -12,9 +12,7 @@ namespace stan {
      * 
      * @param A matrix
      * @param scalar scalar
-     * 
-     * @return matrix multipled with scalar
-     *      
+     * @return matrix multipled with scalar     
      */
     inline matrix_gpu multiply(matrix_gpu & A,  double scalar) {
       matrix_gpu temp(A.rows(), A.cols());
@@ -45,16 +43,14 @@ namespace stan {
      * 
      * @param scalar scalar
      * @param A matrix     
-     * 
      * @return matrix multipled with scalar
-     *      
      */
     inline matrix_gpu multiply(double scalar, matrix_gpu & A) {
       return multiply(A, scalar);
     }
 
     /**
-     * Computes the product of the two specified GPU matrices.  The number of
+     * Computes the product of the two specified GPU matrices. The number of
      * columns in the first matrix must be the same as the number of rows
      * in the second matrix. The number of rows of the resulting matrix must be the
      * same as the number of rows in the first matrix and the number of columns
@@ -65,7 +61,6 @@ namespace stan {
      * 
      * @param A first matrix
      * @param B second matrix
-     * 
      * @return the product of the first and second matrix
      * 
      * @throw <code>std::invalid_argument</code> if the 
@@ -73,8 +68,8 @@ namespace stan {
      */
     inline matrix_gpu multiply(matrix_gpu & A, matrix_gpu & B) {
       check_size_match("multiply (GPU)", "A.cols()", A.cols(),
-       "B.rows()", B.rows());             
-      matrix_gpu temp(A.rows(), B.cols());      
+       "B.rows()", B.rows());
+      matrix_gpu temp(A.rows(), B.cols());
       if ( temp.size() == 0 )
         return temp;
       int local = 32;
@@ -85,13 +80,16 @@ namespace stan {
       int Mpad = ((A.rows() + local-1)/local)*local;
       int Npad = ((B.cols() + local-1)/local)*local;
       int Kpad = ((A.cols() + local-1)/local)*local;
+      // padding the matrices so the dimensions are divisible with local
+      // improves performance becasuse we can omit if statements in the
+      // multiply kernel
       matrix_gpu tempPad(Mpad, Npad);
       matrix_gpu Apad(Mpad, Kpad);
-      matrix_gpu Bpad(Kpad, Npad);      
+      matrix_gpu Bpad(Kpad, Npad);
       Apad.sub_block(A, 0, 0, 0, 0, A.rows(), A.cols());
       Bpad.sub_block(B, 0, 0, 0, 0, B.rows(), B.cols());
       cl::Kernel kernel = opencl_context.get_kernel("matrix_multiply");
-      cl::CommandQueue& cmdQueue = opencl_context.queue();      
+      cl::CommandQueue& cmdQueue = opencl_context.queue();
       int wpt = 8;
       try {
         opencl_context.set_kernel_args(kernel, Apad.rows(), Bpad.cols(),
@@ -107,7 +105,8 @@ namespace stan {
       } catch (cl::Error& e) {
         check_opencl_error("multiply", e);
       }
-      temp.sub_block(tempPad, 0, 0, 0, 0, temp.rows(), temp.cols());      
+      // unpadding the result matrix
+      temp.sub_block(tempPad, 0, 0, 0, 0, temp.rows(), temp.cols());
       return temp;
     }
   }

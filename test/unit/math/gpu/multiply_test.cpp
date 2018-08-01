@@ -270,7 +270,7 @@ TEST(AgradRevMatrix, multiply_big) {
   }
   stan::math::matrix_gpu m11(m1);
   stan::math::matrix_gpu m22(m2);
-  stan::math::matrix_gpu m33(size,size);
+  stan::math::matrix_gpu m33(size, size);
 
   m3 = m1*m2;
 

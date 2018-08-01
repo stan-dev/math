@@ -220,7 +220,6 @@ class opencl_context_base {
    * Map of a kernel name (first) and it's meta information (second).
    */
   typedef std::map<const char*, kernel_meta_info> map_kernel_info;
-  typedef std::map<const char*, std::map<const char*, int>> map_kernel_parameters;
   /**
    * map holding compiled kernels.
    */

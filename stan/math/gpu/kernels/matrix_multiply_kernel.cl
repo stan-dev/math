@@ -1,10 +1,20 @@
 R"(
 #define WPT 8
 #define RTS TS/WPT
+/**
+ * Matrix multiplication on the GPU
+ *
+ * @param M Number of rows for matrix A
+ * @param N Number of cols for matrix A and rows for matrix B
+ * @param K Number of cols for matrix B
+ * @param[in] A the left matrix in matrix multiplication
+ * @param[in] B the right matrix in matrix multiplication
+ * @param[out] C the output matrix
+ */
 __kernel void matrix_multiply(const int M, const int N, const int K,
          const __global double* A,
-            const __global double* B,
-            __global double* C) {
+         const __global double* B,
+         __global double* C) {
     
   const int row = get_local_id(0);
   const int col = get_local_id(1);

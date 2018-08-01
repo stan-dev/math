@@ -16,7 +16,6 @@ namespace stan {
      * Computes the matrix multiplication C = A x A^T
      * 
      * @param A input matrix
-     * 
      * @return the product of the input matrix and its transpose
      * 
      */
@@ -31,6 +30,9 @@ namespace stan {
       }
       int Mpad = ((A.rows() + local-1)/local)*local;
       int Npad = ((A.cols() + local-1)/local)*local;
+      // padding the matrices so the dimensions are divisible with local
+      // improves performance becasuse we can omit if statements in the
+      // multiply kernel
       matrix_gpu tempPad(Mpad, Mpad);
       matrix_gpu Apad(Mpad, Npad);
       matrix_gpu ATpad(Npad, Mpad);
@@ -54,7 +56,7 @@ namespace stan {
       } catch (cl::Error& e) {
         check_opencl_error("multiply self transpose", e);
       }
-      temp.sub_block(tempPad, 0, 0, 0, 0, temp.rows(), temp.cols());      
+      temp.sub_block(tempPad, 0, 0, 0, 0, temp.rows(), temp.cols());
       return temp;
     }
   }

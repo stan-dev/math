@@ -12,11 +12,9 @@ namespace math {
    * 
    * @param A input matrix
    * @param scalar scalar
-   * 
    * @return copy of the input matrix with the diagonal multiplied by scalar
-   *      
    */
-inline matrix_gpu diagonal_multiply(const matrix_gpu & A, const double scalar) {
+inline matrix_gpu diagonal_multiply(const matrix_gpu& A, const double scalar) {
     matrix_gpu B(A);
     if (B.size() == 0)
       return B;

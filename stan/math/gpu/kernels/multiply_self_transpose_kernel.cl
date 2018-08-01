@@ -1,10 +1,20 @@
 R"(
 #define WPT1 4
 #define RTS1 TS1/WPT1
+/**
+ * Matrix multiplication of the form A*A^T on the GPU
+ *
+ * @param M Number of rows for matrix A
+ * @param N Number of cols for matrix A and number of row for matrix A^T
+ * @param K Number of cols for matrix A^T
+ * @param[in] A matrix A
+ * @param[in] B matrix A^T
+ * @param[out] C the output matrix
+ */
 __kernel void multiply_self_transpose(const int M,
             const int N, const int K,
             const __global double* A,
-            const __global double* B,
+            const __global double* AT,
             __global double* C) {
   
   const int row = get_local_id(0); 
@@ -30,7 +40,7 @@ __kernel void multiply_self_transpose(const int M,
       const int tiled_i = TS1*t + row;
       const int tiled_j = TS1*t + col;
       Asub[col + w*RTS1][row] = A[(tiled_j + w*RTS1)*M + i];
-      Bsub[col + w*RTS1][row] = B[(j + w*RTS1)*K + tiled_i];      
+      Bsub[col + w*RTS1][row] = AT[(j + w*RTS1)*K + tiled_i];      
     }
   }
     
