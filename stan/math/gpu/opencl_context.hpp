@@ -3,18 +3,6 @@
 #ifdef STAN_OPENCL
 #define __CL_ENABLE_EXCEPTIONS
 
-#include <stan/math/prim/arr/err/check_opencl.hpp>
-#include <stan/math/prim/scal/err/system_error.hpp>
-
-#include <CL/cl.hpp>
-#include <string>
-#include <cmath>
-#include <iostream>
-#include <fstream>
-#include <map>
-#include <vector>
-#include <cerrno>
-
 #define DEVICE_FILTER CL_DEVICE_TYPE_GPU
 #ifndef OPENCL_DEVICE_ID
 #error OPENCL_DEVICE_ID_NOT_SET
@@ -23,6 +11,16 @@
 #error OPENCL_PLATFORM_ID_NOT_SET
 #endif
 
+#include <stan/math/prim/arr/err/check_opencl.hpp>
+#include <stan/math/prim/scal/err/system_error.hpp>
+
+#include <CL/cl.hpp>
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <map>
+#include <vector>
+#include <cerrno>
 /**
  *  @file stan/math/gpu/opencl_context.hpp
  *  @brief Initialization for OpenCL:
@@ -95,8 +93,6 @@ class opencl_context_base {
       context_ = cl::Context(device_);
       command_queue_ = cl::CommandQueue(context_, device_,
                                         CL_QUEUE_PROFILING_ENABLE, nullptr);
-      // setup kernel groups
-      //init_kernel_groups();
       device_.getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
                               &max_workgroup_size_);
     } catch (const cl::Error& e) {
@@ -120,11 +116,6 @@ class opencl_context_base {
   cl::Device device_;                // The selected GPU device
   std::string device_name_;          // The name of the GPU
   size_t max_workgroup_size_;  // The maximum size of a block of workers on GPU
-  /**
-   * map holding compiled kernels.
-   */
-  //typedef std::map<const char*, cl::Kernel> map_kernel;
-  //map_kernel kernels;           // The compiled kernels
 
   static opencl_context_base& getInstance() {
     static opencl_context_base instance_;
@@ -139,7 +130,6 @@ class opencl_context_base {
  * The API to access the methods and values in opencl_context_base
  */
 class opencl_context {
-
  public:
   opencl_context() = default;
 
@@ -303,7 +293,6 @@ class opencl_context {
   inline std::vector<cl::Platform> platform() {
     return {opencl_context_base::getInstance().platform_};
   }
-
 };
 static opencl_context opencl_context;
 }  // namespace math
