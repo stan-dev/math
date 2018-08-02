@@ -124,12 +124,12 @@ TEST_F(StanMathRevOdeCVode, cvodes_ode_data_dv) {
   NV_Ith_S(nvec.cvode_state_sens_[0], 0) = 1.0;
   NV_Ith_S(nvec.cvode_state_sens_[0], 1) = 2.0;
 
-  ode_data_dv.ode_rhs(t0, nvec.cvode_state_, nvec.cvode_state_dot_,
-                      &ode_data_dv);
+  ode_data_dv.cv_rhs(t0, nvec.cvode_state_, nvec.cvode_state_dot_,
+                     &ode_data_dv);
 
-  ode_data_dv.ode_rhs_sens(M, t0, nvec.cvode_state_, nvec.cvode_state_dot_,
-                           nvec.cvode_state_sens_, nvec.cvode_state_sens_dot_,
-                           &ode_data_dv, tmp1, tmp2);
+  ode_data_dv.cv_rhs_sens(M, t0, nvec.cvode_state_, nvec.cvode_state_dot_,
+                          nvec.cvode_state_sens_, nvec.cvode_state_sens_dot_,
+                          &ode_data_dv, tmp1, tmp2);
 
   std::vector<double> dy_dt_coupled = nvec.get_coupled_state_dot();
 
@@ -160,10 +160,10 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_dv) {
   cvodes2coupled nvec(N, S);
 
   EXPECT_TRUE(stan::math::empty_nested());
-  EXPECT_NO_THROW(ode_data_dv.ode_rhs(t, nvec.cvode_state_,
-                                      nvec.cvode_state_dot_, &ode_data_dv));
+  EXPECT_NO_THROW(ode_data_dv.cv_rhs(t, nvec.cvode_state_,
+                                     nvec.cvode_state_dot_, &ode_data_dv));
 
-  EXPECT_NO_THROW(ode_data_dv.ode_rhs_sens(
+  EXPECT_NO_THROW(ode_data_dv.cv_rhs_sens(
       static_cast<int>(M), t, nvec.cvode_state_, nvec.cvode_state_dot_,
       nvec.cvode_state_sens_, nvec.cvode_state_sens_dot_, &ode_data_dv, tmp1,
       tmp2));
@@ -198,8 +198,8 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_exception_dv) {
     cvodes2coupled nvec(N, S);
 
     EXPECT_TRUE(stan::math::empty_nested());
-    EXPECT_THROW_MSG(ode_data_dv.ode_rhs(t, nvec.cvode_state_,
-                                         nvec.cvode_state_dot_, &ode_data_dv),
+    EXPECT_THROW_MSG(ode_data_dv.cv_rhs(t, nvec.cvode_state_,
+                                        nvec.cvode_state_dot_, &ode_data_dv),
                      std::logic_error, message);
     EXPECT_TRUE(stan::math::empty_nested());
   }
@@ -255,12 +255,12 @@ TEST_F(StanMathRevOdeCVode, cvodes_ode_data_vd) {
   NV_Ith_S(nvec.cvode_state_sens_[1], 0) = 2.0;
   NV_Ith_S(nvec.cvode_state_sens_[1], 1) = 5.0 + 1.0;
 
-  ode_data_vd.ode_rhs(t0, nvec.cvode_state_, nvec.cvode_state_dot_,
-                      &ode_data_vd);
+  ode_data_vd.cv_rhs(t0, nvec.cvode_state_, nvec.cvode_state_dot_,
+                     &ode_data_vd);
 
-  ode_data_vd.ode_rhs_sens(M, t0, nvec.cvode_state_, nvec.cvode_state_dot_,
-                           nvec.cvode_state_sens_, nvec.cvode_state_sens_dot_,
-                           &ode_data_vd, tmp1, tmp2);
+  ode_data_vd.cv_rhs_sens(M, t0, nvec.cvode_state_, nvec.cvode_state_dot_,
+                          nvec.cvode_state_sens_, nvec.cvode_state_sens_dot_,
+                          &ode_data_vd, tmp1, tmp2);
 
   std::vector<double> dy_dt_coupled = nvec.get_coupled_state_dot();
 
@@ -295,10 +295,10 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_vd) {
   cvodes2coupled nvec(N, S);
 
   EXPECT_TRUE(stan::math::empty_nested());
-  EXPECT_NO_THROW(ode_data_vd.ode_rhs(t, nvec.cvode_state_,
-                                      nvec.cvode_state_dot_, &ode_data_vd));
+  EXPECT_NO_THROW(ode_data_vd.cv_rhs(t, nvec.cvode_state_,
+                                     nvec.cvode_state_dot_, &ode_data_vd));
 
-  EXPECT_NO_THROW(ode_data_vd.ode_rhs_sens(
+  EXPECT_NO_THROW(ode_data_vd.cv_rhs_sens(
       static_cast<int>(M), t, nvec.cvode_state_, nvec.cvode_state_dot_,
       nvec.cvode_state_sens_, nvec.cvode_state_sens_dot_, &ode_data_vd, tmp1,
       tmp2));
@@ -330,8 +330,8 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_exception_vd) {
     cvodes2coupled nvec(N, S);
 
     EXPECT_TRUE(stan::math::empty_nested());
-    EXPECT_THROW_MSG(ode_data_vd.ode_rhs(t, nvec.cvode_state_,
-                                         nvec.cvode_state_dot_, &ode_data_vd),
+    EXPECT_THROW_MSG(ode_data_vd.cv_rhs(t, nvec.cvode_state_,
+                                        nvec.cvode_state_dot_, &ode_data_vd),
                      std::logic_error, message);
     EXPECT_TRUE(stan::math::empty_nested());
   }
@@ -376,12 +376,12 @@ TEST_F(StanMathRevOdeCVode, cvodes_ode_data_vv) {
   NV_Ith_S(nvec.cvode_state_sens_[1], 0) = 0.0;
   NV_Ith_S(nvec.cvode_state_sens_[1], 1) = 1.0;
 
-  ode_data_vv.ode_rhs(t0, nvec.cvode_state_, nvec.cvode_state_dot_,
-                      &ode_data_vv);
+  ode_data_vv.cv_rhs(t0, nvec.cvode_state_, nvec.cvode_state_dot_,
+                     &ode_data_vv);
 
-  ode_data_vv.ode_rhs_sens(M, t0, nvec.cvode_state_, nvec.cvode_state_dot_,
-                           nvec.cvode_state_sens_, nvec.cvode_state_sens_dot_,
-                           &ode_data_vv, tmp1, tmp2);
+  ode_data_vv.cv_rhs_sens(M, t0, nvec.cvode_state_, nvec.cvode_state_dot_,
+                          nvec.cvode_state_sens_, nvec.cvode_state_sens_dot_,
+                          &ode_data_vv, tmp1, tmp2);
 
   std::vector<double> dy_dt_coupled = nvec.get_coupled_state_dot();
 
@@ -417,10 +417,10 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_vv) {
   cvodes2coupled nvec(N, S);
 
   EXPECT_TRUE(stan::math::empty_nested());
-  EXPECT_NO_THROW(ode_data_vv.ode_rhs(t, nvec.cvode_state_,
-                                      nvec.cvode_state_dot_, &ode_data_vv));
+  EXPECT_NO_THROW(ode_data_vv.cv_rhs(t, nvec.cvode_state_,
+                                     nvec.cvode_state_dot_, &ode_data_vv));
 
-  EXPECT_NO_THROW(ode_data_vv.ode_rhs_sens(
+  EXPECT_NO_THROW(ode_data_vv.cv_rhs_sens(
       static_cast<int>(M), t, nvec.cvode_state_, nvec.cvode_state_dot_,
       nvec.cvode_state_sens_, nvec.cvode_state_sens_dot_, &ode_data_vv, tmp1,
       tmp2));
@@ -452,8 +452,8 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_exception_vv) {
     cvodes2coupled nvec(N, S);
 
     EXPECT_TRUE(stan::math::empty_nested());
-    EXPECT_THROW_MSG(ode_data_vv.ode_rhs(t, nvec.cvode_state_,
-                                         nvec.cvode_state_dot_, &ode_data_vv),
+    EXPECT_THROW_MSG(ode_data_vv.cv_rhs(t, nvec.cvode_state_,
+                                        nvec.cvode_state_dot_, &ode_data_vv),
                      std::logic_error, message);
     EXPECT_TRUE(stan::math::empty_nested());
   }

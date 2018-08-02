@@ -37,7 +37,7 @@ then
   IFS=$'\n'
 
   echo "Files formatted:"
-  files=$(git diff --diff-filter=AM --name-only | grep -E ".hpp$|.cpp$" | grep -v "^lib/")
+  files=$(git diff --cached --diff-filter=AM --name-only | grep -E ".hpp$|.cpp$" | grep -v "^lib/")
 
   # format the files
   echo $files | xargs -n20 -P6 clang-format -i
