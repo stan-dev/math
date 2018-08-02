@@ -1,5 +1,7 @@
 R"(
+#ifndef WPT
 #define WPT 8
+#endif
 #define RTS TS/WPT
 /**
  * Matrix multiplication on the GPU

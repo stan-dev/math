@@ -1,5 +1,7 @@
 R"(
+#ifndef WPT1
 #define WPT1 4
+#endif
 #define RTS1 TS1/WPT1
 /**
  * Matrix multiplication of the form A*A^T on the GPU

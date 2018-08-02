@@ -23,11 +23,7 @@ namespace stan {
       matrix_gpu temp(A.rows(), A.rows());
       if (temp.size() == 0)
         return temp;
-      int local = 32;
-      int gpu_local_max = sqrt(opencl_context.max_workgroup_size());
-      if (gpu_local_max < local) {
-        local = gpu_local_max;
-      }
+      int local = gpu::multiply_workgroup_size;
       int Mpad = ((A.rows() + local-1)/local)*local;
       int Npad = ((A.cols() + local-1)/local)*local;
       // padding the matrices so the dimensions are divisible with local

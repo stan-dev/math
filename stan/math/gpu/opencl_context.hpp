@@ -40,6 +40,10 @@ const int Entire = 2;
 
 const int LowerToUpper = 1;
 const int UpperToLower = 0;
+
+int work_per_thread_multiply = 8;
+int work_per_thread_multiply_self_trans = 4;
+int multiply_workgroup_size = 32;
 }  // namespace gpu
 /**
  * The <code>opencl_context_base</code> class represents an OpenCL context
@@ -251,16 +255,20 @@ class opencl_context {
    */
   inline void compile_kernel_group(const char* kernel_name) {
     char temp[256];
-    int local = 32;
     int gpu_local_max = std::sqrt(max_workgroup_size());
-    if (gpu_local_max < local)
-      local = gpu_local_max;
+    if (gpu_local_max < gpu::multiply_workgroup_size)
+      gpu::multiply_workgroup_size = gpu_local_max;
     snprintf(temp, sizeof(temp),
-             "-D TS=%d -D TS1=%d -D TS2=%d "
+             "-D TS=%d "
+             "-D TS1=%d "
              "-D LOWER=%d -D UPPER=%d -D ENTIRE=%d "
-             "-D LOWER_TO_UPPER=%d -D UPPER_TO_LOWER=%d ",
-             local, local, local, gpu::Lower, gpu::Upper, gpu::Entire,
-             gpu::LowerToUpper, gpu::UpperToLower);
+             "-D LOWER_TO_UPPER=%d -D UPPER_TO_LOWER=%d "
+             "-D WPT=%d "
+             "-D WPT1=%d ",
+             gpu::multiply_workgroup_size, gpu::multiply_workgroup_size,
+             gpu::Lower, gpu::Upper, gpu::Entire, gpu::LowerToUpper,
+             gpu::UpperToLower, gpu::work_per_thread_multiply,
+             gpu::work_per_thread_multiply_self_trans);
     std::string kernel_source = "";
     const char* kernel_group = kernel_info()[kernel_name].group;
     for (auto kern : kernel_info()) {
@@ -268,12 +276,12 @@ class opencl_context {
         kernel_source += kern.second.raw_code;
       }
     }
-
+    cl::Program program_;
     try {
       cl::Program::Sources source(
           1,
           std::make_pair(kernel_source.c_str(), strlen(kernel_source.c_str())));
-      cl::Program program_ = cl::Program(context(), source);
+      program_ = cl::Program(context(), source);
       program_.build({device()}, temp);
 
       cl_int err = CL_SUCCESS;
@@ -287,6 +295,10 @@ class opencl_context {
         }
       }
     } catch (const cl::Error& e) {
+      std::cout << "Building failed, " << e.what() << "(" << e.err() << ")" 
+          << "\nRetrieving build log\n" 
+          << program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>({device()[0]})
+          << "\n";
       check_opencl_error("Kernel Compilation", e);
     }
   }
