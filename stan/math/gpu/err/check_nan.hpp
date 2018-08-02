@@ -29,11 +29,8 @@ inline void check_nan(const char* function, const char* name,
     cl::Buffer buffer_nan_flag(ctx, CL_MEM_READ_WRITE, sizeof(int));
     cmd_queue.enqueueWriteBuffer(buffer_nan_flag, CL_TRUE, 0, sizeof(int),
                                  &nan_flag);
-
-    kernel_check_nan.setArg(0, y.buffer());
-    kernel_check_nan.setArg(1, y.rows());
-    kernel_check_nan.setArg(2, y.cols());
-    kernel_check_nan.setArg(3, buffer_nan_flag);
+    opencl_context.set_kernel_args(kernel_check_nan, y.buffer(), y.rows(),
+                                   y.cols(), buffer_nan_flag);
 
     cmd_queue.enqueueNDRangeKernel(kernel_check_nan, cl::NullRange,
                                    cl::NDRange(y.rows(), y.cols()),

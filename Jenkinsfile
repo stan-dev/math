@@ -2,35 +2,6 @@
 @Library('StanUtils')
 import org.stan.Utils
 
-def setupCC(Boolean failOnError = true) {
-    errorStr = failOnError ? "-Werror " : ""
-    "echo CC=${env.CXX} ${errorStr}> make/local"
-}
-
-def setup(Boolean failOnError = true) {
-    sh """
-        git clean -xffd
-        ${setupCC(failOnError)}
-    """
-}
-
-def mailBuildResults(String label, additionalEmails='') {
-    script {
-        try {
-            emailext (
-                subject: "[StanJenkins] ${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                body: """${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]': Check console output at ${env.BUILD_URL}""",
-                recipientProviders: [[$class: 'RequesterRecipientProvider']],
-                to: "${env.CHANGE_AUTHOR_EMAIL}, ${additionalEmails}"
-            )
-        } catch (all) {
-            println "Encountered the following exception sending email; please ignore:"
-            println all
-            println "End ignoreable email-sending exception."
-        }
-    }
-}
-
 def runTests(String testPath) {
     sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only"
     try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" }
@@ -129,14 +100,13 @@ pipeline {
                 script {
                     deleteDir()
                     retry(3) { checkout scm }
-                    setup(false)
+                    sh "git clean -xffd"
                     stash 'MathSetup'
-                    sh setupCC()
+                    sh "echo CC=${env.CXX} -Werror > make/local"
                     parallel(
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh 'make test-math-dependencies' } ,
                         Documentation: { sh 'make doxygen' },
-                        Headers: { sh "make -j${env.PARALLEL} test-headers" }
                     )
                 }
             }
@@ -148,49 +118,41 @@ pipeline {
                 }
             }
         }
-        stage('Tests') {
+        stage('Headers check') {
+            agent any
+            steps {
+                deleteDir()
+                unstash 'MathSetup'
+                sh "echo CC=${env.CXX} -Werror > make/local"
+                sh "make -j${env.PARALLEL} test-headers"
+            }
+            post {
+                always {
+                    warnings canRunOnFailed: true, consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)'], [parserName: 'Clang (LLVM based)']]
+                    deleteDir()
+                }
+            }
+        }
+        stage('Linux Unit with MPI') {
+            agent { label 'linux' }
+            steps {
+                deleteDir()
+                unstash 'MathSetup'
+                sh "echo CC=${MPICXX} >> make/local"
+                sh "echo STAN_MPI=true >> make/local"
+                runTests("test/unit")
+            }
+            post { always { retry(3) { deleteDir() } } }
+        }
+        stage('Always-run tests') {
             parallel {
-                stage('Unit') {
-                    agent any
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh setupCC()
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Unit with GPU') {
-                    agent { label "gelman-group-mac" }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh setupCC()
-                        sh "echo STAN_OPENCL=true>> make/local"
-                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
-                        sh "echo OPENCL_DEVICE_ID=0>> make/local"
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Unit with MPI') {
-                    agent any
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CC=${MPICXX} >> make/local"
-                        sh "echo STAN_MPI=true >> make/local"
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
                         sh """
-                            ${setupCC(false)}
+                            echo CC=${env.CXX} > make/local
                             echo 'O=0' >> make/local
                             echo N_TESTS=${env.N_TESTS} >> make/local
                             """
@@ -211,18 +173,54 @@ pipeline {
                         }
                     }
                 }
+                stage('Mac Unit with Threading') {
+                    agent  { label 'osx' }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh "echo CC=${env.CXX} -Werror > make/local"
+                        sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+            }
+        }
+        stage('Additional merge tests') {
+            when { anyOf { branch 'develop'; branch 'master' } }
+            parallel {
+                stage('Unit with GPU') {
+                    agent { label "gelman-group-mac" }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh "echo CC=${env.CXX} -Werror > make/local"
+                        sh "echo STAN_OPENCL=true>> make/local"
+                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
+                        sh "echo OPENCL_DEVICE_ID=0>> make/local"
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Linux Unit with Threading') {
+                    agent { label 'linux' }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh "echo CC=${GCC} >> make/local"
+                        sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
             }
         }
         stage('Upstream tests') {
-            parallel {
-                stage('Stan Upstream Tests') {
-                    when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
-                    steps {
-                        build(job: "Stan/${stan_pr()}",
-                              parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
-                                           string(name: 'cmdstan_pr', value: cmdstan_pr())])
-                    }
-                }
+            when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
+            steps {
+                build(job: "Stan/${stan_pr()}",
+                        parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
+                                    string(name: 'cmdstan_pr', value: cmdstan_pr())])
             }
         }
         stage('Upload doxygen') {
@@ -254,15 +252,16 @@ pipeline {
     post {
         always {
             node("osx || linux") {
-                warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
-                warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
+                warnings canRunOnFailed: true, consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)'], [parserName: 'Clang (LLVM based)']]
             }
         }
         success {
-            script { utils.updateUpstream(env, 'stan') }
-            mailBuildResults("SUCCESSFUL")
+            script {
+                utils.updateUpstream(env, 'stan')
+                utils.mailBuildResults("SUCCESSFUL")
+            }
         }
-        unstable { mailBuildResults("UNSTABLE", alsoNotify()) }
-        failure { mailBuildResults("FAILURE", alsoNotify()) }
+        unstable { script { utils.mailBuildResults("UNSTABLE", alsoNotify()) } }
+        failure { script { utils.mailBuildResults("FAILURE", alsoNotify()) } }
     }
 }
