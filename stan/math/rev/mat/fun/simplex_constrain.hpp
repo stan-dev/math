@@ -80,8 +80,8 @@ class simplex_constrain_op {
  * @return Simplex of dimensionality K
  */
 inline Eigen::Matrix<var, Eigen::Dynamic, 1> simplex_constrain(
-    const Eigen::Matrix<var, Eigen::Dynamic, 1>& x) {
-  return adj_jac_apply<simplex_constrain_op>(x);
+    const Eigen::Matrix<var, Eigen::Dynamic, 1>& y) {
+  return adj_jac_apply<simplex_constrain_op>(y);
 }
 
 }  // namespace math
