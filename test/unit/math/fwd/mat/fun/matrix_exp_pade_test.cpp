@@ -143,10 +143,10 @@ TEST(MathMatrix, matrix_exp_100x100) {
   // Note: because of the way of matrix was constructed,
   // derivative should be the same as value (same case
   // as in the previous test).
-  double rel_err = 1e-10
+  double rel_err = 1e-6
                    * std::max(exp_A.cwiseAbs().maxCoeff(),
                               expm_A.cwiseAbs().maxCoeff().val_),
-         rel_err_d = 1e-10
+         rel_err_d = 1e-6
                      * std::max(exp_A.cwiseAbs().maxCoeff(),
                                 expm_A.cwiseAbs().maxCoeff().d_);
 

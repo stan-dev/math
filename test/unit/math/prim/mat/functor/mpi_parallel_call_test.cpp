@@ -6,8 +6,6 @@
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
-#include <test/unit/math/prim/mat/functor/mpi_test_env.hpp>
-
 #include <test/unit/math/prim/mat/functor/faulty_functor.hpp>
 
 #include <iostream>
@@ -84,10 +82,7 @@ struct MpiJob : public ::testing::Test {
   }
 };
 
-MPI_TEST_F(MpiJob, no_job_input_ok_dd) {
-  if (rank != 0)
-    return;
-
+TEST_F(MpiJob, no_job_input_ok_dd) {
   job_params_d.resize(0);
   x_i.resize(0);
   x_r.resize(0);
@@ -101,10 +96,7 @@ MPI_TEST_F(MpiJob, no_job_input_ok_dd) {
   EXPECT_EQ(res.size(), 0);
 }
 
-MPI_TEST_F(MpiJob, one_job_input_ok_dd) {
-  if (rank != 0)
-    return;
-
+TEST_F(MpiJob, one_job_input_ok_dd) {
   job_params_d.resize(1);
   x_i.resize(1);
   x_r.resize(1);
@@ -120,10 +112,7 @@ MPI_TEST_F(MpiJob, one_job_input_ok_dd) {
   EXPECT_EQ(res.rows(), 3);
 }
 
-MPI_TEST_F(MpiJob, size_mismatch_job_params_dd) {
-  if (rank != 0)
-    return;
-
+TEST_F(MpiJob, size_mismatch_job_params_dd) {
   job_params_d.pop_back();
 
   std::shared_ptr<mock_call_t> call;
@@ -132,10 +121,7 @@ MPI_TEST_F(MpiJob, size_mismatch_job_params_dd) {
                std::invalid_argument);
 }
 
-MPI_TEST_F(MpiJob, size_mismatch_real_data_dd) {
-  if (rank != 0)
-    return;
-
+TEST_F(MpiJob, size_mismatch_real_data_dd) {
   x_r.pop_back();
 
   std::shared_ptr<mock_call_t> call;
@@ -144,10 +130,7 @@ MPI_TEST_F(MpiJob, size_mismatch_real_data_dd) {
                std::invalid_argument);
 }
 
-MPI_TEST_F(MpiJob, size_mismatch_int_data_dd) {
-  if (rank != 0)
-    return;
-
+TEST_F(MpiJob, size_mismatch_int_data_dd) {
   x_i.pop_back();
 
   std::shared_ptr<mock_call_t> call;
@@ -156,10 +139,7 @@ MPI_TEST_F(MpiJob, size_mismatch_int_data_dd) {
                std::invalid_argument);
 }
 
-MPI_TEST_F(MpiJob, recover_on_first_evaluation_dd) {
-  if (rank != 0)
-    return;
-
+TEST_F(MpiJob, recover_on_first_evaluation_dd) {
   // trigger exception on first evaluation
   job_params_d[0](0) = -1.0;
 
@@ -182,10 +162,7 @@ MPI_TEST_F(MpiJob, recover_on_first_evaluation_dd) {
   // note: tests below have data already cached for mock_call_t !
 }
 
-MPI_TEST_F(MpiJob, MPI_busy) {
-  if (rank != 0)
-    return;
-
+TEST_F(MpiJob, MPI_busy) {
   std::shared_ptr<mock_call_t> call1;
   EXPECT_NO_THROW((call1 = std::shared_ptr<mock_call_t>(new mock_call_t(
                        shared_params_d, job_params_d, x_r, x_i))));
@@ -208,10 +185,7 @@ MPI_TEST_F(MpiJob, MPI_busy) {
   EXPECT_NO_THROW(call2->reduce_combine());
 }
 
-MPI_TEST_F(MpiJob, size_mismatch_cached_jobs_dd) {
-  if (rank != 0)
-    return;
-
+TEST_F(MpiJob, size_mismatch_cached_jobs_dd) {
   // run call once to cache data
   std::shared_ptr<mock_call_t> call;
   EXPECT_NO_THROW((call = std::shared_ptr<mock_call_t>(new mock_call_t(
@@ -227,10 +201,7 @@ MPI_TEST_F(MpiJob, size_mismatch_cached_jobs_dd) {
                std::invalid_argument);
 }
 
-MPI_TEST_F(MpiJob, root_not_confused_dd) {
-  if (rank != 0)
-    return;
-
+TEST_F(MpiJob, root_not_confused_dd) {
   // the root must not call the distributed_apply ever
   EXPECT_THROW_MSG(mock_call_t::distributed_apply(), std::runtime_error,
                    "problem sizes must be defined on the root.");

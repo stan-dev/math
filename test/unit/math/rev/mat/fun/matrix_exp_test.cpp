@@ -153,7 +153,7 @@ TEST(MathMatrix, matrix_exp_25x25) {
   Matrix<double, Dynamic, Dynamic> exp_A
       = S * exp_diag_elements.asDiagonal() * S_inv;
 
-  double rel_err = 1e-10
+  double rel_err = 1e-6
                    * std::max(exp_A.cwiseAbs().maxCoeff(),
                               expm_A.cwiseAbs().maxCoeff().val());
 
@@ -177,7 +177,7 @@ TEST(MathMatrix, matrix_exp_25x25) {
         dA(k, k) = exp(diag_elements(k));
         dA_exp = S * dA * S_inv;
         rel_err = std::max(dA_exp.cwiseAbs().maxCoeff(), stan::math::max(g_abs))
-                  * 1e-10;
+                  * 1e-6;
         EXPECT_NEAR(dA_exp(i, j), diag_elements_var(k).adj(), rel_err);
       }
     }
