@@ -88,9 +88,9 @@ namespace stan {
       cl::CommandQueue& cmdQueue = opencl_context.queue();
       int wpt = 8;
       try {
-        opencl_context.set_kernel_args(kernel, Apad.rows(), Bpad.cols(),
-                                   Bpad.rows(), Apad.buffer(), Bpad.buffer(),
-                                   tempPad.buffer());
+        opencl_context.set_kernel_args(kernel, Apad.buffer(), Bpad.buffer(),
+                                   tempPad.buffer(),
+                                   Apad.rows(), Bpad.cols(), Bpad.rows());
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,

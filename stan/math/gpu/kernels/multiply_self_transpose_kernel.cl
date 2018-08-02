@@ -1,68 +1,82 @@
 R"(
-#ifndef WPT1
-#define WPT1 4
+#ifndef WORK_PER_THREAD_MULT_SELF_TRANS
+#define WORK_PER_THREAD_MULT_SELF_TRANS 4
 #endif
-#define RTS1 TS1/WPT1
+#define WORKGROUP_SIZE_MULT_SELF_TRANS_COL WORKGROUP_SIZE_MULT_SELF_TRANS/WORK_PER_THREAD_MULT_SELF_TRANS
+#ifndef B
+#define B(i, j)  B[j * M + i]
+#endif
+
 /**
  * Matrix multiplication of the form A*A^T on the GPU
  *
- * @param M Number of rows for matrix A
- * @param N Number of cols for matrix A and number of row for matrix A^T
- * @param K Number of cols for matrix A^T
  * @param[in] A matrix A
- * @param[in] B matrix A^T
- * @param[out] C the output matrix
+ * @param[out] B the output matrix
+ * @param M Number of rows for matrix A
+ * @param N Number of cols for matrix A and the number of rows for matrix A^T 
  */
-__kernel void multiply_self_transpose(const int M,
-            const int N, const int K,
+__kernel void multiply_self_transpose(
             const __global double* A,
-            const __global double* AT,
-            __global double* C) {
+            __global double* B,
+            const int M,
+            const int N) {
+  // thread index inside the workgroup
+  const int workgroup_row = get_local_id(0); 
+  const int workgroup_col = get_local_id(1); 
   
-  const int row = get_local_id(0); 
-  const int col = get_local_id(1); 
-  const int i = TS1*get_group_id(0) + row; 
-  const int j = TS1*get_group_id(1) + col; 
-  const int jMin = TS1*get_group_id(1);
-  const int iMax = TS1*get_group_id(0)  + get_local_size(0);
+  // global thread index
+  const int i = WORKGROUP_SIZE_MULT_SELF_TRANS*get_group_id(0) + workgroup_row; 
+  const int j = WORKGROUP_SIZE_MULT_SELF_TRANS*get_group_id(1) + workgroup_col; 
   
-  __local double Asub[TS1][TS1];
-  __local double Bsub[TS1][TS1];
+  // indexes that determine the last indexes that need to compute
+  // in order to remove the unnecesary multiplications in the special multiplication of A*A^T
+  const int jMin = WORKGROUP_SIZE_MULT_SELF_TRANS*get_group_id(1);
+  const int iMax = WORKGROUP_SIZE_MULT_SELF_TRANS*get_group_id(0)  + get_local_size(0);
+  
+  // local memory
+  __local double A_local[WORKGROUP_SIZE_MULT_SELF_TRANS][WORKGROUP_SIZE_MULT_SELF_TRANS];
+  __local double B_local[WORKGROUP_SIZE_MULT_SELF_TRANS][WORKGROUP_SIZE_MULT_SELF_TRANS];
 
-  double acc[WPT1];
-  for (int w=0; w<WPT1; w++) {
+  double acc[WORK_PER_THREAD_MULT_SELF_TRANS];
+  for (int w = 0; w < WORK_PER_THREAD_MULT_SELF_TRANS; w++) {
     acc[w] = 0.0;
   }
   
-  const int numTiles = (K+TS1-1)/TS1;
-  for (int t=0; t<numTiles; t++) {
+  const int numTiles = (N+WORKGROUP_SIZE_MULT_SELF_TRANS-1)/WORKGROUP_SIZE_MULT_SELF_TRANS;
+  //iterate over all tiles
+  for (int t = 0; t < numTiles; t++) {
+    // in each tile
+    const int tiled_i = WORKGROUP_SIZE_MULT_SELF_TRANS*t + workgroup_row;
+    const int tiled_j = WORKGROUP_SIZE_MULT_SELF_TRANS*t + workgroup_col;
+    // if the data needs to be loaded to local memory
     if(jMin <= iMax){
-    
-    for (int w=0; w<WPT1; w++) {
-      const int tiled_i = TS1*t + row;
-      const int tiled_j = TS1*t + col;
-      Asub[col + w*RTS1][row] = A[(tiled_j + w*RTS1)*M + i];
-      Bsub[col + w*RTS1][row] = AT[(j + w*RTS1)*K + tiled_i];      
+      // each thread copies WORK_PER_THREAD_MULT_SELF_TRANS values to the local memory
+      for (int w = 0; w < WORK_PER_THREAD_MULT_SELF_TRANS; w++) {
+        A_local[workgroup_col + w*WORKGROUP_SIZE_MULT_SELF_TRANS_COL][workgroup_row] = A[i + (tiled_j + w*WORKGROUP_SIZE_MULT_SELF_TRANS_COL)*M];
+        B_local[workgroup_col + w*WORKGROUP_SIZE_MULT_SELF_TRANS_COL][workgroup_row] = A[(j + w*WORKGROUP_SIZE_MULT_SELF_TRANS_COL) + tiled_i*M];      
+      }
     }
-  }
-    
+    // wait till all tile values are loaded to the local memory
     barrier(CLK_LOCAL_MEM_FENCE);
-
-    for (int k=0; k<TS1; k++) {
-      for (int w=0; w<WPT1; w++) {
-        if((j + w*RTS1)<=i){
-          acc[w] += Asub[k][row] * Bsub[col + w*RTS1][k];
+    // multiply the tile producs
+    for (int k = 0; k < WORKGROUP_SIZE_MULT_SELF_TRANS; k++) {
+      // each thread multiplies WORK_PER_THREAD_MULT_SELF_TRANS values
+      for (int w = 0;w < WORK_PER_THREAD_MULT_SELF_TRANS; w++) {
+        if(jMin <= iMax){
+          if((j + w*WORKGROUP_SIZE_MULT_SELF_TRANS_COL)<=i){
+            acc[w] += A_local[k][workgroup_row] * B_local[workgroup_col + w*WORKGROUP_SIZE_MULT_SELF_TRANS_COL][k];
+          }
         }
       }
     }
-  
     barrier(CLK_LOCAL_MEM_FENCE);
   }
- 
-  for (int w=0; w<WPT1; w++) {
-    if ( (j + w*RTS1)<=i ) {
-      C[(j + w*RTS1)*M + i] = acc[w];
-      C[i*M + (j + w*RTS1)] = acc[w];
+  // save the values
+  for (int w=0; w<WORK_PER_THREAD_MULT_SELF_TRANS; w++) {
+    // each thread saves WORK_PER_THREAD_MULT_SELF_TRANS values
+    if ( (j + w*WORKGROUP_SIZE_MULT_SELF_TRANS_COL) <= i ) {
+      B[i + (j + w*WORKGROUP_SIZE_MULT_SELF_TRANS_COL)*M] = acc[w];
+      B[(j + w*WORKGROUP_SIZE_MULT_SELF_TRANS_COL) + i*M] = acc[w];
     }
   }
 };

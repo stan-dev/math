@@ -2,7 +2,6 @@
 #define STAN_MATH_GPU_MULTIPLY_SELF_TRANSPOSE_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/matrix_gpu.hpp>
-#include <stan/math/gpu/transpose.hpp>
 #include <stan/math/gpu/err/check_square.hpp>
 #include <Eigen/Dense>
 
@@ -31,17 +30,13 @@ namespace stan {
       // multiply kernel
       matrix_gpu tempPad(Mpad, Mpad);
       matrix_gpu Apad(Mpad, Npad);
-      matrix_gpu ATpad(Npad, Mpad);
-      matrix_gpu AT = stan::math::transpose(A);
       Apad.sub_block(A, 0, 0, 0, 0, A.rows(), A.cols());
-      ATpad.sub_block(AT, 0, 0, 0, 0, AT.rows(), AT.cols());
       cl::Kernel kernel = opencl_context.get_kernel("multiply_self_transpose");
       cl::CommandQueue& cmdQueue = opencl_context.queue();
       int wpt = 4;
       try {
-        opencl_context.set_kernel_args(kernel, Apad.rows(), ATpad.cols(),
-                                   ATpad.rows(), Apad.buffer(), ATpad.buffer(),
-                                   tempPad.buffer());
+        opencl_context.set_kernel_args(kernel, Apad.buffer(), tempPad.buffer(),
+                                   Apad.rows(), Apad.cols()); 
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,

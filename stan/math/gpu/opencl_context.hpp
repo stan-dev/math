@@ -259,12 +259,12 @@ class opencl_context {
     if (gpu_local_max < gpu::multiply_workgroup_size)
       gpu::multiply_workgroup_size = gpu_local_max;
     snprintf(temp, sizeof(temp),
-             "-D TS=%d "
-             "-D TS1=%d "
+             "-D WORKGROUP_SIZE_MULT=%d "
+             "-D WORKGROUP_SIZE_MULT_SELF_TRANS=%d "
              "-D LOWER=%d -D UPPER=%d -D ENTIRE=%d "
              "-D LOWER_TO_UPPER=%d -D UPPER_TO_LOWER=%d "
-             "-D WPT=%d "
-             "-D WPT1=%d ",
+             "-D WORK_PER_THREAD_MULT=%d "
+             "-D WORK_PER_THREAD_MULT_SELF_TRANS=%d ",
              gpu::multiply_workgroup_size, gpu::multiply_workgroup_size,
              gpu::Lower, gpu::Upper, gpu::Entire, gpu::LowerToUpper,
              gpu::UpperToLower, gpu::work_per_thread_multiply,

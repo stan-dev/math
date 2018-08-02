@@ -75,7 +75,7 @@ TEST(AgradRevMatrix, multiply_self_transposed_big) {
   using stan::math::multiply;
   stan::math::matrix_d m1, m2, m2_gpu;
 
-  int size = 512;
+  int size = 500;
   m1.resize(size, size);
   m2.resize(size, size);
   m2_gpu.resize(size, size);
@@ -83,16 +83,42 @@ TEST(AgradRevMatrix, multiply_self_transposed_big) {
   for (int j = 0; j < size; j++) {
     m1(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
   }
-
   m2 = m1*m1.transpose();
-
+  
   stan::math::matrix_gpu m11(m1);
   stan::math::matrix_gpu m22(size, size);
   m22 = stan::math::multiply_self_transpose(m11);
   stan::math::copy(m2_gpu, m22);
-
+  
   for (int i = 0; i < size; i++)
   for (int j = 0; j < size; j++)
+    EXPECT_NEAR(m2(i, j), m2_gpu(i, j), 1e-10);
+}
+
+TEST(AgradRevMatrix, multiply_self_transposed_big_non_square) {
+  boost::random::mt19937 rng;
+  using stan::math::multiply;
+  stan::math::matrix_d m1, m2, m2_gpu;
+
+  int size_x = 200;
+  int size_y = 500;
+  m1.resize(size_x, size_y);
+  m2.resize(size_x, size_x);
+  m2_gpu.resize(size_x, size_x);
+  for (int i = 0; i < size_x; i++)
+  for (int j = 0; j < size_y; j++) {
+    m1(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
+  }
+
+  m2 = m1*m1.transpose();
+
+  stan::math::matrix_gpu m11(m1);
+  stan::math::matrix_gpu m22(size_x, size_x);
+  m22 = stan::math::multiply_self_transpose(m11);
+  stan::math::copy(m2_gpu, m22);
+
+  for (int i = 0; i < size_x; i++)
+  for (int j = 0; j < size_x; j++)
     EXPECT_NEAR(m2(i, j), m2_gpu(i, j), 1e-10);
 }
 
