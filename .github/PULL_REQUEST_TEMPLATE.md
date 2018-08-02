@@ -1,6 +1,24 @@
-Thanks for submitting a pull request! Please remove this text when submitting. We expect everything in the checklist to be completed before the pull request is merged. If anything significant is missing, the pull request may be closed until it's ready.
+Thanks for submitting a pull request! Please remove this text when submitting.
 
-Please help guide the reviewer through your code (see [Code Review Guidelines](https://github.com/stan-dev/math/wiki/Developer-Doc#code-review-guidelines)).
+Start by filling in the Summary, Tests, and Side Effects sections of this pull request and then work through the handy checklist at the bottom. If anything significant is missing, the pull request may be closed until it's ready. The full guidebook on how pull requests are reviewed is here: [Code Review Guidelines](https://github.com/stan-dev/math/wiki/Developer-Doc#code-review-guidelines).
+
+## Summary
+
+Describe the contents of the pull request. The issue describes the problem that needs to be fixed, whereas the text here should help the reviewer figure out to what extent this pull request solves the issue.
+
+Describe implementation details and any relevant information that would help the code reviewer understand this pull request. If there is anything special you need to draw someone's attention to, do it here. Link to any related pull requests or Discourse threads.
+
+## Tests
+
+Describe the new tests with the pull request.
+
+For bug fixes there should be a new test that would fail if the patch weren't in place (so that the bug could be caught if it comes up again).
+
+For new features there should be at least one test showing the expected behavior and one test that demonstrates error handling. Be aware the reviewer will very likely ask for more tests than this, but it's a start.
+
+## Side Effects
+
+Are there any side effects that we should be aware of?
 
 ## Checklist
 
@@ -22,21 +40,3 @@ Please help guide the reviewer through your code (see [Code Review Guidelines](h
 - [ ] the code is written in idiomatic C++ and changes are documented in the doxygen
 
 - [ ] the new changes are tested
-
-## Summary
-
-Describe the contents of the pull request. The issue describes the problem that needs to be fixed, whereas the text here should help the reviewer figure out to what extent this pull request solves the issue.
-
-Describe implementation details and any relevant information that would help the code reviewer understand this pull request. If there is anything special you need to draw someone's attention to, do it here. Link to any related pull requests or Discourse threads.
-
-## Tests
-
-Describe the new tests with the pull request.
-
-For bug fixes, there should be a new test that would fail if the patch weren't in place (so that the bug could be caught if it comes up again).
-
-For new features, there should be at least one test showing the expected behavior and one test that demonstrates error handling. The reviewer will very likely ask for more tests.
-
-## Side Effects
-
-Are there any side effects that we should be aware of?
