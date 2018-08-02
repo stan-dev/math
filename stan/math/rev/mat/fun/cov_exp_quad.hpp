@@ -20,19 +20,7 @@ namespace stan {
 namespace math {
 
 /**
- * This is a subclass of the vari class for precomputed
- * gradients of cov_exp_quad.
- *
- * The class stores the double values for the distance
- * matrix, pointers to the varis for the covariance
- * matrix, along with a pointer to the vari for sigma,
- * and the vari for l.
- *
  * @deprecated use <code>gp_exp_quad_cov_vari</code>
- *
- * @tparam T_x type of std::vector of elements
- * @tparam T_sigma type of sigma
- * @tparam T_l type of length scale
  */
 template <typename T_x, typename T_sigma, typename T_l>
 class cov_exp_quad_vari : public vari {
@@ -49,24 +37,7 @@ class cov_exp_quad_vari : public vari {
   vari** cov_diag_;
 
   /**
-   * Constructor for cov_exp_quad.
-   *
-   * All memory allocated in
-   * ChainableStack's stack_alloc arena.
-   *
-   * It is critical for the efficiency of this object
-   * that the constructor create new varis that aren't
-   * popped onto the var_stack_, but rather are
-   * popped onto the var_nochain_stack_. This is
-   * controlled to the second argument to
-   * vari's constructor.
-   *
    * @deprecated use <code>gp_exp_quad_cov_vari</code>
-   *
-   * @param x std::vector input that can be used in square distance
-   *    Assumes each element of x is the same size
-   * @param sigma standard deviation
-   * @param l length scale
    */
   cov_exp_quad_vari(const std::vector<T_x>& x, const T_sigma& sigma,
                     const T_l& l)
@@ -119,18 +90,7 @@ class cov_exp_quad_vari : public vari {
 };
 
 /**
- * This is a subclass of the vari class for precomputed
- * gradients of cov_exp_quad.
- *
- * The class stores the double values for the distance
- * matrix, pointers to the varis for the covariance
- * matrix, along with a pointer to the vari for sigma,
- * and the vari for l.
- *
  * @deprecated use <code>gp_exp_quad_cov_vari</code>
- *
- * @tparam T_x type of std::vector of elements
- * @tparam T_l type of length scale
  */
 template <typename T_x, typename T_l>
 class cov_exp_quad_vari<T_x, double, T_l> : public vari {
@@ -146,24 +106,7 @@ class cov_exp_quad_vari<T_x, double, T_l> : public vari {
   vari** cov_diag_;
 
   /**
-   * Constructor for cov_exp_quad.
-   *
-   * All memory allocated in
-   * ChainableStack's stack_alloc arena.
-   *
-   * It is critical for the efficiency of this object
-   * that the constructor create new varis that aren't
-   * popped onto the var_stack_, but rather are
-   * popped onto the var_nochain_stack_. This is
-   * controlled to the second argument to
-   * vari's constructor.
-   *
    * @deprecated use <code>gp_exp_quad_cov_vari</code>
-   *
-   * @param x std::vector input that can be used in square distance
-   *    Assumes each element of x is the same size
-   * @param sigma standard deviation
-   * @param l length scale
    */
   cov_exp_quad_vari(const std::vector<T_x>& x, double sigma, const T_l& l)
       : vari(0.0),
@@ -206,17 +149,7 @@ class cov_exp_quad_vari<T_x, double, T_l> : public vari {
 };
 
 /**
- * Returns a squared exponential kernel.
- *
  * @deprecated use <code>gp_exp_quad_cov_vari</code>
- *
- * @param x std::vector input that can be used in square distance
- *    Assumes each element of x is the same size
- * @param sigma standard deviation
- * @param l length scale
- * @return squared distance
- * @throw std::domain_error if sigma <= 0, l <= 0, or
- *   x is nan or infinite
  */
 template <typename T_x>
 inline typename boost::enable_if_c<
@@ -227,17 +160,7 @@ cov_exp_quad(const std::vector<T_x>& x, const var& sigma, const var& l) {
 }
 
 /**
- * Returns a squared exponential kernel.
- *
  * @deprecated use <code>gp_exp_quad_cov_vari</code>
- *
- * @param x std::vector input that can be used in square distance
- *    Assumes each element of x is the same size
- * @param sigma standard deviation
- * @param l length scale
- * @return squared distance
- * @throw std::domain_error if sigma <= 0, l <= 0, or
- *   x is nan or infinite
  */
 template <typename T_x>
 inline typename boost::enable_if_c<
