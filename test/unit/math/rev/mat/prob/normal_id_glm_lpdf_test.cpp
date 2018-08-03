@@ -26,22 +26,6 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles) {
   EXPECT_FLOAT_EQ(
       (stan::math::normal_lpdf<true>(n, theta, sigma)),
       (stan::math::normal_id_glm_lpdf<true>(n, x, beta, alpha, sigma)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::normal_lpdf<false>(n, theta, sigma)),
-      (stan::math::normal_id_glm_lpdf<false>(n, x, beta, alpha, sigma)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::normal_lpdf<true, Matrix<int, Dynamic, 1>>(n, theta, sigma)),
-      (stan::math::normal_id_glm_lpdf<true, Matrix<int, Dynamic, 1>>(
-          n, x, beta, alpha, sigma)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::normal_lpdf<false, Matrix<int, Dynamic, 1>>(n, theta,
-                                                               sigma)),
-      (stan::math::normal_id_glm_lpdf<false, Matrix<int, Dynamic, 1>>(
-          n, x, beta, alpha, sigma)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::normal_lpdf<Matrix<int, Dynamic, 1>>(n, theta, sigma)),
-      (stan::math::normal_id_glm_lpdf<Matrix<int, Dynamic, 1>>(n, x, beta,
-                                                               alpha, sigma)));
 }
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
@@ -68,22 +52,6 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles_rand) {
     EXPECT_FLOAT_EQ(
         (stan::math::normal_lpdf<true>(n, theta, phi)),
         (stan::math::normal_id_glm_lpdf<true>(n, x, beta, alpha, phi)));
-    EXPECT_FLOAT_EQ(
-        (stan::math::normal_lpdf<false>(n, theta, phi)),
-        (stan::math::normal_id_glm_lpdf<false>(n, x, beta, alpha, phi)));
-    EXPECT_FLOAT_EQ(
-        (stan::math::normal_lpdf<true, Matrix<int, Dynamic, 1>>(n, theta, phi)),
-        (stan::math::normal_id_glm_lpdf<true, Matrix<int, Dynamic, 1>>(
-            n, x, beta, alpha, phi)));
-    EXPECT_FLOAT_EQ(
-        (stan::math::normal_lpdf<false, Matrix<int, Dynamic, 1>>(n, theta,
-                                                                 phi)),
-        (stan::math::normal_id_glm_lpdf<false, Matrix<int, Dynamic, 1>>(
-            n, x, beta, alpha, phi)));
-    EXPECT_FLOAT_EQ(
-        (stan::math::normal_lpdf<Matrix<int, Dynamic, 1>>(n, theta, phi)),
-        (stan::math::normal_id_glm_lpdf<Matrix<int, Dynamic, 1>>(n, x, beta,
-                                                                 alpha, phi)));
   }
 }
 //  We check that the gradients of the new regression match those of one built
@@ -103,7 +71,26 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars) {
   theta = x * beta + alphavec;
   var lp = stan::math::normal_lpdf(n, theta, sigma);
   lp.grad();
+
+  double lp_val = lp.val();
+  double alpha_adj = alpha.adj();
+  Matrix<double, Dynamic, Dynamic> x_adj(3, 2);
+  Matrix<double, Dynamic, 1> beta_adj(2, 1);
+  Matrix<double, Dynamic, 1> sigma_adj(3, 1);
+  Matrix<double, Dynamic, 1> n_adj(3, 1);
+  for (size_t i = 0; i < 2; i++) {
+    beta_adj[i] = beta[i].adj();
+    for (size_t j = 0; j < 3; j++) {
+      x_adj(j, i) = x(j, i).adj();
+    }
+  }
+  for (size_t j = 0; j < 3; j++) {
+    sigma_adj[j] = sigma[j].adj();
+    n_adj[j] = n[j].adj();
+  }
+
   stan::math::recover_memory();
+
   Matrix<var, Dynamic, 1> n2(3, 1);
   n2 << 14, 32, 21;
   Matrix<var, Dynamic, Dynamic> x2(3, 2);
@@ -115,16 +102,16 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars) {
   sigma2 << 10, 4, 6;
   var lp2 = stan::math::normal_id_glm_lpdf(n2, x2, beta2, alpha2, sigma2);
   lp2.grad();
-  EXPECT_FLOAT_EQ(lp.val(), lp2.val());
+  EXPECT_FLOAT_EQ(lp_val, lp2.val());
   for (size_t i = 0; i < 2; i++) {
-    EXPECT_FLOAT_EQ(beta[i].adj(), beta2[i].adj());
+    EXPECT_FLOAT_EQ(beta_adj[i], beta2[i].adj());
   }
-  EXPECT_FLOAT_EQ(alpha.adj(), alpha2.adj());
+  EXPECT_FLOAT_EQ(alpha_adj, alpha2.adj());
   for (size_t j = 0; j < 3; j++) {
-    EXPECT_FLOAT_EQ(n[j].adj(), n2[j].adj());
-    EXPECT_FLOAT_EQ(sigma[j].adj(), sigma2[j].adj());
+    EXPECT_FLOAT_EQ(n_adj[j], n2[j].adj());
+    EXPECT_FLOAT_EQ(sigma_adj[j], sigma2[j].adj());
     for (size_t i = 0; i < 2; i++) {
-      EXPECT_FLOAT_EQ(x(j, i).adj(), x2(j, i).adj());
+      EXPECT_FLOAT_EQ(x_adj(j, i), x2(j, i).adj());
     }
   }
 }
@@ -151,7 +138,26 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand) {
     theta = (x * beta) + alphavec;
     var lp = stan::math::normal_lpdf(n, theta, phi);
     lp.grad();
+
+    double lp_val = lp.val();
+    double alpha_adj = alpha.adj();
+    Matrix<double, Dynamic, Dynamic> x_adj(3, 2);
+    Matrix<double, Dynamic, 1> beta_adj(2, 1);
+    Matrix<double, Dynamic, 1> phi_adj(3, 1);
+    Matrix<double, Dynamic, 1> n_adj(3, 1);
+    for (size_t i = 0; i < 2; i++) {
+      beta_adj[i] = beta[i].adj();
+      for (size_t j = 0; j < 3; j++) {
+        x_adj(j, i) = x(j, i).adj();
+      }
+    }
+    for (size_t j = 0; j < 3; j++) {
+      phi_adj[j] = phi[j].adj();
+      n_adj[j] = n[j].adj();
+    }
+
     stan::math::recover_memory();
+
     Matrix<var, Dynamic, 1> n2 = nreal;
     Matrix<var, Dynamic, 1> beta2 = betareal;
     Matrix<var, Dynamic, Dynamic> x2 = xreal;
@@ -159,15 +165,16 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand) {
     Matrix<var, Dynamic, 1> phi2 = phireal;
     var lp2 = stan::math::normal_id_glm_lpdf(n2, x2, beta2, alpha2, phi2);
     lp2.grad();
-    EXPECT_FLOAT_EQ(lp.val(), lp2.val());
+    EXPECT_FLOAT_EQ(lp_val, lp2.val());
     for (size_t i = 0; i < 2; i++) {
-      EXPECT_FLOAT_EQ(beta[i].adj(), beta2[i].adj());
+      EXPECT_FLOAT_EQ(beta_adj[i], beta2[i].adj());
     }
-    EXPECT_FLOAT_EQ(alpha.adj(), alpha2.adj());
+    EXPECT_FLOAT_EQ(alpha_adj, alpha2.adj());
     for (size_t j = 0; j < 3; j++) {
-      EXPECT_FLOAT_EQ(n[j].adj(), n2[j].adj());
+      EXPECT_FLOAT_EQ(n_adj[j], n2[j].adj());
+      EXPECT_FLOAT_EQ(phi_adj[j], phi2[j].adj());
       for (size_t i = 0; i < 2; i++) {
-        EXPECT_FLOAT_EQ(x(j, i).adj(), x2(j, i).adj());
+        EXPECT_FLOAT_EQ(x_adj(j, i), x2(j, i).adj());
       }
     }
   }

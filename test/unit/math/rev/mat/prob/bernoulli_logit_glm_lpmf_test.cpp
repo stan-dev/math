@@ -27,23 +27,6 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_doubles) {
   EXPECT_FLOAT_EQ(
       (stan::math::bernoulli_logit_lpmf<true>(n, theta)),
       (stan::math::bernoulli_logit_glm_lpmf<true>(n, x, beta, alpha)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::bernoulli_logit_lpmf<false>(n, theta)),
-      (stan::math::bernoulli_logit_glm_lpmf<false>(n, x, beta, alpha)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::bernoulli_logit_lpmf<true, Matrix<int, Dynamic, 1>>(n,
-                                                                       theta)),
-      (stan::math::bernoulli_logit_glm_lpmf<true, Matrix<int, Dynamic, 1>>(
-          n, x, beta, alpha)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::bernoulli_logit_lpmf<false, Matrix<int, Dynamic, 1>>(n,
-                                                                        theta)),
-      (stan::math::bernoulli_logit_glm_lpmf<false, Matrix<int, Dynamic, 1>>(
-          n, x, beta, alpha)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::bernoulli_logit_lpmf<Matrix<int, Dynamic, 1>>(n, theta)),
-      (stan::math::bernoulli_logit_glm_lpmf<Matrix<int, Dynamic, 1>>(n, x, beta,
-                                                                     alpha)));
 }
 
 //  We check that the values of the new regression match those of one built
@@ -70,23 +53,6 @@ TEST(ProbDistributionsBernoulliLogitGLM,
     EXPECT_FLOAT_EQ(
         (stan::math::bernoulli_logit_lpmf<true>(n, theta)),
         (stan::math::bernoulli_logit_glm_lpmf<true>(n, x, beta, alpha)));
-    EXPECT_FLOAT_EQ(
-        (stan::math::bernoulli_logit_lpmf<false>(n, theta)),
-        (stan::math::bernoulli_logit_glm_lpmf<false>(n, x, beta, alpha)));
-    EXPECT_FLOAT_EQ(
-        (stan::math::bernoulli_logit_lpmf<true, Matrix<int, Dynamic, 1>>(
-            n, theta)),
-        (stan::math::bernoulli_logit_glm_lpmf<true, Matrix<int, Dynamic, 1>>(
-            n, x, beta, alpha)));
-    EXPECT_FLOAT_EQ(
-        (stan::math::bernoulli_logit_lpmf<false, Matrix<int, Dynamic, 1>>(
-            n, theta)),
-        (stan::math::bernoulli_logit_glm_lpmf<false, Matrix<int, Dynamic, 1>>(
-            n, x, beta, alpha)));
-    EXPECT_FLOAT_EQ(
-        (stan::math::bernoulli_logit_lpmf<Matrix<int, Dynamic, 1>>(n, theta)),
-        (stan::math::bernoulli_logit_glm_lpmf<Matrix<int, Dynamic, 1>>(
-            n, x, beta, alpha)));
   }
 }
 
@@ -107,6 +73,17 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
   var lp = stan::math::bernoulli_logit_lpmf(n, theta);
   lp.grad();
 
+  double lp_val = lp.val();
+  double alpha_adj = alpha.adj();
+  Matrix<double, Dynamic, Dynamic> x_adj(3, 2);
+  Matrix<double, Dynamic, 1> beta_adj(2, 1);
+  for (size_t i = 0; i < 2; i++) {
+    beta_adj[i] = beta[i].adj();
+    for (size_t j = 0; j < 3; j++) {
+      x_adj(j, i) = x(j, i).adj();
+    }
+  }
+
   stan::math::recover_memory();
 
   Matrix<int, Dynamic, 1> n2(3, 1);
@@ -120,14 +97,12 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
   var lp2 = stan::math::bernoulli_logit_glm_lpmf(n2, x2, beta2, alpha2);
   lp2.grad();
 
-  EXPECT_FLOAT_EQ(lp.val(), lp2.val());
+  EXPECT_FLOAT_EQ(lp_val, lp2.val());
+  EXPECT_FLOAT_EQ(alpha_adj, alpha2.adj());
   for (size_t i = 0; i < 2; i++) {
-    EXPECT_FLOAT_EQ(beta[i].adj(), beta2[i].adj());
-  }
-  EXPECT_FLOAT_EQ(alpha.adj(), alpha2.adj());
-  for (size_t j = 0; j < 3; j++) {
-    for (size_t i = 0; i < 2; i++) {
-      EXPECT_FLOAT_EQ(x(j, i).adj(), x2(j, i).adj());
+    EXPECT_FLOAT_EQ(beta_adj[i], beta2[i].adj());
+    for (size_t j = 0; j < 3; j++) {
+      EXPECT_FLOAT_EQ(x_adj(j, i), x2(j, i).adj());
     }
   }
 }
@@ -157,6 +132,17 @@ TEST(ProbDistributionsBernoulliLogitGLM,
     var lp = stan::math::bernoulli_logit_lpmf(n, theta);
 
     lp.grad();
+    
+    double lp_val = lp.val();
+    double alpha_adj = alpha.adj();
+    Matrix<double, Dynamic, Dynamic> x_adj(3, 2);
+    Matrix<double, Dynamic, 1> beta_adj(2, 1);
+    for (size_t i = 0; i < 2; i++) {
+      beta_adj[i] = beta[i].adj();
+      for (size_t j = 0; j < 3; j++) {
+        x_adj(j, i) = x(j, i).adj();
+      }
+    }
 
     stan::math::recover_memory();
 
@@ -167,54 +153,13 @@ TEST(ProbDistributionsBernoulliLogitGLM,
     var lp2 = stan::math::bernoulli_logit_glm_lpmf(n, x2, beta2, alpha2);
     lp2.grad();
 
-    EXPECT_FLOAT_EQ(lp.val(), lp2.val());
+    EXPECT_FLOAT_EQ(lp_val, lp2.val());
+    EXPECT_FLOAT_EQ(alpha_adj, alpha2.adj());
     for (size_t i = 0; i < 2; i++) {
-      EXPECT_FLOAT_EQ(beta[i].adj(), beta2[i].adj());
-    }
-    EXPECT_FLOAT_EQ(alpha.adj(), alpha2.adj());
-    for (size_t j = 0; j < 3; j++) {
-      for (size_t i = 0; i < 2; i++) {
-        EXPECT_FLOAT_EQ(x(j, i).adj(), x2(j, i).adj());
+      EXPECT_FLOAT_EQ(beta_adj[i], beta2[i].adj());
+      for (size_t j = 0; j < 3; j++) {
+        EXPECT_FLOAT_EQ(x_adj(j, i), x2(j, i).adj());
       }
-    }
-  }
-}
-
-//  We check the case where beta is a scalar.
-TEST(ProbDistributionsBernoulliLogitGLM,
-     glm_matches_bernoulli_logit_vars_beta_scalar) {
-  Matrix<int, Dynamic, 1> n(3, 1);
-  n << 1, 0, 1;
-  Matrix<var, Dynamic, Dynamic> x(3, 1);
-  x << -12, 46, -42;
-  var beta;
-  beta = 6.3;
-  var alpha = 0.6;
-  Matrix<var, Dynamic, 1> alphavec = alpha * Matrix<double, 3, 1>::Ones();
-  Matrix<var, Dynamic, 1> theta(3, 1);
-  theta = x * beta + alphavec;
-
-  var lp = stan::math::bernoulli_logit_lpmf(n, theta);
-  lp.grad();
-
-  stan::math::recover_memory();
-
-  Matrix<int, Dynamic, 1> n2(3, 1);
-  n2 << 1, 0, 1;
-  Matrix<var, Dynamic, Dynamic> x2(3, 1);
-  x2 << -12, 46, -42;
-  var beta2 = 6.3;
-  var alpha2 = 0.6;
-
-  var lp2 = stan::math::bernoulli_logit_glm_lpmf(n2, x2, beta2, alpha2);
-  lp2.grad();
-
-  EXPECT_FLOAT_EQ(lp.val(), lp2.val());
-  EXPECT_FLOAT_EQ(beta.adj(), beta2.adj());
-  EXPECT_FLOAT_EQ(alpha.adj(), alpha2.adj());
-  for (size_t j = 0; j < 3; j++) {
-    for (size_t i = 0; i < 1; i++) {
-      EXPECT_FLOAT_EQ(x(j, i).adj(), x2(j, i).adj());
     }
   }
 }
