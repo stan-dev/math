@@ -53,6 +53,7 @@ class kernel_cl_base {
       ;                                                // NOLINT
 
  protected:
+  // Holds Default parameter values for each Kernel.
   typedef std::map<const char*, int> map_base_opts;
   const map_base_opts base_opts = {{"LOWER", gpu::Lower},
                                    {"UPPER", gpu::Upper},
@@ -75,8 +76,8 @@ class kernel_cl_base {
   /**
    * Map of a kernel name (first) and it's meta information (second).
    */
-  typedef std::map<const char*, kernel_meta_info> map_kernel_info;
-  const map_kernel_info kernel_info
+  typedef std::map<const char*, kernel_meta_info> map_kernel_table;
+  const map_kernel_table kernel_table
       = {{"dummy",
           {false,
            "timing",
@@ -105,7 +106,7 @@ class kernel_cl_base {
          {"copy_submatrix", {false, "basic_matrix", {}, copy_submatrix_kernel}},
          {"add", {false, "basic_matrix", {}, add_symmetric_kernel}},
          {"subtract", {false, "basic_matrix", {}, subtract_symmetric_kernel}},
-         {"is_nan", {false, "check", {""}, check_nan_kernel}},
+         {"is_nan", {false, "check", {}, check_nan_kernel}},
          {"is_zero_on_diagonal",
           {false, "check", {}, check_diagonal_zeros_kernel}},
          {"is_symmetric", {false, "check", {}, check_symmetric_kernel}}};
@@ -139,13 +140,13 @@ class kernel_cl {
   inline void compile_kernel_group(const char* kernel_name) {
     std::string kernel_opts = "";
     std::string kernel_source = "";
-    if (this->kernel_info().count(kernel_name) == 0) {
+    if (this->kernel_table().count(kernel_name) == 0) {
       // throws if the kernel does not exist
       domain_error("compiling kernels", kernel_name, " kernel does not exist",
                    "");
     }
-    const char* kernel_group = this->kernel_info()[kernel_name].group;
-    for (auto kern : this->kernel_info()) {
+    const char* kernel_group = this->kernel_table()[kernel_name].group;
+    for (auto kern : this->kernel_table()) {
       if (strcmp(kern.second.group, kernel_group) == 0) {
         kernel_source += kern.second.raw_code;
         for (auto comp_opts : kern.second.opts) {
@@ -167,7 +168,7 @@ class kernel_cl {
       cl_int err = CL_SUCCESS;
       // Iterate over the kernel list and get all the kernels from this group
       // and mark them as compiled.
-      for (auto kern : this->kernel_info()) {
+      for (auto kern : this->kernel_table()) {
         if (strcmp(kern.second.group, kernel_group) == 0) {
           kernel_cl_base::getInstance().kernels[(kern.first)]
               = cl::Kernel(program_, kern.first, &err);
@@ -199,7 +200,7 @@ class kernel_cl {
    */
   explicit kernel_cl(const char* kernel_name) {
     // Compile the kernel group and return the kernel
-    if (!this->kernel_info()[kernel_name].exists) {
+    if (!this->kernel_table()[kernel_name].exists) {
       this->compile_kernel_group(kernel_name);
     }
     compiled_ = kernel_cl_base::getInstance().kernels[(kernel_name)];
@@ -254,17 +255,20 @@ class kernel_cl {
   /**
    * return information on the kernel_source
    */
-  inline kernel_cl_base::map_kernel_info kernel_info() {
-    return kernel_cl_base::getInstance().kernel_info;
+  inline kernel_cl_base::map_kernel_table kernel_table() {
+    return kernel_cl_base::getInstance().kernel_table;
   }
 
   /**
-   *
+   * return all compiled kernels.
    */
   inline kernel_cl_base::map_kernel kernels() {
     return kernel_cl_base::getInstance().kernels;
   }
 
+  /*
+   * return the base kernel compiler options
+   */
   inline kernel_cl_base::map_base_opts base_options() {
     return kernel_cl_base::getInstance().base_opts;
   }
