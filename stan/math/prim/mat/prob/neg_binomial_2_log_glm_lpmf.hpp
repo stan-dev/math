@@ -106,10 +106,9 @@ neg_binomial_2_log_glm_lpmf(const T_n& n, const T_x& x, const T_beta& beta,
       beta_dbl[m] = value_of(beta_vec[m]);
     }
   }
-  Matrix<T_partials_return, Dynamic, Dynamic> x_dbl = value_of(x);
 
   Array<T_partials_return, Dynamic, 1> theta_dbl
-      = (x_dbl * beta_dbl
+      = (value_of(x) * beta_dbl
          + Matrix<double, Dynamic, 1>::Ones(N, 1) * value_of(alpha))
             .array();
   Array<T_partials_return, Dynamic, 1> log_phi = phi_arr.log();
@@ -162,7 +161,7 @@ neg_binomial_2_log_glm_lpmf(const T_n& n, const T_x& x, const T_beta& beta,
                            .matrix();
     if (!is_constant_struct<T_beta>::value) {
       assign_to_matrix_or_broadcast_array(ops_partials.edge2_.partials_,
-                                          x_dbl.transpose() * theta_derivative);
+                                          value_of(x).transpose() * theta_derivative);
     }
     if (!is_constant_struct<T_x>::value) {
       ops_partials.edge1_.partials_ = theta_derivative * beta_dbl.transpose();

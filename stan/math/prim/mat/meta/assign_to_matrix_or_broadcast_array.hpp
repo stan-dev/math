@@ -17,7 +17,7 @@ namespace math {
  * @param arg2 Argument we are assigning.
  */
 template <typename T, typename S>
-void assign_to_matrix_or_broadcast_array(T &arg1, S &arg2);
+void assign_to_matrix_or_broadcast_array(T &arg1, const S &arg2);
 
 /**
  * This program is used to assign to a
@@ -29,8 +29,9 @@ void assign_to_matrix_or_broadcast_array(T &arg1, S &arg2);
  * @param arg2 Argument we are assigning.
  */
 template <typename TT, typename S>
-void assign_to_matrix_or_broadcast_array(internal::broadcast_array<TT> &arg1,
-                                         S &arg2) {
+void assign_to_matrix_or_broadcast_array(
+		internal::broadcast_array<TT> &arg1,
+        const S &arg2) {
   arg1[0] = arg2(0, 0);
 }
 
@@ -46,7 +47,7 @@ void assign_to_matrix_or_broadcast_array(internal::broadcast_array<TT> &arg1,
  */
 template <typename TT, int R, int C, typename S>
 void assign_to_matrix_or_broadcast_array(Eigen::Matrix<TT, R, C> &arg1,
-                                         S &arg2) {
+                                         const S &arg2) {
   arg1 = arg2;
 }
 }  // namespace math
