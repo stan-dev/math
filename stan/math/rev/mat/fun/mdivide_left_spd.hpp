@@ -13,306 +13,163 @@ namespace stan {
 namespace math {
 
 namespace {
-template <int R1, int C1, int R2, int C2>
-class mdivide_left_spd_alloc : public chainable_alloc {
+
+template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
+class mdivide_left_spd_vari : public vari {
+ protected:
+  Ta* A_mem_;
+  const double* Ad_llt_mem_;
+  int A_rows_;  // A is square
+  Tb* b_mem_;
+  int b_rows_;
+  int b_cols_;
+  int C_rows_;
+  int C_cols_;
+  vari** C_mem_;
+  const double* Cd_mem_;
+
+  static inline void chainA(
+      const double* A_mem, Eigen::Map<const Eigen::Matrix<double, Rb, Cb> >& Cd,
+      const Eigen::Matrix<double, Rb, Cb>& adjb) {}
+
+  static inline void chainb(const double* b_mem,
+                            const Eigen::Matrix<double, Rb, Cb>& adjb) {}
+
+  static inline void chainA(
+      vari** A_mem, Eigen::Map<const Eigen::Matrix<double, Rb, Cb> >& Cd,
+      const Eigen::Matrix<double, Rb, Cb>& adjb) {
+    Eigen::Matrix<double, Ra, Ca> adjA = -adjb * Cd.transpose();
+
+    for (int i = 0; i < adjA.size(); ++i) {
+      A_mem[i]->adj_ += adjA(i);
+    }
+  }
+
+  static inline void chainb(vari** b_mem,
+                            const Eigen::Matrix<double, Rb, Cb>& adjb) {
+    for (int i = 0; i < adjb.size(); ++i) {
+      b_mem[i]->adj_ += adjb(i);
+    }
+  }
+
  public:
-  virtual ~mdivide_left_spd_alloc() {}
-
-  Eigen::LLT<Eigen::Matrix<double, R1, C1> > llt_;
-  Eigen::Matrix<double, R2, C2> C_;
-};
-
-template <int R1, int C1, int R2, int C2>
-class mdivide_left_spd_vv_vari : public vari {
- public:
-  int M_;  // A.rows() = A.cols() = B.rows()
-  int N_;  // B.cols()
-  vari **variRefA_;
-  vari **variRefB_;
-  vari **variRefC_;
-  mdivide_left_spd_alloc<R1, C1, R2, C2> *alloc_;
-
-  mdivide_left_spd_vv_vari(const Eigen::Matrix<var, R1, C1> &A,
-                           const Eigen::Matrix<var, R2, C2> &B)
-      : vari(0.0),
-        M_(A.rows()),
-        N_(B.cols()),
-        variRefA_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * A.rows()
-                                                       * A.cols()))),
-        variRefB_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
-                                                       * B.cols()))),
-        variRefC_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
-                                                       * B.cols()))),
-        alloc_(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
-    using Eigen::Map;
-    using Eigen::Matrix;
-
-    Matrix<double, R1, C1> Ad(A.rows(), A.cols());
-
-    size_t pos = 0;
-    for (size_type j = 0; j < M_; j++) {
-      for (size_type i = 0; i < M_; i++) {
-        variRefA_[pos] = A(i, j).vi_;
-        Ad(i, j) = A(i, j).val();
-        pos++;
-      }
+  mdivide_left_spd_vari(const double* Cd_mem, Ta* A_mem,
+                        const double* Ad_llt_mem, int A_rows, Tb* b_mem,
+                        int b_rows, int b_cols)
+      : vari(Cd_mem[0]),
+        A_mem_(A_mem),
+        Ad_llt_mem_(Ad_llt_mem),
+        A_rows_(A_rows),
+        b_mem_(b_mem),
+        b_rows_(b_rows),
+        b_cols_(b_cols),
+        C_rows_(b_rows),
+        C_cols_(b_cols),
+        C_mem_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
+            A_rows * b_cols)),
+        Cd_mem_(Cd_mem) {
+    C_mem_[0] = this;
+    for (int i = 1; i < C_rows_ * C_cols_; ++i) {
+      C_mem_[i] = new vari(Cd_mem[i], false);
     }
+  }
 
-    pos = 0;
-    alloc_->C_.resize(M_, N_);
-    for (size_type j = 0; j < N_; j++) {
-      for (size_type i = 0; i < M_; i++) {
-        variRefB_[pos] = B(i, j).vi_;
-        alloc_->C_(i, j) = B(i, j).val();
-        pos++;
-      }
-    }
-
-    alloc_->llt_ = Ad.llt();
-    alloc_->llt_.solveInPlace(alloc_->C_);
-
-    pos = 0;
-    for (size_type j = 0; j < N_; j++) {
-      for (size_type i = 0; i < M_; i++) {
-        variRefC_[pos] = new vari(alloc_->C_(i, j), false);
-        pos++;
-      }
-    }
+  Eigen::Matrix<var, Rb, Cb> get_output() {
+    Eigen::Matrix<var, Rb, Cb> output(b_rows_, b_cols_);
+    for (int i = 0; i < b_rows_ * b_cols_; ++i)
+      output(i) = C_mem_[i];
+    return output;
   }
 
   virtual void chain() {
-    using Eigen::Map;
-    using Eigen::Matrix;
-    Eigen::Matrix<double, R1, C1> adjA(M_, M_);
-    Eigen::Matrix<double, R2, C2> adjB(M_, N_);
+    Eigen::Map<const Eigen::Matrix<double, Ra, Ca> > Ad_llt(Ad_llt_mem_,
+                                                            A_rows_, A_rows_);
+    Eigen::Map<const Eigen::Matrix<double, Rb, Cb> > Cd(Cd_mem_, C_rows_,
+                                                        C_cols_);
 
-    size_t pos = 0;
-    for (size_type j = 0; j < N_; j++)
-      for (size_type i = 0; i < M_; i++)
-        adjB(i, j) = variRefC_[pos++]->adj_;
+    Eigen::Matrix<double, Rb, Cb> adjb(b_rows_, b_cols_);
+    for (int i = 0; i < C_cols_ * C_rows_; ++i) {
+      adjb(i) = C_mem_[i]->adj_;
+    }
 
-    alloc_->llt_.solveInPlace(adjB);
-    adjA.noalias() = -adjB * alloc_->C_.transpose();
+    Ad_llt.template triangularView<Eigen::Lower>().solveInPlace(adjb);
+    Ad_llt.template triangularView<Eigen::Upper>().solveInPlace(adjb);
 
-    pos = 0;
-    for (size_type j = 0; j < M_; j++)
-      for (size_type i = 0; i < M_; i++)
-        variRefA_[pos++]->adj_ += adjA(i, j);
-
-    pos = 0;
-    for (size_type j = 0; j < N_; j++)
-      for (size_type i = 0; i < M_; i++)
-        variRefB_[pos++]->adj_ += adjB(i, j);
+    chainA(A_mem_, Cd, adjb);
+    chainb(b_mem_, adjb);
   }
 };
 
-template <int R1, int C1, int R2, int C2>
-class mdivide_left_spd_dv_vari : public vari {
- public:
-  int M_;  // A.rows() = A.cols() = B.rows()
-  int N_;  // B.cols()
-  vari **variRefB_;
-  vari **variRefC_;
-  mdivide_left_spd_alloc<R1, C1, R2, C2> *alloc_;
+template <int Ra, int Ca>
+const Eigen::Matrix<double, Ra, Ca>& get_Ad(
+    const Eigen::Matrix<double, Ra, Ca>& A) {
+  return A;
+}
 
-  mdivide_left_spd_dv_vari(const Eigen::Matrix<double, R1, C1> &A,
-                           const Eigen::Matrix<var, R2, C2> &B)
-      : vari(0.0),
-        M_(A.rows()),
-        N_(B.cols()),
-        variRefB_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
-                                                       * B.cols()))),
-        variRefC_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
-                                                       * B.cols()))),
-        alloc_(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
-    using Eigen::Map;
-    using Eigen::Matrix;
+template <int Ra, int Ca>
+Eigen::Matrix<double, Ra, Ca> get_Ad(const Eigen::Matrix<var, Ra, Ca>& A) {
+  Eigen::Matrix<double, Ra, Ca> Ad(A.rows(), A.cols());
 
-    size_t pos = 0;
-    alloc_->C_.resize(M_, N_);
-    for (size_type j = 0; j < N_; j++) {
-      for (size_type i = 0; i < M_; i++) {
-        variRefB_[pos] = B(i, j).vi_;
-        alloc_->C_(i, j) = B(i, j).val();
-        pos++;
-      }
-    }
+  for (int i = 0; i < A.size(); ++i)
+    Ad(i) = A(i).val();
 
-    alloc_->llt_ = A.llt();
-    alloc_->llt_.solveInPlace(alloc_->C_);
+  return Ad;
+}
 
-    pos = 0;
-    for (size_type j = 0; j < N_; j++) {
-      for (size_type i = 0; i < M_; i++) {
-        variRefC_[pos] = new vari(alloc_->C_(i, j), false);
-        pos++;
-      }
-    }
-  }
+template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
+Eigen::Matrix<var, Ca, Cb> mdivide_left_spd_rev(
+    const Eigen::Matrix<Ta, Ra, Ca>& A, const Eigen::Matrix<Tb, Rb, Cb>& b) {
+  check_square("mdivide_left_spd", "A", A);
+  check_multiplicable("mdivide_left_spd", "A", A, "b", b);
 
-  virtual void chain() {
-    using Eigen::Map;
-    using Eigen::Matrix;
-    Eigen::Matrix<double, R2, C2> adjB(M_, N_);
+  auto A_mem = build_vari_pointer_array_if_necessary(A.data(), A.size());
+  auto b_mem = build_vari_pointer_array_if_necessary(b.data(), b.size());
 
-    size_t pos = 0;
-    for (size_type j = 0; j < adjB.cols(); j++)
-      for (size_type i = 0; i < adjB.rows(); i++)
-        adjB(i, j) = variRefC_[pos++]->adj_;
+  auto Ad_llt = get_Ad(A).llt();
+  double* Cd_mem = build_double_array(b_mem, b.size());
 
-    alloc_->llt_.solveInPlace(adjB);
+  Eigen::Map<Eigen::Matrix<double, Rb, Cb> > Cd(Cd_mem, b.rows(), b.cols());
 
-    pos = 0;
-    for (size_type j = 0; j < adjB.cols(); j++)
-      for (size_type i = 0; i < adjB.rows(); i++)
-        variRefB_[pos++]->adj_ += adjB(i, j);
-  }
-};
+  Ad_llt.solveInPlace(Cd);
 
-template <int R1, int C1, int R2, int C2>
-class mdivide_left_spd_vd_vari : public vari {
- public:
-  int M_;  // A.rows() = A.cols() = B.rows()
-  int N_;  // B.cols()
-  vari **variRefA_;
-  vari **variRefC_;
-  mdivide_left_spd_alloc<R1, C1, R2, C2> *alloc_;
+  double* Ad_llt_mem
+      = ChainableStack::instance().memalloc_.alloc_array<double>(A.size());
+  Eigen::Map<Eigen::Matrix<double, Ra, Ca> > Ad_llt_matrix(Ad_llt_mem, A.rows(),
+                                                           A.cols());
 
-  mdivide_left_spd_vd_vari(const Eigen::Matrix<var, R1, C1> &A,
-                           const Eigen::Matrix<double, R2, C2> &B)
-      : vari(0.0),
-        M_(A.rows()),
-        N_(B.cols()),
-        variRefA_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * A.rows()
-                                                       * A.cols()))),
-        variRefC_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
-                                                       * B.cols()))),
-        alloc_(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
-    using Eigen::Map;
-    using Eigen::Matrix;
+  Ad_llt_matrix.template triangularView<Eigen::Lower>() = Ad_llt.matrixL();
+  Ad_llt_matrix.template triangularView<Eigen::Upper>()
+      = Ad_llt_matrix.transpose();
 
-    Matrix<double, R1, C1> Ad(A.rows(), A.cols());
+  auto baseVari
+      = new mdivide_left_spd_vari<std::remove_pointer_t<decltype(A_mem)>, Ra,
+                                  Ca, std::remove_pointer_t<decltype(b_mem)>,
+                                  Rb, Cb>(Cd_mem, A_mem, Ad_llt_mem, A.rows(),
+                                          b_mem, b.rows(), b.cols());
 
-    size_t pos = 0;
-    for (size_type j = 0; j < M_; j++) {
-      for (size_type i = 0; i < M_; i++) {
-        variRefA_[pos] = A(i, j).vi_;
-        Ad(i, j) = A(i, j).val();
-        pos++;
-      }
-    }
-
-    alloc_->llt_ = Ad.llt();
-    alloc_->C_ = alloc_->llt_.solve(B);
-
-    pos = 0;
-    for (size_type j = 0; j < N_; j++) {
-      for (size_type i = 0; i < M_; i++) {
-        variRefC_[pos] = new vari(alloc_->C_(i, j), false);
-        pos++;
-      }
-    }
-  }
-
-  virtual void chain() {
-    using Eigen::Map;
-    using Eigen::Matrix;
-    Eigen::Matrix<double, R1, C1> adjA(M_, M_);
-    Eigen::Matrix<double, R1, C2> adjC(M_, N_);
-
-    size_t pos = 0;
-    for (size_type j = 0; j < adjC.cols(); j++)
-      for (size_type i = 0; i < adjC.rows(); i++)
-        adjC(i, j) = variRefC_[pos++]->adj_;
-
-    adjA = -alloc_->llt_.solve(adjC * alloc_->C_.transpose());
-
-    pos = 0;
-    for (size_type j = 0; j < adjA.cols(); j++)
-      for (size_type i = 0; i < adjA.rows(); i++)
-        variRefA_[pos++]->adj_ += adjA(i, j);
-  }
-};
+  return baseVari->get_output();
+}
 }  // namespace
 
-template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
-    const Eigen::Matrix<var, R1, C1> &A, const Eigen::Matrix<var, R2, C2> &b) {
-  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
-
-  check_square("mdivide_left_spd", "A", A);
-  check_multiplicable("mdivide_left_spd", "A", A, "b", b);
-
-  // NOTE: this is not a memory leak, this vari is used in the
-  // expression graph to evaluate the adjoint, but is not needed
-  // for the returned matrix.  Memory will be cleaned up with the
-  // arena allocator.
-  mdivide_left_spd_vv_vari<R1, C1, R2, C2> *baseVari
-      = new mdivide_left_spd_vv_vari<R1, C1, R2, C2>(A, b);
-
-  size_t pos = 0;
-  for (size_type j = 0; j < res.cols(); j++)
-    for (size_type i = 0; i < res.rows(); i++)
-      res(i, j).vi_ = baseVari->variRefC_[pos++];
-
-  return res;
+template <int Ra, int Ca, int Rb, int Cb>
+Eigen::Matrix<var, Ca, Cb> mdivide_left_spd(
+    const Eigen::Matrix<var, Ra, Ca>& A, const Eigen::Matrix<var, Rb, Cb>& b) {
+  return mdivide_left_spd_rev(A, b);
 }
 
-template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
-    const Eigen::Matrix<var, R1, C1> &A,
-    const Eigen::Matrix<double, R2, C2> &b) {
-  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
-
-  check_square("mdivide_left_spd", "A", A);
-  check_multiplicable("mdivide_left_spd", "A", A, "b", b);
-
-  // NOTE: this is not a memory leak, this vari is used in the
-  // expression graph to evaluate the adjoint, but is not needed
-  // for the returned matrix.  Memory will be cleaned up with the
-  // arena allocator.
-  mdivide_left_spd_vd_vari<R1, C1, R2, C2> *baseVari
-      = new mdivide_left_spd_vd_vari<R1, C1, R2, C2>(A, b);
-
-  size_t pos = 0;
-  for (size_type j = 0; j < res.cols(); j++)
-    for (size_type i = 0; i < res.rows(); i++)
-      res(i, j).vi_ = baseVari->variRefC_[pos++];
-
-  return res;
+template <int Ra, int Ca, int Rb, int Cb>
+Eigen::Matrix<var, Ca, Cb> mdivide_left_spd(
+    const Eigen::Matrix<var, Ra, Ca>& A,
+    const Eigen::Matrix<double, Rb, Cb>& b) {
+  return mdivide_left_spd_rev(A, b);
 }
 
-template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
-    const Eigen::Matrix<double, R1, C1> &A,
-    const Eigen::Matrix<var, R2, C2> &b) {
-  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
-
-  check_square("mdivide_left_spd", "A", A);
-  check_multiplicable("mdivide_left_spd", "A", A, "b", b);
-
-  // NOTE: this is not a memory leak, this vari is used in the
-  // expression graph to evaluate the adjoint, but is not needed
-  // for the returned matrix.  Memory will be cleaned up with the
-  // arena allocator.
-  mdivide_left_spd_dv_vari<R1, C1, R2, C2> *baseVari
-      = new mdivide_left_spd_dv_vari<R1, C1, R2, C2>(A, b);
-
-  size_t pos = 0;
-  for (size_type j = 0; j < res.cols(); j++)
-    for (size_type i = 0; i < res.rows(); i++)
-      res(i, j).vi_ = baseVari->variRefC_[pos++];
-
-  return res;
+template <int Ra, int Ca, int Rb, int Cb>
+Eigen::Matrix<var, Ca, Cb> mdivide_left_spd(
+    const Eigen::Matrix<double, Ra, Ca>& A,
+    const Eigen::Matrix<var, Rb, Cb>& b) {
+  return mdivide_left_spd_rev(A, b);
 }
-
 }  // namespace math
 }  // namespace stan
 #endif

@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_CORE_BUILD_DOUBLE_ARRAY_IF_NECESSARY_HPP
-#define STAN_MATH_REV_CORE_BUILD_DOUBLE_ARRAY_IF_NECESSARY_HPP
+#ifndef STAN_MATH_REV_CORE_BUILD_DOUBLE_ARRAY_HPP
+#define STAN_MATH_REV_CORE_BUILD_DOUBLE_ARRAY_HPP
 
 #include <stan/math/rev/core/vari.hpp>
 #include <limits>
@@ -12,9 +12,9 @@ namespace math {
  *
  * @param array Array of pointers to varis to extract values from
  * @param size Number of elements in input
- * @return The new allocated array
+ * @return The newly populated array
  */
-inline const double* build_double_array_if_necessary(vari** array, int size) {
+inline double* build_double_array(vari** array, int size) {
   double* double_array
       = ChainableStack::instance().memalloc_.alloc_array<double>(size);
 
@@ -25,17 +25,21 @@ inline const double* build_double_array_if_necessary(vari** array, int size) {
 }
 
 /**
- * build_double_array_if_necessary does nothing if the input is already an array
- * of doubles. Return the input
+ * Make a copy of the input array allocated in the autodiff arena
  *
  * @param array Input array
  * @param size Number of doubles in input
- * @return The input
+ * @return Copy of input array
  */
-inline const double* build_double_array_if_necessary(const double* array,
-                                                     int size) {
-  return array;
+inline double* build_double_array(const double* array, int size) {
+  double* copy
+      = ChainableStack::instance().memalloc_.alloc_array<double>(size);
+
+  std::copy(array, array + size, copy);
+
+  return copy;
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

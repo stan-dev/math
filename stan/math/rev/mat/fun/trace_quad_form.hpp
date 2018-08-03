@@ -28,18 +28,25 @@ class trace_quad_form_vari : public vari {
   int B_cols_;
 
   static inline void chainA(
-      const double* A_mem, Eigen::Map<const Eigen::Matrix<double, Ra, Ca> >& Ad,
-      double adjC) {}
+      const double* A_mem, int A_rows_,
+      Eigen::Map<const Eigen::Matrix<double, Rb, Cb> >& Bd, double adjC) {}
   static inline void chainB(
       const double* B_mem, Eigen::Map<const Eigen::Matrix<double, Ra, Ca> >& Ad,
       Eigen::Map<const Eigen::Matrix<double, Rb, Cb> >& Bd, double adjC) {}
 
   static inline void chainA(
-      vari** A_mem, Eigen::Map<const Eigen::Matrix<double, Rb, Cb> >& Bd,
-      double adjC) {
-    Eigen::Matrix<double, Ra, Ca> adjA(adjC * Bd * Bd.transpose());
-    for (int i = 0; i < adjA.size(); ++i)
-      A_mem[i]->adj_ += adjA.data()[i];
+      vari** A_mem, int A_rows_,
+      Eigen::Map<const Eigen::Matrix<double, Rb, Cb> >& Bd, double adjC) {
+    if (Bd.cols()
+        == 1) {  // We can easily avoid building a full matrix if B is a vector
+      for (int j = 0; j < A_rows_; ++j)
+        for (int i = 0; i < A_rows_; ++i)
+          A_mem[i + j * A_rows_]->adj_ += adjC * Bd(i) * Bd(j);
+    } else {
+      Eigen::Matrix<double, Rb, Rb> adjB(adjC * Bd * Bd.transpose());
+      for (int i = 0; i < adjB.size(); ++i)
+        A_mem[i]->adj_ += adjB(i);
+    }
   }
   static inline void chainB(
       vari** B_mem, Eigen::Map<const Eigen::Matrix<double, Ra, Ca> >& Ad,
@@ -68,7 +75,7 @@ class trace_quad_form_vari : public vari {
     Eigen::Map<const Eigen::Matrix<double, Rb, Cb> > Bd(Bd_mem_, B_rows_,
                                                         B_cols_);
 
-    chainA(A_mem_, Bd, adj_);
+    chainA(A_mem_, A_rows_, Bd, adj_);
     chainB(B_mem_, Ad, Bd, adj_);
   }
 };
@@ -85,8 +92,8 @@ trace_quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
   auto A_mem = build_vari_pointer_array_if_necessary(A.data(), A.size());
   auto B_mem = build_vari_pointer_array_if_necessary(B.data(), B.size());
 
-  const double* Ad_mem = build_double_array_if_necessary(A_mem, A.size());
-  const double* Bd_mem = build_double_array_if_necessary(B_mem, B.size());
+  const double* Ad_mem = build_double_array(A_mem, A.size());
+  const double* Bd_mem = build_double_array(B_mem, B.size());
 
   Eigen::Matrix<double, Ra, Ca> Ad
       = Eigen::Map<const Eigen::Matrix<double, Ra, Ca> >(Ad_mem, A.rows(),

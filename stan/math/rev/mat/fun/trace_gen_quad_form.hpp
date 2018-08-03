@@ -120,9 +120,9 @@ trace_gen_quad_form(const Eigen::Matrix<Td, Rd, Cd>& D,
   auto A_mem = build_vari_pointer_array_if_necessary(A.data(), A.size());
   auto B_mem = build_vari_pointer_array_if_necessary(B.data(), B.size());
 
-  const double* Dd_mem = build_double_array_if_necessary(D_mem, D.size());
-  const double* Ad_mem = build_double_array_if_necessary(A_mem, A.size());
-  const double* Bd_mem = build_double_array_if_necessary(B_mem, B.size());
+  const double* Dd_mem = build_double_array(D_mem, D.size());
+  const double* Ad_mem = build_double_array(A_mem, A.size());
+  const double* Bd_mem = build_double_array(B_mem, B.size());
 
   Eigen::Matrix<double, Rd, Cd> Dd
       = Eigen::Map<const Eigen::Matrix<double, Rd, Cd> >(Dd_mem, D.rows(),
