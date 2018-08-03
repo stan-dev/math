@@ -58,7 +58,7 @@ class softmax_op {
       adj_times_jac(n) = -y(n) * adj_dot_y + y(n) * adj(n);
     }
 
-    return {adj_times_jac};
+    return std::make_tuple(adj_times_jac);
   }
 };
 }  // namespace
