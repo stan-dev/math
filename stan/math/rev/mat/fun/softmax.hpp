@@ -6,6 +6,7 @@
 #include <stan/math/prim/mat/fun/softmax.hpp>
 #include <stan/math/rev/mat/fun/adj_jac_apply.hpp>
 #include <vector>
+#include <tuple>
 
 namespace stan {
 namespace math {
