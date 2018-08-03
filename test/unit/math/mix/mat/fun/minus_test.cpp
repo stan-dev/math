@@ -37,9 +37,9 @@ TEST(AgradMixMatrixMinus, fv_scalar_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[0]);
 }
 TEST(AgradMixMatrixMinus, fv_vector_1stDeriv) {
+  using stan::math::minus;
   using stan::math::vector_d;
   using stan::math::vector_fv;
-  using stan::math::minus;
 
   vector_d d(3);
   vector_fv v(3);
@@ -73,9 +73,9 @@ TEST(AgradMixMatrixMinus, fv_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixMinus, fv_vector_2ndDeriv) {
+  using stan::math::minus;
   using stan::math::vector_d;
   using stan::math::vector_fv;
-  using stan::math::minus;
 
   vector_d d(3);
   vector_fv v(3);
@@ -98,9 +98,9 @@ TEST(AgradMixMatrixMinus, fv_vector_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixMinus, fv_rowvector_1stDeriv) {
+  using stan::math::minus;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::minus;
 
   row_vector_d d(3);
   row_vector_fv v(3);
@@ -134,9 +134,9 @@ TEST(AgradMixMatrixMinus, fv_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixMinus, fv_rowvector_2ndDeriv) {
+  using stan::math::minus;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::minus;
 
   row_vector_d d(3);
   row_vector_fv v(3);
@@ -282,9 +282,9 @@ TEST(AgradMixMatrixMinus, ffv_scalar_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[0]);
 }
 TEST(AgradMixMatrixMinus, ffv_vector_1stDeriv) {
+  using stan::math::minus;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
-  using stan::math::minus;
 
   vector_d d(3);
   vector_ffv v(3);
@@ -318,9 +318,9 @@ TEST(AgradMixMatrixMinus, ffv_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixMinus, ffv_vector_2ndDeriv_1) {
+  using stan::math::minus;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
-  using stan::math::minus;
 
   vector_d d(3);
   vector_ffv v(3);
@@ -343,9 +343,9 @@ TEST(AgradMixMatrixMinus, ffv_vector_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixMinus, ffv_vector_2ndDeriv_2) {
+  using stan::math::minus;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
-  using stan::math::minus;
 
   vector_d d(3);
   vector_ffv v(3);
@@ -368,9 +368,9 @@ TEST(AgradMixMatrixMinus, ffv_vector_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixMinus, ffv_vector_3rdDeriv) {
+  using stan::math::minus;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
-  using stan::math::minus;
 
   vector_d d(3);
   vector_ffv v(3);
@@ -393,9 +393,9 @@ TEST(AgradMixMatrixMinus, ffv_vector_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixMinus, ffv_rowvector_1stDeriv) {
+  using stan::math::minus;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::minus;
 
   row_vector_d d(3);
   row_vector_ffv v(3);
@@ -429,9 +429,9 @@ TEST(AgradMixMatrixMinus, ffv_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixMinus, ffv_rowvector_2ndDeriv_1) {
+  using stan::math::minus;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::minus;
 
   row_vector_d d(3);
   row_vector_ffv v(3);
@@ -453,9 +453,9 @@ TEST(AgradMixMatrixMinus, ffv_rowvector_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixMinus, ffv_rowvector_2ndDeriv_2) {
+  using stan::math::minus;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::minus;
 
   row_vector_d d(3);
   row_vector_ffv v(3);
@@ -477,9 +477,9 @@ TEST(AgradMixMatrixMinus, ffv_rowvector_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixMinus, ffv_rowvector_3rdDeriv) {
+  using stan::math::minus;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::minus;
 
   row_vector_d d(3);
   row_vector_ffv v(3);

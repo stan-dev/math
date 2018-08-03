@@ -3,9 +3,9 @@
 #include <gtest/gtest.h>
 
 TEST(MathMatrix, dimensionValidation) {
-  using stan::math::determinant;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::determinant;
   Matrix<double, Dynamic, Dynamic> x(3, 3);
   x << 1, 2, 3, 1, 4, 9, 1, 8, 27;
 

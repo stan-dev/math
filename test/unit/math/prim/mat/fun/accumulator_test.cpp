@@ -25,10 +25,10 @@ TEST(MathMatrix, accumulateCollection) {
   // tests int, double, vector<double>, vector<int>
   // MatrixXd, VectorXd, and recursions of vector<T>
 
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
   using stan::math::accumulator;
   using std::vector;
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
 
   accumulator<double> a;
 

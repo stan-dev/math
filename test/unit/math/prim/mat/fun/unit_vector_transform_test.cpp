@@ -3,8 +3,8 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 
 TEST(prob_transform, unit_vector_rt0) {
   Matrix<double, Dynamic, 1> x(4);

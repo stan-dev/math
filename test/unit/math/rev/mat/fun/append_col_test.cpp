@@ -4,14 +4,14 @@
 #include <test/unit/math/rev/mat/util.hpp>
 #include <iostream>
 
-using stan::math::sum;
+using Eigen::MatrixXd;
+using Eigen::RowVectorXd;
 using stan::math::append_col;
 using stan::math::matrix_v;
 using stan::math::row_vector_v;
 using stan::math::set_zero_all_adjoints;
 using stan::math::square;
-using Eigen::MatrixXd;
-using Eigen::RowVectorXd;
+using stan::math::sum;
 
 TEST(AgradRevMatrix, append_col_matrix) {
   matrix_v a(2, 2);
@@ -108,8 +108,8 @@ TEST(MathMatrix, append_col_different_types) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
-  using Eigen::VectorXd;
   using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
   using stan::math::matrix_v;
   using stan::math::row_vector_v;
   using stan::math::vector_v;

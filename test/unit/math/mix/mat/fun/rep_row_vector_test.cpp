@@ -4,9 +4,9 @@
 
 using stan::math::var;
 TEST(AgradMixMatrixRepRowVector, fv_rowvector) {
+  using stan::math::fvar;
   using stan::math::rep_row_vector;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   fvar<var> a;
   a.val_ = 3.0;
   a.d_ = 2.0;
@@ -24,9 +24,9 @@ TEST(AgradMixMatrixRepRowVector, fv_rowvector) {
 }
 
 TEST(AgradMixMatrixRepRowVector, fv_rowvector_exception) {
+  using stan::math::fvar;
   using stan::math::rep_row_vector;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   fvar<var> a;
   a.val_ = 3.0;
   a.d_ = 2.0;
@@ -34,9 +34,9 @@ TEST(AgradMixMatrixRepRowVector, fv_rowvector_exception) {
   EXPECT_THROW(rep_row_vector(a, -2), std::domain_error);
 }
 TEST(AgradMixMatrixRepRowVector, ffv_rowvector) {
+  using stan::math::fvar;
   using stan::math::rep_row_vector;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   fvar<fvar<var> > a;
   a.val_ = 3.0;
   a.d_ = 2.0;
@@ -54,9 +54,9 @@ TEST(AgradMixMatrixRepRowVector, ffv_rowvector) {
 }
 
 TEST(AgradMixMatrixRepRowVector, ffv_rowvector_exception) {
+  using stan::math::fvar;
   using stan::math::rep_row_vector;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   fvar<fvar<var> > a;
   a.val_ = 3.0;
   a.d_ = 2.0;

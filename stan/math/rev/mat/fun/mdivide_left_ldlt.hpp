@@ -49,10 +49,12 @@ class mdivide_left_ldlt_vv_vari : public vari {
       : vari(0.0),
         M_(A.rows()),
         N_(B.cols()),
-        variRefB_(reinterpret_cast<vari **>(ChainableStack::memalloc_.alloc(
-            sizeof(vari *) * B.rows() * B.cols()))),
-        variRefC_(reinterpret_cast<vari **>(ChainableStack::memalloc_.alloc(
-            sizeof(vari *) * B.rows() * B.cols()))),
+        variRefB_(reinterpret_cast<vari **>(
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
+                                                       * B.cols()))),
+        variRefC_(reinterpret_cast<vari **>(
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
+                                                       * B.cols()))),
         alloc_(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()),
         alloc_ldlt_(A.alloc_) {
     int pos = 0;
@@ -123,13 +125,15 @@ class mdivide_left_ldlt_dv_vari : public vari {
       : vari(0.0),
         M_(A.rows()),
         N_(B.cols()),
-        variRefB_(reinterpret_cast<vari **>(ChainableStack::memalloc_.alloc(
-            sizeof(vari *) * B.rows() * B.cols()))),
-        variRefC_(reinterpret_cast<vari **>(ChainableStack::memalloc_.alloc(
-            sizeof(vari *) * B.rows() * B.cols()))),
+        variRefB_(reinterpret_cast<vari **>(
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
+                                                       * B.cols()))),
+        variRefC_(reinterpret_cast<vari **>(
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
+                                                       * B.cols()))),
         alloc_(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()) {
-    using Eigen::Matrix;
     using Eigen::Map;
+    using Eigen::Matrix;
 
     int pos = 0;
     alloc_->C_.resize(M_, N_);
@@ -194,8 +198,9 @@ class mdivide_left_ldlt_vd_vari : public vari {
       : vari(0.0),
         M_(A.rows()),
         N_(B.cols()),
-        variRefC_(reinterpret_cast<vari **>(ChainableStack::memalloc_.alloc(
-            sizeof(vari *) * B.rows() * B.cols()))),
+        variRefC_(reinterpret_cast<vari **>(
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
+                                                       * B.cols()))),
         alloc_(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()),
         alloc_ldlt_(A.alloc_) {
     alloc_->C_ = B;

@@ -47,9 +47,9 @@ log_modified_bessel_first_kind(const T1 v, const T2 z) {
   check_greater_or_equal("log_modified_bessel_first_kind",
                          "first argument (order)", v, -1);
 
+  using boost::math::tools::evaluate_polynomial;
   using std::log;
   using std::sqrt;
-  using boost::math::tools::evaluate_polynomial;
 
   typedef typename boost::math::tools::promote_args<T1, T2, double>::type T;
 

@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 using stan::math::fvar;
 
 TEST(AgradFwdMatrixResize, fvar_double) {

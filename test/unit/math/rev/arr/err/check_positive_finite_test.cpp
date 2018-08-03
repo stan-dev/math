@@ -3,8 +3,8 @@
 #include <limits>
 #include <vector>
 
-using stan::math::var;
 using stan::math::check_positive_finite;
+using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckPositiveFinite_Vector) {
   const char* function = "check_positive_finite";
@@ -55,9 +55,9 @@ TEST(AgradRevErrorHandlingScalar, CheckPositiveFinite_Vector) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckPositiveFiniteVarCheckVectorized) {
+  using stan::math::check_positive_finite;
   using stan::math::var;
   using std::vector;
-  using stan::math::check_positive_finite;
 
   int N = 5;
   const char* function = "check_positive_finite";
@@ -66,18 +66,20 @@ TEST(AgradRevErrorHandlingScalar, CheckPositiveFiniteVarCheckVectorized) {
   for (int i = 0; i < N; ++i)
     a.push_back(var(i));
 
-  size_t stack_size = stan::math::ChainableStack::var_stack_.size();
+  size_t stack_size = stan::math::ChainableStack::instance().var_stack_.size();
 
   EXPECT_EQ(5U, stack_size);
   EXPECT_THROW(check_positive_finite(function, "a", a), std::domain_error);
   EXPECT_NO_THROW(check_positive_finite(function, "a", a[2]));
 
-  size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
+  size_t stack_size_after_call
+      = stan::math::ChainableStack::instance().var_stack_.size();
   EXPECT_EQ(5U, stack_size_after_call);
 
   a[2] = std::numeric_limits<double>::infinity();
   EXPECT_THROW(check_positive_finite(function, "a", a), std::domain_error);
-  stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
+  stack_size_after_call
+      = stan::math::ChainableStack::instance().var_stack_.size();
   EXPECT_EQ(6U, stack_size_after_call);
   stan::math::recover_memory();
 }

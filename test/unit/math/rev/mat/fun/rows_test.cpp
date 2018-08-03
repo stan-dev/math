@@ -3,9 +3,9 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradRevMatrix, rows_vector) {
-  using stan::math::vector_v;
   using stan::math::row_vector_v;
   using stan::math::rows;
+  using stan::math::vector_v;
 
   vector_v v(5);
   v << 0, 1, 2, 3, 4;

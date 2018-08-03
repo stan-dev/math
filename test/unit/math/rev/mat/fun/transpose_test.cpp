@@ -29,9 +29,9 @@ TEST(AgradRevMatrix, transpose_matrix) {
   EXPECT_FLOAT_EQ(0.0, g[2]);
 }
 TEST(AgradRevMatrix, transpose_vector) {
-  using stan::math::vector_v;
   using stan::math::row_vector_v;
   using stan::math::transpose;
+  using stan::math::vector_v;
 
   vector_v a(3);
   a << 1.0, 2.0, 3.0;
@@ -49,9 +49,9 @@ TEST(AgradRevMatrix, transpose_vector) {
   EXPECT_FLOAT_EQ(0.0, g[2]);
 }
 TEST(AgradRevMatrix, transpose_row_vector) {
-  using stan::math::vector_v;
   using stan::math::row_vector_v;
   using stan::math::transpose;
+  using stan::math::vector_v;
 
   row_vector_v a(3);
   a << 1.0, 2.0, 3.0;

@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-using stan::math::var;
 using stan::math::check_positive_finite;
+using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckPositiveFinite) {
   const char* function = "check_positive_finite";
@@ -31,18 +31,19 @@ TEST(AgradRevErrorHandlingScalar, CheckPositiveFinite) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckPositiveFiniteVarCheckUnivariate) {
-  using stan::math::var;
   using stan::math::check_positive_finite;
+  using stan::math::var;
 
   const char* function = "check_positive_finite";
   var a(5.0);
 
-  size_t stack_size = stan::math::ChainableStack::var_stack_.size();
+  size_t stack_size = stan::math::ChainableStack::instance().var_stack_.size();
 
   EXPECT_EQ(1U, stack_size);
   EXPECT_NO_THROW(check_positive_finite(function, "a", a));
 
-  size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
+  size_t stack_size_after_call
+      = stan::math::ChainableStack::instance().var_stack_.size();
   EXPECT_EQ(1U, stack_size_after_call);
 
   stan::math::recover_memory();

@@ -46,8 +46,8 @@ void test_nan_fv2(const F& f, const double& arg1, const bool& throws) {
 }
 template <typename F>
 void test_nan_ffv1(const F& f, const double& arg1, const bool& throws) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
   stan::math::fvar<fvar<var> > arg1_v = arg1;
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.val_ = 1.0;
@@ -69,8 +69,8 @@ void test_nan_ffv1(const F& f, const double& arg1, const bool& throws) {
 }
 template <typename F>
 void test_nan_ffv2(const F& f, const double& arg1, const bool& throws) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
   stan::math::fvar<fvar<var> > arg1_v(fvar<var>(arg1, 1.0),
                                       fvar<var>(1.0, 1.0));
 
@@ -90,8 +90,8 @@ void test_nan_ffv2(const F& f, const double& arg1, const bool& throws) {
 }
 template <typename F>
 void test_nan_ffv3(const F& f, const double& arg1, const bool& throws) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
   stan::math::fvar<fvar<var> > arg1_v = arg1;
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.val_ = 1.0;
@@ -113,8 +113,8 @@ void test_nan_ffv3(const F& f, const double& arg1, const bool& throws) {
 }
 template <typename F>
 void test_nan_ffv4(const F& f, const double& arg1, const bool& throws) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
   stan::math::fvar<fvar<var> > arg1_v(fvar<var>(arg1, 1.0),
                                       fvar<var>(1.0, 1.0));
 

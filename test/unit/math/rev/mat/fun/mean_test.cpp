@@ -60,9 +60,9 @@ TEST(AgradRevMatrix, mean_rowvector_exception) {
   EXPECT_THROW(mean(v), std::invalid_argument);
 }
 TEST(AgradRevMatrix, mean_matrix) {
-  using stan::math::mean;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
+  using stan::math::mean;
 
   matrix_d d1(3, 1);
   matrix_v v1(1, 3);
@@ -78,9 +78,9 @@ TEST(AgradRevMatrix, mean_matrix) {
   EXPECT_FLOAT_EQ(97.0 / 3.0, output.val());
 }
 TEST(AgradRevMatrix, mean_matrix_exception) {
-  using stan::math::mean;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
+  using stan::math::mean;
 
   matrix_d d;
   matrix_v v;

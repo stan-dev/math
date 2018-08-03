@@ -45,8 +45,8 @@ typename return_type<T_y, T_loc, T_scale>::type gumbel_lccdf(
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
 
-  using std::log;
   using std::exp;
+  using std::log;
 
   T_partials_return ccdf_log(0.0);
   if (size_zero(y, mu, beta))

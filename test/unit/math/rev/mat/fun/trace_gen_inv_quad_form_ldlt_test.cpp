@@ -4,8 +4,8 @@
 #include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt) {
-  using stan::math::matrix_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -67,9 +67,9 @@ TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt) {
 }
 
 TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_dvv) {
-  using stan::math::sum;
-  using stan::math::matrix_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::sum;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -118,9 +118,9 @@ TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_dvv) {
 }
 
 TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_vdv) {
-  using stan::math::sum;
-  using stan::math::matrix_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::sum;
 
   matrix_d ad(4, 4);
   matrix_d bd(4, 2);
@@ -168,9 +168,9 @@ TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_vdv) {
 }
 
 TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_vvd) {
-  using stan::math::sum;
-  using stan::math::matrix_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::sum;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -219,9 +219,9 @@ TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_vvd) {
 }
 
 TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_vdd) {
-  using stan::math::sum;
-  using stan::math::matrix_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::sum;
 
   matrix_d ad(4, 4);
   matrix_d bd(4, 2);
@@ -260,9 +260,9 @@ TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_vdd) {
 }
 
 TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_dvd) {
-  using stan::math::sum;
-  using stan::math::matrix_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::sum;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -302,9 +302,9 @@ TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_dvd) {
 }
 
 TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_ddv) {
-  using stan::math::sum;
-  using stan::math::matrix_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::sum;
 
   matrix_d ad(4, 4);
   matrix_d bd(4, 2);
@@ -343,9 +343,9 @@ TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_ddv) {
 }
 
 TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_vvv) {
-  using stan::math::sum;
-  using stan::math::matrix_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::sum;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -403,12 +403,12 @@ TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_vvv) {
 }
 
 TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_dvv_basic) {
-  using stan::math::sum;
-  using stan::math::matrix_v;
-  using stan::math::matrix_d;
-  using stan::math::trace;
-  using stan::math::multiply;
   using stan::math::inverse;
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::multiply;
+  using stan::math::sum;
+  using stan::math::trace;
 
   matrix_d cd(2, 2);
   matrix_v av(4, 4);
@@ -469,11 +469,11 @@ TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_dvv_basic) {
 }
 
 TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_vdv_basic) {
-  using stan::math::sum;
-  using stan::math::matrix_v;
-  using stan::math::matrix_d;
   using stan::math::inverse;
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
   using stan::math::multiply;
+  using stan::math::sum;
   using stan::math::trace;
 
   matrix_v cv(2, 2);
@@ -538,11 +538,11 @@ TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_vdv_basic) {
 }
 
 TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_vvd_basic) {
-  using stan::math::sum;
-  using stan::math::matrix_v;
-  using stan::math::matrix_d;
   using stan::math::inverse;
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
   using stan::math::multiply;
+  using stan::math::sum;
   using stan::math::trace;
 
   matrix_v cv(2, 2);
@@ -608,11 +608,11 @@ TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_vvd_basic) {
 }
 
 TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_vdd_basic) {
-  using stan::math::sum;
-  using stan::math::matrix_v;
-  using stan::math::matrix_d;
   using stan::math::inverse;
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
   using stan::math::multiply;
+  using stan::math::sum;
   using stan::math::trace;
 
   matrix_v cv(2, 2);
@@ -669,11 +669,11 @@ TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_vdd_basic) {
 }
 
 TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_dvd_basic) {
-  using stan::math::sum;
-  using stan::math::matrix_v;
-  using stan::math::matrix_d;
   using stan::math::inverse;
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
   using stan::math::multiply;
+  using stan::math::sum;
   using stan::math::trace;
 
   matrix_d cd(2, 2);
@@ -733,11 +733,11 @@ TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_dvd_basic) {
 }
 
 TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_ddv_basic) {
-  using stan::math::sum;
-  using stan::math::matrix_v;
-  using stan::math::matrix_d;
   using stan::math::inverse;
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
   using stan::math::multiply;
+  using stan::math::sum;
   using stan::math::trace;
 
   matrix_d cd(2, 2);
@@ -795,11 +795,11 @@ TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_ddv_basic) {
 }
 
 TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_vvv_basic) {
-  using stan::math::sum;
-  using stan::math::matrix_v;
-  using stan::math::matrix_d;
   using stan::math::inverse;
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
   using stan::math::multiply;
+  using stan::math::sum;
   using stan::math::trace;
   using stan::math::transpose;
 
@@ -870,8 +870,8 @@ TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_vvv_basic) {
 }
 
 TEST(AgradRevMatrix, check_varis_on_stack) {
-  using stan::math::matrix_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);

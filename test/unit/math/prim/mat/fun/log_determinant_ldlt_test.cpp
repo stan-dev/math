@@ -3,8 +3,8 @@
 
 TEST(MathMatrix, log_deterimant_ldlt) {
   using stan::math::determinant;
-  using std::log;
   using std::fabs;
+  using std::log;
 
   stan::math::matrix_d x(2, 2);
   stan::math::LDLT_factor<double, -1, -1> ldlt_x;

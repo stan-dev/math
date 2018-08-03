@@ -13,8 +13,8 @@ template <typename F>
 void jacobian(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
               Eigen::Matrix<double, Eigen::Dynamic, 1>& fx,
               Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& J) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   start_nested();
   try {
     Matrix<var, Dynamic, 1> x_var(x.size());

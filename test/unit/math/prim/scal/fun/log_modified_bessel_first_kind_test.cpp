@@ -6,8 +6,8 @@
 
 TEST(MathFunctions, log_modified_bessel_first_kind) {
   using stan::math::log_modified_bessel_first_kind;
-  using std::sqrt;
   using std::log;
+  using std::sqrt;
 
   EXPECT_FLOAT_EQ(log_modified_bessel_first_kind(sqrt(3), sqrt(2)),
                   log(boost::math::cyl_bessel_i(sqrt(3), sqrt(2))));

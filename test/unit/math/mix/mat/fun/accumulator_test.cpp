@@ -27,9 +27,9 @@ TEST(AgradMixMatrixAccumulate, fvar_var) {
 
 TEST(AgradMixMatrixAccumulate, collection_fvar_var) {
   using stan::math::accumulator;
-  using std::vector;
-  using stan::math::vector_fv;
   using stan::math::matrix_fv;
+  using stan::math::vector_fv;
+  using std::vector;
 
   accumulator<fvar<var> > a;
 
@@ -99,9 +99,9 @@ TEST(AgradMixMatrixAccumulate, fvar_fvar_var) {
 
 TEST(AgradMixMatrixAccumulate, collection_fvar_fvar_var) {
   using stan::math::accumulator;
-  using std::vector;
-  using stan::math::vector_ffv;
   using stan::math::matrix_ffv;
+  using stan::math::vector_ffv;
+  using std::vector;
 
   accumulator<fvar<fvar<var> > > a;
 

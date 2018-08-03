@@ -2,9 +2,9 @@
 #include <stan/math/prim/scal.hpp>
 #include <boost/utility/enable_if.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradCdfNormal : public AgradCdfTest {
  public:

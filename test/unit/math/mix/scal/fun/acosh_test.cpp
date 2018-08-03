@@ -5,9 +5,9 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdAcosh, FvarVar_1stDeriv) {
+  using stan::math::acosh;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::acosh;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = acosh(x);
@@ -22,9 +22,9 @@ TEST(AgradFwdAcosh, FvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdAcosh, FvarVar_2ndDeriv) {
+  using stan::math::acosh;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::acosh;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = acosh(x);
@@ -39,9 +39,9 @@ TEST(AgradFwdAcosh, FvarVar_2ndDeriv) {
 }
 
 TEST(AgradFwdAcosh, FvarFvarVar_1stDeriv) {
+  using stan::math::acosh;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::acosh;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -76,9 +76,9 @@ TEST(AgradFwdAcosh, FvarFvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdAcosh, FvarFvarVar_2ndDeriv) {
+  using stan::math::acosh;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::acosh;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -103,9 +103,9 @@ TEST(AgradFwdAcosh, FvarFvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(2.0 * -1.07331265, r[0]);
 }
 TEST(AgradFwdAcosh, FvarFvarVar_3rdDeriv) {
+  using stan::math::acosh;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::acosh;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;

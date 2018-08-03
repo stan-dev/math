@@ -5,10 +5,10 @@
 #include <vector>
 
 TEST(AgradRevMatrix, log_determinant_diff) {
-  using stan::math::matrix_v;
   using stan::math::determinant;
   using stan::math::fabs;
   using stan::math::log;
+  using stan::math::matrix_v;
 
   // expected from auto-diff/Eigen
   AVEC x1 = createAVEC(0, 1, 2, 3);
@@ -32,8 +32,8 @@ TEST(AgradRevMatrix, log_determinant_diff) {
 }
 
 TEST(AgradRevMatrix, log_determinant) {
-  using stan::math::matrix_v;
   using stan::math::log_determinant;
+  using stan::math::matrix_v;
 
   matrix_v v(2, 2);
   v << 0, 1, 2, 3;
@@ -44,15 +44,15 @@ TEST(AgradRevMatrix, log_determinant) {
 }
 
 TEST(AgradRevMatrix, log_deteriminant_exception) {
-  using stan::math::matrix_v;
   using stan::math::log_determinant;
+  using stan::math::matrix_v;
 
   EXPECT_THROW(log_determinant(matrix_v(2, 3)), std::invalid_argument);
 }
 
 TEST(AgradRevMatrix, log_determinant_grad) {
-  using stan::math::matrix_v;
   using stan::math::log_determinant;
+  using stan::math::matrix_v;
 
   matrix_v X(2, 2);
   AVAR a = 2.0;

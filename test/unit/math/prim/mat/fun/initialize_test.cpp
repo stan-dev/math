@@ -18,9 +18,9 @@ TEST(MathMatrix, initialize) {
 }
 
 TEST(MathMatrix, initMatrix) {
-  using stan::math::initialize;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::initialize;
   Matrix<double, Dynamic, Dynamic> m(3, 2);
   // template 3, 2
   initialize(m, 13.2);
@@ -41,10 +41,10 @@ TEST(MathMatrix, initMatrix) {
 }
 
 TEST(MathMatrix, initStdVector) {
-  using std::vector;
-  using stan::math::initialize;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::initialize;
+  using std::vector;
 
   vector<double> x(3);
   initialize(x, 2.2);

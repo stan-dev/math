@@ -5,10 +5,10 @@
 using stan::math::fvar;
 
 TEST(AgradFwdMatrixInitialize, fd) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::initialize;
   using std::vector;
-  using Eigen::Matrix;
-  using Eigen::Dynamic;
 
   fvar<double> x;
   fvar<double> y = 10;
@@ -45,8 +45,8 @@ TEST(AgradFwdMatrixInitialize, fd) {
       EXPECT_FLOAT_EQ(54, d[i][j].val_);
 }
 TEST(AgradFwdMatrixInitialize, fd2) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::initialize;
   Matrix<fvar<double>, Dynamic, 1> y(3);
   initialize(y, 3.0);
@@ -54,10 +54,10 @@ TEST(AgradFwdMatrixInitialize, fd2) {
   EXPECT_FLOAT_EQ(3.0, y[0].val_);
 }
 TEST(AgradFwdMatrixInitialize, ffd) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::initialize;
   using std::vector;
-  using Eigen::Matrix;
-  using Eigen::Dynamic;
 
   fvar<fvar<double> > x;
   fvar<fvar<double> > y = 10;
@@ -94,8 +94,8 @@ TEST(AgradFwdMatrixInitialize, ffd) {
       EXPECT_FLOAT_EQ(54, d[i][j].val_.val_);
 }
 TEST(AgradFwdMatrixInitialize, ffd2) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::initialize;
   Matrix<fvar<fvar<double> >, Dynamic, 1> y(3);
   initialize(y, 3.0);

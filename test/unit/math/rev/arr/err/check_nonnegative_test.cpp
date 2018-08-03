@@ -3,8 +3,8 @@
 #include <limits>
 #include <vector>
 
-using stan::math::var;
 using stan::math::check_nonnegative;
+using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVectorized) {
   int N = 5;
@@ -35,9 +35,9 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVectorized) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckVectorized) {
+  using stan::math::check_nonnegative;
   using stan::math::var;
   using std::vector;
-  using stan::math::check_nonnegative;
 
   int N = 5;
   const char* function = "check_nonnegative";
@@ -46,27 +46,31 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckVectorized) {
   for (int i = 0; i < N; ++i)
     a.push_back(var(i));
 
-  size_t stack_size = stan::math::ChainableStack::var_stack_.size();
+  size_t stack_size = stan::math::ChainableStack::instance().var_stack_.size();
 
   EXPECT_EQ(5U, stack_size);
   EXPECT_NO_THROW(check_nonnegative(function, "a", a));
 
-  size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
+  size_t stack_size_after_call
+      = stan::math::ChainableStack::instance().var_stack_.size();
   EXPECT_EQ(5U, stack_size_after_call);
 
   a[1] = std::numeric_limits<double>::infinity();
   EXPECT_NO_THROW(check_nonnegative(function, "a", a));
-  stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
+  stack_size_after_call
+      = stan::math::ChainableStack::instance().var_stack_.size();
   EXPECT_EQ(6U, stack_size_after_call);
 
   a[1] = -1.0;
   EXPECT_THROW(check_nonnegative(function, "a", a), std::domain_error);
-  stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
+  stack_size_after_call
+      = stan::math::ChainableStack::instance().var_stack_.size();
   EXPECT_EQ(7U, stack_size_after_call);
 
   a[1] = 0.0;
   EXPECT_NO_THROW(check_nonnegative(function, "a", a));
-  stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
+  stack_size_after_call
+      = stan::math::ChainableStack::instance().var_stack_.size();
   EXPECT_EQ(8U, stack_size_after_call);
 
   stan::math::recover_memory();

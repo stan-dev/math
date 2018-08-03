@@ -5,10 +5,10 @@
 #include <vector>
 
 void test_log_inv_logit(const double x) {
-  using stan::math::var;
-  using stan::math::log_inv_logit;
-  using std::log;
   using stan::math::inv_logit;
+  using stan::math::log_inv_logit;
+  using stan::math::var;
+  using std::log;
 
   // test gradient
   AVEC x1 = createAVEC(x);

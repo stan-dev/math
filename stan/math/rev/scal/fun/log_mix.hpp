@@ -80,8 +80,8 @@ inline void log_mix_partial_helper(
 template <typename T_theta, typename T_lambda1, typename T_lambda2>
 inline typename return_type<T_theta, T_lambda1, T_lambda2>::type log_mix(
     const T_theta& theta, const T_lambda1& lambda1, const T_lambda2& lambda2) {
-  using std::log;
   using stan::is_constant_struct;
+  using std::log;
 
   operands_and_partials<T_theta, T_lambda1, T_lambda2> ops_partials(
       theta, lambda1, lambda2);

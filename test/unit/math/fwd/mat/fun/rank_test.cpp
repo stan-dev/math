@@ -72,8 +72,8 @@ void test_rank_int() {
 }
 
 TEST(AgradFwdMatrixRank, rank) {
-  using stan::math::rank;
   using stan::math::fvar;
+  using stan::math::rank;
 
   test_rank<std::vector<fvar<double> > >();
   test_rank<Eigen::Matrix<fvar<double>, Eigen::Dynamic, 1> >();

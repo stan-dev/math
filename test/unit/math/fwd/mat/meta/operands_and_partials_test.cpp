@@ -3,8 +3,8 @@
 #include <vector>
 
 TEST(AgradPartialsVari, OperandsAndPartialsFvarVec) {
-  using stan::math::operands_and_partials;
   using stan::math::fvar;
+  using stan::math::operands_and_partials;
 
   std::vector<fvar<double> > x1;
   x1.push_back(fvar<double>(2.0, 2.0));

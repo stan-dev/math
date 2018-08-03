@@ -3,11 +3,11 @@
 #include <vector>
 
 TEST(AgradFwdMatrixSize, fvar_double) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::size;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::size;
+  using std::vector;
 
   vector<fvar<double> > y(6);
   EXPECT_EQ(6, size(y));
@@ -41,11 +41,11 @@ TEST(AgradFwdMatrixSize, fvar_double) {
 }
 
 TEST(AgradFwdMatrixSize, fvar_fvar_double) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::size;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::size;
+  using std::vector;
 
   vector<fvar<fvar<double> > > y(6);
   EXPECT_EQ(6, size(y));

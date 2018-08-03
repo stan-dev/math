@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-using std::vector;
 using stan::math::array_builder;
+using std::vector;
 
 TEST(MathArray, arrayBuilder) {
   EXPECT_EQ(0U, array_builder<double>().array().size());

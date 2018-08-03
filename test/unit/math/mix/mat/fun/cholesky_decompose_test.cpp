@@ -8,8 +8,8 @@ struct chol_functor {
   chol_functor(int i_, int j_, int K_) : i(i_), j(j_), K(K_) {}
   template <typename T>
   T operator()(Eigen::Matrix<T, -1, 1> x) const {
-    using stan::math::cov_matrix_constrain;
     using stan::math::cholesky_decompose;
+    using stan::math::cov_matrix_constrain;
     T lp(0.0);
     Eigen::Matrix<T, -1, -1> x_c = cov_matrix_constrain(x, K, lp);
     Eigen::Matrix<T, -1, -1> L = cholesky_decompose(x_c);

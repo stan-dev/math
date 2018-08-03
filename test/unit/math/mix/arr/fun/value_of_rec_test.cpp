@@ -3,10 +3,10 @@
 #include <vector>
 
 TEST(MathMatrix, value_of_rec) {
-  using stan::math::value_of_rec;
-  using std::vector;
   using stan::math::fvar;
+  using stan::math::value_of_rec;
   using stan::math::var;
+  using std::vector;
 
   vector<fvar<fvar<var> > > a;
   for (size_t i = 0; i < 10; ++i)

@@ -128,9 +128,9 @@ TEST(MathMatrixAssign, vectorDouble) {
 }
 
 TEST(MathMatrixAssign, eigenRowVectorDoubleToDouble) {
-  using stan::math::assign;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::assign;
 
   Matrix<double, 1, Dynamic> y(3);
   y[0] = 1.2;
@@ -145,9 +145,9 @@ TEST(MathMatrixAssign, eigenRowVectorDoubleToDouble) {
     EXPECT_FLOAT_EQ(y[i], x[i]);
 }
 TEST(MathMatrixAssign, eigenRowVectorIntToDouble) {
-  using stan::math::assign;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::assign;
 
   Matrix<double, 1, Dynamic> x(3);
   x[0] = 1.2;
@@ -166,9 +166,9 @@ TEST(MathMatrixAssign, eigenRowVectorIntToDouble) {
     EXPECT_FLOAT_EQ(ns[i], x[i]);
 }
 TEST(MathMatrixAssign, eigenRowVectorShapeMismatch) {
-  using stan::math::assign;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::assign;
 
   Matrix<double, 1, Dynamic> x(3);
   x[0] = 1.2;
@@ -191,9 +191,9 @@ TEST(MathMatrixAssign, eigenRowVectorShapeMismatch) {
 }
 
 TEST(MathMatrixAssign, eigenMatrixDoubleToDouble) {
-  using stan::math::assign;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::assign;
 
   Matrix<double, Dynamic, Dynamic> y(3, 2);
   y << 1.2, 100, -5.1, 12, 1000, -5100;
@@ -210,9 +210,9 @@ TEST(MathMatrixAssign, eigenMatrixDoubleToDouble) {
     EXPECT_FLOAT_EQ(y(i), x(i));
 }
 TEST(MathMatrixAssign, eigenMatrixIntToDouble) {
-  using stan::math::assign;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::assign;
 
   Matrix<int, Dynamic, Dynamic> y(3, 2);
   y << 1, 2, 3, 4, 5, 6;
@@ -229,9 +229,9 @@ TEST(MathMatrixAssign, eigenMatrixIntToDouble) {
     EXPECT_FLOAT_EQ(y(i), x(i));
 }
 TEST(MathMatrixAssign, eigenMatrixShapeMismatch) {
-  using stan::math::assign;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::assign;
 
   Matrix<double, Dynamic, Dynamic> x(2, 3);
   x << 1, 2, 3, 4, 5, 6;
@@ -253,10 +253,10 @@ TEST(MathMatrixAssign, eigenMatrixShapeMismatch) {
 }
 
 TEST(MathMatrix, block) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::get_base1_lhs;
+  using Eigen::Matrix;
   using stan::math::assign;
+  using stan::math::get_base1_lhs;
 
   Matrix<double, Dynamic, Dynamic> m(2, 3);
   m << 1, 2, 3, 4, 5, 6;
@@ -291,8 +291,8 @@ TEST(MathMatrix, block2) {
 }
 
 TEST(MathMatrix, vectorVector) {
-  using std::vector;
   using stan::math::assign;
+  using std::vector;
   vector<vector<double> > x(3, vector<double>(2));
   for (size_t i = 0; i < 3; ++i)
     for (size_t j = 0; j < 2; ++j)
@@ -311,8 +311,8 @@ TEST(MathMatrix, vectorVector) {
 }
 
 TEST(MathMatrix, vectorVectorVector) {
-  using std::vector;
   using stan::math::assign;
+  using std::vector;
   vector<vector<vector<double> > > x(
       4, vector<vector<double> >(3, vector<double>(2)));
   for (size_t k = 0; k < 4; ++k)
@@ -337,10 +337,10 @@ TEST(MathMatrix, vectorVectorVector) {
 }
 
 TEST(MathMatrix, vectorEigenVector) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::assign;
+  using std::vector;
 
   vector<Matrix<double, Dynamic, 1> > x(2, Matrix<double, Dynamic, 1>(3));
   for (size_t i = 0; i < 2; ++i)
@@ -360,10 +360,10 @@ TEST(MathMatrix, vectorEigenVector) {
 }
 
 TEST(MathMatrix, getAssignRow) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::get_base1_lhs;
+  using Eigen::Matrix;
   using stan::math::assign;
+  using stan::math::get_base1_lhs;
 
   Matrix<double, Dynamic, Dynamic> m(2, 3);
   m << 1, 2, 3, 4, 5, 6;

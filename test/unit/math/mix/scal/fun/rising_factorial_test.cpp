@@ -4,10 +4,10 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdRisingFactorial, FvarVar_1stDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
-  using stan::math::rising_factorial;
   using stan::math::digamma;
+  using stan::math::fvar;
+  using stan::math::rising_factorial;
+  using stan::math::var;
 
   fvar<var> a(5.0, 1.0);
   fvar<var> c = rising_factorial(a, 3);
@@ -24,11 +24,11 @@ TEST(AgradFwdRisingFactorial, FvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdRisingFactorial, FvarVar_2ndDeriv_x) {
-  using stan::math::fvar;
-  using stan::math::var;
-  using stan::math::rising_factorial;
   using stan::math::digamma;
+  using stan::math::fvar;
+  using stan::math::rising_factorial;
   using stan::math::trigamma;
+  using stan::math::var;
   using std::pow;
 
   fvar<var> a(5.0, 1.0);
@@ -45,8 +45,8 @@ TEST(AgradFwdRisingFactorial, FvarVar_2ndDeriv_x) {
 
 TEST(AgradFwdRisingFactorial, FvarVar_2ndDeriv_y) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::rising_factorial;
+  using stan::math::var;
 
   /**
    * Second derivative w.r.t. n should return 0,
@@ -63,10 +63,10 @@ TEST(AgradFwdRisingFactorial, FvarVar_2ndDeriv_y) {
 }
 
 TEST(AgradFwdRisingFactorial, FvarFvarVar_1stDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
-  using stan::math::rising_factorial;
   using stan::math::digamma;
+  using stan::math::fvar;
+  using stan::math::rising_factorial;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 5.0;
@@ -87,11 +87,11 @@ TEST(AgradFwdRisingFactorial, FvarFvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdRisingFactorial, FvarFvarVar_2ndDeriv_x) {
-  using stan::math::fvar;
-  using stan::math::var;
-  using stan::math::rising_factorial;
   using stan::math::digamma;
+  using stan::math::fvar;
+  using stan::math::rising_factorial;
   using stan::math::trigamma;
+  using stan::math::var;
   using std::pow;
 
   fvar<fvar<var> > x;
@@ -112,8 +112,8 @@ TEST(AgradFwdRisingFactorial, FvarFvarVar_2ndDeriv_x) {
 
 TEST(AgradFwdRisingFactorial, FvarFvarVar_2ndDeriv_y) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::rising_factorial;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 5.0;
@@ -130,8 +130,8 @@ TEST(AgradFwdRisingFactorial, FvarFvarVar_2ndDeriv_y) {
 
 TEST(AgradFwdRisingFactorial, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::rising_factorial;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 5.0;

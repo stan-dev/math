@@ -1,9 +1,9 @@
 // Arguments: Doubles, Doubles, Doubles
 #include <stan/math/prim/scal.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradDistributionsScaledInvChiSquare : public AgradDistributionTest {
  public:
@@ -72,9 +72,9 @@ class AgradDistributionsScaledInvChiSquare : public AgradDistributionTest {
   typename stan::return_type<T_y, T_dof, T_scale>::type log_prob_function(
       const T_y& y, const T_dof& nu, const T_scale& s, const T3&, const T4&,
       const T5&) {
-    using std::log;
     using stan::math::multiply_log;
     using stan::math::square;
+    using std::log;
 
     if (y <= 0)
       return stan::math::LOG_ZERO;

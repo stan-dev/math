@@ -3,10 +3,10 @@
 #include <vector>
 
 TEST(MathMatrix, size) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::size;
+  using std::vector;
 
   vector<int> x(5);
   EXPECT_EQ(5, size(x));

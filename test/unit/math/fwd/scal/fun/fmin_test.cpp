@@ -4,8 +4,8 @@
 #include <limits>
 
 TEST(AgradFwdFmin, Fvar) {
-  using stan::math::fvar;
   using stan::math::fmin;
+  using stan::math::fvar;
   using std::isnan;
 
   fvar<double> x(2.0, 1.0);

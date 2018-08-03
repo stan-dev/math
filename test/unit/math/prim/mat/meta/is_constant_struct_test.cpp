@@ -15,9 +15,9 @@ typedef std::vector<const_v1> const_v2;
 typedef std::vector<const_v2> const_v3;
 
 TEST(MetaTraits, isConstantStruct) {
-  using stan::is_constant_struct;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::is_constant_struct;
 
   EXPECT_TRUE(is_constant_struct<const_t1>::value);
   EXPECT_TRUE(is_constant_struct<const_t2>::value);

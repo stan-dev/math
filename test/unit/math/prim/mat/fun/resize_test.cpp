@@ -3,12 +3,12 @@
 #include <limits>
 #include <vector>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 
 using stan::math::matrix_d;
-using stan::math::vector_d;
 using stan::math::row_vector_d;
+using stan::math::vector_d;
 
 TEST(MathMatrix, resize_double) {
   double x = 5;

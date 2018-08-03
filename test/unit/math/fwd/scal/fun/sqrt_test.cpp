@@ -4,8 +4,8 @@
 
 TEST(AgradFwdSqrt, Fvar) {
   using stan::math::fvar;
-  using std::sqrt;
   using std::isnan;
+  using std::sqrt;
 
   fvar<double> x(0.5, 1.0);
   fvar<double> a = sqrt(x);

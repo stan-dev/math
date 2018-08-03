@@ -2,9 +2,9 @@
 #include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradDistributionsPoisson : public AgradDistributionTest {
  public:
@@ -65,8 +65,8 @@ class AgradDistributionsPoisson : public AgradDistributionTest {
       const T_n& n, const T_rate& lambda, const T2&, const T3&, const T4&,
       const T5&) {
     using boost::math::lgamma;
-    using stan::math::multiply_log;
     using stan::math::LOG_ZERO;
+    using stan::math::multiply_log;
 
     if (lambda == 0)
       return n == 0 ? 0 : LOG_ZERO;

@@ -13,8 +13,8 @@ static inline std::vector<double> build_fwd_vector(
 template <typename F, typename T>
 static inline std::vector<stan::math::fvar<T> > build_fwd_vector(
     std::vector<stan::math::fvar<T> > fvar_vector, int seed_index = -1) {
-  using std::vector;
   using stan::math::fvar;
+  using std::vector;
 
   vector<T> template_v = build_fwd_vector<F>(vector<T>(), seed_index);
 

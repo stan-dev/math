@@ -3,8 +3,8 @@
 #include <limits>
 
 void test_unary_not(double x) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
 
   EXPECT_EQ(!x, !fvar<double>(x));
   EXPECT_EQ(!x, !fvar<fvar<double> >(x));

@@ -4,9 +4,9 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdBinomialCoefficientLog, Fvar) {
-  using stan::math::fvar;
-  using stan::math::binomial_coefficient_log;
   using boost::math::digamma;
+  using stan::math::binomial_coefficient_log;
+  using stan::math::fvar;
 
   fvar<double> x(2004.0, 1.0);
   fvar<double> y(1002.0, 2.0);
@@ -17,9 +17,9 @@ TEST(AgradFwdBinomialCoefficientLog, Fvar) {
 }
 
 TEST(AgradFwdBinomialCoefficientLog, FvarFvarDouble) {
+  using stan::math::binomial_coefficient_log;
+  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
-  using stan::math::binomial_coefficient_log;
-  using stan::math::binomial_coefficient_log;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 2004.0;

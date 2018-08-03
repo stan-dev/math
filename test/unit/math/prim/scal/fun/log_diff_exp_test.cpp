@@ -4,9 +4,9 @@
 #include <limits>
 
 void test_log_diff_exp(double a, double b) {
-  using std::log;
-  using std::exp;
   using stan::math::log_diff_exp;
+  using std::exp;
+  using std::log;
   EXPECT_FLOAT_EQ(log(exp(a) - exp(b)), log_diff_exp(a, b));
 }
 

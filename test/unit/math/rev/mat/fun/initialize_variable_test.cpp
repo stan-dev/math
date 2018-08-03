@@ -7,8 +7,8 @@ TEST(AgradRevMatrix, initializeVariable) {
   using stan::math::initialize_variable;
   using std::vector;
 
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
 
   AVAR a;
   initialize_variable(a, AVAR(1.0));

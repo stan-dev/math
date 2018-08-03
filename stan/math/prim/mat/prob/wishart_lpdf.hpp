@@ -58,10 +58,10 @@ wishart_lpdf(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
              const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
   static const char* function = "wishart_lpdf";
 
-  using boost::math::tools::promote_args;
   using Eigen::Dynamic;
   using Eigen::Lower;
   using Eigen::Matrix;
+  using boost::math::tools::promote_args;
 
   typename index_type<Matrix<T_scale, Dynamic, Dynamic> >::type k = W.rows();
   typename promote_args<T_y, T_dof, T_scale>::type lp(0.0);

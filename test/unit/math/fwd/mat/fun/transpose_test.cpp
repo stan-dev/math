@@ -36,10 +36,10 @@ TEST(AgradFwdMatrixTranspose, fd_matrix) {
 }
 
 TEST(AgradFwdMatrixTranspose, fd_vector) {
-  using stan::math::vector_fd;
   using stan::math::row_vector_fd;
-  using stan::math::transpose;
   using stan::math::size_type;
+  using stan::math::transpose;
+  using stan::math::vector_fd;
 
   vector_fd a(3);
   a << 1.0, 2.0, 3.0;
@@ -57,10 +57,10 @@ TEST(AgradFwdMatrixTranspose, fd_vector) {
 }
 
 TEST(AgradFwdMatrixTranspose, fd_row_vector) {
-  using stan::math::vector_fd;
   using stan::math::row_vector_fd;
-  using stan::math::transpose;
   using stan::math::size_type;
+  using stan::math::transpose;
+  using stan::math::vector_fd;
 
   row_vector_fd a(3);
   a << 1.0, 2.0, 3.0;
@@ -112,10 +112,10 @@ TEST(AgradFwdMatrixTranspose, ffd_matrix) {
 }
 
 TEST(AgradFwdMatrixTranspose, ffd_vector) {
-  using stan::math::vector_ffd;
   using stan::math::row_vector_ffd;
-  using stan::math::transpose;
   using stan::math::size_type;
+  using stan::math::transpose;
+  using stan::math::vector_ffd;
 
   vector_ffd a(3);
   a << 1.0, 2.0, 3.0;
@@ -133,10 +133,10 @@ TEST(AgradFwdMatrixTranspose, ffd_vector) {
 }
 
 TEST(AgradFwdMatrixTranspose, ffd_row_vector) {
-  using stan::math::vector_ffd;
   using stan::math::row_vector_ffd;
-  using stan::math::transpose;
   using stan::math::size_type;
+  using stan::math::transpose;
+  using stan::math::vector_ffd;
 
   row_vector_ffd a(3);
   a << 1.0, 2.0, 3.0;

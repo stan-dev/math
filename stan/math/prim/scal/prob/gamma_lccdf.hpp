@@ -69,8 +69,8 @@ typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lccdf(
 
   using boost::math::tgamma;
   using std::exp;
-  using std::pow;
   using std::log;
+  using std::pow;
 
   VectorBuilder<!is_constant_struct<T_shape>::value, T_partials_return, T_shape>
       gamma_vec(stan::length(alpha));

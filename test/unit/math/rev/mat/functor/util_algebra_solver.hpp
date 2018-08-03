@@ -24,6 +24,22 @@ struct simple_eq_functor {
   }
 };
 
+struct simple_eq_functor_nopara {
+  template <typename T0, typename T1>
+  inline Eigen::Matrix<typename boost::math::tools::promote_args<T0, T1>::type,
+                       Eigen::Dynamic, 1>
+  operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
+             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+             const std::vector<double>& dat, const std::vector<int>& dat_int,
+             std::ostream* pstream__) const {
+    typedef typename boost::math::tools::promote_args<T0, T1>::type scalar;
+    Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(2);
+    z(0) = x(0) - dat[0] * dat[1];
+    z(1) = x(1) - dat[2];
+    return z;
+  }
+};
+
 struct non_linear_eq_functor {
   template <typename T0, typename T1>
   inline Eigen::Matrix<typename boost::math::tools::promote_args<T0, T1>::type,
@@ -165,15 +181,6 @@ inline void error_conditions_test(
   EXPECT_THROW_MSG(algebra_solver(f, x_bad, y, dat, dat_int),
                    std::invalid_argument, msg2);
 
-  typedef Eigen::Matrix<T, Eigen::Dynamic, 1> matrix;
-  matrix y_bad(static_cast<typename matrix::Index>(0));
-  std::stringstream err_msg3;
-  err_msg3 << "algebra_solver: parameter vector has size 0, but "
-           << "must have a non-zero size";
-  std::string msg3 = err_msg3.str();
-  EXPECT_THROW_MSG(algebra_solver(f, x, y_bad, dat, dat_int),
-                   std::invalid_argument, msg3);
-
   double inf = std::numeric_limits<double>::infinity();
   Eigen::VectorXd x_bad_inf(n_x);
   x_bad_inf << inf, 1, 1;
@@ -182,6 +189,7 @@ inline void error_conditions_test(
                    "algebra_solver: initial guess is inf, but must "
                    "be finite!");
 
+  typedef Eigen::Matrix<T, Eigen::Dynamic, 1> matrix;
   matrix y_bad_inf(3);
   y_bad_inf << inf, 1, 1;
   EXPECT_THROW_MSG(algebra_solver(f, x, y_bad_inf, dat, dat_int),
@@ -222,8 +230,8 @@ void inline unsolvable_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y) {
           << 1.41421  // sqrt(2)
           << " but should be lower than the function tolerance: "
           << function_tolerance
-          << ". Consider increasing the relative tolerance and the"
-          << " max_num_steps.";
+          << ". Consider decreasing the relative tolerance and increasing"
+          << " the max_num_steps.";
   std::string msg = err_msg.str();
   EXPECT_THROW_MSG(
       algebra_solver(unsolvable_eq_functor(), x, y, dat, dat_int, 0,

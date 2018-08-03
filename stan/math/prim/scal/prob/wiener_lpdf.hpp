@@ -75,8 +75,8 @@ typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type wiener_lpdf(
     const T_delta& delta) {
   static const char* function = "wiener_lpdf";
 
-  using std::log;
   using std::exp;
+  using std::log;
   using std::pow;
 
   static const double WIENER_ERR = 0.000001;

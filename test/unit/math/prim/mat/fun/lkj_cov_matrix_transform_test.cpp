@@ -2,8 +2,8 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 
 TEST(prob_transform, lkj_cov_matrix_rt) {
   unsigned int K = 4;

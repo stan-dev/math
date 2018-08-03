@@ -28,8 +28,8 @@ template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_constrain(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& y) {
   // cut & paste simplex_constrain(Eigen::Matrix, T) w/o Jacobian
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using std::log;
   typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
 

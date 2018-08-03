@@ -4,11 +4,11 @@
 #include <vector>
 
 TEST(AgradMixMatrixMean, fv_vector_1stDeriv) {
+  using stan::math::fvar;
   using stan::math::mean;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_fv;
-  using stan::math::fvar;
-  using stan::math::var;
 
   vector_d d1(3);
   vector_fv v1(3);
@@ -36,11 +36,11 @@ TEST(AgradMixMatrixMean, fv_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0 / 3.0, h[2]);
 }
 TEST(AgradMixMatrixMean, fv_vector_2ndDeriv) {
+  using stan::math::fvar;
   using stan::math::mean;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_fv;
-  using stan::math::fvar;
-  using stan::math::var;
 
   vector_d d1(3);
   vector_fv v1(3);
@@ -78,10 +78,10 @@ TEST(AgradMixMatrixMean, fv_vector_exception) {
   EXPECT_THROW(mean(v), std::invalid_argument);
 }
 TEST(AgradMixMatrixMean, fv_rowvector_1stDeriv) {
+  using stan::math::fvar;
   using stan::math::mean;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3);
@@ -110,10 +110,10 @@ TEST(AgradMixMatrixMean, fv_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0 / 3.0, h[2]);
 }
 TEST(AgradMixMatrixMean, fv_rowvector_2ndDeriv) {
+  using stan::math::fvar;
   using stan::math::mean;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3);
@@ -146,10 +146,10 @@ TEST(AgradMixMatrixMean, fv_rowvector_exception) {
   EXPECT_THROW(mean(v), std::invalid_argument);
 }
 TEST(AgradMixMatrixMean, fv_matrix_1stDeriv) {
-  using stan::math::mean;
+  using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
-  using stan::math::fvar;
+  using stan::math::mean;
   using stan::math::var;
 
   matrix_d d1(3, 1);
@@ -178,10 +178,10 @@ TEST(AgradMixMatrixMean, fv_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0 / 3.0, h[2]);
 }
 TEST(AgradMixMatrixMean, fv_matrix_2ndDeriv) {
-  using stan::math::mean;
+  using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
-  using stan::math::fvar;
+  using stan::math::mean;
   using stan::math::var;
 
   matrix_d d1(3, 1);
@@ -204,9 +204,9 @@ TEST(AgradMixMatrixMean, fv_matrix_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixMean, fv_matrix_exception) {
-  using stan::math::mean;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
+  using stan::math::mean;
 
   matrix_d d;
   matrix_fv v;
@@ -214,8 +214,8 @@ TEST(AgradMixMatrixMean, fv_matrix_exception) {
   EXPECT_THROW(mean(v), std::invalid_argument);
 }
 TEST(AgradMixMatrixMean, fv_StdVector_1stDeriv) {
-  using stan::math::mean;
   using stan::math::fvar;
+  using stan::math::mean;
   using stan::math::var;
 
   std::vector<fvar<var> > x(0);
@@ -244,8 +244,8 @@ TEST(AgradMixMatrixMean, fv_StdVector_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0 / 2.0, h[1]);
 }
 TEST(AgradMixMatrixMean, fv_StdVector_2ndDeriv) {
-  using stan::math::mean;
   using stan::math::fvar;
+  using stan::math::mean;
   using stan::math::var;
 
   std::vector<fvar<var> > y;
@@ -264,11 +264,11 @@ TEST(AgradMixMatrixMean, fv_StdVector_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[1]);
 }
 TEST(AgradMixMatrixMean, ffv_vector_1stDeriv) {
+  using stan::math::fvar;
   using stan::math::mean;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
-  using stan::math::fvar;
-  using stan::math::var;
 
   vector_d d1(3);
   vector_ffv v1(3);
@@ -296,11 +296,11 @@ TEST(AgradMixMatrixMean, ffv_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0 / 3.0, h[2]);
 }
 TEST(AgradMixMatrixMean, ffv_vector_2ndDeriv_1) {
+  using stan::math::fvar;
   using stan::math::mean;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
-  using stan::math::fvar;
-  using stan::math::var;
 
   vector_d d1(3);
   vector_ffv v1(3);
@@ -322,11 +322,11 @@ TEST(AgradMixMatrixMean, ffv_vector_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixMean, ffv_vector_2ndDeriv_2) {
+  using stan::math::fvar;
   using stan::math::mean;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
-  using stan::math::fvar;
-  using stan::math::var;
 
   vector_d d1(3);
   vector_ffv v1(3);
@@ -348,11 +348,11 @@ TEST(AgradMixMatrixMean, ffv_vector_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixMean, ffv_vector_3rdDeriv) {
+  using stan::math::fvar;
   using stan::math::mean;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
-  using stan::math::fvar;
-  using stan::math::var;
 
   vector_d d1(3);
   vector_ffv v1(3);
@@ -387,10 +387,10 @@ TEST(AgradMixMatrixMean, ffv_vector_exception) {
   EXPECT_THROW(mean(v), std::invalid_argument);
 }
 TEST(AgradMixMatrixMean, ffv_rowvector_1stDeriv) {
+  using stan::math::fvar;
   using stan::math::mean;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3);
@@ -419,10 +419,10 @@ TEST(AgradMixMatrixMean, ffv_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0 / 3.0, h[2]);
 }
 TEST(AgradMixMatrixMean, ffv_rowvector_2ndDeriv_1) {
+  using stan::math::fvar;
   using stan::math::mean;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3);
@@ -445,10 +445,10 @@ TEST(AgradMixMatrixMean, ffv_rowvector_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixMean, ffv_rowvector_2ndDeriv_2) {
+  using stan::math::fvar;
   using stan::math::mean;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3);
@@ -471,10 +471,10 @@ TEST(AgradMixMatrixMean, ffv_rowvector_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixMean, ffv_rowvector_3rdDeriv) {
+  using stan::math::fvar;
   using stan::math::mean;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3);
@@ -510,10 +510,10 @@ TEST(AgradMixMatrixMean, ffv_rowvector_exception) {
   EXPECT_THROW(mean(v), std::invalid_argument);
 }
 TEST(AgradMixMatrixMean, ffv_matrix_1stDeriv) {
-  using stan::math::mean;
+  using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
-  using stan::math::fvar;
+  using stan::math::mean;
   using stan::math::var;
 
   matrix_d d1(3, 1);
@@ -543,10 +543,10 @@ TEST(AgradMixMatrixMean, ffv_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0 / 3.0, h[2]);
 }
 TEST(AgradMixMatrixMean, ffv_matrix_2ndDeriv_1) {
-  using stan::math::mean;
+  using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
-  using stan::math::fvar;
+  using stan::math::mean;
   using stan::math::var;
 
   matrix_d d1(3, 1);
@@ -570,10 +570,10 @@ TEST(AgradMixMatrixMean, ffv_matrix_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixMean, ffv_matrix_2ndDeriv_2) {
-  using stan::math::mean;
+  using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
-  using stan::math::fvar;
+  using stan::math::mean;
   using stan::math::var;
 
   matrix_d d1(3, 1);
@@ -597,10 +597,10 @@ TEST(AgradMixMatrixMean, ffv_matrix_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixMean, ffv_matrix_3rdDeriv) {
-  using stan::math::mean;
+  using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
-  using stan::math::fvar;
+  using stan::math::mean;
   using stan::math::var;
 
   matrix_d d1(3, 1);
@@ -627,9 +627,9 @@ TEST(AgradMixMatrixMean, ffv_matrix_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixMean, ffv_matrix_exception) {
-  using stan::math::mean;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::mean;
 
   matrix_d d;
   matrix_ffv v;
@@ -637,8 +637,8 @@ TEST(AgradMixMatrixMean, ffv_matrix_exception) {
   EXPECT_THROW(mean(v), std::invalid_argument);
 }
 TEST(AgradMixMatrixMean, ffv_StdVector_1stDeriv) {
-  using stan::math::mean;
   using stan::math::fvar;
+  using stan::math::mean;
   using stan::math::var;
 
   std::vector<fvar<fvar<var> > > x(0);
@@ -667,8 +667,8 @@ TEST(AgradMixMatrixMean, ffv_StdVector_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0 / 2.0, h[1]);
 }
 TEST(AgradMixMatrixMean, ffv_StdVector_2ndDeriv_1) {
-  using stan::math::mean;
   using stan::math::fvar;
+  using stan::math::mean;
   using stan::math::var;
 
   std::vector<fvar<fvar<var> > > y;
@@ -688,8 +688,8 @@ TEST(AgradMixMatrixMean, ffv_StdVector_2ndDeriv_1) {
 }
 
 TEST(AgradMixMatrixMean, ffv_StdVector_2ndDeriv_2) {
-  using stan::math::mean;
   using stan::math::fvar;
+  using stan::math::mean;
   using stan::math::var;
 
   std::vector<fvar<fvar<var> > > y;
@@ -708,8 +708,8 @@ TEST(AgradMixMatrixMean, ffv_StdVector_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[1]);
 }
 TEST(AgradMixMatrixMean, ffv_StdVector_3rdDeriv) {
-  using stan::math::mean;
   using stan::math::fvar;
+  using stan::math::mean;
   using stan::math::var;
 
   std::vector<fvar<fvar<var> > > y;

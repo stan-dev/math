@@ -3,9 +3,9 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradMixMatrixDeterminant, matrix_fv_1stDeriv) {
-  using stan::math::matrix_fv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::var;
 
   fvar<var> b(2.0, 1.0);
@@ -32,9 +32,9 @@ TEST(AgradMixMatrixDeterminant, matrix_fv_1stDeriv) {
   EXPECT_FLOAT_EQ(2.0, h[3]);
 }
 TEST(AgradMixMatrixDeterminant, matrix_fv_2ndDeriv) {
-  using stan::math::matrix_fv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::var;
 
   fvar<var> b(2.0, 1.0);
@@ -56,9 +56,9 @@ TEST(AgradMixMatrixDeterminant, matrix_fv_2ndDeriv) {
   EXPECT_FLOAT_EQ(1.0, h[3]);
 }
 TEST(AgradMixMatrixDeterminant, matrix_ffv_1stDeriv) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > b(2.0, 1.0);
@@ -86,9 +86,9 @@ TEST(AgradMixMatrixDeterminant, matrix_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(2.0, h[3]);
 }
 TEST(AgradMixMatrixDeterminant, matrix_ffv_2ndDeriv_1) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > b(2.0, 1.0);
@@ -112,9 +112,9 @@ TEST(AgradMixMatrixDeterminant, matrix_ffv_2ndDeriv_1) {
 }
 
 TEST(AgradMixMatrixDeterminant, matrix_ffv_2ndDeriv_2) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > b(2.0, 1.0);
@@ -138,9 +138,9 @@ TEST(AgradMixMatrixDeterminant, matrix_ffv_2ndDeriv_2) {
 }
 
 TEST(AgradMixMatrixDeterminant, matrix_ffv_3rdDeriv) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > b(2.0, 1.0);

@@ -193,8 +193,8 @@ TEST(AgradFwdMatrixToFvar, ffd_rowvector) {
 }
 TEST(AgradFwdMatrixToFvar, ffd_matrix_matrix) {
   using stan::math::matrix_d;
-  using stan::math::matrix_ffd;
   using stan::math::matrix_fd;
+  using stan::math::matrix_ffd;
 
   matrix_fd val(3, 3);
   matrix_fd d(3, 3);

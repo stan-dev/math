@@ -4,8 +4,8 @@
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 
 TEST(probTransform, simplex_jacobian) {
   using stan::math::var;

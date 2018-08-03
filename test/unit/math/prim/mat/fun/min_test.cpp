@@ -67,8 +67,8 @@ TEST(MathMatrix, min) {
 }
 
 TEST(MathMatrix, min_exception) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using std::numeric_limits;
   Matrix<double, Dynamic, Dynamic> m;
   Matrix<double, Dynamic, 1> v;

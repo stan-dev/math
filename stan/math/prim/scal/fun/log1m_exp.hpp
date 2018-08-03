@@ -42,8 +42,8 @@ namespace math {
  *
  */
 inline double log1m_exp(double a) {
-  using std::log;
   using std::exp;
+  using std::log;
   if (a >= 0)
     return std::numeric_limits<double>::quiet_NaN();
   else if (a > -0.693147)

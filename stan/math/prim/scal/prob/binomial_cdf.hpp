@@ -70,8 +70,8 @@ typename return_type<T_prob>::type binomial_cdf(const T_n& n, const T_N& N,
   size_t size = max_size(n, N, theta);
 
   using std::exp;
-  using std::pow;
   using std::exp;
+  using std::pow;
 
   operands_and_partials<T_prob> ops_partials(theta);
 

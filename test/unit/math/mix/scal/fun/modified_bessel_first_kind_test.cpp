@@ -5,8 +5,8 @@
 
 TEST(AgradFwdModifiedBesselFirstKind, FvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::modified_bessel_first_kind;
+  using stan::math::var;
 
   fvar<var> z(4.0, 2.0);
   fvar<var> a = modified_bessel_first_kind(1, z);
@@ -21,8 +21,8 @@ TEST(AgradFwdModifiedBesselFirstKind, FvarVar_1stDeriv) {
 }
 TEST(AgradFwdModifiedBesselFirstKind, FvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::modified_bessel_first_kind;
+  using stan::math::var;
 
   fvar<var> z(4.0, 2.0);
   fvar<var> a = modified_bessel_first_kind(1, z);
@@ -35,8 +35,8 @@ TEST(AgradFwdModifiedBesselFirstKind, FvarVar_2ndDeriv) {
 
 TEST(AgradFwdModifiedBesselFirstKind, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::modified_bessel_first_kind;
+  using stan::math::var;
 
   fvar<fvar<var> > y;
   y.val_.val_ = 4.0;
@@ -72,8 +72,8 @@ TEST(AgradFwdModifiedBesselFirstKind, FvarFvarVar_1stDeriv) {
 }
 TEST(AgradFwdModifiedBesselFirstKind, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::modified_bessel_first_kind;
+  using stan::math::var;
 
   fvar<fvar<var> > y;
   y.val_.val_ = 4.0;

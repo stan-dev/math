@@ -4,9 +4,9 @@
 
 using stan::math::var;
 TEST(AgradMixMatrixRepMatrix, fv_real) {
-  using stan::math::rep_matrix;
-  using stan::math::matrix_fv;
   using stan::math::fvar;
+  using stan::math::matrix_fv;
+  using stan::math::rep_matrix;
   fvar<var> a;
   a.val_ = 3.0;
   a.d_ = 2.0;
@@ -27,9 +27,9 @@ TEST(AgradMixMatrixRepMatrix, fv_real) {
   EXPECT_EQ(2, output(1, 2).d_.val());
 }
 TEST(AgradMixMatrixRepMatrix, fv_exception_real) {
-  using stan::math::rep_matrix;
-  using stan::math::matrix_fv;
   using stan::math::fvar;
+  using stan::math::matrix_fv;
+  using stan::math::rep_matrix;
   fvar<var> a;
   a.val_ = 3.0;
   a.d_ = 2.0;
@@ -37,8 +37,8 @@ TEST(AgradMixMatrixRepMatrix, fv_exception_real) {
   EXPECT_THROW(rep_matrix(a, -2, -1), std::domain_error);
 }
 TEST(AgradMixMatrixRepMatrix, fv_rowvector) {
-  using stan::math::rep_matrix;
   using stan::math::matrix_fv;
+  using stan::math::rep_matrix;
   using stan::math::row_vector_fv;
 
   row_vector_fv a(3);
@@ -69,8 +69,8 @@ TEST(AgradMixMatrixRepMatrix, fv_rowvector) {
   EXPECT_EQ(2, output(2, 2).d_.val());
 }
 TEST(AgradMixMatrixRepMatrix, fv_exception_rowvector) {
-  using stan::math::rep_matrix;
   using stan::math::matrix_fv;
+  using stan::math::rep_matrix;
   using stan::math::row_vector_fv;
 
   row_vector_fv a(3);
@@ -79,8 +79,8 @@ TEST(AgradMixMatrixRepMatrix, fv_exception_rowvector) {
   EXPECT_THROW(rep_matrix(a, -3), std::domain_error);
 }
 TEST(AgradMixMatrixRepMatrix, fv_vector) {
-  using stan::math::rep_matrix;
   using stan::math::matrix_fv;
+  using stan::math::rep_matrix;
   using stan::math::vector_fv;
 
   vector_fv a(3);
@@ -111,8 +111,8 @@ TEST(AgradMixMatrixRepMatrix, fv_vector) {
   EXPECT_EQ(2, output(2, 2).d_.val());
 }
 TEST(AgradMixMatrixRepMatrix, fv_exception_vector) {
-  using stan::math::rep_matrix;
   using stan::math::matrix_fv;
+  using stan::math::rep_matrix;
   using stan::math::vector_fv;
 
   vector_fv a(3);
@@ -121,9 +121,9 @@ TEST(AgradMixMatrixRepMatrix, fv_exception_vector) {
   EXPECT_THROW(rep_matrix(a, -3), std::domain_error);
 }
 TEST(AgradMixMatrixRepMatrix, ffv_real) {
-  using stan::math::rep_matrix;
-  using stan::math::matrix_ffv;
   using stan::math::fvar;
+  using stan::math::matrix_ffv;
+  using stan::math::rep_matrix;
   fvar<fvar<var> > a;
   a.val_ = 3.0;
   a.d_ = 2.0;
@@ -144,9 +144,9 @@ TEST(AgradMixMatrixRepMatrix, ffv_real) {
   EXPECT_EQ(2, output(1, 2).d_.val().val());
 }
 TEST(AgradMixMatrixRepMatrix, ffv_exception_real) {
-  using stan::math::rep_matrix;
-  using stan::math::matrix_ffv;
   using stan::math::fvar;
+  using stan::math::matrix_ffv;
+  using stan::math::rep_matrix;
   fvar<fvar<var> > a;
   a.val_ = 3.0;
   a.d_ = 2.0;
@@ -154,8 +154,8 @@ TEST(AgradMixMatrixRepMatrix, ffv_exception_real) {
   EXPECT_THROW(rep_matrix(a, -2, -1), std::domain_error);
 }
 TEST(AgradMixMatrixRepMatrix, ffv_rowvector) {
-  using stan::math::rep_matrix;
   using stan::math::matrix_ffv;
+  using stan::math::rep_matrix;
   using stan::math::row_vector_ffv;
 
   row_vector_ffv a(3);
@@ -186,8 +186,8 @@ TEST(AgradMixMatrixRepMatrix, ffv_rowvector) {
   EXPECT_EQ(2, output(2, 2).d_.val().val());
 }
 TEST(AgradMixMatrixRepMatrix, ffv_exception_rowvector) {
-  using stan::math::rep_matrix;
   using stan::math::matrix_ffv;
+  using stan::math::rep_matrix;
   using stan::math::row_vector_ffv;
 
   row_vector_ffv a(3);
@@ -196,8 +196,8 @@ TEST(AgradMixMatrixRepMatrix, ffv_exception_rowvector) {
   EXPECT_THROW(rep_matrix(a, -3), std::domain_error);
 }
 TEST(AgradMixMatrixRepMatrix, ffv_vector) {
-  using stan::math::rep_matrix;
   using stan::math::matrix_ffv;
+  using stan::math::rep_matrix;
   using stan::math::vector_ffv;
 
   vector_ffv a(3);
@@ -228,8 +228,8 @@ TEST(AgradMixMatrixRepMatrix, ffv_vector) {
   EXPECT_EQ(2, output(2, 2).d_.val().val());
 }
 TEST(AgradMixMatrixRepMatrix, ffv_exception_vector) {
-  using stan::math::rep_matrix;
   using stan::math::matrix_ffv;
+  using stan::math::rep_matrix;
   using stan::math::vector_ffv;
 
   vector_ffv a(3);

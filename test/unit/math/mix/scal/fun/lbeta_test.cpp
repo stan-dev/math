@@ -5,10 +5,10 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdLbeta, FvarVar_FvarVar_1stDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using boost::math::digamma;
+  using stan::math::fvar;
   using stan::math::lbeta;
+  using stan::math::var;
 
   fvar<var> x(3.0, 1.3);
   fvar<var> z(6.0, 1.0);
@@ -26,10 +26,10 @@ TEST(AgradFwdLbeta, FvarVar_FvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(digamma(6.0) - digamma(9.0), g[1]);
 }
 TEST(AgradFwdLbeta, FvarVar_Double_1stDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using boost::math::digamma;
+  using stan::math::fvar;
   using stan::math::lbeta;
+  using stan::math::var;
 
   fvar<var> x(3.0, 1.3);
   double z(6.0);
@@ -44,10 +44,10 @@ TEST(AgradFwdLbeta, FvarVar_Double_1stDeriv) {
   EXPECT_FLOAT_EQ(digamma(3.0) - digamma(9.0), g[0]);
 }
 TEST(AgradFwdLbeta, Double_FvarVar_1stDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using boost::math::digamma;
+  using stan::math::fvar;
   using stan::math::lbeta;
+  using stan::math::var;
 
   double x(3.0);
   fvar<var> z(6.0, 1.0);
@@ -62,10 +62,10 @@ TEST(AgradFwdLbeta, Double_FvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(digamma(6.0) - digamma(9.0), g[0]);
 }
 TEST(AgradFwdLbeta, FvarVar_FvarVar_2ndDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using boost::math::digamma;
+  using stan::math::fvar;
   using stan::math::lbeta;
+  using stan::math::var;
 
   fvar<var> x(3.0, 1.3);
   fvar<var> z(6.0, 1.0);
@@ -83,10 +83,10 @@ TEST(AgradFwdLbeta, FvarVar_FvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(0.18132296 - 2.3 * 0.11751201, g[1]);
 }
 TEST(AgradFwdLbeta, FvarVar_Double_2ndDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using boost::math::digamma;
+  using stan::math::fvar;
   using stan::math::lbeta;
+  using stan::math::var;
 
   fvar<var> x(3.0, 1.3);
   double z(6.0);
@@ -101,10 +101,10 @@ TEST(AgradFwdLbeta, FvarVar_Double_2ndDeriv) {
   EXPECT_FLOAT_EQ(1.3 * 0.39493407 - 1.3 * 0.11751201, g[0]);
 }
 TEST(AgradFwdLbeta, Double_FvarVar_2ndDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using boost::math::digamma;
+  using stan::math::fvar;
   using stan::math::lbeta;
+  using stan::math::var;
 
   double x(3.0);
   fvar<var> z(6.0, 1.0);
@@ -119,10 +119,10 @@ TEST(AgradFwdLbeta, Double_FvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(0.18132296 - 0.11751201, g[0]);
 }
 TEST(AgradFwdLbeta, FvarFvarVar_FvarFvarVar_1stDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using boost::math::digamma;
+  using stan::math::fvar;
   using stan::math::lbeta;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 3.0;
@@ -146,10 +146,10 @@ TEST(AgradFwdLbeta, FvarFvarVar_FvarFvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(digamma(6.0) - digamma(9.0), g[1]);
 }
 TEST(AgradFwdLbeta, FvarFvarVar_Double_1stDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using boost::math::digamma;
+  using stan::math::fvar;
   using stan::math::lbeta;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 3.0;
@@ -170,10 +170,10 @@ TEST(AgradFwdLbeta, FvarFvarVar_Double_1stDeriv) {
   EXPECT_FLOAT_EQ(digamma(3.0) - digamma(9.0), g[0]);
 }
 TEST(AgradFwdLbeta, Double_FvarFvarVar_1stDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using boost::math::digamma;
+  using stan::math::fvar;
   using stan::math::lbeta;
+  using stan::math::var;
 
   double x(3.0);
 
@@ -194,10 +194,10 @@ TEST(AgradFwdLbeta, Double_FvarFvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(digamma(6.0) - digamma(9.0), g[0]);
 }
 TEST(AgradFwdLbeta, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
-  using stan::math::fvar;
-  using stan::math::var;
   using boost::math::digamma;
+  using stan::math::fvar;
   using stan::math::lbeta;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 3.0;
@@ -221,10 +221,10 @@ TEST(AgradFwdLbeta, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
   EXPECT_FLOAT_EQ(-0.11751202, g[1]);
 }
 TEST(AgradFwdLbeta, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
-  using stan::math::fvar;
-  using stan::math::var;
   using boost::math::digamma;
+  using stan::math::fvar;
   using stan::math::lbeta;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 3.0;
@@ -248,10 +248,10 @@ TEST(AgradFwdLbeta, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
   EXPECT_FLOAT_EQ(0.18132296 - 0.11751201, g[1]);
 }
 TEST(AgradFwdLbeta, FvarFvarVar_Double_2ndDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using boost::math::digamma;
+  using stan::math::fvar;
   using stan::math::lbeta;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 3.0;
@@ -272,10 +272,10 @@ TEST(AgradFwdLbeta, FvarFvarVar_Double_2ndDeriv) {
   EXPECT_FLOAT_EQ(0.39493407 - 0.11751201, g[0]);
 }
 TEST(AgradFwdLbeta, Double_FvarFvarVar_2ndDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using boost::math::digamma;
+  using stan::math::fvar;
   using stan::math::lbeta;
+  using stan::math::var;
 
   double x(3.0);
 
@@ -296,10 +296,10 @@ TEST(AgradFwdLbeta, Double_FvarFvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(0.18132296 - 0.11751201, g[0]);
 }
 TEST(AgradFwdLbeta, FvarFvarVar_FvarFvarVar_3rdDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using boost::math::digamma;
+  using stan::math::fvar;
   using stan::math::lbeta;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 3.0;
@@ -318,10 +318,10 @@ TEST(AgradFwdLbeta, FvarFvarVar_FvarFvarVar_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.013793319, g[1]);
 }
 TEST(AgradFwdLbeta, FvarFvarVar_Double_3rdDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using boost::math::digamma;
+  using stan::math::fvar;
   using stan::math::lbeta;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 3.0;
@@ -338,10 +338,10 @@ TEST(AgradFwdLbeta, FvarFvarVar_Double_3rdDeriv) {
   EXPECT_FLOAT_EQ(-0.140320487123420796890184645287, g[0]);
 }
 TEST(AgradFwdLbeta, Double_FvarFvarVar_3rdDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using boost::math::digamma;
+  using stan::math::fvar;
   using stan::math::lbeta;
+  using stan::math::var;
 
   double x(3.0);
 

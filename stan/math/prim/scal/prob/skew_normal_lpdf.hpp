@@ -33,9 +33,9 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type skew_normal_lpdf(
       typename stan::partials_return_type<T_y, T_loc, T_scale, T_shape>::type
           T_partials_return;
 
-  using std::log;
   using stan::is_constant_struct;
   using std::exp;
+  using std::log;
 
   if (size_zero(y, mu, sigma, alpha))
     return 0.0;

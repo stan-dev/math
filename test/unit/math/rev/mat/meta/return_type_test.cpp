@@ -4,12 +4,12 @@
 #include <test/unit/util.hpp>
 #include <vector>
 
-using stan::return_type;
-using stan::math::var;
 using stan::math::matrix_d;
 using stan::math::matrix_v;
+using stan::math::var;
 using stan::math::vector_d;
 using stan::math::vector_v;
+using stan::return_type;
 using std::vector;
 
 TEST(MetaTraits, ReturnTypeVarMat) {

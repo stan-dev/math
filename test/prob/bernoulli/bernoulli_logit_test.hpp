@@ -1,9 +1,9 @@
 // Arguments: Ints, Doubles
 #include <stan/math/prim/scal.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradDistributionsBernoulliLogistic : public AgradDistributionTest {
  public:
@@ -83,8 +83,8 @@ class AgradDistributionsBernoulliLogistic : public AgradDistributionTest {
   typename stan::return_type<T_n, T_prob>::type log_prob_function(
       const T_n& n, const T_prob& theta, const T2&, const T3&, const T4&,
       const T5&) {
-    using std::log;
     using stan::math::log1m;
+    using std::log;
     T_prob ntheta = (2 * n - 1) * theta;
     const static double cutoff = 20.0;
     if (ntheta > cutoff)

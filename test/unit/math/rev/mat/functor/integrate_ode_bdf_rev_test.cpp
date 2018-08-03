@@ -1,7 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <boost/numeric/odeint.hpp>
-#include <test/unit/math/rev/mat/functor/util_cvodes.hpp>
+#include <test/unit/math/rev/mat/functor/util_cvodes_bdf.hpp>
 #include <test/unit/math/prim/arr/functor/harmonic_oscillator.hpp>
 #include <test/unit/math/prim/arr/functor/lorenz.hpp>
 #include <iostream>
@@ -13,8 +13,8 @@ template <typename F, typename T_y0, typename T_theta>
 void sho_value_test(F harm_osc, std::vector<double>& y0, double t0,
                     std::vector<double>& ts, std::vector<double>& theta,
                     std::vector<double>& x, std::vector<int>& x_int) {
-  using stan::math::var;
   using stan::math::promote_scalar;
+  using stan::math::var;
 
   std::vector<std::vector<var> > ode_res_vd = stan::math::integrate_ode_bdf(
       harm_osc, promote_scalar<T_y0>(y0), t0, ts,
@@ -88,24 +88,24 @@ void sho_error_test(F harm_osc, std::vector<double>& y0, double t0,
                     std::vector<double>& ts, std::vector<double>& theta,
                     std::vector<double>& x, std::vector<int>& x_int,
                     std::string error_msg) {
-  using stan::math::var;
   using stan::math::promote_scalar;
+  using stan::math::var;
 
   EXPECT_THROW_MSG(
       stan::math::integrate_ode_bdf(harm_osc, promote_scalar<T_y0>(y0), t0, ts,
                                     promote_scalar<T_theta>(theta), x, x_int),
-      std::runtime_error, error_msg);
+      std::invalid_argument, error_msg);
 }
 
 // TODO(carpenter): g++6 failure
 TEST(StanAgradRevOde_integrate_ode, harmonic_oscillator_finite_diff) {
   sho_finite_diff_test(0);
-  sho_finite_diff_test(1.0);
-  sho_finite_diff_test(-1.0);
+  sho_finite_diff_test(2.0);
+  sho_finite_diff_test(-2.0);
 
   sho_data_finite_diff_test(0);
-  sho_data_finite_diff_test(1.0);
-  sho_data_finite_diff_test(-1.0);
+  sho_data_finite_diff_test(2.5);
+  sho_data_finite_diff_test(-2.5);
 }
 
 TEST(StanAgradRevOde_integrate_ode, harmonic_oscillator_error) {
@@ -127,9 +127,9 @@ TEST(StanAgradRevOde_integrate_ode, harmonic_oscillator_error) {
   std::vector<double> x(3, 1);
   std::vector<int> x_int(2, 0);
 
+  // aligned error handling with non-stiff case
   std::string error_msg
-      = "ode_system: size of state vector y (2) and derivative vector dy_dt (3)"
-        " in the ODE functor do not match in size.";
+      = "cvodes_ode_data: dz_dt (3) and states (2) must match in size";
 
   sho_error_test<double, var>(harm_osc, y0, t0, ts, theta, x, x_int, error_msg);
   sho_error_test<var, double>(harm_osc, y0, t0, ts, theta, x, x_int, error_msg);

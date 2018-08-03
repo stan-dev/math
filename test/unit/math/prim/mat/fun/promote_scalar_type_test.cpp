@@ -4,9 +4,9 @@
 #include <vector>
 
 TEST(MathFunctionsPromoteScalar, TypeMatrix) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   expect_promote_type<Matrix<double, Dynamic, Dynamic>, double,
                       Matrix<int, Dynamic, Dynamic> >();
 
@@ -18,9 +18,9 @@ TEST(MathFunctionsPromoteScalar, TypeMatrix) {
 }
 
 TEST(MathFunctionsPromoteScalar, TypeVector) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   expect_promote_type<Matrix<double, Dynamic, 1>, double,
                       Matrix<int, Dynamic, 1> >();
 
@@ -32,9 +32,9 @@ TEST(MathFunctionsPromoteScalar, TypeVector) {
 }
 
 TEST(MathFunctionsPromoteScalar, TypeRowVector) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   expect_promote_type<Matrix<double, 1, Dynamic>, double,
                       Matrix<int, 1, Dynamic> >();
 

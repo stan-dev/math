@@ -4,9 +4,9 @@
 #include <vector>
 
 TEST(AgradMixMatrixAppendCol, fv) {
+  using Eigen::MatrixXd;
   using stan::math::append_col;
   using stan::math::matrix_fv;
-  using Eigen::MatrixXd;
 
   matrix_fv a(2, 2);
   MatrixXd ad(2, 2);
@@ -49,9 +49,9 @@ TEST(AgradMixMatrixAppendCol, fv) {
 }
 
 TEST(AgradMixRowVectorAppendCol, fv) {
+  using Eigen::RowVectorXd;
   using stan::math::append_col;
   using stan::math::row_vector_fv;
-  using Eigen::RowVectorXd;
 
   row_vector_fv a(4);
   RowVectorXd ad(4);
@@ -92,9 +92,9 @@ TEST(AgradMixRowVectorAppendCol, fv) {
 }
 
 TEST(AgradMixMatrixAppendCol, fv2) {
+  using Eigen::MatrixXd;
   using stan::math::append_col;
   using stan::math::matrix_fv;
-  using Eigen::MatrixXd;
 
   matrix_fv a(2, 2);
   MatrixXd ad(2, 2);
@@ -137,9 +137,9 @@ TEST(AgradMixMatrixAppendCol, fv2) {
 }
 
 TEST(AgradMixRowVectorAppendCol, fv2) {
+  using Eigen::RowVectorXd;
   using stan::math::append_col;
   using stan::math::row_vector_fv;
-  using Eigen::RowVectorXd;
 
   row_vector_fv a(4);
   RowVectorXd ad(4);
@@ -180,9 +180,9 @@ TEST(AgradMixRowVectorAppendCol, fv2) {
 }
 
 TEST(AgradMixMatrixAppendCol, ffv1) {
+  using Eigen::MatrixXd;
   using stan::math::append_col;
   using stan::math::matrix_ffv;
-  using Eigen::MatrixXd;
 
   matrix_ffv a(2, 2);
   MatrixXd ad(2, 2);
@@ -225,9 +225,9 @@ TEST(AgradMixMatrixAppendCol, ffv1) {
 }
 
 TEST(AgradMixRowVectorAppendCol, ffv1) {
+  using Eigen::RowVectorXd;
   using stan::math::append_col;
   using stan::math::row_vector_ffv;
-  using Eigen::RowVectorXd;
 
   row_vector_ffv a(4);
   RowVectorXd ad(4);
@@ -268,9 +268,9 @@ TEST(AgradMixRowVectorAppendCol, ffv1) {
 }
 
 TEST(AgradMixMatrixAppendCol, ffv2) {
+  using Eigen::MatrixXd;
   using stan::math::append_col;
   using stan::math::matrix_ffv;
-  using Eigen::MatrixXd;
 
   matrix_ffv a(2, 2);
   MatrixXd ad(2, 2);
@@ -317,9 +317,9 @@ TEST(AgradMixMatrixAppendCol, ffv2) {
 }
 
 TEST(AgradMixRowVectorAppendCol, ffv2) {
+  using Eigen::RowVectorXd;
   using stan::math::append_col;
   using stan::math::row_vector_ffv;
-  using Eigen::RowVectorXd;
 
   row_vector_ffv a(4);
   RowVectorXd ad(4);
@@ -364,9 +364,9 @@ TEST(AgradMixRowVectorAppendCol, ffv2) {
 }
 
 TEST(AgradMixMatrixAppendCol, ffv3) {
+  using Eigen::MatrixXd;
   using stan::math::append_col;
   using stan::math::matrix_ffv;
-  using Eigen::MatrixXd;
 
   matrix_ffv a(2, 2);
   MatrixXd ad(2, 2);
@@ -413,9 +413,9 @@ TEST(AgradMixMatrixAppendCol, ffv3) {
 }
 
 TEST(AgradMixRowVectorAppendCol, ffv3) {
+  using Eigen::RowVectorXd;
   using stan::math::append_col;
   using stan::math::row_vector_ffv;
-  using Eigen::RowVectorXd;
 
   row_vector_ffv a(4);
   RowVectorXd ad(4);
@@ -460,9 +460,9 @@ TEST(AgradMixRowVectorAppendCol, ffv3) {
 }
 
 TEST(AgradMixMatrixAppendCol, ffv4) {
+  using Eigen::MatrixXd;
   using stan::math::append_col;
   using stan::math::matrix_ffv;
-  using Eigen::MatrixXd;
 
   matrix_ffv a(2, 2);
   MatrixXd ad(2, 2);
@@ -509,9 +509,9 @@ TEST(AgradMixMatrixAppendCol, ffv4) {
 }
 
 TEST(AgradMixRowVectorAppendCol, ffv4) {
+  using Eigen::RowVectorXd;
   using stan::math::append_col;
   using stan::math::row_vector_ffv;
-  using Eigen::RowVectorXd;
 
   row_vector_ffv a(4);
   RowVectorXd ad(4);

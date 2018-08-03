@@ -9,8 +9,8 @@ using Eigen::Dynamic;
 using Eigen::Matrix;
 using std::vector;
 
-using stan::math::var;
 using stan::math::to_var;
+using stan::math::var;
 
 struct multi_normal_cholesky_fun {
   const int K_;
@@ -19,8 +19,8 @@ struct multi_normal_cholesky_fun {
 
   template <typename T>
   T operator()(const std::vector<T>& x) const {
-    using Eigen::Matrix;
     using Eigen::Dynamic;
+    using Eigen::Matrix;
     using stan::math::var;
     Matrix<T, Dynamic, 1> y(K_);
     Matrix<T, Dynamic, 1> mu(K_);

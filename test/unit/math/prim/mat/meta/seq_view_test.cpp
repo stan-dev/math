@@ -4,11 +4,11 @@
 #include <vector>
 
 using stan::math::matrix_d;
-using stan::math::vector_d;
 using stan::math::row_vector_d;
+using stan::math::vector_d;
 
-using std::vector;
 using stan::math::seq_view;
+using std::vector;
 
 TEST(matrixTest, seq_view_double_stdvector) {
   std::vector<double> x(2);

@@ -53,8 +53,8 @@ T F32(const T& a1, const T& a2, const T& a3, const T& b1, const T& b2,
   check_3F2_converges("F32", a1, a2, a3, b1, b2, z);
 
   using std::exp;
-  using std::log;
   using std::fabs;
+  using std::log;
 
   T t_acc = 1.0;
   T log_t = 0.0;

@@ -3,8 +3,8 @@
 
 TEST(AgradFwdMatrixDiagonal, matrix_fd) {
   using stan::math::diagonal;
-  using stan::math::matrix_fd;
   using stan::math::matrix_d;
+  using stan::math::matrix_fd;
   using stan::math::vector_fd;
 
   EXPECT_EQ(0, diagonal(matrix_fd()).size());
@@ -28,10 +28,10 @@ TEST(AgradFwdMatrixDiagonal, matrix_fd) {
 
 TEST(AgradFwdMatrixDiagonal, matrix_ffd) {
   using stan::math::diagonal;
-  using stan::math::matrix_ffd;
-  using stan::math::matrix_d;
-  using stan::math::vector_ffd;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffd;
+  using stan::math::vector_ffd;
 
   EXPECT_EQ(0, diagonal(matrix_ffd()).size());
   EXPECT_EQ(2, diagonal(matrix_ffd(2, 2)).size());

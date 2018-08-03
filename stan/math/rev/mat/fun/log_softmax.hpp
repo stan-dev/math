@@ -53,8 +53,8 @@ class log_softmax_elt_vari : public vari {
  */
 inline Eigen::Matrix<var, Eigen::Dynamic, 1> log_softmax(
     const Eigen::Matrix<var, Eigen::Dynamic, 1>& alpha) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
 
   check_nonzero_size("log_softmax", "alpha", alpha);
 

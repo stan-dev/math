@@ -1,0 +1,12 @@
+MPI_TEMPLATE_INSTANTIATION_CPP := $(shell find $(MATH)stan -type f -name 'mpi_*_inst.cpp') $(shell find $(MATH)stan -type f -name 'mpi_*_def.cpp')
+MPI_TEMPLATE_INSTANTIATION := $(MPI_TEMPLATE_INSTANTIATION_CPP:$(MATH)stan/%.cpp=$(MATH)bin/%.o)
+
+# linking in MPI definitions via a static library does not work
+#$(MATH)bin/libstanmath_mpi.a : $(MPI_TEMPLATE_INSTANTIATION)
+#	@mkdir -p $(dir $@)
+#	$(AR) -rs $(MATH)bin/libstanmath_mpi.a $(MPI_TEMPLATE_INSTANTIATION)
+
+$(MPI_TEMPLATE_INSTANTIATION) : $(MATH)bin/%.o : $(MATH)stan/%.cpp
+	@mkdir -p $(dir $@)
+	$(COMPILE.cc) -c -O$(O_STANC) $(OUTPUT_OPTION) -fPIC $(CXXFLAGS_MPI) $<
+

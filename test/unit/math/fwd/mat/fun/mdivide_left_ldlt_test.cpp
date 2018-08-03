@@ -168,11 +168,11 @@ TEST(AgradFwdMatrixMdivideLeftLDLT, matrix_d_vector_fd) {
 
 TEST(AgradFwdMatrixMdivideLeftLDLT, fd_exceptions) {
   using stan::math::matrix_d;
-  using stan::math::vector_d;
-  using stan::math::row_vector_d;
   using stan::math::matrix_fd;
-  using stan::math::vector_fd;
+  using stan::math::row_vector_d;
   using stan::math::row_vector_fd;
+  using stan::math::vector_d;
+  using stan::math::vector_fd;
 
   matrix_fd fv1_(3, 3), fv2_(4, 4);
   fv1_ << 1, 2, 3, 4, 5, 6, 7, 8, 9;
@@ -393,11 +393,11 @@ TEST(AgradFwdMatrixMdivideLeftLDLT, matrix_d_vector_ffd) {
 
 TEST(AgradFwdMatrixMdivideLeftLDLT, ffd_exceptions) {
   using stan::math::matrix_d;
-  using stan::math::vector_d;
-  using stan::math::row_vector_d;
   using stan::math::matrix_ffd;
-  using stan::math::vector_ffd;
+  using stan::math::row_vector_d;
   using stan::math::row_vector_ffd;
+  using stan::math::vector_d;
+  using stan::math::vector_ffd;
 
   matrix_ffd fv1_(3, 3), fv2_(4, 4);
   fv1_ << 1, 2, 3, 4, 5, 6, 7, 8, 9;

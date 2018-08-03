@@ -9,8 +9,8 @@ namespace math {
 
 inline double dot_self(const std::vector<double>& x) {
   double sum = 0.0;
-  for (size_t i = 0; i < x.size(); ++i)
-    sum += x[i] * x[i];
+  for (double i : x)
+    sum += i * i;
   return sum;
 }
 

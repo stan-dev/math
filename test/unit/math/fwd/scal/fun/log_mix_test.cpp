@@ -6,10 +6,10 @@
 
 void test_log_mix_fff(double theta, double lambda1, double lambda2,
                       double theta_d, double lambda1_d, double lambda2_d) {
-  using stan::math::fvar;
-  using stan::math::log_mix;
   using ::exp;
   using ::log;
+  using stan::math::fvar;
+  using stan::math::log_mix;
 
   fvar<double> theta_f(theta, theta_d);
   fvar<double> lambda1_f(lambda1, lambda1_d);
@@ -27,11 +27,11 @@ void test_log_mix_fff(double theta, double lambda1, double lambda2,
 }
 
 void test_log_mix_f_explicit(double theta, double lambda1, double x) {
+  using ::cos;
+  using ::sin;
   using stan::math::fvar;
   using stan::math::log_mix;
   using std::exp;
-  using ::cos;
-  using ::sin;
 
   fvar<double> x_f(x, 1);
   fvar<double> lambda2_f = sin(x_f);
@@ -48,9 +48,9 @@ void test_log_mix_f_explicit(double theta, double lambda1, double x) {
 
 void test_log_mix_ff_ex_lam_2(double theta, double lambda1, double lambda2,
                               double theta_d, double lambda1_d) {
+  using ::exp;
   using stan::math::fvar;
   using stan::math::log_mix;
-  using ::exp;
 
   fvar<double> theta_f(theta, theta_d);
   fvar<double> lambda1_f(lambda1, lambda1_d);

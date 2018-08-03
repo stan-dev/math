@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixRow, fd_v) {
-  using stan::math::row;
   using stan::math::matrix_fd;
+  using stan::math::row;
   using stan::math::row_vector_fd;
 
   matrix_fd y(2, 3);
@@ -27,8 +27,8 @@ TEST(AgradFwdMatrixRow, fd_v) {
   EXPECT_EQ(6.0, w[2].val_);
 }
 TEST(AgradFwdMatrixRow, fd_v_exc0) {
-  using stan::math::row;
   using stan::math::matrix_fd;
+  using stan::math::row;
 
   matrix_fd y(2, 3);
   y << 1, 2, 3, 4, 5, 6;
@@ -42,8 +42,8 @@ TEST(AgradFwdMatrixRow, fd_v_exc0) {
   EXPECT_THROW(row(y, 7), std::out_of_range);
 }
 TEST(AgradFwdMatrixRow, fd_v_excHigh) {
-  using stan::math::row;
   using stan::math::matrix_fd;
+  using stan::math::row;
 
   matrix_fd y(2, 3);
   y << 1, 2, 3, 4, 5, 6;
@@ -57,8 +57,8 @@ TEST(AgradFwdMatrixRow, fd_v_excHigh) {
   EXPECT_THROW(row(y, 5), std::out_of_range);
 }
 TEST(AgradFwdMatrixRow, ffd_v) {
-  using stan::math::row;
   using stan::math::matrix_ffd;
+  using stan::math::row;
   using stan::math::row_vector_ffd;
 
   matrix_ffd y(2, 3);
@@ -82,8 +82,8 @@ TEST(AgradFwdMatrixRow, ffd_v) {
   EXPECT_EQ(6.0, w[2].val_.val());
 }
 TEST(AgradFwdMatrixRow, ffd_v_exc0) {
-  using stan::math::row;
   using stan::math::matrix_ffd;
+  using stan::math::row;
 
   matrix_ffd y(2, 3);
   y << 1, 2, 3, 4, 5, 6;
@@ -97,8 +97,8 @@ TEST(AgradFwdMatrixRow, ffd_v_exc0) {
   EXPECT_THROW(row(y, 7), std::out_of_range);
 }
 TEST(AgradFwdMatrixRow, ffd_v_excHigh) {
-  using stan::math::row;
   using stan::math::matrix_ffd;
+  using stan::math::row;
 
   matrix_ffd y(2, 3);
   y << 1, 2, 3, 4, 5, 6;

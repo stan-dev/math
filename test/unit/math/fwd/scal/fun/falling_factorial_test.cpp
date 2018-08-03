@@ -3,9 +3,9 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdFallingFactorial, Fvar) {
-  using stan::math::fvar;
-  using stan::math::falling_factorial;
   using stan::math::digamma;
+  using stan::math::falling_factorial;
+  using stan::math::fvar;
 
   fvar<double> a(4.0, 1.0);
   fvar<double> x = falling_factorial(a, 2);
@@ -26,8 +26,8 @@ TEST(AgradFwdFallingFactorial, Fvar) {
 }
 
 TEST(AgradFwdFallingFactorial, FvarFvarDouble) {
-  using stan::math::fvar;
   using stan::math::falling_factorial;
+  using stan::math::fvar;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 4.0;

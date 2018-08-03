@@ -31,8 +31,8 @@ namespace math {
  * this function reduces to <code>identity_free(y)</code>.
  *
  * @tparam T type of scalar
- * @tparam TL type of lower bound
- * @tparam TU type of upper bound
+ * @tparam L type of lower bound
+ * @tparam U type of upper bound
  * @param y constrained value
  * @param lb lower bound
  * @param ub upper bound
@@ -42,10 +42,10 @@ namespace math {
  *   the upper bound, y is less than the lower bound, or y is
  *   greater than the upper bound
  */
-template <typename T, typename TL, typename TU>
-inline typename boost::math::tools::promote_args<T, TL, TU>::type lub_free(
-    const T& y, const TL& lb, const TU& ub) {
-  check_bounded<T, TL, TU>("lub_free", "Bounded variable", y, lb, ub);
+template <typename T, typename L, typename U>
+inline typename boost::math::tools::promote_args<T, L, U>::type lub_free(
+    const T& y, const L& lb, const U& ub) {
+  check_bounded<T, L, U>("lub_free", "Bounded variable", y, lb, ub);
   if (lb == -std::numeric_limits<double>::infinity())
     return ub_free(y, ub);
   if (ub == std::numeric_limits<double>::infinity())

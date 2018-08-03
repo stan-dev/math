@@ -4,8 +4,8 @@
 #include <limits>
 #include <vector>
 
-using stan::math::var;
 using stan::math::fvar;
+using stan::math::var;
 
 TEST(AgradMixMatrixDistance, vector_fv_vector_fv1) {
   stan::math::vector_fv v1, v2;

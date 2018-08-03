@@ -28,13 +28,13 @@ TEST(AgradRevMathMatrix, accumulateCollection) {
   // var, vector<var>, Matrix<var, ...>,
   // and recursions of vector<T>
 
-  using stan::math::accumulator;
-  using std::vector;
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
+  using stan::math::accumulator;
   using stan::math::var;
+  using std::vector;
 
   accumulator<var> a;
 

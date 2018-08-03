@@ -4,9 +4,9 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdLogRisingFactorial, Fvar) {
+  using boost::math::digamma;
   using stan::math::fvar;
   using stan::math::log_rising_factorial;
-  using boost::math::digamma;
 
   fvar<double> a(4.0, 1.0);
   fvar<double> x = log_rising_factorial(a, 1.0);
@@ -42,9 +42,9 @@ TEST(AgradFwdLogRisingFactorial, Fvar) {
 }
 
 TEST(AgradFwdLogRisingFactorial, FvarFvarDouble) {
+  using boost::math::digamma;
   using stan::math::fvar;
   using stan::math::log_rising_factorial;
-  using boost::math::digamma;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 4.0;

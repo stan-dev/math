@@ -16,18 +16,19 @@ TEST(AgradRevErrorHandlingScalar, CheckPositive) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckPositiveVarCheckUnivariate) {
-  using stan::math::var;
   using stan::math::check_positive;
+  using stan::math::var;
 
   const char* function = "check_positive";
   var a(5.0);
 
-  size_t stack_size = stan::math::ChainableStack::var_stack_.size();
+  size_t stack_size = stan::math::ChainableStack::instance().var_stack_.size();
 
   EXPECT_EQ(1U, stack_size);
   EXPECT_NO_THROW(check_positive(function, "a", a));
 
-  size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
+  size_t stack_size_after_call
+      = stan::math::ChainableStack::instance().var_stack_.size();
   EXPECT_EQ(1U, stack_size_after_call);
 
   stan::math::recover_memory();

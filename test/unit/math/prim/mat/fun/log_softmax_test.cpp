@@ -2,11 +2,11 @@
 #include <gtest/gtest.h>
 
 void test_log_softmax(const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta) {
-  using std::log;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::log_softmax;
   using stan::math::softmax;
+  using std::log;
 
   int size = theta.size();
 
@@ -24,10 +24,10 @@ void test_log_softmax(const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta) {
 }
 
 TEST(MathMatrix, softmax) {
-  using stan::math::softmax;
-  using stan::math::log_softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::log_softmax;
+  using stan::math::softmax;
 
   // stan::math::vector_d x(1);
   // x << 0.0;

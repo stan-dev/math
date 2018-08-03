@@ -2,9 +2,9 @@
 #include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/binomial.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradCdfBetaBinomial : public AgradCdfTest {
  public:
@@ -53,9 +53,9 @@ class AgradCdfBetaBinomial : public AgradCdfTest {
   typename stan::return_type<T_size1, T_size2>::type cdf_function(
       const T_n& n, const T_N& N, const T_size1& alpha, const T_size2& beta,
       const T4&, const T5&) {
-    using std::exp;
-    using stan::math::lbeta;
     using boost::math::binomial_coefficient;
+    using stan::math::lbeta;
+    using std::exp;
 
     typename stan::return_type<T_size1, T_size2>::type cdf(0);
 

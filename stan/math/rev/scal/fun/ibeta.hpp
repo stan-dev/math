@@ -40,10 +40,10 @@ class ibeta_vvv_vari : public op_vvv_vari {
     double b = bvi_->val_;
     double c = cvi_->val_;
 
-    using std::sin;
-    using std::pow;
-    using std::log;
     using boost::math::constants::pi;
+    using std::log;
+    using std::pow;
+    using std::sin;
     avi_->adj_ += adj_ * (log(c) - digamma(a) + digamma(a + b)) * val_
                   - tgamma(a) * tgamma(a + b) / tgamma(b) * pow(c, a)
                         / tgamma(1 + a) / tgamma(1 + a)
@@ -66,10 +66,10 @@ class ibeta_vvd_vari : public op_vvd_vari {
     double b = bvi_->val_;
     double c = cd_;
 
-    using std::sin;
-    using std::pow;
-    using std::log;
     using boost::math::constants::pi;
+    using std::log;
+    using std::pow;
+    using std::sin;
     avi_->adj_ += adj_ * (log(c) - digamma(a) + digamma(a + b)) * val_
                   - tgamma(a) * tgamma(a + b) / tgamma(b) * pow(c, a)
                         / tgamma(1 + a) / tgamma(1 + a)
@@ -91,13 +91,13 @@ class ibeta_vdv_vari : public op_vdv_vari {
     double b = bd_;
     double c = cvi_->val_;
 
-    using std::sin;
-    using std::pow;
-    using std::log;
     using boost::math::constants::pi;
-    using boost::math::tgamma;
     using boost::math::digamma;
     using boost::math::ibeta;
+    using boost::math::tgamma;
+    using std::log;
+    using std::pow;
+    using std::sin;
     avi_->adj_ += adj_ * (log(c) - digamma(a) + digamma(a + b)) * val_
                   - tgamma(a) * tgamma(a + b) / tgamma(b) * pow(c, a)
                         / tgamma(1 + a) / tgamma(1 + a)
@@ -114,13 +114,13 @@ class ibeta_vdd_vari : public op_vdd_vari {
     double b = bd_;
     double c = cd_;
 
-    using std::sin;
-    using std::pow;
-    using std::log;
     using boost::math::constants::pi;
-    using boost::math::tgamma;
     using boost::math::digamma;
     using boost::math::ibeta;
+    using boost::math::tgamma;
+    using std::log;
+    using std::pow;
+    using std::sin;
     avi_->adj_ += adj_ * (log(c) - digamma(a) + digamma(a + b)) * val_
                   - tgamma(a) * tgamma(a + b) / tgamma(b) * pow(c, a)
                         / tgamma(1 + a) / tgamma(1 + a)
@@ -136,13 +136,13 @@ class ibeta_dvv_vari : public op_dvv_vari {
     double b = bvi_->val_;
     double c = cvi_->val_;
 
-    using std::sin;
-    using std::pow;
-    using std::log;
     using boost::math::constants::pi;
-    using boost::math::tgamma;
     using boost::math::digamma;
     using boost::math::ibeta;
+    using boost::math::tgamma;
+    using std::log;
+    using std::pow;
+    using std::sin;
     bvi_->adj_ += adj_
                   * (tgamma(b) * tgamma(a + b) / tgamma(a) * pow(1 - c, b)
                          * ibeta_hypergeometric_helper(b, 1 - a, 1 - c)
@@ -161,13 +161,13 @@ class ibeta_dvd_vari : public op_dvd_vari {
     double b = bvi_->val_;
     double c = cd_;
 
-    using std::sin;
-    using std::pow;
-    using std::log;
     using boost::math::constants::pi;
-    using boost::math::tgamma;
     using boost::math::digamma;
     using boost::math::ibeta;
+    using boost::math::tgamma;
+    using std::log;
+    using std::pow;
+    using std::sin;
     bvi_->adj_ += adj_
                   * (tgamma(b) * tgamma(a + b) / tgamma(a) * pow(1 - c, b)
                          * ibeta_hypergeometric_helper(b, 1 - a, 1 - c)

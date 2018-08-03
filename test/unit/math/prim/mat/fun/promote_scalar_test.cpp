@@ -4,8 +4,8 @@
 #include <vector>
 
 TEST(MathMatrixPromoteScalar, MatrixMismatch) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::promote_scalar;
 
   Matrix<int, Dynamic, Dynamic> x(2, 3);
@@ -21,8 +21,8 @@ TEST(MathMatrixPromoteScalar, MatrixMismatch) {
   EXPECT_FLOAT_EQ(6.0, y(1, 2));
 }
 TEST(MathMatrixPromoteScalar, MatrixMatch) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::promote_scalar;
 
   Matrix<double, Dynamic, Dynamic> x(2, 3);
@@ -38,8 +38,8 @@ TEST(MathMatrixPromoteScalar, MatrixMatch) {
   EXPECT_FLOAT_EQ(6.6, y(1, 2));
 }
 TEST(MathMatrixPromoteScalar, VectorMatrixMismatch) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::promote_scalar;
   using std::vector;
 
@@ -69,8 +69,8 @@ TEST(MathMatrixPromoteScalar, VectorMatrixMismatch) {
 }
 
 TEST(MathMatrixPromoteScalar, ColVectorMismatch) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::promote_scalar;
 
   Matrix<int, Dynamic, 1> x(3);
@@ -83,8 +83,8 @@ TEST(MathMatrixPromoteScalar, ColVectorMismatch) {
   EXPECT_FLOAT_EQ(3.0, y(2));
 }
 TEST(MathMatrixPromoteScalar, ColVectorMatch) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::promote_scalar;
 
   Matrix<double, Dynamic, 1> x(3);
@@ -97,8 +97,8 @@ TEST(MathMatrixPromoteScalar, ColVectorMatch) {
   EXPECT_FLOAT_EQ(3.3, y(2));
 }
 TEST(MathMatrixPromoteScalar, VectorColVectorMismatch) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::promote_scalar;
   using std::vector;
 
@@ -122,8 +122,8 @@ TEST(MathMatrixPromoteScalar, VectorColVectorMismatch) {
 }
 
 TEST(MathMatrixPromoteScalar, RowVectorMismatch) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::promote_scalar;
 
   Matrix<int, 1, Dynamic> x(3);
@@ -136,8 +136,8 @@ TEST(MathMatrixPromoteScalar, RowVectorMismatch) {
   EXPECT_FLOAT_EQ(3.0, y(2));
 }
 TEST(MathMatrixPromoteScalar, RowVectorMatch) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::promote_scalar;
 
   Matrix<double, 1, Dynamic> x(3);
@@ -150,8 +150,8 @@ TEST(MathMatrixPromoteScalar, RowVectorMatch) {
   EXPECT_FLOAT_EQ(3.3, y(2));
 }
 TEST(MathMatrixPromoteScalar, VectorRowVectorMismatch) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::promote_scalar;
   using std::vector;
 

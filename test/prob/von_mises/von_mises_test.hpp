@@ -1,9 +1,9 @@
 // Arguments: Doubles, Doubles, Doubles
 #include <stan/math/prim/scal.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradDistributionVonMises : public AgradDistributionTest {
  public:
@@ -80,8 +80,8 @@ class AgradDistributionVonMises : public AgradDistributionTest {
   typename stan::return_type<T_y, T_loc, T_scale>::type log_prob_function(
       const T_y& y, const T_loc& mu, const T_scale& kappa, const T3&, const T4&,
       const T5&) {
-    using stan::math::pi;
     using stan::math::modified_bessel_first_kind;
+    using stan::math::pi;
     using std::log;
 
     return -log(2.0 * stan::math::pi())

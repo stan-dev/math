@@ -5,11 +5,11 @@
 using stan::math::fvar;
 
 TEST(AgradFwdMatrixDims, matrix_fd) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::dims;
   using stan::math::matrix_fd;
+  using std::vector;
 
   fvar<double> x1;
   vector<int> dims1 = dims(x1);
@@ -60,11 +60,11 @@ TEST(AgradFwdMatrixDims, matrix_fd) {
 }
 
 TEST(AgradFwdMatrixDims, matrix_ffd) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::dims;
   using stan::math::matrix_ffd;
+  using std::vector;
 
   fvar<fvar<double> > x1;
   vector<int> dims1 = dims(x1);

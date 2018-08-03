@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixRows, fd_vector) {
-  using stan::math::vector_fd;
   using stan::math::row_vector_fd;
   using stan::math::rows;
+  using stan::math::vector_fd;
 
   vector_fd v(5);
   v << 0, 1, 2, 3, 4;
@@ -36,9 +36,9 @@ TEST(AgradFwdMatrixRows, fd_matrix) {
   EXPECT_EQ(0U, rows(m));
 }
 TEST(AgradFwdMatrixRows, ffd_vector) {
-  using stan::math::vector_ffd;
   using stan::math::row_vector_ffd;
   using stan::math::rows;
+  using stan::math::vector_ffd;
 
   vector_ffd v(5);
   v << 0, 1, 2, 3, 4;

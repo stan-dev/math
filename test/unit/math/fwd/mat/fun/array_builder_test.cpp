@@ -5,8 +5,8 @@
 using stan::math::fvar;
 
 TEST(AgradFwdMatrixArrayBuilder, fvar_double) {
-  using std::vector;
   using stan::math::array_builder;
+  using std::vector;
 
   EXPECT_EQ(0U, array_builder<fvar<double> >().array().size());
 
@@ -58,8 +58,8 @@ TEST(AgradFwdMatrixArrayBuilder, fvar_double) {
 }
 
 TEST(AgradFwdMatrixArrayBuilder, fvar_fvar_double) {
-  using std::vector;
   using stan::math::array_builder;
+  using std::vector;
 
   EXPECT_EQ(0U, array_builder<fvar<fvar<double> > >().array().size());
 

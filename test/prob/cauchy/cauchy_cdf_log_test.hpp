@@ -1,9 +1,9 @@
 // Arguments: Doubles, Doubles, Doubles
 #include <stan/math/prim/scal.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradCdfLogCauchy : public AgradCdfLogTest {
  public:
@@ -71,8 +71,8 @@ class AgradCdfLogCauchy : public AgradCdfLogTest {
   typename stan::return_type<T_y, T_loc, T_scale>::type cdf_log_function(
       const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
       const T5&) {
-    using std::atan;
     using stan::math::pi;
+    using std::atan;
     using std::log;
     return log(atan((y - mu) / sigma) / pi() + 0.5);
   }

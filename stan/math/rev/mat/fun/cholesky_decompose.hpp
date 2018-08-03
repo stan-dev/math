@@ -44,9 +44,9 @@ class cholesky_block : public vari {
                  const Eigen::Matrix<double, -1, -1>& L_A)
       : vari(0.0),
         M_(A.rows()),
-        variRefA_(ChainableStack::memalloc_.alloc_array<vari*>(
+        variRefA_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
             A.rows() * (A.rows() + 1) / 2)),
-        variRefL_(ChainableStack::memalloc_.alloc_array<vari*>(
+        variRefL_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
             A.rows() * (A.rows() + 1) / 2)) {
     size_t pos = 0;
     block_size_ = std::max((M_ / 8 / 16) * 16, 8);
@@ -68,8 +68,8 @@ class cholesky_block : public vari {
    */
   inline void symbolic_rev(Block_& L, Block_& Lbar) {
     using Eigen::Lower;
-    using Eigen::Upper;
     using Eigen::StrictlyUpper;
+    using Eigen::Upper;
     L.transposeInPlace();
     Lbar = (L * Lbar.triangularView<Lower>()).eval();
     Lbar.triangularView<StrictlyUpper>()
@@ -85,11 +85,11 @@ class cholesky_block : public vari {
    *
    */
   virtual void chain() {
-    using Eigen::MatrixXd;
-    using Eigen::Lower;
     using Eigen::Block;
-    using Eigen::Upper;
+    using Eigen::Lower;
+    using Eigen::MatrixXd;
     using Eigen::StrictlyUpper;
+    using Eigen::Upper;
     MatrixXd Lbar(M_, M_);
     MatrixXd L(M_, M_);
 
@@ -159,9 +159,9 @@ class cholesky_scalar : public vari {
                   const Eigen::Matrix<double, -1, -1>& L_A)
       : vari(0.0),
         M_(A.rows()),
-        variRefA_(ChainableStack::memalloc_.alloc_array<vari*>(
+        variRefA_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
             A.rows() * (A.rows() + 1) / 2)),
-        variRefL_(ChainableStack::memalloc_.alloc_array<vari*>(
+        variRefL_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
             A.rows() * (A.rows() + 1) / 2)) {
     size_t accum = 0;
     size_t accum_i = accum;

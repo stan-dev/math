@@ -4,8 +4,8 @@
 
 TEST(AgradFwdLog, Fvar) {
   using stan::math::fvar;
-  using std::log;
   using std::isnan;
+  using std::log;
 
   fvar<double> x(0.5, 1.0);
 

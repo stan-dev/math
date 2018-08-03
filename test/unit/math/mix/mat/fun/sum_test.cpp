@@ -73,9 +73,9 @@ TEST(AgradMixMatrixSum, fv_vector_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixSum, fv_rowvector_1stDeriv) {
-  using stan::math::sum;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
+  using stan::math::sum;
 
   row_vector_d d(6);
   row_vector_fv v(6);
@@ -113,9 +113,9 @@ TEST(AgradMixMatrixSum, fv_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, sum(v).d_.val());
 }
 TEST(AgradMixMatrixSum, fv_rowvector_2ndDeriv) {
-  using stan::math::sum;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
+  using stan::math::sum;
 
   row_vector_d d(6);
   row_vector_fv v(6);
@@ -141,9 +141,9 @@ TEST(AgradMixMatrixSum, fv_rowvector_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixSum, fv_matrix_1stDeriv) {
-  using stan::math::sum;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
+  using stan::math::sum;
 
   matrix_d d(2, 3);
   matrix_fv v(2, 3);
@@ -182,9 +182,9 @@ TEST(AgradMixMatrixSum, fv_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, sum(v).d_.val());
 }
 TEST(AgradMixMatrixSum, fv_matrix_2ndDeriv) {
-  using stan::math::sum;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
+  using stan::math::sum;
 
   matrix_d d(2, 3);
   matrix_fv v(2, 3);
@@ -345,9 +345,9 @@ TEST(AgradMixMatrixSum, ffv_vector_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixSum, ffv_rowvector_1stDeriv) {
-  using stan::math::sum;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::sum;
 
   row_vector_d d(6);
   row_vector_ffv v(6);
@@ -386,9 +386,9 @@ TEST(AgradMixMatrixSum, ffv_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, sum(v).d_.val().val());
 }
 TEST(AgradMixMatrixSum, ffv_rowvector_2ndDeriv_1) {
-  using stan::math::sum;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::sum;
 
   row_vector_d d(6);
   row_vector_ffv v(6);
@@ -415,9 +415,9 @@ TEST(AgradMixMatrixSum, ffv_rowvector_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixSum, ffv_rowvector_2ndDeriv_2) {
-  using stan::math::sum;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::sum;
 
   row_vector_d d(6);
   row_vector_ffv v(6);
@@ -444,9 +444,9 @@ TEST(AgradMixMatrixSum, ffv_rowvector_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixSum, ffv_rowvector_3rdDeriv) {
-  using stan::math::sum;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::sum;
 
   row_vector_d d(6);
   row_vector_ffv v(6);
@@ -479,9 +479,9 @@ TEST(AgradMixMatrixSum, ffv_rowvector_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixSum, ffv_matrix_1stDeriv) {
-  using stan::math::sum;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::sum;
 
   matrix_d d(2, 3);
   matrix_ffv v(2, 3);
@@ -520,9 +520,9 @@ TEST(AgradMixMatrixSum, ffv_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, sum(v).d_.val().val());
 }
 TEST(AgradMixMatrixSum, ffv_matrix_2ndDeriv_1) {
-  using stan::math::sum;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::sum;
 
   matrix_d d(2, 3);
   matrix_ffv v(2, 3);
@@ -550,9 +550,9 @@ TEST(AgradMixMatrixSum, ffv_matrix_2ndDeriv_1) {
 }
 
 TEST(AgradMixMatrixSum, ffv_matrix_2ndDeriv_2) {
-  using stan::math::sum;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::sum;
 
   matrix_d d(2, 3);
   matrix_ffv v(2, 3);
@@ -580,9 +580,9 @@ TEST(AgradMixMatrixSum, ffv_matrix_2ndDeriv_2) {
 }
 
 TEST(AgradMixMatrixSum, ffv_matrix_3rdDeriv) {
-  using stan::math::sum;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::sum;
 
   matrix_d d(2, 3);
   matrix_ffv v(2, 3);

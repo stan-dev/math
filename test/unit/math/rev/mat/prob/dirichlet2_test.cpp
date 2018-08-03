@@ -14,8 +14,8 @@ void expect_propto(T_prob theta, T_prior_sample_size alpha, T_prob theta2,
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
-using stan::math::var;
 using stan::math::to_var;
+using stan::math::var;
 
 class AgradDistributionsDirichlet : public ::testing::Test {
  protected:

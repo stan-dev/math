@@ -35,11 +35,11 @@ TEST(probdistributionsWishartRng, symmetry) {
 }
 
 TEST(ProbDistributionsWishart, marginalTwoChiSquareGoodnessFitTest) {
-  using stan::math::determinant;
-  using stan::math::wishart_rng;
+  using Eigen::MatrixXd;
   using boost::math::chi_squared;
   using boost::math::digamma;
-  using Eigen::MatrixXd;
+  using stan::math::determinant;
+  using stan::math::wishart_rng;
   using std::log;
 
   boost::random::mt19937 rng;
@@ -55,9 +55,9 @@ TEST(ProbDistributionsWishart, marginalTwoChiSquareGoodnessFitTest) {
   MatrixXd a(sigma.rows(), sigma.rows());
   for (int count = 0; count < N; ++count) {
     a = wishart_rng(5.0, sigma, rng);
-    avg += log(determinant(a)) / N;
-    count++;
+    avg += log(determinant(a));
   }
+  avg /= N;
   double chi = (expect - avg) * (expect - avg) / expect;
   chi_squared mydist(1);
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
@@ -69,9 +69,9 @@ TEST(ProbDistributionsWishart, SpecialRNGTest) {
   // must be chi-square distributed with df = k
   // which has mean = k and variance = 2k
 
-  using stan::math::wishart_rng;
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
+  using stan::math::wishart_rng;
 
   boost::random::mt19937 rng(1234);
 

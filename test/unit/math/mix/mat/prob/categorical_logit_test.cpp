@@ -9,8 +9,8 @@ using stan::math::log_softmax;
 using stan::math::log_softmax;
 
 TEST(ProbDistributionsCategoricalLogit, fvar_var) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
   Matrix<fvar<var>, Dynamic, 1> theta(3, 1);
   theta << -1, 2, -10;
   for (int i = 0; i < 3; i++)
@@ -31,8 +31,8 @@ TEST(ProbDistributionsCategoricalLogit, fvar_var) {
 }
 
 TEST(ProbDistributionsCategoricalLogit, fvar_var_vectorized) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
   Matrix<fvar<var>, Dynamic, 1> theta(3);
   theta << -1, 2, -10;
   for (int i = 0; i < 3; i++)
@@ -57,8 +57,8 @@ TEST(ProbDistributionsCategoricalLogit, fvar_var_vectorized) {
 }
 
 TEST(ProbDistributionsCategoricalLogit, fvar_fvar_var) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
   Matrix<fvar<fvar<var> >, Dynamic, 1> theta(3, 1);
   theta << -1, 2, -10;
   for (int i = 0; i < 3; i++)
@@ -79,8 +79,8 @@ TEST(ProbDistributionsCategoricalLogit, fvar_fvar_var) {
 }
 
 TEST(ProbDistributionsCategoricalLogit, fvar_fvar_var_vectorized) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
   Matrix<fvar<fvar<var> >, Dynamic, 1> theta(3);
   theta << -1, 2, -10;
   for (int i = 0; i < 3; i++)

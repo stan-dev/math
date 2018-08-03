@@ -33,10 +33,10 @@ TEST(AgradRevMatrix, squared_distance_vector_vector_exception) {
   EXPECT_THROW(stan::math::squared_distance(v1, v2), std::invalid_argument);
 }
 TEST(AgradRevMatrix, squared_distance_rowvector_vector) {
-  using stan::math::vector_d;
-  using stan::math::vector_v;
   using stan::math::row_vector_d;
   using stan::math::row_vector_v;
+  using stan::math::vector_d;
+  using stan::math::vector_v;
 
   row_vector_d d1(3);
   row_vector_v v1(3);
@@ -53,10 +53,10 @@ TEST(AgradRevMatrix, squared_distance_rowvector_vector) {
   EXPECT_FLOAT_EQ(50, stan::math::squared_distance(v1, v2).val());
 }
 TEST(AgradRevMatrix, squared_distance_rowvector_vector_exception) {
-  using stan::math::vector_d;
-  using stan::math::vector_v;
   using stan::math::row_vector_d;
   using stan::math::row_vector_v;
+  using stan::math::vector_d;
+  using stan::math::vector_v;
 
   row_vector_d d1(3);
   row_vector_v v1(3);
@@ -68,10 +68,10 @@ TEST(AgradRevMatrix, squared_distance_rowvector_vector_exception) {
   EXPECT_THROW(stan::math::squared_distance(v1, v2), std::invalid_argument);
 }
 TEST(AgradRevMatrix, squared_distance_vector_rowvector) {
-  using stan::math::vector_d;
-  using stan::math::vector_v;
   using stan::math::row_vector_d;
   using stan::math::row_vector_v;
+  using stan::math::vector_d;
+  using stan::math::vector_v;
 
   vector_d d1(3);
   vector_v v1(3);
@@ -88,10 +88,10 @@ TEST(AgradRevMatrix, squared_distance_vector_rowvector) {
   EXPECT_FLOAT_EQ(50, stan::math::squared_distance(v1, v2).val());
 }
 TEST(AgradRevMatrix, squared_distance_vector_rowvector_exception) {
-  using stan::math::vector_d;
-  using stan::math::vector_v;
   using stan::math::row_vector_d;
   using stan::math::row_vector_v;
+  using stan::math::vector_d;
+  using stan::math::vector_v;
 
   vector_d d1(3);
   vector_v v1(3);

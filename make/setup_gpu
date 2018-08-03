@@ -1,0 +1,15 @@
+##
+# If STAN_OPENCL is defined
+##
+# Adds the following to CXXFLAGS
+# link to OpenCL
+# Defines:
+#  STAN_OPENCL
+# OPENCL_DEVICE_ID - The ID of the GPU (default: 0)
+# OPENCL_PLATFORM_ID The ID of the OpenCL platform (default: 0)
+# Both IDs can be found through installing and calling clinfo
+##
+ifdef STAN_OPENCL
+  CXXFLAGS += -isystem $(OPENCL) -DSTAN_OPENCL -DOPENCL_DEVICE_ID=$(OPENCL_DEVICE_ID) -DOPENCL_PLATFORM_ID=$(OPENCL_PLATFORM_ID)
+  LDFLAGS += $(LDFLAGS_OPENCL)
+endif

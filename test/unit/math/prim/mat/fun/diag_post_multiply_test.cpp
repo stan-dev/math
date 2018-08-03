@@ -2,8 +2,8 @@
 #include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
 #include <gtest/gtest.h>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 using stan::math::diag_post_multiply;
 
 TEST(MathMatrix, diagPostMultiply) {

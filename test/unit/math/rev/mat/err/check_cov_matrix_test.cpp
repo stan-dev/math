@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 
 TEST(AgradRevErrorHandlingMatrix, CheckCovMatrix) {
-  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::var;
 
   using stan::math::check_cov_matrix;
 

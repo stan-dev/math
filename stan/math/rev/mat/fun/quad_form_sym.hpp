@@ -17,32 +17,33 @@
 namespace stan {
 namespace math {
 
-template <typename TA, int RA, int CA, typename TB, int RB, int CB>
-inline typename boost::enable_if_c<boost::is_same<TA, var>::value
-                                       || boost::is_same<TB, var>::value,
-                                   Eigen::Matrix<var, CB, CB> >::type
-quad_form_sym(const Eigen::Matrix<TA, RA, CA>& A,
-              const Eigen::Matrix<TB, RB, CB>& B) {
+template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
+inline typename boost::enable_if_c<boost::is_same<Ta, var>::value
+                                       || boost::is_same<Tb, var>::value,
+                                   Eigen::Matrix<var, Cb, Cb> >::type
+quad_form_sym(const Eigen::Matrix<Ta, Ra, Ca>& A,
+              const Eigen::Matrix<Tb, Rb, Cb>& B) {
   check_square("quad_form", "A", A);
   check_symmetric("quad_form_sym", "A", A);
   check_multiplicable("quad_form_sym", "A", A, "B", B);
 
-  quad_form_vari<TA, RA, CA, TB, RB, CB>* baseVari
-      = new quad_form_vari<TA, RA, CA, TB, RB, CB>(A, B, true);
+  quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>* baseVari
+      = new quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>(A, B, true);
 
   return baseVari->impl_->C_;
 }
-template <typename TA, int RA, int CA, typename TB, int RB>
+
+template <typename Ta, int Ra, int Ca, typename Tb, int Rb>
 inline typename boost::enable_if_c<
-    boost::is_same<TA, var>::value || boost::is_same<TB, var>::value, var>::type
-quad_form_sym(const Eigen::Matrix<TA, RA, CA>& A,
-              const Eigen::Matrix<TB, RB, 1>& B) {
+    boost::is_same<Ta, var>::value || boost::is_same<Tb, var>::value, var>::type
+quad_form_sym(const Eigen::Matrix<Ta, Ra, Ca>& A,
+              const Eigen::Matrix<Tb, Rb, 1>& B) {
   check_square("quad_form", "A", A);
   check_symmetric("quad_form_sym", "A", A);
   check_multiplicable("quad_form_sym", "A", A, "B", B);
 
-  quad_form_vari<TA, RA, CA, TB, RB, 1>* baseVari
-      = new quad_form_vari<TA, RA, CA, TB, RB, 1>(A, B, true);
+  quad_form_vari<Ta, Ra, Ca, Tb, Rb, 1>* baseVari
+      = new quad_form_vari<Ta, Ra, Ca, Tb, Rb, 1>(A, B, true);
 
   return baseVari->impl_->C_(0, 0);
 }

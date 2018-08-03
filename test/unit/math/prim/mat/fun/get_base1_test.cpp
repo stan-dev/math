@@ -3,8 +3,8 @@
 #include <vector>
 
 TEST(MathMatrix, failing_pre_20) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1;
   Matrix<double, Dynamic, 1> y(3);
   y << 1, 2, 3;
@@ -56,8 +56,8 @@ TEST(MathMatrix, get_base1_vec2) {
                std::out_of_range);
 }
 TEST(MathMatrix, get_base1_matrix) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1;
   Matrix<double, Dynamic, Dynamic> x(4, 3);
   for (size_t i = 0; i < 4; ++i)
@@ -80,8 +80,8 @@ TEST(MathMatrix, get_base1_matrix) {
   EXPECT_THROW(get_base1(x, 1, 0, "x", 1), std::out_of_range);
 }
 TEST(MathMatrix, get_base1_vector) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1;
   Matrix<double, 1, Dynamic> x(3);
   x << 1, 2, 3;
@@ -92,8 +92,8 @@ TEST(MathMatrix, get_base1_vector) {
   EXPECT_THROW(get_base1(x, 100, "x", 1), std::out_of_range);
 }
 TEST(MathMatrix, get_base1_row_vector) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1;
   Matrix<double, Dynamic, 1> x(3);
   x << 1, 2, 3;

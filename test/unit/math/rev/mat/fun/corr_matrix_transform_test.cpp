@@ -4,14 +4,14 @@
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 
 TEST(prob_transform, corr_matrix_jacobian) {
-  using stan::math::var;
   using stan::math::determinant;
-  using std::log;
+  using stan::math::var;
   using std::fabs;
+  using std::log;
 
   int K = 4;
   int K_choose_2 = 6;

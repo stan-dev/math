@@ -12,9 +12,9 @@ TEST(AgradRevMatrix, minus_scalar) {
   EXPECT_FLOAT_EQ(-11, minus(v).val());
 }
 TEST(AgradRevMatrix, minus_vector) {
+  using stan::math::minus;
   using stan::math::vector_d;
   using stan::math::vector_v;
-  using stan::math::minus;
 
   vector_d d(3);
   vector_v v(3);
@@ -35,9 +35,9 @@ TEST(AgradRevMatrix, minus_vector) {
   EXPECT_FLOAT_EQ(-1, output[2].val());
 }
 TEST(AgradRevMatrix, minus_rowvector) {
+  using stan::math::minus;
   using stan::math::row_vector_d;
   using stan::math::row_vector_v;
-  using stan::math::minus;
 
   row_vector_d d(3);
   row_vector_v v(3);

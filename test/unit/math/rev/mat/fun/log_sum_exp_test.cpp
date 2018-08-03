@@ -5,8 +5,8 @@
 #include <cmath>
 #include <vector>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 using stan::math::var;
 using std::vector;
 

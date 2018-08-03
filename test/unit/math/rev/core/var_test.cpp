@@ -69,6 +69,16 @@ TEST_F(AgradRev, ctorOverloads) {
   // ptrdiff_t
   EXPECT_FLOAT_EQ(37, var(static_cast<ptrdiff_t>(37)).val());
   EXPECT_FLOAT_EQ(0, var(static_cast<ptrdiff_t>(0)).val());
+
+  // complex but with zero imaginary part
+  EXPECT_FLOAT_EQ(37, var(std::complex<double>(37, 0)).val());
+  EXPECT_FLOAT_EQ(37, var(std::complex<float>(37, 0)).val());
+  EXPECT_FLOAT_EQ(37, var(std::complex<long double>(37, 0)).val());
+
+  // complex but with non-zero imaginary part
+  EXPECT_THROW(var(std::complex<double>(37, 10)), std::invalid_argument);
+  EXPECT_THROW(var(std::complex<float>(37, 10)), std::invalid_argument);
+  EXPECT_THROW(var(std::complex<long double>(37, 10)), std::invalid_argument);
 }
 
 TEST_F(AgradRev, a_eq_x) {
@@ -119,8 +129,8 @@ TEST_F(AgradRev, smart_ptrs) {
 }
 
 TEST_F(AgradRev, stackAllocation) {
-  using stan::math::vari;
   using stan::math::var;
+  using stan::math::vari;
 
   vari ai(1.0);
   vari bi(2.0);
@@ -197,11 +207,11 @@ struct gradable {
 };
 
 gradable setup_quad_form() {
-  using std::vector;
-  using stan::math::var;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::quad_form;
+  using stan::math::var;
+  using std::vector;
 
   Matrix<var, Dynamic, 1> u(3);
   u << 2, 3, 5;

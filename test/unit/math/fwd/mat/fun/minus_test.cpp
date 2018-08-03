@@ -14,9 +14,9 @@ TEST(AgradFwdMatrixMinus, fd_scalar) {
   EXPECT_FLOAT_EQ(-1, minus(v).d_);
 }
 TEST(AgradFwdMatrixMinus, fd_vector) {
+  using stan::math::minus;
   using stan::math::vector_d;
   using stan::math::vector_fd;
-  using stan::math::minus;
 
   vector_d d(3);
   vector_fd v(3);
@@ -43,9 +43,9 @@ TEST(AgradFwdMatrixMinus, fd_vector) {
   EXPECT_FLOAT_EQ(-1, output[2].d_);
 }
 TEST(AgradFwdMatrixMinus, fd_rowvector) {
+  using stan::math::minus;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fd;
-  using stan::math::minus;
 
   row_vector_d d(3);
   row_vector_fd v(3);
@@ -121,9 +121,9 @@ TEST(AgradFwdMatrixMinus, ffd_scalar) {
   EXPECT_FLOAT_EQ(-1, minus(v).d_.val());
 }
 TEST(AgradFwdMatrixMinus, ffd_vector) {
+  using stan::math::minus;
   using stan::math::vector_d;
   using stan::math::vector_ffd;
-  using stan::math::minus;
 
   vector_d d(3);
   vector_ffd v(3);
@@ -154,9 +154,9 @@ TEST(AgradFwdMatrixMinus, ffd_vector) {
   EXPECT_FLOAT_EQ(-1, output[2].d_.val());
 }
 TEST(AgradFwdMatrixMinus, ffd_rowvector) {
+  using stan::math::minus;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffd;
-  using stan::math::minus;
 
   row_vector_d d(3);
   row_vector_ffd v(3);

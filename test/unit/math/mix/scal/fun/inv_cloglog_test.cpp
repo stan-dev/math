@@ -5,8 +5,8 @@
 
 TEST(AgradFwdInvCLogLog, FvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::inv_cloglog;
+  using stan::math::var;
   using std::exp;
 
   fvar<var> x(0.5, 1.3);
@@ -22,8 +22,8 @@ TEST(AgradFwdInvCLogLog, FvarVar_1stDeriv) {
 }
 TEST(AgradFwdInvCLogLog, FvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::inv_cloglog;
+  using stan::math::var;
   using std::exp;
 
   fvar<var> x(0.5, 1.3);
@@ -37,8 +37,8 @@ TEST(AgradFwdInvCLogLog, FvarVar_2ndDeriv) {
 
 TEST(AgradFwdInvCLogLog, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::inv_cloglog;
+  using stan::math::var;
   using std::exp;
 
   fvar<fvar<var> > x;
@@ -74,8 +74,8 @@ TEST(AgradFwdInvCLogLog, FvarFvarVar_1stDeriv) {
 }
 TEST(AgradFwdInvCLogLog, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::inv_cloglog;
+  using stan::math::var;
   using std::exp;
 
   fvar<fvar<var> > x;
@@ -111,8 +111,8 @@ TEST(AgradFwdInvCLogLog, FvarFvarVar_2ndDeriv) {
 }
 TEST(AgradFwdInvCLogLog, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::inv_cloglog;
+  using stan::math::var;
   using std::exp;
 
   fvar<fvar<var> > x;

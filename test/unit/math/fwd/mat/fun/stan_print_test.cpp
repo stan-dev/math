@@ -6,11 +6,11 @@
 #include <vector>
 
 TEST(AgradFwdMatrixStanPrint, fvar_double) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::stan_print;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::stan_print;
+  using std::vector;
 
   std::stringstream output;
   fvar<double> a(1, 2);
@@ -49,11 +49,11 @@ TEST(AgradFwdMatrixStanPrint, fvar_double) {
 }
 
 TEST(AgradFwdMatrixStanPrint, fvar_fvar_double) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::stan_print;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::stan_print;
+  using std::vector;
 
   std::stringstream output;
   fvar<fvar<double> > a(1, 2);

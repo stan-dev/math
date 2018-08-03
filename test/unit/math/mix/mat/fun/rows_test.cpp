@@ -3,9 +3,9 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradMixMatrixRows, ffd_vector) {
-  using stan::math::vector_ffd;
   using stan::math::row_vector_ffd;
   using stan::math::rows;
+  using stan::math::vector_ffd;
 
   vector_ffd v(5);
   v << 0, 1, 2, 3, 4;

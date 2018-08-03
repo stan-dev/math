@@ -6,11 +6,11 @@
 
 void test_cholesky_correlation_jacobian(
     const Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1>& y, int K) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::var;
+  using Eigen::Matrix;
   using stan::math::cholesky_corr_constrain;
+  using stan::math::var;
+  using std::vector;
 
   int K_choose_2 = (K * (K - 1)) / 2;
 
@@ -42,8 +42,8 @@ void test_cholesky_correlation_jacobian(
 }
 
 TEST(probTransform, choleskyCorrJacobian) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::var;
 
   // K = 1; (K choose 2) = 0

@@ -4,8 +4,8 @@
 
 using stan::math::fvar;
 TEST(AgradMixMatrixMultiplyLowerTriSelfTranspose, fv_3x3_matrix_1stDeriv) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   matrix_d Z(3, 3);
   Z << 1, 0, 0, 2, 3, 0, 4, 5, 6;
   matrix_fv Y(3, 3);
@@ -48,8 +48,8 @@ TEST(AgradMixMatrixMultiplyLowerTriSelfTranspose, fv_3x3_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[5]);
 }
 TEST(AgradMixMatrixMultiplyLowerTriSelfTranspose, fv_3x3_matrix_2ndDeriv) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   matrix_fv Y(3, 3);
   Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
   Y(0, 0).d_ = 2.0;
@@ -74,8 +74,8 @@ TEST(AgradMixMatrixMultiplyLowerTriSelfTranspose, fv_3x3_matrix_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[5]);
 }
 TEST(AgradMixMatrixMultiplyLowerTriSelfTranspose, fv_3x2_matrix_1stDeriv) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   matrix_d Z(3, 2);
   Z << 1, 0, 0, 2, 3, 0;
   matrix_fv Y(3, 2);
@@ -113,8 +113,8 @@ TEST(AgradMixMatrixMultiplyLowerTriSelfTranspose, fv_3x2_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixMultiplyLowerTriSelfTranspose, fv_3x2_matrix_2ndDeriv) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   matrix_fv Y(3, 2);
   Y << 1, 0, 0, 2, 3, 0;
   Y(0, 0).d_ = 2.0;

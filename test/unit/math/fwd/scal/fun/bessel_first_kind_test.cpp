@@ -3,8 +3,8 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdBesselFirstKind, Fvar) {
-  using stan::math::fvar;
   using stan::math::bessel_first_kind;
+  using stan::math::fvar;
 
   fvar<double> a(4.0, 1.0);
   int b = 0;
@@ -20,8 +20,8 @@ TEST(AgradFwdBesselFirstKind, Fvar) {
 }
 
 TEST(AgradFwdBesselFirstKind, FvarFvarDouble) {
-  using stan::math::fvar;
   using stan::math::bessel_first_kind;
+  using stan::math::fvar;
 
   fvar<fvar<double> > x;
   x.val_.val_ = -3.0;

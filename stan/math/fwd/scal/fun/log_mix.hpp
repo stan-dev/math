@@ -28,9 +28,9 @@ inline void log_mix_partial_helper(
     const T_theta& theta, const T_lambda1& lambda1, const T_lambda2& lambda2,
     typename boost::math::tools::promote_args<
         T_theta, T_lambda1, T_lambda2>::type (&partials_array)[N]) {
-  using std::exp;
   using boost::is_same;
   using boost::math::tools::promote_args;
+  using std::exp;
   typedef typename promote_args<T_theta, T_lambda1, T_lambda2>::type
       partial_return_type;
 

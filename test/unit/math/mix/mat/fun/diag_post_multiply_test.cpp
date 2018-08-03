@@ -2,18 +2,18 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
-using stan::math::matrix_d;
-using stan::math::vector_d;
-using stan::math::row_vector_d;
 using stan::math::diag_post_multiply;
+using stan::math::matrix_d;
+using stan::math::row_vector_d;
+using stan::math::vector_d;
 
 TEST(AgradMixMatrixDiagPostMultiply, vector_fv_1stDeriv) {
-  using stan::math::matrix_fv;
-  using stan::math::matrix_d;
-  using stan::math::vector_fv;
-  using stan::math::vector_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   matrix_d Z(3, 3);
   Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
@@ -63,12 +63,12 @@ TEST(AgradMixMatrixDiagPostMultiply, vector_fv_1stDeriv) {
 }
 
 TEST(AgradMixMatrixDiagPostMultiply, vector_fv_2ndDeriv) {
-  using stan::math::matrix_fv;
-  using stan::math::matrix_d;
-  using stan::math::vector_fv;
-  using stan::math::vector_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   fvar<var> a(1.0, 2.0);
   fvar<var> b(2.0, 2.0);
@@ -110,11 +110,11 @@ TEST(AgradMixMatrixDiagPostMultiply, vector_fv_exception) {
 }
 
 TEST(AgradMixMatrixDiagPostMultiply, rowvector_fv_1stDeriv) {
-  using stan::math::matrix_fv;
-  using stan::math::matrix_d;
-  using stan::math::row_vector_fv;
-  using stan::math::row_vector_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_fv;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_fv;
   using stan::math::var;
 
   matrix_d Z(3, 3);
@@ -164,11 +164,11 @@ TEST(AgradMixMatrixDiagPostMultiply, rowvector_fv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDiagPostMultiply, rowvector_fv_2ndDeriv) {
-  using stan::math::matrix_fv;
-  using stan::math::matrix_d;
-  using stan::math::row_vector_fv;
-  using stan::math::row_vector_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_fv;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_fv;
   using stan::math::var;
 
   fvar<var> a(1.0, 2.0);
@@ -210,12 +210,12 @@ TEST(AgradMixMatrixDiagPostMultiply, rowvector_fv_exception) {
   EXPECT_THROW(stan::math::diag_post_multiply(Y, Z), std::invalid_argument);
 }
 TEST(AgradMixMatrixDiagPostMultiply, vector_ffv_1stDeriv) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
-  using stan::math::vector_ffv;
-  using stan::math::vector_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   matrix_d Z(3, 3);
   Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
@@ -265,12 +265,12 @@ TEST(AgradMixMatrixDiagPostMultiply, vector_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDiagPostMultiply, vector_ffv_2ndDeriv_1) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
-  using stan::math::vector_ffv;
-  using stan::math::vector_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   fvar<fvar<var> > a(1.0, 2.0);
   fvar<fvar<var> > b(2.0, 2.0);
@@ -299,12 +299,12 @@ TEST(AgradMixMatrixDiagPostMultiply, vector_ffv_2ndDeriv_1) {
 }
 
 TEST(AgradMixMatrixDiagPostMultiply, vector_ffv_2ndDeriv_2) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
-  using stan::math::vector_ffv;
-  using stan::math::vector_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   fvar<fvar<var> > a(1.0, 2.0);
   fvar<fvar<var> > b(2.0, 2.0);
@@ -332,12 +332,12 @@ TEST(AgradMixMatrixDiagPostMultiply, vector_ffv_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDiagPostMultiply, vector_ffv_3rdDeriv) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
-  using stan::math::vector_ffv;
-  using stan::math::vector_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   fvar<fvar<var> > a(1.0, 1.0);
   fvar<fvar<var> > b(2.0, 1.0);
@@ -386,11 +386,11 @@ TEST(AgradMixMatrixDiagPostMultiply, vector_ffv_exception) {
 }
 
 TEST(AgradMixMatrixDiagPostMultiply, rowvector_ffv_1stDeriv) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
-  using stan::math::row_vector_ffv;
-  using stan::math::row_vector_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_ffv;
   using stan::math::var;
 
   matrix_d Z(3, 3);
@@ -441,11 +441,11 @@ TEST(AgradMixMatrixDiagPostMultiply, rowvector_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDiagPostMultiply, rowvector_ffv_2ndDeriv_1) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
-  using stan::math::row_vector_ffv;
-  using stan::math::row_vector_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(1.0, 2.0);
@@ -474,11 +474,11 @@ TEST(AgradMixMatrixDiagPostMultiply, rowvector_ffv_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDiagPostMultiply, rowvector_ffv_2ndDeriv_2) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
-  using stan::math::row_vector_ffv;
-  using stan::math::row_vector_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(1.0, 2.0);
@@ -507,11 +507,11 @@ TEST(AgradMixMatrixDiagPostMultiply, rowvector_ffv_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDiagPostMultiply, rowvector_ffv_3rdDeriv) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
-  using stan::math::row_vector_ffv;
-  using stan::math::row_vector_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(1.0, 1.0);

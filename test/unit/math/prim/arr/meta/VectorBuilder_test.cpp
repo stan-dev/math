@@ -3,9 +3,9 @@
 #include <vector>
 
 TEST(MetaTraits, VectorBuilder_false_false) {
-  using std::vector;
   using stan::VectorBuilder;
   using stan::length;
+  using std::vector;
 
   std::vector<double> a_std_vector(3);
 
@@ -15,9 +15,9 @@ TEST(MetaTraits, VectorBuilder_false_false) {
 }
 
 TEST(MetaTraits, VectorBuilder_true_false) {
-  using std::vector;
   using stan::VectorBuilder;
   using stan::length;
+  using std::vector;
 
   std::vector<double> a_std_vector(3);
 

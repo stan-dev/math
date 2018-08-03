@@ -50,9 +50,9 @@ TEST(AgradRevMatrix, inverse_grad) {
   }
 }
 TEST(AgradRevMatrix, inverse_inverse_sum) {
-  using stan::math::sum;
   using stan::math::inverse;
   using stan::math::matrix_v;
+  using stan::math::sum;
 
   matrix_v a(4, 4);
   a << 2.0, 3.0, 4.0, 5.0, 9.0, -1.0, 2.0, 2.0, 4.0, 3.0, 7.0, -1.0, 0.0, 1.0,

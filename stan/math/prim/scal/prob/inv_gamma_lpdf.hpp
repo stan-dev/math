@@ -52,8 +52,8 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_lpdf(
   typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
       T_partials_return;
 
-  using stan::is_constant_struct;
   using boost::math::tools::promote_args;
+  using stan::is_constant_struct;
 
   if (size_zero(y, alpha, beta))
     return 0.0;

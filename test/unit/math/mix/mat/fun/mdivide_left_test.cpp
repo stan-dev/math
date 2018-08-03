@@ -96,9 +96,9 @@ TEST(AgradMixMatrixMdivideLeft, fv_matrix_matrix_2ndDeriv) {
 TEST(AgradMixMatrixMdivideLeft, fv_matrix_vector_1stDeriv) {
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
-  using stan::math::vector_fv;
-  using stan::math::vector_d;
   using stan::math::mdivide_left;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   matrix_fv fv(2, 2);
   fv << 1, 2, 3, 4;
@@ -149,9 +149,9 @@ TEST(AgradMixMatrixMdivideLeft, fv_matrix_vector_1stDeriv) {
 TEST(AgradMixMatrixMdivideLeft, fv_matrix_vector_2ndDeriv) {
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
-  using stan::math::vector_fv;
-  using stan::math::vector_d;
   using stan::math::mdivide_left;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   matrix_fv fv(2, 2);
   fv << 1, 2, 3, 4;
@@ -185,12 +185,12 @@ TEST(AgradMixMatrixMdivideLeft, fv_matrix_vector_2ndDeriv) {
 }
 TEST(AgradMixMatrixMdivideLeft, fv_exceptions) {
   using stan::math::matrix_d;
-  using stan::math::vector_d;
-  using stan::math::row_vector_d;
   using stan::math::matrix_fv;
-  using stan::math::vector_fv;
-  using stan::math::row_vector_fv;
   using stan::math::mdivide_left;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_fv;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   matrix_fv fv1(3, 3), fv2(4, 4);
   fv1.setZero();
@@ -387,9 +387,9 @@ TEST(AgradMixMatrixMdivideLeft, ffv_matrix_matrix_3rdDeriv) {
 TEST(AgradMixMatrixMdivideLeft, ffv_matrix_vector_1stDeriv) {
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
-  using stan::math::vector_ffv;
-  using stan::math::vector_d;
   using stan::math::mdivide_left;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   matrix_ffv fv(2, 2);
   fv << 1, 2, 3, 4;
@@ -440,9 +440,9 @@ TEST(AgradMixMatrixMdivideLeft, ffv_matrix_vector_1stDeriv) {
 TEST(AgradMixMatrixMdivideLeft, ffv_matrix_vector_2ndDeriv_1) {
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
-  using stan::math::vector_ffv;
-  using stan::math::vector_d;
   using stan::math::mdivide_left;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   matrix_ffv fv(2, 2);
   fv << 1, 2, 3, 4;
@@ -477,9 +477,9 @@ TEST(AgradMixMatrixMdivideLeft, ffv_matrix_vector_2ndDeriv_1) {
 TEST(AgradMixMatrixMdivideLeft, ffv_matrix_vector_2ndDeriv_2) {
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
-  using stan::math::vector_ffv;
-  using stan::math::vector_d;
   using stan::math::mdivide_left;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   matrix_ffv fv(2, 2);
   fv << 1, 2, 3, 4;
@@ -514,9 +514,9 @@ TEST(AgradMixMatrixMdivideLeft, ffv_matrix_vector_2ndDeriv_2) {
 TEST(AgradMixMatrixMdivideLeft, ffv_matrix_vector_3rdDeriv) {
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
-  using stan::math::vector_ffv;
-  using stan::math::vector_d;
   using stan::math::mdivide_left;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   matrix_ffv fv(2, 2);
   fv << 1, 2, 3, 4;
@@ -556,12 +556,12 @@ TEST(AgradMixMatrixMdivideLeft, ffv_matrix_vector_3rdDeriv) {
 }
 TEST(AgradMixMatrixMdivideLeft, ffv_exceptions) {
   using stan::math::matrix_d;
-  using stan::math::vector_d;
-  using stan::math::row_vector_d;
   using stan::math::matrix_ffv;
-  using stan::math::vector_ffv;
-  using stan::math::row_vector_ffv;
   using stan::math::mdivide_left;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_ffv;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   matrix_ffv fv1(3, 3), fv2(4, 4);
   fv1.setZero();

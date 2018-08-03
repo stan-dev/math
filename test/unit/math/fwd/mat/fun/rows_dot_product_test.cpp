@@ -58,10 +58,10 @@ TEST(AgradFwdMatrixRowsDotProduct, fd_vector_vector_exception) {
   EXPECT_THROW(rows_dot_product(v1, v2), std::invalid_argument);
 }
 TEST(AgradFwdMatrixRowsDotProduct, fd_rowvector_vector) {
-  using stan::math::vector_d;
-  using stan::math::vector_fd;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fd;
+  using stan::math::vector_d;
+  using stan::math::vector_fd;
 
   row_vector_d d1(3);
   row_vector_fd v1(3);
@@ -73,10 +73,10 @@ TEST(AgradFwdMatrixRowsDotProduct, fd_rowvector_vector) {
   EXPECT_THROW(rows_dot_product(v1, v2), std::invalid_argument);
 }
 TEST(AgradFwdMatrixRowsDotProduct, fd_vector_rowvector) {
-  using stan::math::vector_d;
-  using stan::math::vector_fd;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fd;
+  using stan::math::vector_d;
+  using stan::math::vector_fd;
 
   vector_d d1(3);
   vector_fd v1(3);
@@ -278,10 +278,10 @@ TEST(AgradFwdMatrixRowsDotProduct, ffd_vector_vector_exception) {
   EXPECT_THROW(rows_dot_product(v1, v2), std::invalid_argument);
 }
 TEST(AgradFwdMatrixRowsDotProduct, ffd_rowvector_vector) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffd;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffd;
+  using stan::math::vector_d;
+  using stan::math::vector_ffd;
 
   row_vector_d d1(3);
   row_vector_ffd v1(3);
@@ -293,10 +293,10 @@ TEST(AgradFwdMatrixRowsDotProduct, ffd_rowvector_vector) {
   EXPECT_THROW(rows_dot_product(v1, v2), std::invalid_argument);
 }
 TEST(AgradFwdMatrixRowsDotProduct, ffd_vector_rowvector) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffd;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffd;
+  using stan::math::vector_d;
+  using stan::math::vector_ffd;
 
   vector_d d1(3);
   vector_ffd v1(3);

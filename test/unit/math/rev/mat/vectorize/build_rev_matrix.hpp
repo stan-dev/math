@@ -9,8 +9,8 @@ template <typename F, int R, int C>
 static inline Eigen::Matrix<stan::math::var, R, C> build_rev_matrix(
     const Eigen::Matrix<stan::math::var, R, C>& x) {
   using Eigen::Matrix;
-  using std::vector;
   using stan::math::var;
+  using std::vector;
 
   Matrix<var, R, C> var_matrix(x.rows(), x.cols());
   vector<double> inputs = F::valid_inputs();

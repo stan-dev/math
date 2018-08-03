@@ -20,10 +20,10 @@ TEST(MathMatrix, chol2inv_exception) {
 
 TEST(MathMatrix, chol2inv) {
   using stan::math::chol2inv;
-  using stan::math::wishart_rng;
-  using stan::math::matrix_d;
   using stan::math::cholesky_decompose;
   using stan::math::inverse_spd;
+  using stan::math::matrix_d;
+  using stan::math::wishart_rng;
 
   boost::random::mt19937 rng;
   matrix_d I(3, 3);

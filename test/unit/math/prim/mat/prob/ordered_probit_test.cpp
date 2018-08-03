@@ -4,8 +4,8 @@
 #include <boost/math/distributions.hpp>
 #include <limits>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 
 typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
 
@@ -22,11 +22,11 @@ vector_d get_simplex(double lambda, const vector_d& c) {
 }
 
 TEST(ProbDistributions, ordered_probit_vals) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
 
-  using stan::math::ordered_probit_log;
   using stan::math::Phi;
+  using stan::math::ordered_probit_log;
 
   int K = 5;
   Matrix<double, Dynamic, 1> c(K - 1);
@@ -48,11 +48,11 @@ TEST(ProbDistributions, ordered_probit_vals) {
 }
 
 TEST(ProbDistributions, ordered_probit_vals_2) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
 
-  using stan::math::ordered_probit_log;
   using stan::math::Phi;
+  using stan::math::ordered_probit_log;
 
   int K = 3;
   Matrix<double, Dynamic, 1> c(K - 1);

@@ -3,12 +3,12 @@
 #include <vector>
 
 TEST(AgradMixMatrixSize, fvar_var) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::size;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::size;
   using stan::math::var;
+  using std::vector;
 
   vector<fvar<var> > y(6);
   EXPECT_EQ(6, size(y));
@@ -42,12 +42,12 @@ TEST(AgradMixMatrixSize, fvar_var) {
 }
 
 TEST(AgradMixMatrixSize, fvar_fvar_var) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::size;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::size;
   using stan::math::var;
+  using std::vector;
 
   vector<fvar<fvar<var> > > y(6);
   EXPECT_EQ(6, size(y));

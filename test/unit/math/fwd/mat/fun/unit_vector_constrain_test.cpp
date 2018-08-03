@@ -2,11 +2,11 @@
 #include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixUnitVectorConstrain, fd) {
-  using stan::math::unit_vector_constrain;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::vector_fd;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::unit_vector_constrain;
+  using stan::math::vector_fd;
   using std::sqrt;
 
   EXPECT_THROW(unit_vector_constrain(vector_fd()), std::invalid_argument);
@@ -44,11 +44,11 @@ TEST(AgradFwdMatrixUnitVectorConstrain, fd) {
 }
 
 TEST(AgradFwdMatrixSoftmax, ffd) {
-  using stan::math::unit_vector_constrain;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::vector_ffd;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::unit_vector_constrain;
+  using stan::math::vector_ffd;
 
   EXPECT_THROW(unit_vector_constrain(vector_ffd()), std::invalid_argument);
 

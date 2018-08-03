@@ -29,8 +29,8 @@ namespace math {
  * this function reduces to <code>identity_constrain(x)</code>.
  *
  * @tparam T Type of scalar.
- * @tparam TL Type of lower bound.
- * @tparam TU Type of upper bound.
+ * @tparam L Type of lower bound.
+ * @tparam U Type of upper bound.
  * @param[in] x Free scalar to transform.
  * @param[in] lb Lower bound.
  * @param[in] ub Upper bound.
@@ -38,9 +38,9 @@ namespace math {
  *   the free scalar.
  * @throw std::domain_error if ub <= lb
  */
-template <typename T, typename TL, typename TU>
-inline typename boost::math::tools::promote_args<T, TL, TU>::type lub_constrain(
-    const T& x, const TL& lb, const TU& ub) {
+template <typename T, typename L, typename U>
+inline typename boost::math::tools::promote_args<T, L, U>::type lub_constrain(
+    const T& x, const L& lb, const U& ub) {
   using std::exp;
   check_less("lub_constrain", "lb", lb, ub);
   if (lb == -std::numeric_limits<double>::infinity())
@@ -96,8 +96,8 @@ inline typename boost::math::tools::promote_args<T, TL, TU>::type lub_constrain(
  * this function reduces to <code>identity_constrain(x, lp)</code>.
  *
  * @tparam T Type of scalar.
- * @tparam TL Type of lower bound.
- * @tparam TU Type of upper bound.
+ * @tparam L Type of lower bound.
+ * @tparam U Type of upper bound.
  * @param[in] x Free scalar to transform.
  * @param[in] lb Lower bound.
  * @param[in] ub Upper bound.
@@ -106,11 +106,11 @@ inline typename boost::math::tools::promote_args<T, TL, TU>::type lub_constrain(
  *   the free scalar.
  * @throw std::domain_error if ub <= lb
  */
-template <typename T, typename TL, typename TU>
-inline typename boost::math::tools::promote_args<T, TL, TU>::type lub_constrain(
-    const T& x, const TL& lb, const TU& ub, T& lp) {
-  using std::log;
+template <typename T, typename L, typename U>
+inline typename boost::math::tools::promote_args<T, L, U>::type lub_constrain(
+    const T& x, const L& lb, const U& ub, T& lp) {
   using std::exp;
+  using std::log;
   check_less("lub_constrain", "lb", lb, ub);
   if (lb == -std::numeric_limits<double>::infinity())
     return ub_constrain(x, ub, lp);

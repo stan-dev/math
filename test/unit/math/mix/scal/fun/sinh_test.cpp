@@ -10,8 +10,8 @@ class AgradFwdSinh : public testing::Test {
 TEST_F(AgradFwdSinh, FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = sinh(x);
@@ -28,8 +28,8 @@ TEST_F(AgradFwdSinh, FvarVar_1stDeriv) {
 TEST_F(AgradFwdSinh, FvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = sinh(x);
@@ -43,8 +43,8 @@ TEST_F(AgradFwdSinh, FvarVar_2ndDeriv) {
 TEST_F(AgradFwdSinh, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -82,8 +82,8 @@ TEST_F(AgradFwdSinh, FvarFvarVar_1stDeriv) {
 TEST_F(AgradFwdSinh, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -112,8 +112,8 @@ TEST_F(AgradFwdSinh, FvarFvarVar_2ndDeriv) {
 TEST_F(AgradFwdSinh, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;

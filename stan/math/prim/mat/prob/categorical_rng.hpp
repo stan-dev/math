@@ -18,8 +18,8 @@ namespace math {
 template <class RNG>
 inline int categorical_rng(
     const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta, RNG& rng) {
-  using boost::variate_generator;
   using boost::uniform_01;
+  using boost::variate_generator;
 
   static const char* function = "categorical_rng";
 

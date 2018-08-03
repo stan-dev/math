@@ -2,12 +2,12 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-using std::vector;
 using Eigen::Dynamic;
 using Eigen::Matrix;
 using stan::math::array_builder;
 using stan::math::to_matrix;
 using stan::math::to_row_vector;
+using std::vector;
 
 TEST(MathMatrix, arrayBuilder) {
   vector<Matrix<double, 1, Dynamic> > mEmpty

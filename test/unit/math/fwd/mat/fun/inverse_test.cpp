@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixInverse, fd) {
-  using stan::math::matrix_fd;
   using stan::math::matrix_d;
+  using stan::math::matrix_fd;
 
   matrix_fd a(2, 2);
   a << 2.0, 3.0, 5.0, 7.0;
@@ -30,9 +30,9 @@ TEST(AgradFwdMatrixInverse, fd) {
   EXPECT_THROW(stan::math::inverse(matrix_fd(2, 3)), std::invalid_argument);
 }
 TEST(AgradFwdMatrixInverse, ffd) {
-  using stan::math::matrix_ffd;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffd;
 
   fvar<fvar<double> > d, e, f, g;
   d.val_.val_ = 2.0;

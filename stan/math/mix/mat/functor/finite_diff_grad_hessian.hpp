@@ -43,8 +43,8 @@ void finite_diff_grad_hessian(
     Eigen::Matrix<double, -1, -1>& hess,
     std::vector<Eigen::Matrix<double, -1, -1> >& grad_hess_fx,
     double epsilon = 1e-04) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
 
   int d = x.size();
   double dummy_fx_eval;

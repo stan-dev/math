@@ -5,9 +5,9 @@
 #include <vector>
 
 TEST(AgradRev, Phi_approx) {
+  using stan::math::Phi_approx;
   using stan::math::var;
   using std::abs;
-  using stan::math::Phi_approx;
 
   std::vector<double> y_values;
   y_values.push_back(0.0);

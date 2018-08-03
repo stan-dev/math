@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 
 TEST(MathMatrix, initializeVar) {
-  using stan::math::var;
   using stan::math::initialize;
+  using stan::math::var;
   var a;
   var b = 10;
   initialize(a, b);  // template 1
@@ -17,10 +17,10 @@ TEST(MathMatrix, initializeVar) {
 }
 
 TEST(MathMatrix, initMatrix) {
-  using stan::math::var;
-  using stan::math::initialize;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::initialize;
+  using stan::math::var;
 
   Matrix<var, Dynamic, Dynamic> mvar(2, 3);
   initialize(mvar, 2.3);  // template 3, 1

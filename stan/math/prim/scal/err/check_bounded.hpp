@@ -44,8 +44,8 @@ template <typename T_y, typename T_low, typename T_high>
 struct bounded<T_y, T_low, T_high, true> {
   static void check(const char* function, const char* name, const T_y& y,
                     const T_low& low, const T_high& high) {
-    using stan::length;
     using stan::get;
+    using stan::length;
 
     scalar_seq_view<T_low> low_vec(low);
     scalar_seq_view<T_high> high_vec(high);

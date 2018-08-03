@@ -73,16 +73,16 @@ TEST(AgradRevMatrix, mv_lp_norm_inf) {
 }
 
 TEST(AgradRevMatrix, UserCase1) {
-  using std::vector;
-  using stan::math::multiply;
-  using stan::math::transpose;
-  using stan::math::subtract;
-  using stan::math::get_base1;
   using stan::math::assign;
   using stan::math::dot_product;
+  using stan::math::get_base1;
   using stan::math::matrix_v;
+  using stan::math::multiply;
+  using stan::math::subtract;
+  using stan::math::transpose;
   using stan::math::vector_d;
   using stan::math::vector_v;
+  using std::vector;
 
   // also tried DpKm1 > H
   size_t H = 3;

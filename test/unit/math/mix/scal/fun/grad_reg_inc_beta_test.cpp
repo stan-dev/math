@@ -3,11 +3,11 @@
 #include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(ProbInternalMath, grad_reg_inc_beta_fv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using stan::math::digamma;
   using stan::math::exp;
+  using stan::math::fvar;
   using stan::math::lbeta;
+  using stan::math::var;
 
   fvar<var> a = 1.0;
   fvar<var> b = 1.0;
@@ -30,11 +30,11 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fv) {
               g_b.val_.val(), 1e-6);
 }
 TEST(ProbInternalMath, grad_reg_inc_beta_fv_1stDeriv1) {
-  using stan::math::fvar;
-  using stan::math::var;
   using stan::math::digamma;
   using stan::math::exp;
+  using stan::math::fvar;
   using stan::math::lbeta;
+  using stan::math::var;
 
   fvar<var> a = 1.0;
   fvar<var> b = 1.0;
@@ -59,11 +59,11 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fv_1stDeriv1) {
                   grad1[0]);
 }
 TEST(ProbInternalMath, grad_reg_inc_beta_fv_1stDeriv2) {
-  using stan::math::fvar;
-  using stan::math::var;
   using stan::math::digamma;
   using stan::math::exp;
+  using stan::math::fvar;
   using stan::math::lbeta;
+  using stan::math::var;
 
   fvar<var> a = 1.0;
   fvar<var> b = 1.0;
@@ -87,11 +87,11 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fv_1stDeriv2) {
   EXPECT_NEAR(-0.156565690737548079304827886, grad1[0], 1e-6);
 }
 TEST(ProbInternalMath, grad_reg_inc_beta_fv_2ndDeriv1) {
-  using stan::math::fvar;
-  using stan::math::var;
   using stan::math::digamma;
   using stan::math::exp;
+  using stan::math::fvar;
   using stan::math::lbeta;
+  using stan::math::var;
 
   fvar<var> a = 1.0;
   fvar<var> b = 1.0;
@@ -116,11 +116,11 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fv_2ndDeriv1) {
                   grad1[0]);
 }
 TEST(ProbInternalMath, grad_reg_inc_beta_fv_2ndDeriv2) {
-  using stan::math::fvar;
-  using stan::math::var;
   using stan::math::digamma;
   using stan::math::exp;
+  using stan::math::fvar;
   using stan::math::lbeta;
+  using stan::math::var;
 
   fvar<var> a = 1.0;
   fvar<var> b = 1.0;

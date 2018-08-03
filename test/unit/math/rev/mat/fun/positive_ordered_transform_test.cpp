@@ -5,11 +5,11 @@
 #include <vector>
 
 TEST(prob_transform, positive_ordered_jacobian_ad) {
-  using stan::math::var;
-  using stan::math::positive_ordered_constrain;
-  using stan::math::determinant;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::determinant;
+  using stan::math::positive_ordered_constrain;
+  using stan::math::var;
 
   Matrix<double, Dynamic, 1> x(3);
   x << -12.0, 3.0, -1.9;

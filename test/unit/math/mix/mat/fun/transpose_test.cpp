@@ -36,10 +36,10 @@ TEST(AgradMixMatrixTranspose, fv_matrix) {
   EXPECT_EQ(2, c.cols());
 }
 TEST(AgradMixMatrixTranspose, fv_vector) {
-  using stan::math::vector_fv;
   using stan::math::row_vector_fv;
-  using stan::math::transpose;
   using stan::math::size_type;
+  using stan::math::transpose;
+  using stan::math::vector_fv;
 
   vector_fv a(3);
   a << 1.0, 2.0, 3.0;
@@ -56,10 +56,10 @@ TEST(AgradMixMatrixTranspose, fv_vector) {
   EXPECT_FLOAT_EQ(1.0, a_tr(2).d_.val());
 }
 TEST(AgradMixMatrixTranspose, fv_row_vector) {
-  using stan::math::vector_fv;
   using stan::math::row_vector_fv;
-  using stan::math::transpose;
   using stan::math::size_type;
+  using stan::math::transpose;
+  using stan::math::vector_fv;
 
   row_vector_fv a(3);
   a << 1.0, 2.0, 3.0;
@@ -109,10 +109,10 @@ TEST(AgradMixMatrixTranspose, ffv_matrix) {
   EXPECT_EQ(2, c.cols());
 }
 TEST(AgradMixMatrixTranspose, ffv_vector) {
-  using stan::math::vector_ffv;
   using stan::math::row_vector_ffv;
-  using stan::math::transpose;
   using stan::math::size_type;
+  using stan::math::transpose;
+  using stan::math::vector_ffv;
 
   vector_ffv a(3);
   a << 1.0, 2.0, 3.0;
@@ -129,10 +129,10 @@ TEST(AgradMixMatrixTranspose, ffv_vector) {
   EXPECT_FLOAT_EQ(1.0, a_tr(2).d_.val().val());
 }
 TEST(AgradMixMatrixTranspose, ffv_row_vector) {
-  using stan::math::vector_ffv;
   using stan::math::row_vector_ffv;
-  using stan::math::transpose;
   using stan::math::size_type;
+  using stan::math::transpose;
+  using stan::math::vector_ffv;
 
   row_vector_ffv a(3);
   a << 1.0, 2.0, 3.0;

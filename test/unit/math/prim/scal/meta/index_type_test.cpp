@@ -5,8 +5,8 @@
 #include <vector>
 
 TEST(MathMeta, index_type) {
-  using std::vector;
   using stan::math::index_type;
+  using std::vector;
 
   expect_same_type<vector<double>::size_type,
                    index_type<vector<double> >::type>();

@@ -32,8 +32,8 @@ void expect_symmetric(const Eigen::MatrixXd& a) {
  */
 template <typename RNG>
 Eigen::MatrixXd spd_rng(int k, RNG& rng) {
-  using stan::math::normal_rng;
   using Eigen::MatrixXd;
+  using stan::math::normal_rng;
   MatrixXd sigma = MatrixXd::Zero(k, k);
   for (int j = 0; j < k; ++j)
     for (int i = 0; i <= j; ++i)

@@ -12,9 +12,9 @@ void expect_propto(unsigned int n1, T_prob theta1, unsigned int n2,
                   stan::math::categorical_log<true>(n2, theta2), message);
 }
 
-using stan::math::var;
 using Eigen::Dynamic;
 using Eigen::Matrix;
+using stan::math::var;
 
 TEST(AgradDistributionsCategorical, Propto) {
   unsigned int n;

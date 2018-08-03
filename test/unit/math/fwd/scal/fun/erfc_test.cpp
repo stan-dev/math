@@ -4,10 +4,10 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdErfc, Fvar) {
+  using boost::math::erfc;
   using stan::math::fvar;
   using std::exp;
   using std::sqrt;
-  using boost::math::erfc;
 
   fvar<double> x(0.5, 1.0);
 
@@ -23,10 +23,10 @@ TEST(AgradFwdErfc, Fvar) {
 }
 
 TEST(AgradFwdErfc, FvarFvarDouble) {
+  using boost::math::erfc;
   using stan::math::fvar;
   using std::exp;
   using std::sqrt;
-  using boost::math::erfc;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 0.5;

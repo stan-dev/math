@@ -63,9 +63,9 @@ TEST(AgradFwdMatrixCol, matrix_fd_excHigh) {
 
 TEST(AgradFwdMatrixCol, matrix_ffd) {
   using stan::math::col;
+  using stan::math::fvar;
   using stan::math::matrix_ffd;
   using stan::math::vector_ffd;
-  using stan::math::fvar;
 
   fvar<fvar<double> > a;
   fvar<fvar<double> > b;
@@ -106,8 +106,8 @@ TEST(AgradFwdMatrixCol, matrix_ffd) {
 
 TEST(AgradFwdMatrixCol, matrix_ffd_exc0) {
   using stan::math::col;
-  using stan::math::matrix_ffd;
   using stan::math::fvar;
+  using stan::math::matrix_ffd;
 
   fvar<fvar<double> > a;
   fvar<fvar<double> > b;
@@ -137,8 +137,8 @@ TEST(AgradFwdMatrixCol, matrix_ffd_exc0) {
 
 TEST(AgradFwdMatrixCol, matrix_ffd_excHigh) {
   using stan::math::col;
-  using stan::math::matrix_ffd;
   using stan::math::fvar;
+  using stan::math::matrix_ffd;
 
   fvar<fvar<double> > a;
   fvar<fvar<double> > b;

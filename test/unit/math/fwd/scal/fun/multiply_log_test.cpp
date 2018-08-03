@@ -4,9 +4,9 @@
 
 TEST(AgradFwdMultiplyLog, Fvar) {
   using stan::math::fvar;
+  using stan::math::multiply_log;
   using std::isnan;
   using std::log;
-  using stan::math::multiply_log;
 
   fvar<double> x(0.5, 1.0);
   fvar<double> y(1.2, 2.0);
@@ -38,8 +38,8 @@ TEST(AgradFwdMultiplyLog, Fvar) {
 
 TEST(AgradFwdMultiplyLog, FvarFvarDouble) {
   using stan::math::fvar;
-  using std::log;
   using stan::math::multiply_log;
+  using std::log;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 1.5;

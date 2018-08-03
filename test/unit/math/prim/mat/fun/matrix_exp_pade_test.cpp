@@ -42,8 +42,8 @@ TEST(MathMatrix, matrix_exp_pade_3x3_2) {
 }
 
 TEST(MathMatrix, matrix_exp_100x100) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
 
   int size = 100;
   Matrix<double, Dynamic, Dynamic> S = Eigen::MatrixXd::Identity(size, size),
@@ -71,7 +71,7 @@ TEST(MathMatrix, matrix_exp_100x100) {
   expm_A = stan::math::matrix_exp_pade(A);
 
   double rel_err
-      = 1e-10
+      = 1e-6
         * std::max(exp_A.cwiseAbs().maxCoeff(), expm_A.cwiseAbs().maxCoeff());
 
   for (int i = 0; i < size; i++)

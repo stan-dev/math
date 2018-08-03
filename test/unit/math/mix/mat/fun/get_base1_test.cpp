@@ -6,8 +6,8 @@ using stan::math::fvar;
 using stan::math::var;
 
 TEST(AgradMixMatrixGetBase1, failing_pre_20_fv) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1;
   Matrix<fvar<var>, Dynamic, 1> y(3);
   y << 1, 2, 3;
@@ -59,8 +59,8 @@ TEST(AgradMixMatrixGetBase1, get_base1_vec2_fv) {
                std::out_of_range);
 }
 TEST(AgradMixMatrixGetBase1, get_base1_matrix_fv) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1;
   Matrix<fvar<var>, Dynamic, Dynamic> x(4, 3);
   for (size_t i = 0; i < 4; ++i)
@@ -87,8 +87,8 @@ TEST(AgradMixMatrixGetBase1, get_base1_matrix_fv) {
   EXPECT_THROW(get_base1(x, 1, 0, "x", 1), std::out_of_range);
 }
 TEST(AgradMixMatrixGetBase1, get_base1_vector_fv) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1;
   Matrix<fvar<var>, 1, Dynamic> x(3);
   x << 1, 2, 3;
@@ -99,8 +99,8 @@ TEST(AgradMixMatrixGetBase1, get_base1_vector_fv) {
   EXPECT_THROW(get_base1(x, 100, "x", 1), std::out_of_range);
 }
 TEST(AgradMixMatrixGetBase1, get_base1_row_vector_fv) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1;
   Matrix<fvar<var>, Dynamic, 1> x(3);
   x << 1, 2, 3;
@@ -156,8 +156,8 @@ TEST(AgradMixMatrixGetBase1, get_base1_8_fv) {
 }
 
 TEST(AgradMixMatrixGetBase1, failing_pre_20_ffv) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1;
   Matrix<fvar<fvar<var> >, Dynamic, 1> y(3);
   y << 1, 2, 3;
@@ -210,8 +210,8 @@ TEST(AgradMixMatrixGetBase1, get_base1_vec2_ffv) {
                std::out_of_range);
 }
 TEST(AgradMixMatrixGetBase1, get_base1_matrix_ffv) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1;
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> x(4, 3);
   for (size_t i = 0; i < 4; ++i)
@@ -238,8 +238,8 @@ TEST(AgradMixMatrixGetBase1, get_base1_matrix_ffv) {
   EXPECT_THROW(get_base1(x, 1, 0, "x", 1), std::out_of_range);
 }
 TEST(AgradMixMatrixGetBase1, get_base1_vector_ffv) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1;
   Matrix<fvar<fvar<var> >, 1, Dynamic> x(3);
   x << 1, 2, 3;
@@ -251,8 +251,8 @@ TEST(AgradMixMatrixGetBase1, get_base1_vector_ffv) {
   EXPECT_THROW(get_base1(x, 100, "x", 1), std::out_of_range);
 }
 TEST(AgradMixMatrixGetBase1, get_base1_row_vector_ffv) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1;
   Matrix<fvar<fvar<var> >, Dynamic, 1> x(3);
   x << 1, 2, 3;

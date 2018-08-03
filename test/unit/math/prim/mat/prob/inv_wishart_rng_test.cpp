@@ -32,11 +32,11 @@ TEST(probdistributionsInvWishartRng, symmetry) {
 }
 
 TEST(ProbDistributionsInvWishart, chiSquareGoodnessFitTest) {
+  using Eigen::MatrixXd;
+  using boost::math::chi_squared;
+  using boost::math::digamma;
   using stan::math::determinant;
   using stan::math::inv_wishart_rng;
-  using boost::math::digamma;
-  using boost::math::chi_squared;
-  using Eigen::MatrixXd;
   using std::log;
 
   boost::random::mt19937 rng;

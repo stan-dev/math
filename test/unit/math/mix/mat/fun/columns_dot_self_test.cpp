@@ -4,8 +4,8 @@
 
 TEST(AgradMixMatrixColumnsDotSelf, matrix_fv_1stDeriv) {
   using stan::math::columns_dot_self;
-  using stan::math::matrix_fv;
   using stan::math::fvar;
+  using stan::math::matrix_fv;
   using stan::math::var;
 
   fvar<var> a(2.0, 1.0);
@@ -45,8 +45,8 @@ TEST(AgradMixMatrixColumnsDotSelf, matrix_fv_1stDeriv) {
 }
 TEST(AgradMixMatrixColumnsDotSelf, matrix_fv_2ndDeriv) {
   using stan::math::columns_dot_self;
-  using stan::math::matrix_fv;
   using stan::math::fvar;
+  using stan::math::matrix_fv;
   using stan::math::var;
 
   fvar<var> a(2.0, 1.0);
@@ -68,8 +68,8 @@ TEST(AgradMixMatrixColumnsDotSelf, matrix_fv_2ndDeriv) {
 }
 TEST(AgradMixMatrixColumnsDotSelf, matrix_ffv_1stDeriv) {
   using stan::math::columns_dot_self;
-  using stan::math::matrix_ffv;
   using stan::math::fvar;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(2.0, 1.0);
@@ -110,8 +110,8 @@ TEST(AgradMixMatrixColumnsDotSelf, matrix_ffv_1stDeriv) {
 }
 TEST(AgradMixMatrixColumnsDotSelf, matrix_ffv_2ndDeriv_1) {
   using stan::math::columns_dot_self;
-  using stan::math::matrix_ffv;
   using stan::math::fvar;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(2.0, 1.0);
@@ -135,8 +135,8 @@ TEST(AgradMixMatrixColumnsDotSelf, matrix_ffv_2ndDeriv_1) {
 
 TEST(AgradMixMatrixColumnsDotSelf, matrix_ffv_2ndDeriv_2) {
   using stan::math::columns_dot_self;
-  using stan::math::matrix_ffv;
   using stan::math::fvar;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(2.0, 1.0);
@@ -159,8 +159,8 @@ TEST(AgradMixMatrixColumnsDotSelf, matrix_ffv_2ndDeriv_2) {
 }
 TEST(AgradMixMatrixColumnsDotSelf, matrix_ffv_3rdDeriv) {
   using stan::math::columns_dot_self;
-  using stan::math::matrix_ffv;
   using stan::math::fvar;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(2.0, 1.0);

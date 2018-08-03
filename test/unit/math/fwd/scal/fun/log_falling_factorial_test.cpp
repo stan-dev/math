@@ -4,9 +4,9 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdLogFallingFactorial, Fvar) {
+  using boost::math::digamma;
   using stan::math::fvar;
   using stan::math::log_falling_factorial;
-  using boost::math::digamma;
 
   fvar<double> a(4.0, 1.0);
   fvar<double> x = log_falling_factorial(a, 2);

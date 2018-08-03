@@ -2,12 +2,12 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 
 TEST(ProbTransform, CholeskyCorrelation4) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, Dynamic> L(4, 4);
   L << 1, 0, 0, 0, -0.2, 0.9797959, 0, 0, 0.5, -0.3, 0.8124038, 0, 0.7, -0.2,
       0.6, 0.3316625;
@@ -30,9 +30,9 @@ TEST(ProbTransform, CholeskyCorrelation4) {
 
 void test_cholesky_correlation_values(
     const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& L) {
-  using std::vector;
   using stan::math::cholesky_corr_constrain;
   using stan::math::cholesky_corr_free;
+  using std::vector;
   int K = L.rows();
   int K_choose_2 = (K * (K - 1)) / 2;
 
@@ -71,8 +71,8 @@ void test_cholesky_correlation_values(
 }
 
 TEST(ProbTransform, CholeskyCorrelationRoundTrips) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
 
   Matrix<double, Dynamic, Dynamic> L1(1, 1);
   L1 << 1;

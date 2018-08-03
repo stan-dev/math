@@ -8,8 +8,8 @@ namespace math {
 
 template <typename T>
 inline fvar<T> sin(const fvar<T>& x) {
-  using std::sin;
   using std::cos;
+  using std::sin;
   return fvar<T>(sin(x.val_), x.d_ * cos(x.val_));
 }
 }  // namespace math

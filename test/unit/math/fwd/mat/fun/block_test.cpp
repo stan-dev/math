@@ -59,9 +59,9 @@ TEST(AgradFwdMatrixBlock, matrix_fd_exception) {
 
 TEST(AgradFwdMatrixBlock, matrix_ffd) {
   using stan::math::block;
+  using stan::math::fvar;
   using stan::math::matrix_ffd;
   using stan::math::vector_ffd;
-  using stan::math::fvar;
 
   fvar<fvar<double> > a;
   fvar<fvar<double> > b;

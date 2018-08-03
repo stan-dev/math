@@ -83,22 +83,22 @@ struct nlo_functor {
 /**
  * A functor with the required operators to call Eigen's
  * algebraic solver.
- * @tparam FS wrapper around the algebraic system functor. Has the
+ * @tparam S wrapper around the algebraic system functor. Has the
  * signature required for jacobian (i.e takes only one argument).
  * @tparam F algebraic system functor
  * @tparam T0 scalar type for unknowns
  * @tparam T1 scalar type for auxiliary parameters
  */
-template <typename FS, typename F, typename T0, typename T1>
+template <typename S, typename F, typename T0, typename T1>
 struct hybrj_functor_solver : nlo_functor<double> {
   /** Wrapper around algebraic system */
-  FS fs_;
+  S fs_;
   /** number of unknowns */
   int x_size_;
   /** Jacobian of algebraic function wrt unknowns */
   Eigen::MatrixXd J_;
 
-  hybrj_functor_solver(const FS& fs, const F& f,
+  hybrj_functor_solver(const S& fs, const F& f,
                        const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
                        const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
                        const std::vector<double>& dat,

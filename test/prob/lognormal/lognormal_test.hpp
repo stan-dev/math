@@ -1,9 +1,9 @@
 // Arguments: Doubles, Doubles, Doubles
 #include <stan/math/prim/scal.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradDistributionsLognormal : public AgradDistributionTest {
  public:
@@ -69,9 +69,9 @@ class AgradDistributionsLognormal : public AgradDistributionTest {
   typename stan::return_type<T_y, T_loc, T_scale>::type log_prob_function(
       const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
       const T5&) {
+    using stan::math::NEG_LOG_SQRT_TWO_PI;
     using stan::math::pi;
     using stan::math::square;
-    using stan::math::NEG_LOG_SQRT_TWO_PI;
 
     return NEG_LOG_SQRT_TWO_PI - log(sigma) - log(y)
            - square(log(y) - mu) / (2.0 * sigma * sigma);

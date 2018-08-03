@@ -3,10 +3,10 @@
 #include <limits>
 
 TEST(AgradMixNumericLimits, All_Fvar) {
+  using stan::math::INFTY;
   using stan::math::fvar;
   using stan::math::var;
   using std::isnan;
-  using stan::math::INFTY;
 
   EXPECT_TRUE(std::numeric_limits<fvar<var> >::is_specialized);
   EXPECT_TRUE(std::numeric_limits<fvar<fvar<var> > >::is_specialized);

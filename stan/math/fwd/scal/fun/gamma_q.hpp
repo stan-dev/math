@@ -10,12 +10,12 @@ namespace math {
 
 template <typename T>
 inline fvar<T> gamma_q(const fvar<T>& x1, const fvar<T>& x2) {
-  using std::log;
-  using std::exp;
-  using std::pow;
-  using std::fabs;
-  using boost::math::tgamma;
   using boost::math::digamma;
+  using boost::math::tgamma;
+  using std::exp;
+  using std::fabs;
+  using std::log;
+  using std::pow;
 
   T u = gamma_q(x1.val_, x2.val_);
 
@@ -43,12 +43,12 @@ inline fvar<T> gamma_q(const fvar<T>& x1, const fvar<T>& x2) {
 
 template <typename T>
 inline fvar<T> gamma_q(const fvar<T>& x1, double x2) {
-  using std::log;
-  using std::exp;
-  using std::pow;
-  using std::fabs;
-  using boost::math::tgamma;
   using boost::math::digamma;
+  using boost::math::tgamma;
+  using std::exp;
+  using std::fabs;
+  using std::log;
+  using std::pow;
 
   T u = gamma_q(x1.val_, x2);
 

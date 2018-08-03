@@ -2,12 +2,12 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 
 TEST(ProbTransform, choleskyFactor) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::cholesky_factor_constrain;
   using stan::math::cholesky_factor_free;
 
@@ -25,8 +25,8 @@ TEST(ProbTransform, choleskyFactor) {
     EXPECT_FLOAT_EQ(x(i), x2(i));
 }
 TEST(ProbTransform, choleskyFactorLogJacobian) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::cholesky_factor_constrain;
 
   double lp;
@@ -57,8 +57,8 @@ TEST(ProbTransform, choleskyFactorLogJacobian) {
   EXPECT_FLOAT_EQ(1.2 + 1.001 + 3.01 + 6.1, lp);
 }
 TEST(ProbTransform, choleskyFactorConstrainError) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::cholesky_factor_constrain;
 
   Matrix<double, Dynamic, 1> x(3);
@@ -68,8 +68,8 @@ TEST(ProbTransform, choleskyFactorConstrainError) {
   EXPECT_THROW(cholesky_factor_constrain(x, 9, 9, lp), std::invalid_argument);
 }
 TEST(ProbTransform, choleskyFactorFreeError) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::cholesky_factor_free;
 
   Matrix<double, Dynamic, Dynamic> y(1, 1);

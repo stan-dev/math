@@ -1,0 +1,37 @@
+                     SUNLINSOL_LAPACKDENSE
+                 released as part of SUNDIALS
+    SUite of Nonlinear and DIfferential/ALgebraic equation Solvers
+                   Release 3.0.0, September 2017
+
+
+LAPACK dense implementation of the SUNLINSOL module for SUNDIALS. 
+
+SUNLINSOL_LAPACKDENSE defines the content field of SUNMatrix to be a structure 
+containing an integer 'pivots' array, along with a long integer for
+any error flag that arises in the factorization process.
+
+SUNLINSOL_LAPACKDENSE implements all linear solver operations defined
+by the generic SUNLINSOL module in the table of operations.
+
+
+A. Documentation
+----------------
+
+The LAPACK dense SUNLINSOL implementation is fully described in the user
+documentation for any of the SUNDIALS solvers. A PDF file for the user
+guide for a particular solver is available in the solver's
+subdirectory under doc/. 
+
+
+B. Installation
+---------------
+
+For basic installation instructions see /sundials/INSTALL_GUIDE.pdf. 
+For complete installation instructions see any of the user guides.
+
+
+D. Releases
+-----------
+v. 1.0   - date?
+
+

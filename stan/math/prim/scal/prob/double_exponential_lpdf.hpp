@@ -46,8 +46,8 @@ typename return_type<T_y, T_loc, T_scale>::type double_exponential_lpdf(
       T_partials_return;
 
   using stan::is_constant_struct;
-  using std::log;
   using std::fabs;
+  using std::log;
   using std::log;
 
   if (size_zero(y, mu, sigma))

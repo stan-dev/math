@@ -23,14 +23,14 @@ namespace math {
  * reduces to <code>identity_constrain(x)</code>.
  *
  * @tparam T type of scalar
- * @tparam TU type of upper bound
+ * @tparam U type of upper bound
  * @param[in] x free scalar.
  * @param[in] ub upper bound
  * @return scalar constrained to have upper bound
  */
-template <typename T, typename TU>
-inline typename boost::math::tools::promote_args<T, TU>::type ub_constrain(
-    const T& x, const TU& ub) {
+template <typename T, typename U>
+inline typename boost::math::tools::promote_args<T, U>::type ub_constrain(
+    const T& x, const U& ub) {
   using std::exp;
   if (ub == std::numeric_limits<double>::infinity())
     return identity_constrain(x);
@@ -54,15 +54,15 @@ inline typename boost::math::tools::promote_args<T, TU>::type ub_constrain(
  * reduces to <code>identity_constrain(x, lp)</code>.
  *
  * @tparam T type of scalar
- * @tparam TU type of upper bound
+ * @tparam U type of upper bound
  * @param[in] x free scalar.
  * @param[in] ub upper bound
  * @param[in,out] lp log density
  * @return scalar constrained to have upper bound
  */
-template <typename T, typename TU>
-inline typename boost::math::tools::promote_args<T, TU>::type ub_constrain(
-    const T& x, const TU& ub, T& lp) {
+template <typename T, typename U>
+inline typename boost::math::tools::promote_args<T, U>::type ub_constrain(
+    const T& x, const U& ub, T& lp) {
   using std::exp;
   if (ub == std::numeric_limits<double>::infinity())
     return identity_constrain(x, lp);

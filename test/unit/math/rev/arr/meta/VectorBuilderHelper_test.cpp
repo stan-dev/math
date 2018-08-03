@@ -3,10 +3,10 @@
 #include <vector>
 
 TEST(MetaTraits, VectorBuilderHelper_false_true) {
-  using std::vector;
   using stan::VectorBuilderHelper;
-  using stan::math::var;
   using stan::length;
+  using stan::math::var;
+  using std::vector;
 
   std::vector<var> a_std_vector(3);
 
@@ -16,10 +16,10 @@ TEST(MetaTraits, VectorBuilderHelper_false_true) {
 }
 
 TEST(MetaTraits, VectorBuilderHelper_true_true) {
-  using std::vector;
   using stan::VectorBuilderHelper;
-  using stan::math::var;
   using stan::length;
+  using stan::math::var;
+  using std::vector;
 
   var a_var(1);
   std::vector<var> a_std_vector(3);

@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 
 TEST(MathMatrix, softmax) {
-  using stan::math::softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::softmax;
 
   Matrix<double, Dynamic, 1> x(1);
   x << 0.0;

@@ -36,16 +36,16 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
               const T& z, const T& precision = 1e-10, int max_steps = 1e5) {
   check_2F1_converges("grad_2F1", a1, a2, b1, z);
 
-  using std::log;
-  using std::fabs;
   using std::exp;
+  using std::fabs;
+  using std::log;
 
   g_a1 = 0.0;
   g_b1 = 0.0;
 
   T log_g_old[2];
-  for (int i = 0; i < 2; ++i)
-    log_g_old[i] = -std::numeric_limits<T>::infinity();
+  for (auto& i : log_g_old)
+    i = -std::numeric_limits<T>::infinity();
 
   T log_t_old = 0.0;
   T log_t_new = 0.0;
@@ -55,8 +55,8 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
   double log_t_new_sign = 1.0;
   double log_t_old_sign = 1.0;
   double log_g_old_sign[2];
-  for (int i = 0; i < 2; ++i)
-    log_g_old_sign[i] = 1.0;
+  for (double& x : log_g_old_sign)
+    x = 1.0;
 
   for (int k = 0; k <= max_steps; ++k) {
     T p = (a1 + k) * (a2 + k) / ((b1 + k) * (1 + k));

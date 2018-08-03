@@ -17,10 +17,10 @@ typedef std::vector<var_v1> var_v2;
 typedef std::vector<var_v2> var_v3;
 
 TEST(MetaTraits, isConstantStruct) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::is_constant_struct;
   using std::vector;
-  using Eigen::Matrix;
-  using Eigen::Dynamic;
 
   EXPECT_FALSE(is_constant_struct<var_t1>::value);
   EXPECT_FALSE(is_constant_struct<var_t2>::value);

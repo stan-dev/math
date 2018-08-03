@@ -14,9 +14,9 @@ namespace math {
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> cholesky_corr_free(
     const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& x) {
-  using std::sqrt;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::sqrt;
 
   check_square("cholesky_corr_free", "x", x);
   // should validate lower-triangular, unit lengths

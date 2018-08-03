@@ -3,9 +3,9 @@
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 TEST(AgradRev, owens_t_vv) {
-  using stan::math::var;
-  using stan::math::owens_t;
   using boost::math::owens_t;
+  using stan::math::owens_t;
+  using stan::math::var;
 
   var h = 1.0;
   var a = 2.0;
@@ -19,9 +19,9 @@ TEST(AgradRev, owens_t_vv) {
   EXPECT_FLOAT_EQ(-0.1154804963, grad_f[0]);
 }
 TEST(AgradRev, owens_t_vd) {
-  using stan::math::var;
-  using stan::math::owens_t;
   using boost::math::owens_t;
+  using stan::math::owens_t;
+  using stan::math::var;
 
   AVAR h = 1.0;
   double a = 2.0;
@@ -35,9 +35,9 @@ TEST(AgradRev, owens_t_vd) {
   EXPECT_FLOAT_EQ(-0.1154804963, grad_f[0]);
 }
 TEST(AgradRev, owens_t_dv) {
-  using stan::math::var;
-  using stan::math::owens_t;
   using boost::math::owens_t;
+  using stan::math::owens_t;
+  using stan::math::var;
 
   double h = 1.0;
   AVAR a = 2.0;

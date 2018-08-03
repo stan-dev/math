@@ -5,10 +5,10 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdFallingFactorial, FvarVar_1stDeriv) {
+  using stan::math::digamma;
+  using stan::math::falling_factorial;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::falling_factorial;
-  using stan::math::digamma;
 
   fvar<var> a(5.0, 1.0);
   fvar<var> c = falling_factorial(a, 3);
@@ -26,11 +26,11 @@ TEST(AgradFwdFallingFactorial, FvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdFallingFactorial, FvarVar_2ndDeriv_x) {
-  using stan::math::fvar;
-  using stan::math::var;
-  using stan::math::falling_factorial;
   using stan::math::digamma;
+  using stan::math::falling_factorial;
+  using stan::math::fvar;
   using stan::math::trigamma;
+  using stan::math::var;
   using std::pow;
 
   fvar<var> a(5.0, 1.0);
@@ -46,9 +46,9 @@ TEST(AgradFwdFallingFactorial, FvarVar_2ndDeriv_x) {
 }
 
 TEST(AgradFwdFallingFactorial, FvarVar_2ndDeriv_y) {
+  using stan::math::falling_factorial;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::falling_factorial;
 
   /**
    * Second derivative w.r.t. n should return 0,
@@ -65,10 +65,10 @@ TEST(AgradFwdFallingFactorial, FvarVar_2ndDeriv_y) {
 }
 
 TEST(AgradFwdFallingFactorial, FvarFvarVar_1stDeriv) {
+  using stan::math::digamma;
+  using stan::math::falling_factorial;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::falling_factorial;
-  using stan::math::digamma;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 5.0;
@@ -90,11 +90,11 @@ TEST(AgradFwdFallingFactorial, FvarFvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdFallingFactorial, FvarFvarVar_2ndDeriv_x) {
-  using stan::math::fvar;
-  using stan::math::var;
-  using stan::math::falling_factorial;
   using stan::math::digamma;
+  using stan::math::falling_factorial;
+  using stan::math::fvar;
   using stan::math::trigamma;
+  using stan::math::var;
   using std::pow;
 
   fvar<fvar<var> > x;
@@ -114,9 +114,9 @@ TEST(AgradFwdFallingFactorial, FvarFvarVar_2ndDeriv_x) {
 }
 
 TEST(AgradFwdFallingFactorial, FvarFvarVar_2ndDeriv_y) {
+  using stan::math::falling_factorial;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::falling_factorial;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 5.0;
@@ -132,9 +132,9 @@ TEST(AgradFwdFallingFactorial, FvarFvarVar_2ndDeriv_y) {
 }
 
 TEST(AgradFwdFallingFactorial, FvarFvarVar_3rdDeriv) {
+  using stan::math::falling_factorial;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::falling_factorial;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 5.0;

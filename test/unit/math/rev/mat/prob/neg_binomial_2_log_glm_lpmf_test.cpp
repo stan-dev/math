@@ -1,9 +1,11 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+
 using Eigen::Dynamic;
 using Eigen::Matrix;
 using stan::math::var;
+
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNegBinomial2LogGLM,

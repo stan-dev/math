@@ -3,14 +3,14 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
-using stan::math::promote_common;
-using stan::math::var;
 using stan::math::matrix_d;
-using stan::math::vector_d;
-using stan::math::row_vector_d;
 using stan::math::matrix_v;
-using stan::math::vector_v;
+using stan::math::promote_common;
+using stan::math::row_vector_d;
 using stan::math::row_vector_v;
+using stan::math::var;
+using stan::math::vector_d;
+using stan::math::vector_v;
 using std::vector;
 
 TEST(AgradRevMatrix, promote_common_scal) {

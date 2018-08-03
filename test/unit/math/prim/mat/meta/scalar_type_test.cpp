@@ -4,12 +4,12 @@
 #include <vector>
 
 TEST(MetaTraits, ScalarTypeMat) {
-  using stan::scalar_type;
   using Eigen::MatrixXd;
-  using Eigen::VectorXd;
   using Eigen::RowVectorXd;
-  using test::expect_same_type;
+  using Eigen::VectorXd;
+  using stan::scalar_type;
   using std::vector;
+  using test::expect_same_type;
 
   expect_same_type<double, scalar_type<MatrixXd>::type>();
   expect_same_type<double, scalar_type<VectorXd>::type>();

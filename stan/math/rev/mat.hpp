@@ -12,6 +12,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/rev/arr.hpp>
 
+#include <stan/math/rev/mat/fun/adj_jac_apply.hpp>
 #include <stan/math/rev/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_product.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_self.hpp>
@@ -21,6 +22,7 @@
 #include <stan/math/rev/mat/fun/divide.hpp>
 #include <stan/math/rev/mat/fun/dot_product.hpp>
 #include <stan/math/rev/mat/fun/dot_self.hpp>
+#include <stan/math/rev/mat/fun/gp_periodic_cov.hpp>
 #include <stan/math/rev/mat/fun/grad.hpp>
 #include <stan/math/rev/mat/fun/initialize_variable.hpp>
 #include <stan/math/rev/mat/fun/LDLT_alloc.hpp>
@@ -30,6 +32,7 @@
 #include <stan/math/rev/mat/fun/log_determinant_spd.hpp>
 #include <stan/math/rev/mat/fun/log_softmax.hpp>
 #include <stan/math/rev/mat/fun/log_sum_exp.hpp>
+#include <stan/math/rev/mat/fun/matrix_exp_multiply.hpp>
 #include <stan/math/rev/mat/fun/mdivide_left.hpp>
 #include <stan/math/rev/mat/fun/mdivide_left_ldlt.hpp>
 #include <stan/math/rev/mat/fun/mdivide_left_spd.hpp>
@@ -39,6 +42,7 @@
 #include <stan/math/rev/mat/fun/quad_form.hpp>
 #include <stan/math/rev/mat/fun/quad_form_sym.hpp>
 #include <stan/math/rev/mat/fun/rows_dot_product.hpp>
+#include <stan/math/rev/mat/fun/scale_matrix_exp_multiply.hpp>
 #include <stan/math/rev/mat/fun/sd.hpp>
 #include <stan/math/rev/mat/fun/softmax.hpp>
 #include <stan/math/rev/mat/fun/squared_distance.hpp>
@@ -55,9 +59,10 @@
 #include <stan/math/rev/mat/functor/algebra_solver.hpp>
 #include <stan/math/rev/mat/functor/gradient.hpp>
 #include <stan/math/rev/mat/functor/jacobian.hpp>
-#include <stan/math/rev/mat/functor/ode_system.hpp>
 #include <stan/math/rev/mat/functor/cvodes_utils.hpp>
 #include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>
+#include <stan/math/rev/mat/functor/integrate_ode_adams.hpp>
 #include <stan/math/rev/mat/functor/integrate_ode_bdf.hpp>
+#include <stan/math/rev/mat/functor/map_rect_reduce.hpp>
 
 #endif

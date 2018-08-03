@@ -6,8 +6,8 @@
 #include <vector>
 
 stan::math::matrix_v generate_large_L_tri_mat() {
-  using stan::math::matrix_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
 
   matrix_v ret_mat(100, 100);
   matrix_d x;
@@ -43,8 +43,8 @@ void test_mult_LLT(const stan::math::matrix_v& L) {
 }
 
 TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad1) {
-  using stan::math::multiply_lower_tri_self_transpose;
   using stan::math::matrix_v;
+  using stan::math::multiply_lower_tri_self_transpose;
 
   matrix_v L(1, 1);
   L << 3.0;
@@ -64,8 +64,8 @@ TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad1) {
 }
 
 TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad2) {
-  using stan::math::multiply_lower_tri_self_transpose;
   using stan::math::matrix_v;
+  using stan::math::multiply_lower_tri_self_transpose;
 
   matrix_v L(2, 2);
   L << 1, 0, 2, 3;
@@ -114,8 +114,8 @@ TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad2) {
 }
 
 TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad3) {
-  using stan::math::multiply_lower_tri_self_transpose;
   using stan::math::matrix_v;
+  using stan::math::multiply_lower_tri_self_transpose;
 
   matrix_v L(3, 3);
   L << 1, 0, 0, 2, 3, 0, 4, 5, 6;
@@ -221,8 +221,8 @@ TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad3) {
 }
 
 TEST(AgradRevMatrix, multiplyLowerTriSelfTranspose) {
-  using stan::math::multiply_lower_tri_self_transpose;
   using stan::math::matrix_v;
+  using stan::math::multiply_lower_tri_self_transpose;
 
   matrix_v L;
 

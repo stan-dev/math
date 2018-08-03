@@ -4,9 +4,9 @@
 #include <vector>
 
 using stan::math::fvar;
+using stan::math::log_sum_exp;
+using stan::math::log_sum_exp;
 using stan::math::var;
-using stan::math::log_sum_exp;
-using stan::math::log_sum_exp;
 
 TEST(AgradMixMatrixLogSumExp, vector_fv_1st_deriv) {
   using stan::math::vector_fv;

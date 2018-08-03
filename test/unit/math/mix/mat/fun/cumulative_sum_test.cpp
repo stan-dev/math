@@ -183,9 +183,9 @@ void test_cumulative_sum4() {
   EXPECT_FLOAT_EQ(1.0, grad[2]);
 }
 TEST(AgradMixMatrixCumulativeSum, fv) {
+  using stan::math::cumulative_sum;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::cumulative_sum;
 
   EXPECT_FLOAT_EQ(0, cumulative_sum(std::vector<fvar<var> >(0)).size());
 
@@ -200,9 +200,9 @@ TEST(AgradMixMatrixCumulativeSum, fv) {
   test_cumulative_sum2<Eigen::Matrix<fvar<var>, 1, Eigen::Dynamic> >();
 }
 TEST(AgradMixMatrixCumulativeSum, ffv) {
+  using stan::math::cumulative_sum;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::cumulative_sum;
 
   EXPECT_FLOAT_EQ(0, cumulative_sum(std::vector<fvar<fvar<var> > >(0)).size());
 

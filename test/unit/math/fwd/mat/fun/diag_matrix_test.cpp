@@ -28,10 +28,10 @@ TEST(AgradFwdMatrixDiagMatrix, vector_fd) {
 
 TEST(AgradFwdMatrixDiagMatrix, vector_ffd) {
   using stan::math::diag_matrix;
+  using stan::math::fvar;
   using stan::math::matrix_ffd;
   using stan::math::vector_d;
   using stan::math::vector_ffd;
-  using stan::math::fvar;
 
   EXPECT_EQ(0, diag_matrix(vector_ffd()).size());
   EXPECT_EQ(4, diag_matrix(vector_ffd(2)).size());

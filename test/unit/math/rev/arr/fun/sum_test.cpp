@@ -5,8 +5,8 @@
 
 TEST(AgradRev, sum_std_vector) {
   using stan::math::sum;
-  using std::vector;
   using stan::math::var;
+  using std::vector;
 
   vector<var> x;
   for (size_t i = 0; i < 6; ++i)

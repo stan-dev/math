@@ -4,8 +4,8 @@
 #include <stan/math/prim/scal/meta/broadcast_array.hpp>
 
 TEST(foo, bar) {
-  using stan::math::internal::broadcast_array;
   using stan::math::fvar;
+  using stan::math::internal::broadcast_array;
   using stan::math::var;
 
   fvar<var> fv(1.0, 2.1);

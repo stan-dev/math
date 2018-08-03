@@ -5,10 +5,10 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdDigamma, FvarVar_1stDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using boost::math::digamma;
   using boost::math::zeta;
+  using stan::math::fvar;
+  using stan::math::var;
 
   fvar<var> x(0.5, 1.3);
   fvar<var> a = digamma(x);
@@ -23,10 +23,10 @@ TEST(AgradFwdDigamma, FvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdDigamma, FvarVar_2ndDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using boost::math::digamma;
   using boost::math::zeta;
+  using stan::math::fvar;
+  using stan::math::var;
 
   fvar<var> x(0.5, 1.3);
   fvar<var> a = digamma(x);
@@ -38,9 +38,9 @@ TEST(AgradFwdDigamma, FvarVar_2ndDeriv) {
 }
 
 TEST(AgradFwdDigamma, FvarFvarVar_1stDeriv) {
+  using boost::math::digamma;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::digamma;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -75,9 +75,9 @@ TEST(AgradFwdDigamma, FvarFvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdDigamma, FvarFvarVar_2ndDeriv) {
+  using boost::math::digamma;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::digamma;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -102,9 +102,9 @@ TEST(AgradFwdDigamma, FvarFvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(-16.8288, r[0]);
 }
 TEST(AgradFwdDigamma, FvarFvarVar_3rdDeriv) {
+  using boost::math::digamma;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::digamma;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;

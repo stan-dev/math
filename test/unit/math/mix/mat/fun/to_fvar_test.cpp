@@ -131,8 +131,8 @@ TEST(AgradMixMatrixToFvar, ffv_rowvector) {
   EXPECT_FLOAT_EQ(1, output(4).d_.val().val());
 }
 TEST(AgradMixMatrixToFvar, ffv_matrix_matrix) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_ffv;
+  using stan::math::matrix_fv;
 
   matrix_fv val(3, 3);
   matrix_fv d(3, 3);

@@ -34,8 +34,8 @@ template <typename T_y, typename T_low>
 struct greater_or_equal<T_y, T_low, true> {
   static void check(const char* function, const char* name, const T_y& y,
                     const T_low& low) {
-    using stan::length;
     using stan::get;
+    using stan::length;
     scalar_seq_view<T_low> low_vec(low);
     for (size_t n = 0; n < length(y); n++) {
       if (!(get(y, n) >= low_vec[n])) {

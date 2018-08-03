@@ -6,16 +6,16 @@
 #include <vector>
 
 void test_log_sum_exp(double a, double b) {
-  using std::log;
-  using std::exp;
   using stan::math::log_sum_exp;
+  using std::exp;
+  using std::log;
   EXPECT_FLOAT_EQ(log(exp(a) + exp(b)), log_sum_exp(a, b));
 }
 
 void test_log_sum_exp(const std::vector<double>& as) {
-  using std::log;
-  using std::exp;
   using stan::math::log_sum_exp;
+  using std::exp;
+  using std::log;
   double sum_exp = 0.0;
   for (size_t n = 0; n < as.size(); ++n)
     sum_exp += exp(as[n]);

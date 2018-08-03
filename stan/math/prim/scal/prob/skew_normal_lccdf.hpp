@@ -47,8 +47,8 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type skew_normal_lccdf(
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(y, mu, sigma,
                                                                    alpha);
 
-  using std::log;
   using std::exp;
+  using std::log;
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);

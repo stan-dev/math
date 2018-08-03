@@ -5,8 +5,8 @@
 #include <limits>
 #include <vector>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 
 typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
 
@@ -23,11 +23,11 @@ vector_d get_simplex(double lambda, const vector_d& c) {
 }
 
 TEST(ProbDistributions, ordered_logistic_vals) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
 
-  using stan::math::ordered_logistic_log;
   using stan::math::inv_logit;
+  using stan::math::ordered_logistic_log;
 
   std::vector<int> y{1, 2, 3, 4, 5};
   std::vector<int> zero{1, 2, 0, 4, 5};
@@ -62,11 +62,11 @@ TEST(ProbDistributions, ordered_logistic_vals) {
 }
 
 TEST(ProbDistributions, ordered_logistic_vals_2) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
 
-  using stan::math::ordered_logistic_log;
   using stan::math::inv_logit;
+  using stan::math::ordered_logistic_log;
 
   std::vector<int> y{1, 2, 3};
   std::vector<int> zero{1, 0, 3};

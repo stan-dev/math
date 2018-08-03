@@ -1,9 +1,9 @@
 // Arguments: Ints, Ints, Doubles, Doubles
 #include <stan/math/prim/scal.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradDistributionsBetaBinomial : public AgradDistributionTest {
  public:
@@ -76,8 +76,8 @@ class AgradDistributionsBetaBinomial : public AgradDistributionTest {
   typename stan::return_type<T_size1, T_size2>::type log_prob_function(
       const T_n& n, const T_N& N, const T_size1& alpha, const T_size2& beta,
       const T4&, const T5&) {
-    using stan::math::lbeta;
     using stan::math::binomial_coefficient_log;
+    using stan::math::lbeta;
 
     if (n < 0 || n > N)
       return 0.0;

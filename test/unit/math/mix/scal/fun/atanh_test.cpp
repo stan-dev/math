@@ -5,9 +5,9 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdAtanh, FvarVar_1stDeriv) {
+  using boost::math::atanh;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::atanh;
 
   fvar<var> x(0.5, 1.3);
   fvar<var> a = atanh(x);
@@ -22,9 +22,9 @@ TEST(AgradFwdAtanh, FvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdAtanh, FvarVar_2ndDeriv) {
+  using boost::math::atanh;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::atanh;
 
   fvar<var> x(0.5, 1.3);
   fvar<var> a = atanh(x);
@@ -36,9 +36,9 @@ TEST(AgradFwdAtanh, FvarVar_2ndDeriv) {
 }
 
 TEST(AgradFwdAtanh, FvarFvarVar_1stDeriv) {
+  using boost::math::atanh;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::atanh;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -73,9 +73,9 @@ TEST(AgradFwdAtanh, FvarFvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdAtanh, FvarFvarVar_2ndDeriv) {
+  using boost::math::atanh;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::atanh;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -109,9 +109,9 @@ TEST(AgradFwdAtanh, FvarFvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(1.7777778, r[0]);
 }
 TEST(AgradFwdAtanh, FvarFvarVar_3rdDeriv) {
+  using boost::math::atanh;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::atanh;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;

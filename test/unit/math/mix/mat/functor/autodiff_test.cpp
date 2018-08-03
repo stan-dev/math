@@ -5,8 +5,8 @@
 #include <stdexcept>
 #include <vector>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 
 struct fun0 {
   template <typename T>

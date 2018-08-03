@@ -25,16 +25,16 @@ namespace math {
  * reduces to <code>identity_free(y)</code>.
  *
  * @tparam T type of scalar
- * @tparam TU type of upper bound
+ * @tparam U type of upper bound
  * @param y constrained scalar with specified upper bound
  * @param ub upper bound
  * @return unconstrained scalar with respect to upper bound
  * @throw std::invalid_argument if constrained scalar is greater
  *   than the upper bound.
  */
-template <typename T, typename TU>
-inline typename boost::math::tools::promote_args<T, TU>::type ub_free(
-    const T& y, const TU& ub) {
+template <typename T, typename U>
+inline typename boost::math::tools::promote_args<T, U>::type ub_free(
+    const T& y, const U& ub) {
   using std::log;
   if (ub == std::numeric_limits<double>::infinity())
     return identity_free(y);
