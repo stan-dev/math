@@ -112,9 +112,9 @@ typename return_type<T_x, T_beta, T_alpha>::type poisson_log_glm_lpmf(
         && is_constant_struct<T_alpha>::value)) {
     Matrix<T_partials_return, Dynamic, 1> theta_derivative = n_vec - exp_theta;
     if (!is_constant_struct<T_beta>::value) {
-      assign_to_matrix_or_broadcast_array(ops_partials.edge2_.partials_,
-                                          value_of(x).transpose() *
-                                          theta_derivative);
+      assign_to_matrix_or_broadcast_array(
+          ops_partials.edge2_.partials_,
+          value_of(x).transpose() * theta_derivative);
     }
     if (!is_constant_struct<T_x>::value) {
       ops_partials.edge1_.partials_ = theta_derivative * beta_dbl.transpose();

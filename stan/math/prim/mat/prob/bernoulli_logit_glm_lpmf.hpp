@@ -90,10 +90,11 @@ typename return_type<T_x, T_beta, T_alpha>::type bernoulli_logit_glm_lpmf(
       beta_dbl[m] = value_of(beta_vec[m]);
     }
   }
-  Eigen::Array<T_partials_return, Dynamic, 1> ntheta = signs.array()
-              * (value_of(x) * beta_dbl
-                 + Matrix<double, Dynamic, 1>::Ones(N, 1) * value_of(alpha))
-                  .array();
+  Eigen::Array<T_partials_return, Dynamic, 1> ntheta
+      = signs.array()
+        * (value_of(x) * beta_dbl
+           + Matrix<double, Dynamic, 1>::Ones(N, 1) * value_of(alpha))
+              .array();
 
   Eigen::Array<T_partials_return, Dynamic, 1> exp_m_ntheta = (-ntheta).exp();
 
@@ -124,8 +125,9 @@ typename return_type<T_x, T_beta, T_alpha>::type bernoulli_logit_glm_lpmf(
             = signs[n] * exp_m_ntheta[n] / (exp_m_ntheta[n] + 1);
     }
     if (!is_constant_struct<T_beta>::value) {
-      assign_to_matrix_or_broadcast_array(ops_partials.edge2_.partials_,
-      value_of(x).transpose() * theta_derivative);
+      assign_to_matrix_or_broadcast_array(
+          ops_partials.edge2_.partials_,
+          value_of(x).transpose() * theta_derivative);
     }
     if (!is_constant_struct<T_x>::value) {
       ops_partials.edge1_.partials_ = theta_derivative * beta_dbl.transpose();
