@@ -20,6 +20,9 @@ namespace {
 
 template <int R, int C>
 class log_det_ldlt_vari : public vari {
+  double *invA_mem_;
+  LDLT_factor<var, R, C> A_;
+
  public:
   explicit log_det_ldlt_vari(const LDLT_factor<var, R, C> &A)
       : vari(A.log_abs_det()),
@@ -43,9 +46,6 @@ class log_det_ldlt_vari : public vari {
       }
     }
   }
-
-  double *invA_mem_;
-  LDLT_factor<var, R, C> A_;
 };
 }  // namespace
 

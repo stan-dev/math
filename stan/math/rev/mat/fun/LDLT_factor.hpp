@@ -147,13 +147,21 @@ class LDLT_factor<var, R, C> {
   }
 
   /**
-   * Access the varis from the input matrix A
+   * Access the vari pointers from the input matrix A via an flat index
    *
-   * @param i row of vari
-   * @param j column of vari
-   * @return vari
+   * @param i index of vari
+   * @return vari pointer
    */
-  vari *getVariA(int i, int j) { return variA_mem_[i + N_ * j]; }
+  vari *getVariA(int i) const { return variA_mem_[i]; }
+
+  /**
+   * Access the vari pointers from the input matrix A
+   *
+   * @param i row of vari pointer
+   * @param j column of vari pointer
+   * @return vari pointer
+   */
+  vari *getVariA(int i, int j) const { return variA_mem_[i + N_ * j]; }
 
   /**
    * Compute the log of the absolute value of the determinant
