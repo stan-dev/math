@@ -32,8 +32,7 @@ inline double* build_double_array(vari** array, int size) {
  * @return Copy of input array
  */
 inline double* build_double_array(const double* array, int size) {
-  double* copy
-      = ChainableStack::instance().memalloc_.alloc_array<double>(size);
+  double* copy = ChainableStack::instance().memalloc_.alloc_array<double>(size);
 
   std::copy(array, array + size, copy);
 

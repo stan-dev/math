@@ -6,10 +6,10 @@
 TEST(AgradRev, vars_test) {
   std::vector<stan::math::var> vars = {1.0, 2.0, 3.0, -5.0, 10.0};
 
-  stan::math::vari** varis = stan::math::build_vari_pointer_array_if_necessary(vars.data(), vars.size());
-  
-  const double* doubles
-      = stan::math::build_double_array(varis, vars.size());
+  stan::math::vari** varis = stan::math::build_vari_pointer_array_if_necessary(
+      vars.data(), vars.size());
+
+  const double* doubles = stan::math::build_double_array(varis, vars.size());
 
   EXPECT_TRUE(
       stan::math::ChainableStack::instance().memalloc_.in_stack(doubles));
@@ -21,7 +21,8 @@ TEST(AgradRev, vars_test) {
 TEST(AgradRev, doubles_test) {
   std::vector<double> doubles_vector = {1.0, 2.0, 3.0, -5.0, 10.0};
 
-  const double* doubles = stan::math::build_double_array(doubles_vector.data(), doubles_vector.size());
+  const double* doubles = stan::math::build_double_array(doubles_vector.data(),
+                                                         doubles_vector.size());
 
   EXPECT_NE(doubles, doubles_vector.data());
 
