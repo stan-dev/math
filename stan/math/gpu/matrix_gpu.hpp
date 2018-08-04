@@ -176,8 +176,8 @@ class matrix_gpu {
     kernel_cl kernel("zeros");
     cl::CommandQueue cmdQueue = opencl_context.queue();
     try {
-      kernel.set_args(this->buffer(), this->rows(),
-                                     this->cols(), triangular_view);
+      kernel.set_args(this->buffer(), this->rows(), this->cols(),
+                      triangular_view);
       cmdQueue.enqueueNDRangeKernel(kernel.compiled_, cl::NullRange,
                                     cl::NDRange(this->rows(), this->cols()),
                                     cl::NullRange, NULL, NULL);
@@ -208,7 +208,7 @@ class matrix_gpu {
     cl::CommandQueue cmdQueue = opencl_context.queue();
     try {
       kernel.set_args(this->buffer(), this->rows(), this->cols(),
-       triangular_map);
+                      triangular_map);
       cmdQueue.enqueueNDRangeKernel(kernel.compiled_, cl::NullRange,
                                     cl::NDRange(this->rows(), this->cols()),
                                     cl::NullRange, NULL, NULL);
@@ -232,8 +232,8 @@ class matrix_gpu {
     if (nrows == 0 || ncols == 0) {
       return;
     }
-    if ((A_i + nrows) > A.rows() || (A_j + ncols) > A.cols() ||
-        (this_i + nrows) > this->rows() || (this_j + ncols) > this->cols()) {
+    if ((A_i + nrows) > A.rows() || (A_j + ncols) > A.cols()
+        || (this_i + nrows) > this->rows() || (this_j + ncols) > this->cols()) {
       domain_error("copy_submatrix", "submatrix in *this", " is out of bounds",
                    "");
     }
@@ -241,7 +241,8 @@ class matrix_gpu {
     cl::CommandQueue cmdQueue = opencl_context.queue();
     try {
       kernel.set_args(A.buffer(), this->buffer(), A_i, A_j, this_i, this_j,
-       nrows, ncols, A.rows(), A.cols(), this->rows(), this->cols());
+                      nrows, ncols, A.rows(), A.cols(), this->rows(),
+                      this->cols());
       cmdQueue.enqueueNDRangeKernel(kernel.compiled_, cl::NullRange,
                                     cl::NDRange(nrows, ncols), cl::NullRange,
                                     NULL, NULL);

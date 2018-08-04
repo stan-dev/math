@@ -24,8 +24,8 @@ TEST(MathGpu, make_kernel) {
   stan::math::kernel_cl kernel("transpose");
   kernel.set_args(m00_dst.buffer(), m00.buffer(), m00.rows(), m00.cols());
   cmdQueue.enqueueNDRangeKernel(kernel.compiled_, cl::NullRange,
-                                  cl::NDRange(m00.rows(), m00.cols()),
-                                  cl::NullRange, NULL, NULL);
+                                cl::NDRange(m00.rows(), m00.cols()),
+                                cl::NullRange, NULL, NULL);
   copy(m0_dst, m00_dst);
 }
 #endif

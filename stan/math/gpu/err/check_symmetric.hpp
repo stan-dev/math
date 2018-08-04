@@ -30,7 +30,7 @@ inline void check_symmetric(const char* function, const char* name,
                                  &symmetric_flag);
     kernel_cl kernel("is_symmetric");
     kernel.set_args(y.buffer(), y.rows(), y.cols(), buffer_symmetric_flag,
-     math::CONSTRAINT_TOLERANCE);
+                    math::CONSTRAINT_TOLERANCE);
 
     cmd_queue.enqueueNDRangeKernel(kernel.compiled_, cl::NullRange,
                                    cl::NDRange(y.rows(), y.cols()),

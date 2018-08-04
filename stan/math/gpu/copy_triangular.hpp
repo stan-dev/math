@@ -34,7 +34,7 @@ inline matrix_gpu copy_triangular(const matrix_gpu& src) {
   try {
     kernel_cl kernel("copy_triangular");
     kernel.set_args(dst.buffer(), src.buffer(), dst.rows(), dst.cols(),
-     triangular_map);
+                    triangular_map);
     cmdQueue.enqueueNDRangeKernel(kernel.compiled_, cl::NullRange,
                                   cl::NDRange(dst.rows(), dst.cols()),
                                   cl::NullRange, NULL, NULL);
