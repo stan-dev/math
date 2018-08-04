@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_GPU_KERNEL_CL_HPP
 #define STAN_MATH_GPU_KERNEL_CL_HPP
 #ifdef STAN_OPENCL
-
 #include <stan/math/gpu/opencl_context.hpp>
+#include <stan/math/gpu/constants.hpp>
 #include <CL/cl.hpp>
 #include <string>
 #include <map>
@@ -130,7 +130,7 @@ class kernel_cl {
    *  method places all compiled kernels for a group inside of <code> kernels
    *  </code>.
    *
-   * @param kernel_name[in] The kernel name.
+   * @param kernel_name The kernel name.
    *
    * @throw std::system_error if there are compilation errors
    * when compiling the specified kernel group's source code
@@ -196,7 +196,7 @@ class kernel_cl {
    * which was called, but when a user asks for a kernel within the group those
    * kernels will already be compiled.
    *
-   * @param[in] kernel_name The kernel name.
+   * @param kernel_name The kernel name.
    */
   explicit kernel_cl(const char* kernel_name) {
     // Compile the kernel group and return the kernel
