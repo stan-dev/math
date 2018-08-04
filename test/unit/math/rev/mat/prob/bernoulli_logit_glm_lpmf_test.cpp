@@ -132,7 +132,7 @@ TEST(ProbDistributionsBernoulliLogitGLM,
     var lp = stan::math::bernoulli_logit_lpmf(n, theta);
 
     lp.grad();
-    
+
     double lp_val = lp.val();
     double alpha_adj = alpha.adj();
     Matrix<double, Dynamic, Dynamic> x_adj(3, 2);

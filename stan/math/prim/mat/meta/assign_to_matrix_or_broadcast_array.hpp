@@ -30,7 +30,7 @@ void assign_to_matrix_or_broadcast_array(T &arg1, const S &arg2);
  */
 template <typename TT, typename S>
 void assign_to_matrix_or_broadcast_array(
-		internal::broadcast_array<TT> &arg1,
+    internal::broadcast_array<TT> &arg1,
         const S &arg2) {
   arg1[0] = arg2(0, 0);
 }

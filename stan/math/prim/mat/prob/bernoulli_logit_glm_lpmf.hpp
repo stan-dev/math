@@ -90,7 +90,7 @@ typename return_type<T_x, T_beta, T_alpha>::type bernoulli_logit_glm_lpmf(
       beta_dbl[m] = value_of(beta_vec[m]);
     }
   }
-	Eigen::Array<T_partials_return, Dynamic, 1> ntheta = signs.array()
+  Eigen::Array<T_partials_return, Dynamic, 1> ntheta = signs.array()
               * (value_of(x) * beta_dbl
                  + Matrix<double, Dynamic, 1>::Ones(N, 1) * value_of(alpha))
                   .array();
