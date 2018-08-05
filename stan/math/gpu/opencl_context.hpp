@@ -295,8 +295,8 @@ class opencl_context {
         }
       }
     } catch (const cl::Error& e) {
-      std::cout << "Building failed, " << e.what() << "(" << e.err() << ")" 
-          << "\nRetrieving build log\n" 
+      std::cout << "Building failed, " << e.what() << "(" << e.err() << ")"
+          << "\nRetrieving build log\n"
           << program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>({device()[0]})
           << "\n";
       check_opencl_error("Kernel Compilation", e);

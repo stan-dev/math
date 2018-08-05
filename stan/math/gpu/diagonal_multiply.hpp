@@ -7,9 +7,8 @@
 namespace stan {
 namespace math {
   /**
-   * Multiplies the diagonal of the specified matrix on the GPU 
-   * with the specified scalar.
-   * 
+   * Multiplies the diagonal of a matrix on the GPU with the specified scalar.
+   *
    * @param A input matrix
    * @param scalar scalar
    * @return copy of the input matrix with the diagonal multiplied by scalar
@@ -20,6 +19,7 @@ inline matrix_gpu diagonal_multiply(const matrix_gpu& A, const double scalar) {
       return B;
     cl::Kernel kernel = opencl_context.get_kernel("scalar_mul_diagonal");
     cl::CommandQueue cmdQueue = opencl_context.queue();
+    // For rectangular matrices
     int min_dim = B.rows();
     if (B.cols() < min_dim)
       min_dim = B.cols();

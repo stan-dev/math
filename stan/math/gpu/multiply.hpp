@@ -7,12 +7,12 @@
 namespace stan {
   namespace math {
     /**
-     * Multiplies the specified matrix on the GPU 
+     * Multiplies the specified matrix on the GPU
      * with the specified scalar.
-     * 
+     *
      * @param A matrix
      * @param scalar scalar
-     * @return matrix multipled with scalar     
+     * @return matrix multipled with scalar
      */
     inline matrix_gpu multiply(matrix_gpu & A,  double scalar) {
       matrix_gpu temp(A.rows(), A.cols());
@@ -38,11 +38,11 @@ namespace stan {
     }
 
     /**
-     * Multiplies the specified matrix on the GPU 
+     * Multiplies the specified matrix on the GPU
      * with the specified scalar.
-     * 
+     *
      * @param scalar scalar
-     * @param A matrix     
+     * @param A matrix
      * @return matrix multipled with scalar
      */
     inline matrix_gpu multiply(double scalar, matrix_gpu & A) {
@@ -50,20 +50,15 @@ namespace stan {
     }
 
     /**
-     * Computes the product of the two specified GPU matrices. The number of
-     * columns in the first matrix must be the same as the number of rows
-     * in the second matrix. The number of rows of the resulting matrix must be the
-     * same as the number of rows in the first matrix and the number of columns
-     * of the resulting matrix must be the same as the number of columns of the 
-     * second matrix. 
-     * 
-     * Computes the matrix multiplication C = A x B
-     * 
+     * Computes the product of the specified GPU matrices.
+     *
+     * Computes the matrix multiplication C[M, K] = A[M, N] x B[N, K]
+     *
      * @param A first matrix
      * @param B second matrix
      * @return the product of the first and second matrix
-     * 
-     * @throw <code>std::invalid_argument</code> if the 
+     *
+     * @throw <code>std::invalid_argument</code> if the
      *   number of columns in A and rows in B do not match
      */
     inline matrix_gpu multiply(matrix_gpu & A, matrix_gpu & B) {
