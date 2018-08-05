@@ -17,7 +17,7 @@ R"(
  * @param[in] N Number of cols for matrix A and the number of rows for matrix
  * A^T
  */
-__kernel void multiply_self_transpose(const __global double* A,
+__kernel void multiply_transpose(const __global double* A,
                                       __global double* B, const int M,
                                       const int N) {
   // thread index inside the workgroup
