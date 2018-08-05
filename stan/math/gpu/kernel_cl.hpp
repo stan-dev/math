@@ -69,7 +69,6 @@ class kernel_cl_base {
    */
   struct kernel_meta_info {
     bool exists;
-    const char* group;
     std::vector<const char*> opts;
     const char* raw_code;
   };
@@ -80,36 +79,32 @@ class kernel_cl_base {
   const map_kernel_table kernel_table
       = {{"dummy",
           {false,
-           "timing",
            {},
            "__kernel void dummy(__global const int* foo) { };"}},
          {"dummy2",
           {false,
-           "timing",
            {},
            "__kernel void dummy2(__global const int* foo) { };"}},
-         {"copy", {false, "basic_matrix", {}, copy_matrix_kernel}},
-         {"transpose", {false, "basic_matrix", {}, transpose_matrix_kernel}},
+         {"copy", {false, {}, copy_matrix_kernel}},
+         {"transpose", {false, {}, transpose_matrix_kernel}},
          {"zeros",
           {false,
-           "basic_matrix",
            {"LOWER", "UPPER", "ENTIRE"},
            zeros_matrix_kernel}},
-         {"identity", {false, "basic_matrix", {}, identity_matrix_kernel}},
+         {"identity", {false, {}, identity_matrix_kernel}},
          {"copy_triangular",
-          {false, "basic_matrix", {}, copy_triangular_matrix_kernel}},
+          {false, {}, copy_triangular_matrix_kernel}},
          {"copy_triangular_transposed",
           {false,
-           "basic_matrix",
            {"LOWER_TO_UPPER", "UPPER_TO_LOWER"},
            copy_triangular_transposed_matrix_kernel}},
-         {"copy_submatrix", {false, "basic_matrix", {}, copy_submatrix_kernel}},
-         {"add", {false, "basic_matrix", {}, add_symmetric_kernel}},
-         {"subtract", {false, "basic_matrix", {}, subtract_symmetric_kernel}},
-         {"is_nan", {false, "check", {}, check_nan_kernel}},
+         {"copy_submatrix", {false, {}, copy_submatrix_kernel}},
+         {"add", {false, {}, add_symmetric_kernel}},
+         {"subtract", {false, {}, subtract_symmetric_kernel}},
+         {"is_nan", {false, {}, check_nan_kernel}},
          {"is_zero_on_diagonal",
-          {false, "check", {}, check_diagonal_zeros_kernel}},
-         {"is_symmetric", {false, "check", {}, check_symmetric_kernel}}};
+          {false, {}, check_diagonal_zeros_kernel}},
+         {"is_symmetric", {false, {}, check_symmetric_kernel}}};
   typedef std::map<const char*, cl::Kernel> map_kernel;
   map_kernel kernels;  // The compiled kernels
 
@@ -138,26 +133,20 @@ class kernel_cl {
    * name does not exist
    */
   inline void compile_kernel_group(const char* kernel_name) {
-    std::string kernel_opts = "";
-    std::string kernel_source = "";
     if (this->kernel_table().count(kernel_name) == 0) {
       // throws if the kernel does not exist
       domain_error("compiling kernels", kernel_name, " kernel does not exist",
                    "");
     }
-    const char* kernel_group = this->kernel_table()[kernel_name].group;
-    for (auto kern : this->kernel_table()) {
-      if (strcmp(kern.second.group, kernel_group) == 0) {
-        kernel_source += kern.second.raw_code;
-        for (auto comp_opts : kern.second.opts) {
-          if (strcmp(comp_opts, "") != 0) {
-            kernel_opts += std::string(" -D") + comp_opts + "="
-                           + std::to_string(this->base_options()[comp_opts]);
-          }
-        }
+    kernel_cl_base::kernel_meta_info kernel_info = this->kernel_table()[kernel_name];
+    std::string kernel_opts = "";
+    std::string kernel_source = kernel_info.raw_code;
+    for (auto comp_opts : kernel_info.opts) {
+      if (strcmp(comp_opts, "") != 0) {
+        kernel_opts += std::string(" -D") + comp_opts + "="
+         + std::to_string(this->base_options()[comp_opts]);
       }
     }
-
     try {
       cl::Program::Sources source(
           1,
@@ -168,13 +157,9 @@ class kernel_cl {
       cl_int err = CL_SUCCESS;
       // Iterate over the kernel list and get all the kernels from this group
       // and mark them as compiled.
-      for (auto kern : this->kernel_table()) {
-        if (strcmp(kern.second.group, kernel_group) == 0) {
-          kernel_cl_base::getInstance().kernels[(kern.first)]
-              = cl::Kernel(program_, kern.first, &err);
-          kern.second.exists = true;
-        }
-      }
+      kernel_cl_base::getInstance().kernels[(kernel_name)]
+       = cl::Kernel(program_, kernel_name, &err);
+      kernel_info.exists = true;
     } catch (const cl::Error& e) {
       check_opencl_error("Kernel Compilation", e);
     }
