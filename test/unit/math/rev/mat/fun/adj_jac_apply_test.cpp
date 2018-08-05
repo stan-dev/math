@@ -4,6 +4,56 @@
 #include <algorithm>
 #include <sstream>
 #include <tuple>
+#include <stan/math/rev/core.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
+#include <gtest/gtest.h>
+#include <algorithm>
+#include <sstream>
+#include <tuple>
+
+struct ScalarSinFunctor {
+  double x_;
+  template <std::size_t size>
+  double operator()(const std::array<bool, size>& needs_adj, const double& x) {
+    x_ = x;
+
+    return sin(x_);
+  }
+
+  template <std::size_t size>
+  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
+                                 const double& adj) {
+    return std::make_tuple(cos(x_) * adj);
+  }
+};
+
+TEST(AgradRev, test_scalar_sin_stack) {
+  stan::math::var x1, y1;
+  x1 = 1.0;
+
+  y1 = stan::math::adj_jac_apply<ScalarSinFunctor>(x1);
+
+  test::check_varis_on_stack(y1);
+}
+
+TEST(AgradRev, test_scalar_sin_values) {
+  stan::math::var x1, y1;
+  x1 = 1.0;
+
+  y1 = stan::math::adj_jac_apply<ScalarSinFunctor>(x1);
+
+  EXPECT_NEAR(y1.val(), 0.841470984807897, 1e-10);
+}
+
+TEST(AgradRev, test_scalar_sin_jac) {
+  stan::math::var x1, y1;
+  x1 = 1.0;
+
+  y1 = stan::math::adj_jac_apply<ScalarSinFunctor>(x1);
+
+  y1.grad();
+  EXPECT_NEAR(x1.adj(), 0.5403023058681398, 1e-10);
+}
 
 struct SinFunctor {
   int N_;

@@ -27,6 +27,73 @@ template <class F, class Tuple>
 constexpr auto apply(const F& f, const Tuple& t) {
   return apply_impl(f, t, std::make_index_sequence<std::tuple_size<Tuple>{}>{});
 }
+
+/**
+ * build_y_adj takes the adjoint from the vari pointed to
+ * by y_vi_[0] and stores it in y_adj
+ *
+ * @tparam size dimensionality of M_
+ * @param y_vi_ pointer to pointer to vari
+ * @param M_ ignored in this specialization
+ * @param[out] y_adj reference to variable where adjoint is to be stored
+ */
+template <size_t size>
+void build_y_adj(vari** y_vi_, const std::array<int, size>& M_, double& y_adj) {
+  y_adj = y_vi_[0]->adj_;
+}
+
+/**
+ * build_y_adj takes the adjoints from the varis pointed to
+ * by y_vi_ and stores them in y_adj
+ *
+ * @tparam size dimensionality of M_
+ * @param y_vi_ pointer to pointers to varis
+ * @param M_ shape of y_adj
+ * @param[out] y_adj reference to Eigen::Matrix where adjoints are to be stored
+ */
+template <size_t size, int R, int C>
+void build_y_adj(vari** y_vi_, const std::array<int, size>& M_,
+                 Eigen::Matrix<double, R, C>& y_adj) {
+  y_adj.resize(M_[0], M_[1]);
+  for (int m = 0; m < M_[0] * M_[1]; ++m)
+    y_adj(m) = y_vi_[m]->adj_;
+}
+
+/**
+ * compute the dimensionality of the given template argument. By
+ * default assume zero.
+ */
+template <typename T>
+struct compute_dims {
+  static constexpr size_t value = 0;
+};
+
+/**
+ * compute the dimensionality of the given template argument.
+ * Eigen::VectorXd is treated like a Matrix and given dimension two
+ */
+template <>
+struct compute_dims<Eigen::VectorXd> {
+  static constexpr size_t value = 2;
+};
+
+/**
+ * compute the dimensionality of the given template argument.
+ * Eigen::RowVectorXd is treated like a Matrix and given dimension two
+ */
+template <>
+struct compute_dims<Eigen::RowVectorXd> {
+  static constexpr size_t value = 2;
+};
+
+/**
+ * compute the dimensionality of the given template argument.
+ * Eigen::MatrixXd has dimension two
+ */
+template <>
+struct compute_dims<Eigen::MatrixXd> {
+  static constexpr size_t value = 2;
+};
 }  // namespace
 
 /*
@@ -45,11 +112,14 @@ constexpr auto apply(const F& f, const Tuple& t) {
  */
 template <typename F, typename... Targs>
 struct adj_jac_vari : public vari {
-  F f_;
   std::array<bool, sizeof...(Targs)> is_var_;
+  using FReturnType
+      = std::result_of_t<F(decltype(is_var_), decltype(value_of(Targs()))...)>;
+
+  F f_;
   std::array<int, sizeof...(Targs)> offsets_;
   vari** x_vis_;
-  int M_;
+  std::array<int, compute_dims<FReturnType>::value> M_;
   vari** y_vi_;
 
   /*
@@ -213,6 +283,53 @@ struct adj_jac_vari : public vari {
     constexpr int t = sizeof...(Targs) - 1;
     is_var_[t] = false;
   }
+  explicit adj_jac_vari()
+      : vari(std::numeric_limits<double>::quiet_NaN()),  // The val_ in this
+                                                         // vari is unused
+        x_vis_(NULL),
+        y_vi_(NULL) {}
+
+  /**
+   * build_return_varis_and_vars takes the double output of the
+   * F::operator(), allocates a vari with the
+   * value of the output, and then builds and returns a var pointing
+   * at that vari
+   *
+   * @param val_y output of F::operator()
+   * @return Eigen::Matrix of vars
+   */
+  var build_return_varis_and_vars(const double& val_y) {
+    y_vi_ = ChainableStack::instance().memalloc_.alloc_array<vari*>(1);
+    y_vi_[0] = new vari(val_y, false);
+
+    return y_vi_[0];
+  }
+
+  /**
+   * build_return_varis_and_vars takes the Eigen::Matrix output of the
+   * F::operator(), allocates and populates an array of varis with the
+   * values of the output, and then builds an Eigen::Matrix of vars
+   * of the same shape as the original output and assigns the vari pointers
+   * in those vars to the allocated varis
+   *
+   * @param val_y output of F::operator()
+   * @return Eigen::Matrix of vars
+   */
+  Eigen::Matrix<var, Eigen::Dynamic, 1> build_return_varis_and_vars(
+      const Eigen::Matrix<double, Eigen::Dynamic, 1>& val_y) {
+    M_[0] = val_y.rows();
+    M_[1] = val_y.cols();
+    Eigen::Matrix<var, Eigen::Dynamic, 1> var_y(M_[0] * M_[1]);
+
+    y_vi_
+        = ChainableStack::instance().memalloc_.alloc_array<vari*>(var_y.size());
+    for (int m = 0; m < var_y.size(); ++m) {
+      y_vi_[m] = new vari(val_y(m), false);
+      var_y(m) = y_vi_[m];
+    }
+
+    return var_y;
+  }
 
   /**
    * The adj_jac_vari constructor
@@ -221,28 +338,21 @@ struct adj_jac_vari : public vari {
    * input args
    *  3. Saves copies of the varis pointed to by the input vars for subsequent
    * calls to chain
-   *  4. Allocates varis for the output of the functor F
+   *  4. Calls the appropriate build_return_varis_and_vars to construct the
+   * appropriate output data structure of vars
    *
    * The input argument types can be any mix of double, var, or Eigen::Matrices
    * with double or var scalar components
    *
    * @param args Input arguments
+   * @return Output of f_ as vars
    */
-  explicit adj_jac_vari(const Targs&... args)
-      : vari(std::numeric_limits<double>::quiet_NaN()),  // The val_ in this
-                                                         // vari is unused
-        x_vis_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
-            count_memory(0, args...))) {
+  auto operator()(const Targs&... args) {
+    x_vis_ = ChainableStack::instance().memalloc_.alloc_array<vari*>(
+        count_memory(0, args...));
     prepare_x_vis(args...);
 
-    Eigen::Matrix<double, Eigen::Dynamic, 1> val_y
-        = f_(is_var_, value_of(args)...);
-
-    M_ = val_y.size();
-    y_vi_ = ChainableStack::instance().memalloc_.alloc_array<vari*>(M_);
-    for (int m = 0; m < M_; ++m) {
-      y_vi_[m] = new vari(val_y(m), false);
-    }
+    return build_return_varis_and_vars(f_(is_var_, value_of(args)...));
   }
 
   /*
@@ -314,16 +424,16 @@ struct adj_jac_vari : public vari {
 
   /**
    * chain propagates the adjoints at the output varis (y_vi_) back to the input
-   * varis (x_vis_) by using the multiply_adjoint_jacobian function of the user
-   * defined functor
+   * varis (x_vis_) by packing the adjoings in an appropriate container
+   * using build_y_adj and then using the multiply_adjoint_jacobian function of
+   * the user defined functor to compute what the adjoints on x_vis_ should be
    *
    * Unlike the constructor, this operation may be called multiple times during
    * the life of the vari
    */
   void chain() {
-    Eigen::Matrix<double, Eigen::Dynamic, 1> y_adj(M_);
-    for (int m = 0; m < M_; ++m)
-      y_adj(m) = y_vi_[m]->adj_;
+    FReturnType y_adj;
+    build_y_adj(y_vi_, M_, y_adj);
     auto y_adj_jacs = f_.multiply_adjoint_jacobian(is_var_, y_adj);
 
     /**
@@ -412,13 +522,10 @@ struct adj_jac_vari : public vari {
  * @return the result of the specified operation wrapped up in vars
  */
 template <typename F, typename... Targs>
-Eigen::Matrix<var, Eigen::Dynamic, 1> adj_jac_apply(const Targs&... args) {
-  auto vi = new adj_jac_vari<F, Targs...>(args...);
-  Eigen::Matrix<var, Eigen::Dynamic, 1> y(vi->M_);
+auto adj_jac_apply(const Targs&... args) {
+  auto vi = new adj_jac_vari<F, Targs...>();
 
-  for (int m = 0; m < y.size(); ++m)
-    y(m) = (vi->y_vi_)[m];
-  return y;
+  return (*vi)(args...);
 }
 
 }  // namespace math
