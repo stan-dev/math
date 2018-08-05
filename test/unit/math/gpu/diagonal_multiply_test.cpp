@@ -6,8 +6,7 @@
 TEST(MathMatrix, multiply_m_exception_pass_diagonal_mul) {
   stan::math::matrix_d m0;
   m0.resize(3, 2);
-  m0 << 1, 1, 1,
-  1, 1, 1;
+  m0 << 1, 1, 1, 1, 1, 1;
   stan::math::matrix_d m1;
   m1.resize(1, 3);
   m1 << 1, 1, 1;

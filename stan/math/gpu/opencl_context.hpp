@@ -192,8 +192,7 @@ class opencl_context_base {
     kernel_info["is_symmetric"] = {false, "check", check_symmetric_kernel};
     kernel_info["scalar_mul_diagonal"]
         = {false, "multiply", scalar_mul_diagonal_kernel};
-    kernel_info["scalar_mul"]
-        = {false, "multiply", scalar_mul_kernel};
+    kernel_info["scalar_mul"] = {false, "multiply", scalar_mul_kernel};
     kernel_info["multiply_self_transpose"]
         = {false, "multiply", multiply_self_transpose_kernel};
     kernel_info["matrix_multiply"]
@@ -296,9 +295,9 @@ class opencl_context {
       }
     } catch (const cl::Error& e) {
       std::cout << "Building failed, " << e.what() << "(" << e.err() << ")"
-          << "\nRetrieving build log\n"
-          << program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>({device()[0]})
-          << "\n";
+                << "\nRetrieving build log\n"
+                << program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>({device()[0]})
+                << "\n";
       check_opencl_error("Kernel Compilation", e);
     }
   }

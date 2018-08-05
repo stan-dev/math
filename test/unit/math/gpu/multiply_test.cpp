@@ -99,7 +99,7 @@ TEST(MathMatrix, multiply_m_v_exception_fail_zero) {
 
   stan::math::matrix_gpu ans_mm_dim_fail(3, 0);
   EXPECT_THROW(ans_mm_dim_fail = stan::math::multiply(mm, vv),
-   std::invalid_argument);
+               std::invalid_argument);
 }
 
 TEST(MathMatrix, multiply_m_v_exception_pass_pass) {
@@ -185,7 +185,6 @@ TEST(MathMatrix, multiply_zero_size) {
 
   stan::math::matrix_gpu v00(v0);
 
-
   stan::math::matrix_gpu rv00(rv0);
   stan::math::matrix_gpu m00(m0);
   using stan::math::multiply;
@@ -197,10 +196,9 @@ TEST(MathMatrix, multiply_zero_size) {
   EXPECT_NO_THROW(multiply(2.0, m00));
 }
 
-
 TEST(AgradRevMatrix, multiply_int) {
-  using stan::math::multiply;
   using stan::math::assign;
+  using stan::math::multiply;
 
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
 
@@ -241,15 +239,15 @@ TEST(AgradRevMatrix, multiply_small) {
   stan::math::matrix_gpu m22(m2);
   stan::math::matrix_gpu m33(m3);
 
-  m3 = m1*m2;
+  m3 = m1 * m2;
 
   m33 = stan::math::multiply(m11, m22);
 
   stan::math::copy(m3_gpu, m33);
 
   for (int i = 0; i < 3; i++)
-  for (int j = 0; j < 3; j++)
-    EXPECT_NEAR(m3(i, j), m3_gpu(i, j), 1e-10);
+    for (int j = 0; j < 3; j++)
+      EXPECT_NEAR(m3(i, j), m3_gpu(i, j), 1e-10);
 }
 
 TEST(AgradRevMatrix, multiply_big) {
@@ -264,22 +262,22 @@ TEST(AgradRevMatrix, multiply_big) {
   m3_gpu.resize(size, size);
 
   for (int i = 0; i < size; i++)
-  for (int j = 0; j < size; j++) {
-    m1(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
-    m2(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
-  }
+    for (int j = 0; j < size; j++) {
+      m1(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
+      m2(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
+    }
   stan::math::matrix_gpu m11(m1);
   stan::math::matrix_gpu m22(m2);
   stan::math::matrix_gpu m33(size, size);
 
-  m3 = m1*m2;
+  m3 = m1 * m2;
 
   m33 = stan::math::multiply(m11, m22);
 
   stan::math::copy(m3_gpu, m33);
 
   for (int i = 0; i < size; i++)
-  for (int j = 0; j < size; j++)
-    EXPECT_NEAR(m3(i, j), m3_gpu(i, j), 1e-10);
+    for (int j = 0; j < size; j++)
+      EXPECT_NEAR(m3(i, j), m3_gpu(i, j), 1e-10);
 }
 #endif

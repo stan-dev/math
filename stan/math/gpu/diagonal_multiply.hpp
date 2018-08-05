@@ -6,40 +6,35 @@
 
 namespace stan {
 namespace math {
-  /**
-   * Multiplies the diagonal of a matrix on the GPU with the specified scalar.
-   *
-   * @param A input matrix
-   * @param scalar scalar
-   * @return copy of the input matrix with the diagonal multiplied by scalar
-   */
+/**
+ * Multiplies the diagonal of a matrix on the GPU with the specified scalar.
+ *
+ * @param A input matrix
+ * @param scalar scalar
+ * @return copy of the input matrix with the diagonal multiplied by scalar
+ */
 inline matrix_gpu diagonal_multiply(const matrix_gpu& A, const double scalar) {
-    matrix_gpu B(A);
-    if (B.size() == 0)
-      return B;
-    cl::Kernel kernel = opencl_context.get_kernel("scalar_mul_diagonal");
-    cl::CommandQueue cmdQueue = opencl_context.queue();
-    // For rectangular matrices
-    int min_dim = B.rows();
-    if (B.cols() < min_dim)
-      min_dim = B.cols();
-    try {
-      opencl_context.set_kernel_args(kernel, B.buffer(), scalar,
-                                  B.rows(), B.cols());
-      cmdQueue.enqueueNDRangeKernel(
-        kernel,
-        cl::NullRange,
-        cl::NDRange(min_dim),
-        cl::NullRange,
-        NULL,
-        NULL);
-    } catch (const cl::Error& e) {
-      check_opencl_error("diagonal_multiply", e);
-    }
+  matrix_gpu B(A);
+  if (B.size() == 0)
     return B;
+  cl::Kernel kernel = opencl_context.get_kernel("scalar_mul_diagonal");
+  cl::CommandQueue cmdQueue = opencl_context.queue();
+  // For rectangular matrices
+  int min_dim = B.rows();
+  if (B.cols() < min_dim)
+    min_dim = B.cols();
+  try {
+    opencl_context.set_kernel_args(kernel, B.buffer(), scalar, B.rows(),
+                                   B.cols());
+    cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(min_dim),
+                                  cl::NullRange, NULL, NULL);
+  } catch (const cl::Error& e) {
+    check_opencl_error("diagonal_multiply", e);
   }
+  return B;
 }
-}
+}  // namespace math
+}  // namespace stan
 
 #endif
 #endif
