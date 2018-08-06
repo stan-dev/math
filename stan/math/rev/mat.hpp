@@ -12,6 +12,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/rev/arr.hpp>
 
+#include <stan/math/rev/mat/fun/adj_jac_apply.hpp>
 #include <stan/math/rev/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_product.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_self.hpp>

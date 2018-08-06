@@ -1,8 +1,7 @@
 ## Description
-Describe the issue as clearly as possible. Issues are meant for bug reports and feature requests. The issue should contain enough information for a developer to create a pull request.
+Describe the issue as clearly as possible. Issues are meant for bug reports and feature requests. The issue should contain enough information for a developer to put together a solution.
 
 If this is a general question, please post to the [forums](http://discourse.mc-stan.org).
-
 
 ## Example
 For **bug reports**:
