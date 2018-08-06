@@ -9,6 +9,7 @@
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <idas/idas.h>
 #include <nvector/nvector_serial.h>
