@@ -6,14 +6,19 @@
 #include <vector>
 
 /*
- * VectorRNGTestRig is an Abstract class for wrapping up random number
+ * VectorRNGTestRig is a class for wrapping up random number
  * generators in a way so that they can be tested to
  *  1) provide interfaces to all the necessary types
  *  2) generate the correct distributions
  *
- * A test rig that inherits from VectorRNGTestRig must implement
- *  1) generate_samples
- *  2) generate_quantiles
+ * VectorRNGTestRig only allows for interfaces tests. To actually test that a
+ * random number generator is generating the right distributions of numbers,
+ * VectorRealRNGTestRig and VectorIntRNGTestRig should be used depending on
+ * whether or not the random number generator to be tested generates reals or
+ * integers
+ *
+ * A test rig that inherits from VectorRNGTestRig must implement the function
+ *  "generate_samples"
  * and must initialize good_p1_, good_p1_int_, bad_p1_, bad_p1_int_, good_p2_,
  * good_p2_int_, bad_p2_, bad_p2_int_, good_p3_, good_p3_int_, and bad_p3_
  * bad_p3_int_ (depending on how many parameters the wrapped random number
@@ -42,17 +47,6 @@
  *   stan::length(out) == stan::max_size(p1, p2, p3) if all parameters are used
  * It must be defined to take three arguments, but not all must be used.
  *
- * The generate_quantiles callable must have the signature:
- *  std::vector<double> generate_samples(double p1, double p2, double p3)
- * (similarly to above, ignore parameters p2 and p3 if they aren't necessary)
- *
- * generate_quantiles should compute the quantiles that will be compared against
- * (using assert_matches_quantiles) empirical distributions generated with
- * generate_samples (which will be of length N_ for each parameter combination).
- *
- * p1, p2, and p3 are the values of the parameters that these quantiles
- * correspond to.
- *
  * good_p1_ and bad_p1_ should be initialized to lists of valid and invalid
  * floating point parameters for the first parameter of the tested RNG
  *
@@ -71,6 +65,8 @@ class VectorRNGTestRig {
  public:
   int N_;  // Number of samples used in the quantiles tests
   int M_;  // Length of vectors for the vectorization tests
+
+  std::vector<int> test_points_;
 
   std::vector<double> good_p1_;
   std::vector<int> good_p1_int_;
@@ -100,14 +96,6 @@ class VectorRNGTestRig {
   template <typename T1, typename T2, typename T3, typename T_rng>
   auto generate_samples(const T1& p1, const T2& p2, const T3& p3,
                         T_rng& rng) const;
-
-  /*
-   * This function builds the quantiles that we will supply to
-   * assert_matches_quantiles to test the random number generator implemented in
-   * generate_samples
-   */
-  virtual std::vector<double> generate_quantiles(double p1, double p2,
-                                                 double p3) const = 0;
 
   VectorRNGTestRig(int N, int M, std::vector<double> good_p1,
                    std::vector<int> good_p1_int, std::vector<double> bad_p1,

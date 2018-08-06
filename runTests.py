@@ -17,7 +17,7 @@ import time
 
 winsfx = ".exe"
 testsfx = "_test.cpp"
-batchSize = 25
+batchSize = 200
 
 
 def processCLIArgs():

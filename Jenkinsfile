@@ -14,23 +14,6 @@ def setup(Boolean failOnError = true) {
     """
 }
 
-def mailBuildResults(String label, additionalEmails='') {
-    script {
-        try {
-            emailext (
-                subject: "[StanJenkins] ${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                body: """${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]': Check console output at ${env.BUILD_URL}""",
-                recipientProviders: [[$class: 'RequesterRecipientProvider']],
-                to: "${env.CHANGE_AUTHOR_EMAIL}, ${additionalEmails}"
-            )
-        } catch (all) {
-            println "Encountered the following exception sending email; please ignore:"
-            println all
-            println "End ignoreable email-sending exception."
-        }
-    }
-}
-
 def runTests(String testPath) {
     sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only"
     try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" }
@@ -136,19 +119,32 @@ pipeline {
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh 'make test-math-dependencies' } ,
                         Documentation: { sh 'make doxygen' },
-                        Headers: { sh "make -j${env.PARALLEL} test-headers" }
                     )
                 }
             }
             post {
                 always {
                     warnings consoleParsers: [[parserName: 'CppLint']], canRunOnFailed: true
+                    deleteDir()
+                }
+            }
+        }
+        stage('Headers check') {
+            agent any
+            steps {
+                deleteDir()
+                unstash 'MathSetup'
+                sh setupCC()
+                sh "make -j${env.PARALLEL} test-headers"
+            }
+            post {
+                always {
                     warnings consoleParsers: [[parserName: 'math-dependencies']], canRunOnFailed: true
                     deleteDir()
                 }
             }
         }
-        stage('Tests') {
+        stage('Vanilla tests') {
             parallel {
                 stage('Unit') {
                     agent any
@@ -156,30 +152,6 @@ pipeline {
                         deleteDir()
                         unstash 'MathSetup'
                         sh setupCC()
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Unit with GPU') {
-                    agent { label "gelman-group-mac" }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh setupCC()
-                        sh "echo STAN_OPENCL=true>> make/local"
-                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
-                        sh "echo OPENCL_DEVICE_ID=0>> make/local"
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Unit with MPI') {
-                    agent any
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CC=${MPICXX} >> make/local"
-                        sh "echo STAN_MPI=true >> make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -213,16 +185,40 @@ pipeline {
                 }
             }
         }
-        stage('Upstream tests') {
+        stage('Modded tests') {
             parallel {
-                stage('Stan Upstream Tests') {
-                    when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
+                stage('Unit with GPU') {
+                    agent { label "gelman-group-mac" }
                     steps {
-                        build(job: "Stan/${stan_pr()}",
-                              parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
-                                           string(name: 'cmdstan_pr', value: cmdstan_pr())])
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh setupCC()
+                        sh "echo STAN_OPENCL=true>> make/local"
+                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
+                        sh "echo OPENCL_DEVICE_ID=0>> make/local"
+                        runTests("test/unit")
                     }
+                    post { always { retry(3) { deleteDir() } } }
                 }
+                stage('Unit with MPI') {
+                    agent any
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh "echo CC=${MPICXX} >> make/local"
+                        sh "echo STAN_MPI=true >> make/local"
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+            }
+        }
+        stage('Upstream tests') {
+            when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
+            steps {
+                build(job: "Stan/${stan_pr()}",
+                        parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
+                                    string(name: 'cmdstan_pr', value: cmdstan_pr())])
             }
         }
         stage('Upload doxygen') {
@@ -254,15 +250,16 @@ pipeline {
     post {
         always {
             node("osx || linux") {
-                warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
-                warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
+                warnings canRunOnFailed: true, consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)'], [parserName: 'Clang (LLVM based)']]
             }
         }
         success {
-            script { utils.updateUpstream(env, 'stan') }
-            mailBuildResults("SUCCESSFUL")
+            script {
+                utils.updateUpstream(env, 'stan')
+                utils.mailBuildResults("SUCCESSFUL")
+            }
         }
-        unstable { mailBuildResults("UNSTABLE", alsoNotify()) }
-        failure { mailBuildResults("FAILURE", alsoNotify()) }
+        unstable { script { utils.mailBuildResults("UNSTABLE", alsoNotify()) } }
+        failure { script { utils.mailBuildResults("FAILURE", alsoNotify()) } }
     }
 }
