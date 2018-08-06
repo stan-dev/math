@@ -295,6 +295,11 @@ TEST(IDAS_DAE_SYSTEM, constructor_errors) {
   EXPECT_THROW_MSG(build_double(eq_id, yy0, yp0, theta, bad_double),
                    std::domain_error, "continuous data");
 
+  bad_double[0] = 0.0;
+  bad_double.pop_back();
+  EXPECT_THROW_MSG(build_double(eq_id, bad_double, yp0, theta, x_r),
+                   std::invalid_argument, "initial state");
+
   std::vector<var> bad_var{std::numeric_limits<double>::infinity(), 1.0, 0.1};
   std::vector<var> empty_var;
   auto build_var = [&f, msgs, &x_i](const std::vector<int>& eq_id,
@@ -334,4 +339,8 @@ TEST(IDAS_DAE_SYSTEM, constructor_errors) {
   bad_eq_id = {1, 2, 0};
   EXPECT_THROW_MSG(build_var(bad_eq_id, yy0_var, yp0_var, theta_var, x_r),
                    std::domain_error, "derivative-algebra id");
+
+  bad_eq_id.pop_back();
+  EXPECT_THROW_MSG(build_var(bad_eq_id, yy0_var, yp0_var, theta_var, x_r),
+                   std::invalid_argument, "derivative-algebra id");
 }

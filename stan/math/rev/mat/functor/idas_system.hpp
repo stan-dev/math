@@ -3,22 +3,15 @@
 
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/arr/fun/dot_self.hpp>
-#include <stan/math/prim/scal/err/check_less.hpp>
-#include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
-#include <stan/math/prim/arr/err/check_ordered.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <idas/idas.h>
-#include <sunmatrix/sunmatrix_dense.h>
-#include <sunlinsol/sunlinsol_dense.h>
 #include <nvector/nvector_serial.h>
-#include <algorithm>
 #include <ostream>
 #include <vector>
 
@@ -39,7 +32,7 @@ inline void idas_check(int flag, const char* func) {
 }
 
 /**
- * convert NV_Vector* array to Eigen::MatrixXd
+ * copy NV_Vector* array to Eigen::MatrixXd
  *
  * @param[in] nv N_Vector* array.
  * @param[in] nv_size length of nv.
@@ -51,8 +44,8 @@ inline Eigen::MatrixXd matrix_d_from_NVarray(const N_Vector* nv,
   size_t n = NV_LENGTH_S(nv[0]);
   stan::math::matrix_d res(n, m);
   for (size_t j = 0; j < m; ++j) {
+    auto nvp = N_VGetArrayPointer(nv[j]);
     for (size_t i = 0; i < n; ++i) {
-      auto nvp = N_VGetArrayPointer(nv[j]);
       res(i, j) = nvp[i];
     }
   }
@@ -60,19 +53,19 @@ inline Eigen::MatrixXd matrix_d_from_NVarray(const N_Vector* nv,
 }
 
 /**
- * convert Eigen::MatrixXd to NV_Vector* array.
+ * copy Eigen::MatrixXd to NV_Vector* array.
  *
- * @param[in] mat Eigen::MatrixXd to be converted.
- * @param[out] nv N_Vector* array.
- * @param[in] nv_size length of nv.
+ * @param[in] mat Eigen::MatrixXd to be converted
+ * @param[out] nv N_Vector* array
+ * @param[in] nv_size length of nv
  */
 inline void matrix_d_to_NVarray(const Eigen::MatrixXd& mat, N_Vector* nv,
                                 const size_t& nv_size) {
   size_t m = nv_size;
   size_t n = NV_LENGTH_S(nv[0]);
   for (size_t j = 0; j < m; ++j) {
+    auto nvp = N_VGetArrayPointer(nv[j]);
     for (size_t i = 0; i < n; ++i) {
-      auto nvp = N_VGetArrayPointer(nv[j]);
       nvp[i] = mat(i, j);
     }
   }
@@ -87,12 +80,11 @@ namespace math {
  * as well as initial conditions. This is a base type that
  * is intended to contain common values used by forward
  * sensitivity system.
- * TODO(yizhang) adjoint sensitivity system.
  *
- * @tparam F type of functor for DAE residual.
- * @tparam Tyy type of initial unknown values.
- * @tparam Typ type of initial unknown's derivative values.
- * @tparam Tpar type of parameters.
+ * @tparam F type of functor for DAE residual
+ * @tparam Tyy scalar type of initial unknown values
+ * @tparam Typ scalar type of initial unknown's derivative values
+ * @tparam Tpar scalar type of parameters
  */
 template <typename F, typename Tyy, typename Typ, typename Tpar>
 class idas_system {
@@ -176,6 +168,8 @@ class idas_system {
     check_nonzero_size(caller, "derivative initial state", yp0);
     check_consistent_sizes(caller, "initial state", yy0,
                            "derivative initial state", yp0);
+    check_consistent_sizes(caller, "initial state", yy0,
+                           "derivative-algebra id", eq_id);
     check_greater_or_equal(caller, "derivative-algebra id", eq_id, 0);
     check_less_or_equal(caller, "derivative-algebra id", eq_id, 1);
 
@@ -339,9 +333,8 @@ class idas_system {
     const std::vector<double> theta_d(value_of(theta_));
     const std::vector<double> yy_d(value_of(yy_));
     const std::vector<double> yp_d(value_of(yp_));
-    std::ostream* msgs = 0;
     static const char* caller = "idas_integrator";
-    std::vector<double> res(f_(t0, yy_d, yp_d, theta_d, x_r_, x_i_, msgs));
+    std::vector<double> res(f_(t0, yy_d, yp_d, theta_d, x_r_, x_i_, msgs_));
     double res0 = std::sqrt(dot_self(res));
     check_less_or_equal(caller, "DAE residual at t0", res0, tol);
   }

@@ -1,12 +1,8 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_INTEGRATOR_DAE_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_INTEGRATOR_DAE_HPP
 
-#include <stan/math/rev/scal/meta/is_var.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/rev/mat/functor/idas_forward_system.hpp>
 #include <stan/math/rev/mat/functor/idas_integrator.hpp>
-#include <stan/math/prim/scal/err/check_less.hpp>
-#include <algorithm>
 #include <ostream>
 #include <vector>
 
@@ -18,17 +14,17 @@ namespace math {
  * given the specified consistent initial state yy0 and yp0.
  *
  * @tparam DAE type of DAE system
- * @tparam Tpar type of parameter theta
+ * @tparam Tpar scalar type of parameter theta
  * @param[in] f functor for the base ordinary differential equation
  * @param[in] yy0 initial state
  * @param[in] yp0 initial derivative state
- * @param[in] t0 initial time.
+ * @param[in] t0 initial time
  * @param[in] ts times of the desired solutions, in strictly
  * increasing order, all greater than the initial time
- * @param[in] theta parameter
+ * @param[in] theta parameters
  * @param[in] x_r real data
  * @param[in] x_i int data
- * @param[in] rtol relative tolerance passed to IDAS, requred <10^3
+ * @param[in] rtol relative tolerance passed to IDAS, requred <10^-3
  * @param[in] atol absolute tolerance passed to IDAS, problem-dependent
  * @param[in] max_num_steps maximal number of admissable steps
  * between time-points
@@ -44,7 +40,11 @@ std::vector<std::vector<Tpar> > integrate_dae(
     const double rtol, const double atol,
     const int64_t max_num_steps = idas_integrator::IDAS_MAX_STEPS,
     std::ostream* msgs = nullptr) {
+
+  /* it doesn't matter here what values @c eq_id has, as we
+     don't allow yy0 or yp0 to be parameters */
   const std::vector<int> dummy_eq_id(yy0.size(), 0);
+
   stan::math::idas_integrator solver(rtol, atol, max_num_steps);
   stan::math::idas_forward_system<F, double, double, Tpar> dae{
       f, dummy_eq_id, yy0, yp0, theta, x_r, x_i, msgs};

@@ -1,23 +1,20 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_IDAS_INTEGRATOR_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_IDAS_INTEGRATOR_HPP
 
-#include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/rev/mat/functor/idas_forward_system.hpp>
-// #include <stan/math/rev/arr/fun/decouple_ode_states.hpp>
 #include <idas/idas.h>
 #include <idas/idas_direct.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
 #include <nvector/nvector_serial.h>
-#include <algorithm>
 #include <ostream>
 #include <vector>
+#include <algorithm>
 
 enum IDAS_SENSITIVITY { forward };
 
@@ -125,6 +122,7 @@ class idas_integrator {
     static const char* caller = "idas_integrator";
     check_finite(caller, "initial time", t0);
     check_finite(caller, "times", ts);
+    check_ordered(caller, "times", ts);
     check_nonzero_size(caller, "times", ts);
     check_less(caller, "initial time", t0, ts.front());
 
@@ -222,7 +220,7 @@ void idas_integrator::solve(idas_forward_system<F, double, double, double>& dae,
 
 /**
  * Solve Dae system with forward sensitivty, return a
- * vector of var with recomputed gradient as sensitivity value
+ * vector of var with precomputed gradient as sensitivity value
  *
  * @tparam Dae DAE system type
  * @param[out] dae DAE system

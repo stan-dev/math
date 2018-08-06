@@ -239,6 +239,12 @@ TEST_F(IDASIntegratorTest, error_handling) {
   bad_ts[0] = -1;
   EXPECT_THROW_MSG(solver.integrate(dae, bad_t0, bad_ts), std::domain_error,
                    "initial time");
+
+  bad_ts[0] = 0.0;
+  bad_ts.push_back(0.0);
+  EXPECT_THROW_MSG(solver.integrate(dae, t0, bad_ts), std::domain_error,
+                   "times");
+
   bad_ts.clear();
   EXPECT_THROW_MSG(solver.integrate(dae, t0, bad_ts), std::invalid_argument,
                    "times");
