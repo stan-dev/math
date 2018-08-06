@@ -38,7 +38,6 @@ inline std::vector<typename child_type<T>::type> value_of(
  * @param x Specified std::vector.
  * @return Specified std::vector.
  */
-template <>
 inline const std::vector<double>& value_of(const std::vector<double>& x) {
   return x;
 }
