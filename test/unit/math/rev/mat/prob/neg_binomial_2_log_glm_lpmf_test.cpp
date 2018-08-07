@@ -20,8 +20,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
   Matrix<double, Dynamic, 1> alphavec = alpha * Matrix<double, 3, 1>::Ones();
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta = x * beta + alphavec;
-  Matrix<double, Dynamic, 1> phi(3, 1);
-  phi << 2, 1, 0.2;
+  double phi = 2;
   EXPECT_FLOAT_EQ(
       (stan::math::neg_binomial_2_log_lpmf(n, theta, phi)),
       (stan::math::neg_binomial_2_log_glm_lpmf(n, x, alpha, beta, phi)));
@@ -47,9 +46,8 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
     Matrix<double, Dynamic, 1> alphavec = alpha * Matrix<double, 3, 1>::Ones();
     Matrix<double, Dynamic, 1> theta(3, 1);
     theta = x * beta + alphavec;
-    Matrix<double, Dynamic, 1> phi
-        = Matrix<double, Dynamic, Dynamic>::Random(3, 1)
-          + Matrix<double, 3, 1>::Ones();
+    double phi
+        = Matrix<double, Dynamic, 1>::Random(1, 1)[0] + 1;
     EXPECT_FLOAT_EQ(
         (stan::math::neg_binomial_2_log_lpmf(n, theta, phi)),
         (stan::math::neg_binomial_2_log_glm_lpmf(n, x, alpha, beta, phi)));
@@ -71,8 +69,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_vars) {
   Matrix<var, Dynamic, 1> alphavec = alpha * Matrix<double, 3, 1>::Ones();
   Matrix<var, Dynamic, 1> theta(3, 1);
   theta = x * beta + alphavec;
-  Matrix<var, Dynamic, 1> phi(3, 1);
-  phi << 2, 1, 0.2;
+  var phi = 2;
   var lp = stan::math::neg_binomial_2_log_lpmf(n, theta, phi);
   lp.grad();
 
@@ -80,15 +77,12 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_vars) {
   double alpha_adj = alpha.adj();
   Matrix<double, Dynamic, Dynamic> x_adj(3, 2);
   Matrix<double, Dynamic, 1> beta_adj(2, 1);
-  Matrix<double, Dynamic, 1> phi_adj(3, 1);
+  double phi_adj = phi.adj();
   for (size_t i = 0; i < 2; i++) {
     beta_adj[i] = beta[i].adj();
     for (size_t j = 0; j < 3; j++) {
       x_adj(j, i) = x(j, i).adj();
     }
-  }
-  for (size_t j = 0; j < 3; j++) {
-    phi_adj[j] = phi[j].adj();
   }
 
   stan::math::recover_memory();
@@ -100,8 +94,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_vars) {
   Matrix<var, Dynamic, 1> beta2(2, 1);
   beta2 << 0.3, 2;
   var alpha2 = 0.3;
-  Matrix<var, Dynamic, 1> phi2(3, 1);
-  phi2 << 2, 1, 0.2;
+  var phi2 = 2;
   var lp2
       = stan::math::neg_binomial_2_log_glm_lpmf(n2, x2, alpha2, beta2, phi2);
   lp2.grad();
@@ -110,8 +103,8 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_vars) {
     EXPECT_FLOAT_EQ(beta_adj[i], beta2[i].adj());
   }
   EXPECT_FLOAT_EQ(alpha_adj, alpha2.adj());
+    EXPECT_FLOAT_EQ(phi_adj, phi2.adj());
   for (size_t j = 0; j < 3; j++) {
-    EXPECT_FLOAT_EQ(phi_adj[j], phi2[j].adj());
     for (size_t i = 0; i < 2; i++) {
       EXPECT_FLOAT_EQ(x_adj(j, i), x2(j, i).adj());
     }
@@ -132,15 +125,14 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
     Matrix<double, Dynamic, 1> betareal
         = Matrix<double, Dynamic, Dynamic>::Random(2, 1);
     Matrix<double, 1, 1> alphareal = Matrix<double, 1, 1>::Random(1, 1);
-    Matrix<double, Dynamic, 1> phireal
-        = Matrix<double, Dynamic, Dynamic>::Random(3, 1)
-          + Matrix<double, Dynamic, 1>::Ones(3, 1);
+    double phireal
+        = Matrix<double, Dynamic, 1>::Random(1, 1)[0] + 1;
     Matrix<var, Dynamic, 1> beta = betareal;
     Matrix<var, Dynamic, 1> theta(3, 1);
     Matrix<var, Dynamic, Dynamic> x = xreal;
     var alpha = alphareal[0];
     Matrix<var, Dynamic, 1> alphavec = Matrix<double, 3, 1>::Ones() * alpha;
-    Matrix<var, Dynamic, 1> phi = phireal;
+    var phi = phireal;
     theta = (x * beta) + alphavec;
     var lp = stan::math::neg_binomial_2_log_lpmf(n, theta, phi);
     lp.grad();
@@ -149,22 +141,19 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
     double alpha_adj = alpha.adj();
     Matrix<double, Dynamic, Dynamic> x_adj(3, 2);
     Matrix<double, Dynamic, 1> beta_adj(2, 1);
-    Matrix<double, Dynamic, 1> phi_adj(3, 1);
     for (size_t i = 0; i < 2; i++) {
       beta_adj[i] = beta[i].adj();
       for (size_t j = 0; j < 3; j++) {
         x_adj(j, i) = x(j, i).adj();
       }
     }
-    for (size_t j = 0; j < 3; j++) {
-      phi_adj[j] = phi[j].adj();
-    }
+    double phi_adj = phi.adj();
 
     stan::math::recover_memory();
     Matrix<var, Dynamic, 1> beta2 = betareal;
     Matrix<var, Dynamic, Dynamic> x2 = xreal;
     var alpha2 = alphareal[0];
-    Matrix<var, Dynamic, 1> phi2 = phireal;
+    var phi2 = phireal;
     var lp2
         = stan::math::neg_binomial_2_log_glm_lpmf(n, x2, alpha2, beta2, phi2);
     lp2.grad();
@@ -173,8 +162,8 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
       EXPECT_FLOAT_EQ(beta_adj[i], beta2[i].adj());
     }
     EXPECT_FLOAT_EQ(alpha_adj, alpha2.adj());
+    EXPECT_FLOAT_EQ(phi_adj, phi2.adj());
     for (size_t j = 0; j < 3; j++) {
-      EXPECT_FLOAT_EQ(phi_adj[j], phi2[j].adj());
       for (size_t i = 0; i < 2; i++) {
         EXPECT_FLOAT_EQ(x_adj(j, i), x2(j, i).adj());
       }

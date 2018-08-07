@@ -14,7 +14,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/is_vector.hpp>
 #include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/duplicate_if_scalar.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <cmath>
 #include <limits>
@@ -96,8 +95,10 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
     }
   }
 
-  Matrix<T_partials_return, Dynamic, 1> theta_dbl
-      = (value_of(x) * beta_dbl + duplicate_if_scalar(value_of(alpha), N));
+  Matrix<T_partials_return, Dynamic, 1> theta_dbl = (value_of(x) * beta_dbl);
+  scalar_seq_view<T_alpha> alpha_vec(alpha);
+  for (size_t m = 0; m < N; ++m)
+    theta_dbl[m] += value_of(alpha_vec[m]);
   Matrix<T_partials_return, Dynamic, 1> exp_theta
       = theta_dbl.array().exp().matrix();
 

@@ -13,7 +13,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/is_vector.hpp>
 #include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/duplicate_if_scalar.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <cmath>
 
@@ -34,7 +33,9 @@ namespace math {
  * value (for models with constant intercept);
  * @tparam T_beta type of the weight vector;
  * this can also be a single value;
- * @tparam T_scale type of the scale vector.
+ * @tparam T_scale type of the (positive) scale(s);
+ * this can be a vector (of the same length as n, for heteroskedasticity)
+ * or a scalar.
  * @param n vector parameter
  * @param x design matrix
  * @param beta weight vector
@@ -73,8 +74,9 @@ normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_alpha &alpha,
   check_positive(function, "Scale vector", sigma);
   check_consistent_sizes(function, "Rows in matrix of independent variables",
                          x.col(0), "Vector of dependent variables", n);
-  check_consistent_sizes(function, "Rows in matrix of independent variables",
-                         x.col(0), "Vector of scale parameters", sigma);
+  if (is_vector<T_scale>::value)
+    check_consistent_sizes(function, "Vector of scale parameters", sigma,
+                           "Vector of dependent variables", n);
   check_consistent_sizes(function, "Columns in matrix of independent variables",
                          x.row(0), "Weight vector", beta);
   if (is_vector<T_alpha>::value)
@@ -87,17 +89,11 @@ normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_alpha &alpha,
   const size_t N = x.col(0).size();
   const size_t M = x.row(0).size();
 
-  Array<T_partials_return, Dynamic, 1> sigma_dbl(N, 1);
-  Array<T_partials_return, Dynamic, 1> n_dbl(N, 1);
-  {
-    scalar_seq_view<T_n> n_vec(n);
-    scalar_seq_view<T_scale> sigma_vec(sigma);
-    for (size_t n = 0; n < N; ++n) {
-      sigma_dbl[n] = value_of(sigma_vec[n]);
-      n_dbl[n] = value_of(n_vec[n]);
-    }
+  scalar_seq_view<T_scale> sigma_vec(sigma);
+  Array<T_partials_return, Dynamic, 1> inv_sigma(N, 1);
+  for (size_t m = 0; m < N; ++m) {
+    inv_sigma[m] = 1/value_of(sigma_vec[m]);
   }
-  Array<T_partials_return, Dynamic, 1> inv_sigma = 1 / sigma_dbl;
   Matrix<T_partials_return, Dynamic, 1> beta_dbl(M, 1);
   {
     scalar_seq_view<T_beta> beta_vec(beta);
@@ -107,17 +103,22 @@ normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_alpha &alpha,
   }
 
   Array<T_partials_return, Dynamic, 1> mu_dbl
-      = (value_of(x) * beta_dbl + duplicate_if_scalar(value_of(alpha), N))
-            .array();
+      = (value_of(x) * beta_dbl).array();
+  scalar_seq_view<T_alpha> alpha_vec(alpha);
+  for (size_t m = 0; m < N; ++m)
+    mu_dbl[m] += value_of(alpha_vec[m]);
   Array<T_partials_return, Dynamic, 1> n_minus_mu_over_sigma
-      = (n_dbl - mu_dbl) * inv_sigma;
+      = (value_of(n).array() - mu_dbl) * inv_sigma;
   Array<T_partials_return, Dynamic, 1> n_minus_mu_over_sigma_squared
       = n_minus_mu_over_sigma.square();
 
   if (include_summand<propto>::value)
     logp += NEG_LOG_SQRT_TWO_PI * N;
-  if (include_summand<propto, T_scale>::value)
-    logp -= sigma_dbl.log().sum();
+  if (include_summand<propto, T_scale>::value) {
+    for (size_t m = 0; m < N; ++m) {
+      logp -= log(value_of(sigma_vec[m]));
+    }
+  }
   if (include_summand<propto, T_n, T_x, T_alpha, T_beta, T_scale>::value)
     logp -= 0.5 * n_minus_mu_over_sigma_squared.sum();
 
@@ -149,12 +150,20 @@ normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_alpha &alpha,
         ops_partials.edge3_.partials_[0] = mu_derivative.sum();
     }
     if (!is_constant_struct<T_scale>::value) {
-      assign_to_matrix_or_broadcast_array(
-          ops_partials.edge5_.partials_,
+      if (is_vector<T_scale>::value) {
+        assign_to_matrix_or_broadcast_array(
+            ops_partials.edge5_.partials_,
+            ((n_minus_mu_over_sigma_squared
+              - Array<double, Dynamic, 1>::Ones(N, 1))
+             * inv_sigma)
+                .matrix());
+      } else {
+        ops_partials.edge5_.partials_[0] =
           ((n_minus_mu_over_sigma_squared
             - Array<double, Dynamic, 1>::Ones(N, 1))
            * inv_sigma)
-              .matrix());
+              .sum();
+      }
     }
   }
 

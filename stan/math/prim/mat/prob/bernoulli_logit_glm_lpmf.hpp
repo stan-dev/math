@@ -15,7 +15,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/is_vector.hpp>
 #include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/duplicate_if_scalar.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -98,9 +97,10 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
     }
   }
   Eigen::Array<T_partials_return, Dynamic, 1> ntheta
-      = signs.array()
-        * (value_of(x) * beta_dbl + duplicate_if_scalar(value_of(alpha), N))
-              .array();
+      = signs.array() * (value_of(x) * beta_dbl).array();
+  scalar_seq_view<T_alpha> alpha_vec(alpha);
+  for (size_t m = 0; m < N; ++m)
+    ntheta[m] += signs[m] * value_of(alpha_vec[m]);
 
   Eigen::Array<T_partials_return, Dynamic, 1> exp_m_ntheta = (-ntheta).exp();
 

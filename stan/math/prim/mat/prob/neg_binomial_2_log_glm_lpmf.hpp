@@ -19,7 +19,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/is_vector.hpp>
 #include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/duplicate_if_scalar.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <cmath>
 
@@ -40,13 +39,14 @@ namespace math {
  * value (for models with constant intercept);
  * @tparam T_beta type of the weight vector;
  * this can also be a scalar;
- * @tparam T_precision type of the (positive) precision vector phi;
- * this can also be a scalar;
+ * @tparam T_precision type of the (positive) precision(s);
+ * this can be a vector (of the same length as n, for heteroskedasticity)
+ * or a scalar.
  * @param n failures count vector parameter
  * @param x design matrix
  * @param beta weight vector
  * @param alpha intercept (in log odds)
- * @param phi (vector of) precision parameters
+ * @param phi (vector of) precision parameter(s)
  * @return log probability or log sum of probabilities
  * @throw std::invalid_argument if container sizes mismatch.
  * @throw std::domain_error if x, beta or alpha is infinite.
@@ -81,8 +81,9 @@ neg_binomial_2_log_glm_lpmf(const T_n& n, const T_x& x, const T_alpha& alpha,
   check_positive_finite(function, "Precision parameter", phi);
   check_consistent_sizes(function, "Rows in matrix of independent variables",
                          x.col(0), "Vector of dependent variables", n);
-  check_consistent_sizes(function, "Rows in matrix of independent variables",
-                         x.col(0), "Vector of failure counts", phi);
+  if (is_vector<T_precision>::value)
+    check_consistent_sizes(function, "Vector of precision parameters", phi,
+                           "Vector of dependent variables", n);
   check_consistent_sizes(function, "Columns in matrix of independent variables",
                          x.row(0), "Weight vector", beta);
   if (is_vector<T_alpha>::value)
@@ -115,8 +116,10 @@ neg_binomial_2_log_glm_lpmf(const T_n& n, const T_x& x, const T_alpha& alpha,
   }
 
   Array<T_partials_return, Dynamic, 1> theta_dbl
-      = (value_of(x) * beta_dbl + duplicate_if_scalar(value_of(alpha), N))
-            .array();
+      = (value_of(x) * beta_dbl).array();
+  scalar_seq_view<T_alpha> alpha_vec(alpha);
+  for (size_t m = 0; m < N; ++m)
+    theta_dbl[m] += value_of(alpha_vec[m]);
   Array<T_partials_return, Dynamic, 1> log_phi = phi_arr.log();
   Array<T_partials_return, Dynamic, 1> logsumexp_eta_logphi
       = theta_dbl.binaryExpr(log_phi, [](const T_partials_return& xx,
@@ -182,8 +185,19 @@ neg_binomial_2_log_glm_lpmf(const T_n& n, const T_x& x, const T_alpha& alpha,
     }
   }
   if (!is_constant_struct<T_precision>::value) {
-    assign_to_matrix_or_broadcast_array(
-        ops_partials.edge4_.partials_,
+    if (is_vector<T_precision>::value) {
+      assign_to_matrix_or_broadcast_array(
+          ops_partials.edge4_.partials_,
+          (Array<double, Dynamic, 1>::Ones(N, 1)
+           - n_plus_phi / (theta_dbl.exp() + phi_arr) + log_phi
+           - logsumexp_eta_logphi
+           - phi_arr.unaryExpr(
+                 [](const T_partials_return& xx) { return digamma(xx); })
+           + n_plus_phi.unaryExpr(
+                 [](const T_partials_return& xx) { return digamma(xx); }))
+              .matrix());
+    } else {
+      ops_partials.edge4_.partials_[0] =
         (Array<double, Dynamic, 1>::Ones(N, 1)
          - n_plus_phi / (theta_dbl.exp() + phi_arr) + log_phi
          - logsumexp_eta_logphi
@@ -191,7 +205,8 @@ neg_binomial_2_log_glm_lpmf(const T_n& n, const T_x& x, const T_alpha& alpha,
                [](const T_partials_return& xx) { return digamma(xx); })
          + n_plus_phi.unaryExpr(
                [](const T_partials_return& xx) { return digamma(xx); }))
-            .matrix());
+            .sum();
+    }
   }
   return ops_partials.build(logp);
 }
