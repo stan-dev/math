@@ -14,8 +14,8 @@ template <bool propto, typename T_n, typename T_x, typename T_alpha,
           typename T_beta>
 typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_log(
     const T_n &n, const T_x &x, const T_alpha &alpha, const T_beta &beta) {
-  return bernoulli_logit_glm_lpmf<propto, T_n, T_x, T_alpha, T_beta>(n, x, alpha,
-                                                                    beta);
+  return bernoulli_logit_glm_lpmf<propto, T_n, T_x, T_alpha, T_beta>(
+      n, x, alpha, beta);
 }
 
 /**

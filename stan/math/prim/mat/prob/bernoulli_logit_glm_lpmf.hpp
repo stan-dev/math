@@ -125,8 +125,9 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
             = signs[n] * exp_m_ntheta[n] / (exp_m_ntheta[n] + 1);
     }
     if (!is_constant_struct<T_beta>::value) {
-      assign_to_matrix_or_broadcast_array(ops_partials.edge3_.partials_,
-      value_of(x).transpose() * theta_derivative);
+      assign_to_matrix_or_broadcast_array(
+          ops_partials.edge3_.partials_,
+          value_of(x).transpose() * theta_derivative);
     }
     if (!is_constant_struct<T_x>::value) {
       ops_partials.edge1_.partials_ = theta_derivative * beta_dbl.transpose();

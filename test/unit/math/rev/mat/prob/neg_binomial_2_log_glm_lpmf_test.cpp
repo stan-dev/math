@@ -54,8 +54,8 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
         (stan::math::neg_binomial_2_log_lpmf(n, theta, phi)),
         (stan::math::neg_binomial_2_log_glm_lpmf(n, x, alpha, beta, phi)));
     EXPECT_FLOAT_EQ((stan::math::neg_binomial_2_log_lpmf<true>(n, theta, phi)),
-                    (stan::math::neg_binomial_2_log_glm_lpmf<true>(
-                        n, x, alpha, beta, phi)));
+                    (stan::math::neg_binomial_2_log_glm_lpmf<true>(n, x, alpha,
+                                                                   beta, phi)));
   }
 }
 //  We check that the gradients of the new regression match those of one built
