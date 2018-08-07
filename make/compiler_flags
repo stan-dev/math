@@ -51,7 +51,7 @@ CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
 O ?= 3
 
 ## setup includes
-INC ?= -I $(if $(MATH),$(MATH),.) -I $(EIGEN) -I $(BOOST) $(INC_SUNDIALS)
+INC ?= $(INC_FIRST) -I $(if $(MATH),$(MATH),.) -I $(EIGEN) -I $(BOOST) $(INC_SUNDIALS)
 INC_SUNDIALS ?= -I $(SUNDIALS)/include
 INC_GTEST ?= -I $(GTEST)/include -I $(GTEST)
 
