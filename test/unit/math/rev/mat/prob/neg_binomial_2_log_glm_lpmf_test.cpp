@@ -46,8 +46,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
     Matrix<double, Dynamic, 1> alphavec = alpha * Matrix<double, 3, 1>::Ones();
     Matrix<double, Dynamic, 1> theta(3, 1);
     theta = x * beta + alphavec;
-    double phi
-        = Matrix<double, Dynamic, 1>::Random(1, 1)[0] + 1;
+    double phi = Matrix<double, Dynamic, 1>::Random(1, 1)[0] + 1;
     EXPECT_FLOAT_EQ(
         (stan::math::neg_binomial_2_log_lpmf(n, theta, phi)),
         (stan::math::neg_binomial_2_log_glm_lpmf(n, x, alpha, beta, phi)));
@@ -103,7 +102,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_vars) {
     EXPECT_FLOAT_EQ(beta_adj[i], beta2[i].adj());
   }
   EXPECT_FLOAT_EQ(alpha_adj, alpha2.adj());
-    EXPECT_FLOAT_EQ(phi_adj, phi2.adj());
+  EXPECT_FLOAT_EQ(phi_adj, phi2.adj());
   for (size_t j = 0; j < 3; j++) {
     for (size_t i = 0; i < 2; i++) {
       EXPECT_FLOAT_EQ(x_adj(j, i), x2(j, i).adj());
@@ -125,8 +124,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
     Matrix<double, Dynamic, 1> betareal
         = Matrix<double, Dynamic, Dynamic>::Random(2, 1);
     Matrix<double, 1, 1> alphareal = Matrix<double, 1, 1>::Random(1, 1);
-    double phireal
-        = Matrix<double, Dynamic, 1>::Random(1, 1)[0] + 1;
+    double phireal = Matrix<double, Dynamic, 1>::Random(1, 1)[0] + 1;
     Matrix<var, Dynamic, 1> beta = betareal;
     Matrix<var, Dynamic, 1> theta(3, 1);
     Matrix<var, Dynamic, Dynamic> x = xreal;

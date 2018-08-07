@@ -197,15 +197,15 @@ neg_binomial_2_log_glm_lpmf(const T_n& n, const T_x& x, const T_alpha& alpha,
                  [](const T_partials_return& xx) { return digamma(xx); }))
               .matrix());
     } else {
-      ops_partials.edge4_.partials_[0] =
-        (Array<double, Dynamic, 1>::Ones(N, 1)
-         - n_plus_phi / (theta_dbl.exp() + phi_arr) + log_phi
-         - logsumexp_eta_logphi
-         - phi_arr.unaryExpr(
-               [](const T_partials_return& xx) { return digamma(xx); })
-         + n_plus_phi.unaryExpr(
-               [](const T_partials_return& xx) { return digamma(xx); }))
-            .sum();
+      ops_partials.edge4_.partials_[0]
+          = (Array<double, Dynamic, 1>::Ones(N, 1)
+             - n_plus_phi / (theta_dbl.exp() + phi_arr) + log_phi
+             - logsumexp_eta_logphi
+             - phi_arr.unaryExpr(
+                   [](const T_partials_return& xx) { return digamma(xx); })
+             + n_plus_phi.unaryExpr(
+                   [](const T_partials_return& xx) { return digamma(xx); }))
+                .sum();
     }
   }
   return ops_partials.build(logp);

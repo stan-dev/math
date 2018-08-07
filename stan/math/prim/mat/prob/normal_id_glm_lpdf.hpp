@@ -92,7 +92,7 @@ normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_alpha &alpha,
   scalar_seq_view<T_scale> sigma_vec(sigma);
   Array<T_partials_return, Dynamic, 1> inv_sigma(N, 1);
   for (size_t m = 0; m < N; ++m) {
-    inv_sigma[m] = 1/value_of(sigma_vec[m]);
+    inv_sigma[m] = 1 / value_of(sigma_vec[m]);
   }
   Matrix<T_partials_return, Dynamic, 1> beta_dbl(M, 1);
   {
@@ -158,11 +158,11 @@ normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_alpha &alpha,
              * inv_sigma)
                 .matrix());
       } else {
-        ops_partials.edge5_.partials_[0] =
-          ((n_minus_mu_over_sigma_squared
-            - Array<double, Dynamic, 1>::Ones(N, 1))
-           * inv_sigma)
-              .sum();
+        ops_partials.edge5_.partials_[0]
+            = ((n_minus_mu_over_sigma_squared
+                - Array<double, Dynamic, 1>::Ones(N, 1))
+               * inv_sigma)
+                  .sum();
       }
     }
   }

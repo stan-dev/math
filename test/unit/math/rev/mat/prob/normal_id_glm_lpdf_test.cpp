@@ -46,9 +46,9 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles_rand) {
     Matrix<double, Dynamic, 1> phi
         = Matrix<double, Dynamic, Dynamic>::Random(1, 1)
           + Matrix<double, 1, 1>::Ones();
-    EXPECT_FLOAT_EQ((stan::math::normal_lpdf(n, theta, phi[0])),
-                    (stan::math::normal_id_glm_lpdf(n, x, alpha, beta,
-                                                    phi[0])));
+    EXPECT_FLOAT_EQ(
+        (stan::math::normal_lpdf(n, theta, phi[0])),
+        (stan::math::normal_id_glm_lpdf(n, x, alpha, beta, phi[0])));
     EXPECT_FLOAT_EQ(
         (stan::math::normal_lpdf<true>(n, theta, phi[0])),
         (stan::math::normal_id_glm_lpdf<true>(n, x, alpha, beta, phi[0])));
@@ -123,8 +123,7 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand) {
     Matrix<double, Dynamic, 1> betareal
         = Matrix<double, Dynamic, Dynamic>::Random(2, 1);
     Matrix<double, 1, 1> alphareal = Matrix<double, 1, 1>::Random(1, 1);
-    double phireal
-        = Matrix<double, Dynamic, 1>::Random(1, 1)[0] + 1;
+    double phireal = Matrix<double, Dynamic, 1>::Random(1, 1)[0] + 1;
     Matrix<var, Dynamic, 1> n = nreal;
     Matrix<var, Dynamic, 1> beta = betareal;
     Matrix<var, Dynamic, 1> theta(3, 1);
