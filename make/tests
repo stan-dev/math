@@ -29,10 +29,12 @@ endif
 ##
 
 test/unit/multiple_translation_units%.o : CXXFLAGS += -fPIC
-test/unit/libmultiple.so : CXXFLAGS += -shared -fPIC
+test/unit/libmultiple.so : CXXFLAGS += -fPIC
 
 test/unit/libmultiple.so : test/unit/multiple_translation_units1.o test/unit/multiple_translation_units2.o $(MPI_TARGETS)
 	$(LINK.cpp) $^ $(LDLIBS) $(OUTPUT_OPTION)
+
+test/unit/multiple_translation_units_test$(EXE): test/unit/libmultiple.so
 
 ############################################################
 #
