@@ -12,6 +12,9 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/is_vector.hpp>
+#include <stan/math/prim/mat/meta/is_vector.hpp>
+#include <stan/math/prim/mat/meta/duplicate_if_scalar.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <cmath>
 #include <limits>
@@ -28,8 +31,9 @@ namespace math {
  * @tparam T_x type of the matrix of covariates (features); this
  * should be an Eigen::Matrix type whose number of rows should match the
  * length of n and whose number of columns should match the length of beta
- * @tparam T_alpha type of the intercept;
- * this should be a single value;
+ * @tparam T_alpha type of the intercept(s);
+ * this can be a vector (of the same length as n) of intercepts or a single
+ * value (for models with constant intercept);
  * @tparam T_beta type of the weight vector;
  * this can also be a single value;
  * @param n positive integer vector parameter
@@ -66,6 +70,9 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
                          x.col(0), "Vector of dependent variables", n);
   check_consistent_sizes(function, "Columns in matrix of independent variables",
                          x.row(0), "Weight vector", beta);
+  if (is_vector<T_alpha>::value)
+    check_consistent_sizes(function, "Vector of intercepts",
+                       alpha, "Vector of dependent variables", n);
 
   if (!include_summand<propto, T_x, T_alpha, T_beta>::value)
     return 0.0;
@@ -91,7 +98,7 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
 
   Matrix<T_partials_return, Dynamic, 1> theta_dbl
       = (value_of(x) * beta_dbl
-         + Matrix<double, Dynamic, 1>::Ones(N, 1) * value_of(alpha));
+         +  duplicate_if_scalar(value_of(alpha), N));
   Matrix<T_partials_return, Dynamic, 1> exp_theta
       = theta_dbl.array().exp().matrix();
 
@@ -120,7 +127,11 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
       ops_partials.edge1_.partials_ = theta_derivative * beta_dbl.transpose();
     }
     if (!is_constant_struct<T_alpha>::value) {
-      ops_partials.edge2_.partials_[0] = theta_derivative.sum();
+      if (is_vector<T_alpha>::value)
+        assign_to_matrix_or_broadcast_array(ops_partials.edge2_.partials_,
+                                            theta_derivative);
+      else
+        ops_partials.edge2_.partials_[0] = theta_derivative.sum();
     }
   }
   return ops_partials.build(logp);

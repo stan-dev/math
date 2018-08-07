@@ -11,6 +11,9 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/is_vector.hpp>
+#include <stan/math/prim/mat/meta/is_vector.hpp>
+#include <stan/math/prim/mat/meta/duplicate_if_scalar.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <cmath>
 
@@ -26,8 +29,9 @@ namespace math {
  * @tparam T_x type of the matrix of independent variables (features); this
  * should be an Eigen::Matrix type whose number of rows should match the
  * length of n and whose number of columns should match the length of beta
- * @tparam T_alpha type of the intercept;
- * this has to be a single value;
+ * @tparam T_alpha type of the intercept(s);
+ * this can be a vector (of the same length as n) of intercepts or a single
+ * value (for models with constant intercept);
  * @tparam T_beta type of the weight vector;
  * this can also be a single value;
  * @tparam T_scale type of the scale vector.
@@ -73,6 +77,9 @@ normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_alpha &alpha,
                          x.col(0), "Vector of scale parameters", sigma);
   check_consistent_sizes(function, "Columns in matrix of independent variables",
                          x.row(0), "Weight vector", beta);
+  if (is_vector<T_alpha>::value)
+    check_consistent_sizes(function, "Vector of intercepts",
+                       alpha, "Vector of dependent variables", n);
 
   if (!include_summand<propto, T_n, T_x, T_alpha, T_beta, T_scale>::value)
     return 0.0;
@@ -101,7 +108,7 @@ normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_alpha &alpha,
 
   Array<T_partials_return, Dynamic, 1> mu_dbl
       = (value_of(x) * beta_dbl
-         + Matrix<double, Dynamic, 1>::Ones(N, 1) * value_of(alpha))
+         +  duplicate_if_scalar(value_of(alpha), N))
             .array();
   Array<T_partials_return, Dynamic, 1> n_minus_mu_over_sigma
       = (n_dbl - mu_dbl) * inv_sigma;
@@ -136,7 +143,11 @@ normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_alpha &alpha,
           value_of(x).transpose() * mu_derivative);
     }
     if (!is_constant_struct<T_alpha>::value) {
-      ops_partials.edge3_.partials_[0] = mu_derivative.sum();
+      if (is_vector<T_alpha>::value)
+        assign_to_matrix_or_broadcast_array(ops_partials.edge3_.partials_,
+                                            mu_derivative);
+      else
+        ops_partials.edge3_.partials_[0] = mu_derivative.sum();
     }
     if (!is_constant_struct<T_scale>::value) {
       assign_to_matrix_or_broadcast_array(
