@@ -200,14 +200,14 @@ TEST(ProbDistributionsBernoulliLogitGLM,
       }
     }
     for (size_t j = 0; j < 3; j++) {
-       alpha_adj[j] = alpha[j].adj();
+      alpha_adj[j] = alpha[j].adj();
     }
 
     stan::math::recover_memory();
 
     Matrix<var, Dynamic, 1> beta2 = betareal;
     Matrix<var, Dynamic, Dynamic> x2 = xreal;
-    Matrix<var, Dynamic, 1>  alpha2 = alphareal;
+    Matrix<var, Dynamic, 1> alpha2 = alphareal;
 
     var lp2 = stan::math::bernoulli_logit_glm_lpmf(n, x2, alpha2, beta2);
     lp2.grad();

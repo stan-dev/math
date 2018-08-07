@@ -14,10 +14,9 @@ namespace math {
  * @param N Number of duplications to be made.
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1>
-  duplicate_if_scalar(const T &arg1, int N) {
-    return Eigen::Matrix<double, Eigen::Dynamic, 1>::Ones(N, 1) * arg1;
-  }
+Eigen::Matrix<T, Eigen::Dynamic, 1> duplicate_if_scalar(const T &arg1, int N) {
+  return Eigen::Matrix<double, Eigen::Dynamic, 1>::Ones(N, 1) * arg1;
+}
 
 /**
  * This program is used to either duplicate a scalar to a vector of a given
@@ -28,10 +27,10 @@ Eigen::Matrix<T, Eigen::Dynamic, 1>
  * @param N Number of duplications to be made (ignored).
  */
 template <typename T>
-const Eigen::Matrix<T, Eigen::Dynamic, 1>&
-  duplicate_if_scalar(const Eigen::Matrix<T, Eigen::Dynamic, 1> &arg1, int N) {
-    return arg1;
-  }
+const Eigen::Matrix<T, Eigen::Dynamic, 1> &duplicate_if_scalar(
+    const Eigen::Matrix<T, Eigen::Dynamic, 1> &arg1, int N) {
+  return arg1;
+}
 }  // namespace math
 }  // namespace stan
 

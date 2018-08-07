@@ -203,7 +203,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
     Matrix<var, Dynamic, 1> beta = betareal;
     Matrix<var, Dynamic, 1> theta(3, 1);
     Matrix<var, Dynamic, Dynamic> x = xreal;
-    Matrix<var, Dynamic, 1>  alpha = alphareal;
+    Matrix<var, Dynamic, 1> alpha = alphareal;
     Matrix<var, Dynamic, 1> phi = phireal;
     theta = (x * beta) + alpha;
     var lp = stan::math::neg_binomial_2_log_lpmf(n, theta, phi);

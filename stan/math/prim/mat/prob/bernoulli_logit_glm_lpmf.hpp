@@ -74,8 +74,8 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   check_consistent_sizes(function, "Columns in matrix of independent variables",
                          x.row(0), "Weight vector", beta);
   if (is_vector<T_alpha>::value)
-    check_consistent_sizes(function, "Vector of intercepts",
-                       alpha, "Vector of dependent variables", n);
+    check_consistent_sizes(function, "Vector of intercepts", alpha,
+                           "Vector of dependent variables", n);
 
   if (!include_summand<propto, T_x, T_alpha, T_beta>::value)
     return 0.0;
@@ -98,10 +98,9 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
     }
   }
   Eigen::Array<T_partials_return, Dynamic, 1> ntheta
-        = signs.array()
-          * (value_of(x) * beta_dbl
-             + duplicate_if_scalar(value_of(alpha), N))
-                .array();
+      = signs.array()
+        * (value_of(x) * beta_dbl + duplicate_if_scalar(value_of(alpha), N))
+              .array();
 
   Eigen::Array<T_partials_return, Dynamic, 1> exp_m_ntheta = (-ntheta).exp();
 

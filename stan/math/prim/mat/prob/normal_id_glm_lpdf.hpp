@@ -78,8 +78,8 @@ normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_alpha &alpha,
   check_consistent_sizes(function, "Columns in matrix of independent variables",
                          x.row(0), "Weight vector", beta);
   if (is_vector<T_alpha>::value)
-    check_consistent_sizes(function, "Vector of intercepts",
-                       alpha, "Vector of dependent variables", n);
+    check_consistent_sizes(function, "Vector of intercepts", alpha,
+                           "Vector of dependent variables", n);
 
   if (!include_summand<propto, T_n, T_x, T_alpha, T_beta, T_scale>::value)
     return 0.0;
@@ -107,8 +107,7 @@ normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_alpha &alpha,
   }
 
   Array<T_partials_return, Dynamic, 1> mu_dbl
-      = (value_of(x) * beta_dbl
-         +  duplicate_if_scalar(value_of(alpha), N))
+      = (value_of(x) * beta_dbl + duplicate_if_scalar(value_of(alpha), N))
             .array();
   Array<T_partials_return, Dynamic, 1> n_minus_mu_over_sigma
       = (n_dbl - mu_dbl) * inv_sigma;
