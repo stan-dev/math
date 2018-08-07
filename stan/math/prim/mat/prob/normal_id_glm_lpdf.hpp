@@ -26,10 +26,10 @@ namespace math {
  * @tparam T_x type of the matrix of independent variables (features); this
  * should be an Eigen::Matrix type whose number of rows should match the
  * length of n and whose number of columns should match the length of beta
- * @tparam T_beta type of the weight vector;
- * this can also be a single value;
  * @tparam T_alpha type of the intercept;
  * this has to be a single value;
+ * @tparam T_beta type of the weight vector;
+ * this can also be a single value;
  * @tparam T_scale type of the scale vector.
  * @param n vector parameter
  * @param x design matrix
@@ -42,13 +42,13 @@ namespace math {
  * @throw std::domain_error if the scale is not positive.
  * @throw std::invalid_argument if container sizes mismatch.
  */
-template <bool propto, typename T_n, typename T_x, typename T_beta,
-          typename T_alpha, typename T_scale>
-typename return_type<T_n, T_x, T_beta, T_alpha, T_scale>::type
-normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_beta &beta,
-                   const T_alpha &alpha, const T_scale &sigma) {
+template <bool propto, typename T_n, typename T_x, typename T_alpha,
+          typename T_beta, typename T_scale>
+typename return_type<T_n, T_x, T_alpha, T_beta, T_scale>::type
+normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_alpha &alpha,
+                   const T_beta &beta, const T_scale &sigma) {
   static const char *function = "normal_id_glm_lpdf";
-  typedef typename stan::partials_return_type<T_n, T_x, T_beta, T_alpha,
+  typedef typename stan::partials_return_type<T_n, T_x, T_alpha, T_beta,
                                               T_scale>::type T_partials_return;
 
   using Eigen::Array;
@@ -70,11 +70,11 @@ normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_beta &beta,
   check_consistent_sizes(function, "Rows in matrix of independent variables",
                          x.col(0), "Vector of dependent variables", n);
   check_consistent_sizes(function, "Rows in matrix of independent variables",
-                         x.col(0), "Vector of scale paramters", sigma);
+                         x.col(0), "Vector of scale parameters", sigma);
   check_consistent_sizes(function, "Columns in matrix of independent variables",
                          x.row(0), "Weight vector", beta);
 
-  if (!include_summand<propto, T_n, T_x, T_beta, T_alpha, T_scale>::value)
+  if (!include_summand<propto, T_n, T_x, T_alpha, T_beta, T_scale>::value)
     return 0.0;
 
   const size_t N = x.col(0).size();
@@ -112,12 +112,12 @@ normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_beta &beta,
     logp += NEG_LOG_SQRT_TWO_PI * N;
   if (include_summand<propto, T_scale>::value)
     logp -= sigma_dbl.log().sum();
-  if (include_summand<propto, T_n, T_x, T_beta, T_alpha, T_scale>::value)
+  if (include_summand<propto, T_n, T_x, T_alpha, T_beta, T_scale>::value)
     logp -= 0.5 * n_minus_mu_over_sigma_squared.sum();
 
   // Compute the necessary derivatives.
-  operands_and_partials<T_n, T_x, T_beta, T_alpha, T_scale> ops_partials(
-      n, x, beta, alpha, sigma);
+  operands_and_partials<T_n, T_x, T_alpha, T_beta, T_scale> ops_partials(
+      n, x, alpha, beta, sigma);
   if (!(is_constant_struct<T_n>::value && is_constant_struct<T_x>::value
         && is_constant_struct<T_beta>::value
         && is_constant_struct<T_alpha>::value)) {
@@ -131,12 +131,12 @@ normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_beta &beta,
       ops_partials.edge2_.partials_ = mu_derivative * beta_dbl.transpose();
     }
     if (!is_constant_struct<T_beta>::value) {
-      assign_to_matrix_or_broadcast_array(ops_partials.edge3_.partials_,
+      assign_to_matrix_or_broadcast_array(ops_partials.edge4_.partials_,
                                           value_of(x).transpose()
                                           * mu_derivative);
     }
     if (!is_constant_struct<T_alpha>::value) {
-      ops_partials.edge4_.partials_[0] = mu_derivative.sum();
+      ops_partials.edge3_.partials_[0] = mu_derivative.sum();
     }
     if (!is_constant_struct<T_scale>::value) {
       assign_to_matrix_or_broadcast_array(
@@ -151,12 +151,12 @@ normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_beta &beta,
   return ops_partials.build(logp);
 }
 
-template <typename T_n, typename T_x, typename T_beta, typename T_alpha,
+template <typename T_n, typename T_x, typename T_alpha, typename T_beta,
           typename T_scale>
-inline typename return_type<T_n, T_x, T_beta, T_alpha, T_scale>::type
-normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_beta &beta,
-                   const T_alpha &alpha, const T_scale &sigma) {
-  return normal_id_glm_lpdf<false>(n, x, beta, alpha, sigma);
+inline typename return_type<T_n, T_x, T_alpha, T_beta, T_scale>::type
+normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_alpha &alpha,
+                   const T_beta &beta, const T_scale &sigma) {
+  return normal_id_glm_lpdf<false>(n, x, alpha, beta, sigma);
 }
 }  // namespace math
 }  // namespace stan

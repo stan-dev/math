@@ -32,10 +32,10 @@ namespace math {
  * @tparam T_x type of the matrix of covariates (features); this
  * should be an Eigen::Matrix type whose number of rows should match the
  * length of n and whose number of columns should match the length of beta
- * @tparam T_beta type of the weight vector;
- * this can also be a scalar;
  * @tparam T_alpha type of the intercept;
  * this should be a scalar;
+ * @tparam T_beta type of the weight vector;
+ * this can also be a scalar;
  * @tparam T_precision type of the (positive) precision vector phi;
  * this can also be a scalar;
  * @param n failures count vector parameter
@@ -49,14 +49,14 @@ namespace math {
  * @throw std::domain_error if phi is infinite or non-positive.
  * @throw std::domain_error if n is negative.
  */
-template <bool propto, typename T_n, typename T_x, typename T_beta,
-          typename T_alpha, typename T_precision>
-typename return_type<T_x, T_beta, T_alpha, T_precision>::type
-neg_binomial_2_log_glm_lpmf(const T_n& n, const T_x& x, const T_beta& beta,
-                            const T_alpha& alpha, const T_precision& phi) {
+template <bool propto, typename T_n, typename T_x, typename T_alpha,
+          typename T_beta, typename T_precision>
+typename return_type<T_x, T_alpha, T_beta, T_precision>::type
+neg_binomial_2_log_glm_lpmf(const T_n& n, const T_x& x, const T_alpha& alpha,
+                            const T_beta& beta, const T_precision& phi) {
   static const char* function = "neg_binomial_2_log_glm_lpmf";
   typedef
-      typename stan::partials_return_type<T_n, T_x, T_beta, T_alpha,
+      typename stan::partials_return_type<T_n, T_x, T_alpha, T_beta,
                                           T_precision>::type T_partials_return;
 
   using Eigen::Array;
@@ -82,7 +82,7 @@ neg_binomial_2_log_glm_lpmf(const T_n& n, const T_x& x, const T_beta& beta,
   check_consistent_sizes(function, "Columns in matrix of independent variables",
                          x.row(0), "Weight vector", beta);
 
-  if (!include_summand<propto, T_x, T_beta, T_alpha, T_precision>::value)
+  if (!include_summand<propto, T_x, T_alpha, T_beta, T_precision>::value)
     return 0.0;
 
   const size_t N = x.col(0).size();
@@ -136,9 +136,9 @@ neg_binomial_2_log_glm_lpmf(const T_n& n, const T_x& x, const T_beta& beta,
                    [](const T_partials_return& xx) { return lgamma(xx); }))
                 .sum();
   }
-  if (include_summand<propto, T_x, T_beta, T_alpha, T_precision>::value)
+  if (include_summand<propto, T_x, T_alpha, T_beta, T_precision>::value)
     logp -= (n_plus_phi * logsumexp_eta_logphi).sum();
-  if (include_summand<propto, T_x, T_beta, T_alpha>::value)
+  if (include_summand<propto, T_x, T_alpha, T_beta>::value)
     logp += (n_arr * theta_dbl).sum();
   if (include_summand<propto, T_precision>::value) {
     logp += n_plus_phi
@@ -148,8 +148,8 @@ neg_binomial_2_log_glm_lpmf(const T_n& n, const T_x& x, const T_beta& beta,
   }
 
   // Compute the necessary derivatives.
-  operands_and_partials<T_x, T_beta, T_alpha, T_precision> ops_partials(
-      x, beta, alpha, phi);
+  operands_and_partials<T_x, T_alpha, T_beta, T_precision> ops_partials(
+      x, alpha, beta, phi);
 
   if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
         && is_constant_struct<T_alpha>::value)) {
@@ -160,7 +160,7 @@ neg_binomial_2_log_glm_lpmf(const T_n& n, const T_x& x, const T_beta& beta,
                               + Array<double, Dynamic, 1>::Ones(N, 1))))
                            .matrix();
     if (!is_constant_struct<T_beta>::value) {
-      assign_to_matrix_or_broadcast_array(ops_partials.edge2_.partials_,
+      assign_to_matrix_or_broadcast_array(ops_partials.edge3_.partials_,
                                           value_of(x).transpose() *
                                           theta_derivative);
     }
@@ -168,7 +168,7 @@ neg_binomial_2_log_glm_lpmf(const T_n& n, const T_x& x, const T_beta& beta,
       ops_partials.edge1_.partials_ = theta_derivative * beta_dbl.transpose();
     }
     if (!is_constant_struct<T_alpha>::value) {
-      ops_partials.edge3_.partials_[0] = theta_derivative.sum();
+      ops_partials.edge2_.partials_[0] = theta_derivative.sum();
     }
   }
   if (!is_constant_struct<T_precision>::value) {
@@ -186,12 +186,12 @@ neg_binomial_2_log_glm_lpmf(const T_n& n, const T_x& x, const T_beta& beta,
   return ops_partials.build(logp);
 }
 
-template <typename T_n, typename T_x, typename T_beta, typename T_alpha,
+template <typename T_n, typename T_x, typename T_alpha, typename T_beta,
           typename T_precision>
-inline typename return_type<T_x, T_beta, T_alpha, T_precision>::type
-neg_binomial_2_log_glm_lpmf(const T_n& n, const T_x& x, const T_beta& beta,
-                            const T_alpha& alpha, const T_precision& phi) {
-  return neg_binomial_2_log_glm_lpmf<false>(n, x, beta, alpha, phi);
+inline typename return_type<T_x, T_alpha, T_beta, T_precision>::type
+neg_binomial_2_log_glm_lpmf(const T_n& n, const T_x& x, const T_alpha& alpha,
+                            const T_beta& beta, const T_precision& phi) {
+  return neg_binomial_2_log_glm_lpmf<false>(n, x, alpha, beta, phi);
 }
 }  // namespace math
 }  // namespace stan

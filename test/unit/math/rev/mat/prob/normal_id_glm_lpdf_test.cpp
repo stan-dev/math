@@ -22,10 +22,10 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles) {
   Matrix<double, Dynamic, 1> sigma(3, 1);
   sigma << 10, 4, 6;
   EXPECT_FLOAT_EQ((stan::math::normal_lpdf(n, theta, sigma)),
-                  (stan::math::normal_id_glm_lpdf(n, x, beta, alpha, sigma)));
+                  (stan::math::normal_id_glm_lpdf(n, x, alpha, beta, sigma)));
   EXPECT_FLOAT_EQ(
       (stan::math::normal_lpdf<true>(n, theta, sigma)),
-      (stan::math::normal_id_glm_lpdf<true>(n, x, beta, alpha, sigma)));
+      (stan::math::normal_id_glm_lpdf<true>(n, x, alpha, beta, sigma)));
 }
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
@@ -48,10 +48,10 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles_rand) {
         = Matrix<double, Dynamic, Dynamic>::Random(3, 1)
           + Matrix<double, 3, 1>::Ones();
     EXPECT_FLOAT_EQ((stan::math::normal_lpdf(n, theta, phi)),
-                    (stan::math::normal_id_glm_lpdf(n, x, beta, alpha, phi)));
+                    (stan::math::normal_id_glm_lpdf(n, x, alpha, beta, phi)));
     EXPECT_FLOAT_EQ(
         (stan::math::normal_lpdf<true>(n, theta, phi)),
-        (stan::math::normal_id_glm_lpdf<true>(n, x, beta, alpha, phi)));
+        (stan::math::normal_id_glm_lpdf<true>(n, x, alpha, beta, phi)));
   }
 }
 //  We check that the gradients of the new regression match those of one built
@@ -100,7 +100,7 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars) {
   var alpha2 = 0.3;
   Matrix<var, Dynamic, 1> sigma2(3, 1);
   sigma2 << 10, 4, 6;
-  var lp2 = stan::math::normal_id_glm_lpdf(n2, x2, beta2, alpha2, sigma2);
+  var lp2 = stan::math::normal_id_glm_lpdf(n2, x2, alpha2, beta2, sigma2);
   lp2.grad();
   EXPECT_FLOAT_EQ(lp_val, lp2.val());
   for (size_t i = 0; i < 2; i++) {
@@ -163,7 +163,7 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand) {
     Matrix<var, Dynamic, Dynamic> x2 = xreal;
     var alpha2 = alphareal[0];
     Matrix<var, Dynamic, 1> phi2 = phireal;
-    var lp2 = stan::math::normal_id_glm_lpdf(n2, x2, beta2, alpha2, phi2);
+    var lp2 = stan::math::normal_id_glm_lpdf(n2, x2, alpha2, beta2, phi2);
     lp2.grad();
     EXPECT_FLOAT_EQ(lp_val, lp2.val());
     for (size_t i = 0; i < 2; i++) {
@@ -179,53 +179,3 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand) {
     }
   }
 }
-//  Here, we compare the speed of the new regression to that of one built from
-//  existing primitives.
-/*
-#include <chrono>
-typedef std::chrono::high_resolution_clock::time_point TimeVar;
-#define duration(a) \
-  std::chrono::duration_cast<std::chrono::microseconds>(a).count()
-#define timeNow() std::chrono::high_resolution_clock::now()
-TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_speed) {
-  const int R = 30000;
-  const int C = 1000;
-  Matrix<int,Dynamic,1> n(R, 1);
-  for (size_t i = 0; i < R; i++) {
-    n[i] = Matrix<uint, 1, 1>::Random(1, 1)[0]%2000;
-  }
-  int T1 = 0;
-  int T2 = 0;
-  for (size_t testnumber = 0; testnumber < 1; testnumber++){
-    Matrix<double, Dynamic, Dynamic> xreal = Matrix<double, Dynamic,
-Dynamic>::Random(R, C); Matrix<double, Dynamic, 1> betareal = Matrix<double,
-Dynamic, Dynamic>::Random(C, 1); Matrix<double, Dynamic, 1> sigmareal =
-Matrix<double, Dynamic, Dynamic>::Random(R, 1)
-      + Matrix<double, R, 1>::Ones();  // Random Matrix has entries between -1
-and 1. We add 1 to it to get positive entries. Matrix<double, 1, 1> alphareal =
-Matrix<double, 1, 1>::Random(1, 1); Matrix<double, Dynamic, 1> alpharealvec =
-Matrix<double, R, 1>::Ones() * alphareal;
-    Matrix<var, Dynamic, 1> beta = betareal;
-    Matrix<var, Dynamic, 1> sigma = sigmareal;
-    Matrix<var, Dynamic, 1> theta(R, 1);
-    TimeVar t1 = timeNow();
-    theta = (xreal * beta) + alpharealvec;
-    var lp = stan::math::normal_lpdf(n, theta, sigma);
-    lp.grad();
-    TimeVar t2 = timeNow();
-    stan::math::recover_memory();
-    Matrix<var, Dynamic, 1> beta2 = betareal;
-    Matrix<var, Dynamic, 1> sigma2 = sigmareal;
-    TimeVar t3 = timeNow();
-    var lp2 = stan::math::normal_id_glm_lpdf(n, xreal, beta2, alphareal[0],
-      sigma2);
-    lp2.grad();
-    TimeVar t4 = timeNow();
-    stan::math::recover_memory();
-    T1 += duration(t2 - t1);
-    T2 += duration(t4 - t3);
-  }
-  std::cout << "Existing Primitives:" << std::endl << T1 << std::endl  << "New
-Primitives:" << std::endl << T2 << std::endl;
-}
-*/

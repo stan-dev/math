@@ -30,10 +30,10 @@ namespace math {
  * @tparam T_x type of the matrix of independent variables (features); this
  * should be an Eigen::Matrix type whose number of rows should match the
  * length of n and whose number of columns should match the length of beta
- * @tparam T_beta type of the weight vector;
- * this can also be a single value;
  * @tparam T_alpha type of the intercept;
  * this has to be single value;
+ * @tparam T_beta type of the weight vector;
+ * this can also be a single value;
  * @param n binary vector parameter
  * @param x design matrix
  * @param beta weight vector
@@ -44,12 +44,12 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 
-template <bool propto, typename T_n, typename T_x, typename T_beta,
-          typename T_alpha>
-typename return_type<T_x, T_beta, T_alpha>::type bernoulli_logit_glm_lpmf(
-    const T_n &n, const T_x &x, const T_beta &beta, const T_alpha &alpha) {
+template <bool propto, typename T_n, typename T_x, typename T_alpha,
+          typename T_beta>
+typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
+    const T_n &n, const T_x &x, const T_alpha &alpha, const T_beta &beta) {
   static const char *function = "bernoulli_logit_glm_lpmf";
-  typedef typename stan::partials_return_type<T_n, T_x, T_beta, T_alpha>::type
+  typedef typename stan::partials_return_type<T_n, T_x, T_alpha, T_beta>::type
       T_partials_return;
 
   using Eigen::Dynamic;
@@ -70,7 +70,7 @@ typename return_type<T_x, T_beta, T_alpha>::type bernoulli_logit_glm_lpmf(
   check_consistent_sizes(function, "Columns in matrix of independent variables",
                          x.row(0), "Weight vector", beta);
 
-  if (!include_summand<propto, T_x, T_beta, T_alpha>::value)
+  if (!include_summand<propto, T_x, T_alpha, T_beta>::value)
     return 0.0;
 
   const size_t N = x.col(0).size();
@@ -110,7 +110,7 @@ typename return_type<T_x, T_beta, T_alpha>::type bernoulli_logit_glm_lpmf(
   }
 
   // Compute the necessary derivatives.
-  operands_and_partials<T_x, T_beta, T_alpha> ops_partials(x, beta, alpha);
+  operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
   if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
         && is_constant_struct<T_alpha>::value)) {
     Matrix<T_partials_return, Dynamic, 1> theta_derivative(N, 1);
@@ -124,25 +124,25 @@ typename return_type<T_x, T_beta, T_alpha>::type bernoulli_logit_glm_lpmf(
             = signs[n] * exp_m_ntheta[n] / (exp_m_ntheta[n] + 1);
     }
     if (!is_constant_struct<T_beta>::value) {
-      assign_to_matrix_or_broadcast_array(ops_partials.edge2_.partials_,
+      assign_to_matrix_or_broadcast_array(ops_partials.edge3_.partials_,
       value_of(x).transpose() * theta_derivative);
     }
     if (!is_constant_struct<T_x>::value) {
       ops_partials.edge1_.partials_ = theta_derivative * beta_dbl.transpose();
     }
     if (!is_constant_struct<T_alpha>::value) {
-      ops_partials.edge3_.partials_[0] = theta_derivative.sum();
+      ops_partials.edge2_.partials_[0] = theta_derivative.sum();
     }
   }
 
   return ops_partials.build(logp);
 }
 
-template <typename T_n, typename T_x, typename T_beta, typename T_alpha>
+template <typename T_n, typename T_x, typename T_alpha, typename T_beta>
 inline typename return_type<T_x, T_beta, T_alpha>::type
-bernoulli_logit_glm_lpmf(const T_n &n, const T_x &x, const T_beta &beta,
-                         const T_alpha &alpha) {
-  return bernoulli_logit_glm_lpmf<false>(n, x, beta, alpha);
+bernoulli_logit_glm_lpmf(const T_n &n, const T_x &x, const T_alpha &alpha,
+                         const T_beta &beta) {
+  return bernoulli_logit_glm_lpmf<false>(n, x, alpha, beta);
 }
 }  // namespace math
 }  // namespace stan

@@ -23,10 +23,10 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_doubles) {
   theta = x * beta + alphavec;
 
   EXPECT_FLOAT_EQ((stan::math::bernoulli_logit_lpmf(n, theta)),
-                  (stan::math::bernoulli_logit_glm_lpmf(n, x, beta, alpha)));
+                  (stan::math::bernoulli_logit_glm_lpmf(n, x, alpha, beta)));
   EXPECT_FLOAT_EQ(
       (stan::math::bernoulli_logit_lpmf<true>(n, theta)),
-      (stan::math::bernoulli_logit_glm_lpmf<true>(n, x, beta, alpha)));
+      (stan::math::bernoulli_logit_glm_lpmf<true>(n, x, alpha, beta)));
 }
 
 //  We check that the values of the new regression match those of one built
@@ -49,10 +49,10 @@ TEST(ProbDistributionsBernoulliLogitGLM,
     theta = x * beta + alphavec;
 
     EXPECT_FLOAT_EQ((stan::math::bernoulli_logit_lpmf(n, theta)),
-                    (stan::math::bernoulli_logit_glm_lpmf(n, x, beta, alpha)));
+                    (stan::math::bernoulli_logit_glm_lpmf(n, x, alpha, beta)));
     EXPECT_FLOAT_EQ(
         (stan::math::bernoulli_logit_lpmf<true>(n, theta)),
-        (stan::math::bernoulli_logit_glm_lpmf<true>(n, x, beta, alpha)));
+        (stan::math::bernoulli_logit_glm_lpmf<true>(n, x, alpha, beta)));
   }
 }
 
@@ -94,7 +94,7 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
   beta2 << 0.3, 2000;
   var alpha2 = 0.3;
 
-  var lp2 = stan::math::bernoulli_logit_glm_lpmf(n2, x2, beta2, alpha2);
+  var lp2 = stan::math::bernoulli_logit_glm_lpmf(n2, x2, alpha2, beta2);
   lp2.grad();
 
   EXPECT_FLOAT_EQ(lp_val, lp2.val());
@@ -150,7 +150,7 @@ TEST(ProbDistributionsBernoulliLogitGLM,
     Matrix<var, Dynamic, Dynamic> x2 = xreal;
     var alpha2 = alphareal[0];
 
-    var lp2 = stan::math::bernoulli_logit_glm_lpmf(n, x2, beta2, alpha2);
+    var lp2 = stan::math::bernoulli_logit_glm_lpmf(n, x2, alpha2, beta2);
     lp2.grad();
 
     EXPECT_FLOAT_EQ(lp_val, lp2.val());
@@ -163,63 +163,3 @@ TEST(ProbDistributionsBernoulliLogitGLM,
     }
   }
 }
-
-//  Here, we compare the speed of the new regression to that of one built from
-//  existing primitives.
-
-/*
-TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_speed) {
-
-  typedef std::chrono::high_resolution_clock::time_point TimeVar;
-  #define duration(a)
-std::chrono::duration_cast<std::chrono::microseconds>(a).count() #define
-timeNow() std::chrono::high_resolution_clock::now()
-
-  const int R = 30;
-  const int C = 10;
-
-  Matrix<int, Dynamic, 1> n(R, 1);
-  for (size_t i = 0; i < R; i++) {
-    n[i] = Matrix<uint, 1, 1>::Random(1, 1)[0]%2;
-  }
-
-  int T1 = 0;
-  int T2 = 0;
-
-  for (size_t testnumber = 0; testnumber < 1; testnumber++){
-    Matrix<double, Dynamic, Dynamic> xreal = Matrix<double, Dynamic,
-Dynamic>::Random(R, C); Matrix<double, Dynamic, 1> betareal = Matrix<double,
-Dynamic, Dynamic>::Random(C, 1); Matrix<double, 1, 1> alphareal = Matrix<double,
-1, 1>::Random(1, 1); Matrix<double, Dynamic, 1> alpharealvec = Matrix<double, R,
-1>::Ones() * alphareal;
-
-
-    Matrix<var, Dynamic, 1> beta2 = betareal;
-
-    TimeVar t3 = timeNow();
-    var lp2 = stan::math::bernoulli_logit_glm_lpmf(n, xreal, beta2,
-alphareal[0]); TimeVar t4 = timeNow(); lp2.grad();
-
-
-
-
-
-    Matrix<var, Dynamic, 1> beta = betareal;
-    Matrix<var, Dynamic, 1> theta(R, 1);
-
-      EXPECT_FLOAT_EQ(beta[0].val(),
-                  beta2[0].val());
-    TimeVar t1 = timeNow();
-    theta = (xreal * beta) + alpharealvec;
-    var lp = stan::math::bernoulli_logit_lpmf(n, theta);
-    TimeVar t2 = timeNow();
-    lp.grad();
-
-    T1 += duration(t2 - t1);
-    T2 += duration(t4 - t3);
-  }
-
-  std::cout << "Existing Primitives:" << std::endl << T1 << std::endl  << "New
-Primitives:" << std::endl << T2 << std::endl;
-}
-*/
