@@ -23,8 +23,8 @@ namespace math {
  * Calculate first derivative of f(x, param, std::ostream&)
  * with respect to the nth parameter. Uses nested reverse mode autodiff
  *
- * Gradients that evaluate to NaN when the function is zero are set to zero as
- * well
+ * Gradients that evaluate to NaN are set to zero if the function itself
+ * evaluates to zero. If the function is not zero and the gradient evaluates to NaN, a std::domain_error is thrown
  */
 template <typename F>
 inline double gradient_of_f(const F &f, const double &x, const double &xc,
