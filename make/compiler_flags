@@ -53,7 +53,7 @@ O ?= 3
 ## setup includes
 INC ?= -I $(if $(MATH),$(MATH),.) -I $(EIGEN) -I $(BOOST) $(INC_SUNDIALS)
 INC_SUNDIALS ?= -I $(SUNDIALS)/include
-INC_GTEST ?= -isystem $(GTEST)/include -isystem $(GTEST)
+INC_GTEST ?= -I $(GTEST)/include -I $(GTEST)
 
 ## setup precompiler options
 CPPFLAGS_BOOST ?= -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION

@@ -106,6 +106,14 @@ clean-mpi:
 
 endif
 
+############################################################
+# Google Test:
+#   Build the google test library.
+$(GTEST)/src/gtest-all.o: CXXFLAGS += $(CXXFLAGS_GTEST)
+$(GTEST)/src/gtest-all.o: CPPFLAGS += $(CPPFLAGS_GTEST)
+$(GTEST)/src/gtest-all.o: INC += $(INC_GTEST)
+
+
 
 ############################################################
 # Clean all libraries
