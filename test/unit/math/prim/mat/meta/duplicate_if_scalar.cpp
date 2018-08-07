@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/prim/scal.hpp>
+#include <vector>
 
 TEST(MetaTraits, DuplicateIfScalarTestSca) {
   double two = 2;
