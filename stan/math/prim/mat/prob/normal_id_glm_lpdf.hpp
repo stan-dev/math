@@ -131,9 +131,9 @@ normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_alpha &alpha,
       ops_partials.edge2_.partials_ = mu_derivative * beta_dbl.transpose();
     }
     if (!is_constant_struct<T_beta>::value) {
-      assign_to_matrix_or_broadcast_array(ops_partials.edge4_.partials_,
-                                          value_of(x).transpose()
-                                          * mu_derivative);
+      assign_to_matrix_or_broadcast_array(
+          ops_partials.edge4_.partials_,
+          value_of(x).transpose() * mu_derivative);
     }
     if (!is_constant_struct<T_alpha>::value) {
       ops_partials.edge3_.partials_[0] = mu_derivative.sum();
