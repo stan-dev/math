@@ -27,16 +27,12 @@ TEST(MathMatrix, value_of) {
 
 TEST(MathFunctions, value_of_return_type_short_circuit) {
   std::vector<double> a(5, 0);
-  bool r1 = std::is_same<decltype(stan::math::value_of(a)),
-                         std::vector<double>>::value;
-  EXPECT_FALSE(r1);
-  bool r2 = std::is_same<decltype(stan::math::value_of(a)),
-                         std::vector<double>&>::value;
-  EXPECT_FALSE(r2);
-  bool r3 = std::is_same<decltype(stan::math::value_of(a)),
-                         const std::vector<double>>::value;
-  EXPECT_FALSE(r3);
-  bool r4 = std::is_same<decltype(stan::math::value_of(a)),
-                         const std::vector<double>&>::value;
-  EXPECT_TRUE(r4);
+  EXPECT_FALSE((std::is_same<decltype(stan::math::value_of(a)),
+                             std::vector<double>>::value));
+  EXPECT_FALSE((std::is_same<decltype(stan::math::value_of(a)),
+                             std::vector<double>&>::value));
+  EXPECT_FALSE((std::is_same<decltype(stan::math::value_of(a)),
+                             const std::vector<double>>::value));
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(a)),
+                            const std::vector<double>&>::value));
 }

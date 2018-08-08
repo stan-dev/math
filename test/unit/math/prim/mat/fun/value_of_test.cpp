@@ -27,70 +27,60 @@ TEST(MathMatrix, value_of) {
 
 TEST(MathFunctions, value_of_return_type_short_circuit_vector_xd) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> a(5);
-  bool r1 = std::is_same<decltype(stan::math::value_of(a)),
-                         Eigen::Matrix<double, Eigen::Dynamic, 1>>::value;
-  EXPECT_FALSE(r1);
-  bool r2 = std::is_same<decltype(stan::math::value_of(a)),
-                         Eigen::Matrix<double, Eigen::Dynamic, 1>&>::value;
-  EXPECT_FALSE(r2);
-  bool r3 = std::is_same<decltype(stan::math::value_of(a)),
-                         const Eigen::Matrix<double, Eigen::Dynamic, 1>>::value;
-  EXPECT_FALSE(r3);
-  bool r4
-      = std::is_same<decltype(stan::math::value_of(a)),
-                     const Eigen::Matrix<double, Eigen::Dynamic, 1>&>::value;
-  EXPECT_TRUE(r4);
+  EXPECT_FALSE((std::is_same<decltype(stan::math::value_of(a)),
+                             Eigen::Matrix<double, Eigen::Dynamic, 1>>::value));
+  EXPECT_FALSE(
+      (std::is_same<decltype(stan::math::value_of(a)),
+                    Eigen::Matrix<double, Eigen::Dynamic, 1>&>::value));
+  EXPECT_FALSE(
+      (std::is_same<decltype(stan::math::value_of(a)),
+                    const Eigen::Matrix<double, Eigen::Dynamic, 1>>::value));
+  EXPECT_TRUE(
+      (std::is_same<decltype(stan::math::value_of(a)),
+                    const Eigen::Matrix<double, Eigen::Dynamic, 1>&>::value));
 }
 
 TEST(MathFunctions, value_of_return_type_short_circuit_row_vector_xd) {
   Eigen::Matrix<double, 1, Eigen::Dynamic> a(5);
-  bool r1 = std::is_same<decltype(stan::math::value_of(a)),
-                         Eigen::Matrix<double, 1, Eigen::Dynamic>>::value;
-  EXPECT_FALSE(r1);
-  bool r2 = std::is_same<decltype(stan::math::value_of(a)),
-                         Eigen::Matrix<double, 1, Eigen::Dynamic>&>::value;
-  EXPECT_FALSE(r2);
-  bool r3 = std::is_same<decltype(stan::math::value_of(a)),
-                         const Eigen::Matrix<double, 1, Eigen::Dynamic>>::value;
-  EXPECT_FALSE(r3);
-  bool r4
-      = std::is_same<decltype(stan::math::value_of(a)),
-                     const Eigen::Matrix<double, 1, Eigen::Dynamic>&>::value;
-  EXPECT_TRUE(r4);
+  EXPECT_FALSE((std::is_same<decltype(stan::math::value_of(a)),
+                             Eigen::Matrix<double, 1, Eigen::Dynamic>>::value));
+  EXPECT_FALSE(
+      (std::is_same<decltype(stan::math::value_of(a)),
+                    Eigen::Matrix<double, 1, Eigen::Dynamic>&>::value));
+  EXPECT_FALSE(
+      (std::is_same<decltype(stan::math::value_of(a)),
+                    const Eigen::Matrix<double, 1, Eigen::Dynamic>>::value));
+  EXPECT_TRUE(
+      (std::is_same<decltype(stan::math::value_of(a)),
+                    const Eigen::Matrix<double, 1, Eigen::Dynamic>&>::value));
 }
 
 TEST(MathFunctions, value_of_return_type_short_circuit_matrix_xd) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> a(5, 4);
-  bool r1 = std::is_same<
-      decltype(stan::math::value_of(a)),
-      Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>::value;
-  EXPECT_FALSE(r1);
-  bool r2 = std::is_same<
-      decltype(stan::math::value_of(a)),
-      Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&>::value;
-  EXPECT_FALSE(r2);
-  bool r3 = std::is_same<
-      decltype(stan::math::value_of(a)),
-      const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>::value;
-  EXPECT_FALSE(r3);
-  bool r4 = std::is_same<
-      decltype(stan::math::value_of(a)),
-      const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&>::value;
-  EXPECT_TRUE(r4);
+  EXPECT_FALSE((std::is_same<
+                decltype(stan::math::value_of(a)),
+                Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>::value));
+  EXPECT_FALSE(
+      (std::is_same<
+          decltype(stan::math::value_of(a)),
+          Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&>::value));
+  EXPECT_FALSE(
+      (std::is_same<
+          decltype(stan::math::value_of(a)),
+          const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>::value));
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(a)),
+                            const Eigen::Matrix<double, Eigen::Dynamic,
+                                                Eigen::Dynamic>&>::value));
 }
 
 TEST(MathFunctions, value_of_return_type_short_circuit_static_sized_matrix) {
   Eigen::Matrix<double, 5, 4> a;
-  bool r1 = std::is_same<decltype(stan::math::value_of(a)),
-                         Eigen::Matrix<double, 5, 4>>::value;
-  EXPECT_FALSE(r1);
-  bool r2 = std::is_same<decltype(stan::math::value_of(a)),
-                         Eigen::Matrix<double, 5, 4>&>::value;
-  EXPECT_FALSE(r2);
-  bool r3 = std::is_same<decltype(stan::math::value_of(a)),
-                         const Eigen::Matrix<double, 5, 4>>::value;
-  EXPECT_FALSE(r3);
-  bool r4 = std::is_same<decltype(stan::math::value_of(a)),
-                         const Eigen::Matrix<double, 5, 4>&>::value;
-  EXPECT_TRUE(r4);
+  EXPECT_FALSE((std::is_same<decltype(stan::math::value_of(a)),
+                             Eigen::Matrix<double, 5, 4>>::value));
+  EXPECT_FALSE((std::is_same<decltype(stan::math::value_of(a)),
+                             Eigen::Matrix<double, 5, 4>&>::value));
+  EXPECT_FALSE((std::is_same<decltype(stan::math::value_of(a)),
+                             const Eigen::Matrix<double, 5, 4>>::value));
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(a)),
+                            const Eigen::Matrix<double, 5, 4>&>::value));
 }
