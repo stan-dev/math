@@ -14,13 +14,11 @@ namespace math {
 namespace {
 /*
  * Placeholder apply function (until c++17 is available for Stan)
- * Taken from
- * http://aherrmann.github.io/programming/2016/02/28/unpacking-tuples-in-cpp14/
  */
-template <class F, class Tuple, std::size_t... Is>
+template <class F, class Tuple, std::size_t... I>
 constexpr auto apply_impl(const F& f, const Tuple& t,
-                          std::index_sequence<Is...>) {
-  return f(std::get<Is>(t)...);
+                          std::index_sequence<I...>) {
+  return f(std::get<I>(t)...);
 }
 
 template <class F, class Tuple>
@@ -108,37 +106,12 @@ struct adj_jac_vari : public vari {
     return count_memory(count, args...);
   }
 
-  template <int R, int C>
-  size_t count_memory(size_t count, const Eigen::Matrix<var, R, C>& x) {
-    constexpr int t = sizeof...(Targs) - 1;
-    offsets_[t] = count;
-    return count + x.size();
-  }
-
-  template <int R, int C>
-  size_t count_memory(size_t count, const Eigen::Matrix<double, R, C>& x) {
-    constexpr int t = sizeof...(Targs) - 1;
-    offsets_[t] = count;
-    return count;
-  }
-
-  size_t count_memory(size_t count, const var& x) {
-    constexpr int t = sizeof...(Targs) - 1;
-    offsets_[t] = count;
-    return count + 1;
-  }
-
-  size_t count_memory(size_t count, const double& x) {
-    constexpr int t = sizeof...(Targs) - 1;
-    offsets_[t] = count;
-    return count;
-  }
+  size_t count_memory(size_t count) { return count; }
 
   /*
    * prepare_x_vis recursively populates x_vis_ with the varis from each of its
    * input arguments. The vari pointers for argument n are copied into x_vis_ at
-   * the index starting at offsets_[n]. The array is_var_ is populated with
-   * whether or not the scalar type in each argument includes a var
+   * the index starting at offsets_[n].
    *
    * Each of the arguments can be an Eigen::Matrix<var, R, C>, an
    * Eigen::Matrix<double, R, C>, a var, or a double.
@@ -146,7 +119,7 @@ struct adj_jac_vari : public vari {
    * As an example, take the call:
    *    prepare_x_vis(a1, a2, a3)
    *
-   * If a1 is an Eigen::Matrix<var, 5, 5>, a2 is a double, and a3 is a var, the
+   * If a1 is an Eigen::Matrix<var, 5, 5>, a2 is a double, and a3 is a var,
    * x_vis_ to x_vis_ + 24 is filled with the vari pointers of a1, and
    * x_vis_[25] is set equal to the vari pointer of a3. is_var_ is set to {true,
    * false, true}
@@ -158,7 +131,6 @@ struct adj_jac_vari : public vari {
   template <int R, int C, typename... Pargs>
   void prepare_x_vis(const Eigen::Matrix<var, R, C>& x, const Pargs&... args) {
     constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
-    is_var_[t] = true;
     for (int i = 0; i < x.size(); ++i) {
       x_vis_[offsets_[t] + i] = x(i).vi_;
     }
@@ -168,51 +140,22 @@ struct adj_jac_vari : public vari {
   template <int R, int C, typename... Pargs>
   void prepare_x_vis(const Eigen::Matrix<double, R, C>& x,
                      const Pargs&... args) {
-    constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
-    is_var_[t] = false;
     prepare_x_vis(args...);
   }
 
   template <typename... Pargs>
   void prepare_x_vis(const var& x, const Pargs&... args) {
     constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
-    is_var_[t] = true;
     x_vis_[offsets_[t]] = x.vi_;
     prepare_x_vis(args...);
   }
 
   template <typename... Pargs>
   void prepare_x_vis(const double& x, const Pargs&... args) {
-    constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
-    is_var_[t] = false;
     prepare_x_vis(args...);
   }
 
-  template <int R, int C>
-  void prepare_x_vis(const Eigen::Matrix<var, R, C>& x) {
-    constexpr int t = sizeof...(Targs) - 1;
-    is_var_[t] = true;
-    for (int i = 0; i < x.size(); ++i) {
-      x_vis_[offsets_[t] + i] = x(i).vi_;
-    }
-  }
-
-  template <int R, int C>
-  void prepare_x_vis(const Eigen::Matrix<double, R, C>& x) {
-    constexpr int t = sizeof...(Targs) - 1;
-    is_var_[t] = false;
-  }
-
-  void prepare_x_vis(const var& x) {
-    constexpr int t = sizeof...(Targs) - 1;
-    is_var_[t] = true;
-    x_vis_[offsets_[t]] = x.vi_;
-  }
-
-  void prepare_x_vis(const double& x) {
-    constexpr int t = sizeof...(Targs) - 1;
-    is_var_[t] = false;
-  }
+  void prepare_x_vis() {}
 
   /**
    * The adj_jac_vari constructor
@@ -222,15 +165,24 @@ struct adj_jac_vari : public vari {
    *  3. Saves copies of the varis pointed to by the input vars for subsequent
    * calls to chain
    *  4. Allocates varis for the output of the functor F
+   *  5. Populates the array is_var_ with whether or not the scalar type in each
+   * argument is a var
    *
    * The input argument types can be any mix of double, var, or Eigen::Matrices
    * with double or var scalar components
+   *
+   * As an example of how is_var_ is initialized, take the call:
+   *    prepare_x_vis(a1, a2, a3)
+   *
+   * If a1 is an Eigen::Matrix<var, 5, 5>, a2 is a double, and a3 is a var,
+   * is_var_ is set to {true, false, true}
    *
    * @param args Input arguments
    */
   explicit adj_jac_vari(const Targs&... args)
       : vari(std::numeric_limits<double>::quiet_NaN()),  // The val_ in this
                                                          // vari is unused
+        is_var_({is_var<typename scalar_type<Targs>::type>::value...}),
         x_vis_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
             count_memory(0, args...))) {
     prepare_x_vis(args...);
@@ -295,22 +247,7 @@ struct adj_jac_vari : public vari {
     accumulate_adjoints(args...);
   }
 
-  template <int R, int C>
-  void accumulate_adjoints(const Eigen::Matrix<double, R, C>& y_adj_jac) {
-    const int t = sizeof...(Targs) - 1;
-    if (is_var_[t]) {
-      for (int n = 0; n < y_adj_jac.size(); ++n) {
-        x_vis_[offsets_[t] + n]->adj_ += y_adj_jac(n);
-      }
-    }
-  }
-
-  void accumulate_adjoints(const double& y_adj_jac) {
-    const int t = sizeof...(Targs) - 1;
-    if (is_var_[t]) {
-      x_vis_[offsets_[t]]->adj_ += y_adj_jac;
-    }
-  }
+  void accumulate_adjoints() {}
 
   /**
    * chain propagates the adjoints at the output varis (y_vi_) back to the input
@@ -387,8 +324,6 @@ struct adj_jac_vari : public vari {
  *
  * where T1, T2, etc. are the same types as in operator(), needs_adj is the same
  * as in operator(), and adj is the vector dL/dy.
- *
- * (optional) a nullary constructor
  *
  * operator() is responsible for computing f(x) and multiply_adjoint_jacobian is
  * responsible for computing the necessary adjoint transpose Jacobian products
