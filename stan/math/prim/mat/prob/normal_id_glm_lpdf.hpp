@@ -24,7 +24,6 @@ namespace math {
  * with Normal distribution and id link function.
  * If containers are supplied, returns the log sum of the probabilities.
  * @tparam T_n type of vector of dependent variables (labels);
- * this can also be a single value;
  * @tparam T_x type of the matrix of independent variables (features); this
  * should be an Eigen::Matrix type whose number of rows should match the
  * length of n and whose number of columns should match the length of beta
