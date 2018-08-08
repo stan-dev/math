@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_CORE_STD_ISINF_HPP
 
 #include <stan/math/prim/scal/fun/is_inf.hpp>
+#include <stan/math/rev/core/std_numeric_limits.hpp>
 #include <stan/math/rev/core/var.hpp>
 
 namespace std {
@@ -18,4 +19,13 @@ inline int isinf(const stan::math::var& a) {
 }
 
 }  // namespace std
+
+namespace stan {
+namespace math {
+
+// forwarding for ADL
+inline auto isinf(const var& a) { return std::isinf(a); }
+
+}  // namespace math
+}  // namespace stan
 #endif

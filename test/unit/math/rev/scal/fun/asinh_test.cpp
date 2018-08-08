@@ -61,3 +61,16 @@ TEST(AgradRev, check_varis_on_stack) {
   AVAR a = 0.2;
   test::check_varis_on_stack(stan::math::asinh(a));
 }
+
+TEST(AgradRev, complex) {
+  stan::math::var x = 2.0 / 3;
+
+  double h = 1e-8;
+  std::complex<stan::math::var> z(x, h);
+  auto f = asinh(z);
+
+  AVEC v = createAVEC(real(z));
+  VEC g;
+  real(f).grad(v, g);
+  EXPECT_FLOAT_EQ(g[0], imag(f).val() / h);
+}

@@ -46,6 +46,7 @@ inline fvar<T> operator/(double x1, const fvar<T>& x2) {
   // TODO(carpenter): store x1 / x2.val_ and reuse
   return fvar<T>(x1 / x2.val_, -x1 * x2.d_ / (x2.val_ * x2.val_));
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

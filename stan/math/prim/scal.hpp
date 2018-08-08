@@ -3,6 +3,8 @@
 
 #include <stan/math/version.hpp>
 
+#include <stan/math/prim/cplx.hpp>
+
 #include <stan/math/prim/scal/meta/ad_promotable.hpp>
 #include <stan/math/prim/scal/meta/child_type.hpp>
 #include <stan/math/prim/scal/meta/contains_fvar.hpp>
@@ -12,8 +14,11 @@
 #include <stan/math/prim/scal/meta/get.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/index_type.hpp>
+#include <stan/math/prim/scal/meta/is_arith_like.hpp>
+#include <stan/math/prim/scal/meta/is_complex.hpp>
 #include <stan/math/prim/scal/meta/is_constant.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/is_fr_var.hpp>
 #include <stan/math/prim/scal/meta/is_fvar.hpp>
 #include <stan/math/prim/scal/meta/is_var.hpp>
 #include <stan/math/prim/scal/meta/is_var_or_arithmetic.hpp>
@@ -29,6 +34,8 @@
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/partials_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/scal/meta/rm_complex.hpp>
+#include <stan/math/prim/scal/meta/rm_zeroing.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <stan/math/prim/scal/meta/scalar_type_pre.hpp>
@@ -72,7 +79,9 @@
 #include <stan/math/prim/scal/fun/cbrt.hpp>
 #include <stan/math/prim/scal/fun/choose.hpp>
 #include <stan/math/prim/scal/fun/common_type.hpp>
+#include <stan/math/prim/scal/fun/complex_promote.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/copysign.hpp>
 #include <stan/math/prim/scal/fun/corr_constrain.hpp>
 #include <stan/math/prim/scal/fun/corr_free.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
@@ -114,6 +123,7 @@
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/is_uninitialized.hpp>
+#include <stan/math/prim/scal/fun/isfinite.hpp>
 #include <stan/math/prim/scal/fun/lb_constrain.hpp>
 #include <stan/math/prim/scal/fun/lb_free.hpp>
 #include <stan/math/prim/scal/fun/lbeta.hpp>
@@ -154,17 +164,21 @@
 #include <stan/math/prim/scal/fun/owens_t.hpp>
 #include <stan/math/prim/scal/fun/Phi.hpp>
 #include <stan/math/prim/scal/fun/Phi_approx.hpp>
+#include <stan/math/prim/scal/fun/polar.hpp>
 #include <stan/math/prim/scal/fun/positive_constrain.hpp>
 #include <stan/math/prim/scal/fun/positive_free.hpp>
+#include <stan/math/prim/scal/fun/pow.hpp>
 #include <stan/math/prim/scal/fun/primitive_value.hpp>
 #include <stan/math/prim/scal/fun/prob_constrain.hpp>
 #include <stan/math/prim/scal/fun/prob_free.hpp>
+#include <stan/math/prim/scal/fun/proj.hpp>
 #include <stan/math/prim/scal/fun/promote_elements.hpp>
 #include <stan/math/prim/scal/fun/promote_scalar.hpp>
 #include <stan/math/prim/scal/fun/promote_scalar_type.hpp>
 #include <stan/math/prim/scal/fun/rising_factorial.hpp>
 #include <stan/math/prim/scal/fun/round.hpp>
 #include <stan/math/prim/scal/fun/sign.hpp>
+#include <stan/math/prim/scal/fun/signbit.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
@@ -174,6 +188,7 @@
 #include <stan/math/prim/scal/fun/trunc.hpp>
 #include <stan/math/prim/scal/fun/ub_constrain.hpp>
 #include <stan/math/prim/scal/fun/ub_free.hpp>
+#include <stan/math/prim/scal/fun/val.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
 

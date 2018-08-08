@@ -36,6 +36,7 @@ typename return_type<T_y, T_shape, T_scale>::type frechet_lpdf(
       T_partials_return;
 
   using std::log;
+  using std::pow;
 
   if (size_zero(y, alpha, sigma))
     return 0.0;

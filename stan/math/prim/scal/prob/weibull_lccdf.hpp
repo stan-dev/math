@@ -48,6 +48,7 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_lccdf(
 
   using boost::math::tools::promote_args;
   using std::log;
+  using std::pow;
 
   if (size_zero(y, alpha, sigma))
     return 0.0;

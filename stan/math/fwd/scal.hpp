@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_FWD_SCAL_HPP
 #define STAN_MATH_FWD_SCAL_HPP
 
+#include <stan/math/fwd/cplx.hpp>
+
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/scal/meta/ad_promotable.hpp>
 #include <stan/math/fwd/scal/meta/is_fvar.hpp>
@@ -79,6 +81,7 @@
 #include <stan/math/fwd/scal/fun/Phi_approx.hpp>
 #include <stan/math/fwd/scal/fun/pow.hpp>
 #include <stan/math/fwd/scal/fun/primitive_value.hpp>
+#include <stan/math/fwd/scal/fun/proj.hpp>
 #include <stan/math/fwd/scal/fun/rising_factorial.hpp>
 #include <stan/math/fwd/scal/fun/round.hpp>
 #include <stan/math/fwd/scal/fun/sin.hpp>

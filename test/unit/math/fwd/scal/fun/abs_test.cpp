@@ -49,15 +49,45 @@ TEST(AgradFwdAbs, Fvar) {
   EXPECT_FLOAT_EQ(0.0, h.d_);
 }
 
+TEST(AgradFwdAbs, complexNotNullIssue123) {
+  using stan::math::fvar;
+  fvar<double> x(3, 1);
+  std::complex<fvar<double>> z = x;
+  EXPECT_TRUE(z.real().val());
+  EXPECT_FALSE(z.imag().val());
+  auto y(z.real() + 1);
+  // gradient propagates partly through imaginary <- y <- real <- x
+  z.imag(y);
+  EXPECT_TRUE(z.imag().val());
+  auto zabs(abs(z));
+  EXPECT_FLOAT_EQ(zabs.val(), 5);
+  // z^2 = x^2 + (x+1)^2 = 2x^2+2x+1 ==> 2z dz/dx = 4x + 2
+  // dz/dx = (4x + 2)/(2 z) = (4 * 3 + 2)/(2 * 5) = 1.4
+  EXPECT_FLOAT_EQ(zabs.tangent(), 1.4);
+
+  // the following are complex var left and right op parameter coercions
+  // (i.e. checks for correct instantiations)
+
+  // 8/((1+3+4i)*2) = 1/(1+1i) * (1-i)/(1-i) = (1-i)/2
+  auto q(8 / ((1 + z) * 2));
+  q += std::complex<double>(.5, 1.5);             // 0.5-0.5i + .5+1.5i = 1+1i
+  std::complex<fvar<double>> r(2 * (z + 1) / 8);  // 2*(3+4i+1)/8  = 1+1i
+  EXPECT_FLOAT_EQ(abs(q - std::complex<double>(1, 1)).val(), 0.0);
+  EXPECT_FLOAT_EQ(abs(r - std::complex<double>(1, 1)).val(), 0.0);
+
+  EXPECT_NEAR((abs(q) * abs(r)).val(), 2, 1E-8);
+  EXPECT_NEAR((abs(r) * abs(q)).val(), 2, 1E-8);
+}
+
 TEST(AgradFwdAbs, FvarFvarDouble) {
   using stan::math::fvar;
   using std::abs;
 
-  fvar<fvar<double> > x;
+  fvar<fvar<double>> x;
   x.val_.val_ = 4.0;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<double> > a = abs(x);
+  fvar<fvar<double>> a = abs(x);
 
   EXPECT_FLOAT_EQ(4.0, a.val_.val_);
   EXPECT_FLOAT_EQ(1.0, a.val_.d_);

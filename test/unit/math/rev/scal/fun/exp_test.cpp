@@ -30,3 +30,16 @@ TEST(AgradRev, check_varis_on_stack) {
   AVAR a(6.0);
   test::check_varis_on_stack(stan::math::exp(a));
 }
+
+// this test used to not build on g++-4.9 and lower
+TEST(AgradRev, euler) {
+  std::complex<stan::math::var> z
+      = std::complex<stan::math::var>(0.0, stan::math::pi());
+  std::complex<stan::math::var> f = exp(z);
+  EXPECT_FLOAT_EQ(-1, real(f).val());
+  EXPECT_FLOAT_EQ(1, 1 + imag(f).val());
+  AVEC x = createAVEC(imag(z));
+  VEC g;
+  real(f).grad(x, g);
+  EXPECT_FLOAT_EQ(1 + g[0], 1);
+}

@@ -54,7 +54,6 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_lpmf(
     return 0.0;
 
   using std::log;
-  using std::log;
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_shape> alpha_vec(alpha);

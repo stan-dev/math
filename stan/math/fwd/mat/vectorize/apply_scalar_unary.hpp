@@ -18,7 +18,7 @@ namespace math {
  * autodiff variable.
  */
 template <typename F, typename T>
-struct apply_scalar_unary<F, fvar<T> > {
+struct apply_scalar_unary<F, fvar<T>> {
   /**
    * Function return type, which is same as the argument type for
    * the function, <code>fvar&lt;T&gt;</code>.

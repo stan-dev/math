@@ -72,7 +72,6 @@ typename return_type<T_y, T_dof>::type chi_square_lccdf(const T_y& y,
 
   using boost::math::tgamma;
   using std::exp;
-  using std::exp;
   using std::log;
   using std::pow;
 
