@@ -112,12 +112,13 @@ endif
 
 ifeq ($(OS),Darwin)
   ifeq (clang,$(CXX_TYPE))
-    CXXFLAGS_OS ?= -Wno-unknown-warning-option -Wno-tautological-compare -Wsign-compare
+    CXXFLAGS_OS ?= -Wno-unknown-warning-option -Wno-tautological-compare -Wno-sign-compare
   endif
 endif
 
 ifeq ($(OS),Linux)
   CPPFLAGS_GTEST += -DGTEST_HAS_PTHREAD=0
+  CXXFLAGS_OS ?= -Wno-sign-compare
   ifeq (gcc,$(CXX_TYPE))
     CXXFLAGS_OS += -pthread
   endif
@@ -130,7 +131,6 @@ ifeq ($(OS),Linux)
     LDLIBS ?= -lpthread
     CXXFLAGS += -stdlib=libc++
   endif
-  CXXFLAGS += -Wsign-compare
 endif
 
 
