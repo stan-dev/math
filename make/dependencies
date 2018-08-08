@@ -1,0 +1,10 @@
+##
+# Rule for generating dependencies.
+##
+DEPFLAGS = -MT $(patsubst %.d,%.o,$@) -MT $@ -MM -E -MG -MP -MF $@
+
+%.d: %.cpp
+	$(COMPILE.cpp) $(DEPFLAGS) $<
+
+%.d: %.hpp
+	$(COMPILE.cpp) $(DEPFLAGS) $<

@@ -15,6 +15,7 @@ help:
 -include make/local                       # user-defined variables
 
 include make/compiler_flags               # CXX, CXXFLAGS, LDFLAGS set by the end of this file
+include make/dependencies                 # rules for generating dependencies
 include make/libraries
 include make/tests
 include make/cpplint
