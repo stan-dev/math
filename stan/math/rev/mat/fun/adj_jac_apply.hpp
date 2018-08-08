@@ -246,7 +246,7 @@ struct adj_jac_vari : public vari {
   explicit adj_jac_vari(const Targs&... args)
       : vari(std::numeric_limits<double>::quiet_NaN()),  // The val_ in this
                                                          // vari is unused
-        is_var_({is_var<typename scalar_type<Targs>::type>::value...}),
+        is_var_({{is_var<typename scalar_type<Targs>::type>::value...}}),
         x_vis_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
             count_memory(0, args...))) {
     prepare_x_vis(args...);
