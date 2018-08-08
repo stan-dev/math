@@ -39,8 +39,8 @@ namespace math {
  * this can also be a single value;
  * @param n binary vector parameter
  * @param x design matrix
- * @param beta weight vector
  * @param alpha intercept (in log odds)
+ * @param beta weight vector
  * @return log probability or log sum of probabilities
  * @throw std::domain_error if x, beta or alpha is infinite.
  * @throw std::domain_error if n is not binary.

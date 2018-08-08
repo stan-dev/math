@@ -38,8 +38,8 @@ namespace math {
  * or a scalar.
  * @param n vector parameter
  * @param x design matrix
- * @param beta weight vector
  * @param alpha intercept (in log odds)
+ * @param beta weight vector
  * @param sigma (Sequence of) scale parameters for the normal
  * distribution.
  * @return log probability or log sum of probabilities

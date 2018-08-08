@@ -44,8 +44,8 @@ namespace math {
  * or a scalar.
  * @param n failures count vector parameter
  * @param x design matrix
- * @param beta weight vector
  * @param alpha intercept (in log odds)
+ * @param beta weight vector
  * @param phi (vector of) precision parameter(s)
  * @return log probability or log sum of probabilities
  * @throw std::invalid_argument if container sizes mismatch.
