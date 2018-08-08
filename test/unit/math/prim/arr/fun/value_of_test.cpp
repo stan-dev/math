@@ -23,3 +23,15 @@ TEST(MathMatrix, value_of) {
   for (int i = 0; i < 10; ++i)
     EXPECT_FLOAT_EQ(a[i], d_a[i]);
 }
+
+TEST(MathFunctions, value_of_int_return_type_short_circuit) {
+  std::vector<int> a(5, 0);
+  EXPECT_FALSE((std::is_same<decltype(stan::math::value_of(a)),
+                             std::vector<int>>::value));
+  EXPECT_FALSE((std::is_same<decltype(stan::math::value_of(a)),
+                             std::vector<int>&>::value));
+  EXPECT_FALSE((std::is_same<decltype(stan::math::value_of(a)),
+                             const std::vector<int>>::value));
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(a)),
+                            const std::vector<int>&>::value));
+}

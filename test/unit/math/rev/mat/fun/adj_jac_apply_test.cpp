@@ -106,8 +106,9 @@ struct SinCosFunctor {
 
   template <std::size_t size>
   Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
-                             const Eigen::VectorXd& x1,
-                             const Eigen::VectorXd& x2) {
+                             const Eigen::VectorXd& x1, const int& x3,
+                             const std::vector<int>& x4,
+                             const std::vector<double>& x2) {
     stan::math::check_matching_sizes("SinCosFunctor", "x1", x1, "x2", x2);
     N_ = x1.size();
     Eigen::VectorXd out(N_);
@@ -118,14 +119,17 @@ struct SinCosFunctor {
       std::copy(x1.data(), x1.data() + N_, x1_mem_);
     }
 
-    if (needs_adj[1]) {
+    EXPECT_FALSE(needs_adj[1]);
+    EXPECT_FALSE(needs_adj[2]);
+
+    if (needs_adj[3]) {
       x2_mem_ = stan::math::ChainableStack::instance()
                     .memalloc_.alloc_array<double>(N_);
       std::copy(x2.data(), x2.data() + N_, x2_mem_);
     }
 
     for (int n = 0; n < N_; ++n) {
-      out(n) = sin(x1(n)) + cos(x2(n));
+      out(n) = sin(x1(n)) + cos(x2[n]);
     }
 
     return out;
@@ -135,7 +139,7 @@ struct SinCosFunctor {
   auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
                                  const Eigen::VectorXd& adj) {
     Eigen::VectorXd out1;
-    Eigen::VectorXd out2;
+    std::vector<double> out2;
 
     if (needs_adj[0]) {
       out1.resize(N_);
@@ -144,42 +148,53 @@ struct SinCosFunctor {
       }
     }
 
-    if (needs_adj[1]) {
+    EXPECT_FALSE(needs_adj[1]);
+    EXPECT_FALSE(needs_adj[2]);
+
+    if (needs_adj[3]) {
       out2.resize(N_);
       for (int n = 0; n < N_; ++n) {
-        out2(n) = -sin(x2_mem_[n]) * adj(n);
+        out2[n] = -sin(x2_mem_[n]) * adj(n);
       }
     }
 
-    return std::make_tuple(out1, out2);
+    return std::make_tuple(out1, 0, std::vector<int>(), out2);
   }
 };
 
 TEST(AgradRev, test_sincos_stack) {
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x11(1), x12(1), x21(2),
-      x22(2), y1(1), y2(2);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x11(1), x21(2), y1(1),
+      y2(2);
+  std::vector<stan::math::var> x12(1), x22(2);
   x11 << 1.0;
-  x12 << 5.0;
+  x12[0] = 5.0;
   x21 << 2.0, 1.0;
-  x22 << 5.0, 3.0;
+  x22[0] = 5.0;
+  x22[1] = 3.0;
 
-  y1 = stan::math::adj_jac_apply<SinCosFunctor>(x11, x12);
-  y2 = stan::math::adj_jac_apply<SinCosFunctor>(x21, x22);
+  y1 = stan::math::adj_jac_apply<SinCosFunctor>(x11, 0, std::vector<int>(5, 0),
+                                                x12);
+  y2 = stan::math::adj_jac_apply<SinCosFunctor>(x21, 0, std::vector<int>(5, 0),
+                                                x22);
 
   test::check_varis_on_stack(y1);
   test::check_varis_on_stack(y2);
 }
 
 TEST(AgradRev, test_sincos_values) {
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x11(1), x12(1), x21(2),
-      x22(2), y1(1), y2(2);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x11(1), x21(2), y1(1),
+      y2(2);
+  std::vector<stan::math::var> x12(1), x22(2);
   x11 << 1.0;
-  x12 << 5.0;
+  x12[0] = 5.0;
   x21 << 2.0, 1.0;
-  x22 << 5.0, 3.0;
+  x22[0] = 5.0;
+  x22[1] = 3.0;
 
-  y1 = stan::math::adj_jac_apply<SinCosFunctor>(x11, x12);
-  y2 = stan::math::adj_jac_apply<SinCosFunctor>(x21, x22);
+  y1 = stan::math::adj_jac_apply<SinCosFunctor>(x11, 0, std::vector<int>(5, 0),
+                                                x12);
+  y2 = stan::math::adj_jac_apply<SinCosFunctor>(x21, 0, std::vector<int>(5, 0),
+                                                x22);
 
   EXPECT_NEAR(y1(0).val(), 1.125133170271123, 1e-10);
   EXPECT_NEAR(y2(0).val(), 1.192959612288908, 1e-10);
@@ -187,107 +202,117 @@ TEST(AgradRev, test_sincos_values) {
 }
 
 TEST(AgradRev, test_sincos_multiple_jac_vv) {
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x11(1), x12(1), x21(2),
-      x22(2), y1(1), y2(2);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x11(1), x21(2), y1(1),
+      y2(2);
+  std::vector<stan::math::var> x12(1), x22(2);
   x11 << 1.0;
-  x12 << 5.0;
+  x12[0] = 5.0;
   x21 << 2.0, 1.0;
-  x22 << 5.0, 3.0;
+  x22[0] = 5.0;
+  x22[1] = 3.0;
 
-  y1 = stan::math::adj_jac_apply<SinCosFunctor>(x11, x12);
-  y2 = stan::math::adj_jac_apply<SinCosFunctor>(x21, x22);
+  y1 = stan::math::adj_jac_apply<SinCosFunctor>(x11, 0, std::vector<int>(5, 0),
+                                                x12);
+  y2 = stan::math::adj_jac_apply<SinCosFunctor>(x21, 0, std::vector<int>(5, 0),
+                                                x22);
 
   y1(0).grad();
   EXPECT_NEAR(x11(0).adj(), 0.5403023058681398, 1e-10);
-  EXPECT_NEAR(x12(0).adj(), 0.958924274663139, 1e-10);
+  EXPECT_NEAR(x12[0].adj(), 0.958924274663139, 1e-10);
   EXPECT_NEAR(x21(0).adj(), 0.0, 1e-10);
   EXPECT_NEAR(x21(1).adj(), 0.0, 1e-10);
-  EXPECT_NEAR(x22(0).adj(), 0.0, 1e-10);
-  EXPECT_NEAR(x22(1).adj(), 0.0, 1e-10);
+  EXPECT_NEAR(x22[0].adj(), 0.0, 1e-10);
+  EXPECT_NEAR(x22[1].adj(), 0.0, 1e-10);
 
   stan::math::set_zero_all_adjoints();
 
   y2(0).grad();
   EXPECT_NEAR(x11(0).adj(), 0.0, 1e-10);
-  EXPECT_NEAR(x12(0).adj(), 0.0, 1e-10);
+  EXPECT_NEAR(x12[0].adj(), 0.0, 1e-10);
   EXPECT_NEAR(x21(0).adj(), -0.4161468365471424, 1e-10);
   EXPECT_NEAR(x21(1).adj(), 0.0, 1e-10);
-  EXPECT_NEAR(x22(0).adj(), 0.958924274663139, 1e-10);
-  EXPECT_NEAR(x22(1).adj(), 0.0, 1e-10);
+  EXPECT_NEAR(x22[0].adj(), 0.958924274663139, 1e-10);
+  EXPECT_NEAR(x22[1].adj(), 0.0, 1e-10);
 
   stan::math::set_zero_all_adjoints();
 
   y2(1).grad();
   EXPECT_NEAR(x11(0).adj(), 0.0, 1e-10);
-  EXPECT_NEAR(x12(0).adj(), 0.0, 1e-10);
+  EXPECT_NEAR(x12[0].adj(), 0.0, 1e-10);
   EXPECT_NEAR(x21(0).adj(), 0.0, 1e-10);
   EXPECT_NEAR(x21(1).adj(), 0.5403023058681398, 1e-10);
-  EXPECT_NEAR(x22(0).adj(), 0.0, 1e-10);
-  EXPECT_NEAR(x22(1).adj(), -0.1411200080598672, 1e-10);
+  EXPECT_NEAR(x22[0].adj(), 0.0, 1e-10);
+  EXPECT_NEAR(x22[1].adj(), -0.1411200080598672, 1e-10);
 
   stan::math::set_zero_all_adjoints();
 
   stan::math::var sum_y2 = (1.73 * y2(0) + 1.57 * y2(1));
   sum_y2.grad();
   EXPECT_NEAR(x11(0).adj(), 0.0, 1e-10);
-  EXPECT_NEAR(x12(0).adj(), 0.0, 1e-10);
+  EXPECT_NEAR(x12[0].adj(), 0.0, 1e-10);
   EXPECT_NEAR(x21(0).adj(), 1.73 * -0.4161468365471424, 1e-10);
   EXPECT_NEAR(x21(1).adj(), 1.57 * 0.5403023058681398, 1e-10);
-  EXPECT_NEAR(x22(0).adj(), 1.73 * 0.958924274663139, 1e-10);
-  EXPECT_NEAR(x22(1).adj(), 1.57 * -0.1411200080598672, 1e-10);
+  EXPECT_NEAR(x22[0].adj(), 1.73 * 0.958924274663139, 1e-10);
+  EXPECT_NEAR(x22[1].adj(), 1.57 * -0.1411200080598672, 1e-10);
 }
 
 TEST(AgradRev, test_sincos_multiple_jac_dv) {
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x12(1), x22(2), y1(1),
-      y2(2);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y1(1), y2(2);
+  std::vector<stan::math::var> x12(1), x22(2);
   Eigen::Matrix<double, Eigen::Dynamic, 1> x11(1), x21(2);
   x11 << 1.0;
-  x12 << 5.0;
+  x12[0] = 5.0;
   x21 << 2.0, 1.0;
-  x22 << 5.0, 3.0;
+  x22[0] = 5.0;
+  x22[1] = 3.0;
 
-  y1 = stan::math::adj_jac_apply<SinCosFunctor>(x11, x12);
-  y2 = stan::math::adj_jac_apply<SinCosFunctor>(x21, x22);
+  y1 = stan::math::adj_jac_apply<SinCosFunctor>(x11, 0, std::vector<int>(5, 0),
+                                                x12);
+  y2 = stan::math::adj_jac_apply<SinCosFunctor>(x21, 0, std::vector<int>(5, 0),
+                                                x22);
 
   y1(0).grad();
-  EXPECT_NEAR(x12(0).adj(), 0.958924274663139, 1e-10);
-  EXPECT_NEAR(x22(0).adj(), 0.0, 1e-10);
-  EXPECT_NEAR(x22(1).adj(), 0.0, 1e-10);
+  EXPECT_NEAR(x12[0].adj(), 0.958924274663139, 1e-10);
+  EXPECT_NEAR(x22[0].adj(), 0.0, 1e-10);
+  EXPECT_NEAR(x22[1].adj(), 0.0, 1e-10);
 
   stan::math::set_zero_all_adjoints();
 
   y2(0).grad();
-  EXPECT_NEAR(x12(0).adj(), 0.0, 1e-10);
-  EXPECT_NEAR(x22(0).adj(), 0.958924274663139, 1e-10);
-  EXPECT_NEAR(x22(1).adj(), 0.0, 1e-10);
+  EXPECT_NEAR(x12[0].adj(), 0.0, 1e-10);
+  EXPECT_NEAR(x22[0].adj(), 0.958924274663139, 1e-10);
+  EXPECT_NEAR(x22[1].adj(), 0.0, 1e-10);
 
   stan::math::set_zero_all_adjoints();
 
   y2(1).grad();
-  EXPECT_NEAR(x12(0).adj(), 0.0, 1e-10);
-  EXPECT_NEAR(x22(0).adj(), 0.0, 1e-10);
-  EXPECT_NEAR(x22(1).adj(), -0.1411200080598672, 1e-10);
+  EXPECT_NEAR(x12[0].adj(), 0.0, 1e-10);
+  EXPECT_NEAR(x22[0].adj(), 0.0, 1e-10);
+  EXPECT_NEAR(x22[1].adj(), -0.1411200080598672, 1e-10);
 
   stan::math::set_zero_all_adjoints();
 
   stan::math::var sum_y2 = (1.73 * y2(0) + 1.57 * y2(1));
   sum_y2.grad();
-  EXPECT_NEAR(x12(0).adj(), 0.0, 1e-10);
-  EXPECT_NEAR(x22(0).adj(), 1.73 * 0.958924274663139, 1e-10);
-  EXPECT_NEAR(x22(1).adj(), 1.57 * -0.1411200080598672, 1e-10);
+  EXPECT_NEAR(x12[0].adj(), 0.0, 1e-10);
+  EXPECT_NEAR(x22[0].adj(), 1.73 * 0.958924274663139, 1e-10);
+  EXPECT_NEAR(x22[1].adj(), 1.57 * -0.1411200080598672, 1e-10);
 }
 
 TEST(AgradRev, test_sincos_multiple_jac_vd) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x11(1), x21(2), y1(1),
       y2(2);
-  Eigen::Matrix<double, Eigen::Dynamic, 1> x12(1), x22(2);
+  std::vector<double> x12(1), x22(2);
   x11 << 1.0;
-  x12 << 5.0;
+  x12[0] = 5.0;
   x21 << 2.0, 1.0;
-  x22 << 5.0, 3.0;
+  x22[0] = 5.0;
+  x22[1] = 3.0;
 
-  y1 = stan::math::adj_jac_apply<SinCosFunctor>(x11, x12);
-  y2 = stan::math::adj_jac_apply<SinCosFunctor>(x21, x22);
+  y1 = stan::math::adj_jac_apply<SinCosFunctor>(x11, 0, std::vector<int>(5, 0),
+                                                x12);
+  y2 = stan::math::adj_jac_apply<SinCosFunctor>(x21, 0, std::vector<int>(5, 0),
+                                                x22);
 
   y1(0).grad();
   EXPECT_NEAR(x11(0).adj(), 0.5403023058681398, 1e-10);

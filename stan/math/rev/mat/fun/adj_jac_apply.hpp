@@ -60,14 +60,17 @@ struct adj_jac_vari : public vari {
    * The array offsets_ is populated with values to indicate where in x_vis_ the
    * vari pointers for each argument will be stored.
    *
+   * Each of the arguments can be an Eigen::Matrix with var or double scalar
+   * types, a std::vector with var, double, or int scalar types, or a var, a
+   * double, or an int.
+   *
    * As an example, take the call:
-   *    size_t s = count_memory(0, a1, a2, a3)
+   *    size_t s = count_memory(0, a1, a2, a3, a4, a5)
    *
-   * If a1 is an Eigen::Matrix<var, 5, 5>, a2 is a double, and a3 is a var, the
-   * return value of count_memory is 26 and offsets_ is set to {0, 25, 25}
-   *
-   * Each of the arguments can be an Eigen::Matrix<var, R, C>, an
-   * Eigen::Matrix<double, R, C>, a var, or a double.
+   * If a1 is an Eigen::Matrix<var, 5, 5>, a2 is a double, a3 is a var, a4 is
+   * a length 5 vector of vars, and a5 is a length 3 vector of ints, the
+   * return value of count_memory is 31 and offsets_ is set to {0, 25, 25, 26,
+   * 31}.
    *
    * @param count rolling count of number of varis that must be allocated
    * @param x next argument to have its varis counted
@@ -92,6 +95,31 @@ struct adj_jac_vari : public vari {
   }
 
   template <typename... Pargs>
+  size_t count_memory(size_t count, const std::vector<var>& x,
+                      const Pargs&... args) {
+    constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    offsets_[t] = count;
+    count += x.size();
+    return count_memory(count, args...);
+  }
+
+  template <typename... Pargs>
+  size_t count_memory(size_t count, const std::vector<double>& x,
+                      const Pargs&... args) {
+    constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    offsets_[t] = count;
+    return count_memory(count, args...);
+  }
+
+  template <typename... Pargs>
+  size_t count_memory(size_t count, const std::vector<int>& x,
+                      const Pargs&... args) {
+    constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    offsets_[t] = count;
+    return count_memory(count, args...);
+  }
+
+  template <typename... Pargs>
   size_t count_memory(size_t count, const var& x, const Pargs&... args) {
     constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     offsets_[t] = count;
@@ -106,6 +134,13 @@ struct adj_jac_vari : public vari {
     return count_memory(count, args...);
   }
 
+  template <typename... Pargs>
+  size_t count_memory(size_t count, const int& x, const Pargs&... args) {
+    constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    offsets_[t] = count;
+    return count_memory(count, args...);
+  }
+
   size_t count_memory(size_t count) { return count; }
 
   /*
@@ -113,16 +148,19 @@ struct adj_jac_vari : public vari {
    * input arguments. The vari pointers for argument n are copied into x_vis_ at
    * the index starting at offsets_[n].
    *
-   * Each of the arguments can be an Eigen::Matrix<var, R, C>, an
-   * Eigen::Matrix<double, R, C>, a var, or a double.
+   * Each of the arguments can be an Eigen::Matrix with var or double scalar
+   * types, a std::vector with var, double, or int scalar types, or a var, a
+   * double, or an int.
    *
    * As an example, take the call:
-   *    prepare_x_vis(a1, a2, a3)
+   *    prepare_x_vis(a1, a2, a3, a4, a5)
    *
-   * If a1 is an Eigen::Matrix<var, 5, 5>, a2 is a double, and a3 is a var,
-   * x_vis_ to x_vis_ + 24 is filled with the vari pointers of a1, and
-   * x_vis_[25] is set equal to the vari pointer of a3. is_var_ is set to {true,
-   * false, true}
+   * If a1 is an Eigen::Matrix<var, 5, 5>, a2 is a double, a3 is a var, a4 is
+   * a length 5 vector of vars, and a5 is a length 3 vector of ints,
+   * x_vis_ to x_vis_ + 24 is filled with the vari pointers of a1,
+   * x_vis_[25] is set equal to the vari pointer of a3, x_vis_ + 26 to x_vis_ +
+   * 30 is filled with the vari pointers of a4. a2 and a5 have no varis and so
+   * are skipped.
    *
    * @param x next argument to have its vari pointers copied if necessary
    * @param args the rest of the arguments (that will be iterated through
@@ -144,6 +182,25 @@ struct adj_jac_vari : public vari {
   }
 
   template <typename... Pargs>
+  void prepare_x_vis(const std::vector<var>& x, const Pargs&... args) {
+    constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    for (size_t i = 0; i < x.size(); ++i) {
+      x_vis_[offsets_[t] + i] = x[i].vi_;
+    }
+    prepare_x_vis(args...);
+  }
+
+  template <typename... Pargs>
+  void prepare_x_vis(const std::vector<double>& x, const Pargs&... args) {
+    prepare_x_vis(args...);
+  }
+
+  template <typename... Pargs>
+  void prepare_x_vis(const std::vector<int>& x, const Pargs&... args) {
+    prepare_x_vis(args...);
+  }
+
+  template <typename... Pargs>
   void prepare_x_vis(const var& x, const Pargs&... args) {
     constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     x_vis_[offsets_[t]] = x.vi_;
@@ -152,6 +209,11 @@ struct adj_jac_vari : public vari {
 
   template <typename... Pargs>
   void prepare_x_vis(const double& x, const Pargs&... args) {
+    prepare_x_vis(args...);
+  }
+
+  template <typename... Pargs>
+  void prepare_x_vis(const int& x, const Pargs&... args) {
     prepare_x_vis(args...);
   }
 
@@ -168,14 +230,16 @@ struct adj_jac_vari : public vari {
    *  5. Populates the array is_var_ with whether or not the scalar type in each
    * argument is a var
    *
-   * The input argument types can be any mix of double, var, or Eigen::Matrices
-   * with double or var scalar components
+   * Each of the arguments can be an Eigen::Matrix with var or double scalar
+   * types, a std::vector with var, double, or int scalar types, or a var, a
+   * double, or an int.
    *
-   * As an example of how is_var_ is initialized, take the call:
-   *    prepare_x_vis(a1, a2, a3)
+   * As an example of how is_var_ is initialized, take the adj_jac_vari
+   * constructed as: adj_jac_vari(a1, a2, a3, a4, a5)
    *
-   * If a1 is an Eigen::Matrix<var, 5, 5>, a2 is a double, and a3 is a var,
-   * is_var_ is set to {true, false, true}
+   * If a1 is an Eigen::Matrix<var, 5, 5>, a2 is a double, a3 is a var, a4 is
+   * a length 5 vector of vars, and a5 is a length 3 vector of ints,
+   * is_var_ is set to {true, false, true, true, false}
    *
    * @param args Input arguments
    */
@@ -209,16 +273,20 @@ struct adj_jac_vari : public vari {
    * If is_var_[n] is false, then the nth argument is ignored, whatever its
    * value is.
    *
-   * Each of the arguments can be an Eigen::Matrix<double, R, C> or a double.
+   * Each of the arguments can be an Eigen::Matrix<double, R, C>, a
+   * std::vector<double>, a std::vector<int>, a double, or an int.
    *
    * As an example, take the call:
-   *    accumulate_adjoints(a1, a2, a3)
+   *    accumulate_adjoints(a1, a2, a3, a4, a5)
    *
    * If a1 is an Eigen::Matrix<double, 5, 5>, a2 is a double, a3 is a double,
-   * and is_var_ is set to {true, false, true}, the 25 values in a1 are
-   * accumulated in the adjs of the varis pointed to by the values of x_vis_ to
-   * x_vis_ + 24, the value of a2 is ignored, and the adjoint of the vari
-   * pointed to by x_vis_[25] is incremented by a3.
+   * a4 is a length 5 std::vector of doubles, a5 is a length 3 std::vector of
+   * ints and is_var_ is set to {true, false, true, true, false}, the 25 values
+   * in a1 are accumulated in the adjs of the varis pointed to by the values of
+   * x_vis_ to x_vis_ + 24, the value of a2 is ignored, and the adjoint of the
+   * vari pointed to by x_vis_[25] is incremented by a3, the 5 values in a4 are
+   * accumulated in the adjs of the varis pointed to by the values of x_vis_ +
+   * 26 to x_vis_ + 30, and the values in a5 are ignored.
    *
    * @param y_adj_jac next set of adjoints to be accumulated
    * @param args the rest of the arguments (that will be iterated through
@@ -238,12 +306,36 @@ struct adj_jac_vari : public vari {
   }
 
   template <typename... Pargs>
+  void accumulate_adjoints(const std::vector<double>& y_adj_jac,
+                           const Pargs&... args) {
+    const int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    if (is_var_[t]) {
+      for (size_t n = 0; n < y_adj_jac.size(); ++n) {
+        x_vis_[offsets_[t] + n]->adj_ += y_adj_jac[n];
+      }
+    }
+
+    accumulate_adjoints(args...);
+  }
+
+  template <typename... Pargs>
+  void accumulate_adjoints(const std::vector<int>& y_adj_jac,
+                           const Pargs&... args) {
+    accumulate_adjoints(args...);
+  }
+
+  template <typename... Pargs>
   void accumulate_adjoints(const double& y_adj_jac, const Pargs&... args) {
     const int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     if (is_var_[t]) {
       x_vis_[offsets_[t]]->adj_ += y_adj_jac;
     }
 
+    accumulate_adjoints(args...);
+  }
+
+  template <typename... Pargs>
+  void accumulate_adjoints(const int& y_adj_jac, const Pargs&... args) {
     accumulate_adjoints(args...);
   }
 
@@ -338,8 +430,9 @@ struct adj_jac_vari : public vari {
  * variables it defines in the autodiff arena because its destructor will
  * never be called and memory will leak if allocated anywhere else.
  *
- * Targs (the input argument types) can be any mix of double, var, or
- * Eigen::Matrices with double or var scalar components
+ * Targs (the input argument types) can be any mix of doubles, vars, ints,
+ * std::vectors with double, var, or int scalar components, or
+ * Eigen::Matrix s of any shape with var or double scalar components
  *
  * @tparam F functor to be connected to the autodiff stack
  * @tparam Targs types of arguments to pass to functor
