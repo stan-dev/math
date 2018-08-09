@@ -20,7 +20,9 @@ class ops_partials_edge<double, var> {
   explicit ops_partials_edge(const var& op)
       : partial_(0), partials_(partial_), operand_(op) {}
   template <typename TT>
-  void set_partials(const TT &d) { partials_[0] = d(0, 0); }
+  void set_partials(const TT& d) {
+    partials_[0] = d(0, 0);
+  }
 
  private:
   template <typename, typename, typename, typename, typename, typename>

@@ -123,8 +123,8 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   // Compute the necessary derivatives.
   operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
   if (!is_constant_struct<T_beta>::value) {
-        ops_partials.edge3_.set_partials(
-          value_of(x).transpose() * theta_derivative);
+    ops_partials.edge3_.set_partials(value_of(x).transpose()
+                                     * theta_derivative);
   }
   if (!is_constant_struct<T_x>::value) {
     ops_partials.edge1_.partials_ = theta_derivative * beta_dbl.transpose();
