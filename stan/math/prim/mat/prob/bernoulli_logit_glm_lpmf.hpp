@@ -66,22 +66,21 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
 
   T_partials_return logp(0.0);
 
+  const size_t N = x.col(0).size();
+  const size_t M = x.row(0).size();
+
   check_bounded(function, "Vector of dependent variables", y, 0, 1);
   check_finite(function, "Matrix of independent variables", x);
   check_finite(function, "Weight vector", beta);
   check_finite(function, "Intercept", alpha);
-  check_consistent_size(function, "Vector of dependent variables", y,
-                        x.col(0).size());
-  check_consistent_size(function, "Weight vector", beta, x.row(0).size());
+  check_consistent_size(function, "Vector of dependent variables", y, N);
+  check_consistent_size(function, "Weight vector", beta, M);
   if (is_vector<T_alpha>::value)
     check_consistent_sizes(function, "Vector of intercepts", alpha,
                            "Vector of dependent variables", y);
 
   if (!include_summand<propto, T_x, T_alpha, T_beta>::value)
     return 0.0;
-
-  const size_t N = x.col(0).size();
-  const size_t M = x.row(0).size();
 
   Matrix<T_partials_return, Dynamic, 1> signs(N, 1);
   {
@@ -100,52 +99,45 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   Eigen::Array<T_partials_return, Dynamic, 1> ytheta
       = signs.array() * (value_of(x) * beta_dbl).array();
   scalar_seq_view<T_alpha> alpha_vec(alpha);
-  for (size_t m = 0; m < N; ++m)
-    ytheta[m] += signs[m] * value_of(alpha_vec[m]);
 
-  Eigen::Array<T_partials_return, Dynamic, 1> exp_m_ytheta = (-ytheta).exp();
-
+  // Compute the log-density and handle extreme values gracefully
+  // using Taylor approximations.
+  // And compute the derivatives wrt theta.
   static const double cutoff = 20.0;
+  Matrix<T_partials_return, Dynamic, 1> theta_derivative(N, 1);
+  T_partials_return exp_m_ythetan;
   for (size_t n = 0; n < N; ++n) {
-    // Compute the log-density and handle extreme values gracefully
-    // using Taylor approximations.
-    if (ytheta[n] > cutoff)
-      logp -= exp_m_ytheta[n];
-    else if (ytheta[n] < -cutoff)
+    ytheta[n] += signs[n] * value_of(alpha_vec[n]);
+    exp_m_ythetan = exp(-ytheta[n]);
+    if (ytheta[n] > cutoff) {
+      logp -= exp_m_ythetan;
+      theta_derivative[n] = -exp_m_ythetan;
+    } else if (ytheta[n] < -cutoff) {
       logp += ytheta[n];
-    else
-      logp -= log1p(exp_m_ytheta[n]);
+      theta_derivative[n] = signs[n];
+    } else {
+      logp -= log1p(exp_m_ythetan);
+      theta_derivative[n]
+          = signs[n] * exp_m_ythetan / (exp_m_ythetan + 1);
+    }
   }
 
   // Compute the necessary derivatives.
   operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
-  if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
-        && is_constant_struct<T_alpha>::value)) {
-    Matrix<T_partials_return, Dynamic, 1> theta_derivative(N, 1);
-    for (size_t n = 0; n < N; ++n) {
-      if (ytheta[n] > cutoff)
-        theta_derivative[n] = -exp_m_ytheta[n];
-      else if (ytheta[n] < -cutoff)
-        theta_derivative[n] = signs[n];
-      else
-        theta_derivative[n]
-            = signs[n] * exp_m_ytheta[n] / (exp_m_ytheta[n] + 1);
-    }
-    if (!is_constant_struct<T_beta>::value) {
-      assign_to_matrix_or_broadcast_array(
-          ops_partials.edge3_.partials_,
-          value_of(x).transpose() * theta_derivative);
-    }
-    if (!is_constant_struct<T_x>::value) {
-      ops_partials.edge1_.partials_ = theta_derivative * beta_dbl.transpose();
-    }
-    if (!is_constant_struct<T_alpha>::value) {
-      if (is_vector<T_alpha>::value)
-        assign_to_matrix_or_broadcast_array(ops_partials.edge2_.partials_,
-                                            theta_derivative);
-      else
-        ops_partials.edge2_.partials_[0] = theta_derivative.sum();
-    }
+  if (!is_constant_struct<T_beta>::value) {
+    assign_to_matrix_or_broadcast_array(
+        ops_partials.edge3_.partials_,
+        value_of(x).transpose() * theta_derivative);
+  }
+  if (!is_constant_struct<T_x>::value) {
+    ops_partials.edge1_.partials_ = theta_derivative * beta_dbl.transpose();
+  }
+  if (!is_constant_struct<T_alpha>::value) {
+    if (is_vector<T_alpha>::value)
+      assign_to_matrix_or_broadcast_array(ops_partials.edge2_.partials_,
+                                          theta_derivative);
+    else
+      ops_partials.edge2_.partials_[0] = theta_derivative.sum();
   }
 
   return ops_partials.build(logp);

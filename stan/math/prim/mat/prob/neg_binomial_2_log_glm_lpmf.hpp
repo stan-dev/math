@@ -76,14 +76,16 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
 
   T_partials_return logp(0.0);
 
+  const size_t N = x.col(0).size();
+  const size_t M = x.row(0).size();
+
   check_nonnegative(function, "Failures variables", y);
   check_finite(function, "Matrix of independent variables", x);
   check_finite(function, "Weight vector", beta);
   check_finite(function, "Intercept", alpha);
   check_positive_finite(function, "Precision parameter", phi);
-  check_consistent_size(function, "Vector of dependent variables", y,
-                        x.col(0).size());
-  check_consistent_size(function, "Weight vector", beta, x.row(0).size());
+  check_consistent_size(function, "Vector of dependent variables", y, N);
+  check_consistent_size(function, "Weight vector", beta, M);
   if (is_vector<T_precision>::value)
     check_consistent_sizes(function, "Vector of precision parameters", phi,
                            "Vector of dependent variables", y);
@@ -93,9 +95,6 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
 
   if (!include_summand<propto, T_x, T_alpha, T_beta, T_precision>::value)
     return 0.0;
-
-  const size_t N = x.col(0).size();
-  const size_t M = x.row(0).size();
 
   Array<T_partials_return, Dynamic, 1> y_arr(N, 1);
   Array<T_partials_return, Dynamic, 1> phi_arr(N, 1);
@@ -119,8 +118,8 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
   Array<T_partials_return, Dynamic, 1> theta_dbl
       = (value_of(x) * beta_dbl).array();
   scalar_seq_view<T_alpha> alpha_vec(alpha);
-  for (size_t m = 0; m < N; ++m)
-    theta_dbl[m] += value_of(alpha_vec[m]);
+  for (size_t n = 0; n < N; ++n)
+    theta_dbl[n] += value_of(alpha_vec[n]);
   Array<T_partials_return, Dynamic, 1> log_phi = phi_arr.log();
   Array<T_partials_return, Dynamic, 1> logsumexp_eta_logphi
       = theta_dbl.binaryExpr(log_phi, [](const T_partials_return& xx,
@@ -137,9 +136,8 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
                 .sum();
   }
   if (include_summand<propto, T_precision>::value) {
-    for (int i = 0; i < phi_arr.size(); ++i) {
-      logp += multiply_log(phi_arr[i], phi_arr[i]) - lgamma(phi_arr[i]);
-    }
+    for (int n = 0; n < N; ++n)
+      logp += multiply_log(phi_arr[n], phi_arr[n]) - lgamma(phi_arr[n]);
   }
   if (include_summand<propto, T_x, T_alpha, T_beta, T_precision>::value)
     logp -= (y_plus_phi * logsumexp_eta_logphi).sum();

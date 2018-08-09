@@ -62,22 +62,21 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
 
   T_partials_return logp(0.0);
 
+  const size_t N = x.col(0).size();
+  const size_t M = x.row(0).size();
+
   check_nonnegative(function, "Vector of dependent variables", y);
   check_finite(function, "Matrix of independent variables", x);
   check_finite(function, "Weight vector", beta);
   check_finite(function, "Intercept", alpha);
-  check_consistent_size(function, "Vector of dependent variables", y,
-                        x.col(0).size());
-  check_consistent_size(function, "Weight vector", beta, x.row(0).size());
+  check_consistent_size(function, "Vector of dependent variables", y, N);
+  check_consistent_size(function, "Weight vector", beta, M);
   if (is_vector<T_alpha>::value)
     check_consistent_sizes(function, "Vector of intercepts", alpha,
                            "Vector of dependent variables", y);
 
   if (!include_summand<propto, T_x, T_alpha, T_beta>::value)
     return 0.0;
-
-  const size_t N = x.col(0).size();
-  const size_t M = x.row(0).size();
 
   Matrix<T_partials_return, Dynamic, 1> y_vec(N, 1);
   {
@@ -97,19 +96,19 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
 
   Matrix<T_partials_return, Dynamic, 1> theta_dbl = (value_of(x) * beta_dbl);
   scalar_seq_view<T_alpha> alpha_vec(alpha);
-  for (size_t m = 0; m < N; ++m)
-    theta_dbl[m] += value_of(alpha_vec[m]);
+  for (size_t n = 0; n < N; ++n)
+    theta_dbl[n] += value_of(alpha_vec[n]);
   Matrix<T_partials_return, Dynamic, 1> exp_theta
       = theta_dbl.array().exp().matrix();
 
-  for (size_t i = 0; i < N; i++) {
+  for (size_t n = 0; n < N; n++) {
     // Compute the log-density.
-    if (!(theta_dbl[i] == -std::numeric_limits<double>::infinity()
-          && y_vec[i] == 0)) {
+    if (!(theta_dbl[n] == -std::numeric_limits<double>::infinity()
+          && y_vec[n] == 0)) {
       if (include_summand<propto>::value)
-        logp -= lgamma(y_vec[i] + 1.0);
+        logp -= lgamma(y_vec[n] + 1.0);
       if (include_summand<propto, T_partials_return>::value)
-        logp += y_vec[i] * theta_dbl[i] - exp_theta[i];
+        logp += y_vec[n] * theta_dbl[n] - exp_theta[n];
     }
   }
 

@@ -67,14 +67,16 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
 
   T_partials_return logp(0.0);
 
+  const size_t N = x.col(0).size();
+  const size_t M = x.row(0).size();
+
   check_finite(function, "Vector of dependent variables", y);
   check_finite(function, "Matrix of independent variables", x);
   check_finite(function, "Weight vector", beta);
   check_finite(function, "Intercept", alpha);
-  check_positive(function, "Scale vector", sigma);
-  check_consistent_size(function, "Vector of dependent variables", y,
-                        x.col(0).size());
-  check_consistent_size(function, "Weight vector", beta, x.row(0).size());
+  check_positive_finite(function, "Scale vector", sigma);
+  check_consistent_size(function, "Vector of dependent variables", y, N);
+  check_consistent_size(function, "Weight vector", beta, M);
   if (is_vector<T_scale>::value)
     check_consistent_sizes(function, "Vector of scale parameters", sigma,
                            "Vector of dependent variables", y);
@@ -85,14 +87,12 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
   if (!include_summand<propto, T_y, T_x, T_alpha, T_beta, T_scale>::value)
     return 0.0;
 
-  const size_t N = x.col(0).size();
-  const size_t M = x.row(0).size();
+  // Set up data structures and compute log-density.
+  if (include_summand<propto>::value)
+    logp += NEG_LOG_SQRT_TWO_PI * N;
 
   scalar_seq_view<T_scale> sigma_vec(sigma);
-  Array<T_partials_return, Dynamic, 1> inv_sigma(N, 1);
-  for (size_t m = 0; m < N; ++m) {
-    inv_sigma[m] = 1 / value_of(sigma_vec[m]);
-  }
+
   Matrix<T_partials_return, Dynamic, 1> beta_dbl(M, 1);
   {
     scalar_seq_view<T_beta> beta_vec(beta);
@@ -101,23 +101,22 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
     }
   }
 
-  Array<T_partials_return, Dynamic, 1> mu_dbl
+  Array<T_partials_return, Dynamic, 1> mu_minus_alpha_dbl
       = (value_of(x) * beta_dbl).array();
+  Array<T_partials_return, Dynamic, 1> inv_sigma(N, 1);
   scalar_seq_view<T_alpha> alpha_vec(alpha);
-  for (size_t m = 0; m < N; ++m)
-    mu_dbl[m] += value_of(alpha_vec[m]);
-  Array<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma
-      = (value_of(y).array() - mu_dbl) * inv_sigma;
-  Array<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma_squared
-      = y_minus_mu_over_sigma.square();
-
-  if (include_summand<propto>::value)
-    logp += NEG_LOG_SQRT_TWO_PI * N;
-  if (include_summand<propto, T_scale>::value) {
-    for (size_t m = 0; m < N; ++m) {
-      logp -= log(value_of(sigma_vec[m]));
-    }
+  scalar_seq_view<T_y> y_vec(y);
+  Array<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma(N, 1);
+  Array<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma_squared(N, 1);
+  for (size_t n = 0; n < N; ++n) {
+    if (include_summand<propto, T_scale>::value)
+      logp -= log(value_of(sigma_vec[n]));
+    inv_sigma[n] = 1 / value_of(sigma_vec[n]);
+    y_minus_mu_over_sigma[n] = (value_of(y_vec[n]) - mu_minus_alpha_dbl[n]
+      - value_of(alpha_vec[n])) * inv_sigma[n];
+    y_minus_mu_over_sigma_squared[n] = square(y_minus_mu_over_sigma[n]);
   }
+
   if (include_summand<propto, T_y, T_x, T_alpha, T_beta, T_scale>::value)
     logp -= 0.5 * y_minus_mu_over_sigma_squared.sum();
 
