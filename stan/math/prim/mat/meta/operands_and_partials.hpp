@@ -23,6 +23,8 @@ class ops_partials_edge<ViewElt, Eigen::Matrix<Op, R, C>> {
   empty_broadcast_array<partials_t, Eigen::Matrix<Op, R, C>> partials_vec_;
   ops_partials_edge() {}
   explicit ops_partials_edge(const Eigen::Matrix<Op, R, C> ops) {}
+  template <typename TT>
+  void set_partials(const TT &d);
 
  private:
   template <typename, typename, typename, typename, typename, typename>

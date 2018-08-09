@@ -117,7 +117,7 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars) {
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand) {
-  for (size_t ii = 0; ii < 20000; ii++) {
+  for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
     Matrix<double, Dynamic, Dynamic> xreal
         = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
@@ -179,7 +179,7 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand) {
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives, in case beta is a scalar.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand_scal_beta) {
-  for (size_t ii = 0; ii < 20000; ii++) {
+  for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
     Matrix<double, Dynamic, Dynamic> xreal
         = Matrix<double, Dynamic, Dynamic>::Random(3, 1);
@@ -234,7 +234,7 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand_scal_beta) {
 //  from existing primitives.
 TEST(ProbDistributionsNormalIdGLM,
      glm_matches_normal_id_varying_intercept_and_scale) {
-  for (size_t ii = 0; ii < 20000; ii++) {
+  for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
     Matrix<double, Dynamic, Dynamic> xreal
         = Matrix<double, Dynamic, Dynamic>::Random(3, 2);

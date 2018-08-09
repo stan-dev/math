@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_MAT_PROB_NORMAL_ID_GLM_LPDF_HPP
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/mat/meta/assign_to_matrix_or_broadcast_array.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
@@ -130,32 +129,28 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
     Matrix<T_partials_return, Dynamic, 1> mu_derivative
         = (inv_sigma * y_minus_mu_over_sigma).matrix();
     if (!is_constant_struct<T_y>::value) {
-      assign_to_matrix_or_broadcast_array(ops_partials.edge1_.partials_,
-                                          -mu_derivative);
+      ops_partials.edge1_.set_partials(-mu_derivative);
     }
     if (!is_constant_struct<T_x>::value) {
       ops_partials.edge2_.partials_ = mu_derivative * beta_dbl.transpose();
     }
     if (!is_constant_struct<T_beta>::value) {
-      assign_to_matrix_or_broadcast_array(
-          ops_partials.edge4_.partials_,
-          value_of(x).transpose() * mu_derivative);
+          ops_partials.edge4_.set_partials(
+            value_of(x).transpose() * mu_derivative);
     }
     if (!is_constant_struct<T_alpha>::value) {
       if (is_vector<T_alpha>::value)
-        assign_to_matrix_or_broadcast_array(ops_partials.edge3_.partials_,
-                                            mu_derivative);
+        ops_partials.edge3_.set_partials(mu_derivative);
       else
         ops_partials.edge3_.partials_[0] = mu_derivative.sum();
     }
     if (!is_constant_struct<T_scale>::value) {
       if (is_vector<T_scale>::value) {
-        assign_to_matrix_or_broadcast_array(
-            ops_partials.edge5_.partials_,
-            ((y_minus_mu_over_sigma_squared
-              - Array<double, Dynamic, 1>::Ones(N, 1))
-             * inv_sigma)
-                .matrix());
+            ops_partials.edge5_.set_partials(
+              ((y_minus_mu_over_sigma_squared
+                - Array<double, Dynamic, 1>::Ones(N, 1))
+               * inv_sigma)
+                  .matrix());
       } else {
         ops_partials.edge5_.partials_[0]
             = ((y_minus_mu_over_sigma_squared

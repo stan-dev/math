@@ -28,7 +28,7 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_doubles) {
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_doubles_rand) {
-  for (size_t ii = 0; ii < 20000; ii++) {
+  for (size_t ii = 0; ii < 42; ii++) {
     Matrix<int, Dynamic, 1> y(3, 1);
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 200;
@@ -151,7 +151,7 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_vars_rand) {
 //  from existing primitives, in case beta is a scalar.
 TEST(ProbDistributionsPoissonLogGLM,
      glm_matches_poisson_log_vars_rand_scal_beta) {
-  for (size_t ii = 0; ii < 20000; ii++) {
+  for (size_t ii = 0; ii < 42; ii++) {
     Matrix<int, Dynamic, 1> y(3, 1);
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 200;
@@ -196,7 +196,7 @@ TEST(ProbDistributionsPoissonLogGLM,
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives, for the GLM with varying intercept.
 TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_varying_intercept) {
-  for (size_t ii = 0; ii < 20000; ii++) {
+  for (size_t ii = 0; ii < 42; ii++) {
     Matrix<int, Dynamic, 1> y(3, 1);
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 200;

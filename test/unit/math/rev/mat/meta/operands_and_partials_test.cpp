@@ -3,6 +3,34 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+TEST(AgradPartialsVari, OperandsAndPartialsScal) {
+  using stan::math::operands_and_partials;
+  using stan::math::var;
+
+  double d1;
+  operands_and_partials<double> o3(d1);
+  EXPECT_EQ(5, sizeof(o3));
+
+  var v1 = var(0.0);
+
+  std::vector<var> v_stdvec;
+  v_stdvec.push_back(v1);
+
+  operands_and_partials<var> o4(v1);
+  o4.edge1_.partials_[0] += 10.0;
+
+  std::vector<double> grad;
+  var v = o4.build(10.0);
+  v.grad(v_stdvec, grad);
+  EXPECT_FLOAT_EQ(10.0, v.val());
+  EXPECT_FLOAT_EQ(10.0, grad[0]);
+
+  Eigen::Matrix<double, -1, 1> dv(1);
+  dv << 1.0;
+  o4.edge1_.set_partials(dv);
+  EXPECT_FLOAT_EQ(1.0, o4.edge1_.partials_[0]);
+}
+
 TEST(AgradPartialsVari, OperandsAndPartialsVec) {
   using stan::math::operands_and_partials;
   using stan::math::var;
@@ -40,6 +68,14 @@ TEST(AgradPartialsVari, OperandsAndPartialsVec) {
   EXPECT_FLOAT_EQ(20.0, grad[1]);
   EXPECT_FLOAT_EQ(30.0, grad[2]);
   EXPECT_FLOAT_EQ(40.0, grad[3]);
+
+  Eigen::Matrix<double, -1, 1> dv(4);
+  dv << 1.0, 2.0, 3.0, 4.0;
+  o4.edge1_.set_partials(dv);
+  EXPECT_FLOAT_EQ(1.0, o4.edge1_.partials_[0]);
+  EXPECT_FLOAT_EQ(2.0, o4.edge1_.partials_[1]);
+  EXPECT_FLOAT_EQ(3.0, o4.edge1_.partials_[2]);
+  EXPECT_FLOAT_EQ(4.0, o4.edge1_.partials_[3]);
 }
 
 TEST(AgradPartialsVari, OperandsAndPartialsStdVec) {
@@ -74,6 +110,14 @@ TEST(AgradPartialsVari, OperandsAndPartialsStdVec) {
   EXPECT_FLOAT_EQ(20.0, grad[1]);
   EXPECT_FLOAT_EQ(30.0, grad[2]);
   EXPECT_FLOAT_EQ(40.0, grad[3]);
+
+  Eigen::Matrix<double, -1, 1> dv(4);
+  dv << 1.0, 2.0, 3.0, 4.0;
+  o4.edge1_.set_partials(dv);
+  EXPECT_FLOAT_EQ(1.0, o4.edge1_.partials_[0]);
+  EXPECT_FLOAT_EQ(2.0, o4.edge1_.partials_[1]);
+  EXPECT_FLOAT_EQ(3.0, o4.edge1_.partials_[2]);
+  EXPECT_FLOAT_EQ(4.0, o4.edge1_.partials_[3]);
 }
 
 TEST(AgradPartialsVari, OperandsAndPartialsMat) {
@@ -115,6 +159,14 @@ TEST(AgradPartialsVari, OperandsAndPartialsMat) {
   EXPECT_FLOAT_EQ(60.0, grad[1]);
   EXPECT_FLOAT_EQ(90.0, grad[2]);
   EXPECT_FLOAT_EQ(120.0, grad[3]);
+
+  Eigen::Matrix<double, -1, -1> dv(2, 2);
+  dv << 1.0, 2.0, 3.0, 4.0;
+  o4.edge1_.set_partials(dv);
+  EXPECT_FLOAT_EQ(1.0, o4.edge1_.partials_(0, 0));
+  EXPECT_FLOAT_EQ(2.0, o4.edge1_.partials_(0, 1));
+  EXPECT_FLOAT_EQ(3.0, o4.edge1_.partials_(1, 0));
+  EXPECT_FLOAT_EQ(4.0, o4.edge1_.partials_(1, 1));
 }
 
 TEST(AgradPartialsVari, OperandsAndPartialsMatMultivar) {

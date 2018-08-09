@@ -33,7 +33,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
 //  from existing primitives.
 TEST(ProbDistributionsNegBinomial2LogGLM,
      glm_matches_neg_binomial_2_log_doubles_rand) {
-  for (size_t ii = 0; ii < 20000; ii++) {
+  for (size_t ii = 0; ii < 42; ii++) {
     Matrix<int, Dynamic, 1> y(3, 1);
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 200;
@@ -174,7 +174,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
 //  from existing primitives, in case beta is a scalar.
 TEST(ProbDistributionsNegBinomial2LogGLM,
      glm_matches_neg_binomial_2_log_vars_rand_scal_beta) {
-  for (size_t ii = 0; ii < 20000; ii++) {
+  for (size_t ii = 0; ii < 42; ii++) {
     Matrix<int, Dynamic, 1> y(3, 1);
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 200;

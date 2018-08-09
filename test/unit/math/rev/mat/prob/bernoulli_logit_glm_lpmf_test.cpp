@@ -112,7 +112,7 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
 //  from existing primitives.
 TEST(ProbDistributionsBernoulliLogitGLM,
      glm_matches_bernoulli_logit_vars_rand) {
-  for (size_t ii = 0; ii < 20000; ii++) {
+  for (size_t ii = 0; ii < 42; ii++) {
     Matrix<int, Dynamic, 1> y(3, 1);
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 2;
@@ -169,7 +169,7 @@ TEST(ProbDistributionsBernoulliLogitGLM,
 //  from existing primitives, in case beta is a scalar.
 TEST(ProbDistributionsBernoulliLogitGLM,
      glm_matches_bernoulli_logit_vars_rand_scal_beta) {
-  for (size_t ii = 0; ii < 20000; ii++) {
+  for (size_t ii = 0; ii < 42; ii++) {
     Matrix<int, Dynamic, 1> y(3, 1);
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 2;
@@ -215,7 +215,7 @@ TEST(ProbDistributionsBernoulliLogitGLM,
 //  from existing primitives, for the GLM with varying intercept.
 TEST(ProbDistributionsBernoulliLogitGLM,
      glm_matches_bernoulli_varying_intercept) {
-  for (size_t ii = 0; ii < 20000; ii++) {
+  for (size_t ii = 0; ii < 42; ii++) {
     Matrix<int, Dynamic, 1> y(3, 1);
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 2;
