@@ -91,9 +91,9 @@ CXXFLAGS_SUNDIALS ?= -pipe
 # Update compiler flags with operating system specific modifications
 ##
 ifeq ($(OS),Windows_NT)
-  CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized
+  CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-variable -Wno-sign-compare
   CPPFLAGS_GTEST += -DGTEST_HAS_PTHREAD=0
-  CXXFLAGS_OS ?= -Wno-unused-but-set-variable -Wno-unused-variable
+  CXXFLAGS_OS ?=
   ## Detecting Process Bitness:
   ## http://blogs.msdn.com/b/david.wang/archive/2006/03/26/howto-detect-process-bitness.aspx
   ifeq ($(PROCESSOR_ARCHITECTURE)$(PROCESSOR_ARCHITEW6432),x86)
