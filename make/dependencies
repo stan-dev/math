@@ -1,7 +1,7 @@
 ##
 # Rule for generating dependencies.
 ##
-DEPFLAGS = -MT $(patsubst %.d,%.o,$@) -MT $@ -MM -E -MG -MP -MF $@
+DEPFLAGS = -MT $(patsubst %.d,%.o,$@) -MT $@ -M -MG -MP -MF $@
 
 %.d: %.cpp
 	$(COMPILE.cpp) $(DEPFLAGS) $<
