@@ -310,9 +310,8 @@ struct adj_jac_vari : public vari {
                            const Pargs&... args) {
     const int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     if (is_var_[t]) {
-      for (size_t n = 0; n < y_adj_jac.size(); ++n) {
+      for (size_t n = 0; n < y_adj_jac.size(); ++n)
         x_vis_[offsets_[t] + n]->adj_ += y_adj_jac[n];
-      }
     }
 
     accumulate_adjoints(args...);

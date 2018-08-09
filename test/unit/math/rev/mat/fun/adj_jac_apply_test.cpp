@@ -5,6 +5,1187 @@
 #include <sstream>
 #include <tuple>
 
+/**
+ * Test that all types that are documented to be supported can actually be
+ * included in functor. Check initialization of is_vars_ and offsets_ are to
+ * specification.
+ */
+struct WeirdArgumentListFunctor1 {
+  template <size_t size>
+  Eigen::VectorXd operator()(
+      std::array<bool, size> needs_adj, double, int, const double&, const int&,
+      std::vector<double>, std::vector<int>, const std::vector<double>&,
+      const std::vector<int>&, Eigen::Matrix<double, Eigen::Dynamic, 1>,
+      Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>,
+      Eigen::Matrix<double, 2, Eigen::Dynamic>, Eigen::Matrix<double, 5, 1>,
+      const Eigen::Matrix<double, Eigen::Dynamic, 1>&,
+      const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&,
+      const Eigen::Matrix<double, 2, Eigen::Dynamic>&,
+      const Eigen::Matrix<double, 5, 1>&) {
+    return Eigen::VectorXd(1);
+  }
+
+  template <size_t size>
+  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
+                                 const Eigen::VectorXd& y_adj) {
+    return std::make_tuple(
+        double(), int(), double(), int(), std::vector<double>(),
+        std::vector<int>(), std::vector<double>(), std::vector<int>(),
+        Eigen::Matrix<double, Eigen::Dynamic, 1>(),
+        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>(),
+        Eigen::Matrix<double, 2, Eigen::Dynamic>(),
+        Eigen::Matrix<double, 5, 1>(),
+        Eigen::Matrix<double, Eigen::Dynamic, 1>(),
+        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>(),
+        Eigen::Matrix<double, 2, Eigen::Dynamic>(),
+        Eigen::Matrix<double, 5, 1>());
+  }
+};
+
+template <typename F, typename... Targs>
+auto make_vari_for_test(const Targs&... args) {
+  return new stan::math::adj_jac_vari<F, Targs...>(args...);
+}
+
+TEST(AgradRev,
+     test_weird_argument_list_functor_compiles_and_sets_is_var_and_offsets_) {
+  int i;
+  double d;
+  stan::math::var v(5.0);
+  std::vector<int> vi(2);
+  std::vector<double> vd(2);
+  std::vector<stan::math::var> vv(2, 0);
+  Eigen::Matrix<double, Eigen::Dynamic, 1> ed1(3);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> ed2(2, 4);
+  Eigen::Matrix<double, 2, Eigen::Dynamic> ed3(2, 5);
+  Eigen::Matrix<double, 5, 1> ed4;
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> ev1(3);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> ev2(2, 4);
+  Eigen::Matrix<stan::math::var, 2, Eigen::Dynamic> ev3(2, 5);
+  Eigen::Matrix<stan::math::var, 5, 1> ev4;
+  ev1.setZero();
+  ev2.setZero();
+  ev3.setZero();
+  ev4.setZero();
+
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y1
+      = stan::math::adj_jac_apply<WeirdArgumentListFunctor1>(
+          d, i, d, i, vd, vi, vd, vi, ed1, ed2, ed3, ed4, ed1, ed2, ed3, ed4);
+
+  y1(0).grad();
+
+  auto vi1 = make_vari_for_test<WeirdArgumentListFunctor1>(
+      d, i, d, i, vd, vi, vd, vi, ed1, ed2, ed3, ed4, ed1, ed2, ed3, ed4);
+
+  EXPECT_TRUE(
+      (vi1->is_var_
+       == std::array<bool, 16>(
+              {{false, false, false, false, false, false, false, false, false,
+                false, false, false, false, false, false, false}})));
+
+  EXPECT_TRUE((vi1->offsets_
+               == std::array<int, 16>(
+                      {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}})));
+
+  stan::math::var(vi1).grad();
+
+  auto vi2 = make_vari_for_test<WeirdArgumentListFunctor1>(
+      v, i, d, i, vv, vi, vd, vi, ev1, ed2, ev3, ed4, ev1, ed2, ev3, ed4);
+
+  EXPECT_TRUE((vi2->is_var_
+               == std::array<bool, 16>(
+                      {{true, false, false, false, true, false, false, false,
+                        true, false, true, false, true, false, true, false}})));
+
+  EXPECT_TRUE((vi2->offsets_
+               == std::array<int, 16>({{0, 1, 1, 1, 1, 3, 3, 3, 3, 6, 6, 16, 16,
+                                        19, 19, 29}})));
+
+  stan::math::var(vi2).grad();
+
+  auto vi3 = make_vari_for_test<WeirdArgumentListFunctor1>(
+      d, i, v, i, vd, vi, vv, vi, ed1, ev2, ed3, ev4, ed1, ev2, ed3, ev4);
+
+  EXPECT_TRUE((vi3->is_var_
+               == std::array<bool, 16>(
+                      {{false, false, true, false, false, false, true, false,
+                        false, true, false, true, false, true, false, true}})));
+
+  EXPECT_TRUE((vi3->offsets_
+               == std::array<int, 16>({{0, 0, 0, 1, 1, 1, 1, 3, 3, 3, 11, 11,
+                                        16, 16, 24, 24}})));
+
+  stan::math::var(vi3).grad();
+
+  auto vi4 = make_vari_for_test<WeirdArgumentListFunctor1>(
+      v, i, d, i, vd, vi, vv, vi, ev1, ed2, ed3, ev4, ev1, ed2, ed3, ev4);
+
+  EXPECT_TRUE((vi4->is_var_
+               == std::array<bool, 16>(
+                      {{true, false, false, false, false, false, true, false,
+                        true, false, false, true, true, false, false, true}})));
+
+  EXPECT_TRUE((vi4->offsets_
+               == std::array<int, 16>(
+                      {{0, 1, 1, 1, 1, 1, 1, 3, 3, 6, 6, 6, 11, 14, 14, 14}})));
+
+  stan::math::var(vi4).grad();
+}
+
+/**
+ * Test to make sure variable values get passed forward and adjoint values get
+ * passed back for all var types. Mix in some integer types for good measure
+ *
+ * Repeat this test while also individually making some of the could-be-autodiff
+ * variables doubles instead
+ */
+struct CheckAdjointsPassingThrough {
+  int size_vd;
+  int rows_ed1;
+  int rows_ed2;
+  int cols_ed2;
+  int cols_ed3;
+  template <size_t size>
+  Eigen::VectorXd operator()(
+      std::array<bool, size> needs_adj, const double& d,
+      const std::vector<double>& vd, const int&,
+      const Eigen::Matrix<double, Eigen::Dynamic, 1>& ed1,
+      const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& ed2,
+      const std::vector<int>&,
+      const Eigen::Matrix<double, 1, Eigen::Dynamic>& ed3,
+      const Eigen::Matrix<double, 1, 1>& ed4) {
+    size_vd = vd.size();
+    rows_ed1 = ed1.rows();
+    rows_ed2 = ed2.rows();
+    cols_ed2 = ed2.cols();
+    cols_ed3 = ed3.cols();
+    Eigen::VectorXd out(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + cols_ed3
+                        + 1);
+
+    out(0) = d;
+    for (int i = 0; i < size_vd; i++)
+      out(1 + i) = vd[i];
+    for (int i = 0; i < rows_ed1; i++)
+      out(1 + size_vd + i) = ed1(i);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      out(1 + size_vd + rows_ed1 + i) = ed2(i);
+    for (int i = 0; i < cols_ed3; i++)
+      out(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + i) = ed3(i);
+    out(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + cols_ed3) = ed4(0);
+
+    return out;
+  }
+
+  template <size_t size>
+  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
+                                 const Eigen::VectorXd& y_adj) {
+    double d;
+    std::vector<double> vd(size_vd);
+    Eigen::Matrix<double, Eigen::Dynamic, 1> ed1(rows_ed1);
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> ed2(rows_ed2,
+                                                              cols_ed2);
+    Eigen::Matrix<double, 1, Eigen::Dynamic> ed3(cols_ed3);
+    Eigen::Matrix<double, 1, 1> ed4;
+    d = y_adj(0);
+    for (int i = 0; i < size_vd; i++)
+      vd[i] = y_adj(1 + i);
+    for (int i = 0; i < rows_ed1; i++)
+      ed1(i) = y_adj(1 + size_vd + i);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      ed2(i) = y_adj(1 + size_vd + rows_ed1 + i);
+    for (int i = 0; i < cols_ed3; i++)
+      ed3(i) = y_adj(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + i);
+    ed4(0) = y_adj(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + cols_ed3);
+    return std::make_tuple(d, vd, int(), ed1, ed2, std::vector<int>(), ed3,
+                           ed4);
+  }
+};
+
+TEST(AgradRev, test_pass_through_working_all_var_types) {
+  int size_vd = 5, rows_ed1 = 3, rows_ed2 = 2, cols_ed2 = 3, cols_ed3 = 4;
+  stan::math::var d = 1.0;
+  std::vector<stan::math::var> vd(size_vd, 1.0);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> ed1(rows_ed1);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> ed2(rows_ed2,
+                                                                     cols_ed2);
+  std::vector<int> vi(5, 5);
+  Eigen::Matrix<stan::math::var, 1, Eigen::Dynamic> ed3(cols_ed3);
+  Eigen::Matrix<stan::math::var, 1, 1> ed4;
+
+  for (int i = 0; i < size_vd; i++)
+    vd[i] = 1.0;
+
+  for (int i = 0; i < rows_ed1; i++)
+    ed1(i) = 1.0;
+
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    ed2(i) = 1.0;
+
+  for (int i = 0; i < cols_ed3; i++)
+    ed3(i) = 1.0;
+
+  ed4(0) = 1.0;
+
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
+      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
+          d, vd, 5, ed1, ed2, vi, ed3, ed4);
+
+  y(0).grad();
+  EXPECT_NEAR(y(0).val(), d.val(), 1e-10);
+  EXPECT_NEAR(d.adj(), 1.0, 1e-10);
+  for (int i = 0; i < size_vd; i++)
+    EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed1; i++)
+    EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+  for (int i = 0; i < cols_ed3; i++)
+    EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+  EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+  stan::math::set_zero_all_adjoints();
+
+  for (int j = 0; j < size_vd; j++) {
+    y(1 + j).grad();
+    EXPECT_NEAR(y(1 + j).val(), vd[j].val(), 1e-10);
+    EXPECT_NEAR(vd[j].adj(), 1.0, 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      if (i != j)
+        EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < rows_ed1; j++) {
+    y(1 + size_vd + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + j).val(), ed1(j).val(), 1e-10);
+    EXPECT_NEAR(ed1(j).adj(), 1.0, 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      if (i != j)
+        EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < rows_ed2 * cols_ed2; j++) {
+    y(1 + size_vd + rows_ed1 + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + rows_ed1 + j).val(), ed2(j).val(), 1e-10);
+    EXPECT_NEAR(ed2(j).adj(), 1.0, 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      if (i != j)
+        EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < cols_ed3; j++) {
+    y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + j).val(),
+                ed3(j).val(), 1e-10);
+    EXPECT_NEAR(ed3(j).adj(), 1.0, 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      if (i != j)
+        EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + cols_ed3).grad();
+  EXPECT_NEAR(y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + cols_ed3).val(),
+              ed4(0).val(), 1e-10);
+  EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+  for (int i = 0; i < size_vd; i++)
+    EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed1; i++)
+    EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+  for (int i = 0; i < cols_ed3; i++)
+    EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+  EXPECT_NEAR(ed4(0).adj(), 1.0, 1e-10);
+  stan::math::set_zero_all_adjoints();
+}
+
+TEST(AgradRev, test_pass_through_working_all_var_types_different_shapes) {
+  int size_vd = 3, rows_ed1 = 7, rows_ed2 = 3, cols_ed2 = 5, cols_ed3 = 1;
+  stan::math::var d = 1.0;
+  std::vector<stan::math::var> vd(size_vd, 1.0);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> ed1(rows_ed1);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> ed2(rows_ed2,
+                                                                     cols_ed2);
+  std::vector<int> vi(5, 5);
+  Eigen::Matrix<stan::math::var, 1, Eigen::Dynamic> ed3(cols_ed3);
+  Eigen::Matrix<stan::math::var, 1, 1> ed4;
+
+  for (int i = 0; i < size_vd; i++)
+    vd[i] = 1.0;
+
+  for (int i = 0; i < rows_ed1; i++)
+    ed1(i) = 1.0;
+
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    ed2(i) = 1.0;
+
+  for (int i = 0; i < cols_ed3; i++)
+    ed3(i) = 1.0;
+
+  ed4(0) = 1.0;
+
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
+      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
+          d, vd, 3, ed1, ed2, vi, ed3, ed4);
+
+  y(0).grad();
+  EXPECT_NEAR(y(0).val(), d.val(), 1e-10);
+  EXPECT_NEAR(d.adj(), 1.0, 1e-10);
+  for (int i = 0; i < size_vd; i++)
+    EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed1; i++)
+    EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+  for (int i = 0; i < cols_ed3; i++)
+    EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+  EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+  stan::math::set_zero_all_adjoints();
+
+  for (int j = 0; j < size_vd; j++) {
+    y(1 + j).grad();
+    EXPECT_NEAR(y(1 + j).val(), vd[j].val(), 1e-10);
+    EXPECT_NEAR(vd[j].adj(), 1.0, 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      if (i != j)
+        EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < rows_ed1; j++) {
+    y(1 + size_vd + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + j).val(), ed1(j).val(), 1e-10);
+    EXPECT_NEAR(ed1(j).adj(), 1.0, 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      if (i != j)
+        EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < rows_ed2 * cols_ed2; j++) {
+    y(1 + size_vd + rows_ed1 + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + rows_ed1 + j).val(), ed2(j).val(), 1e-10);
+    EXPECT_NEAR(ed2(j).adj(), 1.0, 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      if (i != j)
+        EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < cols_ed3; j++) {
+    y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + j).val(),
+                ed3(j).val(), 1e-10);
+    EXPECT_NEAR(ed3(j).adj(), 1.0, 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      if (i != j)
+        EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + cols_ed3).grad();
+  EXPECT_NEAR(y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + cols_ed3).val(),
+              ed4(0).val(), 1e-10);
+  EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+  for (int i = 0; i < size_vd; i++)
+    EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed1; i++)
+    EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+  for (int i = 0; i < cols_ed3; i++)
+    EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+  EXPECT_NEAR(ed4(0).adj(), 1.0, 1e-10);
+  stan::math::set_zero_all_adjoints();
+}
+
+TEST(AgradRev, test_pass_through_working_all_var_types_double_test_1) {
+  int size_vd = 3, rows_ed1 = 7, rows_ed2 = 3, cols_ed2 = 5, cols_ed3 = 1;
+  double d = 1.0;
+  std::vector<stan::math::var> vd(size_vd, 1.0);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> ed1(rows_ed1);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> ed2(rows_ed2,
+                                                                     cols_ed2);
+  std::vector<int> vi(5, 5);
+  Eigen::Matrix<stan::math::var, 1, Eigen::Dynamic> ed3(cols_ed3);
+  Eigen::Matrix<stan::math::var, 1, 1> ed4;
+
+  for (int i = 0; i < size_vd; i++)
+    vd[i] = 1.0;
+
+  for (int i = 0; i < rows_ed1; i++)
+    ed1(i) = 1.0;
+
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    ed2(i) = 1.0;
+
+  for (int i = 0; i < cols_ed3; i++)
+    ed3(i) = 1.0;
+
+  ed4(0) = 1.0;
+
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
+      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
+          d, vd, 3, ed1, ed2, vi, ed3, ed4);
+
+  y(0).grad();
+  EXPECT_NEAR(y(0).val(), d, 1e-10);
+  for (int i = 0; i < size_vd; i++)
+    EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed1; i++)
+    EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+  for (int i = 0; i < cols_ed3; i++)
+    EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+  EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+  stan::math::set_zero_all_adjoints();
+
+  for (int j = 0; j < size_vd; j++) {
+    y(1 + j).grad();
+    EXPECT_NEAR(y(1 + j).val(), vd[j].val(), 1e-10);
+    EXPECT_NEAR(vd[j].adj(), 1.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      if (i != j)
+        EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < rows_ed1; j++) {
+    y(1 + size_vd + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + j).val(), ed1(j).val(), 1e-10);
+    EXPECT_NEAR(ed1(j).adj(), 1.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      if (i != j)
+        EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < rows_ed2 * cols_ed2; j++) {
+    y(1 + size_vd + rows_ed1 + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + rows_ed1 + j).val(), ed2(j).val(), 1e-10);
+    EXPECT_NEAR(ed2(j).adj(), 1.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      if (i != j)
+        EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < cols_ed3; j++) {
+    y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + j).val(),
+                ed3(j).val(), 1e-10);
+    EXPECT_NEAR(ed3(j).adj(), 1.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      if (i != j)
+        EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + cols_ed3).grad();
+  EXPECT_NEAR(y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + cols_ed3).val(),
+              ed4(0).val(), 1e-10);
+  for (int i = 0; i < size_vd; i++)
+    EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed1; i++)
+    EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+  for (int i = 0; i < cols_ed3; i++)
+    EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+  EXPECT_NEAR(ed4(0).adj(), 1.0, 1e-10);
+  stan::math::set_zero_all_adjoints();
+}
+
+TEST(AgradRev, test_pass_through_working_all_var_types_double_test_2) {
+  int size_vd = 3, rows_ed1 = 7, rows_ed2 = 3, cols_ed2 = 5, cols_ed3 = 1;
+  stan::math::var d = 1.0;
+  std::vector<double> vd(size_vd, 1.0);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> ed1(rows_ed1);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> ed2(rows_ed2,
+                                                                     cols_ed2);
+  std::vector<int> vi(5, 5);
+  Eigen::Matrix<stan::math::var, 1, Eigen::Dynamic> ed3(cols_ed3);
+  Eigen::Matrix<stan::math::var, 1, 1> ed4;
+
+  for (int i = 0; i < size_vd; i++)
+    vd[i] = 1.0;
+
+  for (int i = 0; i < rows_ed1; i++)
+    ed1(i) = 1.0;
+
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    ed2(i) = 1.0;
+
+  for (int i = 0; i < cols_ed3; i++)
+    ed3(i) = 1.0;
+
+  ed4(0) = 1.0;
+
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
+      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
+          d, vd, 3, ed1, ed2, vi, ed3, ed4);
+
+  y(0).grad();
+  EXPECT_NEAR(y(0).val(), d.val(), 1e-10);
+  EXPECT_NEAR(d.adj(), 1.0, 1e-10);
+  for (int i = 0; i < rows_ed1; i++)
+    EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+  for (int i = 0; i < cols_ed3; i++)
+    EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+  EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+  stan::math::set_zero_all_adjoints();
+
+  for (int j = 0; j < size_vd; j++) {
+    y(1 + j).grad();
+    EXPECT_NEAR(y(1 + j).val(), vd[j], 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < rows_ed1; j++) {
+    y(1 + size_vd + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + j).val(), ed1(j).val(), 1e-10);
+    EXPECT_NEAR(ed1(j).adj(), 1.0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      if (i != j)
+        EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < rows_ed2 * cols_ed2; j++) {
+    y(1 + size_vd + rows_ed1 + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + rows_ed1 + j).val(), ed2(j).val(), 1e-10);
+    EXPECT_NEAR(ed2(j).adj(), 1.0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      if (i != j)
+        EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < cols_ed3; j++) {
+    y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + j).val(),
+                ed3(j).val(), 1e-10);
+    EXPECT_NEAR(ed3(j).adj(), 1.0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      if (i != j)
+        EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + cols_ed3).grad();
+  EXPECT_NEAR(y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + cols_ed3).val(),
+              ed4(0).val(), 1e-10);
+  for (int i = 0; i < rows_ed1; i++)
+    EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+  for (int i = 0; i < cols_ed3; i++)
+    EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+  EXPECT_NEAR(ed4(0).adj(), 1.0, 1e-10);
+  stan::math::set_zero_all_adjoints();
+}
+
+TEST(AgradRev, test_pass_through_working_all_var_types_double_test_3) {
+  int size_vd = 3, rows_ed1 = 7, rows_ed2 = 3, cols_ed2 = 5, cols_ed3 = 1;
+  stan::math::var d = 1.0;
+  std::vector<stan::math::var> vd(size_vd, 1.0);
+  Eigen::Matrix<double, Eigen::Dynamic, 1> ed1(rows_ed1);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> ed2(rows_ed2,
+                                                                     cols_ed2);
+  std::vector<int> vi(5, 5);
+  Eigen::Matrix<stan::math::var, 1, Eigen::Dynamic> ed3(cols_ed3);
+  Eigen::Matrix<stan::math::var, 1, 1> ed4;
+
+  for (int i = 0; i < size_vd; i++)
+    vd[i] = 1.0;
+
+  for (int i = 0; i < rows_ed1; i++)
+    ed1(i) = 1.0;
+
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    ed2(i) = 1.0;
+
+  for (int i = 0; i < cols_ed3; i++)
+    ed3(i) = 1.0;
+
+  ed4(0) = 1.0;
+
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
+      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
+          d, vd, 3, ed1, ed2, vi, ed3, ed4);
+
+  y(0).grad();
+  EXPECT_NEAR(y(0).val(), d.val(), 1e-10);
+  EXPECT_NEAR(d.adj(), 1.0, 1e-10);
+  for (int i = 0; i < size_vd; i++)
+    EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+  for (int i = 0; i < cols_ed3; i++)
+    EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+  EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+  stan::math::set_zero_all_adjoints();
+
+  for (int j = 0; j < size_vd; j++) {
+    y(1 + j).grad();
+    EXPECT_NEAR(y(1 + j).val(), vd[j].val(), 1e-10);
+    EXPECT_NEAR(vd[j].adj(), 1.0, 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      if (i != j)
+        EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < rows_ed1; j++) {
+    y(1 + size_vd + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + j).val(), ed1(j), 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < rows_ed2 * cols_ed2; j++) {
+    y(1 + size_vd + rows_ed1 + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + rows_ed1 + j).val(), ed2(j).val(), 1e-10);
+    EXPECT_NEAR(ed2(j).adj(), 1.0, 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      if (i != j)
+        EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < cols_ed3; j++) {
+    y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + j).val(),
+                ed3(j).val(), 1e-10);
+    EXPECT_NEAR(ed3(j).adj(), 1.0, 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      if (i != j)
+        EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + cols_ed3).grad();
+  EXPECT_NEAR(y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + cols_ed3).val(),
+              ed4(0).val(), 1e-10);
+  EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+  for (int i = 0; i < size_vd; i++)
+    EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+  for (int i = 0; i < cols_ed3; i++)
+    EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+  EXPECT_NEAR(ed4(0).adj(), 1.0, 1e-10);
+  stan::math::set_zero_all_adjoints();
+}
+
+TEST(AgradRev, test_pass_through_working_all_var_types_double_test_4) {
+  int size_vd = 3, rows_ed1 = 7, rows_ed2 = 3, cols_ed2 = 5, cols_ed3 = 1;
+  stan::math::var d = 1.0;
+  std::vector<stan::math::var> vd(size_vd, 1.0);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> ed1(rows_ed1);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> ed2(rows_ed2, cols_ed2);
+  std::vector<int> vi(5, 5);
+  Eigen::Matrix<stan::math::var, 1, Eigen::Dynamic> ed3(cols_ed3);
+  Eigen::Matrix<stan::math::var, 1, 1> ed4;
+
+  for (int i = 0; i < size_vd; i++)
+    vd[i] = 1.0;
+
+  for (int i = 0; i < rows_ed1; i++)
+    ed1(i) = 1.0;
+
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    ed2(i) = 1.0;
+
+  for (int i = 0; i < cols_ed3; i++)
+    ed3(i) = 1.0;
+
+  ed4(0) = 1.0;
+
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
+      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
+          d, vd, 3, ed1, ed2, vi, ed3, ed4);
+
+  y(0).grad();
+  EXPECT_NEAR(y(0).val(), d.val(), 1e-10);
+  EXPECT_NEAR(d.adj(), 1.0, 1e-10);
+  for (int i = 0; i < size_vd; i++)
+    EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed1; i++)
+    EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+  for (int i = 0; i < cols_ed3; i++)
+    EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+  EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+  stan::math::set_zero_all_adjoints();
+
+  for (int j = 0; j < size_vd; j++) {
+    y(1 + j).grad();
+    EXPECT_NEAR(y(1 + j).val(), vd[j].val(), 1e-10);
+    EXPECT_NEAR(vd[j].adj(), 1.0, 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      if (i != j)
+        EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < rows_ed1; j++) {
+    y(1 + size_vd + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + j).val(), ed1(j).val(), 1e-10);
+    EXPECT_NEAR(ed1(j).adj(), 1.0, 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      if (i != j)
+        EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < rows_ed2 * cols_ed2; j++) {
+    y(1 + size_vd + rows_ed1 + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + rows_ed1 + j).val(), ed2(j), 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < cols_ed3; j++) {
+    y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + j).val(),
+                ed3(j).val(), 1e-10);
+    EXPECT_NEAR(ed3(j).adj(), 1.0, 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      if (i != j)
+        EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + cols_ed3).grad();
+  EXPECT_NEAR(y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + cols_ed3).val(),
+              ed4(0).val(), 1e-10);
+  EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+  for (int i = 0; i < size_vd; i++)
+    EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed1; i++)
+    EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+  for (int i = 0; i < cols_ed3; i++)
+    EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+  EXPECT_NEAR(ed4(0).adj(), 1.0, 1e-10);
+  stan::math::set_zero_all_adjoints();
+}
+
+TEST(AgradRev, test_pass_through_working_all_var_types_double_test_5) {
+  int size_vd = 3, rows_ed1 = 7, rows_ed2 = 3, cols_ed2 = 5, cols_ed3 = 1;
+  stan::math::var d = 1.0;
+  std::vector<stan::math::var> vd(size_vd, 1.0);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> ed1(rows_ed1);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> ed2(rows_ed2,
+                                                                     cols_ed2);
+  std::vector<int> vi(5, 5);
+  Eigen::Matrix<double, 1, Eigen::Dynamic> ed3(cols_ed3);
+  Eigen::Matrix<stan::math::var, 1, 1> ed4;
+
+  for (int i = 0; i < size_vd; i++)
+    vd[i] = 1.0;
+
+  for (int i = 0; i < rows_ed1; i++)
+    ed1(i) = 1.0;
+
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    ed2(i) = 1.0;
+
+  for (int i = 0; i < cols_ed3; i++)
+    ed3(i) = 1.0;
+
+  ed4(0) = 1.0;
+
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
+      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
+          d, vd, 3, ed1, ed2, vi, ed3, ed4);
+
+  y(0).grad();
+  EXPECT_NEAR(y(0).val(), d.val(), 1e-10);
+  EXPECT_NEAR(d.adj(), 1.0, 1e-10);
+  for (int i = 0; i < size_vd; i++)
+    EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed1; i++)
+    EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+  EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+  stan::math::set_zero_all_adjoints();
+
+  for (int j = 0; j < size_vd; j++) {
+    y(1 + j).grad();
+    EXPECT_NEAR(y(1 + j).val(), vd[j].val(), 1e-10);
+    EXPECT_NEAR(vd[j].adj(), 1.0, 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      if (i != j)
+        EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < rows_ed1; j++) {
+    y(1 + size_vd + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + j).val(), ed1(j).val(), 1e-10);
+    EXPECT_NEAR(ed1(j).adj(), 1.0, 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      if (i != j)
+        EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < rows_ed2 * cols_ed2; j++) {
+    y(1 + size_vd + rows_ed1 + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + rows_ed1 + j).val(), ed2(j).val(), 1e-10);
+    EXPECT_NEAR(ed2(j).adj(), 1.0, 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      if (i != j)
+        EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < cols_ed3; j++) {
+    y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + j).val(),
+                ed3(j), 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    EXPECT_NEAR(ed4(0).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + cols_ed3).grad();
+  EXPECT_NEAR(y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + cols_ed3).val(),
+              ed4(0).val(), 1e-10);
+  EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+  for (int i = 0; i < size_vd; i++)
+    EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed1; i++)
+    EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+  EXPECT_NEAR(ed4(0).adj(), 1.0, 1e-10);
+  stan::math::set_zero_all_adjoints();
+}
+
+TEST(AgradRev, test_pass_through_working_all_var_types_double_test_6) {
+  int size_vd = 3, rows_ed1 = 7, rows_ed2 = 3, cols_ed2 = 5, cols_ed3 = 1;
+  stan::math::var d = 1.0;
+  std::vector<stan::math::var> vd(size_vd, 1.0);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> ed1(rows_ed1);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> ed2(rows_ed2,
+                                                                     cols_ed2);
+  std::vector<int> vi(5, 5);
+  Eigen::Matrix<stan::math::var, 1, Eigen::Dynamic> ed3(cols_ed3);
+  Eigen::Matrix<double, 1, 1> ed4;
+
+  for (int i = 0; i < size_vd; i++)
+    vd[i] = 1.0;
+
+  for (int i = 0; i < rows_ed1; i++)
+    ed1(i) = 1.0;
+
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    ed2(i) = 1.0;
+
+  for (int i = 0; i < cols_ed3; i++)
+    ed3(i) = 1.0;
+
+  ed4(0) = 1.0;
+
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
+      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
+          d, vd, 3, ed1, ed2, vi, ed3, ed4);
+
+  y(0).grad();
+  EXPECT_NEAR(y(0).val(), d.val(), 1e-10);
+  EXPECT_NEAR(d.adj(), 1.0, 1e-10);
+  for (int i = 0; i < size_vd; i++)
+    EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed1; i++)
+    EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+  for (int i = 0; i < cols_ed3; i++)
+    EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+  stan::math::set_zero_all_adjoints();
+
+  for (int j = 0; j < size_vd; j++) {
+    y(1 + j).grad();
+    EXPECT_NEAR(y(1 + j).val(), vd[j].val(), 1e-10);
+    EXPECT_NEAR(vd[j].adj(), 1.0, 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      if (i != j)
+        EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < rows_ed1; j++) {
+    y(1 + size_vd + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + j).val(), ed1(j).val(), 1e-10);
+    EXPECT_NEAR(ed1(j).adj(), 1.0, 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      if (i != j)
+        EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < rows_ed2 * cols_ed2; j++) {
+    y(1 + size_vd + rows_ed1 + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + rows_ed1 + j).val(), ed2(j).val(), 1e-10);
+    EXPECT_NEAR(ed2(j).adj(), 1.0, 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      if (i != j)
+        EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  for (int j = 0; j < cols_ed3; j++) {
+    y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + j).grad();
+    EXPECT_NEAR(y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + j).val(),
+                ed3(j).val(), 1e-10);
+    EXPECT_NEAR(ed3(j).adj(), 1.0, 1e-10);
+    EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+    for (int i = 0; i < size_vd; i++)
+      EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed1; i++)
+      EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+    for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+      EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+    for (int i = 0; i < cols_ed3; i++)
+      if (i != j)
+        EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+    stan::math::set_zero_all_adjoints();
+  }
+
+  y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + cols_ed3).grad();
+  EXPECT_NEAR(y(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + cols_ed3).val(),
+              ed4(0), 1e-10);
+  EXPECT_NEAR(d.adj(), 0.0, 1e-10);
+  for (int i = 0; i < size_vd; i++)
+    EXPECT_NEAR(vd[i].adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed1; i++)
+    EXPECT_NEAR(ed1(i).adj(), 0, 1e-10);
+  for (int i = 0; i < rows_ed2 * cols_ed2; i++)
+    EXPECT_NEAR(ed2(i).adj(), 0, 1e-10);
+  for (int i = 0; i < cols_ed3; i++)
+    EXPECT_NEAR(ed3(i).adj(), 0, 1e-10);
+  stan::math::set_zero_all_adjoints();
+}
+
+/**
+ * Test the most basic adj_jac_vari Functor
+ */
 struct SinFunctor {
   int N_;
   double* x_mem_;
@@ -99,17 +1280,21 @@ TEST(AgradRev, test_sin_multiple_jac) {
   EXPECT_NEAR(x2(1).adj(), 1.57 * 0.5403023058681398, 1e-10);
 }
 
+/**
+ * Test a functor with multiple input types that takes advantage of needs_adj_
+ * functionality
+ */
 struct SinCosFunctor {
   int N_;
   double* x1_mem_;
-  double* x2_mem_;
+  double* x4_mem_;
 
   template <std::size_t size>
   Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
-                             const Eigen::VectorXd& x1, const int& x3,
-                             const std::vector<int>& x4,
-                             const std::vector<double>& x2) {
-    stan::math::check_matching_sizes("SinCosFunctor", "x1", x1, "x2", x2);
+                             const Eigen::VectorXd& x1, const int& x2,
+                             const std::vector<int>& x3,
+                             const std::vector<double>& x4) {
+    stan::math::check_matching_sizes("SinCosFunctor", "x1", x1, "x4", x4);
     N_ = x1.size();
     Eigen::VectorXd out(N_);
 
@@ -123,13 +1308,13 @@ struct SinCosFunctor {
     EXPECT_FALSE(needs_adj[2]);
 
     if (needs_adj[3]) {
-      x2_mem_ = stan::math::ChainableStack::instance()
+      x4_mem_ = stan::math::ChainableStack::instance()
                     .memalloc_.alloc_array<double>(N_);
-      std::copy(x2.data(), x2.data() + N_, x2_mem_);
+      std::copy(x4.data(), x4.data() + N_, x4_mem_);
     }
 
     for (int n = 0; n < N_; ++n) {
-      out(n) = sin(x1(n)) + cos(x2[n]);
+      out(n) = sin(x1(n)) + cos(x4[n]);
     }
 
     return out;
@@ -139,7 +1324,7 @@ struct SinCosFunctor {
   auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
                                  const Eigen::VectorXd& adj) {
     Eigen::VectorXd out1;
-    std::vector<double> out2;
+    std::vector<double> out4;
 
     if (needs_adj[0]) {
       out1.resize(N_);
@@ -152,13 +1337,13 @@ struct SinCosFunctor {
     EXPECT_FALSE(needs_adj[2]);
 
     if (needs_adj[3]) {
-      out2.resize(N_);
+      out4.resize(N_);
       for (int n = 0; n < N_; ++n) {
-        out2[n] = -sin(x2_mem_[n]) * adj(n);
+        out4[n] = -sin(x4_mem_[n]) * adj(n);
       }
     }
 
-    return std::make_tuple(out1, 0, std::vector<int>(), out2);
+    return std::make_tuple(out1, 0, std::vector<int>(), out4);
   }
 };
 
@@ -342,6 +1527,9 @@ TEST(AgradRev, test_sincos_multiple_jac_vd) {
   EXPECT_NEAR(x21(1).adj(), 1.57 * 0.5403023058681398, 1e-10);
 }
 
+/**
+ * Test a multi-argument functor with an Eigen VectorXd input and a double input
+ */
 struct SinCosFunctor2 {
   int N_;
   double* x1_mem_;
@@ -550,6 +1738,9 @@ TEST(AgradRev, test_eigen_vector_scalar_multiple_jac_vd) {
   EXPECT_NEAR(x21(1).adj(), 1.57 * 0.5403023058681398, 1e-10);
 }
 
+/**
+ * Test a functor with a double then Eigen::VectorXd input
+ */
 struct SinCosFunctor3 {
   int N_;
   double* x1_mem_;
