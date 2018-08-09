@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <sstream>
 #include <tuple>
+#include <vector>
 
 /**
  * Test that all types that are documented to be supported can actually be
