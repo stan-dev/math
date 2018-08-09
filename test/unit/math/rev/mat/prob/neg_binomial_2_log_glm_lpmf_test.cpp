@@ -10,8 +10,8 @@ using stan::math::var;
 //  from existing primitives.
 TEST(ProbDistributionsNegBinomial2LogGLM,
      glm_matches_neg_binomial_2_log_doubles) {
-  Matrix<int, Dynamic, 1> n(3, 1);
-  n << 1, 0, 1;
+  Matrix<int, Dynamic, 1> y(3, 1);
+  y << 1, 0, 1;
   Matrix<double, Dynamic, Dynamic> x(3, 2);
   x << -12, 46, -42, 24, 25, 27;
   Matrix<double, Dynamic, 1> beta(2, 1);
@@ -22,20 +22,20 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
   theta = x * beta + alphavec;
   double phi = 2;
   EXPECT_FLOAT_EQ(
-      (stan::math::neg_binomial_2_log_lpmf(n, theta, phi)),
-      (stan::math::neg_binomial_2_log_glm_lpmf(n, x, alpha, beta, phi)));
+      (stan::math::neg_binomial_2_log_lpmf(y, theta, phi)),
+      (stan::math::neg_binomial_2_log_glm_lpmf(y, x, alpha, beta, phi)));
   EXPECT_FLOAT_EQ(
-      (stan::math::neg_binomial_2_log_lpmf<true>(n, theta, phi)),
-      (stan::math::neg_binomial_2_log_glm_lpmf<true>(n, x, alpha, beta, phi)));
+      (stan::math::neg_binomial_2_log_lpmf<true>(y, theta, phi)),
+      (stan::math::neg_binomial_2_log_glm_lpmf<true>(y, x, alpha, beta, phi)));
 }
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNegBinomial2LogGLM,
      glm_matches_neg_binomial_2_log_doubles_rand) {
   for (size_t ii = 0; ii < 20000; ii++) {
-    Matrix<int, Dynamic, 1> n(3, 1);
+    Matrix<int, Dynamic, 1> y(3, 1);
     for (size_t i = 0; i < 3; i++) {
-      n[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 200;
+      y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 200;
     }
     Matrix<double, Dynamic, Dynamic> x
         = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
@@ -48,18 +48,18 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
     theta = x * beta + alphavec;
     double phi = Matrix<double, Dynamic, 1>::Random(1, 1)[0] + 1;
     EXPECT_FLOAT_EQ(
-        (stan::math::neg_binomial_2_log_lpmf(n, theta, phi)),
-        (stan::math::neg_binomial_2_log_glm_lpmf(n, x, alpha, beta, phi)));
-    EXPECT_FLOAT_EQ((stan::math::neg_binomial_2_log_lpmf<true>(n, theta, phi)),
-                    (stan::math::neg_binomial_2_log_glm_lpmf<true>(n, x, alpha,
+        (stan::math::neg_binomial_2_log_lpmf(y, theta, phi)),
+        (stan::math::neg_binomial_2_log_glm_lpmf(y, x, alpha, beta, phi)));
+    EXPECT_FLOAT_EQ((stan::math::neg_binomial_2_log_lpmf<true>(y, theta, phi)),
+                    (stan::math::neg_binomial_2_log_glm_lpmf<true>(y, x, alpha,
                                                                    beta, phi)));
   }
 }
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_vars) {
-  Matrix<int, Dynamic, 1> n(3, 1);
-  n << 1, 0, 1;
+  Matrix<int, Dynamic, 1> y(3, 1);
+  y << 1, 0, 1;
   Matrix<var, Dynamic, Dynamic> x(3, 2);
   x << -12, 46, -42, 24, 25, 27;
   Matrix<var, Dynamic, 1> beta(2, 1);
@@ -69,7 +69,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_vars) {
   Matrix<var, Dynamic, 1> theta(3, 1);
   theta = x * beta + alphavec;
   var phi = 2;
-  var lp = stan::math::neg_binomial_2_log_lpmf(n, theta, phi);
+  var lp = stan::math::neg_binomial_2_log_lpmf(y, theta, phi);
   lp.grad();
 
   double lp_val = lp.val();
@@ -86,8 +86,8 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_vars) {
 
   stan::math::recover_memory();
 
-  Matrix<int, Dynamic, 1> n2(3, 1);
-  n2 << 1, 0, 1;
+  Matrix<int, Dynamic, 1> y2(3, 1);
+  y2 << 1, 0, 1;
   Matrix<var, Dynamic, Dynamic> x2(3, 2);
   x2 << -12, 46, -42, 24, 25, 27;
   Matrix<var, Dynamic, 1> beta2(2, 1);
@@ -95,7 +95,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_vars) {
   var alpha2 = 0.3;
   var phi2 = 2;
   var lp2
-      = stan::math::neg_binomial_2_log_glm_lpmf(n2, x2, alpha2, beta2, phi2);
+      = stan::math::neg_binomial_2_log_glm_lpmf(y2, x2, alpha2, beta2, phi2);
   lp2.grad();
   EXPECT_FLOAT_EQ(lp_val, lp2.val());
   for (size_t i = 0; i < 2; i++) {
@@ -115,9 +115,9 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_vars) {
 TEST(ProbDistributionsNegBinomial2LogGLM,
      glm_matches_neg_binomial_2_log_vars_rand) {
   for (size_t ii = 0; ii < 200; ii++) {
-    Matrix<int, Dynamic, 1> n(3, 1);
+    Matrix<int, Dynamic, 1> y(3, 1);
     for (size_t i = 0; i < 3; i++) {
-      n[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 200;
+      y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 200;
     }
     Matrix<double, Dynamic, Dynamic> xreal
         = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
@@ -132,7 +132,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
     Matrix<var, Dynamic, 1> alphavec = Matrix<double, 3, 1>::Ones() * alpha;
     var phi = phireal;
     theta = (x * beta) + alphavec;
-    var lp = stan::math::neg_binomial_2_log_lpmf(n, theta, phi);
+    var lp = stan::math::neg_binomial_2_log_lpmf(y, theta, phi);
     lp.grad();
 
     double lp_val = lp.val();
@@ -153,7 +153,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
     var alpha2 = alphareal[0];
     var phi2 = phireal;
     var lp2
-        = stan::math::neg_binomial_2_log_glm_lpmf(n, x2, alpha2, beta2, phi2);
+        = stan::math::neg_binomial_2_log_glm_lpmf(y, x2, alpha2, beta2, phi2);
     lp2.grad();
     EXPECT_FLOAT_EQ(lp_val, lp2.val());
     for (size_t i = 0; i < 2; i++) {
@@ -174,9 +174,9 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
 TEST(ProbDistributionsNegBinomial2LogGLM,
      glm_matches_neg_binomial_2_log_varying_intercept) {
   for (size_t ii = 0; ii < 200; ii++) {
-    Matrix<int, Dynamic, 1> n(3, 1);
+    Matrix<int, Dynamic, 1> y(3, 1);
     for (size_t i = 0; i < 3; i++) {
-      n[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 200;
+      y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 200;
     }
     Matrix<double, Dynamic, Dynamic> xreal
         = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
@@ -193,7 +193,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
     Matrix<var, Dynamic, 1> alpha = alphareal;
     Matrix<var, Dynamic, 1> phi = phireal;
     theta = (x * beta) + alpha;
-    var lp = stan::math::neg_binomial_2_log_lpmf(n, theta, phi);
+    var lp = stan::math::neg_binomial_2_log_lpmf(y, theta, phi);
     lp.grad();
 
     double lp_val = lp.val();
@@ -218,7 +218,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
     Matrix<var, Dynamic, 1> alpha2 = alphareal;
     Matrix<var, Dynamic, 1> phi2 = phireal;
     var lp2
-        = stan::math::neg_binomial_2_log_glm_lpmf(n, x2, alpha2, beta2, phi2);
+        = stan::math::neg_binomial_2_log_glm_lpmf(y, x2, alpha2, beta2, phi2);
     lp2.grad();
     EXPECT_FLOAT_EQ(lp_val, lp2.val());
     for (size_t i = 0; i < 2; i++) {

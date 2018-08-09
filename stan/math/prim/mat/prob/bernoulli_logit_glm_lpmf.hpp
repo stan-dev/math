@@ -7,13 +7,12 @@
 #include <stan/math/prim/mat/meta/assign_to_matrix_or_broadcast_array.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <stan/math/prim/scal/err/check_consistent_size.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/is_vector.hpp>
 #include <stan/math/prim/mat/meta/is_vector.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
@@ -26,55 +25,57 @@ namespace math {
 /**
  * Returns the log PMF of the Generalized Linear Model (GLM)
  * with Bernoulli distribution and logit link function.
+ * The idea is that bernoulli_logit_glm_lpmf(y, x, alpha, beta) should
+ * compute a more efficient version of bernoulli_logit_lpmf(y, alpha + x * beta)
+ * by using analytically simplified gradients.
  * If containers are supplied, returns the log sum of the probabilities.
- * @tparam T_n type of binary vector of dependent variables (labels);
+ * @tparam T_y type of binary vector of dependent variables (labels);
  * this can also be a single binary value;
  * @tparam T_x type of the matrix of independent variables (features); this
  * should be an Eigen::Matrix type whose number of rows should match the
- * length of n and whose number of columns should match the length of beta
+ * length of y and whose number of columns should match the length of beta
  * @tparam T_alpha type of the intercept(s);
- * this can be a vector (of the same length as n) of intercepts or a single
+ * this can be a vector (of the same length as y) of intercepts or a single
  * value (for models with constant intercept);
  * @tparam T_beta type of the weight vector;
  * this can also be a single value;
- * @param n binary vector parameter
+ * @param y binary vector parameter
  * @param x design matrix
  * @param alpha intercept (in log odds)
  * @param beta weight vector
  * @return log probability or log sum of probabilities
  * @throw std::domain_error if x, beta or alpha is infinite.
- * @throw std::domain_error if n is not binary.
+ * @throw std::domain_error if y is not binary.
  * @throw std::invalid_argument if container sizes mismatch.
  */
 
-template <bool propto, typename T_n, typename T_x, typename T_alpha,
+template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta>
 typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
-    const T_n &n, const T_x &x, const T_alpha &alpha, const T_beta &beta) {
+    const T_y &y, const T_x &x, const T_alpha &alpha, const T_beta &beta) {
   static const char *function = "bernoulli_logit_glm_lpmf";
-  typedef typename stan::partials_return_type<T_n, T_x, T_alpha, T_beta>::type
+  typedef typename stan::partials_return_type<T_y, T_x, T_alpha, T_beta>::type
       T_partials_return;
 
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
 
-  if (size_zero(n, x, beta))
+  if (size_zero(y, x, beta))
     return 0.0;
 
   T_partials_return logp(0.0);
 
-  check_bounded(function, "Vector of dependent variables", n, 0, 1);
+  check_bounded(function, "Vector of dependent variables", y, 0, 1);
   check_finite(function, "Matrix of independent variables", x);
   check_finite(function, "Weight vector", beta);
   check_finite(function, "Intercept", alpha);
-  check_consistent_sizes(function, "Rows in matrix of independent variables",
-                         x.col(0), "Vector of dependent variables", n);
-  check_consistent_sizes(function, "Columns in matrix of independent variables",
-                         x.row(0), "Weight vector", beta);
+  check_consistent_size(function, "Vector of dependent variables", y,
+  x.col(0).size());
+  check_consistent_size(function, "Weight vector", beta, x.row(0).size());
   if (is_vector<T_alpha>::value)
     check_consistent_sizes(function, "Vector of intercepts", alpha,
-                           "Vector of dependent variables", n);
+                           "Vector of dependent variables", y);
 
   if (!include_summand<propto, T_x, T_alpha, T_beta>::value)
     return 0.0;
@@ -84,9 +85,9 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
 
   Matrix<T_partials_return, Dynamic, 1> signs(N, 1);
   {
-    scalar_seq_view<T_n> n_vec(n);
+    scalar_seq_view<T_y> y_vec(y);
     for (size_t n = 0; n < N; ++n) {
-      signs[n] = 2 * n_vec[n] - 1;
+      signs[n] = 2 * y_vec[n] - 1;
     }
   }
   Matrix<T_partials_return, Dynamic, 1> beta_dbl(M, 1);
@@ -96,24 +97,24 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
       beta_dbl[m] = value_of(beta_vec[m]);
     }
   }
-  Eigen::Array<T_partials_return, Dynamic, 1> ntheta
+  Eigen::Array<T_partials_return, Dynamic, 1> ytheta
       = signs.array() * (value_of(x) * beta_dbl).array();
   scalar_seq_view<T_alpha> alpha_vec(alpha);
   for (size_t m = 0; m < N; ++m)
-    ntheta[m] += signs[m] * value_of(alpha_vec[m]);
+    ytheta[m] += signs[m] * value_of(alpha_vec[m]);
 
-  Eigen::Array<T_partials_return, Dynamic, 1> exp_m_ntheta = (-ntheta).exp();
+  Eigen::Array<T_partials_return, Dynamic, 1> exp_m_ytheta = (-ytheta).exp();
 
   static const double cutoff = 20.0;
   for (size_t n = 0; n < N; ++n) {
     // Compute the log-density and handle extreme values gracefully
     // using Taylor approximations.
-    if (ntheta[n] > cutoff)
-      logp -= exp_m_ntheta[n];
-    else if (ntheta[n] < -cutoff)
-      logp += ntheta[n];
+    if (ytheta[n] > cutoff)
+      logp -= exp_m_ytheta[n];
+    else if (ytheta[n] < -cutoff)
+      logp += ytheta[n];
     else
-      logp -= log1p(exp_m_ntheta[n]);
+      logp -= log1p(exp_m_ytheta[n]);
   }
 
   // Compute the necessary derivatives.
@@ -122,13 +123,13 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
         && is_constant_struct<T_alpha>::value)) {
     Matrix<T_partials_return, Dynamic, 1> theta_derivative(N, 1);
     for (size_t n = 0; n < N; ++n) {
-      if (ntheta[n] > cutoff)
-        theta_derivative[n] = -exp_m_ntheta[n];
-      else if (ntheta[n] < -cutoff)
+      if (ytheta[n] > cutoff)
+        theta_derivative[n] = -exp_m_ytheta[n];
+      else if (ytheta[n] < -cutoff)
         theta_derivative[n] = signs[n];
       else
         theta_derivative[n]
-            = signs[n] * exp_m_ntheta[n] / (exp_m_ntheta[n] + 1);
+            = signs[n] * exp_m_ytheta[n] / (exp_m_ytheta[n] + 1);
     }
     if (!is_constant_struct<T_beta>::value) {
       assign_to_matrix_or_broadcast_array(
@@ -150,11 +151,11 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   return ops_partials.build(logp);
 }
 
-template <typename T_n, typename T_x, typename T_alpha, typename T_beta>
+template <typename T_y, typename T_x, typename T_alpha, typename T_beta>
 inline typename return_type<T_x, T_beta, T_alpha>::type
-bernoulli_logit_glm_lpmf(const T_n &n, const T_x &x, const T_alpha &alpha,
+bernoulli_logit_glm_lpmf(const T_y &y, const T_x &x, const T_alpha &alpha,
                          const T_beta &beta) {
-  return bernoulli_logit_glm_lpmf<false>(n, x, alpha, beta);
+  return bernoulli_logit_glm_lpmf<false>(y, x, alpha, beta);
 }
 }  // namespace math
 }  // namespace stan

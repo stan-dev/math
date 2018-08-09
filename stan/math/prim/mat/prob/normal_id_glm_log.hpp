@@ -10,24 +10,24 @@ namespace math {
 /**
  * @deprecated use <code>normal_id_glm_lpdf</code>
  */
-template <bool propto, typename T_n, typename T_x, typename T_alpha,
+template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta, typename T_scale>
-typename return_type<T_n, T_x, T_alpha, T_beta, T_scale>::type
-normal_id_glm_log(const T_n &n, const T_x &x, const T_alpha &alpha,
+typename return_type<T_y, T_x, T_alpha, T_beta, T_scale>::type
+normal_id_glm_log(const T_y &y, const T_x &x, const T_alpha &alpha,
                   const T_beta &beta, const T_scale &sigma) {
-  return normal_id_glm_lpdf<propto, T_n, T_x, T_alpha, T_beta, T_scale>(
-      n, x, alpha, beta, sigma);
+  return normal_id_glm_lpdf<propto, T_y, T_x, T_alpha, T_beta, T_scale>(
+      y, x, alpha, beta, sigma);
 }
 
 /**
  * @deprecated use <code>normal_id_glm_lpdf</code>
  */
-template <typename T_n, typename T_x, typename T_alpha, typename T_beta,
+template <typename T_y, typename T_x, typename T_alpha, typename T_beta,
           typename T_scale>
-inline typename return_type<T_n, T_x, T_alpha, T_beta, T_scale>::type
-normal_id_glm_log(const T_n &n, const T_x &x, const T_alpha &alpha,
+inline typename return_type<T_y, T_x, T_alpha, T_beta, T_scale>::type
+normal_id_glm_log(const T_y &y, const T_x &x, const T_alpha &alpha,
                   const T_beta &beta, const T_scale &sigma) {
-  return normal_id_glm_lpdf<false>(n, x, alpha, beta, sigma);
+  return normal_id_glm_lpdf<false>(y, x, alpha, beta, sigma);
 }
 }  // namespace math
 }  // namespace stan
