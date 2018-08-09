@@ -112,8 +112,9 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
     if (include_summand<propto, T_scale>::value)
       logp -= log(value_of(sigma_vec[n]));
     inv_sigma[n] = 1 / value_of(sigma_vec[n]);
-    y_minus_mu_over_sigma[n] = (value_of(y_vec[n]) - mu_minus_alpha_dbl[n]
-      - value_of(alpha_vec[n])) * inv_sigma[n];
+    y_minus_mu_over_sigma[n]
+        = (value_of(y_vec[n]) - mu_minus_alpha_dbl[n] - value_of(alpha_vec[n]))
+          * inv_sigma[n];
     y_minus_mu_over_sigma_squared[n] = square(y_minus_mu_over_sigma[n]);
   }
 

@@ -117,8 +117,7 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
       theta_derivative[n] = signs[n];
     } else {
       logp -= log1p(exp_m_ythetan);
-      theta_derivative[n]
-          = signs[n] * exp_m_ythetan / (exp_m_ythetan + 1);
+      theta_derivative[n] = signs[n] * exp_m_ythetan / (exp_m_ythetan + 1);
     }
   }
 

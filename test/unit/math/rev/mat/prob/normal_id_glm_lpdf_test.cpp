@@ -303,7 +303,7 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_interface_types) {
   double value2 = 0;
 
   double d = 1.0;
-  std::vector<double> vd = {{ 1.0, 2.0 }};
+  std::vector<double> vd = {{1.0, 2.0}};
   Eigen::VectorXd ev(2);
   Eigen::RowVectorXd rv(2);
   Eigen::MatrixXd m1(1, 1);
@@ -319,7 +319,7 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_interface_types) {
   value += stan::math::normal_id_glm_lpdf(rv, m, rv, rv, rv);
 
   var v = 1.0;
-  std::vector<var> vv = {{ 1.0, 2.0 }};
+  std::vector<var> vv = {{1.0, 2.0}};
   Eigen::Matrix<var, -1, 1> evv(2);
   Eigen::Matrix<var, 1, -1> rvv(2);
   Eigen::Matrix<var, -1, -1> m1v(1, 1);
@@ -343,67 +343,65 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_error_checking) {
   int M = 2;
   int W = 4;
 
-  Eigen::Matrix<double, -1, 1> y =
-    Eigen::Matrix<double, -1, 1>::Random(N, 1);
-  Eigen::Matrix<double, -1, 1> yw1 =
-    Eigen::Matrix<double, -1, 1>::Random(W, 1);
-  Eigen::Matrix<double, -1, 1> yw2 =
-    Eigen::Matrix<double, -1, 1>::Random(W, 1) * NAN;
-  Eigen::Matrix<double, -1, -1> x =
-    Eigen::Matrix<double, -1, -1>::Random(N, M);
-  Eigen::Matrix<double, -1, -1> xw1 =
-    Eigen::Matrix<double, -1, -1>::Random(W, M);
-  Eigen::Matrix<double, -1, -1> xw2 =
-    Eigen::Matrix<double, -1, -1>::Random(N, W);
-  Eigen::Matrix<double, -1, -1> xw3 =
-    Eigen::Matrix<double, -1, -1>::Random(N, M) * NAN;
-  Eigen::Matrix<double, -1, 1> alpha =
-    Eigen::Matrix<double, -1, 1>::Random(N, 1);
-  Eigen::Matrix<double, -1, 1> alphaw1 =
-    Eigen::Matrix<double, -1, 1>::Random(W, 1);
-  Eigen::Matrix<double, -1, 1> alphaw2 =
-    Eigen::Matrix<double, -1, 1>::Random(N, 1) * NAN;
-  Eigen::Matrix<double, -1, 1> beta =
-    Eigen::Matrix<double, -1, 1>::Random(M, 1);
-  Eigen::Matrix<double, -1, 1> betaw1 =
-    Eigen::Matrix<double, -1, 1>::Random(W, 1);
-  Eigen::Matrix<double, -1, 1> betaw2 =
-    Eigen::Matrix<double, -1, 1>::Random(M, 1) * NAN;
-  Eigen::Matrix<double, -1, 1> sigma =
-    Eigen::Matrix<double, -1, 1>::Random(N, 1)
-    + Eigen::Matrix<double, -1, 1>::Ones(N, 1);
-  Eigen::Matrix<double, -1, 1> sigmaw1 =
-    Eigen::Matrix<double, -1, 1>::Random(W, 1)
-    + Eigen::Matrix<double, -1, 1>::Ones(W, 1);
-  Eigen::Matrix<double, -1, 1> sigmaw2 =
-    Eigen::Matrix<double, -1, 1>::Random(N, 1)
-    - Eigen::Matrix<double, -1, 1>::Ones(N, 1);
-  Eigen::Matrix<double, -1, 1> sigmaw3 =
-    (Eigen::Matrix<double, -1, 1>::Random(N, 1)
-    + Eigen::Matrix<double, -1, 1>::Ones(N, 1)) * NAN;
+  Eigen::Matrix<double, -1, 1> y = Eigen::Matrix<double, -1, 1>::Random(N, 1);
+  Eigen::Matrix<double, -1, 1> yw1 = Eigen::Matrix<double, -1, 1>::Random(W, 1);
+  Eigen::Matrix<double, -1, 1> yw2
+      = Eigen::Matrix<double, -1, 1>::Random(W, 1) * NAN;
+  Eigen::Matrix<double, -1, -1> x = Eigen::Matrix<double, -1, -1>::Random(N, M);
+  Eigen::Matrix<double, -1, -1> xw1
+      = Eigen::Matrix<double, -1, -1>::Random(W, M);
+  Eigen::Matrix<double, -1, -1> xw2
+      = Eigen::Matrix<double, -1, -1>::Random(N, W);
+  Eigen::Matrix<double, -1, -1> xw3
+      = Eigen::Matrix<double, -1, -1>::Random(N, M) * NAN;
+  Eigen::Matrix<double, -1, 1> alpha
+      = Eigen::Matrix<double, -1, 1>::Random(N, 1);
+  Eigen::Matrix<double, -1, 1> alphaw1
+      = Eigen::Matrix<double, -1, 1>::Random(W, 1);
+  Eigen::Matrix<double, -1, 1> alphaw2
+      = Eigen::Matrix<double, -1, 1>::Random(N, 1) * NAN;
+  Eigen::Matrix<double, -1, 1> beta
+      = Eigen::Matrix<double, -1, 1>::Random(M, 1);
+  Eigen::Matrix<double, -1, 1> betaw1
+      = Eigen::Matrix<double, -1, 1>::Random(W, 1);
+  Eigen::Matrix<double, -1, 1> betaw2
+      = Eigen::Matrix<double, -1, 1>::Random(M, 1) * NAN;
+  Eigen::Matrix<double, -1, 1> sigma
+      = Eigen::Matrix<double, -1, 1>::Random(N, 1)
+        + Eigen::Matrix<double, -1, 1>::Ones(N, 1);
+  Eigen::Matrix<double, -1, 1> sigmaw1
+      = Eigen::Matrix<double, -1, 1>::Random(W, 1)
+        + Eigen::Matrix<double, -1, 1>::Ones(W, 1);
+  Eigen::Matrix<double, -1, 1> sigmaw2
+      = Eigen::Matrix<double, -1, 1>::Random(N, 1)
+        - Eigen::Matrix<double, -1, 1>::Ones(N, 1);
+  Eigen::Matrix<double, -1, 1> sigmaw3
+      = (Eigen::Matrix<double, -1, 1>::Random(N, 1)
+         + Eigen::Matrix<double, -1, 1>::Ones(N, 1))
+        * NAN;
 
   EXPECT_THROW(stan::math::normal_id_glm_lpdf(yw1, x, alpha, beta, sigma),
-    std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(stan::math::normal_id_glm_lpdf(yw2, x, alpha, beta, sigma),
-    std::domain_error);
+               std::domain_error);
   EXPECT_THROW(stan::math::normal_id_glm_lpdf(y, xw1, alpha, beta, sigma),
-    std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(stan::math::normal_id_glm_lpdf(y, xw2, alpha, beta, sigma),
-    std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(stan::math::normal_id_glm_lpdf(y, xw3, alpha, beta, sigma),
-    std::domain_error);
+               std::domain_error);
   EXPECT_THROW(stan::math::normal_id_glm_lpdf(y, x, alphaw1, beta, sigma),
-    std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(stan::math::normal_id_glm_lpdf(y, x, alphaw2, beta, sigma),
-    std::domain_error);
+               std::domain_error);
   EXPECT_THROW(stan::math::normal_id_glm_lpdf(y, x, alpha, betaw1, sigma),
-    std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(stan::math::normal_id_glm_lpdf(y, x, alpha, betaw2, sigma),
-    std::domain_error);
+               std::domain_error);
   EXPECT_THROW(stan::math::normal_id_glm_lpdf(y, x, alpha, beta, sigmaw1),
-    std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(stan::math::normal_id_glm_lpdf(y, x, alpha, beta, sigmaw2),
-    std::domain_error);
+               std::domain_error);
   EXPECT_THROW(stan::math::normal_id_glm_lpdf(y, x, alpha, beta, sigmaw3),
-    std::domain_error);
+               std::domain_error);
 }

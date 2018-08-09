@@ -150,7 +150,7 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_vars_rand) {
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives, in case beta is a scalar.
 TEST(ProbDistributionsPoissonLogGLM,
-  glm_matches_poisson_log_vars_rand_scal_beta) {
+     glm_matches_poisson_log_vars_rand_scal_beta) {
   for (size_t ii = 0; ii < 20000; ii++) {
     Matrix<int, Dynamic, 1> y(3, 1);
     for (size_t i = 0; i < 3; i++) {
@@ -182,8 +182,7 @@ TEST(ProbDistributionsPoissonLogGLM,
     var beta2 = betareal;
     Matrix<var, Dynamic, Dynamic> x2 = xreal;
     var alpha2 = alphareal[0];
-    var lp2 =
-      stan::math::poisson_log_glm_lpmf(y, x2, alpha2, beta2);
+    var lp2 = stan::math::poisson_log_glm_lpmf(y, x2, alpha2, beta2);
     lp2.grad();
     EXPECT_FLOAT_EQ(lp_val, lp2.val());
     EXPECT_FLOAT_EQ(beta_adj, beta2.adj());
@@ -255,15 +254,14 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_varying_intercept) {
 }
 
 //  We check that we can instantiate all different interface types.
-TEST(ProbDistributionsPoissonLogGLM,
-  glm_matches_poisson_log_interface_types) {
+TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_interface_types) {
   double value = 0;
   double value2 = 0;
 
   int i = 1;
-  std::vector<double> vi = {{ 1, 0}};
+  std::vector<double> vi = {{1, 0}};
   double d = 1.0;
-  std::vector<double> vd = {{ 1.0, 2.0 }};
+  std::vector<double> vd = {{1.0, 2.0}};
   Eigen::VectorXd ev(2);
   Eigen::RowVectorXd rv(2);
   Eigen::MatrixXd m1(1, 1);
@@ -279,7 +277,7 @@ TEST(ProbDistributionsPoissonLogGLM,
   value += stan::math::poisson_log_glm_lpmf(vi, m, rv, rv);
 
   var v = 1.0;
-  std::vector<var> vv = {{ 1.0, 2.0 }};
+  std::vector<var> vv = {{1.0, 2.0}};
   Eigen::Matrix<var, -1, 1> evv(2);
   Eigen::Matrix<var, 1, -1> rvv(2);
   Eigen::Matrix<var, -1, -1> m1v(1, 1);
@@ -291,17 +289,14 @@ TEST(ProbDistributionsPoissonLogGLM,
 
   value2 += stan::math::poisson_log_glm_lpmf(i, m1v, v, v).val();
   value2 += stan::math::poisson_log_glm_lpmf(vi, mv, vv, vv).val();
-  value2
-    += stan::math::poisson_log_glm_lpmf(vi, mv, evv, evv).val();
-  value2
-    += stan::math::poisson_log_glm_lpmf(vi, mv, rvv, rvv).val();
+  value2 += stan::math::poisson_log_glm_lpmf(vi, mv, evv, evv).val();
+  value2 += stan::math::poisson_log_glm_lpmf(vi, mv, rvv, rvv).val();
 
   EXPECT_FLOAT_EQ(value, value2);
 }
 
 //  We check that the right errors are thrown.
-TEST(ProbDistributionsPoissonLogGLM,
-  glm_matches_poisson_log_error_checking) {
+TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_error_checking) {
   int N = 3;
   int M = 2;
   int W = 4;
@@ -318,43 +313,42 @@ TEST(ProbDistributionsPoissonLogGLM,
   for (int n = 0; n < N; n++) {
     yw2[n] = -(Eigen::Matrix<uint, -1, 1>::Random(1, 1)[0] % 200);
   }
-  Eigen::Matrix<double, -1, -1> x =
-    Eigen::Matrix<double, -1, -1>::Random(N, M);
-  Eigen::Matrix<double, -1, -1> xw1 =
-    Eigen::Matrix<double, -1, -1>::Random(W, M);
-  Eigen::Matrix<double, -1, -1> xw2 =
-    Eigen::Matrix<double, -1, -1>::Random(N, W);
-  Eigen::Matrix<double, -1, -1> xw3 =
-    Eigen::Matrix<double, -1, -1>::Random(N, M) * NAN;
-  Eigen::Matrix<double, -1, 1> alpha =
-    Eigen::Matrix<double, -1, 1>::Random(N, 1);
-  Eigen::Matrix<double, -1, 1> alphaw1 =
-    Eigen::Matrix<double, -1, 1>::Random(W, 1);
-  Eigen::Matrix<double, -1, 1> alphaw2 =
-    Eigen::Matrix<double, -1, 1>::Random(N, 1) * NAN;
-  Eigen::Matrix<double, -1, 1> beta =
-    Eigen::Matrix<double, -1, 1>::Random(M, 1);
-  Eigen::Matrix<double, -1, 1> betaw1 =
-    Eigen::Matrix<double, -1, 1>::Random(W, 1);
-  Eigen::Matrix<double, -1, 1> betaw2 =
-    Eigen::Matrix<double, -1, 1>::Random(M, 1) * NAN;
+  Eigen::Matrix<double, -1, -1> x = Eigen::Matrix<double, -1, -1>::Random(N, M);
+  Eigen::Matrix<double, -1, -1> xw1
+      = Eigen::Matrix<double, -1, -1>::Random(W, M);
+  Eigen::Matrix<double, -1, -1> xw2
+      = Eigen::Matrix<double, -1, -1>::Random(N, W);
+  Eigen::Matrix<double, -1, -1> xw3
+      = Eigen::Matrix<double, -1, -1>::Random(N, M) * NAN;
+  Eigen::Matrix<double, -1, 1> alpha
+      = Eigen::Matrix<double, -1, 1>::Random(N, 1);
+  Eigen::Matrix<double, -1, 1> alphaw1
+      = Eigen::Matrix<double, -1, 1>::Random(W, 1);
+  Eigen::Matrix<double, -1, 1> alphaw2
+      = Eigen::Matrix<double, -1, 1>::Random(N, 1) * NAN;
+  Eigen::Matrix<double, -1, 1> beta
+      = Eigen::Matrix<double, -1, 1>::Random(M, 1);
+  Eigen::Matrix<double, -1, 1> betaw1
+      = Eigen::Matrix<double, -1, 1>::Random(W, 1);
+  Eigen::Matrix<double, -1, 1> betaw2
+      = Eigen::Matrix<double, -1, 1>::Random(M, 1) * NAN;
 
   EXPECT_THROW(stan::math::poisson_log_glm_lpmf(yw1, x, alpha, beta),
-    std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(stan::math::poisson_log_glm_lpmf(yw2, x, alpha, beta),
-    std::domain_error);
+               std::domain_error);
   EXPECT_THROW(stan::math::poisson_log_glm_lpmf(y, xw1, alpha, beta),
-    std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(stan::math::poisson_log_glm_lpmf(y, xw2, alpha, beta),
-    std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(stan::math::poisson_log_glm_lpmf(y, xw3, alpha, beta),
-    std::domain_error);
+               std::domain_error);
   EXPECT_THROW(stan::math::poisson_log_glm_lpmf(y, x, alphaw1, beta),
-    std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(stan::math::poisson_log_glm_lpmf(y, x, alphaw2, beta),
-    std::domain_error);
+               std::domain_error);
   EXPECT_THROW(stan::math::poisson_log_glm_lpmf(y, x, alpha, betaw1),
-    std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(stan::math::poisson_log_glm_lpmf(y, x, alpha, betaw2),
-    std::domain_error);
+               std::domain_error);
 }
