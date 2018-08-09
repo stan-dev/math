@@ -135,7 +135,7 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
                 .sum();
   }
   if (include_summand<propto, T_precision>::value) {
-    for (int n = 0; n < N; ++n)
+    for (size_t n = 0; n < N; ++n)
       logp += multiply_log(phi_arr[n], phi_arr[n]) - lgamma(phi_arr[n]);
   }
   if (include_summand<propto, T_x, T_alpha, T_beta, T_precision>::value)
