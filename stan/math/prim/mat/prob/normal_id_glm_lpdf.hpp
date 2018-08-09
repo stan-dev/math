@@ -73,7 +73,7 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
   check_finite(function, "Intercept", alpha);
   check_positive(function, "Scale vector", sigma);
   check_consistent_size(function, "Vector of dependent variables", y,
-  x.col(0).size());
+                        x.col(0).size());
   check_consistent_size(function, "Weight vector", beta, x.row(0).size());
   if (is_vector<T_scale>::value)
     check_consistent_sizes(function, "Vector of scale parameters", sigma,

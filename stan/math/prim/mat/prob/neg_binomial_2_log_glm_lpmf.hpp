@@ -82,7 +82,7 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
   check_finite(function, "Intercept", alpha);
   check_positive_finite(function, "Precision parameter", phi);
   check_consistent_size(function, "Vector of dependent variables", y,
-  x.col(0).size());
+                        x.col(0).size());
   check_consistent_size(function, "Weight vector", beta, x.row(0).size());
   if (is_vector<T_precision>::value)
     check_consistent_sizes(function, "Vector of precision parameters", phi,
@@ -137,7 +137,7 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
                 .sum();
   }
   if (include_summand<propto, T_precision>::value) {
-    for(int i = 0; i < phi_arr.size(); ++i) {
+    for (int i = 0; i < phi_arr.size(); ++i) {
       logp += multiply_log(phi_arr[i], phi_arr[i]) - lgamma(phi_arr[i]);
     }
   }

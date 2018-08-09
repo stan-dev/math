@@ -67,7 +67,7 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
   check_finite(function, "Weight vector", beta);
   check_finite(function, "Intercept", alpha);
   check_consistent_size(function, "Vector of dependent variables", y,
-  x.col(0).size());
+                        x.col(0).size());
   check_consistent_size(function, "Weight vector", beta, x.row(0).size());
   if (is_vector<T_alpha>::value)
     check_consistent_sizes(function, "Vector of intercepts", alpha,
