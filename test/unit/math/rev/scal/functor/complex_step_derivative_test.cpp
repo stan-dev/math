@@ -29,6 +29,26 @@ TEST_F(ComplexStepDerivativeScalTest, func_exp_sqrt) {
 
   /* f near x = 0 has very large derivative */
   var x = 0.01;
+  var y = complex_step_derivative(f, x, x_r, x_i, 1.e-20, msgs);
+
+  ASSERT_FLOAT_EQ(y.val(), f(x.val(), x_r, x_i, msgs));
+
+  std::vector<stan::math::var> xv{x};
+  std::vector<double> g1, g;
+  var y1 = f(x, x_r, x_i, msgs);
+  stan::math::set_zero_all_adjoints();
+  y1.grad(xv, g1);
+  stan::math::set_zero_all_adjoints();
+  y.grad(xv, g);
+  ASSERT_FLOAT_EQ(g[0], g1[0]);
+}
+
+TEST_F(ComplexStepDerivativeScalTest, func_exp_sqrt_default_h) {
+  using stan::math::complex_step_derivative;
+  using stan::math::var;
+
+  /* f near x = 0 has very large derivative */
+  var x = 0.01;
   var y = complex_step_derivative(f, x, x_r, x_i, msgs);
 
   ASSERT_FLOAT_EQ(y.val(), f(x.val(), x_r, x_i, msgs));

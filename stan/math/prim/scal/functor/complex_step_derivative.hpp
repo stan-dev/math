@@ -20,6 +20,7 @@ namespace math {
  * @param[in] theta parameter where f and df/d(theta) is requested.
  * @param[in] x_r continuous data vector for the ODE.
  * @param[in] x_i integer data vector for the ODE.
+ * @param[in] h complex step size
  * @param[out] msgs the print stream for warning messages.
  * @return a var with value f(theta.val()) and derivative at theta.
  */
@@ -27,6 +28,7 @@ template <typename F>
 double complex_step_derivative(const F& f, const double& theta,
                                const std::vector<double>& x_r,
                                const std::vector<int>& x_i,
+                               const double h,
                                std::ostream* msgs) {
   return f(theta, x_r, x_i, msgs);
 }
