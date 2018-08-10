@@ -4,7 +4,9 @@
 #include <stan/math/prim/mat/fun/matrix_exp.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp_action_handler.hpp>
 #include <vector>
-
+#ifndef M_E
+#define M_E 2.71828182845904523536
+#endif
 TEST(MathMatrix, matrix_exp_action_diag) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
