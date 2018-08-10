@@ -145,11 +145,11 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
     }
     if (!is_constant_struct<T_scale>::value) {
       if (is_vector<T_scale>::value) {
-        ops_partials.edge5_.partials_ = 
-            ((y_minus_mu_over_sigma_squared
-              - Array<double, Dynamic, 1>::Ones(N, 1))
-             * inv_sigma)
-                .matrix();
+        ops_partials.edge5_.partials_
+            = ((y_minus_mu_over_sigma_squared
+                - Array<double, Dynamic, 1>::Ones(N, 1))
+               * inv_sigma)
+                  .matrix();
       } else {
         ops_partials.edge5_.partials_[0]
             = ((y_minus_mu_over_sigma_squared

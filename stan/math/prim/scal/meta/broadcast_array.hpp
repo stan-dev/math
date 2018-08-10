@@ -17,7 +17,9 @@ class broadcast_array {
   T& operator[](int /*i*/) { return prim_; }
 
   template <typename Y>
-  void operator=(const Y& m) { prim_ = m[0]; }
+  void operator=(const Y& m) {
+    prim_ = m[0];
+  }
 };
 
 template <typename T, typename S>

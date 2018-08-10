@@ -114,8 +114,8 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
   if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
         && is_constant_struct<T_alpha>::value)) {
     if (!is_constant_struct<T_beta>::value) {
-      ops_partials.edge3_.partials_ = value_of(x).transpose()
-                                       * theta_derivative;
+      ops_partials.edge3_.partials_
+          = value_of(x).transpose() * theta_derivative;
     }
     if (!is_constant_struct<T_x>::value) {
       ops_partials.edge1_.partials_ = theta_derivative * beta_dbl.transpose();
