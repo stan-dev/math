@@ -139,6 +139,10 @@ class kernel_cl {
                        + std::to_string(this->base_options()[comp_opts]);
       }
     }
+    kernel_opts += std::string(" -DA(i,j)=A[j*rows+i]");
+    kernel_opts += std::string(" -DB(i,j)=B[j*rows+i]");
+    kernel_opts += std::string(" -DC(i,j)=C[j*rows+i]");
+    
     try {
       cl::Program::Sources source(
           1,
