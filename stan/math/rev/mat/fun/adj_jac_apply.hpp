@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_REV_MAT_FUN_ADJ_JAC_APPLY_HPP
 #define STAN_MATH_REV_MAT_FUN_ADJ_JAC_APPLY_HPP
 
+#include <limits>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
-#include <limits>
 #include <vector>
 
 namespace stan {
@@ -20,13 +20,12 @@ namespace math {
  *
  * @tparam F class of functor
  */
-template <typename F>
-struct adj_jac_vari : public vari {
+template <typename F> struct adj_jac_vari : public vari {
   F f_;
   int N_;
-  vari** x_vi_;
+  vari **x_vi_;
   int M_;
-  vari** y_vi_;
+  vari **y_vi_;
 
   /**
    * The adj_jac_vari constructor
@@ -39,16 +38,15 @@ struct adj_jac_vari : public vari {
    *
    * @param x Input as vars
    */
-  explicit adj_jac_vari(const Eigen::Matrix<var, Eigen::Dynamic, 1>& x)
-      : vari(std::numeric_limits<double>::quiet_NaN()),  // The val_ in this
-                                                         // vari is unused
-        N_(x.size()),
-        x_vi_(build_vari_array(x)) {
+  explicit adj_jac_vari(const Eigen::Matrix<var, Eigen::Dynamic, 1> &x)
+      : vari(std::numeric_limits<double>::quiet_NaN()), // The val_ in this
+                                                        // vari is unused
+        N_(x.size()), x_vi_(build_vari_array(x)) {
     Eigen::Matrix<double, Eigen::Dynamic, 1> val_x = value_of(x);
     Eigen::Matrix<double, Eigen::Dynamic, 1> val_y = f_(val_x);
 
     M_ = val_y.size();
-    y_vi_ = ChainableStack::instance().memalloc_.alloc_array<vari*>(M_);
+    y_vi_ = ChainableStack::instance().memalloc_.alloc_array<vari *>(M_);
     for (int m = 0; m < M_; ++m) {
       y_vi_[m] = new vari(val_y(m), false);
     }
@@ -66,8 +64,8 @@ struct adj_jac_vari : public vari {
     Eigen::Matrix<double, Eigen::Dynamic, 1> y_adj(M_);
     for (int m = 0; m < M_; ++m)
       y_adj(m) = y_vi_[m]->adj_;
-    Eigen::Matrix<double, Eigen::Dynamic, 1> y_adj_jac
-        = f_.multiply_adjoint_jacobian(y_adj);
+    Eigen::Matrix<double, Eigen::Dynamic, 1> y_adj_jac =
+        f_.multiply_adjoint_jacobian(y_adj);
     for (int n = 0; n < N_; ++n)
       x_vi_[n]->adj_ += y_adj_jac(n);
   }
@@ -125,9 +123,9 @@ struct adj_jac_vari : public vari {
  * @return the result of the specified operation wrapped up in vars
  */
 template <class F>
-Eigen::Matrix<var, Eigen::Dynamic, 1> adj_jac_apply(
-    const Eigen::Matrix<var, Eigen::Dynamic, 1>& x) {
-  adj_jac_vari<F>* vi = new adj_jac_vari<F>(x);
+Eigen::Matrix<var, Eigen::Dynamic, 1>
+adj_jac_apply(const Eigen::Matrix<var, Eigen::Dynamic, 1> &x) {
+  adj_jac_vari<F> *vi = new adj_jac_vari<F>(x);
   Eigen::Matrix<var, Eigen::Dynamic, 1> y(vi->M_);
 
   for (int m = 0; m < y.size(); ++m)
@@ -135,6 +133,6 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> adj_jac_apply(
   return y;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif
