@@ -9,19 +9,17 @@
 class BetaProportionTestRig : public VectorRealRNGTestRig {
  public:
   BetaProportionTestRig()
-    : VectorRealRNGTestRig(10000, 10, {0.3, 0.4, 0.5, 0.6, 0.7}, {1, 2, 3},
+      : VectorRealRNGTestRig(10000, 10, {0.3, 0.4, 0.5, 0.6, 0.7}, {1, 2, 3},
                              {-2.5, -1.7, -0.1, 0.0}, {-3, -2, -1, 0},
                              {0.35, 0.5, 0.9, 1.7, 2.1, 4.1}, {1, 2, 3, 4},
                              {-2.7, -1.5, -0.5, 0.0}, {-3, -2, -1, 0}) {}
 
   template <typename T1, typename T2, typename T3, typename T_rng>
-  auto generate_samples(const T1& p, const T2& c, const T3&,
-                        T_rng& rng) const {
+  auto generate_samples(const T1& p, const T2& c, const T3&, T_rng& rng) const {
     return stan::math::beta_proportion_rng(p, c, rng);
   }
 
-  std::vector<double> generate_quantiles(double p, double c,
-                                         double) const {
+  std::vector<double> generate_quantiles(double p, double c, double) const {
     // transform from location and precision parameterization
     // into shape1 (alpha) and shape2 (beta) parameterization
     double alpha = p * c;

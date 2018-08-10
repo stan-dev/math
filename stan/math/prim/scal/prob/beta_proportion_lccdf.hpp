@@ -46,10 +46,8 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_prec>
 typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lccdf(
     const T_y& y, const T_loc& p, const T_prec& c) {
-
-  typedef
-    typename stan::partials_return_type<T_y, T_loc, T_prec>::type
-    T_partials_return;
+  typedef typename stan::partials_return_type<T_y, T_loc, T_prec>::type
+      T_partials_return;
 
   static const char* function = "beta_proportion_lccdf";
 
@@ -66,9 +64,8 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lccdf(
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_less_or_equal(function, "Random variable", y, 1.0);
-  check_consistent_sizes(function, "Random variable", y,
-                         "Location parameter", p,
-                         "Precision parameter", c);
+  check_consistent_sizes(function, "Random variable", y, "Location parameter",
+                         p, "Precision parameter", c);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> p_vec(p);
@@ -90,13 +87,13 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lccdf(
       digamma_c_1m_p(max_size(p, c));
   VectorBuilder<contains_nonconstant_struct<T_loc, T_prec>::value,
                 T_partials_return, T_loc, T_prec>
-    digamma_c(max_size(p, c));
+      digamma_c(max_size(p, c));
 
   if (contains_nonconstant_struct<T_loc, T_prec>::value) {
     for (size_t i = 0; i < N; i++) {
       const T_partials_return pc_dbl = value_of(p_vec[i]) * value_of(c_vec[i]);
       const T_partials_return c_1m_p_dbl
-        = value_of(c_vec[i]) * (1.0 - value_of(p_vec[i]));
+          = value_of(c_vec[i]) * (1.0 - value_of(p_vec[i]));
 
       digamma_pc[i] = digamma(pc_dbl);
       digamma_c_1m_p[i] = digamma(c_1m_p_dbl);
@@ -124,15 +121,14 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lccdf(
     T_partials_return g2 = 0;
 
     if (contains_nonconstant_struct<T_loc, T_prec>::value) {
-      grad_reg_inc_beta(g1, g2, pc_dbl, c_1m_p_dbl, y_dbl,
-                        digamma_pc[n], digamma_c_1m_p[n],
-                        digamma_c[n], betafunc_dbl);
+      grad_reg_inc_beta(g1, g2, pc_dbl, c_1m_p_dbl, y_dbl, digamma_pc[n],
+                        digamma_c_1m_p[n], digamma_c[n], betafunc_dbl);
     }
     if (!is_constant_struct<T_loc>::value)
       ops_partials.edge2_.partials_[n] -= c_dbl * (g1 - g2) / Pn;
     if (!is_constant_struct<T_prec>::value)
       ops_partials.edge3_.partials_[n]
-        -= (g1 * p_dbl + g2 * (1.0 - p_dbl)) / Pn;
+          -= (g1 * p_dbl + g2 * (1.0 - p_dbl)) / Pn;
   }
   return ops_partials.build(ccdf_log);
 }

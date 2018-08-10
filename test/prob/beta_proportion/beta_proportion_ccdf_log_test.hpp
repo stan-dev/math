@@ -21,7 +21,8 @@ class AgradCcdfLogBetaProportion : public AgradCcdfLogTest {
     param[1] = 0.75;  // p (location)
     param[2] = 1.4;   // c (precision)
     parameters.push_back(param);
-    log_ccdf.push_back(std::log(1.0 - 0.08724396598527127));  // expected Log_CDF
+    log_ccdf.push_back(
+        std::log(1.0 - 0.08724396598527127));  // expected Log_CDF
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {
@@ -61,19 +62,19 @@ class AgradCcdfLogBetaProportion : public AgradCcdfLogTest {
 
   double upper_bound() { return 1.0; }
 
-  template <typename T_y, typename T_loc, typename T_prec,
-            typename T3, typename T4, typename T5>
+  template <typename T_y, typename T_loc, typename T_prec, typename T3,
+            typename T4, typename T5>
   typename stan::return_type<T_y, T_loc, T_prec>::type ccdf_log(
-      const T_y& y, const T_loc& p, const T_prec& c,
-      const T3&, const T4&, const T5&) {
+      const T_y& y, const T_loc& p, const T_prec& c, const T3&, const T4&,
+      const T5&) {
     return stan::math::beta_proportion_lccdf(y, p, c);
   }
 
-  template <typename T_y, typename T_loc, typename T_prec,
-            typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_prec>::type
-  ccdf_log_function(const T_y& y, const T_loc& p,
-                    const T_prec& c, const T3&, const T4&, const T5&) {
+  template <typename T_y, typename T_loc, typename T_prec, typename T3,
+            typename T4, typename T5>
+  typename stan::return_type<T_y, T_loc, T_prec>::type ccdf_log_function(
+      const T_y& y, const T_loc& p, const T_prec& c, const T3&, const T4&,
+      const T5&) {
     return stan::math::beta_proportion_lccdf(y, p, c);
   }
 };

@@ -43,15 +43,13 @@ namespace math {
  * @tparam T_loc Type of prior location.
  * @tparam T_prec Type of prior precision.
  */
-template <bool propto, typename T_y, typename T_loc,
-          typename T_prec>
+template <bool propto, typename T_y, typename T_loc, typename T_prec>
 typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lpdf(
     const T_y& y, const T_loc& p, const T_prec& c) {
   static const char* function = "beta_proportion_lpdf";
 
-  typedef
-    typename stan::partials_return_type<T_y, T_loc, T_prec>::type
-    T_partials_return;
+  typedef typename stan::partials_return_type<T_y, T_loc, T_prec>::type
+      T_partials_return;
 
   using stan::is_constant_struct;
   using std::log;
@@ -67,9 +65,8 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lpdf(
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_less_or_equal(function, "Random variable", y, 1.0);
-  check_consistent_sizes(function, "Random variable", y,
-                         "Location parameter", p,
-                         "Precision parameter", c);
+  check_consistent_sizes(function, "Random variable", y, "Location parameter",
+                         p, "Precision parameter", c);
 
   if (!include_summand<propto, T_y, T_loc, T_prec>::value)
     return 0.0;
@@ -103,14 +100,13 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lpdf(
 
   VectorBuilder<include_summand<propto, T_loc, T_prec>::value,
                 T_partials_return, T_loc, T_prec>
-    lgamma_pc(max_size(p, c));
+      lgamma_pc(max_size(p, c));
   VectorBuilder<contains_nonconstant_struct<T_loc, T_prec>::value,
                 T_partials_return, T_loc, T_prec>
-    digamma_pc(max_size(p, c));
+      digamma_pc(max_size(p, c));
 
   for (size_t n = 0; n < max_size(p, c); n++) {
-    const T_partials_return pc
-      = value_of(p_vec[n]) * value_of(c_vec[n]);
+    const T_partials_return pc = value_of(p_vec[n]) * value_of(c_vec[n]);
     if (include_summand<propto, T_loc, T_prec>::value)
       lgamma_pc[n] = lgamma(pc);
     if (contains_nonconstant_struct<T_loc, T_prec>::value)
@@ -119,26 +115,25 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lpdf(
 
   VectorBuilder<include_summand<propto, T_loc, T_prec>::value,
                 T_partials_return, T_loc, T_prec>
-    lgamma_c_1m_p(max_size(p, c));
+      lgamma_c_1m_p(max_size(p, c));
   VectorBuilder<contains_nonconstant_struct<T_loc, T_prec>::value,
                 T_partials_return, T_loc, T_prec>
-    digamma_c_1m_p(max_size(p, c));
+      digamma_c_1m_p(max_size(p, c));
 
   for (size_t n = 0; n < max_size(p, c); n++) {
     const T_partials_return c_1m_p
-      = value_of(c_vec[n]) * (1.0 - value_of(p_vec[n]));
+        = value_of(c_vec[n]) * (1.0 - value_of(p_vec[n]));
     if (include_summand<propto, T_loc, T_prec>::value)
       lgamma_c_1m_p[n] = lgamma(c_1m_p);
     if (contains_nonconstant_struct<T_loc, T_prec>::value)
       digamma_c_1m_p[n] = digamma(c_1m_p);
   }
 
-  VectorBuilder<include_summand<propto, T_prec>::value,
-                T_partials_return, T_prec>
-    lgamma_c(length(c));
-  VectorBuilder<!is_constant_struct<T_prec>::value,
-                T_partials_return, T_prec>
-    digamma_c(length(c));
+  VectorBuilder<include_summand<propto, T_prec>::value, T_partials_return,
+                T_prec>
+      lgamma_c(length(c));
+  VectorBuilder<!is_constant_struct<T_prec>::value, T_partials_return, T_prec>
+      digamma_c(length(c));
 
   for (size_t n = 0; n < length(c); n++) {
     if (include_summand<propto, T_prec>::value)
@@ -168,11 +163,12 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lpdf(
     }
     if (!is_constant_struct<T_loc>::value)
       ops_partials.edge2_.partials_[n]
-        += c_dbl * (digamma_c_1m_p[n] - digamma_pc[n] + log_y[n] - log1m_y[n]);
+          += c_dbl
+             * (digamma_c_1m_p[n] - digamma_pc[n] + log_y[n] - log1m_y[n]);
     if (!is_constant_struct<T_prec>::value)
       ops_partials.edge3_.partials_[n]
-        += digamma_c[n] + p_dbl * (log_y[n] - digamma_pc[n])
-        + (1.0 - p_dbl) * (log1m_y[n] - digamma_c_1m_p[n]);
+          += digamma_c[n] + p_dbl * (log_y[n] - digamma_pc[n])
+             + (1.0 - p_dbl) * (log1m_y[n] - digamma_c_1m_p[n]);
   }
   return ops_partials.build(logp);
 }
