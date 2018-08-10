@@ -104,6 +104,7 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   // And compute the derivatives wrt theta.
   static const double cutoff = 20.0;
   Matrix<T_partials_return, Dynamic, 1> theta_derivative(N, 1);
+  T_partials_return theta_derivative_sum = 0;
   T_partials_return exp_m_ythetan;
   for (size_t n = 0; n < N; ++n) {
     ytheta[n] += signs[n] * value_of(alpha_vec[n]);
@@ -118,6 +119,8 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
       logp -= log1p(exp_m_ythetan);
       theta_derivative[n] = signs[n] * exp_m_ythetan / (exp_m_ythetan + 1);
     }
+    if (!is_vector<T_alpha>::value)
+      theta_derivative_sum += theta_derivative[n];
   }
 
   // Compute the necessary derivatives.
@@ -133,7 +136,7 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
     if (is_vector<T_alpha>::value)
       ops_partials.edge2_.set_partials(theta_derivative);
     else
-      ops_partials.edge2_.partials_[0] = theta_derivative.sum();
+      ops_partials.edge2_.partials_[0] = theta_derivative_sum;
   }
 
   return ops_partials.build(logp);

@@ -2,6 +2,31 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+TEST(AgradPartialsVari, OperandsAndPartialsFvarScal) {
+  using stan::math::fvar;
+  using stan::math::operands_and_partials;
+
+  fvar<double> x3 = 5.0;
+  x3.d_ = 4.0;
+
+  Eigen::VectorXd dx1(2);
+  dx1 << 17.0, 13.0;
+
+  operands_and_partials<fvar<double> >
+      o(x3);
+  o.edge1_.partials_[0] += 23.0;
+  o.edge1_.partials_[0] += 23.0;
+  fvar<double> y = o.build(-1.0);
+
+  EXPECT_FLOAT_EQ(2 * 4 * 23, y.d_);
+  EXPECT_FLOAT_EQ(-1, y.val_);
+
+  Eigen::Matrix<double, -1, 1> dv(1);
+  dv << 1.0;
+  o.edge1_.set_partials(dv);
+  EXPECT_FLOAT_EQ(1.0, o.edge1_.partials_[0]);
+}
+
 TEST(AgradPartialsVari, OperandsAndPartialsFvarVec) {
   using stan::math::fvar;
   using stan::math::operands_and_partials;
@@ -29,4 +54,39 @@ TEST(AgradPartialsVari, OperandsAndPartialsFvarVec) {
 
   EXPECT_FLOAT_EQ(2 * 17 + 3 * 13 - 2 * 19 + 2 * 4 * 23, y.d_);
   EXPECT_FLOAT_EQ(-1, y.val_);
+
+  Eigen::Matrix<double, -1, 1> dv(2);
+  dv << 1.0, 2.0;
+  o.edge1_.set_partials(dv);
+  EXPECT_FLOAT_EQ(1.0, o.edge1_.partials_[0]);
+  EXPECT_FLOAT_EQ(2.0, o.edge1_.partials_[1]);
+}
+
+TEST(AgradPartialsVari, OperandsAndPartialsFvarMat) {
+  using stan::math::fvar;
+  using stan::math::operands_and_partials;
+
+  Eigen::Matrix<fvar<double>, -1, -1> x1(2, 2);
+  x1 << (fvar<double>(2.0, 2.0)), (fvar<double>(1.0, 3.0)),
+   (fvar<double>(4.0, 5.0)), (fvar<double>(6.0, 7.0));
+
+  Eigen::MatrixXd dx1(2, 2);
+  dx1 << 17.0, 13.0, 23.0, 32.0;
+
+  operands_and_partials<Eigen::Matrix<fvar<double>, -1, -1>>
+      o(x1);
+  o.edge1_.partials_vec_[0] += dx1;
+
+  fvar<double> y = o.build(-1.0);
+
+  EXPECT_FLOAT_EQ(2 * 17 + 3 * 13 + 5 * 23 + 7 * 32, y.d_);
+  EXPECT_FLOAT_EQ(-1, y.val_);
+
+  Eigen::Matrix<double, -1, -1> dv(2, 2);
+  dv << 1.0, 2.0, 3.0, 4.0;
+  o.edge1_.set_partials(dv);
+  EXPECT_FLOAT_EQ(1.0, o.edge1_.partials_(0, 0));
+  EXPECT_FLOAT_EQ(2.0, o.edge1_.partials_(0, 1));
+  EXPECT_FLOAT_EQ(3.0, o.edge1_.partials_(1, 0));
+  EXPECT_FLOAT_EQ(4.0, o.edge1_.partials_(1, 1));
 }

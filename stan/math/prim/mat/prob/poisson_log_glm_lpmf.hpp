@@ -77,14 +77,6 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
   if (!include_summand<propto, T_x, T_alpha, T_beta>::value)
     return 0.0;
 
-  Matrix<T_partials_return, Dynamic, 1> y_vec(N, 1);
-  {
-    scalar_seq_view<T_y> y_seq_view(y);
-    for (size_t n = 0; n < N; ++n) {
-      y_vec[n] = y_seq_view[n];
-    }
-  }
-
   Matrix<T_partials_return, Dynamic, 1> beta_dbl(M, 1);
   {
     scalar_seq_view<T_beta> beta_vec(beta);
@@ -93,21 +85,27 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
     }
   }
 
-  Matrix<T_partials_return, Dynamic, 1> theta_dbl = (value_of(x) * beta_dbl);
-  scalar_seq_view<T_alpha> alpha_vec(alpha);
-  for (size_t n = 0; n < N; ++n)
-    theta_dbl[n] += value_of(alpha_vec[n]);
-  Matrix<T_partials_return, Dynamic, 1> exp_theta
-      = theta_dbl.array().exp().matrix();
+  Matrix<T_partials_return, Dynamic, 1> theta_dbl = value_of(x) * beta_dbl;
 
-  for (size_t n = 0; n < N; n++) {
+  Matrix<T_partials_return, Dynamic, 1> theta_derivative(N);
+  T_partials_return theta_derivative_sum = 0;
+  scalar_seq_view<T_alpha> alpha_vec(alpha);
+  scalar_seq_view<T_y> y_seq_view(y);
+  for (size_t n = 0; n < N; ++n) {
+    // Compute the derivative wrt theta.
+    double theta_dbl_n = theta_dbl[n] + value_of(alpha_vec[n]);
+    double exp_theta_n = exp(theta_dbl_n);
+    theta_derivative[n] = y_seq_view[n] - exp_theta_n;
+    if (!is_vector<T_alpha>::value)
+      theta_derivative_sum += theta_derivative[n];
+
     // Compute the log-density.
-    if (!(theta_dbl[n] == -std::numeric_limits<double>::infinity()
-          && y_vec[n] == 0)) {
+    if (!(theta_dbl_n == -std::numeric_limits<double>::infinity()
+          && y_seq_view[n] == 0)) {
       if (include_summand<propto>::value)
-        logp -= lgamma(y_vec[n] + 1.0);
+        logp -= lgamma(y_seq_view[n] + 1.0);
       if (include_summand<propto, T_partials_return>::value)
-        logp += y_vec[n] * theta_dbl[n] - exp_theta[n];
+        logp += y_seq_view[n] * theta_dbl_n - exp_theta_n;
     }
   }
 
@@ -115,7 +113,6 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
   operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
   if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
         && is_constant_struct<T_alpha>::value)) {
-    Matrix<T_partials_return, Dynamic, 1> theta_derivative = y_vec - exp_theta;
     if (!is_constant_struct<T_beta>::value) {
       ops_partials.edge3_.set_partials(value_of(x).transpose()
                                        * theta_derivative);
@@ -127,7 +124,7 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
       if (is_vector<T_alpha>::value)
         ops_partials.edge2_.set_partials(theta_derivative);
       else
-        ops_partials.edge2_.partials_[0] = theta_derivative.sum();
+        ops_partials.edge2_.partials_[0] = theta_derivative_sum;
     }
   }
   return ops_partials.build(logp);
