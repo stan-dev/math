@@ -129,27 +129,27 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
     Matrix<T_partials_return, Dynamic, 1> mu_derivative
         = (inv_sigma * y_minus_mu_over_sigma).matrix();
     if (!is_constant_struct<T_y>::value) {
-      ops_partials.edge1_.set_partials(-mu_derivative);
+      ops_partials.edge1_.partials_ = -mu_derivative;
     }
     if (!is_constant_struct<T_x>::value) {
       ops_partials.edge2_.partials_ = mu_derivative * beta_dbl.transpose();
     }
     if (!is_constant_struct<T_beta>::value) {
-      ops_partials.edge4_.set_partials(value_of(x).transpose() * mu_derivative);
+      ops_partials.edge4_.partials_ = value_of(x).transpose() * mu_derivative;
     }
     if (!is_constant_struct<T_alpha>::value) {
       if (is_vector<T_alpha>::value)
-        ops_partials.edge3_.set_partials(mu_derivative);
+        ops_partials.edge3_.partials_ = mu_derivative;
       else
         ops_partials.edge3_.partials_[0] = mu_derivative.sum();
     }
     if (!is_constant_struct<T_scale>::value) {
       if (is_vector<T_scale>::value) {
-        ops_partials.edge5_.set_partials(
+        ops_partials.edge5_.partials_ = 
             ((y_minus_mu_over_sigma_squared
               - Array<double, Dynamic, 1>::Ones(N, 1))
              * inv_sigma)
-                .matrix());
+                .matrix();
       } else {
         ops_partials.edge5_.partials_[0]
             = ((y_minus_mu_over_sigma_squared

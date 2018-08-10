@@ -32,8 +32,6 @@ class ops_partials_edge {
 
   ops_partials_edge() {}
   explicit ops_partials_edge(const Op& /* op */) {}
-  template <typename TT>
-  void set_partials(const TT& d);
 
  private:
   template <typename, typename, typename, typename, typename, typename>

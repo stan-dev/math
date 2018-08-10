@@ -23,7 +23,7 @@ class empty_broadcast_array<ViewElt, Eigen::Matrix<OpElt, R, C> > {
   /**
    * Not implemented so cannot be called.
    */
-  void operator=(Eigen::Matrix<ViewElt, R, C> /*A*/);
+  void operator=(const Eigen::Matrix<ViewElt, R, C>& /*A*/);
   /**
    * Not implemented so cannot be called.
    */

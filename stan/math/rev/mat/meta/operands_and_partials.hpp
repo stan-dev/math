@@ -23,10 +23,6 @@ class ops_partials_edge<double, std::vector<var> > {
       : partials_(partials_t::Zero(op.size())),
         partials_vec_(partials_),
         operands_(op) {}
-  template <typename TT>
-  void set_partials(const TT& d) {
-    partials_ = d;
-  }
 
  private:
   template <typename, typename, typename, typename, typename, typename>
@@ -57,10 +53,6 @@ class ops_partials_edge<double, Eigen::Matrix<var, R, C> > {
       : partials_(partials_t::Zero(ops.rows(), ops.cols())),
         partials_vec_(partials_),
         operands_(ops) {}
-  template <typename TT>
-  void set_partials(const TT& d) {
-    partials_ = d;
-  }
 
  private:
   template <typename, typename, typename, typename, typename, typename>
@@ -94,8 +86,6 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C> > > {
       partials_vec_[i] = partial_t::Zero(ops[i].rows(), ops[i].cols());
     }
   }
-  template <typename TT>
-  void set_partials(const TT& d);
 
  private:
   template <typename, typename, typename, typename, typename, typename>
@@ -137,8 +127,6 @@ class ops_partials_edge<double, std::vector<std::vector<var> > > {
       partials_vec_[i] = partial_t(length(ops[i]), 0.0);
     }
   }
-  template <typename TT>
-  void set_partials(const TT& d);
 
  private:
   template <typename, typename, typename, typename, typename, typename>
