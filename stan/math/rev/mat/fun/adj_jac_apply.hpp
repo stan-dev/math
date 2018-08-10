@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_REV_MAT_FUN_ADJ_JAC_APPLY_HPP
 #define STAN_MATH_REV_MAT_FUN_ADJ_JAC_APPLY_HPP
 
-#include <limits>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
+#include <limits>
 #include <vector>
 
 namespace stan {
