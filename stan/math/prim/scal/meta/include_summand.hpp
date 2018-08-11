@@ -17,16 +17,23 @@ namespace math {
  * should be included for all of the types of variables
  * in a term.
  *
+ * The metaprogram can take an arbitrary number of types.
+ *
  * The <code>value</code> enum will be <code>true</code> if the
  * <code>propto</code> parameter is <code>false</code> or if any
  * of the other template arguments are not constants as defined by
  * <code>stan::is_constant<T></code>.
-
+ *
+ * Example use: <code>include_summand<false, double, var, double, double></code>
+ *
  * @tparam propto <code>true</code> if calculating up to a
  * proportionality constant.
- * @tparam T1 First
+ * @tparam T (optional). A type
+ * @tparam T_pack (optional). A parameter pack of types. This is used to
+ * extend the applicabiity of the function to an arbitrary number of types.
  */
-template <bool propto, typename T=double, typename... T_pack>
+
+template <bool propto, typename T = double, typename... T_pack>
 struct include_summand {
   enum {
     value = (!stan::is_constant<typename scalar_type<T>::type>::value
@@ -35,7 +42,6 @@ struct include_summand {
   };
 };
 
-// T defaults to double (specializations inherrit defaults)
 template <bool propto, typename T>
 struct include_summand<propto,T> {
   /**
