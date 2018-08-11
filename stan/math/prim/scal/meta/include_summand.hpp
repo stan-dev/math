@@ -32,25 +32,24 @@ namespace math {
  * @tparam T_pack (optional). A parameter pack of types. This is used to
  * extend the applicabiity of the function to an arbitrary number of types.
  */
-
 template <bool propto, typename T = double, typename... T_pack>
 struct include_summand {
   enum {
     value = (!stan::is_constant<typename scalar_type<T>::type>::value
-      || include_summand<propto,T_pack...>::value
-    )
+             || include_summand<propto, T_pack...>::value)
   };
 };
 
 template <bool propto, typename T>
-struct include_summand<propto,T> {
+struct include_summand<propto, T> {
   /**
    * <code>true</code> if a term with the specified propto
    * value and subterm types should be included in a proportionality
    * calculation.
    */
   enum {
-    value = (!propto || !stan::is_constant<typename scalar_type<T>::type>::value)
+    value
+    = (!propto || !stan::is_constant<typename scalar_type<T>::type>::value)
   };
 };
 
