@@ -26,16 +26,35 @@ namespace math {
  * proportionality constant.
  * @tparam T1 First
  */
+template <bool propto, typename T=double, typename... T_pack>
+struct include_summand {
+  enum {
+    value = (!stan::is_constant<typename scalar_type<T>::type>::value
+      || include_summand<propto,T_pack...>::value
+    )
+  };
+};
+
+// T defaults to double (specializations inherrit defaults)
+template <bool propto, typename T>
+struct include_summand<propto,T> {
+  enum {
+    value = (!propto || !stan::is_constant<typename scalar_type<T>::type>::value)
+  };
+};
+   /**
+    * <code>true</code> if a term with the specified propto
+    * value and subterm types should be included in a proportionality
+    * calculation.
+    */
+
+ /*
 template <bool propto, typename T1 = double, typename T2 = double,
           typename T3 = double, typename T4 = double, typename T5 = double,
           typename T6 = double, typename T7 = double, typename T8 = double,
           typename T9 = double, typename T10 = double>
-struct include_summand {
-  /**
-   * <code>true</code> if a term with the specified propto
-   * value and subterm types should be included in a proportionality
-   * calculation.
-   */
+          struct include_summand {
+
   enum {
     value
     = (!propto || !stan::is_constant<typename scalar_type<T1>::type>::value
@@ -49,7 +68,9 @@ struct include_summand {
        || !stan::is_constant<typename scalar_type<T9>::type>::value
        || !stan::is_constant<typename scalar_type<T10>::type>::value)
   };
+
 };
+*/
 
 }  // namespace math
 
