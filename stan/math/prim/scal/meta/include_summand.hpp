@@ -38,39 +38,15 @@ struct include_summand {
 // T defaults to double (specializations inherrit defaults)
 template <bool propto, typename T>
 struct include_summand<propto,T> {
+  /**
+   * <code>true</code> if a term with the specified propto
+   * value and subterm types should be included in a proportionality
+   * calculation.
+   */
   enum {
     value = (!propto || !stan::is_constant<typename scalar_type<T>::type>::value)
   };
 };
-   /**
-    * <code>true</code> if a term with the specified propto
-    * value and subterm types should be included in a proportionality
-    * calculation.
-    */
-
- /*
-template <bool propto, typename T1 = double, typename T2 = double,
-          typename T3 = double, typename T4 = double, typename T5 = double,
-          typename T6 = double, typename T7 = double, typename T8 = double,
-          typename T9 = double, typename T10 = double>
-          struct include_summand {
-
-  enum {
-    value
-    = (!propto || !stan::is_constant<typename scalar_type<T1>::type>::value
-       || !stan::is_constant<typename scalar_type<T2>::type>::value
-       || !stan::is_constant<typename scalar_type<T3>::type>::value
-       || !stan::is_constant<typename scalar_type<T4>::type>::value
-       || !stan::is_constant<typename scalar_type<T5>::type>::value
-       || !stan::is_constant<typename scalar_type<T6>::type>::value
-       || !stan::is_constant<typename scalar_type<T7>::type>::value
-       || !stan::is_constant<typename scalar_type<T8>::type>::value
-       || !stan::is_constant<typename scalar_type<T9>::type>::value
-       || !stan::is_constant<typename scalar_type<T10>::type>::value)
-  };
-
-};
-*/
 
 }  // namespace math
 
