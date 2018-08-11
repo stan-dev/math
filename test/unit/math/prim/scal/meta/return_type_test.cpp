@@ -20,14 +20,16 @@ TEST(MetaTraits, ReturnTypeInt) {
 
 TEST(MetaTraits, ReturnTypeDoubleMany) {
 <<<<<<< HEAD
-  test::expect_same_type<double, return_type<double,int,double,float,float,
-    double,float,int,double>::type>();
+  test::expect_same_type<double,
+                         return_type<double, int, double, float, float, double,
+                                     float, int, double>::type>();
 }
 
 TEST(MetaTraits, ReturnTypeTwentyOneParams) {
-  test::expect_same_type<var, return_type<double,var,double,int,double,float,
-     float,float,var,int,double,int,double,float,float,
-     double,var,double,int,double,float>::type>();
+  test::expect_same_type<
+      var, return_type<double, var, double, int, double, float, float, float,
+                       var, int, double, int, double, float, float, double, var,
+                       double, int, double, float>::type>();
 =======
   test::expect_same_type<double,
                          return_type<double, int, double, float, float, double,

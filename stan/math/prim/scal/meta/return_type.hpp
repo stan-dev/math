@@ -8,8 +8,8 @@ namespace stan {
 
 /**
  * Template metaprogram to calculate the base scalar return type resulting
- * from promoting all the scalar types of the template parameters. The metaprogram
- * can take an arbitrary number of template parameters.
+ * from promoting all the scalar types of the template parameters. The
+ * metaprogram can take an arbitrary number of template parameters.
  *
  * All C++ primitive types (except <code>long double</code>) are automatically
  * promoted to <code>double</code>.
@@ -30,19 +30,18 @@ namespace stan {
  */
 
 <<<<<<< HEAD
- template <typename T, typename... Types_pack>
- struct return_type {
-   typedef typename boost::math::tools::promote_args<double,
-      typename scalar_type<T>::type,
-      typename return_type<Types_pack...>::type>::type
-      type;
- };
+template <typename T, typename... Types_pack>
+struct return_type {
+  typedef typename boost::math::tools::promote_args<
+      double, typename scalar_type<T>::type,
+      typename return_type<Types_pack...>::type>::type type;
+};
 
- template <typename T>
- struct return_type<T> {
-   typedef typename boost::math::tools::promote_args<double,
-       typename scalar_type<T>::type>::type type;
- };
+template <typename T>
+struct return_type<T> {
+  typedef typename boost::math::tools::promote_args<
+      double, typename scalar_type<T>::type>::type type;
+};
 =======
 template <typename T, typename... Types_pack>
 struct return_type {
