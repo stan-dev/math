@@ -3,8 +3,8 @@
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
-using stan::return_type;
 using stan::math::var;
+using stan::return_type;
 
 TEST(MetaTraits, ReturnTypeDouble) {
   test::expect_same_type<double, return_type<double>::type>();
@@ -19,14 +19,16 @@ TEST(MetaTraits, ReturnTypeInt) {
 }
 
 TEST(MetaTraits, ReturnTypeDoubleMany) {
-  test::expect_same_type<double, return_type<double,int,double,float,float,double,float,int,double>::type>();
+  test::expect_same_type<double,
+                         return_type<double, int, double, float, float, double,
+                                     float, int, double>::type>();
 }
 
 TEST(MetaTraits, ReturnTypeVarMany) {
-  test::expect_same_type<var, return_type<double,var,float,var,int,double,int,double,float,float>::type>();
+  test::expect_same_type<var, return_type<double, var, float, var, int, double,
+                                          int, double, float, float>::type>();
 }
 
-
 TEST(MetaTraits, ReturnTypeVarLast) {
-  test::expect_same_type<var, return_type<double,double,var>::type>();
+  test::expect_same_type<var, return_type<double, double, var>::type>();
 }

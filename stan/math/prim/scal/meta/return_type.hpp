@@ -12,20 +12,18 @@ namespace stan {
  * Note: Sub-double types are promoted to double.
  */
 
+template <typename T, typename... Types_pack>
+struct return_type {
+  typedef typename boost::math::tools::promote_args<
+      double, typename scalar_type<T>::type,
+      typename return_type<Types_pack...>::type>::type type;
+};
 
- template <typename T, typename... Types_pack>
- struct return_type {
-   typedef typename boost::math::tools::promote_args<double,
-      typename scalar_type<T>::type,
-      typename return_type<Types_pack...>::type>::type
-      type;
- };
-
- template <typename T>
- struct return_type<T> {
-   typedef typename boost::math::tools::promote_args<double,
-       typename scalar_type<T>::type>::type type;
- };
+template <typename T>
+struct return_type<T> {
+  typedef typename boost::math::tools::promote_args<
+      double, typename scalar_type<T>::type>::type type;
+};
 
 }  // namespace stan
 #endif

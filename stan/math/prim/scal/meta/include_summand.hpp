@@ -26,25 +26,25 @@ namespace math {
  * proportionality constant.
  * @tparam T1 First
  */
-template <bool propto, typename T=double, typename... T_pack>
+template <bool propto, typename T = double, typename... T_pack>
 struct include_summand {
   enum {
     value = (!stan::is_constant<typename scalar_type<T>::type>::value
-      || include_summand<propto,T_pack...>::value
-    )
+             || include_summand<propto, T_pack...>::value)
   };
 };
 
 // T defaults to double (specializations inherrit defaults)
 template <bool propto, typename T>
-struct include_summand<propto,T> {
+struct include_summand<propto, T> {
   /**
    * <code>true</code> if a term with the specified propto
    * value and subterm types should be included in a proportionality
    * calculation.
    */
   enum {
-    value = (!propto || !stan::is_constant<typename scalar_type<T>::type>::value)
+    value
+    = (!propto || !stan::is_constant<typename scalar_type<T>::type>::value)
   };
 };
 

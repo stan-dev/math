@@ -9,15 +9,16 @@ namespace stan {
 
 template <typename T, typename... T_pack>
 struct partials_return_type {
-  typedef typename boost::math::tools::promote_args<double,
-      typename partials_type<typename scalar_type<T>::type>::type,
-      typename partials_return_type<T_pack...>::type >::type type;
+  typedef typename boost::math::tools::promote_args<
+      double, typename partials_type<typename scalar_type<T>::type>::type,
+      typename partials_return_type<T_pack...>::type>::type type;
 };
 
 template <typename T>
 struct partials_return_type<T> {
-  typedef typename boost::math::tools::promote_args<double,
-      typename partials_type<typename scalar_type<T>::type>::type >::type type;
+  typedef typename boost::math::tools::promote_args<
+      double, typename partials_type<typename scalar_type<T>::type>::type>::type
+      type;
 };
 
 }  // namespace stan
