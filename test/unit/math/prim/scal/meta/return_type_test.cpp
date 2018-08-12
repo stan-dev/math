@@ -26,16 +26,17 @@ TEST(MetaTraits, ReturnTypeDoubleMany) {
 }
 
 TEST(MetaTraits, ReturnTypeTwentyOneParams) {
-  test::expect_same_type<var,
-       return_type<double, var, double, int, double, float, float, float,
+  test::expect_same_type<
+      var, return_type<double, var, double, int, double, float, float, float,
                        var, int, double, int, double, float, float, double, var,
                        double, int, double, float>::type>();
 
-TEST(MetaTraits, ReturnTypeVarMany) {
-  test::expect_same_type<var, return_type<double, var, float, var, int, double,
-                                          int, double, float, float>::type>();
-}
+  TEST(MetaTraits, ReturnTypeVarMany) {
+    test::expect_same_type<var,
+                           return_type<double, var, float, var, int, double,
+                                       int, double, float, float>::type>();
+  }
 
-TEST(MetaTraits, ReturnTypeVarLast) {
-  test::expect_same_type<var, return_type<double, double, var>::type>();
-}
+  TEST(MetaTraits, ReturnTypeVarLast) {
+    test::expect_same_type<var, return_type<double, double, var>::type>();
+  }

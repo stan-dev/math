@@ -42,6 +42,5 @@ struct return_type<T> {
       double, typename scalar_type<T>::type>::type type;
 };
 
-
 }  // namespace stan
 #endif
