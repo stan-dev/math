@@ -39,7 +39,7 @@ struct return_type {
 template <typename T>
 struct return_type<T> {
   typedef typename boost::math::tools::promote_args<
-      double, typename scalar_type<T>::type>::type type;
+       double, typename scalar_type<T>::type>::type type;
 };
 
 }  // namespace stan
