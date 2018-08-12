@@ -16,7 +16,8 @@ STRINGIFY(
  *  LOWER: 0 - copies the lower triangular
  *  UPPER: 1 - copes the upper triangular
  *
- * @note Used in math/gpu/copy_triangular_opencl.hpp
+ * @note Used in math/gpu/copy_triangular_opencl.hpp.
+ *  This kernel uses the helper macros available in helpers.cl.
  */
 __kernel void copy_triangular(__global write_only double *A,
 	__global read_only double *B,

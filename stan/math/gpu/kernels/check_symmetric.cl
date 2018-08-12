@@ -9,7 +9,8 @@ STRINGIFY(
  * @param cols The number of columns in matrix A.
  * @param[out] flag the flag to be written to if any diagonal is zero.
  *
- * @note Kernel for stan/math/gpu/err/check_symmetric.hpp
+ * @note Kernel for stan/math/gpu/err/check_symmetric.hpp.
+ *  This kernel uses the helper macros available in helpers.cl.
  */
 __kernel void is_symmetric(__global read_only double *A, read_only int rows,
 	read_only int cols, __global write_only int *flag,

@@ -23,7 +23,8 @@ STRINGIFY(
  * @param src_rows The number of rows in the destination matrix.
  * @param dst_cols The number of cols in the destination matrix.
  *
- * @note used in math/gpu/copy_submatrix_opencl.hpp
+ * @note used in math/gpu/copy_submatrix_opencl.hpp.
+ *  This kernel uses the helper macros available in helpers.cl.
  *
  */
  __kernel void copy_submatrix(__global read_only double *src, read_write __global double *dst,

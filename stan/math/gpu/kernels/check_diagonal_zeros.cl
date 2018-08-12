@@ -9,7 +9,8 @@ STRINGIFY(
  * @param cols The number of cols of A.
  * @param[out] flag the flag to be written to if any diagonal is zero.
  *
- * @note Kernel for stan/math/gpu/err/check_diagonal_zeros.hpp
+ * @note Kernel for stan/math/gpu/err/check_diagonal_zeros.hpp.
+ *  This kernel uses the helper macros available in helpers.cl.
  */
 __kernel void is_zero_on_diagonal(__global read_only double *A,
 	 read_only int rows, write_only int cols,

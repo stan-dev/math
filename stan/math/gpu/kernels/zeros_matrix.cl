@@ -15,6 +15,7 @@ STRINGIFY(
  * if the part parameter is not specified,
  * zeros are assigned to the whole matrix.
  *
+ * @note  This kernel uses the helper macros available in helpers.cl.
  */
 __kernel void zeros(__global write_only double *A, read_only unsigned int rows,
 	read_only unsigned int cols, read_only unsigned int part) {

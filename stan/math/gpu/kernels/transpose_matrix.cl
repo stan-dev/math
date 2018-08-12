@@ -9,6 +9,7 @@ STRINGIFY(
  * @param rows The number of rows for A.
  * @param cols The number of columns for A.
  *
+ * @note This kernel uses the helper macros available in helpers.cl.
  */
 __kernel void transpose(__global write_only double *B,
 	__global read_only double *A, read_only int rows,

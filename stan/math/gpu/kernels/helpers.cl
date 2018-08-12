@@ -1,5 +1,5 @@
 R"(
-// Helper definitions
+// Helper macros
 #ifndef A
 #define A(i,j) A[j * rows + i]
 #endif

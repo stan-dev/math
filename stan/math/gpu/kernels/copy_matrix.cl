@@ -8,7 +8,8 @@ STRINGIFY(
  * @param rows The number of rows in A.
  * @param cols The number of cols in A.
  *
- * @note Kernel used in math/gpu/matrix_gpu.hpp
+ * @note Kernel used in math/gpu/matrix_gpu.hpp.
+ *  This kernel uses the helper macros available in helpers.cl.
  */
 __kernel void copy(__global read_only double *A, __global write_only double *B,
 	read_only unsigned int rows, read_only unsigned int cols) {

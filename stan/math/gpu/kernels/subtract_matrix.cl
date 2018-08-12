@@ -12,6 +12,7 @@ STRINGIFY(
  * @param cols The number of columns for matrix A.
  *
  * @note Used in math/gpu/subtract_opencl.hpp
+ *  This kernel uses the helper macros available in helpers.cl.
  */
 __kernel void subtract(__global write_only double *C,
 	__global read_only double *A, __global read_only double *B,

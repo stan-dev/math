@@ -10,6 +10,7 @@ STRINGIFY(
  * @param rows Number of rows for matrix A.
  * @param cols Number of rows for matrix B.
  *
+ * @note This kernel uses the helper macros available in helpers.cl.
  */
 __kernel void add(__global write_only double *C, __global read_only double *A,
 	__global read_only double *B, read_only unsigned int rows,
