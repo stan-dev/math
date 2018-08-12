@@ -257,7 +257,6 @@ TEST(ProbDistributionsOrdLog, intErrors) {
   using stan::math::ordered_logistic_lpmf;
   using stan::math::vector_v;
 
-
   std::vector<int> y{1, 2, 3, 4};
 
   vector_v lam_v(4);

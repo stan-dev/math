@@ -86,7 +86,6 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
       typename stan::partials_return_type<T_loc, T_cut>::type T_partials_return;
   typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
 
-
   scalar_seq_view<T_loc> lam_vec(lambda);
   scalar_seq_view<T_y> y_vec(y);
   vector_seq_view<T_cut> c_vec(c);
@@ -94,8 +93,6 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
   int K = c_vec[0].size() + 1;
   int N = length(lambda);
   int C_l = length_mvt(c);
-
-
 
   check_consistent_sizes(function, "Integers", y, "Locations", lambda);
   if (C_l > 1)
