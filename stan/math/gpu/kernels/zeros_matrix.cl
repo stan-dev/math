@@ -1,19 +1,6 @@
-R"(
-#ifndef LOWER
-#define LOWER 0
-#endif
+#define STRINGIFY(src) #src
 
-#ifndef UPPER
-#define UPPER 1
-#endif
-
-#ifndef ENTIRE
-#define ENTIRE 2
-#endif
-
-#ifndef A
-#define A(i, j)  A[j * rows + i]
-#endif
+STRINGIFY(
 /**
  * Stores zeros in the matrix on the GPU.
  * Supports writing zeroes to the lower and upper triangular or
@@ -29,8 +16,8 @@ R"(
  * zeros are assigned to the whole matrix.
  *
  */
-__kernel void zeros(__global double *A, unsigned int rows, unsigned int cols,
-  unsigned int part) {
+__kernel void zeros(__global write_only double *A, read_only unsigned int rows,
+	read_only unsigned int cols, read_only unsigned int part) {
   int i = get_global_id(0);
   int j = get_global_id(1);
   if (i < rows && j < cols) {
@@ -42,4 +29,5 @@ __kernel void zeros(__global double *A, unsigned int rows, unsigned int cols,
       A(i,j) = 0;
     }
   }
-};)"
+}
+);

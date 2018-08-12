@@ -1,16 +1,6 @@
-R"(
-#ifndef LOWER_TO_UPPER
-#define LOWER_TO_UPPER 1
-#endif
+#define STRINGIFY(src) #src
 
-#ifndef UPPER_TO_LOWER
-#define UPPER_TO_LOWER 0
-#endif
-
-#ifndef A
-#define A(i, j)  A[j * rows + i]
-#endif
-
+STRINGIFY(
 /**
  * Copies a lower/upper triangular of a matrix to it's upper/lower.
  *
@@ -24,8 +14,9 @@ R"(
  *
  * @note Used in mat/gpu/copy_triangular_transposed.hpp
  */
-__kernel void copy_triangular_transposed(__global double *A, unsigned int rows,
-  unsigned int cols, unsigned int copy_direction) {
+__kernel void copy_triangular_transposed(__global read_write double *A,
+	read_only unsigned int rows, read_only unsigned int cols,
+	read_only unsigned int copy_direction) {
   int i = get_global_id(0);
   int j = get_global_id(1);
   if (i < rows && j < cols) {
@@ -35,4 +26,5 @@ __kernel void copy_triangular_transposed(__global double *A, unsigned int rows,
       A(i, j) = A(j, i);
     }
   }
-};)"
+}
+);

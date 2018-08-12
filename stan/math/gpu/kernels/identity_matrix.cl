@@ -1,8 +1,6 @@
-R"(
-#ifndef A
-#define A(i, j)  A[j * rows + i]
-#endif
+#define STRINGIFY(src) #src
 
+STRINGIFY(
 /**
  * Makes an identity matrix on the GPU
  *
@@ -12,8 +10,8 @@ R"(
  *
  * @note Used in math/gpu/identity_opencl.hpp
  */
-__kernel void identity(__global double *A, unsigned int rows,
-  unsigned int cols) {
+__kernel void identity(__global write_only double *A,
+	read_only unsigned int rows, read_only unsigned int cols) {
   int i = get_global_id(0);
   int j = get_global_id(1);
   if (i < rows && j < cols) {
@@ -23,4 +21,5 @@ __kernel void identity(__global double *A, unsigned int rows,
       A(i, j) = 0.0;
     }
   }
-};)"
+}
+);

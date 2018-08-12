@@ -1,11 +1,6 @@
-R"(
-#ifndef A
-#define A(i, j)  A[j * rows + i]
-#endif
+#define STRINGIFY(src) #src
 
-#ifndef B
-#define B(i, j)  B[j * rows + i]
-#endif
+STRINGIFY(
 /**
  * Copies the lower or upper
  * triangular of the source matrix to
@@ -23,8 +18,10 @@ R"(
  *
  * @note Used in math/gpu/copy_triangular_opencl.hpp
  */
-__kernel void copy_triangular(__global double *A, __global double *B,
-  unsigned int rows, unsigned int cols, unsigned int lower_upper) {
+__kernel void copy_triangular(__global write_only double *A,
+	__global read_only double *B,
+  read_only unsigned int rows, read_only unsigned int cols,
+	read_only unsigned int lower_upper) {
   int i = get_global_id(0);
   int j = get_global_id(1);
   if (i < rows && j < cols) {
@@ -38,4 +35,5 @@ __kernel void copy_triangular(__global double *A, __global double *B,
       A(i, j) = 0;
     }
   }
-};)"
+}
+);

@@ -1,7 +1,6 @@
-R"(
-#ifndef A
-#define A(i, j)  A[j * rows + i]
-#endif
+#define STRINGIFY(src) #src
+
+STRINGIFY(
 /**
  * Check if the <code>matrix_gpu</code> is symmetric
  *
@@ -12,8 +11,9 @@ R"(
  *
  * @note Kernel for stan/math/gpu/err/check_symmetric.hpp
  */
-__kernel void is_symmetric(__global double *A, int rows, int cols,
-  __global int *flag, double tolerance) {
+__kernel void is_symmetric(__global read_only double *A, read_only int rows,
+	read_only int cols, __global write_only int *flag,
+	read_only double tolerance) {
   const int i = get_global_id(0);
   const int j = get_global_id(1);
   if (i < rows && j < cols) {
@@ -22,4 +22,5 @@ __kernel void is_symmetric(__global double *A, int rows, int cols,
       flag[0] = 0;
     }
   }
-};)"
+}
+);

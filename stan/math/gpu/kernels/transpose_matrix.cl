@@ -1,10 +1,6 @@
-R"(
-#ifndef A
-#define A(i, j)  A[j * rows + i]
-#endif
-#ifndef BT
-#define BT(i, j)  B[j * cols + i]
-#endif
+#define STRINGIFY(src) #src
+
+STRINGIFY(
 /**
  * Takes the transpose of the matrix on the GPU.
  *
@@ -14,11 +10,13 @@ R"(
  * @param cols The number of columns for A.
  *
  */
-__kernel void transpose(__global double *B, __global double *A, int rows,
+__kernel void transpose(__global write_only double *B,
+	__global read_only double *A, read_only int rows,
   int cols ) {
   int i = get_global_id(0);
   int j = get_global_id(1);
   if (i < rows && j < cols) {
     BT(j, i) = A(i, j);
   }
-};)"
+}
+);

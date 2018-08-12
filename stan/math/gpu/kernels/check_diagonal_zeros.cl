@@ -1,7 +1,6 @@
-R"(
-#ifndef A
-#define A(i, j)  A[j * rows + i]
-#endif
+#define STRINGIFY(src) #src
+
+STRINGIFY(
 /**
  * Check if the <code>matrix_gpu</code> has zeros on the diagonal
  *
@@ -12,7 +11,8 @@ R"(
  *
  * @note Kernel for stan/math/gpu/err/check_diagonal_zeros.hpp
  */
-__kernel void is_zero_on_diagonal(__global double *A, int rows, int cols,
+__kernel void is_zero_on_diagonal(__global read_only double *A,
+	 read_only int rows, write_only int cols,
   __global int *flag) {
   const int i = get_global_id(0);
   if (i < rows && i < cols) {
@@ -20,4 +20,5 @@ __kernel void is_zero_on_diagonal(__global double *A, int rows, int cols,
       flag[0] = 1;
     }
   }
-};)"
+}
+);
