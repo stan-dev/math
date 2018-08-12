@@ -255,7 +255,7 @@ class kernel_cl {
   }
 
 	/**
-	 * Returns helper definitions for use in the kernels
+	 * Returns helper macros for use in the kernels
 	 *  For ease of coding, several helper macros have been placed
 	 *   in stan/math/gpu/kernels/helpers.cl. This function retrieves those
 	 *   macros so they can be added to the kernel string pre-compilation.
