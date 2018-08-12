@@ -4,6 +4,7 @@
 #include <stan/math/gpu/opencl_context.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <CL/cl.hpp>
 #include <iostream>
 #include <string>
@@ -16,7 +17,6 @@
  */
 namespace stan {
 namespace math {
-
 /**
  * This class represents a matrix on the GPU.
  *
@@ -44,8 +44,8 @@ class matrix_gpu {
 
   matrix_gpu() : rows_(0), cols_(0) {}
 
-  matrix_gpu(const matrix_gpu& a) : rows_(a.rows()), cols_(a.cols()) {
-    if (a.size() == 0)
+  matrix_gpu(const matrix_gpu& A) : rows_(A.rows()), cols_(A.cols()) {
+    if (A.size() == 0)
       return;
     // the queue is needed to enqueue the kernel for execution
     cl::CommandQueue& cmdQueue = opencl_context.queue();
@@ -64,10 +64,8 @@ class matrix_gpu {
       // retrieves the kernel that copies memory from the
       // input matrix a
       cl::Kernel kernel = opencl_context.get_kernel("copy");
-      kernel.setArg(0, a.buffer());
-      kernel.setArg(1, buffer());
-      kernel.setArg(2, rows());
-      kernel.setArg(3, cols());
+      opencl_context.set_kernel_args(kernel, A.buffer(), this->buffer(), rows_,
+                                     cols_);
       /**
        * Runs the specified kernel with provided number of threads.
        * - the first argument is the kernel object
@@ -157,6 +155,99 @@ class matrix_gpu {
                      "destination.cols()", cols());
     oclBuffer_ = a.buffer();
     return *this;
+  }
+
+  /**
+   * Stores zeros in the matrix on the GPU.
+   * Supports writing zeroes to the lower and upper triangular or
+   * the whole matrix.
+   *
+   * @tparam triangular_view Specifies if zeros are assigned to
+   * the entire matrix, lower triangular or upper triangular with
+   * possible values stan::math:Entire, stan::math:Lower or
+   * stan::math::Upper
+   *
+   */
+  template <int triangular_view = gpu::Entire>
+  void zeros() {
+    if (size() == 0)
+      return;
+    cl::Kernel kernel = opencl_context.get_kernel("zeros");
+    cl::CommandQueue cmdQueue = opencl_context.queue();
+    try {
+      opencl_context.set_kernel_args(kernel, this->buffer(), this->rows(),
+                                     this->cols(), triangular_view);
+      cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
+                                    cl::NDRange(this->rows(), this->cols()),
+                                    cl::NullRange, NULL, NULL);
+    } catch (const cl::Error& e) {
+      check_opencl_error("zeros", e);
+    }
+  }
+
+  /**
+   * Copies a lower/upper triangular of a matrix to it's upper/lower.
+   *
+   * @tparam triangular_map Specifies if the copy is
+   * lower-to-upper or upper-to-lower triangular with possible values
+   * stan:math::LowerToUpper and stan::math::UpperToLower
+   *
+   * @throw <code>std::invalid_argument</code> if the matrix is not square.
+   *
+   */
+  template <int triangular_map>
+  void triangular_transpose() {
+    if (size() == 0 || size() == 1) {
+      return;
+    }
+    check_size_match("triangular_transpose (GPU)",
+                     "Expecting a square matrix; rows of ", "A", rows(),
+                     "columns of ", "A", cols());
+    cl::Kernel kernel = opencl_context.get_kernel("copy_triangular_transposed");
+    cl::CommandQueue cmdQueue = opencl_context.queue();
+    try {
+      opencl_context.set_kernel_args(kernel, this->buffer(), this->rows(),
+                                     this->cols(), triangular_map);
+      cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
+                                    cl::NDRange(this->rows(), this->cols()),
+                                    cl::NullRange, NULL, NULL);
+    } catch (const cl::Error& e) {
+      check_opencl_error("triangular_transpose", e);
+    }
+  }
+  /**
+   * Write the context of A into
+   * <code>this</code> starting at the top left of <code>this</code>
+   * @param A input matrix
+   * @param A_i the offset row in A
+   * @param A_j the offset column in A
+   * @param this_i the offset row for the matrix to be subset into
+   * @param this_j the offset col for the matrix to be subset into
+   * @param nrows the number of rows in the submatrix
+   * @param ncols the number of columns in the submatrix
+   */
+  void sub_block(const matrix_gpu& A, int A_i, int A_j, int this_i, int this_j,
+                 int nrows, int ncols) {
+    if (nrows == 0 || ncols == 0) {
+      return;
+    }
+    if ((A_i + nrows) > A.rows() || (A_j + ncols) > this->cols()) {
+      domain_error("copy_submatrix", "submatrix in *this", " is out of bounds",
+                   "");
+    }
+    cl::Kernel kernel = opencl_context.get_kernel("copy_submatrix");
+    cl::CommandQueue cmdQueue = opencl_context.queue();
+    try {
+      opencl_context.set_kernel_args(
+          kernel, A.buffer(), this->buffer(), A_i, A_j, this_i, this_j, nrows,
+          ncols, A.rows(), A.cols(), this->rows(), this->cols());
+
+      cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
+                                    cl::NDRange(nrows, ncols), cl::NullRange,
+                                    NULL, NULL);
+    } catch (const cl::Error& e) {
+      check_opencl_error("copy_submatrix", e);
+    }
   }
 };
 

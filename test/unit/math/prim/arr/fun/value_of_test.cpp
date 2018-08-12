@@ -1,6 +1,7 @@
 #include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
 #include <vector>
+#include <type_traits>
 
 TEST(MathMatrix, value_of) {
   using stan::math::value_of;
@@ -22,4 +23,16 @@ TEST(MathMatrix, value_of) {
 
   for (int i = 0; i < 10; ++i)
     EXPECT_FLOAT_EQ(a[i], d_a[i]);
+}
+
+TEST(MathFunctions, value_of_return_type_short_circuit) {
+  std::vector<double> a(5, 0);
+  EXPECT_FALSE((std::is_same<decltype(stan::math::value_of(a)),
+                             std::vector<double>>::value));
+  EXPECT_FALSE((std::is_same<decltype(stan::math::value_of(a)),
+                             std::vector<double>&>::value));
+  EXPECT_FALSE((std::is_same<decltype(stan::math::value_of(a)),
+                             const std::vector<double>>::value));
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(a)),
+                            const std::vector<double>&>::value));
 }

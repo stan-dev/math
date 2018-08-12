@@ -12,6 +12,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/rev/arr.hpp>
 
+#include <stan/math/rev/mat/fun/adj_jac_apply.hpp>
 #include <stan/math/rev/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_product.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_self.hpp>
@@ -62,6 +63,7 @@
 #include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>
 #include <stan/math/rev/mat/functor/integrate_ode_adams.hpp>
 #include <stan/math/rev/mat/functor/integrate_ode_bdf.hpp>
+#include <stan/math/rev/mat/functor/integrate_dae.hpp>
 #include <stan/math/rev/mat/functor/map_rect_reduce.hpp>
 
 #endif
