@@ -19,7 +19,6 @@ TEST(MetaTraits, ReturnTypeInt) {
 }
 
 TEST(MetaTraits, ReturnTypeDoubleMany) {
-<<<<<<< HEAD
   test::expect_same_type<double,
                          return_type<double, int, double, float, float, double,
                                      float, int, double>::type>();
