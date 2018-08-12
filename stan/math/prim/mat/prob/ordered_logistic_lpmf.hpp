@@ -9,6 +9,8 @@
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
 #include <stan/math/prim/scal/fun/log1p_exp.hpp>
 #include <stan/math/prim/scal/fun/log_inv_logit_diff.hpp>
+#include <stan/math/prim/scal/fun/is_integer.hpp>
+#include <stan/math/prim/scal/err/domain_error_vec.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -36,33 +38,26 @@ namespace math {
  *
   \f[
     \frac{\partial }{\partial \lambda} =
-    \left\{\begin{array}
-    \\
-    -\mathrm{logit}^{-1}(\lambda - c_1) & \mbox{if } k = 1,
-    \\
+    \begin{cases}\\
+    -\mathrm{logit}^{-1}(\lambda - c_1) & \mbox{if } k = 1,\\
     -(((1-e^{c_{k-1}-c_{k-2}})^{-1} - \mathrm{logit}^{-1}(c_{k-2}-\lambda)) +
     ((1-e^{c_{k-2}-c_{k-1}})^{-1} - \mathrm{logit}^{-1}(c_{k-1}-\lambda)))
-    & \mathrm{if } 1 < k < K, \mathrm{and}
-    \\
+    & \mathrm{if } 1 < k < K, \mathrm{and}\\
     \mathrm{logit}^{-1}(c_{K-2}-\lambda) & \mathrm{if } k = K.
-    \end{array}\right.
+    \end{cases}.
   \f]
 
   \f[
     \frac{\partial }{\partial \mathrm{c_{K}}} =
-    \left\{\begin{array}
-    \\
-    \mathrm{logit}^{-1}(\lambda - c_1) & \mbox{if } k = 1,
-    \\
+    \begin{cases}\\
+    \mathrm{logit}^{-1}(\lambda - c_1) & \mbox{if } k = 1,\\
     \frac{\partial }{\partial \mathrm{c_{K-2}}} =
-      ((1-e^{c_{k-1}-c_{k-2}})^{-1} - \mathrm{logit}^{-1}(c_{k-2}-\lambda))
-    \\
+      ((1-e^{c_{k-1}-c_{k-2}})^{-1} - \mathrm{logit}^{-1}(c_{k-2}-\lambda))\\
     \frac{\partial }{\partial \mathrm{c_{K-1}}} =
       ((1-e^{c_{k-2}-c_{k-1}})^{-1} - \mathrm{logit}^{-1}(c_{k-1}-\lambda))
-    & \mathrm{if } 1 < k < K, \mathrm{and}
-    \\
+    & \mathrm{if } 1 < k < K, \mathrm{and}\\
     -\mathrm{logit}^{-1}(c_{K-2}-\lambda) & \mathrm{if } k = K.
-    \end{array}\right.
+    \end{cases}.
   \f]
  *
  * @tparam propto True if calculating up to a proportion.
@@ -91,6 +86,7 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
       typename stan::partials_return_type<T_loc, T_cut>::type T_partials_return;
   typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
 
+
   scalar_seq_view<T_loc> lam_vec(lambda);
   scalar_seq_view<T_y> y_vec(y);
   vector_seq_view<T_cut> c_vec(c);
@@ -98,6 +94,8 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
   int K = c_vec[0].size() + 1;
   int N = length(lambda);
   int C_l = length_mvt(c);
+
+
 
   check_consistent_sizes(function, "Integers", y, "Locations", lambda);
   if (C_l > 1)
@@ -116,6 +114,10 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
   for (int n = 0; n < N; n++) {
     check_bounded(function, "Random variable", y_vec[n], 1, K);
     check_finite(function, "Location parameter", lam_vec[n]);
+
+    if (is_integer(lam_vec[n]))
+      domain_error_vec(function, "Locations", lam_vec[n], n,
+                       "are integer, but should be double");
   }
 
   for (int i = 0; i < C_l; i++) {
