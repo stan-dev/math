@@ -41,10 +41,10 @@ namespace math {
  *   x is nan or infinite
  */
 template <typename T_x, typename T_sigma>
-inline typename
-boost::enable_if_c<is_vector_like<T_x>::value,
-                   Eigen::Matrix<typename return_type<T_x, T_sigma>::type,
-                                 Eigen::Dynamic, Eigen::Dynamic> >::type
+inline typename boost::enable_if_c<
+    is_vector_like<T_x>::value,
+    Eigen::Matrix<typename return_type<T_x, T_sigma>::type, Eigen::Dynamic,
+                  Eigen::Dynamic>>::type
 gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
   using stan::math::dot_product;
   using stan::math::square;
@@ -52,13 +52,13 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
   check_not_nan("gp_dot_prod_cov", "sigma", sigma);
   check_nonnegative("gp_dot_prod_cov", "sigma", sigma);
   check_finite("gp_dot_prod_cov", "sigma", sigma);
-  
+
   size_t x_size = x.size();
-  size_t D = length(x[0]); // assuming length all the same length
+  size_t D = length(x[0]);  // assuming length all the same length
   for (size_t i = 0; i < x_size; ++i) {
     for (size_t d = 0; d < D; ++d) {
-       check_not_nan("gp_dot_prod_cov", "x", x[i][d]);
-       check_finite("gp_dot_prod_cov", "x", x[i][d]);
+      check_not_nan("gp_dot_prod_cov", "x", x[i][d]);
+      check_finite("gp_dot_prod_cov", "x", x[i][d]);
     }
   }
   Eigen::Matrix<typename stan::return_type<T_x, T_sigma>::type, Eigen::Dynamic,
@@ -66,7 +66,7 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
       cov(x_size, x_size);
   if (x_size == 0)
     return cov;
-  
+
   T_sigma sigma_sq = square(sigma);
 
   for (size_t i = 0; i < (x_size - 1); ++i) {
@@ -103,10 +103,10 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
  *   x is nan or infinite
  */
 template <typename T_x, typename T_sigma>
-inline typename
-boost::enable_if_c<is_constant<T_x>::value,
-                   Eigen::Matrix<typename return_type<T_x, T_sigma>::type,
-                                 Eigen::Dynamic, Eigen::Dynamic> >::type
+inline typename boost::enable_if_c<
+    is_constant<T_x>::value,
+    Eigen::Matrix<typename return_type<T_x, T_sigma>::type, Eigen::Dynamic,
+                  Eigen::Dynamic>>::type
 gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
   using stan::math::dot_product;
   using stan::math::square;
@@ -117,12 +117,12 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
 
   size_t x_size = x.size();
   for (size_t i = 0; i < x_size; ++i) {
-     check_not_nan("gp_dot_prod_cov", "x", x[i]);
-     check_finite("gp_dot_prod_cov", "x", x[i]);
+    check_not_nan("gp_dot_prod_cov", "x", x[i]);
+    check_finite("gp_dot_prod_cov", "x", x[i]);
   }
 
-  Eigen::Matrix<typename stan::return_type<T_x, T_sigma>::type,
-                Eigen::Dynamic, Eigen::Dynamic>
+  Eigen::Matrix<typename stan::return_type<T_x, T_sigma>::type, Eigen::Dynamic,
+                Eigen::Dynamic>
       cov(x_size, x_size);
   if (x_size == 0)
     return cov;
@@ -163,11 +163,10 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
  *   or if x1 or x2 are nan or inf
  */
 template <typename T_x1, typename T_x2, typename T_sigma>
-inline typename
-boost::enable_if_c<is_vector_like<T_x1>::value,
-                   Eigen::Matrix<typename return_type<T_x1,
-                                                      T_x2, T_sigma>::type,
-                                 Eigen::Dynamic, Eigen::Dynamic>>::type
+inline typename boost::enable_if_c<
+    is_vector_like<T_x1>::value,
+    Eigen::Matrix<typename return_type<T_x1, T_x2, T_sigma>::type,
+                  Eigen::Dynamic, Eigen::Dynamic>>::type
 gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 const T_sigma &sigma) {
   using stan::math::dot_product;
@@ -179,18 +178,18 @@ gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
-  size_t D = length(x1[0]); // assuming length all the same length
+  size_t D = length(x1[0]);  // assuming length all the same length
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t d = 0; d < D; ++d) {
-    check_not_nan("gp_dot_prod_cov", "x1", x1[i][d]);
-    check_finite("gp_dot_prod_cov", "x1", x1[i][d]);
-    check_not_nan("gp_dot_prod_cov", "x2", x2[i][d]);
-    check_finite("gp_dot_prod_cov", "x2", x2[i][d]);
+      check_not_nan("gp_dot_prod_cov", "x1", x1[i][d]);
+      check_finite("gp_dot_prod_cov", "x1", x1[i][d]);
+      check_not_nan("gp_dot_prod_cov", "x2", x2[i][d]);
+      check_finite("gp_dot_prod_cov", "x2", x2[i][d]);
     }
   }
 
-  Eigen::Matrix<typename return_type<T_x1, T_x2, T_sigma>::type,
-                Eigen::Dynamic, Eigen::Dynamic>
+  Eigen::Matrix<typename return_type<T_x1, T_x2, T_sigma>::type, Eigen::Dynamic,
+                Eigen::Dynamic>
       cov(x1_size, x2_size);
 
   if (x1_size == 0 || x2_size == 0)
@@ -229,11 +228,10 @@ gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  *   or if x1 or x2 are nan or inf
  */
 template <typename T_x1, typename T_x2, typename T_sigma>
-inline typename
-boost::enable_if_c<is_constant<T_x1>::value,
-                   Eigen::Matrix<typename return_type<T_x1,
-                                                      T_x2, T_sigma>::type,
-                                 Eigen::Dynamic, Eigen::Dynamic> >::type
+inline typename boost::enable_if_c<
+    is_constant<T_x1>::value,
+    Eigen::Matrix<typename return_type<T_x1, T_x2, T_sigma>::type,
+                  Eigen::Dynamic, Eigen::Dynamic>>::type
 gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 const T_sigma &sigma) {
   using stan::math::square;
