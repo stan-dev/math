@@ -15,7 +15,6 @@ class ordered_constrain_op {
   double* exp_x_;
 
  public:
-  ordered_constrain_op() : N_(0) {}
   /**
    * Return an increasing ordered vector derived from the specified
    * free vector.  The returned constrained vector will have the
@@ -26,11 +25,13 @@ class ordered_constrain_op {
    */
   Eigen::VectorXd operator()(const Eigen::VectorXd& x) {
     N_ = x.size();
-    exp_x_ = ChainableStack::instance().memalloc_.alloc_array<double>(N_ - 1);
 
     Eigen::Matrix<double, Eigen::Dynamic, 1> y(N_);
     if (N_ == 0)
       return y;
+
+    exp_x_ = ChainableStack::instance().memalloc_.alloc_array<double>(N_ - 1);
+
     y[0] = x[0];
     for (int n = 1; n < N_; ++n) {
       exp_x_[n - 1] = exp(x[n]);
@@ -50,12 +51,13 @@ class ordered_constrain_op {
     Eigen::VectorXd adj_times_jac(N_);
     double rolling_adjoint_sum = 0.0;
 
-    for (int n = N_ - 1; n > 0; --n) {
-      rolling_adjoint_sum += adj(n);
-      adj_times_jac(n) = exp_x_[n - 1] * rolling_adjoint_sum;
+    if (N_ > 0) {
+      for (int n = N_ - 1; n > 0; --n) {
+        rolling_adjoint_sum += adj(n);
+        adj_times_jac(n) = exp_x_[n - 1] * rolling_adjoint_sum;
+      }
+      adj_times_jac(0) = rolling_adjoint_sum + adj(0);
     }
-    rolling_adjoint_sum += adj(0);
-    adj_times_jac(0) = rolling_adjoint_sum;
 
     return adj_times_jac;
   }

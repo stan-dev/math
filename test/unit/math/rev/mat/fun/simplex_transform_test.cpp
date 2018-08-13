@@ -47,6 +47,25 @@ TEST(probTransform, simplex_jacobian) {
   EXPECT_FLOAT_EQ(log_det_J, lp.val());
 }
 
+TEST(prob_transform, simplex_constrain_length_zero_no_segfault) {
+  using stan::math::var;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> xv(0);
+  var out = sum(simplex_constrain(xv));
+
+  out.grad();
+}
+
+TEST(prob_transform, simplex_constrain_length_one_no_segfault) {
+  using stan::math::var;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> xv(1);
+  xv << 1.0;
+  var out = sum(simplex_constrain(xv));
+
+  out.grad();
+
+  EXPECT_FLOAT_EQ(xv(0).adj(), 0.0);
+}
+
 TEST(AgradRevMatrix, simplex_constrain_analytical_gradients) {
   using stan::math::var;
   Eigen::Matrix<var, Eigen::Dynamic, 1> yv(4);

@@ -15,8 +15,6 @@ class positive_ordered_constrain_op {
   double* exp_x_;
 
  public:
-  positive_ordered_constrain_op() : N_(0) {}
-
   /**
    * Return an increasing positive ordered vector derived from the specified
    * free vector.  The returned constrained vector will have the
@@ -27,11 +25,13 @@ class positive_ordered_constrain_op {
    */
   Eigen::VectorXd operator()(const Eigen::VectorXd& x) {
     N_ = x.size();
-    exp_x_ = ChainableStack::instance().memalloc_.alloc_array<double>(N_);
 
     Eigen::Matrix<double, Eigen::Dynamic, 1> y(N_);
     if (N_ == 0)
       return y;
+
+    exp_x_ = ChainableStack::instance().memalloc_.alloc_array<double>(N_);
+
     exp_x_[0] = exp(x[0]);
     y[0] = exp_x_[0];
     for (int n = 1; n < N_; ++n) {
@@ -52,7 +52,7 @@ class positive_ordered_constrain_op {
     Eigen::VectorXd adj_times_jac(N_);
     double rolling_adjoint_sum = 0.0;
 
-    for (int n = N_ - 1; n >= 0; --n) {
+    for (int n = N_; --n >= 0;) {
       rolling_adjoint_sum += adj(n);
       adj_times_jac(n) = exp_x_[n] * rolling_adjoint_sum;
     }

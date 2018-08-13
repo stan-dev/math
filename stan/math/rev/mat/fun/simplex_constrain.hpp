@@ -16,7 +16,6 @@ class simplex_constrain_op {
   double* z_;
 
  public:
-  simplex_constrain_op() : N_(0) {}
   /**
    * Return the simplex corresponding to the specified free vector.
    * A simplex is a vector containing values greater than or equal
@@ -57,10 +56,12 @@ class simplex_constrain_op {
     Eigen::VectorXd adj_times_jac(N_);
     double acc = adj(N_);
 
-    adj_times_jac(N_ - 1) = diag_[N_ - 1] * (adj(N_ - 1) - acc);
-    for (int n = N_ - 2; n >= 0; --n) {
-      acc = adj(n + 1) * z_[n + 1] + (1 - z_[n + 1]) * acc;
-      adj_times_jac(n) = diag_[n] * (adj(n) - acc);
+    if (N_ > 0) {
+      adj_times_jac(N_ - 1) = diag_[N_ - 1] * (adj(N_ - 1) - acc);
+      for (int n = N_ - 1; --n >= 0;) {
+        acc = adj(n + 1) * z_[n + 1] + (1 - z_[n + 1]) * acc;
+        adj_times_jac(n) = diag_[n] * (adj(n) - acc);
+      }
     }
 
     return adj_times_jac;

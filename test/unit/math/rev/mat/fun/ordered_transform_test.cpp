@@ -46,6 +46,25 @@ TEST(prob_transform, ordered_jacobian_ad) {
   EXPECT_FLOAT_EQ(log_abs_jacobian_det, lp);
 }
 
+TEST(prob_transform, ordered_constrain_length_zero_no_segfault) {
+  using stan::math::var;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> xv(0);
+  var out = sum(ordered_constrain(xv));
+
+  out.grad();
+}
+
+TEST(prob_transform, ordered_constrain_length_one_no_segfault) {
+  using stan::math::var;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> xv(1);
+  xv << 1.0;
+  var out = sum(ordered_constrain(xv));
+
+  out.grad();
+
+  EXPECT_FLOAT_EQ(xv(0).adj(), 1.0);
+}
+
 TEST(prob_transform, ordered_constrain_analytical_gradients) {
   using stan::math::var;
   Eigen::Matrix<var, Eigen::Dynamic, 1> xv(4);
