@@ -48,7 +48,7 @@ struct adj_jac_vari : public vari {
     Eigen::Matrix<double, Eigen::Dynamic, 1> val_y = f_(val_x);
 
     M_ = val_y.size();
-    y_vi_ = ChainableStack::instance().memalloc_.alloc_array<vari *>(M_);
+    y_vi_ = ChainableStack::instance().memalloc_.alloc_array<vari*>(M_);
     for (int m = 0; m < M_; ++m) {
       y_vi_[m] = new vari(val_y(m), false);
     }
@@ -127,7 +127,7 @@ struct adj_jac_vari : public vari {
 template <class F>
 Eigen::Matrix<var, Eigen::Dynamic, 1> adj_jac_apply(
     const Eigen::Matrix<var, Eigen::Dynamic, 1>& x) {
-  adj_jac_vari<F> *vi = new adj_jac_vari<F>(x);
+  adj_jac_vari<F>* vi = new adj_jac_vari<F>(x);
   Eigen::Matrix<var, Eigen::Dynamic, 1> y(vi->M_);
 
   for (int m = 0; m < y.size(); ++m)
