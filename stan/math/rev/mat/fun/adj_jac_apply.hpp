@@ -24,9 +24,9 @@ template <typename F>
 struct adj_jac_vari : public vari {
   F f_;
   int N_;
-  vari **x_vi_;
+  vari** x_vi_;
   int M_;
-  vari **y_vi_;
+  vari** y_vi_;
 
   /**
    * The adj_jac_vari constructor
@@ -39,7 +39,7 @@ struct adj_jac_vari : public vari {
    *
    * @param x Input as vars
    */
-  explicit adj_jac_vari(const Eigen::Matrix<var, Eigen::Dynamic, 1> &x)
+  explicit adj_jac_vari(const Eigen::Matrix<var, Eigen::Dynamic, 1>& x)
       : vari(std::numeric_limits<double>::quiet_NaN()),  // The val_ in this
                                                          // vari is unused
         N_(x.size()),
@@ -126,7 +126,7 @@ struct adj_jac_vari : public vari {
  */
 template <class F>
 Eigen::Matrix<var, Eigen::Dynamic, 1> adj_jac_apply(
-    const Eigen::Matrix<var, Eigen::Dynamic, 1> &x) {
+    const Eigen::Matrix<var, Eigen::Dynamic, 1>& x) {
   adj_jac_vari<F> *vi = new adj_jac_vari<F>(x);
   Eigen::Matrix<var, Eigen::Dynamic, 1> y(vi->M_);
 
