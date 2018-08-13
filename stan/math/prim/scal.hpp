@@ -68,6 +68,7 @@
 #include <stan/math/prim/scal/fun/bessel_second_kind.hpp>
 #include <stan/math/prim/scal/fun/binary_log_loss.hpp>
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
+#include <stan/math/prim/scal/fun/binormal_integral_owens.hpp>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <stan/math/prim/scal/fun/cbrt.hpp>
 #include <stan/math/prim/scal/fun/choose.hpp>
@@ -393,6 +394,7 @@
 #include <stan/math/prim/scal/prob/skew_normal_log.hpp>
 #include <stan/math/prim/scal/prob/skew_normal_lpdf.hpp>
 #include <stan/math/prim/scal/prob/skew_normal_rng.hpp>
+#include <stan/math/prim/scal/prob/std_binormal_lcdf.hpp>
 #include <stan/math/prim/scal/prob/std_normal_lpdf.hpp>
 #include <stan/math/prim/scal/prob/std_normal_log.hpp>
 #include <stan/math/prim/scal/prob/student_t_ccdf_log.hpp>
