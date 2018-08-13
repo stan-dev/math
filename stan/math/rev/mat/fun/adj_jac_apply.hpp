@@ -13,14 +13,35 @@ namespace math {
 
 namespace {
 /*
- * Placeholder apply function (until c++17 is available for Stan)
+ * Invoke the functor f with arguments given in t and indexed in the index
+ * sequence I
+ *
+ * @tparam F Type of functor
+ * @tparam Tuple Type of tuple containing arguments
+ * @tparam I Index sequence going from 0 to std::tuple_size<T>::value - 1
+ * inclusive
+ * @param f functor callable
+ * @param t tuple of arguments
+ * @param i placeholder variable for index sequence
  */
 template <class F, class Tuple, std::size_t... I>
 constexpr auto apply_impl(const F& f, const Tuple& t,
-                          std::index_sequence<I...>) {
+                          std::index_sequence<I...> i) {
   return f(std::get<I>(t)...);
 }
 
+/*
+ * Call the functor f with the tuple of arguments t, like:
+ *
+ * f(std::get<0>(t), std::get<1>(t), ...)
+ *
+ * TODO: replace this with implementation in C++ std when C++17 is available
+ *
+ * @tparam F Type of functor
+ * @tparam Tuple Type of tuple containing arguments
+ * @param f functor callable
+ * @param t tuple of arguments
+ */
 template <class F, class Tuple>
 constexpr auto apply(const F& f, const Tuple& t) {
   return apply_impl(f, t, std::make_index_sequence<std::tuple_size<Tuple>{}>{});
@@ -51,11 +72,12 @@ struct adj_jac_vari : public vari {
   vari** y_vi_;
 
   /*
-   * count_memory is a recursive templated function that accumulates in its
-   * first argument (count) the number of varis used in the rest of its
-   * arguments
+   * count_memory returns count (the first argument) + the number of varis used
+   * in the second argument + the number of arguments used to encode the
+   * variadic tail args.
    *
-   * This is used to figure out how much space to allocate in x_vis_.
+   * The adj_jac_vari constructor uses this to figure out how much space to
+   * allocate in x_vis_.
    *
    * The array offsets_ is populated with values to indicate where in x_vis_ the
    * vari pointers for each argument will be stored.
@@ -64,14 +86,9 @@ struct adj_jac_vari : public vari {
    * types, a std::vector with var, double, or int scalar types, or a var, a
    * double, or an int.
    *
-   * As an example, take the call:
-   *    size_t s = count_memory(0, a1, a2, a3, a4, a5)
-   *
-   * If a1 is an Eigen::Matrix<var, 5, 5>, a2 is a double, a3 is a var, a4 is
-   * a length 5 vector of vars, and a5 is a length 3 vector of ints, the
-   * return value of count_memory is 31 and offsets_ is set to {0, 25, 25, 26,
-   * 31}.
-   *
+   * @tparam R Eigen Matrix row type
+   * @tparam C Eigen Matrix column type
+   * @tparam Pargs types of rest of arguments
    * @param count rolling count of number of varis that must be allocated
    * @param x next argument to have its varis counted
    * @param args the rest of the arguments (that will be iterated through
@@ -144,24 +161,17 @@ struct adj_jac_vari : public vari {
   size_t count_memory(size_t count) { return count; }
 
   /*
-   * prepare_x_vis recursively populates x_vis_ with the varis from each of its
+   * prepare_x_vis populates x_vis_ with the varis from each of its
    * input arguments. The vari pointers for argument n are copied into x_vis_ at
-   * the index starting at offsets_[n].
+   * the index starting at offsets_[n]. For Eigen::Matrix types, this copying is
+   * done in with column major ordering.
    *
    * Each of the arguments can be an Eigen::Matrix with var or double scalar
    * types, a std::vector with var, double, or int scalar types, or a var, a
    * double, or an int.
    *
-   * As an example, take the call:
-   *    prepare_x_vis(a1, a2, a3, a4, a5)
-   *
-   * If a1 is an Eigen::Matrix<var, 5, 5>, a2 is a double, a3 is a var, a4 is
-   * a length 5 vector of vars, and a5 is a length 3 vector of ints,
-   * x_vis_ to x_vis_ + 24 is filled with the vari pointers of a1,
-   * x_vis_[25] is set equal to the vari pointer of a3, x_vis_ + 26 to x_vis_ +
-   * 30 is filled with the vari pointers of a4. a2 and a5 have no varis and so
-   * are skipped.
-   *
+   * @tparam R Eigen Matrix row type
+   * @tparam C Eigen Matrix column type
    * @param x next argument to have its vari pointers copied if necessary
    * @param args the rest of the arguments (that will be iterated through
    * recursively)
@@ -262,33 +272,15 @@ struct adj_jac_vari : public vari {
   }
 
   /*
-   * accumulate_adjoints recurses through the adjoints returned from the
-   * user-supplied adjoint_jacobian_multiply and accumulates the appropriate
-   * vari adjoints pointed to by values of x_vis_.
+   * accumulate_adjoints accumulates, if necessary, the Eigen Matrix of values
+   * in its first argument into the adjoints of the varis pointed to by the
+   * appropriate elements of x_vis_ and then recursively calls
+   * accumulate_adjoints on the rest of the arguments.
    *
-   * The adjoints of the nth argument are accumulated into the adjoints of the
-   * varis pointed to in the range x_vis_ + offsets_[n] to x_vis_ + offsets[n] +
-   * size of nth argument.
-   *
-   * If is_var_[n] is false, then the nth argument is ignored, whatever its
-   * value is.
-   *
-   * Each of the arguments can be an Eigen::Matrix<double, R, C>, a
-   * std::vector<double>, a std::vector<int>, a double, or an int.
-   *
-   * As an example, take the call:
-   *    accumulate_adjoints(a1, a2, a3, a4, a5)
-   *
-   * If a1 is an Eigen::Matrix<double, 5, 5>, a2 is a double, a3 is a double,
-   * a4 is a length 5 std::vector of doubles, a5 is a length 3 std::vector of
-   * ints and is_var_ is set to {true, false, true, true, false}, the 25 values
-   * in a1 are accumulated in the adjs of the varis pointed to by the values of
-   * x_vis_ to x_vis_ + 24, the value of a2 is ignored, and the adjoint of the
-   * vari pointed to by x_vis_[25] is incremented by a3, the 5 values in a4 are
-   * accumulated in the adjs of the varis pointed to by the values of x_vis_ +
-   * 26 to x_vis_ + 30, and the values in a5 are ignored.
-   *
-   * @param y_adj_jac next set of adjoints to be accumulated
+   * @tparam R Eigen Matrix row type
+   * @tparam C Eigen Matrix column type
+   * @tparam Pargs Types of the rest of adjoints to accumulate
+   * @param y_adj_jac set of values to be accumulated in adjoints
    * @param args the rest of the arguments (that will be iterated through
    * recursively)
    */
@@ -305,6 +297,17 @@ struct adj_jac_vari : public vari {
     accumulate_adjoints(args...);
   }
 
+  /*
+   * accumulate_adjoints accumulates, if necessary, the std::vector of values in
+   * its first argument into the adjoints of the varis pointed to by the
+   * appropriate elements of x_vis_ and then recursively calls
+   * accumulate_adjoints on the rest of the arguments.
+   *
+   * @tparam Pargs Types of the rest of adjoints to accumulate
+   * @param y_adj_jac set of values to be accumulated in adjoints
+   * @param args the rest of the arguments (that will be iterated through
+   * recursively)
+   */
   template <typename... Pargs>
   void accumulate_adjoints(const std::vector<double>& y_adj_jac,
                            const Pargs&... args) {
@@ -317,12 +320,32 @@ struct adj_jac_vari : public vari {
     accumulate_adjoints(args...);
   }
 
+  /*
+   * There are no adjoints to accumulate for std::vector<int> arguments, so
+   * accumulate_adjoints simply recursively calls itself on the rest of the
+   * arguments.
+   *
+   * @tparam Pargs Types of the rest of adjoints to accumulate
+   * @param y_adj_jac ignored
+   * @param args the rest of the arguments (that will be iterated through
+   * recursively)
+   */
   template <typename... Pargs>
   void accumulate_adjoints(const std::vector<int>& y_adj_jac,
                            const Pargs&... args) {
     accumulate_adjoints(args...);
   }
 
+  /*
+   * accumulate_adjoints accumulates, if necessary, the y_adj_jac into the
+   * adjoint of vari pointed to by the appropriate element of x_vis_ and then
+   * recursively calls accumulate_adjoints on the rest of the arguments.
+   *
+   * @tparam Pargs Types of the rest of adjoints to accumulate
+   * @param y_adj_jac next set of adjoints to be accumulated
+   * @param args the rest of the arguments (that will be iterated through
+   * recursively)
+   */
   template <typename... Pargs>
   void accumulate_adjoints(const double& y_adj_jac, const Pargs&... args) {
     const int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
@@ -333,6 +356,16 @@ struct adj_jac_vari : public vari {
     accumulate_adjoints(args...);
   }
 
+  /*
+   * There are no adjoints to accumulate for an int argument, so
+   * accumulate_adjoints simply recursively calls itself on the rest of the
+   * arguments.
+   *
+   * @tparam Pargs Types of the rest of adjoints to accumulate
+   * @param y_adj_jac ignored
+   * @param args the rest of the arguments (that will be iterated through
+   * recursively)
+   */
   template <typename... Pargs>
   void accumulate_adjoints(const int& y_adj_jac, const Pargs&... args) {
     accumulate_adjoints(args...);
@@ -354,11 +387,6 @@ struct adj_jac_vari : public vari {
       y_adj(m) = y_vi_[m]->adj_;
     auto y_adj_jacs = f_.multiply_adjoint_jacobian(is_var_, y_adj);
 
-    /**
-     * NOTE TO REVIEWER: If the cost of this lambda function redirection seems
-     * to high, we could make accumulate_adjoints a non member function and just
-     * pass it all the info it needs.
-     */
     apply([this](auto&&... args) { this->accumulate_adjoints(args...); },
           y_adj_jacs);
   }
