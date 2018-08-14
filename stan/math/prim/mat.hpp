@@ -130,6 +130,8 @@
 #include <stan/math/prim/mat/fun/get_lp.hpp>
 #include <stan/math/prim/mat/fun/gp_dot_prod_cov.hpp>
 #include <stan/math/prim/mat/fun/gp_matern32_cov.hpp>
+#include <stan/math/prim/mat/fun/gp_matern52_cov.hpp>
+#include <stan/math/prim/mat/fun/gp_periodic_cov.hpp>
 #include <stan/math/prim/mat/fun/head.hpp>
 #include <stan/math/prim/mat/fun/initialize.hpp>
 #include <stan/math/prim/mat/fun/inv.hpp>
@@ -263,7 +265,6 @@
 #include <stan/math/prim/mat/functor/map_rect_combine.hpp>
 #include <stan/math/prim/mat/functor/map_rect_concurrent.hpp>
 #include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
-
 #include <stan/math/prim/mat/prob/bernoulli_logit_glm_lpmf.hpp>
 #include <stan/math/prim/mat/prob/categorical_log.hpp>
 #include <stan/math/prim/mat/prob/categorical_logit_log.hpp>

@@ -27,10 +27,10 @@ namespace math {
  * \displaystyle
  * \mbox{ } \ \ \ = \left\{
  * \begin{array}{ll}
- * \mbox{softmax}(y)[k] - \mbox{softmax}(y)[k] \times \mbox{softmax}(y)[m]
+ * \mbox{softmax}(y)[k] \times (1 - \mbox{softmax}(y)[m])
  * & \mbox{ if } m = k, \mbox{ and}
  * \\[6pt]
- * \mbox{softmax}(y)[k] * \mbox{softmax}(y)[m]
+ * -\mbox{softmax}(y)[k] \times \mbox{softmax}(y)[m]
  * & \mbox{ if } m \neq k.
  * \end{array}
  * \right.
