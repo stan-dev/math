@@ -100,6 +100,25 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
                   * std::asin(rho)
                   + stan::math::Phi(a) * stan::math::Phi(b), 
                   stan::math::binormal_integral_owens(a, b, rho));
+  rho = 0.7;
+  a = std::numeric_limits<double>::infinity();
+  b = std::numeric_limits<double>::infinity();
+  EXPECT_FLOAT_EQ(1,stan::math::binormal_integral_owens(a, b, rho)); 
+
+  rho = 0.7;
+  a = -std::numeric_limits<double>::infinity();
+  b = -std::numeric_limits<double>::infinity();
+  EXPECT_FLOAT_EQ(0,stan::math::binormal_integral_owens(a, b, rho)); 
+
+  rho = -0.7;
+  a = -std::numeric_limits<double>::infinity();
+  b = -std::numeric_limits<double>::infinity();
+  EXPECT_FLOAT_EQ(0,stan::math::binormal_integral_owens(a, b, rho)); 
+
+  rho = -0.7;
+  a = std::numeric_limits<double>::infinity();
+  b = std::numeric_limits<double>::infinity();
+  EXPECT_FLOAT_EQ(1,stan::math::binormal_integral_owens(a, b, rho)); 
 }
 TEST(MathFunctions, binormal_integral_val_test) {
   // Hard-coded values calculated in R using pmvnorm(lower = -Inf, upper = c(a,b), 
