@@ -280,7 +280,6 @@ TEST(ProbDistributionsOrdLog, intErrors) {
 
   EXPECT_FLOAT_EQ(out_v.val(), -4.80919533214772);
 
-
   EXPECT_FLOAT_EQ(std_c_v[0][0].adj(), 0.898439072102363);
   EXPECT_FLOAT_EQ(std_c_v[0][1].adj(), 0.0);
   EXPECT_FLOAT_EQ(std_c_v[0][2].adj(), 0.0);
