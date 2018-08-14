@@ -14,8 +14,7 @@ namespace math {
 namespace {
 
 inline var calc_variance(size_t size, const var* dtrs) {
-  vari** varis = reinterpret_cast<vari**>(
-      ChainableStack::memalloc_.alloc(size * sizeof(vari*)));
+  vari** varis = ChainableStack::instance().memalloc_.alloc_array<vari*>(size);
   for (size_t i = 0; i < size; ++i)
     varis[i] = dtrs[i].vi_;
   double sum = 0.0;
@@ -25,8 +24,8 @@ inline var calc_variance(size_t size, const var* dtrs) {
   double sum_of_squares = 0;
   double reciprocal_size_m1 = 1.0 / (size - 1);
   double two_over_size_m1 = 2.0 * reciprocal_size_m1;
-  double* partials = reinterpret_cast<double*>(
-      ChainableStack::memalloc_.alloc(size * sizeof(double)));
+  double* partials
+      = ChainableStack::instance().memalloc_.alloc_array<double>(size);
   for (size_t i = 0; i < size; ++i) {
     double diff = dtrs[i].vi_->val_ - mean;
     sum_of_squares += diff * diff;

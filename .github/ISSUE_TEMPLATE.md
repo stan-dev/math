@@ -1,27 +1,32 @@
-#### Summary:
-Please provide a short couple sentence summary.
+## Description
+Describe the issue as clearly as possible. Issues are meant for bug reports and feature requests. The issue should contain enough information for a developer to put together a solution.
+
+If this is a general question, please post to the [forums](http://discourse.mc-stan.org).
+
+## Example
+For **bug reports**:
+
+- please provide an example that shows the bug
+- if it's not possible to reproduce the bug with an example, please include a description of how you discovered the issue
 
 
-#### Description:
-Describe the issue as clearly as possible.
+For **feature requests**:
+
+- please provide an example that shows how the feature should work
+- describe the expected behavior if the feature exists
 
 
-#### Reproducible Steps:
-Please report steps to reproduce the issue. If it's not possible to reproduce, please include a description of how you discovered the issue.
+## Expected Output
+Please provide the expected output.
 
-If you have a reproducible example, please include it.
+If this is a **bug report**, show what you expected to happen. Please also show what currently happens.
 
-
-#### Current Output:
-The current output. Knowing what is the current behavior is useful.
+If this is a **feature request**, show what you expect to happen if the feature exists.
 
 
-#### Expected Output:
-Describe what you expect the output to be. Knowing the correct behavior is also very useful.
+## Additional Information
+Any additional information goes here.
 
 
-#### Additional Information:
-Provide any additional information here.
-
-#### Current Version:
-v2.17.0
+## Current Math Version
+v2.18.0

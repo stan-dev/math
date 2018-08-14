@@ -8,8 +8,8 @@ namespace stan {
 namespace math {
 
 static inline size_t nested_size() {
-  return ChainableStack::var_stack_.size()
-         - ChainableStack::nested_var_stack_sizes_.back();
+  return ChainableStack::instance().var_stack_.size()
+         - ChainableStack::instance().nested_var_stack_sizes_.back();
 }
 
 }  // namespace math
