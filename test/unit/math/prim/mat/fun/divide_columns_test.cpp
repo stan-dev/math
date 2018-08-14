@@ -6,36 +6,6 @@
 #include <string>
 #include <vector>
 
-TEST(MathPrimMat, vec_of_vec_scalar) {
-  std::vector<Eigen::Matrix<double, 1, -1>> x(3);
-  for (size_t i = 0; i < x.size(); ++i) {
-    x[i].resize(1, 3);
-    x[i] << 1, 1, 1;
-  }
-  std::vector<Eigen::Matrix<double, 1, -1>> out(3);
-  out = stan::math::divide_columns(x, 2.0);
-  for (int i = 0; i < 3; ++i) {
-    for (int j = 0; j < 3; ++j) {
-      EXPECT_FLOAT_EQ(out[i][j], .5);
-    }
-  }
-}
-
-TEST(MathPrimMat, vec_of_rvec_scalar) {
-  std::vector<Eigen::Matrix<double, -1, 1>> x(3);
-  for (size_t i = 0; i < x.size(); ++i) {
-    x[i].resize(3, 1);
-    x[i] << 1, 1, 1;
-  }
-  std::vector<Eigen::Matrix<double, -1, 1>> out(3);
-  out = stan::math::divide_columns(x, 2.0);
-  for (int i = 0; i < 3; ++i) {
-    for (int j = 0; j < 3; ++j) {
-      EXPECT_FLOAT_EQ(out[i][j], .5);
-    }
-  }
-}
-
 TEST(MathPrimMat, vec_of_vec_vec) {
   std::vector<Eigen::Matrix<double, 1, -1>> x(3);
   for (size_t i = 0; i < x.size(); ++i) {
