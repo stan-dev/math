@@ -38,7 +38,7 @@ inline
     typename Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
                            Eigen::Dynamic, Eigen::Dynamic>
     gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma,
-                 const T_l &length_scale) {
+                    const T_l &length_scale) {
   using std::exp;
   check_positive("gp_exp_quad_cov", "magnitude", sigma);
   check_positive("gp_exp_quad_cov", "length scale", length_scale);
@@ -47,7 +47,7 @@ inline
 
   Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
-    cov(x.size(), x.size());
+      cov(x.size(), x.size());
 
   size_t x_size = x.size();
   if (x_size == 0)
@@ -86,12 +86,13 @@ inline
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-  template <typename T_x, typename T_sigma, typename T_l, int R, int C>
+template <typename T_x, typename T_sigma, typename T_l, int R, int C>
 inline
     typename Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
                            Eigen::Dynamic, Eigen::Dynamic>
-  gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x, R, C>> &x,
-                  const T_sigma &sigma, const std::vector<T_l> &length_scale) {
+    gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x, R, C>> &x,
+                    const T_sigma &sigma,
+                    const std::vector<T_l> &length_scale) {
   using std::exp;
 
   size_t x_size = x.size();
@@ -109,9 +110,8 @@ inline
     return cov;
 
   T_sigma sigma_sq = square(sigma);
-  std::vector<Eigen::Matrix<typename return_type<T_x, T_l>::type, R, C>>
-    x_new = divide_columns(x, length_scale);
-
+  std::vector<Eigen::Matrix<typename return_type<T_x, T_l>::type, R, C>> x_new
+      = divide_columns(x, length_scale);
 
   for (size_t j = 0; j < x_size; ++j) {
     cov(j, j) = sigma_sq;
@@ -144,7 +144,7 @@ inline typename Eigen::Matrix<
     typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type, Eigen::Dynamic,
     Eigen::Dynamic>
 gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
-             const T_sigma &sigma, const T_l &length_scale) {
+                const T_sigma &sigma, const T_l &length_scale) {
   using std::exp;
   check_positive("gp_exp_quad_cov", "magnitude", sigma);
   check_positive("gp_exp_quad_cov", "length scale", length_scale);
@@ -191,8 +191,8 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <typename T_x1, typename T_x2, typename T_s, typename T_l,
-          int R1, int C1, int R2, int C2>
+template <typename T_x1, typename T_x2, typename T_s, typename T_l, int R1,
+          int C1, int R2, int C2>
 inline typename Eigen::Matrix<
     typename stan::return_type<T_x1, T_x2, T_s, T_l>::type, Eigen::Dynamic,
     Eigen::Dynamic>
