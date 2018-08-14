@@ -9,7 +9,6 @@
 
 namespace stan {
 namespace math {
-
 /**
  * Takes Stan data type vector[n] x[D] and divides each
  * dimension sequentially by each element of the vector
