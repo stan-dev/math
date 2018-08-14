@@ -2,17 +2,18 @@
 #define STAN_MATH_PRIM_SCAL_META_PARTIALS_RETURN_TYPE_HPP
 
 #include <stan/math/prim/scal/meta/partials_type.hpp>
-#include <stan/math/rev/core/var.hpp>
+/*#include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/scal/meta/partials_type.hpp>
 #include <stan/math/fwd/core/fvar.hpp>
 #include <stan/math/fwd/scal/meta/partials_type.hpp>
+*/
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 
 /**
- * Template metaprogram to calculate the base scalar return type resulting
+ * Template metaprogram to calculate the partial derivative type resulting
  * from promoting all the scalar types of the template parameters. The
  * metaprogram can take an arbitrary number of template parameters.
  *
