@@ -216,6 +216,10 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * @tparam T_x2 type of elements contained in vector x2
  * @tparam T_s type of element of sigma, marginal standard deviation
  * @tparam T_l type of elements of length scale
+ * @tparam R1  num of rows in x matrix (either 1 or -1 since this is a vector)
+ * @tparam C1  num of cols in x matrix (either 1 or -1 since this is a vector)
+ * @tparam R2  num of rows in x matrix (either 1 or -1 since this is a vector)
+ * @tparam C2  num of cols in x matrix (either 1 or -1 since this is a vector)
  *
  * @param x1 std::vector of elements that can be used in stan::math::distance
  * @param x2 std::vector of elements that can be used in stan::math::distance
