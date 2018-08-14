@@ -44,20 +44,18 @@ namespace math {
     ((1-e^{c_{k-2}-c_{k-1}})^{-1} - \mathrm{logit}^{-1}(c_{k-1}-\lambda)))
     & \mathrm{if } 1 < k < K, \mathrm{and}\\
     \mathrm{logit}^{-1}(c_{K-2}-\lambda) & \mathrm{if } k = K.
-    \end{cases}.
+    \end{cases}
   \f]
 
   \f[
-    \frac{\partial }{\partial \mathrm{c_{K}}} =
-    \begin{cases}\\
-    \mathrm{logit}^{-1}(\lambda - c_1) & \mbox{if } k = 1,\\
-    \frac{\partial }{\partial \mathrm{c_{K-2}}} =
-      ((1-e^{c_{k-1}-c_{k-2}})^{-1} - \mathrm{logit}^{-1}(c_{k-2}-\lambda))\\
-    \frac{\partial }{\partial \mathrm{c_{K-1}}} =
-      ((1-e^{c_{k-2}-c_{k-1}})^{-1} - \mathrm{logit}^{-1}(c_{k-1}-\lambda))
-    & \mathrm{if } 1 < k < K, \mathrm{and}\\
-    -\mathrm{logit}^{-1}(c_{K-2}-\lambda) & \mathrm{if } k = K.
-    \end{cases}.
+    \frac{\partial }{\partial \lambda} =
+    \begin{cases}
+    -\mathrm{logit}^{-1}(\lambda - c_1) & \text{if } k = 1,\\
+    -(((1-e^{c_{k-1}-c_{k-2}})^{-1} - \mathrm{logit}^{-1}(c_{k-2}-\lambda)) +
+    ((1-e^{c_{k-2}-c_{k-1}})^{-1} - \mathrm{logit}^{-1}(c_{k-1}-\lambda)))
+    & \text{if } 1 < k < K, \text{ and}\\
+    \mathrm{logit}^{-1}(c_{K-2}-\lambda) & \text{if } k = K.
+    \end{cases}
   \f]
  *
  * @tparam propto True if calculating up to a proportion.
@@ -111,10 +109,6 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
   for (int n = 0; n < N; n++) {
     check_bounded(function, "Random variable", y_vec[n], 1, K);
     check_finite(function, "Location parameter", lam_vec[n]);
-
-    if (is_integer(lam_vec[n]))
-      domain_error_vec(function, "Locations", lam_vec[n], n,
-                       "are integer, but should be double");
   }
 
   for (int i = 0; i < C_l; i++) {

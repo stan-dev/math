@@ -259,8 +259,7 @@ TEST(ProbDistributionsOrdLog, intErrors) {
 
   std::vector<int> y{1, 2, 3, 4};
 
-  vector_v lam_v(4);
-  lam_v << -1.52, -3.51, -0.56, 1.55;
+  std::vector<int> lam_i{-1, -3, -1, 2};
 
   vector_v c1_v(3);
   c1_v << -3.18, -1.84, 0.58;
@@ -276,9 +275,25 @@ TEST(ProbDistributionsOrdLog, intErrors) {
 
   std::vector<vector_v> std_c_v{c1_v, c2_v, c3_v, c4_v};
 
-  std::vector<int> lam_i{-1, -3, -1, 2};
+  AVAR out_v = ordered_logistic_lpmf(y, lam_i, std_c_v);
+  out_v.grad();
 
-  EXPECT_THROW(ordered_logistic_lpmf(y[0], lam_i[0], c1_v), std::domain_error);
-  EXPECT_THROW(ordered_logistic_lpmf(y, lam_i, c1_v), std::domain_error);
-  EXPECT_THROW(ordered_logistic_lpmf(y, lam_i, std_c_v), std::domain_error);
+  EXPECT_FLOAT_EQ(out_v.val(), -4.80919533214772);
+
+
+  EXPECT_FLOAT_EQ(std_c_v[0][0].adj(), 0.898439072102363);
+  EXPECT_FLOAT_EQ(std_c_v[0][1].adj(), 0.0);
+  EXPECT_FLOAT_EQ(std_c_v[0][2].adj(), 0.0);
+
+  EXPECT_FLOAT_EQ(std_c_v[1][0].adj(), -0.213051918269699);
+  EXPECT_FLOAT_EQ(std_c_v[1][1].adj(), 0.5604249106041);
+  EXPECT_FLOAT_EQ(std_c_v[1][2].adj(), 0.0);
+
+  EXPECT_FLOAT_EQ(std_c_v[2][0].adj(), 0.0);
+  EXPECT_FLOAT_EQ(std_c_v[2][1].adj(), -0.364548741344827);
+  EXPECT_FLOAT_EQ(std_c_v[2][2].adj(), 0.041106609543937);
+
+  EXPECT_FLOAT_EQ(std_c_v[3][0].adj(), 0.0);
+  EXPECT_FLOAT_EQ(std_c_v[3][1].adj(), 0.0);
+  EXPECT_FLOAT_EQ(std_c_v[3][2].adj(), -0.70889017256612);
 }
