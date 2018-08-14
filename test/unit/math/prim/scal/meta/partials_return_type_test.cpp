@@ -7,9 +7,9 @@
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
-using stan::partials_return_type;
-using stan::math::var;
 using stan::math::fvar;
+using stan::math::var;
+using stan::partials_return_type;
 
 TEST(MetaTraits, PartialsReturnTypeDouble) {
   test::expect_same_type<double, partials_return_type<double>::type>();
@@ -24,8 +24,7 @@ TEST(MetaTraits, PartialsReturnTypeInt) {
 }
 
 TEST(MetaTraits, PartialsReturnTypeScalarTenParams) {
-  test::expect_same_type<double,
-                         partials_return_type<double, int, double, float, float,
-                                              double, float, int, double,
-                                              double>::type>();
+  test::expect_same_type<
+      double, partials_return_type<double, int, double, float, float, double,
+                                   float, int, double, double>::type>();
 }

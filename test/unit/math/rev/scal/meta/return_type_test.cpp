@@ -5,7 +5,6 @@
 using stan::math::var;
 using stan::return_type;
 
-
 TEST(MetaTraits, ReturnTypeVar) {
   test::expect_same_type<var, return_type<var>::type>();
 }

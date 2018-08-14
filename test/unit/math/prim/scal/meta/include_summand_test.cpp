@@ -9,19 +9,19 @@ TEST(MetaTraits, IncludeSummandProptoFalse) {
 }
 
 TEST(MetaTraits, IncludeSummandProptoTrueInt) {
-  EXPECT_FALSE((include_summand<true,int>::value));
+  EXPECT_FALSE((include_summand<true, int>::value));
 }
 
 TEST(MetaTraits, IncludeSummandProptoTrueDouble) {
-  EXPECT_FALSE((include_summand<true,double>::value));
+  EXPECT_FALSE((include_summand<true, double>::value));
 }
 
 TEST(MetaTraits, IncludeSummandConstantPropToTrueTen) {
-  EXPECT_FALSE((include_summand<true,double,double,int,int,double,double,
+  EXPECT_FALSE((include_summand<true, double, double, int, int, double, double,
                                 int, int, double, int>::value));
 }
 
 TEST(MetaTraits, IncludeSummandConstantProptoFalseTen) {
-  EXPECT_TRUE((include_summand<false,double,double,int,int,double,double,
-                                int, int, double, int>::value));
+  EXPECT_TRUE((include_summand<false, double, double, int, int, double, double,
+                               int, int, double, int>::value));
 }

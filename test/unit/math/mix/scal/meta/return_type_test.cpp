@@ -6,7 +6,6 @@ using stan::math::fvar;
 using stan::math::var;
 using stan::return_type;
 
-
 TEST(MetaTraits, ReturnTypeFvarVar) {
   test::expect_same_type<fvar<var>, return_type<fvar<var> >::type>();
 }
