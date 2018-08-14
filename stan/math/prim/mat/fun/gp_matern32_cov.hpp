@@ -1,16 +1,16 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_GP_MATERN32_COV_HPP
 #define STAN_MATH_PRIM_MAT_FUN_GP_MATERN32_COV_HPP
 
-#include <stan/math/prim/mat/fun/divide_columns.hpp>
+#include <cmath>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/divide_columns.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/scal/fun/divide.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/fun/divide.hpp>
-#include <cmath>
 #include <vector>
 
 namespace stan {
@@ -66,8 +66,8 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
       distance = sqrt(squared_distance(x[i], x[j]));
-      cov(i, j) = sigma_sq * (1.0 + root_3_inv_l * distance)
-                  * exp(neg_root_3_inv_l * distance);
+      cov(i, j) = sigma_sq * (1.0 + root_3_inv_l * distance) *
+                  exp(neg_root_3_inv_l * distance);
       cov(j, i) = cov(i, j);
     }
   }
@@ -128,14 +128,14 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, R, C>> &x,
   T_l neg_root_3 = -1.0 * sqrt(3.0);
 
   std::vector<Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type, R, C>>
-    x_new = divide_columns(x, length_scale);
-  
+      x_new = divide_columns(x, length_scale);
+
   for (size_t i = 0; i < x_size; ++i) {
     for (size_t j = i; j < x_size; ++j) {
-      typename return_type<T_x, T_s, T_l>::type
-        distance = sqrt(squared_distance(x_new[i], x_new[j]));
-      cov(i, j)
-          = sigma_sq * (1.0 + root_3 * distance) * exp(neg_root_3 * distance);
+      typename return_type<T_x, T_s, T_l>::type distance =
+          sqrt(squared_distance(x_new[i], x_new[j]));
+      cov(i, j) =
+          sigma_sq * (1.0 + root_3 * distance) * exp(neg_root_3 * distance);
       cov(j, i) = cov(i, j);
     }
   }
@@ -195,8 +195,8 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
       distance = sqrt(squared_distance(x1[i], x2[j]));
-      cov(i, j) = sigma_sq * (1.0 + root_3_inv_l_sq * distance)
-                  * exp(neg_root_3_inv_l_sq * distance);
+      cov(i, j) = sigma_sq * (1.0 + root_3_inv_l_sq * distance) *
+                  exp(neg_root_3_inv_l_sq * distance);
     }
   }
   return cov;
@@ -224,8 +224,8 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * @throw std::domain error if sigma <= 0, l <= 0, or x1, x2 are nan or inf
  *
  */
-template <typename T_x1, typename T_x2, typename T_s, typename T_l,
-          int R1, int C1, int R2, int C2>
+template <typename T_x1, typename T_x2, typename T_s, typename T_l, int R1,
+          int C1, int R2, int C2>
 inline typename Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
                               Eigen::Dynamic, Eigen::Dynamic>
 gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, R1, C1>> &x1,
@@ -273,12 +273,12 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, R1, C1>> &x1,
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
       distance = sqrt(squared_distance(x1_new[i], x2_new[j]));
-      cov(i, j)
-          = sigma_sq * (1.0 + root_3 * distance) * exp(neg_root_3 * distance);
+      cov(i, j) =
+          sigma_sq * (1.0 + root_3 * distance) * exp(neg_root_3 * distance);
     }
   }
   return cov;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif
