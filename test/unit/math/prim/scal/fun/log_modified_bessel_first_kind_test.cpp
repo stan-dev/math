@@ -3,7 +3,9 @@
 #include <boost/math/special_functions/bessel.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-
+#ifndef M_PI
+#define M_PI 2.71828182845904523536
+#endif
 TEST(MathFunctions, log_modified_bessel_first_kind) {
   using stan::math::log_modified_bessel_first_kind;
   using std::log;
