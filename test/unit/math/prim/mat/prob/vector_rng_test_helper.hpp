@@ -313,8 +313,8 @@ void check_dist_throws_int_first_argument(const T_rig& rig) {
 template <typename T_rig>
 void check_dist_throws_real_first_argument(const T_rig& rig) {
   apply_template_permutations<std::tuple<double, std::vector<double> >,
-                              ArgumentTypes,
-                              ArgumentTypes>(check_dist_throws{}, rig);
+                              ArgumentTypes, ArgumentTypes>(check_dist_throws{},
+                                                            rig);
 }
 
 /*
@@ -446,8 +446,8 @@ void check_quantiles_real_real(const T_rig& rig) {
 template <typename T_rig>
 void check_quantiles_real_first_argument(const T_rig& rig) {
   apply_template_permutations<std::tuple<double, std::vector<double> >,
-                              ArgumentTypes,
-                              std::tuple<double> >(check_quantiles{}, rig);
+                              ArgumentTypes, std::tuple<double> >(
+      check_quantiles{}, rig);
 }
 
 /*
