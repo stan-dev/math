@@ -74,8 +74,8 @@ class kernel_cl_base {
       cl_int err = CL_SUCCESS;
       // Iterate over all the kernels and create the cl::Kernel objects
       for (auto kernel_info : kernel_table) {
-        kernels[kernel_info.first] =
-            cl::Kernel(program_, kernel_info.first, &err);
+        kernels[kernel_info.first]
+            = cl::Kernel(program_, kernel_info.first, &err);
       }
     } catch (const cl::Error& e) {
       check_opencl_error("Kernel Compilation", e);
@@ -88,8 +88,8 @@ class kernel_cl_base {
       ;                                      // NOLINT
   // Holds Default parameter values for each Kernel.
   typedef std::map<const char*, int> map_base_opts;
-  map_base_opts base_opts =
-        {{"LOWER", static_cast<int>(TriangularViewGPU::Lower)},
+  map_base_opts base_opts
+      = {{"LOWER", static_cast<int>(TriangularViewGPU::Lower)},
          {"UPPER", static_cast<int>(TriangularViewGPU::Upper)},
          {"ENTIRE", static_cast<int>(TriangularViewGPU::Entire)},
          {"UPPER_TO_LOWER", static_cast<int>(TriangularMapGPU::UpperToLower)},
@@ -142,7 +142,7 @@ class kernel_cl {
   cl::Kernel compiled_;
   /**
    * Returns the kernel specified in kernel_name.
-   * 
+   *
    * @throw std::domain_error
    */
   explicit kernel_cl(const char* kernel_name) {
