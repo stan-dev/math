@@ -328,3 +328,16 @@ TEST(MathFunctions, binormal_integral_grad_test_vvv_gauss_legendre_near_boundary
   EXPECT_FLOAT_EQ(gf_2, grad_f[1]);
   EXPECT_FLOAT_EQ(gf_3, grad_f[2]);
 }
+
+TEST(AgradRev, check_varis_on_stack) {
+  stan::math::var rho = 0.5;
+  stan::math::var a = 2.0;
+  stan::math::var b = 1.0;
+  test::check_varis_on_stack(stan::math::binormal_integral_owens(a, b, rho));
+  test::check_varis_on_stack(stan::math::binormal_integral_owens(a.val(), b, rho));
+  test::check_varis_on_stack(stan::math::binormal_integral_owens(a, b.val(), rho));
+  test::check_varis_on_stack(stan::math::binormal_integral_owens(a.val(), b.val(), rho));
+  test::check_varis_on_stack(stan::math::binormal_integral_owens(a, b, rho.val()));
+  test::check_varis_on_stack(stan::math::binormal_integral_owens(a.val(), b, rho.val()));
+  test::check_varis_on_stack(stan::math::binormal_integral_owens(a, b.val(), rho.val()));
+}
