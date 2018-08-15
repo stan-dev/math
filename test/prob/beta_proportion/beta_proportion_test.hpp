@@ -69,16 +69,16 @@ class AgradDistributionsBetaProportion : public AgradDistributionTest {
   template <typename T_y, typename T_loc, typename T_prec, typename T3,
             typename T4, typename T5>
   typename stan::return_type<T_y, T_loc, T_prec>::type log_prob(
-      const T_y& y, const T_loc& mu, const T_prec& kappa, const T3&,
-      const T4&, const T5&) {
+      const T_y& y, const T_loc& mu, const T_prec& kappa, const T3&, const T4&,
+      const T5&) {
     return stan::math::beta_proportion_lpdf(y, mu, kappa);
   }
 
   template <bool propto, typename T_y, typename T_loc, typename T_prec,
             typename T3, typename T4, typename T5>
   typename stan::return_type<T_y, T_loc, T_prec>::type log_prob(
-      const T_y& y, const T_loc& mu, const T_prec& kappa, const T3&,
-      const T4&, const T5&) {
+      const T_y& y, const T_loc& mu, const T_prec& kappa, const T3&, const T4&,
+      const T5&) {
     return stan::math::beta_proportion_lpdf<propto>(y, mu, kappa);
   }
 
@@ -89,7 +89,7 @@ class AgradDistributionsBetaProportion : public AgradDistributionTest {
                     const T3&, const T4&, const T5&) {
     using stan::math::log1m;
     using std::log;
-    return (mu*kappa - 1.0) * log(y) + ((1.0 - mu) * kappa - 1.0) * log1m(y)
-      + lgamma(kappa) - lgamma(mu * kappa) - lgamma((1.0 - mu) * kappa);
+    return (mu * kappa - 1.0) * log(y) + ((1.0 - mu) * kappa - 1.0) * log1m(y)
+           + lgamma(kappa) - lgamma(mu * kappa) - lgamma((1.0 - mu) * kappa);
   }
 };
