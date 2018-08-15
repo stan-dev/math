@@ -51,7 +51,7 @@ inline double value_of<double>(double x) {
  * @param x value
  * @return input value
  */
-inline int value_of(const int& x) { return x; }
+inline int value_of(int x) { return x; }
 
 }  // namespace math
 }  // namespace stan
