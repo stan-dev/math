@@ -59,7 +59,7 @@ TEST(MathPrimMat, double_mat_double_rvec_add_diag) {
   }
 }
 
-TEST(MathPrimMat, var_mat_double_rvec_add_diag) {
+TEST(MathPrimMat, double_mat_double_rvec_add_diag) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> mat(2, 3);
   mat << 1, 1, 1, 1, 1, 1;
 
