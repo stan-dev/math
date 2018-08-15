@@ -58,11 +58,12 @@ class kernel_cl_base {
       ;                                      // NOLINT
   // Holds Default parameter values for each Kernel.
   typedef std::map<const char*, int> map_base_opts;
-  const map_base_opts base_opts = {{"LOWER", static_cast<int>(TriangularViewGPU::Lower)},
-                                   {"UPPER", static_cast<int>(TriangularViewGPU::Upper)},
-                                   {"ENTIRE", static_cast<int>(TriangularViewGPU::Entire)},
-                                   {"UPPER_TO_LOWER", static_cast<int>(TriangularMapGPU::UpperToLower)},
-                                   {"LOWER_TO_UPPER", static_cast<int>(TriangularMapGPU::LowerToUpper)}};
+  const map_base_opts base_opts
+      = {{"LOWER", static_cast<int>(TriangularViewGPU::Lower)},
+         {"UPPER", static_cast<int>(TriangularViewGPU::Upper)},
+         {"ENTIRE", static_cast<int>(TriangularViewGPU::Entire)},
+         {"UPPER_TO_LOWER", static_cast<int>(TriangularMapGPU::UpperToLower)},
+         {"LOWER_TO_UPPER", static_cast<int>(TriangularMapGPU::LowerToUpper)}};
 
   /** Holds meta information about a kernel.
    * @param exists a bool to identify whether a kernel has been compiled.
