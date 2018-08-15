@@ -6,16 +6,15 @@
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
 #include <boost/random/normal_distribution.hpp>
-#include <stan/math/prim/scal/prob/normal_cdf.hpp>
+#include <stan/math/prim/scal/fun/Phi.hpp>
 #include <stan/math/prim/scal/prob/std_normal_lpdf.hpp>
 #include <stan/math/prim/scal/fun/binormal_integral_owens.hpp>
 #include <stan/math/prim/scal/fun/inv.hpp>
@@ -43,8 +42,7 @@ typename return_type<T_y_1, T_y_2, T_rho>::type std_binormal_lcdf(
 
   check_not_nan(function, "Random variable 1", y_1);
   check_not_nan(function, "Random variable 2", y_2);
-  check_less(function, "Correlation parameter", rho, 1.0);
-  check_greater(function, "Correlation parameter", rho, -1.0);
+  check_bounded(function, "Correlation parameter", rho, -1.0, 1.0);
   check_consistent_sizes(function, "Random variable 1", y_1, "Random variable 2",
                          y_2, "Correlation parameter", rho);
 
@@ -67,22 +65,25 @@ typename return_type<T_y_1, T_y_2, T_rho>::type std_binormal_lcdf(
       const T_partials_return inv_cdf_ = cdf_ > 0 ? inv(cdf_) : 
         std::numeric_limits<double>::infinity();
       const T_partials_return one_minus_rho_sq = (1 + rho_dbl) * (1 - rho_dbl);
+      const T_partials_return sqrt_one_minus_rho_sq = sqrt(one_minus_rho_sq);
+      const T_partials_return rho_times_y_2 = rho_dbl * y_2_dbl;
+      const T_partials_return y_1_minus_rho_times_y_2 = y_1_dbl - rho_times_y_2;
       if (!is_constant_struct<T_y_1>::value)
         ops_partials.edge1_.partials_[n] 
           += cdf_ > 0 && cdf_ < 1 ? inv_cdf_ * exp(std_normal_lpdf(y_1_dbl))
-              * normal_cdf(y_2_dbl, rho_dbl * y_1_dbl, sqrt(one_minus_rho_sq)) :
-              cdf_ > 0 ? 1 : 0;
+              * Phi((y_2_dbl - rho_dbl * y_1_dbl) / sqrt_one_minus_rho_sq)
+              : cdf_ > 0 ? 1 : 0;
       if (!is_constant_struct<T_y_2>::value)
         ops_partials.edge2_.partials_[n] 
           += cdf_ > 0 && cdf_ < 1 ? inv_cdf_ * exp(std_normal_lpdf(y_2_dbl))
-              * normal_cdf(y_1_dbl, rho_dbl * y_2_dbl, sqrt(one_minus_rho_sq)) :
-              cdf_ > 0 ? 1 : 0;
+              * Phi(y_1_minus_rho_times_y_2 / sqrt_one_minus_rho_sq)
+              : cdf_ > 0 ? 1 : 0;
       if (!is_constant_struct<T_rho>::value)
         ops_partials.edge3_.partials_[n]
-            += cdf_ > 0 && cdf_ < 1 ? inv_cdf_ * 0.5 / (stan::math::pi() * sqrt(one_minus_rho_sq))
-            * exp(-0.5 / one_minus_rho_sq * (y_1_dbl - rho_dbl * y_2_dbl) * (y_1_dbl - rho_dbl * y_2_dbl)
-                  -0.5 * y_2_dbl * y_2_dbl) :
-            cdf_ > 0 ? 1 : 0;
+            += cdf_ > 0 && cdf_ < 1 ? inv_cdf_ * 0.5 / (stan::math::pi() * sqrt_one_minus_rho_sq)
+            * exp(-0.5 / one_minus_rho_sq * y_1_minus_rho_times_y_2 *  y_1_minus_rho_times_y_2
+                  -0.5 * y_2_dbl * y_2_dbl)
+              : cdf_ > 0 ? 1 : 0;
     }
   }
   return ops_partials.build(cdf_log);
