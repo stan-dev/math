@@ -24,9 +24,9 @@ class AgradDistributionsBetaProportion : public AgradDistributionTest {
     parameters.push_back(param);
     log_prob.push_back(-1.6070080920051264);  // expected log_prob
 
-    param[0] = 0.85; // y
-    param[1] = 0.15; // mu (location)
-    param[2] = 4.5;  // kappa (precision)
+    param[0] = 0.85;  // y
+    param[1] = 0.15;  // mu (location)
+    param[2] = 4.5;   // kappa (precision)
     parameters.push_back(param);
     log_prob.push_back(-4.7214376176246775);  // expected log_prob
   }
@@ -70,8 +70,8 @@ class AgradDistributionsBetaProportion : public AgradDistributionTest {
             typename T4, typename T5>
   typename stan::return_type<T_y, T_loc, T_prec>::type log_prob(
 <<<<<<< HEAD
-      const T_y& y, const T_loc& mu, const T_prec& kappa, const T3&,
-      const T4&, const T5&) {
+      const T_y& y, const T_loc& mu, const T_prec& kappa, const T3&, const T4&,
+      const T5&) {
     return stan::math::beta_proportion_lpdf(y, mu, kappa);
 =======
       const T_y& y, const T_loc& p, const T_prec& c, const T3&, const T4&,
@@ -84,8 +84,8 @@ class AgradDistributionsBetaProportion : public AgradDistributionTest {
             typename T3, typename T4, typename T5>
   typename stan::return_type<T_y, T_loc, T_prec>::type log_prob(
 <<<<<<< HEAD
-      const T_y& y, const T_loc& mu, const T_prec& kappa, const T3&,
-      const T4&, const T5&) {
+      const T_y& y, const T_loc& mu, const T_prec& kappa, const T3&, const T4&,
+      const T5&) {
     return stan::math::beta_proportion_lpdf<propto>(y, mu, kappa);
 =======
       const T_y& y, const T_loc& p, const T_prec& c, const T3&, const T4&,
@@ -103,8 +103,8 @@ class AgradDistributionsBetaProportion : public AgradDistributionTest {
     using stan::math::log1m;
     using std::log;
 
-    return (mu*kappa - 1.0) * log(y) + ((1.0 - mu) * kappa - 1.0) * log1m(y)
-      + lgamma(kappa) - lgamma(mu * kappa) - lgamma((1.0 - mu) * kappa);
+    return (mu * kappa - 1.0) * log(y) + ((1.0 - mu) * kappa - 1.0) * log1m(y)
+           + lgamma(kappa) - lgamma(mu * kappa) - lgamma((1.0 - mu) * kappa);
 =======
   log_prob_function(const T_y& y, const T_loc& p, const T_prec& c, const T3&,
                     const T4&, const T5&) {

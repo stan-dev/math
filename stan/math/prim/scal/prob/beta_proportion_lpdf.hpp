@@ -68,9 +68,8 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lpdf(
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_less_or_equal(function, "Random variable", y, 1.0);
-  check_consistent_sizes(function, "Random variable", y,
-                         "Location parameter", mu,
-                         "Precision parameter", kappa);
+  check_consistent_sizes(function, "Random variable", y, "Location parameter",
+                         mu, "Precision parameter", kappa);
 
   if (!include_summand<propto, T_y, T_loc, T_prec>::value)
     return 0.0;
@@ -91,10 +90,10 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lpdf(
 
   VectorBuilder<include_summand<propto, T_y, T_loc, T_prec>::value,
                 T_partials_return, T_y>
-    log_y(length(y));
+      log_y(length(y));
   VectorBuilder<include_summand<propto, T_y, T_loc, T_prec>::value,
                 T_partials_return, T_y>
-    log1m_y(length(y));
+      log1m_y(length(y));
 
   for (size_t n = 0; n < length(y); n++) {
     if (include_summand<propto, T_y, T_loc, T_prec>::value) {
@@ -105,22 +104,22 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lpdf(
 
   VectorBuilder<include_summand<propto, T_loc, T_prec>::value,
                 T_partials_return, T_loc, T_prec>
-    lgamma_mukappa(N_mukappa);
+      lgamma_mukappa(N_mukappa);
   VectorBuilder<include_summand<propto, T_loc, T_prec>::value,
                 T_partials_return, T_loc, T_prec>
-    lgamma_kappa_mukappa(N_mukappa);
+      lgamma_kappa_mukappa(N_mukappa);
   VectorBuilder<contains_nonconstant_struct<T_loc, T_prec>::value,
                 T_partials_return, T_loc, T_prec>
-    digamma_mukappa(N_mukappa);
+      digamma_mukappa(N_mukappa);
   VectorBuilder<contains_nonconstant_struct<T_loc, T_prec>::value,
                 T_partials_return, T_loc, T_prec>
-    digamma_kappa_mukappa(N_mukappa);
+      digamma_kappa_mukappa(N_mukappa);
 
   for (size_t n = 0; n < N_mukappa; n++) {
     const T_partials_return mukappa_dbl
-      = value_of(mu_vec[n]) * value_of(kappa_vec[n]);
+        = value_of(mu_vec[n]) * value_of(kappa_vec[n]);
     const T_partials_return kappa_mukappa_dbl
-      = value_of(kappa_vec[n]) - mukappa_dbl;
+        = value_of(kappa_vec[n]) - mukappa_dbl;
 
     if (include_summand<propto, T_loc, T_prec>::value) {
       lgamma_mukappa[n] = lgamma(mukappa_dbl);
@@ -133,12 +132,11 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lpdf(
     }
   }
 
-  VectorBuilder<include_summand<propto, T_prec>::value,
-                T_partials_return, T_prec>
-    lgamma_kappa(length(kappa));
-  VectorBuilder<!is_constant_struct<T_prec>::value,
-                T_partials_return, T_prec>
-    digamma_kappa(length(kappa));
+  VectorBuilder<include_summand<propto, T_prec>::value, T_partials_return,
+                T_prec>
+      lgamma_kappa(length(kappa));
+  VectorBuilder<!is_constant_struct<T_prec>::value, T_partials_return, T_prec>
+      digamma_kappa(length(kappa));
 
   for (size_t n = 0; n < length(kappa); n++) {
     if (include_summand<propto, T_prec>::value)
@@ -159,21 +157,25 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lpdf(
       logp -= lgamma_mukappa[n] + lgamma_kappa_mukappa[n];
     if (include_summand<propto, T_y, T_loc, T_prec>::value) {
       const T_partials_return mukappa_dbl = mu_dbl * kappa_dbl;
-      logp += (mukappa_dbl - 1) * log_y[n] + (kappa_dbl - mukappa_dbl - 1) * log1m_y[n];
+      logp += (mukappa_dbl - 1) * log_y[n]
+              + (kappa_dbl - mukappa_dbl - 1) * log1m_y[n];
     }
 
     if (!is_constant_struct<T_y>::value) {
       const T_partials_return mukappa_dbl = mu_dbl * kappa_dbl;
       ops_partials.edge1_.partials_[n]
-          += (mukappa_dbl - 1) / y_dbl + (kappa_dbl - mukappa_dbl - 1) / (y_dbl - 1);
+          += (mukappa_dbl - 1) / y_dbl
+             + (kappa_dbl - mukappa_dbl - 1) / (y_dbl - 1);
     }
     if (!is_constant_struct<T_loc>::value)
       ops_partials.edge2_.partials_[n]
-        += kappa_dbl * (digamma_kappa_mukappa[n] - digamma_mukappa[n] + log_y[n] - log1m_y[n]);
+          += kappa_dbl
+             * (digamma_kappa_mukappa[n] - digamma_mukappa[n] + log_y[n]
+                - log1m_y[n]);
     if (!is_constant_struct<T_prec>::value)
       ops_partials.edge3_.partials_[n]
-        += digamma_kappa[n] + mu_dbl * (log_y[n] - digamma_mukappa[n])
-        + (1 - mu_dbl) * (log1m_y[n] - digamma_kappa_mukappa[n]);
+          += digamma_kappa[n] + mu_dbl * (log_y[n] - digamma_mukappa[n])
+             + (1 - mu_dbl) * (log1m_y[n] - digamma_kappa_mukappa[n]);
   }
   return ops_partials.build(logp);
 }
