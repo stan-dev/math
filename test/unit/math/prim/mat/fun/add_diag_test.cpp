@@ -4,19 +4,6 @@
 #include <string>
 #include <vector>
 
-template <typename T_m, typename T_a>
-std::string pull_msg(Eigen::Matrix<T_m, -1, -1> &mat, T_a to_add) {
-  std::string message;
-  try {
-    stan::math::add_diag(mat, to_add);
-  } catch (std::domain_error &e) {
-    message = e.what();
-  } catch (...) {
-    message = "Threw the wrong exection";
-  }
-  return message;
-}
-
 TEST(MathPrimMat, double_mat_double_add_diag) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> mat(2, 3);
   mat << 1, 1, 1, 1, 1, 1;
@@ -39,9 +26,16 @@ TEST(MathPrimMat, double_mat_double_vec_add_diag) {
 
   Eigen::MatrixXd out_mat;
   EXPECT_NO_THROW(out_mat = stan::math::add_diag(mat, to_add));
-  for (int i = 0; i < 2; ++i)
-    EXPECT_FLOAT_EQ(1 + to_add[i], out_mat(i, i))
-        << "index: ( " << i << ", " << i << ")";
+  for (int i = 0; i < 2; ++i) {
+    for(int j = 0; j < 3; ++j) {
+      if (i == j)
+        EXPECT_FLOAT_EQ(1 + to_add[i], out_mat(i, j))
+          << "index: ( " << i << ", " << i << ")";
+      else
+        EXPECT_FLOAT_EQ(1, out_mat(i, j))
+          << "index: ( " << i << ", " << i << ")";
+    }
+  }
 }
 
 TEST(MathPrimMat, double_mat_double_rvec_add_diag) {
@@ -53,23 +47,16 @@ TEST(MathPrimMat, double_mat_double_rvec_add_diag) {
 
   Eigen::MatrixXd out_mat;
   EXPECT_NO_THROW(out_mat = stan::math::add_diag(mat, to_add));
-  for (int i = 0; i < 2; ++i)
-    EXPECT_FLOAT_EQ(1 + to_add[i], out_mat(i, i))
-        << "index: ( " << i << ", " << i << ")";
-}
-
-TEST(MathPrimMat, var_mat_double_vec_add_diag) {
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> mat(2, 3);
-  mat << 1, 1, 1, 1, 1, 1;
-
-  Eigen::Matrix<double, 1, -1> to_add(2);
-  to_add << 0, 1;
-
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> out_mat;
-  EXPECT_NO_THROW(out_mat = stan::math::add_diag(mat, to_add));
-  for (int i = 0; i < 2; ++i)
-    EXPECT_FLOAT_EQ(1 + to_add[i], out_mat(i, i))
-        << "index: ( " << i << ", " << i << ")";
+  for (int i = 0; i < 2; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      if (i == j)
+        EXPECT_FLOAT_EQ(1 + to_add[i], out_mat(i, i))
+          << "index: ( " << i << ", " << i << ")";
+      else
+        EXPECT_FLOAT_EQ(1, out_mat(i, j))
+          << "index: ( " << i << ", " << i << ")";        
+    }
+  }
 }
 
 TEST(MathPrimMat, var_mat_double_rvec_add_diag) {
@@ -81,7 +68,14 @@ TEST(MathPrimMat, var_mat_double_rvec_add_diag) {
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> out_mat;
   EXPECT_NO_THROW(out_mat = stan::math::add_diag(mat, to_add));
-  for (int i = 0; i < 2; ++i)
-    EXPECT_FLOAT_EQ(1 + to_add[i], out_mat(i, i))
-        << "index: ( " << i << ", " << i << ")";
+  for (int i = 0; i < 2; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      if (i == j)
+        EXPECT_FLOAT_EQ(1 + to_add[i], out_mat(i, i))
+          << "index: ( " << i << ", " << i << ")";
+      else
+        EXPECT_FLOAT_EQ(1, out_mat(i, j))
+          << "index: ( " << i << ", " << i << ")";                
+    }
+  }
 }

@@ -31,23 +31,6 @@ std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2,
   return message;
 }
 
-TEST(MathPrimMat, dummy_function) {
-  // just testing templates here
-
-  std::vector<double> x_0(2);
-  x_0[0] = 1;
-  x_0[1] = 2;
-
-  std::vector<Eigen::Matrix<double, -1, 1>> x_1(2);
-  for (size_t i = 0; i < x_1.size(); ++i) {
-    x_1[i].resize(3, 1);
-    x_1[i] << 2 * i, 3 * i, 4 * i;
-  }
-
-  // stan::math::dummy_fun(x_0);
-  // stan::math::dummy_fun(x_1);
-}
-
 TEST(MathPrimMat, vec_double_gp_dot_prod_cov0) {
   double sigma = 0.5;
   double sigma_sq = pow(sigma, 2);
