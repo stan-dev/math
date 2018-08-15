@@ -4,6 +4,7 @@
 #include <test/unit/math/rev/scal/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/scal/prob/normal_cdf.hpp>
 
 TEST(MathFunctions, binormal_integral_using) { using stan::math::binormal_integral_owens; }
 
@@ -249,4 +250,81 @@ TEST(MathFunctions, binormal_integral_val_test) {
   b = -3.4;
   f = stan::math::binormal_integral_owens(a, b, rho);
   EXPECT_FLOAT_EQ(-21.05454315638917, log(f.val()));
+}
+TEST(MathFunctions, binormal_integral_grad_test_vvv_owens) {
+  using stan::math::var;
+  using stan::math::normal_cdf;
+  using std::exp;
+  using std::sqrt;
+  var rho = 0.3;
+  var a = -0.4;
+  var b = 2.7;
+  var f = stan::math::binormal_integral_owens(a, b, rho);
+
+  double gf_1 = 1 / sqrt(2 * stan::math::pi()) * exp(-0.5 * a.val() * a.val()) 
+    * normal_cdf(b.val(), rho.val() * a.val(), sqrt(1 - rho.val() * rho.val()));
+  double gf_2 = 1 / sqrt(2 * stan::math::pi()) * exp(-0.5 * b.val() * b.val()) 
+    * normal_cdf(a.val(), rho.val() * b.val(), sqrt(1 - rho.val() * rho.val()));
+  double gf_3 = 0.5 / (stan::math::pi() * sqrt(1 - rho.val() * rho.val()))
+            * exp(-0.5 / (1 - rho.val() * rho.val())  
+                  * (a.val() - rho.val() * b.val()) * (a.val() - rho.val() * b.val())
+                  -0.5 * b.val() * b.val());
+  AVEC x = createAVEC(a, b, rho);
+  VEC grad_f;
+  f.grad(x, grad_f);
+  EXPECT_FLOAT_EQ(gf_1, grad_f[0]);
+  EXPECT_FLOAT_EQ(gf_2, grad_f[1]);
+  EXPECT_FLOAT_EQ(gf_3, grad_f[2]);
+
+}
+TEST(MathFunctions, binormal_integral_grad_test_vvv_gauss_legendre) {
+  using stan::math::var;
+  using stan::math::normal_cdf;
+  using std::exp;
+  using std::sqrt;
+  var rho = -0.3;
+  var a = -3.3;
+  var b = -3.4;
+  var f = stan::math::binormal_integral_owens(a, b, rho);
+
+  double gf_1 = 1 / sqrt(2 * stan::math::pi()) * exp(-0.5 * a.val() * a.val()) 
+    * normal_cdf(b.val(), rho.val() * a.val(), sqrt(1 - rho.val() * rho.val()));
+  double gf_2 = 1 / sqrt(2 * stan::math::pi()) * exp(-0.5 * b.val() * b.val()) 
+    * normal_cdf(a.val(), rho.val() * b.val(), sqrt(1 - rho.val() * rho.val()));
+  double gf_3 = 0.5 / (stan::math::pi() * sqrt(1 - rho.val() * rho.val()))
+            * exp(-0.5 / (1 - rho.val() * rho.val())  
+                  * (a.val() - rho.val() * b.val()) * (a.val() - rho.val() * b.val())
+                  -0.5 * b.val() * b.val());
+  AVEC x = createAVEC(a, b, rho);
+  VEC grad_f;
+  f.grad(x, grad_f);
+  EXPECT_FLOAT_EQ(gf_1, grad_f[0]);
+  EXPECT_FLOAT_EQ(gf_2, grad_f[1]);
+  EXPECT_FLOAT_EQ(gf_3, grad_f[2]);
+}
+TEST(MathFunctions, binormal_integral_grad_test_vvv_gauss_legendre_near_boundary) {
+  using stan::math::var;
+  using stan::math::normal_cdf;
+  using std::exp;
+  using std::sqrt;
+  var rho = -0.99;
+  var a = -5.3;
+  var b = -5.4;
+  var f = stan::math::binormal_integral_owens(a, b, rho);
+
+  double one_minus_r_sq = (1 + rho.val()) * (1 - rho.val());
+  double gf_1 = 1 / sqrt(2 * stan::math::pi()) * exp(-0.5 * a.val() * a.val()) 
+    * normal_cdf(b.val(), rho.val() * a.val(), sqrt(one_minus_r_sq));
+  double gf_2 = 1 / sqrt(2 * stan::math::pi()) * exp(-0.5 * b.val() * b.val()) 
+    * normal_cdf(a.val(), rho.val() * b.val(), sqrt(one_minus_r_sq));
+  double gf_3 = 0.5 / (stan::math::pi() * sqrt(one_minus_r_sq))
+            * exp(-0.5 / one_minus_r_sq  
+                  * (a.val() - rho.val() * b.val()) * (a.val() - rho.val() * b.val())
+                  -0.5 * b.val() * b.val());
+  AVEC x = createAVEC(a, b, rho);
+  VEC grad_f;
+  f.grad(x, grad_f);
+  EXPECT_FLOAT_EQ(gf_1, grad_f[0]);
+  EXPECT_FLOAT_EQ(gf_2, grad_f[1]);
+  EXPECT_FLOAT_EQ(gf_3, grad_f[2]);
 }
