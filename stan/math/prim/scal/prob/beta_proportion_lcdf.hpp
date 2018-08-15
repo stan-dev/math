@@ -49,9 +49,8 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_prec>
 typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lcdf(
     const T_y& y, const T_loc& mu, const T_prec& kappa) {
-  typedef
-      typename stan::partials_return_type<T_y, T_loc, T_prec>::type
-          T_partials_return;
+  typedef typename stan::partials_return_type<T_y, T_loc, T_prec>::type
+      T_partials_return;
 
   if (size_zero(y, mu, kappa))
     return 0.0;
@@ -68,9 +67,8 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lcdf(
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_less_or_equal(function, "Random variable", y, 1.0);
-  check_consistent_sizes(function, "Random variable", y,
-                         "Location parameter", mu,
-                         "Precision parameter", kappa);
+  check_consistent_sizes(function, "Random variable", y, "Location parameter",
+                         mu, "Precision parameter", kappa);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);
@@ -85,20 +83,20 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lcdf(
 
   VectorBuilder<contains_nonconstant_struct<T_loc, T_prec>::value,
                 T_partials_return, T_loc, T_prec>
-    digamma_mukappa(max_size(mu, kappa));
+      digamma_mukappa(max_size(mu, kappa));
   VectorBuilder<contains_nonconstant_struct<T_loc, T_prec>::value,
                 T_partials_return, T_loc, T_prec>
-    digamma_kappa_mukappa(max_size(mu, kappa));
+      digamma_kappa_mukappa(max_size(mu, kappa));
   VectorBuilder<contains_nonconstant_struct<T_loc, T_prec>::value,
                 T_partials_return, T_prec>
-    digamma_kappa(length(kappa));
+      digamma_kappa(length(kappa));
 
   if (contains_nonconstant_struct<T_loc, T_prec>::value) {
     for (size_t i = 0; i < max_size(mu, kappa); i++) {
       const T_partials_return mukappa_dbl
-        = value_of(mu_vec[i]) * value_of(kappa_vec[i]);
+          = value_of(mu_vec[i]) * value_of(kappa_vec[i]);
       const T_partials_return kappa_mukappa_dbl
-        = value_of(kappa_vec[i]) - mukappa_dbl;
+          = value_of(kappa_vec[i]) - mukappa_dbl;
 
       digamma_mukappa[i] = digamma(mukappa_dbl);
       digamma_kappa_mukappa[i] = digamma(kappa_mukappa_dbl);
@@ -115,8 +113,10 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lcdf(
     const T_partials_return kappa_dbl = value_of(kappa_vec[n]);
     const T_partials_return mukappa_dbl = mu_dbl * kappa_dbl;
     const T_partials_return kappa_mukappa_dbl = kappa_dbl - mukappa_dbl;
-    const T_partials_return betafunc_dbl = exp(lbeta(mukappa_dbl, kappa_mukappa_dbl));
-    const T_partials_return Pn = inc_beta(mukappa_dbl, kappa_mukappa_dbl, y_dbl);
+    const T_partials_return betafunc_dbl
+        = exp(lbeta(mukappa_dbl, kappa_mukappa_dbl));
+    const T_partials_return Pn
+        = inc_beta(mukappa_dbl, kappa_mukappa_dbl, y_dbl);
 
     cdf_log += log(Pn);
 
@@ -136,7 +136,8 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lcdf(
     if (!is_constant_struct<T_loc>::value)
       ops_partials.edge2_.partials_[n] += kappa_dbl * (g1 - g2) / Pn;
     if (!is_constant_struct<T_prec>::value)
-      ops_partials.edge3_.partials_[n] += (g1 * mu_dbl + g2 * (1 - mu_dbl)) / Pn;
+      ops_partials.edge3_.partials_[n]
+          += (g1 * mu_dbl + g2 * (1 - mu_dbl)) / Pn;
   }
 
   return ops_partials.build(cdf_log);

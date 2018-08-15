@@ -24,9 +24,9 @@ class AgradDistributionsBetaProportion : public AgradDistributionTest {
     parameters.push_back(param);
     log_prob.push_back(-1.6070080920051264);  // expected log_prob
 
-    param[0] = 0.85; // y
-    param[1] = 0.15; // mu (location)
-    param[2] = 4.5;  // kappa (precision)
+    param[0] = 0.85;  // y
+    param[1] = 0.15;  // mu (location)
+    param[2] = 4.5;   // kappa (precision)
     parameters.push_back(param);
     log_prob.push_back(-4.7214376176246775);  // expected log_prob
   }
