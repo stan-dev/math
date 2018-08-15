@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/constants.hpp>
 #include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/gpu/copy.hpp>
 #include <CL/cl.hpp>
 
 namespace stan {
@@ -17,13 +18,13 @@ namespace math {
  * @param src the source matrix
  * @tparam triangular_map int to describe
  * which part of the matrix to copy:
- * Lower - copies the lower triangular
- * Upper - copes the upper triangular
+ * TriangularViewGPU::Lower - copies the lower triangular
+ * TriangularViewGPU::Upper - copes the upper triangular
  *
  * @return the matrix with the copied content
  *
  */
-template <int triangular_map = gpu::Lower>
+template <TriangularViewGPU triangular_view = TriangularViewGPU::Entire>
 inline matrix_gpu copy_triangular(const matrix_gpu& src) {
   if (src.size() == 0 || src.size() == 1) {
     matrix_gpu dst(src);
@@ -34,7 +35,7 @@ inline matrix_gpu copy_triangular(const matrix_gpu& src) {
   try {
     kernel_cl kernel("copy_triangular");
     kernel.set_args(dst.buffer(), src.buffer(), dst.rows(), dst.cols(),
-                    triangular_map);
+                    static_cast<int>(triangular_view));
     cmdQueue.enqueueNDRangeKernel(kernel.compiled_, cl::NullRange,
                                   cl::NDRange(dst.rows(), dst.cols()),
                                   cl::NullRange, NULL, NULL);

@@ -3,14 +3,8 @@
 #ifdef STAN_OPENCL
 namespace stan {
 namespace math {
-namespace gpu {
-const int Lower = 0;
-const int Upper = 1;
-const int Entire = 2;
-
-const int LowerToUpper = 1;
-const int UpperToLower = 0;
-}  // namespace gpu
+enum class TriangularViewGPU { Lower = 0, Upper = 1, Entire = 2 };
+enum class TriangularMapGPU { UpperToLower = 0, LowerToUpper = 1 };
 }  // namespace math
 }  // namespace stan
 #endif

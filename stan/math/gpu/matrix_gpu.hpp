@@ -164,12 +164,10 @@ class matrix_gpu {
    * the whole matrix.
    *
    * @tparam triangular_view Specifies if zeros are assigned to
-   * the entire matrix, lower triangular or upper triangular with
-   * possible values stan::math:Entire, stan::math:Lower or
-   * stan::math::Upper
-   *
+   * the entire matrix, lower triangular or upper triangular. The
+   * value must be of type TriangularViewGPU
    */
-  template <int triangular_view = gpu::Entire>
+  template <TriangularViewGPU triangular_view = TriangularViewGPU::Entire>
   void zeros() {
     if (size() == 0)
       return;
@@ -177,7 +175,7 @@ class matrix_gpu {
     cl::CommandQueue cmdQueue = opencl_context.queue();
     try {
       kernel.set_args(this->buffer(), this->rows(), this->cols(),
-                      triangular_view);
+                      static_cast<int>(triangular_view));
       cmdQueue.enqueueNDRangeKernel(kernel.compiled_, cl::NullRange,
                                     cl::NDRange(this->rows(), this->cols()),
                                     cl::NullRange, NULL, NULL);
@@ -190,13 +188,13 @@ class matrix_gpu {
    * Copies a lower/upper triangular of a matrix to it's upper/lower.
    *
    * @tparam triangular_map Specifies if the copy is
-   * lower-to-upper or upper-to-lower triangular with possible values
-   * stan:math::LowerToUpper and stan::math::UpperToLower
+   * lower-to-upper or upper-to-lower triangular. The value
+   * must be of type TriangularMap
    *
    * @throw <code>std::invalid_argument</code> if the matrix is not square.
    *
    */
-  template <int triangular_map = gpu::LowerToUpper>
+  template <TriangularMapGPU triangular_map = TriangularMapGPU::LowerToUpper>
   void triangular_transpose() {
     if (size() == 0 || size() == 1) {
       return;
@@ -208,7 +206,7 @@ class matrix_gpu {
     cl::CommandQueue cmdQueue = opencl_context.queue();
     try {
       kernel.set_args(this->buffer(), this->rows(), this->cols(),
-                      triangular_map);
+                      static_cast<int>(triangular_map));
       cmdQueue.enqueueNDRangeKernel(kernel.compiled_, cl::NullRange,
                                     cl::NDRange(this->rows(), this->cols()),
                                     cl::NullRange, NULL, NULL);
