@@ -29,18 +29,18 @@ TEST(ProbDistributionsBetaProportion, chiSquareGoodnessFitTest) {
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
 
-  double p = 0.5;  // location
-  double c = 3.0;  // precision
+  double mu = 0.5;   // location
+  double kappa = 3.0;  // precision
 
   std::vector<double> samples;
   for (int i = 0; i < N; ++i) {
-    samples.push_back(stan::math::beta_proportion_rng(p, c, rng));
+    samples.push_back(stan::math::beta_proportion_rng(mu, kappa, rng));
   }
 
   // transform from location and precision parameterization
   // into shape1 (alpha) and shape2 (beta) parameterization
-  double alpha = p * c;
-  double beta = (1.0 - p) * c;
+  double alpha = mu * kappa;
+  double beta = (1 - mu) * kappa;
 
   // Generate quantiles from boost's beta distribution
   boost::math::beta_distribution<> dist(alpha, beta);
@@ -60,18 +60,18 @@ TEST(ProbDistributionsBetaProportion, chiSquareGoodnessFitTest2) {
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
 
-  double p = 0.3;  // location
-  double c = 0.5;  // precision
+  double mu = 0.3;   // location
+  double kappa = 0.5;  // precision
 
   std::vector<double> samples;
   for (int i = 0; i < N; ++i) {
-    samples.push_back(stan::math::beta_proportion_rng(p, c, rng));
+    samples.push_back(stan::math::beta_proportion_rng(mu, kappa, rng));
   }
 
   // transform from location and precision parameterization
   // into shape1 (alpha) and shape2 (beta) parameterization
-  double alpha = p * c;
-  double beta = (1.0 - p) * c;
+  double alpha = mu * kappa;
+  double beta = (1 - mu) * kappa;
 
   // Generate quantiles from boost's beta distribution
   boost::math::beta_distribution<> dist(alpha, beta);
