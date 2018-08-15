@@ -27,13 +27,13 @@ TEST(MathPrimMat, double_mat_double_vec_add_diag) {
   Eigen::MatrixXd out_mat;
   EXPECT_NO_THROW(out_mat = stan::math::add_diag(mat, to_add));
   for (int i = 0; i < 2; ++i) {
-    for(int j = 0; j < 3; ++j) {
+    for (int j = 0; j < 3; ++j) {
       if (i == j)
         EXPECT_FLOAT_EQ(1 + to_add[i], out_mat(i, j))
-          << "index: ( " << i << ", " << i << ")";
+            << "index: ( " << i << ", " << i << ")";
       else
         EXPECT_FLOAT_EQ(1, out_mat(i, j))
-          << "index: ( " << i << ", " << i << ")";
+            << "index: ( " << i << ", " << i << ")";
     }
   }
 }
@@ -51,10 +51,10 @@ TEST(MathPrimMat, double_mat_double_rvec_add_diag) {
     for (int j = 0; j < 3; ++j) {
       if (i == j)
         EXPECT_FLOAT_EQ(1 + to_add[i], out_mat(i, i))
-          << "index: ( " << i << ", " << i << ")";
+            << "index: ( " << i << ", " << i << ")";
       else
         EXPECT_FLOAT_EQ(1, out_mat(i, j))
-          << "index: ( " << i << ", " << i << ")";        
+            << "index: ( " << i << ", " << i << ")";
     }
   }
 }
@@ -72,10 +72,10 @@ TEST(MathPrimMat, var_mat_double_rvec_add_diag) {
     for (int j = 0; j < 3; ++j) {
       if (i == j)
         EXPECT_FLOAT_EQ(1 + to_add[i], out_mat(i, i))
-          << "index: ( " << i << ", " << i << ")";
+            << "index: ( " << i << ", " << i << ")";
       else
         EXPECT_FLOAT_EQ(1, out_mat(i, j))
-          << "index: ( " << i << ", " << i << ")";                
+            << "index: ( " << i << ", " << i << ")";
     }
   }
 }
