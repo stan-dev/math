@@ -2,11 +2,6 @@
 #define STAN_MATH_PRIM_SCAL_META_PARTIALS_RETURN_TYPE_HPP
 
 #include <stan/math/prim/scal/meta/partials_type.hpp>
-/*#include <stan/math/rev/core/var.hpp>
-#include <stan/math/rev/scal/meta/partials_type.hpp>
-#include <stan/math/fwd/core/fvar.hpp>
-#include <stan/math/fwd/scal/meta/partials_type.hpp>
-*/
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <boost/math/tools/promotion.hpp>
 
