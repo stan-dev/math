@@ -15,15 +15,15 @@ class BetaProportionTestRig : public VectorRealRNGTestRig {
                              {-2.7, -1.5, -0.5, 0.0}, {-3, -2, -1, 0}) {}
 
   template <typename T1, typename T2, typename T3, typename T_rng>
-  auto generate_samples(const T1& p, const T2& c, const T3&, T_rng& rng) const {
-    return stan::math::beta_proportion_rng(p, c, rng);
+  auto generate_samples(const T1& mu, const T2& kappa, const T3&, T_rng& rng) const {
+    return stan::math::beta_proportion_rng(mu, kappa, rng);
   }
 
-  std::vector<double> generate_quantiles(double p, double c, double) const {
+  std::vector<double> generate_quantiles(double mu, double kappa, double) const {
     // transform from location and precision parameterization
     // into shape1 (alpha) and shape2 (beta) parameterization
-    double alpha = p * c;
-    double beta = (1.0 - p) * c;
+    double alpha = mu * kappa;
+    double beta = kappa - alpha;
     std::vector<double> quantiles;
     double K = boost::math::round(2 * std::pow(N_, 0.4));
     boost::math::beta_distribution<> dist(alpha, beta);

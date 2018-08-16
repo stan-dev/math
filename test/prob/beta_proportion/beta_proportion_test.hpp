@@ -39,7 +39,7 @@ class AgradDistributionsBetaProportion : public AgradDistributionTest {
     index.push_back(0U);
     value.push_back(2.0);
 
-    // p
+    // mu
     index.push_back(1U);
     value.push_back(0.0);
 
@@ -52,7 +52,7 @@ class AgradDistributionsBetaProportion : public AgradDistributionTest {
     index.push_back(1U);
     value.push_back(-numeric_limits<double>::infinity());
 
-    // c
+    // kappa
     index.push_back(2U);
     value.push_back(0.0);
 

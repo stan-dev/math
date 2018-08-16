@@ -40,7 +40,7 @@ TEST(ProbDistributionsBetaProportion, chiSquareGoodnessFitTest) {
   // transform from location and precision parameterization
   // into shape1 (alpha) and shape2 (beta) parameterization
   double alpha = mu * kappa;
-  double beta = (1 - mu) * kappa;
+  double beta =  kappa - alpha;
 
   // Generate quantiles from boost's beta distribution
   boost::math::beta_distribution<> dist(alpha, beta);
@@ -71,7 +71,7 @@ TEST(ProbDistributionsBetaProportion, chiSquareGoodnessFitTest2) {
   // transform from location and precision parameterization
   // into shape1 (alpha) and shape2 (beta) parameterization
   double alpha = mu * kappa;
-  double beta = (1 - mu) * kappa;
+  double beta = kappa - alpha;
 
   // Generate quantiles from boost's beta distribution
   boost::math::beta_distribution<> dist(alpha, beta);

@@ -29,7 +29,7 @@ namespace math {
 /**
  * Returns the beta log complementary cumulative distribution function
  * for specified probability, location, and precision parameters:
- * beta_proportion_lccdf(y | mu, kappa) = beta_lccdf(y | my * kappa, (1 -
+ * beta_proportion_lccdf(y | mu, kappa) = beta_lccdf(y | mu * kappa, (1 -
  * mu) * kappa).  Any arguments other than scalars must be containers of
  * the same size.  With non-scalar arguments, the return is the sum of
  * the log ccdfs with scalars broadcast as necessary.

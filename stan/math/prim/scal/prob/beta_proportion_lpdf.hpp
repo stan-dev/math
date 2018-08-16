@@ -30,7 +30,7 @@ namespace math {
  * precision: beta_proportion_lpdf(y | mu, kappa) = beta_lpdf(y | mu *
  * kappa, (1 - mu) * kappa).  Any arguments other than scalars must be
  * containers of the same size.  With non-scalar arguments, the return
- * is the sum of the log ccdfs with scalars broadcast as necessary.
+ * is the sum of the log pdfs with scalars broadcast as necessary.
  *
  * <p> The result log probability is defined to be the sum of
  * the log probabilities for each observation/mu/kappa triple.
