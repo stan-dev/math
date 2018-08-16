@@ -53,10 +53,10 @@ class ops_partials_edge<double, var> {
  *
  * NB: since ops_partials_edge.partials_ and ops_partials_edge.partials_vec
  * are sometimes represented internally as a broadcast_array, we need to take
- * with assignments to them. Indeed, we can assign any right hand side which
- * allows for indexing to a broadcast_array. The resulting behaviour is that the
- * entry for the first index is what gets assigned. The most common use-case
- * should be where the rhs is some container of length 1.
+ * care with assignments to them. Indeed, we can assign any right hand side
+ * which allows for indexing to a broadcast_array. The resulting behaviour is
+ * that the entry for the first index is what gets assigned. The most common
+ * use-case should be where the rhs is some container of length 1.
  *
  * @tparam Op1 type of the first operand
  * @tparam Op2 type of the second operand
