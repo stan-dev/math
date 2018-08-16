@@ -10,7 +10,7 @@
 
 namespace stan {
 namespace math {
-class kernel_cl; // Declare here so kernel_cl_base can see the class
+class kernel_cl;  // Declare here so kernel_cl_base can see the class
 namespace internal {
 class kernel_cl_base {
   friend class stan::math::kernel_cl;
@@ -58,8 +58,8 @@ class kernel_cl_base {
     for (auto kernel_info : kernel_table) {
       kernel_source += kernel_info.second;
       for (auto comp_opts : base_opts) {
-          kernel_opts += std::string(" -D") + comp_opts.first + "="
-                         + std::to_string(comp_opts.second);
+        kernel_opts += std::string(" -D") + comp_opts.first + "="
+                       + std::to_string(comp_opts.second);
       }
     }
     try {
@@ -81,7 +81,7 @@ class kernel_cl_base {
   }
 
  protected:
-  std::string helpers = // Helper macros for the kernels.
+  std::string helpers =                      // Helper macros for the kernels.
 #include <stan/math/gpu/kernels/helpers.cl>  // NOLINT
       ;                                      // NOLINT
   // Holds Default parameter values for each Kernel.
@@ -94,24 +94,24 @@ class kernel_cl_base {
          {"LOWER_TO_UPPER", static_cast<int>(TriangularMapGPU::LowerToUpper)}};
 
   typedef std::map<const char*, std::string> map_table;
-	/**
-	 * Map of a kernel name (first) and it's meta information (second).
-	 *
-	 * Kernel  | Description
-	 * ------- | -------------
-	 * copy  | Copy matrix A on the GPU to matrix B.
-	 * transpose  | Take the transpose of a matrix.
-	 * zeros | Make a lower, upper, or full matrix of zeros.
-	 * identity | Create a NxM identity matrix.
-	 * copy_triangular | Copy the lower or upper triangular matrix of A to B.
-	 * copy_triangular_transposed | Copy the transpose lower/upper triangular.
-	 * copy_submatrix | Copy a subset of matrix A into B.
-	 * add | C = A + B
-	 * subtract | C = A - B
-	 * is_nan | Check if a matrix on the GPU contains nan values.
-	 * is_zero_on_diagonal | Check if a matrix has zeros on the diagonal.
-	 * is_symmetric | Check if a matrix is symmetric.
-	 */
+  /**
+   * Map of a kernel name (first) and it's meta information (second).
+   *
+   * Kernel  | Description
+   * ------- | -------------
+   * copy  | Copy matrix A on the GPU to matrix B.
+   * transpose  | Take the transpose of a matrix.
+   * zeros | Make a lower, upper, or full matrix of zeros.
+   * identity | Create a NxM identity matrix.
+   * copy_triangular | Copy the lower or upper triangular matrix of A to B.
+   * copy_triangular_transposed | Copy the transpose lower/upper triangular.
+   * copy_submatrix | Copy a subset of matrix A into B.
+   * add | C = A + B
+   * subtract | C = A - B
+   * is_nan | Check if a matrix on the GPU contains nan values.
+   * is_zero_on_diagonal | Check if a matrix has zeros on the diagonal.
+   * is_symmetric | Check if a matrix is symmetric.
+   */
   const map_table kernel_table
       = {{"copy", copy_matrix},
          {"transpose", transpose_matrix},
@@ -135,7 +135,7 @@ class kernel_cl_base {
   kernel_cl_base(kernel_cl_base const&) = delete;
   void operator=(kernel_cl_base const&) = delete;
 };
-}
+}  // namespace internal
 
 /**
  * The adapter class that can access the <code>kernel_cl_base</code> class
@@ -149,16 +149,18 @@ class kernel_cl {
   /**
    * Returns a kernel
    * @param kernel_name The name of a kernel specified in the
-	 *  <code>kernel_table</code>. See the docs of <code>kernel_table</code> for
-	 *  all available kernels.
+   *  <code>kernel_table</code>. See the docs of <code>kernel_table</code> for
+   *  all available kernels.
    * @throw std::domain_error
    */
   explicit kernel_cl(const char* kernel_name) {
-    if (internal::kernel_cl_base::getInstance().kernels.count((kernel_name)) == 0) {
+    if (internal::kernel_cl_base::getInstance().kernels.count((kernel_name))
+        == 0) {
       domain_error("compiling kernels", kernel_name, " kernel does not exist",
                    "");
     } else {
-      compiled_ = internal::kernel_cl_base::getInstance().kernels[(kernel_name)];
+      compiled_
+          = internal::kernel_cl_base::getInstance().kernels[(kernel_name)];
     }
   }
 
@@ -169,7 +171,7 @@ class kernel_cl {
     return internal::kernel_cl_base::getInstance().kernels;
   }
 
-	/**
+  /**
    * Adds arguments to an OpenCL kernel.
    *
    * @param args The arguments to mote to the OpenCL kernel.
@@ -177,12 +179,12 @@ class kernel_cl {
    * @note Comes from:
    * simpleopencl.blogspot.com/2013/04/calling-kernels-with-large-number-of.html
    */
-	template <typename... Args>
-	inline void set_args(const Args&... args) {
-		this->recursive_args(this->compiled_, 0, args...);
-	}
+  template <typename... Args>
+  inline void set_args(const Args&... args) {
+    this->recursive_args(this->compiled_, 0, args...);
+  }
 
-private:
+ private:
   /**
    * Terminating function for recursively setting arguments in an OpenCL kernel.
    *
