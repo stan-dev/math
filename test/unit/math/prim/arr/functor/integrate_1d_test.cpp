@@ -13,7 +13,7 @@ struct f1 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return exp(-x) / sqrt(x);
   }
 };
@@ -23,7 +23,7 @@ struct f2 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     if (x <= 0.5) {
       return sqrt(x) / sqrt(1 - x * x);
     } else {
@@ -37,7 +37,7 @@ struct f3 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return exp(-x);
   }
 };
@@ -47,7 +47,7 @@ struct f4 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return exp(x) + theta[0];
   }
 };
@@ -57,7 +57,7 @@ struct f5 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return exp(x) + pow(theta[0], 2) + pow(theta[1], 3);
   }
 };
@@ -67,7 +67,7 @@ struct f6 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return exp(x) + pow(x_i[0], 2) + pow(theta[0], 4) + 3 * theta[1];
   }
 };
@@ -77,7 +77,7 @@ struct f7 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return exp(x) + pow(x_r[0], 2) + pow(x_r[1], 5) + 3 * x_r[2];
   }
 };
@@ -87,7 +87,7 @@ struct f8 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return exp(-pow(x - theta[0], x_i[0]) / pow(x_r[0], x_i[0]));
   }
 };
@@ -97,7 +97,7 @@ struct f9 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return 1.0 / (1.0 + pow(x, x_i[0]) / theta[0]);
   }
 };
@@ -107,7 +107,7 @@ struct f10 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return pow(x, theta[0] - 1.0)
            * pow((x > 0.5) ? xc : (1 - x), theta[1] - 1.0);
   }
@@ -118,7 +118,7 @@ struct f11 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return (std::isnan(xc)) ? xc : 0.0;
   }
 };
@@ -128,7 +128,7 @@ struct f12 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     T1 out = stan::math::modified_bessel_second_kind(0, x);
     if (out > 0)
       return 2 * x * out;
@@ -141,7 +141,7 @@ struct f13 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     T1 out = stan::math::modified_bessel_second_kind(0, x);
     if (out > 0)
       return 2 * x * stan::math::square(out);
@@ -154,7 +154,7 @@ struct f14 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return exp(x) * stan::math::inv_sqrt(x > 0.5 ? xc : 1 - x);
   }
 };
@@ -164,7 +164,7 @@ struct f15 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     T1 x2 = x * x;
     T1 numer = x2 * log(x);
     T1 denom = x < 0.5 ? (x + 1) * (x - 1) : (x + 1) * -xc;
@@ -178,7 +178,7 @@ struct f16 {
   inline typename stan::return_type<T1, T2>::type operator()(
       const T1 &x, const T1 &xc, const std::vector<T2> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream &msgs) const {
+      std::ostream *msgs) const {
     return x * sin(x) / (1 + stan::math::square(cos(x)));
   }
 };
@@ -226,7 +226,7 @@ void test_integration(const F &f, double a, double b,
     auto flipped =
         [&](const double &x, const double &xc, const std::vector<double> &theta,
             const std::vector<double> &x_r, const std::vector<int> &x_i,
-            std::ostream &msgs) { return f(-x, -xc, theta, x_r, x_i, msgs); };
+            std::ostream *msgs) { return f(-x, -xc, theta, x_r, x_i, msgs); };
     EXPECT_LE(std::abs(integrate_1d(flipped, -b, -a, thetas, x_r, x_i, msgs,
                                     tolerance)
                        - val),
@@ -284,12 +284,24 @@ TEST(StanMath_integrate_1d, TestThrows) {
       f11{}, 0.0, 1.0, std::vector<double>(), {}, {}, msgs, 1e-6));
 }
 
+TEST(StanMath_integrate_1d, test_integer_arguments) {
+  double v;
+  EXPECT_NO_THROW(v = stan::math::integrate_1d(
+                      f2{}, 0, 1, std::vector<double>(), {}, {}, msgs, 1e-6));
+  EXPECT_NO_THROW(v = stan::math::integrate_1d(
+                      f2{}, 0.0, 1, std::vector<double>(), {}, {}, msgs, 1e-6));
+  EXPECT_NO_THROW(v = stan::math::integrate_1d(
+                      f2{}, 0, 1.0, std::vector<double>(), {}, {}, msgs, 1e-6));
+}
+
 TEST(StanMath_integrate_1d, test1) {
   // Tricky integral from Boost docs + limit at infinity
   test_integration(f1{}, 0.0, std::numeric_limits<double>::infinity(), {}, {},
                    {}, 1.772453850905516);
   // Tricky integral from Boost 1d integration docs
   test_integration(f2{}, 0.0, 1.0, {}, {}, {}, 1.198140234735592);
+  // Tricky integral from Boost 1d integration docs
+  test_integration(f2{}, 0, 1, {}, {}, {}, 1.198140234735592);
   // Zero crossing integral + limit at infinity
   test_integration(f3{}, -2.0, std::numeric_limits<double>::infinity(), {}, {},
                    {}, 7.38905609893065);
