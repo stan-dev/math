@@ -16,6 +16,12 @@ class broadcast_array {
 
   T& operator[](int /*i*/) { return prim_; }
 
+  /**
+   * We can assign any right hand side which allows for indexing to a
+   * broadcast_array. The idea is that the entry for the first index is what
+   * gets assigned. The most common use-case should be where the rhs is some
+   * container of length 1.
+   */
   template <typename Y>
   void operator=(const Y& m) {
     prim_ = m[0];
