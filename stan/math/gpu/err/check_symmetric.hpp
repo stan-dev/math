@@ -28,13 +28,12 @@ inline void check_symmetric(const char* function, const char* name,
     cl::Buffer buffer_symmetric_flag(ctx, CL_MEM_READ_WRITE, sizeof(int));
     cmd_queue.enqueueWriteBuffer(buffer_symmetric_flag, CL_TRUE, 0, sizeof(int),
                                  &symmetric_flag);
-    kernel_cl kernel("is_symmetric");
-    kernel.set_args(y.buffer(), y.rows(), y.cols(), buffer_symmetric_flag,
-                    math::CONSTRAINT_TOLERANCE);
+    auto kern = kernel_cl.is_symmetric(y.buffer(), y.rows(), y.cols(),
+                                       buffer_symmetric_flag,
+                                       math::CONSTRAINT_TOLERANCE);
 
-    cmd_queue.enqueueNDRangeKernel(kernel.compiled_, cl::NullRange,
-                                   cl::NDRange(y.rows(), y.cols()),
-                                   cl::NullRange);
+    cmd_queue.enqueueNDRangeKernel(
+        kern, cl::NullRange, cl::NDRange(y.rows(), y.cols()), cl::NullRange);
 
     cmd_queue.enqueueReadBuffer(buffer_symmetric_flag, CL_TRUE, 0, sizeof(int),
                                 &symmetric_flag);

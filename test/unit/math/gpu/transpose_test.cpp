@@ -47,7 +47,7 @@ TEST(MathGpu, transpose) {
   stan::math::matrix_gpu m00_dst(m0.cols(), m0.rows());
 
   using stan::math::transpose;
-  EXPECT_NO_THROW(v00_dst = transpose(v00));
+  v00_dst = transpose(v00);
   EXPECT_NO_THROW(rv00_dst = transpose(rv00));
   EXPECT_NO_THROW(m00_dst = transpose(m00));
 

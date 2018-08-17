@@ -112,9 +112,9 @@ inline void copy(matrix_gpu& dst, const matrix_gpu& src) {
        *  for explanation
        */
       cl::CommandQueue& cmdQueue = opencl_context.queue();
-      kernel_cl kernel("copy");
-      kernel.set_args(src.buffer(), dst.buffer(), dst.rows(), dst.cols());
-      cmdQueue.enqueueNDRangeKernel(kernel.compiled_, cl::NullRange,
+      auto kern
+          = kernel_cl.copy(src.buffer(), dst.buffer(), dst.rows(), dst.cols());
+      cmdQueue.enqueueNDRangeKernel(kern, cl::NullRange,
                                     cl::NDRange(dst.rows(), dst.cols()),
                                     cl::NullRange, NULL, NULL);
     } catch (const cl::Error& e) {

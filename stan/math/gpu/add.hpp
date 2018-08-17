@@ -28,9 +28,9 @@ inline matrix_gpu add(const matrix_gpu& A, const matrix_gpu& B) {
   }
   cl::CommandQueue cmdQueue = opencl_context.queue();
   try {
-    kernel_cl kernel("add");
-    kernel.set_args(C.buffer(), A.buffer(), B.buffer(), A.rows(), A.cols());
-    cmdQueue.enqueueNDRangeKernel(kernel.compiled_, cl::NullRange,
+    auto kern
+        = kernel_cl.add(C.buffer(), A.buffer(), B.buffer(), A.rows(), A.cols());
+    cmdQueue.enqueueNDRangeKernel(kern, cl::NullRange,
                                   cl::NDRange(A.rows(), A.cols()),
                                   cl::NullRange, NULL, NULL);
   } catch (const cl::Error& e) {
