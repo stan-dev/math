@@ -111,12 +111,7 @@ inline void copy(matrix_gpu& dst, const matrix_gpu& src) {
        * see the matrix_gpu(matrix_gpu&) constructor
        *  for explanation
        */
-      cl::CommandQueue& cmdQueue = opencl_context.queue();
-      auto kern
-          = kernel_cl.copy(src.buffer(), dst.buffer(), dst.rows(), dst.cols());
-      cmdQueue.enqueueNDRangeKernel(kern, cl::NullRange,
-                                    cl::NDRange(dst.rows(), dst.cols()),
-                                    cl::NullRange, NULL, NULL);
+      opencl_kernels::copy(dst.rows(), dst.cols(), src.buffer(), dst.buffer());
     } catch (const cl::Error& e) {
       std::cout << e.err() << std::endl;
       check_opencl_error("copy GPU->GPU", e);

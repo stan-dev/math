@@ -21,4 +21,4 @@ __kernel void add(__global write_only double *C, __global read_only double *A,
     C(i, j) = A(i, j) + B(i, j);
   }
 };
-);
+)

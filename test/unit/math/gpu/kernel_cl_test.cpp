@@ -17,12 +17,8 @@ TEST(MathGpu, make_kernel) {
   stan::math::matrix_gpu m00(m0);
 
   stan::math::matrix_gpu m00_dst(m0.cols(), m0.rows());
-  cl::CommandQueue cmdQueue = stan::math::opencl_context.queue();
-  auto kern = stan::math::kernel_cl.transpose(m00_dst.buffer(), m00.buffer(),
-                                              m00.rows(), m00.cols());
-  cmdQueue.enqueueNDRangeKernel(kern, cl::NullRange,
-                                cl::NDRange(m00.rows(), m00.cols()),
-                                cl::NullRange, NULL, NULL);
+  stan::math::opencl_kernels::transpose(m00_dst.buffer(), m00.buffer(),
+                                         m00.rows(), m00.cols());
   copy(m0_dst, m00_dst);
 }
 #endif

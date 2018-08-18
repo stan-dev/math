@@ -37,4 +37,4 @@ __kernel void copy_triangular(__global write_only double *A,
     }
   }
 }
-);
+)

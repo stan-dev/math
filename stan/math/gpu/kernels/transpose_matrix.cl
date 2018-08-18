@@ -20,4 +20,4 @@ STRINGIFY(
       if (i < rows && j < cols) {
         BT(j, i) = A(i, j);
       }
-    });
+    })

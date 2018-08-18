@@ -19,4 +19,4 @@ __kernel void copy(__global read_only double *A, __global write_only double *B,
     B(i, j) = A(i, j);
   }
 }
-);
+)

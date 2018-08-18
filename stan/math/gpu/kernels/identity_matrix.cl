@@ -23,4 +23,4 @@ __kernel void identity(__global write_only double *A,
     }
   }
 }
-);
+)
