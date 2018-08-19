@@ -68,6 +68,23 @@ void build_y_adj(vari** y_vi_, const std::array<int, size>& M_, double& y_adj) {
  * @tparam size dimensionality of M_
  * @param y_vi_ pointer to pointers to varis
  * @param M_ shape of y_adj
+ * @param[out] y_adj reference to std::vector where adjoints are to be stored
+ */
+template <size_t size>
+void build_y_adj(vari** y_vi_, const std::array<int, size>& M_,
+                 std::vector<double>& y_adj) {
+  y_adj.resize(M_[0]);
+  for (int m = 0; m < M_[0]; ++m)
+    y_adj[m] = y_vi_[m]->adj_;
+}
+
+/**
+ * build_y_adj takes the adjoints from the varis pointed to
+ * by y_vi_ and stores them in y_adj
+ *
+ * @tparam size dimensionality of M_
+ * @param y_vi_ pointer to pointers to varis
+ * @param M_ shape of y_adj
  * @param[out] y_adj reference to Eigen::Matrix where adjoints are to be stored
  */
 template <size_t size, int R, int C>
@@ -80,11 +97,27 @@ void build_y_adj(vari** y_vi_, const std::array<int, size>& M_,
 
 /**
  * compute the dimensionality of the given template argument. By
- * default assume zero.
+ * default don't have a value (fail to compile)
  */
 template <typename T>
-struct compute_dims {
+struct compute_dims {};
+
+/**
+ * compute the dimensionality of the given template argument. Double
+ * types are dimensionality zero.
+ */
+template <>
+struct compute_dims<double> {
   static constexpr size_t value = 0;
+};
+
+/**
+ * compute the dimensionality of the given template argument.
+ * std::vector has dimension 1
+ */
+template <typename T>
+struct compute_dims<std::vector<T>> {
+  static constexpr size_t value = 1;
 };
 
 /**
@@ -309,13 +342,11 @@ struct adj_jac_vari : public vari {
         y_vi_(NULL) {}
 
   /**
-   * build_return_varis_and_vars takes the double output of the
-   * F::operator(), allocates a vari with the
-   * value of the output, and then builds and returns a var pointing
-   * at that vari
+   * build_return_varis_and_vars returns a var with a new vari that has the
+   * value val_y
    *
    * @param val_y output of F::operator()
-   * @return Eigen::Matrix of vars
+   * @return var
    */
   var build_return_varis_and_vars(const double& val_y) {
     y_vi_ = ChainableStack::instance().memalloc_.alloc_array<vari*>(1);
@@ -325,20 +356,44 @@ struct adj_jac_vari : public vari {
   }
 
   /**
-   * build_return_varis_and_vars takes the Eigen::Matrix output of the
-   * F::operator(), allocates and populates an array of varis with the
-   * values of the output, and then builds an Eigen::Matrix of vars
-   * of the same shape as the original output and assigns the vari pointers
-   * in those vars to the allocated varis
+   * build_return_varis_and_vars constructs a container of vars of the same
+   * shape and size as the input, allocates new varis for these vars, and
+   * assigns them the values of val_y
    *
+   * @param val_y output of F::operator()
+   * @return std::vector of vars
+   */
+  std::vector<var> build_return_varis_and_vars(
+      const std::vector<double>& val_y) {
+    M_[0] = val_y.size();
+    std::vector<var> var_y(M_[0]);
+
+    y_vi_
+        = ChainableStack::instance().memalloc_.alloc_array<vari*>(var_y.size());
+    for (int m = 0; m < var_y.size(); ++m) {
+      y_vi_[m] = new vari(val_y[m], false);
+      var_y[m] = y_vi_[m];
+    }
+
+    return var_y;
+  }
+
+  /**
+   * build_return_varis_and_vars constructs a container of vars of the same
+   * shape and size as the input, allocates new varis for these vars, and
+   * assigns them the values of val_y
+   *
+   * @tparam R Eigen row type
+   * @tparam C Eigen column type
    * @param val_y output of F::operator()
    * @return Eigen::Matrix of vars
    */
-  Eigen::Matrix<var, Eigen::Dynamic, 1> build_return_varis_and_vars(
-      const Eigen::Matrix<double, Eigen::Dynamic, 1>& val_y) {
+  template <int R, int C>
+  Eigen::Matrix<var, R, C> build_return_varis_and_vars(
+      const Eigen::Matrix<double, R, C>& val_y) {
     M_[0] = val_y.rows();
     M_[1] = val_y.cols();
-    Eigen::Matrix<var, Eigen::Dynamic, 1> var_y(M_[0] * M_[1]);
+    Eigen::Matrix<var, R, C> var_y(M_[0], M_[1]);
 
     y_vi_
         = ChainableStack::instance().memalloc_.alloc_array<vari*>(var_y.size());
@@ -482,15 +537,18 @@ struct adj_jac_vari : public vari {
 
   /**
    * chain propagates the adjoints at the output varis (y_vi_) back to the input
-   * varis (x_vis_) by packing the adjoings in an appropriate container
-   * using build_y_adj and then using the multiply_adjoint_jacobian function of
-   * the user defined functor to compute what the adjoints on x_vis_ should be
+   * varis (x_vis_) by:
+   * 1. packing the adjoints in an appropriate container using build_y_adj
+   * 2. using the multiply_adjoint_jacobian function of the user defined functor
+   * to compute what the adjoints on x_vis_ should be
+   * 3. accumulating the adjoints into the varis pointed to by elements of
+   * x_vis_ using accumulate_adjoints
    *
-   * Unlike the constructor, this operation may be called multiple times during
-   * the life of the vari
+   * This operation may be called multiple times during the life of the vari
    */
   void chain() {
     FReturnType y_adj;
+
     build_y_adj(y_vi_, M_, y_adj);
     auto y_adj_jacs = f_.multiply_adjoint_jacobian(is_var_, y_adj);
 
