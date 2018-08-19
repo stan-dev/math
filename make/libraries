@@ -74,6 +74,10 @@ $(BOOST)/user-config.jam:
 	echo "# In case of a compiler mismatch used by mpicxx and" >> $(BOOST)/user-config.jam
 	echo "# the compiler used for Stan, consider configuring" >> $(BOOST)/user-config.jam
 	echo "# the boost toolset here" >> $(BOOST)/user-config.jam
+	echo "# Moreover, should your mpicxx command live in a" >> $(BOOST)/user-config.jam
+	echo "# in a non-standard directory, then consider to tell" >> $(BOOST)/user-config.jam
+	echo "# boost mpi using this syntax:" >> $(BOOST)/user-config.jam
+	echo "#using mpi : /path/to/mpicxx ;" >> $(BOOST)/user-config.jam
 	echo "using mpi ;" >> $(BOOST)/user-config.jam
 
 $(BOOST)/stage/lib/mpi.so: $(BOOST)/user-config.jam

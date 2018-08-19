@@ -44,6 +44,24 @@ TEST(AgradRevMatrix, variance_vector) {
   EXPECT_FLOAT_EQ(0.0, variance(d1));
   EXPECT_FLOAT_EQ(0.0, variance(v1).val());
 }
+
+TEST(AgradRevMatrix, variance_avoid_precision_loss) {
+  using stan::math::variance;
+  using stan::math::vector_d;
+  using stan::math::vector_v;
+
+  vector_v v(4);
+  v << 1.0, 2.0, 4.0, 5.0;
+  stan::math::var output = variance(v);
+  output.grad();
+
+  EXPECT_FLOAT_EQ(10.0 / 3.0, output.val());
+
+  for (int i = 0; i < v.size(); ++i) {
+    EXPECT_FLOAT_EQ(2.0 * (v(i).val() - 3.0) / 3.0, v(i).adj());
+  }
+}
+
 TEST(AgradRevMatrix, variance_vector_exception) {
   using stan::math::variance;
   using stan::math::vector_d;
