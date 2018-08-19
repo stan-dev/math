@@ -88,7 +88,7 @@ struct adj_jac_vari : public vari {
    *
    * @tparam R Eigen Matrix row type
    * @tparam C Eigen Matrix column type
-   * @tparam Pargs types of rest of arguments
+   * @tparam Pargs Types of rest of arguments
    * @param count rolling count of number of varis that must be allocated
    * @param x next argument to have its varis counted
    * @param args the rest of the arguments (that will be iterated through
@@ -97,7 +97,7 @@ struct adj_jac_vari : public vari {
   template <int R, int C, typename... Pargs>
   size_t count_memory(size_t count, const Eigen::Matrix<var, R, C>& x,
                       const Pargs&... args) {
-    constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     offsets_[t] = count;
     count += x.size();
     return count_memory(count, args...);
@@ -106,7 +106,7 @@ struct adj_jac_vari : public vari {
   template <int R, int C, typename... Pargs>
   size_t count_memory(size_t count, const Eigen::Matrix<double, R, C>& x,
                       const Pargs&... args) {
-    constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     offsets_[t] = count;
     return count_memory(count, args...);
   }
@@ -114,7 +114,7 @@ struct adj_jac_vari : public vari {
   template <typename... Pargs>
   size_t count_memory(size_t count, const std::vector<var>& x,
                       const Pargs&... args) {
-    constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     offsets_[t] = count;
     count += x.size();
     return count_memory(count, args...);
@@ -123,7 +123,7 @@ struct adj_jac_vari : public vari {
   template <typename... Pargs>
   size_t count_memory(size_t count, const std::vector<double>& x,
                       const Pargs&... args) {
-    constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     offsets_[t] = count;
     return count_memory(count, args...);
   }
@@ -131,14 +131,14 @@ struct adj_jac_vari : public vari {
   template <typename... Pargs>
   size_t count_memory(size_t count, const std::vector<int>& x,
                       const Pargs&... args) {
-    constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     offsets_[t] = count;
     return count_memory(count, args...);
   }
 
   template <typename... Pargs>
   size_t count_memory(size_t count, const var& x, const Pargs&... args) {
-    constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     offsets_[t] = count;
     count += 1;
     return count_memory(count, args...);
@@ -146,14 +146,14 @@ struct adj_jac_vari : public vari {
 
   template <typename... Pargs>
   size_t count_memory(size_t count, const double& x, const Pargs&... args) {
-    constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     offsets_[t] = count;
     return count_memory(count, args...);
   }
 
   template <typename... Pargs>
   size_t count_memory(size_t count, const int& x, const Pargs&... args) {
-    constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     offsets_[t] = count;
     return count_memory(count, args...);
   }
@@ -172,13 +172,14 @@ struct adj_jac_vari : public vari {
    *
    * @tparam R Eigen Matrix row type
    * @tparam C Eigen Matrix column type
+   * @tparam Pargs Types of the rest of the arguments to be processed
    * @param x next argument to have its vari pointers copied if necessary
    * @param args the rest of the arguments (that will be iterated through
    * recursively)
    */
   template <int R, int C, typename... Pargs>
   void prepare_x_vis(const Eigen::Matrix<var, R, C>& x, const Pargs&... args) {
-    constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     for (int i = 0; i < x.size(); ++i) {
       x_vis_[offsets_[t] + i] = x(i).vi_;
     }
@@ -193,7 +194,7 @@ struct adj_jac_vari : public vari {
 
   template <typename... Pargs>
   void prepare_x_vis(const std::vector<var>& x, const Pargs&... args) {
-    constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     for (size_t i = 0; i < x.size(); ++i) {
       x_vis_[offsets_[t] + i] = x[i].vi_;
     }
@@ -212,7 +213,7 @@ struct adj_jac_vari : public vari {
 
   template <typename... Pargs>
   void prepare_x_vis(const var& x, const Pargs&... args) {
-    constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     x_vis_[offsets_[t]] = x.vi_;
     prepare_x_vis(args...);
   }
@@ -287,7 +288,7 @@ struct adj_jac_vari : public vari {
   template <int R, int C, typename... Pargs>
   void accumulate_adjoints(const Eigen::Matrix<double, R, C>& y_adj_jac,
                            const Pargs&... args) {
-    const int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     if (is_var_[t]) {
       for (int n = 0; n < y_adj_jac.size(); ++n) {
         x_vis_[offsets_[t] + n]->adj_ += y_adj_jac(n);
@@ -311,7 +312,7 @@ struct adj_jac_vari : public vari {
   template <typename... Pargs>
   void accumulate_adjoints(const std::vector<double>& y_adj_jac,
                            const Pargs&... args) {
-    const int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     if (is_var_[t]) {
       for (size_t n = 0; n < y_adj_jac.size(); ++n)
         x_vis_[offsets_[t] + n]->adj_ += y_adj_jac[n];
@@ -348,7 +349,7 @@ struct adj_jac_vari : public vari {
    */
   template <typename... Pargs>
   void accumulate_adjoints(const double& y_adj_jac, const Pargs&... args) {
-    const int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     if (is_var_[t]) {
       x_vis_[offsets_[t]]->adj_ += y_adj_jac;
     }
