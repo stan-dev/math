@@ -68,7 +68,6 @@
 #include <stan/math/prim/scal/fun/bessel_second_kind.hpp>
 #include <stan/math/prim/scal/fun/binary_log_loss.hpp>
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
-#include <stan/math/prim/scal/fun/binormal_integral_owens.hpp>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <stan/math/prim/scal/fun/cbrt.hpp>
 #include <stan/math/prim/scal/fun/choose.hpp>
@@ -169,6 +168,7 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
+#include <stan/math/prim/scal/fun/std_binormal_integral.hpp>
 #include <stan/math/prim/scal/fun/step.hpp>
 #include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/prim/scal/fun/trigamma.hpp>

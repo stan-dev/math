@@ -16,7 +16,7 @@
 #include <boost/random/normal_distribution.hpp>
 #include <stan/math/prim/scal/fun/Phi.hpp>
 #include <stan/math/prim/scal/prob/std_normal_lpdf.hpp>
-#include <stan/math/prim/scal/fun/binormal_integral_owens.hpp>
+#include <stan/math/prim/scal/fun/std_binormal_integral.hpp>
 #include <stan/math/prim/scal/fun/inv.hpp>
 #include <cmath>
 #include <limits>
@@ -58,7 +58,7 @@ typename return_type<T_y_1, T_y_2, T_rho>::type std_binormal_lcdf(
     const T_partials_return y_2_dbl = value_of(y_2_vec[n]);
     const T_partials_return rho_dbl = value_of(rho_vec[n]);
 
-    T_partials_return cdf_ = binormal_integral_owens(y_1_dbl, y_2_dbl, rho_dbl);
+    T_partials_return cdf_ = std_binormal_integral(y_1_dbl, y_2_dbl, rho_dbl);
       cdf_log += log(cdf_);
 
     if (contains_nonconstant_struct<T_y_1, T_y_2, T_rho>::value) {

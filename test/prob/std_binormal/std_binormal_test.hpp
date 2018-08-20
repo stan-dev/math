@@ -33,6 +33,12 @@ class AgradCdfLogBinormal : public AgradCdfLogTest {
     param[2] = -0.3;  // rho 
     parameters.push_back(param);
     log_cdf.push_back(-8.105838688329269);  // expected log_prob
+
+    param[0] = -2.3;  // y_1
+    param[1] = -2.4;  // y_2 
+    param[2] = -0.3;  // rho 
+    parameters.push_back(param);
+    log_cdf.push_back(-12.28677890093119984272);  // expected log_prob
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {
@@ -47,12 +53,6 @@ class AgradCdfLogBinormal : public AgradCdfLogTest {
 
     index.push_back(2U);
     value.push_back(-1.3);
-
-    index.push_back(2U);
-    value.push_back(-1);
-
-    index.push_back(2U);
-    value.push_back(1);
 
     index.push_back(2U);
     value.push_back(1.3);
@@ -73,7 +73,7 @@ class AgradCdfLogBinormal : public AgradCdfLogTest {
   typename stan::return_type<T_y_1, T_y_2, T_rho, T3, T4, T5>::type
   cdf_log_function(const T_y_1& y_1, const T_y_2& y_2, const T_rho& rho,
                     const T3&, const T4&, const T5&) {
-    using stan::math::binormal_integral_owens;
-    return binormal_integral_owens(y_1, y_2, rho);
+    using stan::math::std_binormal_integral;
+    return std_binormal_integral(y_1, y_2, rho);
   }
 };
