@@ -4,6 +4,7 @@
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/mat/fun/adj_jac_apply.hpp>
+#include <tuple>
 #include <vector>
 
 namespace stan {
