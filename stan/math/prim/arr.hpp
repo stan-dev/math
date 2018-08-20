@@ -37,6 +37,7 @@
 #include <stan/math/prim/arr/fun/sum.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
+#include <stan/math/prim/arr/fun/variable_adapter.hpp>
 
 #include <stan/math/prim/arr/functor/coupled_ode_observer.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
