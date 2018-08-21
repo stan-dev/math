@@ -179,6 +179,7 @@ ifdef STAN_MPI
   BOOST_LIBRARY_ABSOLUTE_PATH = $(abspath $(BOOST)/stage/lib)
 
   LDFLAGS_MPI ?= -Wl,-L,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" -Wl,-rpath,"$(BOOST_LIBRARY_ABSOLUTE_PATH)"
+  CXXFLAGS_MPI ?= -Wno-delete-non-virtual-dtor
 endif
 
 
