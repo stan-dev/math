@@ -17,6 +17,8 @@ namespace math {
  * @param mat a matrix
  * @param to_add (Sequence of) value(s) to add along the diagonal
  * @return a matrix with to_add added along main diagonal
+ * @throw invalid_argument if to_add is vector-like but does not have
+ * the same number of elements as the main diagonal of mat
  */
 template <typename T_m, typename T_a>
 inline typename Eigen::Matrix<typename return_type<T_m, T_a>::type,
