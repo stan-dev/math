@@ -7,7 +7,7 @@
 TEST(MathFunctions, adapt_double) {
   double x = 1.0;
 
-  auto a = stan::math::variable_adapter<double>(x);
+  auto a = stan::math::variable_adapter_factory<double>(x);
 
   EXPECT_EQ(1, a.size());
   EXPECT_FLOAT_EQ(x, a(0));
@@ -19,7 +19,7 @@ TEST(MathFunctions, adapt_double) {
 TEST(MathFunctions, adapt_int) {
   int x = 1;
 
-  auto a = stan::math::variable_adapter(x);
+  auto a = stan::math::variable_adapter_factory<double>(x);
 
   EXPECT_EQ(0, a.size());
 }
@@ -27,7 +27,7 @@ TEST(MathFunctions, adapt_int) {
 TEST(MathFunctions, adapt_std_vector_double) {
   std::vector<double> x = {{1.0, 2.0}};
 
-  auto a = stan::math::variable_adapter(x);
+  auto a = stan::math::variable_adapter_factory<double>(x);
 
   EXPECT_EQ(x.size(), a.size());
   for (size_t i = 0; i < x.size(); ++i)
@@ -37,7 +37,7 @@ TEST(MathFunctions, adapt_std_vector_double) {
 TEST(MathFunctions, adapt_std_vector_int) {
   std::vector<int> x = {{1, 2}};
 
-  auto a = stan::math::variable_adapter(x);
+  auto a = stan::math::variable_adapter_factory<double>(x);
 
   EXPECT_EQ(0, a.size());
 }
@@ -48,7 +48,7 @@ TEST(MathFunctions, adapt_all_types) {
   std::vector<double> xdv = {{1.0, 2.0}};
   std::vector<int> xiv = {{1, 2}};
 
-  auto a = stan::math::variable_adapter(xd, xi, xdv, xiv, xd);
+  auto a = stan::math::variable_adapter_factory<double>(xd, xi, xdv, xiv, xd);
 
   EXPECT_EQ(2 + xdv.size(), a.size());
   EXPECT_FLOAT_EQ(xd, a(0));

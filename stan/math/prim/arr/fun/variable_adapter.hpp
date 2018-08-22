@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-template <typename... Targs>
+template <typename T, typename... Targs>
 class variable_adapter {
  public:
   std::tuple<Targs...> args_;
@@ -17,63 +17,67 @@ class variable_adapter {
   size_t size_;
 
  protected:
-  template <typename T, typename... Pargs>
+  template <typename... Pargs>
   size_t count_memory(size_t count, const std::vector<T>& x,
                       const Pargs&... args) {
     return count_memory(count + x.size(), args...);
   }
 
-  template <typename... Pargs>
-  size_t count_memory(size_t count, const std::vector<int>& x,
+  template <typename R, typename... Pargs>
+  size_t count_memory(size_t count, const std::vector<R>& x,
                       const Pargs&... args) {
     return count_memory(count, args...);
   }
 
-  template <typename T, typename... Pargs>
+  template <typename... Pargs>
   size_t count_memory(size_t count, const T& x, const Pargs&... args) {
     return count_memory(count + 1, args...);
   }
 
-  template <typename... Pargs>
-  size_t count_memory(size_t count, const int& x, const Pargs&... args) {
+  template <typename R, typename... Pargs>
+  size_t count_memory(size_t count, const R& x, const Pargs&... args) {
     return count_memory(count, args...);
   }
 
   size_t count_memory(size_t count) { return count; }
 
-  template <typename T>
-  T& get(int i, std::vector<T>& arg) {
-    return arg[i];
+  T& get(size_t i, std::vector<T>& arg) { return arg[i]; }
+
+  template <typename R>
+  T& get(size_t i, std::vector<R>& arg) {
+    throw std::runtime_error("This should not be reachable");
   }
 
-  template <typename T>
-  T& get(int i, T& arg) {
-    return arg;
+  T& get(size_t i, T& arg) { return arg; }
+
+  template <typename R>
+  T& get(size_t i, R& arg) {
+    throw std::runtime_error("This should not be reachable");
   }
 
-  template <typename T, typename... Pargs>
-  T& get(int i, std::vector<T>& arg, Pargs&... args) {
+  template <typename... Pargs>
+  T& get(size_t i, std::vector<T>& arg, Pargs&... args) {
     if (i < arg.size())
       return arg[i];
     else
       return get(i - arg.size(), args...);
   }
 
-  template <typename... Pargs>
-  auto& get(int i, std::vector<int>& arg, Pargs&... args) {
+  template <typename R, typename... Pargs>
+  auto& get(size_t i, std::vector<R>& arg, Pargs&... args) {
     return get(i, args...);
   }
 
-  template <typename T, typename... Pargs>
-  T& get(int i, T& arg, Pargs&... args) {
+  template <typename... Pargs>
+  T& get(size_t i, T& arg, Pargs&... args) {
     if (i == 0)
       return arg;
     else
       return get(i - 1, args...);
   }
 
-  template <typename... Pargs>
-  auto& get(int i, int& arg, Pargs&... args) {
+  template <typename R, typename... Pargs>
+  auto& get(size_t i, R& arg, Pargs&... args) {
     return get(i, args...);
   }
 
@@ -81,9 +85,9 @@ class variable_adapter {
   variable_adapter(const Targs&... args)
       : args_(std::make_tuple(args...)), size_(count_memory(0, args...)) {}
 
-  int size() const { return size_; }
+  size_t size() const { return size_; }
 
-  auto& operator()(int i) {
+  auto& operator()(size_t i) {
     check_less("variable_adapter::operator()", "i", i, size_);
 
     return std::apply(
@@ -91,6 +95,11 @@ class variable_adapter {
         args_);
   }
 };
+
+template <typename T, typename... Targs>
+auto variable_adapter_factory(const Targs&... args) {
+  return variable_adapter<T, Targs...>(args...);
+}
 
 }  // namespace math
 }  // namespace stan
