@@ -131,31 +131,31 @@ class matrix_gpu {
     return *this;
   }
 
-  //  /**
-  //   * Stores zeros in the matrix on the GPU.
-  //   * Supports writing zeroes to the lower and upper triangular or
-  //   * the whole matrix.
-  //   *
-  //   * @tparam triangular_view Specifies if zeros are assigned to
-  //   * the entire matrix, lower triangular or upper triangular. The
-  //   * value must be of type TriangularViewGPU
-  //   */
-  //  template <TriangularViewGPU triangular_view = TriangularViewGPU::Entire>
-  //  void zeros() {
-  //    if (size() == 0)
-  //      return;
+// /**
+  //  * Stores zeros in the matrix on the GPU.
+  //  * Supports writing zeroes to the lower and upper triangular or
+  //  * the whole matrix.
+  //  *
+  //  * @tparam triangular_view Specifies if zeros are assigned to
+  //  * the entire matrix, lower triangular or upper triangular. The
+  //  * value must be of type TriangularViewGPU
+  //  */
+  // template <TriangularViewGPU triangular_view = TriangularViewGPU::Entire>
+  // void zeros() {
+  //   if (size() == 0)
+  //     return;
   //
-  //    cl::CommandQueue cmdQueue = opencl_context.queue();
-  //    try {
-  //      auto kern = kernel_cl.zeros<triangular_view>(this->buffer(), this->rows(),
-  //                                                   this->cols());
-  //      cmdQueue.enqueueNDRangeKernel(kern, cl::NullRange,
-  //                                    cl::NDRange(this->rows(), this->cols()),
-  //                                    cl::NullRange, NULL, NULL);
-  //    } catch (const cl::Error& e) {
-  //      check_opencl_error("zeros", e);
-  //    }
-  //  }
+  //   cl::CommandQueue cmdQueue = opencl_context.queue();
+  //   try {
+  //     auto kern = kernel_cl.zeros<triangular_view>(this->buffer(), this->rows(),
+  //                                                  this->cols());
+  //     cmdQueue.enqueueNDRangeKernel(kern, cl::NullRange,
+  //                                   cl::NDRange(this->rows(), this->cols()),
+  //                                   cl::NullRange, NULL, NULL);
+  //   } catch (const cl::Error& e) {
+  //     check_opencl_error("zeros", e);
+  //   }
+  // }
 
   //  /**
   //   * Copies a lower/upper triangular of a matrix to it's upper/lower.

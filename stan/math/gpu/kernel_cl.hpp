@@ -42,7 +42,7 @@ auto compile_kernel(const char* name, const char* source) {
 
     return cl::Kernel(program, name);
   } catch (const cl::Error& e) {
-    check_opencl_error("Kernel Compilation", e);
+    check_opencl_error(name, e);
   }
   return cl::Kernel(); // never reached because check_opencl_error throws
 }
@@ -96,18 +96,25 @@ const range_2d_kernel<cl::Buffer, cl::Buffer, cl::Buffer> add("add",
 #include <stan/math/gpu/kernels/add_matrix.cl>  // NOLINT
                                                               );
 
-const range_2d_kernel<cl::Buffer, int*> check_diagonal_zeros("check_diagonal_zeros",
+const range_2d_kernel<cl::Buffer, int*> check_diagonal_zeros("is_zero_on_diagonal",
 #include <stan/math/gpu/kernels/check_diagonal_zeros.cl>  // NOLINT
                                                               );
 
-const range_2d_kernel<cl::Buffer, int*> check_nan("check_nan",
+const range_2d_kernel<cl::Buffer, int*> check_nan("is_nan",
 #include <stan/math/gpu/kernels/check_nan.cl>  // NOLINT
                                                              );
 
-const range_2d_kernel<cl::Buffer, int*> check_symmetric("check_symmetric",
+const range_2d_kernel<cl::Buffer, int*> check_symmetric("is_symmetric",
 #include <stan/math/gpu/kernels/check_symmetric.cl>  // NOLINT
                                                   );
-}
+
+template <TriangularViewGPU V>
+const range_2d_kernel<cl::Buffer, int> zeros("zeros",
+#include <stan/math/gpu/kernels/zeros_matrix.cl>  // NOLINT
+                                        );
+
+
+}  // namespace opencl_kernels
 }  // namespace math
 }  // namespace stan
 

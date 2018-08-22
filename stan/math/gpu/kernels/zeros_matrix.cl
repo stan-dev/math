@@ -31,4 +31,4 @@ __kernel void zeros(__global write_only double *A, read_only unsigned int rows,
     }
   }
 }
-);
+)
