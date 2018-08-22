@@ -57,6 +57,7 @@ STAN_SUNDIALS_HEADERS := $(shell find $(MATH)stan -name *cvodes*.hpp) $(shell fi
 $(STAN_SUNDIALS_HEADERS) : $(LIBSUNDIALS)
 
 clean-sundials:
+	@echo '  cleaning sundials targets'
 	$(RM) $(wildcard $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS)))
 
 
@@ -103,10 +104,9 @@ MPI_TEMPLATE_INSTANTIATION := $(MPI_TEMPLATE_INSTANTIATION_CPP:%.cpp=%.o)
 $(MPI_TEMPLATE_INSTANTIATION) : CXXFLAGS += -fPIC
 
 clean-mpi:
-	$(RM) $(LIBMPI)
-	$(RM) $(MPI_INSTANTIATION)
-	$(RM) -r $(BOOST)/stage/lib/*
-	$(RM) -r $(BOOST)/bin.v2 $(BOOST)/tools/build/src/engine/bootstrap/ $(BOOST)/tools/build/src/engine/bin.* $(BOOST)/project-config.jam* $(BOOST)/b2 $(BOOST)/bjam $(BOOST)/bootstrap.log
+	@echo '  cleaning mpi targets'
+	$(RM) $(wildcard $(LIBMPI) $(MPI_INSTANTIATION))
+	$(RM) $(wildcard $(BOOST)/stage/lib $(BOOST)/bin.v2 $(BOOST)/tools/build/src/engine/bootstrap/ $(BOOST)/tools/build/src/engine/bin.* $(BOOST)/project-config.jam* $(BOOST)/b2 $(BOOST)/bjam $(BOOST)/bootstrap.log)
 
 endif
 

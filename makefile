@@ -108,22 +108,22 @@ clean:
 	$(shell find test -type f -name "*_test.d.*" -exec rm {} +)
 	$(shell find test -type f -name "*_test.xml" -exec rm {} +)
 	$(shell find test -type f -name "*.o" -exec rm {} +)
-	$(shell find lib  -type f -name "*.o" -exec rm {} +)
-	$(shell find test -type f -name "lib*.so" -exec rm {} +)
+	$(RM) $(wildcard $(GTEST)/src/gtest-all)
+	@echo '  removing generated test files'
+	$(RM) $(wildcard test/prob/generate_tests$(EXE))
+	$(shell find test/prob -name '*_generated_*_test.cpp' -type f -exec rm {} +)
 
 clean-doxygen:
+	@echo '  removing doxygen'
 	$(RM) -r doc/api
 
 clean-deps:
 	@echo '  removing dependency files'
-	$(shell find . -type f -name '*.d' -exec rm {} +)
-	$(shell find . -type f -name '*.d.*' -exec rm {} +)
-	$(RM) $(shell find stan -type f -name '*.dSYM') $(shell find stan -type f -name '*.d.*')
+	$(shell find stan test lib -type f -name '*.d' -exec rm {} +)
+	$(shell find stan test lib -type f -name '*.d.*' -exec rm {} +)
+	$(shell find stan  -type f -name '*.dSYM' -exec rm {} +)
 
 clean-all: clean clean-doxygen clean-deps clean-libraries
-	@echo '  removing generated test files'
-	$(shell find test/prob -name '*_generated_*_test.cpp' -type f -exec rm {} +)
-	$(RM) $(wildcard test/prob/generate_tests$(EXE))
 
 ##
 # Debug target that allows you to print a variable
