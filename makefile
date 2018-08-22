@@ -108,7 +108,7 @@ clean:
 	$(shell find test -type f -name "*_test.d.*" -exec rm {} +)
 	$(shell find test -type f -name "*_test.xml" -exec rm {} +)
 	$(shell find test -type f -name "*.o" -exec rm {} +)
-	$(RM) $(wildcard $(GTEST)/src/gtest-all)
+	$(RM) $(wildcard $(GTEST)/src/gtest-all.o)
 	@echo '  removing generated test files'
 	$(RM) $(wildcard test/prob/generate_tests$(EXE))
 	$(shell find test/prob -name '*_generated_*_test.cpp' -type f -exec rm {} +)
