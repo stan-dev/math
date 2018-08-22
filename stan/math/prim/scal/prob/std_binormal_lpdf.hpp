@@ -74,9 +74,9 @@ typename return_type<T_y1, T_y2, T_rho>::type std_binormal_lpdf(
   VectorBuilder<true, T_partials_return, T_rho> one_minus_rho_sq_(length(rho));
   VectorBuilder<include_summand<propto, T_rho>::value, T_partials_return,
                 T_rho>
-      log_one_minus_rho_sq(length(sigma));
+      log_one_minus_rho_sq(length(rho));
 
-  for (size_t i = 0; i < length(sigma); ++i) {
+  for (size_t i = 0; i < length(rho); ++i) {
     T_partials_return rho_dbl = value_of(rho_vec[i]);
     one_minus_rho_sq[i] = (1 + rho_dbl) * (1 - rho_dbl);
     if (include_summand<propto, T_rho>::value)
