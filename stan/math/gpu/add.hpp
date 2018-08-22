@@ -28,8 +28,8 @@ inline matrix_gpu add(const matrix_gpu& A, const matrix_gpu& B) {
   }
   cl::CommandQueue cmdQueue = opencl_context.queue();
   try {
-    opencl_kernels::add(cl::NDRange(A.rows(), A.cols()), C.buffer(),
-                        A.buffer(), B.buffer(), A.rows(), A.cols());
+    opencl_kernels::add(cl::NDRange(A.rows(), A.cols()), C.buffer(), A.buffer(),
+                        B.buffer(), A.rows(), A.cols());
   } catch (const cl::Error& e) {
     check_opencl_error("add", e);
   }

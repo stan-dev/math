@@ -12,10 +12,10 @@ STRINGIFY(
  *  LOWER_TO_UPPER: 1
  *  UPPER_TO_LOWER: 0
  *
- * @note Used in mat/gpu/copy_triangular_transposed.hpp.
+ * @note Used in mat/gpu/triangular_transpose.hpp.
  *  This kernel uses the helper macros available in helpers.cl.
  */
-__kernel void copy_triangular_transposed(__global read_write double *A,
+__kernel void triangular_transpose(__global read_write double *A,
 	read_only unsigned int rows, read_only unsigned int cols,
 	read_only unsigned int copy_direction) {
   int i = get_global_id(0);
@@ -27,5 +27,5 @@ __kernel void copy_triangular_transposed(__global read_write double *A,
       A(i, j) = A(j, i);
     }
   }
-}
-);
+};
+)

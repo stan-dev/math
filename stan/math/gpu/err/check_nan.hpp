@@ -28,9 +28,8 @@ inline void check_nan(const char* function, const char* name,
     cl::Buffer buffer_nan_flag(ctx, CL_MEM_READ_WRITE, sizeof(int));
     cmd_queue.enqueueWriteBuffer(buffer_nan_flag, CL_TRUE, 0, sizeof(int),
                                  &nan_flag);
-    opencl_kernels::check_nan(cl::NDRange(y.rows(), y.cols()),
-                              y.buffer(),buffer_nan_flag,
-                              y.rows(), y.cols());
+    opencl_kernels::check_nan(cl::NDRange(y.rows(), y.cols()), y.buffer(),
+                              buffer_nan_flag, y.rows(), y.cols());
     cmd_queue.enqueueReadBuffer(buffer_nan_flag, CL_TRUE, 0, sizeof(int),
                                 &nan_flag);
     //  if NaN values were found in the matrix
