@@ -92,20 +92,20 @@ CXXFLAGS_SUNDIALS ?= -pipe
 ##
 ifeq ($(OS),Windows_NT)
   CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-variable -Wno-sign-compare -Wno-unused-local-typedefs
-  CPPFLAGS_GTEST += -DGTEST_HAS_PTHREAD=0
-  CXXFLAGS_OS ?=
+  CPPFLAGS_GTEST ?= -DGTEST_HAS_PTHREAD=0
   CPPFLAGS_OS ?= -D_USE_MATH_DEFINES
   ## Detecting Process Bitness:
   ## http://blogs.msdn.com/b/david.wang/archive/2006/03/26/howto-detect-process-bitness.aspx
   ifeq ($(PROCESSOR_ARCHITECTURE)$(PROCESSOR_ARCHITEW6432),x86)
-    CXXFLAGS_OS += -m32
+    CXXFLAGS_OS ?= -m32
   else
-    CXXFLAGS_OS += -m64
+    CXXFLAGS_OS ?= -m64
   endif
 
-  LDLIBS_OS ?= -static-libgcc
-  ifeq (gcc,$(CXX_TYPE))
-    LDLIBS_OS += -static-libstdc++
+  ifneq (gcc,$(CXX_TYPE))
+    LDLIBS_OS ?= -static-libgcc
+  else
+    LDLIBS_OS ?= -static-libgcc -static-libstdc++
   endif
 
   EXE := .exe
@@ -118,10 +118,10 @@ ifeq ($(OS),Darwin)
 endif
 
 ifeq ($(OS),Linux)
-  CPPFLAGS_GTEST += -DGTEST_HAS_PTHREAD=0
-  CXXFLAGS_OS ?= -Wno-sign-compare
+  CPPFLAGS_GTEST ?= -DGTEST_HAS_PTHREAD=0
+  CXXFLAGS_WARNINGS ?= -Wno-sign-compare
   ifeq (gcc,$(CXX_TYPE))
-    CXXFLAGS_OS += -pthread
+    CXXFLAGS_OS ?= -pthread
   endif
   ifeq (mingw32-gcc,$(CXX_TYPE))
     LDLIBS_OS ?= -static -lwinpthread
@@ -130,7 +130,7 @@ ifeq ($(OS),Linux)
   endif
   ifeq (clang,$(CXX_TYPE))
     LDLIBS_OS ?= -lpthread
-    LDFLAGS_OS += -stdlib=libc++
+    LDFLAGS_OS ?= -stdlib=libc++
   endif
 endif
 
