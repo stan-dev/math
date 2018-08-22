@@ -70,10 +70,18 @@ struct range_2d_kernel {
     auto f = make_functor();
     cl::EnqueueArgs eargs(opencl_context.queue(), thread_block_size);
     f(eargs, args...).wait();
-  };
+  }
 };
-
-const range_2d_kernel<cl::Buffer, int, int> identity("identity",
+/**
+ * Makes an identity matrix on the GPU
+ *
+ * @param[in,out] A The identity matrix output.
+ * @param rows The number of rows for A.
+ * @param cols The number of cols for A.
+ *
+ * @note This kernel uses the helper macros available in helpers.cl.
+ */
+const global_range_kernel<cl::Buffer, int, int> identity("identity",
 #include <stan/math/gpu/kernels/identity_matrix.cl>  // NOLINT
 );  // NOLINT
 const range_2d_kernel<cl::Buffer, cl::Buffer, int, int> copy("copy",
