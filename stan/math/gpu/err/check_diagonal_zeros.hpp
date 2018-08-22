@@ -27,11 +27,9 @@ inline void check_diagonal_zeros(const char* function, const char* name,
     cl::Buffer buffer_flag(ctx, CL_MEM_READ_WRITE, sizeof(int));
     cmd_queue.enqueueWriteBuffer(buffer_flag, CL_TRUE, 0, sizeof(int),
                                  &zero_on_diagonal_flag);
-    auto kern = kernel_cl.is_zero_on_diagonal(y.buffer(), y.rows(), y.cols(),
-                                              buffer_flag);
-    cmd_queue.enqueueNDRangeKernel(
-        kern, cl::NullRange, cl::NDRange(y.rows(), y.cols()), cl::NullRange);
-
+    opencl_kernels::check_diagonal_zeros(cl::NDRange(y.rows(), y.cols()),
+                                         y.buffer(),buffer_flag,
+                                         y.rows(), y.cols());
     cmd_queue.enqueueReadBuffer(buffer_flag, CL_TRUE, 0, sizeof(int),
                                 &zero_on_diagonal_flag);
     //  if zeros were found on the diagonal

@@ -111,7 +111,9 @@ inline void copy(matrix_gpu& dst, const matrix_gpu& src) {
        * see the matrix_gpu(matrix_gpu&) constructor
        *  for explanation
        */
-      opencl_kernels::copy(dst.rows(), dst.cols(), src.buffer(), dst.buffer());
+      opencl_kernels::copy(cl::NDRange(dst.rows(), dst.cols()),
+                           src.buffer(), dst.buffer(),
+                           dst.rows(), dst.cols());
     } catch (const cl::Error& e) {
       std::cout << e.err() << std::endl;
       check_opencl_error("copy GPU->GPU", e);

@@ -22,5 +22,5 @@ __kernel void subtract(__global write_only double *C,
   if (i < rows && j < cols) {
     C(i, j) = A(i, j) - B(i, j);
   }
-}
-);
+};
+)

@@ -21,7 +21,9 @@ inline matrix_gpu transpose(const matrix_gpu& src) {
     return dst;
   cl::CommandQueue cmdQueue = opencl_context.queue();
   try {
-    opencl_kernels::transpose(src.rows(), src.cols(), dst.buffer(), src.buffer());
+    opencl_kernels::transpose(cl::NDRange(src.rows(), src.cols()),
+                              dst.buffer(), src.buffer(),
+                              src.rows(), src.cols());
   } catch (const cl::Error& e) {
     check_opencl_error("transpose", e);
   }

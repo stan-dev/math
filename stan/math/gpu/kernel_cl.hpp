@@ -66,53 +66,54 @@ class kernel_functor {
 
 template <typename ...Args>
 struct range_2d_kernel {
-  const kernel_functor<Args..., int, int> make_functor;
+  const kernel_functor<Args...> make_functor;
   range_2d_kernel(const char* name, const char* source)
       : make_functor(name, source) {}
-  auto operator()(int rows, int cols, Args... args) const {
+  auto operator()(cl::NDRange thread_block_size, Args... args) const {
     auto f = make_functor();
-    cl::EnqueueArgs eargs(opencl_context.queue(), cl::NDRange(rows, cols));
-    f(eargs, args..., rows, cols).wait();
+    cl::EnqueueArgs eargs(opencl_context.queue(), thread_block_size);
+    f(eargs, args... ).wait();
   }
 };
 
-const range_2d_kernel<cl::Buffer> identity("identity",
+const range_2d_kernel<cl::Buffer, int, int> identity("identity",
 #include <stan/math/gpu/kernels/identity_matrix.cl>  // NOLINT
                                                 );
-
-const range_2d_kernel<cl::Buffer, cl::Buffer> copy("copy",
+const range_2d_kernel<cl::Buffer, cl::Buffer, int, int> copy("copy",
 #include <stan/math/gpu/kernels/copy_matrix.cl>  // NOLINT
                                                          );
-
+                                                         /*
 const range_2d_kernel<cl::Buffer, cl::Buffer> copy_triangular("copy_triangular",
 #include <stan/math/gpu/kernels/copy_triangular_matrix.cl>  // NOLINT
                                                          );
-
-const range_2d_kernel<cl::Buffer, cl::Buffer> transpose("transpose",
+                                                         */
+const range_2d_kernel<cl::Buffer, cl::Buffer, int, int> transpose("transpose",
 #include <stan/math/gpu/kernels/transpose_matrix.cl>  // NOLINT
                                                          );
-
-const range_2d_kernel<cl::Buffer, cl::Buffer, cl::Buffer> add("add",
+const range_2d_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int> add("add",
 #include <stan/math/gpu/kernels/add_matrix.cl>  // NOLINT
                                                               );
-
-const range_2d_kernel<cl::Buffer, int*> check_diagonal_zeros("is_zero_on_diagonal",
+const range_2d_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int> subtract("subtract",
+#include <stan/math/gpu/kernels/subtract_matrix.cl>  // NOLINT
+                                                              );
+const range_2d_kernel<cl::Buffer, cl::Buffer, int, int, int, int, int, int, int, int, int, int> sub_block("sub_block",
+#include <stan/math/gpu/kernels/sub_block.cl>  // NOLINT
+                                                              );
+const range_2d_kernel<cl::Buffer, cl::Buffer, int, int> check_diagonal_zeros("is_zero_on_diagonal",
 #include <stan/math/gpu/kernels/check_diagonal_zeros.cl>  // NOLINT
                                                               );
-
-const range_2d_kernel<cl::Buffer, int*> check_nan("is_nan",
+const range_2d_kernel<cl::Buffer, cl::Buffer, int, int> check_nan("is_nan",
 #include <stan/math/gpu/kernels/check_nan.cl>  // NOLINT
                                                              );
-
-const range_2d_kernel<cl::Buffer, int*> check_symmetric("is_symmetric",
+const range_2d_kernel<cl::Buffer, cl::Buffer, int, int, const double> check_symmetric("is_symmetric",
 #include <stan/math/gpu/kernels/check_symmetric.cl>  // NOLINT
                                                   );
-
+                                                  /*
 template <TriangularViewGPU V>
 const range_2d_kernel<cl::Buffer, int> zeros("zeros",
 #include <stan/math/gpu/kernels/zeros_matrix.cl>  // NOLINT
                                         );
-
+*/
 
 }  // namespace opencl_kernels
 }  // namespace math

@@ -23,10 +23,8 @@ inline matrix_gpu identity(int rows_cols) {
   cl::CommandQueue cmdQueue = opencl_context.queue();
 
   try {
-    auto kern = kernel_cl.identity(A.buffer(), A.rows(), A.cols());
-    cmdQueue.enqueueNDRangeKernel(kern, cl::NullRange,
-                                  cl::NDRange(A.rows(), A.cols()),
-                                  cl::NullRange, NULL, NULL);
+    opencl_kernels::identity(cl::NDRange(A.rows(), A.cols()),
+                             A.buffer(), A.rows(), A.cols());
   } catch (const cl::Error& e) {
     check_opencl_error("identity", e);
   }

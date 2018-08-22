@@ -8,7 +8,7 @@ STRINGIFY(
  * @param[in] A LHS of matrix addition.
  * @param[in] B RHS of matrix addition.
  * @param rows Number of rows for matrix A.
- * @param cols Number of rows for matrix B.
+ * @param cols Number of cols for matrix A.
  *
  * @note This kernel uses the helper macros available in helpers.cl.
  */
