@@ -103,9 +103,9 @@ ifeq ($(OS),Windows_NT)
     CXXFLAGS_OS += -m64
   endif
 
-  LDLIBS ?= -static-libgcc
+  LDLIBS_OS ?= -static-libgcc
   ifeq (gcc,$(CXX_TYPE))
-    LDLIBS += -static-libstdc++
+    LDLIBS_OS += -static-libstdc++
   endif
 
   EXE := .exe
@@ -124,13 +124,13 @@ ifeq ($(OS),Linux)
     CXXFLAGS_OS += -pthread
   endif
   ifeq (mingw32-gcc,$(CXX_TYPE))
-    LDLIBS ?= -static -lwinpthread
+    LDLIBS_OS ?= -static -lwinpthread
     EXE := .exe
     WINE ?= wine
   endif
   ifeq (clang,$(CXX_TYPE))
-    LDLIBS ?= -lpthread
-    CXXFLAGS += -stdlib=libc++
+    LDLIBS_OS ?= -lpthread
+    LDFLAGS_OS += -stdlib=libc++
   endif
 endif
 
@@ -187,5 +187,5 @@ endif
 
 CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) -O$(O) $(INC)
 CPPFLAGS += $(CPPFLAGS_LANG) $(CPPFLAGS_OS) $(CPPFLAGS_WARNINGS) $(CPPFLAGS_BOOST) $(CPPFLAGS_EIGEN) $(CPPFLAGS_OPENCL) $(CPPFLAGS_MPI)
-LDFLAGS += $(LDFLAGS_MPI) $(LDFLAGS_OPENCL)
-LDLIBS += $(LDLIBS_MPI) $(LDLIBS_OPENCL)
+LDFLAGS += $(LDFLAGS_LANG) $(LDFLAGS_OS) $(LDFLAGS_WARNINGS) $(LDFLAGS_BOOST) $(LDFLAGS_EIGEN) $(LDFLAGS_OPENCL) $(LDFLAGS_MPI)
+LDLIBS += $(LDLIBS_LANG) $(LDLIBS_OS) $(LDLIBS_WARNINGS) $(LDLIBS_BOOST) $(LDLIBS_EIGEN) $(LDLIBS_OPENCL) $(LDLIBS_MPI)
