@@ -3,6 +3,7 @@
 #include <test/unit/math/rev/mat/fun/jacobian.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
+#include <random>
 
 TEST(prob_transform, ordered_jacobian_ad) {
   using Eigen::Dynamic;
@@ -43,6 +44,61 @@ TEST(prob_transform, ordered_jacobian_ad) {
 
   double log_abs_jacobian_det = log(fabs(determinant(J)));
   EXPECT_FLOAT_EQ(log_abs_jacobian_det, lp);
+}
+
+TEST(prob_transform, ordered_constrain_length_zero_no_segfault) {
+  using stan::math::var;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> xv(0);
+  var out = sum(ordered_constrain(xv));
+
+  out.grad();
+}
+
+TEST(prob_transform, ordered_constrain_length_one_no_segfault) {
+  using stan::math::var;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> xv(1);
+  xv << 1.0;
+  var out = sum(ordered_constrain(xv));
+
+  out.grad();
+
+  EXPECT_FLOAT_EQ(xv(0).adj(), 1.0);
+}
+
+TEST(prob_transform, ordered_constrain_analytical_gradients) {
+  using stan::math::var;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> xv(4);
+  xv << -1.0, 0.0, -1.1, 0.5;
+  var out = sum(ordered_constrain(xv));
+
+  out.grad();
+
+  EXPECT_FLOAT_EQ(xv(0).adj(), 4.0);
+  EXPECT_FLOAT_EQ(xv(1).adj(), 3.0 * exp(xv(1).val()));
+  EXPECT_FLOAT_EQ(xv(2).adj(), 2.0 * exp(xv(2).val()));
+  EXPECT_FLOAT_EQ(xv(3).adj(), exp(xv(3).val()));
+}
+
+TEST(prob_transform, ordered_constrain_analytical_grads_rng) {
+  using stan::math::var;
+
+  std::mt19937 rng;
+  std::uniform_real_distribution<> uniform(-5.0, 5.0);
+
+  for (int i = 0; i < 5; ++i) {
+    Eigen::Matrix<var, Eigen::Dynamic, 1> xv(4);
+    for (int j = 0; j < xv.size(); j++) {
+      xv(j) = uniform(rng);
+    }
+    var out = sum(ordered_constrain(xv));
+
+    out.grad();
+
+    EXPECT_FLOAT_EQ(xv(0).adj(), xv.size());
+    for (int j = 1; j < xv.size(); ++j) {
+      EXPECT_FLOAT_EQ(xv(j).adj(), (xv.size() - j) * exp(xv(j).val()));
+    }
+  }
 }
 
 TEST(AgradRevMatrix, check_varis_on_stack) {
