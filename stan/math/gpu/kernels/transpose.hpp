@@ -1,0 +1,45 @@
+#ifndef STAN_MATH_GPU_KERNELS_TRANSPOSE_HPP
+#define STAN_MATH_GPU_KERNELS_TRANSPOSE_HPP
+
+#include <stan/math/gpu/kernel_cl.hpp>
+
+namespace stan {
+namespace math {
+namespace opencl_kernels {
+// \cond
+const char *transpose_kernel_code = STRINGIFY(
+    // \endcond
+    /**
+     * Takes the transpose of the matrix on the GPU.
+     *
+     * @param[out] B The output matrix to hold transpose of A.
+     * @param[in] A The input matrix to transpose into B.
+     * @param rows The number of rows for A.
+     * @param cols The number of columns for A.
+     * @note Code is a <code>const char*</code> held in
+     * <code>transpose_kernel_code.</code>
+     * This kernel uses the helper macros available in helpers.cl.
+     */
+    __kernel void transpose(
+        __global read_write double *B, __global read_only double *A,
+        read_only unsigned int rows, read_only unsigned int cols) {
+      int i = get_global_id(0);
+      int j = get_global_id(1);
+      if (i < rows && j < cols) {
+        BT(j, i) = A(i, j);
+      }
+    }
+    // \cond
+);
+// \endcond
+
+/**
+ * See the docs for \link kernels/transpose.hpp transpose() \endlink
+ */
+const global_range_kernel<cl::Buffer, cl::Buffer, int, int> transpose(
+    "transpose", transpose_kernel_code);
+
+}  // namespace opencl_kernels
+}  // namespace math
+}  // namespace stan
+#endif

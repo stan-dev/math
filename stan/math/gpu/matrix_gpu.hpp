@@ -7,10 +7,15 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/gpu/kernels/copy.hpp>
+#include <stan/math/gpu/kernels/sub_block.hpp>
+#include <stan/math/gpu/kernels/triangular_transpose.hpp>
+#include <stan/math/gpu/kernels/zeros.hpp>
 #include <CL/cl.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 /**
  *  @file stan/math/gpu/matrix_gpu.hpp
@@ -49,40 +54,15 @@ class matrix_gpu {
   matrix_gpu(const matrix_gpu& A) : rows_(A.rows()), cols_(A.cols()) {
     if (A.size() == 0)
       return;
-    // the queue is needed to enqueue the kernel for execution
-    cl::CommandQueue& cmdQueue = opencl_context.queue();
     // the context is needed to create the buffer object
     cl::Context& ctx = opencl_context.context();
     try {
       // creates a read&write object for "size" double values
       // in the provided context
       oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size());
-      /**
-       * Sets the arguments for the kernel. See copy_matrix_kernel in
-       * kernels/basic_matrix_gpu_kernels.hpp for the kernel code.
-       * The arguments are the source & destination matrices
-       * and the size in rows and columns.
-       */
-      // retrieves the kernel that copies memory from the
-      // input matrix a
-      auto kern = kernel_cl.copy(A.buffer(), this->buffer(), rows_, cols_);
-      /**
-       * Runs the specified kernel with provided number of threads.
-       * - the first argument is the kernel object
-       * - the second argument is the thread offset that is used for
-       *   calculating the global thread ID, NULL here, meaning the
-       *   offset is 0,0
-       * - the third argument specifies the amount of threads to create
-       *   in 2D (rows, columns)
-       * - the fourth argument specifies the size of the thread block,
-       *   NULL here, meaning the OpenCL driver determines the size
-       * - the last two arguments are for tracking events associated
-       *   with the kernel (enqueue, start, stop,...) for profiling.
-       *   Not needed here.
-       */
-      cmdQueue.enqueueNDRangeKernel(kern, cl::NullRange,
-                                    cl::NDRange(rows(), cols()), cl::NullRange,
-                                    NULL, NULL);
+
+      opencl_kernels::copy(cl::NDRange(rows_, cols_), A.buffer(),
+                           this->buffer(), rows_, cols_);
     } catch (const cl::Error& e) {
       check_opencl_error("copy GPU->GPU", e);
     }
@@ -170,14 +150,11 @@ class matrix_gpu {
   void zeros() {
     if (size() == 0)
       return;
-
     cl::CommandQueue cmdQueue = opencl_context.queue();
     try {
-      auto kern = kernel_cl.zeros<triangular_view>(this->buffer(), this->rows(),
-                                                   this->cols());
-      cmdQueue.enqueueNDRangeKernel(kern, cl::NullRange,
-                                    cl::NDRange(this->rows(), this->cols()),
-                                    cl::NullRange, NULL, NULL);
+      opencl_kernels::zeros(cl::NDRange(this->rows(), this->cols()),
+                            this->buffer(), this->rows(), this->cols(),
+                            triangular_view);
     } catch (const cl::Error& e) {
       check_opencl_error("zeros", e);
     }
@@ -204,11 +181,9 @@ class matrix_gpu {
 
     cl::CommandQueue cmdQueue = opencl_context.queue();
     try {
-      auto kern = kernel_cl.copy_triangular_transposed<triangular_map>(
-          this->buffer(), this->rows(), this->cols());
-      cmdQueue.enqueueNDRangeKernel(kern, cl::NullRange,
-                                    cl::NDRange(this->rows(), this->cols()),
-                                    cl::NullRange, NULL, NULL);
+      opencl_kernels::triangular_transpose(
+          cl::NDRange(this->rows(), this->cols()), this->buffer(), this->rows(),
+          this->cols(), triangular_map);
     } catch (const cl::Error& e) {
       check_opencl_error("triangular_transpose", e);
     }
@@ -235,12 +210,10 @@ class matrix_gpu {
     }
     cl::CommandQueue cmdQueue = opencl_context.queue();
     try {
-      auto kern = kernel_cl.sub_block(A.buffer(), this->buffer(), A_i, A_j,
-                                      this_i, this_j, nrows, ncols, A.rows(),
-                                      A.cols(), this->rows(), this->cols());
-      cmdQueue.enqueueNDRangeKernel(kern, cl::NullRange,
-                                    cl::NDRange(nrows, ncols), cl::NullRange,
-                                    NULL, NULL);
+      opencl_kernels::sub_block(cl::NDRange(nrows, ncols), A.buffer(),
+                                this->buffer(), A_i, A_j, this_i, this_j, nrows,
+                                ncols, A.rows(), A.cols(), this->rows(),
+                                this->cols());
     } catch (const cl::Error& e) {
       check_opencl_error("copy_submatrix", e);
     }

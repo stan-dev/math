@@ -2,6 +2,7 @@
 #define STAN_MATH_GPU_IDENTITY_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/gpu/kernels/identity.hpp>
 #include <CL/cl.hpp>
 
 namespace stan {
@@ -23,10 +24,8 @@ inline matrix_gpu identity(int rows_cols) {
   cl::CommandQueue cmdQueue = opencl_context.queue();
 
   try {
-    auto kern = kernel_cl.identity(A.buffer(), A.rows(), A.cols());
-    cmdQueue.enqueueNDRangeKernel(kern, cl::NullRange,
-                                  cl::NDRange(A.rows(), A.cols()),
-                                  cl::NullRange, NULL, NULL);
+    opencl_kernels::identity(cl::NDRange(A.rows(), A.cols()), A.buffer(),
+                             A.rows(), A.cols());
   } catch (const cl::Error& e) {
     check_opencl_error("identity", e);
   }

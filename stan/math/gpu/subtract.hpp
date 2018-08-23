@@ -2,6 +2,7 @@
 #define STAN_MATH_GPU_SUBTRACT_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/gpu/kernels/subtract.hpp>
 #include <stan/math/gpu/err/check_matching_dims.hpp>
 #include <CL/cl.hpp>
 
@@ -31,11 +32,8 @@ inline matrix_gpu subtract(const matrix_gpu& A, const matrix_gpu& B) {
   }
   cl::CommandQueue cmdQueue = opencl_context.queue();
   try {
-    auto kern = kernel_cl.subtract(C.buffer(), A.buffer(), B.buffer(), A.rows(),
-                                   A.cols());
-    cmdQueue.enqueueNDRangeKernel(kern, cl::NullRange,
-                                  cl::NDRange(A.rows(), A.cols()),
-                                  cl::NullRange, NULL, NULL);
+    opencl_kernels::subtract(cl::NDRange(A.rows(), A.cols()), C.buffer(),
+                             A.buffer(), B.buffer(), A.rows(), A.cols());
   } catch (cl::Error& e) {
     check_opencl_error("subtract", e);
   }
