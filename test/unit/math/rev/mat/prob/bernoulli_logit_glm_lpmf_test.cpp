@@ -316,7 +316,8 @@ TEST(ProbDistributionsBernoulliLogitGLM,
 }
 
 //  We check that the right errors are thrown.
-TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_error_checking) {
+TEST(ProbDistributionsPoissonLogGLM,
+     glm_matches_bernoulli_logit_error_checking) {
   int N = 3;
   int M = 2;
   int W = 4;
@@ -335,7 +336,7 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_error_checking) {
   }
   Eigen::Matrix<int, -1, 1> yw3(N, 1);
   for (int n = 0; n < N; n++) {
-    yw2[n] = 42 + (Eigen::Matrix<uint, -1, 1>::Random(1, 1)[0] % 2);
+    yw3[n] = 42 + (Eigen::Matrix<uint, -1, 1>::Random(1, 1)[0] % 2);
   }
   Eigen::Matrix<double, -1, -1> x = Eigen::Matrix<double, -1, -1>::Random(N, M);
   Eigen::Matrix<double, -1, -1> xw1
