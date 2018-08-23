@@ -32,14 +32,16 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the beta log complementary cumulative distribution function for
- * the given probability, success, and failure parameters. Given matching
- * containers returns the log sum of probabilities.
+ * Returns the beta log complementary cumulative distribution function
+ * for the given probability, success, and failure parameters.  Any
+ * arguments other than scalars must be containers of the same size.
+ * With non-scalar arguments, the return is the sum of the log ccdfs
+ * with scalars broadcast as necessary.
  *
  * @tparam T_y type of probability parameter
  * @tparam T_scale_succ type of success parameter
  * @tparam T_scale_fail type of failure parameter
- * @param y probability parameter
+ * @param y type of probability parameter
  * @param alpha success parameter
  * @param beta failure parameter
  * @return log probability or log sum of proabbilities
@@ -81,7 +83,6 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lccdf(
                                                                       beta);
 
   using std::exp;
-  using std::exp;
   using std::log;
   using std::pow;
 
@@ -96,7 +97,7 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lccdf(
       digamma_sum_vec(max_size(alpha, beta));
 
   if (contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value) {
-    for (size_t i = 0; i < N; i++) {
+    for (size_t i = 0; i < max_size(alpha, beta); i++) {
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
       const T_partials_return beta_dbl = value_of(beta_vec[i]);
 
