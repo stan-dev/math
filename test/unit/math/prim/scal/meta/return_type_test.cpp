@@ -15,3 +15,9 @@ TEST(MetaTraits, ReturnTypeFloat) {
 TEST(MetaTraits, ReturnTypeInt) {
   test::expect_same_type<double, return_type<int>::type>();
 }
+
+TEST(MetaTraits, ReturnTypeScalarTenParams) {
+  test::expect_same_type<double,
+                         return_type<double, int, double, float, float, double,
+                                     float, int, double, double>::type>();
+}

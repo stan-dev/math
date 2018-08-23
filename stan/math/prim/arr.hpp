@@ -1,10 +1,12 @@
 #ifndef STAN_MATH_PRIM_ARR_HPP
 #define STAN_MATH_PRIM_ARR_HPP
 
+#include <stan/math/prim/arr/meta/contains_std_vector.hpp>
 #include <stan/math/prim/arr/meta/get.hpp>
 #include <stan/math/prim/arr/meta/index_type.hpp>
 #include <stan/math/prim/arr/meta/is_constant_struct.hpp>
 #include <stan/math/prim/arr/meta/is_vector.hpp>
+#include <stan/math/prim/arr/meta/is_std_vector.hpp>
 #include <stan/math/prim/arr/meta/length.hpp>
 #include <stan/math/prim/arr/meta/scalar_type.hpp>
 #include <stan/math/prim/arr/meta/value_type.hpp>
@@ -13,6 +15,9 @@
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
+#ifdef STAN_OPENCL
+#include <stan/math/prim/arr/err/check_opencl.hpp>
+#endif
 
 #include <stan/math/prim/arr/fun/array_builder.hpp>
 #include <stan/math/prim/arr/fun/common_type.hpp>
@@ -35,7 +40,11 @@
 
 #include <stan/math/prim/arr/functor/coupled_ode_observer.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
+#include <stan/math/prim/arr/functor/integrate_1d.hpp>
 #include <stan/math/prim/arr/functor/integrate_ode_rk45.hpp>
+#include <stan/math/prim/arr/functor/mpi_command.hpp>
+#include <stan/math/prim/arr/functor/mpi_distributed_apply.hpp>
+#include <stan/math/prim/arr/functor/mpi_cluster.hpp>
 
 #include <stan/math/prim/scal.hpp>
 

@@ -230,10 +230,10 @@ void expect_throw(const F& f, const Eigen::VectorXd& x) {
     x_t(i) = x(i);
   try {
     f(x_t);
+    FAIL() << "double throws, expect autodiff version to throw";
   } catch (...) {
     SUCCEED();
   }
-  FAIL() << "double throws, expect autodiff version to throw";
 }
 
 template <typename F>

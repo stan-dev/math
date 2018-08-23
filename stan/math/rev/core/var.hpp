@@ -53,7 +53,7 @@ class var {
    * @return <code>true</code> if this variable does not yet have
    * a defined variable.
    */
-  bool is_uninitialized() { return (vi_ == static_cast<vari*>(0U)); }
+  bool is_uninitialized() { return (vi_ == static_cast<vari*>(nullptr)); }
 
   /**
    * Construct a variable for later assignment.
@@ -470,7 +470,7 @@ class var {
    * @return Reference to the specified output stream.
    */
   friend std::ostream& operator<<(std::ostream& os, const var& v) {
-    if (v.vi_ == 0)
+    if (v.vi_ == nullptr)
       return os << "uninitialized";
     return os << v.val();
   }

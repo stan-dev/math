@@ -165,6 +165,16 @@ TEST(ProbDistributions, ordered_logistic) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> lambda_small(3);
   lambda_small << 1, 1, 1;
   EXPECT_THROW(ordered_logistic_log(y, lambda_small, c), std::invalid_argument);
+
+  Eigen::Matrix<double, Eigen::Dynamic, 1> c_small(K - 2);
+  c_small << -0.3, 0.1;
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> c_small_vec(4);
+  c_small_vec[0] = c;
+  c_small_vec[1] = c;
+  c_small_vec[2] = c_small;
+  c_small_vec[3] = c;
+  EXPECT_THROW(ordered_logistic_log(y, lambda, c_small_vec),
+               std::invalid_argument);
 }
 
 void expect_nan(double x) { EXPECT_TRUE(std::isnan(x)); }

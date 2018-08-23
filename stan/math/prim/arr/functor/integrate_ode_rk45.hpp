@@ -70,7 +70,8 @@ std::vector<std::vector<typename stan::return_type<T1, T2>::type> >
 integrate_ode_rk45(const F& f, const std::vector<T1>& y0, double t0,
                    const std::vector<double>& ts, const std::vector<T2>& theta,
                    const std::vector<double>& x, const std::vector<int>& x_int,
-                   std::ostream* msgs = 0, double relative_tolerance = 1e-6,
+                   std::ostream* msgs = nullptr,
+                   double relative_tolerance = 1e-6,
                    double absolute_tolerance = 1e-6, int max_num_steps = 1E6) {
   using boost::numeric::odeint::integrate_times;
   using boost::numeric::odeint::make_dense_output;
