@@ -5,7 +5,6 @@
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/gpu/kernels/check_symmetric.hpp>
 
-
 namespace stan {
 namespace math {
 /**
@@ -28,11 +27,10 @@ inline void check_symmetric(const char* function, const char* name,
   try {
     int symmetric_flag = 1;
     cl::Buffer buffer_symmetric_flag(ctx, CL_MEM_READ_WRITE, sizeof(int));
-    cmd_queue.enqueueWriteBuffer(buffer_symmetric_flag, CL_TRUE, 0,
-                                 sizeof(int), &symmetric_flag);
-    opencl_kernels::check_symmetric(cl::NDRange(y.rows(), y.cols()),
-                                    y.buffer(), buffer_symmetric_flag,
-                                    y.rows(), y.cols(),
+    cmd_queue.enqueueWriteBuffer(buffer_symmetric_flag, CL_TRUE, 0, sizeof(int),
+                                 &symmetric_flag);
+    opencl_kernels::check_symmetric(cl::NDRange(y.rows(), y.cols()), y.buffer(),
+                                    buffer_symmetric_flag, y.rows(), y.cols(),
                                     math::CONSTRAINT_TOLERANCE);
     cmd_queue.enqueueReadBuffer(buffer_symmetric_flag, CL_TRUE, 0, sizeof(int),
                                 &symmetric_flag);

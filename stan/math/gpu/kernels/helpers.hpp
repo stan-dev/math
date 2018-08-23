@@ -11,7 +11,7 @@ namespace opencl_kernels {
  * Defines some helper macros for the kernels
  */
 std::string helpers =
-  R"(
+    R"(
   // Helper macros
   #ifndef A
   #define A(i,j) A[j * rows + i]
