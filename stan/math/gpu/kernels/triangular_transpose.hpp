@@ -1,5 +1,6 @@
 #ifndef STAN_MATH_GPU_KERNELS_TRIANGULAR_TRANSPOSE_HPP
 #define STAN_MATH_GPU_KERNELS_TRIANGULAR_TRANSPOSE_HPP
+#ifdef STAN_OPENCL
 
 #include <stan/math/gpu/kernel_cl.hpp>
 
@@ -52,4 +53,5 @@ const global_range_kernel<cl::Buffer, int, int, TriangularMapGPU>
 }  // namespace opencl_kernels
 }  // namespace math
 }  // namespace stan
+#endif
 #endif

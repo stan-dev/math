@@ -1,5 +1,6 @@
 #ifndef STAN_MATH_GPU_KERNELS_HELPERS_HPP
 #define STAN_MATH_GPU_KERNELS_HELPERS_HPP
+#ifdef STAN_OPENCL
 
 #include <string>
 
@@ -35,4 +36,5 @@ std::string helpers =
 }  // namespace opencl_kernels
 }  // namespace math
 }  // namespace stan
+#endif
 #endif

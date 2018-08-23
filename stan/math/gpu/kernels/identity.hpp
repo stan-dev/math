@@ -1,5 +1,6 @@
 #ifndef STAN_MATH_GPU_KERNELS_IDENTITY_HPP
 #define STAN_MATH_GPU_KERNELS_IDENTITY_HPP
+#ifdef STAN_OPENCL
 
 #include <stan/math/gpu/kernel_cl.hpp>
 
@@ -46,4 +47,5 @@ const global_range_kernel<cl::Buffer, int, int> identity("identity",
 }  // namespace opencl_kernels
 }  // namespace math
 }  // namespace stan
+#endif
 #endif

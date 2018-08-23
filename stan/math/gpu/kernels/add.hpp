@@ -1,5 +1,6 @@
 #ifndef STAN_MATH_GPU_KERNELS_ADD_HPP
 #define STAN_MATH_GPU_KERNELS_ADD_HPP
+#ifdef STAN_OPENCL
 
 #include <stan/math/gpu/kernel_cl.hpp>
 
@@ -44,4 +45,5 @@ const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int> add(
 }  // namespace opencl_kernels
 }  // namespace math
 }  // namespace stan
+#endif
 #endif
