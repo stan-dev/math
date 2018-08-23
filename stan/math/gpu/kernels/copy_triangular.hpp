@@ -54,7 +54,6 @@ const char *copy_triangular_kernel_code = STRINGIFY(
 );
 // \endcond
 
-
 /**
  * See the docs for \link kernels/copy_triangular.hpp copy_triangular() \endlink
  */
