@@ -1,10 +1,6 @@
 #ifndef STAN_MATH_GPU_KERNELS_TRANSPOSE_HPP
 #define STAN_MATH_GPU_KERNELS_TRANSPOSE_HPP
 
-#ifndef STRINGIFY
-#define STRINGIFY(src) #src
-#endif
-
 #include <stan/math/gpu/kernel_cl.hpp>
 
 namespace stan {
