@@ -2,6 +2,7 @@
 #define STAN_MATH_GPU_ADD_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/gpu/kernels/add.hpp>
 #include <stan/math/gpu/err/check_matching_dims.hpp>
 #include <CL/cl.hpp>
 

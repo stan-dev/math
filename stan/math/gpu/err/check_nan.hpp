@@ -2,6 +2,7 @@
 #define STAN_MATH_GPU_ERR_CHECK_NAN_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/gpu/kernels/check_nan.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 
 namespace stan {

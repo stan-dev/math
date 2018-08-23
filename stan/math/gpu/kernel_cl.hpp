@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/opencl_context.hpp>
 #include <stan/math/gpu/constants.hpp>
+#include <stan/math/gpu/kernels/helpers.hpp>
 #include <CL/cl.hpp>
 #include <string>
 #include <algorithm>
@@ -13,9 +14,6 @@ namespace stan {
 namespace math {
 namespace {
 
-std::string helpers =                        // Helper macros for the kernels.
-#include <stan/math/gpu/kernels/helpers.cl>  // NOLINT
-    ;                                        // NOLINT
 // Holds Default parameter values for each Kernel.
 typedef std::map<const char*, int> map_base_opts;
 map_base_opts base_opts
@@ -31,7 +29,7 @@ auto compile_kernel(const char* name, const char* source) {
     kernel_opts += std::string(" -D") + comp_opts.first + "="
                    + std::to_string(comp_opts.second);
   }
-  std::string kernel_source(helpers);
+  std::string kernel_source(opencl_kernels::helpers);
   kernel_source.append(source);
   try {
     cl::Program::Sources src(1, std::make_pair(kernel_source.c_str(),
@@ -58,9 +56,7 @@ class kernel_functor {
   kernel_functor(const char* name, const char* source)
       : kernel_(compile_kernel(name, source)) {}
 
-  auto operator()() const {
-    return cl::make_kernel<Args...>(kernel_);
-  }
+  auto operator()() const { return cl::make_kernel<Args...>(kernel_); }
 };
 
 template <typename... Args>
@@ -74,53 +70,6 @@ struct global_range_kernel {
     f(eargs, args...).wait();
   }
 };
-
-const global_range_kernel<cl::Buffer, int, int> identity("identity",
-#include <stan/math/gpu/kernels/identity_matrix.cl>  // NOLINT
-);                                                   // NOLINT
-const global_range_kernel<cl::Buffer, cl::Buffer, int, int> copy("copy",
-#include <stan/math/gpu/kernels/copy_matrix.cl>  // NOLINT
-);                                               // NOLINT
-const global_range_kernel<cl::Buffer, cl::Buffer, int, int> transpose(
-    "transpose",
-#include <stan/math/gpu/kernels/transpose_matrix.cl>  // NOLINT
-);                                                    // NOLINT
-const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int> add(
-    "add",
-#include <stan/math/gpu/kernels/add_matrix.cl>  // NOLINT
-);                                              // NOLINT
-const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int>
-    subtract("subtract",
-#include <stan/math/gpu/kernels/subtract_matrix.cl>  // NOLINT
-    );                                               // NOLINT
-const global_range_kernel<cl::Buffer, cl::Buffer, int, int, int, int, int, int,
-                          int, int, int, int>
-    sub_block("sub_block",
-#include <stan/math/gpu/kernels/sub_block.cl>  // NOLINT
-    );                                         // NOLINT
-const global_range_kernel<cl::Buffer, cl::Buffer, int, int>
-    check_diagonal_zeros("is_zero_on_diagonal",
-#include <stan/math/gpu/kernels/check_diagonal_zeros.cl>  // NOLINT
-    );                                                    // NOLINT
-const global_range_kernel<cl::Buffer, cl::Buffer, int, int> check_nan("is_nan",
-#include <stan/math/gpu/kernels/check_nan.cl>  // NOLINT
-);                                             // NOLINT
-const global_range_kernel<cl::Buffer, cl::Buffer, int, int, const double>
-    check_symmetric("is_symmetric",
-#include <stan/math/gpu/kernels/check_symmetric.cl>  // NOLINT
-    );                                               // NOLINT
-const global_range_kernel<cl::Buffer, cl::Buffer, int, int, TriangularViewGPU>
-    copy_triangular("copy_triangular",
-#include <stan/math/gpu/kernels/copy_triangular_matrix.cl>  // NOLINT
-    );                                                      // NOLINT
-const global_range_kernel<cl::Buffer, int, int, TriangularViewGPU> zeros(
-    "zeros",
-#include <stan/math/gpu/kernels/zeros_matrix.cl>  // NOLINT
-);                                                // NOLINT
-const global_range_kernel<cl::Buffer, int, int, TriangularMapGPU>
-    triangular_transpose("triangular_transpose",
-#include <stan/math/gpu/kernels/triangular_transpose.cl>  // NOLINT
-    );                                                    // NOLINT
 
 }  // namespace opencl_kernels
 }  // namespace math

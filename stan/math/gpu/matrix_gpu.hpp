@@ -7,6 +7,10 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/gpu/kernels/copy.hpp>
+#include <stan/math/gpu/kernels/sub_block.hpp>
+#include <stan/math/gpu/kernels/triangular_transpose.hpp>
+#include <stan/math/gpu/kernels/zeros.hpp>
 #include <CL/cl.hpp>
 #include <iostream>
 #include <string>

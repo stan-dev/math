@@ -3,6 +3,8 @@
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/matrix_gpu.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/gpu/kernels/check_symmetric.hpp>
+
 
 namespace stan {
 namespace math {
