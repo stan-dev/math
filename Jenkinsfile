@@ -142,83 +142,86 @@ pipeline {
             }
             post { always { retry(3) { deleteDir() } } }
         }
-        stage('Always-run tests') {
-            parallel {
-                stage('Distribution tests') {
-                    agent { label "distribution-tests" }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh """
-                            echo CC=${env.CXX} > make/local
-                            echo 'O=0' >> make/local
-                            echo N_TESTS=${env.N_TESTS} >> make/local
-                            """
-                        script {
-                            if (params.withRowVector || isBranch('develop') || isBranch('master')) {
-                                sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
-                            }
-                        }
-                        sh "./runTests.py -j${env.PARALLEL} test/prob > dist.log 2>&1"
-                    }
-                    post {
-                        always {
-                            script { zip zipFile: "dist.log.zip", archive: true, glob: 'dist.log' }
-                            retry(3) { deleteDir() }
-                        }
-                        failure {
-                            echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
-                        }
+        stage('Distribution tests') {
+            agent { label "distribution-tests" }
+            steps {
+                deleteDir()
+                unstash 'MathSetup'
+                sh """
+                   echo CC=${env.CXX} > make/local
+                   echo 'O=0' >> make/local
+                   echo N_TESTS=${env.N_TESTS} >> make/local
+                   """
+                script {
+                    if (params.withRowVector || isBranch('develop') || isBranch('master')) {
+                        sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
                     }
                 }
-                stage('Mac Unit with Threading') {
-                    agent  { label 'osx' }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CC=${env.CXX} -Werror > make/local"
-                        sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
+                sh "./runTests.py -j${env.PARALLEL} test/prob > dist.log 2>&1"
+            }
+            post {
+                always {
+                    script { zip zipFile: "dist.log.zip", archive: true, glob: 'dist.log' }
+                    retry(3) { deleteDir() }
                 }
+                failure {
+                    echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
+                    }
             }
         }
-        stage('Additional merge tests') {
-            parallel {
-                stage('Unit with GPU') {
-                    when {
-                        anyOf {
-                            branch 'develop'
-                            branch 'master'
-                            changeset "*gpu*"
-                        }
+        stage('Mac Unit with Threading') {
+            when {
+                anyOf {   // When gpu is mentioned, don't run unless
+                    not { // we're on master or develop
+                        changeset "*gpu*"
+                        changelog "*gpu*"
                     }
-                    agent { label "gelman-group-mac" }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CC=${env.CXX} -Werror > make/local"
-                        sh "echo STAN_OPENCL=true>> make/local"
-                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
-                        sh "echo OPENCL_DEVICE_ID=0>> make/local"
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Linux Unit with Threading') {
-                    when { anyOf { branch 'develop'; branch 'master' } }
-                    agent { label 'linux' }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CC=${GCC} >> make/local"
-                        sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
+                    branch 'master'
+                    branch 'develop'
                 }
             }
+            agent  { label 'osx' }
+            steps {
+                deleteDir()
+                unstash 'MathSetup'
+                sh "echo CC=${env.CXX} -Werror > make/local"
+                sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
+                runTests("test/unit")
+            }
+            post { always { retry(3) { deleteDir() } } }
+        }
+        stage('Unit with GPU') {
+            when {
+                anyOf {
+                    branch 'develop'
+                    branch 'master'
+                    changeset "*gpu*"
+                    changelog "*gpu*"
+                }
+            }
+            agent { label "gelman-group-mac" }
+            steps {
+                deleteDir()
+                unstash 'MathSetup'
+                sh "echo CC=${env.CXX} -Werror > make/local"
+                sh "echo STAN_OPENCL=true>> make/local"
+                sh "echo OPENCL_PLATFORM_ID=0>> make/local"
+                sh "echo OPENCL_DEVICE_ID=0>> make/local"
+                runTests("test/unit")
+            }
+            post { always { retry(3) { deleteDir() } } }
+        }
+        stage('Linux Unit with Threading') {
+            when { anyOf { branch 'develop'; branch 'master' } }
+            agent { label 'linux' }
+            steps {
+                deleteDir()
+                unstash 'MathSetup'
+                sh "echo CC=${GCC} >> make/local"
+                sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
+                runTests("test/unit")
+            }
+            post { always { retry(3) { deleteDir() } } }
         }
         stage('Upstream tests') {
             when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
