@@ -48,9 +48,9 @@ auto compile_kernel(const char* name, const char* source) {
 
     return cl::Kernel(program, name);
   } catch (const cl::Error& e) {
-    std::string buildlog = program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(opencl_context.device()[0]);
-    std::cerr << "Build log :" << std::endl
-                << buildlog << std::endl;
+    std::string buildlog = program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(
+        opencl_context.device()[0]);
+    std::cerr << "Build log :" << std::endl << buildlog << std::endl;
     check_opencl_error(name, e);
   }
   return cl::Kernel();  // never reached because check_opencl_error throws
@@ -88,9 +88,11 @@ struct local_range_kernel {
   const kernel_functor<Args...> make_functor;
   local_range_kernel(const char* name, const char* source)
       : make_functor(name, source) {}
-  auto operator()(cl::NDRange thread_global_size, cl::NDRange thread_block_size, Args... args) const {
+  auto operator()(cl::NDRange thread_global_size, cl::NDRange thread_block_size,
+                  Args... args) const {
     auto f = make_functor();
-    cl::EnqueueArgs eargs(opencl_context.queue(), thread_global_size, thread_block_size);
+    cl::EnqueueArgs eargs(opencl_context.queue(), thread_global_size,
+                          thread_block_size);
     f(eargs, args...).wait();
   }
 };

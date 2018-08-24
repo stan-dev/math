@@ -18,15 +18,15 @@ const char *scalar_mul_kernel_code = STRINGIFY(
      * @param[in] M the number of rows in A
      * @param[in] N the number of columns in A
      */
-   __kernel void scalar_mul(__global double *A, const __global double *B,
-                         const double scalar, const unsigned int rows,
-                         const unsigned int cols) {
-    int i = get_global_id(0);
-    int j = get_global_id(1);
-    if (i < rows && j < cols) {
-      A(i, j) = B(i, j) * scalar;
-    }
-  };
+    __kernel void scalar_mul(__global double *A, const __global double *B,
+                             const double scalar, const unsigned int rows,
+                             const unsigned int cols) {
+      int i = get_global_id(0);
+      int j = get_global_id(1);
+      if (i < rows && j < cols) {
+        A(i, j) = B(i, j) * scalar;
+      }
+    };
     // \cond
 );
 // \endcond

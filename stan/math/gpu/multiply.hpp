@@ -21,8 +21,8 @@ inline matrix_gpu multiply(matrix_gpu& A, double scalar) {
   if (A.size() == 0)
     return temp;
   try {
-    opencl_kernels::scalar_mul(cl::NDRange(A.rows(), A.cols()), temp.buffer(), A.buffer(), scalar,
-                                   A.rows(), A.cols());
+    opencl_kernels::scalar_mul(cl::NDRange(A.rows(), A.cols()), temp.buffer(),
+                               A.buffer(), scalar, A.rows(), A.cols());
   } catch (const cl::Error& e) {
     check_opencl_error("multiply scalar", e);
   }
@@ -59,7 +59,7 @@ inline matrix_gpu multiply(matrix_gpu& A, matrix_gpu& B) {
   matrix_gpu temp(A.rows(), B.cols());
   if (temp.size() == 0)
     return temp;
-  int local = 32;//gpu::multiply_workgroup_size;
+  int local = 32;  // gpu::multiply_workgroup_size;
   int Mpad = ((A.rows() + local - 1) / local) * local;
   int Npad = ((B.cols() + local - 1) / local) * local;
   int Kpad = ((A.cols() + local - 1) / local) * local;
@@ -74,9 +74,10 @@ inline matrix_gpu multiply(matrix_gpu& A, matrix_gpu& B) {
   Bpad.sub_block(B, 0, 0, 0, 0, B.rows(), B.cols());
   int wpt = 8;
   try {
-    opencl_kernels::matrix_multiply(cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt), Apad.buffer(), Bpad.buffer(),
-                                   tempPad.buffer(), Apad.rows(), Bpad.cols(),
-                                   Bpad.rows());
+    opencl_kernels::matrix_multiply(
+        cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
+        Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
+        Bpad.cols(), Bpad.rows());
   } catch (cl::Error& e) {
     check_opencl_error("multiply", e);
   }
