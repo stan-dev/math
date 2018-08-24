@@ -16,11 +16,13 @@ template <>
 class ops_partials_edge<double, std::vector<var> > {
  public:
   typedef std::vector<var> Op;
-  typedef Eigen::VectorXd partials_t;
+  typedef Eigen::Map<Eigen::VectorXd> partials_t;
   partials_t partials_;                       // For univariate use-cases
   broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const Op& op)
-      : partials_(partials_t::Zero(op.size())),
+      : partials_(
+            ChainableStack::instance().memalloc_.calloc_array<double>(op.size()),
+            op.size()),
         partials_vec_(partials_),
         operands_(op) {}
 
@@ -46,11 +48,13 @@ template <int R, int C>
 class ops_partials_edge<double, Eigen::Matrix<var, R, C> > {
  public:
   typedef Eigen::Matrix<var, R, C> Op;
-  typedef Eigen::Matrix<double, R, C> partials_t;
+  typedef Eigen::Map<Eigen::Matrix<double, R, C>> partials_t;
   partials_t partials_;                       // For univariate use-cases
   broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const Op& ops)
-      : partials_(partials_t::Zero(ops.rows(), ops.cols())),
+      : partials_(
+            ChainableStack::instance().memalloc_.calloc_array<double>(ops.size()),
+            ops.rows(), ops.cols()),
         partials_vec_(partials_),
         operands_(ops) {}
 
@@ -83,7 +87,9 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C> > > {
   explicit ops_partials_edge(const Op& ops)
       : partials_vec_(ops.size()), operands_(ops) {
     for (size_t i = 0; i < ops.size(); ++i) {
-      partials_vec_[i] = partial_t::Zero(ops[i].rows(), ops[i].cols());
+      partials_vec_[i] = partial_t(
+          ChainableStack::instance().memalloc_.calloc_array<double>(ops[i].size()),
+          ops[i].rows(), ops[i].cols());
     }
   }
 
