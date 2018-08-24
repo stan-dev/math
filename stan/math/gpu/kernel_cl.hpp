@@ -29,7 +29,11 @@ map_base_opts base_opts
        {"UPPER", static_cast<int>(TriangularViewGPU::Upper)},
        {"ENTIRE", static_cast<int>(TriangularViewGPU::Entire)},
        {"UPPER_TO_LOWER", static_cast<int>(TriangularMapGPU::UpperToLower)},
-       {"LOWER_TO_UPPER", static_cast<int>(TriangularMapGPU::LowerToUpper)}};
+       {"LOWER_TO_UPPER", static_cast<int>(TriangularMapGPU::LowerToUpper)},
+       {"WORK_PER_THREAD_MULT", 8},
+       {"WORKGROUP_SIZE_MULT", 32},
+       {"WORKGROUP_SIZE_MULT_SELF_TRANS", 32},
+       {"WORK_PER_THREAD_MULT_SELF_TRANS", 4}};
 
 auto compile_kernel(const char* name, const char* source) {
   std::string kernel_opts = "";
