@@ -34,7 +34,10 @@ pipeline {
         'Run additional distribution tests on RowVectors (takes 5x as long)',
         name: 'withRowVector')
     }
-    options { skipDefaultCheckout() }
+    options {
+        skipDefaultCheckout()
+        preserveStashes(buildCount: 7)
+    }
     stages {
         stage('Kill previous builds') {
             when {
@@ -126,12 +129,7 @@ pipeline {
                 sh "echo CC=${env.CXX} -Werror > make/local"
                 sh "make -j${env.PARALLEL} test-headers"
             }
-            post {
-                always {
-                    warnings canRunOnFailed: true, consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)'], [parserName: 'Clang (LLVM based)']]
-                    deleteDir()
-                }
-            }
+            post { always { deleteDir() } }
         }
         stage('Linux Unit with MPI') {
             agent { label 'linux' }
@@ -187,9 +185,15 @@ pipeline {
             }
         }
         stage('Additional merge tests') {
-            when { anyOf { branch 'develop'; branch 'master' } }
             parallel {
                 stage('Unit with GPU') {
+                    when {
+                        anyOf {
+                            branch 'develop'
+                            branch 'master'
+                            changeset "*gpu*"
+                        }
+                    }
                     agent { label "gelman-group-mac" }
                     steps {
                         deleteDir()
@@ -203,6 +207,7 @@ pipeline {
                     post { always { retry(3) { deleteDir() } } }
                 }
                 stage('Linux Unit with Threading') {
+                    when { anyOf { branch 'develop'; branch 'master' } }
                     agent { label 'linux' }
                     steps {
                         deleteDir()
@@ -252,7 +257,7 @@ pipeline {
     post {
         always {
             node("osx || linux") {
-                warnings canRunOnFailed: true, consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)'], [parserName: 'Clang (LLVM based)']]
+                warnings canRunOnFailed: true, consoleParsers: [[parserName: 'Clang (LLVM based)']]
             }
         }
         success {
