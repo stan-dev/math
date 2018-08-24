@@ -183,6 +183,23 @@ class stack_alloc {
   }
 
   /**
+   * Allocate an array on the arena of the specified size to hold
+   * values of the specified template parameter type. Set every element to 0.
+   *
+   * @tparam T type of entries in allocated array.
+   * @param[in] n size of array to allocate.
+   * @return new array allocated on the arena.
+   */
+  template <typename T>
+  inline T* calloc_array(size_t n) {
+    auto array = static_cast<T*>(alloc(n * sizeof(T)));
+    for (size_t i = 0; i < n; ++i) {
+      array[i] = 0;
+    }
+    return array;
+  }
+
+  /**
    * Recover all the memory used by the stack allocator.  The stack
    * of memory blocks allocated so far will be available for further
    * allocations.  To free memory back to the system, use the

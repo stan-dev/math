@@ -16,10 +16,10 @@ class autodiff_allocator {
   allocate(std::size_t n) {
     using stan::math::ChainableStack;
     return static_cast<value_type*>(
-        ChainableStack::memalloc_.alloc(n * sizeof(value_type)));
+        ChainableStack::instance().memalloc_.alloc(n * sizeof(value_type)));
   }
 
-  void deallocate(value_type* p, std::size_t) noexcept {}
+  void deallocate(value_type* /* p */, std::size_t) noexcept {}
 };
 
 template <class T, class U>

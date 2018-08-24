@@ -43,11 +43,7 @@ class ops_partials_edge {
  private:
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
-
-  void dump_partials(ViewElt* /* partials */) const {}  // reverse mode
-  void dump_operands(void* /* operands */) const {}     // reverse mode
-  ViewElt dx() const { return 0; }                      // used for fvars
-  int size() const { return 0; }                        // reverse mode
+  void chain(double /* adj */) {}
 };
 }  // namespace internal
 
@@ -89,13 +85,13 @@ template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5,
           typename T_return_type>
 class operands_and_partials {
  public:
-  explicit operands_and_partials(const Op1& op1) {}
-  operands_and_partials(const Op1& op1, const Op2& op2) {}
-  operands_and_partials(const Op1& op1, const Op2& op2, const Op3& op3) {}
-  operands_and_partials(const Op1& op1, const Op2& op2, const Op3& op3,
-                        const Op4& op4) {}
-  operands_and_partials(const Op1& op1, const Op2& op2, const Op3& op3,
-                        const Op4& op4, const Op5& op5) {}
+  explicit operands_and_partials(const Op1& /* op1 */) {}
+  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */) {}
+  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */, const Op3& /* op3 */) {}
+  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */, const Op3& /* op3 */,
+                        const Op4& /* op4 */) {}
+  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */, const Op3& /* op3 */,
+                        const Op4& /* op4 */, const Op5& /* op5 */) {}
 
   /**
    * Build the node to be stored on the autodiff graph.

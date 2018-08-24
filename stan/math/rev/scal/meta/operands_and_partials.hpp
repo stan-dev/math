@@ -26,7 +26,6 @@ class ops_partials_edge<double, var> {
   vari operand_;
 
   void chain(double adj) { operand_.adj_ += adj * partial_; }
-  int size() const { return 1; }
 };
 }  // namespace internal
 
@@ -65,6 +64,9 @@ class ops_partials_edge<double, var> {
  */
 template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5>
 class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> : public vari {
+ protected:
+  double val_; // override const-ness from vari so we can define at build()
+
  public:
   internal::ops_partials_edge<double, Op1> edge1_;
   internal::ops_partials_edge<double, Op2> edge2_;
@@ -72,7 +74,7 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> : public vari {
   internal::ops_partials_edge<double, Op4> edge4_;
   internal::ops_partials_edge<double, Op5> edge5_;
 
-  explicit operands_and_partials(const Op1& o1) : edge1_(o1) {}
+  explicit operands_and_partials(const Op1& o1) : vari(0), edge1_(o1) {}
   operands_and_partials(const Op1& o1, const Op2& o2)
       : vari(0), edge1_(o1), edge2_(o2) {}
   operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3)
@@ -84,7 +86,7 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> : public vari {
                         const Op4& o4, const Op5& o5)
       : vari(0), edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4), edge5_(o5) {}
 
-  void chain() {
+  void chain() override {
     edge1_.chain(adj_);
     edge2_.chain(adj_);
     edge3_.chain(adj_);
