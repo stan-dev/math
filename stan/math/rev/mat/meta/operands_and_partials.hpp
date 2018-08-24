@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/meta/broadcast_array.hpp>
 #include <stan/math/prim/scal/meta/likely.hpp>
+#include <stan/math/rev/core/allocator.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/rev/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/arr/meta/length.hpp>
@@ -82,10 +83,11 @@ template <int R, int C>
 class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C> > > {
  public:
   typedef std::vector<Eigen::Matrix<var, R, C> > Op;
-  typedef Eigen::Matrix<double, -1, -1> partial_t;
-  std::vector<partial_t> partials_vec_;
+  typedef Eigen::Map<Eigen::Matrix<double, -1, -1>> partial_t;
+  std::vector<partial_t, autodiff_allocator<partial_t>> partials_vec_;
   explicit ops_partials_edge(const Op& ops)
-      : partials_vec_(ops.size()), operands_(ops) {
+      : operands_(ops) {
+    partials_vec_.reserve(ops.size());
     for (size_t i = 0; i < ops.size(); ++i) {
       partials_vec_[i] = partial_t(
           ChainableStack::instance().memalloc_.calloc_array<double>(ops[i].size()),
@@ -125,8 +127,8 @@ template <>
 class ops_partials_edge<double, std::vector<std::vector<var> > > {
  public:
   typedef std::vector<std::vector<var> > Op;
-  typedef std::vector<double> partial_t;
-  std::vector<partial_t> partials_vec_;
+  typedef std::vector<double, autodiff_allocator<double>> partial_t;
+  std::vector<partial_t, autodiff_allocator<partial_t>> partials_vec_;
   explicit ops_partials_edge(const Op& ops)
       : partials_vec_(length(ops)), operands_(ops) {
     for (size_t i = 0; i < length(ops); ++i) {
