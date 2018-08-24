@@ -22,10 +22,6 @@ String fork() { env.CHANGE_FORK ?: "stan-dev" }
 String branchName() { isPR() ? env.CHANGE_BRANCH :env.BRANCH_NAME }
 String cmdstan_pr() { params.cmdstan_pr ?: "downstream_tests" }
 String stan_pr() { params.stan_pr ?: "downstream_tests" }
-def mentionsGPU = anyOf {
-    changeset "*gpu*"
-    changelog ".*gpu.*"
-}
 
 pipeline {
     agent none
@@ -176,7 +172,12 @@ pipeline {
         stage('Mac Unit with Threading') {
             when {      // When gpu is mentioned, don't run unless
                 anyOf { // we're on master or develop
-                    not { mentionsGPU }
+                    not {
+                        anyOf {
+                            changeset "*gpu*"
+                            changelog ".*gpu.*"
+                        }
+                    }
                     branch 'master'
                     branch 'develop'
                 }
@@ -196,7 +197,8 @@ pipeline {
                 anyOf {
                     branch 'develop'
                     branch 'master'
-                    mentionsGPU
+                    changeset "*gpu*"
+                    changelog ".*gpu.*"
                 }
             }
             agent { label "gelman-group-mac" }
