@@ -171,10 +171,10 @@ pipeline {
         }
         stage('Mac Unit with Threading') {
             when {
-                anyOf {   // When gpu is mentioned, don't run unless
-                    not { // we're on master or develop
-                        changeset "*gpu*"
-                        changelog "*gpu*"
+                anyOf {     // When gpu is mentioned, don't run unless
+                    allOf { // we're on master or develop
+                        not { changeset "*gpu*" }
+                        not { changelog ".*gpu.*" }
                     }
                     branch 'master'
                     branch 'develop'
