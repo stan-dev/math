@@ -39,14 +39,18 @@ auto compile_kernel(const char* name, const char* source) {
   }
   std::string kernel_source(opencl_kernels::helpers);
   kernel_source.append(source);
+  cl::Program program;
   try {
     cl::Program::Sources src(1, std::make_pair(kernel_source.c_str(),
                                                strlen(kernel_source.c_str())));
-    cl::Program program = cl::Program(opencl_context.context(), src);
+    program = cl::Program(opencl_context.context(), src);
     program.build({opencl_context.device()}, kernel_opts.c_str());
 
     return cl::Kernel(program, name);
   } catch (const cl::Error& e) {
+    std::string buildlog = program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(opencl_context.device()[0]);
+    std::cerr << "Build log :" << std::endl
+                << buildlog << std::endl;
     check_opencl_error(name, e);
   }
   return cl::Kernel();  // never reached because check_opencl_error throws
@@ -72,9 +76,21 @@ struct global_range_kernel {
   const kernel_functor<Args...> make_functor;
   global_range_kernel(const char* name, const char* source)
       : make_functor(name, source) {}
-  auto operator()(cl::NDRange thread_block_size, Args... args) const {
+  auto operator()(cl::NDRange thread_global_size, Args... args) const {
     auto f = make_functor();
-    cl::EnqueueArgs eargs(opencl_context.queue(), thread_block_size);
+    cl::EnqueueArgs eargs(opencl_context.queue(), thread_global_size);
+    f(eargs, args...).wait();
+  }
+};
+
+template <typename... Args>
+struct local_range_kernel {
+  const kernel_functor<Args...> make_functor;
+  local_range_kernel(const char* name, const char* source)
+      : make_functor(name, source) {}
+  auto operator()(cl::NDRange thread_global_size, cl::NDRange thread_block_size, Args... args) const {
+    auto f = make_functor();
+    cl::EnqueueArgs eargs(opencl_context.queue(), thread_global_size, thread_block_size);
     f(eargs, args...).wait();
   }
 };

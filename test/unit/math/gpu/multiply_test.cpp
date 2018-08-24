@@ -1,4 +1,5 @@
 #include <stan/math/prim/mat.hpp>
+#include <stan/math/gpu/copy.hpp>
 #include <stan/math/gpu/multiply.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>

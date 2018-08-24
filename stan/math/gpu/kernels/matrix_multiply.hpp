@@ -1,11 +1,15 @@
-R"(
-#ifndef WORK_PER_THREAD_MULT
-#define WORK_PER_THREAD_MULT 8
-#endif
-#ifndef WORKGROUP_SIZE_MULT
-#define WORKGROUP_SIZE_MULT 32
-#endif
-#define WORKGROUP_SIZE_MULT_COL WORKGROUP_SIZE_MULT / WORK_PER_THREAD_MULT
+#ifndef STAN_MATH_GPU_KERNELS_MATRIX_MULTIPLY_HPP
+#define STAN_MATH_GPU_KERNELS_MATRIX_MULTIPLY_HPP
+#ifdef STAN_OPENCL
+
+#include <stan/math/gpu/kernel_cl.hpp>
+
+namespace stan {
+namespace math {
+namespace opencl_kernels {
+// \cond
+const char *matrix_multiply_kernel_code = STRINGIFY(
+// \endcond
 /**
  * Matrix multiplication on the GPU
  *
@@ -66,4 +70,18 @@ __kernel void matrix_multiply(const __global double* A,
     C[(j + w * WORKGROUP_SIZE_MULT_COL) * M + i] = acc[w];
   }
 }
-)"
+// \cond
+);
+// \endcond
+
+/**
+ * See the docs for \link kernels/smatrix_multiply.hpp add() \endlink
+ */
+const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int> matrix_multiply(
+    "matrix_multiply", matrix_multiply_kernel_code);
+
+}  // namespace opencl_kernels
+}  // namespace math
+}  // namespace stan
+#endif
+#endif

@@ -1,13 +1,15 @@
-R"(
-#ifndef WORK_PER_THREAD_MULT_SELF_TRANS
-#define WORK_PER_THREAD_MULT_SELF_TRANS 4
-#endif
-#define WORKGROUP_SIZE_MULT_SELF_TRANS_COL \
-  WORKGROUP_SIZE_MULT_SELF_TRANS / WORK_PER_THREAD_MULT_SELF_TRANS
-#ifndef B
-#define B(i, j) B[j * M + i]
-#endif
+#ifndef STAN_MATH_GPU_KERNELS_MULTIPLY_TRANSPOSE_HPP
+#define STAN_MATH_GPU_KERNELS_MATRIX_MULTIPLY_HPP
+#ifdef STAN_OPENCL
 
+#include <stan/math/gpu/kernel_cl.hpp>
+
+namespace stan {
+namespace math {
+namespace opencl_kernels {
+// \cond
+const char *multiply_transpose_kernel_code = STRINGIFY(
+// \endcond
 /**
  * Matrix multiplication of the form A*A^T on the GPU
  *
@@ -93,5 +95,19 @@ __kernel void multiply_transpose(const __global double* A,
       B[(j + w * WORKGROUP_SIZE_MULT_SELF_TRANS_COL) + i * M] = acc[w];
     }
   }
-};
-)"
+}
+// \cond
+);
+// \endcond
+
+/**
+ * See the docs for \link kernels/multiply_transpose.hpp add() \endlink
+ */
+const local_range_kernel<cl::Buffer, cl::Buffer, int, int> multiply_transpose(
+    "multiply_transpose", multiply_transpose_kernel_code);
+
+}  // namespace opencl_kernels
+}  // namespace math
+}  // namespace stan
+#endif
+#endif

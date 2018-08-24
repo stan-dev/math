@@ -1,5 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/gpu/diagonal_multiply.hpp>
+#include <stan/math/gpu/copy.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 #ifdef STAN_OPENCL
