@@ -15,8 +15,8 @@ const char *scalar_mul_diagonal_kernel_code = STRINGIFY(
      *
      * @param[in, out] A matrix A
      * @param[in] scalar the value with which to multiply the diagonal of A
-     * @param[in] M the number of rows in A
-     * @param[in] N the number of columns in A
+     * @param[in] rows the number of rows in A
+     * @param[in] cols the number of columns in A
      */
     __kernel void scalar_mul_diagonal(__global double *A, const double scalar,
                                       const unsigned int rows,
@@ -25,7 +25,7 @@ const char *scalar_mul_diagonal_kernel_code = STRINGIFY(
       if (i < rows && i < cols) {
         A(i, i) *= scalar;
       }
-    };
+    }
     // \cond
 );
 // \endcond

@@ -75,7 +75,7 @@ const char* matrix_multiply_kernel_code = STRINGIFY(
 // \endcond
 
 /**
- * See the docs for \link kernels/smatrix_multiply.hpp add() \endlink
+ * See the docs for \link kernels/matrix_multiply.hpp add() \endlink
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int>
     matrix_multiply("matrix_multiply", matrix_multiply_kernel_code);

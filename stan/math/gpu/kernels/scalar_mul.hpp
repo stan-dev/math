@@ -13,10 +13,11 @@ const char *scalar_mul_kernel_code = STRINGIFY(
     /**
      * Multiplication of the matrix A with a scalar
      *
-     * @param[in, out] A matrix A
+     * @param[in] A input matrix
+     * @param[in] B output matrix
      * @param[in] scalar the value with which to multiply A
-     * @param[in] M the number of rows in A
-     * @param[in] N the number of columns in A
+     * @param[in] rows the number of rows in A
+     * @param[in] cols the number of columns in A
      */
     __kernel void scalar_mul(__global double *A, const __global double *B,
                              const double scalar, const unsigned int rows,
@@ -26,7 +27,7 @@ const char *scalar_mul_kernel_code = STRINGIFY(
       if (i < rows && j < cols) {
         A(i, j) = B(i, j) * scalar;
       }
-    };
+    }
     // \cond
 );
 // \endcond
