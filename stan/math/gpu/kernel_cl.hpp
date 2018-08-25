@@ -2,7 +2,6 @@
 #define STAN_MATH_GPU_KERNEL_CL_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/opencl_context.hpp>
-#include <stan/math/gpu/constants.hpp>
 #include <stan/math/gpu/kernels/helpers.hpp>
 #include <CL/cl.hpp>
 #include <string>
@@ -22,36 +21,9 @@ namespace stan {
 namespace math {
 namespace {
 
-// Holds Default parameter values for each Kernel.
-typedef std::map<const char*, int> map_base_opts;
-map_base_opts base_opts
-    = {{"LOWER", static_cast<int>(TriangularViewGPU::Lower)},
-       {"UPPER", static_cast<int>(TriangularViewGPU::Upper)},
-       {"ENTIRE", static_cast<int>(TriangularViewGPU::Entire)},
-       {"UPPER_TO_LOWER", static_cast<int>(TriangularMapGPU::UpperToLower)},
-       {"LOWER_TO_UPPER", static_cast<int>(TriangularMapGPU::LowerToUpper)},
-       {"WORK_PER_WI_MULT", 8},
-       {"WG_SIZE_MULT", 32},
-       {"WG_SIZE_MULT_SELF_TRANS", 32},
-       {"WORK_PER_WI_MULT_SELF_TRANS", 4}};
-
 auto compile_kernel(const char* name, const char* source) {
-  size_t max_wg_size = opencl_context.max_workgroup_size();
-  int wg_size_sqrt = static_cast<int>(sqrt(static_cast<double>(max_wg_size)));
-  // Does a compile time check of the maximum allowed
-  // dimension of a square workgroup size
-  // WG size of (32,32) works on all recent GPU but would fail on some
-  // older integrated GPUs or CPUs
-  if (wg_size_sqrt < base_opts["WG_SIZE_MULT"]) {
-    base_opts["WG_SIZE_MULT"] = wg_size_sqrt;
-    base_opts["WORK_PER_WI_MULT"] = 1;
-  }
-  if (wg_size_sqrt < base_opts["WG_SIZE_MULT_SELF_TRANS"]) {
-    base_opts["WG_SIZE_MULT_SELF_TRANS"] = wg_size_sqrt;
-    base_opts["WORK_PER_WI_MULT_SELF_TRANS"] = 1;
-  }
   std::string kernel_opts = "";
-  for (auto&& comp_opts : base_opts) {
+  for (auto&& comp_opts : opencl_context.base_opts()) {
     kernel_opts += std::string(" -D") + comp_opts.first + "="
                    + std::to_string(comp_opts.second);
   }
