@@ -2,6 +2,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/gpu/opencl_context.hpp>
 #include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/gpu/copy.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <vector>
