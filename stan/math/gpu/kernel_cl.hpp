@@ -30,12 +30,26 @@ map_base_opts base_opts
        {"ENTIRE", static_cast<int>(TriangularViewGPU::Entire)},
        {"UPPER_TO_LOWER", static_cast<int>(TriangularMapGPU::UpperToLower)},
        {"LOWER_TO_UPPER", static_cast<int>(TriangularMapGPU::LowerToUpper)},
-       {"WORK_PER_THREAD_MULT", 8},
-       {"WORKGROUP_SIZE_MULT", 32},
-       {"WORKGROUP_SIZE_MULT_SELF_TRANS", 32},
-       {"WORK_PER_THREAD_MULT_SELF_TRANS", 4}};
+       {"WORK_PER_WI_MULT", 8},
+       {"WG_SIZE_MULT", 32},
+       {"WG_SIZE_MULT_SELF_TRANS", 32},
+       {"WORK_PER_WI_MULT_SELF_TRANS", 4}};
 
 auto compile_kernel(const char* name, const char* source) {
+  size_t max_wg_size = opencl_context.max_workgroup_size();
+  int wg_size_sqrt = static_cast<int>(sqrt(static_cast<double>(max_wg_size)));
+  // Does a compile time check of the maximum allowed
+  // dimension of a square workgroup size
+  // WG size of (32,32) works on all recent GPU but would fail on some
+  // older integrated GPUs or CPUs
+  if (wg_size_sqrt < base_opts["WG_SIZE_MULT"]){
+    base_opts["WG_SIZE_MULT"] = wg_size_sqrt;
+    base_opts["WORK_PER_WI_MULT"] = 1;
+  }
+  if (wg_size_sqrt < base_opts["WG_SIZE_MULT_SELF_TRANS"]){
+    base_opts["WG_SIZE_MULT_SELF_TRANS"] = wg_size_sqrt;
+    base_opts["WORK_PER_WI_MULT_SELF_TRANS"] = 1;
+  }
   std::string kernel_opts = "";
   for (auto&& comp_opts : base_opts) {
     kernel_opts += std::string(" -D") + comp_opts.first + "="
@@ -80,9 +94,9 @@ struct global_range_kernel {
   const kernel_functor<Args...> make_functor;
   global_range_kernel(const char* name, const char* source)
       : make_functor(name, source) {}
-  auto operator()(cl::NDRange thread_global_size, Args... args) const {
+  auto operator()(cl::NDRange global_workitems, Args... args) const {
     auto f = make_functor();
-    cl::EnqueueArgs eargs(opencl_context.queue(), thread_global_size);
+    cl::EnqueueArgs eargs(opencl_context.queue(), global_workitems);
     f(eargs, args...).wait();
   }
 };
@@ -92,11 +106,11 @@ struct local_range_kernel {
   const kernel_functor<Args...> make_functor;
   local_range_kernel(const char* name, const char* source)
       : make_functor(name, source) {}
-  auto operator()(cl::NDRange thread_global_size, cl::NDRange thread_block_size,
+  auto operator()(cl::NDRange global_workitems, cl::NDRange workgroup_size,
                   Args... args) const {
     auto f = make_functor();
-    cl::EnqueueArgs eargs(opencl_context.queue(), thread_global_size,
-                          thread_block_size);
+    cl::EnqueueArgs eargs(opencl_context.queue(), global_workitems,
+                          workgroup_size);
     f(eargs, args...).wait();
   }
 };

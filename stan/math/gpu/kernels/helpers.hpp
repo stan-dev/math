@@ -32,23 +32,23 @@ std::string helpers =
   #ifndef dst
   #define dst(i,j) dst[j * dst_rows + i]
   #endif
-  #ifndef WORK_PER_THREAD_MULT
-  #define WORK_PER_THREAD_MULT 8
+  #ifndef WORK_PER_WI_MULT
+  #define WORK_PER_WI_MULT 8
   #endif
-  #ifndef WORKGROUP_SIZE_MULT
-  #define WORKGROUP_SIZE_MULT 32
+  #ifndef WG_SIZE_MULT
+  #define WG_SIZE_MULT 32
   #endif
-  #ifndef WORKGROUP_SIZE_MULT_COL
-    #define WORKGROUP_SIZE_MULT_COL WORKGROUP_SIZE_MULT/WORK_PER_THREAD_MULT
+  #ifndef WG_SIZE_MULT_COL
+    #define WG_SIZE_MULT_COL WG_SIZE_MULT/WORK_PER_WI_MULT
   #endif
-  #ifndef WORKGROUP_SIZE_MULT_SELF_TRANS
-  #define WORKGROUP_SIZE_MULT_SELF_TRANS 32
+  #ifndef WG_SIZE_MULT_SELF_TRANS
+  #define WG_SIZE_MULT_SELF_TRANS 32
   #endif
-  #ifndef WORK_PER_THREAD_MULT_SELF_TRANS
-    #define WORK_PER_THREAD_MULT_SELF_TRANS 4
+  #ifndef WORK_PER_WI_MULT_SELF_TRANS
+    #define WORK_PER_WI_MULT_SELF_TRANS 4
   #endif
-  #define WORKGROUP_SIZE_MULT_SELF_TRANS_COL \
-    WORKGROUP_SIZE_MULT_SELF_TRANS / WORK_PER_THREAD_MULT_SELF_TRANS
+  #define WG_SIZE_MULT_SELF_TRANS_COL \
+    WG_SIZE_MULT_SELF_TRANS / WORK_PER_WI_MULT_SELF_TRANS
   )";
 }  // namespace opencl_kernels
 }  // namespace math
