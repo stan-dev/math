@@ -19,7 +19,7 @@ namespace math {
  * @return Sum of coefficients of vector.
  */
 template <typename T, int R, int C>
-inline double sum(const Eigen::Matrix<T, R, C>& v) {
+inline T sum(const Eigen::Matrix<T, R, C>& v) {
   return v.sum();
 }
 
