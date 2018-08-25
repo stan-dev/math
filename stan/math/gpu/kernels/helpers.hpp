@@ -13,7 +13,7 @@ namespace opencl_kernels {
  */
 std::string helpers =
     R"(
-  // Helper macros
+  // Matrix access helpers
   #ifndef A
   #define A(i,j) A[j * rows + i]
   #endif
@@ -32,23 +32,44 @@ std::string helpers =
   #ifndef dst
   #define dst(i,j) dst[j * dst_rows + i]
   #endif
-  #ifndef WORK_PER_WI_MULT
-  #define WORK_PER_WI_MULT 8
+
+	// Options for lower or upper triangular as well as full
+	#ifndef LOWER
+	#define LOWER 0
+	#endif
+	#ifndef UPPER
+	#define UPPER 1
+	#endif
+	#ifndef ENTIRE
+	#define ENTIRE 2
+	#endif
+
+	// Options for flipping lower to upper and vice versa
+	#ifndef UPPER_TO_LOWER
+	#define UPPER_TO_LOWER 0
+	#endif
+	#ifndef LOWER_TO_UPPER
+	#define LOWER_TO_UPPER 1
+	#endif
+
+	// Thread block sizes
+  #ifndef WORK_PER_THREAD_MULT
+  #define WORK_PER_THREAD_MULT 8
   #endif
-  #ifndef WG_SIZE_MULT
-  #define WG_SIZE_MULT 32
+  #ifndef THREAD_BLOCK_SIZE
+  #define THREAD_BLOCK_SIZE 32
   #endif
-  #ifndef WG_SIZE_MULT_COL
-    #define WG_SIZE_MULT_COL WG_SIZE_MULT/WORK_PER_WI_MULT
+  #ifndef THREAD_BLOCK_SIZE_MULT_COL
+  #define THREAD_BLOCK_SIZE_MULT_COL THREAD_BLOCK_SIZE/WORK_PER_THREAD_MULT
   #endif
-  #ifndef WG_SIZE_MULT_SELF_TRANS
-  #define WG_SIZE_MULT_SELF_TRANS 32
+  #ifndef THREAD_BLOCK_SIZE
+  #define THREAD_BLOCK_SIZE 32
   #endif
-  #ifndef WORK_PER_WI_MULT_SELF_TRANS
-    #define WORK_PER_WI_MULT_SELF_TRANS 4
+  #ifndef WORK_PER_THREAD_MULT_SELF_TRANS
+  #define WORK_PER_THREAD_MULT_SELF_TRANS 4
   #endif
-  #define WG_SIZE_MULT_SELF_TRANS_COL \
-    WG_SIZE_MULT_SELF_TRANS / WORK_PER_WI_MULT_SELF_TRANS
+  #define THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL \
+    THREAD_BLOCK_SIZE / WORK_PER_THREAD_MULT_SELF_TRANS
   )";
 }  // namespace opencl_kernels
 }  // namespace math

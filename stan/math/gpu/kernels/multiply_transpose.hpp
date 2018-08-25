@@ -27,56 +27,56 @@ const char* multiply_transpose_kernel_code = STRINGIFY(
       const int workgroup_col = get_local_id(1);
 
       // global workitem index
-      const int i = WG_SIZE_MULT_SELF_TRANS * get_group_id(0) + workgroup_row;
-      const int j = WG_SIZE_MULT_SELF_TRANS * get_group_id(1) + workgroup_col;
+      const int i = THREAD_BLOCK_SIZE * get_group_id(0) + workgroup_row;
+      const int j = THREAD_BLOCK_SIZE * get_group_id(1) + workgroup_col;
 
       // indexes that determine the last indexes that need to compute
       // in order to remove the unnecesary multiplications in the special
       // multiplication of A*A^T
-      const int jMin = WG_SIZE_MULT_SELF_TRANS * get_group_id(1);
+      const int jMin = THREAD_BLOCK_SIZE * get_group_id(1);
       const int iMax
-          = WG_SIZE_MULT_SELF_TRANS * get_group_id(0) + get_local_size(0);
+          = THREAD_BLOCK_SIZE * get_group_id(0) + get_local_size(0);
 
       // local memory
-      __local double A_local[WG_SIZE_MULT_SELF_TRANS][WG_SIZE_MULT_SELF_TRANS];
-      __local double B_local[WG_SIZE_MULT_SELF_TRANS][WG_SIZE_MULT_SELF_TRANS];
+      __local double A_local[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];
+      __local double B_local[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];
 
-      double acc[WORK_PER_WI_MULT_SELF_TRANS];
-      for (int w = 0; w < WORK_PER_WI_MULT_SELF_TRANS; w++) {
+      double acc[WORK_PER_THREAD_MULT_SELF_TRANS];
+      for (int w = 0; w < WORK_PER_THREAD_MULT_SELF_TRANS; w++) {
         acc[w] = 0.0;
       }
 
       const int numTiles
-          = (N + WG_SIZE_MULT_SELF_TRANS - 1) / WG_SIZE_MULT_SELF_TRANS;
+          = (N + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
       // iterate over all tiles
       for (int t = 0; t < numTiles; t++) {
         // in each tile
-        const int tiled_i = WG_SIZE_MULT_SELF_TRANS * t + workgroup_row;
-        const int tiled_j = WG_SIZE_MULT_SELF_TRANS * t + workgroup_col;
+        const int tiled_i = THREAD_BLOCK_SIZE * t + workgroup_row;
+        const int tiled_j = THREAD_BLOCK_SIZE * t + workgroup_col;
         // if the data needs to be loaded to local memory
         if (jMin <= iMax) {
-          // each workitem copies WORK_PER_WI_MULT_SELF_TRANS values to the
+          // each workitem copies WORK_PER_THREAD_MULT_SELF_TRANS values to the
           // local memory
-          for (int w = 0; w < WORK_PER_WI_MULT_SELF_TRANS; w++) {
-            A_local[workgroup_col + w * WG_SIZE_MULT_SELF_TRANS_COL]
+          for (int w = 0; w < WORK_PER_THREAD_MULT_SELF_TRANS; w++) {
+            A_local[workgroup_col + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL]
                    [workgroup_row]
-                = A[i + (tiled_j + w * WG_SIZE_MULT_SELF_TRANS_COL) * M];
-            B_local[workgroup_col + w * WG_SIZE_MULT_SELF_TRANS_COL]
+                = A[i + (tiled_j + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL) * M];
+            B_local[workgroup_col + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL]
                    [workgroup_row]
-                = A[(j + w * WG_SIZE_MULT_SELF_TRANS_COL) + tiled_i * M];
+                = A[(j + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL) + tiled_i * M];
           }
         }
         // wait till all tile values are loaded to the local memory
         barrier(CLK_LOCAL_MEM_FENCE);
         // multiply the tile products
-        for (int k = 0; k < WG_SIZE_MULT_SELF_TRANS; k++) {
-          // each workitem multiplies WORK_PER_WI_MULT_SELF_TRANS values
-          for (int w = 0; w < WORK_PER_WI_MULT_SELF_TRANS; w++) {
+        for (int k = 0; k < THREAD_BLOCK_SIZE; k++) {
+          // each workitem multiplies WORK_PER_THREAD_MULT_SELF_TRANS values
+          for (int w = 0; w < WORK_PER_THREAD_MULT_SELF_TRANS; w++) {
             if (jMin <= iMax) {
-              if ((j + w * WG_SIZE_MULT_SELF_TRANS_COL) <= i) {
+              if ((j + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL) <= i) {
                 acc[w] += A_local[k][workgroup_row]
                           * B_local[workgroup_col
-                                    + w * WG_SIZE_MULT_SELF_TRANS_COL][k];
+                                    + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL][k];
               }
             }
           }
@@ -84,11 +84,11 @@ const char* multiply_transpose_kernel_code = STRINGIFY(
         barrier(CLK_LOCAL_MEM_FENCE);
       }
       // save the values
-      for (int w = 0; w < WORK_PER_WI_MULT_SELF_TRANS; w++) {
-        // each workitem saves WORK_PER_WI_MULT_SELF_TRANS values
-        if ((j + w * WG_SIZE_MULT_SELF_TRANS_COL) <= i) {
-          B[i + (j + w * WG_SIZE_MULT_SELF_TRANS_COL) * M] = acc[w];
-          B[(j + w * WG_SIZE_MULT_SELF_TRANS_COL) + i * M] = acc[w];
+      for (int w = 0; w < WORK_PER_THREAD_MULT_SELF_TRANS; w++) {
+        // each workitem saves WORK_PER_THREAD_MULT_SELF_TRANS values
+        if ((j + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL) <= i) {
+          B[i + (j + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL) * M] = acc[w];
+          B[(j + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL) + i * M] = acc[w];
         }
       }
     }

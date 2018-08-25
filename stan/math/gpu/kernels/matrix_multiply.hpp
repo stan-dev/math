@@ -27,47 +27,47 @@ const char* matrix_multiply_kernel_code = STRINGIFY(
       const int workgroup_row = get_local_id(0);
       const int workgroup_col = get_local_id(1);
       // global workitem index
-      const int i = WG_SIZE_MULT * get_group_id(0) + workgroup_row;
-      const int j = WG_SIZE_MULT * get_group_id(1) + workgroup_col;
+      const int i = THREAD_BLOCK_SIZE * get_group_id(0) + workgroup_row;
+      const int j = THREAD_BLOCK_SIZE * get_group_id(1) + workgroup_col;
 
       // local memory
-      __local double A_local[WG_SIZE_MULT][WG_SIZE_MULT];
-      __local double B_local[WG_SIZE_MULT][WG_SIZE_MULT];
+      __local double A_local[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];
+      __local double B_local[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];
 
-      double acc[WORK_PER_WI_MULT];
-      for (int w = 0; w < WORK_PER_WI_MULT; w++) {
+      double acc[WORK_PER_THREAD_MULT];
+      for (int w = 0; w < WORK_PER_THREAD_MULT; w++) {
         acc[w] = 0.0;
       }
 
-      const int num_tiles = (K + WG_SIZE_MULT - 1) / WG_SIZE_MULT;
+      const int num_tiles = (K + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
       // iterate over all tiles
       for (int t = 0; t < num_tiles; t++) {
-        // each workitem copies WORK_PER_WI_MULT values to the local
+        // each workitem copies WORK_PER_THREAD_MULT values to the local
         // memory
-        for (int w = 0; w < WORK_PER_WI_MULT; w++) {
-          const int tiled_i = WG_SIZE_MULT * t + workgroup_row;
-          const int tiled_j = WG_SIZE_MULT * t + workgroup_col;
+        for (int w = 0; w < WORK_PER_THREAD_MULT; w++) {
+          const int tiled_i = THREAD_BLOCK_SIZE * t + workgroup_row;
+          const int tiled_j = THREAD_BLOCK_SIZE * t + workgroup_col;
 
-          A_local[workgroup_col + w * WG_SIZE_MULT_COL][workgroup_row]
-              = A[(tiled_j + w * WG_SIZE_MULT_COL) * M + i];
+          A_local[workgroup_col + w * THREAD_BLOCK_SIZE_MULT_COL][workgroup_row]
+              = A[(tiled_j + w * THREAD_BLOCK_SIZE_MULT_COL) * M + i];
 
-          B_local[workgroup_col + w * WG_SIZE_MULT_COL][workgroup_row]
-              = B[(j + w * WG_SIZE_MULT_COL) * K + tiled_i];
+          B_local[workgroup_col + w * THREAD_BLOCK_SIZE_MULT_COL][workgroup_row]
+              = B[(j + w * THREAD_BLOCK_SIZE_MULT_COL) * K + tiled_i];
         }
         // wait until all tile values are loaded to the local memory
         barrier(CLK_LOCAL_MEM_FENCE);
-        for (int k = 0; k < WG_SIZE_MULT; k++) {
-          for (int w = 0; w < WORK_PER_WI_MULT; w++) {
+        for (int k = 0; k < THREAD_BLOCK_SIZE; k++) {
+          for (int w = 0; w < WORK_PER_THREAD_MULT; w++) {
             acc[w] += A_local[k][workgroup_row]
-                      * B_local[workgroup_col + w * WG_SIZE_MULT_COL][k];
+                      * B_local[workgroup_col + w * THREAD_BLOCK_SIZE_MULT_COL][k];
           }
         }
         barrier(CLK_LOCAL_MEM_FENCE);
       }
       // save the values
-      for (int w = 0; w < WORK_PER_WI_MULT; w++) {
-        // each workitem saves WORK_PER_WI_MULT_SELF_TRANS values
-        C[(j + w * WG_SIZE_MULT_COL) * M + i] = acc[w];
+      for (int w = 0; w < WORK_PER_THREAD_MULT; w++) {
+        // each workitem saves WORK_PER_THREAD_MULT_SELF_TRANS values
+        C[(j + w * THREAD_BLOCK_SIZE_MULT_COL) * M + i] = acc[w];
       }
     }
     // \cond
