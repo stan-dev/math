@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 #include <type_traits>
+#include <vector>
 
 TEST(MathMatrix, sumVector) {
   using Eigen::Dynamic;
