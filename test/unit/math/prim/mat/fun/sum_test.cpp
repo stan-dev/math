@@ -3,8 +3,6 @@
 #include <test/unit/util.hpp>
 #include <type_traits>
 
-
-
 TEST(MathMatrix, sumVector) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
