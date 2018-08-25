@@ -58,8 +58,9 @@ const char* matrix_multiply_kernel_code = STRINGIFY(
         barrier(CLK_LOCAL_MEM_FENCE);
         for (int k = 0; k < THREAD_BLOCK_SIZE; k++) {
           for (int w = 0; w < WORK_PER_THREAD_MULT; w++) {
-            acc[w] += A_local[k][workgroup_row]
-                      * B_local[workgroup_col + w * THREAD_BLOCK_SIZE_MULT_COL][k];
+            acc[w]
+                += A_local[k][workgroup_row]
+                   * B_local[workgroup_col + w * THREAD_BLOCK_SIZE_MULT_COL][k];
           }
         }
         barrier(CLK_LOCAL_MEM_FENCE);

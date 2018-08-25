@@ -34,8 +34,7 @@ const char* multiply_transpose_kernel_code = STRINGIFY(
       // in order to remove the unnecesary multiplications in the special
       // multiplication of A*A^T
       const int jMin = THREAD_BLOCK_SIZE * get_group_id(1);
-      const int iMax
-          = THREAD_BLOCK_SIZE * get_group_id(0) + get_local_size(0);
+      const int iMax = THREAD_BLOCK_SIZE * get_group_id(0) + get_local_size(0);
 
       // local memory
       __local double A_local[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];
@@ -46,8 +45,7 @@ const char* multiply_transpose_kernel_code = STRINGIFY(
         acc[w] = 0.0;
       }
 
-      const int numTiles
-          = (N + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
+      const int numTiles = (N + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
       // iterate over all tiles
       for (int t = 0; t < numTiles; t++) {
         // in each tile
@@ -60,10 +58,13 @@ const char* multiply_transpose_kernel_code = STRINGIFY(
           for (int w = 0; w < WORK_PER_THREAD_MULT_SELF_TRANS; w++) {
             A_local[workgroup_col + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL]
                    [workgroup_row]
-                = A[i + (tiled_j + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL) * M];
+                = A[i
+                    + (tiled_j + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL)
+                          * M];
             B_local[workgroup_col + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL]
                    [workgroup_row]
-                = A[(j + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL) + tiled_i * M];
+                = A[(j + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL)
+                    + tiled_i * M];
           }
         }
         // wait till all tile values are loaded to the local memory
@@ -76,7 +77,8 @@ const char* multiply_transpose_kernel_code = STRINGIFY(
               if ((j + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL) <= i) {
                 acc[w] += A_local[k][workgroup_row]
                           * B_local[workgroup_col
-                                    + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL][k];
+                                    + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL]
+                                   [k];
               }
             }
           }

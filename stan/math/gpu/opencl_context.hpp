@@ -106,7 +106,7 @@ class opencl_context_base {
       if (workgroup_size_sqrt < base_opts_["THREAD_BLOCK_SIZE"]) {
         base_opts_["THREAD_BLOCK_SIZE"] = workgroup_size_sqrt;
         base_opts_["WORK_PER_THREAD_MULT"] = 1;
-				base_opts_["WORK_PER_THREAD_MULT_SELF_TRANS"] = 1;
+        base_opts_["WORK_PER_THREAD_MULT_SELF_TRANS"] = 1;
       }
     } catch (const cl::Error& e) {
       check_opencl_error("opencl_context", e);
@@ -132,10 +132,9 @@ class opencl_context_base {
 
   // Holds Default parameter values for each Kernel.
   typedef std::map<const char*, int> map_base_opts;
-  map_base_opts base_opts_
-      = {{"THREAD_BLOCK_SIZE", 32},
-				 {"WORK_PER_THREAD_MULT", 8},
-         {"WORK_PER_THREAD_MULT_SELF_TRANS", 4}};
+  map_base_opts base_opts_ = {{"THREAD_BLOCK_SIZE", 32},
+                              {"WORK_PER_THREAD_MULT", 8},
+                              {"WORK_PER_THREAD_MULT_SELF_TRANS", 4}};
 
   static opencl_context_base& getInstance() {
     static opencl_context_base instance_;

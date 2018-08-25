@@ -28,7 +28,7 @@ namespace opencl_kernels {
  * @param source A string literal containing the code for the kernel.
  * @note The macros defined in kernels/helpers.hpp are included in the kernel
  *  compilation for ease of writing and reading kernels.
-	*/
+ */
 auto compile_kernel(const char* name, const char* source) {
   std::string kernel_opts = "";
   for (auto&& comp_opts : opencl_context.base_opts()) {
@@ -69,11 +69,11 @@ class kernel_functor {
   cl::Kernel kernel_;
 
  public:
-	/**
-	 * functor to access the kernel compiler.
-	 * @param name The name for the kernel.
-	 * @param source A string literal containing the code for the kernel.
-	 */
+  /**
+   * functor to access the kernel compiler.
+   * @param name The name for the kernel.
+   * @param source A string literal containing the code for the kernel.
+   */
   kernel_functor(const char* name, const char* source)
       : kernel_(compile_kernel(name, source)) {}
 
@@ -89,20 +89,20 @@ class kernel_functor {
 template <typename... Args>
 struct global_range_kernel {
   const kernel_functor<Args...> make_functor;
-	/**
-	 * Creates functor for kernels that only need access to defining
-	 *  the global work size.
-	 * @param name The name for the kernel
-	 * @param source A string literal containing the code for the kernel.
-	 */
+  /**
+   * Creates functor for kernels that only need access to defining
+   *  the global work size.
+   * @param name The name for the kernel
+   * @param source A string literal containing the code for the kernel.
+   */
   global_range_kernel(const char* name, const char* source)
       : make_functor(name, source) {}
-	/**
-	 * Executes a kernel
-	 * @param global_workitems The global work size.
-	 * @param args The arguments to pass to the kernel.
+  /**
+   * Executes a kernel
+   * @param global_workitems The global work size.
+   * @param args The arguments to pass to the kernel.
    * @tparam Args Parameter pack of all kernel argument types.
-	 */
+   */
   auto operator()(cl::NDRange global_workitems, Args... args) const {
     auto f = make_functor();
     cl::EnqueueArgs eargs(opencl_context.queue(), global_workitems);
@@ -117,20 +117,20 @@ struct global_range_kernel {
 template <typename... Args>
 struct local_range_kernel {
   const kernel_functor<Args...> make_functor;
-	/**
-	 * Creates kernels that only need access to defining the global work size.
-	 * @param name The name for the kernel
-	 * @param source A string literal containing the code for the kernel.
-	 */
+  /**
+   * Creates kernels that only need access to defining the global work size.
+   * @param name The name for the kernel
+   * @param source A string literal containing the code for the kernel.
+   */
   local_range_kernel(const char* name, const char* source)
       : make_functor(name, source) {}
-	/**
-	 * Executes a kernel
-	 * @param global_workitems The global work size.
-	 * @param workgroup_size The local work group size.
-	 * @param args The arguments to pass to the kernel.
-	 * @tparam Args Parameter pack of all kernel argument types.
-	 */
+  /**
+   * Executes a kernel
+   * @param global_workitems The global work size.
+   * @param workgroup_size The local work group size.
+   * @param args The arguments to pass to the kernel.
+   * @tparam Args Parameter pack of all kernel argument types.
+   */
   auto operator()(cl::NDRange global_workitems, cl::NDRange workgroup_size,
                   Args... args) const {
     auto f = make_functor();
