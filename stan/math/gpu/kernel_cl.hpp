@@ -19,7 +19,7 @@
 
 namespace stan {
 namespace math {
-namespace {
+namespace opencl_kernels {
 
 auto compile_kernel(const char* name, const char* source) {
   std::string kernel_opts = "";
@@ -39,18 +39,16 @@ auto compile_kernel(const char* name, const char* source) {
     return cl::Kernel(program, name);
   } catch (const cl::Error& e) {
     // in case of CL_BUILD_PROGRAM_FAILURE, print the build error
-    if (e.err() == -11){
+    if (e.err() == -11) {
       std::string buildlog = program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(
-        opencl_context.device()[0]);
+          opencl_context.device()[0]);
       system_error("compile_kernel", name, e.err(), buildlog.c_str());
+    } else {
+      check_opencl_error(name, e);
     }
-    check_opencl_error(name, e);
   }
   return cl::Kernel();  // never reached because check_opencl_error throws
 }
-}  // namespace
-
-namespace opencl_kernels {
 
 template <typename... Args>
 class kernel_functor {

@@ -21,6 +21,7 @@
 #include <fstream>
 #include <map>
 #include <vector>
+#include <cmath>
 #include <cerrno>
 /**
  *  @file stan/math/gpu/opencl_context.hpp
@@ -96,16 +97,17 @@ class opencl_context_base {
                                         CL_QUEUE_PROFILING_ENABLE, nullptr);
       device_.getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
                               &max_workgroup_size_);
-      int workgroup_size_sqrt = static_cast<int>(sqrt(static_cast<double>(max_workgroup_size_)));
+      int workgroup_size_sqrt
+          = static_cast<int>(sqrt(static_cast<double>(max_workgroup_size_)));
       // Does a compile time check of the maximum allowed
       // dimension of a square workgroup size
       // WG size of (32,32) works on all recent GPU but would fail on some
       // older integrated GPUs or CPUs
-      if (workgroup_size_sqrt < base_opts_["WG_SIZE_MULT"]){
+      if (workgroup_size_sqrt < base_opts_["WG_SIZE_MULT"]) {
         base_opts_["WG_SIZE_MULT"] = workgroup_size_sqrt;
         base_opts_["WORK_PER_WI_MULT"] = 1;
       }
-      if (workgroup_size_sqrt < base_opts_["WG_SIZE_MULT_SELF_TRANS"]){
+      if (workgroup_size_sqrt < base_opts_["WG_SIZE_MULT_SELF_TRANS"]) {
         base_opts_["WG_SIZE_MULT_SELF_TRANS"] = workgroup_size_sqrt;
         base_opts_["WORK_PER_WI_MULT_SELF_TRANS"] = 1;
       }
@@ -130,19 +132,19 @@ class opencl_context_base {
   cl::Device device_;                // The selected GPU device
   std::string device_name_;          // The name of the GPU
   size_t max_workgroup_size_;  // The maximum size of a block of workers on GPU
-  
+
   // Holds Default parameter values for each Kernel.
   typedef std::map<const char*, int> map_base_opts;
   map_base_opts base_opts_
-  = {{"LOWER", static_cast<int>(TriangularViewGPU::Lower)},
-      {"UPPER", static_cast<int>(TriangularViewGPU::Upper)},
-      {"ENTIRE", static_cast<int>(TriangularViewGPU::Entire)},
-      {"UPPER_TO_LOWER", static_cast<int>(TriangularMapGPU::UpperToLower)},
-      {"LOWER_TO_UPPER", static_cast<int>(TriangularMapGPU::LowerToUpper)},
-      {"WORK_PER_WI_MULT", 8},
-      {"WG_SIZE_MULT", 32},
-      {"WG_SIZE_MULT_SELF_TRANS", 32},
-      {"WORK_PER_WI_MULT_SELF_TRANS", 4}};
+      = {{"LOWER", static_cast<int>(TriangularViewGPU::Lower)},
+         {"UPPER", static_cast<int>(TriangularViewGPU::Upper)},
+         {"ENTIRE", static_cast<int>(TriangularViewGPU::Entire)},
+         {"UPPER_TO_LOWER", static_cast<int>(TriangularMapGPU::UpperToLower)},
+         {"LOWER_TO_UPPER", static_cast<int>(TriangularMapGPU::LowerToUpper)},
+         {"WORK_PER_WI_MULT", 8},
+         {"WG_SIZE_MULT", 32},
+         {"WG_SIZE_MULT_SELF_TRANS", 32},
+         {"WORK_PER_WI_MULT_SELF_TRANS", 4}};
 
   static opencl_context_base& getInstance() {
     static opencl_context_base instance_;
@@ -298,9 +300,7 @@ class opencl_context {
     return opencl_context_base::getInstance().command_queue_;
   }
   /**
-   * Returns the reference to the active OpenCL command queue for the device.
-   * One command queue will exist per device where
-   * kernels are placed on the command queue and by default executed in order.
+   * Returns the reference to the map of kernel defines
    */
   inline opencl_context_base::map_base_opts& base_opts() {
     return opencl_context_base::getInstance().base_opts_;
