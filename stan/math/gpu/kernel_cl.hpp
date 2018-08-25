@@ -66,9 +66,12 @@ auto compile_kernel(const char* name, const char* source) {
 
     return cl::Kernel(program, name);
   } catch (const cl::Error& e) {
-    std::string buildlog = program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(
+    // in case of CL_BUILD_PROGRAM_FAILURE, print the build error
+    if (e.err() == -11){
+      std::string buildlog = program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(
         opencl_context.device()[0]);
-    std::cerr << "Build log :" << std::endl << buildlog << std::endl;
+      system_error("compile_kernel", name, e.err(), buildlog.c_str());
+    }
     check_opencl_error(name, e);
   }
   return cl::Kernel();  // never reached because check_opencl_error throws
