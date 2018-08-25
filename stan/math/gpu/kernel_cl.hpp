@@ -42,11 +42,11 @@ auto compile_kernel(const char* name, const char* source) {
   // dimension of a square workgroup size
   // WG size of (32,32) works on all recent GPU but would fail on some
   // older integrated GPUs or CPUs
-  if (wg_size_sqrt < base_opts["WG_SIZE_MULT"]){
+  if (wg_size_sqrt < base_opts["WG_SIZE_MULT"]) {
     base_opts["WG_SIZE_MULT"] = wg_size_sqrt;
     base_opts["WORK_PER_WI_MULT"] = 1;
   }
-  if (wg_size_sqrt < base_opts["WG_SIZE_MULT_SELF_TRANS"]){
+  if (wg_size_sqrt < base_opts["WG_SIZE_MULT_SELF_TRANS"]) {
     base_opts["WG_SIZE_MULT_SELF_TRANS"] = wg_size_sqrt;
     base_opts["WORK_PER_WI_MULT_SELF_TRANS"] = 1;
   }

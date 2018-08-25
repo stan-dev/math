@@ -27,31 +27,27 @@ const char* multiply_transpose_kernel_code = STRINGIFY(
       const int workgroup_col = get_local_id(1);
 
       // global workitem index
-      const int i
-          = WG_SIZE_MULT_SELF_TRANS * get_group_id(0) + workgroup_row;
-      const int j
-          = WG_SIZE_MULT_SELF_TRANS * get_group_id(1) + workgroup_col;
+      const int i = WG_SIZE_MULT_SELF_TRANS * get_group_id(0) + workgroup_row;
+      const int j = WG_SIZE_MULT_SELF_TRANS * get_group_id(1) + workgroup_col;
 
       // indexes that determine the last indexes that need to compute
       // in order to remove the unnecesary multiplications in the special
       // multiplication of A*A^T
       const int jMin = WG_SIZE_MULT_SELF_TRANS * get_group_id(1);
-      const int iMax = WG_SIZE_MULT_SELF_TRANS * get_group_id(0)
-                       + get_local_size(0);
+      const int iMax
+          = WG_SIZE_MULT_SELF_TRANS * get_group_id(0) + get_local_size(0);
 
       // local memory
-      __local double A_local[WG_SIZE_MULT_SELF_TRANS]
-                            [WG_SIZE_MULT_SELF_TRANS];
-      __local double B_local[WG_SIZE_MULT_SELF_TRANS]
-                            [WG_SIZE_MULT_SELF_TRANS];
+      __local double A_local[WG_SIZE_MULT_SELF_TRANS][WG_SIZE_MULT_SELF_TRANS];
+      __local double B_local[WG_SIZE_MULT_SELF_TRANS][WG_SIZE_MULT_SELF_TRANS];
 
       double acc[WORK_PER_WI_MULT_SELF_TRANS];
       for (int w = 0; w < WORK_PER_WI_MULT_SELF_TRANS; w++) {
         acc[w] = 0.0;
       }
 
-      const int numTiles = (N + WG_SIZE_MULT_SELF_TRANS - 1)
-                           / WG_SIZE_MULT_SELF_TRANS;
+      const int numTiles
+          = (N + WG_SIZE_MULT_SELF_TRANS - 1) / WG_SIZE_MULT_SELF_TRANS;
       // iterate over all tiles
       for (int t = 0; t < numTiles; t++) {
         // in each tile
@@ -78,10 +74,9 @@ const char* multiply_transpose_kernel_code = STRINGIFY(
           for (int w = 0; w < WORK_PER_WI_MULT_SELF_TRANS; w++) {
             if (jMin <= iMax) {
               if ((j + w * WG_SIZE_MULT_SELF_TRANS_COL) <= i) {
-                acc[w]
-                    += A_local[k][workgroup_row]
-                       * B_local[workgroup_col
-                                 + w * WG_SIZE_MULT_SELF_TRANS_COL][k];
+                acc[w] += A_local[k][workgroup_row]
+                          * B_local[workgroup_col
+                                    + w * WG_SIZE_MULT_SELF_TRANS_COL][k];
               }
             }
           }
