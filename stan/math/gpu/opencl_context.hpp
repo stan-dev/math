@@ -121,7 +121,8 @@ class opencl_context_base {
   std::vector<cl::Device> devices_;  // All available GPU devices
   cl::Device device_;                // The selected GPU device
   std::string device_name_;          // The name of the GPU
-  size_t max_thread_block_size_;  // The maximum size of a block of workers on GPU
+  size_t
+      max_thread_block_size_;  // The maximum size of a block of workers on GPU
 
   // Holds Default parameter values for each Kernel.
   typedef std::map<const char*, int> map_base_opts;
@@ -289,10 +290,11 @@ class opencl_context {
     return opencl_context_base::getInstance().base_opts_;
   }
   /**
-   * Returns the maximum thread block size defined by CL_DEVICE_MAX_WORK_GROUP_SIZE
-   * for the device in the context. This is the maximum product of thread block
-   * dimensions for a particular device. IE a max workgoup of 256 would allow
-   * thread blocks of sizes (16,16), (128,2), (8, 32), etc.
+   * Returns the maximum thread block size defined by
+   * CL_DEVICE_MAX_WORK_GROUP_SIZE for the device in the context. This is the
+   * maximum product of thread block dimensions for a particular device. IE a
+   * max workgoup of 256 would allow thread blocks of sizes (16,16), (128,2),
+   * (8, 32), etc.
    */
   inline int max_thread_block_size() {
     return opencl_context_base::getInstance().max_thread_block_size_;

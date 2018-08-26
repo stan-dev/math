@@ -49,10 +49,12 @@ const char* matrix_multiply_kernel_code = STRINGIFY(
           const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
           const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
 
-          A_local[thread_block_col + w * THREAD_BLOCK_SIZE_MULT_COL][thread_block_row]
+          A_local[thread_block_col + w * THREAD_BLOCK_SIZE_MULT_COL]
+                 [thread_block_row]
               = A[(tiled_j + w * THREAD_BLOCK_SIZE_MULT_COL) * M + i];
 
-          B_local[thread_block_col + w * THREAD_BLOCK_SIZE_MULT_COL][thread_block_row]
+          B_local[thread_block_col + w * THREAD_BLOCK_SIZE_MULT_COL]
+                 [thread_block_row]
               = B[(j + w * THREAD_BLOCK_SIZE_MULT_COL) * K + tiled_i];
         }
         // wait until all tile values are loaded to the local memory
@@ -60,8 +62,8 @@ const char* matrix_multiply_kernel_code = STRINGIFY(
         for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE; block_ind++) {
           for (int w = 0; w < WORK_PER_THREAD_MULT; w++) {
             acc[w] += A_local[block_ind][thread_block_row]
-                      * B_local[thread_block_col + w * THREAD_BLOCK_SIZE_MULT_COL]
-                               [block_ind];
+                      * B_local[thread_block_col
+                                + w * THREAD_BLOCK_SIZE_MULT_COL][block_ind];
           }
         }
         barrier(CLK_LOCAL_MEM_FENCE);

@@ -56,12 +56,14 @@ const char* multiply_transpose_kernel_code = STRINGIFY(
           // each thread copies WORK_PER_THREAD_MULT_SELF_TRANS values to the
           // local memory
           for (int w = 0; w < WORK_PER_THREAD_MULT_SELF_TRANS; w++) {
-            A_local[thread_block_col + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL]
+            A_local[thread_block_col
+                    + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL]
                    [thread_block_row]
                 = A[i
                     + (tiled_j + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL)
                           * M];
-            B_local[thread_block_col + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL]
+            B_local[thread_block_col
+                    + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL]
                    [thread_block_row]
                 = A[(j + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL)
                     + tiled_i * M];
