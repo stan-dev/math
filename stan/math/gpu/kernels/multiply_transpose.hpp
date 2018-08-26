@@ -19,10 +19,9 @@ const char* multiply_transpose_kernel_code = STRINGIFY(
      * @param[in] N Number of cols for matrix A and the number of rows for
      * matrix A^T
      */
-    __kernel void multiply_transpose(const __global read_only double* A,
-                                     __global write_only double* B,
-																		  const read_only int M,
-                                     const read_only int N) {
+    __kernel void multiply_transpose(
+        const __global read_only double* A, __global write_only double* B,
+        const read_only int M, const read_only int N) {
       // workitem index inside the workgroup
       const int workgroup_row = get_local_id(0);
       const int workgroup_col = get_local_id(1);
