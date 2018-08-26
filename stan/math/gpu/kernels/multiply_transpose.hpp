@@ -19,9 +19,10 @@ const char* multiply_transpose_kernel_code = STRINGIFY(
      * @param[in] N Number of cols for matrix A and the number of rows for
      * matrix A^T
      */
-    __kernel void multiply_transpose(const __global double* A,
-                                     __global double* B, const int M,
-                                     const int N) {
+    __kernel void multiply_transpose(const __global read_only double* A,
+                                     __global write_only double* B,
+																		  const read_only int M,
+                                     const read_only int N) {
       // workitem index inside the workgroup
       const int workgroup_row = get_local_id(0);
       const int workgroup_col = get_local_id(1);
@@ -47,10 +48,10 @@ const char* multiply_transpose_kernel_code = STRINGIFY(
 
       const int numTiles = (N + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
       // iterate over all tiles
-      for (int t = 0; t < numTiles; t++) {
+      for (int tile_ind = 0; tile_ind < numTiles; tile_ind++) {
         // in each tile
-        const int tiled_i = THREAD_BLOCK_SIZE * t + workgroup_row;
-        const int tiled_j = THREAD_BLOCK_SIZE * t + workgroup_col;
+        const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + workgroup_row;
+        const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + workgroup_col;
         // if the data needs to be loaded to local memory
         if (jMin <= iMax) {
           // each workitem copies WORK_PER_THREAD_MULT_SELF_TRANS values to the
@@ -70,15 +71,15 @@ const char* multiply_transpose_kernel_code = STRINGIFY(
         // wait till all tile values are loaded to the local memory
         barrier(CLK_LOCAL_MEM_FENCE);
         // multiply the tile products
-        for (int k = 0; k < THREAD_BLOCK_SIZE; k++) {
+        for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE; block_ind++) {
           // each workitem multiplies WORK_PER_THREAD_MULT_SELF_TRANS values
           for (int w = 0; w < WORK_PER_THREAD_MULT_SELF_TRANS; w++) {
             if (jMin <= iMax) {
               if ((j + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL) <= i) {
-                acc[w] += A_local[k][workgroup_row]
+                acc[w] += A_local[block_ind][workgroup_row]
                           * B_local[workgroup_col
                                     + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL]
-                                   [k];
+                                   [block_ind];
               }
             }
           }

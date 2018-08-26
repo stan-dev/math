@@ -20,9 +20,11 @@ const char* matrix_multiply_kernel_code = STRINGIFY(
      * @param[in] N Number of rows for matrix B
      * @param[in] K Number of cols for matrix A and number of rows for matrix B
      */
-    __kernel void matrix_multiply(const __global double* A,
-                                  const __global double* B, __global double* C,
-                                  const int M, const int N, const int K) {
+    __kernel void matrix_multiply(const __global read_only double* A,
+                                  const __global read_only double* B,
+																	 __global write_only double* C,
+                                  const read_only int M, const read_only int N,
+																	const read_only int K) {
       // workitem index inside the workgroup
       const int workgroup_row = get_local_id(0);
       const int workgroup_col = get_local_id(1);
@@ -41,12 +43,12 @@ const char* matrix_multiply_kernel_code = STRINGIFY(
 
       const int num_tiles = (K + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
       // iterate over all tiles
-      for (int t = 0; t < num_tiles; t++) {
+      for (int tile_ind = 0; tile_ind < num_tiles; tile_ind++) {
         // each workitem copies WORK_PER_THREAD_MULT values to the local
         // memory
         for (int w = 0; w < WORK_PER_THREAD_MULT; w++) {
-          const int tiled_i = THREAD_BLOCK_SIZE * t + workgroup_row;
-          const int tiled_j = THREAD_BLOCK_SIZE * t + workgroup_col;
+          const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + workgroup_row;
+          const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + workgroup_col;
 
           A_local[workgroup_col + w * THREAD_BLOCK_SIZE_MULT_COL][workgroup_row]
               = A[(tiled_j + w * THREAD_BLOCK_SIZE_MULT_COL) * M + i];
@@ -56,11 +58,12 @@ const char* matrix_multiply_kernel_code = STRINGIFY(
         }
         // wait until all tile values are loaded to the local memory
         barrier(CLK_LOCAL_MEM_FENCE);
-        for (int k = 0; k < THREAD_BLOCK_SIZE; k++) {
+        for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE; block_ind++) {
           for (int w = 0; w < WORK_PER_THREAD_MULT; w++) {
             acc[w]
-                += A_local[k][workgroup_row]
-                   * B_local[workgroup_col + w * THREAD_BLOCK_SIZE_MULT_COL][k];
+                += A_local[block_ind][workgroup_row]
+                   * B_local[workgroup_col + w * THREAD_BLOCK_SIZE_MULT_COL]
+									 [block_ind];
           }
         }
         barrier(CLK_LOCAL_MEM_FENCE);
