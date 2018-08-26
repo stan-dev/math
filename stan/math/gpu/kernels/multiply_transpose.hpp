@@ -22,13 +22,13 @@ const char* multiply_transpose_kernel_code = STRINGIFY(
     __kernel void multiply_transpose(
         const __global read_only double* A, __global write_only double* B,
         const read_only int M, const read_only int N) {
-      // workitem index inside the workgroup
-      const int workgroup_row = get_local_id(0);
-      const int workgroup_col = get_local_id(1);
+      // thread index inside the thread block
+      const int thread_block_row = get_local_id(0);
+      const int thread_block_col = get_local_id(1);
 
-      // global workitem index
-      const int i = THREAD_BLOCK_SIZE * get_group_id(0) + workgroup_row;
-      const int j = THREAD_BLOCK_SIZE * get_group_id(1) + workgroup_col;
+      // global thread index
+      const int i = THREAD_BLOCK_SIZE * get_group_id(0) + thread_block_row;
+      const int j = THREAD_BLOCK_SIZE * get_group_id(1) + thread_block_col;
 
       // indexes that determine the last indexes that need to compute
       // in order to remove the unnecesary multiplications in the special
@@ -49,20 +49,20 @@ const char* multiply_transpose_kernel_code = STRINGIFY(
       // iterate over all tiles
       for (int tile_ind = 0; tile_ind < numTiles; tile_ind++) {
         // in each tile
-        const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + workgroup_row;
-        const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + workgroup_col;
+        const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
+        const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
         // if the data needs to be loaded to local memory
         if (jMin <= iMax) {
-          // each workitem copies WORK_PER_THREAD_MULT_SELF_TRANS values to the
+          // each thread copies WORK_PER_THREAD_MULT_SELF_TRANS values to the
           // local memory
           for (int w = 0; w < WORK_PER_THREAD_MULT_SELF_TRANS; w++) {
-            A_local[workgroup_col + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL]
-                   [workgroup_row]
+            A_local[thread_block_col + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL]
+                   [thread_block_row]
                 = A[i
                     + (tiled_j + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL)
                           * M];
-            B_local[workgroup_col + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL]
-                   [workgroup_row]
+            B_local[thread_block_col + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL]
+                   [thread_block_row]
                 = A[(j + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL)
                     + tiled_i * M];
           }
@@ -71,12 +71,12 @@ const char* multiply_transpose_kernel_code = STRINGIFY(
         barrier(CLK_LOCAL_MEM_FENCE);
         // multiply the tile products
         for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE; block_ind++) {
-          // each workitem multiplies WORK_PER_THREAD_MULT_SELF_TRANS values
+          // each thread multiplies WORK_PER_THREAD_MULT_SELF_TRANS values
           for (int w = 0; w < WORK_PER_THREAD_MULT_SELF_TRANS; w++) {
             if (jMin <= iMax) {
               if ((j + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL) <= i) {
-                acc[w] += A_local[block_ind][workgroup_row]
-                          * B_local[workgroup_col
+                acc[w] += A_local[block_ind][thread_block_row]
+                          * B_local[thread_block_col
                                     + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL]
                                    [block_ind];
               }
@@ -87,7 +87,7 @@ const char* multiply_transpose_kernel_code = STRINGIFY(
       }
       // save the values
       for (int w = 0; w < WORK_PER_THREAD_MULT_SELF_TRANS; w++) {
-        // each workitem saves WORK_PER_THREAD_MULT_SELF_TRANS values
+        // each thread saves WORK_PER_THREAD_MULT_SELF_TRANS values
         if ((j + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL) <= i) {
           B[i + (j + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL) * M] = acc[w];
           B[(j + w * THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL) + i * M] = acc[w];

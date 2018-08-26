@@ -29,7 +29,7 @@
  *    1. create context
  *    2. Find OpenCL platforms and devices available
  *    3. set up command queue
- *    4. initialize kernel groups
+ *    4. set architecture dependent kernel parameters
  */
 namespace stan {
 namespace math {
@@ -67,8 +67,7 @@ class opencl_context_base {
    *  OPENCL_DEVICE_ID.
    * 3. Creates the OpenCL context with the device.
    * 4. Creates the OpenCL command queue for the selected device.
-   * 5. Initializes the kernel groups by filling the <code> kernel_info </code>
-   *  map.
+   * 5. Sets the GPU dependent kernel parameters
    * @throw std::system_error if an OpenCL error occurs.
    */
   opencl_context_base() {
@@ -96,15 +95,15 @@ class opencl_context_base {
       command_queue_ = cl::CommandQueue(context_, device_,
                                         CL_QUEUE_PROFILING_ENABLE, nullptr);
       device_.getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
-                              &max_workgroup_size_);
-      int workgroup_size_sqrt
-          = static_cast<int>(sqrt(static_cast<double>(max_workgroup_size_)));
+                              &max_thread_block_size_);
+      int thread_block_size_sqrt
+          = static_cast<int>(sqrt(static_cast<double>(max_thread_block_size_)));
       // Does a compile time check of the maximum allowed
-      // dimension of a square workgroup size
+      // dimension of a square thread block size
       // WG size of (32,32) works on all recent GPU but would fail on some
       // older integrated GPUs or CPUs
-      if (workgroup_size_sqrt < base_opts_["THREAD_BLOCK_SIZE"]) {
-        base_opts_["THREAD_BLOCK_SIZE"] = workgroup_size_sqrt;
+      if (thread_block_size_sqrt < base_opts_["THREAD_BLOCK_SIZE"]) {
+        base_opts_["THREAD_BLOCK_SIZE"] = thread_block_size_sqrt;
         base_opts_["WORK_PER_THREAD_MULT"] = 1;
         base_opts_["WORK_PER_THREAD_MULT_SELF_TRANS"] = 1;
       }
@@ -112,12 +111,6 @@ class opencl_context_base {
       check_opencl_error("opencl_context", e);
     }
   }
-
-  /**
-   * Initializes the <code> kernel_info </code> where each kernel is mapped to
-   * a logical flag to mark if the kernel was already compiled,
-   * the name of the kernel group, and the OpenCL kernel sources.
-   */
 
  protected:
   cl::Context context_;  // Manages the the device, queue, platform, memory,etc.
@@ -128,7 +121,7 @@ class opencl_context_base {
   std::vector<cl::Device> devices_;  // All available GPU devices
   cl::Device device_;                // The selected GPU device
   std::string device_name_;          // The name of the GPU
-  size_t max_workgroup_size_;  // The maximum size of a block of workers on GPU
+  size_t max_thread_block_size_;  // The maximum size of a block of workers on GPU
 
   // Holds Default parameter values for each Kernel.
   typedef std::map<const char*, int> map_base_opts;
@@ -296,13 +289,13 @@ class opencl_context {
     return opencl_context_base::getInstance().base_opts_;
   }
   /**
-   * Returns the maximum workgroup size defined by CL_DEVICE_MAX_WORK_GROUP_SIZE
-   * for the device in the context. This is the maximum product of work group
+   * Returns the maximum thread block size defined by CL_DEVICE_MAX_WORK_GROUP_SIZE
+   * for the device in the context. This is the maximum product of thread block
    * dimensions for a particular device. IE a max workgoup of 256 would allow
-   * work groups of sizes (16,16), (128,2), (8, 32), etc.
+   * thread blocks of sizes (16,16), (128,2), (8, 32), etc.
    */
-  inline int max_workgroup_size() {
-    return opencl_context_base::getInstance().max_workgroup_size_;
+  inline int max_thread_block_size() {
+    return opencl_context_base::getInstance().max_thread_block_size_;
   }
 
   /**

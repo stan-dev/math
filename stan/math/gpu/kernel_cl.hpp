@@ -99,13 +99,13 @@ struct global_range_kernel {
       : make_functor(name, source) {}
   /**
    * Executes a kernel
-   * @param global_workitems The global work size.
+   * @param global_thread_size The global work size.
    * @param args The arguments to pass to the kernel.
    * @tparam Args Parameter pack of all kernel argument types.
    */
-  auto operator()(cl::NDRange global_workitems, Args... args) const {
+  auto operator()(cl::NDRange global_thread_size, Args... args) const {
     auto f = make_functor();
-    cl::EnqueueArgs eargs(opencl_context.queue(), global_workitems);
+    cl::EnqueueArgs eargs(opencl_context.queue(), global_thread_size);
     f(eargs, args...).wait();
   }
 };
@@ -126,16 +126,16 @@ struct local_range_kernel {
       : make_functor(name, source) {}
   /**
    * Executes a kernel
-   * @param global_workitems The global work size.
-   * @param workgroup_size The local work group size.
+   * @param global_thread_size The global work size.
+   * @param thread_block_size The thread block size.
    * @param args The arguments to pass to the kernel.
    * @tparam Args Parameter pack of all kernel argument types.
    */
-  auto operator()(cl::NDRange global_workitems, cl::NDRange workgroup_size,
+  auto operator()(cl::NDRange global_thread_size, cl::NDRange thread_block_size,
                   Args... args) const {
     auto f = make_functor();
-    cl::EnqueueArgs eargs(opencl_context.queue(), global_workitems,
-                          workgroup_size);
+    cl::EnqueueArgs eargs(opencl_context.queue(), global_thread_size,
+                          thread_block_size);
     f(eargs, args...).wait();
   }
 };
