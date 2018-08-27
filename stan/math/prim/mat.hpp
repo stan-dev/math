@@ -316,6 +316,7 @@
 #include <stan/math/prim/mat/prob/ordered_probit_lpmf.hpp>
 #include <stan/math/prim/mat/prob/ordered_probit_rng.hpp>
 #include <stan/math/prim/mat/prob/poisson_log_glm_lpmf.hpp>
+#include <stan/math/prim/mat/prob/std_binormal_lcdf.hpp>
 #include <stan/math/prim/mat/prob/wishart_log.hpp>
 #include <stan/math/prim/mat/prob/wishart_lpdf.hpp>
 #include <stan/math/prim/mat/prob/wishart_rng.hpp>
