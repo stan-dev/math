@@ -180,22 +180,6 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
   }
 }
 
-// nada, vector 
-template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
-                       vector<T>& rho) {
-  for (int i = 0; i < inp_vec.size(); ++i)
-    rho.push_back(T(inp_vec(i)));
-}
-
-// nada, Vector 
-template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
-                       Eigen::Matrix<T, Eigen::Dynamic, 1>& rho) {
-  for (int i = 0; i < inp_vec.size(); ++i)
-    rho(i) = T(inp_vec(i));
-}
-
 // Vector, real
 struct V_R_std_binorm_lcdf {
   template <typename T>
@@ -834,7 +818,7 @@ TEST(MathFunctions, vec_binormal_integral_grad_test_V_R) {
   V_R_std_binorm_lcdf dist_fun;
   log_binorm tru_fun;
   Matrix<double, Dynamic, 1> inp_vec(3);
-  inp_vec << 0.4, -2.7, 0.9;
+  inp_vec << 0.4, -2.7, 0.8;
 
   double fx_test;
   Matrix<double, Dynamic, 1> grad_fx_test;
@@ -842,17 +826,22 @@ TEST(MathFunctions, vec_binormal_integral_grad_test_V_R) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun, inp_vec, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun, inp_vec, fx_fd, grad_fx_fd);
 
   EXPECT_FLOAT_EQ(fx_test, fx_tru);
+  EXPECT_FLOAT_EQ(fx_test, fx_fd);
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i));
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_grad_test_RV_R) {
   RV_R_std_binorm_lcdf dist_fun;
   log_binorm tru_fun;
   Matrix<double, Dynamic, 1> inp_vec(3);
-  inp_vec << 0.4, -2.7, 0.9;
+  inp_vec << 0.4, -2.7, 0.8;
 
   double fx_test;
   Matrix<double, Dynamic, 1> grad_fx_test;
@@ -860,10 +849,14 @@ TEST(MathFunctions, vec_binormal_integral_grad_test_RV_R) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun, inp_vec, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun, inp_vec, fx_fd, grad_fx_fd);
 
   EXPECT_FLOAT_EQ(fx_test, fx_tru);
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i));
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_grad_test_vV_R) {
@@ -879,10 +872,14 @@ TEST(MathFunctions, vec_binormal_integral_grad_test_vV_R) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun2, inp_vec2, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec2, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun2, inp_vec2, fx_fd, grad_fx_fd);
 
   EXPECT_FLOAT_EQ(fx_test, fx_tru);
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i));
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_grad_test_vRV_R) {
@@ -898,10 +895,14 @@ TEST(MathFunctions, vec_binormal_integral_grad_test_vRV_R) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun2, inp_vec2, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec2, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun2, inp_vec2, fx_fd, grad_fx_fd);
 
   EXPECT_FLOAT_EQ(fx_test, fx_tru);
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i));
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_grad_test_vV_v) {
@@ -917,9 +918,13 @@ TEST(MathFunctions, vec_binormal_integral_grad_test_vV_v) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun, inp_vec, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun, inp_vec, fx_fd, grad_fx_fd);
 
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i));
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_grad_test_vRV_v) {
@@ -935,9 +940,13 @@ TEST(MathFunctions, vec_binormal_integral_grad_test_vRV_v) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun, inp_vec, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun, inp_vec, fx_fd, grad_fx_fd);
 
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i));
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_grad_test_vV_V) {
@@ -953,9 +962,13 @@ TEST(MathFunctions, vec_binormal_integral_grad_test_vV_V) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun, inp_vec, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun, inp_vec, fx_fd, grad_fx_fd);
 
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i));
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_grad_test_vRV_V) {
@@ -971,9 +984,13 @@ TEST(MathFunctions, vec_binormal_integral_grad_test_vRV_V) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun, inp_vec, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun, inp_vec, fx_fd, grad_fx_fd);
 
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i));
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_V_D_test) {
@@ -990,9 +1007,13 @@ TEST(MathFunctions, vec_binormal_integral_V_D_test) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun2, inp_vec2, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec2, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun2, inp_vec2, fx_fd, grad_fx_fd);
 
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i)) << i;
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_RV_D_test) {
@@ -1009,9 +1030,13 @@ TEST(MathFunctions, vec_binormal_integral_RV_D_test) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun2, inp_vec2, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec2, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun2, inp_vec2, fx_fd, grad_fx_fd);
 
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i)) << i;
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_vV_D_test) {
@@ -1029,9 +1054,13 @@ TEST(MathFunctions, vec_binormal_integral_vV_D_test) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun2, inp_vec2, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec2, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun2, inp_vec2, fx_fd, grad_fx_fd);
 
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i)) << i;
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_vRV_D_test) {
@@ -1049,9 +1078,13 @@ TEST(MathFunctions, vec_binormal_integral_vRV_D_test) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun2, inp_vec2, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec2, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun2, inp_vec2, fx_fd, grad_fx_fd);
 
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i)) << i;
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_vV_vD_test) {
@@ -1071,9 +1104,13 @@ TEST(MathFunctions, vec_binormal_integral_vV_vD_test) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun2, inp_vec2, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec2, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun2, inp_vec2, fx_fd, grad_fx_fd);
 
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i)) << i;
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_vRV_vD_test) {
@@ -1093,9 +1130,13 @@ TEST(MathFunctions, vec_binormal_integral_vRV_vD_test) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun2, inp_vec2, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec2, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun2, inp_vec2, fx_fd, grad_fx_fd);
 
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i)) << i;
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_vV_VD_test) {
@@ -1118,9 +1159,13 @@ TEST(MathFunctions, vec_binormal_integral_vV_VD_test) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun2, inp_vec2, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec2, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun2, inp_vec2, fx_fd, grad_fx_fd);
 
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i)) << i;
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_vRV_VD_test) {
@@ -1143,9 +1188,13 @@ TEST(MathFunctions, vec_binormal_integral_vRV_VD_test) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun2, inp_vec2, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec2, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun2, inp_vec2, fx_fd, grad_fx_fd);
 
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i)) << i;
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_VD_R_test) {
@@ -1164,9 +1213,13 @@ TEST(MathFunctions, vec_binormal_integral_VD_R_test) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun2, inp_vec2, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec2, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun2, inp_vec2, fx_fd, grad_fx_fd);
 
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i)) << i;
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_RVD_R_test) {
@@ -1185,9 +1238,13 @@ TEST(MathFunctions, vec_binormal_integral_RVD_R_test) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun2, inp_vec2, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec2, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun2, inp_vec2, fx_fd, grad_fx_fd);
 
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i)) << i;
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_vVD_R_test) {
@@ -1208,9 +1265,13 @@ TEST(MathFunctions, vec_binormal_integral_vVD_R_test) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun2, inp_vec2, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec2, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun2, inp_vec2, fx_fd, grad_fx_fd);
 
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i)) << i;
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_vRVD_R_test) {
@@ -1231,9 +1292,13 @@ TEST(MathFunctions, vec_binormal_integral_vRVD_R_test) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun2, inp_vec2, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec2, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun2, inp_vec2, fx_fd, grad_fx_fd);
 
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i)) << i;
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_vVD_v_test) {
@@ -1254,9 +1319,13 @@ TEST(MathFunctions, vec_binormal_integral_vVD_v_test) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun2, inp_vec2, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec2, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun2, inp_vec2, fx_fd, grad_fx_fd);
 
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i)) << i;
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_vRVD_v_test) {
@@ -1277,9 +1346,13 @@ TEST(MathFunctions, vec_binormal_integral_vRVD_v_test) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun2, inp_vec2, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec2, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun2, inp_vec2, fx_fd, grad_fx_fd);
 
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i)) << i;
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_vVD_V_test) {
@@ -1300,9 +1373,13 @@ TEST(MathFunctions, vec_binormal_integral_vVD_V_test) {
   Matrix<double, Dynamic, 1> grad_fx_tru;
   stan::math::gradient(dist_fun2, inp_vec2, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec2, fx_tru, grad_fx_tru);
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
+  stan::math::finite_diff_gradient(dist_fun2, inp_vec2, fx_fd, grad_fx_fd);
 
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i)) << i;
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
 TEST(MathFunctions, vec_binormal_integral_vRVD_V_test) {
@@ -1321,10 +1398,14 @@ TEST(MathFunctions, vec_binormal_integral_vRVD_V_test) {
   Matrix<double, Dynamic, 1> grad_fx_test;
   double fx_tru;
   Matrix<double, Dynamic, 1> grad_fx_tru;
+  double fx_fd;
+  Matrix<double, Dynamic, 1> grad_fx_fd;
   stan::math::gradient(dist_fun2, inp_vec2, fx_test, grad_fx_test);
   stan::math::gradient(tru_fun, inp_vec2, fx_tru, grad_fx_tru);
+  stan::math::finite_diff_gradient(dist_fun2, inp_vec2, fx_fd, grad_fx_fd);
 
   for (int i = 0; i < grad_fx_test.size(); ++i) {
-    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i)) << i;
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i));
+    EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
 }
