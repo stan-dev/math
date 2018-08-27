@@ -27,6 +27,7 @@
 
 #include <cmath>
 #include <limits>
+#include <algorithm>
 
 namespace stan {
 namespace math {
@@ -65,7 +66,8 @@ typename return_type<T_y, T_rho>::type std_binormal_lcdf(
   using std::max;
 
   check_bounded(function, "Correlation parameter", rho, -1.0, 1.0);
-  if (stan::is_vector_like<T_y_child_type>::value || stan::is_vector_like<T_rho>::value) {
+  if (stan::is_vector_like<T_y_child_type>::value
+      || stan::is_vector_like<T_rho>::value) {
       check_consistent_sizes(function, "Random variable", y,
                              "Correlation parameter", rho);
   }
@@ -107,26 +109,28 @@ typename return_type<T_y, T_rho>::type std_binormal_lcdf(
       cdf_log += log(cdf_);
 
     if (contains_nonconstant_struct<T_y, T_rho>::value) {
-      const T_partials_return inv_cdf_ = cdf_ > 0 ? inv(cdf_) : 
+      const T_partials_return inv_cdf_ = cdf_ > 0 ? inv(cdf_) :
         std::numeric_limits<double>::infinity();
       const T_partials_return one_minus_rho_sq = (1 + rho_dbl) * (1 - rho_dbl);
       const T_partials_return sqrt_one_minus_rho_sq = sqrt(one_minus_rho_sq);
       const T_partials_return rho_times_y2 = rho_dbl * y2_dbl;
       const T_partials_return y1_minus_rho_times_y2 = y1_dbl - rho_times_y2;
       if (!is_constant_struct<T_y>::value) {
-        ops_partials.edge1_.partials_vec_[n](0) 
+        ops_partials.edge1_.partials_vec_[n](0)
           += cdf_ > 0 && cdf_ < 1 ? inv_cdf_ * exp(std_normal_lpdf(y1_dbl))
               * Phi((y2_dbl - rho_dbl * y1_dbl) / sqrt_one_minus_rho_sq)
               : cdf_ > 0 ? 1 : 0;
-        ops_partials.edge1_.partials_vec_[n](1) 
+        ops_partials.edge1_.partials_vec_[n](1)
           += cdf_ > 0 && cdf_ < 1 ? inv_cdf_ * exp(std_normal_lpdf(y2_dbl))
               * Phi(y1_minus_rho_times_y2 / sqrt_one_minus_rho_sq)
               : cdf_ > 0 ? 1 : 0;
       }
       if (!is_constant_struct<T_rho>::value)
         ops_partials.edge2_.partials_[n]
-            += cdf_ > 0 && cdf_ < 1 ? inv_cdf_ * 0.5 / (stan::math::pi() * sqrt_one_minus_rho_sq)
-            * exp(-0.5 / one_minus_rho_sq * y1_minus_rho_times_y2 *  y1_minus_rho_times_y2
+            += cdf_ > 0 && cdf_ < 1 ? inv_cdf_ * 0.5 /
+            (stan::math::pi() * sqrt_one_minus_rho_sq)
+            * exp(-0.5 / one_minus_rho_sq
+                  * y1_minus_rho_times_y2 *  y1_minus_rho_times_y2
                   -0.5 * y2_dbl * y2_dbl)
               : cdf_ > 0 ? 1 : 0;
     }

@@ -51,8 +51,8 @@ namespace math {
  * @return The probability P(Y1 <= y[1], Y2 <= y[2] | rho).
  * @throw std::domain_error if the rho is not between -1 and 1 or nan.
  */
-double std_binormal_integral(const double z1, 
-                             const double z2, 
+double std_binormal_integral(const double z1,
+                             const double z2,
                              const double rho) {
   static const char* function = "std_binormal_integral";
   using std::sqrt;
@@ -63,17 +63,16 @@ double std_binormal_integral(const double z1,
 
   check_not_nan(function, "Random variable 1", z1);
   check_not_nan(function, "Random variable 2", z2);
-  check_bounded(function, "Correlation coefficient", rho, -1,1);
-  
+  check_bounded(function, "Correlation coefficient", rho, -1, 1);
   if (z1 > 10 && z2 > 10)
     return 1;
   if (z1 < -37.5 || z2 < -37.5)
     return 0;
-  if (rho == 0) 
+  if (rho == 0)
     return Phi(z1) * Phi(z2);
-  if (z1 == rho * z2) 
+  if (z1 == rho * z2)
     return 0.5 / pi() * exp(-0.5 * z2 * z2) * asin(rho) + Phi(z1) * Phi(z2);
-  if (z1 * rho == z2) 
+  if (z1 * rho == z2)
     return 0.5 / pi() * exp(-0.5 * z1 * z1) * asin(rho) + Phi(z1) * Phi(z2);
   if (z2 > 40)
     return Phi(z1);
@@ -85,8 +84,9 @@ double std_binormal_integral(const double z1,
     double a2 = (z1 / z2 - rho) / denom;
     double product = z1 * z2;
     double delta = product < 0 || (product == 0 && (z1 + z2) < 0);
-    return 0.5 * (Phi(z1) + Phi(z2) - delta) - owens_t(z1, a1) - owens_t(z2, a2); 
-  } 
+    return 0.5 * (Phi(z1) + Phi(z2) - delta)
+           - owens_t(z1, a1) - owens_t(z2, a2);
+  }
   if (fabs(rho) < 1) {
     int s = rho > 0 ? 1 : -1;
     double h = -z1;
@@ -97,16 +97,17 @@ double std_binormal_integral(const double z1,
     };
     double L1, error;
     boost::math::quadrature::tanh_sinh<double> integrator;
-    double accum = s == 1 ? integrator.integrate(f, 0, asin(rho), 
+    double accum = s == 1 ? integrator.integrate(f, 0, asin(rho),
                                                    sqrt(stan::math::EPSILON),
-                                                   &error, &L1)
-                            : integrator.integrate(f, static_cast<double>(asin(rho)),
-                                                   static_cast<double>(0), 
-                                                   sqrt(stan::math::EPSILON),
-                                                   &error, &L1);
+                                                   &error, &L1) :
+                            integrator.integrate(f,
+                                                 static_cast<double>(asin(rho)),
+                                                 static_cast<double>(0),
+                                                 sqrt(stan::math::EPSILON),
+                                                 &error, &L1);
     if (exp(log(L1) - log(accum)) > 1.5) {
       std::cout << "L1: " << L1 << " integral: " << accum << std::endl;
-      domain_error(function, "the numeric integration of bivariate normal density condition number", 
+      domain_error(function, "the bivariate normal numeric integral condition",
                    exp(log(L1) - log(accum)),
                    "",
                    " indicates the integral is poorly conditioned");
@@ -114,11 +115,11 @@ double std_binormal_integral(const double z1,
 
 
     accum *= s * 0.5 / pi();
-    accum += Phi(z1) * Phi(z2); 
+    accum += Phi(z1) * Phi(z2);
     return accum;
   }
-  if (rho == 1) 
-    return fmin(Phi(z1),Phi(z2));
+  if (rho == 1)
+    return fmin(Phi(z1), Phi(z2));
   return z2 > -z1 > 0 ? Phi(z1) + Phi(z2) - 1 : 0;
 }
 
@@ -168,20 +169,20 @@ typename return_type<T_z1, T_z2, T_rho>::type
     const partials_type rho_times_z2 = rho_dbl * z2_dbl;
     const partials_type z1_minus_rho_times_z2 = z1_dbl - rho_times_z2;
     if (!is_constant_struct<T_z1>::value)
-      ops_partials.edge1_.partials_[0] 
+      ops_partials.edge1_.partials_[0]
         += cdf > 0 && cdf < 1 ? exp(std_normal_lpdf(z1_dbl))
             * Phi((z2_dbl - rho_dbl * z1_dbl) / sqrt_one_minus_rho_sq)
             : 0;
     if (!is_constant_struct<T_z2>::value)
-      ops_partials.edge2_.partials_[0] 
+      ops_partials.edge2_.partials_[0]
         += cdf > 0 && cdf < 1 ? exp(std_normal_lpdf(z2_dbl))
             * Phi(z1_minus_rho_times_z2 / sqrt_one_minus_rho_sq)
             : 0;
     if (!is_constant_struct<T_rho>::value)
       ops_partials.edge3_.partials_[0]
-          += cdf > 0 && cdf < 1 ? 0.5 / (stan::math::pi() * 
+          += cdf > 0 && cdf < 1 ? 0.5 / (stan::math::pi() *
                                          sqrt_one_minus_rho_sq)
-          * exp(-0.5 / one_minus_rho_sq 
+          * exp(-0.5 / one_minus_rho_sq
                 * z1_minus_rho_times_z2 *  z1_minus_rho_times_z2
                 -0.5 * z2_dbl * z2_dbl)
             : 0;
