@@ -15,8 +15,8 @@ struct finite<Eigen::Matrix<T, R, C>, true> {
       domain_error(function, name, y, "is ", ", but must be finite!");
   }
 };
-}
-}
-}
+}  // namespace
+}  // namespace math
+}  // namespace stan
 
 #endif
