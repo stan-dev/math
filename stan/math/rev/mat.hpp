@@ -39,11 +39,14 @@
 #include <stan/math/rev/mat/fun/mdivide_left_tri.hpp>
 #include <stan/math/rev/mat/fun/multiply.hpp>
 #include <stan/math/rev/mat/fun/multiply_lower_tri_self_transpose.hpp>
+#include <stan/math/rev/mat/fun/ordered_constrain.hpp>
+#include <stan/math/rev/mat/fun/positive_ordered_constrain.hpp>
 #include <stan/math/rev/mat/fun/quad_form.hpp>
 #include <stan/math/rev/mat/fun/quad_form_sym.hpp>
 #include <stan/math/rev/mat/fun/rows_dot_product.hpp>
 #include <stan/math/rev/mat/fun/scale_matrix_exp_multiply.hpp>
 #include <stan/math/rev/mat/fun/sd.hpp>
+#include <stan/math/rev/mat/fun/simplex_constrain.hpp>
 #include <stan/math/rev/mat/fun/softmax.hpp>
 #include <stan/math/rev/mat/fun/squared_distance.hpp>
 #include <stan/math/rev/mat/fun/stan_print.hpp>
@@ -63,6 +66,7 @@
 #include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>
 #include <stan/math/rev/mat/functor/integrate_ode_adams.hpp>
 #include <stan/math/rev/mat/functor/integrate_ode_bdf.hpp>
+#include <stan/math/rev/mat/functor/integrate_dae.hpp>
 #include <stan/math/rev/mat/functor/map_rect_reduce.hpp>
 
 #endif

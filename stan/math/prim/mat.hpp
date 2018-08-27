@@ -1,11 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_HPP
 #define STAN_MATH_PRIM_MAT_HPP
 
-#ifdef STAN_OPENCL
-#include <stan/math/gpu/opencl_context.hpp>
-#include <stan/math/prim/mat/fun/opencl_copy.hpp>
-#endif
-
 #include <stan/math/prim/arr/meta/get.hpp>
 #include <stan/math/prim/arr/meta/index_type.hpp>
 #include <stan/math/prim/arr/meta/is_vector.hpp>
@@ -129,6 +124,7 @@
 #include <stan/math/prim/mat/fun/get_base1_lhs.hpp>
 #include <stan/math/prim/mat/fun/get_lp.hpp>
 #include <stan/math/prim/mat/fun/gp_dot_prod_cov.hpp>
+#include <stan/math/prim/mat/fun/gp_matern52_cov.hpp>
 #include <stan/math/prim/mat/fun/gp_periodic_cov.hpp>
 #include <stan/math/prim/mat/fun/head.hpp>
 #include <stan/math/prim/mat/fun/initialize.hpp>
@@ -263,7 +259,7 @@
 #include <stan/math/prim/mat/functor/map_rect_combine.hpp>
 #include <stan/math/prim/mat/functor/map_rect_concurrent.hpp>
 #include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
-
+#include <stan/math/prim/mat/prob/bernoulli_logit_glm_log.hpp>
 #include <stan/math/prim/mat/prob/bernoulli_logit_glm_lpmf.hpp>
 #include <stan/math/prim/mat/prob/categorical_log.hpp>
 #include <stan/math/prim/mat/prob/categorical_logit_log.hpp>
@@ -307,7 +303,9 @@
 #include <stan/math/prim/mat/prob/multinomial_log.hpp>
 #include <stan/math/prim/mat/prob/multinomial_lpmf.hpp>
 #include <stan/math/prim/mat/prob/multinomial_rng.hpp>
+#include <stan/math/prim/mat/prob/neg_binomial_2_log_glm_log.hpp>
 #include <stan/math/prim/mat/prob/neg_binomial_2_log_glm_lpmf.hpp>
+#include <stan/math/prim/mat/prob/normal_id_glm_log.hpp>
 #include <stan/math/prim/mat/prob/normal_id_glm_lpdf.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_log.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_lpmf.hpp>
@@ -315,6 +313,7 @@
 #include <stan/math/prim/mat/prob/ordered_probit_log.hpp>
 #include <stan/math/prim/mat/prob/ordered_probit_lpmf.hpp>
 #include <stan/math/prim/mat/prob/ordered_probit_rng.hpp>
+#include <stan/math/prim/mat/prob/poisson_log_glm_log.hpp>
 #include <stan/math/prim/mat/prob/poisson_log_glm_lpmf.hpp>
 #include <stan/math/prim/mat/prob/std_binormal_lcdf.hpp>
 #include <stan/math/prim/mat/prob/wishart_log.hpp>

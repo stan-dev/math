@@ -32,12 +32,12 @@ TEST(MetaTraits, StdVectorBuilder_true_false) {
 
 TEST(MetaTraits, StdVectorBuilder_type_check) {
   using stan::StdVectorBuilder;
-  using stan::is_std_vector;
+  using stan::contains_std_vector;
 
-  bool r = is_std_vector<
+  bool r = contains_std_vector<
       StdVectorBuilder<true, double, std::vector<int>>::type>::value;
   EXPECT_TRUE(r);
-  r = is_std_vector<
+  r = contains_std_vector<
       StdVectorBuilder<true, double, std::vector<double>>::type>::value;
   EXPECT_TRUE(r);
 }
