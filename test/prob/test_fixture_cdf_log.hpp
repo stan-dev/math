@@ -40,8 +40,6 @@ class AgradCdfLogTest {
     return std::numeric_limits<double>::infinity();
   }
 
-  virtual int random_variable_dimension() { return 1; }
-
   // also include 2 templated functions:
   /*
     template <typename T_y, typename T_loc, typename T_scale,
@@ -707,18 +705,15 @@ class AgradCdfLogTestFixture : public ::testing::Test {
     if (!TestClass.has_lower_bound()) {
       if (!std::numeric_limits<Scalar0>::has_infinity) {
         for (size_t n = 0; n < parameters.size(); n++)
-          for (size_t k = 0; k < TestClass.random_variable_dimension(); ++k)
-            parameters[n][k] = value_of(
-                value_of(value_of(std::numeric_limits<Scalar0>::min())));
+          parameters[n][0] = value_of(
+              value_of(value_of(std::numeric_limits<Scalar0>::min())));
       } else {
         for (size_t n = 0; n < parameters.size(); n++)
-          for (size_t k = 0; k < TestClass.random_variable_dimension(); ++k)
-            parameters[n][k] = -std::numeric_limits<double>::infinity();
+          parameters[n][0] = -std::numeric_limits<double>::infinity();
       }
     } else {
       for (size_t n = 0; n < parameters.size(); n++)
-        for (size_t k = 0; k < TestClass.random_variable_dimension(); ++k)
-          parameters[n][k] = TestClass.lower_bound();
+        parameters[n][0] = TestClass.lower_bound();
     }
 
     for (size_t n = 0; n < parameters.size(); n++) {
@@ -747,18 +742,15 @@ class AgradCdfLogTestFixture : public ::testing::Test {
     if (!TestClass.has_upper_bound()) {
       if (!std::numeric_limits<Scalar0>::has_infinity) {
         for (size_t n = 0; n < parameters.size(); n++)
-          for (size_t k = 0; k < TestClass.random_variable_dimension(); ++k)
-            parameters[n][k] = value_of(
-                value_of(value_of(std::numeric_limits<Scalar0>::max())));
+          parameters[n][0] = value_of(
+              value_of(value_of(std::numeric_limits<Scalar0>::max())));
       } else {
         for (size_t n = 0; n < parameters.size(); n++)
-          for (size_t k = 0; k < TestClass.random_variable_dimension(); ++k)
-            parameters[n][k] = std::numeric_limits<double>::infinity();
+          parameters[n][0] = std::numeric_limits<double>::infinity();
       }
     } else {
       for (size_t n = 0; n < parameters.size(); n++)
-        for (size_t k = 0; k < TestClass.random_variable_dimension(); ++k)
-          parameters[n][k] = TestClass.upper_bound();
+        parameters[n][0] = TestClass.upper_bound();
     }
 
     for (size_t n = 0; n < parameters.size(); n++) {
