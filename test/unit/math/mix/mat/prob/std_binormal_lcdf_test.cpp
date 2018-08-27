@@ -12,9 +12,9 @@ using std::vector;
 using stan::math::var;
 using stan::math::fvar;
 
-// Vector, real 
+// Vector, real
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
                        T& rho) {
   y(0) = inp_vec(0);
@@ -22,9 +22,9 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
   rho = T(inp_vec(2));
 }
 
-// Row Vector, real 
+// Row Vector, real
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        Eigen::Matrix<T, 1, Eigen::Dynamic>& y,
                        T& rho) {
   y(0) = inp_vec(0);
@@ -34,7 +34,7 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
 
 // vector<Vector>, real
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        vector<Eigen::Matrix<T, Eigen::Dynamic, 1>>& y,
                        T& rho) {
   int cntr = 0;
@@ -51,7 +51,7 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
 
 // vector<Row Vector>, real
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        vector<Eigen::Matrix<T, 1, Eigen::Dynamic>>& y,
                        T& rho) {
   int cntr = 0;
@@ -66,9 +66,9 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
   rho = inp_vec(N_y * 2);
 }
 
-// vector<Vector>, vector 
+// vector<Vector>, vector
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        vector<Eigen::Matrix<T, Eigen::Dynamic, 1>>& y,
                        vector<T>& rho) {
   int cntr = 0;
@@ -84,9 +84,9 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
     rho.push_back(T(inp_vec(i)));
 }
 
-// vector<Row Vector>, vector 
+// vector<Row Vector>, vector
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        vector<Eigen::Matrix<T, 1, Eigen::Dynamic>>& y,
                        vector<T>& rho) {
   int cntr = 0;
@@ -102,9 +102,9 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
     rho.push_back(T(inp_vec(i)));
 }
 
-// vector<Vector>, Vector 
+// vector<Vector>, Vector
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        vector<Eigen::Matrix<T, Eigen::Dynamic, 1>>& y,
                        Eigen::Matrix<T, Eigen::Dynamic, 1>& rho) {
   int cntr = 0;
@@ -122,9 +122,9 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
     rho(j++) = (T(inp_vec(i)));
 }
 
-// vector<Row Vector>, Vector 
+// vector<Row Vector>, Vector
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        vector<Eigen::Matrix<T, 1, Eigen::Dynamic>>& y,
                        Eigen::Matrix<T, Eigen::Dynamic, 1>& rho) {
   int cntr = 0;
@@ -144,7 +144,7 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
 
 // Row vector, nada
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        Eigen::Matrix<T, 1, Eigen::Dynamic>& y) {
   y(0) = inp_vec(0);
   y(1) = inp_vec(1);
@@ -153,7 +153,7 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
 
 // vector<Vector>, nada
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        vector<Eigen::Matrix<T, Eigen::Dynamic, 1>>& y) {
   int cntr = 0;
   for (int i = 0; i < N_y; ++i) {
@@ -168,7 +168,7 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
 
 // vector<Row Vector>, nada
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        vector<Eigen::Matrix<T, 1, Eigen::Dynamic>>& y) {
   int cntr = 0;
   for (int i = 0; i < N_y; ++i) {
@@ -289,7 +289,7 @@ struct vRV_V_std_binorm_lcdf {
   }
 };
 
-// Vector, double 
+// Vector, double
 struct V_D_std_binorm_lcdf {
   double rho_;
   V_D_std_binorm_lcdf(double rho) : rho_(rho) {}
@@ -400,8 +400,8 @@ struct vRV_VD_std_binorm_lcdf {
     return stan::math::std_binormal_lcdf(y, rho_);
   }
 };
- 
-// double Vector, real 
+
+// double Vector, real
 struct VD_R_std_binorm_lcdf {
   Matrix<double, Dynamic, 1> y_;
   VD_R_std_binorm_lcdf(Matrix<double, Dynamic, 1>& y) : y_(y) {}
@@ -412,7 +412,7 @@ struct VD_R_std_binorm_lcdf {
   }
 };
 
-// double Row Vector, real 
+// double Row Vector, real
 struct RVD_R_std_binorm_lcdf {
   Matrix<double, 1, Dynamic> y_;
   RVD_R_std_binorm_lcdf(Matrix<double, 1, Dynamic>& y) : y_(y) {}
@@ -502,7 +502,7 @@ struct vRVD_V_std_binorm_lcdf {
 
 // double vector<Vector>, Vector
 struct vVD_V_std_binorm_lcdf {
-  vector<Matrix<double, Dynamic ,1>> y_;
+  vector<Matrix<double, Dynamic , 1>> y_;
   vVD_V_std_binorm_lcdf(vector<Matrix<double, Dynamic, 1>>& y) {
     for (size_t i = 0; i < y.size(); ++i)
       y_.push_back(y[i]);
@@ -536,10 +536,10 @@ struct vV_vD_D_log_std_binorm_integral {
     to_function_input(N_y_, inp_vec, y);
     T accum(0.0);
     if (rho_.size() == N_y_)
-      for (int i = 0; i < N_y_; ++i) 
+      for (int i = 0; i < N_y_; ++i)
         accum += log(stan::math::std_binormal_integral(y[i][0], y[i][1], rho_[i]));
-    else 
-      for (int i = 0; i < N_y_; ++i) 
+    else
+      for (int i = 0; i < N_y_; ++i)
         accum += log(stan::math::std_binormal_integral(y[i][0], y[i][1], rho_[0]));
     return accum;
   }
@@ -557,10 +557,10 @@ struct vV_v_R_log_std_binorm_integral {
     to_function_input(N_y_, inp_vec, y, rho);
     T accum(0.0);
     if (rho.size() == N_y_)
-      for (int i = 0; i < N_y_; ++i) 
+      for (int i = 0; i < N_y_; ++i)
         accum += log(stan::math::std_binormal_integral(y[i][0], y[i][1], rho[i]));
-    else 
-      for (int i = 0; i < N_y_; ++i) 
+    else
+      for (int i = 0; i < N_y_; ++i)
         accum += log(stan::math::std_binormal_integral(y[i][0], y[i][1], rho[0]));
     return accum;
   }
@@ -582,11 +582,11 @@ struct vVD_v_log_std_binorm_integral {
       rho.push_back(inp_vec(i));
     T accum(0.0);
     if (rho.size() == y_.size()) {
-      for (int i = 0; i < y_.size(); ++i) 
+      for (int i = 0; i < y_.size(); ++i)
         accum += log(stan::math::std_binormal_integral(y_[i][0], y_[i][1], rho[i]));
     }
     else  {
-      for (int i = 0; i < y_.size(); ++i) 
+      for (int i = 0; i < y_.size(); ++i)
         accum += log(stan::math::std_binormal_integral(y_[i][0], y_[i][1], rho[0]));
     }
     return accum;
@@ -599,8 +599,8 @@ TEST(MathFunctions, binormal_integral_throw_RV_1_nan_fv) {
   var nan = std::numeric_limits<double>::quiet_NaN();
   Matrix<fvar<var>, Dynamic, 1> y(2);
   y(0) = fvar<var>(var(nan), var(0));
-  y(1) = fvar<var>(var(-2.0),var(0));
-  fvar<var> rho(0.3,0);
+  y(1) = fvar<var>(var(-2.0), var(0));
+  fvar<var> rho(0.3, 0);
   EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho),
                std::domain_error);
 }
@@ -608,8 +608,8 @@ TEST(MathFunctions, binormal_integral_throw_RV_2_nan_fv) {
   var nan = std::numeric_limits<double>::quiet_NaN();
   Matrix<fvar<var>, Dynamic, 1> y(2);
   y(0) = fvar<var>(var(-2.0), var(0));
-  y(1) = fvar<var>(var(nan),var(0));
-  fvar<var> rho(0.3,0);
+  y(1) = fvar<var>(var(nan), var(0));
+  fvar<var> rho(0.3, 0);
   EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho),
                std::domain_error);
 }
@@ -617,24 +617,24 @@ TEST(MathFunctions, binormal_integral_throw_rho_nan_fv) {
   var nan = std::numeric_limits<double>::quiet_NaN();
   Matrix<fvar<var>, Dynamic, 1> y(2);
   y(0) = fvar<var>(var(-2.0), var(0));
-  y(1) = fvar<var>(var(1),var(0));
-  fvar<var> rho(nan,0);
+  y(1) = fvar<var>(var(1), var(0));
+  fvar<var> rho(nan, 0);
   EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho),
                std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_throw_rho_LT_neg_one_fv) {
   Matrix<fvar<var>, Dynamic, 1> y(2);
   y(0) = fvar<var>(var(-2.0), var(0));
-  y(1) = fvar<var>(var(1),var(0));
-  fvar<var> rho(-1.3,0);
+  y(1) = fvar<var>(var(1), var(0));
+  fvar<var> rho(-1.3, 0);
   EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho),
                std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_throw_rho_GT_one_fv) {
   Matrix<fvar<var>, Dynamic, 1> y(2);
   y(0) = fvar<var>(var(-2.0), var(0));
-  y(1) = fvar<var>(var(1),var(0));
-  fvar<var> rho(1.3,0);
+  y(1) = fvar<var>(var(1), var(0));
+  fvar<var> rho(1.3, 0);
   EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho),
                std::domain_error);
 }
@@ -643,7 +643,7 @@ TEST(MathFunctions, binormal_integral_throw_RV_1_nan_ffv) {
   Matrix<fvar<fvar<var>>, Dynamic, 1> y(2);
   y(0) = fvar<fvar<var> >(nan, fvar<var>(3, 0));
   y(1) = fvar<fvar<var> >(fvar<var>(2, 0), fvar<var>(3, 0));
-  fvar<fvar<var>> rho(fvar<var>(0.3,0), fvar<var>(0, 0));
+  fvar<fvar<var>> rho(fvar<var>(0.3, 0), fvar<var>(0, 0));
   EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho),
                std::domain_error);
 }
@@ -652,7 +652,7 @@ TEST(MathFunctions, binormal_integral_throw_RV_2_nan_ffv) {
   Matrix<fvar<fvar<var>>, Dynamic, 1> y(2);
   y(0) = fvar<fvar<var> >(fvar<var>(2, 0), fvar<var>(3, 0));
   y(1) = fvar<fvar<var> >(nan, fvar<var>(3, 0));
-  fvar<fvar<var>> rho(fvar<var>(0.3,0), fvar<var>(0, 0));
+  fvar<fvar<var>> rho(fvar<var>(0.3, 0), fvar<var>(0, 0));
   EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho),
                std::domain_error);
 }
@@ -686,28 +686,28 @@ TEST(MathFunctions, binormal_integral_val_test_fv) {
   V_R_std_binorm_lcdf dist_fun;
   log_binorm tru_fun;
   // 000
-  vals[0] << 0.4, 2.7, 0.3; 
+  vals[0] << 0.4, 2.7, 0.3;
   // 100
-  vals[1] << -0.4, 2.7, 0.3; 
+  vals[1] << -0.4, 2.7, 0.3;
   // 010
-  vals[2] << 0.4, -2.7, 0.3; 
+  vals[2] << 0.4, -2.7, 0.3;
   // 110
-  vals[3] << -0.4, -2.7, 0.3; 
+  vals[3] << -0.4, -2.7, 0.3;
   // 001
-  vals[4] << 0.4, 2.7, -0.3; 
+  vals[4] << 0.4, 2.7, -0.3;
   // 101
-  vals[5] << -0.4, 2.7, -0.3; 
+  vals[5] << -0.4, 2.7, -0.3;
   // 011
-  vals[6] << 0.4, -2.7, -0.3; 
+  vals[6] << 0.4, -2.7, -0.3;
   // 111
-  vals[7] << -0.4, -2.7, -0.3; 
+  vals[7] << -0.4, -2.7, -0.3;
 
-  vals[8] << -0.4, 2.7, 0.3; 
-  vals[9] << -0.4, 2.7, 0.99; 
-  vals[10] << 2.5, 2.7, 0.99; 
-  vals[11] << 3.5, 3.7, 0.99; 
-  vals[12] << -4.5, 4.7, -0.99; 
-  vals[13] << -4.5, 10, -0.99; 
+  vals[8] << -0.4, 2.7, 0.3;
+  vals[9] << -0.4, 2.7, 0.99;
+  vals[10] << 2.5, 2.7, 0.99;
+  vals[11] << 3.5, 3.7, 0.99;
+  vals[12] << -4.5, 4.7, -0.99;
+  vals[13] << -4.5, 10, -0.99;
   for (size_t i = 0; i < vals.size(); ++i)
     EXPECT_FLOAT_EQ(dist_fun(vals[i]).val_.val(), tru_fun(vals[i]).val_.val());
 }
@@ -716,28 +716,28 @@ TEST(MathFunctions, binormal_integral_val_test_ffv) {
   V_R_std_binorm_lcdf dist_fun;
   log_binorm tru_fun;
   // 000
-  vals[0] << 0.4, 2.7, 0.3; 
+  vals[0] << 0.4, 2.7, 0.3;
   // 100
-  vals[1] << -0.4, 2.7, 0.3; 
+  vals[1] << -0.4, 2.7, 0.3;
   // 010
-  vals[2] << 0.4, -2.7, 0.3; 
+  vals[2] << 0.4, -2.7, 0.3;
   // 110
-  vals[3] << -0.4, -2.7, 0.3; 
+  vals[3] << -0.4, -2.7, 0.3;
   // 001
-  vals[4] << 0.4, 2.7, -0.3; 
+  vals[4] << 0.4, 2.7, -0.3;
   // 101
-  vals[5] << -0.4, 2.7, -0.3; 
+  vals[5] << -0.4, 2.7, -0.3;
   // 011
-  vals[6] << 0.4, -2.7, -0.3; 
+  vals[6] << 0.4, -2.7, -0.3;
   // 111
-  vals[7] << -0.4, -2.7, -0.3; 
+  vals[7] << -0.4, -2.7, -0.3;
 
-  vals[8] << -0.4, 2.7, 0.3; 
-  vals[9] << -0.4, 2.7, 0.99; 
-  vals[10] << 2.5, 2.7, 0.99; 
-  vals[11] << 3.5, 3.7, 0.99; 
-  vals[12] << -4.5, 4.7, -0.99; 
-  vals[13] << -4.5, 10, -0.99; 
+  vals[8] << -0.4, 2.7, 0.3;
+  vals[9] << -0.4, 2.7, 0.99;
+  vals[10] << 2.5, 2.7, 0.99;
+  vals[11] << 3.5, 3.7, 0.99;
+  vals[12] << -4.5, 4.7, -0.99;
+  vals[13] << -4.5, 10, -0.99;
   for (size_t i = 0; i < vals.size(); ++i)
     EXPECT_FLOAT_EQ(dist_fun(vals[i]).val_.val_.val(), tru_fun(vals[i]).val_.val_.val());
 }
@@ -789,16 +789,16 @@ TEST(MathFunctions, vec_binormal_integral_hess_test_V_R) {
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i));
   }
-  for (int i = 0; i < grad_fx_test.size(); ++i) 
-    for (int j = 0; j < grad_fx_test.size(); ++j) 
-      EXPECT_FLOAT_EQ(H_test(i,j), H_tru(i,j));
+  for (int i = 0; i < grad_fx_test.size(); ++i)
+    for (int j = 0; j < grad_fx_test.size(); ++j)
+      EXPECT_FLOAT_EQ(H_test(i, j), H_tru(i, j));
 }
 TEST(MathFunctions, vec_binormal_integral_hess_test_vV_R) {
   int N_y = 3;
   vV_R_std_binorm_lcdf dist_fun2(N_y);
   vV_v_R_log_std_binorm_integral tru_fun(N_y);
   Matrix<double, Dynamic, 1> inp_vec2(N_y * 2 + 1);
-  inp_vec2 << 0.4, -2.7,0.4, -2.7,0.4, -2.7, 0.3;
+  inp_vec2 << 0.4, -2.7, 0.4, -2.7, 0.4, -2.7, 0.3;
 
   double fx_test;
   Matrix<double, Dynamic, 1> grad_fx_test;
@@ -813,9 +813,9 @@ TEST(MathFunctions, vec_binormal_integral_hess_test_vV_R) {
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i));
   }
-  for (int i = 0; i < H_tru.rows(); ++i) 
-    for (int j = 0; j < H_tru.cols(); ++j) 
-      EXPECT_FLOAT_EQ(H_test(i,j), H_tru(i,j));
+  for (int i = 0; i < H_tru.rows(); ++i)
+    for (int j = 0; j < H_tru.cols(); ++j)
+      EXPECT_FLOAT_EQ(H_test(i, j), H_tru(i, j));
 }
 TEST(MathFunctions, vec_binormal_integral_hess_test_vV_v) {
   int N_y = 3;
@@ -837,9 +837,9 @@ TEST(MathFunctions, vec_binormal_integral_hess_test_vV_v) {
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i));
   }
-  for (int i = 0; i < H_tru.rows(); ++i) 
-    for (int j = 0; j < H_tru.cols(); ++j) 
-      EXPECT_FLOAT_EQ(H_test(i,j), H_tru(i,j));
+  for (int i = 0; i < H_tru.rows(); ++i)
+    for (int j = 0; j < H_tru.cols(); ++j)
+      EXPECT_FLOAT_EQ(H_test(i, j), H_tru(i, j));
 }
 TEST(MathFunctions, vec_binormal_integral_hess_test_V_D) {
   V_D_std_binorm_lcdf dist_fun(0.3);
@@ -863,9 +863,9 @@ TEST(MathFunctions, vec_binormal_integral_hess_test_V_D) {
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i));
   }
-  for (int i = 0; i < grad_fx_test.size(); ++i) 
-    for (int j = 0; j < grad_fx_test.size(); ++j) 
-      EXPECT_FLOAT_EQ(H_test(i,j), H_tru(i,j));
+  for (int i = 0; i < grad_fx_test.size(); ++i)
+    for (int j = 0; j < grad_fx_test.size(); ++j)
+      EXPECT_FLOAT_EQ(H_test(i, j), H_tru(i, j));
 }
 TEST(MathFunctions, vec_binormal_integral_hess_test_vV_D) {
   vV_D_std_binorm_lcdf dist_fun(3, 0.3);
@@ -889,9 +889,9 @@ TEST(MathFunctions, vec_binormal_integral_hess_test_vV_D) {
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i));
   }
-  for (int i = 0; i < grad_fx_test.size(); ++i) 
-    for (int j = 0; j < grad_fx_test.size(); ++j) 
-      EXPECT_FLOAT_EQ(H_test(i,j), H_tru(i,j));
+  for (int i = 0; i < grad_fx_test.size(); ++i)
+    for (int j = 0; j < grad_fx_test.size(); ++j)
+      EXPECT_FLOAT_EQ(H_test(i, j), H_tru(i, j));
 }
 TEST(MathFunctions, vec_binormal_integral_hess_test_vV_vD) {
   vector<double> rho;
@@ -917,9 +917,9 @@ TEST(MathFunctions, vec_binormal_integral_hess_test_vV_vD) {
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i));
   }
-  for (int i = 0; i < grad_fx_test.size(); ++i) 
-    for (int j = 0; j < grad_fx_test.size(); ++j) 
-      EXPECT_FLOAT_EQ(H_test(i,j), H_tru(i,j));
+  for (int i = 0; i < grad_fx_test.size(); ++i)
+    for (int j = 0; j < grad_fx_test.size(); ++j)
+      EXPECT_FLOAT_EQ(H_test(i, j), H_tru(i, j));
 }
 TEST(MathFunctions, vec_binormal_integral_hess_test_VD_R) {
   Matrix<double, Dynamic, 1> y_el(2);
@@ -945,9 +945,9 @@ TEST(MathFunctions, vec_binormal_integral_hess_test_VD_R) {
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i));
   }
-  for (int i = 0; i < grad_fx_test.size(); ++i) 
-    for (int j = 0; j < grad_fx_test.size(); ++j) 
-      EXPECT_FLOAT_EQ(H_test(i,j), H_tru(i,j));
+  for (int i = 0; i < grad_fx_test.size(); ++i)
+    for (int j = 0; j < grad_fx_test.size(); ++j)
+      EXPECT_FLOAT_EQ(H_test(i, j), H_tru(i, j));
 }
 TEST(MathFunctions, vec_binormal_integral_hess_test_vVD_R) {
   Matrix<double, Dynamic, 1> y_el(2);
@@ -975,9 +975,9 @@ TEST(MathFunctions, vec_binormal_integral_hess_test_vVD_R) {
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i));
   }
-  for (int i = 0; i < grad_fx_test.size(); ++i) 
-    for (int j = 0; j < grad_fx_test.size(); ++j) 
-      EXPECT_FLOAT_EQ(H_test(i,j), H_tru(i,j));
+  for (int i = 0; i < grad_fx_test.size(); ++i)
+    for (int j = 0; j < grad_fx_test.size(); ++j)
+      EXPECT_FLOAT_EQ(H_test(i, j), H_tru(i, j));
 }
 TEST(MathFunctions, vec_binormal_integral_hess_test_vVD_v) {
   Matrix<double, Dynamic, 1> y_el(2);
@@ -1005,9 +1005,9 @@ TEST(MathFunctions, vec_binormal_integral_hess_test_vVD_v) {
   for (int i = 0; i < grad_fx_test.size(); ++i) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i));
   }
-  for (int i = 0; i < grad_fx_test.size(); ++i) 
-    for (int j = 0; j < grad_fx_test.size(); ++j) 
-      EXPECT_FLOAT_EQ(H_test(i,j), H_tru(i,j));
+  for (int i = 0; i < grad_fx_test.size(); ++i)
+    for (int j = 0; j < grad_fx_test.size(); ++j)
+      EXPECT_FLOAT_EQ(H_test(i, j), H_tru(i, j));
 }
 TEST(MathFunctions, vec_binormal_integral_grad_hess_test_V_R) {
   V_R_std_binorm_lcdf dist_fun;
@@ -1026,17 +1026,17 @@ TEST(MathFunctions, vec_binormal_integral_grad_hess_test_V_R) {
   stan::math::grad_hessian(tru_fun, inp_vec, fx_tru, H_tru, grad_H_tru);
 
   EXPECT_FLOAT_EQ(fx_test, fx_tru);
-  for (int i = 0; i < grad_H_test.size(); ++i) 
-    for (int j = 0; j < grad_H_test[i].rows(); ++j) 
-      for (int k = 0; k < grad_H_test[i].cols(); ++k) 
-        EXPECT_FLOAT_EQ(grad_H_test[i](j,k), grad_H_tru[i](j,k));
+  for (int i = 0; i < grad_H_test.size(); ++i)
+    for (int j = 0; j < grad_H_test[i].rows(); ++j)
+      for (int k = 0; k < grad_H_test[i].cols(); ++k)
+        EXPECT_FLOAT_EQ(grad_H_test[i](j, k), grad_H_tru[i](j, k));
 }
 TEST(MathFunctions, vec_binormal_integral_grad_hess_test_vV_R) {
   int N_y = 3;
   vV_R_std_binorm_lcdf dist_fun2(N_y);
   vV_v_R_log_std_binorm_integral tru_fun(N_y);
   Matrix<double, Dynamic, 1> inp_vec2(N_y * 2 + 1);
-  inp_vec2 << 0.4, -2.7,0.4, -2.7,0.4, -2.7, 0.3;
+  inp_vec2 << 0.4, -2.7, 0.4, -2.7, 0.4, -2.7, 0.3;
 
   double fx_test;
   Matrix<double, Dynamic, Dynamic> H_test;
@@ -1048,10 +1048,10 @@ TEST(MathFunctions, vec_binormal_integral_grad_hess_test_vV_R) {
   stan::math::grad_hessian(tru_fun, inp_vec2, fx_tru, H_tru, grad_H_tru);
 
   EXPECT_FLOAT_EQ(fx_test, fx_tru);
-  for (int i = 0; i < grad_H_test.size(); ++i) 
-    for (int j = 0; j < grad_H_test[i].rows(); ++j) 
-      for (int k = 0; k < grad_H_test[i].cols(); ++k) 
-        EXPECT_FLOAT_EQ(grad_H_test[i](j,k), grad_H_tru[i](j,k));
+  for (int i = 0; i < grad_H_test.size(); ++i)
+    for (int j = 0; j < grad_H_test[i].rows(); ++j)
+      for (int k = 0; k < grad_H_test[i].cols(); ++k)
+        EXPECT_FLOAT_EQ(grad_H_test[i](j, k), grad_H_tru[i](j, k));
 }
 TEST(MathFunctions, vec_binormal_integral_grad_hess_test_vV_v) {
   int N_y = 3;
@@ -1070,10 +1070,10 @@ TEST(MathFunctions, vec_binormal_integral_grad_hess_test_vV_v) {
   stan::math::grad_hessian(tru_fun, inp_vec, fx_tru, H_tru, grad_H_tru);
 
   EXPECT_FLOAT_EQ(fx_test, fx_tru);
-  for (int i = 0; i < grad_H_test.size(); ++i) 
-    for (int j = 0; j < grad_H_test[i].rows(); ++j) 
-      for (int k = 0; k < grad_H_test[i].cols(); ++k) 
-        EXPECT_FLOAT_EQ(grad_H_test[i](j,k), grad_H_tru[i](j,k));
+  for (int i = 0; i < grad_H_test.size(); ++i)
+    for (int j = 0; j < grad_H_test[i].rows(); ++j)
+      for (int k = 0; k < grad_H_test[i].cols(); ++k)
+        EXPECT_FLOAT_EQ(grad_H_test[i](j, k), grad_H_tru[i](j, k));
 }
 TEST(MathFunctions, vec_binormal_integral_grad_hess_test_V_D) {
   V_D_std_binorm_lcdf dist_fun(0.3);
@@ -1094,10 +1094,10 @@ TEST(MathFunctions, vec_binormal_integral_grad_hess_test_V_D) {
   stan::math::grad_hessian(tru_fun, inp_vec, fx_tru, H_tru, grad_H_tru);
 
   EXPECT_FLOAT_EQ(fx_test, fx_tru);
-  for (int i = 0; i < grad_H_test.size(); ++i) 
-    for (int j = 0; j < grad_H_test[i].rows(); ++j) 
-      for (int k = 0; k < grad_H_test[i].cols(); ++k) 
-        EXPECT_FLOAT_EQ(grad_H_test[i](j,k), grad_H_tru[i](j,k));
+  for (int i = 0; i < grad_H_test.size(); ++i)
+    for (int j = 0; j < grad_H_test[i].rows(); ++j)
+      for (int k = 0; k < grad_H_test[i].cols(); ++k)
+        EXPECT_FLOAT_EQ(grad_H_test[i](j, k), grad_H_tru[i](j, k));
 }
 TEST(MathFunctions, vec_binormal_integral_grad_hess_test_vV_D) {
   vV_D_std_binorm_lcdf dist_fun(3, 0.3);
@@ -1118,10 +1118,10 @@ TEST(MathFunctions, vec_binormal_integral_grad_hess_test_vV_D) {
   stan::math::grad_hessian(tru_fun, inp_vec, fx_tru, H_tru, grad_H_tru);
 
   EXPECT_FLOAT_EQ(fx_test, fx_tru);
-  for (int i = 0; i < grad_H_test.size(); ++i) 
-    for (int j = 0; j < grad_H_test[i].rows(); ++j) 
-      for (int k = 0; k < grad_H_test[i].cols(); ++k) 
-        EXPECT_FLOAT_EQ(grad_H_test[i](j,k), grad_H_tru[i](j,k));
+  for (int i = 0; i < grad_H_test.size(); ++i)
+    for (int j = 0; j < grad_H_test[i].rows(); ++j)
+      for (int k = 0; k < grad_H_test[i].cols(); ++k)
+        EXPECT_FLOAT_EQ(grad_H_test[i](j, k), grad_H_tru[i](j, k));
 }
 TEST(MathFunctions, vec_binormal_integral_grad_hess_test_vV_vD) {
   vector<double> rho;
@@ -1144,10 +1144,10 @@ TEST(MathFunctions, vec_binormal_integral_grad_hess_test_vV_vD) {
   stan::math::grad_hessian(tru_fun, inp_vec, fx_tru, H_tru, grad_H_tru);
 
   EXPECT_FLOAT_EQ(fx_test, fx_tru);
-  for (int i = 0; i < grad_H_test.size(); ++i) 
-    for (int j = 0; j < grad_H_test[i].rows(); ++j) 
-      for (int k = 0; k < grad_H_test[i].cols(); ++k) 
-        EXPECT_FLOAT_EQ(grad_H_test[i](j,k), grad_H_tru[i](j,k));
+  for (int i = 0; i < grad_H_test.size(); ++i)
+    for (int j = 0; j < grad_H_test[i].rows(); ++j)
+      for (int k = 0; k < grad_H_test[i].cols(); ++k)
+        EXPECT_FLOAT_EQ(grad_H_test[i](j, k), grad_H_tru[i](j, k));
 }
 TEST(MathFunctions, vec_binormal_integral_grad_hess_test_VD_R) {
   Matrix<double, Dynamic, 1> y_el(2);
@@ -1170,10 +1170,10 @@ TEST(MathFunctions, vec_binormal_integral_grad_hess_test_VD_R) {
   stan::math::grad_hessian(tru_fun, inp_vec, fx_tru, H_tru, grad_H_tru);
 
   EXPECT_FLOAT_EQ(fx_test, fx_tru);
-  for (int i = 0; i < grad_H_test.size(); ++i) 
-    for (int j = 0; j < grad_H_test[i].rows(); ++j) 
-      for (int k = 0; k < grad_H_test[i].cols(); ++k) 
-        EXPECT_FLOAT_EQ(grad_H_test[i](j,k), grad_H_tru[i](j,k));
+  for (int i = 0; i < grad_H_test.size(); ++i)
+    for (int j = 0; j < grad_H_test[i].rows(); ++j)
+      for (int k = 0; k < grad_H_test[i].cols(); ++k)
+        EXPECT_FLOAT_EQ(grad_H_test[i](j, k), grad_H_tru[i](j, k));
 }
 TEST(MathFunctions, vec_binormal_integral_grad_hess_test_vVD_R) {
   Matrix<double, Dynamic, 1> y_el(2);
@@ -1198,10 +1198,10 @@ TEST(MathFunctions, vec_binormal_integral_grad_hess_test_vVD_R) {
   stan::math::grad_hessian(tru_fun, inp_vec, fx_tru, H_tru, grad_H_tru);
 
   EXPECT_FLOAT_EQ(fx_test, fx_tru);
-  for (int i = 0; i < grad_H_test.size(); ++i) 
-    for (int j = 0; j < grad_H_test[i].rows(); ++j) 
-      for (int k = 0; k < grad_H_test[i].cols(); ++k) 
-        EXPECT_FLOAT_EQ(grad_H_test[i](j,k), grad_H_tru[i](j,k));
+  for (int i = 0; i < grad_H_test.size(); ++i)
+    for (int j = 0; j < grad_H_test[i].rows(); ++j)
+      for (int k = 0; k < grad_H_test[i].cols(); ++k)
+        EXPECT_FLOAT_EQ(grad_H_test[i](j, k), grad_H_tru[i](j, k));
 }
 TEST(MathFunctions, vec_binormal_integral_grad_hess_test_vVD_v) {
   Matrix<double, Dynamic, 1> y_el(2);
@@ -1226,8 +1226,8 @@ TEST(MathFunctions, vec_binormal_integral_grad_hess_test_vVD_v) {
   stan::math::grad_hessian(tru_fun, inp_vec, fx_tru, H_tru, grad_H_tru);
 
   EXPECT_FLOAT_EQ(fx_test, fx_tru);
-  for (int i = 0; i < grad_H_test.size(); ++i) 
-    for (int j = 0; j < grad_H_test[i].rows(); ++j) 
-      for (int k = 0; k < grad_H_test[i].cols(); ++k) 
-        EXPECT_FLOAT_EQ(grad_H_test[i](j,k), grad_H_tru[i](j,k));
+  for (int i = 0; i < grad_H_test.size(); ++i)
+    for (int j = 0; j < grad_H_test[i].rows(); ++j)
+      for (int k = 0; k < grad_H_test[i].cols(); ++k)
+        EXPECT_FLOAT_EQ(grad_H_test[i](j, k), grad_H_tru[i](j, k));
 }

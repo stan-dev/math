@@ -1,5 +1,5 @@
 #include <stan/math/prim/mat.hpp>
-#include <stan/math/prim/scal/prob/std_binormal_lcdf.hpp>
+#include <stan/math/prim/mat/prob/std_binormal_lcdf.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
@@ -10,7 +10,7 @@ using Eigen::Matrix;
 using std::vector;
 
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        vector<Eigen::Matrix<T, Eigen::Dynamic, 1>>& y,
                        vector<T>& rho) {
   int cntr = 0;
@@ -28,7 +28,7 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
 }
 
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        vector<Eigen::Matrix<T, Eigen::Dynamic, 1>>& y,
                        T& rho) {
   int cntr = 0;
@@ -101,10 +101,10 @@ struct dual_std_vec_log_binorm {
     to_function_input(N_y_, inp_vec, y, rho);
     T accum(0.0);
     if (rho.size() == N_y_)
-      for (int i = 0; i < N_y_; ++i) 
+      for (int i = 0; i < N_y_; ++i)
         accum += log(stan::math::std_binormal_integral(y[i][0], y[i][1], rho[i]));
-    else 
-      for (int i = 0; i < N_y_; ++i) 
+    else
+      for (int i = 0; i < N_y_; ++i)
         accum += log(stan::math::std_binormal_integral(y[i][0], y[i][1], rho[0]));
     return accum;
   }
@@ -319,32 +319,32 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   y(1) = b;
   EXPECT_FLOAT_EQ(log(stan::math::Phi(a)) + log(stan::math::Phi(b)), stan::math::std_binormal_lcdf(y, rho));
 
-  // Perfectly correlated RVs 
+  // Perfectly correlated RVs
   rho = 1;
   a = -3.4;
   b = 3.7;
   y(0) = a;
   y(1) = b;
   EXPECT_FLOAT_EQ(log(stan::math::Phi(a)), stan::math::std_binormal_lcdf(y, rho));
-  
 
-  // Perfectly anticorrelated RVs 
+
+  // Perfectly anticorrelated RVs
   rho = -1;
   a = 2.4;
   b = 1.7;
   y(0) = a;
   y(1) = b;
   EXPECT_FLOAT_EQ(log(stan::math::Phi(a) + stan::math::Phi(b) - 1), stan::math::std_binormal_lcdf(y, rho));
-  
-  // Perfectly anticorrelated RVs 
+
+  // Perfectly anticorrelated RVs
   rho = -1;
   a = -2.4;
   b = 1.7;
   y(0) = a;
   y(1) = b;
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), stan::math::std_binormal_lcdf(y, rho));
-  
-  // a = rho * b 
+
+  // a = rho * b
   rho = -0.7;
   b = 1.7;
   a = rho * b;
@@ -353,10 +353,10 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   EXPECT_FLOAT_EQ(log(0.5 / stan::math::pi()
                   * std::exp(-0.5 * b * b)
                   * std::asin(rho)
-                  + stan::math::Phi(a) * stan::math::Phi(b)), 
+                  + stan::math::Phi(a) * stan::math::Phi(b)),
                   stan::math::std_binormal_lcdf(y, rho));
-  
-  // b = rho * a 
+
+  // b = rho * a
   rho = -0.7;
   a = 1.7;
   b = rho * a;
@@ -365,126 +365,126 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   EXPECT_FLOAT_EQ(log(0.5 / stan::math::pi()
                   * std::exp(-0.5 * a * a)
                   * std::asin(rho)
-                  + stan::math::Phi(a) * stan::math::Phi(b)), 
+                  + stan::math::Phi(a) * stan::math::Phi(b)),
                   stan::math::std_binormal_lcdf(y, rho));
   rho = 0.7;
   a = std::numeric_limits<double>::infinity();
   b = std::numeric_limits<double>::infinity();
   y(0) = a;
   y(1) = b;
-  EXPECT_FLOAT_EQ(0,stan::math::std_binormal_lcdf(y, rho)); 
+  EXPECT_FLOAT_EQ(0, stan::math::std_binormal_lcdf(y, rho));
 
   rho = 0.7;
   a = -std::numeric_limits<double>::infinity();
   b = -std::numeric_limits<double>::infinity();
   y(0) = a;
   y(1) = b;
-  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),stan::math::std_binormal_lcdf(y, rho)); 
+  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), stan::math::std_binormal_lcdf(y, rho));
 
   rho = -0.7;
   a = -std::numeric_limits<double>::infinity();
   b = -std::numeric_limits<double>::infinity();
   y(0) = a;
   y(1) = b;
-  EXPECT_FLOAT_EQ(a,stan::math::std_binormal_lcdf(y, rho)); 
+  EXPECT_FLOAT_EQ(a, stan::math::std_binormal_lcdf(y, rho));
 
   rho = -0.7;
   a = std::numeric_limits<double>::infinity();
   b = std::numeric_limits<double>::infinity();
   y(0) = a;
   y(1) = b;
-  EXPECT_FLOAT_EQ(0,stan::math::std_binormal_lcdf(y, rho)); 
+  EXPECT_FLOAT_EQ(0, stan::math::std_binormal_lcdf(y, rho));
 
   rho = -0.7;
   a = 1.5;
   b = std::numeric_limits<double>::infinity();
   y(0) = a;
   y(1) = b;
-  EXPECT_FLOAT_EQ(log(stan::math::Phi(1.5)),stan::math::std_binormal_lcdf(y, rho)); 
+  EXPECT_FLOAT_EQ(log(stan::math::Phi(1.5)), stan::math::std_binormal_lcdf(y, rho));
 
   rho = 0.7;
   a = 1.5;
   b = std::numeric_limits<double>::infinity();
   y(0) = a;
   y(1) = b;
-  EXPECT_FLOAT_EQ(log(stan::math::Phi(1.5)),stan::math::std_binormal_lcdf(y, rho)); 
+  EXPECT_FLOAT_EQ(log(stan::math::Phi(1.5)), stan::math::std_binormal_lcdf(y, rho));
 
   rho = 0.7;
   b = 2.5;
   a = std::numeric_limits<double>::infinity();
   y(0) = a;
   y(1) = b;
-  EXPECT_FLOAT_EQ(log(stan::math::Phi(2.5)),stan::math::std_binormal_lcdf(y, rho)); 
+  EXPECT_FLOAT_EQ(log(stan::math::Phi(2.5)), stan::math::std_binormal_lcdf(y, rho));
 
   rho = -0.7;
   b = 0.5;
   a = std::numeric_limits<double>::infinity();
   y(0) = a;
   y(1) = b;
-  EXPECT_FLOAT_EQ(log(stan::math::Phi(0.5)),stan::math::std_binormal_lcdf(y, rho)); 
+  EXPECT_FLOAT_EQ(log(stan::math::Phi(0.5)), stan::math::std_binormal_lcdf(y, rho));
 }
 TEST(MathFunctions, binormal_integral_val_test) {
-  // Hard-coded values calculated in R using pmvnorm(lower = -Inf, upper = c(a,b), 
-  // corr = matrix(c(1,rho,rho,1),2,2), algorithm = TVPACK(1e-16))
+  // Hard-coded values calculated in R using pmvnorm(lower = -Inf, upper = c(a, b),
+  // corr = matrix(c(1, rho, rho, 1), 2, 2), algorithm = TVPACK(1e-16))
   // Independent normal RVs
   vector<Matrix<double, Dynamic, 1>> vals;
   Matrix<double, Dynamic, 1> inp_vec(3);
   bivar_norm_lcdf dist_fun;
   log_binorm tru_fun;
   // 000
-  inp_vec << 0.4, 2.7, 0.3; 
+  inp_vec << 0.4, 2.7, 0.3;
   vals.push_back(inp_vec);
   // 100
-  inp_vec << -0.4, 2.7, 0.3; 
+  inp_vec << -0.4, 2.7, 0.3;
   vals.push_back(inp_vec);
   // 010
-  inp_vec << 0.4, -2.7, 0.3; 
+  inp_vec << 0.4, -2.7, 0.3;
   vals.push_back(inp_vec);
   // 110
-  inp_vec << -0.4, -2.7, 0.3; 
+  inp_vec << -0.4, -2.7, 0.3;
   vals.push_back(inp_vec);
   // 001
-  inp_vec << 0.4, 2.7, -0.3; 
+  inp_vec << 0.4, 2.7, -0.3;
   vals.push_back(inp_vec);
   // 101
-  inp_vec << -0.4, 2.7, -0.3; 
+  inp_vec << -0.4, 2.7, -0.3;
   vals.push_back(inp_vec);
   // 011
-  inp_vec << 0.4, -2.7, -0.3; 
+  inp_vec << 0.4, -2.7, -0.3;
   vals.push_back(inp_vec);
   // 111
-  inp_vec << -0.4, -2.7, -0.3; 
+  inp_vec << -0.4, -2.7, -0.3;
   vals.push_back(inp_vec);
 
-  inp_vec << -0.4, 2.7, 0.3; 
+  inp_vec << -0.4, 2.7, 0.3;
   vals.push_back(inp_vec);
-  inp_vec << -0.4, 2.7, 0.99; 
+  inp_vec << -0.4, 2.7, 0.99;
   vals.push_back(inp_vec);
-  inp_vec << 2.5, 2.7, 0.99; 
+  inp_vec << 2.5, 2.7, 0.99;
   vals.push_back(inp_vec);
-  inp_vec << 3.5, 3.7, 0.99; 
+  inp_vec << 3.5, 3.7, 0.99;
   vals.push_back(inp_vec);
-  inp_vec << -4.5, 4.7, -0.99; 
+  inp_vec << -4.5, 4.7, -0.99;
   vals.push_back(inp_vec);
-  inp_vec << -4.5, 10, -0.99; 
+  inp_vec << -4.5, 10, -0.99;
   vals.push_back(inp_vec);
   for (size_t i = 0; i < vals.size(); ++i)
     EXPECT_FLOAT_EQ(dist_fun(vals[i]), tru_fun(vals[i]));
 }
 TEST(MathFunctions, vec_binormal_integral_val_test) {
-  // Hard-coded values calculated in R using pmvnorm(lower = -Inf, upper = c(a,b), 
-  // corr = matrix(c(1,rho,rho,1),2,2), algorithm = TVPACK(1e-16))
+  // Hard-coded values calculated in R using pmvnorm(lower = -Inf, upper = c(a, b),
+  // corr = matrix(c(1, rho, rho, 1), 2, 2), algorithm = TVPACK(1e-16))
   // Independent normal RVs
   int N_y = 3;
   dual_std_vec_bivar_norm_lcdf dist_fun(N_y);
   one_std_vec_bivar_norm_lcdf dist_fun2(N_y);
   dual_std_vec_log_binorm tru_fun(N_y);
   Matrix<double, Dynamic, 1> inp_vec(N_y * 3);
-  inp_vec << 0.4, -2.7,0.4, -2.7,0.4, -2.7, 0.3, 0.4, 0.5;
+  inp_vec << 0.4, -2.7, 0.4, -2.7, 0.4, -2.7, 0.3, 0.4, 0.5;
 
   EXPECT_FLOAT_EQ(dist_fun(inp_vec), tru_fun(inp_vec));
 
   Matrix<double, Dynamic, 1> inp_vec2(N_y * 2 + 1);
-  inp_vec2 << 0.4, -2.7,0.4, -2.7,0.4, -2.7, 0.3;
+  inp_vec2 << 0.4, -2.7, 0.4, -2.7, 0.4, -2.7, 0.3;
   EXPECT_FLOAT_EQ(dist_fun2(inp_vec2), tru_fun(inp_vec2));
 }

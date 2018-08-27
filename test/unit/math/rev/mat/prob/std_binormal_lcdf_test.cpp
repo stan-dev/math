@@ -11,9 +11,9 @@ using Eigen::Matrix;
 using std::vector;
 using stan::math::var;
 
-// nector, real 
+// nector, real
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
                        T& rho) {
   y(0) = inp_vec(0);
@@ -21,9 +21,9 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
   rho = T(inp_vec(2));
 }
 
-// Row Vector, real 
+// Row Vector, real
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        Eigen::Matrix<T, 1, Eigen::Dynamic>& y,
                        T& rho) {
   y(0) = inp_vec(0);
@@ -33,7 +33,7 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
 
 // vector<Vector>, real
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        vector<Eigen::Matrix<T, Eigen::Dynamic, 1>>& y,
                        T& rho) {
   int cntr = 0;
@@ -50,7 +50,7 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
 
 // vector<Row Vector>, real
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        vector<Eigen::Matrix<T, 1, Eigen::Dynamic>>& y,
                        T& rho) {
   int cntr = 0;
@@ -65,9 +65,9 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
   rho = inp_vec(N_y * 2);
 }
 
-// vector<Vector>, vector 
+// vector<Vector>, vector
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        vector<Eigen::Matrix<T, Eigen::Dynamic, 1>>& y,
                        vector<T>& rho) {
   int cntr = 0;
@@ -83,9 +83,9 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
     rho.push_back(T(inp_vec(i)));
 }
 
-// vector<Row Vector>, vector 
+// vector<Row Vector>, vector
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        vector<Eigen::Matrix<T, 1, Eigen::Dynamic>>& y,
                        vector<T>& rho) {
   int cntr = 0;
@@ -101,9 +101,9 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
     rho.push_back(T(inp_vec(i)));
 }
 
-// vector<Vector>, Vector 
+// vector<Vector>, Vector
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        vector<Eigen::Matrix<T, Eigen::Dynamic, 1>>& y,
                        Eigen::Matrix<T, Eigen::Dynamic, 1>& rho) {
   int cntr = 0;
@@ -121,9 +121,9 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
     rho(j++) = (T(inp_vec(i)));
 }
 
-// vector<Row Vector>, Vector 
+// vector<Row Vector>, Vector
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        vector<Eigen::Matrix<T, 1, Eigen::Dynamic>>& y,
                        Eigen::Matrix<T, Eigen::Dynamic, 1>& rho) {
   int cntr = 0;
@@ -143,7 +143,7 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
 
 // Row vector, nada
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        Eigen::Matrix<T, 1, Eigen::Dynamic>& y) {
   y(0) = inp_vec(0);
   y(1) = inp_vec(1);
@@ -152,7 +152,7 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
 
 // vector<Vector>, nada
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        vector<Eigen::Matrix<T, Eigen::Dynamic, 1>>& y) {
   int cntr = 0;
   for (int i = 0; i < N_y; ++i) {
@@ -167,7 +167,7 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
 
 // vector<Row Vector>, nada
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec, 
+void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        vector<Eigen::Matrix<T, 1, Eigen::Dynamic>>& y) {
   int cntr = 0;
   for (int i = 0; i < N_y; ++i) {
@@ -288,7 +288,7 @@ struct vRV_V_std_binorm_lcdf {
   }
 };
 
-// Vector, double 
+// Vector, double
 struct V_D_std_binorm_lcdf {
   double rho_;
   V_D_std_binorm_lcdf(double rho) : rho_(rho) {}
@@ -399,8 +399,8 @@ struct vRV_VD_std_binorm_lcdf {
     return stan::math::std_binormal_lcdf(y, rho_);
   }
 };
- 
-// double Vector, real 
+
+// double Vector, real
 struct VD_R_std_binorm_lcdf {
   Matrix<double, Dynamic, 1> y_;
   VD_R_std_binorm_lcdf(Matrix<double, Dynamic, 1>& y) : y_(y) {}
@@ -411,7 +411,7 @@ struct VD_R_std_binorm_lcdf {
   }
 };
 
-// double Row Vector, real 
+// double Row Vector, real
 struct RVD_R_std_binorm_lcdf {
   Matrix<double, 1, Dynamic> y_;
   RVD_R_std_binorm_lcdf(Matrix<double, 1, Dynamic>& y) : y_(y) {}
@@ -501,7 +501,7 @@ struct vRVD_V_std_binorm_lcdf {
 
 // double vector<Vector>, Vector
 struct vVD_V_std_binorm_lcdf {
-  vector<Matrix<double, Dynamic ,1>> y_;
+  vector<Matrix<double, Dynamic , 1>> y_;
   vVD_V_std_binorm_lcdf(vector<Matrix<double, Dynamic, 1>>& y) {
     for (size_t i = 0; i < y.size(); ++i)
       y_.push_back(y[i]);
@@ -535,10 +535,10 @@ struct vV_vD_D_log_std_binorm_integral {
     to_function_input(N_y_, inp_vec, y);
     T accum(0.0);
     if (rho_.size() == N_y_)
-      for (int i = 0; i < N_y_; ++i) 
+      for (int i = 0; i < N_y_; ++i)
         accum += log(stan::math::std_binormal_integral(y[i][0], y[i][1], rho_[i]));
-    else 
-      for (int i = 0; i < N_y_; ++i) 
+    else
+      for (int i = 0; i < N_y_; ++i)
         accum += log(stan::math::std_binormal_integral(y[i][0], y[i][1], rho_[0]));
     return accum;
   }
@@ -556,10 +556,10 @@ struct vV_v_R_log_std_binorm_integral {
     to_function_input(N_y_, inp_vec, y, rho);
     T accum(0.0);
     if (rho.size() == N_y_)
-      for (int i = 0; i < N_y_; ++i) 
+      for (int i = 0; i < N_y_; ++i)
         accum += log(stan::math::std_binormal_integral(y[i][0], y[i][1], rho[i]));
-    else 
-      for (int i = 0; i < N_y_; ++i) 
+    else
+      for (int i = 0; i < N_y_; ++i)
         accum += log(stan::math::std_binormal_integral(y[i][0], y[i][1], rho[0]));
     return accum;
   }
@@ -581,11 +581,11 @@ struct vVD_v_log_std_binorm_integral {
       rho.push_back(inp_vec(i));
     T accum(0.0);
     if (rho.size() == y_.size()) {
-      for (int i = 0; i < y_.size(); ++i) 
+      for (int i = 0; i < y_.size(); ++i)
         accum += log(stan::math::std_binormal_integral(y_[i][0], y_[i][1], rho[i]));
     }
     else  {
-      for (int i = 0; i < y_.size(); ++i) 
+      for (int i = 0; i < y_.size(); ++i)
         accum += log(stan::math::std_binormal_integral(y_[i][0], y_[i][1], rho[0]));
     }
     return accum;
@@ -647,7 +647,7 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   var fun_run = stan::math::std_binormal_lcdf(y, rho);
   EXPECT_FLOAT_EQ(fun_comp.val(), fun_run.val());
 
-  // Perfectly correlated RVs 
+  // Perfectly correlated RVs
   rho = 1;
   a = -3.4;
   b = 3.7;
@@ -656,9 +656,9 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   fun_comp = log(stan::math::Phi(a));
   fun_run = stan::math::std_binormal_lcdf(y, rho);
   EXPECT_FLOAT_EQ(fun_comp.val(), fun_run.val());
-  
 
-  // Perfectly anticorrelated RVs 
+
+  // Perfectly anticorrelated RVs
   rho = -1;
   a = 2.4;
   b = 1.7;
@@ -666,8 +666,8 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   y(1) = b;
   fun_comp = log(stan::math::Phi(a) + stan::math::Phi(b) - 1);
   fun_run = stan::math::std_binormal_lcdf(y, rho);
-  
-  // Perfectly anticorrelated RVs 
+
+  // Perfectly anticorrelated RVs
   rho = -1;
   a = -2.4;
   b = 1.7;
@@ -675,8 +675,8 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   y(1) = b;
   fun_run = stan::math::std_binormal_lcdf(y, rho);
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), fun_run.val());
-  
-  // a = rho * b 
+
+  // a = rho * b
   rho = -0.7;
   b = 1.7;
   a = rho * b;
@@ -688,8 +688,8 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
                   + stan::math::Phi(a) * stan::math::Phi(b));
   fun_run = stan::math::std_binormal_lcdf(y, rho);
   EXPECT_FLOAT_EQ(fun_comp.val(), fun_run.val());
-  
-  // b = rho * a 
+
+  // b = rho * a
   rho = -0.7;
   a = 1.7;
   b = rho * a;
@@ -708,7 +708,7 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   y(0) = a;
   y(1) = b;
   fun_run = stan::math::std_binormal_lcdf(y, rho);
-  EXPECT_FLOAT_EQ(0,fun_run.val()); 
+  EXPECT_FLOAT_EQ(0, fun_run.val());
 
   rho = 0.7;
   a = -std::numeric_limits<double>::infinity();
@@ -716,7 +716,7 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   y(0) = a;
   y(1) = b;
   fun_run = stan::math::std_binormal_lcdf(y, rho);
-  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),fun_run.val()); 
+  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), fun_run.val());
 
   rho = -0.7;
   a = -std::numeric_limits<double>::infinity();
@@ -724,7 +724,7 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   y(0) = a;
   y(1) = b;
   fun_run = stan::math::std_binormal_lcdf(y, rho);
-  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),fun_run.val()); 
+  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), fun_run.val());
 
   rho = -0.7;
   a = std::numeric_limits<double>::infinity();
@@ -732,7 +732,7 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   y(0) = a;
   y(1) = b;
   fun_run = stan::math::std_binormal_lcdf(y, rho);
-  EXPECT_FLOAT_EQ(0,fun_run.val()); 
+  EXPECT_FLOAT_EQ(0, fun_run.val());
 
   rho = -0.7;
   a = 1.5;
@@ -775,28 +775,28 @@ TEST(MathFunctions, binormal_integral_val_test) {
   V_R_std_binorm_lcdf dist_fun;
   log_binorm tru_fun;
   // 000
-  vals[0] << 0.4, 2.7, 0.3; 
+  vals[0] << 0.4, 2.7, 0.3;
   // 100
-  vals[1] << -0.4, 2.7, 0.3; 
+  vals[1] << -0.4, 2.7, 0.3;
   // 010
-  vals[2] << 0.4, -2.7, 0.3; 
+  vals[2] << 0.4, -2.7, 0.3;
   // 110
-  vals[3] << -0.4, -2.7, 0.3; 
+  vals[3] << -0.4, -2.7, 0.3;
   // 001
-  vals[4] << 0.4, 2.7, -0.3; 
+  vals[4] << 0.4, 2.7, -0.3;
   // 101
-  vals[5] << -0.4, 2.7, -0.3; 
+  vals[5] << -0.4, 2.7, -0.3;
   // 011
-  vals[6] << 0.4, -2.7, -0.3; 
+  vals[6] << 0.4, -2.7, -0.3;
   // 111
-  vals[7] << -0.4, -2.7, -0.3; 
+  vals[7] << -0.4, -2.7, -0.3;
 
-  vals[8] << -0.4, 2.7, 0.3; 
-  vals[9] << -0.4, 2.7, 0.99; 
-  vals[10] << 2.5, 2.7, 0.99; 
-  vals[11] << 3.5, 3.7, 0.99; 
-  vals[12] << -4.5, 4.7, -0.99; 
-  vals[13] << -4.5, 10, -0.99; 
+  vals[8] << -0.4, 2.7, 0.3;
+  vals[9] << -0.4, 2.7, 0.99;
+  vals[10] << 2.5, 2.7, 0.99;
+  vals[11] << 3.5, 3.7, 0.99;
+  vals[12] << -4.5, 4.7, -0.99;
+  vals[13] << -4.5, 10, -0.99;
   for (size_t i = 0; i < vals.size(); ++i)
     EXPECT_FLOAT_EQ(dist_fun(vals[i]).val(), tru_fun(vals[i]).val());
 }
@@ -864,7 +864,7 @@ TEST(MathFunctions, vec_binormal_integral_grad_test_vV_R) {
   vV_R_std_binorm_lcdf dist_fun2(N_y);
   vV_v_R_log_std_binorm_integral tru_fun(N_y);
   Matrix<double, Dynamic, 1> inp_vec2(N_y * 2 + 1);
-  inp_vec2 << 0.4, -2.7,0.4, -2.7,0.4, -2.7, 0.3;
+  inp_vec2 << 0.4, -2.7, 0.4, -2.7, 0.4, -2.7, 0.3;
 
   double fx_test;
   Matrix<double, Dynamic, 1> grad_fx_test;
@@ -887,7 +887,7 @@ TEST(MathFunctions, vec_binormal_integral_grad_test_vRV_R) {
   vRV_R_std_binorm_lcdf dist_fun2(N_y);
   vV_v_R_log_std_binorm_integral tru_fun(N_y);
   Matrix<double, Dynamic, 1> inp_vec2(N_y * 2 + 1);
-  inp_vec2 << 0.4, -2.7,0.4, -2.7,0.4, -2.7, 0.3;
+  inp_vec2 << 0.4, -2.7, 0.4, -2.7, 0.4, -2.7, 0.3;
 
   double fx_test;
   Matrix<double, Dynamic, 1> grad_fx_test;
@@ -1046,7 +1046,7 @@ TEST(MathFunctions, vec_binormal_integral_vV_D_test) {
   rhos.push_back(0.3);
   vV_vD_D_log_std_binorm_integral tru_fun(N_y, rhos);
   Matrix<double, Dynamic, 1> inp_vec2(N_y * 2);
-  inp_vec2 << 0.4, -2.7, 0.4, -2.7,0.4, -2.7;
+  inp_vec2 << 0.4, -2.7, 0.4, -2.7, 0.4, -2.7;
 
   double fx_test;
   Matrix<double, Dynamic, 1> grad_fx_test;
@@ -1070,7 +1070,7 @@ TEST(MathFunctions, vec_binormal_integral_vRV_D_test) {
   rhos.push_back(0.3);
   vV_vD_D_log_std_binorm_integral tru_fun(N_y, rhos);
   Matrix<double, Dynamic, 1> inp_vec2(N_y * 2);
-  inp_vec2 << 0.4, -2.7, 0.4, -2.7,0.4, -2.7;
+  inp_vec2 << 0.4, -2.7, 0.4, -2.7, 0.4, -2.7;
 
   double fx_test;
   Matrix<double, Dynamic, 1> grad_fx_test;
@@ -1096,7 +1096,7 @@ TEST(MathFunctions, vec_binormal_integral_vV_vD_test) {
   vV_vD_std_binorm_lcdf dist_fun2(N_y, rhos);
   vV_vD_D_log_std_binorm_integral tru_fun(N_y, rhos);
   Matrix<double, Dynamic, 1> inp_vec2(N_y * 2);
-  inp_vec2 << 0.4, -2.7, 0.4, -2.7,0.4, -2.7;
+  inp_vec2 << 0.4, -2.7, 0.4, -2.7, 0.4, -2.7;
 
   double fx_test;
   Matrix<double, Dynamic, 1> grad_fx_test;
@@ -1122,7 +1122,7 @@ TEST(MathFunctions, vec_binormal_integral_vRV_vD_test) {
   vRV_vD_std_binorm_lcdf dist_fun2(N_y, rhos);
   vV_vD_D_log_std_binorm_integral tru_fun(N_y, rhos);
   Matrix<double, Dynamic, 1> inp_vec2(N_y * 2);
-  inp_vec2 << 0.4, -2.7, 0.4, -2.7,0.4, -2.7;
+  inp_vec2 << 0.4, -2.7, 0.4, -2.7, 0.4, -2.7;
 
   double fx_test;
   Matrix<double, Dynamic, 1> grad_fx_test;
@@ -1151,7 +1151,7 @@ TEST(MathFunctions, vec_binormal_integral_vV_VD_test) {
   vV_VD_std_binorm_lcdf dist_fun2(N_y, rhos_eig);
   vV_vD_D_log_std_binorm_integral tru_fun(N_y, rhos);
   Matrix<double, Dynamic, 1> inp_vec2(N_y * 2);
-  inp_vec2 << 0.4, -2.7, 0.4, -2.7,0.4, -2.7;
+  inp_vec2 << 0.4, -2.7, 0.4, -2.7, 0.4, -2.7;
 
   double fx_test;
   Matrix<double, Dynamic, 1> grad_fx_test;
@@ -1180,7 +1180,7 @@ TEST(MathFunctions, vec_binormal_integral_vRV_VD_test) {
   vRV_VD_std_binorm_lcdf dist_fun2(N_y, rhos_eig);
   vV_vD_D_log_std_binorm_integral tru_fun(N_y, rhos);
   Matrix<double, Dynamic, 1> inp_vec2(N_y * 2);
-  inp_vec2 << 0.4, -2.7, 0.4, -2.7,0.4, -2.7;
+  inp_vec2 << 0.4, -2.7, 0.4, -2.7, 0.4, -2.7;
 
   double fx_test;
   Matrix<double, Dynamic, 1> grad_fx_test;

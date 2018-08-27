@@ -108,8 +108,8 @@ TEST(MathFunctions, binormal_integral_no_throw_ffd) {
   EXPECT_NO_THROW(stan::math::std_binormal_integral(a, b, rho));
 }
 TEST(MathFunctions, binormal_integral_val_test_fd) {
-  // Hard-coded values calculated in R using pmvnorm(lower = -Inf, upper = c(a,b), 
-  // corr = matrix(c(1,rho,rho,1),2,2), algorithm = TVPACK(1e-16))
+  // Hard-coded values calculated in R using pmvnorm(lower = -Inf, upper = c(a, b),
+  // corr = matrix(c(1, rho, rho, 1), 2, 2), algorithm = TVPACK(1e-16))
   // Independent normal RVs
   using stan::math::fvar;
   fvar<double> rho = 0.3;
@@ -158,7 +158,7 @@ TEST(MathFunctions, binormal_integral_val_test_fd) {
   a = -4.5;
   b = -10;
   f = stan::math::std_binormal_integral(a, b, rho);
-  EXPECT_FLOAT_EQ(0, f.val_);
+  EXPECT_NEAR(0, f.val_, 1e-16);
 
   rho = 0.99;
   a = -4.5;
@@ -205,8 +205,8 @@ TEST(MathFunctions, binormal_integral_val_test_fd) {
 }
 
 TEST(MathFunctions, binormal_integral_val_test_ffd) {
-  // Hard-coded values calculated in R using pmvnorm(lower = -Inf, upper = c(a,b), 
-  // corr = matrix(c(1,rho,rho,1),2,2), algorithm = TVPACK(1e-16))
+  // Hard-coded values calculated in R using pmvnorm(lower = -Inf, upper = c(a, b),
+  // corr = matrix(c(1, rho, rho, 1), 2, 2), algorithm = TVPACK(1e-16))
   // Independent normal RVs
   using stan::math::fvar;
   fvar<fvar<double>> rho = 0.3;
@@ -255,7 +255,7 @@ TEST(MathFunctions, binormal_integral_val_test_ffd) {
   a = -4.5;
   b = -10;
   f = stan::math::std_binormal_integral(a, b, rho);
-  EXPECT_FLOAT_EQ(0, f.val_.val_);
+  EXPECT_NEAR(0, f.val_.val_, 1e-16);
 
   rho = 0.99;
   a = -4.5;
