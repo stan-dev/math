@@ -10,11 +10,14 @@ struct binorm_functor {
   template <typename T>
   inline T operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
-    return stan::math::std_binormal_integral(inp_vec(0), inp_vec(1), inp_vec(2));
+    return stan::math::std_binormal_integral(inp_vec(0), inp_vec(1),
+                                             inp_vec(2));
   }
 };
 
-TEST(MathFunctions, binormal_integral_using) { using stan::math::std_binormal_integral; }
+TEST(MathFunctions, binormal_integral_using) {
+  using stan::math::std_binormal_integral;
+}
 
 TEST(MathFunctions, binormal_integral_throw_RV_1_nan_fv) {
   using stan::math::fvar;
@@ -23,8 +26,7 @@ TEST(MathFunctions, binormal_integral_throw_RV_1_nan_fv) {
   fvar<var> rho(0.3, 1.0);
   fvar<var> a = nan;
   fvar<var> b(2, 1.0);
-  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho), std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_throw_RV_2_nan_fv) {
   using stan::math::fvar;
@@ -33,8 +35,7 @@ TEST(MathFunctions, binormal_integral_throw_RV_2_nan_fv) {
   fvar<var> rho(0.3, 1.0);
   fvar<var> a(2.0, 1.0);
   fvar<var> b = nan;
-  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho), std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_throw_rho_nan_fv) {
   using stan::math::fvar;
@@ -43,8 +44,7 @@ TEST(MathFunctions, binormal_integral_throw_rho_nan_fv) {
   fvar<var> rho = nan;
   fvar<var> a(2.0, 1.0);
   fvar<var> b(2.0, 1.0);
-  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho), std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_throw_corr_coef_neg_fv) {
   using stan::math::fvar;
@@ -52,8 +52,7 @@ TEST(MathFunctions, binormal_integral_throw_corr_coef_neg_fv) {
   fvar<var> rho(-1.3, 1.0);
   fvar<var> a(2.0, 1.0);
   fvar<var> b(2.0, 1.0);
-  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho), std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_throw_corr_coef_gt_one_fv) {
   using stan::math::fvar;
@@ -61,8 +60,7 @@ TEST(MathFunctions, binormal_integral_throw_corr_coef_gt_one_fv) {
   fvar<var> rho(1.3, 1.0);
   fvar<var> a(2.0, 1.0);
   fvar<var> b(2.0, 1.0);
-  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho), std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_no_throw_fd) {
   using stan::math::fvar;
@@ -80,8 +78,7 @@ TEST(MathFunctions, binormal_integral_throw_RV_1_nan_ffv) {
   fvar<fvar<var>> rho = 0.3;
   fvar<fvar<var>> a = nan;
   fvar<fvar<var>> b = 2;
-  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho), std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_throw_RV_2_nan_ffd) {
   using stan::math::fvar;
@@ -89,8 +86,7 @@ TEST(MathFunctions, binormal_integral_throw_RV_2_nan_ffd) {
   fvar<fvar<double>> rho = 0.3;
   fvar<fvar<double>> a = 2;
   fvar<fvar<double>> b = nan;
-  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho), std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_throw_rho_nan_ffd) {
   using stan::math::fvar;
@@ -98,24 +94,21 @@ TEST(MathFunctions, binormal_integral_throw_rho_nan_ffd) {
   fvar<fvar<double>> rho = nan;
   fvar<fvar<double>> a = 2;
   fvar<fvar<double>> b = 2;
-  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho), std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_throw_corr_coef_neg_ffd) {
   using stan::math::fvar;
   fvar<fvar<double>> rho = -1.3;
   fvar<fvar<double>> a = 2;
   fvar<fvar<double>> b = 1;
-  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho), std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_throw_corr_coef_gt_one_ffd) {
   using stan::math::fvar;
   fvar<fvar<double>> rho = 1.3;
   fvar<fvar<double>> a = 2;
   fvar<fvar<double>> b = 1;
-  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho), std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_no_throw_ffd) {
   using stan::math::fvar;
@@ -164,12 +157,12 @@ TEST(MathFunctions, binormal_grad_hessian_finite_diff) {
 
   double norm_eval;
   Matrix<double, Dynamic, Dynamic> H_norm;
-  std::vector<Matrix<double, Dynamic, Dynamic> > grad_H_norm;
+  std::vector<Matrix<double, Dynamic, Dynamic>> grad_H_norm;
   stan::math::grad_hessian(norm, norm_vec, norm_eval, H_norm, grad_H_norm);
 
   double norm_fin_diff_eval;
   Matrix<double, Dynamic, Dynamic> fin_diff_H_norm;
-  std::vector<Matrix<double, Dynamic, Dynamic> > fin_diff_grad_H_norm;
+  std::vector<Matrix<double, Dynamic, Dynamic>> fin_diff_grad_H_norm;
   stan::math::finite_diff_grad_hessian(norm, norm_vec, norm_fin_diff_eval,
                                        fin_diff_H_norm, fin_diff_grad_H_norm);
 

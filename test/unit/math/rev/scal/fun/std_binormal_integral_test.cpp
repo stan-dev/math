@@ -6,7 +6,9 @@
 #include <limits>
 #include <stan/math/prim/scal/prob/normal_cdf.hpp>
 
-TEST(MathFunctions, binormal_integral_using) { using stan::math::std_binormal_integral; }
+TEST(MathFunctions, binormal_integral_using) {
+  using stan::math::std_binormal_integral;
+}
 
 TEST(MathFunctions, binormal_integral_throw_RV_1_nan_vvv) {
   using stan::math::var;
@@ -14,8 +16,7 @@ TEST(MathFunctions, binormal_integral_throw_RV_1_nan_vvv) {
   var rho = 0.3;
   var a = nan;
   var b = 2;
-  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho), std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_throw_RV_2_nan_vvv) {
   using stan::math::var;
@@ -23,8 +24,7 @@ TEST(MathFunctions, binormal_integral_throw_RV_2_nan_vvv) {
   var rho = 0.3;
   var a = 2;
   var b = nan;
-  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho), std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_throw_rho_nan_vvv) {
   using stan::math::var;
@@ -32,24 +32,21 @@ TEST(MathFunctions, binormal_integral_throw_rho_nan_vvv) {
   var rho = nan;
   var a = 2;
   var b = 2;
-  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho), std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_throw_corr_coef_neg_vvv) {
   using stan::math::var;
   var rho = -1.3;
   var a = 2;
   var b = 1;
-  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho), std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_throw_corr_coef_gt_one_vvv) {
   using stan::math::var;
   var rho = 1.3;
   var a = 2;
   var b = 1;
-  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_integral(a, b, rho), std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_no_throw_vvv) {
   using stan::math::var;
@@ -79,7 +76,8 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   a = 2.4;
   b = 1.7;
   f = stan::math::std_binormal_integral(a, b, rho);
-  EXPECT_FLOAT_EQ(stan::math::Phi(a.val()) + stan::math::Phi(b.val()) - 1, f.val());
+  EXPECT_FLOAT_EQ(stan::math::Phi(a.val()) + stan::math::Phi(b.val()) - 1,
+                  f.val());
 
   // Perfectly anticorrelated RVs
   rho = -1;
@@ -93,20 +91,18 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   b = 1.7;
   a = rho * b;
   f = stan::math::std_binormal_integral(a, b, rho);
-  EXPECT_FLOAT_EQ(0.5 / stan::math::pi()
-                  * std::exp(-0.5 * b.val() * b.val())
-                  * std::asin(rho.val())
-                  + stan::math::Phi(a.val()) * stan::math::Phi(b.val()),
+  EXPECT_FLOAT_EQ(0.5 / stan::math::pi() * std::exp(-0.5 * b.val() * b.val())
+                          * std::asin(rho.val())
+                      + stan::math::Phi(a.val()) * stan::math::Phi(b.val()),
                   f.val());
   // b = rho * a
   rho = -0.7;
   a = 1.7;
   b = rho * a;
   f = stan::math::std_binormal_integral(a, b, rho);
-  EXPECT_FLOAT_EQ(0.5 / stan::math::pi()
-                  * std::exp(-0.5 * a.val() * a.val())
-                  * std::asin(rho.val())
-                  + stan::math::Phi(a.val()) * stan::math::Phi(b.val()),
+  EXPECT_FLOAT_EQ(0.5 / stan::math::pi() * std::exp(-0.5 * a.val() * a.val())
+                          * std::asin(rho.val())
+                      + stan::math::Phi(a.val()) * stan::math::Phi(b.val()),
                   f.val());
   rho = 0.7;
   a = std::numeric_limits<double>::infinity();
@@ -157,8 +153,8 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   EXPECT_FLOAT_EQ(stan::math::Phi(0.5), f.val());
 }
 TEST(MathFunctions, binormal_integral_val_test) {
-  // Hard-coded values calculated in R using pmvnorm(lower = -Inf, upper = c(a, b),
-  // corr = matrix(c(1, rho, rho, 1), 2, 2), algorithm = TVPACK(1e-16))
+  // Hard-coded values calculated in R using pmvnorm(lower = -Inf, upper = c(a,
+  // b), corr = matrix(c(1, rho, rho, 1), 2, 2), algorithm = TVPACK(1e-16))
   // Independent normal RVs
   using stan::math::var;
   var rho = 0.3;
@@ -228,8 +224,8 @@ TEST(MathFunctions, binormal_integral_val_test) {
   EXPECT_FLOAT_EQ(-21.05454315638917, log(f.val()));
 }
 TEST(MathFunctions, binormal_integral_grad_test_vvv_owens) {
-  using stan::math::var;
   using stan::math::normal_cdf;
+  using stan::math::var;
   using std::exp;
   using std::sqrt;
   var rho = 0.3;
@@ -238,24 +234,26 @@ TEST(MathFunctions, binormal_integral_grad_test_vvv_owens) {
   var f = stan::math::std_binormal_integral(a, b, rho);
 
   double gf_1 = 1 / sqrt(2 * stan::math::pi()) * exp(-0.5 * a.val() * a.val())
-    * normal_cdf(b.val(), rho.val() * a.val(), sqrt(1 - rho.val() * rho.val()));
+                * normal_cdf(b.val(), rho.val() * a.val(),
+                             sqrt(1 - rho.val() * rho.val()));
   double gf_2 = 1 / sqrt(2 * stan::math::pi()) * exp(-0.5 * b.val() * b.val())
-    * normal_cdf(a.val(), rho.val() * b.val(), sqrt(1 - rho.val() * rho.val()));
+                * normal_cdf(a.val(), rho.val() * b.val(),
+                             sqrt(1 - rho.val() * rho.val()));
   double gf_3 = 0.5 / (stan::math::pi() * sqrt(1 - rho.val() * rho.val()))
-            * exp(-0.5 / (1 - rho.val() * rho.val())
-                  * (a.val() - rho.val() * b.val()) * (a.val() - rho.val() * b.val())
-                  -0.5 * b.val() * b.val());
+                * exp(-0.5 / (1 - rho.val() * rho.val())
+                          * (a.val() - rho.val() * b.val())
+                          * (a.val() - rho.val() * b.val())
+                      - 0.5 * b.val() * b.val());
   AVEC x = createAVEC(a, b, rho);
   VEC grad_f;
   f.grad(x, grad_f);
   EXPECT_FLOAT_EQ(gf_1, grad_f[0]);
   EXPECT_FLOAT_EQ(gf_2, grad_f[1]);
   EXPECT_FLOAT_EQ(gf_3, grad_f[2]);
-
 }
 TEST(MathFunctions, binormal_integral_grad_test_vvv_tanh_sinh) {
-  using stan::math::var;
   using stan::math::normal_cdf;
+  using stan::math::var;
   using std::exp;
   using std::sqrt;
   var rho = -0.5;
@@ -264,13 +262,16 @@ TEST(MathFunctions, binormal_integral_grad_test_vvv_tanh_sinh) {
   var f = stan::math::std_binormal_integral(a, b, rho);
 
   double gf_1 = 1 / sqrt(2 * stan::math::pi()) * exp(-0.5 * a.val() * a.val())
-    * normal_cdf(b.val(), rho.val() * a.val(), sqrt(1 - rho.val() * rho.val()));
+                * normal_cdf(b.val(), rho.val() * a.val(),
+                             sqrt(1 - rho.val() * rho.val()));
   double gf_2 = 1 / sqrt(2 * stan::math::pi()) * exp(-0.5 * b.val() * b.val())
-    * normal_cdf(a.val(), rho.val() * b.val(), sqrt(1 - rho.val() * rho.val()));
+                * normal_cdf(a.val(), rho.val() * b.val(),
+                             sqrt(1 - rho.val() * rho.val()));
   double gf_3 = 0.5 / (stan::math::pi() * sqrt(1 - rho.val() * rho.val()))
-            * exp(-0.5 / (1 - rho.val() * rho.val())
-                  * (a.val() - rho.val() * b.val()) * (a.val() - rho.val() * b.val())
-                  -0.5 * b.val() * b.val());
+                * exp(-0.5 / (1 - rho.val() * rho.val())
+                          * (a.val() - rho.val() * b.val())
+                          * (a.val() - rho.val() * b.val())
+                      - 0.5 * b.val() * b.val());
   AVEC x = createAVEC(a, b, rho);
   VEC grad_f;
   f.grad(x, grad_f);
@@ -279,8 +280,8 @@ TEST(MathFunctions, binormal_integral_grad_test_vvv_tanh_sinh) {
   EXPECT_FLOAT_EQ(gf_3, grad_f[2]);
 }
 TEST(MathFunctions, binormal_integral_grad_test_vvv_tan_sinh_near_boundary) {
-  using stan::math::var;
   using stan::math::normal_cdf;
+  using stan::math::var;
   using std::exp;
   using std::sqrt;
   var rho = 0.99;
@@ -289,14 +290,16 @@ TEST(MathFunctions, binormal_integral_grad_test_vvv_tan_sinh_near_boundary) {
   var f = stan::math::std_binormal_integral(a, b, rho);
 
   double one_minus_r_sq = (1 + rho.val()) * (1 - rho.val());
-  double gf_1 = 1 / sqrt(2 * stan::math::pi()) * exp(-0.5 * a.val() * a.val())
-    * normal_cdf(b.val(), rho.val() * a.val(), sqrt(one_minus_r_sq));
-  double gf_2 = 1 / sqrt(2 * stan::math::pi()) * exp(-0.5 * b.val() * b.val())
-    * normal_cdf(a.val(), rho.val() * b.val(), sqrt(one_minus_r_sq));
+  double gf_1
+      = 1 / sqrt(2 * stan::math::pi()) * exp(-0.5 * a.val() * a.val())
+        * normal_cdf(b.val(), rho.val() * a.val(), sqrt(one_minus_r_sq));
+  double gf_2
+      = 1 / sqrt(2 * stan::math::pi()) * exp(-0.5 * b.val() * b.val())
+        * normal_cdf(a.val(), rho.val() * b.val(), sqrt(one_minus_r_sq));
   double gf_3 = 0.5 / (stan::math::pi() * sqrt(one_minus_r_sq))
-            * exp(-0.5 / one_minus_r_sq
-                  * (a.val() - rho.val() * b.val()) * (a.val() - rho.val() * b.val())
-                  -0.5 * b.val() * b.val());
+                * exp(-0.5 / one_minus_r_sq * (a.val() - rho.val() * b.val())
+                          * (a.val() - rho.val() * b.val())
+                      - 0.5 * b.val() * b.val());
   AVEC x = createAVEC(a, b, rho);
   VEC grad_f;
   f.grad(x, grad_f);
@@ -310,10 +313,16 @@ TEST(AgradRev, check_varis_on_stack) {
   stan::math::var a = 2.0;
   stan::math::var b = 1.0;
   test::check_varis_on_stack(stan::math::std_binormal_integral(a, b, rho));
-  test::check_varis_on_stack(stan::math::std_binormal_integral(a.val(), b, rho));
-  test::check_varis_on_stack(stan::math::std_binormal_integral(a, b.val(), rho));
-  test::check_varis_on_stack(stan::math::std_binormal_integral(a.val(), b.val(), rho));
-  test::check_varis_on_stack(stan::math::std_binormal_integral(a, b, rho.val()));
-  test::check_varis_on_stack(stan::math::std_binormal_integral(a.val(), b, rho.val()));
-  test::check_varis_on_stack(stan::math::std_binormal_integral(a, b.val(), rho.val()));
+  test::check_varis_on_stack(
+      stan::math::std_binormal_integral(a.val(), b, rho));
+  test::check_varis_on_stack(
+      stan::math::std_binormal_integral(a, b.val(), rho));
+  test::check_varis_on_stack(
+      stan::math::std_binormal_integral(a.val(), b.val(), rho));
+  test::check_varis_on_stack(
+      stan::math::std_binormal_integral(a, b, rho.val()));
+  test::check_varis_on_stack(
+      stan::math::std_binormal_integral(a.val(), b, rho.val()));
+  test::check_varis_on_stack(
+      stan::math::std_binormal_integral(a, b.val(), rho.val()));
 }

@@ -29,19 +29,19 @@ namespace math {
  *
  * The function calculates the bivariate integral with Owen's algorithm for the
  * domain fabs(z1) <= 1, fabs(z2) <= 1, and fabs(rho) < 0.7, and elsewhere uses
- * the result std_binormal_integral(z1, z2, rho): 
+ * the result std_binormal_integral(z1, z2, rho):
  *
  * \f[
- *   \Phi(z_1)\Phi(z_2) + 
+ *   \Phi(z_1)\Phi(z_2) +
  *   \frac{1}{2\pi}\int_0^{\sin^{-1}(\rho)}\exp
  *   (\tfrac{-z_1^2 - z_2^2 + 2z_1 z_2 \sin(\theta)}{2\cos(\theta)^2}) d\theta
  * \f]
- * 
+ *
  * where the integral is done using boost's tanh-sinh quadrature. References
  * for the integral can be found in:
  *
- * Genz, Alan. "Numerical computation of rectangular bivariate 
- * and trivariate normal and t probabilities." 
+ * Genz, Alan. "Numerical computation of rectangular bivariate
+ * and trivariate normal and t probabilities."
  * Statistics and Computing 14.3 (2004): 251-260.
  *
  * @param z1 Random variable 1
@@ -51,15 +51,14 @@ namespace math {
  * @return The probability P(Y1 <= y[1], Y2 <= y[2] | rho).
  * @throw std::domain_error if the rho is not between -1 and 1 or nan.
  */
-double std_binormal_integral(const double z1,
-                             const double z2,
+double std_binormal_integral(const double z1, const double z2,
                              const double rho) {
   static const char* function = "std_binormal_integral";
-  using std::sqrt;
+  using std::asin;
+  using std::exp;
   using std::fabs;
   using std::min;
-  using std::exp;
-  using std::asin;
+  using std::sqrt;
 
   check_not_nan(function, "Random variable 1", z1);
   check_not_nan(function, "Random variable 2", z2);
@@ -84,8 +83,8 @@ double std_binormal_integral(const double z1,
     double a2 = (z1 / z2 - rho) / denom;
     double product = z1 * z2;
     double delta = product < 0 || (product == 0 && (z1 + z2) < 0);
-    return 0.5 * (Phi(z1) + Phi(z2) - delta)
-           - owens_t(z1, a1) - owens_t(z2, a2);
+    return 0.5 * (Phi(z1) + Phi(z2) - delta) - owens_t(z1, a1)
+           - owens_t(z2, a2);
   }
   if (fabs(rho) < 1) {
     int s = rho > 0 ? 1 : -1;
@@ -93,26 +92,23 @@ double std_binormal_integral(const double z1,
     double k = -z2;
 
     auto f = [&h, &k](const double x) {
-      return exp(0.5 * (-h * h - k * k + h * k * 2 * sin(x))/(cos(x) * cos(x)));
+      return exp(0.5 * (-h * h - k * k + h * k * 2 * sin(x))
+                 / (cos(x) * cos(x)));
     };
     double L1, error;
     boost::math::quadrature::tanh_sinh<double> integrator;
-    double accum = s == 1 ? integrator.integrate(f, 0, asin(rho),
-                                                   sqrt(stan::math::EPSILON),
-                                                   &error, &L1) :
-                            integrator.integrate(f,
-                                                 static_cast<double>(asin(rho)),
-                                                 static_cast<double>(0),
-                                                 sqrt(stan::math::EPSILON),
-                                                 &error, &L1);
+    double accum
+        = s == 1 ? integrator.integrate(f, 0, asin(rho),
+                                        sqrt(stan::math::EPSILON), &error, &L1)
+                 : integrator.integrate(f, static_cast<double>(asin(rho)),
+                                        static_cast<double>(0),
+                                        sqrt(stan::math::EPSILON), &error, &L1);
     if (exp(log(L1) - log(accum)) > 1.5) {
       std::cout << "L1: " << L1 << " integral: " << accum << std::endl;
       domain_error(function, "the bivariate normal numeric integral condition",
-                   exp(log(L1) - log(accum)),
-                   "",
+                   exp(log(L1) - log(accum)), "",
                    " indicates the integral is poorly conditioned");
     }
-
 
     accum *= s * 0.5 / pi();
     accum += Phi(z1) * Phi(z2);
@@ -126,7 +122,7 @@ double std_binormal_integral(const double z1,
 /**
  * The CDF of the standard bivariate normal (binormal) for the specified
  * variable 1, z1, and variable 2, z2, given the specified correlation, rho.
- * rho can each be either a scalar or a vector. If z1, z2, or rho are 
+ * rho can each be either a scalar or a vector. If z1, z2, or rho are
  * autodiff types, the function propagates the gradients of the CDF. Reference
  * for the gradient of the bivariate normal CDF can be found here:
  *
@@ -141,20 +137,19 @@ double std_binormal_integral(const double z1,
  * @throw std::domain_error if the rho is not between -1 and 1 or nan.
  * @tparam T_z1 type of z1
  * @tparam T_z2 type of z2
- * @tparam T_rho type of rho 
+ * @tparam T_rho type of rho
  */
 
 template <typename T_z1, typename T_z2, typename T_rho>
-typename return_type<T_z1, T_z2, T_rho>::type
-                                     std_binormal_integral(
+typename return_type<T_z1, T_z2, T_rho>::type std_binormal_integral(
     const T_z1& z1, const T_z2& z2, const T_rho& rho) {
   typedef typename partials_return_type<T_z1, T_z2, T_rho>::type partials_type;
-  using std::exp;
-  using std::sqrt;
-  using std::log;
-  using std::asin;
   using stan::math::std_binormal_integral;
   using stan::math::std_normal_lpdf;
+  using std::asin;
+  using std::exp;
+  using std::log;
+  using std::sqrt;
 
   const partials_type z1_dbl = value_of(z1);
   const partials_type z2_dbl = value_of(z2);
@@ -170,22 +165,24 @@ typename return_type<T_z1, T_z2, T_rho>::type
     const partials_type z1_minus_rho_times_z2 = z1_dbl - rho_times_z2;
     if (!is_constant_struct<T_z1>::value)
       ops_partials.edge1_.partials_[0]
-        += cdf > 0 && cdf < 1 ? exp(std_normal_lpdf(z1_dbl))
-            * Phi((z2_dbl - rho_dbl * z1_dbl) / sqrt_one_minus_rho_sq)
-            : 0;
+          += cdf > 0 && cdf < 1 ? exp(std_normal_lpdf(z1_dbl))
+                                      * Phi((z2_dbl - rho_dbl * z1_dbl)
+                                            / sqrt_one_minus_rho_sq)
+                                : 0;
     if (!is_constant_struct<T_z2>::value)
       ops_partials.edge2_.partials_[0]
-        += cdf > 0 && cdf < 1 ? exp(std_normal_lpdf(z2_dbl))
-            * Phi(z1_minus_rho_times_z2 / sqrt_one_minus_rho_sq)
-            : 0;
+          += cdf > 0 && cdf < 1
+                 ? exp(std_normal_lpdf(z2_dbl))
+                       * Phi(z1_minus_rho_times_z2 / sqrt_one_minus_rho_sq)
+                 : 0;
     if (!is_constant_struct<T_rho>::value)
       ops_partials.edge3_.partials_[0]
-          += cdf > 0 && cdf < 1 ? 0.5 / (stan::math::pi() *
-                                         sqrt_one_minus_rho_sq)
-          * exp(-0.5 / one_minus_rho_sq
-                * z1_minus_rho_times_z2 *  z1_minus_rho_times_z2
-                -0.5 * z2_dbl * z2_dbl)
-            : 0;
+          += cdf > 0 && cdf < 1
+                 ? 0.5 / (stan::math::pi() * sqrt_one_minus_rho_sq)
+                       * exp(-0.5 / one_minus_rho_sq * z1_minus_rho_times_z2
+                                 * z1_minus_rho_times_z2
+                             - 0.5 * z2_dbl * z2_dbl)
+                 : 0;
   }
   return ops_partials.build(cdf);
 }

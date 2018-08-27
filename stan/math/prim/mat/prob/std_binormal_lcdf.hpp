@@ -39,39 +39,39 @@ namespace math {
  * length.
  *
  * <p>The result log probability is defined to be the sum of the
- * log probabilities for each 2-vector observation/correlation 
+ * log probabilities for each 2-vector observation/correlation
  * parameter pair.
  *
  * @param y (Sequence of) 2-vector(s).
  * @param rho (Sequence of) correlation parameter(s)
  * for the standard bivariate normal distribution.
- * @return The log of the product of the probabilities P(Y1 <= y[1], Y2 <= y[2] | rho).
+ * @return The log of the product of the probabilities P(Y1 <= y[1], Y2 <= y[2]
+ * | rho).
  * @throw std::domain_error if the rho is not between -1 and 1 or nan.
  * @tparam T_y Underlying type of random variable in sequence.
  * @tparam T_rho Underlying type of correlation in sequence.
  */
 
 template <typename T_y, typename T_rho>
-typename return_type<T_y, T_rho>::type std_binormal_lcdf(
-    const T_y& y, const T_rho& rho) {
+typename return_type<T_y, T_rho>::type std_binormal_lcdf(const T_y& y,
+                                                         const T_rho& rho) {
   static const char* function = "std_binormal_lcdf";
-  typedef typename stan::partials_return_type<T_y, T_rho>::type
-      T_partials_return;
+  typedef
+      typename stan::partials_return_type<T_y, T_rho>::type T_partials_return;
   typedef typename stan::math::value_type<T_y>::type T_y_child_type;
 
-  using std::exp;
-  using std::sqrt;
-  using std::log;
   using std::asin;
+  using std::exp;
+  using std::log;
   using std::max;
+  using std::sqrt;
 
   check_bounded(function, "Correlation parameter", rho, -1.0, 1.0);
   if (stan::is_vector_like<T_y_child_type>::value
       || stan::is_vector_like<T_rho>::value) {
-      check_consistent_sizes(function, "Random variable", y,
-                             "Correlation parameter", rho);
+    check_consistent_sizes(function, "Random variable", y,
+                           "Correlation parameter", rho);
   }
-
 
   vector_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_rho> rho_vec(rho);
@@ -106,33 +106,35 @@ typename return_type<T_y, T_rho>::type std_binormal_lcdf(
     const T_partials_return rho_dbl = value_of(rho_vec[n]);
 
     T_partials_return cdf_ = std_binormal_integral(y1_dbl, y2_dbl, rho_dbl);
-      cdf_log += log(cdf_);
+    cdf_log += log(cdf_);
 
     if (contains_nonconstant_struct<T_y, T_rho>::value) {
-      const T_partials_return inv_cdf_ = cdf_ > 0 ? inv(cdf_) :
-        std::numeric_limits<double>::infinity();
+      const T_partials_return inv_cdf_
+          = cdf_ > 0 ? inv(cdf_) : std::numeric_limits<double>::infinity();
       const T_partials_return one_minus_rho_sq = (1 + rho_dbl) * (1 - rho_dbl);
       const T_partials_return sqrt_one_minus_rho_sq = sqrt(one_minus_rho_sq);
       const T_partials_return rho_times_y2 = rho_dbl * y2_dbl;
       const T_partials_return y1_minus_rho_times_y2 = y1_dbl - rho_times_y2;
       if (!is_constant_struct<T_y>::value) {
         ops_partials.edge1_.partials_vec_[n](0)
-          += cdf_ > 0 && cdf_ < 1 ? inv_cdf_ * exp(std_normal_lpdf(y1_dbl))
-              * Phi((y2_dbl - rho_dbl * y1_dbl) / sqrt_one_minus_rho_sq)
-              : cdf_ > 0 ? 1 : 0;
+            += cdf_ > 0 && cdf_ < 1 ? inv_cdf_ * exp(std_normal_lpdf(y1_dbl))
+                                          * Phi((y2_dbl - rho_dbl * y1_dbl)
+                                                / sqrt_one_minus_rho_sq)
+                                    : cdf_ > 0 ? 1 : 0;
         ops_partials.edge1_.partials_vec_[n](1)
-          += cdf_ > 0 && cdf_ < 1 ? inv_cdf_ * exp(std_normal_lpdf(y2_dbl))
-              * Phi(y1_minus_rho_times_y2 / sqrt_one_minus_rho_sq)
-              : cdf_ > 0 ? 1 : 0;
+            += cdf_ > 0 && cdf_ < 1
+                   ? inv_cdf_ * exp(std_normal_lpdf(y2_dbl))
+                         * Phi(y1_minus_rho_times_y2 / sqrt_one_minus_rho_sq)
+                   : cdf_ > 0 ? 1 : 0;
       }
       if (!is_constant_struct<T_rho>::value)
         ops_partials.edge2_.partials_[n]
-            += cdf_ > 0 && cdf_ < 1 ? inv_cdf_ * 0.5 /
-            (stan::math::pi() * sqrt_one_minus_rho_sq)
-            * exp(-0.5 / one_minus_rho_sq
-                  * y1_minus_rho_times_y2 *  y1_minus_rho_times_y2
-                  -0.5 * y2_dbl * y2_dbl)
-              : cdf_ > 0 ? 1 : 0;
+            += cdf_ > 0 && cdf_ < 1
+                   ? inv_cdf_ * 0.5 / (stan::math::pi() * sqrt_one_minus_rho_sq)
+                         * exp(-0.5 / one_minus_rho_sq * y1_minus_rho_times_y2
+                                   * y1_minus_rho_times_y2
+                               - 0.5 * y2_dbl * y2_dbl)
+                   : cdf_ > 0 ? 1 : 0;
     }
   }
   return ops_partials.build(cdf_log);

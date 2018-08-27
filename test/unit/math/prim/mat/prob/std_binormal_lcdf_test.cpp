@@ -10,7 +10,8 @@ using Eigen::Matrix;
 using std::vector;
 
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
+void to_function_input(int N_y,
+                       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
                        vector<Eigen::Matrix<T, Eigen::Dynamic, 1>>& y,
                        vector<T>& rho) {
   int cntr = 0;
@@ -28,9 +29,9 @@ void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_v
 }
 
 template <typename T>
-void to_function_input(int N_y, const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
-                       vector<Eigen::Matrix<T, Eigen::Dynamic, 1>>& y,
-                       T& rho) {
+void to_function_input(int N_y,
+                       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec,
+                       vector<Eigen::Matrix<T, Eigen::Dynamic, 1>>& y, T& rho) {
   int cntr = 0;
   for (int i = 0; i < N_y; ++i) {
     Eigen::Matrix<T, Eigen::Dynamic, 1> el(2);
@@ -85,7 +86,8 @@ struct log_binorm {
   inline T operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
     using std::log;
-    return log(stan::math::std_binormal_integral(inp_vec(0), inp_vec(1), inp_vec(2)));
+    return log(
+        stan::math::std_binormal_integral(inp_vec(0), inp_vec(1), inp_vec(2)));
   }
 };
 
@@ -102,59 +104,57 @@ struct dual_std_vec_log_binorm {
     T accum(0.0);
     if (rho.size() == N_y_)
       for (int i = 0; i < N_y_; ++i)
-        accum += log(stan::math::std_binormal_integral(y[i][0], y[i][1], rho[i]));
+        accum
+            += log(stan::math::std_binormal_integral(y[i][0], y[i][1], rho[i]));
     else
       for (int i = 0; i < N_y_; ++i)
-        accum += log(stan::math::std_binormal_integral(y[i][0], y[i][1], rho[0]));
+        accum
+            += log(stan::math::std_binormal_integral(y[i][0], y[i][1], rho[0]));
     return accum;
   }
 };
 
-TEST(MathFunctions, binormal_lcdf_using) { using stan::math::std_binormal_lcdf; }
+TEST(MathFunctions, binormal_lcdf_using) {
+  using stan::math::std_binormal_lcdf;
+}
 
 TEST(MathFunctions, binormal_integral_throw_RV_1_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   Matrix<double, Dynamic, 1> y(2);
   y << nan, -2.0;
   double rho = 0.3;
-  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho), std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_throw_RV_2_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   Matrix<double, Dynamic, 1> y(2);
   y << -2, nan;
   double rho = 0.3;
-  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho), std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_throw_rho_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   Matrix<double, Dynamic, 1> y(2);
   y << -2, 3;
   double rho = nan;
-  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho), std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_throw_rho_lt_n_1) {
   Matrix<double, Dynamic, 1> y(2);
   y << -2, 3;
   double rho = -1.3;
-  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho), std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_throw_rho_gt_1) {
   Matrix<double, Dynamic, 1> y(2);
   y << -2, 3;
   double rho = 1.3;
-  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho), std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_throw_size_y_gt_two) {
   Matrix<double, Dynamic, 1> y(3);
   double rho = 0.3;
-  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho),
-               std::invalid_argument);
+  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho), std::invalid_argument);
 }
 TEST(MathFunctions, vec_binormal_integral_throw_size_y_gt_two) {
   vector<Matrix<double, Dynamic, 1>> y(2);
@@ -163,20 +163,17 @@ TEST(MathFunctions, vec_binormal_integral_throw_size_y_gt_two) {
   y[0] = vec_test;
   y[1] = vec_test_alt;
   double rho = 0.3;
-  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho),
-               std::invalid_argument);
+  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho), std::invalid_argument);
 }
 TEST(MathFunctions, vec_binormal_integral_rho_y_inconsistent_size) {
   vector<Matrix<double, Dynamic, 1>> y(2);
   vector<double> rho(3);
-  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho),
-               std::invalid_argument);
+  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho), std::invalid_argument);
 }
 TEST(MathFunctions, vec_binormal_integral_rho_y_inconsistent_size_eigen) {
   vector<Matrix<double, Dynamic, 1>> y(2);
   Matrix<double, Dynamic, 1> rho(3);
-  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho),
-               std::invalid_argument);
+  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho), std::invalid_argument);
 }
 TEST(MathFunctions, vec_binormal_integral_throw_nan_second_arg) {
   double nan = std::numeric_limits<double>::quiet_NaN();
@@ -188,8 +185,7 @@ TEST(MathFunctions, vec_binormal_integral_throw_nan_second_arg) {
   y[0] = vec_test;
   y[1] = vec_test_alt;
   double rho = 0.3;
-  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho), std::domain_error);
 }
 TEST(MathFunctions, vec_binormal_integral_throw_nan_second_arg_second_vec) {
   double nan = std::numeric_limits<double>::quiet_NaN();
@@ -201,8 +197,7 @@ TEST(MathFunctions, vec_binormal_integral_throw_nan_second_arg_second_vec) {
   y[0] = vec_test_alt;
   y[1] = vec_test;
   double rho = 0.3;
-  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho), std::domain_error);
 }
 TEST(MathFunctions, vec_binormal_integral_throw_nan_first_arg) {
   double nan = std::numeric_limits<double>::quiet_NaN();
@@ -214,8 +209,7 @@ TEST(MathFunctions, vec_binormal_integral_throw_nan_first_arg) {
   y[0] = vec_test;
   y[1] = vec_test_alt;
   double rho = 0.3;
-  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho), std::domain_error);
 }
 TEST(MathFunctions, vec_binormal_integral_throw_nan_first_arg_second_vec) {
   double nan = std::numeric_limits<double>::quiet_NaN();
@@ -227,8 +221,7 @@ TEST(MathFunctions, vec_binormal_integral_throw_nan_first_arg_second_vec) {
   y[0] = vec_test_alt;
   y[1] = vec_test;
   double rho = 0.3;
-  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho),
-               std::domain_error);
+  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho), std::domain_error);
 }
 TEST(MathFunctions, binormal_integral_no_throw) {
   Matrix<double, Dynamic, 1> y(2);
@@ -275,8 +268,7 @@ TEST(MathFunctions, binormal_integral_throw_y_row_vec_rho_vec) {
   y << -2, 3;
   Matrix<double, 1, Dynamic> rho(4);
   rho << 0.3, 0.4, 0.5, 0.6;
-  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho),
-               std::invalid_argument);
+  EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho), std::invalid_argument);
 }
 TEST(MathFunctions, binormal_integral_throw_vec_y_row_vec_rho_vec) {
   vector<Matrix<double, 1, Dynamic>> y_vec(1);
@@ -297,7 +289,8 @@ TEST(MathFunctions, binormal_integral_no_throw_vec_y_row_vec_rho_vec_one_el) {
   rho << 0.3;
   EXPECT_NO_THROW(stan::math::std_binormal_lcdf(y_vec, rho));
 }
-TEST(MathFunctions, binormal_integral_throw_two_el_vec_y_row_vec_rho_vec_one_el) {
+TEST(MathFunctions,
+     binormal_integral_throw_two_el_vec_y_row_vec_rho_vec_one_el) {
   vector<Matrix<double, Dynamic, 1>> y_vec(2);
   Matrix<double, Dynamic, 1> y(2);
   y << -2, 3;
@@ -317,7 +310,8 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   Matrix<double, Dynamic, 1> y(2);
   y(0) = a;
   y(1) = b;
-  EXPECT_FLOAT_EQ(log(stan::math::Phi(a)) + log(stan::math::Phi(b)), stan::math::std_binormal_lcdf(y, rho));
+  EXPECT_FLOAT_EQ(log(stan::math::Phi(a)) + log(stan::math::Phi(b)),
+                  stan::math::std_binormal_lcdf(y, rho));
 
   // Perfectly correlated RVs
   rho = 1;
@@ -325,8 +319,8 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   b = 3.7;
   y(0) = a;
   y(1) = b;
-  EXPECT_FLOAT_EQ(log(stan::math::Phi(a)), stan::math::std_binormal_lcdf(y, rho));
-
+  EXPECT_FLOAT_EQ(log(stan::math::Phi(a)),
+                  stan::math::std_binormal_lcdf(y, rho));
 
   // Perfectly anticorrelated RVs
   rho = -1;
@@ -334,7 +328,8 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   b = 1.7;
   y(0) = a;
   y(1) = b;
-  EXPECT_FLOAT_EQ(log(stan::math::Phi(a) + stan::math::Phi(b) - 1), stan::math::std_binormal_lcdf(y, rho));
+  EXPECT_FLOAT_EQ(log(stan::math::Phi(a) + stan::math::Phi(b) - 1),
+                  stan::math::std_binormal_lcdf(y, rho));
 
   // Perfectly anticorrelated RVs
   rho = -1;
@@ -342,7 +337,8 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   b = 1.7;
   y(0) = a;
   y(1) = b;
-  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), stan::math::std_binormal_lcdf(y, rho));
+  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
+                  stan::math::std_binormal_lcdf(y, rho));
 
   // a = rho * b
   rho = -0.7;
@@ -350,11 +346,10 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   a = rho * b;
   y(0) = a;
   y(1) = b;
-  EXPECT_FLOAT_EQ(log(0.5 / stan::math::pi()
-                  * std::exp(-0.5 * b * b)
-                  * std::asin(rho)
-                  + stan::math::Phi(a) * stan::math::Phi(b)),
-                  stan::math::std_binormal_lcdf(y, rho));
+  EXPECT_FLOAT_EQ(
+      log(0.5 / stan::math::pi() * std::exp(-0.5 * b * b) * std::asin(rho)
+          + stan::math::Phi(a) * stan::math::Phi(b)),
+      stan::math::std_binormal_lcdf(y, rho));
 
   // b = rho * a
   rho = -0.7;
@@ -362,11 +357,10 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   b = rho * a;
   y(0) = a;
   y(1) = b;
-  EXPECT_FLOAT_EQ(log(0.5 / stan::math::pi()
-                  * std::exp(-0.5 * a * a)
-                  * std::asin(rho)
-                  + stan::math::Phi(a) * stan::math::Phi(b)),
-                  stan::math::std_binormal_lcdf(y, rho));
+  EXPECT_FLOAT_EQ(
+      log(0.5 / stan::math::pi() * std::exp(-0.5 * a * a) * std::asin(rho)
+          + stan::math::Phi(a) * stan::math::Phi(b)),
+      stan::math::std_binormal_lcdf(y, rho));
   rho = 0.7;
   a = std::numeric_limits<double>::infinity();
   b = std::numeric_limits<double>::infinity();
@@ -379,7 +373,8 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   b = -std::numeric_limits<double>::infinity();
   y(0) = a;
   y(1) = b;
-  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), stan::math::std_binormal_lcdf(y, rho));
+  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
+                  stan::math::std_binormal_lcdf(y, rho));
 
   rho = -0.7;
   a = -std::numeric_limits<double>::infinity();
@@ -400,32 +395,36 @@ TEST(MathFunctions, binormal_integral_val_boundaries_test) {
   b = std::numeric_limits<double>::infinity();
   y(0) = a;
   y(1) = b;
-  EXPECT_FLOAT_EQ(log(stan::math::Phi(1.5)), stan::math::std_binormal_lcdf(y, rho));
+  EXPECT_FLOAT_EQ(log(stan::math::Phi(1.5)),
+                  stan::math::std_binormal_lcdf(y, rho));
 
   rho = 0.7;
   a = 1.5;
   b = std::numeric_limits<double>::infinity();
   y(0) = a;
   y(1) = b;
-  EXPECT_FLOAT_EQ(log(stan::math::Phi(1.5)), stan::math::std_binormal_lcdf(y, rho));
+  EXPECT_FLOAT_EQ(log(stan::math::Phi(1.5)),
+                  stan::math::std_binormal_lcdf(y, rho));
 
   rho = 0.7;
   b = 2.5;
   a = std::numeric_limits<double>::infinity();
   y(0) = a;
   y(1) = b;
-  EXPECT_FLOAT_EQ(log(stan::math::Phi(2.5)), stan::math::std_binormal_lcdf(y, rho));
+  EXPECT_FLOAT_EQ(log(stan::math::Phi(2.5)),
+                  stan::math::std_binormal_lcdf(y, rho));
 
   rho = -0.7;
   b = 0.5;
   a = std::numeric_limits<double>::infinity();
   y(0) = a;
   y(1) = b;
-  EXPECT_FLOAT_EQ(log(stan::math::Phi(0.5)), stan::math::std_binormal_lcdf(y, rho));
+  EXPECT_FLOAT_EQ(log(stan::math::Phi(0.5)),
+                  stan::math::std_binormal_lcdf(y, rho));
 }
 TEST(MathFunctions, binormal_integral_val_test) {
-  // Hard-coded values calculated in R using pmvnorm(lower = -Inf, upper = c(a, b),
-  // corr = matrix(c(1, rho, rho, 1), 2, 2), algorithm = TVPACK(1e-16))
+  // Hard-coded values calculated in R using pmvnorm(lower = -Inf, upper = c(a,
+  // b), corr = matrix(c(1, rho, rho, 1), 2, 2), algorithm = TVPACK(1e-16))
   // Independent normal RVs
   vector<Matrix<double, Dynamic, 1>> vals;
   Matrix<double, Dynamic, 1> inp_vec(3);
@@ -472,8 +471,8 @@ TEST(MathFunctions, binormal_integral_val_test) {
     EXPECT_FLOAT_EQ(dist_fun(vals[i]), tru_fun(vals[i]));
 }
 TEST(MathFunctions, vec_binormal_integral_val_test) {
-  // Hard-coded values calculated in R using pmvnorm(lower = -Inf, upper = c(a, b),
-  // corr = matrix(c(1, rho, rho, 1), 2, 2), algorithm = TVPACK(1e-16))
+  // Hard-coded values calculated in R using pmvnorm(lower = -Inf, upper = c(a,
+  // b), corr = matrix(c(1, rho, rho, 1), 2, 2), algorithm = TVPACK(1e-16))
   // Independent normal RVs
   int N_y = 3;
   dual_std_vec_bivar_norm_lcdf dist_fun(N_y);
