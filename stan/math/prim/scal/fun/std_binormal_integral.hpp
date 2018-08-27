@@ -21,6 +21,34 @@
 namespace stan {
 namespace math {
 
+/**
+ * The CDF of the standard bivariate normal (binormal) for the specified
+ * variable 1, z1, and variable 2, z2, given the specified correlation, rho.
+ *
+ * The function calculates the bivariate integral with Owen's algorithm for the
+ * domain fabs(z1) <= 1, fabs(z2) <= 1, and fabs(rho) < 0.7, and elsewhere uses
+ * the result std_binormal_integral(z1, z2, rho): 
+ *
+ * \f[
+ *   \Phi(z_1)\Phi(z_2) + 
+ *   \frac{1}{2\pi}\int_0^{\sin^{-1}(\rho)}\exp
+ *   (\tfrac{-z_1^2 - z_2^2 + 2z_1 z_2 \sin(\theta)}{2\cos(\theta)^2}) d\theta
+ * \f]
+ * 
+ * where the integral is done using boost's tanh-sinh quadrature. References
+ * for the integral can be found in:
+ *
+ * Genz, Alan. "Numerical computation of rectangular bivariate 
+ * and trivariate normal and t probabilities." 
+ * Statistics and Computing 14.3 (2004): 251-260.
+ *
+ * @param z1 Random variable 1
+ * @param z2 Random variable 2
+ * @param rho correlation parameter
+ * for the standard bivariate normal distribution.
+ * @return The probability P(Y1 <= y[1], Y2 <= y[2] | rho).
+ * @throw std::domain_error if the rho is not between -1 and 1 or nan.
+ */
 double std_binormal_integral(const double z1, 
                              const double z2, 
                              const double rho) {
@@ -76,9 +104,10 @@ double std_binormal_integral(const double z1,
                                                    &error, &L1);
     if (exp(log(L1) - log(accum)) > 1.5) {
       std::cout << "L1: " << L1 << " integral: " << accum << std::endl;
-      domain_error(function, "the numeric integration of bivariate normal density condition number", exp(log(L1) - log(accum)),
+      domain_error(function, "the numeric integration of bivariate normal density condition number", 
+                   exp(log(L1) - log(accum)),
                    "",
-                   " indicates the integral in poorly conditioned");
+                   " indicates the integral is poorly conditioned");
     }
 
 
@@ -90,6 +119,27 @@ double std_binormal_integral(const double z1,
     return fmin(Phi(z1),Phi(z2));
   return z2 > -z1 > 0 ? Phi(z1) + Phi(z2) - 1 : 0;
 }
+
+/**
+ * The CDF of the standard bivariate normal (binormal) for the specified
+ * variable 1, z1, and variable 2, z2, given the specified correlation, rho.
+ * rho can each be either a scalar or a vector. If z1, z2, or rho are 
+ * autodiff types, the function propagates the gradients of the CDF. Reference
+ * for the gradient of the bivariate normal CDF can be found here:
+ *
+ * blogs.sas.com/content/iml/
+ * 2013/09/20/gradient-of-the-bivariate-normal-cumulative-distribution.html
+ *
+ * @param z1 Scalar random variable 1
+ * @param z2 Scalar random variable 2
+ * @param rho Scalar correlation parameter
+ * for the standard bivariate normal distribution.
+ * @return The probability P(Y1 <= y[1], Y2 <= y[2] | rho).
+ * @throw std::domain_error if the rho is not between -1 and 1 or nan.
+ * @tparam T_z1 type of z1
+ * @tparam T_z2 type of z2
+ * @tparam T_rho type of rho 
+ */
 
 template <typename T_z1, typename T_z2, typename T_rho>
 typename return_type<T_z1, T_z2, T_rho>::type
