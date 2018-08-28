@@ -105,6 +105,7 @@ struct global_range_kernel {
    *  the global work size.
    * @param name The name for the kernel
    * @param source A string literal containing the code for the kernel.
+ 	 * @param options The values of macros to be passed at compile time.
    */
   global_range_kernel(const char* name, const char* source,
                       std::map<const char*, int> options = {{"NO_OPT", 0}})
