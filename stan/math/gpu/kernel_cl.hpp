@@ -81,7 +81,7 @@ class kernel_functor {
    * functor to access the kernel compiler.
    * @param name The name for the kernel.
    * @param source A string literal containing the code for the kernel.
-	 * @param options The values of macros to be passed at compile time.
+   * @param options The values of macros to be passed at compile time.
    */
   kernel_functor(const char* name, const char* source,
                  std::map<const char*, int> options)
@@ -134,7 +134,7 @@ struct local_range_kernel {
    * Creates kernels that only need access to defining the global work size.
    * @param name The name for the kernel
    * @param source A string literal containing the code for the kernel.
-	 * @param options The values of macros to be passed at compile time.
+   * @param options The values of macros to be passed at compile time.
    */
   local_range_kernel(const char* name, const char* source,
                      std::map<const char*, int> options = {{"NO_OPT", 0}})
