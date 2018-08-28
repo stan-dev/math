@@ -1,10 +1,9 @@
+#include <stan/math/prim/scal/prob/normal_cdf.hpp>
 #include <stan/math/rev/scal.hpp>
-#include <stan/math/prim/scal/fun/std_binormal_integral.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <stan/math/prim/scal/prob/normal_cdf.hpp>
 
 TEST(MathFunctions, binormal_integral_using) {
   using stan::math::std_binormal_integral;

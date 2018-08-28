@@ -1,5 +1,4 @@
 #include <stan/math/rev/mat.hpp>
-#include <stan/math/prim/mat/prob/std_binormal_lcdf.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
@@ -213,7 +212,7 @@ struct RV_R_std_binorm_lcdf {
 // vector<Vector>, real
 struct vV_R_std_binorm_lcdf {
   int N_y_;
-  vV_R_std_binorm_lcdf(int N_y) : N_y_(N_y) {}
+  explicit vV_R_std_binorm_lcdf(int N_y) : N_y_(N_y) {}
   template <typename T>
   inline T operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
@@ -227,7 +226,7 @@ struct vV_R_std_binorm_lcdf {
 // vector<Row Vector>, real
 struct vRV_R_std_binorm_lcdf {
   int N_y_;
-  vRV_R_std_binorm_lcdf(int N_y) : N_y_(N_y) {}
+  explicit vRV_R_std_binorm_lcdf(int N_y) : N_y_(N_y) {}
   template <typename T>
   inline T operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
@@ -241,7 +240,7 @@ struct vRV_R_std_binorm_lcdf {
 // vector<Vector>, vector
 struct vV_v_std_binorm_lcdf {
   int N_y_;
-  vV_v_std_binorm_lcdf(int N_y) : N_y_(N_y) {}
+  explicit vV_v_std_binorm_lcdf(int N_y) : N_y_(N_y) {}
   template <typename T>
   inline T operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
@@ -255,7 +254,7 @@ struct vV_v_std_binorm_lcdf {
 // vector<Row Vector>, vector
 struct vRV_v_std_binorm_lcdf {
   int N_y_;
-  vRV_v_std_binorm_lcdf(int N_y) : N_y_(N_y) {}
+  explicit vRV_v_std_binorm_lcdf(int N_y) : N_y_(N_y) {}
   template <typename T>
   inline T operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
@@ -269,7 +268,7 @@ struct vRV_v_std_binorm_lcdf {
 // vector<Vector>, Vector
 struct vV_V_std_binorm_lcdf {
   int N_y_;
-  vV_V_std_binorm_lcdf(int N_y) : N_y_(N_y) {}
+  explicit vV_V_std_binorm_lcdf(int N_y) : N_y_(N_y) {}
   template <typename T>
   inline T operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
@@ -283,7 +282,7 @@ struct vV_V_std_binorm_lcdf {
 // vector<Row Vector>, Vector
 struct vRV_V_std_binorm_lcdf {
   int N_y_;
-  vRV_V_std_binorm_lcdf(int N_y) : N_y_(N_y) {}
+  explicit vRV_V_std_binorm_lcdf(int N_y) : N_y_(N_y) {}
   template <typename T>
   inline T operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
@@ -297,7 +296,7 @@ struct vRV_V_std_binorm_lcdf {
 // Vector, double
 struct V_D_std_binorm_lcdf {
   double rho_;
-  V_D_std_binorm_lcdf(double rho) : rho_(rho) {}
+  explicit V_D_std_binorm_lcdf(double rho) : rho_(rho) {}
   template <typename T>
   inline T operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
@@ -311,7 +310,7 @@ struct V_D_std_binorm_lcdf {
 // Row Vector, double
 struct RV_D_std_binorm_lcdf {
   double rho_;
-  RV_D_std_binorm_lcdf(double rho) : rho_(rho) {}
+  explicit RV_D_std_binorm_lcdf(double rho) : rho_(rho) {}
   template <typename T>
   inline T operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
@@ -411,7 +410,7 @@ struct vRV_VD_std_binorm_lcdf {
 // double Vector, real
 struct VD_R_std_binorm_lcdf {
   Matrix<double, Dynamic, 1> y_;
-  VD_R_std_binorm_lcdf(Matrix<double, Dynamic, 1>& y) : y_(y) {}
+  explicit VD_R_std_binorm_lcdf(Matrix<double, Dynamic, 1>& y) : y_(y) {}
   template <typename T>
   inline T operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
@@ -422,7 +421,7 @@ struct VD_R_std_binorm_lcdf {
 // double Row Vector, real
 struct RVD_R_std_binorm_lcdf {
   Matrix<double, 1, Dynamic> y_;
-  RVD_R_std_binorm_lcdf(Matrix<double, 1, Dynamic>& y) : y_(y) {}
+  explicit RVD_R_std_binorm_lcdf(Matrix<double, 1, Dynamic>& y) : y_(y) {}
   template <typename T>
   inline T operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
@@ -433,7 +432,7 @@ struct RVD_R_std_binorm_lcdf {
 // double vector<Vector>, real
 struct vVD_R_std_binorm_lcdf {
   vector<Matrix<double, Dynamic, 1>> y_;
-  vVD_R_std_binorm_lcdf(vector<Matrix<double, Dynamic, 1>>& y) {
+  explicit vVD_R_std_binorm_lcdf(vector<Matrix<double, Dynamic, 1>>& y) {
     for (size_t i = 0; i < y.size(); ++i)
       y_.push_back(y[i]);
   }
@@ -448,7 +447,7 @@ struct vVD_R_std_binorm_lcdf {
 // double vector<Row Vector>, real
 struct vRVD_R_std_binorm_lcdf {
   vector<Matrix<double, 1, Dynamic>> y_;
-  vRVD_R_std_binorm_lcdf(vector<Matrix<double, 1, Dynamic>>& y) {
+  explicit vRVD_R_std_binorm_lcdf(vector<Matrix<double, 1, Dynamic>>& y) {
     for (size_t i = 0; i < y.size(); ++i)
       y_.push_back(y[i]);
   }
@@ -462,7 +461,7 @@ struct vRVD_R_std_binorm_lcdf {
 // double vector<Vector>, vector
 struct vVD_v_std_binorm_lcdf {
   vector<Matrix<double, Dynamic, 1>> y_;
-  vVD_v_std_binorm_lcdf(vector<Matrix<double, Dynamic, 1>>& y) {
+  explicit vVD_v_std_binorm_lcdf(vector<Matrix<double, Dynamic, 1>>& y) {
     for (size_t i = 0; i < y.size(); ++i)
       y_.push_back(y[i]);
   }
@@ -479,7 +478,7 @@ struct vVD_v_std_binorm_lcdf {
 // double vector<Row Vector>, vector
 struct vRVD_v_std_binorm_lcdf {
   vector<Matrix<double, 1, Dynamic>> y_;
-  vRVD_v_std_binorm_lcdf(vector<Matrix<double, 1, Dynamic>>& y) {
+  explicit vRVD_v_std_binorm_lcdf(vector<Matrix<double, 1, Dynamic>>& y) {
     for (size_t i = 0; i < y.size(); ++i)
       y_.push_back(y[i]);
   }
@@ -496,7 +495,7 @@ struct vRVD_v_std_binorm_lcdf {
 // double vector<Row Vector>, Vector
 struct vRVD_V_std_binorm_lcdf {
   vector<Matrix<double, 1, Dynamic>> y_;
-  vRVD_V_std_binorm_lcdf(vector<Matrix<double, 1, Dynamic>>& y) {
+  explicit vRVD_V_std_binorm_lcdf(vector<Matrix<double, 1, Dynamic>>& y) {
     for (size_t i = 0; i < y.size(); ++i)
       y_.push_back(y[i]);
   }
@@ -510,7 +509,7 @@ struct vRVD_V_std_binorm_lcdf {
 // double vector<Vector>, Vector
 struct vVD_V_std_binorm_lcdf {
   vector<Matrix<double, Dynamic, 1>> y_;
-  vVD_V_std_binorm_lcdf(vector<Matrix<double, Dynamic, 1>>& y) {
+  explicit vVD_V_std_binorm_lcdf(vector<Matrix<double, Dynamic, 1>>& y) {
     for (size_t i = 0; i < y.size(); ++i)
       y_.push_back(y[i]);
   }
@@ -543,21 +542,22 @@ struct vV_vD_D_log_std_binorm_integral {
     vector<Matrix<T, Dynamic, 1>> y;
     to_function_input(N_y_, inp_vec, y);
     T accum(0.0);
-    if (rho_.size() == N_y_)
+    if (rho_.size() == N_y_) {
       for (int i = 0; i < N_y_; ++i)
         accum += log(
             stan::math::std_binormal_integral(y[i][0], y[i][1], rho_[i]));
-    else
+    } else {
       for (int i = 0; i < N_y_; ++i)
         accum += log(
             stan::math::std_binormal_integral(y[i][0], y[i][1], rho_[0]));
+    }
     return accum;
   }
 };
 
 struct vV_v_R_log_std_binorm_integral {
   int N_y_;
-  vV_v_R_log_std_binorm_integral(int N_y) : N_y_(N_y) {}
+  explicit vV_v_R_log_std_binorm_integral(int N_y) : N_y_(N_y) {}
   template <typename T>
   inline T operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
@@ -566,14 +566,15 @@ struct vV_v_R_log_std_binorm_integral {
     vector<T> rho;
     to_function_input(N_y_, inp_vec, y, rho);
     T accum(0.0);
-    if (rho.size() == N_y_)
+    if (rho.size() == N_y_) {
       for (int i = 0; i < N_y_; ++i)
         accum
             += log(stan::math::std_binormal_integral(y[i][0], y[i][1], rho[i]));
-    else
+    } else {
       for (int i = 0; i < N_y_; ++i)
         accum
             += log(stan::math::std_binormal_integral(y[i][0], y[i][1], rho[0]));
+    }
     return accum;
   }
 };
@@ -581,7 +582,7 @@ struct vV_v_R_log_std_binorm_integral {
 template <int R, int C>
 struct vVD_v_log_std_binorm_integral {
   vector<Matrix<double, R, C>> y_;
-  vVD_v_log_std_binorm_integral(vector<Matrix<double, R, C>>& y) {
+  explicit vVD_v_log_std_binorm_integral(vector<Matrix<double, R, C>>& y) {
     for (size_t i = 0; i < y.size(); ++i)
       y_.push_back(y[i]);
   }
