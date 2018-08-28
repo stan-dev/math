@@ -23,9 +23,14 @@ std::string helpers =
   #ifndef C
   #define C(i,j) C[j * rows + i]
   #endif
+	// Transpose
   #ifndef BT
   #define BT(i,j) B[j * cols + i]
   #endif
+	#ifndef AT
+	#define AT(i,j) A[j * cols + i]
+	#endif
+	// Moving between two buffers
   #ifndef src
   #define src(i,j) src[j * src_rows + i]
   #endif
@@ -33,16 +38,9 @@ std::string helpers =
   #define dst(i,j) dst[j * dst_rows + i]
   #endif
 
-	// Thread block sizes
-  #ifndef WORK_PER_THREAD
-  #define WORK_PER_THREAD 8
-  #endif
-  #ifndef THREAD_BLOCK_SIZE
-  #define THREAD_BLOCK_SIZE 32
-  #endif
-  #ifndef THREAD_BLOCK_SIZE_COL
+	// The local memory column for each thread block
   #define THREAD_BLOCK_SIZE_COL THREAD_BLOCK_SIZE/WORK_PER_THREAD
-  #endif
+
   )";
 }  // namespace opencl_kernels
 }  // namespace math
