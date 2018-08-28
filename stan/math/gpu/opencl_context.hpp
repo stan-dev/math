@@ -104,8 +104,7 @@ class opencl_context_base {
       // older integrated GPUs or CPUs
       if (thread_block_size_sqrt < base_opts_["THREAD_BLOCK_SIZE"]) {
         base_opts_["THREAD_BLOCK_SIZE"] = thread_block_size_sqrt;
-        base_opts_["WORK_PER_THREAD_MULT"] = 1;
-        base_opts_["WORK_PER_THREAD_MULT_SELF_TRANS"] = 1;
+        base_opts_["WORK_PER_THREAD"] = 1;
       }
     } catch (const cl::Error& e) {
       check_opencl_error("opencl_context", e);
@@ -126,9 +125,14 @@ class opencl_context_base {
 
   // Holds Default parameter values for each Kernel.
   typedef std::map<const char*, int> map_base_opts;
-  map_base_opts base_opts_ = {{"THREAD_BLOCK_SIZE", 32},
-                              {"WORK_PER_THREAD_MULT", 8},
-                              {"WORK_PER_THREAD_MULT_SELF_TRANS", 4}};
+  map_base_opts base_opts_
+      = {{"LOWER", static_cast<int>(TriangularViewGPU::Lower)},
+         {"UPPER", static_cast<int>(TriangularViewGPU::Upper)},
+         {"ENTIRE", static_cast<int>(TriangularViewGPU::Entire)},
+         {"UPPER_TO_LOWER", static_cast<int>(TriangularMapGPU::UpperToLower)},
+         {"LOWER_TO_UPPER", static_cast<int>(TriangularMapGPU::LowerToUpper)},
+         {"THREAD_BLOCK_SIZE", 32},
+         {"WORK_PER_THREAD", 8}};
 
   static opencl_context_base& getInstance() {
     static opencl_context_base instance_;

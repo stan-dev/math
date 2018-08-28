@@ -24,13 +24,13 @@ inline matrix_gpu multiply_transpose(const matrix_gpu& A) {
   // padding the matrices so the dimensions are divisible with local
   // improves performance becasuse we can omit if statements in the
   // multiply kernel
-  int local = opencl_context.base_opts()["THREAD_BLOCK_SIZE"];
+  int local = opencl_kernels::multiply_transpose.opts.at("THREAD_BLOCK_SIZE");
   int Mpad = ((A.rows() + local - 1) / local) * local;
   int Npad = ((A.cols() + local - 1) / local) * local;
   matrix_gpu tempPad(Mpad, Mpad);
   matrix_gpu Apad(Mpad, Npad);
   Apad.sub_block(A, 0, 0, 0, 0, A.rows(), A.cols());
-  int wpt = opencl_context.base_opts()["WORK_PER_THREAD_MULT_SELF_TRANS"];
+  int wpt = opencl_kernels::multiply_transpose.opts.at("WORK_PER_THREAD");
   try {
     opencl_kernels::multiply_transpose(
         cl::NDRange(Mpad, Mpad / wpt), cl::NDRange(local, local / wpt),

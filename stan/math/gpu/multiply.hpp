@@ -59,7 +59,7 @@ inline matrix_gpu multiply(matrix_gpu& A, matrix_gpu& B) {
   matrix_gpu temp(A.rows(), B.cols());
   if (temp.size() == 0)
     return temp;
-  int local = opencl_context.base_opts()["THREAD_BLOCK_SIZE"];
+  int local = opencl_kernels::matrix_multiply.opts.at("THREAD_BLOCK_SIZE");
   int Mpad = ((A.rows() + local - 1) / local) * local;
   int Npad = ((B.cols() + local - 1) / local) * local;
   int Kpad = ((A.cols() + local - 1) / local) * local;
@@ -72,7 +72,7 @@ inline matrix_gpu multiply(matrix_gpu& A, matrix_gpu& B) {
   matrix_gpu Bpad(Kpad, Npad);
   Apad.sub_block(A, 0, 0, 0, 0, A.rows(), A.cols());
   Bpad.sub_block(B, 0, 0, 0, 0, B.rows(), B.cols());
-  int wpt = opencl_context.base_opts()["WORK_PER_THREAD_MULT"];
+  int wpt = opencl_kernels::matrix_multiply.opts.at("WORK_PER_THREAD");
   try {
     opencl_kernels::matrix_multiply(
         cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),

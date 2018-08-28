@@ -33,43 +33,16 @@ std::string helpers =
   #define dst(i,j) dst[j * dst_rows + i]
   #endif
 
-	// Options for lower or upper triangular as well as full
-	#ifndef LOWER
-	#define LOWER 0
-	#endif
-	#ifndef UPPER
-	#define UPPER 1
-	#endif
-	#ifndef ENTIRE
-	#define ENTIRE 2
-	#endif
-
-	// Options for flipping lower to upper and vice versa
-	#ifndef UPPER_TO_LOWER
-	#define UPPER_TO_LOWER 0
-	#endif
-	#ifndef LOWER_TO_UPPER
-	#define LOWER_TO_UPPER 1
-	#endif
-
 	// Thread block sizes
-  #ifndef WORK_PER_THREAD_MULT
-  #define WORK_PER_THREAD_MULT 8
+  #ifndef WORK_PER_THREAD
+  #define WORK_PER_THREAD 8
   #endif
   #ifndef THREAD_BLOCK_SIZE
   #define THREAD_BLOCK_SIZE 32
   #endif
-  #ifndef THREAD_BLOCK_SIZE_MULT_COL
-  #define THREAD_BLOCK_SIZE_MULT_COL THREAD_BLOCK_SIZE/WORK_PER_THREAD_MULT
+  #ifndef THREAD_BLOCK_SIZE_COL
+  #define THREAD_BLOCK_SIZE_COL THREAD_BLOCK_SIZE/WORK_PER_THREAD
   #endif
-  #ifndef THREAD_BLOCK_SIZE
-  #define THREAD_BLOCK_SIZE 32
-  #endif
-  #ifndef WORK_PER_THREAD_MULT_SELF_TRANS
-  #define WORK_PER_THREAD_MULT_SELF_TRANS 4
-  #endif
-  #define THREAD_BLOCK_SIZE_MULT_SELF_TRANS_COL \
-    THREAD_BLOCK_SIZE / WORK_PER_THREAD_MULT_SELF_TRANS
   )";
 }  // namespace opencl_kernels
 }  // namespace math

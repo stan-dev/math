@@ -35,43 +35,43 @@ const char* matrix_multiply_kernel_code = STRINGIFY(
       __local double A_local[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];
       __local double B_local[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];
 
-      double acc[WORK_PER_THREAD_MULT];
-      for (int w = 0; w < WORK_PER_THREAD_MULT; w++) {
+      double acc[WORK_PER_THREAD];
+      for (int w = 0; w < WORK_PER_THREAD; w++) {
         acc[w] = 0.0;
       }
 
       const int num_tiles = (K + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
       // iterate over all tiles
       for (int tile_ind = 0; tile_ind < num_tiles; tile_ind++) {
-        // each thread copies WORK_PER_THREAD_MULT values to the local
+        // each thread copies WORK_PER_THREAD values to the local
         // memory
-        for (int w = 0; w < WORK_PER_THREAD_MULT; w++) {
+        for (int w = 0; w < WORK_PER_THREAD; w++) {
           const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
           const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
 
-          A_local[thread_block_col + w * THREAD_BLOCK_SIZE_MULT_COL]
+          A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                  [thread_block_row]
-              = A[(tiled_j + w * THREAD_BLOCK_SIZE_MULT_COL) * M + i];
+              = A[(tiled_j + w * THREAD_BLOCK_SIZE_COL) * M + i];
 
-          B_local[thread_block_col + w * THREAD_BLOCK_SIZE_MULT_COL]
+          B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                  [thread_block_row]
-              = B[(j + w * THREAD_BLOCK_SIZE_MULT_COL) * K + tiled_i];
+              = B[(j + w * THREAD_BLOCK_SIZE_COL) * K + tiled_i];
         }
         // wait until all tile values are loaded to the local memory
         barrier(CLK_LOCAL_MEM_FENCE);
         for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE; block_ind++) {
-          for (int w = 0; w < WORK_PER_THREAD_MULT; w++) {
+          for (int w = 0; w < WORK_PER_THREAD; w++) {
             acc[w] += A_local[block_ind][thread_block_row]
-                      * B_local[thread_block_col
-                                + w * THREAD_BLOCK_SIZE_MULT_COL][block_ind];
+                      * B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                               [block_ind];
           }
         }
         barrier(CLK_LOCAL_MEM_FENCE);
       }
       // save the values
-      for (int w = 0; w < WORK_PER_THREAD_MULT; w++) {
-        // each thread saves WORK_PER_THREAD_MULT_SELF_TRANS values
-        C[(j + w * THREAD_BLOCK_SIZE_MULT_COL) * M + i] = acc[w];
+      for (int w = 0; w < WORK_PER_THREAD; w++) {
+        // each thread saves WORK_PER_THREAD_SELF_TRANS values
+        C[(j + w * THREAD_BLOCK_SIZE_COL) * M + i] = acc[w];
       }
     }
     // \cond
@@ -82,7 +82,8 @@ const char* matrix_multiply_kernel_code = STRINGIFY(
  * See the docs for \link kernels/matrix_multiply.hpp add() \endlink
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int>
-    matrix_multiply("matrix_multiply", matrix_multiply_kernel_code);
+    matrix_multiply("matrix_multiply", matrix_multiply_kernel_code,
+                    {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
 
 }  // namespace opencl_kernels
 }  // namespace math
