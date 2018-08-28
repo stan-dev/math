@@ -51,8 +51,8 @@ namespace math {
  * @return The probability P(Y1 <= y[1], Y2 <= y[2] | rho).
  * @throw std::domain_error if the rho is not between -1 and 1 or nan.
  */
-double std_binormal_integral(const double z1, const double z2,
-                             const double rho) {
+inline double std_binormal_integral(const double z1, const double z2,
+                                    const double rho) {
   static const char* function = "std_binormal_integral";
   using std::asin;
   using std::exp;
