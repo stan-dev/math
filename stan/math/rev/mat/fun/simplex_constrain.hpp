@@ -3,7 +3,9 @@
 
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/fun/inv_logit.hpp>
 #include <stan/math/rev/mat/fun/adj_jac_apply.hpp>
+#include <tuple>
 #include <vector>
 
 namespace stan {
@@ -24,10 +26,15 @@ class simplex_constrain_op {
    *
    * The transform is based on a centered stick-breaking process.
    *
+   * @tparam size Number of adjoints to return
+   * @param needs_adj Boolean indicators of if adjoints of arguments will be
+   * needed
    * @param y Free vector input of dimensionality K - 1
    * @return Simplex of dimensionality K
    */
-  Eigen::VectorXd operator()(const Eigen::VectorXd& y) {
+  template <std::size_t size>
+  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
+                             const Eigen::VectorXd& y) {
     N_ = y.size();
     diag_ = ChainableStack::instance().memalloc_.alloc_array<double>(N_);
     z_ = ChainableStack::instance().memalloc_.alloc_array<double>(N_);
@@ -49,10 +56,15 @@ class simplex_constrain_op {
    * Compute the result of multiply the transpose of the adjoint vector times
    * the Jacobian of the simplex_constrain operator.
    *
+   * @tparam size Number of adjoints to return
+   * @param needs_adj Boolean indicators of if adjoints of arguments will be
+   * needed
    * @param adj Eigen::VectorXd of adjoints at the output of the softmax
    * @return Eigen::VectorXd of adjoints propagated through softmax operation
    */
-  Eigen::VectorXd multiply_adjoint_jacobian(const Eigen::VectorXd& adj) const {
+  template <std::size_t size>
+  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
+                                 const Eigen::VectorXd& adj) const {
     Eigen::VectorXd adj_times_jac(N_);
     double acc = adj(N_);
 
@@ -64,7 +76,7 @@ class simplex_constrain_op {
       }
     }
 
-    return adj_times_jac;
+    return std::make_tuple(adj_times_jac);
   }
 };
 }  // namespace

@@ -34,7 +34,10 @@ pipeline {
         'Run additional distribution tests on RowVectors (takes 5x as long)',
         name: 'withRowVector')
     }
-    options { skipDefaultCheckout() }
+    options {
+        skipDefaultCheckout()
+        preserveStashes(buildCount: 7)
+    }
     stages {
         stage('Kill previous builds') {
             when {
@@ -127,12 +130,7 @@ pipeline {
                 sh "echo CXX=${env.CXX} -Werror > make/local"
                 sh "make -j${env.PARALLEL} test-headers"
             }
-            post {
-                always {
-                    warnings canRunOnFailed: true, consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)'], [parserName: 'Clang (LLVM based)']]
-                    deleteDir()
-                }
-            }
+            post { always { deleteDir() } }
         }
         stage('Linux Unit with MPI') {
             agent { label 'linux' }
@@ -253,7 +251,7 @@ pipeline {
     post {
         always {
             node("osx || linux") {
-                warnings canRunOnFailed: true, consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)'], [parserName: 'Clang (LLVM based)']]
+                warnings canRunOnFailed: true, consoleParsers: [[parserName: 'Clang (LLVM based)']]
             }
         }
         success {

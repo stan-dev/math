@@ -89,13 +89,15 @@ template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5,
           typename T_return_type>
 class operands_and_partials {
  public:
-  explicit operands_and_partials(const Op1& op1) {}
-  operands_and_partials(const Op1& op1, const Op2& op2) {}
-  operands_and_partials(const Op1& op1, const Op2& op2, const Op3& op3) {}
-  operands_and_partials(const Op1& op1, const Op2& op2, const Op3& op3,
-                        const Op4& op4) {}
-  operands_and_partials(const Op1& op1, const Op2& op2, const Op3& op3,
-                        const Op4& op4, const Op5& op5) {}
+  explicit operands_and_partials(const Op1& /* op1 */) {}
+  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */) {}
+  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */,
+                        const Op3& /* op3 */) {}
+  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */,
+                        const Op3& /* op3 */, const Op4& /* op4 */) {}
+  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */,
+                        const Op3& /* op3 */, const Op4& /* op4 */,
+                        const Op5& /* op5 */) {}
 
   /**
    * Build the node to be stored on the autodiff graph.
