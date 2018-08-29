@@ -25,6 +25,7 @@
 #include <stan/math/prim/mat/err/check_column_index.hpp>
 #include <stan/math/prim/mat/err/check_corr_matrix.hpp>
 #include <stan/math/prim/mat/err/check_cov_matrix.hpp>
+#include <stan/math/prim/mat/err/check_finite.hpp>
 #include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
 #include <stan/math/prim/mat/err/check_lower_triangular.hpp>
 #include <stan/math/prim/mat/err/check_matching_dims.hpp>

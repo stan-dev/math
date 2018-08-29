@@ -6,6 +6,7 @@
 #include <stan/math/prim/mat/fun/softmax.hpp>
 #include <stan/math/rev/mat/fun/adj_jac_apply.hpp>
 #include <vector>
+#include <tuple>
 
 namespace stan {
 namespace math {
@@ -24,7 +25,9 @@ class softmax_op {
    * @param alpha Unconstrained input vector.
    * @return Softmax of the input.
    */
-  Eigen::VectorXd operator()(const Eigen::VectorXd& alpha) {
+  template <std::size_t size>
+  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
+                             const Eigen::VectorXd& alpha) {
     N_ = alpha.size();
     y_ = ChainableStack::instance().memalloc_.alloc_array<double>(N_);
 
@@ -43,7 +46,10 @@ class softmax_op {
    * @param adj Eigen::VectorXd of adjoints at the output of the softmax
    * @return Eigen::VectorXd of adjoints propagated through softmax operation
    */
-  Eigen::VectorXd multiply_adjoint_jacobian(const Eigen::VectorXd& adj) const {
+  template <std::size_t size>
+  std::tuple<Eigen::VectorXd> multiply_adjoint_jacobian(
+      const std::array<bool, size>& needs_adj,
+      const Eigen::VectorXd& adj) const {
     Eigen::VectorXd adj_times_jac(N_);
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1> > y(y_, N_);
 
@@ -52,7 +58,7 @@ class softmax_op {
       adj_times_jac(n) = -y(n) * adj_dot_y + y(n) * adj(n);
     }
 
-    return adj_times_jac;
+    return std::make_tuple(adj_times_jac);
   }
 };
 }  // namespace
