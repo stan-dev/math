@@ -31,14 +31,20 @@ namespace math {
 
 /**
  * The CDF of the bivariate normal (binormal) copula for the
- * specified vector given the specified correlation. 
+ * specified vector given the specified correlation.
+ *
+ * Reference for the gradients of the function:
+ * Meyer, Christian. "The bivariate normal copula." Communications
+ * in Statistics-Theory and Methods 42, no. 13 (2013): 2402-2422. 
+ * https://arxiv.org/pdf/0912.2816.pdf
  *
  * @param u 2-vector.
  * @param rho correlation parameter
  * for the standard bivariate normal distribution.
- * @return The log of the product of the probabilities P(Y1 <= y[1], Y2 <= y[2]
- * | rho).
+ * @return The probability P(U1 <= u[1], U2 <= u[2] | rho).
  * @throw std::domain_error if the rho is not between -1 and 1 or nan.
+ * @throw std::domain_error if elements of u aren't between 0 and 1 or nan.
+ * @throw std::invalid_argument u isn't size 2.
  * @tparam T_u Type of random variable.
  * @tparam T_rho Type of correlation.
  */
@@ -71,8 +77,8 @@ typename return_type<T_u, T_rho>::type binormal_copula_cdf(const T_u& u,
   const T_partials_return u1_dbl = value_of(u[0]);
   const T_partials_return u2_dbl = value_of(u[1]);
   const T_partials_return rho_dbl = value_of(rho);
-  const T_partials_return z1_dbl = inv_Phi(u1_dbl); 
-  const T_partials_return z2_dbl = inv_Phi(u2_dbl); 
+  const T_partials_return z1_dbl = inv_Phi(u1_dbl);
+  const T_partials_return z2_dbl = inv_Phi(u2_dbl);
 
   T_partials_return cdf_ = std_binormal_integral(z1_dbl, z2_dbl, rho_dbl);
 
