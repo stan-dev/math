@@ -1,5 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
+#include <stan/math/gpu/copy.hpp>
 #include <stan/math/gpu/transpose.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
@@ -47,7 +48,6 @@ TEST(MathGpu, transpose) {
 
   using stan::math::transpose;
   v00_dst = transpose(v00);
-  EXPECT_NO_THROW(v00_dst = transpose(v00));
   EXPECT_NO_THROW(rv00_dst = transpose(rv00));
   EXPECT_NO_THROW(m00_dst = transpose(m00));
 

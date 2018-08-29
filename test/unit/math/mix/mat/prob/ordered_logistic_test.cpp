@@ -8,7 +8,6 @@ TEST(ProbDistributionsOrdLog, fv_fv) {
   using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
   using stan::math::vector_d;
-  using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::vector_fv;
 
@@ -59,7 +58,6 @@ TEST(ProbDistributionsOrdLog, fv_d) {
   using stan::math::fvar;
   using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
-  using stan::math::vector_d;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::vector_fv;
@@ -129,7 +127,6 @@ TEST(ProbDistributionsOrdLog, fv_fv_vec) {
   using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
   using stan::math::vector_d;
-  using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::vector_fv;
 
@@ -194,7 +191,6 @@ TEST(ProbDistributionsOrdLog, fv_d_vec) {
   using stan::math::fvar;
   using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
-  using stan::math::vector_d;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::vector_fv;
@@ -278,7 +274,6 @@ TEST(ProbDistributionsOrdLog, fv_fv_stvec) {
   using stan::math::fvar;
   using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
-  using stan::math::vector_d;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::vector_fv;
@@ -407,7 +402,6 @@ TEST(ProbDistributionsOrdLog, fv_d_stvec) {
   using stan::math::fvar;
   using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
-  using stan::math::vector_d;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::vector_fv;
