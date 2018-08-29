@@ -116,7 +116,7 @@ inline double std_binormal_integral(const double z1, const double z2,
   }
   if (rho == 1)
     return fmin(Phi(z1), Phi(z2));
-  return z2 > -z1 > 0 ? Phi(z1) + Phi(z2) - 1 : 0;
+  return z2 > -z1 ? Phi(z1) + Phi(z2) - 1 : 0;
 }
 
 /**

@@ -531,9 +531,9 @@ struct log_binorm {
 };
 
 struct vV_vD_D_log_std_binorm_integral {
-  int N_y_;
+  size_t N_y_;
   vector<double> rho_;
-  vV_vD_D_log_std_binorm_integral(int N_y, vector<double>& rho)
+  vV_vD_D_log_std_binorm_integral(size_t N_y, vector<double>& rho)
       : N_y_(N_y), rho_(rho) {}
   template <typename T>
   inline T operator()(
@@ -543,11 +543,11 @@ struct vV_vD_D_log_std_binorm_integral {
     to_function_input(N_y_, inp_vec, y);
     T accum(0.0);
     if (rho_.size() == N_y_) {
-      for (int i = 0; i < N_y_; ++i)
+      for (size_t i = 0; i < N_y_; ++i)
         accum += log(
             stan::math::std_binormal_integral(y[i][0], y[i][1], rho_[i]));
     } else {
-      for (int i = 0; i < N_y_; ++i)
+      for (size_t i = 0; i < N_y_; ++i)
         accum += log(
             stan::math::std_binormal_integral(y[i][0], y[i][1], rho_[0]));
     }
@@ -556,8 +556,8 @@ struct vV_vD_D_log_std_binorm_integral {
 };
 
 struct vV_v_R_log_std_binorm_integral {
-  int N_y_;
-  explicit vV_v_R_log_std_binorm_integral(int N_y) : N_y_(N_y) {}
+  size_t N_y_;
+  explicit vV_v_R_log_std_binorm_integral(size_t N_y) : N_y_(N_y) {}
   template <typename T>
   inline T operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
@@ -567,11 +567,11 @@ struct vV_v_R_log_std_binorm_integral {
     to_function_input(N_y_, inp_vec, y, rho);
     T accum(0.0);
     if (rho.size() == N_y_) {
-      for (int i = 0; i < N_y_; ++i)
+      for (size_t i = 0; i < N_y_; ++i)
         accum
             += log(stan::math::std_binormal_integral(y[i][0], y[i][1], rho[i]));
     } else {
-      for (int i = 0; i < N_y_; ++i)
+      for (size_t i = 0; i < N_y_; ++i)
         accum
             += log(stan::math::std_binormal_integral(y[i][0], y[i][1], rho[0]));
     }
@@ -595,11 +595,11 @@ struct vVD_v_log_std_binorm_integral {
       rho.push_back(inp_vec(i));
     T accum(0.0);
     if (rho.size() == y_.size()) {
-      for (int i = 0; i < y_.size(); ++i)
+      for (size_t i = 0; i < y_.size(); ++i)
         accum += log(
             stan::math::std_binormal_integral(y_[i][0], y_[i][1], rho[i]));
     } else {
-      for (int i = 0; i < y_.size(); ++i)
+      for (size_t i = 0; i < y_.size(); ++i)
         accum += log(
             stan::math::std_binormal_integral(y_[i][0], y_[i][1], rho[0]));
     }
@@ -1259,7 +1259,7 @@ TEST(MathFunctions, vec_binormal_integral_vVD_R_test) {
   vector<Matrix<double, Dynamic, 1>> y;
   Matrix<double, Dynamic, 1> y_el(2);
   y_el << 2, 3;
-  for (size_t i = 0; i < N_y; ++i)
+  for (int i = 0; i < N_y; ++i)
     y.push_back(y_el);
   vVD_R_std_binorm_lcdf dist_fun2(y);
   vVD_v_log_std_binorm_integral<Dynamic, 1> tru_fun(y);
@@ -1286,7 +1286,7 @@ TEST(MathFunctions, vec_binormal_integral_vRVD_R_test) {
   vector<Matrix<double, 1, Dynamic>> y;
   Matrix<double, 1, Dynamic> y_el(2);
   y_el << 2, 3;
-  for (size_t i = 0; i < N_y; ++i)
+  for (int i = 0; i < N_y; ++i)
     y.push_back(y_el);
   vRVD_R_std_binorm_lcdf dist_fun2(y);
   vVD_v_log_std_binorm_integral<1, Dynamic> tru_fun(y);
@@ -1313,7 +1313,7 @@ TEST(MathFunctions, vec_binormal_integral_vVD_v_test) {
   vector<Matrix<double, Dynamic, 1>> y;
   Matrix<double, Dynamic, 1> y_el(2);
   y_el << 2, 3;
-  for (size_t i = 0; i < N_y; ++i)
+  for (int i = 0; i < N_y; ++i)
     y.push_back(y_el);
   vVD_v_std_binorm_lcdf dist_fun2(y);
   vVD_v_log_std_binorm_integral<Dynamic, 1> tru_fun(y);
@@ -1340,7 +1340,7 @@ TEST(MathFunctions, vec_binormal_integral_vRVD_v_test) {
   vector<Matrix<double, 1, Dynamic>> y;
   Matrix<double, 1, Dynamic> y_el(2);
   y_el << 2, 3;
-  for (size_t i = 0; i < N_y; ++i)
+  for (int i = 0; i < N_y; ++i)
     y.push_back(y_el);
   vRVD_v_std_binorm_lcdf dist_fun2(y);
   vVD_v_log_std_binorm_integral<1, Dynamic> tru_fun(y);
@@ -1367,7 +1367,7 @@ TEST(MathFunctions, vec_binormal_integral_vVD_V_test) {
   vector<Matrix<double, Dynamic, 1>> y;
   Matrix<double, Dynamic, 1> y_el(2);
   y_el << 2, 3;
-  for (size_t i = 0; i < N_y; ++i)
+  for (int i = 0; i < N_y; ++i)
     y.push_back(y_el);
   vVD_V_std_binorm_lcdf dist_fun2(y);
   vVD_v_log_std_binorm_integral<Dynamic, 1> tru_fun(y);
@@ -1394,7 +1394,7 @@ TEST(MathFunctions, vec_binormal_integral_vRVD_V_test) {
   vector<Matrix<double, 1, Dynamic>> y;
   Matrix<double, 1, Dynamic> y_el(2);
   y_el << 2, 3;
-  for (size_t i = 0; i < N_y; ++i)
+  for (int i = 0; i < N_y; ++i)
     y.push_back(y_el);
   vRVD_V_std_binorm_lcdf dist_fun2(y);
   vVD_v_log_std_binorm_integral<1, Dynamic> tru_fun(y);

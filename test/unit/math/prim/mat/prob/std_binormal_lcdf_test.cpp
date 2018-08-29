@@ -91,8 +91,8 @@ struct log_binorm {
 };
 
 struct dual_std_vec_log_binorm {
-  int N_y_;
-  explicit dual_std_vec_log_binorm(int N_y) : N_y_(N_y) {}
+  size_t N_y_;
+  explicit dual_std_vec_log_binorm(size_t N_y) : N_y_(N_y) {}
   template <typename T>
   inline T operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
@@ -102,11 +102,11 @@ struct dual_std_vec_log_binorm {
     to_function_input(N_y_, inp_vec, y, rho);
     T accum(0.0);
     if (rho.size() == N_y_) {
-      for (int i = 0; i < N_y_; ++i)
+      for (size_t i = 0; i < N_y_; ++i)
         accum
             += log(stan::math::std_binormal_integral(y[i][0], y[i][1], rho[i]));
     } else {
-      for (int i = 0; i < N_y_; ++i)
+      for (size_t i = 0; i < N_y_; ++i)
         accum
             += log(stan::math::std_binormal_integral(y[i][0], y[i][1], rho[0]));
     }
