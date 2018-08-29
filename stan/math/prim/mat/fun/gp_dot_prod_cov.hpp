@@ -60,7 +60,7 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
       check_finite("gp_dot_prod_cov", "x", x[i][d]);
     }
   }
- 
+
   Eigen::Matrix<typename stan::return_type<T_x, T_sigma>::type, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x_size, x_size);
