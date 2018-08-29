@@ -11,7 +11,7 @@ using Eigen::Matrix;
 using stan::math::var;
 using std::vector;
 
-template<class F1, class F2>
+template <class F1, class F2>
 void compare_vals(const F1& f1, const F2& f2,
                   const Matrix<double, Dynamic, 1>& inp_vec) {
   double f1_eval = f1(inp_vec);

@@ -51,16 +51,14 @@ struct VD_R_binorm_copula_cdf {
   }
 };
 
-
 struct V_R_binorm_copula_manual {
   template <typename T>
   inline T operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
-    using std::log;
     using stan::math::inv_Phi;
-    return
-        stan::math::std_binormal_integral(inv_Phi(inp_vec(0)),
-                                          inv_Phi(inp_vec(1)), inp_vec(2));
+    using std::log;
+    return stan::math::std_binormal_integral(inv_Phi(inp_vec(0)),
+                                             inv_Phi(inp_vec(1)), inp_vec(2));
   }
 };
 
@@ -70,11 +68,10 @@ struct V_D_binorm_copula_manual {
   template <typename T>
   inline T operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
-    using std::log;
     using stan::math::inv_Phi;
-    return
-        stan::math::std_binormal_integral(inv_Phi(inp_vec(0)),
-                                          inv_Phi(inp_vec(1)), rho_);
+    using std::log;
+    return stan::math::std_binormal_integral(inv_Phi(inp_vec(0)),
+                                             inv_Phi(inp_vec(1)), rho_);
   }
 };
 
@@ -85,25 +82,24 @@ struct VD_R_binorm_copula_manual {
   template <typename T>
   inline T operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
-    using std::log;
     using stan::math::inv_Phi;
-    return
-        stan::math::std_binormal_integral(inv_Phi(y_(0)),
-                                          inv_Phi(y_(1)), inp_vec(0));
+    using std::log;
+    return stan::math::std_binormal_integral(inv_Phi(y_(0)), inv_Phi(y_(1)),
+                                             inp_vec(0));
   }
 };
 
-template<typename T1, typename T2, int R, int C>
-typename stan::return_type<T1, T2>::type
-call_args(const std::tuple<Matrix<T1, R, C>, T2>& inps) {
+template <typename T1, typename T2, int R, int C>
+typename stan::return_type<T1, T2>::type call_args(
+    const std::tuple<Matrix<T1, R, C>, T2>& inps) {
   auto arg1 = std::get<0>(inps);
   auto arg2 = std::get<1>(inps);
   return stan::math::binormal_copula_cdf(arg1, arg2);
 }
 
-template<typename T1, typename T2, int R, int C>
-std::tuple<Matrix<T1, R, C>, T2>
-make_args(const Matrix<double, Dynamic, 1>& flat_args) {
+template <typename T1, typename T2, int R, int C>
+std::tuple<Matrix<T1, R, C>, T2> make_args(
+    const Matrix<double, Dynamic, 1>& flat_args) {
   int dim_y = flat_args.size() - 1;
   Eigen::Matrix<T1, R, C> y(dim_y);
   for (int i = 0; i < dim_y; ++i) {

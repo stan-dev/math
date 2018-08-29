@@ -35,7 +35,7 @@ namespace math {
  *
  * Reference for the gradients of the function:
  * Meyer, Christian. "The bivariate normal copula." Communications
- * in Statistics-Theory and Methods 42, no. 13 (2013): 2402-2422. 
+ * in Statistics-Theory and Methods 42, no. 13 (2013): 2402-2422.
  * https://arxiv.org/pdf/0912.2816.pdf
  *
  * @param u 2-vector.
@@ -91,13 +91,14 @@ typename return_type<T_u, T_rho>::type binormal_copula_cdf(const T_u& u,
       ops_partials.edge1_.partials_vec_[0](0)
           += Phi((z2_dbl - rho_dbl * z1_dbl) / sqrt_one_minus_rho_sq);
       ops_partials.edge1_.partials_vec_[0](1)
-         += Phi(z1_minus_rho_times_z2 / sqrt_one_minus_rho_sq);
+          += Phi(z1_minus_rho_times_z2 / sqrt_one_minus_rho_sq);
     }
     if (!is_constant_struct<T_rho>::value)
       ops_partials.edge2_.partials_[0]
-          += 0.5 / (stan::math::pi() * sqrt_one_minus_rho_sq) *
-             exp(-0.5 / one_minus_rho_sq * z1_minus_rho_times_z2 *
-              z1_minus_rho_times_z2 - 0.5 * z2_dbl * z2_dbl);
+          += 0.5 / (stan::math::pi() * sqrt_one_minus_rho_sq)
+             * exp(-0.5 / one_minus_rho_sq * z1_minus_rho_times_z2
+                       * z1_minus_rho_times_z2
+                   - 0.5 * z2_dbl * z2_dbl);
   }
   return ops_partials.build(cdf_);
 }

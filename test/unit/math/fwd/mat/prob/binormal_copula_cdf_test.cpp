@@ -9,7 +9,7 @@ using Eigen::Matrix;
 using stan::math::fvar;
 using std::vector;
 
-template<class F1, class F2>
+template <class F1, class F2>
 void compare_grad(const F1& f1, const F2& f2,
                   const Matrix<double, Dynamic, 1>& inp_vec) {
   double f1_eval;
@@ -23,7 +23,7 @@ void compare_grad(const F1& f1, const F2& f2,
     EXPECT_FLOAT_EQ(grad_f1(i), grad_f2(i));
 }
 
-template<class F1, class F2>
+template <class F1, class F2>
 void compare_hess(const F1& f1, const F2& f2,
                   const Matrix<double, Dynamic, 1>& inp_vec) {
   double f1_eval;
@@ -51,12 +51,12 @@ void test_invalid_args(const vector<Matrix<double, Dynamic, 1>>& invalid_args) {
     auto args_RV_ff = make_args<fvar<double>, fvar<double>, 1, Dynamic>(inp);
     auto args_RV_df = make_args<double, fvar<double>, 1, Dynamic>(inp);
     auto args_RV_fd = make_args<fvar<double>, double, 1, Dynamic>(inp);
-    auto args_V_ffff =
-      make_args<fvar<fvar<double>>, fvar<fvar<double>>, Dynamic, 1>(inp);
+    auto args_V_ffff
+        = make_args<fvar<fvar<double>>, fvar<fvar<double>>, Dynamic, 1>(inp);
     auto args_V_dff = make_args<double, fvar<fvar<double>>, Dynamic, 1>(inp);
     auto args_V_ffd = make_args<fvar<fvar<double>>, double, Dynamic, 1>(inp);
-    auto args_RV_ffff =
-      make_args<fvar<fvar<double>>, fvar<fvar<double>>, 1, Dynamic>(inp);
+    auto args_RV_ffff
+        = make_args<fvar<fvar<double>>, fvar<fvar<double>>, 1, Dynamic>(inp);
     auto args_RV_dff = make_args<double, fvar<fvar<double>>, 1, Dynamic>(inp);
     auto args_RV_ffd = make_args<fvar<fvar<double>>, double, 1, Dynamic>(inp);
     EXPECT_THROW(call_args(args_V_ff), std::domain_error);
@@ -83,12 +83,12 @@ void test_bad_sizes(const vector<Matrix<double, Dynamic, 1>>& invalid_args) {
     auto args_RV_ff = make_args<fvar<double>, fvar<double>, 1, Dynamic>(inp);
     auto args_RV_df = make_args<double, fvar<double>, 1, Dynamic>(inp);
     auto args_RV_fd = make_args<fvar<double>, double, 1, Dynamic>(inp);
-    auto args_V_ffff =
-      make_args<fvar<fvar<double>>, fvar<fvar<double>>, Dynamic, 1>(inp);
+    auto args_V_ffff
+        = make_args<fvar<fvar<double>>, fvar<fvar<double>>, Dynamic, 1>(inp);
     auto args_V_dff = make_args<double, fvar<fvar<double>>, Dynamic, 1>(inp);
     auto args_V_ffd = make_args<fvar<fvar<double>>, double, Dynamic, 1>(inp);
-    auto args_RV_ffff =
-      make_args<fvar<fvar<double>>, fvar<fvar<double>>, 1, Dynamic>(inp);
+    auto args_RV_ffff
+        = make_args<fvar<fvar<double>>, fvar<fvar<double>>, 1, Dynamic>(inp);
     auto args_RV_dff = make_args<double, fvar<fvar<double>>, 1, Dynamic>(inp);
     auto args_RV_ffd = make_args<fvar<fvar<double>>, double, 1, Dynamic>(inp);
     EXPECT_THROW(call_args(args_V_ff), std::invalid_argument);
@@ -115,12 +115,12 @@ void test_valid_args(const vector<Matrix<double, Dynamic, 1>>& valid_args) {
     auto args_RV_ff = make_args<fvar<double>, fvar<double>, 1, Dynamic>(inp);
     auto args_RV_df = make_args<double, fvar<double>, 1, Dynamic>(inp);
     auto args_RV_fd = make_args<fvar<double>, double, 1, Dynamic>(inp);
-    auto args_V_ffff =
-      make_args<fvar<fvar<double>>, fvar<fvar<double>>, Dynamic, 1>(inp);
+    auto args_V_ffff
+        = make_args<fvar<fvar<double>>, fvar<fvar<double>>, Dynamic, 1>(inp);
     auto args_V_dff = make_args<double, fvar<fvar<double>>, Dynamic, 1>(inp);
     auto args_V_ffd = make_args<fvar<fvar<double>>, double, Dynamic, 1>(inp);
-    auto args_RV_ffff =
-      make_args<fvar<fvar<double>>, fvar<fvar<double>>, 1, Dynamic>(inp);
+    auto args_RV_ffff
+        = make_args<fvar<fvar<double>>, fvar<fvar<double>>, 1, Dynamic>(inp);
     auto args_RV_dff = make_args<double, fvar<fvar<double>>, 1, Dynamic>(inp);
     auto args_RV_ffd = make_args<fvar<fvar<double>>, double, 1, Dynamic>(inp);
     EXPECT_NO_THROW(call_args(args_V_ff));
@@ -148,12 +148,12 @@ void test_vals(const vector<Matrix<double, Dynamic, 1>>& valid_args,
     auto args_RV_ff = make_args<fvar<double>, fvar<double>, 1, Dynamic>(inp);
     auto args_RV_df = make_args<double, fvar<double>, 1, Dynamic>(inp);
     auto args_RV_fd = make_args<fvar<double>, double, 1, Dynamic>(inp);
-    auto args_V_ffff =
-      make_args<fvar<fvar<double>>, fvar<fvar<double>>, Dynamic, 1>(inp);
+    auto args_V_ffff
+        = make_args<fvar<fvar<double>>, fvar<fvar<double>>, Dynamic, 1>(inp);
     auto args_V_dff = make_args<double, fvar<fvar<double>>, Dynamic, 1>(inp);
     auto args_V_ffd = make_args<fvar<fvar<double>>, double, Dynamic, 1>(inp);
-    auto args_RV_ffff =
-      make_args<fvar<fvar<double>>, fvar<fvar<double>>, 1, Dynamic>(inp);
+    auto args_RV_ffff
+        = make_args<fvar<fvar<double>>, fvar<fvar<double>>, 1, Dynamic>(inp);
     auto args_RV_dff = make_args<double, fvar<fvar<double>>, 1, Dynamic>(inp);
     auto args_RV_ffd = make_args<fvar<fvar<double>>, double, 1, Dynamic>(inp);
     EXPECT_FLOAT_EQ(stan::math::value_of_rec(call_args(args_V_ff)), vals[i]);

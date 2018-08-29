@@ -11,7 +11,7 @@ using Eigen::Matrix;
 using stan::math::var;
 using std::vector;
 
-template<class F1, class F2>
+template <class F1, class F2>
 void compare_grad(const F1& f1, const F2& f2,
                   const Matrix<double, Dynamic, 1>& inp_vec) {
   double f1_eval;
@@ -25,9 +25,8 @@ void compare_grad(const F1& f1, const F2& f2,
     EXPECT_FLOAT_EQ(grad_f1(i), grad_f2(i));
 }
 
-template<class F1>
-void compare_fd(const F1& f1,
-                const Matrix<double, Dynamic, 1>& inp_vec) {
+template <class F1>
+void compare_fd(const F1& f1, const Matrix<double, Dynamic, 1>& inp_vec) {
   double f1_eval;
   Matrix<double, Dynamic, 1> grad_f1;
   double f1_fd;
