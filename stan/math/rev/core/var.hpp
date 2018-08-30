@@ -62,7 +62,7 @@ class var {
    * dangling.  Before an assignment, the behavior is thus undefined just
    * as for a basic double.
    */
-  var() : vi_(static_cast<vari*>(0U)) {}
+  constexpr var() : vi_(static_cast<vari*>(0U)) {}
 
   /**
    * Construct a variable from a pointer to a variable implementation.
