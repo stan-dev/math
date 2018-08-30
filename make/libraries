@@ -36,20 +36,20 @@ SUNDIALS_NVECSERIAL := $(patsubst %.c,%.o,\
 $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL)) : CXXFLAGS = $(CXXFLAGS_SUNDIALS) $(INC_SUNDIALS) $(CXXFLAGS_OS)
 $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL)) : CPPFLAGS = $(CPPFLAGS_SUNDIALS) $(CPPFLAGS_OS)
 $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL)) : %.o : %.c
-        @mkdir -p $(dir $@)
-        $(COMPILE.cpp) -x c -include $(SUNDIALS)/include/stan_sundials_printf_override.hpp $< $(OUTPUT_OPTION)
+	@mkdir -p $(dir $@)
+	$(COMPILE.cpp) -x c -include $(SUNDIALS)/include/stan_sundials_printf_override.hpp $< $(OUTPUT_OPTION)
 
 $(SUNDIALS)/lib/libsundials_cvodes.a: $(SUNDIALS_CVODES)
-        @mkdir -p $(dir $@)
-        $(AR) -rs $@ $^
+	@mkdir -p $(dir $@)
+	$(AR) -rs $@ $^
 
 $(SUNDIALS)/lib/libsundials_idas.a: $(SUNDIALS_IDAS)
-        @mkdir -p $(dir $@)
-        $(AR) -rs $@ $^
+	@mkdir -p $(dir $@)
+	$(AR) -rs $@ $^
 
 $(SUNDIALS)/lib/libsundials_nvecserial.a: $(SUNDIALS_NVECSERIAL)
-        @mkdir -p $(dir $@)
-        $(AR) -rs $@ $^
+	@mkdir -p $(dir $@)
+	$(AR) -rs $@ $^
 
 LIBSUNDIALS := $(SUNDIALS)/lib/libsundials_nvecserial.a $(SUNDIALS)/lib/libsundials_cvodes.a $(SUNDIALS)/lib/libsundials_idas.a
 
@@ -57,8 +57,8 @@ STAN_SUNDIALS_HEADERS := $(shell find $(MATH)stan -name *cvodes*.hpp) $(shell fi
 $(STAN_SUNDIALS_HEADERS) : $(LIBSUNDIALS)
 
 clean-sundials:
-        @echo '  cleaning sundials targets'
-        $(RM) $(wildcard $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS)))
+	@echo '  cleaning sundials targets'
+	$(RM) $(wildcard $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS)))
 
 
 ############################################################
@@ -72,32 +72,31 @@ BOOST_PARALLEL_JOBS ?= 1
 
 
 $(BOOST)/user-config.jam:
-        echo "# In case of a compiler mismatch used by mpicxx and" >> $(BOOST)/user-config.jam
-        echo "# the compiler used for Stan, consider configuring" >> $(BOOST)/user-config.jam
-        echo "# the boost toolset here" >> $(BOOST)/user-config.jam
-        echo "# Moreover, should your mpicxx command live in a" >> $(BOOST)/user-config.jam
-        echo "# in a non-standard directory, then consider to tell" >> $(BOOST)/user-config.jam
-        echo "# boost mpi using this syntax:" >> $(BOOST)/user-config.jam
-        echo "#using mpi : /path/to/mpicxx ;" >> $(BOOST)/user-config.jam
-        echo "using mpi ;" >> $(BOOST)/user-config.jam
+	echo "# In case of a compiler mismatch used by mpicxx and" >> $(BOOST)/user-config.jam
+	echo "# the compiler used for Stan, consider configuring" >> $(BOOST)/user-config.jam
+	echo "# the boost toolset here" >> $(BOOST)/user-config.jam
+	echo "# Moreover, should your mpicxx command live in a" >> $(BOOST)/user-config.jam
+	echo "# in a non-standard directory, then consider to tell" >> $(BOOST)/user-config.jam
+	echo "# boost mpi using this syntax:" >> $(BOOST)/user-config.jam
+	echo "#using mpi : /path/to/mpicxx ;" >> $(BOOST)/user-config.jam
+	echo "using mpi ;" >> $(BOOST)/user-config.jam
 
 $(BOOST)/stage/lib/mpi.so: $(BOOST)/user-config.jam
-        @mkdir -p $(dir $@)
-        cd $(BOOST); ./bootstrap.sh
-<<<<<<< HEAD
-        cd $(BOOST); ./b2 --user-config=user-config.jam --layout=system --with-mpi --with-serialization -j$(BOOST_PARALLEL_JOBS) variant=release link=shared threading=multi runtime-link=shared hardcode-dll-paths=true dll-path="$(BOOST_LIBRARY_ABSOLUTE_PATH)"
+	@mkdir -p $(dir $@)
+	cd $(BOOST); ./bootstrap.sh
+	cd $(BOOST); ./b2 --user-config=user-config.jam --layout=system --with-mpi --with-serialization -j$(BOOST_PARALLEL_JOBS) variant=release link=shared threading=multi runtime-link=shared hardcode-dll-paths=true dll-path="$(BOOST_LIBRARY_ABSOLUTE_PATH)"
 
 $(BOOST)/stage/lib/libboost_serialization.so: $(BOOST)/stage/lib/mpi.so
 $(BOOST)/stage/lib/libboost_mpi.so: $(BOOST)/stage/lib/mpi.so
 
 
 $(BOOST)/stage/lib/libboost_serialization.dylib: $(BOOST)/stage/lib/mpi.so
-        install_name_tool -add_rpath "$(BOOST_LIBRARY_ABSOLUTE_PATH)" "$(BOOST)/stage/lib/libboost_serialization.dylib"
-        install_name_tool -id @rpath/libboost_serialization.dylib "$(BOOST)/stage/lib/libboost_serialization.dylib"
+	install_name_tool -add_rpath "$(BOOST_LIBRARY_ABSOLUTE_PATH)" "$(BOOST)/stage/lib/libboost_serialization.dylib"
+	install_name_tool -id @rpath/libboost_serialization.dylib "$(BOOST)/stage/lib/libboost_serialization.dylib"
 $(BOOST)/stage/lib/libboost_mpi.dylib: $(BOOST)/stage/lib/mpi.so $(BOOST)/stage/lib/libboost_serialization.dylib
-        install_name_tool -add_rpath "$(BOOST_LIBRARY_ABSOLUTE_PATH)" "$(BOOST)/stage/lib/libboost_mpi.dylib"
-        install_name_tool -change libboost_serialization.dylib @rpath/libboost_serialization.dylib "$(BOOST)/stage/lib/libboost_mpi.dylib"
-        install_name_tool -id @rpath/libboost_mpi.dylib "$(BOOST)/stage/lib/libboost_mpi.dylib"
+	install_name_tool -add_rpath "$(BOOST_LIBRARY_ABSOLUTE_PATH)" "$(BOOST)/stage/lib/libboost_mpi.dylib"
+	install_name_tool -change libboost_serialization.dylib @rpath/libboost_serialization.dylib "$(BOOST)/stage/lib/libboost_mpi.dylib"
+	install_name_tool -id @rpath/libboost_mpi.dylib "$(BOOST)/stage/lib/libboost_mpi.dylib"
 
 MPI_TEMPLATE_INSTANTIATION_CPP := $(shell find $(MATH)stan -type f -name 'mpi_*_inst.cpp') $(shell find $(MATH)stan -type f -name 'mpi_*_def.cpp')
 MPI_TEMPLATE_INSTANTIATION := $(MPI_TEMPLATE_INSTANTIATION_CPP:%.cpp=%.o)
@@ -105,9 +104,9 @@ MPI_TEMPLATE_INSTANTIATION := $(MPI_TEMPLATE_INSTANTIATION_CPP:%.cpp=%.o)
 $(MPI_TEMPLATE_INSTANTIATION) : CXXFLAGS += -fPIC
 
 clean-mpi:
-        @echo '  cleaning mpi targets'
-        $(RM) $(wildcard $(LIBMPI) $(MPI_INSTANTIATION))
-        $(RM) $(wildcard $(BOOST)/stage/lib $(BOOST)/bin.v2 $(BOOST)/tools/build/src/engine/bootstrap/ $(BOOST)/tools/build/src/engine/bin.* $(BOOST)/project-config.jam* $(BOOST)/b2 $(BOOST)/bjam $(BOOST)/bootstrap.log)
+	@echo '  cleaning mpi targets'
+	$(RM) $(wildcard $(LIBMPI) $(MPI_INSTANTIATION))
+	$(RM) $(wildcard $(BOOST)/stage/lib $(BOOST)/bin.v2 $(BOOST)/tools/build/src/engine/bootstrap/ $(BOOST)/tools/build/src/engine/bin.* $(BOOST)/project-config.jam* $(BOOST)/b2 $(BOOST)/bjam $(BOOST)/bootstrap.log)
 
 endif
 
