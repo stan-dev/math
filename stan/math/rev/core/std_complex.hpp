@@ -10,14 +10,19 @@ namespace std {
 /**
  * Specialization of complex for var objects.
  *
- * This implementation of std::numeric_limits<stan::math::var>
- * is used to treat var objects like doubles.
  */
-/*
 template <>
-struct complex<stan::math::var> {
+constexpr complex<stan::math::var>::complex(const stan::math::var& re,
+                                            const stan::math::var& im) {
+  real(stan::math::is_uninitialized(re) ? stan::math::var{0.0} : re);
+  imag(stan::math::is_uninitialized(im) ? stan::math::var{0.0} : im);
+}
 
-};*/
+// struct complex<stan::math::var> {
+//   complex()
+//       : _M_real(0), _M_imag(0) {
+//   }
+// };
 
 }  // namespace std
 #endif
