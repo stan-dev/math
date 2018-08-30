@@ -216,13 +216,102 @@ TEST_F(MathRev, arithmetic) {
   stan::math::recover_memory();
 }
 
-/*
 TEST_F(MathRev, comparison) {
   // complex and scalar; assume var and double as scalar?
   // operator==
-  // operator!=
-}
+  std::complex<stan::math::var> x1{1, 2}, y1{3, 4};
+  std::complex<stan::math::var> x2{1, 0}, y2{3, 0};
+  double x_d = 1, y_d = 3;
+  stan::math::var x_v = 1, y_v = 3;
 
+  const int stack_size
+      = stan::math::ChainableStack::instance().var_stack_.size();
+  EXPECT_TRUE(x1 == x1);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_FALSE(x1 == x2);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_FALSE(x1 == y1);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+
+  EXPECT_FALSE(x1 == x_d);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_FALSE(x_d == x1);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_TRUE(x2 == x_d);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_TRUE(x_d == x2);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_FALSE(x1 == y_d);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+
+  EXPECT_FALSE(x1 == x_v);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_FALSE(x_v == x1);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_TRUE(x2 == x_v);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_TRUE(x_v == x2);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_FALSE(x1 == y_v);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+
+  // operator!=
+  EXPECT_FALSE(x1 != x1);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_TRUE(x1 != x2);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_TRUE(x1 != y1);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+
+  EXPECT_TRUE(x1 != x_d);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_TRUE(x_d != x1);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_FALSE(x2 != x_d);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_FALSE(x_d != x2);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_TRUE(x1 != y_d);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+
+  EXPECT_TRUE(x1 != x_v);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_TRUE(x_v != x1);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_FALSE(x2 != x_v);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_FALSE(x_v != x2);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_TRUE(x1 != y_v);
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+}
+/*
 TEST_F(MathRev, serialize_deserialize) {
   // operator<<
   // operator>>
