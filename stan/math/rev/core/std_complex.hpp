@@ -8,8 +8,19 @@
 namespace std {
 
 /**
- * Specialization of complex for var objects.
+ * Specialization of the std::complex<stan::math::var>
+ * constructor.
  *
+ * The base template implementation will create uninitialized
+ * stan::math::vars for the default arguments by calling the empty
+ * constructor. This needs to be specialized because uninitialized
+ * vars can cause seg faults.
+ *
+ * Promotion from primitives to stan::math::var applies and this
+ * constructor will handle the primitivies.
+ *
+ * @param re real component
+ * @param im imaginary component
  */
 template <>
 constexpr complex<stan::math::var>::complex(const stan::math::var& re,
@@ -18,11 +29,23 @@ constexpr complex<stan::math::var>::complex(const stan::math::var& re,
   imag(stan::math::is_uninitialized(im) ? stan::math::var{0.0} : im);
 }
 
-// struct complex<stan::math::var> {
-//   complex()
-//       : _M_real(0), _M_imag(0) {
-//   }
-// };
+/**
+ * Specialization of operator= for stan::math::var.
+ *
+ * The base template implementation will leave the imaginary component
+ * as an uninitialized stan::math::var, which can cause seg faults.
+ * This implementation fixes that problem by forcing the imaginary
+ * component to be initialized to 0.0.
+ *
+ *
+ */
+template <>
+complex<stan::math::var>& complex<stan::math::var>::operator=(
+    const stan::math::var& c) {
+  real(c);
+  imag(0.0);
+  return *this;
+}
 
 }  // namespace std
 #endif

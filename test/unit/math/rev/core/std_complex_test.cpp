@@ -9,6 +9,7 @@ class MathRev : public testing::Test {
   void SetUp() { stan::math::recover_memory(); }
 };
 
+/*
 TEST_F(MathRev, complex_constructor) {
   std::complex<stan::math::var> x;
   EXPECT_EQ(2, stan::math::ChainableStack::instance().var_stack_.size());
@@ -24,13 +25,9 @@ TEST_F(MathRev, complex_constructor) {
   EXPECT_EQ(2, stan::math::ChainableStack::instance().var_stack_.size());
   stan::math::recover_memory();
 }
-
-/*
+*/
 TEST_F(MathRev, assignment_double) {
   double rhs = 1;
-  // stan::math::var rhs_v = 2;
-  // std::complex<stan::math::var> rhs_c1{3};
-  // std::complex<stan::math::var> rhs_c2{4, 5};
 
   std::complex<stan::math::var> lhs;
   lhs = rhs;
@@ -38,21 +35,17 @@ TEST_F(MathRev, assignment_double) {
   EXPECT_FLOAT_EQ(0, lhs.imag().val());
   EXPECT_EQ(4, stan::math::ChainableStack::instance().var_stack_.size());
 }
-*/
 
-/*
 TEST_F(MathRev, assignment_var) {
   stan::math::var rhs = 2;
-  // std::complex<stan::math::var> rhs_c1{3};
-  // std::complex<stan::math::var> rhs_c2{4, 5};
 
   std::complex<stan::math::var> lhs;
   lhs = rhs;
   EXPECT_FLOAT_EQ(2, lhs.real().val());
   EXPECT_FLOAT_EQ(0, lhs.imag().val());
-  EXPECT_EQ(3, stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_EQ(4, stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_EQ(rhs.vi_, lhs.real().vi_);
 }
-*/
 
 TEST_F(MathRev, assignment_complex_real_only) {
   std::complex<stan::math::var> rhs{3};
@@ -63,6 +56,7 @@ TEST_F(MathRev, assignment_complex_real_only) {
   EXPECT_FLOAT_EQ(0, lhs.imag().val());
   EXPECT_EQ(4, stan::math::ChainableStack::instance().var_stack_.size());
   EXPECT_EQ(rhs.real().vi_, lhs.real().vi_);
+  EXPECT_EQ(rhs.imag().vi_, lhs.imag().vi_);
 }
 
 TEST_F(MathRev, assignment_complex) {
