@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/std_numeric_limits.hpp>
+#include <stan/math/rev/core/std_isnan.hpp>
 #include <complex>
 
 namespace std {
@@ -45,6 +46,18 @@ complex<stan::math::var>& complex<stan::math::var>::operator=(
   real(c);
   imag(0.0);
   return *this;
+}
+
+template <>
+complex<stan::math::var> operator/(const complex<stan::math::var>& z,
+                                   const complex<stan::math::var>& w) {
+  return complex<stan::math::var>{z.real() / w.real(), z.imag() / w.imag()};
+}
+
+template <>
+complex<stan::math::var> operator*(const complex<stan::math::var>& z,
+                                   const complex<stan::math::var>& w) {
+  return complex<stan::math::var>{z.real() * w.real(), z.imag() * w.imag()};
 }
 
 }  // namespace std
