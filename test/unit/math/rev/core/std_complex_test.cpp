@@ -370,25 +370,84 @@ TEST_F(MathRev, imag) {
   EXPECT_EQ(4, stan::math::ChainableStack::instance().var_stack_.size());
 }
 
-/*
 TEST_F(MathRev, abs) {
-  // abs
-  ADD_FAILURE() << "not yet implemented";
+  std::complex<stan::math::var> z{3, 4};
+  stan::math::var f = abs(z);
+  EXPECT_EQ(5, f.val());
+  std::vector<stan::math::var> x{real(z)};
+  std::vector<double> g;
+  f.grad(x, g);
+  EXPECT_FLOAT_EQ(0.6, g[0]);
 }
 
 TEST_F(MathRev, arg) {
-  // arg
-  ADD_FAILURE() << "not yet implemented";
+  std::complex<stan::math::var> z{1, stan::math::pi()};
+  stan::math::var f = arg(z);
+  EXPECT_EQ(f.val(), stan::math::atan2(std::imag(z), std::real(z)));
 }
 
-TEST_F(MathRev, norm) {
-  // norm
-  ADD_FAILURE() << "not yet implemented";
+TEST_F(MathRev, isinf) {
+  std::complex<stan::math::var> a{0, 0};
+  std::complex<double> b{0, 0};
+  EXPECT_EQ(std::isinf(b), std::isinf(a));
+  EXPECT_FALSE(std::isinf(a));
+
+  a.real(std::numeric_limits<double>::infinity());
+  a.imag(0);
+  b.real(std::numeric_limits<double>::infinity());
+  b.imag(0);
+  EXPECT_EQ(std::isinf(b), std::isinf(a));
+  EXPECT_TRUE(std::isinf(a));
+
+  a.real(0);
+  a.imag(std::numeric_limits<double>::infinity());
+  b.real(0);
+  b.imag(std::numeric_limits<double>::infinity());
+  EXPECT_EQ(std::isinf(b), std::isinf(a));
+  EXPECT_FALSE(std::isinf(a));
 }
+
+TEST_F(MathRev, isnan) {
+  std::complex<stan::math::var> a{0, 0};
+  std::complex<double> b{0, 0};
+  EXPECT_EQ(std::isnan(b), std::isnan(a));
+  EXPECT_FALSE(std::isnan(a));
+
+  a.real(std::numeric_limits<double>::quiet_NaN());
+  a.imag(0);
+  b.real(std::numeric_limits<double>::quiet_NaN());
+  b.imag(0);
+  EXPECT_EQ(std::isnan(b), std::isnan(a));
+  EXPECT_TRUE(std::isnan(a));
+
+  a.real(0);
+  a.imag(std::numeric_limits<double>::quiet_NaN());
+  b.real(0);
+  b.imag(std::numeric_limits<double>::quiet_NaN());
+  EXPECT_EQ(std::isnan(b), std::isnan(a));
+  EXPECT_FALSE(std::isnan(a));
+}
+
+/*
+TEST_F(MathRev, norm) {
+  std::complex<stan::math::var> z{3, 4};
+  stan::math::var f = norm(z);
+  EXPECT_EQ(f.val(), 25);
+
+  std::vector<stan::math::var> x{imag(z)};
+  std::vector<double> g;
+  f.grad(x, g);
+  EXPECT_FLOAT_EQ(g[0], 8);
+}
+*/
+
+/*
 
 TEST_F(MathRev, conj) {
-  // conj
-  ADD_FAILURE() << "not yet implemented";
+  std::complex<stan::math::var> z(1, 2);
+  stan::math::var f = conj(z);
+  EXPECT_EQ(real(f).val(), 1);
+  EXPECT_EQ(imag(f).val(), -2);
 }
 
 TEST_F(MathRev, proj) {

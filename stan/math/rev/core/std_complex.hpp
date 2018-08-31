@@ -1,9 +1,10 @@
 #ifndef STAN_MATH_REV_CORE_STD_COMPLEX_HPP
 #define STAN_MATH_REV_CORE_STD_COMPLEX_HPP
 
-#include <stan/math/rev/core/var.hpp>
+#include <stan/math/rev/core.hpp>
 #include <stan/math/rev/core/std_numeric_limits.hpp>
 #include <stan/math/rev/core/std_isnan.hpp>
+#include <stan/math/rev/core/std_isinf.hpp>
 #include <complex>
 
 namespace std {
@@ -93,6 +94,14 @@ inline bool operator!=(const complex<stan::math::var>& x, double y) {
 
 inline bool operator!=(double x, const complex<stan::math::var>& y) {
   return !(x == y);
+}
+
+inline int isinf(const std::complex<stan::math::var>& a) {
+  return stan::math::is_inf(a.real().val());
+}
+
+inline int isnan(const std::complex<stan::math::var>& a) {
+  return stan::math::is_nan(a.real().val());
 }
 
 }  // namespace std
