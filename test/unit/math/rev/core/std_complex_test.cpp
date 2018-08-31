@@ -9,7 +9,6 @@ class MathRev : public testing::Test {
   void SetUp() { stan::math::recover_memory(); }
 };
 
-/*
 TEST_F(MathRev, complex_constructor) {
   std::complex<stan::math::var> x;
   EXPECT_EQ(2, stan::math::ChainableStack::instance().var_stack_.size());
@@ -25,7 +24,7 @@ TEST_F(MathRev, complex_constructor) {
   EXPECT_EQ(2, stan::math::ChainableStack::instance().var_stack_.size());
   stan::math::recover_memory();
 }
-*/
+
 TEST_F(MathRev, assignment_double) {
   double rhs = 1;
 
@@ -428,7 +427,6 @@ TEST_F(MathRev, isnan) {
   EXPECT_FALSE(std::isnan(a));
 }
 
-/*
 TEST_F(MathRev, norm) {
   std::complex<stan::math::var> z{3, 4};
   stan::math::var f = norm(z);
@@ -439,24 +437,40 @@ TEST_F(MathRev, norm) {
   f.grad(x, g);
   EXPECT_FLOAT_EQ(g[0], 8);
 }
-*/
-
-/*
 
 TEST_F(MathRev, conj) {
   std::complex<stan::math::var> z(1, 2);
-  stan::math::var f = conj(z);
+  std::complex<stan::math::var> f = conj(z);
   EXPECT_EQ(real(f).val(), 1);
   EXPECT_EQ(imag(f).val(), -2);
 }
 
 TEST_F(MathRev, proj) {
-  // projg
-  ADD_FAILURE() << "not yet implemented";
+  std::complex<stan::math::var> z1(1, 2);
+  std::complex<stan::math::var> f = proj(z1);
+  EXPECT_TRUE(f == z1) << f << std::endl;
+
+  using stan::math::positive_infinity;
+  std::complex<stan::math::var> z2(positive_infinity(), -1);
+  f = proj(z2);
+  EXPECT_TRUE(f == std::complex<stan::math::var>(positive_infinity(), -0))
+      << f << std::endl;
+
+  using stan::math::negative_infinity;
+  std::complex<stan::math::var> z3(0, negative_infinity());
+  f = proj(z3);
+  EXPECT_TRUE(f == std::complex<stan::math::var>(positive_infinity(), -0))
+      << f << std::endl;
+
+  std::complex<stan::math::var> z4(std::numeric_limits<double>::quiet_NaN(),
+                                   -2.0);
+  f = proj(z4);
+  EXPECT_TRUE(stan::math::is_nan(f.real()));
+  EXPECT_FLOAT_EQ(-2.0, f.imag().val());
 }
 
 TEST_F(MathRev, polar) {
-  // polar
-  ADD_FAILURE() << "not yet implemented";
+  std::complex<stan::math::var> z = std::polar(1, 0);
+  stan::math::var f = arg(z);
+  EXPECT_EQ(f.val(), 0.0);
 }
-*/

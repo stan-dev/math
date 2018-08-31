@@ -104,5 +104,23 @@ inline int isnan(const std::complex<stan::math::var>& a) {
   return stan::math::is_nan(a.real().val());
 }
 
+template <>
+inline stan::math::var norm(const complex<stan::math::var>& c) {
+  return stan::math::square(c.real()) + stan::math::square(c.imag());
+}
+
+template <>
+inline complex<stan::math::var> conj(const complex<stan::math::var>& c) {
+  return complex<stan::math::var>(c.real(), -c.imag());
+}
+
+template <>
+inline complex<stan::math::var> proj(const complex<stan::math::var>& c) {
+  if (isinf(c.real()) || isinf(c.imag()))
+    return std::complex<stan::math::var>(stan::math::positive_infinity(),
+                                         copysign(0.0, c.imag().val()));
+  return c;
+}
+
 }  // namespace std
 #endif
