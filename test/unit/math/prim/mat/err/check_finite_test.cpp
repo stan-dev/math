@@ -7,27 +7,27 @@ using stan::math::check_finite;
 
 // ---------- check_finite: matrix tests ----------
 TEST(ErrorHandlingScalar, CheckFinite_Matrix) {
+  using Eigen::VectorXd;
   const char* function = "check_finite";
-  Eigen::Matrix<double, Eigen::Dynamic, 1> x;
 
-  x.resize(3);
-  x << -1, 0, 1;
-  ASSERT_NO_THROW(check_finite(function, "x", x))
-      << "check_finite should be true with finite x";
+  VectorXd w(3);
+  w << -1, 0, 1;
+  ASSERT_NO_THROW(check_finite(function, "w", w))
+      << "check_finite should be true with finite w";
 
-  x.resize(3);
+  VectorXd x(3);
   x << -1, 0, std::numeric_limits<double>::infinity();
   EXPECT_THROW(check_finite(function, "x", x), std::domain_error)
       << "check_finite should throw exception on Inf";
 
-  x.resize(3);
-  x << -1, 0, -std::numeric_limits<double>::infinity();
-  EXPECT_THROW(check_finite(function, "x", x), std::domain_error)
+  VectorXd y(3);
+  y << -1, 0, -std::numeric_limits<double>::infinity();
+  EXPECT_THROW(check_finite(function, "y", y), std::domain_error)
       << "check_finite should throw exception on -Inf";
 
-  x.resize(3);
-  x << -1, 0, std::numeric_limits<double>::quiet_NaN();
-  EXPECT_THROW(check_finite(function, "x", x), std::domain_error)
+  VectorXd z(3);
+  z << -1, 0, std::numeric_limits<double>::quiet_NaN();
+  EXPECT_THROW(check_finite(function, "z", z), std::domain_error)
       << "check_finite should throw exception on NaN";
 }
 
@@ -63,4 +63,18 @@ TEST(ErrorHandlingScalar, CheckFinite_nan) {
 
   x_mat << 1, 0, nan;
   EXPECT_THROW(check_finite(function, "x_mat", x_mat), std::domain_error);
+}
+
+TEST(ErrorHandlingScalar, CheckFinite_is_finite_) {
+  const char* function = "check_finite";
+  double nan = std::numeric_limits<double>::quiet_NaN();
+  using Eigen::MatrixXd;
+
+  MatrixXd x(2, 2);
+  x << 0, 1, -1, 20340234.3;
+  ASSERT_NO_THROW(check_finite(function, "x", x)) << "Should be fine";
+
+  x << nan, nan, nan, nan;
+  ASSERT_NO_THROW(check_finite(function, "x", x))
+      << "Should have been checked already!";
 }
