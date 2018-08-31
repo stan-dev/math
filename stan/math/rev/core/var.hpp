@@ -462,8 +462,7 @@ class var {
   inline var& operator/=(double b);
 
   /**
-   * Write the value of this auto-dif variable and its adjoint to
-   * the specified output stream.
+   * Write the value of this auto-diff variable and to the output stream.
    *
    * @param os Output stream to which to write.
    * @param v Variable to write.
@@ -473,6 +472,21 @@ class var {
     if (v.vi_ == nullptr)
       return os << "uninitialized";
     return os << v.val();
+  }
+
+  /**
+   * Read the value of this auto-diff variable from
+   * the specified input stream.
+   *
+   * @param[in] is Input stream to read
+   * @param v Variable to write.
+   * @return Reference to the specified input stream.
+   */
+  friend std::istream& operator>>(std::istream& is, var& v) {
+    double x;
+    is >> x;
+    v = x;
+    return is;
   }
 };
 

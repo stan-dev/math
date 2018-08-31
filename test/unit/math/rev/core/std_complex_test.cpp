@@ -311,23 +311,66 @@ TEST_F(MathRev, comparison) {
   EXPECT_EQ(stack_size,
             stan::math::ChainableStack::instance().var_stack_.size());
 }
-/*
+
 TEST_F(MathRev, serialize_deserialize) {
+  std::stringstream msg;
+
+  std::complex<stan::math::var> x{1, 2};
+  int stack_size = stan::math::ChainableStack::instance().var_stack_.size();
+
   // operator<<
+  msg << x;
+  EXPECT_EQ("(1,2)", msg.str());
+  EXPECT_EQ(stack_size,
+            stan::math::ChainableStack::instance().var_stack_.size());
+
   // operator>>
-  ADD_FAILURE() << "not yet implemented";
+  std::complex<stan::math::var> y;
+  stack_size = stan::math::ChainableStack::instance().var_stack_.size();
+  msg >> y;
+  EXPECT_EQ(1, y.real().val());
+  EXPECT_EQ(2, y.imag().val());
+  EXPECT_EQ(stack_size + 2,
+            stan::math::ChainableStack::instance().var_stack_.size());
 }
 
 TEST_F(MathRev, real) {
-  // real
-  ADD_FAILURE() << "not yet implemented";
+  std::complex<stan::math::var> x{1, 2};
+
+  EXPECT_EQ(2, stan::math::ChainableStack::instance().var_stack_.size());
+
+  EXPECT_EQ(1, x.real().val());
+  EXPECT_EQ(2, stan::math::ChainableStack::instance().var_stack_.size());
+
+  EXPECT_NO_THROW(x.real(2));
+  EXPECT_EQ(2, x.real().val());
+  EXPECT_EQ(3, stan::math::ChainableStack::instance().var_stack_.size());
+
+  stan::math::var y = 3;
+  EXPECT_NO_THROW(x.real(y));
+  EXPECT_EQ(y, x.real().val());
+  EXPECT_EQ(4, stan::math::ChainableStack::instance().var_stack_.size());
 }
 
 TEST_F(MathRev, imag) {
-  // imag
-  ADD_FAILURE() << "not yet implemented";
+  std::complex<stan::math::var> x{1, 2};
+
+  EXPECT_EQ(2, stan::math::ChainableStack::instance().var_stack_.size());
+
+  EXPECT_EQ(2, x.imag().val());
+  EXPECT_EQ(2, stan::math::ChainableStack::instance().var_stack_.size());
+
+  EXPECT_NO_THROW(x.imag(-1));
+  EXPECT_EQ(-1, x.imag().val());
+  EXPECT_EQ(3, stan::math::ChainableStack::instance().var_stack_.size());
+
+  stan::math::var y = 3;
+  EXPECT_NO_THROW(x.imag(y));
+  EXPECT_EQ(y, x.imag().val());
+  EXPECT_EQ(4, stan::math::ChainableStack::instance().var_stack_.size());
 }
 
+/*
 TEST_F(MathRev, abs) {
   // abs
   ADD_FAILURE() << "not yet implemented";
