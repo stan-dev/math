@@ -65,7 +65,6 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
   const size_t M = x.row(0).size();
 
   check_nonnegative(function, "Vector of dependent variables", y);
-  check_finite(function, "Matrix of independent variables", x);
   check_finite(function, "Weight vector", beta);
   check_finite(function, "Intercept", alpha);
   check_consistent_size(function, "Vector of dependent variables", y, N);
@@ -86,6 +85,7 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
   }
 
   Matrix<T_partials_return, Dynamic, 1> theta_dbl = value_of(x) * beta_dbl;
+  check_finite(function, "Matrix of independent variables", theta_dbl);
 
   Matrix<T_partials_return, Dynamic, 1> theta_derivative(N);
   T_partials_return theta_derivative_sum = 0;

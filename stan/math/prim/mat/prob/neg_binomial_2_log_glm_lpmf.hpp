@@ -79,7 +79,6 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
   const size_t M = x.row(0).size();
 
   check_nonnegative(function, "Failures variables", y);
-  check_finite(function, "Matrix of independent variables", x);
   check_finite(function, "Weight vector", beta);
   check_finite(function, "Intercept", alpha);
   check_positive_finite(function, "Precision parameter", phi);
@@ -117,8 +116,10 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
   Array<T_partials_return, Dynamic, 1> theta_dbl
       = (value_of(x) * beta_dbl).array();
   scalar_seq_view<T_alpha> alpha_vec(alpha);
-  for (size_t n = 0; n < N; ++n)
+  for (size_t n = 0; n < N; ++n) {
     theta_dbl[n] += value_of(alpha_vec[n]);
+    check_finite(function, "Matrix of independent variables", theta_dbl[n]);
+  }
   Array<T_partials_return, Dynamic, 1> log_phi = phi_arr.log();
   Array<T_partials_return, Dynamic, 1> logsumexp_eta_logphi
       = theta_dbl.binaryExpr(log_phi, [](const T_partials_return& xx,

@@ -70,7 +70,6 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
   const size_t M = x.row(0).size();
 
   check_finite(function, "Vector of dependent variables", y);
-  check_finite(function, "Matrix of independent variables", x);
   check_finite(function, "Weight vector", beta);
   check_finite(function, "Intercept", alpha);
   check_positive_finite(function, "Scale vector", sigma);
@@ -100,8 +99,9 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
     }
   }
 
-  Array<T_partials_return, Dynamic, 1> mu_minus_alpha_dbl
-      = (value_of(x) * beta_dbl).array();
+  Matrix<T_partials_return, Dynamic, 1> mu_minus_alpha_dbl
+      = (value_of(x) * beta_dbl);
+  check_finite(function, "Matrix of independent variables", mu_minus_alpha_dbl);
   Array<T_partials_return, Dynamic, 1> inv_sigma(N, 1);
   scalar_seq_view<T_alpha> alpha_vec(alpha);
   scalar_seq_view<T_y> y_vec(y);
