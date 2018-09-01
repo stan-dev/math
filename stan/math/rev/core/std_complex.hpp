@@ -50,11 +50,16 @@ complex<stan::math::var>& complex<stan::math::var>::operator=(
 }
 
 template <>
+inline stan::math::var norm(const complex<stan::math::var>& c) {
+  return stan::math::square(c.real()) + stan::math::square(c.imag());
+}
+
+template <>
 complex<stan::math::var> operator/(const complex<stan::math::var>& z,
                                    const complex<stan::math::var>& w) {
   return complex<stan::math::var>{z.real() * w.real() + z.imag() * w.imag(),
                                   z.imag() * w.real() - z.real() * w.imag()}
-         / (square(w.real()) + square(w.imag()));
+         / norm(w);
 }
 
 template <>
@@ -91,12 +96,29 @@ inline bool operator==(double x, const complex<stan::math::var>& y) {
   return y == x;
 }
 
+template <>
+inline bool operator!=(const complex<stan::math::var>& x,
+                       const complex<stan::math::var>& y) {
+  return x.real() != y.real() || x.imag() != y.imag();
+}
+
+inline bool operator!=(const complex<stan::math::var>& x,
+                       const stan::math::var& y) {
+  return (x.real() != y || x.imag() != 0);
+}
+
+inline bool operator!=(const stan::math::var& x,
+                       const complex<stan::math::var>& y) {
+  return y != x;
+}
+
 inline bool operator!=(const complex<stan::math::var>& x, double y) {
-  return !(x == y);
+  return (x.real() != y || x.imag() != 0);
+  ;
 }
 
 inline bool operator!=(double x, const complex<stan::math::var>& y) {
-  return !(x == y);
+  return y != x;
 }
 
 inline int isinf(const std::complex<stan::math::var>& a) {
@@ -108,8 +130,8 @@ inline int isnan(const std::complex<stan::math::var>& a) {
 }
 
 template <>
-inline stan::math::var norm(const complex<stan::math::var>& c) {
-  return stan::math::square(c.real()) + stan::math::square(c.imag());
+inline stan::math::var abs(const complex<stan::math::var>& c) {
+  return stan::math::sqrt(norm(c));
 }
 
 template <>
