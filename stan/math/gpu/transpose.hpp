@@ -2,6 +2,7 @@
 #define STAN_MATH_GPU_TRANSPOSE_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/gpu/kernels/transpose.hpp>
 #include <CL/cl.hpp>
 
 namespace stan {
@@ -18,14 +19,10 @@ inline matrix_gpu transpose(const matrix_gpu& src) {
   matrix_gpu dst(src.cols(), src.rows());
   if (dst.size() == 0)
     return dst;
-  cl::Kernel kernel = opencl_context.get_kernel("transpose");
   cl::CommandQueue cmdQueue = opencl_context.queue();
   try {
-    opencl_context.set_kernel_args(kernel, dst.buffer(), src.buffer(),
-                                   src.rows(), src.cols());
-    cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
-                                  cl::NDRange(src.rows(), src.cols()),
-                                  cl::NullRange, NULL, NULL);
+    opencl_kernels::transpose(cl::NDRange(src.rows(), src.cols()), dst.buffer(),
+                              src.buffer(), src.rows(), src.cols());
   } catch (const cl::Error& e) {
     check_opencl_error("transpose", e);
   }
