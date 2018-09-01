@@ -52,13 +52,16 @@ complex<stan::math::var>& complex<stan::math::var>::operator=(
 template <>
 complex<stan::math::var> operator/(const complex<stan::math::var>& z,
                                    const complex<stan::math::var>& w) {
-  return complex<stan::math::var>{z.real() / w.real(), z.imag() / w.imag()};
+  return complex<stan::math::var>{z.real() * w.real() + z.imag() * w.imag(),
+                                  z.imag() * w.real() - z.real() * w.imag()}
+         / (square(w.real()) + square(w.imag()));
 }
 
 template <>
 complex<stan::math::var> operator*(const complex<stan::math::var>& z,
                                    const complex<stan::math::var>& w) {
-  return complex<stan::math::var>{z.real() * w.real(), z.imag() * w.imag()};
+  return complex<stan::math::var>{z.real() * w.real() - z.imag() * w.imag(),
+                                  z.real() * w.imag() + z.imag() * w.real()};
 }
 
 template <>

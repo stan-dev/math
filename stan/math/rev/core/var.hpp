@@ -462,7 +462,7 @@ class var {
   inline var& operator/=(double b);
 
   /**
-   * Write the value of this auto-diff variable and to the output stream.
+   * Write the value of this auto-diff variable to the output stream.
    *
    * @param os Output stream to which to write.
    * @param v Variable to write.

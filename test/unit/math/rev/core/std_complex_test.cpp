@@ -112,23 +112,23 @@ TEST_F(MathRev, member_operators) {
   y = std::complex<stan::math::var>{3, 4};
   EXPECT_EQ(4, stan::math::ChainableStack::instance().var_stack_.size());
   x /= y;
-  EXPECT_FLOAT_EQ(1.0 / 3.0, x.real().val());
-  EXPECT_FLOAT_EQ(0.5, x.imag().val());
+  EXPECT_FLOAT_EQ(11.0 / 25.0, x.real().val());
+  EXPECT_FLOAT_EQ(2.0 / 25.0, x.imag().val());
   EXPECT_FLOAT_EQ(3, y.real().val());
   EXPECT_FLOAT_EQ(4, y.imag().val());
-  EXPECT_EQ(6, stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_EQ(15, stan::math::ChainableStack::instance().var_stack_.size());
   stan::math::recover_memory();
 
-  // operator*=
+  // operator*
   x = std::complex<stan::math::var>{1, 2};
   y = std::complex<stan::math::var>{3, 4};
   EXPECT_EQ(4, stan::math::ChainableStack::instance().var_stack_.size());
   x *= y;
-  EXPECT_FLOAT_EQ(3, x.real().val());
-  EXPECT_FLOAT_EQ(8, x.imag().val());
+  EXPECT_FLOAT_EQ(-5, x.real().val());
+  EXPECT_FLOAT_EQ(10.0, x.imag().val());
   EXPECT_FLOAT_EQ(3, y.real().val());
   EXPECT_FLOAT_EQ(4, y.imag().val());
-  EXPECT_EQ(6, stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_EQ(10, stan::math::ChainableStack::instance().var_stack_.size());
   stan::math::recover_memory();
 }
 
@@ -191,9 +191,9 @@ TEST_F(MathRev, arithmetic) {
   y = std::complex<stan::math::var>{3, 4};
   z = x * y;
 
-  EXPECT_EQ(6, stan::math::ChainableStack::instance().var_stack_.size());
-  EXPECT_FLOAT_EQ(3, z.real().val());
-  EXPECT_FLOAT_EQ(8, z.imag().val());
+  EXPECT_EQ(10, stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_FLOAT_EQ(-5, z.real().val());
+  EXPECT_FLOAT_EQ(10, z.imag().val());
   EXPECT_FLOAT_EQ(1, x.real().val());
   EXPECT_FLOAT_EQ(2, x.imag().val());
   EXPECT_FLOAT_EQ(3, y.real().val());
@@ -205,9 +205,9 @@ TEST_F(MathRev, arithmetic) {
   y = std::complex<stan::math::var>{3, 4};
   z = x / y;
 
-  EXPECT_EQ(6, stan::math::ChainableStack::instance().var_stack_.size());
-  EXPECT_FLOAT_EQ(1.0 / 3.0, z.real().val());
-  EXPECT_FLOAT_EQ(0.5, z.imag().val());
+  EXPECT_EQ(15, stan::math::ChainableStack::instance().var_stack_.size());
+  EXPECT_FLOAT_EQ(11.0 / 25.0, z.real().val());
+  EXPECT_FLOAT_EQ(2.0 / 25.0, z.imag().val());
   EXPECT_FLOAT_EQ(1, x.real().val());
   EXPECT_FLOAT_EQ(2, x.imag().val());
   EXPECT_FLOAT_EQ(3, y.real().val());
