@@ -414,9 +414,6 @@ TEST(AgradRev, test_matrix_sin_multiple_jac) {
   EXPECT_FLOAT_EQ(x(0, 1).adj(), 0.0);
   EXPECT_FLOAT_EQ(x(1, 0).adj(), 0.0);
   EXPECT_FLOAT_EQ(x(1, 1).adj(), 0.5403023058681398);
-
-  std::cout << stan::math::ChainableStack::instance().var_stack_.size()
-            << std::endl;
 }
 
 /**
@@ -663,8 +660,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types) {
     EXPECT_FLOAT_EQ(vd[j].adj(), 1.0);
     EXPECT_FLOAT_EQ(d.adj(), 0.0);
     for (int i = 0; i < size_vd; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(vd[i].adj(), 0);
+      }
     for (int i = 0; i < rows_ed1; i++)
       EXPECT_FLOAT_EQ(ed1(i).adj(), 0);
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
@@ -683,8 +681,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types) {
     for (int i = 0; i < size_vd; i++)
       EXPECT_FLOAT_EQ(vd[i].adj(), 0);
     for (int i = 0; i < rows_ed1; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(ed1(i).adj(), 0);
+      }
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
       EXPECT_FLOAT_EQ(ed2(i).adj(), 0);
     for (int i = 0; i < cols_ed3; i++)
@@ -703,8 +702,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types) {
     for (int i = 0; i < rows_ed1; i++)
       EXPECT_FLOAT_EQ(ed1(i).adj(), 0);
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(ed2(i).adj(), 0);
+      }
     for (int i = 0; i < cols_ed3; i++)
       EXPECT_FLOAT_EQ(ed3(i).adj(), 0);
     EXPECT_FLOAT_EQ(ed4(0).adj(), 0);
@@ -724,8 +724,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types) {
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
       EXPECT_FLOAT_EQ(ed2(i).adj(), 0);
     for (int i = 0; i < cols_ed3; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(ed3(i).adj(), 0);
+      }
     EXPECT_FLOAT_EQ(ed4(0).adj(), 0);
     stan::math::set_zero_all_adjoints();
   }
@@ -796,8 +797,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_different_shapes) {
     EXPECT_FLOAT_EQ(vd[j].adj(), 1.0);
     EXPECT_FLOAT_EQ(d.adj(), 0.0);
     for (int i = 0; i < size_vd; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(vd[i].adj(), 0);
+      }
     for (int i = 0; i < rows_ed1; i++)
       EXPECT_FLOAT_EQ(ed1(i).adj(), 0);
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
@@ -816,8 +818,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_different_shapes) {
     for (int i = 0; i < size_vd; i++)
       EXPECT_FLOAT_EQ(vd[i].adj(), 0);
     for (int i = 0; i < rows_ed1; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(ed1(i).adj(), 0);
+      }
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
       EXPECT_FLOAT_EQ(ed2(i).adj(), 0);
     for (int i = 0; i < cols_ed3; i++)
@@ -836,8 +839,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_different_shapes) {
     for (int i = 0; i < rows_ed1; i++)
       EXPECT_FLOAT_EQ(ed1(i).adj(), 0);
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(ed2(i).adj(), 0);
+      }
     for (int i = 0; i < cols_ed3; i++)
       EXPECT_FLOAT_EQ(ed3(i).adj(), 0);
     EXPECT_FLOAT_EQ(ed4(0).adj(), 0);
@@ -857,8 +861,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_different_shapes) {
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
       EXPECT_FLOAT_EQ(ed2(i).adj(), 0);
     for (int i = 0; i < cols_ed3; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(ed3(i).adj(), 0);
+      }
     EXPECT_FLOAT_EQ(ed4(0).adj(), 0);
     stan::math::set_zero_all_adjoints();
   }
@@ -927,8 +932,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_1) {
     EXPECT_FLOAT_EQ(y(1 + j).val(), vd[j].val());
     EXPECT_FLOAT_EQ(vd[j].adj(), 1.0);
     for (int i = 0; i < size_vd; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(vd[i].adj(), 0);
+      }
     for (int i = 0; i < rows_ed1; i++)
       EXPECT_FLOAT_EQ(ed1(i).adj(), 0);
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
@@ -946,8 +952,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_1) {
     for (int i = 0; i < size_vd; i++)
       EXPECT_FLOAT_EQ(vd[i].adj(), 0);
     for (int i = 0; i < rows_ed1; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(ed1(i).adj(), 0);
+      }
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
       EXPECT_FLOAT_EQ(ed2(i).adj(), 0);
     for (int i = 0; i < cols_ed3; i++)
@@ -965,8 +972,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_1) {
     for (int i = 0; i < rows_ed1; i++)
       EXPECT_FLOAT_EQ(ed1(i).adj(), 0);
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(ed2(i).adj(), 0);
+      }
     for (int i = 0; i < cols_ed3; i++)
       EXPECT_FLOAT_EQ(ed3(i).adj(), 0);
     EXPECT_FLOAT_EQ(ed4(0).adj(), 0);
@@ -985,8 +993,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_1) {
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
       EXPECT_FLOAT_EQ(ed2(i).adj(), 0);
     for (int i = 0; i < cols_ed3; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(ed3(i).adj(), 0);
+      }
     EXPECT_FLOAT_EQ(ed4(0).adj(), 0);
     stan::math::set_zero_all_adjoints();
   }
@@ -1066,8 +1075,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_2) {
     EXPECT_FLOAT_EQ(y(1 + size_vd + j).val(), ed1(j).val());
     EXPECT_FLOAT_EQ(ed1(j).adj(), 1.0);
     for (int i = 0; i < rows_ed1; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(ed1(i).adj(), 0);
+      }
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
       EXPECT_FLOAT_EQ(ed2(i).adj(), 0);
     for (int i = 0; i < cols_ed3; i++)
@@ -1083,8 +1093,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_2) {
     for (int i = 0; i < rows_ed1; i++)
       EXPECT_FLOAT_EQ(ed1(i).adj(), 0);
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(ed2(i).adj(), 0);
+      }
     for (int i = 0; i < cols_ed3; i++)
       EXPECT_FLOAT_EQ(ed3(i).adj(), 0);
     EXPECT_FLOAT_EQ(ed4(0).adj(), 0);
@@ -1101,8 +1112,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_2) {
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
       EXPECT_FLOAT_EQ(ed2(i).adj(), 0);
     for (int i = 0; i < cols_ed3; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(ed3(i).adj(), 0);
+      }
     EXPECT_FLOAT_EQ(ed4(0).adj(), 0);
     stan::math::set_zero_all_adjoints();
   }
@@ -1168,8 +1180,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_3) {
     EXPECT_FLOAT_EQ(vd[j].adj(), 1.0);
     EXPECT_FLOAT_EQ(d.adj(), 0.0);
     for (int i = 0; i < size_vd; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(vd[i].adj(), 0);
+      }
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
       EXPECT_FLOAT_EQ(ed2(i).adj(), 0);
     for (int i = 0; i < cols_ed3; i++)
@@ -1200,8 +1213,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_3) {
     for (int i = 0; i < size_vd; i++)
       EXPECT_FLOAT_EQ(vd[i].adj(), 0);
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(ed2(i).adj(), 0);
+      }
     for (int i = 0; i < cols_ed3; i++)
       EXPECT_FLOAT_EQ(ed3(i).adj(), 0);
     EXPECT_FLOAT_EQ(ed4(0).adj(), 0);
@@ -1219,8 +1233,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_3) {
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
       EXPECT_FLOAT_EQ(ed2(i).adj(), 0);
     for (int i = 0; i < cols_ed3; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(ed3(i).adj(), 0);
+      }
     EXPECT_FLOAT_EQ(ed4(0).adj(), 0);
     stan::math::set_zero_all_adjoints();
   }
@@ -1286,8 +1301,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_4) {
     EXPECT_FLOAT_EQ(vd[j].adj(), 1.0);
     EXPECT_FLOAT_EQ(d.adj(), 0.0);
     for (int i = 0; i < size_vd; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(vd[i].adj(), 0);
+      }
     for (int i = 0; i < rows_ed1; i++)
       EXPECT_FLOAT_EQ(ed1(i).adj(), 0);
     for (int i = 0; i < cols_ed3; i++)
@@ -1304,8 +1320,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_4) {
     for (int i = 0; i < size_vd; i++)
       EXPECT_FLOAT_EQ(vd[i].adj(), 0);
     for (int i = 0; i < rows_ed1; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(ed1(i).adj(), 0);
+      }
     for (int i = 0; i < cols_ed3; i++)
       EXPECT_FLOAT_EQ(ed3(i).adj(), 0);
     EXPECT_FLOAT_EQ(ed4(0).adj(), 0);
@@ -1337,8 +1354,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_4) {
     for (int i = 0; i < rows_ed1; i++)
       EXPECT_FLOAT_EQ(ed1(i).adj(), 0);
     for (int i = 0; i < cols_ed3; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(ed3(i).adj(), 0);
+      }
     EXPECT_FLOAT_EQ(ed4(0).adj(), 0);
     stan::math::set_zero_all_adjoints();
   }
@@ -1405,8 +1423,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_5) {
     EXPECT_FLOAT_EQ(vd[j].adj(), 1.0);
     EXPECT_FLOAT_EQ(d.adj(), 0.0);
     for (int i = 0; i < size_vd; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(vd[i].adj(), 0);
+      }
     for (int i = 0; i < rows_ed1; i++)
       EXPECT_FLOAT_EQ(ed1(i).adj(), 0);
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
@@ -1423,8 +1442,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_5) {
     for (int i = 0; i < size_vd; i++)
       EXPECT_FLOAT_EQ(vd[i].adj(), 0);
     for (int i = 0; i < rows_ed1; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(ed1(i).adj(), 0);
+      }
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
       EXPECT_FLOAT_EQ(ed2(i).adj(), 0);
     EXPECT_FLOAT_EQ(ed4(0).adj(), 0);
@@ -1441,8 +1461,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_5) {
     for (int i = 0; i < rows_ed1; i++)
       EXPECT_FLOAT_EQ(ed1(i).adj(), 0);
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(ed2(i).adj(), 0);
+      }
     EXPECT_FLOAT_EQ(ed4(0).adj(), 0);
     stan::math::set_zero_all_adjoints();
   }
@@ -1525,8 +1546,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_6) {
     EXPECT_FLOAT_EQ(vd[j].adj(), 1.0);
     EXPECT_FLOAT_EQ(d.adj(), 0.0);
     for (int i = 0; i < size_vd; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(vd[i].adj(), 0);
+      }
     for (int i = 0; i < rows_ed1; i++)
       EXPECT_FLOAT_EQ(ed1(i).adj(), 0);
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
@@ -1544,8 +1566,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_6) {
     for (int i = 0; i < size_vd; i++)
       EXPECT_FLOAT_EQ(vd[i].adj(), 0);
     for (int i = 0; i < rows_ed1; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(ed1(i).adj(), 0);
+      }
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
       EXPECT_FLOAT_EQ(ed2(i).adj(), 0);
     for (int i = 0; i < cols_ed3; i++)
@@ -1563,8 +1586,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_6) {
     for (int i = 0; i < rows_ed1; i++)
       EXPECT_FLOAT_EQ(ed1(i).adj(), 0);
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(ed2(i).adj(), 0);
+      }
     for (int i = 0; i < cols_ed3; i++)
       EXPECT_FLOAT_EQ(ed3(i).adj(), 0);
     stan::math::set_zero_all_adjoints();
@@ -1583,8 +1607,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_6) {
     for (int i = 0; i < rows_ed2 * cols_ed2; i++)
       EXPECT_FLOAT_EQ(ed2(i).adj(), 0);
     for (int i = 0; i < cols_ed3; i++)
-      if (i != j)
+      if (i != j) {
         EXPECT_FLOAT_EQ(ed3(i).adj(), 0);
+      }
     stan::math::set_zero_all_adjoints();
   }
 

@@ -373,7 +373,7 @@ struct adj_jac_vari : public vari {
 
     y_vi_
         = ChainableStack::instance().memalloc_.alloc_array<vari*>(var_y.size());
-    for (int m = 0; m < var_y.size(); ++m) {
+    for (size_t m = 0; m < var_y.size(); ++m) {
       y_vi_[m] = new vari(val_y[m], false);
       var_y[m] = y_vi_[m];
     }
