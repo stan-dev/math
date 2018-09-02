@@ -5,209 +5,143 @@
 #include <gtest/gtest.h>
 #include <algorithm>
 #ifdef STAN_OPENCL
+boost::random::mt19937 rng;
 
-TEST(MathMatrix, multiply_c_v) {
+#define  EXPECT_MATRIX_NEAR(A, B, DELTA) \
+          for (int i = 0; i < A.size(); i++)  \
+            EXPECT_NEAR(A(i), B(i), DELTA);
+
+TEST(MathMatrix, vector_row_vector) {
   stan::math::vector_d v(3);
-  v << 1, 2, 3;
-  stan::math::matrix_gpu vv(v);
-  vv = stan::math::multiply(vv, 2.0);
-  stan::math::copy(v, vv);
-  EXPECT_FLOAT_EQ(2.0, v(0));
-  EXPECT_FLOAT_EQ(4.0, v(1));
-  EXPECT_FLOAT_EQ(6.0, v(2));
-}
-
-TEST(MathMatrix, multiply_c_rv) {
   stan::math::row_vector_d rv(3);
-  rv << 1, 2, 3;
-  stan::math::matrix_gpu vv(rv);
-  vv = stan::math::multiply(vv, 2.0);
-  stan::math::copy(rv, vv);
-  EXPECT_FLOAT_EQ(2.0, rv(0));
-  EXPECT_FLOAT_EQ(4.0, rv(1));
-  EXPECT_FLOAT_EQ(6.0, rv(2));
+  stan::math::matrix_gpu v_gpu(v);
+  stan::math::matrix_gpu rv_gpu(rv);
+  stan::math::matrix_gpu m_gpu(1, 1);
+  EXPECT_NO_THROW(m_gpu = stan::math::multiply(rv_gpu, v_gpu));
 }
 
-TEST(MathMatrix, multiply_c_m) {
-  stan::math::matrix_d m(2, 3);
-  m << 1, 2, 3, 4, 5, 6;
-  stan::math::matrix_gpu mm(m);
-  mm = stan::math::multiply(mm, 2.0);
-  stan::math::copy(m, mm);
-  EXPECT_FLOAT_EQ(2.0, m(0, 0));
-  EXPECT_FLOAT_EQ(4.0, m(0, 1));
-  EXPECT_FLOAT_EQ(6.0, m(0, 2));
-  EXPECT_FLOAT_EQ(8.0, m(1, 0));
-  EXPECT_FLOAT_EQ(10.0, m(1, 1));
-  EXPECT_FLOAT_EQ(12.0, m(1, 2));
+TEST(MathMatrix, one_dim_zero_matrix) {
+  stan::math::matrix_d m0(5, 0);
+  stan::math::matrix_d m1(0, 3);
+
+  stan::math::matrix_gpu m0_gpu(m0);
+  stan::math::matrix_gpu m1_gpu(m1);
+  EXPECT_NO_THROW(stan::math::multiply(m0_gpu, m1_gpu));
+
+  EXPECT_NO_THROW(stan::math::multiply(m0_gpu, 2.0));
+  EXPECT_NO_THROW(stan::math::multiply(2.0, m0_gpu));
+
+  EXPECT_NO_THROW(stan::math::multiply(m1_gpu, 2.0));
+  EXPECT_NO_THROW(stan::math::multiply(2.0, m1_gpu));
 }
 
-TEST(MathMatrix, multiply_rv_v_exception_pass_vec) {
-  stan::math::row_vector_d rv;
-  stan::math::vector_d v;
+TEST(MathMatrix, zero_result_matrix) {
+  stan::math::matrix_d m0(0, 5);
+  stan::math::matrix_d m1(5, 0);
 
-  rv.resize(3);
-  v.resize(3);
-  stan::math::matrix_gpu rvv(rv);
-  stan::math::matrix_gpu vv(v);
-  stan::math::matrix_gpu ans_v(1, 1);
-  EXPECT_NO_THROW(ans_v = stan::math::multiply(rvv, vv));
+  stan::math::matrix_gpu m0_gpu(m0);
+  stan::math::matrix_gpu m1_gpu(m1);
+  EXPECT_NO_THROW(stan::math::multiply(m0_gpu, m1_gpu));
 }
 
-TEST(MathMatrix, multiply_rv_v_exception_pass_empty) {
-  stan::math::row_vector_d rv;
-  stan::math::vector_d v;
-  rv.resize(0);
-  v.resize(0);
-  stan::math::matrix_gpu rvv(rv);
-  stan::math::matrix_gpu vv(v);
-  stan::math::matrix_gpu ans_vv(1, 1);
-  EXPECT_NO_THROW(ans_vv = stan::math::multiply(rvv, vv));
+TEST(MathMatrix, zero_size_input_matrix) {
+  stan::math::matrix_d m0(0, 0);
+  stan::math::matrix_d m1(0, 0);
+
+  stan::math::matrix_gpu m0_gpu(m0);
+  stan::math::matrix_gpu m1_gpu(m1);
+  EXPECT_NO_THROW(stan::math::multiply(m0_gpu, m1_gpu));
+
+  EXPECT_NO_THROW(stan::math::multiply(m0_gpu, 2.0));
+  EXPECT_NO_THROW(stan::math::multiply(2.0, m0_gpu));
 }
 
-TEST(MathMatrix, multiply_rv_v_exception_fail) {
-  stan::math::row_vector_d rv;
-  stan::math::vector_d v;
-  rv.resize(2);
-  v.resize(3);
-  stan::math::matrix_gpu rvv(rv);
-  stan::math::matrix_gpu vv(v);
-  stan::math::matrix_gpu ans_vv(2, 3);
-  EXPECT_THROW(ans_vv = stan::math::multiply(rvv, vv), std::invalid_argument);
+TEST(MathMatrix, non_matching_dim_excpetion) {
+  stan::math::matrix_d m0(5, 3);
+  stan::math::matrix_d m1(2, 6);
+
+  stan::math::matrix_gpu m0_gpu(m0);
+  stan::math::matrix_gpu m1_gpu(m1);
+  EXPECT_THROW(stan::math::multiply(m0_gpu, m1_gpu), std::invalid_argument);
 }
 
-TEST(MathMatrix, multiply_m_v_exception_pass) {
-  stan::math::matrix_d m;
-  stan::math::vector_d v;
+TEST(MathMatrix, multiply_scalar) {
+  stan::math::vector_d v(25);
+  stan::math::vector_d v_gpu_res(25);
+  stan::math::row_vector_d rv(25);
+  stan::math::row_vector_d rv_gpu_res(25);
+  stan::math::matrix_d m(5, 5);
+  stan::math::matrix_d m_gpu_res(5, 5);
 
-  m.resize(3, 5);
-  v.resize(5);
-  stan::math::matrix_gpu mm(m);
-  stan::math::matrix_gpu vv(v);
-  stan::math::matrix_gpu ans_mm(3, 1);
-  EXPECT_NO_THROW(ans_mm = stan::math::multiply(mm, vv));
+  for (int i = 0; i < v.size(); i++)
+    v(i) = stan::math::normal_rng(0.0, 5.0, rng);
+  for (int i = 0; i < rv.size(); i++)
+    rv(i) = stan::math::normal_rng(0.0, 5.0, rng);
+  for (int i = 0; i < m.size(); i++)
+    m(i) = stan::math::normal_rng(0.0, 5.0, rng);
+
+  stan::math::matrix_gpu v_gpu(v);
+  v_gpu = stan::math::multiply(v_gpu, 2.0);
+  stan::math::copy(v_gpu_res, v_gpu);
+
+  stan::math::matrix_gpu rv_gpu(rv);
+  rv_gpu = stan::math::multiply(rv_gpu, 2.0);
+  stan::math::copy(rv_gpu_res, rv_gpu);
+
+  stan::math::matrix_gpu m_gpu(m);
+  m_gpu = stan::math::multiply(m_gpu, 2.0);
+  stan::math::copy(m_gpu_res, m_gpu);
+
+  v = v * 2.0;
+  rv = rv * 2.0;
+  m = m * 2.0;
+
+  EXPECT_MATRIX_NEAR(v, v_gpu_res, 1e-10);
+  EXPECT_MATRIX_NEAR(rv, rv_gpu_res, 1e-10);
+  EXPECT_MATRIX_NEAR(m, m_gpu_res, 1e-10);
 }
 
-TEST(MathMatrix, multiply_m_v_exception_fail_zero) {
-  stan::math::matrix_d m;
-  stan::math::vector_d v;
-  m.resize(3, 0);
-  v.resize(0);
-  stan::math::matrix_gpu mm(m);
-  stan::math::matrix_gpu vv(v);
-  stan::math::matrix_gpu ans_mm(3, 1);
-  EXPECT_NO_THROW(ans_mm = stan::math::multiply(mm, vv));
+TEST(MathMatrix, row_vector_vector) {
+  stan::math::vector_d v(5);
+  stan::math::row_vector_d rv(5);
+  stan::math::matrix_d m0(1, 1);
+  stan::math::matrix_d m0_gpu_res(1, 1);
+  stan::math::matrix_d m1(5, 5);
+  stan::math::matrix_d m1_gpu_res(5, 5);
 
-  stan::math::matrix_gpu ans_mm_dim_fail(3, 0);
-  EXPECT_THROW(ans_mm_dim_fail = stan::math::multiply(mm, vv),
-               std::invalid_argument);
-}
+  for (int i = 0; i < v.size(); i++)
+    v(i) = stan::math::normal_rng(0.0, 5.0, rng);
+  for (int i = 0; i < rv.size(); i++)
+    rv(i) = stan::math::normal_rng(0.0, 5.0, rng);
 
-TEST(MathMatrix, multiply_m_v_exception_pass_pass) {
-  stan::math::matrix_d m;
-  stan::math::vector_d v;
-  m.resize(2, 3);
-  v.resize(2);
-  stan::math::matrix_gpu mm(m);
-  stan::math::matrix_gpu vv(v);
-  stan::math::matrix_gpu ans_mm(2, 1);
-  EXPECT_THROW(ans_mm = stan::math::multiply(mm, vv), std::invalid_argument);
-}
+  m0 = rv * v;
+  m1 = v * rv;
 
-TEST(MathMatrix, multiply_rv_m_exception_pass_vec1) {
-  stan::math::row_vector_d rv;
-  stan::math::matrix_d m;
+  stan::math::matrix_gpu v_gpu(v);
+  stan::math::matrix_gpu rv_gpu(rv);
+  stan::math::matrix_gpu m0_gpu(1, 1);
+  stan::math::matrix_gpu m1_gpu(5, 5);
 
-  rv.resize(3);
-  m.resize(3, 5);
-  stan::math::matrix_gpu mm(m);
-  stan::math::matrix_gpu rvv(rv);
-  stan::math::matrix_gpu ans_mm(1, 5);
-  EXPECT_NO_THROW(ans_mm = stan::math::multiply(rvv, mm));
-}
+  m0_gpu = stan::math::multiply(rv_gpu, v_gpu);
+  m1_gpu = stan::math::multiply(v_gpu, rv_gpu);
+  stan::math::copy(m0_gpu_res, m0_gpu);
+  stan::math::copy(m1_gpu_res, m1_gpu);
 
-TEST(MathMatrix, multiply_rv_m_exception_fail_zero1) {
-  stan::math::row_vector_d rv;
-  stan::math::matrix_d m;
-  rv.resize(0);
-  m.resize(0, 3);
-  stan::math::matrix_gpu mm(m);
-  stan::math::matrix_gpu rvv(rv);
-  stan::math::matrix_gpu ans_mm1(1, 3);
-  EXPECT_NO_THROW(ans_mm1 = stan::math::multiply(rvv, mm));
-}
-
-TEST(MathMatrix, multiply_rv_m_exception_fail_dims) {
-  stan::math::row_vector_d rv;
-  stan::math::matrix_d m;
-  rv.resize(3);
-  m.resize(2, 3);
-  stan::math::matrix_gpu mm(m);
-  stan::math::matrix_gpu rvv(rv);
-  stan::math::matrix_gpu ans_mm(1, 3);
-  EXPECT_THROW(ans_mm = stan::math::multiply(rvv, mm), std::invalid_argument);
-}
-
-TEST(MathMatrix, multiply_m_m_exception_pass_dim) {
-  stan::math::matrix_d m1, m2;
-
-  m1.resize(1, 3);
-  m2.resize(3, 5);
-  stan::math::matrix_gpu mm1(m1);
-  stan::math::matrix_gpu mm2(m2);
-  stan::math::matrix_gpu mm3(1, 5);
-  EXPECT_NO_THROW(mm3 = stan::math::multiply(mm1, mm2));
-}
-
-TEST(MathMatrix, multiply_m_m_exception_fail_dim_zero) {
-  stan::math::matrix_d m1, m2;
-  m1.resize(2, 0);
-  m2.resize(0, 3);
-  stan::math::matrix_gpu mm1(m1);
-  stan::math::matrix_gpu mm2(m2);
-  stan::math::matrix_gpu mm3(2, 3);
-  EXPECT_NO_THROW(mm3 = stan::math::multiply(mm1, mm2));
-}
-
-TEST(MathMatrix, multiply_m_m_exception_fail_dim) {
-  stan::math::matrix_d m1, m2;
-  m1.resize(4, 3);
-  m2.resize(2, 3);
-  stan::math::matrix_gpu mm1(m1);
-  stan::math::matrix_gpu mm2(m2);
-  stan::math::matrix_gpu mm3(3, 3);
-  EXPECT_THROW(mm3 = stan::math::multiply(mm1, mm2), std::invalid_argument);
-}
-
-TEST(MathMatrix, multiply_zero_size) {
-  stan::math::vector_d v0;
-  stan::math::row_vector_d rv0;
-  stan::math::matrix_d m0;
-
-  stan::math::matrix_gpu v00(v0);
-
-  stan::math::matrix_gpu rv00(rv0);
-  stan::math::matrix_gpu m00(m0);
-  using stan::math::multiply;
-  EXPECT_NO_THROW(multiply(v00, 2.0));
-  EXPECT_NO_THROW(multiply(rv00, 2.0));
-  EXPECT_NO_THROW(multiply(m00, 2.0));
-  EXPECT_NO_THROW(multiply(2.0, v00));
-  EXPECT_NO_THROW(multiply(2.0, rv00));
-  EXPECT_NO_THROW(multiply(2.0, m00));
+  EXPECT_MATRIX_NEAR(m0, m0_gpu_res, 1e-10);
+  EXPECT_MATRIX_NEAR(m1, m1_gpu_res, 1e-10);
 }
 
 TEST(AgradRevMatrix, multiply_small) {
   using stan::math::multiply;
-  stan::math::matrix_d m1, m2, m3, m3_gpu;
+  stan::math::matrix_d m1(3, 3);
+  stan::math::matrix_d m2(3, 3);
+  stan::math::matrix_d m3(3, 3);
+  stan::math::matrix_d m3_gpu_res(3, 3);
 
-  m1.resize(3, 3);
-  m2.resize(3, 3);
-  m3.resize(3, 3);
-  m3_gpu.resize(3, 3);
-
-  m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
-  m2 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  for (int i = 0; i < m1.size(); i++)
+    m1(i) = stan::math::normal_rng(0.0, 5.0, rng);
+  for (int i = 0; i < m2.size(); i++)
+    m2(i) = stan::math::normal_rng(0.0, 5.0, rng);
 
   stan::math::matrix_gpu m11(m1);
   stan::math::matrix_gpu m22(m2);
@@ -217,29 +151,25 @@ TEST(AgradRevMatrix, multiply_small) {
 
   m33 = stan::math::multiply(m11, m22);
 
-  stan::math::copy(m3_gpu, m33);
+  stan::math::copy(m3_gpu_res, m33);
 
-  for (int i = 0; i < 3; i++)
-    for (int j = 0; j < 3; j++)
-      EXPECT_NEAR(m3(i, j), m3_gpu(i, j), 1e-10);
+  EXPECT_MATRIX_NEAR(m3, m3_gpu_res, 1e-10);
 }
 
 TEST(AgradRevMatrix, multiply_big) {
-  boost::random::mt19937 rng;
   using stan::math::multiply;
-  stan::math::matrix_d m1, m2, m3, m3_gpu;
-
   int size = 512;
-  m1.resize(size, size);
-  m2.resize(size, size);
-  m3.resize(size, size);
-  m3_gpu.resize(size, size);
+  stan::math::matrix_d m1(size, size);
+  stan::math::matrix_d m2(size, size);
+  stan::math::matrix_d m3(size, size);
+  stan::math::matrix_d m3_gpu_res(size, size);
 
-  for (int i = 0; i < size; i++)
+  for (int i = 0; i < size; i++) {
     for (int j = 0; j < size; j++) {
       m1(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
       m2(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
     }
+  }
   stan::math::matrix_gpu m11(m1);
   stan::math::matrix_gpu m22(m2);
   stan::math::matrix_gpu m33(size, size);
@@ -248,10 +178,8 @@ TEST(AgradRevMatrix, multiply_big) {
 
   m33 = stan::math::multiply(m11, m22);
 
-  stan::math::copy(m3_gpu, m33);
+  stan::math::copy(m3_gpu_res, m33);
 
-  for (int i = 0; i < size; i++)
-    for (int j = 0; j < size; j++)
-      EXPECT_NEAR(m3(i, j), m3_gpu(i, j), 1e-10);
+  EXPECT_MATRIX_NEAR(m3, m3_gpu_res, 1e-10);
 }
 #endif
