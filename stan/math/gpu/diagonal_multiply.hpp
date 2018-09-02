@@ -24,7 +24,7 @@ inline matrix_gpu diagonal_multiply(const matrix_gpu& A, const double scalar) {
     min_dim = B.cols();
   try {
     opencl_kernels::scalar_mul_diagonal(cl::NDRange(min_dim), B.buffer(),
-                                        scalar, B.rows(), B.cols());
+                                        scalar, B.rows(), min_dim);
   } catch (const cl::Error& e) {
     check_opencl_error("diagonal_multiply", e);
   }

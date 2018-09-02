@@ -16,7 +16,7 @@ namespace math {
  * @param scalar scalar
  * @return matrix multipled with scalar
  */
-inline matrix_gpu multiply(matrix_gpu& A, double scalar) {
+inline matrix_gpu multiply(const matrix_gpu& A, const double scalar) {
   matrix_gpu temp(A.rows(), A.cols());
   if (A.size() == 0)
     return temp;
@@ -37,7 +37,7 @@ inline matrix_gpu multiply(matrix_gpu& A, double scalar) {
  * @param A matrix
  * @return matrix multipled with scalar
  */
-inline matrix_gpu multiply(double scalar, matrix_gpu& A) {
+inline matrix_gpu multiply(const double scalar, const matrix_gpu& A) {
   return multiply(A, scalar);
 }
 
@@ -53,7 +53,7 @@ inline matrix_gpu multiply(double scalar, matrix_gpu& A) {
  * @throw <code>std::invalid_argument</code> if the
  *   number of columns in A and rows in B do not match
  */
-inline matrix_gpu multiply(matrix_gpu& A, matrix_gpu& B) {
+inline matrix_gpu multiply(const matrix_gpu& A, const matrix_gpu& B) {
   check_size_match("multiply (GPU)", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
   matrix_gpu temp(A.rows(), B.cols());

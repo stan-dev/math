@@ -290,7 +290,7 @@ class opencl_context {
   /**
    * Returns the reference to the map of kernel defines
    */
-  inline opencl_context_base::map_base_opts& base_opts() {
+  inline opencl_context_base::map_base_opts base_opts() {
     return opencl_context_base::getInstance().base_opts_;
   }
   /**

@@ -70,7 +70,7 @@ const char* matrix_multiply_kernel_code = STRINGIFY(
       }
       // save the values
       for (int w = 0; w < WORK_PER_THREAD; w++) {
-        // each thread saves WORK_PER_THREAD_SELF_TRANS values
+        // each thread saves WORK_PER_THREAD values
         C[(j + w * THREAD_BLOCK_SIZE_COL) * M + i] = acc[w];
       }
     }
