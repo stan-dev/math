@@ -16,7 +16,7 @@ const char *scalar_mul_diagonal_kernel_code = STRINGIFY(
      * @param[in, out] A matrix A
      * @param[in] scalar the value with which to multiply the diagonal of A
      * @param[in] rows the number of rows in A
-     * @param[in] cols the number of columns in A
+     * @param[in] min_dim the size of the smaller dimension of A
      */
     __kernel void scalar_mul_diagonal(__global read_write double *A,
                                       const read_only double scalar,
