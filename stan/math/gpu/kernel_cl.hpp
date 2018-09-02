@@ -108,7 +108,8 @@ struct global_range_kernel {
    * @param options The values of macros to be passed at compile time.
    */
   global_range_kernel(const char* name, const char* source,
-                      const std::map<const char*, int> options = {{"NO_OPT", 0}})
+                      const std::map<const char*, int> options
+                      = {{"NO_OPT", 0}})
       : make_functor(name, source, options), opts(options) {}
   /**
    * Executes a kernel
