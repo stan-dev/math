@@ -70,6 +70,22 @@ complex<stan::math::var> operator*(const complex<stan::math::var>& z,
 }
 
 template <>
+template <>
+complex<stan::math::var>& complex<stan::math::var>::operator/=(
+    const complex<stan::math::var>& y) {
+  *this = *this / y;
+  return *this;
+}
+
+template <>
+template <>
+complex<stan::math::var>& complex<stan::math::var>::operator*=(
+    const complex<stan::math::var>& y) {
+  *this = *this * y;
+  return *this;
+}
+
+template <>
 inline bool operator==(const complex<stan::math::var>& x,
                        const complex<stan::math::var>& y) {
   return x.real() == y.real() && x.imag() == y.imag();
