@@ -26,7 +26,6 @@
 #include <stan/math/prim/arr/fun/fill.hpp>
 #include <stan/math/prim/arr/fun/inverse_softmax.hpp>
 #include <stan/math/prim/arr/fun/log_sum_exp.hpp>
-#include <stan/math/prim/arr/fun/promote_double_to_T.hpp>
 #include <stan/math/prim/arr/fun/promote_elements.hpp>
 #include <stan/math/prim/arr/fun/promote_scalar.hpp>
 #include <stan/math/prim/arr/fun/promote_scalar_type.hpp>
@@ -38,7 +37,6 @@
 #include <stan/math/prim/arr/fun/sum.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
-#include <stan/math/prim/arr/fun/variable_adapter.hpp>
 
 #include <stan/math/prim/arr/functor/coupled_ode_observer.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>

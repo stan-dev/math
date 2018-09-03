@@ -183,6 +183,7 @@
 #include <stan/math/prim/mat/fun/positive_ordered_constrain.hpp>
 #include <stan/math/prim/mat/fun/positive_ordered_free.hpp>
 #include <stan/math/prim/mat/fun/prod.hpp>
+#include <stan/math/prim/mat/fun/promote_double_to_T.hpp>
 #include <stan/math/prim/mat/fun/promote_common.hpp>
 #include <stan/math/prim/mat/fun/promote_elements.hpp>
 #include <stan/math/prim/mat/fun/promote_scalar.hpp>
@@ -255,6 +256,7 @@
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/mat/fun/variance.hpp>
+#include <stan/math/prim/mat/fun/variable_adapter.hpp>
 #include <stan/math/prim/mat/fun/welford_covar_estimator.hpp>
 #include <stan/math/prim/mat/fun/welford_var_estimator.hpp>
 

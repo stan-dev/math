@@ -3,6 +3,13 @@
 #include <tuple>
 #include <type_traits>
 
+TEST(MathFunctions, call_all_argument_combos_0_arg) {
+  auto output = stan::math::call_all_argument_combos([]() { return 0; });
+
+  EXPECT_EQ(1, std::tuple_size<decltype(output)>::value);
+  EXPECT_EQ(0, std::get<0>(output));
+}
+
 TEST(MathFunctions, call_all_argument_combos_2_arg) {
   auto output = stan::math::call_all_argument_combos(
       [](auto a, auto b) { return a + b; }, std::make_tuple(1, 2),

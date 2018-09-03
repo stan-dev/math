@@ -4,20 +4,16 @@
 
 TEST(MathFunctions, promote_double_to_T_int) {
   int x = 3;
-  EXPECT_TRUE((
-      std::is_same<const int&, decltype(stan::math::promote_double_to_T<double>(
-                                   x))>::value));
-  EXPECT_FALSE(
-      (std::is_same<double, decltype(stan::math::promote_double_to_T<double>(
-                                x))>::value));
+  auto y = stan::math::promote_double_to_T<double>(x);
+  EXPECT_TRUE((std::is_same<const int&, decltype(y)>::value));
+  EXPECT_FALSE((std::is_same<double, decltype(y)>::value));
+  EXPECT_EQ(x, y);
 }
 
 TEST(MathFunctions, promote_double_to_T_double) {
   double x = 3.0;
-  EXPECT_TRUE(
-      (std::is_same<float, decltype(stan::math::promote_double_to_T<float>(
-                               x))>::value));
-  EXPECT_FALSE((std::is_same<const double&,
-                             decltype(stan::math::promote_double_to_T<float>(
-                                 x))>::value));
+  auto y = stan::math::promote_double_to_T<float>(x);
+  EXPECT_TRUE((std::is_same<float, decltype(y)>::value));
+  EXPECT_FALSE((std::is_same<const double&, decltype(y)>::value));
+  EXPECT_FLOAT_EQ(static_cast<float>(x), y);
 }
