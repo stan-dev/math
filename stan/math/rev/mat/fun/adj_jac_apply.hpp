@@ -12,41 +12,6 @@ namespace stan {
 namespace math {
 
 namespace {
-/*
- * Invoke the functor f with arguments given in t and indexed in the index
- * sequence I
- *
- * @tparam F Type of functor
- * @tparam Tuple Type of tuple containing arguments
- * @tparam I Index sequence going from 0 to std::tuple_size<T>::value - 1
- * inclusive
- * @param f functor callable
- * @param t tuple of arguments
- * @param i placeholder variable for index sequence
- */
-template <class F, class Tuple, std::size_t... I>
-constexpr auto apply_impl(const F& f, const Tuple& t,
-                          std::index_sequence<I...> i) {
-  return f(std::get<I>(t)...);
-}
-
-/*
- * Call the functor f with the tuple of arguments t, like:
- *
- * f(std::get<0>(t), std::get<1>(t), ...)
- *
- * TODO: replace this with implementation in C++ std when C++17 is available
- *
- * @tparam F Type of functor
- * @tparam Tuple Type of tuple containing arguments
- * @param f functor callable
- * @param t tuple of arguments
- */
-template <class F, class Tuple>
-constexpr auto apply(const F& f, const Tuple& t) {
-  return apply_impl(f, t, std::make_index_sequence<std::tuple_size<Tuple>{}>{});
-}
-
 /**
  * build_y_adj takes the adjoint from the vari pointed to
  * by y_vi_[0] and stores it in y_adj

@@ -105,7 +105,8 @@ auto promote_double_to_T_impl_impl(std::tuple<T_output...> output,
 template <typename T, std::size_t... I, typename... T_inputs>
 auto promote_double_to_T_impl(std::index_sequence<I...>,
                               const std::tuple<T_inputs...>& input) {
-  return promote_double_to_T_impl_impl<T>(std::tuple(), std::get<I>(input)...);
+  return promote_double_to_T_impl_impl<T>(std::tuple<>(),
+                                          std::get<I>(input)...);
 }
 
 /**

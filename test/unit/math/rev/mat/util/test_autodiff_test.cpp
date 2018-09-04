@@ -121,7 +121,7 @@ struct bad_std_vector_func {
   }
 
   std::vector<double> operator()(const std::vector<double>& t) {
-    std::vector o(t);
+    std::vector<double> o(t);
     o[0] = o[0] + 1.0;
     return o;
   }

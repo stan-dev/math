@@ -203,14 +203,14 @@ void test_var(F f, double dx, const Targs&... args) {
       return;
     }
 
-    auto output = make_variable_adapter<var>(std::apply(f, input.get_args()));
+    auto output = make_variable_adapter<var>(apply(f, input.get_args()));
 
     if (output.size() == 0) {
       throw std::runtime_error("The function produced no output");
     }
 
     auto output_double
-        = make_variable_adapter<double>(std::apply(fd, input.get_args()));
+        = make_variable_adapter<double>(apply(fd, input.get_args()));
 
     if (output_double.size() != output.size()) {
       std::cout << "The non-autodiff output has " << output_double.size()
@@ -231,13 +231,13 @@ void test_var(F f, double dx, const Targs&... args) {
 
     Eigen::MatrixXd fd_jac(output.size(), input.size());
     for (size_t j = 0; j < input.size(); ++j) {
-      variable_adapter fd_input = input;
+      auto fd_input = input;
       fd_input(j) += dx;
       auto output1
-          = make_variable_adapter<double>(std::apply(fd, fd_input.get_args()));
+          = make_variable_adapter<double>(apply(fd, fd_input.get_args()));
       fd_input(j) -= 2 * dx;
       auto output2
-          = make_variable_adapter<double>(std::apply(fd, fd_input.get_args()));
+          = make_variable_adapter<double>(apply(fd, fd_input.get_args()));
       for (size_t i = 0; i < output.size(); ++i) {
         fd_jac(i, j) = (output1(i) - output2(i)) / (2.0 * dx);
       }

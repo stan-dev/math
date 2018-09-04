@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_VARIABLE_ADAPTER_HPP
 #define STAN_MATH_PRIM_MAT_FUN_VARIABLE_ADAPTER_HPP
 
+#include <stan/math/prim/scal/functor/apply.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <vector>
 #include <cstddef>
@@ -172,7 +173,7 @@ class variable_adapter {
   auto& operator()(size_t i) {
     check_less("variable_adapter::operator()", "i", i, size_);
 
-    return std::apply(
+    return apply(
         [ i, this ](auto&... args) -> auto& { return this->get(i, args...); },
         args_);
   }
