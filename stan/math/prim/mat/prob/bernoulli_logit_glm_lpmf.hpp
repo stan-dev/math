@@ -16,6 +16,8 @@
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/mat/meta/constant_array_type.hpp>
+#include <stan/math/prim/mat/meta/constant_array_type.hpp>
 #include <cmath>
 
 namespace stan {
@@ -55,6 +57,7 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   static const char *function = "bernoulli_logit_glm_lpmf";
   typedef typename stan::partials_return_type<T_y, T_x, T_alpha, T_beta>::type
       T_partials_return;
+  typedef typename constant_array_type<T_alpha>::value_type T_alpha_val;
 
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -94,9 +97,10 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
       beta_dbl[m] = value_of(beta_vec[m]);
     }
   }
+  const T_alpha_val& alpha_val = value_of(alpha);
   Eigen::Array<T_partials_return, Dynamic, 1> ytheta
-      = signs.array() * (value_of(x) * beta_dbl).array();
-  scalar_seq_view<T_alpha> alpha_vec(alpha);
+      = signs.array() * ((value_of(x) * beta_dbl).array()
+        + alpha_val);
 
   // Compute the log-density and handle extreme values gracefully
   // using Taylor approximations.
@@ -106,7 +110,6 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   T_partials_return theta_derivative_sum = 0;
   T_partials_return exp_m_ythetan;
   for (size_t n = 0; n < N; ++n) {
-    ytheta[n] += signs[n] * value_of(alpha_vec[n]);
     check_finite(function, "Matrix of independent variables", ytheta[n]);
     exp_m_ythetan = exp(-ytheta[n]);
     if (ytheta[n] > cutoff) {

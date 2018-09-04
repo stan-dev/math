@@ -12,6 +12,7 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/mat/meta/is_vector.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/mat/meta/constant_array_type.hpp>
 #include <cmath>
 #include <limits>
 
@@ -51,6 +52,7 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
   static const char *function = "poisson_log_glm_lpmf";
   typedef typename stan::partials_return_type<T_y, T_x, T_alpha, T_beta>::type
       T_partials_return;
+  typedef typename constant_array_type<T_alpha>::value_type T_alpha_val;
 
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -83,17 +85,19 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
       beta_dbl[m] = value_of(beta_vec[m]);
     }
   }
+  const T_alpha_val& alpha_val = value_of(alpha);
 
-  Matrix<T_partials_return, Dynamic, 1> theta_dbl = value_of(x) * beta_dbl;
+  Matrix<T_partials_return, Dynamic, 1> theta_dbl =
+    (value_of(x) * beta_dbl).array() + alpha_val;
   check_finite(function, "Matrix of independent variables", theta_dbl);
 
   Matrix<T_partials_return, Dynamic, 1> theta_derivative(N);
   T_partials_return theta_derivative_sum = 0;
-  scalar_seq_view<T_alpha> alpha_vec(alpha);
+
   scalar_seq_view<T_y> y_seq_view(y);
   for (size_t n = 0; n < N; ++n) {
     // Compute the derivative wrt theta.
-    double theta_dbl_n = theta_dbl[n] + value_of(alpha_vec[n]);
+    double theta_dbl_n = theta_dbl[n];
     double exp_theta_n = exp(theta_dbl_n);
     theta_derivative[n] = y_seq_view[n] - exp_theta_n;
     if (!is_vector<T_alpha>::value)

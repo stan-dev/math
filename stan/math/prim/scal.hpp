@@ -168,6 +168,7 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/fun/step.hpp>
+#include <stan/math/prim/scal/fun/sum.hpp>
 #include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/prim/scal/fun/trigamma.hpp>
 #include <stan/math/prim/scal/fun/trunc.hpp>

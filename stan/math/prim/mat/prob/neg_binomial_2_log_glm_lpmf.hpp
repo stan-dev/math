@@ -17,6 +17,8 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/mat/meta/is_vector.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/mat/meta/constant_array_type.hpp>
+#include <stan/math/prim/scal/fun/sum.hpp>
 #include <cmath>
 
 namespace stan {
@@ -63,6 +65,7 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
   typedef
       typename stan::partials_return_type<T_y, T_x, T_alpha, T_beta,
                                           T_precision>::type T_partials_return;
+  typedef typename constant_array_type<T_alpha>::value_type T_alpha_val;
 
   using Eigen::Array;
   using Eigen::Dynamic;
@@ -112,12 +115,11 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
       beta_dbl[m] = value_of(beta_vec[m]);
     }
   }
+  const T_alpha_val& alpha_val = value_of(alpha);
 
   Array<T_partials_return, Dynamic, 1> theta_dbl
-      = (value_of(x) * beta_dbl).array();
-  scalar_seq_view<T_alpha> alpha_vec(alpha);
+      = (value_of(x) * beta_dbl).array() + alpha_val;
   for (size_t n = 0; n < N; ++n) {
-    theta_dbl[n] += value_of(alpha_vec[n]);
     check_finite(function, "Matrix of independent variables", theta_dbl[n]);
   }
   Array<T_partials_return, Dynamic, 1> log_phi = phi_arr.log();
