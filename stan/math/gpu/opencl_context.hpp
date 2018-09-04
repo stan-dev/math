@@ -288,7 +288,7 @@ class opencl_context {
     return opencl_context_base::getInstance().command_queue_;
   }
   /**
-   * Returns the reference to the map of kernel defines
+   * Returns a copy of the map of kernel defines
    */
   inline opencl_context_base::map_base_opts base_opts() {
     return opencl_context_base::getInstance().base_opts_;

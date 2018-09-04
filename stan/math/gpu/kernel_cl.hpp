@@ -33,13 +33,7 @@ namespace opencl_kernels {
 auto compile_kernel(const char* name, const char* source,
                     std::map<const char*, int> options) {
   std::string kernel_opts = "";
-  std::map<const char*, int> base_opts = opencl_context.base_opts();
-  if (!options.count("NO_OPT")) {
-    for (auto&& add_opts : options) {
-      base_opts[add_opts.first] = add_opts.second;
-    }
-  }
-  for (auto&& comp_opts : base_opts) {
+  for (auto&& comp_opts : options) {
     kernel_opts += std::string(" -D") + comp_opts.first + "="
                    + std::to_string(comp_opts.second);
   }
@@ -84,8 +78,11 @@ class kernel_functor {
    * @param options The values of macros to be passed at compile time.
    */
   kernel_functor(const char* name, const char* source,
-                 std::map<const char*, int> options)
-      : kernel_(compile_kernel(name, source, options)) {}
+                 std::map<const char*, int> options) {
+    auto base_opts = opencl_context.base_opts();
+    options.insert(base_opts.begin(), base_opts.end());
+    kernel_ = compile_kernel(name, source, options);
+  }
 
   auto operator()() const { return cl::make_kernel<Args...>(kernel_); }
 };
@@ -99,7 +96,7 @@ class kernel_functor {
 template <typename... Args>
 struct global_range_kernel {
   const kernel_functor<Args...> make_functor;
-  const std::map<const char*, int> opts;
+  const std::map<const char*, int> opts_;
   /**
    * Creates functor for kernels that only need access to defining
    *  the global work size.
@@ -108,9 +105,8 @@ struct global_range_kernel {
    * @param options The values of macros to be passed at compile time.
    */
   global_range_kernel(const char* name, const char* source,
-                      const std::map<const char*, int> options
-                      = {{"NO_OPT", 0}})
-      : make_functor(name, source, options), opts(options) {}
+                      const std::map<const char*, int> options = {})
+      : make_functor(name, source, options), opts_(options) {}
   /**
    * Executes a kernel
    * @param global_thread_size The global work size.
@@ -131,7 +127,7 @@ struct global_range_kernel {
 template <typename... Args>
 struct local_range_kernel {
   const kernel_functor<Args...> make_functor;
-  const std::map<const char*, int> opts;
+  const std::map<const char*, int> opts_;
   /**
    * Creates kernels that need access to defining the global thread
    * siez and the thread block size.
@@ -140,8 +136,8 @@ struct local_range_kernel {
    * @param options The values of macros to be passed at compile time.
    */
   local_range_kernel(const char* name, const char* source,
-                     const std::map<const char*, int> options = {{"NO_OPT", 0}})
-      : make_functor(name, source, options), opts(options) {}
+                     const std::map<const char*, int> options = {})
+      : make_functor(name, source, options), opts_(options) {}
   /**
    * Executes a kernel
    * @param global_thread_size The global work size.
