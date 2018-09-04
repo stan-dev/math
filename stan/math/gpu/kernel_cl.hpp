@@ -69,9 +69,9 @@ template <typename... Args>
 class kernel_functor {
  private:
   cl::Kernel kernel_;
+  std::map<const char*, int> opts_;
 
  public:
-  const std::map<const char*, int> opts_;
   /**
    * functor to access the kernel compiler.
    * @param name The name for the kernel.
@@ -82,11 +82,16 @@ class kernel_functor {
                  std::map<const char*, int> options) {
     auto base_opts = opencl_context.base_opts();
     options.insert(base_opts.begin(), base_opts.end());
-    opts_ = options;
     kernel_ = compile_kernel(name, source, options);
+    opts_ = options;
   }
 
   auto operator()() const { return cl::make_kernel<Args...>(kernel_); }
+
+  /**
+   * @return The options that the kernel was compiled with.
+   */
+  const std::map<const char*, int>& get_opts() const { return opts_; };
 };
 
 /**
