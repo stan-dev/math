@@ -71,6 +71,7 @@ class kernel_functor {
   cl::Kernel kernel_;
 
  public:
+  const std::map<const char*, int> opts_;
   /**
    * functor to access the kernel compiler.
    * @param name The name for the kernel.
@@ -81,6 +82,7 @@ class kernel_functor {
                  std::map<const char*, int> options) {
     auto base_opts = opencl_context.base_opts();
     options.insert(base_opts.begin(), base_opts.end());
+    opts_ = options;
     kernel_ = compile_kernel(name, source, options);
   }
 
@@ -96,7 +98,6 @@ class kernel_functor {
 template <typename... Args>
 struct global_range_kernel {
   const kernel_functor<Args...> make_functor;
-  const std::map<const char*, int> opts_;
   /**
    * Creates functor for kernels that only need access to defining
    *  the global work size.
@@ -106,7 +107,7 @@ struct global_range_kernel {
    */
   global_range_kernel(const char* name, const char* source,
                       const std::map<const char*, int> options = {})
-      : make_functor(name, source, options), opts_(options) {}
+      : make_functor(name, source, options) {}
   /**
    * Executes a kernel
    * @param global_thread_size The global work size.
@@ -127,7 +128,6 @@ struct global_range_kernel {
 template <typename... Args>
 struct local_range_kernel {
   const kernel_functor<Args...> make_functor;
-  const std::map<const char*, int> opts_;
   /**
    * Creates kernels that need access to defining the global thread
    * siez and the thread block size.
@@ -137,7 +137,7 @@ struct local_range_kernel {
    */
   local_range_kernel(const char* name, const char* source,
                      const std::map<const char*, int> options = {})
-      : make_functor(name, source, options), opts_(options) {}
+      : make_functor(name, source, options) {}
   /**
    * Executes a kernel
    * @param global_thread_size The global work size.
