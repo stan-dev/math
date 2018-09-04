@@ -269,10 +269,10 @@ TEST(MathFunctions, vec_binormal_integral_val_and_grad_test_var_doub) {
   compare_fd(dist_fun_RV_R, inp_vec);
 }
 TEST(MathFunctions, vec_binormal_integral_val_and_grad_test_var_doub_bound) {
-  using std::exp;
-  using std::sqrt;
   using stan::math::inv_Phi;
+  using std::exp;
   using std::pow;
+  using std::sqrt;
   V_D_binorm_copula_cdf<Dynamic, 1> dist_fun_V_R(0.3);
   V_D_binorm_copula_cdf<Dynamic, 1> dist_fun_V_R_rho_1(1.0);
   V_D_binorm_copula_cdf<Dynamic, 1> dist_fun_V_R_rho_neg_1(-1.0);
