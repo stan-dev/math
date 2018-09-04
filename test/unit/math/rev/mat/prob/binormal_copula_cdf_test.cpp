@@ -22,7 +22,18 @@ void compare_grad(const F1& f1, const F2& f2,
   stan::math::gradient(f2, inp_vec, f2_eval, grad_f2);
   EXPECT_FLOAT_EQ(f1_eval, f2_eval);
   for (int i = 0; i < grad_f1.size(); ++i)
-    EXPECT_FLOAT_EQ(grad_f1(i), grad_f2(i));
+    EXPECT_FLOAT_EQ(grad_f1(i), grad_f2(i)) << i;
+}
+
+template <class F1>
+void compare_grad_known(const F1& f1,
+                        const Matrix<double, Dynamic, 1>& expected_grad,
+                        const Matrix<double, Dynamic, 1>& inp_vec) {
+  double f1_eval;
+  Matrix<double, Dynamic, 1> grad_f1;
+  stan::math::gradient(f1, inp_vec, f1_eval, grad_f1);
+  for (int i = 0; i < grad_f1.size(); ++i)
+    EXPECT_FLOAT_EQ(grad_f1(i), expected_grad(i)) << i;
 }
 
 template <class F1>
@@ -35,7 +46,7 @@ void compare_fd(const F1& f1, const Matrix<double, Dynamic, 1>& inp_vec) {
   stan::math::finite_diff_gradient(f1, inp_vec, f1_fd, grad_f1_fd);
   EXPECT_FLOAT_EQ(f1_eval, f1_fd);
   for (int i = 0; i < grad_f1.size(); ++i)
-    EXPECT_FLOAT_EQ(grad_f1(i), grad_f1_fd(i));
+    EXPECT_FLOAT_EQ(grad_f1(i), grad_f1_fd(i)) << i;
 }
 
 void test_invalid_args(const vector<Matrix<double, Dynamic, 1>>& invalid_args) {
@@ -256,6 +267,131 @@ TEST(MathFunctions, vec_binormal_integral_val_and_grad_test_var_doub) {
 
   compare_grad(dist_fun_RV_R, tru_fun, inp_vec);
   compare_fd(dist_fun_RV_R, inp_vec);
+}
+TEST(MathFunctions, vec_binormal_integral_val_and_grad_test_var_doub_bound) {
+  using std::exp;
+  using std::sqrt;
+  using stan::math::inv_Phi;
+  using std::pow;
+  V_D_binorm_copula_cdf<Dynamic, 1> dist_fun_V_R(0.3);
+  V_D_binorm_copula_cdf<Dynamic, 1> dist_fun_V_R_rho_1(1.0);
+  V_D_binorm_copula_cdf<Dynamic, 1> dist_fun_V_R_rho_neg_1(-1.0);
+  V_D_binorm_copula_cdf<1, Dynamic> dist_fun_RV_R(0.3);
+  Matrix<double, Dynamic, 1> inp_vec(2);
+  inp_vec << 0, 0;
+  Matrix<double, Dynamic, 1> expected_grad(2);
+  expected_grad << 0, 0;
+  compare_grad_known(dist_fun_V_R, expected_grad, inp_vec);
+
+  inp_vec << 0, 0.3;
+  expected_grad << 0, 0;
+  compare_grad_known(dist_fun_V_R, expected_grad, inp_vec);
+
+  inp_vec << 0.3, 0;
+  expected_grad << 0, 0;
+  compare_grad_known(dist_fun_V_R, expected_grad, inp_vec);
+
+  inp_vec << 1, 1;
+  expected_grad << 0, 0;
+  compare_grad_known(dist_fun_V_R, expected_grad, inp_vec);
+
+  inp_vec << 1, 0.3;
+  expected_grad << 0, 1;
+  compare_grad_known(dist_fun_V_R, expected_grad, inp_vec);
+
+  inp_vec << 0.3, 1;
+  expected_grad << 1, 0;
+  compare_grad_known(dist_fun_V_R, expected_grad, inp_vec);
+
+  inp_vec << 1, 0;
+  expected_grad << 0, 0;
+  compare_grad_known(dist_fun_V_R, expected_grad, inp_vec);
+
+  inp_vec << 0, 1;
+  expected_grad << 0, 0;
+  compare_grad_known(dist_fun_V_R, expected_grad, inp_vec);
+
+  // rho = 1
+  inp_vec << 0, 0;
+  expected_grad << 0, 0;
+  compare_grad_known(dist_fun_V_R_rho_1, expected_grad, inp_vec);
+
+  inp_vec << 0, 1;
+  expected_grad << 0, 0;
+  compare_grad_known(dist_fun_V_R_rho_1, expected_grad, inp_vec);
+
+  inp_vec << 1, 0;
+  expected_grad << 0, 0;
+  compare_grad_known(dist_fun_V_R_rho_1, expected_grad, inp_vec);
+
+  inp_vec << 1, 1;
+  expected_grad << 0, 0;
+  compare_grad_known(dist_fun_V_R_rho_1, expected_grad, inp_vec);
+
+  inp_vec << 1, 0.3;
+  expected_grad << 0, 1;
+  compare_grad_known(dist_fun_V_R_rho_1, expected_grad, inp_vec);
+
+  inp_vec << 0.3, 1;
+  expected_grad << 1, 0;
+  compare_grad_known(dist_fun_V_R_rho_1, expected_grad, inp_vec);
+
+  inp_vec << 0.3, 0;
+  expected_grad << 0, 0;
+  compare_grad_known(dist_fun_V_R_rho_1, expected_grad, inp_vec);
+
+  inp_vec << 0, 0.3;
+  expected_grad << 0, 0;
+  compare_grad_known(dist_fun_V_R_rho_1, expected_grad, inp_vec);
+
+  inp_vec << 0.4, 0.3;
+  expected_grad << 0, 1;
+  compare_grad_known(dist_fun_V_R_rho_1, expected_grad, inp_vec);
+
+  inp_vec << 0.3, 0.4;
+  expected_grad << 1, 0;
+  compare_grad_known(dist_fun_V_R_rho_1, expected_grad, inp_vec);
+  //
+  // rho = -1
+  inp_vec << 0, 0;
+  expected_grad << 0, 0;
+  compare_grad_known(dist_fun_V_R_rho_neg_1, expected_grad, inp_vec);
+
+  inp_vec << 0, 1;
+  expected_grad << 0, 0;
+  compare_grad_known(dist_fun_V_R_rho_neg_1, expected_grad, inp_vec);
+
+  inp_vec << 1, 0;
+  expected_grad << 0, 0;
+  compare_grad_known(dist_fun_V_R_rho_neg_1, expected_grad, inp_vec);
+
+  inp_vec << 1, 1;
+  expected_grad << 0, 0;
+  compare_grad_known(dist_fun_V_R_rho_neg_1, expected_grad, inp_vec);
+
+  inp_vec << 1, 0.3;
+  expected_grad << 0, 1;
+  compare_grad_known(dist_fun_V_R_rho_neg_1, expected_grad, inp_vec);
+
+  inp_vec << 0.3, 1;
+  expected_grad << 1, 0;
+  compare_grad_known(dist_fun_V_R_rho_neg_1, expected_grad, inp_vec);
+
+  inp_vec << 0.3, 0;
+  expected_grad << 0, 0;
+  compare_grad_known(dist_fun_V_R_rho_neg_1, expected_grad, inp_vec);
+
+  inp_vec << 0, 0.3;
+  expected_grad << 0, 0;
+  compare_grad_known(dist_fun_V_R_rho_neg_1, expected_grad, inp_vec);
+
+  inp_vec << 0.4, 0.7;
+  expected_grad << 1, 1;
+  compare_grad_known(dist_fun_V_R_rho_neg_1, expected_grad, inp_vec);
+
+  inp_vec << 0.3, 0.4;
+  expected_grad << 0, 0;
+  compare_grad_known(dist_fun_V_R_rho_neg_1, expected_grad, inp_vec);
 }
 TEST(MathFunctions, vec_binormal_integral_val_and_grad_test_doub_var) {
   Matrix<double, Dynamic, 1> y1(2);

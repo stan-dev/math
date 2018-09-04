@@ -11,6 +11,7 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -20,6 +21,7 @@
 #include <boost/random/normal_distribution.hpp>
 #include <stan/math/prim/scal/fun/Phi.hpp>
 #include <stan/math/prim/scal/fun/inv_Phi.hpp>
+#include <stan/math/prim/scal/prob/std_normal_lpdf.hpp>
 #include <stan/math/prim/scal/fun/std_binormal_integral.hpp>
 
 #include <cmath>
@@ -61,6 +63,7 @@ typename return_type<T_u, T_rho>::type binormal_copula_cdf(const T_u& u,
   using std::log;
   using std::max;
   using std::sqrt;
+  using std::isfinite;
 
   check_bounded(function, "Correlation parameter", rho, -1.0, 1.0);
   check_bounded(function, "Random variable", u, 0.0, 1.0);
@@ -87,18 +90,46 @@ typename return_type<T_u, T_rho>::type binormal_copula_cdf(const T_u& u,
     const T_partials_return sqrt_one_minus_rho_sq = sqrt(one_minus_rho_sq);
     const T_partials_return rho_times_z2 = rho_dbl * z2_dbl;
     const T_partials_return z1_minus_rho_times_z2 = z1_dbl - rho_times_z2;
+    const T_partials_return z2_minus_rho_times_z1 = z2_dbl - rho_dbl * z1_dbl;
+    const bool u1_u2_zero = u1_dbl == 0 || u2_dbl == 0;
+    const bool u1_u2_non_zero = !u1_u2_zero;
+    const bool u1_one = u1_dbl == 1;
+    const bool u2_one = u2_dbl == 1;
+    const bool u1_u2_non_one = !(u1_one || u2_one);
     if (!is_constant_struct<T_u>::value) {
       ops_partials.edge1_.partials_vec_[0](0)
-          += Phi((z2_dbl - rho_dbl * z1_dbl) / sqrt_one_minus_rho_sq);
+          += u1_u2_non_zero
+             && u1_u2_non_one
+             && fabs(rho) < 1 ? Phi(z2_minus_rho_times_z1
+                                    / sqrt_one_minus_rho_sq)
+                              : u1_one
+                                || u1_u2_zero
+                                || (u1_one && u2_one)
+                                || (rho == 1 && u1_dbl > u2_dbl)
+                                || (rho == -1 && (u1_dbl + u2_dbl - 1 < 0)) ? 0
+                              : 1;
       ops_partials.edge1_.partials_vec_[0](1)
-          += Phi(z1_minus_rho_times_z2 / sqrt_one_minus_rho_sq);
+          += u1_u2_non_zero
+             && u1_u2_non_one
+             && fabs(rho) < 1 ? Phi(z1_minus_rho_times_z2
+                                    / sqrt_one_minus_rho_sq)
+                              : u2_one
+                                || u1_u2_zero
+                                || (u1_one && u2_one)
+                                || (rho == 1 && u2_dbl > u1_dbl)
+                                || (rho == -1 && (u1_dbl + u2_dbl - 1 < 0)) ? 0
+                              : 1;
     }
     if (!is_constant_struct<T_rho>::value)
       ops_partials.edge2_.partials_[0]
-          += 0.5 / (stan::math::pi() * sqrt_one_minus_rho_sq)
-             * exp(-0.5 / one_minus_rho_sq * z1_minus_rho_times_z2
-                       * z1_minus_rho_times_z2
-                   - 0.5 * z2_dbl * z2_dbl);
+          += u1_u2_non_zero
+             && u1_u2_non_one
+             && fabs(rho) < 1 ? 0.5 / (stan::math::pi() * sqrt_one_minus_rho_sq)
+                                 * exp(-0.5 / one_minus_rho_sq
+                                           * z1_minus_rho_times_z2
+                                           * z1_minus_rho_times_z2
+                                       - 0.5 * z2_dbl * z2_dbl)
+                              : 0;
   }
   return ops_partials.build(cdf_);
 }
