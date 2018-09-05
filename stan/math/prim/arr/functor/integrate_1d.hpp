@@ -16,10 +16,10 @@ namespace stan {
 namespace math {
 /**
  * Integrate a single variable function f from a to b to within a specified
- * tolerance. This function assumes a is less than b.
+ * relative tolerance. This function assumes a is less than b.
  *
  * The signature for f should be:
- *   double foo(double x, double xc)
+ *   double f(double x, double xc)
  *
  * It should return the value of the function evaluated at x.
  *
@@ -28,7 +28,7 @@ namespace math {
  * the Boost quadrature library is chosen.
  *
  * Integrals that cross zero are broken into two, and the separate integrals are
- * each integrated to the given tolerance.
+ * each integrated to the given relative tolerance.
  *
  * For integrals with finite limits, the xc argument is the distance to the
  * nearest boundary. So for a > 0, b > 0, it will be a - x for x closer to a,
@@ -43,11 +43,13 @@ namespace math {
  * @param f the function to be integrated
  * @param a lower limit of integration
  * @param b upper limit of integration
- * @param tolerance target tolerance passed to Boost quadrature
+ * @param relative_tolerance target relative tolerance passed to Boost
+ * quadrature
  * @return numeric integral of function f
  */
 template <typename F>
-inline double integrate(const F& f, double a, double b, double tolerance) {
+inline double integrate(const F& f, double a, double b,
+                        double relative_tolerance) {
   double error1 = 0.0;
   double error2 = 0.0;
   double L1 = 0.0;
@@ -60,7 +62,7 @@ inline double integrate(const F& f, double a, double b, double tolerance) {
       return f(x, std::numeric_limits<double>::quiet_NaN());
     };
     boost::math::quadrature::sinh_sinh<double> integrator;
-    Q = integrator.integrate(f_wrap, tolerance, &error1, &L1, &levels);
+    Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1, &levels);
   } else if (std::isinf(a)) {
     boost::math::quadrature::exp_sinh<double> integrator;
     /**
@@ -72,15 +74,17 @@ inline double integrate(const F& f, double a, double b, double tolerance) {
       auto f_wrap = [&](double x) {
         return f(-(x + b), std::numeric_limits<double>::quiet_NaN());
       };
-      Q = integrator.integrate(f_wrap, tolerance, &error1, &L1, &levels);
+      Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1,
+                               &levels);
     } else {
       boost::math::quadrature::tanh_sinh<double> integrator_right;
       auto f_wrap = [&](double x) {
         return f(-x, std::numeric_limits<double>::quiet_NaN());
       };
-      Q = integrator.integrate(f_wrap, tolerance, &error1, &L1, &levels)
-          + integrator_right.integrate(f_wrap, -b, 0, tolerance, &error2, &L2,
-                                       &levels);
+      Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1,
+                               &levels)
+          + integrator_right.integrate(f_wrap, -b, 0, relative_tolerance,
+                                       &error2, &L2, &levels);
       used_two_integrals = true;
     }
   } else if (std::isinf(b)) {
@@ -89,46 +93,53 @@ inline double integrate(const F& f, double a, double b, double tolerance) {
       auto f_wrap = [&](double x) {
         return f(x + a, std::numeric_limits<double>::quiet_NaN());
       };
-      Q = integrator.integrate(f_wrap, tolerance, &error1, &L1, &levels);
+      Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1,
+                               &levels);
     } else {
       boost::math::quadrature::tanh_sinh<double> integrator_right;
       auto f_wrap = [&](double x) {
         return f(x, std::numeric_limits<double>::quiet_NaN());
       };
-      Q = integrator.integrate(f_wrap, tolerance, &error1, &L1, &levels)
-          + integrator_right.integrate(f_wrap, a, 0, tolerance, &error2, &L2,
-                                       &levels);
+      Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1,
+                               &levels)
+          + integrator_right.integrate(f_wrap, a, 0, relative_tolerance,
+                                       &error2, &L2, &levels);
       used_two_integrals = true;
     }
   } else {
     auto f_wrap = [&](double x, double xc) { return f(x, xc); };
     boost::math::quadrature::tanh_sinh<double> integrator;
     if (a < 0.0 && b > 0.0) {
-      Q = integrator.integrate(f_wrap, a, 0.0, tolerance, &error1, &L1, &levels)
-          + integrator.integrate(f_wrap, 0.0, b, tolerance, &error2, &L2,
-                                 &levels);
+      Q = integrator.integrate(f_wrap, a, 0.0, relative_tolerance, &error1, &L1,
+                               &levels)
+          + integrator.integrate(f_wrap, 0.0, b, relative_tolerance, &error2,
+                                 &L2, &levels);
       used_two_integrals = true;
     } else {
-      Q = integrator.integrate(f_wrap, a, b, tolerance, &error1, &L1, &levels);
+      Q = integrator.integrate(f_wrap, a, b, relative_tolerance, &error1, &L1,
+                               &levels);
     }
   }
 
   static const char* function = "integrate";
   if (used_two_integrals) {
-    if (error1 > tolerance * L1) {
+    if (error1 > relative_tolerance * L1) {
       domain_error(function, "error estimate of integral below zero", error1,
                    "",
-                   " exceeds the given tolerance times integral below zero");
+                   " exceeds the given relative tolerance times norm of "
+                   "integral below zero");
     }
-    if (error2 > tolerance * L2) {
+    if (error2 > relative_tolerance * L2) {
       domain_error(function, "error estimate of integral above zero", error2,
                    "",
-                   " exceeds the given tolerance times integral above zero");
+                   " exceeds the given relative tolerance times norm of "
+                   "integral above zero");
     }
   } else {
-    if (error1 > tolerance * L1) {
-      domain_error(function, "error estimate of integral", error1, "",
-                   " exceeds the given tolerance times integral");
+    if (error1 > relative_tolerance * L1) {
+      domain_error(
+          function, "error estimate of integral", error1, "",
+          " exceeds the given relative tolerance times norm of integral");
     }
   }
   return Q;
@@ -136,17 +147,18 @@ inline double integrate(const F& f, double a, double b, double tolerance) {
 
 /**
  * Compute the integral of the single variable function f from a to b to within
- * a specified tolerance. a and b can be finite or infinite.
+ * a specified relative tolerance. a and b can be finite or infinite.
  *
  * The signature for f should be:
- *   double foo(double x, double xc, std::vector<double> theta,
- * std::vector<double> x_r, std::vector<int> x_i, std::ostream& msgs)
+ *   double f(double x, double xc, const std::vector<double>& theta,
+ *     const std::vector<double>& x_r, const std::vector<int>& x_i,
+ * std::ostream* msgs)
  *
  * It should return the value of the function evaluated at x. Any errors
  * should be printed to the msgs stream.
  *
  * Integrals that cross zero are broken into two, and the separate integrals are
- * each integrated to the given tolerance.
+ * each integrated to the given relative tolerance.
  *
  * For integrals with finite limits, the xc argument is the distance to the
  * nearest boundary. So for a > 0, b > 0, it will be a - x for x closer to a,
@@ -157,11 +169,16 @@ inline double integrate(const F& f, double a, double b, double tolerance) {
  *
  * If either limit is infinite, xc is set to NaN
  *
- * Boost decides the integration is converged when subsequent estimates of the
- * integral are less than tolerance * abs(integral). This means the tolerance is
- * relative to the actual scale of the integral. Integrals that cross zero are
+ * The integration algorithm terminates when
+ *   \f[
+ *     \frac{{|I_{n + 1} - I_n|}}{{|I|_{n + 1}}} < \text{relative tolerance}
+ *   \f]
+ * where \f$I_{n}\f$ is the nth estimate of the integral and \f$|I|_{n}\f$ is
+ * the nth estimate of the norm of the integral.
+ *
+ * Integrals that cross zero are
  * split into two. In this case, each integral is separately integrated to the
- * given tolerance.
+ * given relative_tolerance.
  *
  * @tparam T Type of f
  * @param f the function to be integrated
@@ -171,7 +188,7 @@ inline double integrate(const F& f, double a, double b, double tolerance) {
  * @param x_r additional data to be passed to f
  * @param x_i additional integer data to be passed to f
  * @param[in, out] msgs the print stream for warning messages
- * @param tolerance integrator tolerance passed to Boost quadrature
+ * @param relative_tolerance tolerance passed to Boost quadrature
  * @return numeric integral of function f
  */
 template <typename F>
@@ -179,7 +196,7 @@ inline double integrate_1d(
     const F& f, const double a, const double b,
     const std::vector<double>& theta, const std::vector<double>& x_r,
     const std::vector<int>& x_i, std::ostream& msgs,
-    const double tolerance
+    const double relative_tolerance
     = std::sqrt(std::numeric_limits<double>::epsilon())) {
   static const char* function = "integrate_1d";
   check_less_or_equal(function, "lower limit", a, b);
@@ -191,8 +208,8 @@ inline double integrate_1d(
   } else {
     return integrate(
         std::bind<double>(f, std::placeholders::_1, std::placeholders::_2,
-                          theta, x_r, x_i, std::ref(msgs)),
-        a, b, tolerance);
+                          theta, x_r, x_i, &msgs),
+        a, b, relative_tolerance);
   }
 }
 

@@ -3,7 +3,9 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/gpu/opencl_context.hpp>
+#include <stan/math/gpu/kernel_cl.hpp>
 #include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/gpu/kernels/copy.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <CL/cl.hpp>
@@ -110,15 +112,8 @@ inline void copy(matrix_gpu& dst, const matrix_gpu& src) {
        * see the matrix_gpu(matrix_gpu&) constructor
        *  for explanation
        */
-      cl::CommandQueue& cmdQueue = opencl_context.queue();
-      cl::Kernel kernel = opencl_context.get_kernel("copy");
-      kernel.setArg(0, src.buffer());
-      kernel.setArg(1, dst.buffer());
-      kernel.setArg(2, dst.rows());
-      kernel.setArg(3, dst.cols());
-      cmdQueue.enqueueNDRangeKernel(kernel, cl::NullRange,
-                                    cl::NDRange(dst.rows(), dst.cols()),
-                                    cl::NullRange, NULL, NULL);
+      opencl_kernels::copy(cl::NDRange(dst.rows(), dst.cols()), src.buffer(),
+                           dst.buffer(), dst.rows(), dst.cols());
     } catch (const cl::Error& e) {
       std::cout << e.err() << std::endl;
       check_opencl_error("copy GPU->GPU", e);
