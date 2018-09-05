@@ -91,7 +91,7 @@ class kernel_functor {
   /**
    * @return The options that the kernel was compiled with.
    */
-  const std::map<const char*, int>& get_opts() const { return opts_; };
+  const std::map<const char*, int>& get_opts() const { return opts_; }
 };
 
 /**
