@@ -66,19 +66,12 @@ TEST(MathMatrix, non_matching_dim_excpetion) {
 }
 
 TEST(MathMatrix, multiply_scalar) {
-  stan::math::vector_d v(25);
+  auto v = stan::math::vector_d::Random(25).eval();
   stan::math::vector_d v_gpu_res(25);
-  stan::math::row_vector_d rv(25);
+  auto rv = stan::math::row_vector_d::Random(25).eval();
   stan::math::row_vector_d rv_gpu_res(25);
-  stan::math::matrix_d m(5, 5);
+  auto m = stan::math::matrix_d::Random(5, 5).eval();
   stan::math::matrix_d m_gpu_res(5, 5);
-
-  for (int i = 0; i < v.size(); i++)
-    v(i) = stan::math::normal_rng(0.0, 5.0, rng);
-  for (int i = 0; i < rv.size(); i++)
-    rv(i) = stan::math::normal_rng(0.0, 5.0, rng);
-  for (int i = 0; i < m.size(); i++)
-    m(i) = stan::math::normal_rng(0.0, 5.0, rng);
 
   stan::math::matrix_gpu v_gpu(v);
   v_gpu = stan::math::multiply(v_gpu, 2.0);
@@ -102,17 +95,12 @@ TEST(MathMatrix, multiply_scalar) {
 }
 
 TEST(MathMatrix, row_vector_vector) {
-  stan::math::vector_d v(5);
-  stan::math::row_vector_d rv(5);
+  auto v = stan::math::vector_d::Random(5).eval();
+  auto rv = stan::math::row_vector_d::Random(5).eval();
   stan::math::matrix_d m0(1, 1);
   stan::math::matrix_d m0_gpu_res(1, 1);
   stan::math::matrix_d m1(5, 5);
   stan::math::matrix_d m1_gpu_res(5, 5);
-
-  for (int i = 0; i < v.size(); i++)
-    v(i) = stan::math::normal_rng(0.0, 5.0, rng);
-  for (int i = 0; i < rv.size(); i++)
-    rv(i) = stan::math::normal_rng(0.0, 5.0, rng);
 
   m0 = rv * v;
   m1 = v * rv;
@@ -133,23 +121,16 @@ TEST(MathMatrix, row_vector_vector) {
 
 TEST(AgradRevMatrix, multiply_small) {
   using stan::math::multiply;
-  stan::math::matrix_d m1(3, 3);
-  stan::math::matrix_d m2(3, 3);
-  stan::math::matrix_d m3(3, 3);
+  auto m1 = stan::math::matrix_d::Random(3, 3).eval();
+  auto m2 = stan::math::matrix_d::Random(3, 3).eval();
   stan::math::matrix_d m3_gpu_res(3, 3);
-
-  for (int i = 0; i < m1.size(); i++)
-    m1(i) = stan::math::normal_rng(0.0, 5.0, rng);
-  for (int i = 0; i < m2.size(); i++)
-    m2(i) = stan::math::normal_rng(0.0, 5.0, rng);
 
   stan::math::matrix_gpu m11(m1);
   stan::math::matrix_gpu m22(m2);
-  stan::math::matrix_gpu m33(m3);
 
-  m3 = m1 * m2;
+  auto m3 = (m1 * m2).eval();
 
-  m33 = stan::math::multiply(m11, m22);
+  auto m33 = stan::math::multiply(m11, m22);
 
   stan::math::copy(m3_gpu_res, m33);
 
@@ -159,24 +140,16 @@ TEST(AgradRevMatrix, multiply_small) {
 TEST(AgradRevMatrix, multiply_big) {
   using stan::math::multiply;
   int size = 512;
-  stan::math::matrix_d m1(size, size);
-  stan::math::matrix_d m2(size, size);
-  stan::math::matrix_d m3(size, size);
+  auto m1 = stan::math::matrix_d::Random(size, size).eval();
+  auto m2 = stan::math::matrix_d::Random(size, size).eval();
   stan::math::matrix_d m3_gpu_res(size, size);
 
-  for (int i = 0; i < size; i++) {
-    for (int j = 0; j < size; j++) {
-      m1(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
-      m2(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
-    }
-  }
   stan::math::matrix_gpu m11(m1);
   stan::math::matrix_gpu m22(m2);
-  stan::math::matrix_gpu m33(size, size);
 
-  m3 = m1 * m2;
+  auto m3 = (m1 * m2);
 
-  m33 = stan::math::multiply(m11, m22);
+  auto m33 = stan::math::multiply(m11, m22);
 
   stan::math::copy(m3_gpu_res, m33);
 

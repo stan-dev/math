@@ -51,12 +51,9 @@ TEST(MathMatrix, multiply_zero_size) {
 
 TEST(AgradRevMatrix, multiply_transposed_small) {
   using stan::math::multiply;
-  stan::math::matrix_d m1(3, 3);
+  auto m1 = stan::math::matrix_d::Random(3, 3).eval();
   stan::math::matrix_d m2(3, 3);
   stan::math::matrix_d m2_gpu(3, 3);
-
-  for (int i = 0; i < m1.size(); i++)
-    m1(i) = stan::math::normal_rng(0.0, 5.0, rng);
 
   m2 = m1 * m1.transpose();
 
@@ -70,17 +67,12 @@ TEST(AgradRevMatrix, multiply_transposed_small) {
 
 TEST(AgradRevMatrix, multiply_transposed_big) {
   using stan::math::multiply;
-  stan::math::matrix_d m1, m2, m2_gpu;
+  stan::math::matrix_d m2, m2_gpu;
 
   int size = 500;
-  m1.resize(size, size);
+  auto m1 = stan::math::matrix_d::Random(size, size).eval();
   m2.resize(size, size);
   m2_gpu.resize(size, size);
-  for (int i = 0; i < size; i++) {
-    for (int j = 0; j < size; j++) {
-      m1(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
-    }
-  }
   m2 = m1 * m1.transpose();
 
   stan::math::matrix_gpu m11(m1);
@@ -92,17 +84,13 @@ TEST(AgradRevMatrix, multiply_transposed_big) {
 
 TEST(AgradRevMatrix, multiply_transposed_big_non_square) {
   using stan::math::multiply;
-  stan::math::matrix_d m1, m2, m2_gpu;
+  stan::math::matrix_d m2, m2_gpu;
 
   int size_x = 200;
   int size_y = 500;
-  m1.resize(size_x, size_y);
+  auto m1 = stan::math::matrix_d::Random(size_x, size_y).eval();
   m2.resize(size_x, size_x);
   m2_gpu.resize(size_x, size_x);
-  for (int i = 0; i < size_x; i++)
-    for (int j = 0; j < size_y; j++) {
-      m1(i, j) = stan::math::normal_rng(0.0, 1.0, rng);
-    }
 
   m2 = m1 * m1.transpose();
 
