@@ -15,6 +15,7 @@ TEST(MathFunctions, call_all_argument_combos_2_arg) {
       [](auto a, auto b) { return a + b; }, std::make_tuple(1, 2),
       std::make_tuple(3, 4));
 
+  EXPECT_EQ(4, std::tuple_size<decltype(output)>::value);
   EXPECT_TRUE((std::is_same<int&, decltype(std::get<0>(output))>::value));
   EXPECT_TRUE((std::is_same<int&, decltype(std::get<1>(output))>::value));
   EXPECT_TRUE((std::is_same<int&, decltype(std::get<2>(output))>::value));
@@ -31,6 +32,7 @@ TEST(MathFunctions, call_all_argument_combos_3_arg) {
       [](auto a, auto b, auto c) { return a + b + c; }, std::make_tuple(1, 2),
       std::make_tuple(3, 4), std::make_tuple(5, 6));
 
+  EXPECT_EQ(8, std::tuple_size<decltype(output)>::value);
   EXPECT_TRUE((std::is_same<int&, decltype(std::get<0>(output))>::value));
   EXPECT_TRUE((std::is_same<int&, decltype(std::get<1>(output))>::value));
   EXPECT_TRUE((std::is_same<int&, decltype(std::get<2>(output))>::value));
@@ -55,6 +57,7 @@ TEST(MathFunctions, call_all_argument_combos_2_arg_types) {
       [](auto a, auto b) { return a + b; }, std::make_tuple(1.1, 2),
       std::make_tuple(3, 4.7));
 
+  EXPECT_EQ(4, std::tuple_size<decltype(output)>::value);
   EXPECT_TRUE((std::is_same<double&, decltype(std::get<0>(output))>::value));
   EXPECT_TRUE((std::is_same<double&, decltype(std::get<1>(output))>::value));
   EXPECT_TRUE((std::is_same<int&, decltype(std::get<2>(output))>::value));
