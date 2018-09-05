@@ -30,5 +30,25 @@ template <typename T>
 struct scalar_type<Eigen::Block<T> > {
   typedef typename scalar_type<T>::type type;
 };
+
+template <typename T, int R, int C>
+struct scalar_type<Eigen::Array<T, R, C> > {
+  typedef typename scalar_type<T>::type type;
+};
+
+template <typename T, int R, int C>
+struct scalar_type<const Eigen::Array<T, R, C> > {
+  typedef typename scalar_type<T>::type type;
+};
+
+template <typename T, int R, int C>
+struct scalar_type<Eigen::Array<T, R, C>&> {
+  typedef typename scalar_type<T>::type type;
+};
+
+template <typename T, int R, int C>
+struct scalar_type<const Eigen::Array<T, R, C>&> {
+  typedef typename scalar_type<T>::type type;
+};
 }  // namespace stan
 #endif

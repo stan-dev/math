@@ -55,9 +55,12 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
   static const char *function = "normal_id_glm_lpdf";
   typedef typename stan::partials_return_type<T_y, T_x, T_alpha, T_beta,
                                               T_scale>::type T_partials_return;
-  typedef typename constant_array_type<T_scale>::value_type T_sigma_val;
-  typedef typename constant_array_type<T_alpha>::value_type T_alpha_val;
-  typedef typename constant_array_type<T_y>::value_type T_y_val;
+  typedef typename constant_array_type<T_scale,
+    typename stan::partials_return_type<T_scale>::type>::value_type T_sigma_val;
+  typedef typename constant_array_type<T_alpha,
+    typename stan::partials_return_type<T_alpha>::type>::value_type T_alpha_val;
+  typedef typename constant_array_type<T_y,
+    typename stan::partials_return_type<T_y>::type>::value_type T_y_val;
 
   using Eigen::Array;
   using Eigen::Dynamic;
@@ -105,7 +108,7 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
   const T_sigma_val& sigma_val = value_of(sigma);
   const T_y_val& y_val = value_of(y);
 
-  const T_sigma_val& inv_sigma = 1 / sigma_val;
+  T_sigma_val inv_sigma = 1 / sigma_val;
   Array<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma
     = (y_val - (value_of(x) * beta_dbl).array() - alpha_val) * inv_sigma;
   Matrix<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma_squared

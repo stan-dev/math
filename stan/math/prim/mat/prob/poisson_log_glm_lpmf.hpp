@@ -52,7 +52,8 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
   static const char *function = "poisson_log_glm_lpmf";
   typedef typename stan::partials_return_type<T_y, T_x, T_alpha, T_beta>::type
       T_partials_return;
-  typedef typename constant_array_type<T_alpha>::value_type T_alpha_val;
+  typedef typename constant_array_type<T_alpha,
+    typename stan::partials_return_type<T_alpha>::type>::value_type T_alpha_val;
 
   using Eigen::Dynamic;
   using Eigen::Matrix;
