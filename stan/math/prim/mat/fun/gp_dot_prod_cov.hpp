@@ -40,11 +40,10 @@ namespace math {
  *   x is nan or infinite
  */
 template <typename T_x, typename T_sigma>
-inline typename boost::enable_if_c<
-    is_vector_like<T_x>::value,
-    Eigen::Matrix<typename return_type<T_x, T_sigma>::type, Eigen::Dynamic,
-                  Eigen::Dynamic>>::type
-gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
+Eigen::Matrix<typename return_type<T_x, T_sigma>::type, Eigen::Dynamic,
+              Eigen::Dynamic>
+gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
+                const T_sigma &sigma) {
   using stan::math::dot_product;
   using stan::math::square;
 
@@ -100,10 +99,8 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
  *   x is nan or infinite
  */
 template <typename T_x, typename T_sigma>
-inline typename boost::enable_if_c<
-    is_constant<T_x>::value,
-    Eigen::Matrix<typename return_type<T_x, T_sigma>::type, Eigen::Dynamic,
-                  Eigen::Dynamic>>::type
+Eigen::Matrix<typename return_type<T_x, T_sigma>::type, Eigen::Dynamic,
+              Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
   using stan::math::dot_product;
   using stan::math::square;
@@ -158,11 +155,10 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
  *   or if x1 or x2 are nan or inf
  */
 template <typename T_x1, typename T_x2, typename T_sigma>
-inline typename boost::enable_if_c<
-    is_vector_like<T_x1>::value,
-    Eigen::Matrix<typename return_type<T_x1, T_x2, T_sigma>::type,
-                  Eigen::Dynamic, Eigen::Dynamic>>::type
-gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
+Eigen::Matrix<typename return_type<T_x1, T_x2, T_sigma>::type, Eigen::Dynamic,
+              Eigen::Dynamic>
+gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
+                const std::vector<Eigen::Matrix<T_x2, Eigen::Dynamic, 1>> &x2,
                 const T_sigma &sigma) {
   using stan::math::dot_product;
   using stan::math::square;
@@ -221,10 +217,8 @@ gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  *   or if x1 or x2 are nan or inf
  */
 template <typename T_x1, typename T_x2, typename T_sigma>
-inline typename boost::enable_if_c<
-    is_constant<T_x1>::value,
-    Eigen::Matrix<typename return_type<T_x1, T_x2, T_sigma>::type,
-                  Eigen::Dynamic, Eigen::Dynamic>>::type
+Eigen::Matrix<typename return_type<T_x1, T_x2, T_sigma>::type, Eigen::Dynamic,
+              Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 const T_sigma &sigma) {
   using stan::math::square;
