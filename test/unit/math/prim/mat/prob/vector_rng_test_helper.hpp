@@ -301,6 +301,23 @@ void check_dist_throws_int_first_argument(const T_rig& rig) {
 }
 
 /*
+ * This function calls check_dist_throws with the given test_rig where
+ * the first argument can only be a double or a std::vector<double>
+ * and the other arguments can be any combination of int,
+ * std::vector<int>, double, std::vector<double>, Eigen::VectorXd, or
+ * Eigen::RowVectorXd
+ *
+ * @tparam T_rig Test rig type for random number generator
+ * @param T_rig Test rig for random number generator
+ */
+template <typename T_rig>
+void check_dist_throws_real_first_argument(const T_rig& rig) {
+  apply_template_permutations<std::tuple<double, std::vector<double> >,
+                              ArgumentTypes, ArgumentTypes>(check_dist_throws{},
+                                                            rig);
+}
+
+/*
  * Convert a scalar to a length one vector
  *
  * @tparam T Scalar type
@@ -414,6 +431,23 @@ template <typename T_rig>
 void check_quantiles_real_real(const T_rig& rig) {
   apply_template_permutations<ArgumentTypes, ArgumentTypes,
                               std::tuple<double> >(check_quantiles{}, rig);
+}
+
+/*
+ * Call check_quantiles on the given test rig for a continuous
+ * distribution that has two parameters where the first can only be a
+ * double or a std::vector<double> and the other argument can be int,
+ * std::vector<int>, double, std::vector<double>, Eigen::VectorXd, or
+ * an Eigen::RowVectorXd
+ *
+ * @tparam T_rig Type of test rig for random number generator
+ * @param T_rig Test rig for random number generator
+ */
+template <typename T_rig>
+void check_quantiles_real_first_argument(const T_rig& rig) {
+  apply_template_permutations<std::tuple<double, std::vector<double> >,
+                              ArgumentTypes, std::tuple<double> >(
+      check_quantiles{}, rig);
 }
 
 /*

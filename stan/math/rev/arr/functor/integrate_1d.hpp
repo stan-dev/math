@@ -8,6 +8,8 @@
 #include <stan/math/rev/scal/fun/is_nan.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
+#include <boost/utility/enable_if.hpp>
+#include <boost/type_traits.hpp>
 #include <string>
 #include <vector>
 #include <functional>
@@ -20,6 +22,10 @@ namespace math {
 /**
  * Calculate first derivative of f(x, param, std::ostream&)
  * with respect to the nth parameter. Uses nested reverse mode autodiff
+ *
+ * Gradients that evaluate to NaN are set to zero if the function itself
+ * evaluates to zero. If the function is not zero and the gradient evaluates to
+ * NaN, a std::domain_error is thrown
  */
 template <typename F>
 inline double gradient_of_f(const F &f, const double &x, const double &xc,
@@ -33,15 +39,16 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
   try {
     for (size_t i = 0; i < theta_vals.size(); i++)
       theta_var[i] = theta_vals[i];
-    var fx = f(x, xc, theta_var, x_r, x_i, msgs);
+    var fx = f(x, xc, theta_var, x_r, x_i, &msgs);
     fx.grad();
     gradient = theta_var[n].adj();
     if (is_nan(gradient)) {
-      if (fx.val() == 0)
+      if (fx.val() == 0) {
         gradient = 0;
-      else
-        throw std::domain_error(
-            std::string("derivative of integral is nan for parameter ", n));
+      } else {
+        domain_error("gradient_of_f", "The gradient of f", n,
+                     "is nan for parameter ", "");
+      }
     }
   } catch (const std::exception &e) {
     recover_memory_nested();
@@ -54,17 +61,18 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
 
 /**
  * Compute the integral of the single variable function f from a to b to within
- * a specified tolerance. a and b can be finite or infinite.
+ * a specified relative tolerance. a and b can be finite or infinite.
  *
  * f should be compatible with reverse mode autodiff and have the signature:
- *   var foo(double x, double xc, std::vector<var> theta, std::vector<double>
- * x_r, std::vector<int> x_i, std::ostream& msgs)
+ *   var f(double x, double xc, const std::vector<var>& theta,
+ *     const std::vector<double>& x_r, const std::vector<int> &x_i,
+ * std::ostream* msgs)
  *
  * It should return the value of the function evaluated at x. Any errors
  * should be printed to the msgs stream.
  *
  * Integrals that cross zero are broken into two, and the separate integrals are
- * each integrated to the given tolerance.
+ * each integrated to the given relative tolerance.
  *
  * For integrals with finite limits, the xc argument is the distance to the
  * nearest boundary. So for a > 0, b > 0, it will be a - x for x closer to a,
@@ -75,11 +83,21 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
  *
  * If either limit is infinite, xc is set to NaN
  *
- * Boost decides the integration is converged when subsequent estimates of the
- * integral are less than tolerance * abs(integral). This means the tolerance is
- * relative to the actual scale of the integral. Integrals that cross zero are
+ * The integration algorithm terminates when
+ *   \f[
+ *     \frac{{|I_{n + 1} - I_n|}}{{|I|_{n + 1}}} < \text{relative tolerance}
+ *   \f]
+ * where \f$I_{n}\f$ is the nth estimate of the integral and \f$|I|_{n}\f$ is
+ * the nth estimate of the norm of the integral.
+ *
+ * Integrals that cross zero are
  * split into two. In this case, each integral is separately integrated to the
- * given tolerance.
+ * given relative_tolerance.
+ *
+ * Gradients of f that evaluate to NaN when the function evaluates to zero are
+ * set to zero themselves. This is due to the autodiff easily overflowing to NaN
+ * when evaluating gradients near the maximum and minimum floating point values
+ * (where the function should be zero anyway for the integral to exist)
  *
  * @tparam T_a type of first limit
  * @tparam T_b type of second limit
@@ -92,16 +110,19 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
  * @param x_r additional data to be passed to f
  * @param x_i additional integer data to be passed to f
  * @param[in, out] msgs the print stream for warning messages
- * @param tolerance integrator tolerance passed to Boost quadrature
+ * @param relative_tolerance relative tolerance passed to Boost quadrature
  * @return numeric integral of function f
  */
 template <typename F, typename T_a, typename T_b, typename T_theta>
-inline var integrate_1d(const F &f, const T_a &a, const T_b &b,
-                        const std::vector<T_theta> &theta,
-                        const std::vector<double> &x_r,
-                        const std::vector<int> &x_i, std::ostream &msgs,
-                        const double tolerance
-                        = std::sqrt(std::numeric_limits<double>::epsilon())) {
+inline typename boost::enable_if_c<boost::is_same<T_a, var>::value
+                                       || boost::is_same<T_a, var>::value
+                                       || boost::is_same<T_theta, var>::value,
+                                   var>::type
+integrate_1d(const F &f, const T_a &a, const T_b &b,
+             const std::vector<T_theta> &theta, const std::vector<double> &x_r,
+             const std::vector<int> &x_i, std::ostream &msgs,
+             const double relative_tolerance
+             = std::sqrt(std::numeric_limits<double>::epsilon())) {
   static const char *function = "integrate_1d";
   check_less_or_equal(function, "lower limit", a, b);
 
@@ -113,8 +134,8 @@ inline var integrate_1d(const F &f, const T_a &a, const T_b &b,
   } else {
     double integral = integrate(
         std::bind<double>(f, std::placeholders::_1, std::placeholders::_2,
-                          value_of(theta), x_r, x_i, std::ref(msgs)),
-        value_of(a), value_of(b), tolerance);
+                          value_of(theta), x_r, x_i, &msgs),
+        value_of(a), value_of(b), relative_tolerance);
 
     size_t N_theta_vars = is_var<T_theta>::value ? theta.size() : 0;
     std::vector<double> dintegral_dtheta(N_theta_vars);
@@ -128,7 +149,7 @@ inline var integrate_1d(const F &f, const T_a &a, const T_b &b,
             std::bind<double>(gradient_of_f<F>, f, std::placeholders::_1,
                               std::placeholders::_2, theta_vals, x_r, x_i, n,
                               std::ref(msgs)),
-            value_of(a), value_of(b), tolerance);
+            value_of(a), value_of(b), relative_tolerance);
         theta_concat[n] = theta[n];
       }
     }
@@ -136,13 +157,13 @@ inline var integrate_1d(const F &f, const T_a &a, const T_b &b,
     if (!is_inf(a) && is_var<T_a>::value) {
       theta_concat.push_back(a);
       dintegral_dtheta.push_back(
-          -value_of(f(value_of(a), 0.0, theta, x_r, x_i, msgs)));
+          -value_of(f(value_of(a), 0.0, theta, x_r, x_i, &msgs)));
     }
 
     if (!is_inf(b) && is_var<T_b>::value) {
       theta_concat.push_back(b);
       dintegral_dtheta.push_back(
-          value_of(f(value_of(b), 0.0, theta, x_r, x_i, msgs)));
+          value_of(f(value_of(b), 0.0, theta, x_r, x_i, &msgs)));
     }
 
     return precomputed_gradients(integral, theta_concat, dintegral_dtheta);

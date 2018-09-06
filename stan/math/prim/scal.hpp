@@ -18,7 +18,6 @@
 #include <stan/math/prim/scal/meta/is_var.hpp>
 #include <stan/math/prim/scal/meta/is_var_or_arithmetic.hpp>
 #include <stan/math/prim/scal/meta/is_vector.hpp>
-#include <stan/math/prim/scal/meta/is_std_vector.hpp>
 #include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/length_mvt.hpp>
@@ -196,6 +195,10 @@
 #include <stan/math/prim/scal/prob/beta_binomial_log.hpp>
 #include <stan/math/prim/scal/prob/beta_binomial_lpmf.hpp>
 #include <stan/math/prim/scal/prob/beta_binomial_rng.hpp>
+#include <stan/math/prim/scal/prob/beta_proportion_lccdf.hpp>
+#include <stan/math/prim/scal/prob/beta_proportion_lcdf.hpp>
+#include <stan/math/prim/scal/prob/beta_proportion_lpdf.hpp>
+#include <stan/math/prim/scal/prob/beta_proportion_rng.hpp>
 #include <stan/math/prim/scal/prob/beta_ccdf_log.hpp>
 #include <stan/math/prim/scal/prob/beta_cdf.hpp>
 #include <stan/math/prim/scal/prob/beta_cdf_log.hpp>

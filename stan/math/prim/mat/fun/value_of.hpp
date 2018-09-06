@@ -42,7 +42,7 @@ inline Eigen::Matrix<typename child_type<T>::type, R, C> value_of(
  * @return Specified matrix.
  */
 template <int R, int C>
-inline typename Eigen::Matrix<double, R, C> value_of(
+inline const Eigen::Matrix<double, R, C>& value_of(
     const Eigen::Matrix<double, R, C>& x) {
   return x;
 }

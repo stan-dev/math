@@ -1,5 +1,8 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/util.hpp>
+#include <type_traits>
+#include <vector>
 
 TEST(MathMatrix, sumVector) {
   using Eigen::Dynamic;
@@ -53,4 +56,14 @@ TEST(MathMatrix, sumMatrix) {
   m = stan::math::matrix_d(3, 2);
   m << 1, 2, 3, 4, 5, 6;
   EXPECT_FLOAT_EQ(21.0, sum(m));
+}
+
+template <typename T>
+using sum_return_t = decltype(stan::math::sum(std::declval<T>()));
+
+TEST(MathMatrix, sumIsTemplated) {
+  using Eigen::Matrix;
+  test::expect_same_type<int, sum_return_t<Matrix<int, 2, 3>>>();
+  test::expect_same_type<double, sum_return_t<Matrix<double, 4, 2>>>();
+  test::expect_same_type<float, sum_return_t<std::vector<float>>>();
 }
