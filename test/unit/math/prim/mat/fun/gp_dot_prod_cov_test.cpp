@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat.hpp>
 #include <limits>
+#include <stan/math/prim/mat.hpp>
 #include <string>
 #include <vector>
 
@@ -247,10 +247,4 @@ TEST(MathPrimMat, vec_vec_x1_x2_gp_dot_prod_cov0) {
           << "index: (" << i << ", " << j << ")";
     }
   }
-}
-
-TEST(MathPrimMat, catch_segfault) {
-
-  std::cout << "we've eliminated D\n";
-
 }
