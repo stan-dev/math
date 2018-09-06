@@ -4,6 +4,7 @@
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/mat/fun/adj_jac_apply.hpp>
+#include <tuple>
 #include <vector>
 
 namespace stan {
@@ -20,10 +21,15 @@ class positive_ordered_constrain_op {
    * free vector.  The returned constrained vector will have the
    * same dimensionality as the specified free vector.
    *
+   * @tparam size Number of arguments
+   * @param needs_adj Boolean indicators of if adjoints of arguments will be
+   * needed
    * @param x Free vector of scalars
    * @return Positive, increasing ordered vector
    */
-  Eigen::VectorXd operator()(const Eigen::VectorXd& x) {
+  template <std::size_t size>
+  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
+                             const Eigen::VectorXd& x) {
     N_ = x.size();
 
     Eigen::Matrix<double, Eigen::Dynamic, 1> y(N_);
@@ -45,10 +51,15 @@ class positive_ordered_constrain_op {
    * Compute the result of multiply the transpose of the adjoint vector times
    * the Jacobian of the positive_ordered_constrain operator.
    *
+   * @tparam size Number of adjoints to return
+   * @param needs_adj Boolean indicators of if adjoints of arguments will be
+   * needed
    * @param adj Eigen::VectorXd of adjoints at the output of the softmax
    * @return Eigen::VectorXd of adjoints propagated through softmax operation
    */
-  Eigen::VectorXd multiply_adjoint_jacobian(const Eigen::VectorXd& adj) const {
+  template <std::size_t size>
+  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
+                                 const Eigen::VectorXd& adj) const {
     Eigen::VectorXd adj_times_jac(N_);
     double rolling_adjoint_sum = 0.0;
 
@@ -57,7 +68,7 @@ class positive_ordered_constrain_op {
       adj_times_jac(n) = exp_x_[n] * rolling_adjoint_sum;
     }
 
-    return adj_times_jac;
+    return std::make_tuple(adj_times_jac);
   }
 };
 }  // namespace
