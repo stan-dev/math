@@ -8,6 +8,7 @@
 #include <stan/math/prim/mat/meta/operands_and_partials.hpp>
 #include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
@@ -22,6 +23,7 @@
 #include <stan/math/prim/scal/prob/std_normal_lpdf.hpp>
 #include <stan/math/prim/scal/fun/std_binormal_integral.hpp>
 #include <stan/math/prim/scal/fun/inv.hpp>
+#include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/meta/max_size_mvt.hpp>
 #include <stan/math/prim/mat/meta/value_type.hpp>
 
@@ -65,6 +67,7 @@ typename return_type<T_y, T_rho>::type std_binormal_lcdf(const T_y& y,
   using std::log;
   using std::max;
   using std::sqrt;
+  using stan::math::value_of_rec;
 
   check_bounded(function, "Correlation parameter", rho, -1.0, 1.0);
   if (stan::is_vector_like<T_y_child_type>::value
@@ -109,32 +112,44 @@ typename return_type<T_y, T_rho>::type std_binormal_lcdf(const T_y& y,
     cdf_log += log(cdf_);
 
     if (contains_nonconstant_struct<T_y, T_rho>::value) {
-      const T_partials_return inv_cdf_
-          = cdf_ > 0 ? inv(cdf_) : std::numeric_limits<double>::infinity();
+      const T_partials_return inv_cdf_ = 1.0 / cdf_;
       const T_partials_return one_minus_rho_sq = (1 + rho_dbl) * (1 - rho_dbl);
       const T_partials_return sqrt_one_minus_rho_sq = sqrt(one_minus_rho_sq);
       const T_partials_return rho_times_y2 = rho_dbl * y2_dbl;
       const T_partials_return y1_minus_rho_times_y2 = y1_dbl - rho_times_y2;
+      const bool y1_isfinite = std::isfinite(value_of_rec(y1_dbl));
+      const bool y2_isfinite = std::isfinite(value_of_rec(y2_dbl));
+      const bool y1_y2_arefinite = y1_isfinite && y2_isfinite;
+      const bool rho_lt_one = fabs(rho_dbl) < 1;
       if (!is_constant_struct<T_y>::value) {
         ops_partials.edge1_.partials_vec_[n](0)
-            += cdf_ > 0 && cdf_ < 1 ? inv_cdf_ * exp(std_normal_lpdf(y1_dbl))
-                                          * Phi((y2_dbl - rho_dbl * y1_dbl)
-                                                / sqrt_one_minus_rho_sq)
-                                    : cdf_ > 0 ? 1 : 0;
+            += cdf_ > 0 && rho_lt_one && y1_y2_arefinite
+               ? inv_cdf_ * exp(std_normal_lpdf(y1_dbl))
+                * Phi((y2_dbl - rho_dbl * y1_dbl)
+                      / sqrt_one_minus_rho_sq)
+               : (!y2_isfinite && y1_isfinite && cdf_ > 0)
+                 || (rho_dbl == 1 && y1_dbl < y2_dbl && cdf_ > 0)
+                 || (rho_dbl == -1 && y2_dbl > -y1_dbl && cdf_ > 0)
+               ? inv_cdf_ * exp(std_normal_lpdf(y1_dbl)) :
+                cdf_ > 0 ? 0 : inv_cdf_;
         ops_partials.edge1_.partials_vec_[n](1)
-            += cdf_ > 0 && cdf_ < 1
-                   ? inv_cdf_ * exp(std_normal_lpdf(y2_dbl))
+            += cdf_ > 0 && rho_lt_one  && y1_y2_arefinite
+               ? inv_cdf_ * exp(std_normal_lpdf(y2_dbl))
                          * Phi(y1_minus_rho_times_y2 / sqrt_one_minus_rho_sq)
-                   : cdf_ > 0 ? 1 : 0;
+               : (!y1_isfinite && y2_isfinite && cdf_ > 0)
+                 || (rho_dbl == 1 && y2_dbl < y1_dbl && cdf_ > 0)
+                 || (rho_dbl == -1 && y2_dbl > -y1_dbl && cdf_ > 0)
+               ? inv_cdf_ * exp(std_normal_lpdf(y2_dbl)) :
+                cdf_ > 0 ? 0 : inv_cdf_;
       }
       if (!is_constant_struct<T_rho>::value)
         ops_partials.edge2_.partials_[n]
-            += cdf_ > 0 && cdf_ < 1
+            += cdf_ > 0 && y1_y2_arefinite && rho_lt_one
                    ? inv_cdf_ * 0.5 / (stan::math::pi() * sqrt_one_minus_rho_sq)
                          * exp(-0.5 / one_minus_rho_sq * y1_minus_rho_times_y2
                                    * y1_minus_rho_times_y2
-                               - 0.5 * y2_dbl * y2_dbl)
-                   : cdf_ > 0 ? 1 : 0;
+                               - 0.5 * y2_dbl * y2_dbl) :
+               cdf_ > 0 ? 0 : inv_cdf_;
     }
   }
   return ops_partials.build(cdf_log);

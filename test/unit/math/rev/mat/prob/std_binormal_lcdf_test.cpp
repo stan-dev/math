@@ -10,6 +10,31 @@ using Eigen::Matrix;
 using stan::math::var;
 using std::vector;
 
+template <class F1, class F2>
+void compare_grad(const F1& f1, const F2& f2,
+                  const Matrix<double, Dynamic, 1>& inp_vec) {
+  double f1_eval;
+  Matrix<double, Dynamic, 1> grad_f1;
+  double f2_eval;
+  Matrix<double, Dynamic, 1> grad_f2;
+  stan::math::gradient(f1, inp_vec, f1_eval, grad_f1);
+  stan::math::gradient(f2, inp_vec, f2_eval, grad_f2);
+  EXPECT_FLOAT_EQ(f1_eval, f2_eval);
+  for (int i = 0; i < grad_f1.size(); ++i)
+    EXPECT_FLOAT_EQ(grad_f1(i), grad_f2(i));
+}
+
+template <class F1>
+void compare_grad_known(const F1& f1,
+                        const Matrix<double, Dynamic, 1>& exp_grad,
+                        const Matrix<double, Dynamic, 1>& inp_vec) {
+  double f1_eval;
+  Matrix<double, Dynamic, 1> grad_f1;
+  stan::math::gradient(f1, inp_vec, f1_eval, grad_f1);
+  for (int i = 0; i < grad_f1.size(); ++i)
+    EXPECT_FLOAT_EQ(exp_grad(i), grad_f1(i)) << i;
+}
+
 // nector, real
 template <typename T>
 void to_function_input(int N_y,
@@ -843,6 +868,62 @@ TEST(MathFunctions, vec_binormal_integral_grad_test_V_R) {
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_tru(i));
     EXPECT_FLOAT_EQ(grad_fx_test(i), grad_fx_fd(i));
   }
+}
+TEST(MathFunctions, binormal_integral_grad_test_boundary_V_R) {
+  V_R_std_binorm_lcdf dist_fun;
+  log_binorm tru_fun;
+  Matrix<double, Dynamic, 1> inp_vec(3);
+
+  inp_vec << std::numeric_limits<double>::infinity(), -2.7, 0.8;
+  compare_grad(tru_fun, dist_fun, inp_vec);
+
+  inp_vec << 2.3, std::numeric_limits<double>::infinity(), 0.8;
+  compare_grad(tru_fun, dist_fun, inp_vec);
+
+  inp_vec << 2.3, std::numeric_limits<double>::infinity(), 1;
+  compare_grad(tru_fun, dist_fun, inp_vec);
+
+  inp_vec << 2.3, std::numeric_limits<double>::infinity(), -1;
+  compare_grad(tru_fun, dist_fun, inp_vec);
+
+  inp_vec << std::numeric_limits<double>::infinity(), 2.3, 1;
+  compare_grad(tru_fun, dist_fun, inp_vec);
+
+  inp_vec << std::numeric_limits<double>::infinity(), 2.3, -1;
+  compare_grad(tru_fun, dist_fun, inp_vec);
+
+  inp_vec << 2.3, 1, -1;
+  compare_grad(tru_fun, dist_fun, inp_vec);
+
+  // These tests will fail, though this is expected due to the
+  // difference in gradient calculation.
+  // std_binormal_lcdf returns the correct result
+  // inp_vec << -std::numeric_limits<double>::infinity(), 1, -1;
+  // compare_grad(tru_fun, dist_fun, inp_vec);
+  // inp_vec << -2.3, 1, -1;
+  // compare_grad(tru_fun, dist_fun, inp_vec);
+
+  Matrix<double, Dynamic, 1> known_grad(3);
+  known_grad << std::numeric_limits<double>::infinity(),
+                std::numeric_limits<double>::infinity(),
+                std::numeric_limits<double>::infinity();
+  inp_vec << -5.3, 1, -1;
+  compare_grad_known(dist_fun, known_grad, inp_vec);
+
+  inp_vec << 1, -5.3, -1;
+  compare_grad_known(dist_fun, known_grad, inp_vec);
+
+  inp_vec << -std::numeric_limits<double>::infinity(), -1, 0.4;
+  compare_grad_known(dist_fun, known_grad, inp_vec);
+
+  inp_vec << 1, -std::numeric_limits<double>::infinity(), 0.4;
+  compare_grad_known(dist_fun, known_grad, inp_vec);
+
+  inp_vec << 1, -std::numeric_limits<double>::infinity(), 1;
+  compare_grad_known(dist_fun, known_grad, inp_vec);
+
+  inp_vec << 1, -std::numeric_limits<double>::infinity(), -1;
+  compare_grad_known(dist_fun, known_grad, inp_vec);
 }
 TEST(MathFunctions, vec_binormal_integral_grad_test_RV_R) {
   RV_R_std_binorm_lcdf dist_fun;
