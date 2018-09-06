@@ -1,9 +1,33 @@
 #include <stan/math/prim/scal/prob/normal_cdf.hpp>
-#include <stan/math/rev/scal.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+
+using Eigen::Matrix;
+using Eigen::Dynamic;
+
+struct VVV_std_binorm_integral {
+  template <typename T>
+  inline T operator()(
+      const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
+    return stan::math::std_binormal_integral(inp_vec(0),
+                                             inp_vec(1), inp_vec(2));
+  }
+};
+
+template <class F1>
+void compare_grad_known(const F1& f1,
+                        const Matrix<double, Dynamic, 1>& exp_grad,
+                        const Matrix<double, Dynamic, 1>& inp_vec) {
+  double f1_eval;
+  Matrix<double, Dynamic, 1> grad_f1;
+  stan::math::gradient(f1, inp_vec, f1_eval, grad_f1);
+  for (int i = 0; i < grad_f1.size(); ++i)
+    EXPECT_FLOAT_EQ(exp_grad(i), grad_f1(i));
+}
+
 
 TEST(MathFunctions, binormal_integral_using) {
   using stan::math::std_binormal_integral;
@@ -277,6 +301,76 @@ TEST(MathFunctions, binormal_integral_grad_test_vvv_tanh_sinh) {
   EXPECT_FLOAT_EQ(gf_1, grad_f[0]);
   EXPECT_FLOAT_EQ(gf_2, grad_f[1]);
   EXPECT_FLOAT_EQ(gf_3, grad_f[2]);
+}
+TEST(MathFunctions, binormal_integral_grad_test_vvv_at_boundary) {
+  VVV_std_binorm_integral test_fun;
+  Matrix<double, Dynamic, 1> inp_vec(3);
+  inp_vec << -std::numeric_limits<double>::infinity(), 2, 0.5;
+  Matrix<double, Dynamic, 1> expected_grad(3);
+  expected_grad << 0, 0, 0;
+  compare_grad_known(test_fun, expected_grad, inp_vec);
+
+  inp_vec << 2, -std::numeric_limits<double>::infinity(), 0.5;
+  expected_grad << 0, 0, 0;
+  compare_grad_known(test_fun, expected_grad, inp_vec);
+
+  inp_vec << 2, std::numeric_limits<double>::infinity(), 0.5;
+  expected_grad << exp(stan::math::std_normal_lpdf(2)), 0, 0;
+  compare_grad_known(test_fun, expected_grad, inp_vec);
+
+  inp_vec << std::numeric_limits<double>::infinity(), 1, 0.5;
+  expected_grad << 0, exp(stan::math::std_normal_lpdf(1)), 0;
+  compare_grad_known(test_fun, expected_grad, inp_vec);
+
+  inp_vec << std::numeric_limits<double>::infinity(), 1, 1;
+  expected_grad << 0, exp(stan::math::std_normal_lpdf(1)), 0;
+  compare_grad_known(test_fun, expected_grad, inp_vec);
+
+  inp_vec << std::numeric_limits<double>::infinity(), 1, -1;
+  expected_grad << 0, exp(stan::math::std_normal_lpdf(1)), 0;
+  compare_grad_known(test_fun, expected_grad, inp_vec);
+
+  inp_vec << std::numeric_limits<double>::infinity(),
+             std::numeric_limits<double>::infinity(), 0.4;
+  expected_grad << 0, 0, 0;
+  compare_grad_known(test_fun, expected_grad, inp_vec);
+
+  inp_vec << -std::numeric_limits<double>::infinity(),
+             -std::numeric_limits<double>::infinity(), 0.4;
+  expected_grad << 0, 0, 0;
+  compare_grad_known(test_fun, expected_grad, inp_vec);
+
+  inp_vec << -std::numeric_limits<double>::infinity(),
+             1, 1;
+  expected_grad << 0, 0, 0;
+  compare_grad_known(test_fun, expected_grad, inp_vec);
+
+  inp_vec << 1, -std::numeric_limits<double>::infinity(),
+             1;
+  expected_grad << 0, 0, 0;
+  compare_grad_known(test_fun, expected_grad, inp_vec);
+
+  inp_vec << 1, -std::numeric_limits<double>::infinity(),
+             -1;
+  expected_grad << 0, 0, 0;
+  compare_grad_known(test_fun, expected_grad, inp_vec);
+
+  inp_vec << 2, 3, 1;
+  expected_grad << 1 / sqrt(2 * stan::math::pi()) * exp(-0.5 * 4), 0, 0;
+  compare_grad_known(test_fun, expected_grad, inp_vec);
+
+  inp_vec << 3, 1, 1;
+  expected_grad << 0, 1 / sqrt(2 * stan::math::pi()) * exp(-0.5), 0;
+  compare_grad_known(test_fun, expected_grad, inp_vec);
+
+  inp_vec << 3, 1, -1;
+  expected_grad << 1 / sqrt(2 * stan::math::pi()) * exp(-0.5 * 9),
+                1 / sqrt(2 * stan::math::pi()) * exp(-0.5), 0;
+  compare_grad_known(test_fun, expected_grad, inp_vec);
+
+  inp_vec << -1, 1, -1;
+  expected_grad << 0, 0, 0;
+  compare_grad_known(test_fun, expected_grad, inp_vec);
 }
 TEST(MathFunctions, binormal_integral_grad_test_vvv_tan_sinh_near_boundary) {
   using stan::math::normal_cdf;
