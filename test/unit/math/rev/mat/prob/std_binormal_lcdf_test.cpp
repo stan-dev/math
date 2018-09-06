@@ -905,8 +905,8 @@ TEST(MathFunctions, binormal_integral_grad_test_boundary_V_R) {
 
   Matrix<double, Dynamic, 1> known_grad(3);
   known_grad << std::numeric_limits<double>::infinity(),
-                std::numeric_limits<double>::infinity(),
-                std::numeric_limits<double>::infinity();
+      std::numeric_limits<double>::infinity(),
+      std::numeric_limits<double>::infinity();
   inp_vec << -5.3, 1, -1;
   compare_grad_known(dist_fun, known_grad, inp_vec);
 
