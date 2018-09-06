@@ -37,7 +37,16 @@ std::string helpers =
   #ifndef dst
   #define dst(i,j) dst[j * dst_rows + i]
   #endif
-
+    // lower triangular inverse
+  #ifndef V
+  #define V(i,j) V[offset+j*(part_size_fixed+1)+i] 
+  #endif    
+  #ifndef temp
+  #define temp(i,j) temp[(n/2)*(sizeM)*(sizeM)+j*part_size2+i]
+  #endif
+  #define TS2 32
+  #define WPT 4
+  #define RTS TS2/WPT
   // The local memory column for each thread block
   #define THREAD_BLOCK_SIZE_COL THREAD_BLOCK_SIZE/WORK_PER_THREAD
 
