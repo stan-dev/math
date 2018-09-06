@@ -62,12 +62,12 @@ typename return_type<T_y, T_rho>::type std_binormal_lcdf(const T_y& y,
       typename stan::partials_return_type<T_y, T_rho>::type T_partials_return;
   typedef typename stan::math::value_type<T_y>::type T_y_child_type;
 
+  using stan::math::value_of_rec;
   using std::asin;
   using std::exp;
   using std::log;
   using std::max;
   using std::sqrt;
-  using stan::math::value_of_rec;
 
   check_bounded(function, "Correlation parameter", rho, -1.0, 1.0);
   if (stan::is_vector_like<T_y_child_type>::value
@@ -124,23 +124,23 @@ typename return_type<T_y, T_rho>::type std_binormal_lcdf(const T_y& y,
       if (!is_constant_struct<T_y>::value) {
         ops_partials.edge1_.partials_vec_[n](0)
             += cdf_ > 0 && rho_lt_one && y1_y2_arefinite
-               ? inv_cdf_ * exp(std_normal_lpdf(y1_dbl))
-                * Phi((y2_dbl - rho_dbl * y1_dbl)
-                      / sqrt_one_minus_rho_sq)
-               : (!y2_isfinite && y1_isfinite && cdf_ > 0)
-                 || (rho_dbl == 1 && y1_dbl < y2_dbl && cdf_ > 0)
-                 || (rho_dbl == -1 && y2_dbl > -y1_dbl && cdf_ > 0)
-               ? inv_cdf_ * exp(std_normal_lpdf(y1_dbl)) :
-                cdf_ > 0 ? 0 : inv_cdf_;
+                   ? inv_cdf_ * exp(std_normal_lpdf(y1_dbl))
+                         * Phi((y2_dbl - rho_dbl * y1_dbl)
+                               / sqrt_one_minus_rho_sq)
+                   : (!y2_isfinite && y1_isfinite && cdf_ > 0)
+                             || (rho_dbl == 1 && y1_dbl < y2_dbl && cdf_ > 0)
+                             || (rho_dbl == -1 && y2_dbl > -y1_dbl && cdf_ > 0)
+                         ? inv_cdf_ * exp(std_normal_lpdf(y1_dbl))
+                         : cdf_ > 0 ? 0 : inv_cdf_;
         ops_partials.edge1_.partials_vec_[n](1)
-            += cdf_ > 0 && rho_lt_one  && y1_y2_arefinite
-               ? inv_cdf_ * exp(std_normal_lpdf(y2_dbl))
+            += cdf_ > 0 && rho_lt_one && y1_y2_arefinite
+                   ? inv_cdf_ * exp(std_normal_lpdf(y2_dbl))
                          * Phi(y1_minus_rho_times_y2 / sqrt_one_minus_rho_sq)
-               : (!y1_isfinite && y2_isfinite && cdf_ > 0)
-                 || (rho_dbl == 1 && y2_dbl < y1_dbl && cdf_ > 0)
-                 || (rho_dbl == -1 && y2_dbl > -y1_dbl && cdf_ > 0)
-               ? inv_cdf_ * exp(std_normal_lpdf(y2_dbl)) :
-                cdf_ > 0 ? 0 : inv_cdf_;
+                   : (!y1_isfinite && y2_isfinite && cdf_ > 0)
+                             || (rho_dbl == 1 && y2_dbl < y1_dbl && cdf_ > 0)
+                             || (rho_dbl == -1 && y2_dbl > -y1_dbl && cdf_ > 0)
+                         ? inv_cdf_ * exp(std_normal_lpdf(y2_dbl))
+                         : cdf_ > 0 ? 0 : inv_cdf_;
       }
       if (!is_constant_struct<T_rho>::value)
         ops_partials.edge2_.partials_[n]
@@ -148,8 +148,8 @@ typename return_type<T_y, T_rho>::type std_binormal_lcdf(const T_y& y,
                    ? inv_cdf_ * 0.5 / (stan::math::pi() * sqrt_one_minus_rho_sq)
                          * exp(-0.5 / one_minus_rho_sq * y1_minus_rho_times_y2
                                    * y1_minus_rho_times_y2
-                               - 0.5 * y2_dbl * y2_dbl) :
-               cdf_ > 0 ? 0 : inv_cdf_;
+                               - 0.5 * y2_dbl * y2_dbl)
+                   : cdf_ > 0 ? 0 : inv_cdf_;
     }
   }
   return ops_partials.build(cdf_log);
