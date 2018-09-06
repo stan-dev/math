@@ -74,8 +74,6 @@ inline
  * @tparam T_x type of std::vector of elements
  * @tparam T_sigma type of sigma
  * @tparam T_l type of std::vector of length scale
- * @tparam R   num of rows in x matrix (either 1 or -1 since this is a vector)
- * @tparam C   num of cols in x matrix (either 1 or -1 since this is a vector)
  *
  * @param x std::vector of elements that can be used in square distance.
  *    This function assumes each element of x is the same size.
@@ -86,11 +84,11 @@ inline
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <typename T_x, typename T_sigma, typename T_l, int R, int C>
+template <typename T_x, typename T_sigma, typename T_l>
 inline
     typename Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
                            Eigen::Dynamic, Eigen::Dynamic>
-    gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x, R, C>> &x,
+gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
                     const T_sigma &sigma,
                     const std::vector<T_l> &length_scale) {
   using std::exp;
@@ -110,7 +108,8 @@ inline
     return cov;
 
   T_sigma sigma_sq = square(sigma);
-  std::vector<Eigen::Matrix<typename return_type<T_x, T_l>::type, R, C>> x_new
+  std::vector<Eigen::Matrix<typename return_type<T_x, T_l>::type,
+                            Eigen::Dynamic, 1>> x_new
       = divide_columns(x, length_scale);
 
   for (size_t j = 0; j < x_size; ++j) {
@@ -146,12 +145,17 @@ inline typename Eigen::Matrix<
 gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 const T_sigma &sigma, const T_l &length_scale) {
   using std::exp;
-  check_positive("gp_exp_quad_cov", "magnitude", sigma);
-  check_positive("gp_exp_quad_cov", "length scale", length_scale);
-  for (size_t n = 0; n < x1.size(); ++n)
-    check_not_nan("gp_exp_quad_cov", "x1", x1[n]);
-  for (size_t n = 0; n < x2.size(); ++n)
-    check_not_nan("gp_exp_quad_cov", "x2", x2[n]);
+
+  const char *function_name = "gp_exp_quad_cov";
+  check_positive(function_name, "magnitude", sigma);
+  check_positive(function_name, "length scale", length_scale);
+
+  size_t x1_size = x1.size();
+  for (size_t i = 0; i < x1_size; ++i)
+    check_not_nan(function_name, "x1", x1[i]);
+  size_t x2_size = x2.size();
+  for (size_t i = 0; i < x2_size; ++i)
+    check_not_nan(function_name, "x2", x2[i]);
 
   Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
@@ -177,10 +181,6 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * @tparam T_x2 type of second std::vector of elements
  * @tparam T_s type of sigma
  * @tparam T_l type of length scale
- * @tparam R1  num of rows in x matrix (either 1 or -1 since this is a vector)
- * @tparam C1  num of cols in x matrix (either 1 or -1 since this is a vector)
- * @tparam R2  num of rows in x matrix (either 1 or -1 since this is a vector)
- * @tparam C2  num of cols in x matrix (either 1 or -1 since this is a vector)
  *
  * @param x1 std::vector of elements that can be used in square distance
  * @param x2 std::vector of elements that can be used in square distance
@@ -191,14 +191,13 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <typename T_x1, typename T_x2, typename T_s, typename T_l, int R1,
-          int C1, int R2, int C2>
+  template <typename T_x1, typename T_x2, typename T_s, typename T_l>
 inline typename Eigen::Matrix<
     typename stan::return_type<T_x1, T_x2, T_s, T_l>::type, Eigen::Dynamic,
     Eigen::Dynamic>
-gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, R1, C1>> &x1,
-                const std::vector<Eigen::Matrix<T_x2, R2, C2>> &x2,
-                const T_s &sigma, const std::vector<T_l> &length_scale) {
+  gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
+                  const std::vector<Eigen::Matrix<T_x2, Eigen::Dynamic, 1>> &x2,
+                  const T_s &sigma, const std::vector<T_l> &length_scale) {
   using std::exp;
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
@@ -211,9 +210,9 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, R1, C1>> &x1,
     check_not_nan(function_name, "x2", x2[i]);
   check_positive_finite(function_name, "magnitude", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
-  check_size_match("gp_exp_quad_cov", "x dimension", x1[0].size(),
+  check_size_match(function_name, "x dimension", x1[0].size(),
                    "number of length scales", l_size);
-  check_size_match("gp_exp_quad_cov", "x dimension", x2[0].size(),
+  check_size_match(function_name, "x dimension", x2[0].size(),
                    "number of length scales", l_size);
 
   Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_s, T_l>::type,
@@ -224,9 +223,11 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, R1, C1>> &x1,
 
   T_s sigma_sq = square(sigma);
 
-  std::vector<Eigen::Matrix<typename return_type<T_x1, T_l, T_s>::type, R1, C1>>
+  std::vector<Eigen::Matrix<typename return_type<T_x1, T_l, T_s>::type,
+                            Eigen::Dynamic, 1>>
       x1_new = divide_columns(x1, length_scale);
-  std::vector<Eigen::Matrix<typename return_type<T_x2, T_l, T_s>::type, R2, C2>>
+  std::vector<Eigen::Matrix<typename return_type<T_x2, T_l, T_s>::type,
+                            Eigen::Dynamic, 1>>
       x2_new = divide_columns(x2, length_scale);
 
   for (size_t i = 0; i < x1_size; ++i) {
