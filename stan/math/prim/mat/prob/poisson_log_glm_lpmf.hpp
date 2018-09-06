@@ -12,7 +12,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/mat/meta/is_vector.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/mat/meta/constant_array_type.hpp>
 #include <cmath>
 #include <limits>
 
@@ -52,8 +51,10 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
   static const char *function = "poisson_log_glm_lpmf";
   typedef typename stan::partials_return_type<T_y, T_x, T_alpha, T_beta>::type
       T_partials_return;
-  typedef typename constant_array_type<T_alpha,
-    typename stan::partials_return_type<T_alpha>::type>::value_type T_alpha_val;
+  typedef typename std::conditional<is_vector<T_alpha>::value,
+    Eigen::Array<typename stan::partials_return_type<T_alpha>::type, -1, 1>,
+    typename stan::partials_return_type<T_alpha>::type>::type
+    T_alpha_val;
 
   using Eigen::Dynamic;
   using Eigen::Matrix;
