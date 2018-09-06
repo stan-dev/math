@@ -147,11 +147,11 @@ typename return_type<T_z1, T_z2, T_rho>::type std_binormal_integral(
   typedef typename partials_return_type<T_z1, T_z2, T_rho>::type partials_type;
   using stan::math::std_binormal_integral;
   using stan::math::std_normal_lpdf;
+  using stan::math::value_of_rec;
   using std::asin;
   using std::exp;
   using std::log;
   using std::sqrt;
-  using stan::math::value_of_rec;
 
   const partials_type z1_dbl = value_of(z1);
   const partials_type z2_dbl = value_of(z2);
@@ -171,26 +171,28 @@ typename return_type<T_z1, T_z2, T_rho>::type std_binormal_integral(
     const bool rho_lt_one = fabs(rho_dbl) < 1;
     if (!is_constant_struct<T_z1>::value)
       ops_partials.edge1_.partials_[0]
-            += cdf > 0 && rho_lt_one && z1_z2_arefinite
-               ? exp(std_normal_lpdf(z1_dbl))
-                * Phi((z2_dbl - rho_dbl * z1_dbl)
-                      / sqrt_one_minus_rho_sq)
-               : (!z2_isfinite && z1_isfinite && cdf > 0)
-                 || (rho == 1 && z1_dbl < z2_dbl)
-                 || (rho == -1 && z2_dbl > -z1_dbl)
-               ? exp(std_normal_lpdf(z1_dbl)) : 0;
+          += cdf > 0 && rho_lt_one && z1_z2_arefinite
+                 ? exp(std_normal_lpdf(z1_dbl))
+                       * Phi((z2_dbl - rho_dbl * z1_dbl)
+                             / sqrt_one_minus_rho_sq)
+                 : (!z2_isfinite && z1_isfinite && cdf > 0)
+                           || (rho == 1 && z1_dbl < z2_dbl)
+                           || (rho == -1 && z2_dbl > -z1_dbl)
+                       ? exp(std_normal_lpdf(z1_dbl))
+                       : 0;
     if (!is_constant_struct<T_z2>::value)
       ops_partials.edge2_.partials_[0]
-            += cdf > 0 && rho_lt_one  && z1_z2_arefinite
-               ? exp(std_normal_lpdf(z2_dbl))
-                         * Phi(z1_minus_rho_times_z2 / sqrt_one_minus_rho_sq)
-               : (!z1_isfinite && z2_isfinite && cdf > 0)
-                 || (rho == 1 && z2_dbl < z1_dbl)
-                 || (rho == -1 && z2_dbl > -z1_dbl)
-               ? exp(std_normal_lpdf(z2_dbl)) : 0;
+          += cdf > 0 && rho_lt_one && z1_z2_arefinite
+                 ? exp(std_normal_lpdf(z2_dbl))
+                       * Phi(z1_minus_rho_times_z2 / sqrt_one_minus_rho_sq)
+                 : (!z1_isfinite && z2_isfinite && cdf > 0)
+                           || (rho == 1 && z2_dbl < z1_dbl)
+                           || (rho == -1 && z2_dbl > -z1_dbl)
+                       ? exp(std_normal_lpdf(z2_dbl))
+                       : 0;
     if (!is_constant_struct<T_rho>::value)
       ops_partials.edge3_.partials_[0]
-            += cdf > 0 && z1_z2_arefinite && rho_lt_one
+          += cdf > 0 && z1_z2_arefinite && rho_lt_one
                  ? 0.5 / (stan::math::pi() * sqrt_one_minus_rho_sq)
                        * exp(-0.5 / one_minus_rho_sq * z1_minus_rho_times_z2
                                  * z1_minus_rho_times_z2
