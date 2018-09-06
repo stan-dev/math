@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_GP_EXP_QUAD_COV_HPP
 #define STAN_MATH_PRIM_MAT_FUN_GP_EXP_QUAD_COV_HPP
 
+#include <cmath>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/divide.hpp>
 #include <stan/math/prim/mat/fun/divide_columns.hpp>
@@ -13,7 +14,6 @@
 #include <stan/math/prim/scal/fun/exp.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <cmath>
 #include <vector>
 
 namespace stan {
@@ -59,8 +59,8 @@ inline
   for (size_t j = 0; j < (x_size - 1); ++j) {
     cov(j, j) = sigma_sq;
     for (size_t i = j + 1; i < x_size; ++i) {
-      cov(i, j)
-          = sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
+      cov(i, j) =
+          sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
       cov(j, i) = cov(i, j);
     }
   }
@@ -88,7 +88,7 @@ template <typename T_x, typename T_sigma, typename T_l>
 inline
     typename Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
                            Eigen::Dynamic, Eigen::Dynamic>
-gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
+    gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
                     const T_sigma &sigma,
                     const std::vector<T_l> &length_scale) {
   using std::exp;
@@ -108,9 +108,9 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
     return cov;
 
   T_sigma sigma_sq = square(sigma);
-  std::vector<Eigen::Matrix<typename return_type<T_x, T_l>::type,
-                            Eigen::Dynamic, 1>> x_new
-      = divide_columns(x, length_scale);
+  std::vector<
+      Eigen::Matrix<typename return_type<T_x, T_l>::type, Eigen::Dynamic, 1>>
+      x_new = divide_columns(x, length_scale);
 
   for (size_t j = 0; j < x_size; ++j) {
     cov(j, j) = sigma_sq;
@@ -167,8 +167,8 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   for (size_t i = 0; i < x1.size(); ++i) {
     for (size_t j = 0; j < x2.size(); ++j) {
-      cov(i, j)
-          = sigma_sq * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
+      cov(i, j) =
+          sigma_sq * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
     }
   }
   return cov;
@@ -191,13 +191,13 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-  template <typename T_x1, typename T_x2, typename T_s, typename T_l>
+template <typename T_x1, typename T_x2, typename T_s, typename T_l>
 inline typename Eigen::Matrix<
     typename stan::return_type<T_x1, T_x2, T_s, T_l>::type, Eigen::Dynamic,
     Eigen::Dynamic>
-  gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
-                  const std::vector<Eigen::Matrix<T_x2, Eigen::Dynamic, 1>> &x2,
-                  const T_s &sigma, const std::vector<T_l> &length_scale) {
+gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
+                const std::vector<Eigen::Matrix<T_x2, Eigen::Dynamic, 1>> &x2,
+                const T_s &sigma, const std::vector<T_l> &length_scale) {
   using std::exp;
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
@@ -237,6 +237,6 @@ inline typename Eigen::Matrix<
   }
   return cov;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif
