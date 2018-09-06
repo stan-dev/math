@@ -5,15 +5,15 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 
 struct VVV_std_binorm_integral {
   template <typename T>
   inline T operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
-    return stan::math::std_binormal_integral(inp_vec(0),
-                                             inp_vec(1), inp_vec(2));
+    return stan::math::std_binormal_integral(inp_vec(0), inp_vec(1),
+                                             inp_vec(2));
   }
 };
 
@@ -27,7 +27,6 @@ void compare_grad_known(const F1& f1,
   for (int i = 0; i < grad_f1.size(); ++i)
     EXPECT_FLOAT_EQ(exp_grad(i), grad_f1(i));
 }
-
 
 TEST(MathFunctions, binormal_integral_using) {
   using stan::math::std_binormal_integral;
@@ -331,27 +330,24 @@ TEST(MathFunctions, binormal_integral_grad_test_vvv_at_boundary) {
   compare_grad_known(test_fun, expected_grad, inp_vec);
 
   inp_vec << std::numeric_limits<double>::infinity(),
-             std::numeric_limits<double>::infinity(), 0.4;
+      std::numeric_limits<double>::infinity(), 0.4;
   expected_grad << 0, 0, 0;
   compare_grad_known(test_fun, expected_grad, inp_vec);
 
   inp_vec << -std::numeric_limits<double>::infinity(),
-             -std::numeric_limits<double>::infinity(), 0.4;
+      -std::numeric_limits<double>::infinity(), 0.4;
   expected_grad << 0, 0, 0;
   compare_grad_known(test_fun, expected_grad, inp_vec);
 
-  inp_vec << -std::numeric_limits<double>::infinity(),
-             1, 1;
+  inp_vec << -std::numeric_limits<double>::infinity(), 1, 1;
   expected_grad << 0, 0, 0;
   compare_grad_known(test_fun, expected_grad, inp_vec);
 
-  inp_vec << 1, -std::numeric_limits<double>::infinity(),
-             1;
+  inp_vec << 1, -std::numeric_limits<double>::infinity(), 1;
   expected_grad << 0, 0, 0;
   compare_grad_known(test_fun, expected_grad, inp_vec);
 
-  inp_vec << 1, -std::numeric_limits<double>::infinity(),
-             -1;
+  inp_vec << 1, -std::numeric_limits<double>::infinity(), -1;
   expected_grad << 0, 0, 0;
   compare_grad_known(test_fun, expected_grad, inp_vec);
 
@@ -365,7 +361,7 @@ TEST(MathFunctions, binormal_integral_grad_test_vvv_at_boundary) {
 
   inp_vec << 3, 1, -1;
   expected_grad << 1 / sqrt(2 * stan::math::pi()) * exp(-0.5 * 9),
-                1 / sqrt(2 * stan::math::pi()) * exp(-0.5), 0;
+      1 / sqrt(2 * stan::math::pi()) * exp(-0.5), 0;
   compare_grad_known(test_fun, expected_grad, inp_vec);
 
   inp_vec << -1, 1, -1;
