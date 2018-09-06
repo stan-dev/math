@@ -274,6 +274,26 @@ TEST(StanMath_integrate_1d, TestDerivatives_zero_crossing) {
                                   -19.06340613646808, 21.41380852375568);
 }
 
+TEST(StanMath_integrate_1d, TestDerivatives_var_right_endpoint_var_params) {
+  // Zero crossing integral + test x_r + vars at right endpoint
+  using stan::math::var;
+  test_derivatives<double, var, var>(
+      f3{}, -1.0, 1.0, {0.5, 1.75, 3.9}, {2.5, 3.0}, {},
+      2.350402387287579 + 2.0 * pow(0.5, 2.5) + 4.0 * pow(1.75, 3.0)
+          + 4.0 * 3.9,
+      {5 * pow(0.5, 1.5), 12 * 1.75 * 1.75, 4.0}, 0.0, 21.41380852375568);
+}
+
+TEST(StanMath_integrate_1d, TestDerivatives_var_left_endpoint_var_params) {
+  // Zero crossing integral + test x_r + var at left endpoint
+  using stan::math::var;
+  test_derivatives<var, double, var>(
+      f3{}, -1.0, 1.0, {0.5, 1.75, 3.9}, {2.5, 3.0}, {},
+      2.350402387287579 + 2.0 * pow(0.5, 2.5) + 4.0 * pow(1.75, 3.0)
+          + 4.0 * 3.9,
+      {5 * pow(0.5, 1.5), 12 * 1.75 * 1.75, 4.0}, -19.06340613646808, 0.0);
+}
+
 TEST(StanMath_integrate_1d, TestDerivatives_no_param_vars) {
   // No param vars
   using stan::math::var;
