@@ -77,7 +77,7 @@ $(BOOST)/user-config.jam:
 $(BOOST_LIB)/mpi.so: $(BOOST)/user-config.jam
 	@mkdir -p $(dir $@)
 	cd $(BOOST); ./bootstrap.sh
-	cd $(BOOST); ./b2 --user-config=user-config.jam --layout=system --with-mpi --with-serialization -j$(BOOST_PARALLEL_BUILD) variant=release link=shared threading=multi runtime-link=shared
+	cd $(BOOST); ./b2 --user-config=user-config.jam --layout=system --with-mpi --with-serialization -j$(BOOST_PARALLEL_BUILD) variant=release link=shared threading=multi runtime-link=shared hardcode-dll-paths=true dll-path="$(BOOST_LIB_ABS)"
 
 $(BOOST_LIB)/libboost_serialization.so: $(BOOST_LIB)/mpi.so
 

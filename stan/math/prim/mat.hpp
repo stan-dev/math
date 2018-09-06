@@ -1,11 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_HPP
 #define STAN_MATH_PRIM_MAT_HPP
 
-#ifdef STAN_OPENCL
-#include <stan/math/gpu/opencl_context.hpp>
-#include <stan/math/prim/mat/fun/opencl_copy.hpp>
-#endif
-
 #include <stan/math/prim/arr/meta/get.hpp>
 #include <stan/math/prim/arr/meta/index_type.hpp>
 #include <stan/math/prim/arr/meta/is_vector.hpp>
@@ -30,6 +25,7 @@
 #include <stan/math/prim/mat/err/check_column_index.hpp>
 #include <stan/math/prim/mat/err/check_corr_matrix.hpp>
 #include <stan/math/prim/mat/err/check_cov_matrix.hpp>
+#include <stan/math/prim/mat/err/check_finite.hpp>
 #include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
 #include <stan/math/prim/mat/err/check_lower_triangular.hpp>
 #include <stan/math/prim/mat/err/check_matching_dims.hpp>

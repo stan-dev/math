@@ -11,9 +11,9 @@
 std::ostringstream msgs;
 
 struct f1 {
-  template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+  template <typename T1, typename T2, typename T3>
+  inline typename stan::return_type<T1, T2, T3>::type operator()(
+      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
     return exp(x) + theta[0];
@@ -21,9 +21,9 @@ struct f1 {
 };
 
 struct f2 {
-  template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+  template <typename T1, typename T2, typename T3>
+  inline typename stan::return_type<T1, T2, T3>::type operator()(
+      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
     return exp(theta[0] * cos(2 * 3.141593 * x)) + theta[0];
@@ -31,9 +31,9 @@ struct f2 {
 };
 
 struct f3 {
-  template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+  template <typename T1, typename T2, typename T3>
+  inline typename stan::return_type<T1, T2, T3>::type operator()(
+      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
     return exp(x) + pow(theta[0], x_r[0]) + 2 * pow(theta[1], x_r[1])
@@ -42,9 +42,9 @@ struct f3 {
 };
 
 struct f4 {
-  template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+  template <typename T1, typename T2, typename T3>
+  inline typename stan::return_type<T1, T2, T3>::type operator()(
+      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
     return exp(-x) / sqrt(x);
@@ -52,9 +52,9 @@ struct f4 {
 };
 
 struct f5 {
-  template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+  template <typename T1, typename T2, typename T3>
+  inline typename stan::return_type<T1, T2, T3>::type operator()(
+      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
     return exp(-theta[0] * x) / sqrt(theta[1] * x);
@@ -62,9 +62,9 @@ struct f5 {
 };
 
 struct f6 {
-  template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+  template <typename T1, typename T2, typename T3>
+  inline typename stan::return_type<T1, T2, T3>::type operator()(
+      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
     return sqrt(x / (1 - theta[0] * x * x));
@@ -72,9 +72,9 @@ struct f6 {
 };
 
 struct f7 {
-  template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+  template <typename T1, typename T2, typename T3>
+  inline typename stan::return_type<T1, T2, T3>::type operator()(
+      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
     return exp(-theta[0] * x);
@@ -82,9 +82,9 @@ struct f7 {
 };
 
 struct f8 {
-  template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+  template <typename T1, typename T2, typename T3>
+  inline typename stan::return_type<T1, T2, T3>::type operator()(
+      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
     return exp(theta[0] * x);
@@ -92,9 +92,9 @@ struct f8 {
 };
 
 struct f10 {
-  template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+  template <typename T1, typename T2, typename T3>
+  inline typename stan::return_type<T1, T2, T3>::type operator()(
+      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
     return 1 / (1 + pow(x, x_i[0]) / x_r[0]);
@@ -102,9 +102,9 @@ struct f10 {
 };
 
 struct f11 {
-  template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+  template <typename T1, typename T2, typename T3>
+  inline typename stan::return_type<T1, T2, T3>::type operator()(
+      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
     return pow(x, theta[0] - 1.0)
@@ -113,22 +113,22 @@ struct f11 {
 };
 
 struct f12 {
-  template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+  template <typename T1, typename T2, typename T3>
+  inline typename stan::return_type<T1, T2, T3>::type operator()(
+      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
-    T2 mu = theta[0];
-    T2 sigma = theta[1];
+    T3 mu = theta[0];
+    T3 sigma = theta[1];
     return exp(-0.5 * stan::math::square((x - mu) / sigma))
            / (sigma * sqrt(2.0 * stan::math::pi()));
   }
 };
 
 struct f13 {
-  template <typename T1, typename T2>
-  inline typename stan::return_type<T1, T2>::type operator()(
-      const T1 &x, const T1 &xc, const std::vector<T2> &theta,
+  template <typename T1, typename T2, typename T3>
+  inline typename stan::return_type<T1, T2, T3>::type operator()(
+      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
     return x + theta[0] + theta[1];
@@ -169,10 +169,11 @@ double get_adjoint_if_var(double v) {
  *
  * The prototype for f is:
  *   struct f10 {
- *     template <typename T1, typename T2>
- *     inline typename stan::return_type<T1, T2>::type operator()(
- *         const T1& x, const std::vector<T2>& theta, const std::vector<double>&
- * x_r, const std::vector<int>& x_i, std::ostream& msgs) const {
+ *     template <typename T1, typename T2, typename T3>
+ *     inline typename stan::return_type<T1, T2, T3>::type operator()(
+ *         const T1& x, const T2& xc, const std::vector<T3>& theta, const
+ * std::vector<double>& x_r, const std::vector<int>& x_i, std::ostream& msgs)
+ * const {
  *     }
  *  };
  *
@@ -225,10 +226,12 @@ void test_derivatives(const F &f, double a, double b,
         EXPECT_LE(std::abs(grad[i] - get_adjoint_if_var(thetas_[i])),
                   tolerance);
     }
-    if (stan::is_var<T_a>::value)
+    if (stan::is_var<T_a>::value) {
       EXPECT_LE(std::abs(d_a - get_adjoint_if_var(a_)), tolerance);
-    if (stan::is_var<T_b>::value)
+    }
+    if (stan::is_var<T_b>::value) {
       EXPECT_LE(std::abs(d_b - get_adjoint_if_var(b_)), tolerance);
+    }
   }
 }
 
@@ -243,9 +246,9 @@ TEST(StanMath_integrate_1d, test_integer_arguments) {
       v = stan::math::integrate_1d(f2{}, 0, 1.0, theta, {}, {}, msgs, 1e-6));
 }
 
-TEST(StanMath_integrate_1d, TestDerivatives) {
-  using stan::math::var;
+TEST(StanMath_integrate_1d, TestDerivatives_easy) {
   // Easy integrals
+  using stan::math::var;
   test_derivatives<double, double, var>(f1{}, 0.2, 0.7, {0.75}, {}, {},
                                         0.7923499493102901 + 0.5 * 0.75, {0.5});
   test_derivatives<var, var, var>(f2{}, 0.0, 1.0, {0.5}, {}, {},
@@ -258,48 +261,124 @@ TEST(StanMath_integrate_1d, TestDerivatives) {
                                         {0.0});
   test_derivatives<double, double, var>(f2{}, 1.0, 1.0, {0.5}, {}, {}, 0.0,
                                         {0.0});
+}
+
+TEST(StanMath_integrate_1d, TestDerivatives_zero_crossing) {
   // Zero crossing integral + test x_r + vars at endpoints
+  using stan::math::var;
   test_derivatives<var, var, var>(f3{}, -1.0, 1.0, {0.5, 1.75, 3.9}, {2.5, 3.0},
                                   {},
                                   2.350402387287579 + 2.0 * pow(0.5, 2.5)
                                       + 4.0 * pow(1.75, 3.0) + 4.0 * 3.9,
                                   {5 * pow(0.5, 1.5), 12 * 1.75 * 1.75, 4.0},
                                   -19.06340613646808, 21.41380852375568);
+}
+
+TEST(StanMath_integrate_1d, TestDerivatives_var_right_endpoint_var_params) {
+  // Zero crossing integral + test x_r + vars at right endpoint
+  using stan::math::var;
+  test_derivatives<double, var, var>(
+      f3{}, -1.0, 1.0, {0.5, 1.75, 3.9}, {2.5, 3.0}, {},
+      2.350402387287579 + 2.0 * pow(0.5, 2.5) + 4.0 * pow(1.75, 3.0)
+          + 4.0 * 3.9,
+      {5 * pow(0.5, 1.5), 12 * 1.75 * 1.75, 4.0}, 0.0, 21.41380852375568);
+}
+
+TEST(StanMath_integrate_1d, TestDerivatives_var_left_endpoint_var_params) {
+  // Zero crossing integral + test x_r + var at left endpoint
+  using stan::math::var;
+  test_derivatives<var, double, var>(
+      f3{}, -1.0, 1.0, {0.5, 1.75, 3.9}, {2.5, 3.0}, {},
+      2.350402387287579 + 2.0 * pow(0.5, 2.5) + 4.0 * pow(1.75, 3.0)
+          + 4.0 * 3.9,
+      {5 * pow(0.5, 1.5), 12 * 1.75 * 1.75, 4.0}, -19.06340613646808, 0.0);
+}
+
+TEST(StanMath_integrate_1d, TestDerivatives_no_param_vars) {
   // No param vars
+  using stan::math::var;
   test_derivatives<var, var, double>(f3{}, -1.0, 1.0, {0.5, 1.75, 3.9},
                                      {2.5, 3.0}, {},
                                      2.350402387287579 + 2.0 * pow(0.5, 2.5)
                                          + 4.0 * pow(1.75, 3.0) + 4.0 * 3.9,
                                      {}, -19.06340613646808, 21.41380852375568);
+}
+
+TEST(StanMath_integrate_1d, TestDerivatives_left_limit_var) {
+  // No param vars, only left limit var
+  using stan::math::var;
+  test_derivatives<var, double, double>(f3{}, -1.0, 1.0, {0.5, 1.75, 3.9},
+                                        {2.5, 3.0}, {},
+                                        2.350402387287579 + 2.0 * pow(0.5, 2.5)
+                                            + 4.0 * pow(1.75, 3.0) + 4.0 * 3.9,
+                                        {}, -19.06340613646808, 0.0);
+}
+
+TEST(StanMath_integrate_1d, TestDerivatives_right_limit_var) {
+  // No param vars, only right limit var
+  using stan::math::var;
+  test_derivatives<double, var, double>(f3{}, -1.0, 1.0, {0.5, 1.75, 3.9},
+                                        {2.5, 3.0}, {},
+                                        2.350402387287579 + 2.0 * pow(0.5, 2.5)
+                                            + 4.0 * pow(1.75, 3.0) + 4.0 * 3.9,
+                                        {}, 0.0, 21.41380852375568);
+}
+
+TEST(StanMath_integrate_1d, TestDerivatives_tricky1) {
   // Tricky integral from Boost docs + limit at infinity + no gradients
+  using stan::math::var;
   test_derivatives<double, double, var>(f4{}, 0.0,
                                         std::numeric_limits<double>::infinity(),
                                         {}, {}, {}, 1.772453850905516, {});
+}
+
+TEST(StanMath_integrate_1d, TestDerivatives_tricky2) {
   // Tricky integral from Boost docs + limit at infinity with gradients
+  using stan::math::var;
   test_derivatives<double, double, var>(
       f5{}, 0.0, std::numeric_limits<double>::infinity(), {0.5, 3.0}, {}, {},
       1.772453850905516 / sqrt(0.5 * 3.0),
       {-1.772453850905516 * 3.0 / (2 * pow(0.5 * 3.0, 1.5)),
        -1.772453850905516 * 0.5 / (2 * pow(0.5 * 3.0, 1.5))});
+}
+
+TEST(StanMath_integrate_1d, TestDerivatives_tricky3) {
   // Tricky integral from Boost docs
+  using stan::math::var;
   test_derivatives<double, double, var>(
       f6{}, 0.0, 1.0, {0.75}, {}, {}, 0.851926727945904, {0.4814066053874294});
+}
+
+TEST(StanMath_integrate_1d, TestDerivatives_zero_crossing2) {
   // Zero crossing integral + limit at infinity + var at left limit
+  using stan::math::var;
   test_derivatives<var, double, var>(
       f7{}, -5.0, std::numeric_limits<double>::infinity(), {1.5}, {}, {},
       1205.361609637375, {5223.23364176196}, -1808.042414456063,
       std::numeric_limits<double>::quiet_NaN());
+}
+
+TEST(StanMath_integrate_1d, TestDerivatives_zero_crossing3) {
   // Zero crossing integral + limit at negative infinity + var at right limit
+  using stan::math::var;
   test_derivatives<double, var, var>(
       f8{}, -std::numeric_limits<double>::infinity(), 5.0, {1.5}, {}, {},
       1205.361609637375, {5223.23364176196},
       std::numeric_limits<double>::quiet_NaN(), 1808.042414456063);
+}
+
+TEST(StanMath_integrate_1d, TestDerivatives_indefinite) {
   // Both limits at infinity + test x_r/x_i + no gradients
+  using stan::math::var;
   test_derivatives<double, double, var>(
       f10{}, -std::numeric_limits<double>::infinity(),
       std::numeric_limits<double>::infinity(), {}, {1.7}, {4},
       2.536571480364399, {});
+}
+
+TEST(StanMath_integrate_1d, TestDerivatives_endpoint_precision) {
   // Various integrals of beta function
+  using stan::math::var;
   test_derivatives<double, double, var>(f11{}, 0.0, 1.0, {0.1, 0.1}, {}, {},
                                         19.71463948905016,
                                         {-101.229055967892, -101.229055967892});
@@ -315,7 +394,11 @@ TEST(StanMath_integrate_1d, TestDerivatives) {
   test_derivatives<double, double, var>(
       f11{}, 0.0, 1.0, {3.0, 5.0}, {}, {}, 0.00952380952380952,
       {-0.01040816326530613, -0.004852607709750566});
+}
+
+TEST(StanMath_integrate_1d, TestDerivatives_gaussian) {
   // Check Gaussian integrates to 1.0 always
+  using stan::math::var;
   test_derivatives<double, double, var>(
       f12{}, -std::numeric_limits<double>::infinity(),
       std::numeric_limits<double>::infinity(), {5.7, 1}, {}, {}, 1.0,
