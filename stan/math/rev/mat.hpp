@@ -66,6 +66,7 @@
 #include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>
 #include <stan/math/rev/mat/functor/integrate_ode_adams.hpp>
 #include <stan/math/rev/mat/functor/integrate_ode_bdf.hpp>
+#include <stan/math/rev/mat/functor/integrate_ode_bdf_adjoint.hpp>
 #include <stan/math/rev/mat/functor/integrate_dae.hpp>
 #include <stan/math/rev/mat/functor/map_rect_reduce.hpp>
 

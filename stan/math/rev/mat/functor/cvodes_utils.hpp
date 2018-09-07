@@ -16,7 +16,12 @@ namespace math {
 extern "C" inline void cvodes_silent_err_handler(int error_code,
                                                  const char* module,
                                                  const char* function,
-                                                 char* msg, void* eh_data) {}
+                                                 char* msg, void* eh_data) {
+  // I found it handy to make this non-silent to debug CVODES while I set up
+  // the adjoint sensitivity. I'm keeping this here for now
+  std::cout << "Error " << msg << " (" << error_code << ") in " << module
+            << ", " << function << std::endl;
+}
 
 inline void cvodes_check_flag(int flag, const char* func_name) {
   if (flag < 0) {

@@ -9,6 +9,8 @@
 #include <sundials/sundials_dense.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
+#include <sunlinsol/sunlinsol_spgmr.h>
+#include <sunlinsol/sunlinsol_spbcgs.h>
 #include <nvector/nvector_serial.h>
 #include <algorithm>
 #include <vector>
@@ -47,8 +49,12 @@ class cvodes_ode_data {
   std::vector<double> coupled_state_;
   N_Vector nv_state_;
   N_Vector* nv_state_sens_;
+  N_Vector nv_state_sens_adj_;
   SUNMatrix A_;
   SUNLinearSolver LS_;
+  SUNMatrix A_adj_;
+  SUNLinearSolver LS_adj_;
+  int sens_;
 
   /**
    * Construct CVODES ode data object to enable callbacks from
@@ -75,7 +81,7 @@ class cvodes_ode_data {
   cvodes_ode_data(const F& f, const std::vector<T_initial>& y0,
                   const std::vector<T_param>& theta,
                   const std::vector<double>& x, const std::vector<int>& x_int,
-                  std::ostream* msgs)
+                  std::ostream* msgs, int sens)
       : f_(f),
         y0_(y0),
         theta_(theta),
@@ -91,11 +97,20 @@ class cvodes_ode_data {
         nv_state_(N_VMake_Serial(N_, &coupled_state_[0])),
         nv_state_sens_(nullptr),
         A_(SUNDenseMatrix(N_, N_)),
-        LS_(SUNDenseLinearSolver(nv_state_, A_)) {
+        LS_(SUNDenseLinearSolver(nv_state_, A_)),
+        sens_(sens) {
     if (S_ > 0) {
-      nv_state_sens_ = N_VCloneVectorArrayEmpty_Serial(S_, nv_state_);
-      for (std::size_t i = 0; i < S_; i++) {
-        NV_DATA_S(nv_state_sens_[i]) = &coupled_state_[N_] + i * N_;
+      if (sens == 1) {
+        nv_state_sens_ = N_VCloneVectorArrayEmpty_Serial(S_, nv_state_);
+        for (std::size_t i = 0; i < S_; i++) {
+          NV_DATA_S(nv_state_sens_[i]) = &coupled_state_[N_] + i * N_;
+        }
+      } else {
+        nv_state_sens_adj_ = N_VNew_Serial(N_ + M_);
+        A_adj_ = SUNDenseMatrix(N_ + M_, N_ + M_);
+        LS_adj_ = SUNDenseLinearSolver(nv_state_sens_adj_, A_adj_);
+        // LS_adj_ = SUNSPGMR(nv_state_sens_adj_, 0, 5);
+        // LS_adj_ = SUNSPBCGS(nv_state_sens_adj_, 0, 5);
       }
     }
   }
@@ -104,8 +119,13 @@ class cvodes_ode_data {
     SUNLinSolFree(LS_);
     SUNMatDestroy(A_);
     N_VDestroy_Serial(nv_state_);
-    if (S_ > 0)
-      N_VDestroyVectorArray_Serial(nv_state_sens_, S_);
+    if (S_ > 0) {
+      if (sens_ == 1) {
+        N_VDestroyVectorArray_Serial(nv_state_sens_, S_);
+      } else {
+        N_VDestroy_Serial(nv_state_sens_adj_);
+      }
+    }
   }
 
   /**
@@ -127,6 +147,16 @@ class cvodes_ode_data {
                          N_Vector tmp1, N_Vector tmp2) {
     const ode_data* explicit_ode = static_cast<const ode_data*>(user_data);
     explicit_ode->rhs_sens(t, NV_DATA_S(y), yS, ySdot);
+    return 0;
+  }
+
+  static int ode_rhs_adj_sens(realtype t, N_Vector y, N_Vector yB,
+                              N_Vector yBdot, void* user_data) {
+    const ode_data* explicit_ode = static_cast<const ode_data*>(user_data);
+    const std::vector<double> y_vec(NV_DATA_S(y),
+                                    NV_DATA_S(y) + explicit_ode->N_);
+    explicit_ode->rhs_adj_sens(explicit_ode->y0_, explicit_ode->theta_, t,
+                               y_vec, yB, yBdot);
     return 0;
   }
 
@@ -195,6 +225,54 @@ class cvodes_ode_data {
     for (std::size_t s = 0; s < S_; s++)
       std::copy(dz_dt.begin() + (s + 1) * N_, dz_dt.begin() + (s + 2) * N_,
                 NV_DATA_S(ySdot[s]));
+  }
+
+  /*
+   * Calculate the adjoint sensitivity RHS for varying initial conditions
+   * and parameters
+   *
+   * @param[in] initial var vector
+   * @param[in] param var vector
+   * @param[in] t time
+   * @param[in] y state of the base ODE system
+   * @param[in] yB state of the adjoint ODE system
+   * @param[out] yBdot evaluation of adjoint ODE RHS
+   */
+  template <typename T1, typename T2>
+  void rhs_adj_sens(const std::vector<T1>& initial,
+                    const std::vector<T2>& param, double t,
+                    const std::vector<double>& y, N_Vector yB,
+                    N_Vector yBdot) const {
+    using Eigen::Map;
+    using Eigen::VectorXd;
+    Map<VectorXd> lambda(NV_DATA_S(yB), N_);
+    Map<VectorXd> lambda_dot(NV_DATA_S(yBdot), N_);
+    Map<VectorXd> mu_dot(NV_DATA_S(yBdot) + N_, M_);
+    Eigen::VectorXd dy_dt(N_);
+
+    start_nested();
+
+    std::vector<var> y_var(y.begin(), y.end());
+    std::vector<var> theta_var(theta_dbl_.begin(), theta_dbl_.end());
+
+    std::vector<var> dy_dt_vec = f_(t, y_var, theta_var, x_, x_int_, msgs_);
+
+    var z = 0.0;
+    for (int i = 0; i < lambda.size(); ++i) {
+      z += lambda(i) * dy_dt_vec[i];
+    }
+
+    z.grad();
+
+    for (int i = 0; i < lambda_dot.size(); ++i) {
+      lambda_dot(i) = -y_var[i].adj();
+    }
+
+    for (int i = 0; i < mu_dot.size(); ++i) {
+      mu_dot(i) = -theta_var[i].adj();
+    }
+
+    recover_memory_nested();
   }
 };
 
