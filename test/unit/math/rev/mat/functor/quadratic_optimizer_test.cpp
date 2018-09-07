@@ -521,16 +521,16 @@ struct fh_s2 {
       // theta signiature: (gamma, sigma1sq,sigma2sq,sigma3sq, alpha)
       // Eigen::Matrix<T0, Eigen::Dynamic, 2> H_mat(n,n) = MatrixXf::Zero();
       // H_mat = Identity(n, n);
-      Eigen::Matrix<T0, Eigen::Dynamic, 2> H_mat(n,n);
+      Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic> H_mat(n,n);
       H_mat(0,0) = pow(theta(0), 2) * theta(1);
       H_mat(1,1) = pow(theta(0), 2) * theta(2);
       H_mat(2,2) = pow(theta(0), 2) * theta(3);
       H_mat(0,1) = 0;
       H_mat(1,0) = 0;
-	  H_mat(0,2) = 0;
-	  H_mat(1,2) = 0;
-	  H_mat(2,0) = 0;
-	  H_mat(2,1) = 0;
+	    H_mat(0,2) = 0;
+	    H_mat(1,2) = 0;
+	    H_mat(2,0) = 0;
+	    H_mat(2,1) = 0;
       return H_mat;
     }
 };
@@ -544,12 +544,12 @@ struct fv_s2 {
 
      // declare "data"
      int n = 3;
-     VectorXd qa(3);
-     qa << 1.5,2,4;
+     VectorXd qa(n);
+     qa << 1.5, 2, 4;
      // VectorXd qe(3);
      // qe << 1,1,0.8;
-     VectorXd co(3);
-     co << 5,10,7;
+     VectorXd co(n);
+     co << 5, 10, 7;
      // double s = 130;
 
      // theta signiature: (gamma, sigma1sq,sigma2sq, alpha)
@@ -557,7 +557,7 @@ struct fv_s2 {
       linear_term(0) = -( theta(0)*qa(0) + pow(theta(0),2)*theta(1)*theta(3)*co(0) );
       linear_term(1) = -( theta(0)*qa(1) + pow(theta(0),2)*theta(2)*theta(3)*co(1) );
       linear_term(2) = -( theta(0)*qa(2) + pow(theta(0),2)*theta(3)*theta(3)*co(2) );
-	  
+
       return linear_term;
     }
 };
@@ -573,7 +573,7 @@ struct fa_s2 {
     // VectorXd qa(3);
     // qa << 1.5,2,4;
     VectorXd qe(3);
-    qe << 1,1,0.8;
+    qe << 1, 1, 0.8;
     // VectorXd co(3);
     // co << 5,10,7;
     // double s = 130;
@@ -595,7 +595,8 @@ struct fb_s2 {
                     const std::vector<double>& delta,
                     const std::vector<int>& delta_int) const {
 
-    return -130;
+    T0 lin_term = 130;
+    return lin_term;
   }
 };
 
@@ -607,10 +608,18 @@ TEST(MathMatrix, quadratic_optimizer_s2) {
   double tol = 1e-10;
   int n = 3;
 
+  // CHECK THE FUNCTIONS RETURN THE WANTED RESULT
+  // fh_s2 fh_s2_struct;
+  // std::cout << fh_s2_struct(theta, delta, delta_int) << std::endl;
+
   VectorXd x = quadratic_optimizer(fh_s2(), fv_s2(), fa_s2(), fb_s2(), theta,
                                    delta, delta_int, n, 0, tol);
 
- std::cout << "x opt: " << x;
+ std::cout << "x opt: " << x << std::endl;
+ EXPECT_NEAR(x(0), 80.0196, 0.0001);
+ EXPECT_NEAR(x(1), 31.7966, 0.0001);
+ EXPECT_NEAR(x(2), 22.7298, 0.0001);
+ 
  // EXPECT_NEAR(x(0).val(), 80.0196, 0.0001);
  // EXPECT_NEAR(x(1).val(), 31.7966, 0.0001);
  // EXPECT_NEAR(x(2).val(), 22.7298, 0.0001);
