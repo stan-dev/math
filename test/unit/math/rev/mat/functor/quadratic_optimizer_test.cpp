@@ -554,9 +554,10 @@ struct fv_s2 {
 
      // theta signiature: (gamma, sigma1sq,sigma2sq, alpha)
       Eigen::Matrix<T0, Eigen::Dynamic, 1> linear_term(n);
-      linear_term(0) = -( theta(0)*qa(0) + pow(theta(0),2)*theta(1)*theta(3)*co(0) );
-      linear_term(1) = -( theta(0)*qa(1) + pow(theta(0),2)*theta(2)*theta(3)*co(1) );
-      linear_term(2) = -( theta(0)*qa(2) + pow(theta(0),2)*theta(3)*theta(3)*co(2) );
+      linear_term(0) = -( theta(0)*qa(0) + pow(theta(0),2)*theta(1)*theta(4)*co(0) );
+      linear_term(1) = -( theta(0)*qa(1) + pow(theta(0),2)*theta(2)*theta(4)*co(1) );
+      linear_term(2) = -( theta(0)*qa(2) + pow(theta(0),2)*theta(3)*theta(4)*co(2) );
+	  	  
 
       return linear_term;
     }
@@ -595,7 +596,7 @@ struct fb_s2 {
                     const std::vector<double>& delta,
                     const std::vector<int>& delta_int) const {
 
-    T0 lin_term = 130;
+    T0 lin_term = -130;
     return lin_term;
   }
 };
@@ -609,8 +610,8 @@ TEST(MathMatrix, quadratic_optimizer_s2) {
   int n = 3;
 
   // CHECK THE FUNCTIONS RETURN THE WANTED RESULT
-  // fh_s2 fh_s2_struct;
-  // std::cout << fh_s2_struct(theta, delta, delta_int) << std::endl;
+  fh_s2 fh_s2_struct;
+  std::cout << fh_s2_struct(theta, delta, delta_int) << std::endl;
 
   VectorXd x = quadratic_optimizer(fh_s2(), fv_s2(), fa_s2(), fb_s2(), theta,
                                    delta, delta_int, n, 0, tol);
@@ -626,44 +627,44 @@ TEST(MathMatrix, quadratic_optimizer_s2) {
 
 }
 
-// TEST(MathMatrix, quadratic_optimizer_var_s2) {
-//   std::vector<double> delta;
-//   std::vector<int> delta_int;
-//   int n_x = 3;
-//   int n_theta = 5;
-//   // theta signiature: (gamma, sigma1sq,sigma2sq,sigma3, alpha)
-//
-//   MatrixXd J(3, 5);
-//   // Jacobian worked out by Shosh
-//   J << 0.924045, -100.836, 17.0506, 7.9128, -9.9492,
-//        -0.0467667, 66.6905, -19.2331, 1.9782, 6.2627,
-// 	   -1.0966, 42.6819, 2.72809, -12.3638, 4.60813;
-//
-//   // to get results with finite differentiation
-//   // var diff = 1e-8;
-//
-//   for (int k = 0; k < n_x; k++) {
-//     Matrix<var, Dynamic, 1> theta(n_theta);
-//     theta << 1.5, 0.2, 0.8, 1, 1.3;
-//
-//     Matrix<var, Dynamic, 1> x = quadratic_optimizer(fh_s2(), fv_s2(), fa_s2(), fb_s2(),
-//                                                     theta, delta, delta_int, n_x);
-//
-// 	  EXPECT_NEAR(x(0).val(), 80.0196, 0.0001);
-// 	  EXPECT_NEAR(x(1).val(), 31.7966, 0.0001);
-// 	  EXPECT_NEAR(x(2).val(), 22.7298, 0.0001);
-//
-//     AVEC parameter_vec = createAVEC(theta(0), theta(1), theta(2), theta(3), theta(4));
-//     VEC g;
-//     x(k).grad(parameter_vec, g);
-//
-//     EXPECT_NEAR(J(k, 0), g[0], 0.0001);
-//     EXPECT_NEAR(J(k, 1), g[1], 0.0001);
-//     EXPECT_NEAR(J(k, 2), g[2], 0.0001);
-//     EXPECT_NEAR(J(k, 3), g[3], 0.0001);
-//     EXPECT_NEAR(J(k, 4), g[4], 0.0001);
-//
-//
-// 	}
-// }
-//
+TEST(MathMatrix, quadratic_optimizer_var_s2) {
+  std::vector<double> delta;
+  std::vector<int> delta_int;
+  int n_x = 3;
+  int n_theta = 5;
+  // theta signiature: (gamma, sigma1sq,sigma2sq,sigma3, alpha)
+
+  MatrixXd J(3, 5);
+  // Jacobian worked out by Shosh
+  J << 0.924045, -100.836, 17.0506, 7.9128, -9.9492,
+       -0.0467667, 66.6905, -19.2331, 1.9782, 6.2627,
+	   -1.0966, 42.6819, 2.72809, -12.3638, 4.60813;
+
+  // to get results with finite differentiation
+  // var diff = 1e-8;
+
+  for (int k = 0; k < n_x; k++) {
+    Matrix<var, Dynamic, 1> theta(n_theta);
+    theta << 1.5, 0.2, 0.8, 1, 1.3;
+
+    Matrix<var, Dynamic, 1> x = quadratic_optimizer(fh_s2(), fv_s2(), fa_s2(), fb_s2(),
+                                                    theta, delta, delta_int, n_x);
+
+	  EXPECT_NEAR(x(0).val(), 80.0196, 0.0001);
+	  EXPECT_NEAR(x(1).val(), 31.7966, 0.0001);
+	  EXPECT_NEAR(x(2).val(), 22.7298, 0.0001);
+
+    AVEC parameter_vec = createAVEC(theta(0), theta(1), theta(2), theta(3), theta(4));
+    VEC g;
+    x(k).grad(parameter_vec, g);
+
+    EXPECT_NEAR(J(k, 0), g[0], 0.0001);
+    EXPECT_NEAR(J(k, 1), g[1], 0.0001);
+    EXPECT_NEAR(J(k, 2), g[2], 0.0001);
+    EXPECT_NEAR(J(k, 3), g[3], 0.0001);
+    EXPECT_NEAR(J(k, 4), g[4], 0.0001);
+
+
+	}
+}
+
