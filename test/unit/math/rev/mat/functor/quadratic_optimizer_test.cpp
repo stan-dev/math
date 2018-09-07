@@ -554,9 +554,10 @@ struct fv_s2 {
 
      // theta signiature: (gamma, sigma1sq,sigma2sq, alpha)
       Eigen::Matrix<T0, Eigen::Dynamic, 1> linear_term(n);
-      linear_term(0) = -( theta(0)*qa(0) + pow(theta(0),2)*theta(1)*theta(3)*co(0) );
-      linear_term(1) = -( theta(0)*qa(1) + pow(theta(0),2)*theta(2)*theta(3)*co(1) );
-      linear_term(2) = -( theta(0)*qa(2) + pow(theta(0),2)*theta(3)*theta(3)*co(2) );
+      linear_term(0) = -( theta(0)*qa(0) + pow(theta(0),2)*theta(1)*theta(4)*co(0) );
+      linear_term(1) = -( theta(0)*qa(1) + pow(theta(0),2)*theta(2)*theta(4)*co(1) );
+      linear_term(2) = -( theta(0)*qa(2) + pow(theta(0),2)*theta(3)*theta(4)*co(2) );
+	  	  
 
       return linear_term;
     }
@@ -595,7 +596,7 @@ struct fb_s2 {
                     const std::vector<double>& delta,
                     const std::vector<int>& delta_int) const {
 
-    T0 lin_term = 130;
+    T0 lin_term = -130;
     return lin_term;
   }
 };
@@ -609,8 +610,8 @@ TEST(MathMatrix, quadratic_optimizer_s2) {
   int n = 3;
 
   // CHECK THE FUNCTIONS RETURN THE WANTED RESULT
-  // fh_s2 fh_s2_struct;
-  // std::cout << fh_s2_struct(theta, delta, delta_int) << std::endl;
+  fh_s2 fh_s2_struct;
+  std::cout << fh_s2_struct(theta, delta, delta_int) << std::endl;
 
   VectorXd x = quadratic_optimizer(fh_s2(), fv_s2(), fa_s2(), fb_s2(), theta,
                                    delta, delta_int, n, 0, tol);
