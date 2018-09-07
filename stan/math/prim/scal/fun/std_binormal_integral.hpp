@@ -14,6 +14,7 @@
 #include <stan/math/prim/scal/fun/owens_t.hpp>
 #include <stan/math/prim/scal/fun/fmin.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
+#include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/prob/std_normal_lpdf.hpp>
@@ -93,19 +94,21 @@ inline double std_binormal_integral(const double z1, const double z2,
     double k = -z2;
 
     auto f = [&h, &k](const double x) {
+      using std::cos;
+      using std::sin;
+      using stan::math::square;
       return exp(0.5 * (-h * h - k * k + h * k * 2 * sin(x))
-                 / (cos(x) * cos(x)));
+                 / square(cos(x)));
     };
     double L1, error;
     boost::math::quadrature::tanh_sinh<double> integrator;
     double accum
         = s == 1 ? integrator.integrate(f, 0, asin(rho),
                                         sqrt(stan::math::EPSILON), &error, &L1)
-                 : integrator.integrate(f, static_cast<double>(asin(rho)),
-                                        static_cast<double>(0),
+                 : integrator.integrate(f, asin(rho),
+                                        0,
                                         sqrt(stan::math::EPSILON), &error, &L1);
     if (exp(log(L1) - log(accum)) > 1.5) {
-      std::cout << "L1: " << L1 << " integral: " << accum << std::endl;
       domain_error(function, "the bivariate normal numeric integral condition",
                    exp(log(L1) - log(accum)), "",
                    " indicates the integral is poorly conditioned");
