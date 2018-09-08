@@ -30,8 +30,7 @@ namespace math {
  * @tparam T_loc Type of prior location.
  * @tparam T_prec Type of prior precision.
  */
-template <bool propto, typename T_y, typename T_loc,
-          typename T_prec>
+template <bool propto, typename T_y, typename T_loc, typename T_prec>
 typename return_type<T_y, T_loc, T_prec>::type beta_proportion_log(
     const T_y& y, const T_loc& mu, const T_prec& kappa) {
   return beta_proportion_lpdf<propto, T_y, T_loc, T_prec>(y, mu, kappa);
