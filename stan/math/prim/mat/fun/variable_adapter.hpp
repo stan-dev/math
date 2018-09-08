@@ -3,9 +3,10 @@
 
 #include <stan/math/prim/scal/functor/apply.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
-#include <vector>
 #include <cstddef>
 #include <iostream>
+#include <tuple>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -145,7 +146,7 @@ class variable_adapter {
    *
    * @param args Arguments to adapt to a 1D interface
    */
-  variable_adapter(const Targs&... args)
+  explicit variable_adapter(const Targs&... args)
       : args_(std::make_tuple(args...)), size_(count_T(args...)) {}
 
   /**

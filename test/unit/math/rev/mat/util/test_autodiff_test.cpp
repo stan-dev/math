@@ -288,7 +288,7 @@ template <typename T, typename E>
 struct single_error_helper {
   E e_;
 
-  single_error_helper(E e) : e_(e) {}
+  explicit single_error_helper(E e) : e_(e) {}
 
   template <typename R>
   R operator()(R a) {

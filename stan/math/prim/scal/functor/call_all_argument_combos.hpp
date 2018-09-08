@@ -42,11 +42,11 @@ auto call_all_argument_combos_impl(
  * ...
  *
  * @tparam F type of functor
- * @tparam ...Ts_first_arg types of tuple of first argument
- * @tparam ...T_tail Tuple types of the rest of the arguments
+ * @tparam Ts_first_arg types of tuple of first argument
+ * @tparam T_tail Tuple types of the rest of the arguments
  * @param f functor
  * @param first_arg_tuple Tuple of values for first argument
- * @param T_tail Tuples of values for the trailing arguments
+ * @param tail Tuple of values for the trailing arguments
  */
 template <typename F, typename... Ts_first_arg, typename... T_tail>
 auto call_all_argument_combos(

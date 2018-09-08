@@ -4,7 +4,10 @@
 #include <stan/math/rev/mat.hpp>
 #include <stan/math/prim/scal/functor/call_all_argument_combos.hpp>
 #include <gtest/gtest.h>
+#include <algorithm>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 namespace stan {
 namespace math {

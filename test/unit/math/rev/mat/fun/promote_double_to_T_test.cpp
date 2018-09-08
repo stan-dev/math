@@ -1,5 +1,6 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <tuple>
 #include <type_traits>
 #include <vector>
 

@@ -1,5 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <tuple>
 #include <type_traits>
 #include <vector>
 
