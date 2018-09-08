@@ -42,7 +42,6 @@ TEST(MathPrimMat, vec_double_gp_dot_prod_cov0) {
 
   Eigen::MatrixXd cov;
   EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(x, sigma));
-  EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(x, sigma));
 
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 3; j++)
