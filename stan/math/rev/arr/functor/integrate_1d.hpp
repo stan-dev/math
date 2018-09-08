@@ -115,7 +115,7 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
  */
 template <typename F, typename T_a, typename T_b, typename T_theta>
 inline typename boost::enable_if_c<boost::is_same<T_a, var>::value
-                                       || boost::is_same<T_a, var>::value
+                                       || boost::is_same<T_b, var>::value
                                        || boost::is_same<T_theta, var>::value,
                                    var>::type
 integrate_1d(const F &f, const T_a &a, const T_b &b,
