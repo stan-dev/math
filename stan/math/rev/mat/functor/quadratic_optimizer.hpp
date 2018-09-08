@@ -176,8 +176,8 @@ struct quadratic_optimizer_vari : public vari {
  * @tparam Fa type of functor which returns a
  * @tparam Fb type of functor which returns b
  * @param[in] fh functor which returns H
- * @param[in] fv functor which returns a
- * @param[in] fa functor which returns v
+ * @param[in] fv functor which returns v
+ * @param[in] fa functor which returns a
  * @param[in] fb functor which returns b
  * @param[in] theta vector of parameters for the objective function
  * @param[in] delta continuous data array for objective function
@@ -218,6 +218,16 @@ quadratic_optimizer(const Fh& fh,
                                   Eigen::MatrixXd::Identity(n, n),
                                   Eigen::VectorXd::Zero(n),
                                   x);
+
+  // check that all the returned solutions are positive.
+  std::ostringstream err_message;
+  err_message << "quadratic_optimizer: the returned solution vector has " 
+              << "negative elements. This could be because the equality "
+              << "and the inequality constraint cannot hold simultaneously.";
+  for (int i = 0; i < x.size(); i++) {
+    if (x(i) < 0) throw boost::math::evaluation_error(err_message.str());
+  }
+
   return x;
 }
 

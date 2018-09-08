@@ -56,6 +56,39 @@ TEST(MathMatrix, eiquadprog) {
   EXPECT_FLOAT_EQ(0, x(2));
 }
 
+TEST(MathMatrix, eiquadprog2) {
+  // make sure solve_quadprog imposes the positivity constraint on x.
+  using Eigen::solve_quadprog;
+  VectorXd theta(2);
+  theta << -1, 1;
+  
+  MatrixXd H(2, 2);
+  H << 1, 0,
+       0, 1;
+
+  VectorXd v(2);
+  v << 0, theta(1);
+
+  MatrixXd A(2, 1);
+  A << 1, 0;
+
+  VectorXd b(1);
+  b << theta(0);
+
+  MatrixXd CI(2, 2);
+  CI << 1, 0,
+        0, 1;
+  
+  VectorXd ci0(2);
+  ci0 << 0, 0;
+  
+  VectorXd x;
+  double f;  // two lines to silence warning about unused f.
+  f = solve_quadprog(H, v, A, b, CI, ci0, x);
+  
+  EXPECT_EQ(x(0), 1);
+  EXPECT_EQ(x(1), 0);
+}
 
 struct fh {
   template <typename T0>
@@ -120,29 +153,10 @@ struct fb {
   }
 };
 
-// template <typename F1, typename F2, typename F3, typename F4>
-// struct f_theta {
-//   VectorXd delta_;
-//   VectorXd x_;
-// 
-//   // structure to be passed to the stan::math::jacobian function
-//   f_theta(const F1& fh,
-//           const F2& fv,
-//           const F3& fa,
-//           const F4& fb,
-//           const VectorXd& delta,
-//           const VectorXd& x) : delta_(delta), x_(x) {}
-// 
-//   template<typename T>
-//   Eigen::Matrix<T, Eigen::Dynamic, 1>
-//   inline operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta) const {
-//     return quadratic_optimizer_analytical(fh(), fv(), fa(), fb(),
-//                                           theta, delta_, x_);
-//   }
-// };
-
 TEST(MathMatrix, quadratic_optimizer_double) {
   VectorXd theta(2);
+
+  // simple test 1
   theta << 0, -1;
   std::vector<double> delta;
   std::vector<int> delta_int;
@@ -151,12 +165,21 @@ TEST(MathMatrix, quadratic_optimizer_double) {
 
   VectorXd x = quadratic_optimizer(fh(), fv(), fa_0(), fb(), theta, 
                                    delta, delta_int, n, 0, tol);
-  EXPECT_EQ(x(0), 0);
-  EXPECT_EQ(x(1), 1);
+  EXPECT_EQ(0, x(0));
+  EXPECT_EQ(1, x(1));
 
+  // simple test 2 (to be compared with eiquadprog2)
+  theta << -1, 1;
+  x = quadratic_optimizer(fh(), fv(), fa(), fb(), theta,
+                          delta, delta_int, n, 0, tol);
+  EXPECT_EQ(1, x(0));
+  EXPECT_EQ(0, x(1));
+
+  // simple test 3
   theta << -5, -3;
   x = quadratic_optimizer(fh(), fv(), fa(), fb(), theta,
                           delta, delta_int, n);
+
   EXPECT_EQ(x(0), -theta(0));
   EXPECT_EQ(x(1), -theta(1));
   
@@ -179,8 +202,6 @@ TEST(MathMatrix, quadratic_optimizer_double) {
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++) EXPECT_EQ(J_solution(i, j), J(i, j));
 
-  // cout << J << "\n";
-  
   // theta << -1, 0;
   // std::cout << "Finite diff test \n"
   //           << quadratic_optimizer(fh(), fv(), fa(), fb(), theta, delta, n)
@@ -210,6 +231,25 @@ TEST(MathMatrix, quadratic_optimizer_double) {
   // theta << 0, 1;
   // x = quadratic_optimizer(fh(), fv(), fa_0(), fb(), theta, delta, n);
   // std::cout << "Inequality constraint test:\n" << x << "\n \n";
+}
+
+TEST(MathMatrix, quadratic_optimizer_err) {
+  int n = 2;
+  double tol = 1e-10;
+  std::vector<double> delta;
+  std::vector<int> delta_int;
+  VectorXd theta(n);
+  theta << 1, 1;
+
+  std::stringstream msg_err;
+  msg_err << "quadratic_optimizer: the returned solution vector has " 
+          << "negative elements. This could be because the equality "
+          << "and the inequality constraint cannot hold simultaneously.";
+  std::string msg_err_string = msg_err.str();
+
+  EXPECT_THROW_MSG(quadratic_optimizer(fh(), fv(), fa(), fb(), theta,
+                          delta, delta_int, n, 0, tol),
+                          boost::math::evaluation_error, msg_err_string);
 }
 
 TEST(MathMatrix, quadratic_optimizer_var) {
@@ -609,21 +649,12 @@ TEST(MathMatrix, quadratic_optimizer_s2) {
   double tol = 1e-10;
   int n = 3;
 
-  // CHECK THE FUNCTIONS RETURN THE WANTED RESULT
-  fh_s2 fh_s2_struct;
-  std::cout << fh_s2_struct(theta, delta, delta_int) << std::endl;
-
   VectorXd x = quadratic_optimizer(fh_s2(), fv_s2(), fa_s2(), fb_s2(), theta,
                                    delta, delta_int, n, 0, tol);
 
- std::cout << "x opt: " << x << std::endl;
  EXPECT_NEAR(x(0), 80.0196, 0.0001);
  EXPECT_NEAR(x(1), 31.7966, 0.0001);
  EXPECT_NEAR(x(2), 22.7298, 0.0001);
- 
- // EXPECT_NEAR(x(0).val(), 80.0196, 0.0001);
- // EXPECT_NEAR(x(1).val(), 31.7966, 0.0001);
- // EXPECT_NEAR(x(2).val(), 22.7298, 0.0001);
 
 }
 
@@ -663,8 +694,5 @@ TEST(MathMatrix, quadratic_optimizer_var_s2) {
     EXPECT_NEAR(J(k, 2), g[2], 0.0001);
     EXPECT_NEAR(J(k, 3), g[3], 0.0001);
     EXPECT_NEAR(J(k, 4), g[4], 0.0001);
-
-
 	}
 }
-
