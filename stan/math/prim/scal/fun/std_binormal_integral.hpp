@@ -97,16 +97,14 @@ inline double std_binormal_integral(const double z1, const double z2,
       using std::cos;
       using std::sin;
       using stan::math::square;
-      return exp(0.5 * (-h * h - k * k + h * k * 2 * sin(x))
-                 / square(cos(x)));
+      return exp(0.5 * (-h * h - k * k + h * k * 2 * sin(x)) / square(cos(x)));
     };
     double L1, error;
     boost::math::quadrature::tanh_sinh<double> integrator;
     double accum
         = s == 1 ? integrator.integrate(f, 0, asin(rho),
                                         sqrt(stan::math::EPSILON), &error, &L1)
-                 : integrator.integrate(f, asin(rho),
-                                        0,
+                 : integrator.integrate(f, asin(rho), 0,
                                         sqrt(stan::math::EPSILON), &error, &L1);
     if (exp(log(L1) - log(accum)) > 1.5) {
       domain_error(function, "the bivariate normal numeric integral condition",

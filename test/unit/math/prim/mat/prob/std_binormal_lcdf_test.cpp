@@ -168,11 +168,15 @@ TEST(MathFunctions, vec_binormal_integral_throw_size_y_gt_two) {
 TEST(MathFunctions, vec_binormal_integral_rho_y_inconsistent_size) {
   vector<Matrix<double, Dynamic, 1>> y(2);
   vector<double> rho(3);
+  rho.push_back(0.4);
+  rho.push_back(0.4);
+  rho.push_back(0.4);
   EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho), std::invalid_argument);
 }
 TEST(MathFunctions, vec_binormal_integral_rho_y_inconsistent_size_eigen) {
   vector<Matrix<double, Dynamic, 1>> y(2);
   Matrix<double, Dynamic, 1> rho(3);
+  rho << 0.5, 0.1, 0.2;
   EXPECT_THROW(stan::math::std_binormal_lcdf(y, rho), std::invalid_argument);
 }
 TEST(MathFunctions, vec_binormal_integral_throw_nan_second_arg) {
