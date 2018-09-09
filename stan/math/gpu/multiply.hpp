@@ -57,7 +57,7 @@ inline matrix_gpu multiply(const matrix_gpu& A, const matrix_gpu& B) {
   check_size_match("multiply (GPU)", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
   matrix_gpu temp(A.rows(), B.cols());
-  if (temp.size() == 0)
+  if (A.size() == 0 || B.size() == 0)
     return temp;
   int local = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
       "THREAD_BLOCK_SIZE");
@@ -71,6 +71,9 @@ inline matrix_gpu multiply(const matrix_gpu& A, const matrix_gpu& B) {
   matrix_gpu tempPad(Mpad, Npad);
   matrix_gpu Apad(Mpad, Kpad);
   matrix_gpu Bpad(Kpad, Npad);
+  opencl_kernels::zeros(cl::NDRange(Mpad, Kpad), Apad.buffer(), Mpad, Kpad, TriangularViewGPU::Entire);
+  opencl_kernels::zeros(cl::NDRange(Kpad, Npad), Bpad.buffer(), Kpad, Npad, TriangularViewGPU::Entire);
+  opencl_kernels::zeros(cl::NDRange(Mpad, Npad), tempPad.buffer(), Mpad, Npad, TriangularViewGPU::Entire);
   Apad.sub_block(A, 0, 0, 0, 0, A.rows(), A.cols());
   Bpad.sub_block(B, 0, 0, 0, 0, B.rows(), B.cols());
   int wpt = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
