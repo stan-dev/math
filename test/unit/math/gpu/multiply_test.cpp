@@ -147,7 +147,7 @@ TEST(AgradRevMatrix, multiply_big) {
   stan::math::matrix_gpu m11(m1);
   stan::math::matrix_gpu m22(m2);
 
-  auto m3 = (m1 * m2);
+  auto m3 = (m1 * m2).eval();
 
   auto m33 = stan::math::multiply(m11, m22);
 
