@@ -50,6 +50,7 @@ class cvodes_ode_data {
   N_Vector nv_state_;
   N_Vector* nv_state_sens_;
   N_Vector nv_state_sens_adj_;
+  N_Vector nv_state_sens_adj_quad_;
   SUNMatrix A_;
   SUNLinearSolver LS_;
   SUNMatrix A_adj_;
@@ -106,8 +107,9 @@ class cvodes_ode_data {
           NV_DATA_S(nv_state_sens_[i]) = &coupled_state_[N_] + i * N_;
         }
       } else {
-        nv_state_sens_adj_ = N_VNew_Serial(N_ + M_);
-        A_adj_ = SUNDenseMatrix(N_ + M_, N_ + M_);
+        nv_state_sens_adj_ = N_VNew_Serial(N_);
+        nv_state_sens_adj_quad_ = N_VNew_Serial(M_);
+        A_adj_ = SUNDenseMatrix(N_, N_);
         LS_adj_ = SUNDenseLinearSolver(nv_state_sens_adj_, A_adj_);
         // LS_adj_ = SUNSPGMR(nv_state_sens_adj_, 0, 5);
         // LS_adj_ = SUNSPBCGS(nv_state_sens_adj_, 0, 5);
@@ -124,6 +126,9 @@ class cvodes_ode_data {
         N_VDestroyVectorArray_Serial(nv_state_sens_, S_);
       } else {
         N_VDestroy_Serial(nv_state_sens_adj_);
+        N_VDestroy_Serial(nv_state_sens_adj_quad_);
+        SUNMatDestroy(A_adj_);
+        SUNLinSolFree(LS_adj_);
       }
     }
   }
@@ -157,6 +162,38 @@ class cvodes_ode_data {
                                     NV_DATA_S(y) + explicit_ode->N_);
     explicit_ode->rhs_adj_sens(explicit_ode->y0_, explicit_ode->theta_, t,
                                y_vec, yB, yBdot);
+    return 0;
+  }
+
+  static int ode_rhs_adj_sens_jac(realtype t, N_Vector y, N_Vector yB,
+                                  N_Vector fyB, SUNMatrix JacB, void* user_data,
+                                  N_Vector tmp1, N_Vector tmp2, N_Vector tmp3) {
+    const ode_data* explicit_ode = static_cast<const ode_data*>(user_data);
+    const std::vector<double> y_vec(NV_DATA_S(y),
+                                    NV_DATA_S(y) + explicit_ode->N_);
+    explicit_ode->rhs_adj_sens_jac(explicit_ode->y0_, explicit_ode->theta_, t,
+                                   y_vec, JacB);
+    return 0;
+  }
+
+  static int ode_adj_jac_vec(N_Vector vB, N_Vector JvB, realtype t, N_Vector y,
+                             N_Vector yB, N_Vector fyB, void* user_data,
+                             N_Vector tmpB) {
+    const ode_data* explicit_ode = static_cast<const ode_data*>(user_data);
+    const std::vector<double> y_vec(NV_DATA_S(y),
+                                    NV_DATA_S(y) + explicit_ode->N_);
+    explicit_ode->rhs_adj_sens(explicit_ode->y0_, explicit_ode->theta_, t,
+                               y_vec, vB, JvB);
+    return 0;
+  }
+
+  static int ode_rhs_adj_quad(realtype t, N_Vector y, N_Vector yB,
+                              N_Vector qBdot, void* user_data) {
+    const ode_data* explicit_ode = static_cast<const ode_data*>(user_data);
+    const std::vector<double> y_vec(NV_DATA_S(y),
+                                    NV_DATA_S(y) + explicit_ode->N_);
+    explicit_ode->rhs_adj_quad(explicit_ode->y0_, explicit_ode->theta_, t,
+                               y_vec, yB, qBdot);
     return 0;
   }
 
@@ -247,15 +284,12 @@ class cvodes_ode_data {
     using Eigen::VectorXd;
     Map<VectorXd> lambda(NV_DATA_S(yB), N_);
     Map<VectorXd> lambda_dot(NV_DATA_S(yBdot), N_);
-    Map<VectorXd> mu_dot(NV_DATA_S(yBdot) + N_, M_);
-    Eigen::VectorXd dy_dt(N_);
 
     start_nested();
 
     std::vector<var> y_var(y.begin(), y.end());
-    std::vector<var> theta_var(theta_dbl_.begin(), theta_dbl_.end());
 
-    std::vector<var> dy_dt_vec = f_(t, y_var, theta_var, x_, x_int_, msgs_);
+    std::vector<var> dy_dt_vec = f_(t, y_var, theta_dbl_, x_, x_int_, msgs_);
 
     var z = 0.0;
     for (int i = 0; i < lambda.size(); ++i) {
@@ -267,6 +301,82 @@ class cvodes_ode_data {
     for (int i = 0; i < lambda_dot.size(); ++i) {
       lambda_dot(i) = -y_var[i].adj();
     }
+
+    recover_memory_nested();
+  }
+
+  /*
+   * Calculate the adjoint sensitivity RHS for varying initial conditions
+   * and parameters
+   *
+   * @param[in] initial var vector
+   * @param[in] param var vector
+   * @param[in] t time
+   * @param[in] y state of the base ODE system
+   * @param[out] JacB Jacobian of adjoint ODE RHS
+   */
+  template <typename T1, typename T2>
+  void rhs_adj_sens_jac(const std::vector<T1>& initial,
+                        const std::vector<T2>& param, double t,
+                        const std::vector<double>& y, SUNMatrix JacB) const {
+    using Eigen::Map;
+    using Eigen::MatrixXd;
+    using Eigen::VectorXd;
+    MatrixXd jacobian(N_, N_);
+
+    start_nested();
+
+    std::vector<var> y_var(y.begin(), y.end());
+    std::vector<var> dy_dt_vec = f_(t, y_var, theta_dbl_, x_, x_int_, msgs_);
+
+    for (int j = 0; j < N_; j++) {
+      set_zero_all_adjoints_nested();
+
+      dy_dt_vec[j].grad();
+
+      for (int i = 0; i < y_var.size(); ++i) {
+        jacobian(j, i) = -y_var[i].adj();
+      }
+    }
+
+    recover_memory_nested();
+
+    std::copy(jacobian.data(), jacobian.data() + N_ * N_, SM_DATA_D(JacB));
+  }
+
+  /*
+   * Calculate the adjoint quadrature RHS for varying initial conditions
+   * and parameters
+   *
+   * @param[in] initial var vector
+   * @param[in] param var vector
+   * @param[in] t time
+   * @param[in] y state of the base ODE system
+   * @param[in] yB state of the adjoint ODE system
+   * @param[out] qBdot evaluation of adjoint quadrature RHS
+   */
+  template <typename T1, typename T2>
+  void rhs_adj_quad(const std::vector<T1>& initial,
+                    const std::vector<T2>& param, double t,
+                    const std::vector<double>& y, N_Vector yB,
+                    N_Vector qBdot) const {
+    using Eigen::Map;
+    using Eigen::VectorXd;
+    Map<VectorXd> lambda(NV_DATA_S(yB), N_);
+    Map<VectorXd> mu_dot(NV_DATA_S(qBdot), M_);
+
+    start_nested();
+
+    std::vector<var> theta_var(theta_dbl_.begin(), theta_dbl_.end());
+
+    std::vector<var> dy_dt_vec = f_(t, y, theta_var, x_, x_int_, msgs_);
+
+    var z = 0.0;
+    for (int i = 0; i < lambda.size(); ++i) {
+      z += lambda(i) * dy_dt_vec[i];
+    }
+
+    z.grad();
 
     for (int i = 0; i < mu_dot.size(); ++i) {
       mu_dot(i) = -theta_var[i].adj();

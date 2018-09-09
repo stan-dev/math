@@ -99,6 +99,7 @@ class cvodes_adj_ode_vari : public vari {
     // std::cout << "chain" << std::endl; <-- Good way to verify it's only
     //  being called once
     N_VConst(0.0, cvodes_data_->nv_state_sens_adj_);
+    N_VConst(0.0, cvodes_data_->nv_state_sens_adj_quad_);
 
     try {
       int indexB;
@@ -126,12 +127,34 @@ class cvodes_adj_ode_vari : public vari {
                              absolute_tolerance_),
           "CVodeSStolerancesB");
 
-      // cvodes_check_flag(CVSpilsSetLinearSolverB(cvodes_mem_, indexB,
-      // cvodes_data_->LS_adj_), "CVSpilsSetLinearSolverB");
+      cvodes_check_flag(
+          CVodeQuadInitB(cvodes_mem_, indexB, &T_ode_data::ode_rhs_adj_quad,
+                         cvodes_data_->nv_state_sens_adj_quad_),
+          "CVodeQuadInitB");
+
+      cvodes_check_flag(
+          CVodeQuadSStolerancesB(cvodes_mem_, indexB, relative_tolerance_,
+                                 absolute_tolerance_),
+          "CVodeQuadSStolerancesB");
+
+      /*cvodes_check_flag(
+                        CVSpilsSetLinearSolverB(cvodes_mem_, indexB,
+                                                cvodes_data_->LS_adj_),
+                        "CVSpilsSetLinearSolverB");
+
+      cvodes_check_flag(
+                        CVSpilsSetJacTimesB(cvodes_mem_, indexB, NULL,
+                                            &T_ode_data::ode_adj_jac_vec),
+                                            "CVSpilsSetJacTimesB");*/
+
       cvodes_check_flag(
           CVDlsSetLinearSolverB(cvodes_mem_, indexB, cvodes_data_->LS_adj_,
                                 cvodes_data_->A_adj_),
           "CVDlsSetLinearSolverB");
+
+      /*cvodes_check_flag(
+                        CVDlsSetJacFnB(cvodes_mem_, indexB,
+         &T_ode_data::ode_rhs_adj_sens_jac), "CVDlsSetJacFnB");*/
 
       // At every time step, collect the adjoints from the output
       // variables and re-initialize the solver
@@ -139,7 +162,6 @@ class cvodes_adj_ode_vari : public vari {
         // Take in the adjoints from all the output variables at this point
         // in time
         for (int j = 0; j < N_; j++) {
-          // std::cout << "j " << j << std::endl;
           if (i == ts_.size() - 1 && j == N_ - 1) {
             NV_Ith_S(cvodes_data_->nv_state_sens_adj_, j) += adj_;
           } else {
@@ -150,9 +172,13 @@ class cvodes_adj_ode_vari : public vari {
 
         cvodes_check_flag(CVodeReInitB(cvodes_mem_, indexB, ts_[i],
                                        cvodes_data_->nv_state_sens_adj_),
-                          "CVodeB");
+                          "CVodeReInitB");
 
-        // std::cout << i << std::endl;
+        cvodes_check_flag(
+            CVodeQuadReInitB(cvodes_mem_, indexB,
+                             cvodes_data_->nv_state_sens_adj_quad_),
+            "CVodeQuadReInitB");
+
         cvodes_check_flag(
             CVodeB(cvodes_mem_, (i > 0) ? ts_[i - 1] : t0_, CV_NORMAL),
             "CVodeB");
@@ -160,11 +186,23 @@ class cvodes_adj_ode_vari : public vari {
         // Currently unused, but I should probably check it. CVodeGetB sets
         // it to the time that the ode successfully integrated back to.
         // This should be equal to (i > 0) ? ts_[i - 1] : t0_
-        double tret;
+        double tret, tret2;
 
         cvodes_check_flag(CVodeGetB(cvodes_mem_, indexB, &tret,
                                     cvodes_data_->nv_state_sens_adj_),
                           "CVodeGetB");
+
+        cvodes_check_flag(CVodeGetQuadB(cvodes_mem_, indexB, &tret2,
+                                        cvodes_data_->nv_state_sens_adj_quad_),
+                          "CVodeGetQuadB");
+
+        if (tret != tret2) {
+          std::stringstream s;
+          s << "Quadrature and backwards adjoint integrator did not integrate "
+               "to the same point in time (quadrature went to: "
+            << tret2 << ", and adjoint went to: " << tret << ")";
+          throw std::runtime_error(s.str());
+        }
       }
 
       // After integrating all the way back to t0, we finally have the
@@ -176,7 +214,7 @@ class cvodes_adj_ode_vari : public vari {
 
       // These are the dlog_density / d(parameters[s]) adjoints
       for (size_t s = 0; s < M_; s++) {
-        theta_v_[s]->adj_ += NV_Ith_S(cvodes_data_->nv_state_sens_adj_, N_ + s);
+        theta_v_[s]->adj_ += NV_Ith_S(cvodes_data_->nv_state_sens_adj_quad_, s);
       }
     } catch (const std::exception& e) {
       throw;

@@ -142,9 +142,9 @@ class cvodes_integrator {
         // and provide a Jacobian function call. new API since 3.0.0:
         // create matrix object and linear solver object; resource
         // (de-)allocation is handled in the cvodes_ode_data
-        /*cvodes_check_flag(
-                          CVDlsSetJacFn(cvodes_mem,
-           &ode_data::cv_jacobian_states), "CVDlsSetJacFn");*/
+        cvodes_check_flag(
+            CVDlsSetJacFn(cvodes_mem, &ode_data::cv_jacobian_states),
+            "CVDlsSetJacFn");
 
         // initialize forward sensitivity system of CVODES as needed
         if (S > 0) {
