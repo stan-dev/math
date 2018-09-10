@@ -45,7 +45,7 @@ inline typename Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type,
 gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
                 const T_l &length_scale) {
   using std::exp;
-
+  
   size_t x_size = x.size();
   for (size_t n = 0; n < x_size; ++n)
     check_not_nan("gp_matern52_cov", "x", x[n]);
@@ -96,8 +96,6 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
  * @tparam T_x type of elements contained in vector x
  * @tparam T_s type of element of sigma, the magnitude
  * @tparam T_l type of elements in vector of length scale
- * @tparam R   num of rows in x matrix (either 1 or -1 since this is a vector)
- * @tparam C   num of cols in x matrix (either 1 or -1 since this is a vector)
  *
  * @param x std::vector of elements that can be used in stan::math::distance
  * @param length_scale length scale
@@ -105,10 +103,10 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
  * @throw std::domain error if sigma <= 0, l <= 0, or x is nan or inf
  * @throw std::invalid_argument if length scale size != dimension of x
  */
-template <typename T_x, typename T_s, typename T_l, int R, int C>
+template <typename T_x, typename T_s, typename T_l>
 inline typename Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type,
                               Eigen::Dynamic, Eigen::Dynamic>
-gp_matern52_cov(const std::vector<Eigen::Matrix<T_x, R, C>> &x,
+gp_matern52_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
                 const T_s &sigma, const std::vector<T_l> &length_scale) {
   using std::exp;
 
@@ -134,7 +132,7 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x, R, C>> &x,
   double five_thirds = 5.0 / 3.0;
   double neg_root_5 = -root_5;
 
-  std::vector<Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type, R, C>>
+  std::vector<Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type, -1, 1>>
       x_new = divide_columns(x, length_scale);
 
   for (size_t i = 0; i < x_size; ++i) {
@@ -234,10 +232,6 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * @tparam T_x2 type of elements contained in vector x2
  * @tparam T_s type of element of sigma, the  magnitude
  * @tparam T_l type of elements in vector of length scale
- * @tparam R1  num of rows in x matrix (either 1 or -1 since this is a vector)
- * @tparam C1  num of cols in x matrix (either 1 or -1 since this is a vector)
- * @tparam R2  num of rows in x matrix (either 1 or -1 since this is a vector)
- * @tparam C2  num of cols in x matrix (either 1 or -1 since this is a vector)
  *
  * @param x1 std::vector of elements that can be used in stan::math::distance
  * @param x2 std::vector of elements that can be used in stan::math::distance
@@ -247,13 +241,12 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * @throw std::invalid_argument if length scale size != dimension of x1 or x2
  *
  */
-template <typename T_x1, typename T_x2, typename T_s, typename T_l, int R1,
-          int C1, int R2, int C2>
+template <typename T_x1, typename T_x2, typename T_s, typename T_l>
 inline typename Eigen::Matrix<
-    typename stan::return_type<T_x1, T_x2, T_s, T_l>::type, Eigen::Dynamic,
-    Eigen::Dynamic>
-gp_matern52_cov(const std::vector<Eigen::Matrix<T_x1, R1, C1>> &x1,
-                const std::vector<Eigen::Matrix<T_x2, R2, C2>> &x2,
+  typename stan::return_type<T_x1, T_x2, T_s, T_l>::type, Eigen::Dynamic,
+  Eigen::Dynamic>
+gp_matern52_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
+                const std::vector<Eigen::Matrix<T_x2, Eigen::Dynamic, 1>> &x2,
                 const T_s &sigma, const std::vector<T_l> &length_scale) {
   using std::exp;
 
@@ -285,9 +278,9 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x1, R1, C1>> &x1,
   double five_thirds = 5.0 / 3.0;
   double neg_root_5 = -root_5;
 
-  std::vector<Eigen::Matrix<typename return_type<T_x1, T_l, T_s>::type, R1, C1>>
+  std::vector<Eigen::Matrix<typename return_type<T_x1, T_l, T_s>::type, -1, 1>>
       x1_new = divide_columns(x1, length_scale);
-  std::vector<Eigen::Matrix<typename return_type<T_x2, T_l, T_s>::type, R2, C2>>
+  std::vector<Eigen::Matrix<typename return_type<T_x2, T_l, T_s>::type, -1, 1>>
       x2_new = divide_columns(x2, length_scale);
 
   for (size_t i = 0; i < x1_size; ++i) {
