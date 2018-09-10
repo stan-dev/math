@@ -15,38 +15,29 @@ std::string helpers =
     R"(
     // Matrix access helpers
   #ifndef A
-  #define A(i,j) A[j * rows + i]
+  #define A(i,j) A[(j) * rows + i]
   #endif
   #ifndef B
-  #define B(i,j) B[j * rows + i]
+  #define B(i,j) B[(j) * rows + i]
   #endif
   #ifndef C
-  #define C(i,j) C[j * rows + i]
+  #define C(i,j) C[(j) * rows + i]
   #endif
     // Transpose
   #ifndef BT
-  #define BT(i,j) B[j * cols + i]
+  #define BT(i,j) B[(j) * cols + i]
   #endif
   #ifndef AT
-  #define AT(i,j) A[j * cols + i]
+  #define AT(i,j) A[(j) * cols + i]
   #endif
     // Moving between two buffers
   #ifndef src
-  #define src(i,j) src[j * src_rows + i]
+  #define src(i,j) src[(j) * src_rows + i]
   #endif
   #ifndef dst
-  #define dst(i,j) dst[j * dst_rows + i]
+  #define dst(i,j) dst[(j) * dst_rows + i]
   #endif
-    // lower triangular inverse
-  #ifndef V
-  #define V(i,j) V[offset+j*(part_size_fixed+1)+i] 
-  #endif    
-  #ifndef temp
-  #define temp(i,j) temp[(n/2)*(sizeM)*(sizeM)+j*part_size2+i]
-  #endif
-  #define TS2 32
-  #define WPT 4
-  #define RTS TS2/WPT
+  
   // The local memory column for each thread block
   #define THREAD_BLOCK_SIZE_COL THREAD_BLOCK_SIZE/WORK_PER_THREAD
 

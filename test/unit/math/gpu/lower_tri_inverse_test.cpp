@@ -19,7 +19,7 @@ TEST(MathMatrixGPU, inverse_gpu_exception) {
   using stan::math::lower_triangular_inverse;
   EXPECT_THROW(m3 = lower_triangular_inverse(m2), std::invalid_argument);
 }
-
+/*
 TEST(MathMatrixGPU, inverse_gpu_small) {
   auto m1 = stan::math::matrix_d::Random(3, 3).eval();
   m1.triangularView<Eigen::StrictlyUpper>() = stan::math::matrix_d::Zero(3, 3).eval();
@@ -36,49 +36,32 @@ TEST(MathMatrixGPU, inverse_gpu_small) {
   stan::math::copy(m1_cl, m3);
 
   EXPECT_MATRIX_NEAR(m1_cl, m1_cpu, 1e-8);
-}
+}*/
 
 TEST(MathMatrixGPU, inverse_gpu_big) {
-  int size = 128;
+  int size = 32;
   auto m1 = stan::math::matrix_d::Random(size, size).eval();
   m1.triangularView<Eigen::StrictlyUpper>() = stan::math::matrix_d::Zero(size, size).eval();
   stan::math::matrix_d m1_cpu(size, size);
   stan::math::matrix_d m1_cl(size, size);
+  
+  m1_cpu = stan::math::mdivide_left_tri<Eigen::Lower>(m1).eval();
+  
 
-  m1_cpu = stan::math::mdivide_left_tri<Eigen::Lower>(m1);
-
-  stan::math::matrix_gpu m2(m1);
+  auto start_gpu = std::chrono::steady_clock::now();
   stan::math::matrix_gpu m3(size, size);
-
+  stan::math::matrix_gpu m2(m1);  
   EXPECT_NO_THROW(m3 = stan::math::lower_triangular_inverse(m2));
   EXPECT_NO_THROW(stan::math::copy(m1_cl, m3));
-
-  EXPECT_MATRIX_NEAR(m1_cl, m1_cpu, 1e-8);
-
-  /*
-  for (int i = 0; i < m1.rows(); i++) {
-    for (int j = 0; j < m1.cols(); j++) {
-      std::cout << m1(i, j) << " ";
+  auto stop_gpu = std::chrono::steady_clock::now();
+  std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(stop_gpu - start_gpu).count()
+            << "ms" << std::endl;
+  
+  EXPECT_MATRIX_NEAR(m1_cpu, m1_cl, 1e-8); 
+  for(int i = 0; i < m1.rows();i++){
+    for(int j = 0; j <= i;j++){
+      EXPECT_NEAR(m1_cpu(i,j), m1_cl(i,j), 1e-8);
     }
-    std::cout << std::endl;
-  }
-  std::cout << std::endl;std::cout << std::endl;
-  for (int i = 0; i < m1_cpu.rows(); i++) {
-    for (int j = 0; j < m1_cpu.cols(); j++) {
-      std::cout << m1_cpu(i, j) << " ";
-    }
-    std::cout << std::endl;
-  }
-  std::cout << std::endl;std::cout << std::endl;
-  for (int i = 0; i < m2_cpu.rows(); i++) {
-    for (int j = 0; j < m2_cpu.cols(); j++) {
-      std::cout << m2_cpu(i, j) << " ";
-      EXPECT_NEAR(m1_cpu(i, j), m2_cpu(i, j), 1e-8);
-    }
-    std::cout << std::endl;
-  }
-  std::cout << std::endl;std::cout << std::endl;
-  */
-  //EXPECT_MATRIX_NEAR(m2_cpu, m1_cpu, 1e-8);
+  }  
 }
 #endif

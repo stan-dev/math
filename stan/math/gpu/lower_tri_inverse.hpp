@@ -25,70 +25,62 @@ namespace stan {
     inline matrix_gpu lower_triangular_inverse(const matrix_gpu & A) {
       check_square("lower_triangular_inverse (GPU)", "A", A);
       matrix_gpu inv(A);
-      /*cl::Kernel kernel_step1 =
-        opencl_context.get_kernel("lower_tri_inverse_step1");
-      cl::Kernel kernel_step2 =
-        opencl_context.get_kernel("lower_tri_inverse_step2");
-      cl::Kernel kernel_step3 =
-        opencl_context.get_kernel("lower_tri_inverse_step3");*/
       cl::CommandQueue cmdQueue = opencl_context.queue();
-      int parts = 1;
-      if (inv.rows() < 65)
-        parts = 1;
-      if (inv.rows() > 2500)
-        parts = 64;
+      int parts = (inv.rows()+1)/2;
       try {
-        matrix_gpu temp(inv.rows(),  inv.cols() * 2);
+        matrix_gpu temp((inv.rows()+1)/2,  (inv.cols()+1)/2);
 
-        int remainder = inv.rows() % parts;
-        int part_size_fixed = inv.rows()/parts;
-        
-        std::vector<int> stl_sizes(parts, part_size_fixed);
-
-        for (int i = 0; i < remainder; i++) {
-            stl_sizes[i]++;
-        }
-        cl::Context& ctx = opencl_context.context();
-        cl::Buffer sizes = cl::Buffer(ctx, CL_MEM_READ_WRITE,
-         sizeof(int) * parts);
-
-        cmdQueue.enqueueWriteBuffer(sizes, CL_TRUE, 0,
-         sizeof(int) * parts, &stl_sizes[0]);
         try {
           opencl_kernels::lower_tri_inverse_step1(
-              cl::NDRange(parts), cl::NDRange(1),
-              inv.buffer(), temp.buffer(), remainder, part_size_fixed, inv.rows());
+              cl::NDRange(parts),
+              inv.buffer(), inv.rows());
         } catch (cl::Error& e) {
-          check_opencl_error("multiply self transpose", e);
+          check_opencl_error("inverse step1", e);
         }
-
-        int repeat = 1;
-        int sizePad;
 
         int local = 32;
         int gpu_local_max = sqrt(opencl_context.max_thread_block_size());
         if (gpu_local_max < local) {
           local = gpu_local_max;
         }
-        int wpt = 4;
 
+        parts /= 2;
+        int block = 4;
+        int result_matrix_dim = 2;
+        std::cout << "max local: " << local << std::endl;
+        while (parts > 0) {
+        
+          if (result_matrix_dim <= local){
+            std::cout << result_matrix_dim << std::endl;
+            std::cout << parts << std::endl;
+            opencl_kernels::lower_tri_inverse_step2_small(
+                cl::NDRange(result_matrix_dim, result_matrix_dim, parts),
+                cl::NDRange(result_matrix_dim, result_matrix_dim, 1),
+                inv.buffer(), result_matrix_dim, inv.rows());
+          }
+          parts /= 2;
+          result_matrix_dim *= 2;
+          block *= 2;
+        
+        }
+        
+        /*int wpt = 4;
         for (int pp = parts; pp > 1; pp /= 2) {
-          std::cout << "abc" << std::endl;
           sizePad = (((part_size_fixed + 1) * repeat + 31) / 32) * 32;
           try {
-          opencl_kernels::lower_tri_inverse_step2(
-              cl::NDRange(sizePad, sizePad / wpt, pp / 2),
-              cl::NDRange(local, local/wpt, 1),
-              inv.buffer(), sizes, temp.buffer(), repeat, remainder, part_size_fixed, inv.rows());
-          opencl_kernels::lower_tri_inverse_step3(
-              cl::NDRange(sizePad, sizePad / wpt, pp / 2),
-              cl::NDRange(local, local/wpt, 1),
-              inv.buffer(), sizes, temp.buffer(), repeat, remainder, part_size_fixed, inv.rows());
+            opencl_kernels::lower_tri_inverse_step2(
+                cl::NDRange(sizePad, sizePad / wpt, pp / 2),
+                cl::NDRange(local, local/wpt, 1),
+                inv.buffer(), sizes, temp.buffer(), repeat, remainder, part_size_fixed, inv.rows());
+            opencl_kernels::lower_tri_inverse_step3(
+                cl::NDRange(sizePad, sizePad / wpt, pp / 2),
+                cl::NDRange(local, local/wpt, 1),
+                inv.buffer(), sizes, temp.buffer(), repeat, remainder, part_size_fixed, inv.rows());
           } catch (cl::Error& e) {
-            check_opencl_error("multiply self transpose", e);
+            check_opencl_error("inverse step 2 and 3", e);
           }
           repeat *= 2;
-        }
+        }*/
       } catch (const cl::Error& e) {
         check_opencl_error("inverse", e);
       }
