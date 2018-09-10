@@ -34,7 +34,10 @@ pipeline {
         'Run additional distribution tests on RowVectors (takes 5x as long)',
         name: 'withRowVector')
     }
-    options { skipDefaultCheckout() }
+    options {
+        skipDefaultCheckout()
+        preserveStashes(buildCount: 7)
+    }
     stages {
         stage('Kill previous builds') {
             when {
@@ -126,25 +129,37 @@ pipeline {
                 sh "echo CC=${env.CXX} -Werror > make/local"
                 sh "make -j${env.PARALLEL} test-headers"
             }
-            post {
-                always {
-                    warnings canRunOnFailed: true, consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)'], [parserName: 'Clang (LLVM based)']]
-                    deleteDir()
+            post { always { deleteDir() } }
+        }
+        stage('Always-run tests part 1') {
+            parallel {
+                stage('Linux Unit with MPI') {
+                    agent { label 'linux' }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh "echo CC=${MPICXX} >> make/local"
+                        sh "echo STAN_MPI=true >> make/local"
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('GPU Tests') {
+                    agent { label "gpu" }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh "echo CC=${env.CXX} -Werror > make/local"
+                        sh "echo STAN_OPENCL=true>> make/local"
+                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
+                        sh "echo OPENCL_DEVICE_ID=1>> make/local"
+                        runTests("test/unit/math/gpu")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
                 }
             }
         }
-        stage('Linux Unit with MPI') {
-            agent { label 'linux' }
-            steps {
-                deleteDir()
-                unstash 'MathSetup'
-                sh "echo CC=${MPICXX} >> make/local"
-                sh "echo STAN_MPI=true >> make/local"
-                runTests("test/unit")
-            }
-            post { always { retry(3) { deleteDir() } } }
-        }
-        stage('Always-run tests') {
+        stage('Always-run tests part 2') {
             parallel {
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
@@ -170,17 +185,17 @@ pipeline {
                         }
                         failure {
                             echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
-                        }
+                            }
                     }
                 }
-                stage('Mac Unit with Threading') {
-                    agent  { label 'osx' }
+                stage('Threading tests') {
+                    agent any
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
                         sh "echo CC=${env.CXX} -Werror > make/local"
                         sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
-                        runTests("test/unit")
+                        runTests("test/unit -f thread")
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
@@ -197,7 +212,7 @@ pipeline {
                         sh "echo CC=${env.CXX} -Werror > make/local"
                         sh "echo STAN_OPENCL=true>> make/local"
                         sh "echo OPENCL_PLATFORM_ID=0>> make/local"
-                        sh "echo OPENCL_DEVICE_ID=0>> make/local"
+                        sh "echo OPENCL_DEVICE_ID=1>> make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -208,6 +223,17 @@ pipeline {
                         deleteDir()
                         unstash 'MathSetup'
                         sh "echo CC=${GCC} >> make/local"
+                        sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Mac Unit with Threading') {
+                    agent  { label 'osx' }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh "echo CC=${env.CXX} -Werror > make/local"
                         sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
                         runTests("test/unit")
                     }
@@ -252,7 +278,7 @@ pipeline {
     post {
         always {
             node("osx || linux") {
-                warnings canRunOnFailed: true, consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)'], [parserName: 'Clang (LLVM based)']]
+                warnings canRunOnFailed: true, consoleParsers: [[parserName: 'Clang (LLVM based)']]
             }
         }
         success {

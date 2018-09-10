@@ -3,18 +3,6 @@
 #ifdef STAN_OPENCL
 #define __CL_ENABLE_EXCEPTIONS
 
-#include <stan/math/prim/arr/err/check_opencl.hpp>
-#include <stan/math/prim/scal/err/system_error.hpp>
-
-#include <CL/cl.hpp>
-#include <string>
-#include <cmath>
-#include <iostream>
-#include <fstream>
-#include <map>
-#include <vector>
-#include <cerrno>
-
 #define DEVICE_FILTER CL_DEVICE_TYPE_GPU
 #ifndef OPENCL_DEVICE_ID
 #error OPENCL_DEVICE_ID_NOT_SET
@@ -23,24 +11,29 @@
 #error OPENCL_PLATFORM_ID_NOT_SET
 #endif
 
+#include <stan/math/prim/arr/err/check_opencl.hpp>
+#include <stan/math/gpu/constants.hpp>
+#include <stan/math/prim/scal/err/system_error.hpp>
+
+#include <CL/cl.hpp>
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <map>
+#include <vector>
+#include <cmath>
+#include <cerrno>
 /**
  *  @file stan/math/gpu/opencl_context.hpp
  *  @brief Initialization for OpenCL:
  *    1. create context
  *    2. Find OpenCL platforms and devices available
  *    3. set up command queue
- *    4. initialize kernel groups
+ *    4. set architecture dependent kernel parameters
  */
 namespace stan {
 namespace math {
-namespace gpu {
-const int Lower = 0;
-const int Upper = 1;
-const int Entire = 2;
 
-const int LowerToUpper = 1;
-const int UpperToLower = 0;
-}  // namespace gpu
 /**
  * The <code>opencl_context_base</code> class represents an OpenCL context
  * in the standard Meyers singleton design pattern.
@@ -74,8 +67,7 @@ class opencl_context_base {
    *  OPENCL_DEVICE_ID.
    * 3. Creates the OpenCL context with the device.
    * 4. Creates the OpenCL command queue for the selected device.
-   * 5. Initializes the kernel groups by filling the <code> kernel_info </code>
-   *  map.
+   * 5. Sets the GPU dependent kernel parameters
    * @throw std::system_error if an OpenCL error occurs.
    */
   opencl_context_base() {
@@ -102,78 +94,21 @@ class opencl_context_base {
       context_ = cl::Context(device_);
       command_queue_ = cl::CommandQueue(context_, device_,
                                         CL_QUEUE_PROFILING_ENABLE, nullptr);
-      // setup kernel groups
-      init_kernel_groups();
       device_.getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
-                              &max_workgroup_size_);
+                              &max_thread_block_size_);
+      int thread_block_size_sqrt
+          = static_cast<int>(sqrt(static_cast<double>(max_thread_block_size_)));
+      // Does a compile time check of the maximum allowed
+      // dimension of a square thread block size
+      // WG size of (32,32) works on all recent GPU but would fail on some
+      // older integrated GPUs or CPUs
+      if (thread_block_size_sqrt < base_opts_["THREAD_BLOCK_SIZE"]) {
+        base_opts_["THREAD_BLOCK_SIZE"] = thread_block_size_sqrt;
+        base_opts_["WORK_PER_THREAD"] = 1;
+      }
     } catch (const cl::Error& e) {
       check_opencl_error("opencl_context", e);
     }
-  }
-
-  /**
-   * Initializes the <code> kernel_info </code> where each kernel is mapped to
-   * a logical flag to mark if the kernel was already compiled,
-   * the name of the kernel group, and the OpenCL kernel sources.
-   */
-  inline void init_kernel_groups() {
-    const char* copy_matrix_kernel =
-#include <stan/math/gpu/kernels/copy_matrix_kernel.cl>
-        ;  // NOLINT
-    const char* transpose_matrix_kernel =
-#include <stan/math/gpu/kernels/transpose_matrix_kernel.cl>
-        ;  // NOLINT
-    const char* zeros_matrix_kernel =
-#include <stan/math/gpu/kernels/zeros_matrix_kernel.cl>
-        ;  // NOLINT
-    const char* identity_matrix_kernel =
-#include <stan/math/gpu/kernels/identity_matrix_kernel.cl>
-        ;  // NOLINT
-    const char* copy_triangular_matrix_kernel =
-#include <stan/math/gpu/kernels/copy_triangular_matrix_kernel.cl>
-        ;  // NOLINT
-    const char* copy_triangular_transposed_matrix_kernel =
-#include <stan/math/gpu/kernels/triangular_transpose_kernel.cl>
-        ;  // NOLINT
-    const char* copy_submatrix_kernel =
-#include <stan/math/gpu/kernels/sub_block_kernel.cl>
-        ;  // NOLINT
-    const char* check_nan_kernel =
-#include <stan/math/gpu/kernels/check_nan_kernel.cl>
-        ;  // NOLINT
-    const char* check_diagonal_zeros_kernel =
-#include <stan/math/gpu/kernels/check_diagonal_zeros_kernel.cl>
-        ;  // NOLINT
-    const char* check_symmetric_kernel =
-#include <stan/math/gpu/kernels/check_symmetric_kernel.cl>
-        ;  // NOLINT
-    const char* subtract_symmetric_kernel =
-#include <stan/math/gpu/kernels/subtract_matrix_kernel.cl>
-        ;  // NOLINT
-    const char* add_symmetric_kernel =
-#include <stan/math/gpu/kernels/add_matrix_kernel.cl>
-        ;  // NOLINT
-    kernel_info["dummy"] = {
-        false, "timing", "__kernel void dummy(__global const int* foo) { };"};
-    kernel_info["dummy2"] = {
-        false, "timing", "__kernel void dummy2(__global const int* foo) { };"};
-    kernel_info["copy"] = {false, "basic_matrix", copy_matrix_kernel};
-    kernel_info["transpose"] = {false, "basic_matrix", transpose_matrix_kernel};
-    kernel_info["zeros"] = {false, "basic_matrix", zeros_matrix_kernel};
-    kernel_info["identity"] = {false, "basic_matrix", identity_matrix_kernel};
-    kernel_info["copy_triangular"]
-        = {false, "basic_matrix", copy_triangular_matrix_kernel};
-    kernel_info["copy_triangular_transposed"]
-        = {false, "basic_matrix", copy_triangular_transposed_matrix_kernel};
-    kernel_info["copy_submatrix"]
-        = {false, "basic_matrix", copy_submatrix_kernel};
-    kernel_info["add"] = {false, "basic_matrix", add_symmetric_kernel};
-    kernel_info["subtract"]
-        = {false, "basic_matrix", subtract_symmetric_kernel};
-    kernel_info["is_nan"] = {false, "check", check_nan_kernel};
-    kernel_info["is_zero_on_diagonal"]
-        = {false, "check", check_diagonal_zeros_kernel};
-    kernel_info["is_symmetric"] = {false, "check", check_symmetric_kernel};
   }
 
  protected:
@@ -185,27 +120,20 @@ class opencl_context_base {
   std::vector<cl::Device> devices_;  // All available GPU devices
   cl::Device device_;                // The selected GPU device
   std::string device_name_;          // The name of the GPU
-  size_t max_workgroup_size_;  // The maximum size of a block of workers on GPU
-  /** Holds meta information about a kernel.
-   * @param exists a bool to identify whether a kernel has been compiled.
-   * @param group The name of the compilation group for the kernel.
-   * @param code The source code for the kernel.
-   */
-  struct kernel_meta_info {
-    bool exists;
-    const char* group;
-    const char* raw_code;
-  };
-  /**
-   * Map of a kernel name (first) and it's meta information (second).
-   */
-  typedef std::map<const char*, kernel_meta_info> map_kernel_info;
-  /**
-   * map holding compiled kernels.
-   */
-  typedef std::map<const char*, cl::Kernel> map_kernel;
-  map_kernel_info kernel_info;  // The meta kernel info
-  map_kernel kernels;           // The compiled kernels
+  size_t
+      max_thread_block_size_;  // The maximum size of a block of workers on GPU
+
+  // Holds Default parameter values for each Kernel.
+  typedef std::map<const char*, int> map_base_opts;
+  map_base_opts base_opts_
+      = {{"LOWER", static_cast<int>(TriangularViewGPU::Lower)},
+         {"UPPER", static_cast<int>(TriangularViewGPU::Upper)},
+         {"ENTIRE", static_cast<int>(TriangularViewGPU::Entire)},
+         {"UPPER_TO_LOWER", static_cast<int>(TriangularMapGPU::UpperToLower)},
+         {"LOWER_TO_UPPER", static_cast<int>(TriangularMapGPU::LowerToUpper)},
+         {"THREAD_BLOCK_SIZE", 32},
+         {"WORK_PER_THREAD", 8}};
+
   static opencl_context_base& getInstance() {
     static opencl_context_base instance_;
     return instance_;
@@ -219,88 +147,8 @@ class opencl_context_base {
  * The API to access the methods and values in opencl_context_base
  */
 class opencl_context {
-  /**
-   * Compiles all the kernels in the specified group. The side effect of this
-   *  method places all compiled kernels for a group inside of <code> kernels
-   *  </code>.
-   *
-   * @param kernel_name[in] The kernel name.
-   *
-   * @throw std::system_error if there are compilation errors
-   * when compiling the specified kernel group's source code.
-   */
-  inline void compile_kernel_group(const char* kernel_name) {
-    char temp[256];
-    int local = 32;
-    int gpu_local_max = std::sqrt(max_workgroup_size());
-    if (gpu_local_max < local)
-      local = gpu_local_max;
-    snprintf(temp, sizeof(temp),
-             "-D TS=%d -D TS1=%d -D TS2=%d "
-             "-D LOWER=%d -D UPPER=%d -D ENTIRE=%d "
-             "-D LOWER_TO_UPPER=%d -D UPPER_TO_LOWER=%d ",
-             local, local, local, gpu::Lower, gpu::Upper, gpu::Entire,
-             gpu::LowerToUpper, gpu::UpperToLower);
-    std::string kernel_source = "";
-    const char* kernel_group = kernel_info()[kernel_name].group;
-    for (auto kern : kernel_info()) {
-      if (strcmp(kern.second.group, kernel_group) == 0) {
-        kernel_source += kern.second.raw_code;
-      }
-    }
-
-    try {
-      cl::Program::Sources source(
-          1,
-          std::make_pair(kernel_source.c_str(), strlen(kernel_source.c_str())));
-      cl::Program program_ = cl::Program(context(), source);
-      program_.build({device()}, temp);
-
-      cl_int err = CL_SUCCESS;
-      // Iterate over the kernel list and get all the kernels from this group
-      // and mark them as compiled.
-      for (auto kern : kernel_info()) {
-        if (strcmp(kern.second.group, kernel_group) == 0) {
-          opencl_context_base::getInstance().kernels[(kern.first)]
-              = cl::Kernel(program_, kern.first, &err);
-          kern.second.exists = true;
-        }
-      }
-    } catch (const cl::Error& e) {
-      check_opencl_error("Kernel Compilation", e);
-    }
-  }
-
  public:
   opencl_context() = default;
-  /**
-   * Returns the kernel specified in kernel_name.
-   * If the kernel has not yet been compiled, the kernel group is compiled
-   * first.
-   *
-   * @brief Passing the name of a kernel compiles all kernels in the same group
-   * as the selected kernel.
-   * OpenCL kernels are compiled JIT, instead of compiling each kernel
-   * individually this function will compile all kernels
-   * in a predefined group. Groupings are made such that kernels commonly
-   * called with one another will be compiled at the same time. For example,
-   * An arithmetic group of kernels compiled together could contain the kernels
-   * for <code> add() </code>, <code> subtract() </code>,
-   * and <code> multiply() </code>. This function will only return the kernel
-   * which was called, but when a user asks for a kernel within the group those
-   * kernels will already be compiled.
-   *
-   * @param[in] kernel_name The kernel name
-   *
-   * @return a copy of the cl::Kernel object
-   */
-  inline cl::Kernel get_kernel(const char* kernel_name) {
-    // Compile the kernel group and return the kernel
-    if (!kernel_info()[kernel_name].exists) {
-      compile_kernel_group(kernel_name);
-    }
-    return kernels()[kernel_name];
-  }
 
   /**
    * Returns the description of the OpenCL platform and device that is used.
@@ -440,13 +288,20 @@ class opencl_context {
     return opencl_context_base::getInstance().command_queue_;
   }
   /**
-   * Returns the maximum workgroup size defined by CL_DEVICE_MAX_WORK_GROUP_SIZE
-   * for the device in the context. This is the maximum product of work group
-   * dimensions for a particular device. IE a max workgoup of 256 would allow
-   * work groups of sizes (16,16), (128,2), (8, 32), etc.
+   * Returns a copy of the map of kernel defines
    */
-  inline int max_workgroup_size() {
-    return opencl_context_base::getInstance().max_workgroup_size_;
+  inline opencl_context_base::map_base_opts base_opts() {
+    return opencl_context_base::getInstance().base_opts_;
+  }
+  /**
+   * Returns the maximum thread block size defined by
+   * CL_DEVICE_MAX_WORK_GROUP_SIZE for the device in the context. This is the
+   * maximum product of thread block dimensions for a particular device. IE a
+   * max workgoup of 256 would allow thread blocks of sizes (16,16), (128,2),
+   * (8, 32), etc.
+   */
+  inline int max_thread_block_size() {
+    return opencl_context_base::getInstance().max_thread_block_size_;
   }
 
   /**
@@ -461,64 +316,6 @@ class opencl_context {
    */
   inline std::vector<cl::Platform> platform() {
     return {opencl_context_base::getInstance().platform_};
-  }
-
-  /**
-   * return information on the kernel_source
-   */
-  inline opencl_context_base::map_kernel_info kernel_info() {
-    return opencl_context_base::getInstance().kernel_info;
-  }
-
-  /**
-   *
-   */
-  inline opencl_context_base::map_kernel kernels() {
-    return opencl_context_base::getInstance().kernels;
-  }
-  /**
-   * Terminating function for recursively setting arguments in an OpenCL kernel.
-   *
-   * @param k An OpenCL kernel.
-   * @param i The <code>i</code>th argument to the kernel.
-   * @note This function definition serves to end the recursive call for
-   * <code>set_kernel_args()</code>
-   */
-  inline void recursive_kernel_args(cl::Kernel& k, int i) {}
-
-  /**
-   * Used in <code>set_kernel_args()</code> to add arguments to an OpenCL
-   * kernel.
-   *
-   * @param kernel An OpenCL kernel.
-   * @param i the position of the argument to the OpenCL kernel.
-   * @param first_arg The first argument to go into the OpenCL kernel.
-   * @param extra_args The remaining arguments to go into the OpenCL kernel.
-   * @tparam T the type of <code>first_arg</code>.
-   * @tparam Args The types of <code>extra_args</code>.
-   * @note Comes from:
-   * simpleopencl.blogspot.com/2013/04/calling-kernels-with-large-number-of.html
-   */
-  template <typename T, typename... Args>
-  inline void recursive_kernel_args(cl::Kernel& kernel, int i,
-                                    const T& first_arg,
-                                    const Args&... extra_args) {
-    kernel.setArg(i, first_arg);
-    recursive_kernel_args(kernel, i + 1, extra_args...);
-  }
-
-  /**
-   * Adds arguments to an OpenCL kernel.
-   *
-   * @param kernel An OpenCL kernel.
-   * @param args The arguments to mote to the OpenCL kernel.
-   * @tparam Args The types of <code>extra_args</code>.
-   * @note Comes from:
-   * simpleopencl.blogspot.com/2013/04/calling-kernels-with-large-number-of.html
-   */
-  template <typename... Args>
-  inline void set_kernel_args(cl::Kernel& kernel, const Args&... args) {
-    recursive_kernel_args(kernel, 0, args...);
   }
 };
 static opencl_context opencl_context;
