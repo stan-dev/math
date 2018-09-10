@@ -106,7 +106,7 @@ $(MPI_TEMPLATE_INSTANTIATION) : CXXFLAGS += -fPIC
 clean-mpi:
 	@echo '  cleaning mpi targets'
 	$(RM) $(wildcard $(LIBMPI) $(MPI_INSTANTIATION))
-	$(RM) $(wildcard $(BOOST)/stage/lib $(BOOST)/bin.v2 $(BOOST)/tools/build/src/engine/bootstrap/ $(BOOST)/tools/build/src/engine/bin.* $(BOOST)/project-config.jam* $(BOOST)/b2 $(BOOST)/bjam $(BOOST)/bootstrap.log)
+	$(RM) -r $(wildcard $(BOOST)/stage/lib $(BOOST)/bin.v2 $(BOOST)/tools/build/src/engine/bootstrap/ $(BOOST)/tools/build/src/engine/bin.* $(BOOST)/project-config.jam* $(BOOST)/b2 $(BOOST)/bjam $(BOOST)/bootstrap.log)
 
 endif
 
