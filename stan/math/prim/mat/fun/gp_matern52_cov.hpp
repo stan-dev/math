@@ -243,8 +243,8 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  */
 template <typename T_x1, typename T_x2, typename T_s, typename T_l>
 inline typename Eigen::Matrix<
-  typename stan::return_type<T_x1, T_x2, T_s, T_l>::type, Eigen::Dynamic,
-  Eigen::Dynamic>
+    typename stan::return_type<T_x1, T_x2, T_s, T_l>::type, Eigen::Dynamic,
+    Eigen::Dynamic>
 gp_matern52_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
                 const std::vector<Eigen::Matrix<T_x2, Eigen::Dynamic, 1>> &x2,
                 const T_s &sigma, const std::vector<T_l> &length_scale) {
