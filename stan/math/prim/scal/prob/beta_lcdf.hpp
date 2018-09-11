@@ -33,16 +33,18 @@ namespace math {
 
 /**
  * Returns the beta log cumulative distribution function for the given
- * probability, success, and failure parameters. Given matching containers
- * returns the log sum of probabilities.
+ * probability, success, and failure parameters.  Any arguments other
+ * than scalars must be containers of the same size.  With non-scalar
+ * arguments, the return is the sum of the log cdfs with scalars
+ * broadcast as necessary.
  *
- * @tparam T_y type of probability parameter
+ * @tparam T_y type of y
  * @tparam T_scale_succ type of success parameter
  * @tparam T_scale_fail type of failure parameter
- * @param y probability parameter
- * @param alpha success parameter
- * @param beta failure parameter
- * @return log probability or log sum of probabilities
+ * @param y (Sequence of) scalar(s) between zero and one
+ * @param alpha (Sequence of) success parameter(s)
+ * @param beta (Sequence of) failure parameter(s)
+ * @return log probability or sum of log of proabilities
  * @throw std::domain_error if alpha or beta is negative
  * @throw std::domain_error if y is not a valid probability
  * @throw std::invalid_argument if container sizes mismatch
@@ -81,7 +83,6 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lcdf(
                                                                       beta);
 
   using std::exp;
-  using std::exp;
   using std::log;
   using std::pow;
 
@@ -98,7 +99,7 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lcdf(
       digamma_sum_vec(max_size(alpha, beta));
 
   if (contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value) {
-    for (size_t i = 0; i < N; i++) {
+    for (size_t i = 0; i < max_size(alpha, beta); i++) {
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
       const T_partials_return beta_dbl = value_of(beta_vec[i]);
 
