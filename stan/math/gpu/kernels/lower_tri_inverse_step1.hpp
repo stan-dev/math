@@ -24,20 +24,43 @@ const char* lower_tri_inverse_step1_kernel_code = STRINGIFY(
     __kernel void lower_tri_inverse_step1(
         __global double* A,
         int rows) {
-      int i = get_global_id(0);
-      double a = 0;
-      double b = 0;
-      double c = 0;
-      if (2*i < rows) {
-          a = 1.0/A(2*i, 2*i);
-          A(2*i, 2*i) = a;
+      int index = get_local_id(0);
+      int group = get_group_id(0);
+      int block_size = get_local_size(0);
+      int offset = group*block_size;
+      __local double V[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];      
+      int i = index;
+      for(int j=0;j<block_size;j++){
+        if(i==j){
+            V[i][j] = 1.0;
+        }else{
+            V[i][j] = 0.0;
+        }
       }
-      if (2*i+1 < rows) {
-          b = 1.0/A(2*i+1, 2*i+1);
-          c = A(2*i+1, 2*i);
-          A(2*i+1, 2*i+1) = b;
-          A(2*i+1, 2*i) = -a*b*c;
+      barrier(CLK_LOCAL_MEM_FENCE);
+      for(int k=0;k<block_size;k++){
+        
+        double factor = A(offset+k,offset+k); 
+        int j = index;
+        if (j <= k) {
+            V[k][j] /= factor;
+        }
+        barrier(CLK_LOCAL_MEM_FENCE);
+        for(int i=k+1;i<block_size;i++){
+            factor = A(offset+i,offset+k);
+            j = index;
+            if (j < i) {
+                V[i][j] -= V[k][j]*factor;
+            }
+        }        
+        barrier(CLK_LOCAL_MEM_FENCE);
       }
+      barrier(CLK_LOCAL_MEM_FENCE);
+      i = index;
+      for(int j=0;j<block_size;j++){
+        A(offset+i,offset+j) = V[i][j];
+      }
+      
     }
     // \cond
 );
@@ -46,8 +69,9 @@ const char* lower_tri_inverse_step1_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/matrix_multiply.hpp add() \endlink
  */
-const global_range_kernel<cl::Buffer, int>
-    lower_tri_inverse_step1("lower_tri_inverse_step1", lower_tri_inverse_step1_kernel_code);
+const local_range_kernel<cl::Buffer, int>
+    lower_tri_inverse_step1("lower_tri_inverse_step1", lower_tri_inverse_step1_kernel_code,
+    {{"THREAD_BLOCK_SIZE", 32}});
 
 }  // namespace opencl_kernels
 }  // namespace math
