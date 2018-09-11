@@ -20,6 +20,7 @@
 #endif
 
 #include <stan/math/prim/arr/fun/array_builder.hpp>
+#include <stan/math/prim/arr/fun/asc_lin_seq_by_array.hpp>
 #include <stan/math/prim/arr/fun/common_type.hpp>
 #include <stan/math/prim/arr/fun/dot.hpp>
 #include <stan/math/prim/arr/fun/dot_self.hpp>
