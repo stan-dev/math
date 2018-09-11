@@ -11,36 +11,21 @@ namespace opencl_kernels {
 const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
     // \endcond
     /**
-     * Calculates 
+     * Calculates the intermediate products in the lower_tri_inverse
      *
-     * @param[in,out] A The identity matrix output.
-     * @param rows The number of rows for A.
-     * @param cols The number of cols for A.
+     * @param[in] A input matrix that is being inverted
+     * @param[out] C temporary matrix to store the intermediate results
+     * @param M The number of rows for A.
+     * @param K The number of elements to multiply
+     * @param temp_rows The number of rows in C
      * @note Code is a <code>const char*</code> held in
-     * <code>identity_kernel_code.</code>
-     *  Used in math/gpu/identity_opencl.hpp.
+     * <code>lower_tri_inverse_step2_kernel_code.</code>
+     *  Used in math/gpu/lower_tri_inverse.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      */
     __kernel void lower_tri_inverse_step2(
-        __global read_write double* A,
+        __global read_only double* A,
         __global write_only double* C, const read_only int M, const read_only int K, const read_only int temp_rows) {
-        /*int i = get_global_id(0); 
-        int j = get_global_id(1);
-        double acc = 0.0;
-        
-        __local double temp[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];
-        for(int k = 0; k < temp_rows; k++){
-            acc += A(offset+temp_rows+i,offset+temp_rows+k)*A(offset+temp_rows+k,offset+j);
-        }
-        temp[i][j]=acc;
-        barrier(CLK_LOCAL_MEM_FENCE);
-        acc = 0.0;
-        for(int k = 0; k < temp_rows; k++){
-            acc += temp[i][k]*A(offset+k, offset+j);
-        }
-        A(offset+temp_rows+i, offset+j) = -acc;*/
-      
-
       int t = get_global_id(2);
       int offset = t*temp_rows*2;
       // thread index inside the thread_block
@@ -70,12 +55,13 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
 
           A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                  [thread_block_row]
-              = A[(offset + temp_rows+tiled_j + w * THREAD_BLOCK_SIZE_COL) * M + offset + i + temp_rows];
+              = A[(offset + temp_rows +tiled_j + w * THREAD_BLOCK_SIZE_COL) * M + offset + i + temp_rows];
 
           B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                  [thread_block_row]
               = A[(offset+ j + w * THREAD_BLOCK_SIZE_COL) * M + tiled_i + temp_rows + offset];
         }
+        
         // wait until all tile values are loaded to the local memory
         barrier(CLK_LOCAL_MEM_FENCE);
         for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE; block_ind++) {

@@ -23,18 +23,19 @@ const char* lower_tri_inverse_step1_kernel_code = STRINGIFY(
      */
     __kernel void lower_tri_inverse_step1(
         __global double* A,
+        __global double* V,
         int rows) {
       int index = get_local_id(0);
       int group = get_group_id(0);
       int block_size = get_local_size(0);
       int offset = group*block_size;
-      __local double V[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];      
+      //__local double V[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];      
       int i = index;
       for(int j=0;j<block_size;j++){
         if(i==j){
-            V[i][j] = 1.0;
+            V[group*block_size*block_size+j*block_size + i] = 1.0;
         }else{
-            V[i][j] = 0.0;
+            V[group*block_size*block_size+j*block_size + i] = 0.0;
         }
       }
       barrier(CLK_LOCAL_MEM_FENCE);
@@ -43,14 +44,14 @@ const char* lower_tri_inverse_step1_kernel_code = STRINGIFY(
         double factor = A(offset+k,offset+k); 
         int j = index;
         if (j <= k) {
-            V[k][j] /= factor;
+            V[group*block_size*block_size+j*block_size + k] /= factor;
         }
         barrier(CLK_LOCAL_MEM_FENCE);
         for(int i=k+1;i<block_size;i++){
             factor = A(offset+i,offset+k);
             j = index;
             if (j < i) {
-                V[i][j] -= V[k][j]*factor;
+                V[group*block_size*block_size+j*block_size + i] -= V[group*block_size*block_size+j*block_size + k]*factor;
             }
         }        
         barrier(CLK_LOCAL_MEM_FENCE);
@@ -58,7 +59,7 @@ const char* lower_tri_inverse_step1_kernel_code = STRINGIFY(
       barrier(CLK_LOCAL_MEM_FENCE);
       i = index;
       for(int j=0;j<block_size;j++){
-        A(offset+i,offset+j) = V[i][j];
+        A(offset+i,offset+j) = V[group*block_size*block_size+j*block_size + i];
       }
       
     }
@@ -69,7 +70,7 @@ const char* lower_tri_inverse_step1_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/matrix_multiply.hpp add() \endlink
  */
-const local_range_kernel<cl::Buffer, int>
+const local_range_kernel<cl::Buffer, cl::Buffer, int>
     lower_tri_inverse_step1("lower_tri_inverse_step1", lower_tri_inverse_step1_kernel_code,
     {{"THREAD_BLOCK_SIZE", 32}});
 

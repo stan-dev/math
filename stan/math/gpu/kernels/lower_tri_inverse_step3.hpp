@@ -11,14 +11,16 @@ namespace opencl_kernels {
 const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
     // \endcond
     /**
-     * Calculates 
+     * Calculates the products to calculate parts of the lower_tri_inverse
      *
-     * @param[in,out] A The identity matrix output.
-     * @param rows The number of rows for A.
-     * @param cols The number of cols for A.
+     * @param[in, out] A input matrix that is being inverted
+     * @param[in] C tge temporary matrix with the intermediate results
+     * @param M The number of rows for A.
+     * @param K The number of elements to multiply
+     * @param temp_rows The number of rows in C
      * @note Code is a <code>const char*</code> held in
-     * <code>identity_kernel_code.</code>
-     *  Used in math/gpu/identity_opencl.hpp.
+     * <code>lower_tri_inverse_step3_kernel_code.</code>
+     *  Used in math/gpu/lower_tri_inverse.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      */
 __kernel void lower_tri_inverse_step3(
