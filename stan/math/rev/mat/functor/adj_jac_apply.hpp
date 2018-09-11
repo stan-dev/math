@@ -52,7 +52,7 @@ constexpr auto apply(const F& f, const Tuple& t) {
 /**
  * Store the adjoint in y_vi[0] in y_adj
  *
- * @tparam size dimensionality of M_
+ * @tparam size dimensionality of M
  * @param[in] y_vi pointer to pointer to vari
  * @param[in] M
  * @param[out] y_adj reference to variable where adjoint is to be stored
@@ -67,7 +67,7 @@ void build_y_adj(vari** y_vi, const std::array<int, size>& M, double& y_adj) {
  *
  * @tparam size dimensionality of M
  * @param[in] y_vi pointer to pointers to varis
- * @param[in] M_ shape of y_adj
+ * @param[in] M shape of y_adj
  * @param[out] y_adj reference to std::vector where adjoints are to be stored
  */
 template <size_t size>
