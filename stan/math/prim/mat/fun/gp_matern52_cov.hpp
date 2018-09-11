@@ -45,7 +45,7 @@ inline typename Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type,
 gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
                 const T_l &length_scale) {
   using std::exp;
-  
+
   size_t x_size = x.size();
   for (size_t n = 0; n < x_size; ++n)
     check_not_nan("gp_matern52_cov", "x", x[n]);
