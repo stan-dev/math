@@ -13,7 +13,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 /*
  * Invoke the functor f with arguments given in t and indexed in the index
  * sequence I
@@ -50,63 +50,61 @@ constexpr auto apply(const F& f, const Tuple& t) {
 }
 
 /**
- * build_y_adj takes the adjoint from the vari pointed to
- * by y_vi_[0] and stores it in y_adj
+ * Store the adjoint in y_vi[0] in y_adj
  *
  * @tparam size dimensionality of M_
- * @param y_vi_ pointer to pointer to vari
- * @param M_ ignored in this specialization
+ * @param[in] y_vi pointer to pointer to vari
+ * @param[in] M
  * @param[out] y_adj reference to variable where adjoint is to be stored
  */
 template <size_t size>
-void build_y_adj(vari** y_vi_, const std::array<int, size>& M_, double& y_adj) {
-  y_adj = y_vi_[0]->adj_;
+void build_y_adj(vari** y_vi, const std::array<int, size>& M, double& y_adj) {
+  y_adj = y_vi[0]->adj_;
 }
 
 /**
- * build_y_adj takes the adjoints from the varis pointed to
- * by y_vi_ and stores them in y_adj
+ * Store the adjoints from y_vi in y_adj
  *
- * @tparam size dimensionality of M_
- * @param y_vi_ pointer to pointers to varis
- * @param M_ shape of y_adj
+ * @tparam size dimensionality of M
+ * @param[in] y_vi pointer to pointers to varis
+ * @param[in] M_ shape of y_adj
  * @param[out] y_adj reference to std::vector where adjoints are to be stored
  */
 template <size_t size>
-void build_y_adj(vari** y_vi_, const std::array<int, size>& M_,
+void build_y_adj(vari** y_vi, const std::array<int, size>& M,
                  std::vector<double>& y_adj) {
-  y_adj.resize(M_[0]);
-  for (int m = 0; m < M_[0]; ++m)
-    y_adj[m] = y_vi_[m]->adj_;
+  y_adj.resize(M[0]);
+  for (int m = 0; m < y_adj.size(); ++m)
+    y_adj[m] = y_vi[m]->adj_;
 }
 
 /**
- * build_y_adj takes the adjoints from the varis pointed to
- * by y_vi_ and stores them in y_adj
+ * Store the adjoints from y_vi in y_adj
  *
- * @tparam size dimensionality of M_
- * @param y_vi_ pointer to pointers to varis
- * @param M_ shape of y_adj
+ * @tparam size dimensionality of M
+ * @param[in] y_vi pointer to pointers to varis
+ * @param[in] M shape of y_adj
  * @param[out] y_adj reference to Eigen::Matrix where adjoints are to be stored
  */
 template <size_t size, int R, int C>
-void build_y_adj(vari** y_vi_, const std::array<int, size>& M_,
+void build_y_adj(vari** y_vi, const std::array<int, size>& M,
                  Eigen::Matrix<double, R, C>& y_adj) {
-  y_adj.resize(M_[0], M_[1]);
-  for (int m = 0; m < M_[0] * M_[1]; ++m)
-    y_adj(m) = y_vi_[m]->adj_;
+  y_adj.resize(M[0], M[1]);
+  for (int m = 0; m < y_adj.size(); ++m)
+    y_adj(m) = y_vi[m]->adj_;
 }
 
 /**
- * compute the dimensionality of the given template argument. By
+ * Compute the dimensionality of the given template argument. The
+ * definition of dimensionality is deferred to specializations. By
  * default don't have a value (fail to compile)
  */
 template <typename T>
 struct compute_dims {};
 
 /**
- * compute the dimensionality of the given template argument. Double
- * types are dimensionality zero.
+ * Compute the dimensionality of the given template argument. Double
+ * types hav dimensionality zero.
  */
 template <>
 struct compute_dims<double> {
@@ -114,7 +112,7 @@ struct compute_dims<double> {
 };
 
 /**
- * compute the dimensionality of the given template argument.
+ * Compute the dimensionality of the given template argument.
  * std::vector has dimension 1
  */
 template <typename T>
@@ -124,31 +122,13 @@ struct compute_dims<std::vector<T>> {
 
 /**
  * compute the dimensionality of the given template argument.
- * Eigen::VectorXd is treated like a Matrix and given dimension two
+ * Eigen::Matrix types all have dimension two
  */
-template <>
-struct compute_dims<Eigen::VectorXd> {
+template <typename T, int R, int C>
+struct compute_dims<Eigen::Matrix<T, R, C>> {
   static constexpr size_t value = 2;
 };
-
-/**
- * compute the dimensionality of the given template argument.
- * Eigen::RowVectorXd is treated like a Matrix and given dimension two
- */
-template <>
-struct compute_dims<Eigen::RowVectorXd> {
-  static constexpr size_t value = 2;
-};
-
-/**
- * compute the dimensionality of the given template argument.
- * Eigen::MatrixXd has dimension two
- */
-template <>
-struct compute_dims<Eigen::MatrixXd> {
-  static constexpr size_t value = 2;
-};
-}  // namespace
+}  // namespace internal
 
 /*
  * adj_jac_vari interfaces a user supplied functor  with the reverse mode
@@ -334,8 +314,8 @@ struct adj_jac_vari : public vari {
   }
 
   /**
-   * The constructor initializes is_var_ with whether or not the scalar type in
-   * each argument is a var
+   * Initializes is_var_ with true if the scalar type in each argument
+   * is a var (and false if not)
    */
   adj_jac_vari()
       : vari(std::numeric_limits<double>::quiet_NaN()),  // The val_ in this
@@ -345,8 +325,7 @@ struct adj_jac_vari : public vari {
         y_vi_(NULL) {}
 
   /**
-   * build_return_varis_and_vars returns a var with a new vari that has the
-   * value val_y
+   * Return a var with a new vari holding the given value
    *
    * @param val_y output of F::operator()
    * @return var
@@ -359,9 +338,8 @@ struct adj_jac_vari : public vari {
   }
 
   /**
-   * build_return_varis_and_vars constructs a container of vars of the same
-   * shape and size as the input, allocates new varis for these vars, and
-   * assigns them the values of val_y
+   * Return a std::vector of vars created from newly allocated varis initialized
+   * with the values of val_y
    *
    * @param val_y output of F::operator()
    * @return std::vector of vars
@@ -382,9 +360,9 @@ struct adj_jac_vari : public vari {
   }
 
   /**
-   * build_return_varis_and_vars constructs a container of vars of the same
-   * shape and size as the input, allocates new varis for these vars, and
-   * assigns them the values of val_y
+   * Return an Eigen::Matrix of vars created from newly allocated varis
+   * initialized with the values of val_y. The shape of the new matrix comes
+   * from M_
    *
    * @tparam R Eigen row type
    * @tparam C Eigen column type
@@ -411,7 +389,7 @@ struct adj_jac_vari : public vari {
   void prepare_x_vis() {}
 
   /**
-   * The adj_jac_vari operator()
+   * The adj_jac_vari functor
    *  1. Initializes an instance of the user defined functor F
    *  2. Calls operator() on the F instance with the double values from the
    * input args
@@ -437,10 +415,10 @@ struct adj_jac_vari : public vari {
   }
 
   /*
-   * accumulate_adjoints accumulates, if necessary, the Eigen Matrix of values
-   * in its first argument into the adjoints of the varis pointed to by the
-   * appropriate elements of x_vis_ and then recursively calls
-   * accumulate_adjoints on the rest of the arguments.
+   * Accumulate, if necessary, the values of y_adj_jac into the
+   * adjoints of the varis pointed to by the appropriate elements
+   * of x_vis_. Recursively calls accumulate_adjoints on the rest of the
+   * arguments.
    *
    * @tparam R Eigen Matrix row type
    * @tparam C Eigen Matrix column type
@@ -463,10 +441,10 @@ struct adj_jac_vari : public vari {
   }
 
   /*
-   * accumulate_adjoints accumulates, if necessary, the std::vector of values in
-   * its first argument into the adjoints of the varis pointed to by the
-   * appropriate elements of x_vis_ and then recursively calls
-   * accumulate_adjoints on the rest of the arguments.
+   * Accumulate, if necessary, the values of y_adj_jac into the
+   * adjoints of the varis pointed to by the appropriate elements
+   * of x_vis_. Recursively calls accumulate_adjoints on the rest of the
+   * arguments.
    *
    * @tparam Pargs Types of the rest of adjoints to accumulate
    * @param y_adj_jac set of values to be accumulated in adjoints
@@ -486,9 +464,8 @@ struct adj_jac_vari : public vari {
   }
 
   /*
-   * There are no adjoints to accumulate for std::vector<int> arguments, so
-   * accumulate_adjoints simply recursively calls itself on the rest of the
-   * arguments.
+   * Recursively call accumulate_adjoints with args. There are no adjoints to
+   * accumulate for std::vector<int> arguments.
    *
    * @tparam Pargs Types of the rest of adjoints to accumulate
    * @param y_adj_jac ignored
@@ -502,9 +479,10 @@ struct adj_jac_vari : public vari {
   }
 
   /*
-   * accumulate_adjoints accumulates, if necessary, the y_adj_jac into the
-   * adjoint of vari pointed to by the appropriate element of x_vis_ and then
-   * recursively calls accumulate_adjoints on the rest of the arguments.
+   * Accumulate, if necessary, the value of y_adj_jac into the
+   * adjoint of the vari pointed to by the appropriate element
+   * of x_vis_. Recursively calls accumulate_adjoints on the rest of the
+   * arguments.
    *
    * @tparam Pargs Types of the rest of adjoints to accumulate
    * @param y_adj_jac next set of adjoints to be accumulated
@@ -522,9 +500,8 @@ struct adj_jac_vari : public vari {
   }
 
   /*
-   * There are no adjoints to accumulate for an int argument, so
-   * accumulate_adjoints simply recursively calls itself on the rest of the
-   * arguments.
+   * Recursively call accumulate_adjoints with args. There are no adjoints to
+   * accumulate for int arguments.
    *
    * @tparam Pargs Types of the rest of adjoints to accumulate
    * @param y_adj_jac ignored
@@ -539,7 +516,7 @@ struct adj_jac_vari : public vari {
   void accumulate_adjoints() {}
 
   /**
-   * chain propagates the adjoints at the output varis (y_vi_) back to the input
+   * Propagate the adjoints at the output varis (y_vi_) back to the input
    * varis (x_vis_) by:
    * 1. packing the adjoints in an appropriate container using build_y_adj
    * 2. using the multiply_adjoint_jacobian function of the user defined functor
