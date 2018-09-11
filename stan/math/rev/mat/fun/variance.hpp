@@ -14,8 +14,7 @@ namespace math {
 namespace {
 
 inline var calc_variance(size_t size, const var* dtrs) {
-  vari** varis = reinterpret_cast<vari**>(
-      ChainableStack::instance().memalloc_.alloc(size * sizeof(vari*)));
+  vari** varis = ChainableStack::instance().memalloc_.alloc_array<vari*>(size);
   for (size_t i = 0; i < size; ++i)
     varis[i] = dtrs[i].vi_;
   double sum = 0.0;
@@ -23,16 +22,16 @@ inline var calc_variance(size_t size, const var* dtrs) {
     sum += dtrs[i].vi_->val_;
   double mean = sum / size;
   double sum_of_squares = 0;
+  double reciprocal_size_m1 = 1.0 / (size - 1);
+  double two_over_size_m1 = 2.0 * reciprocal_size_m1;
+  double* partials
+      = ChainableStack::instance().memalloc_.alloc_array<double>(size);
   for (size_t i = 0; i < size; ++i) {
     double diff = dtrs[i].vi_->val_ - mean;
     sum_of_squares += diff * diff;
+    partials[i] = two_over_size_m1 * diff;
   }
-  double variance = sum_of_squares / (size - 1);
-  double* partials = reinterpret_cast<double*>(
-      ChainableStack::instance().memalloc_.alloc(size * sizeof(double)));
-  double two_over_size_m1 = 2 / (size - 1);
-  for (size_t i = 0; i < size; ++i)
-    partials[i] = two_over_size_m1 * (dtrs[i].vi_->val_ - mean);
+  double variance = sum_of_squares * reciprocal_size_m1;
   return var(new stored_gradient_vari(variance, size, varis, partials));
 }
 
