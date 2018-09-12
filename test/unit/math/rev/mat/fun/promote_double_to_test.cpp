@@ -23,8 +23,8 @@ TEST(AgradRevMatrix, promote_double_to_double) {
 TEST(AgradRevMatrix, promote_double_to_mix) {
   auto y1 = stan::math::promote_double_to<stan::math::var>(
       std::make_tuple(1.0, 2, 3.0));
-  auto y2 = stan::math::promote_double_to<stan::math::var>(
-      std::make_tuple(1.0, 2));
+  auto y2
+      = stan::math::promote_double_to<stan::math::var>(std::make_tuple(1.0, 2));
   EXPECT_TRUE((std::is_same<std::tuple<stan::math::var, stan::math::var>,
                             decltype(y1)>::value));
   EXPECT_TRUE((std::is_same<std::tuple<stan::math::var>, decltype(y2)>::value));
