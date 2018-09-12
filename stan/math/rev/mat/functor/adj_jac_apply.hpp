@@ -14,7 +14,7 @@ namespace stan {
 namespace math {
 
 namespace internal {
-/*
+/**
  * Invoke the functor f with arguments given in t and indexed in the index
  * sequence I
  *
@@ -32,7 +32,7 @@ constexpr auto apply_impl(const F& f, const Tuple& t,
   return f(std::get<I>(t)...);
 }
 
-/*
+/**
  * Call the functor f with the tuple of arguments t, like:
  *
  * f(std::get<0>(t), std::get<1>(t), ...)
@@ -74,7 +74,7 @@ template <size_t size>
 void build_y_adj(vari** y_vi, const std::array<int, size>& M,
                  std::vector<double>& y_adj) {
   y_adj.resize(M[0]);
-  for (int m = 0; m < y_adj.size(); ++m)
+  for (size_t m = 0; m < y_adj.size(); ++m)
     y_adj[m] = y_vi[m]->adj_;
 }
 
@@ -130,7 +130,7 @@ struct compute_dims<Eigen::Matrix<T, R, C>> {
 };
 }  // namespace internal
 
-/*
+/**
  * adj_jac_vari interfaces a user supplied functor  with the reverse mode
  * autodiff. It allows someone to implement functions with custom reverse mode
  * autodiff without having to deal with autodiff types.
@@ -153,10 +153,10 @@ struct adj_jac_vari : public vari {
   F f_;
   std::array<int, sizeof...(Targs)> offsets_;
   vari** x_vis_;
-  std::array<int, compute_dims<FReturnType>::value> M_;
+  std::array<int, internal::compute_dims<FReturnType>::value> M_;
   vari** y_vi_;
 
-  /*
+  /**
    * count_memory returns count (the first argument) + the number of varis used
    * in the second argument + the number of arguments used to encode the
    * variadic tail args.
@@ -245,7 +245,7 @@ struct adj_jac_vari : public vari {
 
   size_t count_memory(size_t count) { return count; }
 
-  /*
+  /**
    * prepare_x_vis populates x_vis_ with the varis from each of its
    * input arguments. The vari pointers for argument n are copied into x_vis_ at
    * the index starting at offsets_[n]. For Eigen::Matrix types, this copying is
@@ -414,7 +414,7 @@ struct adj_jac_vari : public vari {
     return build_return_varis_and_vars(f_(is_var_, value_of(args)...));
   }
 
-  /*
+  /**
    * Accumulate, if necessary, the values of y_adj_jac into the
    * adjoints of the varis pointed to by the appropriate elements
    * of x_vis_. Recursively calls accumulate_adjoints on the rest of the
@@ -440,7 +440,7 @@ struct adj_jac_vari : public vari {
     accumulate_adjoints(args...);
   }
 
-  /*
+  /**
    * Accumulate, if necessary, the values of y_adj_jac into the
    * adjoints of the varis pointed to by the appropriate elements
    * of x_vis_. Recursively calls accumulate_adjoints on the rest of the
@@ -463,7 +463,7 @@ struct adj_jac_vari : public vari {
     accumulate_adjoints(args...);
   }
 
-  /*
+  /**
    * Recursively call accumulate_adjoints with args. There are no adjoints to
    * accumulate for std::vector<int> arguments.
    *
@@ -478,7 +478,7 @@ struct adj_jac_vari : public vari {
     accumulate_adjoints(args...);
   }
 
-  /*
+  /**
    * Accumulate, if necessary, the value of y_adj_jac into the
    * adjoint of the vari pointed to by the appropriate element
    * of x_vis_. Recursively calls accumulate_adjoints on the rest of the
@@ -499,7 +499,7 @@ struct adj_jac_vari : public vari {
     accumulate_adjoints(args...);
   }
 
-  /*
+  /**
    * Recursively call accumulate_adjoints with args. There are no adjoints to
    * accumulate for int arguments.
    *
@@ -537,7 +537,7 @@ struct adj_jac_vari : public vari {
   }
 };
 
-/*
+/**
  * Return the result of applying the function defined by a nullary construction
  * of F to the specified input argument
  *
