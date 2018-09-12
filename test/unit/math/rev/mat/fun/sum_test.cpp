@@ -2,7 +2,20 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <test/unit/math/rev/mat/util/test_autodiff.hpp>
 #include <vector>
+
+TEST(AgradRevMatrix, sum_vector_test_autodiff) {
+  auto sum_functor = [](auto a) { return stan::math::sum(a); };
+  Eigen::VectorXd d(6);
+  Eigen::RowVectorXd rd(6);
+
+  d << 1, 2, 3, 4, 5, 6;
+  rd = d.transpose();
+
+  stan::math::test::test_autodiff(sum_functor, 1e-9, 1e-9, d);
+  stan::math::test::test_autodiff(sum_functor, 1e-9, 1e-9, rd);
+}
 
 TEST(AgradRevMatrix, sum_vector) {
   using stan::math::sum;

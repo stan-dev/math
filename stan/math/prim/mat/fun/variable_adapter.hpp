@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_VARIABLE_ADAPTER_HPP
 #define STAN_MATH_PRIM_MAT_FUN_VARIABLE_ADAPTER_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/functor/apply.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <cstddef>
@@ -12,11 +13,8 @@ namespace stan {
 namespace math {
 
 /**
- * variable_adapter exports a flat, single-index interface to variables of
- * a given type in a variadic list of arguments provided in the constructor
- *
- * variable_adapter behaves like a 1d data structure with length equal to
- * the number of scalars of type T in the list of input arguments
+ * Export a one-dimensional interface to scalar variables of a given
+ * type in a variadic list of arguments provided in the constructor
  *
  * @tparam T Type of element to index
  * @tparam Targs Types of input arguments to index over
@@ -28,9 +26,6 @@ class variable_adapter {
 
   size_t size_;
 
-  /**
-   * count_T_impl is the implementation of count_T
-   */
   template <typename... Pargs, int RowType, int ColType>
   size_t count_T_impl(size_t count, const Eigen::Matrix<T, RowType, ColType>& x,
                       const Pargs&... args) {
@@ -56,7 +51,7 @@ class variable_adapter {
   size_t count_T_impl(size_t count) { return count; }
 
   /**
-   * count_T counts the number of scalars of type T in the input argument list
+   * Count the number of scalars of type T in the input argument list
    *
    * @tparam Pargs Types of input arguments
    * @return Number of scalars of type T in input
@@ -67,7 +62,8 @@ class variable_adapter {
   }
 
   /**
-   * Tail of get recursion. This indicates an out of bounds error
+   * Tail of get recursion. This function always indicates an out of bounds
+   * error
    *
    * @return always throws
    * @throw domain_error always
@@ -80,8 +76,9 @@ class variable_adapter {
   }
 
   /**
-   * get the ith element of arg. If i is greater than arg.size(), get
-   * the (i - arg.size())th element of the remaining args
+   * Return the ith element of arg if i is less than arg.size().
+   * Otherwise return the (i - arg.size())th element of the
+   * remaining args
    *
    * @tparam RowType Eigen row type of arg
    * @tparam ColType Eigen column type of arg
@@ -97,8 +94,9 @@ class variable_adapter {
   }
 
   /**
-   * get the ith element of arg. If i is greater than arg.size(), get
-   * the (i - arg.size())th element of the remaining args
+   * Return the ith element of arg if i is less than arg.size().
+   * Otherwise return the (i - arg.size())th element of the
+   * remaining args
    *
    * @tparam Pargs Types of the rest of the input arguments to process
    * @return Reference to ith T in args_
@@ -112,7 +110,7 @@ class variable_adapter {
   }
 
   /**
-   * If i == 0, arg is the element we're looking for, otherwise, get
+   * Return arg if i == 0. Otherwise, return
    * the (i - 1)th element of the remaining args
    *
    * @tparam Pargs Types of the rest of the input arguments to process
@@ -127,7 +125,7 @@ class variable_adapter {
   }
 
   /**
-   * No T here, recursively call get on the remaining arguments
+   * Return the ith element of the remaining arguments
    *
    * @tparam R Type of arg (is not indexed)
    * @tparam Pargs Types of the rest of the input arguments to process
@@ -140,9 +138,9 @@ class variable_adapter {
 
  public:
   /**
-   * Construct a variable_adapter from the given list of inputs. The inputs
-   * are copied by value into a tuple member variable args_, so writing to
-   * variable_adapter does not modify the original variables.
+   * The inputs are copied by value into a tuple member variable
+   * args_, so writing to variable_adapter does not modify the
+   * original variables.
    *
    * @param args Arguments to adapt to a 1D interface
    */
@@ -150,8 +148,7 @@ class variable_adapter {
       : args_(std::make_tuple(args...)), size_(count_T(args...)) {}
 
   /**
-   * Get a tuple of args of the current values. These are returned by
-   * value, not reference
+   * Get a copy of the args_ member variable
    *
    * @return Tuple of args
    */
@@ -165,8 +162,7 @@ class variable_adapter {
   size_t size() const { return size_; }
 
   /**
-   * Index the variable_adapter. Elements are returned by reference, so can
-   * be modified
+   * Reference the elements of the variable_adapter
    *
    * @param i index into adapter
    * @return Reference to the ith T in args_
@@ -181,8 +177,8 @@ class variable_adapter {
 };
 
 /**
- * make_variable_adapter makes it easy to construct a variable_adapter
- * variable (template arguments are determined automatically)
+ * Construct a variable_adapter targetting type T from a variadic list of
+ * arguments
  *
  * @tparam T Type of variable to index in args
  * @tparam Targs Types of input arguments

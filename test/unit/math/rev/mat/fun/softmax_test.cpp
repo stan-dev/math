@@ -2,7 +2,17 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <test/unit/math/rev/mat/util/test_autodiff.hpp>
 #include <vector>
+
+TEST(AgradRevMatrix, softmax_test_autodiff) {
+  auto sum_functor = [](auto a) { return stan::math::sum(a); };
+  Eigen::VectorXd d(6);
+
+  d << 1, 2, 3, 4, 5, 6;
+
+  stan::math::test::test_autodiff(sum_functor, 1e-9, 1e-9, d);
+}
 
 TEST(AgradRevMatrix, softmax) {
   using Eigen::Dynamic;

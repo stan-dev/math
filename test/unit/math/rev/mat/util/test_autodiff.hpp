@@ -40,43 +40,6 @@ bool is_near(double x1, double x2, double relative_tolerance = 1e-9,
   }
 }
 
-class exception_not_thrown : public std::exception {};
-
-/**
- * expect_exception calls f with args checks, to the best of its ability, that
- * the function throws an exception of type E
- *
- * @tparam F Type of functor f
- * @tparam E Type of exception to catch
- * @tparam Targs Types of arguments to pass to f
- * @param f Functor to test
- * @param e Exception that was previously caught
- * @param args Arguments to call f with
- */
-template <typename F, typename E, typename... Targs>
-void expect_exception(F f, const E& e, const Targs&... args) {
-  try {
-    f(args...);
-    throw exception_not_thrown();
-  } catch (const exception_not_thrown&) {
-    std::stringstream s;
-    s << "prim version of function threw with message: \"" << e.what()
-      << "\" but var version threw nothing";
-    throw std::runtime_error(s.str());
-  } catch (const E&) {
-  } catch (const std::exception& e2) {
-    std::stringstream s;
-    s << "prim version of function threw: \"" << e.what()
-      << "\" but var version threw different error: \"" << e2.what() << "\"";
-    throw std::runtime_error(s.str());
-  } catch (...) {
-    std::stringstream s;
-    s << "prim version of function threw: \"" << e.what()
-      << "\" but var version threw different error";
-    throw std::runtime_error(s.str());
-  }
-}
-
 /**
  * Return an easy to read string describing the type of x
  *
@@ -120,98 +83,74 @@ std::string type_as_string(const std::vector<T>&) {
 }
 
 /**
- * Test that the functor f called with the arguments args (which may contain
- * vars)
- *
- * 1. Throws the same exceptions as f called with args cast to non-autodiff
- * types. WARNING: This check isn't perfect. It is possible that the
- * non-autodiff and autodiff versions of this function throw different
- * exceptions and this check fails. If exception behavior is critical, use
- * different tests
- * 2. Produces the same values as f called with args cast to non-autodiff types
- * 3. Can produce the same Jacobian (to a tolerance) as one computed via finite
- * differences with the version of f called with non-autodiff args
- *
- * If no variable in args is a var or has a var as a scalar type, this testing
- * is skipped.
+ * Checks that f called with args and f called with args cast to
+ * non-autodiff types either both throw exceptions or both do not.
+ * This does not check that exceptions are of the same type
  *
  * @tparam F Type of functor f
  * @tparam Targs Types of arguments to pass to f
  * @param f Functor to test
  * @param args Arguments to call f with
  * @throw runtime_error if exceptions do not match
- * @throw runtime_error if values do not match
- * @throw runtime_error if gradients do not match
  */
 template <typename F, typename... Targs>
-void test_var(F f, double dx, const Targs&... args) {
-  start_nested();
-
+void test_exceptions(F f, const Targs&... args) {
   auto fd = [&f](auto... args) { return f(value_of(args)...); };
-  auto input = make_variable_adapter<var>(args...);
-
-  if (input.size() == 0) {
-    return;
-  }
-
-  bool no_exceptions = false;
+  std::stringstream s;
 
   try {
+    fd(args...);
     try {
-      fd(args...);
-      throw exception_not_thrown();
-    } catch (const std::domain_error& e) {
-      expect_exception(f, e, args...);
-    } catch (const std::invalid_argument& e) {
-      expect_exception(f, e, args...);
-    } catch (const std::out_of_range& e) {
-      expect_exception(f, e, args...);
-    } catch (const std::system_error& e) {
-      expect_exception(f, e, args...);
-    } catch (const std::runtime_error& e) {
-      expect_exception(f, e, args...);
-    } catch (const std::logic_error& e) {
-      expect_exception(f, e, args...);
-    } catch (const exception_not_thrown& e) {
-      try {
-        f(args...);
-        no_exceptions = true;
-      } catch (const std::exception& e2) {
-        std::stringstream s;
-        s << "prim version of function threw no exception but var version "
-             "threw: "
-          << e2.what();
-        throw std::runtime_error(s.str());
-      } catch (...) {
-        throw std::runtime_error(
-            "prim version of function threw no exception but var version threw "
-            "unknown exception");
-      }
-    } catch (const std::exception& e) {
-      expect_exception(f, e, args...);
+      f(args...);
+    } catch (const std::exception& e2) {
+      s << "prim version of function threw no exception but var version "
+           "threw: \""
+        << e2.what() << "\"";
     } catch (...) {
-      try {
-        f(args...);
-        throw exception_not_thrown();
-      } catch (const exception_not_thrown&) {
-        std::stringstream s;
-        s << "prim version of function threw unknown exception but var version "
-             "threw nothing";
-        throw std::runtime_error(s.str());
-      } catch (...) {
-      }
+      s << "prim version of function threw no exception but var version threw "
+           "unknown exception";
     }
-
-    if (!no_exceptions) {
-      return;
+  } catch (const std::exception& e) {
+    try {
+      f(args...);
+      s << "prim version of function threw with message: \"" << e.what()
+        << "\" but var version threw nothing";
+    } catch (...) {
     }
-
-    auto output = make_variable_adapter<var>(apply(f, input.get_args()));
-
-    if (output.size() == 0) {
-      throw std::runtime_error("The function produced no output");
+  } catch (...) {
+    try {
+      f(args...);
+      s << "prim version of function threw unknown exception but var version "
+           "threw nothing";
+    } catch (...) {
     }
+  }
 
+  std::string error_msg = s.str();
+  if (error_msg.size() > 0)
+    throw std::runtime_error(error_msg);
+}
+
+/**
+ * Checks that the values of the output of f called with args called with
+ * args cast to non-autodiff types are the same.
+ *
+ * @tparam F Type of functor f
+ * @tparam Targs Types of arguments to pass to f
+ * @param f Functor to test
+ * @param relative_tolerance Relative tolerance for comparisons
+ * @param absolute_tolerance Absolute tolerance for comparisons
+ * @param args Arguments to call f with
+ * @throw runtime_error if values do not match
+ */
+template <typename F, typename... Targs>
+void test_values(F f, double relative_tolerance, double absolute_tolerance,
+                 const Targs&... args) {
+  auto fd = [&f](auto... args) { return f(value_of(args)...); };
+  auto input = make_variable_adapter<var>(args...);
+  auto output = make_variable_adapter<var>(apply(f, input.get_args()));
+
+  if (output.size() > 0) {
     auto output_double
         = make_variable_adapter<double>(apply(fd, input.get_args()));
 
@@ -222,7 +161,8 @@ void test_var(F f, double dx, const Targs&... args) {
     }
 
     for (size_t i = 0; i < output.size(); ++i) {
-      if (!is_near(output_double(i), value_of(output(i)))) {
+      if (!is_near(output_double(i), value_of(output(i)), relative_tolerance,
+                   absolute_tolerance)) {
         std::stringstream s;
         s << "The " << i << "th output element from the non-autodiff call ("
           << output_double(i)
@@ -231,6 +171,32 @@ void test_var(F f, double dx, const Targs&... args) {
         throw std::runtime_error(s.str());
       }
     }
+  }
+}
+
+/**
+ * Checks that the Jacobian of f computed with autodiff
+ * is the same (within tolerance) of the Jacobian of f computed
+ * with finite differences
+ *
+ * @tparam F Type of functor f
+ * @tparam Targs Types of arguments to pass to f
+ * @param f Functor to test
+ * @param dx Finite difference delta
+ * @param relative_tolerance Relative tolerance for comparisons
+ * @param absolute_tolerance Absolute tolerance for comparisons
+ * @param args Arguments to call f with
+ * @throw runtime_error if gradients do not match to within tolerance
+ */
+template <typename F, typename... Targs>
+void test_gradients(F f, double dx, double relative_tolerance,
+                    double absolute_tolerance, const Targs&... args) {
+  start_nested();
+
+  try {
+    auto fd = [&f](auto... args) { return f(value_of(args)...); };
+    auto input = make_variable_adapter<var>(args...);
+    auto output = make_variable_adapter<var>(apply(f, input.get_args()));
 
     Eigen::MatrixXd fd_jac(output.size(), input.size());
     for (size_t j = 0; j < input.size(); ++j) {
@@ -248,32 +214,79 @@ void test_var(F f, double dx, const Targs&... args) {
 
     Eigen::MatrixXd var_jac(output.size(), input.size());
     for (size_t i = 0; i < output.size(); ++i) {
+      // This needs to be set_zero_all_adjoints and not set_zero_adjoints_nested
+      // because the input vars are created outside this nesting level
+      set_zero_all_adjoints();
+
       output(i).grad();
 
       for (size_t j = 0; j < input.size(); ++j) {
         var_jac(i, j) = input(j).adj();
       }
-
-      set_zero_all_adjoints();
     }
 
     for (int i = 0; i < fd_jac.rows(); ++i) {
       for (int j = 0; j < fd_jac.cols(); ++j) {
-        if (!is_near(fd_jac(i, j), var_jac(i, j), dx * dx * 1e2)) {
+        if (!is_near(fd_jac(i, j), var_jac(i, j), relative_tolerance,
+                     absolute_tolerance)) {
           std::stringstream s;
           s << "The (" << i << ", " << j
             << ")th Jacobian element of the finite difference approximation ("
             << fd_jac(i, j)
-            << ") does not match the one from the reverse mode calcluation ("
+            << ") does not match the one from the reverse mode calculation ("
             << var_jac(i, j) << ")" << std::endl;
           throw std::runtime_error(s.str());
         }
       }
     }
+  } catch (...) {
+    recover_memory_nested();
+
+    throw;
+  }
+
+  recover_memory_nested();
+}
+
+/**
+ * Test that the functor f called with the arguments args (which may contain
+ * vars)
+ *
+ * 1. Throws exceptions at the same time as the matching non-autodiff call
+ * 2. Produces the same output as the matching non-autodiff call
+ * 3. Can produce the same Jacobian (to a tolerance) as one computed via finite
+ * differences with the matching non-autodiff f
+ *
+ * If nothing in args is a var this testing is skipped.
+ *
+ * @tparam F Type of functor f
+ * @tparam Targs Types of arguments to pass to f
+ * @param f Functor to test
+ * @param dx Finite difference delta
+ * @param relative_tolerance Relative tolerance for comparisons
+ * @param absolute_tolerance Absolute tolerance for comparisons
+ * @param args Arguments to call f with
+ * @throw runtime_error if exceptions do not match
+ * @throw runtime_error if values do not match
+ * @throw runtime_error if gradients do not match
+ */
+template <typename F, typename... Targs>
+void test_var(F f, double dx, double relative_tolerance,
+              double absolute_tolerance, const Targs&... args) {
+  auto input = make_variable_adapter<var>(args...);
+
+  if (input.size() == 0) {
+    return;
+  }
+
+  try {
+    test_exceptions(f, args...);
+    test_values(f, relative_tolerance, absolute_tolerance, args...);
+    test_gradients(f, dx, relative_tolerance, absolute_tolerance, args...);
   } catch (std::exception& e) {
     std::stringstream s;
     std::vector<std::string> argument_types = {{type_as_string(args)...}};
-    s << "Error testing gradients of f(";
+    s << "Error testing f(";
     for (int i = 0; i < argument_types.size(); ++i) {
       s << argument_types[i];
       if (i < argument_types.size() - 1) {
@@ -283,8 +296,6 @@ void test_var(F f, double dx, const Targs&... args) {
     s << ")" << std::endl << e.what();
     throw std::runtime_error(s.str());
   }
-
-  recover_memory_nested();
 }
 
 /**
@@ -303,17 +314,30 @@ void test_var(F f, double dx, const Targs&... args) {
  * @tparam F Type of Functor f
  * @tparam Targs Types of arguments of f
  * @param f Functor
+ * @param relative_tolerance Relative tolerance for comparisons
+ * @param absolute_tolerance Absolute tolerance for comparisons
  * @param args Arguments for f
  */
 template <typename F, typename... Targs>
-void test_autodiff(F f, const Targs&... args) {
-  call_all_argument_combos(
-      [&f](auto... args) {
-        test_var(f, 1e-4, args...);
-        return 0;
-      },
-      std::tuple_cat(std::make_tuple(args),
-                     promote_double_to_T<var>(std::make_tuple(args)))...);
+void test_autodiff(F f, double relative_tolerance, double absolute_tolerance,
+                   const Targs&... args) {
+  start_nested();
+
+  try {
+    call_all_argument_combos(
+        [&](auto... args) {
+          test_var(f, 1e-4, relative_tolerance, absolute_tolerance, args...);
+          return 0;
+        },
+        std::tuple_cat(std::make_tuple(args),
+                       promote_double_to<var>(std::make_tuple(args)))...);
+  } catch (...) {
+    recover_memory_nested();
+
+    throw;
+  }
+
+  recover_memory_nested();
 }
 
 }  // namespace test

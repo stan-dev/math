@@ -2,6 +2,31 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <test/unit/math/rev/mat/util/test_autodiff.hpp>
+
+TEST(AgradRevMatrix, dot_product_vector_vector_test_autodiff) {
+  auto dot_product_functor
+      = [](auto... args) { return stan::math::dot_product(args...); };
+  Eigen::VectorXd d1(3), d2(3);
+
+  d1 << 1, 2, 3;
+  d2 << 4, 5, 6;
+
+  stan::math::test::test_autodiff(dot_product_functor, 1e-9, 1e-9, d1, d2);
+  stan::math::test::test_autodiff(dot_product_functor, 1e-9, 1e-9, d1, d1);
+}
+
+TEST(AgradRevMatrix, dot_product_row_vector_row_vector_test_autodiff) {
+  auto dot_product_functor
+      = [](auto... args) { return stan::math::dot_product(args...); };
+  Eigen::RowVectorXd d1(3), d2(3);
+
+  d1 << 1, 2, 3;
+  d2 << 4, 5, 6;
+
+  stan::math::test::test_autodiff(dot_product_functor, 1e-9, 1e-9, d1, d2);
+  stan::math::test::test_autodiff(dot_product_functor, 1e-9, 1e-9, d1, d1);
+}
 
 TEST(AgradRevMatrix, dot_product_vector_vector) {
   using stan::math::vector_d;

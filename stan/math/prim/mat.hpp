@@ -179,7 +179,7 @@
 #include <stan/math/prim/mat/fun/positive_ordered_constrain.hpp>
 #include <stan/math/prim/mat/fun/positive_ordered_free.hpp>
 #include <stan/math/prim/mat/fun/prod.hpp>
-#include <stan/math/prim/mat/fun/promote_double_to_T.hpp>
+#include <stan/math/prim/mat/fun/promote_double_to.hpp>
 #include <stan/math/prim/mat/fun/promote_common.hpp>
 #include <stan/math/prim/mat/fun/promote_elements.hpp>
 #include <stan/math/prim/mat/fun/promote_scalar.hpp>
