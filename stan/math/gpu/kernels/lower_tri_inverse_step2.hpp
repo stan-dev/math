@@ -24,10 +24,11 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
      *  This kernel uses the helper macros available in helpers.cl.
      */
     __kernel void lower_tri_inverse_step2(
-        __global read_only double* A,
-        __global write_only double* C, const read_only int M, const read_only int K, const read_only int temp_rows) {
+        __global read_only double* A, __global write_only double* C,
+        const read_only int M, const read_only int K,
+        const read_only int temp_rows) {
       int t = get_global_id(2);
-      int offset = t*temp_rows*2;
+      int offset = t * temp_rows * 2;
       // thread index inside the thread_block
       const int thread_block_row = get_local_id(0);
       const int thread_block_col = get_local_id(1);
@@ -55,13 +56,15 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
 
           A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                  [thread_block_row]
-              = A[(offset + temp_rows +tiled_j + w * THREAD_BLOCK_SIZE_COL) * M + offset + i + temp_rows];
+              = A[(offset + temp_rows + tiled_j + w * THREAD_BLOCK_SIZE_COL) * M
+                  + offset + i + temp_rows];
 
           B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                  [thread_block_row]
-              = A[(offset+ j + w * THREAD_BLOCK_SIZE_COL) * M + tiled_i + temp_rows + offset];
+              = A[(offset + j + w * THREAD_BLOCK_SIZE_COL) * M + tiled_i
+                  + temp_rows + offset];
         }
-        
+
         // wait until all tile values are loaded to the local memory
         barrier(CLK_LOCAL_MEM_FENCE);
         for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE; block_ind++) {
@@ -76,7 +79,9 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
       // save the values
       for (int w = 0; w < WORK_PER_THREAD; w++) {
         // each thread saves WORK_PER_THREAD values
-        C[t*temp_rows*temp_rows+(j + w * THREAD_BLOCK_SIZE_COL) * temp_rows + i] = acc[w];        
+        C[t * temp_rows * temp_rows
+          + (j + w * THREAD_BLOCK_SIZE_COL) * temp_rows + i]
+            = acc[w];
       }
     }
     // \cond
@@ -87,8 +92,10 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
  * See the docs for \link kernels/matrix_multiply.hpp add() \endlink
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, int, int, int>
-    lower_tri_inverse_step2("lower_tri_inverse_step2", lower_tri_inverse_step2_kernel_code,
-    {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
+    lower_tri_inverse_step2("lower_tri_inverse_step2",
+                            lower_tri_inverse_step2_kernel_code,
+                            {{"THREAD_BLOCK_SIZE", 32},
+                             {"WORK_PER_THREAD", 8}});
 
 }  // namespace opencl_kernels
 }  // namespace math

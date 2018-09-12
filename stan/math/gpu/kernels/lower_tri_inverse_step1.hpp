@@ -11,7 +11,7 @@ namespace opencl_kernels {
 const char* lower_tri_inverse_step1_kernel_code = STRINGIFY(
     // \endcond
     /**
-     * Calculates 
+     * Calculates
      *
      * @param[in,out] A The identity matrix output.
      * @param rows The number of rows for A.
@@ -21,47 +21,45 @@ const char* lower_tri_inverse_step1_kernel_code = STRINGIFY(
      *  Used in math/gpu/identity_opencl.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void lower_tri_inverse_step1(
-        __global double* A,
-        __global double* V,
-        int rows) {
+    __kernel void lower_tri_inverse_step1(__global double* A,
+                                          __global double* V, int rows) {
       int index = get_local_id(0);
       int group = get_group_id(0);
       int block_size = get_local_size(0);
-      int offset = group*block_size;
-      //__local double V[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];      
+      int offset = group * block_size;
       int i = index;
-      for(int j=0;j<block_size;j++){
-        if(i==j){
-            V[group*block_size*block_size+j*block_size + i] = 1.0;
-        }else{
-            V[group*block_size*block_size+j*block_size + i] = 0.0;
+      for (int j = 0; j < block_size; j++) {
+        if (i == j) {
+          V[group * block_size * block_size + j * block_size + i] = 1.0;
+        } else {
+          V[group * block_size * block_size + j * block_size + i] = 0.0;
         }
       }
       barrier(CLK_LOCAL_MEM_FENCE);
-      for(int k=0;k<block_size;k++){
-        
-        double factor = A(offset+k,offset+k); 
+      for (int k = 0; k < block_size; k++) {
+        double factor = A(offset + k, offset + k);
         int j = index;
         if (j <= k) {
-            V[group*block_size*block_size+j*block_size + k] /= factor;
+          V[group * block_size * block_size + j * block_size + k] /= factor;
         }
         barrier(CLK_LOCAL_MEM_FENCE);
-        for(int i=k+1;i<block_size;i++){
-            factor = A(offset+i,offset+k);
-            j = index;
-            if (j < i) {
-                V[group*block_size*block_size+j*block_size + i] -= V[group*block_size*block_size+j*block_size + k]*factor;
-            }
-        }        
+        for (int i = k + 1; i < block_size; i++) {
+          factor = A(offset + i, offset + k);
+          j = index;
+          if (j < i) {
+            V[group * block_size * block_size + j * block_size + i]
+                -= V[group * block_size * block_size + j * block_size + k]
+                   * factor;
+          }
+        }
         barrier(CLK_LOCAL_MEM_FENCE);
       }
       barrier(CLK_LOCAL_MEM_FENCE);
       i = index;
-      for(int j=0;j<block_size;j++){
-        A(offset+i,offset+j) = V[group*block_size*block_size+j*block_size + i];
+      for (int j = 0; j < block_size; j++) {
+        A(offset + i, offset + j)
+            = V[group * block_size * block_size + j * block_size + i];
       }
-      
     }
     // \cond
 );
@@ -70,8 +68,8 @@ const char* lower_tri_inverse_step1_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/matrix_multiply.hpp add() \endlink
  */
-const local_range_kernel<cl::Buffer, cl::Buffer, int>
-    lower_tri_inverse_step1("lower_tri_inverse_step1", lower_tri_inverse_step1_kernel_code,
+const local_range_kernel<cl::Buffer, cl::Buffer, int> lower_tri_inverse_step1(
+    "lower_tri_inverse_step1", lower_tri_inverse_step1_kernel_code,
     {{"THREAD_BLOCK_SIZE", 32}});
 
 }  // namespace opencl_kernels

@@ -22,7 +22,8 @@ TEST(MathMatrixGPU, inverse_gpu_exception) {
 
 TEST(MathMatrixGPU, inverse_gpu_small) {
   auto m1 = stan::math::matrix_d::Random(3, 3).eval();
-  m1.triangularView<Eigen::StrictlyUpper>() = stan::math::matrix_d::Zero(3, 3).eval();
+  m1.triangularView<Eigen::StrictlyUpper>()
+      = stan::math::matrix_d::Zero(3, 3).eval();
 
   stan::math::matrix_d m1_cpu(3, 3);
   stan::math::matrix_d m1_cl(3, 3);
@@ -42,31 +43,30 @@ TEST(MathMatrixGPU, inverse_gpu_big) {
   int size = 1024;
   boost::random::mt19937 rng;
   auto m1 = stan::math::matrix_d(size, size);
-  for(int i = 0; i < size; i++){
-	for(int j = 0;j <= i; j++){
-		m1(i, j) = stan::math::uniform_rng(-5, 5, rng);
-	}
-	for(int j = i+1;j < size; j++){
-		m1(i, j) = 0.0;
-	}
+  for (int i = 0; i < size; i++) {
+    for (int j = 0; j <= i; j++) {
+      m1(i, j) = stan::math::uniform_rng(-5, 5, rng);
+    }
+    for (int j = i + 1; j < size; j++) {
+      m1(i, j) = 0.0;
+    }
   }
   stan::math::matrix_d m1_cpu(size, size);
   stan::math::matrix_d m1_cl(size, size);
-  
+
   m1_cpu = stan::math::mdivide_left_tri<Eigen::Lower>(m1).eval();
-  
-  stan::math::matrix_gpu m2(m1);  
+
+  stan::math::matrix_gpu m2(m1);
   auto m3 = stan::math::lower_triangular_inverse(m2);
   stan::math::copy(m1_cl, m3);
-  double max_error=0;  
-  for(int i = 0; i < size; i++){
-    for(int j = 0;j <= i; j++){
+  double max_error = 0;
+  for (int i = 0; i < size; i++) {
+    for (int j = 0; j <= i; j++) {
       double abs_err = abs(m1_cpu(i, j) - m1_cl(i, j));
-      double a = std::max(abs_err/m1_cpu(i, j), abs_err/m1_cl(i, j));
+      double a = std::max(abs_err / m1_cpu(i, j), abs_err / m1_cl(i, j));
       max_error = std::max(max_error, a);
     }
   }
   EXPECT_LT(max_error, 1e-10);
-    
 }
 #endif
