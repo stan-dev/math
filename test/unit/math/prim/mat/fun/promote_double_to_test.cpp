@@ -20,8 +20,7 @@ TEST(MathFunctions, promote_double_to_double) {
 }
 
 TEST(MathFunctions, promote_double_to_mix) {
-  auto y1
-      = stan::math::promote_double_to<float>(std::make_tuple(1.0, 2, 3.0));
+  auto y1 = stan::math::promote_double_to<float>(std::make_tuple(1.0, 2, 3.0));
   auto y2 = stan::math::promote_double_to<float>(std::make_tuple(1.0, 2));
   EXPECT_TRUE((std::is_same<std::tuple<float, float>, decltype(y1)>::value));
   EXPECT_TRUE((std::is_same<std::tuple<float>, decltype(y2)>::value));
@@ -55,8 +54,7 @@ TEST(MathFunctions, promote_double_to_std_vector_mix) {
   std::vector<int> xi = {{1, 2}};
   std::vector<double> xd1 = {{3.0, 4.0}};
   std::vector<double> xd2 = {{5.0, 6.0}};
-  auto y1
-      = stan::math::promote_double_to<float>(std::make_tuple(xd1, xi, xd2));
+  auto y1 = stan::math::promote_double_to<float>(std::make_tuple(xd1, xi, xd2));
   auto y2 = stan::math::promote_double_to<float>(std::make_tuple(xd1, xi));
   EXPECT_TRUE((std::is_same<std::tuple<std::vector<float>, std::vector<float> >,
                             decltype(y1)>::value));
