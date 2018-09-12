@@ -28,7 +28,10 @@ namespace math {
 inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
   check_square("lower_triangular_inverse (GPU)", "A", A);
 
-  int thread_block_size_1D = 32;
+  int thread_block_size_1D = 128;
+  if (A.rows() < 512) {
+    thread_block_size_1D = 64;
+  }
   int thread_block_2D_dim = 32;
   int A_rows_padded
       = ((A.rows() + thread_block_2D_dim - 1) / thread_block_2D_dim)
@@ -92,7 +95,7 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
         cl::NDRange(rows, result_matrix_dim / wpt, 1),
         cl::NDRange(thread_block_2D_dim, thread_block_2D_dim / wpt, 1),
         inv_padded.buffer(), temp.buffer(), inv_padded.rows(),
-        thread_block_2D_dim, result_matrix_dim);
+        rows, result_matrix_dim);
     opencl_kernels::lower_tri_inverse_step3(
         cl::NDRange(rows, result_matrix_dim / wpt, 1),
         cl::NDRange(thread_block_2D_dim, thread_block_2D_dim / wpt, 1),
