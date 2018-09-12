@@ -28,18 +28,21 @@ namespace math {
 inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
   check_square("lower_triangular_inverse (GPU)", "A", A);
 
-  int thread_block_size_1D = 128;
-  if (A.rows() < 512) {
-    thread_block_size_1D = 64;
+  int thread_block_size_1D = 256;
+  if (A.rows() <= 512) {
+    thread_block_size_1D = 32;
   }
   int thread_block_2D_dim = 32;
   int A_rows_padded
-      = ((A.rows() + thread_block_2D_dim - 1) / thread_block_2D_dim)
-        * thread_block_2D_dim;
+      = ((A.rows() + thread_block_size_1D - 1) / thread_block_size_1D)
+        * thread_block_size_1D;
 
   matrix_gpu temp(A_rows_padded, A_rows_padded);
   matrix_gpu inv_padded(A_rows_padded, A_rows_padded);
   matrix_gpu inv(A);
+  matrix_gpu zeros(A_rows_padded - A.rows(), A_rows_padded);
+  zeros.zeros<stan::math::TriangularViewGPU::Entire>();
+  temp.zeros<stan::math::TriangularViewGPU::Entire>();
   inv_padded.zeros<stan::math::TriangularViewGPU::Entire>();
 
   int max_1D_thread_block_size = opencl_context.max_thread_block_size();
@@ -47,8 +50,8 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
   if (max_1D_thread_block_size < thread_block_size_1D) {
     thread_block_size_1D = max_1D_thread_block_size;
   }
-  if (inv_padded.rows() < thread_block_size_1D) {
-    thread_block_size_1D = inv_padded.rows();
+  if (inv.rows() < thread_block_size_1D) {
+    thread_block_size_1D = inv.rows();
   }
   if (max_2D_thread_block_dim < thread_block_2D_dim) {
     thread_block_2D_dim = max_2D_thread_block_dim;
@@ -56,8 +59,7 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
 
   int wpt = opencl_kernels::lower_tri_inverse_step2.make_functor.get_opts().at(
       "WORK_PER_THREAD");
-  int parts
-      = (inv_padded.rows() + thread_block_size_1D - 1) / thread_block_size_1D;
+  int parts = (inv.rows() + thread_block_size_1D - 1) / thread_block_size_1D;
   try {
     opencl_kernels::lower_tri_inverse_step1(
         cl::NDRange(parts * thread_block_size_1D),
@@ -66,41 +68,35 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
   } catch (cl::Error& e) {
     check_opencl_error("inverse step1", e);
   }
-  parts /= 2;
-  if (parts == 0) {
+  if (parts == 1) {
     return inv;
   }
+  parts = ceil(parts / 2.0);
   inv_padded.sub_block(inv, 0, 0, 0, 0, inv.rows(), inv.rows());
-
+  inv_padded.sub_block(zeros, 0, 0, inv.rows(), 0, zeros.rows(), zeros.cols());
+  inv_padded.zeros<stan::math::TriangularViewGPU::Upper>();
   int result_matrix_dim = thread_block_size_1D;
   while (parts > 0) {
+    std::cout << parts << std::endl;
     opencl_kernels::lower_tri_inverse_step2(
         cl::NDRange(result_matrix_dim, result_matrix_dim / wpt, parts),
         cl::NDRange(thread_block_2D_dim, thread_block_2D_dim / wpt, 1),
         inv_padded.buffer(), temp.buffer(), inv_padded.rows(),
-        result_matrix_dim, result_matrix_dim);
+        result_matrix_dim, result_matrix_dim, inv.rows());
     opencl_kernels::lower_tri_inverse_step3(
         cl::NDRange(result_matrix_dim, result_matrix_dim / wpt, parts),
         cl::NDRange(thread_block_2D_dim, thread_block_2D_dim / wpt, 1),
         inv_padded.buffer(), temp.buffer(), inv_padded.rows(),
-        result_matrix_dim, result_matrix_dim);
-    parts /= 2;
+        result_matrix_dim, result_matrix_dim, inv.rows());
+    if (parts == 1) {
+      parts = 0;
+    } else {
+      parts = ceil(parts / 2.0);
+    }
     result_matrix_dim *= 2;
-  }
-  int rows = inv_padded.rows() - result_matrix_dim;
-  // for cases where the number of rows is not power of 2
-  // we have to calculate the remainder
-  if (rows > 0) {
-    opencl_kernels::lower_tri_inverse_step2(
-        cl::NDRange(rows, result_matrix_dim / wpt, 1),
-        cl::NDRange(thread_block_2D_dim, thread_block_2D_dim / wpt, 1),
-        inv_padded.buffer(), temp.buffer(), inv_padded.rows(),
-        rows, result_matrix_dim);
-    opencl_kernels::lower_tri_inverse_step3(
-        cl::NDRange(rows, result_matrix_dim / wpt, 1),
-        cl::NDRange(thread_block_2D_dim, thread_block_2D_dim / wpt, 1),
-        inv_padded.buffer(), temp.buffer(), inv_padded.rows(),
-        result_matrix_dim, result_matrix_dim);
+    inv_padded.sub_block(zeros, 0, 0, inv.rows(), 0, zeros.rows(),
+                         zeros.cols());
+    inv_padded.zeros<stan::math::TriangularViewGPU::Upper>();
   }
   inv.sub_block(inv_padded, 0, 0, 0, 0, A.rows(), A.rows());
   return inv;

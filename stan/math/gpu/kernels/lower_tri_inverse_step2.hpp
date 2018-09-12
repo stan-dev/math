@@ -26,7 +26,7 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
     __kernel void lower_tri_inverse_step2(
         __global read_only double* A, __global write_only double* C,
         const read_only int M, const read_only int K,
-        const read_only int temp_rows) {
+        const read_only int temp_rows, int non_padded_rows) {
       int t = get_global_id(2);
       int offset = t * temp_rows * 2;
       // thread index inside the thread_block
@@ -53,18 +53,28 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
         for (int w = 0; w < WORK_PER_THREAD; w++) {
           const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
           const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
-
-          A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                 [thread_block_row]
-              = A[(offset + temp_rows + tiled_j + w * THREAD_BLOCK_SIZE_COL) * M
-                  + offset + i + temp_rows];
-
-          B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                 [thread_block_row]
-              = A[(offset + j + w * THREAD_BLOCK_SIZE_COL) * M + tiled_i
-                  + temp_rows + offset];
+           if ((offset + temp_rows + tiled_j + w * THREAD_BLOCK_SIZE_COL) <= (offset + i + temp_rows)) {
+            A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                  [thread_block_row]
+                = A[(offset + temp_rows + tiled_j + w * THREAD_BLOCK_SIZE_COL) * M
+                    + offset + i + temp_rows];
+          } else {
+            A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                  [thread_block_row]
+                = 0;
+          }
+          if (((tiled_i + temp_rows + offset) < non_padded_rows) && ((offset + j + w * THREAD_BLOCK_SIZE_COL) <= (tiled_i
+                    + temp_rows + offset))) {
+            B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                   [thread_block_row]
+                = A[(offset + j + w * THREAD_BLOCK_SIZE_COL) * M + tiled_i
+                    + temp_rows + offset];
+          } else {
+            B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                   [thread_block_row]
+                = 0.0;
+          }
         }
-
         // wait until all tile values are loaded to the local memory
         barrier(CLK_LOCAL_MEM_FENCE);
         for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE; block_ind++) {
@@ -79,9 +89,15 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
       // save the values
       for (int w = 0; w < WORK_PER_THREAD; w++) {
         // each thread saves WORK_PER_THREAD values
-        C[t * temp_rows * temp_rows
-          + (j + w * THREAD_BLOCK_SIZE_COL) * temp_rows + i]
-            = acc[w];
+        if ((offset + i) < non_padded_rows) {
+          C[t * temp_rows * temp_rows
+            + (j + w * THREAD_BLOCK_SIZE_COL) * temp_rows + i]
+              = acc[w];
+        } else {
+          C[t * temp_rows * temp_rows
+            + (j + w * THREAD_BLOCK_SIZE_COL) * temp_rows + i]
+              = 0;
+        }
       }
     }
     // \cond
@@ -91,7 +107,7 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/matrix_multiply.hpp add() \endlink
  */
-const local_range_kernel<cl::Buffer, cl::Buffer, int, int, int>
+const local_range_kernel<cl::Buffer, cl::Buffer, int, int, int, int>
     lower_tri_inverse_step2("lower_tri_inverse_step2",
                             lower_tri_inverse_step2_kernel_code,
                             {{"THREAD_BLOCK_SIZE", 32},

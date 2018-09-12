@@ -40,13 +40,14 @@ TEST(MathMatrixGPU, inverse_gpu_small) {
 }
 
 TEST(MathMatrixGPU, inverse_gpu_big) {
-  int size = 512;
+  int size = 2000;
   boost::random::mt19937 rng;
   auto m1 = stan::math::matrix_d(size, size);
   for (int i = 0; i < size; i++) {
-    for (int j = 0; j <= i; j++) {
-      m1(i, j) = stan::math::uniform_rng(-2000, 2000, rng);
+    for (int j = 0; j < i; j++) {
+      m1(i, j) = stan::math::uniform_rng(-5, 5, rng);
     }
+    m1(i, i) = 10;
     for (int j = i + 1; j < size; j++) {
       m1(i, j) = 0.0;
     }
@@ -59,7 +60,6 @@ TEST(MathMatrixGPU, inverse_gpu_big) {
   stan::math::matrix_gpu m2(m1);
   auto m3 = stan::math::lower_triangular_inverse(m2);
   stan::math::copy(m1_cl, m3);
-
   double max_error = 0;
   for (int i = 0; i < size; i++) {
     for (int j = 0; j <= i; j++) {
@@ -68,6 +68,7 @@ TEST(MathMatrixGPU, inverse_gpu_big) {
       max_error = std::max(max_error, a);
     }
   }
-  EXPECT_LT(max_error, 1e-10);
+  EXPECT_LT(max_error, 1e-8);
 }
 #endif
+
