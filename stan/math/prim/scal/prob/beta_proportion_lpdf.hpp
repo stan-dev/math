@@ -38,9 +38,9 @@ namespace math {
  * Prior location, mu, must be contained in (0, 1).  Prior precision
  * must be positive.
  *
- * @param y (Sequence of) scalar(s).
- * @param mu (Sequence of) prior location(s).
- * @param kappa (Sequence of) prior precision(s).
+ * @param y (Sequence of) scalar(s) between zero and one
+ * @param mu (Sequence of) location parameter(s)
+ * @param kappa (Sequence of) precision parameter(s)
  * @return The log of the product of densities.
  * @tparam T_y Type of scalar outcome.
  * @tparam T_loc Type of prior location.

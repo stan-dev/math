@@ -34,13 +34,13 @@ namespace math {
  * the same size.  With non-scalar arguments, the return is the sum of
  * the log cdfs with scalars broadcast as necessary.
  *
- * @tparam T_y type of probability parameter
+ * @tparam T_y type of y
  * @tparam T_loc type of location parameter
  * @tparam T_prec type of precision parameter
- * @param y probability parameter
- * @param mu location parameter
- * @param kappa precision parameter
- * @return log probability or log sum of probabilities
+ * @param y (Sequence of) scalar(s) between zero and one
+ * @param mu (Sequence of) location parameter(s)
+ * @param kappa (Sequence of) precision parameter(s)
+ * @return log probability or sum of log of probabilities
  * @throw std::domain_error if mu is outside of (0, 1)
  * @throw std::domain_error if kappa is nonpositive
  * @throw std::domain_error if y is not a valid probability
