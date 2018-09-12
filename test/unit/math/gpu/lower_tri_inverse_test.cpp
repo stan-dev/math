@@ -40,7 +40,7 @@ TEST(MathMatrixGPU, inverse_gpu_small) {
 }
 
 TEST(MathMatrixGPU, inverse_gpu_big) {
-  int size = 1024;
+  int size = 1000;
   boost::random::mt19937 rng;
   auto m1 = stan::math::matrix_d(size, size);
   for (int i = 0; i < size; i++) {

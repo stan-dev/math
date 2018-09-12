@@ -70,7 +70,7 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
   inv_padded.sub_block(inv, 0, 0, 0, 0, inv.rows(), inv.rows());
 
   int result_matrix_dim = thread_block_size_1D;
-  while (parts > 1) {
+  while (parts > 0) {
     opencl_kernels::lower_tri_inverse_step2(
         cl::NDRange(result_matrix_dim, result_matrix_dim / wpt, parts),
         cl::NDRange(thread_block_2D_dim, thread_block_2D_dim / wpt, 1),
@@ -84,18 +84,21 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
     parts /= 2;
     result_matrix_dim *= 2;
   }
-  opencl_kernels::lower_tri_inverse_step2(
-      cl::NDRange(inv.rows() - result_matrix_dim, result_matrix_dim / wpt,
-                  parts),
-      cl::NDRange(thread_block_2D_dim, thread_block_2D_dim / wpt, 1),
-      inv_padded.buffer(), temp.buffer(), inv_padded.rows(),
-      inv.rows() - result_matrix_dim, result_matrix_dim);
-  opencl_kernels::lower_tri_inverse_step3(
-      cl::NDRange(inv.rows() - result_matrix_dim, result_matrix_dim / wpt,
-                  parts),
-      cl::NDRange(thread_block_2D_dim, thread_block_2D_dim / wpt, 1),
-      inv_padded.buffer(), temp.buffer(), inv_padded.rows(), result_matrix_dim,
-      result_matrix_dim);
+  int rows = inv_padded.rows() - result_matrix_dim;
+  // for cases where the number of rows is not power of 2
+  // we have to calculate the remainder
+  if (rows > 0) {
+    opencl_kernels::lower_tri_inverse_step2(
+        cl::NDRange(rows, result_matrix_dim / wpt, 1),
+        cl::NDRange(thread_block_2D_dim, thread_block_2D_dim / wpt, 1),
+        inv_padded.buffer(), temp.buffer(), inv_padded.rows(),
+        thread_block_2D_dim, result_matrix_dim);
+    opencl_kernels::lower_tri_inverse_step3(
+        cl::NDRange(rows, result_matrix_dim / wpt, 1),
+        cl::NDRange(thread_block_2D_dim, thread_block_2D_dim / wpt, 1),
+        inv_padded.buffer(), temp.buffer(), inv_padded.rows(),
+        result_matrix_dim, result_matrix_dim);
+  }
   inv.sub_block(inv_padded, 0, 0, 0, 0, A.rows(), A.rows());
   return inv;
 }
