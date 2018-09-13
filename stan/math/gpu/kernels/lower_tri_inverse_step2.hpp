@@ -55,7 +55,9 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
           const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
           const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
           if ((offset + temp_rows + tiled_j + w * THREAD_BLOCK_SIZE_COL)
-              <= (offset + i + temp_rows)) {
+                  <= (offset + i + temp_rows)
+              && (offset + temp_rows + tiled_j + w * THREAD_BLOCK_SIZE_COL) < non_padded_rows
+              && (offset + i + temp_rows) < non_padded_rows) {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
                 = A[(offset + temp_rows + tiled_j + w * THREAD_BLOCK_SIZE_COL)
@@ -68,7 +70,9 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
           }
           if (((tiled_i + temp_rows + offset) < non_padded_rows)
               && ((offset + j + w * THREAD_BLOCK_SIZE_COL)
-                  <= (tiled_i + temp_rows + offset))) {
+                  <= (tiled_i + temp_rows + offset))
+              && (offset + j + w * THREAD_BLOCK_SIZE_COL) < non_padded_rows
+              && (tiled_i + temp_rows + offset) < non_padded_rows) {
             B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
                 = A[(offset + j + w * THREAD_BLOCK_SIZE_COL) * M + tiled_i
@@ -93,15 +97,9 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
       // save the values
       for (int w = 0; w < WORK_PER_THREAD; w++) {
         // each thread saves WORK_PER_THREAD values
-        if ((offset + i) < non_padded_rows) {
           C[t * temp_rows * temp_rows
             + (j + w * THREAD_BLOCK_SIZE_COL) * temp_rows + i]
               = acc[w];
-        } else {
-          C[t * temp_rows * temp_rows
-            + (j + w * THREAD_BLOCK_SIZE_COL) * temp_rows + i]
-              = 0;
-        }
       }
     }
     // \cond

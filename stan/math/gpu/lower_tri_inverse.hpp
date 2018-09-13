@@ -30,7 +30,7 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
 
   int thread_block_size_1D = 256;
   if (A.rows() <= 512) {
-    thread_block_size_1D = 32;
+    thread_block_size_1D = 64;
   }
   int thread_block_2D_dim = 32;
   int A_rows_padded

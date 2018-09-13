@@ -54,11 +54,21 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
         for (int w = 0; w < WORK_PER_THREAD; w++) {
           const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
           const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
-          A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                 [thread_block_row]
-              = C[t * temp_rows * temp_rows
-                  + (tiled_j + w * THREAD_BLOCK_SIZE_COL) * temp_rows + i];
-          if ((offset + j + w * THREAD_BLOCK_SIZE_COL) <= (tiled_i + offset)) {
+
+          if ((tiled_j + w * THREAD_BLOCK_SIZE_COL)<temp_rows 
+              && (i)<temp_rows ) {
+              A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                    [thread_block_row]
+                  = C[t * temp_rows * temp_rows
+                      + (tiled_j + w * THREAD_BLOCK_SIZE_COL) * temp_rows + i];
+          } else {
+            A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                    [thread_block_row]
+                  = 0.0;
+          }
+          if ((offset + j + w * THREAD_BLOCK_SIZE_COL) <= (tiled_i + offset) 
+             && (offset + j + w * THREAD_BLOCK_SIZE_COL) < non_padded_rows
+             && (tiled_i + offset) < non_padded_rows) {
             B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
                 = A[(offset + j + w * THREAD_BLOCK_SIZE_COL) * M + tiled_i
@@ -83,7 +93,9 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
       // save the values
       for (int w = 0; w < WORK_PER_THREAD; w++) {
         // each thread saves WORK_PER_THREAD values
-        if ((i + temp_rows + offset) < non_padded_rows) {
+        if ((i + temp_rows + offset) < non_padded_rows
+            && (offset + j + w * THREAD_BLOCK_SIZE_COL) < M
+            && (i + temp_rows + offset) < M ) {
           A[(offset + j + w * THREAD_BLOCK_SIZE_COL) * M + i + temp_rows
             + offset]
               = -acc[w];
