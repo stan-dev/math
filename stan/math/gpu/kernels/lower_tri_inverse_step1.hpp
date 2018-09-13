@@ -11,14 +11,14 @@ namespace opencl_kernels {
 const char* lower_tri_inverse_step1_kernel_code = STRINGIFY(
     // \endcond
     /**
-     * Calculates
+     * Calculates the inverse with no blocking
      *
-     * @param[in,out] A The identity matrix output.
+     * @param[in,out] A The input matrix.
+     * @param[in, out] V A temporary matrix for storing partial calculations.
      * @param rows The number of rows for A.
-     * @param cols The number of cols for A.
      * @note Code is a <code>const char*</code> held in
-     * <code>identity_kernel_code.</code>
-     *  Used in math/gpu/identity_opencl.hpp.
+     * <code>lower_tri_inverse_step1_kernel_code.</code>
+     *  Used in math/gpu/lower_tri_inverse.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      */
     __kernel void lower_tri_inverse_step1(__global double* A,
@@ -66,7 +66,7 @@ const char* lower_tri_inverse_step1_kernel_code = STRINGIFY(
 // \endcond
 
 /**
- * See the docs for \link kernels/matrix_multiply.hpp add() \endlink
+ * See the docs for \link kernels/lower_tri_inverse_step1.hpp add() \endlink
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, int> lower_tri_inverse_step1(
     "lower_tri_inverse_step1", lower_tri_inverse_step1_kernel_code,

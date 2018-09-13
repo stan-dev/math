@@ -78,22 +78,22 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
   inv_padded.sub_block(zero_mat, 0, 0, inv_mat.rows(), 0, zero_mat.rows(),
                        zero_mat.cols());
   inv_padded.zeros<stan::math::TriangularViewGPU::Upper>();
-  int result_matrix_dim = thread_block_size_1D;
+  auto result_matrix_dim = thread_block_size_1D;
+  auto thread_block_work2d_dim = thread_block_2D_dim / work_per_thread;
+  auto ndrange_2d
+      = cl::NDRange(thread_block_2D_dim, thread_block_work2d_dim, 1);
   while (parts > 0) {
+    auto result_work_dim = result_matrix_dim / work_per_thread;
+    auto result_ndrange
+        = cl::NDRange(result_matrix_dim, result_work_dim, parts);
     opencl_kernels::lower_tri_inverse_step2(
-        cl::NDRange(result_matrix_dim, result_matrix_dim / work_per_thread,
-                    parts),
-        cl::NDRange(thread_block_2D_dim, thread_block_2D_dim / work_per_thread,
-                    1),
-        inv_padded.buffer(), temp.buffer(), inv_padded.rows(),
-        result_matrix_dim, result_matrix_dim, inv_mat.rows());
+        result_ndrange, ndrange_2d, inv_padded.buffer(), temp.buffer(),
+        inv_padded.rows(), result_matrix_dim, result_matrix_dim,
+        inv_mat.rows());
     opencl_kernels::lower_tri_inverse_step3(
-        cl::NDRange(result_matrix_dim, result_matrix_dim / work_per_thread,
-                    parts),
-        cl::NDRange(thread_block_2D_dim, thread_block_2D_dim / work_per_thread,
-                    1),
-        inv_padded.buffer(), temp.buffer(), inv_padded.rows(),
-        result_matrix_dim, result_matrix_dim, inv_mat.rows());
+        result_ndrange, ndrange_2d, inv_padded.buffer(), temp.buffer(),
+        inv_padded.rows(), result_matrix_dim, result_matrix_dim,
+        inv_mat.rows());
     if (parts == 1) {
       parts = 0;
     } else {

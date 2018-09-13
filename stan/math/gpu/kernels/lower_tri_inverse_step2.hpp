@@ -13,11 +13,12 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
     /**
      * Calculates the intermediate products in the lower_tri_inverse
      *
-     * @param[in] A input matrix that is being inverted
-     * @param[out] C temporary matrix to store the intermediate results
+     * @param[in] A input matrix that is being inverted.
+     * @param[out] C temporary matrix to store the intermediate results.
      * @param M The number of rows for A.
-     * @param K The number of elements to multiply
-     * @param temp_rows The number of rows in C
+     * @param K The number of elements to multiply.
+     * @param temp_rows The number of rows in C.
+     * @param non_padded_rows The number of rows that are not used for padding.
      * @note Code is a <code>const char*</code> held in
      * <code>lower_tri_inverse_step2_kernel_code.</code>
      *  Used in math/gpu/lower_tri_inverse.hpp.
