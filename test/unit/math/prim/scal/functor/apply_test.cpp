@@ -12,7 +12,7 @@ struct func {
 };
 
 TEST(MathFunctions, apply_basic_double) {
-  std::tuple<double> x = {1.0};
+  std::tuple<double> x = std::make_tuple(1.0);
 
   auto y = stan::math::apply(func{}, x);
 
@@ -21,7 +21,7 @@ TEST(MathFunctions, apply_basic_double) {
 }
 
 TEST(MathFunctions, apply_basic_int) {
-  std::tuple<int> x = {1};
+  std::tuple<int> x = std::make_tuple(1);
 
   auto y = stan::math::apply(func{}, x);
 
@@ -30,7 +30,7 @@ TEST(MathFunctions, apply_basic_int) {
 }
 
 TEST(MathFunctions, apply_const_double) {
-  const std::tuple<const double> x = {1.0};
+  const std::tuple<const double> x = std::make_tuple(1.0);
 
   auto y = stan::math::apply(func{}, x);
 
@@ -68,7 +68,7 @@ TEST(MathFunctions, apply_temporary_function_const_reference) {
 }
 
 TEST(MathFunctions, apply_temporary_function_return_reference) {
-  std::tuple<double> x = {1.0};
+  std::tuple<double> x = std::make_tuple(1.0);
 
   decltype(auto) y = stan::math::apply([](auto& x) -> auto& { return x; }, x);
 
@@ -77,7 +77,7 @@ TEST(MathFunctions, apply_temporary_function_return_reference) {
 }
 
 TEST(MathFunctions, apply_temporary_function_return_const_reference) {
-  std::tuple<double> x = {1.0};
+  std::tuple<double> x = std::make_tuple(1.0);
 
   decltype(auto) y
       = stan::math::apply([](const auto& x) -> const auto& { return x; }, x);
