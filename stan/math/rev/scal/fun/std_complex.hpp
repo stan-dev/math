@@ -143,11 +143,11 @@ inline bool operator!=(double x, const complex<stan::math::var>& y) {
   return y != x;
 }
 
-inline int isinf(const std::complex<stan::math::var>& a) {
+inline int isinf(const complex<stan::math::var>& a) {
   return stan::math::is_inf(a.real().val());
 }
 
-inline int isnan(const std::complex<stan::math::var>& a) {
+inline int isnan(const complex<stan::math::var>& a) {
   return stan::math::is_nan(a.real().val());
 }
 
@@ -164,8 +164,8 @@ inline complex<stan::math::var> conj(const complex<stan::math::var>& c) {
 template <>
 inline complex<stan::math::var> proj(const complex<stan::math::var>& c) {
   if (isinf(c.real()) || isinf(c.imag()))
-    return std::complex<stan::math::var>(stan::math::positive_infinity(),
-                                         copysign(0.0, c.imag().val()));
+    return complex<stan::math::var>(stan::math::positive_infinity(),
+                                    copysign(0.0, c.imag().val()));
   return c;
 }
 
