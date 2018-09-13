@@ -157,7 +157,7 @@ inline stan::math::var abs(const complex<stan::math::var>& c) {
   return stan::math::sqrt(norm(c));
 }
 
-template<>
+template <>
 inline complex<stan::math::var> exp(const complex<stan::math::var>& z) {
   stan::math::var exp_x = exp(z.real());
   return complex<stan::math::var>(exp_x * cos(z.imag()), exp_x * sin(z.imag()));
