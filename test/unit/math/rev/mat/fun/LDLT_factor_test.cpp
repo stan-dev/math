@@ -41,13 +41,19 @@ TEST(AgradRevMatrix, success) {
 
   Eigen::Matrix<var, -1, -1> A(2, 2);
   A << 0, 0, 0, 0;
-
-  LDLT_factor<var, -1, -1> ldlt_A(A);
+  LDLT_factor<var, -1, -1> ldlt_A;
+  EXPECT_THROW(ldlt_A.compute(A), std::domain_error);
   EXPECT_FALSE(ldlt_A.success());
 
+  A << 0, 0, 0, -0.0001;
+  LDLT_factor<var, -1, -1> ldlt_A2;
+  EXPECT_THROW(ldlt_A2.compute(A), std::domain_error);
+  EXPECT_FALSE(ldlt_A2.success());
+
   A << 2, 1, 1, 2;
-  LDLT_factor<var, -1, -1> ldlt_A2(A);
-  EXPECT_TRUE(ldlt_A2.success());
+  LDLT_factor<var, -1, -1> ldlt_A3;
+  EXPECT_NO_THROW(ldlt_A3.compute(A));
+  EXPECT_TRUE(ldlt_A3.success());
 }
 
 TEST(AgradRevMatrix, solve) {
@@ -72,10 +78,19 @@ TEST(AgradRevMatrix, solve) {
   LDLT_factor<var, -1, -1> ldlt_A(A);
   ASSERT_TRUE(ldlt_A.success());
   EXPECT_NO_THROW(solve = ldlt_A.solve(B));
-
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++)
       EXPECT_FLOAT_EQ(expected_solve(i, j), solve(i, j));
+
+  EXPECT_NO_THROW(ldlt_A.solve(B, solve));
+  for (int i = 0; i < 2; i++)
+    for (int j = 0; j < 2; j++)
+      EXPECT_FLOAT_EQ(expected_solve(i, j), solve(i, j));
+
+  EXPECT_NO_THROW(ldlt_A.solveInPlace(B));
+  for (int i = 0; i < 2; i++)
+    for (int j = 0; j < 2; j++)
+      EXPECT_FLOAT_EQ(expected_solve(i, j), B(i, j));
 }
 
 TEST(AgradRevMatrix, vectorD) {
@@ -133,6 +148,8 @@ TEST(AgradRevMatrix, compute) {
   A_double << 2, 1, 1, 2;
 
   Eigen::LDLT<Eigen::Matrix<double, -1, -1> > ldlt_double(A_double);
+  Eigen::Matrix<double, -1, -1> b(2, 2);
+  b << 1, 0, 0, 1;
   Eigen::Matrix<double, -1, -1> expected_mat, mat;
 
   LDLT_factor<var, -1, -1> ldlt_A;
@@ -142,8 +159,8 @@ TEST(AgradRevMatrix, compute) {
   EXPECT_NO_THROW(ldlt_A.compute(A));
   ASSERT_TRUE(ldlt_A.success());
 
-  EXPECT_NO_THROW(mat = ldlt_A.alloc_->ldlt_.matrixLDLT());
-  expected_mat = ldlt_double.matrixLDLT();
+  EXPECT_NO_THROW(mat = ldlt_A.solve(b));
+  expected_mat = ldlt_double.solve(b);
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++)
       EXPECT_FLOAT_EQ(expected_mat(i, j), mat(i, j))
@@ -151,7 +168,7 @@ TEST(AgradRevMatrix, compute) {
 
   // tests on A: [0, 0][0, 0]
   A << 0, 0, 0, 0;
-  EXPECT_NO_THROW(ldlt_A.compute(A));
+  EXPECT_THROW(ldlt_A.compute(A), std::domain_error);
   ASSERT_FALSE(ldlt_A.success());
 
   // tests on A: [1, 2, 3][2, 3, 4]
@@ -159,4 +176,20 @@ TEST(AgradRevMatrix, compute) {
   A << 1, 2, 2, 3, 3, 4;
   EXPECT_THROW(ldlt_A.compute(A), std::invalid_argument);
   ASSERT_FALSE(ldlt_A.success());
+}
+
+TEST(AgradRevMatrix, check_vari) {
+  using stan::math::LDLT_factor;
+  using stan::math::var;
+
+  Eigen::Matrix<var, -1, -1> A(2, 2);
+  A << 2, 1, 1, 2;
+  LDLT_factor<var, -1, -1> ldlt_A;
+  EXPECT_NO_THROW(ldlt_A.compute(A));
+
+  for (int i = 0; i < ldlt_A.cols(); ++i) {
+    for (int j = 0; j < ldlt_A.rows(); ++j) {
+      EXPECT_EQ(A(i, j).vi_, ldlt_A.getVariA(i, j));
+    }
+  }
 }

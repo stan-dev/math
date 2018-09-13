@@ -2,6 +2,8 @@
 #define STAN_MATH_REV_CORE_HPP
 
 #include <stan/math/rev/core/autodiffstackstorage.hpp>
+#include <stan/math/rev/core/build_double_array.hpp>
+#include <stan/math/rev/core/build_vari_pointer_array_if_necessary.hpp>
 #include <stan/math/rev/core/build_vari_array.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>

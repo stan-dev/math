@@ -3,27 +3,12 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/rev/mat/fun/LDLT_alloc.hpp>
 #include <stan/math/rev/mat/fun/LDLT_factor.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 
 namespace stan {
 namespace math {
 namespace {
-template <int R1, int C1, int R2, int C2>
-class mdivide_left_ldlt_alloc : public chainable_alloc {
- public:
-  virtual ~mdivide_left_ldlt_alloc() {}
-
-  /**
-   * This share_ptr is used to prevent copying the LDLT factorizations
-   * for mdivide_left_ldlt(ldltA, b) when ldltA is a LDLT_factor<double>.
-   * The pointer is shared with the LDLT_factor<double> class.
-   **/
-  boost::shared_ptr<Eigen::LDLT<Eigen::Matrix<double, R1, C1> > > ldltP_;
-  Eigen::Matrix<double, R2, C2> C_;
-};
-
 /**
  * The vari for mdivide_left_ldlt(A, b) which handles the chain() call
  * for all elements of the result.  This vari follows the pattern
@@ -41,8 +26,8 @@ class mdivide_left_ldlt_vv_vari : public vari {
   int N_;  // B.cols()
   vari **variRefB_;
   vari **variRefC_;
-  mdivide_left_ldlt_alloc<R1, C1, R2, C2> *alloc_;
-  const LDLT_alloc<R1, C1> *alloc_ldlt_;
+  LDLT_factor<var, R1, C1> A_;
+  double *C_mem_;
 
   mdivide_left_ldlt_vv_vari(const LDLT_factor<var, R1, C1> &A,
                             const Eigen::Matrix<var, R2, C2> &B)
@@ -55,24 +40,25 @@ class mdivide_left_ldlt_vv_vari : public vari {
         variRefC_(reinterpret_cast<vari **>(
             ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))),
-        alloc_(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()),
-        alloc_ldlt_(A.alloc_) {
+        A_(A),
+        C_mem_(
+            ChainableStack::instance().memalloc_.alloc_array<double>(M_ * N_)) {
     int pos = 0;
-    alloc_->C_.resize(M_, N_);
+    Eigen::Map<Eigen::MatrixXd> C(C_mem_, M_, N_);
     for (int j = 0; j < N_; j++) {
       for (int i = 0; i < M_; i++) {
         variRefB_[pos] = B(i, j).vi_;
-        alloc_->C_(i, j) = B(i, j).val();
+        C(i, j) = B(i, j).val();
         pos++;
       }
     }
 
-    alloc_ldlt_->ldlt_.solveInPlace(alloc_->C_);
+    A_.solveInPlace(C);
 
     pos = 0;
     for (int j = 0; j < N_; j++) {
       for (int i = 0; i < M_; i++) {
-        variRefC_[pos] = new vari(alloc_->C_(i, j), false);
+        variRefC_[pos] = new vari(C(i, j), false);
         pos++;
       }
     }
@@ -81,18 +67,19 @@ class mdivide_left_ldlt_vv_vari : public vari {
   virtual void chain() {
     Eigen::Matrix<double, R1, C1> adjA(M_, M_);
     Eigen::Matrix<double, R2, C2> adjB(M_, N_);
+    Eigen::Map<Eigen::MatrixXd> C(C_mem_, M_, N_);
 
     int pos = 0;
     for (int j = 0; j < N_; j++)
       for (int i = 0; i < M_; i++)
         adjB(i, j) = variRefC_[pos++]->adj_;
 
-    alloc_ldlt_->ldlt_.solveInPlace(adjB);
-    adjA.noalias() = -adjB * alloc_->C_.transpose();
+    A_.solveInPlace(adjB);
+    adjA.noalias() = -adjB * C.transpose();
 
     for (int j = 0; j < M_; j++)
       for (int i = 0; i < M_; i++)
-        alloc_ldlt_->variA_(i, j)->adj_ += adjA(i, j);
+        A_.getVariA(i, j)->adj_ += adjA(i, j);
 
     pos = 0;
     for (int j = 0; j < N_; j++)
@@ -118,7 +105,7 @@ class mdivide_left_ldlt_dv_vari : public vari {
   int N_;  // B.cols()
   vari **variRefB_;
   vari **variRefC_;
-  mdivide_left_ldlt_alloc<R1, C1, R2, C2> *alloc_;
+  LDLT_factor<double, R1, C1> A_;
 
   mdivide_left_ldlt_dv_vari(const LDLT_factor<double, R1, C1> &A,
                             const Eigen::Matrix<var, R2, C2> &B)
@@ -131,27 +118,26 @@ class mdivide_left_ldlt_dv_vari : public vari {
         variRefC_(reinterpret_cast<vari **>(
             ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))),
-        alloc_(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()) {
+        A_(A) {
     using Eigen::Map;
     using Eigen::Matrix;
 
     int pos = 0;
-    alloc_->C_.resize(M_, N_);
+    Eigen::MatrixXd C(M_, N_);
     for (int j = 0; j < N_; j++) {
       for (int i = 0; i < M_; i++) {
         variRefB_[pos] = B(i, j).vi_;
-        alloc_->C_(i, j) = B(i, j).val();
+        C(i, j) = B(i, j).val();
         pos++;
       }
     }
 
-    alloc_->ldltP_ = A.ldltP_;
-    alloc_->ldltP_->solveInPlace(alloc_->C_);
+    A_.solveInPlace(C);
 
     pos = 0;
     for (int j = 0; j < N_; j++) {
       for (int i = 0; i < M_; i++) {
-        variRefC_[pos] = new vari(alloc_->C_(i, j), false);
+        variRefC_[pos] = new vari(C(i, j), false);
         pos++;
       }
     }
@@ -165,7 +151,7 @@ class mdivide_left_ldlt_dv_vari : public vari {
       for (int i = 0; i < adjB.rows(); i++)
         adjB(i, j) = variRefC_[pos++]->adj_;
 
-    alloc_->ldltP_->solveInPlace(adjB);
+    A_.solveInPlace(adjB);
 
     pos = 0;
     for (int j = 0; j < adjB.cols(); j++)
@@ -190,8 +176,8 @@ class mdivide_left_ldlt_vd_vari : public vari {
   int M_;  // A.rows() = A.cols() = B.rows()
   int N_;  // B.cols()
   vari **variRefC_;
-  mdivide_left_ldlt_alloc<R1, C1, R2, C2> *alloc_;
-  const LDLT_alloc<R1, C1> *alloc_ldlt_;
+  LDLT_factor<var, R1, C1> A_;
+  double *C_mem_;
 
   mdivide_left_ldlt_vd_vari(const LDLT_factor<var, R1, C1> &A,
                             const Eigen::Matrix<double, R2, C2> &B)
@@ -201,15 +187,17 @@ class mdivide_left_ldlt_vd_vari : public vari {
         variRefC_(reinterpret_cast<vari **>(
             ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))),
-        alloc_(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()),
-        alloc_ldlt_(A.alloc_) {
-    alloc_->C_ = B;
-    alloc_ldlt_->ldlt_.solveInPlace(alloc_->C_);
+        A_(A),
+        C_mem_(
+            ChainableStack::instance().memalloc_.alloc_array<double>(M_ * N_)) {
+    Eigen::Map<Eigen::MatrixXd> C(C_mem_, M_, N_);
+    C = B;
+    A.solveInPlace(C);
 
     int pos = 0;
     for (int j = 0; j < N_; j++) {
       for (int i = 0; i < M_; i++) {
-        variRefC_[pos] = new vari(alloc_->C_(i, j), false);
+        variRefC_[pos] = new vari(C(i, j), false);
         pos++;
       }
     }
@@ -218,17 +206,18 @@ class mdivide_left_ldlt_vd_vari : public vari {
   virtual void chain() {
     Eigen::Matrix<double, R1, C1> adjA(M_, M_);
     Eigen::Matrix<double, R1, C2> adjC(M_, N_);
+    Eigen::Map<Eigen::MatrixXd> C(C_mem_, M_, N_);
 
     int pos = 0;
     for (int j = 0; j < adjC.cols(); j++)
       for (int i = 0; i < adjC.rows(); i++)
         adjC(i, j) = variRefC_[pos++]->adj_;
 
-    adjA = -alloc_ldlt_->ldlt_.solve(adjC * alloc_->C_.transpose());
+    adjA = -A_.solve(adjC * C.transpose());
 
     for (int j = 0; j < adjA.cols(); j++)
       for (int i = 0; i < adjA.rows(); i++)
-        alloc_ldlt_->variA_(i, j)->adj_ += adjA(i, j);
+        A_.getVariA(i, j)->adj_ += adjA(i, j);
   }
 };
 }  // namespace

@@ -16,21 +16,15 @@
 
 namespace stan {
 namespace math {
-
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
 inline typename boost::enable_if_c<boost::is_same<Ta, var>::value
                                        || boost::is_same<Tb, var>::value,
                                    Eigen::Matrix<var, Cb, Cb> >::type
 quad_form_sym(const Eigen::Matrix<Ta, Ra, Ca>& A,
               const Eigen::Matrix<Tb, Rb, Cb>& B) {
-  check_square("quad_form", "A", A);
   check_symmetric("quad_form_sym", "A", A);
-  check_multiplicable("quad_form_sym", "A", A, "B", B);
 
-  quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>* baseVari
-      = new quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>(A, B, true);
-
-  return baseVari->impl_->C_;
+  return quad_form_inner(A, B, true);
 }
 
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb>
@@ -38,14 +32,9 @@ inline typename boost::enable_if_c<
     boost::is_same<Ta, var>::value || boost::is_same<Tb, var>::value, var>::type
 quad_form_sym(const Eigen::Matrix<Ta, Ra, Ca>& A,
               const Eigen::Matrix<Tb, Rb, 1>& B) {
-  check_square("quad_form", "A", A);
   check_symmetric("quad_form_sym", "A", A);
-  check_multiplicable("quad_form_sym", "A", A, "B", B);
 
-  quad_form_vari<Ta, Ra, Ca, Tb, Rb, 1>* baseVari
-      = new quad_form_vari<Ta, Ra, Ca, Tb, Rb, 1>(A, B, true);
-
-  return baseVari->impl_->C_(0, 0);
+  return quad_form_inner(A, B, true)(0, 0);
 }
 
 }  // namespace math
