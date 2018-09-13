@@ -97,7 +97,6 @@ template <>
 inline bool operator==(const complex<stan::math::var>& x,
                        const complex<stan::math::var>& y) {
   return x.real() == y.real() && x.imag() == y.imag();
-  ;
 }
 
 template <>
@@ -138,7 +137,6 @@ inline bool operator!=(const stan::math::var& x,
 
 inline bool operator!=(const complex<stan::math::var>& x, double y) {
   return (x.real() != y || x.imag() != 0);
-  ;
 }
 
 inline bool operator!=(double x, const complex<stan::math::var>& y) {
