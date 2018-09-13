@@ -39,9 +39,9 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
 
   matrix_gpu temp(A_rows_padded, A_rows_padded);
   matrix_gpu inv_padded(A_rows_padded, A_rows_padded);
-  matrix_gpu inv(A);
-  matrix_gpu zeros(A_rows_padded - A.rows(), A_rows_padded);
-  zeros.zeros<stan::math::TriangularViewGPU::Entire>();
+  matrix_gpu inv_mat(A);
+  matrix_gpu zero_mat(A_rows_padded - A.rows(), A_rows_padded);
+  zero_mat.zeros<stan::math::TriangularViewGPU::Entire>();
   temp.zeros<stan::math::TriangularViewGPU::Entire>();
   inv_padded.zeros<stan::math::TriangularViewGPU::Entire>();
 
@@ -50,56 +50,62 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
   if (max_1D_thread_block_size < thread_block_size_1D) {
     thread_block_size_1D = max_1D_thread_block_size;
   }
-  if (inv.rows() < thread_block_size_1D) {
-    thread_block_size_1D = inv.rows();
+  if (inv_mat.rows() < thread_block_size_1D) {
+    thread_block_size_1D = inv_mat.rows();
   }
   if (max_2D_thread_block_dim < thread_block_2D_dim) {
     thread_block_2D_dim = max_2D_thread_block_dim;
   }
 
-  int wpt = opencl_kernels::lower_tri_inverse_step2.make_functor.get_opts().at(
-      "WORK_PER_THREAD");
-  int parts = (inv.rows() + thread_block_size_1D - 1) / thread_block_size_1D;
+  int work_per_thread
+      = opencl_kernels::lower_tri_inverse_step2.make_functor.get_opts().at(
+          "WORK_PER_THREAD");
+  int parts
+      = (inv_mat.rows() + thread_block_size_1D - 1) / thread_block_size_1D;
   try {
     opencl_kernels::lower_tri_inverse_step1(
         cl::NDRange(parts * thread_block_size_1D),
-        cl::NDRange(thread_block_size_1D), inv.buffer(), temp.buffer(),
-        inv.rows());
+        cl::NDRange(thread_block_size_1D), inv_mat.buffer(), temp.buffer(),
+        inv_mat.rows());
   } catch (cl::Error& e) {
     check_opencl_error("inverse step1", e);
   }
   if (parts == 1) {
-    return inv;
+    return inv_mat;
   }
   parts = ceil(parts / 2.0);
-  inv_padded.sub_block(inv, 0, 0, 0, 0, inv.rows(), inv.rows());
-  inv_padded.sub_block(zeros, 0, 0, inv.rows(), 0, zeros.rows(), zeros.cols());
+  inv_padded.sub_block(inv_mat, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
+  inv_padded.sub_block(zero_mat, 0, 0, inv_mat.rows(), 0, zero_mat.rows(),
+                       zero_mat.cols());
   inv_padded.zeros<stan::math::TriangularViewGPU::Upper>();
   int result_matrix_dim = thread_block_size_1D;
   while (parts > 0) {
-    std::cout << parts << std::endl;
     opencl_kernels::lower_tri_inverse_step2(
-        cl::NDRange(result_matrix_dim, result_matrix_dim / wpt, parts),
-        cl::NDRange(thread_block_2D_dim, thread_block_2D_dim / wpt, 1),
+        cl::NDRange(result_matrix_dim, result_matrix_dim / work_per_thread,
+                    parts),
+        cl::NDRange(thread_block_2D_dim, thread_block_2D_dim / work_per_thread,
+                    1),
         inv_padded.buffer(), temp.buffer(), inv_padded.rows(),
-        result_matrix_dim, result_matrix_dim, inv.rows());
+        result_matrix_dim, result_matrix_dim, inv_mat.rows());
     opencl_kernels::lower_tri_inverse_step3(
-        cl::NDRange(result_matrix_dim, result_matrix_dim / wpt, parts),
-        cl::NDRange(thread_block_2D_dim, thread_block_2D_dim / wpt, 1),
+        cl::NDRange(result_matrix_dim, result_matrix_dim / work_per_thread,
+                    parts),
+        cl::NDRange(thread_block_2D_dim, thread_block_2D_dim / work_per_thread,
+                    1),
         inv_padded.buffer(), temp.buffer(), inv_padded.rows(),
-        result_matrix_dim, result_matrix_dim, inv.rows());
+        result_matrix_dim, result_matrix_dim, inv_mat.rows());
     if (parts == 1) {
       parts = 0;
     } else {
       parts = ceil(parts / 2.0);
     }
     result_matrix_dim *= 2;
-    inv_padded.sub_block(zeros, 0, 0, inv.rows(), 0, zeros.rows(),
-                         zeros.cols());
+    inv_padded.sub_block(zero_mat, 0, 0, inv_mat.rows(), 0, zero_mat.rows(),
+                         zero_mat.cols());
     inv_padded.zeros<stan::math::TriangularViewGPU::Upper>();
   }
-  inv.sub_block(inv_padded, 0, 0, 0, 0, A.rows(), A.rows());
-  return inv;
+  inv_mat.sub_block(inv_padded, 0, 0, 0, 0, A.rows(), A.rows());
+  return inv_mat;
 }
 }  // namespace math
 }  // namespace stan
