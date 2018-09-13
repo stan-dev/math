@@ -78,3 +78,13 @@ TEST(AgradRev, check_varis_on_stack) {
   AVAR a = 0.68;
   test::check_varis_on_stack(stan::math::abs(a));
 }
+
+TEST(AgradRev, abs_complex) {
+  std::complex<stan::math::var> z = std::complex<stan::math::var>(3, 4);
+  auto f = abs(z);
+  EXPECT_EQ(5, f.val());
+  AVEC x = createAVEC(real(z));
+  VEC g;
+  f.grad(x, g);
+  EXPECT_FLOAT_EQ(0.6, g[0]);
+}

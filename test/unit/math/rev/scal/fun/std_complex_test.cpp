@@ -476,3 +476,42 @@ TEST_F(MathRev, polar) {
   stan::math::var f = arg(z);
   EXPECT_EQ(f.val(), 0.0);
 }
+
+TEST_F(MathRev, sqrt_conj) {
+  std::complex<stan::math::var> z(-5, 12);
+  EXPECT_TRUE(std::sqrt(std::conj(z)) == std::conj(std::sqrt(z)));
+}
+
+TEST_F(MathRev, sqrt_negative_real) {
+  std::complex<stan::math::var> z(-5, 12);
+  std::complex<stan::math::var> zsqrt = sqrt(z);
+  EXPECT_FLOAT_EQ(2, zsqrt.real().val());
+  EXPECT_FLOAT_EQ(3, zsqrt.imag().val());
+}
+
+TEST_F(MathRev, sqrt_positive_real) {
+  std::complex<stan::math::var> z(9, 40);
+  std::complex<stan::math::var> zsqrt = sqrt(z);
+  EXPECT_FLOAT_EQ(5, zsqrt.real().val());
+  EXPECT_FLOAT_EQ(4, zsqrt.imag().val());
+}
+
+TEST_F(MathRev, sqrt_zero_real) {
+  std::complex<stan::math::var> z(0, 8);
+  std::complex<stan::math::var> zsqrt = sqrt(z);
+  EXPECT_FLOAT_EQ(2, zsqrt.real().val());
+  EXPECT_FLOAT_EQ(2, zsqrt.imag().val());
+}
+
+TEST_F(MathRev, pow) {
+  std::complex<stan::math::var> i(0, 1);
+  auto f = pow(i, i);
+  EXPECT_EQ(real(f).val(), exp(-stan::math::pi() / 2));
+}
+
+TEST_F(MathRev, pow_zero) {
+  std::complex<stan::math::var> i(0, 0);
+  auto f = pow(i, i);
+  EXPECT_EQ(0, real(f).val());
+  EXPECT_EQ(0, imag(f).val());
+}

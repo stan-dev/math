@@ -7,6 +7,7 @@
 #include <stan/math/rev/core/std_isinf.hpp>
 #include <stan/math/rev/scal/fun/is_uninitialized.hpp>
 #include <complex>
+#include <iostream>
 
 namespace std {
 
@@ -154,6 +155,30 @@ inline int isnan(const complex<stan::math::var>& a) {
 template <>
 inline stan::math::var abs(const complex<stan::math::var>& c) {
   return stan::math::sqrt(norm(c));
+}
+
+template <>
+inline complex<stan::math::var> pow(const complex<stan::math::var>& x,
+                                    const complex<stan::math::var>& y) {
+  return (x == 0.0) ? complex<stan::math::var>(0.0, 0.0)
+                    : std::exp(y * std::log(x));
+}
+
+template <>
+inline complex<stan::math::var> sqrt(const complex<stan::math::var>& c) {
+  if (c.real() == 0.0) {
+    stan::math::var t = sqrt(abs(c.imag()) / 2.0);
+    return complex<stan::math::var>(t,
+                                    ((c.imag() > 0.0) - (c.imag() < 0.0)) * t);
+  } else {
+    stan::math::var t = sqrt(2.0 * (abs(c) + abs(c.real())));
+    if (c.real() > 0.0) {
+      return complex<stan::math::var>(t / 2.0, (c.imag() / t));
+    } else {
+      return complex<stan::math::var>(
+          abs(c.imag()) / t, ((c.imag() > 0) - (c.imag() < 0)) * t / 2.0);
+    }
+  }
 }
 
 template <>
