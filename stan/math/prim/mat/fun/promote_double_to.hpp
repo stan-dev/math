@@ -10,70 +10,49 @@
 namespace stan {
 namespace math {
 
+namespace internal {
 template <typename T, typename... T_output>
 auto promote_double_to_impl(std::tuple<T_output...> output) {
   return output;
 }
 
-template <typename T, int RowType, int ColType, typename... T_output,
-          typename... T_inputs>
-auto promote_double_to_impl(
-    std::tuple<T_output...> output,
-    const Eigen::Matrix<double, RowType, ColType>& leading_input,
-    const T_inputs&... inputs);
-template <typename T, typename... T_output, typename... T_inputs>
-auto promote_double_to_impl(std::tuple<T_output...> output,
-                            const std::vector<double>& leading_input,
-                            const T_inputs&... inputs);
-template <typename T, typename... T_output, typename... T_inputs>
-auto promote_double_to_impl(std::tuple<T_output...> output,
-                            const double& leading_input,
-                            const T_inputs&... inputs);
-template <typename T, typename R, typename... T_output, typename... T_inputs>
-auto promote_double_to_impl(std::tuple<T_output...> output,
-                            const R& leading_input, const T_inputs&... inputs);
+template <typename T, int RowType, int ColType>
+std::tuple<Eigen::Matrix<T, RowType, ColType> > promote_element_double_to(
+    const Eigen::Matrix<double, RowType, ColType>& input) {
+  Eigen::Matrix<T, RowType, ColType> promoted_input(input.rows(), input.cols());
+  for (int i = 0; i < input.size(); ++i)
+    promoted_input(i) = input(i);
+  return std::make_tuple(promoted_input);
+}
+
+template <typename T>
+std::tuple<std::vector<T> > promote_element_double_to(
+    const std::vector<double>& input) {
+  std::vector<T> promoted_input;
+  promoted_input.reserve(input.size());
+  for (size_t i = 0; i < input.size(); ++i)
+    promoted_input.push_back(input[i]);
+  return std::make_tuple(promoted_input);
+}
+
+template <typename T>
+std::tuple<T> promote_element_double_to(const double& input) {
+  return std::make_tuple(T(input));
+}
+
+template <typename T, typename R>
+std::tuple<> promote_element_double_to(const R& input) {
+  return std::tuple<>();
+}
 
 template <typename T, typename R, typename... T_output, typename... T_inputs>
 auto promote_double_to_impl(std::tuple<T_output...> output,
                             const R& leading_input, const T_inputs&... inputs) {
-  return promote_double_to_impl<T>(output, inputs...);
-}
-
-template <typename T, int RowType, int ColType, typename... T_output,
-          typename... T_inputs>
-auto promote_double_to_impl(
-    std::tuple<T_output...> output,
-    const Eigen::Matrix<double, RowType, ColType>& leading_input,
-    const T_inputs&... inputs) {
-  Eigen::Matrix<T, RowType, ColType> promoted_leading_input(
-      leading_input.rows(), leading_input.cols());
-  for (int i = 0; i < leading_input.size(); ++i)
-    promoted_leading_input(i) = leading_input(i);
   return promote_double_to_impl<T>(
-      std::tuple_cat(output, std::make_tuple(promoted_leading_input)),
+      std::tuple_cat(output, promote_element_double_to<T>(leading_input)),
       inputs...);
 }
-
-template <typename T, typename... T_output, typename... T_inputs>
-auto promote_double_to_impl(std::tuple<T_output...> output,
-                            const std::vector<double>& leading_input,
-                            const T_inputs&... inputs) {
-  std::vector<T> promoted_leading_input;
-  promoted_leading_input.reserve(leading_input.size());
-  for (size_t i = 0; i < leading_input.size(); ++i)
-    promoted_leading_input.push_back(leading_input[i]);
-  return promote_double_to_impl<T>(
-      std::tuple_cat(output, std::make_tuple(promoted_leading_input)),
-      inputs...);
-}
-
-template <typename T, typename... T_output, typename... T_inputs>
-auto promote_double_to_impl(std::tuple<T_output...> output,
-                            const double& leading_input,
-                            const T_inputs&... inputs) {
-  return promote_double_to_impl<T>(
-      std::tuple_cat(output, std::make_tuple(T(leading_input))), inputs...);
-}
+}  // namespace internal
 
 /**
  * Cast the double elements of the given tuple to type T a return
@@ -88,7 +67,8 @@ template <typename T, typename... T_inputs>
 auto promote_double_to(const std::tuple<T_inputs...>& input) {
   return apply(
       [](auto... lambda_args) {
-        return promote_double_to_impl<T>(std::tuple<>(), lambda_args...);
+        return internal::promote_double_to_impl<T>(std::tuple<>(),
+                                                   lambda_args...);
       },
       input);
 }
