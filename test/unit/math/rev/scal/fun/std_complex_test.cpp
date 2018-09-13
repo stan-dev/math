@@ -1,6 +1,8 @@
 #include <stan/math/rev/scal.hpp>
 #include <stan/math/rev/scal/fun/std_complex.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <vector>
 
 // For a definition of the spec:
 // https://en.cppreference.com/w/cpp/numeric/complex
