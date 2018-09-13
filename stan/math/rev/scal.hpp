@@ -92,6 +92,7 @@
 #include <stan/math/rev/scal/fun/sqrt.hpp>
 #include <stan/math/rev/scal/fun/square.hpp>
 #include <stan/math/rev/scal/fun/squared_distance.hpp>
+#include <stan/math/rev/scal/fun/std_complex.hpp>
 #include <stan/math/rev/scal/fun/step.hpp>
 #include <stan/math/rev/scal/fun/tan.hpp>
 #include <stan/math/rev/scal/fun/tanh.hpp>

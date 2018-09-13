@@ -1,5 +1,5 @@
 #include <stan/math/rev/scal.hpp>
-#include <stan/math/rev/core/std_complex.hpp>
+#include <stan/math/rev/scal/fun/std_complex.hpp>
 #include <gtest/gtest.h>
 
 // For a definition of the spec:
