@@ -1,20 +1,30 @@
 #include <stan/math/mix/scal.hpp>
+
 #include <gtest/gtest.h>
+#include <test/unit/util.hpp>
 
-TEST(MetaTraits, partials_return_type) {
-  using stan::math::fvar;
-  using stan::math::var;
-  using stan::partials_return_type;
+using stan::math::fvar;
+using stan::math::var;
+using stan::partials_return_type;
 
-  partials_return_type<double, fvar<fvar<var> > >::type c(3.0, 2.0);
-  EXPECT_EQ(3.0, c.val_.val());
-  EXPECT_EQ(2.0, c.d_.val());
+TEST(MetaTraits, PartialsReturnTypeFvarVar) {
+  test::expect_same_type<var, partials_return_type<fvar<var> >::type>();
+}
 
-  partials_return_type<double, double, var, fvar<fvar<var> > >::type d(3.0,
-                                                                       2.0);
-  EXPECT_EQ(3.0, d.val_.val());
-  EXPECT_EQ(2.0, d.d_.val());
+TEST(MetaTraits, PartialsReturnTypeFvarFvarVar) {
+  test::expect_same_type<fvar<var>,
+                         partials_return_type<fvar<fvar<var> > >::type>();
+}
 
-  partials_return_type<double, double, var, fvar<var> >::type e(3.0);
-  EXPECT_EQ(3.0, e.val());
+TEST(MetaTraits, PartialsReturnTypeFvarVarTenParams) {
+  test::expect_same_type<
+      var, partials_return_type<double, fvar<var>, double, int, double, float,
+                                float, float, fvar<var>, int>::type>();
+}
+
+TEST(MetaTraits, PartialsReturnTypeFvarFvarVarTenParams) {
+  test::expect_same_type<
+      fvar<var>,
+      partials_return_type<double, fvar<fvar<var> >, double, int, double, float,
+                           float, float, fvar<fvar<var> >, int>::type>();
 }

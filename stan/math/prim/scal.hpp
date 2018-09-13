@@ -33,6 +33,7 @@
 #include <stan/math/prim/scal/meta/scalar_type_pre.hpp>
 #include <stan/math/prim/scal/meta/size_of.hpp>
 #include <stan/math/prim/scal/meta/value_type.hpp>
+#include <stan/math/prim/scal/meta/StdVectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 
 #include <stan/math/prim/scal/err/check_2F1_converges.hpp>
@@ -74,6 +75,7 @@
 #include <stan/math/prim/scal/fun/corr_constrain.hpp>
 #include <stan/math/prim/scal/fun/corr_free.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
+#include <stan/math/prim/scal/fun/distance.hpp>
 #include <stan/math/prim/scal/fun/divide.hpp>
 #include <stan/math/prim/scal/fun/erf.hpp>
 #include <stan/math/prim/scal/fun/erfc.hpp>
@@ -94,6 +96,7 @@
 #include <stan/math/prim/scal/fun/grad_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
+#include <stan/math/prim/scal/fun/grad_reg_lower_inc_gamma.hpp>
 #include <stan/math/prim/scal/fun/hypot.hpp>
 #include <stan/math/prim/scal/fun/ibeta.hpp>
 #include <stan/math/prim/scal/fun/identity_constrain.hpp>
@@ -126,6 +129,7 @@
 #include <stan/math/prim/scal/fun/log_diff_exp.hpp>
 #include <stan/math/prim/scal/fun/log_falling_factorial.hpp>
 #include <stan/math/prim/scal/fun/log_inv_logit.hpp>
+#include <stan/math/prim/scal/fun/log_inv_logit_diff.hpp>
 #include <stan/math/prim/scal/fun/log_mix.hpp>
 #include <stan/math/prim/scal/fun/log_modified_bessel_first_kind.hpp>
 #include <stan/math/prim/scal/fun/log_rising_factorial.hpp>
@@ -199,6 +203,13 @@
 #include <stan/math/prim/scal/prob/beta_log.hpp>
 #include <stan/math/prim/scal/prob/beta_lpdf.hpp>
 #include <stan/math/prim/scal/prob/beta_rng.hpp>
+#include <stan/math/prim/scal/prob/beta_proportion_ccdf_log.hpp>
+#include <stan/math/prim/scal/prob/beta_proportion_cdf_log.hpp>
+#include <stan/math/prim/scal/prob/beta_proportion_lccdf.hpp>
+#include <stan/math/prim/scal/prob/beta_proportion_lcdf.hpp>
+#include <stan/math/prim/scal/prob/beta_proportion_log.hpp>
+#include <stan/math/prim/scal/prob/beta_proportion_lpdf.hpp>
+#include <stan/math/prim/scal/prob/beta_proportion_rng.hpp>
 #include <stan/math/prim/scal/prob/binomial_ccdf_log.hpp>
 #include <stan/math/prim/scal/prob/binomial_cdf.hpp>
 #include <stan/math/prim/scal/prob/binomial_cdf_log.hpp>

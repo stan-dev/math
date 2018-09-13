@@ -34,11 +34,11 @@ typename boost::math::tools::promote_args<T_prob>::type multinomial_lpmf(
 
   if (include_summand<propto>::value) {
     double sum = 1.0;
-    for (unsigned int i = 0; i < ns.size(); ++i)
-      sum += ns[i];
+    for (int n : ns)
+      sum += n;
     lp += lgamma(sum);
-    for (unsigned int i = 0; i < ns.size(); ++i)
-      lp -= lgamma(ns[i] + 1.0);
+    for (int n : ns)
+      lp -= lgamma(n + 1.0);
   }
   if (include_summand<propto, T_prob>::value) {
     for (unsigned int i = 0; i < ns.size(); ++i)

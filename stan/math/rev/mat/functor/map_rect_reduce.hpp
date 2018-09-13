@@ -19,7 +19,7 @@ struct map_rect_reduce<F, var, var> {
                       const vector_d& job_specific_params,
                       const std::vector<double>& x_r,
                       const std::vector<int>& x_i,
-                      std::ostream* msgs = 0) const {
+                      std::ostream* msgs = nullptr) const {
     const size_type num_shared_params = shared_params.rows();
     const size_type num_job_specific_params = job_specific_params.rows();
     matrix_d out(1 + num_shared_params + num_job_specific_params, 0);
@@ -61,7 +61,7 @@ struct map_rect_reduce<F, double, var> {
                       const vector_d& job_specific_params,
                       const std::vector<double>& x_r,
                       const std::vector<int>& x_i,
-                      std::ostream* msgs = 0) const {
+                      std::ostream* msgs = nullptr) const {
     const size_type num_job_specific_params = job_specific_params.rows();
     matrix_d out(1 + num_job_specific_params, 0);
 
@@ -97,7 +97,7 @@ struct map_rect_reduce<F, var, double> {
                       const vector_d& job_specific_params,
                       const std::vector<double>& x_r,
                       const std::vector<int>& x_i,
-                      std::ostream* msgs = 0) const {
+                      std::ostream* msgs = nullptr) const {
     const size_type num_shared_params = shared_params.rows();
     matrix_d out(1 + num_shared_params, 0);
 
