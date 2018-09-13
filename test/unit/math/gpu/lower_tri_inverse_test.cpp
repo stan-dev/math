@@ -56,7 +56,7 @@ TEST(MathMatrixGPU, inverse_gpu_big_1) {
   stan::math::matrix_d m1_cl(size, size);
 
   m1_cpu = stan::math::mdivide_left_tri<Eigen::Lower>(m1).eval();
-  
+
   stan::math::matrix_gpu m2(m1);
   auto m3 = stan::math::lower_triangular_inverse(m2);
   stan::math::copy(m1_cl, m3);
@@ -65,7 +65,7 @@ TEST(MathMatrixGPU, inverse_gpu_big_1) {
     for (int j = 0; j <= i; j++) {
       double abs_err = abs(m1_cpu(i, j) - m1_cl(i, j));
       double a = std::max(abs_err / m1_cpu(i, j), abs_err / m1_cl(i, j));
-      max_error = std::max(max_error, a);      
+      max_error = std::max(max_error, a);
     }
   }
   EXPECT_LT(max_error, 1e-8);
@@ -87,7 +87,7 @@ TEST(MathMatrixGPU, inverse_gpu_big_2) {
   stan::math::matrix_d m1_cl(size, size);
 
   m1_cpu = stan::math::mdivide_left_tri<Eigen::Lower>(m1).eval();
-  
+
   stan::math::matrix_gpu m2(m1);
   auto m3 = stan::math::lower_triangular_inverse(m2);
   stan::math::copy(m1_cl, m3);
@@ -96,7 +96,7 @@ TEST(MathMatrixGPU, inverse_gpu_big_2) {
     for (int j = 0; j <= i; j++) {
       double abs_err = abs(m1_cpu(i, j) - m1_cl(i, j));
       double a = std::max(abs_err / m1_cpu(i, j), abs_err / m1_cl(i, j));
-      max_error = std::max(max_error, a);      
+      max_error = std::max(max_error, a);
     }
   }
   EXPECT_LT(max_error, 1e-8);
@@ -118,7 +118,7 @@ TEST(MathMatrixGPU, inverse_gpu_big_3) {
   stan::math::matrix_d m1_cl(size, size);
 
   m1_cpu = stan::math::mdivide_left_tri<Eigen::Lower>(m1).eval();
-  
+
   stan::math::matrix_gpu m2(m1);
   auto m3 = stan::math::lower_triangular_inverse(m2);
   stan::math::copy(m1_cl, m3);
@@ -127,7 +127,7 @@ TEST(MathMatrixGPU, inverse_gpu_big_3) {
     for (int j = 0; j <= i; j++) {
       double abs_err = abs(m1_cpu(i, j) - m1_cl(i, j));
       double a = std::max(abs_err / m1_cpu(i, j), abs_err / m1_cl(i, j));
-      max_error = std::max(max_error, a);      
+      max_error = std::max(max_error, a);
     }
   }
   EXPECT_LT(max_error, 1e-8);
@@ -149,7 +149,7 @@ TEST(MathMatrixGPU, inverse_gpu_big_4) {
   stan::math::matrix_d m1_cl(size, size);
 
   m1_cpu = stan::math::mdivide_left_tri<Eigen::Lower>(m1).eval();
-  
+
   stan::math::matrix_gpu m2(m1);
   auto m3 = stan::math::lower_triangular_inverse(m2);
   stan::math::copy(m1_cl, m3);
@@ -158,7 +158,7 @@ TEST(MathMatrixGPU, inverse_gpu_big_4) {
     for (int j = 0; j <= i; j++) {
       double abs_err = abs(m1_cpu(i, j) - m1_cl(i, j));
       double a = std::max(abs_err / m1_cpu(i, j), abs_err / m1_cl(i, j));
-      max_error = std::max(max_error, a);      
+      max_error = std::max(max_error, a);
     }
   }
   EXPECT_LT(max_error, 1e-8);
@@ -181,7 +181,7 @@ TEST(MathMatrixGPU, inverse_gpu_big_5) {
   stan::math::matrix_d m1_cl(size, size);
 
   m1_cpu = stan::math::mdivide_left_tri<Eigen::Lower>(m1).eval();
-  
+
   stan::math::matrix_gpu m2(m1);
   auto m3 = stan::math::lower_triangular_inverse(m2);
   stan::math::copy(m1_cl, m3);
@@ -190,7 +190,7 @@ TEST(MathMatrixGPU, inverse_gpu_big_5) {
     for (int j = 0; j <= i; j++) {
       double abs_err = abs(m1_cpu(i, j) - m1_cl(i, j));
       double a = std::max(abs_err / m1_cpu(i, j), abs_err / m1_cl(i, j));
-      max_error = std::max(max_error, a);      
+      max_error = std::max(max_error, a);
     }
   }
   EXPECT_LT(max_error, 1e-8);
