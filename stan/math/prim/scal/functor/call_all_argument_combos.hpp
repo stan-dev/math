@@ -13,11 +13,11 @@ auto call_all_argument_combos(F f) {
 
 /**
  * There needs to be a forward declaration here because call_all_argument_combos
- * and call_all_argument_combos_impl call each other recursively
+ * and call_all_argument_combos_expand_first_arg call each other recursively
  */
 template <typename F, typename... Ts_first_arg, std::size_t... I,
           typename... T_tail>
-auto call_all_argument_combos_impl(
+auto call_all_argument_combos_expand_first_arg(
     F f, const std::tuple<Ts_first_arg...>& first_arg_tuple,
     std::index_sequence<I...>, const T_tail&... tail);
 
@@ -30,8 +30,9 @@ auto call_all_argument_combos_impl(
  * 2. M tuples (t1, t2, ...), one for each argument f
  *
  * f is called each combinations of the elements of the tuples, and returns a
- * flat tuple with all the return values arranged in row-major order (last index
- * moves first).
+ * flat tuple with all the return values. The return values are sorted by the
+ * ordering of the rightmost tuple, then the ordering of the second rightmost
+ * tuple, then the ordering of the third rightmost tuple, etc.
  *
  * If f takes two arguments, this would look like:
  *
@@ -52,21 +53,30 @@ template <typename F, typename... Ts_first_arg, typename... T_tail>
 auto call_all_argument_combos(
     F f, const std::tuple<Ts_first_arg...>& first_arg_tuple,
     const T_tail&... tail) {
-  return call_all_argument_combos_impl(
+  return call_all_argument_combos_expand_first_arg(
       f, first_arg_tuple, std::make_index_sequence<sizeof...(Ts_first_arg)>{},
+      tail...);
+}
+
+template <std::size_t I, typename F, typename... Ts_first_arg,
+          typename... T_tail>
+auto call_all_argument_combos_expand_first_arg_impl(
+    F f, const std::tuple<Ts_first_arg...>& first_arg_tuple,
+    const T_tail&... tail) {
+  return call_all_argument_combos(
+      [&first_arg_tuple, &f](const auto&... inner_args) {
+        return f(std::get<I>(first_arg_tuple), inner_args...);
+      },
       tail...);
 }
 
 template <typename F, typename... Ts_first_arg, std::size_t... I,
           typename... T_tail>
-auto call_all_argument_combos_impl(
+auto call_all_argument_combos_expand_first_arg(
     F f, const std::tuple<Ts_first_arg...>& first_arg_tuple,
     std::index_sequence<I...>, const T_tail&... tail) {
-  return std::tuple_cat(call_all_argument_combos(
-      [&first_arg_tuple, &f](const auto&... inner_args) {
-        return f(std::get<I>(first_arg_tuple), inner_args...);
-      },
-      tail...)...);
+  return std::tuple_cat(call_all_argument_combos_expand_first_arg_impl<I>(
+      f, first_arg_tuple, tail...)...);
 }
 
 }  // namespace math

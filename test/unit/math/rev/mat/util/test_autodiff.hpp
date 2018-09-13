@@ -287,7 +287,7 @@ void test_var(F f, double dx, double relative_tolerance,
     std::stringstream s;
     std::vector<std::string> argument_types = {{type_as_string(args)...}};
     s << "Error testing f(";
-    for (int i = 0; i < argument_types.size(); ++i) {
+    for (size_t i = 0; i < argument_types.size(); ++i) {
       s << argument_types[i];
       if (i < argument_types.size() - 1) {
         s << ", ";
