@@ -95,7 +95,8 @@ struct fh {
   inline Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic> 
     operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
                const std::vector<double>& delta,
-               const std::vector<int>& delta_int) const {
+               const std::vector<int>& delta_int,
+               std::ostream* pstream = 0) const {
       int n = 2;
       return Eigen::MatrixXd::Identity(n, n);
     }
@@ -106,7 +107,8 @@ struct fv {
   inline Eigen::Matrix<T0, Eigen::Dynamic, 1>
     operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
                const std::vector<double>& delta,
-               const std::vector<int>& delta_int) const {
+               const std::vector<int>& delta_int,
+               std::ostream* pstream = 0) const {
       int n = 2;
       Eigen::Matrix<T0, Eigen::Dynamic, 1> linear_term(n);
       linear_term(0) = 0;
@@ -120,7 +122,8 @@ struct fa_0 {
   Eigen::Matrix<T0, Eigen::Dynamic, 1>
   inline operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
                     const std::vector<double>& delta,
-                    const std::vector<int>& delta_int) const {
+                    const std::vector<int>& delta_int,
+                    std::ostream* pstream = 0) const {
     int n = 2;
     Eigen::Matrix<T0, Eigen::Dynamic, 1> linear_constraint(n);
     linear_constraint(0) = 0;
@@ -134,7 +137,8 @@ struct fa {
   Eigen::Matrix<T0, Eigen::Dynamic, 1>
   inline operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
                     const std::vector<double>& delta,
-                    const std::vector<int>& delta_int) const {
+                    const std::vector<int>& delta_int,
+                    std::ostream* pstream = 0) const {
     int n = 2;
     Eigen::Matrix<T0, Eigen::Dynamic, 1> linear_constraint(n);
     linear_constraint(0) = 1;
@@ -148,7 +152,8 @@ struct fb {
   T0
   inline operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
                     const std::vector<double>& delta,
-                    const std::vector<int>& delta_int) const {
+                    const std::vector<int>& delta_int,
+                    std::ostream* pstream = 0) const {
     return theta(0);
   }
 };
@@ -285,7 +290,8 @@ struct fh_s1 {
   inline Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic>
     operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
                const std::vector<double>& delta,
-               const std::vector<int>& delta_int) const {
+               const std::vector<int>& delta_int,
+               std::ostream* pstream = 0) const {
       // declare "data"
       int n = 2;
       // VectorXd qa(2);
@@ -314,7 +320,8 @@ struct fv_s1 {
   inline Eigen::Matrix<T0, Eigen::Dynamic, 1>
     operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
                const std::vector<double>& delta,
-               const std::vector<int>& delta_int) const {
+               const std::vector<int>& delta_int,
+               std::ostream* pstream = 0) const {
 
      // declare "data"
      int n = 2;
@@ -339,7 +346,8 @@ struct fa_s1 {
   Eigen::Matrix<T0, Eigen::Dynamic, 1>
   inline operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
                     const std::vector<double>& delta,
-                    const std::vector<int>& delta_int) const {
+                    const std::vector<int>& delta_int,
+                    std::ostream* pstream = 0) const {
     // declare "data"
     int n = 2;
     VectorXd qe(2);
@@ -358,7 +366,8 @@ struct fb_s1 {
   T0
   inline operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
                     const std::vector<double>& delta,
-                    const std::vector<int>& delta_int) const {
+                    const std::vector<int>& delta_int,
+                    std::ostream* pstream = 0) const {
     // double s = 82.5;
     // double minus_s = -s;
     return -82.5;
@@ -546,7 +555,8 @@ struct fh_s2 {
   inline Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic>
     operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
                const std::vector<double>& delta,
-               const std::vector<int>& delta_int) const {
+               const std::vector<int>& delta_int,
+               std::ostream* pstream = 0) const {
       // declare "data"
       int n = 3;
       // VectorXd qa(3);
@@ -580,7 +590,8 @@ struct fv_s2 {
   inline Eigen::Matrix<T0, Eigen::Dynamic, 1>
     operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
                const std::vector<double>& delta,
-               const std::vector<int>& delta_int) const {
+               const std::vector<int>& delta_int,
+               std::ostream* pstream = 0) const {
 
      // declare "data"
      int n = 3;
@@ -608,7 +619,8 @@ struct fa_s2 {
   Eigen::Matrix<T0, Eigen::Dynamic, 1>
   inline operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
                     const std::vector<double>& delta,
-                    const std::vector<int>& delta_int) const {
+                    const std::vector<int>& delta_int,
+                    std::ostream* pstream = 0) const {
     // declare "data"
     int n = 3;
     // VectorXd qa(3);
@@ -634,7 +646,8 @@ struct fb_s2 {
   T0
   inline operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
                     const std::vector<double>& delta,
-                    const std::vector<int>& delta_int) const {
+                    const std::vector<int>& delta_int,
+                    std::ostream* pstream = 0) const {
 
     T0 lin_term = -130;
     return lin_term;
@@ -695,4 +708,4 @@ TEST(MathMatrix, quadratic_optimizer_var_s2) {
     EXPECT_NEAR(J(k, 3), g[3], 0.0001);
     EXPECT_NEAR(J(k, 4), g[4], 0.0001);
 	}
-}
+} /**/

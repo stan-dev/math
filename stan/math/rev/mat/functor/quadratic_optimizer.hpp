@@ -16,6 +16,12 @@
 namespace stan {
 namespace math {
 
+// TO DO: handle stream messages. The last argument for all
+// functors is a stream message argument, which is automatically
+// created by Stan's parser.
+// For now, a fourth default argument is added to each call to the
+// functors (default value is 0).
+
 /**
  * Return analytical form, which will be used to compute Jacobians.
  */
@@ -36,10 +42,10 @@ quadratic_optimizer_analytical
   using Eigen::Matrix;
   using Eigen::Dynamic;
 
-  Matrix<scalar, Dynamic, Dynamic> H = fh(theta, delta, delta_int);
-  Matrix<scalar, Dynamic, Dynamic> v = fv(theta, delta, delta_int);
-  Matrix<scalar, Dynamic, 1> A = fa(theta, delta, delta_int);
-  scalar b = fb(theta, delta, delta_int);
+  Matrix<scalar, Dynamic, Dynamic> H = fh(theta, delta, delta_int, 0);
+  Matrix<scalar, Dynamic, Dynamic> v = fv(theta, delta, delta_int, 0);
+  Matrix<scalar, Dynamic, 1> A = fa(theta, delta, delta_int, 0);
+  scalar b = fb(theta, delta, delta_int, 0);
   int size = x.size();
 
   Matrix<T, Dynamic, 1> x_analytical(x.size());
@@ -207,14 +213,14 @@ quadratic_optimizer(const Fh& fh,
   double f_value;  // declare here to remove warning message
 
   VectorXd b(1);
-  b(0) = fb(theta, delta, delta_int);
+  b(0) = fb(theta, delta, delta_int, msgs);
 
-  VectorXd A_v = fa(theta, delta, delta_int);
+  VectorXd A_v = fa(theta, delta, delta_int, msgs);
   Eigen::MatrixXd A(1, A_v.size());
   A = to_matrix(A_v);
 
-  f_value = Eigen::solve_quadprog(fh(theta, delta, delta_int),
-                                  fv(theta, delta, delta_int), A, b,
+  f_value = Eigen::solve_quadprog(fh(theta, delta, delta_int, msgs),
+                                  fv(theta, delta, delta_int, msgs), A, b,
                                   Eigen::MatrixXd::Identity(n, n),
                                   Eigen::VectorXd::Zero(n),
                                   x);
