@@ -54,18 +54,21 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
         for (int w = 0; w < WORK_PER_THREAD; w++) {
           const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
           const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
-           if ((offset + temp_rows + tiled_j + w * THREAD_BLOCK_SIZE_COL) <= (offset + i + temp_rows)) {
+          if ((offset + temp_rows + tiled_j + w * THREAD_BLOCK_SIZE_COL)
+              <= (offset + i + temp_rows)) {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                  [thread_block_row]
-                = A[(offset + temp_rows + tiled_j + w * THREAD_BLOCK_SIZE_COL) * M
+                   [thread_block_row]
+                = A[(offset + temp_rows + tiled_j + w * THREAD_BLOCK_SIZE_COL)
+                        * M
                     + offset + i + temp_rows];
           } else {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                  [thread_block_row]
+                   [thread_block_row]
                 = 0;
           }
-          if (((tiled_i + temp_rows + offset) < non_padded_rows) && ((offset + j + w * THREAD_BLOCK_SIZE_COL) <= (tiled_i
-                    + temp_rows + offset))) {
+          if (((tiled_i + temp_rows + offset) < non_padded_rows)
+              && ((offset + j + w * THREAD_BLOCK_SIZE_COL)
+                  <= (tiled_i + temp_rows + offset))) {
             B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
                 = A[(offset + j + w * THREAD_BLOCK_SIZE_COL) * M + tiled_i

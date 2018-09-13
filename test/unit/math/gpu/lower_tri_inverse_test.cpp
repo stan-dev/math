@@ -71,4 +71,3 @@ TEST(MathMatrixGPU, inverse_gpu_big) {
   EXPECT_LT(max_error, 1e-8);
 }
 #endif
-

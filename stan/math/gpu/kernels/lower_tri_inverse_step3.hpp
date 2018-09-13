@@ -58,15 +58,14 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
                  [thread_block_row]
               = C[t * temp_rows * temp_rows
                   + (tiled_j + w * THREAD_BLOCK_SIZE_COL) * temp_rows + i];
-          if ((offset + j + w * THREAD_BLOCK_SIZE_COL) <= (tiled_i
-                    + offset)) {
+          if ((offset + j + w * THREAD_BLOCK_SIZE_COL) <= (tiled_i + offset)) {
             B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                  [thread_block_row]
+                   [thread_block_row]
                 = A[(offset + j + w * THREAD_BLOCK_SIZE_COL) * M + tiled_i
                     + offset];
           } else {
             B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                  [thread_block_row]
+                   [thread_block_row]
                 = 0;
           }
         }
@@ -85,8 +84,9 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
       for (int w = 0; w < WORK_PER_THREAD; w++) {
         // each thread saves WORK_PER_THREAD values
         if ((i + temp_rows + offset) < non_padded_rows) {
-          A[(offset + j + w * THREAD_BLOCK_SIZE_COL) * M
-              + i + temp_rows + offset] = -acc[w];
+          A[(offset + j + w * THREAD_BLOCK_SIZE_COL) * M + i + temp_rows
+            + offset]
+              = -acc[w];
         }
       }
     }
