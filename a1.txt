@@ -1,4 +1,0 @@
-g++ -Wall -I . -isystem lib/eigen_3.3.3 -isystem lib/boost_1.66.0 -isystem lib/sundials_3.1.0/include -std=c++1y -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION -Wno-unused-function -Wno-uninitialized -pthread -isystem lib/opencl_1.2.8 -DSTAN_OPENCL -DOPENCL_DEVICE_ID=0 -DOPENCL_PLATFORM_ID=0 -DGTEST_USE_OWN_TR1_TUPLE -DGTEST_HAS_PTHREAD=0 -isystem lib/gtest_1.7.0/include -isystem lib/gtest_1.7.0 -O3 -DGTEST_USE_OWN_TR1_TUPLE -DGTEST_HAS_PTHREAD=0 -isystem lib/gtest_1.7.0/include -isystem lib/gtest_1.7.0 -O3 -DNO_FPRINTF_OUTPUT -pipe  -c -o test/unit/math/gpu/lower_tri_inverse_test.o test/unit/math/gpu/lower_tri_inverse_test.cpp
-------------------------------------------------------------
-make -j1 test/unit/math/gpu/lower_tri_inverse_test
-<builtin>: recipe for target 'test/unit/math/gpu/lower_tri_inverse_test.o' failed
