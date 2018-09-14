@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/gpu/kernel_cl.hpp>
+#include <algorithm>
 
 namespace stan {
 namespace math {
