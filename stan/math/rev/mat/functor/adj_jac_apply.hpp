@@ -498,9 +498,8 @@ struct adj_jac_vari : public vari {
     internal::build_y_adj(y_vi_, M_, y_adj);
     auto y_adj_jacs = f_.multiply_adjoint_jacobian(is_var_, y_adj);
 
-    apply(
-        [this](auto&&... args) { this->accumulate_adjoints(args...); },
-        y_adj_jacs);
+    apply([this](auto&&... args) { this->accumulate_adjoints(args...); },
+          y_adj_jacs);
   }
 };
 
