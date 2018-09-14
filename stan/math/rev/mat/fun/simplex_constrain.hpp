@@ -4,7 +4,7 @@
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
-#include <stan/math/rev/mat/fun/adj_jac_apply.hpp>
+#include <stan/math/rev/mat/functor/adj_jac_apply.hpp>
 #include <tuple>
 #include <vector>
 

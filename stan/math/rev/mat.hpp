@@ -12,7 +12,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/rev/arr.hpp>
 
-#include <stan/math/rev/mat/fun/adj_jac_apply.hpp>
 #include <stan/math/rev/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_product.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_self.hpp>
@@ -59,6 +58,8 @@
 #include <stan/math/rev/mat/fun/trace_quad_form.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/rev/mat/fun/variance.hpp>
+
+#include <stan/math/rev/mat/functor/adj_jac_apply.hpp>
 #include <stan/math/rev/mat/functor/algebra_solver.hpp>
 #include <stan/math/rev/mat/functor/gradient.hpp>
 #include <stan/math/rev/mat/functor/jacobian.hpp>
