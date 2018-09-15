@@ -29,10 +29,9 @@ const char *copy_triangular_kernel_code = STRINGIFY(
      * Used in math/gpu/copy_triangular_opencl.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void copy_triangular(
-        __global write_only double *A, __global read_only double *B,
-        read_only unsigned int rows, read_only unsigned int cols,
-        read_only unsigned int lower_upper) {
+    __kernel void copy_triangular(__global double *A, __global double *B,
+                                  unsigned int rows, unsigned int cols,
+                                  unsigned int lower_upper) {
       int i = get_global_id(0);
       int j = get_global_id(1);
       if (i < rows && j < cols) {

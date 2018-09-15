@@ -22,9 +22,8 @@ const char *is_nan_kernel_code = STRINGIFY(
      *  Kernel for stan/math/gpu/err/check_nan.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void is_nan(
-        __global read_only double *A, __global write_only int *flag,
-        read_only unsigned int rows, read_only unsigned int cols) {
+    __kernel void is_nan(__global double *A, __global int *flag,
+                         unsigned int rows, unsigned int cols) {
       const int i = get_global_id(0);
       const int j = get_global_id(1);
       if (i < rows && j < cols) {
