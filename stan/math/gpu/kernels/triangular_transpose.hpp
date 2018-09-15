@@ -25,9 +25,9 @@ const char* triangular_transpose_kernel_code = STRINGIFY(
      * Used in mat/gpu/triangular_transpose.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void triangular_transpose(
-        __global read_write double* A, read_only unsigned int rows,
-        read_only unsigned int cols, read_only unsigned int copy_direction) {
+    __kernel void triangular_transpose(__global double* A, unsigned int rows,
+                                       unsigned int cols,
+                                       unsigned int copy_direction) {
       int i = get_global_id(0);
       int j = get_global_id(1);
       if (i < rows && j < cols) {

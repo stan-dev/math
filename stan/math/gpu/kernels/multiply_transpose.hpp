@@ -19,9 +19,9 @@ const char* multiply_transpose_kernel_code = STRINGIFY(
      * @param[in] N Number of cols for matrix A and the number of rows for
      * matrix A^T
      */
-    __kernel void multiply_transpose(
-        const __global read_only double* A, __global write_only double* B,
-        const read_only int M, const read_only int N) {
+    __kernel void multiply_transpose(const __global double* A,
+                                     __global double* B, const int M,
+                                     const int N) {
       // thread index inside the thread block
       const int thread_block_row = get_local_id(0);
       const int thread_block_col = get_local_id(1);
