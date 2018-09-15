@@ -79,19 +79,19 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
     return inv_mat;
   }
   parts = ceil(parts / 2.0);
-  
+
   auto result_matrix_dim = thread_block_size_1D;
   auto thread_block_work2d_dim = thread_block_2D_dim / work_per_thread;
   auto ndrange_2d
       = cl::NDRange(thread_block_2D_dim, thread_block_work2d_dim, 1);
   while (parts > 0) {
     int result_matrix_dim_x = result_matrix_dim;
-    if ( parts==1 && (inv_padded.rows() - result_matrix_dim*2) < 0){
-      result_matrix_dim_x = inv_padded.rows() - result_matrix_dim;      
+    if (parts == 1 && (inv_padded.rows() - result_matrix_dim * 2) < 0) {
+      result_matrix_dim_x = inv_padded.rows() - result_matrix_dim;
     }
-    
+
     auto result_work_dim = result_matrix_dim / work_per_thread;
-    
+
     auto result_ndrange
         = cl::NDRange(result_matrix_dim_x, result_work_dim, parts);
     opencl_kernels::lower_tri_inverse_step2(
