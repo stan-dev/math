@@ -16,8 +16,7 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
      * @param[in] A input matrix that is being inverted.
      * @param[out] C temporary matrix to store the intermediate results.
      * @param M The number of rows for A.
-     * @param K The number of elements to multiply.
-     * @param temp_rows The number of rows in C.
+     * @param temp_rows The number of elements to multiply
      * @param non_padded_rows The number of rows that are not used for padding.
      * @note Code is a <code>const char*</code> held in
      * <code>lower_tri_inverse_step2_kernel_code.</code>
@@ -25,9 +24,8 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
      *  This kernel uses the helper macros available in helpers.cl.
      */
     __kernel void lower_tri_inverse_step2(
-        __global read_only double* A, __global write_only double* C,
-        const read_only int M, const read_only int K,
-        const read_only int temp_rows, int non_padded_rows) {
+        __global read_only double* A, __global double* C,
+        const int M, const int temp_rows, int non_padded_rows) {
       int t = get_global_id(2);
       int offset = t * temp_rows * 2;
       // thread index inside the thread_block
@@ -46,7 +44,7 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
         acc[w] = 0.0;
       }
 
-      const int num_tiles = (K + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
+      const int num_tiles = (temp_rows + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
       // iterate over all tiles
       for (int tile_ind = 0; tile_ind < num_tiles; tile_ind++) {
         // each thread copies WORK_PER_THREAD values to the local
@@ -110,7 +108,7 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/matrix_multiply.hpp add() \endlink
  */
-const local_range_kernel<cl::Buffer, cl::Buffer, int, int, int, int>
+const local_range_kernel<cl::Buffer, cl::Buffer, int, int, int>
     lower_tri_inverse_step2("lower_tri_inverse_step2",
                             lower_tri_inverse_step2_kernel_code,
                             {{"THREAD_BLOCK_SIZE", 32},

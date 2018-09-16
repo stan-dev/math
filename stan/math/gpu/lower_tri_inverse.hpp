@@ -28,24 +28,27 @@ namespace math {
 inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
   check_square("lower_triangular_inverse (GPU)", "A", A);
 
-  int thread_block_size_1D = 256;
-  if (A.rows() <= 512) {
-    thread_block_size_1D = 64;
-  }
+  
   int thread_block_2D_dim = 32;
-
   int max_1D_thread_block_size = opencl_context.max_thread_block_size();
-  int max_2D_thread_block_dim = sqrt(max_1D_thread_block_size);
+  // we split the input matrix to 32 blocks
+  int thread_block_size_1D = (((A.rows()/32)+thread_block_2D_dim-1)/thread_block_2D_dim)*thread_block_2D_dim;
   if (max_1D_thread_block_size < thread_block_size_1D) {
     thread_block_size_1D = max_1D_thread_block_size;
   }
-  if (A.rows() < thread_block_size_1D) {
-    thread_block_size_1D = A.rows();
-  }
+  int max_2D_thread_block_dim = sqrt(max_1D_thread_block_size);
   if (max_2D_thread_block_dim < thread_block_2D_dim) {
     thread_block_2D_dim = max_2D_thread_block_dim;
+  } 
+  // for small size split in max 2 parts
+  if (thread_block_size_1D < 64) {
+    thread_block_size_1D = 32;
   }
+  if (A.rows() < thread_block_size_1D) {
+    thread_block_size_1D = A.rows();
+  } 
 
+  // pad the input matrix
   int A_rows_padded
       = ((A.rows() + thread_block_size_1D - 1) / thread_block_size_1D)
         * thread_block_size_1D;
@@ -61,9 +64,12 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
   int work_per_thread
       = opencl_kernels::lower_tri_inverse_step2.make_functor.get_opts().at(
           "WORK_PER_THREAD");
+  // the number of blocks in the first step
+  // each block is inverted with using the regular forward substitution
   int parts = inv_padded.rows() / thread_block_size_1D;
   inv_padded.sub_block(inv_mat, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
   try {
+    // spawn parts thread blocks, each responsible for one block
     opencl_kernels::lower_tri_inverse_step1(
         cl::NDRange(parts * thread_block_size_1D),
         cl::NDRange(thread_block_size_1D), inv_padded.buffer(), temp.buffer(),
@@ -71,13 +77,14 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
   } catch (cl::Error& e) {
     check_opencl_error("inverse step1", e);
   }
+  // set the padded part of the matrix and the upper triangular to zeros
   inv_padded.sub_block(zero_mat, 0, 0, inv_mat.rows(), 0, zero_mat.rows(),
                        zero_mat.cols());
   inv_padded.zeros<stan::math::TriangularViewGPU::Upper>();
   if (parts == 1) {
     inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
     return inv_mat;
-  }
+  }  
   parts = ceil(parts / 2.0);
 
   auto result_matrix_dim = thread_block_size_1D;
@@ -86,32 +93,35 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
       = cl::NDRange(thread_block_2D_dim, thread_block_work2d_dim, 1);
   while (parts > 0) {
     int result_matrix_dim_x = result_matrix_dim;
+    // when calculating the last submatrix
+    // we can reduce the size to the actual size (not the next power of 2)
     if (parts == 1 && (inv_padded.rows() - result_matrix_dim * 2) < 0) {
       result_matrix_dim_x = inv_padded.rows() - result_matrix_dim;
     }
-
     auto result_work_dim = result_matrix_dim / work_per_thread;
-
     auto result_ndrange
         = cl::NDRange(result_matrix_dim_x, result_work_dim, parts);
     opencl_kernels::lower_tri_inverse_step2(
         result_ndrange, ndrange_2d, inv_padded.buffer(), temp.buffer(),
-        inv_padded.rows(), result_matrix_dim, result_matrix_dim,
+        inv_padded.rows(), result_matrix_dim,
         inv_mat.rows());
     opencl_kernels::lower_tri_inverse_step3(
         result_ndrange, ndrange_2d, inv_padded.buffer(), temp.buffer(),
-        inv_padded.rows(), result_matrix_dim, result_matrix_dim,
+        inv_padded.rows(), result_matrix_dim, 
         inv_mat.rows());
+    // if this is the last submatrix, end
     if (parts == 1) {
       parts = 0;
-    } else {
+    } else {      
       parts = ceil(parts / 2.0);
     }
     result_matrix_dim *= 2;
+    // set the padded part and upper diagonal to zeros
     inv_padded.sub_block(zero_mat, 0, 0, inv_mat.rows(), 0, zero_mat.rows(),
                          zero_mat.cols());
     inv_padded.zeros<stan::math::TriangularViewGPU::Upper>();
   }
+  // un-pad and return
   inv_mat.sub_block(inv_padded, 0, 0, 0, 0, A.rows(), A.rows());
   return inv_mat;
 }
