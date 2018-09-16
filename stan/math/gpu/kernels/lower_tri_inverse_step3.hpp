@@ -24,8 +24,8 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
      *  This kernel uses the helper macros available in helpers.cl.
      */
     __kernel void lower_tri_inverse_step3(
-        __global read_write double* A, const __global double* C,
-        const int M, const int temp_rows, int non_padded_rows) {
+        __global read_write double* A, const __global double* C, const int M,
+        const int temp_rows, int non_padded_rows) {
       int t = get_global_id(2);
       int offset = t * temp_rows * 2;
       // thread index inside the thread_block
@@ -44,7 +44,8 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
         acc[w] = 0.0;
       }
 
-      const int num_tiles = (temp_rows + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
+      const int num_tiles
+          = (temp_rows + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
       // iterate over all tiles
       for (int tile_ind = 0; tile_ind < num_tiles; tile_ind++) {
         // each thread copies WORK_PER_THREAD values to the local

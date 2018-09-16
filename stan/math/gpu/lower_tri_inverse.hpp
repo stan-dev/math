@@ -28,25 +28,26 @@ namespace math {
 inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
   check_square("lower_triangular_inverse (GPU)", "A", A);
 
-  
   int thread_block_2D_dim = 32;
   int max_1D_thread_block_size = opencl_context.max_thread_block_size();
   // we split the input matrix to 32 blocks
-  int thread_block_size_1D = (((A.rows()/32)+thread_block_2D_dim-1)/thread_block_2D_dim)*thread_block_2D_dim;
+  int thread_block_size_1D
+      = (((A.rows() / 32) + thread_block_2D_dim - 1) / thread_block_2D_dim)
+        * thread_block_2D_dim;
   if (max_1D_thread_block_size < thread_block_size_1D) {
     thread_block_size_1D = max_1D_thread_block_size;
   }
   int max_2D_thread_block_dim = sqrt(max_1D_thread_block_size);
   if (max_2D_thread_block_dim < thread_block_2D_dim) {
     thread_block_2D_dim = max_2D_thread_block_dim;
-  } 
+  }
   // for small size split in max 2 parts
   if (thread_block_size_1D < 64) {
     thread_block_size_1D = 32;
   }
   if (A.rows() < thread_block_size_1D) {
     thread_block_size_1D = A.rows();
-  } 
+  }
 
   // pad the input matrix
   int A_rows_padded
@@ -84,7 +85,7 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
   if (parts == 1) {
     inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
     return inv_mat;
-  }  
+  }
   parts = ceil(parts / 2.0);
 
   auto result_matrix_dim = thread_block_size_1D;
@@ -103,16 +104,14 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
         = cl::NDRange(result_matrix_dim_x, result_work_dim, parts);
     opencl_kernels::lower_tri_inverse_step2(
         result_ndrange, ndrange_2d, inv_padded.buffer(), temp.buffer(),
-        inv_padded.rows(), result_matrix_dim,
-        inv_mat.rows());
+        inv_padded.rows(), result_matrix_dim, inv_mat.rows());
     opencl_kernels::lower_tri_inverse_step3(
         result_ndrange, ndrange_2d, inv_padded.buffer(), temp.buffer(),
-        inv_padded.rows(), result_matrix_dim, 
-        inv_mat.rows());
+        inv_padded.rows(), result_matrix_dim, inv_mat.rows());
     // if this is the last submatrix, end
     if (parts == 1) {
       parts = 0;
-    } else {      
+    } else {
       parts = ceil(parts / 2.0);
     }
     result_matrix_dim *= 2;
