@@ -130,7 +130,6 @@ ifeq ($(OS),Linux)
   endif
   ifeq (clang,$(CXX_TYPE))
     LDLIBS_OS ?= -lpthread
-    LDFLAGS_OS ?= -stdlib=libc++
   endif
 endif
 
