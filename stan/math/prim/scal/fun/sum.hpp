@@ -5,7 +5,7 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the identity.
+ * Acts as the identity function.
  *
  * @tparam T Type of element.
  * @param v Specified value.
