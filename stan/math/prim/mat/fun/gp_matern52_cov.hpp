@@ -122,7 +122,7 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
 
   Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
                 Eigen::Dynamic>
-      cov(x_size, x_size);
+    cov(x_size, x_size);
 
   if (x_size == 0)
     return cov;
@@ -132,15 +132,15 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
   double five_thirds = 5.0 / 3.0;
   double neg_root_5 = -root_5;
 
-  std::vector<Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type, -1, 1>>
+  std::vector<Eigen::Matrix<typename return_type<T_x, T_l>::type, -1, 1>>
       x_new = divide_columns(x, length_scale);
 
   for (size_t i = 0; i < x_size; ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
-      typename return_type<T_x, T_s, T_l>::type sq_distance
+      typename return_type<T_x>::type sq_distance
           = squared_distance(x_new[i], x_new[j]);
-      typename return_type<T_x, T_s, T_l>::type distance = sqrt(sq_distance);
+      typename return_type<T_x>::type distance = sqrt(sq_distance);
       cov(i, j) = sigma_sq
                   * (1.0 + root_5 * distance + five_thirds * sq_distance)
                   * exp(neg_root_5 * distance);
@@ -278,16 +278,16 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
   double five_thirds = 5.0 / 3.0;
   double neg_root_5 = -root_5;
 
-  std::vector<Eigen::Matrix<typename return_type<T_x1, T_l, T_s>::type, -1, 1>>
+  std::vector<Eigen::Matrix<typename return_type<T_x1, T_l>::type, -1, 1>>
       x1_new = divide_columns(x1, length_scale);
-  std::vector<Eigen::Matrix<typename return_type<T_x2, T_l, T_s>::type, -1, 1>>
+  std::vector<Eigen::Matrix<typename return_type<T_x2, T_l>::type, -1, 1>>
       x2_new = divide_columns(x2, length_scale);
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      typename return_type<T_x1, T_x2, T_l, T_s>::type sq_distance
+      typename return_type<T_x1, T_x2>::type sq_distance
           = squared_distance(x1_new[i], x2_new[j]);
-      typename return_type<T_x1, T_x2, T_l, T_s>::type distance
+      typename return_type<T_x1, T_x2>::type distance
           = sqrt(sq_distance);
       cov(i, j) = sigma_sq
                   * (1.0 + root_5 * distance + five_thirds * sq_distance)
