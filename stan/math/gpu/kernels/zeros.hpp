@@ -27,9 +27,8 @@ const char* zeros_kernel_code = STRINGIFY(
      * <code>zeros_kernel_code.</code>
      * This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void zeros(
-        __global write_only double* A, read_only unsigned int rows,
-        read_only unsigned int cols, read_only unsigned int part) {
+    __kernel void zeros(__global double* A, unsigned int rows,
+                        unsigned int cols, unsigned int part) {
       int i = get_global_id(0);
       int j = get_global_id(1);
       if (i < rows && j < cols) {

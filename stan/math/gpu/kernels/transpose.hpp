@@ -21,9 +21,8 @@ const char *transpose_kernel_code = STRINGIFY(
      * <code>transpose_kernel_code.</code>
      * This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void transpose(
-        __global read_write double *B, __global read_only double *A,
-        read_only unsigned int rows, read_only unsigned int cols) {
+    __kernel void transpose(__global double *B, __global double *A,
+                            unsigned int rows, unsigned int cols) {
       int i = get_global_id(0);
       int j = get_global_id(1);
       if (i < rows && j < cols) {

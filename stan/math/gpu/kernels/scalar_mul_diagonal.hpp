@@ -18,10 +18,9 @@ const char *scalar_mul_diagonal_kernel_code = STRINGIFY(
      * @param[in] rows the number of rows in A
      * @param[in] min_dim the size of the smaller dimension of A
      */
-    __kernel void scalar_mul_diagonal(__global read_write double *A,
-                                      const read_only double scalar,
-                                      const read_only unsigned int rows,
-                                      const read_only unsigned int min_dim) {
+    __kernel void scalar_mul_diagonal(__global double *A, const double scalar,
+                                      const unsigned int rows,
+                                      const unsigned int min_dim) {
       int i = get_global_id(0);
       if (i < min_dim) {
         A(i, i) *= scalar;
