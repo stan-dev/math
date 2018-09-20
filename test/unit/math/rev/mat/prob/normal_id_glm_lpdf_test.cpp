@@ -231,8 +231,7 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand_scal_beta) {
 
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsNormalIdGLM,
-     glm_matches_normal_id_varying_intercept) {
+TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_varying_intercept) {
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
     Matrix<double, Dynamic, Dynamic> xreal
@@ -241,9 +240,7 @@ TEST(ProbDistributionsNormalIdGLM,
         = Matrix<double, Dynamic, Dynamic>::Random(2, 1);
     Matrix<double, Dynamic, 1> alphareal
         = Matrix<double, Dynamic, 1>::Random(3, 1);
-    double phireal
-        = Matrix<double, Dynamic, 1>::Random(3, 1)[0]
-          + 1;
+    double phireal = Matrix<double, Dynamic, 1>::Random(3, 1)[0] + 1;
     Matrix<var, Dynamic, 1> y = yreal;
     Matrix<var, Dynamic, 1> beta = betareal;
     Matrix<var, Dynamic, 1> theta(3, 1);

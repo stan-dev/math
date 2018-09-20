@@ -51,10 +51,10 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
   static const char *function = "poisson_log_glm_lpmf";
   typedef typename stan::partials_return_type<T_y, T_x, T_alpha, T_beta>::type
       T_partials_return;
-  typedef typename std::conditional<is_vector<T_alpha>::value,
-    Eigen::Array<typename stan::partials_return_type<T_alpha>::type, -1, 1>,
-    typename stan::partials_return_type<T_alpha>::type>::type
-    T_alpha_val;
+  typedef typename std::conditional<
+      is_vector<T_alpha>::value,
+      Eigen::Array<typename stan::partials_return_type<T_alpha>::type, -1, 1>,
+      typename stan::partials_return_type<T_alpha>::type>::type T_alpha_val;
 
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -87,10 +87,10 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
       beta_dbl[m] = value_of(beta_vec[m]);
     }
   }
-  const T_alpha_val& alpha_val = value_of(alpha);
+  const T_alpha_val &alpha_val = value_of(alpha);
 
-  Matrix<T_partials_return, Dynamic, 1> theta_dbl =
-    (value_of(x) * beta_dbl).array() + alpha_val;
+  Matrix<T_partials_return, Dynamic, 1> theta_dbl
+      = (value_of(x) * beta_dbl).array() + alpha_val;
   check_finite(function, "Matrix of independent variables", theta_dbl);
 
   Matrix<T_partials_return, Dynamic, 1> theta_derivative(N);

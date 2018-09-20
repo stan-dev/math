@@ -55,11 +55,11 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   static const char *function = "bernoulli_logit_glm_lpmf";
   typedef typename stan::partials_return_type<T_y, T_x, T_alpha, T_beta>::type
       T_partials_return;
-  typedef typename std::conditional<is_vector<T_alpha>::value,
-    Eigen::Array<typename stan::partials_return_type<T_alpha>::type, -1, 1>,
-    typename stan::partials_return_type<T_alpha>::type>::type
-    T_alpha_val;
-  
+  typedef typename std::conditional<
+      is_vector<T_alpha>::value,
+      Eigen::Array<typename stan::partials_return_type<T_alpha>::type, -1, 1>,
+      typename stan::partials_return_type<T_alpha>::type>::type T_alpha_val;
+
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
@@ -98,10 +98,9 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
       beta_dbl[m] = value_of(beta_vec[m]);
     }
   }
-  const T_alpha_val& alpha_val = value_of(alpha);
+  const T_alpha_val &alpha_val = value_of(alpha);
   Eigen::Array<T_partials_return, Dynamic, 1> ytheta
-      = signs.array() * ((value_of(x) * beta_dbl).array()
-        + alpha_val);
+      = signs.array() * ((value_of(x) * beta_dbl).array() + alpha_val);
 
   // Compute the log-density and handle extreme values gracefully
   // using Taylor approximations.

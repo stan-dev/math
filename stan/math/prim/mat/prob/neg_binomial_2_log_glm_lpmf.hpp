@@ -24,13 +24,16 @@ namespace math {
 
 namespace internal {
 template <typename T>
-inline T try_to_array_else_identity(T t) { return t; }
+inline T try_to_array_else_identity(T t) {
+  return t;
+}
 
 template <typename S>
-inline Eigen::Array<S, -1, 1> try_to_array_else_identity(const Eigen::Matrix<S, -1, 1>&t) {
+inline Eigen::Array<S, -1, 1> try_to_array_else_identity(
+    const Eigen::Matrix<S, -1, 1>& t) {
   return t.array();
 }
-} //namespace internal
+}  // namespace internal
 
 /**
  * Returns the log PMF of the Generalized Linear Model (GLM)
@@ -73,18 +76,22 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
   typedef
       typename stan::partials_return_type<T_y, T_x, T_alpha, T_beta,
                                           T_precision>::type T_partials_return;
-  typedef typename std::conditional<is_vector<T_alpha>::value,
-    Eigen::Array<typename stan::partials_return_type<T_alpha>::type, -1, 1>,
-    typename stan::partials_return_type<T_alpha>::type>::type
-    T_alpha_val;
-  typedef typename std::conditional<is_vector<T_precision>::value,
-    Eigen::Matrix<typename stan::partials_return_type<T_precision>::type, -1, 1>,
-    typename stan::partials_return_type<T_precision>::type>::type
-    T_precision_mat;
-  typedef typename std::conditional<is_vector<T_precision>::value,
-    Eigen::Array<typename stan::partials_return_type<T_precision>::type, -1, 1>,
-    typename stan::partials_return_type<T_precision>::type>::type
-    T_precision_val;
+  typedef typename std::conditional<
+      is_vector<T_alpha>::value,
+      Eigen::Array<typename stan::partials_return_type<T_alpha>::type, -1, 1>,
+      typename stan::partials_return_type<T_alpha>::type>::type T_alpha_val;
+  typedef typename std::conditional<
+      is_vector<T_precision>::value,
+      Eigen::Matrix<typename stan::partials_return_type<T_precision>::type, -1,
+                    1>,
+      typename stan::partials_return_type<T_precision>::type>::type
+      T_precision_mat;
+  typedef typename std::conditional<
+      is_vector<T_precision>::value,
+      Eigen::Array<typename stan::partials_return_type<T_precision>::type, -1,
+                   1>,
+      typename stan::partials_return_type<T_precision>::type>::type
+      T_precision_val;
 
   using Eigen::Array;
   using Eigen::Dynamic;
@@ -118,13 +125,13 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
     return 0.0;
 
   const T_precision_mat& phi_val = value_of(phi);
-  const T_precision_val& phi_arr = phi_val; // No copy?
+  const T_precision_val& phi_arr = phi_val;  // No copy?
   scalar_seq_view<T_precision_mat> phi_vec(phi_val);
   Array<double, Dynamic, 1> y_arr(N, 1);
   {
     scalar_seq_view<T_y> y_vec(y);
     for (size_t n = 0; n < N; ++n) {
-      y_arr[n] = y_vec[n]; // Possibly redundant copy
+      y_arr[n] = y_vec[n];  // Possibly redundant copy
     }
   }
   Matrix<T_partials_return, Dynamic, 1> beta_dbl(M, 1);
@@ -173,11 +180,8 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
   if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
         && is_constant_struct<T_alpha>::value)) {
     Matrix<T_partials_return, Dynamic, 1> theta_derivative(N, 1);
-    theta_derivative = (y_arr
-                        - (y_plus_phi
-                           / (phi_arr / (theta_dbl.exp())
-                              + 1)))
-                           .matrix();
+    theta_derivative
+        = (y_arr - (y_plus_phi / (phi_arr / (theta_dbl.exp()) + 1))).matrix();
     if (!is_constant_struct<T_beta>::value) {
       ops_partials.edge3_.partials_
           = value_of(x).transpose() * theta_derivative;
@@ -196,15 +200,14 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
     if (is_vector<T_precision>::value) {
       ops_partials.edge4_.partials_
           = 1 - y_plus_phi / (theta_dbl.exp() + phi_arr) + log_phi
-              - logsumexp_eta_logphi
-              + digamma(y_plus_phi.matrix()).array()
-              - try_to_array_else_identity(digamma(phi_val));
+            - logsumexp_eta_logphi + digamma(y_plus_phi.matrix()).array()
+            - try_to_array_else_identity(digamma(phi_val));
     } else {
       ops_partials.edge4_.partials_[0]
           = (1 - y_plus_phi / (theta_dbl.exp() + phi_arr) + log_phi
-               - logsumexp_eta_logphi
-               + digamma(y_plus_phi.matrix()).array()
-               - try_to_array_else_identity(digamma(phi_val))).sum();
+             - logsumexp_eta_logphi + digamma(y_plus_phi.matrix()).array()
+             - try_to_array_else_identity(digamma(phi_val)))
+                .sum();
     }
   }
   return ops_partials.build(logp);

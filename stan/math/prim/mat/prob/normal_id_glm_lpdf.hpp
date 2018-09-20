@@ -55,18 +55,18 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
   static const char *function = "normal_id_glm_lpdf";
   typedef typename stan::partials_return_type<T_y, T_x, T_alpha, T_beta,
                                               T_scale>::type T_partials_return;
-  typedef typename std::conditional<is_vector<T_scale>::value,
-    Eigen::Array<typename stan::partials_return_type<T_scale>::type, -1, 1>,
-    typename stan::partials_return_type<T_scale>::type>::type
-    T_scale_val;
-  typedef typename std::conditional<is_vector<T_alpha>::value,
-    Eigen::Array<typename stan::partials_return_type<T_alpha>::type, -1, 1>,
-    typename stan::partials_return_type<T_alpha>::type>::type
-    T_alpha_val;
-  typedef typename std::conditional<is_vector<T_y>::value,
-    Eigen::Array<typename stan::partials_return_type<T_y>::type, -1, 1>,
-    typename stan::partials_return_type<T_y>::type>::type
-    T_y_val;
+  typedef typename std::conditional<
+      is_vector<T_scale>::value,
+      Eigen::Array<typename stan::partials_return_type<T_scale>::type, -1, 1>,
+      typename stan::partials_return_type<T_scale>::type>::type T_scale_val;
+  typedef typename std::conditional<
+      is_vector<T_alpha>::value,
+      Eigen::Array<typename stan::partials_return_type<T_alpha>::type, -1, 1>,
+      typename stan::partials_return_type<T_alpha>::type>::type T_alpha_val;
+  typedef typename std::conditional<
+      is_vector<T_y>::value,
+      Eigen::Array<typename stan::partials_return_type<T_y>::type, -1, 1>,
+      typename stan::partials_return_type<T_y>::type>::type T_y_val;
 
   using Eigen::Array;
   using Eigen::Dynamic;
@@ -102,7 +102,6 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
   if (include_summand<propto>::value)
     logp += NEG_LOG_SQRT_TWO_PI * N;
 
-
   Matrix<T_partials_return, Dynamic, 1> beta_dbl(M, 1);
   {
     scalar_seq_view<T_beta> beta_vec(beta);
@@ -110,16 +109,17 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
       beta_dbl[m] = value_of(beta_vec[m]);
     }
   }
-  const T_alpha_val& alpha_val = value_of(alpha);
-  const T_scale_val& sigma_val = value_of(sigma);
-  const T_y_val& y_val = value_of(y);
+  const T_alpha_val &alpha_val = value_of(alpha);
+  const T_scale_val &sigma_val = value_of(sigma);
+  const T_y_val &y_val = value_of(y);
 
   T_scale_val inv_sigma = 1 / sigma_val;
   Array<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma
-    = (y_val - (value_of(x) * beta_dbl).array() - alpha_val) * inv_sigma;
+      = (y_val - (value_of(x) * beta_dbl).array() - alpha_val) * inv_sigma;
   Matrix<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma_squared
-    = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
-  check_finite(function, "Matrix of independent variables", y_minus_mu_over_sigma_squared);
+      = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
+  check_finite(function, "Matrix of independent variables",
+               y_minus_mu_over_sigma_squared);
   if (include_summand<propto, T_scale>::value) {
     if (is_vector<T_scale>::value)
       logp -= sum(log(sigma_val));
@@ -156,16 +156,11 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
     if (!is_constant_struct<T_scale>::value) {
       if (is_vector<T_scale>::value) {
         ops_partials.edge5_.partials_
-            = ((y_minus_mu_over_sigma_squared.array()
-                - 1)
-               * inv_sigma)
+            = ((y_minus_mu_over_sigma_squared.array() - 1) * inv_sigma)
                   .matrix();
       } else {
         ops_partials.edge5_.partials_[0]
-            = ((y_minus_mu_over_sigma_squared.array()
-                - 1)
-               * inv_sigma)
-                  .sum();
+            = ((y_minus_mu_over_sigma_squared.array() - 1) * inv_sigma).sum();
       }
     }
   }
