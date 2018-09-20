@@ -21,35 +21,33 @@ namespace stan {
  *
  *  These values are mutable.
  */
-template <typename T1, bool used, bool is_vec>
-class VectorBuilderHelper {
- public:
+template <typename T1, bool used, bool is_vec> class VectorBuilderHelper {
+public:
   explicit VectorBuilderHelper(size_t /* n */) {}
 
-  T1& operator[](size_t /* i */) {
+  T1 &operator[](size_t /* i */) {
     throw std::logic_error("used is false. this should never be called");
   }
 
   typedef T1 type;
 
-  inline type& data() {
+  inline type &data() {
     throw std::logic_error("used is false. this should never be called");
   }
 };
 
-template <typename T1>
-class VectorBuilderHelper<T1, true, false> {
- private:
+template <typename T1> class VectorBuilderHelper<T1, true, false> {
+private:
   T1 x_;
 
- public:
+public:
   explicit VectorBuilderHelper(size_t /* n */) : x_(0) {}
-  T1& operator[](size_t /* i */) { return x_; }
+  T1 &operator[](size_t /* i */) { return x_; }
 
   typedef T1 type;
 
-  inline type& data() { return x_; }
+  inline type &data() { return x_; }
 };
 
-}  // namespace stan
+} // namespace stan
 #endif

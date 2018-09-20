@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_LDLT_FACTOR_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_LDLT_FACTOR_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/mat/fun/LDLT_factor.hpp>
 #include <sstream>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/LDLT_factor.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <string>
 
 namespace stan {
@@ -26,8 +26,8 @@ namespace math {
  *   invalid.
  */
 template <typename T, int R, int C>
-inline void check_ldlt_factor(const char* function, const char* name,
-                              LDLT_factor<T, R, C>& A) {
+inline void check_ldlt_factor(const char *function, const char *name,
+                              LDLT_factor<T, R, C> &A) {
   if (!A.success()) {
     std::ostringstream msg;
     msg << "is not positive definite.  last conditional variance is ";
@@ -37,6 +37,6 @@ inline void check_ldlt_factor(const char* function, const char* name,
   }
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

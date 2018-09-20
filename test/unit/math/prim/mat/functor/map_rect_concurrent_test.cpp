@@ -5,8 +5,8 @@
 #undef STAN_MPI
 #endif
 
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 #include <test/unit/math/prim/mat/functor/hard_work.hpp>
 
@@ -19,8 +19,8 @@ STAN_REGISTER_MAP_RECT(1, hard_work)
 struct map_rect : public ::testing::Test {
   Eigen::VectorXd shared_params_d;
   std::vector<Eigen::VectorXd> job_params_d;
-  std::vector<std::vector<double> > x_r;
-  std::vector<std::vector<int> > x_i;
+  std::vector<std::vector<double>> x_r;
+  std::vector<std::vector<int>> x_i;
   const int N = 10;
 
   virtual void SetUp() {
@@ -33,8 +33,8 @@ struct map_rect : public ::testing::Test {
       job_params_d.push_back(job_d);
     }
 
-    x_r = std::vector<std::vector<double> >(N, std::vector<double>(1, 1.0));
-    x_i = std::vector<std::vector<int> >(N, std::vector<int>(1, 0));
+    x_r = std::vector<std::vector<double>>(N, std::vector<double>(1, 1.0));
+    x_i = std::vector<std::vector<int>>(N, std::vector<int>(1, 0));
   }
 };
 
@@ -57,10 +57,10 @@ TEST_F(map_rect, concurrent_eval_ok_dd) {
       shared_params_d, job_params_d, x_r, x_i);
   for (int i = 0, j = 0; i < N; i++) {
     j = 2 * i;
-    EXPECT_FLOAT_EQ(
-        res1(j), job_params_d[i](0) * job_params_d[i](0) + shared_params_d(0));
+    EXPECT_FLOAT_EQ(res1(j), job_params_d[i](0) * job_params_d[i](0) +
+                                 shared_params_d(0));
     EXPECT_FLOAT_EQ(res1(j + 1),
-                    x_r[i][0] * job_params_d[i](1) * job_params_d[i](0)
-                        + 2 * shared_params_d(0) + shared_params_d(1));
+                    x_r[i][0] * job_params_d[i](1) * job_params_d[i](0) +
+                        2 * shared_params_d(0) + shared_params_d(1));
   }
 }

@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(ProbInvWishart, log_matches_lpmf) {
   Eigen::MatrixXd Y(4, 4);

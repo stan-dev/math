@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_REV_CORE_VARI_HPP
 #define STAN_MATH_REV_CORE_VARI_HPP
 
+#include <ostream>
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
-#include <ostream>
 
 namespace stan {
 namespace math {
@@ -28,10 +28,10 @@ class var;
  * information via an implementation of chain().
  */
 class vari {
- private:
+private:
   friend class var;
 
- public:
+public:
   /**
    * The value of this variable.
    */
@@ -108,7 +108,7 @@ class vari {
    *
    * @return The modified ostream.
    */
-  friend std::ostream& operator<<(std::ostream& os, const vari* v) {
+  friend std::ostream &operator<<(std::ostream &os, const vari *v) {
     return os << v->val_ << ":" << v->adj_;
   }
 
@@ -122,7 +122,7 @@ class vari {
    * @param nbytes Number of bytes to allocate.
    * @return Pointer to allocated bytes.
    */
-  static inline void* operator new(size_t nbytes) {
+  static inline void *operator new(size_t nbytes) {
     return ChainableStack::instance().memalloc_.alloc(nbytes);
   }
 
@@ -137,10 +137,10 @@ class vari {
    * See the discussion of "plugging the memory leak" in:
    *   http://www.parashift.com/c++-faq/memory-pools.html
    */
-  static inline void operator delete(void* /* ignore arg */) { /* no op */
+  static inline void operator delete(void * /* ignore arg */) { /* no op */
   }
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

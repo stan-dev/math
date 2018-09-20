@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 
 TEST(AgradRevMatrix, LDLT_factor_default_constructor) {
   using stan::math::LDLT_factor;
@@ -88,7 +88,7 @@ TEST(AgradRevMatrix, vectorD) {
 
   Eigen::Matrix<double, -1, -1> A_double(2, 2);
   A_double << 2, 1, 1, 2;
-  Eigen::LDLT<Eigen::Matrix<double, 2, 2> > ldlt_double(A_double);
+  Eigen::LDLT<Eigen::Matrix<double, 2, 2>> ldlt_double(A_double);
   Eigen::Matrix<double, -1, -1> expected_vectorD(2, 1);
   expected_vectorD = ldlt_double.vectorD();
 
@@ -132,7 +132,7 @@ TEST(AgradRevMatrix, compute) {
   Eigen::Matrix<double, -1, -1> A_double(2, 2);
   A_double << 2, 1, 1, 2;
 
-  Eigen::LDLT<Eigen::Matrix<double, -1, -1> > ldlt_double(A_double);
+  Eigen::LDLT<Eigen::Matrix<double, -1, -1>> ldlt_double(A_double);
   Eigen::Matrix<double, -1, -1> expected_mat, mat;
 
   LDLT_factor<var, -1, -1> ldlt_A;
@@ -146,8 +146,8 @@ TEST(AgradRevMatrix, compute) {
   expected_mat = ldlt_double.matrixLDLT();
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++)
-      EXPECT_FLOAT_EQ(expected_mat(i, j), mat(i, j))
-          << "element (" << i << ", " << j << ")";
+      EXPECT_FLOAT_EQ(expected_mat(i, j), mat(i, j)) << "element (" << i << ", "
+                                                     << j << ")";
 
   // tests on A: [0, 0][0, 0]
   A << 0, 0, 0, 0;

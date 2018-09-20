@@ -1,7 +1,7 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/prim/mat/fun/sort_test_util.hpp>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
 
@@ -179,25 +179,25 @@ TEST(AgradRev, sort_no_thrown) {
 }
 
 TEST(MathMatrix, sortAscStdVecNan) {
-  test_sort_asc_throws<std::vector<stan::math::var> >();
+  test_sort_asc_throws<std::vector<stan::math::var>>();
 }
 
 TEST(MathMatrix, sortDescStdVecNan) {
-  test_sort_desc_throws<std::vector<stan::math::var> >();
+  test_sort_desc_throws<std::vector<stan::math::var>>();
 }
 
 TEST(MathMatrix, sortAscEigenVecNan) {
-  test_sort_asc_throws<Eigen::Matrix<stan::math::var, -1, 1> >();
+  test_sort_asc_throws<Eigen::Matrix<stan::math::var, -1, 1>>();
 }
 TEST(MathMatrix, sortAscEigenRowVecNan) {
-  test_sort_asc_throws<Eigen::Matrix<stan::math::var, 1, -1> >();
+  test_sort_asc_throws<Eigen::Matrix<stan::math::var, 1, -1>>();
 }
 
 TEST(MathMatrix, sortDescEigenVecNan) {
-  test_sort_desc_throws<Eigen::Matrix<stan::math::var, -1, 1> >();
+  test_sort_desc_throws<Eigen::Matrix<stan::math::var, -1, 1>>();
 }
 TEST(MathMatrix, sortDescEigenRowVecNan) {
-  test_sort_desc_throws<Eigen::Matrix<stan::math::var, 1, -1> >();
+  test_sort_desc_throws<Eigen::Matrix<stan::math::var, 1, -1>>();
 }
 TEST(AgradRevMatrix, check_varis_on_stack) {
   using stan::math::to_var;

@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_FWD_MAT_FUN_EIGEN_NUMTRAITS_HPP
 #define STAN_MATH_FWD_MAT_FUN_EIGEN_NUMTRAITS_HPP
 
+#include <limits>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/core/std_numeric_limits.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <limits>
 
 namespace Eigen {
 
@@ -13,8 +13,7 @@ namespace Eigen {
  * gradient variables.
  */
 template <typename T>
-struct NumTraits<stan::math::fvar<T> >
-    : GenericNumTraits<stan::math::fvar<T> > {
+struct NumTraits<stan::math::fvar<T>> : GenericNumTraits<stan::math::fvar<T>> {
   enum {
     /**
      * stan::math::fvar requires initialization
@@ -69,7 +68,7 @@ struct significant_decimals_default_impl<stan::math::fvar<T>, false> {
   }
 };
 #endif
-}  // namespace internal
+} // namespace internal
 
-}  // namespace Eigen
+} // namespace Eigen
 #endif

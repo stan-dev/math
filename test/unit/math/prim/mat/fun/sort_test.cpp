@@ -1,12 +1,11 @@
-#include <stan/math/prim/mat.hpp>
-#include <test/unit/math/prim/mat/fun/sort_test_util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/mat.hpp>
 #include <stdexcept>
+#include <test/unit/math/prim/mat/fun/sort_test_util.hpp>
 #include <vector>
 
-template <typename T>
-void test_sort_asc() {
+template <typename T> void test_sort_asc() {
   using stan::math::index_type;
   using stan::math::sort_asc;
 
@@ -40,11 +39,11 @@ void test_sort_asc() {
 }
 
 TEST(MathMatrix, sortAscStdVecNan) {
-  test_sort_asc_throws<std::vector<double> >();
+  test_sort_asc_throws<std::vector<double>>();
 }
 
 TEST(MathMatrix, sortDescStdVecNan) {
-  test_sort_desc_throws<std::vector<double> >();
+  test_sort_desc_throws<std::vector<double>>();
 }
 
 TEST(MathMatrix, sortAscEigenVecNan) {
@@ -66,13 +65,12 @@ TEST(MathMatrix, sort_asc) {
 
   EXPECT_EQ(0U, sort_asc(std::vector<int>(0)).size());
 
-  test_sort_asc<std::vector<double> >();
-  test_sort_asc<Eigen::Matrix<double, Eigen::Dynamic, 1> >();
-  test_sort_asc<Eigen::Matrix<double, 1, Eigen::Dynamic> >();
+  test_sort_asc<std::vector<double>>();
+  test_sort_asc<Eigen::Matrix<double, Eigen::Dynamic, 1>>();
+  test_sort_asc<Eigen::Matrix<double, 1, Eigen::Dynamic>>();
 }
 
-template <typename T>
-void test_sort_desc() {
+template <typename T> void test_sort_desc() {
   using stan::math::index_type;
   using stan::math::sort_desc;
 
@@ -110,7 +108,7 @@ TEST(MathMatrix, sort_desc) {
 
   EXPECT_EQ(0U, sort_desc(std::vector<int>(0)).size());
 
-  test_sort_desc<std::vector<double> >();
-  test_sort_desc<Eigen::Matrix<double, Eigen::Dynamic, 1> >();
-  test_sort_desc<Eigen::Matrix<double, 1, Eigen::Dynamic> >();
+  test_sort_desc<std::vector<double>>();
+  test_sort_desc<Eigen::Matrix<double, Eigen::Dynamic, 1>>();
+  test_sort_desc<Eigen::Matrix<double, 1, Eigen::Dynamic>>();
 }

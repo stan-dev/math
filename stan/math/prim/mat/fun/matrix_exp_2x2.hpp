@@ -16,8 +16,7 @@ namespace math {
  * @param[in] A 2x2 matrix to exponentiate.
  * @return Matrix exponential of A.
  */
-template <typename Mtype>
-Mtype matrix_exp_2x2(const Mtype& A) {
+template <typename Mtype> Mtype matrix_exp_2x2(const Mtype &A) {
   using T = typename Mtype::Scalar;
   T a = A(0, 0), b = A(0, 1), c = A(1, 0), d = A(1, 1), delta;
   delta = sqrt(square(a - d) + 4 * b * c);
@@ -38,6 +37,6 @@ Mtype matrix_exp_2x2(const Mtype& A) {
 
   return B / delta;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

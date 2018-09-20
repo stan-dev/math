@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 #include <stdexcept>
 #include <vector>
 
@@ -67,7 +67,7 @@ TEST(AgradFwdMatrixTail, tailRowVector4_fd) {
 
 TEST(AgradFwdMatrixTail, tailStdVector1_fd) {
   using stan::math::tail;
-  std::vector<fvar<double> > v;
+  std::vector<fvar<double>> v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -75,7 +75,7 @@ TEST(AgradFwdMatrixTail, tailStdVector1_fd) {
 }
 TEST(AgradFwdMatrixTail, tailStdVector2_fd) {
   using stan::math::tail;
-  std::vector<fvar<double> > v;
+  std::vector<fvar<double>> v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -83,7 +83,7 @@ TEST(AgradFwdMatrixTail, tailStdVector2_fd) {
 }
 TEST(AgradFwdMatrixTail, tailStdVector3_fd) {
   using stan::math::tail;
-  std::vector<fvar<double> > v;
+  std::vector<fvar<double>> v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -91,11 +91,11 @@ TEST(AgradFwdMatrixTail, tailStdVector3_fd) {
 }
 TEST(AgradFwdMatrixTail, tailStdVector4_fd) {
   using stan::math::tail;
-  std::vector<fvar<double> > v;
+  std::vector<fvar<double>> v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
-  std::vector<fvar<double> > v12 = tail(v, 2);
+  std::vector<fvar<double>> v12 = tail(v, 2);
   EXPECT_EQ(2U, v12.size());
   for (int n = 0; n < 2; ++n) {
     EXPECT_FLOAT_EQ(v[n + 1].val_, v12[n].val_);
@@ -163,7 +163,7 @@ TEST(AgradFwdMatrixTail, tailRowVector4_ffd) {
 
 TEST(AgradFwdMatrixTail, tailStdVector1_ffd) {
   using stan::math::tail;
-  std::vector<fvar<fvar<double> > > v;
+  std::vector<fvar<fvar<double>>> v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -171,7 +171,7 @@ TEST(AgradFwdMatrixTail, tailStdVector1_ffd) {
 }
 TEST(AgradFwdMatrixTail, tailStdVector2_ffd) {
   using stan::math::tail;
-  std::vector<fvar<fvar<double> > > v;
+  std::vector<fvar<fvar<double>>> v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -179,7 +179,7 @@ TEST(AgradFwdMatrixTail, tailStdVector2_ffd) {
 }
 TEST(AgradFwdMatrixTail, tailStdVector3_ffd) {
   using stan::math::tail;
-  std::vector<fvar<fvar<double> > > v;
+  std::vector<fvar<fvar<double>>> v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -187,11 +187,11 @@ TEST(AgradFwdMatrixTail, tailStdVector3_ffd) {
 }
 TEST(AgradFwdMatrixTail, tailStdVector4_ffd) {
   using stan::math::tail;
-  std::vector<fvar<fvar<double> > > v;
+  std::vector<fvar<fvar<double>>> v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
-  std::vector<fvar<fvar<double> > > v12 = tail(v, 2);
+  std::vector<fvar<fvar<double>>> v12 = tail(v, 2);
   EXPECT_EQ(2U, v12.size());
   for (int n = 0; n < 2; ++n) {
     EXPECT_FLOAT_EQ(v[n + 1].val_.val_, v12[n].val_.val_);

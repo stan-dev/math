@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 TEST(AgradFwdMatrixBlock, matrix_fd) {
   using stan::math::block;
@@ -63,9 +63,9 @@ TEST(AgradFwdMatrixBlock, matrix_ffd) {
   using stan::math::matrix_ffd;
   using stan::math::vector_ffd;
 
-  fvar<fvar<double> > a;
-  fvar<fvar<double> > b;
-  fvar<fvar<double> > c;
+  fvar<fvar<double>> a;
+  fvar<fvar<double>> b;
+  fvar<fvar<double>> c;
 
   a.val_.val_ = 1.0;
   a.d_.val_ = 1.0;

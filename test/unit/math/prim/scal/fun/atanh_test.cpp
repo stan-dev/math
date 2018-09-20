@@ -1,9 +1,9 @@
-#include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
+#include <cmath>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 #include <stdexcept>
-#include <cmath>
 
 TEST(MathFunctions, atanh) {
   using stan::math::atanh;

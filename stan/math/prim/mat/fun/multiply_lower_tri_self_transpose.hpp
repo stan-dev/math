@@ -15,13 +15,13 @@ namespace math {
  * transpose.
  * @throw std::domain_error If the input matrix is not square.
  */
-inline matrix_d multiply_lower_tri_self_transpose(const matrix_d& L) {
+inline matrix_d multiply_lower_tri_self_transpose(const matrix_d &L) {
   int K = L.rows();
   if (K == 0)
     return L;
   if (K == 1) {
     matrix_d result(1, 1);
-    result(0) = square(L(0));  // first elt, so don't need double idx
+    result(0) = square(L(0)); // first elt, so don't need double idx
     return result;
   }
   int J = L.cols();
@@ -36,6 +36,6 @@ inline matrix_d multiply_lower_tri_self_transpose(const matrix_d& L) {
   return LLt;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

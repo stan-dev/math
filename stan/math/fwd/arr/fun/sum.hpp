@@ -16,8 +16,7 @@ namespace math {
  * @param m Vector.
  * @return Sum of vector entries.
  */
-template <typename T>
-inline fvar<T> sum(const std::vector<fvar<T> >& m) {
+template <typename T> inline fvar<T> sum(const std::vector<fvar<T>> &m) {
   if (m.size() == 0)
     return 0.0;
   std::vector<T> vals(m.size());
@@ -29,6 +28,6 @@ inline fvar<T> sum(const std::vector<fvar<T> >& m) {
   return fvar<T>(sum(vals), sum(tans));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

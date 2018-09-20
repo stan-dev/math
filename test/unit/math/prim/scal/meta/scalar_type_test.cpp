@@ -1,5 +1,5 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/scal.hpp>
 #include <test/unit/util.hpp>
 
 TEST(MetaTraits, ScalarTypeScal) {

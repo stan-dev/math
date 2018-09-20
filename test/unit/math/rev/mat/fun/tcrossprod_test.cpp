@@ -1,11 +1,11 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/jacobian.hpp>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
 
-void test_tcrossprod(const stan::math::matrix_v& L) {
+void test_tcrossprod(const stan::math::matrix_v &L) {
   using stan::math::matrix_v;
   using stan::math::tcrossprod;
   matrix_v LLT_eigen = L * L.transpose();

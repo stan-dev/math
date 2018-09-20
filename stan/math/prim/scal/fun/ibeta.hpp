@@ -27,6 +27,6 @@ inline double ibeta(double a, double b, double x) {
   return boost::math::ibeta(a, b, x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

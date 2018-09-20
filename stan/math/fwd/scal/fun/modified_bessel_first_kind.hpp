@@ -8,12 +8,12 @@ namespace stan {
 namespace math {
 
 template <typename T>
-inline fvar<T> modified_bessel_first_kind(int v, const fvar<T>& z) {
+inline fvar<T> modified_bessel_first_kind(int v, const fvar<T> &z) {
   T modified_bessel_first_kind_z(modified_bessel_first_kind(v, z.val_));
   return fvar<T>(modified_bessel_first_kind_z,
-                 -v * z.d_ * modified_bessel_first_kind_z / z.val_
-                     + z.d_ * modified_bessel_first_kind(v - 1, z.val_));
+                 -v * z.d_ * modified_bessel_first_kind_z / z.val_ +
+                     z.d_ * modified_bessel_first_kind(v - 1, z.val_));
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

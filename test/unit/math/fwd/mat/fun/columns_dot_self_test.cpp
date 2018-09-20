@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 TEST(AgradFwdMatrixColumnsDotSelf, matrix_fd) {
   using stan::math::columns_dot_self;
@@ -40,10 +40,10 @@ TEST(AgradFwdMatrixColumnsDotSelf, matrix_ffd) {
   using stan::math::fvar;
   using stan::math::matrix_ffd;
 
-  fvar<fvar<double> > a;
-  fvar<fvar<double> > b;
-  fvar<fvar<double> > c;
-  fvar<fvar<double> > d;
+  fvar<fvar<double>> a;
+  fvar<fvar<double>> b;
+  fvar<fvar<double>> c;
+  fvar<fvar<double>> d;
   a.val_.val_ = 2.0;
   a.d_.val_ = 1.0;
   b.val_.val_ = 3.0;

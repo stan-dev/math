@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_COV_MATRIX_FREE_LKJ_HPP
 #define STAN_MATH_PRIM_MAT_FUN_COV_MATRIX_FREE_LKJ_HPP
 
+#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 
 namespace stan {
@@ -29,12 +29,12 @@ namespace math {
  *    factorized by factor_cov_matrix()
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> cov_matrix_free_lkj(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& y) {
+Eigen::Matrix<T, Eigen::Dynamic, 1>
+cov_matrix_free_lkj(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &y) {
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  typedef typename index_type<Matrix<T, Dynamic, Dynamic> >::type size_type;
+  typedef typename index_type<Matrix<T, Dynamic, Dynamic>>::type size_type;
 
   check_nonzero_size("cov_matrix_free_lkj", "y", y);
   check_square("cov_matrix_free_lkj", "y", y);
@@ -55,6 +55,6 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> cov_matrix_free_lkj(
   return x;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

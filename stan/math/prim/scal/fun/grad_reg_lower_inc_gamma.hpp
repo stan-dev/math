@@ -1,18 +1,18 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOWER_REG_INC_GAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOWER_REG_INC_GAMMA_HPP
 
+#include <limits>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/prim/scal/fun/gamma_p.hpp>
-#include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/prim/scal/fun/is_inf.hpp>
+#include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
+#include <stan/math/prim/scal/fun/is_inf.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -103,8 +103,9 @@ namespace math {
  *
  */
 template <typename T1, typename T2>
-typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
-    const T1& a, const T2& z, double precision = 1e-10, int max_steps = 1e5) {
+typename return_type<T1, T2>::type
+grad_reg_lower_inc_gamma(const T1 &a, const T2 &z, double precision = 1e-10,
+                         int max_steps = 1e5) {
   using std::exp;
   using std::log;
   using std::pow;
@@ -119,9 +120,9 @@ typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
     return 0.0;
   check_positive_finite("grad_reg_lower_inc_gamma", "z", z);
 
-  if ((a < 0.8 && z > 15.0) || (a < 12.0 && z > 30.0)
-      || a < sqrt(-756 - value_of_rec(z) * value_of_rec(z)
-                  + 60 * value_of_rec(z))) {
+  if ((a < 0.8 && z > 15.0) || (a < 12.0 && z > 30.0) ||
+      a < sqrt(-756 - value_of_rec(z) * value_of_rec(z) +
+               60 * value_of_rec(z))) {
     T1 tg = tgamma(a);
     T1 dig = digamma(a);
     return -grad_reg_inc_gamma(a, z, tg, dig, max_steps, precision);
@@ -156,8 +157,8 @@ typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
   TP sum_b = digamma(a + 1) * exp(a * log_z - lgamma_a_plus_1);
   lgamma_a_plus_n_plus_1 = lgamma_a_plus_1 + log(a_plus_n);
   while (true) {
-    term = exp(a_plus_n * log_z - lgamma_a_plus_n_plus_1)
-           * digamma(a_plus_n + 1);
+    term =
+        exp(a_plus_n * log_z - lgamma_a_plus_n_plus_1) * digamma(a_plus_n + 1);
     sum_b += term;
     if (term <= precision)
       return emz * (log_z * sum_a - sum_b);
@@ -172,7 +173,7 @@ typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
   }
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

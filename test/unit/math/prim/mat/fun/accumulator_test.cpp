@@ -1,10 +1,9 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 #include <vector>
 
 // test sum of first n numbers for sum of a
-template <typename T>
-void test_sum(stan::math::accumulator<T>& a, int n) {
+template <typename T> void test_sum(stan::math::accumulator<T> &a, int n) {
   EXPECT_FLOAT_EQ((n * (n + 1)) / 2, a.sum());
 }
 
@@ -53,7 +52,7 @@ TEST(MathMatrix, accumulateCollection) {
     a.add(pos++);
   test_sum(a, pos - 1);
 
-  vector<vector<int> > ww(10);
+  vector<vector<int>> ww(10);
   for (size_t i = 0; i < 10; ++i) {
     vector<int> w(5);
     for (size_t n = 0; n < 5; ++n)

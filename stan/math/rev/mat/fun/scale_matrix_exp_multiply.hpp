@@ -1,12 +1,12 @@
 #ifndef STAN_MATH_REV_MAT_FUN_SCALE_MATRIX_EXP_MULTIPLY_HPP
 #define STAN_MATH_REV_MAT_FUN_SCALE_MATRIX_EXP_MULTIPLY_HPP
 
-#include <stan/math/prim/mat.hpp>
-#include <stan/math/rev/mat/fun/matrix_exp_multiply.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <boost/math/tools/promotion.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <boost/type_traits.hpp>
+#include <boost/utility/enable_if.hpp>
+#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/rev/mat/fun/matrix_exp_multiply.hpp>
 #include <vector>
 
 namespace stan {
@@ -24,8 +24,8 @@ namespace math {
  */
 template <typename Ta, typename Tb, int Cb>
 inline Eigen::Matrix<typename stan::return_type<Ta, Tb>::type, -1, Cb>
-scale_matrix_exp_multiply(const double& t, const Eigen::Matrix<Ta, -1, -1>& A,
-                          const Eigen::Matrix<Tb, -1, Cb>& B) {
+scale_matrix_exp_multiply(const double &t, const Eigen::Matrix<Ta, -1, -1> &A,
+                          const Eigen::Matrix<Tb, -1, Cb> &B) {
   check_nonzero_size("scale_matrix_exp_multiply", "input matrix", A);
   check_nonzero_size("scale_matrix_exp_multiply", "input matrix", B);
   check_multiplicable("scale_matrix_exp_multiply", "A", A, "B", B);
@@ -33,7 +33,7 @@ scale_matrix_exp_multiply(const double& t, const Eigen::Matrix<Ta, -1, -1>& A,
   return matrix_exp_action(A, B, t);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

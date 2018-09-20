@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_ARR_FUN_VALUE_OF_REC_HPP
 #define STAN_MATH_PRIM_ARR_FUN_VALUE_OF_REC_HPP
 
+#include <cstddef>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <vector>
-#include <cstddef>
 
 namespace stan {
 namespace math {
@@ -19,7 +19,7 @@ namespace math {
  * @return std::vector of values
  **/
 template <typename T>
-inline std::vector<double> value_of_rec(const std::vector<T>& x) {
+inline std::vector<double> value_of_rec(const std::vector<T> &x) {
   size_t size = x.size();
   std::vector<double> result(size);
   for (size_t i = 0; i < size; i++)
@@ -39,11 +39,11 @@ inline std::vector<double> value_of_rec(const std::vector<T>& x) {
  * @return Specified std::vector.
  */
 template <>
-inline std::vector<double> value_of_rec(const std::vector<double>& x) {
+inline std::vector<double> value_of_rec(const std::vector<double> &x) {
   return x;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

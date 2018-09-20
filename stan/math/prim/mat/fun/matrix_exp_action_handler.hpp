@@ -29,11 +29,11 @@ class matrix_exp_action_handler {
       2.4e-3, 1.4e-1, 6.4e-1, 1.4e0, 2.4e0, 3.5e0,
       4.7e0,  6.0e0,  7.2e0,  8.5e0, 9.9e0};
 
-  double l1norm(const Eigen::MatrixXd& m) {
+  double l1norm(const Eigen::MatrixXd &m) {
     return m.colwise().lpNorm<1>().maxCoeff();
   }
 
- public:
+public:
   /* Constructor
    */
   matrix_exp_action_handler() {}
@@ -44,9 +44,9 @@ class matrix_exp_action_handler {
    * @param [in] t double t, e.g. time.
    * @return matrix exp(A*t)*B
    */
-  inline Eigen::MatrixXd action(const Eigen::MatrixXd& mat,
-                                const Eigen::MatrixXd& b,
-                                const double& t = 1.0) {
+  inline Eigen::MatrixXd action(const Eigen::MatrixXd &mat,
+                                const Eigen::MatrixXd &b,
+                                const double &t = 1.0) {
     Eigen::MatrixXd A = mat;
     double mu = A.trace() / A.rows();
     for (int i = 0; i < A.rows(); ++i) {
@@ -83,7 +83,7 @@ class matrix_exp_action_handler {
           break;
       }
       res.col(col) = F;
-    }  // loop b columns
+    } // loop b columns
     return res;
   }
 
@@ -101,8 +101,8 @@ class matrix_exp_action_handler {
    * @param [out] m int parameter m
    * @param [out] s int parameter s
    */
-  inline void set_approximation_parameter(const Eigen::MatrixXd& mat,
-                                          const double& t, int& m, int& s) {
+  inline void set_approximation_parameter(const Eigen::MatrixXd &mat,
+                                          const double &t, int &m, int &s) {
     if (l1norm(mat) < tol || t < tol) {
       m = 0;
       s = 1;
@@ -121,7 +121,7 @@ class matrix_exp_action_handler {
   }
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

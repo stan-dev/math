@@ -19,8 +19,7 @@ namespace math {
  * @param x scalar to convert to double
  * @return value of scalar cast to double
  */
-template <typename T>
-inline double value_of(const T x) {
+template <typename T> inline double value_of(const T x) {
   return static_cast<double>(x);
 }
 
@@ -35,10 +34,7 @@ inline double value_of(const T x) {
  * @param x value
  * @return input value
  */
-template <>
-inline double value_of<double>(double x) {
-  return x;
-}
+template <> inline double value_of<double>(double x) { return x; }
 
 /**
  * Return the specified argument.
@@ -53,6 +49,6 @@ inline double value_of<double>(double x) {
  */
 inline int value_of(int x) { return x; }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_FWD_SCAL_FUN_PHI_APPROX_HPP
 #define STAN_MATH_FWD_SCAL_FUN_PHI_APPROX_HPP
 
+#include <cmath>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
-#include <cmath>
 
 namespace stan {
 namespace math {
@@ -18,12 +18,11 @@ namespace math {
  * @return approximate probability random sample is less than or
  * equal to argument
  */
-template <typename T>
-inline fvar<T> Phi_approx(const fvar<T>& x) {
+template <typename T> inline fvar<T> Phi_approx(const fvar<T> &x) {
   using std::pow;
   return inv_logit(0.07056 * pow(x, 3.0) + 1.5976 * x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

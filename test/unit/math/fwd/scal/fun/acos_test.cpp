@@ -1,5 +1,5 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdAcos, Fvar) {
@@ -54,18 +54,18 @@ TEST(AgradFwdAcos, FvarFvarDouble) {
   using stan::math::fvar;
   using std::acos;
 
-  fvar<fvar<double> > x;
+  fvar<fvar<double>> x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 2.0;
 
-  fvar<fvar<double> > a = acos(x);
+  fvar<fvar<double>> a = acos(x);
 
   EXPECT_FLOAT_EQ(acos(0.5), a.val_.val_);
   EXPECT_FLOAT_EQ(-2.0 / sqrt(1.0 - 0.5 * 0.5), a.val_.d_);
   EXPECT_FLOAT_EQ(0, a.d_.val_);
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 
-  fvar<fvar<double> > y;
+  fvar<fvar<double>> y;
   y.val_.val_ = 0.5;
   y.d_.val_ = 2.0;
 
@@ -77,8 +77,7 @@ TEST(AgradFwdAcos, FvarFvarDouble) {
 }
 
 struct acos_fun {
-  template <typename T0>
-  inline T0 operator()(const T0& arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return acos(arg1);
   }
 };

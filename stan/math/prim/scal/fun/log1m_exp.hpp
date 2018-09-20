@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOG1M_EXP_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOG1M_EXP_HPP
 
-#include <stan/math/prim/scal/fun/expm1.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
 #include <cmath>
 #include <limits>
+#include <stan/math/prim/scal/fun/expm1.hpp>
+#include <stan/math/prim/scal/fun/log1m.hpp>
 
 namespace stan {
 namespace math {
@@ -47,12 +47,12 @@ inline double log1m_exp(double a) {
   if (a >= 0)
     return std::numeric_limits<double>::quiet_NaN();
   else if (a > -0.693147)
-    return log(-expm1(a));  // 0.693147 ~= log(2)
+    return log(-expm1(a)); // 0.693147 ~= log(2)
   else
     return log1m(exp(a));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

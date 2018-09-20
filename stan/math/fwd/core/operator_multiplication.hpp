@@ -15,7 +15,7 @@ namespace math {
  * @return product of arguments
  */
 template <typename T>
-inline fvar<T> operator*(const fvar<T>& x, const fvar<T>& y) {
+inline fvar<T> operator*(const fvar<T> &x, const fvar<T> &y) {
   return fvar<T>(x.val_ * y.val_, x.d_ * y.val_ + x.val_ * y.d_);
 }
 
@@ -27,8 +27,7 @@ inline fvar<T> operator*(const fvar<T>& x, const fvar<T>& y) {
  * @param[in] y second argument
  * @return product of arguments
  */
-template <typename T>
-inline fvar<T> operator*(double x, const fvar<T>& y) {
+template <typename T> inline fvar<T> operator*(double x, const fvar<T> &y) {
   return fvar<T>(x * y.val_, x * y.d_);
 }
 
@@ -40,11 +39,10 @@ inline fvar<T> operator*(double x, const fvar<T>& y) {
  * @param[in] y second argument
  * @return product of arguments
  */
-template <typename T>
-inline fvar<T> operator*(const fvar<T>& x, double y) {
+template <typename T> inline fvar<T> operator*(const fvar<T> &x, double y) {
   return fvar<T>(x.val_ * y, x.d_ * y);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

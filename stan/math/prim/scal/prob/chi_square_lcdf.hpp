@@ -1,27 +1,27 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_CHI_SQUARE_LCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_CHI_SQUARE_LCDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/gamma_p.hpp>
-#include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <boost/random/chi_squared_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <limits>
+#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <stan/math/prim/scal/err/check_nonnegative.hpp>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/digamma.hpp>
+#include <stan/math/prim/scal/fun/gamma_p.hpp>
+#include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
+#include <stan/math/prim/scal/fun/multiply_log.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {
 namespace math {
@@ -40,9 +40,9 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_dof>
-typename return_type<T_y, T_dof>::type chi_square_lcdf(const T_y& y,
-                                                       const T_dof& nu) {
-  static const char* function = "chi_square_lcdf";
+typename return_type<T_y, T_dof>::type chi_square_lcdf(const T_y &y,
+                                                       const T_dof &nu) {
+  static const char *function = "chi_square_lcdf";
   typedef
       typename stan::partials_return_type<T_y, T_dof>::type T_partials_return;
 
@@ -104,19 +104,18 @@ typename return_type<T_y, T_dof>::type chi_square_lcdf(const T_y& y,
     cdf_log += log(Pn);
 
     if (!is_constant_struct<T_y>::value)
-      ops_partials.edge1_.partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
-                                          * pow(beta_dbl * y_dbl, alpha_dbl - 1)
-                                          / tgamma(alpha_dbl) / Pn;
+      ops_partials.edge1_.partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl) *
+                                          pow(beta_dbl * y_dbl, alpha_dbl - 1) /
+                                          tgamma(alpha_dbl) / Pn;
     if (!is_constant_struct<T_dof>::value)
-      ops_partials.edge2_.partials_[n]
-          -= 0.5
-             * grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
-                                  digamma_vec[n])
-             / Pn;
+      ops_partials.edge2_.partials_[n] -=
+          0.5 * grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
+                                   digamma_vec[n]) /
+          Pn;
   }
   return ops_partials.build(cdf_log);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

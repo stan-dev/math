@@ -46,14 +46,14 @@ const char *sub_block_kernel_code = STRINGIFY(
         unsigned int dst_cols) {
       int i = get_global_id(0);
       int j = get_global_id(1);
-      if ((i + src_offset_i) < src_rows && (j + src_offset_j) < src_cols
-          && (i + dst_offset_i) < dst_rows && (j + dst_offset_j) < dst_cols) {
-        dst((dst_offset_i + i), (dst_offset_j + j))
-            = src((src_offset_i + i), (src_offset_j + j));
+      if ((i + src_offset_i) < src_rows && (j + src_offset_j) < src_cols &&
+          (i + dst_offset_i) < dst_rows && (j + dst_offset_j) < dst_cols) {
+        dst((dst_offset_i + i), (dst_offset_j + j)) =
+            src((src_offset_i + i), (src_offset_j + j));
       }
     }
     // \cond
-);
+    );
 // \endcond
 
 /**
@@ -63,8 +63,8 @@ const global_range_kernel<cl::Buffer, cl::Buffer, int, int, int, int, int, int,
                           int, int, int, int>
     sub_block("sub_block", sub_block_kernel_code);
 
-}  // namespace opencl_kernels
-}  // namespace math
-}  // namespace stan
+} // namespace opencl_kernels
+} // namespace math
+} // namespace stan
 #endif
 #endif

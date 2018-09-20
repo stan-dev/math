@@ -11,11 +11,11 @@ namespace stan {
 namespace math {
 
 template <class RNG>
-inline int hypergeometric_rng(int N, int a, int b, RNG& rng) {
+inline int hypergeometric_rng(int N, int a, int b, RNG &rng) {
   using boost::math::hypergeometric_distribution;
   using boost::variate_generator;
 
-  static const char* function = "hypergeometric_rng";
+  static const char *function = "hypergeometric_rng";
 
   check_bounded(function, "Draws parameter", N, 0, a + b);
   check_positive(function, "Draws parameter", N);
@@ -37,6 +37,6 @@ inline int hypergeometric_rng(int N, int a, int b, RNG& rng) {
   return min + 1;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

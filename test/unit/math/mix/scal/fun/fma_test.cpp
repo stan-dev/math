@@ -1,8 +1,8 @@
-#include <stan/math/mix/scal.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/rev/scal/fun/util.hpp>
-#include <test/unit/math/mix/scal/fun/nan_util.hpp>
 #include <cmath>
+#include <gtest/gtest.h>
+#include <stan/math/mix/scal.hpp>
+#include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradFwdFma, FvarVar_FvarVar_FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -258,18 +258,18 @@ TEST(AgradFwdFma, FvarFvarVar_FvarFvarVar_FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 2.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var> > z;
+  fvar<fvar<var>> z;
   z.val_.val_ = 1.7;
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   EXPECT_FLOAT_EQ(fma(2.5, 1.5, 1.7), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1.5, a.val_.d_.val());
@@ -288,16 +288,16 @@ TEST(AgradFwdFma, FvarFvarVar_Double_FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 2.5;
   x.val_.d_ = 1.0;
 
   double y(1.5);
 
-  fvar<fvar<var> > z;
+  fvar<fvar<var>> z;
   z.val_.val_ = 1.7;
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   EXPECT_FLOAT_EQ(fma(2.5, 1.5, 1.7), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1.5, a.val_.d_.val());
@@ -315,17 +315,17 @@ TEST(AgradFwdFma, FvarFvarVar_FvarFvarVar_Double_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 2.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
   double z(1.7);
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   EXPECT_FLOAT_EQ(fma(2.5, 1.5, 1.7), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1.5, a.val_.d_.val());
@@ -343,14 +343,14 @@ TEST(AgradFwdFma, FvarFvarVar_double_double_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 2.5;
   x.val_.d_ = 1.0;
 
   double y(1.5);
   double z(1.7);
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   EXPECT_FLOAT_EQ(fma(2.5, 1.5, 1.7), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1.5, a.val_.d_.val());
@@ -369,14 +369,14 @@ TEST(AgradFwdFma, Double_FvarFvarVar_FvarFvarVar_1stDeriv) {
 
   double x(2.5);
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var> > z;
+  fvar<fvar<var>> z;
   z.val_.val_ = 1.7;
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   EXPECT_FLOAT_EQ(fma(2.5, 1.5, 1.7), a.val_.val_.val());
   EXPECT_FLOAT_EQ(0, a.val_.d_.val());
@@ -397,10 +397,10 @@ TEST(AgradFwdFma, Double_Double_FvarFvarVar_1stDeriv) {
   double x(2.5);
   double y(1.5);
 
-  fvar<fvar<var> > z;
+  fvar<fvar<var>> z;
   z.val_.val_ = 1.7;
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   EXPECT_FLOAT_EQ(fma(2.5, 1.5, 1.7), a.val_.val_.val());
   EXPECT_FLOAT_EQ(0, a.val_.d_.val());
@@ -420,11 +420,11 @@ TEST(AgradFwdFma, Double_FvarFvarVar_Double_1stDeriv) {
   double x(2.5);
   double z(1.7);
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   EXPECT_FLOAT_EQ(fma(2.5, 1.5, 1.7), a.val_.val_.val());
   EXPECT_FLOAT_EQ(0, a.val_.d_.val());
@@ -441,18 +441,18 @@ TEST(AgradFwdFma, FvarFvarVar_FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 2.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var> > z;
+  fvar<fvar<var>> z;
   z.val_.val_ = 1.7;
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   EXPECT_FLOAT_EQ(fma(2.5, 1.5, 1.7), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1.5, a.val_.d_.val());
@@ -471,18 +471,18 @@ TEST(AgradFwdFma, FvarFvarVar_FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 2.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var> > z;
+  fvar<fvar<var>> z;
   z.val_.val_ = 1.7;
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   EXPECT_FLOAT_EQ(fma(2.5, 1.5, 1.7), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1.5, a.val_.d_.val());
@@ -500,16 +500,16 @@ TEST(AgradFwdFma, FvarFvarVar_Double_FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 2.5;
   x.val_.d_ = 1.0;
 
   double y(1.5);
 
-  fvar<fvar<var> > z;
+  fvar<fvar<var>> z;
   z.val_.val_ = 1.7;
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   EXPECT_FLOAT_EQ(fma(2.5, 1.5, 1.7), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1.5, a.val_.d_.val());
@@ -527,17 +527,17 @@ TEST(AgradFwdFma, FvarFvarVar_FvarFvarVar_Double_2ndDeriv_x) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 2.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
   double z(1.7);
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   EXPECT_FLOAT_EQ(fma(2.5, 1.5, 1.7), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1.5, a.val_.d_.val());
@@ -554,17 +554,17 @@ TEST(AgradFwdFma, FvarFvarVar_FvarFvarVar_Double_2ndDeriv_y) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 2.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
   double z(1.7);
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   EXPECT_FLOAT_EQ(fma(2.5, 1.5, 1.7), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1.5, a.val_.d_.val());
@@ -581,14 +581,14 @@ TEST(AgradFwdFma, FvarFvarVar_double_double_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 2.5;
   x.val_.d_ = 1.0;
 
   double y(1.5);
   double z(1.7);
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   EXPECT_FLOAT_EQ(fma(2.5, 1.5, 1.7), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1.5, a.val_.d_.val());
@@ -607,14 +607,14 @@ TEST(AgradFwdFma, Double_FvarFvarVar_FvarFvarVar_2ndDeriv) {
 
   double x(2.5);
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var> > z;
+  fvar<fvar<var>> z;
   z.val_.val_ = 1.7;
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   EXPECT_FLOAT_EQ(fma(2.5, 1.5, 1.7), a.val_.val_.val());
   EXPECT_FLOAT_EQ(0, a.val_.d_.val());
@@ -635,10 +635,10 @@ TEST(AgradFwdFma, Double_Double_FvarFvarVar_2ndDeriv) {
   double x(2.5);
   double y(1.5);
 
-  fvar<fvar<var> > z;
+  fvar<fvar<var>> z;
   z.val_.val_ = 1.7;
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   EXPECT_FLOAT_EQ(fma(2.5, 1.5, 1.7), a.val_.val_.val());
   EXPECT_FLOAT_EQ(0, a.val_.d_.val());
@@ -654,18 +654,18 @@ TEST(AgradFwdFma, FvarFvarVar_FvarFvarVar_FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 2.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var> > z;
+  fvar<fvar<var>> z;
   z.val_.val_ = 1.7;
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   AVEC q = createAVEC(x.val_.val_, y.val_.val_, z.val_.val_);
   VEC r;
@@ -678,16 +678,16 @@ TEST(AgradFwdFma, FvarFvarVar_Double_FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 2.5;
   x.val_.d_ = 1.0;
 
   double y(1.5);
 
-  fvar<fvar<var> > z;
+  fvar<fvar<var>> z;
   z.val_.val_ = 1.7;
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   AVEC q = createAVEC(x.val_.val_, z.val_.val_);
   VEC r;
@@ -699,17 +699,17 @@ TEST(AgradFwdFma, FvarFvarVar_FvarFvarVar_Double_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 2.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
   double z(1.7);
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   AVEC q = createAVEC(x.val_.val_, y.val_.val_);
   VEC r;
@@ -721,7 +721,7 @@ TEST(AgradFwdFma, FvarFvarVar_double_double_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 2.5;
   x.val_.d_ = 1.0;
   x.d_.val_ = 1.0;
@@ -729,7 +729,7 @@ TEST(AgradFwdFma, FvarFvarVar_double_double_3rdDeriv) {
   double y(1.5);
   double z(1.7);
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   AVEC q = createAVEC(x.val_.val_);
   VEC r;
@@ -743,17 +743,17 @@ TEST(AgradFwdFma, Double_FvarFvarVar_FvarFvarVar_3rdDeriv) {
 
   double x(2.5);
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
   y.val_.d_ = 1.0;
 
-  fvar<fvar<var> > z;
+  fvar<fvar<var>> z;
   z.val_.val_ = 1.7;
   z.d_.val_ = 1.0;
   z.val_.d_ = 1.0;
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   AVEC q = createAVEC(y.val_.val_, z.val_.val_);
   VEC r;
@@ -769,12 +769,12 @@ TEST(AgradFwdFma, Double_Double_FvarFvarVar_3rdDeriv) {
   double x(2.5);
   double y(1.5);
 
-  fvar<fvar<var> > z;
+  fvar<fvar<var>> z;
   z.val_.val_ = 1.7;
   z.val_.d_ = 1.0;
   z.d_.val_ = 1.0;
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   AVEC q = createAVEC(z.val_.val_);
   VEC r;
@@ -789,12 +789,12 @@ TEST(AgradFwdFma, Double_FvarFvarVar_Double_3rdDeriv) {
   double x(2.5);
   double z(1.7);
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
   y.val_.d_ = 1.0;
 
-  fvar<fvar<var> > a = fma(x, y, z);
+  fvar<fvar<var>> a = fma(x, y, z);
 
   AVEC q = createAVEC(y.val_.val_);
   VEC r;
@@ -804,8 +804,8 @@ TEST(AgradFwdFma, Double_FvarFvarVar_Double_3rdDeriv) {
 
 struct fma_fun {
   template <typename T0, typename T1, typename T2>
-  inline typename stan::return_type<T0, T1, T2>::type operator()(
-      const T0& arg1, const T1& arg2, const T2& arg3) const {
+  inline typename stan::return_type<T0, T1, T2>::type
+  operator()(const T0 &arg1, const T1 &arg2, const T2 &arg3) const {
     return fma(arg1, arg2, arg3);
   }
 };

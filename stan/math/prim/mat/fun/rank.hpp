@@ -16,10 +16,9 @@ namespace math {
  * @return number of components of v less than v[s].
  * @throw std::out_of_range if s is out of range.
  */
-template <typename C>
-inline int rank(const C& v, int s) {
+template <typename C> inline int rank(const C &v, int s) {
   check_range("rank", "v", v.size(), s);
-  --s;  // adjust for indexing by one
+  --s; // adjust for indexing by one
   int count = 0;
   for (typename index_type<C>::type i = 0; i < v.size(); ++i)
     if (v[i] < v[s])
@@ -27,6 +26,6 @@ inline int rank(const C& v, int s) {
   return count;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 #include <vector>
 
 TEST(MathMatrix, size) {
@@ -14,30 +14,30 @@ TEST(MathMatrix, size) {
   vector<double> y(6);
   EXPECT_EQ(6, size(y));
 
-  vector<Matrix<double, Dynamic, Dynamic> > z(7);
+  vector<Matrix<double, Dynamic, Dynamic>> z(7);
   EXPECT_EQ(7, size(z));
 
-  vector<Matrix<double, Dynamic, 1> > a(8);
+  vector<Matrix<double, Dynamic, 1>> a(8);
   EXPECT_EQ(8, size(a));
 
-  vector<Matrix<double, 1, Dynamic> > b(9);
+  vector<Matrix<double, 1, Dynamic>> b(9);
   EXPECT_EQ(9, size(b));
 
-  vector<vector<double> > c(10);
+  vector<vector<double>> c(10);
   EXPECT_EQ(10, size(c));
 
-  vector<vector<double> > ci(10);
+  vector<vector<double>> ci(10);
   EXPECT_EQ(10, size(ci));
 
-  vector<vector<Matrix<double, Dynamic, Dynamic> > > d(11);
+  vector<vector<Matrix<double, Dynamic, Dynamic>>> d(11);
   EXPECT_EQ(11, size(d));
 
-  vector<vector<Matrix<double, 1, Dynamic> > > e(12);
+  vector<vector<Matrix<double, 1, Dynamic>>> e(12);
   EXPECT_EQ(12, size(e));
 
-  vector<vector<Matrix<double, Dynamic, 1> > > f(13);
+  vector<vector<Matrix<double, Dynamic, 1>>> f(13);
   EXPECT_EQ(13, size(f));
 
-  vector<vector<vector<Matrix<double, Dynamic, 1> > > > g(14);
+  vector<vector<vector<Matrix<double, Dynamic, 1>>>> g(14);
   EXPECT_EQ(14, size(g));
 }

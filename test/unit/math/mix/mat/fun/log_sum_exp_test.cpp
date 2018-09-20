@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
@@ -186,7 +186,7 @@ TEST(AgradMixMatrixLogSumExp, vector_ffv_1st_deriv) {
   b(2).d_ = 1.0;
   b(3).d_ = 1.0;
 
-  fvar<fvar<var> > a = log_sum_exp(b);
+  fvar<fvar<var>> a = log_sum_exp(b);
 
   EXPECT_FLOAT_EQ(4.4401898, a.val_.val_.val());
   EXPECT_FLOAT_EQ(1, a.d_.val_.val());
@@ -215,7 +215,7 @@ TEST(AgradMixMatrixLogSumExp, row_vector_ffv_1st_deriv) {
   b(2).d_ = 1.0;
   b(3).d_ = 1.0;
 
-  fvar<fvar<var> > a = log_sum_exp(b);
+  fvar<fvar<var>> a = log_sum_exp(b);
 
   EXPECT_FLOAT_EQ(4.4401898, a.val_.val_.val());
   EXPECT_FLOAT_EQ(1, a.d_.val_.val());
@@ -244,7 +244,7 @@ TEST(AgradMixMatrixLogSumExp, matrix_ffv_1st_deriv) {
   b(1, 0).d_ = 1.0;
   b(1, 1).d_ = 1.0;
 
-  fvar<fvar<var> > a = log_sum_exp(b);
+  fvar<fvar<var>> a = log_sum_exp(b);
 
   EXPECT_FLOAT_EQ(4.4401898, a.val_.val_.val());
   EXPECT_FLOAT_EQ(1, a.d_.val_.val());
@@ -273,7 +273,7 @@ TEST(AgradMixMatrixLogSumExp, vector_ffv_2nd_deriv) {
   b(2).d_ = 1.0;
   b(3).d_ = 1.0;
 
-  fvar<fvar<var> > a = log_sum_exp(b);
+  fvar<fvar<var>> a = log_sum_exp(b);
 
   std::vector<var> z;
   z.push_back(b(0).val_.val_);
@@ -299,7 +299,7 @@ TEST(AgradMixMatrixLogSumExp, row_vector_ffv_2nd_deriv) {
   b(2).d_ = 1.0;
   b(3).d_ = 1.0;
 
-  fvar<fvar<var> > a = log_sum_exp(b);
+  fvar<fvar<var>> a = log_sum_exp(b);
 
   std::vector<var> z;
   z.push_back(b(0).val_.val_);
@@ -325,7 +325,7 @@ TEST(AgradMixMatrixLogSumExp, matrix_ffv_2nd_deriv) {
   b(1, 0).d_ = 1.0;
   b(1, 1).d_ = 1.0;
 
-  fvar<fvar<var> > a = log_sum_exp(b);
+  fvar<fvar<var>> a = log_sum_exp(b);
 
   std::vector<var> z;
   z.push_back(b(0, 0).val_.val_);
@@ -355,7 +355,7 @@ TEST(AgradMixMatrixLogSumExp, vector_ffv_3rd_deriv) {
   b(2).val_.d_ = 1.0;
   b(3).val_.d_ = 1.0;
 
-  fvar<fvar<var> > a = log_sum_exp(b);
+  fvar<fvar<var>> a = log_sum_exp(b);
 
   std::vector<var> z;
   z.push_back(b(0).val_.val_);
@@ -385,7 +385,7 @@ TEST(AgradMixMatrixLogSumExp, row_vector_ffv_3rd_deriv) {
   b(2).val_.d_ = 1.0;
   b(3).val_.d_ = 1.0;
 
-  fvar<fvar<var> > a = log_sum_exp(b);
+  fvar<fvar<var>> a = log_sum_exp(b);
 
   std::vector<var> z;
   z.push_back(b(0).val_.val_);
@@ -415,7 +415,7 @@ TEST(AgradMixMatrixLogSumExp, matrix_ffv_3rd_deriv) {
   b(2).val_.d_ = 1.0;
   b(3).val_.d_ = 1.0;
 
-  fvar<fvar<var> > a = log_sum_exp(b);
+  fvar<fvar<var>> a = log_sum_exp(b);
 
   std::vector<var> z;
   z.push_back(b(0, 0).val_.val_);

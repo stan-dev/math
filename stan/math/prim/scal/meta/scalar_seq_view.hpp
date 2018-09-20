@@ -13,20 +13,20 @@ namespace stan {
  */
 template <typename C, typename T = typename scalar_type<C>::type>
 class scalar_seq_view {
- public:
-  explicit scalar_seq_view(const C& c) : c_(c) {}
+public:
+  explicit scalar_seq_view(const C &c) : c_(c) {}
 
   /**
    * Segfaults if out of bounds.
    * @param i index
    * @return the element at the specified position in the container
    */
-  const T& operator[](int i) const { return c_[i]; }
+  const T &operator[](int i) const { return c_[i]; }
 
   int size() const { return c_.size(); }
 
- private:
-  const C& c_;
+private:
+  const C &c_;
 };
 
 /**
@@ -34,17 +34,16 @@ class scalar_seq_view {
  *
  * @tparam T the scalar type
  */
-template <typename T>
-class scalar_seq_view<T, T> {
- public:
-  explicit scalar_seq_view(const T& t) : t_(t) {}
+template <typename T> class scalar_seq_view<T, T> {
+public:
+  explicit scalar_seq_view(const T &t) : t_(t) {}
 
-  const T& operator[](int /* i */) const { return t_; }
+  const T &operator[](int /* i */) const { return t_; }
 
   int size() const { return 1; }
 
- private:
-  const T& t_;
+private:
+  const T &t_;
 };
-}  // namespace stan
+} // namespace stan
 #endif

@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_PHI_HPP
 
 #include <boost/math/special_functions/erf.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 
 namespace stan {
 namespace math {
@@ -37,6 +37,6 @@ inline double Phi(double x) {
     return 0.5 * (1.0 + boost::math::erf(INV_SQRT_2 * x));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -1,19 +1,19 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CHOLESKY_CORR_FREE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CHOLESKY_CORR_FREE_HPP
 
+#include <cmath>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/corr_constrain.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/corr_free.hpp>
-#include <cmath>
+#include <stan/math/prim/scal/fun/square.hpp>
 
 namespace stan {
 namespace math {
 
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> cholesky_corr_free(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& x) {
+Eigen::Matrix<T, Eigen::Dynamic, 1>
+cholesky_corr_free(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &x) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::sqrt;
@@ -35,6 +35,6 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> cholesky_corr_free(
   return z;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

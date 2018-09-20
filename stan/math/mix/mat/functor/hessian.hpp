@@ -39,9 +39,9 @@ namespace math {
  * @param[out] H Hessian of function at argument
  */
 template <typename F>
-void hessian(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
-             double& fx, Eigen::Matrix<double, Eigen::Dynamic, 1>& grad,
-             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& H) {
+void hessian(const F &f, const Eigen::Matrix<double, Eigen::Dynamic, 1> &x,
+             double &fx, Eigen::Matrix<double, Eigen::Dynamic, 1> &grad,
+             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> &H) {
   H.resize(x.size(), x.size());
   grad.resize(x.size());
   // size 0 separate because nothing to loop over in main body
@@ -64,12 +64,12 @@ void hessian(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
         H(i, j) = x_fvar(j).val_.adj();
       recover_memory_nested();
     }
-  } catch (const std::exception& e) {
+  } catch (const std::exception &e) {
     recover_memory_nested();
     throw;
   }
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

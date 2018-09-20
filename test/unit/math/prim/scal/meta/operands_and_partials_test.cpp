@@ -1,5 +1,5 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/scal.hpp>
 
 TEST(AgradPartialsVari, OperandsAndPartials) {
   using stan::math::operands_and_partials;

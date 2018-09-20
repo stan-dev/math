@@ -32,6 +32,6 @@ inline double exp2(double y) {
  */
 inline double exp2(int y) { return exp2(static_cast<double>(y)); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -25,7 +25,7 @@
  * correspond to.
  */
 class VectorRealRNGTestRig : public VectorRNGTestRig {
- public:
+public:
   /*
    * This function builds the quantiles that we will supply to
    * assert_matches_quantiles to test the random number generator implemented in

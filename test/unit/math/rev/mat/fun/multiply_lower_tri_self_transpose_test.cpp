@@ -1,7 +1,7 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/jacobian.hpp>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
 
@@ -17,7 +17,7 @@ stan::math::matrix_v generate_large_L_tri_mat() {
   for (int i = 1; i < 10000; ++i)
     vals[i] = vals[i - 1] + 0.1123456;
 
-  x = Eigen::Map<Eigen::Matrix<double, 100, 100> >(vals);
+  x = Eigen::Map<Eigen::Matrix<double, 100, 100>>(vals);
   x *= 1e10;
 
   for (int i = 0; i < x.cols(); ++i)
@@ -27,7 +27,7 @@ stan::math::matrix_v generate_large_L_tri_mat() {
   return ret_mat;
 }
 
-void test_mult_LLT(const stan::math::matrix_v& L) {
+void test_mult_LLT(const stan::math::matrix_v &L) {
   using stan::math::matrix_v;
   matrix_v Lp = L;
   for (int m = 0; m < L.rows(); ++m)

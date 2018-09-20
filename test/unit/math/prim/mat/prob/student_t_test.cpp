@@ -1,13 +1,13 @@
-#include <gtest/gtest.h>
 #include <boost/math/distributions.hpp>
 #include <boost/random/mersenne_twister.hpp>
+#include <gtest/gtest.h>
+#include <limits>
 #include <stan/math/prim/mat.hpp>
 #include <test/unit/math/prim/mat/prob/vector_rng_test_helper.hpp>
-#include <limits>
 #include <vector>
 
 class StudentTTestRig : public VectorRealRNGTestRig {
- public:
+public:
   StudentTTestRig()
       : VectorRealRNGTestRig(10000, 10, {1.1, 2.0, 2.5, 3.1}, {1, 2, 3, 4},
                              {-1.7, -0.5, -2.5, 0.0}, {-2, -1, -3, 0},
@@ -17,8 +17,8 @@ class StudentTTestRig : public VectorRealRNGTestRig {
                              {-2.7, -1.5, -0.5, 0.0}, {-3, -2, -1, 0}) {}
 
   template <typename T1, typename T2, typename T3, typename T_rng>
-  auto generate_samples(const T1& nu, const T2& mu, const T3& sigma,
-                        T_rng& rng) const {
+  auto generate_samples(const T1 &nu, const T2 &mu, const T3 &sigma,
+                        T_rng &rng) const {
     return stan::math::student_t_rng(nu, mu, sigma, rng);
   }
 

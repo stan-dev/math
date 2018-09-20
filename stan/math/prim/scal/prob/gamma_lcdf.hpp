@@ -3,42 +3,42 @@
 
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <cmath>
+#include <limits>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/fun/gamma_p.hpp>
+#include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
+#include <stan/math/prim/scal/fun/multiply_log.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/length.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
-#include <cmath>
-#include <limits>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {
 namespace math {
 
 template <typename T_y, typename T_shape, typename T_inv_scale>
-typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lcdf(
-    const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
+typename return_type<T_y, T_shape, T_inv_scale>::type
+gamma_lcdf(const T_y &y, const T_shape &alpha, const T_inv_scale &beta) {
   if (size_zero(y, alpha, beta))
     return 0.0;
   typedef typename stan::partials_return_type<T_y, T_shape, T_inv_scale>::type
       T_partials_return;
 
-  static const char* function = "gamma_lcdf";
+  static const char *function = "gamma_lcdf";
 
   using boost::math::tools::promote_args;
   using std::exp;
@@ -99,22 +99,22 @@ typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lcdf(
     P += log(Pn);
 
     if (!is_constant_struct<T_y>::value)
-      ops_partials.edge1_.partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
-                                          * pow(beta_dbl * y_dbl, alpha_dbl - 1)
-                                          / tgamma(alpha_dbl) / Pn;
+      ops_partials.edge1_.partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl) *
+                                          pow(beta_dbl * y_dbl, alpha_dbl - 1) /
+                                          tgamma(alpha_dbl) / Pn;
     if (!is_constant_struct<T_shape>::value)
-      ops_partials.edge2_.partials_[n]
-          -= grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
-                                digamma_vec[n])
-             / Pn;
+      ops_partials.edge2_.partials_[n] -=
+          grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
+                             digamma_vec[n]) /
+          Pn;
     if (!is_constant_struct<T_inv_scale>::value)
-      ops_partials.edge3_.partials_[n] += y_dbl * exp(-beta_dbl * y_dbl)
-                                          * pow(beta_dbl * y_dbl, alpha_dbl - 1)
-                                          / tgamma(alpha_dbl) / Pn;
+      ops_partials.edge3_.partials_[n] += y_dbl * exp(-beta_dbl * y_dbl) *
+                                          pow(beta_dbl * y_dbl, alpha_dbl - 1) /
+                                          tgamma(alpha_dbl) / Pn;
   }
   return ops_partials.build(P);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

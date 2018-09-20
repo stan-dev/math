@@ -34,7 +34,7 @@ const char *subtract_kernel_code = STRINGIFY(
       }
     }
     // \cond
-);
+    );
 // \endcond
 
 /**
@@ -43,8 +43,8 @@ const char *subtract_kernel_code = STRINGIFY(
 const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int>
     subtract("subtract", subtract_kernel_code);
 
-}  // namespace opencl_kernels
-}  // namespace math
-}  // namespace stan
+} // namespace opencl_kernels
+} // namespace math
+} // namespace stan
 #endif
 #endif

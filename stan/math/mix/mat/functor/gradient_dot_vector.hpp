@@ -10,10 +10,10 @@ namespace stan {
 namespace math {
 
 template <typename T1, typename T2, typename F>
-void gradient_dot_vector(const F& f,
-                         const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
-                         const Eigen::Matrix<T2, Eigen::Dynamic, 1>& v, T1& fx,
-                         T1& grad_fx_dot_v) {
+void gradient_dot_vector(const F &f,
+                         const Eigen::Matrix<T1, Eigen::Dynamic, 1> &x,
+                         const Eigen::Matrix<T2, Eigen::Dynamic, 1> &v, T1 &fx,
+                         T1 &grad_fx_dot_v) {
   using Eigen::Matrix;
   Matrix<fvar<T1>, Eigen::Dynamic, 1> x_fvar(x.size());
   for (int i = 0; i < x.size(); ++i)
@@ -23,6 +23,6 @@ void gradient_dot_vector(const F& f,
   grad_fx_dot_v = fx_fvar.d_;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

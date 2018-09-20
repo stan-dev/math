@@ -1,7 +1,7 @@
-#include <stan/math/prim/scal.hpp>
-#include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <gtest/gtest.h>
+#include <stan/math/prim/scal.hpp>
 
 TEST(ProbNegBinomial2, ccdf_log_matches_lccdf) {
   double y = 0.8;

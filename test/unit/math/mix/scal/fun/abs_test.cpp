@@ -1,9 +1,9 @@
-#include <stan/math/mix/scal.hpp>
-#include <gtest/gtest.h>
 #include <boost/math/special_functions/fpclassify.hpp>
-#include <test/unit/math/rev/scal/fun/util.hpp>
-#include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/mix/scal.hpp>
+#include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradFwdAbs, FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -40,10 +40,10 @@ TEST(AgradFwdAbs, FvarFvarVar_1stDeriv) {
   using stan::math::var;
   using std::abs;
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_ = fvar<var>(4.0, 1.0);
 
-  fvar<fvar<var> > b = abs(y);
+  fvar<fvar<var>> b = abs(y);
 
   EXPECT_FLOAT_EQ(4.0, b.val_.val_.val());
   EXPECT_FLOAT_EQ(1.0, b.val_.d_.val());
@@ -60,10 +60,10 @@ TEST(AgradFwdAbs, FvarFvarVar_2ndDeriv) {
   using stan::math::var;
   using std::abs;
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_ = fvar<var>(4.0, 1.0);
 
-  fvar<fvar<var> > b = abs(y);
+  fvar<fvar<var>> b = abs(y);
 
   AVEC z = createAVEC(y.val_.val_);
   VEC h;
@@ -75,12 +75,12 @@ TEST(AgradFwdAbs, FvarFvarVar_3rdDeriv) {
   using stan::math::var;
   using std::abs;
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 4.0;
   y.val_.d_ = 1.0;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var> > b = abs(y);
+  fvar<fvar<var>> b = abs(y);
 
   AVEC z = createAVEC(y.val_.val_);
   VEC h;
@@ -89,8 +89,7 @@ TEST(AgradFwdAbs, FvarFvarVar_3rdDeriv) {
 }
 
 struct abs_fun {
-  template <typename T0>
-  inline T0 operator()(const T0& arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return abs(arg1);
   }
 };

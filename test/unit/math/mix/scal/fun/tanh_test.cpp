@@ -1,7 +1,7 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/scal/fun/util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 class AgradFwdTanh : public testing::Test {
   void SetUp() { stan::math::recover_memory(); }
@@ -43,11 +43,11 @@ TEST_F(AgradFwdTanh, FvarFvarVar_1stDeriv) {
   using stan::math::var;
   using std::tanh;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 2.0;
 
-  fvar<fvar<var> > a = tanh(x);
+  fvar<fvar<var>> a = tanh(x);
 
   EXPECT_FLOAT_EQ(tanh(1.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(2.0 * (1.0 - tanh(1.5) * tanh(1.5)), a.val_.d_.val());
@@ -60,11 +60,11 @@ TEST_F(AgradFwdTanh, FvarFvarVar_1stDeriv) {
   stan::math::recover_memory();
   EXPECT_FLOAT_EQ((1.0 - tanh(1.5) * tanh(1.5)), g[0]);
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 2.0;
 
-  fvar<fvar<var> > b = tanh(y);
+  fvar<fvar<var>> b = tanh(y);
   EXPECT_FLOAT_EQ(tanh(1.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(0, a.val_.d_.val());
   EXPECT_FLOAT_EQ(2.0 * (1.0 - tanh(1.5) * tanh(1.5)), a.d_.val_.val());
@@ -81,11 +81,11 @@ TEST_F(AgradFwdTanh, FvarFvarVar_2ndDeriv) {
   using std::cosh;
   using std::tanh;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 2.0;
 
-  fvar<fvar<var> > a = tanh(x);
+  fvar<fvar<var>> a = tanh(x);
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
@@ -93,11 +93,11 @@ TEST_F(AgradFwdTanh, FvarFvarVar_2ndDeriv) {
   stan::math::recover_memory();
   EXPECT_FLOAT_EQ(2.0 * -2.0 * tanh(1.5) / (cosh(1.5) * cosh(1.5)), g[0]);
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 2.0;
 
-  fvar<fvar<var> > b = tanh(y);
+  fvar<fvar<var>> b = tanh(y);
 
   AVEC q = createAVEC(y.val_.val_);
   VEC r;
@@ -110,12 +110,12 @@ TEST_F(AgradFwdTanh, FvarFvarVar_3rdDeriv) {
   using std::cosh;
   using std::tanh;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 1.0;
   x.d_.val_ = 1.0;
 
-  fvar<fvar<var> > a = tanh(x);
+  fvar<fvar<var>> a = tanh(x);
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
@@ -124,8 +124,7 @@ TEST_F(AgradFwdTanh, FvarFvarVar_3rdDeriv) {
 }
 
 struct tanh_fun {
-  template <typename T0>
-  inline T0 operator()(const T0& arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return tanh(arg1);
   }
 };

@@ -1,6 +1,6 @@
+#include <gtest/gtest.h>
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <gtest/gtest.h>
 
 TEST(StanAgradRevInternal, precomp_v_vari) {
   double value, gradient;

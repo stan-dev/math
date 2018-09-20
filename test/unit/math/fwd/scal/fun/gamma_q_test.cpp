@@ -1,6 +1,6 @@
-#include <stan/math/fwd/scal.hpp>
-#include <gtest/gtest.h>
 #include <boost/math/special_functions/gamma.hpp>
+#include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdGammaQ, Fvar) {
@@ -36,15 +36,15 @@ TEST(AgradFwdGammaQ, FvarFvarDouble) {
   using boost::math::gamma_q;
   using stan::math::fvar;
 
-  fvar<fvar<double> > x;
+  fvar<fvar<double>> x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<double> > y;
+  fvar<fvar<double>> y;
   y.val_.val_ = 1.0;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<double> > a = gamma_q(x, y);
+  fvar<fvar<double>> a = gamma_q(x, y);
 
   EXPECT_FLOAT_EQ(gamma_q(0.5, 1.0), a.val_.val_);
   EXPECT_FLOAT_EQ(0.38983709, a.val_.d_);
@@ -54,8 +54,8 @@ TEST(AgradFwdGammaQ, FvarFvarDouble) {
 
 struct gamma_q_fun {
   template <typename T0, typename T1>
-  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
-      const T0 arg1, const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type
+  operator()(const T0 arg1, const T1 arg2) const {
     return gamma_q(arg1, arg2);
   }
 };

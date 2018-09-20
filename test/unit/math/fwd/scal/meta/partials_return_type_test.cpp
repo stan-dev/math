@@ -7,12 +7,12 @@ using stan::math::fvar;
 using stan::partials_return_type;
 
 TEST(MetaTraits, PartialsReturnTypeFvarDouble) {
-  test::expect_same_type<double, partials_return_type<fvar<double> >::type>();
+  test::expect_same_type<double, partials_return_type<fvar<double>>::type>();
 }
 
 TEST(MetaTraits, PartialsReturnTypeFvarFvarDouble) {
   test::expect_same_type<fvar<double>,
-                         partials_return_type<fvar<fvar<double> > >::type>();
+                         partials_return_type<fvar<fvar<double>>>::type>();
 }
 
 TEST(MetaTraits, PartialsReturnTypeFvarDoubleTenParams) {
@@ -24,7 +24,7 @@ TEST(MetaTraits, PartialsReturnTypeFvarDoubleTenParams) {
 
 TEST(MetaTraits, PartialsReturnTypeFvarFvarDoubleTenParams) {
   test::expect_same_type<
-      fvar<double>, partials_return_type<double, fvar<fvar<double> >, double,
+      fvar<double>, partials_return_type<double, fvar<fvar<double>>, double,
                                          int, double, float, float, float,
-                                         fvar<fvar<double> >, int>::type>();
+                                         fvar<fvar<double>>, int>::type>();
 }

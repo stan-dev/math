@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_VON_MISES_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_VON_MISES_RNG_HPP
 
+#include <boost/random/uniform_real_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
@@ -8,10 +10,8 @@
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
-#include <boost/random/uniform_real_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {
 namespace math {
@@ -45,11 +45,11 @@ namespace math {
  * sizes
  */
 template <typename T_loc, typename T_conc, class RNG>
-inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
-    const T_loc& mu, const T_conc& kappa, RNG& rng) {
+inline typename VectorBuilder<true, double, T_loc, T_conc>::type
+von_mises_rng(const T_loc &mu, const T_conc &kappa, RNG &rng) {
   using boost::random::uniform_real_distribution;
   using boost::variate_generator;
-  static const char* function = "von_mises_rng";
+  static const char *function = "von_mises_rng";
 
   check_finite(function, "mean", mu);
   check_positive_finite(function, "inverse of variance", kappa);
@@ -61,7 +61,7 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
   size_t N = max_size(mu, kappa);
   VectorBuilder<true, double, T_loc, T_conc> output(N);
 
-  variate_generator<RNG&, uniform_real_distribution<> > uniform_rng(
+  variate_generator<RNG &, uniform_real_distribution<>> uniform_rng(
       rng, uniform_real_distribution<>(0.0, 1.0));
 
   for (size_t n = 0; n < N; ++n) {
@@ -86,15 +86,14 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
     double sign = ((U3 >= 0) - (U3 <= 0));
 
     //  it's really an fmod() with a positivity constraint
-    output[n]
-        = sign * std::acos(W)
-          + std::fmod(std::fmod(mu_vec[n], 2 * pi()) + 2 * stan::math::pi(),
-                      2 * pi());
+    output[n] = sign * std::acos(W) +
+                std::fmod(std::fmod(mu_vec[n], 2 * pi()) + 2 * stan::math::pi(),
+                          2 * pi());
   }
 
   return output.data();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

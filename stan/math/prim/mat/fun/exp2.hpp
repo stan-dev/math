@@ -18,10 +18,7 @@ struct exp2_fun {
    * @return Base two exponent of the argument.
    * @tparam T Argument type.
    */
-  template <typename T>
-  static inline T fun(const T& x) {
-    return exp2(x);
-  }
+  template <typename T> static inline T fun(const T &x) { return exp2(x); }
 };
 
 /**
@@ -35,11 +32,11 @@ struct exp2_fun {
  * @return Elementwise exp2 of members of container.
  */
 template <typename T>
-inline typename apply_scalar_unary<exp2_fun, T>::return_t exp2(const T& x) {
+inline typename apply_scalar_unary<exp2_fun, T>::return_t exp2(const T &x) {
   return apply_scalar_unary<exp2_fun, T>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

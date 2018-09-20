@@ -1,6 +1,6 @@
+#include <gtest/gtest.h>
 #include <stan/math/prim/scal.hpp>
 #include <test/unit/util.hpp>
-#include <gtest/gtest.h>
 
 TEST(prob_transform, positive) {
   EXPECT_FLOAT_EQ(exp(-1.0), stan::math::positive_constrain(-1.0));

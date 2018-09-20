@@ -1,8 +1,8 @@
-#include <stan/math/rev/mat.hpp>
+#include <cmath>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
-#include <cmath>
 #include <vector>
 
 using Eigen::Dynamic;
@@ -11,7 +11,7 @@ using stan::math::var;
 using std::vector;
 
 template <int R, int C>
-void test_log_sum_exp_matrix(const Matrix<double, R, C>& m) {
+void test_log_sum_exp_matrix(const Matrix<double, R, C> &m) {
   using std::exp;
 
   vector<var> x_expected(m.size());

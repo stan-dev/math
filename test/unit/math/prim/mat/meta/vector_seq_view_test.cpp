@@ -16,7 +16,7 @@ TEST(MetaTraits, VectorSeqView) {
   vector<VectorXd> v;
   v.push_back(m1);
   v.push_back(m1.reverse());
-  vector_seq_view<vector<VectorXd> > vsv_vec(v);
+  vector_seq_view<vector<VectorXd>> vsv_vec(v);
   EXPECT_FLOAT_EQ(m1(0), vsv_vec[0][0]);
   EXPECT_FLOAT_EQ(m1(0), vsv_vec[1][3]);
   EXPECT_FLOAT_EQ(m1(2), vsv_vec[1][1]);

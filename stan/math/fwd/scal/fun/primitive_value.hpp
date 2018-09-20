@@ -16,13 +16,12 @@ namespace math {
  * @param v input variable.
  * @return primitive value of input.
  */
-template <typename T>
-inline double primitive_value(const fvar<T>& v) {
+template <typename T> inline double primitive_value(const fvar<T> &v) {
   return primitive_value(v.val_);
 }
 
-}  // namespace math
+} // namespace math
 
-}  // namespace stan
+} // namespace stan
 
 #endif

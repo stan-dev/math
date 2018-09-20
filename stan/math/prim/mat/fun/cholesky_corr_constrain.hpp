@@ -1,19 +1,19 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CHOLESKY_CORR_CONSTRAIN_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CHOLESKY_CORR_CONSTRAIN_HPP
 
+#include <cmath>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/scal/fun/corr_constrain.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/fun/corr_constrain.hpp>
-#include <cmath>
 
 namespace stan {
 namespace math {
 
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_corr_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& y, int K) {
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+cholesky_corr_constrain(const Eigen::Matrix<T, Eigen::Dynamic, 1> &y, int K) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::sqrt;
@@ -46,8 +46,9 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_corr_constrain(
 
 // FIXME to match above after debugged
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_corr_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& y, int K, T& lp) {
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+cholesky_corr_constrain(const Eigen::Matrix<T, Eigen::Dynamic, 1> &y, int K,
+                        T &lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::sqrt;
@@ -79,6 +80,6 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_corr_constrain(
   return x;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -1,10 +1,10 @@
 #ifdef STAN_OPENCL
-#include <stan/math/prim/mat.hpp>
-#include <stan/math/gpu/opencl_context.hpp>
-#include <stan/math/gpu/matrix_gpu.hpp>
-#include <stan/math/gpu/copy.hpp>
-#include <gtest/gtest.h>
 #include <algorithm>
+#include <gtest/gtest.h>
+#include <stan/math/gpu/copy.hpp>
+#include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/gpu/opencl_context.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <vector>
 
 TEST(MathMatrixGPU, matrix_gpu_copy) {
@@ -75,10 +75,10 @@ TEST(MathMatrixGPU, barebone_buffer_copy) {
   // retrieve the command queue
   cl::CommandQueue queue = stan::math::opencl_context.queue();
   // retrieve the context
-  cl::Context& ctx = stan::math::opencl_context.context();
+  cl::Context &ctx = stan::math::opencl_context.context();
   // create the gpu buffer of the same size
-  cl::Buffer gpu_buffer
-      = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size);
+  cl::Buffer gpu_buffer =
+      cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size);
 
   // write the cpu_buffer to the GPU (gpu_buffer)
   queue.enqueueWriteBuffer(gpu_buffer, CL_TRUE, 0, sizeof(double) * size,

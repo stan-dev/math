@@ -1,17 +1,17 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_STD_NORMAL_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_STD_NORMAL_LPDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {
 namespace math {
@@ -29,8 +29,8 @@ namespace math {
  * @throw std::domain_error if any scalar is nan.
  */
 template <bool propto, typename T_y>
-typename return_type<T_y>::type std_normal_lpdf(const T_y& y) {
-  static const char* function = "std_normal_lpdf";
+typename return_type<T_y>::type std_normal_lpdf(const T_y &y) {
+  static const char *function = "std_normal_lpdf";
   typedef typename stan::partials_return_type<T_y>::type T_partials_return;
 
   using stan::is_constant_struct;
@@ -59,10 +59,10 @@ typename return_type<T_y>::type std_normal_lpdf(const T_y& y) {
 }
 
 template <typename T_y>
-inline typename return_type<T_y>::type std_normal_lpdf(const T_y& y) {
+inline typename return_type<T_y>::type std_normal_lpdf(const T_y &y) {
   return std_normal_lpdf<false>(y);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

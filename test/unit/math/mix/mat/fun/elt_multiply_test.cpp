@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
@@ -601,10 +601,10 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_vv_1stDeriv) {
   using stan::math::vector_ffv;
   using stan::math::vector_ffv;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
-  fvar<fvar<var> > c(10.0, 1.0);
-  fvar<fvar<var> > d(100.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
+  fvar<fvar<var>> c(10.0, 1.0);
+  fvar<fvar<var>> d(100.0, 1.0);
 
   vector_ffv x(2);
   x << a, b;
@@ -617,8 +617,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_vv_1stDeriv) {
   EXPECT_FLOAT_EQ(12, z(0).d_.val().val());
   EXPECT_FLOAT_EQ(105, z(1).d_.val().val());
 
-  AVEC q
-      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC q =
+      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   z(0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(10.0, h[0]);
@@ -633,10 +633,10 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_vv_2ndDeriv_1) {
   using stan::math::vector_ffv;
   using stan::math::vector_ffv;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
-  fvar<fvar<var> > c(10.0, 1.0);
-  fvar<fvar<var> > d(100.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
+  fvar<fvar<var>> c(10.0, 1.0);
+  fvar<fvar<var>> d(100.0, 1.0);
 
   vector_ffv x(2);
   x << a, b;
@@ -645,8 +645,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_vv_2ndDeriv_1) {
 
   vector_ffv z = elt_multiply(x, y);
 
-  AVEC q
-      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC q =
+      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   z(0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -661,10 +661,10 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_vv_2ndDeriv_2) {
   using stan::math::vector_ffv;
   using stan::math::vector_ffv;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
-  fvar<fvar<var> > c(10.0, 1.0);
-  fvar<fvar<var> > d(100.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
+  fvar<fvar<var>> c(10.0, 1.0);
+  fvar<fvar<var>> d(100.0, 1.0);
 
   vector_ffv x(2);
   x << a, b;
@@ -673,8 +673,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_vv_2ndDeriv_2) {
 
   vector_ffv z = elt_multiply(x, y);
 
-  AVEC q
-      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC q =
+      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   z(0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1.0, h[0]);
@@ -689,10 +689,10 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_vv_3rdDeriv) {
   using stan::math::vector_ffv;
   using stan::math::vector_ffv;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
-  fvar<fvar<var> > c(10.0, 1.0);
-  fvar<fvar<var> > d(100.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
+  fvar<fvar<var>> c(10.0, 1.0);
+  fvar<fvar<var>> d(100.0, 1.0);
 
   vector_ffv x(2);
   x << a, b;
@@ -701,8 +701,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_vv_3rdDeriv) {
 
   vector_ffv z = elt_multiply(x, y);
 
-  AVEC q
-      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC q =
+      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   z(0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -717,8 +717,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_vd_1stDeriv) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
 
   vector_ffv x(2);
   x << a, b;
@@ -744,8 +744,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_vd_2ndDeriv_1) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
 
   vector_ffv x(2);
   x << a, b;
@@ -767,8 +767,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_vd_2ndDeriv_2) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
 
   vector_ffv x(2);
   x << a, b;
@@ -790,8 +790,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_vd_3rdDeriv) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
 
@@ -815,8 +815,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_dv_1stDeriv) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
-  fvar<fvar<var> > c(10.0, 1.0);
-  fvar<fvar<var> > d(100.0, 1.0);
+  fvar<fvar<var>> c(10.0, 1.0);
+  fvar<fvar<var>> d(100.0, 1.0);
 
   vector_d x(2);
   x << 2, 5;
@@ -842,8 +842,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_dv_2ndDeriv_1) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
-  fvar<fvar<var> > c(10.0, 1.0);
-  fvar<fvar<var> > d(100.0, 1.0);
+  fvar<fvar<var>> c(10.0, 1.0);
+  fvar<fvar<var>> d(100.0, 1.0);
 
   vector_d x(2);
   x << 2, 5;
@@ -865,8 +865,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_dv_2ndDeriv_2) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
-  fvar<fvar<var> > c(10.0, 1.0);
-  fvar<fvar<var> > d(100.0, 1.0);
+  fvar<fvar<var>> c(10.0, 1.0);
+  fvar<fvar<var>> d(100.0, 1.0);
 
   vector_d x(2);
   x << 2, 5;
@@ -888,8 +888,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_dv_3rdDeriv) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
-  fvar<fvar<var> > c(10.0, 1.0);
-  fvar<fvar<var> > d(100.0, 1.0);
+  fvar<fvar<var>> c(10.0, 1.0);
+  fvar<fvar<var>> d(100.0, 1.0);
   c.val_.d_ = 1.0;
   d.val_.d_ = 1.0;
 
@@ -912,10 +912,10 @@ TEST(AgradMixMatrixEltMultiply, ffv_row_vec_vv_1stDeriv) {
   using stan::math::row_vector_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
-  fvar<fvar<var> > c(10.0, 1.0);
-  fvar<fvar<var> > d(100.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
+  fvar<fvar<var>> c(10.0, 1.0);
+  fvar<fvar<var>> d(100.0, 1.0);
 
   row_vector_ffv x(2);
   x << a, b;
@@ -928,8 +928,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_row_vec_vv_1stDeriv) {
   EXPECT_FLOAT_EQ(12, z(0).d_.val().val());
   EXPECT_FLOAT_EQ(105, z(1).d_.val().val());
 
-  AVEC q
-      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC q =
+      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   z(0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(10.0, h[0]);
@@ -943,10 +943,10 @@ TEST(AgradMixMatrixEltMultiply, ffv_row_vec_vv_2ndDeriv_1) {
   using stan::math::row_vector_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
-  fvar<fvar<var> > c(10.0, 1.0);
-  fvar<fvar<var> > d(100.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
+  fvar<fvar<var>> c(10.0, 1.0);
+  fvar<fvar<var>> d(100.0, 1.0);
 
   row_vector_ffv x(2);
   x << a, b;
@@ -955,8 +955,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_row_vec_vv_2ndDeriv_1) {
 
   row_vector_ffv z = elt_multiply(x, y);
 
-  AVEC q
-      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC q =
+      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   z(0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -970,10 +970,10 @@ TEST(AgradMixMatrixEltMultiply, ffv_row_vec_vv_2ndDeriv_2) {
   using stan::math::row_vector_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
-  fvar<fvar<var> > c(10.0, 1.0);
-  fvar<fvar<var> > d(100.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
+  fvar<fvar<var>> c(10.0, 1.0);
+  fvar<fvar<var>> d(100.0, 1.0);
 
   row_vector_ffv x(2);
   x << a, b;
@@ -982,8 +982,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_row_vec_vv_2ndDeriv_2) {
 
   row_vector_ffv z = elt_multiply(x, y);
 
-  AVEC q
-      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC q =
+      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   z(0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1.0, h[0]);
@@ -997,10 +997,10 @@ TEST(AgradMixMatrixEltMultiply, ffv_row_vec_vv_3rdDeriv) {
   using stan::math::row_vector_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
-  fvar<fvar<var> > c(10.0, 1.0);
-  fvar<fvar<var> > d(100.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
+  fvar<fvar<var>> c(10.0, 1.0);
+  fvar<fvar<var>> d(100.0, 1.0);
 
   row_vector_ffv x(2);
   x << a, b;
@@ -1009,8 +1009,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_row_vec_vv_3rdDeriv) {
 
   row_vector_ffv z = elt_multiply(x, y);
 
-  AVEC q
-      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC q =
+      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   z(0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1025,8 +1025,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_row_vec_vd_1stDeriv) {
   using stan::math::row_vector_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
 
   row_vector_ffv x(2);
   x << a, b;
@@ -1052,8 +1052,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_row_vec_vd_2ndDeriv_1) {
   using stan::math::row_vector_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
 
   row_vector_ffv x(2);
   x << a, b;
@@ -1075,8 +1075,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_row_vec_vd_2ndDeriv_2) {
   using stan::math::row_vector_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
 
   row_vector_ffv x(2);
   x << a, b;
@@ -1098,8 +1098,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_row_vec_vd_3rdDeriv) {
   using stan::math::row_vector_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
 
@@ -1123,8 +1123,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_row_vec_dv_1stDeriv) {
   using stan::math::row_vector_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > c(10.0, 1.0);
-  fvar<fvar<var> > d(100.0, 1.0);
+  fvar<fvar<var>> c(10.0, 1.0);
+  fvar<fvar<var>> d(100.0, 1.0);
 
   row_vector_d x(2);
   x << 2, 5;
@@ -1150,8 +1150,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_row_vec_dv_2ndDeriv_1) {
   using stan::math::row_vector_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > c(10.0, 1.0);
-  fvar<fvar<var> > d(100.0, 1.0);
+  fvar<fvar<var>> c(10.0, 1.0);
+  fvar<fvar<var>> d(100.0, 1.0);
 
   row_vector_d x(2);
   x << 2, 5;
@@ -1173,8 +1173,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_row_vec_dv_2ndDeriv_2) {
   using stan::math::row_vector_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > c(10.0, 1.0);
-  fvar<fvar<var> > d(100.0, 1.0);
+  fvar<fvar<var>> c(10.0, 1.0);
+  fvar<fvar<var>> d(100.0, 1.0);
 
   row_vector_d x(2);
   x << 2, 5;
@@ -1196,8 +1196,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_row_vec_dv_3rdDeriv) {
   using stan::math::row_vector_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > c(10.0, 1.0);
-  fvar<fvar<var> > d(100.0, 1.0);
+  fvar<fvar<var>> c(10.0, 1.0);
+  fvar<fvar<var>> d(100.0, 1.0);
   c.val_.d_ = 1.0;
   d.val_.d_ = 1.0;
 
@@ -1220,18 +1220,18 @@ TEST(AgradMixMatrixEltMultiply, ffv_matrix_vv_1stDeriv) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
-  fvar<fvar<var> > c(6.0, 1.0);
-  fvar<fvar<var> > d(9.0, 1.0);
-  fvar<fvar<var> > e(13.0, 1.0);
-  fvar<fvar<var> > f(29.0, 1.0);
-  fvar<fvar<var> > g(10.0, 1.0);
-  fvar<fvar<var> > h(100.0, 1.0);
-  fvar<fvar<var> > i(1000.0, 1.0);
-  fvar<fvar<var> > j(10000.0, 1.0);
-  fvar<fvar<var> > k(100000.0, 1.0);
-  fvar<fvar<var> > l(1000000.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
+  fvar<fvar<var>> c(6.0, 1.0);
+  fvar<fvar<var>> d(9.0, 1.0);
+  fvar<fvar<var>> e(13.0, 1.0);
+  fvar<fvar<var>> f(29.0, 1.0);
+  fvar<fvar<var>> g(10.0, 1.0);
+  fvar<fvar<var>> h(100.0, 1.0);
+  fvar<fvar<var>> i(1000.0, 1.0);
+  fvar<fvar<var>> j(10000.0, 1.0);
+  fvar<fvar<var>> k(100000.0, 1.0);
+  fvar<fvar<var>> l(1000000.0, 1.0);
 
   matrix_ffv x(2, 3);
   x << a, b, c, d, e, f;
@@ -1280,18 +1280,18 @@ TEST(AgradMixMatrixEltMultiply, ffv_matrix_vv_2ndDeriv_1) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
-  fvar<fvar<var> > c(6.0, 1.0);
-  fvar<fvar<var> > d(9.0, 1.0);
-  fvar<fvar<var> > e(13.0, 1.0);
-  fvar<fvar<var> > f(29.0, 1.0);
-  fvar<fvar<var> > g(10.0, 1.0);
-  fvar<fvar<var> > h(100.0, 1.0);
-  fvar<fvar<var> > i(1000.0, 1.0);
-  fvar<fvar<var> > j(10000.0, 1.0);
-  fvar<fvar<var> > k(100000.0, 1.0);
-  fvar<fvar<var> > l(1000000.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
+  fvar<fvar<var>> c(6.0, 1.0);
+  fvar<fvar<var>> d(9.0, 1.0);
+  fvar<fvar<var>> e(13.0, 1.0);
+  fvar<fvar<var>> f(29.0, 1.0);
+  fvar<fvar<var>> g(10.0, 1.0);
+  fvar<fvar<var>> h(100.0, 1.0);
+  fvar<fvar<var>> i(1000.0, 1.0);
+  fvar<fvar<var>> j(10000.0, 1.0);
+  fvar<fvar<var>> k(100000.0, 1.0);
+  fvar<fvar<var>> l(1000000.0, 1.0);
 
   matrix_ffv x(2, 3);
   x << a, b, c, d, e, f;
@@ -1334,18 +1334,18 @@ TEST(AgradMixMatrixEltMultiply, ffv_matrix_vv_2ndDeriv_2) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
-  fvar<fvar<var> > c(6.0, 1.0);
-  fvar<fvar<var> > d(9.0, 1.0);
-  fvar<fvar<var> > e(13.0, 1.0);
-  fvar<fvar<var> > f(29.0, 1.0);
-  fvar<fvar<var> > g(10.0, 1.0);
-  fvar<fvar<var> > h(100.0, 1.0);
-  fvar<fvar<var> > i(1000.0, 1.0);
-  fvar<fvar<var> > j(10000.0, 1.0);
-  fvar<fvar<var> > k(100000.0, 1.0);
-  fvar<fvar<var> > l(1000000.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
+  fvar<fvar<var>> c(6.0, 1.0);
+  fvar<fvar<var>> d(9.0, 1.0);
+  fvar<fvar<var>> e(13.0, 1.0);
+  fvar<fvar<var>> f(29.0, 1.0);
+  fvar<fvar<var>> g(10.0, 1.0);
+  fvar<fvar<var>> h(100.0, 1.0);
+  fvar<fvar<var>> i(1000.0, 1.0);
+  fvar<fvar<var>> j(10000.0, 1.0);
+  fvar<fvar<var>> k(100000.0, 1.0);
+  fvar<fvar<var>> l(1000000.0, 1.0);
 
   matrix_ffv x(2, 3);
   x << a, b, c, d, e, f;
@@ -1388,18 +1388,18 @@ TEST(AgradMixMatrixEltMultiply, ffv_matrix_vv_3rdDeriv) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
-  fvar<fvar<var> > c(6.0, 1.0);
-  fvar<fvar<var> > d(9.0, 1.0);
-  fvar<fvar<var> > e(13.0, 1.0);
-  fvar<fvar<var> > f(29.0, 1.0);
-  fvar<fvar<var> > g(10.0, 1.0);
-  fvar<fvar<var> > h(100.0, 1.0);
-  fvar<fvar<var> > i(1000.0, 1.0);
-  fvar<fvar<var> > j(10000.0, 1.0);
-  fvar<fvar<var> > k(100000.0, 1.0);
-  fvar<fvar<var> > l(1000000.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
+  fvar<fvar<var>> c(6.0, 1.0);
+  fvar<fvar<var>> d(9.0, 1.0);
+  fvar<fvar<var>> e(13.0, 1.0);
+  fvar<fvar<var>> f(29.0, 1.0);
+  fvar<fvar<var>> g(10.0, 1.0);
+  fvar<fvar<var>> h(100.0, 1.0);
+  fvar<fvar<var>> i(1000.0, 1.0);
+  fvar<fvar<var>> j(10000.0, 1.0);
+  fvar<fvar<var>> k(100000.0, 1.0);
+  fvar<fvar<var>> l(1000000.0, 1.0);
 
   matrix_ffv x(2, 3);
   x << a, b, c, d, e, f;
@@ -1443,12 +1443,12 @@ TEST(AgradMixMatrixEltMultiply, ffv_matrix_vd_1stDeriv) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
-  fvar<fvar<var> > c(6.0, 1.0);
-  fvar<fvar<var> > d(9.0, 1.0);
-  fvar<fvar<var> > e(13.0, 1.0);
-  fvar<fvar<var> > f(29.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
+  fvar<fvar<var>> c(6.0, 1.0);
+  fvar<fvar<var>> d(9.0, 1.0);
+  fvar<fvar<var>> e(13.0, 1.0);
+  fvar<fvar<var>> f(29.0, 1.0);
 
   matrix_ffv x(2, 3);
   x << a, b, c, d, e, f;
@@ -1481,12 +1481,12 @@ TEST(AgradMixMatrixEltMultiply, ffv_matrix_vd_2ndDeriv_1) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
-  fvar<fvar<var> > c(6.0, 1.0);
-  fvar<fvar<var> > d(9.0, 1.0);
-  fvar<fvar<var> > e(13.0, 1.0);
-  fvar<fvar<var> > f(29.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
+  fvar<fvar<var>> c(6.0, 1.0);
+  fvar<fvar<var>> d(9.0, 1.0);
+  fvar<fvar<var>> e(13.0, 1.0);
+  fvar<fvar<var>> f(29.0, 1.0);
 
   matrix_ffv x(2, 3);
   x << a, b, c, d, e, f;
@@ -1519,12 +1519,12 @@ TEST(AgradMixMatrixEltMultiply, ffv_matrix_vd_2ndDeriv_2) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
-  fvar<fvar<var> > c(6.0, 1.0);
-  fvar<fvar<var> > d(9.0, 1.0);
-  fvar<fvar<var> > e(13.0, 1.0);
-  fvar<fvar<var> > f(29.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
+  fvar<fvar<var>> c(6.0, 1.0);
+  fvar<fvar<var>> d(9.0, 1.0);
+  fvar<fvar<var>> e(13.0, 1.0);
+  fvar<fvar<var>> f(29.0, 1.0);
 
   matrix_ffv x(2, 3);
   x << a, b, c, d, e, f;
@@ -1557,12 +1557,12 @@ TEST(AgradMixMatrixEltMultiply, ffv_matrix_vd_3rdDeriv) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(5.0, 1.0);
-  fvar<fvar<var> > c(6.0, 1.0);
-  fvar<fvar<var> > d(9.0, 1.0);
-  fvar<fvar<var> > e(13.0, 1.0);
-  fvar<fvar<var> > f(29.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(5.0, 1.0);
+  fvar<fvar<var>> c(6.0, 1.0);
+  fvar<fvar<var>> d(9.0, 1.0);
+  fvar<fvar<var>> e(13.0, 1.0);
+  fvar<fvar<var>> f(29.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;
@@ -1601,12 +1601,12 @@ TEST(AgradMixMatrixEltMultiply, ffv_matrix_dv_1stDeriv) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > g(10.0, 1.0);
-  fvar<fvar<var> > h(100.0, 1.0);
-  fvar<fvar<var> > i(1000.0, 1.0);
-  fvar<fvar<var> > j(10000.0, 1.0);
-  fvar<fvar<var> > k(100000.0, 1.0);
-  fvar<fvar<var> > l(1000000.0, 1.0);
+  fvar<fvar<var>> g(10.0, 1.0);
+  fvar<fvar<var>> h(100.0, 1.0);
+  fvar<fvar<var>> i(1000.0, 1.0);
+  fvar<fvar<var>> j(10000.0, 1.0);
+  fvar<fvar<var>> k(100000.0, 1.0);
+  fvar<fvar<var>> l(1000000.0, 1.0);
 
   matrix_d x(2, 3);
   x << 2, 5, 6, 9, 13, 29;
@@ -1639,12 +1639,12 @@ TEST(AgradMixMatrixEltMultiply, ffv_matrix_dv_2ndDeriv_1) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > g(10.0, 1.0);
-  fvar<fvar<var> > h(100.0, 1.0);
-  fvar<fvar<var> > i(1000.0, 1.0);
-  fvar<fvar<var> > j(10000.0, 1.0);
-  fvar<fvar<var> > k(100000.0, 1.0);
-  fvar<fvar<var> > l(1000000.0, 1.0);
+  fvar<fvar<var>> g(10.0, 1.0);
+  fvar<fvar<var>> h(100.0, 1.0);
+  fvar<fvar<var>> i(1000.0, 1.0);
+  fvar<fvar<var>> j(10000.0, 1.0);
+  fvar<fvar<var>> k(100000.0, 1.0);
+  fvar<fvar<var>> l(1000000.0, 1.0);
 
   matrix_d x(2, 3);
   x << 2, 5, 6, 9, 13, 29;
@@ -1671,12 +1671,12 @@ TEST(AgradMixMatrixEltMultiply, ffv_matrix_dv_2ndDeriv_2) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > g(10.0, 1.0);
-  fvar<fvar<var> > h(100.0, 1.0);
-  fvar<fvar<var> > i(1000.0, 1.0);
-  fvar<fvar<var> > j(10000.0, 1.0);
-  fvar<fvar<var> > k(100000.0, 1.0);
-  fvar<fvar<var> > l(1000000.0, 1.0);
+  fvar<fvar<var>> g(10.0, 1.0);
+  fvar<fvar<var>> h(100.0, 1.0);
+  fvar<fvar<var>> i(1000.0, 1.0);
+  fvar<fvar<var>> j(10000.0, 1.0);
+  fvar<fvar<var>> k(100000.0, 1.0);
+  fvar<fvar<var>> l(1000000.0, 1.0);
 
   matrix_d x(2, 3);
   x << 2, 5, 6, 9, 13, 29;
@@ -1703,12 +1703,12 @@ TEST(AgradMixMatrixEltMultiply, ffv_matrix_dv_3rdDeriv) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > g(10.0, 1.0);
-  fvar<fvar<var> > h(100.0, 1.0);
-  fvar<fvar<var> > i(1000.0, 1.0);
-  fvar<fvar<var> > j(10000.0, 1.0);
-  fvar<fvar<var> > k(100000.0, 1.0);
-  fvar<fvar<var> > l(1000000.0, 1.0);
+  fvar<fvar<var>> g(10.0, 1.0);
+  fvar<fvar<var>> h(100.0, 1.0);
+  fvar<fvar<var>> i(1000.0, 1.0);
+  fvar<fvar<var>> j(10000.0, 1.0);
+  fvar<fvar<var>> k(100000.0, 1.0);
+  fvar<fvar<var>> l(1000000.0, 1.0);
   g.val_.d_ = 1.0;
   h.val_.d_ = 1.0;
   i.val_.d_ = 1.0;

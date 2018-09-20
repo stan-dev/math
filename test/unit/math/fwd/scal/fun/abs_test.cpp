@@ -1,8 +1,8 @@
-#include <stan/math/fwd/scal.hpp>
-#include <gtest/gtest.h>
 #include <boost/math/special_functions/fpclassify.hpp>
-#include <test/unit/math/fwd/scal/fun/nan_util.hpp>
+#include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/fwd/scal.hpp>
+#include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdAbs, Fvar) {
   using stan::math::fvar;
@@ -53,11 +53,11 @@ TEST(AgradFwdAbs, FvarFvarDouble) {
   using stan::math::fvar;
   using std::abs;
 
-  fvar<fvar<double> > x;
+  fvar<fvar<double>> x;
   x.val_.val_ = 4.0;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<double> > a = abs(x);
+  fvar<fvar<double>> a = abs(x);
 
   EXPECT_FLOAT_EQ(4.0, a.val_.val_);
   EXPECT_FLOAT_EQ(1.0, a.val_.d_);
@@ -66,8 +66,7 @@ TEST(AgradFwdAbs, FvarFvarDouble) {
 }
 
 struct abs_fun {
-  template <typename T0>
-  inline T0 operator()(const T0& arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return abs(arg1);
   }
 };

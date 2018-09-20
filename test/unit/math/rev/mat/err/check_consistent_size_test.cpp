@@ -1,6 +1,6 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/rev/mat.hpp>
 
 TEST(AgradRevErrorHandlingScalar, checkConsistentSize) {
   using Eigen::Dynamic;
@@ -9,8 +9,8 @@ TEST(AgradRevErrorHandlingScalar, checkConsistentSize) {
   using stan::math::var;
   using stan::size_of;
 
-  const char* function = "check_consistent_size";
-  const char* name1 = "name1";
+  const char *function = "check_consistent_size";
+  const char *name1 = "name1";
 
   Matrix<var, Dynamic, 1> v1(4);
   v1 << 4.0, 5.0, 6.0, 7.0;
@@ -28,8 +28,8 @@ TEST(AgradRevErrorHandlingScalar, checkConsistentSize_nan) {
   using stan::math::var;
   using stan::size_of;
 
-  const char* function = "check_consistent_size";
-  const char* name1 = "name1";
+  const char *function = "check_consistent_size";
+  const char *name1 = "name1";
 
   double nan = std::numeric_limits<double>::quiet_NaN();
 

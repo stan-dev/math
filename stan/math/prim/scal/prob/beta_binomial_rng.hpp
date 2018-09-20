@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_PROB_BETA_BINOMIAL_RNG_HPP
 
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/prob/binomial_rng.hpp>
 #include <stan/math/prim/scal/prob/beta_rng.hpp>
+#include <stan/math/prim/scal/prob/binomial_rng.hpp>
 
 namespace stan {
 namespace math {
@@ -44,6 +44,6 @@ beta_binomial_rng(const T_N &N, const T_shape1 &alpha, const T_shape2 &beta,
   return binomial_rng(N, p, rng);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

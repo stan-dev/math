@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(ProbWishart, log_matches_lpmf) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Sigma(2, 2);

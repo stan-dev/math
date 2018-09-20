@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_INV_LOGIT_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_INV_LOGIT_HPP
 
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <cmath>
+#include <stan/math/prim/scal/fun/constants.hpp>
 
 namespace stan {
 namespace math {
@@ -56,6 +56,6 @@ inline double inv_logit(double a) {
   return 1 / (1 + exp(-a));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

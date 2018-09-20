@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MATRIX_NORMAL_PREC_LOG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MATRIX_NORMAL_PREC_LOG_HPP
 
+#include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/prob/matrix_normal_prec_lpdf.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {
@@ -32,10 +32,10 @@ template <bool propto, typename T_y, typename T_Mu, typename T_Sigma,
           typename T_D>
 typename boost::math::tools::promote_args<T_y, T_Mu, T_Sigma, T_D>::type
 matrix_normal_prec_log(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-    const Eigen::Matrix<T_Mu, Eigen::Dynamic, Eigen::Dynamic>& Mu,
-    const Eigen::Matrix<T_Sigma, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
-    const Eigen::Matrix<T_D, Eigen::Dynamic, Eigen::Dynamic>& D) {
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y,
+    const Eigen::Matrix<T_Mu, Eigen::Dynamic, Eigen::Dynamic> &Mu,
+    const Eigen::Matrix<T_Sigma, Eigen::Dynamic, Eigen::Dynamic> &Sigma,
+    const Eigen::Matrix<T_D, Eigen::Dynamic, Eigen::Dynamic> &D) {
   return matrix_normal_prec_lpdf<propto, T_y, T_Mu, T_Sigma, T_D>(y, Mu, Sigma,
                                                                   D);
 }
@@ -46,13 +46,13 @@ matrix_normal_prec_log(
 template <typename T_y, typename T_Mu, typename T_Sigma, typename T_D>
 typename boost::math::tools::promote_args<T_y, T_Mu, T_Sigma, T_D>::type
 matrix_normal_prec_log(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-    const Eigen::Matrix<T_Mu, Eigen::Dynamic, Eigen::Dynamic>& Mu,
-    const Eigen::Matrix<T_Sigma, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
-    const Eigen::Matrix<T_D, Eigen::Dynamic, Eigen::Dynamic>& D) {
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y,
+    const Eigen::Matrix<T_Mu, Eigen::Dynamic, Eigen::Dynamic> &Mu,
+    const Eigen::Matrix<T_Sigma, Eigen::Dynamic, Eigen::Dynamic> &Sigma,
+    const Eigen::Matrix<T_D, Eigen::Dynamic, Eigen::Dynamic> &D) {
   return matrix_normal_prec_lpdf<T_y, T_Mu, T_Sigma, T_D>(y, Mu, Sigma, D);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_CORR_FREE_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_CORR_FREE_HPP
 
-#include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <cmath>
+#include <stan/math/prim/scal/err/check_bounded.hpp>
 
 namespace stan {
 namespace math {
@@ -23,12 +23,11 @@ namespace math {
  * @param[in] y correlation
  * @return free scalar that transforms to the specified input
  */
-template <typename T>
-inline T corr_free(const T& y) {
+template <typename T> inline T corr_free(const T &y) {
   check_bounded("lub_free", "Correlation variable", y, -1.0, 1.0);
   return atanh(y);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

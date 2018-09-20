@@ -1,12 +1,12 @@
 #ifndef STAN_MATH_REV_MAT_FUN_MDIVIDE_LEFT_SPD_HPP
 #define STAN_MATH_REV_MAT_FUN_MDIVIDE_LEFT_SPD_HPP
 
-#include <stan/math/rev/core.hpp>
+#include <stan/math/prim/mat/err/check_multiplicable.hpp>
+#include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
+#include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
 #include <vector>
 
 namespace stan {
@@ -15,18 +15,18 @@ namespace math {
 namespace {
 template <int R1, int C1, int R2, int C2>
 class mdivide_left_spd_alloc : public chainable_alloc {
- public:
+public:
   virtual ~mdivide_left_spd_alloc() {}
 
-  Eigen::LLT<Eigen::Matrix<double, R1, C1> > llt_;
+  Eigen::LLT<Eigen::Matrix<double, R1, C1>> llt_;
   Eigen::Matrix<double, R2, C2> C_;
 };
 
 template <int R1, int C1, int R2, int C2>
 class mdivide_left_spd_vv_vari : public vari {
- public:
-  int M_;  // A.rows() = A.cols() = B.rows()
-  int N_;  // B.cols()
+public:
+  int M_; // A.rows() = A.cols() = B.rows()
+  int N_; // B.cols()
   vari **variRefA_;
   vari **variRefB_;
   vari **variRefC_;
@@ -34,18 +34,16 @@ class mdivide_left_spd_vv_vari : public vari {
 
   mdivide_left_spd_vv_vari(const Eigen::Matrix<var, R1, C1> &A,
                            const Eigen::Matrix<var, R2, C2> &B)
-      : vari(0.0),
-        M_(A.rows()),
-        N_(B.cols()),
+      : vari(0.0), M_(A.rows()), N_(B.cols()),
         variRefA_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * A.rows()
-                                                       * A.cols()))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) *
+                                                       A.rows() * A.cols()))),
         variRefB_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
-                                                       * B.cols()))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) *
+                                                       B.rows() * B.cols()))),
         variRefC_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
-                                                       * B.cols()))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) *
+                                                       B.rows() * B.cols()))),
         alloc_(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
     using Eigen::Map;
     using Eigen::Matrix;
@@ -111,24 +109,22 @@ class mdivide_left_spd_vv_vari : public vari {
 
 template <int R1, int C1, int R2, int C2>
 class mdivide_left_spd_dv_vari : public vari {
- public:
-  int M_;  // A.rows() = A.cols() = B.rows()
-  int N_;  // B.cols()
+public:
+  int M_; // A.rows() = A.cols() = B.rows()
+  int N_; // B.cols()
   vari **variRefB_;
   vari **variRefC_;
   mdivide_left_spd_alloc<R1, C1, R2, C2> *alloc_;
 
   mdivide_left_spd_dv_vari(const Eigen::Matrix<double, R1, C1> &A,
                            const Eigen::Matrix<var, R2, C2> &B)
-      : vari(0.0),
-        M_(A.rows()),
-        N_(B.cols()),
+      : vari(0.0), M_(A.rows()), N_(B.cols()),
         variRefB_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
-                                                       * B.cols()))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) *
+                                                       B.rows() * B.cols()))),
         variRefC_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
-                                                       * B.cols()))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) *
+                                                       B.rows() * B.cols()))),
         alloc_(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
     using Eigen::Map;
     using Eigen::Matrix;
@@ -176,24 +172,22 @@ class mdivide_left_spd_dv_vari : public vari {
 
 template <int R1, int C1, int R2, int C2>
 class mdivide_left_spd_vd_vari : public vari {
- public:
-  int M_;  // A.rows() = A.cols() = B.rows()
-  int N_;  // B.cols()
+public:
+  int M_; // A.rows() = A.cols() = B.rows()
+  int N_; // B.cols()
   vari **variRefA_;
   vari **variRefC_;
   mdivide_left_spd_alloc<R1, C1, R2, C2> *alloc_;
 
   mdivide_left_spd_vd_vari(const Eigen::Matrix<var, R1, C1> &A,
                            const Eigen::Matrix<double, R2, C2> &B)
-      : vari(0.0),
-        M_(A.rows()),
-        N_(B.cols()),
+      : vari(0.0), M_(A.rows()), N_(B.cols()),
         variRefA_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * A.rows()
-                                                       * A.cols()))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) *
+                                                       A.rows() * A.cols()))),
         variRefC_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
-                                                       * B.cols()))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) *
+                                                       B.rows() * B.cols()))),
         alloc_(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
     using Eigen::Map;
     using Eigen::Matrix;
@@ -240,11 +234,12 @@ class mdivide_left_spd_vd_vari : public vari {
         variRefA_[pos++]->adj_ += adjA(i, j);
   }
 };
-}  // namespace
+} // namespace
 
 template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
-    const Eigen::Matrix<var, R1, C1> &A, const Eigen::Matrix<var, R2, C2> &b) {
+inline Eigen::Matrix<var, R1, C2>
+mdivide_left_spd(const Eigen::Matrix<var, R1, C1> &A,
+                 const Eigen::Matrix<var, R2, C2> &b) {
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
 
   check_square("mdivide_left_spd", "A", A);
@@ -254,8 +249,8 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  mdivide_left_spd_vv_vari<R1, C1, R2, C2> *baseVari
-      = new mdivide_left_spd_vv_vari<R1, C1, R2, C2>(A, b);
+  mdivide_left_spd_vv_vari<R1, C1, R2, C2> *baseVari =
+      new mdivide_left_spd_vv_vari<R1, C1, R2, C2>(A, b);
 
   size_t pos = 0;
   for (size_type j = 0; j < res.cols(); j++)
@@ -266,9 +261,9 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
 }
 
 template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
-    const Eigen::Matrix<var, R1, C1> &A,
-    const Eigen::Matrix<double, R2, C2> &b) {
+inline Eigen::Matrix<var, R1, C2>
+mdivide_left_spd(const Eigen::Matrix<var, R1, C1> &A,
+                 const Eigen::Matrix<double, R2, C2> &b) {
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
 
   check_square("mdivide_left_spd", "A", A);
@@ -278,8 +273,8 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  mdivide_left_spd_vd_vari<R1, C1, R2, C2> *baseVari
-      = new mdivide_left_spd_vd_vari<R1, C1, R2, C2>(A, b);
+  mdivide_left_spd_vd_vari<R1, C1, R2, C2> *baseVari =
+      new mdivide_left_spd_vd_vari<R1, C1, R2, C2>(A, b);
 
   size_t pos = 0;
   for (size_type j = 0; j < res.cols(); j++)
@@ -290,9 +285,9 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
 }
 
 template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
-    const Eigen::Matrix<double, R1, C1> &A,
-    const Eigen::Matrix<var, R2, C2> &b) {
+inline Eigen::Matrix<var, R1, C2>
+mdivide_left_spd(const Eigen::Matrix<double, R1, C1> &A,
+                 const Eigen::Matrix<var, R2, C2> &b) {
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
 
   check_square("mdivide_left_spd", "A", A);
@@ -302,8 +297,8 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  mdivide_left_spd_dv_vari<R1, C1, R2, C2> *baseVari
-      = new mdivide_left_spd_dv_vari<R1, C1, R2, C2>(A, b);
+  mdivide_left_spd_dv_vari<R1, C1, R2, C2> *baseVari =
+      new mdivide_left_spd_dv_vari<R1, C1, R2, C2>(A, b);
 
   size_t pos = 0;
   for (size_type j = 0; j < res.cols(); j++)
@@ -313,6 +308,6 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
   return res;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

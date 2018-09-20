@@ -1,6 +1,6 @@
+#include <gtest/gtest.h>
 #include <stan/math/prim/scal.hpp>
 #include <test/unit/math/prim/scal/fun/promote_type_test_util.hpp>
-#include <gtest/gtest.h>
 
 TEST(MathFunctionsPromoteScalar, Match) {
   using stan::math::promote_scalar;

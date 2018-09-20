@@ -1,8 +1,8 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/util.hpp>
 #include <limits>
+#include <stan/math/prim/mat.hpp>
 #include <string>
+#include <test/unit/util.hpp>
 
 TEST(ErrorHandlingMatrix, checkSimplex) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> y(2);
@@ -26,7 +26,7 @@ TEST(ErrorHandlingMatrix, checkSimplex_message_negative_value) {
   try {
     stan::math::check_simplex("checkSimplex", "y", y);
     FAIL() << "should have thrown";
-  } catch (std::domain_error& e) {
+  } catch (std::domain_error &e) {
     message = e.what();
   } catch (...) {
     FAIL() << "threw the wrong error";
@@ -44,7 +44,7 @@ TEST(ErrorHandlingMatrix, checkSimplex_message_negative_value) {
   try {
     stan::math::check_simplex("checkSimplex", "y", y);
     FAIL() << "should have thrown";
-  } catch (std::domain_error& e) {
+  } catch (std::domain_error &e) {
     message = e.what();
   } catch (...) {
     FAIL() << "threw the wrong error";
@@ -66,7 +66,7 @@ TEST(ErrorHandlingMatrix, checkSimplex_message_sum) {
   try {
     stan::math::check_simplex("checkSimplex", "y", y);
     FAIL() << "should have thrown";
-  } catch (std::domain_error& e) {
+  } catch (std::domain_error &e) {
     message = e.what();
   } catch (...) {
     FAIL() << "threw the wrong error";

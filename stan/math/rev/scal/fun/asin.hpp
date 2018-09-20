@@ -1,21 +1,21 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_ASIN_HPP
 #define STAN_MATH_REV_SCAL_FUN_ASIN_HPP
 
-#include <stan/math/rev/core.hpp>
 #include <cmath>
+#include <stan/math/rev/core.hpp>
 
 namespace stan {
 namespace math {
 
 namespace {
 class asin_vari : public op_v_vari {
- public:
-  explicit asin_vari(vari* avi) : op_v_vari(std::asin(avi->val_), avi) {}
+public:
+  explicit asin_vari(vari *avi) : op_v_vari(std::asin(avi->val_), avi) {}
   void chain() {
     avi_->adj_ += adj_ / std::sqrt(1.0 - (avi_->val_ * avi_->val_));
   }
 };
-}  // namespace
+} // namespace
 
 /**
  * Return the principal value of the arc sine, in radians, of the
@@ -53,8 +53,8 @@ class asin_vari : public op_v_vari {
  * @param a Variable in range [-1, 1].
  * @return Arc sine of variable, in radians.
  */
-inline var asin(const var& a) { return var(new asin_vari(a.vi_)); }
+inline var asin(const var &a) { return var(new asin_vari(a.vi_)); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -1,5 +1,5 @@
-#include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/arr.hpp>
 #include <vector>
 
 TEST(MathMatrix, rep_array) {
@@ -14,7 +14,7 @@ TEST(MathMatrix, rep_array) {
 TEST(MathMatrix, rep_array2D) {
   using stan::math::rep_array;
   using std::vector;
-  vector<vector<double> > x = rep_array(2.0, 3, 4);
+  vector<vector<double>> x = rep_array(2.0, 3, 4);
   EXPECT_EQ(3U, x.size());
   for (size_t i = 0; i < x.size(); ++i) {
     EXPECT_EQ(4U, x[i].size());
@@ -27,7 +27,7 @@ TEST(MathMatrix, rep_array2D) {
 TEST(MathMatrix, rep_array3D) {
   using stan::math::rep_array;
   using std::vector;
-  vector<vector<vector<int> > > x = rep_array(13, 3, 4, 5);
+  vector<vector<vector<int>>> x = rep_array(13, 3, 4, 5);
   EXPECT_EQ(3U, x.size());
   for (size_t i = 0; i < x.size(); ++i) {
     EXPECT_EQ(4U, x[i].size());

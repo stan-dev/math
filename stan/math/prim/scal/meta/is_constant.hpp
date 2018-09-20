@@ -18,8 +18,7 @@ namespace stan {
  *
  * @tparam T Type being tested.
  */
-template <typename T>
-struct is_constant {
+template <typename T> struct is_constant {
   /**
    * A boolean constant with equal to <code>true</code> if the
    * type parameter <code>T</code> is a mathematical constant.
@@ -27,5 +26,5 @@ struct is_constant {
   enum { value = boost::is_convertible<T, double>::value };
 };
 
-}  // namespace stan
+} // namespace stan
 #endif

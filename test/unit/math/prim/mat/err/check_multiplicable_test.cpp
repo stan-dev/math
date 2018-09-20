@@ -1,7 +1,7 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
 #include <limits>
+#include <stan/math/prim/mat.hpp>
 
 TEST(ErrorHandlingMatrix, checkMultiplicableMatrix) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;

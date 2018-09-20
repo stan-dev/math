@@ -1,19 +1,19 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_SIN_HPP
 #define STAN_MATH_REV_SCAL_FUN_SIN_HPP
 
-#include <stan/math/rev/core.hpp>
 #include <cmath>
+#include <stan/math/rev/core.hpp>
 
 namespace stan {
 namespace math {
 
 namespace {
 class sin_vari : public op_v_vari {
- public:
-  explicit sin_vari(vari* avi) : op_v_vari(std::sin(avi->val_), avi) {}
+public:
+  explicit sin_vari(vari *avi) : op_v_vari(std::sin(avi->val_), avi) {}
   void chain() { avi_->adj_ += adj_ * std::cos(avi_->val_); }
 };
-}  // namespace
+} // namespace
 
 /**
  * Return the sine of a radian-scaled variable (cmath).
@@ -42,8 +42,8 @@ class sin_vari : public op_v_vari {
  * @param a Variable for radians of angle.
  * @return Sine of variable.
  */
-inline var sin(const var& a) { return var(new sin_vari(a.vi_)); }
+inline var sin(const var &a) { return var(new sin_vari(a.vi_)); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -8,14 +8,13 @@
 namespace stan {
 
 template <typename T, int R, int C>
-struct is_constant_struct<Eigen::Matrix<T, R, C> > {
+struct is_constant_struct<Eigen::Matrix<T, R, C>> {
   enum { value = is_constant_struct<T>::value };
 };
 
-template <typename T>
-struct is_constant_struct<Eigen::Block<T> > {
+template <typename T> struct is_constant_struct<Eigen::Block<T>> {
   enum { value = is_constant_struct<T>::value };
 };
 
-}  // namespace stan
+} // namespace stan
 #endif

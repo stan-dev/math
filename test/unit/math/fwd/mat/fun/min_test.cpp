@@ -1,7 +1,7 @@
-#include <stan/math/fwd/mat.hpp>
+#include <algorithm>
 #include <gtest/gtest.h>
 #include <limits>
-#include <algorithm>
+#include <stan/math/fwd/mat.hpp>
 
 using stan::math::fvar;
 TEST(AgradFwdMatrixMin, fd_vector) {
@@ -108,7 +108,7 @@ TEST(AgradFwdMatrixMin, ffd_vector) {
 
   vector_d d1(3);
   vector_ffd v1(3);
-  fvar<fvar<double> > a, b, c;
+  fvar<fvar<double>> a, b, c;
   a.val_.val_ = 100.0;
   b.val_.val_ = 0.0;
   c.val_.val_ = -3.0;
@@ -119,7 +119,7 @@ TEST(AgradFwdMatrixMin, ffd_vector) {
   d1 << 100, 0, -3;
   v1 << a, b, c;
 
-  fvar<fvar<double> > output;
+  fvar<fvar<double>> output;
   output = min(d1);
   EXPECT_FLOAT_EQ(-3, output.val_.val());
   EXPECT_FLOAT_EQ(0, output.d_.val());
@@ -147,7 +147,7 @@ TEST(AgradFwdMatrixMin, ffd_rowvector) {
 
   row_vector_d d1(3);
   row_vector_ffd v1(3);
-  fvar<fvar<double> > a, b, c;
+  fvar<fvar<double>> a, b, c;
   a.val_.val_ = 100.0;
   b.val_.val_ = 0.0;
   c.val_.val_ = -3.0;
@@ -158,7 +158,7 @@ TEST(AgradFwdMatrixMin, ffd_rowvector) {
   d1 << 100, 0, -3;
   v1 << a, b, c;
 
-  fvar<fvar<double> > output;
+  fvar<fvar<double>> output;
   output = min(d1);
   EXPECT_FLOAT_EQ(-3, output.val_.val());
   EXPECT_FLOAT_EQ(0, output.d_.val());
@@ -182,7 +182,7 @@ TEST(AgradFwdMatrixMin, ffd_matrix) {
 
   matrix_d d1(3, 1);
   matrix_ffd v1(1, 3);
-  fvar<fvar<double> > a, b, c;
+  fvar<fvar<double>> a, b, c;
   a.val_.val_ = 100.0;
   b.val_.val_ = 0.0;
   c.val_.val_ = -3.0;
@@ -193,7 +193,7 @@ TEST(AgradFwdMatrixMin, ffd_matrix) {
   d1 << 100, 0, -3;
   v1 << a, b, c;
 
-  fvar<fvar<double> > output;
+  fvar<fvar<double>> output;
   output = min(d1);
   EXPECT_FLOAT_EQ(-3, output.val_.val());
   EXPECT_FLOAT_EQ(0, output.d_.val());

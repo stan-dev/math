@@ -1,7 +1,7 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/scal/fun/util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradFwdAcos, FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -38,11 +38,11 @@ TEST(AgradFwdAcos, FvarFvarVar_1stDeriv) {
   using stan::math::var;
   using std::acos;
 
-  fvar<fvar<var> > z;
+  fvar<fvar<var>> z;
   z.val_.val_ = 0.5;
   z.val_.d_ = 2.0;
 
-  fvar<fvar<var> > b = acos(z);
+  fvar<fvar<var>> b = acos(z);
 
   EXPECT_FLOAT_EQ(acos(0.5), b.val_.val_.val());
   EXPECT_FLOAT_EQ(-2.0 / sqrt(1.0 - 0.5 * 0.5), b.val_.d_.val());
@@ -54,7 +54,7 @@ TEST(AgradFwdAcos, FvarFvarVar_1stDeriv) {
   b.val_.val_.grad(y, g);
   EXPECT_FLOAT_EQ(-1.0 / sqrt(1.0 - 0.5 * 0.5), g[0]);
 
-  fvar<fvar<var> > w;
+  fvar<fvar<var>> w;
   w.val_.val_ = 0.5;
   w.d_.val_ = 2.0;
 
@@ -74,22 +74,22 @@ TEST(AgradFwdAcos, FvarFvarVar_2ndDeriv) {
   using stan::math::var;
   using std::acos;
 
-  fvar<fvar<var> > z;
+  fvar<fvar<var>> z;
   z.val_.val_ = 0.5;
   z.val_.d_ = 2.0;
 
-  fvar<fvar<var> > b = acos(z);
+  fvar<fvar<var>> b = acos(z);
 
   AVEC y = createAVEC(z.val_.val_);
   VEC g;
   b.val_.d_.grad(y, g);
   EXPECT_FLOAT_EQ(-0.5 * 2.0 / (sqrt(1.0 - 0.5 * 0.5) * 0.75), g[0]);
 
-  fvar<fvar<var> > w;
+  fvar<fvar<var>> w;
   w.val_.val_ = 0.5;
   w.d_.val_ = 2.0;
 
-  fvar<fvar<var> > c = acos(w);
+  fvar<fvar<var>> c = acos(w);
 
   AVEC p = createAVEC(w.val_.val_);
   VEC q;
@@ -102,12 +102,12 @@ TEST(AgradFwdAcos, FvarFvarVar_3rdDeriv) {
   using stan::math::var;
   using std::acos;
 
-  fvar<fvar<var> > z;
+  fvar<fvar<var>> z;
   z.val_.val_ = 0.5;
   z.val_.d_ = 1.0;
   z.d_.val_ = 1.0;
 
-  fvar<fvar<var> > b = acos(z);
+  fvar<fvar<var>> b = acos(z);
 
   AVEC y = createAVEC(z.val_.val_);
   VEC g;
@@ -116,8 +116,7 @@ TEST(AgradFwdAcos, FvarFvarVar_3rdDeriv) {
 }
 
 struct acos_fun {
-  template <typename T0>
-  inline T0 operator()(const T0& arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return acos(arg1);
   }
 };

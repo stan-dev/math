@@ -1,9 +1,9 @@
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat.hpp>
-#include <gtest/gtest.h>
 #include <fstream>
-#include <vector>
+#include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stdexcept>
+#include <vector>
 
 TEST(ProbAutocorrelation, test1) {
   // ar1.csv generated in R with

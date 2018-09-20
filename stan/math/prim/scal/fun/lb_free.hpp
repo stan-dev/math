@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LB_FREE_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LB_FREE_HPP
 
-#include <stan/math/prim/scal/fun/identity_free.hpp>
-#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <cmath>
 #include <limits>
+#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
+#include <stan/math/prim/scal/fun/identity_free.hpp>
 
 namespace stan {
 namespace math {
@@ -26,8 +26,8 @@ namespace math {
  * @throw std::domain_error if y is lower than the lower bound
  */
 template <typename T, typename L>
-inline typename boost::math::tools::promote_args<T, L>::type lb_free(
-    const T& y, const L& lb) {
+inline typename boost::math::tools::promote_args<T, L>::type
+lb_free(const T &y, const L &lb) {
   using std::log;
   if (lb == -std::numeric_limits<double>::infinity())
     return identity_free(y);
@@ -35,6 +35,6 @@ inline typename boost::math::tools::promote_args<T, L>::type lb_free(
   return log(y - lb);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

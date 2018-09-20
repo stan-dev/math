@@ -1,5 +1,5 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdLog1mInvLogit, Fvar) {
@@ -29,18 +29,18 @@ TEST(AgradFwdLog1mInvLogit, FvarFvarDouble) {
   using stan::math::log1m_inv_logit;
   using std::exp;
 
-  fvar<fvar<double> > x;
+  fvar<fvar<double>> x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<double> > a = log1m_inv_logit(x);
+  fvar<fvar<double>> a = log1m_inv_logit(x);
 
   EXPECT_FLOAT_EQ(log1m_inv_logit(0.5), a.val_.val_);
   EXPECT_FLOAT_EQ(-exp(0.5) / (1 + exp(0.5)), a.val_.d_);
   EXPECT_FLOAT_EQ(0, a.d_.val_);
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 
-  fvar<fvar<double> > y;
+  fvar<fvar<double>> y;
   y.val_.val_ = 0.5;
   y.d_.val_ = 1.0;
 
@@ -52,8 +52,7 @@ TEST(AgradFwdLog1mInvLogit, FvarFvarDouble) {
 }
 
 struct log1m_inv_logit_fun {
-  template <typename T0>
-  inline T0 operator()(const T0& arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return log1m_inv_logit(arg1);
   }
 };

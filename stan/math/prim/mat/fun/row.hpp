@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_ROW_HPP
 #define STAN_MATH_PRIM_MAT_FUN_ROW_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_row_index.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {
 namespace math {
@@ -21,13 +21,13 @@ namespace math {
  * @throw std::out_of_range if i is out of range.
  */
 template <typename T>
-inline Eigen::Matrix<T, 1, Eigen::Dynamic> row(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m, size_t i) {
+inline Eigen::Matrix<T, 1, Eigen::Dynamic>
+row(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m, size_t i) {
   check_row_index("row", "i", m, i);
 
   return m.row(i - 1);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

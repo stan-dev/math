@@ -1,6 +1,6 @@
+#include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
 #include <test/unit/math/prim/scal/fun/promote_type_test_util.hpp>
-#include <gtest/gtest.h>
 #include <vector>
 
 TEST(MathMatrixPromoteScalar, MatrixMismatch) {
@@ -43,7 +43,7 @@ TEST(MathMatrixPromoteScalar, VectorMatrixMismatch) {
   using stan::math::promote_scalar;
   using std::vector;
 
-  vector<Matrix<int, Dynamic, Dynamic> > x(2);
+  vector<Matrix<int, Dynamic, Dynamic>> x(2);
   Matrix<int, Dynamic, Dynamic> x0(2, 3);
   x0 << 1, 2, 3, 4, 5, 6;
   x[0] = x0;
@@ -51,7 +51,7 @@ TEST(MathMatrixPromoteScalar, VectorMatrixMismatch) {
   x1 << 10, 20, 30, 40, 50, 60;
   x[1] = x1;
 
-  vector<Matrix<double, Dynamic, Dynamic> > y = promote_scalar<double>(x);
+  vector<Matrix<double, Dynamic, Dynamic>> y = promote_scalar<double>(x);
   EXPECT_EQ(2, y.size());
 
   EXPECT_FLOAT_EQ(1.0, y[0](0, 0));
@@ -102,7 +102,7 @@ TEST(MathMatrixPromoteScalar, VectorColVectorMismatch) {
   using stan::math::promote_scalar;
   using std::vector;
 
-  vector<Matrix<int, Dynamic, 1> > x(2);
+  vector<Matrix<int, Dynamic, 1>> x(2);
   Matrix<int, Dynamic, 1> x0(3);
   x0 << 1, 2, 3;
   x[0] = x0;
@@ -110,7 +110,7 @@ TEST(MathMatrixPromoteScalar, VectorColVectorMismatch) {
   x1 << 10, 20, 30;
   x[1] = x1;
 
-  vector<Matrix<double, Dynamic, 1> > y = promote_scalar<double>(x);
+  vector<Matrix<double, Dynamic, 1>> y = promote_scalar<double>(x);
   EXPECT_EQ(2, y.size());
 
   EXPECT_FLOAT_EQ(1.0, y[0](0));
@@ -155,7 +155,7 @@ TEST(MathMatrixPromoteScalar, VectorRowVectorMismatch) {
   using stan::math::promote_scalar;
   using std::vector;
 
-  vector<Matrix<int, 1, Dynamic> > x(2);
+  vector<Matrix<int, 1, Dynamic>> x(2);
   Matrix<int, 1, Dynamic> x0(3);
   x0 << 1, 2, 3;
   x[0] = x0;
@@ -163,7 +163,7 @@ TEST(MathMatrixPromoteScalar, VectorRowVectorMismatch) {
   x1 << 10, 20, 30;
   x[1] = x1;
 
-  vector<Matrix<double, 1, Dynamic> > y = promote_scalar<double>(x);
+  vector<Matrix<double, 1, Dynamic>> y = promote_scalar<double>(x);
   EXPECT_EQ(2, y.size());
 
   EXPECT_FLOAT_EQ(1.0, y[0](0));
