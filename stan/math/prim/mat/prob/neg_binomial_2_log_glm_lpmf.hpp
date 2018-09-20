@@ -97,7 +97,7 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
-  using namespace internal;
+  using internal::try_to_array_else_identity;
 
   if (!(stan::length(y) && stan::length(x) && stan::length(beta)
         && stan::length(phi)))
