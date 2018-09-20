@@ -10,16 +10,16 @@
 namespace stan {
 namespace math {
 /**
- * Takes Stan data type vector[n] x[D] and divides each
- * dimension sequentially by each element of the vector
+ * Takes Stan data type vector[n] x[D] and divides column
+ * vector in x element-wise by the values in vec
  *
- * @tparam T_x type of elements contained in vector x, scalar-type
- * @tparam T_v vector of elements
- * @tparam R   number of rows in the submatrix of x
- * @tparam C   number of columns in the submatrix of x
+ * @tparam T_x Type of dividend 
+ * @tparam T_v Scalar type of divisor
+ * @tparam R   Row type of Eigen Matrices
+ * @tparam C   Column type of Eigen Matrices
  *
- * @param x std::vector of elements
- * @param vec a vector type of elements
+ * @param x    std::vector of matrices
+ * @param vec  std::vector of divisors
  * @throw std::invalid argument if D != length of vector
  *
  */
