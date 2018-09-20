@@ -36,6 +36,8 @@ divide_columns(const std::vector<Eigen::Matrix<T_x, R, C>> &x,
       out(N);
   for (size_t n = 0; n < N; ++n) {
     out[n].resize(D);
+    check_size_match("divide_columns", "x dimension", x[n].size(),
+                     "vector", vec.size());
     for (size_t d = 0; d < D; ++d) {
       out[n][d] = divide(x[n][d], vec[d]);
     }
