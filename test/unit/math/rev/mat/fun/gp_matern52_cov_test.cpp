@@ -45,24 +45,24 @@ TEST(MathPrimMat, output_type_checking) {
   x[1] = -1;
   x[2] = -0.5;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov1;
-  EXPECT_NO_THROW(cov1 = stan::math::gp_matern52_cov(value_of(x),
-                                                     value_of(sigma),
-                                                     value_of(l)));
+  EXPECT_NO_THROW(cov1 = stan::math::gp_matern52_cov(
+                      value_of(x), value_of(sigma), value_of(l)));
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov2;
-  EXPECT_NO_THROW(cov2 = stan::math::gp_matern52_cov(x, value_of(sigma),
-                                                     value_of(l)));
+  EXPECT_NO_THROW(
+      cov2 = stan::math::gp_matern52_cov(x, value_of(sigma), value_of(l)));
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov3;
-  EXPECT_NO_THROW(cov3 = stan::math::gp_matern52_cov(value_of(x), sigma,
-                                                     value_of(l)));
+  EXPECT_NO_THROW(
+      cov3 = stan::math::gp_matern52_cov(value_of(x), sigma, value_of(l)));
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov4;
-  EXPECT_NO_THROW(cov3 = stan::math::gp_matern52_cov(value_of(x),
-                                                     value_of(sigma), l));
+  EXPECT_NO_THROW(
+      cov3 = stan::math::gp_matern52_cov(value_of(x), value_of(sigma), l));
   for (int i = 0; i < 3; ++i) {
     for (int j = 0; j < 3; ++j) {
       EXPECT_TRUE((std::is_same<double, decltype(cov1(i, j).val())>::value));
-      // EXPECT_TRUE((boost::is_same<stan::math::var, decltype(cov2(i, j))>::value));
-      //      EXPECT_TRUE((std::is_same<stan::math::var, decltype(value_of(cov2(i, j)))>::value));
+      // EXPECT_TRUE((boost::is_same<stan::math::var, decltype(cov2(i,
+      // j))>::value));
+      //      EXPECT_TRUE((std::is_same<stan::math::var,
+      //      decltype(value_of(cov2(i, j)))>::value));
     }
   }
 }
-

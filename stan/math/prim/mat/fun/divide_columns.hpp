@@ -13,7 +13,7 @@ namespace math {
  * Takes Stan data type vector[n] x[D] and divides column
  * vector in x element-wise by the values in vec
  *
- * @tparam T_x Type of dividend 
+ * @tparam T_x Type of dividend
  * @tparam T_v Scalar type of divisor
  * @tparam R   Row type of Eigen Matrices
  * @tparam C   Column type of Eigen Matrices
@@ -24,8 +24,8 @@ namespace math {
  *
  */
 template <typename T_x, typename T_v>
-inline typename std::vector<
-  Eigen::Matrix<typename return_type<T_x, T_v, double>::type, Eigen::Dynamic, 1>>
+inline typename std::vector<Eigen::Matrix<
+    typename return_type<T_x, T_v, double>::type, Eigen::Dynamic, 1>>
 divide_columns(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
                const std::vector<T_v> &vec) {
   size_t N = x.size();
@@ -37,8 +37,8 @@ divide_columns(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
       out(N);
   for (size_t n = 0; n < N; ++n) {
     out[n].resize(D);
-    check_size_match("divide_columns", "x dimension", x[n].size(),
-                     "vector", vec.size());
+    check_size_match("divide_columns", "x dimension", x[n].size(), "vector",
+                     vec.size());
     for (size_t d = 0; d < D; ++d) {
       out[n][d] = divide(x[n][d], vec[d]);
     }
