@@ -23,16 +23,17 @@ namespace math {
  * @throw std::invalid argument if D != length of vector
  *
  */
-template <typename T_x, typename T_v, int R, int C>
+template <typename T_x, typename T_v>
 inline typename std::vector<
-    Eigen::Matrix<typename return_type<T_x, T_v, double>::type, R, C>>
-divide_columns(const std::vector<Eigen::Matrix<T_x, R, C>> &x,
+  Eigen::Matrix<typename return_type<T_x, T_v, double>::type, Eigen::Dynamic, 1>>
+divide_columns(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
                const std::vector<T_v> &vec) {
   size_t N = x.size();
   size_t D = x[0].size();
   check_size_match("divide_columns", "x dimension", D, "vector", vec.size());
 
-  std::vector<Eigen::Matrix<typename return_type<T_x, T_v, double>::type, R, C>>
+  std::vector<Eigen::Matrix<typename return_type<T_x, T_v, double>::type,
+                            Eigen::Dynamic, 1>>
       out(N);
   for (size_t n = 0; n < N; ++n) {
     out[n].resize(D);
