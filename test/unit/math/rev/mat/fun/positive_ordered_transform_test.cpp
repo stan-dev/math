@@ -1,9 +1,9 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <random>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/jacobian.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
-#include <random>
 
 TEST(prob_transform, positive_ordered_jacobian_ad) {
   using Eigen::Dynamic;
@@ -34,7 +34,7 @@ TEST(prob_transform, positive_ordered_jacobian_ad) {
   for (unsigned int i = 0; i < 3; ++i)
     yvec[i] = yv[i];
 
-  std::vector<std::vector<double> > j;
+  std::vector<std::vector<double>> j;
   stan::math::jacobian(yvec, xvec, j);
 
   Matrix<double, Dynamic, Dynamic> J(3, 3);

@@ -5,10 +5,10 @@
 
 #include <stan/math/prim/arr/functor/mpi_command.hpp>
 
-#include <boost/serialization/nvp.hpp>
-#include <boost/serialization/serialization.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/base_object.hpp>
+#include <boost/serialization/nvp.hpp>
+#include <boost/serialization/serialization.hpp>
 
 namespace stan {
 namespace math {
@@ -23,14 +23,13 @@ namespace math {
  *
  * @tparam F type of functor with static distributed_apply method.
  */
-template <typename F>
-struct mpi_distributed_apply : public mpi_command {
+template <typename F> struct mpi_distributed_apply : public mpi_command {
   // declarations needed for boost.serialization (see
   // https://www.boost.org/doc/libs/1_66_0/libs/serialization/doc/index.html)
   friend class boost::serialization::access;
   template <class Archive>
-  void serialize(Archive& ar, const unsigned int version) {
-    ar& BOOST_SERIALIZATION_BASE_OBJECT_NVP(mpi_command);
+  void serialize(Archive &ar, const unsigned int version) {
+    ar &BOOST_SERIALIZATION_BASE_OBJECT_NVP(mpi_command);
   }
 
   /**
@@ -40,10 +39,10 @@ struct mpi_distributed_apply : public mpi_command {
   void run() const { F::distributed_apply(); }
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
-#define STAN_REGISTER_MPI_DISTRIBUTED_APPLY(APPLY_FUNCTOR) \
+#define STAN_REGISTER_MPI_DISTRIBUTED_APPLY(APPLY_FUNCTOR)                     \
   STAN_REGISTER_MPI_COMMAND(stan::math::mpi_distributed_apply<APPLY_FUNCTOR>)
 
 #endif

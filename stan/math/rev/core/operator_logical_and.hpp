@@ -14,7 +14,7 @@ namespace math {
  * @param[in] y second argument
  * @return disjuntion of the argument's values
  */
-inline bool operator&&(const var& x, const var& y) {
+inline bool operator&&(const var &x, const var &y) {
   return x.val() && y.val();
 }
 
@@ -27,8 +27,7 @@ inline bool operator&&(const var& x, const var& y) {
  * @return conjunction of first argument's value and second
  * argument
  */
-template <typename T>
-inline bool operator&&(const var& x, double y) {
+template <typename T> inline bool operator&&(const var &x, double y) {
   return x.val() && y;
 }
 
@@ -41,11 +40,10 @@ inline bool operator&&(const var& x, double y) {
  * @return conjunction of first argument and second argument's
  * value
  */
-template <typename T>
-inline bool operator&&(double x, const var& y) {
+template <typename T> inline bool operator&&(double x, const var &y) {
   return x && y.val();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

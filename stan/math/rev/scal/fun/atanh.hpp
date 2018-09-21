@@ -1,20 +1,20 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_ATANH_HPP
 #define STAN_MATH_REV_SCAL_FUN_ATANH_HPP
 
+#include <limits>
 #include <stan/math/prim/scal/fun/atanh.hpp>
 #include <stan/math/rev/core.hpp>
-#include <limits>
 
 namespace stan {
 namespace math {
 
 namespace {
 class atanh_vari : public op_v_vari {
- public:
-  atanh_vari(double val, vari* avi) : op_v_vari(val, avi) {}
+public:
+  atanh_vari(double val, vari *avi) : op_v_vari(val, avi) {}
   void chain() { avi_->adj_ += adj_ / (1.0 - avi_->val_ * avi_->val_); }
 };
-}  // namespace
+} // namespace
 
 /**
  * The inverse hyperbolic tangent function for variables (C99).
@@ -55,10 +55,10 @@ class atanh_vari : public op_v_vari {
    * @return Inverse hyperbolic tangent of the variable.
    * @throw std::domain_error if a < -1 or a > 1
    */
-inline var atanh(const var& a) {
+inline var atanh(const var &a) {
   return var(new atanh_vari(atanh(a.val()), a.vi_));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

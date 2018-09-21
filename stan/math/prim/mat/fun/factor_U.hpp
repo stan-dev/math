@@ -21,8 +21,8 @@ namespace math {
  * @param CPCs fill this unbounded
  */
 template <typename T>
-void factor_U(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& U,
-              Eigen::Array<T, Eigen::Dynamic, 1>& CPCs) {
+void factor_U(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &U,
+              Eigen::Array<T, Eigen::Dynamic, 1> &CPCs) {
   size_t K = U.rows();
   size_t position = 0;
   size_t pull = K - 1;
@@ -47,11 +47,11 @@ void factor_U(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& U,
     CPCs.segment(position, pull) = temp;
     acc.tail(pull) *= 1.0 - temp.square();
   }
-  CPCs = 0.5 * ((1.0 + CPCs) / (1.0 - CPCs)).log();  // now unbounded
+  CPCs = 0.5 * ((1.0 + CPCs) / (1.0 - CPCs)).log(); // now unbounded
 }
 
-}  // namespace math
+} // namespace math
 
-}  // namespace stan
+} // namespace stan
 
 #endif

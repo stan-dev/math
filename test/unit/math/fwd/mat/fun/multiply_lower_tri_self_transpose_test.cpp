@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 using stan::math::fvar;
 TEST(AgradFwdMatrixMultiplyLowerTriSelfTranspose, fd_3x3_matrix) {
@@ -71,7 +71,7 @@ TEST(AgradFwdMatrixMultiplyLowerTriSelfTranspose, ffd_3x3_matrix) {
   matrix_d Z(3, 3);
   Z << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
-  fvar<fvar<double> > a, b, c, d, e, f, g;
+  fvar<fvar<double>> a, b, c, d, e, f, g;
   a.val_.val_ = 0.0;
   b.val_.val_ = 1.0;
   c.val_.val_ = 2.0;
@@ -112,7 +112,7 @@ TEST(AgradFwdMatrixMultiplyLowerTriSelfTranspose, ffd_3x2_matrix) {
   matrix_d Z(3, 2);
   Z << 1, 0, 0, 2, 3, 0;
 
-  fvar<fvar<double> > a, b, c, d;
+  fvar<fvar<double>> a, b, c, d;
   a.val_.val_ = 0.0;
   b.val_.val_ = 1.0;
   c.val_.val_ = 2.0;

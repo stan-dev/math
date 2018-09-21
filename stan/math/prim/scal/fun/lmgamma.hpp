@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LMGAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LMGAMMA_HPP
 
+#include <boost/math/special_functions/gamma.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <boost/math/special_functions/gamma.hpp>
 
 namespace stan {
 namespace math {
@@ -53,14 +53,14 @@ namespace math {
 template <typename T>
 inline typename boost::math::tools::promote_args<T>::type lmgamma(int k, T x) {
   using boost::math::lgamma;
-  typename boost::math::tools::promote_args<T>::type result
-      = k * (k - 1) * LOG_PI_OVER_FOUR;
+  typename boost::math::tools::promote_args<T>::type result =
+      k * (k - 1) * LOG_PI_OVER_FOUR;
 
   for (int j = 1; j <= k; ++j)
     result += lgamma(x + (1.0 - j) / 2.0);
   return result;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

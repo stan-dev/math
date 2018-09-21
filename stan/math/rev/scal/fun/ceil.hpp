@@ -1,25 +1,25 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_CEIL_HPP
 #define STAN_MATH_REV_SCAL_FUN_CEIL_HPP
 
-#include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/prim/scal/meta/likely.hpp>
 #include <cmath>
 #include <limits>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/meta/likely.hpp>
+#include <stan/math/rev/core.hpp>
 
 namespace stan {
 namespace math {
 
 namespace {
 class ceil_vari : public op_v_vari {
- public:
-  explicit ceil_vari(vari* avi) : op_v_vari(std::ceil(avi->val_), avi) {}
+public:
+  explicit ceil_vari(vari *avi) : op_v_vari(std::ceil(avi->val_), avi) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_)))
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
   }
 };
-}  // namespace
+} // namespace
 
 /**
  * Return the ceiling of the specified variable (cmath).
@@ -55,8 +55,8 @@ class ceil_vari : public op_v_vari {
  * @param a Input variable.
  * @return Ceiling of the variable.
  */
-inline var ceil(const var& a) { return var(new ceil_vari(a.vi_)); }
+inline var ceil(const var &a) { return var(new ceil_vari(a.vi_)); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

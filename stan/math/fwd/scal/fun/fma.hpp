@@ -56,8 +56,8 @@ namespace math {
  * @return Product of the first two values plus the third.
  */
 template <typename T1, typename T2, typename T3>
-inline fvar<typename stan::return_type<T1, T2, T3>::type> fma(
-    const fvar<T1>& x1, const fvar<T2>& x2, const fvar<T3>& x3) {
+inline fvar<typename stan::return_type<T1, T2, T3>::type>
+fma(const fvar<T1> &x1, const fvar<T2> &x2, const fvar<T3> &x3) {
   return fvar<typename stan::return_type<T1, T2, T3>::type>(
       fma(x1.val_, x2.val_, x3.val_),
       x1.d_ * x2.val_ + x2.d_ * x1.val_ + x3.d_);
@@ -67,8 +67,8 @@ inline fvar<typename stan::return_type<T1, T2, T3>::type> fma(
  * See all-var input signature for details on the function and derivatives.
  */
 template <typename T1, typename T2, typename T3>
-inline fvar<typename stan::return_type<T1, T2, T3>::type> fma(
-    const T1& x1, const fvar<T2>& x2, const fvar<T3>& x3) {
+inline fvar<typename stan::return_type<T1, T2, T3>::type>
+fma(const T1 &x1, const fvar<T2> &x2, const fvar<T3> &x3) {
   return fvar<typename stan::return_type<T1, T2, T3>::type>(
       fma(x1, x2.val_, x3.val_), x2.d_ * x1 + x3.d_);
 }
@@ -77,8 +77,8 @@ inline fvar<typename stan::return_type<T1, T2, T3>::type> fma(
  * See all-var input signature for details on the function and derivatives.
  */
 template <typename T1, typename T2, typename T3>
-inline fvar<typename stan::return_type<T1, T2, T3>::type> fma(
-    const fvar<T1>& x1, const T2& x2, const fvar<T3>& x3) {
+inline fvar<typename stan::return_type<T1, T2, T3>::type>
+fma(const fvar<T1> &x1, const T2 &x2, const fvar<T3> &x3) {
   return fvar<typename stan::return_type<T1, T2, T3>::type>(
       fma(x1.val_, x2, x3.val_), x1.d_ * x2 + x3.d_);
 }
@@ -87,8 +87,8 @@ inline fvar<typename stan::return_type<T1, T2, T3>::type> fma(
  * See all-var input signature for details on the function and derivatives.
  */
 template <typename T1, typename T2, typename T3>
-inline fvar<typename stan::return_type<T1, T2, T3>::type> fma(
-    const fvar<T1>& x1, const fvar<T2>& x2, const T3& x3) {
+inline fvar<typename stan::return_type<T1, T2, T3>::type>
+fma(const fvar<T1> &x1, const fvar<T2> &x2, const T3 &x3) {
   return fvar<typename stan::return_type<T1, T2, T3>::type>(
       fma(x1.val_, x2.val_, x3), x1.d_ * x2.val_ + x2.d_ * x1.val_);
 }
@@ -97,8 +97,8 @@ inline fvar<typename stan::return_type<T1, T2, T3>::type> fma(
  * See all-var input signature for details on the function and derivatives.
  */
 template <typename T1, typename T2, typename T3>
-inline fvar<typename stan::return_type<T1, T2, T3>::type> fma(
-    const T1& x1, const T2& x2, const fvar<T3>& x3) {
+inline fvar<typename stan::return_type<T1, T2, T3>::type>
+fma(const T1 &x1, const T2 &x2, const fvar<T3> &x3) {
   return fvar<typename stan::return_type<T1, T2, T3>::type>(
       fma(x1, x2, x3.val_), x3.d_);
 }
@@ -107,8 +107,8 @@ inline fvar<typename stan::return_type<T1, T2, T3>::type> fma(
  * See all-var input signature for details on the function and derivatives.
  */
 template <typename T1, typename T2, typename T3>
-inline fvar<typename stan::return_type<T1, T2, T3>::type> fma(
-    const fvar<T1>& x1, const T2& x2, const T3& x3) {
+inline fvar<typename stan::return_type<T1, T2, T3>::type>
+fma(const fvar<T1> &x1, const T2 &x2, const T3 &x3) {
   return fvar<typename stan::return_type<T1, T2, T3>::type>(
       fma(x1.val_, x2, x3), x1.d_ * x2);
 }
@@ -117,12 +117,12 @@ inline fvar<typename stan::return_type<T1, T2, T3>::type> fma(
  * See all-var input signature for details on the function and derivatives.
  */
 template <typename T1, typename T2, typename T3>
-inline fvar<typename stan::return_type<T1, T2, T3>::type> fma(
-    const T1& x1, const fvar<T2>& x2, const T3& x3) {
+inline fvar<typename stan::return_type<T1, T2, T3>::type>
+fma(const T1 &x1, const fvar<T2> &x2, const T3 &x3) {
   return fvar<typename stan::return_type<T1, T2, T3>::type>(
       fma(x1, x2.val_, x3), x2.d_ * x1);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

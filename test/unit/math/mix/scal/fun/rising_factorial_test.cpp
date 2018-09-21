@@ -1,7 +1,7 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/scal/fun/util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradFwdRisingFactorial, FvarVar_1stDeriv) {
   using stan::math::digamma;
@@ -37,9 +37,8 @@ TEST(AgradFwdRisingFactorial, FvarVar_2ndDeriv_x) {
   AVEC y = createAVEC(a.val_, 3);
   VEC g;
   c.d_.grad(y, g);
-  ASSERT_NEAR(rising_factorial(5, 3)
-                  * (pow((digamma(5 + 3) - digamma(5)), 2) + trigamma(5 + 3)
-                     - trigamma(5)),
+  ASSERT_NEAR(rising_factorial(5, 3) * (pow((digamma(5 + 3) - digamma(5)), 2) +
+                                        trigamma(5 + 3) - trigamma(5)),
               g[0], 0.1);
 }
 
@@ -68,11 +67,11 @@ TEST(AgradFwdRisingFactorial, FvarFvarVar_1stDeriv) {
   using stan::math::rising_factorial;
   using stan::math::var;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 5.0;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var> > a = rising_factorial(x, 3);
+  fvar<fvar<var>> a = rising_factorial(x, 3);
 
   EXPECT_FLOAT_EQ(rising_factorial(5, 3), a.val_.val_.val());
   EXPECT_FLOAT_EQ(107.0, a.val_.d_.val());
@@ -94,18 +93,17 @@ TEST(AgradFwdRisingFactorial, FvarFvarVar_2ndDeriv_x) {
   using stan::math::var;
   using std::pow;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 5.0;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var> > a = rising_factorial(x, 3);
+  fvar<fvar<var>> a = rising_factorial(x, 3);
 
   AVEC p = createAVEC(x.val_.val_, 3);
   VEC g;
   a.val_.d_.grad(p, g);
-  ASSERT_NEAR(rising_factorial(5, 3)
-                  * (pow((digamma(5 + 3) - digamma(5)), 2) + trigamma(5 + 3)
-                     - trigamma(5)),
+  ASSERT_NEAR(rising_factorial(5, 3) * (pow((digamma(5 + 3) - digamma(5)), 2) +
+                                        trigamma(5 + 3) - trigamma(5)),
               g[0], 0.01);
   ASSERT_NEAR(0, g[1], 0.01);
 }
@@ -115,11 +113,11 @@ TEST(AgradFwdRisingFactorial, FvarFvarVar_2ndDeriv_y) {
   using stan::math::rising_factorial;
   using stan::math::var;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 5.0;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var> > a = rising_factorial(x, 3);
+  fvar<fvar<var>> a = rising_factorial(x, 3);
 
   AVEC p = createAVEC(x.val_.val_, 3);
   VEC g;
@@ -133,11 +131,11 @@ TEST(AgradFwdRisingFactorial, FvarFvarVar_3rdDeriv) {
   using stan::math::rising_factorial;
   using stan::math::var;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 5.0;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var> > a = rising_factorial(x, 3);
+  fvar<fvar<var>> a = rising_factorial(x, 3);
 
   AVEC p = createAVEC(x.val_.val_, 3);
   VEC g;
@@ -148,8 +146,8 @@ TEST(AgradFwdRisingFactorial, FvarFvarVar_3rdDeriv) {
 
 struct rising_factorial_fun {
   template <typename T>
-  inline typename boost::math::tools::promote_args<T>::type operator()(
-      const T arg1, int arg2) const {
+  inline typename boost::math::tools::promote_args<T>::type
+  operator()(const T arg1, int arg2) const {
     return rising_factorial(arg1, arg2);
   }
 };

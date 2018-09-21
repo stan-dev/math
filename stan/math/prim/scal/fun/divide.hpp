@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_DIVIDE_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_DIVIDE_HPP
 
+#include <cstddef>
+#include <cstdlib>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/meta/likely.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <cstddef>
-#include <cstdlib>
 
 namespace stan {
 namespace math {
@@ -18,8 +18,8 @@ namespace math {
  * @return Vector divided by the scalar.
  */
 template <typename T1, typename T2>
-inline typename stan::return_type<T1, T2>::type divide(const T1& x,
-                                                       const T2& y) {
+inline typename stan::return_type<T1, T2>::type divide(const T1 &x,
+                                                       const T2 &y) {
   return x / y;
 }
 
@@ -29,6 +29,6 @@ inline int divide(int x, int y) {
   return x / y;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

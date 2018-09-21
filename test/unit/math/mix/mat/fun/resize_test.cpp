@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <vector>
 
 using Eigen::Dynamic;
@@ -13,7 +13,7 @@ TEST(AgradMixMatrixResize, fvar_var) {
   stan::math::resize(x, dims);
 }
 TEST(AgradMixMatrixResize, svec_fvar_var) {
-  std::vector<fvar<var> > y;
+  std::vector<fvar<var>> y;
   std::vector<int> dims;
   EXPECT_EQ(0U, y.size());
 
@@ -66,7 +66,7 @@ TEST(AgradMixMatrixResize, mat_fvar_var) {
   EXPECT_EQ(17, m.cols());
 }
 TEST(AgradMixMatrixResize, svec_svec_fvar_var) {
-  std::vector<std::vector<fvar<var> > > xx;
+  std::vector<std::vector<fvar<var>>> xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
   dims.push_back(4U);
@@ -82,7 +82,7 @@ TEST(AgradMixMatrixResize, svec_svec_fvar_var) {
   EXPECT_EQ(7U, xx[1].size());
 }
 TEST(AgradMixMatrixResize, svec_v_fvar_var) {
-  std::vector<Matrix<fvar<var>, Dynamic, 1> > xx;
+  std::vector<Matrix<fvar<var>, Dynamic, 1>> xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
   dims.push_back(4U);
@@ -99,7 +99,7 @@ TEST(AgradMixMatrixResize, svec_v_fvar_var) {
   EXPECT_EQ(7, xx[1].size());
 }
 TEST(AgradMixMatrixResize, svec_rv_fvar_var) {
-  std::vector<Matrix<fvar<var>, 1, Dynamic> > xx;
+  std::vector<Matrix<fvar<var>, 1, Dynamic>> xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
   dims.push_back(4U);
@@ -116,7 +116,7 @@ TEST(AgradMixMatrixResize, svec_rv_fvar_var) {
   EXPECT_EQ(7, xx[1].size());
 }
 TEST(AgradMixMatrixResize, svec_svec_matrix_fvar_var) {
-  std::vector<std::vector<Matrix<fvar<var>, Dynamic, Dynamic> > > mm;
+  std::vector<std::vector<Matrix<fvar<var>, Dynamic, Dynamic>>> mm;
   std::vector<int> dims;
   dims.push_back(4U);
   dims.push_back(5U);
@@ -129,12 +129,12 @@ TEST(AgradMixMatrixResize, svec_svec_matrix_fvar_var) {
   EXPECT_EQ(3, mm[3][4].cols());
 }
 TEST(AgradMixMatrixResize, fvar_fvar_var) {
-  fvar<fvar<var> > x = 5;
+  fvar<fvar<var>> x = 5;
   std::vector<int> dims;
   stan::math::resize(x, dims);
 }
 TEST(AgradMixMatrixResize, svec_fvar_fvar_var) {
-  std::vector<fvar<fvar<var> > > y;
+  std::vector<fvar<fvar<var>>> y;
   std::vector<int> dims;
   EXPECT_EQ(0U, y.size());
 
@@ -147,7 +147,7 @@ TEST(AgradMixMatrixResize, svec_fvar_fvar_var) {
   EXPECT_EQ(2U, y.size());
 }
 TEST(AgradMixMatrixResize, vec_fvar_fvar_var) {
-  Matrix<fvar<fvar<var> >, Dynamic, 1> v(2);
+  Matrix<fvar<fvar<var>>, Dynamic, 1> v(2);
   std::vector<int> dims;
   EXPECT_EQ(2, v.size());
 
@@ -161,7 +161,7 @@ TEST(AgradMixMatrixResize, vec_fvar_fvar_var) {
   EXPECT_EQ(3, v.size());
 }
 TEST(AgradMixMatrixResize, rvec_fvar_fvar_var) {
-  Matrix<fvar<fvar<var> >, 1, Dynamic> rv(2);
+  Matrix<fvar<fvar<var>>, 1, Dynamic> rv(2);
   std::vector<int> dims;
   EXPECT_EQ(2, rv.size());
 
@@ -175,7 +175,7 @@ TEST(AgradMixMatrixResize, rvec_fvar_fvar_var) {
   EXPECT_EQ(3, rv.size());
 }
 TEST(AgradMixMatrixResize, mat_fvar_fvar_var) {
-  Matrix<fvar<fvar<var> >, Dynamic, Dynamic> m(2, 3);
+  Matrix<fvar<fvar<var>>, Dynamic, Dynamic> m(2, 3);
   std::vector<int> dims;
   EXPECT_EQ(2, m.rows());
   EXPECT_EQ(3, m.cols());
@@ -187,7 +187,7 @@ TEST(AgradMixMatrixResize, mat_fvar_fvar_var) {
   EXPECT_EQ(17, m.cols());
 }
 TEST(AgradMixMatrixResize, svec_svec_fvar_fvar_var) {
-  std::vector<std::vector<fvar<fvar<var> > > > xx;
+  std::vector<std::vector<fvar<fvar<var>>>> xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
   dims.push_back(4U);
@@ -203,7 +203,7 @@ TEST(AgradMixMatrixResize, svec_svec_fvar_fvar_var) {
   EXPECT_EQ(7U, xx[1].size());
 }
 TEST(AgradMixMatrixResize, svec_v_fvar_fvar_var) {
-  std::vector<Matrix<fvar<fvar<var> >, Dynamic, 1> > xx;
+  std::vector<Matrix<fvar<fvar<var>>, Dynamic, 1>> xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
   dims.push_back(4U);
@@ -220,7 +220,7 @@ TEST(AgradMixMatrixResize, svec_v_fvar_fvar_var) {
   EXPECT_EQ(7, xx[1].size());
 }
 TEST(AgradMixMatrixResize, svec_rv_fvar_fvar_var) {
-  std::vector<Matrix<fvar<fvar<var> >, 1, Dynamic> > xx;
+  std::vector<Matrix<fvar<fvar<var>>, 1, Dynamic>> xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
   dims.push_back(4U);
@@ -237,7 +237,7 @@ TEST(AgradMixMatrixResize, svec_rv_fvar_fvar_var) {
   EXPECT_EQ(7, xx[1].size());
 }
 TEST(AgradMixMatrixResize, svec_svec_matrix_fvar_fvar_var) {
-  std::vector<std::vector<Matrix<fvar<fvar<var> >, Dynamic, Dynamic> > > mm;
+  std::vector<std::vector<Matrix<fvar<fvar<var>>, Dynamic, Dynamic>>> mm;
   std::vector<int> dims;
   dims.push_back(4U);
   dims.push_back(5U);

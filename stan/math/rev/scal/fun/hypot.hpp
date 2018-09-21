@@ -1,16 +1,16 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_HYPOT_HPP
 #define STAN_MATH_REV_SCAL_FUN_HYPOT_HPP
 
-#include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/hypot.hpp>
+#include <stan/math/rev/core.hpp>
 
 namespace stan {
 namespace math {
 
 namespace {
 class hypot_vv_vari : public op_vv_vari {
- public:
-  hypot_vv_vari(vari* avi, vari* bvi)
+public:
+  hypot_vv_vari(vari *avi, vari *bvi)
       : op_vv_vari(hypot(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
     avi_->adj_ += adj_ * avi_->val_ / val_;
@@ -19,11 +19,11 @@ class hypot_vv_vari : public op_vv_vari {
 };
 
 class hypot_vd_vari : public op_v_vari {
- public:
-  hypot_vd_vari(vari* avi, double b) : op_v_vari(hypot(avi->val_, b), avi) {}
+public:
+  hypot_vd_vari(vari *avi, double b) : op_v_vari(hypot(avi->val_, b), avi) {}
   void chain() { avi_->adj_ += adj_ * avi_->val_ / val_; }
 };
-}  // namespace
+} // namespace
 
 /**
  * Returns the length of the hypoteneuse of a right triangle
@@ -41,7 +41,7 @@ class hypot_vd_vari : public op_v_vari {
  * @param[in] b Length of second side.
  * @return Length of hypoteneuse.
  */
-inline var hypot(const var& a, const var& b) {
+inline var hypot(const var &a, const var &b) {
   return var(new hypot_vv_vari(a.vi_, b.vi_));
 }
 
@@ -57,7 +57,7 @@ inline var hypot(const var& a, const var& b) {
  * @param[in] b Length of second side.
  * @return Length of hypoteneuse.
  */
-inline var hypot(const var& a, double b) {
+inline var hypot(const var &a, double b) {
   return var(new hypot_vd_vari(a.vi_, b));
 }
 
@@ -100,10 +100,10 @@ inline var hypot(const var& a, double b) {
  * @param[in] b Length of second side.
  * @return Length of hypoteneuse.
  */
-inline var hypot(double a, const var& b) {
+inline var hypot(double a, const var &b) {
   return var(new hypot_vd_vari(b.vi_, a));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

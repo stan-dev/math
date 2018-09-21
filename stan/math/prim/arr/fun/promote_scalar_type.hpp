@@ -16,13 +16,13 @@ namespace math {
  * @tparam S input type
  */
 template <typename T, typename S>
-struct promote_scalar_type<T, std::vector<S> > {
+struct promote_scalar_type<T, std::vector<S>> {
   /**
    * The promoted type.
    */
   typedef std::vector<typename promote_scalar_type<T, S>::type> type;
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -1,27 +1,27 @@
 #ifndef STAN_MATH_FWD_MAT_FUN_MDIVIDE_RIGHT_HPP
 #define STAN_MATH_FWD_MAT_FUN_MDIVIDE_RIGHT_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/fun/mdivide_right.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
 #include <stan/math/fwd/mat/fun/inverse.hpp>
 #include <stan/math/fwd/mat/fun/multiply.hpp>
-#include <stan/math/prim/mat/fun/multiply.hpp>
 #include <stan/math/fwd/mat/fun/to_fvar.hpp>
+#include <stan/math/fwd/mat/fun/typedefs.hpp>
+#include <stan/math/prim/mat/err/check_multiplicable.hpp>
+#include <stan/math/prim/mat/err/check_square.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/inverse.hpp>
+#include <stan/math/prim/mat/fun/mdivide_right.hpp>
+#include <stan/math/prim/mat/fun/multiply.hpp>
+#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
 
 template <typename T, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_right(
-    const Eigen::Matrix<fvar<T>, R1, C1> &A,
-    const Eigen::Matrix<fvar<T>, R2, C2> &b) {
+inline Eigen::Matrix<fvar<T>, R1, C2>
+mdivide_right(const Eigen::Matrix<fvar<T>, R1, C1> &A,
+              const Eigen::Matrix<fvar<T>, R2, C2> &b) {
   check_square("mdivide_right", "b", b);
   check_multiplicable("mdivide_right", "A", A, "b", b);
 
@@ -58,9 +58,9 @@ inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_right(
 }
 
 template <typename T, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_right(
-    const Eigen::Matrix<fvar<T>, R1, C1> &A,
-    const Eigen::Matrix<double, R2, C2> &b) {
+inline Eigen::Matrix<fvar<T>, R1, C2>
+mdivide_right(const Eigen::Matrix<fvar<T>, R1, C1> &A,
+              const Eigen::Matrix<double, R2, C2> &b) {
   check_square("mdivide_right", "b", b);
   check_multiplicable("mdivide_right", "A", A, "b", b);
 
@@ -79,9 +79,9 @@ inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_right(
 }
 
 template <typename T, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_right(
-    const Eigen::Matrix<double, R1, C1> &A,
-    const Eigen::Matrix<fvar<T>, R2, C2> &b) {
+inline Eigen::Matrix<fvar<T>, R1, C2>
+mdivide_right(const Eigen::Matrix<double, R1, C1> &A,
+              const Eigen::Matrix<fvar<T>, R2, C2> &b) {
   check_square("mdivide_right", "b", b);
   check_multiplicable("mdivide_right", "A", A, "b", b);
   Eigen::Matrix<T, R1, C2> A_mult_inv_b(A.rows(), b.cols());
@@ -105,6 +105,6 @@ inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_right(
   return to_fvar(A_mult_inv_b, deriv);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

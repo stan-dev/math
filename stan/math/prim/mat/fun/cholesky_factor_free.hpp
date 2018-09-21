@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CHOLESKY_FACTOR_FREE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CHOLESKY_FACTOR_FREE_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_cholesky_factor.hpp>
 #include <cmath>
+#include <stan/math/prim/mat/err/check_cholesky_factor.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stdexcept>
 
 namespace stan {
@@ -20,7 +20,7 @@ namespace math {
  */
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> cholesky_factor_free(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& y) {
+    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &y) {
   using std::log;
   check_cholesky_factor("cholesky_factor_free", "y", y);
   int M = y.rows();
@@ -40,6 +40,6 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> cholesky_factor_free(
   return x;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

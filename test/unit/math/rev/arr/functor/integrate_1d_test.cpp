@@ -1,136 +1,136 @@
 #include <gtest/gtest.h>
+#include <iostream>
+#include <limits>
+#include <sstream>
 #include <stan/math.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/util.hpp>
 #include <vector>
-#include <iostream>
-#include <limits>
-#include <sstream>
 
 std::ostringstream msgs;
 
 struct f1 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+  inline typename stan::return_type<T1, T2, T3>::type
+  operator()(const T1 &x, const T2 &xc, const std::vector<T3> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream *msgs) const {
     return exp(x) + theta[0];
   }
 };
 
 struct f2 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+  inline typename stan::return_type<T1, T2, T3>::type
+  operator()(const T1 &x, const T2 &xc, const std::vector<T3> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream *msgs) const {
     return exp(theta[0] * cos(2 * 3.141593 * x)) + theta[0];
   }
 };
 
 struct f3 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
-    return exp(x) + pow(theta[0], x_r[0]) + 2 * pow(theta[1], x_r[1])
-           + 2 * theta[2];
+  inline typename stan::return_type<T1, T2, T3>::type
+  operator()(const T1 &x, const T2 &xc, const std::vector<T3> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream *msgs) const {
+    return exp(x) + pow(theta[0], x_r[0]) + 2 * pow(theta[1], x_r[1]) +
+           2 * theta[2];
   }
 };
 
 struct f4 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+  inline typename stan::return_type<T1, T2, T3>::type
+  operator()(const T1 &x, const T2 &xc, const std::vector<T3> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream *msgs) const {
     return exp(-x) / sqrt(x);
   }
 };
 
 struct f5 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+  inline typename stan::return_type<T1, T2, T3>::type
+  operator()(const T1 &x, const T2 &xc, const std::vector<T3> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream *msgs) const {
     return exp(-theta[0] * x) / sqrt(theta[1] * x);
   }
 };
 
 struct f6 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+  inline typename stan::return_type<T1, T2, T3>::type
+  operator()(const T1 &x, const T2 &xc, const std::vector<T3> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream *msgs) const {
     return sqrt(x / (1 - theta[0] * x * x));
   }
 };
 
 struct f7 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+  inline typename stan::return_type<T1, T2, T3>::type
+  operator()(const T1 &x, const T2 &xc, const std::vector<T3> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream *msgs) const {
     return exp(-theta[0] * x);
   }
 };
 
 struct f8 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+  inline typename stan::return_type<T1, T2, T3>::type
+  operator()(const T1 &x, const T2 &xc, const std::vector<T3> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream *msgs) const {
     return exp(theta[0] * x);
   }
 };
 
 struct f10 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+  inline typename stan::return_type<T1, T2, T3>::type
+  operator()(const T1 &x, const T2 &xc, const std::vector<T3> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream *msgs) const {
     return 1 / (1 + pow(x, x_i[0]) / x_r[0]);
   }
 };
 
 struct f11 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
-    return pow(x, theta[0] - 1.0)
-           * pow((x > 0.5) ? xc : (1 - x), theta[1] - 1.0);
+  inline typename stan::return_type<T1, T2, T3>::type
+  operator()(const T1 &x, const T2 &xc, const std::vector<T3> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream *msgs) const {
+    return pow(x, theta[0] - 1.0) *
+           pow((x > 0.5) ? xc : (1 - x), theta[1] - 1.0);
   }
 };
 
 struct f12 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+  inline typename stan::return_type<T1, T2, T3>::type
+  operator()(const T1 &x, const T2 &xc, const std::vector<T3> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream *msgs) const {
     T3 mu = theta[0];
     T3 sigma = theta[1];
-    return exp(-0.5 * stan::math::square((x - mu) / sigma))
-           / (sigma * sqrt(2.0 * stan::math::pi()));
+    return exp(-0.5 * stan::math::square((x - mu) / sigma)) /
+           (sigma * sqrt(2.0 * stan::math::pi()));
   }
 };
 
 struct f13 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+  inline typename stan::return_type<T1, T2, T3>::type
+  operator()(const T1 &x, const T2 &xc, const std::vector<T3> &theta,
+             const std::vector<double> &x_r, const std::vector<int> &x_i,
+             std::ostream *msgs) const {
     return x + theta[0] + theta[1];
   }
 };
@@ -217,8 +217,8 @@ void test_derivatives(const F &f, double a, double b,
     for (size_t i = 0; i < thetas.size(); ++i)
       thetas_[i] = thetas[i];
 
-    var integral = stan::math::integrate_1d(f, a_, b_, thetas_, x_r, x_i, msgs,
-                                            tolerance);
+    var integral =
+        stan::math::integrate_1d(f, a_, b_, thetas_, x_r, x_i, msgs, tolerance);
     integral.grad();
     EXPECT_LE(std::abs(val - integral.val()), tolerance);
     if (stan::is_var<T_theta>::value) {
@@ -267,9 +267,8 @@ TEST(StanMath_integrate_1d, TestDerivatives_zero_crossing) {
   // Zero crossing integral + test x_r + vars at endpoints
   using stan::math::var;
   test_derivatives<var, var, var>(f3{}, -1.0, 1.0, {0.5, 1.75, 3.9}, {2.5, 3.0},
-                                  {},
-                                  2.350402387287579 + 2.0 * pow(0.5, 2.5)
-                                      + 4.0 * pow(1.75, 3.0) + 4.0 * 3.9,
+                                  {}, 2.350402387287579 + 2.0 * pow(0.5, 2.5) +
+                                          4.0 * pow(1.75, 3.0) + 4.0 * 3.9,
                                   {5 * pow(0.5, 1.5), 12 * 1.75 * 1.75, 4.0},
                                   -19.06340613646808, 21.41380852375568);
 }
@@ -279,8 +278,8 @@ TEST(StanMath_integrate_1d, TestDerivatives_var_right_endpoint_var_params) {
   using stan::math::var;
   test_derivatives<double, var, var>(
       f3{}, -1.0, 1.0, {0.5, 1.75, 3.9}, {2.5, 3.0}, {},
-      2.350402387287579 + 2.0 * pow(0.5, 2.5) + 4.0 * pow(1.75, 3.0)
-          + 4.0 * 3.9,
+      2.350402387287579 + 2.0 * pow(0.5, 2.5) + 4.0 * pow(1.75, 3.0) +
+          4.0 * 3.9,
       {5 * pow(0.5, 1.5), 12 * 1.75 * 1.75, 4.0}, 0.0, 21.41380852375568);
 }
 
@@ -289,8 +288,8 @@ TEST(StanMath_integrate_1d, TestDerivatives_var_left_endpoint_var_params) {
   using stan::math::var;
   test_derivatives<var, double, var>(
       f3{}, -1.0, 1.0, {0.5, 1.75, 3.9}, {2.5, 3.0}, {},
-      2.350402387287579 + 2.0 * pow(0.5, 2.5) + 4.0 * pow(1.75, 3.0)
-          + 4.0 * 3.9,
+      2.350402387287579 + 2.0 * pow(0.5, 2.5) + 4.0 * pow(1.75, 3.0) +
+          4.0 * 3.9,
       {5 * pow(0.5, 1.5), 12 * 1.75 * 1.75, 4.0}, -19.06340613646808, 0.0);
 }
 
@@ -299,29 +298,29 @@ TEST(StanMath_integrate_1d, TestDerivatives_no_param_vars) {
   using stan::math::var;
   test_derivatives<var, var, double>(f3{}, -1.0, 1.0, {0.5, 1.75, 3.9},
                                      {2.5, 3.0}, {},
-                                     2.350402387287579 + 2.0 * pow(0.5, 2.5)
-                                         + 4.0 * pow(1.75, 3.0) + 4.0 * 3.9,
+                                     2.350402387287579 + 2.0 * pow(0.5, 2.5) +
+                                         4.0 * pow(1.75, 3.0) + 4.0 * 3.9,
                                      {}, -19.06340613646808, 21.41380852375568);
 }
 
 TEST(StanMath_integrate_1d, TestDerivatives_left_limit_var) {
   // No param vars, only left limit var
   using stan::math::var;
-  test_derivatives<var, double, double>(f3{}, -1.0, 1.0, {0.5, 1.75, 3.9},
-                                        {2.5, 3.0}, {},
-                                        2.350402387287579 + 2.0 * pow(0.5, 2.5)
-                                            + 4.0 * pow(1.75, 3.0) + 4.0 * 3.9,
-                                        {}, -19.06340613646808, 0.0);
+  test_derivatives<var, double, double>(
+      f3{}, -1.0, 1.0, {0.5, 1.75, 3.9}, {2.5, 3.0}, {},
+      2.350402387287579 + 2.0 * pow(0.5, 2.5) + 4.0 * pow(1.75, 3.0) +
+          4.0 * 3.9,
+      {}, -19.06340613646808, 0.0);
 }
 
 TEST(StanMath_integrate_1d, TestDerivatives_right_limit_var) {
   // No param vars, only right limit var
   using stan::math::var;
-  test_derivatives<double, var, double>(f3{}, -1.0, 1.0, {0.5, 1.75, 3.9},
-                                        {2.5, 3.0}, {},
-                                        2.350402387287579 + 2.0 * pow(0.5, 2.5)
-                                            + 4.0 * pow(1.75, 3.0) + 4.0 * 3.9,
-                                        {}, 0.0, 21.41380852375568);
+  test_derivatives<double, var, double>(
+      f3{}, -1.0, 1.0, {0.5, 1.75, 3.9}, {2.5, 3.0}, {},
+      2.350402387287579 + 2.0 * pow(0.5, 2.5) + 4.0 * pow(1.75, 3.0) +
+          4.0 * 3.9,
+      {}, 0.0, 21.41380852375568);
 }
 
 TEST(StanMath_integrate_1d, TestDerivatives_tricky1) {
@@ -412,8 +411,8 @@ TEST(StanMath_integrate_1d, TestDerivativesSameVarAtEndpointAndInParams) {
   var b = 4.0;
   std::vector<var> thetas = {a, b};
 
-  var integral
-      = stan::math::integrate_1d(f13{}, a, b, thetas, {}, {}, msgs, 1e-8);
+  var integral =
+      stan::math::integrate_1d(f13{}, a, b, thetas, {}, {}, msgs, 1e-8);
   integral.grad();
 
   EXPECT_LT(std::abs(18.0 - integral.val()), 1e-8);
@@ -504,8 +503,8 @@ TEST(StanMath_integrate_1d, TestDoubleExponential) {
     return exp(stan::math::double_exponential_lpdf(x, theta[0], theta[1]));
   };
   // requires two subintervals to achieve numerical accuracy
-  var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8)
-          + integrate_1d(pdf, b, -a, theta, {}, {}, msgs, 1e-8);
+  var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8) +
+          integrate_1d(pdf, b, -a, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
   AVEC x = createAVEC(mu, sigma);

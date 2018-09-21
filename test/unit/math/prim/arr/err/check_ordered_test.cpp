@@ -1,6 +1,6 @@
-#include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/arr.hpp>
 #include <string>
 #include <vector>
 
@@ -42,7 +42,7 @@ TEST(ErrorHandling, checkOrdered_one_indexed_message) {
   try {
     check_ordered("check_ordered", "y", y);
     FAIL() << "should have thrown";
-  } catch (std::domain_error& e) {
+  } catch (std::domain_error &e) {
     message = e.what();
   } catch (...) {
     FAIL() << "threw the wrong error";

@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
@@ -34,9 +34,9 @@ TEST(AgradMixMatrix, value_of) {
   Eigen::Matrix<fvar<var>, 5, 1> fv_b;
   ::fill(b_vals, fv_b);
 
-  Eigen::Matrix<fvar<fvar<var> >, 2, 5> ffv_a;
+  Eigen::Matrix<fvar<fvar<var>>, 2, 5> ffv_a;
   ::fill(a_vals, ffv_a);
-  Eigen::Matrix<fvar<fvar<var> >, 5, 1> ffv_b;
+  Eigen::Matrix<fvar<fvar<var>>, 5, 1> ffv_b;
   ::fill(b_vals, ffv_b);
 
   Eigen::MatrixXd d_a = value_of(a);

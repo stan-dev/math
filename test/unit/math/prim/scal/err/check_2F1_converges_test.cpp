@@ -1,11 +1,11 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 using stan::math::check_2F1_converges;
 
 TEST(passesOnConvergentArgs, Check2F1Converges) {
-  const char* function = "check_2F1_converges";
+  const char *function = "check_2F1_converges";
   double a1 = 1.0;
   double a2 = 1.0;
   double b1 = 5.0;

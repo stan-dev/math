@@ -14,11 +14,10 @@ namespace math {
  * @param x Argument.
  * @return Cube root of argument.
  */
-template <typename T>
-inline fvar<T> cbrt(const fvar<T>& x) {
+template <typename T> inline fvar<T> cbrt(const fvar<T> &x) {
   return fvar<T>(cbrt(x.val_), x.d_ / (3 * square(cbrt(x.val_))));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

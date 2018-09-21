@@ -52,6 +52,6 @@ namespace math {
  */
 inline double gamma_q(double x, double a) { return boost::math::gamma_q(x, a); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

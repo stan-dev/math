@@ -1,8 +1,8 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
+#include <string>
 #include <test/unit/math/rev/mat/prob/expect_eq_diffs.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
-#include <string>
 
 template <typename T_y, typename T_dof, typename T_scale>
 void expect_propto(T_y W1, T_dof nu1, T_scale S1, T_y W2, T_dof nu2, T_scale S2,
@@ -19,7 +19,7 @@ using stan::math::to_var;
 using stan::math::var;
 
 class AgradDistributionsWishart : public ::testing::Test {
- protected:
+protected:
   virtual void SetUp() {
     Y1.resize(2, 2);
     Y1 << 2.011108, -11.20661, -11.206611, 112.94139;

@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_PARETO_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_PARETO_RNG_HPP
 
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/meta/max_size.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/exponential_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <stan/math/prim/scal/meta/max_size.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {
 namespace math {
@@ -31,12 +31,12 @@ namespace math {
  * sizes
  */
 template <typename T_shape, typename T_scale, class RNG>
-inline typename VectorBuilder<true, double, T_shape, T_scale>::type pareto_rng(
-    const T_scale& y_min, const T_shape& alpha, RNG& rng) {
+inline typename VectorBuilder<true, double, T_shape, T_scale>::type
+pareto_rng(const T_scale &y_min, const T_shape &alpha, RNG &rng) {
   using boost::exponential_distribution;
   using boost::variate_generator;
 
-  static const char* function = "pareto_rng";
+  static const char *function = "pareto_rng";
 
   check_positive_finite(function, "Scale parameter", y_min);
   check_positive_finite(function, "Shape parameter", alpha);
@@ -49,7 +49,7 @@ inline typename VectorBuilder<true, double, T_shape, T_scale>::type pareto_rng(
   VectorBuilder<true, double, T_scale, T_shape> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    variate_generator<RNG&, exponential_distribution<> > exp_rng(
+    variate_generator<RNG &, exponential_distribution<>> exp_rng(
         rng, exponential_distribution<>(alpha_vec[n]));
     output[n] = y_min_vec[n] * std::exp(exp_rng());
   }
@@ -57,6 +57,6 @@ inline typename VectorBuilder<true, double, T_shape, T_scale>::type pareto_rng(
   return output.data();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

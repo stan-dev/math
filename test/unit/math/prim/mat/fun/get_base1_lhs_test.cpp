@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 #include <vector>
 
 TEST(MathMatrix, failing_in_26) {
@@ -43,7 +43,7 @@ TEST(MathMatrix, get_base1_lhs_vec2) {
   size_t M = 3;
   size_t N = 4;
 
-  vector<vector<double> > x(M, vector<double>(N, 0.0));
+  vector<vector<double>> x(M, vector<double>(N, 0.0));
 
   for (size_t m = 1; m <= M; ++m)
     for (size_t n = 1; n <= N; ++n)
@@ -52,8 +52,8 @@ TEST(MathMatrix, get_base1_lhs_vec2) {
   for (size_t m = 1; m <= M; ++m) {
     for (size_t n = 1; n <= N; ++n) {
       double expected = x[m - 1][n - 1];
-      double found
-          = get_base1_lhs(get_base1_lhs(x, m, "x[m]", 1), n, "x[m][n]", 2);
+      double found =
+          get_base1_lhs(get_base1_lhs(x, m, "x[m]", 1), n, "x[m][n]", 2);
       EXPECT_FLOAT_EQ(expected, found);
     }
   }
@@ -126,15 +126,14 @@ TEST(MathMatrix, get_base1_lhs_8) {
   double x0(42.0);
   // ~ 4m entries ~ 32MB memory + sizes
   vector<double> x1(9, x0);
-  vector<vector<double> > x2(8, x1);
-  vector<vector<vector<double> > > x3(7, x2);
-  vector<vector<vector<vector<double> > > > x4(6, x3);
-  vector<vector<vector<vector<vector<double> > > > > x5(5, x4);
-  vector<vector<vector<vector<vector<vector<double> > > > > > x6(4, x5);
-  vector<vector<vector<vector<vector<vector<vector<double> > > > > > > x7(3,
-                                                                          x6);
-  vector<vector<vector<vector<vector<vector<vector<vector<double> > > > > > > >
-      x8(2, x7);
+  vector<vector<double>> x2(8, x1);
+  vector<vector<vector<double>>> x3(7, x2);
+  vector<vector<vector<vector<double>>>> x4(6, x3);
+  vector<vector<vector<vector<vector<double>>>>> x5(5, x4);
+  vector<vector<vector<vector<vector<vector<double>>>>>> x6(4, x5);
+  vector<vector<vector<vector<vector<vector<vector<double>>>>>>> x7(3, x6);
+  vector<vector<vector<vector<vector<vector<vector<vector<double>>>>>>>> x8(2,
+                                                                            x7);
 
   EXPECT_EQ(x0, x8[0][0][0][0][0][0][0][0]);
 
@@ -146,8 +145,8 @@ TEST(MathMatrix, get_base1_lhs_8) {
             for (size_t i6 = 0; i6 < x8[0][0][0][0][0].size(); ++i6)
               for (size_t i7 = 0; i7 < x8[0][0][0][0][0][0].size(); ++i7)
                 for (size_t i8 = 0; i8 < x8[0][0][0][0][0][0][0].size(); ++i8)
-                  x8[i1][i2][i3][i4][i5][i6][i7][i8]
-                      = i1 * i2 * i3 * i4 * i5 * i6 * i7 * i8;
+                  x8[i1][i2][i3][i4][i5][i6][i7][i8] =
+                      i1 * i2 * i3 * i4 * i5 * i6 * i7 * i8;
 
   for (size_t i1 = 0; i1 < x8.size(); ++i1)
     for (size_t i2 = 0; i2 < x8[0].size(); ++i2)
@@ -157,8 +156,8 @@ TEST(MathMatrix, get_base1_lhs_8) {
             for (size_t i6 = 0; i6 < x8[0][0][0][0][0].size(); ++i6)
               for (size_t i7 = 0; i7 < x8[0][0][0][0][0][0].size(); ++i7)
                 for (size_t i8 = 0; i8 < x8[0][0][0][0][0][0][0].size(); ++i8)
-                  EXPECT_FLOAT_EQ(
-                      x8[i1][i2][i3][i4][i5][i6][i7][i8],
-                      get_base1_lhs(x8, i1 + 1, i2 + 1, i3 + 1, i4 + 1, i5 + 1,
-                                    i6 + 1, i7 + 1, i8 + 1, "x8", 1));
+                  EXPECT_FLOAT_EQ(x8[i1][i2][i3][i4][i5][i6][i7][i8],
+                                  get_base1_lhs(x8, i1 + 1, i2 + 1, i3 + 1,
+                                                i4 + 1, i5 + 1, i6 + 1, i7 + 1,
+                                                i8 + 1, "x8", 1));
 }

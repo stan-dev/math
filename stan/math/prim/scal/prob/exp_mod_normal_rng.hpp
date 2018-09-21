@@ -1,15 +1,15 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_EXP_MOD_NORMAL_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_EXP_MOD_NORMAL_RNG_HPP
 
+#include <boost/random/normal_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/meta/max_size.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <stan/math/prim/scal/meta/max_size.hpp>
 #include <stan/math/prim/scal/prob/exponential_rng.hpp>
 #include <stan/math/prim/scal/prob/normal_rng.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
@@ -38,9 +38,9 @@ namespace math {
  */
 template <typename T_loc, typename T_scale, typename T_inv_scale, class RNG>
 inline typename VectorBuilder<true, double, T_loc, T_scale, T_inv_scale>::type
-exp_mod_normal_rng(const T_loc& mu, const T_scale& sigma,
-                   const T_inv_scale& lambda, RNG& rng) {
-  static const char* function = "exp_mod_normal_rng";
+exp_mod_normal_rng(const T_loc &mu, const T_scale &sigma,
+                   const T_inv_scale &lambda, RNG &rng) {
+  static const char *function = "exp_mod_normal_rng";
 
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", sigma);
@@ -55,12 +55,12 @@ exp_mod_normal_rng(const T_loc& mu, const T_scale& sigma,
   VectorBuilder<true, double, T_loc, T_scale, T_inv_scale> output(N);
 
   for (size_t n = 0; n < N; ++n)
-    output[n] = normal_rng(mu_vec[n], sigma_vec[n], rng)
-                + exponential_rng(lambda_vec[n], rng);
+    output[n] = normal_rng(mu_vec[n], sigma_vec[n], rng) +
+                exponential_rng(lambda_vec[n], rng);
 
   return output.data();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

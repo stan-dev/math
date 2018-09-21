@@ -15,13 +15,10 @@ namespace math {
  * @param[in] y value
  * @return value
  */
-template <typename T>
-inline T identity_free(const T& y) {
-  return y;
-}
+template <typename T> inline T identity_free(const T &y) { return y; }
 
-}  // namespace math
+} // namespace math
 
-}  // namespace stan
+} // namespace stan
 
 #endif

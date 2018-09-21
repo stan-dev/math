@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_EXP_HPP
 #define STAN_MATH_PRIM_MAT_FUN_EXP_HPP
 
+#include <cmath>
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
-#include <cmath>
 
 namespace stan {
 namespace math {
@@ -20,8 +20,7 @@ struct exp_fun {
    * @param[in] x Argument.
    * @return Exponential of argument.
    */
-  template <typename T>
-  static inline T fun(const T& x) {
+  template <typename T> static inline T fun(const T &x) {
     using std::exp;
     return exp(x);
   }
@@ -37,11 +36,11 @@ struct exp_fun {
  * @return Elementwise application of exponentiation to the argument.
  */
 template <typename T>
-inline typename apply_scalar_unary<exp_fun, T>::return_t exp(const T& x) {
+inline typename apply_scalar_unary<exp_fun, T>::return_t exp(const T &x) {
   return apply_scalar_unary<exp_fun, T>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

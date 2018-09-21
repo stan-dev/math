@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MULTIPLY_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MULTIPLY_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <boost/type_traits/is_arithmetic.hpp>
 #include <boost/utility/enable_if.hpp>
+#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
+#include <stan/math/prim/mat/err/check_multiplicable.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {
 namespace math {
@@ -20,8 +20,8 @@ namespace math {
  */
 template <int R, int C, typename T>
 inline typename boost::enable_if_c<boost::is_arithmetic<T>::value,
-                                   Eigen::Matrix<double, R, C> >::type
-multiply(const Eigen::Matrix<double, R, C>& m, T c) {
+                                   Eigen::Matrix<double, R, C>>::type
+multiply(const Eigen::Matrix<double, R, C> &m, T c) {
   return c * m;
 }
 
@@ -35,8 +35,8 @@ multiply(const Eigen::Matrix<double, R, C>& m, T c) {
  */
 template <int R, int C, typename T>
 inline typename boost::enable_if_c<boost::is_arithmetic<T>::value,
-                                   Eigen::Matrix<double, R, C> >::type
-multiply(T c, const Eigen::Matrix<double, R, C>& m) {
+                                   Eigen::Matrix<double, R, C>>::type
+multiply(T c, const Eigen::Matrix<double, R, C> &m) {
   return c * m;
 }
 
@@ -51,9 +51,9 @@ multiply(T c, const Eigen::Matrix<double, R, C>& m) {
  *   the number of rows of m2.
  */
 template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<double, R1, C2> multiply(
-    const Eigen::Matrix<double, R1, C1>& m1,
-    const Eigen::Matrix<double, R2, C2>& m2) {
+inline Eigen::Matrix<double, R1, C2>
+multiply(const Eigen::Matrix<double, R1, C1> &m1,
+         const Eigen::Matrix<double, R2, C2> &m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
   return m1 * m2;
 }
@@ -68,12 +68,12 @@ inline Eigen::Matrix<double, R1, C2> multiply(
  * @throw std::domain_error if rv and v are not the same size.
  */
 template <int C1, int R2>
-inline double multiply(const Eigen::Matrix<double, 1, C1>& rv,
-                       const Eigen::Matrix<double, R2, 1>& v) {
+inline double multiply(const Eigen::Matrix<double, 1, C1> &rv,
+                       const Eigen::Matrix<double, R2, 1> &v) {
   check_matching_sizes("multiply", "rv", rv, "v", v);
   return rv.dot(v);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

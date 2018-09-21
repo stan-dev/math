@@ -1,5 +1,5 @@
 class agrad_distributions_multi_student_t : public ::testing::Test {
- protected:
+protected:
   virtual void SetUp() {
     nu = 5;
 

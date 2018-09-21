@@ -1,9 +1,9 @@
 #ifdef STAN_OPENCL
-#include <stan/math/prim/mat.hpp>
-#include <stan/math/gpu/copy.hpp>
-#include <stan/math/gpu/add.hpp>
-#include <gtest/gtest.h>
 #include <algorithm>
+#include <gtest/gtest.h>
+#include <stan/math/gpu/add.hpp>
+#include <stan/math/gpu/copy.hpp>
+#include <stan/math/prim/mat.hpp>
 
 TEST(MathMatrixGPU, add_v_exception_pass) {
   stan::math::vector_d d1, d2;

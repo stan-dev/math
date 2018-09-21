@@ -1,12 +1,12 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MDIVIDE_RIGHT_LDLT_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MDIVIDE_RIGHT_LDLT_HPP
 
+#include <boost/math/tools/promotion.hpp>
+#include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/LDLT_factor.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>
 #include <stan/math/prim/mat/fun/transpose.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {
@@ -30,13 +30,13 @@ mdivide_right_ldlt(const Eigen::Matrix<T1, R1, C1> &b,
 }
 
 template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<double, R1, C2> mdivide_right_ldlt(
-    const Eigen::Matrix<double, R1, C1> &b,
-    const LDLT_factor<double, R2, C2> &A) {
+inline Eigen::Matrix<double, R1, C2>
+mdivide_right_ldlt(const Eigen::Matrix<double, R1, C1> &b,
+                   const LDLT_factor<double, R2, C2> &A) {
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A);
   return A.solveRight(b);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

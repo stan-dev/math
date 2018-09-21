@@ -2,9 +2,9 @@
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_SIZE_MATCH_HPP
 
 #include <boost/type_traits/common_type.hpp>
+#include <sstream>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <stan/math/prim/scal/meta/likely.hpp>
-#include <sstream>
 #include <string>
 
 namespace stan {
@@ -26,8 +26,8 @@ namespace math {
  *   do not match
  */
 template <typename T_size1, typename T_size2>
-inline void check_size_match(const char* function, const char* name_i,
-                             T_size1 i, const char* name_j, T_size2 j) {
+inline void check_size_match(const char *function, const char *name_i,
+                             T_size1 i, const char *name_j, T_size2 j) {
   if (likely(i == static_cast<T_size1>(j)))
     return;
 
@@ -55,9 +55,9 @@ inline void check_size_match(const char* function, const char* name_i,
  *   do not match
  */
 template <typename T_size1, typename T_size2>
-inline void check_size_match(const char* function, const char* expr_i,
-                             const char* name_i, T_size1 i, const char* expr_j,
-                             const char* name_j, T_size2 j) {
+inline void check_size_match(const char *function, const char *expr_i,
+                             const char *name_i, T_size1 i, const char *expr_j,
+                             const char *name_j, T_size2 j) {
   if (likely(i == static_cast<T_size1>(j)))
     return;
   std::ostringstream updated_name;
@@ -69,6 +69,6 @@ inline void check_size_match(const char* function, const char* expr_i,
   invalid_argument(function, updated_name_str.c_str(), i, "(", msg_str.c_str());
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

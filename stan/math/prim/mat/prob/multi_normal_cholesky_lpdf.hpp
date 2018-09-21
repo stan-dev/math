@@ -1,23 +1,23 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_CHOLESKY_LPDF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_CHOLESKY_LPDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/mat/meta/operands_and_partials.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/mat/fun/dot_self.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_tri.hpp>
 #include <stan/math/prim/mat/fun/transpose.hpp>
+#include <stan/math/prim/mat/meta/operands_and_partials.hpp>
 #include <stan/math/prim/mat/meta/vector_seq_view.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/max_size_mvt.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/max_size_mvt.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
@@ -45,9 +45,9 @@ namespace math {
  * @tparam T_covar Type of scale.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_covar>
-typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
-    const T_y& y, const T_loc& mu, const T_covar& L) {
-  static const char* function = "multi_normal_cholesky_lpdf";
+typename return_type<T_y, T_loc, T_covar>::type
+multi_normal_cholesky_lpdf(const T_y &y, const T_loc &mu, const T_covar &L) {
+  static const char *function = "multi_normal_cholesky_lpdf";
   typedef typename scalar_type<T_covar>::type T_covar_elem;
   typedef typename return_type<T_y, T_loc, T_covar>::type T_return;
   typedef typename stan::partials_return_type<T_y, T_loc, T_covar>::type
@@ -69,12 +69,10 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
     int size_y_old = size_y;
     for (size_t i = 1, size_ = length_mvt(y); i < size_; i++) {
       int size_y_new = y_vec[i].size();
-      check_size_match(function,
-                       "Size of one of the vectors of "
-                       "the random variable",
-                       size_y_new,
-                       "Size of another vector of the "
-                       "random variable",
+      check_size_match(function, "Size of one of the vectors of "
+                                 "the random variable",
+                       size_y_new, "Size of another vector of the "
+                                   "random variable",
                        size_y_old);
       size_y_old = size_y_new;
     }
@@ -82,12 +80,10 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
     int size_mu_old = size_mu;
     for (size_t i = 1, size_ = length_mvt(mu); i < size_; i++) {
       int size_mu_new = mu_vec[i].size();
-      check_size_match(function,
-                       "Size of one of the vectors of "
-                       "the location variable",
-                       size_mu_new,
-                       "Size of another vector of the "
-                       "location variable",
+      check_size_match(function, "Size of one of the vectors of "
+                                 "the location variable",
+                       size_mu_new, "Size of another vector of the "
+                                    "location variable",
                        size_mu_old);
       size_mu_old = size_mu_new;
     }
@@ -114,8 +110,8 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
   if (include_summand<propto>::value)
     logp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
 
-  const matrix_partials_t inv_L_dbl
-      = mdivide_left_tri<Eigen::Lower>(value_of(L));
+  const matrix_partials_t inv_L_dbl =
+      mdivide_left_tri<Eigen::Lower>(value_of(L));
 
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     for (size_t i = 0; i < size_vec; i++) {
@@ -123,12 +119,12 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
       for (int j = 0; j < size_y; j++)
         y_minus_mu_dbl(j) = value_of(y_vec[i](j)) - value_of(mu_vec[i](j));
 
-      const row_vector_partials_t half
-          = (inv_L_dbl.template triangularView<Eigen::Lower>() * y_minus_mu_dbl)
-                .transpose();
-      const vector_partials_t scaled_diff
-          = (half * inv_L_dbl.template triangularView<Eigen::Lower>())
-                .transpose();
+      const row_vector_partials_t half =
+          (inv_L_dbl.template triangularView<Eigen::Lower>() * y_minus_mu_dbl)
+              .transpose();
+      const vector_partials_t scaled_diff =
+          (half * inv_L_dbl.template triangularView<Eigen::Lower>())
+              .transpose();
 
       logp -= 0.5 * dot_self(half);
 
@@ -158,10 +154,10 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
 
 template <typename T_y, typename T_loc, typename T_covar>
 inline typename return_type<T_y, T_loc, T_covar>::type
-multi_normal_cholesky_lpdf(const T_y& y, const T_loc& mu, const T_covar& L) {
+multi_normal_cholesky_lpdf(const T_y &y, const T_loc &mu, const T_covar &L) {
   return multi_normal_cholesky_lpdf<false>(y, mu, L);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

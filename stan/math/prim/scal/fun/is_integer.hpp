@@ -12,12 +12,9 @@ namespace math {
  * @param x Value to test.
  * @return <code>true</code> if the value is an integer
  */
-template <typename T>
-inline bool is_integer(T x) {
-  return floor(x) == x;
-}
+template <typename T> inline bool is_integer(T x) { return floor(x) == x; }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

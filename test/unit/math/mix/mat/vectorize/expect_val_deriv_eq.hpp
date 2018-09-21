@@ -1,9 +1,9 @@
 #ifndef TEST_UNIT_MATH_MIX_MAT_VECTORIZE_EXPECT_VAL_DERIV_EQ_HPP
 #define TEST_UNIT_MATH_MIX_MAT_VECTORIZE_EXPECT_VAL_DERIV_EQ_HPP
 
+#include <gtest/gtest.h>
 #include <stan/math/fwd/core/fvar.hpp>
 #include <test/unit/math/rev/mat/vectorize/expect_val_deriv_eq.hpp>
-#include <gtest/gtest.h>
 
 template <typename V>
 static inline void expect_val_deriv_eq(V exp_var, V base_exp_var, V test_var,

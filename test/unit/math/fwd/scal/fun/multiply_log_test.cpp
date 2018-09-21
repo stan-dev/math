@@ -1,5 +1,5 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdMultiplyLog, Fvar) {
@@ -41,15 +41,15 @@ TEST(AgradFwdMultiplyLog, FvarFvarDouble) {
   using stan::math::multiply_log;
   using std::log;
 
-  fvar<fvar<double> > x;
+  fvar<fvar<double>> x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 1.3;
 
-  fvar<fvar<double> > y;
+  fvar<fvar<double>> y;
   y.val_.val_ = 1.8;
   y.d_.val_ = 1.1;
 
-  fvar<fvar<double> > a = multiply_log(x, y);
+  fvar<fvar<double>> a = multiply_log(x, y);
 
   EXPECT_FLOAT_EQ(multiply_log(1.5, 1.8), a.val_.val_);
   EXPECT_FLOAT_EQ(log(1.8) * 1.3, a.val_.d_);
@@ -59,8 +59,8 @@ TEST(AgradFwdMultiplyLog, FvarFvarDouble) {
 
 struct multiply_log_fun {
   template <typename T0, typename T1>
-  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
-      const T0 arg1, const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type
+  operator()(const T0 arg1, const T1 arg2) const {
     return multiply_log(arg1, arg2);
   }
 };

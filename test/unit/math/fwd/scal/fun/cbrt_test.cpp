@@ -1,6 +1,6 @@
-#include <stan/math/fwd/scal.hpp>
-#include <gtest/gtest.h>
 #include <boost/math/special_functions/cbrt.hpp>
+#include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdCbrt, Fvar) {
@@ -40,18 +40,18 @@ TEST(AgradFwdCbrt, FvarFvarDouble) {
   using boost::math::cbrt;
   using stan::math::fvar;
 
-  fvar<fvar<double> > x;
+  fvar<fvar<double>> x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 2.0;
 
-  fvar<fvar<double> > a = cbrt(x);
+  fvar<fvar<double>> a = cbrt(x);
 
   EXPECT_FLOAT_EQ(cbrt(1.5), a.val_.val_);
   EXPECT_FLOAT_EQ(2.0 / (3.0 * cbrt(1.5) * cbrt(1.5)), a.val_.d_);
   EXPECT_FLOAT_EQ(0, a.d_.val_);
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 
-  fvar<fvar<double> > y;
+  fvar<fvar<double>> y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 2.0;
 
@@ -63,8 +63,7 @@ TEST(AgradFwdCbrt, FvarFvarDouble) {
 }
 
 struct cbrt_fun {
-  template <typename T0>
-  inline T0 operator()(const T0& arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return cbrt(arg1);
   }
 };

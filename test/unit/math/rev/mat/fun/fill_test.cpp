@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
@@ -37,7 +37,7 @@ TEST(AgradRevMatrix, fill) {
   for (int i = 0; i < 4; ++i)
     EXPECT_FLOAT_EQ(22.0, v(i).val());
 
-  vector<vector<AVAR> > d(3, vector<AVAR>(2));
+  vector<vector<AVAR>> d(3, vector<AVAR>(2));
   fill(d, AVAR(54));
   for (size_t i = 0; i < 3; ++i)
     for (size_t j = 0; j < 2; ++j)

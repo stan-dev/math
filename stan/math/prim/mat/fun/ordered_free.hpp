@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_ORDERED_FREE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_ORDERED_FREE_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_ordered.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
 #include <cmath>
+#include <stan/math/prim/mat/err/check_ordered.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/meta/index_type.hpp>
 
 namespace stan {
 namespace math {
@@ -22,13 +22,13 @@ namespace math {
  *   ordered scalars.
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_free(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& y) {
+Eigen::Matrix<T, Eigen::Dynamic, 1>
+ordered_free(const Eigen::Matrix<T, Eigen::Dynamic, 1> &y) {
   check_ordered("stan::math::ordered_free", "Ordered variable", y);
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  typedef typename index_type<Matrix<T, Dynamic, 1>>::type size_type;
 
   size_type k = y.size();
   Matrix<T, Dynamic, 1> x(k);
@@ -39,6 +39,6 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_free(
     x[i] = log(y[i] - y[i - 1]);
   return x;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

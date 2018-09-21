@@ -1,5 +1,5 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(ProbInternalMath, gradRegIncGamma_typical) {
@@ -44,10 +44,10 @@ TEST(ProbInternalMath, gradRegIncGamma_fd) {
 TEST(ProbInternalMath, gradRegIncGamma_ffd) {
   using stan::math::fvar;
 
-  fvar<fvar<double> > a = 0.5;
-  fvar<fvar<double> > b = 1.0;
-  fvar<fvar<double> > g = 1.77245;
-  fvar<fvar<double> > dig = -1.96351;
+  fvar<fvar<double>> a = 0.5;
+  fvar<fvar<double>> b = 1.0;
+  fvar<fvar<double>> g = 1.77245;
+  fvar<fvar<double>> dig = -1.96351;
 
   EXPECT_FLOAT_EQ(0.38984156,
                   stan::math::grad_reg_inc_gamma(a, b, g, dig).val_.val_);

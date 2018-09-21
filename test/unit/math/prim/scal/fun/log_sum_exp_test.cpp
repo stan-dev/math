@@ -1,8 +1,8 @@
-#include <stan/math/prim/scal.hpp>
-#include <stan/math/prim/arr/fun/log_sum_exp.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/arr/fun/log_sum_exp.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <vector>
 
 void test_log_sum_exp(double a, double b) {
@@ -12,7 +12,7 @@ void test_log_sum_exp(double a, double b) {
   EXPECT_FLOAT_EQ(log(exp(a) + exp(b)), log_sum_exp(a, b));
 }
 
-void test_log_sum_exp(const std::vector<double>& as) {
+void test_log_sum_exp(const std::vector<double> &as) {
   using stan::math::log_sum_exp;
   using std::exp;
   using std::log;

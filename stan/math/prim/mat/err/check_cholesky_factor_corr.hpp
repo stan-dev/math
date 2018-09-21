@@ -1,12 +1,12 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_CHOLESKY_FACTOR_CORR_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_CHOLESKY_FACTOR_CORR_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/mat/err/check_lower_triangular.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/err/check_unit_vector.hpp>
+#include <stan/math/prim/mat/err/constraint_tolerance.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/err/check_positive.hpp>
 
 namespace stan {
 namespace math {
@@ -32,8 +32,8 @@ namespace math {
  */
 template <typename T_y>
 void check_cholesky_factor_corr(
-    const char* function, const char* name,
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
+    const char *function, const char *name,
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y) {
   using Eigen::Dynamic;
   check_square(function, name, y);
   check_lower_triangular(function, name, y);
@@ -45,6 +45,6 @@ void check_cholesky_factor_corr(
   }
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

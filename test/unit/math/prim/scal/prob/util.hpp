@@ -1,16 +1,16 @@
 #ifndef TEST_UNIT_MATH_PRIM_SCAL_PROB_HPP
 #define TEST_UNIT_MATH_PRIM_SCAL_PROB_HPP
 
-#include <boost/math/distributions.hpp>
 #include <algorithm>
+#include <boost/math/distributions.hpp>
 #include <vector>
 
 /**
  * Uses a chi-squared test to assert that a vector of observed counts
  * is consistent with a vector of expected counts. Useful for testing RNGs.
  */
-void assert_chi_squared(const std::vector<int>& counts,
-                        const std::vector<double>& expected, double tolerance) {
+void assert_chi_squared(const std::vector<int> &counts,
+                        const std::vector<double> &expected, double tolerance) {
   int bins = counts.size();
   EXPECT_EQ(bins, expected.size());
 
@@ -30,8 +30,8 @@ void assert_chi_squared(const std::vector<int>& counts,
  * assert that the samples resemble draws from a distribution with those
  * quantiles, using a chi_squared goodness of fit test.
  */
-void assert_matches_quantiles(const std::vector<double>& samples,
-                              const std::vector<double>& quantiles,
+void assert_matches_quantiles(const std::vector<double> &samples,
+                              const std::vector<double> &quantiles,
                               double tolerance) {
   int N = samples.size();
   std::vector<double> mysamples = samples;

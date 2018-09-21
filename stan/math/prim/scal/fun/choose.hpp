@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_CHOOSE_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_CHOOSE_HPP
 
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <boost/math/special_functions/binomial.hpp>
-#include <limits>
 #include <cmath>
+#include <limits>
+#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
+#include <stan/math/prim/scal/err/check_nonnegative.hpp>
 
 namespace stan {
 namespace math {
@@ -38,6 +38,6 @@ inline int choose(int n, int k) {
   return static_cast<int>(std::round(choices));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

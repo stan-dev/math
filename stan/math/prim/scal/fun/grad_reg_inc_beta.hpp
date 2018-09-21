@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_GRAD_REG_INC_BETA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_GRAD_REG_INC_BETA_HPP
 
+#include <cmath>
 #include <stan/math/prim/scal/fun/grad_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/fun/lbeta.hpp>
-#include <cmath>
 
 namespace stan {
 namespace math {
@@ -29,9 +29,9 @@ namespace math {
  * @param[in] betaAB the value of <code>beta(a, b)</code>
  */
 template <typename T>
-void grad_reg_inc_beta(T& g1, T& g2, const T& a, const T& b, const T& z,
-                       const T& digammaA, const T& digammaB,
-                       const T& digammaSum, const T& betaAB) {
+void grad_reg_inc_beta(T &g1, T &g2, const T &a, const T &b, const T &z,
+                       const T &digammaA, const T &digammaB,
+                       const T &digammaSum, const T &betaAB) {
   using std::exp;
   T dBda = 0;
   T dBdb = 0;
@@ -41,6 +41,6 @@ void grad_reg_inc_beta(T& g1, T& g2, const T& a, const T& b, const T& z,
   g2 = (dBdb - b1 * (digammaB - digammaSum)) / betaAB;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

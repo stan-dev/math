@@ -2,10 +2,10 @@
 #define STAN_MATH_PRIM_SCAL_FUN_FALLING_FACTORIAL_HPP
 
 #include <boost/math/special_functions/factorials.hpp>
-#include <stan/math/prim/scal/fun/boost_policy.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <limits>
+#include <stan/math/prim/scal/err/check_nonnegative.hpp>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/scal/fun/boost_policy.hpp>
 
 namespace stan {
 namespace math {
@@ -61,15 +61,15 @@ namespace math {
  *
  */
 template <typename T>
-inline typename boost::math::tools::promote_args<T>::type falling_factorial(
-    const T& x, int n) {
-  static const char* function = "falling_factorial";
+inline typename boost::math::tools::promote_args<T>::type
+falling_factorial(const T &x, int n) {
+  static const char *function = "falling_factorial";
   check_not_nan(function, "first argument", x);
   check_nonnegative(function, "second argument", n);
   return boost::math::falling_factorial(x, n, boost_policy_t());
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

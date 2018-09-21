@@ -1,12 +1,12 @@
 #ifndef STAN_MATH_GPU_KERNEL_CL_HPP
 #define STAN_MATH_GPU_KERNEL_CL_HPP
 #ifdef STAN_OPENCL
-#include <stan/math/gpu/opencl_context.hpp>
-#include <stan/math/gpu/kernels/helpers.hpp>
 #include <CL/cl.hpp>
-#include <string>
 #include <algorithm>
 #include <map>
+#include <stan/math/gpu/kernels/helpers.hpp>
+#include <stan/math/gpu/opencl_context.hpp>
+#include <string>
 #include <vector>
 
 // Used for importing the opencl kernels at compile time.
@@ -30,12 +30,12 @@ namespace opencl_kernels {
  * @note The macros defined in kernels/helpers.hpp are included in the kernel
  *  compilation for ease of writing and reading kernels.
  */
-auto compile_kernel(const char* name, const char* source,
-                    std::map<const char*, int> options) {
+auto compile_kernel(const char *name, const char *source,
+                    std::map<const char *, int> options) {
   std::string kernel_opts = "";
-  for (auto&& comp_opts : options) {
-    kernel_opts += std::string(" -D") + comp_opts.first + "="
-                   + std::to_string(comp_opts.second);
+  for (auto &&comp_opts : options) {
+    kernel_opts += std::string(" -D") + comp_opts.first + "=" +
+                   std::to_string(comp_opts.second);
   }
   std::string kernel_source(opencl_kernels::helpers);
   kernel_source.append(source);
@@ -47,7 +47,7 @@ auto compile_kernel(const char* name, const char* source,
     program.build({opencl_context.device()}, kernel_opts.c_str());
 
     return cl::Kernel(program, name);
-  } catch (const cl::Error& e) {
+  } catch (const cl::Error &e) {
     // in case of CL_BUILD_PROGRAM_FAILURE, print the build error
     if (e.err() == -11) {
       std::string buildlog = program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(
@@ -57,7 +57,7 @@ auto compile_kernel(const char* name, const char* source,
       check_opencl_error(name, e);
     }
   }
-  return cl::Kernel();  // never reached because check_opencl_error throws
+  return cl::Kernel(); // never reached because check_opencl_error throws
 }
 
 /**
@@ -65,21 +65,20 @@ auto compile_kernel(const char* name, const char* source,
  *
  * @tparam Args Parameter pack of all kernel argument types.
  */
-template <typename... Args>
-class kernel_functor {
- private:
+template <typename... Args> class kernel_functor {
+private:
   cl::Kernel kernel_;
-  std::map<const char*, int> opts_;
+  std::map<const char *, int> opts_;
 
- public:
+public:
   /**
    * functor to access the kernel compiler.
    * @param name The name for the kernel.
    * @param source A string literal containing the code for the kernel.
    * @param options The values of macros to be passed at compile time.
    */
-  kernel_functor(const char* name, const char* source,
-                 std::map<const char*, int> options) {
+  kernel_functor(const char *name, const char *source,
+                 std::map<const char *, int> options) {
     auto base_opts = opencl_context.base_opts();
     options.insert(base_opts.begin(), base_opts.end());
     kernel_ = compile_kernel(name, source, options);
@@ -91,7 +90,7 @@ class kernel_functor {
   /**
    * @return The options that the kernel was compiled with.
    */
-  const std::map<const char*, int>& get_opts() const { return opts_; }
+  const std::map<const char *, int> &get_opts() const { return opts_; }
 };
 
 /**
@@ -100,8 +99,7 @@ class kernel_functor {
  *
  * @tparam Args Parameter pack of all kernel argument types.
  */
-template <typename... Args>
-struct global_range_kernel {
+template <typename... Args> struct global_range_kernel {
   const kernel_functor<Args...> make_functor;
   /**
    * Creates functor for kernels that only need access to defining
@@ -110,8 +108,8 @@ struct global_range_kernel {
    * @param source A string literal containing the code for the kernel.
    * @param options The values of macros to be passed at compile time.
    */
-  global_range_kernel(const char* name, const char* source,
-                      const std::map<const char*, int> options = {})
+  global_range_kernel(const char *name, const char *source,
+                      const std::map<const char *, int> options = {})
       : make_functor(name, source, options) {}
   /**
    * Executes a kernel
@@ -130,8 +128,7 @@ struct global_range_kernel {
  *  local and global work size.
  * @tparam Args Parameter pack of all kernel argument types.
  */
-template <typename... Args>
-struct local_range_kernel {
+template <typename... Args> struct local_range_kernel {
   const kernel_functor<Args...> make_functor;
   /**
    * Creates kernels that need access to defining the global thread
@@ -140,8 +137,8 @@ struct local_range_kernel {
    * @param source A string literal containing the code for the kernel.
    * @param options The values of macros to be passed at compile time.
    */
-  local_range_kernel(const char* name, const char* source,
-                     const std::map<const char*, int> options = {})
+  local_range_kernel(const char *name, const char *source,
+                     const std::map<const char *, int> options = {})
       : make_functor(name, source, options) {}
   /**
    * Executes a kernel
@@ -159,9 +156,9 @@ struct local_range_kernel {
   }
 };
 
-}  // namespace opencl_kernels
-}  // namespace math
-}  // namespace stan
+} // namespace opencl_kernels
+} // namespace math
+} // namespace stan
 
 #endif
 #endif

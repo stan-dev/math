@@ -1,12 +1,12 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LUB_CONSTRAIN_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LUB_CONSTRAIN_HPP
 
-#include <stan/math/prim/scal/err/check_less.hpp>
-#include <stan/math/prim/scal/fun/lb_constrain.hpp>
-#include <stan/math/prim/scal/fun/ub_constrain.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <cmath>
 #include <limits>
+#include <stan/math/prim/scal/err/check_less.hpp>
+#include <stan/math/prim/scal/fun/lb_constrain.hpp>
+#include <stan/math/prim/scal/fun/ub_constrain.hpp>
 
 namespace stan {
 namespace math {
@@ -39,8 +39,8 @@ namespace math {
  * @throw std::domain_error if ub <= lb
  */
 template <typename T, typename L, typename U>
-inline typename boost::math::tools::promote_args<T, L, U>::type lub_constrain(
-    const T& x, const L& lb, const U& ub) {
+inline typename boost::math::tools::promote_args<T, L, U>::type
+lub_constrain(const T &x, const L &lb, const U &ub) {
   using std::exp;
   check_less("lub_constrain", "lb", lb, ub);
   if (lb == -std::numeric_limits<double>::infinity())
@@ -107,8 +107,8 @@ inline typename boost::math::tools::promote_args<T, L, U>::type lub_constrain(
  * @throw std::domain_error if ub <= lb
  */
 template <typename T, typename L, typename U>
-inline typename boost::math::tools::promote_args<T, L, U>::type lub_constrain(
-    const T& x, const L& lb, const U& ub, T& lp) {
+inline typename boost::math::tools::promote_args<T, L, U>::type
+lub_constrain(const T &x, const L &lb, const U &ub, T &lp) {
   using std::exp;
   using std::log;
   check_less("lub_constrain", "lb", lb, ub);
@@ -135,6 +135,6 @@ inline typename boost::math::tools::promote_args<T, L, U>::type lub_constrain(
   return lb + (ub - lb) * inv_logit_x;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -1,5 +1,5 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdSin, Fvar) {
@@ -41,18 +41,18 @@ TEST(AgradFwdSin, FvarFvarDouble) {
   using std::cos;
   using std::sin;
 
-  fvar<fvar<double> > x;
+  fvar<fvar<double>> x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 2.0;
 
-  fvar<fvar<double> > a = sin(x);
+  fvar<fvar<double>> a = sin(x);
 
   EXPECT_FLOAT_EQ(sin(1.5), a.val_.val_);
   EXPECT_FLOAT_EQ(2.0 * cos(1.5), a.val_.d_);
   EXPECT_FLOAT_EQ(0, a.d_.val_);
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 
-  fvar<fvar<double> > y;
+  fvar<fvar<double>> y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 2.0;
 
@@ -64,8 +64,7 @@ TEST(AgradFwdSin, FvarFvarDouble) {
 }
 
 struct sin_fun {
-  template <typename T0>
-  inline T0 operator()(const T0& arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return sin(arg1);
   }
 };

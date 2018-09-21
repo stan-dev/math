@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_IS_NAN_HPP
 #define STAN_MATH_REV_SCAL_FUN_IS_NAN_HPP
 
-#include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/rev/core.hpp>
 
 namespace stan {
 namespace math {
@@ -17,8 +17,8 @@ namespace math {
  *
  * @return <code>1</code> if the value is NaN and <code>0</code> otherwise.
  */
-inline bool is_nan(const var& v) { return is_nan(v.val()); }
+inline bool is_nan(const var &v) { return is_nan(v.val()); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

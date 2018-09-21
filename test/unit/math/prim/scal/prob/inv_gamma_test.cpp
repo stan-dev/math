@@ -1,10 +1,10 @@
-#include <stan/math/prim/scal.hpp>
-#include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <gtest/gtest.h>
+#include <limits>
+#include <stan/math/prim/scal.hpp>
 #include <test/unit/math/prim/scal/prob/util.hpp>
 #include <vector>
-#include <limits>
 
 TEST(ProbDistributionsInvGamma, error_check) {
   boost::random::mt19937 rng;

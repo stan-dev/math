@@ -19,7 +19,7 @@ namespace math {
  * @return Cumulative sum of values.
  */
 template <typename T>
-inline std::vector<T> cumulative_sum(const std::vector<T>& x) {
+inline std::vector<T> cumulative_sum(const std::vector<T> &x) {
   std::vector<T> result(x.size());
   if (x.size() == 0)
     return result;
@@ -44,7 +44,7 @@ inline std::vector<T> cumulative_sum(const std::vector<T>& x) {
  * @return Cumulative sum of values.
  */
 template <typename T, int R, int C>
-inline Eigen::Matrix<T, R, C> cumulative_sum(const Eigen::Matrix<T, R, C>& m) {
+inline Eigen::Matrix<T, R, C> cumulative_sum(const Eigen::Matrix<T, R, C> &m) {
   Eigen::Matrix<T, R, C> result(m.rows(), m.cols());
   if (m.size() == 0)
     return result;
@@ -53,6 +53,6 @@ inline Eigen::Matrix<T, R, C> cumulative_sum(const Eigen::Matrix<T, R, C>& m) {
     result(i) = m(i) + result(i - 1);
   return result;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

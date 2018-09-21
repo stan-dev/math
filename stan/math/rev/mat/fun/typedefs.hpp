@@ -27,6 +27,6 @@ typedef Eigen::Matrix<var, Eigen::Dynamic, 1> vector_v;
  */
 typedef Eigen::Matrix<var, 1, Eigen::Dynamic> row_vector_v;
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

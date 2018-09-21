@@ -1,26 +1,26 @@
 #ifndef STAN_MATH_REV_MAT_FUN_SD_HPP
 #define STAN_MATH_REV_MAT_FUN_SD_HPP
 
+#include <boost/math/tools/promotion.hpp>
+#include <cmath>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/mean.hpp>
 #include <stan/math/rev/core.hpp>
-#include <boost/math/tools/promotion.hpp>
-#include <cmath>
 #include <vector>
 
 namespace stan {
 namespace math {
 
-namespace {  // anonymous
+namespace { // anonymous
 
 // if x.size() = N, and x[i] = x[j] =
 // then lim sd(x) -> 0 [ d/dx[n] sd(x) ] = sqrt(N) / N
 
-var calc_sd(size_t size, const var* dtrs) {
+var calc_sd(size_t size, const var *dtrs) {
   using std::sqrt;
-  vari** varis = reinterpret_cast<vari**>(
-      ChainableStack::instance().memalloc_.alloc(size * sizeof(vari*)));
+  vari **varis = reinterpret_cast<vari **>(
+      ChainableStack::instance().memalloc_.alloc(size * sizeof(vari *)));
   for (size_t i = 0; i < size; ++i)
     varis[i] = dtrs[i].vi_;
   double sum = 0.0;
@@ -34,7 +34,7 @@ var calc_sd(size_t size, const var* dtrs) {
   }
   double variance = sum_of_squares / (size - 1);
   double sd = sqrt(variance);
-  double* partials = reinterpret_cast<double*>(
+  double *partials = reinterpret_cast<double *>(
       ChainableStack::instance().memalloc_.alloc(size * sizeof(double)));
   if (sum_of_squares < 1e-20) {
     double grad_limit = 1 / std::sqrt(static_cast<double>(size));
@@ -48,7 +48,7 @@ var calc_sd(size_t size, const var* dtrs) {
   return var(new stored_gradient_vari(sd, size, varis, partials));
 }
 
-}  // namespace
+} // namespace
 
 /**
  * Return the sample standard deviation of the specified standard
@@ -57,7 +57,7 @@ var calc_sd(size_t size, const var* dtrs) {
  * @param[in] v a vector
  * @return sample standard deviation of specified vector
  */
-inline var sd(const std::vector<var>& v) {
+inline var sd(const std::vector<var> &v) {
   check_nonzero_size("sd", "v", v);
   if (v.size() == 1)
     return 0;
@@ -74,14 +74,13 @@ inline var sd(const std::vector<var>& v) {
  * @param[in] m input matrix
  * @return sample standard deviation of specified matrix
  */
-template <int R, int C>
-var sd(const Eigen::Matrix<var, R, C>& m) {
+template <int R, int C> var sd(const Eigen::Matrix<var, R, C> &m) {
   check_nonzero_size("sd", "m", m);
   if (m.size() == 1)
     return 0;
   return calc_sd(m.size(), &m(0));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

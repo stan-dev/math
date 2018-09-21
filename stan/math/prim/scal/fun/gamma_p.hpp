@@ -53,6 +53,6 @@ namespace math {
  */
 inline double gamma_p(double x, double a) { return boost::math::gamma_p(x, a); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

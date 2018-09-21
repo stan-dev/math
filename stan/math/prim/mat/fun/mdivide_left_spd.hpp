@@ -2,12 +2,12 @@
 #define STAN_MATH_PRIM_MAT_FUN_MDIVIDE_LEFT_SPD_HPP
 
 #include <boost/math/tools/promotion.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/promote_common.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
-#include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
+#include <stan/math/prim/mat/err/check_symmetric.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/promote_common.hpp>
 
 namespace stan {
 namespace math {
@@ -30,14 +30,13 @@ mdivide_left_spd(const Eigen::Matrix<T1, R1, C1> &A,
   check_pos_definite("mdivide_left_spd", "A", A);
   check_square("mdivide_left_spd", "A", A);
   check_multiplicable("mdivide_left_spd", "A", A, "b", b);
-  return promote_common<Eigen::Matrix<T1, R1, C1>, Eigen::Matrix<T2, R1, C1> >(
-             A)
+  return promote_common<Eigen::Matrix<T1, R1, C1>, Eigen::Matrix<T2, R1, C1>>(A)
       .llt()
       .solve(
-          promote_common<Eigen::Matrix<T1, R2, C2>, Eigen::Matrix<T2, R2, C2> >(
+          promote_common<Eigen::Matrix<T1, R2, C2>, Eigen::Matrix<T2, R2, C2>>(
               b));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

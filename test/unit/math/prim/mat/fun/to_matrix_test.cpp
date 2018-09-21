@@ -1,14 +1,14 @@
-#include <stan/math/prim/mat.hpp>
-#include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
 #include <gtest/gtest.h>
-#include <vector>
+#include <stan/math/prim/mat.hpp>
 #include <stdexcept>
+#include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
+#include <vector>
 
 using stan::math::to_matrix;
 
 template <typename T, int R, int C>
-inline Eigen::Matrix<T, R, C> row_major_to_column_major(
-    const Eigen::Matrix<T, R, C>& x) {
+inline Eigen::Matrix<T, R, C>
+row_major_to_column_major(const Eigen::Matrix<T, R, C> &x) {
   int rows = x.rows();
   int cols = x.cols();
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> result(rows, cols);
@@ -198,8 +198,8 @@ TEST(ToMatrixRowVector, answers) {
 
 // [[T]] -> Matrix
 void test_to_matrix_2darray_answers(int m, int n) {
-  std::vector<std::vector<double> > vec(m, std::vector<double>(n));
-  std::vector<std::vector<int> > vec_int(m, std::vector<int>(n));
+  std::vector<std::vector<double>> vec(m, std::vector<double>(n));
+  std::vector<std::vector<int>> vec_int(m, std::vector<int>(n));
   // Any vec (0, C) will become (0, 0)
   if (m == 0)
     n = 0;

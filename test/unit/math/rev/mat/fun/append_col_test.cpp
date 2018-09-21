@@ -1,8 +1,8 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <iostream>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
-#include <iostream>
 
 using Eigen::MatrixXd;
 using Eigen::RowVectorXd;
@@ -93,13 +93,13 @@ TEST(AgradRevMatrix, append_col_row_vector) {
 }
 
 template <typename T, int R, int C>
-void correct_type_row_vector(const Eigen::Matrix<T, R, C>& x) {
+void correct_type_row_vector(const Eigen::Matrix<T, R, C> &x) {
   EXPECT_EQ(Eigen::Dynamic, C);
   EXPECT_EQ(1, R);
 }
 
 template <typename T, int R, int C>
-void correct_type_matrix(const Eigen::Matrix<T, R, C>& x) {
+void correct_type_matrix(const Eigen::Matrix<T, R, C> &x) {
   EXPECT_EQ(Eigen::Dynamic, C);
   EXPECT_EQ(Eigen::Dynamic, R);
 }

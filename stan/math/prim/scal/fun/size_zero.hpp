@@ -14,10 +14,7 @@ namespace math {
  * @param x argument
  * @return 0 or 1
  */
-template <typename T>
-inline bool size_zero(T& x) {
-  return !length(x);
-}
+template <typename T> inline bool size_zero(T &x) { return !length(x); }
 
 /**
  * Returns 1 if any inputs are of length 0, returns 0
@@ -27,11 +24,10 @@ inline bool size_zero(T& x) {
  * @param xs parameter pack of remaining arguments to forward to function
  * @return 0 or 1
  */
-template <typename T, typename... Ts>
-inline bool size_zero(T& x, Ts&&... xs) {
+template <typename T, typename... Ts> inline bool size_zero(T &x, Ts &&... xs) {
   return (size_zero(x) || size_zero(std::forward<Ts>(xs)...));
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

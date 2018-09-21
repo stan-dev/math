@@ -1,14 +1,14 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MDIVIDE_RIGHT_SPD_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MDIVIDE_RIGHT_SPD_HPP
 
+#include <boost/math/tools/promotion.hpp>
+#include <stan/math/prim/mat/err/check_multiplicable.hpp>
+#include <stan/math/prim/mat/err/check_pos_definite.hpp>
+#include <stan/math/prim/mat/err/check_square.hpp>
+#include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_spd.hpp>
 #include <stan/math/prim/mat/fun/transpose.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
-#include <stan/math/prim/mat/err/check_pos_definite.hpp>
-#include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {
@@ -36,6 +36,6 @@ mdivide_right_spd(const Eigen::Matrix<T1, R1, C1> &b,
   return mdivide_left_spd(A, transpose(b)).transpose();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

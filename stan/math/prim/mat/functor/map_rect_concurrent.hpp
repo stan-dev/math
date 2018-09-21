@@ -3,15 +3,15 @@
 
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 
-#include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
-#include <stan/math/prim/mat/functor/map_rect_combine.hpp>
-#include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <boost/lexical_cast.hpp>
+#include <stan/math/prim/mat/functor/map_rect_combine.hpp>
+#include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
+#include <stan/math/prim/scal/err/invalid_argument.hpp>
 
-#include <vector>
-#include <thread>
-#include <future>
 #include <cstdlib>
+#include <future>
+#include <thread>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -41,11 +41,11 @@ namespace internal {
 inline int get_num_threads(int num_jobs) {
   int num_threads = 1;
 #ifdef STAN_THREADS
-  const char* env_stan_num_threads = std::getenv("STAN_NUM_THREADS");
+  const char *env_stan_num_threads = std::getenv("STAN_NUM_THREADS");
   if (env_stan_num_threads != nullptr) {
     try {
-      const int env_num_threads
-          = boost::lexical_cast<int>(env_stan_num_threads);
+      const int env_num_threads =
+          boost::lexical_cast<int>(env_stan_num_threads);
       if (env_num_threads > 0)
         num_threads = env_num_threads;
       else if (env_num_threads == -1)
@@ -73,11 +73,11 @@ template <int call_id, typename F, typename T_shared_param,
 Eigen::Matrix<typename stan::return_type<T_shared_param, T_job_param>::type,
               Eigen::Dynamic, 1>
 map_rect_concurrent(
-    const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
-    const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&
-        job_params,
-    const std::vector<std::vector<double>>& x_r,
-    const std::vector<std::vector<int>>& x_i, std::ostream* msgs = nullptr) {
+    const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1> &shared_params,
+    const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>
+        &job_params,
+    const std::vector<std::vector<double>> &x_r,
+    const std::vector<std::vector<int>> &x_i, std::ostream *msgs = nullptr) {
   typedef map_rect_reduce<F, T_shared_param, T_job_param> ReduceF;
   typedef map_rect_combine<F, T_shared_param, T_job_param> CombineF;
 
@@ -102,13 +102,13 @@ map_rect_concurrent(
 
 #ifdef STAN_THREADS
   if (num_threads > 1) {
-    const int num_big_threads
-        = (num_jobs - num_jobs_per_thread) % (num_threads - 1);
+    const int num_big_threads =
+        (num_jobs - num_jobs_per_thread) % (num_threads - 1);
     const int first_big_thread = num_threads - num_big_threads;
     for (int i = 1, job_start = num_jobs_per_thread, job_size = 0;
          i < num_threads; ++i, job_start += job_size) {
-      job_size = i >= first_big_thread ? num_jobs_per_thread + 1
-                                       : num_jobs_per_thread;
+      job_size =
+          i >= first_big_thread ? num_jobs_per_thread + 1 : num_jobs_per_thread;
       futures.emplace_back(
           std::async(std::launch::async, execute_chunk, job_start, job_size));
     }
@@ -122,12 +122,12 @@ map_rect_concurrent(
 
   int offset = 0;
   for (std::size_t i = 0; i < futures.size(); ++i) {
-    const std::vector<matrix_d>& chunk_result = futures[i].get();
+    const std::vector<matrix_d> &chunk_result = futures[i].get();
     if (i == 0)
       world_output.resize(chunk_result[0].rows(),
                           num_jobs * chunk_result[0].cols());
 
-    for (const auto& job_result : chunk_result) {
+    for (const auto &job_result : chunk_result) {
       const int num_job_outputs = job_result.cols();
       world_f_out.push_back(num_job_outputs);
 
@@ -135,8 +135,8 @@ map_rect_concurrent(
         world_output.conservativeResize(Eigen::NoChange,
                                         2 * (offset + num_job_outputs));
 
-      world_output.block(0, offset, world_output.rows(), num_job_outputs)
-          = job_result;
+      world_output.block(0, offset, world_output.rows(), num_job_outputs) =
+          job_result;
 
       offset += num_job_outputs;
     }
@@ -145,8 +145,8 @@ map_rect_concurrent(
   return combine(world_output, world_f_out);
 }
 
-}  // namespace internal
-}  // namespace math
-}  // namespace stan
+} // namespace internal
+} // namespace math
+} // namespace stan
 
 #endif

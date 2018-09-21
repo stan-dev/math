@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_SYSTEM_ERROR_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_SYSTEM_ERROR_HPP
 
-#include <typeinfo>
 #include <sstream>
 #include <stdexcept>
 #include <system_error>
+#include <typeinfo>
 namespace stan {
 namespace math {
 
@@ -24,8 +24,8 @@ namespace math {
  * @param[in] msg2 Message to print after the variable.
  * @throw std::system_error Always.
  */
-inline void system_error(const char* function, const char* name, const int& y,
-                         const char* msg1, const char* msg2) {
+inline void system_error(const char *function, const char *name, const int &y,
+                         const char *msg1, const char *msg2) {
   std::ostringstream message;
   // hack to remove -Waddress, -Wnonnull-compare warnings from GCC 6
   message << function << ": " << name << " " << msg1 << msg2;
@@ -47,11 +47,11 @@ inline void system_error(const char* function, const char* name, const int& y,
  * @param[in] msg1 Message to print before the variable.
  * @throw std::system_error Always.
  */
-inline void system_error(const char* function, const char* name, const int& y,
-                         const char* msg1) {
+inline void system_error(const char *function, const char *name, const int &y,
+                         const char *msg1) {
   system_error(function, name, y, msg1, "");
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

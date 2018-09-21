@@ -1,5 +1,5 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 
 TEST(ProbInternalMath, grad_reg_inc_beta_fd) {
   using stan::math::digamma;
@@ -34,18 +34,18 @@ TEST(ProbInternalMath, grad_reg_inc_beta_ffd) {
   using stan::math::fvar;
   using stan::math::lbeta;
 
-  fvar<fvar<double> > a = 1.0;
-  fvar<fvar<double> > b = 1.0;
-  fvar<fvar<double> > g = 0.4;
+  fvar<fvar<double>> a = 1.0;
+  fvar<fvar<double>> b = 1.0;
+  fvar<fvar<double>> g = 0.4;
   a.d_ = 1.0;
   b.d_ = 1.0;
   g.d_ = 1.0;
-  fvar<fvar<double> > dig_a = digamma(a);
-  fvar<fvar<double> > dig_b = digamma(b);
-  fvar<fvar<double> > dig_sum = digamma(a + b);
-  fvar<fvar<double> > beta_ab = exp(lbeta(a, b));
-  fvar<fvar<double> > g_a;
-  fvar<fvar<double> > g_b;
+  fvar<fvar<double>> dig_a = digamma(a);
+  fvar<fvar<double>> dig_b = digamma(b);
+  fvar<fvar<double>> dig_sum = digamma(a + b);
+  fvar<fvar<double>> beta_ab = exp(lbeta(a, b));
+  fvar<fvar<double>> g_a;
+  fvar<fvar<double>> g_b;
 
   stan::math::grad_reg_inc_beta(g_a, g_b, a, b, g, dig_a, dig_b, dig_sum,
                                 beta_ab);

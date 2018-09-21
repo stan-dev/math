@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char* identity_kernel_code = STRINGIFY(
+const char *identity_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Makes an identity matrix on the GPU
@@ -21,7 +21,7 @@ const char* identity_kernel_code = STRINGIFY(
      *  Used in math/gpu/identity_opencl.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void identity(__global double* A, unsigned int rows,
+    __kernel void identity(__global double *A, unsigned int rows,
                            unsigned int cols) {
       int i = get_global_id(0);
       int j = get_global_id(1);
@@ -34,7 +34,7 @@ const char* identity_kernel_code = STRINGIFY(
       }
     }
     // \cond
-);
+    );
 // \endcond
 
 /**
@@ -43,8 +43,8 @@ const char* identity_kernel_code = STRINGIFY(
 const global_range_kernel<cl::Buffer, int, int> identity("identity",
                                                          identity_kernel_code);
 
-}  // namespace opencl_kernels
-}  // namespace math
-}  // namespace stan
+} // namespace opencl_kernels
+} // namespace math
+} // namespace stan
 #endif
 #endif

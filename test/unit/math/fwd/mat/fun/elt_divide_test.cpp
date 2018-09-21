@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 TEST(AgradFwdMatrixEltDivide, fd_vec_vv) {
   using stan::math::elt_divide;
@@ -199,7 +199,7 @@ TEST(AgradFwdMatrixEltDivide, ffd_vec_vv) {
   using stan::math::fvar;
   using stan::math::vector_ffd;
 
-  fvar<fvar<double> > a, b, c, d;
+  fvar<fvar<double>> a, b, c, d;
   a.val_.val_ = 2.0;
   a.d_.val_ = 1.0;
   b.val_.val_ = 5.0;
@@ -227,7 +227,7 @@ TEST(AgradFwdMatrixEltDivide, ffd_vec_vd) {
   using stan::math::vector_d;
   using stan::math::vector_ffd;
 
-  fvar<fvar<double> > a, b;
+  fvar<fvar<double>> a, b;
   a.val_.val_ = 2.0;
   a.d_.val_ = 1.0;
   b.val_.val_ = 5.0;
@@ -251,7 +251,7 @@ TEST(AgradFwdMatrixEltDivide, ffd_vec_dv) {
   using stan::math::vector_d;
   using stan::math::vector_ffd;
 
-  fvar<fvar<double> > c, d;
+  fvar<fvar<double>> c, d;
   c.val_.val_ = 10.0;
   c.d_.val_ = 1.0;
   d.val_.val_ = 100.0;
@@ -274,7 +274,7 @@ TEST(AgradFwdMatrixEltDivide, ffd_rowvec_vv) {
   using stan::math::fvar;
   using stan::math::row_vector_ffd;
 
-  fvar<fvar<double> > a, b, c, d;
+  fvar<fvar<double>> a, b, c, d;
   a.val_.val_ = 2.0;
   a.d_.val_ = 1.0;
   b.val_.val_ = 5.0;
@@ -301,8 +301,8 @@ TEST(AgradFwdMatrixEltDivide, ffd_rowvec_vd) {
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffd;
 
-  fvar<fvar<double> > a;
-  fvar<fvar<double> > b;
+  fvar<fvar<double>> a;
+  fvar<fvar<double>> b;
   a.val_.val_ = 2.0;
   a.d_.val_ = 1.0;
   b.val_.val_ = 5.0;
@@ -326,7 +326,7 @@ TEST(AgradFwdMatrixEltDivide, ffd_rowvec_dv) {
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffd;
 
-  fvar<fvar<double> > c, d;
+  fvar<fvar<double>> c, d;
   c.val_.val_ = 10.0;
   c.d_.val_ = 1.0;
   d.val_.val_ = 100.0;
@@ -348,7 +348,7 @@ TEST(AgradFwdMatrixEltDivide, ffd_mat_vv) {
   using stan::math::fvar;
   using stan::math::matrix_ffd;
 
-  fvar<fvar<double> > a, b, c, d, e, f, g, h, i, j, k, l;
+  fvar<fvar<double>> a, b, c, d, e, f, g, h, i, j, k, l;
   a.val_.val_ = 2.0;
   a.d_.val_ = 1.0;
   b.val_.val_ = 5.0;
@@ -393,7 +393,7 @@ TEST(AgradFwdMatrixEltDivide, ffd_mat_vd) {
   using stan::math::matrix_d;
   using stan::math::matrix_ffd;
 
-  fvar<fvar<double> > a, b, c, d, e, f;
+  fvar<fvar<double>> a, b, c, d, e, f;
   a.val_.val_ = 2.0;
   a.d_.val_ = 1.0;
   b.val_.val_ = 5.0;
@@ -427,7 +427,7 @@ TEST(AgradFwdMatrixEltDivide, ffd_mat_dv) {
   using stan::math::matrix_d;
   using stan::math::matrix_ffd;
 
-  fvar<fvar<double> > g, h, i, j, k, l;
+  fvar<fvar<double>> g, h, i, j, k, l;
   g.val_.val_ = 10.0;
   g.d_.val_ = 1.0;
   h.val_.val_ = 100.0;

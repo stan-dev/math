@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SYSTEM_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SYSTEM_HPP
 
+#include <iostream>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/mat/functor/jacobian.hpp>
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -33,14 +33,14 @@ struct system_functor {
   /** integer data */
   std::vector<int> dat_int_;
   /** stream message */
-  std::ostream* msgs_;
+  std::ostream *msgs_;
 
   system_functor() {}
 
-  system_functor(const F& f, const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
-                 const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-                 const std::vector<double>& dat,
-                 const std::vector<int>& dat_int, std::ostream* msgs)
+  system_functor(const F &f, const Eigen::Matrix<T0, Eigen::Dynamic, 1> &x,
+                 const Eigen::Matrix<T1, Eigen::Dynamic, 1> &y,
+                 const std::vector<double> &dat,
+                 const std::vector<int> &dat_int, std::ostream *msgs)
       : f_(f), x_(x), y_(y), dat_(dat), dat_int_(dat_int), msgs_(msgs) {}
 
   /**
@@ -52,8 +52,8 @@ struct system_functor {
    * @tparam T the scalar type of the independent variable
    */
   template <typename T>
-  inline Eigen::Matrix<T, Eigen::Dynamic, 1> operator()(
-      const Eigen::Matrix<T, Eigen::Dynamic, 1>& iv) const {
+  inline Eigen::Matrix<T, Eigen::Dynamic, 1>
+  operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1> &iv) const {
     if (x_is_iv)
       return f_(iv, y_, dat_, dat_int_, msgs_);
     else
@@ -98,11 +98,11 @@ struct hybrj_functor_solver : nlo_functor<double> {
   /** Jacobian of algebraic function wrt unknowns */
   Eigen::MatrixXd J_;
 
-  hybrj_functor_solver(const S& fs, const F& f,
-                       const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
-                       const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-                       const std::vector<double>& dat,
-                       const std::vector<int>& dat_int, std::ostream* msgs)
+  hybrj_functor_solver(const S &fs, const F &f,
+                       const Eigen::Matrix<T0, Eigen::Dynamic, 1> &x,
+                       const Eigen::Matrix<T1, Eigen::Dynamic, 1> &y,
+                       const std::vector<double> &dat,
+                       const std::vector<int> &dat_int, std::ostream *msgs)
       : fs_(f, x, y, dat, dat_int, msgs), x_size_(x.size()) {}
 
   /**
@@ -112,7 +112,7 @@ struct hybrj_functor_solver : nlo_functor<double> {
    * @param [in] iv independent variables
    * @param [in, out] fvec value of algebraic function when plugging in iv.
    */
-  int operator()(const Eigen::VectorXd& iv, Eigen::VectorXd& fvec) {
+  int operator()(const Eigen::VectorXd &iv, Eigen::VectorXd &fvec) {
     jacobian(fs_, iv, fvec, J_);
     return 0;
   }
@@ -123,7 +123,7 @@ struct hybrj_functor_solver : nlo_functor<double> {
    * @param [in] iv independent variables.
    * @param [in, out] fjac matrix container for jacobian
    */
-  int df(const Eigen::VectorXd& iv, Eigen::MatrixXd& fjac) const {
+  int df(const Eigen::VectorXd &iv, Eigen::MatrixXd &fjac) const {
     fjac = J_;
     return 0;
   }
@@ -134,7 +134,7 @@ struct hybrj_functor_solver : nlo_functor<double> {
    * passed by reference.
    * @param [in] iv indepdent variable.
    */
-  Eigen::MatrixXd get_jacobian(const Eigen::VectorXd& iv) {
+  Eigen::MatrixXd get_jacobian(const Eigen::VectorXd &iv) {
     Eigen::VectorXd fvec;
     jacobian(fs_, iv, fvec, J_);
     return J_;
@@ -146,10 +146,10 @@ struct hybrj_functor_solver : nlo_functor<double> {
    * argument passed by reference.
    * @tparam [in] iv independent variable.
    */
-  Eigen::VectorXd get_value(const Eigen::VectorXd& iv) const { return fs_(iv); }
+  Eigen::VectorXd get_value(const Eigen::VectorXd &iv) const { return fs_(iv); }
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

@@ -3,33 +3,33 @@
 
 #include <boost/random/exponential_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <cmath>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
+#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/length.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <cmath>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {
 namespace math {
 
 // Logistic(y|mu, sigma)    [sigma > 0]
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type logistic_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
-  static const char* function = "logistic_lpdf";
+typename return_type<T_y, T_loc, T_scale>::type
+logistic_lpdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
+  static const char *function = "logistic_lpdf";
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
 
@@ -101,30 +101,30 @@ typename return_type<T_y, T_loc, T_scale>::type logistic_lpdf(
       logp -= 2.0 * log1p(exp_m_y_minus_mu_div_sigma);
 
     if (!is_constant_struct<T_y>::value)
-      ops_partials.edge1_.partials_[n]
-          += (2 * inv_1p_exp_y_minus_mu_div_sigma - 1) * inv_sigma[n];
+      ops_partials.edge1_.partials_[n] +=
+          (2 * inv_1p_exp_y_minus_mu_div_sigma - 1) * inv_sigma[n];
     if (!is_constant_struct<T_loc>::value)
-      ops_partials.edge2_.partials_[n]
-          += (1
-              - 2 * exp_mu_div_sigma[n]
-                    / (exp_mu_div_sigma[n] + exp_y_div_sigma[n]))
-             * inv_sigma[n];
+      ops_partials.edge2_.partials_[n] +=
+          (1 -
+           2 * exp_mu_div_sigma[n] /
+               (exp_mu_div_sigma[n] + exp_y_div_sigma[n])) *
+          inv_sigma[n];
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge3_.partials_[n]
-          += ((1 - 2 * inv_1p_exp_y_minus_mu_div_sigma) * y_minus_mu
-                  * inv_sigma[n]
-              - 1)
-             * inv_sigma[n];
+      ops_partials.edge3_.partials_[n] +=
+          ((1 - 2 * inv_1p_exp_y_minus_mu_div_sigma) * y_minus_mu *
+               inv_sigma[n] -
+           1) *
+          inv_sigma[n];
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline typename return_type<T_y, T_loc, T_scale>::type logistic_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+inline typename return_type<T_y, T_loc, T_scale>::type
+logistic_lpdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
   return logistic_lpdf<false>(y, mu, sigma);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

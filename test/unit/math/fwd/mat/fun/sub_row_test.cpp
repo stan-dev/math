@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 #include <stdexcept>
 
 TEST(AgradFwdMatrixSubRow, SubRow1_matrix_fd) {

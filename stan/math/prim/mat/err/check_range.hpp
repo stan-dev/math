@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_RANGE_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_RANGE_HPP
 
-#include <stan/math/prim/scal/err/out_of_range.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
-#include <stan/math/prim/scal/meta/error_index.hpp>
 #include <sstream>
+#include <stan/math/prim/mat/meta/index_type.hpp>
+#include <stan/math/prim/scal/err/out_of_range.hpp>
+#include <stan/math/prim/scal/meta/error_index.hpp>
 #include <string>
 
 namespace stan {
@@ -25,10 +25,10 @@ namespace math {
  *
  * @throw <code>std::out_of_range</code> if the index is not in range
  */
-inline void check_range(const char* function, const char* name, int max,
-                        int index, int nested_level, const char* error_msg) {
-  if ((index >= stan::error_index::value)
-      && (index < max + stan::error_index::value))
+inline void check_range(const char *function, const char *name, int max,
+                        int index, int nested_level, const char *error_msg) {
+  if ((index >= stan::error_index::value) &&
+      (index < max + stan::error_index::value))
     return;
 
   std::stringstream msg;
@@ -52,10 +52,10 @@ inline void check_range(const char* function, const char* name, int max,
  *
  * @throw <code>std::out_of_range</code> if the index is not in range
  */
-inline void check_range(const char* function, const char* name, int max,
-                        int index, const char* error_msg) {
-  if ((index >= stan::error_index::value)
-      && (index < max + stan::error_index::value))
+inline void check_range(const char *function, const char *name, int max,
+                        int index, const char *error_msg) {
+  if ((index >= stan::error_index::value) &&
+      (index < max + stan::error_index::value))
     return;
 
   out_of_range(function, max, index, error_msg);
@@ -74,15 +74,15 @@ inline void check_range(const char* function, const char* name, int max,
  *
  * @throw <code>std::out_of_range</code> if the index is not in range
  */
-inline void check_range(const char* function, const char* name, int max,
+inline void check_range(const char *function, const char *name, int max,
                         int index) {
-  if ((index >= stan::error_index::value)
-      && (index < max + stan::error_index::value))
+  if ((index >= stan::error_index::value) &&
+      (index < max + stan::error_index::value))
     return;
 
   out_of_range(function, max, index);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

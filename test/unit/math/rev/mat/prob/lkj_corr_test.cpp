@@ -1,8 +1,8 @@
-#include <stan/math/rev/mat.hpp>
+#include <boost/math/distributions.hpp>
+#include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
 #include <stan/math.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/math/distributions.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/prob/lkj_corr_cholesky_test_functors.hpp>
 #include <test/unit/math/rev/mat/prob/test_gradients.hpp>
 #include <test/unit/math/rev/mat/util.hpp>

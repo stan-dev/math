@@ -1,7 +1,7 @@
-#include <stan/math/prim/scal.hpp>
-#include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <gtest/gtest.h>
+#include <stan/math/prim/scal.hpp>
 #include <string>
 
 TEST(ProbDistributionsNegBinomial, error_check) {
@@ -26,14 +26,13 @@ TEST(ProbDistributionsNegBinomial, error_check) {
 
   std::string error_msg;
 
-  error_msg
-      = "neg_binomial_2_rng: Location parameter "
-        "divided by the precision parameter is "
-        "inf, but must be finite!";
+  error_msg = "neg_binomial_2_rng: Location parameter "
+              "divided by the precision parameter is "
+              "inf, but must be finite!";
   try {
     stan::math::neg_binomial_2_rng(1e300, 1e-300, rng);
     FAIL() << "neg_binomial_2_rng should have thrown" << std::endl;
-  } catch (const std::exception& e) {
+  } catch (const std::exception &e) {
     if (std::string(e.what()).find(error_msg) == std::string::npos)
       FAIL() << "Error message is different than expected" << std::endl
              << "EXPECTED: " << error_msg << std::endl
@@ -41,13 +40,12 @@ TEST(ProbDistributionsNegBinomial, error_check) {
     SUCCEED();
   }
 
-  error_msg
-      = "neg_binomial_2_rng: Random number that "
-        "came from gamma distribution is";
+  error_msg = "neg_binomial_2_rng: Random number that "
+              "came from gamma distribution is";
   try {
     stan::math::neg_binomial_2_rng(1e10, 1e20, rng);
     FAIL() << "neg_binomial_2_rng should have thrown" << std::endl;
-  } catch (const std::exception& e) {
+  } catch (const std::exception &e) {
     if (std::string(e.what()).find(error_msg) == std::string::npos)
       FAIL() << "Error message is different than expected" << std::endl
              << "EXPECTED: " << error_msg << std::endl

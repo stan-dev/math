@@ -11,11 +11,11 @@ namespace stan {
 namespace math {
 
 template <typename F>
-void hessian_times_vector(const F& f,
-                          const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
-                          const Eigen::Matrix<double, Eigen::Dynamic, 1>& v,
-                          double& fx,
-                          Eigen::Matrix<double, Eigen::Dynamic, 1>& Hv) {
+void hessian_times_vector(const F &f,
+                          const Eigen::Matrix<double, Eigen::Dynamic, 1> &x,
+                          const Eigen::Matrix<double, Eigen::Dynamic, 1> &v,
+                          double &fx,
+                          Eigen::Matrix<double, Eigen::Dynamic, 1> &Hv) {
   using Eigen::Matrix;
   start_nested();
   try {
@@ -30,17 +30,17 @@ void hessian_times_vector(const F& f,
     Hv.resize(x.size());
     for (int i = 0; i < x.size(); ++i)
       Hv(i) = x_var(i).adj();
-  } catch (const std::exception& e) {
+  } catch (const std::exception &e) {
     recover_memory_nested();
     throw;
   }
   recover_memory_nested();
 }
 template <typename T, typename F>
-void hessian_times_vector(const F& f,
-                          const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-                          const Eigen::Matrix<T, Eigen::Dynamic, 1>& v, T& fx,
-                          Eigen::Matrix<T, Eigen::Dynamic, 1>& Hv) {
+void hessian_times_vector(const F &f,
+                          const Eigen::Matrix<T, Eigen::Dynamic, 1> &x,
+                          const Eigen::Matrix<T, Eigen::Dynamic, 1> &v, T &fx,
+                          Eigen::Matrix<T, Eigen::Dynamic, 1> &Hv) {
   using Eigen::Matrix;
   Matrix<T, Eigen::Dynamic, 1> grad;
   Matrix<T, Eigen::Dynamic, Eigen::Dynamic> H;
@@ -48,6 +48,6 @@ void hessian_times_vector(const F& f,
   Hv = H * v;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -1,15 +1,15 @@
 #ifndef STAN_MATH_REV_MAT_FUN_TCROSSPROD_HPP
 #define STAN_MATH_REV_MAT_FUN_TCROSSPROD_HPP
 
+#include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/Eigen_NumTraits.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
+#include <stan/math/rev/mat/fun/columns_dot_self.hpp>
 #include <stan/math/rev/mat/fun/dot_product.hpp>
 #include <stan/math/rev/mat/fun/dot_self.hpp>
-#include <stan/math/rev/mat/fun/columns_dot_self.hpp>
-#include <boost/math/tools/promotion.hpp>
+#include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <vector>
 
 namespace stan {
@@ -21,7 +21,7 @@ namespace math {
  * @param M Matrix to multiply.
  * @return M times its transpose.
  */
-inline matrix_v tcrossprod(const matrix_v& M) {
+inline matrix_v tcrossprod(const matrix_v &M) {
   if (M.rows() == 0)
     return matrix_v(0, 0);
   // if (M.rows() == 1)
@@ -33,9 +33,9 @@ inline matrix_v tcrossprod(const matrix_v& M) {
 
   matrix_v MMt(M.rows(), M.rows());
 
-  vari** vs
-      = reinterpret_cast<vari**>(ChainableStack::instance().memalloc_.alloc(
-          (M.rows() * M.cols()) * sizeof(vari*)));
+  vari **vs =
+      reinterpret_cast<vari **>(ChainableStack::instance().memalloc_.alloc(
+          (M.rows() * M.cols()) * sizeof(vari *)));
   int pos = 0;
   for (int m = 0; m < M.rows(); ++m)
     for (int n = 0; n < M.cols(); ++n)
@@ -52,6 +52,6 @@ inline matrix_v tcrossprod(const matrix_v& M) {
   return MMt;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

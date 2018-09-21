@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BERNOULLI_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BERNOULLI_RNG_HPP
 
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/bernoulli_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/err/check_bounded.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <stan/math/prim/scal/meta/length.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {
 namespace math {
@@ -27,12 +27,12 @@ namespace math {
  * greater than one.
  */
 template <typename T_theta, class RNG>
-inline typename VectorBuilder<true, int, T_theta>::type bernoulli_rng(
-    const T_theta& theta, RNG& rng) {
+inline typename VectorBuilder<true, int, T_theta>::type
+bernoulli_rng(const T_theta &theta, RNG &rng) {
   using boost::bernoulli_distribution;
   using boost::variate_generator;
 
-  static const char* function = "bernoulli_rng";
+  static const char *function = "bernoulli_rng";
 
   check_finite(function, "Probability parameter", theta);
   check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
@@ -42,7 +42,7 @@ inline typename VectorBuilder<true, int, T_theta>::type bernoulli_rng(
   VectorBuilder<true, int, T_theta> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    variate_generator<RNG&, bernoulli_distribution<> > bernoulli_rng(
+    variate_generator<RNG &, bernoulli_distribution<>> bernoulli_rng(
         rng, bernoulli_distribution<>(theta_vec[n]));
     output[n] = bernoulli_rng();
   }
@@ -50,6 +50,6 @@ inline typename VectorBuilder<true, int, T_theta>::type bernoulli_rng(
   return output.data();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

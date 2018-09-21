@@ -19,7 +19,7 @@ namespace math {
  */
 inline double square(double x) { return x * x; }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

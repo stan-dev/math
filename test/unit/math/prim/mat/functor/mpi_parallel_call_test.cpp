@@ -2,8 +2,8 @@
 // MPI
 #ifdef STAN_MPI
 
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 #include <test/unit/util.hpp>
 
 #include <test/unit/math/prim/mat/functor/faulty_functor.hpp>
@@ -15,14 +15,14 @@ using stan::math::matrix_d;
 using stan::math::vector_d;
 
 struct mock_reduce {
-  matrix_d operator()(const vector_d& shared_params,
-                      const vector_d& job_specific_params,
-                      const std::vector<double>& x_r,
-                      const std::vector<int>& x_i,
-                      std::ostream* msgs = nullptr) const {
+  matrix_d operator()(const vector_d &shared_params,
+                      const vector_d &job_specific_params,
+                      const std::vector<double> &x_r,
+                      const std::vector<int> &x_i,
+                      std::ostream *msgs = nullptr) const {
     boost::mpi::communicator world;
-    if (stan::math::abs(job_specific_params(0) + 1.0)
-        < 1E-7) {  // check for param being 1.0
+    if (stan::math::abs(job_specific_params(0) + 1.0) <
+        1E-7) { // check for param being 1.0
       throw std::domain_error("Illegal parameter!");
     }
     return stan::math::rep_matrix(world.rank(), 3, world.rank());
@@ -31,17 +31,17 @@ struct mock_reduce {
 
 template <typename F, typename T_shared_param, typename T_job_param>
 struct mock_combine {
- public:
+public:
   typedef matrix_d result_t;
 
   mock_combine() {}
   mock_combine(
-      const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
-      const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&
-          job_params) {}
+      const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1> &shared_params,
+      const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>
+          &job_params) {}
 
-  result_t operator()(const matrix_d& local_result,
-                      const std::vector<int>& world_f_out) {
+  result_t operator()(const matrix_d &local_result,
+                      const std::vector<int> &world_f_out) {
     return local_result;
   }
 };
@@ -64,10 +64,10 @@ struct MpiJob : public ::testing::Test {
   Eigen::VectorXd shared_params_d;
   std::vector<Eigen::VectorXd> job_params_d;
   const std::size_t N = 10;
-  std::vector<std::vector<double>> x_r
-      = std::vector<std::vector<double>>(N, std::vector<double>(1, 1.0));
-  std::vector<std::vector<int>> x_i
-      = std::vector<std::vector<int>>(N, std::vector<int>(1, 0));
+  std::vector<std::vector<double>> x_r =
+      std::vector<std::vector<double>>(N, std::vector<double>(1, 1.0));
+  std::vector<std::vector<int>> x_i =
+      std::vector<std::vector<int>>(N, std::vector<int>(1, 0));
 
   virtual void SetUp() {
     shared_params_d.resize(2);

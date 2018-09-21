@@ -1,9 +1,9 @@
-#include <stan/math/prim/scal.hpp>
 #include <boost/math/distributions.hpp>
-#include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
-#include <test/unit/math/prim/scal/prob/util.hpp>
+#include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
+#include <test/unit/math/prim/scal/prob/util.hpp>
 #include <vector>
 
 TEST(ProbDistributionsGumbel, error_check) {

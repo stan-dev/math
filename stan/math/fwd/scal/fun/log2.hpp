@@ -15,14 +15,13 @@ namespace math {
  * @param x argument
  * @return base two logarithm of argument
  */
-template <typename T>
-inline fvar<T> log2(const fvar<T>& x) {
+template <typename T> inline fvar<T> log2(const fvar<T> &x) {
   if (x.val_ < 0.0)
     return fvar<T>(NOT_A_NUMBER, NOT_A_NUMBER);
   else
     return fvar<T>(log2(x.val_), x.d_ / (x.val_ * LOG_2));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

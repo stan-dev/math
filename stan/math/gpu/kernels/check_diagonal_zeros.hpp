@@ -32,7 +32,7 @@ const char *is_zero_on_diagonal_kernel_code = STRINGIFY(
       }
     }
     // \cond
-);
+    );
 // \endcond
 
 /**
@@ -43,8 +43,8 @@ const global_range_kernel<cl::Buffer, cl::Buffer, int, int>
     check_diagonal_zeros("is_zero_on_diagonal",
                          is_zero_on_diagonal_kernel_code);
 
-}  // namespace opencl_kernels
-}  // namespace math
-}  // namespace stan
+} // namespace opencl_kernels
+} // namespace math
+} // namespace stan
 #endif
 #endif

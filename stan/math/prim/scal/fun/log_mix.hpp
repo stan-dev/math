@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOG_MIX_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOG_MIX_HPP
 
+#include <cmath>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/fun/log_sum_exp.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
-#include <cmath>
+#include <stan/math/prim/scal/fun/log_sum_exp.hpp>
 
 namespace stan {
 namespace math {
@@ -50,6 +50,6 @@ inline double log_mix(double theta, double lambda1, double lambda2) {
   return log_sum_exp(log(theta) + lambda1, log1m(theta) + lambda2);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

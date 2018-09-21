@@ -1,34 +1,34 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_PARETO_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_PARETO_LPDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <boost/random/exponential_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
+#include <cmath>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <boost/random/exponential_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <cmath>
+#include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
+#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {
 namespace math {
 
 // Pareto(y|y_m, alpha)  [y > y_m;  y_m > 0;  alpha > 0]
 template <bool propto, typename T_y, typename T_scale, typename T_shape>
-typename return_type<T_y, T_scale, T_shape>::type pareto_lpdf(
-    const T_y& y, const T_scale& y_min, const T_shape& alpha) {
-  static const char* function = "pareto_lpdf";
+typename return_type<T_y, T_scale, T_shape>::type
+pareto_lpdf(const T_y &y, const T_scale &y_min, const T_shape &alpha) {
+  static const char *function = "pareto_lpdf";
   typedef typename stan::partials_return_type<T_y, T_scale, T_shape>::type
       T_partials_return;
 
@@ -106,18 +106,18 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_lpdf(
     if (!is_constant_struct<T_scale>::value)
       ops_partials.edge2_.partials_[n] += alpha_dbl / value_of(y_min_vec[n]);
     if (!is_constant_struct<T_shape>::value)
-      ops_partials.edge3_.partials_[n]
-          += 1 / alpha_dbl + log_y_min[n] - log_y[n];
+      ops_partials.edge3_.partials_[n] +=
+          1 / alpha_dbl + log_y_min[n] - log_y[n];
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_scale, typename T_shape>
-inline typename return_type<T_y, T_scale, T_shape>::type pareto_lpdf(
-    const T_y& y, const T_scale& y_min, const T_shape& alpha) {
+inline typename return_type<T_y, T_scale, T_shape>::type
+pareto_lpdf(const T_y &y, const T_scale &y_min, const T_shape &alpha) {
   return pareto_lpdf<false>(y, y_min, alpha);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

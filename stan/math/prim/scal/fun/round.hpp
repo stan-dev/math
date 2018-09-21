@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_ROUND_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_ROUND_HPP
 
-#include <stan/math/prim/scal/fun/boost_policy.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <boost/math/special_functions/round.hpp>
 #include <limits>
+#include <stan/math/prim/scal/fun/boost_policy.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
 
 namespace stan {
 namespace math {
@@ -31,6 +31,6 @@ inline double round(double x) {
  */
 inline double round(int x) { return round(static_cast<double>(x)); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

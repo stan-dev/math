@@ -1,7 +1,7 @@
-#include <stan/math/fwd/mat.hpp>
-#include <gtest/gtest.h>
 #include <boost/math/special_functions/fpclassify.hpp>
+#include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/fwd/mat.hpp>
 
 using stan::math::fvar;
 
@@ -137,7 +137,7 @@ TEST(AgradFwdMatrixSquaredDistance, vector_ffd_vector_ffd) {
   v2(1).d_ = 5.0;
   v2(2).d_ = 6.0;
 
-  stan::math::fvar<fvar<double> > a = stan::math::squared_distance(v1, v2);
+  stan::math::fvar<fvar<double>> a = stan::math::squared_distance(v1, v2);
 
   EXPECT_FLOAT_EQ(50, a.val_.val_);
   EXPECT_FLOAT_EQ(12, a.d_.val_);
@@ -168,7 +168,7 @@ TEST(AgradFwdMatrixSquaredDistance, rowvector_ffd_vector_ffd) {
   v(1).d_ = 5.0;
   v(2).d_ = 6.0;
 
-  stan::math::fvar<fvar<double> > a = stan::math::squared_distance(rv, v);
+  stan::math::fvar<fvar<double>> a = stan::math::squared_distance(rv, v);
 
   EXPECT_FLOAT_EQ(50, a.val_.val_);
   EXPECT_FLOAT_EQ(12, a.d_.val_);
@@ -199,7 +199,7 @@ TEST(AgradFwdMatrixSquaredDistance, vector_ffd_rowvector_ffd) {
   v(1).d_ = 5.0;
   v(2).d_ = 6.0;
 
-  stan::math::fvar<fvar<double> > a = stan::math::squared_distance(v, rv);
+  stan::math::fvar<fvar<double>> a = stan::math::squared_distance(v, rv);
 
   EXPECT_FLOAT_EQ(50, a.val_.val_);
   EXPECT_FLOAT_EQ(12, a.d_.val_);

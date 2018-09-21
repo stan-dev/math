@@ -17,7 +17,7 @@ namespace math {
  */
 inline double abs(double x) { return std::fabs(x); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

@@ -1,8 +1,8 @@
-#include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/binomial.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 int round_to_int(double x) {
   return static_cast<int>(x < 0 ? x - 0.5 : x + 0.5);

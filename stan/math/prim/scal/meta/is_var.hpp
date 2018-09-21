@@ -3,10 +3,9 @@
 
 namespace stan {
 
-template <typename T>
-struct is_var {
+template <typename T> struct is_var {
   enum { value = false };
 };
 
-}  // namespace stan
+} // namespace stan
 #endif

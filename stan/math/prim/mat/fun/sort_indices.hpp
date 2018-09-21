@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_SORT_INDICES_HPP
 #define STAN_MATH_PRIM_MAT_FUN_SORT_INDICES_HPP
 
+#include <algorithm>
+#include <stan/math/prim/arr/meta/index_type.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
-#include <stan/math/prim/arr/meta/index_type.hpp>
-#include <algorithm>
 #include <vector>
 
 namespace stan {
@@ -18,18 +18,17 @@ namespace math {
  * @tparam C container type
  */
 namespace {
-template <bool ascending, typename C>
-class index_comparator {
-  const C& xs_;
+template <bool ascending, typename C> class index_comparator {
+  const C &xs_;
 
- public:
+public:
   /**
    * Construct an index comparator holding a reference
    * to the specified container.
    *
    * @patam xs Container
    */
-  explicit index_comparator(const C& xs) : xs_(xs) {}
+  explicit index_comparator(const C &xs) : xs_(xs) {}
 
   /**
    * Return true if the value at the first index is sorted in
@@ -58,7 +57,7 @@ class index_comparator {
  * @return sorted version of container
  */
 template <bool ascending, typename C>
-std::vector<int> sort_indices(const C& xs) {
+std::vector<int> sort_indices(const C &xs) {
   typedef typename index_type<C>::type idx_t;
   idx_t size = xs.size();
   std::vector<int> idxs;
@@ -70,8 +69,8 @@ std::vector<int> sort_indices(const C& xs) {
   return idxs;
 }
 
-}  // namespace
+} // namespace
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

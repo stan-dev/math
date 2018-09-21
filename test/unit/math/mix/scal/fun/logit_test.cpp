@@ -1,7 +1,7 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/scal/fun/util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 class AgradFwdLogit : public testing::Test {
   void SetUp() { stan::math::recover_memory(); }
@@ -42,11 +42,11 @@ TEST_F(AgradFwdLogit, FvarFvarVar_1stDeriv) {
   using stan::math::logit;
   using stan::math::var;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var> > a = logit(x);
+  fvar<fvar<var>> a = logit(x);
 
   EXPECT_FLOAT_EQ(logit(0.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1 / (0.5 - 0.25), a.val_.d_.val());
@@ -59,11 +59,11 @@ TEST_F(AgradFwdLogit, FvarFvarVar_1stDeriv) {
   stan::math::recover_memory();
   EXPECT_FLOAT_EQ(1 / (0.5 - 0.25), g[0]);
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 0.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var> > b = logit(y);
+  fvar<fvar<var>> b = logit(y);
   EXPECT_FLOAT_EQ(logit(0.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(0, a.val_.d_.val());
   EXPECT_FLOAT_EQ(1 / (0.5 - 0.25), a.d_.val_.val());
@@ -79,11 +79,11 @@ TEST_F(AgradFwdLogit, FvarFvarVar_2ndDeriv) {
   using stan::math::logit;
   using stan::math::var;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var> > a = logit(x);
+  fvar<fvar<var>> a = logit(x);
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
@@ -91,11 +91,11 @@ TEST_F(AgradFwdLogit, FvarFvarVar_2ndDeriv) {
   stan::math::recover_memory();
   EXPECT_FLOAT_EQ(0, g[0]);
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 0.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var> > b = logit(y);
+  fvar<fvar<var>> b = logit(y);
 
   AVEC q = createAVEC(y.val_.val_);
   VEC r;
@@ -106,12 +106,12 @@ TEST_F(AgradFwdLogit, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
   x.d_.val_ = 1.0;
 
-  fvar<fvar<var> > a = logit(x);
+  fvar<fvar<var>> a = logit(x);
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
@@ -120,8 +120,7 @@ TEST_F(AgradFwdLogit, FvarFvarVar_3rdDeriv) {
 }
 
 struct logit_fun {
-  template <typename T0>
-  inline T0 operator()(const T0& arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return logit(arg1);
   }
 };

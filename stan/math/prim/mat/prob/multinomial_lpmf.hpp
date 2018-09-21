@@ -5,11 +5,11 @@
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/mat/err/check_simplex.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <vector>
 
@@ -18,10 +18,10 @@ namespace math {
 // Multinomial(ns|N, theta)   [0 <= n <= N;  SUM ns = N;
 //                            0 <= theta[n] <= 1;  SUM theta = 1]
 template <bool propto, typename T_prob>
-typename boost::math::tools::promote_args<T_prob>::type multinomial_lpmf(
-    const std::vector<int>& ns,
-    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
-  static const char* function = "multinomial_lpmf";
+typename boost::math::tools::promote_args<T_prob>::type
+multinomial_lpmf(const std::vector<int> &ns,
+                 const Eigen::Matrix<T_prob, Eigen::Dynamic, 1> &theta) {
+  static const char *function = "multinomial_lpmf";
 
   using boost::math::lgamma;
   using boost::math::tools::promote_args;
@@ -48,12 +48,12 @@ typename boost::math::tools::promote_args<T_prob>::type multinomial_lpmf(
 }
 
 template <typename T_prob>
-typename boost::math::tools::promote_args<T_prob>::type multinomial_lpmf(
-    const std::vector<int>& ns,
-    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
+typename boost::math::tools::promote_args<T_prob>::type
+multinomial_lpmf(const std::vector<int> &ns,
+                 const Eigen::Matrix<T_prob, Eigen::Dynamic, 1> &theta) {
   return multinomial_lpmf<false>(ns, theta);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -1,9 +1,9 @@
 #ifndef TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_MATCH_RETURN_T_HPP
 #define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_MATCH_RETURN_T_HPP
 
-#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 
 namespace stan {
 
@@ -24,6 +24,6 @@ void expect_match_return_t() {
   EXPECT_TRUE((boost::is_same<T_result_expected, result_t>::value));
 }
 
-}  // namespace test
-}  // namespace stan
+} // namespace test
+} // namespace stan
 #endif

@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(MathMatrix, trace_inv_quad_form_ldlt) {
   stan::math::matrix_d A(4, 4), B(4, 2);

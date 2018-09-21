@@ -1,5 +1,5 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(ProbInternalMath, F32_fd) {
@@ -19,12 +19,12 @@ TEST(ProbInternalMath, F32_fd) {
 TEST(ProbInternalMath, F32_ffd) {
   using stan::math::fvar;
 
-  fvar<fvar<double> > a = 1.0;
-  fvar<fvar<double> > b = 31.0;
-  fvar<fvar<double> > c = -27.0;
-  fvar<fvar<double> > d = 19.0;
-  fvar<fvar<double> > e = -41.0;
-  fvar<fvar<double> > z = 1.0;
+  fvar<fvar<double>> a = 1.0;
+  fvar<fvar<double>> b = 31.0;
+  fvar<fvar<double>> c = -27.0;
+  fvar<fvar<double>> d = 19.0;
+  fvar<fvar<double>> e = -41.0;
+  fvar<fvar<double>> z = 1.0;
 
   EXPECT_FLOAT_EQ(
       11.28915378492300834453857665243661995978358572684678329916652,

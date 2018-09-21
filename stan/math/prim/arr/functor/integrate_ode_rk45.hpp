@@ -1,16 +1,16 @@
 #ifndef STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_RK45_HPP
 #define STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_RK45_HPP
 
+#include <boost/version.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
-#include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_observer.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/err/check_less.hpp>
+#include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <boost/version.hpp>
 #if BOOST_VERSION == 106400
 #include <boost/serialization/array_wrapper.hpp>
 #endif
@@ -66,11 +66,11 @@ namespace math {
  * same size as the state variable, corresponding to a time in ts.
  */
 template <typename F, typename T1, typename T2>
-std::vector<std::vector<typename stan::return_type<T1, T2>::type> >
-integrate_ode_rk45(const F& f, const std::vector<T1>& y0, double t0,
-                   const std::vector<double>& ts, const std::vector<T2>& theta,
-                   const std::vector<double>& x, const std::vector<int>& x_int,
-                   std::ostream* msgs = nullptr,
+std::vector<std::vector<typename stan::return_type<T1, T2>::type>>
+integrate_ode_rk45(const F &f, const std::vector<T1> &y0, double t0,
+                   const std::vector<double> &ts, const std::vector<T2> &theta,
+                   const std::vector<double> &x, const std::vector<int> &x_int,
+                   std::ostream *msgs = nullptr,
                    double relative_tolerance = 1e-6,
                    double absolute_tolerance = 1e-6, int max_num_steps = 1E6) {
   using boost::numeric::odeint::integrate_times;
@@ -108,7 +108,7 @@ integrate_ode_rk45(const F& f, const std::vector<T1>& y0, double t0,
   for (size_t n = 0; n < ts.size(); n++)
     ts_vec[n + 1] = ts[n];
 
-  std::vector<std::vector<double> > y_coupled(ts_vec.size());
+  std::vector<std::vector<double>> y_coupled(ts_vec.size());
   coupled_ode_observer observer(y_coupled);
 
   // the coupled system creates the coupled initial state
@@ -129,8 +129,8 @@ integrate_ode_rk45(const F& f, const std::vector<T1>& y0, double t0,
   return coupled_system.decouple_states(y_coupled);
 }
 
-}  // namespace math
+} // namespace math
 
-}  // namespace stan
+} // namespace stan
 
 #endif

@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_ORDERED_CONSTRAIN_HPP
 #define STAN_MATH_PRIM_MAT_FUN_ORDERED_CONSTRAIN_HPP
 
+#include <cmath>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
-#include <cmath>
 
 namespace stan {
 namespace math {
@@ -18,13 +18,13 @@ namespace math {
  * @tparam T Type of scalar.
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) {
+Eigen::Matrix<T, Eigen::Dynamic, 1>
+ordered_constrain(const Eigen::Matrix<T, Eigen::Dynamic, 1> &x) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
 
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  typedef typename index_type<Matrix<T, Dynamic, 1>>::type size_type;
 
   size_type k = x.size();
   Matrix<T, Dynamic, 1> y(k);
@@ -49,20 +49,20 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_constrain(
  * @tparam T Type of scalar.
  */
 template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, T& lp) {
+inline Eigen::Matrix<T, Eigen::Dynamic, 1>
+ordered_constrain(const Eigen::Matrix<T, Eigen::Dynamic, 1> &x, T &lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  typedef typename index_type<Matrix<T, Dynamic, 1>>::type size_type;
 
   for (size_type i = 1; i < x.size(); ++i)
     lp += x(i);
   return ordered_constrain(x);
 }
 
-}  // namespace math
+} // namespace math
 
-}  // namespace stan
+} // namespace stan
 
 #endif

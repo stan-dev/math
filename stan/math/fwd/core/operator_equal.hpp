@@ -16,7 +16,7 @@ namespace math {
  * @return true if the arguments have equal values
  */
 template <typename T>
-inline bool operator==(const fvar<T>& x, const fvar<T>& y) {
+inline bool operator==(const fvar<T> &x, const fvar<T> &y) {
   return x.val_ == y.val_;
 }
 
@@ -30,8 +30,7 @@ inline bool operator==(const fvar<T>& x, const fvar<T>& y) {
  * @param[in] y second argument
  * @return true if the arguments have equal values
  */
-template <typename T>
-inline bool operator==(const fvar<T>& x, double y) {
+template <typename T> inline bool operator==(const fvar<T> &x, double y) {
   return x.val_ == y;
 }
 
@@ -44,11 +43,10 @@ inline bool operator==(const fvar<T>& x, double y) {
  * @param[in] y second argument
  * @return true if the arguments have equal values
  */
-template <typename T>
-inline bool operator==(double x, const fvar<T>& y) {
+template <typename T> inline bool operator==(double x, const fvar<T> &y) {
   return x == y.val_;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

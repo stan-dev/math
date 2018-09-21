@@ -1,7 +1,7 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/scal/fun/util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradFwdPow, FvarVar_FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -112,14 +112,14 @@ TEST(AgradFwdPow, FvarFvarVar_FvarFvarVar_1stDeriv) {
   using std::log;
   using std::pow;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 0.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var> > a = pow(x, y);
+  fvar<fvar<var>> a = pow(x, y);
 
   EXPECT_FLOAT_EQ(pow(0.5, 0.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(0.5 * pow(0.5, -0.5), a.val_.d_.val());
@@ -138,12 +138,12 @@ TEST(AgradFwdPow, FvarFvarVar_Double_1stDeriv) {
   using std::log;
   using std::pow;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
   double y(0.5);
 
-  fvar<fvar<var> > a = pow(x, y);
+  fvar<fvar<var>> a = pow(x, y);
 
   EXPECT_FLOAT_EQ(pow(0.5, 0.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(0.5 * pow(0.5, -0.5), a.val_.d_.val());
@@ -162,11 +162,11 @@ TEST(AgradFwdPow, Double_FvarFvarVar_1stDeriv) {
   using std::pow;
 
   double x(0.5);
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 0.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var> > a = pow(x, y);
+  fvar<fvar<var>> a = pow(x, y);
 
   EXPECT_FLOAT_EQ(pow(0.5, 0.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(0, a.val_.d_.val());
@@ -184,14 +184,14 @@ TEST(AgradFwdPow, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
   using std::log;
   using std::pow;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 0.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var> > a = pow(x, y);
+  fvar<fvar<var>> a = pow(x, y);
 
   AVEC p = createAVEC(x.val_.val_, y.val_.val_);
   VEC g;
@@ -205,14 +205,14 @@ TEST(AgradFwdPow, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
   using std::log;
   using std::pow;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 0.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var> > a = pow(x, y);
+  fvar<fvar<var>> a = pow(x, y);
 
   AVEC p = createAVEC(x.val_.val_, y.val_.val_);
   VEC g;
@@ -226,12 +226,12 @@ TEST(AgradFwdPow, FvarFvarVar_Double_2ndDeriv) {
   using std::log;
   using std::pow;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
   double y(1.2);
 
-  fvar<fvar<var> > a = pow(x, y);
+  fvar<fvar<var>> a = pow(x, y);
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
@@ -245,11 +245,11 @@ TEST(AgradFwdPow, Double_FvarFvarVar_2ndDeriv) {
   using std::pow;
 
   double x(0.5);
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.2;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var> > a = pow(x, y);
+  fvar<fvar<var>> a = pow(x, y);
 
   AVEC p = createAVEC(y.val_.val_);
   VEC g;
@@ -262,14 +262,14 @@ TEST(AgradFwdPow, FvarFvarVar_FvarFvarVar_3rdDeriv) {
   using std::log;
   using std::pow;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 0.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var> > a = pow(x, y);
+  fvar<fvar<var>> a = pow(x, y);
 
   AVEC p = createAVEC(x.val_.val_, y.val_.val_);
   VEC g;
@@ -283,13 +283,13 @@ TEST(AgradFwdPow, FvarFvarVar_Double_3rdDeriv) {
   using std::log;
   using std::pow;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
   x.d_.val_ = 1.0;
   double y(1.2);
 
-  fvar<fvar<var> > a = pow(x, y);
+  fvar<fvar<var>> a = pow(x, y);
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
@@ -303,12 +303,12 @@ TEST(AgradFwdPow, Double_FvarFvarVar_3rdDeriv) {
   using std::pow;
 
   double x(0.5);
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.2;
   y.d_.val_ = 1.0;
   y.val_.d_ = 1.0;
 
-  fvar<fvar<var> > a = pow(x, y);
+  fvar<fvar<var>> a = pow(x, y);
 
   AVEC p = createAVEC(y.val_.val_);
   VEC g;
@@ -318,8 +318,8 @@ TEST(AgradFwdPow, Double_FvarFvarVar_3rdDeriv) {
 
 struct pow_fun {
   template <typename T0, typename T1>
-  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
-      const T0 arg1, const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type
+  operator()(const T0 arg1, const T1 arg2) const {
     return pow(arg1, arg2);
   }
 };

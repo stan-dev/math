@@ -1,6 +1,6 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <vector>
 // For speed comparisons
 // #include <chrono>
@@ -39,10 +39,10 @@ TEST(ProbDistributionsBernoulliLogitGLM,
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 2;
     }
-    Matrix<double, Dynamic, Dynamic> x
-        = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
-    Matrix<double, Dynamic, 1> beta
-        = Matrix<double, Dynamic, Dynamic>::Random(2, 1);
+    Matrix<double, Dynamic, Dynamic> x =
+        Matrix<double, Dynamic, Dynamic>::Random(3, 2);
+    Matrix<double, Dynamic, 1> beta =
+        Matrix<double, Dynamic, Dynamic>::Random(2, 1);
     Matrix<double, 1, 1> alphamat = Matrix<double, 1, 1>::Random(1, 1);
     double alpha = alphamat[0];
     Matrix<double, Dynamic, 1> alphavec = alpha * Matrix<double, 3, 1>::Ones();
@@ -117,10 +117,10 @@ TEST(ProbDistributionsBernoulliLogitGLM,
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 2;
     }
-    Matrix<double, Dynamic, Dynamic> xreal
-        = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
-    Matrix<double, Dynamic, 1> betareal
-        = Matrix<double, Dynamic, Dynamic>::Random(2, 1);
+    Matrix<double, Dynamic, Dynamic> xreal =
+        Matrix<double, Dynamic, Dynamic>::Random(3, 2);
+    Matrix<double, Dynamic, 1> betareal =
+        Matrix<double, Dynamic, Dynamic>::Random(2, 1);
     Matrix<double, 1, 1> alphareal = Matrix<double, 1, 1>::Random(1, 1);
 
     Matrix<var, Dynamic, 1> beta = betareal;
@@ -174,8 +174,8 @@ TEST(ProbDistributionsBernoulliLogitGLM,
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 2;
     }
-    Matrix<double, Dynamic, Dynamic> xreal
-        = Matrix<double, Dynamic, Dynamic>::Random(3, 1);
+    Matrix<double, Dynamic, Dynamic> xreal =
+        Matrix<double, Dynamic, Dynamic>::Random(3, 1);
     double betareal = Matrix<double, Dynamic, Dynamic>::Random(1, 1)(0, 0);
     Matrix<double, 1, 1> alphareal = Matrix<double, 1, 1>::Random(1, 1);
     var beta = betareal;
@@ -220,12 +220,12 @@ TEST(ProbDistributionsBernoulliLogitGLM,
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 2;
     }
-    Matrix<double, Dynamic, Dynamic> xreal
-        = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
-    Matrix<double, Dynamic, 1> betareal
-        = Matrix<double, Dynamic, Dynamic>::Random(2, 1);
-    Matrix<double, Dynamic, 1> alphareal
-        = Matrix<double, Dynamic, Dynamic>::Random(3, 1);
+    Matrix<double, Dynamic, Dynamic> xreal =
+        Matrix<double, Dynamic, Dynamic>::Random(3, 2);
+    Matrix<double, Dynamic, 1> betareal =
+        Matrix<double, Dynamic, Dynamic>::Random(2, 1);
+    Matrix<double, Dynamic, 1> alphareal =
+        Matrix<double, Dynamic, Dynamic>::Random(3, 1);
 
     Matrix<var, Dynamic, 1> beta = betareal;
     Matrix<var, Dynamic, 1> theta(3, 1);
@@ -339,24 +339,24 @@ TEST(ProbDistributionsPoissonLogGLM,
     yw3[n] = 42 + (Eigen::Matrix<uint, -1, 1>::Random(1, 1)[0] % 2);
   }
   Eigen::Matrix<double, -1, -1> x = Eigen::Matrix<double, -1, -1>::Random(N, M);
-  Eigen::Matrix<double, -1, -1> xw1
-      = Eigen::Matrix<double, -1, -1>::Random(W, M);
-  Eigen::Matrix<double, -1, -1> xw2
-      = Eigen::Matrix<double, -1, -1>::Random(N, W);
-  Eigen::Matrix<double, -1, -1> xw3
-      = Eigen::Matrix<double, -1, -1>::Random(N, M) * NAN;
-  Eigen::Matrix<double, -1, 1> alpha
-      = Eigen::Matrix<double, -1, 1>::Random(N, 1);
-  Eigen::Matrix<double, -1, 1> alphaw1
-      = Eigen::Matrix<double, -1, 1>::Random(W, 1);
-  Eigen::Matrix<double, -1, 1> alphaw2
-      = Eigen::Matrix<double, -1, 1>::Random(N, 1) * NAN;
-  Eigen::Matrix<double, -1, 1> beta
-      = Eigen::Matrix<double, -1, 1>::Random(M, 1);
-  Eigen::Matrix<double, -1, 1> betaw1
-      = Eigen::Matrix<double, -1, 1>::Random(W, 1);
-  Eigen::Matrix<double, -1, 1> betaw2
-      = Eigen::Matrix<double, -1, 1>::Random(M, 1) * NAN;
+  Eigen::Matrix<double, -1, -1> xw1 =
+      Eigen::Matrix<double, -1, -1>::Random(W, M);
+  Eigen::Matrix<double, -1, -1> xw2 =
+      Eigen::Matrix<double, -1, -1>::Random(N, W);
+  Eigen::Matrix<double, -1, -1> xw3 =
+      Eigen::Matrix<double, -1, -1>::Random(N, M) * NAN;
+  Eigen::Matrix<double, -1, 1> alpha =
+      Eigen::Matrix<double, -1, 1>::Random(N, 1);
+  Eigen::Matrix<double, -1, 1> alphaw1 =
+      Eigen::Matrix<double, -1, 1>::Random(W, 1);
+  Eigen::Matrix<double, -1, 1> alphaw2 =
+      Eigen::Matrix<double, -1, 1>::Random(N, 1) * NAN;
+  Eigen::Matrix<double, -1, 1> beta =
+      Eigen::Matrix<double, -1, 1>::Random(M, 1);
+  Eigen::Matrix<double, -1, 1> betaw1 =
+      Eigen::Matrix<double, -1, 1>::Random(W, 1);
+  Eigen::Matrix<double, -1, 1> betaw2 =
+      Eigen::Matrix<double, -1, 1>::Random(M, 1) * NAN;
 
   EXPECT_THROW(stan::math::bernoulli_logit_glm_lpmf(yw1, x, alpha, beta),
                std::invalid_argument);

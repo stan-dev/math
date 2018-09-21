@@ -1,5 +1,5 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <vector>
 
@@ -30,7 +30,7 @@ TEST(ProbAgradDistributionsNormal, derivatives) {
   fvar<double> lp = normal_log<false>(0, 0, fvar<double>(1.0, 1));
   EXPECT_FLOAT_EQ(grad[2], lp.tangent());
 
-  fvar<fvar<double> > y(1.0);
+  fvar<fvar<double>> y(1.0);
   fvar<double> x(1.0, 2.0);
   EXPECT_NO_THROW(normal_log(y, 1, 1));
   EXPECT_FLOAT_EQ(normal_log(x, 1, 1).val_, -0.918938533204672741780);

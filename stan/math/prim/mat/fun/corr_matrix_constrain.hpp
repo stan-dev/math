@@ -2,10 +2,10 @@
 #define STAN_MATH_PRIM_MAT_FUN_CORR_MATRIX_CONSTRAIN_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/read_corr_matrix.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/fun/corr_constrain.hpp>
-#include <stan/math/prim/mat/fun/read_corr_matrix.hpp>
 #include <stdexcept>
 
 namespace stan {
@@ -37,11 +37,11 @@ namespace math {
  */
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-    typename math::index_type<Eigen::Matrix<T, Eigen::Dynamic, 1> >::type k) {
+    const Eigen::Matrix<T, Eigen::Dynamic, 1> &x,
+    typename math::index_type<Eigen::Matrix<T, Eigen::Dynamic, 1>>::type k) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  typedef typename index_type<Matrix<T, Dynamic, 1>>::type size_type;
 
   size_type k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
@@ -73,13 +73,13 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
  */
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-    typename math::index_type<Eigen::Matrix<T, Eigen::Dynamic, 1> >::type k,
-    T& lp) {
+    const Eigen::Matrix<T, Eigen::Dynamic, 1> &x,
+    typename math::index_type<Eigen::Matrix<T, Eigen::Dynamic, 1>>::type k,
+    T &lp) {
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  typedef typename index_type<Matrix<T, Dynamic, 1>>::type size_type;
 
   size_type k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
@@ -90,6 +90,6 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
   return read_corr_matrix(cpcs, k, lp);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

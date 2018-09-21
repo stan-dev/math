@@ -17,15 +17,15 @@ namespace math {
  * @tparam S type of input elements, must be assignable to T
  */
 template <typename T, typename S, int R, int C>
-struct promote_elements<Eigen::Matrix<T, R, C>, Eigen::Matrix<S, R, C> > {
+struct promote_elements<Eigen::Matrix<T, R, C>, Eigen::Matrix<S, R, C>> {
   /**
    * Return input matrix of type S as matrix of type T.
    *
    * @param u matrix of type S, assignable to type T
    * @returns matrix of type T
    */
-  inline static Eigen::Matrix<T, R, C> promote(
-      const Eigen::Matrix<S, R, C>& u) {
+  inline static Eigen::Matrix<T, R, C>
+  promote(const Eigen::Matrix<S, R, C> &u) {
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> t(u.rows(), u.cols());
     for (int i = 0; i < u.size(); ++i)
       t(i) = promote_elements<T, S>::promote(u(i));
@@ -41,20 +41,20 @@ struct promote_elements<Eigen::Matrix<T, R, C>, Eigen::Matrix<S, R, C> > {
  * @tparam T type of elements
  */
 template <typename T, int R, int C>
-struct promote_elements<Eigen::Matrix<T, R, C>, Eigen::Matrix<T, R, C> > {
+struct promote_elements<Eigen::Matrix<T, R, C>, Eigen::Matrix<T, R, C>> {
   /**
    * Return input matrix.
    *
    * @param u matrix of type T
    * @returns matrix of type T
    */
-  inline static const Eigen::Matrix<T, R, C>& promote(
-      const Eigen::Matrix<T, R, C>& u) {
+  inline static const Eigen::Matrix<T, R, C> &
+  promote(const Eigen::Matrix<T, R, C> &u) {
     return u;
   }
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

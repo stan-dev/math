@@ -1,6 +1,6 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/rev/scal.hpp>
 
 TEST(AgradRev, undefined) {
   stan::math::var a;
