@@ -1,7 +1,7 @@
-#include <exception>
-#include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
 #include <vector>
+#include <exception>
 
 TEST(MathUtoZ, sizeZeroInput) {
   using stan::math::csr_u_to_z;

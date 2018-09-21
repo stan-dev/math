@@ -1,9 +1,10 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
+#include <gtest/gtest.h>
 #include <stdexcept>
 #include <vector>
 
-template <typename T> void test_rank() {
+template <typename T>
+void test_rank() {
   using stan::math::rank;
 
   T c(1);
@@ -36,7 +37,8 @@ template <typename T> void test_rank() {
   EXPECT_THROW(rank(z, 2), std::out_of_range);
 }
 
-template <typename T> void test_rank_int() {
+template <typename T>
+void test_rank_int() {
   using stan::math::rank;
 
   T c(1);
@@ -73,19 +75,19 @@ TEST(AgradFwdMatrixRank, rank) {
   using stan::math::fvar;
   using stan::math::rank;
 
-  test_rank<std::vector<fvar<double>>>();
-  test_rank<Eigen::Matrix<fvar<double>, Eigen::Dynamic, 1>>();
-  test_rank<Eigen::Matrix<fvar<double>, 1, Eigen::Dynamic>>();
+  test_rank<std::vector<fvar<double> > >();
+  test_rank<Eigen::Matrix<fvar<double>, Eigen::Dynamic, 1> >();
+  test_rank<Eigen::Matrix<fvar<double>, 1, Eigen::Dynamic> >();
 
-  test_rank_int<std::vector<fvar<double>>>();
-  test_rank_int<Eigen::Matrix<fvar<double>, Eigen::Dynamic, 1>>();
-  test_rank_int<Eigen::Matrix<fvar<double>, 1, Eigen::Dynamic>>();
+  test_rank_int<std::vector<fvar<double> > >();
+  test_rank_int<Eigen::Matrix<fvar<double>, Eigen::Dynamic, 1> >();
+  test_rank_int<Eigen::Matrix<fvar<double>, 1, Eigen::Dynamic> >();
 
-  test_rank<std::vector<fvar<fvar<double>>>>();
-  test_rank<Eigen::Matrix<fvar<fvar<double>>, Eigen::Dynamic, 1>>();
-  test_rank<Eigen::Matrix<fvar<fvar<double>>, 1, Eigen::Dynamic>>();
+  test_rank<std::vector<fvar<fvar<double> > > >();
+  test_rank<Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, 1> >();
+  test_rank<Eigen::Matrix<fvar<fvar<double> >, 1, Eigen::Dynamic> >();
 
-  test_rank_int<std::vector<fvar<fvar<double>>>>();
-  test_rank_int<Eigen::Matrix<fvar<fvar<double>>, Eigen::Dynamic, 1>>();
-  test_rank_int<Eigen::Matrix<fvar<fvar<double>>, 1, Eigen::Dynamic>>();
+  test_rank_int<std::vector<fvar<fvar<double> > > >();
+  test_rank_int<Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, 1> >();
+  test_rank_int<Eigen::Matrix<fvar<fvar<double> >, 1, Eigen::Dynamic> >();
 }

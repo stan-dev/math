@@ -1,8 +1,8 @@
-#include <boost/math/special_functions/expm1.hpp>
-#include <gtest/gtest.h>
 #include <stan/math/rev/scal.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <boost/math/special_functions/expm1.hpp>
 
 TEST(AgradRev, expm1) {
   AVAR a = 1.3;
@@ -16,7 +16,8 @@ TEST(AgradRev, expm1) {
 }
 
 struct expm1_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0& arg1) const {
     return expm1(arg1);
   }
 };

@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/mat.hpp>
 #include <test/unit/math/prim/mat/fun/sort_test_util.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 typedef std::vector<double> VEC;
@@ -11,12 +11,12 @@ void test_sort_asc2(std::vector<double> val) {
   using stan::math::sort_asc;
   using stan::math::sort_asc;
 
-  std::vector<fvar<var>> x;
+  std::vector<fvar<var> > x;
   for (size_t i = 0U; i < val.size(); i++)
     x.push_back(fvar<var>(val[i]));
 
   std::vector<double> val_sorted = sort_asc(val);
-  std::vector<fvar<var>> x_sorted = sort_asc(x);
+  std::vector<fvar<var> > x_sorted = sort_asc(x);
 
   for (size_t i = 0U; i < val.size(); i++)
     EXPECT_EQ(val_sorted[i], x_sorted[i].val().val());
@@ -32,12 +32,12 @@ void test_sort_asc4(std::vector<double> val) {
   using stan::math::sort_asc;
   using stan::math::sort_asc;
 
-  std::vector<fvar<fvar<var>>> x;
+  std::vector<fvar<fvar<var> > > x;
   for (size_t i = 0U; i < val.size(); i++)
-    x.push_back(fvar<fvar<var>>(val[i]));
+    x.push_back(fvar<fvar<var> >(val[i]));
 
   std::vector<double> val_sorted = sort_asc(val);
-  std::vector<fvar<fvar<var>>> x_sorted = sort_asc(x);
+  std::vector<fvar<fvar<var> > > x_sorted = sort_asc(x);
 
   for (size_t i = 0U; i < val.size(); i++)
     EXPECT_EQ(val_sorted[i], x_sorted[i].val().val().val());
@@ -53,12 +53,12 @@ void test_sort_desc2(VEC val) {
   using stan::math::sort_desc;
   using stan::math::sort_desc;
 
-  std::vector<fvar<var>> x;
+  std::vector<fvar<var> > x;
   for (size_t i = 0U; i < val.size(); i++)
     x.push_back(fvar<var>(val[i]));
 
   VEC val_sorted = sort_desc(val);
-  std::vector<fvar<var>> x_sorted = sort_desc(x);
+  std::vector<fvar<var> > x_sorted = sort_desc(x);
 
   for (size_t i = 0U; i < val.size(); i++)
     EXPECT_EQ(val_sorted[i], x_sorted[i].val().val());
@@ -74,12 +74,12 @@ void test_sort_desc4(VEC val) {
   using stan::math::sort_desc;
   using stan::math::sort_desc;
 
-  std::vector<fvar<fvar<var>>> x;
+  std::vector<fvar<fvar<var> > > x;
   for (size_t i = 0U; i < val.size(); i++)
-    x.push_back(fvar<fvar<var>>(val[i]));
+    x.push_back(fvar<fvar<var> >(val[i]));
 
   VEC val_sorted = sort_desc(val);
-  std::vector<fvar<fvar<var>>> x_sorted = sort_desc(x);
+  std::vector<fvar<fvar<var> > > x_sorted = sort_desc(x);
 
   for (size_t i = 0U; i < val.size(); i++)
     EXPECT_EQ(val_sorted[i], x_sorted[i].val().val().val());
@@ -123,14 +123,14 @@ void test_sort_asc4(Eigen::Matrix<T, R, C> val) {
   using stan::math::sort_asc;
   using stan::math::sort_asc;
 
-  typedef Eigen::Matrix<fvar<fvar<var>>, R, C> AVEC;
+  typedef Eigen::Matrix<fvar<fvar<var> >, R, C> AVEC;
   typedef Eigen::Matrix<double, R, C> VEC;
 
   const size_t size = val.size();
 
   AVEC x(size);
   for (size_t i = 0U; i < size; i++)
-    x.data()[i] = fvar<fvar<var>>(val[i]);
+    x.data()[i] = fvar<fvar<var> >(val[i]);
 
   VEC val_sorted = sort_asc(val);
   AVEC x_sorted = sort_asc(x);
@@ -177,14 +177,14 @@ void test_sort_desc4(Eigen::Matrix<T, R, C> val) {
   using stan::math::sort_desc;
   using stan::math::sort_desc;
 
-  typedef Eigen::Matrix<fvar<fvar<var>>, R, C> AVEC;
+  typedef Eigen::Matrix<fvar<fvar<var> >, R, C> AVEC;
   typedef Eigen::Matrix<double, R, C> VEC;
 
   const size_t size = val.size();
 
   AVEC x(size);
   for (size_t i = 0U; i < size; i++)
-    x.data()[i] = fvar<fvar<var>>(val[i]);
+    x.data()[i] = fvar<fvar<var> >(val[i]);
 
   VEC val_sorted = sort_desc(val);
   AVEC x_sorted = sort_desc(x);
@@ -324,49 +324,51 @@ TEST(AgradMixSort, ffv_sort) {
 }
 
 TEST(AgradMixSort, ffv_no_thrown) {
-  Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1> vec1;
+  Eigen::Matrix<fvar<fvar<var> >, Eigen::Dynamic, 1> vec1;
   EXPECT_EQ(0, vec1.size());
   EXPECT_NO_THROW(sort_asc(vec1));
   EXPECT_NO_THROW(sort_desc(vec1));
 
-  Eigen::Matrix<fvar<fvar<var>>, 1, Eigen::Dynamic> vec2;
+  Eigen::Matrix<fvar<fvar<var> >, 1, Eigen::Dynamic> vec2;
   EXPECT_EQ(0, vec2.size());
   EXPECT_NO_THROW(sort_asc(vec2));
   EXPECT_NO_THROW(sort_desc(vec2));
 }
 
 TEST(MathMatrix, sortAscStdVecNan) {
-  test_sort_asc_throws<std::vector<stan::math::fvar<stan::math::var>>>();
-  test_sort_asc_throws<std::vector<stan::math::fvar<fvar<stan::math::var>>>>();
+  test_sort_asc_throws<std::vector<stan::math::fvar<stan::math::var> > >();
+  test_sort_asc_throws<
+      std::vector<stan::math::fvar<fvar<stan::math::var> > > >();
 }
 
 TEST(MathMatrix, sortDescStdVecNan) {
-  test_sort_desc_throws<std::vector<stan::math::fvar<stan::math::var>>>();
-  test_sort_desc_throws<std::vector<stan::math::fvar<fvar<stan::math::var>>>>();
+  test_sort_desc_throws<std::vector<stan::math::fvar<stan::math::var> > >();
+  test_sort_desc_throws<
+      std::vector<stan::math::fvar<fvar<stan::math::var> > > >();
 }
 
 TEST(MathMatrix, sortAscEigenVecNan) {
   test_sort_asc_throws<
-      Eigen::Matrix<stan::math::fvar<stan::math::var>, -1, 1>>();
+      Eigen::Matrix<stan::math::fvar<stan::math::var>, -1, 1> >();
   test_sort_asc_throws<
-      Eigen::Matrix<stan::math::fvar<fvar<stan::math::var>>, -1, 1>>();
+      Eigen::Matrix<stan::math::fvar<fvar<stan::math::var> >, -1, 1> >();
 }
 TEST(MathMatrix, sortAscEigenRowVecNan) {
   test_sort_asc_throws<
-      Eigen::Matrix<stan::math::fvar<stan::math::var>, 1, -1>>();
+      Eigen::Matrix<stan::math::fvar<stan::math::var>, 1, -1> >();
   test_sort_asc_throws<
-      Eigen::Matrix<stan::math::fvar<fvar<stan::math::var>>, 1, -1>>();
+      Eigen::Matrix<stan::math::fvar<fvar<stan::math::var> >, 1, -1> >();
 }
 
 TEST(MathMatrix, sortDescEigenVecNan) {
   test_sort_desc_throws<
-      Eigen::Matrix<stan::math::fvar<stan::math::var>, -1, 1>>();
+      Eigen::Matrix<stan::math::fvar<stan::math::var>, -1, 1> >();
   test_sort_desc_throws<
-      Eigen::Matrix<stan::math::fvar<fvar<stan::math::var>>, -1, 1>>();
+      Eigen::Matrix<stan::math::fvar<fvar<stan::math::var> >, -1, 1> >();
 }
 TEST(MathMatrix, sortDescEigenRowVecNan) {
   test_sort_desc_throws<
-      Eigen::Matrix<stan::math::fvar<stan::math::var>, 1, -1>>();
+      Eigen::Matrix<stan::math::fvar<stan::math::var>, 1, -1> >();
   test_sort_desc_throws<
-      Eigen::Matrix<stan::math::fvar<fvar<stan::math::var>>, 1, -1>>();
+      Eigen::Matrix<stan::math::fvar<fvar<stan::math::var> >, 1, -1> >();
 }

@@ -1,11 +1,11 @@
-#include <gtest/gtest.h>
 #include <stan/math/rev/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/jacobian.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
 
 void test_cholesky_correlation_jacobian(
-    const Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> &y, int K) {
+    const Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1>& y, int K) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::cholesky_corr_constrain;
@@ -26,7 +26,7 @@ void test_cholesky_correlation_jacobian(
     for (int j = 0; j < i; ++j)
       deps.push_back(x(i, j));
 
-  vector<vector<double>> jacobian;
+  vector<vector<double> > jacobian;
   stan::math::jacobian(deps, indeps, jacobian);
 
   Matrix<double, Dynamic, Dynamic> J(K_choose_2, K_choose_2);

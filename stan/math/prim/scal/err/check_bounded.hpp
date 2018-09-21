@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/err/domain_error_vec.hpp>
-#include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
+#include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <string>
 
@@ -22,8 +22,8 @@ namespace internal {
 // throws if y, low, or high is nan
 template <typename T_y, typename T_low, typename T_high, bool y_is_vec>
 struct bounded {
-  static void check(const char *function, const char *name, const T_y &y,
-                    const T_low &low, const T_high &high) {
+  static void check(const char* function, const char* name, const T_y& y,
+                    const T_low& low, const T_high& high) {
     using stan::max_size;
 
     scalar_seq_view<T_low> low_vec(low);
@@ -42,8 +42,8 @@ struct bounded {
 
 template <typename T_y, typename T_low, typename T_high>
 struct bounded<T_y, T_low, T_high, true> {
-  static void check(const char *function, const char *name, const T_y &y,
-                    const T_low &low, const T_high &high) {
+  static void check(const char* function, const char* name, const T_y& y,
+                    const T_low& low, const T_high& high) {
     using stan::get;
     using stan::length;
 
@@ -60,7 +60,7 @@ struct bounded<T_y, T_low, T_high, true> {
     }
   }
 };
-} // namespace internal
+}  // namespace internal
 
 /**
  * Check if the value is between the low and high
@@ -80,12 +80,12 @@ struct bounded<T_y, T_low, T_high, true> {
  *   if any of the arguments are NaN.
  */
 template <typename T_y, typename T_low, typename T_high>
-inline void check_bounded(const char *function, const char *name, const T_y &y,
-                          const T_low &low, const T_high &high) {
+inline void check_bounded(const char* function, const char* name, const T_y& y,
+                          const T_low& low, const T_high& high) {
   internal::bounded<T_y, T_low, T_high, is_vector_like<T_y>::value>::check(
       function, name, y, low, high);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

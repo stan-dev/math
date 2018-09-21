@@ -1,8 +1,9 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
-template <typename T> void test_cumulative_sum() {
+template <typename T>
+void test_cumulative_sum() {
   using stan::math::cumulative_sum;
 
   T c(1);
@@ -41,7 +42,7 @@ TEST(MathMatrix, cumulative_sum) {
   Eigen::Matrix<double, 1, Eigen::Dynamic> b;
   EXPECT_FLOAT_EQ(0, cumulative_sum(b).size());
 
-  test_cumulative_sum<std::vector<double>>();
-  test_cumulative_sum<Eigen::Matrix<double, Eigen::Dynamic, 1>>();
-  test_cumulative_sum<Eigen::Matrix<double, 1, Eigen::Dynamic>>();
+  test_cumulative_sum<std::vector<double> >();
+  test_cumulative_sum<Eigen::Matrix<double, Eigen::Dynamic, 1> >();
+  test_cumulative_sum<Eigen::Matrix<double, 1, Eigen::Dynamic> >();
 }

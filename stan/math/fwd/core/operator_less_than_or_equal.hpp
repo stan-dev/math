@@ -18,7 +18,7 @@ namespace math {
  * equal to the second argument's value
  */
 template <typename T>
-inline bool operator<=(const fvar<T> &x, const fvar<T> &y) {
+inline bool operator<=(const fvar<T>& x, const fvar<T>& y) {
   return x.val_ <= y.val_;
 }
 
@@ -32,7 +32,8 @@ inline bool operator<=(const fvar<T> &x, const fvar<T> &y) {
  * @return true if the first argument's value is less than or
  * equal to the second argument
  */
-template <typename T> inline bool operator<=(const fvar<T> &x, double y) {
+template <typename T>
+inline bool operator<=(const fvar<T>& x, double y) {
   return x.val_ <= y;
 }
 
@@ -46,9 +47,10 @@ template <typename T> inline bool operator<=(const fvar<T> &x, double y) {
  * @return true if the first argument is less than or equal to the
  * second argument's value
  */
-template <typename T> inline bool operator<=(double x, const fvar<T> &y) {
+template <typename T>
+inline bool operator<=(double x, const fvar<T>& y) {
   return x <= y.val_;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

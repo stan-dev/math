@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_PROMOTE_SCALAR_TYPE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_PROMOTE_SCALAR_TYPE_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/promote_scalar_type.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <vector>
 
 namespace stan {
@@ -20,7 +20,7 @@ namespace math {
  */
 template <typename T, typename S>
 struct promote_scalar_type<T,
-                           Eigen::Matrix<S, Eigen::Dynamic, Eigen::Dynamic>> {
+                           Eigen::Matrix<S, Eigen::Dynamic, Eigen::Dynamic> > {
   /**
    * The promoted type.
    */
@@ -38,7 +38,7 @@ struct promote_scalar_type<T,
  * @tparam S input vector scalar type
  */
 template <typename T, typename S>
-struct promote_scalar_type<T, Eigen::Matrix<S, Eigen::Dynamic, 1>> {
+struct promote_scalar_type<T, Eigen::Matrix<S, Eigen::Dynamic, 1> > {
   /**
    * The promoted type.
    */
@@ -56,7 +56,7 @@ struct promote_scalar_type<T, Eigen::Matrix<S, Eigen::Dynamic, 1>> {
  * @tparam S input row vector scalar type
  */
 template <typename T, typename S>
-struct promote_scalar_type<T, Eigen::Matrix<S, 1, Eigen::Dynamic>> {
+struct promote_scalar_type<T, Eigen::Matrix<S, 1, Eigen::Dynamic> > {
   /**
    * The promoted type.
    */
@@ -65,8 +65,8 @@ struct promote_scalar_type<T, Eigen::Matrix<S, 1, Eigen::Dynamic>> {
       type;
 };
 
-} // namespace math
+}  // namespace math
 
-} // namespace stan
+}  // namespace stan
 
 #endif

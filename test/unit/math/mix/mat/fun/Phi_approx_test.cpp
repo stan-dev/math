@@ -1,10 +1,10 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/mat.hpp>
+#include <gtest/gtest.h>
+#include <test/unit/math/prim/mat/vectorize/prim_scalar_unary_test.hpp>
+#include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
 #include <test/unit/math/fwd/mat/vectorize/fwd_scalar_unary_test.hpp>
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
-#include <test/unit/math/prim/mat/vectorize/prim_scalar_unary_test.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
-#include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
 #include <vector>
 
 /**
@@ -24,7 +24,8 @@ struct Phi_approx_test {
    * @tparam R Return type.
    * @tparam T Argument type.
    */
-  template <typename R, typename T> static R apply(const T &x) {
+  template <typename R, typename T>
+  static R apply(const T& x) {
     using stan::math::Phi_approx;
     return Phi_approx(x);
   }
@@ -51,7 +52,10 @@ struct Phi_approx_test {
    *
    * WARNING:  this is *not an independent test of the underlying function*.
    */
-  template <typename T> static T apply_base(const T &x) { return apply<T>(x); }
+  template <typename T>
+  static T apply_base(const T& x) {
+    return apply<T>(x);
+  }
 
   /**
    * Return sequence of valid double-valued inputs.

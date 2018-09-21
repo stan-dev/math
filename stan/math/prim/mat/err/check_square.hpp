@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_SQUARE_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_SQUARE_HPP
 
-#include <sstream>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <sstream>
 
 namespace stan {
 namespace math {
@@ -23,13 +23,13 @@ namespace math {
  *    is not square
  */
 template <typename T_y>
-inline void
-check_square(const char *function, const char *name,
-             const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y) {
+inline void check_square(
+    const char* function, const char* name,
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
   check_size_match(function, "Expecting a square matrix; rows of ", name,
                    y.rows(), "columns of ", name, y.cols());
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

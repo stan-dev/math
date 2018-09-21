@@ -1,9 +1,9 @@
-#include <gtest/gtest.h>
-#include <limits>
 #include <stan/math/rev/scal.hpp>
-#include <stdexcept>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <stdexcept>
+#include <limits>
 
 TEST(AgradRev, log1p) {
   AVAR a = 0.1;
@@ -30,7 +30,8 @@ TEST(AgradRevLog1p, overflows) {
 }
 
 struct log1p_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0& arg1) const {
     return log1p(arg1);
   }
 };

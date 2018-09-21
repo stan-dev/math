@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/mat.hpp>
+#include <gtest/gtest.h>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -47,18 +47,18 @@ TEST(ProbDistributionsMultiGP, fvar_var) {
 TEST(ProbDistributionsMultiGP, fvar_fvar_var) {
   using stan::math::fvar;
   using stan::math::var;
-  Matrix<fvar<fvar<var>>, Dynamic, 1> mu(5, 1);
+  Matrix<fvar<fvar<var> >, Dynamic, 1> mu(5, 1);
   mu.setZero();
 
-  Matrix<fvar<fvar<var>>, Dynamic, Dynamic> y(3, 5);
+  Matrix<fvar<fvar<var> >, Dynamic, Dynamic> y(3, 5);
   y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
       -2.0, -11.0;
 
-  Matrix<fvar<fvar<var>>, Dynamic, Dynamic> Sigma(5, 5);
+  Matrix<fvar<fvar<var> >, Dynamic, Dynamic> Sigma(5, 5);
   Sigma << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0,
       1.0, 0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
 
-  Matrix<fvar<fvar<var>>, Dynamic, 1> w(3, 1);
+  Matrix<fvar<fvar<var> >, Dynamic, 1> w(3, 1);
   w << 1.0, 0.5, 1.5;
 
   for (int i = 0; i < 5; i++) {
@@ -72,10 +72,10 @@ TEST(ProbDistributionsMultiGP, fvar_fvar_var) {
     }
   }
 
-  fvar<fvar<var>> lp_ref(0);
+  fvar<fvar<var> > lp_ref(0);
   for (size_t i = 0; i < 3; i++) {
-    Matrix<fvar<fvar<var>>, Dynamic, 1> cy(y.row(i).transpose());
-    Matrix<fvar<fvar<var>>, Dynamic, Dynamic> cSigma((1.0 / w[i]) * Sigma);
+    Matrix<fvar<fvar<var> >, Dynamic, 1> cy(y.row(i).transpose());
+    Matrix<fvar<fvar<var> >, Dynamic, Dynamic> cSigma((1.0 / w[i]) * Sigma);
     lp_ref += stan::math::multi_normal_log(cy, mu, cSigma);
   }
 

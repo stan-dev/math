@@ -13,8 +13,8 @@ namespace math {
  * @param v Variable.
  * @return Value of variable.
  */
-inline double value_of_rec(const var &v) { return v.vi_->val_; }
+inline double value_of_rec(const var& v) { return v.vi_->val_; }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

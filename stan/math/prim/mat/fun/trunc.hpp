@@ -19,7 +19,10 @@ struct trunc_fun {
    * @param x argument
    * @return truncation of the argument
    */
-  template <typename T> static inline T fun(const T &x) { return trunc(x); }
+  template <typename T>
+  static inline T fun(const T& x) {
+    return trunc(x);
+  }
 };
 
 /**
@@ -33,11 +36,11 @@ struct trunc_fun {
  * @return elementwise trunc of container elements
  */
 template <typename T>
-inline typename apply_scalar_unary<trunc_fun, T>::return_t trunc(const T &x) {
+inline typename apply_scalar_unary<trunc_fun, T>::return_t trunc(const T& x) {
   return apply_scalar_unary<trunc_fun, T>::apply(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

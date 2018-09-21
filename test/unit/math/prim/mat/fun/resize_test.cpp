@@ -1,6 +1,6 @@
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <stan/math/prim/mat.hpp>
 #include <vector>
 
 using Eigen::Dynamic;
@@ -69,7 +69,7 @@ TEST(MathMatrix, resize_mat_double) {
   EXPECT_EQ(17, m.cols());
 }
 TEST(MathMatrix, resize_svec_svec_double) {
-  std::vector<std::vector<double>> xx;
+  std::vector<std::vector<double> > xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
   dims.push_back(4U);
@@ -85,7 +85,7 @@ TEST(MathMatrix, resize_svec_svec_double) {
   EXPECT_EQ(7U, xx[1].size());
 }
 TEST(MathMatrix, resize_svec_v_double) {
-  std::vector<Matrix<double, Dynamic, 1>> xx;
+  std::vector<Matrix<double, Dynamic, 1> > xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
   dims.push_back(4U);
@@ -102,7 +102,7 @@ TEST(MathMatrix, resize_svec_v_double) {
   EXPECT_EQ(7, xx[1].size());
 }
 TEST(MathMatrix, resize_svec_rv_double) {
-  std::vector<Matrix<double, 1, Dynamic>> xx;
+  std::vector<Matrix<double, 1, Dynamic> > xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
   dims.push_back(4U);
@@ -119,7 +119,7 @@ TEST(MathMatrix, resize_svec_rv_double) {
   EXPECT_EQ(7, xx[1].size());
 }
 TEST(MathMatrix, resize_svec_svec_matrix_double) {
-  std::vector<std::vector<Matrix<double, Dynamic, Dynamic>>> mm;
+  std::vector<std::vector<Matrix<double, Dynamic, Dynamic> > > mm;
   std::vector<int> dims;
   dims.push_back(4U);
   dims.push_back(5U);

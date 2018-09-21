@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/scal.hpp>
-#include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/util.hpp>
+#include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 double deriv(const int y, const double y_hat) {
   if (y == 0)
@@ -83,11 +83,11 @@ TEST(AgradFwdBinaryLogLoss, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 0.4;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var>> a = binary_log_loss(0, y);
+  fvar<fvar<var> > a = binary_log_loss(0, y);
 
   EXPECT_FLOAT_EQ(binary_log_loss(0.0, 0.4), a.val_.val_.val());
   EXPECT_FLOAT_EQ(0, a.val_.d_.val());
@@ -100,11 +100,11 @@ TEST(AgradFwdBinaryLogLoss, FvarFvarVar_1stDeriv) {
   a.val_.val_.grad(p, g);
   EXPECT_FLOAT_EQ(deriv(0, 0.4), g[0]);
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 0.4;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var>> b = binary_log_loss(1, x);
+  fvar<fvar<var> > b = binary_log_loss(1, x);
 
   EXPECT_FLOAT_EQ(binary_log_loss(1.0, 0.4), b.val_.val_.val());
   EXPECT_FLOAT_EQ(deriv(1.0, 0.4), b.val_.d_.val());
@@ -123,11 +123,11 @@ TEST(AgradFwdBinaryLogLoss, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 0.4;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var>> a = binary_log_loss(0, y);
+  fvar<fvar<var> > a = binary_log_loss(0, y);
 
   EXPECT_FLOAT_EQ(binary_log_loss(0.0, 0.4), a.val_.val_.val());
   EXPECT_FLOAT_EQ(0, a.val_.d_.val());
@@ -140,11 +140,11 @@ TEST(AgradFwdBinaryLogLoss, FvarFvarVar_2ndDeriv) {
   a.d_.val_.grad(p, g);
   EXPECT_FLOAT_EQ(deriv_2(0.0, 0.4), g[0]);
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 0.4;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var>> b = binary_log_loss(1, x);
+  fvar<fvar<var> > b = binary_log_loss(1, x);
 
   EXPECT_FLOAT_EQ(binary_log_loss(1.0, 0.4), b.val_.val_.val());
   EXPECT_FLOAT_EQ(-2.5, b.val_.d_.val());
@@ -162,12 +162,12 @@ TEST(AgradFwdBinaryLogLoss, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 0.4;
   y.d_.val_ = 1.0;
   y.val_.d_ = 1.0;
 
-  fvar<fvar<var>> a = binary_log_loss(0, y);
+  fvar<fvar<var> > a = binary_log_loss(0, y);
 
   AVEC p = createAVEC(y.val_.val_);
   VEC g;
@@ -176,7 +176,8 @@ TEST(AgradFwdBinaryLogLoss, FvarFvarVar_3rdDeriv) {
 }
 
 struct binary_log_loss_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0& arg1) const {
     return binary_log_loss(0, arg1);
   }
 };

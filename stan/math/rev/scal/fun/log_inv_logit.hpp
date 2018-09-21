@@ -16,11 +16,11 @@ namespace math {
  * @param u argument
  * @return log inverse logit of the argument
  */
-inline var log_inv_logit(const var &u) {
+inline var log_inv_logit(const var& u) {
   return var(
       new precomp_v_vari(log_inv_logit(u.val()), u.vi_, inv_logit(-u.val())));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

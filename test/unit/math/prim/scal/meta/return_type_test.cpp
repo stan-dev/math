@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/scal.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
 using stan::return_type;

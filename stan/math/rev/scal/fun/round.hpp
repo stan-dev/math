@@ -1,24 +1,24 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_ROUND_HPP
 #define STAN_MATH_REV_SCAL_FUN_ROUND_HPP
 
-#include <limits>
+#include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/round.hpp>
-#include <stan/math/rev/core.hpp>
+#include <limits>
 
 namespace stan {
 namespace math {
 
 namespace {
 class round_vari : public op_v_vari {
-public:
-  explicit round_vari(vari *avi) : op_v_vari(round(avi->val_), avi) {}
+ public:
+  explicit round_vari(vari* avi) : op_v_vari(round(avi->val_), avi) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_)))
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
   }
 };
-} // namespace
+}  // namespace
 
 /**
  * Returns the rounded form of the specified variable (C99).
@@ -50,8 +50,8 @@ public:
  * @param a Specified variable.
  * @return Rounded variable.
  */
-inline var round(const var &a) { return var(new round_vari(a.vi_)); }
+inline var round(const var& a) { return var(new round_vari(a.vi_)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

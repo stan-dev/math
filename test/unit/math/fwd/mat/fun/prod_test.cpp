@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
+#include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixProd, fd_vector) {
   using stan::math::fvar;
@@ -127,7 +127,7 @@ TEST(AgradFwdMatrixProd, ffd_vector) {
   vv(0).d_ = 1.0;
   vv(1).d_ = 1.0;
 
-  fvar<fvar<double>> f = prod(vv);
+  fvar<fvar<double> > f = prod(vv);
   EXPECT_FLOAT_EQ(6.0, prod(vd));
   EXPECT_FLOAT_EQ(6.0, f.val_.val());
   EXPECT_FLOAT_EQ(5.0, f.d_.val());
@@ -163,7 +163,7 @@ TEST(AgradFwdMatrixProd, ffd_rowvector) {
   x[0] = vv[0];
   x[1] = vv[1];
 
-  fvar<fvar<double>> f = prod(vv);
+  fvar<fvar<double> > f = prod(vv);
   EXPECT_FLOAT_EQ(6.0, prod(vd));
   EXPECT_FLOAT_EQ(6.0, f.val_.val());
   EXPECT_FLOAT_EQ(5.0, f.d_.val());
@@ -197,7 +197,7 @@ TEST(AgradFwdMatrixProd, ffd_matrix) {
   vv(1, 0).d_ = 1.0;
   vv(1, 1).d_ = 1.0;
 
-  fvar<fvar<double>> f = prod(vv);
+  fvar<fvar<double> > f = prod(vv);
   EXPECT_FLOAT_EQ(36.0, prod(vd));
   EXPECT_FLOAT_EQ(36.0, f.val_.val());
   EXPECT_FLOAT_EQ(60.0, f.d_.val());

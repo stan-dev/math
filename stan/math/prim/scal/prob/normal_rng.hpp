@@ -1,14 +1,14 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_NORMAL_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_NORMAL_RNG_HPP
 
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/max_size.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/max_size.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
@@ -32,11 +32,11 @@ namespace math {
  * sizes
  */
 template <typename T_loc, typename T_scale, class RNG>
-inline typename VectorBuilder<true, double, T_loc, T_scale>::type
-normal_rng(const T_loc &mu, const T_scale &sigma, RNG &rng) {
+inline typename VectorBuilder<true, double, T_loc, T_scale>::type normal_rng(
+    const T_loc& mu, const T_scale& sigma, RNG& rng) {
   using boost::normal_distribution;
   using boost::variate_generator;
-  static const char *function = "normal_rng";
+  static const char* function = "normal_rng";
 
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", sigma);
@@ -49,7 +49,7 @@ normal_rng(const T_loc &mu, const T_scale &sigma, RNG &rng) {
   VectorBuilder<true, double, T_loc, T_scale> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    variate_generator<RNG &, normal_distribution<>> norm_rng(
+    variate_generator<RNG&, normal_distribution<> > norm_rng(
         rng, normal_distribution<>(mu_vec[n], sigma_vec[n]));
     output[n] = norm_rng();
   }
@@ -57,6 +57,6 @@ normal_rng(const T_loc &mu, const T_scale &sigma, RNG &rng) {
   return output.data();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

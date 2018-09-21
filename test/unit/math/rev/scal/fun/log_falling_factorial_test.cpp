@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/rev/scal.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 
@@ -16,9 +16,9 @@ TEST(AgradRev, log_falling_factorial_var_double) {
   EXPECT_FLOAT_EQ((boost::math::digamma(5) - boost::math::digamma(3)), g[1]);
 
   double eps = 1e-6;
-  EXPECT_FLOAT_EQ((stan::math::log_falling_factorial(4.0 + eps, 2.0) -
-                   stan::math::log_falling_factorial(4.0 - eps, 2.0)) /
-                      (2 * eps),
+  EXPECT_FLOAT_EQ((stan::math::log_falling_factorial(4.0 + eps, 2.0)
+                   - stan::math::log_falling_factorial(4.0 - eps, 2.0))
+                      / (2 * eps),
                   g[1]);
 }
 
@@ -41,9 +41,9 @@ TEST(AgradRev, log_falling_factorial_double_var) {
   EXPECT_FLOAT_EQ(boost::math::digamma(2), g[1]);
 
   double eps = 1e-6;
-  EXPECT_FLOAT_EQ((stan::math::log_falling_factorial(5.0, 4.0 + eps) -
-                   stan::math::log_falling_factorial(5.0, 4.0 - eps)) /
-                      (2 * eps),
+  EXPECT_FLOAT_EQ((stan::math::log_falling_factorial(5.0, 4.0 + eps)
+                   - stan::math::log_falling_factorial(5.0, 4.0 - eps))
+                      / (2 * eps),
                   g[1]);
 }
 
@@ -59,20 +59,20 @@ TEST(AgradRev, log_falling_factorial_var_var) {
   EXPECT_FLOAT_EQ(boost::math::digamma(3), g[1]);
 
   double eps = 1e-6;
-  EXPECT_FLOAT_EQ((stan::math::log_falling_factorial(6.0 + eps, 4.0) -
-                   stan::math::log_falling_factorial(6.0 - eps, 4.0)) /
-                      (2 * eps),
+  EXPECT_FLOAT_EQ((stan::math::log_falling_factorial(6.0 + eps, 4.0)
+                   - stan::math::log_falling_factorial(6.0 - eps, 4.0))
+                      / (2 * eps),
                   g[0]);
-  EXPECT_FLOAT_EQ((stan::math::log_falling_factorial(6.0, 4.0 + eps) -
-                   stan::math::log_falling_factorial(6.0, 4.0 - eps)) /
-                      (2 * eps),
+  EXPECT_FLOAT_EQ((stan::math::log_falling_factorial(6.0, 4.0 + eps)
+                   - stan::math::log_falling_factorial(6.0, 4.0 - eps))
+                      / (2 * eps),
                   g[1]);
 }
 
 struct log_falling_factorial_fun {
   template <typename T0, typename T1>
-  inline typename stan::return_type<T0, T1>::type
-  operator()(const T0 &arg1, const T1 &arg2) const {
+  inline typename stan::return_type<T0, T1>::type operator()(
+      const T0& arg1, const T1& arg2) const {
     return log_falling_factorial(arg1, arg2);
   }
 };

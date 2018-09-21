@@ -9,11 +9,11 @@ namespace math {
 
 namespace {
 class cbrt_vari : public op_v_vari {
-public:
-  explicit cbrt_vari(vari *avi) : op_v_vari(cbrt(avi->val_), avi) {}
+ public:
+  explicit cbrt_vari(vari* avi) : op_v_vari(cbrt(avi->val_), avi) {}
   void chain() { avi_->adj_ += adj_ / (3.0 * val_ * val_); }
 };
-} // namespace
+}  // namespace
 
 /**
  * Returns the cube root of the specified variable (C99).
@@ -41,8 +41,8 @@ public:
  * @param a Specified variable.
  * @return Cube root of the variable.
  */
-inline var cbrt(const var &a) { return var(new cbrt_vari(a.vi_)); }
+inline var cbrt(const var& a) { return var(new cbrt_vari(a.vi_)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

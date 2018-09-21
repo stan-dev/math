@@ -18,7 +18,7 @@ namespace math {
  * @return Sum of matrix entries.
  */
 template <typename T, int R, int C>
-inline fvar<T> sum(const Eigen::Matrix<fvar<T>, R, C> &m) {
+inline fvar<T> sum(const Eigen::Matrix<fvar<T>, R, C>& m) {
   if (m.size() == 0)
     return 0.0;
   Eigen::Matrix<T, Eigen::Dynamic, 1> vals(m.size());
@@ -30,6 +30,6 @@ inline fvar<T> sum(const Eigen::Matrix<fvar<T>, R, C> &m) {
   return fvar<T>(sum(vals), sum(tans));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

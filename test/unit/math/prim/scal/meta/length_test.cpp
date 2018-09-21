@@ -1,6 +1,6 @@
-#include <boost/type_traits.hpp>
-#include <gtest/gtest.h>
 #include <stan/math/prim/scal.hpp>
+#include <gtest/gtest.h>
+#include <boost/type_traits.hpp>
 
 using stan::length;
 

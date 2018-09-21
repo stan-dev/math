@@ -1,6 +1,6 @@
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <stan/math/prim/mat.hpp>
 #include <string>
 
 TEST(ErrorHandlingMatrix, checkSymmetric) {
@@ -24,7 +24,7 @@ TEST(ErrorHandlingMatrix, checkSymmetric_one_indexed_message) {
   try {
     stan::math::check_symmetric("checkSymmetric", "y", y);
     FAIL() << "should have thrown";
-  } catch (std::domain_error &e) {
+  } catch (std::domain_error& e) {
     message = e.what();
   } catch (...) {
     FAIL() << "threw the wrong error";

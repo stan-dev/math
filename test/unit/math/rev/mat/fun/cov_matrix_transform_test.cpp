@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/rev/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/jacobian.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
@@ -22,14 +22,14 @@ TEST(prob_transform, cov_matrix_jacobian) {
   for (int i = 0; i < X.size(); ++i)
     x.push_back(X(i));
   var lp = 0.0;
-  Matrix<var, Dynamic, Dynamic> Sigma =
-      stan::math::cov_matrix_constrain(X, K, lp);
+  Matrix<var, Dynamic, Dynamic> Sigma
+      = stan::math::cov_matrix_constrain(X, K, lp);
   std::vector<var> y;
   for (int m = 0; m < K; ++m)
     for (int n = 0; n <= m; ++n)
       y.push_back(Sigma(m, n));
 
-  std::vector<std::vector<double>> j;
+  std::vector<std::vector<double> > j;
   stan::math::jacobian(y, x, j);
 
   Matrix<double, Dynamic, Dynamic> J(10, 10);

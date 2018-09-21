@@ -1,11 +1,11 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/arr.hpp>
-#include <string>
+#include <gtest/gtest.h>
+#include <test/unit/util.hpp>
 #include <test/unit/math/prim/arr/functor/harmonic_oscillator.hpp>
 #include <test/unit/math/prim/arr/functor/mock_ode_functor.hpp>
 #include <test/unit/math/prim/arr/functor/mock_throwing_ode_functor.hpp>
-#include <test/unit/util.hpp>
 #include <vector>
+#include <string>
 
 struct StanMathOde : public ::testing::Test {
   std::stringstream msgs;
@@ -30,7 +30,7 @@ TEST_F(StanMathOde, decouple_states_dd) {
 
   int T = 10;
   int k = 0;
-  std::vector<std::vector<double>> ys_coupled(T);
+  std::vector<std::vector<double> > ys_coupled(T);
   for (int t = 0; t < T; t++) {
     std::vector<double> coupled_state(coupled_system.size(), 0.0);
     for (int n = 0; n < coupled_system.size(); n++)
@@ -38,7 +38,7 @@ TEST_F(StanMathOde, decouple_states_dd) {
     ys_coupled[t] = coupled_state;
   }
 
-  std::vector<std::vector<double>> ys;
+  std::vector<std::vector<double> > ys;
   ys = coupled_system.decouple_states(ys_coupled);
 
   ASSERT_EQ(T, ys.size());

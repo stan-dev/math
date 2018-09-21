@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/rev/scal.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
 using stan::math::include_summand;

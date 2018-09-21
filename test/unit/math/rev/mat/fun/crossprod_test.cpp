@@ -1,9 +1,9 @@
-#include <gtest/gtest.h>
 #include <stan/math/rev/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 
-void test_crossprod(const stan::math::matrix_v &L) {
+void test_crossprod(const stan::math::matrix_v& L) {
   using stan::math::crossprod;
   using stan::math::matrix_v;
   matrix_v LLT_eigen = L.transpose() * L;

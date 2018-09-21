@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
+#include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixCol, matrix_fd) {
   using stan::math::col;
@@ -67,12 +67,12 @@ TEST(AgradFwdMatrixCol, matrix_ffd) {
   using stan::math::matrix_ffd;
   using stan::math::vector_ffd;
 
-  fvar<fvar<double>> a;
-  fvar<fvar<double>> b;
-  fvar<fvar<double>> c;
-  fvar<fvar<double>> d;
-  fvar<fvar<double>> e;
-  fvar<fvar<double>> f;
+  fvar<fvar<double> > a;
+  fvar<fvar<double> > b;
+  fvar<fvar<double> > c;
+  fvar<fvar<double> > d;
+  fvar<fvar<double> > e;
+  fvar<fvar<double> > f;
   a.val_.val_ = 1.0;
   a.d_.val_ = 1.0;
   b.val_.val_ = 2.0;
@@ -109,12 +109,12 @@ TEST(AgradFwdMatrixCol, matrix_ffd_exc0) {
   using stan::math::fvar;
   using stan::math::matrix_ffd;
 
-  fvar<fvar<double>> a;
-  fvar<fvar<double>> b;
-  fvar<fvar<double>> c;
-  fvar<fvar<double>> d;
-  fvar<fvar<double>> e;
-  fvar<fvar<double>> f;
+  fvar<fvar<double> > a;
+  fvar<fvar<double> > b;
+  fvar<fvar<double> > c;
+  fvar<fvar<double> > d;
+  fvar<fvar<double> > e;
+  fvar<fvar<double> > f;
   a.val_.val_ = 1.0;
   a.d_.val_ = 1.0;
   b.val_.val_ = 2.0;
@@ -140,12 +140,12 @@ TEST(AgradFwdMatrixCol, matrix_ffd_excHigh) {
   using stan::math::fvar;
   using stan::math::matrix_ffd;
 
-  fvar<fvar<double>> a;
-  fvar<fvar<double>> b;
-  fvar<fvar<double>> c;
-  fvar<fvar<double>> d;
-  fvar<fvar<double>> e;
-  fvar<fvar<double>> f;
+  fvar<fvar<double> > a;
+  fvar<fvar<double> > b;
+  fvar<fvar<double> > c;
+  fvar<fvar<double> > d;
+  fvar<fvar<double> > e;
+  fvar<fvar<double> > f;
   a.val_.val_ = 1.0;
   a.d_.val_ = 1.0;
   b.val_.val_ = 2.0;

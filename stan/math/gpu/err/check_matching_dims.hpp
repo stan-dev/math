@@ -18,16 +18,16 @@ namespace math {
  * @throw <code>std::invalid_argument</code>
  * if the dimensions of the matrices do not match
  */
-inline void check_matching_dims(const char *function, const char *name1,
-                                const matrix_gpu &y1, const char *name2,
-                                const matrix_gpu &y2) {
+inline void check_matching_dims(const char* function, const char* name1,
+                                const matrix_gpu& y1, const char* name2,
+                                const matrix_gpu& y2) {
   check_size_match(function, "Rows of ", name1, y1.rows(), "rows of ", name2,
                    y2.rows());
   check_size_match(function, "Columns of ", name1, y1.cols(), "columns of ",
                    name2, y2.cols());
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
 #endif

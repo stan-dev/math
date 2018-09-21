@@ -18,9 +18,9 @@
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 
-#include <memory>
 #include <mutex>
 #include <vector>
+#include <memory>
 
 namespace stan {
 namespace math {
@@ -30,7 +30,7 @@ namespace math {
  * commands send from the root.
  */
 class mpi_stop_listen : public std::exception {
-  virtual const char *what() const throw() {
+  virtual const char* what() const throw() {
     return "Stopping MPI listening mode.";
   }
 };
@@ -39,7 +39,7 @@ class mpi_stop_listen : public std::exception {
  * Exception thrown whenever the MPI resource is busy
  */
 class mpi_is_in_use : public std::exception {
-  virtual const char *what() const throw() { return "MPI resource is in use."; }
+  virtual const char* what() const throw() { return "MPI resource is in use."; }
 };
 
 /**
@@ -49,8 +49,8 @@ class mpi_is_in_use : public std::exception {
 struct mpi_stop_worker : public mpi_command {
   friend class boost::serialization::access;
   template <class Archive>
-  void serialize(Archive &ar, const unsigned int version) {
-    ar &BOOST_SERIALIZATION_BASE_OBJECT_NVP(mpi_command);
+  void serialize(Archive& ar, const unsigned int version) {
+    ar& BOOST_SERIALIZATION_BASE_OBJECT_NVP(mpi_command);
   }
   void run() const {
     boost::mpi::communicator world;
@@ -99,7 +99,8 @@ inline std::vector<int> mpi_map_chunks(std::size_t num_jobs,
   return chunks;
 }
 
-template <typename T> std::unique_lock<std::mutex> mpi_broadcast_command();
+template <typename T>
+std::unique_lock<std::mutex> mpi_broadcast_command();
 
 /**
  * MPI cluster holds MPI resources and must be initialized only
@@ -163,7 +164,7 @@ struct mpi_cluster {
 
         work->run();
       }
-    } catch (const mpi_stop_listen &e) {
+    } catch (const mpi_stop_listen& e) {
     }
   }
 
@@ -182,7 +183,7 @@ struct mpi_cluster {
   /**
    * Returns the current listening state of the cluster.
    */
-  static bool &listening_status() {
+  static bool& listening_status() {
     static bool listening_status = false;
     return listening_status;
   }
@@ -190,7 +191,7 @@ struct mpi_cluster {
   /**
    * Returns a reference to the global in use mutex
    */
-  static std::mutex &in_use() {
+  static std::mutex& in_use() {
     static std::mutex in_use_mutex;
     return in_use_mutex;
   }
@@ -205,8 +206,8 @@ struct mpi_cluster {
  * derived from mpi_command
  * @return A unique_lock instance locking the mpi_cluster
  */
-inline std::unique_lock<std::mutex>
-mpi_broadcast_command(std::shared_ptr<mpi_command> &command) {
+inline std::unique_lock<std::mutex> mpi_broadcast_command(
+    std::shared_ptr<mpi_command>& command) {
   boost::mpi::communicator world;
 
   if (world.rank() != 0)
@@ -233,14 +234,15 @@ mpi_broadcast_command(std::shared_ptr<mpi_command> &command) {
  * mpi_command
  * @return A unique_lock instance locking the mpi_cluster
  */
-template <typename T> std::unique_lock<std::mutex> mpi_broadcast_command() {
+template <typename T>
+std::unique_lock<std::mutex> mpi_broadcast_command() {
   std::shared_ptr<mpi_command> command(new T);
 
   return mpi_broadcast_command(command);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif
 

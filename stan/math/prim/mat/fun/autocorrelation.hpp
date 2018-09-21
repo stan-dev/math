@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_AUTOCORRELATION_HPP
 #define STAN_MATH_PRIM_MAT_FUN_AUTOCORRELATION_HPP
 
-#include <complex>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/mean.hpp>
 #include <unsupported/Eigen/FFT>
+#include <complex>
 #include <vector>
 
 namespace stan {
@@ -31,7 +31,7 @@ size_t fft_next_good_size(size_t N) {
     N++;
   }
 }
-} // namespace
+}  // namespace
 
 /**
  * Write autocorrelation estimates for every lag for the specified
@@ -54,8 +54,8 @@ size_t fft_next_good_size(size_t N) {
  * @param fft FFT engine instance.
  */
 template <typename T>
-void autocorrelation(const std::vector<T> &y, std::vector<T> &ac,
-                     Eigen::FFT<T> &fft) {
+void autocorrelation(const std::vector<T>& y, std::vector<T>& ac,
+                     Eigen::FFT<T>& fft) {
   using std::complex;
   using std::vector;
 
@@ -63,7 +63,7 @@ void autocorrelation(const std::vector<T> &y, std::vector<T> &ac,
   size_t M = fft_next_good_size(N);
   size_t Mt2 = 2 * M;
 
-  vector<complex<T>> freqvec;
+  vector<complex<T> > freqvec;
 
   // centered_signal = y-mean(y) followed by N zeroes
   vector<T> centered_signal(y);
@@ -108,8 +108,8 @@ void autocorrelation(const std::vector<T> &y, std::vector<T> &ac,
  * @param fft FFT engine instance.
  */
 template <typename T, typename DerivedA, typename DerivedB>
-void autocorrelation(const Eigen::MatrixBase<DerivedA> &y,
-                     Eigen::MatrixBase<DerivedB> &ac, Eigen::FFT<T> &fft) {
+void autocorrelation(const Eigen::MatrixBase<DerivedA>& y,
+                     Eigen::MatrixBase<DerivedB>& ac, Eigen::FFT<T>& fft) {
   size_t N = y.size();
   size_t M = fft_next_good_size(N);
   size_t Mt2 = 2 * M;
@@ -150,13 +150,13 @@ void autocorrelation(const Eigen::MatrixBase<DerivedA> &y,
  * @param ac Autocorrelations.
  */
 template <typename T>
-void autocorrelation(const std::vector<T> &y, std::vector<T> &ac) {
+void autocorrelation(const std::vector<T>& y, std::vector<T>& ac) {
   Eigen::FFT<T> fft;
   size_t N = y.size();
   ac.resize(N);
 
-  const Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>> y_map(&y[0], N);
-  Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1>> ac_map(&ac[0], N);
+  const Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1> > y_map(&y[0], N);
+  Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > ac_map(&ac[0], N);
   autocorrelation<T>(y_map, ac_map, fft);
 }
 
@@ -177,12 +177,12 @@ void autocorrelation(const std::vector<T> &y, std::vector<T> &ac) {
  * @param ac Autocorrelations.
  */
 template <typename T, typename DerivedA, typename DerivedB>
-void autocorrelation(const Eigen::MatrixBase<DerivedA> &y,
-                     Eigen::MatrixBase<DerivedB> &ac) {
+void autocorrelation(const Eigen::MatrixBase<DerivedA>& y,
+                     Eigen::MatrixBase<DerivedB>& ac) {
   Eigen::FFT<T> fft;
   autocorrelation(y, ac, fft);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -34,8 +34,8 @@ namespace math {
  * @param[in] epsilon perturbation size
  */
 template <typename F>
-void finite_diff_gradient(const F &f, const Eigen::Matrix<double, -1, 1> &x,
-                          double &fx, Eigen::Matrix<double, -1, 1> &grad_fx,
+void finite_diff_gradient(const F& f, const Eigen::Matrix<double, -1, 1>& x,
+                          double& fx, Eigen::Matrix<double, -1, 1>& grad_fx,
                           double epsilon = 1e-03) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -73,6 +73,6 @@ void finite_diff_gradient(const F &f, const Eigen::Matrix<double, -1, 1> &x,
     grad_fx(i) = delta_f;
   }
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

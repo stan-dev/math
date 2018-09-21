@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_ARR_FUN_PROMOTE_SCALAR_HPP
 #define STAN_MATH_PRIM_ARR_FUN_PROMOTE_SCALAR_HPP
 
-#include <stan/math/prim/arr/meta/index_type.hpp>
 #include <stan/math/prim/scal/fun/promote_scalar.hpp>
 #include <stan/math/prim/scal/fun/promote_scalar_type.hpp>
+#include <stan/math/prim/arr/meta/index_type.hpp>
 #include <vector>
 
 namespace stan {
@@ -19,7 +19,7 @@ namespace math {
  * assignable to T.
  */
 template <typename T, typename S>
-struct promote_scalar_struct<T, std::vector<S>> {
+struct promote_scalar_struct<T, std::vector<S> > {
   /**
    * Return the standard vector consisting of the recursive
    * promotion of the elements of the input standard vector to the
@@ -28,8 +28,8 @@ struct promote_scalar_struct<T, std::vector<S>> {
    * @param x input standard vector.
    * @return standard vector with values promoted from input vector.
    */
-  static std::vector<typename promote_scalar_type<T, S>::type>
-  apply(const std::vector<S> &x) {
+  static std::vector<typename promote_scalar_type<T, S>::type> apply(
+      const std::vector<S>& x) {
     typedef std::vector<typename promote_scalar_type<T, S>::type> return_t;
     typedef typename index_type<return_t>::type idx_t;
     return_t y(x.size());
@@ -39,6 +39,6 @@ struct promote_scalar_struct<T, std::vector<S>> {
   }
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/scal.hpp>
+#include <gtest/gtest.h>
 
 TEST(ProbHypergeometric, log_matches_lpmf) {
   int n = 1;

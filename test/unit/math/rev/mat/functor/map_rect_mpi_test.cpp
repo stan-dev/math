@@ -2,12 +2,12 @@
 // MPI
 #ifdef STAN_MPI
 
-#include <gtest/gtest.h>
 #include <stan/math/rev/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
-#include <test/unit/math/prim/mat/functor/faulty_functor.hpp>
 #include <test/unit/math/prim/mat/functor/hard_work.hpp>
+#include <test/unit/math/prim/mat/functor/faulty_functor.hpp>
 
 #include <iostream>
 #include <vector>
@@ -24,10 +24,10 @@ struct MpiJob : public ::testing::Test {
   stan::math::vector_v shared_params_v2;
   std::vector<stan::math::vector_v> job_params_v2;
   const std::size_t N = 10;
-  std::vector<std::vector<double>> x_r =
-      std::vector<std::vector<double>>(N, std::vector<double>(1, 1.0));
-  std::vector<std::vector<int>> x_i =
-      std::vector<std::vector<int>>(N, std::vector<int>(1, 0));
+  std::vector<std::vector<double>> x_r
+      = std::vector<std::vector<double>>(N, std::vector<double>(1, 1.0));
+  std::vector<std::vector<int>> x_i
+      = std::vector<std::vector<int>>(N, std::vector<int>(1, 0));
 
   virtual void SetUp() {
     shared_params_v.resize(2);
@@ -53,10 +53,10 @@ struct MpiJob : public ::testing::Test {
 };
 
 TEST_F(MpiJob, hard_work_vv) {
-  std::vector<stan::math::var> shared_params_v_vec =
-      stan::math::to_array_1d(shared_params_v);
-  std::vector<stan::math::var> shared_params_v2_vec =
-      stan::math::to_array_1d(shared_params_v2);
+  std::vector<stan::math::var> shared_params_v_vec
+      = stan::math::to_array_1d(shared_params_v);
+  std::vector<stan::math::var> shared_params_v2_vec
+      = stan::math::to_array_1d(shared_params_v2);
 
   std::vector<std::vector<stan::math::var>> job_params_v_vec;
   std::vector<std::vector<stan::math::var>> job_params_v2_vec;
@@ -69,8 +69,8 @@ TEST_F(MpiJob, hard_work_vv) {
   stan::math::vector_v result_mpi = stan::math::map_rect<0, hard_work>(
       shared_params_v, job_params_v, x_r, x_i, 0);
 
-  stan::math::vector_v result_concurrent =
-      stan::math::internal::map_rect_concurrent<0, hard_work>(
+  stan::math::vector_v result_concurrent
+      = stan::math::internal::map_rect_concurrent<0, hard_work>(
           shared_params_v2, job_params_v2, x_r, x_i, 0);
 
   std::vector<double> z_grad1;

@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/scal.hpp>
-#include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/util.hpp>
+#include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdAtan2, FvarVar_FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -109,21 +109,21 @@ TEST(AgradFwdAtan2, FvarFvarVar_FvarFvarVar_1stDeriv) {
   using stan::math::var;
   using std::atan2;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var>> a = atan2(x, y);
+  fvar<fvar<var> > a = atan2(x, y);
 
   EXPECT_FLOAT_EQ(atan(1.0), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1.5 / (1.5 * 1.5 + 1.5 * 1.5), a.val_.d_.val());
   EXPECT_FLOAT_EQ(-1.5 / (1.5 * 1.5 + 1.5 * 1.5), a.d_.val_.val());
-  EXPECT_FLOAT_EQ((1.5 * 1.5 - 1.5 * 1.5) /
-                      ((1.5 * 1.5 + 1.5 * 1.5) * (1.5 * 1.5 + 1.5 * 1.5)),
+  EXPECT_FLOAT_EQ((1.5 * 1.5 - 1.5 * 1.5)
+                      / ((1.5 * 1.5 + 1.5 * 1.5) * (1.5 * 1.5 + 1.5 * 1.5)),
                   a.d_.d_.val());
 
   AVEC q = createAVEC(x.val_.val_, y.val_.val_);
@@ -138,13 +138,13 @@ TEST(AgradFwdAtan2, FvarFvarVar_Double_1stDeriv) {
   using stan::math::var;
   using std::atan2;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 1.0;
 
   double y(1.5);
 
-  fvar<fvar<var>> a = atan2(x, y);
+  fvar<fvar<var> > a = atan2(x, y);
 
   EXPECT_FLOAT_EQ(atan(1.0), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1.5 / (1.5 * 1.5 + 1.5 * 1.5), a.val_.d_.val());
@@ -164,11 +164,11 @@ TEST(AgradFwdAtan2, Double_FvarFvarVar_1stDeriv) {
 
   double x(1.5);
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var>> a = atan2(x, y);
+  fvar<fvar<var> > a = atan2(x, y);
 
   EXPECT_FLOAT_EQ(atan(1.0), a.val_.val_.val());
   EXPECT_FLOAT_EQ(0.0, a.val_.d_.val());
@@ -186,15 +186,15 @@ TEST(AgradFwdAtan2, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
   using stan::math::var;
   using std::atan2;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var>> a = atan2(x, y);
+  fvar<fvar<var> > a = atan2(x, y);
 
   AVEC q = createAVEC(x.val_.val_);
   VEC g;
@@ -206,15 +206,15 @@ TEST(AgradFwdAtan2, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
   using stan::math::var;
   using std::atan2;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var>> a = atan2(x, y);
+  fvar<fvar<var> > a = atan2(x, y);
 
   AVEC p = createAVEC(y.val_.val_);
   VEC h;
@@ -226,17 +226,17 @@ TEST(AgradFwdAtan2, FvarFvarVar_FvarFvarVar_3rdDeriv) {
   using stan::math::var;
   using std::atan2;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 1.0;
   x.d_.val_ = 1.0;
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
   y.val_.d_ = 1.0;
 
-  fvar<fvar<var>> a = atan2(x, y);
+  fvar<fvar<var> > a = atan2(x, y);
 
   AVEC p = createAVEC(x.val_.val_, y.val_.val_);
   VEC h;
@@ -250,13 +250,13 @@ TEST(AgradFwdAtan2, FvarFvarVar_Double_2ndDeriv) {
   using stan::math::var;
   using std::atan2;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 1.0;
 
   double y(1.5);
 
-  fvar<fvar<var>> a = atan2(x, y);
+  fvar<fvar<var> > a = atan2(x, y);
 
   AVEC q = createAVEC(x.val_.val_);
   VEC g;
@@ -268,14 +268,14 @@ TEST(AgradFwdAtan2, FvarFvarVar_Double_3rdDeriv) {
   using stan::math::var;
   using std::atan2;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 1.0;
   x.d_.val_ = 1.0;
 
   double y(1.5);
 
-  fvar<fvar<var>> a = atan2(x, y);
+  fvar<fvar<var> > a = atan2(x, y);
 
   AVEC q = createAVEC(x.val_.val_);
   VEC g;
@@ -290,11 +290,11 @@ TEST(AgradFwdAtan2, Double_FvarFvarVar_2ndDeriv) {
 
   double x(1.5);
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var>> a = atan2(x, y);
+  fvar<fvar<var> > a = atan2(x, y);
 
   AVEC q = createAVEC(y.val_.val_);
   VEC g;
@@ -308,12 +308,12 @@ TEST(AgradFwdAtan2, Double_FvarFvarVar_3rdDeriv) {
 
   double x(1.5);
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
   y.val_.d_ = 1.0;
 
-  fvar<fvar<var>> a = atan2(x, y);
+  fvar<fvar<var> > a = atan2(x, y);
 
   AVEC q = createAVEC(y.val_.val_);
   VEC g;
@@ -323,8 +323,8 @@ TEST(AgradFwdAtan2, Double_FvarFvarVar_3rdDeriv) {
 
 struct atan2_fun {
   template <typename T0, typename T1>
-  inline typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1, const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return atan2(arg1, arg2);
   }
 };

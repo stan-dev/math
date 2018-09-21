@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOG_FALLING_FACTORIAL_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOG_FALLING_FACTORIAL_HPP
 
-#include <limits>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <limits>
 
 namespace stan {
 namespace math {
@@ -55,11 +55,11 @@ inline typename boost::math::tools::promote_args<T1, T2>::type
 log_falling_factorial(const T1 x, const T2 n) {
   if (is_nan(x) || is_nan(n))
     return std::numeric_limits<double>::quiet_NaN();
-  static const char *function = "log_falling_factorial";
+  static const char* function = "log_falling_factorial";
   check_positive(function, "first argument", x);
   return lgamma(x + 1) - lgamma(x - n + 1);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

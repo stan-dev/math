@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/scal.hpp>
-#include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/util.hpp>
+#include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdOwensT, FvarVar_FvarVar_1stDeriv) {
   using boost::math::owens_t;
@@ -108,13 +108,13 @@ TEST(AgradFwdOwensT, FvarFvarVar_FvarFvarVar_1stDeriv) {
   using stan::math::owens_t;
   using stan::math::var;
 
-  fvar<fvar<var>> h, a;
+  fvar<fvar<var> > h, a;
   h.val_.val_ = 1.0;
   h.val_.d_ = 1.0;
   a.val_.val_ = 2.0;
   a.d_.val_ = 1.0;
 
-  fvar<fvar<var>> f = owens_t(h, a);
+  fvar<fvar<var> > f = owens_t(h, a);
 
   EXPECT_FLOAT_EQ(owens_t(1.0, 2.0), f.val_.val_.val());
   EXPECT_FLOAT_EQ(-0.1154804963, f.val_.d_.val());
@@ -133,12 +133,12 @@ TEST(AgradFwdOwensT, FvarFvarVar_Double_1stDeriv) {
   using stan::math::owens_t;
   using stan::math::var;
 
-  fvar<fvar<var>> h;
+  fvar<fvar<var> > h;
   h.val_.val_ = 1.0;
   h.val_.d_ = 1.0;
   double a(2.0);
 
-  fvar<fvar<var>> f = owens_t(h, a);
+  fvar<fvar<var> > f = owens_t(h, a);
 
   EXPECT_FLOAT_EQ(owens_t(1.0, 2.0), f.val_.val_.val());
   EXPECT_FLOAT_EQ(-0.1154804963, f.val_.d_.val());
@@ -158,11 +158,11 @@ TEST(AgradFwdOwensT, Double_FvarFvarVar_1stDeriv) {
   using stan::math::var;
 
   double h(1.0);
-  fvar<fvar<var>> a;
+  fvar<fvar<var> > a;
   a.val_.val_ = 2.0;
   a.d_.val_ = 1.0;
 
-  fvar<fvar<var>> f = owens_t(h, a);
+  fvar<fvar<var> > f = owens_t(h, a);
 
   EXPECT_FLOAT_EQ(owens_t(1.0, 2.0), f.val_.val_.val());
   EXPECT_FLOAT_EQ(0, f.val_.d_.val());
@@ -180,13 +180,13 @@ TEST(AgradFwdOwensT, FvarFvarVar_FvarFvarVar_2ndDeriv_h) {
   using stan::math::owens_t;
   using stan::math::var;
 
-  fvar<fvar<var>> h, a;
+  fvar<fvar<var> > h, a;
   h.val_.val_ = 1.0;
   h.val_.d_ = 1.0;
   a.val_.val_ = 2.0;
   a.d_.val_ = 1.0;
 
-  fvar<fvar<var>> f = owens_t(h, a);
+  fvar<fvar<var> > f = owens_t(h, a);
 
   AVEC p = createAVEC(h.val_.val_, a.val_.val_);
   VEC g;
@@ -200,13 +200,13 @@ TEST(AgradFwdOwensT, FvarFvarVar_FvarFvarVar_2ndDeriv_a) {
   using stan::math::owens_t;
   using stan::math::var;
 
-  fvar<fvar<var>> h, a;
+  fvar<fvar<var> > h, a;
   h.val_.val_ = 1.0;
   h.val_.d_ = 1.0;
   a.val_.val_ = 2.0;
   a.d_.val_ = 1.0;
 
-  fvar<fvar<var>> f = owens_t(h, a);
+  fvar<fvar<var> > f = owens_t(h, a);
 
   AVEC p = createAVEC(h.val_.val_, a.val_.val_);
   VEC g;
@@ -220,12 +220,12 @@ TEST(AgradFwdOwensT, FvarFvarVar_Double_2ndDeriv) {
   using stan::math::owens_t;
   using stan::math::var;
 
-  fvar<fvar<var>> h;
+  fvar<fvar<var> > h;
   h.val_.val_ = 1.0;
   h.val_.d_ = 1.0;
   double a(2.0);
 
-  fvar<fvar<var>> f = owens_t(h, a);
+  fvar<fvar<var> > f = owens_t(h, a);
 
   AVEC p = createAVEC(h.val_.val_);
   VEC g;
@@ -240,11 +240,11 @@ TEST(AgradFwdOwensT, Double_FvarFvarVar_2ndDeriv) {
   using stan::math::var;
 
   double h(1.0);
-  fvar<fvar<var>> a;
+  fvar<fvar<var> > a;
   a.val_.val_ = 2.0;
   a.d_.val_ = 1.0;
 
-  fvar<fvar<var>> f = owens_t(h, a);
+  fvar<fvar<var> > f = owens_t(h, a);
 
   AVEC p = createAVEC(a.val_.val_);
   VEC g;
@@ -257,13 +257,13 @@ TEST(AgradFwdOwensT, FvarFvarVar_FvarFvarVar_3rdDeriv) {
   using stan::math::owens_t;
   using stan::math::var;
 
-  fvar<fvar<var>> h, a;
+  fvar<fvar<var> > h, a;
   h.val_.val_ = 1.0;
   h.val_.d_ = 1.0;
   a.val_.val_ = 2.0;
   a.d_.val_ = 1.0;
 
-  fvar<fvar<var>> f = owens_t(h, a);
+  fvar<fvar<var> > f = owens_t(h, a);
 
   AVEC p = createAVEC(h.val_.val_, a.val_.val_);
   VEC g;
@@ -277,13 +277,13 @@ TEST(AgradFwdOwensT, FvarFvarVar_Double_3rdDeriv) {
   using stan::math::owens_t;
   using stan::math::var;
 
-  fvar<fvar<var>> h;
+  fvar<fvar<var> > h;
   h.val_.val_ = 1.0;
   h.val_.d_ = 1.0;
   h.d_.val_ = 1.0;
   double a(2.0);
 
-  fvar<fvar<var>> f = owens_t(h, a);
+  fvar<fvar<var> > f = owens_t(h, a);
 
   AVEC p = createAVEC(h.val_.val_);
   VEC g;
@@ -298,12 +298,12 @@ TEST(AgradFwdOwensT, Double_FvarFvarVar_3rdDeriv) {
   using stan::math::var;
 
   double h(1.0);
-  fvar<fvar<var>> a;
+  fvar<fvar<var> > a;
   a.val_.val_ = 2.0;
   a.d_.val_ = 1.0;
   a.val_.d_ = 1.0;
 
-  fvar<fvar<var>> f = owens_t(h, a);
+  fvar<fvar<var> > f = owens_t(h, a);
 
   AVEC p = createAVEC(a.val_.val_);
   VEC g;
@@ -313,8 +313,8 @@ TEST(AgradFwdOwensT, Double_FvarFvarVar_3rdDeriv) {
 
 struct owens_t_fun {
   template <typename T0, typename T1>
-  inline typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1, const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return owens_t(arg1, arg2);
   }
 };

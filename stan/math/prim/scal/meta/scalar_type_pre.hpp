@@ -18,7 +18,7 @@ struct scalar_type_helper_pre<true, T, T_container> {
       typename stan::math::value_type<T>::type,
       typename stan::math::value_type<T_container>::type>::type type;
 };
-} // namespace
+}  // namespace
 
 /**
  * Metaprogram structure to determine the type of first container of
@@ -26,11 +26,12 @@ struct scalar_type_helper_pre<true, T, T_container> {
  *
  * @tparam T Type of object.
  */
-template <typename T> struct scalar_type_pre {
+template <typename T>
+struct scalar_type_pre {
   typedef typename scalar_type_helper_pre<
       is_vector<typename stan::math::value_type<T>::type>::value,
       typename stan::math::value_type<T>::type, T>::type type;
 };
 
-} // namespace stan
+}  // namespace stan
 #endif

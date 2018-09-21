@@ -1,6 +1,6 @@
+#include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <stan/math/prim/arr.hpp>
 #include <vector>
 
 TEST(ErrorHandling, checkMatchingSizes) {

@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/rev/scal.hpp>
+#include <gtest/gtest.h>
 
 TEST(AgradRev, value_of) {
   using stan::math::value_of;

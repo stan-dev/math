@@ -1,20 +1,20 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_HYPERGEOMETRIC_LPMF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_HYPERGEOMETRIC_LPMF_HPP
 
-#include <boost/math/distributions.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
+#include <boost/math/distributions.hpp>
 
 namespace stan {
 namespace math {
@@ -23,9 +23,9 @@ namespace math {
 // n: #white balls drawn;  N: #balls drawn;
 // a: #white balls;  b: #black balls
 template <bool propto, typename T_n, typename T_N, typename T_a, typename T_b>
-double hypergeometric_lpmf(const T_n &n, const T_N &N, const T_a &a,
-                           const T_b &b) {
-  static const char *function = "hypergeometric_lpmf";
+double hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
+                           const T_b& b) {
+  static const char* function = "hypergeometric_lpmf";
 
   if (size_zero(n, N, a, b))
     return 0.0;
@@ -53,18 +53,18 @@ double hypergeometric_lpmf(const T_n &n, const T_N &N, const T_a &a,
     return 0.0;
 
   for (size_t i = 0; i < size; i++)
-    logp += math::binomial_coefficient_log(a_vec[i], n_vec[i]) +
-            math::binomial_coefficient_log(b_vec[i], N_vec[i] - n_vec[i]) -
-            math::binomial_coefficient_log(a_vec[i] + b_vec[i], N_vec[i]);
+    logp += math::binomial_coefficient_log(a_vec[i], n_vec[i])
+            + math::binomial_coefficient_log(b_vec[i], N_vec[i] - n_vec[i])
+            - math::binomial_coefficient_log(a_vec[i] + b_vec[i], N_vec[i]);
   return logp;
 }
 
 template <typename T_n, typename T_N, typename T_a, typename T_b>
-inline double hypergeometric_lpmf(const T_n &n, const T_N &N, const T_a &a,
-                                  const T_b &b) {
+inline double hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
+                                  const T_b& b) {
   return hypergeometric_lpmf<false>(n, N, a, b);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

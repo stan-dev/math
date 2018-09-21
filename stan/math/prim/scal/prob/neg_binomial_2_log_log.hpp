@@ -12,9 +12,8 @@ namespace math {
  */
 template <bool propto, typename T_n, typename T_log_location,
           typename T_precision>
-typename return_type<T_log_location, T_precision>::type
-neg_binomial_2_log_log(const T_n &n, const T_log_location &eta,
-                       const T_precision &phi) {
+typename return_type<T_log_location, T_precision>::type neg_binomial_2_log_log(
+    const T_n& n, const T_log_location& eta, const T_precision& phi) {
   return neg_binomial_2_log_lpmf<propto, T_n, T_log_location, T_precision>(
       n, eta, phi);
 }
@@ -24,10 +23,10 @@ neg_binomial_2_log_log(const T_n &n, const T_log_location &eta,
  */
 template <typename T_n, typename T_log_location, typename T_precision>
 inline typename return_type<T_log_location, T_precision>::type
-neg_binomial_2_log_log(const T_n &n, const T_log_location &eta,
-                       const T_precision &phi) {
+neg_binomial_2_log_log(const T_n& n, const T_log_location& eta,
+                       const T_precision& phi) {
   return neg_binomial_2_log_lpmf<T_n, T_log_location, T_precision>(n, eta, phi);
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -1,12 +1,12 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_RAYLEIGH_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_RAYLEIGH_RNG_HPP
 
-#include <boost/random/uniform_real_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <boost/random/uniform_real_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
@@ -25,12 +25,12 @@ namespace math {
  * @throw std::domain_error if sigma is nonpositive
  */
 template <typename T_scale, class RNG>
-inline typename VectorBuilder<true, double, T_scale>::type
-rayleigh_rng(const T_scale &sigma, RNG &rng) {
+inline typename VectorBuilder<true, double, T_scale>::type rayleigh_rng(
+    const T_scale& sigma, RNG& rng) {
   using boost::random::uniform_real_distribution;
   using boost::variate_generator;
 
-  static const char *function = "rayleigh_rng";
+  static const char* function = "rayleigh_rng";
 
   check_positive_finite(function, "Scale parameter", sigma);
 
@@ -38,7 +38,7 @@ rayleigh_rng(const T_scale &sigma, RNG &rng) {
   size_t N = length(sigma);
   VectorBuilder<true, double, T_scale> output(N);
 
-  variate_generator<RNG &, uniform_real_distribution<>> uniform_rng(
+  variate_generator<RNG&, uniform_real_distribution<> > uniform_rng(
       rng, uniform_real_distribution<>(0.0, 1.0));
   for (size_t n = 0; n < N; ++n) {
     output[n] = sigma_vec[n] * std::sqrt(-2.0 * std::log(uniform_rng()));
@@ -47,6 +47,6 @@ rayleigh_rng(const T_scale &sigma, RNG &rng) {
   return output.data();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

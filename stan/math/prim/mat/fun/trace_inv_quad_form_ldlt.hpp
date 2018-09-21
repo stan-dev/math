@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_TRACE_INV_QUAD_FORM_LDLT_HPP
 #define STAN_MATH_PRIM_MAT_FUN_TRACE_INV_QUAD_FORM_LDLT_HPP
 
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/LDLT_factor.hpp>
+#include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>
-#include <stan/math/prim/mat/fun/multiply.hpp>
 #include <stan/math/prim/mat/fun/trace.hpp>
 #include <stan/math/prim/mat/fun/transpose.hpp>
+#include <stan/math/prim/mat/fun/multiply.hpp>
 #include <stan/math/prim/scal/meta/is_var.hpp>
 
 namespace stan {
@@ -29,6 +29,6 @@ trace_inv_quad_form_ldlt(const LDLT_factor<T1, R2, C2> &A,
   return trace(multiply(transpose(B), mdivide_left_ldlt(A, B)));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

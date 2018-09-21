@@ -55,13 +55,13 @@ namespace math {
  * @tparam T2 Type of second value.
  */
 template <typename T1, typename T2>
-inline typename boost::math::tools::promote_args<T1, T2>::type
-lbeta(const T1 a, const T2 b) {
+inline typename boost::math::tools::promote_args<T1, T2>::type lbeta(
+    const T1 a, const T2 b) {
   using boost::math::lgamma;
   return lgamma(a) + lgamma(b) - lgamma(a + b);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

@@ -1,12 +1,12 @@
-#include <gtest/gtest.h>
-#include <limits>
 #include <stan/math/rev/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <limits>
 #include <vector>
 
-std::vector<double>
-unit_vector_grad(Eigen::Matrix<double, Eigen::Dynamic, 1> &y_dbl, int k) {
+std::vector<double> unit_vector_grad(
+    Eigen::Matrix<double, Eigen::Dynamic, 1>& y_dbl, int k) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;

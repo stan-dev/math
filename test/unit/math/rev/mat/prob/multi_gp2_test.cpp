@@ -1,11 +1,11 @@
-#include <gtest/gtest.h>
 #include <stan/math/rev/mat.hpp>
-#include <string>
-#include <test/unit/math/prim/mat/prob/agrad_distributions_multi_gp.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/prob/expect_eq_diffs.hpp>
 #include <test/unit/math/rev/mat/prob/test_gradients.hpp>
+#include <test/unit/math/prim/mat/prob/agrad_distributions_multi_gp.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
+#include <string>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -100,25 +100,24 @@ TEST(ProbDistributionsMultiGP, MultiGPGradientUnivariate) {
   Matrix<double, Dynamic, Dynamic> y_p(1, 1);
   y_p(0) = y(0) + epsilon;
   y_m(0) = y(0) - epsilon;
-  double grad_diff =
-      (multi_gp_log(y_p, Sigma, w) - multi_gp_log(y_m, Sigma, w)) /
-      (2 * epsilon);
+  double grad_diff = (multi_gp_log(y_p, Sigma, w) - multi_gp_log(y_m, Sigma, w))
+                     / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[0]);
 
   Matrix<double, Dynamic, 1> w_m(1, 1);
   Matrix<double, Dynamic, 1> w_p(1, 1);
   w_p[0] = w[0] + epsilon;
   w_m[0] = w[0] - epsilon;
-  grad_diff = (multi_gp_log(y, Sigma, w_p) - multi_gp_log(y, Sigma, w_m)) /
-              (2 * epsilon);
+  grad_diff = (multi_gp_log(y, Sigma, w_p) - multi_gp_log(y, Sigma, w_m))
+              / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[1]);
 
   Matrix<double, Dynamic, Dynamic> Sigma_m(1, 1);
   Matrix<double, Dynamic, Dynamic> Sigma_p(1, 1);
   Sigma_p(0) = Sigma(0) + epsilon;
   Sigma_m(0) = Sigma(0) - epsilon;
-  grad_diff = (multi_gp_log(y, Sigma_p, w) - multi_gp_log(y, Sigma_m, w)) /
-              (2 * epsilon);
+  grad_diff = (multi_gp_log(y, Sigma_p, w) - multi_gp_log(y, Sigma_m, w))
+              / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[2]);
 }
 
@@ -127,7 +126,8 @@ struct multi_gp_fun {
 
   multi_gp_fun(int K, int N) : K_(K), N_(N) {}
 
-  template <typename T> T operator()(const std::vector<T> &x) const {
+  template <typename T>
+  T operator()(const std::vector<T>& x) const {
     using Eigen::Dynamic;
     using Eigen::Matrix;
     using stan::math::var;

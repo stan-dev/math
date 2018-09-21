@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradMixMatrixDiagMatrix, vector_fv_1stDeriv) {
@@ -72,9 +72,9 @@ TEST(AgradMixMatrixDiagMatrix, vector_ffv_1stDeriv) {
   EXPECT_EQ(0, diag_matrix(vector_d()).size());
   EXPECT_EQ(4, diag_matrix(vector_d(2)).size());
 
-  fvar<fvar<var>> a(1.0, 1.0);
-  fvar<fvar<var>> b(4.0, 1.0);
-  fvar<fvar<var>> c(9.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(4.0, 1.0);
+  fvar<fvar<var> > c(9.0, 1.0);
 
   vector_ffv v(3);
   v << a, b, c;
@@ -101,9 +101,9 @@ TEST(AgradMixMatrixDiagMatrix, vector_ffv_2ndDeriv_1) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
-  fvar<fvar<var>> a(1.0, 1.0);
-  fvar<fvar<var>> b(4.0, 1.0);
-  fvar<fvar<var>> c(9.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(4.0, 1.0);
+  fvar<fvar<var> > c(9.0, 1.0);
 
   vector_ffv v(3);
   v << a, b, c;
@@ -124,9 +124,9 @@ TEST(AgradMixMatrixDiagMatrix, vector_ffv_2ndDeriv_2) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
-  fvar<fvar<var>> a(1.0, 1.0);
-  fvar<fvar<var>> b(4.0, 1.0);
-  fvar<fvar<var>> c(9.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(4.0, 1.0);
+  fvar<fvar<var> > c(9.0, 1.0);
 
   vector_ffv v(3);
   v << a, b, c;
@@ -147,9 +147,9 @@ TEST(AgradMixMatrixDiagMatrix, vector_ffv_3rdDeriv) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
-  fvar<fvar<var>> a(1.0, 1.0);
-  fvar<fvar<var>> b(4.0, 1.0);
-  fvar<fvar<var>> c(9.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(4.0, 1.0);
+  fvar<fvar<var> > c(9.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;

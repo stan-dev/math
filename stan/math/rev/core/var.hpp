@@ -1,21 +1,21 @@
 #ifndef STAN_MATH_REV_CORE_VAR_HPP
 #define STAN_MATH_REV_CORE_VAR_HPP
 
-#include <boost/math/tools/config.hpp>
-#include <complex>
-#include <exception>
-#include <ostream>
-#include <stan/math/rev/core/chainable_alloc.hpp>
-#include <stan/math/rev/core/grad.hpp>
 #include <stan/math/rev/core/vari.hpp>
-#include <string>
+#include <stan/math/rev/core/grad.hpp>
+#include <stan/math/rev/core/chainable_alloc.hpp>
+#include <boost/math/tools/config.hpp>
+#include <ostream>
 #include <vector>
+#include <complex>
+#include <string>
+#include <exception>
 
 namespace stan {
 namespace math {
 
 // forward declare
-static void grad(vari *vi);
+static void grad(vari* vi);
 
 /**
  * Independent (input) and dependent (output) variables for gradients.
@@ -31,7 +31,7 @@ static void grad(vari *vi);
  * var values objects.
  */
 class var {
-public:
+ public:
   // FIXME: doc what this is for
   typedef double Scalar;
 
@@ -42,7 +42,7 @@ public:
    * <code>var</code> operators to construct <code>vari</code>
    * instances.
    */
-  vari *vi_;
+  vari* vi_;
 
   /**
    * Return <code>true</code> if this variable has been
@@ -53,7 +53,7 @@ public:
    * @return <code>true</code> if this variable does not yet have
    * a defined variable.
    */
-  bool is_uninitialized() { return (vi_ == static_cast<vari *>(nullptr)); }
+  bool is_uninitialized() { return (vi_ == static_cast<vari*>(nullptr)); }
 
   /**
    * Construct a variable for later assignment.
@@ -62,14 +62,14 @@ public:
    * dangling.  Before an assignment, the behavior is thus undefined just
    * as for a basic double.
    */
-  var() : vi_(static_cast<vari *>(0U)) {}
+  var() : vi_(static_cast<vari*>(0U)) {}
 
   /**
    * Construct a variable from a pointer to a variable implementation.
    *
    * @param vi Variable implementation.
    */
-  var(vari *vi) : vi_(vi) {} // NOLINT
+  var(vari* vi) : vi_(vi) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -78,7 +78,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(float x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(float x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -87,7 +87,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(double x) : vi_(new vari(x)) {} // NOLINT
+  var(double x) : vi_(new vari(x)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -96,7 +96,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(long double x) : vi_(new vari(x)) {} // NOLINT
+  var(long double x) : vi_(new vari(x)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -105,7 +105,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(bool x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(bool x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -114,7 +114,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(char x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(char x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -123,7 +123,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(short x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(short x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -132,7 +132,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(int x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(int x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -141,7 +141,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(long x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(long x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -150,7 +150,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(unsigned char x) // NOLINT(runtime/explicit)
+  var(unsigned char x)  // NOLINT(runtime/explicit)
       : vi_(new vari(static_cast<double>(x))) {}
 
   /**
@@ -170,7 +170,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(unsigned int x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(unsigned int x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -180,7 +180,7 @@ public:
    * @param x Value of the variable.
    */
   // NOLINTNEXTLINE
-  var(unsigned long x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(unsigned long x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -190,7 +190,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  explicit var(const std::complex<double> &x) {
+  explicit var(const std::complex<double>& x) {
     if (imag(x) == 0) {
       vi_ = new vari(real(x));
     } else {
@@ -211,7 +211,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  explicit var(const std::complex<float> &x) {
+  explicit var(const std::complex<float>& x) {
     if (imag(x) == 0) {
       vi_ = new vari(static_cast<double>(real(x)));
     } else {
@@ -232,7 +232,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  explicit var(const std::complex<long double> &x) {
+  explicit var(const std::complex<long double>& x) {
     if (imag(x) == 0) {
       vi_ = new vari(static_cast<double>(real(x)));
     } else {
@@ -258,7 +258,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(size_t x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(size_t x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -267,7 +267,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(ptrdiff_t x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(ptrdiff_t x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 #endif
 
 #ifdef BOOST_MATH_USE_FLOAT128
@@ -282,7 +282,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(__float128 x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(__float128 x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 
 #endif
 
@@ -315,7 +315,7 @@ public:
    * @param g Gradient vector of partial derivatives of this
    * variable with respect to x.
    */
-  void grad(std::vector<var> &x, std::vector<double> &g) {
+  void grad(std::vector<var>& x, std::vector<double>& g) {
     stan::math::grad(vi_);
     g.resize(x.size());
     for (size_t i = 0; i < x.size(); ++i)
@@ -344,7 +344,7 @@ public:
    *
    * @return variable
    */
-  inline vari &operator*() { return *vi_; }
+  inline vari& operator*() { return *vi_; }
 
   /**
    * Return a pointer to the underlying implementation of this variable.
@@ -356,7 +356,7 @@ public:
    * <i>Warning</i>: The returned result does not track changes to
    * this variable.
    */
-  inline vari *operator->() { return vi_; }
+  inline vari* operator->() { return vi_; }
 
   // COMPOUND ASSIGNMENT OPERATORS
 
@@ -370,7 +370,7 @@ public:
    * @param b The variable to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
-  inline var &operator+=(const var &b);
+  inline var& operator+=(const var& b);
 
   /**
    * The compound add/assignment operator for scalars (C++).
@@ -382,7 +382,7 @@ public:
    * @param b The scalar to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
-  inline var &operator+=(double b);
+  inline var& operator+=(double b);
 
   /**
    * The compound subtract/assignment operator for variables (C++).
@@ -395,7 +395,7 @@ public:
    * @return The result of subtracting the specified variable from
    * this variable.
    */
-  inline var &operator-=(const var &b);
+  inline var& operator-=(const var& b);
 
   /**
    * The compound subtract/assignment operator for scalars (C++).
@@ -408,7 +408,7 @@ public:
    * @return The result of subtracting the specified variable from this
    * variable.
    */
-  inline var &operator-=(double b);
+  inline var& operator-=(double b);
 
   /**
    * The compound multiply/assignment operator for variables (C++).
@@ -421,7 +421,7 @@ public:
    * @return The result of multiplying this variable by the
    * specified variable.
    */
-  inline var &operator*=(const var &b);
+  inline var& operator*=(const var& b);
 
   /**
    * The compound multiply/assignment operator for scalars (C++).
@@ -434,7 +434,7 @@ public:
    * @return The result of multplying this variable by the specified
    * variable.
    */
-  inline var &operator*=(double b);
+  inline var& operator*=(double b);
 
   /**
    * The compound divide/assignment operator for variables (C++).  If this
@@ -446,7 +446,7 @@ public:
    * @return The result of dividing this variable by the
    * specified variable.
    */
-  inline var &operator/=(const var &b);
+  inline var& operator/=(const var& b);
 
   /**
    * The compound divide/assignment operator for scalars (C++).
@@ -459,7 +459,7 @@ public:
    * @return The result of dividing this variable by the specified
    * variable.
    */
-  inline var &operator/=(double b);
+  inline var& operator/=(double b);
 
   /**
    * Write the value of this auto-dif variable and its adjoint to
@@ -469,13 +469,13 @@ public:
    * @param v Variable to write.
    * @return Reference to the specified output stream.
    */
-  friend std::ostream &operator<<(std::ostream &os, const var &v) {
+  friend std::ostream& operator<<(std::ostream& os, const var& v) {
     if (v.vi_ == nullptr)
       return os << "uninitialized";
     return os << v.val();
   }
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

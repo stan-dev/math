@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
 
 TEST(MathMatrix, multiply_c_v) {
   stan::math::vector_d v(3);

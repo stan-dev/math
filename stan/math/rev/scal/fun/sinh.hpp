@@ -9,11 +9,11 @@ namespace math {
 
 namespace {
 class sinh_vari : public op_v_vari {
-public:
-  explicit sinh_vari(vari *avi) : op_v_vari(std::sinh(avi->val_), avi) {}
+ public:
+  explicit sinh_vari(vari* avi) : op_v_vari(std::sinh(avi->val_), avi) {}
   void chain() { avi_->adj_ += adj_ * std::cosh(avi_->val_); }
 };
-} // namespace
+}  // namespace
 
 /**
  * Return the hyperbolic sine of the specified variable (cmath).
@@ -42,8 +42,8 @@ public:
  * @param a Variable.
  * @return Hyperbolic sine of variable.
  */
-inline var sinh(const var &a) { return var(new sinh_vari(a.vi_)); }
+inline var sinh(const var& a) { return var(new sinh_vari(a.vi_)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

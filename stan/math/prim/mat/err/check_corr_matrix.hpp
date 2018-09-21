@@ -1,16 +1,16 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_CORR_MATRIX_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_CORR_MATRIX_HPP
 
-#include <sstream>
+#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/check_positive_size.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
-#include <stan/math/prim/scal/err/check_positive_size.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/meta/error_index.hpp>
+#include <sstream>
 #include <string>
 
 namespace stan {
@@ -40,13 +40,14 @@ namespace math {
  *   elements nan.
  */
 template <typename T_y>
-inline void
-check_corr_matrix(const char *function, const char *name,
-                  const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y) {
+inline void check_corr_matrix(
+    const char* function, const char* name,
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
   using Eigen::Matrix;
 
-  typedef typename index_type<Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>>::type
-      size_t;
+  typedef
+      typename index_type<Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> >::type
+          size_t;
 
   check_size_match(function, "Rows of correlation matrix", y.rows(),
                    "columns of correlation matrix", y.cols());
@@ -67,6 +68,6 @@ check_corr_matrix(const char *function, const char *name,
   check_pos_definite(function, "y", y);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

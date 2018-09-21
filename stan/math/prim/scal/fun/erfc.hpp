@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_ERFC_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_ERFC_HPP
 
-#include <boost/math/special_functions/erf.hpp>
-#include <limits>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <boost/math/special_functions/erf.hpp>
+#include <limits>
 
 namespace stan {
 namespace math {
@@ -34,6 +34,6 @@ inline double erfc(double x) {
  */
 inline double erfc(int x) { return erfc(static_cast<double>(x)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

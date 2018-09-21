@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
+#include <gtest/gtest.h>
 
 using stan::math::fvar;
 
@@ -229,7 +229,7 @@ TEST(AgradFwdMatrixMdivideLeftLDLT, fd_exceptions) {
 }
 
 TEST(AgradFwdMatrixMdivideLeftLDLT, matrix_ffd_matrix_ffd) {
-  stan::math::LDLT_factor<fvar<fvar<double>>, -1, -1> ldlt_Ad;
+  stan::math::LDLT_factor<fvar<fvar<double> >, -1, -1> ldlt_Ad;
   stan::math::matrix_ffd Ad(2, 2);
   stan::math::matrix_ffd Av(2, 2);
   stan::math::matrix_ffd I;
@@ -270,7 +270,7 @@ TEST(AgradFwdMatrixMdivideLeftLDLT, matrix_ffd_matrix_ffd) {
 }
 
 TEST(AgradFwdMatrixMdivideLeftLDLT, matrix_ffd_matrix_d) {
-  stan::math::LDLT_factor<fvar<fvar<double>>, -1, -1> ldlt_Ad;
+  stan::math::LDLT_factor<fvar<fvar<double> >, -1, -1> ldlt_Ad;
   stan::math::matrix_ffd Ad(2, 2);
   stan::math::matrix_d Av(2, 2);
   stan::math::matrix_ffd I;
@@ -323,7 +323,7 @@ TEST(AgradFwdMatrixMdivideLeftLDLT, matrix_d_matrix_ffd) {
 }
 
 TEST(AgradFwdMatrixMdivideLeftLDLT, matrix_ffd_vector_ffd) {
-  stan::math::LDLT_factor<fvar<fvar<double>>, -1, -1> ldlt_Ad;
+  stan::math::LDLT_factor<fvar<fvar<double> >, -1, -1> ldlt_Ad;
   stan::math::matrix_ffd Ad(2, 2);
   stan::math::vector_ffd Av(2);
   stan::math::vector_ffd I;
@@ -348,7 +348,7 @@ TEST(AgradFwdMatrixMdivideLeftLDLT, matrix_ffd_vector_ffd) {
 }
 
 TEST(AgradFwdMatrixMdivideLeftLDLT, matrix_ffd_vector_d) {
-  stan::math::LDLT_factor<fvar<fvar<double>>, -1, -1> ldlt_Ad;
+  stan::math::LDLT_factor<fvar<fvar<double> >, -1, -1> ldlt_Ad;
   stan::math::matrix_ffd Ad(2, 2);
   stan::math::vector_d Av(2);
   stan::math::vector_ffd I;
@@ -418,8 +418,8 @@ TEST(AgradFwdMatrixMdivideLeftLDLT, ffd_exceptions) {
   vd1.setZero();
   vd2.setZero();
 
-  stan::math::LDLT_factor<fvar<fvar<double>>, -1, -1> fv1;
-  stan::math::LDLT_factor<fvar<fvar<double>>, -1, -1> fv2;
+  stan::math::LDLT_factor<fvar<fvar<double> >, -1, -1> fv1;
+  stan::math::LDLT_factor<fvar<fvar<double> >, -1, -1> fv2;
   stan::math::LDLT_factor<double, -1, -1> fd1;
   stan::math::LDLT_factor<double, -1, -1> fd2;
   fv1.compute(fv1_);

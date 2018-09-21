@@ -32,8 +32,8 @@ namespace math {
  * @param a Variable input.
  * @return Absolute value of variable.
  */
-inline var abs(const var &a) { return fabs(a); }
+inline var abs(const var& a) { return fabs(a); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

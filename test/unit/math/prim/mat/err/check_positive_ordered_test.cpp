@@ -1,6 +1,6 @@
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <stan/math/prim/mat.hpp>
 #include <string>
 
 using stan::math::check_positive_ordered;
@@ -42,7 +42,7 @@ TEST(ErrorHandlingMatrix, checkPositiveOrdered_one_indexed_message) {
   try {
     check_positive_ordered("check_positive_ordered", "y", y);
     FAIL() << "should have thrown";
-  } catch (std::domain_error &e) {
+  } catch (std::domain_error& e) {
     message = e.what();
   } catch (...) {
     FAIL() << "threw the wrong error";
@@ -54,7 +54,7 @@ TEST(ErrorHandlingMatrix, checkPositiveOrdered_one_indexed_message) {
   try {
     check_positive_ordered("check_positive_ordered", "y", y);
     FAIL() << "should have thrown";
-  } catch (std::domain_error &e) {
+  } catch (std::domain_error& e) {
     message = e.what();
   } catch (...) {
     FAIL() << "threw the wrong error";

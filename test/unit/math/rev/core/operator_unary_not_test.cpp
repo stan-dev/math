@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
-#include <limits>
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <gtest/gtest.h>
+#include <limits>
 
 void test_unary_not(double x) {
   AVAR x_v = x;

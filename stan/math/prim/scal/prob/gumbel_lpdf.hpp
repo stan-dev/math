@@ -3,22 +3,22 @@
 
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <cmath>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -39,9 +39,9 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type
-gumbel_lpdf(const T_y &y, const T_loc &mu, const T_scale &beta) {
-  static const char *function = "gumbel_lpdf";
+typename return_type<T_y, T_loc, T_scale>::type gumbel_lpdf(
+    const T_y& y, const T_loc& mu, const T_scale& beta) {
+  static const char* function = "gumbel_lpdf";
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
 
@@ -84,8 +84,8 @@ gumbel_lpdf(const T_y &y, const T_loc &mu, const T_scale &beta) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
 
-    const T_partials_return y_minus_mu_over_beta =
-        (y_dbl - mu_dbl) * inv_beta[n];
+    const T_partials_return y_minus_mu_over_beta
+        = (y_dbl - mu_dbl) * inv_beta[n];
 
     if (include_summand<propto, T_scale>::value)
       logp -= log_beta[n];
@@ -98,19 +98,19 @@ gumbel_lpdf(const T_y &y, const T_loc &mu, const T_scale &beta) {
     if (!is_constant_struct<T_loc>::value)
       ops_partials.edge2_.partials_[n] += inv_beta[n] - scaled_diff;
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge3_.partials_[n] += -inv_beta[n] +
-                                          y_minus_mu_over_beta * inv_beta[n] -
-                                          scaled_diff * y_minus_mu_over_beta;
+      ops_partials.edge3_.partials_[n] += -inv_beta[n]
+                                          + y_minus_mu_over_beta * inv_beta[n]
+                                          - scaled_diff * y_minus_mu_over_beta;
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline typename return_type<T_y, T_loc, T_scale>::type
-gumbel_lpdf(const T_y &y, const T_loc &mu, const T_scale &beta) {
+inline typename return_type<T_y, T_loc, T_scale>::type gumbel_lpdf(
+    const T_y& y, const T_loc& mu, const T_scale& beta) {
   return gumbel_lpdf<false>(y, mu, beta);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

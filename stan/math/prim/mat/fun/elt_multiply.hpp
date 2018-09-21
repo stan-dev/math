@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_MAT_FUN_ELT_MULTIPLY_HPP
 
 #include <boost/math/tools/promotion.hpp>
-#include <stan/math/prim/mat/err/check_matching_dims.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/err/check_matching_dims.hpp>
 
 namespace stan {
 namespace math {
@@ -22,8 +22,8 @@ namespace math {
  */
 template <typename T1, typename T2, int R, int C>
 Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R, C>
-elt_multiply(const Eigen::Matrix<T1, R, C> &m1,
-             const Eigen::Matrix<T2, R, C> &m2) {
+elt_multiply(const Eigen::Matrix<T1, R, C>& m1,
+             const Eigen::Matrix<T2, R, C>& m2) {
   check_matching_dims("elt_multiply", "m1", m1, "m2", m2);
   Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R, C>
       result(m1.rows(), m2.cols());
@@ -32,6 +32,6 @@ elt_multiply(const Eigen::Matrix<T1, R, C> &m1,
   return result;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

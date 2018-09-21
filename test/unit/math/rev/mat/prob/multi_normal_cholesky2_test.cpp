@@ -1,8 +1,8 @@
-#include <gtest/gtest.h>
 #include <stan/math/rev/mat.hpp>
-#include <test/unit/math/rev/mat/prob/expect_eq_diffs.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/prob/test_gradients.hpp>
 #include <test/unit/math/rev/mat/prob/test_gradients_multi_normal.hpp>
+#include <test/unit/math/rev/mat/prob/expect_eq_diffs.hpp>
 #include <vector>
 
 using Eigen::Dynamic;
@@ -17,7 +17,8 @@ struct multi_normal_cholesky_fun {
 
   explicit multi_normal_cholesky_fun(int K) : K_(K) {}
 
-  template <typename T> T operator()(const std::vector<T> &x) const {
+  template <typename T>
+  T operator()(const std::vector<T>& x) const {
     using Eigen::Dynamic;
     using Eigen::Matrix;
     using stan::math::var;
@@ -85,17 +86,18 @@ struct vectorized_multi_normal_cholesky_fun {
       int K, int L, bool M = false, bool N = false)
       : K_(K), L_(L), dont_vectorize_y(M), dont_vectorize_mu(N) {
     if ((dont_vectorize_y || dont_vectorize_mu) && L != 1)
-      throw std::runtime_error("attempt to disable vectorization with vector "
-                               "bigger than 1");
+      throw std::runtime_error(
+          "attempt to disable vectorization with vector "
+          "bigger than 1");
   }
 
   template <typename T_y, typename T_mu, typename T_sigma>
   typename boost::math::tools::promote_args<T_y, T_mu, T_sigma>::type
-  operator()(const std::vector<T_y> &y_vec, const std::vector<T_mu> &mu_vec,
-             const std::vector<T_sigma> &sigma_vec) const {
-    vector<Matrix<T_y, is_row_vec_y, is_row_vec_y * -1>> y(
+  operator()(const std::vector<T_y>& y_vec, const std::vector<T_mu>& mu_vec,
+             const std::vector<T_sigma>& sigma_vec) const {
+    vector<Matrix<T_y, is_row_vec_y, is_row_vec_y * -1> > y(
         L_, Matrix<T_y, is_row_vec_y, is_row_vec_y * -1>(K_));
-    vector<Matrix<T_mu, is_row_vec_mu, is_row_vec_mu * -1>> mu(
+    vector<Matrix<T_mu, is_row_vec_mu, is_row_vec_mu * -1> > mu(
         L_, Matrix<T_mu, is_row_vec_mu, is_row_vec_mu * -1>(K_));
     Matrix<T_sigma, Dynamic, Dynamic> L(K_, K_);
     int pos = 0;
@@ -130,7 +132,8 @@ struct vectorized_multi_normal_cholesky_fun {
   }
 };
 
-template <int is_row_vec_y, int is_row_vec_mu> void test_all() {
+template <int is_row_vec_y, int is_row_vec_mu>
+void test_all() {
   {
     vector<double> y_(3), mu_(3), sigma_(6);
     // y

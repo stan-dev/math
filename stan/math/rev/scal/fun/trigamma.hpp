@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_TRIGAMMA_HPP
 #define STAN_MATH_REV_SCAL_FUN_TRIGAMMA_HPP
 
-#include <stan/math/prim/scal/fun/trigamma.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/floor.hpp>
 #include <stan/math/rev/scal/fun/sin.hpp>
+#include <stan/math/prim/scal/fun/trigamma.hpp>
 
 namespace stan {
 namespace math {
@@ -17,8 +17,8 @@ namespace math {
  * @param u argument
  * @return trigamma function at argument
  */
-inline var trigamma(const var &u) { return trigamma_impl(u); }
+inline var trigamma(const var& u) { return trigamma_impl(u); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

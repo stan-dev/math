@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_INVALID_ARGUMENT_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_INVALID_ARGUMENT_HPP
 
+#include <typeinfo>
 #include <sstream>
 #include <stdexcept>
-#include <typeinfo>
 
 namespace stan {
 namespace math {
@@ -27,8 +27,8 @@ namespace math {
  * @throw std::invalid_argument
  */
 template <typename T>
-inline void invalid_argument(const char *function, const char *name, const T &y,
-                             const char *msg1, const char *msg2) {
+inline void invalid_argument(const char* function, const char* name, const T& y,
+                             const char* msg1, const char* msg2) {
   std::ostringstream message;
 
   message << function << ": " << name << " " << msg1 << y << msg2;
@@ -55,11 +55,11 @@ inline void invalid_argument(const char *function, const char *name, const T &y,
  * @throw std::invalid_argument
  */
 template <typename T>
-inline void invalid_argument(const char *function, const char *name, const T &y,
-                             const char *msg1) {
+inline void invalid_argument(const char* function, const char* name, const T& y,
+                             const char* msg1) {
   invalid_argument(function, name, y, msg1, "");
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

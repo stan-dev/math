@@ -1,29 +1,29 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_LPDF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_LPDF_HPP
 
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
 #include <stan/math/prim/mat/fun/trace_inv_quad_form_ldlt.hpp>
+#include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
 #include <stan/math/prim/mat/meta/vector_seq_view.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/max_size_mvt.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/scal/meta/max_size_mvt.hpp>
+#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
 
 template <bool propto, typename T_y, typename T_loc, typename T_covar>
-typename return_type<T_y, T_loc, T_covar>::type
-multi_normal_lpdf(const T_y &y, const T_loc &mu, const T_covar &Sigma) {
-  static const char *function = "multi_normal_lpdf";
+typename return_type<T_y, T_loc, T_covar>::type multi_normal_lpdf(
+    const T_y& y, const T_loc& mu, const T_covar& Sigma) {
+  static const char* function = "multi_normal_lpdf";
   typedef typename scalar_type<T_covar>::type T_covar_elem;
   typedef typename return_type<T_y, T_loc, T_covar>::type lp_type;
   lp_type lp(0.0);
@@ -48,10 +48,12 @@ multi_normal_lpdf(const T_y &y, const T_loc &mu, const T_covar &Sigma) {
     int size_y_new;
     for (size_t i = 1, size_ = length_mvt(y); i < size_; i++) {
       int size_y_new = y_vec[i].size();
-      check_size_match(function, "Size of one of the vectors of "
-                                 "the random variable",
-                       size_y_new, "Size of another vector of the "
-                                   "random variable",
+      check_size_match(function,
+                       "Size of one of the vectors of "
+                       "the random variable",
+                       size_y_new,
+                       "Size of another vector of the "
+                       "random variable",
                        size_y_old);
       size_y_old = size_y_new;
     }
@@ -59,10 +61,12 @@ multi_normal_lpdf(const T_y &y, const T_loc &mu, const T_covar &Sigma) {
     int size_mu_new;
     for (size_t i = 1, size_ = length_mvt(mu); i < size_; i++) {
       int size_mu_new = mu_vec[i].size();
-      check_size_match(function, "Size of one of the vectors of "
-                                 "the location variable",
-                       size_mu_new, "Size of another vector of the "
-                                    "location variable",
+      check_size_match(function,
+                       "Size of one of the vectors of "
+                       "the location variable",
+                       size_mu_new,
+                       "Size of another vector of the "
+                       "location variable",
                        size_mu_old);
       size_mu_old = size_mu_new;
     }
@@ -108,11 +112,11 @@ multi_normal_lpdf(const T_y &y, const T_loc &mu, const T_covar &Sigma) {
 }
 
 template <typename T_y, typename T_loc, typename T_covar>
-inline typename return_type<T_y, T_loc, T_covar>::type
-multi_normal_lpdf(const T_y &y, const T_loc &mu, const T_covar &Sigma) {
+inline typename return_type<T_y, T_loc, T_covar>::type multi_normal_lpdf(
+    const T_y& y, const T_loc& mu, const T_covar& Sigma) {
   return multi_normal_lpdf<false>(y, mu, Sigma);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

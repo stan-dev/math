@@ -1,18 +1,18 @@
 #include <gtest/gtest.h>
-#include <limits>
-#include <sstream>
 #include <stan/math/prim/arr/functor/integrate_ode_rk45.hpp>
 #include <stan/math/rev/core.hpp>
 #include <test/unit/util.hpp>
+#include <sstream>
 #include <vector>
+#include <limits>
 
 // calculates finite diffs for integrate_ode_rk45 with varying parameters
 template <typename F>
-std::vector<std::vector<double>> finite_diff_params(
-    const F &f, const double &t_in, const std::vector<double> &ts,
-    const std::vector<double> &y_in, const std::vector<double> &theta,
-    const std::vector<double> &x, const std::vector<int> &x_int,
-    const size_t &param_index, const double &diff) {
+std::vector<std::vector<double> > finite_diff_params(
+    const F& f, const double& t_in, const std::vector<double>& ts,
+    const std::vector<double>& y_in, const std::vector<double>& theta,
+    const std::vector<double>& x, const std::vector<int>& x_int,
+    const size_t& param_index, const double& diff) {
   std::stringstream msgs;
   std::vector<double> theta_ub(theta.size());
   std::vector<double> theta_lb(theta.size());
@@ -26,15 +26,15 @@ std::vector<std::vector<double>> finite_diff_params(
     }
   }
 
-  std::vector<std::vector<double>> ode_res_ub;
-  std::vector<std::vector<double>> ode_res_lb;
+  std::vector<std::vector<double> > ode_res_ub;
+  std::vector<std::vector<double> > ode_res_lb;
 
   ode_res_ub = stan::math::integrate_ode_rk45(f, y_in, t_in, ts, theta_ub, x,
                                               x_int, &msgs);
   ode_res_lb = stan::math::integrate_ode_rk45(f, y_in, t_in, ts, theta_lb, x,
                                               x_int, &msgs);
 
-  std::vector<std::vector<double>> results(ts.size());
+  std::vector<std::vector<double> > results(ts.size());
 
   for (size_t i = 0; i < ode_res_ub.size(); i++)
     for (size_t j = 0; j < ode_res_ub[j].size(); j++)
@@ -44,11 +44,11 @@ std::vector<std::vector<double>> finite_diff_params(
 
 // calculates finite diffs for integrate_ode_rk45 with varying initial positions
 template <typename F>
-std::vector<std::vector<double>> finite_diff_initial_position(
-    const F &f, const double &t_in, const std::vector<double> &ts,
-    const std::vector<double> &y_in, const std::vector<double> &theta,
-    const std::vector<double> &x, const std::vector<int> &x_int,
-    const size_t &param_index, const double &diff) {
+std::vector<std::vector<double> > finite_diff_initial_position(
+    const F& f, const double& t_in, const std::vector<double>& ts,
+    const std::vector<double>& y_in, const std::vector<double>& theta,
+    const std::vector<double>& x, const std::vector<int>& x_int,
+    const size_t& param_index, const double& diff) {
   std::stringstream msgs;
   std::vector<double> y_in_ub(y_in.size());
   std::vector<double> y_in_lb(y_in.size());
@@ -62,15 +62,15 @@ std::vector<std::vector<double>> finite_diff_initial_position(
     }
   }
 
-  std::vector<std::vector<double>> ode_res_ub;
-  std::vector<std::vector<double>> ode_res_lb;
+  std::vector<std::vector<double> > ode_res_ub;
+  std::vector<std::vector<double> > ode_res_lb;
 
   ode_res_ub = stan::math::integrate_ode_rk45(f, y_in_ub, t_in, ts, theta, x,
                                               x_int, &msgs);
   ode_res_lb = stan::math::integrate_ode_rk45(f, y_in_lb, t_in, ts, theta, x,
                                               x_int, &msgs);
 
-  std::vector<std::vector<double>> results(ts.size());
+  std::vector<std::vector<double> > results(ts.size());
 
   for (size_t i = 0; i < ode_res_ub.size(); i++)
     for (size_t j = 0; j < ode_res_ub[j].size(); j++)
@@ -81,19 +81,19 @@ std::vector<std::vector<double>> finite_diff_initial_position(
 // test integrate_ode_rk45 with initial positions as doubles and parameters
 // as vars against finite differences
 template <typename F>
-void test_ode_finite_diff_dv(const F &f, const double &t_in,
-                             const std::vector<double> &ts,
-                             const std::vector<double> &y_in,
-                             const std::vector<double> &theta,
-                             const std::vector<double> &x,
-                             const std::vector<int> &x_int, const double &diff,
-                             const double &diff2) {
+void test_ode_finite_diff_dv(const F& f, const double& t_in,
+                             const std::vector<double>& ts,
+                             const std::vector<double>& y_in,
+                             const std::vector<double>& theta,
+                             const std::vector<double>& x,
+                             const std::vector<int>& x_int, const double& diff,
+                             const double& diff2) {
   std::stringstream msgs;
 
-  std::vector<std::vector<std::vector<double>>> finite_diff_res(theta.size());
+  std::vector<std::vector<std::vector<double> > > finite_diff_res(theta.size());
   for (size_t i = 0; i < theta.size(); i++)
-    finite_diff_res[i] =
-        finite_diff_params(f, t_in, ts, y_in, theta, x, x_int, i, diff);
+    finite_diff_res[i]
+        = finite_diff_params(f, t_in, ts, y_in, theta, x, x_int, i, diff);
 
   std::vector<double> grads_eff;
 
@@ -101,7 +101,7 @@ void test_ode_finite_diff_dv(const F &f, const double &t_in,
   for (size_t i = 0; i < theta.size(); i++)
     theta_v.push_back(theta[i]);
 
-  std::vector<std::vector<stan::math::var>> ode_res;
+  std::vector<std::vector<stan::math::var> > ode_res;
 
   ode_res = stan::math::integrate_ode_rk45(f, y_in, t_in, ts, theta_v, x, x_int,
                                            &msgs);
@@ -125,16 +125,16 @@ void test_ode_finite_diff_dv(const F &f, const double &t_in,
 // test integrate_ode_rk45 with initial positions as vars and parameters
 // as doubles against finite differences
 template <typename F>
-void test_ode_finite_diff_vd(const F &f, const double &t_in,
-                             const std::vector<double> &ts,
-                             const std::vector<double> &y_in,
-                             const std::vector<double> &theta,
-                             const std::vector<double> &x,
-                             const std::vector<int> &x_int, const double &diff,
-                             const double &diff2) {
+void test_ode_finite_diff_vd(const F& f, const double& t_in,
+                             const std::vector<double>& ts,
+                             const std::vector<double>& y_in,
+                             const std::vector<double>& theta,
+                             const std::vector<double>& x,
+                             const std::vector<int>& x_int, const double& diff,
+                             const double& diff2) {
   std::stringstream msgs;
 
-  std::vector<std::vector<std::vector<double>>> finite_diff_res(y_in.size());
+  std::vector<std::vector<std::vector<double> > > finite_diff_res(y_in.size());
   for (size_t i = 0; i < y_in.size(); i++)
     finite_diff_res[i] = finite_diff_initial_position(f, t_in, ts, y_in, theta,
                                                       x, x_int, i, diff);
@@ -145,7 +145,7 @@ void test_ode_finite_diff_vd(const F &f, const double &t_in,
   for (size_t k = 0; k < y_in.size(); k++)
     y_in_v.push_back(y_in[k]);
 
-  std::vector<std::vector<stan::math::var>> ode_res;
+  std::vector<std::vector<stan::math::var> > ode_res;
 
   ode_res = stan::math::integrate_ode_rk45(f, y_in_v, t_in, ts, theta, x, x_int,
                                            &msgs);
@@ -169,24 +169,26 @@ void test_ode_finite_diff_vd(const F &f, const double &t_in,
 // test integrate_ode_rk45 with initial positions as vars and parameters
 // as vars against finite differences
 template <typename F>
-void test_ode_finite_diff_vv(const F &f, const double &t_in,
-                             const std::vector<double> &ts,
-                             const std::vector<double> &y_in,
-                             const std::vector<double> &theta,
-                             const std::vector<double> &x,
-                             const std::vector<int> &x_int, const double &diff,
-                             const double &diff2) {
+void test_ode_finite_diff_vv(const F& f, const double& t_in,
+                             const std::vector<double>& ts,
+                             const std::vector<double>& y_in,
+                             const std::vector<double>& theta,
+                             const std::vector<double>& x,
+                             const std::vector<int>& x_int, const double& diff,
+                             const double& diff2) {
   std::stringstream msgs;
 
-  std::vector<std::vector<std::vector<double>>> finite_diff_res_y(y_in.size());
+  std::vector<std::vector<std::vector<double> > > finite_diff_res_y(
+      y_in.size());
   for (size_t i = 0; i < y_in.size(); i++)
     finite_diff_res_y[i] = finite_diff_initial_position(
         f, t_in, ts, y_in, theta, x, x_int, i, diff);
 
-  std::vector<std::vector<std::vector<double>>> finite_diff_res_p(theta.size());
+  std::vector<std::vector<std::vector<double> > > finite_diff_res_p(
+      theta.size());
   for (size_t i = 0; i < theta.size(); i++)
-    finite_diff_res_p[i] =
-        finite_diff_params(f, t_in, ts, y_in, theta, x, x_int, i, diff);
+    finite_diff_res_p[i]
+        = finite_diff_params(f, t_in, ts, y_in, theta, x, x_int, i, diff);
 
   std::vector<double> grads_eff;
   std::vector<stan::math::var> y_in_v;
@@ -202,7 +204,7 @@ void test_ode_finite_diff_vv(const F &f, const double &t_in,
   for (size_t i = 0; i < theta_v.size(); i++)
     vars.push_back(theta_v[i]);
 
-  std::vector<std::vector<stan::math::var>> ode_res;
+  std::vector<std::vector<stan::math::var> > ode_res;
 
   ode_res = stan::math::integrate_ode_rk45(f, y_in_v, t_in, ts, theta_v, x,
                                            x_int, &msgs);
@@ -231,12 +233,12 @@ void test_ode_finite_diff_vv(const F &f, const double &t_in,
 }
 
 template <typename F, typename T1, typename T2>
-void test_ode_error_conditions(F &f, const double &t0,
-                               const std::vector<double> &ts,
-                               const std::vector<T1> &y0,
-                               const std::vector<T2> &theta,
-                               const std::vector<double> &x,
-                               const std::vector<int> &x_int) {
+void test_ode_error_conditions(F& f, const double& t0,
+                               const std::vector<double>& ts,
+                               const std::vector<T1>& y0,
+                               const std::vector<T2>& theta,
+                               const std::vector<double>& x,
+                               const std::vector<int>& x_int) {
   using stan::math::integrate_ode_rk45;
   std::stringstream msgs;
 
@@ -302,12 +304,12 @@ void test_ode_error_conditions(F &f, const double &t0,
 }
 
 template <typename F, typename T1, typename T2>
-void test_ode_error_conditions_nan(F &f, const double &t0,
-                                   const std::vector<double> &ts,
-                                   const std::vector<T1> &y0,
-                                   const std::vector<T2> &theta,
-                                   const std::vector<double> &x,
-                                   const std::vector<int> &x_int) {
+void test_ode_error_conditions_nan(F& f, const double& t0,
+                                   const std::vector<double>& ts,
+                                   const std::vector<T1>& y0,
+                                   const std::vector<T2>& theta,
+                                   const std::vector<double>& x,
+                                   const std::vector<int>& x_int) {
   using stan::math::integrate_ode_rk45;
   std::stringstream msgs;
   double nan = std::numeric_limits<double>::quiet_NaN();
@@ -375,12 +377,12 @@ void test_ode_error_conditions_nan(F &f, const double &t0,
 }
 
 template <typename F, typename T1, typename T2>
-void test_ode_error_conditions_inf(F &f, const double &t0,
-                                   const std::vector<double> &ts,
-                                   const std::vector<T1> &y0,
-                                   const std::vector<T2> &theta,
-                                   const std::vector<double> &x,
-                                   const std::vector<int> &x_int) {
+void test_ode_error_conditions_inf(F& f, const double& t0,
+                                   const std::vector<double>& ts,
+                                   const std::vector<T1>& y0,
+                                   const std::vector<T2>& theta,
+                                   const std::vector<double>& x,
+                                   const std::vector<int>& x_int) {
   using stan::math::integrate_ode_rk45;
   std::stringstream msgs;
   double inf = std::numeric_limits<double>::infinity();
@@ -485,12 +487,12 @@ void test_ode_error_conditions_inf(F &f, const double &t0,
 }
 
 template <typename F>
-void test_ode_error_conditions_vd(const F &f, const double &t_in,
-                                  const std::vector<double> &ts,
-                                  const std::vector<double> &y_in,
-                                  const std::vector<double> &theta,
-                                  const std::vector<double> &x,
-                                  const std::vector<int> &x_int) {
+void test_ode_error_conditions_vd(const F& f, const double& t_in,
+                                  const std::vector<double>& ts,
+                                  const std::vector<double>& y_in,
+                                  const std::vector<double>& theta,
+                                  const std::vector<double>& x,
+                                  const std::vector<int>& x_int) {
   std::vector<stan::math::var> y_var;
   for (size_t i = 0; i < y_in.size(); i++)
     y_var.push_back(y_in[i]);
@@ -498,12 +500,12 @@ void test_ode_error_conditions_vd(const F &f, const double &t_in,
   test_ode_error_conditions_nan(f, t_in, ts, y_var, theta, x, x_int);
 }
 template <typename F>
-void test_ode_error_conditions_dv(const F &f, const double &t_in,
-                                  const std::vector<double> &ts,
-                                  const std::vector<double> &y_in,
-                                  const std::vector<double> &theta,
-                                  const std::vector<double> &x,
-                                  const std::vector<int> &x_int) {
+void test_ode_error_conditions_dv(const F& f, const double& t_in,
+                                  const std::vector<double>& ts,
+                                  const std::vector<double>& y_in,
+                                  const std::vector<double>& theta,
+                                  const std::vector<double>& x,
+                                  const std::vector<int>& x_int) {
   std::vector<stan::math::var> theta_var;
   for (size_t i = 0; i < theta.size(); i++)
     theta_var.push_back(theta[i]);
@@ -511,12 +513,12 @@ void test_ode_error_conditions_dv(const F &f, const double &t_in,
   test_ode_error_conditions_nan(f, t_in, ts, y_in, theta_var, x, x_int);
 }
 template <typename F>
-void test_ode_error_conditions_vv(const F &f, const double &t_in,
-                                  const std::vector<double> &ts,
-                                  const std::vector<double> &y_in,
-                                  const std::vector<double> &theta,
-                                  const std::vector<double> &x,
-                                  const std::vector<int> &x_int) {
+void test_ode_error_conditions_vv(const F& f, const double& t_in,
+                                  const std::vector<double>& ts,
+                                  const std::vector<double>& y_in,
+                                  const std::vector<double>& theta,
+                                  const std::vector<double>& x,
+                                  const std::vector<int>& x_int) {
   std::vector<stan::math::var> y_var;
   for (size_t i = 0; i < y_in.size(); i++)
     y_var.push_back(y_in[i]);
@@ -529,10 +531,10 @@ void test_ode_error_conditions_vv(const F &f, const double &t_in,
 }
 
 template <typename F>
-void test_ode(const F &f, const double &t_in, const std::vector<double> &ts,
-              const std::vector<double> &y_in, const std::vector<double> &theta,
-              const std::vector<double> &x, const std::vector<int> &x_int,
-              const double &diff, const double &diff2) {
+void test_ode(const F& f, const double& t_in, const std::vector<double>& ts,
+              const std::vector<double>& y_in, const std::vector<double>& theta,
+              const std::vector<double>& x, const std::vector<int>& x_int,
+              const double& diff, const double& diff2) {
   test_ode_finite_diff_vd(f, t_in, ts, y_in, theta, x, x_int, diff, diff2);
   test_ode_finite_diff_dv(f, t_in, ts, y_in, theta, x, x_int, diff, diff2);
   test_ode_finite_diff_vv(f, t_in, ts, y_in, theta, x, x_int, diff, diff2);

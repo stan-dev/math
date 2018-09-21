@@ -13,9 +13,10 @@ namespace math {
  * @param[in] x argument
  * @return negation of argument
  */
-template <typename T> inline fvar<T> operator-(const fvar<T> &x) {
+template <typename T>
+inline fvar<T> operator-(const fvar<T>& x) {
   return fvar<T>(-x.val_, -x.d_);
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

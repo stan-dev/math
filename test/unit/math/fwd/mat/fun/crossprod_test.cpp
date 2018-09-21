@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
+#include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixCrossProd, 3x3_matrix_fd) {
   using stan::math::matrix_d;
@@ -141,13 +141,13 @@ TEST(AgradFwdMatrixCrossProd, 3x3_matrix_ffd) {
   matrix_d Z(3, 3);
   Z << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
-  fvar<fvar<double>> a;
-  fvar<fvar<double>> b;
-  fvar<fvar<double>> c;
-  fvar<fvar<double>> d;
-  fvar<fvar<double>> e;
-  fvar<fvar<double>> f;
-  fvar<fvar<double>> g;
+  fvar<fvar<double> > a;
+  fvar<fvar<double> > b;
+  fvar<fvar<double> > c;
+  fvar<fvar<double> > d;
+  fvar<fvar<double> > e;
+  fvar<fvar<double> > f;
+  fvar<fvar<double> > g;
   a.val_.val_ = 1.0;
   a.d_.val_ = 2.0;
   b.val_.val_ = 2.0;
@@ -191,10 +191,10 @@ TEST(AgradFwdMatrixCrossProd, 2x2_matrix_ffd) {
   matrix_d Z(2, 2);
   Z << 3, 0, 4, -3;
 
-  fvar<fvar<double>> a;
-  fvar<fvar<double>> b;
-  fvar<fvar<double>> c;
-  fvar<fvar<double>> d;
+  fvar<fvar<double> > a;
+  fvar<fvar<double> > b;
+  fvar<fvar<double> > c;
+  fvar<fvar<double> > d;
   a.val_.val_ = 3.0;
   a.d_.val_ = 2.0;
   b.val_.val_ = 0.0;
@@ -222,7 +222,7 @@ TEST(AgradFwdMatrixCrossProd, 1x1_matrix_ffd) {
   using stan::math::fvar;
   using stan::math::matrix_ffd;
 
-  fvar<fvar<double>> a;
+  fvar<fvar<double> > a;
   a.val_.val_ = 3.0;
   a.d_.val_ = 2.0;
 
@@ -238,9 +238,9 @@ TEST(AgradFwdMatrixCrossProd, 1x3_matrix_ffd) {
   using stan::math::matrix_d;
   using stan::math::matrix_ffd;
 
-  fvar<fvar<double>> a;
-  fvar<fvar<double>> b;
-  fvar<fvar<double>> c;
+  fvar<fvar<double> > a;
+  fvar<fvar<double> > b;
+  fvar<fvar<double> > c;
   a.val_.val_ = 1.0;
   a.d_.val_ = 2.0;
   b.val_.val_ = 2.0;
@@ -261,12 +261,12 @@ TEST(AgradFwdMatrixCrossProd, 2x3_matrix_ffd) {
   using stan::math::matrix_d;
   using stan::math::matrix_ffd;
 
-  fvar<fvar<double>> a;
-  fvar<fvar<double>> b;
-  fvar<fvar<double>> c;
-  fvar<fvar<double>> d;
-  fvar<fvar<double>> e;
-  fvar<fvar<double>> f;
+  fvar<fvar<double> > a;
+  fvar<fvar<double> > b;
+  fvar<fvar<double> > c;
+  fvar<fvar<double> > d;
+  fvar<fvar<double> > e;
+  fvar<fvar<double> > f;
   a.val_.val_ = 1.0;
   a.d_.val_ = 2.0;
   b.val_.val_ = 2.0;
@@ -298,12 +298,12 @@ TEST(AgradFwdMatrixCrossProd, 3x2_matrix_ffd) {
   using stan::math::matrix_d;
   using stan::math::matrix_ffd;
 
-  fvar<fvar<double>> a;
-  fvar<fvar<double>> b;
-  fvar<fvar<double>> c;
-  fvar<fvar<double>> d;
-  fvar<fvar<double>> e;
-  fvar<fvar<double>> f;
+  fvar<fvar<double> > a;
+  fvar<fvar<double> > b;
+  fvar<fvar<double> > c;
+  fvar<fvar<double> > d;
+  fvar<fvar<double> > e;
+  fvar<fvar<double> > f;
   a.val_.val_ = 1.0;
   a.d_.val_ = 2.0;
   b.val_.val_ = 2.0;

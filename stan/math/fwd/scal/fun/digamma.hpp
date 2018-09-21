@@ -18,9 +18,10 @@ namespace math {
  * @return derivative of the log gamma function at the specified
  * argument
  */
-template <typename T> inline fvar<T> digamma(const fvar<T> &x) {
+template <typename T>
+inline fvar<T> digamma(const fvar<T>& x) {
   return fvar<T>(digamma(x.val_), x.d_ * trigamma(x.val_));
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

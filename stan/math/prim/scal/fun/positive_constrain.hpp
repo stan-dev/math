@@ -16,7 +16,8 @@ namespace math {
  * @param x Arbitrary input scalar.
  * @return Input transformed to be positive.
  */
-template <typename T> inline T positive_constrain(const T &x) {
+template <typename T>
+inline T positive_constrain(const T& x) {
   using std::exp;
   return exp(x);
 }
@@ -37,14 +38,15 @@ template <typename T> inline T positive_constrain(const T &x) {
  * @param lp log density reference.
  * @return positive constrained version of unconstrained value
  */
-template <typename T> inline T positive_constrain(const T &x, T &lp) {
+template <typename T>
+inline T positive_constrain(const T& x, T& lp) {
   using std::exp;
   lp += x;
   return exp(x);
 }
 
-} // namespace math
+}  // namespace math
 
-} // namespace stan
+}  // namespace stan
 
 #endif

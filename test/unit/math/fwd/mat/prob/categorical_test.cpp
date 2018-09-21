@@ -1,7 +1,7 @@
-#include <boost/math/distributions.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
+#include <gtest/gtest.h>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/math/distributions.hpp>
 #include <vector>
 
 using Eigen::Dynamic;
@@ -41,7 +41,7 @@ TEST(ProbDistributionsCategorical, fvar_double_vector) {
 
 TEST(ProbDistributionsCategorical, fvar_fvar_double) {
   using stan::math::fvar;
-  Matrix<fvar<fvar<double>>, Dynamic, 1> theta(3, 1);
+  Matrix<fvar<fvar<double> >, Dynamic, 1> theta(3, 1);
   theta << 0.3, 0.5, 0.2;
   for (int i = 0; i < 3; i++)
     theta(i).d_.val_ = 1.0;
@@ -58,7 +58,7 @@ TEST(ProbDistributionsCategorical, fvar_fvar_double) {
 }
 TEST(ProbDistributionsCategorical, fvar_fvar_double_vector) {
   using stan::math::fvar;
-  Matrix<fvar<fvar<double>>, Dynamic, 1> theta(3, 1);
+  Matrix<fvar<fvar<double> >, Dynamic, 1> theta(3, 1);
   theta << 0.3, 0.5, 0.2;
   for (int i = 0; i < 3; i++)
     theta(i).d_.val_ = 1.0;

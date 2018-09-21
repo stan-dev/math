@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradMixMatrixRowsDotProduct, fv_vector_vector_1stDeriv) {
@@ -387,8 +387,8 @@ TEST(AgradMixMatrixRowsDotProduct, ffv_vector_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(1, output(1).d_.val().val());
   EXPECT_FLOAT_EQ(-6, output(2).d_.val().val());
 
-  AVEC q =
-      createAVEC(vv_1(0).val().val(), vv_1(1).val().val(), vv_1(2).val().val());
+  AVEC q = createAVEC(vv_1(0).val().val(), vv_1(1).val().val(),
+                      vv_1(2).val().val());
   VEC h;
   output(0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(4, h[0]);
@@ -416,8 +416,8 @@ TEST(AgradMixMatrixRowsDotProduct, ffv_vector_vector_2ndDeriv_1) {
   vector_ffv output(3);
 
   output = rows_dot_product(vv_1, vv_2);
-  AVEC q =
-      createAVEC(vv_1(0).val().val(), vv_1(1).val().val(), vv_1(2).val().val());
+  AVEC q = createAVEC(vv_1(0).val().val(), vv_1(1).val().val(),
+                      vv_1(2).val().val());
   VEC h;
   output(0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -445,8 +445,8 @@ TEST(AgradMixMatrixRowsDotProduct, ffv_vector_vector_2ndDeriv_2) {
   vector_ffv output(3);
 
   output = rows_dot_product(vv_1, vv_2);
-  AVEC q =
-      createAVEC(vv_1(0).val().val(), vv_1(1).val().val(), vv_1(2).val().val());
+  AVEC q = createAVEC(vv_1(0).val().val(), vv_1(1).val().val(),
+                      vv_1(2).val().val());
   VEC h;
   output(0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
@@ -481,8 +481,8 @@ TEST(AgradMixMatrixRowsDotProduct, ffv_vector_vector_3rdDeriv) {
   vector_ffv output(3);
 
   output = rows_dot_product(vv_1, vv_2);
-  AVEC q =
-      createAVEC(vv_1(0).val().val(), vv_1(1).val().val(), vv_1(2).val().val());
+  AVEC q = createAVEC(vv_1(0).val().val(), vv_1(1).val().val(),
+                      vv_1(2).val().val());
   VEC h;
   output(0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);

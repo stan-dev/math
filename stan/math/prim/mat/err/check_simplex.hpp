@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_SIMPLEX_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_SIMPLEX_HPP
 
-#include <sstream>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/meta/error_index.hpp>
+#include <sstream>
 #include <string>
 
 namespace stan {
@@ -36,12 +36,12 @@ namespace math {
  *   simplex or if any element is <code>NaN</code>.
  */
 template <typename T_prob>
-void check_simplex(const char *function, const char *name,
-                   const Eigen::Matrix<T_prob, Eigen::Dynamic, 1> &theta) {
+void check_simplex(const char* function, const char* name,
+                   const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
-  typedef typename index_type<Matrix<T_prob, Dynamic, 1>>::type size_t;
+  typedef typename index_type<Matrix<T_prob, Dynamic, 1> >::type size_t;
 
   check_nonzero_size(function, name, theta);
   if (!(fabs(1.0 - theta.sum()) <= CONSTRAINT_TOLERANCE)) {
@@ -65,6 +65,6 @@ void check_simplex(const char *function, const char *name,
     }
   }
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

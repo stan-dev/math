@@ -1,12 +1,12 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_CHECK_3F2_CONVERGES_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_3F2_CONVERGES_HPP
 
-#include <cmath>
-#include <limits>
-#include <sstream>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/fun/is_nonpositive_integer.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
+#include <cmath>
+#include <limits>
+#include <sstream>
 #include <stdexcept>
 
 namespace stan {
@@ -38,9 +38,9 @@ namespace math {
  */
 template <typename T_a1, typename T_a2, typename T_a3, typename T_b1,
           typename T_b2, typename T_z>
-inline void check_3F2_converges(const char *function, const T_a1 &a1,
-                                const T_a2 &a2, const T_a3 &a3, const T_b1 &b1,
-                                const T_b2 &b2, const T_z &z) {
+inline void check_3F2_converges(const char* function, const T_a1& a1,
+                                const T_a2& a2, const T_a3& a3, const T_b1& b1,
+                                const T_b2& b2, const T_z& z) {
   using std::fabs;
   using std::floor;
 
@@ -67,8 +67,8 @@ inline void check_3F2_converges(const char *function, const T_a1 &a1,
     num_terms = floor(fabs(value_of_rec(a3)));
   }
 
-  bool is_undefined = (is_nonpositive_integer(b1) && fabs(b1) <= num_terms) ||
-                      (is_nonpositive_integer(b2) && fabs(b2) <= num_terms);
+  bool is_undefined = (is_nonpositive_integer(b1) && fabs(b1) <= num_terms)
+                      || (is_nonpositive_integer(b2) && fabs(b2) <= num_terms);
 
   if (is_polynomial && !is_undefined)
     return;
@@ -86,6 +86,6 @@ inline void check_3F2_converges(const char *function, const T_a1 &a1,
   throw std::domain_error(msg.str());
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

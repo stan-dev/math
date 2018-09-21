@@ -13,8 +13,8 @@ namespace math {
  * @param[in] x argument
  * @return negation of argument value
  */
-inline bool operator!(const var &x) { return !x.val(); }
+inline bool operator!(const var& x) { return !x.val(); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

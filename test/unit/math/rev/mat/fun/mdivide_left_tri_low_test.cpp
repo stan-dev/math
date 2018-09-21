@@ -1,10 +1,10 @@
-#include <gtest/gtest.h>
-#include <iostream>
 #include <stan/math/rev/mat.hpp>
 #include <stan/math/rev/mat/fun/mdivide_left_tri.hpp>
-#include <stdexcept>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <stdexcept>
+#include <iostream>
 
 TEST(AgradRevMatrix, var_var_mdivide_left_tri_low) {
   using stan::math::matrix_d;

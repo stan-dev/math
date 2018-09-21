@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOG2_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOG2_HPP
 
-#include <cmath>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -38,7 +38,7 @@ inline double log2(int u) { return log2(static_cast<double>(u)); }
  */
 inline double log2() { return LOG_2; }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

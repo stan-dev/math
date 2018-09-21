@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/arr.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 TEST(MathMatrix, value_of_rec) {
@@ -8,13 +8,13 @@ TEST(MathMatrix, value_of_rec) {
   using stan::math::var;
   using std::vector;
 
-  vector<fvar<fvar<var>>> a;
+  vector<fvar<fvar<var> > > a;
   for (size_t i = 0; i < 10; ++i)
-    a.push_back(fvar<fvar<var>>(i + 1));
+    a.push_back(fvar<fvar<var> >(i + 1));
 
-  vector<fvar<fvar<var>>> b;
+  vector<fvar<fvar<var> > > b;
   for (size_t i = 10; i < 15; ++i)
-    b.push_back(fvar<fvar<var>>(i + 1));
+    b.push_back(fvar<fvar<var> >(i + 1));
 
   vector<double> d_a = value_of_rec(a);
   vector<double> d_b = value_of_rec(b);

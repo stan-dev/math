@@ -1,12 +1,12 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_EXPONENTIAL_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_EXPONENTIAL_RNG_HPP
 
-#include <boost/random/exponential_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <boost/random/exponential_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
@@ -25,12 +25,12 @@ namespace math {
  * @throw std::domain_error if beta is nonpositive
  */
 template <typename T_inv, class RNG>
-inline typename VectorBuilder<true, double, T_inv>::type
-exponential_rng(const T_inv &beta, RNG &rng) {
+inline typename VectorBuilder<true, double, T_inv>::type exponential_rng(
+    const T_inv& beta, RNG& rng) {
   using boost::exponential_distribution;
   using boost::variate_generator;
 
-  static const char *function = "exponential_rng";
+  static const char* function = "exponential_rng";
 
   check_positive_finite(function, "Inverse scale parameter", beta);
 
@@ -39,7 +39,7 @@ exponential_rng(const T_inv &beta, RNG &rng) {
   VectorBuilder<true, double, T_inv> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    variate_generator<RNG &, exponential_distribution<>> exp_rng(
+    variate_generator<RNG&, exponential_distribution<> > exp_rng(
         rng, exponential_distribution<>(beta_vec[n]));
     output[n] = exp_rng();
   }
@@ -47,6 +47,6 @@ exponential_rng(const T_inv &beta, RNG &rng) {
   return output.data();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

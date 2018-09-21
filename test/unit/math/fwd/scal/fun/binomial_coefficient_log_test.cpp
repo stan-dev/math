@@ -1,6 +1,6 @@
-#include <boost/math/special_functions/digamma.hpp>
-#include <gtest/gtest.h>
 #include <stan/math/fwd/scal.hpp>
+#include <gtest/gtest.h>
+#include <boost/math/special_functions/digamma.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdBinomialCoefficientLog, Fvar) {
@@ -21,15 +21,15 @@ TEST(AgradFwdBinomialCoefficientLog, FvarFvarDouble) {
   using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
 
-  fvar<fvar<double>> x;
+  fvar<fvar<double> > x;
   x.val_.val_ = 2004.0;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<double>> y;
+  fvar<fvar<double> > y;
   y.val_.val_ = 1002.0;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<double>> a = binomial_coefficient_log(x, y);
+  fvar<fvar<double> > a = binomial_coefficient_log(x, y);
 
   EXPECT_FLOAT_EQ(binomial_coefficient_log(2004.0, 1002.0), a.val_.val_);
   EXPECT_FLOAT_EQ(0.69289774, a.val_.d_);
@@ -39,8 +39,8 @@ TEST(AgradFwdBinomialCoefficientLog, FvarFvarDouble) {
 
 struct binomial_coefficient_log_fun {
   template <typename T0, typename T1>
-  inline typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1, const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return binomial_coefficient_log(arg1, arg2);
   }
 };

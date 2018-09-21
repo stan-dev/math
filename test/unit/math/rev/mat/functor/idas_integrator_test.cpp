@@ -1,29 +1,29 @@
 #include <stan/math.hpp>
 #include <stan/math/rev/core.hpp>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <stan/math/rev/mat/functor/idas_forward_system.hpp>
 #include <stan/math/rev/mat/functor/idas_integrator.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 
 #include <nvector/nvector_serial.h>
 
-#include <gtest/gtest.h>
 #include <test/unit/util.hpp>
+#include <gtest/gtest.h>
 
-#include <fstream>
-#include <iostream>
-#include <limits>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+#include <iostream>
+#include <fstream>
 #include <vector>
+#include <limits>
 
 struct chemical_kinetics {
   template <typename T0, typename TYY, typename TYP, typename TPAR>
   inline std::vector<typename stan::return_type<TYY, TYP, TPAR>::type>
-  operator()(const T0 &t_in, const std::vector<TYY> &yy,
-             const std::vector<TYP> &yp, const std::vector<TPAR> &theta,
-             const std::vector<double> &x_r, const std::vector<int> &x_i,
-             std::ostream *msgs) const {
+  operator()(const T0& t_in, const std::vector<TYY>& yy,
+             const std::vector<TYP>& yp, const std::vector<TPAR>& theta,
+             const std::vector<double>& x_r, const std::vector<int>& x_i,
+             std::ostream* msgs) const {
     if (yy.size() != 3 || yp.size() != 3)
       throw std::domain_error(
           "this function was called with inconsistent state");
@@ -52,10 +52,10 @@ struct chemical_kinetics {
 struct prey_predator_harvest {
   template <typename T0, typename TYY, typename TYP, typename TPAR>
   inline std::vector<typename stan::return_type<TYY, TYP, TPAR>::type>
-  operator()(const T0 &t_in, const std::vector<TYY> &yy,
-             const std::vector<TYP> &yp, const std::vector<TPAR> &theta,
-             const std::vector<double> &x_r, const std::vector<int> &x_i,
-             std::ostream *msgs) const {
+  operator()(const T0& t_in, const std::vector<TYY>& yy,
+             const std::vector<TYP>& yp, const std::vector<TPAR>& theta,
+             const std::vector<double>& x_r, const std::vector<int>& x_i,
+             std::ostream* msgs) const {
     if (yy.size() != 3 || yp.size() != 3)
       throw std::domain_error(
           "this function was called with inconsistent state");
@@ -90,7 +90,7 @@ struct IDASIntegratorTest : public ::testing::Test {
   std::vector<double> theta;
   std::vector<double> x_r;
   std::vector<int> x_i;
-  std::ostream *msgs;
+  std::ostream* msgs;
   std::vector<int> eq_id;
   const double t0;
   std::vector<double> ts;
@@ -98,8 +98,12 @@ struct IDASIntegratorTest : public ::testing::Test {
   void SetUp() { stan::math::recover_memory(); }
 
   IDASIntegratorTest()
-      : yy0{1.0, 0.0, 0.0}, yp0{-0.04, 0.04, 0.0}, theta{0.040, 1.0e4, 3.0e7},
-        msgs{0}, eq_id{1, 1, 0}, t0(0.0) {
+      : yy0{1.0, 0.0, 0.0},
+        yp0{-0.04, 0.04, 0.0},
+        theta{0.040, 1.0e4, 3.0e7},
+        msgs{0},
+        eq_id{1, 1, 0},
+        t0(0.0) {
     const size_t nout{4};
     const double h{0.4};
     for (size_t i = 0; i < nout; ++i)
@@ -114,7 +118,7 @@ TEST_F(IDASIntegratorTest, idas_ivp_system_yy0) {
       f, eq_id, yy0, yp0, theta, x_r, x_i, msgs};
   idas_integrator solver(1e-4, 1e-8, 1e6);
 
-  std::vector<std::vector<double>> yy = solver.integrate(dae, t0, ts);
+  std::vector<std::vector<double> > yy = solver.integrate(dae, t0, ts);
   EXPECT_NEAR(0.985172, yy[0][0], 1e-6);
   EXPECT_NEAR(0.0147939, yy[0][2], 1e-6);
   EXPECT_NEAR(0.905521, yy[1][0], 1e-6);
@@ -132,7 +136,7 @@ TEST_F(IDASIntegratorTest, forward_sensitivity_theta_chemical) {
 
   idas_forward_system<chemical_kinetics, double, double, var> dae(
       f, eq_id, yy0, yp0, theta_var, x_r, x_i, msgs);
-  std::vector<std::vector<var>> yy = solver.integrate(dae, t0, ts);
+  std::vector<std::vector<var> > yy = solver.integrate(dae, t0, ts);
   EXPECT_NEAR(0.985172, value_of(yy[0][0]), 1e-6);
   EXPECT_NEAR(0.0147939, value_of(yy[0][2]), 1e-6);
   EXPECT_NEAR(0.905519, value_of(yy[1][0]), 1e-6);
@@ -146,8 +150,8 @@ TEST_F(IDASIntegratorTest, forward_sensitivity_theta_chemical) {
   idas_forward_system<chemical_kinetics, double, double, double> dae1(
       f, eq_id, yy0, yp0, theta1, x_r, x_i, msgs),
       dae2(f, eq_id, yy0, yp0, theta2, x_r, x_i, msgs);
-  std::vector<std::vector<double>> yy1 = solver.integrate(dae1, t0, ts);
-  std::vector<std::vector<double>> yy2 = solver.integrate(dae2, t0, ts);
+  std::vector<std::vector<double> > yy1 = solver.integrate(dae1, t0, ts);
+  std::vector<std::vector<double> > yy2 = solver.integrate(dae2, t0, ts);
 
   double yys_finite_diff;
   for (size_t i = 0; i < yy.size(); ++i) {
@@ -179,7 +183,7 @@ TEST_F(IDASIntegratorTest, forward_sensitivity_theta_prey) {
 
   idas_forward_system<prey_predator_harvest, double, double, var> dae(
       f2, eq_id, yy0, yp0, theta_var, x_r, x_i, msgs);
-  std::vector<std::vector<var>> yy = solver.integrate(dae, t0, ts);
+  std::vector<std::vector<var> > yy = solver.integrate(dae, t0, ts);
 
   // test derivatives against central difference results
   std::vector<double> g;
@@ -189,8 +193,8 @@ TEST_F(IDASIntegratorTest, forward_sensitivity_theta_prey) {
   idas_forward_system<prey_predator_harvest, double, double, double> dae1(
       f2, eq_id, yy0, yp0, theta1, x_r, x_i, msgs),
       dae2(f2, eq_id, yy0, yp0, theta2, x_r, x_i, msgs);
-  std::vector<std::vector<double>> yy1 = solver.integrate(dae1, t0, ts);
-  std::vector<std::vector<double>> yy2 = solver.integrate(dae2, t0, ts);
+  std::vector<std::vector<double> > yy1 = solver.integrate(dae1, t0, ts);
+  std::vector<std::vector<double> > yy2 = solver.integrate(dae2, t0, ts);
 
   double yys_finite_diff;
   for (size_t i = 0; i < yy.size(); ++i) {

@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_DOMAIN_ERROR_VEC_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_DOMAIN_ERROR_VEC_HPP
 
-#include <sstream>
 #include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/meta/value_type.hpp>
 #include <stan/math/prim/scal/meta/error_index.hpp>
 #include <stan/math/prim/scal/meta/get.hpp>
-#include <stan/math/prim/scal/meta/value_type.hpp>
+#include <sstream>
 #include <string>
 
 namespace stan {
@@ -34,8 +34,8 @@ namespace math {
  * @throw std::domain_error
  */
 template <typename T>
-inline void domain_error_vec(const char *function, const char *name, const T &y,
-                             size_t i, const char *msg1, const char *msg2) {
+inline void domain_error_vec(const char* function, const char* name, const T& y,
+                             size_t i, const char* msg1, const char* msg2) {
   std::ostringstream vec_name_stream;
   vec_name_stream << name << "[" << stan::error_index::value + i << "]";
   std::string vec_name(vec_name_stream.str());
@@ -64,11 +64,11 @@ inline void domain_error_vec(const char *function, const char *name, const T &y,
  * @throw std::domain_error
  */
 template <typename T>
-inline void domain_error_vec(const char *function, const char *name, const T &y,
-                             size_t i, const char *msg) {
+inline void domain_error_vec(const char* function, const char* name, const T& y,
+                             size_t i, const char* msg) {
   domain_error_vec(function, name, y, i, msg, "");
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

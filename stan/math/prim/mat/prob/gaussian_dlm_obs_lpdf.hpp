@@ -4,7 +4,11 @@
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/mat/err/check_cov_matrix.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/mat/err/check_spsd_matrix.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/err/check_nonnegative.hpp>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/mat/fun/add.hpp>
 #include <stan/math/prim/mat/fun/dot_product.hpp>
 #include <stan/math/prim/mat/fun/inverse_spd.hpp>
@@ -17,10 +21,6 @@
 #include <stan/math/prim/mat/fun/tcrossprod.hpp>
 #include <stan/math/prim/mat/fun/trace_quad_form.hpp>
 #include <stan/math/prim/mat/fun/transpose.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
@@ -71,22 +71,22 @@ template <bool propto, typename T_y, typename T_F, typename T_G, typename T_V,
 typename return_type<
     T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type
 gaussian_dlm_obs_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y,
-    const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic> &F,
-    const Eigen::Matrix<T_G, Eigen::Dynamic, Eigen::Dynamic> &G,
-    const Eigen::Matrix<T_V, Eigen::Dynamic, Eigen::Dynamic> &V,
-    const Eigen::Matrix<T_W, Eigen::Dynamic, Eigen::Dynamic> &W,
-    const Eigen::Matrix<T_m0, Eigen::Dynamic, 1> &m0,
-    const Eigen::Matrix<T_C0, Eigen::Dynamic, Eigen::Dynamic> &C0) {
-  static const char *function = "gaussian_dlm_obs_lpdf";
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
+    const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic>& F,
+    const Eigen::Matrix<T_G, Eigen::Dynamic, Eigen::Dynamic>& G,
+    const Eigen::Matrix<T_V, Eigen::Dynamic, Eigen::Dynamic>& V,
+    const Eigen::Matrix<T_W, Eigen::Dynamic, Eigen::Dynamic>& W,
+    const Eigen::Matrix<T_m0, Eigen::Dynamic, 1>& m0,
+    const Eigen::Matrix<T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
+  static const char* function = "gaussian_dlm_obs_lpdf";
   typedef
       typename return_type<T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0,
                                                      T_C0>::type>::type T_lp;
   T_lp lp(0.0);
 
-  int r = y.rows(); // number of variables
-  int T = y.cols(); // number of observations
-  int n = G.rows(); // number of states
+  int r = y.rows();  // number of variables
+  int T = y.cols();  // number of observations
+  int n = G.rows();  // number of states
 
   check_finite(function, "y", y);
   check_not_nan(function, "y", y);
@@ -172,13 +172,13 @@ template <typename T_y, typename T_F, typename T_G, typename T_V, typename T_W,
 inline typename return_type<
     T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type
 gaussian_dlm_obs_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y,
-    const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic> &F,
-    const Eigen::Matrix<T_G, Eigen::Dynamic, Eigen::Dynamic> &G,
-    const Eigen::Matrix<T_V, Eigen::Dynamic, Eigen::Dynamic> &V,
-    const Eigen::Matrix<T_W, Eigen::Dynamic, Eigen::Dynamic> &W,
-    const Eigen::Matrix<T_m0, Eigen::Dynamic, 1> &m0,
-    const Eigen::Matrix<T_C0, Eigen::Dynamic, Eigen::Dynamic> &C0) {
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
+    const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic>& F,
+    const Eigen::Matrix<T_G, Eigen::Dynamic, Eigen::Dynamic>& G,
+    const Eigen::Matrix<T_V, Eigen::Dynamic, Eigen::Dynamic>& V,
+    const Eigen::Matrix<T_W, Eigen::Dynamic, Eigen::Dynamic>& W,
+    const Eigen::Matrix<T_m0, Eigen::Dynamic, 1>& m0,
+    const Eigen::Matrix<T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
   return gaussian_dlm_obs_lpdf<false>(y, F, G, V, W, m0, C0);
 }
 
@@ -222,14 +222,14 @@ template <bool propto, typename T_y, typename T_F, typename T_G, typename T_V,
 typename return_type<
     T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type
 gaussian_dlm_obs_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y,
-    const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic> &F,
-    const Eigen::Matrix<T_G, Eigen::Dynamic, Eigen::Dynamic> &G,
-    const Eigen::Matrix<T_V, Eigen::Dynamic, 1> &V,
-    const Eigen::Matrix<T_W, Eigen::Dynamic, Eigen::Dynamic> &W,
-    const Eigen::Matrix<T_m0, Eigen::Dynamic, 1> &m0,
-    const Eigen::Matrix<T_C0, Eigen::Dynamic, Eigen::Dynamic> &C0) {
-  static const char *function = "gaussian_dlm_obs_lpdf";
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
+    const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic>& F,
+    const Eigen::Matrix<T_G, Eigen::Dynamic, Eigen::Dynamic>& G,
+    const Eigen::Matrix<T_V, Eigen::Dynamic, 1>& V,
+    const Eigen::Matrix<T_W, Eigen::Dynamic, Eigen::Dynamic>& W,
+    const Eigen::Matrix<T_m0, Eigen::Dynamic, 1>& m0,
+    const Eigen::Matrix<T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
+  static const char* function = "gaussian_dlm_obs_lpdf";
   typedef
       typename return_type<T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0,
                                                      T_C0>::type>::type T_lp;
@@ -237,9 +237,9 @@ gaussian_dlm_obs_lpdf(
 
   using std::log;
 
-  int r = y.rows(); // number of variables
-  int T = y.cols(); // number of observations
-  int n = G.rows(); // number of states
+  int r = y.rows();  // number of variables
+  int T = y.cols();  // number of observations
+  int n = G.rows();  // number of states
 
   check_finite(function, "y", y);
   check_not_nan(function, "y", y);
@@ -335,16 +335,16 @@ template <typename T_y, typename T_F, typename T_G, typename T_V, typename T_W,
 inline typename return_type<
     T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type
 gaussian_dlm_obs_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y,
-    const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic> &F,
-    const Eigen::Matrix<T_G, Eigen::Dynamic, Eigen::Dynamic> &G,
-    const Eigen::Matrix<T_V, Eigen::Dynamic, 1> &V,
-    const Eigen::Matrix<T_W, Eigen::Dynamic, Eigen::Dynamic> &W,
-    const Eigen::Matrix<T_m0, Eigen::Dynamic, 1> &m0,
-    const Eigen::Matrix<T_C0, Eigen::Dynamic, Eigen::Dynamic> &C0) {
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
+    const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic>& F,
+    const Eigen::Matrix<T_G, Eigen::Dynamic, Eigen::Dynamic>& G,
+    const Eigen::Matrix<T_V, Eigen::Dynamic, 1>& V,
+    const Eigen::Matrix<T_W, Eigen::Dynamic, Eigen::Dynamic>& W,
+    const Eigen::Matrix<T_m0, Eigen::Dynamic, 1>& m0,
+    const Eigen::Matrix<T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
   return gaussian_dlm_obs_lpdf<false>(y, F, G, V, W, m0, C0);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

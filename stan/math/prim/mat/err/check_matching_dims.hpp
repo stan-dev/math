@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_MATCHING_DIMS_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_MATCHING_DIMS_HPP
 
-#include <sstream>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
+#include <sstream>
 #include <string>
 
 namespace stan {
@@ -33,10 +33,10 @@ namespace math {
  * if the dimensions of the matrices do not match
  */
 template <typename T1, typename T2, int R1, int C1, int R2, int C2>
-inline void check_matching_dims(const char *function, const char *name1,
-                                const Eigen::Matrix<T1, R1, C1> &y1,
-                                const char *name2,
-                                const Eigen::Matrix<T2, R2, C2> &y2) {
+inline void check_matching_dims(const char* function, const char* name1,
+                                const Eigen::Matrix<T1, R1, C1>& y1,
+                                const char* name2,
+                                const Eigen::Matrix<T2, R2, C2>& y2) {
   check_size_match(function, "Rows of ", name1, y1.rows(), "rows of ", name2,
                    y2.rows());
   check_size_match(function, "Columns of ", name1, y1.cols(), "columns of ",
@@ -69,10 +69,10 @@ inline void check_matching_dims(const char *function, const char *name1,
  */
 template <bool check_compile, typename T1, typename T2, int R1, int C1, int R2,
           int C2>
-inline void check_matching_dims(const char *function, const char *name1,
-                                const Eigen::Matrix<T1, R1, C1> &y1,
-                                const char *name2,
-                                const Eigen::Matrix<T2, R2, C2> &y2) {
+inline void check_matching_dims(const char* function, const char* name1,
+                                const Eigen::Matrix<T1, R1, C1>& y1,
+                                const char* name2,
+                                const Eigen::Matrix<T2, R2, C2>& y2) {
   if (check_compile && (R1 != R2 || C1 != C2)) {
     std::ostringstream msg;
     msg << "Static rows and cols of " << name1 << " and " << name2
@@ -82,6 +82,6 @@ inline void check_matching_dims(const char *function, const char *name1,
   }
   check_matching_dims(function, name1, y1, name2, y2);
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

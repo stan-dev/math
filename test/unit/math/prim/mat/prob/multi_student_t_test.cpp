@@ -1,9 +1,9 @@
-#include <boost/math/distributions.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <gtest/gtest.h>
-#include <limits>
 #include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/math/distributions.hpp>
 #include <vector>
+#include <limits>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -27,8 +27,8 @@ TEST(ProbDistributionsMultiStudentT, NotVectorized) {
 }
 TEST(ProbDistributionsMultiStudentT, Vectorized) {
   boost::random::mt19937 rng;
-  vector<Matrix<double, Dynamic, 1>> vec_y(2);
-  vector<Matrix<double, 1, Dynamic>> vec_y_t(2);
+  vector<Matrix<double, Dynamic, 1> > vec_y(2);
+  vector<Matrix<double, 1, Dynamic> > vec_y_t(2);
   Matrix<double, Dynamic, 1> y(3);
   Matrix<double, 1, Dynamic> y_t(3);
   y << 3.0, -2.0, 10.0;
@@ -39,8 +39,8 @@ TEST(ProbDistributionsMultiStudentT, Vectorized) {
   vec_y_t[1] = y;
   y_t = y;
 
-  vector<Matrix<double, Dynamic, 1>> vec_mu(2);
-  vector<Matrix<double, 1, Dynamic>> vec_mu_t(2);
+  vector<Matrix<double, Dynamic, 1> > vec_mu(2);
+  vector<Matrix<double, 1, Dynamic> > vec_mu_t(2);
   Matrix<double, Dynamic, 1> mu(3);
   Matrix<double, 1, Dynamic> mu_t(3);
   mu << 2.0, -1.0, 4.0;

@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/mat.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 using stan::math::fvar;
@@ -542,12 +542,12 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, exceptions_fv) {
 }
 
 TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_ffv_matrix_ffv1) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_A;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_A;
   stan::math::matrix_ffv D(2, 2);
   stan::math::matrix_ffv A(2, 2);
   stan::math::matrix_ffv B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -585,12 +585,12 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_ffv_matrix_ffv1) {
 }
 
 TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_ffv_matrix_ffv2) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_A;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_A;
   stan::math::matrix_ffv D(2, 2);
   stan::math::matrix_ffv A(2, 2);
   stan::math::matrix_ffv B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -626,12 +626,12 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_ffv_matrix_ffv2) {
 }
 
 TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_ffv_matrix_ffv3) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_A;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_A;
   stan::math::matrix_ffv D(2, 2);
   stan::math::matrix_ffv A(2, 2);
   stan::math::matrix_ffv B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -669,12 +669,12 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_ffv_matrix_ffv3) {
   EXPECT_FLOAT_EQ(16.08, grads[11]);
 }
 TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_ffv_matrix_ffv4) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_A;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_A;
   stan::math::matrix_ffv D(2, 2);
   stan::math::matrix_ffv A(2, 2);
   stan::math::matrix_ffv B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -712,12 +712,12 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_ffv_matrix_ffv4) {
   EXPECT_FLOAT_EQ(-17.696, grads[11]);
 }
 TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_ffv_matrix_d1) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_A;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_A;
   stan::math::matrix_ffv D(2, 2);
   stan::math::matrix_ffv A(2, 2);
   stan::math::matrix_d B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -749,12 +749,12 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_ffv_matrix_d1) {
 }
 
 TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_ffv_matrix_d2) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_A;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_A;
   stan::math::matrix_ffv D(2, 2);
   stan::math::matrix_ffv A(2, 2);
   stan::math::matrix_d B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -786,12 +786,12 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_ffv_matrix_d2) {
 }
 
 TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_ffv_matrix_d3) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_A;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_A;
   stan::math::matrix_ffv D(2, 2);
   stan::math::matrix_ffv A(2, 2);
   stan::math::matrix_d B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -824,12 +824,12 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_ffv_matrix_d3) {
   EXPECT_FLOAT_EQ(14.712, grads[7]);
 }
 TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_ffv_matrix_d4) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_A;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_A;
   stan::math::matrix_ffv D(2, 2);
   stan::math::matrix_ffv A(2, 2);
   stan::math::matrix_d B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -867,7 +867,7 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_d_matrix_ffv1) {
   stan::math::matrix_d A(2, 2);
   stan::math::matrix_ffv B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -903,7 +903,7 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_d_matrix_ffv2) {
   stan::math::matrix_d A(2, 2);
   stan::math::matrix_ffv B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -937,7 +937,7 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_d_matrix_ffv3) {
   stan::math::matrix_d A(2, 2);
   stan::math::matrix_ffv B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -973,7 +973,7 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_d_matrix_ffv4) {
   stan::math::matrix_d A(2, 2);
   stan::math::matrix_ffv B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -1005,12 +1005,12 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_d_matrix_ffv4) {
 }
 
 TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_ffv_matrix_ffv1) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_A;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_A;
   stan::math::matrix_d D(2, 2);
   stan::math::matrix_ffv A(2, 2);
   stan::math::matrix_ffv B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -1042,12 +1042,12 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_ffv_matrix_ffv1) {
 }
 
 TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_ffv_matrix_ffv2) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_A;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_A;
   stan::math::matrix_d D(2, 2);
   stan::math::matrix_ffv A(2, 2);
   stan::math::matrix_ffv B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -1076,12 +1076,12 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_ffv_matrix_ffv2) {
   EXPECT_FLOAT_EQ(17.28, grads[7]);
 }
 TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_ffv_matrix_ffv3) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_A;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_A;
   stan::math::matrix_d D(2, 2);
   stan::math::matrix_ffv A(2, 2);
   stan::math::matrix_ffv B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -1113,12 +1113,12 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_ffv_matrix_ffv3) {
 }
 
 TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_ffv_matrix_ffv4) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_A;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_A;
   stan::math::matrix_d D(2, 2);
   stan::math::matrix_ffv A(2, 2);
   stan::math::matrix_ffv B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -1155,7 +1155,7 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_d_matrix_d1) {
   stan::math::matrix_d A(2, 2);
   stan::math::matrix_d B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -1186,7 +1186,7 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_d_matrix_d2) {
   stan::math::matrix_d A(2, 2);
   stan::math::matrix_d B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -1216,7 +1216,7 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_d_matrix_d3) {
   stan::math::matrix_d A(2, 2);
   stan::math::matrix_d B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -1247,7 +1247,7 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_d_matrix_d4) {
   stan::math::matrix_d A(2, 2);
   stan::math::matrix_d B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -1273,12 +1273,12 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_ffv_matrix_d_matrix_d4) {
   EXPECT_FLOAT_EQ(0, grads[3]);
 }
 TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_ffv_matrix_d1) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_A;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_A;
   stan::math::matrix_d D(2, 2);
   stan::math::matrix_ffv A(2, 2);
   stan::math::matrix_d B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -1303,12 +1303,12 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_ffv_matrix_d1) {
   EXPECT_FLOAT_EQ(-3.96, grads[3]);
 }
 TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_ffv_matrix_d2) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_A;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_A;
   stan::math::matrix_d D(2, 2);
   stan::math::matrix_ffv A(2, 2);
   stan::math::matrix_d B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -1333,12 +1333,12 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_ffv_matrix_d2) {
   EXPECT_FLOAT_EQ(15.072, grads[3]);
 }
 TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_ffv_matrix_d3) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_A;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_A;
   stan::math::matrix_d D(2, 2);
   stan::math::matrix_ffv A(2, 2);
   stan::math::matrix_d B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -1364,12 +1364,12 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_ffv_matrix_d3) {
   EXPECT_FLOAT_EQ(15.072, grads[3]);
 }
 TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_ffv_matrix_d4) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_A;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_A;
   stan::math::matrix_d D(2, 2);
   stan::math::matrix_ffv A(2, 2);
   stan::math::matrix_d B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -1401,7 +1401,7 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_d_matrix_ffv1) {
   stan::math::matrix_d A(2, 2);
   stan::math::matrix_ffv B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -1431,7 +1431,7 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_d_matrix_ffv2) {
   stan::math::matrix_d A(2, 2);
   stan::math::matrix_ffv B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -1461,7 +1461,7 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_d_matrix_ffv3) {
   stan::math::matrix_d A(2, 2);
   stan::math::matrix_ffv B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -1492,7 +1492,7 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_d_matrix_ffv4) {
   stan::math::matrix_d A(2, 2);
   stan::math::matrix_ffv B(2, 2);
   std::vector<var> vars;
-  fvar<fvar<var>> I;
+  fvar<fvar<var> > I;
 
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
@@ -1537,8 +1537,8 @@ TEST(AgradMixMatrixTraceGenInvQuadFormLDLT, exceptions_ffv) {
   row_vector_d rvd1(3), rvd2(4);
   vector_d vd1(3), vd2(4);
 
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> fv1;
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> fv2;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> fv1;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> fv2;
   stan::math::LDLT_factor<double, -1, -1> fd1;
   stan::math::LDLT_factor<double, -1, -1> fd2;
   fv1.compute(fv1_);

@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/arr.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 TEST(MathMatrix, value_of_rec) {
@@ -18,9 +18,9 @@ TEST(MathMatrix, value_of_rec) {
     b_vals.push_back(i + 1);
 
   {
-    vector<fvar<double>> a;
+    vector<fvar<double> > a;
     a = stan::math::to_fvar(a_vals);
-    vector<fvar<double>> b;
+    vector<fvar<double> > b;
     b = stan::math::to_fvar(b_vals);
 
     vector<double> d_a = value_of_rec(a);
@@ -34,14 +34,14 @@ TEST(MathMatrix, value_of_rec) {
   }
 
   {
-    vector<fvar<double>> a_vals_fd = stan::math::to_fvar(a_vals);
-    vector<fvar<double>> b_vals_fd = stan::math::to_fvar(b_vals);
-    vector<fvar<double>> zeros_fd(10);
+    vector<fvar<double> > a_vals_fd = stan::math::to_fvar(a_vals);
+    vector<fvar<double> > b_vals_fd = stan::math::to_fvar(b_vals);
+    vector<fvar<double> > zeros_fd(10);
     std::fill(zeros_fd.begin(), zeros_fd.end(), 0);
 
-    vector<fvar<fvar<double>>> a;
+    vector<fvar<fvar<double> > > a;
     a = stan::math::to_fvar(a_vals_fd, zeros_fd);
-    vector<fvar<fvar<double>>> b;
+    vector<fvar<fvar<double> > > b;
     b = stan::math::to_fvar(b_vals_fd, zeros_fd);
 
     vector<double> d_a = value_of_rec(a);

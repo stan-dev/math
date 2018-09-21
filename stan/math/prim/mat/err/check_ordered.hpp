@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_ORDERED_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_ORDERED_HPP
 
-#include <sstream>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/meta/error_index.hpp>
-#include <string>
+#include <sstream>
 #include <vector>
+#include <string>
 
 namespace stan {
 namespace math {
@@ -27,12 +27,12 @@ namespace math {
  *   values, or if any element is <code>NaN</code>.
  */
 template <typename T_y>
-void check_ordered(const char *function, const char *name,
-                   const Eigen::Matrix<T_y, Eigen::Dynamic, 1> &y) {
+void check_ordered(const char* function, const char* name,
+                   const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
-  typedef typename index_type<Matrix<T_y, Dynamic, 1>>::type size_t;
+  typedef typename index_type<Matrix<T_y, Dynamic, 1> >::type size_t;
 
   for (size_t n = 1; n < y.size(); n++) {
     if (!(y[n] > y[n - 1])) {
@@ -48,6 +48,6 @@ void check_ordered(const char *function, const char *name,
   }
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -15,6 +15,6 @@ namespace math {
  */
 inline double exp(int x) { return std::exp(static_cast<double>(x)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

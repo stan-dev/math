@@ -1,9 +1,9 @@
-#include <cmath>
-#include <gtest/gtest.h>
-#include <limits>
 #include <stan/math/rev/scal.hpp>
-#include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <cmath>
+#include <limits>
 
 TEST(AgradRev, cosh_var) {
   AVAR a = 0.68;
@@ -52,7 +52,8 @@ TEST(AgradRev, cosh_neg_inf) {
 }
 
 struct cosh_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0& arg1) const {
     return cosh(arg1);
   }
 };

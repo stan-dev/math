@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/scal.hpp>
-#include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/util.hpp>
+#include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdFdim, FvarVar_FvarVar_1stDeriv) {
   using stan::math::fdim;
@@ -121,15 +121,15 @@ TEST(AgradFwdFdim, FvarFvarVar_FvarFvarVar_1stDeriv) {
   using stan::math::var;
   using std::floor;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 2.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var>> a = fdim(x, y);
+  fvar<fvar<var> > a = fdim(x, y);
 
   EXPECT_FLOAT_EQ(fdim(2.5, 1.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1, a.val_.d_.val());
@@ -149,13 +149,13 @@ TEST(AgradFwdFdim, FvarFvarVar_double_1stDeriv) {
   using stan::math::var;
   using std::floor;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 2.5;
   x.val_.d_ = 1.0;
 
   double y(1.5);
 
-  fvar<fvar<var>> a = fdim(x, y);
+  fvar<fvar<var> > a = fdim(x, y);
 
   EXPECT_FLOAT_EQ(fdim(2.5, 1.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1, a.val_.d_.val());
@@ -176,11 +176,11 @@ TEST(AgradFwdFdim, Double_FvarFvarVar_1stDeriv) {
 
   double x(2.5);
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var>> a = fdim(x, y);
+  fvar<fvar<var> > a = fdim(x, y);
 
   EXPECT_FLOAT_EQ(fdim(2.5, 1.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(0, a.val_.d_.val());
@@ -199,15 +199,15 @@ TEST(AgradFwdFdim, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
   using stan::math::var;
   using std::floor;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 2.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var>> a = fdim(x, y);
+  fvar<fvar<var> > a = fdim(x, y);
 
   EXPECT_FLOAT_EQ(fdim(2.5, 1.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1, a.val_.d_.val());
@@ -226,15 +226,15 @@ TEST(AgradFwdFdim, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
   using stan::math::var;
   using std::floor;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 2.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var>> a = fdim(x, y);
+  fvar<fvar<var> > a = fdim(x, y);
 
   EXPECT_FLOAT_EQ(fdim(2.5, 1.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1, a.val_.d_.val());
@@ -252,13 +252,13 @@ TEST(AgradFwdFdim, FvarFvarVar_double_2ndDeriv) {
   using stan::math::var;
   using std::floor;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 2.5;
   x.val_.d_ = 1.0;
 
   double y(1.5);
 
-  fvar<fvar<var>> a = fdim(x, y);
+  fvar<fvar<var> > a = fdim(x, y);
 
   EXPECT_FLOAT_EQ(fdim(2.5, 1.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1, a.val_.d_.val());
@@ -279,11 +279,11 @@ TEST(AgradFwdFdim, Double_FvarFvarVar_2ndDeriv) {
 
   double x(2.5);
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var>> a = fdim(x, y);
+  fvar<fvar<var> > a = fdim(x, y);
 
   EXPECT_FLOAT_EQ(fdim(2.5, 1.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(0, a.val_.d_.val());
@@ -302,15 +302,15 @@ TEST(AgradFwdFdim, FvarFvarVar_FvarFvarVar_3rdDeriv) {
   using stan::math::var;
   using std::floor;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 2.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var>> a = fdim(x, y);
+  fvar<fvar<var> > a = fdim(x, y);
 
   AVEC p = createAVEC(y.val_.val_);
   VEC g;
@@ -323,14 +323,14 @@ TEST(AgradFwdFdim, FvarFvarVar_double_3rdDeriv) {
   using stan::math::var;
   using std::floor;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 2.5;
   x.val_.d_ = 1.0;
   x.d_.val_ = 1.0;
 
   double y(1.5);
 
-  fvar<fvar<var>> a = fdim(x, y);
+  fvar<fvar<var> > a = fdim(x, y);
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
@@ -346,12 +346,12 @@ TEST(AgradFwdFdim, Double_FvarFvarVar_3rdDeriv) {
 
   double x(2.5);
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 1.0;
   y.val_.d_ = 1.0;
 
-  fvar<fvar<var>> a = fdim(x, y);
+  fvar<fvar<var> > a = fdim(x, y);
 
   AVEC p = createAVEC(y.val_.val_);
   VEC g;
@@ -361,8 +361,8 @@ TEST(AgradFwdFdim, Double_FvarFvarVar_3rdDeriv) {
 
 struct fdim_fun {
   template <typename T0, typename T1>
-  inline typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1, const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return fdim(arg1, arg2);
   }
 };

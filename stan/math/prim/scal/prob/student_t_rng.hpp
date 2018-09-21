@@ -1,14 +1,14 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_STUDENT_T_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_STUDENT_T_RNG_HPP
 
-#include <boost/random/student_t_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <boost/random/student_t_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
@@ -36,11 +36,11 @@ namespace math {
  */
 template <typename T_deg, typename T_loc, typename T_scale, class RNG>
 inline typename VectorBuilder<true, double, T_deg, T_loc, T_scale>::type
-student_t_rng(const T_deg &nu, const T_loc &mu, const T_scale &sigma,
-              RNG &rng) {
+student_t_rng(const T_deg& nu, const T_loc& mu, const T_scale& sigma,
+              RNG& rng) {
   using boost::random::student_t_distribution;
   using boost::variate_generator;
-  static const char *function = "student_t_rng";
+  static const char* function = "student_t_rng";
 
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_finite(function, "Location parameter", mu);
@@ -55,7 +55,7 @@ student_t_rng(const T_deg &nu, const T_loc &mu, const T_scale &sigma,
   VectorBuilder<true, double, T_deg, T_loc, T_scale> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    variate_generator<RNG &, student_t_distribution<>> rng_unit_student_t(
+    variate_generator<RNG&, student_t_distribution<> > rng_unit_student_t(
         rng, student_t_distribution<>(nu_vec[n]));
     output[n] = mu_vec[n] + sigma_vec[n] * rng_unit_student_t();
   }
@@ -63,6 +63,6 @@ student_t_rng(const T_deg &nu, const T_loc &mu, const T_scale &sigma,
   return output.data();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

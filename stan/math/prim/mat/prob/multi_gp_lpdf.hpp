@@ -2,17 +2,17 @@
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_GP_LPDF_HPP
 
 #include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
 #include <stan/math/prim/mat/fun/multiply.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
 #include <stan/math/prim/mat/fun/trace_gen_inv_quad_form_ldlt.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
@@ -40,10 +40,10 @@ namespace math {
 template <bool propto, typename T_y, typename T_covar, typename T_w>
 typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type
 multi_gp_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y,
-    const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic> &Sigma,
-    const Eigen::Matrix<T_w, Eigen::Dynamic, 1> &w) {
-  static const char *function = "multi_gp_lpdf";
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
+    const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
+    const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
+  static const char* function = "multi_gp_lpdf";
   typedef
       typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type T_lp;
   T_lp lp(0.0);
@@ -89,12 +89,12 @@ multi_gp_lpdf(
 template <typename T_y, typename T_covar, typename T_w>
 inline typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type
 multi_gp_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y,
-    const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic> &Sigma,
-    const Eigen::Matrix<T_w, Eigen::Dynamic, 1> &w) {
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
+    const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
+    const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
   return multi_gp_lpdf<false>(y, Sigma, w);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

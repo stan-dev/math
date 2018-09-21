@@ -1,8 +1,8 @@
-#include <algorithm>
-#include <gtest/gtest.h>
-#include <limits>
 #include <stan/math/mix/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <limits>
+#include <algorithm>
 
 using stan::math::fvar;
 TEST(AgradMixMatrixMin, fv_vector_1stDeriv) {
@@ -216,7 +216,7 @@ TEST(AgradMixMatrixMin, ffv_vector_1stDeriv) {
   v1(1).d_ = 1.0;
   v1(2).d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = min(d1);
   EXPECT_FLOAT_EQ(-3, output.val_.val().val());
   EXPECT_FLOAT_EQ(0, output.d_.val().val());
@@ -247,7 +247,7 @@ TEST(AgradMixMatrixMin, ffv_vector_2ndDeriv_1) {
   v1(1).d_ = 1.0;
   v1(2).d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = min(v1);
 
   AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
@@ -272,7 +272,7 @@ TEST(AgradMixMatrixMin, ffv_vector_2ndDeriv_2) {
   v1(1).d_ = 1.0;
   v1(2).d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = min(v1);
 
   AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
@@ -300,7 +300,7 @@ TEST(AgradMixMatrixMin, ffv_vector_3rdDeriv) {
   v1(1).val_.d_ = 1.0;
   v1(2).val_.d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = min(v1);
 
   AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
@@ -337,7 +337,7 @@ TEST(AgradMixMatrixMin, ffv_rowvector_1stDeriv) {
   v1(1).d_ = 1.0;
   v1(2).d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = min(d1);
   EXPECT_FLOAT_EQ(-3, output.val_.val().val());
   EXPECT_FLOAT_EQ(0, output.d_.val().val());
@@ -368,7 +368,7 @@ TEST(AgradMixMatrixMin, ffv_rowvector_2ndDeriv_1) {
   v1(1).d_ = 1.0;
   v1(2).d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = min(v1);
 
   AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
@@ -393,7 +393,7 @@ TEST(AgradMixMatrixMin, ffv_rowvector_2ndDeriv_2) {
   v1(1).d_ = 1.0;
   v1(2).d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = min(v1);
 
   AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
@@ -421,7 +421,7 @@ TEST(AgradMixMatrixMin, ffv_rowvector_3rdDeriv) {
   v1(1).val_.d_ = 1.0;
   v1(2).val_.d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = min(v1);
 
   AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
@@ -455,7 +455,7 @@ TEST(AgradMixMatrixMin, ffv_matrix_1stDeriv) {
   v1(0, 1).d_ = 1.0;
   v1(0, 2).d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = min(d1);
   EXPECT_FLOAT_EQ(-3, output.val_.val().val());
   EXPECT_FLOAT_EQ(0, output.d_.val().val());
@@ -487,7 +487,7 @@ TEST(AgradMixMatrixMin, ffv_matrix_2ndDeriv_1) {
   v1(0, 1).d_ = 1.0;
   v1(0, 2).d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = min(v1);
 
   AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
@@ -513,7 +513,7 @@ TEST(AgradMixMatrixMin, ffv_matrix_2ndDeriv_2) {
   v1(0, 1).d_ = 1.0;
   v1(0, 2).d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = min(v1);
 
   AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
@@ -542,7 +542,7 @@ TEST(AgradMixMatrixMin, ffv_matrix_3rdDeriv) {
   v1(0, 1).val_.d_ = 1.0;
   v1(0, 2).val_.d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = min(v1);
 
   AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
