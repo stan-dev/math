@@ -23,6 +23,10 @@ include make/cpplint
 .PHONY: help
 help:
 	@echo '--------------------------------------------------------------------------------'
+	@echo 'Note: testing of Math is typically done with the `runTests.py` python script.'
+	@echo '  See https://github.com/stan-dev/math/wiki/Developer-Doc#building-and-running-tests'
+	@echo '  for more detail on testing.'
+	@echo  ''
 	@echo 'Stan Math makefile:'
 	@$(MAKE) print-compiler-flags
 	@echo 'Tests:'
