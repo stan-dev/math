@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 TEST(ProbDistributionsOrdLog, fd_fd) {

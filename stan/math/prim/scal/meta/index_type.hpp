@@ -14,7 +14,8 @@ namespace math {
  *
  * tparam T type of container.
  */
-template <typename T> struct index_type {};
+template <typename T>
+struct index_type {};
 
 /**
  * Template class for metaprogram to compute the type of indexes
@@ -22,11 +23,12 @@ template <typename T> struct index_type {};
  *
  * @tparam T type of container without const modifier.
  */
-template <typename T> struct index_type<const T> {
+template <typename T>
+struct index_type<const T> {
   typedef typename index_type<T>::type type;
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

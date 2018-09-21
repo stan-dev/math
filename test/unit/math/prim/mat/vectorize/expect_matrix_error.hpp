@@ -1,12 +1,13 @@
 #ifndef TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_MATRIX_ERROR_HPP
 #define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_MATRIX_ERROR_HPP
 
+#include <gtest/gtest.h>
 #include <Eigen/Dense>
 #include <exception>
-#include <gtest/gtest.h>
 #include <vector>
 
-template <typename F, typename T> void expect_matrix_error() {
+template <typename F, typename T>
+void expect_matrix_error() {
   using std::vector;
   typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
   vector<double> invalid_inputs = F::invalid_inputs();
@@ -23,7 +24,7 @@ template <typename F, typename T> void expect_matrix_error() {
   vector<matrix_t> d;
   d.push_back(a);
   d.push_back(a);
-  EXPECT_THROW(F::template apply<vector<matrix_t>>(d), std::exception);
+  EXPECT_THROW(F::template apply<vector<matrix_t> >(d), std::exception);
 }
 
 #endif

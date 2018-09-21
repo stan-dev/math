@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
-#include <limits>
 #include <stan/math/rev/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/util.hpp>
+#include <limits>
 #include <vector>
 
 TEST(AgradRevErrorHandlingMatrix, checkNonzeroSizeMatrix) {

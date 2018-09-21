@@ -6,20 +6,20 @@ using std::numeric_limits;
 using std::vector;
 
 class AgradCcdfLogInvGamma : public AgradCcdfLogTest {
-public:
-  void valid_values(vector<vector<double>> &parameters,
-                    vector<double> &ccdf_log) {
+ public:
+  void valid_values(vector<vector<double> >& parameters,
+                    vector<double>& ccdf_log) {
     vector<double> param(3);
 
-    param[0] = 3.0; // y
-    param[1] = 0.5; // alpha (Shape)
-    param[2] = 3.3; // beta (Scale)
+    param[0] = 3.0;  // y
+    param[1] = 0.5;  // alpha (Shape)
+    param[2] = 3.3;  // beta (Scale)
     parameters.push_back(param);
     ccdf_log.push_back(
-        std::log(1.0 - 0.138010737568659559638900550956)); // expected ccdf_log
+        std::log(1.0 - 0.138010737568659559638900550956));  // expected ccdf_log
   }
 
-  void invalid_values(vector<size_t> &index, vector<double> &value) {
+  void invalid_values(vector<size_t>& index, vector<double>& value) {
     // y
     index.push_back(0U);
     value.push_back(-1.0);
@@ -53,17 +53,17 @@ public:
 
   template <typename T_y, typename T_shape, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_shape, T_scale>::type
-  ccdf_log(const T_y &y, const T_shape &alpha, const T_scale &beta, const T3 &,
-           const T4 &, const T5 &) {
+  typename stan::return_type<T_y, T_shape, T_scale>::type ccdf_log(
+      const T_y& y, const T_shape& alpha, const T_scale& beta, const T3&,
+      const T4&, const T5&) {
     return stan::math::inv_gamma_ccdf_log(y, alpha, beta);
   }
 
   template <typename T_y, typename T_shape, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_shape, T_scale>::type
-  ccdf_log_function(const T_y &y, const T_shape &alpha, const T_scale &beta,
-                    const T3 &, const T4 &, const T5 &) {
+  typename stan::return_type<T_y, T_shape, T_scale>::type ccdf_log_function(
+      const T_y& y, const T_shape& alpha, const T_scale& beta, const T3&,
+      const T4&, const T5&) {
     using stan::math::gamma_p;
 
     return log(gamma_p(alpha, beta / y));

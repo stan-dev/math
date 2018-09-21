@@ -1,18 +1,18 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_FMOD_HPP
 #define STAN_MATH_REV_SCAL_FUN_FMOD_HPP
 
+#include <stan/math/rev/core.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <cmath>
 #include <limits>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/rev/core.hpp>
 
 namespace stan {
 namespace math {
 
 namespace {
 class fmod_vv_vari : public op_vv_vari {
-public:
-  fmod_vv_vari(vari *avi, vari *bvi)
+ public:
+  fmod_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(std::fmod(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_) || is_nan(bvi_->val_))) {
@@ -26,8 +26,8 @@ public:
 };
 
 class fmod_vd_vari : public op_vd_vari {
-public:
-  fmod_vd_vari(vari *avi, double b)
+ public:
+  fmod_vd_vari(vari* avi, double b)
       : op_vd_vari(std::fmod(avi->val_, b), avi, b) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_) || is_nan(bd_)))
@@ -38,8 +38,8 @@ public:
 };
 
 class fmod_dv_vari : public op_dv_vari {
-public:
-  fmod_dv_vari(double a, vari *bvi)
+ public:
+  fmod_dv_vari(double a, vari* bvi)
       : op_dv_vari(std::fmod(a, bvi->val_), a, bvi) {}
   void chain() {
     if (unlikely(is_nan(bvi_->val_) || is_nan(ad_))) {
@@ -50,7 +50,7 @@ public:
     }
   }
 };
-} // namespace
+}  // namespace
 
 /**
  * Return the floating point remainder after dividing the
@@ -95,7 +95,7 @@ public:
  * @return Floating pointer remainder of dividing the first variable
  * by the second.
  */
-inline var fmod(const var &a, const var &b) {
+inline var fmod(const var& a, const var& b) {
   return var(new fmod_vv_vari(a.vi_, b.vi_));
 }
 
@@ -112,7 +112,7 @@ inline var fmod(const var &a, const var &b) {
  * @return Floating pointer remainder of dividing the first variable by
  * the second scalar.
  */
-inline var fmod(const var &a, double b) {
+inline var fmod(const var& a, double b) {
   return var(new fmod_vd_vari(a.vi_, b));
 }
 
@@ -129,10 +129,10 @@ inline var fmod(const var &a, double b) {
  * @return Floating pointer remainder of dividing first scalar by
  * the second variable.
  */
-inline var fmod(double a, const var &b) {
+inline var fmod(double a, const var& b) {
   return var(new fmod_dv_vari(a, b.vi_));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

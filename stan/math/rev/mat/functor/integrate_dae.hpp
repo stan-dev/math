@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_INTEGRATOR_DAE_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_INTEGRATOR_DAE_HPP
 
-#include <ostream>
 #include <stan/math/rev/mat/functor/idas_forward_system.hpp>
 #include <stan/math/rev/mat/functor/idas_integrator.hpp>
+#include <ostream>
 #include <vector>
 
 namespace stan {
@@ -33,14 +33,13 @@ namespace math {
  * same size as the state variable, corresponding to a time in ts.
  */
 template <typename F, typename Tpar>
-std::vector<std::vector<Tpar>>
-integrate_dae(const F &f, const std::vector<double> &yy0,
-              const std::vector<double> &yp0, double t0,
-              const std::vector<double> &ts, const std::vector<Tpar> &theta,
-              const std::vector<double> &x_r, const std::vector<int> &x_i,
-              const double rtol, const double atol,
-              const int64_t max_num_steps = idas_integrator::IDAS_MAX_STEPS,
-              std::ostream *msgs = nullptr) {
+std::vector<std::vector<Tpar> > integrate_dae(
+    const F& f, const std::vector<double>& yy0, const std::vector<double>& yp0,
+    double t0, const std::vector<double>& ts, const std::vector<Tpar>& theta,
+    const std::vector<double>& x_r, const std::vector<int>& x_i,
+    const double rtol, const double atol,
+    const int64_t max_num_steps = idas_integrator::IDAS_MAX_STEPS,
+    std::ostream* msgs = nullptr) {
   /* it doesn't matter here what values @c eq_id has, as we
      don't allow yy0 or yp0 to be parameters */
   const std::vector<int> dummy_eq_id(yy0.size(), 0);
@@ -53,7 +52,7 @@ integrate_dae(const F &f, const std::vector<double> &yy0,
 
   return solver.integrate(dae, t0, ts);
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

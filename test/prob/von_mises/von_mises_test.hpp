@@ -6,14 +6,14 @@ using std::numeric_limits;
 using std::vector;
 
 class AgradDistributionVonMises : public AgradDistributionTest {
-public:
-  void valid_values(vector<vector<double>> &parameters,
-                    vector<double> &log_prob) {
+ public:
+  void valid_values(vector<vector<double> >& parameters,
+                    vector<double>& log_prob) {
     vector<double> param(3);
 
-    param[0] = boost::math::constants::third_pi<double>(); // y
-    param[1] = boost::math::constants::sixth_pi<double>(); // mu
-    param[2] = 0.5;                                        // kappa
+    param[0] = boost::math::constants::third_pi<double>();  // y
+    param[1] = boost::math::constants::sixth_pi<double>();  // mu
+    param[2] = 0.5;                                         // kappa
     parameters.push_back(param);
     log_prob.push_back(-1.46641408370260739602);
 
@@ -36,7 +36,7 @@ public:
     log_prob.push_back(-2.262849861924804084623);
   }
 
-  void invalid_values(vector<size_t> &index, vector<double> &value) {
+  void invalid_values(vector<size_t>& index, vector<double>& value) {
     // y
     index.push_back(0U);
     value.push_back(-numeric_limits<double>::infinity());
@@ -61,30 +61,30 @@ public:
 
   template <typename T_y, typename T_loc, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type
-  log_prob(const T_y &y, const T_loc &mu, const T_scale &kappa, const T3 &,
-           const T4 &, const T5 &) {
+  typename stan::return_type<T_y, T_loc, T_scale>::type log_prob(
+      const T_y& y, const T_loc& mu, const T_scale& kappa, const T3&, const T4&,
+      const T5&) {
     return stan::math::von_mises_log(y, mu, kappa);
   }
 
   template <bool propto, typename T_y, typename T_loc, typename T_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type
-  log_prob(const T_y &y, const T_loc &mu, const T_scale &kappa, const T3 &,
-           const T4 &, const T5 &) {
+  typename stan::return_type<T_y, T_loc, T_scale>::type log_prob(
+      const T_y& y, const T_loc& mu, const T_scale& kappa, const T3&, const T4&,
+      const T5&) {
     return stan::math::von_mises_log<propto>(y, mu, kappa);
   }
 
   template <typename T_y, typename T_loc, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type
-  log_prob_function(const T_y &y, const T_loc &mu, const T_scale &kappa,
-                    const T3 &, const T4 &, const T5 &) {
+  typename stan::return_type<T_y, T_loc, T_scale>::type log_prob_function(
+      const T_y& y, const T_loc& mu, const T_scale& kappa, const T3&, const T4&,
+      const T5&) {
     using stan::math::modified_bessel_first_kind;
     using stan::math::pi;
     using std::log;
 
-    return -log(2.0 * stan::math::pi()) -
-           log(modified_bessel_first_kind(0, kappa)) + kappa * cos(mu - y);
+    return -log(2.0 * stan::math::pi())
+           - log(modified_bessel_first_kind(0, kappa)) + kappa * cos(mu - y);
   }
 };

@@ -1,12 +1,12 @@
-#include <gtest/gtest.h>
 #include <stan/math/rev/mat.hpp>
-#include <string>
-#include <test/unit/math/prim/mat/prob/agrad_distributions_multi_normal.hpp>
-#include <test/unit/math/prim/mat/prob/agrad_distributions_multi_normal_multi_row.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/prob/expect_eq_diffs.hpp>
 #include <test/unit/math/rev/mat/prob/test_gradients.hpp>
 #include <test/unit/math/rev/mat/prob/test_gradients_multi_normal.hpp>
+#include <test/unit/math/prim/mat/prob/agrad_distributions_multi_normal_multi_row.hpp>
+#include <test/unit/math/prim/mat/prob/agrad_distributions_multi_normal.hpp>
 #include <vector>
+#include <string>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -127,27 +127,27 @@ TEST(ProbDistributionsMultiNormal, MultiNormalGradientUnivariate) {
   Matrix<double, Dynamic, 1> y_p(1, 1);
   y_p[0] = y[0] + epsilon;
   y_m[0] = y[0] - epsilon;
-  double grad_diff =
-      (multi_normal_log(y_p, mu, Sigma) - multi_normal_log(y_m, mu, Sigma)) /
-      (2 * epsilon);
+  double grad_diff
+      = (multi_normal_log(y_p, mu, Sigma) - multi_normal_log(y_m, mu, Sigma))
+        / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[0]);
 
   Matrix<double, Dynamic, 1> mu_m(1, 1);
   Matrix<double, Dynamic, 1> mu_p(1, 1);
   mu_p[0] = mu[0] + epsilon;
   mu_m[0] = mu[0] - epsilon;
-  grad_diff =
-      (multi_normal_log(y, mu_p, Sigma) - multi_normal_log(y, mu_m, Sigma)) /
-      (2 * epsilon);
+  grad_diff
+      = (multi_normal_log(y, mu_p, Sigma) - multi_normal_log(y, mu_m, Sigma))
+        / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[1]);
 
   Matrix<double, Dynamic, Dynamic> Sigma_m(1, 1);
   Matrix<double, Dynamic, Dynamic> Sigma_p(1, 1);
   Sigma_p(0) = Sigma(0) + epsilon;
   Sigma_m(0) = Sigma(0) - epsilon;
-  grad_diff =
-      (multi_normal_log(y, mu, Sigma_p) - multi_normal_log(y, mu, Sigma_m)) /
-      (2 * epsilon);
+  grad_diff
+      = (multi_normal_log(y, mu, Sigma_p) - multi_normal_log(y, mu, Sigma_m))
+        / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[2]);
 }
 
@@ -156,7 +156,8 @@ struct multi_normal_fun {
 
   explicit multi_normal_fun(int K) : K_(K) {}
 
-  template <typename T> T operator()(const std::vector<T> &x) const {
+  template <typename T>
+  T operator()(const std::vector<T>& x) const {
     using Eigen::Dynamic;
     using Eigen::Matrix;
     using stan::math::var;
@@ -222,17 +223,18 @@ struct vectorized_multi_normal_fun {
                                                            bool N = false)
       : K_(K), L_(L), dont_vectorize_y(M), dont_vectorize_mu(N) {
     if ((dont_vectorize_y || dont_vectorize_mu) && L != 1)
-      throw std::runtime_error("attempt to disable vectorization with vector "
-                               "bigger than 1");
+      throw std::runtime_error(
+          "attempt to disable vectorization with vector "
+          "bigger than 1");
   }
 
   template <typename T_y, typename T_mu, typename T_sigma>
   typename boost::math::tools::promote_args<T_y, T_mu, T_sigma>::type
-  operator()(const std::vector<T_y> &y_vec, const std::vector<T_mu> &mu_vec,
-             const std::vector<T_sigma> &sigma_vec) const {
-    vector<Matrix<T_y, is_row_vec_y, is_row_vec_y * -1>> y(
+  operator()(const std::vector<T_y>& y_vec, const std::vector<T_mu>& mu_vec,
+             const std::vector<T_sigma>& sigma_vec) const {
+    vector<Matrix<T_y, is_row_vec_y, is_row_vec_y * -1> > y(
         L_, Matrix<T_y, is_row_vec_y, is_row_vec_y * -1>(K_));
-    vector<Matrix<T_mu, is_row_vec_mu, is_row_vec_mu * -1>> mu(
+    vector<Matrix<T_mu, is_row_vec_mu, is_row_vec_mu * -1> > mu(
         L_, Matrix<T_mu, is_row_vec_mu, is_row_vec_mu * -1>(K_));
     Matrix<T_sigma, Dynamic, Dynamic> Sigma(K_, K_);
     int pos = 0;
@@ -267,7 +269,8 @@ struct vectorized_multi_normal_fun {
   }
 };
 
-template <int is_row_vec_y, int is_row_vec_mu> void test_all() {
+template <int is_row_vec_y, int is_row_vec_mu>
+void test_all() {
   {
     vector<double> y_(3), mu_(3), sigma_(6);
     // y

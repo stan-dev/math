@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
 
 TEST(ProbMultiNormalPrec, log_matches_lpmf) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> y(3, 1);
@@ -16,15 +16,18 @@ TEST(ProbMultiNormalPrec, log_matches_lpmf) {
   EXPECT_FLOAT_EQ((stan::math::multi_normal_prec_lpdf<false>(y, mu, L)),
                   (stan::math::multi_normal_prec_log<false>(y, mu, L)));
   EXPECT_FLOAT_EQ(
-      (stan::math::multi_normal_prec_lpdf<
-          true, Eigen::VectorXd, Eigen::VectorXd, Eigen::MatrixXd>(y, mu, L)),
+      (stan::math::multi_normal_prec_lpdf<true, Eigen::VectorXd,
+                                          Eigen::VectorXd, Eigen::MatrixXd>(
+          y, mu, L)),
       (stan::math::multi_normal_prec_log<true, Eigen::VectorXd, Eigen::VectorXd,
                                          Eigen::MatrixXd>(y, mu, L)));
   EXPECT_FLOAT_EQ(
-      (stan::math::multi_normal_prec_lpdf<
-          false, Eigen::VectorXd, Eigen::VectorXd, Eigen::MatrixXd>(y, mu, L)),
-      (stan::math::multi_normal_prec_log<
-          false, Eigen::VectorXd, Eigen::VectorXd, Eigen::MatrixXd>(y, mu, L)));
+      (stan::math::multi_normal_prec_lpdf<false, Eigen::VectorXd,
+                                          Eigen::VectorXd, Eigen::MatrixXd>(
+          y, mu, L)),
+      (stan::math::multi_normal_prec_log<false, Eigen::VectorXd,
+                                         Eigen::VectorXd, Eigen::MatrixXd>(
+          y, mu, L)));
   EXPECT_FLOAT_EQ(
       (stan::math::multi_normal_prec_lpdf<Eigen::VectorXd, Eigen::VectorXd,
                                           Eigen::MatrixXd>(y, mu, L)),

@@ -1,18 +1,18 @@
 #ifndef STAN_MATH_REV_MAT_FUN_MDIVIDE_LEFT_LDLT_HPP
 #define STAN_MATH_REV_MAT_FUN_MDIVIDE_LEFT_LDLT_HPP
 
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/mat/fun/LDLT_alloc.hpp>
 #include <stan/math/rev/mat/fun/LDLT_factor.hpp>
+#include <stan/math/prim/mat/err/check_multiplicable.hpp>
 
 namespace stan {
 namespace math {
 namespace {
 template <int R1, int C1, int R2, int C2>
 class mdivide_left_ldlt_alloc : public chainable_alloc {
-public:
+ public:
   virtual ~mdivide_left_ldlt_alloc() {}
 
   /**
@@ -20,7 +20,7 @@ public:
    * for mdivide_left_ldlt(ldltA, b) when ldltA is a LDLT_factor<double>.
    * The pointer is shared with the LDLT_factor<double> class.
    **/
-  boost::shared_ptr<Eigen::LDLT<Eigen::Matrix<double, R1, C1>>> ldltP_;
+  boost::shared_ptr<Eigen::LDLT<Eigen::Matrix<double, R1, C1> > > ldltP_;
   Eigen::Matrix<double, R2, C2> C_;
 };
 
@@ -36,9 +36,9 @@ public:
  **/
 template <int R1, int C1, int R2, int C2>
 class mdivide_left_ldlt_vv_vari : public vari {
-public:
-  int M_; // A.rows() = A.cols() = B.rows()
-  int N_; // B.cols()
+ public:
+  int M_;  // A.rows() = A.cols() = B.rows()
+  int N_;  // B.cols()
   vari **variRefB_;
   vari **variRefC_;
   mdivide_left_ldlt_alloc<R1, C1, R2, C2> *alloc_;
@@ -46,13 +46,15 @@ public:
 
   mdivide_left_ldlt_vv_vari(const LDLT_factor<var, R1, C1> &A,
                             const Eigen::Matrix<var, R2, C2> &B)
-      : vari(0.0), M_(A.rows()), N_(B.cols()),
+      : vari(0.0),
+        M_(A.rows()),
+        N_(B.cols()),
         variRefB_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) *
-                                                       B.rows() * B.cols()))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
+                                                       * B.cols()))),
         variRefC_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) *
-                                                       B.rows() * B.cols()))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
+                                                       * B.cols()))),
         alloc_(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()),
         alloc_ldlt_(A.alloc_) {
     int pos = 0;
@@ -111,22 +113,24 @@ public:
  **/
 template <int R1, int C1, int R2, int C2>
 class mdivide_left_ldlt_dv_vari : public vari {
-public:
-  int M_; // A.rows() = A.cols() = B.rows()
-  int N_; // B.cols()
+ public:
+  int M_;  // A.rows() = A.cols() = B.rows()
+  int N_;  // B.cols()
   vari **variRefB_;
   vari **variRefC_;
   mdivide_left_ldlt_alloc<R1, C1, R2, C2> *alloc_;
 
   mdivide_left_ldlt_dv_vari(const LDLT_factor<double, R1, C1> &A,
                             const Eigen::Matrix<var, R2, C2> &B)
-      : vari(0.0), M_(A.rows()), N_(B.cols()),
+      : vari(0.0),
+        M_(A.rows()),
+        N_(B.cols()),
         variRefB_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) *
-                                                       B.rows() * B.cols()))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
+                                                       * B.cols()))),
         variRefC_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) *
-                                                       B.rows() * B.cols()))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
+                                                       * B.cols()))),
         alloc_(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()) {
     using Eigen::Map;
     using Eigen::Matrix;
@@ -182,19 +186,21 @@ public:
  **/
 template <int R1, int C1, int R2, int C2>
 class mdivide_left_ldlt_vd_vari : public vari {
-public:
-  int M_; // A.rows() = A.cols() = B.rows()
-  int N_; // B.cols()
+ public:
+  int M_;  // A.rows() = A.cols() = B.rows()
+  int N_;  // B.cols()
   vari **variRefC_;
   mdivide_left_ldlt_alloc<R1, C1, R2, C2> *alloc_;
   const LDLT_alloc<R1, C1> *alloc_ldlt_;
 
   mdivide_left_ldlt_vd_vari(const LDLT_factor<var, R1, C1> &A,
                             const Eigen::Matrix<double, R2, C2> &B)
-      : vari(0.0), M_(A.rows()), N_(B.cols()),
+      : vari(0.0),
+        M_(A.rows()),
+        N_(B.cols()),
         variRefC_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) *
-                                                       B.rows() * B.cols()))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
+                                                       * B.cols()))),
         alloc_(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()),
         alloc_ldlt_(A.alloc_) {
     alloc_->C_ = B;
@@ -225,7 +231,7 @@ public:
         alloc_ldlt_->variA_(i, j)->adj_ += adjA(i, j);
   }
 };
-} // namespace
+}  // namespace
 
 /**
  * Returns the solution of the system Ax=b given an LDLT_factor of A
@@ -235,15 +241,14 @@ public:
  * @throws std::domain_error if rows of b don't match the size of A.
  */
 template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<var, R1, C2>
-mdivide_left_ldlt(const LDLT_factor<var, R1, C1> &A,
-                  const Eigen::Matrix<var, R2, C2> &b) {
+inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
+    const LDLT_factor<var, R1, C1> &A, const Eigen::Matrix<var, R2, C2> &b) {
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
 
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
 
-  mdivide_left_ldlt_vv_vari<R1, C1, R2, C2> *baseVari =
-      new mdivide_left_ldlt_vv_vari<R1, C1, R2, C2>(A, b);
+  mdivide_left_ldlt_vv_vari<R1, C1, R2, C2> *baseVari
+      = new mdivide_left_ldlt_vv_vari<R1, C1, R2, C2>(A, b);
 
   int pos = 0;
   for (int j = 0; j < res.cols(); j++)
@@ -261,15 +266,14 @@ mdivide_left_ldlt(const LDLT_factor<var, R1, C1> &A,
  * @throws std::domain_error if rows of b don't match the size of A.
  */
 template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<var, R1, C2>
-mdivide_left_ldlt(const LDLT_factor<var, R1, C1> &A,
-                  const Eigen::Matrix<double, R2, C2> &b) {
+inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
+    const LDLT_factor<var, R1, C1> &A, const Eigen::Matrix<double, R2, C2> &b) {
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
 
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
 
-  mdivide_left_ldlt_vd_vari<R1, C1, R2, C2> *baseVari =
-      new mdivide_left_ldlt_vd_vari<R1, C1, R2, C2>(A, b);
+  mdivide_left_ldlt_vd_vari<R1, C1, R2, C2> *baseVari
+      = new mdivide_left_ldlt_vd_vari<R1, C1, R2, C2>(A, b);
 
   int pos = 0;
   for (int j = 0; j < res.cols(); j++)
@@ -287,15 +291,14 @@ mdivide_left_ldlt(const LDLT_factor<var, R1, C1> &A,
  * @throws std::domain_error if rows of b don't match the size of A.
  */
 template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<var, R1, C2>
-mdivide_left_ldlt(const LDLT_factor<double, R1, C1> &A,
-                  const Eigen::Matrix<var, R2, C2> &b) {
+inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
+    const LDLT_factor<double, R1, C1> &A, const Eigen::Matrix<var, R2, C2> &b) {
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
 
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
 
-  mdivide_left_ldlt_dv_vari<R1, C1, R2, C2> *baseVari =
-      new mdivide_left_ldlt_dv_vari<R1, C1, R2, C2>(A, b);
+  mdivide_left_ldlt_dv_vari<R1, C1, R2, C2> *baseVari
+      = new mdivide_left_ldlt_dv_vari<R1, C1, R2, C2>(A, b);
 
   int pos = 0;
   for (int j = 0; j < res.cols(); j++)
@@ -305,6 +308,6 @@ mdivide_left_ldlt(const LDLT_factor<double, R1, C1> &A,
   return res;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

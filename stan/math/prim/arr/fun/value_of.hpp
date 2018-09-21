@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_ARR_FUN_VALUE_OF_HPP
 #define STAN_MATH_PRIM_ARR_FUN_VALUE_OF_HPP
 
-#include <cstddef>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/child_type.hpp>
 #include <vector>
+#include <cstddef>
 
 namespace stan {
 namespace math {
@@ -18,8 +18,8 @@ namespace math {
  * @return std::vector of values
  **/
 template <typename T>
-inline std::vector<typename child_type<T>::type>
-value_of(const std::vector<T> &x) {
+inline std::vector<typename child_type<T>::type> value_of(
+    const std::vector<T>& x) {
   size_t size = x.size();
   std::vector<typename child_type<T>::type> result(size);
   for (size_t i = 0; i < size; i++)
@@ -38,7 +38,7 @@ value_of(const std::vector<T> &x) {
  * @param x Specified std::vector.
  * @return Specified std::vector.
  */
-inline const std::vector<double> &value_of(const std::vector<double> &x) {
+inline const std::vector<double>& value_of(const std::vector<double>& x) {
   return x;
 }
 
@@ -53,9 +53,9 @@ inline const std::vector<double> &value_of(const std::vector<double> &x) {
  * @param x Specified std::vector.
  * @return Specified std::vector.
  */
-inline const std::vector<int> &value_of(const std::vector<int> &x) { return x; }
+inline const std::vector<int>& value_of(const std::vector<int>& x) { return x; }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

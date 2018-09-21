@@ -1,7 +1,7 @@
-#include <cmath>
-#include <gtest/gtest.h>
-#include <limits>
 #include <stan/math/prim/scal.hpp>
+#include <gtest/gtest.h>
+#include <cmath>
+#include <limits>
 #include <stdexcept>
 
 TEST(MathFunctions, log_mix_exceptions) {

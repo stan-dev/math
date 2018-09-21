@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_FWD_CORE_FVAR_HPP
 #define STAN_MATH_FWD_CORE_FVAR_HPP
 
+#include <stan/math/prim/scal/meta/likely.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/fwd/scal/meta/ad_promotable.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <ostream>
-#include <stan/math/fwd/scal/meta/ad_promotable.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/prim/scal/meta/likely.hpp>
 
 namespace stan {
 namespace math {
@@ -38,7 +38,8 @@ namespace math {
  *
  * @tparam T type of value and tangent
  */
-template <typename T> struct fvar {
+template <typename T>
+struct fvar {
   /**
    * The value of this variable.
    */
@@ -74,7 +75,7 @@ template <typename T> struct fvar {
    *
    * @param[in] x variable to be copied
    */
-  fvar(const fvar<T> &x) : val_(x.val_), d_(x.d_) {}
+  fvar(const fvar<T>& x) : val_(x.val_), d_(x.d_) {}
 
   /**
    * Construct a forward variable with the specified value and
@@ -84,7 +85,7 @@ template <typename T> struct fvar {
    *   tangent type T)
    * @param[in] v value
    */
-  fvar(const T &v) : val_(v), d_(0.0) { // NOLINT(runtime/explicit)
+  fvar(const T& v) : val_(v), d_(0.0) {  // NOLINT(runtime/explicit)
     if (unlikely(is_nan(v)))
       d_ = v;
   }
@@ -100,8 +101,8 @@ template <typename T> struct fvar {
    *   metaprogramming
    */
   template <typename V>
-  fvar(const V &v,
-       typename boost::enable_if_c<ad_promotable<V, T>::value>::type *dummy = 0)
+  fvar(const V& v,
+       typename boost::enable_if_c<ad_promotable<V, T>::value>::type* dummy = 0)
       : val_(v), d_(0.0) {
     if (unlikely(is_nan(v)))
       d_ = v;
@@ -119,7 +120,7 @@ template <typename T> struct fvar {
    * @param[in] d tangent
    */
   template <typename V, typename D>
-  fvar(const V &v, const D &d) : val_(v), d_(d) {
+  fvar(const V& v, const D& d) : val_(v), d_(d) {
     if (unlikely(is_nan(v)))
       d_ = v;
   }
@@ -131,7 +132,7 @@ template <typename T> struct fvar {
    * @param[in] x2 variable to add
    * @return reference to this variable after addition
    */
-  inline fvar<T> &operator+=(const fvar<T> &x2) {
+  inline fvar<T>& operator+=(const fvar<T>& x2) {
     val_ += x2.val_;
     d_ += x2.d_;
     return *this;
@@ -144,7 +145,7 @@ template <typename T> struct fvar {
    * @param[in] x2 value to add
    * @return reference to this variable after addition
    */
-  inline fvar<T> &operator+=(double x2) {
+  inline fvar<T>& operator+=(double x2) {
     val_ += x2;
     return *this;
   }
@@ -156,7 +157,7 @@ template <typename T> struct fvar {
    * @param[in] x2 variable to subtract
    * @return reference to this variable after subtraction
    */
-  inline fvar<T> &operator-=(const fvar<T> &x2) {
+  inline fvar<T>& operator-=(const fvar<T>& x2) {
     val_ -= x2.val_;
     d_ -= x2.d_;
     return *this;
@@ -169,7 +170,7 @@ template <typename T> struct fvar {
    * @param[in] x2 value to add
    * @return reference to this variable after subtraction
    */
-  inline fvar<T> &operator-=(double x2) {
+  inline fvar<T>& operator-=(double x2) {
     val_ -= x2;
     return *this;
   }
@@ -181,7 +182,7 @@ template <typename T> struct fvar {
    * @param[in] x2 variable to multiply
    * @return reference to this variable after multiplication
    */
-  inline fvar<T> &operator*=(const fvar<T> &x2) {
+  inline fvar<T>& operator*=(const fvar<T>& x2) {
     d_ = d_ * x2.val_ + val_ * x2.d_;
     val_ *= x2.val_;
     return *this;
@@ -194,7 +195,7 @@ template <typename T> struct fvar {
    * @param[in] x2 value to multiply
    * @return reference to this variable after multiplication
    */
-  inline fvar<T> &operator*=(double x2) {
+  inline fvar<T>& operator*=(double x2) {
     val_ *= x2;
     d_ *= x2;
     return *this;
@@ -207,7 +208,7 @@ template <typename T> struct fvar {
    * @param[in] x2 variable to divide this variable by
    * @return reference to this variable after division
    */
-  inline fvar<T> &operator/=(const fvar<T> &x2) {
+  inline fvar<T>& operator/=(const fvar<T>& x2) {
     d_ = (d_ * x2.val_ - val_ * x2.d_) / (x2.val_ * x2.val_);
     val_ /= x2.val_;
     return *this;
@@ -220,7 +221,7 @@ template <typename T> struct fvar {
    * @param[in] x2 value to divide this variable by
    * @return reference to this variable after division
    */
-  inline fvar<T> &operator/=(double x2) {
+  inline fvar<T>& operator/=(double x2) {
     val_ /= x2;
     d_ /= x2;
     return *this;
@@ -232,7 +233,7 @@ template <typename T> struct fvar {
    *
    * @return reference to this variable after increment
    */
-  inline fvar<T> &operator++() {
+  inline fvar<T>& operator++() {
     ++val_;
     return *this;
   }
@@ -255,7 +256,7 @@ template <typename T> struct fvar {
    *
    * @return reference to this variable after decrement
    */
-  inline fvar<T> &operator--() {
+  inline fvar<T>& operator--() {
     --val_;
     return *this;
   }
@@ -280,10 +281,10 @@ template <typename T> struct fvar {
    * @param[in] v variable whose value is written
    * @return reference to the specified output stream
    */
-  friend std::ostream &operator<<(std::ostream &os, const fvar<T> &v) {
+  friend std::ostream& operator<<(std::ostream& os, const fvar<T>& v) {
     return os << v.val_;
   }
 };
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

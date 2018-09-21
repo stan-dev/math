@@ -1,9 +1,9 @@
-#include <cmath>
-#include <gtest/gtest.h>
-#include <limits>
 #include <stan/math/rev/scal.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <cmath>
+#include <limits>
 
 TEST(AgradRev, acosh_val) {
   using stan::math::acosh;
@@ -45,7 +45,8 @@ TEST(AgradRevAcosh, overflows) {
 }
 
 struct acosh_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0& arg1) const {
     using stan::math::acosh;
     return acosh(arg1);
   }

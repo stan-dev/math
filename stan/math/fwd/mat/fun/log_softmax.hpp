@@ -11,8 +11,8 @@ namespace stan {
 namespace math {
 
 template <typename T>
-inline Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1>
-log_softmax(const Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1> &alpha) {
+inline Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1> log_softmax(
+    const Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1>& alpha) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
@@ -30,12 +30,12 @@ log_softmax(const Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1> &alpha) {
   }
 
   for (int m = 0; m < alpha.size(); ++m) {
-    T negative_alpha_m_d_times_softmax_alpha_t_m =
-        -alpha(m).d_ * softmax_alpha_t(m);
+    T negative_alpha_m_d_times_softmax_alpha_t_m
+        = -alpha(m).d_ * softmax_alpha_t(m);
     for (int k = 0; k < alpha.size(); ++k) {
       if (m == k)
-        log_softmax_alpha(k).d_ +=
-            alpha(m).d_ + negative_alpha_m_d_times_softmax_alpha_t_m;
+        log_softmax_alpha(k).d_
+            += alpha(m).d_ + negative_alpha_m_d_times_softmax_alpha_t_m;
       else
         log_softmax_alpha(k).d_ += negative_alpha_m_d_times_softmax_alpha_t_m;
     }
@@ -44,6 +44,6 @@ log_softmax(const Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1> &alpha) {
   return log_softmax_alpha;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

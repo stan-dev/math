@@ -2,10 +2,10 @@
 #define STAN_MATH_PRIM_MAT_FUN_MDIVIDE_LEFT_TRI_LOW_HPP
 
 #include <boost/math/tools/promotion.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_tri.hpp>
+#include <stan/math/prim/mat/err/check_square.hpp>
+#include <stan/math/prim/mat/err/check_multiplicable.hpp>
 
 namespace stan {
 namespace math {
@@ -42,12 +42,12 @@ mdivide_left_tri_low(const Eigen::Matrix<T1, R1, C1> &A,
 }
 
 template <typename T, int R1, int C1>
-inline Eigen::Matrix<T, R1, C1>
-mdivide_left_tri_low(const Eigen::Matrix<T, R1, C1> &A) {
+inline Eigen::Matrix<T, R1, C1> mdivide_left_tri_low(
+    const Eigen::Matrix<T, R1, C1> &A) {
   check_square("mdivide_left_tri_low", "A", A);
   return mdivide_left_tri<Eigen::Lower>(A);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

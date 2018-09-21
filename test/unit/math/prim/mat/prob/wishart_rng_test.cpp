@@ -1,8 +1,8 @@
+#include <stan/math/prim/mat.hpp>
+#include <test/unit/math/prim/mat/util.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat.hpp>
 #include <stdexcept>
-#include <test/unit/math/prim/mat/util.hpp>
 #include <vector>
 
 TEST(ProbDistributionsWishartRng, rng) {
@@ -48,8 +48,9 @@ TEST(ProbDistributionsWishart, marginalTwoChiSquareGoodnessFitTest) {
   int N = 10000;
 
   double avg = 0;
-  double expect = sigma.rows() * log(2.0) + log(determinant(sigma)) +
-                  digamma(5.0 / 2.0) + digamma(4.0 / 2.0) + digamma(3.0 / 2.0);
+  double expect = sigma.rows() * log(2.0) + log(determinant(sigma))
+                  + digamma(5.0 / 2.0) + digamma(4.0 / 2.0)
+                  + digamma(3.0 / 2.0);
 
   MatrixXd a(sigma.rows(), sigma.rows());
   for (int count = 0; count < N; ++count) {
@@ -92,8 +93,8 @@ TEST(ProbDistributionsWishart, SpecialRNGTest) {
   std::vector<double> acum;
   acum.reserve(N);
   for (size_t i = 0; i < N; i++)
-    acum.push_back((C.transpose() * wishart_rng(k, sigma, rng) * C)(0) /
-                   (C.transpose() * sigma_sym * C)(0));
+    acum.push_back((C.transpose() * wishart_rng(k, sigma, rng) * C)(0)
+                   / (C.transpose() * sigma_sym * C)(0));
 
   EXPECT_NEAR(1, stan::math::mean(acum) / k, tol * tol);
   EXPECT_NEAR(1, stan::math::variance(acum) / (2 * k), tol);

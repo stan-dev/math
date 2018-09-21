@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
+#include <gtest/gtest.h>
 #include <stdexcept>
 #include <vector>
 
@@ -65,7 +65,7 @@ TEST(AgradFwdMatrixSegment, SegmentRowVector4_fd) {
 
 TEST(AgradFwdMatrixSegment, SegmentStdVector1_fd) {
   using stan::math::segment;
-  std::vector<fvar<double>> v(3);
+  std::vector<fvar<double> > v(3);
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -73,7 +73,7 @@ TEST(AgradFwdMatrixSegment, SegmentStdVector1_fd) {
 }
 TEST(AgradFwdMatrixSegment, SegmentStdVector2_fd) {
   using stan::math::segment;
-  std::vector<fvar<double>> v(3);
+  std::vector<fvar<double> > v(3);
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -81,7 +81,7 @@ TEST(AgradFwdMatrixSegment, SegmentStdVector2_fd) {
 }
 TEST(AgradFwdMatrixSegment, SegmentStdVector3_fd) {
   using stan::math::segment;
-  std::vector<fvar<double>> v(3);
+  std::vector<fvar<double> > v(3);
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -89,11 +89,11 @@ TEST(AgradFwdMatrixSegment, SegmentStdVector3_fd) {
 }
 TEST(AgradFwdMatrixSegment, SegmentStdVector4_fd) {
   using stan::math::segment;
-  std::vector<fvar<double>> v(3);
+  std::vector<fvar<double> > v(3);
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
-  std::vector<fvar<double>> v23 = segment(v, 2, 2);
+  std::vector<fvar<double> > v23 = segment(v, 2, 2);
   EXPECT_EQ(2U, v23.size());
   for (int n = 0; n < 2; ++n)
     EXPECT_FLOAT_EQ(v[n + 1].val_, v23[n].val_);
@@ -159,7 +159,7 @@ TEST(AgradFwdMatrixSegment, SegmentRowVector4_ffd) {
 
 TEST(AgradFwdMatrixSegment, SegmentStdVector1_ffd) {
   using stan::math::segment;
-  std::vector<fvar<fvar<double>>> v(3);
+  std::vector<fvar<fvar<double> > > v(3);
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -167,7 +167,7 @@ TEST(AgradFwdMatrixSegment, SegmentStdVector1_ffd) {
 }
 TEST(AgradFwdMatrixSegment, SegmentStdVector2_ffd) {
   using stan::math::segment;
-  std::vector<fvar<fvar<double>>> v(3);
+  std::vector<fvar<fvar<double> > > v(3);
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -175,7 +175,7 @@ TEST(AgradFwdMatrixSegment, SegmentStdVector2_ffd) {
 }
 TEST(AgradFwdMatrixSegment, SegmentStdVector3_ffd) {
   using stan::math::segment;
-  std::vector<fvar<fvar<double>>> v(3);
+  std::vector<fvar<fvar<double> > > v(3);
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -183,11 +183,11 @@ TEST(AgradFwdMatrixSegment, SegmentStdVector3_ffd) {
 }
 TEST(AgradFwdMatrixSegment, SegmentStdVector4_ffd) {
   using stan::math::segment;
-  std::vector<fvar<fvar<double>>> v(3);
+  std::vector<fvar<fvar<double> > > v(3);
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
-  std::vector<fvar<fvar<double>>> v23 = segment(v, 2, 2);
+  std::vector<fvar<fvar<double> > > v23 = segment(v, 2, 2);
   EXPECT_EQ(2U, v23.size());
   for (int n = 0; n < 2; ++n)
     EXPECT_FLOAT_EQ(v[n + 1].val_.val_, v23[n].val_.val_);

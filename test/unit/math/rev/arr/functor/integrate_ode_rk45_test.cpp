@@ -1,21 +1,21 @@
-#include <boost/numeric/odeint.hpp>
-#include <gtest/gtest.h>
-#include <iostream>
-#include <sstream>
 #include <stan/math/rev/arr.hpp>
+#include <gtest/gtest.h>
+#include <boost/numeric/odeint.hpp>
+#include <test/unit/math/rev/arr/functor/util.hpp>
 #include <test/unit/math/prim/arr/functor/harmonic_oscillator.hpp>
 #include <test/unit/math/prim/arr/functor/lorenz.hpp>
-#include <test/unit/math/rev/arr/functor/util.hpp>
+#include <iostream>
+#include <sstream>
 #include <vector>
 
 template <typename F, typename T_y0, typename T_theta>
-void sho_value_test(F harm_osc, std::vector<double> &y0, double t0,
-                    std::vector<double> &ts, std::vector<double> &theta,
-                    std::vector<double> &x, std::vector<int> &x_int) {
+void sho_value_test(F harm_osc, std::vector<double>& y0, double t0,
+                    std::vector<double>& ts, std::vector<double>& theta,
+                    std::vector<double>& x, std::vector<int>& x_int) {
   using stan::math::promote_scalar;
   using stan::math::var;
 
-  std::vector<std::vector<var>> ode_res_vd = stan::math::integrate_ode_rk45(
+  std::vector<std::vector<var> > ode_res_vd = stan::math::integrate_ode_rk45(
       harm_osc, promote_scalar<T_y0>(y0), t0, ts,
       promote_scalar<T_theta>(theta), x, x_int, 0);
   EXPECT_NEAR(0.995029, ode_res_vd[0][0].val(), 1e-5);

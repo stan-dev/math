@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradMixMatrixSoftmax, fv_1stDeriv) {
@@ -91,34 +91,34 @@ TEST(AgradMixMatrixSoftmax, ffv_1stDeriv) {
 
   EXPECT_THROW(softmax(vector_ffv()), std::invalid_argument);
 
-  Matrix<fvar<fvar<var>>, Dynamic, 1> x(1);
+  Matrix<fvar<fvar<var> >, Dynamic, 1> x(1);
   x << 0.0;
   x(0).d_ = 1.0;
 
-  Matrix<fvar<fvar<var>>, Dynamic, 1> theta = softmax(x);
+  Matrix<fvar<fvar<var> >, Dynamic, 1> theta = softmax(x);
   EXPECT_EQ(1, theta.size());
   EXPECT_FLOAT_EQ(1.0, theta[0].val_.val().val());
   EXPECT_FLOAT_EQ(0.0, theta[0].d_.val().val());
 
-  Matrix<fvar<fvar<var>>, Dynamic, 1> x2(2);
+  Matrix<fvar<fvar<var> >, Dynamic, 1> x2(2);
   x2 << -1.0, 1.0;
   x2(0).d_ = 2.0;
   x2(1).d_ = 1.0;
 
-  Matrix<fvar<fvar<var>>, Dynamic, 1> theta2 = softmax(x2);
+  Matrix<fvar<fvar<var> >, Dynamic, 1> theta2 = softmax(x2);
   EXPECT_EQ(2, theta2.size());
   EXPECT_FLOAT_EQ(exp(-1) / (exp(-1) + exp(1)), theta2[0].val_.val().val());
   EXPECT_FLOAT_EQ(exp(1) / (exp(-1) + exp(1)), theta2[1].val_.val().val());
   EXPECT_FLOAT_EQ(0.10499358, theta2[0].d_.val().val());
   EXPECT_FLOAT_EQ(-0.10499358, theta2[1].d_.val().val());
 
-  Matrix<fvar<fvar<var>>, Dynamic, 1> x3(3);
+  Matrix<fvar<fvar<var> >, Dynamic, 1> x3(3);
   x3 << -1.0, 1.0, 10.0;
   x3(0).d_ = 2.0;
   x3(1).d_ = 1.0;
   x3(2).d_ = 1.0;
 
-  Matrix<fvar<fvar<var>>, Dynamic, 1> theta3 = softmax(x3);
+  Matrix<fvar<fvar<var> >, Dynamic, 1> theta3 = softmax(x3);
   EXPECT_EQ(3, theta3.size());
   EXPECT_FLOAT_EQ(exp(-1) / (exp(-1) + exp(1) + exp(10.0)),
                   theta3[0].val_.val().val());
@@ -145,13 +145,13 @@ TEST(AgradMixMatrixSoftmax, ffv_2ndDeriv_1) {
   using stan::math::var;
   using stan::math::vector_ffv;
 
-  Matrix<fvar<fvar<var>>, Dynamic, 1> x3(3);
+  Matrix<fvar<fvar<var> >, Dynamic, 1> x3(3);
   x3 << -1.0, 1.0, 10.0;
   x3(0).d_ = 2.0;
   x3(1).d_ = 1.0;
   x3(2).d_ = 1.0;
 
-  Matrix<fvar<fvar<var>>, Dynamic, 1> theta3 = softmax(x3);
+  Matrix<fvar<fvar<var> >, Dynamic, 1> theta3 = softmax(x3);
 
   AVEC q = createAVEC(x3(0).val().val(), x3(1).val().val(), x3(2).val().val());
   VEC h;
@@ -169,13 +169,13 @@ TEST(AgradMixMatrixSoftmax, ffv_2ndDeriv_2) {
   using stan::math::var;
   using stan::math::vector_ffv;
 
-  Matrix<fvar<fvar<var>>, Dynamic, 1> x3(3);
+  Matrix<fvar<fvar<var> >, Dynamic, 1> x3(3);
   x3 << -1.0, 1.0, 10.0;
   x3(0).d_ = 2.0;
   x3(1).d_ = 1.0;
   x3(2).d_ = 1.0;
 
-  Matrix<fvar<fvar<var>>, Dynamic, 1> theta3 = softmax(x3);
+  Matrix<fvar<fvar<var> >, Dynamic, 1> theta3 = softmax(x3);
 
   AVEC q = createAVEC(x3(0).val().val(), x3(1).val().val(), x3(2).val().val());
   VEC h;
@@ -193,7 +193,7 @@ TEST(AgradMixMatrixSoftmax, ffv_3rdDeriv) {
   using stan::math::var;
   using stan::math::vector_ffv;
 
-  Matrix<fvar<fvar<var>>, Dynamic, 1> x3(3);
+  Matrix<fvar<fvar<var> >, Dynamic, 1> x3(3);
   x3 << -1.0, 1.0, 10.0;
   x3(0).d_ = 2.0;
   x3(1).d_ = 1.0;
@@ -202,7 +202,7 @@ TEST(AgradMixMatrixSoftmax, ffv_3rdDeriv) {
   x3(1).val_.d_ = 1.0;
   x3(2).val_.d_ = 1.0;
 
-  Matrix<fvar<fvar<var>>, Dynamic, 1> theta3 = softmax(x3);
+  Matrix<fvar<fvar<var> >, Dynamic, 1> theta3 = softmax(x3);
 
   AVEC q = createAVEC(x3(0).val().val(), x3(1).val().val(), x3(2).val().val());
   VEC h;

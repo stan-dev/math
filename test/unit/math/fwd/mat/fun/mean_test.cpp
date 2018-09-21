@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 TEST(AgradFwdMatrixMean, fd_vector) {
@@ -108,14 +108,14 @@ TEST(AgradFwdMatrixMean, fd_StdVector) {
   using stan::math::fvar;
   using stan::math::mean;
 
-  std::vector<fvar<double>> x(0);
+  std::vector<fvar<double> > x(0);
   EXPECT_THROW(mean(x), std::invalid_argument);
   x.push_back(1.0);
   EXPECT_FLOAT_EQ(1.0, mean(x).val_);
   x.push_back(2.0);
   EXPECT_FLOAT_EQ(1.5, mean(x).val_);
 
-  std::vector<fvar<double>> y;
+  std::vector<fvar<double> > y;
   fvar<double> a = 1.0;
   a.d_ = 1.0;
   fvar<double> b = 2.0;
@@ -135,7 +135,7 @@ TEST(AgradFwdMatrixMean, ffd_vector) {
 
   vector_d d1(3);
   vector_ffd v1(3);
-  fvar<fvar<double>> a, b, c;
+  fvar<fvar<double> > a, b, c;
   a.val_.val_ = 100.0;
   b.val_.val_ = 0.0;
   c.val_.val_ = -3.0;
@@ -146,7 +146,7 @@ TEST(AgradFwdMatrixMean, ffd_vector) {
   d1 << 100, 0, -3;
   v1 << a, b, c;
 
-  fvar<fvar<double>> output;
+  fvar<fvar<double> > output;
   output = mean(d1);
   EXPECT_FLOAT_EQ(97.0 / 3.0, output.val_.val());
   EXPECT_FLOAT_EQ(0.0, output.d_.val());
@@ -173,7 +173,7 @@ TEST(AgradFwdMatrixMean, ffd_rowvector) {
 
   row_vector_d d1(3);
   row_vector_ffd v1(3);
-  fvar<fvar<double>> a, b, c;
+  fvar<fvar<double> > a, b, c;
   a.val_.val_ = 100.0;
   b.val_.val_ = 0.0;
   c.val_.val_ = -3.0;
@@ -184,7 +184,7 @@ TEST(AgradFwdMatrixMean, ffd_rowvector) {
   d1 << 100, 0, -3;
   v1 << a, b, c;
 
-  fvar<fvar<double>> output;
+  fvar<fvar<double> > output;
   output = mean(d1);
   EXPECT_FLOAT_EQ(97.0 / 3.0, output.val_.val());
   EXPECT_FLOAT_EQ(0.0, output.d_.val());
@@ -211,7 +211,7 @@ TEST(AgradFwdMatrixMean, ffd_matrix) {
 
   matrix_d d1(3, 1);
   matrix_ffd v1(1, 3);
-  fvar<fvar<double>> a, b, c;
+  fvar<fvar<double> > a, b, c;
   a.val_.val_ = 100.0;
   b.val_.val_ = 0.0;
   c.val_.val_ = -3.0;
@@ -222,7 +222,7 @@ TEST(AgradFwdMatrixMean, ffd_matrix) {
   d1 << 100, 0, -3;
   v1 << a, b, c;
 
-  fvar<fvar<double>> output;
+  fvar<fvar<double> > output;
   output = mean(d1);
   EXPECT_FLOAT_EQ(97.0 / 3.0, output.val_.val());
   EXPECT_FLOAT_EQ(0.0, output.d_.val());
@@ -245,22 +245,22 @@ TEST(AgradFwdMatrixMean, ffd_StdVector) {
   using stan::math::fvar;
   using stan::math::mean;
 
-  std::vector<fvar<fvar<double>>> x(0);
+  std::vector<fvar<fvar<double> > > x(0);
   EXPECT_THROW(mean(x), std::invalid_argument);
   x.push_back(1.0);
   EXPECT_FLOAT_EQ(1.0, mean(x).val_.val());
   x.push_back(2.0);
   EXPECT_FLOAT_EQ(1.5, mean(x).val_.val());
 
-  std::vector<fvar<fvar<double>>> y;
-  fvar<fvar<double>> a, b;
+  std::vector<fvar<fvar<double> > > y;
+  fvar<fvar<double> > a, b;
   a.val_.val_ = 1.0;
   a.d_.val_ = 1.0;
   b.val_.val_ = 2.0;
   b.d_.val_ = 1.0;
   y.push_back(a);
   y.push_back(b);
-  fvar<fvar<double>> f = mean(y);
+  fvar<fvar<double> > f = mean(y);
 
   EXPECT_FLOAT_EQ(1.5, f.val_.val());
   EXPECT_FLOAT_EQ(1.0, f.d_.val());

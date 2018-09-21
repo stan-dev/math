@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_GPU_MULTIPLY_HPP
 #define STAN_MATH_GPU_MULTIPLY_HPP
 #ifdef STAN_OPENCL
-#include <Eigen/Dense>
-#include <stan/math/gpu/kernels/matrix_multiply.hpp>
-#include <stan/math/gpu/kernels/scalar_mul.hpp>
 #include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/gpu/kernels/scalar_mul.hpp>
+#include <stan/math/gpu/kernels/matrix_multiply.hpp>
+#include <Eigen/Dense>
 
 namespace stan {
 namespace math {
@@ -16,14 +16,14 @@ namespace math {
  * @param scalar scalar
  * @return matrix multipled with scalar
  */
-inline matrix_gpu multiply(const matrix_gpu &A, const double scalar) {
+inline matrix_gpu multiply(const matrix_gpu& A, const double scalar) {
   matrix_gpu temp(A.rows(), A.cols());
   if (A.size() == 0)
     return temp;
   try {
     opencl_kernels::scalar_mul(cl::NDRange(A.rows(), A.cols()), temp.buffer(),
                                A.buffer(), scalar, A.rows(), A.cols());
-  } catch (const cl::Error &e) {
+  } catch (const cl::Error& e) {
     check_opencl_error("multiply scalar", e);
   }
   return temp;
@@ -37,7 +37,7 @@ inline matrix_gpu multiply(const matrix_gpu &A, const double scalar) {
  * @param A matrix
  * @return matrix multipled with scalar
  */
-inline matrix_gpu multiply(const double scalar, const matrix_gpu &A) {
+inline matrix_gpu multiply(const double scalar, const matrix_gpu& A) {
   return multiply(A, scalar);
 }
 
@@ -53,7 +53,7 @@ inline matrix_gpu multiply(const double scalar, const matrix_gpu &A) {
  * @throw <code>std::invalid_argument</code> if the
  *   number of columns in A and rows in B do not match
  */
-inline matrix_gpu multiply(const matrix_gpu &A, const matrix_gpu &B) {
+inline matrix_gpu multiply(const matrix_gpu& A, const matrix_gpu& B) {
   check_size_match("multiply (GPU)", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
   matrix_gpu temp(A.rows(), B.cols());
@@ -84,15 +84,15 @@ inline matrix_gpu multiply(const matrix_gpu &A, const matrix_gpu &B) {
         cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
         Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
         Bpad.cols(), Bpad.rows());
-  } catch (cl::Error &e) {
+  } catch (cl::Error& e) {
     check_opencl_error("multiply", e);
   }
   // unpadding the result matrix
   temp.sub_block(tempPad, 0, 0, 0, 0, temp.rows(), temp.cols());
   return temp;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif
 #endif

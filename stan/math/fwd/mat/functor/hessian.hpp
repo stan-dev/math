@@ -39,9 +39,9 @@ namespace math {
  * @param[out] H Hessian of function at argument
  */
 template <typename T, typename F>
-void hessian(const F &f, const Eigen::Matrix<T, Eigen::Dynamic, 1> &x, T &fx,
-             Eigen::Matrix<T, Eigen::Dynamic, 1> &grad,
-             Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &H) {
+void hessian(const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, T& fx,
+             Eigen::Matrix<T, Eigen::Dynamic, 1>& grad,
+             Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& H) {
   H.resize(x.size(), x.size());
   grad.resize(x.size());
   // size 0 separate because nothing to loop over in main body
@@ -49,12 +49,12 @@ void hessian(const F &f, const Eigen::Matrix<T, Eigen::Dynamic, 1> &x, T &fx,
     fx = f(x);
     return;
   }
-  Eigen::Matrix<fvar<fvar<T>>, Eigen::Dynamic, 1> x_fvar(x.size());
+  Eigen::Matrix<fvar<fvar<T> >, Eigen::Dynamic, 1> x_fvar(x.size());
   for (int i = 0; i < x.size(); ++i) {
     for (int j = i; j < x.size(); ++j) {
       for (int k = 0; k < x.size(); ++k)
-        x_fvar(k) = fvar<fvar<T>>(fvar<T>(x(k), j == k), fvar<T>(i == k, 0));
-      fvar<fvar<T>> fx_fvar = f(x_fvar);
+        x_fvar(k) = fvar<fvar<T> >(fvar<T>(x(k), j == k), fvar<T>(i == k, 0));
+      fvar<fvar<T> > fx_fvar = f(x_fvar);
       if (j == 0)
         fx = fx_fvar.val_.val_;
       if (i == j)
@@ -65,6 +65,6 @@ void hessian(const F &f, const Eigen::Matrix<T, Eigen::Dynamic, 1> &x, T &fx,
   }
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

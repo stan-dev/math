@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
+#include <gtest/gtest.h>
 
 TEST(AgradMatrix, value_of_rec) {
   using stan::math::fvar;
@@ -20,9 +20,9 @@ TEST(AgradMatrix, value_of_rec) {
   Eigen::Matrix<fvar<double>, 2, 5> fd_a_zeros;
   Eigen::Matrix<fvar<double>, 5, 1> fd_b_zeros;
 
-  Eigen::Matrix<fvar<fvar<double>>, 2, 5> ffd_a;
+  Eigen::Matrix<fvar<fvar<double> >, 2, 5> ffd_a;
   ffd_a = stan::math::to_fvar(fd_a, fd_a_zeros);
-  Eigen::Matrix<fvar<fvar<double>>, 5, 1> ffd_b;
+  Eigen::Matrix<fvar<fvar<double> >, 5, 1> ffd_b;
   ffd_b = stan::math::to_fvar(fd_b, fd_b_zeros);
 
   Eigen::MatrixXd d_fd_a = value_of_rec(fd_a);

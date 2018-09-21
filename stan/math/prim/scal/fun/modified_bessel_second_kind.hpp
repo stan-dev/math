@@ -42,7 +42,7 @@ inline T2 modified_bessel_second_kind(int v, const T2 z) {
   return boost::math::cyl_bessel_k(v, z);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

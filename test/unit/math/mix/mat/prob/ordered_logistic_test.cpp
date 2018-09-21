@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 TEST(ProbDistributionsOrdLog, fv_fv) {

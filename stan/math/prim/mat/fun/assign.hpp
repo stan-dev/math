@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_ASSIGN_HPP
 #define STAN_MATH_PRIM_MAT_FUN_ASSIGN_HPP
 
-#include <iostream>
-#include <sstream>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/err/invalid_argument.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/mat/err/check_matching_dims.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/err/invalid_argument.hpp>
+#include <iostream>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -21,7 +21,8 @@ namespace math {
  * @tparam N Eigen matrix size specification
  * @param o output stream
  */
-template <int N> inline void print_mat_size(std::ostream &o) {
+template <int N>
+inline void print_mat_size(std::ostream& o) {
   if (N == Eigen::Dynamic)
     o << "dynamically sized";
   else
@@ -43,7 +44,7 @@ template <int N> inline void print_mat_size(std::ostream &o) {
  * @param y Right-hand side.
  */
 template <typename T_lhs, typename T_rhs>
-inline void assign(T_lhs &x, const T_rhs &y) {
+inline void assign(T_lhs& x, const T_rhs& y) {
   x = y;
 }
 
@@ -68,8 +69,8 @@ inline void assign(T_lhs &x, const T_rhs &y) {
  * @throw std::invalid_argument
  */
 template <typename T_lhs, typename T_rhs, int R1, int C1, int R2, int C2>
-inline void assign(Eigen::Matrix<T_lhs, R1, C1> &x,
-                   const Eigen::Matrix<T_rhs, R2, C2> &y) {
+inline void assign(Eigen::Matrix<T_lhs, R1, C1>& x,
+                   const Eigen::Matrix<T_rhs, R2, C2>& y) {
   std::stringstream ss;
   ss << "shapes must match, but found"
      << " left-hand side rows=";
@@ -103,8 +104,8 @@ inline void assign(Eigen::Matrix<T_lhs, R1, C1> &x,
  * @throw std::invalid_argument if sizes do not match.
  */
 template <typename T_lhs, typename T_rhs, int R, int C>
-inline void assign(Eigen::Matrix<T_lhs, R, C> &x,
-                   const Eigen::Matrix<T_rhs, R, C> &y) {
+inline void assign(Eigen::Matrix<T_lhs, R, C>& x,
+                   const Eigen::Matrix<T_rhs, R, C>& y) {
   check_matching_dims("assign", "left-hand-side", x, "right-hand-side", y);
   for (int i = 0; i < x.size(); ++i)
     assign(x(i), y(i));
@@ -134,7 +135,7 @@ inline void assign(Eigen::Matrix<T_lhs, R, C> &x,
  * @throw std::invalid_argument if sizes do not match.
  */
 template <typename T_lhs, typename T, int R, int C>
-inline void assign(Eigen::Block<T_lhs> x, const Eigen::Matrix<T, R, C> &y) {
+inline void assign(Eigen::Block<T_lhs> x, const Eigen::Matrix<T, R, C>& y) {
   check_size_match("assign", "left-hand side rows", x.rows(),
                    "right-hand side rows", y.rows());
   check_size_match("assign", "left-hand side cols", x.cols(),
@@ -164,12 +165,12 @@ inline void assign(Eigen::Block<T_lhs> x, const Eigen::Matrix<T, R, C> &y) {
  * @throw std::invalid_argument if sizes do not match.
  */
 template <typename T_lhs, typename T_rhs>
-inline void assign(std::vector<T_lhs> &x, const std::vector<T_rhs> &y) {
+inline void assign(std::vector<T_lhs>& x, const std::vector<T_rhs>& y) {
   check_matching_sizes("assign", "left-hand side", x, "right-hand side", y);
   for (size_t i = 0; i < x.size(); ++i)
     assign(x[i], y[i]);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

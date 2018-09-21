@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_FDIM_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_FDIM_HPP
 
+#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <limits>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
 
 namespace stan {
 namespace math {
@@ -29,6 +29,6 @@ inline typename boost::math::tools::promote_args<T1, T2>::type fdim(T1 x,
   return (x <= y) ? 0 : x - y;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

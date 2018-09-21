@@ -12,6 +12,6 @@ inline T log_determinant_ldlt(LDLT_factor<T, R, C> &A) {
   return A.log_abs_det();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

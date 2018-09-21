@@ -1,21 +1,21 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_INTEGRATE_ODE_CVODES_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_INTEGRATE_ODE_CVODES_HPP
 
-#include <algorithm>
-#include <cvodes/cvodes.h>
-#include <cvodes/cvodes_direct.h>
-#include <ostream>
+#include <stan/math/prim/arr/fun/value_of.hpp>
+#include <stan/math/prim/scal/err/check_less.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
-#include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
-#include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>
-#include <stan/math/rev/mat/functor/cvodes_utils.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
+#include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
+#include <stan/math/rev/mat/functor/cvodes_utils.hpp>
+#include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>
+#include <cvodes/cvodes.h>
+#include <cvodes/cvodes_direct.h>
+#include <algorithm>
+#include <ostream>
 #include <vector>
 
 namespace stan {
@@ -26,8 +26,9 @@ namespace math {
  * methods).
  * @tparam Lmm ID of ODE solver (1: ADAMS, 2: BDF)
  */
-template <int Lmm> class cvodes_integrator {
-public:
+template <int Lmm>
+class cvodes_integrator {
+ public:
   cvodes_integrator() {}
 
   /**
@@ -68,17 +69,18 @@ public:
    * same size as the state variable, corresponding to a time in ts.
    */
   template <typename F, typename T_initial, typename T_param>
-  std::vector<std::vector<typename stan::return_type<T_initial, T_param>::type>>
-  integrate(const F &f, const std::vector<T_initial> &y0, double t0,
-            const std::vector<double> &ts, const std::vector<T_param> &theta,
-            const std::vector<double> &x, const std::vector<int> &x_int,
-            std::ostream *msgs, double relative_tolerance,
+  std::vector<
+      std::vector<typename stan::return_type<T_initial, T_param>::type> >
+  integrate(const F& f, const std::vector<T_initial>& y0, double t0,
+            const std::vector<double>& ts, const std::vector<T_param>& theta,
+            const std::vector<double>& x, const std::vector<int>& x_int,
+            std::ostream* msgs, double relative_tolerance,
             double absolute_tolerance,
-            long int max_num_steps) { // NOLINT(runtime/int)
+            long int max_num_steps) {  // NOLINT(runtime/int)
     typedef stan::is_var<T_initial> initial_var;
     typedef stan::is_var<T_param> param_var;
 
-    const char *fun = "integrate_ode_cvodes";
+    const char* fun = "integrate_ode_cvodes";
 
     check_finite(fun, "initial state", y0);
     check_finite(fun, "initial time", t0);
@@ -106,13 +108,13 @@ public:
     typedef cvodes_ode_data<F, T_initial, T_param> ode_data;
     ode_data cvodes_data(f, y0, theta, x, x_int, msgs);
 
-    void *cvodes_mem = CVodeCreate(Lmm, CV_NEWTON);
+    void* cvodes_mem = CVodeCreate(Lmm, CV_NEWTON);
     if (cvodes_mem == nullptr)
       throw std::runtime_error("CVodeCreate failed to allocate memory");
 
     const size_t coupled_size = cvodes_data.coupled_ode_.size();
 
-    std::vector<std::vector<double>> y_coupled(
+    std::vector<std::vector<double> > y_coupled(
         ts.size(), std::vector<double>(coupled_size, 0));
 
     try {
@@ -122,7 +124,7 @@ public:
 
       // Assign pointer to this as user data
       cvodes_check_flag(
-          CVodeSetUserData(cvodes_mem, reinterpret_cast<void *>(&cvodes_data)),
+          CVodeSetUserData(cvodes_mem, reinterpret_cast<void*>(&cvodes_data)),
           "CVodeSetUserData");
 
       cvodes_set_options(cvodes_mem, relative_tolerance, absolute_tolerance,
@@ -141,10 +143,10 @@ public:
 
       // initialize forward sensitivity system of CVODES as needed
       if (S > 0) {
-        cvodes_check_flag(CVodeSensInit(cvodes_mem, static_cast<int>(S),
-                                        CV_STAGGERED, &ode_data::cv_rhs_sens,
-                                        cvodes_data.nv_state_sens_),
-                          "CVodeSensInit");
+        cvodes_check_flag(
+            CVodeSensInit(cvodes_mem, static_cast<int>(S), CV_STAGGERED,
+                          &ode_data::cv_rhs_sens, cvodes_data.nv_state_sens_),
+            "CVodeSensInit");
 
         cvodes_check_flag(CVodeSensEEtolerances(cvodes_mem),
                           "CVodeSensEEtolerances");
@@ -166,7 +168,7 @@ public:
                   cvodes_data.coupled_state_.end(), y_coupled[n].begin());
         t_init = t_final;
       }
-    } catch (const std::exception &e) {
+    } catch (const std::exception& e) {
       CVodeFree(&cvodes_mem);
       throw;
     }
@@ -175,7 +177,7 @@ public:
 
     return cvodes_data.coupled_ode_.decouple_states(y_coupled);
   }
-}; // cvodes integrator
-} // namespace math
-} // namespace stan
+};  // cvodes integrator
+}  // namespace math
+}  // namespace stan
 #endif

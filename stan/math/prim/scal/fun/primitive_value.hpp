@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_PRIMITIVE_VALUE_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_PRIMITIVE_VALUE_HPP
 
-#include <boost/type_traits/is_arithmetic.hpp>
 #include <boost/utility/enable_if.hpp>
+#include <boost/type_traits/is_arithmetic.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 
 namespace stan {
@@ -41,10 +41,10 @@ primitive_value(T x) {
  */
 template <typename T>
 inline typename boost::disable_if<boost::is_arithmetic<T>, double>::type
-primitive_value(const T &x) {
+primitive_value(const T& x) {
   return value_of(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

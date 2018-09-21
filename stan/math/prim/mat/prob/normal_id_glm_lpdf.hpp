@@ -1,17 +1,17 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_NORMAL_ID_GLM_LPDF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_NORMAL_ID_GLM_LPDF_HPP
 
-#include <cmath>
-#include <stan/math/prim/mat/fun/value_of.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
+#include <stan/math/prim/mat/meta/is_vector.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -60,8 +60,8 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
   using Eigen::Matrix;
   using std::exp;
 
-  if (!(stan::length(y) && stan::length(x) && stan::length(beta) &&
-        stan::length(sigma)))
+  if (!(stan::length(y) && stan::length(x) && stan::length(beta)
+        && stan::length(sigma)))
     return 0.0;
 
   T_partials_return logp(0.0);
@@ -100,8 +100,8 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
     }
   }
 
-  Array<T_partials_return, Dynamic, 1> mu_minus_alpha_dbl =
-      (value_of(x) * beta_dbl).array();
+  Array<T_partials_return, Dynamic, 1> mu_minus_alpha_dbl
+      = (value_of(x) * beta_dbl).array();
   Array<T_partials_return, Dynamic, 1> inv_sigma(N, 1);
   scalar_seq_view<T_alpha> alpha_vec(alpha);
   scalar_seq_view<T_y> y_vec(y);
@@ -111,9 +111,9 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
     if (include_summand<propto, T_scale>::value)
       logp -= log(value_of(sigma_vec[n]));
     inv_sigma[n] = 1 / value_of(sigma_vec[n]);
-    y_minus_mu_over_sigma[n] =
-        (value_of(y_vec[n]) - mu_minus_alpha_dbl[n] - value_of(alpha_vec[n])) *
-        inv_sigma[n];
+    y_minus_mu_over_sigma[n]
+        = (value_of(y_vec[n]) - mu_minus_alpha_dbl[n] - value_of(alpha_vec[n]))
+          * inv_sigma[n];
     y_minus_mu_over_sigma_squared[n] = square(y_minus_mu_over_sigma[n]);
   }
 
@@ -123,11 +123,11 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
   // Compute the necessary derivatives.
   operands_and_partials<T_y, T_x, T_alpha, T_beta, T_scale> ops_partials(
       y, x, alpha, beta, sigma);
-  if (!(is_constant_struct<T_y>::value && is_constant_struct<T_x>::value &&
-        is_constant_struct<T_beta>::value &&
-        is_constant_struct<T_alpha>::value)) {
-    Matrix<T_partials_return, Dynamic, 1> mu_derivative =
-        (inv_sigma * y_minus_mu_over_sigma).matrix();
+  if (!(is_constant_struct<T_y>::value && is_constant_struct<T_x>::value
+        && is_constant_struct<T_beta>::value
+        && is_constant_struct<T_alpha>::value)) {
+    Matrix<T_partials_return, Dynamic, 1> mu_derivative
+        = (inv_sigma * y_minus_mu_over_sigma).matrix();
     if (!is_constant_struct<T_y>::value) {
       ops_partials.edge1_.partials_ = -mu_derivative;
     }
@@ -145,17 +145,17 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
     }
     if (!is_constant_struct<T_scale>::value) {
       if (is_vector<T_scale>::value) {
-        ops_partials.edge5_.partials_ =
-            ((y_minus_mu_over_sigma_squared -
-              Array<double, Dynamic, 1>::Ones(N, 1)) *
-             inv_sigma)
-                .matrix();
+        ops_partials.edge5_.partials_
+            = ((y_minus_mu_over_sigma_squared
+                - Array<double, Dynamic, 1>::Ones(N, 1))
+               * inv_sigma)
+                  .matrix();
       } else {
-        ops_partials.edge5_.partials_[0] =
-            ((y_minus_mu_over_sigma_squared -
-              Array<double, Dynamic, 1>::Ones(N, 1)) *
-             inv_sigma)
-                .sum();
+        ops_partials.edge5_.partials_[0]
+            = ((y_minus_mu_over_sigma_squared
+                - Array<double, Dynamic, 1>::Ones(N, 1))
+               * inv_sigma)
+                  .sum();
       }
     }
   }
@@ -170,6 +170,6 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
                    const T_beta &beta, const T_scale &sigma) {
   return normal_id_glm_lpdf<false>(y, x, alpha, beta, sigma);
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

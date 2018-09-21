@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_REV_CORE_PRECOMPUTED_GRADIENTS_HPP
 #define STAN_MATH_REV_CORE_PRECOMPUTED_GRADIENTS_HPP
 
-#include <algorithm>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vari.hpp>
+#include <stan/math/rev/core/var.hpp>
+#include <algorithm>
 #include <vector>
 
 namespace stan {
@@ -18,12 +18,12 @@ namespace math {
  * directly.
  */
 class precomputed_gradients_vari : public vari {
-protected:
+ protected:
   const size_t size_;
-  vari **varis_;
-  double *gradients_;
+  vari** varis_;
+  double* gradients_;
 
-public:
+ public:
   /**
    * Construct a precomputed vari with the specified value,
    * operands, and gradients.
@@ -33,8 +33,8 @@ public:
    * @param[in] varis Operand implementations.
    * @param[in] gradients Gradients with respect to operands.
    */
-  precomputed_gradients_vari(double val, size_t size, vari **varis,
-                             double *gradients)
+  precomputed_gradients_vari(double val, size_t size, vari** varis,
+                             double* gradients)
       : vari(val), size_(size), varis_(varis), gradients_(gradients) {}
 
   /**
@@ -48,10 +48,11 @@ public:
    * @throws std::invalid_argument if the sizes of the vectors
    * don't match.
    */
-  precomputed_gradients_vari(double val, const std::vector<var> &vars,
-                             const std::vector<double> &gradients)
-      : vari(val), size_(vars.size()),
-        varis_(ChainableStack::instance().memalloc_.alloc_array<vari *>(
+  precomputed_gradients_vari(double val, const std::vector<var>& vars,
+                             const std::vector<double>& gradients)
+      : vari(val),
+        size_(vars.size()),
+        varis_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
             vars.size())),
         gradients_(ChainableStack::instance().memalloc_.alloc_array<double>(
             vars.size())) {
@@ -84,10 +85,10 @@ public:
  * @return An auto-diff variable that uses the precomputed
  *   gradients provided.
  */
-inline var precomputed_gradients(double value, const std::vector<var> &operands,
-                                 const std::vector<double> &gradients) {
+inline var precomputed_gradients(double value, const std::vector<var>& operands,
+                                 const std::vector<double>& gradients) {
   return var(new precomputed_gradients_vari(value, operands, gradients));
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

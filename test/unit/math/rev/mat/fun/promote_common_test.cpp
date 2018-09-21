@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/rev/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
@@ -31,22 +31,22 @@ TEST(AgradRevMatrix, promote_common_stdvec) {
   for (int i = 0; i < 5; ++i)
     x[i] = i * i;
 
-  vector<double> y = promote_common<vector<double>, vector<double>>(x);
+  vector<double> y = promote_common<vector<double>, vector<double> >(x);
   EXPECT_EQ(5U, y.size());
   for (int i = 0; i < 5; ++i)
     EXPECT_FLOAT_EQ(x[i], y[i]);
 
-  vector<var> z = promote_common<vector<double>, vector<var>>(x);
+  vector<var> z = promote_common<vector<double>, vector<var> >(x);
   EXPECT_EQ(5U, z.size());
   for (int i = 0; i < 5; ++i)
     EXPECT_FLOAT_EQ(x[i], z[i].val());
 
-  vector<var> w = promote_common<vector<var>, vector<var>>(z);
+  vector<var> w = promote_common<vector<var>, vector<var> >(z);
   EXPECT_EQ(5U, w.size());
   for (int i = 0; i < 5; ++i)
     EXPECT_FLOAT_EQ(x[i], w[i].val());
 
-  vector<var> u = promote_common<vector<var>, vector<double>>(z);
+  vector<var> u = promote_common<vector<var>, vector<double> >(z);
   EXPECT_EQ(5U, u.size());
   for (int i = 0; i < 5; ++i)
     EXPECT_FLOAT_EQ(x[i], u[i].val());

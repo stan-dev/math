@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_IS_UNINITIALIZED_HPP
 #define STAN_MATH_REV_SCAL_FUN_IS_UNINITIALIZED_HPP
 
-#include <stan/math/prim/scal/fun/is_uninitialized.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/scal/fun/is_uninitialized.hpp>
 
 namespace stan {
 namespace math {
@@ -21,6 +21,6 @@ namespace math {
  */
 inline bool is_uninitialized(var x) { return x.is_uninitialized(); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

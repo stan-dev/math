@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_LOG_SUM_EXP_HPP
 #define STAN_MATH_PRIM_MAT_FUN_LOG_SUM_EXP_HPP
 
+#include <stan/math/prim/scal/fun/log1p.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <limits>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/fun/log1p.hpp>
 #include <vector>
 
 namespace stan {
@@ -25,7 +25,7 @@ namespace math {
  * @return The log of the sum of the exponentiated vector values.
  */
 template <int R, int C>
-double log_sum_exp(const Eigen::Matrix<double, R, C> &x) {
+double log_sum_exp(const Eigen::Matrix<double, R, C>& x) {
   using std::exp;
   using std::log;
   using std::numeric_limits;
@@ -42,7 +42,7 @@ double log_sum_exp(const Eigen::Matrix<double, R, C> &x) {
   return max + log(sum);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

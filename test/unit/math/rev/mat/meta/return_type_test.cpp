@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
 #include <stan/math/rev/mat.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 #include <vector>
 
@@ -22,7 +22,7 @@ TEST(MetaTraits, ReturnTypeVarMat) {
 
 TEST(MetaTraits, ReturnTypeMatMultivar) {
   // test::expect_same_type<var, return_type<vector<vector_v> >::type>();
-  test::expect_same_type<var, return_type<vector<matrix_v>>::type>();
+  test::expect_same_type<var, return_type<vector<matrix_v> >::type>();
   test::expect_same_type<var, return_type<vector<matrix_v>, double>::type>();
   test::expect_same_type<var, return_type<vector<matrix_v>, var>::type>();
   test::expect_same_type<var, return_type<vector<matrix_d>, matrix_v>::type>();

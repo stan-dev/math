@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
 
 /*
  * Compute the trace of an inverse quadratic form.  I.E., this computes

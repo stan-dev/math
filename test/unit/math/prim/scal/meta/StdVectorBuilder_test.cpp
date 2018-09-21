@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/scal.hpp>
+#include <gtest/gtest.h>
 
 TEST(MetaTraits, StdVectorBuilder_false_false) {
   using stan::StdVectorBuilder;
@@ -31,8 +31,8 @@ TEST(MetaTraits, StdVectorBuilder_type_check) {
   using stan::StdVectorBuilder;
   using stan::contains_std_vector;
 
-  bool r =
-      contains_std_vector<StdVectorBuilder<true, double, int>::type>::value;
+  bool r
+      = contains_std_vector<StdVectorBuilder<true, double, int>::type>::value;
   EXPECT_FALSE(r);
   r = contains_std_vector<StdVectorBuilder<true, double, double>::type>::value;
   EXPECT_FALSE(r);

@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 TEST(ProbCategoricalLogit, log_matches_lpmf) {

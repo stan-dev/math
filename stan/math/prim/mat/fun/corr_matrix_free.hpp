@@ -1,14 +1,14 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CORR_MATRIX_FREE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CORR_MATRIX_FREE_HPP
 
-#include <cmath>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/err/constraint_tolerance.hpp>
+#include <stan/math/prim/mat/err/check_square.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/mat/fun/factor_cov_matrix.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -34,15 +34,15 @@ namespace math {
  *    factor_cov_matrix() on log scale are unconstrained.
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1>
-corr_matrix_free(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &y) {
+Eigen::Matrix<T, Eigen::Dynamic, 1> corr_matrix_free(
+    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& y) {
   check_square("corr_matrix_free", "y", y);
   check_nonzero_size("corr_matrix_free", "y", y);
 
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  typedef typename index_type<Matrix<T, Dynamic, 1>>::type size_type;
+  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
 
   size_type k = y.rows();
   size_type k_choose_2 = (k * (k - 1)) / 2;
@@ -57,6 +57,6 @@ corr_matrix_free(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &y) {
   }
   return x.matrix();
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

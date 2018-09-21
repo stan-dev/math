@@ -1,23 +1,23 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_ERF_HPP
 #define STAN_MATH_REV_SCAL_FUN_ERF_HPP
 
-#include <cmath>
+#include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/erf.hpp>
-#include <stan/math/rev/core.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
 
 namespace {
 class erf_vari : public op_v_vari {
-public:
-  explicit erf_vari(vari *avi) : op_v_vari(erf(avi->val_), avi) {}
+ public:
+  explicit erf_vari(vari* avi) : op_v_vari(erf(avi->val_), avi) {}
   void chain() {
     avi_->adj_ += adj_ * TWO_OVER_SQRT_PI * std::exp(-avi_->val_ * avi_->val_);
   }
 };
-} // namespace
+}  // namespace
 
 /**
  * The error function for variables (C99).
@@ -54,8 +54,8 @@ public:
  * @param a The variable.
  * @return Error function applied to the variable.
  */
-inline var erf(const var &a) { return var(new erf_vari(a.vi_)); }
+inline var erf(const var& a) { return var(new erf_vari(a.vi_)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

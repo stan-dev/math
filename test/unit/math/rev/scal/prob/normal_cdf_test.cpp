@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
 #include <stan/math/rev/scal.hpp>
-#include <string>
+#include <gtest/gtest.h>
 #include <vector>
+#include <string>
 
 TEST(normal_cdf, tails) {
   using stan::math::normal_cdf;
@@ -153,15 +153,15 @@ void test_value_and_derivatives(double expected_val, double y_dbl,
   double inv2e = 0.5 / e;
   std::vector<double> finite_diffs;
   finite_diffs.resize(3);
-  finite_diffs[0] = (normal_cdf(y_dbl + e, mu_dbl, sigma_dbl) -
-                     normal_cdf(y_dbl - e, mu_dbl, sigma_dbl)) *
-                    inv2e;
-  finite_diffs[1] = (normal_cdf(y_dbl, mu_dbl + e, sigma_dbl) -
-                     normal_cdf(y_dbl, mu_dbl - e, sigma_dbl)) *
-                    inv2e;
-  finite_diffs[2] = (normal_cdf(y_dbl, mu_dbl, sigma_dbl + e) -
-                     normal_cdf(y_dbl, mu_dbl, sigma_dbl - e)) *
-                    inv2e;
+  finite_diffs[0] = (normal_cdf(y_dbl + e, mu_dbl, sigma_dbl)
+                     - normal_cdf(y_dbl - e, mu_dbl, sigma_dbl))
+                    * inv2e;
+  finite_diffs[1] = (normal_cdf(y_dbl, mu_dbl + e, sigma_dbl)
+                     - normal_cdf(y_dbl, mu_dbl - e, sigma_dbl))
+                    * inv2e;
+  finite_diffs[2] = (normal_cdf(y_dbl, mu_dbl, sigma_dbl + e)
+                     - normal_cdf(y_dbl, mu_dbl, sigma_dbl - e))
+                    * inv2e;
 
   EXPECT_FLOAT_EQ(expected_val, val.val());
   EXPECT_FALSE(is_nan(gradients[0]));

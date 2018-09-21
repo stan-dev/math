@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_EXPM1_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_EXPM1_HPP
 
-#include <boost/math/special_functions/expm1.hpp>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
+#include <boost/math/special_functions/expm1.hpp>
 
 namespace stan {
 namespace math {
@@ -27,6 +27,6 @@ inline double expm1(double x) {
  */
 inline double expm1(int x) { return expm1(static_cast<double>(x)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

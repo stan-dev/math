@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_GPU_ERR_CHECK_DIAGONAL_ZEROS_HPP
 #define STAN_MATH_GPU_ERR_CHECK_DIAGONAL_ZEROS_HPP
 #ifdef STAN_OPENCL
-#include <stan/math/gpu/kernels/check_diagonal_zeros.hpp>
 #include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/gpu/kernels/check_diagonal_zeros.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 
 namespace stan {
@@ -17,8 +17,8 @@ namespace math {
  * @throw <code>std::domain_error</code> if
  *    any diagonal element of the matrix is zero.
  */
-inline void check_diagonal_zeros(const char *function, const char *name,
-                                 const matrix_gpu &y) {
+inline void check_diagonal_zeros(const char* function, const char* name,
+                                 const matrix_gpu& y) {
   if (y.size() == 0)
     return;
   cl::CommandQueue cmd_queue = opencl_context.queue();
@@ -37,12 +37,12 @@ inline void check_diagonal_zeros(const char *function, const char *name,
     if (zero_on_diagonal_flag) {
       domain_error(function, name, "has zeros on the diagonal.", "");
     }
-  } catch (const cl::Error &e) {
+  } catch (const cl::Error& e) {
     check_opencl_error("diag_zeros_check", e);
   }
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
 #endif

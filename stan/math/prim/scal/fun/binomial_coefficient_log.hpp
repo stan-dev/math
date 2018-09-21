@@ -68,11 +68,11 @@ binomial_coefficient_log(const T_N N, const T_n n) {
   } else {
     typename boost::math::tools::promote_args<T_N, T_n>::type N_minus_n = N - n;
     double one_twelfth = 1.0 / 12;
-    return n * log(N_minus_n) + (N + 0.5) * log(N / N_minus_n) +
-           one_twelfth / N - n - one_twelfth / N_minus_n - lgamma(n + 1);
+    return n * log(N_minus_n) + (N + 0.5) * log(N / N_minus_n) + one_twelfth / N
+           - n - one_twelfth / N_minus_n - lgamma(n + 1);
   }
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

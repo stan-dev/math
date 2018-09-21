@@ -11,6 +11,6 @@ class chainable_alloc;
 
 typedef AutodiffStackSingleton<vari, chainable_alloc> ChainableStack;
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

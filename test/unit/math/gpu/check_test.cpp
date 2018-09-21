@@ -1,18 +1,18 @@
 #ifdef STAN_OPENCL
-#include <gtest/gtest.h>
-#include <limits>
+#include <stan/math/prim/mat.hpp>
 #include <stan/math/gpu/err/check_diagonal_zeros.hpp>
 #include <stan/math/gpu/err/check_matching_dims.hpp>
 #include <stan/math/gpu/err/check_nan.hpp>
 #include <stan/math/gpu/err/check_square.hpp>
 #include <stan/math/gpu/err/check_symmetric.hpp>
-#include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
+#include <limits>
 
 using stan::math::check_nan;
 
 // ---------- check_nan: matrix tests ----------
 TEST(ErrorHandlingScalarGPU, check_nan_Matrix) {
-  const char *function = "check_nan";
+  const char* function = "check_nan";
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
   using stan::math::matrix_gpu;
   x.resize(3);
@@ -24,7 +24,7 @@ TEST(ErrorHandlingScalarGPU, check_nan_Matrix) {
 }
 
 TEST(ErrorHandlingScalarGPU, check_nan_Matrix_quit_nan) {
-  const char *function = "check_nan";
+  const char* function = "check_nan";
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
   using stan::math::matrix_gpu;
 
@@ -36,7 +36,7 @@ TEST(ErrorHandlingScalarGPU, check_nan_Matrix_quit_nan) {
 }
 
 TEST(ErrorHandlingScalarGPU, check_nan_positions) {
-  const char *function = "check_nan";
+  const char* function = "check_nan";
   double nan = std::numeric_limits<double>::quiet_NaN();
   using stan::math::matrix_gpu;
   Eigen::Matrix<double, Eigen::Dynamic, 1> x_mat(3);
@@ -54,7 +54,7 @@ TEST(ErrorHandlingScalarGPU, check_nan_positions) {
 }
 
 TEST(ErrorHandlingScalarGPU, check_rv_v_symmetric_gpu) {
-  const char *function = "check_symmetric";
+  const char* function = "check_symmetric";
 
   stan::math::row_vector_d rv;
   stan::math::vector_d v;
@@ -69,7 +69,7 @@ TEST(ErrorHandlingScalarGPU, check_rv_v_symmetric_gpu) {
 }
 
 TEST(ErrorHandlingScalarGPU, check_m_symmetric) {
-  const char *function = "check_symmetric";
+  const char* function = "check_symmetric";
 
   stan::math::matrix_d m_ok(3, 3);
   stan::math::matrix_d m_fail(3, 3);
@@ -83,7 +83,7 @@ TEST(ErrorHandlingScalarGPU, check_m_symmetric) {
 }
 
 TEST(ErrorHandlingScalarGPU, check_m_diagonal_zeros) {
-  const char *function = "check_diagonal_zeros";
+  const char* function = "check_diagonal_zeros";
 
   stan::math::matrix_d m_ok(3, 3);
   stan::math::matrix_d m_fail(3, 3);

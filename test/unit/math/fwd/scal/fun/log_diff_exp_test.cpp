@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/scal.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdLogDiffExp, Fvar) {
@@ -39,15 +39,15 @@ TEST(AgradFwdLogDiffExp, FvarFvarDouble) {
   using stan::math::log_diff_exp;
   using std::exp;
 
-  fvar<fvar<double>> x;
+  fvar<fvar<double> > x;
   x.val_.val_ = 9.0;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<double>> y;
+  fvar<fvar<double> > y;
   y.val_.val_ = 6.0;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<double>> a = log_diff_exp(x, y);
+  fvar<fvar<double> > a = log_diff_exp(x, y);
 
   EXPECT_FLOAT_EQ(log_diff_exp(9.0, 6.0), a.val_.val_);
   EXPECT_FLOAT_EQ(exp(9.0) / (exp(9.0) - exp(6.0)), a.val_.d_);
@@ -57,8 +57,8 @@ TEST(AgradFwdLogDiffExp, FvarFvarDouble) {
 
 struct log_diff_exp_fun {
   template <typename T0, typename T1>
-  inline typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1, const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return log_diff_exp(arg1, arg2);
   }
 };

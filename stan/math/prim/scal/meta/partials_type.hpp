@@ -3,7 +3,10 @@
 
 namespace stan {
 
-template <typename T> struct partials_type { typedef T type; };
+template <typename T>
+struct partials_type {
+  typedef T type;
+};
 
-} // namespace stan
+}  // namespace stan
 #endif

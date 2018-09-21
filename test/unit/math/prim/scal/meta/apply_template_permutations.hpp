@@ -20,7 +20,7 @@
 template <typename T_typelist1, typename T_typelist2, typename T_typelist3,
           typename T_functor, typename T_param, int I, int J, int K>
 struct apply_template_permutations_helper {
-  void operator()(const T_functor &func, const T_param &param) const {
+  void operator()(const T_functor& func, const T_param& param) const {
     func.template operator()<typename std::tuple_element<I, T_typelist1>::type,
                              typename std::tuple_element<J, T_typelist2>::type,
                              typename std::tuple_element<K, T_typelist3>::type>(
@@ -50,7 +50,7 @@ template <typename T_typelist1, typename T_typelist2, typename T_typelist3,
           typename T_functor, typename T_param, int I, int J>
 struct apply_template_permutations_helper<T_typelist1, T_typelist2, T_typelist3,
                                           T_functor, T_param, I, J, 0> {
-  void operator()(const T_functor &func, const T_param &param) const {
+  void operator()(const T_functor& func, const T_param& param) const {
     func.template operator()<typename std::tuple_element<I, T_typelist1>::type,
                              typename std::tuple_element<J, T_typelist2>::type,
                              typename std::tuple_element<0, T_typelist3>::type>(
@@ -78,7 +78,7 @@ template <typename T_typelist1, typename T_typelist2, typename T_typelist3,
           typename T_functor, typename T_param, int I>
 struct apply_template_permutations_helper<T_typelist1, T_typelist2, T_typelist3,
                                           T_functor, T_param, I, 0, 0> {
-  void operator()(const T_functor &func, const T_param &param) const {
+  void operator()(const T_functor& func, const T_param& param) const {
     func.template operator()<typename std::tuple_element<I, T_typelist1>::type,
                              typename std::tuple_element<0, T_typelist2>::type,
                              typename std::tuple_element<0, T_typelist3>::type>(
@@ -106,7 +106,7 @@ template <typename T_typelist1, typename T_typelist2, typename T_typelist3,
           typename T_functor, typename T_param>
 struct apply_template_permutations_helper<T_typelist1, T_typelist2, T_typelist3,
                                           T_functor, T_param, 0, 0, 0> {
-  void operator()(const T_functor &func, const T_param &param) const {
+  void operator()(const T_functor& func, const T_param& param) const {
     func.template operator()<typename std::tuple_element<0, T_typelist1>::type,
                              typename std::tuple_element<0, T_typelist2>::type,
                              typename std::tuple_element<0, T_typelist3>::type>(
@@ -132,7 +132,7 @@ struct apply_template_permutations_helper<T_typelist1, T_typelist2, T_typelist3,
  */
 template <typename T_typelist1, typename T_typelist2, typename T_typelist3,
           typename T_functor, typename T_param>
-void apply_template_permutations(const T_functor &func, const T_param &param) {
+void apply_template_permutations(const T_functor& func, const T_param& param) {
   apply_template_permutations_helper<T_typelist1, T_typelist2, T_typelist3,
                                      T_functor, T_param,
                                      std::tuple_size<T_typelist1>::value - 1,

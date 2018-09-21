@@ -21,7 +21,7 @@
  * will be tested.
  */
 class VectorIntRNGTestRig : public VectorRNGTestRig {
-public:
+ public:
   std::vector<int> test_points_;
 
   /*
@@ -32,7 +32,8 @@ public:
    * It *must* be implemented in the child class (it isn't virtual here because
    * C++ doesn't allow templated virtual member functions)
    */
-  template <typename T1> double pmf(int y, T1 p1, double p2, double p3) const;
+  template <typename T1>
+  double pmf(int y, T1 p1, double p2, double p3) const;
 
   VectorIntRNGTestRig(int N, int M, std::vector<int> test_points,
                       std::vector<double> good_p1, std::vector<int> good_p1_int,

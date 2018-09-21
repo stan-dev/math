@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_QR_THIN_Q_HPP
 #define STAN_MATH_PRIM_MAT_FUN_QR_THIN_Q_HPP
 
-#include <Eigen/QR>
-#include <algorithm>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
+#include <Eigen/QR>
+#include <algorithm>
 
 namespace stan {
 namespace math {
@@ -17,8 +17,8 @@ namespace math {
  * @return Orthogonal matrix with minimal columns
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-qr_thin_Q(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m) {
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> qr_thin_Q(
+    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
   typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
   check_nonzero_size("qr_thin_Q", "m", m);
   Eigen::HouseholderQR<matrix_t> qr(m.rows(), m.cols());
@@ -31,6 +31,6 @@ qr_thin_Q(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m) {
   return Q;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

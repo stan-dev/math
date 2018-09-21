@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_CHECK_CONSISTENT_SIZE_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_CONSISTENT_SIZE_HPP
 
-#include <sstream>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <stan/math/prim/scal/meta/size_of.hpp>
+#include <sstream>
 #include <string>
 
 namespace stan {
@@ -24,8 +24,8 @@ namespace math {
  * @throw <code>invalid_argument</code> if the size is inconsistent
  */
 template <typename T>
-inline void check_consistent_size(const char *function, const char *name,
-                                  const T &x, size_t expected_size) {
+inline void check_consistent_size(const char* function, const char* name,
+                                  const T& x, size_t expected_size) {
   if (!is_vector<T>::value)
     return;
   if (is_vector<T>::value && expected_size == stan::size_of(x))
@@ -39,10 +39,10 @@ inline void check_consistent_size(const char *function, const char *name,
       << "multidimensional values of the same shape.";
   std::string msg_str(msg.str());
 
-  invalid_argument(function, name, stan::size_of(x), "has dimension = ",
-                   msg_str.c_str());
+  invalid_argument(function, name, stan::size_of(x),
+                   "has dimension = ", msg_str.c_str());
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

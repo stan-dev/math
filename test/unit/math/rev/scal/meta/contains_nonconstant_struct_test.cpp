@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/rev/scal.hpp>
+#include <gtest/gtest.h>
 
 TEST(MetaTraits, containsNonconstantStruct) {
   using stan::contains_nonconstant_struct;

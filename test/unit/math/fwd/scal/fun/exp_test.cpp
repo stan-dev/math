@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/scal.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdExp, Fvar) {
@@ -39,18 +39,18 @@ TEST(AgradFwdExp, FvarFvarDouble) {
   using stan::math::fvar;
   using std::exp;
 
-  fvar<fvar<double>> x;
+  fvar<fvar<double> > x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<double>> a = exp(x);
+  fvar<fvar<double> > a = exp(x);
 
   EXPECT_FLOAT_EQ(exp(0.5), a.val_.val_);
   EXPECT_FLOAT_EQ(exp(0.5), a.val_.d_);
   EXPECT_FLOAT_EQ(0, a.d_.val_);
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 
-  fvar<fvar<double>> y;
+  fvar<fvar<double> > y;
   y.val_.val_ = 0.5;
   y.d_.val_ = 1.0;
 
@@ -62,7 +62,8 @@ TEST(AgradFwdExp, FvarFvarDouble) {
 }
 
 struct exp_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0& arg1) const {
     return exp(arg1);
   }
 };

@@ -14,7 +14,8 @@ namespace math {
  *
  * tparam T type of container.
  */
-template <typename T> struct value_type {};
+template <typename T>
+struct value_type {};
 
 /**
  * Template class for metaprogram to compute the type of values
@@ -22,10 +23,11 @@ template <typename T> struct value_type {};
  *
  * @tparam T type of container without const modifier.
  */
-template <typename T> struct value_type<const T> {
+template <typename T>
+struct value_type<const T> {
   typedef typename value_type<T>::type type;
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

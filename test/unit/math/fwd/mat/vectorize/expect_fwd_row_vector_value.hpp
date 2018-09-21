@@ -1,13 +1,14 @@
 #ifndef TEST_UNIT_MATH_FWD_MAT_VECTORIZE_EXPECT_FWD_ROW_VECTOR_VALUE_HPP
 #define TEST_UNIT_MATH_FWD_MAT_VECTORIZE_EXPECT_FWD_ROW_VECTOR_VALUE_HPP
 
-#include <Eigen/Dense>
 #include <stan/math/fwd/mat.hpp>
 #include <test/unit/math/fwd/mat/vectorize/build_fwd_matrix.hpp>
 #include <test/unit/math/fwd/mat/vectorize/expect_val_deriv_eq.hpp>
+#include <Eigen/Dense>
 #include <vector>
 
-template <typename F, typename T> void expect_fwd_row_vector_value() {
+template <typename F, typename T>
+void expect_fwd_row_vector_value() {
   using stan::math::fvar;
   using std::vector;
   typedef Eigen::Matrix<T, 1, Eigen::Dynamic> row_vector_t;
@@ -31,7 +32,7 @@ template <typename F, typename T> void expect_fwd_row_vector_value() {
           c.push_back(build_fwd_matrix<F>(template_rv, j));
         else
           c.push_back(build_fwd_matrix<F>(template_rv));
-      vector<row_vector_t> fc = F::template apply<vector<row_vector_t>>(c);
+      vector<row_vector_t> fc = F::template apply<vector<row_vector_t> >(c);
       EXPECT_EQ(c.size(), fc.size());
       EXPECT_EQ(c[i].size(), fc[i].size());
       expect_val_deriv_eq(F::apply_base(c[i](j)), fc[i](j));

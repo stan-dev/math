@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/mat.hpp>
+#include <gtest/gtest.h>
 #include <stdexcept>
 
 TEST(AgradMixMatrixSubRow, SubRow1_matrix_fv) {

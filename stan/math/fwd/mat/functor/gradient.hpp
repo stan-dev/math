@@ -36,8 +36,8 @@ namespace math {
  * @param[out] grad_fx Gradient of function at argument
  */
 template <typename T, typename F>
-void gradient(const F &f, const Eigen::Matrix<T, Eigen::Dynamic, 1> &x, T &fx,
-              Eigen::Matrix<T, Eigen::Dynamic, 1> &grad_fx) {
+void gradient(const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, T& fx,
+              Eigen::Matrix<T, Eigen::Dynamic, 1>& grad_fx) {
   Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1> x_fvar(x.size());
   grad_fx.resize(x.size());
   for (int i = 0; i < x.size(); ++i) {
@@ -50,6 +50,6 @@ void gradient(const F &f, const Eigen::Matrix<T, Eigen::Dynamic, 1> &x, T &fx,
   }
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

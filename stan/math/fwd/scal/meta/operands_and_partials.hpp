@@ -1,29 +1,30 @@
 #ifndef STAN_MATH_FWD_SCAL_META_OPERANDS_AND_PARTIALS_HPP
 #define STAN_MATH_FWD_SCAL_META_OPERANDS_AND_PARTIALS_HPP
 
-#include <stan/math/fwd/core/fvar.hpp>
 #include <stan/math/prim/scal/meta/broadcast_array.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/fwd/core/fvar.hpp>
 
 namespace stan {
 namespace math {
 namespace internal {
-template <typename Dx> class ops_partials_edge<Dx, fvar<Dx>> {
-public:
+template <typename Dx>
+class ops_partials_edge<Dx, fvar<Dx> > {
+ public:
   typedef fvar<Dx> Op;
   Dx partial_;
   broadcast_array<Dx> partials_;
-  explicit ops_partials_edge(const Op &op)
+  explicit ops_partials_edge(const Op& op)
       : partial_(0), partials_(partial_), operand_(op) {}
 
-private:
+ private:
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
-  const Op &operand_;
+  const Op& operand_;
 
   Dx dx() { return this->partials_[0] * this->operand_.d_; }
 };
-} // namespace internal
+}  // namespace internal
 
 /**
  * This class builds partial derivatives with respect to a set of
@@ -63,24 +64,24 @@ private:
  */
 template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5,
           typename Dx>
-class operands_and_partials<Op1, Op2, Op3, Op4, Op5, fvar<Dx>> {
-public:
+class operands_and_partials<Op1, Op2, Op3, Op4, Op5, fvar<Dx> > {
+ public:
   internal::ops_partials_edge<Dx, Op1> edge1_;
   internal::ops_partials_edge<Dx, Op2> edge2_;
   internal::ops_partials_edge<Dx, Op3> edge3_;
   internal::ops_partials_edge<Dx, Op4> edge4_;
   internal::ops_partials_edge<Dx, Op5> edge5_;
   typedef fvar<Dx> T_return_type;
-  explicit operands_and_partials(const Op1 &o1) : edge1_(o1) {}
-  operands_and_partials(const Op1 &o1, const Op2 &o2)
+  explicit operands_and_partials(const Op1& o1) : edge1_(o1) {}
+  operands_and_partials(const Op1& o1, const Op2& o2)
       : edge1_(o1), edge2_(o2) {}
-  operands_and_partials(const Op1 &o1, const Op2 &o2, const Op3 &o3)
+  operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3)
       : edge1_(o1), edge2_(o2), edge3_(o3) {}
-  operands_and_partials(const Op1 &o1, const Op2 &o2, const Op3 &o3,
-                        const Op4 &o4)
+  operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3,
+                        const Op4& o4)
       : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4) {}
-  operands_and_partials(const Op1 &o1, const Op2 &o2, const Op3 &o3,
-                        const Op4 &o4, const Op5 &o5)
+  operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3,
+                        const Op4& o4, const Op5& o5)
       : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4), edge5_(o5) {}
 
   /**
@@ -97,11 +98,11 @@ public:
    * @return the value with its derivative
    */
   T_return_type build(Dx value) {
-    Dx deriv =
-        edge1_.dx() + edge2_.dx() + edge3_.dx() + edge4_.dx() + edge5_.dx();
+    Dx deriv
+        = edge1_.dx() + edge2_.dx() + edge3_.dx() + edge4_.dx() + edge5_.dx();
     return T_return_type(value, deriv);
   }
 };
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

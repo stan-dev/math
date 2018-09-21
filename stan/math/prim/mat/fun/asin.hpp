@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_ASIN_HPP
 #define STAN_MATH_PRIM_MAT_FUN_ASIN_HPP
 
-#include <cmath>
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -14,7 +14,8 @@ namespace math {
  * @return Arcsine of x in radians.
  */
 struct asin_fun {
-  template <typename T> static inline T fun(const T &x) {
+  template <typename T>
+  static inline T fun(const T& x) {
     using std::asin;
     return asin(x);
   }
@@ -27,11 +28,11 @@ struct asin_fun {
  * @return Arcsine of each variable in the container, in radians.
  */
 template <typename T>
-inline typename apply_scalar_unary<asin_fun, T>::return_t asin(const T &x) {
+inline typename apply_scalar_unary<asin_fun, T>::return_t asin(const T& x) {
   return apply_scalar_unary<asin_fun, T>::apply(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

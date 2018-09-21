@@ -5,8 +5,8 @@
 #undef STAN_MPI
 #endif
 
-#include <gtest/gtest.h>
 #include <stan/math/rev/mat.hpp>
+#include <gtest/gtest.h>
 
 #include <test/unit/math/prim/mat/functor/hard_work.hpp>
 
@@ -18,8 +18,8 @@ STAN_REGISTER_MAP_RECT(0, hard_work)
 struct map_rect : public ::testing::Test {
   Eigen::VectorXd shared_params_d;
   std::vector<Eigen::VectorXd> job_params_d;
-  std::vector<std::vector<double>> x_r;
-  std::vector<std::vector<int>> x_i;
+  std::vector<std::vector<double> > x_r;
+  std::vector<std::vector<int> > x_i;
   const std::size_t N = 10;
 
   virtual void SetUp() {
@@ -32,8 +32,8 @@ struct map_rect : public ::testing::Test {
       job_params_d.push_back(job_d);
     }
 
-    x_r = std::vector<std::vector<double>>(N, std::vector<double>(1, 1.0));
-    x_i = std::vector<std::vector<int>>(N, std::vector<int>(1, 0));
+    x_r = std::vector<std::vector<double> >(N, std::vector<double>(1, 1.0));
+    x_i = std::vector<std::vector<int> >(N, std::vector<int>(1, 0));
   }
 };
 
@@ -44,12 +44,12 @@ TEST_F(map_rect, concurrent_eval_ok_vd) {
 
   for (std::size_t i = 0, j = 0; i < N; i++) {
     j = 2 * i;
-    EXPECT_FLOAT_EQ(stan::math::value_of(res1(j)),
-                    job_params_d[i](0) * job_params_d[i](0) +
-                        shared_params_d(0));
+    EXPECT_FLOAT_EQ(
+        stan::math::value_of(res1(j)),
+        job_params_d[i](0) * job_params_d[i](0) + shared_params_d(0));
     EXPECT_FLOAT_EQ(stan::math::value_of(res1(j + 1)),
-                    x_r[i][0] * job_params_d[i](1) * job_params_d[i](0) +
-                        2 * shared_params_d(0) + shared_params_d(1));
+                    x_r[i][0] * job_params_d[i](1) * job_params_d[i](0)
+                        + 2 * shared_params_d(0) + shared_params_d(1));
 
     stan::math::set_zero_all_adjoints();
     res1(j).grad();
@@ -74,12 +74,12 @@ TEST_F(map_rect, concurrent_eval_ok_dv) {
 
   for (std::size_t i = 0, j = 0; i < N; i++) {
     j = 2 * i;
-    EXPECT_FLOAT_EQ(stan::math::value_of(res1(j)),
-                    job_params_d[i](0) * job_params_d[i](0) +
-                        shared_params_d(0));
+    EXPECT_FLOAT_EQ(
+        stan::math::value_of(res1(j)),
+        job_params_d[i](0) * job_params_d[i](0) + shared_params_d(0));
     EXPECT_FLOAT_EQ(stan::math::value_of(res1(j + 1)),
-                    x_r[i][0] * job_params_d[i](1) * job_params_d[i](0) +
-                        2 * shared_params_d(0) + shared_params_d(1));
+                    x_r[i][0] * job_params_d[i](1) * job_params_d[i](0)
+                        + 2 * shared_params_d(0) + shared_params_d(1));
 
     stan::math::set_zero_all_adjoints();
     res1(j).grad();
@@ -121,12 +121,12 @@ TEST_F(map_rect, concurrent_eval_ok_vv) {
 
   for (std::size_t i = 0, j = 0; i < N; i++) {
     j = 2 * i;
-    EXPECT_FLOAT_EQ(stan::math::value_of(res1(j)),
-                    job_params_d[i](0) * job_params_d[i](0) +
-                        shared_params_d(0));
+    EXPECT_FLOAT_EQ(
+        stan::math::value_of(res1(j)),
+        job_params_d[i](0) * job_params_d[i](0) + shared_params_d(0));
     EXPECT_FLOAT_EQ(stan::math::value_of(res1(j + 1)),
-                    x_r[i][0] * job_params_d[i](1) * job_params_d[i](0) +
-                        2 * shared_params_d(0) + shared_params_d(1));
+                    x_r[i][0] * job_params_d[i](1) * job_params_d[i](0)
+                        + 2 * shared_params_d(0) + shared_params_d(1));
 
     stan::math::set_zero_all_adjoints();
     res1(j).grad();

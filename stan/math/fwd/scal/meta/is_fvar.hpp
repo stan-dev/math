@@ -6,9 +6,10 @@
 
 namespace stan {
 
-template <typename T> struct is_fvar<stan::math::fvar<T>> {
+template <typename T>
+struct is_fvar<stan::math::fvar<T> > {
   enum { value = true };
 };
 
-} // namespace stan
+}  // namespace stan
 #endif

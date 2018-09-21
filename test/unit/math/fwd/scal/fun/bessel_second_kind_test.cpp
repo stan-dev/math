@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/scal.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdBesselSecondKind, Fvar) {
@@ -25,22 +25,22 @@ TEST(AgradFwdBesselSecondKind, FvarFvarDouble) {
   using stan::math::bessel_second_kind;
   using stan::math::fvar;
 
-  fvar<fvar<double>> x;
+  fvar<fvar<double> > x;
   x.val_.val_ = 3.0;
   x.val_.d_ = 2.0;
 
-  fvar<fvar<double>> y;
+  fvar<fvar<double> > y;
   y.val_.val_ = 3.0;
   y.d_.val_ = 2.0;
 
-  fvar<fvar<double>> a = stan::math::bessel_second_kind(1, y);
+  fvar<fvar<double> > a = stan::math::bessel_second_kind(1, y);
 
   EXPECT_FLOAT_EQ(stan::math::bessel_second_kind(1, 3.0), a.val_.val_);
   EXPECT_FLOAT_EQ(0, a.val_.d_);
   EXPECT_FLOAT_EQ(0.53725040349771411, a.d_.val_);
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 
-  fvar<fvar<double>> b = stan::math::bessel_second_kind(1, x);
+  fvar<fvar<double> > b = stan::math::bessel_second_kind(1, x);
 
   EXPECT_FLOAT_EQ(stan::math::bessel_second_kind(1, 3.0), b.val_.val_);
   EXPECT_FLOAT_EQ(0.53725040349771411, b.val_.d_);
@@ -49,7 +49,8 @@ TEST(AgradFwdBesselSecondKind, FvarFvarDouble) {
 }
 
 struct bessel_second_kind_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0& arg1) const {
     return bessel_second_kind(1, arg1);
   }
 };

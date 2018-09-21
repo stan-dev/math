@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_SIMPLEX_FREE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_SIMPLEX_FREE_HPP
 
-#include <cmath>
-#include <stan/math/prim/mat/err/check_simplex.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/err/check_simplex.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/scal/fun/logit.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -25,13 +25,13 @@ namespace math {
  * @throw std::domain_error if x is not a valid simplex
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1>
-simplex_free(const Eigen::Matrix<T, Eigen::Dynamic, 1> &x) {
+Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_free(
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
 
-  typedef typename index_type<Matrix<T, Dynamic, 1>>::type size_type;
+  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
 
   check_simplex("stan::math::simplex_free", "Simplex variable", x);
   int Km1 = x.size() - 1;
@@ -46,6 +46,6 @@ simplex_free(const Eigen::Matrix<T, Eigen::Dynamic, 1> &x) {
   return y;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

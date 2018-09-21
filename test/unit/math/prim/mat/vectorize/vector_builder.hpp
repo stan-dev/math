@@ -11,7 +11,8 @@ namespace math {
  *
  * @tparam T Type of values held by builder.
  */
-template <typename T> struct vector_builder {
+template <typename T>
+struct vector_builder {
   std::vector<T> vec_;
 
   /**
@@ -26,7 +27,7 @@ template <typename T> struct vector_builder {
    * @param x Value to add.
    * @return Reference to this builder.
    */
-  vector_builder &add(const T &x) {
+  vector_builder& add(const T& x) {
     vec_.push_back(x);
     return *this;
   }
@@ -39,6 +40,6 @@ template <typename T> struct vector_builder {
   std::vector<T> build() const { return vec_; }
 };
 
-} // namespace math
-} // namespace test
+}  // namespace math
+}  // namespace test
 #endif

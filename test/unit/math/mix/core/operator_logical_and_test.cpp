@@ -1,6 +1,6 @@
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <stan/math/mix/mat.hpp>
 #include <vector>
 
 void test_logical_and(double x, double y) {
@@ -11,17 +11,17 @@ void test_logical_and(double x, double y) {
   EXPECT_EQ(x && y, fvar<double>(x) && y);
   EXPECT_EQ(x && y, x && fvar<double>(y));
 
-  EXPECT_EQ(x && y, fvar<fvar<double>>(x) && fvar<fvar<double>>(y));
-  EXPECT_EQ(x && y, fvar<fvar<double>>(x) && y);
-  EXPECT_EQ(x && y, x && fvar<fvar<double>>(y));
+  EXPECT_EQ(x && y, fvar<fvar<double> >(x) && fvar<fvar<double> >(y));
+  EXPECT_EQ(x && y, fvar<fvar<double> >(x) && y);
+  EXPECT_EQ(x && y, x && fvar<fvar<double> >(y));
 
   EXPECT_EQ(x && y, fvar<var>(x) && fvar<var>(y));
   EXPECT_EQ(x && y, fvar<var>(x) && y);
   EXPECT_EQ(x && y, x && fvar<var>(y));
 
-  EXPECT_EQ(x && y, fvar<fvar<var>>(x) && fvar<fvar<var>>(y));
-  EXPECT_EQ(x && y, fvar<fvar<var>>(x) && y);
-  EXPECT_EQ(x && y, x && fvar<fvar<var>>(y));
+  EXPECT_EQ(x && y, fvar<fvar<var> >(x) && fvar<fvar<var> >(y));
+  EXPECT_EQ(x && y, fvar<fvar<var> >(x) && y);
+  EXPECT_EQ(x && y, x && fvar<fvar<var> >(y));
 }
 
 TEST(AgradRev, unaryNot) {

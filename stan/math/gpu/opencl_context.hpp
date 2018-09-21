@@ -11,18 +11,18 @@
 #error OPENCL_PLATFORM_ID_NOT_SET
 #endif
 
-#include <stan/math/gpu/constants.hpp>
 #include <stan/math/prim/arr/err/check_opencl.hpp>
+#include <stan/math/gpu/constants.hpp>
 #include <stan/math/prim/scal/err/system_error.hpp>
 
 #include <CL/cl.hpp>
-#include <cerrno>
-#include <cmath>
-#include <fstream>
-#include <iostream>
-#include <map>
 #include <string>
+#include <iostream>
+#include <fstream>
+#include <map>
 #include <vector>
+#include <cmath>
+#include <cerrno>
 /**
  *  @file stan/math/gpu/opencl_context.hpp
  *  @brief Initialization for OpenCL:
@@ -54,7 +54,7 @@ namespace math {
 class opencl_context_base {
   friend class opencl_context;
 
-private:
+ private:
   /**
    * Construct the opencl_context by initializing the
    * OpenCL context, devices, command queues, and kernel
@@ -96,8 +96,8 @@ private:
                                         CL_QUEUE_PROFILING_ENABLE, nullptr);
       device_.getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
                               &max_thread_block_size_);
-      int thread_block_size_sqrt =
-          static_cast<int>(sqrt(static_cast<double>(max_thread_block_size_)));
+      int thread_block_size_sqrt
+          = static_cast<int>(sqrt(static_cast<double>(max_thread_block_size_)));
       // Does a compile time check of the maximum allowed
       // dimension of a square thread block size
       // WG size of (32,32) works on all recent GPU but would fail on some
@@ -106,48 +106,48 @@ private:
         base_opts_["THREAD_BLOCK_SIZE"] = thread_block_size_sqrt;
         base_opts_["WORK_PER_THREAD"] = 1;
       }
-    } catch (const cl::Error &e) {
+    } catch (const cl::Error& e) {
       check_opencl_error("opencl_context", e);
     }
   }
 
-protected:
-  cl::Context context_; // Manages the the device, queue, platform, memory,etc.
-  cl::CommandQueue command_queue_;      // job queue for device, one per device
-  std::vector<cl::Platform> platforms_; // Vector of available platforms
-  cl::Platform platform_;               // The platform for compiling kernels
-  std::string platform_name_; // The platform such as NVIDIA OpenCL or AMD SDK
-  std::vector<cl::Device> devices_; // All available GPU devices
-  cl::Device device_;               // The selected GPU device
-  std::string device_name_;         // The name of the GPU
+ protected:
+  cl::Context context_;  // Manages the the device, queue, platform, memory,etc.
+  cl::CommandQueue command_queue_;       // job queue for device, one per device
+  std::vector<cl::Platform> platforms_;  // Vector of available platforms
+  cl::Platform platform_;                // The platform for compiling kernels
+  std::string platform_name_;  // The platform such as NVIDIA OpenCL or AMD SDK
+  std::vector<cl::Device> devices_;  // All available GPU devices
+  cl::Device device_;                // The selected GPU device
+  std::string device_name_;          // The name of the GPU
   size_t
-      max_thread_block_size_; // The maximum size of a block of workers on GPU
+      max_thread_block_size_;  // The maximum size of a block of workers on GPU
 
   // Holds Default parameter values for each Kernel.
-  typedef std::map<const char *, int> map_base_opts;
-  map_base_opts base_opts_ = {
-      {"LOWER", static_cast<int>(TriangularViewGPU::Lower)},
-      {"UPPER", static_cast<int>(TriangularViewGPU::Upper)},
-      {"ENTIRE", static_cast<int>(TriangularViewGPU::Entire)},
-      {"UPPER_TO_LOWER", static_cast<int>(TriangularMapGPU::UpperToLower)},
-      {"LOWER_TO_UPPER", static_cast<int>(TriangularMapGPU::LowerToUpper)},
-      {"THREAD_BLOCK_SIZE", 32},
-      {"WORK_PER_THREAD", 8}};
+  typedef std::map<const char*, int> map_base_opts;
+  map_base_opts base_opts_
+      = {{"LOWER", static_cast<int>(TriangularViewGPU::Lower)},
+         {"UPPER", static_cast<int>(TriangularViewGPU::Upper)},
+         {"ENTIRE", static_cast<int>(TriangularViewGPU::Entire)},
+         {"UPPER_TO_LOWER", static_cast<int>(TriangularMapGPU::UpperToLower)},
+         {"LOWER_TO_UPPER", static_cast<int>(TriangularMapGPU::LowerToUpper)},
+         {"THREAD_BLOCK_SIZE", 32},
+         {"WORK_PER_THREAD", 8}};
 
-  static opencl_context_base &getInstance() {
+  static opencl_context_base& getInstance() {
     static opencl_context_base instance_;
     return instance_;
   }
 
-  opencl_context_base(opencl_context_base const &) = delete;
-  void operator=(opencl_context_base const &) = delete;
+  opencl_context_base(opencl_context_base const&) = delete;
+  void operator=(opencl_context_base const&) = delete;
 };
 
 /**
  * The API to access the methods and values in opencl_context_base
  */
 class opencl_context {
-public:
+ public:
   opencl_context() = default;
 
   /**
@@ -255,7 +255,7 @@ public:
           msg << "\t\tDevice Available: "
               << device.getInfo<CL_DEVICE_AVAILABLE>() << "\n";
         }
-      } catch (const cl::Error &e) {
+      } catch (const cl::Error& e) {
         // if one of the platforms have no devices that match the device type
         // it will throw the error == -1 (DEVICE_NOT_FOUND)
         // other errors will throw a system error
@@ -276,7 +276,7 @@ public:
    * objects. For stan, there should only be one context, queue, device, and
    * program with multiple kernels.
    */
-  inline cl::Context &context() {
+  inline cl::Context& context() {
     return opencl_context_base::getInstance().context_;
   }
   /**
@@ -284,7 +284,7 @@ public:
    * One command queue will exist per device where
    * kernels are placed on the command queue and by default executed in order.
    */
-  inline cl::CommandQueue &queue() {
+  inline cl::CommandQueue& queue() {
     return opencl_context_base::getInstance().command_queue_;
   }
   /**
@@ -319,8 +319,8 @@ public:
   }
 };
 static opencl_context opencl_context;
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif
 #endif

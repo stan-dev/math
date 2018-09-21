@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_GPU_TRANSPOSE_HPP
 #define STAN_MATH_GPU_TRANSPOSE_HPP
 #ifdef STAN_OPENCL
-#include <CL/cl.hpp>
-#include <stan/math/gpu/kernels/transpose.hpp>
 #include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/gpu/kernels/transpose.hpp>
+#include <CL/cl.hpp>
 
 namespace stan {
 namespace math {
@@ -15,7 +15,7 @@ namespace math {
  * @return transposed input matrix
  *
  */
-inline matrix_gpu transpose(const matrix_gpu &src) {
+inline matrix_gpu transpose(const matrix_gpu& src) {
   matrix_gpu dst(src.cols(), src.rows());
   if (dst.size() == 0)
     return dst;
@@ -23,13 +23,13 @@ inline matrix_gpu transpose(const matrix_gpu &src) {
   try {
     opencl_kernels::transpose(cl::NDRange(src.rows(), src.cols()), dst.buffer(),
                               src.buffer(), src.rows(), src.cols());
-  } catch (const cl::Error &e) {
+  } catch (const cl::Error& e) {
     check_opencl_error("transpose", e);
   }
   return dst;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif
 #endif

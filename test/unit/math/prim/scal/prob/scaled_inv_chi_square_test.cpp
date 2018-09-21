@@ -1,9 +1,9 @@
-#include <boost/math/distributions.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <gtest/gtest.h>
-#include <limits>
 #include <stan/math/prim/scal.hpp>
+#include <gtest/gtest.h>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/math/distributions.hpp>
 #include <test/unit/math/prim/scal/prob/util.hpp>
+#include <limits>
 #include <vector>
 
 TEST(ProbDistributionsScaledInvChiSquare, error_check) {
@@ -29,8 +29,8 @@ TEST(ProbDistributionsScaledInvChiSquare, chiSquareGoodnessFitTest) {
 
   std::vector<double> samples;
   for (int i = 0; i < N; ++i) {
-    samples.push_back(stan::math::scaled_inv_chi_square_rng(2.0, 1.0, rng) /
-                      (2.0 * 1.0));
+    samples.push_back(stan::math::scaled_inv_chi_square_rng(2.0, 1.0, rng)
+                      / (2.0 * 1.0));
   }
 
   // Generate quantiles from boost's inverse chi square distribution

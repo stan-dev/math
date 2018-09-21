@@ -1,12 +1,12 @@
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <stan/math/prim/scal.hpp>
 
 using stan::math::check_bounded;
 
 TEST(ErrorHandlingScalar, CheckBounded_x) {
-  const char *function = "check_bounded";
-  const char *name = "x";
+  const char* function = "check_bounded";
+  const char* name = "x";
   double x = 0;
   double low = -1;
   double high = 1;
@@ -51,8 +51,8 @@ TEST(ErrorHandlingScalar, CheckBounded_x) {
       << ", " << low;
 }
 TEST(ErrorHandlingScalar, CheckBounded_Low) {
-  const char *function = "check_bounded";
-  const char *name = "x";
+  const char* function = "check_bounded";
+  const char* name = "x";
   double x = 0;
   double low = -1;
   double high = 1;
@@ -77,8 +77,8 @@ TEST(ErrorHandlingScalar, CheckBounded_Low) {
       << ", " << high;
 }
 TEST(ErrorHandlingScalar, CheckBounded_High) {
-  const char *function = "check_bounded";
-  const char *name = "x";
+  const char* function = "check_bounded";
+  const char* name = "x";
   double x = 0;
   double low = -1;
   double high = 1;
@@ -105,8 +105,8 @@ TEST(ErrorHandlingScalar, CheckBounded_High) {
 TEST(ErrorHandlingScalar, CheckBounded_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  const char *function = "check_bounded";
-  const char *name = "x";
+  const char* function = "check_bounded";
+  const char* name = "x";
   double x = 0;
   double low = -1;
   double high = 1;

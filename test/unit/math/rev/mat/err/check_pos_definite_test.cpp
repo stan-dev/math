@@ -1,6 +1,6 @@
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <stan/math/rev/mat.hpp>
 
 TEST(AgradRevErrorHandlingMatrix, checkPosDefiniteMatrix_nan) {
   using Eigen::Dynamic;

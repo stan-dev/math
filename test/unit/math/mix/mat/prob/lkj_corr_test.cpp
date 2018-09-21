@@ -1,9 +1,9 @@
-#include <boost/math/distributions.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <gtest/gtest.h>
 #include <stan/math/mix/mat.hpp>
-#include <test/unit/math/mix/mat/prob/higher_order_utils.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/prob/lkj_corr_cholesky_test_functors.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/math/distributions.hpp>
+#include <test/unit/math/mix/mat/prob/higher_order_utils.hpp>
 #include <vector>
 
 TEST(ProbDistributionsLkjCorr, fvar_var) {
@@ -56,13 +56,13 @@ TEST(ProbDistributionsLkjCorr, fvar_fvar_var) {
   using stan::math::var;
   boost::random::mt19937 rng;
   int K = 4;
-  Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
+  Eigen::Matrix<fvar<fvar<var> >, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
   Sigma.setZero();
   Sigma.diagonal().setOnes();
   for (int i = 0; i < K * K; i++)
     Sigma(i).d_.val_ = 1.0;
-  fvar<fvar<var>> eta = stan::math::uniform_rng(0, 2, rng);
-  fvar<fvar<var>> f = stan::math::do_lkj_constant(eta, K);
+  fvar<fvar<var> > eta = stan::math::uniform_rng(0, 2, rng);
+  fvar<fvar<var> > f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val_.val_.val(),
                   stan::math::lkj_corr_log(Sigma, eta).val_.val_.val());
   EXPECT_FLOAT_EQ(2.5177896,
@@ -80,13 +80,13 @@ TEST(ProbDistributionsLkjCorrCholesky, fvar_fvar_var) {
   using stan::math::var;
   boost::random::mt19937 rng;
   int K = 4;
-  Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
+  Eigen::Matrix<fvar<fvar<var> >, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
   Sigma.setZero();
   Sigma.diagonal().setOnes();
   for (int i = 0; i < K * K; i++)
     Sigma(i).d_.val_ = 1.0;
-  fvar<fvar<var>> eta = stan::math::uniform_rng(0, 2, rng);
-  fvar<fvar<var>> f = stan::math::do_lkj_constant(eta, K);
+  fvar<fvar<var> > eta = stan::math::uniform_rng(0, 2, rng);
+  fvar<fvar<var> > f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(
       f.val_.val_.val(),
       stan::math::lkj_corr_cholesky_log(Sigma, eta).val_.val_.val());
@@ -184,10 +184,10 @@ TEST(ProbDistributionsLkjCorrCholesky, grad_hessian) {
   using stan::math::grad_hessian;
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> hess_gh_3;
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> gh_3;
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > gh_3;
   double fx_gh_3;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> hess_gh_ad_3;
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> gh_ad_3;
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > gh_ad_3;
   double fx_gh_ad_3;
 
   finite_diff_grad_hessian(test_func_3, x3, fx_gh_3, hess_gh_3, gh_3);
@@ -197,10 +197,10 @@ TEST(ProbDistributionsLkjCorrCholesky, grad_hessian) {
   EXPECT_FLOAT_EQ(fx_gh_3, fx_gh_ad_3);
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> hess_gh_2;
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> gh_2;
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > gh_2;
   double fx_gh_2;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> hess_gh_ad_2;
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> gh_ad_2;
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > gh_ad_2;
   double fx_gh_ad_2;
 
   finite_diff_grad_hessian(test_func_2, x2, fx_gh_2, hess_gh_2, gh_2);
@@ -210,10 +210,10 @@ TEST(ProbDistributionsLkjCorrCholesky, grad_hessian) {
   EXPECT_FLOAT_EQ(fx_gh_2, fx_gh_ad_2);
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> hess_gh_1;
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> gh_1;
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > gh_1;
   double fx_gh_1;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> hess_gh_ad_1;
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> gh_ad_1;
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > gh_ad_1;
   double fx_gh_ad_1;
 
   finite_diff_grad_hessian(test_func_1, x1, fx_gh_1, hess_gh_1, gh_1);

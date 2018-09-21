@@ -1,14 +1,14 @@
-#include <algorithm>
+#include <stan/math/prim/mat.hpp>
+#include <stan/math/gpu/multiply_transpose.hpp>
+#include <stan/math/gpu/copy.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/gpu/copy.hpp>
-#include <stan/math/gpu/multiply_transpose.hpp>
-#include <stan/math/prim/mat.hpp>
+#include <algorithm>
 #ifdef STAN_OPENCL
 boost::random::mt19937 rng;
 
-#define EXPECT_MATRIX_NEAR(A, B, DELTA)                                        \
-  for (int i = 0; i < A.size(); i++)                                           \
+#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
+  for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(MathMatrix, multiply_transpose_exception_fail_zero) {

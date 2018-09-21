@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
-#include <limits>
 #include <stan/math/fwd/scal.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
+#include <limits>
 
 TEST(AgradFwdIsInf, Fvar) {
   using stan::math::fvar;
@@ -34,11 +34,11 @@ TEST(AgradFwdIsInf, FvarFvar) {
   double min = std::numeric_limits<double>::min();
   double max = std::numeric_limits<double>::max();
 
-  fvar<fvar<double>> a(infinity, infinity);
-  fvar<fvar<double>> b(max, max);
-  fvar<fvar<double>> c(min, min);
-  fvar<fvar<double>> d(0.5, 1.0);
-  fvar<fvar<double>> e(nan, nan);
+  fvar<fvar<double> > a(infinity, infinity);
+  fvar<fvar<double> > b(max, max);
+  fvar<fvar<double> > c(min, min);
+  fvar<fvar<double> > d(0.5, 1.0);
+  fvar<fvar<double> > e(nan, nan);
 
   EXPECT_TRUE(is_inf(a.val_.val_));
   EXPECT_FALSE(is_inf(b.val_.val_));

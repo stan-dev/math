@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/scal.hpp>
+#include <gtest/gtest.h>
 
 TEST(AgradFwdLogInvLogitDiff, Fvar) {
   using stan::math::fvar;
@@ -21,15 +21,15 @@ TEST(AgradFwdLogInvLogit, FvarFvarDouble) {
   using stan::math::fvar;
   using stan::math::log_inv_logit_diff;
 
-  fvar<fvar<double>> x;
+  fvar<fvar<double> > x;
   x.val_.val_ = 3.4;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<double>> y;
+  fvar<fvar<double> > y;
   y.val_.val_ = 0.9;
   y.val_.d_ = 1.0;
 
-  fvar<fvar<double>> a = log_inv_logit_diff(x, y);
+  fvar<fvar<double> > a = log_inv_logit_diff(x, y);
 
   EXPECT_FLOAT_EQ(-1.3596328289, a.val_.val_);
   EXPECT_FLOAT_EQ(-0.678654037927, a.val_.d_);

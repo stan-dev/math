@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_FABS_HPP
 #define STAN_MATH_REV_SCAL_FUN_FABS_HPP
 
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 
 namespace stan {
 namespace math {
@@ -46,7 +46,7 @@ namespace math {
  * @param a Input variable.
  * @return Absolute value of variable.
  */
-inline var fabs(const var &a) {
+inline var fabs(const var& a) {
   if (a.val() > 0.0)
     return a;
   else if (a.val() < 0.0)
@@ -57,6 +57,6 @@ inline var fabs(const var &a) {
     return var(new precomp_v_vari(NOT_A_NUMBER, a.vi_, NOT_A_NUMBER));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_TRUNC_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_TRUNC_HPP
 
-#include <boost/math/special_functions/trunc.hpp>
-#include <limits>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <boost/math/special_functions/trunc.hpp>
+#include <limits>
 
 namespace stan {
 namespace math {
@@ -31,6 +31,6 @@ inline double trunc(double x) {
  */
 inline double trunc(int x) { return trunc(static_cast<double>(x)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -6,11 +6,11 @@
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
-#include <stan/math/prim/mat/err/check_simplex.hpp>
-#include <stan/math/prim/mat/fun/log_sum_exp.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/mat/err/check_simplex.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/mat/fun/log_sum_exp.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
@@ -41,8 +41,8 @@ namespace math {
  * @param rng Pseudo-random number generator.
  */
 template <class RNG>
-inline Eigen::VectorXd
-dirichlet_rng(const Eigen::Matrix<double, Eigen::Dynamic, 1> &alpha, RNG &rng) {
+inline Eigen::VectorXd dirichlet_rng(
+    const Eigen::Matrix<double, Eigen::Dynamic, 1>& alpha, RNG& rng) {
   using Eigen::VectorXd;
   using boost::gamma_distribution;
   using boost::random::uniform_real_distribution;
@@ -52,11 +52,11 @@ dirichlet_rng(const Eigen::Matrix<double, Eigen::Dynamic, 1> &alpha, RNG &rng) {
 
   // separate algorithm if any parameter is less than 1
   if (alpha.minCoeff() < 1) {
-    variate_generator<RNG &, uniform_real_distribution<>> uniform_rng(
+    variate_generator<RNG&, uniform_real_distribution<> > uniform_rng(
         rng, uniform_real_distribution<>(0.0, 1.0));
     VectorXd log_y(alpha.size());
     for (int i = 0; i < alpha.size(); ++i) {
-      variate_generator<RNG &, gamma_distribution<>> gamma_rng(
+      variate_generator<RNG&, gamma_distribution<> > gamma_rng(
           rng, gamma_distribution<>(alpha(i) + 1, 1));
       double log_u = log(uniform_rng());
       log_y(i) = log(gamma_rng()) + log_u / alpha(i);
@@ -71,13 +71,13 @@ dirichlet_rng(const Eigen::Matrix<double, Eigen::Dynamic, 1> &alpha, RNG &rng) {
   // standard normalized gamma algorithm
   Eigen::VectorXd y(alpha.rows());
   for (int i = 0; i < alpha.rows(); i++) {
-    variate_generator<RNG &, gamma_distribution<>> gamma_rng(
+    variate_generator<RNG&, gamma_distribution<> > gamma_rng(
         rng, gamma_distribution<>(alpha(i, 0), 1e-7));
     y(i) = gamma_rng();
   }
   return y / y.sum();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

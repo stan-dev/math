@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/scal.hpp>
+#include <gtest/gtest.h>
 
 TEST(ProbExpModNormal, log_matches_lpmf) {
   double y = 0.8;

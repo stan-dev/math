@@ -5,8 +5,8 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/softmax.hpp>
 #include <stan/math/rev/mat/functor/adj_jac_apply.hpp>
-#include <tuple>
 #include <vector>
+#include <tuple>
 
 namespace stan {
 namespace math {
@@ -14,9 +14,9 @@ namespace math {
 namespace {
 class softmax_op {
   int N_;
-  double *y_; // Holds the results of the softmax
+  double* y_;  // Holds the results of the softmax
 
-public:
+ public:
   softmax_op() : N_(0), y_(NULL) {}
 
   /*
@@ -26,8 +26,8 @@ public:
    * @return Softmax of the input.
    */
   template <std::size_t size>
-  Eigen::VectorXd operator()(const std::array<bool, size> &needs_adj,
-                             const Eigen::VectorXd &alpha) {
+  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
+                             const Eigen::VectorXd& alpha) {
     N_ = alpha.size();
     y_ = ChainableStack::instance().memalloc_.alloc_array<double>(N_);
 
@@ -47,11 +47,11 @@ public:
    * @return Eigen::VectorXd of adjoints propagated through softmax operation
    */
   template <std::size_t size>
-  std::tuple<Eigen::VectorXd>
-  multiply_adjoint_jacobian(const std::array<bool, size> &needs_adj,
-                            const Eigen::VectorXd &adj) const {
+  std::tuple<Eigen::VectorXd> multiply_adjoint_jacobian(
+      const std::array<bool, size>& needs_adj,
+      const Eigen::VectorXd& adj) const {
     Eigen::VectorXd adj_times_jac(N_);
-    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1>> y(y_, N_);
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1> > y(y_, N_);
 
     double adj_dot_y = adj.dot(y);
     for (int n = 0; n < N_; ++n) {
@@ -61,7 +61,7 @@ public:
     return std::make_tuple(adj_times_jac);
   }
 };
-} // namespace
+}  // namespace
 
 /**
  * Return the softmax of the specified Eigen vector.  Softmax is
@@ -71,13 +71,13 @@ public:
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
-inline Eigen::Matrix<var, Eigen::Dynamic, 1>
-softmax(const Eigen::Matrix<var, Eigen::Dynamic, 1> &alpha) {
+inline Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
+    const Eigen::Matrix<var, Eigen::Dynamic, 1>& alpha) {
   check_nonzero_size("softmax", "alpha", alpha);
 
   return adj_jac_apply<softmax_op>(alpha);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

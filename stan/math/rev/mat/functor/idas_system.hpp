@@ -1,19 +1,19 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_IDAS_RESIDUAL_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_IDAS_RESIDUAL_HPP
 
+#include <stan/math/prim/arr/fun/value_of.hpp>
+#include <stan/math/prim/arr/fun/dot_self.hpp>
+#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
+#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
+#include <stan/math/rev/scal/meta/is_var.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <idas/idas.h>
 #include <nvector/nvector_serial.h>
 #include <ostream>
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
-#include <stan/math/prim/arr/fun/dot_self.hpp>
-#include <stan/math/prim/arr/fun/value_of.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
-#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
-#include <stan/math/rev/scal/meta/is_var.hpp>
 #include <vector>
 
 #define CHECK_IDAS_CALL(call) idas_check(call, #call)
@@ -24,7 +24,7 @@
  * @param[in] flag routine return flag
  * @param[in] func routine name
  */
-inline void idas_check(int flag, const char *func) {
+inline void idas_check(int flag, const char* func) {
   if (flag < 0) {
     std::ostringstream ss;
     ss << func << " failed with error flag " << flag;
@@ -39,8 +39,8 @@ inline void idas_check(int flag, const char *func) {
  * @param[in] nv_size length of nv.
  * @return Eigen::MatrixXd.
  */
-inline Eigen::MatrixXd matrix_d_from_NVarray(const N_Vector *nv,
-                                             const size_t &nv_size) {
+inline Eigen::MatrixXd matrix_d_from_NVarray(const N_Vector* nv,
+                                             const size_t& nv_size) {
   size_t m = nv_size;
   size_t n = NV_LENGTH_S(nv[0]);
   stan::math::matrix_d res(n, m);
@@ -60,8 +60,8 @@ inline Eigen::MatrixXd matrix_d_from_NVarray(const N_Vector *nv,
  * @param[out] nv N_Vector* array
  * @param[in] nv_size length of nv
  */
-inline void matrix_d_to_NVarray(const Eigen::MatrixXd &mat, N_Vector *nv,
-                                const size_t &nv_size) {
+inline void matrix_d_to_NVarray(const Eigen::MatrixXd& mat, N_Vector* nv,
+                                const size_t& nv_size) {
   size_t m = nv_size;
   size_t n = NV_LENGTH_S(nv[0]);
   for (size_t j = 0; j < m; ++j) {
@@ -89,34 +89,34 @@ namespace math {
  */
 template <typename F, typename Tyy, typename Typ, typename Tpar>
 class idas_system {
-protected:
-  const F &f_;
-  const std::vector<Tyy> &yy_;
-  const std::vector<Typ> &yp_;
-  std::vector<double> yy_val_; // workspace
-  std::vector<double> yp_val_; // workspace
-  const std::vector<Tpar> &theta_;
-  const std::vector<double> &x_r_;
-  const std::vector<int> &x_i_;
+ protected:
+  const F& f_;
+  const std::vector<Tyy>& yy_;
+  const std::vector<Typ>& yp_;
+  std::vector<double> yy_val_;  // workspace
+  std::vector<double> yp_val_;  // workspace
+  const std::vector<Tpar>& theta_;
+  const std::vector<double>& x_r_;
+  const std::vector<int>& x_i_;
   const size_t N_;
   const size_t M_;
-  const size_t ns_; // nb. of sensi params
+  const size_t ns_;  // nb. of sensi params
   N_Vector nv_yy_;
   N_Vector nv_yp_;
-  std::vector<double> rr_val_; // workspace
+  std::vector<double> rr_val_;  // workspace
   N_Vector nv_rr_;
   N_Vector id_;
-  void *mem_;
-  std::ostream *msgs_;
+  void* mem_;
+  std::ostream* msgs_;
 
-public:
+ public:
   static constexpr bool is_var_yy0 = stan::is_var<Tyy>::value;
   static constexpr bool is_var_yp0 = stan::is_var<Typ>::value;
   static constexpr bool is_var_par = stan::is_var<Tpar>::value;
   static constexpr bool need_sens = is_var_yy0 || is_var_yp0 || is_var_par;
 
   using scalar_type = typename stan::return_type<Tyy, Typ, Tpar>::type;
-  using return_type = std::vector<std::vector<scalar_type>>;
+  using return_type = std::vector<std::vector<scalar_type> >;
 
   /**
    * Construct IDAS DAE system from initial condition and parameters
@@ -131,26 +131,36 @@ public:
    * @param[in] x_i integer data vector for the DAE.
    * @param[in] msgs stream to which messages are printed.
    */
-  idas_system(const F &f, const std::vector<int> &eq_id,
-              const std::vector<Tyy> &yy0, const std::vector<Typ> &yp0,
-              const std::vector<Tpar> &theta, const std::vector<double> &x_r,
-              const std::vector<int> &x_i, std::ostream *msgs)
-      : f_(f), yy_(yy0), yp_(yp0), yy_val_(value_of(yy0)),
-        yp_val_(value_of(yp0)), theta_(theta), x_r_(x_r), x_i_(x_i),
-        N_(yy0.size()), M_(theta.size()),
-        ns_((is_var_yy0 ? N_ : 0) + (is_var_yp0 ? N_ : 0) +
-            (is_var_par ? M_ : 0)),
+  idas_system(const F& f, const std::vector<int>& eq_id,
+              const std::vector<Tyy>& yy0, const std::vector<Typ>& yp0,
+              const std::vector<Tpar>& theta, const std::vector<double>& x_r,
+              const std::vector<int>& x_i, std::ostream* msgs)
+      : f_(f),
+        yy_(yy0),
+        yp_(yp0),
+        yy_val_(value_of(yy0)),
+        yp_val_(value_of(yp0)),
+        theta_(theta),
+        x_r_(x_r),
+        x_i_(x_i),
+        N_(yy0.size()),
+        M_(theta.size()),
+        ns_((is_var_yy0 ? N_ : 0) + (is_var_yp0 ? N_ : 0)
+            + (is_var_par ? M_ : 0)),
         nv_yy_(N_VMake_Serial(N_, yy_val_.data())),
-        nv_yp_(N_VMake_Serial(N_, yp_val_.data())), rr_val_(N_, 0.0),
-        nv_rr_(N_VMake_Serial(N_, rr_val_.data())), id_(N_VNew_Serial(N_)),
-        mem_(IDACreate()), msgs_(msgs) {
+        nv_yp_(N_VMake_Serial(N_, yp_val_.data())),
+        rr_val_(N_, 0.0),
+        nv_rr_(N_VMake_Serial(N_, rr_val_.data())),
+        id_(N_VNew_Serial(N_)),
+        mem_(IDACreate()),
+        msgs_(msgs) {
     if (nv_yy_ == NULL || nv_yp_ == NULL)
       throw std::runtime_error("N_VMake_Serial failed to allocate memory");
 
     if (mem_ == NULL)
       throw std::runtime_error("IDACreate failed to allocate memory");
 
-    static const char *caller = "idas_system";
+    static const char* caller = "idas_system";
     check_finite(caller, "initial state", yy0);
     check_finite(caller, "derivative initial state", yp0);
     check_finite(caller, "parameter vector", theta);
@@ -184,63 +194,63 @@ public:
    *
    * @return reference to current N_Vector of unknown variable
    */
-  N_Vector &nv_yy() { return nv_yy_; }
+  N_Vector& nv_yy() { return nv_yy_; }
 
   /**
    * return reference to current N_Vector of derivative variable
    *
    * @return reference to current N_Vector of derivative variable
    */
-  N_Vector &nv_yp() { return nv_yp_; }
+  N_Vector& nv_yp() { return nv_yp_; }
 
   /**
    * return reference to current N_Vector of residual workspace
    *
    * @return reference to current N_Vector of residual workspace
    */
-  N_Vector &nv_rr() { return nv_rr_; }
+  N_Vector& nv_rr() { return nv_rr_; }
 
   /**
    * return reference to DAE variable IDs
    *
    * @return reference to DAE variable IDs.
    */
-  N_Vector &id() { return id_; }
+  N_Vector& id() { return id_; }
 
   /**
    * return reference to current solution vector value
    *
    * @return reference to current solution vector value
    */
-  const std::vector<double> &yy_val() { return yy_val_; }
+  const std::vector<double>& yy_val() { return yy_val_; }
 
   /**
    * return reference to current solution derivative vector value
    *
    * @return reference to current solution derivative vector value
    */
-  const std::vector<double> &yp_val() { return yp_val_; }
+  const std::vector<double>& yp_val() { return yp_val_; }
 
   /**
    * return reference to initial condition
    *
    * @return reference to initial condition
    */
-  const std::vector<Tyy> &yy0() const { return yy_; }
+  const std::vector<Tyy>& yy0() const { return yy_; }
 
   /**
    * return reference to derivative initial condition
    *
    * @return reference to derivative initial condition
    */
-  const std::vector<Typ> &yp0() const { return yp_; }
+  const std::vector<Typ>& yp0() const { return yp_; }
 
   /**
    * return reference to parameter
    *
    * @return reference to parameter
    */
-  const std::vector<Tpar> &theta() const { return theta_; }
+  const std::vector<Tpar>& theta() const { return theta_; }
 
   /**
    * return a vector of vars for that contains the initial
@@ -288,21 +298,21 @@ public:
   /**
    * return IDAS memory handle
    */
-  void *mem() { return mem_; }
+  void* mem() { return mem_; }
 
   /**
    * return reference to DAE functor
    */
-  const F &f() { return f_; }
+  const F& f() { return f_; }
 
   /**
    * return a closure for IDAS residual callback
    */
-  IDAResFn residual() { // a non-capture lambda
+  IDAResFn residual() {  // a non-capture lambda
     return [](double t, N_Vector yy, N_Vector yp, N_Vector rr,
-              void *user_data) -> int {
+              void* user_data) -> int {
       using DAE = idas_system<F, Tyy, Typ, Tpar>;
-      DAE *dae = static_cast<DAE *>(user_data);
+      DAE* dae = static_cast<DAE*>(user_data);
 
       size_t N = NV_LENGTH_S(yy);
       auto yy_val = N_VGetArrayPointer(yy);
@@ -318,13 +328,13 @@ public:
     };
   }
 
-  void check_ic_consistency(const double &t0, const double &tol) {
+  void check_ic_consistency(const double& t0, const double& tol) {
     using stan::math::dot_self;
     using stan::math::value_of;
     const std::vector<double> theta_d(value_of(theta_));
     const std::vector<double> yy_d(value_of(yy_));
     const std::vector<double> yp_d(value_of(yp_));
-    static const char *caller = "idas_integrator";
+    static const char* caller = "idas_integrator";
     std::vector<double> res(f_(t0, yy_d, yp_d, theta_d, x_r_, x_i_, msgs_));
     double res0 = std::sqrt(dot_self(res));
     check_less_or_equal(caller, "DAE residual at t0", res0, tol);
@@ -333,7 +343,7 @@ public:
 
 // TODO(yizhang): adjoint system construction
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

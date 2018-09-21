@@ -10,7 +10,7 @@ namespace math {
 /**
  * Type for sizes and indexes in an Eigen matrix with double e
  */
-typedef index_type<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>::type
+typedef index_type<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> >::type
     size_type;
 
 /**
@@ -28,7 +28,7 @@ typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
  */
 typedef Eigen::Matrix<double, 1, Eigen::Dynamic> row_vector_d;
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

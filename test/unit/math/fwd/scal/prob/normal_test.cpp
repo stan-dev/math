@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/scal.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 TEST(ProbAgradDistributionsNormal, fwd) {

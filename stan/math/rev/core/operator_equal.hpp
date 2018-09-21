@@ -23,7 +23,7 @@ namespace math {
  * @return True if the first variable's value is the same as the
  * second's.
  */
-inline bool operator==(const var &a, const var &b) {
+inline bool operator==(const var& a, const var& b) {
   return a.val() == b.val();
 }
 
@@ -36,7 +36,7 @@ inline bool operator==(const var &a, const var &b) {
  * @return True if the first variable's value is the same as the
  * second value.
  */
-inline bool operator==(const var &a, double b) { return a.val() == b; }
+inline bool operator==(const var& a, double b) { return a.val() == b; }
 
 /**
  * Equality operator comparing a scalar and a variable's value
@@ -46,8 +46,8 @@ inline bool operator==(const var &a, double b) { return a.val() == b; }
  * @param b Second variable.
  * @return True if the variable's value is equal to the scalar.
  */
-inline bool operator==(double a, const var &b) { return a == b.val(); }
+inline bool operator==(double a, const var& b) { return a == b.val(); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

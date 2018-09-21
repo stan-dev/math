@@ -1,12 +1,12 @@
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <stan/math/rev/mat.hpp>
 
 using stan::math::check_greater_or_equal;
 using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckGreaterOrEqualMatrix) {
-  const char *function = "check_greater_or_equal";
+  const char* function = "check_greater_or_equal";
   var x;
   var low;
   Eigen::Matrix<var, Eigen::Dynamic, 1> x_vec;

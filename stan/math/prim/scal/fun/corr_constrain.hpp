@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_CORR_CONSTRAIN_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_CORR_CONSTRAIN_HPP
 
-#include <cmath>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -20,7 +20,10 @@ namespace math {
  * @param[in] x value
  * @return tanh transform of value
  */
-template <typename T> inline T corr_constrain(const T &x) { return tanh(x); }
+template <typename T>
+inline T corr_constrain(const T& x) {
+  return tanh(x);
+}
 
 /**
  * Return the result of transforming the specified scalar to have
@@ -36,12 +39,13 @@ template <typename T> inline T corr_constrain(const T &x) { return tanh(x); }
  * @param[in] x value
  * @param[in,out] lp log density accumulator
  */
-template <typename T> inline T corr_constrain(const T &x, T &lp) {
+template <typename T>
+inline T corr_constrain(const T& x, T& lp) {
   T tanh_x = tanh(x);
   lp += log1m(square(tanh_x));
   return tanh_x;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

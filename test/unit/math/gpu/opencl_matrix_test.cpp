@@ -1,9 +1,9 @@
 #ifdef STAN_OPENCL
-#include <algorithm>
-#include <gtest/gtest.h>
-#include <stan/math/gpu/matrix_gpu.hpp>
-#include <stan/math/gpu/opencl_context.hpp>
 #include <stan/math/prim/mat.hpp>
+#include <stan/math/gpu/opencl_context.hpp>
+#include <stan/math/gpu/matrix_gpu.hpp>
+#include <gtest/gtest.h>
+#include <algorithm>
 #include <vector>
 
 TEST(MathMatrixGPU, matrix_gpu_creation) {

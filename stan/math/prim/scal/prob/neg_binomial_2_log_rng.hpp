@@ -1,18 +1,18 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_LOG_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_LOG_RNG_HPP
 
+#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/err/check_less.hpp>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/scal/err/check_nonnegative.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/meta/max_size.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/poisson_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_less.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/max_size.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {
 namespace math {
@@ -37,12 +37,12 @@ namespace math {
  */
 template <typename T_loc, typename T_inv, class RNG>
 inline typename VectorBuilder<true, int, T_loc, T_inv>::type
-neg_binomial_2_log_rng(const T_loc &eta, const T_inv &phi, RNG &rng) {
+neg_binomial_2_log_rng(const T_loc& eta, const T_inv& phi, RNG& rng) {
   using boost::gamma_distribution;
   using boost::random::poisson_distribution;
   using boost::variate_generator;
 
-  static const char *function = "neg_binomial_2_log_rng";
+  static const char* function = "neg_binomial_2_log_rng";
 
   check_finite(function, "Log-location parameter", eta);
   check_positive_finite(function, "Inverse dispersion parameter", phi);
@@ -55,15 +55,16 @@ neg_binomial_2_log_rng(const T_loc &eta, const T_inv &phi, RNG &rng) {
   VectorBuilder<true, int, T_loc, T_inv> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    double exp_eta_div_phi =
-        std::exp(static_cast<double>(eta_vec[n])) / phi_vec[n];
+    double exp_eta_div_phi
+        = std::exp(static_cast<double>(eta_vec[n])) / phi_vec[n];
 
     // gamma_rng params must be positive and finite
-    check_positive_finite(function, "Exponential of the log-location parameter "
-                                    "divided by the precision parameter",
+    check_positive_finite(function,
+                          "Exponential of the log-location parameter "
+                          "divided by the precision parameter",
                           exp_eta_div_phi);
 
-    double rng_from_gamma = variate_generator<RNG &, gamma_distribution<>>(
+    double rng_from_gamma = variate_generator<RNG&, gamma_distribution<> >(
         rng, gamma_distribution<>(phi_vec[n], exp_eta_div_phi))();
 
     // same as the constraints for poisson_rng
@@ -75,13 +76,13 @@ neg_binomial_2_log_rng(const T_loc &eta, const T_inv &phi, RNG &rng) {
                       "Random number that came from gamma distribution",
                       rng_from_gamma);
 
-    output[n] = variate_generator<RNG &, poisson_distribution<>>(
+    output[n] = variate_generator<RNG&, poisson_distribution<> >(
         rng, poisson_distribution<>(rng_from_gamma))();
   }
 
   return output.data();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

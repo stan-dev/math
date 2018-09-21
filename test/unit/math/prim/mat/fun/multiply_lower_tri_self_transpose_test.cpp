@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
 
 using stan::math::matrix_d;
 
@@ -11,13 +11,13 @@ matrix_d generate_large_L_tri_mat() {
   for (int i = 1; i < 10000; ++i)
     vals[i] = vals[i - 1] + 0.1123456;
 
-  x = Eigen::Map<Eigen::Matrix<double, 100, 100>>(vals);
+  x = Eigen::Map<Eigen::Matrix<double, 100, 100> >(vals);
   x *= 1e10;
 
   return x;
 }
 
-void test_multiply_lower_tri_self_transpose(const matrix_d &x) {
+void test_multiply_lower_tri_self_transpose(const matrix_d& x) {
   using stan::math::multiply_lower_tri_self_transpose;
   matrix_d y = multiply_lower_tri_self_transpose(x);
   matrix_d xp = x;
@@ -36,8 +36,8 @@ void test_multiply_lower_tri_self_transpose(const matrix_d &x) {
 TEST(MathMatrix, multiply_lower_tri_self_transpose) {
   using stan::math::check_symmetric;
   using stan::math::multiply_lower_tri_self_transpose;
-  static const char *function =
-      "stan::math::multiply_lower_tri_self_transpose(%1%)";
+  static const char* function
+      = "stan::math::multiply_lower_tri_self_transpose(%1%)";
   matrix_d x;
   test_multiply_lower_tri_self_transpose(x);
 

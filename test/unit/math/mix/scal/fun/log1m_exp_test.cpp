@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/scal.hpp>
-#include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/util.hpp>
+#include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdLog1mExp, FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -41,10 +41,10 @@ TEST(AgradFwdLog1mExp, FvarFvarVar_1stDeriv) {
   using stan::math::var;
   using std::exp;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = -0.2;
   x.val_.d_ = 1.0;
-  fvar<fvar<var>> a = log1m_exp(x);
+  fvar<fvar<var> > a = log1m_exp(x);
 
   EXPECT_FLOAT_EQ(log1m_exp(-0.2), a.val_.val_.val());
   EXPECT_FLOAT_EQ(-exp(-0.2) / (1.0 - exp(-0.2)), a.val_.d_.val());
@@ -62,10 +62,10 @@ TEST(AgradFwdLog1mExp, FvarFvarVar_2ndDeriv) {
   using stan::math::var;
   using std::exp;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = -0.2;
   x.val_.d_ = 1.0;
-  fvar<fvar<var>> a = log1m_exp(x);
+  fvar<fvar<var> > a = log1m_exp(x);
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
@@ -76,12 +76,12 @@ TEST(AgradFwdLog1mExp, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = -0.5;
   x.val_.d_ = 1.0;
   x.d_.val_ = 1.0;
 
-  fvar<fvar<var>> a = log1m_exp(x);
+  fvar<fvar<var> > a = log1m_exp(x);
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
   a.d_.d_.grad(p, g);
@@ -89,7 +89,8 @@ TEST(AgradFwdLog1mExp, FvarFvarVar_3rdDeriv) {
 }
 
 struct log1m_exp_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0& arg1) const {
     return log1m_exp(arg1);
   }
 };

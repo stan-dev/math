@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/scal.hpp>
-#include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/util.hpp>
+#include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdTrigamma, FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -36,18 +36,18 @@ TEST(AgradFwdTrigamma, FvarFvarDouble) {
   using stan::math::fvar;
   using stan::math::trigamma;
 
-  fvar<fvar<double>> x;
+  fvar<fvar<double> > x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<double>> a = trigamma(x);
+  fvar<fvar<double> > a = trigamma(x);
 
   EXPECT_FLOAT_EQ(4.9348022005446793094, a.val_.val_);
   EXPECT_FLOAT_EQ(-16.8288, a.val_.d_);
   EXPECT_FLOAT_EQ(0, a.d_.val_);
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 
-  fvar<fvar<double>> y;
+  fvar<fvar<double> > y;
   y.val_.val_ = 0.5;
   y.d_.val_ = 1.0;
 
@@ -62,11 +62,11 @@ TEST(AgradFwdTrigamma, FvarFvarVar_1stDeriv) {
   using stan::math::trigamma;
   using stan::math::var;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var>> a = trigamma(x);
+  fvar<fvar<var> > a = trigamma(x);
 
   EXPECT_FLOAT_EQ(4.9348022005446793094, a.val_.val_.val());
   EXPECT_FLOAT_EQ(-16.8288, a.val_.d_.val());
@@ -78,11 +78,11 @@ TEST(AgradFwdTrigamma, FvarFvarVar_1stDeriv) {
   a.val_.val_.grad(p, g);
   EXPECT_FLOAT_EQ(-16.8288, g[0]);
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 0.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var>> b = trigamma(y);
+  fvar<fvar<var> > b = trigamma(y);
   EXPECT_FLOAT_EQ(4.9348022005446793094, b.val_.val_.val());
   EXPECT_FLOAT_EQ(0, b.val_.d_.val());
   EXPECT_FLOAT_EQ(-16.8288, b.d_.val_.val());
@@ -98,22 +98,22 @@ TEST(AgradFwdTrigamma, FvarFvarVar_2ndDeriv) {
   using stan::math::trigamma;
   using stan::math::var;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var>> a = trigamma(x);
+  fvar<fvar<var> > a = trigamma(x);
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
   a.val_.d_.grad(p, g);
   EXPECT_FLOAT_EQ(97.409088, g[0]);
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 0.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var>> b = trigamma(y);
+  fvar<fvar<var> > b = trigamma(y);
 
   AVEC q = createAVEC(y.val_.val_);
   VEC r;
@@ -125,12 +125,12 @@ TEST(AgradFwdTrigamma, FvarFvarVar_3rdDeriv) {
   using stan::math::trigamma;
   using stan::math::var;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
   x.d_.val_ = 1.0;
 
-  fvar<fvar<var>> a = trigamma(x);
+  fvar<fvar<var> > a = trigamma(x);
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
@@ -139,7 +139,8 @@ TEST(AgradFwdTrigamma, FvarFvarVar_3rdDeriv) {
 }
 
 struct trigamma_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0& arg1) const {
     return stan::math::trigamma(arg1);
   }
 };

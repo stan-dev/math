@@ -1,18 +1,18 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_ORDERED_PROBIT_RNG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_ORDERED_PROBIT_RNG_HPP
 
-#include <stan/math/prim/mat/err/check_ordered.hpp>
-#include <stan/math/prim/mat/prob/categorical_rng.hpp>
+#include <stan/math/prim/scal/fun/Phi.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
-#include <stan/math/prim/scal/fun/Phi.hpp>
+#include <stan/math/prim/mat/err/check_ordered.hpp>
+#include <stan/math/prim/mat/prob/categorical_rng.hpp>
 
 namespace stan {
 namespace math {
 
 template <class RNG>
-inline int ordered_probit_rng(double eta, const Eigen::VectorXd &c, RNG &rng) {
-  static const char *function = "ordered_probit";
+inline int ordered_probit_rng(double eta, const Eigen::VectorXd& c, RNG& rng) {
+  static const char* function = "ordered_probit";
 
   check_finite(function, "Location parameter", eta);
   check_greater(function, "Size of cut points parameter", c.size(), 0);
@@ -28,6 +28,6 @@ inline int ordered_probit_rng(double eta, const Eigen::VectorXd &c, RNG &rng) {
   return categorical_rng(cut, rng);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

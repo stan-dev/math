@@ -1,6 +1,6 @@
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <stan/math/fwd/mat.hpp>
 
 using stan::math::fvar;
 TEST(AgradFwdMatrixOperatorDivision, fd_scalar) {
@@ -303,7 +303,7 @@ TEST(AgradFwdMatrixOperatorDivision, fd_matrix) {
 TEST(AgradFwdMatrixOperatorDivision, ffd_scalar) {
   using stan::math::divide;
   double d1, d2;
-  fvar<fvar<double>> v1, v2;
+  fvar<fvar<double> > v1, v2;
 
   d1 = 10;
   v1.val_.val_ = 10;
@@ -353,7 +353,7 @@ TEST(AgradFwdMatrixOperatorDivision, ffd_vector) {
   vector_d d1(3);
   vector_ffd v1(3);
   double d2;
-  fvar<fvar<double>> v2, a, b, c;
+  fvar<fvar<double> > v2, a, b, c;
 
   a.val_.val_ = 100.0;
   b.val_.val_ = 0.0;
@@ -444,7 +444,7 @@ TEST(AgradFwdMatrixOperatorDivision, ffd_rowvector) {
   row_vector_d d1(3);
   row_vector_ffd v1(3);
   double d2;
-  fvar<fvar<double>> v2, a, b, c;
+  fvar<fvar<double> > v2, a, b, c;
   a.val_.val_ = 100.0;
   b.val_.val_ = 0.0;
   c.val_.val_ = -3.0;
@@ -534,7 +534,7 @@ TEST(AgradFwdMatrixOperatorDivision, ffd_matrix) {
   matrix_d d1(2, 2);
   matrix_ffd v1(2, 2);
   double d2;
-  fvar<fvar<double>> v2, a, b, c, d;
+  fvar<fvar<double> > v2, a, b, c, d;
 
   a.val_.val_ = 100.0;
   b.val_.val_ = 0.0;

@@ -1,14 +1,14 @@
+#include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <stan/math/prim/arr.hpp>
-#include <string>
 #include <vector>
+#include <string>
 
 using stan::math::check_not_nan;
 
 TEST(ErrorHandlingScalar, CheckNotNanVectorized) {
   int N = 5;
-  const char *function = "check_not_nan";
+  const char* function = "check_not_nan";
   std::vector<double> x(N);
 
   x.assign(N, 0);
@@ -30,7 +30,7 @@ TEST(ErrorHandlingScalar, CheckNotNanVectorized) {
 
 TEST(ErrorHandlingScalar, CheckNotNanVectorized_one_indexed_message) {
   int N = 5;
-  const char *function = "check_not_nan";
+  const char* function = "check_not_nan";
   std::vector<double> x(N);
   std::string message;
 
@@ -39,7 +39,7 @@ TEST(ErrorHandlingScalar, CheckNotNanVectorized_one_indexed_message) {
   try {
     check_not_nan(function, "x", x);
     FAIL() << "should have thrown";
-  } catch (std::domain_error &e) {
+  } catch (std::domain_error& e) {
     message = e.what();
   } catch (...) {
     FAIL() << "threw the wrong error";
