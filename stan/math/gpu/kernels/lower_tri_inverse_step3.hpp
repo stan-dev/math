@@ -16,7 +16,7 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
      * @param[in, out] A Input matrix that is being inverted.
      * @param[in] C Temporary matrix with the intermediate results.
      * @param M Number of rows for A.
-     * @param temp_rows Number of elements to multiply.
+     * @param rows The number of rows in a single matrix of the batch
      * @param non_padded_rows Number of rows in A not used for padding.
      * @note Code is a <code>const char*</code> held in
      * <code>lower_tri_inverse_step3_kernel_code.</code>
@@ -25,9 +25,9 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
      */
     __kernel void lower_tri_inverse_step3(
         __global read_write double* A, const __global double* C, const int M,
-        const int temp_rows, int non_padded_rows) {
+        const int rows, int non_padded_rows) {
       int t = get_global_id(2);
-      int offset = t * temp_rows * 2;
+      int offset = t * rows * 2;
       // thread index inside the thread_block
       const int thread_block_row = get_local_id(0);
       const int thread_block_col = get_local_id(1);
@@ -45,7 +45,7 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
       }
 
       const int num_tiles
-          = (temp_rows + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
+          = (rows + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
       // iterate over all tiles
       for (int tile_ind = 0; tile_ind < num_tiles; tile_ind++) {
         // each thread copies WORK_PER_THREAD values to the local
@@ -54,12 +54,12 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
           const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
           const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
 
-          if ((tiled_j + w * THREAD_BLOCK_SIZE_COL) < temp_rows
-              && (i) < temp_rows) {
+          if ((tiled_j + w * THREAD_BLOCK_SIZE_COL) < rows
+              && (i) < rows) {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
-                = C[t * temp_rows * temp_rows
-                    + (tiled_j + w * THREAD_BLOCK_SIZE_COL) * temp_rows + i];
+                = C[t * rows * rows
+                    + (tiled_j + w * THREAD_BLOCK_SIZE_COL) * rows + i];
           } else {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
@@ -92,10 +92,10 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
       // save the values
       for (int w = 0; w < WORK_PER_THREAD; w++) {
         // each thread saves WORK_PER_THREAD values
-        if ((i + temp_rows + offset) < non_padded_rows
+        if ((i + rows + offset) < non_padded_rows
             && (offset + j + w * THREAD_BLOCK_SIZE_COL) < M
-            && (i + temp_rows + offset) < M) {
-          A[(offset + j + w * THREAD_BLOCK_SIZE_COL) * M + i + temp_rows
+            && (i + rows + offset) < M) {
+          A[(offset + j + w * THREAD_BLOCK_SIZE_COL) * M + i + rows
             + offset]
               = -acc[w];
         }

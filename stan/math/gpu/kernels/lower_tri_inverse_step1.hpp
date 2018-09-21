@@ -26,39 +26,34 @@ const char* lower_tri_inverse_step1_kernel_code = STRINGIFY(
       int index = get_local_id(0);
       int group = get_group_id(0);
       int block_size = get_local_size(0);
-      int offset = group * block_size;
-      int i = index;
+      int offset = group * block_size;      
       for (int j = 0; j < block_size; j++) {
-        if (i == j) {
-          V[group * block_size * block_size + j * block_size + i] = 1.0;
+        if (index == j) {
+          V[group * block_size * block_size + j * block_size + index] = 1.0;
         } else {
-          V[group * block_size * block_size + j * block_size + i] = 0.0;
+          V[group * block_size * block_size + j * block_size + index] = 0.0;
         }
       }
       barrier(CLK_LOCAL_MEM_FENCE);
       for (int k = 0; k < block_size; k++) {
         double factor = A(offset + k, offset + k);
-        int j = index;
-        if (j <= k) {
-          V[group * block_size * block_size + j * block_size + k] /= factor;
+        if (index <= k) {
+          V[group * block_size * block_size + index * block_size + k] /= factor;
         }
         barrier(CLK_LOCAL_MEM_FENCE);
         for (int i = k + 1; i < block_size; i++) {
           factor = A(offset + i, offset + k);
-          j = index;
-          if (j < i) {
-            V[group * block_size * block_size + j * block_size + i]
-                -= V[group * block_size * block_size + j * block_size + k]
+          if (index < i) {
+            V[group * block_size * block_size + index * block_size + i]
+                -= V[group * block_size * block_size + index * block_size + k]
                    * factor;
           }
         }
         barrier(CLK_LOCAL_MEM_FENCE);
       }
-      barrier(CLK_LOCAL_MEM_FENCE);
-      i = index;
       for (int j = 0; j < block_size; j++) {
-        A(offset + i, offset + j)
-            = V[group * block_size * block_size + j * block_size + i];
+        A(offset + index, offset + j)
+            = V[group * block_size * block_size + j * block_size + index];
       }
     }
     // \cond
