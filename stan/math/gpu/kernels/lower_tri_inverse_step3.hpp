@@ -23,9 +23,9 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
      *  Used in math/gpu/lower_tri_inverse.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void lower_tri_inverse_step3(
-        __global read_write double* A, const __global double* C, const int M,
-        const int rows, int non_padded_rows) {
+    __kernel void lower_tri_inverse_step3(__global read_write double* A,
+                                          const __global double* C, const int M,
+                                          const int rows, int non_padded_rows) {
       int t = get_global_id(2);
       int offset = t * rows * 2;
       // thread index inside the thread_block
@@ -44,8 +44,7 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
         acc[w] = 0.0;
       }
 
-      const int num_tiles
-          = (rows + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
+      const int num_tiles = (rows + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
       // iterate over all tiles
       for (int tile_ind = 0; tile_ind < num_tiles; tile_ind++) {
         // each thread copies WORK_PER_THREAD values to the local
@@ -54,8 +53,7 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
           const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
           const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
 
-          if ((tiled_j + w * THREAD_BLOCK_SIZE_COL) < rows
-              && (i) < rows) {
+          if ((tiled_j + w * THREAD_BLOCK_SIZE_COL) < rows && (i) < rows) {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
                 = C[t * rows * rows
@@ -95,8 +93,7 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
         if ((i + rows + offset) < non_padded_rows
             && (offset + j + w * THREAD_BLOCK_SIZE_COL) < M
             && (i + rows + offset) < M) {
-          A[(offset + j + w * THREAD_BLOCK_SIZE_COL) * M + i + rows
-            + offset]
+          A[(offset + j + w * THREAD_BLOCK_SIZE_COL) * M + i + rows + offset]
               = -acc[w];
         }
       }

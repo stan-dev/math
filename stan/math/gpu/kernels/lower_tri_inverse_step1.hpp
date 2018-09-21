@@ -26,7 +26,7 @@ const char* lower_tri_inverse_step1_kernel_code = STRINGIFY(
       int index = get_local_id(0);
       int group = get_group_id(0);
       int block_size = get_local_size(0);
-      int offset = group * block_size;      
+      int offset = group * block_size;
       for (int j = 0; j < block_size; j++) {
         if (index == j) {
           V[group * block_size * block_size + j * block_size + index] = 1.0;

@@ -39,7 +39,7 @@ TEST(MathMatrixGPU, inverse_gpu_small) {
   EXPECT_MATRIX_NEAR(m1_cl, m1_cpu, 1e-8);
 }
 
-void inverse_big(int size){
+void inverse_big(int size) {
   boost::random::mt19937 rng;
   auto m1 = stan::math::matrix_d(size, size);
   for (int i = 0; i < size; i++) {
@@ -70,15 +70,9 @@ void inverse_big(int size){
   EXPECT_LT(max_error, 1e-8);
 }
 
-TEST(MathMatrixGPU, inverse_gpu_big) {
-  inverse_big(512);
-}
+TEST(MathMatrixGPU, inverse_gpu_big) { inverse_big(512); }
 
-TEST(MathMatrixGPU, inverse_gpu_big_2) {
-  inverse_big(700);
-}
+TEST(MathMatrixGPU, inverse_gpu_big_2) { inverse_big(700); }
 
-TEST(MathMatrixGPU, inverse_gpu_big_3) {
-  inverse_big(1500);
-}
+TEST(MathMatrixGPU, inverse_gpu_big_3) { inverse_big(1500); }
 #endif

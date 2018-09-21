@@ -14,7 +14,8 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
      * Calculates the intermediate products in the lower_tri_inverse
      *
      * @param[in] A input matrix that is being inverted.
-     * @param[out] C output matrix with results of the batched matrix multiplications
+     * @param[out] C output matrix with results of the batched matrix
+     * multiplications
      * @param M The number of rows for A.
      * @param rows The number of rows in a single matrix of the batch
      * @param non_padded_rows The number of rows in the non-padded matrix
@@ -23,9 +24,9 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
      *  Used in math/gpu/lower_tri_inverse.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void lower_tri_inverse_step2(
-        __global read_only double* A, __global double* C, const int M,
-        const int rows, int non_padded_rows) {
+    __kernel void lower_tri_inverse_step2(__global read_only double* A,
+                                          __global double* C, const int M,
+                                          const int rows, int non_padded_rows) {
       int t = get_global_id(2);
       int offset = t * rows * 2;
       // thread index inside the thread_block
@@ -60,8 +61,7 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
               && (offset + i + rows) < non_padded_rows) {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
-                = A[(offset + rows + tiled_j + w * THREAD_BLOCK_SIZE_COL)
-                        * M
+                = A[(offset + rows + tiled_j + w * THREAD_BLOCK_SIZE_COL) * M
                     + offset + i + rows];
           } else {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
@@ -97,8 +97,7 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
       // save the values
       for (int w = 0; w < WORK_PER_THREAD; w++) {
         // each thread saves WORK_PER_THREAD values
-        C[t * rows * rows
-          + (j + w * THREAD_BLOCK_SIZE_COL) * rows + i]
+        C[t * rows * rows + (j + w * THREAD_BLOCK_SIZE_COL) * rows + i]
             = acc[w];
       }
     }
