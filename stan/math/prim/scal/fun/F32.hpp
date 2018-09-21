@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_F32_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_F32_HPP
 
-#include <cmath>
-#include <stan/math/prim/scal/err/check_3F2_converges.hpp>
+#include <stan/math/prim/scal/fun/sign.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
-#include <stan/math/prim/scal/fun/sign.hpp>
+#include <stan/math/prim/scal/err/check_3F2_converges.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -48,8 +48,8 @@ namespace math {
  * @param[in] max_steps number of steps to take. defaults to 1e5
  */
 template <typename T>
-T F32(const T &a1, const T &a2, const T &a3, const T &b1, const T &b2,
-      const T &z, double precision = 1e-6, int max_steps = 1e5) {
+T F32(const T& a1, const T& a2, const T& a3, const T& b1, const T& b2,
+      const T& z, double precision = 1e-6, int max_steps = 1e5) {
   check_3F2_converges("F32", a1, a2, a3, b1, b2, z);
 
   using std::exp;
@@ -81,9 +81,9 @@ T F32(const T &a1, const T &a2, const T &a3, const T &b1, const T &b2,
   }
   domain_error("F32", "k (internal counter)", max_steps, "exceeded ",
                " iterations, hypergeometric function did not converge.");
-  return t_acc; // to silence warning.
+  return t_acc;  // to silence warning.
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

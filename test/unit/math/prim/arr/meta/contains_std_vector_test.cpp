@@ -1,15 +1,15 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/arr.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 TEST(MetaTraits, contains_vector_true) {
   using stan::contains_std_vector;
   using std::vector;
 
-  EXPECT_TRUE(contains_std_vector<std::vector<double>>::value);
-  EXPECT_TRUE(contains_std_vector<std::vector<int>>::value);
-  EXPECT_TRUE(contains_std_vector<std::vector<const double>>::value);
-  EXPECT_TRUE(contains_std_vector<std::vector<const int>>::value);
+  EXPECT_TRUE(contains_std_vector<std::vector<double> >::value);
+  EXPECT_TRUE(contains_std_vector<std::vector<int> >::value);
+  EXPECT_TRUE(contains_std_vector<std::vector<const double> >::value);
+  EXPECT_TRUE(contains_std_vector<std::vector<const int> >::value);
 
   bool r = contains_std_vector<std::vector<double>, double, double, double,
                                double, double>::value;
@@ -27,7 +27,7 @@ TEST(MetaTraits, contains_vector_true) {
                           double>::value;
   EXPECT_TRUE(r);
   r = contains_std_vector<double, double, double, double, double,
-                          std::vector<double>>::value;
+                          std::vector<double> >::value;
   EXPECT_TRUE(r);
 }
 

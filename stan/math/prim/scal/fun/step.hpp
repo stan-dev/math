@@ -24,9 +24,12 @@ namespace math {
  * @param y value
  * @return zero if the value is less than zero, and one otherwise
  */
-template <typename T> inline double step(const T &y) { return y < 0.0 ? 0 : 1; }
+template <typename T>
+inline double step(const T& y) {
+  return y < 0.0 ? 0 : 1;
+}
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

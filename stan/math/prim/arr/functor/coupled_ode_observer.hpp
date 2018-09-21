@@ -12,7 +12,7 @@ namespace math {
  * construction time.
  */
 struct coupled_ode_observer {
-  std::vector<std::vector<double>> &y_coupled_;
+  std::vector<std::vector<double> >& y_coupled_;
   int n_;
 
   /**
@@ -21,7 +21,7 @@ struct coupled_ode_observer {
    *
    * @param y_coupled reference to a vector of vector of doubles.
    */
-  explicit coupled_ode_observer(std::vector<std::vector<double>> &y_coupled)
+  explicit coupled_ode_observer(std::vector<std::vector<double> >& y_coupled)
       : y_coupled_(y_coupled), n_(0) {}
 
   /**
@@ -30,14 +30,14 @@ struct coupled_ode_observer {
    * @param coupled_state solution at the specified time.
    * @param t time of solution.
    */
-  void operator()(const std::vector<double> &coupled_state, double t) {
+  void operator()(const std::vector<double>& coupled_state, double t) {
     y_coupled_[n_] = coupled_state;
     n_++;
   }
 };
 
-} // namespace math
+}  // namespace math
 
-} // namespace stan
+}  // namespace stan
 
 #endif

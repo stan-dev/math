@@ -1,34 +1,35 @@
 #ifndef STAN_MATH_REV_SCAL_META_OPERANDS_AND_PARTIALS_HPP
 #define STAN_MATH_REV_SCAL_META_OPERANDS_AND_PARTIALS_HPP
 
-#include <stan/math/prim/scal/meta/broadcast_array.hpp>
-#include <stan/math/prim/scal/meta/is_vector_like.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/precomputed_gradients.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vari.hpp>
+#include <stan/math/prim/scal/meta/broadcast_array.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/scal/meta/is_vector_like.hpp>
 
 namespace stan {
 namespace math {
 namespace internal {
-template <> class ops_partials_edge<double, var> {
-public:
+template <>
+class ops_partials_edge<double, var> {
+ public:
   double partial_;
   broadcast_array<double> partials_;
-  explicit ops_partials_edge(const var &op)
+  explicit ops_partials_edge(const var& op)
       : partial_(0), partials_(partial_), operand_(op) {}
 
-private:
+ private:
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
-  const var &operand_;
+  const var& operand_;
 
-  void dump_partials(double *partials) { *partials = this->partial_; }
-  void dump_operands(vari **varis) { *varis = this->operand_.vi_; }
+  void dump_partials(double* partials) { *partials = this->partial_; }
+  void dump_operands(vari** varis) { *varis = this->operand_.vi_; }
   int size() const { return 1; }
 };
-} // namespace internal
+}  // namespace internal
 
 /**
  * This class builds partial derivatives with respect to a set of
@@ -65,23 +66,23 @@ private:
  */
 template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5>
 class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
-public:
+ public:
   internal::ops_partials_edge<double, Op1> edge1_;
   internal::ops_partials_edge<double, Op2> edge2_;
   internal::ops_partials_edge<double, Op3> edge3_;
   internal::ops_partials_edge<double, Op4> edge4_;
   internal::ops_partials_edge<double, Op5> edge5_;
 
-  explicit operands_and_partials(const Op1 &o1) : edge1_(o1) {}
-  operands_and_partials(const Op1 &o1, const Op2 &o2)
+  explicit operands_and_partials(const Op1& o1) : edge1_(o1) {}
+  operands_and_partials(const Op1& o1, const Op2& o2)
       : edge1_(o1), edge2_(o2) {}
-  operands_and_partials(const Op1 &o1, const Op2 &o2, const Op3 &o3)
+  operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3)
       : edge1_(o1), edge2_(o2), edge3_(o3) {}
-  operands_and_partials(const Op1 &o1, const Op2 &o2, const Op3 &o3,
-                        const Op4 &o4)
+  operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3,
+                        const Op4& o4)
       : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4) {}
-  operands_and_partials(const Op1 &o1, const Op2 &o2, const Op3 &o3,
-                        const Op4 &o4, const Op5 &o5)
+  operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3,
+                        const Op4& o4, const Op5& o5)
       : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4), edge5_(o5) {}
 
   /**
@@ -98,12 +99,12 @@ public:
    * @return the node to be stored in the expression graph for autodiff
    */
   var build(double value) {
-    size_t size = edge1_.size() + edge2_.size() + edge3_.size() +
-                  edge4_.size() + edge5_.size();
-    vari **varis =
-        ChainableStack::instance().memalloc_.alloc_array<vari *>(size);
-    double *partials =
-        ChainableStack::instance().memalloc_.alloc_array<double>(size);
+    size_t size = edge1_.size() + edge2_.size() + edge3_.size() + edge4_.size()
+                  + edge5_.size();
+    vari** varis
+        = ChainableStack::instance().memalloc_.alloc_array<vari*>(size);
+    double* partials
+        = ChainableStack::instance().memalloc_.alloc_array<double>(size);
     int idx = 0;
     edge1_.dump_operands(&varis[idx]);
     edge1_.dump_partials(&partials[idx]);
@@ -119,6 +120,6 @@ public:
     return var(new precomputed_gradients_vari(value, size, varis, partials));
   }
 };
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

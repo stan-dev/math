@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp_2x2.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
 
 TEST(MathMatrix, matrix_exp_2x2_1) {

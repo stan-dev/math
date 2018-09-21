@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 struct foo : public stan::math::chainable_alloc {
@@ -13,7 +13,7 @@ struct foo : public stan::math::chainable_alloc {
 TEST(AgradRev, varStackRecoverNestedSegFaultFix) {
   // this test failed in 2.5, but passes in 2.6
   stan::math::start_nested();
-  foo *x = new foo();
+  foo* x = new foo();
   x->chain();
   stan::math::recover_memory_nested();
   // should be able to do this redundantly:

@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
 TEST(MathMatrix, cholesky_decompose) {

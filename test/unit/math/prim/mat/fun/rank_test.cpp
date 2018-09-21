@@ -1,8 +1,9 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
-template <typename T> void test_rank() {
+template <typename T>
+void test_rank() {
   using stan::math::rank;
 
   T c(1);
@@ -35,7 +36,8 @@ template <typename T> void test_rank() {
   EXPECT_THROW(rank(z, 2), std::out_of_range);
 }
 
-template <typename T> void test_rank_int() {
+template <typename T>
+void test_rank_int() {
   using stan::math::rank;
 
   T c(1);
@@ -71,12 +73,12 @@ template <typename T> void test_rank_int() {
 TEST(MathMatrix, rank) {
   using stan::math::rank;
 
-  test_rank<std::vector<double>>();
-  test_rank<Eigen::Matrix<double, Eigen::Dynamic, 1>>();
-  test_rank<Eigen::Matrix<double, 1, Eigen::Dynamic>>();
+  test_rank<std::vector<double> >();
+  test_rank<Eigen::Matrix<double, Eigen::Dynamic, 1> >();
+  test_rank<Eigen::Matrix<double, 1, Eigen::Dynamic> >();
 
-  test_rank_int<std::vector<int>>();
-  test_rank_int<std::vector<double>>();
-  test_rank_int<Eigen::Matrix<double, Eigen::Dynamic, 1>>();
-  test_rank_int<Eigen::Matrix<double, 1, Eigen::Dynamic>>();
+  test_rank_int<std::vector<int> >();
+  test_rank_int<std::vector<double> >();
+  test_rank_int<Eigen::Matrix<double, Eigen::Dynamic, 1> >();
+  test_rank_int<Eigen::Matrix<double, 1, Eigen::Dynamic> >();
 }

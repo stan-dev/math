@@ -3,31 +3,31 @@
 
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <cmath>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
 
 template <typename T_y, typename T_scale>
-typename return_type<T_y, T_scale>::type rayleigh_lcdf(const T_y &y,
-                                                       const T_scale &sigma) {
-  static const char *function = "rayleigh_lcdf";
+typename return_type<T_y, T_scale>::type rayleigh_lcdf(const T_y& y,
+                                                       const T_scale& sigma) {
+  static const char* function = "rayleigh_lcdf";
   typedef
       typename stan::partials_return_type<T_y, T_scale>::type T_partials_return;
 
@@ -68,15 +68,15 @@ typename return_type<T_y, T_scale>::type rayleigh_lcdf(const T_y &y,
       cdf_log += log1m(exp_val);
 
     if (!is_constant_struct<T_y>::value)
-      ops_partials.edge1_.partials_[n] +=
-          y_dbl * inv_sigma_sqr * exp_div_1m_exp;
+      ops_partials.edge1_.partials_[n]
+          += y_dbl * inv_sigma_sqr * exp_div_1m_exp;
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge2_.partials_[n] -=
-          y_sqr * inv_sigma_sqr * inv_sigma[n] * exp_div_1m_exp;
+      ops_partials.edge2_.partials_[n]
+          -= y_sqr * inv_sigma_sqr * inv_sigma[n] * exp_div_1m_exp;
   }
   return ops_partials.build(cdf_log);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

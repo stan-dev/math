@@ -15,6 +15,6 @@ namespace math {
  */
 inline double log(int x) { return std::log(static_cast<double>(x)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

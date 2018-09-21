@@ -1,10 +1,11 @@
-#include <gtest/gtest.h>
 #include <stan/math/rev/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
 
-template <typename T> void test_cumulative_sum() {
+template <typename T>
+void test_cumulative_sum() {
   using stan::math::cumulative_sum;
 
   T c(1);
@@ -56,9 +57,9 @@ TEST(AgradRevMatrix, cumulative_sum) {
   Eigen::Matrix<var, 1, Eigen::Dynamic> b;
   EXPECT_FLOAT_EQ(0, cumulative_sum(b).size());
 
-  test_cumulative_sum<std::vector<var>>();
-  test_cumulative_sum<Eigen::Matrix<var, Eigen::Dynamic, 1>>();
-  test_cumulative_sum<Eigen::Matrix<var, 1, Eigen::Dynamic>>();
+  test_cumulative_sum<std::vector<var> >();
+  test_cumulative_sum<Eigen::Matrix<var, Eigen::Dynamic, 1> >();
+  test_cumulative_sum<Eigen::Matrix<var, 1, Eigen::Dynamic> >();
 }
 
 TEST(AgradRevMatrix, check_varis_on_stack) {

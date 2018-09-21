@@ -1,8 +1,8 @@
-#include <gtest/gtest.h>
-#include <limits>
 #include <stan/math/rev/scal.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <limits>
 
 TEST(AgradRev, sqrt_a) {
   AVAR a(5.0);
@@ -47,7 +47,8 @@ TEST(AgradRev, sqrt_zero) {
 }
 
 struct sqrt_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0& arg1) const {
     return sqrt(arg1);
   }
 };

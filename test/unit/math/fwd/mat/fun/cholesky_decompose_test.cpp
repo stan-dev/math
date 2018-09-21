@@ -1,11 +1,11 @@
-#include <cmath>
-#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
+#include <gtest/gtest.h>
+#include <cmath>
 
 template <typename T>
-void deriv_chol_fwd(const Eigen::Matrix<T, -1, -1> &parent_mat,
-                    Eigen::Matrix<double, -1, -1> &vals,
-                    Eigen::Matrix<double, -1, -1> &gradients) {
+void deriv_chol_fwd(const Eigen::Matrix<T, -1, -1>& parent_mat,
+                    Eigen::Matrix<double, -1, -1>& vals,
+                    Eigen::Matrix<double, -1, -1>& gradients) {
   using stan::math::value_of_rec;
 
   Eigen::Matrix<double, 2, 2> parent_mat_d = value_of_rec(parent_mat);
@@ -19,16 +19,17 @@ void deriv_chol_fwd(const Eigen::Matrix<T, -1, -1> &parent_mat,
       parent_mat_d(1, 1) - pow(parent_mat_d(1, 0), 2.0) / parent_mat_d(0, 0),
       -0.5);
   gradients(0, 0) = pow_neg_half_00 / 2 * value_of_rec(parent_mat(0, 0).d_);
-  gradients(1, 0) =
-      -0.5 * value_of_rec(parent_mat(0, 0).d_) * pow(parent_mat_d(0, 0), -1.5) +
-      value_of_rec(parent_mat(1, 0).d_) * pow_neg_half_00 * parent_mat_d(1, 0);
+  gradients(1, 0)
+      = -0.5 * value_of_rec(parent_mat(0, 0).d_) * pow(parent_mat_d(0, 0), -1.5)
+        + value_of_rec(parent_mat(1, 0).d_) * pow_neg_half_00
+              * parent_mat_d(1, 0);
   gradients(0, 1) = 0.0;
-  gradients(1, 1) =
-      0.5 * pow_neg_half_comb *
-      (value_of_rec(parent_mat(1, 1).d_) * -2 * parent_mat_d(1, 0) /
-           parent_mat_d(0, 0) * value_of_rec(parent_mat(1, 0).d_) +
-       pow(parent_mat_d(1, 0), 2.0) / pow(parent_mat_d(0, 0), 2.0) *
-           value_of_rec(parent_mat(0, 0).d_));
+  gradients(1, 1)
+      = 0.5 * pow_neg_half_comb
+        * (value_of_rec(parent_mat(1, 1).d_) * -2 * parent_mat_d(1, 0)
+               / parent_mat_d(0, 0) * value_of_rec(parent_mat(1, 0).d_)
+           + pow(parent_mat_d(1, 0), 2.0) / pow(parent_mat_d(0, 0), 2.0)
+                 * value_of_rec(parent_mat(0, 0).d_));
 }
 
 TEST(AgradFwdMatrixCholeskyDecompose, exception_mat_fd) {
@@ -86,8 +87,8 @@ TEST(AgradFwdMatrixCholeskyDecompose, mat_fd) {
   for (int i = 0; i < 2; ++i)
     for (int j = 0; j < i; ++j) {
       EXPECT_FLOAT_EQ(res_mat(i, j), res(i, j).val_);
-      EXPECT_FLOAT_EQ(d_mat(i, j), res(i, j).d_) << "Row: " << i
-                                                 << "Col: " << j;
+      EXPECT_FLOAT_EQ(d_mat(i, j), res(i, j).d_)
+          << "Row: " << i << "Col: " << j;
     }
 }
 
@@ -108,7 +109,7 @@ TEST(AgradFwdMatrixCholeskyDecompose, mat_ffd) {
   for (int i = 0; i < 2; ++i)
     for (int j = 0; j < i; ++j) {
       EXPECT_FLOAT_EQ(res_mat(i, j), res(i, j).val_.val_);
-      EXPECT_FLOAT_EQ(d_mat(i, j), res(i, j).d_.val_) << "Row: " << i
-                                                      << " Col: " << j;
+      EXPECT_FLOAT_EQ(d_mat(i, j), res(i, j).d_.val_)
+          << "Row: " << i << " Col: " << j;
     }
 }

@@ -8,11 +8,11 @@ namespace math {
 
 namespace {
 class square_vari : public op_v_vari {
-public:
-  explicit square_vari(vari *avi) : op_v_vari(avi->val_ * avi->val_, avi) {}
+ public:
+  explicit square_vari(vari* avi) : op_v_vari(avi->val_ * avi->val_, avi) {}
   void chain() { avi_->adj_ += adj_ * 2.0 * avi_->val_; }
 };
-} // namespace
+}  // namespace
 
 /**
  * Return the square of the input variable.
@@ -39,8 +39,8 @@ public:
  * @param x Variable to square.
  * @return Square of variable.
  */
-inline var square(const var &x) { return var(new square_vari(x.vi_)); }
+inline var square(const var& x) { return var(new square_vari(x.vi_)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -1,10 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_GP_PERIODIC_COV_HPP
 #define STAN_MATH_PRIM_MAT_FUN_GP_PERIODIC_COV_HPP
 
-#include <cmath>
 #include <math.h>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/distance.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
@@ -14,6 +13,7 @@
 #include <stan/math/prim/scal/fun/inv_square.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <cmath>
 
 #include <vector>
 
@@ -74,8 +74,9 @@ gp_periodic_cov(const std::vector<T_x> &x, const T_sigma &sigma, const T_l &l,
   for (size_t j = 0; j < x_size; ++j) {
     cov(j, j) = sigma_sq;
     for (size_t i = j + 1; i < x_size; ++i) {
-      cov(i, j) = sigma_sq * exp(square(sin(pi_div_p * distance(x[i], x[j]))) *
-                                 neg_two_inv_l_sq);
+      cov(i, j) = sigma_sq
+                  * exp(square(sin(pi_div_p * distance(x[i], x[j])))
+                        * neg_two_inv_l_sq);
       cov(j, i) = cov(i, j);
     }
   }
@@ -142,14 +143,14 @@ gp_periodic_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   for (size_t i = 0; i < x1.size(); ++i) {
     for (size_t j = 0; j < x2.size(); ++j) {
-      cov(i, j) =
-          sigma_sq * exp(square(sin(pi_div_p * distance(x1[i], x2[j]))) *
-                         neg_two_inv_l_sq);
+      cov(i, j) = sigma_sq
+                  * exp(square(sin(pi_div_p * distance(x1[i], x2[j])))
+                        * neg_two_inv_l_sq);
     }
   }
   return cov;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

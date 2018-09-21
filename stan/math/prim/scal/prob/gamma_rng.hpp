@@ -1,14 +1,14 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_GAMMA_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_GAMMA_RNG_HPP
 
-#include <boost/random/gamma_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <boost/random/gamma_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
@@ -32,12 +32,12 @@ namespace math {
  * sizes
  */
 template <typename T_shape, typename T_inv, class RNG>
-inline typename VectorBuilder<true, double, T_shape, T_inv>::type
-gamma_rng(const T_shape &alpha, const T_inv &beta, RNG &rng) {
+inline typename VectorBuilder<true, double, T_shape, T_inv>::type gamma_rng(
+    const T_shape& alpha, const T_inv& beta, RNG& rng) {
   using boost::gamma_distribution;
   using boost::variate_generator;
 
-  static const char *function = "gamma_rng";
+  static const char* function = "gamma_rng";
 
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Inverse scale parameter", beta);
@@ -51,7 +51,7 @@ gamma_rng(const T_shape &alpha, const T_inv &beta, RNG &rng) {
 
   for (size_t n = 0; n < N; ++n) {
     // Convert rate (inverse scale) argument to scale for boost
-    variate_generator<RNG &, gamma_distribution<>> gamma_rng(
+    variate_generator<RNG&, gamma_distribution<> > gamma_rng(
         rng, gamma_distribution<>(alpha_vec[n],
                                   1 / static_cast<double>(beta_vec[n])));
     output[n] = gamma_rng();
@@ -60,6 +60,6 @@ gamma_rng(const T_shape &alpha, const T_inv &beta, RNG &rng) {
   return output.data();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

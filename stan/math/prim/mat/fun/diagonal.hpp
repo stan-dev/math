@@ -13,11 +13,11 @@ namespace math {
  * @return Diagonal of the matrix.
  */
 template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, 1>
-diagonal(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m) {
+inline Eigen::Matrix<T, Eigen::Dynamic, 1> diagonal(
+    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
   return m.diagonal();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

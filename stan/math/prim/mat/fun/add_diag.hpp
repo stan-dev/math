@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_ADD_DIAG_HPP
 #define STAN_MATH_PRIM_MAT_FUN_ADD_DIAG_HPP
 
-#include <algorithm>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
+#include <algorithm>
 
 namespace stan {
 namespace math {
@@ -39,6 +39,6 @@ add_diag(const Eigen::Matrix<T_m, Eigen::Dynamic, Eigen::Dynamic> &mat,
 
   return out;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

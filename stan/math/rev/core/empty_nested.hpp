@@ -13,6 +13,6 @@ static inline bool empty_nested() {
   return ChainableStack::instance().nested_var_stack_sizes_.empty();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

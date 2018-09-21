@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_TRACE_QUAD_FORM_HPP
 #define STAN_MATH_PRIM_MAT_FUN_TRACE_QUAD_FORM_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {
 namespace math {
@@ -19,6 +19,6 @@ inline double trace_quad_form(const Eigen::Matrix<double, RA, CA> &A,
   return (B.transpose() * A * B).trace();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

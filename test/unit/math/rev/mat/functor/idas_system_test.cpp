@@ -1,29 +1,29 @@
 #include <stan/math.hpp>
 #include <stan/math/rev/core.hpp>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <stan/math/rev/mat/functor/idas_forward_system.hpp>
 #include <stan/math/rev/mat/functor/idas_integrator.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 
 #include <nvector/nvector_serial.h>
 
-#include <gtest/gtest.h>
 #include <test/unit/util.hpp>
+#include <gtest/gtest.h>
 
-#include <fstream>
-#include <iostream>
-#include <limits>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+#include <iostream>
+#include <fstream>
 #include <vector>
+#include <limits>
 
 struct chemical_kinetics {
   template <typename T0, typename TYY, typename TYP, typename TPAR>
   inline std::vector<typename stan::return_type<TYY, TYP, TPAR>::type>
-  operator()(const T0 &t_in, const std::vector<TYY> &yy,
-             const std::vector<TYP> &yp, const std::vector<TPAR> &theta,
-             const std::vector<double> &x_r, const std::vector<int> &x_i,
-             std::ostream *msgs) const {
+  operator()(const T0& t_in, const std::vector<TYY>& yy,
+             const std::vector<TYP>& yp, const std::vector<TPAR>& theta,
+             const std::vector<double>& x_r, const std::vector<int>& x_i,
+             std::ostream* msgs) const {
     if (yy.size() != 3 || yp.size() != 3)
       throw std::domain_error(
           "this function was called with inconsistent state");
@@ -53,12 +53,12 @@ struct chemical_kinetics {
 };
 
 template <typename TYY, typename TYP, typename TPAR>
-void idas_system_test(chemical_kinetics &f, std::vector<int> eq_id,
-                      std::vector<TYY> &yy0, std::vector<TYP> &yp0,
-                      std::vector<TPAR> &theta, N_Vector &res) {
+void idas_system_test(chemical_kinetics& f, std::vector<int> eq_id,
+                      std::vector<TYY>& yy0, std::vector<TYP>& yp0,
+                      std::vector<TPAR>& theta, N_Vector& res) {
   std::vector<double> x_r(3, 1);
   std::vector<int> x_i(2, 0);
-  std::ostream *msgs = 0;
+  std::ostream* msgs = 0;
 
   stan::math::idas_forward_system<chemical_kinetics, TYY, TYP, TPAR> dae{
       f, eq_id, yy0, yp0, theta, x_r, x_i, msgs};
@@ -83,13 +83,13 @@ void idas_system_test(chemical_kinetics &f, std::vector<int> eq_id,
 }
 
 template <typename TYY, typename TYP, typename TPAR>
-void idas_forward_sen_test(chemical_kinetics &f, std::vector<int> eq_id,
-                           std::vector<TYY> &yy0, std::vector<TYP> &yp0,
-                           std::vector<TPAR> &theta, N_Vector &res,
-                           N_Vector *ress) {
+void idas_forward_sen_test(chemical_kinetics& f, std::vector<int> eq_id,
+                           std::vector<TYY>& yy0, std::vector<TYP>& yp0,
+                           std::vector<TPAR>& theta, N_Vector& res,
+                           N_Vector* ress) {
   std::vector<double> x_r(3, 1);
   std::vector<int> x_i(2, 0);
-  std::ostream *msgs = 0;
+  std::ostream* msgs = 0;
 
   stan::math::idas_forward_system<chemical_kinetics, TYY, TYP, TPAR> dae{
       f, eq_id, yy0, yp0, theta, x_r, x_i, msgs};
@@ -157,13 +157,13 @@ TEST(IDAS_DAE_SYSTEM, idas_forward_system_io) {
 
   {
     N_Vector res = N_VNew_Serial(n);
-    N_Vector *ress = N_VCloneVectorArray(theta.size(), res);
+    N_Vector* ress = N_VCloneVectorArray(theta.size(), res);
     idas_forward_sen_test(f, eq_id, yy0, yp0, theta, res, ress);
   }
 
   {
     N_Vector res = N_VNew_Serial(n);
-    N_Vector *ress = N_VCloneVectorArray(theta.size(), res);
+    N_Vector* ress = N_VCloneVectorArray(theta.size(), res);
     idas_forward_sen_test(f, eq_id, yy0, yp0, theta_var, res, ress);
     EXPECT_EQ(NV_Ith_S(ress[0], 0), yy0[0]);
     EXPECT_EQ(NV_Ith_S(ress[0], 1), -yy0[0]);
@@ -173,7 +173,7 @@ TEST(IDAS_DAE_SYSTEM, idas_forward_system_io) {
   {
     size_t ns = n + n + theta.size();
     N_Vector res = N_VNew_Serial(n);
-    N_Vector *ress = N_VCloneVectorArray(ns, res);
+    N_Vector* ress = N_VCloneVectorArray(ns, res);
     idas_forward_sen_test(f, eq_id, yy0_var, yp0_var, theta_var, res, ress);
     EXPECT_EQ(NV_Ith_S(ress[n + n], 0), yy0[0]);
     EXPECT_EQ(NV_Ith_S(ress[n + n], 1), -yy0[0]);
@@ -192,7 +192,7 @@ TEST(IDAS_DAE_SYSTEM, idas_forward_system_general) {
   auto theta_var = stan::math::to_var(theta);
   std::vector<double> x_r(3, 1);
   std::vector<int> x_i(2, 0);
-  std::ostream *msgs = 0;
+  std::ostream* msgs = 0;
 
   stan::math::idas_forward_system<chemical_kinetics, stan::math::var,
                                   stan::math::var, stan::math::var>
@@ -209,7 +209,7 @@ TEST(IDAS_DAE_SYSTEM, idas_forward_system_general) {
   auto p3 = theta[2];
 
   N_Vector res = N_VNew_Serial(n);
-  N_Vector *ress = N_VCloneVectorArray(ns, res);
+  N_Vector* ress = N_VCloneVectorArray(ns, res);
   for (size_t is = 0; is < ns; is++) {
     N_VConst(RCONST(1.0), yys[is]);
     N_VConst(RCONST(1.0), yps[is]);
@@ -268,14 +268,15 @@ TEST(IDAS_DAE_SYSTEM, constructor_errors) {
   auto theta_var = stan::math::to_var(theta);
   std::vector<double> x_r(3, 1);
   std::vector<int> x_i;
-  std::ostream *msgs = 0;
+  std::ostream* msgs = 0;
 
   std::vector<double> bad_double{yy0};
   bad_double[0] = std::numeric_limits<double>::infinity();
-  auto build_double = [&f, msgs, &x_i](
-      const std::vector<int> &eq_id, const std::vector<double> &yy0,
-      const std::vector<double> &yp0, const std::vector<double> &theta,
-      const std::vector<double> &x_r) {
+  auto build_double = [&f, msgs, &x_i](const std::vector<int>& eq_id,
+                                       const std::vector<double>& yy0,
+                                       const std::vector<double>& yp0,
+                                       const std::vector<double>& theta,
+                                       const std::vector<double>& x_r) {
     idas_forward_system<chemical_kinetics, double, double, double> dae{
         f, eq_id, yy0, yp0, theta, x_r, x_i, msgs};
   };
@@ -301,10 +302,11 @@ TEST(IDAS_DAE_SYSTEM, constructor_errors) {
 
   std::vector<var> bad_var{std::numeric_limits<double>::infinity(), 1.0, 0.1};
   std::vector<var> empty_var;
-  auto build_var = [&f, msgs, &x_i](
-      const std::vector<int> &eq_id, const std::vector<var> &yy0,
-      const std::vector<var> &yp0, const std::vector<var> &theta,
-      const std::vector<double> &x_r) {
+  auto build_var = [&f, msgs, &x_i](const std::vector<int>& eq_id,
+                                    const std::vector<var>& yy0,
+                                    const std::vector<var>& yp0,
+                                    const std::vector<var>& theta,
+                                    const std::vector<double>& x_r) {
     idas_forward_system<chemical_kinetics, var, var, var> dae{
         f, eq_id, yy0, yp0, theta, x_r, x_i, msgs};
   };

@@ -1,15 +1,16 @@
-#include <gtest/gtest.h>
-#include <iostream>
 #include <stan/math/mix/mat.hpp>
-#include <stdexcept>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <iostream>
+#include <stdexcept>
 #include <vector>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
 
 struct fun0 {
-  template <typename T> inline T operator()(const T &x) const {
+  template <typename T>
+  inline T operator()(const T& x) const {
     return 5.0 * x * x * x;
   }
 };
@@ -17,7 +18,7 @@ struct fun0 {
 // fun1(x, y) = (x^2 * y) + (3 * y^2)
 struct fun1 {
   template <typename T>
-  inline T operator()(const Matrix<T, Dynamic, 1> &x) const {
+  inline T operator()(const Matrix<T, Dynamic, 1>& x) const {
     return x(0) * x(0) * x(1) + 3.0 * x(1) * x(1);
   }
 };
@@ -25,8 +26,8 @@ struct fun1 {
 // fun2: R^2 --> R^2 | (x, y) --> [(x + x), (3 * x * y)]
 struct fun2 {
   template <typename T>
-  inline Matrix<T, Dynamic, 1>
-  operator()(const Matrix<T, Dynamic, 1> &x) const {
+  inline Matrix<T, Dynamic, 1> operator()(
+      const Matrix<T, Dynamic, 1>& x) const {
     Matrix<T, Dynamic, 1> z(2);
     z << x(0) + x(0), 3 * x(0) * x(1);
     return z;
@@ -35,8 +36,8 @@ struct fun2 {
 
 struct norm_functor {
   template <typename T>
-  inline T
-  operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1> &inp_vec) const {
+  inline T operator()(
+      const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
     return stan::math::normal_log(inp_vec(0), inp_vec(1), inp_vec(2));
   }
 };
@@ -237,11 +238,11 @@ TEST(AgradAutoDiff, GradientHessian) {
   Matrix<double, Dynamic, Dynamic> norm_hess_analytic;
   Matrix<double, Dynamic, Dynamic> poly_hess_analytic;
 
-  std::vector<Matrix<double, Dynamic, Dynamic>> norm_grad_hess_agrad;
-  std::vector<Matrix<double, Dynamic, Dynamic>> poly_grad_hess_agrad;
+  std::vector<Matrix<double, Dynamic, Dynamic> > norm_grad_hess_agrad;
+  std::vector<Matrix<double, Dynamic, Dynamic> > poly_grad_hess_agrad;
 
-  std::vector<Matrix<double, Dynamic, Dynamic>> norm_grad_hess_analytic;
-  std::vector<Matrix<double, Dynamic, Dynamic>> poly_grad_hess_analytic;
+  std::vector<Matrix<double, Dynamic, Dynamic> > norm_grad_hess_analytic;
+  std::vector<Matrix<double, Dynamic, Dynamic> > poly_grad_hess_analytic;
 
   normal_eval_analytic = log_normal_density(normal_eval_vec);
   poly_eval_analytic = mixed_third_poly(poly_eval_vec);

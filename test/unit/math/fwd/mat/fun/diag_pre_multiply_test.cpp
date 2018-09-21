@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
+#include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixDiagPreMultiply, vector_fd) {
   using stan::math::matrix_d;
@@ -131,12 +131,12 @@ TEST(AgradFwdMatrixDiagPreMultiply, vector_ffd) {
   matrix_d Z(3, 3);
   Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
 
-  fvar<fvar<double>> a;
-  fvar<fvar<double>> b;
-  fvar<fvar<double>> c;
-  fvar<fvar<double>> d;
-  fvar<fvar<double>> e;
-  fvar<fvar<double>> f;
+  fvar<fvar<double> > a;
+  fvar<fvar<double> > b;
+  fvar<fvar<double> > c;
+  fvar<fvar<double> > d;
+  fvar<fvar<double> > e;
+  fvar<fvar<double> > f;
   a.val_.val_ = 1.0;
   a.d_.val_ = 2.0;
   b.val_.val_ = 2.0;
@@ -201,12 +201,12 @@ TEST(AgradFwdMatrixDiagPreMultiply, rowvector_ffd) {
   matrix_d Z(3, 3);
   Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
 
-  fvar<fvar<double>> a;
-  fvar<fvar<double>> b;
-  fvar<fvar<double>> c;
-  fvar<fvar<double>> d;
-  fvar<fvar<double>> e;
-  fvar<fvar<double>> f;
+  fvar<fvar<double> > a;
+  fvar<fvar<double> > b;
+  fvar<fvar<double> > c;
+  fvar<fvar<double> > d;
+  fvar<fvar<double> > e;
+  fvar<fvar<double> > f;
   a.val_.val_ = 1.0;
   a.d_.val_ = 2.0;
   b.val_.val_ = 2.0;

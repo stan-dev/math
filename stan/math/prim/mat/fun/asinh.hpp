@@ -15,7 +15,10 @@ namespace math {
  * @return inverse hyperbolic sine of argument in radians.
  */
 struct asinh_fun {
-  template <typename T> static inline T fun(const T &x) { return asinh(x); }
+  template <typename T>
+  static inline T fun(const T& x) {
+    return asinh(x);
+  }
 };
 
 /**
@@ -26,11 +29,11 @@ struct asinh_fun {
  * @return Inverse hyperbolic sine of each value in the container.
  */
 template <typename T>
-inline typename apply_scalar_unary<asinh_fun, T>::return_t asinh(const T &x) {
+inline typename apply_scalar_unary<asinh_fun, T>::return_t asinh(const T& x) {
   return apply_scalar_unary<asinh_fun, T>::apply(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

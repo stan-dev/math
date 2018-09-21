@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_DOMAIN_ERROR_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_DOMAIN_ERROR_HPP
 
+#include <typeinfo>
 #include <sstream>
 #include <stdexcept>
-#include <typeinfo>
 
 namespace stan {
 namespace math {
@@ -26,11 +26,11 @@ namespace math {
  * @throw std::domain_error Always.
  */
 template <typename T>
-inline void domain_error(const char *function, const char *name, const T &y,
-                         const char *msg1, const char *msg2) {
+inline void domain_error(const char* function, const char* name, const T& y,
+                         const char* msg1, const char* msg2) {
   std::ostringstream message;
   // hack to remove -Waddress, -Wnonnull-compare warnings from GCC 6
-  const T *y_ptr = &y;
+  const T* y_ptr = &y;
   message << function << ": " << name << " " << msg1 << (*y_ptr) << msg2;
   throw std::domain_error(message.str());
 }
@@ -52,11 +52,11 @@ inline void domain_error(const char *function, const char *name, const T &y,
  * @throw std::domain_error Always.
  */
 template <typename T>
-inline void domain_error(const char *function, const char *name, const T &y,
-                         const char *msg1) {
+inline void domain_error(const char* function, const char* name, const T& y,
+                         const char* msg1) {
   domain_error(function, name, y, msg1, "");
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

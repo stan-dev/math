@@ -1,8 +1,8 @@
-#include <boost/math/special_functions/fpclassify.hpp>
-#include <gtest/gtest.h>
 #include <stan/math/mix/scal.hpp>
-#include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <gtest/gtest.h>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <test/unit/math/rev/scal/fun/util.hpp>
+#include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdLmgamma, FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -38,11 +38,11 @@ TEST(AgradFwdLmgamma, FvarFvarVar_1stDeriv) {
   using stan::math::lmgamma;
   using stan::math::var;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 3.2;
   x.val_.d_ = 2.1;
 
-  fvar<fvar<var>> a = lmgamma(3, x);
+  fvar<fvar<var> > a = lmgamma(3, x);
 
   EXPECT_FLOAT_EQ(lmgamma(3, 3.2), a.val_.val_.val());
   EXPECT_FLOAT_EQ(4.9138227, a.val_.d_.val());
@@ -54,11 +54,11 @@ TEST(AgradFwdLmgamma, FvarFvarVar_1stDeriv) {
   a.val_.val_.grad(p, g);
   EXPECT_FLOAT_EQ(4.9138227 / 2.1, g[0]);
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 3.2;
   y.d_.val_ = 2.1;
 
-  fvar<fvar<var>> b = lmgamma(3, y);
+  fvar<fvar<var> > b = lmgamma(3, y);
   EXPECT_FLOAT_EQ(lmgamma(3, 3.2), b.val_.val_.val());
   EXPECT_FLOAT_EQ(0, b.val_.d_.val());
   EXPECT_FLOAT_EQ(4.9138227, b.d_.val_.val());
@@ -74,22 +74,22 @@ TEST(AgradFwdLmgamma, FvarFvarVar_2ndDeriv) {
   using stan::math::lmgamma;
   using stan::math::var;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 3.2;
   x.val_.d_ = 2.1;
 
-  fvar<fvar<var>> a = lmgamma(3, x);
+  fvar<fvar<var> > a = lmgamma(3, x);
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
   a.val_.d_.grad(p, g);
   EXPECT_FLOAT_EQ(2.9115787, g[0]);
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 3.2;
   y.d_.val_ = 2.1;
 
-  fvar<fvar<var>> b = lmgamma(3, y);
+  fvar<fvar<var> > b = lmgamma(3, y);
 
   AVEC q = createAVEC(y.val_.val_);
   VEC r;
@@ -100,12 +100,12 @@ TEST(AgradFwdLmgamma, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 3.2;
   x.val_.d_ = 1.0;
   x.d_.val_ = 1.0;
 
-  fvar<fvar<var>> a = stan::math::lmgamma(3, x);
+  fvar<fvar<var> > a = stan::math::lmgamma(3, x);
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
@@ -114,7 +114,8 @@ TEST(AgradFwdLmgamma, FvarFvarVar_3rdDeriv) {
 }
 
 struct lmgamma_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0& arg1) const {
     return lmgamma(3, arg1);
   }
 };

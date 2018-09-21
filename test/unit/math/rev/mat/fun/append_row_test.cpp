@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/rev/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 
@@ -91,13 +91,13 @@ TEST(AgradRevMatrix, append_row_row_vector) {
 }
 
 template <typename T, int R, int C>
-void correct_type_vector(const Eigen::Matrix<T, R, C> &x) {
+void correct_type_vector(const Eigen::Matrix<T, R, C>& x) {
   EXPECT_EQ(Eigen::Dynamic, R);
   EXPECT_EQ(1, C);
 }
 
 template <typename T, int R, int C>
-void correct_type_matrix(const Eigen::Matrix<T, R, C> &x) {
+void correct_type_matrix(const Eigen::Matrix<T, R, C>& x) {
   EXPECT_EQ(Eigen::Dynamic, C);
   EXPECT_EQ(Eigen::Dynamic, R);
 }

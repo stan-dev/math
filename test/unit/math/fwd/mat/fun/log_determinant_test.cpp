@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
+#include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixLogDeterminant, fd) {
   using stan::math::fvar;
@@ -30,7 +30,7 @@ TEST(AgradFwdMatrixLogDeterminant, ffd) {
   using stan::math::log_determinant;
   using stan::math::matrix_ffd;
 
-  fvar<fvar<double>> a, b, c, d;
+  fvar<fvar<double> > a, b, c, d;
   a.val_.val_ = 0.0;
   a.d_.val_ = 1.0;
   b.val_.val_ = 1.0;
@@ -43,7 +43,7 @@ TEST(AgradFwdMatrixLogDeterminant, ffd) {
   matrix_ffd v(2, 2);
   v << a, b, c, d;
 
-  fvar<fvar<double>> det;
+  fvar<fvar<double> > det;
   det = log_determinant(v);
   EXPECT_FLOAT_EQ(std::log(2.0), det.val_.val());
   EXPECT_FLOAT_EQ(1.5, det.d_.val());

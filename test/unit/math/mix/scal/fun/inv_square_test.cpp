@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/scal.hpp>
-#include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/util.hpp>
+#include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdInvSquare, FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -39,11 +39,11 @@ TEST(AgradFwdInvSquare, FvarFvarVar_1stDeriv) {
   using stan::math::var;
   using std::log;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var>> a = inv_square(x);
+  fvar<fvar<var> > a = inv_square(x);
 
   EXPECT_FLOAT_EQ(inv_square(0.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(-2.0 * inv_square(0.5) / (0.5), a.val_.d_.val());
@@ -61,11 +61,11 @@ TEST(AgradFwdInvSquare, FvarFvarVar_2ndDeriv) {
   using stan::math::var;
   using std::log;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var>> a = inv_square(x);
+  fvar<fvar<var> > a = inv_square(x);
 
   EXPECT_FLOAT_EQ(inv_square(0.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(-2.0 * inv_square(0.5) / (0.5), a.val_.d_.val());
@@ -81,12 +81,12 @@ TEST(AgradFwdInvSquare, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
   x.d_.val_ = 1.0;
 
-  fvar<fvar<var>> a = inv_square(x);
+  fvar<fvar<var> > a = inv_square(x);
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
@@ -95,7 +95,8 @@ TEST(AgradFwdInvSquare, FvarFvarVar_3rdDeriv) {
 }
 
 struct inv_square_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0& arg1) const {
     return inv_square(arg1);
   }
 };

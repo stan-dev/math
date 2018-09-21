@@ -14,7 +14,10 @@ namespace math {
  * @return 1 / sqrt of x.
  */
 struct inv_sqrt_fun {
-  template <typename T> static inline T fun(const T &x) { return inv_sqrt(x); }
+  template <typename T>
+  static inline T fun(const T& x) {
+    return inv_sqrt(x);
+  }
 };
 
 /**
@@ -24,12 +27,12 @@ struct inv_sqrt_fun {
  * @return 1 / sqrt of each value in x.
  */
 template <typename T>
-inline typename apply_scalar_unary<inv_sqrt_fun, T>::return_t
-inv_sqrt(const T &x) {
+inline typename apply_scalar_unary<inv_sqrt_fun, T>::return_t inv_sqrt(
+    const T& x) {
   return apply_scalar_unary<inv_sqrt_fun, T>::apply(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

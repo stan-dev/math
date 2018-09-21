@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOG1P_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOG1P_HPP
 
-#include <boost/math/special_functions/log1p.hpp>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
+#include <boost/math/special_functions/log1p.hpp>
 
 namespace stan {
 namespace math {
@@ -37,6 +37,6 @@ inline double log1p(double x) {
  */
 inline double log1p(int x) { return log1p(static_cast<double>(x)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

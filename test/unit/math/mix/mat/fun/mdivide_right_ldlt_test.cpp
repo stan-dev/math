@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/mat.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 using stan::math::fvar;
@@ -516,7 +516,7 @@ TEST(AgradMixMatrixMdivideRightLDLT, fv_exceptions) {
 }
 
 TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_matrix_ffv_1) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_Ad;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_Ad;
   stan::math::matrix_ffv Ad(2, 2);
   stan::math::matrix_ffv Av(2, 2);
   stan::math::matrix_ffv I;
@@ -578,7 +578,7 @@ TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_matrix_ffv_1) {
 }
 
 TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_matrix_ffv_2) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_Ad;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_Ad;
   stan::math::matrix_ffv Ad(2, 2);
   stan::math::matrix_ffv Av(2, 2);
   stan::math::matrix_ffv I;
@@ -622,7 +622,7 @@ TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_matrix_ffv_2) {
 }
 
 TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_matrix_ffv_3) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_Ad;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_Ad;
   stan::math::matrix_ffv Ad(2, 2);
   stan::math::matrix_ffv Av(2, 2);
   stan::math::matrix_ffv I;
@@ -673,7 +673,7 @@ TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_matrix_ffv_3) {
   EXPECT_FLOAT_EQ(0, grads[7]);
 }
 TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_matrix_ffv_4) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_Ad;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_Ad;
   stan::math::matrix_ffv Ad(2, 2);
   stan::math::matrix_ffv Av(2, 2);
   stan::math::matrix_ffv I;
@@ -724,7 +724,7 @@ TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_matrix_ffv_4) {
   EXPECT_FLOAT_EQ(0, grads[7]);
 }
 TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_matrix_d_1) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_Ad;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_Ad;
   stan::math::matrix_ffv Ad(2, 2);
   stan::math::matrix_d Av(2, 2);
   stan::math::matrix_ffv I;
@@ -763,7 +763,7 @@ TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_matrix_d_1) {
   EXPECT_NEAR(0, grads[3], 1E-12);
 }
 TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_matrix_d_2) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_Ad;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_Ad;
   stan::math::matrix_ffv Ad(2, 2);
   stan::math::matrix_d Av(2, 2);
   stan::math::matrix_ffv I;
@@ -794,7 +794,7 @@ TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_matrix_d_2) {
   EXPECT_FLOAT_EQ(0.12, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_matrix_d_3) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_Ad;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_Ad;
   stan::math::matrix_ffv Ad(2, 2);
   stan::math::matrix_d Av(2, 2);
   stan::math::matrix_ffv I;
@@ -829,7 +829,7 @@ TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_matrix_d_3) {
   EXPECT_FLOAT_EQ(0.12, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_matrix_d_4) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_Ad;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_Ad;
   stan::math::matrix_ffv Ad(2, 2);
   stan::math::matrix_d Av(2, 2);
   stan::math::matrix_ffv I;
@@ -1003,7 +1003,7 @@ TEST(AgradMixMatrixMdivideRightLDLT, matrix_d_matrix_ffv_4) {
 }
 
 TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_row_vector_ffv_1) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_Ad;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_Ad;
   stan::math::matrix_ffv Ad(2, 2);
   stan::math::row_vector_ffv Av(2);
   stan::math::row_vector_ffv I;
@@ -1044,7 +1044,7 @@ TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_row_vector_ffv_1) {
   EXPECT_FLOAT_EQ(-0.6, grads[5]);
 }
 TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_row_vector_ffv_2) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_Ad;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_Ad;
   stan::math::matrix_ffv Ad(2, 2);
   stan::math::row_vector_ffv Av(2);
   stan::math::row_vector_ffv I;
@@ -1082,7 +1082,7 @@ TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_row_vector_ffv_2) {
 }
 
 TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_row_vector_ffv_3) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_Ad;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_Ad;
   stan::math::matrix_ffv Ad(2, 2);
   stan::math::row_vector_ffv Av(2);
   stan::math::row_vector_ffv I;
@@ -1125,7 +1125,7 @@ TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_row_vector_ffv_3) {
   EXPECT_FLOAT_EQ(0.16, grads[5]);
 }
 TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_row_vector_ffv_4) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_Ad;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_Ad;
   stan::math::matrix_ffv Ad(2, 2);
   stan::math::row_vector_ffv Av(2);
   stan::math::row_vector_ffv I;
@@ -1168,7 +1168,7 @@ TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_row_vector_ffv_4) {
   EXPECT_FLOAT_EQ(-0.192, grads[5]);
 }
 TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_row_vector_d_1) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_Ad;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_Ad;
   stan::math::matrix_ffv Ad(2, 2);
   stan::math::row_vector_d Av(2);
   stan::math::row_vector_ffv I;
@@ -1204,7 +1204,7 @@ TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_row_vector_d_1) {
 }
 
 TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_row_vector_d_2) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_Ad;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_Ad;
   stan::math::matrix_ffv Ad(2, 2);
   stan::math::row_vector_d Av(2);
   stan::math::row_vector_ffv I;
@@ -1236,7 +1236,7 @@ TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_row_vector_d_2) {
 }
 
 TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_row_vector_d_3) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_Ad;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_Ad;
   stan::math::matrix_ffv Ad(2, 2);
   stan::math::row_vector_d Av(2);
   stan::math::row_vector_ffv I;
@@ -1271,7 +1271,7 @@ TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_row_vector_d_3) {
   EXPECT_FLOAT_EQ(0.12, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightLDLT, matrix_ffv_row_vector_d_4) {
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> ldlt_Ad;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> ldlt_Ad;
   stan::math::matrix_ffv Ad(2, 2);
   stan::math::row_vector_d Av(2);
   stan::math::row_vector_ffv I;
@@ -1441,8 +1441,8 @@ TEST(AgradMixMatrixMdivideRightLDLT, ffv_exceptions) {
   vd1.setZero();
   vd2.setZero();
 
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> fv1;
-  stan::math::LDLT_factor<fvar<fvar<var>>, -1, -1> fv2;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> fv1;
+  stan::math::LDLT_factor<fvar<fvar<var> >, -1, -1> fv2;
   stan::math::LDLT_factor<double, -1, -1> fd1;
   stan::math::LDLT_factor<double, -1, -1> fd2;
   fv1.compute(fv1_);

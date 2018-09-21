@@ -1,9 +1,9 @@
-#include <future>
-#include <gtest/gtest.h>
 #include <stan/math/rev/mat.hpp>
+#include <gtest/gtest.h>
 #include <stdexcept>
-#include <thread>
 #include <vector>
+#include <thread>
+#include <future>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -13,7 +13,7 @@ using Eigen::VectorXd;
 // fun1(x, y) = (x^2 * y) + (3 * y^2)
 struct fun1 {
   template <typename T>
-  inline T operator()(const Matrix<T, Dynamic, 1> &x) const {
+  inline T operator()(const Matrix<T, Dynamic, 1>& x) const {
     return x(0) * x(0) * x(1) + 3.0 * x(1) * x(1);
   }
 };
@@ -88,7 +88,7 @@ TEST(AgradAutoDiff, gradient_threaded) {
   }
 
   for (std::size_t i = 0; i < 100; i++) {
-    const VectorXd &ad_result = ad_futures_ref[i].get();
+    const VectorXd& ad_result = ad_futures_ref[i].get();
     double fx_job = ad_result(0);
     VectorXd grad_fx_job = ad_result.tail(ad_result.size() - 1);
 
@@ -99,15 +99,15 @@ TEST(AgradAutoDiff, gradient_threaded) {
   }
 
   for (std::size_t i = 0; i < 100; i++) {
-    const VectorXd &ad_result = ad_futures_local[i].get();
+    const VectorXd& ad_result = ad_futures_local[i].get();
     double fx_job = ad_result(0);
     VectorXd x_local(2);
     x_local << 1.0 * i, 2.0 * i;
     VectorXd grad_fx_job = ad_result.tail(ad_result.size() - 1);
 
-    EXPECT_FLOAT_EQ(x_local(0) * x_local(0) * x_local(1) +
-                        3 * x_local(1) * x_local(1),
-                    fx_job);
+    EXPECT_FLOAT_EQ(
+        x_local(0) * x_local(0) * x_local(1) + 3 * x_local(1) * x_local(1),
+        fx_job);
     EXPECT_EQ(2, grad_fx_job.size());
     EXPECT_FLOAT_EQ(2 * x_local(0) * x_local(1), grad_fx_job(0));
     EXPECT_FLOAT_EQ(x_local(0) * x_local(0) + 3 * 2 * x_local(1),
@@ -115,7 +115,7 @@ TEST(AgradAutoDiff, gradient_threaded) {
   }
 }
 
-stan::math::var sum_and_throw(const Matrix<stan::math::var, Dynamic, 1> &x) {
+stan::math::var sum_and_throw(const Matrix<stan::math::var, Dynamic, 1>& x) {
   stan::math::var y = 0;
   for (int i = 0; i < x.size(); ++i)
     y += x(i);
@@ -132,7 +132,7 @@ TEST(AgradAutoDiff, RecoverMemory) {
       double fx;
       VectorXd grad_fx;
       stan::math::gradient(sum_and_throw, x, fx, grad_fx);
-    } catch (const std::domain_error &e) {
+    } catch (const std::domain_error& e) {
       // ignore me
     }
   }

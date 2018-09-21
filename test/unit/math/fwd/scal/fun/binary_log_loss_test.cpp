@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/scal.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 double deriv(const int y, const double y_hat) {
@@ -97,10 +97,10 @@ TEST(AgradFwdBinaryLogLoss, FvarFvarDouble) {
   using stan::math::binary_log_loss;
   using stan::math::fvar;
 
-  fvar<fvar<double>> y;
+  fvar<fvar<double> > y;
   y.val_.val_ = 0.4;
   y.d_.val_ = 1.0;
-  fvar<fvar<double>> a = binary_log_loss(0.0, y);
+  fvar<fvar<double> > a = binary_log_loss(0.0, y);
 
   EXPECT_FLOAT_EQ(binary_log_loss(0.0, 0.4), a.val_.val_);
   EXPECT_FLOAT_EQ(0, a.val_.d_);
@@ -108,10 +108,10 @@ TEST(AgradFwdBinaryLogLoss, FvarFvarDouble) {
   EXPECT_NEAR(finite_diff(0, 0.4), a.d_.val_, 1e-5);
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 
-  fvar<fvar<double>> x;
+  fvar<fvar<double> > x;
   x.val_.val_ = 0.4;
   x.val_.d_ = 1.0;
-  fvar<fvar<double>> b = binary_log_loss(1.0, x);
+  fvar<fvar<double> > b = binary_log_loss(1.0, x);
 
   EXPECT_FLOAT_EQ(binary_log_loss(1.0, 0.4), b.val_.val_);
   EXPECT_FLOAT_EQ(deriv(1, 0.4), b.val_.d_);
@@ -121,7 +121,8 @@ TEST(AgradFwdBinaryLogLoss, FvarFvarDouble) {
 }
 
 struct binary_log_loss_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0& arg1) const {
     return binary_log_loss(0, arg1);
   }
 };

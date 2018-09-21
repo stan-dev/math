@@ -1,15 +1,15 @@
-#include <boost/math/distributions.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <gtest/gtest.h>
-#include <limits>
 #include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/math/distributions.hpp>
+#include <limits>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
 
 typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
 
-vector_d get_simplex(double lambda, const vector_d &c) {
+vector_d get_simplex(double lambda, const vector_d& c) {
   using stan::math::Phi;
   int K = c.size() + 1;
   vector_d theta(K);

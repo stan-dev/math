@@ -31,8 +31,8 @@ namespace math {
  * @tparam T_dof Type of degrees of freedom.
  */
 template <bool propto, typename T_y, typename T_dof, typename T_scale>
-typename return_type<T_y, T_dof, T_scale>::type
-scaled_inv_chi_square_log(const T_y &y, const T_dof &nu, const T_scale &s) {
+typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_log(
+    const T_y& y, const T_dof& nu, const T_scale& s) {
   return scaled_inv_chi_square_lpdf<propto, T_y, T_dof, T_scale>(y, nu, s);
 }
 
@@ -41,10 +41,10 @@ scaled_inv_chi_square_log(const T_y &y, const T_dof &nu, const T_scale &s) {
  */
 template <typename T_y, typename T_dof, typename T_scale>
 inline typename return_type<T_y, T_dof, T_scale>::type
-scaled_inv_chi_square_log(const T_y &y, const T_dof &nu, const T_scale &s) {
+scaled_inv_chi_square_log(const T_y& y, const T_dof& nu, const T_scale& s) {
   return scaled_inv_chi_square_lpdf<T_y, T_dof, T_scale>(y, nu, s);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

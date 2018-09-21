@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/arr.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 using stan::math::array_builder;
@@ -14,12 +14,12 @@ TEST(MathArray, arrayBuilder) {
   EXPECT_FLOAT_EQ(3.0, v3[1]);
   EXPECT_FLOAT_EQ(2.0, v3[2]);
 
-  vector<vector<int>> v3v2 =
-      array_builder<vector<int>>()
-          .add(array_builder<int>().add(1).add(2).array())
-          .add(array_builder<int>().add(3).add(4).array())
-          .add(array_builder<int>().add(5).add(6).array())
-          .array();
+  vector<vector<int> > v3v2
+      = array_builder<vector<int> >()
+            .add(array_builder<int>().add(1).add(2).array())
+            .add(array_builder<int>().add(3).add(4).array())
+            .add(array_builder<int>().add(5).add(6).array())
+            .array();
 
   EXPECT_EQ(3U, v3v2.size());
   for (size_t i = 0; i < 3; ++i)

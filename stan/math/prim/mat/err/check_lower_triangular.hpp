@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_LOWER_TRIANGULAR_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_LOWER_TRIANGULAR_HPP
 
-#include <sstream>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/meta/error_index.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <sstream>
 #include <string>
 
 namespace stan {
@@ -29,8 +29,8 @@ namespace math {
  */
 template <typename T_y>
 inline void check_lower_triangular(
-    const char *function, const char *name,
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y) {
+    const char* function, const char* name,
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
   for (int n = 1; n < y.cols(); ++n) {
     for (int m = 0; m < n && m < y.rows(); ++m) {
       if (y(m, n) != 0) {
@@ -45,6 +45,6 @@ inline void check_lower_triangular(
   }
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

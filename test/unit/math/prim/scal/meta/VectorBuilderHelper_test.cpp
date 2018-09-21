@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/scal.hpp>
+#include <gtest/gtest.h>
 
 TEST(MetaTraits, VectorBuilderHelper_false_false) {
   using stan::VectorBuilderHelper;

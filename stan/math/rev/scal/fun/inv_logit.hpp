@@ -1,19 +1,19 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_INV_LOGIT_HPP
 #define STAN_MATH_REV_SCAL_FUN_INV_LOGIT_HPP
 
-#include <stan/math/prim/scal/fun/inv_logit.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/scal/fun/inv_logit.hpp>
 
 namespace stan {
 namespace math {
 
 namespace {
 class inv_logit_vari : public op_v_vari {
-public:
-  explicit inv_logit_vari(vari *avi) : op_v_vari(inv_logit(avi->val_), avi) {}
+ public:
+  explicit inv_logit_vari(vari* avi) : op_v_vari(inv_logit(avi->val_), avi) {}
   void chain() { avi_->adj_ += adj_ * val_ * (1.0 - val_); }
 };
-} // namespace
+}  // namespace
 
 /**
  * The inverse logit function for variables (stan).
@@ -28,8 +28,8 @@ public:
  * @param a Argument variable.
  * @return Inverse logit of argument.
  */
-inline var inv_logit(const var &a) { return var(new inv_logit_vari(a.vi_)); }
+inline var inv_logit(const var& a) { return var(new inv_logit_vari(a.vi_)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

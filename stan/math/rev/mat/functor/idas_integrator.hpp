@@ -1,20 +1,20 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_IDAS_INTEGRATOR_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_IDAS_INTEGRATOR_HPP
 
-#include <algorithm>
-#include <idas/idas.h>
-#include <idas/idas_direct.h>
-#include <nvector/nvector_serial.h>
-#include <ostream>
+#include <stan/math/prim/scal/err/check_less.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_less.hpp>
-#include <stan/math/rev/mat/functor/idas_forward_system.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
-#include <sunlinsol/sunlinsol_dense.h>
+#include <stan/math/rev/mat/functor/idas_forward_system.hpp>
+#include <idas/idas.h>
+#include <idas/idas_direct.h>
 #include <sunmatrix/sunmatrix_dense.h>
+#include <sunlinsol/sunlinsol_dense.h>
+#include <nvector/nvector_serial.h>
+#include <ostream>
 #include <vector>
+#include <algorithm>
 
 enum IDAS_SENSITIVITY { forward };
 
@@ -31,7 +31,8 @@ class idas_integrator {
   /**
    * Forward decl
    */
-  template <typename Dae> void init_sensitivity(Dae &dae);
+  template <typename Dae>
+  void init_sensitivity(Dae& dae);
 
   /**
    * Placeholder for data-only idas_forword_system, no sensitivty
@@ -40,7 +41,7 @@ class idas_integrator {
    * @param[in] dae DAE system
    */
   template <typename F>
-  void init_sensitivity(idas_forward_system<F, double, double, double> &dae) {}
+  void init_sensitivity(idas_forward_system<F, double, double, double>& dae) {}
 
   // /**
   //  *  idas adjoint sens calculation requires different initialization
@@ -60,17 +61,17 @@ class idas_integrator {
   // }
 
   template <typename F>
-  void solve(idas_forward_system<F, double, double, double> &dae,
-             const double &t0, const std::vector<double> &ts,
-             std::vector<std::vector<double>> &res_yy);
+  void solve(idas_forward_system<F, double, double, double>& dae,
+             const double& t0, const std::vector<double>& ts,
+             std::vector<std::vector<double> >& res_yy);
 
   template <typename Dae>
-  void solve(Dae &dae, const double &t0, const std::vector<double> &ts,
-             typename Dae::return_type &res_yy);
+  void solve(Dae& dae, const double& t0, const std::vector<double>& ts,
+             typename Dae::return_type& res_yy);
 
   // TODO(yizhang): adjoint sensitivity solver
 
-public:
+ public:
   static constexpr int IDAS_MAX_STEPS = 500;
   /**
    * constructor
@@ -111,14 +112,14 @@ public:
    * same size as the state variable, corresponding to a time in ts.
    */
   template <typename Dae>
-  typename Dae::return_type integrate(Dae &dae, double t0,
-                                      const std::vector<double> &ts) {
+  typename Dae::return_type integrate(Dae& dae, double t0,
+                                      const std::vector<double>& ts) {
     using Eigen::Dynamic;
     using Eigen::Matrix;
     using Eigen::MatrixXd;
     using Eigen::VectorXd;
 
-    static const char *caller = "idas_integrator";
+    static const char* caller = "idas_integrator";
     check_finite(caller, "initial time", t0);
     check_finite(caller, "times", ts);
     check_ordered(caller, "times", ts);
@@ -147,7 +148,7 @@ public:
       init_sensitivity(dae);
 
       solve(dae, t0, ts, res_yy);
-    } catch (const std::exception &e) {
+    } catch (const std::exception& e) {
       SUNLinSolFree(LS);
       SUNMatDestroy(A);
       throw;
@@ -158,7 +159,7 @@ public:
 
     return res_yy;
   }
-}; // idas integrator
+};  // idas integrator
 
 /**
  * Initialize sensitivity calculation and set
@@ -168,7 +169,8 @@ public:
  * @tparam Dae DAE system type
  * @param[in/out] dae DAE system
  */
-template <typename Dae> void idas_integrator::init_sensitivity(Dae &dae) {
+template <typename Dae>
+void idas_integrator::init_sensitivity(Dae& dae) {
   if (Dae::need_sens) {
     auto mem = dae.mem();
     auto yys = dae.nv_yys();
@@ -200,9 +202,9 @@ template <typename Dae> void idas_integrator::init_sensitivity(Dae &dae) {
  * @param[out] res_yy DAE solutions
  */
 template <typename F>
-void idas_integrator::solve(idas_forward_system<F, double, double, double> &dae,
-                            const double &t0, const std::vector<double> &ts,
-                            std::vector<std::vector<double>> &res_yy) {
+void idas_integrator::solve(idas_forward_system<F, double, double, double>& dae,
+                            const double& t0, const std::vector<double>& ts,
+                            std::vector<std::vector<double> >& res_yy) {
   double t1 = t0;
   size_t i = 0;
   auto mem = dae.mem();
@@ -227,9 +229,9 @@ void idas_integrator::solve(idas_forward_system<F, double, double, double> &dae,
  * @param[out] res_yy DAE solutions
  */
 template <typename Dae>
-void idas_integrator::solve(Dae &dae, const double &t0,
-                            const std::vector<double> &ts,
-                            typename Dae::return_type &res_yy) {
+void idas_integrator::solve(Dae& dae, const double& t0,
+                            const std::vector<double>& ts,
+                            typename Dae::return_type& res_yy) {
   double t1 = t0;
   size_t i = 0;
   auto mem = dae.mem();
@@ -250,14 +252,14 @@ void idas_integrator::solve(Dae &dae, const double &t0,
       for (size_t j = 0; j < ns; ++j) {
         sol_grad[j] = NV_Ith_S(yys[j], k);
       }
-      sol_t[k] =
-          stan::math::precomputed_gradients(NV_Ith_S(yy, k), vars, sol_grad);
+      sol_t[k]
+          = stan::math::precomputed_gradients(NV_Ith_S(yy, k), vars, sol_grad);
     }
     res_yy[i] = sol_t;
     ++i;
   });
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

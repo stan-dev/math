@@ -1,14 +1,14 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_SYMMETRIC_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_SYMMETRIC_HPP
 
-#include <sstream>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/error_index.hpp>
+#include <sstream>
 #include <string>
 
 namespace stan {
@@ -31,24 +31,24 @@ namespace math {
  *   main diagonal is <code>NaN</code>
  */
 template <typename T_y>
-inline void
-check_symmetric(const char *function, const char *name,
-                const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y) {
+inline void check_symmetric(
+    const char* function, const char* name,
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
   check_square(function, name, y);
 
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::fabs;
 
-  typedef typename index_type<Matrix<T_y, Dynamic, Dynamic>>::type size_type;
+  typedef typename index_type<Matrix<T_y, Dynamic, Dynamic> >::type size_type;
 
   size_type k = y.rows();
   if (k == 1)
     return;
   for (size_type m = 0; m < k; ++m) {
     for (size_type n = m + 1; n < k; ++n) {
-      if (!(fabs(value_of(y(m, n)) - value_of(y(n, m))) <=
-            CONSTRAINT_TOLERANCE)) {
+      if (!(fabs(value_of(y(m, n)) - value_of(y(n, m)))
+            <= CONSTRAINT_TOLERANCE)) {
         std::ostringstream msg1;
         msg1 << "is not symmetric. " << name << "["
              << stan::error_index::value + m << ","
@@ -65,6 +65,6 @@ check_symmetric(const char *function, const char *name,
   }
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

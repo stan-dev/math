@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 TEST(is_vector_like, MatrixXd) {
@@ -7,7 +7,7 @@ TEST(is_vector_like, MatrixXd) {
 }
 
 TEST(is_vector_like, vector_of_MatrixXd) {
-  EXPECT_TRUE(stan::is_vector_like<std::vector<Eigen::MatrixXd>>::value);
+  EXPECT_TRUE(stan::is_vector_like<std::vector<Eigen::MatrixXd> >::value);
 }
 
 TEST(is_vector_like, VectorXd) {
@@ -15,7 +15,7 @@ TEST(is_vector_like, VectorXd) {
 }
 
 TEST(is_vector_like, vector_of_VectorXd) {
-  EXPECT_TRUE(stan::is_vector_like<std::vector<Eigen::VectorXd>>::value);
+  EXPECT_TRUE(stan::is_vector_like<std::vector<Eigen::VectorXd> >::value);
 }
 
 TEST(is_vector_like, RowVectorXd) {
@@ -23,5 +23,5 @@ TEST(is_vector_like, RowVectorXd) {
 }
 
 TEST(is_vector_like, vector_of_RowVectorXd) {
-  EXPECT_TRUE(stan::is_vector_like<std::vector<Eigen::RowVectorXd>>::value);
+  EXPECT_TRUE(stan::is_vector_like<std::vector<Eigen::RowVectorXd> >::value);
 }

@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
-#include <limits>
 #include <stan/math/mix/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <limits>
 
 using stan::math::fvar;
 using stan::math::var;
@@ -482,7 +482,7 @@ TEST(AgradMixMatrixOperatorDivision, fv_matrix_2ndDeriv) {
 TEST(AgradMixMatrixOperatorDivision, ffv_scalar_1stDeriv) {
   using stan::math::divide;
   double d1, d2;
-  fvar<fvar<var>> v1, v2;
+  fvar<fvar<var> > v1, v2;
 
   d1 = 10;
   v1 = 10;
@@ -536,7 +536,7 @@ TEST(AgradMixMatrixOperatorDivision, ffv_scalar_1stDeriv) {
 TEST(AgradMixMatrixOperatorDivision, ffv_scalar_2ndDeriv_1) {
   using stan::math::divide;
   double d2;
-  fvar<fvar<var>> v1, v2;
+  fvar<fvar<var> > v1, v2;
 
   v1 = 10;
   v1.d_ = 1.0;
@@ -550,7 +550,7 @@ TEST(AgradMixMatrixOperatorDivision, ffv_scalar_2ndDeriv_1) {
 TEST(AgradMixMatrixOperatorDivision, ffv_scalar_2ndDeriv_2) {
   using stan::math::divide;
   double d2;
-  fvar<fvar<var>> v1, v2;
+  fvar<fvar<var> > v1, v2;
 
   v1 = 10;
   v1.d_ = 1.0;
@@ -564,7 +564,7 @@ TEST(AgradMixMatrixOperatorDivision, ffv_scalar_2ndDeriv_2) {
 TEST(AgradMixMatrixOperatorDivision, ffv_scalar_3rdDeriv) {
   using stan::math::divide;
   double d2;
-  fvar<fvar<var>> v1, v2;
+  fvar<fvar<var> > v1, v2;
 
   v1 = 10;
   v1.d_ = 1.0;
@@ -584,7 +584,7 @@ TEST(AgradMixMatrixOperatorDivision, ffv_vector_1stDeriv) {
   vector_d d1(3);
   vector_ffv v1(3);
   double d2;
-  fvar<fvar<var>> v2;
+  fvar<fvar<var> > v2;
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
@@ -686,7 +686,7 @@ TEST(AgradMixMatrixOperatorDivision, ffv_vector_2ndDeriv_1) {
   using stan::math::vector_ffv;
 
   vector_ffv v1(3);
-  fvar<fvar<var>> v2;
+  fvar<fvar<var> > v2;
 
   v1 << 100, 0, -3;
   v1(0).d_ = 1.0;
@@ -710,7 +710,7 @@ TEST(AgradMixMatrixOperatorDivision, ffv_vector_2ndDeriv_2) {
   using stan::math::vector_ffv;
 
   vector_ffv v1(3);
-  fvar<fvar<var>> v2;
+  fvar<fvar<var> > v2;
 
   v1 << 100, 0, -3;
   v1(0).d_ = 1.0;
@@ -734,7 +734,7 @@ TEST(AgradMixMatrixOperatorDivision, ffv_vector_3rdDeriv) {
   using stan::math::vector_ffv;
 
   vector_ffv v1(3);
-  fvar<fvar<var>> v2;
+  fvar<fvar<var> > v2;
 
   v1 << 100, 0, -3;
   v1(0).d_ = 1.0;
@@ -764,7 +764,7 @@ TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_1stDeriv) {
   row_vector_d d1(3);
   row_vector_ffv v1(3);
   double d2;
-  fvar<fvar<var>> v2;
+  fvar<fvar<var> > v2;
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
@@ -865,7 +865,7 @@ TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_2ndDeriv_1) {
   using stan::math::row_vector_ffv;
 
   row_vector_ffv v1(3);
-  fvar<fvar<var>> v2;
+  fvar<fvar<var> > v2;
 
   v1 << 100, 0, -3;
   v1(0).d_ = 1.0;
@@ -890,7 +890,7 @@ TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_2ndDeriv_2) {
   using stan::math::row_vector_ffv;
 
   row_vector_ffv v1(3);
-  fvar<fvar<var>> v2;
+  fvar<fvar<var> > v2;
 
   v1 << 100, 0, -3;
   v1(0).d_ = 1.0;
@@ -915,7 +915,7 @@ TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_3rdDeriv) {
   using stan::math::row_vector_ffv;
 
   row_vector_ffv v1(3);
-  fvar<fvar<var>> v2;
+  fvar<fvar<var> > v2;
 
   v1 << 100, 0, -3;
   v1(0).d_ = 1.0;
@@ -946,7 +946,7 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_1stDeriv) {
   matrix_d d1(2, 2);
   matrix_ffv v1(2, 2);
   double d2;
-  fvar<fvar<var>> v2;
+  fvar<fvar<var> > v2;
 
   d1 << 100, 0, -3, 4;
   v1 << 100, 0, -3, 4;
@@ -1069,7 +1069,7 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_2ndDeriv_1) {
   using stan::math::matrix_ffv;
 
   matrix_ffv v1(2, 2);
-  fvar<fvar<var>> v2;
+  fvar<fvar<var> > v2;
 
   v1 << 100, 0, -3, 4;
   v1(0, 0).d_ = 1.0;
@@ -1098,7 +1098,7 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_2ndDeriv_2) {
   using stan::math::matrix_ffv;
 
   matrix_ffv v1(2, 2);
-  fvar<fvar<var>> v2;
+  fvar<fvar<var> > v2;
 
   v1 << 100, 0, -3, 4;
   v1(0, 0).d_ = 1.0;
@@ -1127,7 +1127,7 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_3rdDeriv) {
   using stan::math::matrix_ffv;
 
   matrix_ffv v1(2, 2);
-  fvar<fvar<var>> v2;
+  fvar<fvar<var> > v2;
 
   v1 << 100, 0, -3, 4;
   v1(0, 0).d_ = 1.0;

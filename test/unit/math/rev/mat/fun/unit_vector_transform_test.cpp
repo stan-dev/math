@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/rev/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/jacobian.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
@@ -31,7 +31,7 @@ TEST(probTransform, unit_vector_jacobian) {
   deps.push_back(x(1));
   deps.push_back(r2);
 
-  vector<vector<double>> jacobian;
+  vector<vector<double> > jacobian;
   stan::math::jacobian(deps, indeps, jacobian);
 
   Matrix<double, Dynamic, Dynamic> J(3, 3);

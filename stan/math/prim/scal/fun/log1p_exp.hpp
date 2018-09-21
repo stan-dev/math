@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOG1P_EXP_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOG1P_EXP_HPP
 
-#include <cmath>
 #include <stan/math/prim/scal/fun/log1p.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -47,7 +47,7 @@ inline double log1p_exp(double a) {
   return log1p(exp(a));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

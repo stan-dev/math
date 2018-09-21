@@ -1,7 +1,7 @@
-#include <boost/math/distributions.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <gtest/gtest.h>
 #include <stan/math/mix/mat.hpp>
+#include <gtest/gtest.h>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/math/distributions.hpp>
 #include <vector>
 
 using Eigen::Dynamic;
@@ -30,7 +30,7 @@ TEST(ProbDistributionsMultinomial, fvar_fvar_var) {
   ns.push_back(1);
   ns.push_back(2);
   ns.push_back(3);
-  Matrix<fvar<fvar<var>>, Dynamic, 1> theta(3, 1);
+  Matrix<fvar<fvar<var> >, Dynamic, 1> theta(3, 1);
   theta << 0.2, 0.3, 0.5;
   for (int i = 0; i < 3; i++)
     theta(i).d_.val_ = 1.0;

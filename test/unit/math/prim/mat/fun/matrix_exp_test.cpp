@@ -1,10 +1,10 @@
-#include <algorithm>
+#include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
+#include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
 #include <cstdlib>
 #include <ctime>
-#include <gtest/gtest.h>
+#include <algorithm>
 #include <random>
-#include <stan/math/prim/mat.hpp>
-#include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
 
 TEST(MathMatrix, matrix_exp_1x1) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(1, 1), m2(1, 1);
@@ -56,8 +56,8 @@ TEST(MathMatrix, matrix_exp_3x3_2) {
 
 TEST(MathMatrix, matrix_exp_100x100) {
   int size = 100;
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>
-      S = Eigen::MatrixXd::Identity(size, size),
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> S
+      = Eigen::MatrixXd::Identity(size, size),
       I = Eigen::MatrixXd::Identity(size, size);
   std::random_device rd;
   std::mt19937 mt(rd());
@@ -69,20 +69,21 @@ TEST(MathMatrix, matrix_exp_100x100) {
       col2 = rd() % size;
     S.col(col1) += S.col(col2) * std::pow(-1, rd());
   }
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> S_inv =
-      stan::math::mdivide_right(I, S);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> S_inv
+      = stan::math::mdivide_right(I, S);
   Eigen::Matrix<double, 1, Eigen::Dynamic> diag_elements(size);
   diag_elements.setRandom();
-  Eigen::Matrix<double, 1, Eigen::Dynamic> exp_diag_elements =
-      stan::math::exp(diag_elements);
+  Eigen::Matrix<double, 1, Eigen::Dynamic> exp_diag_elements
+      = stan::math::exp(diag_elements);
 
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>
-      A = S * diag_elements.asDiagonal() * S_inv,
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> A
+      = S * diag_elements.asDiagonal() * S_inv,
       exp_A = S * exp_diag_elements.asDiagonal() * S_inv,
       expm_A = stan::math::matrix_exp(A);
 
-  double rel_err = 1e-6 * std::max(exp_A.cwiseAbs().maxCoeff(),
-                                   expm_A.cwiseAbs().maxCoeff());
+  double rel_err
+      = 1e-6
+        * std::max(exp_A.cwiseAbs().maxCoeff(), expm_A.cwiseAbs().maxCoeff());
 
   for (int i = 0; i < size; i++)
     for (int j = 0; j < size; j++)

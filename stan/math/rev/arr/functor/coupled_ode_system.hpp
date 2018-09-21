@@ -1,14 +1,14 @@
 #ifndef STAN_MATH_REV_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 #define STAN_MATH_REV_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 
-#include <ostream>
-#include <stan/math/prim/arr/fun/value_of.hpp>
-#include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/arr/meta/get.hpp>
 #include <stan/math/prim/arr/meta/length.hpp>
+#include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
+#include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
+#include <stan/math/rev/core.hpp>
+#include <ostream>
 #include <stdexcept>
 #include <vector>
 
@@ -40,17 +40,18 @@ namespace math {
  *
  * @tparam F type of functor for the base ode system.
  */
-template <typename F> struct coupled_ode_system<F, double, var> {
-  const F &f_;
-  const std::vector<double> &y0_dbl_;
-  const std::vector<var> &theta_;
+template <typename F>
+struct coupled_ode_system<F, double, var> {
+  const F& f_;
+  const std::vector<double>& y0_dbl_;
+  const std::vector<var>& theta_;
   const std::vector<double> theta_dbl_;
-  const std::vector<double> &x_;
-  const std::vector<int> &x_int_;
+  const std::vector<double>& x_;
+  const std::vector<int>& x_int_;
   const size_t N_;
   const size_t M_;
   const size_t size_;
-  std::ostream *msgs_;
+  std::ostream* msgs_;
 
   /**
    * Construct a coupled ODE system with the specified base
@@ -64,12 +65,19 @@ template <typename F> struct coupled_ode_system<F, double, var> {
    * @param[in] x_int integer data.
    * @param[in, out] msgs stream to which messages are printed.
    */
-  coupled_ode_system(const F &f, const std::vector<double> &y0,
-                     const std::vector<var> &theta,
-                     const std::vector<double> &x,
-                     const std::vector<int> &x_int, std::ostream *msgs)
-      : f_(f), y0_dbl_(y0), theta_(theta), theta_dbl_(value_of(theta)), x_(x),
-        x_int_(x_int), N_(y0.size()), M_(theta.size()), size_(N_ + N_ * M_),
+  coupled_ode_system(const F& f, const std::vector<double>& y0,
+                     const std::vector<var>& theta,
+                     const std::vector<double>& x,
+                     const std::vector<int>& x_int, std::ostream* msgs)
+      : f_(f),
+        y0_dbl_(y0),
+        theta_(theta),
+        theta_dbl_(value_of(theta)),
+        x_(x),
+        x_int_(x_int),
+        N_(y0.size()),
+        M_(theta.size()),
+        size_(N_ + N_ * M_),
         msgs_(msgs) {}
 
   /**
@@ -89,7 +97,7 @@ template <typename F> struct coupled_ode_system<F, double, var> {
    * y is the base ODE system state
    *
    */
-  void operator()(const std::vector<double> &z, std::vector<double> &dz_dt,
+  void operator()(const std::vector<double>& z, std::vector<double>& dz_dt,
                   double t) const {
     using std::vector;
 
@@ -128,7 +136,7 @@ template <typename F> struct coupled_ode_system<F, double, var> {
           dz_dt[N_ + i + j * N_] = temp_deriv;
         }
       }
-    } catch (const std::exception &e) {
+    } catch (const std::exception& e) {
       recover_memory_nested();
       throw;
     }
@@ -168,11 +176,11 @@ template <typename F> struct coupled_ode_system<F, double, var> {
    *
    * @param y coupled states after solving the ode
    */
-  std::vector<std::vector<var>>
-  decouple_states(const std::vector<std::vector<double>> &y) const {
+  std::vector<std::vector<var> > decouple_states(
+      const std::vector<std::vector<double> >& y) const {
     std::vector<var> temp_vars(N_);
     std::vector<double> temp_gradients(M_);
-    std::vector<std::vector<var>> y_return(y.size());
+    std::vector<std::vector<var> > y_return(y.size());
 
     for (size_t i = 0; i < y.size(); i++) {
       // iterate over number of equations
@@ -215,14 +223,15 @@ template <typename F> struct coupled_ode_system<F, double, var> {
  *
  * @tparam F type of base ODE system functor
  */
-template <typename F> struct coupled_ode_system<F, var, double> {
-  const F &f_;
-  const std::vector<var> &y0_;
+template <typename F>
+struct coupled_ode_system<F, var, double> {
+  const F& f_;
+  const std::vector<var>& y0_;
   const std::vector<double> y0_dbl_;
-  const std::vector<double> &theta_dbl_;
-  const std::vector<double> &x_;
-  const std::vector<int> &x_int_;
-  std::ostream *msgs_;
+  const std::vector<double>& theta_dbl_;
+  const std::vector<double>& x_;
+  const std::vector<int>& x_int_;
+  std::ostream* msgs_;
   const size_t N_;
   const size_t M_;
   const size_t size_;
@@ -240,12 +249,19 @@ template <typename F> struct coupled_ode_system<F, var, double> {
    * @param[in] x_int integer data.
    * @param[in, out] msgs output stream for messages.
    */
-  coupled_ode_system(const F &f, const std::vector<var> &y0,
-                     const std::vector<double> &theta,
-                     const std::vector<double> &x,
-                     const std::vector<int> &x_int, std::ostream *msgs)
-      : f_(f), y0_(y0), y0_dbl_(value_of(y0)), theta_dbl_(theta), x_(x),
-        x_int_(x_int), msgs_(msgs), N_(y0.size()), M_(theta.size()),
+  coupled_ode_system(const F& f, const std::vector<var>& y0,
+                     const std::vector<double>& theta,
+                     const std::vector<double>& x,
+                     const std::vector<int>& x_int, std::ostream* msgs)
+      : f_(f),
+        y0_(y0),
+        y0_dbl_(value_of(y0)),
+        theta_dbl_(theta),
+        x_(x),
+        x_int_(x_int),
+        msgs_(msgs),
+        N_(y0.size()),
+        M_(theta.size()),
         size_(N_ + N_ * N_) {}
 
   /**
@@ -264,7 +280,7 @@ template <typename F> struct coupled_ode_system<F, var, double> {
    * y is the base ODE system state
    *
    */
-  void operator()(const std::vector<double> &z, std::vector<double> &dz_dt,
+  void operator()(const std::vector<double>& z, std::vector<double>& dz_dt,
                   double t) const {
     using std::vector;
 
@@ -296,7 +312,7 @@ template <typename F> struct coupled_ode_system<F, var, double> {
           dz_dt[N_ + i + j * N_] = temp_deriv;
         }
       }
-    } catch (const std::exception &e) {
+    } catch (const std::exception& e) {
       recover_memory_nested();
       throw;
     }
@@ -340,13 +356,13 @@ template <typename F> struct coupled_ode_system<F, var, double> {
    *
    * @param y the vector of the coupled states after solving the ode
    */
-  std::vector<std::vector<var>>
-  decouple_states(const std::vector<std::vector<double>> &y) const {
+  std::vector<std::vector<var> > decouple_states(
+      const std::vector<std::vector<double> >& y) const {
     using std::vector;
 
     vector<var> temp_vars(N_);
     vector<double> temp_gradients(N_);
-    vector<vector<var>> y_return(y.size());
+    vector<vector<var> > y_return(y.size());
 
     for (size_t i = 0; i < y.size(); i++) {
       // iterate over number of equations
@@ -399,18 +415,19 @@ template <typename F> struct coupled_ode_system<F, var, double> {
  *
  * @tparam F the functor for the base ode system
  */
-template <typename F> struct coupled_ode_system<F, var, var> {
-  const F &f_;
-  const std::vector<var> &y0_;
+template <typename F>
+struct coupled_ode_system<F, var, var> {
+  const F& f_;
+  const std::vector<var>& y0_;
   const std::vector<double> y0_dbl_;
-  const std::vector<var> &theta_;
+  const std::vector<var>& theta_;
   const std::vector<double> theta_dbl_;
-  const std::vector<double> &x_;
-  const std::vector<int> &x_int_;
+  const std::vector<double>& x_;
+  const std::vector<int>& x_int_;
   const size_t N_;
   const size_t M_;
   const size_t size_;
-  std::ostream *msgs_;
+  std::ostream* msgs_;
 
   /**
    * Construct a coupled ODE system with unknown initial value and
@@ -425,13 +442,21 @@ template <typename F> struct coupled_ode_system<F, var, var> {
    * @param[in] x_int integer data.
    * @param[in, out] msgs output stream to which to print messages.
    */
-  coupled_ode_system(const F &f, const std::vector<var> &y0,
-                     const std::vector<var> &theta,
-                     const std::vector<double> &x,
-                     const std::vector<int> &x_int, std::ostream *msgs)
-      : f_(f), y0_(y0), y0_dbl_(value_of(y0)), theta_(theta),
-        theta_dbl_(value_of(theta)), x_(x), x_int_(x_int), N_(y0.size()),
-        M_(theta.size()), size_(N_ + N_ * (N_ + M_)), msgs_(msgs) {}
+  coupled_ode_system(const F& f, const std::vector<var>& y0,
+                     const std::vector<var>& theta,
+                     const std::vector<double>& x,
+                     const std::vector<int>& x_int, std::ostream* msgs)
+      : f_(f),
+        y0_(y0),
+        y0_dbl_(value_of(y0)),
+        theta_(theta),
+        theta_dbl_(value_of(theta)),
+        x_(x),
+        x_int_(x_int),
+        N_(y0.size()),
+        M_(theta.size()),
+        size_(N_ + N_ * (N_ + M_)),
+        msgs_(msgs) {}
 
   /**
    * Populates the derivative vector with derivatives of the
@@ -449,7 +474,7 @@ template <typename F> struct coupled_ode_system<F, var, var> {
    * y is the base ODE system state
    *
    */
-  void operator()(const std::vector<double> &z, std::vector<double> &dz_dt,
+  void operator()(const std::vector<double>& z, std::vector<double>& dz_dt,
                   double t) const {
     using std::vector;
 
@@ -488,7 +513,7 @@ template <typename F> struct coupled_ode_system<F, var, var> {
           dz_dt[N_ + i + j * N_] = temp_deriv;
         }
       }
-    } catch (const std::exception &e) {
+    } catch (const std::exception& e) {
       recover_memory_nested();
       throw;
     }
@@ -529,8 +554,8 @@ template <typename F> struct coupled_ode_system<F, var, var> {
    *
    * @param y the vector of the coupled states after solving the ode
    */
-  std::vector<std::vector<var>>
-  decouple_states(const std::vector<std::vector<double>> &y) const {
+  std::vector<std::vector<var> > decouple_states(
+      const std::vector<std::vector<double> >& y) const {
     using std::vector;
 
     vector<var> vars = y0_;
@@ -538,7 +563,7 @@ template <typename F> struct coupled_ode_system<F, var, var> {
 
     vector<var> temp_vars(N_);
     vector<double> temp_gradients(N_ + M_);
-    vector<vector<var>> y_return(y.size());
+    vector<vector<var> > y_return(y.size());
 
     for (size_t i = 0; i < y.size(); i++) {
       // iterate over number of equations
@@ -556,6 +581,6 @@ template <typename F> struct coupled_ode_system<F, var, var> {
   }
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

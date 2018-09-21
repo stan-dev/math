@@ -1,11 +1,11 @@
-#include <algorithm>
-#include <cstdlib>
-#include <ctime>
-#include <gtest/gtest.h>
-#include <random>
 #include <stan/math/rev/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/expect_matrix_eq.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <random>
+#include <cstdlib>
+#include <ctime>
+#include <algorithm>
 #include <vector>
 
 TEST(MathMatrix, matrix_exp_1x1) {
@@ -100,19 +100,17 @@ TEST(MathMatrix, matrix_exp_3x3) {
       VEC g;
       m1_exp(k, l).grad(x, g);
 
-      double rel_err =
-          std::max(dm1_exp_da.cwiseAbs().maxCoeff().val(), std::abs(g[0])) *
-          1e-10;
+      double rel_err
+          = std::max(dm1_exp_da.cwiseAbs().maxCoeff().val(), std::abs(g[0]))
+            * 1e-10;
       EXPECT_NEAR(dm1_exp_da(k, l).val(), g[0], rel_err);
 
-      rel_err =
-          std::max(dm1_exp_db.cwiseAbs().maxCoeff().val(), std::abs(g[1])) *
-          1e-10;
+      rel_err = std::max(dm1_exp_db.cwiseAbs().maxCoeff().val(), std::abs(g[1]))
+                * 1e-10;
       EXPECT_NEAR(dm1_exp_db(k, l).val(), g[1], rel_err);
 
-      rel_err =
-          std::max(dm1_exp_dc.cwiseAbs().maxCoeff().val(), std::abs(g[2])) *
-          1e-10;
+      rel_err = std::max(dm1_exp_dc.cwiseAbs().maxCoeff().val(), std::abs(g[2]))
+                * 1e-10;
       EXPECT_NEAR(dm1_exp_dc(k, l).val(), g[2], rel_err);
     }
   }
@@ -147,16 +145,17 @@ TEST(MathMatrix, matrix_exp_25x25) {
   // Compute matrix exponential (analytically and using function)
   stan::math::start_nested();
   matrix_v diag_elements_var = diag_elements.cast<var>();
-  matrix_v A =
-      S.cast<var>() * diag_elements_var.asDiagonal() * S_inv.cast<var>();
+  matrix_v A
+      = S.cast<var>() * diag_elements_var.asDiagonal() * S_inv.cast<var>();
   matrix_v expm_A = stan::math::matrix_exp(A);
-  Matrix<double, Dynamic, Dynamic> exp_diag_elements =
-      stan::math::exp(diag_elements);
-  Matrix<double, Dynamic, Dynamic> exp_A =
-      S * exp_diag_elements.asDiagonal() * S_inv;
+  Matrix<double, Dynamic, Dynamic> exp_diag_elements
+      = stan::math::exp(diag_elements);
+  Matrix<double, Dynamic, Dynamic> exp_A
+      = S * exp_diag_elements.asDiagonal() * S_inv;
 
-  double rel_err = 1e-6 * std::max(exp_A.cwiseAbs().maxCoeff(),
-                                   expm_A.cwiseAbs().maxCoeff().val());
+  double rel_err = 1e-6
+                   * std::max(exp_A.cwiseAbs().maxCoeff(),
+                              expm_A.cwiseAbs().maxCoeff().val());
 
   // Test values
   for (int i = 0; i < size; i++)
@@ -177,9 +176,8 @@ TEST(MathMatrix, matrix_exp_25x25) {
         dA.setZero();
         dA(k, k) = exp(diag_elements(k));
         dA_exp = S * dA * S_inv;
-        rel_err =
-            std::max(dA_exp.cwiseAbs().maxCoeff(), stan::math::max(g_abs)) *
-            1e-6;
+        rel_err = std::max(dA_exp.cwiseAbs().maxCoeff(), stan::math::max(g_abs))
+                  * 1e-6;
         EXPECT_NEAR(dA_exp(i, j), diag_elements_var(k).adj(), rel_err);
       }
     }

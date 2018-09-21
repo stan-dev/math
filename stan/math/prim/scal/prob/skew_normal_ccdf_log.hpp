@@ -11,12 +11,11 @@ namespace math {
  * @deprecated use <code>skew_normal_lccdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-typename return_type<T_y, T_loc, T_scale, T_shape>::type
-skew_normal_ccdf_log(const T_y &y, const T_loc &mu, const T_scale &sigma,
-                     const T_shape &alpha) {
+typename return_type<T_y, T_loc, T_scale, T_shape>::type skew_normal_ccdf_log(
+    const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
   return skew_normal_lccdf<T_y, T_loc, T_scale, T_shape>(y, mu, sigma, alpha);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_VECTOR_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_VECTOR_HPP
 
-#include <sstream>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
+#include <stan/math/prim/scal/err/invalid_argument.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <sstream>
 #include <string>
 
 namespace stan {
@@ -29,8 +29,8 @@ namespace math {
  *   vector.
  */
 template <typename T, int R, int C>
-inline void check_vector(const char *function, const char *name,
-                         const Eigen::Matrix<T, R, C> &x) {
+inline void check_vector(const char* function, const char* name,
+                         const Eigen::Matrix<T, R, C>& x) {
   if (R == 1)
     return;
   if (C == 1)
@@ -47,6 +47,6 @@ inline void check_vector(const char *function, const char *name,
                    msg_str.c_str());
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

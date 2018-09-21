@@ -1,22 +1,22 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_LOG10_HPP
 #define STAN_MATH_REV_SCAL_FUN_LOG10_HPP
 
-#include <cmath>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
 
 namespace {
 class log10_vari : public op_v_vari {
-public:
+ public:
   const double exp_val_;
-  explicit log10_vari(vari *avi)
+  explicit log10_vari(vari* avi)
       : op_v_vari(std::log10(avi->val_), avi), exp_val_(avi->val_) {}
   void chain() { avi_->adj_ += adj_ / (LOG_10 * exp_val_); }
 };
-} // namespace
+}  // namespace
 
 /**
  * Return the base 10 log of the specified variable (cmath).
@@ -47,8 +47,8 @@ public:
  * @param a Variable whose log is taken.
  * @return Base 10 log of variable.
  */
-inline var log10(const var &a) { return var(new log10_vari(a.vi_)); }
+inline var log10(const var& a) { return var(new log10_vari(a.vi_)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

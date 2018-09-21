@@ -1,24 +1,24 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_CAUCHY_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_CAUCHY_LPDF_HPP
 
-#include <boost/random/cauchy_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <cmath>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <boost/random/cauchy_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -41,9 +41,9 @@ namespace math {
  * @tparam T_scale Type of scale.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type
-cauchy_lpdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
-  static const char *function = "cauchy_lpdf";
+typename return_type<T_y, T_loc, T_scale>::type cauchy_lpdf(
+    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+  static const char* function = "cauchy_lpdf";
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
 
@@ -93,8 +93,8 @@ cauchy_lpdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
     const T_partials_return y_minus_mu = y_dbl - mu_dbl;
     const T_partials_return y_minus_mu_squared = y_minus_mu * y_minus_mu;
     const T_partials_return y_minus_mu_over_sigma = y_minus_mu * inv_sigma[n];
-    const T_partials_return y_minus_mu_over_sigma_squared =
-        y_minus_mu_over_sigma * y_minus_mu_over_sigma;
+    const T_partials_return y_minus_mu_over_sigma_squared
+        = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
 
     if (include_summand<propto>::value)
       logp += NEG_LOG_PI;
@@ -104,25 +104,25 @@ cauchy_lpdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
       logp -= log1p(y_minus_mu_over_sigma_squared);
 
     if (!is_constant_struct<T_y>::value)
-      ops_partials.edge1_.partials_[n] -=
-          2 * y_minus_mu / (sigma_squared[n] + y_minus_mu_squared);
+      ops_partials.edge1_.partials_[n]
+          -= 2 * y_minus_mu / (sigma_squared[n] + y_minus_mu_squared);
     if (!is_constant_struct<T_loc>::value)
-      ops_partials.edge2_.partials_[n] +=
-          2 * y_minus_mu / (sigma_squared[n] + y_minus_mu_squared);
+      ops_partials.edge2_.partials_[n]
+          += 2 * y_minus_mu / (sigma_squared[n] + y_minus_mu_squared);
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge3_.partials_[n] +=
-          (y_minus_mu_squared - sigma_squared[n]) * inv_sigma[n] /
-          (sigma_squared[n] + y_minus_mu_squared);
+      ops_partials.edge3_.partials_[n]
+          += (y_minus_mu_squared - sigma_squared[n]) * inv_sigma[n]
+             / (sigma_squared[n] + y_minus_mu_squared);
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline typename return_type<T_y, T_loc, T_scale>::type
-cauchy_lpdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
+inline typename return_type<T_y, T_loc, T_scale>::type cauchy_lpdf(
+    const T_y& y, const T_loc& mu, const T_scale& sigma) {
   return cauchy_lpdf<false>(y, mu, sigma);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

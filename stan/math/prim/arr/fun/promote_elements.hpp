@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_ARR_FUN_PROMOTE_ELEMENTS_HPP
 #define STAN_MATH_PRIM_ARR_FUN_PROMOTE_ELEMENTS_HPP
 
-#include <cstddef>
 #include <stan/math/prim/scal/fun/promote_elements.hpp>
 #include <vector>
+#include <cstddef>
 
 namespace stan {
 namespace math {
@@ -18,14 +18,14 @@ namespace math {
  * @tparam S type of input elements, must be assignable to T
  */
 template <typename T, typename S>
-struct promote_elements<std::vector<T>, std::vector<S>> {
+struct promote_elements<std::vector<T>, std::vector<S> > {
   /**
    * Return input vector of type S as vector of type T.
    *
    * @param u vector of type S, assignable to type T
    * @returns vector of type T
    */
-  inline static std::vector<T> promote(const std::vector<S> &u) {
+  inline static std::vector<T> promote(const std::vector<S>& u) {
     std::vector<T> t;
     t.reserve(u.size());
     for (size_t i = 0; i < u.size(); ++i)
@@ -41,19 +41,20 @@ struct promote_elements<std::vector<T>, std::vector<S>> {
  *
  * @tparam T type of elements
  */
-template <typename T> struct promote_elements<std::vector<T>, std::vector<T>> {
+template <typename T>
+struct promote_elements<std::vector<T>, std::vector<T> > {
   /**
    * Return input vector.
    *
    * @param u vector of type T
    * @returns vector of type T
    */
-  inline static const std::vector<T> &promote(const std::vector<T> &u) {
+  inline static const std::vector<T>& promote(const std::vector<T>& u) {
     return u;
   }
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

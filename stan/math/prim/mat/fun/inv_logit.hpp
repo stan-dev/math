@@ -14,7 +14,10 @@ namespace math {
  * @return Inverse logit of x.
  */
 struct inv_logit_fun {
-  template <typename T> static inline T fun(const T &x) { return inv_logit(x); }
+  template <typename T>
+  static inline T fun(const T& x) {
+    return inv_logit(x);
+  }
 };
 
 /**
@@ -24,12 +27,12 @@ struct inv_logit_fun {
  * @return Inverse logit applied to each value in x.
  */
 template <typename T>
-inline typename apply_scalar_unary<inv_logit_fun, T>::return_t
-inv_logit(const T &x) {
+inline typename apply_scalar_unary<inv_logit_fun, T>::return_t inv_logit(
+    const T& x) {
   return apply_scalar_unary<inv_logit_fun, T>::apply(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

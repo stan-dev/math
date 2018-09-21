@@ -1,9 +1,9 @@
-#include <boost/math/special_functions/digamma.hpp>
-#include <boost/math/special_functions/zeta.hpp>
-#include <gtest/gtest.h>
 #include <stan/math/rev/scal.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <boost/math/special_functions/digamma.hpp>
+#include <boost/math/special_functions/zeta.hpp>
 
 TEST(AgradRev, digamma) {
   AVAR a = 0.5;
@@ -17,7 +17,8 @@ TEST(AgradRev, digamma) {
 }
 
 struct digamma_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0& arg1) const {
     return digamma(arg1);
   }
 };

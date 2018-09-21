@@ -2,16 +2,16 @@
 #define STAN_MATH_PRIM_MAT_FUN_OPENCL_COPY_HPP
 #ifdef STAN_OPENCL
 
-#include <CL/cl.hpp>
-#include <algorithm>
-#include <iostream>
-#include <stan/math/gpu/kernel_cl.hpp>
-#include <stan/math/gpu/kernels/copy.hpp>
-#include <stan/math/gpu/matrix_gpu.hpp>
 #include <stan/math/gpu/opencl_context.hpp>
+#include <stan/math/gpu/kernel_cl.hpp>
+#include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/gpu/kernels/copy.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <CL/cl.hpp>
+#include <iostream>
 #include <vector>
+#include <algorithm>
 
 namespace stan {
 namespace math {
@@ -29,7 +29,7 @@ namespace math {
  * matrices do not have matching dimensions
  */
 template <int R, int C>
-void copy(matrix_gpu &dst, const Eigen::Matrix<double, R, C> &src) {
+void copy(matrix_gpu& dst, const Eigen::Matrix<double, R, C>& src) {
   check_size_match("copy (Eigen -> GPU)", "src.rows()", src.rows(),
                    "dst.rows()", dst.rows());
   check_size_match("copy (Eigen -> GPU)", "src.cols()", src.cols(),
@@ -46,7 +46,7 @@ void copy(matrix_gpu &dst, const Eigen::Matrix<double, R, C> &src) {
        */
       queue.enqueueWriteBuffer(dst.buffer(), CL_TRUE, 0,
                                sizeof(double) * dst.size(), src.data());
-    } catch (const cl::Error &e) {
+    } catch (const cl::Error& e) {
       check_opencl_error("copy Eigen->GPU", e);
     }
   }
@@ -65,7 +65,7 @@ void copy(matrix_gpu &dst, const Eigen::Matrix<double, R, C> &src) {
  * matrices do not have matching dimensions
  */
 template <int R, int C>
-void copy(Eigen::Matrix<double, R, C> &dst, const matrix_gpu &src) {
+void copy(Eigen::Matrix<double, R, C>& dst, const matrix_gpu& src) {
   check_size_match("copy (GPU -> Eigen)", "src.rows()", src.rows(),
                    "dst.rows()", dst.rows());
   check_size_match("copy (GPU -> Eigen)", "src.cols()", src.cols(),
@@ -83,7 +83,7 @@ void copy(Eigen::Matrix<double, R, C> &dst, const matrix_gpu &src) {
        */
       queue.enqueueReadBuffer(src.buffer(), CL_TRUE, 0,
                               sizeof(double) * dst.size(), dst.data());
-    } catch (const cl::Error &e) {
+    } catch (const cl::Error& e) {
       check_opencl_error("copy GPU->Eigen", e);
     }
   }
@@ -100,7 +100,7 @@ void copy(Eigen::Matrix<double, R, C> &dst, const matrix_gpu &src) {
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
-inline void copy(matrix_gpu &dst, const matrix_gpu &src) {
+inline void copy(matrix_gpu& dst, const matrix_gpu& src) {
   check_size_match("copy (GPU -> GPU)", "src.rows()", src.rows(), "dst.rows()",
                    dst.rows());
   check_size_match("copy (GPU -> GPU)", "src.cols()", src.cols(), "dst.cols()",
@@ -114,14 +114,14 @@ inline void copy(matrix_gpu &dst, const matrix_gpu &src) {
        */
       opencl_kernels::copy(cl::NDRange(dst.rows(), dst.cols()), src.buffer(),
                            dst.buffer(), dst.rows(), dst.cols());
-    } catch (const cl::Error &e) {
+    } catch (const cl::Error& e) {
       std::cout << e.err() << std::endl;
       check_opencl_error("copy GPU->GPU", e);
     }
   }
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
 #endif

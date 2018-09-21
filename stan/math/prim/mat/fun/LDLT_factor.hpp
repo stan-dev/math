@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_LDLT_FACTOR_HPP
 #define STAN_MATH_PRIM_MAT_FUN_LDLT_FACTOR_HPP
 
-#include <boost/shared_ptr.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <boost/shared_ptr.hpp>
 
 namespace stan {
 namespace math {
@@ -59,8 +59,9 @@ namespace math {
  * @tparam R rows (as in Eigen)
  * @tparam C columns (as in Eigen)
  */
-template <typename T, int R, int C> class LDLT_factor {
-public:
+template <typename T, int R, int C>
+class LDLT_factor {
+ public:
   typedef Eigen::Matrix<T, Eigen::Dynamic, 1> vector_t;
   typedef Eigen::Matrix<T, R, C> matrix_t;
   typedef Eigen::LDLT<matrix_t> ldlt_t;
@@ -69,11 +70,11 @@ public:
 
   LDLT_factor() : N_(0), ldltP_(new ldlt_t()) {}
 
-  explicit LDLT_factor(const matrix_t &A) : N_(0), ldltP_(new ldlt_t()) {
+  explicit LDLT_factor(const matrix_t& A) : N_(0), ldltP_(new ldlt_t()) {
     compute(A);
   }
 
-  inline void compute(const matrix_t &A) {
+  inline void compute(const matrix_t& A) {
     check_square("LDLT_factor", "A", A);
     N_ = A.rows();
     ldltP_->compute(A);
@@ -93,26 +94,26 @@ public:
 
   inline T log_abs_det() const { return ldltP_->vectorD().array().log().sum(); }
 
-  inline void inverse(matrix_t &invA) const {
+  inline void inverse(matrix_t& invA) const {
     invA.setIdentity(N_);
     ldltP_->solveInPlace(invA);
   }
 
 #if EIGEN_VERSION_AT_LEAST(3, 3, 0)
   template <typename Rhs>
-  inline const Eigen::Solve<ldlt_t, Rhs>
-  solve(const Eigen::MatrixBase<Rhs> &b) const {
+  inline const Eigen::Solve<ldlt_t, Rhs> solve(
+      const Eigen::MatrixBase<Rhs>& b) const {
     return ldltP_->solve(b);
   }
 #else
   template <typename Rhs>
-  inline const Eigen::internal::solve_retval<ldlt_t, Rhs>
-  solve(const Eigen::MatrixBase<Rhs> &b) const {
+  inline const Eigen::internal::solve_retval<ldlt_t, Rhs> solve(
+      const Eigen::MatrixBase<Rhs>& b) const {
     return ldltP_->solve(b);
   }
 #endif
 
-  inline matrix_t solveRight(const matrix_t &B) const {
+  inline matrix_t solveRight(const matrix_t& B) const {
     return ldltP_->solve(B.transpose()).transpose();
   }
 
@@ -127,6 +128,6 @@ public:
   boost::shared_ptr<ldlt_t> ldltP_;
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

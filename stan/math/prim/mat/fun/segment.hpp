@@ -14,8 +14,8 @@ namespace math {
  * from the specified element - 1 of the specified vector.
  */
 template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, 1>
-segment(const Eigen::Matrix<T, Eigen::Dynamic, 1> &v, size_t i, size_t n) {
+inline Eigen::Matrix<T, Eigen::Dynamic, 1> segment(
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& v, size_t i, size_t n) {
   check_greater("segment", "n", i, 0.0);
   check_less_or_equal("segment", "n", i, static_cast<size_t>(v.rows()));
   if (n != 0) {
@@ -27,8 +27,8 @@ segment(const Eigen::Matrix<T, Eigen::Dynamic, 1> &v, size_t i, size_t n) {
 }
 
 template <typename T>
-inline Eigen::Matrix<T, 1, Eigen::Dynamic>
-segment(const Eigen::Matrix<T, 1, Eigen::Dynamic> &v, size_t i, size_t n) {
+inline Eigen::Matrix<T, 1, Eigen::Dynamic> segment(
+    const Eigen::Matrix<T, 1, Eigen::Dynamic>& v, size_t i, size_t n) {
   check_greater("segment", "n", i, 0.0);
   check_less_or_equal("segment", "n", i, static_cast<size_t>(v.cols()));
   if (n != 0) {
@@ -41,7 +41,7 @@ segment(const Eigen::Matrix<T, 1, Eigen::Dynamic> &v, size_t i, size_t n) {
 }
 
 template <typename T>
-std::vector<T> segment(const std::vector<T> &sv, size_t i, size_t n) {
+std::vector<T> segment(const std::vector<T>& sv, size_t i, size_t n) {
   check_greater("segment", "i", i, 0.0);
   check_less_or_equal("segment", "i", i, sv.size());
   if (n != 0) {
@@ -55,6 +55,6 @@ std::vector<T> segment(const std::vector<T> &sv, size_t i, size_t n) {
   return s;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

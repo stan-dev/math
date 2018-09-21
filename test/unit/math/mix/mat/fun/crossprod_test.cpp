@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradMixMatrixCrossProd, 3x3_matrix_fv_1stderiv) {
@@ -38,8 +38,8 @@ TEST(AgradMixMatrixCrossProd, 3x3_matrix_fv_1stderiv) {
   EXPECT_FLOAT_EQ(28, output(2, 1).d_.val());
   EXPECT_FLOAT_EQ(24, output(2, 2).d_.val());
 
-  AVEC z =
-      createAVEC(a.val(), b.val(), c.val(), d.val(), e.val(), f.val(), g.val());
+  AVEC z = createAVEC(a.val(), b.val(), c.val(), d.val(), e.val(), f.val(),
+                      g.val());
   VEC h;
   output(0, 0).val_.grad(z, h);
   EXPECT_FLOAT_EQ(2.0, h[0]);
@@ -71,8 +71,8 @@ TEST(AgradMixMatrixCrossProd, 3x3_matrix_fv_2ndderiv) {
 
   matrix_fv output = stan::math::crossprod(Y);
 
-  AVEC z =
-      createAVEC(a.val(), b.val(), c.val(), d.val(), e.val(), f.val(), g.val());
+  AVEC z = createAVEC(a.val(), b.val(), c.val(), d.val(), e.val(), f.val(),
+                      g.val());
   VEC h;
   output(0, 0).d_.grad(z, h);
   EXPECT_FLOAT_EQ(4.0, h[0]);
@@ -360,13 +360,13 @@ TEST(AgradMixMatrixCrossProd, 3x3_matrix_ffv_1stderiv) {
   matrix_d Z(3, 3);
   Z << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
-  fvar<fvar<var>> a(1.0, 2.0);
-  fvar<fvar<var>> b(2.0, 2.0);
-  fvar<fvar<var>> c(3.0, 2.0);
-  fvar<fvar<var>> d(4.0, 2.0);
-  fvar<fvar<var>> e(5.0, 2.0);
-  fvar<fvar<var>> f(6.0, 2.0);
-  fvar<fvar<var>> g(0.0, 2.0);
+  fvar<fvar<var> > a(1.0, 2.0);
+  fvar<fvar<var> > b(2.0, 2.0);
+  fvar<fvar<var> > c(3.0, 2.0);
+  fvar<fvar<var> > d(4.0, 2.0);
+  fvar<fvar<var> > e(5.0, 2.0);
+  fvar<fvar<var> > f(6.0, 2.0);
+  fvar<fvar<var> > g(0.0, 2.0);
   matrix_ffv Y(3, 3);
   Y << a, g, g, b, c, g, d, e, f;
 
@@ -387,9 +387,9 @@ TEST(AgradMixMatrixCrossProd, 3x3_matrix_ffv_1stderiv) {
   EXPECT_FLOAT_EQ(28, output(2, 1).d_.val().val());
   EXPECT_FLOAT_EQ(24, output(2, 2).d_.val().val());
 
-  AVEC z =
-      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(),
-                 e.val().val(), f.val().val(), g.val().val());
+  AVEC z
+      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(),
+                   e.val().val(), f.val().val(), g.val().val());
   VEC h;
   output(0, 0).val_.val().grad(z, h);
   EXPECT_FLOAT_EQ(2.0, h[0]);
@@ -409,21 +409,21 @@ TEST(AgradMixMatrixCrossProd, 3x3_matrix_ffv_2ndderiv_1) {
   matrix_d Z(3, 3);
   Z << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
-  fvar<fvar<var>> a(1.0, 2.0);
-  fvar<fvar<var>> b(2.0, 2.0);
-  fvar<fvar<var>> c(3.0, 2.0);
-  fvar<fvar<var>> d(4.0, 2.0);
-  fvar<fvar<var>> e(5.0, 2.0);
-  fvar<fvar<var>> f(6.0, 2.0);
-  fvar<fvar<var>> g(0.0, 2.0);
+  fvar<fvar<var> > a(1.0, 2.0);
+  fvar<fvar<var> > b(2.0, 2.0);
+  fvar<fvar<var> > c(3.0, 2.0);
+  fvar<fvar<var> > d(4.0, 2.0);
+  fvar<fvar<var> > e(5.0, 2.0);
+  fvar<fvar<var> > f(6.0, 2.0);
+  fvar<fvar<var> > g(0.0, 2.0);
   matrix_ffv Y(3, 3);
   Y << a, g, g, b, c, g, d, e, f;
 
   matrix_ffv output = stan::math::crossprod(Y);
 
-  AVEC z =
-      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(),
-                 e.val().val(), f.val().val(), g.val().val());
+  AVEC z
+      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(),
+                   e.val().val(), f.val().val(), g.val().val());
   VEC h;
   output(0, 0).val_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -443,21 +443,21 @@ TEST(AgradMixMatrixCrossProd, 3x3_matrix_ffv_2ndderiv_2) {
   matrix_d Z(3, 3);
   Z << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
-  fvar<fvar<var>> a(1.0, 2.0);
-  fvar<fvar<var>> b(2.0, 2.0);
-  fvar<fvar<var>> c(3.0, 2.0);
-  fvar<fvar<var>> d(4.0, 2.0);
-  fvar<fvar<var>> e(5.0, 2.0);
-  fvar<fvar<var>> f(6.0, 2.0);
-  fvar<fvar<var>> g(0.0, 2.0);
+  fvar<fvar<var> > a(1.0, 2.0);
+  fvar<fvar<var> > b(2.0, 2.0);
+  fvar<fvar<var> > c(3.0, 2.0);
+  fvar<fvar<var> > d(4.0, 2.0);
+  fvar<fvar<var> > e(5.0, 2.0);
+  fvar<fvar<var> > f(6.0, 2.0);
+  fvar<fvar<var> > g(0.0, 2.0);
   matrix_ffv Y(3, 3);
   Y << a, g, g, b, c, g, d, e, f;
 
   matrix_ffv output = stan::math::crossprod(Y);
 
-  AVEC z =
-      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(),
-                 e.val().val(), f.val().val(), g.val().val());
+  AVEC z
+      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(),
+                   e.val().val(), f.val().val(), g.val().val());
   VEC h;
   output(0, 0).d_.val().grad(z, h);
   EXPECT_FLOAT_EQ(4.0, h[0]);
@@ -477,13 +477,13 @@ TEST(AgradMixMatrixCrossProd, 3x3_matrix_ffv_3rdderiv) {
   matrix_d Z(3, 3);
   Z << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
-  fvar<fvar<var>> a(1.0, 1.0);
-  fvar<fvar<var>> b(2.0, 1.0);
-  fvar<fvar<var>> c(3.0, 1.0);
-  fvar<fvar<var>> d(4.0, 1.0);
-  fvar<fvar<var>> e(5.0, 1.0);
-  fvar<fvar<var>> f(6.0, 1.0);
-  fvar<fvar<var>> g(0.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(2.0, 1.0);
+  fvar<fvar<var> > c(3.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(5.0, 1.0);
+  fvar<fvar<var> > f(6.0, 1.0);
+  fvar<fvar<var> > g(0.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;
@@ -496,9 +496,9 @@ TEST(AgradMixMatrixCrossProd, 3x3_matrix_ffv_3rdderiv) {
 
   matrix_ffv output = stan::math::crossprod(Y);
 
-  AVEC z =
-      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(),
-                 e.val().val(), f.val().val(), g.val().val());
+  AVEC z
+      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(),
+                   e.val().val(), f.val().val(), g.val().val());
   VEC h;
   output(0, 0).d_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -518,10 +518,10 @@ TEST(AgradMixMatrixCrossProd, 2x2_matrix_ffv_1stDeriv) {
   matrix_d Z(2, 2);
   Z << 3, 0, 4, -3;
 
-  fvar<fvar<var>> a(3.0, 2.0);
-  fvar<fvar<var>> b(0.0, 2.0);
-  fvar<fvar<var>> c(4.0, 2.0);
-  fvar<fvar<var>> d(-3.0, 2.0);
+  fvar<fvar<var> > a(3.0, 2.0);
+  fvar<fvar<var> > b(0.0, 2.0);
+  fvar<fvar<var> > c(4.0, 2.0);
+  fvar<fvar<var> > d(-3.0, 2.0);
 
   matrix_ffv Y(2, 2);
   Y << a, b, c, d;
@@ -537,8 +537,8 @@ TEST(AgradMixMatrixCrossProd, 2x2_matrix_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(8, output(1, 0).d_.val().val());
   EXPECT_FLOAT_EQ(-12, output(1, 1).d_.val().val());
 
-  AVEC z =
-      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC z
+      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   output(0, 0).val_.val().grad(z, h);
   EXPECT_FLOAT_EQ(6.0, h[0]);
@@ -555,17 +555,17 @@ TEST(AgradMixMatrixCrossProd, 2x2_matrix_ffv_2ndDeriv_1) {
   matrix_d Z(2, 2);
   Z << 3, 0, 4, -3;
 
-  fvar<fvar<var>> a(3.0, 2.0);
-  fvar<fvar<var>> b(0.0, 2.0);
-  fvar<fvar<var>> c(4.0, 2.0);
-  fvar<fvar<var>> d(-3.0, 2.0);
+  fvar<fvar<var> > a(3.0, 2.0);
+  fvar<fvar<var> > b(0.0, 2.0);
+  fvar<fvar<var> > c(4.0, 2.0);
+  fvar<fvar<var> > d(-3.0, 2.0);
 
   matrix_ffv Y(2, 2);
   Y << a, b, c, d;
   matrix_ffv output = stan::math::crossprod(Y);
 
-  AVEC z =
-      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC z
+      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   output(0, 0).val().d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -582,17 +582,17 @@ TEST(AgradMixMatrixCrossProd, 2x2_matrix_ffv_2ndDeriv_2) {
   matrix_d Z(2, 2);
   Z << 3, 0, 4, -3;
 
-  fvar<fvar<var>> a(3.0, 2.0);
-  fvar<fvar<var>> b(0.0, 2.0);
-  fvar<fvar<var>> c(4.0, 2.0);
-  fvar<fvar<var>> d(-3.0, 2.0);
+  fvar<fvar<var> > a(3.0, 2.0);
+  fvar<fvar<var> > b(0.0, 2.0);
+  fvar<fvar<var> > c(4.0, 2.0);
+  fvar<fvar<var> > d(-3.0, 2.0);
 
   matrix_ffv Y(2, 2);
   Y << a, b, c, d;
   matrix_ffv output = stan::math::crossprod(Y);
 
-  AVEC z =
-      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC z
+      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   output(0, 0).d_.val().grad(z, h);
   EXPECT_FLOAT_EQ(4.0, h[0]);
@@ -609,10 +609,10 @@ TEST(AgradMixMatrixCrossProd, 2x2_matrix_ffv_3rdDeriv) {
   matrix_d Z(2, 2);
   Z << 3, 0, 4, -3;
 
-  fvar<fvar<var>> a(3.0, 1.0);
-  fvar<fvar<var>> b(0.0, 1.0);
-  fvar<fvar<var>> c(4.0, 1.0);
-  fvar<fvar<var>> d(-3.0, 1.0);
+  fvar<fvar<var> > a(3.0, 1.0);
+  fvar<fvar<var> > b(0.0, 1.0);
+  fvar<fvar<var> > c(4.0, 1.0);
+  fvar<fvar<var> > d(-3.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;
@@ -622,8 +622,8 @@ TEST(AgradMixMatrixCrossProd, 2x2_matrix_ffv_3rdDeriv) {
   Y << a, b, c, d;
   matrix_ffv output = stan::math::crossprod(Y);
 
-  AVEC z =
-      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC z
+      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   output(0, 0).d_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -636,7 +636,7 @@ TEST(AgradMixMatrixCrossProd, 1x1_matrix_ffv_1stDeriv) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var>> a(3.0, 2.0);
+  fvar<fvar<var> > a(3.0, 2.0);
 
   matrix_ffv Y(1, 1);
   Y << a;
@@ -654,7 +654,7 @@ TEST(AgradMixMatrixCrossProd, 1x1_matrix_ffv_2ndDeriv_1) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var>> a(3.0, 2.0);
+  fvar<fvar<var> > a(3.0, 2.0);
 
   matrix_ffv Y(1, 1);
   Y << a;
@@ -670,7 +670,7 @@ TEST(AgradMixMatrixCrossProd, 1x1_matrix_ffv_2ndDeriv_2) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var>> a(3.0, 2.0);
+  fvar<fvar<var> > a(3.0, 2.0);
 
   matrix_ffv Y(1, 1);
   Y << a;
@@ -686,7 +686,7 @@ TEST(AgradMixMatrixCrossProd, 1x1_matrix_ffv_3rdDeriv) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var>> a(3.0, 1.0);
+  fvar<fvar<var> > a(3.0, 1.0);
   a.val_.d_ = 1.0;
 
   matrix_ffv Y(1, 1);
@@ -704,9 +704,9 @@ TEST(AgradMixMatrixCrossProd, 1x3_matrix_ffv_1stDeriv) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var>> a(1.0, 2.0);
-  fvar<fvar<var>> b(2.0, 2.0);
-  fvar<fvar<var>> c(3.0, 2.0);
+  fvar<fvar<var> > a(1.0, 2.0);
+  fvar<fvar<var> > b(2.0, 2.0);
+  fvar<fvar<var> > c(3.0, 2.0);
 
   matrix_ffv Y(1, 3);
   Y << a, b, c;
@@ -728,9 +728,9 @@ TEST(AgradMixMatrixCrossProd, 1x3_matrix_ffv_2ndDeriv_1) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var>> a(1.0, 2.0);
-  fvar<fvar<var>> b(2.0, 2.0);
-  fvar<fvar<var>> c(3.0, 2.0);
+  fvar<fvar<var> > a(1.0, 2.0);
+  fvar<fvar<var> > b(2.0, 2.0);
+  fvar<fvar<var> > c(3.0, 2.0);
 
   matrix_ffv Y(1, 3);
   Y << a, b, c;
@@ -749,9 +749,9 @@ TEST(AgradMixMatrixCrossProd, 1x3_matrix_ffv_2ndDeriv_2) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var>> a(1.0, 2.0);
-  fvar<fvar<var>> b(2.0, 2.0);
-  fvar<fvar<var>> c(3.0, 2.0);
+  fvar<fvar<var> > a(1.0, 2.0);
+  fvar<fvar<var> > b(2.0, 2.0);
+  fvar<fvar<var> > c(3.0, 2.0);
 
   matrix_ffv Y(1, 3);
   Y << a, b, c;
@@ -770,9 +770,9 @@ TEST(AgradMixMatrixCrossProd, 1x3_matrix_ffv_3rdDeriv) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var>> a(1.0, 1.0);
-  fvar<fvar<var>> b(2.0, 1.0);
-  fvar<fvar<var>> c(3.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(2.0, 1.0);
+  fvar<fvar<var> > c(3.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;
@@ -794,12 +794,12 @@ TEST(AgradMixMatrixCrossProd, 2x3_matrix_ffv_1stDeriv) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var>> a(1.0, 2.0);
-  fvar<fvar<var>> b(2.0, 2.0);
-  fvar<fvar<var>> c(3.0, 2.0);
-  fvar<fvar<var>> d(-1.0, 2.0);
-  fvar<fvar<var>> e(4.0, 2.0);
-  fvar<fvar<var>> f(-9.0, 2.0);
+  fvar<fvar<var> > a(1.0, 2.0);
+  fvar<fvar<var> > b(2.0, 2.0);
+  fvar<fvar<var> > c(3.0, 2.0);
+  fvar<fvar<var> > d(-1.0, 2.0);
+  fvar<fvar<var> > e(4.0, 2.0);
+  fvar<fvar<var> > f(-9.0, 2.0);
 
   matrix_ffv Y(2, 3);
   Y << a, b, c, d, e, f;
@@ -831,12 +831,12 @@ TEST(AgradMixMatrixCrossProd, 2x3_matrix_ffv_2ndDeriv_1) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var>> a(1.0, 2.0);
-  fvar<fvar<var>> b(2.0, 2.0);
-  fvar<fvar<var>> c(3.0, 2.0);
-  fvar<fvar<var>> d(-1.0, 2.0);
-  fvar<fvar<var>> e(4.0, 2.0);
-  fvar<fvar<var>> f(-9.0, 2.0);
+  fvar<fvar<var> > a(1.0, 2.0);
+  fvar<fvar<var> > b(2.0, 2.0);
+  fvar<fvar<var> > c(3.0, 2.0);
+  fvar<fvar<var> > d(-1.0, 2.0);
+  fvar<fvar<var> > e(4.0, 2.0);
+  fvar<fvar<var> > f(-9.0, 2.0);
 
   matrix_ffv Y(2, 3);
   Y << a, b, c, d, e, f;
@@ -859,12 +859,12 @@ TEST(AgradMixMatrixCrossProd, 2x3_matrix_ffv_2ndDeriv_2) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var>> a(1.0, 2.0);
-  fvar<fvar<var>> b(2.0, 2.0);
-  fvar<fvar<var>> c(3.0, 2.0);
-  fvar<fvar<var>> d(-1.0, 2.0);
-  fvar<fvar<var>> e(4.0, 2.0);
-  fvar<fvar<var>> f(-9.0, 2.0);
+  fvar<fvar<var> > a(1.0, 2.0);
+  fvar<fvar<var> > b(2.0, 2.0);
+  fvar<fvar<var> > c(3.0, 2.0);
+  fvar<fvar<var> > d(-1.0, 2.0);
+  fvar<fvar<var> > e(4.0, 2.0);
+  fvar<fvar<var> > f(-9.0, 2.0);
 
   matrix_ffv Y(2, 3);
   Y << a, b, c, d, e, f;
@@ -887,12 +887,12 @@ TEST(AgradMixMatrixCrossProd, 2x3_matrix_ffv_3rdDeriv) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var>> a(1.0, 1.0);
-  fvar<fvar<var>> b(2.0, 1.0);
-  fvar<fvar<var>> c(3.0, 1.0);
-  fvar<fvar<var>> d(-1.0, 1.0);
-  fvar<fvar<var>> e(4.0, 1.0);
-  fvar<fvar<var>> f(-9.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(2.0, 1.0);
+  fvar<fvar<var> > c(3.0, 1.0);
+  fvar<fvar<var> > d(-1.0, 1.0);
+  fvar<fvar<var> > e(4.0, 1.0);
+  fvar<fvar<var> > f(-9.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;
@@ -921,12 +921,12 @@ TEST(AgradMixMatrixCrossProd, 3x2_matrix_ffv_1stDeriv) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var>> a(1.0, 2.0);
-  fvar<fvar<var>> b(2.0, 2.0);
-  fvar<fvar<var>> c(3.0, 2.0);
-  fvar<fvar<var>> d(-1.0, 2.0);
-  fvar<fvar<var>> e(4.0, 2.0);
-  fvar<fvar<var>> f(-9.0, 2.0);
+  fvar<fvar<var> > a(1.0, 2.0);
+  fvar<fvar<var> > b(2.0, 2.0);
+  fvar<fvar<var> > c(3.0, 2.0);
+  fvar<fvar<var> > d(-1.0, 2.0);
+  fvar<fvar<var> > e(4.0, 2.0);
+  fvar<fvar<var> > f(-9.0, 2.0);
 
   matrix_ffv Y(3, 2);
   Y << a, b, c, d, e, f;
@@ -958,12 +958,12 @@ TEST(AgradMixMatrixCrossProd, 3x2_matrix_ffv_2ndDeriv_1) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var>> a(1.0, 2.0);
-  fvar<fvar<var>> b(2.0, 2.0);
-  fvar<fvar<var>> c(3.0, 2.0);
-  fvar<fvar<var>> d(-1.0, 2.0);
-  fvar<fvar<var>> e(4.0, 2.0);
-  fvar<fvar<var>> f(-9.0, 2.0);
+  fvar<fvar<var> > a(1.0, 2.0);
+  fvar<fvar<var> > b(2.0, 2.0);
+  fvar<fvar<var> > c(3.0, 2.0);
+  fvar<fvar<var> > d(-1.0, 2.0);
+  fvar<fvar<var> > e(4.0, 2.0);
+  fvar<fvar<var> > f(-9.0, 2.0);
 
   matrix_ffv Y(3, 2);
   Y << a, b, c, d, e, f;
@@ -986,12 +986,12 @@ TEST(AgradMixMatrixCrossProd, 3x2_matrix_ffv_2ndDeriv_2) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var>> a(1.0, 2.0);
-  fvar<fvar<var>> b(2.0, 2.0);
-  fvar<fvar<var>> c(3.0, 2.0);
-  fvar<fvar<var>> d(-1.0, 2.0);
-  fvar<fvar<var>> e(4.0, 2.0);
-  fvar<fvar<var>> f(-9.0, 2.0);
+  fvar<fvar<var> > a(1.0, 2.0);
+  fvar<fvar<var> > b(2.0, 2.0);
+  fvar<fvar<var> > c(3.0, 2.0);
+  fvar<fvar<var> > d(-1.0, 2.0);
+  fvar<fvar<var> > e(4.0, 2.0);
+  fvar<fvar<var> > f(-9.0, 2.0);
 
   matrix_ffv Y(3, 2);
   Y << a, b, c, d, e, f;
@@ -1014,12 +1014,12 @@ TEST(AgradMixMatrixCrossProd, 3x2_matrix_ffv_3rdDeriv) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var>> a(1.0, 1.0);
-  fvar<fvar<var>> b(2.0, 1.0);
-  fvar<fvar<var>> c(3.0, 1.0);
-  fvar<fvar<var>> d(-1.0, 1.0);
-  fvar<fvar<var>> e(4.0, 1.0);
-  fvar<fvar<var>> f(-9.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(2.0, 1.0);
+  fvar<fvar<var> > c(3.0, 1.0);
+  fvar<fvar<var> > d(-1.0, 1.0);
+  fvar<fvar<var> > e(4.0, 1.0);
+  fvar<fvar<var> > f(-9.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;

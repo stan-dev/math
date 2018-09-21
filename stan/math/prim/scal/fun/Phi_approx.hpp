@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_PHI_APPROX_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_PHI_APPROX_HPP
 
-#include <cmath>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -32,7 +32,7 @@ inline double Phi_approx(double x) {
  */
 inline double Phi_approx(int x) { return Phi_approx(static_cast<double>(x)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

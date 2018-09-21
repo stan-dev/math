@@ -1,14 +1,14 @@
 #ifndef TEST_UNIT_MATH_FWD_SCAL_FUN_NAN_UTIL_HPP
 #define TEST_UNIT_MATH_FWD_SCAL_FUN_NAN_UTIL_HPP
 
-#include <Eigen/Dense>
+#include <stan/math/fwd/scal.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/math/tools/promotion.hpp>
+#include <Eigen/Dense>
 #include <limits>
-#include <stan/math/fwd/scal.hpp>
 
 template <typename F>
-void test_nan_fd(const F &f, const double &arg1, const bool &throws) {
+void test_nan_fd(const F& f, const double& arg1, const bool& throws) {
   stan::math::fvar<double> arg1_v = arg1;
   arg1_v.d_ = 1.0;
   if (throws) {
@@ -20,9 +20,9 @@ void test_nan_fd(const F &f, const double &arg1, const bool &throws) {
 }
 
 template <typename F>
-void test_nan_ffd(const F &f, const double &arg1, const bool &throws) {
+void test_nan_ffd(const F& f, const double& arg1, const bool& throws) {
   using stan::math::fvar;
-  fvar<fvar<double>> arg1_v(fvar<double>(arg1, 1.0), fvar<double>(1.0, 1.0));
+  fvar<fvar<double> > arg1_v(fvar<double>(arg1, 1.0), fvar<double>(1.0, 1.0));
 
   if (throws) {
     EXPECT_THROW(f(arg1_v), std::domain_error);
@@ -34,15 +34,16 @@ void test_nan_ffd(const F &f, const double &arg1, const bool &throws) {
   }
 }
 
-template <typename F> void test_nan_fwd(const F &f, const bool &throws) {
+template <typename F>
+void test_nan_fwd(const F& f, const bool& throws) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   test_nan_fd(f, nan, throws);
   test_nan_ffd(f, nan, throws);
 }
 
 template <typename F>
-void test_nan_fd(const F &f, const double &arg1, const double &arg2,
-                 const bool &throws) {
+void test_nan_fd(const F& f, const double& arg1, const double& arg2,
+                 const bool& throws) {
   using stan::math::fvar;
   fvar<double> arg1_v(arg1, 1.0);
   fvar<double> arg2_v(arg2, 1.0);
@@ -73,14 +74,14 @@ void test_nan_fd(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_ffd(const F &f, const double &arg1, const double &arg2,
-                  const bool &throws) {
+void test_nan_ffd(const F& f, const double& arg1, const double& arg2,
+                  const bool& throws) {
   using stan::math::fvar;
-  fvar<fvar<double>> arg1_v = arg1;
+  fvar<fvar<double> > arg1_v = arg1;
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.val_ = 1.0;
   arg1_v.d_.d_ = 1.0;
-  fvar<fvar<double>> arg2_v = arg2;
+  fvar<fvar<double> > arg2_v = arg2;
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.val_ = 1.0;
   arg2_v.d_.d_ = 1.0;
@@ -124,8 +125,8 @@ void test_nan_ffd(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_fwd(const F &f, const double &arg1, const double &arg2,
-                  const bool &throws) {
+void test_nan_fwd(const F& f, const double& arg1, const double& arg2,
+                  const bool& throws) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   Eigen::VectorXd arg1_vec(3);
   Eigen::VectorXd arg2_vec(3);
@@ -138,8 +139,8 @@ void test_nan_fwd(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_fd(const F &f, const double &arg1, const double &arg2,
-                 const double &arg3, const bool &throws) {
+void test_nan_fd(const F& f, const double& arg1, const double& arg2,
+                 const double& arg3, const bool& throws) {
   using boost::math::isnan;
   using stan::math::fvar;
   fvar<double> arg1_v(arg1, 1.0);
@@ -178,13 +179,13 @@ void test_nan_fd(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffd(const F &f, const double &arg1, const double &arg2,
-                  const double &arg3, const bool &throws) {
+void test_nan_ffd(const F& f, const double& arg1, const double& arg2,
+                  const double& arg3, const bool& throws) {
   using boost::math::isnan;
   using stan::math::fvar;
-  fvar<fvar<double>> arg1_v(arg1, 1.0);
-  fvar<fvar<double>> arg2_v(arg2, 1.0);
-  fvar<fvar<double>> arg3_v(arg3, 1.0);
+  fvar<fvar<double> > arg1_v(arg1, 1.0);
+  fvar<fvar<double> > arg2_v(arg2, 1.0);
+  fvar<fvar<double> > arg3_v(arg3, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg2_v.val_.d_ = 1.0;
@@ -238,8 +239,8 @@ void test_nan_ffd(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_fwd(const F &f, const double &arg1, const double &arg2,
-                  const double &arg3, const bool &throws) {
+void test_nan_fwd(const F& f, const double& arg1, const double& arg2,
+                  const double& arg3, const bool& throws) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   Eigen::VectorXd arg1_vec(7);
   Eigen::VectorXd arg2_vec(7);

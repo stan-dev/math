@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
+#include <gtest/gtest.h>
 
 using stan::math::fvar;
 TEST(AgradFwdMatrixSum, fd_vector) {
@@ -115,7 +115,7 @@ TEST(AgradFwdMatrixSum, ffd_vector) {
   v(4).d_ = 1.0;
   v(5).d_ = 1.0;
 
-  fvar<fvar<double>> output;
+  fvar<fvar<double> > output;
   output = sum(d);
   EXPECT_FLOAT_EQ(21.0, output.val_.val());
   EXPECT_FLOAT_EQ(0.0, output.d_.val());
@@ -147,7 +147,7 @@ TEST(AgradFwdMatrixSum, ffd_rowvector) {
   v(4).d_ = 1.0;
   v(5).d_ = 1.0;
 
-  fvar<fvar<double>> output;
+  fvar<fvar<double> > output;
   output = sum(d);
   EXPECT_FLOAT_EQ(21.0, output.val_.val());
   EXPECT_FLOAT_EQ(0.0, output.d_.val());
@@ -179,7 +179,7 @@ TEST(AgradFwdMatrixSum, ffd_matrix) {
   v(1, 1).d_ = 1.0;
   v(1, 2).d_ = 1.0;
 
-  fvar<fvar<double>> output;
+  fvar<fvar<double> > output;
   output = sum(d);
   EXPECT_FLOAT_EQ(21.0, output.val_.val());
   EXPECT_FLOAT_EQ(0.0, output.d_.val());

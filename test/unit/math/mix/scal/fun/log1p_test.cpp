@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/scal.hpp>
-#include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/util.hpp>
+#include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdLog1p, FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -40,11 +40,11 @@ TEST(AgradFwdLog1p, FvarFvarVar_1stDeriv) {
   using stan::math::log1p;
   using stan::math::var;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var>> a = log1p(x);
+  fvar<fvar<var> > a = log1p(x);
 
   EXPECT_FLOAT_EQ(log1p(0.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1 / (1.5), a.val_.d_.val());
@@ -56,11 +56,11 @@ TEST(AgradFwdLog1p, FvarFvarVar_1stDeriv) {
   a.val_.val_.grad(p, g);
   EXPECT_FLOAT_EQ(1.0 / 1.5, g[0]);
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 0.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var>> b = log1p(y);
+  fvar<fvar<var> > b = log1p(y);
   EXPECT_FLOAT_EQ(log1p(0.5), b.val_.val_.val());
   EXPECT_FLOAT_EQ(0, b.val_.d_.val());
   EXPECT_FLOAT_EQ(1 / (1.5), b.d_.val_.val());
@@ -76,22 +76,22 @@ TEST(AgradFwdLog1p, FvarFvarVar_2ndDeriv) {
   using stan::math::log1p;
   using stan::math::var;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var>> a = log1p(x);
+  fvar<fvar<var> > a = log1p(x);
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
   a.val_.d_.grad(p, g);
   EXPECT_FLOAT_EQ(-1.0 / 2.25, g[0]);
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 0.5;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var>> b = log1p(y);
+  fvar<fvar<var> > b = log1p(y);
 
   AVEC q = createAVEC(y.val_.val_);
   VEC r;
@@ -102,12 +102,12 @@ TEST(AgradFwdLog1p, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
   x.d_.val_ = 1.0;
 
-  fvar<fvar<var>> a = log1p(x);
+  fvar<fvar<var> > a = log1p(x);
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
@@ -116,7 +116,8 @@ TEST(AgradFwdLog1p, FvarFvarVar_3rdDeriv) {
 }
 
 struct log1p_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0& arg1) const {
     return log1p(arg1);
   }
 };

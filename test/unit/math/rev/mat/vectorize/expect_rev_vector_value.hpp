@@ -1,14 +1,15 @@
 #ifndef TEST_UNIT_MATH_REV_MAT_VECTORIZE_EXPECT_REV_VECTOR_VALUE_HPP
 #define TEST_UNIT_MATH_REV_MAT_VECTORIZE_EXPECT_REV_VECTOR_VALUE_HPP
 
-#include <Eigen/Dense>
-#include <gtest/gtest.h>
 #include <stan/math/rev/core/var.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/vectorize/build_rev_matrix.hpp>
 #include <test/unit/math/rev/mat/vectorize/expect_val_deriv_eq.hpp>
+#include <Eigen/Dense>
 #include <vector>
 
-template <typename F> void expect_rev_vector_value() {
+template <typename F>
+void expect_rev_vector_value() {
   using stan::math::var;
   using std::vector;
   typedef Eigen::Matrix<var, Eigen::Dynamic, 1> VectorXvar;
@@ -33,7 +34,7 @@ template <typename F> void expect_rev_vector_value() {
         d.push_back(build_rev_matrix<F>(template_vector));
         e.push_back(build_rev_matrix<F>(template_vector));
       }
-      vector<VectorXvar> fe = F::template apply<vector<VectorXvar>>(e);
+      vector<VectorXvar> fe = F::template apply<vector<VectorXvar> >(e);
       EXPECT_EQ(e[i].size(), fe[i].size());
       EXPECT_EQ(e.size(), fe.size());
       expect_val_deriv_eq(F::apply_base(d[i](j)), d[i](j), fe[i](j), e[i](j));

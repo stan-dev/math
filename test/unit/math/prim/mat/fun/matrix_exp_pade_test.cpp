@@ -1,9 +1,9 @@
-#include <algorithm>
-#include <gtest/gtest.h>
-#include <random>
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp_pade.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
+#include <algorithm>
+#include <random>
 
 TEST(MathMatrix, matrix_exp_pade_1x1) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(1, 1), m2(1, 1);
@@ -70,8 +70,9 @@ TEST(MathMatrix, matrix_exp_100x100) {
   exp_A = S * exp_diag_elements.asDiagonal() * S_inv;
   expm_A = stan::math::matrix_exp_pade(A);
 
-  double rel_err = 1e-6 * std::max(exp_A.cwiseAbs().maxCoeff(),
-                                   expm_A.cwiseAbs().maxCoeff());
+  double rel_err
+      = 1e-6
+        * std::max(exp_A.cwiseAbs().maxCoeff(), expm_A.cwiseAbs().maxCoeff());
 
   for (int i = 0; i < size; i++)
     for (int j = 0; j < size; j++)

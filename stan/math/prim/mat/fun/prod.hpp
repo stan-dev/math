@@ -13,7 +13,8 @@ namespace math {
  * @param v Specified vector.
  * @return Product of coefficients of vector.
  */
-template <typename T> inline T prod(const std::vector<T> &v) {
+template <typename T>
+inline T prod(const std::vector<T>& v) {
   if (v.size() == 0)
     return 1;
   T product = v[0];
@@ -29,12 +30,12 @@ template <typename T> inline T prod(const std::vector<T> &v) {
  * @return Product of coefficients of vector.
  */
 template <typename T, int R, int C>
-inline T prod(const Eigen::Matrix<T, R, C> &v) {
+inline T prod(const Eigen::Matrix<T, R, C>& v) {
   if (v.size() == 0)
     return 1.0;
   return v.prod();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

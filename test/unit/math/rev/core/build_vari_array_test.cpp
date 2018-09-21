@@ -1,6 +1,6 @@
+#include <stan/math/rev/core.hpp>
 #include <gtest/gtest.h>
 #include <sstream>
-#include <stan/math/rev/core.hpp>
 
 TEST(AgradRev, build_vari_array) {
   using Eigen::Dynamic;

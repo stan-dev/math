@@ -38,8 +38,8 @@ namespace math {
  * @param[out] grad_fx Gradient of function at argument
  */
 template <typename F>
-void gradient(const F &f, const Eigen::Matrix<double, Eigen::Dynamic, 1> &x,
-              double &fx, Eigen::Matrix<double, Eigen::Dynamic, 1> &grad_fx) {
+void gradient(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
+              double& fx, Eigen::Matrix<double, Eigen::Dynamic, 1>& grad_fx) {
   start_nested();
   try {
     Eigen::Matrix<var, Eigen::Dynamic, 1> x_var(x.size());
@@ -51,13 +51,13 @@ void gradient(const F &f, const Eigen::Matrix<double, Eigen::Dynamic, 1> &x,
     grad(fx_var.vi_);
     for (int i = 0; i < x.size(); ++i)
       grad_fx(i) = x_var(i).adj();
-  } catch (const std::exception & /*e*/) {
+  } catch (const std::exception& /*e*/) {
     recover_memory_nested();
     throw;
   }
   recover_memory_nested();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

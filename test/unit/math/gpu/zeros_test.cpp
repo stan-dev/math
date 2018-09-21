@@ -1,9 +1,9 @@
 #ifdef STAN_OPENCL
-#include <algorithm>
-#include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 #include <stan/math/gpu/copy.hpp>
 #include <stan/math/gpu/matrix_gpu.hpp>
-#include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
+#include <algorithm>
 
 TEST(MathMatrixGPU, zero_m_exception_pass) {
   stan::math::matrix_gpu m(1, 1);

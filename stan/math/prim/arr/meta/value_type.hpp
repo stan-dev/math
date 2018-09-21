@@ -13,7 +13,8 @@ namespace math {
  *
  * @tparam T type of elements in standard vector.
  */
-template <typename T> struct value_type<std::vector<T>> {
+template <typename T>
+struct value_type<std::vector<T> > {
   /**
    * Type of value stored in a standard vector with type
    * <code>T</code> entries.
@@ -21,6 +22,6 @@ template <typename T> struct value_type<std::vector<T>> {
   typedef T type;
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

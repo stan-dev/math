@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/rev/arr.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/arr/fun/util.hpp>
 #include <test/unit/math/rev/arr/util.hpp>
 #include <vector>
@@ -26,8 +26,8 @@ TEST(AgradRev, log_sum_exp_vector) {
   x.push_back(4.0);
   x.push_back(5.0);
   f = log_sum_exp(x);
-  double expected_log_sum_exp = std::log(
-      std::exp(1) + std::exp(2) + std::exp(3) + std::exp(4) + std::exp(5));
+  double expected_log_sum_exp = std::log(std::exp(1) + std::exp(2) + std::exp(3)
+                                         + std::exp(4) + std::exp(5));
   EXPECT_FLOAT_EQ(expected_log_sum_exp, f.val());
 
   grad_f.clear();
@@ -61,10 +61,10 @@ TEST(AgradRev, log_sum_exp_vector) {
   x.push_back(0.0);
   x.push_back(-100.0);
   f = log_sum_exp(x);
-  expected_log_sum_exp =
-      std::log(std::exp(0.0) + std::exp(-100) + std::exp(-890.0) +
-               std::exp(-900.0) + std::exp(-1000.0)) +
-      900.0;
+  expected_log_sum_exp
+      = std::log(std::exp(0.0) + std::exp(-100) + std::exp(-890.0)
+                 + std::exp(-900.0) + std::exp(-1000.0))
+        + 900.0;
   EXPECT_FLOAT_EQ(expected_log_sum_exp, f.val());
 
   f.grad(x, grad_f);

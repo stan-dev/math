@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_POISSON_LOG_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_POISSON_LOG_RNG_HPP
 
-#include <boost/random/poisson_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <boost/random/poisson_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
@@ -26,12 +26,12 @@ namespace math {
  * @throw std::domain_error if alpha is nonfinite
  */
 template <typename T_rate, class RNG>
-inline typename VectorBuilder<true, int, T_rate>::type
-poisson_log_rng(const T_rate &alpha, RNG &rng) {
+inline typename VectorBuilder<true, int, T_rate>::type poisson_log_rng(
+    const T_rate& alpha, RNG& rng) {
   using boost::random::poisson_distribution;
   using boost::variate_generator;
 
-  static const char *function = "poisson_log_rng";
+  static const char* function = "poisson_log_rng";
   static const double POISSON_MAX_LOG_RATE = 30 * std::log(2);
 
   check_finite(function, "Log rate parameter", alpha);
@@ -42,7 +42,7 @@ poisson_log_rng(const T_rate &alpha, RNG &rng) {
   VectorBuilder<true, int, T_rate> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    variate_generator<RNG &, poisson_distribution<>> poisson_rng(
+    variate_generator<RNG&, poisson_distribution<> > poisson_rng(
         rng, poisson_distribution<>(std::exp(alpha_vec[n])));
     output[n] = poisson_rng();
   }
@@ -50,6 +50,6 @@ poisson_log_rng(const T_rate &alpha, RNG &rng) {
   return output.data();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

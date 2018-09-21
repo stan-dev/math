@@ -3,28 +3,28 @@
 
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <cmath>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/gamma_q.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <stan/math/prim/scal/fun/gamma_q.hpp>
+#include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
+#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -46,9 +46,9 @@ namespace math {
  * @tparam T_scale Type of scale.
  */
 template <bool propto, typename T_y, typename T_shape, typename T_scale>
-typename return_type<T_y, T_shape, T_scale>::type
-inv_gamma_lpdf(const T_y &y, const T_shape &alpha, const T_scale &beta) {
-  static const char *function = "inv_gamma_lpdf";
+typename return_type<T_y, T_shape, T_scale>::type inv_gamma_lpdf(
+    const T_y& y, const T_shape& alpha, const T_scale& beta) {
+  static const char* function = "inv_gamma_lpdf";
   typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
       T_partials_return;
 
@@ -132,11 +132,11 @@ inv_gamma_lpdf(const T_y &y, const T_shape &alpha, const T_scale &beta) {
       logp -= beta_dbl * inv_y[n];
 
     if (!is_constant<typename is_vector<T_y>::type>::value)
-      ops_partials.edge1_.partials_[n] +=
-          -(alpha_dbl + 1) * inv_y[n] + beta_dbl * inv_y[n] * inv_y[n];
+      ops_partials.edge1_.partials_[n]
+          += -(alpha_dbl + 1) * inv_y[n] + beta_dbl * inv_y[n] * inv_y[n];
     if (!is_constant<typename is_vector<T_shape>::type>::value)
-      ops_partials.edge2_.partials_[n] +=
-          -digamma_alpha[n] + log_beta[n] - log_y[n];
+      ops_partials.edge2_.partials_[n]
+          += -digamma_alpha[n] + log_beta[n] - log_y[n];
     if (!is_constant<typename is_vector<T_scale>::type>::value)
       ops_partials.edge3_.partials_[n] += alpha_dbl / beta_dbl - inv_y[n];
   }
@@ -144,11 +144,11 @@ inv_gamma_lpdf(const T_y &y, const T_shape &alpha, const T_scale &beta) {
 }
 
 template <typename T_y, typename T_shape, typename T_scale>
-inline typename return_type<T_y, T_shape, T_scale>::type
-inv_gamma_lpdf(const T_y &y, const T_shape &alpha, const T_scale &beta) {
+inline typename return_type<T_y, T_shape, T_scale>::type inv_gamma_lpdf(
+    const T_y& y, const T_shape& alpha, const T_scale& beta) {
   return inv_gamma_lpdf<false>(y, alpha, beta);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

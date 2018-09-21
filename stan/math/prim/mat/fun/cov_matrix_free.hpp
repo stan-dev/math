@@ -1,12 +1,12 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_COV_MATRIX_FREE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_COV_MATRIX_FREE_HPP
 
-#include <cmath>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
+#include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -34,8 +34,8 @@ namespace math {
  * has zero dimensionality, or has a non-positive diagonal element.
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1>
-cov_matrix_free(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &y) {
+Eigen::Matrix<T, Eigen::Dynamic, 1> cov_matrix_free(
+    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& y) {
   check_square("cov_matrix_free", "y", y);
   check_nonzero_size("cov_matrix_free", "y", y);
 
@@ -46,7 +46,7 @@ cov_matrix_free(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &y) {
   Eigen::Matrix<T, Eigen::Dynamic, 1> x((K * (K + 1)) / 2);
   // FIXME: see Eigen LDLT for rank-revealing version -- use that
   // even if less efficient?
-  Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>> llt(y.rows());
+  Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > llt(y.rows());
   llt.compute(y);
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> L = llt.matrixL();
   int i = 0;
@@ -58,6 +58,6 @@ cov_matrix_free(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &y) {
   return x;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

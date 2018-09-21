@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
+#include <gtest/gtest.h>
 
 using stan::math::fvar;
 
@@ -113,7 +113,7 @@ TEST(AgradFwdMatrixMinus, fd_matrix) {
 TEST(AgradFwdMatrixMinus, ffd_scalar) {
   using stan::math::minus;
   double x = 10;
-  fvar<fvar<double>> v = 11;
+  fvar<fvar<double> > v = 11;
   v.d_ = 1.0;
 
   EXPECT_FLOAT_EQ(-10, minus(x));
@@ -127,7 +127,7 @@ TEST(AgradFwdMatrixMinus, ffd_vector) {
 
   vector_d d(3);
   vector_ffd v(3);
-  fvar<fvar<double>> a, b, c;
+  fvar<fvar<double> > a, b, c;
   a.val_.val_ = -100.0;
   b.val_.val_ = 0.0;
   c.val_.val_ = 1.0;
@@ -160,7 +160,7 @@ TEST(AgradFwdMatrixMinus, ffd_rowvector) {
 
   row_vector_d d(3);
   row_vector_ffd v(3);
-  fvar<fvar<double>> a, b, c;
+  fvar<fvar<double> > a, b, c;
   a.val_.val_ = -100.0;
   b.val_.val_ = 0.0;
   c.val_.val_ = 1.0;
@@ -193,7 +193,7 @@ TEST(AgradFwdMatrixMinus, ffd_matrix) {
 
   matrix_d dd(2, 3);
   matrix_ffd v(2, 3);
-  fvar<fvar<double>> a, b, c, d, e, f;
+  fvar<fvar<double> > a, b, c, d, e, f;
   a.val_.val_ = -100.0;
   b.val_.val_ = 0.0;
   c.val_.val_ = 1.0;

@@ -2,17 +2,17 @@
 #define STAN_MATH_PRIM_MAT_PROB_MATRIX_NORMAL_PREC_LPDF_HPP
 
 #include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/mat/fun/log_determinant.hpp>
 #include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
 #include <stan/math/prim/mat/fun/subtract.hpp>
-#include <stan/math/prim/mat/fun/trace_gen_quad_form.hpp>
 #include <stan/math/prim/mat/fun/trace_quad_form.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/mat/fun/trace_gen_quad_form.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
@@ -40,11 +40,11 @@ template <bool propto, typename T_y, typename T_Mu, typename T_Sigma,
           typename T_D>
 typename boost::math::tools::promote_args<T_y, T_Mu, T_Sigma, T_D>::type
 matrix_normal_prec_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y,
-    const Eigen::Matrix<T_Mu, Eigen::Dynamic, Eigen::Dynamic> &Mu,
-    const Eigen::Matrix<T_Sigma, Eigen::Dynamic, Eigen::Dynamic> &Sigma,
-    const Eigen::Matrix<T_D, Eigen::Dynamic, Eigen::Dynamic> &D) {
-  static const char *function = "matrix_normal_prec_lpdf";
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
+    const Eigen::Matrix<T_Mu, Eigen::Dynamic, Eigen::Dynamic>& Mu,
+    const Eigen::Matrix<T_Sigma, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
+    const Eigen::Matrix<T_D, Eigen::Dynamic, Eigen::Dynamic>& D) {
+  static const char* function = "matrix_normal_prec_lpdf";
   typename boost::math::tools::promote_args<T_y, T_Mu, T_Sigma, T_D>::type lp(
       0.0);
 
@@ -91,13 +91,13 @@ matrix_normal_prec_lpdf(
 template <typename T_y, typename T_Mu, typename T_Sigma, typename T_D>
 typename boost::math::tools::promote_args<T_y, T_Mu, T_Sigma, T_D>::type
 matrix_normal_prec_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y,
-    const Eigen::Matrix<T_Mu, Eigen::Dynamic, Eigen::Dynamic> &Mu,
-    const Eigen::Matrix<T_Sigma, Eigen::Dynamic, Eigen::Dynamic> &Sigma,
-    const Eigen::Matrix<T_D, Eigen::Dynamic, Eigen::Dynamic> &D) {
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
+    const Eigen::Matrix<T_Mu, Eigen::Dynamic, Eigen::Dynamic>& Mu,
+    const Eigen::Matrix<T_Sigma, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
+    const Eigen::Matrix<T_D, Eigen::Dynamic, Eigen::Dynamic>& D) {
   return matrix_normal_prec_lpdf<false>(y, Mu, Sigma, D);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

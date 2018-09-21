@@ -23,8 +23,8 @@ namespace math {
  *   has zero size
  */
 template <typename T_y>
-inline void check_nonzero_size(const char *function, const char *name,
-                               const T_y &y) {
+inline void check_nonzero_size(const char* function, const char* name,
+                               const T_y& y) {
   if (y.size() > 0)
     return;
 
@@ -32,6 +32,6 @@ inline void check_nonzero_size(const char *function, const char *name,
                    ", but must have a non-zero size");
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

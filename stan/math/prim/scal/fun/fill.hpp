@@ -14,8 +14,11 @@ namespace math {
  * @param x Container.
  * @param y Value.
  */
-template <typename T, typename S> void fill(T &x, const S &y) { x = y; }
+template <typename T, typename S>
+void fill(T& x, const S& y) {
+  x = y;
+}
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
