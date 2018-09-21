@@ -1,5 +1,5 @@
-#include <stan/math.hpp>
 #include <gtest/gtest.h>
+#include <stan/math.hpp>
 #include <vector>
 
 // Test that column indexes of values from dense matrix in sparse

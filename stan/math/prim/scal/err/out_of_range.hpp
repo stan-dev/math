@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_OUT_OF_RANGE_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_OUT_OF_RANGE_HPP
 
-#include <stan/math/prim/scal/meta/error_index.hpp>
-#include <typeinfo>
 #include <sstream>
+#include <stan/math/prim/scal/meta/error_index.hpp>
 #include <stdexcept>
+#include <typeinfo>
 
 namespace stan {
 namespace math {
@@ -27,8 +27,8 @@ namespace math {
  * @param msg2 Message to print. Default is "".
  * @throw std::out_of_range with message.
  */
-inline void out_of_range(const char* function, int max, int index,
-                         const char* msg1 = "", const char* msg2 = "") {
+inline void out_of_range(const char *function, int max, int index,
+                         const char *msg1 = "", const char *msg2 = "") {
   std::ostringstream message;
 
   message << function << ": accessing element out of range. "
@@ -39,6 +39,6 @@ inline void out_of_range(const char* function, int max, int index,
   throw std::out_of_range(message.str());
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

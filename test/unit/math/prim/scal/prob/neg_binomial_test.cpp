@@ -1,7 +1,7 @@
-#include <stan/math/prim/scal.hpp>
-#include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <gtest/gtest.h>
+#include <stan/math/prim/scal.hpp>
 #include <string>
 
 TEST(ProbDistributionsNegBinomial, error_check) {
@@ -24,13 +24,12 @@ TEST(ProbDistributionsNegBinomial, error_check) {
       std::domain_error);
 
   std::string error_msg;
-  error_msg
-      = "neg_binomial_rng: Random number that "
-        "came from gamma distribution is";
+  error_msg = "neg_binomial_rng: Random number that "
+              "came from gamma distribution is";
   try {
     stan::math::neg_binomial_rng(1e10, 1, rng);
     FAIL() << "neg_binomial_rng should have thrown" << std::endl;
-  } catch (const std::exception& e) {
+  } catch (const std::exception &e) {
     if (std::string(e.what()).find(error_msg) == std::string::npos)
       FAIL() << "Error message is different than expected" << std::endl
              << "EXPECTED: " << error_msg << std::endl
@@ -39,7 +38,7 @@ TEST(ProbDistributionsNegBinomial, error_check) {
   }
 }
 
-void expected_bin_sizes(double* expect, const int K, const int N,
+void expected_bin_sizes(double *expect, const int K, const int N,
                         const double alpha, const double beta) {
   double p = 0;
   for (int i = 0; i < K; i++) {

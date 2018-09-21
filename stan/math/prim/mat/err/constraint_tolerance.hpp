@@ -10,6 +10,6 @@ namespace math {
  */
 const double CONSTRAINT_TOLERANCE = 1E-8;
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

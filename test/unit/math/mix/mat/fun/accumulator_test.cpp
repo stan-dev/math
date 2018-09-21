@@ -1,20 +1,19 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <vector>
 
 using stan::math::fvar;
 using stan::math::var;
 
 // test sum of first n numbers for sum of a
-template <typename T>
-void test_sum(stan::math::accumulator<T>& a, int n) {
+template <typename T> void test_sum(stan::math::accumulator<T> &a, int n) {
   EXPECT_TRUE((n * (n + 1)) / 2 == a.sum());
 }
 
 TEST(AgradMixMatrixAccumulate, fvar_var) {
   using stan::math::accumulator;
 
-  accumulator<fvar<var> > a;
+  accumulator<fvar<var>> a;
   test_sum(a, 0);
 
   a.add(1.0);
@@ -31,12 +30,12 @@ TEST(AgradMixMatrixAccumulate, collection_fvar_var) {
   using stan::math::vector_fv;
   using std::vector;
 
-  accumulator<fvar<var> > a;
+  accumulator<fvar<var>> a;
 
   int pos = 0;
   test_sum(a, 0);
 
-  vector<fvar<var> > v(10);
+  vector<fvar<var>> v(10);
   for (size_t i = 0; i < 10; ++i)
     v[i] = pos++;
   a.add(v);
@@ -49,9 +48,9 @@ TEST(AgradMixMatrixAccumulate, collection_fvar_var) {
   a.add(x);
   test_sum(a, pos - 1);
 
-  vector<vector<fvar<var> > > ww(10);
+  vector<vector<fvar<var>>> ww(10);
   for (size_t i = 0; i < 10; ++i) {
-    vector<fvar<var> > w(5);
+    vector<fvar<var>> w(5);
     for (size_t n = 0; n < 5; ++n)
       w[n] = pos++;
     ww[i] = w;
@@ -86,7 +85,7 @@ TEST(AgradMixMatrixAccumulate, collection_fvar_var) {
 TEST(AgradMixMatrixAccumulate, fvar_fvar_var) {
   using stan::math::accumulator;
 
-  accumulator<fvar<fvar<var> > > a;
+  accumulator<fvar<fvar<var>>> a;
   test_sum(a, 0);
 
   a.add(1.0);
@@ -103,12 +102,12 @@ TEST(AgradMixMatrixAccumulate, collection_fvar_fvar_var) {
   using stan::math::vector_ffv;
   using std::vector;
 
-  accumulator<fvar<fvar<var> > > a;
+  accumulator<fvar<fvar<var>>> a;
 
   int pos = 0;
   test_sum(a, 0);
 
-  vector<fvar<fvar<var> > > v(10);
+  vector<fvar<fvar<var>>> v(10);
   for (size_t i = 0; i < 10; ++i)
     v[i] = pos++;
   a.add(v);
@@ -121,9 +120,9 @@ TEST(AgradMixMatrixAccumulate, collection_fvar_fvar_var) {
   a.add(x);
   test_sum(a, pos - 1);
 
-  vector<vector<fvar<fvar<var> > > > ww(10);
+  vector<vector<fvar<fvar<var>>>> ww(10);
   for (size_t i = 0; i < 10; ++i) {
-    vector<fvar<fvar<var> > > w(5);
+    vector<fvar<fvar<var>>> w(5);
     for (size_t n = 0; n < 5; ++n)
       w[n] = pos++;
     ww[i] = w;

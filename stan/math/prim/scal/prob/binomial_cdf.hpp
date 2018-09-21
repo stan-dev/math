@@ -1,30 +1,30 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BINOMIAL_CDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BINOMIAL_CDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <boost/random/binomial_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
+#include <cmath>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
+#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
+#include <stan/math/prim/scal/fun/lbeta.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/log_inv_logit.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
-#include <stan/math/prim/scal/fun/lbeta.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/fun/inc_beta.hpp>
-#include <boost/random/binomial_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <cmath>
 
 namespace stan {
 namespace math {
@@ -46,9 +46,9 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_n, typename T_N, typename T_prob>
-typename return_type<T_prob>::type binomial_cdf(const T_n& n, const T_N& N,
-                                                const T_prob& theta) {
-  static const char* function = "binomial_cdf";
+typename return_type<T_prob>::type binomial_cdf(const T_n &n, const T_N &N,
+                                                const T_prob &theta) {
+  static const char *function = "binomial_cdf";
   typedef typename stan::partials_return_type<T_n, T_N, T_prob>::type
       T_partials_return;
 
@@ -93,15 +93,15 @@ typename return_type<T_prob>::type binomial_cdf(const T_n& n, const T_N& N,
     const T_partials_return N_dbl = value_of(N_vec[i]);
     const T_partials_return theta_dbl = value_of(theta_vec[i]);
     const T_partials_return betafunc = exp(lbeta(N_dbl - n_dbl, n_dbl + 1));
-    const T_partials_return Pi
-        = inc_beta(N_dbl - n_dbl, n_dbl + 1, 1 - theta_dbl);
+    const T_partials_return Pi =
+        inc_beta(N_dbl - n_dbl, n_dbl + 1, 1 - theta_dbl);
 
     P *= Pi;
 
     if (!is_constant_struct<T_prob>::value)
-      ops_partials.edge1_.partials_[i]
-          -= pow(theta_dbl, n_dbl) * pow(1 - theta_dbl, N_dbl - n_dbl - 1)
-             / betafunc / Pi;
+      ops_partials.edge1_.partials_[i] -=
+          pow(theta_dbl, n_dbl) * pow(1 - theta_dbl, N_dbl - n_dbl - 1) /
+          betafunc / Pi;
   }
 
   if (!is_constant_struct<T_prob>::value) {
@@ -112,6 +112,6 @@ typename return_type<T_prob>::type binomial_cdf(const T_n& n, const T_N& N,
   return ops_partials.build(P);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

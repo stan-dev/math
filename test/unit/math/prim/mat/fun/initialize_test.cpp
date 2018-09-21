@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 #include <vector>
 
 TEST(MathMatrix, initialize) {
@@ -52,7 +52,7 @@ TEST(MathMatrix, initStdVector) {
     // template 4, 2
     EXPECT_FLOAT_EQ(2.2, x[i]);
 
-  vector<Matrix<double, Dynamic, Dynamic> > z(
+  vector<Matrix<double, Dynamic, Dynamic>> z(
       4, Matrix<double, Dynamic, Dynamic>(3, 2));
   initialize(z, 3.7);
   for (size_t i = 0; i < 4; ++i)

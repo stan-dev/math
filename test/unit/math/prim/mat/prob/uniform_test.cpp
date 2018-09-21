@@ -1,13 +1,13 @@
-#include <gtest/gtest.h>
 #include <boost/math/distributions.hpp>
 #include <boost/random/mersenne_twister.hpp>
+#include <gtest/gtest.h>
+#include <limits>
 #include <stan/math/prim/mat.hpp>
 #include <test/unit/math/prim/mat/prob/vector_rng_test_helper.hpp>
-#include <limits>
 #include <vector>
 
 class UniformTestRig : public VectorRealRNGTestRig {
- public:
+public:
   UniformTestRig(std::vector<double> good_p1, std::vector<int> good_p1_int,
                  std::vector<double> bad_p1, std::vector<int> bad_p1_int,
                  std::vector<double> good_p2, std::vector<int> good_p2_int,
@@ -17,8 +17,8 @@ class UniformTestRig : public VectorRealRNGTestRig {
                              bad_p2_int) {}
 
   template <typename T1, typename T2, typename T3, typename T_rng>
-  auto generate_samples(const T1& alpha, const T2& beta, const T3& unused,
-                        T_rng& rng) const {
+  auto generate_samples(const T1 &alpha, const T2 &beta, const T3 &unused,
+                        T_rng &rng) const {
     return stan::math::uniform_rng(alpha, beta, rng);
   }
 

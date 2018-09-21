@@ -1,19 +1,19 @@
-#include <stan/math/rev/mat.hpp>
 #include <boost/numeric/odeint.hpp>
 #include <gtest/gtest.h>
+#include <iostream>
+#include <limits>
+#include <sstream>
+#include <stan/math/rev/mat.hpp>
+#include <string>
 #include <test/unit/math/prim/arr/functor/harmonic_oscillator.hpp>
 #include <test/unit/util.hpp>
-#include <iostream>
-#include <sstream>
 #include <vector>
-#include <limits>
-#include <string>
 
 template <typename F>
-void sho_value_test(F harm_osc, std::vector<double>& y0, double t0,
-                    std::vector<double>& ts, std::vector<double>& theta,
-                    std::vector<double>& x, std::vector<int>& x_int) {
-  std::vector<std::vector<double> > ode_res_vd = stan::math::integrate_ode_bdf(
+void sho_value_test(F harm_osc, std::vector<double> &y0, double t0,
+                    std::vector<double> &ts, std::vector<double> &theta,
+                    std::vector<double> &x, std::vector<int> &x_int) {
+  std::vector<std::vector<double>> ode_res_vd = stan::math::integrate_ode_bdf(
       harm_osc, y0, t0, ts, theta, x, x_int, 0, 1e-8, 1e-10, 1e6);
 
   EXPECT_NEAR(0.995029, ode_res_vd[0][0], 1e-5);
@@ -354,8 +354,8 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions_bad_ode) {
   std::vector<double> x(3, 1);
   std::vector<int> x_int(2, 0);
 
-  std::string error_msg
-      = "cvodes_ode_data: dz_dt (3) and states (2) must match in size";
+  std::string error_msg =
+      "cvodes_ode_data: dz_dt (3) and states (2) must match in size";
 
   EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x, x_int, 0,
                                      1e-8, 1e-10, 1e6),

@@ -11,7 +11,7 @@ inline double inv_sqrt(double x) {
   return 1.0 / sqrt(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

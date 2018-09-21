@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include <stan/math/fwd/core.hpp>
-#include <sstream>
 #include <limits>
+#include <sstream>
+#include <stan/math/fwd/core.hpp>
 
 TEST(AgradFwdFvar, Fvar) {
   using stan::math::fvar;

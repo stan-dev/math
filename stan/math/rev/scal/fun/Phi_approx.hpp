@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_PHI_APPROX_HPP
 #define STAN_MATH_REV_SCAL_FUN_PHI_APPROX_HPP
 
-#include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
+#include <stan/math/rev/core.hpp>
 
 namespace stan {
 namespace math {
@@ -42,7 +42,7 @@ namespace math {
  * @param a Variable argument.
  * @return The corresponding unit normal cdf approximation.
  */
-inline var Phi_approx(const var& a) {
+inline var Phi_approx(const var &a) {
   double av = a.vi_->val_;
   double av_squared = av * av;
   double av_cubed = av * av_squared;
@@ -51,6 +51,6 @@ inline var Phi_approx(const var& a) {
   return var(new precomp_v_vari(f, a.vi_, da));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

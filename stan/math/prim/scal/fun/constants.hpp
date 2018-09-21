@@ -71,8 +71,8 @@ const double POISSON_MAX_RATE = std::pow(2.0, 30);
  * Log pi divided by 4
  * \f$ \log \pi / 4 \f$
  */
-const double LOG_PI_OVER_FOUR
-    = std::log(boost::math::constants::pi<double>()) / 4.0;
+const double LOG_PI_OVER_FOUR =
+    std::log(boost::math::constants::pi<double>()) / 4.0;
 
 /**
  * Return the value of pi.
@@ -139,8 +139,8 @@ const double TWO_OVER_SQRT_PI = 2.0 / SQRT_PI;
 
 const double NEG_TWO_OVER_SQRT_PI = -TWO_OVER_SQRT_PI;
 
-const double INV_SQRT_TWO_PI
-    = 1.0 / std::sqrt(2.0 * boost::math::constants::pi<double>());
+const double INV_SQRT_TWO_PI =
+    1.0 / std::sqrt(2.0 * boost::math::constants::pi<double>());
 
 const double LOG_PI = std::log(boost::math::constants::pi<double>());
 
@@ -154,13 +154,13 @@ const double LOG_HALF = std::log(0.5);
 
 const double NEG_LOG_TWO = -LOG_TWO;
 
-const double NEG_LOG_SQRT_TWO_PI
-    = -std::log(std::sqrt(2.0 * boost::math::constants::pi<double>()));
+const double NEG_LOG_SQRT_TWO_PI =
+    -std::log(std::sqrt(2.0 * boost::math::constants::pi<double>()));
 
 const double NEG_LOG_PI = -LOG_PI;
 
-const double NEG_LOG_SQRT_PI
-    = -std::log(std::sqrt(boost::math::constants::pi<double>()));
+const double NEG_LOG_SQRT_PI =
+    -std::log(std::sqrt(boost::math::constants::pi<double>()));
 
 const double NEG_LOG_TWO_OVER_TWO = -LOG_TWO / 2.0;
 
@@ -169,7 +169,7 @@ const double LOG_TWO_PI = LOG_TWO + LOG_PI;
 const double NEG_LOG_TWO_PI = -LOG_TWO_PI;
 
 const double LOG_EPSILON = std::log(EPSILON);
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

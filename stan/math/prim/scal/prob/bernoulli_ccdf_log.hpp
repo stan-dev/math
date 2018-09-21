@@ -11,10 +11,10 @@ namespace math {
  * @deprecated use <code>bernoulli_lccdf</code>
  */
 template <typename T_n, typename T_prob>
-typename return_type<T_prob>::type bernoulli_ccdf_log(const T_n& n,
-                                                      const T_prob& theta) {
+typename return_type<T_prob>::type bernoulli_ccdf_log(const T_n &n,
+                                                      const T_prob &theta) {
   return bernoulli_lccdf<T_n, T_prob>(n, theta);
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

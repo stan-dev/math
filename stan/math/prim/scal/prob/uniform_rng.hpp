@@ -34,12 +34,12 @@ namespace math {
  * sizes
  */
 template <typename T_alpha, typename T_beta, class RNG>
-inline typename VectorBuilder<true, double, T_alpha, T_beta>::type uniform_rng(
-    const T_alpha& alpha, const T_beta& beta, RNG& rng) {
+inline typename VectorBuilder<true, double, T_alpha, T_beta>::type
+uniform_rng(const T_alpha &alpha, const T_beta &beta, RNG &rng) {
   using boost::random::uniform_real_distribution;
   using boost::variate_generator;
 
-  static const char* function = "uniform_rng";
+  static const char *function = "uniform_rng";
 
   check_finite(function, "Lower bound parameter", alpha);
   check_finite(function, "Upper bound parameter", beta);
@@ -52,7 +52,7 @@ inline typename VectorBuilder<true, double, T_alpha, T_beta>::type uniform_rng(
   size_t N = max_size(alpha, beta);
   VectorBuilder<true, double, T_alpha, T_beta> output(N);
 
-  variate_generator<RNG&, uniform_real_distribution<> > uniform_rng(
+  variate_generator<RNG &, uniform_real_distribution<>> uniform_rng(
       rng, uniform_real_distribution<>(0.0, 1.0));
   for (size_t n = 0; n < N; ++n) {
     output[n] = (beta_vec[n] - alpha_vec[n]) * uniform_rng() + alpha_vec[n];
@@ -61,6 +61,6 @@ inline typename VectorBuilder<true, double, T_alpha, T_beta>::type uniform_rng(
   return output.data();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

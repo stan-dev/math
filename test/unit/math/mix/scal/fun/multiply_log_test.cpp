@@ -1,7 +1,7 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/scal/fun/util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradFwdMultiplyLog, FvarVar_FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -111,15 +111,15 @@ TEST(AgradFwdMultiplyLog, FvarFvarVar_FvarFvarVar_1stDeriv) {
   using stan::math::var;
   using std::log;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 1.3;
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.8;
   y.d_.val_ = 1.1;
 
-  fvar<fvar<var> > a = multiply_log(x, y);
+  fvar<fvar<var>> a = multiply_log(x, y);
 
   EXPECT_FLOAT_EQ(multiply_log(1.5, 1.8), a.val_.val_.val());
   EXPECT_FLOAT_EQ(log(1.8) * 1.3, a.val_.d_.val());
@@ -138,12 +138,12 @@ TEST(AgradFwdMultiplyLog, FvarFvarVar_Double_1stDeriv) {
   using stan::math::var;
   using std::log;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 1.3;
   double y(1.8);
 
-  fvar<fvar<var> > a = multiply_log(x, y);
+  fvar<fvar<var>> a = multiply_log(x, y);
 
   EXPECT_FLOAT_EQ(multiply_log(1.5, 1.8), a.val_.val_.val());
   EXPECT_FLOAT_EQ(log(1.8) * 1.3, a.val_.d_.val());
@@ -162,11 +162,11 @@ TEST(AgradFwdMultiplyLog, Double_FvarFvarVar_1stDeriv) {
   using std::log;
 
   double x(1.5);
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.8;
   y.d_.val_ = 1.1;
 
-  fvar<fvar<var> > a = multiply_log(x, y);
+  fvar<fvar<var>> a = multiply_log(x, y);
 
   EXPECT_FLOAT_EQ(multiply_log(1.5, 1.8), a.val_.val_.val());
   EXPECT_FLOAT_EQ(0, a.val_.d_.val());
@@ -184,15 +184,15 @@ TEST(AgradFwdMultiplyLog, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
   using stan::math::var;
   using std::log;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 1.3;
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.8;
   y.d_.val_ = 1.1;
 
-  fvar<fvar<var> > a = multiply_log(x, y);
+  fvar<fvar<var>> a = multiply_log(x, y);
 
   EXPECT_FLOAT_EQ(multiply_log(1.5, 1.8), a.val_.val_.val());
   EXPECT_FLOAT_EQ(log(1.8) * 1.3, a.val_.d_.val());
@@ -211,15 +211,15 @@ TEST(AgradFwdMultiplyLog, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
   using stan::math::var;
   using std::log;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 1.3;
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.8;
   y.d_.val_ = 1.1;
 
-  fvar<fvar<var> > a = multiply_log(x, y);
+  fvar<fvar<var>> a = multiply_log(x, y);
 
   EXPECT_FLOAT_EQ(multiply_log(1.5, 1.8), a.val_.val_.val());
   EXPECT_FLOAT_EQ(log(1.8) * 1.3, a.val_.d_.val());
@@ -238,12 +238,12 @@ TEST(AgradFwdMultiplyLog, FvarFvarVar_Double_2ndDeriv) {
   using stan::math::var;
   using std::log;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 1.3;
   double y(1.8);
 
-  fvar<fvar<var> > a = multiply_log(x, y);
+  fvar<fvar<var>> a = multiply_log(x, y);
 
   EXPECT_FLOAT_EQ(multiply_log(1.5, 1.8), a.val_.val_.val());
   EXPECT_FLOAT_EQ(log(1.8) * 1.3, a.val_.d_.val());
@@ -262,11 +262,11 @@ TEST(AgradFwdMultiplyLog, Double_FvarFvarVar_2ndDeriv) {
   using std::log;
 
   double x(1.5);
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.8;
   y.d_.val_ = 1.1;
 
-  fvar<fvar<var> > a = multiply_log(x, y);
+  fvar<fvar<var>> a = multiply_log(x, y);
 
   AVEC p = createAVEC(y.val_.val_);
   VEC g;
@@ -279,15 +279,15 @@ TEST(AgradFwdMultiplyLog, FvarFvarVar_FvarFvarVar_3rdDeriv) {
   using stan::math::var;
   using std::log;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 1.3;
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.8;
   y.d_.val_ = 1.1;
 
-  fvar<fvar<var> > a = multiply_log(x, y);
+  fvar<fvar<var>> a = multiply_log(x, y);
 
   AVEC p = createAVEC(x.val_.val_, y.val_.val_);
   VEC g;
@@ -301,13 +301,13 @@ TEST(AgradFwdMultiplyLog, FvarFvarVar_Double_3rdDeriv) {
   using stan::math::var;
   using std::log;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 1.0;
   x.d_.val_ = 1.0;
   double y(1.8);
 
-  fvar<fvar<var> > a = multiply_log(x, y);
+  fvar<fvar<var>> a = multiply_log(x, y);
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
@@ -321,12 +321,12 @@ TEST(AgradFwdMultiplyLog, Double_FvarFvarVar_3rdDeriv) {
   using std::log;
 
   double x(1.5);
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.8;
   y.d_.val_ = 1.0;
   y.val_.d_ = 1.0;
 
-  fvar<fvar<var> > a = multiply_log(x, y);
+  fvar<fvar<var>> a = multiply_log(x, y);
 
   AVEC p = createAVEC(y.val_.val_);
   VEC g;
@@ -336,8 +336,8 @@ TEST(AgradFwdMultiplyLog, Double_FvarFvarVar_3rdDeriv) {
 
 struct multiply_log_fun {
   template <typename T0, typename T1>
-  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
-      const T0 arg1, const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type
+  operator()(const T0 arg1, const T1 arg2) const {
     return multiply_log(arg1, arg2);
   }
 };

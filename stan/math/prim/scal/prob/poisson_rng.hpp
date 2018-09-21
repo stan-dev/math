@@ -1,15 +1,15 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_POISSON_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_POISSON_RNG_HPP
 
-#include <stan/math/prim/scal/err/check_less.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <boost/random/poisson_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/err/check_less.hpp>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <stan/math/prim/scal/meta/length.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {
 namespace math {
@@ -28,12 +28,12 @@ namespace math {
  * @throw std::domain_error if lambda is nonpositive
  */
 template <typename T_rate, class RNG>
-inline typename VectorBuilder<true, int, T_rate>::type poisson_rng(
-    const T_rate& lambda, RNG& rng) {
+inline typename VectorBuilder<true, int, T_rate>::type
+poisson_rng(const T_rate &lambda, RNG &rng) {
   using boost::random::poisson_distribution;
   using boost::variate_generator;
 
-  static const char* function = "poisson_rng";
+  static const char *function = "poisson_rng";
 
   check_not_nan(function, "Rate parameter", lambda);
   check_positive(function, "Rate parameter", lambda);
@@ -44,7 +44,7 @@ inline typename VectorBuilder<true, int, T_rate>::type poisson_rng(
   VectorBuilder<true, int, T_rate> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    variate_generator<RNG&, poisson_distribution<> > poisson_rng(
+    variate_generator<RNG &, poisson_distribution<>> poisson_rng(
         rng, poisson_distribution<>(lambda_vec[n]));
     output[n] = poisson_rng();
   }
@@ -52,6 +52,6 @@ inline typename VectorBuilder<true, int, T_rate>::type poisson_rng(
   return output.data();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

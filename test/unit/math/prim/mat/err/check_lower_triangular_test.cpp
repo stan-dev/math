@@ -1,6 +1,6 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/mat.hpp>
 #include <string>
 
 TEST(ErrorHandlingMatrix, checkLowerTriangular) {
@@ -51,7 +51,7 @@ TEST(ErrorHandlingMatrix, checkLowerTriangular_one_indexed_message) {
   try {
     check_lower_triangular("checkLowerTriangular", "y", y);
     FAIL() << "should have thrown";
-  } catch (std::domain_error& e) {
+  } catch (std::domain_error &e) {
     message = e.what();
   } catch (...) {
     FAIL() << "threw the wrong error";

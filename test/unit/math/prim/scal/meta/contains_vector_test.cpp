@@ -1,6 +1,6 @@
-#include <stan/math/prim/scal.hpp>
-#include <gtest/gtest.h>
 #include <boost/type_traits.hpp>
+#include <gtest/gtest.h>
+#include <stan/math/prim/scal.hpp>
 
 TEST(MetaTraits, contains_vector) {
   using stan::contains_vector;

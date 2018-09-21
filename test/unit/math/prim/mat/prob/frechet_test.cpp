@@ -1,13 +1,13 @@
-#include <gtest/gtest.h>
 #include <boost/math/distributions.hpp>
 #include <boost/random/mersenne_twister.hpp>
+#include <gtest/gtest.h>
+#include <limits>
 #include <stan/math/prim/mat.hpp>
 #include <test/unit/math/prim/mat/prob/vector_rng_test_helper.hpp>
-#include <limits>
 #include <vector>
 
 class FrechetTestRig : public VectorRealRNGTestRig {
- public:
+public:
   FrechetTestRig()
       : VectorRealRNGTestRig(10000, 10, {0.5, 1.0, 1.3, 2.0}, {1, 2, 3},
                              {-2.5, -1.7, -0.1, 0.0}, {-3, -2, -1, 0},
@@ -20,8 +20,8 @@ class FrechetTestRig : public VectorRealRNGTestRig {
    * quantiles from a Weibull distribution.
    */
   template <typename T1, typename T2, typename T3, typename T_rng>
-  auto generate_samples(const T1& alpha, const T2& sigma, const T3&,
-                        T_rng& rng) const {
+  auto generate_samples(const T1 &alpha, const T2 &sigma, const T3 &,
+                        T_rng &rng) const {
     return stan::math::inv(stan::math::frechet_rng(alpha, sigma, rng));
   }
 

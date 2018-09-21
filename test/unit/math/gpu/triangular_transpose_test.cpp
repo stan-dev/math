@@ -1,10 +1,10 @@
 #ifdef STAN_OPENCL
-#include <stan/math/prim/mat.hpp>
-#include <stan/math/gpu/copy.hpp>
-#include <stan/math/gpu/constants.hpp>
-#include <stan/math/gpu/matrix_gpu.hpp>
-#include <gtest/gtest.h>
 #include <algorithm>
+#include <gtest/gtest.h>
+#include <stan/math/gpu/constants.hpp>
+#include <stan/math/gpu/copy.hpp>
+#include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/prim/mat.hpp>
 
 TEST(MathMatrixGPU, triangular_transpose_m_exception_pass) {
   stan::math::matrix_gpu m1(1, 1);

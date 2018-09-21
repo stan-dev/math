@@ -1,8 +1,8 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <stan/math/rev/scal.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
-#include <limits>
 
 TEST(AgradRev, multiplyLogChainVV) {
   AVAR a = 19.7;
@@ -107,8 +107,8 @@ TEST(AgradRev, multiply_log_double_var) {
 
 struct multiply_log_fun {
   template <typename T0, typename T1>
-  inline typename stan::return_type<T0, T1>::type operator()(
-      const T0& arg1, const T1& arg2) const {
+  inline typename stan::return_type<T0, T1>::type
+  operator()(const T0 &arg1, const T1 &arg2) const {
     return multiply_log(arg1, arg2);
   }
 };

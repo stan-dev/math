@@ -1,20 +1,20 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_NORMAL_SUFFICIENT_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_NORMAL_SUFFICIENT_LPDF_HPP
 
-#include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/prob/normal_lpdf.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/prob/normal_lpdf.hpp>
 
 namespace stan {
 namespace math {
@@ -48,13 +48,12 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_s, typename T_n, typename T_loc,
           typename T_scale>
-typename return_type<T_y, T_s, T_loc, T_scale>::type normal_sufficient_lpdf(
-    const T_y& y_bar, const T_s& s_squared, const T_n& n_obs, const T_loc& mu,
-    const T_scale& sigma) {
-  static const char* function = "normal_sufficient_lpdf";
-  typedef
-      typename stan::partials_return_type<T_y, T_s, T_n, T_loc, T_scale>::type
-          T_partials_return;
+typename return_type<T_y, T_s, T_loc, T_scale>::type
+normal_sufficient_lpdf(const T_y &y_bar, const T_s &s_squared, const T_n &n_obs,
+                       const T_loc &mu, const T_scale &sigma) {
+  static const char *function = "normal_sufficient_lpdf";
+  typedef typename stan::partials_return_type<T_y, T_s, T_n, T_loc,
+                                              T_scale>::type T_partials_return;
 
   using stan::is_constant_struct;
   using stan::math::check_consistent_sizes;
@@ -115,15 +114,15 @@ typename return_type<T_y, T_s, T_loc, T_scale>::type normal_sufficient_lpdf(
     if (include_summand<propto, T_scale>::value)
       logp -= n_obs_dbl * log(sigma_dbl);
 
-    const T_partials_return cons_expr
-        = (s_squared_dbl + n_obs_dbl * pow(y_bar_dbl - mu_dbl, 2));
+    const T_partials_return cons_expr =
+        (s_squared_dbl + n_obs_dbl * pow(y_bar_dbl - mu_dbl, 2));
 
     logp -= cons_expr / (2 * sigma_squared);
 
     // gradients
     if (!is_constant_struct<T_y>::value || !is_constant_struct<T_loc>::value) {
-      const T_partials_return common_derivative
-          = n_obs_dbl * (mu_dbl - y_bar_dbl) / sigma_squared;
+      const T_partials_return common_derivative =
+          n_obs_dbl * (mu_dbl - y_bar_dbl) / sigma_squared;
       if (!is_constant_struct<T_y>::value)
         ops_partials.edge1_.partials_[i] += common_derivative;
       if (!is_constant_struct<T_loc>::value)
@@ -132,8 +131,8 @@ typename return_type<T_y, T_s, T_loc, T_scale>::type normal_sufficient_lpdf(
     if (!is_constant_struct<T_s>::value)
       ops_partials.edge2_.partials_[i] -= 0.5 / sigma_squared;
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge4_.partials_[i]
-          += cons_expr / pow(sigma_dbl, 3) - n_obs_dbl / sigma_dbl;
+      ops_partials.edge4_.partials_[i] +=
+          cons_expr / pow(sigma_dbl, 3) - n_obs_dbl / sigma_dbl;
   }
   return ops_partials.build(logp);
 }
@@ -141,11 +140,11 @@ typename return_type<T_y, T_s, T_loc, T_scale>::type normal_sufficient_lpdf(
 template <typename T_y, typename T_s, typename T_n, typename T_loc,
           typename T_scale>
 inline typename return_type<T_y, T_s, T_loc, T_scale>::type
-normal_sufficient_lpdf(const T_y& y_bar, const T_s& s_squared, const T_n& n_obs,
-                       const T_loc& mu, const T_scale& sigma) {
+normal_sufficient_lpdf(const T_y &y_bar, const T_s &s_squared, const T_n &n_obs,
+                       const T_loc &mu, const T_scale &sigma) {
   return normal_sufficient_lpdf<false>(y_bar, s_squared, n_obs, mu, sigma);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

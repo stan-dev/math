@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 using stan::math::fvar;
@@ -864,7 +864,7 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_vector_scalar_1stDeriv) {
   vector_d d1(3);
   vector_ffv v1(3);
   double d2;
-  fvar<fvar<var> > v2;
+  fvar<fvar<var>> v2;
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
@@ -936,7 +936,7 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_vector_scalar_2ndDeriv_1) {
   using stan::math::vector_ffv;
 
   vector_ffv v1(3);
-  fvar<fvar<var> > v2;
+  fvar<fvar<var>> v2;
 
   v1 << 100, 0, -3;
   v1(0).d_ = 1.0;
@@ -961,7 +961,7 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_vector_scalar_2ndDeriv_2) {
   using stan::math::vector_ffv;
 
   vector_ffv v1(3);
-  fvar<fvar<var> > v2;
+  fvar<fvar<var>> v2;
 
   v1 << 100, 0, -3;
   v1(0).d_ = 1.0;
@@ -986,7 +986,7 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_vector_scalar_3rdDeriv) {
   using stan::math::vector_ffv;
 
   vector_ffv v1(3);
-  fvar<fvar<var> > v2;
+  fvar<fvar<var>> v2;
 
   v1 << 100, 0, -3;
   v1(0).d_ = 1.0;
@@ -1018,7 +1018,7 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_scalar_1stDeriv) {
   row_vector_d d1(3);
   row_vector_ffv v1(3);
   double d2;
-  fvar<fvar<var> > v2;
+  fvar<fvar<var>> v2;
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
@@ -1090,7 +1090,7 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_scalar_2ndDeriv_1) {
   using stan::math::row_vector_ffv;
 
   row_vector_ffv v1(3);
-  fvar<fvar<var> > v2;
+  fvar<fvar<var>> v2;
 
   v1 << 100, 0, -3;
   v1(0).d_ = 1.0;
@@ -1115,7 +1115,7 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_scalar_2ndDeriv_2) {
   using stan::math::row_vector_ffv;
 
   row_vector_ffv v1(3);
-  fvar<fvar<var> > v2;
+  fvar<fvar<var>> v2;
 
   v1 << 100, 0, -3;
   v1(0).d_ = 1.0;
@@ -1140,7 +1140,7 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_scalar_3rdDeriv) {
   using stan::math::row_vector_ffv;
 
   row_vector_ffv v1(3);
-  fvar<fvar<var> > v2;
+  fvar<fvar<var>> v2;
 
   v1 << 100, 0, -3;
   v1(0).d_ = 1.0;
@@ -1171,7 +1171,7 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_scalar_1stDeriv) {
   matrix_d d1(2, 2);
   matrix_ffv v1(2, 2);
   double d2;
-  fvar<fvar<var> > v2;
+  fvar<fvar<var>> v2;
 
   d1 << 100, 0, -3, 4;
   v1 << 100, 0, -3, 4;
@@ -1258,7 +1258,7 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_scalar_2ndDeriv_1) {
   using stan::math::matrix_ffv;
 
   matrix_ffv v1(2, 2);
-  fvar<fvar<var> > v2;
+  fvar<fvar<var>> v2;
 
   v1 << 100, 0, -3, 4;
   v1(0, 0).d_ = 1.0;
@@ -1285,7 +1285,7 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_scalar_2ndDeriv_2) {
   using stan::math::matrix_ffv;
 
   matrix_ffv v1(2, 2);
-  fvar<fvar<var> > v2;
+  fvar<fvar<var>> v2;
 
   v1 << 100, 0, -3, 4;
   v1(0, 0).d_ = 1.0;
@@ -1312,7 +1312,7 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_scalar_3rdDeriv) {
   using stan::math::matrix_ffv;
 
   matrix_ffv v1(2, 2);
-  fvar<fvar<var> > v2;
+  fvar<fvar<var>> v2;
 
   v1 << 100, 0, -3, 4;
   v1(0, 0).d_ = 1.0;

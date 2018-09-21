@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOG_INV_LOGIT_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOG_INV_LOGIT_HPP
 
-#include <stan/math/prim/scal/fun/log1p.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <cmath>
+#include <stan/math/prim/scal/fun/log1p.hpp>
 
 namespace stan {
 namespace math {
@@ -32,7 +32,7 @@ namespace math {
 inline double log_inv_logit(double u) {
   using std::exp;
   if (u < 0.0)
-    return u - log1p(exp(u));  // prevent underflow
+    return u - log1p(exp(u)); // prevent underflow
   return -log1p(exp(-u));
 }
 
@@ -47,7 +47,7 @@ inline double log_inv_logit(int u) {
   return log_inv_logit(static_cast<double>(u));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

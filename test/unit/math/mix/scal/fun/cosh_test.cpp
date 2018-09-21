@@ -1,7 +1,7 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/scal/fun/util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradFwdCosh, FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -45,11 +45,11 @@ TEST(AgradFwdCosh, FvarFvarVar_1stDeriv) {
   using std::cosh;
   using std::sinh;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 2.0;
 
-  fvar<fvar<var> > a = cosh(x);
+  fvar<fvar<var>> a = cosh(x);
 
   EXPECT_FLOAT_EQ(cosh(1.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(2.0 * sinh(1.5), a.val_.d_.val());
@@ -61,11 +61,11 @@ TEST(AgradFwdCosh, FvarFvarVar_1stDeriv) {
   a.val_.val_.grad(p, g);
   EXPECT_FLOAT_EQ(sinh(1.5), g[0]);
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 2.0;
 
-  fvar<fvar<var> > b = cosh(y);
+  fvar<fvar<var>> b = cosh(y);
   EXPECT_FLOAT_EQ(cosh(1.5), b.val_.val_.val());
   EXPECT_FLOAT_EQ(0, b.val_.d_.val());
   EXPECT_FLOAT_EQ(2.0 * sinh(1.5), b.d_.val_.val());
@@ -83,11 +83,11 @@ TEST(AgradFwdCosh, FvarFvarVar_2ndDeriv) {
   using std::cosh;
   using std::sinh;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 2.0;
 
-  fvar<fvar<var> > a = cosh(x);
+  fvar<fvar<var>> a = cosh(x);
 
   EXPECT_FLOAT_EQ(cosh(1.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(2.0 * sinh(1.5), a.val_.d_.val());
@@ -99,11 +99,11 @@ TEST(AgradFwdCosh, FvarFvarVar_2ndDeriv) {
   a.val_.d_.grad(p, g);
   EXPECT_FLOAT_EQ(2.0 * cosh(1.5), g[0]);
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 2.0;
 
-  fvar<fvar<var> > b = cosh(y);
+  fvar<fvar<var>> b = cosh(y);
   EXPECT_FLOAT_EQ(cosh(1.5), b.val_.val_.val());
   EXPECT_FLOAT_EQ(0, b.val_.d_.val());
   EXPECT_FLOAT_EQ(2.0 * sinh(1.5), b.d_.val_.val());
@@ -120,12 +120,12 @@ TEST(AgradFwdCosh, FvarFvarVar_3rdDeriv) {
   using std::cosh;
   using std::sinh;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 1.0;
   x.d_.val_ = 1.0;
 
-  fvar<fvar<var> > a = cosh(x);
+  fvar<fvar<var>> a = cosh(x);
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
@@ -134,8 +134,7 @@ TEST(AgradFwdCosh, FvarFvarVar_3rdDeriv) {
 }
 
 struct cosh_fun {
-  template <typename T0>
-  inline T0 operator()(const T0& arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return cosh(arg1);
   }
 };

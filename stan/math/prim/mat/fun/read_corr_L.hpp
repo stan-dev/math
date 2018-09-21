@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_READ_CORR_L_HPP
 #define STAN_MATH_PRIM_MAT_FUN_READ_CORR_L_HPP
 
+#include <cstddef>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/sum.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/mat/fun/sum.hpp>
-#include <cstddef>
 
 namespace stan {
 namespace math {
@@ -32,9 +32,9 @@ namespace math {
  * @tparam T Type of underlying scalar.
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
-    const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs,  // on (-1, 1)
-    size_t K) {
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+read_corr_L(const Eigen::Array<T, Eigen::Dynamic, 1> &CPCs, // on (-1, 1)
+            size_t K) {
   Eigen::Array<T, Eigen::Dynamic, 1> temp;
   Eigen::Array<T, Eigen::Dynamic, 1> acc(K - 1);
   acc.setOnes();
@@ -85,8 +85,9 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
  * @tparam T Type of underlying scalar.
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
-    const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs, size_t K, T& log_prob) {
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+read_corr_L(const Eigen::Array<T, Eigen::Dynamic, 1> &CPCs, size_t K,
+            T &log_prob) {
   Eigen::Matrix<T, Eigen::Dynamic, 1> values(CPCs.rows() - 1);
   size_t pos = 0;
   // no need to abs() because this Jacobian determinant
@@ -102,6 +103,6 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
   return read_corr_L(CPCs, K);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

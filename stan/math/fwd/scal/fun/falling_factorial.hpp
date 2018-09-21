@@ -3,8 +3,8 @@
 
 #include <stan/math/fwd/core.hpp>
 
-#include <stan/math/prim/scal/fun/falling_factorial.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
+#include <stan/math/prim/scal/fun/falling_factorial.hpp>
 
 namespace stan {
 namespace math {
@@ -23,12 +23,12 @@ namespace math {
  */
 
 template <typename T>
-inline fvar<T> falling_factorial(const fvar<T>& x, int n) {
+inline fvar<T> falling_factorial(const fvar<T> &x, int n) {
   T falling_fact(falling_factorial(x.val_, n));
-  return fvar<T>(
-      falling_fact,
-      falling_fact * (digamma(x.val_ + 1) - digamma(x.val_ - n + 1)) * x.d_);
+  return fvar<T>(falling_fact,
+                 falling_fact *
+                     (digamma(x.val_ + 1) - digamma(x.val_ - n + 1)) * x.d_);
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

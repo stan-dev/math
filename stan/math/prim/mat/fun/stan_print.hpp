@@ -8,13 +8,10 @@ namespace stan {
 namespace math {
 // prints used in generator for print() statements in modeling language
 
-template <typename T>
-void stan_print(std::ostream* o, const T& x) {
-  *o << x;
-}
+template <typename T> void stan_print(std::ostream *o, const T &x) { *o << x; }
 
 template <typename T>
-void stan_print(std::ostream* o, const std::vector<T>& x) {
+void stan_print(std::ostream *o, const std::vector<T> &x) {
   *o << '[';
   for (size_t i = 0; i < x.size(); ++i) {
     if (i > 0)
@@ -25,7 +22,7 @@ void stan_print(std::ostream* o, const std::vector<T>& x) {
 }
 
 template <typename T>
-void stan_print(std::ostream* o, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) {
+void stan_print(std::ostream *o, const Eigen::Matrix<T, Eigen::Dynamic, 1> &x) {
   *o << '[';
   for (int i = 0; i < x.size(); ++i) {
     if (i > 0)
@@ -36,7 +33,7 @@ void stan_print(std::ostream* o, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) {
 }
 
 template <typename T>
-void stan_print(std::ostream* o, const Eigen::Matrix<T, 1, Eigen::Dynamic>& x) {
+void stan_print(std::ostream *o, const Eigen::Matrix<T, 1, Eigen::Dynamic> &x) {
   *o << '[';
   for (int i = 0; i < x.size(); ++i) {
     if (i > 0)
@@ -47,8 +44,8 @@ void stan_print(std::ostream* o, const Eigen::Matrix<T, 1, Eigen::Dynamic>& x) {
 }
 
 template <typename T>
-void stan_print(std::ostream* o,
-                const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& x) {
+void stan_print(std::ostream *o,
+                const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &x) {
   *o << '[';
   for (int i = 0; i < x.rows(); ++i) {
     if (i > 0)
@@ -64,6 +61,6 @@ void stan_print(std::ostream* o,
   *o << ']';
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

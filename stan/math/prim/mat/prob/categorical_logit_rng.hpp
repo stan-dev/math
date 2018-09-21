@@ -3,11 +3,11 @@
 
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/mat/err/check_simplex.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/cumulative_sum.hpp>
 #include <stan/math/prim/mat/fun/softmax.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
 
 namespace stan {
 namespace math {
@@ -25,15 +25,15 @@ namespace math {
  * @return Categorical random variate
  */
 template <class RNG>
-inline int categorical_logit_rng(const Eigen::VectorXd& beta, RNG& rng) {
+inline int categorical_logit_rng(const Eigen::VectorXd &beta, RNG &rng) {
   using boost::uniform_01;
   using boost::variate_generator;
 
-  static const char* function = "categorical_logit_rng";
+  static const char *function = "categorical_logit_rng";
 
   check_finite(function, "Log odds parameter", beta);
 
-  variate_generator<RNG&, uniform_01<> > uniform01_rng(rng, uniform_01<>());
+  variate_generator<RNG &, uniform_01<>> uniform01_rng(rng, uniform_01<>());
   Eigen::VectorXd theta = softmax(beta);
   Eigen::VectorXd index = cumulative_sum(theta);
 
@@ -43,6 +43,6 @@ inline int categorical_logit_rng(const Eigen::VectorXd& beta, RNG& rng) {
     b++;
   return b + 1;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

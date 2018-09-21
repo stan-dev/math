@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_INVALID_ARGUMENT_VEC_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_INVALID_ARGUMENT_VEC_HPP
 
+#include <sstream>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
-#include <stan/math/prim/scal/meta/value_type.hpp>
 #include <stan/math/prim/scal/meta/error_index.hpp>
 #include <stan/math/prim/scal/meta/get.hpp>
-#include <sstream>
+#include <stan/math/prim/scal/meta/value_type.hpp>
 #include <string>
 
 namespace stan {
@@ -34,9 +34,9 @@ namespace math {
  * @throw std::invalid_argument
  */
 template <typename T>
-inline void invalid_argument_vec(const char* function, const char* name,
-                                 const T& y, size_t i, const char* msg1,
-                                 const char* msg2) {
+inline void invalid_argument_vec(const char *function, const char *name,
+                                 const T &y, size_t i, const char *msg1,
+                                 const char *msg2) {
   std::ostringstream vec_name_stream;
   vec_name_stream << name << "[" << stan::error_index::value + i << "]";
   std::string vec_name(vec_name_stream.str());
@@ -65,11 +65,11 @@ inline void invalid_argument_vec(const char* function, const char* name,
  * @throw std::invalid_argument
  */
 template <typename T>
-inline void invalid_argument_vec(const char* function, const char* name,
-                                 const T& y, size_t i, const char* msg) {
+inline void invalid_argument_vec(const char *function, const char *name,
+                                 const T &y, size_t i, const char *msg) {
   invalid_argument_vec(function, name, y, i, msg, "");
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

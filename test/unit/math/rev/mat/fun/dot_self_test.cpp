@@ -1,10 +1,10 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 
 template <int R, int C>
-void assert_val_grad(Eigen::Matrix<stan::math::var, R, C>& v) {
+void assert_val_grad(Eigen::Matrix<stan::math::var, R, C> &v) {
   v << -1.0, 0.0, 3.0;
   AVEC x = createAVEC(v(0), v(1), v(2));
   AVAR f = dot_self(v);

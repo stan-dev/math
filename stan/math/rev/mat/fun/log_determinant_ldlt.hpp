@@ -19,9 +19,8 @@ namespace {
  * @throws never
  */
 
-template <int R, int C>
-class log_det_ldlt_vari : public vari {
- public:
+template <int R, int C> class log_det_ldlt_vari : public vari {
+public:
   explicit log_det_ldlt_vari(const LDLT_factor<var, R, C> &A)
       : vari(A.alloc_->log_abs_det()), alloc_ldlt_(A.alloc_) {}
 
@@ -41,13 +40,12 @@ class log_det_ldlt_vari : public vari {
 
   const LDLT_alloc<R, C> *alloc_ldlt_;
 };
-}  // namespace
+} // namespace
 
-template <int R, int C>
-var log_determinant_ldlt(LDLT_factor<var, R, C> &A) {
+template <int R, int C> var log_determinant_ldlt(LDLT_factor<var, R, C> &A) {
   return var(new log_det_ldlt_vari<R, C>(A));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

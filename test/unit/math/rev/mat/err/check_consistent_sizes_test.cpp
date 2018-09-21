@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <vector>
 
 TEST(AgradRevErrorHandlingScalar, checkConsistentSizes) {
@@ -9,11 +9,11 @@ TEST(AgradRevErrorHandlingScalar, checkConsistentSizes) {
   using stan::math::var;
   using stan::size_of;
 
-  const char* function = "testConsSizes";
-  const char* name1 = "name1";
-  const char* name2 = "name2";
-  const char* name3 = "name3";
-  const char* name4 = "name4";
+  const char *function = "testConsSizes";
+  const char *name1 = "name1";
+  const char *name2 = "name2";
+  const char *name3 = "name3";
+  const char *name4 = "name4";
 
   Matrix<var, Dynamic, 1> v1(4);
   Matrix<var, Dynamic, 1> v2(4);
@@ -32,7 +32,7 @@ TEST(AgradRevErrorHandlingScalar, checkConsistentSizes) {
   Matrix<var, Dynamic, 1> v(3);
 
   ASSERT_EQ(3U, size_of(v));
-  const char* name = "inconsistent";
+  const char *name = "inconsistent";
   EXPECT_THROW(check_consistent_sizes(function, name, v, name2, v2),
                std::invalid_argument);
   EXPECT_THROW(check_consistent_sizes(function, name1, v1, name, v),

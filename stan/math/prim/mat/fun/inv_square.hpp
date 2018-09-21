@@ -14,8 +14,7 @@ namespace math {
  * @return 1 / x squared.
  */
 struct inv_square_fun {
-  template <typename T>
-  static inline T fun(const T& x) {
+  template <typename T> static inline T fun(const T &x) {
     return inv_square(x);
   }
 };
@@ -27,12 +26,12 @@ struct inv_square_fun {
  * @return 1 / the square of each value in x.
  */
 template <typename T>
-inline typename apply_scalar_unary<inv_square_fun, T>::return_t inv_square(
-    const T& x) {
+inline typename apply_scalar_unary<inv_square_fun, T>::return_t
+inv_square(const T &x) {
   return apply_scalar_unary<inv_square_fun, T>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

@@ -3,8 +3,7 @@
 
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/fun/inv_logit.hpp>
-#include <stan/math/prim/scal/fun/log1p_exp.hpp>
+#include <stan/math/prim/mat/prob/categorical_rng.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
@@ -13,17 +12,18 @@
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/mat/prob/categorical_rng.hpp>
+#include <stan/math/prim/scal/fun/inv_logit.hpp>
+#include <stan/math/prim/scal/fun/log1p_exp.hpp>
 
 namespace stan {
 namespace math {
 
 template <class RNG>
 inline int ordered_logistic_rng(
-    double eta, const Eigen::Matrix<double, Eigen::Dynamic, 1>& c, RNG& rng) {
+    double eta, const Eigen::Matrix<double, Eigen::Dynamic, 1> &c, RNG &rng) {
   using boost::variate_generator;
 
-  static const char* function = "ordered_logistic";
+  static const char *function = "ordered_logistic";
 
   check_finite(function, "Location parameter", eta);
   check_greater(function, "Size of cut points parameter", c.size(), 0);
@@ -42,6 +42,6 @@ inline int ordered_logistic_rng(
   return categorical_rng(cut, rng);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -1,6 +1,6 @@
+#include <gtest/gtest.h>
 #include <stan/math/prim/scal.hpp>
 #include <test/unit/util.hpp>
-#include <gtest/gtest.h>
 
 TEST(prob_transform, corr) {
   EXPECT_FLOAT_EQ(std::tanh(-1.0), stan::math::corr_constrain(-1.0));

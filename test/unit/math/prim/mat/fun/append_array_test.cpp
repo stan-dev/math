@@ -1,6 +1,6 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/mat.hpp>
 #include <vector>
 
 TEST(MathFunctions, append_array_nan) {
@@ -21,7 +21,7 @@ TEST(MathFunctions, append_array_nan) {
 }
 
 TEST(MathFunctions, append_array_check_size_vector1) {
-  std::vector<std::vector<double> > x(3), y(3), result;
+  std::vector<std::vector<double>> x(3), y(3), result;
 
   for (size_t i = 0; i < x.size(); i++) {
     x[i].resize(3);
@@ -37,7 +37,7 @@ TEST(MathFunctions, append_array_check_size_vector1) {
 }
 
 TEST(MathFunctions, append_array_check_size_vector2) {
-  std::vector<std::vector<std::vector<double> > > x(3), y(3), result;
+  std::vector<std::vector<std::vector<double>>> x(3), y(3), result;
 
   for (size_t i = 0; i < 3; i++) {
     x[i].resize(3);

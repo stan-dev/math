@@ -30,21 +30,21 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_WIENER_LPDF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_WIENER_LPDF_HPP
 
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <algorithm>
+#include <boost/math/distributions.hpp>
+#include <cmath>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
+#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <boost/math/distributions.hpp>
-#include <algorithm>
-#include <cmath>
 #include <string>
 
 namespace stan {
@@ -70,10 +70,10 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_alpha, typename T_tau,
           typename T_beta, typename T_delta>
-typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type wiener_lpdf(
-    const T_y& y, const T_alpha& alpha, const T_tau& tau, const T_beta& beta,
-    const T_delta& delta) {
-  static const char* function = "wiener_lpdf";
+typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type
+wiener_lpdf(const T_y &y, const T_alpha &alpha, const T_tau &tau,
+            const T_beta &beta, const T_delta &delta) {
+  static const char *function = "wiener_lpdf";
 
   using std::exp;
   using std::log;
@@ -82,10 +82,10 @@ typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type wiener_lpdf(
   static const double WIENER_ERR = 0.000001;
   static const double PI_TIMES_WIENER_ERR = pi() * WIENER_ERR;
   static const double LOG_PI_LOG_WIENER_ERR = LOG_PI + log(WIENER_ERR);
-  static const double TWO_TIMES_SQRT_2_TIMES_SQRT_PI_TIMES_WIENER_ERR
-      = 2.0 * SQRT_2_TIMES_SQRT_PI * WIENER_ERR;
-  static const double LOG_TWO_OVER_TWO_PLUS_LOG_SQRT_PI
-      = LOG_TWO / 2 + LOG_SQRT_PI;
+  static const double TWO_TIMES_SQRT_2_TIMES_SQRT_PI_TIMES_WIENER_ERR =
+      2.0 * SQRT_2_TIMES_SQRT_PI * WIENER_ERR;
+  static const double LOG_TWO_OVER_TWO_PLUS_LOG_SQRT_PI =
+      LOG_TWO / 2 + LOG_SQRT_PI;
   static const double SQUARE_PI_OVER_TWO = square(pi()) * 0.5;
   static const double TWO_TIMES_LOG_SQRT_PI = 2.0 * LOG_SQRT_PI;
 
@@ -155,40 +155,40 @@ typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type wiener_lpdf(
       // ensure boundary conditions met
       kl = (kl > one_over_pi_times_sqrt_x) ? kl : one_over_pi_times_sqrt_x;
     } else {
-      kl = one_over_pi_times_sqrt_x;  // set to boundary condition
+      kl = one_over_pi_times_sqrt_x; // set to boundary condition
     }
     // calculate number of terms needed for small t:
     // if error threshold is set low enough
-    T_return_type tmp_expr0
-        = TWO_TIMES_SQRT_2_TIMES_SQRT_PI_TIMES_WIENER_ERR * sqrt_x;
+    T_return_type tmp_expr0 =
+        TWO_TIMES_SQRT_2_TIMES_SQRT_PI_TIMES_WIENER_ERR * sqrt_x;
     if (tmp_expr0 < 1) {
       // compute bound
       ks = 2.0 + sqrt_x * sqrt(-2 * log(tmp_expr0));
       // ensure boundary conditions are met
       T_return_type sqrt_x_plus_one = sqrt_x + 1.0;
       ks = (ks > sqrt_x_plus_one) ? ks : sqrt_x_plus_one;
-    } else {     // if error threshold was set too high
-      ks = 2.0;  // minimal kappa for that case
+    } else {    // if error threshold was set too high
+      ks = 2.0; // minimal kappa for that case
     }
-    if (ks < kl) {   // small t
-      K = ceil(ks);  // round to smallest integer meeting error
+    if (ks < kl) {  // small t
+      K = ceil(ks); // round to smallest integer meeting error
       T_return_type tmp_expr1 = (K - 1.0) / 2.0;
       T_return_type tmp_expr2 = ceil(tmp_expr1);
       for (k = -floor(tmp_expr1); k <= tmp_expr2; k++)
-        tmp += (one_minus_beta + 2.0 * k)
-               * exp(-(square(one_minus_beta + 2.0 * k)) * 0.5 / x);
+        tmp += (one_minus_beta + 2.0 * k) *
+               exp(-(square(one_minus_beta + 2.0 * k)) * 0.5 / x);
       tmp = log(tmp) - LOG_TWO_OVER_TWO_PLUS_LOG_SQRT_PI - 1.5 * log_x;
-    } else {         // if large t is better...
-      K = ceil(kl);  // round to smallest integer meeting error
+    } else {        // if large t is better...
+      K = ceil(kl); // round to smallest integer meeting error
       for (k = 1; k <= K; ++k)
-        tmp += k * exp(-(square(k)) * (SQUARE_PI_OVER_TWO * x))
-               * sin(k * pi() * one_minus_beta);
+        tmp += k * exp(-(square(k)) * (SQUARE_PI_OVER_TWO * x)) *
+               sin(k * pi() * one_minus_beta);
       tmp = log(tmp) + TWO_TIMES_LOG_SQRT_PI;
     }
 
     // convert to f(t|v,a,w) and return result
-    lp += delta_vec[i] * alpha_vec[i] * one_minus_beta
-          - square(delta_vec[i]) * x * alpha2 / 2.0 - log(alpha2) + tmp;
+    lp += delta_vec[i] * alpha_vec[i] * one_minus_beta -
+          square(delta_vec[i]) * x * alpha2 / 2.0 - log(alpha2) + tmp;
   }
   return lp;
 }
@@ -196,11 +196,11 @@ typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type wiener_lpdf(
 template <typename T_y, typename T_alpha, typename T_tau, typename T_beta,
           typename T_delta>
 inline typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type
-wiener_lpdf(const T_y& y, const T_alpha& alpha, const T_tau& tau,
-            const T_beta& beta, const T_delta& delta) {
+wiener_lpdf(const T_y &y, const T_alpha &alpha, const T_tau &tau,
+            const T_beta &beta, const T_delta &delta) {
   return wiener_lpdf<false>(y, alpha, tau, beta, delta);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

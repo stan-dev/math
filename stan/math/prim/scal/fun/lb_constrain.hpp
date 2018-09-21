@@ -2,9 +2,9 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LB_CONSTRAIN_HPP
 
 #include <boost/math/tools/promotion.hpp>
-#include <stan/math/prim/scal/fun/identity_constrain.hpp>
 #include <cmath>
 #include <limits>
+#include <stan/math/prim/scal/fun/identity_constrain.hpp>
 
 namespace stan {
 namespace math {
@@ -29,7 +29,7 @@ namespace math {
  * @return lower bound constrained value correspdonding to inputs
  */
 template <typename T, typename L>
-inline T lb_constrain(const T& x, const L& lb) {
+inline T lb_constrain(const T &x, const L &lb) {
   using std::exp;
   if (lb == -std::numeric_limits<double>::infinity())
     return identity_constrain(x);
@@ -53,8 +53,8 @@ inline T lb_constrain(const T& x, const L& lb) {
  * @return lower-bound constrained value corresponding to inputs
  */
 template <typename T, typename L>
-inline typename boost::math::tools::promote_args<T, L>::type lb_constrain(
-    const T& x, const L& lb, T& lp) {
+inline typename boost::math::tools::promote_args<T, L>::type
+lb_constrain(const T &x, const L &lb, T &lp) {
   using std::exp;
   if (lb == -std::numeric_limits<double>::infinity())
     return identity_constrain(x, lp);
@@ -62,8 +62,8 @@ inline typename boost::math::tools::promote_args<T, L>::type lb_constrain(
   return exp(x) + lb;
 }
 
-}  // namespace math
+} // namespace math
 
-}  // namespace stan
+} // namespace stan
 
 #endif

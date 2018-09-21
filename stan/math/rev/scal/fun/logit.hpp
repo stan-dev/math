@@ -14,11 +14,11 @@ namespace math {
  * @param u argument
  * @return log odds of argument
  */
-inline var logit(const var& u) {
+inline var logit(const var &u) {
   return var(new precomp_v_vari(logit(u.val()), u.vi_,
                                 1 / (u.val() - u.val() * u.val())));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

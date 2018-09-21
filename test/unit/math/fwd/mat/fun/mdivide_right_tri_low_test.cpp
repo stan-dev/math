@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 using stan::math::fvar;
 TEST(AgradFwdMatrixMdivideRightTriLow, fd__rowvector_fd_matrix_fd) {
@@ -262,7 +262,7 @@ TEST(AgradFwdMatrixMdivideRightTriLow, ffd__rowvector_ffd_matrix_ffd) {
   using stan::math::matrix_ffd;
   using stan::math::row_vector_ffd;
 
-  fvar<fvar<double> > a, b, c, d, e, f, g;
+  fvar<fvar<double>> a, b, c, d, e, f, g;
 
   a.val_.val_ = 1.0;
   b.val_.val_ = 2.0;
@@ -298,7 +298,7 @@ TEST(AgradFwdMatrixMdivideRightTriLow, ffd__rowvector_matrix_ffd) {
   using stan::math::matrix_ffd;
   using stan::math::row_vector_d;
 
-  fvar<fvar<double> > a, b, c, d, e, f, g;
+  fvar<fvar<double>> a, b, c, d, e, f, g;
 
   a.val_.val_ = 1.0;
   b.val_.val_ = 2.0;
@@ -338,7 +338,7 @@ TEST(AgradFwdMatrixMdivideRightTriLow, ffd__rowvector_ffd_matrix) {
   matrix_d Y(3, 3);
   Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
-  fvar<fvar<double> > a, b, c;
+  fvar<fvar<double>> a, b, c;
 
   a.val_.val_ = 1.0;
   b.val_.val_ = 2.0;
@@ -363,7 +363,7 @@ TEST(AgradFwdMatrixMdivideRightTriLow, ffd__matrix_ffd_matrix_ffd) {
   using stan::math::matrix_ffd;
   using stan::math::row_vector_ffd;
 
-  fvar<fvar<double> > a, b, c, d, e, f, g, h, i, j;
+  fvar<fvar<double>> a, b, c, d, e, f, g, h, i, j;
 
   a.val_.val_ = 1.0;
   b.val_.val_ = 2.0;
@@ -418,7 +418,7 @@ TEST(AgradFwdMatrixMdivideRightTriLow, ffd__matrix_ffd_matrix) {
   using stan::math::matrix_ffd;
   using stan::math::row_vector_ffd;
 
-  fvar<fvar<double> > a, b, c, d, e, f, g, h, i, j;
+  fvar<fvar<double>> a, b, c, d, e, f, g, h, i, j;
 
   a.val_.val_ = 1.0;
   b.val_.val_ = 2.0;
@@ -473,7 +473,7 @@ TEST(AgradFwdMatrixMdivideRightTriLow, ffd__matrix_matrix_ffd) {
   using stan::math::matrix_ffd;
   using stan::math::row_vector_ffd;
 
-  fvar<fvar<double> > a, b, c, d, e, f, g;
+  fvar<fvar<double>> a, b, c, d, e, f, g;
 
   a.val_.val_ = 1.0;
   b.val_.val_ = 2.0;

@@ -30,7 +30,7 @@ inline int logical_and(const T1 x1, const T2 x2) {
   return (x1 != 0) && (x2 != 0);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

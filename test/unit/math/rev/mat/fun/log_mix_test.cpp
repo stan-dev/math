@@ -1,7 +1,7 @@
+#include <gtest/gtest.h>
 #include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
-#include <gtest/gtest.h>
 #include <vector>
 
 using stan::math::log_mix;
@@ -10,8 +10,7 @@ using stan::math::var;
 using stan::math::vector_d;
 using stan::math::vector_v;
 
-template <typename T_a, typename T_b>
-void val_rev_test(T_a a, T_b b) {
+template <typename T_a, typename T_b> void val_rev_test(T_a a, T_b b) {
   a[0] = 0.112;
   a[1] = 0.214;
   a[2] = 0.305;

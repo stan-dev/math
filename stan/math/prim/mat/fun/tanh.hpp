@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_TANH_HPP
 #define STAN_MATH_PRIM_MAT_FUN_TANH_HPP
 
-#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
+#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 
 namespace stan {
 namespace math {
@@ -14,8 +14,7 @@ namespace math {
  * @return Hyperbolic tangent of x.
  */
 struct tanh_fun {
-  template <typename T>
-  static inline T fun(const T& x) {
+  template <typename T> static inline T fun(const T &x) {
     using std::tanh;
     return tanh(x);
   }
@@ -28,11 +27,11 @@ struct tanh_fun {
  * @return Hyperbolic tangent of each value in x.
  */
 template <typename T>
-inline typename apply_scalar_unary<tanh_fun, T>::return_t tanh(const T& x) {
+inline typename apply_scalar_unary<tanh_fun, T>::return_t tanh(const T &x) {
   return apply_scalar_unary<tanh_fun, T>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

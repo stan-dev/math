@@ -30,17 +30,17 @@ const char *transpose_kernel_code = STRINGIFY(
       }
     }
     // \cond
-);
+    );
 // \endcond
 
 /**
  * See the docs for \link kernels/transpose.hpp transpose() \endlink
  */
-const global_range_kernel<cl::Buffer, cl::Buffer, int, int> transpose(
-    "transpose", transpose_kernel_code);
+const global_range_kernel<cl::Buffer, cl::Buffer, int, int>
+    transpose("transpose", transpose_kernel_code);
 
-}  // namespace opencl_kernels
-}  // namespace math
-}  // namespace stan
+} // namespace opencl_kernels
+} // namespace math
+} // namespace stan
 #endif
 #endif

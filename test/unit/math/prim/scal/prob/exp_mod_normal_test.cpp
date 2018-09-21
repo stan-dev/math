@@ -1,7 +1,7 @@
-#include <stan/math/prim/scal.hpp>
 #include <boost/math/distributions.hpp>
-#include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
+#include <gtest/gtest.h>
+#include <stan/math/prim/scal.hpp>
 
 TEST(ProbDistributionsExpModNormal, error_check) {
   boost::random::mt19937 rng;

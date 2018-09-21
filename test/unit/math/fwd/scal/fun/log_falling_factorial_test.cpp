@@ -1,6 +1,6 @@
-#include <stan/math/fwd/scal.hpp>
-#include <gtest/gtest.h>
 #include <boost/math/special_functions/digamma.hpp>
+#include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdLogFallingFactorial, Fvar) {
@@ -15,9 +15,9 @@ TEST(AgradFwdLogFallingFactorial, Fvar) {
 
   // finite diff
   double eps = 1e-6;
-  EXPECT_FLOAT_EQ((stan::math::log_falling_factorial(4.0 + eps, 2.0)
-                   - stan::math::log_falling_factorial(4.0 - eps, 2.0))
-                      / (2 * eps),
+  EXPECT_FLOAT_EQ((stan::math::log_falling_factorial(4.0 + eps, 2.0) -
+                   stan::math::log_falling_factorial(4.0 - eps, 2.0)) /
+                      (2 * eps),
                   x.d_);
 
   fvar<double> c(-3.0, 2.0);
@@ -34,9 +34,9 @@ TEST(AgradFwdLogFallingFactorial, Fvar) {
   EXPECT_FLOAT_EQ(digamma(2.0), x.d_);
 
   // finite diff
-  EXPECT_FLOAT_EQ((stan::math::log_falling_factorial(5.0, 4.0 + eps)
-                   - stan::math::log_falling_factorial(5.0, 4.0 - eps))
-                      / (2 * eps),
+  EXPECT_FLOAT_EQ((stan::math::log_falling_factorial(5.0, 4.0 + eps) -
+                   stan::math::log_falling_factorial(5.0, 4.0 - eps)) /
+                      (2 * eps),
                   x.d_);
 }
 
@@ -44,15 +44,15 @@ TEST(AgradFwdLogFallingFactorial, FvarFvarDouble) {
   using stan::math::fvar;
   using stan::math::log_falling_factorial;
 
-  fvar<fvar<double> > x;
+  fvar<fvar<double>> x;
   x.val_.val_ = 4.0;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<double> > y;
+  fvar<fvar<double>> y;
   y.val_.val_ = 3.0;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<double> > a = log_falling_factorial(x, y);
+  fvar<fvar<double>> a = log_falling_factorial(x, y);
 
   EXPECT_FLOAT_EQ(3.1780539, a.val_.val_);
   EXPECT_FLOAT_EQ(1.0833334, a.val_.d_);
@@ -62,8 +62,8 @@ TEST(AgradFwdLogFallingFactorial, FvarFvarDouble) {
 
 struct log_falling_factorial_fun {
   template <typename T0, typename T1>
-  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
-      const T0 arg1, const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type
+  operator()(const T0 arg1, const T1 arg2) const {
     return log_falling_factorial(arg1, arg2);
   }
 };

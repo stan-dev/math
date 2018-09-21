@@ -1,44 +1,44 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_SCALED_INV_CHI_SQUARE_LCCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_SCALED_INV_CHI_SQUARE_LCCDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <boost/random/chi_squared_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
+#include <cmath>
+#include <limits>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
+#include <stan/math/prim/scal/fun/gamma_p.hpp>
+#include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/tgamma.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
-#include <boost/random/chi_squared_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <limits>
-#include <cmath>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/length.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {
 namespace math {
 
 template <typename T_y, typename T_dof, typename T_scale>
-typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_lccdf(
-    const T_y& y, const T_dof& nu, const T_scale& s) {
+typename return_type<T_y, T_dof, T_scale>::type
+scaled_inv_chi_square_lccdf(const T_y &y, const T_dof &nu, const T_scale &s) {
   typedef typename stan::partials_return_type<T_y, T_dof, T_scale>::type
       T_partials_return;
 
   if (size_zero(y, nu, s))
     return 0.0;
 
-  static const char* function = "scaled_inv_chi_square_lccdf";
+  static const char *function = "scaled_inv_chi_square_lccdf";
 
   using std::exp;
 
@@ -95,33 +95,32 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_lccdf(
     const T_partials_return half_nu_dbl = 0.5 * value_of(nu_vec[n]);
     const T_partials_return s_dbl = value_of(s_vec[n]);
     const T_partials_return half_s2_overx_dbl = 0.5 * s_dbl * s_dbl * y_inv_dbl;
-    const T_partials_return half_nu_s2_overx_dbl
-        = 2.0 * half_nu_dbl * half_s2_overx_dbl;
+    const T_partials_return half_nu_s2_overx_dbl =
+        2.0 * half_nu_dbl * half_s2_overx_dbl;
 
     const T_partials_return Pn = gamma_p(half_nu_dbl, half_nu_s2_overx_dbl);
-    const T_partials_return gamma_p_deriv
-        = exp(-half_nu_s2_overx_dbl)
-          * pow(half_nu_s2_overx_dbl, half_nu_dbl - 1) / tgamma(half_nu_dbl);
+    const T_partials_return gamma_p_deriv =
+        exp(-half_nu_s2_overx_dbl) *
+        pow(half_nu_s2_overx_dbl, half_nu_dbl - 1) / tgamma(half_nu_dbl);
 
     P += log(Pn);
 
     if (!is_constant_struct<T_y>::value)
-      ops_partials.edge1_.partials_[n]
-          -= half_nu_s2_overx_dbl * y_inv_dbl * gamma_p_deriv / Pn;
+      ops_partials.edge1_.partials_[n] -=
+          half_nu_s2_overx_dbl * y_inv_dbl * gamma_p_deriv / Pn;
     if (!is_constant_struct<T_dof>::value)
-      ops_partials.edge2_.partials_[n]
-          -= (0.5
-                  * grad_reg_inc_gamma(half_nu_dbl, half_nu_s2_overx_dbl,
-                                       gamma_vec[n], digamma_vec[n])
-              - half_s2_overx_dbl * gamma_p_deriv)
-             / Pn;
+      ops_partials.edge2_.partials_[n] -=
+          (0.5 * grad_reg_inc_gamma(half_nu_dbl, half_nu_s2_overx_dbl,
+                                    gamma_vec[n], digamma_vec[n]) -
+           half_s2_overx_dbl * gamma_p_deriv) /
+          Pn;
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge3_.partials_[n]
-          += 2.0 * half_nu_dbl * s_dbl * y_inv_dbl * gamma_p_deriv / Pn;
+      ops_partials.edge3_.partials_[n] +=
+          2.0 * half_nu_dbl * s_dbl * y_inv_dbl * gamma_p_deriv / Pn;
   }
   return ops_partials.build(P);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

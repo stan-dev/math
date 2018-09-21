@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_CHOLESKY_LOG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_CHOLESKY_LOG_HPP
 
+#include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/prob/multi_normal_cholesky_lpdf.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {
@@ -26,8 +26,8 @@ namespace math {
  * @tparam T_covar Type of scale.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_covar>
-typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_log(
-    const T_y& y, const T_loc& mu, const T_covar& L) {
+typename return_type<T_y, T_loc, T_covar>::type
+multi_normal_cholesky_log(const T_y &y, const T_loc &mu, const T_covar &L) {
   return multi_normal_cholesky_lpdf<propto, T_y, T_loc, T_covar>(y, mu, L);
 }
 
@@ -36,10 +36,10 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_log(
  */
 template <typename T_y, typename T_loc, typename T_covar>
 inline typename return_type<T_y, T_loc, T_covar>::type
-multi_normal_cholesky_log(const T_y& y, const T_loc& mu, const T_covar& L) {
+multi_normal_cholesky_log(const T_y &y, const T_loc &mu, const T_covar &L) {
   return multi_normal_cholesky_lpdf<T_y, T_loc, T_covar>(y, mu, L);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

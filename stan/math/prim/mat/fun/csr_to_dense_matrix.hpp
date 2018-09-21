@@ -2,11 +2,11 @@
 #define STAN_MATH_PRIM_MAT_FUN_CSR_TO_DENSE_MATRIX_HPP
 
 #include <stan/math/prim/mat/err/check_range.hpp>
-#include <stan/math/prim/mat/fun/csr_u_to_z.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/csr_u_to_z.hpp>
 #include <stan/math/prim/mat/fun/dot_product.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <vector>
 
 namespace stan {
@@ -33,9 +33,9 @@ namespace math {
  * @throw std::out_of_range if any of the indices are out of range.
  */
 template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> csr_to_dense_matrix(
-    int m, int n, const Eigen::Matrix<T, Eigen::Dynamic, 1>& w,
-    const std::vector<int>& v, const std::vector<int>& u) {
+inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+csr_to_dense_matrix(int m, int n, const Eigen::Matrix<T, Eigen::Dynamic, 1> &w,
+                    const std::vector<int> &v, const std::vector<int> &u) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
@@ -62,8 +62,8 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> csr_to_dense_matrix(
   }
   return result;
 }
-/** @} */  // end of csr_format group
+/** @} */ // end of csr_format group
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

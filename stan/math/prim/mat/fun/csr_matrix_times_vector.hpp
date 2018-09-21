@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CSR_MATRIX_TIMES_VECTOR_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CSR_MATRIX_TIMES_VECTOR_HPP
 
-#include <stan/math/prim/mat/fun/csr_u_to_z.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/dot_product.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/mat/err/check_range.hpp>
 #include <boost/math/tools/promotion.hpp>
+#include <stan/math/prim/mat/err/check_range.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/csr_u_to_z.hpp>
+#include <stan/math/prim/mat/fun/dot_product.hpp>
+#include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <vector>
 
 namespace stan {
@@ -76,9 +76,9 @@ template <typename T1, typename T2>
 inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
                      Eigen::Dynamic, 1>
 csr_matrix_times_vector(int m, int n,
-                        const Eigen::Matrix<T1, Eigen::Dynamic, 1>& w,
-                        const std::vector<int>& v, const std::vector<int>& u,
-                        const Eigen::Matrix<T2, Eigen::Dynamic, 1>& b) {
+                        const Eigen::Matrix<T1, Eigen::Dynamic, 1> &w,
+                        const std::vector<int> &v, const std::vector<int> &u,
+                        const Eigen::Matrix<T2, Eigen::Dynamic, 1> &b) {
   typedef typename boost::math::tools::promote_args<T1, T2>::type result_t;
 
   check_positive("csr_matrix_times_vector", "m", m);
@@ -110,8 +110,8 @@ csr_matrix_times_vector(int m, int n,
   }
   return result;
 }
-/** @}*/  // end of csr_format group
+/** @}*/ // end of csr_format group
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

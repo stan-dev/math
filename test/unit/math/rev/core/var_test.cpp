@@ -1,9 +1,9 @@
-#include <stan/math.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat/fun/Eigen.hpp>  // only used for stack tests
+#include <stan/math.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp> // only used for stack tests
 #include <stan/math/rev/mat/fun/quad_form.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <string>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
 struct AgradRev : public testing::Test {
@@ -194,8 +194,8 @@ struct gradable {
   AVEC x_;
   AVAR f_;
   Eigen::Matrix<double, Eigen::Dynamic, 1> g_expected_;
-  gradable(const AVEC& x, const AVAR& f,
-           const Eigen::Matrix<double, Eigen::Dynamic, 1>& g_expected)
+  gradable(const AVEC &x, const AVAR &f,
+           const Eigen::Matrix<double, Eigen::Dynamic, 1> &g_expected)
       : x_(x), f_(f), g_expected_(g_expected) {}
   void test() {
     std::vector<double> g;

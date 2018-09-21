@@ -1,12 +1,12 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_CHECK_2F1_CONVERGES_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_2F1_CONVERGES_HPP
 
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/fun/is_nonpositive_integer.hpp>
-#include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <cmath>
 #include <limits>
 #include <sstream>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/scal/fun/is_nonpositive_integer.hpp>
+#include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <stdexcept>
 
 namespace stan {
@@ -33,8 +33,8 @@ namespace math {
  *   does not meet convergence conditions, or if any coefficient is NaN.
  */
 template <typename T_a1, typename T_a2, typename T_b1, typename T_z>
-inline void check_2F1_converges(const char* function, const T_a1& a1,
-                                const T_a2& a2, const T_b1& b1, const T_z& z) {
+inline void check_2F1_converges(const char *function, const T_a1 &a1,
+                                const T_a2 &a2, const T_b1 &b1, const T_z &z) {
   using std::fabs;
   using std::floor;
 
@@ -57,8 +57,8 @@ inline void check_2F1_converges(const char* function, const T_a1& a1,
 
   bool is_undefined = is_nonpositive_integer(b1) && fabs(b1) <= num_terms;
 
-  if (!is_undefined
-      && (is_polynomial || fabs(z) < 1 || (fabs(z) == 1 && b1 > a1 + a2)))
+  if (!is_undefined &&
+      (is_polynomial || fabs(z) < 1 || (fabs(z) == 1 && b1 > a1 + a2)))
     return;
 
   std::stringstream msg;
@@ -70,6 +70,6 @@ inline void check_2F1_converges(const char* function, const T_a1& a1,
   throw std::domain_error(msg.str());
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

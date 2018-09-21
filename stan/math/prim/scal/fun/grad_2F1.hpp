@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_GRAD_2F1_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_GRAD_2F1_HPP
 
-#include <stan/math/prim/scal/fun/sign.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/scal/err/check_2F1_converges.hpp>
 #include <cmath>
 #include <limits>
+#include <stan/math/prim/scal/err/check_2F1_converges.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/fun/sign.hpp>
 
 namespace stan {
 namespace math {
@@ -32,8 +32,8 @@ namespace math {
  * @param[in] max_steps number of steps to take.
  */
 template <typename T>
-void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
-              const T& z, const T& precision = 1e-10, int max_steps = 1e5) {
+void grad_2F1(T &g_a1, T &g_b1, const T &a1, const T &a2, const T &b1,
+              const T &z, const T &precision = 1e-10, int max_steps = 1e5) {
   check_2F1_converges("grad_2F1", a1, a2, b1, z);
 
   using std::exp;
@@ -44,7 +44,7 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
   g_b1 = 0.0;
 
   T log_g_old[2];
-  for (auto& i : log_g_old)
+  for (auto &i : log_g_old)
     i = -std::numeric_limits<T>::infinity();
 
   T log_t_old = 0.0;
@@ -55,7 +55,7 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
   double log_t_new_sign = 1.0;
   double log_t_old_sign = 1.0;
   double log_g_old_sign[2];
-  for (double& x : log_g_old_sign)
+  for (double &x : log_g_old_sign)
     x = 1.0;
 
   for (int k = 0; k <= max_steps; ++k) {
@@ -66,13 +66,14 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
     log_t_new += log(fabs(p)) + log_z;
     log_t_new_sign = p >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
-    T term = log_g_old_sign[0] * log_t_old_sign * exp(log_g_old[0] - log_t_old)
-             + 1 / (a1 + k);
+    T term =
+        log_g_old_sign[0] * log_t_old_sign * exp(log_g_old[0] - log_t_old) +
+        1 / (a1 + k);
     log_g_old[0] = log_t_new + log(fabs(term));
     log_g_old_sign[0] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
-    term = log_g_old_sign[1] * log_t_old_sign * exp(log_g_old[1] - log_t_old)
-           - 1 / (b1 + k);
+    term = log_g_old_sign[1] * log_t_old_sign * exp(log_g_old[1] - log_t_old) -
+           1 / (b1 + k);
     log_g_old[1] = log_t_new + log(fabs(term));
     log_g_old_sign[1] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
@@ -80,7 +81,7 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
     g_b1 += log_g_old_sign[1] > 0 ? exp(log_g_old[1]) : -exp(log_g_old[1]);
 
     if (log_t_new <= log(precision))
-      return;  // implicit abs
+      return; // implicit abs
 
     log_t_old = log_t_new;
     log_t_old_sign = log_t_new_sign;
@@ -91,6 +92,6 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
   return;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

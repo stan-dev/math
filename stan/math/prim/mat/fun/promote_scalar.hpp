@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_PROMOTE_SCALAR_HPP
 #define STAN_MATH_PRIM_MAT_FUN_PROMOTE_SCALAR_HPP
 
-#include <stan/math/prim/scal/fun/promote_scalar.hpp>
-#include <stan/math/prim/mat/fun/promote_scalar_type.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/promote_scalar_type.hpp>
+#include <stan/math/prim/scal/fun/promote_scalar.hpp>
 
 namespace stan {
 namespace math {
@@ -17,7 +17,7 @@ namespace math {
  * have a scalar type assignable to T
  */
 template <typename T, typename S>
-struct promote_scalar_struct<T, Eigen::Matrix<S, -1, -1> > {
+struct promote_scalar_struct<T, Eigen::Matrix<S, -1, -1>> {
   /**
    * Return the matrix consisting of the recursive promotion of
    * the elements of the input matrix to the scalar type specified
@@ -26,8 +26,8 @@ struct promote_scalar_struct<T, Eigen::Matrix<S, -1, -1> > {
    * @param x input matrix.
    * @return matrix with values promoted from input vector.
    */
-  static Eigen::Matrix<typename promote_scalar_type<T, S>::type, -1, -1> apply(
-      const Eigen::Matrix<S, -1, -1>& x) {
+  static Eigen::Matrix<typename promote_scalar_type<T, S>::type, -1, -1>
+  apply(const Eigen::Matrix<S, -1, -1> &x) {
     Eigen::Matrix<typename promote_scalar_type<T, S>::type, -1, -1> y(x.rows(),
                                                                       x.cols());
     for (int i = 0; i < x.size(); ++i)
@@ -45,7 +45,7 @@ struct promote_scalar_struct<T, Eigen::Matrix<S, -1, -1> > {
  * have a scalar type assignable to T
  */
 template <typename T, typename S>
-struct promote_scalar_struct<T, Eigen::Matrix<S, 1, -1> > {
+struct promote_scalar_struct<T, Eigen::Matrix<S, 1, -1>> {
   /**
    * Return the column vector consisting of the recursive promotion of
    * the elements of the input column vector to the scalar type specified
@@ -54,8 +54,8 @@ struct promote_scalar_struct<T, Eigen::Matrix<S, 1, -1> > {
    * @param x input column vector.
    * @return column vector with values promoted from input vector.
    */
-  static Eigen::Matrix<typename promote_scalar_type<T, S>::type, 1, -1> apply(
-      const Eigen::Matrix<S, 1, -1>& x) {
+  static Eigen::Matrix<typename promote_scalar_type<T, S>::type, 1, -1>
+  apply(const Eigen::Matrix<S, 1, -1> &x) {
     Eigen::Matrix<typename promote_scalar_type<T, S>::type, 1, -1> y(x.rows(),
                                                                      x.cols());
     for (int i = 0; i < x.size(); ++i)
@@ -73,7 +73,7 @@ struct promote_scalar_struct<T, Eigen::Matrix<S, 1, -1> > {
  * have a scalar type assignable to T
  */
 template <typename T, typename S>
-struct promote_scalar_struct<T, Eigen::Matrix<S, -1, 1> > {
+struct promote_scalar_struct<T, Eigen::Matrix<S, -1, 1>> {
   /**
    * Return the row vector consisting of the recursive promotion of
    * the elements of the input row vector to the scalar type specified
@@ -82,8 +82,8 @@ struct promote_scalar_struct<T, Eigen::Matrix<S, -1, 1> > {
    * @param x input row vector.
    * @return row vector with values promoted from input vector.
    */
-  static Eigen::Matrix<typename promote_scalar_type<T, S>::type, -1, 1> apply(
-      const Eigen::Matrix<S, -1, 1>& x) {
+  static Eigen::Matrix<typename promote_scalar_type<T, S>::type, -1, 1>
+  apply(const Eigen::Matrix<S, -1, 1> &x) {
     Eigen::Matrix<typename promote_scalar_type<T, S>::type, -1, 1> y(x.rows(),
                                                                      x.cols());
     for (int i = 0; i < x.size(); ++i)
@@ -92,7 +92,7 @@ struct promote_scalar_struct<T, Eigen::Matrix<S, -1, 1> > {
   }
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

@@ -16,11 +16,10 @@ namespace math {
  * @param x Argument.
  * @return natural logarithm of the gamma function of argument.
  */
-template <typename T>
-inline fvar<T> lgamma(const fvar<T>& x) {
+template <typename T> inline fvar<T> lgamma(const fvar<T> &x) {
   return fvar<T>(lgamma(x.val_), x.d_ * digamma(x.val_));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

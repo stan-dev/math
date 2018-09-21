@@ -1,5 +1,5 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(ProbInternalMath, inc_beta_fd) {
@@ -12,10 +12,10 @@ TEST(ProbInternalMath, inc_beta_fd) {
   g.d_ = 1.0;
 
   EXPECT_FLOAT_EQ(0.4, stan::math::inc_beta(a, b, g).val_);
-  EXPECT_NEAR(-0.36651629442883944183907601651838247842001142107486495485
-                  + 0.306495375042422864944011633197968575202046200428315551199
-                  + std::pow(1 - 0.4, 1.0 - 1.0) * std::pow(0.4, 1.0 - 1.0)
-                        / std::exp(stan::math::lbeta(1.0, 1.0)),
+  EXPECT_NEAR(-0.36651629442883944183907601651838247842001142107486495485 +
+                  0.306495375042422864944011633197968575202046200428315551199 +
+                  std::pow(1 - 0.4, 1.0 - 1.0) * std::pow(0.4, 1.0 - 1.0) /
+                      std::exp(stan::math::lbeta(1.0, 1.0)),
               stan::math::inc_beta(a, b, g).d_, 1e-6);
 }
 TEST(ProbInternalMath, inc_beta_fv) {
@@ -29,10 +29,10 @@ TEST(ProbInternalMath, inc_beta_fv) {
   g.d_ = 1.0;
 
   EXPECT_FLOAT_EQ(0.4, stan::math::inc_beta(a, b, g).val_.val());
-  EXPECT_NEAR(-0.36651629442883944183907601651838247842001142107486495485
-                  + 0.306495375042422864944011633197968575202046200428315551199
-                  + std::pow(1 - 0.4, 1.0 - 1.0) * std::pow(0.4, 1.0 - 1.0)
-                        / std::exp(stan::math::lbeta(1.0, 1.0)),
+  EXPECT_NEAR(-0.36651629442883944183907601651838247842001142107486495485 +
+                  0.306495375042422864944011633197968575202046200428315551199 +
+                  std::pow(1 - 0.4, 1.0 - 1.0) * std::pow(0.4, 1.0 - 1.0) /
+                      std::exp(stan::math::lbeta(1.0, 1.0)),
               stan::math::inc_beta(a, b, g).d_.val(), 1e-6);
 }
 TEST(ProbInternalMath, inc_beta_fv_2ndderiv1) {
@@ -91,50 +91,50 @@ TEST(ProbInternalMath, inc_beta_fv_2ndderiv3) {
 
 TEST(ProbInternalMath, inc_beta_ffd) {
   using stan::math::fvar;
-  fvar<fvar<double> > a = 1.0;
-  fvar<fvar<double> > b = 1.0;
-  fvar<fvar<double> > g = 0.4;
+  fvar<fvar<double>> a = 1.0;
+  fvar<fvar<double>> b = 1.0;
+  fvar<fvar<double>> g = 0.4;
   a.d_ = 1.0;
   b.d_ = 1.0;
   g.d_ = 1.0;
 
   EXPECT_FLOAT_EQ(0.4, stan::math::inc_beta(a, b, g).val_.val_);
-  EXPECT_NEAR(-0.36651629442883944183907601651838247842001142107486495485
-                  + 0.306495375042422864944011633197968575202046200428315551199
-                  + std::pow(1 - 0.4, 1.0 - 1.0) * std::pow(0.4, 1.0 - 1.0)
-                        / std::exp(stan::math::lbeta(1.0, 1.0)),
+  EXPECT_NEAR(-0.36651629442883944183907601651838247842001142107486495485 +
+                  0.306495375042422864944011633197968575202046200428315551199 +
+                  std::pow(1 - 0.4, 1.0 - 1.0) * std::pow(0.4, 1.0 - 1.0) /
+                      std::exp(stan::math::lbeta(1.0, 1.0)),
               stan::math::inc_beta(a, b, g).d_.val_, 1e-6);
 }
 
 TEST(ProbInternalMath, inc_beta_fvv) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > a = 1.0;
-  fvar<fvar<var> > b = 1.0;
-  fvar<fvar<var> > g = 0.4;
+  fvar<fvar<var>> a = 1.0;
+  fvar<fvar<var>> b = 1.0;
+  fvar<fvar<var>> g = 0.4;
   a.d_ = 1.0;
   b.d_ = 1.0;
   g.d_ = 1.0;
 
   EXPECT_FLOAT_EQ(0.4, stan::math::inc_beta(a, b, g).val_.val_.val());
-  EXPECT_NEAR(-0.36651629442883944183907601651838247842001142107486495485
-                  + 0.306495375042422864944011633197968575202046200428315551199
-                  + std::pow(1 - 0.4, 1.0 - 1.0) * std::pow(0.4, 1.0 - 1.0)
-                        / std::exp(stan::math::lbeta(1.0, 1.0)),
+  EXPECT_NEAR(-0.36651629442883944183907601651838247842001142107486495485 +
+                  0.306495375042422864944011633197968575202046200428315551199 +
+                  std::pow(1 - 0.4, 1.0 - 1.0) * std::pow(0.4, 1.0 - 1.0) /
+                      std::exp(stan::math::lbeta(1.0, 1.0)),
               stan::math::inc_beta(a, b, g).d_.val_.val(), 1e-6);
 }
 
 TEST(ProbInternalMath, inc_beta_ffv_2ndderiv1) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > a_ffv = 1.0;
-  fvar<fvar<var> > b_ffv = 1.0;
-  fvar<fvar<var> > g_ffv = 0.4;
+  fvar<fvar<var>> a_ffv = 1.0;
+  fvar<fvar<var>> b_ffv = 1.0;
+  fvar<fvar<var>> g_ffv = 0.4;
   a_ffv.d_ = 0.0;
   b_ffv.d_ = 0.0;
   g_ffv.d_ = 1.0;
 
-  fvar<fvar<var> > z1 = stan::math::inc_beta(a_ffv, b_ffv, g_ffv);
+  fvar<fvar<var>> z1 = stan::math::inc_beta(a_ffv, b_ffv, g_ffv);
 
   AVEC y1 = createAVEC(g_ffv.val_.val_);
   VEC grad1;
@@ -144,14 +144,14 @@ TEST(ProbInternalMath, inc_beta_ffv_2ndderiv1) {
 TEST(ProbInternalMath, inc_beta_ffv_2ndderiv2) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > a_ffv = 1.0;
-  fvar<fvar<var> > b_ffv = 1.0;
-  fvar<fvar<var> > g_ffv = 0.4;
+  fvar<fvar<var>> a_ffv = 1.0;
+  fvar<fvar<var>> b_ffv = 1.0;
+  fvar<fvar<var>> g_ffv = 0.4;
   a_ffv.d_ = 1.0;
   b_ffv.d_ = 0.0;
   g_ffv.d_ = 0.0;
 
-  fvar<fvar<var> > z1 = stan::math::inc_beta(a_ffv, b_ffv, g_ffv);
+  fvar<fvar<var>> z1 = stan::math::inc_beta(a_ffv, b_ffv, g_ffv);
 
   AVEC y1 = createAVEC(a_ffv.val_.val_);
   VEC grad1;
@@ -162,14 +162,14 @@ TEST(ProbInternalMath, inc_beta_ffv_2ndderiv2) {
 TEST(ProbInternalMath, inc_beta_ffv_2ndderiv3) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > a_ffv = 1.0;
-  fvar<fvar<var> > b_ffv = 1.0;
-  fvar<fvar<var> > g_ffv = 0.4;
+  fvar<fvar<var>> a_ffv = 1.0;
+  fvar<fvar<var>> b_ffv = 1.0;
+  fvar<fvar<var>> g_ffv = 0.4;
   a_ffv.d_ = 0.0;
   b_ffv.d_ = 1.0;
   g_ffv.d_ = 0.0;
 
-  fvar<fvar<var> > z1 = stan::math::inc_beta(a_ffv, b_ffv, g_ffv);
+  fvar<fvar<var>> z1 = stan::math::inc_beta(a_ffv, b_ffv, g_ffv);
 
   AVEC y1 = createAVEC(b_ffv.val_.val_);
   VEC grad1;
@@ -180,15 +180,15 @@ TEST(ProbInternalMath, inc_beta_ffv_2ndderiv3) {
 TEST(ProbInternalMath, inc_beta_ffv_3rddderiv1) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > a_ffv = 1.0;
-  fvar<fvar<var> > b_ffv = 1.0;
-  fvar<fvar<var> > g_ffv = 0.4;
+  fvar<fvar<var>> a_ffv = 1.0;
+  fvar<fvar<var>> b_ffv = 1.0;
+  fvar<fvar<var>> g_ffv = 0.4;
   a_ffv.d_ = 0.0;
   b_ffv.d_ = 1.0;
   b_ffv.val_.d_ = 1.0;
   g_ffv.d_ = 0.0;
 
-  fvar<fvar<var> > z1 = stan::math::inc_beta(a_ffv, b_ffv, g_ffv);
+  fvar<fvar<var>> z1 = stan::math::inc_beta(a_ffv, b_ffv, g_ffv);
 
   AVEC y1 = createAVEC(b_ffv.val_.val_);
   VEC grad1;
@@ -198,15 +198,15 @@ TEST(ProbInternalMath, inc_beta_ffv_3rddderiv1) {
 TEST(ProbInternalMath, inc_beta_ffv_3rddderiv2) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > a_ffv = 1.0;
-  fvar<fvar<var> > b_ffv = 1.0;
-  fvar<fvar<var> > g_ffv = 0.4;
+  fvar<fvar<var>> a_ffv = 1.0;
+  fvar<fvar<var>> b_ffv = 1.0;
+  fvar<fvar<var>> g_ffv = 0.4;
   a_ffv.d_ = 1.0;
   a_ffv.val_.d_ = 1.0;
   b_ffv.d_ = 0.0;
   g_ffv.d_ = 0.0;
 
-  fvar<fvar<var> > z1 = stan::math::inc_beta(a_ffv, b_ffv, g_ffv);
+  fvar<fvar<var>> z1 = stan::math::inc_beta(a_ffv, b_ffv, g_ffv);
 
   AVEC y1 = createAVEC(a_ffv.val_.val_);
   VEC grad1;
@@ -217,15 +217,15 @@ TEST(ProbInternalMath, inc_beta_ffv_3rddderiv2) {
 TEST(ProbInternalMath, inc_beta_ffv_3rddderiv3) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > a_ffv = 1.0;
-  fvar<fvar<var> > b_ffv = 1.0;
-  fvar<fvar<var> > g_ffv = 0.4;
+  fvar<fvar<var>> a_ffv = 1.0;
+  fvar<fvar<var>> b_ffv = 1.0;
+  fvar<fvar<var>> g_ffv = 0.4;
   a_ffv.d_ = 0.0;
   b_ffv.d_ = 0.0;
   g_ffv.d_ = 1.0;
   g_ffv.val_.d_ = 1.0;
 
-  fvar<fvar<var> > z1 = stan::math::inc_beta(a_ffv, b_ffv, g_ffv);
+  fvar<fvar<var>> z1 = stan::math::inc_beta(a_ffv, b_ffv, g_ffv);
 
   AVEC y1 = createAVEC(g_ffv.val_.val_);
   VEC grad1;

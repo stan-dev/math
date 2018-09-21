@@ -2,11 +2,11 @@
 #define STAN_MATH_PRIM_MAT_FUN_MDIVIDE_LEFT_LDLT_HPP
 
 #include <boost/math/tools/promotion.hpp>
+#include <boost/type_traits/is_same.hpp>
+#include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/LDLT_factor.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/fun/promote_common.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 namespace stan {
 namespace math {
@@ -27,9 +27,9 @@ mdivide_left_ldlt(const LDLT_factor<T1, R1, C1> &A,
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
 
   return A.solve(
-      promote_common<Eigen::Matrix<T1, R2, C2>, Eigen::Matrix<T2, R2, C2> >(b));
+      promote_common<Eigen::Matrix<T1, R2, C2>, Eigen::Matrix<T2, R2, C2>>(b));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

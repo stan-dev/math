@@ -1,7 +1,7 @@
-#include <stan/math/prim/mat.hpp>
+#include <algorithm>
 #include <gtest/gtest.h>
 #include <limits>
-#include <algorithm>
+#include <stan/math/prim/mat.hpp>
 #include <vector>
 
 TEST(MathMatrix, max) {

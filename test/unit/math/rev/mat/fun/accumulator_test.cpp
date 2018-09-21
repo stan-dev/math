@@ -1,10 +1,10 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
 
 // test sum of first n numbers for sum of a
-void test_sum(stan::math::accumulator<stan::math::var>& a, int n) {
+void test_sum(stan::math::accumulator<stan::math::var> &a, int n) {
   EXPECT_FLOAT_EQ((n * (n + 1)) / 2, a.sum().val());
 }
 
@@ -70,7 +70,7 @@ TEST(AgradRevMathMatrix, accumulateCollection) {
     a.add(pos++);
   test_sum(a, pos - 1);
 
-  vector<vector<int> > ww(10);
+  vector<vector<int>> ww(10);
   for (size_t i = 0; i < 10; ++i) {
     vector<int> w(5);
     for (size_t n = 0; n < 5; ++n)
@@ -116,7 +116,7 @@ TEST(AgradRevMathMatrix, accumulateCollection) {
   a.add(mvvar);
   test_sum(a, pos - 1);
 
-  vector<Matrix<var, Dynamic, 1> > vvx_var(8);
+  vector<Matrix<var, Dynamic, 1>> vvx_var(8);
   for (size_t i = 0; i < 8; ++i) {
     Matrix<var, Dynamic, 1> vx_var(3);
     for (int j = 0; j < 3; ++j)

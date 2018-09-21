@@ -1,7 +1,7 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/scal/fun/util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradFwdModifiedBesselFirstKind, FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -38,11 +38,11 @@ TEST(AgradFwdModifiedBesselFirstKind, FvarFvarVar_1stDeriv) {
   using stan::math::modified_bessel_first_kind;
   using stan::math::var;
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 4.0;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var> > a = modified_bessel_first_kind(1, y);
+  fvar<fvar<var>> a = modified_bessel_first_kind(1, y);
 
   EXPECT_FLOAT_EQ(modified_bessel_first_kind(1, 4.0), a.val_.val_.val());
   EXPECT_FLOAT_EQ(0, a.val_.d_.val());
@@ -54,11 +54,11 @@ TEST(AgradFwdModifiedBesselFirstKind, FvarFvarVar_1stDeriv) {
   a.val_.val_.grad(p, g);
   EXPECT_FLOAT_EQ(8.8620556637102180189, g[0]);
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 4.0;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var> > b = modified_bessel_first_kind(1, x);
+  fvar<fvar<var>> b = modified_bessel_first_kind(1, x);
 
   EXPECT_FLOAT_EQ(modified_bessel_first_kind(1, 4.0), b.val_.val_.val());
   EXPECT_FLOAT_EQ(8.8620556637102180189, b.val_.d_.val());
@@ -75,22 +75,22 @@ TEST(AgradFwdModifiedBesselFirstKind, FvarFvarVar_2ndDeriv) {
   using stan::math::modified_bessel_first_kind;
   using stan::math::var;
 
-  fvar<fvar<var> > y;
+  fvar<fvar<var>> y;
   y.val_.val_ = 4.0;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<var> > a = modified_bessel_first_kind(1, y);
+  fvar<fvar<var>> a = modified_bessel_first_kind(1, y);
 
   AVEC p = createAVEC(y.val_.val_);
   VEC g;
   a.d_.val_.grad(p, g);
   EXPECT_FLOAT_EQ(8.1539183, g[0]);
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 4.0;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<var> > b = modified_bessel_first_kind(1, x);
+  fvar<fvar<var>> b = modified_bessel_first_kind(1, x);
 
   AVEC q = createAVEC(x.val_.val_);
   VEC r;
@@ -101,12 +101,12 @@ TEST(AgradFwdModifiedBesselFirstKind, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > x;
+  fvar<fvar<var>> x;
   x.val_.val_ = 4.0;
   x.val_.d_ = 1.0;
   x.d_.val_ = 1.0;
 
-  fvar<fvar<var> > a = modified_bessel_first_kind(1, x);
+  fvar<fvar<var>> a = modified_bessel_first_kind(1, x);
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
@@ -115,8 +115,7 @@ TEST(AgradFwdModifiedBesselFirstKind, FvarFvarVar_3rdDeriv) {
 }
 
 struct modified_bessel_first_kind_fun {
-  template <typename T0>
-  inline T0 operator()(const T0& arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return modified_bessel_first_kind(1, arg1);
   }
 };

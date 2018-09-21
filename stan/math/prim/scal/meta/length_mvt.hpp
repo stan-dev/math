@@ -17,11 +17,10 @@ namespace stan {
  *   only match scalars.
  * @throw std::invalid_argument since the type is a scalar.
  */
-template <typename T>
-size_t length_mvt(const T& /* unused */) {
+template <typename T> size_t length_mvt(const T & /* unused */) {
   throw std::invalid_argument("length_mvt passed to an unrecognized type.");
   return 1U;
 }
 
-}  // namespace stan
+} // namespace stan
 #endif

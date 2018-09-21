@@ -1,6 +1,6 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <random>
+#include <stan/math/prim/mat.hpp>
 
 TEST(ProbDistributionsLkjCorr, testIdentity) {
   std::random_device rd;

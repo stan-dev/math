@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 
@@ -48,8 +48,8 @@ TEST(AgradRevMatrix, inverse_spd_grad) {
       int idx = 0;
       for (int i = 0; i < 2; ++i) {
         for (int j = 0; j < 2; ++j) {
-          EXPECT_FLOAT_EQ(-0.5 * ad_inv(k, i).val() * ad_inv(j, l).val()
-                              - 0.5 * ad_inv(l, i).val() * ad_inv(j, k).val(),
+          EXPECT_FLOAT_EQ(-0.5 * ad_inv(k, i).val() * ad_inv(j, l).val() -
+                              0.5 * ad_inv(l, i).val() * ad_inv(j, k).val(),
                           g[idx]);
           ++idx;
         }

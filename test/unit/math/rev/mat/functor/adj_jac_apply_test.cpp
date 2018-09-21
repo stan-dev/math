@@ -1,8 +1,8 @@
+#include <algorithm>
+#include <gtest/gtest.h>
+#include <sstream>
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
-#include <gtest/gtest.h>
-#include <algorithm>
-#include <sstream>
 #include <tuple>
 #include <vector>
 
@@ -12,15 +12,15 @@
 struct ScalarSinFunctor {
   double x_;
   template <std::size_t size>
-  double operator()(const std::array<bool, size>& needs_adj, const double& x) {
+  double operator()(const std::array<bool, size> &needs_adj, const double &x) {
     x_ = x;
 
     return sin(x_);
   }
 
   template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const double& adj) {
+  auto multiply_adjoint_jacobian(const std::array<bool, size> &needs_adj,
+                                 const double &adj) {
     return std::make_tuple(cos(x_) * adj);
   }
 };
@@ -57,12 +57,12 @@ TEST(AgradRev, test_scalar_sin_jac) {
  * Check std::vector return type
  */
 struct StdVectorSinFunctor {
-  double* x_;
+  double *x_;
   int N_;
 
   template <std::size_t size>
-  std::vector<double> operator()(const std::array<bool, size>& needs_adj,
-                                 const std::vector<double>& x) {
+  std::vector<double> operator()(const std::array<bool, size> &needs_adj,
+                                 const std::vector<double> &x) {
     N_ = x.size();
     std::vector<double> out(N_);
 
@@ -78,8 +78,8 @@ struct StdVectorSinFunctor {
   }
 
   template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const std::vector<double>& adj) {
+  auto multiply_adjoint_jacobian(const std::array<bool, size> &needs_adj,
+                                 const std::vector<double> &adj) {
     std::vector<double> adj_jac(N_);
     for (int i = 0; i < N_; ++i) {
       adj_jac[i] = cos(x_[i]) * adj[i];
@@ -131,14 +131,14 @@ TEST(AgradRev, test_std_vector_sin_jac) {
  */
 struct SinFunctor {
   int N_;
-  double* x_mem_;
+  double *x_mem_;
   template <std::size_t size>
-  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
-                             const Eigen::VectorXd& x) {
+  Eigen::VectorXd operator()(const std::array<bool, size> &needs_adj,
+                             const Eigen::VectorXd &x) {
     N_ = x.size();
     Eigen::VectorXd out(N_);
-    x_mem_
-        = stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
+    x_mem_ =
+        stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
             N_);
 
     for (int n = 0; n < N_; ++n) {
@@ -150,8 +150,8 @@ struct SinFunctor {
   }
 
   template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const Eigen::VectorXd& adj) {
+  auto multiply_adjoint_jacobian(const std::array<bool, size> &needs_adj,
+                                 const Eigen::VectorXd &adj) {
     Eigen::VectorXd out(N_);
 
     for (int n = 0; n < N_; ++n) {
@@ -228,14 +228,14 @@ TEST(AgradRev, test_vector_sin_multiple_jac) {
  */
 struct RowVectorSinFunctor {
   int N_;
-  double* x_mem_;
+  double *x_mem_;
   template <std::size_t size>
-  Eigen::RowVectorXd operator()(const std::array<bool, size>& needs_adj,
-                                const Eigen::RowVectorXd& x) {
+  Eigen::RowVectorXd operator()(const std::array<bool, size> &needs_adj,
+                                const Eigen::RowVectorXd &x) {
     N_ = x.size();
     Eigen::RowVectorXd out(N_);
-    x_mem_
-        = stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
+    x_mem_ =
+        stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
             N_);
 
     for (int n = 0; n < N_; ++n) {
@@ -247,8 +247,8 @@ struct RowVectorSinFunctor {
   }
 
   template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const Eigen::RowVectorXd& adj) {
+  auto multiply_adjoint_jacobian(const std::array<bool, size> &needs_adj,
+                                 const Eigen::RowVectorXd &adj) {
     Eigen::RowVectorXd out(N_);
 
     for (int n = 0; n < N_; ++n) {
@@ -326,15 +326,15 @@ TEST(AgradRev, test_row_vector_sin_multiple_jac) {
 struct MatrixSinFunctor {
   int N_;
   int M_;
-  double* x_mem_;
+  double *x_mem_;
   template <std::size_t size>
-  Eigen::MatrixXd operator()(const std::array<bool, size>& needs_adj,
-                             const Eigen::MatrixXd& x) {
+  Eigen::MatrixXd operator()(const std::array<bool, size> &needs_adj,
+                             const Eigen::MatrixXd &x) {
     N_ = x.rows();
     M_ = x.cols();
     Eigen::MatrixXd out(N_, M_);
-    x_mem_
-        = stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
+    x_mem_ =
+        stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
             N_ * M_);
 
     for (int n = 0; n < N_ * M_; ++n) {
@@ -346,8 +346,8 @@ struct MatrixSinFunctor {
   }
 
   template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const Eigen::MatrixXd& adj) {
+  auto multiply_adjoint_jacobian(const std::array<bool, size> &needs_adj,
+                                 const Eigen::MatrixXd &adj) {
     Eigen::MatrixXd out(N_, M_);
 
     for (int n = 0; n < N_ * M_; ++n) {
@@ -423,22 +423,24 @@ TEST(AgradRev, test_matrix_sin_multiple_jac) {
  */
 struct WeirdArgumentListFunctor1 {
   template <size_t size>
-  Eigen::VectorXd operator()(
-      std::array<bool, size> needs_adj, double, int, const double&, const int&,
-      std::vector<double>, std::vector<int>, const std::vector<double>&,
-      const std::vector<int>&, Eigen::Matrix<double, Eigen::Dynamic, 1>,
-      Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>,
-      Eigen::Matrix<double, 2, Eigen::Dynamic>, Eigen::Matrix<double, 5, 1>,
-      const Eigen::Matrix<double, Eigen::Dynamic, 1>&,
-      const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&,
-      const Eigen::Matrix<double, 2, Eigen::Dynamic>&,
-      const Eigen::Matrix<double, 5, 1>&) {
+  Eigen::VectorXd
+  operator()(std::array<bool, size> needs_adj, double, int, const double &,
+             const int &, std::vector<double>, std::vector<int>,
+             const std::vector<double> &, const std::vector<int> &,
+             Eigen::Matrix<double, Eigen::Dynamic, 1>,
+             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>,
+             Eigen::Matrix<double, 2, Eigen::Dynamic>,
+             Eigen::Matrix<double, 5, 1>,
+             const Eigen::Matrix<double, Eigen::Dynamic, 1> &,
+             const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> &,
+             const Eigen::Matrix<double, 2, Eigen::Dynamic> &,
+             const Eigen::Matrix<double, 5, 1> &) {
     return Eigen::VectorXd(1);
   }
 
   template <size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const Eigen::VectorXd& y_adj) {
+  auto multiply_adjoint_jacobian(const std::array<bool, size> &needs_adj,
+                                 const Eigen::VectorXd &y_adj) {
     return std::make_tuple(
         double(), int(), double(), int(), std::vector<double>(),
         std::vector<int>(), std::vector<double>(), std::vector<int>(),
@@ -454,7 +456,7 @@ struct WeirdArgumentListFunctor1 {
 };
 
 template <typename F, typename... Targs>
-auto make_vari_for_test(const Targs&... args) {
+auto make_vari_for_test(const Targs &... args) {
   auto vi = new stan::math::adj_jac_vari<F, Targs...>();
 
   (*vi)(args...);
@@ -483,8 +485,8 @@ TEST(AgradRev,
   ev3.setZero();
   ev4.setZero();
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y1
-      = stan::math::adj_jac_apply<WeirdArgumentListFunctor1>(
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y1 =
+      stan::math::adj_jac_apply<WeirdArgumentListFunctor1>(
           d, i, d, i, vd, vi, vd, vi, ed1, ed2, ed3, ed4, ed1, ed2, ed3, ed4);
 
   y1(0).grad();
@@ -556,21 +558,21 @@ struct CheckAdjointsPassingThrough {
   int cols_ed2;
   int cols_ed3;
   template <size_t size>
-  Eigen::VectorXd operator()(
-      std::array<bool, size> needs_adj, const double& d,
-      const std::vector<double>& vd, const int&,
-      const Eigen::Matrix<double, Eigen::Dynamic, 1>& ed1,
-      const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& ed2,
-      const std::vector<int>&,
-      const Eigen::Matrix<double, 1, Eigen::Dynamic>& ed3,
-      const Eigen::Matrix<double, 1, 1>& ed4) {
+  Eigen::VectorXd
+  operator()(std::array<bool, size> needs_adj, const double &d,
+             const std::vector<double> &vd, const int &,
+             const Eigen::Matrix<double, Eigen::Dynamic, 1> &ed1,
+             const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> &ed2,
+             const std::vector<int> &,
+             const Eigen::Matrix<double, 1, Eigen::Dynamic> &ed3,
+             const Eigen::Matrix<double, 1, 1> &ed4) {
     size_vd = vd.size();
     rows_ed1 = ed1.rows();
     rows_ed2 = ed2.rows();
     cols_ed2 = ed2.cols();
     cols_ed3 = ed3.cols();
-    Eigen::VectorXd out(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + cols_ed3
-                        + 1);
+    Eigen::VectorXd out(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 +
+                        cols_ed3 + 1);
 
     out(0) = d;
     for (int i = 0; i < size_vd; i++)
@@ -587,8 +589,8 @@ struct CheckAdjointsPassingThrough {
   }
 
   template <size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const Eigen::VectorXd& y_adj) {
+  auto multiply_adjoint_jacobian(const std::array<bool, size> &needs_adj,
+                                 const Eigen::VectorXd &y_adj) {
     double d;
     std::vector<double> vd(size_vd);
     Eigen::Matrix<double, Eigen::Dynamic, 1> ed1(rows_ed1);
@@ -636,9 +638,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types) {
 
   ed4(0) = 1.0;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
-      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
-          d, vd, 5, ed1, ed2, vi, ed3, ed4);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y =
+      stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(d, vd, 5, ed1, ed2,
+                                                             vi, ed3, ed4);
 
   y(0).grad();
   EXPECT_FLOAT_EQ(y(0).val(), d.val());
@@ -773,9 +775,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_different_shapes) {
 
   ed4(0) = 1.0;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
-      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
-          d, vd, 3, ed1, ed2, vi, ed3, ed4);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y =
+      stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(d, vd, 3, ed1, ed2,
+                                                             vi, ed3, ed4);
 
   y(0).grad();
   EXPECT_FLOAT_EQ(y(0).val(), d.val());
@@ -910,9 +912,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_1) {
 
   ed4(0) = 1.0;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
-      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
-          d, vd, 3, ed1, ed2, vi, ed3, ed4);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y =
+      stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(d, vd, 3, ed1, ed2,
+                                                             vi, ed3, ed4);
 
   y(0).grad();
   EXPECT_FLOAT_EQ(y(0).val(), d);
@@ -1041,9 +1043,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_2) {
 
   ed4(0) = 1.0;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
-      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
-          d, vd, 3, ed1, ed2, vi, ed3, ed4);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y =
+      stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(d, vd, 3, ed1, ed2,
+                                                             vi, ed3, ed4);
 
   y(0).grad();
   EXPECT_FLOAT_EQ(y(0).val(), d.val());
@@ -1158,9 +1160,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_3) {
 
   ed4(0) = 1.0;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
-      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
-          d, vd, 3, ed1, ed2, vi, ed3, ed4);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y =
+      stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(d, vd, 3, ed1, ed2,
+                                                             vi, ed3, ed4);
 
   y(0).grad();
   EXPECT_FLOAT_EQ(y(0).val(), d.val());
@@ -1279,9 +1281,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_4) {
 
   ed4(0) = 1.0;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
-      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
-          d, vd, 3, ed1, ed2, vi, ed3, ed4);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y =
+      stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(d, vd, 3, ed1, ed2,
+                                                             vi, ed3, ed4);
 
   y(0).grad();
   EXPECT_FLOAT_EQ(y(0).val(), d.val());
@@ -1401,9 +1403,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_5) {
 
   ed4(0) = 1.0;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
-      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
-          d, vd, 3, ed1, ed2, vi, ed3, ed4);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y =
+      stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(d, vd, 3, ed1, ed2,
+                                                             vi, ed3, ed4);
 
   y(0).grad();
   EXPECT_FLOAT_EQ(y(0).val(), d.val());
@@ -1523,9 +1525,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_6) {
 
   ed4(0) = 1.0;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
-      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
-          d, vd, 3, ed1, ed2, vi, ed3, ed4);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y =
+      stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(d, vd, 3, ed1, ed2,
+                                                             vi, ed3, ed4);
 
   y(0).grad();
   EXPECT_FLOAT_EQ(y(0).val(), d.val());
@@ -1634,21 +1636,22 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_6) {
  */
 struct SinCosFunctor {
   int N_;
-  double* x1_mem_;
-  double* x4_mem_;
+  double *x1_mem_;
+  double *x4_mem_;
 
   template <std::size_t size>
-  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
-                             const Eigen::VectorXd& x1, const int& x2,
-                             const std::vector<int>& x3,
-                             const std::vector<double>& x4) {
+  Eigen::VectorXd operator()(const std::array<bool, size> &needs_adj,
+                             const Eigen::VectorXd &x1, const int &x2,
+                             const std::vector<int> &x3,
+                             const std::vector<double> &x4) {
     stan::math::check_matching_sizes("SinCosFunctor", "x1", x1, "x4", x4);
     N_ = x1.size();
     Eigen::VectorXd out(N_);
 
     if (needs_adj[0]) {
-      x1_mem_ = stan::math::ChainableStack::instance()
-                    .memalloc_.alloc_array<double>(N_);
+      x1_mem_ =
+          stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
+              N_);
       std::copy(x1.data(), x1.data() + N_, x1_mem_);
     }
 
@@ -1656,8 +1659,9 @@ struct SinCosFunctor {
     EXPECT_FALSE(needs_adj[2]);
 
     if (needs_adj[3]) {
-      x4_mem_ = stan::math::ChainableStack::instance()
-                    .memalloc_.alloc_array<double>(N_);
+      x4_mem_ =
+          stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
+              N_);
       std::copy(x4.data(), x4.data() + N_, x4_mem_);
     }
 
@@ -1669,8 +1673,8 @@ struct SinCosFunctor {
   }
 
   template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const Eigen::VectorXd& adj) {
+  auto multiply_adjoint_jacobian(const std::array<bool, size> &needs_adj,
+                                 const Eigen::VectorXd &adj) {
     Eigen::VectorXd out1;
     std::vector<double> out4;
 
@@ -1880,18 +1884,19 @@ TEST(AgradRev, test_sincos_multiple_jac_vd) {
  */
 struct SinCosFunctor2 {
   int N_;
-  double* x1_mem_;
+  double *x1_mem_;
   double x2_;
 
   template <std::size_t size>
-  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
-                             const Eigen::VectorXd& x1, const double& x2) {
+  Eigen::VectorXd operator()(const std::array<bool, size> &needs_adj,
+                             const Eigen::VectorXd &x1, const double &x2) {
     N_ = x1.size();
     Eigen::VectorXd out(N_);
 
     if (needs_adj[0]) {
-      x1_mem_ = stan::math::ChainableStack::instance()
-                    .memalloc_.alloc_array<double>(N_);
+      x1_mem_ =
+          stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
+              N_);
       std::copy(x1.data(), x1.data() + N_, x1_mem_);
     }
 
@@ -1907,8 +1912,8 @@ struct SinCosFunctor2 {
   }
 
   template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const Eigen::VectorXd& adj) {
+  auto multiply_adjoint_jacobian(const std::array<bool, size> &needs_adj,
+                                 const Eigen::VectorXd &adj) {
     Eigen::VectorXd out1;
     double out2 = 0.0;
 
@@ -2091,18 +2096,19 @@ TEST(AgradRev, test_eigen_vector_scalar_multiple_jac_vd) {
  */
 struct SinCosFunctor3 {
   int N_;
-  double* x1_mem_;
+  double *x1_mem_;
   double x2_;
 
   template <std::size_t size>
-  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
-                             const double& x2, const Eigen::VectorXd& x1) {
+  Eigen::VectorXd operator()(const std::array<bool, size> &needs_adj,
+                             const double &x2, const Eigen::VectorXd &x1) {
     N_ = x1.size();
     Eigen::VectorXd out(N_);
 
     if (needs_adj[1]) {
-      x1_mem_ = stan::math::ChainableStack::instance()
-                    .memalloc_.alloc_array<double>(N_);
+      x1_mem_ =
+          stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
+              N_);
       std::copy(x1.data(), x1.data() + N_, x1_mem_);
     }
 
@@ -2118,8 +2124,8 @@ struct SinCosFunctor3 {
   }
 
   template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const Eigen::VectorXd& adj) {
+  auto multiply_adjoint_jacobian(const std::array<bool, size> &needs_adj,
+                                 const Eigen::VectorXd &adj) {
     Eigen::VectorXd out1;
     double out2 = 0.0;
 

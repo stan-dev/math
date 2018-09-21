@@ -1,24 +1,24 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_EXPONENTIAL_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_EXPONENTIAL_LPDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <boost/random/exponential_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
+#include <cmath>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/length.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <boost/random/exponential_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <cmath>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {
 namespace math {
@@ -50,9 +50,9 @@ namespace math {
  * @tparam T_inv_scale Type of inverse scale.
  */
 template <bool propto, typename T_y, typename T_inv_scale>
-typename return_type<T_y, T_inv_scale>::type exponential_lpdf(
-    const T_y& y, const T_inv_scale& beta) {
-  static const char* function = "exponential_lpdf";
+typename return_type<T_y, T_inv_scale>::type
+exponential_lpdf(const T_y &y, const T_inv_scale &beta) {
+  static const char *function = "exponential_lpdf";
   typedef typename stan::partials_return_type<T_y, T_inv_scale>::type
       T_partials_return;
 
@@ -97,11 +97,11 @@ typename return_type<T_y, T_inv_scale>::type exponential_lpdf(
 }
 
 template <typename T_y, typename T_inv_scale>
-inline typename return_type<T_y, T_inv_scale>::type exponential_lpdf(
-    const T_y& y, const T_inv_scale& beta) {
+inline typename return_type<T_y, T_inv_scale>::type
+exponential_lpdf(const T_y &y, const T_inv_scale &beta) {
   return exponential_lpdf<false>(y, beta);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

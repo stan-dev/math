@@ -1,6 +1,6 @@
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim/mat/fun/typedefs.hpp>
 
 TEST(ProbDirichlet, log_matches_lpmf) {
   using stan::math::vector_d;

@@ -1,10 +1,9 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <stdexcept>
 #include <vector>
 
-template <typename T>
-void test_rank() {
+template <typename T> void test_rank() {
   using stan::math::rank;
 
   T c(1);
@@ -37,8 +36,7 @@ void test_rank() {
   EXPECT_THROW(rank(z, 2), std::out_of_range);
 }
 
-template <typename T>
-void test_rank_int() {
+template <typename T> void test_rank_int() {
   using stan::math::rank;
 
   T c(1);
@@ -76,19 +74,19 @@ TEST(AgradMixMatrixRank, rank) {
   using stan::math::rank;
   using stan::math::var;
 
-  test_rank<std::vector<fvar<var> > >();
-  test_rank<Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1> >();
-  test_rank<Eigen::Matrix<fvar<var>, 1, Eigen::Dynamic> >();
+  test_rank<std::vector<fvar<var>>>();
+  test_rank<Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1>>();
+  test_rank<Eigen::Matrix<fvar<var>, 1, Eigen::Dynamic>>();
 
-  test_rank_int<std::vector<fvar<var> > >();
-  test_rank_int<Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1> >();
-  test_rank_int<Eigen::Matrix<fvar<var>, 1, Eigen::Dynamic> >();
+  test_rank_int<std::vector<fvar<var>>>();
+  test_rank_int<Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1>>();
+  test_rank_int<Eigen::Matrix<fvar<var>, 1, Eigen::Dynamic>>();
 
-  test_rank<std::vector<fvar<fvar<var> > > >();
-  test_rank<Eigen::Matrix<fvar<fvar<var> >, Eigen::Dynamic, 1> >();
-  test_rank<Eigen::Matrix<fvar<fvar<var> >, 1, Eigen::Dynamic> >();
+  test_rank<std::vector<fvar<fvar<var>>>>();
+  test_rank<Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1>>();
+  test_rank<Eigen::Matrix<fvar<fvar<var>>, 1, Eigen::Dynamic>>();
 
-  test_rank_int<std::vector<fvar<fvar<var> > > >();
-  test_rank_int<Eigen::Matrix<fvar<fvar<var> >, Eigen::Dynamic, 1> >();
-  test_rank_int<Eigen::Matrix<fvar<fvar<var> >, 1, Eigen::Dynamic> >();
+  test_rank_int<std::vector<fvar<fvar<var>>>>();
+  test_rank_int<Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1>>();
+  test_rank_int<Eigen::Matrix<fvar<fvar<var>>, 1, Eigen::Dynamic>>();
 }

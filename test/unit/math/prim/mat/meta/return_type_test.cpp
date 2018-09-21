@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 #include <test/unit/util.hpp>
 #include <vector>
 
@@ -22,5 +22,5 @@ TEST(MetaTraits, ReturnTypeRowVectorXd) {
 }
 
 TEST(MetaTraits, ReturnTypeArray) {
-  test::expect_same_type<double, return_type<vector<int> >::type>();
+  test::expect_same_type<double, return_type<vector<int>>::type>();
 }

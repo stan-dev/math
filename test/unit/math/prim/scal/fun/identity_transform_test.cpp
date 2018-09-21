@@ -1,6 +1,6 @@
+#include <gtest/gtest.h>
 #include <stan/math/prim/scal.hpp>
 #include <test/unit/util.hpp>
-#include <gtest/gtest.h>
 
 TEST(prob_transform, identity) {
   EXPECT_FLOAT_EQ(4.0, stan::math::identity_constrain(4.0));

@@ -1,11 +1,11 @@
+#include <fstream>
+#include <gtest/gtest.h>
+#include <iostream>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/functor/algebra_solver.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/functor/util_algebra_solver.hpp>
 #include <test/unit/util.hpp>
-#include <gtest/gtest.h>
-#include <iostream>
-#include <fstream>
 #include <vector>
 
 // Every test exists in duplicate to test the case
@@ -20,8 +20,8 @@ TEST(MathMatrix, simple_Eq) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
     y << 5, 4, 2;
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-        = simple_eq_test(simple_eq_functor(), y);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta =
+        simple_eq_test(simple_eq_functor(), y);
 
     Eigen::MatrixXd J(n_x, n_y);
     J << 4, 5, 0, 0, 0, 1;
@@ -51,8 +51,8 @@ TEST(MathMatrix, simple_Eq_tuned) {
     double xtol = 1e-6, ftol = 1e-6;
     int maxfev = 1e+4;
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-        = simple_eq_test(simple_eq_functor(), y, true, xtol, ftol, maxfev);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta =
+        simple_eq_test(simple_eq_functor(), y, true, xtol, ftol, maxfev);
 
     Eigen::MatrixXd J(n_x, n_y);
     J << 4, 5, 0, 0, 0, 1;
@@ -73,8 +73,8 @@ TEST(MathMatrix, simple_Eq_tuned_dbl) {
   double xtol = 1e-6, ftol = 1e-6;
   int maxfev = 1e+4;
 
-  Eigen::VectorXd theta
-      = simple_eq_test(simple_eq_functor(), y, true, xtol, ftol, maxfev);
+  Eigen::VectorXd theta =
+      simple_eq_test(simple_eq_functor(), y, true, xtol, ftol, maxfev);
 }
 
 TEST(MathMatrix, simple_Eq_nopara) {
@@ -85,7 +85,7 @@ TEST(MathMatrix, simple_Eq_nopara) {
 
   int n_x = 2;
   Eigen::VectorXd x(n_x);
-  x << 1, 1;  // initial guess
+  x << 1, 1; // initial guess
   Eigen::VectorXd y_dummy;
   std::vector<int> dummy_dat_int;
 
@@ -110,8 +110,8 @@ TEST(MathMatrix, simple_Eq_init_is_para) {
   std::vector<double> dat;
   std::vector<int> dat_int;
 
-  Eigen::VectorXd theta
-      = stan::math::algebra_solver(simple_eq_functor(), x, y, dat, dat_int);
+  Eigen::VectorXd theta =
+      stan::math::algebra_solver(simple_eq_functor(), x, y, dat, dat_int);
 
   EXPECT_EQ(20, theta(0));
   EXPECT_EQ(2, theta(1));
@@ -125,8 +125,8 @@ TEST(MathMatrix, non_linear_eq) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
     y << 4, 6, 3;
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-        = non_linear_eq_test(non_linear_eq_functor(), y);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta =
+        non_linear_eq_test(non_linear_eq_functor(), y);
 
     EXPECT_FLOAT_EQ(-y(0).val(), theta(0).val());
     EXPECT_FLOAT_EQ(-y(1).val(), theta(1).val());
@@ -180,7 +180,7 @@ TEST(MathMatrix, unsolvable) {
   using stan::math::var;
 
   Eigen::Matrix<var, Eigen::Dynamic, 1> y(2);
-  y << 1, 1;  // should be positive
+  y << 1, 1; // should be positive
 
   unsolvable_test(y);
 }
@@ -219,7 +219,7 @@ TEST(MathMatrix, degenerate) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y(2);
     y << 5, 8;
     Eigen::VectorXd x(2);
-    x << 10, 1;  // Initial Guess
+    x << 10, 1; // Initial Guess
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta = degenerate_test(y, x);
     EXPECT_EQ(8, theta(0));
     EXPECT_EQ(8, theta(1));
@@ -241,7 +241,7 @@ TEST(MathMatrix, degenerate) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y(2);
     y << 5, 8;
     Eigen::VectorXd x(2);
-    x << 1, 1;  // Initial Guess
+    x << 1, 1; // Initial Guess
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta = degenerate_test(y, x);
     EXPECT_FLOAT_EQ(5, theta(0).val());
     EXPECT_FLOAT_EQ(5, theta(0).val());
@@ -267,7 +267,7 @@ TEST(MathMatrix, degenerate_dbl) {
   Eigen::VectorXd y(2);
   y << 5, 8;
   Eigen::VectorXd x(2);
-  x << 10, 1;  // Initial Guess
+  x << 10, 1; // Initial Guess
   Eigen::VectorXd theta;
   theta = degenerate_test(y, x);
   EXPECT_EQ(8, theta(0));
@@ -275,7 +275,7 @@ TEST(MathMatrix, degenerate_dbl) {
 
   // This next initial guess produces the
   // solution x = {5, 5}
-  x << 1, 1;  // Initial Guess
+  x << 1, 1; // Initial Guess
   theta = degenerate_test(y, x);
   EXPECT_FLOAT_EQ(5, theta(0));
   EXPECT_FLOAT_EQ(5, theta(1));
@@ -283,12 +283,12 @@ TEST(MathMatrix, degenerate_dbl) {
   // See if the initial guess determines neighborhood of the
   // solution, when solutions have different scales.
   y << 5, 100;
-  x << 1, 1;  // initial guess
+  x << 1, 1; // initial guess
   theta = degenerate_test(y, x);
   EXPECT_FLOAT_EQ(5, theta(0));
   EXPECT_FLOAT_EQ(5, theta(1));
 
-  x << 120, 120;  // Initial guess
+  x << 120, 120; // Initial guess
   theta = degenerate_test(y, x);
   EXPECT_FLOAT_EQ(100, theta(0));
   EXPECT_FLOAT_EQ(100, theta(1));
@@ -305,7 +305,7 @@ TEST(MathMatrix, system_functor_constructor) {
   x << 10, 1;
   std::vector<double> dat{0.0, 0.0};
   std::vector<int> dat_int{0, 0};
-  std::ostream* msgs = 0;
+  std::ostream *msgs = 0;
   int f = 99;
 
   system_functor<int, double, double, true> fs(f, x, y, dat, dat_int, msgs);

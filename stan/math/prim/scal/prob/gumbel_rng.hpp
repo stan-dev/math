@@ -1,14 +1,14 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_GUMBEL_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_GUMBEL_RNG_HPP
 
+#include <boost/random/uniform_01.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <boost/random/uniform_01.hpp>
-#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
@@ -32,11 +32,11 @@ namespace math {
  * sizes
  */
 template <typename T_loc, typename T_scale, class RNG>
-inline typename VectorBuilder<true, double, T_loc, T_scale>::type gumbel_rng(
-    const T_loc& mu, const T_scale& beta, RNG& rng) {
+inline typename VectorBuilder<true, double, T_loc, T_scale>::type
+gumbel_rng(const T_loc &mu, const T_scale &beta, RNG &rng) {
   using boost::uniform_01;
   using boost::variate_generator;
-  static const char* function = "gumbel_rng";
+  static const char *function = "gumbel_rng";
 
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", beta);
@@ -48,13 +48,13 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type gumbel_rng(
   size_t N = max_size(mu, beta);
   VectorBuilder<true, double, T_loc, T_scale> output(N);
 
-  variate_generator<RNG&, uniform_01<> > uniform01_rng(rng, uniform_01<>());
+  variate_generator<RNG &, uniform_01<>> uniform01_rng(rng, uniform_01<>());
   for (size_t n = 0; n < N; ++n)
     output[n] = mu_vec[n] - beta_vec[n] * std::log(-std::log(uniform01_rng()));
 
   return output.data();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

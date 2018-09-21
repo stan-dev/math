@@ -11,14 +11,13 @@ namespace math {
  * @tparam T result scalar type.
  * @tparam S input type
  */
-template <typename T, typename S>
-struct promote_scalar_type {
+template <typename T, typename S> struct promote_scalar_type {
   /**
    * The promoted type.
    */
   typedef T type;
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

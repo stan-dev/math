@@ -18,10 +18,7 @@ struct atanh_fun {
    * @return Inverse hyperbolic tangent of the argument.
    * @tparam T Argument type.
    */
-  template <typename T>
-  static inline T fun(const T& x) {
-    return atanh(x);
-  }
+  template <typename T> static inline T fun(const T &x) { return atanh(x); }
 };
 
 /**
@@ -35,11 +32,11 @@ struct atanh_fun {
  * @return Elementwise atanh of members of container.
  */
 template <typename T>
-inline typename apply_scalar_unary<atanh_fun, T>::return_t atanh(const T& x) {
+inline typename apply_scalar_unary<atanh_fun, T>::return_t atanh(const T &x) {
   return apply_scalar_unary<atanh_fun, T>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

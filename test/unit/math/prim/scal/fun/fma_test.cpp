@@ -1,7 +1,7 @@
 #include <boost/math/special_functions/fpclassify.hpp>
+#include <cmath>
 #include <gtest/gtest.h>
 #include <limits>
-#include <cmath>
 
 // this is just testing the nan behavior of the built-in fma
 // there is no longer a stan::math::fma, just the agrad versions

@@ -1,8 +1,8 @@
-#include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/owens_t.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
+#include <boost/math/special_functions/owens_t.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 TEST(MathFunctions, owens_t) {
   double a = 1.0;

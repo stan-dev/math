@@ -1,13 +1,13 @@
 #ifndef TEST_UNIT_MATH_REV_MAT_VECTORIZE_BUILD_REV_MATRIX_HPP
 #define TEST_UNIT_MATH_REV_MAT_VECTORIZE_BUILD_REV_MATRIX_HPP
 
-#include <stan/math/rev/core/var.hpp>
 #include <Eigen/Dense>
+#include <stan/math/rev/core/var.hpp>
 #include <vector>
 
 template <typename F, int R, int C>
-static inline Eigen::Matrix<stan::math::var, R, C> build_rev_matrix(
-    const Eigen::Matrix<stan::math::var, R, C>& x) {
+static inline Eigen::Matrix<stan::math::var, R, C>
+build_rev_matrix(const Eigen::Matrix<stan::math::var, R, C> &x) {
   using Eigen::Matrix;
   using stan::math::var;
   using std::vector;

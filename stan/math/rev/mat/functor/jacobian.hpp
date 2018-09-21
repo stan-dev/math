@@ -10,9 +10,9 @@ namespace stan {
 namespace math {
 
 template <typename F>
-void jacobian(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
-              Eigen::Matrix<double, Eigen::Dynamic, 1>& fx,
-              Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& J) {
+void jacobian(const F &f, const Eigen::Matrix<double, Eigen::Dynamic, 1> &x,
+              Eigen::Matrix<double, Eigen::Dynamic, 1> &fx,
+              Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> &J) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   start_nested();
@@ -32,13 +32,13 @@ void jacobian(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
       for (int k = 0; k < x.size(); ++k)
         J(i, k) = x_var(k).adj();
     }
-  } catch (const std::exception& e) {
+  } catch (const std::exception &e) {
     recover_memory_nested();
     throw;
   }
   recover_memory_nested();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

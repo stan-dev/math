@@ -2,14 +2,14 @@
 #define STAN_THREADS
 #endif
 
-#include <stan/math/prim/mat/functor/map_rect_concurrent.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat/functor/map_rect_concurrent.hpp>
 #include <test/unit/util.hpp>
 
 #include <stdlib.h>
 
 // Can't easily use std::string as putenv require non-const char*
-void set_n_threads_var(const char* value) {
+void set_n_threads_var(const char *value) {
   char env_string[256];
   snprintf(env_string, sizeof(env_string), "STAN_NUM_THREADS=%s", value);
   putenv(env_string);

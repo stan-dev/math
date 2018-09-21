@@ -1,17 +1,17 @@
+#include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
 #include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
-#include <gtest/gtest.h>
 
 using stan::math::append_col;
 
 template <int R, int C>
-void correct_type_row_vector(const Eigen::Matrix<double, R, C>& x) {
+void correct_type_row_vector(const Eigen::Matrix<double, R, C> &x) {
   EXPECT_EQ(Eigen::Dynamic, C);
   EXPECT_EQ(1, R);
 }
 
 template <int R, int C>
-void correct_type_matrix(const Eigen::Matrix<double, R, C>& x) {
+void correct_type_matrix(const Eigen::Matrix<double, R, C> &x) {
   EXPECT_EQ(Eigen::Dynamic, C);
   EXPECT_EQ(Eigen::Dynamic, R);
 }

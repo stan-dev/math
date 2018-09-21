@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 using stan::math::diag_post_multiply;
@@ -220,12 +220,12 @@ TEST(AgradMixMatrixDiagPostMultiply, vector_ffv_1stDeriv) {
   matrix_d Z(3, 3);
   Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
 
-  fvar<fvar<var> > a(1.0, 2.0);
-  fvar<fvar<var> > b(2.0, 2.0);
-  fvar<fvar<var> > c(3.0, 2.0);
-  fvar<fvar<var> > d(4.0, 2.0);
-  fvar<fvar<var> > e(5.0, 2.0);
-  fvar<fvar<var> > f(6.0, 2.0);
+  fvar<fvar<var>> a(1.0, 2.0);
+  fvar<fvar<var>> b(2.0, 2.0);
+  fvar<fvar<var>> c(3.0, 2.0);
+  fvar<fvar<var>> d(4.0, 2.0);
+  fvar<fvar<var>> e(5.0, 2.0);
+  fvar<fvar<var>> f(6.0, 2.0);
 
   matrix_ffv Y(3, 3);
   Y << a, b, c, b, c, d, d, e, f;
@@ -272,12 +272,12 @@ TEST(AgradMixMatrixDiagPostMultiply, vector_ffv_2ndDeriv_1) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
-  fvar<fvar<var> > a(1.0, 2.0);
-  fvar<fvar<var> > b(2.0, 2.0);
-  fvar<fvar<var> > c(3.0, 2.0);
-  fvar<fvar<var> > d(4.0, 2.0);
-  fvar<fvar<var> > e(5.0, 2.0);
-  fvar<fvar<var> > f(6.0, 2.0);
+  fvar<fvar<var>> a(1.0, 2.0);
+  fvar<fvar<var>> b(2.0, 2.0);
+  fvar<fvar<var>> c(3.0, 2.0);
+  fvar<fvar<var>> d(4.0, 2.0);
+  fvar<fvar<var>> e(5.0, 2.0);
+  fvar<fvar<var>> f(6.0, 2.0);
 
   matrix_ffv Y(3, 3);
   Y << a, b, c, b, c, d, d, e, f;
@@ -306,12 +306,12 @@ TEST(AgradMixMatrixDiagPostMultiply, vector_ffv_2ndDeriv_2) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
-  fvar<fvar<var> > a(1.0, 2.0);
-  fvar<fvar<var> > b(2.0, 2.0);
-  fvar<fvar<var> > c(3.0, 2.0);
-  fvar<fvar<var> > d(4.0, 2.0);
-  fvar<fvar<var> > e(5.0, 2.0);
-  fvar<fvar<var> > f(6.0, 2.0);
+  fvar<fvar<var>> a(1.0, 2.0);
+  fvar<fvar<var>> b(2.0, 2.0);
+  fvar<fvar<var>> c(3.0, 2.0);
+  fvar<fvar<var>> d(4.0, 2.0);
+  fvar<fvar<var>> e(5.0, 2.0);
+  fvar<fvar<var>> f(6.0, 2.0);
 
   matrix_ffv Y(3, 3);
   Y << a, b, c, b, c, d, d, e, f;
@@ -339,12 +339,12 @@ TEST(AgradMixMatrixDiagPostMultiply, vector_ffv_3rdDeriv) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
-  fvar<fvar<var> > a(1.0, 1.0);
-  fvar<fvar<var> > b(2.0, 1.0);
-  fvar<fvar<var> > c(3.0, 1.0);
-  fvar<fvar<var> > d(4.0, 1.0);
-  fvar<fvar<var> > e(5.0, 1.0);
-  fvar<fvar<var> > f(6.0, 1.0);
+  fvar<fvar<var>> a(1.0, 1.0);
+  fvar<fvar<var>> b(2.0, 1.0);
+  fvar<fvar<var>> c(3.0, 1.0);
+  fvar<fvar<var>> d(4.0, 1.0);
+  fvar<fvar<var>> e(5.0, 1.0);
+  fvar<fvar<var>> f(6.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;
@@ -396,12 +396,12 @@ TEST(AgradMixMatrixDiagPostMultiply, rowvector_ffv_1stDeriv) {
   matrix_d Z(3, 3);
   Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
 
-  fvar<fvar<var> > a(1.0, 2.0);
-  fvar<fvar<var> > b(2.0, 2.0);
-  fvar<fvar<var> > c(3.0, 2.0);
-  fvar<fvar<var> > d(4.0, 2.0);
-  fvar<fvar<var> > e(5.0, 2.0);
-  fvar<fvar<var> > f(6.0, 2.0);
+  fvar<fvar<var>> a(1.0, 2.0);
+  fvar<fvar<var>> b(2.0, 2.0);
+  fvar<fvar<var>> c(3.0, 2.0);
+  fvar<fvar<var>> d(4.0, 2.0);
+  fvar<fvar<var>> e(5.0, 2.0);
+  fvar<fvar<var>> f(6.0, 2.0);
 
   matrix_ffv Y(3, 3);
   Y << a, b, c, b, c, d, d, e, f;
@@ -448,12 +448,12 @@ TEST(AgradMixMatrixDiagPostMultiply, rowvector_ffv_2ndDeriv_1) {
   using stan::math::row_vector_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(1.0, 2.0);
-  fvar<fvar<var> > b(2.0, 2.0);
-  fvar<fvar<var> > c(3.0, 2.0);
-  fvar<fvar<var> > d(4.0, 2.0);
-  fvar<fvar<var> > e(5.0, 2.0);
-  fvar<fvar<var> > f(6.0, 2.0);
+  fvar<fvar<var>> a(1.0, 2.0);
+  fvar<fvar<var>> b(2.0, 2.0);
+  fvar<fvar<var>> c(3.0, 2.0);
+  fvar<fvar<var>> d(4.0, 2.0);
+  fvar<fvar<var>> e(5.0, 2.0);
+  fvar<fvar<var>> f(6.0, 2.0);
 
   matrix_ffv Y(3, 3);
   Y << a, b, c, b, c, d, d, e, f;
@@ -481,12 +481,12 @@ TEST(AgradMixMatrixDiagPostMultiply, rowvector_ffv_2ndDeriv_2) {
   using stan::math::row_vector_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(1.0, 2.0);
-  fvar<fvar<var> > b(2.0, 2.0);
-  fvar<fvar<var> > c(3.0, 2.0);
-  fvar<fvar<var> > d(4.0, 2.0);
-  fvar<fvar<var> > e(5.0, 2.0);
-  fvar<fvar<var> > f(6.0, 2.0);
+  fvar<fvar<var>> a(1.0, 2.0);
+  fvar<fvar<var>> b(2.0, 2.0);
+  fvar<fvar<var>> c(3.0, 2.0);
+  fvar<fvar<var>> d(4.0, 2.0);
+  fvar<fvar<var>> e(5.0, 2.0);
+  fvar<fvar<var>> f(6.0, 2.0);
 
   matrix_ffv Y(3, 3);
   Y << a, b, c, b, c, d, d, e, f;
@@ -514,12 +514,12 @@ TEST(AgradMixMatrixDiagPostMultiply, rowvector_ffv_3rdDeriv) {
   using stan::math::row_vector_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(1.0, 1.0);
-  fvar<fvar<var> > b(2.0, 1.0);
-  fvar<fvar<var> > c(3.0, 1.0);
-  fvar<fvar<var> > d(4.0, 1.0);
-  fvar<fvar<var> > e(5.0, 1.0);
-  fvar<fvar<var> > f(6.0, 1.0);
+  fvar<fvar<var>> a(1.0, 1.0);
+  fvar<fvar<var>> b(2.0, 1.0);
+  fvar<fvar<var>> c(3.0, 1.0);
+  fvar<fvar<var>> d(4.0, 1.0);
+  fvar<fvar<var>> e(5.0, 1.0);
+  fvar<fvar<var>> f(6.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;

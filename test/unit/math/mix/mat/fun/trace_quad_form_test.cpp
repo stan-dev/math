@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
@@ -142,7 +142,7 @@ TEST(AgradMixMatrixTraceQuadForm, mat_dffv_instant) {
 
   Eigen::Matrix<double, -1, -1> ad(4, 4);
   matrix_ffv bd(4, 2);
-  fvar<fvar<var> > res;
+  fvar<fvar<var>> res;
   bd << 100, 10, 0, 1, -3, -3, 5, 2;
   ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
       1.0, 112.0;
@@ -159,7 +159,7 @@ TEST(AgradMixMatrixTraceQuadForm, mat_ffvd_instant) {
 
   matrix_ffv ad(4, 4);
   Eigen::Matrix<double, -1, -1> bd(4, 2);
-  fvar<fvar<var> > res;
+  fvar<fvar<var>> res;
   bd << 100, 10, 0, 1, -3, -3, 5, 2;
   ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
       1.0, 112.0;
@@ -270,7 +270,7 @@ TEST(AgradMixMatrixTraceQuadForm, mat_ffv_1st_deriv) {
 
   matrix_ffv ad(4, 4);
   matrix_ffv bd(4, 2);
-  fvar<fvar<var> > res;
+  fvar<fvar<var>> res;
   bd << 100, 10, 0, 1, -3, -3, 5, 2;
   ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
       1.0, 112.0;
@@ -365,7 +365,7 @@ TEST(AgradMixMatrixTraceQuadForm, mat_ffv_2nd_deriv) {
 
   matrix_ffv ad(4, 4);
   matrix_ffv bd(4, 2);
-  fvar<fvar<var> > res;
+  fvar<fvar<var>> res;
   bd << 100, 10, 0, 1, -3, -3, 5, 2;
   ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
       1.0, 112.0;
@@ -460,7 +460,7 @@ TEST(AgradMixMatrixTraceQuadForm, mat_ffv_3rd_deriv) {
 
   matrix_ffv ad(4, 4);
   matrix_ffv bd(4, 2);
-  fvar<fvar<var> > res;
+  fvar<fvar<var>> res;
   bd << 100, 10, 0, 1, -3, -3, 5, 2;
   ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
       1.0, 112.0;

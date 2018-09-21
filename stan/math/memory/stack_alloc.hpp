@@ -3,12 +3,12 @@
 
 // TODO(Bob): <cstddef> replaces this ifdef in C++11, until then this
 //            is best we can do to get safe pointer casts to uints.
-#include <stdint.h>
-#include <stan/math/prim/scal/meta/likely.hpp>
-#include <cstdlib>
 #include <cstddef>
+#include <cstdlib>
 #include <sstream>
+#include <stan/math/prim/scal/meta/likely.hpp>
 #include <stdexcept>
+#include <stdint.h>
 #include <vector>
 
 namespace stan {
@@ -25,20 +25,19 @@ namespace math {
  * @return <code>true</code> if pointer is aligned.
  * @tparam Type of object to which pointer points.
  */
-template <typename T>
-bool is_aligned(T* ptr, unsigned int bytes_aligned) {
+template <typename T> bool is_aligned(T *ptr, unsigned int bytes_aligned) {
   return (reinterpret_cast<uintptr_t>(ptr) % bytes_aligned) == 0U;
 }
 
 namespace {
-const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
+const size_t DEFAULT_INITIAL_NBYTES = 1 << 16; // 64KB
 
 // FIXME: enforce alignment
 // big fun to inline, but only called twice
-inline char* eight_byte_aligned_malloc(size_t size) {
-  char* ptr = static_cast<char*>(malloc(size));
+inline char *eight_byte_aligned_malloc(size_t size) {
+  char *ptr = static_cast<char *>(malloc(size));
   if (!ptr)
-    return ptr;  // malloc failed to alloc
+    return ptr; // malloc failed to alloc
   if (!is_aligned(ptr, 8U)) {
     std::stringstream s;
     s << "invalid alignment to 8 bytes, ptr="
@@ -47,7 +46,7 @@ inline char* eight_byte_aligned_malloc(size_t size) {
   }
   return ptr;
 }
-}  // namespace
+} // namespace
 
 /**
  * An instance of this class provides a memory pool through
@@ -69,18 +68,18 @@ inline char* eight_byte_aligned_malloc(size_t size) {
  * contain an 8-byte member or a virtual function.
  */
 class stack_alloc {
- private:
-  std::vector<char*> blocks_;  // storage for blocks,
+private:
+  std::vector<char *> blocks_; // storage for blocks,
                                // may be bigger than cur_block_
   std::vector<size_t> sizes_;  // could store initial & shift for others
   size_t cur_block_;           // index into blocks_ for next alloc
-  char* cur_block_end_;        // ptr to cur_block_ptr_ + sizes_[cur_block_]
-  char* next_loc_;             // ptr to next available spot in cur
+  char *cur_block_end_;        // ptr to cur_block_ptr_ + sizes_[cur_block_]
+  char *next_loc_;             // ptr to next available spot in cur
                                // block
   // next three for keeping track of nested allocations on top of stack:
   std::vector<size_t> nested_cur_blocks_;
-  std::vector<char*> nested_next_locs_;
-  std::vector<char*> nested_cur_block_ends_;
+  std::vector<char *> nested_next_locs_;
+  std::vector<char *> nested_cur_block_ends_;
 
   /**
    * Moves us to the next block of memory, allocating that block
@@ -90,8 +89,8 @@ class stack_alloc {
    * @param size_t $len Number of bytes to allocate.
    * @return A pointer to the allocated memory.
    */
-  char* move_to_next_block(size_t len) {
-    char* result;
+  char *move_to_next_block(size_t len) {
+    char *result;
     ++cur_block_;
     // Find the next block (if any) containing at least len bytes.
     while ((cur_block_ < blocks_.size()) && (sizes_[cur_block_] < len))
@@ -114,7 +113,7 @@ class stack_alloc {
     return result;
   }
 
- public:
+public:
   /**
    * Construct a resizable stack allocator initially holding the
    * specified number of bytes.
@@ -126,12 +125,10 @@ class stack_alloc {
    */
   explicit stack_alloc(size_t initial_nbytes = DEFAULT_INITIAL_NBYTES)
       : blocks_(1, eight_byte_aligned_malloc(initial_nbytes)),
-        sizes_(1, initial_nbytes),
-        cur_block_(0),
-        cur_block_end_(blocks_[0] + initial_nbytes),
-        next_loc_(blocks_[0]) {
+        sizes_(1, initial_nbytes), cur_block_(0),
+        cur_block_end_(blocks_[0] + initial_nbytes), next_loc_(blocks_[0]) {
     if (!blocks_[0])
-      throw std::bad_alloc();  // no msg allowed in bad_alloc ctor
+      throw std::bad_alloc(); // no msg allowed in bad_alloc ctor
   }
 
   /**
@@ -142,7 +139,7 @@ class stack_alloc {
    */
   ~stack_alloc() {
     // free ALL blocks
-    for (auto& block : blocks_)
+    for (auto &block : blocks_)
       if (block)
         free(block);
   }
@@ -159,14 +156,14 @@ class stack_alloc {
    * @param len Number of bytes to allocate.
    * @return A pointer to the allocated memory.
    */
-  inline void* alloc(size_t len) {
+  inline void *alloc(size_t len) {
     // Typically, just return and increment the next location.
-    char* result = next_loc_;
+    char *result = next_loc_;
     next_loc_ += len;
     // Occasionally, we have to switch blocks.
     if (unlikely(next_loc_ >= cur_block_end_))
       result = move_to_next_block(len);
-    return reinterpret_cast<void*>(result);
+    return reinterpret_cast<void *>(result);
   }
 
   /**
@@ -177,9 +174,8 @@ class stack_alloc {
    * @param[in] n size of array to allocate.
    * @return new array allocated on the arena.
    */
-  template <typename T>
-  inline T* alloc_array(size_t n) {
-    return static_cast<T*>(alloc(n * sizeof(T)));
+  template <typename T> inline T *alloc_array(size_t n) {
+    return static_cast<T *>(alloc(n * sizeof(T)));
   }
 
   /**
@@ -262,7 +258,7 @@ class stack_alloc {
    * @return true if the pointer is in the stack,
    *    false otherwise.
    */
-  inline bool in_stack(const void* ptr) const {
+  inline bool in_stack(const void *ptr) const {
     for (size_t i = 0; i < cur_block_; ++i)
       if (ptr >= blocks_[i] && ptr < blocks_[i] + sizes_[i])
         return true;
@@ -272,6 +268,6 @@ class stack_alloc {
   }
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -1,6 +1,6 @@
+#include <gtest/gtest.h>
 #include <stan/math/prim/arr.hpp>
 #include <test/unit/math/prim/scal/fun/promote_type_test_util.hpp>
-#include <gtest/gtest.h>
 #include <vector>
 
 TEST(MathFunctionsPromoteScalar, VectorMismatch) {
@@ -26,7 +26,7 @@ TEST(MathFunctionsPromoteScalar, VectorMatch) {
 TEST(MathFunctionsPromoteScalar, Vector2Mismatch) {
   using stan::math::promote_scalar;
   using std::vector;
-  vector<vector<int> > x(2);
+  vector<vector<int>> x(2);
   x[0].push_back(1);
   x[0].push_back(2);
   x[0].push_back(3);
@@ -34,7 +34,7 @@ TEST(MathFunctionsPromoteScalar, Vector2Mismatch) {
   x[1].push_back(5);
   x[1].push_back(6);
 
-  vector<vector<double> > y = promote_scalar<double>(x);
+  vector<vector<double>> y = promote_scalar<double>(x);
   EXPECT_EQ(2U, y.size());
   EXPECT_EQ(3, y[0].size());
   EXPECT_FLOAT_EQ(1.0, y[0][0]);
@@ -47,7 +47,7 @@ TEST(MathFunctionsPromoteScalar, Vector2Mismatch) {
 TEST(MathFunctionsPromoteScalar, Vector2Match) {
   using stan::math::promote_scalar;
   using std::vector;
-  vector<vector<double> > x(2);
+  vector<vector<double>> x(2);
   x[0].push_back(1.1);
   x[0].push_back(2.2);
   x[0].push_back(3.3);
@@ -55,7 +55,7 @@ TEST(MathFunctionsPromoteScalar, Vector2Match) {
   x[1].push_back(5.5);
   x[1].push_back(6.6);
 
-  vector<vector<double> > y = promote_scalar<double>(x);
+  vector<vector<double>> y = promote_scalar<double>(x);
   EXPECT_EQ(2U, y.size());
   EXPECT_EQ(3, y[0].size());
   EXPECT_FLOAT_EQ(1.1, y[0][0]);

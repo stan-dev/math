@@ -1,8 +1,8 @@
-#include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 TEST(MathFunctions, digamma) {
   EXPECT_FLOAT_EQ(boost::math::digamma(0.5), stan::math::digamma(0.5));

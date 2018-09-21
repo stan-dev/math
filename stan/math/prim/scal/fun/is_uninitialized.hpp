@@ -14,11 +14,8 @@ namespace math {
  * @return <code>true</code> if the specified object is uninitialized.
  * @return false if input is NaN.
  */
-template <typename T>
-inline bool is_uninitialized(T x) {
-  return false;
-}
+template <typename T> inline bool is_uninitialized(T x) { return false; }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

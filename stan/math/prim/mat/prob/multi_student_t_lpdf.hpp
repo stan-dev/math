@@ -1,25 +1,25 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_STUDENT_T_LPDF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_STUDENT_T_LPDF_HPP
 
-#include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
-#include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <stan/math/prim/mat/fun/multiply.hpp>
-#include <stan/math/prim/mat/fun/dot_product.hpp>
-#include <stan/math/prim/mat/fun/subtract.hpp>
-#include <stan/math/prim/mat/meta/vector_seq_view.hpp>
-#include <stan/math/prim/mat/prob/multi_normal_log.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/is_inf.hpp>
-#include <stan/math/prim/scal/fun/log1p.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <cstdlib>
+#include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
+#include <stan/math/prim/mat/err/check_symmetric.hpp>
+#include <stan/math/prim/mat/fun/dot_product.hpp>
+#include <stan/math/prim/mat/fun/multiply.hpp>
+#include <stan/math/prim/mat/fun/subtract.hpp>
+#include <stan/math/prim/mat/meta/vector_seq_view.hpp>
+#include <stan/math/prim/mat/prob/multi_normal_log.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/is_inf.hpp>
+#include <stan/math/prim/scal/fun/log1p.hpp>
+#include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
 namespace math {
@@ -32,9 +32,10 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_dof, typename T_loc,
           typename T_scale>
-typename return_type<T_y, T_dof, T_loc, T_scale>::type multi_student_t_lpdf(
-    const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& Sigma) {
-  static const char* function = "multi_student_t";
+typename return_type<T_y, T_dof, T_loc, T_scale>::type
+multi_student_t_lpdf(const T_y &y, const T_dof &nu, const T_loc &mu,
+                     const T_scale &Sigma) {
+  static const char *function = "multi_student_t";
 
   using boost::math::lgamma;
   using std::log;
@@ -72,12 +73,10 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type multi_student_t_lpdf(
     int size_mu_new;
     for (size_t i = 1, size_ = length_mvt(mu); i < size_; i++) {
       int size_mu_new = mu_vec[i].size();
-      check_size_match(function,
-                       "Size of one of the vectors "
-                       "of the location variable",
-                       size_mu_new,
-                       "Size of another vector of "
-                       "the location variable",
+      check_size_match(function, "Size of one of the vectors "
+                                 "of the location variable",
+                       size_mu_new, "Size of another vector of "
+                                    "the location variable",
                        size_mu_old);
       size_mu_old = size_mu_new;
     }
@@ -128,8 +127,8 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type multi_student_t_lpdf(
           y_minus_mu(size_y);
       for (int j = 0; j < size_y; j++)
         y_minus_mu(j) = y_vec[i](j) - mu_vec[i](j);
-      sum_lp_vec
-          += log1p(trace_inv_quad_form_ldlt(ldlt_Sigma, y_minus_mu) / nu);
+      sum_lp_vec +=
+          log1p(trace_inv_quad_form_ldlt(ldlt_Sigma, y_minus_mu) / nu);
     }
     lp -= 0.5 * (nu + size_y) * sum_lp_vec;
   }
@@ -138,11 +137,11 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type multi_student_t_lpdf(
 
 template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
 inline typename return_type<T_y, T_dof, T_loc, T_scale>::type
-multi_student_t_lpdf(const T_y& y, const T_dof& nu, const T_loc& mu,
-                     const T_scale& Sigma) {
+multi_student_t_lpdf(const T_y &y, const T_dof &nu, const T_loc &mu,
+                     const T_scale &Sigma) {
   return multi_student_t_lpdf<false>(y, nu, mu, Sigma);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

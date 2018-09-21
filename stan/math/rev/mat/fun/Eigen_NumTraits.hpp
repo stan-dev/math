@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_REV_MAT_FUN_EIGEN_NUMTRAITS_HPP
 #define STAN_MATH_REV_MAT_FUN_EIGEN_NUMTRAITS_HPP
 
+#include <limits>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/core/std_numeric_limits.hpp>
-#include <limits>
 
 namespace Eigen {
 
@@ -85,8 +85,7 @@ namespace internal {
  * Scalar product traits specialization for Eigen for reverse-mode
  * autodiff variables.
  */
-template <>
-struct scalar_product_traits<stan::math::var, double> {
+template <> struct scalar_product_traits<stan::math::var, double> {
   typedef stan::math::var ReturnType;
 };
 
@@ -94,8 +93,7 @@ struct scalar_product_traits<stan::math::var, double> {
  * Scalar product traits specialization for Eigen for reverse-mode
  * autodiff variables.
  */
-template <>
-struct scalar_product_traits<double, stan::math::var> {
+template <> struct scalar_product_traits<double, stan::math::var> {
   typedef stan::math::var ReturnType;
 };
 
@@ -121,21 +119,21 @@ struct general_matrix_vector_product<Index, stan::math::var, LhsMapper,
   enum { LhsStorageOrder = ColMajor };
 
   EIGEN_DONT_INLINE static void run(Index rows, Index cols,
-                                    const LhsMapper& lhsMapper,
-                                    const RhsMapper& rhsMapper, ResScalar* res,
-                                    Index resIncr, const ResScalar& alpha) {
-    const LhsScalar* lhs = lhsMapper.data();
+                                    const LhsMapper &lhsMapper,
+                                    const RhsMapper &rhsMapper, ResScalar *res,
+                                    Index resIncr, const ResScalar &alpha) {
+    const LhsScalar *lhs = lhsMapper.data();
     const Index lhsStride = lhsMapper.stride();
-    const RhsScalar* rhs = rhsMapper.data();
+    const RhsScalar *rhs = rhsMapper.data();
     const Index rhsIncr = rhsMapper.stride();
     run(rows, cols, lhs, lhsStride, rhs, rhsIncr, res, resIncr, alpha);
   }
 
   EIGEN_DONT_INLINE static void run(Index rows, Index cols,
-                                    const LhsScalar* lhs, Index lhsStride,
-                                    const RhsScalar* rhs, Index rhsIncr,
-                                    ResScalar* res, Index resIncr,
-                                    const ResScalar& alpha) {
+                                    const LhsScalar *lhs, Index lhsStride,
+                                    const RhsScalar *rhs, Index rhsIncr,
+                                    ResScalar *res, Index resIncr,
+                                    const ResScalar &alpha) {
     using stan::math::gevv_vvv_vari;
     using stan::math::var;
     for (Index i = 0; i < rows; ++i) {
@@ -156,21 +154,21 @@ struct general_matrix_vector_product<Index, stan::math::var, LhsMapper,
   enum { LhsStorageOrder = RowMajor };
 
   EIGEN_DONT_INLINE static void run(Index rows, Index cols,
-                                    const LhsMapper& lhsMapper,
-                                    const RhsMapper& rhsMapper, ResScalar* res,
-                                    Index resIncr, const RhsScalar& alpha) {
-    const LhsScalar* lhs = lhsMapper.data();
+                                    const LhsMapper &lhsMapper,
+                                    const RhsMapper &rhsMapper, ResScalar *res,
+                                    Index resIncr, const RhsScalar &alpha) {
+    const LhsScalar *lhs = lhsMapper.data();
     const Index lhsStride = lhsMapper.stride();
-    const RhsScalar* rhs = rhsMapper.data();
+    const RhsScalar *rhs = rhsMapper.data();
     const Index rhsIncr = rhsMapper.stride();
     run(rows, cols, lhs, lhsStride, rhs, rhsIncr, res, resIncr, alpha);
   }
 
   EIGEN_DONT_INLINE static void run(Index rows, Index cols,
-                                    const LhsScalar* lhs, Index lhsStride,
-                                    const RhsScalar* rhs, Index rhsIncr,
-                                    ResScalar* res, Index resIncr,
-                                    const RhsScalar& alpha) {
+                                    const LhsScalar *lhs, Index lhsStride,
+                                    const RhsScalar *rhs, Index rhsIncr,
+                                    ResScalar *res, Index resIncr,
+                                    const RhsScalar &alpha) {
     for (Index i = 0; i < rows; i++) {
       res[i * resIncr] += stan::math::var(new stan::math::gevv_vvv_vari(
           &alpha,
@@ -202,22 +200,22 @@ struct general_matrix_matrix_product<Index, stan::math::var, LhsStorageOrder,
       RhsMapper;
 
   EIGEN_DONT_INLINE
-  static void run(Index rows, Index cols, Index depth, const LhsScalar* lhs,
-                  Index lhsStride, const RhsScalar* rhs, Index rhsStride,
-                  ResScalar* res, Index resStride, const ResScalar& alpha,
-                  level3_blocking<LhsScalar, RhsScalar>& /* blocking */,
-                  GemmParallelInfo<Index>* /* info = 0 */) {
+  static void run(Index rows, Index cols, Index depth, const LhsScalar *lhs,
+                  Index lhsStride, const RhsScalar *rhs, Index rhsStride,
+                  ResScalar *res, Index resStride, const ResScalar &alpha,
+                  level3_blocking<LhsScalar, RhsScalar> & /* blocking */,
+                  GemmParallelInfo<Index> * /* info = 0 */) {
     for (Index i = 0; i < cols; i++) {
       general_matrix_vector_product<
           Index, LhsScalar, LhsMapper, LhsStorageOrder, ConjugateLhs, RhsScalar,
           RhsMapper,
           ConjugateRhs>::run(rows, depth, lhs, lhsStride,
-                             &rhs[static_cast<int>(RhsStorageOrder)
-                                          == static_cast<int>(ColMajor)
+                             &rhs[static_cast<int>(RhsStorageOrder) ==
+                                          static_cast<int>(ColMajor)
                                       ? i * rhsStride
                                       : i],
-                             static_cast<int>(RhsStorageOrder)
-                                     == static_cast<int>(ColMajor)
+                             static_cast<int>(RhsStorageOrder) ==
+                                     static_cast<int>(ColMajor)
                                  ? 1
                                  : rhsStride,
                              &res[i * resStride], 1, alpha);
@@ -226,13 +224,13 @@ struct general_matrix_matrix_product<Index, stan::math::var, LhsStorageOrder,
 
   EIGEN_DONT_INLINE
   static void run(Index rows, Index cols, Index depth,
-                  const LhsMapper& lhsMapper, const RhsMapper& rhsMapper,
-                  ResScalar* res, Index resStride, const ResScalar& alpha,
-                  level3_blocking<LhsScalar, RhsScalar>& blocking,
-                  GemmParallelInfo<Index>* info = 0) {
-    const LhsScalar* lhs = lhsMapper.data();
+                  const LhsMapper &lhsMapper, const RhsMapper &rhsMapper,
+                  ResScalar *res, Index resStride, const ResScalar &alpha,
+                  level3_blocking<LhsScalar, RhsScalar> &blocking,
+                  GemmParallelInfo<Index> *info = 0) {
+    const LhsScalar *lhs = lhsMapper.data();
     const Index lhsStride = lhsMapper.stride();
-    const RhsScalar* rhs = rhsMapper.data();
+    const RhsScalar *rhs = rhsMapper.data();
     const Index rhsStride = rhsMapper.stride();
 
     run(rows, cols, depth, lhs, lhsStride, rhs, rhsStride, res, resStride,
@@ -243,8 +241,7 @@ struct general_matrix_matrix_product<Index, stan::math::var, LhsStorageOrder,
 /**
  * Implemented this for printing to stream.
  */
-template <>
-struct significant_decimals_default_impl<stan::math::var, false> {
+template <> struct significant_decimals_default_impl<stan::math::var, false> {
   static inline int run() {
     using std::ceil;
     using std::log;
@@ -257,8 +254,7 @@ struct significant_decimals_default_impl<stan::math::var, false> {
  * Scalar product traits override for Eigen for automatic
  * gradient variables.
  */
-template <>
-struct scalar_product_traits<stan::math::var, double> {
+template <> struct scalar_product_traits<stan::math::var, double> {
   typedef stan::math::var ReturnType;
 };
 
@@ -266,8 +262,7 @@ struct scalar_product_traits<stan::math::var, double> {
  * Scalar product traits override for Eigen for automatic
  * gradient variables.
  */
-template <>
-struct scalar_product_traits<double, stan::math::var> {
+template <> struct scalar_product_traits<double, stan::math::var> {
   typedef stan::math::var ReturnType;
 };
 
@@ -286,10 +281,10 @@ struct general_matrix_vector_product<Index, stan::math::var, ColMajor,
   enum { LhsStorageOrder = ColMajor };
 
   EIGEN_DONT_INLINE static void run(Index rows, Index cols,
-                                    const LhsScalar* lhs, Index lhsStride,
-                                    const RhsScalar* rhs, Index rhsIncr,
-                                    ResScalar* res, Index resIncr,
-                                    const ResScalar& alpha) {
+                                    const LhsScalar *lhs, Index lhsStride,
+                                    const RhsScalar *rhs, Index rhsIncr,
+                                    ResScalar *res, Index resIncr,
+                                    const ResScalar &alpha) {
     for (Index i = 0; i < rows; i++) {
       res[i * resIncr] += stan::math::var(new stan::math::gevv_vvv_vari(
           &alpha,
@@ -314,10 +309,10 @@ struct general_matrix_vector_product<Index, stan::math::var, RowMajor,
   enum { LhsStorageOrder = RowMajor };
 
   EIGEN_DONT_INLINE static void run(Index rows, Index cols,
-                                    const LhsScalar* lhs, Index lhsStride,
-                                    const RhsScalar* rhs, Index rhsIncr,
-                                    ResScalar* res, Index resIncr,
-                                    const RhsScalar& alpha) {
+                                    const LhsScalar *lhs, Index lhsStride,
+                                    const RhsScalar *rhs, Index rhsIncr,
+                                    ResScalar *res, Index resIncr,
+                                    const RhsScalar &alpha) {
     for (Index i = 0; i < rows; i++) {
       res[i * resIncr] += stan::math::var(new stan::math::gevv_vvv_vari(
           &alpha,
@@ -340,21 +335,21 @@ struct general_matrix_matrix_product<Index, stan::math::var, LhsStorageOrder,
   typedef stan::math::var RhsScalar;
   typedef typename scalar_product_traits<LhsScalar, RhsScalar>::ReturnType
       ResScalar;
-  static void run(Index rows, Index cols, Index depth, const LhsScalar* lhs,
-                  Index lhsStride, const RhsScalar* rhs, Index rhsStride,
-                  ResScalar* res, Index resStride, const ResScalar& alpha,
-                  level3_blocking<LhsScalar, RhsScalar>& /* blocking */,
-                  GemmParallelInfo<Index>* /* info = 0 */) {
+  static void run(Index rows, Index cols, Index depth, const LhsScalar *lhs,
+                  Index lhsStride, const RhsScalar *rhs, Index rhsStride,
+                  ResScalar *res, Index resStride, const ResScalar &alpha,
+                  level3_blocking<LhsScalar, RhsScalar> & /* blocking */,
+                  GemmParallelInfo<Index> * /* info = 0 */) {
     for (Index i = 0; i < cols; i++) {
       general_matrix_vector_product<
           Index, LhsScalar, LhsStorageOrder, ConjugateLhs, RhsScalar,
           ConjugateRhs>::run(rows, depth, lhs, lhsStride,
-                             &rhs[(static_cast<int>(RhsStorageOrder)
-                                   == static_cast<int>(ColMajor))
+                             &rhs[(static_cast<int>(RhsStorageOrder) ==
+                                   static_cast<int>(ColMajor))
                                       ? (i * rhsStride)
                                       : (i)],
-                             (static_cast<int>(RhsStorageOrder)
-                              == static_cast<int>(ColMajor))
+                             (static_cast<int>(RhsStorageOrder) ==
+                              static_cast<int>(ColMajor))
                                  ? (1)
                                  : (rhsStride),
                              &res[i * resStride], 1, alpha);
@@ -362,6 +357,6 @@ struct general_matrix_matrix_product<Index, stan::math::var, LhsStorageOrder,
   }
 };
 #endif
-}  // namespace internal
-}  // namespace Eigen
+} // namespace internal
+} // namespace Eigen
 #endif

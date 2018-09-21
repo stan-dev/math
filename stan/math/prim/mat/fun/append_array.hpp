@@ -1,12 +1,12 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_APPEND_ARRAY_HPP
 #define STAN_MATH_PRIM_MAT_FUN_APPEND_ARRAY_HPP
 
+#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/assign.hpp>
 #include <stan/math/prim/mat/fun/dims.hpp>
 #include <stan/math/prim/mat/fun/resize.hpp>
-#include <stan/math/prim/mat/fun/assign.hpp>
 #include <stan/math/prim/mat/meta/append_return_type.hpp>
-#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <vector>
 
@@ -25,9 +25,9 @@ namespace math {
  * @return A vector of x and y concatenated together (in that order)
  */
 template <typename T1, typename T2>
-inline typename append_return_type<std::vector<T1>, std::vector<T2> >::type
-append_array(const std::vector<T1>& x, const std::vector<T2>& y) {
-  typename append_return_type<std::vector<T1>, std::vector<T2> >::type z;
+inline typename append_return_type<std::vector<T1>, std::vector<T2>>::type
+append_array(const std::vector<T1> &x, const std::vector<T2> &y) {
+  typename append_return_type<std::vector<T1>, std::vector<T2>>::type z;
   std::vector<int> zdims;
   if (x.empty()) {
     zdims = dims(y);
@@ -54,8 +54,8 @@ append_array(const std::vector<T1>& x, const std::vector<T2>& y) {
  * @return A vector of x and y concatenated together (in that order)
  */
 template <typename T1>
-inline std::vector<T1> append_array(const std::vector<T1>& x,
-                                    const std::vector<T1>& y) {
+inline std::vector<T1> append_array(const std::vector<T1> &x,
+                                    const std::vector<T1> &y) {
   std::vector<T1> z;
 
   if (!x.empty() && !y.empty()) {
@@ -73,6 +73,6 @@ inline std::vector<T1> append_array(const std::vector<T1>& x,
   z.insert(z.end(), y.begin(), y.end());
   return z;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

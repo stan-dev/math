@@ -1,8 +1,8 @@
-#include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/math/special_functions/bessel.hpp>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 TEST(MathFunctions, log_modified_bessel_first_kind) {
   using stan::math::log_modified_bessel_first_kind;
@@ -29,7 +29,7 @@ TEST(MathFunctions, log_modified_bessel_first_kind) {
 
   // code branches at v = 0
   EXPECT_FLOAT_EQ(0.235914358507179,
-                  log_modified_bessel_first_kind(0, 1));  // integers promoted
+                  log_modified_bessel_first_kind(0, 1)); // integers promoted
   EXPECT_FLOAT_EQ(0.235914358507179, log_modified_bessel_first_kind(1e-16, 1));
 
   EXPECT_FLOAT_EQ(5.82456472298118,
@@ -45,7 +45,7 @@ TEST(MathFunctions, log_modified_bessel_first_kind) {
 
   // code branches at v = 1
   EXPECT_FLOAT_EQ(-0.570647987490831,
-                  log_modified_bessel_first_kind(1, 1));  // integers promoted
+                  log_modified_bessel_first_kind(1, 1)); // integers promoted
   EXPECT_FLOAT_EQ(-0.570647987490831,
                   log_modified_bessel_first_kind(1 + 1e-16, 1));
 

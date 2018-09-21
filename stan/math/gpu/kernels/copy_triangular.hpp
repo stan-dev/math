@@ -47,7 +47,7 @@ const char *copy_triangular_kernel_code = STRINGIFY(
       }
     }
     // \cond
-);
+    );
 // \endcond
 
 /**
@@ -56,8 +56,8 @@ const char *copy_triangular_kernel_code = STRINGIFY(
 const global_range_kernel<cl::Buffer, cl::Buffer, int, int, TriangularViewGPU>
     copy_triangular("copy_triangular", copy_triangular_kernel_code);
 
-}  // namespace opencl_kernels
-}  // namespace math
-}  // namespace stan
+} // namespace opencl_kernels
+} // namespace math
+} // namespace stan
 #endif
 #endif

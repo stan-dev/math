@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradMixMatrixColumnsDotSelf, matrix_fv_1stDeriv) {
@@ -72,10 +72,10 @@ TEST(AgradMixMatrixColumnsDotSelf, matrix_ffv_1stDeriv) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(3.0, 1.0);
-  fvar<fvar<var> > c(4.0, 1.0);
-  fvar<fvar<var> > d(5.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(3.0, 1.0);
+  fvar<fvar<var>> c(4.0, 1.0);
+  fvar<fvar<var>> d(5.0, 1.0);
   matrix_ffv m1(1, 1);
   m1 << a;
 
@@ -99,8 +99,8 @@ TEST(AgradMixMatrixColumnsDotSelf, matrix_ffv_1stDeriv) {
   EXPECT_NEAR(12.0, x(0, 0).d_.val().val(), 1E-12);
   EXPECT_NEAR(16.0, x(0, 1).d_.val().val(), 1E-12);
 
-  AVEC z
-      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC z =
+      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   x(0, 0).val_.val().grad(z, h);
   EXPECT_FLOAT_EQ(4.0, h[0]);
@@ -114,17 +114,17 @@ TEST(AgradMixMatrixColumnsDotSelf, matrix_ffv_2ndDeriv_1) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(3.0, 1.0);
-  fvar<fvar<var> > c(4.0, 1.0);
-  fvar<fvar<var> > d(5.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(3.0, 1.0);
+  fvar<fvar<var>> c(4.0, 1.0);
+  fvar<fvar<var>> d(5.0, 1.0);
   matrix_ffv x;
   matrix_ffv m3(2, 2);
   m3 << a, b, c, d;
   x = columns_dot_self(m3);
 
-  AVEC z
-      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC z =
+      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   x(0, 0).val().d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -139,17 +139,17 @@ TEST(AgradMixMatrixColumnsDotSelf, matrix_ffv_2ndDeriv_2) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(3.0, 1.0);
-  fvar<fvar<var> > c(4.0, 1.0);
-  fvar<fvar<var> > d(5.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(3.0, 1.0);
+  fvar<fvar<var>> c(4.0, 1.0);
+  fvar<fvar<var>> d(5.0, 1.0);
   matrix_ffv x;
   matrix_ffv m3(2, 2);
   m3 << a, b, c, d;
   x = columns_dot_self(m3);
 
-  AVEC z
-      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC z =
+      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   x(0, 0).d_.val().grad(z, h);
   EXPECT_FLOAT_EQ(2.0, h[0]);
@@ -163,10 +163,10 @@ TEST(AgradMixMatrixColumnsDotSelf, matrix_ffv_3rdDeriv) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(3.0, 1.0);
-  fvar<fvar<var> > c(4.0, 1.0);
-  fvar<fvar<var> > d(5.0, 1.0);
+  fvar<fvar<var>> a(2.0, 1.0);
+  fvar<fvar<var>> b(3.0, 1.0);
+  fvar<fvar<var>> c(4.0, 1.0);
+  fvar<fvar<var>> d(5.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;
@@ -176,8 +176,8 @@ TEST(AgradMixMatrixColumnsDotSelf, matrix_ffv_3rdDeriv) {
   m3 << a, b, c, d;
   x = columns_dot_self(m3);
 
-  AVEC z
-      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC z =
+      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   x(0, 0).d_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);

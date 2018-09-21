@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(ProbMultiGp, log_matches_lpmf) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> mu(5, 1);

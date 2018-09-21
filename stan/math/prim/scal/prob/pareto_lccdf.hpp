@@ -1,37 +1,37 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_PARETO_LCCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_PARETO_LCCDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <boost/random/exponential_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
+#include <cmath>
+#include <limits>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <boost/random/exponential_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <cmath>
-#include <limits>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {
 namespace math {
 
 template <typename T_y, typename T_scale, typename T_shape>
-typename return_type<T_y, T_scale, T_shape>::type pareto_lccdf(
-    const T_y& y, const T_scale& y_min, const T_shape& alpha) {
+typename return_type<T_y, T_scale, T_shape>::type
+pareto_lccdf(const T_y &y, const T_scale &y_min, const T_shape &alpha) {
   typedef typename stan::partials_return_type<T_y, T_scale, T_shape>::type
       T_partials_return;
 
   if (size_zero(y, y_min, alpha))
     return 0.0;
 
-  static const char* function = "pareto_lccdf";
+  static const char *function = "pareto_lccdf";
 
   using std::exp;
   using std::log;
@@ -66,16 +66,16 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_lccdf(
       return ops_partials.build(negative_infinity());
     }
 
-    const T_partials_return log_dbl
-        = log(value_of(y_min_vec[n]) / value_of(y_vec[n]));
+    const T_partials_return log_dbl =
+        log(value_of(y_min_vec[n]) / value_of(y_vec[n]));
     const T_partials_return y_min_inv_dbl = 1.0 / value_of(y_min_vec[n]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
 
     P += alpha_dbl * log_dbl;
 
     if (!is_constant_struct<T_y>::value)
-      ops_partials.edge1_.partials_[n]
-          -= alpha_dbl * y_min_inv_dbl * exp(log_dbl);
+      ops_partials.edge1_.partials_[n] -=
+          alpha_dbl * y_min_inv_dbl * exp(log_dbl);
     if (!is_constant_struct<T_scale>::value)
       ops_partials.edge2_.partials_[n] += alpha_dbl * y_min_inv_dbl;
     if (!is_constant_struct<T_shape>::value)
@@ -84,6 +84,6 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_lccdf(
   return ops_partials.build(P);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

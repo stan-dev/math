@@ -1,6 +1,6 @@
-#include <stan/math/prim/scal.hpp>
-#include <gtest/gtest.h>
 #include <boost/type_traits.hpp>
+#include <gtest/gtest.h>
+#include <stan/math/prim/scal.hpp>
 
 TEST(MetaTraits, containsNonconstantStruct) {
   using stan::contains_nonconstant_struct;

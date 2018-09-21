@@ -1,12 +1,12 @@
 #ifndef STAN_MATH_PRIM_ARR_ERR_CHECK_ORDERED_HPP
 #define STAN_MATH_PRIM_ARR_ERR_CHECK_ORDERED_HPP
 
+#include <sstream>
 #include <stan/math/prim/arr/meta/index_type.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/meta/error_index.hpp>
-#include <sstream>
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -26,8 +26,8 @@ namespace math {
  *   values, or if any element is <code>NaN</code>.
  */
 template <typename T_y>
-void check_ordered(const char* function, const char* name,
-                   const std::vector<T_y>& y) {
+void check_ordered(const char *function, const char *name,
+                   const std::vector<T_y> &y) {
   for (size_t n = 1; n < y.size(); n++) {
     if (!(y[n] > y[n - 1])) {
       std::ostringstream msg1;
@@ -41,6 +41,6 @@ void check_ordered(const char* function, const char* name,
     }
   }
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

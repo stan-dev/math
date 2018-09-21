@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char* triangular_transpose_kernel_code = STRINGIFY(
+const char *triangular_transpose_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Copies a lower/upper triangular of a matrix to it's upper/lower.
@@ -25,7 +25,7 @@ const char* triangular_transpose_kernel_code = STRINGIFY(
      * Used in mat/gpu/triangular_transpose.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void triangular_transpose(__global double* A, unsigned int rows,
+    __kernel void triangular_transpose(__global double *A, unsigned int rows,
                                        unsigned int cols,
                                        unsigned int copy_direction) {
       int i = get_global_id(0);
@@ -39,7 +39,7 @@ const char* triangular_transpose_kernel_code = STRINGIFY(
       }
     }
     // \cond
-);
+    );
 // \endcond
 
 /**
@@ -50,8 +50,8 @@ const global_range_kernel<cl::Buffer, int, int, TriangularMapGPU>
     triangular_transpose("triangular_transpose",
                          triangular_transpose_kernel_code);
 
-}  // namespace opencl_kernels
-}  // namespace math
-}  // namespace stan
+} // namespace opencl_kernels
+} // namespace math
+} // namespace stan
 #endif
 #endif

@@ -1,22 +1,22 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_UNIFORM_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_UNIFORM_LPDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <boost/random/uniform_real_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
+#include <cmath>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <boost/random/uniform_real_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <cmath>
 
 namespace stan {
 namespace math {
@@ -44,9 +44,9 @@ namespace math {
  * @tparam T_high Type of upper bound.
  */
 template <bool propto, typename T_y, typename T_low, typename T_high>
-typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
-    const T_y& y, const T_low& alpha, const T_high& beta) {
-  static const char* function = "uniform_lpdf";
+typename return_type<T_y, T_low, T_high>::type
+uniform_lpdf(const T_y &y, const T_low &alpha, const T_high &beta) {
+  static const char *function = "uniform_lpdf";
   typedef typename stan::partials_return_type<T_y, T_low, T_high>::type
       T_partials_return;
 
@@ -83,16 +83,16 @@ typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
       inv_beta_minus_alpha(max_size(alpha, beta));
   for (size_t i = 0; i < max_size(alpha, beta); i++)
     if (include_summand<propto, T_low, T_high>::value)
-      inv_beta_minus_alpha[i]
-          = 1.0 / (value_of(beta_vec[i]) - value_of(alpha_vec[i]));
+      inv_beta_minus_alpha[i] =
+          1.0 / (value_of(beta_vec[i]) - value_of(alpha_vec[i]));
 
   VectorBuilder<include_summand<propto, T_low, T_high>::value,
                 T_partials_return, T_low, T_high>
       log_beta_minus_alpha(max_size(alpha, beta));
   for (size_t i = 0; i < max_size(alpha, beta); i++)
     if (include_summand<propto, T_low, T_high>::value)
-      log_beta_minus_alpha[i]
-          = log(value_of(beta_vec[i]) - value_of(alpha_vec[i]));
+      log_beta_minus_alpha[i] =
+          log(value_of(beta_vec[i]) - value_of(alpha_vec[i]));
 
   operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
   for (size_t n = 0; n < N; n++) {
@@ -108,11 +108,11 @@ typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
 }
 
 template <typename T_y, typename T_low, typename T_high>
-inline typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
-    const T_y& y, const T_low& alpha, const T_high& beta) {
+inline typename return_type<T_y, T_low, T_high>::type
+uniform_lpdf(const T_y &y, const T_low &alpha, const T_high &beta) {
   return uniform_lpdf<false>(y, alpha, beta);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif
