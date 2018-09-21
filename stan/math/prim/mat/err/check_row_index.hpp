@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_ROW_INDEX_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_ROW_INDEX_HPP
 
-#include <stan/math/prim/scal/err/out_of_range.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <sstream>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/err/out_of_range.hpp>
 #include <string>
 
 namespace stan {
@@ -27,10 +27,10 @@ namespace math {
  * @throw <code>std::out_of_range</code> if the index is out of range.
  */
 template <typename T_y, int R, int C>
-inline void check_row_index(const char* function, const char* name,
-                            const Eigen::Matrix<T_y, R, C>& y, size_t i) {
-  if (i >= stan::error_index::value
-      && i < static_cast<size_t>(y.rows()) + stan::error_index::value)
+inline void check_row_index(const char *function, const char *name,
+                            const Eigen::Matrix<T_y, R, C> &y, size_t i) {
+  if (i >= stan::error_index::value &&
+      i < static_cast<size_t>(y.rows()) + stan::error_index::value)
     return;
 
   std::stringstream msg;
@@ -39,6 +39,6 @@ inline void check_row_index(const char* function, const char* name,
   out_of_range(function, y.rows(), i, msg_str.c_str());
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

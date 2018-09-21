@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_FWD_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
 #define STAN_MATH_FWD_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
 
-#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/fwd/core/fvar.hpp>
+#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 
 namespace stan {
 namespace math {
@@ -17,8 +17,7 @@ namespace math {
  * @tparam T Value and tangent type for for forward-mode
  * autodiff variable.
  */
-template <typename F, typename T>
-struct apply_scalar_unary<F, fvar<T> > {
+template <typename F, typename T> struct apply_scalar_unary<F, fvar<T>> {
   /**
    * Function return type, which is same as the argument type for
    * the function, <code>fvar&lt;T&gt;</code>.
@@ -31,9 +30,9 @@ struct apply_scalar_unary<F, fvar<T> > {
    * @param x Argument variable.
    * @return Function applied to the variable.
    */
-  static inline return_t apply(const fvar<T>& x) { return F::fun(x); }
+  static inline return_t apply(const fvar<T> &x) { return F::fun(x); }
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

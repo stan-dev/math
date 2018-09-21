@@ -62,9 +62,9 @@
  * tested either.
  */
 class VectorRNGTestRig {
- public:
-  int N_;  // Number of samples used in the quantiles tests
-  int M_;  // Length of vectors for the vectorization tests
+public:
+  int N_; // Number of samples used in the quantiles tests
+  int M_; // Length of vectors for the vectorization tests
 
   std::vector<int> test_points_;
 
@@ -81,9 +81,9 @@ class VectorRNGTestRig {
   std::vector<double> bad_p3_;
   std::vector<int> bad_p3_int_;
 
-  std::vector<double> always_bad_values_
-      = {stan::math::positive_infinity(), stan::math::negative_infinity(),
-         stan::math::not_a_number()};
+  std::vector<double> always_bad_values_ = {stan::math::positive_infinity(),
+                                            stan::math::negative_infinity(),
+                                            stan::math::not_a_number()};
   /*
    * This function wraps up the random number generator for testing.
    *
@@ -94,8 +94,8 @@ class VectorRNGTestRig {
    * C++ doesn't allow templated virtual member functions)
    */
   template <typename T1, typename T2, typename T3, typename T_rng>
-  auto generate_samples(const T1& p1, const T2& p2, const T3& p3,
-                        T_rng& rng) const;
+  auto generate_samples(const T1 &p1, const T2 &p2, const T3 &p3,
+                        T_rng &rng) const;
 
   VectorRNGTestRig(int N, int M, std::vector<double> good_p1,
                    std::vector<int> good_p1_int, std::vector<double> bad_p1,
@@ -104,37 +104,25 @@ class VectorRNGTestRig {
                    std::vector<int> bad_p2_int, std::vector<double> good_p3,
                    std::vector<int> good_p3_int, std::vector<double> bad_p3,
                    std::vector<int> bad_p3_int)
-      : N_(N),
-        M_(M),
-        good_p1_(good_p1),
-        good_p1_int_(good_p1_int),
-        bad_p1_(bad_p1),
-        bad_p1_int_(bad_p1_int),
-        good_p2_(good_p2),
-        good_p2_int_(good_p2_int),
-        bad_p2_(bad_p2),
-        bad_p2_int_(bad_p2_int),
-        good_p3_(good_p3),
-        good_p3_int_(good_p3_int),
-        bad_p3_(bad_p3),
+      : N_(N), M_(M), good_p1_(good_p1), good_p1_int_(good_p1_int),
+        bad_p1_(bad_p1), bad_p1_int_(bad_p1_int), good_p2_(good_p2),
+        good_p2_int_(good_p2_int), bad_p2_(bad_p2), bad_p2_int_(bad_p2_int),
+        good_p3_(good_p3), good_p3_int_(good_p3_int), bad_p3_(bad_p3),
         bad_p3_int_(bad_p3_int) {
     if (good_p1.size() > 0 && good_p1_int.size() == 0)
-      throw std::domain_error(
-          "good_p1 has non-zero length, but good_p1_int "
-          "still has length zero (good_p1_int must also "
-          "have non-zero length)");
+      throw std::domain_error("good_p1 has non-zero length, but good_p1_int "
+                              "still has length zero (good_p1_int must also "
+                              "have non-zero length)");
 
     if (good_p2.size() > 0 && good_p2_int.size() == 0)
-      throw std::domain_error(
-          "good_p2 has non-zero length, but good_p2_int "
-          "still has length zero (good_p2_int must also "
-          "have non-zero length)");
+      throw std::domain_error("good_p2 has non-zero length, but good_p2_int "
+                              "still has length zero (good_p2_int must also "
+                              "have non-zero length)");
 
     if (good_p3.size() > 0 && good_p3_int.size() == 0)
-      throw std::domain_error(
-          "good_p3 has non-zero length, but good_p3_int "
-          "still has length zero (good_p3_int must also "
-          "have non-zero length)");
+      throw std::domain_error("good_p3 has non-zero length, but good_p3_int "
+                              "still has length zero (good_p3_int must also "
+                              "have non-zero length)");
   }
 
   VectorRNGTestRig(int N, int M, std::vector<double> good_p1,
@@ -177,64 +165,46 @@ class VectorRNGTestRig {
    * (can be double or int)
    * @return List of parameter values
    */
-  template <typename T>
-  std::vector<T> get_good_p1() const {
-    return good_p1_;
-  }
+  template <typename T> std::vector<T> get_good_p1() const { return good_p1_; }
 
-  template <typename T>
-  std::vector<T> get_bad_p1() const {
+  template <typename T> std::vector<T> get_bad_p1() const {
     return stan::math::append_array(bad_p1_, always_bad_values_);
   }
 
-  template <typename T>
-  std::vector<T> get_good_p2() const {
-    return good_p2_;
-  }
+  template <typename T> std::vector<T> get_good_p2() const { return good_p2_; }
 
-  template <typename T>
-  std::vector<T> get_bad_p2() const {
+  template <typename T> std::vector<T> get_bad_p2() const {
     return stan::math::append_array(bad_p2_, always_bad_values_);
   }
 
-  template <typename T>
-  std::vector<T> get_good_p3() const {
-    return good_p3_;
-  }
+  template <typename T> std::vector<T> get_good_p3() const { return good_p3_; }
 
-  template <typename T>
-  std::vector<T> get_bad_p3() const {
+  template <typename T> std::vector<T> get_bad_p3() const {
     return stan::math::append_array(bad_p3_, always_bad_values_);
   }
 };
 
-template <>
-std::vector<int> VectorRNGTestRig::get_good_p1<int>() const {
+template <> std::vector<int> VectorRNGTestRig::get_good_p1<int>() const {
   return good_p1_int_;
 }
 
-template <>
-std::vector<int> VectorRNGTestRig::get_bad_p1<int>() const {
+template <> std::vector<int> VectorRNGTestRig::get_bad_p1<int>() const {
   return bad_p1_int_;
 }
 
-template <>
-std::vector<int> VectorRNGTestRig::get_good_p2<int>() const {
+template <> std::vector<int> VectorRNGTestRig::get_good_p2<int>() const {
   return good_p2_int_;
 }
 
-template <>
-std::vector<int> VectorRNGTestRig::get_bad_p2<int>() const {
+template <> std::vector<int> VectorRNGTestRig::get_bad_p2<int>() const {
   return bad_p2_int_;
 }
 
-template <>
-std::vector<int> VectorRNGTestRig::get_good_p3<int>() const {
+template <> std::vector<int> VectorRNGTestRig::get_good_p3<int>() const {
   return good_p3_int_;
 }
 
-template <>
-std::vector<int> VectorRNGTestRig::get_bad_p3<int>() const {
+template <> std::vector<int> VectorRNGTestRig::get_bad_p3<int>() const {
   return bad_p3_int_;
 }
 

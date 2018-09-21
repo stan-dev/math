@@ -1,19 +1,18 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 #include <vector>
 
 using stan::math::fvar;
 
 // test sum of first n numbers for sum of a
-template <typename T>
-void test_sum(stan::math::accumulator<T>& a, int n) {
+template <typename T> void test_sum(stan::math::accumulator<T> &a, int n) {
   EXPECT_TRUE((n * (n + 1)) / 2 == a.sum());
 }
 
 TEST(AgradFwdMatrixAccumulate, fvar_double) {
   using stan::math::accumulator;
 
-  accumulator<fvar<double> > a;
+  accumulator<fvar<double>> a;
   test_sum(a, 0);
 
   a.add(1.0);
@@ -30,12 +29,12 @@ TEST(AgradFwdMatrixAccumulate, collection_fvar_double) {
   using stan::math::vector_fd;
   using std::vector;
 
-  accumulator<fvar<double> > a;
+  accumulator<fvar<double>> a;
 
   int pos = 0;
   test_sum(a, 0);
 
-  vector<fvar<double> > v(10);
+  vector<fvar<double>> v(10);
   for (size_t i = 0; i < 10; ++i)
     v[i] = pos++;
   a.add(v);
@@ -48,9 +47,9 @@ TEST(AgradFwdMatrixAccumulate, collection_fvar_double) {
   a.add(x);
   test_sum(a, pos - 1);
 
-  vector<vector<fvar<double> > > ww(10);
+  vector<vector<fvar<double>>> ww(10);
   for (size_t i = 0; i < 10; ++i) {
-    vector<fvar<double> > w(5);
+    vector<fvar<double>> w(5);
     for (size_t n = 0; n < 5; ++n)
       w[n] = pos++;
     ww[i] = w;
@@ -87,7 +86,7 @@ TEST(AgradFwdMatrixAccumulate, collection_fvar_double) {
 TEST(AgradFwdMatrixAccumulate, fvar_fvar_double) {
   using stan::math::accumulator;
 
-  accumulator<fvar<fvar<double> > > a;
+  accumulator<fvar<fvar<double>>> a;
   test_sum(a, 0);
 
   a.add(1.0);
@@ -104,12 +103,12 @@ TEST(AgradFwdMatrixAccumulate, collection_fvar_fvar_double) {
   using stan::math::vector_ffd;
   using std::vector;
 
-  accumulator<fvar<fvar<double> > > a;
+  accumulator<fvar<fvar<double>>> a;
 
   int pos = 0;
   test_sum(a, 0);
 
-  vector<fvar<fvar<double> > > v(10);
+  vector<fvar<fvar<double>>> v(10);
   for (size_t i = 0; i < 10; ++i)
     v[i] = pos++;
   a.add(v);
@@ -122,9 +121,9 @@ TEST(AgradFwdMatrixAccumulate, collection_fvar_fvar_double) {
   a.add(x);
   test_sum(a, pos - 1);
 
-  vector<vector<fvar<fvar<double> > > > ww(10);
+  vector<vector<fvar<fvar<double>>>> ww(10);
   for (size_t i = 0; i < 10; ++i) {
-    vector<fvar<fvar<double> > > w(5);
+    vector<fvar<fvar<double>>> w(5);
     for (size_t n = 0; n < 5; ++n)
       w[n] = pos++;
     ww[i] = w;

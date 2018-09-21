@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {
 namespace math {
@@ -21,16 +21,16 @@ namespace math {
  *   if m is not positive definite (if m has more than 0 elements)
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+cholesky_decompose(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m) {
   check_square("cholesky_decompose", "m", m);
   check_symmetric("cholesky_decompose", "m", m);
-  Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > llt(m.rows());
+  Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>> llt(m.rows());
   llt.compute(m);
   check_pos_definite("cholesky_decompose", "m", llt);
   return llt.matrixL();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

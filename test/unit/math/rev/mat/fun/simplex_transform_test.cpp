@@ -1,9 +1,9 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <random>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/jacobian.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
-#include <random>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -31,7 +31,7 @@ TEST(probTransform, simplex_jacobian) {
   deps.push_back(x(1));
   deps.push_back(x(2));
 
-  vector<vector<double> > jacobian;
+  vector<vector<double>> jacobian;
   stan::math::jacobian(deps, indeps, jacobian);
 
   Matrix<double, Dynamic, Dynamic> J(3, 3);
@@ -86,8 +86,8 @@ TEST(AgradRevMatrix, simplex_constrain_analytical_gradients) {
 
   out.grad();
 
-  EXPECT_FLOAT_EQ(yv(0).adj(), diagonal_of_jacobian(0) * (1 - zk(3))
-                                   * (1 - zk(2)) * (1 - zk(1)));
+  EXPECT_FLOAT_EQ(yv(0).adj(), diagonal_of_jacobian(0) * (1 - zk(3)) *
+                                   (1 - zk(2)) * (1 - zk(1)));
   EXPECT_FLOAT_EQ(yv(1).adj(),
                   diagonal_of_jacobian(1) * (1 - zk(3)) * (1 - zk(2)));
   EXPECT_FLOAT_EQ(yv(2).adj(), diagonal_of_jacobian(2) * (1 - zk(3)));
@@ -132,8 +132,8 @@ TEST(prob_transform, simplex_constrain_analytical_grads_rng) {
 
     out.grad();
 
-    EXPECT_FLOAT_EQ(yv(0).adj(), diagonal_of_jacobian(0) * (1 - zk(3))
-                                     * (1 - zk(2)) * (1 - zk(1)));
+    EXPECT_FLOAT_EQ(yv(0).adj(), diagonal_of_jacobian(0) * (1 - zk(3)) *
+                                     (1 - zk(2)) * (1 - zk(1)));
     EXPECT_FLOAT_EQ(yv(1).adj(),
                     diagonal_of_jacobian(1) * (1 - zk(3)) * (1 - zk(2)));
     EXPECT_FLOAT_EQ(yv(2).adj(), diagonal_of_jacobian(2) * (1 - zk(3)));

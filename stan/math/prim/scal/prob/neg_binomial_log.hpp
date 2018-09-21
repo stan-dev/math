@@ -11,8 +11,8 @@ namespace math {
  * @deprecated use <code>neg_binomial_lpmf</code>
  */
 template <bool propto, typename T_n, typename T_shape, typename T_inv_scale>
-typename return_type<T_shape, T_inv_scale>::type neg_binomial_log(
-    const T_n& n, const T_shape& alpha, const T_inv_scale& beta) {
+typename return_type<T_shape, T_inv_scale>::type
+neg_binomial_log(const T_n &n, const T_shape &alpha, const T_inv_scale &beta) {
   return neg_binomial_lpmf<propto, T_n, T_shape, T_inv_scale>(n, alpha, beta);
 }
 
@@ -20,11 +20,11 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_log(
  * @deprecated use <code>neg_binomial_lpmf</code>
  */
 template <typename T_n, typename T_shape, typename T_inv_scale>
-inline typename return_type<T_shape, T_inv_scale>::type neg_binomial_log(
-    const T_n& n, const T_shape& alpha, const T_inv_scale& beta) {
+inline typename return_type<T_shape, T_inv_scale>::type
+neg_binomial_log(const T_n &n, const T_shape &alpha, const T_inv_scale &beta) {
   return neg_binomial_lpmf<T_n, T_shape, T_inv_scale>(n, alpha, beta);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

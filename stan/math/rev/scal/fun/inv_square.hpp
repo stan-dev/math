@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_INV_SQUARE_HPP
 #define STAN_MATH_REV_SCAL_FUN_INV_SQUARE_HPP
 
-#include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/inv_square.hpp>
+#include <stan/math/rev/core.hpp>
 #include <valarray>
 
 namespace stan {
@@ -10,13 +10,13 @@ namespace math {
 
 namespace {
 class inv_square_vari : public op_v_vari {
- public:
-  explicit inv_square_vari(vari* avi) : op_v_vari(inv_square(avi->val_), avi) {}
+public:
+  explicit inv_square_vari(vari *avi) : op_v_vari(inv_square(avi->val_), avi) {}
   void chain() {
     avi_->adj_ -= 2 * adj_ / (avi_->val_ * avi_->val_ * avi_->val_);
   }
 };
-}  // namespace
+} // namespace
 
 /**
  *
@@ -37,8 +37,8 @@ class inv_square_vari : public op_v_vari {
    \f]
  *
  */
-inline var inv_square(const var& a) { return var(new inv_square_vari(a.vi_)); }
+inline var inv_square(const var &a) { return var(new inv_square_vari(a.vi_)); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

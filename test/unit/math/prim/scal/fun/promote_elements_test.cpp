@@ -1,8 +1,8 @@
+#include <boost/type_traits/is_same.hpp>
+#include <boost/typeof/typeof.hpp>
+#include <gtest/gtest.h>
 #include <stan/math/prim/scal.hpp>
 #include <stan/math/rev/core/var.hpp>
-#include <gtest/gtest.h>
-#include <boost/typeof/typeof.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 using stan::math::promote_elements;
 using stan::math::var;

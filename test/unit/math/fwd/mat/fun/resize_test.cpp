@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 #include <vector>
 
 using Eigen::Dynamic;
@@ -12,7 +12,7 @@ TEST(AgradFwdMatrixResize, fvar_double) {
   stan::math::resize(x, dims);
 }
 TEST(AgradFwdMatrixResize, svec_fvar_double) {
-  std::vector<fvar<double> > y;
+  std::vector<fvar<double>> y;
   std::vector<int> dims;
   EXPECT_EQ(0U, y.size());
 
@@ -65,7 +65,7 @@ TEST(AgradFwdMatrixResize, mat_fvar_double) {
   EXPECT_EQ(17, m.cols());
 }
 TEST(AgradFwdMatrixResize, svec_svec_fvar_double) {
-  std::vector<std::vector<fvar<double> > > xx;
+  std::vector<std::vector<fvar<double>>> xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
   dims.push_back(4U);
@@ -81,7 +81,7 @@ TEST(AgradFwdMatrixResize, svec_svec_fvar_double) {
   EXPECT_EQ(7U, xx[1].size());
 }
 TEST(AgradFwdMatrixResize, svec_v_fvar_double) {
-  std::vector<Matrix<fvar<double>, Dynamic, 1> > xx;
+  std::vector<Matrix<fvar<double>, Dynamic, 1>> xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
   dims.push_back(4U);
@@ -98,7 +98,7 @@ TEST(AgradFwdMatrixResize, svec_v_fvar_double) {
   EXPECT_EQ(7, xx[1].size());
 }
 TEST(AgradFwdMatrixResize, svec_rv_fvar_double) {
-  std::vector<Matrix<fvar<double>, 1, Dynamic> > xx;
+  std::vector<Matrix<fvar<double>, 1, Dynamic>> xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
   dims.push_back(4U);
@@ -115,7 +115,7 @@ TEST(AgradFwdMatrixResize, svec_rv_fvar_double) {
   EXPECT_EQ(7, xx[1].size());
 }
 TEST(AgradFwdMatrixResize, svec_svec_matrix_fvar_double) {
-  std::vector<std::vector<Matrix<fvar<double>, Dynamic, Dynamic> > > mm;
+  std::vector<std::vector<Matrix<fvar<double>, Dynamic, Dynamic>>> mm;
   std::vector<int> dims;
   dims.push_back(4U);
   dims.push_back(5U);
@@ -128,12 +128,12 @@ TEST(AgradFwdMatrixResize, svec_svec_matrix_fvar_double) {
   EXPECT_EQ(3, mm[3][4].cols());
 }
 TEST(AgradFwdMatrixResize, fvar_fvar_double) {
-  fvar<fvar<double> > x = 5;
+  fvar<fvar<double>> x = 5;
   std::vector<int> dims;
   stan::math::resize(x, dims);
 }
 TEST(AgradFwdMatrixResize, svec_fvar_fvar_double) {
-  std::vector<fvar<fvar<double> > > y;
+  std::vector<fvar<fvar<double>>> y;
   std::vector<int> dims;
   EXPECT_EQ(0U, y.size());
 
@@ -146,7 +146,7 @@ TEST(AgradFwdMatrixResize, svec_fvar_fvar_double) {
   EXPECT_EQ(2U, y.size());
 }
 TEST(AgradFwdMatrixResize, vec_fvar_fvar_double) {
-  Matrix<fvar<fvar<double> >, Dynamic, 1> v(2);
+  Matrix<fvar<fvar<double>>, Dynamic, 1> v(2);
   std::vector<int> dims;
   EXPECT_EQ(2, v.size());
 
@@ -160,7 +160,7 @@ TEST(AgradFwdMatrixResize, vec_fvar_fvar_double) {
   EXPECT_EQ(3, v.size());
 }
 TEST(AgradFwdMatrixResize, rvec_fvar_fvar_double) {
-  Matrix<fvar<fvar<double> >, 1, Dynamic> rv(2);
+  Matrix<fvar<fvar<double>>, 1, Dynamic> rv(2);
   std::vector<int> dims;
   EXPECT_EQ(2, rv.size());
 
@@ -174,7 +174,7 @@ TEST(AgradFwdMatrixResize, rvec_fvar_fvar_double) {
   EXPECT_EQ(3, rv.size());
 }
 TEST(AgradFwdMatrixResize, mat_fvar_fvar_double) {
-  Matrix<fvar<fvar<double> >, Dynamic, Dynamic> m(2, 3);
+  Matrix<fvar<fvar<double>>, Dynamic, Dynamic> m(2, 3);
   std::vector<int> dims;
   EXPECT_EQ(2, m.rows());
   EXPECT_EQ(3, m.cols());
@@ -186,7 +186,7 @@ TEST(AgradFwdMatrixResize, mat_fvar_fvar_double) {
   EXPECT_EQ(17, m.cols());
 }
 TEST(AgradFwdMatrixResize, svec_svec_fvar_fvar_double) {
-  std::vector<std::vector<fvar<fvar<double> > > > xx;
+  std::vector<std::vector<fvar<fvar<double>>>> xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
   dims.push_back(4U);
@@ -202,7 +202,7 @@ TEST(AgradFwdMatrixResize, svec_svec_fvar_fvar_double) {
   EXPECT_EQ(7U, xx[1].size());
 }
 TEST(AgradFwdMatrixResize, svec_v_fvar_fvar_double) {
-  std::vector<Matrix<fvar<fvar<double> >, Dynamic, 1> > xx;
+  std::vector<Matrix<fvar<fvar<double>>, Dynamic, 1>> xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
   dims.push_back(4U);
@@ -219,7 +219,7 @@ TEST(AgradFwdMatrixResize, svec_v_fvar_fvar_double) {
   EXPECT_EQ(7, xx[1].size());
 }
 TEST(AgradFwdMatrixResize, svec_rv_fvar_fvar_double) {
-  std::vector<Matrix<fvar<fvar<double> >, 1, Dynamic> > xx;
+  std::vector<Matrix<fvar<fvar<double>>, 1, Dynamic>> xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
   dims.push_back(4U);
@@ -236,7 +236,7 @@ TEST(AgradFwdMatrixResize, svec_rv_fvar_fvar_double) {
   EXPECT_EQ(7, xx[1].size());
 }
 TEST(AgradFwdMatrixResize, svec_svec_matrix_fvar_fvar_double) {
-  std::vector<std::vector<Matrix<fvar<fvar<double> >, Dynamic, Dynamic> > > mm;
+  std::vector<std::vector<Matrix<fvar<fvar<double>>, Dynamic, Dynamic>>> mm;
   std::vector<int> dims;
   dims.push_back(4U);
   dims.push_back(5U);

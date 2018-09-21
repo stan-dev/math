@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <stdexcept>
 #include <vector>
 
@@ -68,7 +68,7 @@ TEST(AgradMixMatrixTail, tailRowVector4_fv) {
 
 TEST(AgradMixMatrixTail, tailStdVector1_fv) {
   using stan::math::tail;
-  std::vector<fvar<var> > v;
+  std::vector<fvar<var>> v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -76,7 +76,7 @@ TEST(AgradMixMatrixTail, tailStdVector1_fv) {
 }
 TEST(AgradMixMatrixTail, tailStdVector2_fv) {
   using stan::math::tail;
-  std::vector<fvar<var> > v;
+  std::vector<fvar<var>> v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -84,7 +84,7 @@ TEST(AgradMixMatrixTail, tailStdVector2_fv) {
 }
 TEST(AgradMixMatrixTail, tailStdVector3_fv) {
   using stan::math::tail;
-  std::vector<fvar<var> > v;
+  std::vector<fvar<var>> v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -92,11 +92,11 @@ TEST(AgradMixMatrixTail, tailStdVector3_fv) {
 }
 TEST(AgradMixMatrixTail, tailStdVector4_fv) {
   using stan::math::tail;
-  std::vector<fvar<var> > v;
+  std::vector<fvar<var>> v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
-  std::vector<fvar<var> > v12 = tail(v, 2);
+  std::vector<fvar<var>> v12 = tail(v, 2);
   EXPECT_EQ(2U, v12.size());
   for (int n = 0; n < 2; ++n) {
     EXPECT_FLOAT_EQ(v[n + 1].val_.val(), v12[n].val_.val());
@@ -164,7 +164,7 @@ TEST(AgradMixMatrixTail, tailRowVector4_ffv) {
 
 TEST(AgradMixMatrixTail, tailStdVector1_ffv) {
   using stan::math::tail;
-  std::vector<fvar<fvar<var> > > v;
+  std::vector<fvar<fvar<var>>> v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -172,7 +172,7 @@ TEST(AgradMixMatrixTail, tailStdVector1_ffv) {
 }
 TEST(AgradMixMatrixTail, tailStdVector2_ffv) {
   using stan::math::tail;
-  std::vector<fvar<fvar<var> > > v;
+  std::vector<fvar<fvar<var>>> v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -180,7 +180,7 @@ TEST(AgradMixMatrixTail, tailStdVector2_ffv) {
 }
 TEST(AgradMixMatrixTail, tailStdVector3_ffv) {
   using stan::math::tail;
-  std::vector<fvar<fvar<var> > > v;
+  std::vector<fvar<fvar<var>>> v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -188,11 +188,11 @@ TEST(AgradMixMatrixTail, tailStdVector3_ffv) {
 }
 TEST(AgradMixMatrixTail, tailStdVector4_ffv) {
   using stan::math::tail;
-  std::vector<fvar<fvar<var> > > v;
+  std::vector<fvar<fvar<var>>> v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
-  std::vector<fvar<fvar<var> > > v12 = tail(v, 2);
+  std::vector<fvar<fvar<var>>> v12 = tail(v, 2);
   EXPECT_EQ(2U, v12.size());
   for (int n = 0; n < 2; ++n) {
     EXPECT_FLOAT_EQ(v[n + 1].val_.val_.val(), v12[n].val_.val_.val());

@@ -1,7 +1,7 @@
-#include <stan/math/fwd/mat.hpp>
-#include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -33,11 +33,11 @@ TEST(ProbDistributionsMultiNormalCholesky, fvar_double) {
 
 TEST(ProbDistributionsMultiNormalCholesky, fvar_fvar_double) {
   using stan::math::fvar;
-  Matrix<fvar<fvar<double> >, Dynamic, 1> y(3, 1);
+  Matrix<fvar<fvar<double>>, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
-  Matrix<fvar<fvar<double> >, Dynamic, 1> mu(3, 1);
+  Matrix<fvar<fvar<double>>, Dynamic, 1> mu(3, 1);
   mu << 1.0, -1.0, 3.0;
-  Matrix<fvar<fvar<double> >, Dynamic, Dynamic> Sigma(3, 3);
+  Matrix<fvar<fvar<double>>, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
 
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
@@ -48,7 +48,7 @@ TEST(ProbDistributionsMultiNormalCholesky, fvar_fvar_double) {
       Sigma(i, j).d_.val_ = 1.0;
   }
 
-  Matrix<fvar<fvar<double> >, Dynamic, Dynamic> L = Sigma.llt().matrixL();
+  Matrix<fvar<fvar<double>>, Dynamic, Dynamic> L = Sigma.llt().matrixL();
   EXPECT_FLOAT_EQ(-11.73908,
                   stan::math::multi_normal_cholesky_log(y, mu, L).val_.val_);
   EXPECT_FLOAT_EQ(0.54899865,

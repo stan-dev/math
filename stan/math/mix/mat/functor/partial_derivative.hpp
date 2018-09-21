@@ -22,9 +22,9 @@ namespace math {
  * @param[out] dfx_dxn Value of partial derivative
  */
 template <typename T, typename F>
-void partial_derivative(const F& f,
-                        const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, int n,
-                        T& fx, T& dfx_dxn) {
+void partial_derivative(const F &f,
+                        const Eigen::Matrix<T, Eigen::Dynamic, 1> &x, int n,
+                        T &fx, T &dfx_dxn) {
   Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1> x_fvar(x.size());
   for (int i = 0; i < x.size(); ++i)
     x_fvar(i) = fvar<T>(x(i), i == n);
@@ -33,6 +33,6 @@ void partial_derivative(const F& f,
   dfx_dxn = fx_fvar.d_;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

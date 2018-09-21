@@ -7,16 +7,16 @@ namespace stan {
 namespace math {
 
 class op_dvv_vari : public vari {
- protected:
+protected:
   double ad_;
-  vari* bvi_;
-  vari* cvi_;
+  vari *bvi_;
+  vari *cvi_;
 
- public:
-  op_dvv_vari(double f, double a, vari* bvi, vari* cvi)
+public:
+  op_dvv_vari(double f, double a, vari *bvi, vari *cvi)
       : vari(f), ad_(a), bvi_(bvi), cvi_(cvi) {}
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

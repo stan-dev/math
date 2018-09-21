@@ -7,12 +7,11 @@
 namespace stan {
 namespace math {
 
-template <typename T>
-inline fvar<T> log1p_exp(const fvar<T>& x) {
+template <typename T> inline fvar<T> log1p_exp(const fvar<T> &x) {
   using std::exp;
   return fvar<T>(log1p_exp(x.val_), x.d_ / (1 + exp(-x.val_)));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

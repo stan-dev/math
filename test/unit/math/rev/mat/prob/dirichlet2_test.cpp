@@ -1,7 +1,7 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/prob/expect_eq_diffs.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <string>
+#include <test/unit/math/rev/mat/prob/expect_eq_diffs.hpp>
 
 template <typename T_prob, typename T_prior_sample_size>
 void expect_propto(T_prob theta, T_prior_sample_size alpha, T_prob theta2,
@@ -18,7 +18,7 @@ using stan::math::to_var;
 using stan::math::var;
 
 class AgradDistributionsDirichlet : public ::testing::Test {
- protected:
+protected:
   virtual void SetUp() {
     theta.resize(3, 1);
     theta << 0.2, 0.3, 0.5;

@@ -5,24 +5,20 @@
 #include <vector>
 
 namespace stan {
-template <typename T>
-struct scalar_type<std::vector<T> > {
+template <typename T> struct scalar_type<std::vector<T>> {
   typedef typename scalar_type<T>::type type;
 };
 
-template <typename T>
-struct scalar_type<const std::vector<T> > {
+template <typename T> struct scalar_type<const std::vector<T>> {
   typedef typename scalar_type<T>::type type;
 };
 
-template <typename T>
-struct scalar_type<std::vector<T>&> {
+template <typename T> struct scalar_type<std::vector<T> &> {
   typedef typename scalar_type<T>::type type;
 };
 
-template <typename T>
-struct scalar_type<const std::vector<T>&> {
+template <typename T> struct scalar_type<const std::vector<T> &> {
   typedef typename scalar_type<T>::type type;
 };
-}  // namespace stan
+} // namespace stan
 #endif

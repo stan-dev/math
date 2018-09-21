@@ -1,24 +1,24 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_FMA_HPP
 #define STAN_MATH_REV_SCAL_FUN_FMA_HPP
 
-#include <stan/math/rev/core.hpp>
+#include <limits>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/fma.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/meta/likely.hpp>
-#include <limits>
+#include <stan/math/rev/core.hpp>
 
 namespace stan {
 namespace math {
 
 namespace {
 class fma_vvv_vari : public op_vvv_vari {
- public:
-  fma_vvv_vari(vari* avi, vari* bvi, vari* cvi)
+public:
+  fma_vvv_vari(vari *avi, vari *bvi, vari *cvi)
       : op_vvv_vari(fma(avi->val_, bvi->val_, cvi->val_), avi, bvi, cvi) {}
   void chain() {
-    if (unlikely(is_nan(avi_->val_) || is_nan(bvi_->val_)
-                 || is_nan(cvi_->val_))) {
+    if (unlikely(is_nan(avi_->val_) || is_nan(bvi_->val_) ||
+                 is_nan(cvi_->val_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
       cvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
@@ -31,8 +31,8 @@ class fma_vvv_vari : public op_vvv_vari {
 };
 
 class fma_vvd_vari : public op_vvd_vari {
- public:
-  fma_vvd_vari(vari* avi, vari* bvi, double c)
+public:
+  fma_vvd_vari(vari *avi, vari *bvi, double c)
       : op_vvd_vari(fma(avi->val_, bvi->val_, c), avi, bvi, c) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_) || is_nan(bvi_->val_) || is_nan(cd_))) {
@@ -46,8 +46,8 @@ class fma_vvd_vari : public op_vvd_vari {
 };
 
 class fma_vdv_vari : public op_vdv_vari {
- public:
-  fma_vdv_vari(vari* avi, double b, vari* cvi)
+public:
+  fma_vdv_vari(vari *avi, double b, vari *cvi)
       : op_vdv_vari(fma(avi->val_, b, cvi->val_), avi, b, cvi) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_) || is_nan(cvi_->val_) || is_nan(bd_))) {
@@ -61,8 +61,8 @@ class fma_vdv_vari : public op_vdv_vari {
 };
 
 class fma_vdd_vari : public op_vdd_vari {
- public:
-  fma_vdd_vari(vari* avi, double b, double c)
+public:
+  fma_vdd_vari(vari *avi, double b, double c)
       : op_vdd_vari(fma(avi->val_, b, c), avi, b, c) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_) || is_nan(bd_) || is_nan(cd_)))
@@ -73,8 +73,8 @@ class fma_vdd_vari : public op_vdd_vari {
 };
 
 class fma_ddv_vari : public op_ddv_vari {
- public:
-  fma_ddv_vari(double a, double b, vari* cvi)
+public:
+  fma_ddv_vari(double a, double b, vari *cvi)
       : op_ddv_vari(fma(a, b, cvi->val_), a, b, cvi) {}
   void chain() {
     if (unlikely(is_nan(cvi_->val_) || is_nan(ad_) || is_nan(bd_)))
@@ -83,7 +83,7 @@ class fma_ddv_vari : public op_ddv_vari {
       cvi_->adj_ += adj_;
   }
 };
-}  // namespace
+} // namespace
 
 /**
  * The fused multiply-add function for three variables (C99).
@@ -103,7 +103,7 @@ class fma_ddv_vari : public op_ddv_vari {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-inline var fma(const var& a, const var& b, const var& c) {
+inline var fma(const var &a, const var &b, const var &c) {
   return var(new fma_vvv_vari(a.vi_, b.vi_, c.vi_));
 }
 
@@ -123,7 +123,7 @@ inline var fma(const var& a, const var& b, const var& c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-inline var fma(const var& a, const var& b, double c) {
+inline var fma(const var &a, const var &b, double c) {
   return var(new fma_vvd_vari(a.vi_, b.vi_, c));
 }
 
@@ -143,7 +143,7 @@ inline var fma(const var& a, const var& b, double c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-inline var fma(const var& a, double b, const var& c) {
+inline var fma(const var &a, double b, const var &c) {
   return var(new fma_vdv_vari(a.vi_, b, c.vi_));
 }
 
@@ -165,7 +165,7 @@ inline var fma(const var& a, double b, const var& c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-inline var fma(const var& a, double b, double c) {
+inline var fma(const var &a, double b, double c) {
   return var(new fma_vdd_vari(a.vi_, b, c));
 }
 
@@ -183,7 +183,7 @@ inline var fma(const var& a, double b, double c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-inline var fma(double a, const var& b, double c) {
+inline var fma(double a, const var &b, double c) {
   return var(new fma_vdd_vari(b.vi_, a, c));
 }
 
@@ -201,7 +201,7 @@ inline var fma(double a, const var& b, double c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-inline var fma(double a, double b, const var& c) {
+inline var fma(double a, double b, const var &c) {
   return var(new fma_ddv_vari(a, b, c.vi_));
 }
 
@@ -221,10 +221,10 @@ inline var fma(double a, double b, const var& c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-inline var fma(double a, const var& b, const var& c) {
-  return var(new fma_vdv_vari(b.vi_, a, c.vi_));  // a-b symmetry
+inline var fma(double a, const var &b, const var &c) {
+  return var(new fma_vdv_vari(b.vi_, a, c.vi_)); // a-b symmetry
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

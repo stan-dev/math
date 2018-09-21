@@ -1,5 +1,5 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/scal.hpp>
 #include <test/unit/math/prim/scal/fun/promote_type_test_util.hpp>
 
 TEST(MathMeta, value_type) {

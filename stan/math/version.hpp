@@ -27,7 +27,7 @@ const std::string MINOR_VERSION = STAN_STRING(STAN_MATH_MINOR);
 /** Patch version for Stan math library. */
 const std::string PATCH_VERSION = STAN_STRING(STAN_MATH_PATCH);
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

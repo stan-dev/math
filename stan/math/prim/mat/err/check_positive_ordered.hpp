@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_POSITIVE_ORDERED_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_POSITIVE_ORDERED_HPP
 
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <sstream>
 #include <stan/math/prim/mat/err/check_ordered.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
-#include <sstream>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <string>
 
 namespace stan {
@@ -25,8 +25,8 @@ namespace math {
  *   values, or if any element is <code>NaN</code>.
  */
 template <typename T_y>
-void check_positive_ordered(const char* function, const char* name,
-                            const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y) {
+void check_positive_ordered(const char *function, const char *name,
+                            const Eigen::Matrix<T_y, Eigen::Dynamic, 1> &y) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
@@ -43,6 +43,6 @@ void check_positive_ordered(const char* function, const char* name,
   }
   check_ordered(function, name, y);
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

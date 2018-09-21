@@ -3,34 +3,34 @@
 
 #include <boost/random/lognormal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <cmath>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
+#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/length.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <cmath>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {
 namespace math {
 
 // LogNormal(y|mu, sigma)  [y >= 0;  sigma > 0]
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type lognormal_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
-  static const char* function = "lognormal_lpdf";
+typename return_type<T_y, T_loc, T_scale>::type
+lognormal_lpdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
+  static const char *function = "lognormal_lpdf";
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
 
@@ -127,18 +127,18 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_lpdf(
     if (!is_constant_struct<T_loc>::value)
       ops_partials.edge2_.partials_[n] += logy_m_mu_div_sigma;
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge3_.partials_[n]
-          += (logy_m_mu_div_sigma * logy_m_mu - 1) * inv_sigma[n];
+      ops_partials.edge3_.partials_[n] +=
+          (logy_m_mu_div_sigma * logy_m_mu - 1) * inv_sigma[n];
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline typename return_type<T_y, T_loc, T_scale>::type lognormal_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+inline typename return_type<T_y, T_loc, T_scale>::type
+lognormal_lpdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
   return lognormal_lpdf<false>(y, mu, sigma);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

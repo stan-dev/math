@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 using stan::math::var;
@@ -37,7 +37,7 @@ TEST(AgradMixMatrixRepVector, ffv_vector) {
   using stan::math::fvar;
   using stan::math::rep_vector;
   using stan::math::vector_ffv;
-  fvar<fvar<var> > a;
+  fvar<fvar<var>> a;
   a.val_ = 3.0;
   a.d_ = 2.0;
   vector_ffv output;
@@ -57,7 +57,7 @@ TEST(AgradMixMatrixRepVector, ffv_vector_exception) {
   using stan::math::fvar;
   using stan::math::rep_vector;
   using stan::math::vector_ffv;
-  fvar<fvar<var> > a;
+  fvar<fvar<var>> a;
   a.val_ = 3.0;
   a.d_ = 2.0;
 

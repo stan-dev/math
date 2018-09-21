@@ -5,9 +5,9 @@
 #include <stan/math/fwd/scal/meta/is_fvar.hpp>
 #include <stan/math/fwd/scal/meta/partials_type.hpp>
 
+#include <stan/math/fwd/arr.hpp>
 #include <stan/math/fwd/mat/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/mat.hpp>
-#include <stan/math/fwd/arr.hpp>
 
 #include <stan/math/fwd/mat/fun/Eigen_NumTraits.hpp>
 #include <stan/math/fwd/mat/fun/columns_dot_product.hpp>

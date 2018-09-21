@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 using stan::math::check_not_nan;
 using stan::math::fvar;
@@ -487,7 +487,7 @@ TEST(AgradFwdMatrixQuadForm, quad_form_vec_ffd) {
 
   matrix_ffd ad(4, 4);
   vector_ffd bd(4);
-  fvar<fvar<double> > res;
+  fvar<fvar<double>> res;
 
   bd << 100, 0, -3, 5;
   ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
@@ -526,7 +526,7 @@ TEST(AgradFwdMatrixQuadForm, quad_form_sym_vec_dffd) {
 
   Eigen::Matrix<double, -1, -1> ad(4, 4);
   vector_ffd bd(4);
-  fvar<fvar<double> > res;
+  fvar<fvar<double>> res;
 
   bd << 100, 0, -3, 5;
   ad << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
@@ -543,7 +543,7 @@ TEST(AgradFwdMatrixQuadForm, quad_form_sym_vec_ffdd) {
 
   matrix_ffd ad(4, 4);
   Eigen::Matrix<double, -1, 1> bd(4);
-  fvar<fvar<double> > res;
+  fvar<fvar<double>> res;
 
   bd << 100, 0, -3, 5;
   ad << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
@@ -561,7 +561,7 @@ TEST(AgradFwdMatrixQuadForm, quad_form_sym_vec_ffd) {
 
   matrix_ffd ad(4, 4);
   vector_ffd bd(4);
-  fvar<fvar<double> > res;
+  fvar<fvar<double>> res;
 
   bd << 100, 0, -3, 5;
   ad << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,

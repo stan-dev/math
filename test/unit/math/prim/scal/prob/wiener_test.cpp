@@ -1,5 +1,5 @@
-#include <stan/math/prim/scal/prob/wiener_log.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/scal/prob/wiener_log.hpp>
 #include <vector>
 
 TEST(mathPrimScalProbWiener, illegal_tau_gt_y) {

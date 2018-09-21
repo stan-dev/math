@@ -1,9 +1,9 @@
-#include <stan/math/rev/scal.hpp>
-#include <gtest/gtest.h>
 #include <boost/math/special_functions/fpclassify.hpp>
+#include <gtest/gtest.h>
+#include <limits>
+#include <stan/math/rev/scal.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
-#include <limits>
 
 TEST(AgradRev, atan_1) {
   AVAR a = 1;
@@ -47,8 +47,7 @@ TEST(AgradRev, atan_boundry) {
 }
 
 struct atan_fun {
-  template <typename T0>
-  inline T0 operator()(const T0& arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return atan(arg1);
   }
 };

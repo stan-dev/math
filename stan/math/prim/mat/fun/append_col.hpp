@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_MAT_FUN_APPEND_COL_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <vector>
 
 namespace stan {
@@ -35,8 +35,8 @@ namespace math {
 template <typename T1, typename T2, int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<typename return_type<T1, T2>::type, Eigen::Dynamic,
                      Eigen::Dynamic>
-append_col(const Eigen::Matrix<T1, R1, C1>& A,
-           const Eigen::Matrix<T2, R2, C2>& B) {
+append_col(const Eigen::Matrix<T1, R1, C1> &A,
+           const Eigen::Matrix<T2, R2, C2> &B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
@@ -77,8 +77,8 @@ append_col(const Eigen::Matrix<T1, R1, C1>& A,
  */
 template <typename T1, typename T2, int C1, int C2>
 inline Eigen::Matrix<typename return_type<T1, T2>::type, 1, Eigen::Dynamic>
-append_col(const Eigen::Matrix<T1, 1, C1>& A,
-           const Eigen::Matrix<T2, 1, C2>& B) {
+append_col(const Eigen::Matrix<T1, 1, C1> &A,
+           const Eigen::Matrix<T2, 1, C2> &B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
@@ -117,8 +117,9 @@ append_col(const Eigen::Matrix<T1, 1, C1>& A,
  * second matrix side by side.
  */
 template <typename T, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> append_col(
-    const Eigen::Matrix<T, R1, C1>& A, const Eigen::Matrix<T, R2, C2>& B) {
+inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+append_col(const Eigen::Matrix<T, R1, C1> &A,
+           const Eigen::Matrix<T, R2, C2> &B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
@@ -146,8 +147,8 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> append_col(
  * of the first row vector.
  */
 template <typename T, int C1, int C2>
-inline Eigen::Matrix<T, 1, Eigen::Dynamic> append_col(
-    const Eigen::Matrix<T, 1, C1>& A, const Eigen::Matrix<T, 1, C2>& B) {
+inline Eigen::Matrix<T, 1, Eigen::Dynamic>
+append_col(const Eigen::Matrix<T, 1, C1> &A, const Eigen::Matrix<T, 1, C2> &B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
@@ -172,7 +173,7 @@ inline Eigen::Matrix<T, 1, Eigen::Dynamic> append_col(
  */
 template <typename T1, typename T2, int R, int C>
 inline Eigen::Matrix<typename return_type<T1, T2>::type, 1, Eigen::Dynamic>
-append_col(const T1& A, const Eigen::Matrix<T2, R, C>& B) {
+append_col(const T1 &A, const Eigen::Matrix<T2, R, C> &B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   typedef typename return_type<T1, T2>::type return_type;
@@ -198,7 +199,7 @@ append_col(const T1& A, const Eigen::Matrix<T2, R, C>& B) {
  */
 template <typename T1, typename T2, int R, int C>
 inline Eigen::Matrix<typename return_type<T1, T2>::type, 1, Eigen::Dynamic>
-append_col(const Eigen::Matrix<T1, R, C>& A, const T2& B) {
+append_col(const Eigen::Matrix<T1, R, C> &A, const T2 &B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   typedef typename return_type<T1, T2>::type return_type;
@@ -207,8 +208,8 @@ append_col(const Eigen::Matrix<T1, R, C>& A, const T2& B) {
   result << A.template cast<return_type>(), B;
   return result;
 }
-}  // namespace math
+} // namespace math
 
-}  // namespace stan
+} // namespace stan
 
 #endif

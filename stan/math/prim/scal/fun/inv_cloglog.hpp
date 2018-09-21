@@ -49,7 +49,7 @@ inline double inv_cloglog(double x) {
   return 1 - exp(-exp(x));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

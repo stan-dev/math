@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
@@ -254,7 +254,7 @@ TEST(AgradMixMatrixVariance, fv_StdVector_1stDeriv) {
   x2.d_ = 2.0;
   fvar<var> x3 = 3.5;
   x3.d_ = 2.0;
-  std::vector<fvar<var> > y1;
+  std::vector<fvar<var>> y1;
   y1.push_back(x1);
   y1.push_back(x2);
   y1.push_back(x3);
@@ -281,7 +281,7 @@ TEST(AgradMixMatrixVariance, fv_StdVector_2ndDeriv) {
   x2.d_ = 2.0;
   fvar<var> x3 = 3.5;
   x3.d_ = 2.0;
-  std::vector<fvar<var> > y1;
+  std::vector<fvar<var>> y1;
   y1.push_back(x1);
   y1.push_back(x2);
   y1.push_back(x3);
@@ -703,17 +703,17 @@ TEST(AgradMixMatrixVariance, ffv_StdVector_1stDeriv) {
   using stan::math::var;
   using stan::math::variance;
 
-  fvar<fvar<var> > x1 = 0.5;
+  fvar<fvar<var>> x1 = 0.5;
   x1.d_ = 1.0;
-  fvar<fvar<var> > x2 = 2.0;
+  fvar<fvar<var>> x2 = 2.0;
   x2.d_ = 2.0;
-  fvar<fvar<var> > x3 = 3.5;
+  fvar<fvar<var>> x3 = 3.5;
   x3.d_ = 2.0;
-  std::vector<fvar<fvar<var> > > y1;
+  std::vector<fvar<fvar<var>>> y1;
   y1.push_back(x1);
   y1.push_back(x2);
   y1.push_back(x3);
-  fvar<fvar<var> > f1 = variance(y1);
+  fvar<fvar<var>> f1 = variance(y1);
 
   EXPECT_FLOAT_EQ(2.25, f1.val_.val().val());
   EXPECT_FLOAT_EQ(1.5, f1.d_.val().val());
@@ -730,17 +730,17 @@ TEST(AgradMixMatrixVariance, ffv_StdVector_2ndDeriv_1) {
   using stan::math::var;
   using stan::math::variance;
 
-  fvar<fvar<var> > x1 = 0.5;
+  fvar<fvar<var>> x1 = 0.5;
   x1.d_ = 1.0;
-  fvar<fvar<var> > x2 = 2.0;
+  fvar<fvar<var>> x2 = 2.0;
   x2.d_ = 2.0;
-  fvar<fvar<var> > x3 = 3.5;
+  fvar<fvar<var>> x3 = 3.5;
   x3.d_ = 2.0;
-  std::vector<fvar<fvar<var> > > y1;
+  std::vector<fvar<fvar<var>>> y1;
   y1.push_back(x1);
   y1.push_back(x2);
   y1.push_back(x3);
-  fvar<fvar<var> > f1 = variance(y1);
+  fvar<fvar<var>> f1 = variance(y1);
 
   AVEC q = createAVEC(x1.val().val(), x2.val().val(), x3.val().val());
   VEC h;
@@ -755,17 +755,17 @@ TEST(AgradMixMatrixVariance, ffv_StdVector_2ndDeriv_2) {
   using stan::math::var;
   using stan::math::variance;
 
-  fvar<fvar<var> > x1 = 0.5;
+  fvar<fvar<var>> x1 = 0.5;
   x1.d_ = 1.0;
-  fvar<fvar<var> > x2 = 2.0;
+  fvar<fvar<var>> x2 = 2.0;
   x2.d_ = 2.0;
-  fvar<fvar<var> > x3 = 3.5;
+  fvar<fvar<var>> x3 = 3.5;
   x3.d_ = 2.0;
-  std::vector<fvar<fvar<var> > > y1;
+  std::vector<fvar<fvar<var>>> y1;
   y1.push_back(x1);
   y1.push_back(x2);
   y1.push_back(x3);
-  fvar<fvar<var> > f1 = variance(y1);
+  fvar<fvar<var>> f1 = variance(y1);
 
   AVEC q = createAVEC(x1.val().val(), x2.val().val(), x3.val().val());
   VEC h;
@@ -780,21 +780,21 @@ TEST(AgradMixMatrixVariance, ffv_StdVector_3rdDeriv) {
   using stan::math::var;
   using stan::math::variance;
 
-  fvar<fvar<var> > x1 = 0.5;
+  fvar<fvar<var>> x1 = 0.5;
   x1.d_.val_ = 1.0;
   x1.val_.d_ = 1.0;
-  fvar<fvar<var> > x2 = 2.0;
+  fvar<fvar<var>> x2 = 2.0;
   x2.d_.val_ = 1.0;
   x2.val_.d_ = 1.0;
-  fvar<fvar<var> > x3 = 3.5;
+  fvar<fvar<var>> x3 = 3.5;
   x3.d_.val_ = 1.0;
   x3.val_.d_ = 1.0;
 
-  std::vector<fvar<fvar<var> > > y1;
+  std::vector<fvar<fvar<var>>> y1;
   y1.push_back(x1);
   y1.push_back(x2);
   y1.push_back(x3);
-  fvar<fvar<var> > f1 = variance(y1);
+  fvar<fvar<var>> f1 = variance(y1);
 
   AVEC q = createAVEC(x1.val().val(), x2.val().val(), x3.val().val());
   VEC h;

@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 TEST(AgradFwdMatrixInverse, fd) {
   using stan::math::matrix_d;
@@ -34,7 +34,7 @@ TEST(AgradFwdMatrixInverse, ffd) {
   using stan::math::matrix_d;
   using stan::math::matrix_ffd;
 
-  fvar<fvar<double> > d, e, f, g;
+  fvar<fvar<double>> d, e, f, g;
   d.val_.val_ = 2.0;
   d.d_.val_ = 1.0;
   e.val_.val_ = 3.0;

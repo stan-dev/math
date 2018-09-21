@@ -6,15 +6,14 @@
 namespace stan {
 namespace math {
 namespace internal {
-template <typename T>
-class broadcast_array {
- private:
-  T& prim_;
+template <typename T> class broadcast_array {
+private:
+  T &prim_;
 
- public:
-  explicit broadcast_array(T& prim) : prim_(prim) {}
+public:
+  explicit broadcast_array(T &prim) : prim_(prim) {}
 
-  T& operator[](int /*i*/) { return prim_; }
+  T &operator[](int /*i*/) { return prim_; }
 
   /**
    * We can assign any right hand side which allows for indexing to a
@@ -22,29 +21,24 @@ class broadcast_array {
    * gets assigned. The most common use-case should be where the rhs is some
    * container of length 1.
    */
-  template <typename Y>
-  void operator=(const Y& m) {
-    prim_ = m[0];
-  }
+  template <typename Y> void operator=(const Y &m) { prim_ = m[0]; }
 };
 
-template <typename T, typename S>
-class empty_broadcast_array {
- public:
+template <typename T, typename S> class empty_broadcast_array {
+public:
   empty_broadcast_array() {}
   /**
    * Not implemented so cannot be called.
    */
-  T& operator[](int /*i*/);
+  T &operator[](int /*i*/);
 
   /**
    * Not implemented so cannot be called.
    */
-  template <typename Y>
-  void operator=(const Y& /*A*/);
+  template <typename Y> void operator=(const Y & /*A*/);
 };
-}  // namespace internal
-}  // namespace math
-}  // namespace stan
+} // namespace internal
+} // namespace math
+} // namespace stan
 
 #endif

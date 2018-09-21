@@ -1,12 +1,12 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/mat.hpp>
 #include <string>
 
 using stan::math::check_positive_finite;
 
 TEST(ErrorHandlingScalar, CheckPositiveFinite_Matrix) {
-  const char* function = "check_positive_finite";
+  const char *function = "check_positive_finite";
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
 
   x.resize(3);
@@ -41,7 +41,7 @@ TEST(ErrorHandlingScalar, CheckPositiveFinite_Matrix) {
 }
 
 TEST(ErrorHandlingScalar, CheckPositiveFinite_Matrix_one_indexed_message) {
-  const char* function = "check_positive_finite";
+  const char *function = "check_positive_finite";
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
   std::string message;
 
@@ -50,7 +50,7 @@ TEST(ErrorHandlingScalar, CheckPositiveFinite_Matrix_one_indexed_message) {
   try {
     check_positive_finite(function, "x", x);
     FAIL() << "should have thrown";
-  } catch (std::domain_error& e) {
+  } catch (std::domain_error &e) {
     message = e.what();
   } catch (...) {
     FAIL() << "threw the wrong error";
@@ -59,7 +59,7 @@ TEST(ErrorHandlingScalar, CheckPositiveFinite_Matrix_one_indexed_message) {
   EXPECT_NE(std::string::npos, message.find("[3]")) << message;
 }
 TEST(ErrorHandlingScalar, CheckPositiveFinite_Matrix_one_indexed_message_2) {
-  const char* function = "check_positive_finite";
+  const char *function = "check_positive_finite";
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
   std::string message;
 
@@ -68,7 +68,7 @@ TEST(ErrorHandlingScalar, CheckPositiveFinite_Matrix_one_indexed_message_2) {
   try {
     check_positive_finite(function, "x", x);
     FAIL() << "should have thrown";
-  } catch (std::domain_error& e) {
+  } catch (std::domain_error &e) {
     message = e.what();
   } catch (...) {
     FAIL() << "threw the wrong error";
@@ -78,7 +78,7 @@ TEST(ErrorHandlingScalar, CheckPositiveFinite_Matrix_one_indexed_message_2) {
 }
 
 TEST(ErrorHandlingScalar, CheckPositiveFinite_Matrix_one_indexed_message_3) {
-  const char* function = "check_positive_finite";
+  const char *function = "check_positive_finite";
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
   std::string message;
 
@@ -87,7 +87,7 @@ TEST(ErrorHandlingScalar, CheckPositiveFinite_Matrix_one_indexed_message_3) {
   try {
     check_positive_finite(function, "x", x);
     FAIL() << "should have thrown";
-  } catch (std::domain_error& e) {
+  } catch (std::domain_error &e) {
     message = e.what();
   } catch (...) {
     FAIL() << "threw the wrong error";
@@ -97,7 +97,7 @@ TEST(ErrorHandlingScalar, CheckPositiveFinite_Matrix_one_indexed_message_3) {
 }
 
 TEST(ErrorHandlingScalar, CheckPositiveFinite_nan) {
-  const char* function = "check_positive_finite";
+  const char *function = "check_positive_finite";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> x_mat(3);

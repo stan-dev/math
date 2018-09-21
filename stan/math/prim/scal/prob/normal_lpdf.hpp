@@ -1,23 +1,23 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_NORMAL_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_NORMAL_LPDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
+#include <cmath>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <cmath>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {
 namespace math {
@@ -42,9 +42,9 @@ namespace math {
  * @throw std::domain_error if the scale is not positive.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type normal_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
-  static const char* function = "normal_lpdf";
+typename return_type<T_y, T_loc, T_scale>::type
+normal_lpdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
+  static const char *function = "normal_lpdf";
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
 
@@ -86,10 +86,10 @@ typename return_type<T_y, T_loc, T_scale>::type normal_lpdf(
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
 
-    const T_partials_return y_minus_mu_over_sigma
-        = (y_dbl - mu_dbl) * inv_sigma[n];
-    const T_partials_return y_minus_mu_over_sigma_squared
-        = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
+    const T_partials_return y_minus_mu_over_sigma =
+        (y_dbl - mu_dbl) * inv_sigma[n];
+    const T_partials_return y_minus_mu_over_sigma_squared =
+        y_minus_mu_over_sigma * y_minus_mu_over_sigma;
 
     static double NEGATIVE_HALF = -0.5;
 
@@ -106,18 +106,18 @@ typename return_type<T_y, T_loc, T_scale>::type normal_lpdf(
     if (!is_constant_struct<T_loc>::value)
       ops_partials.edge2_.partials_[n] += scaled_diff;
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge3_.partials_[n]
-          += -inv_sigma[n] + inv_sigma[n] * y_minus_mu_over_sigma_squared;
+      ops_partials.edge3_.partials_[n] +=
+          -inv_sigma[n] + inv_sigma[n] * y_minus_mu_over_sigma_squared;
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline typename return_type<T_y, T_loc, T_scale>::type normal_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+inline typename return_type<T_y, T_loc, T_scale>::type
+normal_lpdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
   return normal_lpdf<false>(y, mu, sigma);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

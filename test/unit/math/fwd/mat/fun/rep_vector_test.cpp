@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 TEST(AgradFwdMatrixRepVector, fd_vector) {
   using stan::math::fvar;
@@ -35,7 +35,7 @@ TEST(AgradFwdMatrixRepVector, ffd_vector) {
   using stan::math::fvar;
   using stan::math::rep_vector;
   using stan::math::vector_ffd;
-  fvar<fvar<double> > a;
+  fvar<fvar<double>> a;
   a.val_ = 3.0;
   a.d_ = 2.0;
   vector_ffd output;
@@ -55,7 +55,7 @@ TEST(AgradFwdMatrixRepVector, ffd_vector_exception) {
   using stan::math::fvar;
   using stan::math::rep_vector;
   using stan::math::vector_ffd;
-  fvar<fvar<double> > a;
+  fvar<fvar<double>> a;
   a.val_ = 3.0;
   a.d_ = 2.0;
 

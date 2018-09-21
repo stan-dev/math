@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CSR_EXTRACT_W_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CSR_EXTRACT_W_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <Eigen/Sparse>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {
 namespace math {
@@ -18,8 +18,8 @@ namespace math {
  * @return Vector of non-zero entries of A.
  */
 template <typename T>
-const Eigen::Matrix<T, Eigen::Dynamic, 1> csr_extract_w(
-    const Eigen::SparseMatrix<T, Eigen::RowMajor>& A) {
+const Eigen::Matrix<T, Eigen::Dynamic, 1>
+csr_extract_w(const Eigen::SparseMatrix<T, Eigen::RowMajor> &A) {
   Eigen::Matrix<T, Eigen::Dynamic, 1> w(A.nonZeros());
   w.setZero();
   for (int nze = 0; nze < A.nonZeros(); ++nze)
@@ -35,14 +35,14 @@ const Eigen::Matrix<T, Eigen::Dynamic, 1> csr_extract_w(
  * @return Vector of non-zero entries of A.
  */
 template <typename T, int R, int C>
-const Eigen::Matrix<T, Eigen::Dynamic, 1> csr_extract_w(
-    const Eigen::Matrix<T, R, C>& A) {
+const Eigen::Matrix<T, Eigen::Dynamic, 1>
+csr_extract_w(const Eigen::Matrix<T, R, C> &A) {
   Eigen::SparseMatrix<T, Eigen::RowMajor> B = A.sparseView();
   return csr_extract_w(B);
 }
 
-/** @} */  // end of csr_format group
+/** @} */ // end of csr_format group
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -9,8 +9,8 @@
 #include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/rev/scal/meta/partials_type.hpp>
 
-#include <stan/math/prim/arr.hpp>
 #include <stan/math/fwd/arr.hpp>
+#include <stan/math/prim/arr.hpp>
 #include <stan/math/rev/arr.hpp>
 
 #endif

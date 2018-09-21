@@ -3,9 +3,9 @@
 
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/err/domain_error_vec.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/get.hpp>
 #include <stan/math/prim/scal/meta/is_vector_like.hpp>
+#include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <string>
 
@@ -13,10 +13,9 @@ namespace stan {
 namespace math {
 
 namespace {
-template <typename T_y, typename T_high, bool is_vec>
-struct less_or_equal {
-  static void check(const char* function, const char* name, const T_y& y,
-                    const T_high& high) {
+template <typename T_y, typename T_high, bool is_vec> struct less_or_equal {
+  static void check(const char *function, const char *name, const T_y &y,
+                    const T_high &high) {
     using stan::length;
     scalar_seq_view<T_high> high_vec(high);
     for (size_t n = 0; n < length(high); n++) {
@@ -33,8 +32,8 @@ struct less_or_equal {
 
 template <typename T_y, typename T_high>
 struct less_or_equal<T_y, T_high, true> {
-  static void check(const char* function, const char* name, const T_y& y,
-                    const T_high& high) {
+  static void check(const char *function, const char *name, const T_y &y,
+                    const T_high &high) {
     using stan::length;
     scalar_seq_view<T_high> high_vec(high);
     for (size_t n = 0; n < length(y); n++) {
@@ -48,7 +47,7 @@ struct less_or_equal<T_y, T_high, true> {
     }
   }
 };
-}  // namespace
+} // namespace
 
 /**
  * Check if <code>y</code> is less or equal to
@@ -69,11 +68,11 @@ struct less_or_equal<T_y, T_high, true> {
  *   to low or if any element of y or high is NaN.
  */
 template <typename T_y, typename T_high>
-inline void check_less_or_equal(const char* function, const char* name,
-                                const T_y& y, const T_high& high) {
+inline void check_less_or_equal(const char *function, const char *name,
+                                const T_y &y, const T_high &high) {
   less_or_equal<T_y, T_high, is_vector_like<T_y>::value>::check(function, name,
                                                                 y, high);
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

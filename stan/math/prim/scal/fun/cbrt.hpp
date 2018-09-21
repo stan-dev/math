@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_CBRT_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_CBRT_HPP
 
+#include <boost/math/special_functions/cbrt.hpp>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <boost/math/special_functions/cbrt.hpp>
 
 namespace stan {
 namespace math {
@@ -34,6 +34,6 @@ inline double cbrt(double x) {
  */
 inline double cbrt(int x) { return cbrt(static_cast<double>(x)); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

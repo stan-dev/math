@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(MathMatrix, mdivide_right_ldlt_val) {
   stan::math::LDLT_factor<double, -1, -1> ldlt_Ad;

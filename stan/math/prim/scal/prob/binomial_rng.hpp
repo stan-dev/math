@@ -1,14 +1,14 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BINOMIAL_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BINOMIAL_RNG_HPP
 
+#include <boost/random/binomial_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
-#include <boost/random/binomial_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {
 namespace math {
@@ -31,12 +31,12 @@ namespace math {
  * @throw std::domain_error if theta is not a valid probability
  */
 template <typename T_N, typename T_theta, class RNG>
-inline typename VectorBuilder<true, int, T_N, T_theta>::type binomial_rng(
-    const T_N& N, const T_theta& theta, RNG& rng) {
+inline typename VectorBuilder<true, int, T_N, T_theta>::type
+binomial_rng(const T_N &N, const T_theta &theta, RNG &rng) {
   using boost::binomial_distribution;
   using boost::variate_generator;
 
-  static const char* function = "binomial_rng";
+  static const char *function = "binomial_rng";
 
   check_nonnegative(function, "Population size parameter", N);
   check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
@@ -49,7 +49,7 @@ inline typename VectorBuilder<true, int, T_N, T_theta>::type binomial_rng(
   VectorBuilder<true, int, T_N, T_theta> output(M);
 
   for (size_t m = 0; m < M; ++m) {
-    variate_generator<RNG&, binomial_distribution<> > binomial_rng(
+    variate_generator<RNG &, binomial_distribution<>> binomial_rng(
         rng, binomial_distribution<>(N_vec[m], theta_vec[m]));
 
     output[m] = binomial_rng();
@@ -58,6 +58,6 @@ inline typename VectorBuilder<true, int, T_N, T_theta>::type binomial_rng(
   return output.data();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

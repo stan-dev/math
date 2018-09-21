@@ -14,11 +14,10 @@ namespace math {
  * @param[in] x argument
  * @return negation of argument value
  */
-template <typename T>
-inline bool operator!(const fvar<T>& x) {
+template <typename T> inline bool operator!(const fvar<T> &x) {
   return !x.val_;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

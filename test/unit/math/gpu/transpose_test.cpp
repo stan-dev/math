@@ -1,9 +1,9 @@
 #ifdef STAN_OPENCL
-#include <stan/math/prim/mat.hpp>
+#include <algorithm>
+#include <gtest/gtest.h>
 #include <stan/math/gpu/copy.hpp>
 #include <stan/math/gpu/transpose.hpp>
-#include <gtest/gtest.h>
-#include <algorithm>
+#include <stan/math/prim/mat.hpp>
 
 TEST(MathGpu, transpose_size_zero) {
   stan::math::vector_d v0;

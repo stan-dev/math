@@ -24,10 +24,10 @@ inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
 mdivide_right_tri_low(const Eigen::Matrix<T1, R1, C1> &b,
                       const Eigen::Matrix<T2, R2, C2> &A) {
   return mdivide_right_tri<Eigen::Lower>(
-      promote_common<Eigen::Matrix<T1, R1, C1>, Eigen::Matrix<T2, R1, C1> >(b),
-      promote_common<Eigen::Matrix<T1, R2, C2>, Eigen::Matrix<T2, R2, C2> >(A));
+      promote_common<Eigen::Matrix<T1, R1, C1>, Eigen::Matrix<T2, R1, C1>>(b),
+      promote_common<Eigen::Matrix<T1, R2, C2>, Eigen::Matrix<T2, R2, C2>>(A));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

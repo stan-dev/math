@@ -1,18 +1,18 @@
 #ifndef STAN_MATH_REV_CORE_OPERATOR_UNARY_INCREMENT_HPP
 #define STAN_MATH_REV_CORE_OPERATOR_UNARY_INCREMENT_HPP
 
-#include <stan/math/rev/core/var.hpp>
-#include <stan/math/rev/core/v_vari.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <limits>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/rev/core/v_vari.hpp>
+#include <stan/math/rev/core/var.hpp>
 
 namespace stan {
 namespace math {
 
 namespace {
 class increment_vari : public op_v_vari {
- public:
-  explicit increment_vari(vari* avi) : op_v_vari(avi->val_ + 1.0, avi) {}
+public:
+  explicit increment_vari(vari *avi) : op_v_vari(avi->val_ + 1.0, avi) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_)))
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
@@ -20,7 +20,7 @@ class increment_vari : public op_v_vari {
       avi_->adj_ += adj_;
   }
 };
-}  // namespace
+} // namespace
 
 /**
  * Prefix increment operator for variables (C++).  Following C++,
@@ -31,7 +31,7 @@ class increment_vari : public op_v_vari {
  * @param a Variable to increment.
  * @return Reference the result of incrementing this input variable.
  */
-inline var& operator++(var& a) {
+inline var &operator++(var &a) {
   a.vi_ = new increment_vari(a.vi_);
   return a;
 }
@@ -47,12 +47,12 @@ inline var& operator++(var& a) {
  * @param a Variable to increment.
  * @return Input variable.
  */
-inline var operator++(var& a, int /*dummy*/) {
+inline var operator++(var &a, int /*dummy*/) {
   var temp(a);
   a.vi_ = new increment_vari(a.vi_);
   return temp;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

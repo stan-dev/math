@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_UNIT_VECTOR_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_UNIT_VECTOR_HPP
 
+#include <sstream>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <sstream>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <string>
 
 namespace stan {
@@ -31,8 +31,8 @@ namespace math {
  *   vector or if any element is <code>NaN</code>.
  */
 template <typename T_prob>
-void check_unit_vector(const char* function, const char* name,
-                       const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
+void check_unit_vector(const char *function, const char *name,
+                       const Eigen::Matrix<T_prob, Eigen::Dynamic, 1> &theta) {
   check_nonzero_size(function, name, theta);
   T_prob ssq = theta.squaredNorm();
   if (!(fabs(1.0 - ssq) <= CONSTRAINT_TOLERANCE)) {
@@ -44,6 +44,6 @@ void check_unit_vector(const char* function, const char* name,
   }
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

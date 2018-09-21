@@ -1,12 +1,12 @@
-#include <stan/math/mix/mat.hpp>
+#include <exception>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/fwd/mat/vectorize/fwd_scalar_unary_test.hpp>
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
 #include <test/unit/math/prim/mat/vectorize/prim_scalar_unary_test.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
 #include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
 #include <vector>
-#include <exception>
 
 /**
  * This is the structure for testing vectorized log1p (defined in the
@@ -25,8 +25,7 @@ struct log1p_test {
    * @tparam R Return type.
    * @tparam T Argument type.
    */
-  template <typename R, typename T>
-  static R apply(const T& x) {
+  template <typename R, typename T> static R apply(const T &x) {
     return stan::math::log1p(x);
   }
 
@@ -52,10 +51,7 @@ struct log1p_test {
    *
    * WARNING:  this is *not an independent test of the underlying function*.
    */
-  template <typename T>
-  static T apply_base(const T& x) {
-    return apply<T>(x);
-  }
+  template <typename T> static T apply_base(const T &x) { return apply<T>(x); }
 
   /**
    * Return sequence of valid double-valued inputs.

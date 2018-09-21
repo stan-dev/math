@@ -1,11 +1,11 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 using stan::math::check_not_nan;
 
 TEST(ErrorHandlingScalar, CheckNotNan) {
-  const char* function = "check_not_nan";
+  const char *function = "check_not_nan";
   double x = 0;
 
   EXPECT_NO_THROW(check_not_nan(function, "x", x))

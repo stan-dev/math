@@ -16,8 +16,7 @@ namespace math {
  * @return Return the differences of the arguments if it is
  * positive and 0 otherwise.
  */
-template <typename T>
-inline fvar<T> fdim(const fvar<T>& x, const fvar<T>& y) {
+template <typename T> inline fvar<T> fdim(const fvar<T> &x, const fvar<T> &y) {
   if (x.val_ < y.val_)
     return fvar<T>(fdim(x.val_, y.val_), 0);
   else
@@ -33,8 +32,7 @@ inline fvar<T> fdim(const fvar<T>& x, const fvar<T>& y) {
  * @return Return the differences of the arguments if it is
  * positive and 0 otherwise.
  */
-template <typename T>
-inline fvar<T> fdim(const fvar<T>& x, double y) {
+template <typename T> inline fvar<T> fdim(const fvar<T> &x, double y) {
   if (x.val_ < y)
     return fvar<T>(fdim(x.val_, y), 0);
   else
@@ -50,14 +48,13 @@ inline fvar<T> fdim(const fvar<T>& x, double y) {
  * @return Return the differences of the arguments if it is
  * positive and 0 otherwise.
  */
-template <typename T>
-inline fvar<T> fdim(double x, const fvar<T>& y) {
+template <typename T> inline fvar<T> fdim(double x, const fvar<T> &y) {
   if (x < y.val_)
     return fvar<T>(fdim(x, y.val_), 0);
   else
     return fvar<T>(fdim(x, y.val_), -y.d_);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

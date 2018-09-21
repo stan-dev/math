@@ -1,12 +1,12 @@
 #ifndef STAN_MATH_REV_CORE_OPERATOR_DIVISION_HPP
 #define STAN_MATH_REV_CORE_OPERATOR_DIVISION_HPP
 
-#include <stan/math/rev/core/var.hpp>
-#include <stan/math/rev/core/vv_vari.hpp>
-#include <stan/math/rev/core/vd_vari.hpp>
-#include <stan/math/rev/core/dv_vari.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <limits>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/rev/core/dv_vari.hpp>
+#include <stan/math/rev/core/var.hpp>
+#include <stan/math/rev/core/vd_vari.hpp>
+#include <stan/math/rev/core/vv_vari.hpp>
 
 namespace stan {
 namespace math {
@@ -14,8 +14,8 @@ namespace math {
 namespace {
 // (a/b)' = a' * (1 / b) - b' * (a / [b * b])
 class divide_vv_vari : public op_vv_vari {
- public:
-  divide_vv_vari(vari* avi, vari* bvi)
+public:
+  divide_vv_vari(vari *avi, vari *bvi)
       : op_vv_vari(avi->val_ / bvi->val_, avi, bvi) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_) || is_nan(bvi_->val_))) {
@@ -29,8 +29,8 @@ class divide_vv_vari : public op_vv_vari {
 };
 
 class divide_vd_vari : public op_vd_vari {
- public:
-  divide_vd_vari(vari* avi, double b) : op_vd_vari(avi->val_ / b, avi, b) {}
+public:
+  divide_vd_vari(vari *avi, double b) : op_vd_vari(avi->val_ / b, avi, b) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_) || is_nan(bd_)))
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
@@ -40,11 +40,11 @@ class divide_vd_vari : public op_vd_vari {
 };
 
 class divide_dv_vari : public op_dv_vari {
- public:
-  divide_dv_vari(double a, vari* bvi) : op_dv_vari(a / bvi->val_, a, bvi) {}
+public:
+  divide_dv_vari(double a, vari *bvi) : op_dv_vari(a / bvi->val_, a, bvi) {}
   void chain() { bvi_->adj_ -= adj_ * ad_ / (bvi_->val_ * bvi_->val_); }
 };
-}  // namespace
+} // namespace
 
 /**
  * Division operator for two variables (C++).
@@ -84,7 +84,7 @@ class divide_dv_vari : public op_dv_vari {
  * @return Variable result of dividing the first variable by the
  * second.
  */
-inline var operator/(const var& a, const var& b) {
+inline var operator/(const var &a, const var &b) {
   return var(new divide_vv_vari(a.vi_, b.vi_));
 }
 
@@ -99,7 +99,7 @@ inline var operator/(const var& a, const var& b) {
  * @param b Scalar operand.
  * @return Variable result of dividing the variable by the scalar.
  */
-inline var operator/(const var& a, double b) {
+inline var operator/(const var &a, double b) {
   if (b == 1.0)
     return a;
   return var(new divide_vd_vari(a.vi_, b));
@@ -116,10 +116,10 @@ inline var operator/(const var& a, double b) {
  * @param b Variable operand.
  * @return Variable result of dividing the scalar by the variable.
  */
-inline var operator/(double a, const var& b) {
+inline var operator/(double a, const var &b) {
   return var(new divide_dv_vari(a, b.vi_));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

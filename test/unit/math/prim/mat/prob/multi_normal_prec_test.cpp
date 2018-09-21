@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 #include <vector>
 
 using Eigen::Dynamic;
@@ -18,8 +18,8 @@ TEST(ProbDistributionsMultiNormalPrec, NotVectorized) {
 }
 
 TEST(ProbDistributionsMultiNormalPrec, Vectorized) {
-  vector<Matrix<double, Dynamic, 1> > vec_y(2);
-  vector<Matrix<double, 1, Dynamic> > vec_y_t(2);
+  vector<Matrix<double, Dynamic, 1>> vec_y(2);
+  vector<Matrix<double, 1, Dynamic>> vec_y_t(2);
   Matrix<double, Dynamic, 1> y(3);
   Matrix<double, 1, Dynamic> y_t(3);
   y << 2.0, -2.0, 11.0;
@@ -30,8 +30,8 @@ TEST(ProbDistributionsMultiNormalPrec, Vectorized) {
   vec_y_t[1] = y;
   y_t = y;
 
-  vector<Matrix<double, Dynamic, 1> > vec_mu(2);
-  vector<Matrix<double, 1, Dynamic> > vec_mu_t(2);
+  vector<Matrix<double, Dynamic, 1>> vec_mu(2);
+  vector<Matrix<double, 1, Dynamic>> vec_mu_t(2);
   Matrix<double, Dynamic, 1> mu(3);
   Matrix<double, 1, Dynamic> mu_t(3);
   mu << 1.0, -1.0, 3.0;

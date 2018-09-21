@@ -1,12 +1,12 @@
 #ifndef TEST_UNIT_MATH_MIX_MAT_UTIL_AUTODIFF_TESTER_HPP
 #define TEST_UNIT_MATH_MIX_MAT_UTIL_AUTODIFF_TESTER_HPP
 
-#include <stan/math/mix/mat.hpp>
-#include <test/unit/math/mix/mat/seq_reader.hpp>
-#include <test/unit/math/mix/mat/seq_writer.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <stdexcept>
 #include <string>
+#include <test/unit/math/mix/mat/seq_reader.hpp>
+#include <test/unit/math/mix/mat/seq_writer.hpp>
 #include <vector>
 
 namespace stan {
@@ -34,7 +34,7 @@ bool is_finite(double x) { return !is_inf(x) && !is_nan(x); }
  * @return true if all container values are finite
  */
 template <typename T, int R, int C>
-bool is_finite(const Eigen::Matrix<T, R, C>& x) {
+bool is_finite(const Eigen::Matrix<T, R, C> &x) {
   for (int i = 0; i < x.size(); ++i)
     if (!is_finite(x(i)))
       return false;
@@ -48,8 +48,7 @@ bool is_finite(const Eigen::Matrix<T, R, C>& x) {
  * @param x container to test
  * @return true if all container values are finite
  */
-template <typename T>
-bool is_finite(const std::vector<T>& x) {
+template <typename T> bool is_finite(const std::vector<T> &x) {
   for (size_t i = 0; i < x.size(); ++i)
     if (!is_finite(x[i]))
       return false;
@@ -62,19 +61,19 @@ bool is_finite(const std::vector<T>& x) {
  * values.
  */
 template <typename T1, typename T2>
-void expect_near(const std::string& msg, const T1& x1, const T2& x2,
+void expect_near(const std::string &msg, const T1 &x1, const T2 &x2,
                  double tol = 1e-9) {
   if (is_nan(x1) || is_nan(x2))
-    EXPECT_TRUE(is_nan(x1) && is_nan(x2))
-        << "expect_near(" << x1 << ", " << x2 << ")" << std::endl
-        << msg << std::endl;
+    EXPECT_TRUE(is_nan(x1) && is_nan(x2)) << "expect_near(" << x1 << ", " << x2
+                                          << ")" << std::endl
+                                          << msg << std::endl;
   else if (is_inf(x1) || is_inf(x2))
     EXPECT_EQ(x1, x2) << "expect_near(" << x1 << ", " << x2 << ")" << std::endl
                       << msg << std::endl;
   else
-    EXPECT_NEAR(x1, x2, tol)
-        << "expect_near(" << x1 << ", " << x2 << ")" << std::endl
-        << msg << std::endl;
+    EXPECT_NEAR(x1, x2, tol) << "expect_near(" << x1 << ", " << x2 << ")"
+                             << std::endl
+                             << msg << std::endl;
 }
 
 /**
@@ -82,8 +81,8 @@ void expect_near(const std::string& msg, const T1& x1, const T2& x2,
  * have near values up to specified tolerance.
  */
 template <typename T, int R, int C>
-void expect_near(const std::string& msg, const Eigen::Matrix<T, R, C>& x1,
-                 const Eigen::Matrix<T, R, C>& x2, double tol = 1e-7) {
+void expect_near(const std::string &msg, const Eigen::Matrix<T, R, C> &x1,
+                 const Eigen::Matrix<T, R, C> &x2, double tol = 1e-7) {
   EXPECT_EQ(x1.rows(), x2.rows()) << "expect_near rows expect_eq(" << x1.rows()
                                   << ", " << x2.rows() << ")" << std::endl
                                   << msg << std::endl;
@@ -100,7 +99,7 @@ void expect_near(const std::string& msg, const Eigen::Matrix<T, R, C>& x1,
  * the expected value fx (with scalars as double).
  */
 template <typename F>
-void test_value(const F& f, const Eigen::VectorXd& x, double fx) {
+void test_value(const F &f, const Eigen::VectorXd &x, double fx) {
   if (is_nan(fx))
     EXPECT_TRUE(is_nan(f(x))) << "test_value is_nan(" << f(x) << std::endl;
   else
@@ -113,7 +112,7 @@ void test_value(const F& f, const Eigen::VectorXd& x, double fx) {
  * calaculated with the gradient functional using var.
  */
 template <typename F>
-void test_gradient(const F& f, const Eigen::VectorXd& x, double fx,
+void test_gradient(const F &f, const Eigen::VectorXd &x, double fx,
                    bool test_derivs) {
   Eigen::VectorXd grad_ad;
   double fx_ad;
@@ -134,7 +133,7 @@ void test_gradient(const F& f, const Eigen::VectorXd& x, double fx,
  * scalars.
  */
 template <typename F>
-void test_gradient_fvar(const F& f, const Eigen::VectorXd& x, double fx,
+void test_gradient_fvar(const F &f, const Eigen::VectorXd &x, double fx,
                         bool test_derivs) {
   Eigen::VectorXd grad_ad;
   double fx_ad;
@@ -155,7 +154,7 @@ void test_gradient_fvar(const F& f, const Eigen::VectorXd& x, double fx,
  * scalars.
  */
 template <typename F>
-void test_hessian_fvar(const F& f, const Eigen::VectorXd& x, double fx,
+void test_hessian_fvar(const F &f, const Eigen::VectorXd &x, double fx,
                        bool test_derivs) {
   double fx_ad;
   Eigen::VectorXd grad_ad;
@@ -179,7 +178,7 @@ void test_hessian_fvar(const F& f, const Eigen::VectorXd& x, double fx,
  * fvar<fvar<double>> scalars.
  */
 template <typename F>
-void test_hessian(const F& f, const Eigen::VectorXd& x, double fx,
+void test_hessian(const F &f, const Eigen::VectorXd &x, double fx,
                   bool test_derivs) {
   double fx_ad;
   Eigen::VectorXd grad_ad;
@@ -203,7 +202,7 @@ void test_hessian(const F& f, const Eigen::VectorXd& x, double fx,
  * fvar<fvar<var>> scalars.
  */
 template <typename F>
-void test_grad_hessian(const F& f, const Eigen::VectorXd& x, double fx,
+void test_grad_hessian(const F &f, const Eigen::VectorXd &x, double fx,
                        bool test_derivs) {
   double fx_ad;
   Eigen::MatrixXd H_ad;
@@ -224,7 +223,7 @@ void test_grad_hessian(const F& f, const Eigen::VectorXd& x, double fx,
 }
 
 template <typename T, typename F>
-void expect_throw(const F& f, const Eigen::VectorXd& x) {
+void expect_throw(const F &f, const Eigen::VectorXd &x) {
   Eigen::Matrix<T, -1, 1> x_t(x.rows());
   for (int i = 0; i < x.rows(); ++i)
     x_t(i) = x(i);
@@ -237,19 +236,19 @@ void expect_throw(const F& f, const Eigen::VectorXd& x) {
 }
 
 template <typename F>
-void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
+void expect_all_throw(const F &f, const Eigen::VectorXd &x) {
   using stan::math::fvar;
   using stan::math::var;
   expect_throw<var>(f, x);
-  expect_throw<fvar<double> >(f, x);
-  expect_throw<fvar<fvar<double> > >(f, x);
-  expect_throw<fvar<var> >(f, x);
-  expect_throw<fvar<fvar<var> > >(f, x);
+  expect_throw<fvar<double>>(f, x);
+  expect_throw<fvar<fvar<double>>>(f, x);
+  expect_throw<fvar<var>>(f, x);
+  expect_throw<fvar<fvar<var>>>(f, x);
 }
 
 // test value and derivative in all functionals vs. finite diffs
 template <typename F>
-void test_functor(const F& f, const Eigen::VectorXd& x, double fx,
+void test_functor(const F &f, const Eigen::VectorXd &x, double fx,
                   bool test_derivs, bool expect_exception) {
   if (expect_exception) {
     expect_all_throw(f, x);
@@ -278,18 +277,17 @@ void test_functor(const F& f, const Eigen::VectorXd& x, double fx,
  * @tparam T1 type of first argument with double scalars
  * @tparam T2 type of second argument with double scalars
  */
-template <typename F, typename T1, typename T2>
-struct binder_binary {
+template <typename F, typename T1, typename T2> struct binder_binary {
   T1 x1_;
   T2 x2_;
   bool fixed1_;
   bool fixed2_;
 
-  binder_binary(const T1& x1, const T2& x2)
+  binder_binary(const T1 &x1, const T2 &x2)
       : x1_(x1), x2_(x2), fixed1_(false), fixed2_(false) {}
 
   template <typename T>
-  T operator()(const Eigen::Matrix<T, -1, 1>& theta) const {
+  T operator()(const Eigen::Matrix<T, -1, 1> &theta) const {
     if (fixed1_ && fixed2_) {
       return F::apply(x1_, x2_);
     } else if (fixed1_ && !fixed2_) {
@@ -318,7 +316,7 @@ struct binder_binary {
  * instantiations.
  */
 template <typename F, typename T1, typename T2>
-void test_ad(const T1& x1, const T2& x2, double fx, bool test_derivs,
+void test_ad(const T1 &x1, const T2 &x2, double fx, bool test_derivs,
              bool expect_exception) {
   // create binder then test all autodiff/double combos
   binder_binary<F, T1, T2> f(x1, x2);
@@ -353,7 +351,7 @@ void test_ad(const T1& x1, const T2& x2, double fx, bool test_derivs,
 }
 
 template <typename F, bool is_comparison>
-void test_args(const std::vector<double>& xs1, const std::vector<double>& xs2) {
+void test_args(const std::vector<double> &xs1, const std::vector<double> &xs2) {
   using stan::math::test::test_ad;
 
   // avoid testing derivatives for comparisons of equal values
@@ -374,12 +372,11 @@ void test_args(const std::vector<double>& xs1, const std::vector<double>& xs2) {
 }
 
 template <typename F, bool is_comparison>
-void test_args(const std::vector<double>& xs) {
+void test_args(const std::vector<double> &xs) {
   test_args<F, is_comparison>(xs, xs);
 }
 
-template <typename F, bool is_comparison>
-void test_common_args() {
+template <typename F, bool is_comparison> void test_common_args() {
   std::vector<double> xs;
   xs.push_back(0.5);
   xs.push_back(0);
@@ -390,7 +387,7 @@ void test_common_args() {
   test_args<F, is_comparison>(xs, xs);
 }
 
-}  // namespace test
-}  // namespace math
-}  // namespace stan
+} // namespace test
+} // namespace math
+} // namespace stan
 #endif

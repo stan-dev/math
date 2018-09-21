@@ -1,5 +1,5 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdTan, Fvar) {
@@ -40,18 +40,18 @@ TEST(AgradFwdTan, FvarFvarDouble) {
   using std::cos;
   using std::tan;
 
-  fvar<fvar<double> > x;
+  fvar<fvar<double>> x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 2.0;
 
-  fvar<fvar<double> > a = tan(x);
+  fvar<fvar<double>> a = tan(x);
 
   EXPECT_FLOAT_EQ(tan(1.5), a.val_.val_);
   EXPECT_FLOAT_EQ(2.0 / (cos(1.5) * cos(1.5)), a.val_.d_);
   EXPECT_FLOAT_EQ(0, a.d_.val_);
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 
-  fvar<fvar<double> > y;
+  fvar<fvar<double>> y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 2.0;
 
@@ -63,8 +63,7 @@ TEST(AgradFwdTan, FvarFvarDouble) {
 }
 
 struct tan_fun {
-  template <typename T0>
-  inline T0 operator()(const T0& arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return tan(arg1);
   }
 };

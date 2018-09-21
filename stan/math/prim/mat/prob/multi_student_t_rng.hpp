@@ -1,16 +1,16 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_STUDENT_T_RNG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_STUDENT_T_RNG_HPP
 
+#include <boost/random/gamma_distribution.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/mat/err/check_pos_definite.hpp>
+#include <stan/math/prim/mat/err/check_symmetric.hpp>
+#include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 #include <stan/math/prim/scal/meta/StdVectorBuilder.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/gamma_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
@@ -36,13 +36,13 @@ namespace math {
 template <typename T_loc, class RNG>
 inline typename StdVectorBuilder<true, Eigen::VectorXd, T_loc>::type
 multi_student_t_rng(
-    double nu, const T_loc& mu,
-    const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S, RNG& rng) {
+    double nu, const T_loc &mu,
+    const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> &S, RNG &rng) {
   using boost::normal_distribution;
   using boost::random::gamma_distribution;
   using boost::variate_generator;
 
-  static const char* function = "multi_student_t_rng";
+  static const char *function = "multi_student_t_rng";
 
   check_not_nan(function, "Degrees of freedom parameter", nu);
   check_positive(function, "Degrees of freedom parameter", nu);
@@ -58,12 +58,10 @@ multi_student_t_rng(
   int size_mu_old = size_mu;
   for (size_t i = 1; i < N; i++) {
     int size_mu_new = mu_vec[i].size();
-    check_size_match(function,
-                     "Size of one of the vectors of "
-                     "the location variable",
-                     size_mu_new,
-                     "Size of another vector of the "
-                     "location variable",
+    check_size_match(function, "Size of one of the vectors of "
+                               "the location variable",
+                     size_mu_new, "Size of another vector of the "
+                                  "location variable",
                      size_mu_old);
     size_mu_old = size_mu_new;
   }
@@ -74,9 +72,9 @@ multi_student_t_rng(
 
   StdVectorBuilder<true, Eigen::VectorXd, T_loc> output(N);
 
-  variate_generator<RNG&, normal_distribution<> > std_normal_rng(
+  variate_generator<RNG &, normal_distribution<>> std_normal_rng(
       rng, normal_distribution<>(0, 1));
-  variate_generator<RNG&, gamma_distribution<> > gamma_rng(
+  variate_generator<RNG &, gamma_distribution<>> gamma_rng(
       rng, gamma_distribution<>(nu / 2.0, 2.0 / nu));
 
   double w = 1.0 / gamma_rng();
@@ -91,6 +89,6 @@ multi_student_t_rng(
   return output.data();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

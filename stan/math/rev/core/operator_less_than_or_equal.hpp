@@ -23,7 +23,7 @@ namespace math {
  * @return True if first variable's value is less than or equal to
  * the second's.
  */
-inline bool operator<=(const var& a, const var& b) {
+inline bool operator<=(const var &a, const var &b) {
   return a.val() <= b.val();
 }
 
@@ -36,7 +36,7 @@ inline bool operator<=(const var& a, const var& b) {
  * @return True if first variable's value is less than or equal to
  * the second value.
  */
-inline bool operator<=(const var& a, double b) { return a.val() <= b; }
+inline bool operator<=(const var &a, double b) { return a.val() <= b; }
 
 /**
  * Less than or equal operator comparing a double and variable's
@@ -47,8 +47,8 @@ inline bool operator<=(const var& a, double b) { return a.val() <= b; }
  * @return True if first value is less than or equal to the second
  * variable's value.
  */
-inline bool operator<=(double a, const var& b) { return a <= b.val(); }
+inline bool operator<=(double a, const var &b) { return a <= b.val(); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -19,8 +19,7 @@ namespace math {
  * @param x Scalar to convert to double.
  * @return Value of scalar cast to a double.
  */
-template <typename T>
-inline double value_of_rec(const T x) {
+template <typename T> inline double value_of_rec(const T x) {
   return static_cast<double>(x);
 }
 
@@ -35,11 +34,8 @@ inline double value_of_rec(const T x) {
  * @param x Specified value.
  * @return Specified value.
  */
-template <>
-inline double value_of_rec<double>(double x) {
-  return x;
-}
+template <> inline double value_of_rec<double>(double x) { return x; }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

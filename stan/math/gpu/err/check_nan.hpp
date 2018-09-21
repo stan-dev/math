@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_GPU_ERR_CHECK_NAN_HPP
 #define STAN_MATH_GPU_ERR_CHECK_NAN_HPP
 #ifdef STAN_OPENCL
-#include <stan/math/gpu/matrix_gpu.hpp>
 #include <stan/math/gpu/kernels/check_nan.hpp>
+#include <stan/math/gpu/matrix_gpu.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 
 namespace stan {
@@ -17,13 +17,13 @@ namespace math {
  * @throw <code>std::domain_error</code> if
  *    any element of the matrix is <code>NaN</code>.
  */
-inline void check_nan(const char* function, const char* name,
-                      const matrix_gpu& y) {
+inline void check_nan(const char *function, const char *name,
+                      const matrix_gpu &y) {
   if (y.size() == 0)
     return;
 
   cl::CommandQueue cmd_queue = opencl_context.queue();
-  cl::Context& ctx = opencl_context.context();
+  cl::Context &ctx = opencl_context.context();
   try {
     int nan_flag = 0;
     cl::Buffer buffer_nan_flag(ctx, CL_MEM_READ_WRITE, sizeof(int));
@@ -37,12 +37,12 @@ inline void check_nan(const char* function, const char* name,
     if (nan_flag) {
       domain_error(function, name, "has NaN values", "");
     }
-  } catch (const cl::Error& e) {
+  } catch (const cl::Error &e) {
     check_opencl_error("nan_check", e);
   }
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif
 #endif

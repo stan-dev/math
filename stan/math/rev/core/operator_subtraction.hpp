@@ -1,20 +1,20 @@
 #ifndef STAN_MATH_REV_CORE_OPERATOR_SUBTRACTION_HPP
 #define STAN_MATH_REV_CORE_OPERATOR_SUBTRACTION_HPP
 
-#include <stan/math/rev/core/var.hpp>
-#include <stan/math/rev/core/vv_vari.hpp>
-#include <stan/math/rev/core/vd_vari.hpp>
-#include <stan/math/rev/core/dv_vari.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <limits>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/rev/core/dv_vari.hpp>
+#include <stan/math/rev/core/var.hpp>
+#include <stan/math/rev/core/vd_vari.hpp>
+#include <stan/math/rev/core/vv_vari.hpp>
 
 namespace stan {
 namespace math {
 
 namespace {
 class subtract_vv_vari : public op_vv_vari {
- public:
-  subtract_vv_vari(vari* avi, vari* bvi)
+public:
+  subtract_vv_vari(vari *avi, vari *bvi)
       : op_vv_vari(avi->val_ - bvi->val_, avi, bvi) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_) || is_nan(bvi_->val_))) {
@@ -28,8 +28,8 @@ class subtract_vv_vari : public op_vv_vari {
 };
 
 class subtract_vd_vari : public op_vd_vari {
- public:
-  subtract_vd_vari(vari* avi, double b) : op_vd_vari(avi->val_ - b, avi, b) {}
+public:
+  subtract_vd_vari(vari *avi, double b) : op_vd_vari(avi->val_ - b, avi, b) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_) || is_nan(bd_)))
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
@@ -39,8 +39,8 @@ class subtract_vd_vari : public op_vd_vari {
 };
 
 class subtract_dv_vari : public op_dv_vari {
- public:
-  subtract_dv_vari(double a, vari* bvi) : op_dv_vari(a - bvi->val_, a, bvi) {}
+public:
+  subtract_dv_vari(double a, vari *bvi) : op_dv_vari(a - bvi->val_, a, bvi) {}
   void chain() {
     if (unlikely(is_nan(ad_) || is_nan(bvi_->val_)))
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
@@ -48,7 +48,7 @@ class subtract_dv_vari : public op_dv_vari {
       bvi_->adj_ -= adj_;
   }
 };
-}  // namespace
+} // namespace
 
 /**
  * Subtraction operator for variables (C++).
@@ -88,7 +88,7 @@ class subtract_dv_vari : public op_dv_vari {
  * @return Variable result of subtracting the second variable from
  * the first.
  */
-inline var operator-(const var& a, const var& b) {
+inline var operator-(const var &a, const var &b) {
   return var(new subtract_vv_vari(a.vi_, b.vi_));
 }
 
@@ -103,7 +103,7 @@ inline var operator-(const var& a, const var& b) {
  * @param b Second scalar operand.
  * @return Result of subtracting the scalar from the variable.
  */
-inline var operator-(const var& a, double b) {
+inline var operator-(const var &a, double b) {
   if (b == 0.0)
     return a;
   return var(new subtract_vd_vari(a.vi_, b));
@@ -120,10 +120,10 @@ inline var operator-(const var& a, double b) {
  * @param b Second variable operand.
  * @return Result of sutracting a variable from a scalar.
  */
-inline var operator-(double a, const var& b) {
+inline var operator-(double a, const var &b) {
   return var(new subtract_dv_vari(a, b.vi_));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

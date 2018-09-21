@@ -19,11 +19,11 @@ namespace math {
  * @return Vector divided by the scalar.
  */
 template <typename T1, typename T2, int R, int C>
-inline Eigen::Matrix<var, R, C> divide(const Eigen::Matrix<T1, R, C>& v,
-                                       const T2& c) {
+inline Eigen::Matrix<var, R, C> divide(const Eigen::Matrix<T1, R, C> &v,
+                                       const T2 &c) {
   return to_var(v) / to_var(c);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

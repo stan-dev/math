@@ -18,11 +18,11 @@ namespace math {
  */
 template <int R, int C, typename T>
 inline typename boost::enable_if_c<boost::is_arithmetic<T>::value,
-                                   Eigen::Matrix<double, R, C> >::type
-divide(const Eigen::Matrix<double, R, C>& m, T c) {
+                                   Eigen::Matrix<double, R, C>>::type
+divide(const Eigen::Matrix<double, R, C> &m, T c) {
   return m / c;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

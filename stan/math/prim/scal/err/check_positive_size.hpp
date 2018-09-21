@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_CHECK_POSITIVE_SIZE_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_POSITIVE_SIZE_HPP
 
-#include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <sstream>
+#include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <string>
 
 namespace stan {
@@ -19,8 +19,8 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if <code>size</code> is
  *   zero or negative.
  */
-inline void check_positive_size(const char* function, const char* name,
-                                const char* expr, int size) {
+inline void check_positive_size(const char *function, const char *name,
+                                const char *expr, int size) {
   if (size <= 0) {
     std::stringstream msg;
     msg << "; dimension size expression = " << expr;
@@ -30,6 +30,6 @@ inline void check_positive_size(const char* function, const char* name,
   }
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

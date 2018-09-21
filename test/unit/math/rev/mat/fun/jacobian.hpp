@@ -37,9 +37,9 @@ namespace math {
  * @param[in] independents Indepent (input) variables.
  * @param[out] jacobian Jacobian of the transform.
  */
-inline void jacobian(std::vector<var>& dependents,
-                     std::vector<var>& independents,
-                     std::vector<std::vector<double> >& jacobian) {
+inline void jacobian(std::vector<var> &dependents,
+                     std::vector<var> &independents,
+                     std::vector<std::vector<double>> &jacobian) {
   jacobian.resize(dependents.size());
   for (size_t i = 0; i < dependents.size(); ++i) {
     jacobian[i].resize(independents.size());
@@ -52,6 +52,6 @@ inline void jacobian(std::vector<var>& dependents,
   }
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -1,7 +1,7 @@
-#include <stan/math/prim/scal.hpp>
-#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
+#include <test/unit/util.hpp>
 
 TEST(prob_transform, ub) {
   EXPECT_FLOAT_EQ(2.0 - exp(-1.0), stan::math::ub_constrain(-1.0, 2.0));

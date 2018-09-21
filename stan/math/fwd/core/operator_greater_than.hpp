@@ -17,7 +17,7 @@ namespace math {
  * second
  */
 template <typename T>
-inline bool operator>(const fvar<T>& x, const fvar<T>& y) {
+inline bool operator>(const fvar<T> &x, const fvar<T> &y) {
   return x.val_ > y.val_;
 }
 
@@ -31,8 +31,7 @@ inline bool operator>(const fvar<T>& x, const fvar<T>& y) {
  * @return true if the first argument has a greater value than the
  * second
  */
-template <typename T>
-inline bool operator>(const fvar<T>& x, double y) {
+template <typename T> inline bool operator>(const fvar<T> &x, double y) {
   return x.val_ > y;
 }
 
@@ -46,11 +45,10 @@ inline bool operator>(const fvar<T>& x, double y) {
  * @return true if the first argument has a greater value than the
  * second
  */
-template <typename T>
-inline bool operator>(double x, const fvar<T>& y) {
+template <typename T> inline bool operator>(double x, const fvar<T> &y) {
   return x > y.val_;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -14,6 +14,6 @@ namespace math {
  */
 inline double tgamma(double x) { return boost::math::tgamma(x); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

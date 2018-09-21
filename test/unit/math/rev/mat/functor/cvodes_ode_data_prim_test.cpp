@@ -1,10 +1,10 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/util.hpp>
+#include <stan/math/rev/mat.hpp>
+#include <string>
 #include <test/unit/math/prim/arr/functor/harmonic_oscillator.hpp>
 #include <test/unit/math/prim/arr/functor/mock_ode_functor.hpp>
 #include <test/unit/math/prim/arr/functor/mock_throwing_ode_functor.hpp>
-#include <string>
+#include <test/unit/util.hpp>
 #include <vector>
 
 struct StanMathOdeCVode : public ::testing::Test {

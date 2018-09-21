@@ -18,10 +18,7 @@ struct log1p_fun {
    * @return Inverse hyperbolic cosine of the argument.
    * @tparam T Argument type.
    */
-  template <typename T>
-  static inline T fun(const T& x) {
-    return log1p(x);
-  }
+  template <typename T> static inline T fun(const T &x) { return log1p(x); }
 };
 
 /**
@@ -35,11 +32,11 @@ struct log1p_fun {
  * @return Elementwise log1p of members of container.
  */
 template <typename T>
-inline typename apply_scalar_unary<log1p_fun, T>::return_t log1p(const T& x) {
+inline typename apply_scalar_unary<log1p_fun, T>::return_t log1p(const T &x) {
   return apply_scalar_unary<log1p_fun, T>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

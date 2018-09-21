@@ -10,7 +10,7 @@ template <typename Op1 = double, typename Op2 = double, typename Op3 = double,
           typename Op4 = double, typename Op5 = double,
           typename T_return_type =
               typename return_type<Op1, Op2, Op3, Op4, Op5>::type>
-class operands_and_partials;  // Forward declaration
+class operands_and_partials; // Forward declaration
 
 namespace internal {
 /**
@@ -32,24 +32,23 @@ namespace internal {
  * @tparam ViewElt the type we expect to be at partials_[i]
  * @tparam Op the type of the operand
  */
-template <typename ViewElt, typename Op>
-class ops_partials_edge {
- public:
+template <typename ViewElt, typename Op> class ops_partials_edge {
+public:
   empty_broadcast_array<ViewElt, Op> partials_;
 
   ops_partials_edge() {}
-  explicit ops_partials_edge(const Op& /* op */) {}
+  explicit ops_partials_edge(const Op & /* op */) {}
 
- private:
+private:
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
 
-  void dump_partials(ViewElt* /* partials */) const {}  // reverse mode
-  void dump_operands(void* /* operands */) const {}     // reverse mode
+  void dump_partials(ViewElt * /* partials */) const {} // reverse mode
+  void dump_operands(void * /* operands */) const {}    // reverse mode
   ViewElt dx() const { return 0; }                      // used for fvars
   int size() const { return 0; }                        // reverse mode
 };
-}  // namespace internal
+} // namespace internal
 
 /**
  * This template builds partial derivatives with respect to a
@@ -88,16 +87,16 @@ class ops_partials_edge {
 template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5,
           typename T_return_type>
 class operands_and_partials {
- public:
-  explicit operands_and_partials(const Op1& /* op1 */) {}
-  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */) {}
-  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */,
-                        const Op3& /* op3 */) {}
-  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */,
-                        const Op3& /* op3 */, const Op4& /* op4 */) {}
-  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */,
-                        const Op3& /* op3 */, const Op4& /* op4 */,
-                        const Op5& /* op5 */) {}
+public:
+  explicit operands_and_partials(const Op1 & /* op1 */) {}
+  operands_and_partials(const Op1 & /* op1 */, const Op2 & /* op2 */) {}
+  operands_and_partials(const Op1 & /* op1 */, const Op2 & /* op2 */,
+                        const Op3 & /* op3 */) {}
+  operands_and_partials(const Op1 & /* op1 */, const Op2 & /* op2 */,
+                        const Op3 & /* op3 */, const Op4 & /* op4 */) {}
+  operands_and_partials(const Op1 & /* op1 */, const Op2 & /* op2 */,
+                        const Op3 & /* op3 */, const Op4 & /* op4 */,
+                        const Op5 & /* op5 */) {}
 
   /**
    * Build the node to be stored on the autodiff graph.
@@ -121,6 +120,6 @@ class operands_and_partials {
   internal::ops_partials_edge<double, Op4> edge4_;
   internal::ops_partials_edge<double, Op5> edge5_;
 };
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

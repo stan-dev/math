@@ -1,6 +1,6 @@
+#include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
 #include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
-#include <gtest/gtest.h>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;

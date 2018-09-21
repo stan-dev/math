@@ -19,8 +19,7 @@ struct log1m_inv_logit_fun {
    * @param x argument
    * @return natural log of one minus inverse logit of argument
    */
-  template <typename T>
-  static inline T fun(const T& x) {
+  template <typename T> static inline T fun(const T &x) {
     return log1m_inv_logit(x);
   }
 };
@@ -37,11 +36,11 @@ struct log1m_inv_logit_fun {
  */
 template <typename T>
 inline typename apply_scalar_unary<log1m_inv_logit_fun, T>::return_t
-log1m_inv_logit(const T& x) {
+log1m_inv_logit(const T &x) {
   return apply_scalar_unary<log1m_inv_logit_fun, T>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

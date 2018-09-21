@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_CHOLESKY_FACTOR_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_CHOLESKY_FACTOR_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/mat/err/check_lower_triangular.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
+#include <stan/math/prim/scal/err/check_positive.hpp>
 
 namespace stan {
 namespace math {
@@ -29,8 +29,8 @@ namespace math {
  */
 template <typename T_y>
 inline void check_cholesky_factor(
-    const char* function, const char* name,
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
+    const char *function, const char *name,
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y) {
   check_less_or_equal(function, "columns and rows of Cholesky factor", y.cols(),
                       y.rows());
   check_positive(function, "columns of Cholesky factor", y.cols());
@@ -40,6 +40,6 @@ inline void check_cholesky_factor(
     check_positive(function, name, y(i, i));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

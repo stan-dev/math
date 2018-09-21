@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 using stan::math::fvar;
@@ -166,8 +166,8 @@ TEST(AgradMixMatrixSum, fv_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(21.0, output.val_.val());
   EXPECT_FLOAT_EQ(6.0, output.d_.val());
 
-  AVEC q
-      = createAVEC(v(0, 0).val(), v(0, 1).val(), v(1, 0).val(), v(1, 1).val());
+  AVEC q =
+      createAVEC(v(0, 0).val(), v(0, 1).val(), v(1, 0).val(), v(1, 1).val());
   VEC h;
   output.val_.grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
@@ -201,8 +201,8 @@ TEST(AgradMixMatrixSum, fv_matrix_2ndDeriv) {
   fvar<var> output;
   output = sum(v);
 
-  AVEC q
-      = createAVEC(v(0, 0).val(), v(0, 1).val(), v(1, 0).val(), v(1, 1).val());
+  AVEC q =
+      createAVEC(v(0, 0).val(), v(0, 1).val(), v(1, 0).val(), v(1, 1).val());
   VEC h;
   output.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -227,7 +227,7 @@ TEST(AgradMixMatrixSum, ffv_vector_1stDeriv) {
   v(4).d_ = 1.0;
   v(5).d_ = 1.0;
 
-  fvar<fvar<var> > output;
+  fvar<fvar<var>> output;
   output = sum(d);
   EXPECT_FLOAT_EQ(21.0, output.val_.val().val());
   EXPECT_FLOAT_EQ(0.0, output.d_.val().val());
@@ -268,7 +268,7 @@ TEST(AgradMixMatrixSum, ffv_vector_2ndDeriv_1) {
   v(4).d_ = 1.0;
   v(5).d_ = 1.0;
 
-  fvar<fvar<var> > output;
+  fvar<fvar<var>> output;
   output = sum(v);
 
   AVEC q = createAVEC(v(0).val().val(), v(1).val().val(), v(2).val().val(),
@@ -297,7 +297,7 @@ TEST(AgradMixMatrixSum, ffv_vector_2ndDeriv_2) {
   v(4).d_ = 1.0;
   v(5).d_ = 1.0;
 
-  fvar<fvar<var> > output;
+  fvar<fvar<var>> output;
   output = sum(v);
 
   AVEC q = createAVEC(v(0).val().val(), v(1).val().val(), v(2).val().val(),
@@ -332,7 +332,7 @@ TEST(AgradMixMatrixSum, ffv_vector_3rdDeriv) {
   v(4).val_.d_ = 1.0;
   v(5).val_.d_ = 1.0;
 
-  fvar<fvar<var> > output;
+  fvar<fvar<var>> output;
   output = sum(v);
 
   AVEC q = createAVEC(v(0).val().val(), v(1).val().val(), v(2).val().val(),
@@ -361,7 +361,7 @@ TEST(AgradMixMatrixSum, ffv_rowvector_1stDeriv) {
   v(4).d_ = 1.0;
   v(5).d_ = 1.0;
 
-  fvar<fvar<var> > output;
+  fvar<fvar<var>> output;
   output = sum(d);
   EXPECT_FLOAT_EQ(21.0, output.val_.val().val());
   EXPECT_FLOAT_EQ(0.0, output.d_.val().val());
@@ -402,7 +402,7 @@ TEST(AgradMixMatrixSum, ffv_rowvector_2ndDeriv_1) {
   v(4).d_ = 1.0;
   v(5).d_ = 1.0;
 
-  fvar<fvar<var> > output;
+  fvar<fvar<var>> output;
   output = sum(v);
 
   AVEC q = createAVEC(v(0).val().val(), v(1).val().val(), v(2).val().val(),
@@ -431,7 +431,7 @@ TEST(AgradMixMatrixSum, ffv_rowvector_2ndDeriv_2) {
   v(4).d_ = 1.0;
   v(5).d_ = 1.0;
 
-  fvar<fvar<var> > output;
+  fvar<fvar<var>> output;
   output = sum(v);
 
   AVEC q = createAVEC(v(0).val().val(), v(1).val().val(), v(2).val().val(),
@@ -466,7 +466,7 @@ TEST(AgradMixMatrixSum, ffv_rowvector_3rdDeriv) {
   v(4).val_.d_ = 1.0;
   v(5).val_.d_ = 1.0;
 
-  fvar<fvar<var> > output;
+  fvar<fvar<var>> output;
   output = sum(v);
 
   AVEC q = createAVEC(v(0).val().val(), v(1).val().val(), v(2).val().val(),
@@ -495,7 +495,7 @@ TEST(AgradMixMatrixSum, ffv_matrix_1stDeriv) {
   v(1, 1).d_ = 1.0;
   v(1, 2).d_ = 1.0;
 
-  fvar<fvar<var> > output;
+  fvar<fvar<var>> output;
   output = sum(d);
   EXPECT_FLOAT_EQ(21.0, output.val_.val().val());
   EXPECT_FLOAT_EQ(0.0, output.d_.val().val());
@@ -536,7 +536,7 @@ TEST(AgradMixMatrixSum, ffv_matrix_2ndDeriv_1) {
   v(1, 1).d_ = 1.0;
   v(1, 2).d_ = 1.0;
 
-  fvar<fvar<var> > output;
+  fvar<fvar<var>> output;
   output = sum(v);
 
   AVEC q = createAVEC(v(0, 0).val().val(), v(0, 1).val().val(),
@@ -566,7 +566,7 @@ TEST(AgradMixMatrixSum, ffv_matrix_2ndDeriv_2) {
   v(1, 1).d_ = 1.0;
   v(1, 2).d_ = 1.0;
 
-  fvar<fvar<var> > output;
+  fvar<fvar<var>> output;
   output = sum(v);
 
   AVEC q = createAVEC(v(0, 0).val().val(), v(0, 1).val().val(),
@@ -602,7 +602,7 @@ TEST(AgradMixMatrixSum, ffv_matrix_3rdDeriv) {
   v(1, 1).val_.d_ = 1.0;
   v(1, 2).val_.d_ = 1.0;
 
-  fvar<fvar<var> > output;
+  fvar<fvar<var>> output;
   output = sum(v);
 
   AVEC q = createAVEC(v(0, 0).val().val(), v(0, 1).val().val(),

@@ -6,10 +6,7 @@
 
 namespace stan {
 
-template <typename T>
-inline T get(const T& x, size_t n) {
-  return x;
-}
+template <typename T> inline T get(const T &x, size_t n) { return x; }
 
-}  // namespace stan
+} // namespace stan
 #endif

@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 #include <vector>
 
 TEST(AgradFwdMatrixVariance, fd_vector) {
@@ -148,7 +148,7 @@ TEST(AgradFwdMatrixVariance, fd_StdVector) {
   x2.d_ = 2.0;
   fvar<double> x3 = 3.5;
   x3.d_ = 2.0;
-  std::vector<fvar<double> > y1;
+  std::vector<fvar<double>> y1;
   y1.push_back(x1);
   y1.push_back(x2);
   y1.push_back(x3);
@@ -297,17 +297,17 @@ TEST(AgradFwdMatrixVariance, ffd_StdVector) {
   using stan::math::fvar;
   using stan::math::variance;
 
-  fvar<fvar<double> > x1 = 0.5;
+  fvar<fvar<double>> x1 = 0.5;
   x1.d_ = 1.0;
-  fvar<fvar<double> > x2 = 2.0;
+  fvar<fvar<double>> x2 = 2.0;
   x2.d_ = 2.0;
-  fvar<fvar<double> > x3 = 3.5;
+  fvar<fvar<double>> x3 = 3.5;
   x3.d_ = 2.0;
-  std::vector<fvar<fvar<double> > > y1;
+  std::vector<fvar<fvar<double>>> y1;
   y1.push_back(x1);
   y1.push_back(x2);
   y1.push_back(x3);
-  fvar<fvar<double> > f1 = variance(y1);
+  fvar<fvar<double>> f1 = variance(y1);
 
   EXPECT_FLOAT_EQ(2.25, f1.val_.val());
   EXPECT_FLOAT_EQ(1.5, f1.d_.val());

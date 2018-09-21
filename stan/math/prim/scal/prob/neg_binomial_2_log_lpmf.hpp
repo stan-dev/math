@@ -1,29 +1,29 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_LOG_LPMF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_LOG_LPMF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_less.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
-#include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/prim/scal/fun/log_sum_exp.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 #include <boost/random/negative_binomial_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <stan/math/prim/scal/err/check_less.hpp>
+#include <stan/math/prim/scal/err/check_nonnegative.hpp>
+#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/digamma.hpp>
+#include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
+#include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <stan/math/prim/scal/fun/log_sum_exp.hpp>
+#include <stan/math/prim/scal/fun/multiply_log.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {
 namespace math {
@@ -31,13 +31,14 @@ namespace math {
 // NegBinomial(n|eta, phi)  [phi > 0;  n >= 0]
 template <bool propto, typename T_n, typename T_log_location,
           typename T_precision>
-typename return_type<T_log_location, T_precision>::type neg_binomial_2_log_lpmf(
-    const T_n& n, const T_log_location& eta, const T_precision& phi) {
+typename return_type<T_log_location, T_precision>::type
+neg_binomial_2_log_lpmf(const T_n &n, const T_log_location &eta,
+                        const T_precision &phi) {
   typedef
       typename stan::partials_return_type<T_n, T_log_location,
                                           T_precision>::type T_partials_return;
 
-  static const char* function = "neg_binomial_2_log_lpmf";
+  static const char *function = "neg_binomial_2_log_lpmf";
 
   if (size_zero(n, eta, phi))
     return 0.0;
@@ -100,23 +101,22 @@ typename return_type<T_log_location, T_precision>::type neg_binomial_2_log_lpmf(
       logp += lgamma(n_plus_phi[i]);
 
     if (!is_constant_struct<T_log_location>::value)
-      ops_partials.edge1_.partials_[i]
-          += n_vec[i] - n_plus_phi[i] / (phi__[i] / exp(eta__[i]) + 1.0);
+      ops_partials.edge1_.partials_[i] +=
+          n_vec[i] - n_plus_phi[i] / (phi__[i] / exp(eta__[i]) + 1.0);
     if (!is_constant_struct<T_precision>::value)
-      ops_partials.edge2_.partials_[i]
-          += 1.0 - n_plus_phi[i] / (exp(eta__[i]) + phi__[i]) + log_phi[i]
-             - logsumexp_eta_logphi[i] - digamma(phi__[i])
-             + digamma(n_plus_phi[i]);
+      ops_partials.edge2_.partials_[i] +=
+          1.0 - n_plus_phi[i] / (exp(eta__[i]) + phi__[i]) + log_phi[i] -
+          logsumexp_eta_logphi[i] - digamma(phi__[i]) + digamma(n_plus_phi[i]);
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_n, typename T_log_location, typename T_precision>
 inline typename return_type<T_log_location, T_precision>::type
-neg_binomial_2_log_lpmf(const T_n& n, const T_log_location& eta,
-                        const T_precision& phi) {
+neg_binomial_2_log_lpmf(const T_n &n, const T_log_location &eta,
+                        const T_precision &phi) {
   return neg_binomial_2_log_lpmf<false>(n, eta, phi);
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

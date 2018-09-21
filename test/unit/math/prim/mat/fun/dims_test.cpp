@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 #include <vector>
 
 TEST(MathMatrix, dims) {
@@ -23,7 +23,7 @@ TEST(MathMatrix, dims) {
   EXPECT_EQ(1U, dims3.size());
   EXPECT_EQ(2, dims3[0]);
 
-  vector<vector<double> > x4;
+  vector<vector<double>> x4;
   x4.push_back(x3);
   x4.push_back(x3);
   x4.push_back(x3);
@@ -50,7 +50,7 @@ TEST(MathMatrix, dims) {
   EXPECT_EQ(1, dims7[0]);
   EXPECT_EQ(17, dims7[1]);
 
-  vector<Matrix<double, Dynamic, Dynamic> > x8;
+  vector<Matrix<double, Dynamic, Dynamic>> x8;
   x8.push_back(x5);
   x8.push_back(x5);
   vector<int> dims8 = dims(x8);

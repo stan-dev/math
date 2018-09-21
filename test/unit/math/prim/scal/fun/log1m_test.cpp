@@ -1,8 +1,8 @@
-#include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/util.hpp>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
+#include <test/unit/util.hpp>
 
 TEST(MathFunctions, log1m) {
   EXPECT_FLOAT_EQ(stan::math::log1p(-0.1), stan::math::log1m(0.1));

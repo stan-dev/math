@@ -3,26 +3,26 @@
 
 #include <boost/random/chi_squared_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <cmath>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/fun/gamma_q.hpp>
+#include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
+#include <stan/math/prim/scal/fun/multiply_log.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/length.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <cmath>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {
 namespace math {
@@ -47,9 +47,9 @@ namespace math {
  * @tparam T_dof Type of degrees of freedom.
  */
 template <bool propto, typename T_y, typename T_dof>
-typename return_type<T_y, T_dof>::type inv_chi_square_lpdf(const T_y& y,
-                                                           const T_dof& nu) {
-  static const char* function = "inv_chi_square_lpdf";
+typename return_type<T_y, T_dof>::type inv_chi_square_lpdf(const T_y &y,
+                                                           const T_dof &nu) {
+  static const char *function = "inv_chi_square_lpdf";
   typedef
       typename stan::partials_return_type<T_y, T_dof>::type T_partials_return;
 
@@ -112,24 +112,23 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lpdf(const T_y& y,
       logp -= 0.5 * inv_y[n];
 
     if (!is_constant_struct<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
-          += -(half_nu + 1.0) * inv_y[n] + 0.5 * inv_y[n] * inv_y[n];
+      ops_partials.edge1_.partials_[n] +=
+          -(half_nu + 1.0) * inv_y[n] + 0.5 * inv_y[n] * inv_y[n];
     }
     if (!is_constant_struct<T_dof>::value) {
-      ops_partials.edge2_.partials_[n] += NEG_LOG_TWO_OVER_TWO
-                                          - digamma_half_nu_over_two[n]
-                                          - 0.5 * log_y[n];
+      ops_partials.edge2_.partials_[n] +=
+          NEG_LOG_TWO_OVER_TWO - digamma_half_nu_over_two[n] - 0.5 * log_y[n];
     }
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_dof>
-inline typename return_type<T_y, T_dof>::type inv_chi_square_lpdf(
-    const T_y& y, const T_dof& nu) {
+inline typename return_type<T_y, T_dof>::type
+inv_chi_square_lpdf(const T_y &y, const T_dof &nu) {
   return inv_chi_square_lpdf<false>(y, nu);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_GPU_IDENTITY_HPP
 #define STAN_MATH_GPU_IDENTITY_HPP
 #ifdef STAN_OPENCL
-#include <stan/math/gpu/matrix_gpu.hpp>
-#include <stan/math/gpu/kernels/identity.hpp>
 #include <CL/cl.hpp>
+#include <stan/math/gpu/kernels/identity.hpp>
+#include <stan/math/gpu/matrix_gpu.hpp>
 
 namespace stan {
 namespace math {
@@ -26,13 +26,13 @@ inline matrix_gpu identity(int rows_cols) {
   try {
     opencl_kernels::identity(cl::NDRange(A.rows(), A.cols()), A.buffer(),
                              A.rows(), A.cols());
-  } catch (const cl::Error& e) {
+  } catch (const cl::Error &e) {
     check_opencl_error("identity", e);
   }
   return A;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif
 #endif

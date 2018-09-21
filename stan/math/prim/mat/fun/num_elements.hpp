@@ -13,10 +13,7 @@ namespace math {
  * @param x Argument of primitive type.
  * @return 1
  */
-template <typename T>
-inline int num_elements(const T& x) {
-  return 1;
-}
+template <typename T> inline int num_elements(const T &x) { return 1; }
 
 /**
  * Returns the size of the specified matrix.
@@ -25,7 +22,7 @@ inline int num_elements(const T& x) {
  * @return size of matrix
  */
 template <typename T, int R, int C>
-inline int num_elements(const Eigen::Matrix<T, R, C>& m) {
+inline int num_elements(const Eigen::Matrix<T, R, C> &m) {
   return m.size();
 }
 
@@ -37,13 +34,12 @@ inline int num_elements(const Eigen::Matrix<T, R, C>& m) {
  * @param v argument vector
  * @return number of contained arguments
  */
-template <typename T>
-inline int num_elements(const std::vector<T>& v) {
+template <typename T> inline int num_elements(const std::vector<T> &v) {
   if (v.size() == 0)
     return 0;
   return v.size() * num_elements(v[0]);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

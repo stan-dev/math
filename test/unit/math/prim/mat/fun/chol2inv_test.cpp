@@ -1,6 +1,6 @@
-#include <stan/math/prim/mat.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(MathMatrix, chol2inv_exception) {
   using stan::math::chol2inv;

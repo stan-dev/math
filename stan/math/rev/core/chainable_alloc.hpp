@@ -14,13 +14,13 @@ namespace math {
  * operator new for memory management.
  */
 class chainable_alloc {
- public:
+public:
   chainable_alloc() {
     ChainableStack::instance().var_alloc_stack_.push_back(this);
   }
   virtual ~chainable_alloc() {}
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

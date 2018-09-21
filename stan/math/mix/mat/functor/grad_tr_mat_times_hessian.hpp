@@ -2,9 +2,9 @@
 #define STAN_MATH_MIX_MAT_FUNCTOR_GRAD_TR_MAT_TIMES_HESSIAN_HPP
 
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/mix/mat/functor/gradient_dot_vector.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/mix/mat/functor/gradient_dot_vector.hpp>
 #include <stdexcept>
 #include <vector>
 
@@ -13,9 +13,9 @@ namespace math {
 
 template <typename F>
 void grad_tr_mat_times_hessian(
-    const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
-    const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& M,
-    Eigen::Matrix<double, Eigen::Dynamic, 1>& grad_tr_MH) {
+    const F &f, const Eigen::Matrix<double, Eigen::Dynamic, 1> &x,
+    const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> &M,
+    Eigen::Matrix<double, Eigen::Dynamic, 1> &grad_tr_MH) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   start_nested();
@@ -44,13 +44,13 @@ void grad_tr_mat_times_hessian(
     grad(sum.vi_);
     for (int i = 0; i < x.size(); ++i)
       grad_tr_MH(i) = x_var(i).adj();
-  } catch (const std::exception& e) {
+  } catch (const std::exception &e) {
     recover_memory_nested();
     throw;
   }
   recover_memory_nested();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

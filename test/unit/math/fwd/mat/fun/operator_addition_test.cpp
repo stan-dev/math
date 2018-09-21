@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 using stan::math::fvar;
 TEST(AgradFwdMatrixOperatorAddition, fd_scalar_matrix) {
@@ -343,7 +343,7 @@ TEST(AgradFwdMatrixOperatorAddition, ffd_scalar_matrix) {
   using stan::math::add;
   using stan::math::matrix_ffd;
 
-  fvar<fvar<double> > a, b, c, d;
+  fvar<fvar<double>> a, b, c, d;
   a.val_.val_ = 1.0;
   b.val_.val_ = 2.0;
   c.val_.val_ = 3.0;
@@ -381,7 +381,7 @@ TEST(AgradFwdMatrixOperatorAddition, ffd_scalar_vector) {
   using stan::math::add;
   using stan::math::vector_ffd;
 
-  fvar<fvar<double> > a, b, c, d;
+  fvar<fvar<double>> a, b, c, d;
   a.val_.val_ = 1.0;
   b.val_.val_ = 2.0;
   c.val_.val_ = 3.0;
@@ -419,7 +419,7 @@ TEST(AgradFwdMatrixOperatorAddition, ffd_scalar_rowvector) {
   using stan::math::add;
   using stan::math::row_vector_ffd;
 
-  fvar<fvar<double> > a, b, c, d;
+  fvar<fvar<double>> a, b, c, d;
   a.val_.val_ = 1.0;
   b.val_.val_ = 2.0;
   c.val_.val_ = 3.0;
@@ -463,7 +463,7 @@ TEST(AgradFwdMatrixOperatorAddition, ffd_vector_vector) {
   vector_ffd vv_1(5);
   vector_ffd vv_2(5);
 
-  fvar<fvar<double> > a, b, c, d, e, f;
+  fvar<fvar<double>> a, b, c, d, e, f;
   a.val_.val_ = 1.0;
   b.val_.val_ = 2.0;
   c.val_.val_ = 3.0;
@@ -550,7 +550,7 @@ TEST(AgradFwdMatrixOperatorAddition, ffd_rowvector_rowvector) {
   row_vector_d rvd_1(5), rvd_2(5);
   row_vector_ffd rvv_1(5), rvv_2(5);
 
-  fvar<fvar<double> > a, b, c, d, e, f;
+  fvar<fvar<double>> a, b, c, d, e, f;
   a.val_.val_ = 1.0;
   b.val_.val_ = 2.0;
   c.val_.val_ = 3.0;
@@ -637,7 +637,7 @@ TEST(AgradFwdMatrixOperatorAddition, ffd_matrix_matrix) {
   matrix_d md_1(2, 2), md_2(2, 2);
   matrix_ffd mv_1(2, 2), mv_2(2, 2);
 
-  fvar<fvar<double> > a, b, c, d, e;
+  fvar<fvar<double>> a, b, c, d, e;
   a.val_.val_ = -10.0;
   b.val_.val_ = 1.0;
   c.val_.val_ = 10.0;

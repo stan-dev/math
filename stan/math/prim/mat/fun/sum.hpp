@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_SUM_HPP
 #define STAN_MATH_PRIM_MAT_FUN_SUM_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/arr/fun/sum.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <vector>
 
 namespace stan {
@@ -19,10 +19,10 @@ namespace math {
  * @return Sum of coefficients of vector.
  */
 template <typename T, int R, int C>
-inline T sum(const Eigen::Matrix<T, R, C>& v) {
+inline T sum(const Eigen::Matrix<T, R, C> &v) {
   return v.sum();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -1,7 +1,7 @@
-#include <stan/math/fwd/mat.hpp>
+#include <algorithm>
 #include <gtest/gtest.h>
 #include <limits>
-#include <algorithm>
+#include <stan/math/fwd/mat.hpp>
 
 using stan::math::fvar;
 TEST(AgradFwdMatrixMax, fd_vector) {
@@ -106,7 +106,7 @@ TEST(AgradFwdMatrixMax, ffd_vector) {
   vector_d d1(3);
   vector_ffd v1(3);
 
-  fvar<fvar<double> > a, b, c;
+  fvar<fvar<double>> a, b, c;
   a.val_.val_ = 100.0;
   a.d_.val_ = 1.0;
   b.val_.val_ = 0.0;
@@ -117,7 +117,7 @@ TEST(AgradFwdMatrixMax, ffd_vector) {
   d1 << 100, 0, -3;
   v1 << a, b, c;
 
-  fvar<fvar<double> > output;
+  fvar<fvar<double>> output;
   output = max(d1);
   EXPECT_FLOAT_EQ(100, output.val_.val());
   EXPECT_FLOAT_EQ(0, output.d_.val());
@@ -143,7 +143,7 @@ TEST(AgradFwdMatrixMax, ffd_rowvector) {
   row_vector_d d1(3);
   row_vector_ffd v1(3);
 
-  fvar<fvar<double> > a, b, c;
+  fvar<fvar<double>> a, b, c;
   a.val_.val_ = 100.0;
   a.d_.val_ = 1.0;
   b.val_.val_ = 0.0;
@@ -154,7 +154,7 @@ TEST(AgradFwdMatrixMax, ffd_rowvector) {
   d1 << 100, 0, -3;
   v1 << a, b, c;
 
-  fvar<fvar<double> > output;
+  fvar<fvar<double>> output;
   output = max(d1);
   EXPECT_FLOAT_EQ(100, output.val_.val());
   EXPECT_FLOAT_EQ(0, output.d_.val());
@@ -180,7 +180,7 @@ TEST(AgradFwdMatrixMax, ffd_matrix) {
   matrix_d d1(3, 1);
   matrix_ffd v1(1, 3);
 
-  fvar<fvar<double> > a, b, c;
+  fvar<fvar<double>> a, b, c;
   a.val_.val_ = 100.0;
   a.d_.val_ = 1.0;
   b.val_.val_ = 0.0;
@@ -191,7 +191,7 @@ TEST(AgradFwdMatrixMax, ffd_matrix) {
   d1 << 100, 0, -3;
   v1 << a, b, c;
 
-  fvar<fvar<double> > output;
+  fvar<fvar<double>> output;
   output = max(d1);
   EXPECT_FLOAT_EQ(100, output.val_.val());
   EXPECT_FLOAT_EQ(0, output.d_.val());

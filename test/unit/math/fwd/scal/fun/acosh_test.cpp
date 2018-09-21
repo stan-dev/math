@@ -1,8 +1,8 @@
-#include <stan/math/fwd/scal.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 #include <cmath>
+#include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/fwd/scal.hpp>
+#include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdAcosh, Fvar) {
   using stan::math::acosh;
@@ -35,18 +35,18 @@ TEST(AgradFwdAcosh, FvarFvarDouble) {
   using stan::math::acosh;
   using stan::math::fvar;
 
-  fvar<fvar<double> > x;
+  fvar<fvar<double>> x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 2.0;
 
-  fvar<fvar<double> > a = acosh(x);
+  fvar<fvar<double>> a = acosh(x);
 
   EXPECT_FLOAT_EQ(acosh(1.5), a.val_.val_);
   EXPECT_FLOAT_EQ(2 / sqrt(-1 + 1.5 * 1.5), a.val_.d_);
   EXPECT_FLOAT_EQ(0, a.d_.val_);
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 
-  fvar<fvar<double> > y;
+  fvar<fvar<double>> y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 2.0;
 
@@ -58,8 +58,7 @@ TEST(AgradFwdAcosh, FvarFvarDouble) {
 }
 
 struct acosh_fun {
-  template <typename T0>
-  inline T0 operator()(const T0& arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     using stan::math::acosh;
     return acosh(arg1);
   }

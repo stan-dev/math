@@ -1,17 +1,17 @@
 #ifndef STAN_MATH_FWD_SCAL_FUN_GRAD_INC_BETA_HPP
 #define STAN_MATH_FWD_SCAL_FUN_GRAD_INC_BETA_HPP
 
+#include <cmath>
+#include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/scal/fun/exp.hpp>
 #include <stan/math/fwd/scal/fun/fabs.hpp>
+#include <stan/math/fwd/scal/fun/inc_beta.hpp>
+#include <stan/math/fwd/scal/fun/lbeta.hpp>
 #include <stan/math/fwd/scal/fun/log.hpp>
 #include <stan/math/fwd/scal/fun/log1m.hpp>
-#include <stan/math/fwd/scal/fun/lbeta.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
 #include <stan/math/fwd/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/fun/grad_2F1.hpp>
-#include <cmath>
+#include <stan/math/prim/scal/fun/value_of.hpp>
 
 namespace stan {
 namespace math {
@@ -31,7 +31,7 @@ namespace math {
  * @param[in] z z
  */
 template <typename T>
-void grad_inc_beta(fvar<T>& g1, fvar<T>& g2, fvar<T> a, fvar<T> b, fvar<T> z) {
+void grad_inc_beta(fvar<T> &g1, fvar<T> &g2, fvar<T> a, fvar<T> b, fvar<T> z) {
   fvar<T> c1 = log(z);
   fvar<T> c2 = log1m(z);
   fvar<T> c3 = exp(lbeta(a, b)) * inc_beta(a, b, z);
@@ -48,6 +48,6 @@ void grad_inc_beta(fvar<T>& g1, fvar<T>& g2, fvar<T> a, fvar<T> b, fvar<T> z) {
   g2 = c2 * c3 + C * dF1;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

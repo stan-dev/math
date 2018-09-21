@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_LOG_SOFTMAX_HPP
 #define STAN_MATH_PRIM_MAT_FUN_LOG_SOFTMAX_HPP
 
+#include <cmath>
+#include <sstream>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/log_sum_exp.hpp>
-#include <cmath>
-#include <sstream>
 #include <stdexcept>
 
 namespace stan {
@@ -40,8 +40,8 @@ namespace math {
  * @return Unit simplex result of the softmax transform of the vector.
  */
 template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, 1> log_softmax(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& v) {
+inline Eigen::Matrix<T, Eigen::Dynamic, 1>
+log_softmax(const Eigen::Matrix<T, Eigen::Dynamic, 1> &v) {
   using std::exp;
   using std::log;
   check_nonzero_size("log_softmax", "v", v);
@@ -52,6 +52,6 @@ inline Eigen::Matrix<T, Eigen::Dynamic, 1> log_softmax(
   return theta;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

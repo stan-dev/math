@@ -1,8 +1,8 @@
-#include <stan/math/prim/mat.hpp>
-#include <stan/math/gpu/diagonal_multiply.hpp>
-#include <stan/math/gpu/copy.hpp>
-#include <gtest/gtest.h>
 #include <algorithm>
+#include <gtest/gtest.h>
+#include <stan/math/gpu/copy.hpp>
+#include <stan/math/gpu/diagonal_multiply.hpp>
+#include <stan/math/prim/mat.hpp>
 #ifdef STAN_OPENCL
 
 using stan::math::matrix_d;

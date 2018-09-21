@@ -17,8 +17,7 @@ namespace stan {
  *
  * @tparam T Type to test
  */
-template <typename T>
-struct is_vector_like {
+template <typename T> struct is_vector_like {
   enum { value = stan::is_vector<T>::value };
 };
 
@@ -32,8 +31,7 @@ struct is_vector_like {
  *
  * @tparam T Type to test
  */
-template <typename T>
-struct is_vector_like<T*> {
+template <typename T> struct is_vector_like<T *> {
   enum { value = true };
 };
 
@@ -49,9 +47,8 @@ struct is_vector_like<T*> {
  *
  * @tparam T Type to test
  */
-template <typename T>
-struct is_vector_like<const T> {
+template <typename T> struct is_vector_like<const T> {
   enum { value = stan::is_vector_like<T>::value };
 };
-}  // namespace stan
+} // namespace stan
 #endif

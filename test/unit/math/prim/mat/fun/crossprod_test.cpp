@@ -1,7 +1,7 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
-void test_crossprod(const stan::math::matrix_d& x) {
+void test_crossprod(const stan::math::matrix_d &x) {
   using stan::math::crossprod;
   stan::math::matrix_d y = crossprod(x);
   stan::math::matrix_d xtx = x.transpose() * x;

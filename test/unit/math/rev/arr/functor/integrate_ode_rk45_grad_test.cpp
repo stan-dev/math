@@ -1,10 +1,10 @@
-#include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/rev/mat/functor/gradient.hpp>
 #include <iostream>
 #include <sstream>
-#include <vector>
+#include <stan/math/rev/arr.hpp>
+#include <stan/math/rev/mat/functor/gradient.hpp>
 #include <stdexcept>
+#include <vector>
 
 using std::cos;
 using std::sin;
@@ -30,7 +30,7 @@ double dy2_dchi(double t, double omega, double chi) {
 }
 
 class sho_functor {
- public:
+public:
   template <typename T0, typename T1, typename T2>
   inline std::vector<typename stan::return_type<T1, T2>::type>
   // time
@@ -38,9 +38,9 @@ class sho_functor {
   // parameters
   // double data
   // integer data
-  operator()(const T0& t_in, const std::vector<T1>& y_in,
-             const std::vector<T2>& theta, const std::vector<double>& x,
-             const std::vector<int>& x_int, std::ostream* msgs) const {
+  operator()(const T0 &t_in, const std::vector<T1> &y_in,
+             const std::vector<T2> &theta, const std::vector<double> &x,
+             const std::vector<int> &x_int, std::ostream *msgs) const {
     if (y_in.size() != 2)
       throw std::domain_error("Functor called with inconsistent state");
 
@@ -53,9 +53,9 @@ class sho_functor {
 };
 
 class test_functor_double_var_1 {
- public:
+public:
   template <typename T>
-  inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
+  inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1> &x) const {
     sho_functor sho;
 
     std::vector<T> theta;
@@ -72,7 +72,7 @@ class test_functor_double_var_1 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys = stan::math::integrate_ode_rk45(
+    std::vector<std::vector<T>> ys = stan::math::integrate_ode_rk45(
         sho, y0, t0, ts, theta, data, data_int, 0);
 
     return ys[0][0];
@@ -80,9 +80,9 @@ class test_functor_double_var_1 {
 };
 
 class test_functor_double_var_2 {
- public:
+public:
   template <typename T>
-  inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
+  inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1> &x) const {
     sho_functor sho;
 
     std::vector<T> theta;
@@ -99,7 +99,7 @@ class test_functor_double_var_2 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys = stan::math::integrate_ode_rk45(
+    std::vector<std::vector<T>> ys = stan::math::integrate_ode_rk45(
         sho, y0, t0, ts, theta, data, data_int, 0);
 
     return ys[0][1];
@@ -131,9 +131,9 @@ TEST(StanMathOdeIntegrateODEGrad, double_var) {
 }
 
 class test_functor_var_double_1 {
- public:
+public:
   template <typename T>
-  inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
+  inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1> &x) const {
     sho_functor sho;
 
     std::vector<double> theta;
@@ -150,7 +150,7 @@ class test_functor_var_double_1 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys = stan::math::integrate_ode_rk45(
+    std::vector<std::vector<T>> ys = stan::math::integrate_ode_rk45(
         sho, y0, t0, ts, theta, data, data_int, 0);
 
     return ys[0][0];
@@ -158,9 +158,9 @@ class test_functor_var_double_1 {
 };
 
 class test_functor_var_double_2 {
- public:
+public:
   template <typename T>
-  inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
+  inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1> &x) const {
     sho_functor sho;
 
     std::vector<double> theta;
@@ -177,7 +177,7 @@ class test_functor_var_double_2 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys = stan::math::integrate_ode_rk45(
+    std::vector<std::vector<T>> ys = stan::math::integrate_ode_rk45(
         sho, y0, t0, ts, theta, data, data_int, 0);
 
     return ys[0][1];
@@ -209,9 +209,9 @@ TEST(StanMathOdeIntegrateODEGrad, var_double) {
 }
 
 class test_functor_var_var_1 {
- public:
+public:
   template <typename T>
-  inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
+  inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1> &x) const {
     sho_functor sho;
 
     std::vector<T> theta;
@@ -228,7 +228,7 @@ class test_functor_var_var_1 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys = stan::math::integrate_ode_rk45(
+    std::vector<std::vector<T>> ys = stan::math::integrate_ode_rk45(
         sho, y0, t0, ts, theta, data, data_int, 0);
 
     return ys[0][0];
@@ -236,9 +236,9 @@ class test_functor_var_var_1 {
 };
 
 class test_functor_var_var_2 {
- public:
+public:
   template <typename T>
-  inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
+  inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1> &x) const {
     sho_functor sho;
 
     std::vector<T> theta;
@@ -255,7 +255,7 @@ class test_functor_var_var_2 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys = stan::math::integrate_ode_rk45(
+    std::vector<std::vector<T>> ys = stan::math::integrate_ode_rk45(
         sho, y0, t0, ts, theta, data, data_int, 0);
 
     return ys[0][1];
