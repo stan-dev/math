@@ -111,7 +111,7 @@ struct ad_promotable<unsigned long, double> {  // NOLINT(runtime/int)
  * A long long may be promoted to a double.
  */
 template <>
-struct ad_promotable<long long, double> {
+struct ad_promotable<long long, double> {  // NOLINT(runtime/int)
   enum { value = true };
 };
 
@@ -119,7 +119,7 @@ struct ad_promotable<long long, double> {
  * An unsigned long long may be promoted to a double.
  */
 template <>
-struct ad_promotable<unsigned long long, double> {
+struct ad_promotable<unsigned long long, double> {  // NOLINT(runtime/int)
   enum { value = true };
 };
 
