@@ -8,6 +8,17 @@ def runTests(String testPath) {
     finally { junit 'test/**/*.xml' }
 }
 
+def runTestsWin(String testPath) {
+    bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
+    try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
+    finally { junit 'test/**/*.xml' }
+}
+
+def deleteDirWin() {
+    bat "attrib -r -s /s /d"
+    deleteDir()
+}
+
 def utils = new org.stan.Utils()
 
 def isBranch(String b) { env.BRANCH_NAME == b }
@@ -157,6 +168,22 @@ pipeline {
                         runTests("test/unit/math/gpu")
                     }
                     post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Windows Headers') {
+                    agent { label 'windows' }
+                    steps {
+                        deleteDirWin()
+                        unstash 'MathSetup'
+                        bat "make -j${env.PARALLEL} test-headers"
+                    }
+                }
+                stage('Windows Unit') {
+                    agent { label 'windows' }
+                    steps {
+                        deleteDirWin()
+                        unstash 'MathSetup'
+                        runTestsWin("test/unit")
+                    }
                 }
             }
         }
