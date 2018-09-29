@@ -197,6 +197,7 @@ pipeline {
                         sh "echo CXX=${env.CXX} -Werror > make/local"
                         sh "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
                         runTests("test/unit -f thread")
+                        runTests("test/unit -f map_rect")
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
