@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <vector>
+#include <cmath>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -31,7 +32,7 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_doubles_rand) {
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<int, Dynamic, 1> y(3, 1);
     for (size_t i = 0; i < 3; i++) {
-      y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 200;
+      y[i] = abs(Matrix<int, 1, 1>::Random(1, 1)[0] % 200);
     }
     Matrix<double, Dynamic, Dynamic> x
         = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
@@ -102,7 +103,7 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_vars_rand) {
   for (size_t ii = 0; ii < 200; ii++) {
     Matrix<int, Dynamic, 1> y(3, 1);
     for (size_t i = 0; i < 3; i++) {
-      y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 200;
+      y[i] = abs(Matrix<int, 1, 1>::Random(1, 1)[0] % 200);
     }
     Matrix<double, Dynamic, Dynamic> xreal
         = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
@@ -154,7 +155,7 @@ TEST(ProbDistributionsPoissonLogGLM,
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<int, Dynamic, 1> y(3, 1);
     for (size_t i = 0; i < 3; i++) {
-      y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 200;
+      y[i] = abs(Matrix<int, 1, 1>::Random(1, 1)[0] % 200);
     }
     Matrix<double, Dynamic, Dynamic> xreal
         = Matrix<double, Dynamic, Dynamic>::Random(3, 1);
@@ -199,7 +200,7 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_varying_intercept) {
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<int, Dynamic, 1> y(3, 1);
     for (size_t i = 0; i < 3; i++) {
-      y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 200;
+      y[i] = abs(Matrix<int, 1, 1>::Random(1, 1)[0] % 200);
     }
     Matrix<double, Dynamic, Dynamic> xreal
         = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
@@ -303,15 +304,15 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_error_checking) {
 
   Eigen::Matrix<int, -1, 1> y(N, 1);
   for (int n = 0; n < N; n++) {
-    y[n] = Eigen::Matrix<uint, -1, 1>::Random(1, 1)[0] % 200;
+    y[n] = abs(Eigen::Matrix<int, -1, 1>::Random(1, 1)[0] % 200);
   }
   Eigen::Matrix<int, -1, 1> yw1(W, 1);
   for (int n = 0; n < W; n++) {
-    yw1[n] = Eigen::Matrix<uint, -1, 1>::Random(1, 1)[0] % 200;
+    yw1[n] = abs(Eigen::Matrix<int, -1, 1>::Random(1, 1)[0] % 200);
   }
   Eigen::Matrix<int, -1, 1> yw2(N, 1);
   for (int n = 0; n < N; n++) {
-    yw2[n] = -(Eigen::Matrix<uint, -1, 1>::Random(1, 1)[0] % 200);
+    yw2[n] = -abs(Eigen::Matrix<int, -1, 1>::Random(1, 1)[0] % 200);
   }
   Eigen::Matrix<double, -1, -1> x = Eigen::Matrix<double, -1, -1>::Random(N, M);
   Eigen::Matrix<double, -1, -1> xw1
