@@ -135,7 +135,7 @@ pipeline {
         stage('Always-run tests part 1') {
             parallel {
                 stage('Linux Unit with MPI') {
-                    agent { label 'linux' }
+                    agent { label 'linux && mpi' }
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
