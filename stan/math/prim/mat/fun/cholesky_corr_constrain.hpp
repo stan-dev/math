@@ -12,8 +12,8 @@ namespace stan {
 namespace math {
 
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-cholesky_corr_constrain(const Eigen::Matrix<T, Eigen::Dynamic, 1> &y, int K) {
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_corr_constrain(
+    const Eigen::Matrix<T, Eigen::Dynamic, 1> &y, int K) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::sqrt;
@@ -46,9 +46,8 @@ cholesky_corr_constrain(const Eigen::Matrix<T, Eigen::Dynamic, 1> &y, int K) {
 
 // FIXME to match above after debugged
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-cholesky_corr_constrain(const Eigen::Matrix<T, Eigen::Dynamic, 1> &y, int K,
-                        T &lp) {
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_corr_constrain(
+    const Eigen::Matrix<T, Eigen::Dynamic, 1> &y, int K, T &lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::sqrt;
@@ -80,6 +79,6 @@ cholesky_corr_constrain(const Eigen::Matrix<T, Eigen::Dynamic, 1> &y, int K,
   return x;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -60,6 +60,6 @@ beta_proportion_rng(const T_loc &mu, const T_prec &kappa, RNG &rng) {
   return output.data();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

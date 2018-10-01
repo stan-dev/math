@@ -28,6 +28,6 @@ void derivative(const F &f, const T &x, T &fx, T &dfx_dx) {
   dfx_dx = fx_fvar.d_;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -14,7 +14,8 @@ namespace math {
  * @return Cosine of x.
  */
 struct cos_fun {
-  template <typename T> static inline T fun(const T &x) {
+  template <typename T>
+  static inline T fun(const T &x) {
     using std::cos;
     return cos(x);
   }
@@ -31,7 +32,7 @@ inline typename apply_scalar_unary<cos_fun, T>::return_t cos(const T &x) {
   return apply_scalar_unary<cos_fun, T>::apply(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

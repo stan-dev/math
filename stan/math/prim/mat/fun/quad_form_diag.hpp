@@ -35,6 +35,6 @@ quad_form_diag(const Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> &mat,
   return result;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -7,7 +7,7 @@
 #include <vector>
 
 class GammaTestRig : public VectorRealRNGTestRig {
-public:
+ public:
   GammaTestRig()
       : VectorRealRNGTestRig(10000, 10, {1.0, 0.5, 1.3, 2.0}, {1, 2, 3},
                              {-2.5, -1.7, -0.1, 0.0}, {-3, -2, -1, 0},

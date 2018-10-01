@@ -43,9 +43,8 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_n, typename T_N, typename T_size1, typename T_size2>
-typename return_type<T_size1, T_size2>::type
-beta_binomial_lcdf(const T_n &n, const T_N &N, const T_size1 &alpha,
-                   const T_size2 &beta) {
+typename return_type<T_size1, T_size2>::type beta_binomial_lcdf(
+    const T_n &n, const T_N &N, const T_size1 &alpha, const T_size2 &beta) {
   static const char *function = "beta_binomial_lcdf";
   typedef typename stan::partials_return_type<T_n, T_N, T_size1, T_size2>::type
       T_partials_return;
@@ -124,13 +123,15 @@ beta_binomial_lcdf(const T_n &n, const T_N &N, const T_size1 &alpha,
                1 - nu, (T_partials_return)1);
     }
     if (!is_constant_struct<T_size1>::value) {
-      const T_partials_return g = -C * (digamma(mu) - digammaOne + dF[1] / F -
-                                        digamma(alpha_dbl) + digammaTwo);
+      const T_partials_return g = -C
+                                  * (digamma(mu) - digammaOne + dF[1] / F
+                                     - digamma(alpha_dbl) + digammaTwo);
       ops_partials.edge1_.partials_[i] += g / Pi;
     }
     if (!is_constant_struct<T_size2>::value) {
-      const T_partials_return g = -C * (digamma(nu) - digammaOne - dF[4] / F -
-                                        digamma(beta_dbl) + digammaTwo);
+      const T_partials_return g = -C
+                                  * (digamma(nu) - digammaOne - dF[4] / F
+                                     - digamma(beta_dbl) + digammaTwo);
       ops_partials.edge2_.partials_[i] += g / Pi;
     }
   }
@@ -138,6 +139,6 @@ beta_binomial_lcdf(const T_n &n, const T_N &N, const T_size1 &alpha,
   return ops_partials.build(P);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

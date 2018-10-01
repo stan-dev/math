@@ -20,7 +20,7 @@ struct common_type<std::vector<T1>, std::vector<T2>> {
   typedef std::vector<typename common_type<T1, T2>::type> type;
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

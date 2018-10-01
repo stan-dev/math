@@ -12,14 +12,16 @@ namespace stan {
 namespace math {
 
 namespace {
-template <typename T_y, bool is_vec> struct finite {
+template <typename T_y, bool is_vec>
+struct finite {
   static void check(const char *function, const char *name, const T_y &y) {
     if (!(boost::math::isfinite)(value_of_rec(y)))
       domain_error(function, name, y, "is ", ", but must be finite!");
   }
 };
 
-template <typename T_y> struct finite<T_y, true> {
+template <typename T_y>
+struct finite<T_y, true> {
   static void check(const char *function, const char *name, const T_y &y) {
     using stan::length;
     for (size_t n = 0; n < length(y); n++) {
@@ -28,7 +30,7 @@ template <typename T_y> struct finite<T_y, true> {
     }
   }
 };
-} // namespace
+}  // namespace
 
 /**
  * Check if <code>y</code> is finite.
@@ -49,6 +51,6 @@ template <typename T_y>
 inline void check_finite(const char *function, const char *name, const T_y &y) {
   finite<T_y, is_vector_like<T_y>::value>::check(function, name, y);
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

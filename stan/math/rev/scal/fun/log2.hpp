@@ -10,11 +10,11 @@ namespace math {
 
 namespace {
 class log2_vari : public op_v_vari {
-public:
+ public:
   explicit log2_vari(vari *avi) : op_v_vari(log2(avi->val_), avi) {}
   void chain() { avi_->adj_ += adj_ / (LOG_2 * avi_->val_); }
 };
-} // namespace
+}  // namespace
 
 /**
  * Returns the base 2 logarithm of the specified variable (C99).
@@ -48,6 +48,6 @@ public:
  */
 inline var log2(const var &a) { return var(new log2_vari(a.vi_)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

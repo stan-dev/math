@@ -9,11 +9,12 @@
 namespace stan {
 namespace math {
 
-template <typename T> inline fvar<T> asinh(const fvar<T> &x) {
+template <typename T>
+inline fvar<T> asinh(const fvar<T> &x) {
   using std::sqrt;
   return fvar<T>(asinh(x.val_), x.d_ / sqrt(square(x.val_) + 1));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

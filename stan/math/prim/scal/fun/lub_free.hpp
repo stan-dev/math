@@ -43,8 +43,8 @@ namespace math {
  *   greater than the upper bound
  */
 template <typename T, typename L, typename U>
-inline typename boost::math::tools::promote_args<T, L, U>::type
-lub_free(const T &y, const L &lb, const U &ub) {
+inline typename boost::math::tools::promote_args<T, L, U>::type lub_free(
+    const T &y, const L &lb, const U &ub) {
   check_bounded<T, L, U>("lub_free", "Bounded variable", y, lb, ub);
   if (lb == -std::numeric_limits<double>::infinity())
     return ub_free(y, ub);
@@ -53,6 +53,6 @@ lub_free(const T &y, const L &lb, const U &ub) {
   return logit((y - lb) / (ub - lb));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

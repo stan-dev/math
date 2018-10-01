@@ -11,11 +11,11 @@ namespace math {
 
 namespace {
 class lgamma_vari : public op_v_vari {
-public:
+ public:
   lgamma_vari(double value, vari *avi) : op_v_vari(value, avi) {}
   void chain() { avi_->adj_ += adj_ * digamma(avi_->val_); }
 };
-} // namespace
+}  // namespace
 
 /**
  * The log gamma function for variables (C99).
@@ -31,6 +31,6 @@ inline var lgamma(const var &a) {
   return var(new lgamma_vari(lgamma(a.val()), a.vi_));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

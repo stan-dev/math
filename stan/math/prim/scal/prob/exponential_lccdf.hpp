@@ -23,8 +23,8 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_inv_scale>
-typename return_type<T_y, T_inv_scale>::type
-exponential_lccdf(const T_y &y, const T_inv_scale &beta) {
+typename return_type<T_y, T_inv_scale>::type exponential_lccdf(
+    const T_y &y, const T_inv_scale &beta) {
   typedef typename stan::partials_return_type<T_y, T_inv_scale>::type
       T_partials_return;
 
@@ -58,6 +58,6 @@ exponential_lccdf(const T_y &y, const T_inv_scale &beta) {
   return ops_partials.build(ccdf_log);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

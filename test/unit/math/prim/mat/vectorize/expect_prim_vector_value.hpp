@@ -5,7 +5,8 @@
 #include <test/unit/math/prim/mat/vectorize/expect_val_eq.hpp>
 #include <vector>
 
-template <typename F> void expect_prim_vector_value() {
+template <typename F>
+void expect_prim_vector_value() {
   using Eigen::VectorXd;
   using std::vector;
 

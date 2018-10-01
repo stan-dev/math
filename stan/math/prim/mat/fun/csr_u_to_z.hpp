@@ -29,6 +29,6 @@ inline int csr_u_to_z(const std::vector<int> &u, int i) {
   return u[i + 1] - u[i];
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

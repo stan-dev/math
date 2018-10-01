@@ -34,6 +34,6 @@ namespace math {
  */
 inline var abs(const var &a) { return fabs(a); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -10,7 +10,7 @@ namespace math {
 namespace internal {
 template <typename ViewElt, typename OpElt, int R, int C>
 class empty_broadcast_array<ViewElt, Eigen::Matrix<OpElt, R, C>> {
-public:
+ public:
   empty_broadcast_array() {}
   /**
    * Not implemented so cannot be called.
@@ -41,7 +41,7 @@ public:
    */
   Eigen::Matrix<ViewElt, R, 1> &col(int /*i*/);
 };
-} // namespace internal
-} // namespace math
-} // namespace stan
+}  // namespace internal
+}  // namespace math
+}  // namespace stan
 #endif

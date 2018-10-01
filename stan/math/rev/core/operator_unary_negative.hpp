@@ -11,7 +11,7 @@ namespace math {
 
 namespace {
 class neg_vari : public op_v_vari {
-public:
+ public:
   explicit neg_vari(vari *avi) : op_v_vari(-(avi->val_), avi) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_)))
@@ -20,7 +20,7 @@ public:
       avi_->adj_ -= adj_;
   }
 };
-} // namespace
+}  // namespace
 
 /**
  * Unary negation operator for variables (C++).
@@ -48,6 +48,6 @@ public:
  */
 inline var operator-(const var &a) { return var(new neg_vari(a.vi_)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

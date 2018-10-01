@@ -7,7 +7,7 @@
 #include <vector>
 
 class StudentTTestRig : public VectorRealRNGTestRig {
-public:
+ public:
   StudentTTestRig()
       : VectorRealRNGTestRig(10000, 10, {1.1, 2.0, 2.5, 3.1}, {1, 2, 3, 4},
                              {-1.7, -0.5, -2.5, 0.0}, {-2, -1, -3, 0},

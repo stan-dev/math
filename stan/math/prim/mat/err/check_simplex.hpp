@@ -65,6 +65,6 @@ void check_simplex(const char *function, const char *name,
     }
   }
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

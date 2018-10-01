@@ -44,6 +44,6 @@ void check_unit_vector(const char *function, const char *name,
   }
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

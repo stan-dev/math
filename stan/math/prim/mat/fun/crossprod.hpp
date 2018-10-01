@@ -17,6 +17,6 @@ inline matrix_d crossprod(const matrix_d &M) {
   return tcrossprod(static_cast<matrix_d>(M.transpose()));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -6,7 +6,8 @@
 #include <test/unit/math/mix/mat/vectorize/expect_mix_values.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_types.hpp>
 
-template <typename T> class mix_scalar_unary_test : public ::testing::Test {};
+template <typename T>
+class mix_scalar_unary_test : public ::testing::Test {};
 
 TYPED_TEST_CASE_P(mix_scalar_unary_test);
 

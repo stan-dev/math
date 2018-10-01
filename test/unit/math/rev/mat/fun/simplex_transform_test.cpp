@@ -86,8 +86,8 @@ TEST(AgradRevMatrix, simplex_constrain_analytical_gradients) {
 
   out.grad();
 
-  EXPECT_FLOAT_EQ(yv(0).adj(), diagonal_of_jacobian(0) * (1 - zk(3)) *
-                                   (1 - zk(2)) * (1 - zk(1)));
+  EXPECT_FLOAT_EQ(yv(0).adj(), diagonal_of_jacobian(0) * (1 - zk(3))
+                                   * (1 - zk(2)) * (1 - zk(1)));
   EXPECT_FLOAT_EQ(yv(1).adj(),
                   diagonal_of_jacobian(1) * (1 - zk(3)) * (1 - zk(2)));
   EXPECT_FLOAT_EQ(yv(2).adj(), diagonal_of_jacobian(2) * (1 - zk(3)));
@@ -132,8 +132,8 @@ TEST(prob_transform, simplex_constrain_analytical_grads_rng) {
 
     out.grad();
 
-    EXPECT_FLOAT_EQ(yv(0).adj(), diagonal_of_jacobian(0) * (1 - zk(3)) *
-                                     (1 - zk(2)) * (1 - zk(1)));
+    EXPECT_FLOAT_EQ(yv(0).adj(), diagonal_of_jacobian(0) * (1 - zk(3))
+                                     * (1 - zk(2)) * (1 - zk(1)));
     EXPECT_FLOAT_EQ(yv(1).adj(),
                     diagonal_of_jacobian(1) * (1 - zk(3)) * (1 - zk(2)));
     EXPECT_FLOAT_EQ(yv(2).adj(), diagonal_of_jacobian(2) * (1 - zk(3)));

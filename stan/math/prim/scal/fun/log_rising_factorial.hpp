@@ -57,7 +57,7 @@ log_rising_factorial(const T1 &x, const T2 &n) {
   return lgamma(x + n) - lgamma(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

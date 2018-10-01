@@ -19,7 +19,8 @@ struct log_fun {
    * @param[in] x Argument.
    * @return Natural log of x.
    */
-  template <typename T> static inline T fun(const T &x) {
+  template <typename T>
+  static inline T fun(const T &x) {
     using std::log;
     return log(x);
   }
@@ -39,6 +40,6 @@ inline typename apply_scalar_unary<log_fun, T>::return_t log(const T &x) {
   return apply_scalar_unary<log_fun, T>::apply(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

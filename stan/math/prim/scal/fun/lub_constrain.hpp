@@ -39,8 +39,8 @@ namespace math {
  * @throw std::domain_error if ub <= lb
  */
 template <typename T, typename L, typename U>
-inline typename boost::math::tools::promote_args<T, L, U>::type
-lub_constrain(const T &x, const L &lb, const U &ub) {
+inline typename boost::math::tools::promote_args<T, L, U>::type lub_constrain(
+    const T &x, const L &lb, const U &ub) {
   using std::exp;
   check_less("lub_constrain", "lb", lb, ub);
   if (lb == -std::numeric_limits<double>::infinity())
@@ -107,8 +107,8 @@ lub_constrain(const T &x, const L &lb, const U &ub) {
  * @throw std::domain_error if ub <= lb
  */
 template <typename T, typename L, typename U>
-inline typename boost::math::tools::promote_args<T, L, U>::type
-lub_constrain(const T &x, const L &lb, const U &ub, T &lp) {
+inline typename boost::math::tools::promote_args<T, L, U>::type lub_constrain(
+    const T &x, const L &lb, const U &ub, T &lp) {
   using std::exp;
   using std::log;
   check_less("lub_constrain", "lb", lb, ub);
@@ -135,6 +135,6 @@ lub_constrain(const T &x, const L &lb, const U &ub, T &lp) {
   return lb + (ub - lb) * inv_logit_x;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

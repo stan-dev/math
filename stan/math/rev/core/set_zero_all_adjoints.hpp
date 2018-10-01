@@ -18,6 +18,6 @@ static void set_zero_all_adjoints() {
     x->set_zero_adjoint();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

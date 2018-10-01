@@ -9,9 +9,10 @@ namespace stan {
  * Metaprogram to determine if a type has a base scalar
  * type that can be assigned to type double.
  */
-template <typename T> struct is_constant_struct {
+template <typename T>
+struct is_constant_struct {
   enum { value = is_constant<T>::value };
 };
 
-} // namespace stan
+}  // namespace stan
 #endif

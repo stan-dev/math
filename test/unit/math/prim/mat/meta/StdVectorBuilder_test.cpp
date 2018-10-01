@@ -57,8 +57,9 @@ TEST(MetaTraits, StdVectorBuilder_type_check) {
       true, double, std::vector<Eigen::RowVectorXd>>::type>::value;
   EXPECT_TRUE(r);
   r = contains_std_vector<StdVectorBuilder<
-      true, double, std::vector<Eigen::Matrix<double, Eigen::Dynamic,
-                                              Eigen::Dynamic>>>::type>::value;
+      true, double,
+      std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>>::
+                              type>::value;
   EXPECT_TRUE(r);
   r = contains_std_vector<
       StdVectorBuilder<true, double, Eigen::VectorXd>::type>::value;

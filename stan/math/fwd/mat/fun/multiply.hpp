@@ -15,8 +15,8 @@ namespace stan {
 namespace math {
 
 template <typename T, int R1, int C1>
-inline Eigen::Matrix<fvar<T>, R1, C1>
-multiply(const Eigen::Matrix<fvar<T>, R1, C1> &m, const fvar<T> &c) {
+inline Eigen::Matrix<fvar<T>, R1, C1> multiply(
+    const Eigen::Matrix<fvar<T>, R1, C1> &m, const fvar<T> &c) {
   Eigen::Matrix<fvar<T>, R1, C1> res(m.rows(), m.cols());
   for (int i = 0; i < m.rows(); i++) {
     for (int j = 0; j < m.cols(); j++)
@@ -26,8 +26,8 @@ multiply(const Eigen::Matrix<fvar<T>, R1, C1> &m, const fvar<T> &c) {
 }
 
 template <typename T, int R2, int C2>
-inline Eigen::Matrix<fvar<T>, R2, C2>
-multiply(const Eigen::Matrix<fvar<T>, R2, C2> &m, double c) {
+inline Eigen::Matrix<fvar<T>, R2, C2> multiply(
+    const Eigen::Matrix<fvar<T>, R2, C2> &m, double c) {
   Eigen::Matrix<fvar<T>, R2, C2> res(m.rows(), m.cols());
   for (int i = 0; i < m.rows(); i++) {
     for (int j = 0; j < m.cols(); j++)
@@ -37,8 +37,8 @@ multiply(const Eigen::Matrix<fvar<T>, R2, C2> &m, double c) {
 }
 
 template <typename T, int R1, int C1>
-inline Eigen::Matrix<fvar<T>, R1, C1>
-multiply(const Eigen::Matrix<double, R1, C1> &m, const fvar<T> &c) {
+inline Eigen::Matrix<fvar<T>, R1, C1> multiply(
+    const Eigen::Matrix<double, R1, C1> &m, const fvar<T> &c) {
   Eigen::Matrix<fvar<T>, R1, C1> res(m.rows(), m.cols());
   for (int i = 0; i < m.rows(); i++) {
     for (int j = 0; j < m.cols(); j++)
@@ -48,27 +48,27 @@ multiply(const Eigen::Matrix<double, R1, C1> &m, const fvar<T> &c) {
 }
 
 template <typename T, int R1, int C1>
-inline Eigen::Matrix<fvar<T>, R1, C1>
-multiply(const fvar<T> &c, const Eigen::Matrix<fvar<T>, R1, C1> &m) {
+inline Eigen::Matrix<fvar<T>, R1, C1> multiply(
+    const fvar<T> &c, const Eigen::Matrix<fvar<T>, R1, C1> &m) {
   return multiply(m, c);
 }
 
 template <typename T, int R1, int C1>
-inline Eigen::Matrix<fvar<T>, R1, C1>
-multiply(double c, const Eigen::Matrix<fvar<T>, R1, C1> &m) {
+inline Eigen::Matrix<fvar<T>, R1, C1> multiply(
+    double c, const Eigen::Matrix<fvar<T>, R1, C1> &m) {
   return multiply(m, c);
 }
 
 template <typename T, int R1, int C1>
-inline Eigen::Matrix<fvar<T>, R1, C1>
-multiply(const fvar<T> &c, const Eigen::Matrix<double, R1, C1> &m) {
+inline Eigen::Matrix<fvar<T>, R1, C1> multiply(
+    const fvar<T> &c, const Eigen::Matrix<double, R1, C1> &m) {
   return multiply(m, c);
 }
 
 template <typename T, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<fvar<T>, R1, C2>
-multiply(const Eigen::Matrix<fvar<T>, R1, C1> &m1,
-         const Eigen::Matrix<fvar<T>, R2, C2> &m2) {
+inline Eigen::Matrix<fvar<T>, R1, C2> multiply(
+    const Eigen::Matrix<fvar<T>, R1, C1> &m1,
+    const Eigen::Matrix<fvar<T>, R2, C2> &m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
   Eigen::Matrix<fvar<T>, R1, C2> result(m1.rows(), m2.cols());
   for (size_type i = 0; i < m1.rows(); i++) {
@@ -82,9 +82,9 @@ multiply(const Eigen::Matrix<fvar<T>, R1, C1> &m1,
 }
 
 template <typename T, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<fvar<T>, R1, C2>
-multiply(const Eigen::Matrix<fvar<T>, R1, C1> &m1,
-         const Eigen::Matrix<double, R2, C2> &m2) {
+inline Eigen::Matrix<fvar<T>, R1, C2> multiply(
+    const Eigen::Matrix<fvar<T>, R1, C1> &m1,
+    const Eigen::Matrix<double, R2, C2> &m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
   Eigen::Matrix<fvar<T>, R1, C2> result(m1.rows(), m2.cols());
   for (size_type i = 0; i < m1.rows(); i++) {
@@ -98,9 +98,9 @@ multiply(const Eigen::Matrix<fvar<T>, R1, C1> &m1,
 }
 
 template <typename T, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<fvar<T>, R1, C2>
-multiply(const Eigen::Matrix<double, R1, C1> &m1,
-         const Eigen::Matrix<fvar<T>, R2, C2> &m2) {
+inline Eigen::Matrix<fvar<T>, R1, C2> multiply(
+    const Eigen::Matrix<double, R1, C1> &m1,
+    const Eigen::Matrix<fvar<T>, R2, C2> &m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
   Eigen::Matrix<fvar<T>, R1, C2> result(m1.rows(), m2.cols());
   for (size_type i = 0; i < m1.rows(); i++) {
@@ -134,6 +134,6 @@ inline fvar<T> multiply(const Eigen::Matrix<double, 1, C1> &rv,
   return dot_product(rv, v);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

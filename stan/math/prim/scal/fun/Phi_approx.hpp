@@ -32,7 +32,7 @@ inline double Phi_approx(double x) {
  */
 inline double Phi_approx(int x) { return Phi_approx(static_cast<double>(x)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

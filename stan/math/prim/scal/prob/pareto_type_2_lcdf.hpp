@@ -23,11 +23,12 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-typename return_type<T_y, T_loc, T_scale, T_shape>::type
-pareto_type_2_lcdf(const T_y &y, const T_loc &mu, const T_scale &lambda,
-                   const T_shape &alpha) {
-  typedef typename stan::partials_return_type<T_y, T_loc, T_scale,
-                                              T_shape>::type T_partials_return;
+typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lcdf(
+    const T_y &y, const T_loc &mu, const T_scale &lambda,
+    const T_shape &alpha) {
+  typedef
+      typename stan::partials_return_type<T_y, T_loc, T_scale, T_shape>::type
+          T_partials_return;
 
   if (size_zero(y, mu, lambda, alpha))
     return 0.0;
@@ -66,9 +67,9 @@ pareto_type_2_lcdf(const T_y &y, const T_loc &mu, const T_scale &lambda,
       log_1p_y_over_lambda(N);
 
   for (size_t i = 0; i < N; i++) {
-    const T_partials_return temp =
-        1.0 +
-        (value_of(y_vec[i]) - value_of(mu_vec[i])) / value_of(lambda_vec[i]);
+    const T_partials_return temp = 1.0
+                                   + (value_of(y_vec[i]) - value_of(mu_vec[i]))
+                                         / value_of(lambda_vec[i]);
     const T_partials_return p1_pow_alpha = pow(temp, value_of(alpha_vec[i]));
     cdf_log[i] = log1m(1.0 / p1_pow_alpha);
 
@@ -84,9 +85,8 @@ pareto_type_2_lcdf(const T_y &y, const T_loc &mu, const T_scale &lambda,
     const T_partials_return lambda_dbl = value_of(lambda_vec[n]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
 
-    const T_partials_return grad_1_2 = alpha_dbl *
-                                       inv_p1_pow_alpha_minus_one[n] /
-                                       (lambda_dbl - mu_dbl + y_dbl);
+    const T_partials_return grad_1_2 = alpha_dbl * inv_p1_pow_alpha_minus_one[n]
+                                       / (lambda_dbl - mu_dbl + y_dbl);
 
     P += cdf_log[n];
 
@@ -95,15 +95,15 @@ pareto_type_2_lcdf(const T_y &y, const T_loc &mu, const T_scale &lambda,
     if (!is_constant_struct<T_loc>::value)
       ops_partials.edge2_.partials_[n] -= grad_1_2;
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge3_.partials_[n] +=
-          (mu_dbl - y_dbl) * grad_1_2 / lambda_dbl;
+      ops_partials.edge3_.partials_[n]
+          += (mu_dbl - y_dbl) * grad_1_2 / lambda_dbl;
     if (!is_constant_struct<T_shape>::value)
-      ops_partials.edge4_.partials_[n] +=
-          log_1p_y_over_lambda[n] * inv_p1_pow_alpha_minus_one[n];
+      ops_partials.edge4_.partials_[n]
+          += log_1p_y_over_lambda[n] * inv_p1_pow_alpha_minus_one[n];
   }
   return ops_partials.build(P);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -34,8 +34,8 @@ namespace math {
  *    factor_cov_matrix() on log scale are unconstrained.
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1>
-corr_matrix_free(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &y) {
+Eigen::Matrix<T, Eigen::Dynamic, 1> corr_matrix_free(
+    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &y) {
   check_square("corr_matrix_free", "y", y);
   check_nonzero_size("corr_matrix_free", "y", y);
 
@@ -57,6 +57,6 @@ corr_matrix_free(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &y) {
   }
   return x.matrix();
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

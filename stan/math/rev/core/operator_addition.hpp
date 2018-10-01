@@ -12,7 +12,7 @@ namespace math {
 
 namespace {
 class add_vv_vari : public op_vv_vari {
-public:
+ public:
   add_vv_vari(vari *avi, vari *bvi)
       : op_vv_vari(avi->val_ + bvi->val_, avi, bvi) {}
   void chain() {
@@ -27,7 +27,7 @@ public:
 };
 
 class add_vd_vari : public op_vd_vari {
-public:
+ public:
   add_vd_vari(vari *avi, double b) : op_vd_vari(avi->val_ + b, avi, b) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_) || is_nan(bd_)))
@@ -36,7 +36,7 @@ public:
       avi_->adj_ += adj_;
   }
 };
-} // namespace
+}  // namespace
 
 /**
  * Addition operator for variables (C++).
@@ -111,9 +111,9 @@ inline var operator+(const var &a, double b) {
 inline var operator+(double a, const var &b) {
   if (a == 0.0)
     return b;
-  return var(new add_vd_vari(b.vi_, a)); // by symmetry
+  return var(new add_vd_vari(b.vi_, a));  // by symmetry
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

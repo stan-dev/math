@@ -30,6 +30,6 @@ lkj_corr_cholesky_log(
   return lkj_corr_cholesky_lpdf<T_covar, T_shape>(L, eta);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

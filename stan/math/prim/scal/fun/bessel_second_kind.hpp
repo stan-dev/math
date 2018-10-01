@@ -35,11 +35,12 @@ namespace math {
    \f]
  *
  */
-template <typename T2> inline T2 bessel_second_kind(int v, const T2 z) {
+template <typename T2>
+inline T2 bessel_second_kind(int v, const T2 z) {
   return boost::math::cyl_neumann(v, z);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

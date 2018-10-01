@@ -16,6 +16,6 @@ inline Eigen::Matrix<T, R, 1> rows_dot_self(const Eigen::Matrix<T, R, C> &x) {
   return x.rowwise().squaredNorm();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

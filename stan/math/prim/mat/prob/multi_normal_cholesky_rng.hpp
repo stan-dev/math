@@ -43,10 +43,12 @@ multi_normal_cholesky_rng(
   int size_mu_old = size_mu;
   for (size_t i = 1; i < N; i++) {
     int size_mu_new = mu_vec[i].size();
-    check_size_match(function, "Size of one of the vectors of "
-                               "the location variable",
-                     size_mu_new, "Size of another vector of the "
-                                  "location variable",
+    check_size_match(function,
+                     "Size of one of the vectors of "
+                     "the location variable",
+                     size_mu_new,
+                     "Size of another vector of the "
+                     "location variable",
                      size_mu_old);
     size_mu_old = size_mu_new;
   }
@@ -70,6 +72,6 @@ multi_normal_cholesky_rng(
 
   return output.data();
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

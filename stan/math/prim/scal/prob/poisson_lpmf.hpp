@@ -65,13 +65,13 @@ typename return_type<T_rate>::type poisson_lpmf(const T_n &n,
       if (include_summand<propto>::value)
         logp -= lgamma(n_vec[i] + 1.0);
       if (include_summand<propto, T_rate>::value)
-        logp += multiply_log(n_vec[i], value_of(lambda_vec[i])) -
-                value_of(lambda_vec[i]);
+        logp += multiply_log(n_vec[i], value_of(lambda_vec[i]))
+                - value_of(lambda_vec[i]);
     }
 
     if (!is_constant_struct<T_rate>::value)
-      ops_partials.edge1_.partials_[i] +=
-          n_vec[i] / value_of(lambda_vec[i]) - 1.0;
+      ops_partials.edge1_.partials_[i]
+          += n_vec[i] / value_of(lambda_vec[i]) - 1.0;
   }
   return ops_partials.build(logp);
 }
@@ -82,6 +82,6 @@ inline typename return_type<T_rate>::type poisson_lpmf(const T_n &n,
   return poisson_lpmf<false>(n, lambda);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

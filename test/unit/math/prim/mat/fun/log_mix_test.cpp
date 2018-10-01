@@ -13,7 +13,8 @@ using stan::math::log_mix;
 using stan::math::row_vector_d;
 using stan::math::vector_d;
 
-template <typename T_a, typename T_b> void val_test(T_a a, T_b b) {
+template <typename T_a, typename T_b>
+void val_test(T_a a, T_b b) {
   a[0] = 0.321;
   a[1] = 0.115;
   a[2] = 0.261;
@@ -92,8 +93,8 @@ TEST(MatrixFunctions, LogMix_Values) {
   dens_2 << -5.65, -7.62;
 
   double log_mix_stan_1 = log_mix(prob, dens);
-  double log_mix_sumexp =
-      stan::math::log_sum_exp((stan::math::log(prob) + dens).eval());
+  double log_mix_sumexp
+      = stan::math::log_sum_exp((stan::math::log(prob) + dens).eval());
 
   double log_mix_stan_2 = log_mix(prob_2, dens_2);
   double log_mix_stan_scal = log_mix(0.1, -5.65, -7.62);

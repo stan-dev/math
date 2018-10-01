@@ -25,19 +25,20 @@ namespace math {
  * @return <code>true</code> if pointer is aligned.
  * @tparam Type of object to which pointer points.
  */
-template <typename T> bool is_aligned(T *ptr, unsigned int bytes_aligned) {
+template <typename T>
+bool is_aligned(T *ptr, unsigned int bytes_aligned) {
   return (reinterpret_cast<uintptr_t>(ptr) % bytes_aligned) == 0U;
 }
 
 namespace {
-const size_t DEFAULT_INITIAL_NBYTES = 1 << 16; // 64KB
+const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
 
 // FIXME: enforce alignment
 // big fun to inline, but only called twice
 inline char *eight_byte_aligned_malloc(size_t size) {
   char *ptr = static_cast<char *>(malloc(size));
   if (!ptr)
-    return ptr; // malloc failed to alloc
+    return ptr;  // malloc failed to alloc
   if (!is_aligned(ptr, 8U)) {
     std::stringstream s;
     s << "invalid alignment to 8 bytes, ptr="
@@ -46,7 +47,7 @@ inline char *eight_byte_aligned_malloc(size_t size) {
   }
   return ptr;
 }
-} // namespace
+}  // namespace
 
 /**
  * An instance of this class provides a memory pool through
@@ -68,14 +69,14 @@ inline char *eight_byte_aligned_malloc(size_t size) {
  * contain an 8-byte member or a virtual function.
  */
 class stack_alloc {
-private:
-  std::vector<char *> blocks_; // storage for blocks,
-                               // may be bigger than cur_block_
-  std::vector<size_t> sizes_;  // could store initial & shift for others
-  size_t cur_block_;           // index into blocks_ for next alloc
-  char *cur_block_end_;        // ptr to cur_block_ptr_ + sizes_[cur_block_]
-  char *next_loc_;             // ptr to next available spot in cur
-                               // block
+ private:
+  std::vector<char *> blocks_;  // storage for blocks,
+                                // may be bigger than cur_block_
+  std::vector<size_t> sizes_;   // could store initial & shift for others
+  size_t cur_block_;            // index into blocks_ for next alloc
+  char *cur_block_end_;         // ptr to cur_block_ptr_ + sizes_[cur_block_]
+  char *next_loc_;              // ptr to next available spot in cur
+                                // block
   // next three for keeping track of nested allocations on top of stack:
   std::vector<size_t> nested_cur_blocks_;
   std::vector<char *> nested_next_locs_;
@@ -113,7 +114,7 @@ private:
     return result;
   }
 
-public:
+ public:
   /**
    * Construct a resizable stack allocator initially holding the
    * specified number of bytes.
@@ -125,10 +126,12 @@ public:
    */
   explicit stack_alloc(size_t initial_nbytes = DEFAULT_INITIAL_NBYTES)
       : blocks_(1, eight_byte_aligned_malloc(initial_nbytes)),
-        sizes_(1, initial_nbytes), cur_block_(0),
-        cur_block_end_(blocks_[0] + initial_nbytes), next_loc_(blocks_[0]) {
+        sizes_(1, initial_nbytes),
+        cur_block_(0),
+        cur_block_end_(blocks_[0] + initial_nbytes),
+        next_loc_(blocks_[0]) {
     if (!blocks_[0])
-      throw std::bad_alloc(); // no msg allowed in bad_alloc ctor
+      throw std::bad_alloc();  // no msg allowed in bad_alloc ctor
   }
 
   /**
@@ -174,7 +177,8 @@ public:
    * @param[in] n size of array to allocate.
    * @return new array allocated on the arena.
    */
-  template <typename T> inline T *alloc_array(size_t n) {
+  template <typename T>
+  inline T *alloc_array(size_t n) {
     return static_cast<T *>(alloc(n * sizeof(T)));
   }
 
@@ -268,6 +272,6 @@ public:
   }
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -22,8 +22,11 @@ namespace math {
  * @param[in] y value
  * @return 1 if value is greater than 0 and 0 otherwise
  */
-template <typename T> inline int int_step(const T &y) { return y > 0; }
+template <typename T>
+inline int int_step(const T &y) {
+  return y > 0;
+}
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

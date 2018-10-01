@@ -76,8 +76,8 @@ namespace math {
  * lengths.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_cut>
-typename return_type<T_loc, T_cut>::type
-ordered_logistic_lpmf(const T_y &y, const T_loc &lambda, const T_cut &c) {
+typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
+    const T_y &y, const T_loc &lambda, const T_cut &c) {
   static const char *function = "ordered_logistic";
 
   typedef
@@ -149,12 +149,12 @@ ordered_logistic_lpmf(const T_y &y, const T_loc &lambda, const T_cut &c) {
         ops_partials.edge2_.partials_vec_[n](K - 2) -= d;
 
     } else {
-      T_partials_return d1 =
-          inv(1 - exp(c_dbl[y_vec[n] - 1] - c_dbl[y_vec[n] - 2])) -
-          inv_logit(c_dbl[y_vec[n] - 2] - lam_dbl);
-      T_partials_return d2 =
-          inv(1 - exp(c_dbl[y_vec[n] - 2] - c_dbl[y_vec[n] - 1])) -
-          inv_logit(c_dbl[y_vec[n] - 1] - lam_dbl);
+      T_partials_return d1
+          = inv(1 - exp(c_dbl[y_vec[n] - 1] - c_dbl[y_vec[n] - 2]))
+            - inv_logit(c_dbl[y_vec[n] - 2] - lam_dbl);
+      T_partials_return d2
+          = inv(1 - exp(c_dbl[y_vec[n] - 2] - c_dbl[y_vec[n] - 1]))
+            - inv_logit(c_dbl[y_vec[n] - 1] - lam_dbl);
       logp += log_inv_logit_diff(lam_dbl - c_dbl[y_vec[n] - 2],
                                  lam_dbl - c_dbl[y_vec[n] - 1]);
 
@@ -171,11 +171,11 @@ ordered_logistic_lpmf(const T_y &y, const T_loc &lambda, const T_cut &c) {
 }
 
 template <typename T_y, typename T_loc, typename T_cut>
-typename return_type<T_loc, T_cut>::type
-ordered_logistic_lpmf(const T_y &y, const T_loc &lambda, const T_cut &c) {
+typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
+    const T_y &y, const T_loc &lambda, const T_cut &c) {
   return ordered_logistic_lpmf<false>(y, lambda, c);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

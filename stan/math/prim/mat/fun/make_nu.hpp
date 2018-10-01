@@ -24,7 +24,7 @@ Eigen::Array<T, Eigen::Dynamic, 1> make_nu(const T &eta, size_t K) {
   // Best (1978) implies nu = 2 * alpha for the dof in a t
   // distribution that generates a beta variate on (-1, 1)
   Array<T, Dynamic, 1> nu(K * (K - 1) / 2);
-  T alpha = eta + 0.5 * (K - 2.0); // from Lewandowski et. al.
+  T alpha = eta + 0.5 * (K - 2.0);  // from Lewandowski et. al.
   T alpha2 = 2.0 * alpha;
   for (size_type j = 0; j < (K - 1); ++j)
     nu(j) = alpha2;
@@ -38,6 +38,6 @@ Eigen::Array<T, Eigen::Dynamic, 1> make_nu(const T &eta, size_t K) {
   return nu;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -6,7 +6,10 @@
 
 namespace stan {
 
-template <> struct partials_type<stan::math::var> { typedef double type; };
+template <>
+struct partials_type<stan::math::var> {
+  typedef double type;
+};
 
-} // namespace stan
+}  // namespace stan
 #endif

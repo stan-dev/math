@@ -116,6 +116,6 @@ inline var fmin(double a, const var &b) {
   return b <= a ? b : var(a);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

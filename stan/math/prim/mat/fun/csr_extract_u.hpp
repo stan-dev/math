@@ -22,9 +22,9 @@ namespace math {
  * @return Vector of indexes into non-zero entries of A.
  */
 template <typename T>
-const std::vector<int>
-csr_extract_u(const Eigen::SparseMatrix<T, Eigen::RowMajor> &A) {
-  std::vector<int> u(A.outerSize() + 1); // last entry is garbage.
+const std::vector<int> csr_extract_u(
+    const Eigen::SparseMatrix<T, Eigen::RowMajor> &A) {
+  std::vector<int> u(A.outerSize() + 1);  // last entry is garbage.
   for (int nze = 0; nze <= A.outerSize(); ++nze)
     u[nze] = *(A.outerIndexPtr() + nze) + stan::error_index::value;
   return u;
@@ -44,9 +44,9 @@ const std::vector<int> csr_extract_u(const Eigen::Matrix<T, R, C> &A) {
   return u;
 }
 
-/** @} */ // end of csr_format group
+/** @} */  // end of csr_format group
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

@@ -95,6 +95,6 @@ multi_gp_lpdf(
   return multi_gp_lpdf<false>(y, Sigma, w);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -17,14 +17,22 @@ namespace stan {
 namespace math {
 
 namespace {
-template <typename T> struct dot_product_store_type;
+template <typename T>
+struct dot_product_store_type;
 
-template <> struct dot_product_store_type<var> { typedef vari **type; };
+template <>
+struct dot_product_store_type<var> {
+  typedef vari **type;
+};
 
-template <> struct dot_product_store_type<double> { typedef double *type; };
+template <>
+struct dot_product_store_type<double> {
+  typedef double *type;
+};
 
-template <typename T1, typename T2> class dot_product_vari : public vari {
-protected:
+template <typename T1, typename T2>
+class dot_product_vari : public vari {
+ protected:
   typename dot_product_store_type<T1>::type v1_;
   typename dot_product_store_type<T2>::type v2_;
   size_t length_;
@@ -121,7 +129,7 @@ protected:
     }
   }
 
-public:
+ public:
   dot_product_vari(typename dot_product_store_type<T1>::type v1,
                    typename dot_product_store_type<T2>::type v2, size_t length)
       : vari(var_dot(v1, v2, length)), v1_(v1), v2_(v2), length_(length) {}
@@ -177,7 +185,7 @@ public:
   }
   virtual void chain() { chain(v1_, v2_); }
 };
-} // namespace
+}  // namespace
 
 /**
  * Returns the dot product.
@@ -228,6 +236,6 @@ dot_product(const std::vector<T1> &v1, const std::vector<T2> &v2) {
   return var(new dot_product_vari<T1, T2>(&v1[0], &v2[0], v1.size()));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

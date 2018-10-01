@@ -28,8 +28,8 @@ struct promote_scalar_struct<T, std::vector<S>> {
    * @param x input standard vector.
    * @return standard vector with values promoted from input vector.
    */
-  static std::vector<typename promote_scalar_type<T, S>::type>
-  apply(const std::vector<S> &x) {
+  static std::vector<typename promote_scalar_type<T, S>::type> apply(
+      const std::vector<S> &x) {
     typedef std::vector<typename promote_scalar_type<T, S>::type> return_t;
     typedef typename index_type<return_t>::type idx_t;
     return_t y(x.size());
@@ -39,6 +39,6 @@ struct promote_scalar_struct<T, std::vector<S>> {
   }
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -16,11 +16,13 @@ typedef stan::math::index_type<Eigen::Matrix<double, 1, 1>>::type size_type;
 
 struct empty {};
 
-template <typename T> struct is_empty {
+template <typename T>
+struct is_empty {
   enum { value = false };
 };
 
-template <> struct is_empty<empty> {
+template <>
+struct is_empty<empty> {
   enum { value = true };
 };
 
@@ -49,7 +51,7 @@ std::ostream &operator<<(std::ostream &os, const vector<var> &param) {
   return os;
 }
 
-} // namespace std
+}  // namespace std
 
 // ------------------------------------------------------------
 // default template handles Eigen::Matrix
@@ -105,9 +107,8 @@ fvar<var> get_params<fvar<var>>(const vector<vector<double>> &parameters,
   return param;
 }
 template <>
-fvar<fvar<double>>
-get_params<fvar<fvar<double>>>(const vector<vector<double>> &parameters,
-                               const size_t p) {
+fvar<fvar<double>> get_params<fvar<fvar<double>>>(
+    const vector<vector<double>> &parameters, const size_t p) {
   fvar<fvar<double>> param(0);
   if (p < parameters[0].size()) {
     param = parameters[0][p];
@@ -116,9 +117,8 @@ get_params<fvar<fvar<double>>>(const vector<vector<double>> &parameters,
   return param;
 }
 template <>
-fvar<fvar<var>>
-get_params<fvar<fvar<var>>>(const vector<vector<double>> &parameters,
-                            const size_t p) {
+fvar<fvar<var>> get_params<fvar<fvar<var>>>(
+    const vector<vector<double>> &parameters, const size_t p) {
   fvar<fvar<var>> param(0);
   if (p < parameters[0].size()) {
     param = parameters[0][p];
@@ -144,9 +144,8 @@ vector<int> get_params<vector<int>>(const vector<vector<double>> &parameters,
   return param;
 }
 template <>
-vector<double>
-get_params<vector<double>>(const vector<vector<double>> &parameters,
-                           const size_t p) {
+vector<double> get_params<vector<double>>(
+    const vector<vector<double>> &parameters, const size_t p) {
   vector<double> param(parameters.size());
   for (size_t n = 0; n < parameters.size(); n++)
     if (p < parameters[0].size())
@@ -163,9 +162,8 @@ vector<var> get_params<vector<var>>(const vector<vector<double>> &parameters,
   return param;
 }
 template <>
-vector<fvar<double>>
-get_params<vector<fvar<double>>>(const vector<vector<double>> &parameters,
-                                 const size_t p) {
+vector<fvar<double>> get_params<vector<fvar<double>>>(
+    const vector<vector<double>> &parameters, const size_t p) {
   vector<fvar<double>> param(parameters.size());
   for (size_t n = 0; n < parameters.size(); n++)
     if (p < parameters[0].size()) {
@@ -175,9 +173,8 @@ get_params<vector<fvar<double>>>(const vector<vector<double>> &parameters,
   return param;
 }
 template <>
-vector<fvar<var>>
-get_params<vector<fvar<var>>>(const vector<vector<double>> &parameters,
-                              const size_t p) {
+vector<fvar<var>> get_params<vector<fvar<var>>>(
+    const vector<vector<double>> &parameters, const size_t p) {
   vector<fvar<var>> param(parameters.size());
   for (size_t n = 0; n < parameters.size(); n++)
     if (p < parameters[0].size()) {
@@ -187,9 +184,8 @@ get_params<vector<fvar<var>>>(const vector<vector<double>> &parameters,
   return param;
 }
 template <>
-vector<fvar<fvar<double>>>
-get_params<vector<fvar<fvar<double>>>>(const vector<vector<double>> &parameters,
-                                       const size_t p) {
+vector<fvar<fvar<double>>> get_params<vector<fvar<fvar<double>>>>(
+    const vector<vector<double>> &parameters, const size_t p) {
   vector<fvar<fvar<double>>> param(parameters.size());
   for (size_t n = 0; n < parameters.size(); n++)
     if (p < parameters[0].size()) {
@@ -199,9 +195,8 @@ get_params<vector<fvar<fvar<double>>>>(const vector<vector<double>> &parameters,
   return param;
 }
 template <>
-vector<fvar<fvar<var>>>
-get_params<vector<fvar<fvar<var>>>>(const vector<vector<double>> &parameters,
-                                    const size_t p) {
+vector<fvar<fvar<var>>> get_params<vector<fvar<fvar<var>>>>(
+    const vector<vector<double>> &parameters, const size_t p) {
   vector<fvar<fvar<var>>> param(parameters.size());
   for (size_t n = 0; n < parameters.size(); n++)
     if (p < parameters[0].size()) {
@@ -268,9 +263,8 @@ fvar<var> get_params<fvar<var>>(const vector<vector<double>> &parameters,
   return param;
 }
 template <>
-fvar<fvar<double>>
-get_params<fvar<fvar<double>>>(const vector<vector<double>> &parameters,
-                               const size_t n, const size_t p) {
+fvar<fvar<double>> get_params<fvar<fvar<double>>>(
+    const vector<vector<double>> &parameters, const size_t n, const size_t p) {
   fvar<fvar<double>> param(0);
   if (p < parameters[0].size()) {
     param = parameters[n][p];
@@ -279,9 +273,8 @@ get_params<fvar<fvar<double>>>(const vector<vector<double>> &parameters,
   return param;
 }
 template <>
-fvar<fvar<var>>
-get_params<fvar<fvar<var>>>(const vector<vector<double>> &parameters,
-                            const size_t n, const size_t p) {
+fvar<fvar<var>> get_params<fvar<fvar<var>>>(
+    const vector<vector<double>> &parameters, const size_t n, const size_t p) {
   fvar<fvar<var>> param(0);
   if (p < parameters[0].size()) {
     param = parameters[n][p];
@@ -308,9 +301,9 @@ vector<int> get_params<vector<int>>(const vector<vector<double>> &parameters,
   return param;
 }
 template <>
-vector<double>
-get_params<vector<double>>(const vector<vector<double>> &parameters,
-                           const size_t /*n*/, const size_t p) {
+vector<double> get_params<vector<double>>(
+    const vector<vector<double>> &parameters, const size_t /*n*/,
+    const size_t p) {
   vector<double> param(parameters.size());
   for (size_t i = 0; i < parameters.size(); i++)
     if (p < parameters[0].size())
@@ -327,9 +320,9 @@ vector<var> get_params<vector<var>>(const vector<vector<double>> &parameters,
   return param;
 }
 template <>
-vector<fvar<double>>
-get_params<vector<fvar<double>>>(const vector<vector<double>> &parameters,
-                                 const size_t /*n*/, const size_t p) {
+vector<fvar<double>> get_params<vector<fvar<double>>>(
+    const vector<vector<double>> &parameters, const size_t /*n*/,
+    const size_t p) {
   vector<fvar<double>> param(parameters.size());
   for (size_t i = 0; i < parameters.size(); i++)
     if (p < parameters[0].size()) {
@@ -339,9 +332,9 @@ get_params<vector<fvar<double>>>(const vector<vector<double>> &parameters,
   return param;
 }
 template <>
-vector<fvar<var>>
-get_params<vector<fvar<var>>>(const vector<vector<double>> &parameters,
-                              const size_t /*n*/, const size_t p) {
+vector<fvar<var>> get_params<vector<fvar<var>>>(
+    const vector<vector<double>> &parameters, const size_t /*n*/,
+    const size_t p) {
   vector<fvar<var>> param(parameters.size());
   for (size_t i = 0; i < parameters.size(); i++)
     if (p < parameters[0].size()) {
@@ -351,9 +344,9 @@ get_params<vector<fvar<var>>>(const vector<vector<double>> &parameters,
   return param;
 }
 template <>
-vector<fvar<fvar<double>>>
-get_params<vector<fvar<fvar<double>>>>(const vector<vector<double>> &parameters,
-                                       const size_t /*n*/, const size_t p) {
+vector<fvar<fvar<double>>> get_params<vector<fvar<fvar<double>>>>(
+    const vector<vector<double>> &parameters, const size_t /*n*/,
+    const size_t p) {
   vector<fvar<fvar<double>>> param(parameters.size());
   for (size_t i = 0; i < parameters.size(); i++)
     if (p < parameters[0].size()) {
@@ -363,9 +356,9 @@ get_params<vector<fvar<fvar<double>>>>(const vector<vector<double>> &parameters,
   return param;
 }
 template <>
-vector<fvar<fvar<var>>>
-get_params<vector<fvar<fvar<var>>>>(const vector<vector<double>> &parameters,
-                                    const size_t /*n*/, const size_t p) {
+vector<fvar<fvar<var>>> get_params<vector<fvar<fvar<var>>>>(
+    const vector<vector<double>> &parameters, const size_t /*n*/,
+    const size_t p) {
   vector<fvar<fvar<var>>> param(parameters.size());
   for (size_t i = 0; i < parameters.size(); i++)
     if (p < parameters[0].size()) {
@@ -437,10 +430,9 @@ fvar<var> get_repeated_params<fvar<var>>(const vector<double> &parameters,
   return param;
 }
 template <>
-fvar<fvar<double>>
-get_repeated_params<fvar<fvar<double>>>(const vector<double> &parameters,
-                                        const size_t p,
-                                        const size_t /*N_REPEAT*/) {
+fvar<fvar<double>> get_repeated_params<fvar<fvar<double>>>(
+    const vector<double> &parameters, const size_t p,
+    const size_t /*N_REPEAT*/) {
   fvar<fvar<double>> param(0);
   if (p < parameters.size()) {
     param = parameters[p];
@@ -449,10 +441,9 @@ get_repeated_params<fvar<fvar<double>>>(const vector<double> &parameters,
   return param;
 }
 template <>
-fvar<fvar<var>>
-get_repeated_params<fvar<fvar<var>>>(const vector<double> &parameters,
-                                     const size_t p,
-                                     const size_t /*N_REPEAT*/) {
+fvar<fvar<var>> get_repeated_params<fvar<fvar<var>>>(
+    const vector<double> &parameters, const size_t p,
+    const size_t /*N_REPEAT*/) {
   fvar<fvar<var>> param(0);
   if (p < parameters.size()) {
     param = parameters[p];
@@ -480,9 +471,8 @@ vector<int> get_repeated_params<vector<int>>(const vector<double> &parameters,
   return param;
 }
 template <>
-vector<double>
-get_repeated_params<vector<double>>(const vector<double> &parameters,
-                                    const size_t p, const size_t N_REPEAT) {
+vector<double> get_repeated_params<vector<double>>(
+    const vector<double> &parameters, const size_t p, const size_t N_REPEAT) {
   vector<double> param(N_REPEAT);
   for (size_t n = 0; n < N_REPEAT; n++)
     if (p < parameters.size())
@@ -512,9 +502,8 @@ vector<fvar<double>> get_repeated_params<vector<fvar<double>>>(
   return param;
 }
 template <>
-vector<fvar<var>>
-get_repeated_params<vector<fvar<var>>>(const vector<double> &parameters,
-                                       const size_t p, const size_t N_REPEAT) {
+vector<fvar<var>> get_repeated_params<vector<fvar<var>>>(
+    const vector<double> &parameters, const size_t p, const size_t N_REPEAT) {
   vector<fvar<var>> param(N_REPEAT);
   for (size_t n = 0; n < N_REPEAT; n++)
     if (p < parameters.size()) {
@@ -603,9 +592,8 @@ fvar<fvar<var>> get_param<fvar<fvar<var>>>(const vector<double> &params,
 // ------------------------------------------------------------
 
 template <typename T>
-typename scalar_type<T>::type
-select_var_param(const vector<vector<double>> &parameters, const size_t n,
-                 const size_t p) {
+typename scalar_type<T>::type select_var_param(
+    const vector<vector<double>> &parameters, const size_t n, const size_t p) {
   typename scalar_type<T>::type param(0);
   if (p < parameters[0].size()) {
     if (is_vector<T>::value && !is_constant_struct<T>::value)
@@ -627,12 +615,12 @@ template <typename T0, typename T1, typename T2, typename T3, typename T4,
           typename T5>
 struct all_scalar {
   enum {
-    value = (!is_vector<T0>::value || is_empty<T0>::value) &&
-            (!is_vector<T1>::value || is_empty<T1>::value) &&
-            (!is_vector<T2>::value || is_empty<T2>::value) &&
-            (!is_vector<T3>::value || is_empty<T3>::value) &&
-            (!is_vector<T4>::value || is_empty<T4>::value) &&
-            (!is_vector<T5>::value || is_empty<T5>::value)
+    value = (!is_vector<T0>::value || is_empty<T0>::value)
+            && (!is_vector<T1>::value || is_empty<T1>::value)
+            && (!is_vector<T2>::value || is_empty<T2>::value)
+            && (!is_vector<T3>::value || is_empty<T3>::value)
+            && (!is_vector<T4>::value || is_empty<T4>::value)
+            && (!is_vector<T5>::value || is_empty<T5>::value)
   };
 };
 
@@ -640,12 +628,12 @@ template <typename T0, typename T1, typename T2, typename T3, typename T4,
           typename T5>
 struct all_constant {
   enum {
-    value = (is_constant_struct<T0>::value || is_empty<T0>::value) &&
-            (is_constant_struct<T1>::value || is_empty<T1>::value) &&
-            (is_constant_struct<T2>::value || is_empty<T2>::value) &&
-            (is_constant_struct<T3>::value || is_empty<T3>::value) &&
-            (is_constant_struct<T4>::value || is_empty<T4>::value) &&
-            (is_constant_struct<T5>::value || is_empty<T5>::value)
+    value = (is_constant_struct<T0>::value || is_empty<T0>::value)
+            && (is_constant_struct<T1>::value || is_empty<T1>::value)
+            && (is_constant_struct<T2>::value || is_empty<T2>::value)
+            && (is_constant_struct<T3>::value || is_empty<T3>::value)
+            && (is_constant_struct<T4>::value || is_empty<T4>::value)
+            && (is_constant_struct<T5>::value || is_empty<T5>::value)
   };
 };
 
@@ -653,12 +641,12 @@ template <typename T0, typename T1, typename T2, typename T3, typename T4,
           typename T5>
 struct all_var {
   enum {
-    value = (!is_constant_struct<T0>::value || is_empty<T0>::value) &&
-            (!is_constant_struct<T1>::value || is_empty<T1>::value) &&
-            (!is_constant_struct<T2>::value || is_empty<T2>::value) &&
-            (!is_constant_struct<T3>::value || is_empty<T3>::value) &&
-            (!is_constant_struct<T4>::value || is_empty<T4>::value) &&
-            (!is_constant_struct<T5>::value || is_empty<T5>::value)
+    value = (!is_constant_struct<T0>::value || is_empty<T0>::value)
+            && (!is_constant_struct<T1>::value || is_empty<T1>::value)
+            && (!is_constant_struct<T2>::value || is_empty<T2>::value)
+            && (!is_constant_struct<T3>::value || is_empty<T3>::value)
+            && (!is_constant_struct<T4>::value || is_empty<T4>::value)
+            && (!is_constant_struct<T5>::value || is_empty<T5>::value)
   };
 };
 
@@ -666,18 +654,23 @@ template <typename T0, typename T1, typename T2, typename T3, typename T4,
           typename T5>
 struct any_vector {
   enum {
-    value = is_vector<T0>::value || is_vector<T1>::value ||
-            is_vector<T2>::value || is_vector<T3>::value ||
-            is_vector<T4>::value || is_vector<T5>::value
+    value = is_vector<T0>::value || is_vector<T1>::value || is_vector<T2>::value
+            || is_vector<T3>::value || is_vector<T4>::value
+            || is_vector<T5>::value
   };
 };
 
 // ------------------------------------------------------------
-template <typename T> void add_var(vector<var> & /*x*/, T & /*p*/) {}
+template <typename T>
+void add_var(vector<var> & /*x*/, T & /*p*/) {}
 
-template <> void add_var<var>(vector<var> &x, var &p) { x.push_back(p); }
+template <>
+void add_var<var>(vector<var> &x, var &p) {
+  x.push_back(p);
+}
 
-template <> void add_var<vector<var>>(vector<var> &x, vector<var> &p) {
+template <>
+void add_var<vector<var>>(vector<var> &x, vector<var> &p) {
   x.insert(x.end(), p.begin(), p.end());
 }
 
@@ -695,7 +688,8 @@ void add_var<Eigen::Matrix<var, Eigen::Dynamic, 1>>(
     x.push_back(p(n));
 }
 
-template <> void add_var<fvar<var>>(vector<var> &x, fvar<var> &p) {
+template <>
+void add_var<fvar<var>>(vector<var> &x, fvar<var> &p) {
   x.push_back(p.val_);
 }
 
@@ -719,7 +713,8 @@ void add_var<Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1>>(
     x.push_back(p(n).val_);
 }
 
-template <> void add_var<fvar<fvar<var>>>(vector<var> &x, fvar<fvar<var>> &p) {
+template <>
+void add_var<fvar<fvar<var>>>(vector<var> &x, fvar<fvar<var>> &p) {
   x.push_back(p.val_.val_);
 }
 

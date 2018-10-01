@@ -12,8 +12,8 @@ namespace stan {
 namespace math {
 
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1>
-cholesky_corr_free(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &x) {
+Eigen::Matrix<T, Eigen::Dynamic, 1> cholesky_corr_free(
+    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &x) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::sqrt;
@@ -35,6 +35,6 @@ cholesky_corr_free(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &x) {
   return z;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

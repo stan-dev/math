@@ -63,6 +63,6 @@ cov_exp_quad(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
              const T_sigma &sigma, const std::vector<T_l> &length_scale) {
   return gp_exp_quad_cov(x1, x2, sigma, length_scale);
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

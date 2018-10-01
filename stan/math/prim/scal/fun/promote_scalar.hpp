@@ -15,7 +15,8 @@ namespace math {
  * @tparam S input type for nested static function, whose underlying
  * scalar type must be assignable to T.
  */
-template <typename T, typename S> struct promote_scalar_struct {
+template <typename T, typename S>
+struct promote_scalar_struct {
   /**
    * Return the value of the input argument promoted to the type
    * specified by the template parameter.
@@ -37,7 +38,8 @@ template <typename T, typename S> struct promote_scalar_struct {
  *
  * @tparam T input and return type of nested static function.
  */
-template <typename T> struct promote_scalar_struct<T, T> {
+template <typename T>
+struct promote_scalar_struct<T, T> {
   /**
    * Return the unmodified input.
    *
@@ -61,6 +63,6 @@ typename promote_scalar_type<T, S>::type promote_scalar(const S &x) {
   return promote_scalar_struct<T, S>::apply(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

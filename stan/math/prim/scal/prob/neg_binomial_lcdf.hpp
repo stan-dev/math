@@ -30,8 +30,8 @@ namespace stan {
 namespace math {
 
 template <typename T_n, typename T_shape, typename T_inv_scale>
-typename return_type<T_shape, T_inv_scale>::type
-neg_binomial_lcdf(const T_n &n, const T_shape &alpha, const T_inv_scale &beta) {
+typename return_type<T_shape, T_inv_scale>::type neg_binomial_lcdf(
+    const T_n &n, const T_shape &alpha, const T_inv_scale &beta) {
   static const char *function = "neg_binomial_lcdf";
   typedef typename stan::partials_return_type<T_n, T_shape, T_inv_scale>::type
       T_partials_return;
@@ -109,14 +109,14 @@ neg_binomial_lcdf(const T_n &n, const T_shape &alpha, const T_inv_scale &beta) {
       ops_partials.edge1_.partials_[i] += g1 / Pi;
     }
     if (!is_constant_struct<T_inv_scale>::value)
-      ops_partials.edge2_.partials_[i] += d_dbl * pow(1 - p_dbl, n_dbl) *
-                                          pow(p_dbl, alpha_dbl - 1) /
-                                          beta_func / Pi;
+      ops_partials.edge2_.partials_[i] += d_dbl * pow(1 - p_dbl, n_dbl)
+                                          * pow(p_dbl, alpha_dbl - 1)
+                                          / beta_func / Pi;
   }
 
   return ops_partials.build(P);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

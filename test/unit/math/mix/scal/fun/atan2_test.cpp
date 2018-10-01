@@ -122,8 +122,8 @@ TEST(AgradFwdAtan2, FvarFvarVar_FvarFvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(atan(1.0), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1.5 / (1.5 * 1.5 + 1.5 * 1.5), a.val_.d_.val());
   EXPECT_FLOAT_EQ(-1.5 / (1.5 * 1.5 + 1.5 * 1.5), a.d_.val_.val());
-  EXPECT_FLOAT_EQ((1.5 * 1.5 - 1.5 * 1.5) /
-                      ((1.5 * 1.5 + 1.5 * 1.5) * (1.5 * 1.5 + 1.5 * 1.5)),
+  EXPECT_FLOAT_EQ((1.5 * 1.5 - 1.5 * 1.5)
+                      / ((1.5 * 1.5 + 1.5 * 1.5) * (1.5 * 1.5 + 1.5 * 1.5)),
                   a.d_.d_.val());
 
   AVEC q = createAVEC(x.val_.val_, y.val_.val_);
@@ -323,8 +323,8 @@ TEST(AgradFwdAtan2, Double_FvarFvarVar_3rdDeriv) {
 
 struct atan2_fun {
   template <typename T0, typename T1>
-  inline typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1, const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return atan2(arg1, arg2);
   }
 };

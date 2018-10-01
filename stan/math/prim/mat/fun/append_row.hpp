@@ -110,9 +110,8 @@ append_row(const Eigen::Matrix<T1, R1, 1> &A,
  * @return Result of stacking first matrix on top of second.
  */
 template <typename T, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-append_row(const Eigen::Matrix<T, R1, C1> &A,
-           const Eigen::Matrix<T, R2, C2> &B) {
+inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> append_row(
+    const Eigen::Matrix<T, R1, C1> &A, const Eigen::Matrix<T, R2, C2> &B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
@@ -141,8 +140,8 @@ append_row(const Eigen::Matrix<T, R1, C1> &A,
  * vector.
  */
 template <typename T, int R1, int R2>
-inline Eigen::Matrix<T, Eigen::Dynamic, 1>
-append_row(const Eigen::Matrix<T, R1, 1> &A, const Eigen::Matrix<T, R2, 1> &B) {
+inline Eigen::Matrix<T, Eigen::Dynamic, 1> append_row(
+    const Eigen::Matrix<T, R1, 1> &A, const Eigen::Matrix<T, R2, 1> &B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
@@ -201,8 +200,8 @@ append_row(const Eigen::Matrix<T1, R, C> &A, const T2 &B) {
   return result;
 }
 
-} // namespace math
+}  // namespace math
 
-} // namespace stan
+}  // namespace stan
 
 #endif

@@ -17,7 +17,8 @@ namespace math {
  * @tparam T Value and tangent type for for forward-mode
  * autodiff variable.
  */
-template <typename F, typename T> struct apply_scalar_unary<F, fvar<T>> {
+template <typename F, typename T>
+struct apply_scalar_unary<F, fvar<T>> {
   /**
    * Function return type, which is same as the argument type for
    * the function, <code>fvar&lt;T&gt;</code>.
@@ -33,6 +34,6 @@ template <typename F, typename T> struct apply_scalar_unary<F, fvar<T>> {
   static inline return_t apply(const fvar<T> &x) { return F::fun(x); }
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

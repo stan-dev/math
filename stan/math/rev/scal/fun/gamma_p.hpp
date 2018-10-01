@@ -16,7 +16,7 @@ namespace math {
 
 namespace {
 class gamma_p_vv_vari : public op_vv_vari {
-public:
+ public:
   gamma_p_vv_vari(vari *avi, vari *bvi)
       : op_vv_vari(gamma_p(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
@@ -42,14 +42,15 @@ public:
       return;
 
     avi_->adj_ += adj_ * grad_reg_lower_inc_gamma(avi_->val_, bvi_->val_);
-    bvi_->adj_ += adj_ * std::exp(-bvi_->val_ +
-                                  (avi_->val_ - 1.0) * std::log(bvi_->val_) -
-                                  lgamma(avi_->val_));
+    bvi_->adj_
+        += adj_
+           * std::exp(-bvi_->val_ + (avi_->val_ - 1.0) * std::log(bvi_->val_)
+                      - lgamma(avi_->val_));
   }
 };
 
 class gamma_p_vd_vari : public op_vd_vari {
-public:
+ public:
   gamma_p_vd_vari(vari *avi, double b)
       : op_vd_vari(gamma_p(avi->val_, b), avi, b) {}
   void chain() {
@@ -72,7 +73,7 @@ public:
 };
 
 class gamma_p_dv_vari : public op_dv_vari {
-public:
+ public:
   gamma_p_dv_vari(double a, vari *bvi)
       : op_dv_vari(gamma_p(a, bvi->val_), a, bvi) {}
   void chain() {
@@ -90,12 +91,12 @@ public:
     if (std::fabs(bvi_->val_ / ad_) > 10)
       return;
 
-    bvi_->adj_ +=
-        adj_ * std::exp(-bvi_->val_ + (ad_ - 1.0) * std::log(bvi_->val_) -
-                        lgamma(ad_));
+    bvi_->adj_ += adj_
+                  * std::exp(-bvi_->val_ + (ad_ - 1.0) * std::log(bvi_->val_)
+                             - lgamma(ad_));
   }
 };
-} // namespace
+}  // namespace
 
 inline var gamma_p(const var &a, const var &b) {
   return var(new gamma_p_vv_vari(a.vi_, b.vi_));
@@ -109,6 +110,6 @@ inline var gamma_p(double a, const var &b) {
   return var(new gamma_p_dv_vari(a, b.vi_));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

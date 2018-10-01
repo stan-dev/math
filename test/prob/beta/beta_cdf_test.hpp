@@ -6,15 +6,15 @@ using std::numeric_limits;
 using std::vector;
 
 class AgradCdfBeta : public AgradCdfTest {
-public:
+ public:
   void valid_values(vector<vector<double>> &parameters, vector<double> &cdf) {
     vector<double> param(3);
 
-    param[0] = 0.5; // y
-    param[1] = 2.0; // alpha (Success Scale)
-    param[2] = 5.0; // beta  (Faiulre Scale)
+    param[0] = 0.5;  // y
+    param[1] = 2.0;  // alpha (Success Scale)
+    param[2] = 5.0;  // beta  (Faiulre Scale)
     parameters.push_back(param);
-    cdf.push_back(0.890625); // expected CDF
+    cdf.push_back(0.890625);  // expected CDF
   }
 
   void invalid_values(vector<size_t> &index, vector<double> &value) {
@@ -56,8 +56,8 @@ public:
 
   template <typename T_y, typename T_scale_succ, typename T_scale_fail,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_scale_succ, T_scale_fail>::type
-  cdf(const T_y &y, const T_scale_succ &alpha, const T_scale_fail &beta,
+  typename stan::return_type<T_y, T_scale_succ, T_scale_fail>::type cdf(
+      const T_y &y, const T_scale_succ &alpha, const T_scale_fail &beta,
       const T3 &, const T4 &, const T5 &) {
     return stan::math::beta_cdf(y, alpha, beta);
   }

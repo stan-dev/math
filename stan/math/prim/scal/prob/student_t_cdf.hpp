@@ -30,9 +30,8 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
-typename return_type<T_y, T_dof, T_loc, T_scale>::type
-student_t_cdf(const T_y &y, const T_dof &nu, const T_loc &mu,
-              const T_scale &sigma) {
+typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_cdf(
+    const T_y &y, const T_dof &nu, const T_loc &mu, const T_scale &sigma) {
   typedef typename stan::partials_return_type<T_y, T_dof, T_loc, T_scale>::type
       T_partials_return;
 
@@ -97,8 +96,8 @@ student_t_cdf(const T_y &y, const T_dof &nu, const T_loc &mu,
     }
 
     const T_partials_return sigma_inv = 1.0 / value_of(sigma_vec[n]);
-    const T_partials_return t =
-        (value_of(y_vec[n]) - value_of(mu_vec[n])) * sigma_inv;
+    const T_partials_return t
+        = (value_of(y_vec[n]) - value_of(mu_vec[n])) * sigma_inv;
     const T_partials_return nu_dbl = value_of(nu_vec[n]);
     const T_partials_return q = nu_dbl / (t * t);
     const T_partials_return r = 1.0 / (1.0 + q);
@@ -107,17 +106,17 @@ student_t_cdf(const T_y &y, const T_dof &nu, const T_loc &mu,
     double zJacobian = t > 0 ? -0.5 : 0.5;
 
     if (q < 2) {
-      T_partials_return z =
-          inc_beta(0.5 * nu_dbl, (T_partials_return)0.5, 1.0 - r);
+      T_partials_return z
+          = inc_beta(0.5 * nu_dbl, (T_partials_return)0.5, 1.0 - r);
       const T_partials_return Pn = t > 0 ? 1.0 - 0.5 * z : 0.5 * z;
-      const T_partials_return d_ibeta =
-          pow(r, -0.5) * pow(1.0 - r, 0.5 * nu_dbl - 1) / betaNuHalf;
+      const T_partials_return d_ibeta
+          = pow(r, -0.5) * pow(1.0 - r, 0.5 * nu_dbl - 1) / betaNuHalf;
 
       P *= Pn;
 
       if (!is_constant_struct<T_y>::value)
-        ops_partials.edge1_.partials_[n] +=
-            -zJacobian * d_ibeta * J * sigma_inv / Pn;
+        ops_partials.edge1_.partials_[n]
+            += -zJacobian * d_ibeta * J * sigma_inv / Pn;
       if (!is_constant_struct<T_dof>::value) {
         T_partials_return g1 = 0;
         T_partials_return g2 = 0;
@@ -126,33 +125,33 @@ student_t_cdf(const T_y &y, const T_dof &nu, const T_loc &mu,
                           digammaNu_vec[n], digammaHalf,
                           digammaNuPlusHalf_vec[n], betaNuHalf);
 
-        ops_partials.edge2_.partials_[n] +=
-            zJacobian * (d_ibeta * (r / t) * (r / t) + 0.5 * g1) / Pn;
+        ops_partials.edge2_.partials_[n]
+            += zJacobian * (d_ibeta * (r / t) * (r / t) + 0.5 * g1) / Pn;
       }
 
       if (!is_constant_struct<T_loc>::value)
-        ops_partials.edge3_.partials_[n] +=
-            zJacobian * d_ibeta * J * sigma_inv / Pn;
+        ops_partials.edge3_.partials_[n]
+            += zJacobian * d_ibeta * J * sigma_inv / Pn;
       if (!is_constant_struct<T_scale>::value)
-        ops_partials.edge4_.partials_[n] +=
-            zJacobian * d_ibeta * J * sigma_inv * t / Pn;
+        ops_partials.edge4_.partials_[n]
+            += zJacobian * d_ibeta * J * sigma_inv * t / Pn;
 
     } else {
-      T_partials_return z =
-          1.0 - inc_beta((T_partials_return)0.5, 0.5 * nu_dbl, r);
+      T_partials_return z
+          = 1.0 - inc_beta((T_partials_return)0.5, 0.5 * nu_dbl, r);
 
       zJacobian *= -1;
 
       const T_partials_return Pn = t > 0 ? 1.0 - 0.5 * z : 0.5 * z;
 
-      T_partials_return d_ibeta =
-          pow(1.0 - r, 0.5 * nu_dbl - 1) * pow(r, -0.5) / betaNuHalf;
+      T_partials_return d_ibeta
+          = pow(1.0 - r, 0.5 * nu_dbl - 1) * pow(r, -0.5) / betaNuHalf;
 
       P *= Pn;
 
       if (!is_constant_struct<T_y>::value)
-        ops_partials.edge1_.partials_[n] +=
-            zJacobian * d_ibeta * J * sigma_inv / Pn;
+        ops_partials.edge1_.partials_[n]
+            += zJacobian * d_ibeta * J * sigma_inv / Pn;
       if (!is_constant_struct<T_dof>::value) {
         T_partials_return g1 = 0;
         T_partials_return g2 = 0;
@@ -161,15 +160,15 @@ student_t_cdf(const T_y &y, const T_dof &nu, const T_loc &mu,
                           digammaHalf, digammaNu_vec[n],
                           digammaNuPlusHalf_vec[n], betaNuHalf);
 
-        ops_partials.edge2_.partials_[n] +=
-            zJacobian * (-d_ibeta * (r / t) * (r / t) + 0.5 * g2) / Pn;
+        ops_partials.edge2_.partials_[n]
+            += zJacobian * (-d_ibeta * (r / t) * (r / t) + 0.5 * g2) / Pn;
       }
       if (!is_constant_struct<T_loc>::value)
-        ops_partials.edge3_.partials_[n] +=
-            -zJacobian * d_ibeta * J * sigma_inv / Pn;
+        ops_partials.edge3_.partials_[n]
+            += -zJacobian * d_ibeta * J * sigma_inv / Pn;
       if (!is_constant_struct<T_scale>::value)
-        ops_partials.edge4_.partials_[n] +=
-            -zJacobian * d_ibeta * J * sigma_inv * t / Pn;
+        ops_partials.edge4_.partials_[n]
+            += -zJacobian * d_ibeta * J * sigma_inv * t / Pn;
     }
   }
 
@@ -192,6 +191,6 @@ student_t_cdf(const T_y &y, const T_dof &nu, const T_loc &mu,
   return ops_partials.build(P);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

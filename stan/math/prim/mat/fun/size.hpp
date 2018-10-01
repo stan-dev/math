@@ -13,10 +13,11 @@ namespace math {
  * @param[in] x Input vector.
  * @return Size of input vector.
  */
-template <typename T> inline int size(const std::vector<T> &x) {
+template <typename T>
+inline int size(const std::vector<T> &x) {
   return static_cast<int>(x.size());
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

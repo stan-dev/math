@@ -5,7 +5,8 @@
 #include <test/unit/math/prim/mat/fun/sort_test_util.hpp>
 #include <vector>
 
-template <typename T> void test_sort_asc() {
+template <typename T>
+void test_sort_asc() {
   using stan::math::index_type;
   using stan::math::sort_asc;
 
@@ -70,7 +71,8 @@ TEST(MathMatrix, sort_asc) {
   test_sort_asc<Eigen::Matrix<double, 1, Eigen::Dynamic>>();
 }
 
-template <typename T> void test_sort_desc() {
+template <typename T>
+void test_sort_desc() {
   using stan::math::index_type;
   using stan::math::sort_desc;
 

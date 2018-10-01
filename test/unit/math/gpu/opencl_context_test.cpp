@@ -47,9 +47,9 @@ TEST(opencl_context, devices) {
       msg << "- device name: " << device.getInfo<CL_DEVICE_NAME>() << std::endl;
     }
 
-    EXPECT_GE(all_devices.size(), 1) << "expecting to find at least one device"
-                                     << std::endl
-                                     << msg.str();
+    EXPECT_GE(all_devices.size(), 1)
+        << "expecting to find at least one device" << std::endl
+        << msg.str();
 
     msg.str("");
     msg << "max_thead_block_sizes: " << std::endl;
@@ -67,8 +67,8 @@ TEST(opencl_context, compile_kernel_rawcode) {
   // build dummy kernel
   cl::Context cl = stan::math::opencl_context.context();
   std::vector<cl::Device> dv = stan::math::opencl_context.device();
-  const char *dummy_kernel_src =
-      "__kernel void dummy(__global const int* foo) { };";
+  const char *dummy_kernel_src
+      = "__kernel void dummy(__global const int* foo) { };";
   cl::Program::Sources source(
       1, std::make_pair(dummy_kernel_src, strlen(dummy_kernel_src)));
   cl::Program program_ = cl::Program(cl, source);

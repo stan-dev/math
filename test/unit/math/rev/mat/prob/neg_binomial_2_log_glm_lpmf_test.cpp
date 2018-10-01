@@ -38,10 +38,10 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 200;
     }
-    Matrix<double, Dynamic, Dynamic> x =
-        Matrix<double, Dynamic, Dynamic>::Random(3, 2);
-    Matrix<double, Dynamic, 1> beta =
-        Matrix<double, Dynamic, Dynamic>::Random(2, 1);
+    Matrix<double, Dynamic, Dynamic> x
+        = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
+    Matrix<double, Dynamic, 1> beta
+        = Matrix<double, Dynamic, Dynamic>::Random(2, 1);
     Matrix<double, 1, 1> alphamat = Matrix<double, 1, 1>::Random(1, 1);
     double alpha = alphamat[0];
     Matrix<double, Dynamic, 1> alphavec = alpha * Matrix<double, 3, 1>::Ones();
@@ -95,8 +95,8 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_vars) {
   beta2 << 0.3, 2;
   var alpha2 = 0.3;
   var phi2 = 2;
-  var lp2 =
-      stan::math::neg_binomial_2_log_glm_lpmf(y2, x2, alpha2, beta2, phi2);
+  var lp2
+      = stan::math::neg_binomial_2_log_glm_lpmf(y2, x2, alpha2, beta2, phi2);
   lp2.grad();
   EXPECT_FLOAT_EQ(lp_val, lp2.val());
   for (size_t i = 0; i < 2; i++) {
@@ -120,10 +120,10 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 200;
     }
-    Matrix<double, Dynamic, Dynamic> xreal =
-        Matrix<double, Dynamic, Dynamic>::Random(3, 2);
-    Matrix<double, Dynamic, 1> betareal =
-        Matrix<double, Dynamic, Dynamic>::Random(2, 1);
+    Matrix<double, Dynamic, Dynamic> xreal
+        = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
+    Matrix<double, Dynamic, 1> betareal
+        = Matrix<double, Dynamic, Dynamic>::Random(2, 1);
     Matrix<double, 1, 1> alphareal = Matrix<double, 1, 1>::Random(1, 1);
     double phireal = Matrix<double, Dynamic, 1>::Random(1, 1)[0] + 1;
     Matrix<var, Dynamic, 1> beta = betareal;
@@ -153,8 +153,8 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
     Matrix<var, Dynamic, Dynamic> x2 = xreal;
     var alpha2 = alphareal[0];
     var phi2 = phireal;
-    var lp2 =
-        stan::math::neg_binomial_2_log_glm_lpmf(y, x2, alpha2, beta2, phi2);
+    var lp2
+        = stan::math::neg_binomial_2_log_glm_lpmf(y, x2, alpha2, beta2, phi2);
     lp2.grad();
     EXPECT_FLOAT_EQ(lp_val, lp2.val());
     for (size_t i = 0; i < 2; i++) {
@@ -179,8 +179,8 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 200;
     }
-    Matrix<double, Dynamic, Dynamic> xreal =
-        Matrix<double, Dynamic, Dynamic>::Random(3, 1);
+    Matrix<double, Dynamic, Dynamic> xreal
+        = Matrix<double, Dynamic, Dynamic>::Random(3, 1);
     double betareal = Matrix<double, Dynamic, Dynamic>::Random(1, 1)(0, 0);
     Matrix<double, 1, 1> alphareal = Matrix<double, 1, 1>::Random(1, 1);
     double phireal = Matrix<double, Dynamic, 1>::Random(1, 1)[0] + 1;
@@ -209,8 +209,8 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
     Matrix<var, Dynamic, Dynamic> x2 = xreal;
     var alpha2 = alphareal[0];
     var phi2 = phireal;
-    var lp2 =
-        stan::math::neg_binomial_2_log_glm_lpmf(y, x2, alpha2, beta2, phi2);
+    var lp2
+        = stan::math::neg_binomial_2_log_glm_lpmf(y, x2, alpha2, beta2, phi2);
     lp2.grad();
     EXPECT_FLOAT_EQ(lp_val, lp2.val());
     EXPECT_FLOAT_EQ(beta_adj, beta2.adj());
@@ -231,15 +231,15 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 200;
     }
-    Matrix<double, Dynamic, Dynamic> xreal =
-        Matrix<double, Dynamic, Dynamic>::Random(3, 2);
-    Matrix<double, Dynamic, 1> betareal =
-        Matrix<double, Dynamic, Dynamic>::Random(2, 1);
-    Matrix<double, Dynamic, 1> alphareal =
-        Matrix<double, Dynamic, Dynamic>::Random(3, 1);
-    Matrix<double, Dynamic, 1> phireal =
-        Matrix<double, Dynamic, Dynamic>::Random(3, 1) +
-        Matrix<double, Dynamic, 1>::Ones(3, 1);
+    Matrix<double, Dynamic, Dynamic> xreal
+        = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
+    Matrix<double, Dynamic, 1> betareal
+        = Matrix<double, Dynamic, Dynamic>::Random(2, 1);
+    Matrix<double, Dynamic, 1> alphareal
+        = Matrix<double, Dynamic, Dynamic>::Random(3, 1);
+    Matrix<double, Dynamic, 1> phireal
+        = Matrix<double, Dynamic, Dynamic>::Random(3, 1)
+          + Matrix<double, Dynamic, 1>::Ones(3, 1);
     Matrix<var, Dynamic, 1> beta = betareal;
     Matrix<var, Dynamic, 1> theta(3, 1);
     Matrix<var, Dynamic, Dynamic> x = xreal;
@@ -270,8 +270,8 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
     Matrix<var, Dynamic, Dynamic> x2 = xreal;
     Matrix<var, Dynamic, 1> alpha2 = alphareal;
     Matrix<var, Dynamic, 1> phi2 = phireal;
-    var lp2 =
-        stan::math::neg_binomial_2_log_glm_lpmf(y, x2, alpha2, beta2, phi2);
+    var lp2
+        = stan::math::neg_binomial_2_log_glm_lpmf(y, x2, alpha2, beta2, phi2);
     lp2.grad();
     EXPECT_FLOAT_EQ(lp_val, lp2.val());
     for (size_t i = 0; i < 2; i++) {
@@ -324,10 +324,10 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
 
   value2 += stan::math::neg_binomial_2_log_glm_lpmf(i, m1v, v, v, v).val();
   value2 += stan::math::neg_binomial_2_log_glm_lpmf(vi, mv, vv, vv, vv).val();
-  value2 +=
-      stan::math::neg_binomial_2_log_glm_lpmf(vi, mv, evv, evv, evv).val();
-  value2 +=
-      stan::math::neg_binomial_2_log_glm_lpmf(vi, mv, rvv, rvv, rvv).val();
+  value2
+      += stan::math::neg_binomial_2_log_glm_lpmf(vi, mv, evv, evv, evv).val();
+  value2
+      += stan::math::neg_binomial_2_log_glm_lpmf(vi, mv, rvv, rvv, rvv).val();
 
   EXPECT_FLOAT_EQ(value, value2);
 }
@@ -352,37 +352,37 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
     yw2[n] = -(Eigen::Matrix<uint, -1, 1>::Random(1, 1)[0] % 200);
   }
   Eigen::Matrix<double, -1, -1> x = Eigen::Matrix<double, -1, -1>::Random(N, M);
-  Eigen::Matrix<double, -1, -1> xw1 =
-      Eigen::Matrix<double, -1, -1>::Random(W, M);
-  Eigen::Matrix<double, -1, -1> xw2 =
-      Eigen::Matrix<double, -1, -1>::Random(N, W);
-  Eigen::Matrix<double, -1, -1> xw3 =
-      Eigen::Matrix<double, -1, -1>::Random(N, M) * NAN;
-  Eigen::Matrix<double, -1, 1> alpha =
-      Eigen::Matrix<double, -1, 1>::Random(N, 1);
-  Eigen::Matrix<double, -1, 1> alphaw1 =
-      Eigen::Matrix<double, -1, 1>::Random(W, 1);
-  Eigen::Matrix<double, -1, 1> alphaw2 =
-      Eigen::Matrix<double, -1, 1>::Random(N, 1) * NAN;
-  Eigen::Matrix<double, -1, 1> beta =
-      Eigen::Matrix<double, -1, 1>::Random(M, 1);
-  Eigen::Matrix<double, -1, 1> betaw1 =
-      Eigen::Matrix<double, -1, 1>::Random(W, 1);
-  Eigen::Matrix<double, -1, 1> betaw2 =
-      Eigen::Matrix<double, -1, 1>::Random(M, 1) * NAN;
-  Eigen::Matrix<double, -1, 1> sigma =
-      Eigen::Matrix<double, -1, 1>::Random(N, 1) +
-      Eigen::Matrix<double, -1, 1>::Ones(N, 1);
-  Eigen::Matrix<double, -1, 1> sigmaw1 =
-      Eigen::Matrix<double, -1, 1>::Random(W, 1) +
-      Eigen::Matrix<double, -1, 1>::Ones(W, 1);
-  Eigen::Matrix<double, -1, 1> sigmaw2 =
-      Eigen::Matrix<double, -1, 1>::Random(N, 1) -
-      Eigen::Matrix<double, -1, 1>::Ones(N, 1);
-  Eigen::Matrix<double, -1, 1> sigmaw3 =
-      (Eigen::Matrix<double, -1, 1>::Random(N, 1) +
-       Eigen::Matrix<double, -1, 1>::Ones(N, 1)) *
-      NAN;
+  Eigen::Matrix<double, -1, -1> xw1
+      = Eigen::Matrix<double, -1, -1>::Random(W, M);
+  Eigen::Matrix<double, -1, -1> xw2
+      = Eigen::Matrix<double, -1, -1>::Random(N, W);
+  Eigen::Matrix<double, -1, -1> xw3
+      = Eigen::Matrix<double, -1, -1>::Random(N, M) * NAN;
+  Eigen::Matrix<double, -1, 1> alpha
+      = Eigen::Matrix<double, -1, 1>::Random(N, 1);
+  Eigen::Matrix<double, -1, 1> alphaw1
+      = Eigen::Matrix<double, -1, 1>::Random(W, 1);
+  Eigen::Matrix<double, -1, 1> alphaw2
+      = Eigen::Matrix<double, -1, 1>::Random(N, 1) * NAN;
+  Eigen::Matrix<double, -1, 1> beta
+      = Eigen::Matrix<double, -1, 1>::Random(M, 1);
+  Eigen::Matrix<double, -1, 1> betaw1
+      = Eigen::Matrix<double, -1, 1>::Random(W, 1);
+  Eigen::Matrix<double, -1, 1> betaw2
+      = Eigen::Matrix<double, -1, 1>::Random(M, 1) * NAN;
+  Eigen::Matrix<double, -1, 1> sigma
+      = Eigen::Matrix<double, -1, 1>::Random(N, 1)
+        + Eigen::Matrix<double, -1, 1>::Ones(N, 1);
+  Eigen::Matrix<double, -1, 1> sigmaw1
+      = Eigen::Matrix<double, -1, 1>::Random(W, 1)
+        + Eigen::Matrix<double, -1, 1>::Ones(W, 1);
+  Eigen::Matrix<double, -1, 1> sigmaw2
+      = Eigen::Matrix<double, -1, 1>::Random(N, 1)
+        - Eigen::Matrix<double, -1, 1>::Ones(N, 1);
+  Eigen::Matrix<double, -1, 1> sigmaw3
+      = (Eigen::Matrix<double, -1, 1>::Random(N, 1)
+         + Eigen::Matrix<double, -1, 1>::Ones(N, 1))
+        * NAN;
 
   EXPECT_THROW(
       stan::math::neg_binomial_2_log_glm_lpmf(yw1, x, alpha, beta, sigma),

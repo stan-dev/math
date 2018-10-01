@@ -36,6 +36,6 @@ inline double atanh(double x) {
  */
 inline double atanh(int x) { return atanh(static_cast<double>(x)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

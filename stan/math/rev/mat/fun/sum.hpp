@@ -15,7 +15,7 @@ namespace math {
  * managed by the superclass <code>sum_v_vari</code>.
  */
 class sum_eigen_v_vari : public sum_v_vari {
-protected:
+ protected:
   template <typename Derived>
   inline static double sum_of_val(const Eigen::DenseBase<Derived> &v) {
     double result = 0;
@@ -24,7 +24,7 @@ protected:
     return result;
   }
 
-public:
+ public:
   template <int R1, int C1>
   explicit sum_eigen_v_vari(const Eigen::Matrix<var, R1, C1> &v1)
       : sum_v_vari(sum_of_val(v1),
@@ -46,12 +46,13 @@ public:
  * @param m Specified matrix or vector.
  * @return Sum of coefficients of matrix.
  */
-template <int R, int C> inline var sum(const Eigen::Matrix<var, R, C> &m) {
+template <int R, int C>
+inline var sum(const Eigen::Matrix<var, R, C> &m) {
   if (m.size() == 0)
     return 0.0;
   return var(new sum_eigen_v_vari(m));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

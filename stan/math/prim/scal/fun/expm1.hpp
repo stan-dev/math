@@ -27,6 +27,6 @@ inline double expm1(double x) {
  */
 inline double expm1(int x) { return expm1(static_cast<double>(x)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

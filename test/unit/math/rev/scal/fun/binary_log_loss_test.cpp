@@ -85,7 +85,8 @@ TEST(AgradRev, binary_log_loss) {
 }
 
 struct binary_log_loss_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0 &arg1) const {
     return binary_log_loss(1, arg1);
   }
 };

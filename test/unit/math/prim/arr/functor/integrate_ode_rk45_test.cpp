@@ -22,8 +22,8 @@ template <typename F>
 void sho_value_test(F harm_osc, std::vector<double> &y0, double t0,
                     std::vector<double> &ts, std::vector<double> &theta,
                     std::vector<double> &x, std::vector<int> &x_int) {
-  std::vector<std::vector<double>> ode_res_vd =
-      stan::math::integrate_ode_rk45(harm_osc, y0, t0, ts, theta, x, x_int);
+  std::vector<std::vector<double>> ode_res_vd
+      = stan::math::integrate_ode_rk45(harm_osc, y0, t0, ts, theta, x, x_int);
   EXPECT_NEAR(0.995029, ode_res_vd[0][0], 1e-5);
   EXPECT_NEAR(-0.0990884, ode_res_vd[0][1], 1e-5);
 

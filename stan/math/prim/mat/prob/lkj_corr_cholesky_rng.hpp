@@ -66,6 +66,6 @@ inline Eigen::MatrixXd lkj_corr_cholesky_rng(size_t K, double eta, RNG &rng) {
   return read_corr_L(CPCs, K);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -8,7 +8,7 @@
 #include <vector>
 
 class BernoulliLogitTestRig : public VectorIntRNGTestRig {
-public:
+ public:
   BernoulliLogitTestRig()
       : VectorIntRNGTestRig(10000, 10, {0, 1},
                             {-5.7, -1.0, 0.0, 0.2, 1.0, 10.0}, {-3, -2, 0, 1},
@@ -19,7 +19,8 @@ public:
     return stan::math::bernoulli_logit_rng(t, rng);
   }
 
-  template <typename T1> double pmf(int y, T1 t, double, double) const {
+  template <typename T1>
+  double pmf(int y, T1 t, double, double) const {
     return std::exp(stan::math::bernoulli_logit_lpmf(y, t));
   }
 };

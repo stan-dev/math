@@ -47,7 +47,7 @@ inline double log1p_exp(double a) {
   return log1p(exp(a));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

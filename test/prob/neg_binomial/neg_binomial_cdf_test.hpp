@@ -7,21 +7,21 @@ using std::numeric_limits;
 using std::vector;
 
 class AgradCdfNegBinomial : public AgradCdfTest {
-public:
+ public:
   void valid_values(vector<vector<double>> &parameters, vector<double> &cdf) {
     vector<double> param(3);
 
-    param[0] = 15; // Failures/Counts
-    param[1] = 50; // Successes/Shape
-    param[2] = 3;  // logit(p)/Inverse Scale
+    param[0] = 15;  // Failures/Counts
+    param[1] = 50;  // Successes/Shape
+    param[2] = 3;   // logit(p)/Inverse Scale
     parameters.push_back(param);
-    cdf.push_back(0.4240861277740262114122); // expected cdf
+    cdf.push_back(0.4240861277740262114122);  // expected cdf
 
-    param[0] = 0;  // Failures/Counts
-    param[1] = 15; // Successes/Shape
-    param[2] = 3;  // logit(p)/Inverse Scale
+    param[0] = 0;   // Failures/Counts
+    param[1] = 15;  // Successes/Shape
+    param[2] = 3;   // logit(p)/Inverse Scale
     parameters.push_back(param);
-    cdf.push_back(0.013363461010158063716); // expected cdf
+    cdf.push_back(0.013363461010158063716);  // expected cdf
   }
 
   void invalid_values(vector<size_t> &index, vector<double> &value) {
@@ -40,17 +40,17 @@ public:
 
   template <typename T_n, typename T_shape, typename T_inv_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_shape, T_inv_scale>::type
-  cdf(const T_n &n, const T_shape &alpha, const T_inv_scale &beta, const T3 &,
+  typename stan::return_type<T_shape, T_inv_scale>::type cdf(
+      const T_n &n, const T_shape &alpha, const T_inv_scale &beta, const T3 &,
       const T4 &, const T5 &) {
     return stan::math::neg_binomial_cdf(n, alpha, beta);
   }
 
   template <typename T_n, typename T_shape, typename T_inv_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_shape, T_inv_scale>::type
-  cdf_function(const T_n &n, const T_shape &alpha, const T_inv_scale &beta,
-               const T3 &, const T4 &, const T5 &) {
+  typename stan::return_type<T_shape, T_inv_scale>::type cdf_function(
+      const T_n &n, const T_shape &alpha, const T_inv_scale &beta, const T3 &,
+      const T4 &, const T5 &) {
     using stan::math::binomial_coefficient_log;
     using std::exp;
     using std::log;
@@ -61,8 +61,8 @@ public:
       typename stan::return_type<T_shape, T_inv_scale>::type temp;
       temp = binomial_coefficient_log(i + alpha - 1, i);
 
-      cdf +=
-          exp(temp + alpha * log(beta / (1 + beta)) + i * log(1 / (1 + beta)));
+      cdf += exp(temp + alpha * log(beta / (1 + beta))
+                 + i * log(1 / (1 + beta)));
     }
 
     return cdf;

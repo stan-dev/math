@@ -11,7 +11,7 @@ namespace math {
 
 namespace {
 class fmod_vv_vari : public op_vv_vari {
-public:
+ public:
   fmod_vv_vari(vari *avi, vari *bvi)
       : op_vv_vari(std::fmod(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
@@ -26,7 +26,7 @@ public:
 };
 
 class fmod_vd_vari : public op_vd_vari {
-public:
+ public:
   fmod_vd_vari(vari *avi, double b)
       : op_vd_vari(std::fmod(avi->val_, b), avi, b) {}
   void chain() {
@@ -38,7 +38,7 @@ public:
 };
 
 class fmod_dv_vari : public op_dv_vari {
-public:
+ public:
   fmod_dv_vari(double a, vari *bvi)
       : op_dv_vari(std::fmod(a, bvi->val_), a, bvi) {}
   void chain() {
@@ -50,7 +50,7 @@ public:
     }
   }
 };
-} // namespace
+}  // namespace
 
 /**
  * Return the floating point remainder after dividing the
@@ -133,6 +133,6 @@ inline var fmod(double a, const var &b) {
   return var(new fmod_dv_vari(a, b.vi_));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

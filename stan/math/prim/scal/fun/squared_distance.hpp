@@ -17,12 +17,12 @@ namespace math {
  * size or if they are both not vector dimensioned.
  */
 template <typename T1, typename T2>
-inline typename boost::math::tools::promote_args<T1, T2>::type
-squared_distance(const T1 &x1, const T2 &x2) {
+inline typename boost::math::tools::promote_args<T1, T2>::type squared_distance(
+    const T1 &x1, const T2 &x2) {
   check_finite("squared_distance", "x1", x1);
   check_finite("squared_distance", "x2", x2);
   return square(x1 - x2);
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -32,9 +32,8 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_dof, typename T_loc,
           typename T_scale>
-typename return_type<T_y, T_dof, T_loc, T_scale>::type
-multi_student_t_lpdf(const T_y &y, const T_dof &nu, const T_loc &mu,
-                     const T_scale &Sigma) {
+typename return_type<T_y, T_dof, T_loc, T_scale>::type multi_student_t_lpdf(
+    const T_y &y, const T_dof &nu, const T_loc &mu, const T_scale &Sigma) {
   static const char *function = "multi_student_t";
 
   using boost::math::lgamma;
@@ -73,10 +72,12 @@ multi_student_t_lpdf(const T_y &y, const T_dof &nu, const T_loc &mu,
     int size_mu_new;
     for (size_t i = 1, size_ = length_mvt(mu); i < size_; i++) {
       int size_mu_new = mu_vec[i].size();
-      check_size_match(function, "Size of one of the vectors "
-                                 "of the location variable",
-                       size_mu_new, "Size of another vector of "
-                                    "the location variable",
+      check_size_match(function,
+                       "Size of one of the vectors "
+                       "of the location variable",
+                       size_mu_new,
+                       "Size of another vector of "
+                       "the location variable",
                        size_mu_old);
       size_mu_old = size_mu_new;
     }
@@ -127,8 +128,8 @@ multi_student_t_lpdf(const T_y &y, const T_dof &nu, const T_loc &mu,
           y_minus_mu(size_y);
       for (int j = 0; j < size_y; j++)
         y_minus_mu(j) = y_vec[i](j) - mu_vec[i](j);
-      sum_lp_vec +=
-          log1p(trace_inv_quad_form_ldlt(ldlt_Sigma, y_minus_mu) / nu);
+      sum_lp_vec
+          += log1p(trace_inv_quad_form_ldlt(ldlt_Sigma, y_minus_mu) / nu);
     }
     lp -= 0.5 * (nu + size_y) * sum_lp_vec;
   }
@@ -142,6 +143,6 @@ multi_student_t_lpdf(const T_y &y, const T_dof &nu, const T_loc &mu,
   return multi_student_t_lpdf<false>(y, nu, mu, Sigma);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

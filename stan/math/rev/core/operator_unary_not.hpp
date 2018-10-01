@@ -15,6 +15,6 @@ namespace math {
  */
 inline bool operator!(const var &x) { return !x.val(); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -22,7 +22,7 @@ inline void check_square(const char *function, const char *name,
                    y.rows(), "columns of ", name, y.cols());
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
 #endif

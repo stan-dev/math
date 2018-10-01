@@ -27,6 +27,6 @@ diag_post_multiply(const Eigen::Matrix<T1, R1, C1> &m1,
   return result;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

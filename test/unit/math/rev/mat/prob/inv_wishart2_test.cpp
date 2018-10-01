@@ -19,7 +19,7 @@ using stan::math::to_var;
 using stan::math::var;
 
 class AgradDistributionsInvWishart : public ::testing::Test {
-protected:
+ protected:
   virtual void SetUp() {
     Y1.resize(2, 2);
     Y1 << 2.011108, -11.20661, -11.206611, 112.94139;

@@ -28,6 +28,6 @@ inline Eigen::MatrixXd lkj_corr_rng(size_t K, double eta, RNG &rng) {
   return multiply_lower_tri_self_transpose(lkj_corr_cholesky_rng(K, eta, rng));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

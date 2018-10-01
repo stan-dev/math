@@ -38,6 +38,6 @@ inline int choose(int n, int k) {
   return static_cast<int>(std::round(choices));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

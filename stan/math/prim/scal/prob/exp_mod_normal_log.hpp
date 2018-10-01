@@ -12,9 +12,9 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_inv_scale>
-typename return_type<T_y, T_loc, T_scale, T_inv_scale>::type
-exp_mod_normal_log(const T_y &y, const T_loc &mu, const T_scale &sigma,
-                   const T_inv_scale &lambda) {
+typename return_type<T_y, T_loc, T_scale, T_inv_scale>::type exp_mod_normal_log(
+    const T_y &y, const T_loc &mu, const T_scale &sigma,
+    const T_inv_scale &lambda) {
   return exp_mod_normal_lpdf<propto, T_y, T_loc, T_scale, T_inv_scale>(
       y, mu, sigma, lambda);
 }
@@ -30,6 +30,6 @@ exp_mod_normal_log(const T_y &y, const T_loc &mu, const T_scale &sigma,
                                                                lambda);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

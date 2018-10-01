@@ -14,7 +14,8 @@ namespace math {
  * @return Square root of x.
  */
 struct sqrt_fun {
-  template <typename T> static inline T fun(const T &x) {
+  template <typename T>
+  static inline T fun(const T &x) {
     using std::sqrt;
     return sqrt(x);
   }
@@ -31,7 +32,7 @@ inline typename apply_scalar_unary<sqrt_fun, T>::return_t sqrt(const T &x) {
   return apply_scalar_unary<sqrt_fun, T>::apply(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

@@ -12,14 +12,16 @@ namespace stan {
 namespace math {
 
 namespace {
-template <typename T_y, bool is_vec> struct not_nan {
+template <typename T_y, bool is_vec>
+struct not_nan {
   static void check(const char *function, const char *name, const T_y &y) {
     if (is_nan(value_of_rec(y)))
       domain_error(function, name, y, "is ", ", but must not be nan!");
   }
 };
 
-template <typename T_y> struct not_nan<T_y, true> {
+template <typename T_y>
+struct not_nan<T_y, true> {
   static void check(const char *function, const char *name, const T_y &y) {
     for (size_t n = 0; n < stan::length(y); n++) {
       if (is_nan(value_of_rec(stan::get(y, n))))
@@ -27,7 +29,7 @@ template <typename T_y> struct not_nan<T_y, true> {
     }
   }
 };
-} // namespace
+}  // namespace
 
 /**
  * Check if <code>y</code> is not
@@ -51,6 +53,6 @@ inline void check_not_nan(const char *function, const char *name,
   not_nan<T_y, is_vector_like<T_y>::value>::check(function, name, y);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -8,7 +8,7 @@
 #include <vector>
 
 class BinomialTestRig : public VectorIntRNGTestRig {
-public:
+ public:
   BinomialTestRig()
       : VectorIntRNGTestRig(10000, 10, {0, 1, 2, 3, 4, 5, 6}, {}, {0, 1, 3, 8},
                             {}, {-1, -5, -7}, {0.0, 0.1, 0.7, 0.99}, {0},
@@ -20,7 +20,8 @@ public:
     return stan::math::binomial_rng(N, theta, rng);
   }
 
-  template <typename T1> double pmf(int y, T1 N, double theta, double) const {
+  template <typename T1>
+  double pmf(int y, T1 N, double theta, double) const {
     if (y <= N) {
       return std::exp(stan::math::binomial_lpmf(y, N, theta));
     } else {

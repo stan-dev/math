@@ -14,7 +14,8 @@ namespace math {
  * @return Arctan of x in radians.
  */
 struct atan_fun {
-  template <typename T> static inline T fun(const T &x) {
+  template <typename T>
+  static inline T fun(const T &x) {
     using std::atan;
     return atan(x);
   }
@@ -31,7 +32,7 @@ inline typename apply_scalar_unary<atan_fun, T>::return_t atan(const T &x) {
   return apply_scalar_unary<atan_fun, T>::apply(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

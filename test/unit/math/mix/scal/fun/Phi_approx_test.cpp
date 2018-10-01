@@ -117,7 +117,8 @@ TEST(AgradFwdPhi_approx, FvarFvarVar_3rdDeriv) {
 }
 
 struct Phi_approx_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0 &arg1) const {
     return stan::math::Phi_approx(arg1);
   }
 };

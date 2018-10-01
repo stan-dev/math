@@ -45,8 +45,9 @@ namespace math {
  * @throw std::invalid_argument if vector sizes do not match
  */
 template <bool propto, typename T_n, typename T_N, typename T_prob>
-typename return_type<T_prob>::type
-binomial_logit_lpmf(const T_n &n, const T_N &N, const T_prob &alpha) {
+typename return_type<T_prob>::type binomial_logit_lpmf(const T_n &n,
+                                                       const T_N &N,
+                                                       const T_prob &alpha) {
   typedef typename stan::partials_return_type<T_n, T_N, T_prob>::type
       T_partials_return;
 
@@ -89,8 +90,8 @@ binomial_logit_lpmf(const T_n &n, const T_N &N, const T_prob &alpha) {
     log_inv_logit_neg_alpha[i] = log_inv_logit(-value_of(alpha_vec[i]));
 
   for (size_t i = 0; i < size; ++i)
-    logp += n_vec[i] * log_inv_logit_alpha[i] +
-            (N_vec[i] - n_vec[i]) * log_inv_logit_neg_alpha[i];
+    logp += n_vec[i] * log_inv_logit_alpha[i]
+            + (N_vec[i] - n_vec[i]) * log_inv_logit_neg_alpha[i];
 
   if (length(alpha) == 1) {
     T_partials_return temp1 = 0;
@@ -100,16 +101,16 @@ binomial_logit_lpmf(const T_n &n, const T_N &N, const T_prob &alpha) {
       temp2 += N_vec[i] - n_vec[i];
     }
     if (!is_constant_struct<T_prob>::value) {
-      ops_partials.edge1_.partials_[0] +=
-          temp1 * inv_logit(-value_of(alpha_vec[0])) -
-          temp2 * inv_logit(value_of(alpha_vec[0]));
+      ops_partials.edge1_.partials_[0]
+          += temp1 * inv_logit(-value_of(alpha_vec[0]))
+             - temp2 * inv_logit(value_of(alpha_vec[0]));
     }
   } else {
     if (!is_constant_struct<T_prob>::value) {
       for (size_t i = 0; i < size; ++i)
-        ops_partials.edge1_.partials_[i] +=
-            n_vec[i] * inv_logit(-value_of(alpha_vec[i])) -
-            (N_vec[i] - n_vec[i]) * inv_logit(value_of(alpha_vec[i]));
+        ops_partials.edge1_.partials_[i]
+            += n_vec[i] * inv_logit(-value_of(alpha_vec[i]))
+               - (N_vec[i] - n_vec[i]) * inv_logit(value_of(alpha_vec[i]));
     }
   }
 
@@ -117,11 +118,11 @@ binomial_logit_lpmf(const T_n &n, const T_N &N, const T_prob &alpha) {
 }
 
 template <typename T_n, typename T_N, typename T_prob>
-inline typename return_type<T_prob>::type
-binomial_logit_lpmf(const T_n &n, const T_N &N, const T_prob &alpha) {
+inline typename return_type<T_prob>::type binomial_logit_lpmf(
+    const T_n &n, const T_N &N, const T_prob &alpha) {
   return binomial_logit_lpmf<false>(n, N, alpha);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

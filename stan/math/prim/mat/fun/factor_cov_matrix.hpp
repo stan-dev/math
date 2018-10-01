@@ -34,7 +34,7 @@ bool factor_cov_matrix(
 
   Eigen::DiagonalMatrix<T, Eigen::Dynamic> D(K);
   D.diagonal() = sds.inverse();
-  sds = sds.log(); // now unbounded
+  sds = sds.log();  // now unbounded
 
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> R = D * Sigma * D;
   // to hopefully prevent pivoting due to floating point error
@@ -48,8 +48,8 @@ bool factor_cov_matrix(
   return true;
 }
 
-} // namespace math
+}  // namespace math
 
-} // namespace stan
+}  // namespace stan
 
 #endif

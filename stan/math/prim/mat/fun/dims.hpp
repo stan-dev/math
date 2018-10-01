@@ -7,7 +7,8 @@
 namespace stan {
 namespace math {
 
-template <typename T> inline void dims(const T &x, std::vector<int> &result) {
+template <typename T>
+inline void dims(const T &x, std::vector<int> &result) {
   /* no op */
 }
 template <typename T, int R, int C>
@@ -22,12 +23,13 @@ inline void dims(const std::vector<T> &x, std::vector<int> &result) {
     dims(x[0], result);
 }
 
-template <typename T> inline std::vector<int> dims(const T &x) {
+template <typename T>
+inline std::vector<int> dims(const T &x) {
   std::vector<int> result;
   dims(x, result);
   return result;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

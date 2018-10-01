@@ -3,8 +3,8 @@
 
 TEST(MathMatrix, rep_matrix) {
   using stan::math::rep_matrix;
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x =
-      rep_matrix(2.0, 3, 4);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x
+      = rep_matrix(2.0, 3, 4);
   EXPECT_EQ(12, x.size());
   EXPECT_EQ(3, x.rows());
   EXPECT_EQ(4, x.cols());

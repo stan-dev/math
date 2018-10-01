@@ -38,6 +38,6 @@ void inverse_softmax(const Vector &simplex, Vector &y) {
     y[i] = log(simplex[i]);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

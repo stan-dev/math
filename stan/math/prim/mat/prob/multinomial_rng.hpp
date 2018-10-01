@@ -18,9 +18,8 @@ namespace stan {
 namespace math {
 
 template <class RNG>
-inline std::vector<int>
-multinomial_rng(const Eigen::Matrix<double, Eigen::Dynamic, 1> &theta, int N,
-                RNG &rng) {
+inline std::vector<int> multinomial_rng(
+    const Eigen::Matrix<double, Eigen::Dynamic, 1> &theta, int N, RNG &rng) {
   static const char *function = "multinomial_rng";
 
   check_simplex(function, "Probabilites parameter", theta);
@@ -40,6 +39,6 @@ multinomial_rng(const Eigen::Matrix<double, Eigen::Dynamic, 1> &theta, int N,
   return result;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -16,6 +16,6 @@ typename return_type<T_prob>::type bernoulli_cdf_log(const T_n &n,
   return bernoulli_lcdf<T_n, T_prob>(n, theta);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -44,12 +44,12 @@ TEST_F(map_rect, concurrent_eval_ok_vd) {
 
   for (std::size_t i = 0, j = 0; i < N; i++) {
     j = 2 * i;
-    EXPECT_FLOAT_EQ(stan::math::value_of(res1(j)),
-                    job_params_d[i](0) * job_params_d[i](0) +
-                        shared_params_d(0));
+    EXPECT_FLOAT_EQ(
+        stan::math::value_of(res1(j)),
+        job_params_d[i](0) * job_params_d[i](0) + shared_params_d(0));
     EXPECT_FLOAT_EQ(stan::math::value_of(res1(j + 1)),
-                    x_r[i][0] * job_params_d[i](1) * job_params_d[i](0) +
-                        2 * shared_params_d(0) + shared_params_d(1));
+                    x_r[i][0] * job_params_d[i](1) * job_params_d[i](0)
+                        + 2 * shared_params_d(0) + shared_params_d(1));
 
     stan::math::set_zero_all_adjoints();
     res1(j).grad();
@@ -74,12 +74,12 @@ TEST_F(map_rect, concurrent_eval_ok_dv) {
 
   for (std::size_t i = 0, j = 0; i < N; i++) {
     j = 2 * i;
-    EXPECT_FLOAT_EQ(stan::math::value_of(res1(j)),
-                    job_params_d[i](0) * job_params_d[i](0) +
-                        shared_params_d(0));
+    EXPECT_FLOAT_EQ(
+        stan::math::value_of(res1(j)),
+        job_params_d[i](0) * job_params_d[i](0) + shared_params_d(0));
     EXPECT_FLOAT_EQ(stan::math::value_of(res1(j + 1)),
-                    x_r[i][0] * job_params_d[i](1) * job_params_d[i](0) +
-                        2 * shared_params_d(0) + shared_params_d(1));
+                    x_r[i][0] * job_params_d[i](1) * job_params_d[i](0)
+                        + 2 * shared_params_d(0) + shared_params_d(1));
 
     stan::math::set_zero_all_adjoints();
     res1(j).grad();
@@ -121,12 +121,12 @@ TEST_F(map_rect, concurrent_eval_ok_vv) {
 
   for (std::size_t i = 0, j = 0; i < N; i++) {
     j = 2 * i;
-    EXPECT_FLOAT_EQ(stan::math::value_of(res1(j)),
-                    job_params_d[i](0) * job_params_d[i](0) +
-                        shared_params_d(0));
+    EXPECT_FLOAT_EQ(
+        stan::math::value_of(res1(j)),
+        job_params_d[i](0) * job_params_d[i](0) + shared_params_d(0));
     EXPECT_FLOAT_EQ(stan::math::value_of(res1(j + 1)),
-                    x_r[i][0] * job_params_d[i](1) * job_params_d[i](0) +
-                        2 * shared_params_d(0) + shared_params_d(1));
+                    x_r[i][0] * job_params_d[i](1) * job_params_d[i](0)
+                        + 2 * shared_params_d(0) + shared_params_d(1));
 
     stan::math::set_zero_all_adjoints();
     res1(j).grad();

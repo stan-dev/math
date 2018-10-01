@@ -5,7 +5,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-template <typename F, typename T> void expect_scalar_error() {
+template <typename F, typename T>
+void expect_scalar_error() {
   using std::vector;
   vector<double> invalid_inputs = F::invalid_inputs();
   for (size_t i = 0; i < invalid_inputs.size(); ++i) {

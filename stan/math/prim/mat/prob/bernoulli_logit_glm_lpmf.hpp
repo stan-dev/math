@@ -50,9 +50,8 @@ namespace math {
 
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta>
-typename return_type<T_x, T_alpha, T_beta>::type
-bernoulli_logit_glm_lpmf(const T_y &y, const T_x &x, const T_alpha &alpha,
-                         const T_beta &beta) {
+typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
+    const T_y &y, const T_x &x, const T_alpha &alpha, const T_beta &beta) {
   static const char *function = "bernoulli_logit_glm_lpmf";
   typedef typename stan::partials_return_type<T_y, T_x, T_alpha, T_beta>::type
       T_partials_return;
@@ -96,8 +95,8 @@ bernoulli_logit_glm_lpmf(const T_y &y, const T_x &x, const T_alpha &alpha,
       beta_dbl[m] = value_of(beta_vec[m]);
     }
   }
-  Eigen::Array<T_partials_return, Dynamic, 1> ytheta =
-      signs.array() * (value_of(x) * beta_dbl).array();
+  Eigen::Array<T_partials_return, Dynamic, 1> ytheta
+      = signs.array() * (value_of(x) * beta_dbl).array();
   scalar_seq_view<T_alpha> alpha_vec(alpha);
 
   // Compute the log-density and handle extreme values gracefully
@@ -148,6 +147,6 @@ bernoulli_logit_glm_lpmf(const T_y &y, const T_x &x, const T_alpha &alpha,
                          const T_beta &beta) {
   return bernoulli_logit_glm_lpmf<false>(y, x, alpha, beta);
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

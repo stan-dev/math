@@ -19,6 +19,6 @@ namespace math {
  */
 inline int is_inf(const var &v) { return is_inf(v.val()); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

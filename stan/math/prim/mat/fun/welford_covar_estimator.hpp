@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 class welford_covar_estimator {
-public:
+ public:
   explicit welford_covar_estimator(int n)
       : m_(Eigen::VectorXd::Zero(n)), m2_(Eigen::MatrixXd::Zero(n, n)) {
     restart();
@@ -37,12 +37,12 @@ public:
       covar = m2_ / (num_samples_ - 1.0);
   }
 
-protected:
+ protected:
   double num_samples_;
   Eigen::VectorXd m_;
   Eigen::MatrixXd m2_;
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

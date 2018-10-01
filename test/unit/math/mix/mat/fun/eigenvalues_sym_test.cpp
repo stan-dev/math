@@ -38,8 +38,8 @@ TEST(AgradMixMatrixEigenvaluesSym, matrix_fv_1st_deriv) {
   EXPECT_FLOAT_EQ(0, res0(0).d_.val());
   EXPECT_FLOAT_EQ(2, res0(1).d_.val());
 
-  AVEC z =
-      createAVEC(m1(0, 0).val_, m1(0, 1).val_, m1(1, 0).val_, m1(1, 1).val_);
+  AVEC z
+      = createAVEC(m1(0, 0).val_, m1(0, 1).val_, m1(1, 0).val_, m1(1, 1).val_);
   VEC h;
   res0(1).val_.grad(z, h);
   EXPECT_FLOAT_EQ(0.5, h[0]);
@@ -63,8 +63,8 @@ TEST(AgradMixMatrixEigenvaluesSym, matrix_fv_2nd_deriv) {
   EXPECT_FLOAT_EQ(0, res0(0).d_.val());
   EXPECT_FLOAT_EQ(2, res0(1).d_.val());
 
-  AVEC z =
-      createAVEC(m1(0, 0).val_, m1(0, 1).val_, m1(1, 0).val_, m1(1, 1).val_);
+  AVEC z
+      = createAVEC(m1(0, 0).val_, m1(0, 1).val_, m1(1, 0).val_, m1(1, 1).val_);
   VEC h;
   res0(1).d_.grad(z, h);
   EXPECT_NEAR(-1.110223e-16, h[0], 1e-8);

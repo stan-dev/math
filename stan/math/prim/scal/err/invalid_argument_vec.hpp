@@ -70,6 +70,6 @@ inline void invalid_argument_vec(const char *function, const char *name,
   invalid_argument_vec(function, name, y, i, msg, "");
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

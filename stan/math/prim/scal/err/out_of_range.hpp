@@ -39,6 +39,6 @@ inline void out_of_range(const char *function, int max, int index,
   throw std::out_of_range(message.str());
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

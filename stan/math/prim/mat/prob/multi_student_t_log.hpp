@@ -17,9 +17,8 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_dof, typename T_loc,
           typename T_scale>
-typename return_type<T_y, T_dof, T_loc, T_scale>::type
-multi_student_t_log(const T_y &y, const T_dof &nu, const T_loc &mu,
-                    const T_scale &Sigma) {
+typename return_type<T_y, T_dof, T_loc, T_scale>::type multi_student_t_log(
+    const T_y &y, const T_dof &nu, const T_loc &mu, const T_scale &Sigma) {
   return multi_student_t_lpdf<propto, T_y, T_dof, T_loc, T_scale>(y, nu, mu,
                                                                   Sigma);
 }
@@ -34,6 +33,6 @@ multi_student_t_log(const T_y &y, const T_dof &nu, const T_loc &mu,
   return multi_student_t_lpdf<T_y, T_dof, T_loc, T_scale>(y, nu, mu, Sigma);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -617,8 +617,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_vv_1stDeriv) {
   EXPECT_FLOAT_EQ(12, z(0).d_.val().val());
   EXPECT_FLOAT_EQ(105, z(1).d_.val().val());
 
-  AVEC q =
-      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC q
+      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   z(0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(10.0, h[0]);
@@ -645,8 +645,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_vv_2ndDeriv_1) {
 
   vector_ffv z = elt_multiply(x, y);
 
-  AVEC q =
-      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC q
+      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   z(0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -673,8 +673,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_vv_2ndDeriv_2) {
 
   vector_ffv z = elt_multiply(x, y);
 
-  AVEC q =
-      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC q
+      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   z(0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1.0, h[0]);
@@ -701,8 +701,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_vv_3rdDeriv) {
 
   vector_ffv z = elt_multiply(x, y);
 
-  AVEC q =
-      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC q
+      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   z(0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -928,8 +928,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_row_vec_vv_1stDeriv) {
   EXPECT_FLOAT_EQ(12, z(0).d_.val().val());
   EXPECT_FLOAT_EQ(105, z(1).d_.val().val());
 
-  AVEC q =
-      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC q
+      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   z(0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(10.0, h[0]);
@@ -955,8 +955,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_row_vec_vv_2ndDeriv_1) {
 
   row_vector_ffv z = elt_multiply(x, y);
 
-  AVEC q =
-      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC q
+      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   z(0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -982,8 +982,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_row_vec_vv_2ndDeriv_2) {
 
   row_vector_ffv z = elt_multiply(x, y);
 
-  AVEC q =
-      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC q
+      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   z(0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1.0, h[0]);
@@ -1009,8 +1009,8 @@ TEST(AgradMixMatrixEltMultiply, ffv_row_vec_vv_3rdDeriv) {
 
   row_vector_ffv z = elt_multiply(x, y);
 
-  AVEC q =
-      createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
+  AVEC q
+      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   z(0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);

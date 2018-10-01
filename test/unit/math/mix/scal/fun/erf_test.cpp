@@ -15,9 +15,9 @@ TEST(AgradFwdErf, FvarVar_1stDeriv) {
   fvar<var> a = erf(x);
 
   EXPECT_FLOAT_EQ(erf(0.5), a.val_.val());
-  EXPECT_FLOAT_EQ(1.3 * 2 * exp(-0.5 * 0.5) /
-                      sqrt(boost::math::constants::pi<double>()),
-                  a.d_.val());
+  EXPECT_FLOAT_EQ(
+      1.3 * 2 * exp(-0.5 * 0.5) / sqrt(boost::math::constants::pi<double>()),
+      a.d_.val());
 
   AVEC y = createAVEC(x.val_);
   VEC g;
@@ -38,9 +38,9 @@ TEST(AgradFwdErf, FvarVar_2ndDeriv) {
   AVEC y = createAVEC(x.val_);
   VEC g;
   a.d_.grad(y, g);
-  EXPECT_FLOAT_EQ(-1.3 * 2 * exp(-0.5 * 0.5) /
-                      sqrt(boost::math::constants::pi<double>()),
-                  g[0]);
+  EXPECT_FLOAT_EQ(
+      -1.3 * 2 * exp(-0.5 * 0.5) / sqrt(boost::math::constants::pi<double>()),
+      g[0]);
 }
 
 TEST(AgradFwdErf, FvarFvarVar_1stDeriv) {
@@ -57,9 +57,9 @@ TEST(AgradFwdErf, FvarFvarVar_1stDeriv) {
   fvar<fvar<var>> a = erf(x);
 
   EXPECT_FLOAT_EQ(erf(0.5), a.val_.val_.val());
-  EXPECT_FLOAT_EQ(2 * exp(-0.5 * 0.5) /
-                      sqrt(boost::math::constants::pi<double>()),
-                  a.val_.d_.val());
+  EXPECT_FLOAT_EQ(
+      2 * exp(-0.5 * 0.5) / sqrt(boost::math::constants::pi<double>()),
+      a.val_.d_.val());
   EXPECT_FLOAT_EQ(0, a.d_.val_.val());
   EXPECT_FLOAT_EQ(0, a.d_.d_.val());
 
@@ -76,9 +76,9 @@ TEST(AgradFwdErf, FvarFvarVar_1stDeriv) {
   fvar<fvar<var>> b = erf(y);
   EXPECT_FLOAT_EQ(erf(0.5), b.val_.val_.val());
   EXPECT_FLOAT_EQ(0, b.val_.d_.val());
-  EXPECT_FLOAT_EQ(2 * exp(-0.5 * 0.5) /
-                      sqrt(boost::math::constants::pi<double>()),
-                  b.d_.val_.val());
+  EXPECT_FLOAT_EQ(
+      2 * exp(-0.5 * 0.5) / sqrt(boost::math::constants::pi<double>()),
+      b.d_.val_.val());
   EXPECT_FLOAT_EQ(0, b.d_.d_.val());
 
   AVEC q = createAVEC(y.val_.val_);
@@ -102,9 +102,9 @@ TEST(AgradFwdErf, FvarFvarVar_2ndDeriv) {
   fvar<fvar<var>> a = erf(x);
 
   EXPECT_FLOAT_EQ(erf(0.5), a.val_.val_.val());
-  EXPECT_FLOAT_EQ(2 * exp(-0.5 * 0.5) /
-                      sqrt(boost::math::constants::pi<double>()),
-                  a.val_.d_.val());
+  EXPECT_FLOAT_EQ(
+      2 * exp(-0.5 * 0.5) / sqrt(boost::math::constants::pi<double>()),
+      a.val_.d_.val());
   EXPECT_FLOAT_EQ(0, a.d_.val_.val());
   EXPECT_FLOAT_EQ(0, a.d_.d_.val());
 
@@ -121,9 +121,9 @@ TEST(AgradFwdErf, FvarFvarVar_2ndDeriv) {
   fvar<fvar<var>> b = erf(y);
   EXPECT_FLOAT_EQ(erf(0.5), b.val_.val_.val());
   EXPECT_FLOAT_EQ(0, b.val_.d_.val());
-  EXPECT_FLOAT_EQ(2 * exp(-0.5 * 0.5) /
-                      sqrt(boost::math::constants::pi<double>()),
-                  b.d_.val_.val());
+  EXPECT_FLOAT_EQ(
+      2 * exp(-0.5 * 0.5) / sqrt(boost::math::constants::pi<double>()),
+      b.d_.val_.val());
   EXPECT_FLOAT_EQ(0, b.d_.d_.val());
 
   AVEC q = createAVEC(y.val_.val_);
@@ -153,7 +153,8 @@ TEST(AgradFwdErf, FvarFvarVar_3rdDeriv) {
 }
 
 struct erf_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0 &arg1) const {
     return erf(arg1);
   }
 };

@@ -38,8 +38,8 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type
-cauchy_cdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
+typename return_type<T_y, T_loc, T_scale>::type cauchy_cdf(
+    const T_y &y, const T_loc &mu, const T_scale &sigma) {
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
 
@@ -92,14 +92,14 @@ cauchy_cdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
     P *= Pn;
 
     if (!is_constant_struct<T_y>::value)
-      ops_partials.edge1_.partials_[n] +=
-          sigma_inv_dbl / (pi() * (1.0 + z * z) * Pn);
+      ops_partials.edge1_.partials_[n]
+          += sigma_inv_dbl / (pi() * (1.0 + z * z) * Pn);
     if (!is_constant_struct<T_loc>::value)
-      ops_partials.edge2_.partials_[n] +=
-          -sigma_inv_dbl / (pi() * (1.0 + z * z) * Pn);
+      ops_partials.edge2_.partials_[n]
+          += -sigma_inv_dbl / (pi() * (1.0 + z * z) * Pn);
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge3_.partials_[n] +=
-          -z * sigma_inv_dbl / (pi() * (1.0 + z * z) * Pn);
+      ops_partials.edge3_.partials_[n]
+          += -z * sigma_inv_dbl / (pi() * (1.0 + z * z) * Pn);
   }
 
   if (!is_constant_struct<T_y>::value) {
@@ -117,6 +117,6 @@ cauchy_cdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
   return ops_partials.build(P);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

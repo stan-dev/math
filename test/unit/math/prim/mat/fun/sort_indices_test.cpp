@@ -2,7 +2,8 @@
 #include <stan/math/prim/mat.hpp>
 #include <vector>
 
-template <typename T> void test_sort_indices_asc() {
+template <typename T>
+void test_sort_indices_asc() {
   using stan::math::sort_indices_asc;
   typedef typename stan::math::index_type<T>::type idx_t;
 
@@ -45,7 +46,8 @@ TEST(MathMatrix, sort_indices_asc) {
   test_sort_indices_asc<Eigen::Matrix<double, 1, Eigen::Dynamic>>();
 }
 
-template <typename T> void test_sort_indices_desc() {
+template <typename T>
+void test_sort_indices_desc() {
   using stan::math::sort_indices_desc;
   typedef typename stan::math::index_type<T>::type idx_t;
 

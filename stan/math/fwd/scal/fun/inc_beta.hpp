@@ -27,12 +27,12 @@ inline fvar<T> inc_beta(const fvar<T> &a, const fvar<T> &b, const fvar<T> &x) {
   grad_reg_inc_beta(d_a, d_b, a.val_, b.val_, x.val_, digamma(a.val_),
                     digamma(b.val_), digamma(a.val_ + b.val_),
                     exp(lbeta(a.val_, b.val_)));
-  d_x = pow((1 - x.val_), b.val_ - 1) * pow(x.val_, a.val_ - 1) /
-        exp(lbeta(a.val_, b.val_));
+  d_x = pow((1 - x.val_), b.val_ - 1) * pow(x.val_, a.val_ - 1)
+        / exp(lbeta(a.val_, b.val_));
   return fvar<T>(inc_beta(a.val_, b.val_, x.val_),
                  a.d_ * d_a + b.d_ * d_b + x.d_ * d_x);
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

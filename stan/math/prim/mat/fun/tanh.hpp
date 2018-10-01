@@ -14,7 +14,8 @@ namespace math {
  * @return Hyperbolic tangent of x.
  */
 struct tanh_fun {
-  template <typename T> static inline T fun(const T &x) {
+  template <typename T>
+  static inline T fun(const T &x) {
     using std::tanh;
     return tanh(x);
   }
@@ -31,7 +32,7 @@ inline typename apply_scalar_unary<tanh_fun, T>::return_t tanh(const T &x) {
   return apply_scalar_unary<tanh_fun, T>::apply(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

@@ -73,6 +73,6 @@ void finite_diff_gradient(const F &f, const Eigen::Matrix<double, -1, 1> &x,
     grad_fx(i) = delta_f;
   }
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

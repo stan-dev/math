@@ -158,6 +158,6 @@ inline fvar<T> squared_distance(const Eigen::Matrix<fvar<T>, R1, C1> &v1,
   return dot_self(v3);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

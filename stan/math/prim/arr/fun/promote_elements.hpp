@@ -41,7 +41,8 @@ struct promote_elements<std::vector<T>, std::vector<S>> {
  *
  * @tparam T type of elements
  */
-template <typename T> struct promote_elements<std::vector<T>, std::vector<T>> {
+template <typename T>
+struct promote_elements<std::vector<T>, std::vector<T>> {
   /**
    * Return input vector.
    *
@@ -53,7 +54,7 @@ template <typename T> struct promote_elements<std::vector<T>, std::vector<T>> {
   }
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

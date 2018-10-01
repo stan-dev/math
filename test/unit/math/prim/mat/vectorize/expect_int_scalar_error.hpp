@@ -5,7 +5,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-template <typename F> void expect_int_scalar_error() {
+template <typename F>
+void expect_int_scalar_error() {
   using std::vector;
   vector<int> int_invalid_inputs = F::int_invalid_inputs();
   for (size_t i = 0; i < int_invalid_inputs.size(); ++i) {

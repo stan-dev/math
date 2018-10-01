@@ -45,8 +45,8 @@ namespace math {
  * sizes
  */
 template <typename T_loc, typename T_conc, class RNG>
-inline typename VectorBuilder<true, double, T_loc, T_conc>::type
-von_mises_rng(const T_loc &mu, const T_conc &kappa, RNG &rng) {
+inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
+    const T_loc &mu, const T_conc &kappa, RNG &rng) {
   using boost::random::uniform_real_distribution;
   using boost::variate_generator;
   static const char *function = "von_mises_rng";
@@ -86,14 +86,15 @@ von_mises_rng(const T_loc &mu, const T_conc &kappa, RNG &rng) {
     double sign = ((U3 >= 0) - (U3 <= 0));
 
     //  it's really an fmod() with a positivity constraint
-    output[n] = sign * std::acos(W) +
-                std::fmod(std::fmod(mu_vec[n], 2 * pi()) + 2 * stan::math::pi(),
-                          2 * pi());
+    output[n]
+        = sign * std::acos(W)
+          + std::fmod(std::fmod(mu_vec[n], 2 * pi()) + 2 * stan::math::pi(),
+                      2 * pi());
   }
 
   return output.data();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

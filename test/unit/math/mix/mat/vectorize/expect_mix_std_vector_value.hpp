@@ -5,7 +5,8 @@
 #include <test/unit/math/mix/mat/vectorize/expect_val_deriv_eq.hpp>
 #include <vector>
 
-template <typename F, typename T> void expect_mix_std_vector_value() {
+template <typename F, typename T>
+void expect_mix_std_vector_value() {
   using std::vector;
 
   size_t num_inputs = F::valid_inputs().size();

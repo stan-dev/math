@@ -7,8 +7,8 @@
 using stan::math::to_matrix;
 
 template <typename T, int R, int C>
-inline Eigen::Matrix<T, R, C>
-row_major_to_column_major(const Eigen::Matrix<T, R, C> &x) {
+inline Eigen::Matrix<T, R, C> row_major_to_column_major(
+    const Eigen::Matrix<T, R, C> &x) {
   int rows = x.rows();
   int cols = x.cols();
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> result(rows, cols);

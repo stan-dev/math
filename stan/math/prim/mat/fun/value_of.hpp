@@ -21,8 +21,8 @@ namespace math {
  * @return Matrix of values
  **/
 template <typename T, int R, int C>
-inline Eigen::Matrix<typename child_type<T>::type, R, C>
-value_of(const Eigen::Matrix<T, R, C> &M) {
+inline Eigen::Matrix<typename child_type<T>::type, R, C> value_of(
+    const Eigen::Matrix<T, R, C> &M) {
   Eigen::Matrix<typename child_type<T>::type, R, C> Md(M.rows(), M.cols());
   for (int j = 0; j < M.cols(); j++)
     for (int i = 0; i < M.rows(); i++)
@@ -42,11 +42,11 @@ value_of(const Eigen::Matrix<T, R, C> &M) {
  * @return Specified matrix.
  */
 template <int R, int C>
-inline const Eigen::Matrix<double, R, C> &
-value_of(const Eigen::Matrix<double, R, C> &x) {
+inline const Eigen::Matrix<double, R, C> &value_of(
+    const Eigen::Matrix<double, R, C> &x) {
   return x;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

@@ -43,6 +43,6 @@ inline int categorical_logit_rng(const Eigen::VectorXd &beta, RNG &rng) {
     b++;
   return b + 1;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

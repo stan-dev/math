@@ -48,8 +48,9 @@ TEST(ProbDistributionsInvWishart, chiSquareGoodnessFitTest) {
   siginv = sigma.inverse();
   int count = 0;
   double avg = 0;
-  double expect = sigma.rows() * log(2.0) + log(determinant(siginv)) +
-                  digamma(5.0 / 2.0) + digamma(4.0 / 2.0) + digamma(3.0 / 2.0);
+  double expect = sigma.rows() * log(2.0) + log(determinant(siginv))
+                  + digamma(5.0 / 2.0) + digamma(4.0 / 2.0)
+                  + digamma(3.0 / 2.0);
 
   MatrixXd a(sigma.rows(), sigma.rows());
   while (count < N) {

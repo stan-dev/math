@@ -46,7 +46,8 @@ TEST(AgradRev, asinh_boundry) {
 }
 
 struct asinh_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0 &arg1) const {
     return asinh(arg1);
   }
 };

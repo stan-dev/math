@@ -12,17 +12,19 @@ namespace stan {
 namespace math {
 namespace internal {
 // Vectorized Univariate
-template <> class ops_partials_edge<double, std::vector<var>> {
-public:
+template <>
+class ops_partials_edge<double, std::vector<var>> {
+ public:
   typedef std::vector<var> Op;
   typedef Eigen::VectorXd partials_t;
-  partials_t partials_;                      // For univariate use-cases
-  broadcast_array<partials_t> partials_vec_; // For multivariate
+  partials_t partials_;                       // For univariate use-cases
+  broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const Op &op)
-      : partials_(partials_t::Zero(op.size())), partials_vec_(partials_),
+      : partials_(partials_t::Zero(op.size())),
+        partials_vec_(partials_),
         operands_(op) {}
 
-private:
+ private:
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
   const Op &operands_;
@@ -42,16 +44,17 @@ private:
 
 template <int R, int C>
 class ops_partials_edge<double, Eigen::Matrix<var, R, C>> {
-public:
+ public:
   typedef Eigen::Matrix<var, R, C> Op;
   typedef Eigen::Matrix<double, R, C> partials_t;
-  partials_t partials_;                      // For univariate use-cases
-  broadcast_array<partials_t> partials_vec_; // For multivariate
+  partials_t partials_;                       // For univariate use-cases
+  broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const Op &ops)
       : partials_(partials_t::Zero(ops.rows(), ops.cols())),
-        partials_vec_(partials_), operands_(ops) {}
+        partials_vec_(partials_),
+        operands_(ops) {}
 
-private:
+ private:
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
   const Op &operands_;
@@ -73,7 +76,7 @@ private:
 // (i.e. nested containers)
 template <int R, int C>
 class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
-public:
+ public:
   typedef std::vector<Eigen::Matrix<var, R, C>> Op;
   typedef Eigen::Matrix<double, -1, -1> partial_t;
   std::vector<partial_t> partials_vec_;
@@ -84,7 +87,7 @@ public:
     }
   }
 
-private:
+ private:
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
   const Op &operands_;
@@ -112,8 +115,9 @@ private:
   }
 };
 
-template <> class ops_partials_edge<double, std::vector<std::vector<var>>> {
-public:
+template <>
+class ops_partials_edge<double, std::vector<std::vector<var>>> {
+ public:
   typedef std::vector<std::vector<var>> Op;
   typedef std::vector<double> partial_t;
   std::vector<partial_t> partials_vec_;
@@ -124,7 +128,7 @@ public:
     }
   }
 
-private:
+ private:
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
   const Op &operands_;
@@ -151,7 +155,7 @@ private:
     return this->operands_.size() * this->operands_[0].size();
   }
 };
-} // namespace internal
-} // namespace math
-} // namespace stan
+}  // namespace internal
+}  // namespace math
+}  // namespace stan
 #endif

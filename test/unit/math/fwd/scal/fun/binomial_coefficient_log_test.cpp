@@ -39,8 +39,8 @@ TEST(AgradFwdBinomialCoefficientLog, FvarFvarDouble) {
 
 struct binomial_coefficient_log_fun {
   template <typename T0, typename T1>
-  inline typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1, const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return binomial_coefficient_log(arg1, arg2);
   }
 };

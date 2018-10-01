@@ -48,6 +48,6 @@ inline var if_else(bool c, const var &y_true, double y_false) {
     return var(y_false);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

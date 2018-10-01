@@ -33,7 +33,7 @@ scale_matrix_exp_multiply(const double &t, const Eigen::Matrix<Ta, -1, -1> &A,
   return matrix_exp_action(A, B, t);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

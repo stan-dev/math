@@ -5,7 +5,8 @@
 #include <test/unit/math/prim/mat/vectorize/expect_match_return_t.hpp>
 #include <vector>
 
-template <typename F> void expect_int_types() {
+template <typename F>
+void expect_int_types() {
   using stan::test::expect_match_return_t;
   using std::vector;
 
@@ -14,7 +15,8 @@ template <typename F> void expect_int_types() {
   expect_match_return_t<F, vector<vector<double>>, vector<vector<int>>>();
 }
 
-template <typename F, typename T> void expect_types() {
+template <typename F, typename T>
+void expect_types() {
   using Eigen::Matrix;
   using stan::test::expect_match_return_t;
   using std::vector;

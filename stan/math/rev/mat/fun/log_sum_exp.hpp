@@ -32,7 +32,7 @@ double log_sum_exp_as_double(const Eigen::Matrix<var, R, C> &x) {
 }
 
 class log_sum_exp_matrix_vari : public op_matrix_vari {
-public:
+ public:
   template <int R, int C>
   explicit log_sum_exp_matrix_vari(const Eigen::Matrix<var, R, C> &x)
       : op_matrix_vari(log_sum_exp_as_double(x), x) {}
@@ -42,7 +42,7 @@ public:
     }
   }
 };
-} // namespace
+}  // namespace
 
 /**
  * Returns the log sum of exponentials.
@@ -54,6 +54,6 @@ inline var log_sum_exp(const Eigen::Matrix<var, R, C> &x) {
   return var(new log_sum_exp_matrix_vari(x));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -7,11 +7,12 @@
 namespace stan {
 namespace math {
 
-template <typename T> inline fvar<T> floor(const fvar<T> &x) {
+template <typename T>
+inline fvar<T> floor(const fvar<T> &x) {
   using std::floor;
   return fvar<T>(floor(x.val_), 0);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

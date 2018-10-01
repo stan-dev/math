@@ -15,5 +15,5 @@ void check_varis_on_stack(const std::vector<stan::math::var> &x) {
         << n << " is not on the stack";
 }
 
-} // namespace test
+}  // namespace test
 #endif

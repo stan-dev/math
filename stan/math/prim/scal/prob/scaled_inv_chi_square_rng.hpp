@@ -59,6 +59,6 @@ scaled_inv_chi_square_rng(const T_deg &nu, const T_scale &s, RNG &rng) {
   return output.data();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -17,10 +17,11 @@ namespace math {
  * @return Value of variable.
  */
 
-template <typename T> inline double value_of_rec(const fvar<T> &v) {
+template <typename T>
+inline double value_of_rec(const fvar<T> &v) {
   return value_of_rec(v.val_);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

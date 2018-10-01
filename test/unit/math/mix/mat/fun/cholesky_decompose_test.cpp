@@ -6,7 +6,8 @@
 struct chol_functor {
   int i, j, K;
   chol_functor(int i_, int j_, int K_) : i(i_), j(j_), K(K_) {}
-  template <typename T> T operator()(Eigen::Matrix<T, -1, 1> x) const {
+  template <typename T>
+  T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::cholesky_decompose;
     using stan::math::cov_matrix_constrain;
     T lp(0.0);

@@ -14,8 +14,8 @@ TEST(ProbTransform, CholeskyCorrelation4) {
 
   Matrix<double, Dynamic, 1> y = stan::math::cholesky_corr_free(L);
 
-  Matrix<double, Dynamic, Dynamic> x =
-      stan::math::cholesky_corr_constrain(y, 4);
+  Matrix<double, Dynamic, Dynamic> x
+      = stan::math::cholesky_corr_constrain(y, 4);
 
   Matrix<double, Dynamic, 1> yrt = stan::math::cholesky_corr_free(x);
 
@@ -41,8 +41,8 @@ void test_cholesky_correlation_values(
   EXPECT_EQ(K_choose_2, y.size());
 
   // test transform roundtrip without Jacobian
-  Matrix<double, Dynamic, Dynamic> x =
-      stan::math::cholesky_corr_constrain(y, K);
+  Matrix<double, Dynamic, Dynamic> x
+      = stan::math::cholesky_corr_constrain(y, K);
 
   Matrix<double, Dynamic, 1> yrt = stan::math::cholesky_corr_free(x);
 
@@ -56,8 +56,8 @@ void test_cholesky_correlation_values(
 
   // test transform roundtrip with Jacobian (Jacobian itself tested above)
   double lp;
-  Matrix<double, Dynamic, Dynamic> x2 =
-      stan::math::cholesky_corr_constrain(y, K, lp);
+  Matrix<double, Dynamic, Dynamic> x2
+      = stan::math::cholesky_corr_constrain(y, K, lp);
 
   Matrix<double, Dynamic, 1> yrt2 = stan::math::cholesky_corr_free(x2);
 

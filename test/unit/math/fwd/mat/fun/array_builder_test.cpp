@@ -77,21 +77,21 @@ TEST(AgradFwdMatrixArrayBuilder, fvar_fvar_double) {
   EXPECT_FLOAT_EQ(4.0, x[1].d_.val_);
   EXPECT_FLOAT_EQ(4.0, x[2].d_.val_);
 
-  vector<vector<fvar<fvar<double>>>> xx =
-      array_builder<vector<fvar<fvar<double>>>>()
-          .add(array_builder<fvar<fvar<double>>>()
-                   .add(fvar<fvar<double>>(1, 4))
-                   .add(fvar<fvar<double>>(2, 4))
-                   .array())
-          .add(array_builder<fvar<fvar<double>>>()
-                   .add(fvar<fvar<double>>(3, 4))
-                   .add(fvar<fvar<double>>(4, 4))
-                   .array())
-          .add(array_builder<fvar<fvar<double>>>()
-                   .add(fvar<fvar<double>>(5, 4))
-                   .add(fvar<fvar<double>>(6, 4))
-                   .array())
-          .array();
+  vector<vector<fvar<fvar<double>>>> xx
+      = array_builder<vector<fvar<fvar<double>>>>()
+            .add(array_builder<fvar<fvar<double>>>()
+                     .add(fvar<fvar<double>>(1, 4))
+                     .add(fvar<fvar<double>>(2, 4))
+                     .array())
+            .add(array_builder<fvar<fvar<double>>>()
+                     .add(fvar<fvar<double>>(3, 4))
+                     .add(fvar<fvar<double>>(4, 4))
+                     .array())
+            .add(array_builder<fvar<fvar<double>>>()
+                     .add(fvar<fvar<double>>(5, 4))
+                     .add(fvar<fvar<double>>(6, 4))
+                     .array())
+            .array();
 
   EXPECT_EQ(3U, xx.size());
   for (size_t i = 0; i < 3; ++i)

@@ -23,8 +23,8 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_scale, typename T_shape>
-typename return_type<T_y, T_scale, T_shape>::type
-pareto_lccdf(const T_y &y, const T_scale &y_min, const T_shape &alpha) {
+typename return_type<T_y, T_scale, T_shape>::type pareto_lccdf(
+    const T_y &y, const T_scale &y_min, const T_shape &alpha) {
   typedef typename stan::partials_return_type<T_y, T_scale, T_shape>::type
       T_partials_return;
 
@@ -66,16 +66,16 @@ pareto_lccdf(const T_y &y, const T_scale &y_min, const T_shape &alpha) {
       return ops_partials.build(negative_infinity());
     }
 
-    const T_partials_return log_dbl =
-        log(value_of(y_min_vec[n]) / value_of(y_vec[n]));
+    const T_partials_return log_dbl
+        = log(value_of(y_min_vec[n]) / value_of(y_vec[n]));
     const T_partials_return y_min_inv_dbl = 1.0 / value_of(y_min_vec[n]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
 
     P += alpha_dbl * log_dbl;
 
     if (!is_constant_struct<T_y>::value)
-      ops_partials.edge1_.partials_[n] -=
-          alpha_dbl * y_min_inv_dbl * exp(log_dbl);
+      ops_partials.edge1_.partials_[n]
+          -= alpha_dbl * y_min_inv_dbl * exp(log_dbl);
     if (!is_constant_struct<T_scale>::value)
       ops_partials.edge2_.partials_[n] += alpha_dbl * y_min_inv_dbl;
     if (!is_constant_struct<T_shape>::value)
@@ -84,6 +84,6 @@ pareto_lccdf(const T_y &y, const T_scale &y_min, const T_shape &alpha) {
   return ops_partials.build(P);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

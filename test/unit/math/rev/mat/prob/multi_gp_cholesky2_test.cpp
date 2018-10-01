@@ -101,27 +101,27 @@ TEST(ProbDistributionsMultiGPCholesky, MultiGPCholeskyGradientUnivariate) {
   Matrix<double, Dynamic, Dynamic> y_p(1, 1);
   y_p(0) = y(0) + epsilon;
   y_m(0) = y(0) - epsilon;
-  double grad_diff =
-      (multi_gp_cholesky_log(y_p, L, w) - multi_gp_cholesky_log(y_m, L, w)) /
-      (2 * epsilon);
+  double grad_diff
+      = (multi_gp_cholesky_log(y_p, L, w) - multi_gp_cholesky_log(y_m, L, w))
+        / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[0]);
 
   Matrix<double, Dynamic, 1> w_m(1, 1);
   Matrix<double, Dynamic, 1> w_p(1, 1);
   w_p[0] = w[0] + epsilon;
   w_m[0] = w[0] - epsilon;
-  grad_diff =
-      (multi_gp_cholesky_log(y, L, w_p) - multi_gp_cholesky_log(y, L, w_m)) /
-      (2 * epsilon);
+  grad_diff
+      = (multi_gp_cholesky_log(y, L, w_p) - multi_gp_cholesky_log(y, L, w_m))
+        / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[1]);
 
   Matrix<double, Dynamic, Dynamic> L_m(1, 1);
   Matrix<double, Dynamic, Dynamic> L_p(1, 1);
   L_p(0) = L(0) + epsilon;
   L_m(0) = L(0) - epsilon;
-  grad_diff =
-      (multi_gp_cholesky_log(y, L_p, w) - multi_gp_cholesky_log(y, L_m, w)) /
-      (2 * epsilon);
+  grad_diff
+      = (multi_gp_cholesky_log(y, L_p, w) - multi_gp_cholesky_log(y, L_m, w))
+        / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[2]);
 }
 
@@ -130,7 +130,8 @@ struct multi_gp_cholesky_fun {
 
   multi_gp_cholesky_fun(int K, int N) : K_(K), N_(N) {}
 
-  template <typename T> T operator()(const std::vector<T> &x) const {
+  template <typename T>
+  T operator()(const std::vector<T> &x) const {
     using Eigen::Dynamic;
     using Eigen::Matrix;
     using stan::math::var;

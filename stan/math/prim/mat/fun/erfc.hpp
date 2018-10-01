@@ -14,7 +14,8 @@ namespace math {
  * @return Complementary error function applied to x.
  */
 struct erfc_fun {
-  template <typename T> static inline T fun(const T &x) {
+  template <typename T>
+  static inline T fun(const T &x) {
     using boost::math::erfc;
     return erfc(x);
   }
@@ -31,7 +32,7 @@ inline typename apply_scalar_unary<erfc_fun, T>::return_t erfc(const T &x) {
   return apply_scalar_unary<erfc_fun, T>::apply(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

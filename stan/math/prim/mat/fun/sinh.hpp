@@ -14,7 +14,8 @@ namespace math {
  * @return Hyperbolic sine of x.
  */
 struct sinh_fun {
-  template <typename T> static inline T fun(const T &x) {
+  template <typename T>
+  static inline T fun(const T &x) {
     using std::sinh;
     return sinh(x);
   }
@@ -31,7 +32,7 @@ inline typename apply_scalar_unary<sinh_fun, T>::return_t sinh(const T &x) {
   return apply_scalar_unary<sinh_fun, T>::apply(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

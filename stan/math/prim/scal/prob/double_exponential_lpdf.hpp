@@ -39,8 +39,8 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type
-double_exponential_lpdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
+typename return_type<T_y, T_loc, T_scale>::type double_exponential_lpdf(
+    const T_y &y, const T_loc &mu, const T_scale &sigma) {
   static const char *function = "double_exponential_lpdf";
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
@@ -111,18 +111,18 @@ double_exponential_lpdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
       ops_partials.edge2_.partials_[n] += sign_y_m_mu_times_inv_sigma;
     }
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge3_.partials_[n] +=
-          -inv_sigma[n] + fabs_y_m_mu * inv_sigma_squared[n];
+      ops_partials.edge3_.partials_[n]
+          += -inv_sigma[n] + fabs_y_m_mu * inv_sigma_squared[n];
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type
-double_exponential_lpdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
+typename return_type<T_y, T_loc, T_scale>::type double_exponential_lpdf(
+    const T_y &y, const T_loc &mu, const T_scale &sigma) {
   return double_exponential_lpdf<false>(y, mu, sigma);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

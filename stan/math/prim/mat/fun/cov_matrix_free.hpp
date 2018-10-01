@@ -34,8 +34,8 @@ namespace math {
  * has zero dimensionality, or has a non-positive diagonal element.
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1>
-cov_matrix_free(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &y) {
+Eigen::Matrix<T, Eigen::Dynamic, 1> cov_matrix_free(
+    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &y) {
   check_square("cov_matrix_free", "y", y);
   check_nonzero_size("cov_matrix_free", "y", y);
 
@@ -58,6 +58,6 @@ cov_matrix_free(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &y) {
   return x;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

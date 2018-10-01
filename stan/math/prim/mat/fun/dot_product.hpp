@@ -48,6 +48,6 @@ inline double dot_product(const std::vector<double> &v1,
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
   return dot_product(&v1[0], &v2[0], v1.size());
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

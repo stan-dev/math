@@ -6,7 +6,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-template <typename F, typename T> void expect_matrix_error() {
+template <typename F, typename T>
+void expect_matrix_error() {
   using std::vector;
   typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
   vector<double> invalid_inputs = F::invalid_inputs();

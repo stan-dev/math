@@ -21,6 +21,6 @@ namespace math {
  */
 inline double value_of(const var &v) { return v.vi_->val_; }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

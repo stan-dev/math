@@ -92,8 +92,8 @@ void test_ode_finite_diff_dv(const F &f, const double &t_in,
 
   std::vector<std::vector<std::vector<double>>> finite_diff_res(theta.size());
   for (size_t i = 0; i < theta.size(); i++)
-    finite_diff_res[i] =
-        finite_diff_params(f, t_in, ts, y_in, theta, x, x_int, i, diff);
+    finite_diff_res[i]
+        = finite_diff_params(f, t_in, ts, y_in, theta, x, x_int, i, diff);
 
   std::vector<double> grads_eff;
 
@@ -185,8 +185,8 @@ void test_ode_finite_diff_vv(const F &f, const double &t_in,
 
   std::vector<std::vector<std::vector<double>>> finite_diff_res_p(theta.size());
   for (size_t i = 0; i < theta.size(); i++)
-    finite_diff_res_p[i] =
-        finite_diff_params(f, t_in, ts, y_in, theta, x, x_int, i, diff);
+    finite_diff_res_p[i]
+        = finite_diff_params(f, t_in, ts, y_in, theta, x, x_int, i, diff);
 
   std::vector<double> grads_eff;
   std::vector<stan::math::var> y_in_v;

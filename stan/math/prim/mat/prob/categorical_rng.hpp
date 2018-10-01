@@ -16,9 +16,8 @@ namespace stan {
 namespace math {
 
 template <class RNG>
-inline int
-categorical_rng(const Eigen::Matrix<double, Eigen::Dynamic, 1> &theta,
-                RNG &rng) {
+inline int categorical_rng(
+    const Eigen::Matrix<double, Eigen::Dynamic, 1> &theta, RNG &rng) {
   using boost::uniform_01;
   using boost::variate_generator;
 
@@ -39,6 +38,6 @@ categorical_rng(const Eigen::Matrix<double, Eigen::Dynamic, 1> &theta,
     b++;
   return b + 1;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

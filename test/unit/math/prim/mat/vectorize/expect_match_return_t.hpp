@@ -24,6 +24,6 @@ void expect_match_return_t() {
   EXPECT_TRUE((boost::is_same<T_result_expected, result_t>::value));
 }
 
-} // namespace test
-} // namespace stan
+}  // namespace test
+}  // namespace stan
 #endif

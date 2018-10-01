@@ -10,13 +10,15 @@
 // first n*m elements are for A
 // second m*k elements starting with n*m + 1-th element (indexed by
 // n*m (remember !)
-template <int R_A, int C_A, int C_B> class mult_vv {
+template <int R_A, int C_A, int C_B>
+class mult_vv {
   int i, j, N, M, K;
 
-public:
+ public:
   mult_vv(int i_, int j_, int N_, int M_, int K_)
       : i(i_), j(j_), N(N_), M(M_), K(K_) {}
-  template <typename T> T operator()(Eigen::Matrix<T, -1, 1> x) const {
+  template <typename T>
+  T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::multiply;
     Eigen::Matrix<T, R_A, C_A> A_c(N, M);
     Eigen::Matrix<T, C_A, C_B> B_c(M, K);
@@ -35,12 +37,14 @@ public:
   }
 };
 
-template <> class mult_vv<1, -1, 1> {
+template <>
+class mult_vv<1, -1, 1> {
   int N, M, K;
 
-public:
+ public:
   mult_vv(int N_, int M_, int K_) : N(N_), M(M_), K(K_) {}
-  template <typename T> T operator()(Eigen::Matrix<T, -1, 1> x) const {
+  template <typename T>
+  T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::multiply;
     Eigen::Matrix<T, 1, -1> A_c(N, M);
     Eigen::Matrix<T, -1, 1> B_c(M, K);
@@ -59,14 +63,16 @@ public:
   }
 };
 
-template <int R_A, int C_A, int C_B> class mult_dv {
+template <int R_A, int C_A, int C_B>
+class mult_dv {
   int i, j, M, K;
   Eigen::Matrix<double, R_A, C_A> A_c;
 
-public:
+ public:
   mult_dv(int i_, int j_, int M_, int K_, Eigen::Matrix<double, R_A, C_A> A_c_)
       : i(i_), j(j_), M(M_), K(K_), A_c(A_c_) {}
-  template <typename T> T operator()(Eigen::Matrix<T, -1, 1> x) const {
+  template <typename T>
+  T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::multiply;
     Eigen::Matrix<T, C_A, C_B> B_c(M, K);
     int pos = 0;
@@ -81,14 +87,16 @@ public:
   }
 };
 
-template <> class mult_dv<1, -1, 1> {
+template <>
+class mult_dv<1, -1, 1> {
   int M, K;
   Eigen::Matrix<double, 1, -1> A_c;
 
-public:
+ public:
   mult_dv(int M_, int K_, Eigen::Matrix<double, 1, -1> A_c_)
       : M(M_), K(K_), A_c(A_c_) {}
-  template <typename T> T operator()(Eigen::Matrix<T, -1, 1> x) const {
+  template <typename T>
+  T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::multiply;
     Eigen::Matrix<T, -1, 1> B_c(M, K);
     int pos = 0;
@@ -103,14 +111,16 @@ public:
   }
 };
 
-template <int R_A, int C_A, int C_B> class mult_vd {
+template <int R_A, int C_A, int C_B>
+class mult_vd {
   int i, j, N, M;
   Eigen::Matrix<double, C_A, C_B> B_c;
 
-public:
+ public:
   mult_vd(int i_, int j_, int N_, int M_, Eigen::Matrix<double, C_A, C_B> B_c_)
       : i(i_), j(j_), N(N_), M(M_), B_c(B_c_) {}
-  template <typename T> T operator()(Eigen::Matrix<T, -1, 1> x) const {
+  template <typename T>
+  T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::multiply;
     Eigen::Matrix<T, R_A, C_A> A_c(N, M);
     int pos = 0;
@@ -124,14 +134,16 @@ public:
   }
 };
 
-template <> class mult_vd<1, -1, 1> {
+template <>
+class mult_vd<1, -1, 1> {
   int N, M;
   Eigen::Matrix<double, -1, 1> B_c;
 
-public:
+ public:
   mult_vd(int N_, int M_, Eigen::Matrix<double, -1, 1> B_c_)
       : N(N_), M(M_), B_c(B_c_) {}
-  template <typename T> T operator()(Eigen::Matrix<T, -1, 1> x) const {
+  template <typename T>
+  T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::multiply;
     Eigen::Matrix<T, 1, -1> A_c(N, M);
     int pos = 0;
@@ -148,8 +160,8 @@ public:
 Eigen::Matrix<double, -1, 1> generate_inp(int N, int M, int K) {
   std::srand(123);
   int size_vec = N * M + M * K;
-  Eigen::Matrix<double, -1, 1> vec =
-      Eigen::Matrix<double, -1, 1>::Random(size_vec);
+  Eigen::Matrix<double, -1, 1> vec
+      = Eigen::Matrix<double, -1, 1>::Random(size_vec);
   return vec;
 }
 

@@ -98,8 +98,12 @@ struct IDASIntegratorTest : public ::testing::Test {
   void SetUp() { stan::math::recover_memory(); }
 
   IDASIntegratorTest()
-      : yy0{1.0, 0.0, 0.0}, yp0{-0.04, 0.04, 0.0}, theta{0.040, 1.0e4, 3.0e7},
-        msgs{0}, eq_id{1, 1, 0}, t0(0.0) {
+      : yy0{1.0, 0.0, 0.0},
+        yp0{-0.04, 0.04, 0.0},
+        theta{0.040, 1.0e4, 3.0e7},
+        msgs{0},
+        eq_id{1, 1, 0},
+        t0(0.0) {
     const size_t nout{4};
     const double h{0.4};
     for (size_t i = 0; i < nout; ++i)

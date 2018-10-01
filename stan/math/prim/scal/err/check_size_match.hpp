@@ -69,6 +69,6 @@ inline void check_size_match(const char *function, const char *expr_i,
   invalid_argument(function, updated_name_str.c_str(), i, "(", msg_str.c_str());
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

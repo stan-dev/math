@@ -44,6 +44,6 @@ beta_binomial_rng(const T_N &N, const T_shape1 &alpha, const T_shape2 &beta,
   return binomial_rng(N, p, rng);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

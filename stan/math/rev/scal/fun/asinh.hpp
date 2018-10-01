@@ -10,13 +10,13 @@ namespace math {
 
 namespace {
 class asinh_vari : public op_v_vari {
-public:
+ public:
   asinh_vari(double val, vari *avi) : op_v_vari(val, avi) {}
   void chain() {
     avi_->adj_ += adj_ / std::sqrt(avi_->val_ * avi_->val_ + 1.0);
   }
 };
-} // namespace
+}  // namespace
 
 /**
  * The inverse hyperbolic sine function for variables (C99).
@@ -55,6 +55,6 @@ inline var asinh(const var &a) {
   return var(new asinh_vari(asinh(a.val()), a.vi_));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

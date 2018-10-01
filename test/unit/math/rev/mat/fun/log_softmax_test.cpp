@@ -62,8 +62,8 @@ TEST(AgradRevMatrix, log_softmax) {
 
 // compute grad using templated definition in math
 // to check custom derivatives
-std::vector<double>
-log_softmax_grad(Eigen::Matrix<double, Eigen::Dynamic, 1> &alpha_dbl, int k) {
+std::vector<double> log_softmax_grad(
+    Eigen::Matrix<double, Eigen::Dynamic, 1> &alpha_dbl, int k) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;

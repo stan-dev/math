@@ -36,7 +36,7 @@ inline fvar<T> trace_quad_form(const Eigen::Matrix<double, RA, CA> &A,
   check_multiplicable("trace_quad_form", "A", A, "B", B);
   return trace(multiply(transpose(B), multiply(A, B)));
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

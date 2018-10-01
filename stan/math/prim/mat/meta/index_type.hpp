@@ -15,12 +15,13 @@ namespace math {
  * @tparam R number of rows for matrix.
  * @tparam C number of columns for matrix.
  */
-template <typename T, int R, int C> struct index_type<Eigen::Matrix<T, R, C>> {
+template <typename T, int R, int C>
+struct index_type<Eigen::Matrix<T, R, C>> {
   typedef typename Eigen::Matrix<T, R, C>::Index type;
 };
 
-} // namespace math
+}  // namespace math
 
-} // namespace stan
+}  // namespace stan
 
 #endif

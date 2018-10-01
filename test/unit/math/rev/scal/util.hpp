@@ -11,5 +11,5 @@ void check_varis_on_stack(const stan::math::var &x) {
       << "not on the stack";
 }
 
-} // namespace test
+}  // namespace test
 #endif

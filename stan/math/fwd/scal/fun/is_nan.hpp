@@ -15,10 +15,11 @@ namespace math {
  * @param x Value to test.
  * @return <code>1</code> if the value is NaN and <code>0</code> otherwise.
  */
-template <typename T> inline int is_nan(const fvar<T> &x) {
+template <typename T>
+inline int is_nan(const fvar<T> &x) {
   return is_nan(x.val());
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

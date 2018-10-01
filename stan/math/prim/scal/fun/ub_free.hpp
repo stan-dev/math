@@ -33,8 +33,8 @@ namespace math {
  *   than the upper bound.
  */
 template <typename T, typename U>
-inline typename boost::math::tools::promote_args<T, U>::type
-ub_free(const T &y, const U &ub) {
+inline typename boost::math::tools::promote_args<T, U>::type ub_free(
+    const T &y, const U &ub) {
   using std::log;
   if (ub == std::numeric_limits<double>::infinity())
     return identity_free(y);
@@ -42,6 +42,6 @@ ub_free(const T &y, const U &ub) {
   return log(ub - y);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -14,6 +14,6 @@ inline double dot(const std::vector<double> &x, const std::vector<double> &y) {
   return sum;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

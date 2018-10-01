@@ -56,6 +56,6 @@ inline double inv_logit(double a) {
   return 1 / (1 + exp(-a));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -30,6 +30,6 @@ inline fvar<T> sum(const Eigen::Matrix<fvar<T>, R, C> &m) {
   return fvar<T>(sum(vals), sum(tans));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

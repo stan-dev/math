@@ -34,6 +34,6 @@ inline fvar<T1> log_diff_exp(const fvar<T1> &x1, const T2 &x2) {
     return fvar<T1>(NOT_A_NUMBER, NOT_A_NUMBER);
   return fvar<T1>(log_diff_exp(x1.val_, x2), -x1.d_ / expm1(x2 - x1.val_));
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

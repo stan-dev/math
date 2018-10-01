@@ -51,6 +51,6 @@ inline double logit(double u) {
  */
 inline double logit(int u) { return logit(static_cast<double>(u)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

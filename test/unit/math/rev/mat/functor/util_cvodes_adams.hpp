@@ -28,10 +28,10 @@ std::vector<std::vector<double>> finite_diff_params(
   std::vector<std::vector<double>> ode_res_ub;
   std::vector<std::vector<double>> ode_res_lb;
 
-  ode_res_ub =
-      stan::math::integrate_ode_adams(f, y_in, t_in, ts, theta_ub, x, x_int);
-  ode_res_lb =
-      stan::math::integrate_ode_adams(f, y_in, t_in, ts, theta_lb, x, x_int);
+  ode_res_ub
+      = stan::math::integrate_ode_adams(f, y_in, t_in, ts, theta_ub, x, x_int);
+  ode_res_lb
+      = stan::math::integrate_ode_adams(f, y_in, t_in, ts, theta_lb, x, x_int);
 
   std::vector<std::vector<double>> results(ts.size());
 
@@ -64,10 +64,10 @@ std::vector<std::vector<double>> finite_diff_initial_position(
   std::vector<std::vector<double>> ode_res_ub;
   std::vector<std::vector<double>> ode_res_lb;
 
-  ode_res_ub =
-      stan::math::integrate_ode_adams(f, y_in_ub, t_in, ts, theta, x, x_int);
-  ode_res_lb =
-      stan::math::integrate_ode_adams(f, y_in_lb, t_in, ts, theta, x, x_int);
+  ode_res_ub
+      = stan::math::integrate_ode_adams(f, y_in_ub, t_in, ts, theta, x, x_int);
+  ode_res_lb
+      = stan::math::integrate_ode_adams(f, y_in_lb, t_in, ts, theta, x, x_int);
 
   std::vector<std::vector<double>> results(ts.size());
 
@@ -91,8 +91,8 @@ void test_ode_finite_diff_dv(const F &f, const double &t_in,
 
   std::vector<std::vector<std::vector<double>>> finite_diff_res(theta.size());
   for (size_t i = 0; i < theta.size(); i++)
-    finite_diff_res[i] =
-        finite_diff_params(f, t_in, ts, y_in, theta, x, x_int, i, diff);
+    finite_diff_res[i]
+        = finite_diff_params(f, t_in, ts, y_in, theta, x, x_int, i, diff);
 
   std::vector<double> grads_eff;
 
@@ -102,8 +102,8 @@ void test_ode_finite_diff_dv(const F &f, const double &t_in,
 
   std::vector<std::vector<stan::math::var>> ode_res;
 
-  ode_res =
-      stan::math::integrate_ode_adams(f, y_in, t_in, ts, theta_v, x, x_int);
+  ode_res
+      = stan::math::integrate_ode_adams(f, y_in, t_in, ts, theta_v, x, x_int);
 
   for (size_t i = 0; i < ts.size(); i++) {
     for (size_t j = 0; j < y_in.size(); j++) {
@@ -146,8 +146,8 @@ void test_ode_finite_diff_vd(const F &f, const double &t_in,
 
   std::vector<std::vector<stan::math::var>> ode_res;
 
-  ode_res =
-      stan::math::integrate_ode_adams(f, y_in_v, t_in, ts, theta, x, x_int);
+  ode_res
+      = stan::math::integrate_ode_adams(f, y_in_v, t_in, ts, theta, x, x_int);
 
   for (size_t i = 0; i < ts.size(); i++) {
     for (size_t j = 0; j < y_in.size(); j++) {
@@ -184,8 +184,8 @@ void test_ode_finite_diff_vv(const F &f, const double &t_in,
 
   std::vector<std::vector<std::vector<double>>> finite_diff_res_p(theta.size());
   for (size_t i = 0; i < theta.size(); i++)
-    finite_diff_res_p[i] =
-        finite_diff_params(f, t_in, ts, y_in, theta, x, x_int, i, diff);
+    finite_diff_res_p[i]
+        = finite_diff_params(f, t_in, ts, y_in, theta, x, x_int, i, diff);
 
   std::vector<double> grads_eff;
   std::vector<stan::math::var> y_in_v;
@@ -203,8 +203,8 @@ void test_ode_finite_diff_vv(const F &f, const double &t_in,
 
   std::vector<std::vector<stan::math::var>> ode_res;
 
-  ode_res =
-      stan::math::integrate_ode_adams(f, y_in_v, t_in, ts, theta_v, x, x_int);
+  ode_res
+      = stan::math::integrate_ode_adams(f, y_in_v, t_in, ts, theta_v, x, x_int);
 
   for (size_t i = 0; i < ts.size(); i++) {
     for (size_t j = 0; j < y_in.size(); j++) {

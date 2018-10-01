@@ -36,7 +36,11 @@ struct cvodes2coupled {
   N_Vector *cvode_state_sens_dot_;
 
   cvodes2coupled(const size_t N, const size_t S)
-      : N_(N), S_(S), state_(N, 0), state_dot_(N, 0), p_state_(&state_[0]),
+      : N_(N),
+        S_(S),
+        state_(N, 0),
+        state_dot_(N, 0),
+        p_state_(&state_[0]),
         p_state_dot_(&state_dot_[0]),
         cvode_state_(N_VMake_Serial(N_, &state_[0])),
         cvode_state_dot_(N_VMake_Serial(N_, &state_dot_[0])) {
@@ -381,8 +385,8 @@ TEST_F(StanMathRevOdeCVode, cvodes_ode_data_vv) {
 
   std::vector<double> dy_dt_coupled = nvec.get_coupled_state_dot();
 
-  std::vector<double> dy_dt_base =
-      harm_osc(0.0, y0_d, theta_d, x, x_int, &msgs);
+  std::vector<double> dy_dt_base
+      = harm_osc(0.0, y0_d, theta_d, x, x_int, &msgs);
 
   EXPECT_FLOAT_EQ(dy_dt_base[0], dy_dt_coupled[0]);
   EXPECT_FLOAT_EQ(dy_dt_base[1], dy_dt_coupled[1]);

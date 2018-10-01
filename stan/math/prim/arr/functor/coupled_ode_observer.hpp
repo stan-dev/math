@@ -36,8 +36,8 @@ struct coupled_ode_observer {
   }
 };
 
-} // namespace math
+}  // namespace math
 
-} // namespace stan
+}  // namespace stan
 
 #endif

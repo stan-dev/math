@@ -46,7 +46,8 @@ TEST(AgradRev, atanh_out_of_bounds) {
 }
 
 struct atanh_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0 &arg1) const {
     return atanh(arg1);
   }
 };

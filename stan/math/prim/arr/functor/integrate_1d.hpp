@@ -82,9 +82,9 @@ inline double integrate(const F &f, double a, double b,
         return f(-x, std::numeric_limits<double>::quiet_NaN());
       };
       Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1,
-                               &levels) +
-          integrator_right.integrate(f_wrap, -b, 0, relative_tolerance, &error2,
-                                     &L2, &levels);
+                               &levels)
+          + integrator_right.integrate(f_wrap, -b, 0, relative_tolerance,
+                                       &error2, &L2, &levels);
       used_two_integrals = true;
     }
   } else if (std::isinf(b)) {
@@ -101,9 +101,9 @@ inline double integrate(const F &f, double a, double b,
         return f(x, std::numeric_limits<double>::quiet_NaN());
       };
       Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1,
-                               &levels) +
-          integrator_right.integrate(f_wrap, a, 0, relative_tolerance, &error2,
-                                     &L2, &levels);
+                               &levels)
+          + integrator_right.integrate(f_wrap, a, 0, relative_tolerance,
+                                       &error2, &L2, &levels);
       used_two_integrals = true;
     }
   } else {
@@ -111,9 +111,9 @@ inline double integrate(const F &f, double a, double b,
     boost::math::quadrature::tanh_sinh<double> integrator;
     if (a < 0.0 && b > 0.0) {
       Q = integrator.integrate(f_wrap, a, 0.0, relative_tolerance, &error1, &L1,
-                               &levels) +
-          integrator.integrate(f_wrap, 0.0, b, relative_tolerance, &error2, &L2,
-                               &levels);
+                               &levels)
+          + integrator.integrate(f_wrap, 0.0, b, relative_tolerance, &error2,
+                                 &L2, &levels);
       used_two_integrals = true;
     } else {
       Q = integrator.integrate(f_wrap, a, b, relative_tolerance, &error1, &L1,
@@ -125,13 +125,15 @@ inline double integrate(const F &f, double a, double b,
   if (used_two_integrals) {
     if (error1 > relative_tolerance * L1) {
       domain_error(function, "error estimate of integral below zero", error1,
-                   "", " exceeds the given relative tolerance times norm of "
-                       "integral below zero");
+                   "",
+                   " exceeds the given relative tolerance times norm of "
+                   "integral below zero");
     }
     if (error2 > relative_tolerance * L2) {
       domain_error(function, "error estimate of integral above zero", error2,
-                   "", " exceeds the given relative tolerance times norm of "
-                       "integral above zero");
+                   "",
+                   " exceeds the given relative tolerance times norm of "
+                   "integral above zero");
     }
   } else {
     if (error1 > relative_tolerance * L1) {
@@ -190,12 +192,12 @@ inline double integrate(const F &f, double a, double b,
  * @return numeric integral of function f
  */
 template <typename F>
-inline double integrate_1d(const F &f, const double a, const double b,
-                           const std::vector<double> &theta,
-                           const std::vector<double> &x_r,
-                           const std::vector<int> &x_i, std::ostream &msgs,
-                           const double relative_tolerance = std::sqrt(
-                               std::numeric_limits<double>::epsilon())) {
+inline double integrate_1d(
+    const F &f, const double a, const double b,
+    const std::vector<double> &theta, const std::vector<double> &x_r,
+    const std::vector<int> &x_i, std::ostream &msgs,
+    const double relative_tolerance
+    = std::sqrt(std::numeric_limits<double>::epsilon())) {
   static const char *function = "integrate_1d";
   check_less_or_equal(function, "lower limit", a, b);
 
@@ -204,14 +206,14 @@ inline double integrate_1d(const F &f, const double a, const double b,
       domain_error(function, "Integration endpoints are both", a, "", "");
     return 0.0;
   } else {
-    return integrate(std::bind<double>(f, std::placeholders::_1,
-                                       std::placeholders::_2, theta, x_r, x_i,
-                                       &msgs),
-                     a, b, relative_tolerance);
+    return integrate(
+        std::bind<double>(f, std::placeholders::_1, std::placeholders::_2,
+                          theta, x_r, x_i, &msgs),
+        a, b, relative_tolerance);
   }
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

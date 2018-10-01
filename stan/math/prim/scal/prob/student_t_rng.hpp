@@ -63,6 +63,6 @@ student_t_rng(const T_deg &nu, const T_loc &mu, const T_scale &sigma,
   return output.data();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -60,7 +60,8 @@ double fun_value_of(stan::math::fvar<stan::math::fvar<double>> x) {
 }
 
 // tests calculating using R 3.0.2 Snow Leopard build (6558)
-template <typename T> void test_tails() {
+template <typename T>
+void test_tails() {
   using stan::math::Phi;
 
   EXPECT_EQ(0, fun_value_of(Phi(T(-40))));
@@ -169,7 +170,8 @@ TEST(AgradFwdPhi, PhiTails) {
 }
 
 struct Phi_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0 &arg1) const {
     return Phi(arg1);
   }
 };

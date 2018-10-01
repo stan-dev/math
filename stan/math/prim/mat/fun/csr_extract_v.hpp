@@ -23,8 +23,8 @@ namespace math {
  * @return Vector of column indexes for non-zero entries of A.
  */
 template <typename T>
-const std::vector<int>
-csr_extract_v(const Eigen::SparseMatrix<T, Eigen::RowMajor> &A) {
+const std::vector<int> csr_extract_v(
+    const Eigen::SparseMatrix<T, Eigen::RowMajor> &A) {
   std::vector<int> v(A.nonZeros());
   for (int nze = 0; nze < A.nonZeros(); ++nze)
     v[nze] = *(A.innerIndexPtr() + nze) + stan::error_index::value;
@@ -47,8 +47,8 @@ const std::vector<int> csr_extract_v(const Eigen::Matrix<T, R, C> &A) {
   return v;
 }
 
-/** @} */ // end of csr_format group
-} // namespace math
-} // namespace stan
+/** @} */  // end of csr_format group
+}  // namespace math
+}  // namespace stan
 
 #endif

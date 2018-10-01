@@ -55,7 +55,8 @@ TEST(AgradFwdLog1mExp, FvarFvarDouble) {
 }
 
 struct log1m_exp_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0 &arg1) const {
     return log1m_exp(arg1);
   }
 };

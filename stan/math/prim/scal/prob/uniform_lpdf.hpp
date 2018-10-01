@@ -44,8 +44,8 @@ namespace math {
  * @tparam T_high Type of upper bound.
  */
 template <bool propto, typename T_y, typename T_low, typename T_high>
-typename return_type<T_y, T_low, T_high>::type
-uniform_lpdf(const T_y &y, const T_low &alpha, const T_high &beta) {
+typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
+    const T_y &y, const T_low &alpha, const T_high &beta) {
   static const char *function = "uniform_lpdf";
   typedef typename stan::partials_return_type<T_y, T_low, T_high>::type
       T_partials_return;
@@ -83,16 +83,16 @@ uniform_lpdf(const T_y &y, const T_low &alpha, const T_high &beta) {
       inv_beta_minus_alpha(max_size(alpha, beta));
   for (size_t i = 0; i < max_size(alpha, beta); i++)
     if (include_summand<propto, T_low, T_high>::value)
-      inv_beta_minus_alpha[i] =
-          1.0 / (value_of(beta_vec[i]) - value_of(alpha_vec[i]));
+      inv_beta_minus_alpha[i]
+          = 1.0 / (value_of(beta_vec[i]) - value_of(alpha_vec[i]));
 
   VectorBuilder<include_summand<propto, T_low, T_high>::value,
                 T_partials_return, T_low, T_high>
       log_beta_minus_alpha(max_size(alpha, beta));
   for (size_t i = 0; i < max_size(alpha, beta); i++)
     if (include_summand<propto, T_low, T_high>::value)
-      log_beta_minus_alpha[i] =
-          log(value_of(beta_vec[i]) - value_of(alpha_vec[i]));
+      log_beta_minus_alpha[i]
+          = log(value_of(beta_vec[i]) - value_of(alpha_vec[i]));
 
   operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
   for (size_t n = 0; n < N; n++) {
@@ -108,11 +108,11 @@ uniform_lpdf(const T_y &y, const T_low &alpha, const T_high &beta) {
 }
 
 template <typename T_y, typename T_low, typename T_high>
-inline typename return_type<T_y, T_low, T_high>::type
-uniform_lpdf(const T_y &y, const T_low &alpha, const T_high &beta) {
+inline typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
+    const T_y &y, const T_low &alpha, const T_high &beta) {
   return uniform_lpdf<false>(y, alpha, beta);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -84,19 +84,19 @@ typename return_type<T_prob>::type bernoulli_logit_lpmf(const T_n &n,
       else if (ntheta < -cutoff)
         ops_partials.edge1_.partials_[n] += sign;
       else
-        ops_partials.edge1_.partials_[n] +=
-            sign * exp_m_ntheta / (exp_m_ntheta + 1);
+        ops_partials.edge1_.partials_[n]
+            += sign * exp_m_ntheta / (exp_m_ntheta + 1);
     }
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_n, typename T_prob>
-inline typename return_type<T_prob>::type
-bernoulli_logit_lpmf(const T_n &n, const T_prob &theta) {
+inline typename return_type<T_prob>::type bernoulli_logit_lpmf(
+    const T_n &n, const T_prob &theta) {
   return bernoulli_logit_lpmf<false>(n, theta);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

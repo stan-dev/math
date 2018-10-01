@@ -5,7 +5,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-template <typename F> void expect_int_std_vector_error() {
+template <typename F>
+void expect_int_std_vector_error() {
   using std::vector;
   vector<int> invalid_inputs = F::int_invalid_inputs();
   if (invalid_inputs.size() == 0)

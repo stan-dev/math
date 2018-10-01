@@ -52,8 +52,8 @@ struct system_functor {
    * @tparam T the scalar type of the independent variable
    */
   template <typename T>
-  inline Eigen::Matrix<T, Eigen::Dynamic, 1>
-  operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1> &iv) const {
+  inline Eigen::Matrix<T, Eigen::Dynamic, 1> operator()(
+      const Eigen::Matrix<T, Eigen::Dynamic, 1> &iv) const {
     if (x_is_iv)
       return f_(iv, y_, dat_, dat_int_, msgs_);
     else
@@ -149,7 +149,7 @@ struct hybrj_functor_solver : nlo_functor<double> {
   Eigen::VectorXd get_value(const Eigen::VectorXd &iv) const { return fs_(iv); }
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

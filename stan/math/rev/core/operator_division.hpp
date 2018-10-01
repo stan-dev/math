@@ -14,7 +14,7 @@ namespace math {
 namespace {
 // (a/b)' = a' * (1 / b) - b' * (a / [b * b])
 class divide_vv_vari : public op_vv_vari {
-public:
+ public:
   divide_vv_vari(vari *avi, vari *bvi)
       : op_vv_vari(avi->val_ / bvi->val_, avi, bvi) {}
   void chain() {
@@ -29,7 +29,7 @@ public:
 };
 
 class divide_vd_vari : public op_vd_vari {
-public:
+ public:
   divide_vd_vari(vari *avi, double b) : op_vd_vari(avi->val_ / b, avi, b) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_) || is_nan(bd_)))
@@ -40,11 +40,11 @@ public:
 };
 
 class divide_dv_vari : public op_dv_vari {
-public:
+ public:
   divide_dv_vari(double a, vari *bvi) : op_dv_vari(a / bvi->val_, a, bvi) {}
   void chain() { bvi_->adj_ -= adj_ * ad_ / (bvi_->val_ * bvi_->val_); }
 };
-} // namespace
+}  // namespace
 
 /**
  * Division operator for two variables (C++).
@@ -120,6 +120,6 @@ inline var operator/(double a, const var &b) {
   return var(new divide_dv_vari(a, b.vi_));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

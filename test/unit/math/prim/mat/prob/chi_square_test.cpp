@@ -7,7 +7,7 @@
 #include <vector>
 
 class ChiSquareTestRig : public VectorRealRNGTestRig {
-public:
+ public:
   ChiSquareTestRig()
       : VectorRealRNGTestRig(10000, 10, {0.1, 1.0, 2.5, 4.0}, {1, 2, 3, 4},
                              {-2.7, -1.5, -0.5, 0.0}, {-3, -2, -1, 0}) {}

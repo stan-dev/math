@@ -33,9 +33,9 @@ namespace math {
  * @throw std::out_of_range if any of the indices are out of range.
  */
 template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-csr_to_dense_matrix(int m, int n, const Eigen::Matrix<T, Eigen::Dynamic, 1> &w,
-                    const std::vector<int> &v, const std::vector<int> &u) {
+inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> csr_to_dense_matrix(
+    int m, int n, const Eigen::Matrix<T, Eigen::Dynamic, 1> &w,
+    const std::vector<int> &v, const std::vector<int> &u) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
@@ -62,8 +62,8 @@ csr_to_dense_matrix(int m, int n, const Eigen::Matrix<T, Eigen::Dynamic, 1> &w,
   }
   return result;
 }
-/** @} */ // end of csr_format group
+/** @} */  // end of csr_format group
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

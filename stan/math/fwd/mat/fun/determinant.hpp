@@ -39,6 +39,6 @@ inline fvar<T> determinant(const Eigen::Matrix<fvar<T>, R, C> &m) {
   return result;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

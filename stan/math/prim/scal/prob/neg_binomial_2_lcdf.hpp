@@ -15,9 +15,8 @@ namespace stan {
 namespace math {
 
 template <typename T_n, typename T_location, typename T_precision>
-typename return_type<T_location, T_precision>::type
-neg_binomial_2_lcdf(const T_n &n, const T_location &mu,
-                    const T_precision &phi) {
+typename return_type<T_location, T_precision>::type neg_binomial_2_lcdf(
+    const T_n &n, const T_location &mu, const T_precision &phi) {
   using std::log;
 
   if (size_zero(n, mu, phi))
@@ -52,6 +51,6 @@ neg_binomial_2_lcdf(const T_n &n, const T_location &mu,
   return beta_cdf_log(phi_mu.data(), phi, np1.data());
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

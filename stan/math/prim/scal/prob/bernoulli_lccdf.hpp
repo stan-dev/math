@@ -82,6 +82,6 @@ typename return_type<T_prob>::type bernoulli_lccdf(const T_n &n,
 
   return ops_partials.build(P);
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

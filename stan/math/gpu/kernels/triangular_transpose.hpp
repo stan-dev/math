@@ -39,7 +39,7 @@ const char *triangular_transpose_kernel_code = STRINGIFY(
       }
     }
     // \cond
-    );
+);
 // \endcond
 
 /**
@@ -50,8 +50,8 @@ const global_range_kernel<cl::Buffer, int, int, TriangularMapGPU>
     triangular_transpose("triangular_transpose",
                          triangular_transpose_kernel_code);
 
-} // namespace opencl_kernels
-} // namespace math
-} // namespace stan
+}  // namespace opencl_kernels
+}  // namespace math
+}  // namespace stan
 #endif
 #endif

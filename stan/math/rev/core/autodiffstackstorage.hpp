@@ -70,7 +70,7 @@ struct AutodiffStackSingleton {
 
 #ifndef STAN_THREADS
 
-private:
+ private:
   static AutodiffStackStorage instance_;
 #endif
 };
@@ -82,6 +82,6 @@ typename AutodiffStackSingleton<ChainableT,
     AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_;
 #endif
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

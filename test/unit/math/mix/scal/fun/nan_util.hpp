@@ -131,7 +131,8 @@ void test_nan_ffv4(const F &f, const double &arg1, const bool &throws) {
   }
 }
 
-template <typename F> void test_nan_mix(const F &f, const bool &throws) {
+template <typename F>
+void test_nan_mix(const F &f, const bool &throws) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   test_nan_fv1(f, nan, throws);
   test_nan_fv2(f, nan, throws);

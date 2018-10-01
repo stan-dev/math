@@ -58,6 +58,6 @@ inv_gamma_rng(const T_shape &alpha, const T_scale &beta, RNG &rng) {
   return output.data();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

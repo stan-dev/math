@@ -16,6 +16,6 @@ namespace math {
  */
 inline double primitive_value(const var &v) { return v.val(); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

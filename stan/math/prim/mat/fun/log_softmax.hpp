@@ -40,8 +40,8 @@ namespace math {
  * @return Unit simplex result of the softmax transform of the vector.
  */
 template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, 1>
-log_softmax(const Eigen::Matrix<T, Eigen::Dynamic, 1> &v) {
+inline Eigen::Matrix<T, Eigen::Dynamic, 1> log_softmax(
+    const Eigen::Matrix<T, Eigen::Dynamic, 1> &v) {
   using std::exp;
   using std::log;
   check_nonzero_size("log_softmax", "v", v);
@@ -52,6 +52,6 @@ log_softmax(const Eigen::Matrix<T, Eigen::Dynamic, 1> &v) {
   return theta;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

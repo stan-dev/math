@@ -59,8 +59,9 @@ namespace math {
  * @tparam R rows (as in Eigen)
  * @tparam C columns (as in Eigen)
  */
-template <typename T, int R, int C> class LDLT_factor {
-public:
+template <typename T, int R, int C>
+class LDLT_factor {
+ public:
   typedef Eigen::Matrix<T, Eigen::Dynamic, 1> vector_t;
   typedef Eigen::Matrix<T, R, C> matrix_t;
   typedef Eigen::LDLT<matrix_t> ldlt_t;
@@ -100,14 +101,14 @@ public:
 
 #if EIGEN_VERSION_AT_LEAST(3, 3, 0)
   template <typename Rhs>
-  inline const Eigen::Solve<ldlt_t, Rhs>
-  solve(const Eigen::MatrixBase<Rhs> &b) const {
+  inline const Eigen::Solve<ldlt_t, Rhs> solve(
+      const Eigen::MatrixBase<Rhs> &b) const {
     return ldltP_->solve(b);
   }
 #else
   template <typename Rhs>
-  inline const Eigen::internal::solve_retval<ldlt_t, Rhs>
-  solve(const Eigen::MatrixBase<Rhs> &b) const {
+  inline const Eigen::internal::solve_retval<ldlt_t, Rhs> solve(
+      const Eigen::MatrixBase<Rhs> &b) const {
     return ldltP_->solve(b);
   }
 #endif
@@ -127,6 +128,6 @@ public:
   boost::shared_ptr<ldlt_t> ldltP_;
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

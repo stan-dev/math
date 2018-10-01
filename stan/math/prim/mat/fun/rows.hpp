@@ -21,6 +21,6 @@ inline int rows(const Eigen::Matrix<T, R, C> &m) {
   return m.rows();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

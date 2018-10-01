@@ -89,27 +89,27 @@ namespace math {
  */
 template <typename F, typename Tyy, typename Typ, typename Tpar>
 class idas_system {
-protected:
+ protected:
   const F &f_;
   const std::vector<Tyy> &yy_;
   const std::vector<Typ> &yp_;
-  std::vector<double> yy_val_; // workspace
-  std::vector<double> yp_val_; // workspace
+  std::vector<double> yy_val_;  // workspace
+  std::vector<double> yp_val_;  // workspace
   const std::vector<Tpar> &theta_;
   const std::vector<double> &x_r_;
   const std::vector<int> &x_i_;
   const size_t N_;
   const size_t M_;
-  const size_t ns_; // nb. of sensi params
+  const size_t ns_;  // nb. of sensi params
   N_Vector nv_yy_;
   N_Vector nv_yp_;
-  std::vector<double> rr_val_; // workspace
+  std::vector<double> rr_val_;  // workspace
   N_Vector nv_rr_;
   N_Vector id_;
   void *mem_;
   std::ostream *msgs_;
 
-public:
+ public:
   static constexpr bool is_var_yy0 = stan::is_var<Tyy>::value;
   static constexpr bool is_var_yp0 = stan::is_var<Typ>::value;
   static constexpr bool is_var_par = stan::is_var<Tpar>::value;
@@ -135,15 +135,25 @@ public:
               const std::vector<Tyy> &yy0, const std::vector<Typ> &yp0,
               const std::vector<Tpar> &theta, const std::vector<double> &x_r,
               const std::vector<int> &x_i, std::ostream *msgs)
-      : f_(f), yy_(yy0), yp_(yp0), yy_val_(value_of(yy0)),
-        yp_val_(value_of(yp0)), theta_(theta), x_r_(x_r), x_i_(x_i),
-        N_(yy0.size()), M_(theta.size()),
-        ns_((is_var_yy0 ? N_ : 0) + (is_var_yp0 ? N_ : 0) +
-            (is_var_par ? M_ : 0)),
+      : f_(f),
+        yy_(yy0),
+        yp_(yp0),
+        yy_val_(value_of(yy0)),
+        yp_val_(value_of(yp0)),
+        theta_(theta),
+        x_r_(x_r),
+        x_i_(x_i),
+        N_(yy0.size()),
+        M_(theta.size()),
+        ns_((is_var_yy0 ? N_ : 0) + (is_var_yp0 ? N_ : 0)
+            + (is_var_par ? M_ : 0)),
         nv_yy_(N_VMake_Serial(N_, yy_val_.data())),
-        nv_yp_(N_VMake_Serial(N_, yp_val_.data())), rr_val_(N_, 0.0),
-        nv_rr_(N_VMake_Serial(N_, rr_val_.data())), id_(N_VNew_Serial(N_)),
-        mem_(IDACreate()), msgs_(msgs) {
+        nv_yp_(N_VMake_Serial(N_, yp_val_.data())),
+        rr_val_(N_, 0.0),
+        nv_rr_(N_VMake_Serial(N_, rr_val_.data())),
+        id_(N_VNew_Serial(N_)),
+        mem_(IDACreate()),
+        msgs_(msgs) {
     if (nv_yy_ == NULL || nv_yp_ == NULL)
       throw std::runtime_error("N_VMake_Serial failed to allocate memory");
 
@@ -298,7 +308,7 @@ public:
   /**
    * return a closure for IDAS residual callback
    */
-  IDAResFn residual() { // a non-capture lambda
+  IDAResFn residual() {  // a non-capture lambda
     return [](double t, N_Vector yy, N_Vector yp, N_Vector rr,
               void *user_data) -> int {
       using DAE = idas_system<F, Tyy, Typ, Tpar>;
@@ -333,7 +343,7 @@ public:
 
 // TODO(yizhang): adjoint system construction
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

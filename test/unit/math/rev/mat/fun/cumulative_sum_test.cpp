@@ -4,7 +4,8 @@
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
 
-template <typename T> void test_cumulative_sum() {
+template <typename T>
+void test_cumulative_sum() {
   using stan::math::cumulative_sum;
 
   T c(1);

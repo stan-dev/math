@@ -128,7 +128,8 @@ TEST_F(AgradFwdAsinh, FvarFvarVar_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.183805982181141, g[0]);
 }
 struct asinh_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0 &arg1) const {
     return asinh(arg1);
   }
 };

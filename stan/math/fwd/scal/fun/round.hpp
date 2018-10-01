@@ -19,12 +19,13 @@ namespace math {
  * @param x Argument.
  * @return The rounded value of the argument.
  */
-template <typename T> inline fvar<T> round(const fvar<T> &x) {
+template <typename T>
+inline fvar<T> round(const fvar<T> &x) {
   return fvar<T>(round(x.val_), is_nan(x.val_)
                                     ? std::numeric_limits<double>::quiet_NaN()
                                     : 0.0);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

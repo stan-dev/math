@@ -128,8 +128,8 @@ TEST(StanAgradRevOde_integrate_ode, harmonic_oscillator_error) {
   std::vector<int> x_int(2, 0);
 
   // aligned error handling with non-stiff case
-  std::string error_msg =
-      "cvodes_ode_data: dz_dt (3) and states (2) must match in size";
+  std::string error_msg
+      = "cvodes_ode_data: dz_dt (3) and states (2) must match in size";
 
   sho_error_test<double, var>(harm_osc, y0, t0, ts, theta, x, x_int, error_msg);
   sho_error_test<var, double>(harm_osc, y0, t0, ts, theta, x, x_int, error_msg);

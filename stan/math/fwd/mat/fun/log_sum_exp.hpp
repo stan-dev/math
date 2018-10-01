@@ -31,6 +31,6 @@ fvar<T> log_sum_exp(const Eigen::Matrix<fvar<T>, R, C> &v) {
   return fvar<T>(log_sum_exp(vals), deriv / denominator);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

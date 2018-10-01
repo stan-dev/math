@@ -5,8 +5,8 @@
 #include <vector>
 
 template <typename F>
-static inline std::vector<stan::math::var>
-build_mix_vector(std::vector<stan::math::var> fvar_vector, int seed_index) {
+static inline std::vector<stan::math::var> build_mix_vector(
+    std::vector<stan::math::var> fvar_vector, int seed_index) {
   using stan::math::var;
   using std::vector;
   vector<double> inputs = F::valid_inputs();
@@ -16,9 +16,8 @@ build_mix_vector(std::vector<stan::math::var> fvar_vector, int seed_index) {
 }
 
 template <typename F, typename T>
-static inline std::vector<stan::math::fvar<T>>
-build_mix_vector(std::vector<stan::math::fvar<T>> fvar_vector,
-                 int seed_index = -1) {
+static inline std::vector<stan::math::fvar<T>> build_mix_vector(
+    std::vector<stan::math::fvar<T>> fvar_vector, int seed_index = -1) {
   using stan::math::fvar;
   using std::vector;
 

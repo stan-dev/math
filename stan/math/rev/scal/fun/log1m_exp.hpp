@@ -10,12 +10,12 @@ namespace math {
 
 namespace {
 class log1m_exp_v_vari : public op_v_vari {
-public:
+ public:
   explicit log1m_exp_v_vari(vari *avi) : op_v_vari(log1m_exp(avi->val_), avi) {}
 
   void chain() { avi_->adj_ -= adj_ / expm1(-(avi_->val_)); }
 };
-} // namespace
+}  // namespace
 
 /**
  * Return the log of 1 minus the exponential of the specified
@@ -30,6 +30,6 @@ public:
  */
 inline var log1m_exp(const var &x) { return var(new log1m_exp_v_vari(x.vi_)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

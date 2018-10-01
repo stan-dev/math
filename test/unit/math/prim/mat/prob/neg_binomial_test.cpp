@@ -8,7 +8,7 @@
 #include <vector>
 
 class NegativeBinomialTestRig : public VectorIntRNGTestRig {
-public:
+ public:
   NegativeBinomialTestRig()
       : VectorIntRNGTestRig(10000, 10, {0, 1, 2, 3, 4, 5, 6}, {0.1, 1.7, 3.99},
                             {1, 2, 3}, {-2.1, -0.5, 0.0}, {-3, -1, 0},

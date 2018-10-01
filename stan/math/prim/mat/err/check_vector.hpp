@@ -47,6 +47,6 @@ inline void check_vector(const char *function, const char *name,
                    msg_str.c_str());
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

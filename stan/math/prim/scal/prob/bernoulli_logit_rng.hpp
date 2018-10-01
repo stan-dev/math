@@ -27,8 +27,8 @@ namespace math {
  * is not finite
  */
 template <typename T_t, class RNG>
-inline typename VectorBuilder<true, int, T_t>::type
-bernoulli_logit_rng(const T_t &t, RNG &rng) {
+inline typename VectorBuilder<true, int, T_t>::type bernoulli_logit_rng(
+    const T_t &t, RNG &rng) {
   using boost::bernoulli_distribution;
   using boost::variate_generator;
   using stan::math::inv_logit;
@@ -49,6 +49,6 @@ bernoulli_logit_rng(const T_t &t, RNG &rng) {
   return output.data();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

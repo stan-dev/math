@@ -8,9 +8,10 @@
 namespace stan {
 namespace math {
 
-template <typename T> inline fvar<T> inv(const fvar<T> &x) {
+template <typename T>
+inline fvar<T> inv(const fvar<T> &x) {
   return fvar<T>(1 / x.val_, -x.d_ / square(x.val_));
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

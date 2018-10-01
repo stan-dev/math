@@ -31,7 +31,7 @@ static void grad(vari *vi);
  * var values objects.
  */
 class var {
-public:
+ public:
   // FIXME: doc what this is for
   typedef double Scalar;
 
@@ -69,7 +69,7 @@ public:
    *
    * @param vi Variable implementation.
    */
-  var(vari *vi) : vi_(vi) {} // NOLINT
+  var(vari *vi) : vi_(vi) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -78,7 +78,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(float x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(float x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -87,7 +87,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(double x) : vi_(new vari(x)) {} // NOLINT
+  var(double x) : vi_(new vari(x)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -96,7 +96,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(long double x) : vi_(new vari(x)) {} // NOLINT
+  var(long double x) : vi_(new vari(x)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -105,7 +105,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(bool x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(bool x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -114,7 +114,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(char x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(char x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -123,7 +123,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(short x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(short x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -132,7 +132,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(int x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(int x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -141,7 +141,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(long x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(long x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -150,7 +150,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(unsigned char x) // NOLINT(runtime/explicit)
+  var(unsigned char x)  // NOLINT(runtime/explicit)
       : vi_(new vari(static_cast<double>(x))) {}
 
   /**
@@ -170,7 +170,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(unsigned int x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(unsigned int x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -180,7 +180,7 @@ public:
    * @param x Value of the variable.
    */
   // NOLINTNEXTLINE
-  var(unsigned long x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(unsigned long x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -258,7 +258,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(size_t x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(size_t x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -267,7 +267,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(ptrdiff_t x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(ptrdiff_t x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 #endif
 
 #ifdef BOOST_MATH_USE_FLOAT128
@@ -282,7 +282,7 @@ public:
    *
    * @param x Value of the variable.
    */
-  var(__float128 x) : vi_(new vari(static_cast<double>(x))) {} // NOLINT
+  var(__float128 x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 
 #endif
 
@@ -476,6 +476,6 @@ public:
   }
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

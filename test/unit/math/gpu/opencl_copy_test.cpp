@@ -77,8 +77,8 @@ TEST(MathMatrixGPU, barebone_buffer_copy) {
   // retrieve the context
   cl::Context &ctx = stan::math::opencl_context.context();
   // create the gpu buffer of the same size
-  cl::Buffer gpu_buffer =
-      cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size);
+  cl::Buffer gpu_buffer
+      = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size);
 
   // write the cpu_buffer to the GPU (gpu_buffer)
   queue.enqueueWriteBuffer(gpu_buffer, CL_TRUE, 0, sizeof(double) * size,

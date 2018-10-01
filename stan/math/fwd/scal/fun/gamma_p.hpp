@@ -32,7 +32,8 @@ inline fvar<T> gamma_p(const fvar<T> &x1, const fvar<T> &x2) {
   return fvar<T>(u, x1.d_ * der1 + x2.d_ * der2);
 }
 
-template <typename T> inline fvar<T> gamma_p(const fvar<T> &x1, double x2) {
+template <typename T>
+inline fvar<T> gamma_p(const fvar<T> &x1, double x2) {
   using boost::math::digamma;
   using std::exp;
   using std::fabs;
@@ -50,7 +51,8 @@ template <typename T> inline fvar<T> gamma_p(const fvar<T> &x1, double x2) {
   return fvar<T>(u, x1.d_ * der1);
 }
 
-template <typename T> inline fvar<T> gamma_p(double x1, const fvar<T> &x2) {
+template <typename T>
+inline fvar<T> gamma_p(double x1, const fvar<T> &x2) {
   using std::exp;
   using std::log;
 
@@ -62,6 +64,6 @@ template <typename T> inline fvar<T> gamma_p(double x1, const fvar<T> &x2) {
 
   return fvar<T>(u, x2.d_ * der2);
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

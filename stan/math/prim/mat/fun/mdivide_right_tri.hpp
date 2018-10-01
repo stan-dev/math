@@ -43,6 +43,6 @@ mdivide_right_tri(const Eigen::Matrix<T1, R1, C1> &b,
       .transpose();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

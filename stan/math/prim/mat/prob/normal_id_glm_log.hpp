@@ -29,6 +29,6 @@ normal_id_glm_log(const T_y &y, const T_x &x, const T_alpha &alpha,
                   const T_beta &beta, const T_scale &sigma) {
   return normal_id_glm_lpdf<false>(y, x, alpha, beta, sigma);
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

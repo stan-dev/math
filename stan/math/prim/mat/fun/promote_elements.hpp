@@ -24,8 +24,8 @@ struct promote_elements<Eigen::Matrix<T, R, C>, Eigen::Matrix<S, R, C>> {
    * @param u matrix of type S, assignable to type T
    * @returns matrix of type T
    */
-  inline static Eigen::Matrix<T, R, C>
-  promote(const Eigen::Matrix<S, R, C> &u) {
+  inline static Eigen::Matrix<T, R, C> promote(
+      const Eigen::Matrix<S, R, C> &u) {
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> t(u.rows(), u.cols());
     for (int i = 0; i < u.size(); ++i)
       t(i) = promote_elements<T, S>::promote(u(i));
@@ -48,13 +48,13 @@ struct promote_elements<Eigen::Matrix<T, R, C>, Eigen::Matrix<T, R, C>> {
    * @param u matrix of type T
    * @returns matrix of type T
    */
-  inline static const Eigen::Matrix<T, R, C> &
-  promote(const Eigen::Matrix<T, R, C> &u) {
+  inline static const Eigen::Matrix<T, R, C> &promote(
+      const Eigen::Matrix<T, R, C> &u) {
     return u;
   }
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

@@ -116,7 +116,8 @@ TEST(AgradFwdBesselSecondKind, FvarFvarVar_3rdDeriv) {
 }
 
 struct bessel_second_kind_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0 &arg1) const {
     return bessel_second_kind(1, arg1);
   }
 };

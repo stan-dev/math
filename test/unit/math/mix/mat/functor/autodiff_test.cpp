@@ -9,7 +9,8 @@ using Eigen::Dynamic;
 using Eigen::Matrix;
 
 struct fun0 {
-  template <typename T> inline T operator()(const T &x) const {
+  template <typename T>
+  inline T operator()(const T &x) const {
     return 5.0 * x * x * x;
   }
 };
@@ -25,8 +26,8 @@ struct fun1 {
 // fun2: R^2 --> R^2 | (x, y) --> [(x + x), (3 * x * y)]
 struct fun2 {
   template <typename T>
-  inline Matrix<T, Dynamic, 1>
-  operator()(const Matrix<T, Dynamic, 1> &x) const {
+  inline Matrix<T, Dynamic, 1> operator()(
+      const Matrix<T, Dynamic, 1> &x) const {
     Matrix<T, Dynamic, 1> z(2);
     z << x(0) + x(0), 3 * x(0) * x(1);
     return z;
@@ -35,8 +36,8 @@ struct fun2 {
 
 struct norm_functor {
   template <typename T>
-  inline T
-  operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1> &inp_vec) const {
+  inline T operator()(
+      const Eigen::Matrix<T, Eigen::Dynamic, 1> &inp_vec) const {
     return stan::math::normal_log(inp_vec(0), inp_vec(1), inp_vec(2));
   }
 };

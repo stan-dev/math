@@ -62,8 +62,12 @@ struct StanIntegrateDAETest : public ::testing::Test {
   void SetUp() { stan::math::recover_memory(); }
 
   StanIntegrateDAETest()
-      : yy0{1.0, 0.0, 0.0}, yp0{-0.04, 0.04, 0.0}, theta{0.040, 1.0e4, 3.0e7},
-        msgs{0}, eq_id{1, 1, 0}, t0(0.0) {
+      : yy0{1.0, 0.0, 0.0},
+        yp0{-0.04, 0.04, 0.0},
+        theta{0.040, 1.0e4, 3.0e7},
+        msgs{0},
+        eq_id{1, 1, 0},
+        t0(0.0) {
     const size_t nout{4};
     const double h{0.4};
     for (size_t i = 0; i < nout; ++i)
@@ -74,8 +78,8 @@ struct StanIntegrateDAETest : public ::testing::Test {
 TEST_F(StanIntegrateDAETest, idas_ivp_system_yy0) {
   using stan::math::idas_forward_system;
   using stan::math::integrate_dae;
-  std::vector<std::vector<double>> yy =
-      integrate_dae(f, yy0, yp0, t0, ts, theta, x_r, x_i, 1e-4, 1e-8);
+  std::vector<std::vector<double>> yy
+      = integrate_dae(f, yy0, yp0, t0, ts, theta, x_r, x_i, 1e-4, 1e-8);
   EXPECT_NEAR(0.985172, yy[0][0], 1e-6);
   EXPECT_NEAR(0.0147939, yy[0][2], 1e-6);
   EXPECT_NEAR(0.905521, yy[1][0], 1e-6);
@@ -92,8 +96,8 @@ TEST_F(StanIntegrateDAETest, forward_sensitivity_theta) {
 
   std::vector<var> theta_var = to_var(theta);
 
-  std::vector<std::vector<var>> yy =
-      integrate_dae(f, yy0, yp0, t0, ts, theta_var, x_r, x_i, 1e-5, 1e-12);
+  std::vector<std::vector<var>> yy
+      = integrate_dae(f, yy0, yp0, t0, ts, theta_var, x_r, x_i, 1e-5, 1e-12);
   EXPECT_NEAR(0.985172, value_of(yy[0][0]), 1e-6);
   EXPECT_NEAR(0.0147939, value_of(yy[0][2]), 1e-6);
   EXPECT_NEAR(0.905519, value_of(yy[1][0]), 1e-6);

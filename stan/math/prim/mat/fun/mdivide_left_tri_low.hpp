@@ -42,12 +42,12 @@ mdivide_left_tri_low(const Eigen::Matrix<T1, R1, C1> &A,
 }
 
 template <typename T, int R1, int C1>
-inline Eigen::Matrix<T, R1, C1>
-mdivide_left_tri_low(const Eigen::Matrix<T, R1, C1> &A) {
+inline Eigen::Matrix<T, R1, C1> mdivide_left_tri_low(
+    const Eigen::Matrix<T, R1, C1> &A) {
   check_square("mdivide_left_tri_low", "A", A);
   return mdivide_left_tri<Eigen::Lower>(A);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

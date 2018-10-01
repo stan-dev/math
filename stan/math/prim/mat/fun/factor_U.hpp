@@ -47,11 +47,11 @@ void factor_U(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &U,
     CPCs.segment(position, pull) = temp;
     acc.tail(pull) *= 1.0 - temp.square();
   }
-  CPCs = 0.5 * ((1.0 + CPCs) / (1.0 - CPCs)).log(); // now unbounded
+  CPCs = 0.5 * ((1.0 + CPCs) / (1.0 - CPCs)).log();  // now unbounded
 }
 
-} // namespace math
+}  // namespace math
 
-} // namespace stan
+}  // namespace stan
 
 #endif

@@ -39,7 +39,7 @@ inline double log_sum_exp(const std::vector<double> &x) {
   return max + log(sum);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

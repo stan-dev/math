@@ -26,6 +26,6 @@ inline fvar<T> multiply_log(const fvar<T> &x1, double x2) {
   using std::log;
   return fvar<T>(multiply_log(x1.val_, x2), x1.d_ * log(x2));
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

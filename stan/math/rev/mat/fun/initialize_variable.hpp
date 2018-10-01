@@ -36,7 +36,7 @@ inline void initialize_variable(std::vector<T> &variables, const var &value) {
     initialize_variable(variables[i], value);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

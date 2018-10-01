@@ -57,11 +57,11 @@ const char *multiply_transpose_kernel_code = STRINGIFY(
           // local memory
           for (int w = 0; w < WORK_PER_THREAD; w++) {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                   [thread_block_row] =
-                       A[i + (tiled_j + w * THREAD_BLOCK_SIZE_COL) * M];
+                   [thread_block_row]
+                = A[i + (tiled_j + w * THREAD_BLOCK_SIZE_COL) * M];
             B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                   [thread_block_row] =
-                       A[(j + w * THREAD_BLOCK_SIZE_COL) + tiled_i * M];
+                   [thread_block_row]
+                = A[(j + w * THREAD_BLOCK_SIZE_COL) + tiled_i * M];
           }
         }
         // wait till all tile values are loaded to the local memory
@@ -72,9 +72,9 @@ const char *multiply_transpose_kernel_code = STRINGIFY(
           for (int w = 0; w < WORK_PER_THREAD; w++) {
             if (jMin <= iMax) {
               if ((j + w * THREAD_BLOCK_SIZE_COL) <= i) {
-                acc[w] += A_local[block_ind][thread_block_row] *
-                          B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                                 [block_ind];
+                acc[w] += A_local[block_ind][thread_block_row]
+                          * B_local[thread_block_col
+                                    + w * THREAD_BLOCK_SIZE_COL][block_ind];
               }
             }
           }
@@ -91,18 +91,18 @@ const char *multiply_transpose_kernel_code = STRINGIFY(
       }
     }
     // \cond
-    );
+);
 // \endcond
 
 /**
  * See the docs for \link kernels/multiply_transpose.hpp add() \endlink
  */
-const local_range_kernel<cl::Buffer, cl::Buffer, int, int>
-    multiply_transpose("multiply_transpose", multiply_transpose_kernel_code,
-                       {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 4}});
+const local_range_kernel<cl::Buffer, cl::Buffer, int, int> multiply_transpose(
+    "multiply_transpose", multiply_transpose_kernel_code,
+    {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 4}});
 
-} // namespace opencl_kernels
-} // namespace math
-} // namespace stan
+}  // namespace opencl_kernels
+}  // namespace math
+}  // namespace stan
 #endif
 #endif

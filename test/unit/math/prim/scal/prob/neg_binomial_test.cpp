@@ -24,8 +24,9 @@ TEST(ProbDistributionsNegBinomial, error_check) {
       std::domain_error);
 
   std::string error_msg;
-  error_msg = "neg_binomial_rng: Random number that "
-              "came from gamma distribution is";
+  error_msg
+      = "neg_binomial_rng: Random number that "
+        "came from gamma distribution is";
   try {
     stan::math::neg_binomial_rng(1e10, 1, rng);
     FAIL() << "neg_binomial_rng should have thrown" << std::endl;

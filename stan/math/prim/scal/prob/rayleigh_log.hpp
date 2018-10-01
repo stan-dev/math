@@ -20,11 +20,11 @@ typename return_type<T_y, T_scale>::type rayleigh_log(const T_y &y,
  * @deprecated use <code>rayleigh_lpdf</code>
  */
 template <typename T_y, typename T_scale>
-inline typename return_type<T_y, T_scale>::type
-rayleigh_log(const T_y &y, const T_scale &sigma) {
+inline typename return_type<T_y, T_scale>::type rayleigh_log(
+    const T_y &y, const T_scale &sigma) {
   return rayleigh_lpdf<T_y, T_scale>(y, sigma);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

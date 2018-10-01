@@ -29,8 +29,8 @@ TEST(ProbDistributionsScaledInvChiSquare, chiSquareGoodnessFitTest) {
 
   std::vector<double> samples;
   for (int i = 0; i < N; ++i) {
-    samples.push_back(stan::math::scaled_inv_chi_square_rng(2.0, 1.0, rng) /
-                      (2.0 * 1.0));
+    samples.push_back(stan::math::scaled_inv_chi_square_rng(2.0, 1.0, rng)
+                      / (2.0 * 1.0));
   }
 
   // Generate quantiles from boost's inverse chi square distribution

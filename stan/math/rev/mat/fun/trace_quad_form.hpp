@@ -18,7 +18,7 @@ namespace math {
 namespace {
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
 class trace_quad_form_vari_alloc : public chainable_alloc {
-public:
+ public:
   trace_quad_form_vari_alloc(const Eigen::Matrix<Ta, Ra, Ca> &A,
                              const Eigen::Matrix<Tb, Rb, Cb> &B)
       : A_(A), B_(B) {}
@@ -31,7 +31,7 @@ public:
 
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
 class trace_quad_form_vari : public vari {
-protected:
+ protected:
   static inline void chainA(Eigen::Matrix<double, Ra, Ca> &A,
                             const Eigen::Matrix<double, Rb, Cb> &Bd,
                             double adjC) {}
@@ -66,7 +66,7 @@ protected:
     chainB(B, Ad, Bd, adjC);
   }
 
-public:
+ public:
   explicit trace_quad_form_vari(
       trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb> *impl)
       : vari(impl->compute()), impl_(impl) {}
@@ -78,7 +78,7 @@ public:
 
   trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb> *impl_;
 };
-} // namespace
+}  // namespace
 
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
 inline typename boost::enable_if_c<
@@ -88,12 +88,12 @@ trace_quad_form(const Eigen::Matrix<Ta, Ra, Ca> &A,
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
 
-  trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb> *baseVari =
-      new trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>(A, B);
+  trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb> *baseVari
+      = new trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>(A, B);
 
   return var(new trace_quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>(baseVari));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

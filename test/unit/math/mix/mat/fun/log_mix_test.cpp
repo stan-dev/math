@@ -13,7 +13,8 @@ using stan::math::vector_d;
 using stan::math::vector_ffv;
 using stan::math::vector_fv;
 
-template <typename T_a, typename T_b> void fv_fv_test(T_a a, T_b b) {
+template <typename T_a, typename T_b>
+void fv_fv_test(T_a a, T_b b) {
   a[0].val_ = 0.514;
   a[1].val_ = 0.284;
   a[2].val_ = 0.112;
@@ -49,7 +50,8 @@ template <typename T_a, typename T_b> void fv_fv_test(T_a a, T_b b) {
   }
 }
 
-template <typename T_a, typename T_b> void fv_fv_vec_test(T_a a, T_b b1) {
+template <typename T_a, typename T_b>
+void fv_fv_vec_test(T_a a, T_b b1) {
   a[0].val_ = 0.514;
   a[1].val_ = 0.284;
   a[2].val_ = 0.112;
@@ -148,7 +150,8 @@ TEST(AgradMixMatrixLogMix, fv_fv) {
   fv_fv_vec_test(std_vecfv_prob, std_vecfv_dens);
 }
 
-template <typename T_a, typename T_b> void fv_d_test(T_a a, T_b b) {
+template <typename T_a, typename T_b>
+void fv_d_test(T_a a, T_b b) {
   a[0].val_ = 0.514;
   a[1].val_ = 0.284;
   a[2].val_ = 0.112;
@@ -177,7 +180,8 @@ template <typename T_a, typename T_b> void fv_d_test(T_a a, T_b b) {
   }
 }
 
-template <typename T_a, typename T_b> void fv_d_vec_test(T_a a, T_b b1) {
+template <typename T_a, typename T_b>
+void fv_d_vec_test(T_a a, T_b b1) {
   a[0].val_ = 0.514;
   a[1].val_ = 0.284;
   a[2].val_ = 0.112;
@@ -255,7 +259,8 @@ TEST(AgradMixMatrixLogMix, fv_d) {
   fv_d_vec_test(std_vecfv_prob, std_vecd_dens);
 }
 
-template <typename T_a, typename T_b> void d_fv_test(T_a a, T_b b) {
+template <typename T_a, typename T_b>
+void d_fv_test(T_a a, T_b b) {
   a[0] = 0.514;
   a[1] = 0.284;
   a[2] = 0.112;
@@ -284,7 +289,8 @@ template <typename T_a, typename T_b> void d_fv_test(T_a a, T_b b) {
   }
 }
 
-template <typename T_a, typename T_b> void d_fv_vec_test(T_a a, T_b b1) {
+template <typename T_a, typename T_b>
+void d_fv_vec_test(T_a a, T_b b1) {
   a[0] = 0.514;
   a[1] = 0.284;
   a[2] = 0.112;
@@ -376,7 +382,8 @@ TEST(AgradMixMatrixLogMix, d_fv) {
   d_fv_vec_test(std_vecd_prob, std_vecfv_dens);
 }
 
-template <typename T_a, typename T_b> void ffv_ffv_test(T_a a, T_b b) {
+template <typename T_a, typename T_b>
+void ffv_ffv_test(T_a a, T_b b) {
   a[0].val_ = 0.514;
   a[1].val_ = 0.284;
   a[2].val_ = 0.112;
@@ -420,7 +427,8 @@ template <typename T_a, typename T_b> void ffv_ffv_test(T_a a, T_b b) {
   }
 }
 
-template <typename T_a, typename T_b> void ffv_ffv_vec_test(T_a a, T_b b1) {
+template <typename T_a, typename T_b>
+void ffv_ffv_vec_test(T_a a, T_b b1) {
   a[0].val_ = 0.514;
   a[1].val_ = 0.284;
   a[2].val_ = 0.112;
@@ -528,7 +536,8 @@ TEST(AgradMixMatrixLogMix, ffv_ffv) {
   ffv_ffv_test(std_vecffv_prob, std_vecffv_dens);
 }
 
-template <typename T_a, typename T_b> void ffv_d_test(T_a a, T_b b) {
+template <typename T_a, typename T_b>
+void ffv_d_test(T_a a, T_b b) {
   a[0].val_ = 0.514;
   a[1].val_ = 0.284;
   a[2].val_ = 0.112;
@@ -561,7 +570,8 @@ template <typename T_a, typename T_b> void ffv_d_test(T_a a, T_b b) {
   }
 }
 
-template <typename T_a, typename T_b> void ffv_d_vec_test(T_a a, T_b b1) {
+template <typename T_a, typename T_b>
+void ffv_d_vec_test(T_a a, T_b b1) {
   a[0].val_ = 0.514;
   a[1].val_ = 0.284;
   a[2].val_ = 0.112;
@@ -641,7 +651,8 @@ TEST(AgradMixMatrixLogMix, ffv_d) {
   ffv_d_vec_test(std_vecffv_prob, std_vecd_dens);
 }
 
-template <typename T_a, typename T_b> void d_ffv_test(T_a a, T_b b) {
+template <typename T_a, typename T_b>
+void d_ffv_test(T_a a, T_b b) {
   a[0] = 0.514;
   a[1] = 0.284;
   a[2] = 0.112;
@@ -674,7 +685,8 @@ template <typename T_a, typename T_b> void d_ffv_test(T_a a, T_b b) {
   }
 }
 
-template <typename T_a, typename T_b> void d_ffv_vec_test(T_a a, T_b b1) {
+template <typename T_a, typename T_b>
+void d_ffv_vec_test(T_a a, T_b b1) {
   a[0] = 0.514;
   a[1] = 0.284;
   a[2] = 0.112;

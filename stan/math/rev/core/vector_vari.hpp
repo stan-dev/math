@@ -9,11 +9,11 @@ namespace stan {
 namespace math {
 
 class op_vector_vari : public vari {
-protected:
+ protected:
   const size_t size_;
   vari **vis_;
 
-public:
+ public:
   op_vector_vari(double f, const std::vector<var> &vs)
       : vari(f), size_(vs.size()) {
     vis_ = reinterpret_cast<vari **>(operator new(sizeof(vari *) * vs.size()));
@@ -24,6 +24,6 @@ public:
   size_t size() { return size_; }
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

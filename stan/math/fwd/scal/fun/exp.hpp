@@ -6,11 +6,12 @@
 
 namespace stan {
 namespace math {
-template <typename T> inline fvar<T> exp(const fvar<T> &x) {
+template <typename T>
+inline fvar<T> exp(const fvar<T> &x) {
   using std::exp;
   return fvar<T>(exp(x.val_), x.d_ * exp(x.val_));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

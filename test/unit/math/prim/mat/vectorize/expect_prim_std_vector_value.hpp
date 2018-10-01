@@ -4,7 +4,8 @@
 #include <test/unit/math/prim/mat/vectorize/expect_val_eq.hpp>
 #include <vector>
 
-template <typename F> void expect_prim_std_vector_value() {
+template <typename F>
+void expect_prim_std_vector_value() {
   using std::vector;
 
   vector<double> valid_inputs = F::valid_inputs();

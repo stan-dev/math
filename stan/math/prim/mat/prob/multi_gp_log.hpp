@@ -49,6 +49,6 @@ multi_gp_log(
   return multi_gp_lpdf<T_y, T_covar, T_w>(y, Sigma, w);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

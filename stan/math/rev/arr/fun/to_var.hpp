@@ -33,6 +33,6 @@ inline std::vector<var> to_var(const std::vector<double> &v) {
  */
 inline std::vector<var> to_var(const std::vector<var> &v) { return v; }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

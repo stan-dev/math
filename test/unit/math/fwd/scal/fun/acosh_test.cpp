@@ -58,7 +58,8 @@ TEST(AgradFwdAcosh, FvarFvarDouble) {
 }
 
 struct acosh_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0 &arg1) const {
     using stan::math::acosh;
     return acosh(arg1);
   }

@@ -33,11 +33,12 @@ namespace math {
    \f]
  *
  */
-template <typename T2> inline T2 bessel_first_kind(int v, const T2 z) {
+template <typename T2>
+inline T2 bessel_first_kind(int v, const T2 z) {
   check_not_nan("bessel_first_kind", "z", z);
   return boost::math::cyl_bessel_j(v, z);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

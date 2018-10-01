@@ -12,14 +12,15 @@
 namespace stan {
 namespace math {
 namespace internal {
-template <> class ops_partials_edge<double, var> {
-public:
+template <>
+class ops_partials_edge<double, var> {
+ public:
   double partial_;
   broadcast_array<double> partials_;
   explicit ops_partials_edge(const var &op)
       : partial_(0), partials_(partial_), operand_(op) {}
 
-private:
+ private:
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
   const var &operand_;
@@ -28,7 +29,7 @@ private:
   void dump_operands(vari **varis) { *varis = this->operand_.vi_; }
   int size() const { return 1; }
 };
-} // namespace internal
+}  // namespace internal
 
 /**
  * This class builds partial derivatives with respect to a set of
@@ -65,7 +66,7 @@ private:
  */
 template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5>
 class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
-public:
+ public:
   internal::ops_partials_edge<double, Op1> edge1_;
   internal::ops_partials_edge<double, Op2> edge2_;
   internal::ops_partials_edge<double, Op3> edge3_;
@@ -98,12 +99,12 @@ public:
    * @return the node to be stored in the expression graph for autodiff
    */
   var build(double value) {
-    size_t size = edge1_.size() + edge2_.size() + edge3_.size() +
-                  edge4_.size() + edge5_.size();
-    vari **varis =
-        ChainableStack::instance().memalloc_.alloc_array<vari *>(size);
-    double *partials =
-        ChainableStack::instance().memalloc_.alloc_array<double>(size);
+    size_t size = edge1_.size() + edge2_.size() + edge3_.size() + edge4_.size()
+                  + edge5_.size();
+    vari **varis
+        = ChainableStack::instance().memalloc_.alloc_array<vari *>(size);
+    double *partials
+        = ChainableStack::instance().memalloc_.alloc_array<double>(size);
     int idx = 0;
     edge1_.dump_operands(&varis[idx]);
     edge1_.dump_partials(&partials[idx]);
@@ -119,6 +120,6 @@ public:
     return var(new precomputed_gradients_vari(value, size, varis, partials));
   }
 };
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

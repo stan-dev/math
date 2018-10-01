@@ -16,6 +16,6 @@ typename return_type<T_rate>::type poisson_cdf_log(const T_n &n,
   return poisson_lcdf<T_n, T_rate>(n, lambda);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

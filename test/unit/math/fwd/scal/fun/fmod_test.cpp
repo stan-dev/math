@@ -48,8 +48,8 @@ TEST(AgradFwdFmod, FvarFvarDouble) {
 
 struct fmod_fun {
   template <typename T0, typename T1>
-  inline typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1, const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return fmod(arg1, arg2);
   }
 };

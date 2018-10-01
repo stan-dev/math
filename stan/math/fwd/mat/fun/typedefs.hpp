@@ -23,6 +23,6 @@ typedef Eigen::Matrix<fvar<double>, 1, Eigen::Dynamic> row_vector_fd;
 
 typedef Eigen::Matrix<fvar<fvar<double>>, 1, Eigen::Dynamic> row_vector_ffd;
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

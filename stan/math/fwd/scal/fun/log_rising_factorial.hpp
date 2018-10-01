@@ -11,9 +11,9 @@ namespace math {
 
 template <typename T>
 inline fvar<T> log_rising_factorial(const fvar<T> &x, const fvar<T> &n) {
-  return fvar<T>(log_rising_factorial(x.val_, n.val_),
-                 digamma(x.val_ + n.val_) * (x.d_ + n.d_) -
-                     digamma(x.val_) * x.d_);
+  return fvar<T>(
+      log_rising_factorial(x.val_, n.val_),
+      digamma(x.val_ + n.val_) * (x.d_ + n.d_) - digamma(x.val_) * x.d_);
 }
 
 template <typename T>
@@ -27,6 +27,6 @@ inline fvar<T> log_rising_factorial(double x, const fvar<T> &n) {
   return fvar<T>(log_rising_factorial(x, n.val_), digamma(x + n.val_) * n.d_);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

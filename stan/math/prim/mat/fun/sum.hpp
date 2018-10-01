@@ -23,6 +23,6 @@ inline T sum(const Eigen::Matrix<T, R, C> &v) {
   return v.sum();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -6,7 +6,7 @@
 #include <vector>
 
 class NormalTestRig : public VectorRealRNGTestRig {
-public:
+ public:
   /*
    * The default NormalTestRig constructor initializes the TestRig with
    * valid and invalid parameters for a random number generator with two
@@ -14,10 +14,10 @@ public:
    */
   NormalTestRig()
       : VectorRealRNGTestRig(
-            10000, // Number of samples used for quantiles tests
-            10,    // Length of vectors for vectorization tests
-            {-2.5, -1.7, -0.1, 0.0, 2.0, 5.8}, // Valid values for p1
-            {-3, -2, -1, 0, 2, 6},             // Valid integer values for p1
+            10000,  // Number of samples used for quantiles tests
+            10,     // Length of vectors for vectorization tests
+            {-2.5, -1.7, -0.1, 0.0, 2.0, 5.8},  // Valid values for p1
+            {-3, -2, -1, 0, 2, 6},              // Valid integer values for p1
             {}, {}, {0.1, 1.0, 2.5, 4.0}, {1, 2, 3, 4}, {-2.7, -1.5, -0.5, 0.0},
             {-3, -2, -1, 0}) {}
 

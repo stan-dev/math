@@ -12,14 +12,14 @@ namespace math {
 
 namespace {
 class floor_vari : public op_v_vari {
-public:
+ public:
   explicit floor_vari(vari *avi) : op_v_vari(std::floor(avi->val_), avi) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_)))
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
   }
 };
-} // namespace
+}  // namespace
 
 /**
  * Return the floor of the specified variable (cmath).
@@ -57,6 +57,6 @@ public:
  */
 inline var floor(const var &a) { return var(new floor_vari(a.vi_)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

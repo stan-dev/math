@@ -21,11 +21,12 @@ namespace math {
  *
  * @tparam T Type of scalar added
  */
-template <typename T> class accumulator {
-private:
+template <typename T>
+class accumulator {
+ private:
   std::vector<T> buf_;
 
-public:
+ public:
   /**
    * Construct an accumulator.
    */
@@ -95,7 +96,8 @@ public:
    * @tparam S Type of value to recursively add.
    * @param xs Vector of entries to add
    */
-  template <typename S> void add(const std::vector<S> &xs) {
+  template <typename S>
+  void add(const std::vector<S> &xs) {
     for (size_t i = 0; i < xs.size(); ++i)
       add(xs[i]);
   }
@@ -111,7 +113,7 @@ public:
   }
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

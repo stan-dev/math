@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-namespace { // anonymous
+namespace {  // anonymous
 
 // if x.size() = N, and x[i] = x[j] =
 // then lim sd(x) -> 0 [ d/dx[n] sd(x) ] = sqrt(N) / N
@@ -48,7 +48,7 @@ var calc_sd(size_t size, const var *dtrs) {
   return var(new stored_gradient_vari(sd, size, varis, partials));
 }
 
-} // namespace
+}  // namespace
 
 /**
  * Return the sample standard deviation of the specified standard
@@ -74,13 +74,14 @@ inline var sd(const std::vector<var> &v) {
  * @param[in] m input matrix
  * @return sample standard deviation of specified matrix
  */
-template <int R, int C> var sd(const Eigen::Matrix<var, R, C> &m) {
+template <int R, int C>
+var sd(const Eigen::Matrix<var, R, C> &m) {
   check_nonzero_size("sd", "m", m);
   if (m.size() == 1)
     return 0;
   return calc_sd(m.size(), &m(0));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

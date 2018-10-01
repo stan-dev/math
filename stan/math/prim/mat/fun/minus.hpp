@@ -11,8 +11,11 @@ namespace math {
  * @param x Subtrahend.
  * @return Negation of subtrahend.
  */
-template <typename T> inline T minus(const T &x) { return -x; }
+template <typename T>
+inline T minus(const T &x) {
+  return -x;
+}
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

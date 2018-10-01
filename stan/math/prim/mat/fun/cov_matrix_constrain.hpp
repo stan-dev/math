@@ -82,12 +82,12 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain(
       L(m, n) = 0.0;
   }
   // Jacobian for complete transform, including exp() above
-  lp += (K * LOG_2); // needless constant; want propto
+  lp += (K * LOG_2);  // needless constant; want propto
   for (index_t k = 0; k < K; ++k)
-    lp += (K - k + 1) * log(L(k, k)); // only +1 because index from 0
+    lp += (K - k + 1) * log(L(k, k));  // only +1 because index from 0
   return multiply_lower_tri_self_transpose(L);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

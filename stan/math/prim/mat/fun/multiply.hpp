@@ -51,9 +51,9 @@ multiply(T c, const Eigen::Matrix<double, R, C> &m) {
  *   the number of rows of m2.
  */
 template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<double, R1, C2>
-multiply(const Eigen::Matrix<double, R1, C1> &m1,
-         const Eigen::Matrix<double, R2, C2> &m2) {
+inline Eigen::Matrix<double, R1, C2> multiply(
+    const Eigen::Matrix<double, R1, C1> &m1,
+    const Eigen::Matrix<double, R2, C2> &m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
   return m1 * m2;
 }
@@ -74,6 +74,6 @@ inline double multiply(const Eigen::Matrix<double, 1, C1> &rv,
   return rv.dot(v);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

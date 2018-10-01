@@ -15,7 +15,8 @@ namespace math {
  * @throw std::domain_error if x is 0 or a negative integer
  */
 struct tgamma_fun {
-  template <typename T> static inline T fun(const T &x) {
+  template <typename T>
+  static inline T fun(const T &x) {
     using boost::math::tgamma;
     return tgamma(x);
   }
@@ -33,7 +34,7 @@ inline typename apply_scalar_unary<tgamma_fun, T>::return_t tgamma(const T &x) {
   return apply_scalar_unary<tgamma_fun, T>::apply(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

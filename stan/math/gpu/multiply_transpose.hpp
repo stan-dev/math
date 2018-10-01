@@ -45,8 +45,8 @@ inline matrix_gpu multiply_transpose(const matrix_gpu &A) {
   temp.sub_block(tempPad, 0, 0, 0, 0, temp.rows(), temp.cols());
   return temp;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif
 #endif

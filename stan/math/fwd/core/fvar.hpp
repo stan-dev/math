@@ -38,7 +38,8 @@ namespace math {
  *
  * @tparam T type of value and tangent
  */
-template <typename T> struct fvar {
+template <typename T>
+struct fvar {
   /**
    * The value of this variable.
    */
@@ -84,7 +85,7 @@ template <typename T> struct fvar {
    *   tangent type T)
    * @param[in] v value
    */
-  fvar(const T &v) : val_(v), d_(0.0) { // NOLINT(runtime/explicit)
+  fvar(const T &v) : val_(v), d_(0.0) {  // NOLINT(runtime/explicit)
     if (unlikely(is_nan(v)))
       d_ = v;
   }
@@ -284,6 +285,6 @@ template <typename T> struct fvar {
     return os << v.val_;
   }
 };
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

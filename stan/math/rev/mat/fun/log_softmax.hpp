@@ -15,16 +15,19 @@ namespace math {
 namespace {
 
 class log_softmax_elt_vari : public vari {
-private:
+ private:
   vari **alpha_;
   const double *softmax_alpha_;
-  const int size_; // array sizes
-  const int idx_;  // in in softmax output
+  const int size_;  // array sizes
+  const int idx_;   // in in softmax output
 
-public:
+ public:
   log_softmax_elt_vari(double val, vari **alpha, const double *softmax_alpha,
                        int size, int idx)
-      : vari(val), alpha_(alpha), softmax_alpha_(softmax_alpha), size_(size),
+      : vari(val),
+        alpha_(alpha),
+        softmax_alpha_(softmax_alpha),
+        size_(size),
         idx_(idx) {}
   void chain() {
     for (int m = 0; m < size_; ++m) {
@@ -36,7 +39,7 @@ public:
   }
 };
 
-} // namespace
+}  // namespace
 
 /**
  * Return the softmax of the specified Eigen vector.  Softmax is
@@ -48,8 +51,8 @@ public:
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
-inline Eigen::Matrix<var, Eigen::Dynamic, 1>
-log_softmax(const Eigen::Matrix<var, Eigen::Dynamic, 1> &alpha) {
+inline Eigen::Matrix<var, Eigen::Dynamic, 1> log_softmax(
+    const Eigen::Matrix<var, Eigen::Dynamic, 1> &alpha) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
@@ -96,12 +99,12 @@ log_softmax(const Eigen::Matrix<var, Eigen::Dynamic, 1> &alpha) {
 
   Matrix<var, Dynamic, 1> log_softmax_alpha(alpha.size());
   for (int k = 0; k < log_softmax_alpha.size(); ++k)
-    log_softmax_alpha(k) =
-        var(new log_softmax_elt_vari(log_softmax_alpha_d[k], alpha_vi_array,
-                                     softmax_alpha_d_array, alpha.size(), k));
+    log_softmax_alpha(k)
+        = var(new log_softmax_elt_vari(log_softmax_alpha_d[k], alpha_vi_array,
+                                       softmax_alpha_d_array, alpha.size(), k));
   return log_softmax_alpha;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

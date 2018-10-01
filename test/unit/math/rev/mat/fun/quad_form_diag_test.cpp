@@ -137,8 +137,8 @@ TEST(MathMatrix, quadFormDiagGrad_vd) {
   for (int i = 0; i < 9; ++i)
     xs2.push_back(m2(i));
 
-  Matrix<var, Dynamic, Dynamic> v_m_times_v_m =
-      multiply(v_m, multiply(m2, v_m));
+  Matrix<var, Dynamic, Dynamic> v_m_times_v_m
+      = multiply(v_m, multiply(m2, v_m));
 
   var norm2 = v_m_times_v_m.norm();
   std::vector<double> g2;
@@ -178,8 +178,8 @@ TEST(MathMatrix, quadFormDiagGrad_dv) {
   for (int i = 0; i < 3; ++i)
     xs2.push_back(v_m(i, i));
 
-  Matrix<var, Dynamic, Dynamic> v_m_times_v_m =
-      multiply(v_m, multiply(m2, v_m));
+  Matrix<var, Dynamic, Dynamic> v_m_times_v_m
+      = multiply(v_m, multiply(m2, v_m));
 
   var norm2 = v_m_times_v_m.norm();
   std::vector<double> g2;

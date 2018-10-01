@@ -12,11 +12,11 @@ namespace math {
  * @tparam T scalar type
  */
 template <typename T, int R, int C>
-inline Eigen::Matrix<T, 1, C>
-columns_dot_self(const Eigen::Matrix<T, R, C> &x) {
+inline Eigen::Matrix<T, 1, C> columns_dot_self(
+    const Eigen::Matrix<T, R, C> &x) {
   return x.colwise().squaredNorm();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

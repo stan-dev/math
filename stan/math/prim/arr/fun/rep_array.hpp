@@ -7,7 +7,8 @@
 namespace stan {
 namespace math {
 
-template <typename T> inline std::vector<T> rep_array(const T &x, int n) {
+template <typename T>
+inline std::vector<T> rep_array(const T &x, int n) {
   check_nonnegative("rep_array", "n", n);
   return std::vector<T>(n, x);
 }
@@ -30,7 +31,7 @@ inline std::vector<std::vector<std::vector<T>>> rep_array(const T &x, int k,
   return vector<vector<vector<T>>>(k, vector<vector<T>>(m, vector<T>(n, x)));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

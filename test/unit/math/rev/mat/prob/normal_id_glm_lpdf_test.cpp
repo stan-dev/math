@@ -35,18 +35,18 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles_rand) {
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 200;
     }
-    Matrix<double, Dynamic, Dynamic> x =
-        Matrix<double, Dynamic, Dynamic>::Random(3, 2);
-    Matrix<double, Dynamic, 1> beta =
-        Matrix<double, Dynamic, Dynamic>::Random(2, 1);
+    Matrix<double, Dynamic, Dynamic> x
+        = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
+    Matrix<double, Dynamic, 1> beta
+        = Matrix<double, Dynamic, Dynamic>::Random(2, 1);
     Matrix<double, 1, 1> alphamat = Matrix<double, 1, 1>::Random(1, 1);
     double alpha = alphamat[0];
     Matrix<double, Dynamic, 1> alphavec = alpha * Matrix<double, 3, 1>::Ones();
     Matrix<double, Dynamic, 1> theta(3, 1);
     theta = x * beta + alphavec;
-    Matrix<double, Dynamic, 1> phi =
-        Matrix<double, Dynamic, Dynamic>::Random(1, 1) +
-        Matrix<double, 1, 1>::Ones();
+    Matrix<double, Dynamic, 1> phi
+        = Matrix<double, Dynamic, Dynamic>::Random(1, 1)
+          + Matrix<double, 1, 1>::Ones();
     EXPECT_FLOAT_EQ(
         (stan::math::normal_lpdf(y, theta, phi[0])),
         (stan::math::normal_id_glm_lpdf(y, x, alpha, beta, phi[0])));
@@ -119,10 +119,10 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars) {
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand) {
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
-    Matrix<double, Dynamic, Dynamic> xreal =
-        Matrix<double, Dynamic, Dynamic>::Random(3, 2);
-    Matrix<double, Dynamic, 1> betareal =
-        Matrix<double, Dynamic, Dynamic>::Random(2, 1);
+    Matrix<double, Dynamic, Dynamic> xreal
+        = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
+    Matrix<double, Dynamic, 1> betareal
+        = Matrix<double, Dynamic, Dynamic>::Random(2, 1);
     Matrix<double, 1, 1> alphareal = Matrix<double, 1, 1>::Random(1, 1);
     double phireal = Matrix<double, Dynamic, 1>::Random(1, 1)[0] + 1;
     Matrix<var, Dynamic, 1> y = yreal;
@@ -181,8 +181,8 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand) {
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand_scal_beta) {
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
-    Matrix<double, Dynamic, Dynamic> xreal =
-        Matrix<double, Dynamic, Dynamic>::Random(3, 1);
+    Matrix<double, Dynamic, Dynamic> xreal
+        = Matrix<double, Dynamic, Dynamic>::Random(3, 1);
     double betareal = Matrix<double, Dynamic, Dynamic>::Random(1, 1)(0, 0);
     Matrix<double, 1, 1> alphareal = Matrix<double, 1, 1>::Random(1, 1);
     double phireal = Matrix<double, Dynamic, 1>::Random(1, 1)[0] + 1;
@@ -236,15 +236,15 @@ TEST(ProbDistributionsNormalIdGLM,
      glm_matches_normal_id_varying_intercept_and_scale) {
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
-    Matrix<double, Dynamic, Dynamic> xreal =
-        Matrix<double, Dynamic, Dynamic>::Random(3, 2);
-    Matrix<double, Dynamic, 1> betareal =
-        Matrix<double, Dynamic, Dynamic>::Random(2, 1);
-    Matrix<double, Dynamic, 1> alphareal =
-        Matrix<double, Dynamic, 1>::Random(3, 1);
-    Matrix<double, Dynamic, 1> phireal =
-        Matrix<double, Dynamic, Dynamic>::Random(3, 1) +
-        Matrix<double, Dynamic, 1>::Ones(3, 1);
+    Matrix<double, Dynamic, Dynamic> xreal
+        = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
+    Matrix<double, Dynamic, 1> betareal
+        = Matrix<double, Dynamic, Dynamic>::Random(2, 1);
+    Matrix<double, Dynamic, 1> alphareal
+        = Matrix<double, Dynamic, 1>::Random(3, 1);
+    Matrix<double, Dynamic, 1> phireal
+        = Matrix<double, Dynamic, Dynamic>::Random(3, 1)
+          + Matrix<double, Dynamic, 1>::Ones(3, 1);
     Matrix<var, Dynamic, 1> y = yreal;
     Matrix<var, Dynamic, 1> beta = betareal;
     Matrix<var, Dynamic, 1> theta(3, 1);
@@ -345,40 +345,40 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_error_checking) {
 
   Eigen::Matrix<double, -1, 1> y = Eigen::Matrix<double, -1, 1>::Random(N, 1);
   Eigen::Matrix<double, -1, 1> yw1 = Eigen::Matrix<double, -1, 1>::Random(W, 1);
-  Eigen::Matrix<double, -1, 1> yw2 =
-      Eigen::Matrix<double, -1, 1>::Random(W, 1) * NAN;
+  Eigen::Matrix<double, -1, 1> yw2
+      = Eigen::Matrix<double, -1, 1>::Random(W, 1) * NAN;
   Eigen::Matrix<double, -1, -1> x = Eigen::Matrix<double, -1, -1>::Random(N, M);
-  Eigen::Matrix<double, -1, -1> xw1 =
-      Eigen::Matrix<double, -1, -1>::Random(W, M);
-  Eigen::Matrix<double, -1, -1> xw2 =
-      Eigen::Matrix<double, -1, -1>::Random(N, W);
-  Eigen::Matrix<double, -1, -1> xw3 =
-      Eigen::Matrix<double, -1, -1>::Random(N, M) * NAN;
-  Eigen::Matrix<double, -1, 1> alpha =
-      Eigen::Matrix<double, -1, 1>::Random(N, 1);
-  Eigen::Matrix<double, -1, 1> alphaw1 =
-      Eigen::Matrix<double, -1, 1>::Random(W, 1);
-  Eigen::Matrix<double, -1, 1> alphaw2 =
-      Eigen::Matrix<double, -1, 1>::Random(N, 1) * NAN;
-  Eigen::Matrix<double, -1, 1> beta =
-      Eigen::Matrix<double, -1, 1>::Random(M, 1);
-  Eigen::Matrix<double, -1, 1> betaw1 =
-      Eigen::Matrix<double, -1, 1>::Random(W, 1);
-  Eigen::Matrix<double, -1, 1> betaw2 =
-      Eigen::Matrix<double, -1, 1>::Random(M, 1) * NAN;
-  Eigen::Matrix<double, -1, 1> sigma =
-      Eigen::Matrix<double, -1, 1>::Random(N, 1) +
-      Eigen::Matrix<double, -1, 1>::Ones(N, 1);
-  Eigen::Matrix<double, -1, 1> sigmaw1 =
-      Eigen::Matrix<double, -1, 1>::Random(W, 1) +
-      Eigen::Matrix<double, -1, 1>::Ones(W, 1);
-  Eigen::Matrix<double, -1, 1> sigmaw2 =
-      Eigen::Matrix<double, -1, 1>::Random(N, 1) -
-      Eigen::Matrix<double, -1, 1>::Ones(N, 1);
-  Eigen::Matrix<double, -1, 1> sigmaw3 =
-      (Eigen::Matrix<double, -1, 1>::Random(N, 1) +
-       Eigen::Matrix<double, -1, 1>::Ones(N, 1)) *
-      NAN;
+  Eigen::Matrix<double, -1, -1> xw1
+      = Eigen::Matrix<double, -1, -1>::Random(W, M);
+  Eigen::Matrix<double, -1, -1> xw2
+      = Eigen::Matrix<double, -1, -1>::Random(N, W);
+  Eigen::Matrix<double, -1, -1> xw3
+      = Eigen::Matrix<double, -1, -1>::Random(N, M) * NAN;
+  Eigen::Matrix<double, -1, 1> alpha
+      = Eigen::Matrix<double, -1, 1>::Random(N, 1);
+  Eigen::Matrix<double, -1, 1> alphaw1
+      = Eigen::Matrix<double, -1, 1>::Random(W, 1);
+  Eigen::Matrix<double, -1, 1> alphaw2
+      = Eigen::Matrix<double, -1, 1>::Random(N, 1) * NAN;
+  Eigen::Matrix<double, -1, 1> beta
+      = Eigen::Matrix<double, -1, 1>::Random(M, 1);
+  Eigen::Matrix<double, -1, 1> betaw1
+      = Eigen::Matrix<double, -1, 1>::Random(W, 1);
+  Eigen::Matrix<double, -1, 1> betaw2
+      = Eigen::Matrix<double, -1, 1>::Random(M, 1) * NAN;
+  Eigen::Matrix<double, -1, 1> sigma
+      = Eigen::Matrix<double, -1, 1>::Random(N, 1)
+        + Eigen::Matrix<double, -1, 1>::Ones(N, 1);
+  Eigen::Matrix<double, -1, 1> sigmaw1
+      = Eigen::Matrix<double, -1, 1>::Random(W, 1)
+        + Eigen::Matrix<double, -1, 1>::Ones(W, 1);
+  Eigen::Matrix<double, -1, 1> sigmaw2
+      = Eigen::Matrix<double, -1, 1>::Random(N, 1)
+        - Eigen::Matrix<double, -1, 1>::Ones(N, 1);
+  Eigen::Matrix<double, -1, 1> sigmaw3
+      = (Eigen::Matrix<double, -1, 1>::Random(N, 1)
+         + Eigen::Matrix<double, -1, 1>::Ones(N, 1))
+        * NAN;
 
   EXPECT_THROW(stan::math::normal_id_glm_lpdf(yw1, x, alpha, beta, sigma),
                std::invalid_argument);

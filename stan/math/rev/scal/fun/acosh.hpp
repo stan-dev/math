@@ -10,13 +10,13 @@ namespace math {
 
 namespace {
 class acosh_vari : public op_v_vari {
-public:
+ public:
   acosh_vari(double val, vari *avi) : op_v_vari(val, avi) {}
   void chain() {
     avi_->adj_ += adj_ / std::sqrt(avi_->val_ * avi_->val_ - 1.0);
   }
 };
-} // namespace
+}  // namespace
 
 /**
  * The inverse hyperbolic cosine function for variables (C99).
@@ -61,6 +61,6 @@ inline var acosh(const var &a) {
   return var(new acosh_vari(stan::math::acosh(a.val()), a.vi_));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

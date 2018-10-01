@@ -21,7 +21,8 @@ namespace math {
  * @tparam N Eigen matrix size specification
  * @param o output stream
  */
-template <int N> inline void print_mat_size(std::ostream &o) {
+template <int N>
+inline void print_mat_size(std::ostream &o) {
   if (N == Eigen::Dynamic)
     o << "dynamically sized";
   else
@@ -170,6 +171,6 @@ inline void assign(std::vector<T_lhs> &x, const std::vector<T_rhs> &y) {
     assign(x[i], y[i]);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -37,7 +37,7 @@ log_inv_logit_diff(const T1 &x, const T2 &y) {
   return x - log1p_exp(x) + log1m_exp(y - x) - log1p_exp(y);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

@@ -44,15 +44,15 @@ namespace math {
  * @param b the second variable
  */
 template <typename T1, typename T2>
-inline typename boost::math::tools::promote_args<T1, T2>::type
-log_sum_exp(const T2 &a, const T1 &b) {
+inline typename boost::math::tools::promote_args<T1, T2>::type log_sum_exp(
+    const T2 &a, const T1 &b) {
   using std::exp;
   if (a > b)
     return a + log1p_exp(b - a);
   return b + log1p_exp(a - b);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

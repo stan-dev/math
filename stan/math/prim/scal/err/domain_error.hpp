@@ -57,6 +57,6 @@ inline void domain_error(const char *function, const char *name, const T &y,
   domain_error(function, name, y, msg1, "");
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

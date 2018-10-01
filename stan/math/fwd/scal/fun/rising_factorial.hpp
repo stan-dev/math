@@ -21,11 +21,12 @@ namespace math {
  * @return tangent of rising factorial at arguments.
  */
 
-template <typename T> inline fvar<T> rising_factorial(const fvar<T> &x, int n) {
+template <typename T>
+inline fvar<T> rising_factorial(const fvar<T> &x, int n) {
   T rising_fact(rising_factorial(x.val_, n));
   return fvar<T>(rising_fact,
                  rising_fact * x.d_ * (digamma(x.val_ + n) - digamma(x.val_)));
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

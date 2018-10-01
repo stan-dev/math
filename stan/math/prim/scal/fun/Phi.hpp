@@ -37,6 +37,6 @@ inline double Phi(double x) {
     return 0.5 * (1.0 + boost::math::erf(INV_SQRT_2 * x));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

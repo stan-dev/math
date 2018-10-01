@@ -14,9 +14,9 @@
 #include <tuple>
 #include <vector>
 
-using ArgumentTypes =
-    std::tuple<int, double, std::vector<int>, std::vector<double>,
-               Eigen::VectorXd, Eigen::RowVectorXd>;
+using ArgumentTypes
+    = std::tuple<int, double, std::vector<int>, std::vector<double>,
+                 Eigen::VectorXd, Eigen::RowVectorXd>;
 
 /*
  * Fill the vector-like variable params with values from the values argument.
@@ -110,17 +110,22 @@ void assign_parameter_values(int &param, const std::vector<int> &values) {
  * @param v Variable to resize
  * @param N New size
  */
-template <typename T> void resize_if_vector(T &v, int N) { v.resize(N); }
+template <typename T>
+void resize_if_vector(T &v, int N) {
+  v.resize(N);
+}
 
 /*
  * For doubles, resize_if_vector does nothing
  */
-template <> void resize_if_vector(double &v, int N) {}
+template <>
+void resize_if_vector(double &v, int N) {}
 
 /*
  * For ints, resize_if_vector does nothing
  */
-template <> void resize_if_vector(int &v, int N) {}
+template <>
+void resize_if_vector(int &v, int N) {}
 
 /*
  * check_dist_throws feeds rig.generate_samples various
@@ -163,24 +168,24 @@ struct check_dist_throws {
     bool p2_is_used = rig.p2_is_used();
     bool p3_is_used = rig.p3_is_used();
 
-    resize_if_vector(p1, 5); // No-op if p1 is a scalar
-    resize_if_vector(p2, 5); // No-op if p2 is a scalar
-    resize_if_vector(p3, 5); // No-op if p3 is a scalar
+    resize_if_vector(p1, 5);  // No-op if p1 is a scalar
+    resize_if_vector(p2, 5);  // No-op if p2 is a scalar
+    resize_if_vector(p3, 5);  // No-op if p3 is a scalar
 
     // Make copies of the input arguments so that we can randomly shuffle them
     // in the tests
-    std::vector<T_scalar_param1> good_p1 =
-        rig.template get_good_p1<T_scalar_param1>();
-    std::vector<T_scalar_param1> bad_p1 =
-        rig.template get_bad_p1<T_scalar_param1>();
-    std::vector<T_scalar_param2> good_p2 =
-        rig.template get_good_p2<T_scalar_param2>();
-    std::vector<T_scalar_param2> bad_p2 =
-        rig.template get_bad_p2<T_scalar_param2>();
-    std::vector<T_scalar_param3> good_p3 =
-        rig.template get_good_p3<T_scalar_param3>();
-    std::vector<T_scalar_param3> bad_p3 =
-        rig.template get_bad_p3<T_scalar_param3>();
+    std::vector<T_scalar_param1> good_p1
+        = rig.template get_good_p1<T_scalar_param1>();
+    std::vector<T_scalar_param1> bad_p1
+        = rig.template get_bad_p1<T_scalar_param1>();
+    std::vector<T_scalar_param2> good_p2
+        = rig.template get_good_p2<T_scalar_param2>();
+    std::vector<T_scalar_param2> bad_p2
+        = rig.template get_bad_p2<T_scalar_param2>();
+    std::vector<T_scalar_param3> good_p3
+        = rig.template get_good_p3<T_scalar_param3>();
+    std::vector<T_scalar_param3> bad_p3
+        = rig.template get_bad_p3<T_scalar_param3>();
 
     // Try a few combinations of parameters that should work
     for (int i = 0; i < 5; i++) {
@@ -225,11 +230,12 @@ struct check_dist_throws {
     // all parameter pairs.
 
     // If p1 is a scalar or the only vector, this test is skipped
-    resize_if_vector(p1, 3); // No-op if p1 is a scalar
-    resize_if_vector(p2, 4); // No-op if p2 is a scalar
-    resize_if_vector(p3, 4); // No-op if p3 is a scalar
-    if (stan::length(p1) != 1 && ((p2_is_used && stan::length(p2) != 1) ||
-                                  (p3_is_used && stan::length(p3) != 1))) {
+    resize_if_vector(p1, 3);  // No-op if p1 is a scalar
+    resize_if_vector(p2, 4);  // No-op if p2 is a scalar
+    resize_if_vector(p3, 4);  // No-op if p3 is a scalar
+    if (stan::length(p1) != 1
+        && ((p2_is_used && stan::length(p2) != 1)
+            || (p3_is_used && stan::length(p3) != 1))) {
       assign_parameter_values(p1, good_p1);
       assign_parameter_values(p2, good_p2);
       assign_parameter_values(p3, good_p3);
@@ -238,11 +244,11 @@ struct check_dist_throws {
     }
 
     // If p2 is a scalar or the only vector, this test is skipped
-    resize_if_vector(p1, 4); // No-op if p1 is a scalar
-    resize_if_vector(p2, 3); // No-op if p2 is a scalar
-    resize_if_vector(p3, 4); // No-op if p3 is a scalar
-    if (p2_is_used && stan::length(p2) != 1 &&
-        (stan::length(p1) != 1 || (p3_is_used && stan::length(p3) != 1))) {
+    resize_if_vector(p1, 4);  // No-op if p1 is a scalar
+    resize_if_vector(p2, 3);  // No-op if p2 is a scalar
+    resize_if_vector(p3, 4);  // No-op if p3 is a scalar
+    if (p2_is_used && stan::length(p2) != 1
+        && (stan::length(p1) != 1 || (p3_is_used && stan::length(p3) != 1))) {
       assign_parameter_values(p1, good_p1);
       assign_parameter_values(p2, good_p2);
       assign_parameter_values(p3, good_p3);
@@ -251,11 +257,11 @@ struct check_dist_throws {
     }
 
     // If p3 is a scalar or the only vector, this test is skipped
-    resize_if_vector(p1, 4); // No-op if p1 is a scalar
-    resize_if_vector(p2, 4); // No-op if p2 is a scalar
-    resize_if_vector(p3, 3); // No-op if p3 is a scalar
-    if (p3_is_used && stan::length(p3) != 1 &&
-        (stan::length(p1) != 1 || (p2_is_used && stan::length(p2) != 1))) {
+    resize_if_vector(p1, 4);  // No-op if p1 is a scalar
+    resize_if_vector(p2, 4);  // No-op if p2 is a scalar
+    resize_if_vector(p3, 3);  // No-op if p3 is a scalar
+    if (p3_is_used && stan::length(p3) != 1
+        && (stan::length(p1) != 1 || (p2_is_used && stan::length(p2) != 1))) {
       assign_parameter_values(p1, good_p1);
       assign_parameter_values(p2, good_p2);
       assign_parameter_values(p3, good_p3);
@@ -273,7 +279,8 @@ struct check_dist_throws {
  * @tparam T_rig Test rig type for random number generator
  * @param T_rig Test rig for random number generator
  */
-template <typename T_rig> void check_dist_throws_all_types(const T_rig &rig) {
+template <typename T_rig>
+void check_dist_throws_all_types(const T_rig &rig) {
   apply_template_permutations<ArgumentTypes, ArgumentTypes, ArgumentTypes>(
       check_dist_throws{}, rig);
 }
@@ -317,7 +324,8 @@ void check_dist_throws_real_first_argument(const T_rig &rig) {
  * @param v Input scalar
  * @return vector of length 1 with value v
  */
-template <typename T> std::vector<T> promote_to_vector(T v) {
+template <typename T>
+std::vector<T> promote_to_vector(T v) {
   return std::vector<T>(1, v);
 }
 
@@ -325,7 +333,8 @@ template <typename T> std::vector<T> promote_to_vector(T v) {
  * For arguments that are already vectors, just copy. Probably more efficient
  * just using std::move but cpplint complained about use of unapproved Rvalues.
  */
-template <typename T> std::vector<T> promote_to_vector(std::vector<T> v) {
+template <typename T>
+std::vector<T> promote_to_vector(std::vector<T> v) {
   return v;
 }
 
@@ -351,9 +360,9 @@ struct check_quantiles {
     T_param1 p1;
     T_param2 p2;
     T_param3 p3;
-    resize_if_vector(p1, rig.M_); // No-op if p1 is scalar
-    resize_if_vector(p2, rig.M_); // No-op if p2 is scalar
-    resize_if_vector(p3, rig.M_); // No-op if p3 is scalar
+    resize_if_vector(p1, rig.M_);  // No-op if p1 is scalar
+    resize_if_vector(p2, rig.M_);  // No-op if p2 is scalar
+    resize_if_vector(p3, rig.M_);  // No-op if p3 is scalar
 
     assign_parameter_values(
         p1,
@@ -388,8 +397,8 @@ struct check_quantiles {
       for (int n = 0; n < rig.N_; ++n) {
         samples_to_test.push_back(samples_to_test_transpose[n][m]);
       }
-      std::vector<double> quantiles =
-          rig.generate_quantiles(p1_vec[m], p2_vec[m], p3_vec[m]);
+      std::vector<double> quantiles
+          = rig.generate_quantiles(p1_vec[m], p2_vec[m], p3_vec[m]);
 
       assert_matches_quantiles(samples_to_test, quantiles, 1e-6);
     }
@@ -404,7 +413,8 @@ struct check_quantiles {
  * @tparam T_rig Type of test rig for random number generator
  * @param T_rig Test rig for random number generator
  */
-template <typename T_rig> void check_quantiles_real(const T_rig &rig) {
+template <typename T_rig>
+void check_quantiles_real(const T_rig &rig) {
   apply_template_permutations<ArgumentTypes, std::tuple<double>,
                               std::tuple<double>>(check_quantiles{}, rig);
 }
@@ -417,7 +427,8 @@ template <typename T_rig> void check_quantiles_real(const T_rig &rig) {
  * @tparam T_rig Type of test rig for random number generator
  * @param T_rig Test rig for random number generator
  */
-template <typename T_rig> void check_quantiles_real_real(const T_rig &rig) {
+template <typename T_rig>
+void check_quantiles_real_real(const T_rig &rig) {
   apply_template_permutations<ArgumentTypes, ArgumentTypes, std::tuple<double>>(
       check_quantiles{}, rig);
 }
@@ -494,9 +505,9 @@ struct check_counts {
     T_param1 p1;
     T_param2 p2;
     T_param3 p3;
-    resize_if_vector(p1, rig.M_); // No-op if p1 is scalar
-    resize_if_vector(p2, rig.M_); // No-op if p2 is scalar
-    resize_if_vector(p3, rig.M_); // No-op if p3 is scalar
+    resize_if_vector(p1, rig.M_);  // No-op if p1 is scalar
+    resize_if_vector(p2, rig.M_);  // No-op if p2 is scalar
+    resize_if_vector(p3, rig.M_);  // No-op if p3 is scalar
 
     assign_parameter_values(
         p1,
@@ -536,9 +547,9 @@ struct check_counts {
       std::vector<double> epmf;
       double total = 0.0;
       for (size_t n = 0; n < rig.test_points_.size(); ++n) {
-        double e =
-            rig.N_ *
-            rig.pmf(rig.test_points_[n], p1_vec[m], p2_vec[m], p3_vec[m]);
+        double e
+            = rig.N_
+              * rig.pmf(rig.test_points_[n], p1_vec[m], p2_vec[m], p3_vec[m]);
         epmf.push_back(e);
         total += e;
       }
@@ -593,7 +604,8 @@ struct check_counts {
  * @tparam T_rig Type of test rig for random number generator
  * @param T_rig Test rig for random number generator
  */
-template <typename T_rig> void check_counts_real(const T_rig &rig) {
+template <typename T_rig>
+void check_counts_real(const T_rig &rig) {
   apply_template_permutations<ArgumentTypes, std::tuple<double>,
                               std::tuple<double>>(check_counts{}, rig);
 }
@@ -606,7 +618,8 @@ template <typename T_rig> void check_counts_real(const T_rig &rig) {
  * @tparam T_rig Type of test rig for random number generator
  * @param T_rig Test rig for random number generator
  */
-template <typename T_rig> void check_counts_real_real(const T_rig &rig) {
+template <typename T_rig>
+void check_counts_real_real(const T_rig &rig) {
   apply_template_permutations<ArgumentTypes, ArgumentTypes, std::tuple<double>>(
       check_counts{}, rig);
 }
@@ -619,7 +632,8 @@ template <typename T_rig> void check_counts_real_real(const T_rig &rig) {
  * @tparam T_rig Type of test rig for random number generator
  * @param T_rig Test rig for random number generator
  */
-template <typename T_rig> void check_counts_real_real_real(const T_rig &rig) {
+template <typename T_rig>
+void check_counts_real_real_real(const T_rig &rig) {
   apply_template_permutations<ArgumentTypes, ArgumentTypes, ArgumentTypes>(
       check_counts{}, rig);
 }
@@ -633,7 +647,8 @@ template <typename T_rig> void check_counts_real_real_real(const T_rig &rig) {
  * @tparam T_rig Type of test rig for random number generator
  * @param T_rig Test rig for random number generator
  */
-template <typename T_rig> void check_counts_int_real(const T_rig &rig) {
+template <typename T_rig>
+void check_counts_int_real(const T_rig &rig) {
   apply_template_permutations<std::tuple<int, std::vector<int>>, ArgumentTypes,
                               std::tuple<double>>(check_counts{}, rig);
 }
@@ -647,7 +662,8 @@ template <typename T_rig> void check_counts_int_real(const T_rig &rig) {
  * @tparam T_rig Type of test rig for random number generator
  * @param T_rig Test rig for random number generator
  */
-template <typename T_rig> void check_counts_int_real_real(const T_rig &rig) {
+template <typename T_rig>
+void check_counts_int_real_real(const T_rig &rig) {
   apply_template_permutations<std::tuple<int, std::vector<int>>, ArgumentTypes,
                               ArgumentTypes>(check_counts{}, rig);
 }

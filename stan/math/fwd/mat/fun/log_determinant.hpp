@@ -21,6 +21,6 @@ inline fvar<T> log_determinant(const Eigen::Matrix<fvar<T>, R, C> &m) {
   return log(fabs(determinant(m)));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

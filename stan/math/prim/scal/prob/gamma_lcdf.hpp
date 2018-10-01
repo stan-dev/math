@@ -31,8 +31,8 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_shape, typename T_inv_scale>
-typename return_type<T_y, T_shape, T_inv_scale>::type
-gamma_lcdf(const T_y &y, const T_shape &alpha, const T_inv_scale &beta) {
+typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lcdf(
+    const T_y &y, const T_shape &alpha, const T_inv_scale &beta) {
   if (size_zero(y, alpha, beta))
     return 0.0;
   typedef typename stan::partials_return_type<T_y, T_shape, T_inv_scale>::type
@@ -99,22 +99,22 @@ gamma_lcdf(const T_y &y, const T_shape &alpha, const T_inv_scale &beta) {
     P += log(Pn);
 
     if (!is_constant_struct<T_y>::value)
-      ops_partials.edge1_.partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl) *
-                                          pow(beta_dbl * y_dbl, alpha_dbl - 1) /
-                                          tgamma(alpha_dbl) / Pn;
+      ops_partials.edge1_.partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
+                                          * pow(beta_dbl * y_dbl, alpha_dbl - 1)
+                                          / tgamma(alpha_dbl) / Pn;
     if (!is_constant_struct<T_shape>::value)
-      ops_partials.edge2_.partials_[n] -=
-          grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
-                             digamma_vec[n]) /
-          Pn;
+      ops_partials.edge2_.partials_[n]
+          -= grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
+                                digamma_vec[n])
+             / Pn;
     if (!is_constant_struct<T_inv_scale>::value)
-      ops_partials.edge3_.partials_[n] += y_dbl * exp(-beta_dbl * y_dbl) *
-                                          pow(beta_dbl * y_dbl, alpha_dbl - 1) /
-                                          tgamma(alpha_dbl) / Pn;
+      ops_partials.edge3_.partials_[n] += y_dbl * exp(-beta_dbl * y_dbl)
+                                          * pow(beta_dbl * y_dbl, alpha_dbl - 1)
+                                          / tgamma(alpha_dbl) / Pn;
   }
   return ops_partials.build(P);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

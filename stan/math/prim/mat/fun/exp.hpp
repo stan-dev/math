@@ -20,7 +20,8 @@ struct exp_fun {
    * @param[in] x Argument.
    * @return Exponential of argument.
    */
-  template <typename T> static inline T fun(const T &x) {
+  template <typename T>
+  static inline T fun(const T &x) {
     using std::exp;
     return exp(x);
   }
@@ -40,7 +41,7 @@ inline typename apply_scalar_unary<exp_fun, T>::return_t exp(const T &x) {
   return apply_scalar_unary<exp_fun, T>::apply(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

@@ -18,8 +18,8 @@ namespace math {
  * @tparam T Type of scalar.
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1>
-ordered_constrain(const Eigen::Matrix<T, Eigen::Dynamic, 1> &x) {
+Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_constrain(
+    const Eigen::Matrix<T, Eigen::Dynamic, 1> &x) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
@@ -49,8 +49,8 @@ ordered_constrain(const Eigen::Matrix<T, Eigen::Dynamic, 1> &x) {
  * @tparam T Type of scalar.
  */
 template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, 1>
-ordered_constrain(const Eigen::Matrix<T, Eigen::Dynamic, 1> &x, T &lp) {
+inline Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_constrain(
+    const Eigen::Matrix<T, Eigen::Dynamic, 1> &x, T &lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
@@ -61,8 +61,8 @@ ordered_constrain(const Eigen::Matrix<T, Eigen::Dynamic, 1> &x, T &lp) {
   return ordered_constrain(x);
 }
 
-} // namespace math
+}  // namespace math
 
-} // namespace stan
+}  // namespace stan
 
 #endif

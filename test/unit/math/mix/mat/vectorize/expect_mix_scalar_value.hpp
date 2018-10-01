@@ -5,7 +5,8 @@
 #include <test/unit/math/mix/mat/vectorize/expect_val_deriv_eq.hpp>
 #include <vector>
 
-template <typename F, typename T> void expect_mix_scalar_value() {
+template <typename F, typename T>
+void expect_mix_scalar_value() {
   using std::vector;
   for (size_t i = 0; i < F::valid_inputs().size(); ++i) {
     vector<T> y = build_mix_vector<F>(vector<T>(), i);

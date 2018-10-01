@@ -46,8 +46,8 @@ namespace math {
  * @tparam T_scale_fail Type of beta.
  */
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>
-typename return_type<T_y, T_scale_succ, T_scale_fail>::type
-beta_cdf(const T_y &y, const T_scale_succ &alpha, const T_scale_fail &beta) {
+typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_cdf(
+    const T_y &y, const T_scale_succ &alpha, const T_scale_fail &beta) {
   typedef
       typename stan::partials_return_type<T_y, T_scale_succ, T_scale_fail>::type
           T_partials_return;
@@ -122,19 +122,19 @@ beta_cdf(const T_y &y, const T_scale_succ &alpha, const T_scale_fail &beta) {
     P *= Pn;
 
     if (!is_constant_struct<T_y>::value)
-      ops_partials.edge1_.partials_[n] +=
-          inc_beta_ddz(alpha_dbl, beta_dbl, y_dbl) / Pn;
+      ops_partials.edge1_.partials_[n]
+          += inc_beta_ddz(alpha_dbl, beta_dbl, y_dbl) / Pn;
 
     if (!is_constant_struct<T_scale_succ>::value)
-      ops_partials.edge2_.partials_[n] +=
-          inc_beta_dda(alpha_dbl, beta_dbl, y_dbl, digamma_alpha_vec[n],
-                       digamma_sum_vec[n]) /
-          Pn;
+      ops_partials.edge2_.partials_[n]
+          += inc_beta_dda(alpha_dbl, beta_dbl, y_dbl, digamma_alpha_vec[n],
+                          digamma_sum_vec[n])
+             / Pn;
     if (!is_constant_struct<T_scale_fail>::value)
-      ops_partials.edge3_.partials_[n] +=
-          inc_beta_ddb(alpha_dbl, beta_dbl, y_dbl, digamma_beta_vec[n],
-                       digamma_sum_vec[n]) /
-          Pn;
+      ops_partials.edge3_.partials_[n]
+          += inc_beta_ddb(alpha_dbl, beta_dbl, y_dbl, digamma_beta_vec[n],
+                          digamma_sum_vec[n])
+             / Pn;
   }
 
   if (!is_constant_struct<T_y>::value) {
@@ -153,6 +153,6 @@ beta_cdf(const T_y &y, const T_scale_succ &alpha, const T_scale_fail &beta) {
   return ops_partials.build(P);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -13,11 +13,11 @@ namespace math {
 
 namespace {
 class dot_self_vari : public vari {
-protected:
+ protected:
   vari **v_;
   size_t size_;
 
-public:
+ public:
   dot_self_vari(vari **v, size_t size)
       : vari(var_dot_self(v, size)), v_(v), size_(size) {}
   template <typename Derived>
@@ -62,22 +62,23 @@ public:
       v_[i]->adj_ += adj_ * 2.0 * v_[i]->val_;
   }
 };
-} // namespace
-  /**
-   * Returns the dot product of a vector with itself.
-   *
-   * @param[in] v Vector.
-   * @return Dot product of the vector with itself.
-   * @tparam R number of rows or <code>Eigen::Dynamic</code> for
-   * dynamic; one of R or C must be 1
-   * @tparam C number of rows or <code>Eigen::Dyanmic</code> for
-   * dynamic; one of R or C must be 1
-   */
-template <int R, int C> inline var dot_self(const Eigen::Matrix<var, R, C> &v) {
+}  // namespace
+/**
+ * Returns the dot product of a vector with itself.
+ *
+ * @param[in] v Vector.
+ * @return Dot product of the vector with itself.
+ * @tparam R number of rows or <code>Eigen::Dynamic</code> for
+ * dynamic; one of R or C must be 1
+ * @tparam C number of rows or <code>Eigen::Dyanmic</code> for
+ * dynamic; one of R or C must be 1
+ */
+template <int R, int C>
+inline var dot_self(const Eigen::Matrix<var, R, C> &v) {
   check_vector("dot_self", "v", v);
   return var(new dot_self_vari(v));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

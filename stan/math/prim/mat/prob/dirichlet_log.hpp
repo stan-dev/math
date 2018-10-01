@@ -28,8 +28,8 @@ namespace math {
  * @tparam T_prior_size Type of prior sample sizes.
  */
 template <bool propto, typename T_prob, typename T_prior_size>
-typename return_type<T_prob, T_prior_size>::type
-dirichlet_log(const T_prob &theta, const T_prior_size &alpha) {
+typename return_type<T_prob, T_prior_size>::type dirichlet_log(
+    const T_prob &theta, const T_prior_size &alpha) {
   return dirichlet_lpmf<propto, T_prob, T_prior_size>(theta, alpha);
 }
 
@@ -37,11 +37,11 @@ dirichlet_log(const T_prob &theta, const T_prior_size &alpha) {
  * @deprecated use <code>dirichlet_lpmf</code>
  */
 template <typename T_prob, typename T_prior_size>
-typename return_type<T_prob, T_prior_size>::type
-dirichlet_log(const T_prob &theta, const T_prior_size &alpha) {
+typename return_type<T_prob, T_prior_size>::type dirichlet_log(
+    const T_prob &theta, const T_prior_size &alpha) {
   return dirichlet_lpmf<T_prob, T_prior_size>(theta, alpha);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

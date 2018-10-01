@@ -6,9 +6,10 @@
 
 namespace stan {
 
-template <> struct is_var<stan::math::var> {
+template <>
+struct is_var<stan::math::var> {
   enum { value = true };
 };
 
-} // namespace stan
+}  // namespace stan
 #endif

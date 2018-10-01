@@ -43,7 +43,8 @@ TEST(AgradRev, Phi_approx) {
 }
 
 struct Phi_approx_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0 &arg1) const {
     return Phi_approx(arg1);
   }
 };

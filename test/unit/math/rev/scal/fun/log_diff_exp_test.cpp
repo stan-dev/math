@@ -177,8 +177,8 @@ TEST(AgradRev, log_diff_exp_exception) {
 
 struct log_diff_exp_fun {
   template <typename T0, typename T1>
-  inline typename stan::return_type<T0, T1>::type
-  operator()(const T0 &arg1, const T1 &arg2) const {
+  inline typename stan::return_type<T0, T1>::type operator()(
+      const T0 &arg1, const T1 &arg2) const {
     return log_diff_exp(arg1, arg2);
   }
 };

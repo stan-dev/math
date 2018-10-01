@@ -53,6 +53,6 @@ inline Eigen::Matrix<T, R, C> cumulative_sum(const Eigen::Matrix<T, R, C> &m) {
     result(i) = m(i) + result(i - 1);
   return result;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

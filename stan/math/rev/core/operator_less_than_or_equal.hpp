@@ -49,6 +49,6 @@ inline bool operator<=(const var &a, double b) { return a.val() <= b; }
  */
 inline bool operator<=(double a, const var &b) { return a <= b.val(); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

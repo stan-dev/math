@@ -62,12 +62,12 @@ do_lkj_constant(const T_shape &eta, const unsigned int &K) {
       denominator(k - 1) = lgamma(2.0 * k);
     constant = -denominator.sum();
     if ((K % 2) == 1)
-      constant -= 0.25 * (K * K - 1) * LOG_PI - 0.25 * (Km1 * Km1) * LOG_TWO -
-                  Km1 * lgamma(0.5 * (K + 1));
+      constant -= 0.25 * (K * K - 1) * LOG_PI - 0.25 * (Km1 * Km1) * LOG_TWO
+                  - Km1 * lgamma(0.5 * (K + 1));
     else
-      constant -= 0.25 * K * (K - 2) * LOG_PI +
-                  0.25 * (3 * K * K - 4 * K) * LOG_TWO + K * lgamma(0.5 * K) -
-                  Km1 * lgamma(static_cast<double>(K));
+      constant -= 0.25 * K * (K - 2) * LOG_PI
+                  + 0.25 * (3 * K * K - 4 * K) * LOG_TWO + K * lgamma(0.5 * K)
+                  - Km1 * lgamma(static_cast<double>(K));
   } else {
     constant = Km1 * lgamma(eta + 0.5 * Km1);
     for (int k = 1; k <= Km1; k++)
@@ -79,9 +79,9 @@ do_lkj_constant(const T_shape &eta, const unsigned int &K) {
 // LKJ_Corr(y|eta) [ y correlation matrix (not covariance matrix)
 //                  eta > 0; eta == 1 <-> uniform]
 template <bool propto, typename T_y, typename T_shape>
-typename boost::math::tools::promote_args<T_y, T_shape>::type
-lkj_corr_lpdf(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y,
-              const T_shape &eta) {
+typename boost::math::tools::promote_args<T_y, T_shape>::type lkj_corr_lpdf(
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y,
+    const T_shape &eta) {
   static const char *function = "lkj_corr_lpdf";
 
   using boost::math::tools::promote_args;
@@ -97,15 +97,15 @@ lkj_corr_lpdf(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y,
   if (include_summand<propto, T_shape>::value)
     lp += do_lkj_constant(eta, K);
 
-  if ((eta == 1.0) &&
-      stan::is_constant<typename stan::scalar_type<T_shape>>::value)
+  if ((eta == 1.0)
+      && stan::is_constant<typename stan::scalar_type<T_shape>>::value)
     return lp;
 
   if (!include_summand<propto, T_y, T_shape>::value)
     return lp;
 
-  Eigen::Matrix<T_y, Eigen::Dynamic, 1> values =
-      y.ldlt().vectorD().array().log().matrix();
+  Eigen::Matrix<T_y, Eigen::Dynamic, 1> values
+      = y.ldlt().vectorD().array().log().matrix();
   lp += (eta - 1.0) * sum(values);
   return lp;
 }
@@ -117,6 +117,6 @@ lkj_corr_lpdf(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y,
   return lkj_corr_lpdf<false>(y, eta);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

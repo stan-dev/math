@@ -14,7 +14,10 @@ namespace math {
  * @return x squared.
  */
 struct square_fun {
-  template <typename T> static inline T fun(const T &x) { return square(x); }
+  template <typename T>
+  static inline T fun(const T &x) {
+    return square(x);
+  }
 };
 
 /**
@@ -28,7 +31,7 @@ inline typename apply_scalar_unary<square_fun, T>::return_t square(const T &x) {
   return apply_scalar_unary<square_fun, T>::apply(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

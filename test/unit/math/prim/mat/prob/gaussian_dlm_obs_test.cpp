@@ -123,7 +123,7 @@ TEST(ProbDistributionsGaussianDLM, LoglikeMMSeq) {
 }
 
 class ProbDistributionsGaussianDLMInputs : public ::testing::Test {
-protected:
+ protected:
   virtual void SetUp() {
     FF = MatrixXd::Random(2, 3);
     GG = MatrixXd::Random(2, 2);
@@ -310,8 +310,8 @@ TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesVVector) {
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG, V_nan, W, m0, C0),
                std::domain_error);
   // wrong size
-  Matrix<double, Dynamic, 1> V_badsz =
-      Matrix<double, Dynamic, 1>::Constant(2, 1.0);
+  Matrix<double, Dynamic, 1> V_badsz
+      = Matrix<double, Dynamic, 1>::Constant(2, 1.0);
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG, V_badsz, W, m0, C0),
                std::invalid_argument);
   // positive semi-definite is okay

@@ -23,12 +23,13 @@ namespace math {
  * @tparam T Type of scalar.
  * @throw std::domain_error if the variable is negative
  */
-template <typename T> inline T positive_free(const T &y) {
+template <typename T>
+inline T positive_free(const T &y) {
   using std::log;
   check_positive("positive_free", "Positive variable", y);
   return log(y);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

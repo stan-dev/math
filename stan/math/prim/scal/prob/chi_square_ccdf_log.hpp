@@ -16,6 +16,6 @@ typename return_type<T_y, T_dof>::type chi_square_ccdf_log(const T_y &y,
   return chi_square_lccdf<T_y, T_dof>(y, nu);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

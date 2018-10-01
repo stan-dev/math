@@ -18,7 +18,8 @@ namespace math {
  * @tparam T1 First type to be promoted
  * @tparam T2 Second type to be promoted
  */
-template <typename T1, typename T2> struct append_return_type {
+template <typename T1, typename T2>
+struct append_return_type {
   typedef typename return_type<T1, T2>::type type;
 };
 
@@ -31,7 +32,10 @@ template <typename T1, typename T2> struct append_return_type {
  * @tparam T1 First type to be promoted
  * @tparam T2 Second type to be promoted
  */
-template <> struct append_return_type<int, int> { typedef int type; };
+template <>
+struct append_return_type<int, int> {
+  typedef int type;
+};
 
 /**
  * This template metaprogram is used to compute the return type for
@@ -67,6 +71,6 @@ template <typename T1, typename T2>
 struct append_return_type<std::vector<T1>, std::vector<T2>> {
   typedef typename std::vector<typename append_return_type<T1, T2>::type> type;
 };
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

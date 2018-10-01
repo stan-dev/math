@@ -47,8 +47,8 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_loc, typename T_prec>
-typename return_type<T_y, T_loc, T_prec>::type
-beta_proportion_lcdf(const T_y &y, const T_loc &mu, const T_prec &kappa) {
+typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lcdf(
+    const T_y &y, const T_loc &mu, const T_prec &kappa) {
   typedef typename stan::partials_return_type<T_y, T_loc, T_prec>::type
       T_partials_return;
 
@@ -93,10 +93,10 @@ beta_proportion_lcdf(const T_y &y, const T_loc &mu, const T_prec &kappa) {
 
   if (contains_nonconstant_struct<T_loc, T_prec>::value) {
     for (size_t i = 0; i < max_size(mu, kappa); i++) {
-      const T_partials_return mukappa_dbl =
-          value_of(mu_vec[i]) * value_of(kappa_vec[i]);
-      const T_partials_return kappa_mukappa_dbl =
-          value_of(kappa_vec[i]) - mukappa_dbl;
+      const T_partials_return mukappa_dbl
+          = value_of(mu_vec[i]) * value_of(kappa_vec[i]);
+      const T_partials_return kappa_mukappa_dbl
+          = value_of(kappa_vec[i]) - mukappa_dbl;
 
       digamma_mukappa[i] = digamma(mukappa_dbl);
       digamma_kappa_mukappa[i] = digamma(kappa_mukappa_dbl);
@@ -113,17 +113,17 @@ beta_proportion_lcdf(const T_y &y, const T_loc &mu, const T_prec &kappa) {
     const T_partials_return kappa_dbl = value_of(kappa_vec[n]);
     const T_partials_return mukappa_dbl = mu_dbl * kappa_dbl;
     const T_partials_return kappa_mukappa_dbl = kappa_dbl - mukappa_dbl;
-    const T_partials_return betafunc_dbl =
-        exp(lbeta(mukappa_dbl, kappa_mukappa_dbl));
-    const T_partials_return Pn =
-        inc_beta(mukappa_dbl, kappa_mukappa_dbl, y_dbl);
+    const T_partials_return betafunc_dbl
+        = exp(lbeta(mukappa_dbl, kappa_mukappa_dbl));
+    const T_partials_return Pn
+        = inc_beta(mukappa_dbl, kappa_mukappa_dbl, y_dbl);
 
     cdf_log += log(Pn);
 
     if (!is_constant_struct<T_y>::value)
-      ops_partials.edge1_.partials_[n] +=
-          pow(1 - y_dbl, kappa_mukappa_dbl - 1) * pow(y_dbl, mukappa_dbl - 1) /
-          betafunc_dbl / Pn;
+      ops_partials.edge1_.partials_[n] += pow(1 - y_dbl, kappa_mukappa_dbl - 1)
+                                          * pow(y_dbl, mukappa_dbl - 1)
+                                          / betafunc_dbl / Pn;
 
     T_partials_return g1 = 0;
     T_partials_return g2 = 0;
@@ -136,13 +136,13 @@ beta_proportion_lcdf(const T_y &y, const T_loc &mu, const T_prec &kappa) {
     if (!is_constant_struct<T_loc>::value)
       ops_partials.edge2_.partials_[n] += kappa_dbl * (g1 - g2) / Pn;
     if (!is_constant_struct<T_prec>::value)
-      ops_partials.edge3_.partials_[n] +=
-          (g1 * mu_dbl + g2 * (1 - mu_dbl)) / Pn;
+      ops_partials.edge3_.partials_[n]
+          += (g1 * mu_dbl + g2 * (1 - mu_dbl)) / Pn;
   }
 
   return ops_partials.build(cdf_log);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

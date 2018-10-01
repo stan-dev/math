@@ -18,25 +18,25 @@ inline var log_determinant(const Eigen::Matrix<var, R, C> &m) {
   for (int i = 0; i < m.size(); ++i)
     m_d(i) = m(i).val();
 
-  Eigen::FullPivHouseholderQR<Matrix<double, R, C>> hh =
-      m_d.fullPivHouseholderQr();
+  Eigen::FullPivHouseholderQR<Matrix<double, R, C>> hh
+      = m_d.fullPivHouseholderQr();
 
   double val = hh.logAbsDeterminant();
 
-  vari **varis =
-      ChainableStack::instance().memalloc_.alloc_array<vari *>(m.size());
+  vari **varis
+      = ChainableStack::instance().memalloc_.alloc_array<vari *>(m.size());
   for (int i = 0; i < m.size(); ++i)
     varis[i] = m(i).vi_;
 
   Matrix<double, R, C> m_inv_transpose = hh.inverse().transpose();
-  double *gradients =
-      ChainableStack::instance().memalloc_.alloc_array<double>(m.size());
+  double *gradients
+      = ChainableStack::instance().memalloc_.alloc_array<double>(m.size());
   for (int i = 0; i < m.size(); ++i)
     gradients[i] = m_inv_transpose(i);
 
   return var(new precomputed_gradients_vari(val, m.size(), varis, gradients));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

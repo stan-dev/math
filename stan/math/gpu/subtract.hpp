@@ -39,8 +39,8 @@ inline matrix_gpu subtract(const matrix_gpu &A, const matrix_gpu &B) {
   }
   return C;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif
 #endif

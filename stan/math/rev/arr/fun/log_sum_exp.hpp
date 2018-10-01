@@ -27,7 +27,7 @@ double log_sum_exp_as_double(const std::vector<var> &x) {
 }
 
 class log_sum_exp_vector_vari : public op_vector_vari {
-public:
+ public:
   explicit log_sum_exp_vector_vari(const std::vector<var> &x)
       : op_vector_vari(log_sum_exp_as_double(x), x) {}
   void chain() {
@@ -36,7 +36,7 @@ public:
     }
   }
 };
-} // namespace
+}  // namespace
 
 /**
  * Returns the log sum of exponentials.
@@ -45,6 +45,6 @@ inline var log_sum_exp(const std::vector<var> &x) {
   return var(new log_sum_exp_vector_vari(x));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

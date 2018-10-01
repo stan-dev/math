@@ -59,6 +59,6 @@ wishart_log(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &W,
   return wishart_lpdf<T_y, T_dof, T_scale>(W, nu, S);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -18,8 +18,8 @@ namespace stan {
 namespace math {
 
 template <typename T1, int R1, int C1, typename T2, int R2, int C2>
-inline typename boost::enable_if_c<boost::is_same<T1, var>::value ||
-                                       boost::is_same<T2, var>::value,
+inline typename boost::enable_if_c<boost::is_same<T1, var>::value
+                                       || boost::is_same<T2, var>::value,
                                    Eigen::Matrix<var, 1, C1>>::type
 columns_dot_product(const Eigen::Matrix<T1, R1, C1> &v1,
                     const Eigen::Matrix<T2, R2, C2> &v2) {
@@ -31,6 +31,6 @@ columns_dot_product(const Eigen::Matrix<T1, R1, C1> &v1,
   return ret;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -30,8 +30,8 @@ inline matrix_gpu diagonal_multiply(const matrix_gpu &A, const double scalar) {
   }
   return B;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif
 #endif

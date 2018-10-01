@@ -5,6 +5,9 @@
 
 namespace stan {
 
-template <typename T> size_t length(const T & /*x*/) { return 1U; }
-} // namespace stan
+template <typename T>
+size_t length(const T& /*x*/) {
+  return 1U;
+}
+}  // namespace stan
 #endif

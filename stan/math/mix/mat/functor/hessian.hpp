@@ -70,6 +70,6 @@ void hessian(const F &f, const Eigen::Matrix<double, Eigen::Dynamic, 1> &x,
   }
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

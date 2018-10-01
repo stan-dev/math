@@ -9,11 +9,11 @@ namespace math {
 
 // use for single precomputed partials
 class precomp_vv_vari : public op_vv_vari {
-protected:
+ protected:
   double da_;
   double db_;
 
-public:
+ public:
   precomp_vv_vari(double val, vari *avi, vari *bvi, double da, double db)
       : op_vv_vari(val, avi, bvi), da_(da), db_(db) {}
   void chain() {
@@ -22,6 +22,6 @@ public:
   }
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

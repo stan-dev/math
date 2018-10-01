@@ -19,7 +19,7 @@ namespace {
 template <typename Td, int Rd, int Cd, typename Ta, int Ra, int Ca, typename Tb,
           int Rb, int Cb>
 class trace_gen_quad_form_vari_alloc : public chainable_alloc {
-public:
+ public:
   trace_gen_quad_form_vari_alloc(const Eigen::Matrix<Td, Rd, Cd> &D,
                                  const Eigen::Matrix<Ta, Ra, Ca> &A,
                                  const Eigen::Matrix<Tb, Rb, Cb> &B)
@@ -37,7 +37,7 @@ public:
 template <typename Td, int Rd, int Cd, typename Ta, int Ra, int Ca, typename Tb,
           int Rb, int Cb>
 class trace_gen_quad_form_vari : public vari {
-protected:
+ protected:
   static inline void computeAdjoints(double adj,
                                      const Eigen::Matrix<double, Rd, Cd> &D,
                                      const Eigen::Matrix<double, Ra, Ca> &A,
@@ -72,7 +72,7 @@ protected:
     }
   }
 
-public:
+ public:
   explicit trace_gen_quad_form_vari(
       trace_gen_quad_form_vari_alloc<Td, Rd, Cd, Ta, Ra, Ca, Tb, Rb, Cb> *impl)
       : vari(impl->compute()), impl_(impl) {}
@@ -90,13 +90,13 @@ public:
 
   trace_gen_quad_form_vari_alloc<Td, Rd, Cd, Ta, Ra, Ca, Tb, Rb, Cb> *impl_;
 };
-} // namespace
+}  // namespace
 
 template <typename Td, int Rd, int Cd, typename Ta, int Ra, int Ca, typename Tb,
           int Rb, int Cb>
-inline typename boost::enable_if_c<boost::is_same<Td, var>::value ||
-                                       boost::is_same<Ta, var>::value ||
-                                       boost::is_same<Tb, var>::value,
+inline typename boost::enable_if_c<boost::is_same<Td, var>::value
+                                       || boost::is_same<Ta, var>::value
+                                       || boost::is_same<Tb, var>::value,
                                    var>::type
 trace_gen_quad_form(const Eigen::Matrix<Td, Rd, Cd> &D,
                     const Eigen::Matrix<Ta, Ra, Ca> &A,
@@ -106,14 +106,14 @@ trace_gen_quad_form(const Eigen::Matrix<Td, Rd, Cd> &D,
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
   check_multiplicable("trace_gen_quad_form", "B", B, "D", D);
 
-  trace_gen_quad_form_vari_alloc<Td, Rd, Cd, Ta, Ra, Ca, Tb, Rb, Cb> *baseVari =
-      new trace_gen_quad_form_vari_alloc<Td, Rd, Cd, Ta, Ra, Ca, Tb, Rb, Cb>(
+  trace_gen_quad_form_vari_alloc<Td, Rd, Cd, Ta, Ra, Ca, Tb, Rb, Cb> *baseVari
+      = new trace_gen_quad_form_vari_alloc<Td, Rd, Cd, Ta, Ra, Ca, Tb, Rb, Cb>(
           D, A, B);
 
   return var(new trace_gen_quad_form_vari<Td, Rd, Cd, Ta, Ra, Ca, Tb, Rb, Cb>(
       baseVari));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

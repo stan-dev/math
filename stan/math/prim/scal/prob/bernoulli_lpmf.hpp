@@ -116,6 +116,6 @@ inline typename return_type<T_prob>::type bernoulli_lpmf(const T_y &n,
   return bernoulli_lpmf<false>(n, theta);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -14,7 +14,7 @@ inline void sub(std::vector<double> &x, std::vector<double> &y,
     result[i] = x[i] - y[i];
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

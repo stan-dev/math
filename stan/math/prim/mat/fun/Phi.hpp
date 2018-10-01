@@ -14,7 +14,10 @@ namespace math {
  * @return Unit normal CDF of x.
  */
 struct Phi_fun {
-  template <typename T> static inline T fun(const T &x) { return Phi(x); }
+  template <typename T>
+  static inline T fun(const T &x) {
+    return Phi(x);
+  }
 };
 
 /**
@@ -28,7 +31,7 @@ inline typename apply_scalar_unary<Phi_fun, T>::return_t Phi(const T &x) {
   return apply_scalar_unary<Phi_fun, T>::apply(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

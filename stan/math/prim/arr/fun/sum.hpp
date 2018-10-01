@@ -15,10 +15,11 @@ namespace math {
  * @param xs Standard vector to sum.
  * @return Sum of elements.
  */
-template <typename T> inline T sum(const std::vector<T> &xs) {
+template <typename T>
+inline T sum(const std::vector<T> &xs) {
   return std::accumulate(xs.begin(), xs.end(), T{0});
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

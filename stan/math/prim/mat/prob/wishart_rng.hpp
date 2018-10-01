@@ -32,6 +32,6 @@ inline Eigen::MatrixXd wishart_rng(double nu, const Eigen::MatrixXd &S,
   return crossprod(B * S.llt().matrixU());
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

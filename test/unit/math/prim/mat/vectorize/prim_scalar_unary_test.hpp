@@ -6,7 +6,8 @@
 #include <test/unit/math/prim/mat/vectorize/expect_prim_values.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_types.hpp>
 
-template <typename T> class prim_scalar_unary_test : public ::testing::Test {};
+template <typename T>
+class prim_scalar_unary_test : public ::testing::Test {};
 
 TYPED_TEST_CASE_P(prim_scalar_unary_test);
 

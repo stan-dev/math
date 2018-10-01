@@ -129,7 +129,7 @@ struct shared_secret : public stan::math::mpi_command {
     boost::mpi::gather(world, worker_secret, secrets, 0);
   }
 
-private:
+ private:
   double common_;
 };
 

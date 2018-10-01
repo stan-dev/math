@@ -32,6 +32,6 @@ inline void check_nonzero_size(const char *function, const char *name,
                    ", but must have a non-zero size");
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

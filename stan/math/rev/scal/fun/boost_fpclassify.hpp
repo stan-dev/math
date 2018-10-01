@@ -19,10 +19,11 @@ namespace math {
  *   <code>FP_FINITE</code>, <code>FP_INFINITE</code>, <code>FP_NAN</code>,
  *   or <code>FP_SUBZERO</code>, specifying the category of v.
  */
-template <> inline int fpclassify(const stan::math::var &v) {
+template <>
+inline int fpclassify(const stan::math::var &v) {
   return (boost::math::fpclassify)(v.val());
 }
 
-} // namespace math
-} // namespace boost
+}  // namespace math
+}  // namespace boost
 #endif

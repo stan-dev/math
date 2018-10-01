@@ -33,15 +33,15 @@ double dy2_dchi(double t, double omega, double chi) {
 }
 
 class sho_functor {
-public:
+ public:
   template <typename T0, typename T1, typename T2>
-  inline std::vector<typename stan::return_type<T1, T2>::type>
-  operator()(const T0 &t_in,                // time
-             const std::vector<T1> &y_in,   // state
-             const std::vector<T2> &theta,  // parameters
-             const std::vector<double> &x,  // double data
-             const std::vector<int> &x_int, // integer data
-             std::ostream *msgs) const {
+  inline std::vector<typename stan::return_type<T1, T2>::type> operator()(
+      const T0 &t_in,                 // time
+      const std::vector<T1> &y_in,    // state
+      const std::vector<T2> &theta,   // parameters
+      const std::vector<double> &x,   // double data
+      const std::vector<int> &x_int,  // integer data
+      std::ostream *msgs) const {
     if (y_in.size() != 2)
       throw std::domain_error("Functor called with inconsistent state");
 
@@ -56,7 +56,7 @@ public:
 class test_functor_double_var_1 {
   int lmm_;
 
-public:
+ public:
   explicit test_functor_double_var_1(int lmm) : lmm_(lmm) {}
 
   template <typename T>
@@ -77,12 +77,12 @@ public:
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T>> ys =
-        (lmm_ == TEST_CVODES_ADAMS
-             ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
-                                               data_int)
-             : stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data,
-                                             data_int));
+    std::vector<std::vector<T>> ys
+        = (lmm_ == TEST_CVODES_ADAMS
+               ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
+                                                 data_int)
+               : stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data,
+                                               data_int));
 
     return ys[0][0];
   }
@@ -91,7 +91,7 @@ public:
 class test_functor_double_var_2 {
   int lmm_;
 
-public:
+ public:
   explicit test_functor_double_var_2(int lmm) : lmm_(lmm) {}
 
   template <typename T>
@@ -112,12 +112,12 @@ public:
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T>> ys =
-        (lmm_ == TEST_CVODES_ADAMS
-             ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
-                                               data_int)
-             : stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data,
-                                             data_int));
+    std::vector<std::vector<T>> ys
+        = (lmm_ == TEST_CVODES_ADAMS
+               ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
+                                                 data_int)
+               : stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data,
+                                               data_int));
 
     return ys[0][1];
   }
@@ -134,7 +134,7 @@ TEST(StanMathOdeIntegrateODEGrad, double_var) {
   double f;
   Eigen::VectorXd grad(1);
 
-  { // Adams
+  {  // Adams
     test_functor_double_var_1 func1(TEST_CVODES_ADAMS);
     stan::math::gradient(func1, x, f, grad);
 
@@ -148,7 +148,7 @@ TEST(StanMathOdeIntegrateODEGrad, double_var) {
     EXPECT_NEAR(dy2_domega(t, omega, chi), grad(0), 1e-7);
   }
 
-  { // bdf
+  {  // bdf
     test_functor_double_var_1 func1(TEST_CVODES_BDF);
     stan::math::gradient(func1, x, f, grad);
 
@@ -166,7 +166,7 @@ TEST(StanMathOdeIntegrateODEGrad, double_var) {
 class test_functor_var_double_1 {
   int lmm_;
 
-public:
+ public:
   explicit test_functor_var_double_1(int lmm) : lmm_(lmm) {}
 
   template <typename T>
@@ -187,12 +187,12 @@ public:
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T>> ys =
-        (lmm_ == TEST_CVODES_ADAMS
-             ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
-                                               data_int)
-             : stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data,
-                                             data_int));
+    std::vector<std::vector<T>> ys
+        = (lmm_ == TEST_CVODES_ADAMS
+               ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
+                                                 data_int)
+               : stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data,
+                                               data_int));
 
     return ys[0][0];
   }
@@ -201,7 +201,7 @@ public:
 class test_functor_var_double_2 {
   int lmm_;
 
-public:
+ public:
   explicit test_functor_var_double_2(int lmm) : lmm_(lmm) {}
 
   template <typename T>
@@ -222,12 +222,12 @@ public:
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T>> ys =
-        (lmm_ == TEST_CVODES_ADAMS
-             ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
-                                               data_int)
-             : stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data,
-                                             data_int));
+    std::vector<std::vector<T>> ys
+        = (lmm_ == TEST_CVODES_ADAMS
+               ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
+                                                 data_int)
+               : stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data,
+                                               data_int));
 
     return ys[0][1];
   }
@@ -244,7 +244,7 @@ TEST(StanMathOdeIntegrateODEGrad, var_double) {
   double f;
   Eigen::VectorXd grad(1);
 
-  { // adams
+  {  // adams
     test_functor_var_double_1 func1(TEST_CVODES_ADAMS);
     stan::math::gradient(func1, x, f, grad);
 
@@ -258,7 +258,7 @@ TEST(StanMathOdeIntegrateODEGrad, var_double) {
     EXPECT_NEAR(dy2_dchi(t, omega, chi), grad(0), 1e-7);
   }
 
-  { // bdf
+  {  // bdf
     test_functor_var_double_1 func1(TEST_CVODES_BDF);
     stan::math::gradient(func1, x, f, grad);
 
@@ -276,7 +276,7 @@ TEST(StanMathOdeIntegrateODEGrad, var_double) {
 class test_functor_var_var_1 {
   int lmm_;
 
-public:
+ public:
   explicit test_functor_var_var_1(int lmm) : lmm_(lmm) {}
 
   template <typename T>
@@ -297,12 +297,12 @@ public:
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T>> ys =
-        (lmm_ == TEST_CVODES_ADAMS
-             ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
-                                               data_int)
-             : stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data,
-                                             data_int));
+    std::vector<std::vector<T>> ys
+        = (lmm_ == TEST_CVODES_ADAMS
+               ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
+                                                 data_int)
+               : stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data,
+                                               data_int));
 
     return ys[0][0];
   }
@@ -311,7 +311,7 @@ public:
 class test_functor_var_var_2 {
   int lmm_;
 
-public:
+ public:
   explicit test_functor_var_var_2(int lmm) : lmm_(lmm) {}
 
   template <typename T>
@@ -332,12 +332,12 @@ public:
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T>> ys =
-        (lmm_ == TEST_CVODES_ADAMS
-             ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
-                                               data_int)
-             : stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data,
-                                             data_int));
+    std::vector<std::vector<T>> ys
+        = (lmm_ == TEST_CVODES_ADAMS
+               ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
+                                                 data_int)
+               : stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data,
+                                               data_int));
 
     return ys[0][1];
   }

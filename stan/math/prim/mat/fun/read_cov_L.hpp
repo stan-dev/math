@@ -18,15 +18,15 @@ namespace math {
  * partial correlations.
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-read_cov_L(const Eigen::Array<T, Eigen::Dynamic, 1> &CPCs,
-           const Eigen::Array<T, Eigen::Dynamic, 1> &sds, T &log_prob) {
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_cov_L(
+    const Eigen::Array<T, Eigen::Dynamic, 1> &CPCs,
+    const Eigen::Array<T, Eigen::Dynamic, 1> &sds, T &log_prob) {
   size_t K = sds.rows();
   // adjust due to transformation from correlations to covariances
   log_prob += (sds.log().sum() + LOG_2) * K;
   return sds.matrix().asDiagonal() * read_corr_L(CPCs, K, log_prob);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

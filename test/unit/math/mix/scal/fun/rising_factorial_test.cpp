@@ -37,8 +37,9 @@ TEST(AgradFwdRisingFactorial, FvarVar_2ndDeriv_x) {
   AVEC y = createAVEC(a.val_, 3);
   VEC g;
   c.d_.grad(y, g);
-  ASSERT_NEAR(rising_factorial(5, 3) * (pow((digamma(5 + 3) - digamma(5)), 2) +
-                                        trigamma(5 + 3) - trigamma(5)),
+  ASSERT_NEAR(rising_factorial(5, 3)
+                  * (pow((digamma(5 + 3) - digamma(5)), 2) + trigamma(5 + 3)
+                     - trigamma(5)),
               g[0], 0.1);
 }
 
@@ -102,8 +103,9 @@ TEST(AgradFwdRisingFactorial, FvarFvarVar_2ndDeriv_x) {
   AVEC p = createAVEC(x.val_.val_, 3);
   VEC g;
   a.val_.d_.grad(p, g);
-  ASSERT_NEAR(rising_factorial(5, 3) * (pow((digamma(5 + 3) - digamma(5)), 2) +
-                                        trigamma(5 + 3) - trigamma(5)),
+  ASSERT_NEAR(rising_factorial(5, 3)
+                  * (pow((digamma(5 + 3) - digamma(5)), 2) + trigamma(5 + 3)
+                     - trigamma(5)),
               g[0], 0.01);
   ASSERT_NEAR(0, g[1], 0.01);
 }
@@ -146,8 +148,8 @@ TEST(AgradFwdRisingFactorial, FvarFvarVar_3rdDeriv) {
 
 struct rising_factorial_fun {
   template <typename T>
-  inline typename boost::math::tools::promote_args<T>::type
-  operator()(const T arg1, int arg2) const {
+  inline typename boost::math::tools::promote_args<T>::type operator()(
+      const T arg1, int arg2) const {
     return rising_factorial(arg1, arg2);
   }
 };

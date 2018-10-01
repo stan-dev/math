@@ -31,6 +31,6 @@ inline double trunc(double x) {
  */
 inline double trunc(int x) { return trunc(static_cast<double>(x)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

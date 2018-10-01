@@ -31,7 +31,8 @@ class idas_integrator {
   /**
    * Forward decl
    */
-  template <typename Dae> void init_sensitivity(Dae &dae);
+  template <typename Dae>
+  void init_sensitivity(Dae &dae);
 
   /**
    * Placeholder for data-only idas_forword_system, no sensitivty
@@ -70,7 +71,7 @@ class idas_integrator {
 
   // TODO(yizhang): adjoint sensitivity solver
 
-public:
+ public:
   static constexpr int IDAS_MAX_STEPS = 500;
   /**
    * constructor
@@ -158,7 +159,7 @@ public:
 
     return res_yy;
   }
-}; // idas integrator
+};  // idas integrator
 
 /**
  * Initialize sensitivity calculation and set
@@ -168,7 +169,8 @@ public:
  * @tparam Dae DAE system type
  * @param[in/out] dae DAE system
  */
-template <typename Dae> void idas_integrator::init_sensitivity(Dae &dae) {
+template <typename Dae>
+void idas_integrator::init_sensitivity(Dae &dae) {
   if (Dae::need_sens) {
     auto mem = dae.mem();
     auto yys = dae.nv_yys();
@@ -250,14 +252,14 @@ void idas_integrator::solve(Dae &dae, const double &t0,
       for (size_t j = 0; j < ns; ++j) {
         sol_grad[j] = NV_Ith_S(yys[j], k);
       }
-      sol_t[k] =
-          stan::math::precomputed_gradients(NV_Ith_S(yy, k), vars, sol_grad);
+      sol_t[k]
+          = stan::math::precomputed_gradients(NV_Ith_S(yy, k), vars, sol_grad);
     }
     res_yy[i] = sol_t;
     ++i;
   });
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

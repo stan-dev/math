@@ -6,7 +6,8 @@
 #include <test/unit/util.hpp>
 #include <vector>
 
-template <int N> void test_print_mat_size(const std::string &expected) {
+template <int N>
+void test_print_mat_size(const std::string &expected) {
   using stan::math::print_mat_size;
   std::stringstream ss;
   stan::math::print_mat_size<N>(ss);

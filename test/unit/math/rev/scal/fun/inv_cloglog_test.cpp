@@ -25,7 +25,8 @@ TEST(AgradRev, inv_cloglog) {
 }
 
 struct inv_cloglog_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0 &arg1) const {
     return inv_cloglog(arg1);
   }
 };

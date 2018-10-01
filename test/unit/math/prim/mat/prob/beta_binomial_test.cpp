@@ -8,7 +8,7 @@
 #include <vector>
 
 class BetaBinomialTestRig : public VectorIntRNGTestRig {
-public:
+ public:
   BetaBinomialTestRig()
       : VectorIntRNGTestRig(10000, 10, {0, 1, 2, 3, 4, 5, 6}, {}, {0, 1, 3, 8},
                             {}, {-1, -5, -7}, {0.1, 1.7, 3.99}, {1, 2, 3},

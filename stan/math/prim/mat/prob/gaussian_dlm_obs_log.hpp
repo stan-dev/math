@@ -149,6 +149,6 @@ gaussian_dlm_obs_log(
                                                                     W, m0, C0);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

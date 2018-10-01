@@ -21,8 +21,8 @@ namespace math {
  *   if m is not positive definite (if m has more than 0 elements)
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-cholesky_decompose(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m) {
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
+    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m) {
   check_square("cholesky_decompose", "m", m);
   check_symmetric("cholesky_decompose", "m", m);
   Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>> llt(m.rows());
@@ -31,6 +31,6 @@ cholesky_decompose(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m) {
   return llt.matrixL();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

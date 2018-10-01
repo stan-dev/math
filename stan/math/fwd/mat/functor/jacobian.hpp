@@ -31,6 +31,6 @@ void jacobian(const F &f, const Eigen::Matrix<T, Eigen::Dynamic, 1> &x,
   }
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

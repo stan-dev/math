@@ -6,19 +6,19 @@ using std::numeric_limits;
 using std::vector;
 
 class AgradCdfBernoulli : public AgradCdfTest {
-public:
+ public:
   void valid_values(vector<vector<double>> &parameters, vector<double> &cdf) {
     vector<double> param(2);
 
-    param[0] = 0;    // Successes (out of single trial)
-    param[1] = 0.75; // Probability
+    param[0] = 0;     // Successes (out of single trial)
+    param[1] = 0.75;  // Probability
     parameters.push_back(param);
-    cdf.push_back(1 - param[1]); // expected cdf
+    cdf.push_back(1 - param[1]);  // expected cdf
 
-    param[0] = 1;    // Successes (out of single trial)
-    param[1] = 0.75; // Probability
+    param[0] = 1;     // Successes (out of single trial)
+    param[1] = 0.75;  // Probability
     parameters.push_back(param);
-    cdf.push_back(1); // expected cdf
+    cdf.push_back(1);  // expected cdf
   }
 
   void invalid_values(vector<size_t> &index, vector<double> &value) {
@@ -36,17 +36,20 @@ public:
 
   template <typename T_n, typename T_prob, typename T2, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_prob>::type
-  cdf(const T_n &n, const T_prob &theta, const T2 &, const T3 &, const T4 &,
-      const T5 &) {
+  typename stan::return_type<T_prob>::type cdf(const T_n &n,
+                                               const T_prob &theta, const T2 &,
+                                               const T3 &, const T4 &,
+                                               const T5 &) {
     return stan::math::bernoulli_cdf(n, theta);
   }
 
   template <typename T_n, typename T_prob, typename T2, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_prob>::type
-  cdf_function(const T_n &n, const T_prob &theta, const T2 &, const T3 &,
-               const T4 &, const T5 &) {
+  typename stan::return_type<T_prob>::type cdf_function(const T_n &n,
+                                                        const T_prob &theta,
+                                                        const T2 &, const T3 &,
+                                                        const T4 &,
+                                                        const T5 &) {
     if (n < 0)
       return 0;
     if (n < 1)

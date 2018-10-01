@@ -48,12 +48,13 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_s, typename T_n, typename T_loc,
           typename T_scale>
-typename return_type<T_y, T_s, T_loc, T_scale>::type
-normal_sufficient_lpdf(const T_y &y_bar, const T_s &s_squared, const T_n &n_obs,
-                       const T_loc &mu, const T_scale &sigma) {
+typename return_type<T_y, T_s, T_loc, T_scale>::type normal_sufficient_lpdf(
+    const T_y &y_bar, const T_s &s_squared, const T_n &n_obs, const T_loc &mu,
+    const T_scale &sigma) {
   static const char *function = "normal_sufficient_lpdf";
-  typedef typename stan::partials_return_type<T_y, T_s, T_n, T_loc,
-                                              T_scale>::type T_partials_return;
+  typedef
+      typename stan::partials_return_type<T_y, T_s, T_n, T_loc, T_scale>::type
+          T_partials_return;
 
   using stan::is_constant_struct;
   using stan::math::check_consistent_sizes;
@@ -114,15 +115,15 @@ normal_sufficient_lpdf(const T_y &y_bar, const T_s &s_squared, const T_n &n_obs,
     if (include_summand<propto, T_scale>::value)
       logp -= n_obs_dbl * log(sigma_dbl);
 
-    const T_partials_return cons_expr =
-        (s_squared_dbl + n_obs_dbl * pow(y_bar_dbl - mu_dbl, 2));
+    const T_partials_return cons_expr
+        = (s_squared_dbl + n_obs_dbl * pow(y_bar_dbl - mu_dbl, 2));
 
     logp -= cons_expr / (2 * sigma_squared);
 
     // gradients
     if (!is_constant_struct<T_y>::value || !is_constant_struct<T_loc>::value) {
-      const T_partials_return common_derivative =
-          n_obs_dbl * (mu_dbl - y_bar_dbl) / sigma_squared;
+      const T_partials_return common_derivative
+          = n_obs_dbl * (mu_dbl - y_bar_dbl) / sigma_squared;
       if (!is_constant_struct<T_y>::value)
         ops_partials.edge1_.partials_[i] += common_derivative;
       if (!is_constant_struct<T_loc>::value)
@@ -131,8 +132,8 @@ normal_sufficient_lpdf(const T_y &y_bar, const T_s &s_squared, const T_n &n_obs,
     if (!is_constant_struct<T_s>::value)
       ops_partials.edge2_.partials_[i] -= 0.5 / sigma_squared;
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge4_.partials_[i] +=
-          cons_expr / pow(sigma_dbl, 3) - n_obs_dbl / sigma_dbl;
+      ops_partials.edge4_.partials_[i]
+          += cons_expr / pow(sigma_dbl, 3) - n_obs_dbl / sigma_dbl;
   }
   return ops_partials.build(logp);
 }
@@ -145,6 +146,6 @@ normal_sufficient_lpdf(const T_y &y_bar, const T_s &s_squared, const T_n &n_obs,
   return normal_sufficient_lpdf<false>(y_bar, s_squared, n_obs, mu, sigma);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

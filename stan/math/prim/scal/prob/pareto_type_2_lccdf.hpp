@@ -23,11 +23,12 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-typename return_type<T_y, T_loc, T_scale, T_shape>::type
-pareto_type_2_lccdf(const T_y &y, const T_loc &mu, const T_scale &lambda,
-                    const T_shape &alpha) {
-  typedef typename stan::partials_return_type<T_y, T_loc, T_scale,
-                                              T_shape>::type T_partials_return;
+typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lccdf(
+    const T_y &y, const T_loc &mu, const T_scale &lambda,
+    const T_shape &alpha) {
+  typedef
+      typename stan::partials_return_type<T_y, T_loc, T_scale, T_shape>::type
+          T_partials_return;
 
   if (size_zero(y, mu, lambda, alpha))
     return 0.0;
@@ -96,14 +97,14 @@ pareto_type_2_lccdf(const T_y &y, const T_loc &mu, const T_scale &lambda,
     if (!is_constant_struct<T_loc>::value)
       ops_partials.edge2_.partials_[n] += a_over_lambda_plus_y[n];
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge3_.partials_[n] +=
-          a_over_lambda_plus_y[n] * (y_dbl - mu_dbl) / lambda_dbl;
+      ops_partials.edge3_.partials_[n]
+          += a_over_lambda_plus_y[n] * (y_dbl - mu_dbl) / lambda_dbl;
     if (!is_constant_struct<T_shape>::value)
       ops_partials.edge4_.partials_[n] -= log_1p_y_over_lambda[n];
   }
   return ops_partials.build(P);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

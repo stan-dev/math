@@ -22,10 +22,10 @@ struct coupled_mm_ode_fun {
     const T2 deact = parms[2];
     const T2 KmAp = parms[3];
 
-    ydot[0] =
-        -1 * (act * y[0] / (KmA + y[0])) + 1 * (deact * y[1] / (KmAp + y[1]));
-    ydot[1] =
-        1 * (act * y[0] / (KmA + y[0])) - 1 * (deact * y[1] / (KmAp + y[1]));
+    ydot[0]
+        = -1 * (act * y[0] / (KmA + y[0])) + 1 * (deact * y[1] / (KmAp + y[1]));
+    ydot[1]
+        = 1 * (act * y[0] / (KmA + y[0])) - 1 * (deact * y[1] / (KmAp + y[1]));
 
     return (ydot);
   }

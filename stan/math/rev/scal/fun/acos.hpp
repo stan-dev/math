@@ -10,13 +10,13 @@ namespace math {
 
 namespace {
 class acos_vari : public op_v_vari {
-public:
+ public:
   explicit acos_vari(vari *avi) : op_v_vari(std::acos(avi->val_), avi) {}
   void chain() {
     avi_->adj_ -= adj_ / std::sqrt(1.0 - (avi_->val_ * avi_->val_));
   }
 };
-} // namespace
+}  // namespace
 
 /**
  * Return the principal value of the arc cosine of a variable,
@@ -56,6 +56,6 @@ public:
  */
 inline var acos(const var &a) { return var(new acos_vari(a.vi_)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

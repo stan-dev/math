@@ -6,16 +6,16 @@ using std::numeric_limits;
 using std::vector;
 
 class AgradCcdfLogBeta : public AgradCcdfLogTest {
-public:
+ public:
   void valid_values(vector<vector<double>> &parameters,
                     vector<double> &log_ccdf) {
     vector<double> param(3);
 
-    param[0] = 0.5; // y
-    param[1] = 2.0; // alpha (Success Scale)
-    param[2] = 5.0; // beta  (Faiulre Scale)
+    param[0] = 0.5;  // y
+    param[1] = 2.0;  // alpha (Success Scale)
+    param[2] = 5.0;  // beta  (Faiulre Scale)
     parameters.push_back(param);
-    log_ccdf.push_back(std::log(1.0 - 0.890625)); // expected Log_CCDF
+    log_ccdf.push_back(std::log(1.0 - 0.890625));  // expected Log_CCDF
   }
 
   void invalid_values(vector<size_t> &index, vector<double> &value) {
@@ -57,9 +57,9 @@ public:
 
   template <typename T_y, typename T_scale_succ, typename T_scale_fail,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_scale_succ, T_scale_fail>::type
-  ccdf_log(const T_y &y, const T_scale_succ &alpha, const T_scale_fail &beta,
-           const T3 &, const T4 &, const T5 &) {
+  typename stan::return_type<T_y, T_scale_succ, T_scale_fail>::type ccdf_log(
+      const T_y &y, const T_scale_succ &alpha, const T_scale_fail &beta,
+      const T3 &, const T4 &, const T5 &) {
     return stan::math::beta_ccdf_log(y, alpha, beta);
   }
 

@@ -129,8 +129,8 @@ integrate_ode_rk45(const F &f, const std::vector<T1> &y0, double t0,
   return coupled_system.decouple_states(y_coupled);
 }
 
-} // namespace math
+}  // namespace math
 
-} // namespace stan
+}  // namespace stan
 
 #endif

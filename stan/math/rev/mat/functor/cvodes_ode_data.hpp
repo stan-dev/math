@@ -42,7 +42,7 @@ class cvodes_ode_data {
   typedef stan::is_var<T_initial> initial_var;
   typedef stan::is_var<T_param> param_var;
 
-public:
+ public:
   const coupled_ode_system<F, T_initial, T_param> coupled_ode_;
   std::vector<double> coupled_state_;
   N_Vector nv_state_;
@@ -76,13 +76,21 @@ public:
                   const std::vector<T_param> &theta,
                   const std::vector<double> &x, const std::vector<int> &x_int,
                   std::ostream *msgs)
-      : f_(f), y0_(y0), theta_(theta), theta_dbl_(value_of(theta)),
-        N_(y0.size()), M_(theta.size()), x_(x), x_int_(x_int), msgs_(msgs),
+      : f_(f),
+        y0_(y0),
+        theta_(theta),
+        theta_dbl_(value_of(theta)),
+        N_(y0.size()),
+        M_(theta.size()),
+        x_(x),
+        x_int_(x_int),
+        msgs_(msgs),
         S_((initial_var::value ? N_ : 0) + (param_var::value ? M_ : 0)),
         coupled_ode_(f, y0, theta, x, x_int, msgs),
         coupled_state_(coupled_ode_.initial_state()),
         nv_state_(N_VMake_Serial(N_, &coupled_state_[0])),
-        nv_state_sens_(nullptr), A_(SUNDenseMatrix(N_, N_)),
+        nv_state_sens_(nullptr),
+        A_(SUNDenseMatrix(N_, N_)),
         LS_(SUNDenseLinearSolver(nv_state_, A_)) {
     if (S_ > 0) {
       nv_state_sens_ = N_VCloneVectorArrayEmpty_Serial(S_, nv_state_);
@@ -135,15 +143,15 @@ public:
     return explicit_ode->jacobian_states(t, NV_DATA_S(y), J);
   }
 
-private:
+ private:
   /**
    * Calculates the ODE RHS, dy_dt, using the user-supplied functor at
    * the given time t and state y.
    */
   inline void rhs(double t, const double y[], double dy_dt[]) const {
     const std::vector<double> y_vec(y, y + N_);
-    const std::vector<double> dy_dt_vec =
-        f_(t, y_vec, theta_dbl_, x_, x_int_, msgs_);
+    const std::vector<double> dy_dt_vec
+        = f_(t, y_vec, theta_dbl_, x_, x_int_, msgs_);
     check_size_match("cvodes_ode_data", "dz_dt", dy_dt_vec.size(), "states",
                      N_);
     std::copy(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
@@ -190,6 +198,6 @@ private:
   }
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

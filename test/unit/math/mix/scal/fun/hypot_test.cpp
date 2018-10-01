@@ -71,9 +71,9 @@ TEST(AgradFwdHypot, FvarVar_FvarVar_2ndDeriv) {
   a.d_.grad(y, g);
   EXPECT_FLOAT_EQ(
       (1.3 * 6.0 * 6.0 - 6.0 * 3.0) / hypot(3.0, 6.0) / (9.0 + 36.0), g[0]);
-  EXPECT_FLOAT_EQ((1.0 * 3.0 * 3.0 - 1.3 * 6.0 * 3.0) / hypot(3.0, 6.0) /
-                      (9.0 + 36.0),
-                  g[1]);
+  EXPECT_FLOAT_EQ(
+      (1.0 * 3.0 * 3.0 - 1.3 * 6.0 * 3.0) / hypot(3.0, 6.0) / (9.0 + 36.0),
+      g[1]);
 }
 TEST(AgradFwdHypot, FvarVar_Double_2ndDeriv) {
   using boost::math::hypot;
@@ -317,8 +317,8 @@ TEST(AgradFwdHypot, Double_FvarFvarVar_3rdDeriv) {
 
 struct hypot_fun {
   template <typename T0, typename T1>
-  inline typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1, const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return hypot(arg1, arg2);
   }
 };

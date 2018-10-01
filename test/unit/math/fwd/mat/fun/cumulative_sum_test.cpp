@@ -2,7 +2,8 @@
 #include <stan/math/fwd/mat.hpp>
 #include <vector>
 
-template <typename T> void test_cumulative_sum() {
+template <typename T>
+void test_cumulative_sum() {
   using stan::math::cumulative_sum;
 
   T c(1);
@@ -42,7 +43,8 @@ template <typename T> void test_cumulative_sum() {
   EXPECT_FLOAT_EQ(9.0, h[2].d_);
 }
 
-template <typename T> void test_cumulative_sum3() {
+template <typename T>
+void test_cumulative_sum3() {
   using stan::math::cumulative_sum;
 
   T c(1);

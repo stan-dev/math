@@ -22,12 +22,13 @@ namespace math {
  * @param[in] y_hat response value in [0, 1]
  * @return Log loss for response given reference value
  */
-template <typename T> inline T binary_log_loss(int y, const T &y_hat) {
+template <typename T>
+inline T binary_log_loss(int y, const T &y_hat) {
   using std::log;
   return y ? -log(y_hat) : -log1m(y_hat);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

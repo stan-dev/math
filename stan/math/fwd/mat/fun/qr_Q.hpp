@@ -11,8 +11,8 @@ namespace stan {
 namespace math {
 
 template <typename T>
-Eigen::Matrix<fvar<T>, Eigen::Dynamic, Eigen::Dynamic>
-qr_Q(const Eigen::Matrix<fvar<T>, Eigen::Dynamic, Eigen::Dynamic> &m) {
+Eigen::Matrix<fvar<T>, Eigen::Dynamic, Eigen::Dynamic> qr_Q(
+    const Eigen::Matrix<fvar<T>, Eigen::Dynamic, Eigen::Dynamic> &m) {
   typedef Eigen::Matrix<fvar<T>, Eigen::Dynamic, Eigen::Dynamic> matrix_fwd_t;
   check_nonzero_size("qr_Q", "m", m);
   check_greater_or_equal("qr_Q", "m.rows()", m.rows(), m.cols());
@@ -25,6 +25,6 @@ qr_Q(const Eigen::Matrix<fvar<T>, Eigen::Dynamic, Eigen::Dynamic> &m) {
   return Q;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

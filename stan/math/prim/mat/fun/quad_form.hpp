@@ -32,7 +32,7 @@ inline T quad_form(const Eigen::Matrix<T, RA, CA> &A,
   return dot_product(B, multiply(A, B));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

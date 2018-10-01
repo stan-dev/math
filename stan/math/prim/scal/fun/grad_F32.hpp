@@ -69,39 +69,38 @@ void grad_F32(T *g, const T &a1, const T &a2, const T &a3, const T &b1,
     log_t_new_sign = p >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
     //        g_old[0] = t_new * (g_old[0] / t_old + 1.0 / (a1 + k));
-    T term =
-        log_g_old_sign[0] * log_t_old_sign * exp(log_g_old[0] - log_t_old) +
-        inv(a1 + k);
+    T term = log_g_old_sign[0] * log_t_old_sign * exp(log_g_old[0] - log_t_old)
+             + inv(a1 + k);
     log_g_old[0] = log_t_new + log(fabs(term));
     log_g_old_sign[0] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
     //        g_old[1] = t_new * (g_old[1] / t_old + 1.0 / (a2 + k));
-    term = log_g_old_sign[1] * log_t_old_sign * exp(log_g_old[1] - log_t_old) +
-           inv(a2 + k);
+    term = log_g_old_sign[1] * log_t_old_sign * exp(log_g_old[1] - log_t_old)
+           + inv(a2 + k);
     log_g_old[1] = log_t_new + log(fabs(term));
     log_g_old_sign[1] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
     //        g_old[2] = t_new * (g_old[2] / t_old + 1.0 / (a3 + k));
-    term = log_g_old_sign[2] * log_t_old_sign * exp(log_g_old[2] - log_t_old) +
-           inv(a3 + k);
+    term = log_g_old_sign[2] * log_t_old_sign * exp(log_g_old[2] - log_t_old)
+           + inv(a3 + k);
     log_g_old[2] = log_t_new + log(fabs(term));
     log_g_old_sign[2] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
     //        g_old[3] = t_new * (g_old[3] / t_old - 1.0 / (b1 + k));
-    term = log_g_old_sign[3] * log_t_old_sign * exp(log_g_old[3] - log_t_old) -
-           inv(b1 + k);
+    term = log_g_old_sign[3] * log_t_old_sign * exp(log_g_old[3] - log_t_old)
+           - inv(b1 + k);
     log_g_old[3] = log_t_new + log(fabs(term));
     log_g_old_sign[3] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
     //        g_old[4] = t_new * (g_old[4] / t_old - 1.0 / (b2 + k));
-    term = log_g_old_sign[4] * log_t_old_sign * exp(log_g_old[4] - log_t_old) -
-           inv(b2 + k);
+    term = log_g_old_sign[4] * log_t_old_sign * exp(log_g_old[4] - log_t_old)
+           - inv(b2 + k);
     log_g_old[4] = log_t_new + log(fabs(term));
     log_g_old_sign[4] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
     //        g_old[5] = t_new * (g_old[5] / t_old + 1.0 / z);
-    term = log_g_old_sign[5] * log_t_old_sign * exp(log_g_old[5] - log_t_old) +
-           inv(z);
+    term = log_g_old_sign[5] * log_t_old_sign * exp(log_g_old[5] - log_t_old)
+           + inv(z);
     log_g_old[5] = log_t_new + log(fabs(term));
     log_g_old_sign[5] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
@@ -110,7 +109,7 @@ void grad_F32(T *g, const T &a1, const T &a2, const T &a3, const T &b1,
     }
 
     if (log_t_new <= log(precision))
-      return; // implicit abs
+      return;  // implicit abs
 
     log_t_old = log_t_new;
     log_t_old_sign = log_t_new_sign;
@@ -121,6 +120,6 @@ void grad_F32(T *g, const T &a1, const T &a2, const T &a3, const T &b1,
   return;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -27,7 +27,8 @@ inline bool operator||(const var &x, const var &y) {
  * @return disjunction of first argument's value and second
  * argument
  */
-template <typename T> inline bool operator||(const var &x, double y) {
+template <typename T>
+inline bool operator||(const var &x, double y) {
   return x.val() || y;
 }
 
@@ -40,10 +41,11 @@ template <typename T> inline bool operator||(const var &x, double y) {
  * @return disjunction of first argument and the second
  * argument's value
  */
-template <typename T> inline bool operator||(double x, const var &y) {
+template <typename T>
+inline bool operator||(double x, const var &y) {
   return x || y.val();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -26,12 +26,12 @@ namespace math {
  *   or if any element of the matrix is nan
  */
 template <typename T_y>
-inline void
-check_cov_matrix(const char *function, const char *name,
-                 const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y) {
+inline void check_cov_matrix(
+    const char *function, const char *name,
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y) {
   check_pos_definite(function, name, y);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

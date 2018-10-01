@@ -26,8 +26,9 @@ namespace math {
  * methods).
  * @tparam Lmm ID of ODE solver (1: ADAMS, 2: BDF)
  */
-template <int Lmm> class cvodes_integrator {
-public:
+template <int Lmm>
+class cvodes_integrator {
+ public:
   cvodes_integrator() {}
 
   /**
@@ -74,7 +75,7 @@ public:
             const std::vector<double> &x, const std::vector<int> &x_int,
             std::ostream *msgs, double relative_tolerance,
             double absolute_tolerance,
-            long int max_num_steps) { // NOLINT(runtime/int)
+            long int max_num_steps) {  // NOLINT(runtime/int)
     typedef stan::is_var<T_initial> initial_var;
     typedef stan::is_var<T_param> param_var;
 
@@ -141,10 +142,10 @@ public:
 
       // initialize forward sensitivity system of CVODES as needed
       if (S > 0) {
-        cvodes_check_flag(CVodeSensInit(cvodes_mem, static_cast<int>(S),
-                                        CV_STAGGERED, &ode_data::cv_rhs_sens,
-                                        cvodes_data.nv_state_sens_),
-                          "CVodeSensInit");
+        cvodes_check_flag(
+            CVodeSensInit(cvodes_mem, static_cast<int>(S), CV_STAGGERED,
+                          &ode_data::cv_rhs_sens, cvodes_data.nv_state_sens_),
+            "CVodeSensInit");
 
         cvodes_check_flag(CVodeSensEEtolerances(cvodes_mem),
                           "CVodeSensEEtolerances");
@@ -175,7 +176,7 @@ public:
 
     return cvodes_data.coupled_ode_.decouple_states(y_coupled);
   }
-}; // cvodes integrator
-} // namespace math
-} // namespace stan
+};  // cvodes integrator
+}  // namespace math
+}  // namespace stan
 #endif

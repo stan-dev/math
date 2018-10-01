@@ -81,9 +81,9 @@ T F32(const T &a1, const T &a2, const T &a3, const T &b1, const T &b2,
   }
   domain_error("F32", "k (internal counter)", max_steps, "exceeded ",
                " iterations, hypergeometric function did not converge.");
-  return t_acc; // to silence warning.
+  return t_acc;  // to silence warning.
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

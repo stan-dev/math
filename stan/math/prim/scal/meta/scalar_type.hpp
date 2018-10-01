@@ -13,11 +13,15 @@ namespace stan {
  *
  * @tparam T Type of object.
  */
-template <typename T> struct scalar_type { typedef T type; };
+template <typename T>
+struct scalar_type {
+  typedef T type;
+};
 
-template <typename T> struct scalar_type<T *> {
+template <typename T>
+struct scalar_type<T *> {
   typedef typename scalar_type<T>::type type;
 };
 
-} // namespace stan
+}  // namespace stan
 #endif

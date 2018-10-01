@@ -38,7 +38,7 @@ inline double log2(int u) { return log2(static_cast<double>(u)); }
  */
 inline double log2() { return LOG_2; }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

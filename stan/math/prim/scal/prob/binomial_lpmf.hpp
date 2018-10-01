@@ -86,8 +86,8 @@ typename return_type<T_prob>::type binomial_lpmf(const T_n &n, const T_N &N,
     log1m_theta[i] = log1m(value_of(theta_vec[i]));
 
   for (size_t i = 0; i < size; ++i)
-    logp += multiply_log(n_vec[i], value_of(theta_vec[i])) +
-            (N_vec[i] - n_vec[i]) * log1m_theta[i];
+    logp += multiply_log(n_vec[i], value_of(theta_vec[i]))
+            + (N_vec[i] - n_vec[i]) * log1m_theta[i];
 
   if (length(theta) == 1) {
     T_partials_return temp1 = 0;
@@ -97,16 +97,16 @@ typename return_type<T_prob>::type binomial_lpmf(const T_n &n, const T_N &N,
       temp2 += N_vec[i] - n_vec[i];
     }
     if (!is_constant_struct<T_prob>::value) {
-      ops_partials.edge1_.partials_[0] +=
-          temp1 / value_of(theta_vec[0]) -
-          temp2 / (1.0 - value_of(theta_vec[0]));
+      ops_partials.edge1_.partials_[0]
+          += temp1 / value_of(theta_vec[0])
+             - temp2 / (1.0 - value_of(theta_vec[0]));
     }
   } else {
     if (!is_constant_struct<T_prob>::value) {
       for (size_t i = 0; i < size; ++i)
-        ops_partials.edge1_.partials_[i] +=
-            n_vec[i] / value_of(theta_vec[i]) -
-            (N_vec[i] - n_vec[i]) / (1.0 - value_of(theta_vec[i]));
+        ops_partials.edge1_.partials_[i]
+            += n_vec[i] / value_of(theta_vec[i])
+               - (N_vec[i] - n_vec[i]) / (1.0 - value_of(theta_vec[i]));
     }
   }
 
@@ -114,11 +114,12 @@ typename return_type<T_prob>::type binomial_lpmf(const T_n &n, const T_N &N,
 }
 
 template <typename T_n, typename T_N, typename T_prob>
-inline typename return_type<T_prob>::type
-binomial_lpmf(const T_n &n, const T_N &N, const T_prob &theta) {
+inline typename return_type<T_prob>::type binomial_lpmf(const T_n &n,
+                                                        const T_N &N,
+                                                        const T_prob &theta) {
   return binomial_lpmf<false>(n, N, theta);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

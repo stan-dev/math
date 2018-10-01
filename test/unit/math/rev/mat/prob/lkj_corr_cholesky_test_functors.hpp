@@ -6,17 +6,16 @@ namespace stan {
 namespace math {
 
 template <typename T_L, typename T_eta>
-typename return_type<T_eta, T_L>::type
-    lkj_corr_cholesky_uc(Eigen::Matrix<T_L, Eigen::Dynamic, 1> L, T_eta eta,
-                         int K) {
+typename return_type<T_eta, T_L>::type lkj_corr_cholesky_uc(
+    Eigen::Matrix<T_L, Eigen::Dynamic, 1> L, T_eta eta, int K) {
   using math::cholesky_corr_constrain;
   using math::lkj_corr_cholesky_log;
   using math::positive_constrain;
 
   typedef typename return_type<T_eta, T_L>::type rettype;
   rettype lp(0.0);
-  Eigen::Matrix<T_L, Eigen::Dynamic, Eigen::Dynamic> L_c =
-      cholesky_corr_constrain(L, K, lp);
+  Eigen::Matrix<T_L, Eigen::Dynamic, Eigen::Dynamic> L_c
+      = cholesky_corr_constrain(L, K, lp);
   T_eta eta_c = positive_constrain(eta, lp);
   lp += lkj_corr_cholesky_log(L_c, eta_c);
   return lp;
@@ -72,6 +71,6 @@ struct lkj_corr_cholesky_dd {
     return lkj_corr_cholesky_uc(L, vec(0), K);
   }
 };
-} // namespace math
+}  // namespace math
 
-} // namespace stan
+}  // namespace stan

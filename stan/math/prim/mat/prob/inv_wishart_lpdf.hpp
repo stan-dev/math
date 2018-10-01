@@ -109,6 +109,6 @@ inv_wishart_lpdf(
   return inv_wishart_lpdf<false>(W, nu, S);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

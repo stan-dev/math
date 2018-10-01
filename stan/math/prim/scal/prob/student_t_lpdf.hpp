@@ -58,9 +58,8 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_dof, typename T_loc,
           typename T_scale>
-typename return_type<T_y, T_dof, T_loc, T_scale>::type
-student_t_lpdf(const T_y &y, const T_dof &nu, const T_loc &mu,
-               const T_scale &sigma) {
+typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lpdf(
+    const T_y &y, const T_dof &nu, const T_loc &mu, const T_scale &sigma) {
   static const char *function = "student_t_lpdf";
   typedef typename stan::partials_return_type<T_y, T_dof, T_loc, T_scale>::type
       T_partials_return;
@@ -146,8 +145,8 @@ student_t_lpdf(const T_y &y, const T_dof &nu, const T_loc &mu,
       const T_partials_return mu_dbl = value_of(mu_vec[i]);
       const T_partials_return sigma_dbl = value_of(sigma_vec[i]);
       const T_partials_return nu_dbl = value_of(nu_vec[i]);
-      square_y_minus_mu_over_sigma__over_nu[i] =
-          square((y_dbl - mu_dbl) / sigma_dbl) / nu_dbl;
+      square_y_minus_mu_over_sigma__over_nu[i]
+          = square((y_dbl - mu_dbl) / sigma_dbl) / nu_dbl;
       log1p_exp[i] = log1p(square_y_minus_mu_over_sigma__over_nu[i]);
     }
 
@@ -168,44 +167,43 @@ student_t_lpdf(const T_y &y, const T_dof &nu, const T_loc &mu,
       logp -= (half_nu[n] + 0.5) * log1p_exp[n];
 
     if (!is_constant_struct<T_y>::value) {
-      ops_partials.edge1_.partials_[n] +=
-          -(half_nu[n] + 0.5) * 1.0 /
-          (1.0 + square_y_minus_mu_over_sigma__over_nu[n]) *
-          (2.0 * (y_dbl - mu_dbl) / square(sigma_dbl) / nu_dbl);
+      ops_partials.edge1_.partials_[n]
+          += -(half_nu[n] + 0.5) * 1.0
+             / (1.0 + square_y_minus_mu_over_sigma__over_nu[n])
+             * (2.0 * (y_dbl - mu_dbl) / square(sigma_dbl) / nu_dbl);
     }
     if (!is_constant_struct<T_dof>::value) {
       const T_partials_return inv_nu = 1.0 / nu_dbl;
-      ops_partials.edge2_.partials_[n] +=
-          0.5 * digamma_half_nu_plus_half[n] - 0.5 * digamma_half_nu[n] -
-          0.5 * inv_nu - 0.5 * log1p_exp[n] +
-          (half_nu[n] + 0.5) *
-              (1.0 / (1.0 + square_y_minus_mu_over_sigma__over_nu[n]) *
-               square_y_minus_mu_over_sigma__over_nu[n] * inv_nu);
+      ops_partials.edge2_.partials_[n]
+          += 0.5 * digamma_half_nu_plus_half[n] - 0.5 * digamma_half_nu[n]
+             - 0.5 * inv_nu - 0.5 * log1p_exp[n]
+             + (half_nu[n] + 0.5)
+                   * (1.0 / (1.0 + square_y_minus_mu_over_sigma__over_nu[n])
+                      * square_y_minus_mu_over_sigma__over_nu[n] * inv_nu);
     }
     if (!is_constant_struct<T_loc>::value) {
-      ops_partials.edge3_.partials_[n] -=
-          (half_nu[n] + 0.5) /
-          (1.0 + square_y_minus_mu_over_sigma__over_nu[n]) *
-          (2.0 * (mu_dbl - y_dbl) / (sigma_dbl * sigma_dbl * nu_dbl));
+      ops_partials.edge3_.partials_[n]
+          -= (half_nu[n] + 0.5)
+             / (1.0 + square_y_minus_mu_over_sigma__over_nu[n])
+             * (2.0 * (mu_dbl - y_dbl) / (sigma_dbl * sigma_dbl * nu_dbl));
     }
     if (!is_constant_struct<T_scale>::value) {
       const T_partials_return inv_sigma = 1.0 / sigma_dbl;
-      ops_partials.edge4_.partials_[n] +=
-          -inv_sigma +
-          (nu_dbl + 1.0) / (1.0 + square_y_minus_mu_over_sigma__over_nu[n]) *
-              (square_y_minus_mu_over_sigma__over_nu[n] * inv_sigma);
+      ops_partials.edge4_.partials_[n]
+          += -inv_sigma
+             + (nu_dbl + 1.0) / (1.0 + square_y_minus_mu_over_sigma__over_nu[n])
+                   * (square_y_minus_mu_over_sigma__over_nu[n] * inv_sigma);
     }
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
-inline typename return_type<T_y, T_dof, T_loc, T_scale>::type
-student_t_lpdf(const T_y &y, const T_dof &nu, const T_loc &mu,
-               const T_scale &sigma) {
+inline typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lpdf(
+    const T_y &y, const T_dof &nu, const T_loc &mu, const T_scale &sigma) {
   return student_t_lpdf<false>(y, nu, mu, sigma);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

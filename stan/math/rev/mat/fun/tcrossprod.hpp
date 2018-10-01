@@ -33,8 +33,8 @@ inline matrix_v tcrossprod(const matrix_v &M) {
 
   matrix_v MMt(M.rows(), M.rows());
 
-  vari **vs =
-      reinterpret_cast<vari **>(ChainableStack::instance().memalloc_.alloc(
+  vari **vs
+      = reinterpret_cast<vari **>(ChainableStack::instance().memalloc_.alloc(
           (M.rows() * M.cols()) * sizeof(vari *)));
   int pos = 0;
   for (int m = 0; m < M.rows(); ++m)
@@ -52,6 +52,6 @@ inline matrix_v tcrossprod(const matrix_v &M) {
   return MMt;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

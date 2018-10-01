@@ -18,8 +18,8 @@ namespace math {
  * @return std::vector of values
  **/
 template <typename T>
-inline std::vector<typename child_type<T>::type>
-value_of(const std::vector<T> &x) {
+inline std::vector<typename child_type<T>::type> value_of(
+    const std::vector<T> &x) {
   size_t size = x.size();
   std::vector<typename child_type<T>::type> result(size);
   for (size_t i = 0; i < size; i++)
@@ -55,7 +55,7 @@ inline const std::vector<double> &value_of(const std::vector<double> &x) {
  */
 inline const std::vector<int> &value_of(const std::vector<int> &x) { return x; }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

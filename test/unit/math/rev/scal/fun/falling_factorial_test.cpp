@@ -17,9 +17,9 @@ TEST(AgradRev, falling_factorial_var_int) {
   EXPECT_FLOAT_EQ((digamma(5) - digamma(3)) * 12.0, g[1]);
 
   double eps = 1e-6;
-  EXPECT_FLOAT_EQ((stan::math::falling_factorial(4.0 + eps, 2) -
-                   stan::math::falling_factorial(4.0 - eps, 2)) /
-                      (2 * eps),
+  EXPECT_FLOAT_EQ((stan::math::falling_factorial(4.0 + eps, 2)
+                   - stan::math::falling_factorial(4.0 - eps, 2))
+                      / (2 * eps),
                   g[1]);
 }
 

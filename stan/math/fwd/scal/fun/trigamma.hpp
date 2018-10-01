@@ -17,10 +17,11 @@ namespace math {
  * @param u argument
  * @return trigamma function at argument
  */
-template <typename T> inline fvar<T> trigamma(const fvar<T> &u) {
+template <typename T>
+inline fvar<T> trigamma(const fvar<T> &u) {
   return trigamma_impl(u);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

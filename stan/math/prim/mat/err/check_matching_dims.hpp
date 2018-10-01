@@ -82,6 +82,6 @@ inline void check_matching_dims(const char *function, const char *name1,
   }
   check_matching_dims(function, name1, y1, name2, y2);
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

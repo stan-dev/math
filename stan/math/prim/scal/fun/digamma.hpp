@@ -46,6 +46,6 @@ inline double digamma(double x) {
   return boost::math::digamma(x, boost_policy_t());
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

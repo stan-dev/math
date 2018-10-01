@@ -15,9 +15,9 @@ namespace math {
 namespace {
 template <int TriView, int R1, int C1, int R2, int C2>
 class mdivide_left_tri_vv_vari : public vari {
-public:
-  int M_; // A.rows() = A.cols() = B.rows()
-  int N_; // B.cols()
+ public:
+  int M_;  // A.rows() = A.cols() = B.rows()
+  int N_;  // B.cols()
   double *A_;
   double *C_;
   vari **variRefA_;
@@ -26,22 +26,24 @@ public:
 
   mdivide_left_tri_vv_vari(const Eigen::Matrix<var, R1, C1> &A,
                            const Eigen::Matrix<var, R2, C2> &B)
-      : vari(0.0), M_(A.rows()), N_(B.cols()),
+      : vari(0.0),
+        M_(A.rows()),
+        N_(B.cols()),
         A_(reinterpret_cast<double *>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(double) *
-                                                       A.rows() * A.cols()))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(double) * A.rows()
+                                                       * A.cols()))),
         C_(reinterpret_cast<double *>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(double) *
-                                                       B.rows() * B.cols()))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(double) * B.rows()
+                                                       * B.cols()))),
         variRefA_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(
-                sizeof(vari *) * A.rows() * (A.rows() + 1) / 2))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * A.rows()
+                                                       * (A.rows() + 1) / 2))),
         variRefB_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) *
-                                                       B.rows() * B.cols()))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
+                                                       * B.cols()))),
         variRefC_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) *
-                                                       B.rows() * B.cols()))) {
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
+                                                       * B.cols()))) {
     using Eigen::Map;
     using Eigen::Matrix;
 
@@ -104,8 +106,8 @@ public:
                .template triangularView<TriView>()
                .transpose()
                .solve(adjC);
-    adjA.noalias() =
-        -adjB * Map<Matrix<double, R1, C2>>(C_, M_, N_).transpose();
+    adjA.noalias()
+        = -adjB * Map<Matrix<double, R1, C2>>(C_, M_, N_).transpose();
 
     pos = 0;
     if (TriView == Eigen::Lower) {
@@ -127,9 +129,9 @@ public:
 
 template <int TriView, int R1, int C1, int R2, int C2>
 class mdivide_left_tri_dv_vari : public vari {
-public:
-  int M_; // A.rows() = A.cols() = B.rows()
-  int N_; // B.cols()
+ public:
+  int M_;  // A.rows() = A.cols() = B.rows()
+  int N_;  // B.cols()
   double *A_;
   double *C_;
   vari **variRefB_;
@@ -137,19 +139,21 @@ public:
 
   mdivide_left_tri_dv_vari(const Eigen::Matrix<double, R1, C1> &A,
                            const Eigen::Matrix<var, R2, C2> &B)
-      : vari(0.0), M_(A.rows()), N_(B.cols()),
+      : vari(0.0),
+        M_(A.rows()),
+        N_(B.cols()),
         A_(reinterpret_cast<double *>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(double) *
-                                                       A.rows() * A.cols()))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(double) * A.rows()
+                                                       * A.cols()))),
         C_(reinterpret_cast<double *>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(double) *
-                                                       B.rows() * B.cols()))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(double) * B.rows()
+                                                       * B.cols()))),
         variRefB_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) *
-                                                       B.rows() * B.cols()))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
+                                                       * B.cols()))),
         variRefC_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) *
-                                                       B.rows() * B.cols()))) {
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
+                                                       * B.cols()))) {
     using Eigen::Map;
     using Eigen::Matrix;
 
@@ -210,9 +214,9 @@ public:
 
 template <int TriView, int R1, int C1, int R2, int C2>
 class mdivide_left_tri_vd_vari : public vari {
-public:
-  int M_; // A.rows() = A.cols() = B.rows()
-  int N_; // B.cols()
+ public:
+  int M_;  // A.rows() = A.cols() = B.rows()
+  int N_;  // B.cols()
   double *A_;
   double *C_;
   vari **variRefA_;
@@ -220,19 +224,21 @@ public:
 
   mdivide_left_tri_vd_vari(const Eigen::Matrix<var, R1, C1> &A,
                            const Eigen::Matrix<double, R2, C2> &B)
-      : vari(0.0), M_(A.rows()), N_(B.cols()),
+      : vari(0.0),
+        M_(A.rows()),
+        N_(B.cols()),
         A_(reinterpret_cast<double *>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(double) *
-                                                       A.rows() * A.cols()))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(double) * A.rows()
+                                                       * A.cols()))),
         C_(reinterpret_cast<double *>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(double) *
-                                                       B.rows() * B.cols()))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(double) * B.rows()
+                                                       * B.cols()))),
         variRefA_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(
-                sizeof(vari *) * A.rows() * (A.rows() + 1) / 2))),
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * A.rows()
+                                                       * (A.rows() + 1) / 2))),
         variRefC_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) *
-                                                       B.rows() * B.cols()))) {
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
+                                                       * B.cols()))) {
     using Eigen::Map;
     using Eigen::Matrix;
 
@@ -280,11 +286,12 @@ public:
       for (size_type i = 0; i < adjC.rows(); i++)
         adjC(i, j) = variRefC_[pos++]->adj_;
 
-    adjA.noalias() =
-        -Map<Matrix<double, R1, C1>>(A_, M_, M_)
-             .template triangularView<TriView>()
-             .transpose()
-             .solve(adjC * Map<Matrix<double, R1, C2>>(C_, M_, N_).transpose());
+    adjA.noalias()
+        = -Map<Matrix<double, R1, C1>>(A_, M_, M_)
+               .template triangularView<TriView>()
+               .transpose()
+               .solve(adjC
+                      * Map<Matrix<double, R1, C2>>(C_, M_, N_).transpose());
 
     pos = 0;
     if (TriView == Eigen::Lower) {
@@ -298,12 +305,11 @@ public:
     }
   }
 };
-} // namespace
+}  // namespace
 
 template <int TriView, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<var, R1, C2>
-mdivide_left_tri(const Eigen::Matrix<var, R1, C1> &A,
-                 const Eigen::Matrix<var, R2, C2> &b) {
+inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
+    const Eigen::Matrix<var, R1, C1> &A, const Eigen::Matrix<var, R2, C2> &b) {
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
 
   check_square("mdivide_left_tri", "A", A);
@@ -313,8 +319,8 @@ mdivide_left_tri(const Eigen::Matrix<var, R1, C1> &A,
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  mdivide_left_tri_vv_vari<TriView, R1, C1, R2, C2> *baseVari =
-      new mdivide_left_tri_vv_vari<TriView, R1, C1, R2, C2>(A, b);
+  mdivide_left_tri_vv_vari<TriView, R1, C1, R2, C2> *baseVari
+      = new mdivide_left_tri_vv_vari<TriView, R1, C1, R2, C2>(A, b);
 
   size_t pos = 0;
   for (size_type j = 0; j < res.cols(); j++)
@@ -324,9 +330,9 @@ mdivide_left_tri(const Eigen::Matrix<var, R1, C1> &A,
   return res;
 }
 template <int TriView, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<var, R1, C2>
-mdivide_left_tri(const Eigen::Matrix<double, R1, C1> &A,
-                 const Eigen::Matrix<var, R2, C2> &b) {
+inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
+    const Eigen::Matrix<double, R1, C1> &A,
+    const Eigen::Matrix<var, R2, C2> &b) {
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
 
   check_square("mdivide_left_tri", "A", A);
@@ -336,8 +342,8 @@ mdivide_left_tri(const Eigen::Matrix<double, R1, C1> &A,
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  mdivide_left_tri_dv_vari<TriView, R1, C1, R2, C2> *baseVari =
-      new mdivide_left_tri_dv_vari<TriView, R1, C1, R2, C2>(A, b);
+  mdivide_left_tri_dv_vari<TriView, R1, C1, R2, C2> *baseVari
+      = new mdivide_left_tri_dv_vari<TriView, R1, C1, R2, C2>(A, b);
 
   size_t pos = 0;
   for (size_type j = 0; j < res.cols(); j++)
@@ -347,9 +353,9 @@ mdivide_left_tri(const Eigen::Matrix<double, R1, C1> &A,
   return res;
 }
 template <int TriView, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<var, R1, C2>
-mdivide_left_tri(const Eigen::Matrix<var, R1, C1> &A,
-                 const Eigen::Matrix<double, R2, C2> &b) {
+inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
+    const Eigen::Matrix<var, R1, C1> &A,
+    const Eigen::Matrix<double, R2, C2> &b) {
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
 
   check_square("mdivide_left_tri", "A", A);
@@ -359,8 +365,8 @@ mdivide_left_tri(const Eigen::Matrix<var, R1, C1> &A,
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  mdivide_left_tri_vd_vari<TriView, R1, C1, R2, C2> *baseVari =
-      new mdivide_left_tri_vd_vari<TriView, R1, C1, R2, C2>(A, b);
+  mdivide_left_tri_vd_vari<TriView, R1, C1, R2, C2> *baseVari
+      = new mdivide_left_tri_vd_vari<TriView, R1, C1, R2, C2>(A, b);
 
   size_t pos = 0;
   for (size_type j = 0; j < res.cols(); j++)
@@ -370,6 +376,6 @@ mdivide_left_tri(const Eigen::Matrix<var, R1, C1> &A,
   return res;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

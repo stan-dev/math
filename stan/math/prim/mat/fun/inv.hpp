@@ -14,7 +14,10 @@ namespace math {
  * @return 1 / x.
  */
 struct inv_fun {
-  template <typename T> static inline T fun(const T &x) { return inv(x); }
+  template <typename T>
+  static inline T fun(const T &x) {
+    return inv(x);
+  }
 };
 
 /**
@@ -28,7 +31,7 @@ inline typename apply_scalar_unary<inv_fun, T>::return_t inv(const T &x) {
   return apply_scalar_unary<inv_fun, T>::apply(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

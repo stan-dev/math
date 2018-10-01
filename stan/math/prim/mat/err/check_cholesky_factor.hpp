@@ -40,6 +40,6 @@ inline void check_cholesky_factor(
     check_positive(function, name, y(i, i));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

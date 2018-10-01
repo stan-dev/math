@@ -16,7 +16,7 @@ namespace math {
 
 namespace {
 class pow_vv_vari : public op_vv_vari {
-public:
+ public:
   pow_vv_vari(vari *avi, vari *bvi)
       : op_vv_vari(std::pow(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
@@ -25,7 +25,7 @@ public:
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
       if (avi_->val_ == 0.0)
-        return; // partials zero, avoids 0 & log(0)
+        return;  // partials zero, avoids 0 & log(0)
       avi_->adj_ += adj_ * bvi_->val_ * val_ / avi_->val_;
       bvi_->adj_ += adj_ * std::log(avi_->val_) * val_;
     }
@@ -33,7 +33,7 @@ public:
 };
 
 class pow_vd_vari : public op_vd_vari {
-public:
+ public:
   pow_vd_vari(vari *avi, double b)
       : op_vd_vari(std::pow(avi->val_, b), avi, b) {}
   void chain() {
@@ -41,14 +41,14 @@ public:
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
       if (avi_->val_ == 0.0)
-        return; // partials zero, avoids 0 & log(0)
+        return;  // partials zero, avoids 0 & log(0)
       avi_->adj_ += adj_ * bd_ * val_ / avi_->val_;
     }
   }
 };
 
 class pow_dv_vari : public op_dv_vari {
-public:
+ public:
   pow_dv_vari(double a, vari *bvi)
       : op_dv_vari(std::pow(a, bvi->val_), a, bvi) {}
   void chain() {
@@ -56,12 +56,12 @@ public:
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
       if (ad_ == 0.0)
-        return; // partials zero, avoids 0 & log(0)
+        return;  // partials zero, avoids 0 & log(0)
       bvi_->adj_ += adj_ * std::log(ad_) * val_;
     }
   }
 };
-} // namespace
+}  // namespace
 
 /**
  * Return the base raised to the power of the exponent (cmath).
@@ -149,6 +149,6 @@ inline var pow(double base, const var &exponent) {
   return var(new pow_dv_vari(base, exponent.vi_));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

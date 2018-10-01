@@ -71,6 +71,6 @@ typename return_type<T_y, T_scale>::type rayleigh_lccdf(const T_y &y,
   return ops_partials.build(ccdf_log);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

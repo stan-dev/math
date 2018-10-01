@@ -14,7 +14,8 @@ namespace math {
  * @return Sine of x.
  */
 struct sin_fun {
-  template <typename T> static inline T fun(const T &x) {
+  template <typename T>
+  static inline T fun(const T &x) {
     using std::sin;
     return sin(x);
   }
@@ -31,7 +32,7 @@ inline typename apply_scalar_unary<sin_fun, T>::return_t sin(const T &x) {
   return apply_scalar_unary<sin_fun, T>::apply(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

@@ -27,7 +27,8 @@ inline fvar<T> operator-(const fvar<T> &x1, const fvar<T> &x2) {
  * @param x2 second argument
  * @return difference of the arguments
  */
-template <typename T> inline fvar<T> operator-(double x1, const fvar<T> &x2) {
+template <typename T>
+inline fvar<T> operator-(double x1, const fvar<T> &x2) {
   return fvar<T>(x1 - x2.val_, -x2.d_);
 }
 
@@ -39,10 +40,11 @@ template <typename T> inline fvar<T> operator-(double x1, const fvar<T> &x2) {
  * @param x2 second argument
  * @return difference of the arguments
  */
-template <typename T> inline fvar<T> operator-(const fvar<T> &x1, double x2) {
+template <typename T>
+inline fvar<T> operator-(const fvar<T> &x1, double x2) {
   return fvar<T>(x1.val_ - x2, x1.d_);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

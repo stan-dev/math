@@ -33,6 +33,6 @@ void partial_derivative(const F &f,
   dfx_dxn = fx_fvar.d_;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

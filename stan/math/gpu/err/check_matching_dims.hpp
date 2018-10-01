@@ -27,7 +27,7 @@ inline void check_matching_dims(const char *function, const char *name1,
                    name2, y2.cols());
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
 #endif

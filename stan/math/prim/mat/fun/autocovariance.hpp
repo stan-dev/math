@@ -117,6 +117,6 @@ void autocovariance(const Eigen::MatrixBase<DerivedA> &y,
   autocovariance(y, acov, fft);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

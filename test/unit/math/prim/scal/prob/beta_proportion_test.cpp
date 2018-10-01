@@ -29,8 +29,8 @@ TEST(ProbDistributionsBetaProportion, chiSquareGoodnessFitTest) {
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
 
-  double mu = 0.5;    // location
-  double kappa = 3.0; // precision
+  double mu = 0.5;     // location
+  double kappa = 3.0;  // precision
 
   std::vector<double> samples;
   for (int i = 0; i < N; ++i) {
@@ -60,8 +60,8 @@ TEST(ProbDistributionsBetaProportion, chiSquareGoodnessFitTest2) {
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
 
-  double mu = 0.3;    // location
-  double kappa = 0.5; // precision
+  double mu = 0.3;     // location
+  double kappa = 0.5;  // precision
 
   std::vector<double> samples;
   for (int i = 0; i < N; ++i) {

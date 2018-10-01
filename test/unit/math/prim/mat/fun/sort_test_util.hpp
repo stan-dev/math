@@ -5,7 +5,8 @@
 #include <limits>
 #include <stan/math/prim/mat.hpp>
 
-template <typename C> void test_sort_asc_throws() {
+template <typename C>
+void test_sort_asc_throws() {
   using stan::math::sort_asc;
 
   C xs0;
@@ -29,7 +30,8 @@ template <typename C> void test_sort_asc_throws() {
   EXPECT_THROW(sort_asc(xs2), std::domain_error);
 }
 
-template <typename C> void test_sort_desc_throws() {
+template <typename C>
+void test_sort_desc_throws() {
   using stan::math::sort_desc;
 
   C xs0;

@@ -48,6 +48,6 @@ void hessian_times_vector(const F &f,
   Hv = H * v;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

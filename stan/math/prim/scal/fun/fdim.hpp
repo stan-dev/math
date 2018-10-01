@@ -29,6 +29,6 @@ inline typename boost::math::tools::promote_args<T1, T2>::type fdim(T1 x,
   return (x <= y) ? 0 : x - y;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

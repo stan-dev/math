@@ -34,6 +34,6 @@ inline double erf(double x) {
  */
 inline double erf(int x) { return erf(static_cast<double>(x)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

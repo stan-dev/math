@@ -41,6 +41,6 @@ void grad_reg_inc_beta(T &g1, T &g2, const T &a, const T &b, const T &z,
   g2 = (dBdb - b1 * (digammaB - digammaSum)) / betaAB;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

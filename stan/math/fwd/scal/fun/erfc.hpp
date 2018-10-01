@@ -10,11 +10,12 @@
 namespace stan {
 namespace math {
 
-template <typename T> inline fvar<T> erfc(const fvar<T> &x) {
+template <typename T>
+inline fvar<T> erfc(const fvar<T> &x) {
   using std::exp;
   return fvar<T>(erfc(x.val_), -x.d_ * exp(-square(x.val_)) * TWO_OVER_SQRT_PI);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -18,5 +18,5 @@ size_t length_mvt(const std::vector<Eigen::Matrix<T, R, C>> &x) {
   return x.size();
 }
 
-} // namespace stan
+}  // namespace stan
 #endif

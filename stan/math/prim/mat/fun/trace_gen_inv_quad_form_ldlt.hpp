@@ -22,8 +22,8 @@ namespace math {
 template <typename T1, typename T2, typename T3, int R1, int C1, int R2, int C2,
           int R3, int C3>
 inline typename boost::enable_if_c<
-    !stan::is_var<T1>::value && !stan::is_var<T2>::value &&
-        !stan::is_var<T3>::value,
+    !stan::is_var<T1>::value && !stan::is_var<T2>::value
+        && !stan::is_var<T3>::value,
     typename boost::math::tools::promote_args<T1, T2, T3>::type>::type
 trace_gen_inv_quad_form_ldlt(const Eigen::Matrix<T1, R1, C1> &D,
                              const LDLT_factor<T2, R2, C2> &A,
@@ -35,6 +35,6 @@ trace_gen_inv_quad_form_ldlt(const Eigen::Matrix<T1, R1, C1> &D,
   return trace(multiply(multiply(D, transpose(B)), mdivide_left_ldlt(A, B)));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

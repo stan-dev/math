@@ -20,6 +20,6 @@ inline T determinant(const Eigen::Matrix<T, R, C> &m) {
   return m.determinant();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

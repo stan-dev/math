@@ -43,15 +43,15 @@ inline void cvodes_set_options(void *cvodes_mem, double rel_tol, double abs_tol,
   cvodes_check_flag(CVodeSetInitStep(cvodes_mem, init_step),
                     "CVodeSetInitStep");
 
-  long int max_err_test_fails = 20; // NOLINT(runtime/int)
+  long int max_err_test_fails = 20;  // NOLINT(runtime/int)
   cvodes_check_flag(CVodeSetMaxErrTestFails(cvodes_mem, max_err_test_fails),
                     "CVodeSetMaxErrTestFails");
 
-  long int max_conv_fails = 50; // NOLINT(runtime/int)
+  long int max_conv_fails = 50;  // NOLINT(runtime/int)
   cvodes_check_flag(CVodeSetMaxConvFails(cvodes_mem, max_conv_fails),
                     "CVodeSetMaxConvFails");
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -146,8 +146,8 @@ TEST(AgradRevMatrix, compute) {
   expected_mat = ldlt_double.matrixLDLT();
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++)
-      EXPECT_FLOAT_EQ(expected_mat(i, j), mat(i, j)) << "element (" << i << ", "
-                                                     << j << ")";
+      EXPECT_FLOAT_EQ(expected_mat(i, j), mat(i, j))
+          << "element (" << i << ", " << j << ")";
 
   // tests on A: [0, 0][0, 0]
   A << 0, 0, 0, 0;

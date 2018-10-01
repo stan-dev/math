@@ -63,6 +63,6 @@ inline typename return_type<T_y>::type std_normal_lpdf(const T_y &y) {
   return std_normal_lpdf<false>(y);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

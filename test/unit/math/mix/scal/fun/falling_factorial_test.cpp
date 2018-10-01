@@ -14,9 +14,9 @@ TEST(AgradFwdFallingFactorial, FvarVar_1stDeriv) {
   fvar<var> c = falling_factorial(a, 3);
 
   EXPECT_FLOAT_EQ(falling_factorial(5, 3), c.val_.val());
-  EXPECT_FLOAT_EQ(falling_factorial(5, 3) *
-                      (digamma(5 + 1) - digamma(5 + 1 - 3)),
-                  c.d_.val());
+  EXPECT_FLOAT_EQ(
+      falling_factorial(5, 3) * (digamma(5 + 1) - digamma(5 + 1 - 3)),
+      c.d_.val());
 
   AVEC y = createAVEC(a.val_, 3);
   VEC g;
@@ -39,9 +39,9 @@ TEST(AgradFwdFallingFactorial, FvarVar_2ndDeriv_x) {
   AVEC y = createAVEC(a.val_, 3);
   VEC g;
   c.d_.grad(y, g);
-  ASSERT_NEAR(falling_factorial(5, 3) *
-                  (pow((digamma(5 + 1) - digamma(5 + 1 - 3)), 2) -
-                   trigamma(5 + 1 - 3) + trigamma(5 + 1)),
+  ASSERT_NEAR(falling_factorial(5, 3)
+                  * (pow((digamma(5 + 1) - digamma(5 + 1 - 3)), 2)
+                     - trigamma(5 + 1 - 3) + trigamma(5 + 1)),
               g[0], 0.1);
 }
 
@@ -106,9 +106,9 @@ TEST(AgradFwdFallingFactorial, FvarFvarVar_2ndDeriv_x) {
   AVEC p = createAVEC(x.val_.val_, 3);
   VEC g;
   a.val_.d_.grad(p, g);
-  ASSERT_NEAR(falling_factorial(5, 3) *
-                  (pow((digamma(5 + 1) - digamma(5 + 1 - 3)), 2) -
-                   trigamma(5 + 1 - 3) + trigamma(5 + 1)),
+  ASSERT_NEAR(falling_factorial(5, 3)
+                  * (pow((digamma(5 + 1) - digamma(5 + 1 - 3)), 2)
+                     - trigamma(5 + 1 - 3) + trigamma(5 + 1)),
               g[0], 0.01);
   ASSERT_NEAR(0, g[1], 0.01);
 }
@@ -151,8 +151,8 @@ TEST(AgradFwdFallingFactorial, FvarFvarVar_3rdDeriv) {
 
 struct falling_factorial_fun {
   template <typename T>
-  inline typename boost::math::tools::promote_args<T>::type
-  operator()(const T arg1, int arg2) const {
+  inline typename boost::math::tools::promote_args<T>::type operator()(
+      const T arg1, int arg2) const {
     return falling_factorial(arg1, arg2);
   }
 };

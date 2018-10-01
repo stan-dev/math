@@ -14,6 +14,6 @@ inline double dot_self(const std::vector<double> &x) {
   return sum;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

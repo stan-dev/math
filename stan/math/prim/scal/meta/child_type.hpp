@@ -14,7 +14,10 @@ namespace math {
  * @tparam T type of container.
  */
 
-template <typename T> struct child_type { typedef double type; };
+template <typename T>
+struct child_type {
+  typedef double type;
+};
 
 /**
  * Specialization for template classes / structs.
@@ -31,7 +34,7 @@ struct child_type<T_struct<T_child>> {
   typedef T_child type;
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

@@ -33,7 +33,8 @@ inline int min(const std::vector<int> &x) {
  * @return Minimum coefficient value in the vector.
  * @tparam Type of values being compared and returned
  */
-template <typename T> inline T min(const std::vector<T> &x) {
+template <typename T>
+inline T min(const std::vector<T> &x) {
   if (x.size() == 0)
     return std::numeric_limits<T>::infinity();
   T min = x[0];
@@ -56,6 +57,6 @@ inline T min(const Eigen::Matrix<T, R, C> &m) {
   return m.minCoeff();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

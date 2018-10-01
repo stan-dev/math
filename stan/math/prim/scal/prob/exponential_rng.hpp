@@ -25,8 +25,8 @@ namespace math {
  * @throw std::domain_error if beta is nonpositive
  */
 template <typename T_inv, class RNG>
-inline typename VectorBuilder<true, double, T_inv>::type
-exponential_rng(const T_inv &beta, RNG &rng) {
+inline typename VectorBuilder<true, double, T_inv>::type exponential_rng(
+    const T_inv &beta, RNG &rng) {
   using boost::exponential_distribution;
   using boost::variate_generator;
 
@@ -47,6 +47,6 @@ exponential_rng(const T_inv &beta, RNG &rng) {
   return output.data();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

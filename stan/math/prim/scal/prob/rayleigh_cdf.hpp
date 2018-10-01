@@ -75,15 +75,15 @@ typename return_type<T_y, T_scale>::type rayleigh_cdf(const T_y &y,
     const T_partials_return exp_div_1m_exp = exp_val / (1.0 - exp_val);
 
     if (!is_constant_struct<T_y>::value)
-      ops_partials.edge1_.partials_[n] +=
-          y_dbl * inv_sigma_sqr * exp_div_1m_exp * cdf;
+      ops_partials.edge1_.partials_[n]
+          += y_dbl * inv_sigma_sqr * exp_div_1m_exp * cdf;
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge2_.partials_[n] -=
-          y_sqr * inv_sigma_sqr * inv_sigma[n] * exp_div_1m_exp * cdf;
+      ops_partials.edge2_.partials_[n]
+          -= y_sqr * inv_sigma_sqr * inv_sigma[n] * exp_div_1m_exp * cdf;
   }
   return ops_partials.build(cdf);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

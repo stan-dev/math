@@ -37,6 +37,6 @@ inline double log1p(double x) {
  */
 inline double log1p(int x) { return log1p(static_cast<double>(x)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

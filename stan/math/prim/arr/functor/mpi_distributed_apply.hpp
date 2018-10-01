@@ -23,7 +23,8 @@ namespace math {
  *
  * @tparam F type of functor with static distributed_apply method.
  */
-template <typename F> struct mpi_distributed_apply : public mpi_command {
+template <typename F>
+struct mpi_distributed_apply : public mpi_command {
   // declarations needed for boost.serialization (see
   // https://www.boost.org/doc/libs/1_66_0/libs/serialization/doc/index.html)
   friend class boost::serialization::access;
@@ -39,10 +40,10 @@ template <typename F> struct mpi_distributed_apply : public mpi_command {
   void run() const { F::distributed_apply(); }
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
-#define STAN_REGISTER_MPI_DISTRIBUTED_APPLY(APPLY_FUNCTOR)                     \
+#define STAN_REGISTER_MPI_DISTRIBUTED_APPLY(APPLY_FUNCTOR) \
   STAN_REGISTER_MPI_COMMAND(stan::math::mpi_distributed_apply<APPLY_FUNCTOR>)
 
 #endif

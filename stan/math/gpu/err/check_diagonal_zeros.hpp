@@ -42,7 +42,7 @@ inline void check_diagonal_zeros(const char *function, const char *name,
   }
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
 #endif

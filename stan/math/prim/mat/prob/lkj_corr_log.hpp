@@ -12,9 +12,9 @@ namespace math {
  * @deprecated use <code>lkj_corr_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_shape>
-typename boost::math::tools::promote_args<T_y, T_shape>::type
-lkj_corr_log(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y,
-             const T_shape &eta) {
+typename boost::math::tools::promote_args<T_y, T_shape>::type lkj_corr_log(
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y,
+    const T_shape &eta) {
   return lkj_corr_lpdf<propto, T_y, T_shape>(y, eta);
 }
 
@@ -28,6 +28,6 @@ lkj_corr_log(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y,
   return lkj_corr_lpdf<T_y, T_shape>(y, eta);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

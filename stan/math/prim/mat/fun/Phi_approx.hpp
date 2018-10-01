@@ -19,7 +19,8 @@ struct Phi_approx_fun {
    * @param x argument
    * @return aprpoximate value of Phi applied to argument.
    */
-  template <typename T> static inline T fun(const T &x) {
+  template <typename T>
+  static inline T fun(const T &x) {
     return Phi_approx(x);
   }
 };
@@ -35,12 +36,12 @@ struct Phi_approx_fun {
  * @return elementwise Phi_approx of container elements
  */
 template <typename T>
-inline typename apply_scalar_unary<Phi_approx_fun, T>::return_t
-Phi_approx(const T &x) {
+inline typename apply_scalar_unary<Phi_approx_fun, T>::return_t Phi_approx(
+    const T &x) {
   return apply_scalar_unary<Phi_approx_fun, T>::apply(x);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

@@ -67,8 +67,8 @@ inline Eigen::MatrixXd exp_action_chain_vd(double *Ad, double *Bd, const int &n,
       Av(i) = to_var(Ad[i]);
     }
     std::vector<stan::math::var> Avec(Av.data(), Av.data() + Av.size());
-    Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> expA =
-        matrix_exp(Av);
+    Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> expA
+        = matrix_exp(Av);
     std::vector<double> g;
     for (size_type i = 0; i < expA.size(); ++i) {
       stan::math::set_zero_all_adjoints_nested();
@@ -103,7 +103,7 @@ inline Eigen::MatrixXd exp_action_chain_vd(double *Ad, double *Bd, const int &n,
  */
 template <typename Ta, int N, typename Tb, int Cb>
 class matrix_exp_action_vari : public vari {
-public:
+ public:
   int n_;
   int B_cols_;
   int A_size_;
@@ -123,8 +123,12 @@ public:
    */
   matrix_exp_action_vari(const Eigen::Matrix<Ta, N, N> &A,
                          const Eigen::Matrix<Tb, N, Cb> &B, const double &t)
-      : vari(0.0), n_(A.rows()), B_cols_(B.cols()), A_size_(A.size()),
-        B_size_(B.size()), t_(t),
+      : vari(0.0),
+        n_(A.rows()),
+        B_cols_(B.cols()),
+        A_size_(A.size()),
+        B_size_(B.size()),
+        t_(t),
         Ad_(ChainableStack::instance().memalloc_.alloc_array<double>(A_size_)),
         Bd_(ChainableStack::instance().memalloc_.alloc_array<double>(B_size_)),
         variRefA_(
@@ -190,7 +194,7 @@ public:
  */
 template <int N, typename Tb, int Cb>
 class matrix_exp_action_vari<double, N, Tb, Cb> : public vari {
-public:
+ public:
   int n_;
   int B_cols_;
   int A_size_;
@@ -220,8 +224,12 @@ public:
    */
   matrix_exp_action_vari(const Eigen::Matrix<double, N, N> &A,
                          const Eigen::Matrix<Tb, N, Cb> &B, const double &t)
-      : vari(0.0), n_(A.rows()), B_cols_(B.cols()), A_size_(A.size()),
-        B_size_(B.size()), t_(t),
+      : vari(0.0),
+        n_(A.rows()),
+        B_cols_(B.cols()),
+        A_size_(A.size()),
+        B_size_(B.size()),
+        t_(t),
         Ad_(ChainableStack::instance().memalloc_.alloc_array<double>(A_size_)),
         Bd_(ChainableStack::instance().memalloc_.alloc_array<double>(B_size_)),
         variRefB_(
@@ -280,7 +288,7 @@ public:
  */
 template <typename Ta, int N, int Cb>
 class matrix_exp_action_vari<Ta, N, double, Cb> : public vari {
-public:
+ public:
   int n_;
   int B_cols_;
   int A_size_;
@@ -310,8 +318,12 @@ public:
    */
   matrix_exp_action_vari(const Eigen::Matrix<Ta, N, N> &A,
                          const Eigen::Matrix<double, N, Cb> &B, const double &t)
-      : vari(0.0), n_(A.rows()), B_cols_(B.cols()), A_size_(A.size()),
-        B_size_(B.size()), t_(t),
+      : vari(0.0),
+        n_(A.rows()),
+        B_cols_(B.cols()),
+        A_size_(A.size()),
+        B_size_(B.size()),
+        t_(t),
         Ad_(ChainableStack::instance().memalloc_.alloc_array<double>(A_size_)),
         Bd_(ChainableStack::instance().memalloc_.alloc_array<double>(B_size_)),
         variRefA_(
@@ -363,13 +375,13 @@ public:
  * @return exponential of At multiplies B
  */
 template <typename Ta, int N, typename Tb, int Cb>
-inline typename boost::enable_if_c<boost::is_same<Ta, var>::value ||
-                                       boost::is_same<Tb, var>::value,
+inline typename boost::enable_if_c<boost::is_same<Ta, var>::value
+                                       || boost::is_same<Tb, var>::value,
                                    Eigen::Matrix<var, N, Cb>>::type
 matrix_exp_action(const Eigen::Matrix<Ta, N, N> &A,
                   const Eigen::Matrix<Tb, N, Cb> &B, const double &t = 1.0) {
-  matrix_exp_action_vari<Ta, N, Tb, Cb> *baseVari =
-      new matrix_exp_action_vari<Ta, N, Tb, Cb>(A, B, t);
+  matrix_exp_action_vari<Ta, N, Tb, Cb> *baseVari
+      = new matrix_exp_action_vari<Ta, N, Tb, Cb>(A, B, t);
   Eigen::Matrix<var, N, Cb> expAB_v(A.rows(), B.cols());
   for (size_type i = 0; i < expAB_v.size(); ++i) {
     expAB_v.coeffRef(i).vi_ = baseVari->variRefexpAB_[i];
@@ -397,7 +409,7 @@ matrix_exp_multiply(const Eigen::Matrix<Ta, -1, -1> &A,
   return matrix_exp_action(A, B);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

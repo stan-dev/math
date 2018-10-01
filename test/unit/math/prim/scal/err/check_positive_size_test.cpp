@@ -12,13 +12,15 @@ TEST(ErrorHandlingScalar, CheckPositiveSize) {
 
   EXPECT_NO_THROW(check_positive_size(function, name, expr, 10));
 
-  expected_msg = "name must have a positive size, but is 0; "
-                 "dimension size expression = expr";
+  expected_msg
+      = "name must have a positive size, but is 0; "
+        "dimension size expression = expr";
   EXPECT_THROW_MSG(check_positive_size(function, name, expr, 0),
                    std::invalid_argument, expected_msg);
 
-  expected_msg = "name must have a positive size, but is -1; "
-                 "dimension size expression = expr";
+  expected_msg
+      = "name must have a positive size, but is -1; "
+        "dimension size expression = expr";
   EXPECT_THROW_MSG(check_positive_size(function, name, expr, -1),
                    std::invalid_argument, expected_msg);
 }
