@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/mat.hpp>
+#include <gtest/gtest.h>
 #include <stdexcept>
 #include <vector>
 
@@ -68,7 +68,7 @@ TEST(AgradMixMatrixHead, HeadRowVector4_fv) {
 
 TEST(AgradMixMatrixHead, HeadStdVector1_fv) {
   using stan::math::head;
-  std::vector<fvar<var>> v;
+  std::vector<fvar<var> > v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -76,7 +76,7 @@ TEST(AgradMixMatrixHead, HeadStdVector1_fv) {
 }
 TEST(AgradMixMatrixHead, HeadStdVector2_fv) {
   using stan::math::head;
-  std::vector<fvar<var>> v;
+  std::vector<fvar<var> > v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -84,7 +84,7 @@ TEST(AgradMixMatrixHead, HeadStdVector2_fv) {
 }
 TEST(AgradMixMatrixHead, HeadStdVector3_fv) {
   using stan::math::head;
-  std::vector<fvar<var>> v;
+  std::vector<fvar<var> > v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -92,11 +92,11 @@ TEST(AgradMixMatrixHead, HeadStdVector3_fv) {
 }
 TEST(AgradMixMatrixHead, HeadStdVector4_fv) {
   using stan::math::head;
-  std::vector<fvar<var>> v;
+  std::vector<fvar<var> > v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
-  std::vector<fvar<var>> v01 = head(v, 2);
+  std::vector<fvar<var> > v01 = head(v, 2);
   EXPECT_EQ(2U, v01.size());
   for (int n = 0; n < 2; ++n) {
     EXPECT_FLOAT_EQ(v[n].val_.val(), v01[n].val_.val());
@@ -164,7 +164,7 @@ TEST(AgradMixMatrixHead, HeadRowVector4_ffv) {
 
 TEST(AgradMixMatrixHead, HeadStdVector1_ffv) {
   using stan::math::head;
-  std::vector<fvar<fvar<var>>> v;
+  std::vector<fvar<fvar<var> > > v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -172,7 +172,7 @@ TEST(AgradMixMatrixHead, HeadStdVector1_ffv) {
 }
 TEST(AgradMixMatrixHead, HeadStdVector2_ffv) {
   using stan::math::head;
-  std::vector<fvar<fvar<var>>> v;
+  std::vector<fvar<fvar<var> > > v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -180,7 +180,7 @@ TEST(AgradMixMatrixHead, HeadStdVector2_ffv) {
 }
 TEST(AgradMixMatrixHead, HeadStdVector3_ffv) {
   using stan::math::head;
-  std::vector<fvar<fvar<var>>> v;
+  std::vector<fvar<fvar<var> > > v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
@@ -188,11 +188,11 @@ TEST(AgradMixMatrixHead, HeadStdVector3_ffv) {
 }
 TEST(AgradMixMatrixHead, HeadStdVector4_ffv) {
   using stan::math::head;
-  std::vector<fvar<fvar<var>>> v;
+  std::vector<fvar<fvar<var> > > v;
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
-  std::vector<fvar<fvar<var>>> v01 = head(v, 2);
+  std::vector<fvar<fvar<var> > > v01 = head(v, 2);
   EXPECT_EQ(2U, v01.size());
   for (int n = 0; n < 2; ++n) {
     EXPECT_FLOAT_EQ(v[n].val_.val_.val(), v01[n].val_.val_.val());

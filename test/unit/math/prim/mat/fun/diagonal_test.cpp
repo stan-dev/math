@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
 
 TEST(MathMatrix, diagonal) {
   stan::math::matrix_d m0;

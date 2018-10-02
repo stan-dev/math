@@ -1,8 +1,8 @@
-#include <gtest/gtest.h>
-#include <limits>
 #include <stan/math/rev/scal.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <limits>
 
 TEST(AgradRev, cos_var) {
   AVAR a = 0.49;
@@ -36,7 +36,8 @@ TEST(AgradRev, cos_boundry) {
 }
 
 struct cos_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0& arg1) const {
     return cos(arg1);
   }
 };

@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
@@ -218,14 +218,14 @@ TEST(AgradMixMatrixMean, fv_StdVector_1stDeriv) {
   using stan::math::mean;
   using stan::math::var;
 
-  std::vector<fvar<var>> x(0);
+  std::vector<fvar<var> > x(0);
   EXPECT_THROW(mean(x), std::invalid_argument);
   x.push_back(1.0);
   EXPECT_FLOAT_EQ(1.0, mean(x).val_.val());
   x.push_back(2.0);
   EXPECT_FLOAT_EQ(1.5, mean(x).val_.val());
 
-  std::vector<fvar<var>> y;
+  std::vector<fvar<var> > y;
   fvar<var> a = 1.0;
   a.d_ = 1.0;
   fvar<var> b = 2.0;
@@ -248,7 +248,7 @@ TEST(AgradMixMatrixMean, fv_StdVector_2ndDeriv) {
   using stan::math::mean;
   using stan::math::var;
 
-  std::vector<fvar<var>> y;
+  std::vector<fvar<var> > y;
   fvar<var> a = 1.0;
   a.d_ = 1.0;
   fvar<var> b = 2.0;
@@ -279,7 +279,7 @@ TEST(AgradMixMatrixMean, ffv_vector_1stDeriv) {
   v1(1).d_ = 1.0;
   v1(2).d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = mean(d1);
   EXPECT_FLOAT_EQ(97.0 / 3.0, output.val_.val().val());
   EXPECT_FLOAT_EQ(0.0, output.d_.val().val());
@@ -311,7 +311,7 @@ TEST(AgradMixMatrixMean, ffv_vector_2ndDeriv_1) {
   v1(1).d_ = 1.0;
   v1(2).d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = mean(v1);
 
   AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
@@ -337,7 +337,7 @@ TEST(AgradMixMatrixMean, ffv_vector_2ndDeriv_2) {
   v1(1).d_ = 1.0;
   v1(2).d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = mean(v1);
 
   AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
@@ -366,7 +366,7 @@ TEST(AgradMixMatrixMean, ffv_vector_3rdDeriv) {
   v1(1).val_.d_ = 1.0;
   v1(2).val_.d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = mean(v1);
 
   AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
@@ -402,7 +402,7 @@ TEST(AgradMixMatrixMean, ffv_rowvector_1stDeriv) {
   v1(1).d_ = 1.0;
   v1(2).d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = mean(d1);
   EXPECT_FLOAT_EQ(97.0 / 3.0, output.val_.val().val());
   EXPECT_FLOAT_EQ(0.0, output.d_.val().val());
@@ -434,7 +434,7 @@ TEST(AgradMixMatrixMean, ffv_rowvector_2ndDeriv_1) {
   v1(1).d_ = 1.0;
   v1(2).d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = mean(v1);
 
   AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
@@ -460,7 +460,7 @@ TEST(AgradMixMatrixMean, ffv_rowvector_2ndDeriv_2) {
   v1(1).d_ = 1.0;
   v1(2).d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = mean(v1);
 
   AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
@@ -489,7 +489,7 @@ TEST(AgradMixMatrixMean, ffv_rowvector_3rdDeriv) {
   v1(1).val_.d_ = 1.0;
   v1(2).val_.d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = mean(v1);
 
   AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
@@ -525,7 +525,7 @@ TEST(AgradMixMatrixMean, ffv_matrix_1stDeriv) {
   v1(0, 1).d_ = 1.0;
   v1(0, 2).d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = mean(d1);
   EXPECT_FLOAT_EQ(97.0 / 3.0, output.val_.val().val());
   EXPECT_FLOAT_EQ(0.0, output.d_.val().val());
@@ -558,7 +558,7 @@ TEST(AgradMixMatrixMean, ffv_matrix_2ndDeriv_1) {
   v1(0, 1).d_ = 1.0;
   v1(0, 2).d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = mean(v1);
 
   AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
@@ -585,7 +585,7 @@ TEST(AgradMixMatrixMean, ffv_matrix_2ndDeriv_2) {
   v1(0, 1).d_ = 1.0;
   v1(0, 2).d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = mean(v1);
 
   AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
@@ -615,7 +615,7 @@ TEST(AgradMixMatrixMean, ffv_matrix_3rdDeriv) {
   v1(1).val_.d_ = 1.0;
   v1(2).val_.d_ = 1.0;
 
-  fvar<fvar<var>> output;
+  fvar<fvar<var> > output;
   output = mean(v1);
 
   AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
@@ -641,21 +641,21 @@ TEST(AgradMixMatrixMean, ffv_StdVector_1stDeriv) {
   using stan::math::mean;
   using stan::math::var;
 
-  std::vector<fvar<fvar<var>>> x(0);
+  std::vector<fvar<fvar<var> > > x(0);
   EXPECT_THROW(mean(x), std::invalid_argument);
   x.push_back(1.0);
   EXPECT_FLOAT_EQ(1.0, mean(x).val_.val().val());
   x.push_back(2.0);
   EXPECT_FLOAT_EQ(1.5, mean(x).val_.val().val());
 
-  std::vector<fvar<fvar<var>>> y;
-  fvar<fvar<var>> a = 1.0;
+  std::vector<fvar<fvar<var> > > y;
+  fvar<fvar<var> > a = 1.0;
   a.d_ = 1.0;
-  fvar<fvar<var>> b = 2.0;
+  fvar<fvar<var> > b = 2.0;
   b.d_ = 1.0;
   y.push_back(a);
   y.push_back(b);
-  fvar<fvar<var>> f = mean(y);
+  fvar<fvar<var> > f = mean(y);
 
   EXPECT_FLOAT_EQ(1.5, f.val_.val().val());
   EXPECT_FLOAT_EQ(1.0, f.d_.val().val());
@@ -671,14 +671,14 @@ TEST(AgradMixMatrixMean, ffv_StdVector_2ndDeriv_1) {
   using stan::math::mean;
   using stan::math::var;
 
-  std::vector<fvar<fvar<var>>> y;
-  fvar<fvar<var>> a = 1.0;
+  std::vector<fvar<fvar<var> > > y;
+  fvar<fvar<var> > a = 1.0;
   a.d_ = 1.0;
-  fvar<fvar<var>> b = 2.0;
+  fvar<fvar<var> > b = 2.0;
   b.d_ = 1.0;
   y.push_back(a);
   y.push_back(b);
-  fvar<fvar<var>> f = mean(y);
+  fvar<fvar<var> > f = mean(y);
 
   AVEC q = createAVEC(a.val().val(), b.val().val());
   VEC h;
@@ -692,14 +692,14 @@ TEST(AgradMixMatrixMean, ffv_StdVector_2ndDeriv_2) {
   using stan::math::mean;
   using stan::math::var;
 
-  std::vector<fvar<fvar<var>>> y;
-  fvar<fvar<var>> a = 1.0;
+  std::vector<fvar<fvar<var> > > y;
+  fvar<fvar<var> > a = 1.0;
   a.d_ = 1.0;
-  fvar<fvar<var>> b = 2.0;
+  fvar<fvar<var> > b = 2.0;
   b.d_ = 1.0;
   y.push_back(a);
   y.push_back(b);
-  fvar<fvar<var>> f = mean(y);
+  fvar<fvar<var> > f = mean(y);
 
   AVEC q = createAVEC(a.val().val(), b.val().val());
   VEC h;
@@ -712,17 +712,17 @@ TEST(AgradMixMatrixMean, ffv_StdVector_3rdDeriv) {
   using stan::math::mean;
   using stan::math::var;
 
-  std::vector<fvar<fvar<var>>> y;
-  fvar<fvar<var>> a = 1.0;
+  std::vector<fvar<fvar<var> > > y;
+  fvar<fvar<var> > a = 1.0;
   a.d_.val_ = 1.0;
   a.val_.d_ = 1.0;
-  fvar<fvar<var>> b = 2.0;
+  fvar<fvar<var> > b = 2.0;
   b.d_.val_ = 1.0;
   b.val_.d_ = 1.0;
 
   y.push_back(a);
   y.push_back(b);
-  fvar<fvar<var>> f = mean(y);
+  fvar<fvar<var> > f = mean(y);
 
   AVEC q = createAVEC(a.val().val(), b.val().val());
   VEC h;

@@ -1,6 +1,6 @@
-#include <boost/math/special_functions/digamma.hpp>
-#include <gtest/gtest.h>
 #include <stan/math/fwd/scal.hpp>
+#include <gtest/gtest.h>
+#include <boost/math/special_functions/digamma.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdDigamma, Fvar) {
@@ -18,18 +18,18 @@ TEST(AgradFwdDigamma, FvarFvarDouble) {
   using boost::math::digamma;
   using stan::math::fvar;
 
-  fvar<fvar<double>> x;
+  fvar<fvar<double> > x;
   x.val_.val_ = 0.5;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<double>> a = digamma(x);
+  fvar<fvar<double> > a = digamma(x);
 
   EXPECT_FLOAT_EQ(digamma(0.5), a.val_.val_);
   EXPECT_FLOAT_EQ(4.9348022005446793094, a.val_.d_);
   EXPECT_FLOAT_EQ(0, a.d_.val_);
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 
-  fvar<fvar<double>> y;
+  fvar<fvar<double> > y;
   y.val_.val_ = 0.5;
   y.d_.val_ = 1.0;
 
@@ -41,7 +41,8 @@ TEST(AgradFwdDigamma, FvarFvarDouble) {
 }
 
 struct digamma_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0& arg1) const {
     return digamma(arg1);
   }
 };

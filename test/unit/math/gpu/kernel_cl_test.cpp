@@ -1,14 +1,14 @@
 #ifdef STAN_OPENCL
 
-#include <CL/cl.hpp>
-#include <algorithm>
-#include <gtest/gtest.h>
-#include <stan/math/gpu/copy.hpp>
-#include <stan/math/gpu/kernel_cl.hpp>
-#include <stan/math/gpu/matrix_gpu.hpp>
-#include <stan/math/gpu/opencl_context.hpp>
-#include <stan/math/gpu/transpose.hpp>
 #include <stan/math/prim/mat.hpp>
+#include <CL/cl.hpp>
+#include <stan/math/gpu/opencl_context.hpp>
+#include <stan/math/gpu/kernel_cl.hpp>
+#include <stan/math/gpu/copy.hpp>
+#include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/gpu/transpose.hpp>
+#include <gtest/gtest.h>
+#include <algorithm>
 
 TEST(MathGpu, make_kernel) {
   stan::math::matrix_d m0(3, 3);

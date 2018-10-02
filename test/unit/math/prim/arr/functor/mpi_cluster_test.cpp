@@ -7,8 +7,8 @@
 #include <stan/math/prim/arr.hpp>
 
 #include <iostream>
-#include <memory>
 #include <vector>
+#include <memory>
 
 TEST(mpi_cluster, chunk_mapping) {
   boost::mpi::communicator world;
@@ -115,9 +115,9 @@ struct shared_secret : public stan::math::mpi_command {
 
   friend class boost::serialization::access;
   template <class Archive>
-  void serialize(Archive &ar, const unsigned int version) {
-    ar &BOOST_SERIALIZATION_BASE_OBJECT_NVP(stan::math::mpi_command);
-    ar &common_;
+  void serialize(Archive& ar, const unsigned int version) {
+    ar& BOOST_SERIALIZATION_BASE_OBJECT_NVP(stan::math::mpi_command);
+    ar& common_;
   }
 
   void run() const {
@@ -129,7 +129,7 @@ struct shared_secret : public stan::math::mpi_command {
     boost::mpi::gather(world, worker_secret, secrets, 0);
   }
 
-private:
+ private:
   double common_;
 };
 

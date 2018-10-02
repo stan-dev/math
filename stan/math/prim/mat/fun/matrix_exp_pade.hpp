@@ -17,7 +17,7 @@ namespace math {
  * @return Matrix exponential of input matrix.
  */
 template <typename MatrixType>
-MatrixType matrix_exp_pade(const MatrixType &arg) {
+MatrixType matrix_exp_pade(const MatrixType& arg) {
   MatrixType U, V;
   int squarings;
   Eigen::matrix_exp_computeUV<MatrixType>::run(arg, U, V, squarings, arg(0, 0));
@@ -27,10 +27,10 @@ MatrixType matrix_exp_pade(const MatrixType &arg) {
   MatrixType denom = -U + V;
   MatrixType pade_approximation = denom.partialPivLu().solve(numer);
   for (int i = 0; i < squarings; ++i)
-    pade_approximation *= pade_approximation; // undo scaling by
-                                              // repeated squaring
+    pade_approximation *= pade_approximation;  // undo scaling by
+                                               // repeated squaring
   return pade_approximation;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

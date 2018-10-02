@@ -1,12 +1,12 @@
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <stan/math/prim/mat.hpp>
 #include <string>
 
 using stan::math::check_less_or_equal;
 
 TEST(ErrorHandlingScalar, CheckLessOrEqual_Matrix) {
-  const char *function = "check_less_or_equal";
+  const char* function = "check_less_or_equal";
   double x;
   double high;
   Eigen::Matrix<double, Eigen::Dynamic, 1> x_vec;
@@ -84,7 +84,7 @@ TEST(ErrorHandlingScalar, CheckLessOrEqual_Matrix) {
 }
 
 TEST(ErrorHandlingScalar, CheckLessOrEqual_Matrix_one_indexed_message) {
-  const char *function = "check_less";
+  const char* function = "check_less";
   double x;
   double high;
   Eigen::Matrix<double, Eigen::Dynamic, 1> x_vec;
@@ -100,7 +100,7 @@ TEST(ErrorHandlingScalar, CheckLessOrEqual_Matrix_one_indexed_message) {
   try {
     check_less_or_equal(function, "x", x_vec, high);
     FAIL() << "should have thrown";
-  } catch (std::domain_error &e) {
+  } catch (std::domain_error& e) {
     message = e.what();
   } catch (...) {
     FAIL() << "threw the wrong error";
@@ -115,7 +115,7 @@ TEST(ErrorHandlingScalar, CheckLessOrEqual_Matrix_one_indexed_message) {
   try {
     check_less_or_equal(function, "x", x_vec, high_vec);
     FAIL() << "should have thrown";
-  } catch (std::domain_error &e) {
+  } catch (std::domain_error& e) {
     message = e.what();
   } catch (...) {
     FAIL() << "threw the wrong error";
@@ -130,19 +130,19 @@ TEST(ErrorHandlingScalar, CheckLessOrEqual_Matrix_one_indexed_message) {
   try {
     check_less_or_equal(function, "x", x, high_vec);
     FAIL() << "should have thrown";
-  } catch (std::domain_error &e) {
+  } catch (std::domain_error& e) {
     message = e.what();
   } catch (...) {
     FAIL() << "threw the wrong error";
   }
 
-  EXPECT_EQ(std::string::npos, message.find("[")) << "no index provided"
-                                                  << std::endl
-                                                  << message;
+  EXPECT_EQ(std::string::npos, message.find("["))
+      << "no index provided" << std::endl
+      << message;
 }
 
 TEST(ErrorHandlingScalar, CheckLessOrEqual_nan) {
-  const char *function = "check_less_or_equal";
+  const char* function = "check_less_or_equal";
   double nan = std::numeric_limits<double>::quiet_NaN();
   Eigen::Matrix<double, Eigen::Dynamic, 1> x_vec(3);
   Eigen::Matrix<double, Eigen::Dynamic, 1> low_vec(3);

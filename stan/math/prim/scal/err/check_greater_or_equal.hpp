@@ -1,20 +1,21 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_CHECK_GREATER_OR_EQUAL_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_GREATER_OR_EQUAL_HPP
 
-#include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/scal/err/domain_error_vec.hpp>
-#include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/is_vector_like.hpp>
+#include <stan/math/prim/scal/err/domain_error_vec.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <string>
 
 namespace stan {
 namespace math {
 
 namespace {
-template <typename T_y, typename T_low, bool is_vec> struct greater_or_equal {
-  static void check(const char *function, const char *name, const T_y &y,
-                    const T_low &low) {
+template <typename T_y, typename T_low, bool is_vec>
+struct greater_or_equal {
+  static void check(const char* function, const char* name, const T_y& y,
+                    const T_low& low) {
     using stan::length;
     scalar_seq_view<T_low> low_vec(low);
     for (size_t n = 0; n < length(low); n++) {
@@ -31,8 +32,8 @@ template <typename T_y, typename T_low, bool is_vec> struct greater_or_equal {
 
 template <typename T_y, typename T_low>
 struct greater_or_equal<T_y, T_low, true> {
-  static void check(const char *function, const char *name, const T_y &y,
-                    const T_low &low) {
+  static void check(const char* function, const char* name, const T_y& y,
+                    const T_low& low) {
     using stan::get;
     using stan::length;
     scalar_seq_view<T_low> low_vec(low);
@@ -47,7 +48,7 @@ struct greater_or_equal<T_y, T_low, true> {
     }
   }
 };
-} // namespace
+}  // namespace
 
 /**
  * Check if <code>y</code> is greater or equal
@@ -68,11 +69,11 @@ struct greater_or_equal<T_y, T_low, true> {
  *   if any element of y or low is NaN.
  */
 template <typename T_y, typename T_low>
-inline void check_greater_or_equal(const char *function, const char *name,
-                                   const T_y &y, const T_low &low) {
+inline void check_greater_or_equal(const char* function, const char* name,
+                                   const T_y& y, const T_low& low) {
   greater_or_equal<T_y, T_low, is_vector_like<T_y>::value>::check(function,
                                                                   name, y, low);
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

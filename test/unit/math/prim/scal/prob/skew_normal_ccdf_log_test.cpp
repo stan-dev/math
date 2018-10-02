@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/scal.hpp>
+#include <gtest/gtest.h>
 
 TEST(ProbSkewNormal, ccdf_log_matches_lccdf) {
   double y = 0.8;

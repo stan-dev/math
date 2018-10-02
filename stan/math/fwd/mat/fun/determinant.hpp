@@ -1,22 +1,22 @@
 #ifndef STAN_MATH_FWD_MAT_FUN_DETERMINANT_HPP
 #define STAN_MATH_FWD_MAT_FUN_DETERMINANT_HPP
 
-#include <boost/math/tools/promotion.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/mat/fun/inverse.hpp>
-#include <stan/math/fwd/mat/fun/multiply.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/inverse.hpp>
+#include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/fun/multiply.hpp>
+#include <stan/math/fwd/mat/fun/multiply.hpp>
+#include <stan/math/prim/mat/fun/inverse.hpp>
+#include <stan/math/fwd/mat/fun/inverse.hpp>
+#include <stan/math/prim/mat/err/check_square.hpp>
+#include <boost/math/tools/promotion.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
 
 template <typename T, int R, int C>
-inline fvar<T> determinant(const Eigen::Matrix<fvar<T>, R, C> &m) {
+inline fvar<T> determinant(const Eigen::Matrix<fvar<T>, R, C>& m) {
   check_square("determinant", "m", m);
   Eigen::Matrix<T, R, C> m_deriv(m.rows(), m.cols());
   Eigen::Matrix<T, R, C> m_val(m.rows(), m.cols());
@@ -39,6 +39,6 @@ inline fvar<T> determinant(const Eigen::Matrix<fvar<T>, R, C> &m) {
   return result;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

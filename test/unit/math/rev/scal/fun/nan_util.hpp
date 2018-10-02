@@ -1,14 +1,14 @@
 #ifndef TEST__UNIT_AGRAD_REV__NAN_UTIL_HPP
 #define TEST__UNIT_AGRAD_REV__NAN_UTIL_HPP
 
+#include <test/unit/math/rev/arr/fun/util.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <test/unit/math/rev/arr/fun/util.hpp>
 
 template <typename F>
-void test_nan_vd(const F &f, const double &arg1, const double &arg2,
-                 const bool &throws, const bool &is_grad_nan) {
+void test_nan_vd(const F& f, const double& arg1, const double& arg2,
+                 const bool& throws, const bool& is_grad_nan) {
   stan::math::var res;
   stan::math::var arg1_v = arg1;
 
@@ -33,8 +33,8 @@ void test_nan_vd(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_dv(const F &f, const double &arg1, const double &arg2,
-                 const bool &throws, const bool &is_grad_nan) {
+void test_nan_dv(const F& f, const double& arg1, const double& arg2,
+                 const bool& throws, const bool& is_grad_nan) {
   stan::math::var res;
   stan::math::var arg2_v = arg2;
 
@@ -59,8 +59,8 @@ void test_nan_dv(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_vv(const F &f, const double &arg1, const double &arg2,
-                 const bool &throws, const bool &is_grad_nan) {
+void test_nan_vv(const F& f, const double& arg1, const double& arg2,
+                 const bool& throws, const bool& is_grad_nan) {
   stan::math::var res;
   stan::math::var arg1_v = arg1;
   stan::math::var arg2_v = arg2;
@@ -88,8 +88,8 @@ void test_nan_vv(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan(const F &f, const double &arg1, const double &arg2,
-              const bool &throws, const bool &is_grad_nan) {
+void test_nan(const F& f, const double& arg1, const double& arg2,
+              const bool& throws, const bool& is_grad_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   test_nan_vd(f, nan, arg2, throws, is_grad_nan);
   test_nan_vd(f, arg1, nan, throws, is_grad_nan);
@@ -103,8 +103,8 @@ void test_nan(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_v(const F &f, const double &arg1, const bool &throws,
-                const bool &is_grad_nan) {
+void test_nan_v(const F& f, const double& arg1, const bool& throws,
+                const bool& is_grad_nan) {
   stan::math::var res;
   stan::math::var arg1_v = arg1;
   if (throws) {
@@ -125,15 +125,15 @@ void test_nan_v(const F &f, const double &arg1, const bool &throws,
 }
 
 template <typename F>
-void test_nan(const F &f, const bool &throws, const bool &is_grad_nan) {
+void test_nan(const F& f, const bool& throws, const bool& is_grad_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   test_nan_v(f, nan, throws, is_grad_nan);
 }
 
 template <typename F>
-void test_nan_vvv(const F &f, const double &arg1, const double &arg2,
-                  const double &arg3, const bool &throws,
-                  const bool &is_grad_nan) {
+void test_nan_vvv(const F& f, const double& arg1, const double& arg2,
+                  const double& arg3, const bool& throws,
+                  const bool& is_grad_nan) {
   stan::math::var res;
   stan::math::var arg1_v = arg1;
   stan::math::var arg2_v = arg2;
@@ -164,9 +164,9 @@ void test_nan_vvv(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_dvv(const F &f, const double &arg1, const double &arg2,
-                  const double &arg3, const bool &throws,
-                  const bool &is_grad_nan) {
+void test_nan_dvv(const F& f, const double& arg1, const double& arg2,
+                  const double& arg3, const bool& throws,
+                  const bool& is_grad_nan) {
   stan::math::var res;
   stan::math::var arg2_v = arg2;
   stan::math::var arg3_v = arg3;
@@ -194,9 +194,9 @@ void test_nan_dvv(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_vdv(const F &f, const double &arg1, const double &arg2,
-                  const double &arg3, const bool &throws,
-                  const bool &is_grad_nan) {
+void test_nan_vdv(const F& f, const double& arg1, const double& arg2,
+                  const double& arg3, const bool& throws,
+                  const bool& is_grad_nan) {
   stan::math::var res;
   stan::math::var arg1_v = arg1;
   stan::math::var arg3_v = arg3;
@@ -225,9 +225,9 @@ void test_nan_vdv(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_vvd(const F &f, const double &arg1, const double &arg2,
-                  const double &arg3, const bool &throws,
-                  const bool &is_grad_nan) {
+void test_nan_vvd(const F& f, const double& arg1, const double& arg2,
+                  const double& arg3, const bool& throws,
+                  const bool& is_grad_nan) {
   stan::math::var res;
   stan::math::var arg1_v = arg1;
   stan::math::var arg2_v = arg2;
@@ -256,9 +256,9 @@ void test_nan_vvd(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_ddv(const F &f, const double &arg1, const double &arg2,
-                  const double &arg3, const bool &throws,
-                  const bool &is_grad_nan) {
+void test_nan_ddv(const F& f, const double& arg1, const double& arg2,
+                  const double& arg3, const bool& throws,
+                  const bool& is_grad_nan) {
   stan::math::var res;
   stan::math::var arg3_v = arg3;
 
@@ -285,9 +285,9 @@ void test_nan_ddv(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_dvd(const F &f, const double &arg1, const double &arg2,
-                  const double &arg3, const bool &throws,
-                  const bool &is_grad_nan) {
+void test_nan_dvd(const F& f, const double& arg1, const double& arg2,
+                  const double& arg3, const bool& throws,
+                  const bool& is_grad_nan) {
   stan::math::var res;
   stan::math::var arg2_v = arg2;
 
@@ -314,9 +314,9 @@ void test_nan_dvd(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_vdd(const F &f, const double &arg1, const double &arg2,
-                  const double &arg3, const bool &throws,
-                  const bool &is_grad_nan) {
+void test_nan_vdd(const F& f, const double& arg1, const double& arg2,
+                  const double& arg3, const bool& throws,
+                  const bool& is_grad_nan) {
   stan::math::var res;
   stan::math::var arg1_v = arg1;
 
@@ -342,8 +342,8 @@ void test_nan_vdd(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan(const F &f, const double &arg1, const double &arg2,
-              const double &arg3, const bool &throws, const bool &is_grad_nan) {
+void test_nan(const F& f, const double& arg1, const double& arg2,
+              const double& arg3, const bool& throws, const bool& is_grad_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   test_nan_vvv(f, nan, arg2, arg3, throws, is_grad_nan);
   test_nan_vvv(f, arg1, nan, arg3, throws, is_grad_nan);

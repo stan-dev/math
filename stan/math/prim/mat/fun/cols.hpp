@@ -17,10 +17,10 @@ namespace math {
  * @return Number of columns.
  */
 template <typename T, int R, int C>
-inline int cols(const Eigen::Matrix<T, R, C> &m) {
+inline int cols(const Eigen::Matrix<T, R, C>& m) {
   return m.cols();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

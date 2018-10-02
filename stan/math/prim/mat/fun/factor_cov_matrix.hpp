@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_FACTOR_COV_MATRIX_HPP
 #define STAN_MATH_PRIM_MAT_FUN_FACTOR_COV_MATRIX_HPP
 
-#include <cstddef>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/factor_U.hpp>
+#include <cstddef>
 
 namespace stan {
 namespace math {
@@ -22,9 +22,9 @@ namespace math {
  */
 template <typename T>
 bool factor_cov_matrix(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &Sigma,
-    Eigen::Array<T, Eigen::Dynamic, 1> &CPCs,
-    Eigen::Array<T, Eigen::Dynamic, 1> &sds) {
+    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
+    Eigen::Array<T, Eigen::Dynamic, 1>& CPCs,
+    Eigen::Array<T, Eigen::Dynamic, 1>& sds) {
   size_t K = sds.rows();
 
   sds = Sigma.diagonal().array();
@@ -34,12 +34,12 @@ bool factor_cov_matrix(
 
   Eigen::DiagonalMatrix<T, Eigen::Dynamic> D(K);
   D.diagonal() = sds.inverse();
-  sds = sds.log(); // now unbounded
+  sds = sds.log();  // now unbounded
 
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> R = D * Sigma * D;
   // to hopefully prevent pivoting due to floating point error
   R.diagonal().setOnes();
-  Eigen::LDLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>> ldlt;
+  Eigen::LDLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ldlt;
   ldlt = R.ldlt();
   if (!ldlt.isPositive())
     return false;
@@ -48,8 +48,8 @@ bool factor_cov_matrix(
   return true;
 }
 
-} // namespace math
+}  // namespace math
 
-} // namespace stan
+}  // namespace stan
 
 #endif

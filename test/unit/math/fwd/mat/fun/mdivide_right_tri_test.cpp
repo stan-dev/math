@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
+#include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixMdivideRightTri, matrix_fd_matrix_fd_lower) {
   using stan::math::matrix_fd;

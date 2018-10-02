@@ -1,11 +1,11 @@
-#include <gtest/gtest.h>
 #include <stan/math/rev/arr.hpp>
-#include <string>
+#include <gtest/gtest.h>
+#include <test/unit/util.hpp>
 #include <test/unit/math/prim/arr/functor/harmonic_oscillator.hpp>
 #include <test/unit/math/prim/arr/functor/mock_ode_functor.hpp>
 #include <test/unit/math/prim/arr/functor/mock_throwing_ode_functor.hpp>
-#include <test/unit/util.hpp>
 #include <vector>
+#include <string>
 
 struct StanAgradRevOde : public ::testing::Test {
   void SetUp() { stan::math::recover_memory(); }
@@ -67,7 +67,7 @@ TEST_F(StanAgradRevOde, decouple_states_dv) {
       mock_ode, y0, theta, x, x_int, &msgs);
 
   size_t k = 0;
-  std::vector<std::vector<double>> ys_coupled(T);
+  std::vector<std::vector<double> > ys_coupled(T);
   for (size_t t = 0; t < T; t++) {
     std::vector<double> coupled_state(coupled_system.size(), 0.0);
     for (size_t n = 0; n < coupled_system.size(); n++)
@@ -75,7 +75,7 @@ TEST_F(StanAgradRevOde, decouple_states_dv) {
     ys_coupled[t] = coupled_state;
   }
 
-  std::vector<std::vector<var>> ys;
+  std::vector<std::vector<var> > ys;
   ys = coupled_system.decouple_states(ys_coupled);
 
   ASSERT_EQ(T, ys.size());
@@ -241,7 +241,7 @@ TEST_F(StanAgradRevOde, decouple_states_vd) {
       mock_ode, y0, theta, x, x_int, &msgs);
 
   size_t k = 0;
-  std::vector<std::vector<double>> ys_coupled(T);
+  std::vector<std::vector<double> > ys_coupled(T);
   for (size_t t = 0; t < T; t++) {
     std::vector<double> coupled_state(coupled_system.size(), 0.0);
     for (size_t n = 0; n < coupled_system.size(); n++)
@@ -249,7 +249,7 @@ TEST_F(StanAgradRevOde, decouple_states_vd) {
     ys_coupled[t] = coupled_state;
   }
 
-  std::vector<std::vector<var>> ys;
+  std::vector<std::vector<var> > ys;
   ys = coupled_system.decouple_states(ys_coupled);
 
   ASSERT_EQ(T, ys.size());
@@ -392,8 +392,8 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
   std::vector<double> theta_double(1);
   theta_double[0] = 0.15;
 
-  std::vector<double> dy_dt_base =
-      harm_osc(0.0, y0_double, theta_double, x, x_int, &msgs);
+  std::vector<double> dy_dt_base
+      = harm_osc(0.0, y0_double, theta_double, x, x_int, &msgs);
 
   EXPECT_FLOAT_EQ(dy_dt_base[0], dy_dt[0]);
   EXPECT_FLOAT_EQ(dy_dt_base[1], dy_dt[1]);
@@ -422,7 +422,7 @@ TEST_F(StanAgradRevOde, decouple_states_vv) {
 
   size_t T = 10;
   size_t k = 0;
-  std::vector<std::vector<double>> ys_coupled(T);
+  std::vector<std::vector<double> > ys_coupled(T);
   for (size_t t = 0; t < T; t++) {
     std::vector<double> coupled_state(coupled_system.size(), 0.0);
     for (size_t n = 0; n < coupled_system.size(); n++)
@@ -430,7 +430,7 @@ TEST_F(StanAgradRevOde, decouple_states_vv) {
     ys_coupled[t] = coupled_state;
   }
 
-  std::vector<std::vector<var>> ys;
+  std::vector<std::vector<var> > ys;
   ys = coupled_system.decouple_states(ys_coupled);
 
   ASSERT_EQ(T, ys.size());

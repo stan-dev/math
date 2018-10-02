@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/scal.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(ProbInternalMath, gradF32_fd1) {
@@ -181,14 +181,14 @@ TEST(ProbInternalMath, gradF32_fd6) {
 TEST(ProbInternalMath, gradF32_ffd_2ndderiv1) {
   using stan::math::fvar;
 
-  fvar<fvar<double>> a = 1.0;
+  fvar<fvar<double> > a = 1.0;
   a.d_ = 1.0;
-  fvar<fvar<double>> b = 31.0;
-  fvar<fvar<double>> c = -27.0;
-  fvar<fvar<double>> d = 19.0;
-  fvar<fvar<double>> e = -41.0;
-  fvar<fvar<double>> z = 1.0;
-  fvar<fvar<double>> g[6];
+  fvar<fvar<double> > b = 31.0;
+  fvar<fvar<double> > c = -27.0;
+  fvar<fvar<double> > d = 19.0;
+  fvar<fvar<double> > e = -41.0;
+  fvar<fvar<double> > z = 1.0;
+  fvar<fvar<double> > g[6];
 
   stan::math::grad_F32(g, a, b, c, d, e, z);
 
@@ -211,14 +211,14 @@ TEST(ProbInternalMath, gradF32_ffd_2ndderiv1) {
 TEST(ProbInternalMath, gradF32_ffd_2ndderiv2) {
   using stan::math::fvar;
 
-  fvar<fvar<double>> a = 1.0;
-  fvar<fvar<double>> b = 31.0;
+  fvar<fvar<double> > a = 1.0;
+  fvar<fvar<double> > b = 31.0;
   b.d_ = 1.0;
-  fvar<fvar<double>> c = -27.0;
-  fvar<fvar<double>> d = 19.0;
-  fvar<fvar<double>> e = -41.0;
-  fvar<fvar<double>> z = 1.0;
-  fvar<fvar<double>> g[6];
+  fvar<fvar<double> > c = -27.0;
+  fvar<fvar<double> > d = 19.0;
+  fvar<fvar<double> > e = -41.0;
+  fvar<fvar<double> > z = 1.0;
+  fvar<fvar<double> > g[6];
 
   stan::math::grad_F32(g, a, b, c, d, e, z);
 
@@ -241,14 +241,14 @@ TEST(ProbInternalMath, gradF32_ffd_2ndderiv2) {
 TEST(ProbInternalMath, gradF32_ffd_2ndderiv3) {
   using stan::math::fvar;
 
-  fvar<fvar<double>> a = 1.0;
-  fvar<fvar<double>> b = 31.0;
-  fvar<fvar<double>> c = -27.0;
+  fvar<fvar<double> > a = 1.0;
+  fvar<fvar<double> > b = 31.0;
+  fvar<fvar<double> > c = -27.0;
   c.d_ = 1.0;
-  fvar<fvar<double>> d = 19.0;
-  fvar<fvar<double>> e = -41.0;
-  fvar<fvar<double>> z = 1.0;
-  fvar<fvar<double>> g[6];
+  fvar<fvar<double> > d = 19.0;
+  fvar<fvar<double> > e = -41.0;
+  fvar<fvar<double> > z = 1.0;
+  fvar<fvar<double> > g[6];
 
   stan::math::grad_F32(g, a, b, c, d, e, z);
 
@@ -269,14 +269,14 @@ TEST(ProbInternalMath, gradF32_ffd_2ndderiv3) {
 TEST(ProbInternalMath, gradF32_ffd_2ndderiv4) {
   using stan::math::fvar;
 
-  fvar<fvar<double>> a = 1.0;
-  fvar<fvar<double>> b = 31.0;
-  fvar<fvar<double>> c = -27.0;
-  fvar<fvar<double>> d = 19.0;
+  fvar<fvar<double> > a = 1.0;
+  fvar<fvar<double> > b = 31.0;
+  fvar<fvar<double> > c = -27.0;
+  fvar<fvar<double> > d = 19.0;
   d.d_ = 1.0;
-  fvar<fvar<double>> e = -41.0;
-  fvar<fvar<double>> z = 1.0;
-  fvar<fvar<double>> g[6];
+  fvar<fvar<double> > e = -41.0;
+  fvar<fvar<double> > z = 1.0;
+  fvar<fvar<double> > g[6];
 
   stan::math::grad_F32(g, a, b, c, d, e, z);
 
@@ -298,14 +298,14 @@ TEST(ProbInternalMath, gradF32_ffd_2ndderiv4) {
 TEST(ProbInternalMath, gradF32_ffd_2ndderiv5) {
   using stan::math::fvar;
 
-  fvar<fvar<double>> a = 1.0;
-  fvar<fvar<double>> b = 31.0;
-  fvar<fvar<double>> c = -27.0;
-  fvar<fvar<double>> d = 19.0;
-  fvar<fvar<double>> e = -41.0;
+  fvar<fvar<double> > a = 1.0;
+  fvar<fvar<double> > b = 31.0;
+  fvar<fvar<double> > c = -27.0;
+  fvar<fvar<double> > d = 19.0;
+  fvar<fvar<double> > e = -41.0;
   e.d_ = 1.0;
-  fvar<fvar<double>> z = 1.0;
-  fvar<fvar<double>> g[6];
+  fvar<fvar<double> > z = 1.0;
+  fvar<fvar<double> > g[6];
 
   stan::math::grad_F32(g, a, b, c, d, e, z);
 
@@ -327,14 +327,14 @@ TEST(ProbInternalMath, gradF32_ffd_2ndderiv5) {
 TEST(ProbInternalMath, gradF32_ffd_2ndderiv6) {
   using stan::math::fvar;
 
-  fvar<fvar<double>> a = 1.0;
-  fvar<fvar<double>> b = 31.0;
-  fvar<fvar<double>> c = -27.0;
-  fvar<fvar<double>> d = 19.0;
-  fvar<fvar<double>> e = -41.0;
-  fvar<fvar<double>> z = 1.0;
+  fvar<fvar<double> > a = 1.0;
+  fvar<fvar<double> > b = 31.0;
+  fvar<fvar<double> > c = -27.0;
+  fvar<fvar<double> > d = 19.0;
+  fvar<fvar<double> > e = -41.0;
+  fvar<fvar<double> > z = 1.0;
   z.d_ = 1.0;
-  fvar<fvar<double>> g[6];
+  fvar<fvar<double> > g[6];
 
   stan::math::grad_F32(g, a, b, c, d, e, z);
 
@@ -357,15 +357,15 @@ TEST(ProbInternalMath, gradF32_ffd_2ndderiv6) {
 TEST(ProbInternalMath, gradF32_ffd_3rdderiv1) {
   using stan::math::fvar;
 
-  fvar<fvar<double>> a = 1.0;
+  fvar<fvar<double> > a = 1.0;
   a.d_ = 1.0;
   a.val_.d_ = 1.0;
-  fvar<fvar<double>> b = 31.0;
-  fvar<fvar<double>> c = -27.0;
-  fvar<fvar<double>> d = 19.0;
-  fvar<fvar<double>> e = -41.0;
-  fvar<fvar<double>> z = 1.0;
-  fvar<fvar<double>> g[6];
+  fvar<fvar<double> > b = 31.0;
+  fvar<fvar<double> > c = -27.0;
+  fvar<fvar<double> > d = 19.0;
+  fvar<fvar<double> > e = -41.0;
+  fvar<fvar<double> > z = 1.0;
+  fvar<fvar<double> > g[6];
 
   stan::math::grad_F32(g, a, b, c, d, e, z);
 
@@ -387,15 +387,15 @@ TEST(ProbInternalMath, gradF32_ffd_3rdderiv1) {
 TEST(ProbInternalMath, gradF32_ffd_3rdderiv2) {
   using stan::math::fvar;
 
-  fvar<fvar<double>> a = 1.0;
-  fvar<fvar<double>> b = 31.0;
+  fvar<fvar<double> > a = 1.0;
+  fvar<fvar<double> > b = 31.0;
   b.d_ = 1.0;
   b.val_.d_ = 1.0;
-  fvar<fvar<double>> c = -27.0;
-  fvar<fvar<double>> d = 19.0;
-  fvar<fvar<double>> e = -41.0;
-  fvar<fvar<double>> z = 1.0;
-  fvar<fvar<double>> g[6];
+  fvar<fvar<double> > c = -27.0;
+  fvar<fvar<double> > d = 19.0;
+  fvar<fvar<double> > e = -41.0;
+  fvar<fvar<double> > z = 1.0;
+  fvar<fvar<double> > g[6];
 
   stan::math::grad_F32(g, a, b, c, d, e, z);
 
@@ -417,15 +417,15 @@ TEST(ProbInternalMath, gradF32_ffd_3rdderiv2) {
 TEST(ProbInternalMath, gradF32_ffd_3rdderiv3) {
   using stan::math::fvar;
 
-  fvar<fvar<double>> a = 1.0;
-  fvar<fvar<double>> b = 31.0;
-  fvar<fvar<double>> c = -27.0;
+  fvar<fvar<double> > a = 1.0;
+  fvar<fvar<double> > b = 31.0;
+  fvar<fvar<double> > c = -27.0;
   c.d_ = 1.0;
   c.val_.d_ = 1.0;
-  fvar<fvar<double>> d = 19.0;
-  fvar<fvar<double>> e = -41.0;
-  fvar<fvar<double>> z = 1.0;
-  fvar<fvar<double>> g[6];
+  fvar<fvar<double> > d = 19.0;
+  fvar<fvar<double> > e = -41.0;
+  fvar<fvar<double> > z = 1.0;
+  fvar<fvar<double> > g[6];
 
   stan::math::grad_F32(g, a, b, c, d, e, z);
 
@@ -446,15 +446,15 @@ TEST(ProbInternalMath, gradF32_ffd_3rdderiv3) {
 TEST(ProbInternalMath, gradF32_ffd_3rdderiv4) {
   using stan::math::fvar;
 
-  fvar<fvar<double>> a = 1.0;
-  fvar<fvar<double>> b = 31.0;
-  fvar<fvar<double>> c = -27.0;
-  fvar<fvar<double>> d = 19.0;
+  fvar<fvar<double> > a = 1.0;
+  fvar<fvar<double> > b = 31.0;
+  fvar<fvar<double> > c = -27.0;
+  fvar<fvar<double> > d = 19.0;
   d.d_ = 1.0;
   d.val_.d_ = 1.0;
-  fvar<fvar<double>> e = -41.0;
-  fvar<fvar<double>> z = 1.0;
-  fvar<fvar<double>> g[6];
+  fvar<fvar<double> > e = -41.0;
+  fvar<fvar<double> > z = 1.0;
+  fvar<fvar<double> > g[6];
 
   stan::math::grad_F32(g, a, b, c, d, e, z);
 
@@ -475,15 +475,15 @@ TEST(ProbInternalMath, gradF32_ffd_3rdderiv4) {
 TEST(ProbInternalMath, gradF32_ffd_3rdderiv5) {
   using stan::math::fvar;
 
-  fvar<fvar<double>> a = 1.0;
-  fvar<fvar<double>> b = 31.0;
-  fvar<fvar<double>> c = -27.0;
-  fvar<fvar<double>> d = 19.0;
-  fvar<fvar<double>> e = -41.0;
+  fvar<fvar<double> > a = 1.0;
+  fvar<fvar<double> > b = 31.0;
+  fvar<fvar<double> > c = -27.0;
+  fvar<fvar<double> > d = 19.0;
+  fvar<fvar<double> > e = -41.0;
   e.d_ = 1.0;
   e.val_.d_ = 1.0;
-  fvar<fvar<double>> z = 1.0;
-  fvar<fvar<double>> g[6];
+  fvar<fvar<double> > z = 1.0;
+  fvar<fvar<double> > g[6];
 
   stan::math::grad_F32(g, a, b, c, d, e, z);
 
@@ -504,15 +504,15 @@ TEST(ProbInternalMath, gradF32_ffd_3rdderiv5) {
 TEST(ProbInternalMath, gradF32_ffd_3rdderiv6) {
   using stan::math::fvar;
 
-  fvar<fvar<double>> a = 1.0;
-  fvar<fvar<double>> b = 31.0;
-  fvar<fvar<double>> c = -27.0;
-  fvar<fvar<double>> d = 19.0;
-  fvar<fvar<double>> e = -41.0;
-  fvar<fvar<double>> z = 1.0;
+  fvar<fvar<double> > a = 1.0;
+  fvar<fvar<double> > b = 31.0;
+  fvar<fvar<double> > c = -27.0;
+  fvar<fvar<double> > d = 19.0;
+  fvar<fvar<double> > e = -41.0;
+  fvar<fvar<double> > z = 1.0;
   z.d_ = 1.0;
   z.val_.d_ = 1.0;
-  fvar<fvar<double>> g[6];
+  fvar<fvar<double> > g[6];
 
   stan::math::grad_F32(g, a, b, c, d, e, z);
 

@@ -1,15 +1,15 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_PARETO_TYPE_2_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_PARETO_TYPE_2_RNG_HPP
 
-#include <boost/random/uniform_real_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/prob/exponential_rng.hpp>
 #include <stan/math/prim/scal/prob/normal_rng.hpp>
+#include <boost/random/uniform_real_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
@@ -37,11 +37,11 @@ namespace math {
  */
 template <typename T_loc, typename T_scale, typename T_shape, class RNG>
 inline typename VectorBuilder<true, double, T_loc, T_scale, T_shape>::type
-pareto_type_2_rng(const T_loc &mu, const T_scale &lambda, const T_shape &alpha,
-                  RNG &rng) {
+pareto_type_2_rng(const T_loc& mu, const T_scale& lambda, const T_shape& alpha,
+                  RNG& rng) {
   using boost::random::uniform_real_distribution;
   using boost::variate_generator;
-  static const char *function = "pareto_type_2_rng";
+  static const char* function = "pareto_type_2_rng";
 
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", lambda);
@@ -55,16 +55,16 @@ pareto_type_2_rng(const T_loc &mu, const T_scale &lambda, const T_shape &alpha,
   size_t N = max_size(mu, lambda, alpha);
   VectorBuilder<true, double, T_loc, T_scale, T_shape> output(N);
 
-  variate_generator<RNG &, uniform_real_distribution<>> uniform_rng(
+  variate_generator<RNG&, uniform_real_distribution<> > uniform_rng(
       rng, uniform_real_distribution<>(0.0, 1.0));
   for (size_t n = 0; n < N; ++n)
-    output[n] = (std::pow(1.0 - uniform_rng(), -1.0 / alpha_vec[n]) - 1.0) *
-                    lambda_vec[n] +
-                mu_vec[n];
+    output[n] = (std::pow(1.0 - uniform_rng(), -1.0 / alpha_vec[n]) - 1.0)
+                    * lambda_vec[n]
+                + mu_vec[n];
 
   return output.data();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

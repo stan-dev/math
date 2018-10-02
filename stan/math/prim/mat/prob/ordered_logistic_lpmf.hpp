@@ -1,26 +1,26 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_LPMF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_LPMF_HPP
 
-#include <stan/math/prim/mat/err/check_ordered.hpp>
-#include <stan/math/prim/mat/fun/size.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
-#include <stan/math/prim/mat/meta/length_mvt.hpp>
+#include <stan/math/prim/mat/fun/size.hpp>
 #include <stan/math/prim/mat/meta/vector_seq_view.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_greater.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/err/domain_error_vec.hpp>
+#include <stan/math/prim/mat/meta/length_mvt.hpp>
+#include <stan/math/prim/mat/err/check_ordered.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
-#include <stan/math/prim/scal/fun/is_integer.hpp>
 #include <stan/math/prim/scal/fun/log1p_exp.hpp>
 #include <stan/math/prim/scal/fun/log_inv_logit_diff.hpp>
+#include <stan/math/prim/scal/fun/is_integer.hpp>
+#include <stan/math/prim/scal/err/domain_error_vec.hpp>
+#include <stan/math/prim/scal/err/check_bounded.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/err/check_greater.hpp>
+#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <vector>
 
@@ -76,9 +76,9 @@ namespace math {
  * lengths.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_cut>
-typename return_type<T_loc, T_cut>::type
-ordered_logistic_lpmf(const T_y &y, const T_loc &lambda, const T_cut &c) {
-  static const char *function = "ordered_logistic";
+typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
+    const T_y& y, const T_loc& lambda, const T_cut& c) {
+  static const char* function = "ordered_logistic";
 
   typedef
       typename stan::partials_return_type<T_loc, T_cut>::type T_partials_return;
@@ -149,12 +149,12 @@ ordered_logistic_lpmf(const T_y &y, const T_loc &lambda, const T_cut &c) {
         ops_partials.edge2_.partials_vec_[n](K - 2) -= d;
 
     } else {
-      T_partials_return d1 =
-          inv(1 - exp(c_dbl[y_vec[n] - 1] - c_dbl[y_vec[n] - 2])) -
-          inv_logit(c_dbl[y_vec[n] - 2] - lam_dbl);
-      T_partials_return d2 =
-          inv(1 - exp(c_dbl[y_vec[n] - 2] - c_dbl[y_vec[n] - 1])) -
-          inv_logit(c_dbl[y_vec[n] - 1] - lam_dbl);
+      T_partials_return d1
+          = inv(1 - exp(c_dbl[y_vec[n] - 1] - c_dbl[y_vec[n] - 2]))
+            - inv_logit(c_dbl[y_vec[n] - 2] - lam_dbl);
+      T_partials_return d2
+          = inv(1 - exp(c_dbl[y_vec[n] - 2] - c_dbl[y_vec[n] - 1]))
+            - inv_logit(c_dbl[y_vec[n] - 1] - lam_dbl);
       logp += log_inv_logit_diff(lam_dbl - c_dbl[y_vec[n] - 2],
                                  lam_dbl - c_dbl[y_vec[n] - 1]);
 
@@ -171,11 +171,11 @@ ordered_logistic_lpmf(const T_y &y, const T_loc &lambda, const T_cut &c) {
 }
 
 template <typename T_y, typename T_loc, typename T_cut>
-typename return_type<T_loc, T_cut>::type
-ordered_logistic_lpmf(const T_y &y, const T_loc &lambda, const T_cut &c) {
+typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
+    const T_y& y, const T_loc& lambda, const T_cut& c) {
   return ordered_logistic_lpmf<false>(y, lambda, c);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

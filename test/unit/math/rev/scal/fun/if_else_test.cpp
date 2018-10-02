@@ -1,8 +1,8 @@
-#include <boost/math/special_functions/fpclassify.hpp>
-#include <gtest/gtest.h>
-#include <limits>
 #include <stan/math/rev/scal.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <boost/math/special_functions/fpclassify.hpp>
+#include <limits>
 
 TEST(AgradRev, if_else) {
   using stan::math::if_else;

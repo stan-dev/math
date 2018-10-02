@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_REV_MAT_FUN_LOG_SUM_EXP_HPP
 #define STAN_MATH_REV_MAT_FUN_LOG_SUM_EXP_HPP
 
-#include <limits>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/fun/log_sum_exp.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/calculate_chain.hpp>
+#include <stan/math/prim/scal/fun/log_sum_exp.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <limits>
 
 namespace stan {
 namespace math {
@@ -16,7 +16,7 @@ namespace {
 // log_sum_exp for std::vector for Eigen::Matrix
 
 template <int R, int C>
-double log_sum_exp_as_double(const Eigen::Matrix<var, R, C> &x) {
+double log_sum_exp_as_double(const Eigen::Matrix<var, R, C>& x) {
   using std::exp;
   using std::log;
   using std::numeric_limits;
@@ -32,9 +32,9 @@ double log_sum_exp_as_double(const Eigen::Matrix<var, R, C> &x) {
 }
 
 class log_sum_exp_matrix_vari : public op_matrix_vari {
-public:
+ public:
   template <int R, int C>
-  explicit log_sum_exp_matrix_vari(const Eigen::Matrix<var, R, C> &x)
+  explicit log_sum_exp_matrix_vari(const Eigen::Matrix<var, R, C>& x)
       : op_matrix_vari(log_sum_exp_as_double(x), x) {}
   void chain() {
     for (size_t i = 0; i < size_; ++i) {
@@ -42,7 +42,7 @@ public:
     }
   }
 };
-} // namespace
+}  // namespace
 
 /**
  * Returns the log sum of exponentials.
@@ -50,10 +50,10 @@ public:
  * @param x matrix
  */
 template <int R, int C>
-inline var log_sum_exp(const Eigen::Matrix<var, R, C> &x) {
+inline var log_sum_exp(const Eigen::Matrix<var, R, C>& x) {
   return var(new log_sum_exp_matrix_vari(x));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

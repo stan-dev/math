@@ -15,7 +15,7 @@ namespace math {
  * @return first argument divided by second argument
  */
 template <typename T>
-inline fvar<T> operator/(const fvar<T> &x1, const fvar<T> &x2) {
+inline fvar<T> operator/(const fvar<T>& x1, const fvar<T>& x2) {
   return fvar<T>(x1.val_ / x2.val_,
                  (x1.d_ * x2.val_ - x1.val_ * x2.d_) / (x2.val_ * x2.val_));
 }
@@ -28,7 +28,8 @@ inline fvar<T> operator/(const fvar<T> &x1, const fvar<T> &x2) {
  * @param x2 second argument
  * @return first argument divided by second argument
  */
-template <typename T> inline fvar<T> operator/(const fvar<T> &x1, double x2) {
+template <typename T>
+inline fvar<T> operator/(const fvar<T>& x1, double x2) {
   return fvar<T>(x1.val_ / x2, x1.d_ / x2);
 }
 
@@ -40,10 +41,11 @@ template <typename T> inline fvar<T> operator/(const fvar<T> &x1, double x2) {
  * @param x2 second argument
  * @return first argument divided by second argument
  */
-template <typename T> inline fvar<T> operator/(double x1, const fvar<T> &x2) {
+template <typename T>
+inline fvar<T> operator/(double x1, const fvar<T>& x2) {
   // TODO(carpenter): store x1 / x2.val_ and reuse
   return fvar<T>(x1 / x2.val_, -x1 * x2.d_ / (x2.val_ * x2.val_));
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

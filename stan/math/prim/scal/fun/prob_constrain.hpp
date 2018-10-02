@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_PROB_CONSTRAIN_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_PROB_CONSTRAIN_HPP
 
-#include <cmath>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -20,7 +20,8 @@ namespace math {
  * @param[in] x unconstrained value
  * @return result constrained to fall in (0, 1)
  */
-template <typename T> inline T prob_constrain(const T &x) {
+template <typename T>
+inline T prob_constrain(const T& x) {
   return inv_logit(x);
 }
 
@@ -44,15 +45,16 @@ template <typename T> inline T prob_constrain(const T &x) {
  * @param[in, out] lp log density
  * @return result constrained to fall in (0, 1)
  */
-template <typename T> inline T prob_constrain(const T &x, T &lp) {
+template <typename T>
+inline T prob_constrain(const T& x, T& lp) {
   using std::log;
   T inv_logit_x = inv_logit(x);
   lp += log(inv_logit_x) + log1m(inv_logit_x);
   return inv_logit_x;
 }
 
-} // namespace math
+}  // namespace math
 
-} // namespace stan
+}  // namespace stan
 
 #endif

@@ -1,18 +1,18 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_RNG_HPP
 
+#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/err/check_less.hpp>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/scal/err/check_nonnegative.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/meta/max_size.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/poisson_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_less.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/max_size.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {
 namespace math {
@@ -36,13 +36,13 @@ namespace math {
  * sizes
  */
 template <typename T_shape, typename T_inv, class RNG>
-inline typename VectorBuilder<true, int, T_shape, T_inv>::type
-neg_binomial_rng(const T_shape &alpha, const T_inv &beta, RNG &rng) {
+inline typename VectorBuilder<true, int, T_shape, T_inv>::type neg_binomial_rng(
+    const T_shape& alpha, const T_inv& beta, RNG& rng) {
   using boost::gamma_distribution;
   using boost::random::poisson_distribution;
   using boost::variate_generator;
 
-  static const char *function = "neg_binomial_rng";
+  static const char* function = "neg_binomial_rng";
 
   // gamma_rng params must be positive and finite
   check_positive_finite(function, "Shape parameter", alpha);
@@ -56,7 +56,7 @@ neg_binomial_rng(const T_shape &alpha, const T_inv &beta, RNG &rng) {
   VectorBuilder<true, int, T_shape, T_inv> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    double rng_from_gamma = variate_generator<RNG &, gamma_distribution<>>(
+    double rng_from_gamma = variate_generator<RNG&, gamma_distribution<> >(
         rng, gamma_distribution<>(alpha_vec[n], 1.0 / beta_vec[n]))();
 
     // same as the constraints for poisson_rng
@@ -68,13 +68,13 @@ neg_binomial_rng(const T_shape &alpha, const T_inv &beta, RNG &rng) {
                       "Random number that came from gamma distribution",
                       rng_from_gamma);
 
-    output[n] = variate_generator<RNG &, poisson_distribution<>>(
+    output[n] = variate_generator<RNG&, poisson_distribution<> >(
         rng, poisson_distribution<>(rng_from_gamma))();
   }
 
   return output.data();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

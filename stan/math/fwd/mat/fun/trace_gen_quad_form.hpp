@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_FWD_MAT_FUN_TRACE_GEN_QUAD_FORM_HPP
 #define STAN_MATH_FWD_MAT_FUN_TRACE_GEN_QUAD_FORM_HPP
 
-#include <stan/math/fwd/mat/fun/multiply.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/mat/fun/multiply.hpp>
+#include <stan/math/fwd/mat/fun/multiply.hpp>
 #include <stan/math/prim/mat/fun/trace.hpp>
+#include <stan/math/prim/mat/fun/multiply.hpp>
 #include <stan/math/prim/mat/fun/transpose.hpp>
 
 namespace stan {
@@ -22,6 +22,6 @@ inline fvar<T> trace_gen_quad_form(const Eigen::Matrix<fvar<T>, RD, CD> &D,
   return trace(multiply(multiply(D, transpose(B)), multiply(A, B)));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

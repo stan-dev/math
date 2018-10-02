@@ -2,16 +2,16 @@
 #define STAN_MATH_PRIM_MAT_PROB_INV_WISHART_LPDF_HPP
 
 #include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
-#include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>
-#include <stan/math/prim/mat/fun/trace.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/mat/err/check_square.hpp>
+#include <stan/math/prim/mat/meta/index_type.hpp>
+#include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
+#include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/lmgamma.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/fun/lmgamma.hpp>
+#include <stan/math/prim/mat/fun/trace.hpp>
 
 namespace stan {
 namespace math {
@@ -47,16 +47,16 @@ namespace math {
 template <bool propto, typename T_y, typename T_dof, typename T_scale>
 typename boost::math::tools::promote_args<T_y, T_dof, T_scale>::type
 inv_wishart_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &W,
-    const T_dof &nu,
-    const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic> &S) {
-  static const char *function = "inv_wishart_lpdf";
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
+    const T_dof& nu,
+    const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
+  static const char* function = "inv_wishart_lpdf";
 
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using boost::math::tools::promote_args;
 
-  typename index_type<Matrix<T_scale, Dynamic, Dynamic>>::type k = S.rows();
+  typename index_type<Matrix<T_scale, Dynamic, Dynamic> >::type k = S.rows();
   typename promote_args<T_y, T_dof, T_scale>::type lp(0.0);
 
   check_greater(function, "Degrees of freedom parameter", nu, k - 1);
@@ -91,7 +91,8 @@ inv_wishart_lpdf(
                   Eigen::Dynamic>
         Winv_S(mdivide_left_ldlt(
             ldlt_W,
-            static_cast<Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>>(
+            static_cast<
+                Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic> >(
                 S.template selfadjointView<Eigen::Lower>())));
     lp -= 0.5 * trace(Winv_S);
   }
@@ -103,12 +104,12 @@ inv_wishart_lpdf(
 template <typename T_y, typename T_dof, typename T_scale>
 inline typename boost::math::tools::promote_args<T_y, T_dof, T_scale>::type
 inv_wishart_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &W,
-    const T_dof &nu,
-    const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic> &S) {
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
+    const T_dof& nu,
+    const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
   return inv_wishart_lpdf<false>(W, nu, S);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

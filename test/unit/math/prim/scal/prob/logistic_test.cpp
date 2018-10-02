@@ -1,9 +1,9 @@
-#include <boost/math/distributions.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <gtest/gtest.h>
-#include <limits>
 #include <stan/math/prim/scal.hpp>
+#include <gtest/gtest.h>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/math/distributions.hpp>
 #include <test/unit/math/prim/scal/prob/util.hpp>
+#include <limits>
 #include <vector>
 
 TEST(ProbDistributionsLogistic, error_check) {

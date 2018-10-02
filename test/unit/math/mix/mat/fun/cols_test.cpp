@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/mat.hpp>
+#include <gtest/gtest.h>
 
 TEST(AgradMixMatrixCols, vector_fv) {
   using stan::math::cols;
@@ -66,11 +66,11 @@ TEST(AgradMixFvarFvarMatrix, vector_ffv) {
   using stan::math::var;
   using stan::math::vector_ffv;
 
-  fvar<fvar<var>> a;
-  fvar<fvar<var>> b;
-  fvar<fvar<var>> c;
-  fvar<fvar<var>> d;
-  fvar<fvar<var>> e;
+  fvar<fvar<var> > a;
+  fvar<fvar<var> > b;
+  fvar<fvar<var> > c;
+  fvar<fvar<var> > d;
+  fvar<fvar<var> > e;
   a.val_.val_ = 1.0;
   a.d_.val_ = 1.0;
   b.val_.val_ = 2.0;
@@ -95,11 +95,11 @@ TEST(AgradMixMatrixCols, rowvector_ffv) {
   using stan::math::row_vector_ffv;
   using stan::math::var;
 
-  fvar<fvar<var>> a;
-  fvar<fvar<var>> b;
-  fvar<fvar<var>> c;
-  fvar<fvar<var>> d;
-  fvar<fvar<var>> e;
+  fvar<fvar<var> > a;
+  fvar<fvar<var> > b;
+  fvar<fvar<var> > c;
+  fvar<fvar<var> > d;
+  fvar<fvar<var> > e;
   a.val_.val_ = 1.0;
   a.d_.val_ = 1.0;
   b.val_.val_ = 2.0;
@@ -124,12 +124,12 @@ TEST(AgradMixMatrixCols, matrix_ffv) {
   using stan::math::matrix_ffv;
   using stan::math::var;
 
-  fvar<fvar<var>> a;
-  fvar<fvar<var>> b;
-  fvar<fvar<var>> c;
-  fvar<fvar<var>> d;
-  fvar<fvar<var>> e;
-  fvar<fvar<var>> f;
+  fvar<fvar<var> > a;
+  fvar<fvar<var> > b;
+  fvar<fvar<var> > c;
+  fvar<fvar<var> > d;
+  fvar<fvar<var> > e;
+  fvar<fvar<var> > f;
   a.val_.val_ = 1.0;
   a.d_.val_ = 1.0;
   b.val_.val_ = 2.0;

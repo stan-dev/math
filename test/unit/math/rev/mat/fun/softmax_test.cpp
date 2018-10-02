@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/rev/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
@@ -40,12 +40,12 @@ TEST(AgradRevSoftmax, gradient_check) {
   using Eigen::Matrix;
   using stan::math::softmax;
   using stan::math::var;
-  std::vector<std::vector<double>> inputs = {{0.5, -1.0, 3.0},
-                                             {4.0, 3.0, -2.0}};
+  std::vector<std::vector<double> > inputs
+      = {{0.5, -1.0, 3.0}, {4.0, 3.0, -2.0}};
   std::vector<double> vals = {0.07459555713221443, 0.729736214118415};
-  std::vector<std::vector<double>> grads = {
-      {0.06903105998834897, -0.001241607138856182, -0.06778945284949277},
-      {0.1972212719225377, -0.1959012993504623, -0.001319972572075391}};
+  std::vector<std::vector<double> > grads
+      = {{0.06903105998834897, -0.001241607138856182, -0.06778945284949277},
+         {0.1972212719225377, -0.1959012993504623, -0.001319972572075391}};
   for (size_t i = 0; i < inputs.size(); ++i) {
     for (int j = 0; j < 3; ++j) {
       stan::math::set_zero_all_adjoints();

@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
+#include <gtest/gtest.h>
 
 using stan::math::fvar;
 TEST(AgradFwdMatrixDotSelf, vec_fd) {
@@ -27,9 +27,9 @@ TEST(AgradFwdMatrixDotSelf, vec_fd) {
 TEST(AgradFwdMatrixDotSelf, vec_ffd) {
   using stan::math::dot_self;
 
-  fvar<fvar<double>> a;
-  fvar<fvar<double>> b;
-  fvar<fvar<double>> c;
+  fvar<fvar<double> > a;
+  fvar<fvar<double> > b;
+  fvar<fvar<double> > c;
   a.val_.val_ = 2.0;
   a.d_.val_ = 1.0;
   b.val_.val_ = 3.0;
@@ -37,15 +37,15 @@ TEST(AgradFwdMatrixDotSelf, vec_ffd) {
   c.val_.val_ = 4.0;
   c.d_.val_ = 1.0;
 
-  Eigen::Matrix<fvar<fvar<double>>, Eigen::Dynamic, 1> v1(1);
+  Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, 1> v1(1);
   v1 << a;
   EXPECT_NEAR(4.0, dot_self(v1).val_.val(), 1E-12);
   EXPECT_NEAR(4.0, dot_self(v1).d_.val(), 1E-12);
-  Eigen::Matrix<fvar<fvar<double>>, Eigen::Dynamic, 1> v2(2);
+  Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, 1> v2(2);
   v2 << a, b;
   EXPECT_NEAR(13.0, dot_self(v2).val_.val(), 1E-12);
   EXPECT_NEAR(10.0, dot_self(v2).d_.val(), 1E-12);
-  Eigen::Matrix<fvar<fvar<double>>, Eigen::Dynamic, 1> v3(3);
+  Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, 1> v3(3);
   v3 << a, b, c;
   EXPECT_NEAR(29.0, dot_self(v3).val_.val(), 1E-12);
   EXPECT_NEAR(18.0, dot_self(v3).d_.val(), 1E-12);

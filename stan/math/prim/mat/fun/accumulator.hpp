@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_ACCUMULATOR_HPP
 #define STAN_MATH_PRIM_MAT_FUN_ACCUMULATOR_HPP
 
-#include <boost/type_traits/is_arithmetic.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
+#include <boost/utility/enable_if.hpp>
+#include <boost/type_traits/is_arithmetic.hpp>
+#include <boost/type_traits/is_same.hpp>
 #include <vector>
 
 namespace stan {
@@ -21,11 +21,12 @@ namespace math {
  *
  * @tparam T Type of scalar added
  */
-template <typename T> class accumulator {
-private:
+template <typename T>
+class accumulator {
+ private:
   std::vector<T> buf_;
 
-public:
+ public:
   /**
    * Construct an accumulator.
    */
@@ -67,7 +68,7 @@ public:
   typename boost::disable_if<
       boost::is_arithmetic<S>,
       typename boost::enable_if<boost::is_same<S, T>, void>::type>::type
-  add(const S &x) {
+  add(const S& x) {
     buf_.push_back(x);
   }
 
@@ -81,7 +82,7 @@ public:
    * @param m Matrix of values to add
    */
   template <typename S, int R, int C>
-  void add(const Eigen::Matrix<S, R, C> &m) {
+  void add(const Eigen::Matrix<S, R, C>& m) {
     for (int i = 0; i < m.size(); ++i)
       add(m(i));
   }
@@ -95,7 +96,8 @@ public:
    * @tparam S Type of value to recursively add.
    * @param xs Vector of entries to add
    */
-  template <typename S> void add(const std::vector<S> &xs) {
+  template <typename S>
+  void add(const std::vector<S>& xs) {
     for (size_t i = 0; i < xs.size(); ++i)
       add(xs[i]);
   }
@@ -111,7 +113,7 @@ public:
   }
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

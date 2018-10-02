@@ -1,21 +1,21 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_GRAD_INC_BETA_HPP
 #define STAN_MATH_REV_SCAL_FUN_GRAD_INC_BETA_HPP
 
-#include <cmath>
-#include <stan/math/prim/scal/fun/grad_2F1.hpp>
-#include <stan/math/prim/scal/fun/lbeta.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/scal/fun/lbeta.hpp>
+#include <stan/math/prim/scal/fun/grad_2F1.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/rev/scal/fun/exp.hpp>
 #include <stan/math/rev/scal/fun/fabs.hpp>
 #include <stan/math/rev/scal/fun/floor.hpp>
+#include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <stan/math/rev/scal/fun/inc_beta.hpp>
 #include <stan/math/rev/scal/fun/is_nan.hpp>
 #include <stan/math/rev/scal/fun/lgamma.hpp>
 #include <stan/math/rev/scal/fun/log.hpp>
 #include <stan/math/rev/scal/fun/log1m.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/fun/value_of_rec.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -33,8 +33,8 @@ namespace math {
  * @param[in] b b
  * @param[in] z z
  */
-inline void grad_inc_beta(var &g1, var &g2, const var &a, const var &b,
-                          const var &z) {
+inline void grad_inc_beta(var& g1, var& g2, const var& a, const var& b,
+                          const var& z) {
   var c1 = log(z);
   var c2 = log1m(z);
   var c3 = exp(lbeta(a, b)) * inc_beta(a, b, z);
@@ -47,6 +47,6 @@ inline void grad_inc_beta(var &g1, var &g2, const var &a, const var &b,
   g2 = c2 * c3 + C * dF1;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

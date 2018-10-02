@@ -1,31 +1,31 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_VON_MISES_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_VON_MISES_LPDF_HPP
 
-#include <cmath>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/fun/log_modified_bessel_first_kind.hpp>
 #include <stan/math/prim/scal/fun/modified_bessel_first_kind.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
 
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type
-von_mises_lpdf(T_y const &y, T_loc const &mu, T_scale const &kappa) {
-  static char const *const function = "von_mises_lpdf";
+typename return_type<T_y, T_loc, T_scale>::type von_mises_lpdf(
+    T_y const& y, T_loc const& mu, T_scale const& kappa) {
+  static char const* const function = "von_mises_lpdf";
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
 
@@ -66,8 +66,8 @@ von_mises_lpdf(T_y const &y, T_loc const &mu, T_scale const &kappa) {
   for (size_t i = 0; i < length(kappa); i++) {
     kappa_dbl[i] = value_of(kappa_vec[i]);
     if (include_summand<propto, T_scale>::value)
-      log_bessel0[i] =
-          log_modified_bessel_first_kind(0, value_of(kappa_vec[i]));
+      log_bessel0[i]
+          = log_modified_bessel_first_kind(0, value_of(kappa_vec[i]));
   }
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, kappa);
@@ -100,18 +100,18 @@ von_mises_lpdf(T_y const &y, T_loc const &mu, T_scale const &kappa) {
     if (!mu_const)
       ops_partials.edge2_.partials_[n] -= kappa_sin;
     if (!kappa_const)
-      ops_partials.edge3_.partials_[n] +=
-          kappa_cos / kappa_dbl[n] - bessel1 / bessel0;
+      ops_partials.edge3_.partials_[n]
+          += kappa_cos / kappa_dbl[n] - bessel1 / bessel0;
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline typename return_type<T_y, T_loc, T_scale>::type
-von_mises_lpdf(T_y const &y, T_loc const &mu, T_scale const &kappa) {
+inline typename return_type<T_y, T_loc, T_scale>::type von_mises_lpdf(
+    T_y const& y, T_loc const& mu, T_scale const& kappa) {
   return von_mises_lpdf<false>(y, mu, kappa);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -20,6 +20,6 @@ static inline void start_nested() {
   ChainableStack::instance().memalloc_.start_nested();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

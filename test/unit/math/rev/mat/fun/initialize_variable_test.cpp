@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/rev/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
@@ -44,7 +44,7 @@ TEST(AgradRevMatrix, initializeVariable) {
     EXPECT_FLOAT_EQ(7.0, cc(m).val());
 
   Matrix<AVAR, Dynamic, Dynamic> init_val(3, 4);
-  vector<Matrix<AVAR, Dynamic, Dynamic>> dd(5, init_val);
+  vector<Matrix<AVAR, Dynamic, Dynamic> > dd(5, init_val);
   initialize_variable(dd, AVAR(11.0));
   for (size_t i = 0; i < dd.size(); ++i)
     for (int m = 0; m < dd[0].rows(); ++m)

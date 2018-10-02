@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/scal.hpp>
-#include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/util.hpp>
+#include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 class AgradFwdSinh : public testing::Test {
   void SetUp() { stan::math::recover_memory(); }
@@ -46,11 +46,11 @@ TEST_F(AgradFwdSinh, FvarFvarVar_1stDeriv) {
   using std::cosh;
   using std::sinh;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 2.0;
 
-  fvar<fvar<var>> a = sinh(x);
+  fvar<fvar<var> > a = sinh(x);
 
   EXPECT_FLOAT_EQ(sinh(1.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(2.0 * cosh(1.5), a.val_.d_.val());
@@ -63,11 +63,11 @@ TEST_F(AgradFwdSinh, FvarFvarVar_1stDeriv) {
   stan::math::recover_memory();
   EXPECT_FLOAT_EQ(cosh(1.5), g[0]);
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 2.0;
 
-  fvar<fvar<var>> b = sinh(y);
+  fvar<fvar<var> > b = sinh(y);
   EXPECT_FLOAT_EQ(sinh(1.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(0, a.val_.d_.val());
   EXPECT_FLOAT_EQ(2.0 * cosh(1.5), a.d_.val_.val());
@@ -85,11 +85,11 @@ TEST_F(AgradFwdSinh, FvarFvarVar_2ndDeriv) {
   using std::cosh;
   using std::sinh;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 2.0;
 
-  fvar<fvar<var>> a = sinh(x);
+  fvar<fvar<var> > a = sinh(x);
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
@@ -97,11 +97,11 @@ TEST_F(AgradFwdSinh, FvarFvarVar_2ndDeriv) {
   stan::math::recover_memory();
   EXPECT_FLOAT_EQ(2.0 * sinh(1.5), g[0]);
 
-  fvar<fvar<var>> y;
+  fvar<fvar<var> > y;
   y.val_.val_ = 1.5;
   y.d_.val_ = 2.0;
 
-  fvar<fvar<var>> b = sinh(y);
+  fvar<fvar<var> > b = sinh(y);
 
   AVEC q = createAVEC(y.val_.val_);
   VEC r;
@@ -115,12 +115,12 @@ TEST_F(AgradFwdSinh, FvarFvarVar_3rdDeriv) {
   using std::cosh;
   using std::sinh;
 
-  fvar<fvar<var>> x;
+  fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
   x.val_.d_ = 1.0;
   x.d_.val_ = 1.0;
 
-  fvar<fvar<var>> a = sinh(x);
+  fvar<fvar<var> > a = sinh(x);
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
@@ -129,7 +129,8 @@ TEST_F(AgradFwdSinh, FvarFvarVar_3rdDeriv) {
 }
 
 struct sinh_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0& arg1) const {
     return sinh(arg1);
   }
 };

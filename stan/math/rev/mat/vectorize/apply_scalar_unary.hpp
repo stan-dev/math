@@ -15,7 +15,8 @@ namespace math {
  *
  * @tparam F Type of function to apply.
  */
-template <typename F> struct apply_scalar_unary<F, var> {
+template <typename F>
+struct apply_scalar_unary<F, var> {
   /**
    * Function return type, which is <code>var</code>.
    */
@@ -27,9 +28,9 @@ template <typename F> struct apply_scalar_unary<F, var> {
    * @param x Argument variable.
    * @return Function applied to the variable.
    */
-  static inline return_t apply(const var &x) { return F::fun(x); }
+  static inline return_t apply(const var& x) { return F::fun(x); }
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

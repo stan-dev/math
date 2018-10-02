@@ -6,7 +6,7 @@
 #include <limits>
 
 template <typename F>
-void test_nan_fv1(const F &f, const double &arg1, const bool &throws) {
+void test_nan_fv1(const F& f, const double& arg1, const bool& throws) {
   using stan::math::var;
   stan::math::fvar<var> arg1_v = arg1;
 
@@ -26,7 +26,7 @@ void test_nan_fv1(const F &f, const double &arg1, const bool &throws) {
 }
 
 template <typename F>
-void test_nan_fv2(const F &f, const double &arg1, const bool &throws) {
+void test_nan_fv2(const F& f, const double& arg1, const bool& throws) {
   using stan::math::var;
   stan::math::fvar<var> arg1_v = arg1;
 
@@ -45,10 +45,10 @@ void test_nan_fv2(const F &f, const double &arg1, const bool &throws) {
   }
 }
 template <typename F>
-void test_nan_ffv1(const F &f, const double &arg1, const bool &throws) {
+void test_nan_ffv1(const F& f, const double& arg1, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  stan::math::fvar<fvar<var>> arg1_v = arg1;
+  stan::math::fvar<fvar<var> > arg1_v = arg1;
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.val_ = 1.0;
   arg1_v.d_.d_ = 1.0;
@@ -56,7 +56,7 @@ void test_nan_ffv1(const F &f, const double &arg1, const bool &throws) {
   if (throws) {
     EXPECT_THROW(f(arg1_v), std::domain_error);
   } else {
-    fvar<fvar<var>> res = f(arg1_v);
+    fvar<fvar<var> > res = f(arg1_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.val_.val()));
 
     AVEC x = createAVEC(arg1_v.val_.val_);
@@ -68,15 +68,16 @@ void test_nan_ffv1(const F &f, const double &arg1, const bool &throws) {
   }
 }
 template <typename F>
-void test_nan_ffv2(const F &f, const double &arg1, const bool &throws) {
+void test_nan_ffv2(const F& f, const double& arg1, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  stan::math::fvar<fvar<var>> arg1_v(fvar<var>(arg1, 1.0), fvar<var>(1.0, 1.0));
+  stan::math::fvar<fvar<var> > arg1_v(fvar<var>(arg1, 1.0),
+                                      fvar<var>(1.0, 1.0));
 
   if (throws) {
     EXPECT_THROW(f(arg1_v), std::domain_error);
   } else {
-    fvar<fvar<var>> res = f(arg1_v);
+    fvar<fvar<var> > res = f(arg1_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.d_.val()));
 
     AVEC x = createAVEC(arg1_v.val_.val_);
@@ -88,10 +89,10 @@ void test_nan_ffv2(const F &f, const double &arg1, const bool &throws) {
   }
 }
 template <typename F>
-void test_nan_ffv3(const F &f, const double &arg1, const bool &throws) {
+void test_nan_ffv3(const F& f, const double& arg1, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  stan::math::fvar<fvar<var>> arg1_v = arg1;
+  stan::math::fvar<fvar<var> > arg1_v = arg1;
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.val_ = 1.0;
   arg1_v.d_.d_ = 1.0;
@@ -99,7 +100,7 @@ void test_nan_ffv3(const F &f, const double &arg1, const bool &throws) {
   if (throws) {
     EXPECT_THROW(f(arg1_v), std::domain_error);
   } else {
-    fvar<fvar<var>> res = f(arg1_v);
+    fvar<fvar<var> > res = f(arg1_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.val_.val()));
 
     AVEC x = createAVEC(arg1_v.val_.val_);
@@ -111,15 +112,16 @@ void test_nan_ffv3(const F &f, const double &arg1, const bool &throws) {
   }
 }
 template <typename F>
-void test_nan_ffv4(const F &f, const double &arg1, const bool &throws) {
+void test_nan_ffv4(const F& f, const double& arg1, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  stan::math::fvar<fvar<var>> arg1_v(fvar<var>(arg1, 1.0), fvar<var>(1.0, 1.0));
+  stan::math::fvar<fvar<var> > arg1_v(fvar<var>(arg1, 1.0),
+                                      fvar<var>(1.0, 1.0));
 
   if (throws) {
     EXPECT_THROW(f(arg1_v), std::domain_error);
   } else {
-    fvar<fvar<var>> res = f(arg1_v);
+    fvar<fvar<var> > res = f(arg1_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.d_.val()));
 
     AVEC x = createAVEC(arg1_v.val_.val_);
@@ -131,7 +133,8 @@ void test_nan_ffv4(const F &f, const double &arg1, const bool &throws) {
   }
 }
 
-template <typename F> void test_nan_mix(const F &f, const bool &throws) {
+template <typename F>
+void test_nan_mix(const F& f, const bool& throws) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   test_nan_fv1(f, nan, throws);
   test_nan_fv2(f, nan, throws);
@@ -142,8 +145,8 @@ template <typename F> void test_nan_mix(const F &f, const bool &throws) {
 }
 
 template <typename F>
-void test_nan_fv_fv1(const F &f, const double &arg1, const double &arg2,
-                     const bool &throws) {
+void test_nan_fv_fv1(const F& f, const double& arg1, const double& arg2,
+                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
@@ -166,8 +169,8 @@ void test_nan_fv_fv1(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_fv_fv2(const F &f, const double &arg1, const double &arg2,
-                     const bool &throws) {
+void test_nan_fv_fv2(const F& f, const double& arg1, const double& arg2,
+                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
@@ -190,8 +193,8 @@ void test_nan_fv_fv2(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_fv_d1(const F &f, const double &arg1, const double &arg2,
-                    const bool &throws) {
+void test_nan_fv_d1(const F& f, const double& arg1, const double& arg2,
+                    const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
@@ -212,8 +215,8 @@ void test_nan_fv_d1(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_fv_d2(const F &f, const double &arg1, const double &arg2,
-                    const bool &throws) {
+void test_nan_fv_d2(const F& f, const double& arg1, const double& arg2,
+                    const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
@@ -234,8 +237,8 @@ void test_nan_fv_d2(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_d_fv1(const F &f, const double &arg1, const double &arg2,
-                    const bool &throws) {
+void test_nan_d_fv1(const F& f, const double& arg1, const double& arg2,
+                    const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg2_v(arg2, 1.0);
@@ -256,8 +259,8 @@ void test_nan_d_fv1(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_d_fv2(const F &f, const double &arg1, const double &arg2,
-                    const bool &throws) {
+void test_nan_d_fv2(const F& f, const double& arg1, const double& arg2,
+                    const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg2_v(arg2, 1.0);
@@ -277,15 +280,15 @@ void test_nan_d_fv2(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv1(const F &f, const double &arg1, const double &arg2,
-                       const bool &throws) {
+void test_nan_ffv_ffv1(const F& f, const double& arg1, const double& arg2,
+                       const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v = arg1;
+  fvar<fvar<var> > arg1_v = arg1;
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.val_ = 1.0;
   arg1_v.d_.d_ = 1.0;
-  fvar<fvar<var>> arg2_v = arg2;
+  fvar<fvar<var> > arg2_v = arg2;
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.val_ = 1.0;
   arg2_v.d_.d_ = 1.0;
@@ -293,7 +296,7 @@ void test_nan_ffv_ffv1(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v), std::domain_error);
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2_v);
+    fvar<fvar<var> > res = f(arg1_v, arg2_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.val_.val()));
 
     AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_);
@@ -306,15 +309,15 @@ void test_nan_ffv_ffv1(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv2(const F &f, const double &arg1, const double &arg2,
-                       const bool &throws) {
+void test_nan_ffv_ffv2(const F& f, const double& arg1, const double& arg2,
+                       const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v = arg1;
+  fvar<fvar<var> > arg1_v = arg1;
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.val_ = 1.0;
   arg1_v.d_.d_ = 1.0;
-  fvar<fvar<var>> arg2_v = arg2;
+  fvar<fvar<var> > arg2_v = arg2;
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.val_ = 1.0;
   arg2_v.d_.d_ = 1.0;
@@ -322,7 +325,7 @@ void test_nan_ffv_ffv2(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v), std::domain_error);
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2_v);
+    fvar<fvar<var> > res = f(arg1_v, arg2_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.d_.val()));
 
     AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_);
@@ -335,15 +338,15 @@ void test_nan_ffv_ffv2(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv3(const F &f, const double &arg1, const double &arg2,
-                       const bool &throws) {
+void test_nan_ffv_ffv3(const F& f, const double& arg1, const double& arg2,
+                       const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v = arg1;
+  fvar<fvar<var> > arg1_v = arg1;
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.val_ = 1.0;
   arg1_v.d_.d_ = 1.0;
-  fvar<fvar<var>> arg2_v = arg2;
+  fvar<fvar<var> > arg2_v = arg2;
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.val_ = 1.0;
   arg2_v.d_.d_ = 1.0;
@@ -351,7 +354,7 @@ void test_nan_ffv_ffv3(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v), std::domain_error);
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2_v);
+    fvar<fvar<var> > res = f(arg1_v, arg2_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.val_.val()));
 
     AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_);
@@ -364,15 +367,15 @@ void test_nan_ffv_ffv3(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv4(const F &f, const double &arg1, const double &arg2,
-                       const bool &throws) {
+void test_nan_ffv_ffv4(const F& f, const double& arg1, const double& arg2,
+                       const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v = arg1;
+  fvar<fvar<var> > arg1_v = arg1;
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.val_ = 1.0;
   arg1_v.d_.d_ = 1.0;
-  fvar<fvar<var>> arg2_v = arg2;
+  fvar<fvar<var> > arg2_v = arg2;
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.val_ = 1.0;
   arg2_v.d_.d_ = 1.0;
@@ -380,7 +383,7 @@ void test_nan_ffv_ffv4(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v), std::domain_error);
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2_v);
+    fvar<fvar<var> > res = f(arg1_v, arg2_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.d_.val()));
 
     AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_);
@@ -394,11 +397,11 @@ void test_nan_ffv_ffv4(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_ffv_d1(const F &f, const double &arg1, const double &arg2,
-                     const bool &throws) {
+void test_nan_ffv_d1(const F& f, const double& arg1, const double& arg2,
+                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v = arg1;
+  fvar<fvar<var> > arg1_v = arg1;
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.val_ = 1.0;
   arg1_v.d_.d_ = 1.0;
@@ -406,7 +409,7 @@ void test_nan_ffv_d1(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2), std::domain_error);
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2);
+    fvar<fvar<var> > res = f(arg1_v, arg2);
     EXPECT_TRUE(boost::math::isnan(res.val_.val_.val()));
 
     AVEC x = createAVEC(arg1_v.val_.val_);
@@ -418,11 +421,11 @@ void test_nan_ffv_d1(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_d2(const F &f, const double &arg1, const double &arg2,
-                     const bool &throws) {
+void test_nan_ffv_d2(const F& f, const double& arg1, const double& arg2,
+                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v = arg1;
+  fvar<fvar<var> > arg1_v = arg1;
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.val_ = 1.0;
   arg1_v.d_.d_ = 1.0;
@@ -430,7 +433,7 @@ void test_nan_ffv_d2(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2), std::domain_error);
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2);
+    fvar<fvar<var> > res = f(arg1_v, arg2);
     EXPECT_TRUE(boost::math::isnan(res.val_.d_.val()));
 
     AVEC x = createAVEC(arg1_v.val_.val_);
@@ -442,11 +445,11 @@ void test_nan_ffv_d2(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_d3(const F &f, const double &arg1, const double &arg2,
-                     const bool &throws) {
+void test_nan_ffv_d3(const F& f, const double& arg1, const double& arg2,
+                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v = arg1;
+  fvar<fvar<var> > arg1_v = arg1;
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.val_ = 1.0;
   arg1_v.d_.d_ = 1.0;
@@ -454,7 +457,7 @@ void test_nan_ffv_d3(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2), std::domain_error);
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2);
+    fvar<fvar<var> > res = f(arg1_v, arg2);
     EXPECT_TRUE(boost::math::isnan(res.d_.val_.val()));
 
     AVEC x = createAVEC(arg1_v.val_.val_);
@@ -466,11 +469,11 @@ void test_nan_ffv_d3(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_d4(const F &f, const double &arg1, const double &arg2,
-                     const bool &throws) {
+void test_nan_ffv_d4(const F& f, const double& arg1, const double& arg2,
+                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v = arg1;
+  fvar<fvar<var> > arg1_v = arg1;
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.val_ = 1.0;
   arg1_v.d_.d_ = 1.0;
@@ -478,7 +481,7 @@ void test_nan_ffv_d4(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2), std::domain_error);
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2);
+    fvar<fvar<var> > res = f(arg1_v, arg2);
     EXPECT_TRUE(boost::math::isnan(res.d_.d_.val()));
 
     AVEC x = createAVEC(arg1_v.val_.val_);
@@ -491,11 +494,11 @@ void test_nan_ffv_d4(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_d_ffv1(const F &f, const double &arg1, const double &arg2,
-                     const bool &throws) {
+void test_nan_d_ffv1(const F& f, const double& arg1, const double& arg2,
+                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg2_v = arg2;
+  fvar<fvar<var> > arg2_v = arg2;
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.val_ = 1.0;
   arg2_v.d_.d_ = 1.0;
@@ -503,7 +506,7 @@ void test_nan_d_ffv1(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v), std::domain_error);
   } else {
-    fvar<fvar<var>> res = f(arg1, arg2_v);
+    fvar<fvar<var> > res = f(arg1, arg2_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.val_.val()));
 
     AVEC x = createAVEC(arg2_v.val_.val_);
@@ -515,11 +518,11 @@ void test_nan_d_ffv1(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_d_ffv2(const F &f, const double &arg1, const double &arg2,
-                     const bool &throws) {
+void test_nan_d_ffv2(const F& f, const double& arg1, const double& arg2,
+                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg2_v = arg2;
+  fvar<fvar<var> > arg2_v = arg2;
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.val_ = 1.0;
   arg2_v.d_.d_ = 1.0;
@@ -527,7 +530,7 @@ void test_nan_d_ffv2(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v), std::domain_error);
   } else {
-    fvar<fvar<var>> res = f(arg1, arg2_v);
+    fvar<fvar<var> > res = f(arg1, arg2_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.d_.val()));
 
     AVEC x = createAVEC(arg2_v.val_.val_);
@@ -539,11 +542,11 @@ void test_nan_d_ffv2(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_d_ffv3(const F &f, const double &arg1, const double &arg2,
-                     const bool &throws) {
+void test_nan_d_ffv3(const F& f, const double& arg1, const double& arg2,
+                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg2_v = arg2;
+  fvar<fvar<var> > arg2_v = arg2;
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.val_ = 1.0;
   arg2_v.d_.d_ = 1.0;
@@ -551,7 +554,7 @@ void test_nan_d_ffv3(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v), std::domain_error);
   } else {
-    fvar<fvar<var>> res = f(arg1, arg2_v);
+    fvar<fvar<var> > res = f(arg1, arg2_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.val_.val()));
 
     AVEC x = createAVEC(arg2_v.val_.val_);
@@ -563,11 +566,11 @@ void test_nan_d_ffv3(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_d_ffv4(const F &f, const double &arg1, const double &arg2,
-                     const bool &throws) {
+void test_nan_d_ffv4(const F& f, const double& arg1, const double& arg2,
+                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg2_v = arg2;
+  fvar<fvar<var> > arg2_v = arg2;
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.val_ = 1.0;
   arg2_v.d_.d_ = 1.0;
@@ -575,7 +578,7 @@ void test_nan_d_ffv4(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v), std::domain_error);
   } else {
-    fvar<fvar<var>> res = f(arg1, arg2_v);
+    fvar<fvar<var> > res = f(arg1, arg2_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.d_.val()));
 
     AVEC x = createAVEC(arg2_v.val_.val_);
@@ -587,8 +590,8 @@ void test_nan_d_ffv4(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_mix(const F &f, const double &arg1, const double &arg2,
-                  const bool &throws) {
+void test_nan_mix(const F& f, const double& arg1, const double& arg2,
+                  const bool& throws) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   Eigen::VectorXd arg1_vec(3);
   Eigen::VectorXd arg2_vec(3);
@@ -616,8 +619,8 @@ void test_nan_mix(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_fv_fv_fv1(const F &f, const double &arg1, const double &arg2,
-                        const double &arg3, const bool &throws) {
+void test_nan_fv_fv_fv1(const F& f, const double& arg1, const double& arg2,
+                        const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
@@ -647,8 +650,8 @@ void test_nan_fv_fv_fv1(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_fv_fv_fv2(const F &f, const double &arg1, const double &arg2,
-                        const double &arg3, const bool &throws) {
+void test_nan_fv_fv_fv2(const F& f, const double& arg1, const double& arg2,
+                        const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
@@ -679,8 +682,8 @@ void test_nan_fv_fv_fv2(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_d_fv_fv1(const F &f, const double &arg1, const double &arg2,
-                       const double &arg3, const bool &throws) {
+void test_nan_d_fv_fv1(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg2_v(arg2, 1.0);
@@ -707,8 +710,8 @@ void test_nan_d_fv_fv1(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_d_fv_fv2(const F &f, const double &arg1, const double &arg2,
-                       const double &arg3, const bool &throws) {
+void test_nan_d_fv_fv2(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg2_v(arg2, 1.0);
@@ -735,8 +738,8 @@ void test_nan_d_fv_fv2(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_fv_d_fv1(const F &f, const double &arg1, const double &arg2,
-                       const double &arg3, const bool &throws) {
+void test_nan_fv_d_fv1(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
@@ -763,8 +766,8 @@ void test_nan_fv_d_fv1(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_fv_d_fv2(const F &f, const double &arg1, const double &arg2,
-                       const double &arg3, const bool &throws) {
+void test_nan_fv_d_fv2(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
@@ -791,8 +794,8 @@ void test_nan_fv_d_fv2(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_fv_fv_d1(const F &f, const double &arg1, const double &arg2,
-                       const double &arg3, const bool &throws) {
+void test_nan_fv_fv_d1(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
@@ -819,8 +822,8 @@ void test_nan_fv_fv_d1(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_fv_fv_d2(const F &f, const double &arg1, const double &arg2,
-                       const double &arg3, const bool &throws) {
+void test_nan_fv_fv_d2(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
@@ -847,8 +850,8 @@ void test_nan_fv_fv_d2(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_fv_d_d1(const F &f, const double &arg1, const double &arg2,
-                      const double &arg3, const bool &throws) {
+void test_nan_fv_d_d1(const F& f, const double& arg1, const double& arg2,
+                      const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
@@ -873,8 +876,8 @@ void test_nan_fv_d_d1(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_fv_d_d2(const F &f, const double &arg1, const double &arg2,
-                      const double &arg3, const bool &throws) {
+void test_nan_fv_d_d2(const F& f, const double& arg1, const double& arg2,
+                      const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
@@ -900,8 +903,8 @@ void test_nan_fv_d_d2(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_d_fv_d1(const F &f, const double &arg1, const double &arg2,
-                      const double &arg3, const bool &throws) {
+void test_nan_d_fv_d1(const F& f, const double& arg1, const double& arg2,
+                      const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg2_v(arg2, 1.0);
@@ -926,8 +929,8 @@ void test_nan_d_fv_d1(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_d_fv_d2(const F &f, const double &arg1, const double &arg2,
-                      const double &arg3, const bool &throws) {
+void test_nan_d_fv_d2(const F& f, const double& arg1, const double& arg2,
+                      const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg2_v(arg2, 1.0);
@@ -953,8 +956,8 @@ void test_nan_d_fv_d2(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_d_d_fv1(const F &f, const double &arg1, const double &arg2,
-                      const double &arg3, const bool &throws) {
+void test_nan_d_d_fv1(const F& f, const double& arg1, const double& arg2,
+                      const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg3_v(arg3, 1.0);
@@ -979,8 +982,8 @@ void test_nan_d_d_fv1(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_d_d_fv2(const F &f, const double &arg1, const double &arg2,
-                      const double &arg3, const bool &throws) {
+void test_nan_d_d_fv2(const F& f, const double& arg1, const double& arg2,
+                      const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg3_v(arg3, 1.0);
@@ -1005,13 +1008,13 @@ void test_nan_d_d_fv2(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv_ffv1(const F &f, const double &arg1, const double &arg2,
-                           const double &arg3, const bool &throws) {
+void test_nan_ffv_ffv_ffv1(const F& f, const double& arg1, const double& arg2,
+                           const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v(arg1, 1.0);
-  fvar<fvar<var>> arg2_v(arg2, 1.0);
-  fvar<fvar<var>> arg3_v(arg3, 1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg2_v.val_.d_ = 1.0;
@@ -1028,7 +1031,7 @@ void test_nan_ffv_ffv_ffv1(const F &f, const double &arg1, const double &arg2,
     EXPECT_THROW(f(arg1_v, arg2_v, arg3_v), std::domain_error)
         << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2_v, arg3_v);
+    fvar<fvar<var> > res = f(arg1_v, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_, arg3_v.val_.val_);
@@ -1042,13 +1045,13 @@ void test_nan_ffv_ffv_ffv1(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv_ffv2(const F &f, const double &arg1, const double &arg2,
-                           const double &arg3, const bool &throws) {
+void test_nan_ffv_ffv_ffv2(const F& f, const double& arg1, const double& arg2,
+                           const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v(arg1, 1.0);
-  fvar<fvar<var>> arg2_v(arg2, 1.0);
-  fvar<fvar<var>> arg3_v(arg3, 1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg2_v.val_.d_ = 1.0;
@@ -1065,7 +1068,7 @@ void test_nan_ffv_ffv_ffv2(const F &f, const double &arg1, const double &arg2,
     EXPECT_THROW(f(arg1_v, arg2_v, arg3_v), std::domain_error)
         << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2_v, arg3_v);
+    fvar<fvar<var> > res = f(arg1_v, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_, arg3_v.val_.val_);
@@ -1079,13 +1082,13 @@ void test_nan_ffv_ffv_ffv2(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv_ffv3(const F &f, const double &arg1, const double &arg2,
-                           const double &arg3, const bool &throws) {
+void test_nan_ffv_ffv_ffv3(const F& f, const double& arg1, const double& arg2,
+                           const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v(arg1, 1.0);
-  fvar<fvar<var>> arg2_v(arg2, 1.0);
-  fvar<fvar<var>> arg3_v(arg3, 1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg2_v.val_.d_ = 1.0;
@@ -1102,7 +1105,7 @@ void test_nan_ffv_ffv_ffv3(const F &f, const double &arg1, const double &arg2,
     EXPECT_THROW(f(arg1_v, arg2_v, arg3_v), std::domain_error)
         << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2_v, arg3_v);
+    fvar<fvar<var> > res = f(arg1_v, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_, arg3_v.val_.val_);
@@ -1117,13 +1120,13 @@ void test_nan_ffv_ffv_ffv3(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_ffv_ffv_ffv4(const F &f, const double &arg1, const double &arg2,
-                           const double &arg3, const bool &throws) {
+void test_nan_ffv_ffv_ffv4(const F& f, const double& arg1, const double& arg2,
+                           const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v(arg1, 1.0);
-  fvar<fvar<var>> arg2_v(arg2, 1.0);
-  fvar<fvar<var>> arg3_v(arg3, 1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg2_v.val_.d_ = 1.0;
@@ -1140,7 +1143,7 @@ void test_nan_ffv_ffv_ffv4(const F &f, const double &arg1, const double &arg2,
     EXPECT_THROW(f(arg1_v, arg2_v, arg3_v), std::domain_error)
         << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2_v, arg3_v);
+    fvar<fvar<var> > res = f(arg1_v, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_, arg3_v.val_.val_);
@@ -1154,12 +1157,12 @@ void test_nan_ffv_ffv_ffv4(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_d_ffv_ffv1(const F &f, const double &arg1, const double &arg2,
-                         const double &arg3, const bool &throws) {
+void test_nan_d_ffv_ffv1(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg2_v(arg2, 1.0);
-  fvar<fvar<var>> arg3_v(arg3, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.d_ = 1.0;
   arg3_v.val_.d_ = 1.0;
@@ -1173,7 +1176,7 @@ void test_nan_d_ffv_ffv1(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1, arg2_v, arg3_v);
+    fvar<fvar<var> > res = f(arg1, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg2_v.val_.val_, arg3_v.val_.val_);
@@ -1186,12 +1189,12 @@ void test_nan_d_ffv_ffv1(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_d_ffv_ffv2(const F &f, const double &arg1, const double &arg2,
-                         const double &arg3, const bool &throws) {
+void test_nan_d_ffv_ffv2(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg2_v(arg2, 1.0);
-  fvar<fvar<var>> arg3_v(arg3, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.d_ = 1.0;
   arg3_v.val_.d_ = 1.0;
@@ -1205,7 +1208,7 @@ void test_nan_d_ffv_ffv2(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1, arg2_v, arg3_v);
+    fvar<fvar<var> > res = f(arg1, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg2_v.val_.val_, arg3_v.val_.val_);
@@ -1218,12 +1221,12 @@ void test_nan_d_ffv_ffv2(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_d_ffv_ffv3(const F &f, const double &arg1, const double &arg2,
-                         const double &arg3, const bool &throws) {
+void test_nan_d_ffv_ffv3(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg2_v(arg2, 1.0);
-  fvar<fvar<var>> arg3_v(arg3, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.d_ = 1.0;
   arg3_v.val_.d_ = 1.0;
@@ -1237,7 +1240,7 @@ void test_nan_d_ffv_ffv3(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1, arg2_v, arg3_v);
+    fvar<fvar<var> > res = f(arg1, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg2_v.val_.val_, arg3_v.val_.val_);
@@ -1250,12 +1253,12 @@ void test_nan_d_ffv_ffv3(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_d_ffv_ffv4(const F &f, const double &arg1, const double &arg2,
-                         const double &arg3, const bool &throws) {
+void test_nan_d_ffv_ffv4(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg2_v(arg2, 1.0);
-  fvar<fvar<var>> arg3_v(arg3, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.d_ = 1.0;
   arg3_v.val_.d_ = 1.0;
@@ -1269,7 +1272,7 @@ void test_nan_d_ffv_ffv4(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1, arg2_v, arg3_v);
+    fvar<fvar<var> > res = f(arg1, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg2_v.val_.val_, arg3_v.val_.val_);
@@ -1282,12 +1285,12 @@ void test_nan_d_ffv_ffv4(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_d_ffv1(const F &f, const double &arg1, const double &arg2,
-                         const double &arg3, const bool &throws) {
+void test_nan_ffv_d_ffv1(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v(arg1, 1.0);
-  fvar<fvar<var>> arg3_v(arg3, 1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg3_v.val_.d_ = 1.0;
@@ -1301,7 +1304,7 @@ void test_nan_ffv_d_ffv1(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3_v), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2, arg3_v);
+    fvar<fvar<var> > res = f(arg1_v, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_.val_, arg3_v.val_.val_);
@@ -1314,12 +1317,12 @@ void test_nan_ffv_d_ffv1(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_d_ffv2(const F &f, const double &arg1, const double &arg2,
-                         const double &arg3, const bool &throws) {
+void test_nan_ffv_d_ffv2(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v(arg1, 1.0);
-  fvar<fvar<var>> arg3_v(arg3, 1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg3_v.val_.d_ = 1.0;
@@ -1333,7 +1336,7 @@ void test_nan_ffv_d_ffv2(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3_v), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2, arg3_v);
+    fvar<fvar<var> > res = f(arg1_v, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_.val_, arg3_v.val_.val_);
@@ -1346,12 +1349,12 @@ void test_nan_ffv_d_ffv2(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_d_ffv3(const F &f, const double &arg1, const double &arg2,
-                         const double &arg3, const bool &throws) {
+void test_nan_ffv_d_ffv3(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v(arg1, 1.0);
-  fvar<fvar<var>> arg3_v(arg3, 1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg3_v.val_.d_ = 1.0;
@@ -1365,7 +1368,7 @@ void test_nan_ffv_d_ffv3(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3_v), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2, arg3_v);
+    fvar<fvar<var> > res = f(arg1_v, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_.val_, arg3_v.val_.val_);
@@ -1378,12 +1381,12 @@ void test_nan_ffv_d_ffv3(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_d_ffv4(const F &f, const double &arg1, const double &arg2,
-                         const double &arg3, const bool &throws) {
+void test_nan_ffv_d_ffv4(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v(arg1, 1.0);
-  fvar<fvar<var>> arg3_v(arg3, 1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg3_v.val_.d_ = 1.0;
@@ -1397,7 +1400,7 @@ void test_nan_ffv_d_ffv4(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3_v), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2, arg3_v);
+    fvar<fvar<var> > res = f(arg1_v, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_.val_, arg3_v.val_.val_);
@@ -1410,12 +1413,12 @@ void test_nan_ffv_d_ffv4(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv_d1(const F &f, const double &arg1, const double &arg2,
-                         const double &arg3, const bool &throws) {
+void test_nan_ffv_ffv_d1(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v(arg1, 1.0);
-  fvar<fvar<var>> arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg2_v.val_.d_ = 1.0;
@@ -1429,7 +1432,7 @@ void test_nan_ffv_ffv_d1(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v, arg3), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2_v, arg3);
+    fvar<fvar<var> > res = f(arg1_v, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.val_.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_);
@@ -1442,12 +1445,12 @@ void test_nan_ffv_ffv_d1(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv_d2(const F &f, const double &arg1, const double &arg2,
-                         const double &arg3, const bool &throws) {
+void test_nan_ffv_ffv_d2(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v(arg1, 1.0);
-  fvar<fvar<var>> arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg2_v.val_.d_ = 1.0;
@@ -1461,7 +1464,7 @@ void test_nan_ffv_ffv_d2(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v, arg3), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2_v, arg3);
+    fvar<fvar<var> > res = f(arg1_v, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.d_.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_);
@@ -1474,12 +1477,12 @@ void test_nan_ffv_ffv_d2(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv_d3(const F &f, const double &arg1, const double &arg2,
-                         const double &arg3, const bool &throws) {
+void test_nan_ffv_ffv_d3(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v(arg1, 1.0);
-  fvar<fvar<var>> arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg2_v.val_.d_ = 1.0;
@@ -1493,7 +1496,7 @@ void test_nan_ffv_ffv_d3(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v, arg3), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2_v, arg3);
+    fvar<fvar<var> > res = f(arg1_v, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.val_.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_);
@@ -1506,12 +1509,12 @@ void test_nan_ffv_ffv_d3(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv_d4(const F &f, const double &arg1, const double &arg2,
-                         const double &arg3, const bool &throws) {
+void test_nan_ffv_ffv_d4(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v(arg1, 1.0);
-  fvar<fvar<var>> arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg2_v.val_.d_ = 1.0;
@@ -1525,7 +1528,7 @@ void test_nan_ffv_ffv_d4(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v, arg3), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2_v, arg3);
+    fvar<fvar<var> > res = f(arg1_v, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.d_.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_);
@@ -1538,11 +1541,11 @@ void test_nan_ffv_ffv_d4(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_d_d1(const F &f, const double &arg1, const double &arg2,
-                       const double &arg3, const bool &throws) {
+void test_nan_ffv_d_d1(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
 
@@ -1554,7 +1557,7 @@ void test_nan_ffv_d_d1(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2, arg3);
+    fvar<fvar<var> > res = f(arg1_v, arg2, arg3);
     EXPECT_TRUE(boost::math::isnan(res.val_.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_.val_);
@@ -1566,11 +1569,11 @@ void test_nan_ffv_d_d1(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_d_d2(const F &f, const double &arg1, const double &arg2,
-                       const double &arg3, const bool &throws) {
+void test_nan_ffv_d_d2(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
 
@@ -1582,7 +1585,7 @@ void test_nan_ffv_d_d2(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2, arg3);
+    fvar<fvar<var> > res = f(arg1_v, arg2, arg3);
     EXPECT_TRUE(boost::math::isnan(res.d_.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_.val_);
@@ -1594,11 +1597,11 @@ void test_nan_ffv_d_d2(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_d_d3(const F &f, const double &arg1, const double &arg2,
-                       const double &arg3, const bool &throws) {
+void test_nan_ffv_d_d3(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
 
@@ -1610,7 +1613,7 @@ void test_nan_ffv_d_d3(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2, arg3);
+    fvar<fvar<var> > res = f(arg1_v, arg2, arg3);
     EXPECT_TRUE(boost::math::isnan(res.val_.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_.val_);
@@ -1622,11 +1625,11 @@ void test_nan_ffv_d_d3(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_ffv_d_d4(const F &f, const double &arg1, const double &arg2,
-                       const double &arg3, const bool &throws) {
+void test_nan_ffv_d_d4(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
 
@@ -1638,7 +1641,7 @@ void test_nan_ffv_d_d4(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1_v, arg2, arg3);
+    fvar<fvar<var> > res = f(arg1_v, arg2, arg3);
     EXPECT_TRUE(boost::math::isnan(res.d_.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_.val_);
@@ -1651,11 +1654,11 @@ void test_nan_ffv_d_d4(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_d_ffv_d1(const F &f, const double &arg1, const double &arg2,
-                       const double &arg3, const bool &throws) {
+void test_nan_d_ffv_d1(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.d_ = 1.0;
 
@@ -1667,7 +1670,7 @@ void test_nan_d_ffv_d1(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1, arg2_v, arg3);
+    fvar<fvar<var> > res = f(arg1, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.val_.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg2_v.val_.val_);
@@ -1679,11 +1682,11 @@ void test_nan_d_ffv_d1(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_d_ffv_d2(const F &f, const double &arg1, const double &arg2,
-                       const double &arg3, const bool &throws) {
+void test_nan_d_ffv_d2(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.d_ = 1.0;
 
@@ -1695,7 +1698,7 @@ void test_nan_d_ffv_d2(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1, arg2_v, arg3);
+    fvar<fvar<var> > res = f(arg1, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.d_.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg2_v.val_.val_);
@@ -1707,11 +1710,11 @@ void test_nan_d_ffv_d2(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_d_ffv_d3(const F &f, const double &arg1, const double &arg2,
-                       const double &arg3, const bool &throws) {
+void test_nan_d_ffv_d3(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.d_ = 1.0;
 
@@ -1723,7 +1726,7 @@ void test_nan_d_ffv_d3(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1, arg2_v, arg3);
+    fvar<fvar<var> > res = f(arg1, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.val_.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg2_v.val_.val_);
@@ -1735,11 +1738,11 @@ void test_nan_d_ffv_d3(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_d_ffv_d4(const F &f, const double &arg1, const double &arg2,
-                       const double &arg3, const bool &throws) {
+void test_nan_d_ffv_d4(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.d_ = 1.0;
 
@@ -1751,7 +1754,7 @@ void test_nan_d_ffv_d4(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1, arg2_v, arg3);
+    fvar<fvar<var> > res = f(arg1, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.d_.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg2_v.val_.val_);
@@ -1764,11 +1767,11 @@ void test_nan_d_ffv_d4(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_d_d_ffv1(const F &f, const double &arg1, const double &arg2,
-                       const double &arg3, const bool &throws) {
+void test_nan_d_d_ffv1(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg3_v(arg3, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg3_v.val_.d_ = 1.0;
   arg3_v.d_.d_ = 1.0;
 
@@ -1780,7 +1783,7 @@ void test_nan_d_d_ffv1(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1, arg2, arg3_v), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1, arg2, arg3_v);
+    fvar<fvar<var> > res = f(arg1, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg3_v.val_.val_);
@@ -1792,11 +1795,11 @@ void test_nan_d_d_ffv1(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_d_d_ffv2(const F &f, const double &arg1, const double &arg2,
-                       const double &arg3, const bool &throws) {
+void test_nan_d_d_ffv2(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg3_v(arg3, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg3_v.val_.d_ = 1.0;
   arg3_v.d_.d_ = 1.0;
 
@@ -1808,7 +1811,7 @@ void test_nan_d_d_ffv2(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1, arg2, arg3_v), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1, arg2, arg3_v);
+    fvar<fvar<var> > res = f(arg1, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg3_v.val_.val_);
@@ -1820,11 +1823,11 @@ void test_nan_d_d_ffv2(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_d_d_ffv3(const F &f, const double &arg1, const double &arg2,
-                       const double &arg3, const bool &throws) {
+void test_nan_d_d_ffv3(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg3_v(arg3, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg3_v.val_.d_ = 1.0;
   arg3_v.d_.d_ = 1.0;
 
@@ -1836,7 +1839,7 @@ void test_nan_d_d_ffv3(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1, arg2, arg3_v), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1, arg2, arg3_v);
+    fvar<fvar<var> > res = f(arg1, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg3_v.val_.val_);
@@ -1848,11 +1851,11 @@ void test_nan_d_d_ffv3(const F &f, const double &arg1, const double &arg2,
   }
 }
 template <typename F>
-void test_nan_d_d_ffv4(const F &f, const double &arg1, const double &arg2,
-                       const double &arg3, const bool &throws) {
+void test_nan_d_d_ffv4(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var>> arg3_v(arg3, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg3_v.val_.d_ = 1.0;
   arg3_v.d_.d_ = 1.0;
 
@@ -1864,7 +1867,7 @@ void test_nan_d_d_ffv4(const F &f, const double &arg1, const double &arg2,
   if (throws) {
     EXPECT_THROW(f(arg1, arg2, arg3_v), std::domain_error) << fail_msg.str();
   } else {
-    fvar<fvar<var>> res = f(arg1, arg2, arg3_v);
+    fvar<fvar<var> > res = f(arg1, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg3_v.val_.val_);
@@ -1877,8 +1880,8 @@ void test_nan_d_d_ffv4(const F &f, const double &arg1, const double &arg2,
 }
 
 template <typename F>
-void test_nan_mix(const F &f, const double &arg1, const double &arg2,
-                  const double &arg3, const bool &throws) {
+void test_nan_mix(const F& f, const double& arg1, const double& arg2,
+                  const double& arg3, const bool& throws) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   Eigen::VectorXd arg1_vec(7);
   Eigen::VectorXd arg2_vec(7);

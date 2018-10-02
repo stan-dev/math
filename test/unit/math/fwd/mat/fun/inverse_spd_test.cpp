@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
+#include <gtest/gtest.h>
 
 class AgradFwdMatrixInverseSPD : public testing::Test {
   void SetUp() {}

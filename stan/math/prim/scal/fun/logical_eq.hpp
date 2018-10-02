@@ -19,7 +19,7 @@ inline int logical_eq(const T1 x1, const T2 x2) {
   return x1 == x2;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

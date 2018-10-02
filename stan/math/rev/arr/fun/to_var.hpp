@@ -16,7 +16,7 @@ namespace math {
  * @param[in] v A std::vector<double>
  * @return A std::vector<var> with the values set
  */
-inline std::vector<var> to_var(const std::vector<double> &v) {
+inline std::vector<var> to_var(const std::vector<double>& v) {
   std::vector<var> var_vector(v.size());
   for (size_t n = 0; n < v.size(); n++)
     var_vector[n] = v[n];
@@ -31,8 +31,8 @@ inline std::vector<var> to_var(const std::vector<double> &v) {
  * @param[in] v A std::vector<var>
  * @return A std::vector<var>
  */
-inline std::vector<var> to_var(const std::vector<var> &v) { return v; }
+inline std::vector<var> to_var(const std::vector<var>& v) { return v; }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

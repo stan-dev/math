@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
-#include <limits>
 #include <stan/math/fwd/scal.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
+#include <limits>
 
 TEST(MathFunctions, inv_Phi) {
   using stan::math::Phi;
@@ -25,7 +25,7 @@ TEST(MathFunctions, inv_Phi_inf) {
   using stan::math::fvar;
   using stan::math::inv_Phi;
   fvar<double> p = 7e-311;
-  const fvar<double> inf = std::numeric_limits<fvar<double>>::infinity();
+  const fvar<double> inf = std::numeric_limits<fvar<double> >::infinity();
   EXPECT_EQ(inv_Phi(p), -inf);
   p = 1.0;
   EXPECT_EQ(inv_Phi(p), inf);
@@ -33,7 +33,7 @@ TEST(MathFunctions, inv_Phi_inf) {
 TEST(MathFunctions, inv_Phi_nan) {
   using stan::math::fvar;
   using stan::math::inv_Phi;
-  fvar<double> nan = std::numeric_limits<fvar<double>>::quiet_NaN();
+  fvar<double> nan = std::numeric_limits<fvar<double> >::quiet_NaN();
   EXPECT_THROW(inv_Phi(nan), std::domain_error);
   EXPECT_THROW(inv_Phi(-2.0), std::domain_error);
   EXPECT_THROW(inv_Phi(2.0), std::domain_error);
@@ -57,11 +57,11 @@ TEST(AgradFwdinv_Phi, FvarFvarDouble) {
   using stan::math::fvar;
   using stan::math::inv_Phi;
 
-  fvar<fvar<double>> x;
+  fvar<fvar<double> > x;
   x.val_.val_ = 0.1;
   x.val_.d_ = 1.0;
 
-  fvar<fvar<double>> a = Phi(inv_Phi(x));
+  fvar<fvar<double> > a = Phi(inv_Phi(x));
 
   EXPECT_FLOAT_EQ(0.1, a.val_.val_);
   EXPECT_FLOAT_EQ(1.0, a.val_.d_);
@@ -70,7 +70,8 @@ TEST(AgradFwdinv_Phi, FvarFvarDouble) {
 }
 
 struct inv_Phi_fun {
-  template <typename T0> inline T0 operator()(const T0 &arg1) const {
+  template <typename T0>
+  inline T0 operator()(const T0& arg1) const {
     return inv_Phi(arg1);
   }
 };

@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 typedef stan::math::fvar<double> AVAR;
@@ -29,9 +29,9 @@ void test_sort_indices_asc(VEC val) {
 }
 
 void test_sort_indices_asc3(std::vector<double> val) {
-  std::vector<fvar<fvar<double>>> x;
+  std::vector<fvar<fvar<double> > > x;
   for (size_t i = 0U; i < val.size(); i++)
-    x.push_back(fvar<fvar<double>>(val[i]));
+    x.push_back(fvar<fvar<double> >(val[i]));
 
   std::vector<int> val_sorted = sort_indices_asc(val);
   std::vector<int> x_sorted = sort_indices_asc(x);
@@ -67,9 +67,9 @@ void test_sort_indices_desc(VEC val) {
 }
 
 void test_sort_indices_desc3(VEC val) {
-  std::vector<fvar<fvar<double>>> x;
+  std::vector<fvar<fvar<double> > > x;
   for (size_t i = 0U; i < val.size(); i++)
-    x.push_back(fvar<fvar<double>>(val[i]));
+    x.push_back(fvar<fvar<double> >(val[i]));
 
   std::vector<int> val_sorted = sort_indices_desc(val);
   std::vector<int> x_sorted = sort_indices_desc(x);
@@ -111,13 +111,13 @@ void test_sort_indices_asc(Eigen::Matrix<T, R, C> val) {
 
 template <typename T, int R, int C>
 void test_sort_indices_asc3(Eigen::Matrix<T, R, C> val) {
-  typedef Eigen::Matrix<fvar<fvar<double>>, R, C> AVEC;
+  typedef Eigen::Matrix<fvar<fvar<double> >, R, C> AVEC;
 
   const size_t size = val.size();
 
   AVEC x(size);
   for (size_t i = 0U; i < size; i++)
-    x.data()[i] = fvar<fvar<double>>(val[i]);
+    x.data()[i] = fvar<fvar<double> >(val[i]);
 
   std::vector<int> val_sorted = sort_indices_asc(val);
   std::vector<int> x_sorted = sort_indices_asc(x);
@@ -159,13 +159,13 @@ void test_sort_indices_desc(Eigen::Matrix<T, R, C> val) {
 
 template <typename T, int R, int C>
 void test_sort_indices_desc3(Eigen::Matrix<T, R, C> val) {
-  typedef Eigen::Matrix<fvar<fvar<double>>, R, C> AVEC;
+  typedef Eigen::Matrix<fvar<fvar<double> >, R, C> AVEC;
 
   const size_t size = val.size();
 
   AVEC x(size);
   for (size_t i = 0U; i < size; i++)
-    x.data()[i] = fvar<fvar<double>>(val[i]);
+    x.data()[i] = fvar<fvar<double> >(val[i]);
 
   std::vector<int> val_sorted = sort_indices_desc(val);
   std::vector<int> x_sorted = sort_indices_desc(x);
@@ -316,12 +316,12 @@ TEST(AgradFwdSortIndices, ffd_no_thrown) {
   EXPECT_NO_THROW(sort_indices_asc(vec0));
   EXPECT_NO_THROW(sort_indices_desc(vec0));
 
-  Eigen::Matrix<fvar<fvar<double>>, Eigen::Dynamic, 1> vec1;
+  Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, 1> vec1;
   EXPECT_EQ(0, vec1.size());
   EXPECT_NO_THROW(sort_indices_asc(vec1));
   EXPECT_NO_THROW(sort_indices_desc(vec1));
 
-  Eigen::Matrix<fvar<fvar<double>>, 1, Eigen::Dynamic> vec2;
+  Eigen::Matrix<fvar<fvar<double> >, 1, Eigen::Dynamic> vec2;
   EXPECT_EQ(0, vec2.size());
   EXPECT_NO_THROW(sort_indices_asc(vec2));
   EXPECT_NO_THROW(sort_indices_desc(vec2));

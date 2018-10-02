@@ -2,10 +2,10 @@
 #define STAN_MATH_FWD_MAT_FUN_LOG_SUM_EXP_HPP
 
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/log_sum_exp.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/fwd/scal/fun/log.hpp>
+#include <stan/math/fwd/scal/fun/exp.hpp>
 #include <vector>
 
 namespace stan {
@@ -14,7 +14,7 @@ namespace math {
 // FIXME: cut-and-paste from fwd/log_sum_exp.hpp; should
 // be able to generalize
 template <typename T, int R, int C>
-fvar<T> log_sum_exp(const Eigen::Matrix<fvar<T>, R, C> &v) {
+fvar<T> log_sum_exp(const Eigen::Matrix<fvar<T>, R, C>& v) {
   using std::exp;
   using std::log;
 
@@ -31,6 +31,6 @@ fvar<T> log_sum_exp(const Eigen::Matrix<fvar<T>, R, C> &v) {
   return fvar<T>(log_sum_exp(vals), deriv / denominator);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_ACOSH_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_ACOSH_HPP
 
-#include <boost/math/special_functions/acosh.hpp>
-#include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/meta/likely.hpp>
+#include <stan/math/prim/scal/fun/boost_policy.hpp>
+#include <boost/math/special_functions/acosh.hpp>
 
 namespace stan {
 namespace math {
@@ -34,6 +34,6 @@ inline double acosh(double x) {
  */
 inline double acosh(int x) { return acosh(static_cast<double>(x)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

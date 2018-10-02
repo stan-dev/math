@@ -3,8 +3,8 @@
 #include <limits>
 #include <stan/math/rev/mat.hpp>
 #include <string>
-#include <type_traits>
 #include <vector>
+#include <type_traits>
 
 TEST(MathPrimMat, vec_double_gp_matern52_cov1) {
   stan::math::var sigma = 0.2;
@@ -21,16 +21,17 @@ TEST(MathPrimMat, vec_double_gp_matern52_cov1) {
     for (int j = 0; j < 3; j++)
       EXPECT_FLOAT_EQ(
           stan::math::value_of(
-              sigma * sigma *
-              (1 +
-               std::pow(5, 0.5) / l *
-                   stan::math::sqrt(stan::math::squared_distance(x[i], x[j])) +
-               (5.0 / 3.0) * stan::math::squared_distance(x[i], x[j]) /
-                   std::pow(value_of(l), 2)) *
-              std::exp(stan::math::value_of(
-                  -1.0 * pow(5.0, 0.5) *
-                  stan::math::sqrt(stan::math::squared_distance(x[i], x[j])) /
-                  l))),
+              sigma * sigma
+              * (1
+                 + std::pow(5, 0.5) / l
+                       * stan::math::sqrt(
+                             stan::math::squared_distance(x[i], x[j]))
+                 + (5.0 / 3.0) * stan::math::squared_distance(x[i], x[j])
+                       / std::pow(value_of(l), 2))
+              * std::exp(stan::math::value_of(
+                    -1.0 * pow(5.0, 0.5)
+                    * stan::math::sqrt(stan::math::squared_distance(x[i], x[j]))
+                    / l))),
           cov(i, j).val())
           << "index: (" << i << ", " << j << ")";
 }

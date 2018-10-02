@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_REV_CORE_STD_NUMERIC_LIMITS_HPP
 #define STAN_MATH_REV_CORE_STD_NUMERIC_LIMITS_HPP
 
-#include <limits>
 #include <stan/math/rev/core/var.hpp>
+#include <limits>
 
 namespace std {
 
@@ -12,7 +12,8 @@ namespace std {
  * This implementation of std::numeric_limits<stan::math::var>
  * is used to treat var objects like doubles.
  */
-template <> struct numeric_limits<stan::math::var> {
+template <>
+struct numeric_limits<stan::math::var> {
   static const bool is_specialized = true;
   static stan::math::var min() { return numeric_limits<double>::min(); }
   static stan::math::var max() { return numeric_limits<double>::max(); }
@@ -34,10 +35,10 @@ template <> struct numeric_limits<stan::math::var> {
 
   static const bool has_infinity = numeric_limits<double>::has_infinity;
   static const bool has_quiet_NaN = numeric_limits<double>::has_quiet_NaN;
-  static const bool has_signaling_NaN =
-      numeric_limits<double>::has_signaling_NaN;
-  static const float_denorm_style has_denorm =
-      numeric_limits<double>::has_denorm;
+  static const bool has_signaling_NaN
+      = numeric_limits<double>::has_signaling_NaN;
+  static const float_denorm_style has_denorm
+      = numeric_limits<double>::has_denorm;
   static const bool has_denorm_loss = numeric_limits<double>::has_denorm_loss;
   static stan::math::var infinity() {
     return numeric_limits<double>::infinity();
@@ -58,9 +59,9 @@ template <> struct numeric_limits<stan::math::var> {
 
   static const bool traps = numeric_limits<double>::traps;
   static const bool tinyness_before = numeric_limits<double>::tinyness_before;
-  static const float_round_style round_style =
-      numeric_limits<double>::round_style;
+  static const float_round_style round_style
+      = numeric_limits<double>::round_style;
 };
 
-} // namespace std
+}  // namespace std
 #endif

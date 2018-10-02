@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_HEAD_HPP
 #define STAN_MATH_PRIM_MAT_FUN_HEAD_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_column_index.hpp>
 #include <stan/math/prim/mat/err/check_row_index.hpp>
 #include <stan/math/prim/mat/err/check_std_vector_index.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <vector>
 
 namespace stan {
@@ -21,8 +21,8 @@ namespace math {
  * @throw std::out_of_range if n is out of range.
  */
 template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, 1>
-head(const Eigen::Matrix<T, Eigen::Dynamic, 1> &v, size_t n) {
+inline Eigen::Matrix<T, Eigen::Dynamic, 1> head(
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& v, size_t n) {
   if (n != 0)
     check_row_index("head", "n", v, n);
   return v.head(n);
@@ -39,8 +39,8 @@ head(const Eigen::Matrix<T, Eigen::Dynamic, 1> &v, size_t n) {
  * @throw std::out_of_range if n is out of range.
  */
 template <typename T>
-inline Eigen::Matrix<T, 1, Eigen::Dynamic>
-head(const Eigen::Matrix<T, 1, Eigen::Dynamic> &rv, size_t n) {
+inline Eigen::Matrix<T, 1, Eigen::Dynamic> head(
+    const Eigen::Matrix<T, 1, Eigen::Dynamic>& rv, size_t n) {
   if (n != 0)
     check_column_index("head", "n", rv, n);
   return rv.head(n);
@@ -56,7 +56,8 @@ head(const Eigen::Matrix<T, 1, Eigen::Dynamic> &rv, size_t n) {
  * @return The first n elements of sv.
  * @throw std::out_of_range if n is out of range.
  */
-template <typename T> std::vector<T> head(const std::vector<T> &sv, size_t n) {
+template <typename T>
+std::vector<T> head(const std::vector<T>& sv, size_t n) {
   if (n != 0)
     check_std_vector_index("head", "n", sv, n);
 
@@ -66,6 +67,6 @@ template <typename T> std::vector<T> head(const std::vector<T> &sv, size_t n) {
   return s;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

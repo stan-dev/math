@@ -1,8 +1,8 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
 
 template <int R, int C>
-void test_log_sum_exp(const Eigen::Matrix<double, R, C> &as) {
+void test_log_sum_exp(const Eigen::Matrix<double, R, C>& as) {
   using stan::math::log_sum_exp;
   using std::exp;
   using std::log;

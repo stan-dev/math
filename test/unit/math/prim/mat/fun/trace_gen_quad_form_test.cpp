@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
 
 TEST(MathMatrix, trace_gen_quad_form_mat) {
   using stan::math::matrix_d;

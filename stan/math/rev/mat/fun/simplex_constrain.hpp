@@ -14,10 +14,10 @@ namespace math {
 namespace {
 class simplex_constrain_op {
   int N_;
-  double *diag_; // diagonal of the Jacobian of the operator
-  double *z_;
+  double* diag_;  // diagonal of the Jacobian of the operator
+  double* z_;
 
-public:
+ public:
   /**
    * Return the simplex corresponding to the specified free vector.
    * A simplex is a vector containing values greater than or equal
@@ -33,8 +33,8 @@ public:
    * @return Simplex of dimensionality K
    */
   template <std::size_t size>
-  Eigen::VectorXd operator()(const std::array<bool, size> &needs_adj,
-                             const Eigen::VectorXd &y) {
+  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
+                             const Eigen::VectorXd& y) {
     N_ = y.size();
     diag_ = ChainableStack::instance().memalloc_.alloc_array<double>(N_);
     z_ = ChainableStack::instance().memalloc_.alloc_array<double>(N_);
@@ -63,8 +63,8 @@ public:
    * @return Eigen::VectorXd of adjoints propagated through softmax operation
    */
   template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size> &needs_adj,
-                                 const Eigen::VectorXd &adj) const {
+  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
+                                 const Eigen::VectorXd& adj) const {
     Eigen::VectorXd adj_times_jac(N_);
     double acc = adj(N_);
 
@@ -79,7 +79,7 @@ public:
     return std::make_tuple(adj_times_jac);
   }
 };
-} // namespace
+}  // namespace
 
 /**
  * Return the simplex corresponding to the specified free vector.
@@ -92,11 +92,11 @@ public:
  * @param y Free vector input of dimensionality K - 1
  * @return Simplex of dimensionality K
  */
-inline Eigen::Matrix<var, Eigen::Dynamic, 1>
-simplex_constrain(const Eigen::Matrix<var, Eigen::Dynamic, 1> &y) {
+inline Eigen::Matrix<var, Eigen::Dynamic, 1> simplex_constrain(
+    const Eigen::Matrix<var, Eigen::Dynamic, 1>& y) {
   return adj_jac_apply<simplex_constrain_op>(y);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

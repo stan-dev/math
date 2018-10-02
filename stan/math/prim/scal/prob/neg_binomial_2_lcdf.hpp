@@ -1,29 +1,28 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_LCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_LCDF_HPP
 
-#include <cmath>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/prob/beta_cdf_log.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
 
 template <typename T_n, typename T_location, typename T_precision>
-typename return_type<T_location, T_precision>::type
-neg_binomial_2_lcdf(const T_n &n, const T_location &mu,
-                    const T_precision &phi) {
+typename return_type<T_location, T_precision>::type neg_binomial_2_lcdf(
+    const T_n& n, const T_location& mu, const T_precision& phi) {
   using std::log;
 
   if (size_zero(n, mu, phi))
     return 0.0;
 
-  static const char *function = "neg_binomial_2_lcdf";
+  static const char* function = "neg_binomial_2_lcdf";
   check_positive_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Precision parameter", phi);
   check_not_nan(function, "Random variable", n);
@@ -52,6 +51,6 @@ neg_binomial_2_lcdf(const T_n &n, const T_location &mu,
   return beta_cdf_log(phi_mu.data(), phi, np1.data());
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

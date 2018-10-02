@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/scal.hpp>
+#include <gtest/gtest.h>
 
 TEST(MetaTraits, isConstantStruct) {
   using stan::is_constant_struct;

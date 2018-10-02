@@ -18,7 +18,8 @@ namespace test {
  *
  * @tparam T scalar type of data
  */
-template <typename T> struct seq_writer {
+template <typename T>
+struct seq_writer {
   /**
    * Accumulator for the data.
    */
@@ -41,7 +42,8 @@ template <typename T> struct seq_writer {
    * @tparam C static cols of matrix or vector
    * @param x matrix or vector
    */
-  template <int R, int C> void write(const Eigen::Matrix<double, R, C> &x) {
+  template <int R, int C>
+  void write(const Eigen::Matrix<double, R, C>& x) {
     for (int i = 0; i < x.size(); ++i)
       write(x(i));
   }
@@ -54,7 +56,7 @@ template <typename T> struct seq_writer {
    *
    * @param x vector to write
    */
-  void write(const std::vector<double> &x) {
+  void write(const std::vector<double>& x) {
     for (size_t i = 0; i < x.size(); ++i)
       write(x[i]);
   }
@@ -71,8 +73,8 @@ template <typename T> struct seq_writer {
   }
 };
 
-} // namespace test
-} // namespace math
-} // namespace stan
+}  // namespace test
+}  // namespace math
+}  // namespace stan
 
 #endif

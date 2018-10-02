@@ -11,11 +11,11 @@ namespace math {
  * @deprecated use <code>rayleigh_lccdf</code>
  */
 template <typename T_y, typename T_scale>
-typename return_type<T_y, T_scale>::type
-rayleigh_ccdf_log(const T_y &y, const T_scale &sigma) {
+typename return_type<T_y, T_scale>::type rayleigh_ccdf_log(
+    const T_y& y, const T_scale& sigma) {
   return rayleigh_lccdf<T_y, T_scale>(y, sigma);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

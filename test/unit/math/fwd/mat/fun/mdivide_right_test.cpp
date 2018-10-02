@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
+#include <gtest/gtest.h>
 
 using stan::math::fvar;
 TEST(AgradFwdMatrixMdivideRight, fd_matrix_matrix) {
@@ -154,7 +154,7 @@ TEST(AgradFwdMatrixMdivideRight, ffd_matrix_matrix) {
   matrix_d Ad(2, 2);
   matrix_ffd I;
 
-  fvar<fvar<double>> a, b, c, d;
+  fvar<fvar<double> > a, b, c, d;
   a.val_.val_ = 2.0;
   b.val_.val_ = 3.0;
   c.val_.val_ = 5.0;
@@ -204,7 +204,7 @@ TEST(AgradFwdMatrixMdivideRight, ffd_matrix_rowvector) {
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffd;
 
-  fvar<fvar<double>> a, b, c, d, e, f;
+  fvar<fvar<double> > a, b, c, d, e, f;
   a.val_.val_ = 1.0;
   b.val_.val_ = 2.0;
   c.val_.val_ = 3.0;

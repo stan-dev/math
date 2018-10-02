@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
-#include <limits>
 #include <stan/math/rev/scal.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <limits>
 #include <vector>
 
 TEST(MathRev, squared_distance) {

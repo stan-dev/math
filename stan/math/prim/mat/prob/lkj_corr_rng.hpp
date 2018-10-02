@@ -22,12 +22,12 @@ namespace math {
  * @throw std::domain_error If the shape parameter is not positive.
  */
 template <class RNG>
-inline Eigen::MatrixXd lkj_corr_rng(size_t K, double eta, RNG &rng) {
-  static const char *function = "lkj_corr_rng";
+inline Eigen::MatrixXd lkj_corr_rng(size_t K, double eta, RNG& rng) {
+  static const char* function = "lkj_corr_rng";
   check_positive(function, "Shape parameter", eta);
   return multiply_lower_tri_self_transpose(lkj_corr_cholesky_rng(K, eta, rng));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_GPU_ERR_CHECK_SYMMETRIC_HPP
 #define STAN_MATH_GPU_ERR_CHECK_SYMMETRIC_HPP
 #ifdef STAN_OPENCL
-#include <stan/math/gpu/kernels/check_symmetric.hpp>
 #include <stan/math/gpu/matrix_gpu.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/gpu/kernels/check_symmetric.hpp>
 
 namespace stan {
 namespace math {
@@ -17,13 +17,13 @@ namespace math {
  * @throw <code>std::domain_error</code> if
  *    the matrix is not symmetric.
  */
-inline void check_symmetric(const char *function, const char *name,
-                            const matrix_gpu &y) {
+inline void check_symmetric(const char* function, const char* name,
+                            const matrix_gpu& y) {
   if (y.size() == 0)
     return;
   check_square(function, name, y);
   cl::CommandQueue cmd_queue = opencl_context.queue();
-  cl::Context &ctx = opencl_context.context();
+  cl::Context& ctx = opencl_context.context();
   try {
     int symmetric_flag = 1;
     cl::Buffer buffer_symmetric_flag(ctx, CL_MEM_READ_WRITE, sizeof(int));
@@ -38,12 +38,12 @@ inline void check_symmetric(const char *function, const char *name,
     if (!symmetric_flag) {
       domain_error(function, name, "is not symmetric", "");
     }
-  } catch (const cl::Error &e) {
+  } catch (const cl::Error& e) {
     check_opencl_error("symmetric_check", e);
   }
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
 #endif

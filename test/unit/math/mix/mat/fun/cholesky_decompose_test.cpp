@@ -1,12 +1,13 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
 struct chol_functor {
   int i, j, K;
   chol_functor(int i_, int j_, int K_) : i(i_), j(j_), K(K_) {}
-  template <typename T> T operator()(Eigen::Matrix<T, -1, 1> x) const {
+  template <typename T>
+  T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::cholesky_decompose;
     using stan::math::cov_matrix_constrain;
     T lp(0.0);
@@ -18,11 +19,11 @@ struct chol_functor {
 };
 
 void test_hessians(int size) {
-  std::vector<std::vector<chol_functor>> functowns;
-  std::vector<std::vector<Eigen::Matrix<double, -1, 1>>> grads_ad;
-  std::vector<std::vector<Eigen::Matrix<double, -1, 1>>> grads_fd;
-  std::vector<std::vector<Eigen::Matrix<double, -1, -1>>> hess_ad;
-  std::vector<std::vector<Eigen::Matrix<double, -1, -1>>> hess_fd;
+  std::vector<std::vector<chol_functor> > functowns;
+  std::vector<std::vector<Eigen::Matrix<double, -1, 1> > > grads_ad;
+  std::vector<std::vector<Eigen::Matrix<double, -1, 1> > > grads_fd;
+  std::vector<std::vector<Eigen::Matrix<double, -1, -1> > > hess_ad;
+  std::vector<std::vector<Eigen::Matrix<double, -1, -1> > > hess_fd;
   Eigen::Matrix<double, -1, -1> evals_ad(size, size);
   Eigen::Matrix<double, -1, -1> evals_fd(size, size);
   functowns.resize(size);
@@ -59,12 +60,12 @@ void test_hessians(int size) {
 }
 
 void test_grad_hessians(int size) {
-  std::vector<std::vector<chol_functor>> functowns;
-  std::vector<std::vector<Eigen::Matrix<double, -1, -1>>> hess_ad;
-  std::vector<std::vector<Eigen::Matrix<double, -1, -1>>> hess_fd;
-  std::vector<std::vector<std::vector<Eigen::Matrix<double, -1, -1>>>>
+  std::vector<std::vector<chol_functor> > functowns;
+  std::vector<std::vector<Eigen::Matrix<double, -1, -1> > > hess_ad;
+  std::vector<std::vector<Eigen::Matrix<double, -1, -1> > > hess_fd;
+  std::vector<std::vector<std::vector<Eigen::Matrix<double, -1, -1> > > >
       grad_hess_ad;
-  std::vector<std::vector<std::vector<Eigen::Matrix<double, -1, -1>>>>
+  std::vector<std::vector<std::vector<Eigen::Matrix<double, -1, -1> > > >
       grad_hess_fd;
   Eigen::Matrix<double, -1, -1> evals_ad(size, size);
   Eigen::Matrix<double, -1, -1> evals_fd(size, size);

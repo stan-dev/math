@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/scal.hpp>
+#include <gtest/gtest.h>
 
 TEST(ProbPoisson, cdf_log_matches_lcdf) {
   int y = 3;

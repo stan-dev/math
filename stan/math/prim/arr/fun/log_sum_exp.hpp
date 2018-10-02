@@ -22,7 +22,7 @@ namespace math {
  * @param[in] x array of specified values
  * @return The log of the sum of the exponentiated vector values.
  */
-inline double log_sum_exp(const std::vector<double> &x) {
+inline double log_sum_exp(const std::vector<double>& x) {
   using std::exp;
   using std::log;
   using std::numeric_limits;
@@ -39,7 +39,7 @@ inline double log_sum_exp(const std::vector<double> &x) {
   return max + log(sum);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

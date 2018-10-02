@@ -1,7 +1,7 @@
-#include <boost/math/special_functions/gamma.hpp>
-#include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/grad_reg_lower_inc_gamma.hpp>
 #include <stan/math/rev/scal.hpp>
+#include <stan/math/prim/scal/fun/grad_reg_lower_inc_gamma.hpp>
+#include <gtest/gtest.h>
+#include <boost/math/special_functions/gamma.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 
@@ -60,8 +60,8 @@ TEST(AgradRev, gamma_p_var_double) {
 
 struct gamma_p_fun {
   template <typename T0, typename T1>
-  inline typename stan::return_type<T0, T1>::type
-  operator()(const T0 &arg1, const T1 &arg2) const {
+  inline typename stan::return_type<T0, T1>::type operator()(
+      const T0& arg1, const T1& arg2) const {
     return gamma_p(arg1, arg2);
   }
 };

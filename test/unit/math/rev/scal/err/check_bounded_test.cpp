@@ -1,13 +1,13 @@
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <stan/math/rev/scal.hpp>
 
 TEST(AgradRevErrorHandlingScalar, CheckBounded_X) {
   using stan::math::check_bounded;
   using stan::math::var;
 
-  const char *function = "check_bounded";
-  const char *name = "x";
+  const char* function = "check_bounded";
+  const char* name = "x";
   var x = 0;
   var low = -1;
   var high = 1;
@@ -57,8 +57,8 @@ TEST(AgradRevErrorHandlingScalar, CheckBounded_Low) {
   using stan::math::check_bounded;
   using stan::math::var;
 
-  const char *function = "check_bounded";
-  const char *name = "x";
+  const char* function = "check_bounded";
+  const char* name = "x";
   var x = 0;
   var low = -1;
   var high = 1;
@@ -87,8 +87,8 @@ TEST(AgradRevErrorHandlingScalar, CheckBounded_High) {
   using stan::math::check_bounded;
   using stan::math::var;
 
-  const char *function = "check_bounded";
-  const char *name = "x";
+  const char* function = "check_bounded";
+  const char* name = "x";
   var x = 0;
   var low = -1;
   var high = 1;
@@ -118,7 +118,7 @@ TEST(AgradRevErrorHandlingScalar, CheckBoundedVarCheckUnivariate) {
   using stan::math::check_bounded;
   using stan::math::var;
 
-  const char *function = "check_bounded";
+  const char* function = "check_bounded";
   var a(5.0);
 
   size_t stack_size = stan::math::ChainableStack::instance().var_stack_.size();
@@ -126,8 +126,8 @@ TEST(AgradRevErrorHandlingScalar, CheckBoundedVarCheckUnivariate) {
   EXPECT_EQ(1U, stack_size);
   EXPECT_NO_THROW(check_bounded(function, "a", a, 4.0, 6.0));
 
-  size_t stack_size_after_call =
-      stan::math::ChainableStack::instance().var_stack_.size();
+  size_t stack_size_after_call
+      = stan::math::ChainableStack::instance().var_stack_.size();
   EXPECT_EQ(1U, stack_size_after_call);
 
   stan::math::recover_memory();

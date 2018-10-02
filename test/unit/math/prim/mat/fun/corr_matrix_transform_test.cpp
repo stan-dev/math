@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
 #include <test/unit/util.hpp>
+#include <gtest/gtest.h>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -11,8 +11,8 @@ TEST(prob_transform, corr_matrix_j) {
   Matrix<double, Dynamic, 1> x(K_choose_2);
   x << -1.0, 2.0, 0.0, 1.0, 3.0, -1.5;
   double lp = -12.9;
-  Matrix<double, Dynamic, Dynamic> y =
-      stan::math::corr_matrix_constrain(x, K, lp);
+  Matrix<double, Dynamic, Dynamic> y
+      = stan::math::corr_matrix_constrain(x, K, lp);
   Matrix<double, Dynamic, 1> xrt = stan::math::corr_matrix_free(y);
   EXPECT_EQ(x.size(), xrt.size());
   for (int i = 0; i < x.size(); ++i) {
@@ -26,8 +26,8 @@ TEST(prob_transform, corr_matrix_j2x2) {
   Matrix<double, Dynamic, 1> x(K_choose_2);
   x << -1.3;
   double lp = -12.9;
-  Matrix<double, Dynamic, Dynamic> y =
-      stan::math::corr_matrix_constrain(x, K, lp);
+  Matrix<double, Dynamic, Dynamic> y
+      = stan::math::corr_matrix_constrain(x, K, lp);
   Matrix<double, Dynamic, 1> xrt = stan::math::corr_matrix_free(y);
   EXPECT_EQ(x.size(), xrt.size());
   for (int i = 0; i < x.size(); ++i) {

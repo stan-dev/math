@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_ATANH_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_ATANH_HPP
 
-#include <boost/math/special_functions/atanh.hpp>
-#include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/meta/likely.hpp>
+#include <stan/math/prim/scal/fun/boost_policy.hpp>
+#include <boost/math/special_functions/atanh.hpp>
 
 namespace stan {
 namespace math {
@@ -36,6 +36,6 @@ inline double atanh(double x) {
  */
 inline double atanh(int x) { return atanh(static_cast<double>(x)); }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

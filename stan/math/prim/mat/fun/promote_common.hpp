@@ -19,11 +19,11 @@ namespace math {
  * @return the result of promoting elements
  */
 template <typename T1, typename T2, typename F>
-inline typename common_type<T1, T2>::type promote_common(const F &u) {
+inline typename common_type<T1, T2>::type promote_common(const F& u) {
   return promote_elements<typename common_type<T1, T2>::type, F>::promote(u);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

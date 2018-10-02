@@ -1,14 +1,14 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_SKEW_NORMAL_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_SKEW_NORMAL_RNG_HPP
 
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/prob/normal_rng.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
@@ -36,11 +36,11 @@ namespace math {
  */
 template <typename T_loc, typename T_scale, typename T_shape, class RNG>
 inline typename VectorBuilder<true, double, T_loc, T_scale, T_shape>::type
-skew_normal_rng(const T_loc &mu, const T_scale &sigma, const T_shape &alpha,
-                RNG &rng) {
+skew_normal_rng(const T_loc& mu, const T_scale& sigma, const T_shape& alpha,
+                RNG& rng) {
   using boost::random::normal_distribution;
   using boost::variate_generator;
-  static const char *function = "skew_normal_rng";
+  static const char* function = "skew_normal_rng";
 
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", sigma);
@@ -54,7 +54,7 @@ skew_normal_rng(const T_loc &mu, const T_scale &sigma, const T_shape &alpha,
   size_t N = max_size(mu, sigma, alpha);
   VectorBuilder<true, double, T_loc, T_scale, T_shape> output(N);
 
-  variate_generator<RNG &, normal_distribution<>> norm_rng(
+  variate_generator<RNG&, normal_distribution<> > norm_rng(
       rng, normal_distribution<>(0, 1));
   for (size_t n = 0; n < N; ++n) {
     double r1 = norm_rng();
@@ -69,6 +69,6 @@ skew_normal_rng(const T_loc &mu, const T_scale &sigma, const T_shape &alpha,
   return output.data();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

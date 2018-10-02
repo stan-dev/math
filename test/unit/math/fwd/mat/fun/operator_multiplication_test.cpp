@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
+#include <gtest/gtest.h>
 
 using stan::math::fvar;
 using stan::math::multiply;
@@ -547,9 +547,9 @@ TEST(AgradFwdMatrixOperatorMultiplication, ffd_vector_scalar) {
   vector_d d1(3);
   vector_ffd v1(3);
   double d2;
-  fvar<fvar<double>> v2;
+  fvar<fvar<double> > v2;
 
-  fvar<fvar<double>> a, b, c;
+  fvar<fvar<double> > a, b, c;
   a.val_.val_ = 100.0;
   b.val_.val_ = 0.0;
   c.val_.val_ = -3.0;
@@ -620,9 +620,9 @@ TEST(AgradFwdMatrixOperatorMultiplication, ffd_rowvector_scalar) {
   row_vector_d d1(3);
   row_vector_ffd v1(3);
   double d2;
-  fvar<fvar<double>> v2;
+  fvar<fvar<double> > v2;
 
-  fvar<fvar<double>> a, b, c;
+  fvar<fvar<double> > a, b, c;
   a.val_.val_ = 100.0;
   b.val_.val_ = 0.0;
   c.val_.val_ = -3.0;
@@ -692,9 +692,9 @@ TEST(AgradFwdMatrixOperatorMultiplication, ffd_matrix_scalar) {
   matrix_d d1(2, 2);
   matrix_ffd v1(2, 2);
   double d2;
-  fvar<fvar<double>> v2;
+  fvar<fvar<double> > v2;
 
-  fvar<fvar<double>> a, b, c, d, e;
+  fvar<fvar<double> > a, b, c, d, e;
   a.val_.val_ = 100.0;
   b.val_.val_ = 0.0;
   c.val_.val_ = -3.0;
@@ -783,7 +783,7 @@ TEST(AgradFwdMatrixOperatorMultiplication, ffd_rowvector_vector) {
   vector_d d2(3);
   vector_ffd v2(3);
 
-  fvar<fvar<double>> a, b, c, d, e, f;
+  fvar<fvar<double> > a, b, c, d, e, f;
   a.val_.val_ = -2.0;
   b.val_.val_ = 4.0;
   c.val_.val_ = 1.0;
@@ -827,7 +827,7 @@ TEST(AgradFwdMatrixOperatorMultiplication, ffd_vector_rowvector) {
   row_vector_d d2(3);
   row_vector_ffd v2(3);
 
-  fvar<fvar<double>> a, b, c, d, e, f;
+  fvar<fvar<double> > a, b, c, d, e, f;
   a.val_.val_ = -2.0;
   b.val_.val_ = 4.0;
   c.val_.val_ = 1.0;
@@ -923,7 +923,7 @@ TEST(AgradFwdMatrixOperatorMultiplication, ffd_matrix_vector) {
   vector_d d2(2);
   vector_ffd v2(2);
 
-  fvar<fvar<double>> a, b, c, d, e, f;
+  fvar<fvar<double> > a, b, c, d, e, f;
   a.val_.val_ = -2.0;
   b.val_.val_ = 4.0;
   c.val_.val_ = 1.0;
@@ -995,7 +995,7 @@ TEST(AgradFwdMatrixOperatorMultiplication, ffd_rowvector_matrix) {
   matrix_d d2(3, 2);
   matrix_ffd v2(3, 2);
 
-  fvar<fvar<double>> a, b, c, d, e, f;
+  fvar<fvar<double> > a, b, c, d, e, f;
   a.val_.val_ = -2.0;
   b.val_.val_ = 4.0;
   c.val_.val_ = 1.0;
@@ -1058,7 +1058,7 @@ TEST(AgradFwdMatrixOperatorMultiplication, ffd_matrix_matrix) {
   matrix_d d2(3, 2);
   matrix_ffd v2(3, 2);
 
-  fvar<fvar<double>> a, b, c, d, e, f, g, h, i, j, k, l;
+  fvar<fvar<double> > a, b, c, d, e, f, g, h, i, j, k, l;
   a.val_.val_ = 9.0;
   b.val_.val_ = 24.0;
   c.val_.val_ = 3.0;

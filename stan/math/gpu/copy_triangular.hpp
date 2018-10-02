@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_GPU_COPY_TRIANGULAR_HPP
 #define STAN_MATH_GPU_COPY_TRIANGULAR_HPP
 #ifdef STAN_OPENCL
-#include <CL/cl.hpp>
 #include <stan/math/gpu/constants.hpp>
+#include <stan/math/gpu/matrix_gpu.hpp>
 #include <stan/math/gpu/copy.hpp>
 #include <stan/math/gpu/kernels/copy_triangular.hpp>
-#include <stan/math/gpu/matrix_gpu.hpp>
+#include <CL/cl.hpp>
 
 namespace stan {
 namespace math {
@@ -26,7 +26,7 @@ namespace math {
  *
  */
 template <TriangularViewGPU triangular_view = TriangularViewGPU::Entire>
-inline matrix_gpu copy_triangular(const matrix_gpu &src) {
+inline matrix_gpu copy_triangular(const matrix_gpu& src) {
   if (src.size() == 0 || src.size() == 1) {
     matrix_gpu dst(src);
     return dst;
@@ -37,13 +37,13 @@ inline matrix_gpu copy_triangular(const matrix_gpu &src) {
     opencl_kernels::copy_triangular(cl::NDRange(dst.rows(), dst.cols()),
                                     dst.buffer(), src.buffer(), dst.rows(),
                                     dst.cols(), triangular_view);
-  } catch (const cl::Error &e) {
+  } catch (const cl::Error& e) {
     check_opencl_error("copy_triangular", e);
   }
   return dst;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif
 #endif

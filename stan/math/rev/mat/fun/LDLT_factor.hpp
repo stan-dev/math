@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_REV_MAT_FUN_LDLT_FACTOR_HPP
 #define STAN_MATH_REV_MAT_FUN_LDLT_FACTOR_HPP
 
-#include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/mat/fun/LDLT_factor.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/LDLT_alloc.hpp>
+#include <stan/math/prim/mat/fun/LDLT_factor.hpp>
+#include <stan/math/prim/mat/err/check_square.hpp>
 
 namespace stan {
 namespace math {
@@ -42,8 +42,9 @@ namespace math {
  * ~~~
  *
  */
-template <int R, int C> class LDLT_factor<var, R, C> {
-public:
+template <int R, int C>
+class LDLT_factor<var, R, C> {
+ public:
   /**
    * Default constructor.  The caller *MUST* call compute() after this.  Any
    * calls which use the LDLT_factor without calling compute() run the risk
@@ -82,14 +83,14 @@ public:
  */
 #if EIGEN_VERSION_AT_LEAST(3, 3, 0)
   template <typename Rhs>
-  inline const Eigen::Solve<Eigen::LDLT<Eigen::Matrix<double, R, C>>, Rhs>
+  inline const Eigen::Solve<Eigen::LDLT<Eigen::Matrix<double, R, C> >, Rhs>
   solve(const Eigen::MatrixBase<Rhs> &b) const {
     return alloc_->ldlt_.solve(b);
   }
 #else
   template <typename Rhs>
   inline const Eigen::internal::solve_retval<
-      Eigen::LDLT<Eigen::Matrix<double, R, C>>, Rhs>
+      Eigen::LDLT<Eigen::Matrix<double, R, C> >, Rhs>
   solve(const Eigen::MatrixBase<Rhs> &b) const {
     return alloc_->ldlt_.solve(b);
   }
@@ -135,6 +136,6 @@ public:
   LDLT_alloc<R, C> *alloc_;
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

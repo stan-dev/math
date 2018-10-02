@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
 
 TEST(MathMatrix, columns_dot_self) {
   using stan::math::columns_dot_self;

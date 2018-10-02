@@ -2,12 +2,12 @@
 // MPI
 #ifdef STAN_MPI
 
-#include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
-#include <test/unit/math/prim/mat/functor/faulty_functor.hpp>
 #include <test/unit/math/prim/mat/functor/hard_work.hpp>
+#include <test/unit/math/prim/mat/functor/faulty_functor.hpp>
 
 #include <iostream>
 #include <vector>
@@ -21,10 +21,10 @@ struct MpiJob : public ::testing::Test {
   Eigen::VectorXd shared_params_d;
   std::vector<Eigen::VectorXd> job_params_d;
   const std::size_t N = 10;
-  std::vector<std::vector<double>> x_r =
-      std::vector<std::vector<double>>(N, std::vector<double>(1, 1.0));
-  std::vector<std::vector<int>> x_i =
-      std::vector<std::vector<int>>(N, std::vector<int>(1, 0));
+  std::vector<std::vector<double>> x_r
+      = std::vector<std::vector<double>>(N, std::vector<double>(1, 1.0));
+  std::vector<std::vector<int>> x_i
+      = std::vector<std::vector<int>>(N, std::vector<int>(1, 0));
 
   virtual void SetUp() {
     shared_params_d.resize(2);
@@ -45,10 +45,10 @@ struct MpiJobSmallWorld : public ::testing::Test {
   boost::mpi::communicator world_;
   const std::size_t world_size_ = world_.size();
   const std::size_t N = world_size_ > 1 ? world_size_ - 1 : 1;
-  std::vector<std::vector<double>> x_r =
-      std::vector<std::vector<double>>(N, std::vector<double>(1, 1.0));
-  std::vector<std::vector<int>> x_i =
-      std::vector<std::vector<int>>(N, std::vector<int>(1, 0));
+  std::vector<std::vector<double>> x_r
+      = std::vector<std::vector<double>>(N, std::vector<double>(1, 1.0));
+  std::vector<std::vector<int>> x_i
+      = std::vector<std::vector<int>>(N, std::vector<int>(1, 0));
 
   virtual void SetUp() {
     shared_params_d.resize(2);
@@ -66,8 +66,8 @@ struct MpiJobSmallWorld : public ::testing::Test {
 TEST_F(MpiJob, hard_work_dd) {
   Eigen::VectorXd result_mpi = stan::math::map_rect<0, hard_work>(
       shared_params_d, job_params_d, x_r, x_i);
-  Eigen::VectorXd result_concurrent =
-      stan::math::internal::map_rect_concurrent<0, hard_work>(
+  Eigen::VectorXd result_concurrent
+      = stan::math::internal::map_rect_concurrent<0, hard_work>(
           shared_params_d, job_params_d, x_r, x_i);
 
   EXPECT_EQ(result_mpi.rows(), result_concurrent.rows());
@@ -81,8 +81,8 @@ TEST_F(MpiJob, hard_work_dd) {
 TEST_F(MpiJobSmallWorld, hard_work_dd) {
   Eigen::VectorXd result_mpi = stan::math::map_rect<1, hard_work>(
       shared_params_d, job_params_d, x_r, x_i);
-  Eigen::VectorXd result_concurrent =
-      stan::math::internal::map_rect_concurrent<1, hard_work>(
+  Eigen::VectorXd result_concurrent
+      = stan::math::internal::map_rect_concurrent<1, hard_work>(
           shared_params_d, job_params_d, x_r, x_i);
 
   EXPECT_EQ(result_mpi.rows(), result_concurrent.rows());

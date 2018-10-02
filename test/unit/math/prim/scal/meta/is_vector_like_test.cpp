@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/prim/scal.hpp>
+#include <gtest/gtest.h>
 
 TEST(is_vector_like, double) {
   EXPECT_FALSE(stan::is_vector_like<double>::value);

@@ -1,12 +1,13 @@
+#include <stan/math/prim/mat.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <sstream>
-#include <stan/math/prim/mat.hpp>
 #include <stdexcept>
-#include <string>
-#include <test/unit/util.hpp>
 #include <vector>
+#include <string>
 
-template <int N> void test_print_mat_size(const std::string &expected) {
+template <int N>
+void test_print_mat_size(const std::string& expected) {
   using stan::math::print_mat_size;
   std::stringstream ss;
   stan::math::print_mat_size<N>(ss);
@@ -292,12 +293,12 @@ TEST(MathMatrix, block2) {
 TEST(MathMatrix, vectorVector) {
   using stan::math::assign;
   using std::vector;
-  vector<vector<double>> x(3, vector<double>(2));
+  vector<vector<double> > x(3, vector<double>(2));
   for (size_t i = 0; i < 3; ++i)
     for (size_t j = 0; j < 2; ++j)
       x[i][j] = (i + 1) * (j - 10);
 
-  vector<vector<double>> y(3, vector<double>(2));
+  vector<vector<double> > y(3, vector<double>(2));
 
   assign(y, x);
   EXPECT_EQ(3U, y.size());
@@ -312,15 +313,15 @@ TEST(MathMatrix, vectorVector) {
 TEST(MathMatrix, vectorVectorVector) {
   using stan::math::assign;
   using std::vector;
-  vector<vector<vector<double>>> x(
-      4, vector<vector<double>>(3, vector<double>(2)));
+  vector<vector<vector<double> > > x(
+      4, vector<vector<double> >(3, vector<double>(2)));
   for (size_t k = 0; k < 4; ++k)
     for (size_t i = 0; i < 3; ++i)
       for (size_t j = 0; j < 2; ++j)
         x[k][i][j] = (i + 1) * (j - 10) * (20 * k + 100);
 
-  vector<vector<vector<double>>> y(
-      4, vector<vector<double>>(3, vector<double>(2)));
+  vector<vector<vector<double> > > y(
+      4, vector<vector<double> >(3, vector<double>(2)));
 
   assign(y, x);
   EXPECT_EQ(4U, y.size());
@@ -341,11 +342,11 @@ TEST(MathMatrix, vectorEigenVector) {
   using stan::math::assign;
   using std::vector;
 
-  vector<Matrix<double, Dynamic, 1>> x(2, Matrix<double, Dynamic, 1>(3));
+  vector<Matrix<double, Dynamic, 1> > x(2, Matrix<double, Dynamic, 1>(3));
   for (size_t i = 0; i < 2; ++i)
     for (int j = 0; j < 3; ++j)
       x[i](j) = (i + 1) * (10 * j + 2);
-  vector<Matrix<double, Dynamic, 1>> y(2, Matrix<double, Dynamic, 1>(3));
+  vector<Matrix<double, Dynamic, 1> > y(2, Matrix<double, Dynamic, 1>(3));
 
   assign(y, x);
 

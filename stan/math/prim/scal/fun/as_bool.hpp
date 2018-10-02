@@ -12,9 +12,12 @@ namespace math {
  * @param x value
  * @return true if value is not equal to zero
  */
-template <typename T> inline bool as_bool(const T &x) { return x != 0; }
+template <typename T>
+inline bool as_bool(const T& x) {
+  return x != 0;
+}
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

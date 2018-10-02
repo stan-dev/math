@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradMixMatrixBlock, matrix_fv) {
@@ -60,9 +60,9 @@ TEST(AgradMixMatrixBlock, matrix_ffv) {
   using stan::math::var;
   using stan::math::vector_ffv;
 
-  fvar<fvar<var>> a;
-  fvar<fvar<var>> b;
-  fvar<fvar<var>> c;
+  fvar<fvar<var> > a;
+  fvar<fvar<var> > b;
+  fvar<fvar<var> > c;
 
   a.val_.val_ = 1.0;
   a.d_.val_ = 1.0;

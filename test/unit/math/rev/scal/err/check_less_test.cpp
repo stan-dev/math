@@ -1,12 +1,12 @@
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <stan/math/rev/scal.hpp>
 
 using stan::math::check_less;
 using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckLess) {
-  const char *function = "check_less";
+  const char* function = "check_less";
   var x = -10.0;
   var lb = 0.0;
 
@@ -41,7 +41,7 @@ TEST(AgradRevErrorHandlingScalar, CheckLessVarCheckUnivariate) {
   using stan::math::check_less;
   using stan::math::var;
 
-  const char *function = "check_less";
+  const char* function = "check_less";
   var a(5.0);
 
   size_t stack_size = stan::math::ChainableStack::instance().var_stack_.size();
@@ -49,13 +49,13 @@ TEST(AgradRevErrorHandlingScalar, CheckLessVarCheckUnivariate) {
   EXPECT_EQ(1U, stack_size);
   EXPECT_THROW(check_less(function, "a", a, 2.0), std::domain_error);
 
-  size_t stack_size_after_call =
-      stan::math::ChainableStack::instance().var_stack_.size();
+  size_t stack_size_after_call
+      = stan::math::ChainableStack::instance().var_stack_.size();
   EXPECT_EQ(1U, stack_size_after_call);
 
   EXPECT_NO_THROW(check_less(function, "a", a, 10.0));
-  stack_size_after_call =
-      stan::math::ChainableStack::instance().var_stack_.size();
+  stack_size_after_call
+      = stan::math::ChainableStack::instance().var_stack_.size();
   EXPECT_EQ(1U, stack_size_after_call);
 
   stan::math::recover_memory();

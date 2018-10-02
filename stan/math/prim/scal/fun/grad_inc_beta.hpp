@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_GRAD_INC_BETA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_GRAD_INC_BETA_HPP
 
-#include <cmath>
-#include <stan/math/prim/scal/fun/grad_2F1.hpp>
-#include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/fun/lbeta.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
+#include <stan/math/prim/scal/fun/inc_beta.hpp>
+#include <stan/math/prim/scal/fun/grad_2F1.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -14,7 +14,7 @@ namespace math {
 // with respect to the first two arguments, using the
 // equivalence to a hypergeometric function.
 // See http://dlmf.nist.gov/8.17#ii
-inline void grad_inc_beta(double &g1, double &g2, double a, double b,
+inline void grad_inc_beta(double& g1, double& g2, double a, double b,
                           double z) {
   using std::exp;
   using std::log;
@@ -31,6 +31,6 @@ inline void grad_inc_beta(double &g1, double &g2, double a, double b,
   g2 = c2 * c3 + C * dF1;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

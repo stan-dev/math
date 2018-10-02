@@ -14,5 +14,5 @@ struct error_index {
   };
 };
 
-} // namespace stan
+}  // namespace stan
 #endif

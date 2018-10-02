@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CHOL2INV_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CHOL2INV_HPP
 
-#include <stan/math/prim/mat/err/check_lower_triangular.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/dot_product.hpp>
 #include <stan/math/prim/mat/fun/dot_self.hpp>
+#include <stan/math/prim/mat/fun/dot_product.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_tri_low.hpp>
 #include <stan/math/prim/scal/fun/inv_square.hpp>
+#include <stan/math/prim/mat/err/check_square.hpp>
+#include <stan/math/prim/mat/err/check_lower_triangular.hpp>
 
 namespace stan {
 namespace math {
@@ -21,8 +21,8 @@ namespace math {
  *  lower triangular
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-chol2inv(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &L) {
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> chol2inv(
+    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& L) {
   check_square("chol2inv", "L", L);
   check_lower_triangular("chol2inv", "L", L);
   int K = L.rows();
@@ -47,6 +47,6 @@ chol2inv(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &L) {
   return X;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

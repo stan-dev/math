@@ -1,9 +1,9 @@
-#include <boost/math/distributions.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <gtest/gtest.h>
-#include <limits>
 #include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/math/distributions.hpp>
 #include <vector>
+#include <limits>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;

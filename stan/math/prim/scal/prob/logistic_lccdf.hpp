@@ -3,40 +3,40 @@
 
 #include <boost/random/exponential_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <cmath>
-#include <limits>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/scal/fun/log1p.hpp>
+#include <stan/math/prim/scal/meta/length.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/prob/logistic_log.hpp>
+#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <cmath>
+#include <limits>
 
 namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type
-logistic_lccdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
+typename return_type<T_y, T_loc, T_scale>::type logistic_lccdf(
+    const T_y& y, const T_loc& mu, const T_scale& sigma) {
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
 
   if (size_zero(y, mu, sigma))
     return 0.0;
 
-  static const char *function = "logistic_lccdf";
+  static const char* function = "logistic_lccdf";
 
   using boost::math::tools::promote_args;
   using std::exp;
@@ -76,24 +76,24 @@ logistic_lccdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
     const T_partials_return sigma_inv_vec = 1.0 / value_of(sigma_vec[n]);
 
-    const T_partials_return Pn =
-        1.0 - 1.0 / (1.0 + exp(-(y_dbl - mu_dbl) * sigma_inv_vec));
+    const T_partials_return Pn
+        = 1.0 - 1.0 / (1.0 + exp(-(y_dbl - mu_dbl) * sigma_inv_vec));
     P += log(Pn);
 
     if (!is_constant_struct<T_y>::value)
-      ops_partials.edge1_.partials_[n] -=
-          exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
+      ops_partials.edge1_.partials_[n]
+          -= exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
     if (!is_constant_struct<T_loc>::value)
-      ops_partials.edge2_.partials_[n] -=
-          -exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
+      ops_partials.edge2_.partials_[n]
+          -= -exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge3_.partials_[n] -=
-          -(y_dbl - mu_dbl) * sigma_inv_vec *
-          exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
+      ops_partials.edge3_.partials_[n]
+          -= -(y_dbl - mu_dbl) * sigma_inv_vec
+             * exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
   }
   return ops_partials.build(P);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

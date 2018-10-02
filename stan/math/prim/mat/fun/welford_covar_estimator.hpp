@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 class welford_covar_estimator {
-public:
+ public:
   explicit welford_covar_estimator(int n)
       : m_(Eigen::VectorXd::Zero(n)), m2_(Eigen::MatrixXd::Zero(n, n)) {
     restart();
@@ -20,7 +20,7 @@ public:
     m2_.setZero();
   }
 
-  void add_sample(const Eigen::VectorXd &q) {
+  void add_sample(const Eigen::VectorXd& q) {
     ++num_samples_;
 
     Eigen::VectorXd delta(q - m_);
@@ -30,19 +30,19 @@ public:
 
   int num_samples() { return num_samples_; }
 
-  void sample_mean(Eigen::VectorXd &mean) { mean = m_; }
+  void sample_mean(Eigen::VectorXd& mean) { mean = m_; }
 
-  void sample_covariance(Eigen::MatrixXd &covar) {
+  void sample_covariance(Eigen::MatrixXd& covar) {
     if (num_samples_ > 1)
       covar = m2_ / (num_samples_ - 1.0);
   }
 
-protected:
+ protected:
   double num_samples_;
   Eigen::VectorXd m_;
   Eigen::MatrixXd m2_;
 };
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

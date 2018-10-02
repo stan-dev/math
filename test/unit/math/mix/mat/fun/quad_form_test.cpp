@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
@@ -1589,7 +1589,7 @@ TEST(AgradMixMatrixQuadForm, quad_form_vec_ffv_1st_deriv) {
 
   matrix_ffv ad(4, 4);
   vector_ffv bd(4);
-  fvar<fvar<var>> res;
+  fvar<fvar<var> > res;
 
   bd << 100, 0, -3, 5;
   ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
@@ -1674,7 +1674,7 @@ TEST(AgradMixMatrixQuadForm, quad_form_vec_ffv_2nd_deriv) {
 
   matrix_ffv ad(4, 4);
   vector_ffv bd(4);
-  fvar<fvar<var>> res;
+  fvar<fvar<var> > res;
 
   bd << 100, 0, -3, 5;
   ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
@@ -1756,7 +1756,7 @@ TEST(AgradMixMatrixQuadForm, quad_form_vec_ffv_3rd_deriv) {
 
   matrix_ffv ad(4, 4);
   vector_ffv bd(4);
-  fvar<fvar<var>> res;
+  fvar<fvar<var> > res;
 
   bd << 100, 0, -3, 5;
   ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
@@ -1859,7 +1859,7 @@ TEST(AgradMixMatrixQuadForm, quad_form_sym_vec_dffv_instant) {
 
   Eigen::Matrix<double, -1, -1> ad(4, 4);
   vector_ffv bd(4);
-  fvar<fvar<var>> res;
+  fvar<fvar<var> > res;
 
   bd << 100, 0, -3, 5;
   ad << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
@@ -1876,7 +1876,7 @@ TEST(AgradMixMatrixQuadForm, quad_form_sym_vec_ffvd_instant) {
 
   matrix_ffv ad(4, 4);
   Eigen::Matrix<double, -1, 1> bd(4);
-  fvar<fvar<var>> res;
+  fvar<fvar<var> > res;
 
   bd << 100, 0, -3, 5;
   ad << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
@@ -1892,7 +1892,7 @@ TEST(AgradMixMatrixQuadForm, quad_form_sym_vec_ffv_1st_deriv) {
 
   matrix_ffv ad(4, 4);
   vector_ffv bd(4);
-  fvar<fvar<var>> res;
+  fvar<fvar<var> > res;
 
   bd << 100, 0, -3, 5;
   ad << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
@@ -1977,7 +1977,7 @@ TEST(AgradMixMatrixQuadForm, quad_form_sym_vec_ffv_2nd_deriv) {
 
   matrix_ffv ad(4, 4);
   vector_ffv bd(4);
-  fvar<fvar<var>> res;
+  fvar<fvar<var> > res;
 
   bd << 100, 0, -3, 5;
   ad << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
@@ -2059,7 +2059,7 @@ TEST(AgradMixMatrixQuadForm, quad_form_sym_vec_ffv_3rd_deriv) {
 
   matrix_ffv ad(4, 4);
   vector_ffv bd(4);
-  fvar<fvar<var>> res;
+  fvar<fvar<var> > res;
 
   bd << 100, 0, -3, 5;
   ad << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,

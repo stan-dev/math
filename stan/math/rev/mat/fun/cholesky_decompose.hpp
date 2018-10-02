@@ -1,28 +1,28 @@
 #ifndef STAN_MATH_REV_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
 #define STAN_MATH_REV_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
 
-#include <algorithm>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
+#include <stan/math/rev/scal/fun/value_of_rec.hpp>
+#include <stan/math/rev/scal/fun/value_of.hpp>
+#include <stan/math/rev/core.hpp>
+#include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/fun/value_of_rec.hpp>
+#include <algorithm>
 
 namespace stan {
 namespace math {
 
 class cholesky_block : public vari {
-public:
+ public:
   int M_;
   int block_size_;
   typedef Eigen::Block<Eigen::MatrixXd> Block_;
-  vari **variRefA_;
-  vari **variRefL_;
+  vari** variRefA_;
+  vari** variRefL_;
 
   /**
    * Constructor for cholesky function.
@@ -40,12 +40,13 @@ public:
    * @param A matrix
    * @param L_A matrix, cholesky factor of A
    */
-  cholesky_block(const Eigen::Matrix<var, -1, -1> &A,
-                 const Eigen::Matrix<double, -1, -1> &L_A)
-      : vari(0.0), M_(A.rows()),
-        variRefA_(ChainableStack::instance().memalloc_.alloc_array<vari *>(
+  cholesky_block(const Eigen::Matrix<var, -1, -1>& A,
+                 const Eigen::Matrix<double, -1, -1>& L_A)
+      : vari(0.0),
+        M_(A.rows()),
+        variRefA_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
             A.rows() * (A.rows() + 1) / 2)),
-        variRefL_(ChainableStack::instance().memalloc_.alloc_array<vari *>(
+        variRefL_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
             A.rows() * (A.rows() + 1) / 2)) {
     size_t pos = 0;
     block_size_ = std::max((M_ / 8 / 16) * 16, 8);
@@ -65,14 +66,14 @@ public:
    * @param L cholesky factor
    * @param Lbar matrix of adjoints of L
    */
-  inline void symbolic_rev(Block_ &L, Block_ &Lbar) {
+  inline void symbolic_rev(Block_& L, Block_& Lbar) {
     using Eigen::Lower;
     using Eigen::StrictlyUpper;
     using Eigen::Upper;
     L.transposeInPlace();
     Lbar = (L * Lbar.triangularView<Lower>()).eval();
-    Lbar.triangularView<StrictlyUpper>() =
-        Lbar.adjoint().triangularView<StrictlyUpper>();
+    Lbar.triangularView<StrictlyUpper>()
+        = Lbar.adjoint().triangularView<StrictlyUpper>();
     L.triangularView<Upper>().solveInPlace(Lbar);
     L.triangularView<Upper>().solveInPlace(Lbar.transpose());
   }
@@ -135,10 +136,10 @@ public:
 };
 
 class cholesky_scalar : public vari {
-public:
+ public:
   int M_;
-  vari **variRefA_;
-  vari **variRefL_;
+  vari** variRefA_;
+  vari** variRefL_;
 
   /**
    * Constructor for cholesky function.
@@ -154,12 +155,13 @@ public:
    * @param A matrix
    * @param L_A matrix, cholesky factor of A
    */
-  cholesky_scalar(const Eigen::Matrix<var, -1, -1> &A,
-                  const Eigen::Matrix<double, -1, -1> &L_A)
-      : vari(0.0), M_(A.rows()),
-        variRefA_(ChainableStack::instance().memalloc_.alloc_array<vari *>(
+  cholesky_scalar(const Eigen::Matrix<var, -1, -1>& A,
+                  const Eigen::Matrix<double, -1, -1>& L_A)
+      : vari(0.0),
+        M_(A.rows()),
+        variRefA_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
             A.rows() * (A.rows() + 1) / 2)),
-        variRefL_(ChainableStack::instance().memalloc_.alloc_array<vari *>(
+        variRefL_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
             A.rows() * (A.rows() + 1) / 2)) {
     size_t accum = 0;
     size_t accum_i = accum;
@@ -209,8 +211,8 @@ public:
           adjA.coeffRef(i, j) = 0.5 * adjL.coeff(i, j) / LA.coeff(i, j);
         } else {
           adjA.coeffRef(i, j) = adjL.coeff(i, j) / LA.coeff(j, j);
-          adjL.coeffRef(j, j) -=
-              adjL.coeff(i, j) * LA.coeff(i, j) / LA.coeff(j, j);
+          adjL.coeffRef(j, j)
+              -= adjL.coeff(i, j) * LA.coeff(i, j) / LA.coeff(j, j);
         }
         for (int k = j - 1; k >= 0; --k) {
           adjL.coeffRef(i, k) -= adjA.coeff(i, j) * LA.coeff(j, k);
@@ -233,8 +235,8 @@ public:
  * @param A Matrix
  * @return L cholesky factor of A
  */
-inline Eigen::Matrix<var, -1, -1>
-cholesky_decompose(const Eigen::Matrix<var, -1, -1> &A) {
+inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
+    const Eigen::Matrix<var, -1, -1>& A) {
   check_square("cholesky_decompose", "A", A);
   check_symmetric("cholesky_decompose", "A", A);
 
@@ -245,10 +247,10 @@ cholesky_decompose(const Eigen::Matrix<var, -1, -1> &A) {
   // Memory allocated in arena.
   // cholesky_scalar gradient faster for small matrices compared to
   // cholesky_block
-  vari *dummy = new vari(0.0, false);
+  vari* dummy = new vari(0.0, false);
   Eigen::Matrix<var, -1, -1> L(A.rows(), A.cols());
   if (L_A.rows() <= 35) {
-    cholesky_scalar *baseVari = new cholesky_scalar(A, L_A);
+    cholesky_scalar* baseVari = new cholesky_scalar(A, L_A);
     size_t accum = 0;
     size_t accum_i = accum;
     for (size_type j = 0; j < L.cols(); ++j) {
@@ -263,7 +265,7 @@ cholesky_decompose(const Eigen::Matrix<var, -1, -1> &A) {
       accum_i = accum;
     }
   } else {
-    cholesky_block *baseVari = new cholesky_block(A, L_A);
+    cholesky_block* baseVari = new cholesky_block(A, L_A);
     size_t pos = 0;
     for (size_type j = 0; j < L.cols(); ++j) {
       for (size_type i = j; i < L.cols(); ++i) {
@@ -275,6 +277,6 @@ cholesky_decompose(const Eigen::Matrix<var, -1, -1> &A) {
   }
   return L;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

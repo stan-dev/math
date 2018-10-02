@@ -1,6 +1,6 @@
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <stan/math/prim/scal.hpp>
 
 TEST(MathFunctions, squared_distance) {
   double x1 = 1;

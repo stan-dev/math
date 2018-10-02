@@ -11,8 +11,8 @@ namespace math {
  * @deprecated use <code>poisson_log_lpmf</code>
  */
 template <bool propto, typename T_n, typename T_log_rate>
-typename return_type<T_log_rate>::type
-poisson_log_log(const T_n &n, const T_log_rate &alpha) {
+typename return_type<T_log_rate>::type poisson_log_log(
+    const T_n& n, const T_log_rate& alpha) {
   return poisson_log_lpmf<propto, T_n, T_log_rate>(n, alpha);
 }
 
@@ -20,11 +20,11 @@ poisson_log_log(const T_n &n, const T_log_rate &alpha) {
  * @deprecated use <code>poisson_log_lpmf</code>
  */
 template <typename T_n, typename T_log_rate>
-inline typename return_type<T_log_rate>::type
-poisson_log_log(const T_n &n, const T_log_rate &alpha) {
+inline typename return_type<T_log_rate>::type poisson_log_log(
+    const T_n& n, const T_log_rate& alpha) {
   return poisson_log_lpmf<T_n, T_log_rate>(n, alpha);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

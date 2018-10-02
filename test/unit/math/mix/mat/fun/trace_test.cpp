@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <stan/math/mix/mat.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradMixMatrixTrace, fv) {
@@ -36,7 +36,7 @@ TEST(AgradMixMatrixTrace, ffv) {
   a(1, 0).val_.d_ = 1.0;
   a(1, 1).val_.d_ = 1.0;
 
-  fvar<fvar<var>> s = trace(a);
+  fvar<fvar<var> > s = trace(a);
   EXPECT_FLOAT_EQ(9.0, s.val_.val().val());
   EXPECT_FLOAT_EQ(2.0, s.d_.val().val());
 

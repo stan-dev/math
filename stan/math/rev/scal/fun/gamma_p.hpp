@@ -1,23 +1,23 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_GAMMA_P_HPP
 #define STAN_MATH_REV_SCAL_FUN_GAMMA_P_HPP
 
-#include <limits>
+#include <stan/math/rev/core.hpp>
+#include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_lower_inc_gamma.hpp>
-#include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/rev/core.hpp>
+#include <stan/math/prim/scal/fun/grad_reg_lower_inc_gamma.hpp>
 #include <valarray>
+#include <limits>
 
 namespace stan {
 namespace math {
 
 namespace {
 class gamma_p_vv_vari : public op_vv_vari {
-public:
-  gamma_p_vv_vari(vari *avi, vari *bvi)
+ public:
+  gamma_p_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(gamma_p(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
     using boost::math::lgamma;
@@ -42,15 +42,16 @@ public:
       return;
 
     avi_->adj_ += adj_ * grad_reg_lower_inc_gamma(avi_->val_, bvi_->val_);
-    bvi_->adj_ += adj_ * std::exp(-bvi_->val_ +
-                                  (avi_->val_ - 1.0) * std::log(bvi_->val_) -
-                                  lgamma(avi_->val_));
+    bvi_->adj_
+        += adj_
+           * std::exp(-bvi_->val_ + (avi_->val_ - 1.0) * std::log(bvi_->val_)
+                      - lgamma(avi_->val_));
   }
 };
 
 class gamma_p_vd_vari : public op_vd_vari {
-public:
-  gamma_p_vd_vari(vari *avi, double b)
+ public:
+  gamma_p_vd_vari(vari* avi, double b)
       : op_vd_vari(gamma_p(avi->val_, b), avi, b) {}
   void chain() {
     if (is_inf(avi_->val_)) {
@@ -72,8 +73,8 @@ public:
 };
 
 class gamma_p_dv_vari : public op_dv_vari {
-public:
-  gamma_p_dv_vari(double a, vari *bvi)
+ public:
+  gamma_p_dv_vari(double a, vari* bvi)
       : op_dv_vari(gamma_p(a, bvi->val_), a, bvi) {}
   void chain() {
     if (is_inf(ad_)) {
@@ -90,25 +91,25 @@ public:
     if (std::fabs(bvi_->val_ / ad_) > 10)
       return;
 
-    bvi_->adj_ +=
-        adj_ * std::exp(-bvi_->val_ + (ad_ - 1.0) * std::log(bvi_->val_) -
-                        lgamma(ad_));
+    bvi_->adj_ += adj_
+                  * std::exp(-bvi_->val_ + (ad_ - 1.0) * std::log(bvi_->val_)
+                             - lgamma(ad_));
   }
 };
-} // namespace
+}  // namespace
 
-inline var gamma_p(const var &a, const var &b) {
+inline var gamma_p(const var& a, const var& b) {
   return var(new gamma_p_vv_vari(a.vi_, b.vi_));
 }
 
-inline var gamma_p(const var &a, double b) {
+inline var gamma_p(const var& a, double b) {
   return var(new gamma_p_vd_vari(a.vi_, b));
 }
 
-inline var gamma_p(double a, const var &b) {
+inline var gamma_p(double a, const var& b) {
   return var(new gamma_p_dv_vari(a, b.vi_));
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

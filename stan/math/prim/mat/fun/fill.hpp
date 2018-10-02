@@ -19,10 +19,10 @@ namespace math {
  * @param y Value.
  */
 template <typename T, int R, int C, typename S>
-void fill(Eigen::Matrix<T, R, C> &x, const S &y) {
+void fill(Eigen::Matrix<T, R, C>& x, const S& y) {
   x.fill(y);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
