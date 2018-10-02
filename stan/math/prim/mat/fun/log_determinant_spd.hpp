@@ -28,6 +28,6 @@ inline T log_determinant_spd(const Eigen::Matrix<T, R, C> &m) {
   return m.ldlt().vectorD().array().log().sum();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -31,6 +31,6 @@ inline double round(double x) {
  */
 inline double round(int x) { return round(static_cast<double>(x)); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

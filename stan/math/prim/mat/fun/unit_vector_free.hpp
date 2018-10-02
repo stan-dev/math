@@ -19,12 +19,12 @@ namespace math {
  * @tparam T Scalar type.
  **/
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> unit_vector_free(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1> &x) {
+Eigen::Matrix<T, Eigen::Dynamic, 1>
+unit_vector_free(const Eigen::Matrix<T, Eigen::Dynamic, 1> &x) {
   check_unit_vector("stan::math::unit_vector_free", "Unit vector variable", x);
   return x;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

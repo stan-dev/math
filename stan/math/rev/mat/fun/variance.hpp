@@ -24,8 +24,8 @@ inline var calc_variance(size_t size, const var *dtrs) {
   double sum_of_squares = 0;
   double reciprocal_size_m1 = 1.0 / (size - 1);
   double two_over_size_m1 = 2.0 * reciprocal_size_m1;
-  double *partials
-      = ChainableStack::instance().memalloc_.alloc_array<double>(size);
+  double *partials =
+      ChainableStack::instance().memalloc_.alloc_array<double>(size);
   for (size_t i = 0; i < size; ++i) {
     double diff = dtrs[i].vi_->val_ - mean;
     sum_of_squares += diff * diff;
@@ -35,7 +35,7 @@ inline var calc_variance(size_t size, const var *dtrs) {
   return var(new stored_gradient_vari(variance, size, varis, partials));
 }
 
-}  // namespace
+} // namespace
 
 /**
  * Return the sample variance of the specified standard
@@ -61,14 +61,13 @@ inline var variance(const std::vector<var> &v) {
  * @param[in] m input matrix
  * @return sample variance of specified matrix
  */
-template <int R, int C>
-var variance(const Eigen::Matrix<var, R, C> &m) {
+template <int R, int C> var variance(const Eigen::Matrix<var, R, C> &m) {
   check_nonzero_size("variance", "m", m);
   if (m.size() == 1)
     return 0;
   return calc_variance(m.size(), &m(0));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

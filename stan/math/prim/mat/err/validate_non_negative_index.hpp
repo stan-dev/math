@@ -20,6 +20,6 @@ inline void validate_non_negative_index(const char *var_name, const char *expr,
   }
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

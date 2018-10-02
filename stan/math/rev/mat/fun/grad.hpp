@@ -29,6 +29,6 @@ inline void grad(var &v, Eigen::Matrix<var, Eigen::Dynamic, 1> &x,
     g(i) = x(i).vi_->adj_;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

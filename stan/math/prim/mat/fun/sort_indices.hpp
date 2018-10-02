@@ -18,11 +18,10 @@ namespace math {
  * @tparam C container type
  */
 namespace {
-template <bool ascending, typename C>
-class index_comparator {
+template <bool ascending, typename C> class index_comparator {
   const C &xs_;
 
- public:
+public:
   /**
    * Construct an index comparator holding a reference
    * to the specified container.
@@ -70,8 +69,8 @@ std::vector<int> sort_indices(const C &xs) {
   return idxs;
 }
 
-}  // namespace
+} // namespace
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

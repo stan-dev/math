@@ -47,6 +47,6 @@ inline void grad_inc_beta(var &g1, var &g2, const var &a, const var &b,
   g2 = c2 * c3 + C * dF1;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -23,8 +23,8 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type lognormal_cdf(
-    const T_y &y, const T_loc &mu, const T_scale &sigma) {
+typename return_type<T_y, T_loc, T_scale>::type
+lognormal_cdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
   static const char *function = "lognormal_cdf";
 
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
@@ -62,10 +62,10 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_cdf(
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials_return scaled_diff
-        = (log(y_dbl) - mu_dbl) / (sigma_dbl * SQRT_2);
-    const T_partials_return rep_deriv
-        = SQRT_2 * 0.5 / sqrt_pi * exp(-scaled_diff * scaled_diff) / sigma_dbl;
+    const T_partials_return scaled_diff =
+        (log(y_dbl) - mu_dbl) / (sigma_dbl * SQRT_2);
+    const T_partials_return rep_deriv =
+        SQRT_2 * 0.5 / sqrt_pi * exp(-scaled_diff * scaled_diff) / sigma_dbl;
 
     const T_partials_return cdf_ = 0.5 * erfc(-scaled_diff);
     cdf *= cdf_;
@@ -75,8 +75,8 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_cdf(
     if (!is_constant_struct<T_loc>::value)
       ops_partials.edge2_.partials_[n] -= rep_deriv / cdf_;
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge3_.partials_[n]
-          -= rep_deriv * scaled_diff * SQRT_2 / cdf_;
+      ops_partials.edge3_.partials_[n] -=
+          rep_deriv * scaled_diff * SQRT_2 / cdf_;
   }
 
   if (!is_constant_struct<T_y>::value) {
@@ -94,6 +94,6 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_cdf(
   return ops_partials.build(cdf);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

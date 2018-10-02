@@ -26,8 +26,8 @@ namespace math {
  * @throw std::domain_error if alpha is nonfinite
  */
 template <typename T_rate, class RNG>
-inline typename VectorBuilder<true, int, T_rate>::type poisson_log_rng(
-    const T_rate &alpha, RNG &rng) {
+inline typename VectorBuilder<true, int, T_rate>::type
+poisson_log_rng(const T_rate &alpha, RNG &rng) {
   using boost::random::poisson_distribution;
   using boost::variate_generator;
 
@@ -50,6 +50,6 @@ inline typename VectorBuilder<true, int, T_rate>::type poisson_log_rng(
   return output.data();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

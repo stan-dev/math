@@ -29,9 +29,9 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_alpha, typename T_tau,
           typename T_beta, typename T_delta>
-typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type wiener_log(
-    const T_y &y, const T_alpha &alpha, const T_tau &tau, const T_beta &beta,
-    const T_delta &delta) {
+typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type
+wiener_log(const T_y &y, const T_alpha &alpha, const T_tau &tau,
+           const T_beta &beta, const T_delta &delta) {
   return wiener_lpdf<propto, T_y, T_alpha, T_tau, T_beta, T_delta>(
       y, alpha, tau, beta, delta);
 }
@@ -48,6 +48,6 @@ wiener_log(const T_y &y, const T_alpha &alpha, const T_tau &tau,
                                                            delta);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

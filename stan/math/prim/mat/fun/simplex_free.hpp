@@ -25,8 +25,8 @@ namespace math {
  * @throw std::domain_error if x is not a valid simplex
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_free(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1> &x) {
+Eigen::Matrix<T, Eigen::Dynamic, 1>
+simplex_free(const Eigen::Matrix<T, Eigen::Dynamic, 1> &x) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
@@ -46,6 +46,6 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_free(
   return y;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

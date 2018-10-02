@@ -8,8 +8,7 @@
 #include <test/unit/math/rev/mat/vectorize/expect_val_deriv_eq.hpp>
 #include <vector>
 
-template <typename F>
-void expect_rev_row_vector_value() {
+template <typename F> void expect_rev_row_vector_value() {
   using stan::math::var;
   using std::vector;
   typedef Eigen::Matrix<var, 1, Eigen::Dynamic> RowVectorXvar;

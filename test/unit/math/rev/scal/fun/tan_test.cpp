@@ -29,17 +29,16 @@ TEST(AgradRev, tan_neg_var) {
 TEST(AgradRev, tan_boundry) {
   double inf = std::numeric_limits<double>::infinity();
   AVAR a = inf;
-  EXPECT_TRUE(std::isnan(tan(a)))
-      << "tan(" << a << "): " << tan(a) << " mimics std::tan behavior";
+  EXPECT_TRUE(std::isnan(tan(a))) << "tan(" << a << "): " << tan(a)
+                                  << " mimics std::tan behavior";
 
   AVAR b = -inf;
-  EXPECT_TRUE(std::isnan(tan(b)))
-      << "tan(" << b << "): " << tan(b) << " mimics std::tan behavior";
+  EXPECT_TRUE(std::isnan(tan(b))) << "tan(" << b << "): " << tan(b)
+                                  << " mimics std::tan behavior";
 }
 
 struct tan_fun {
-  template <typename T0>
-  inline T0 operator()(const T0 &arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return tan(arg1);
   }
 };

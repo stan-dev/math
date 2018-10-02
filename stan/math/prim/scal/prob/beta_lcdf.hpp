@@ -50,8 +50,8 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>
-typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lcdf(
-    const T_y &y, const T_scale_succ &alpha, const T_scale_fail &beta) {
+typename return_type<T_y, T_scale_succ, T_scale_fail>::type
+beta_lcdf(const T_y &y, const T_scale_succ &alpha, const T_scale_fail &beta) {
   typedef
       typename stan::partials_return_type<T_y, T_scale_succ, T_scale_fail>::type
           T_partials_return;
@@ -119,9 +119,9 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lcdf(
     cdf_log += log(Pn);
 
     if (!is_constant_struct<T_y>::value)
-      ops_partials.edge1_.partials_[n] += pow(1 - y_dbl, beta_dbl - 1)
-                                          * pow(y_dbl, alpha_dbl - 1)
-                                          / betafunc_dbl / Pn;
+      ops_partials.edge1_.partials_[n] += pow(1 - y_dbl, beta_dbl - 1) *
+                                          pow(y_dbl, alpha_dbl - 1) /
+                                          betafunc_dbl / Pn;
 
     T_partials_return g1 = 0;
     T_partials_return g2 = 0;
@@ -140,6 +140,6 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lcdf(
   return ops_partials.build(cdf_log);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

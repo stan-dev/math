@@ -10,11 +10,11 @@ namespace stan {
 namespace math {
 
 class op_matrix_vari : public vari {
- protected:
+protected:
   const size_t size_;
   vari **vis_;
 
- public:
+public:
   template <int R, int C>
   op_matrix_vari(double f, const Eigen::Matrix<var, R, C> &vs)
       : vari(f), size_(vs.size()) {
@@ -26,6 +26,6 @@ class op_matrix_vari : public vari {
   size_t size() { return size_; }
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

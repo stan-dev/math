@@ -39,6 +39,6 @@ void jacobian(const F &f, const Eigen::Matrix<double, Eigen::Dynamic, 1> &x,
   recover_memory_nested();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

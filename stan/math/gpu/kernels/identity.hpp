@@ -34,7 +34,7 @@ const char *identity_kernel_code = STRINGIFY(
       }
     }
     // \cond
-);
+    );
 // \endcond
 
 /**
@@ -43,8 +43,8 @@ const char *identity_kernel_code = STRINGIFY(
 const global_range_kernel<cl::Buffer, int, int> identity("identity",
                                                          identity_kernel_code);
 
-}  // namespace opencl_kernels
-}  // namespace math
-}  // namespace stan
+} // namespace opencl_kernels
+} // namespace math
+} // namespace stan
 #endif
 #endif

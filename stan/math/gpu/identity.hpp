@@ -31,8 +31,8 @@ inline matrix_gpu identity(int rows_cols) {
   }
   return A;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif
 #endif

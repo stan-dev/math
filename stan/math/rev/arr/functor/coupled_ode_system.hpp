@@ -40,8 +40,7 @@ namespace math {
  *
  * @tparam F type of functor for the base ode system.
  */
-template <typename F>
-struct coupled_ode_system<F, double, var> {
+template <typename F> struct coupled_ode_system<F, double, var> {
   const F &f_;
   const std::vector<double> &y0_dbl_;
   const std::vector<var> &theta_;
@@ -69,15 +68,8 @@ struct coupled_ode_system<F, double, var> {
                      const std::vector<var> &theta,
                      const std::vector<double> &x,
                      const std::vector<int> &x_int, std::ostream *msgs)
-      : f_(f),
-        y0_dbl_(y0),
-        theta_(theta),
-        theta_dbl_(value_of(theta)),
-        x_(x),
-        x_int_(x_int),
-        N_(y0.size()),
-        M_(theta.size()),
-        size_(N_ + N_ * M_),
+      : f_(f), y0_dbl_(y0), theta_(theta), theta_dbl_(value_of(theta)), x_(x),
+        x_int_(x_int), N_(y0.size()), M_(theta.size()), size_(N_ + N_ * M_),
         msgs_(msgs) {}
 
   /**
@@ -176,8 +168,8 @@ struct coupled_ode_system<F, double, var> {
    *
    * @param y coupled states after solving the ode
    */
-  std::vector<std::vector<var>> decouple_states(
-      const std::vector<std::vector<double>> &y) const {
+  std::vector<std::vector<var>>
+  decouple_states(const std::vector<std::vector<double>> &y) const {
     std::vector<var> temp_vars(N_);
     std::vector<double> temp_gradients(M_);
     std::vector<std::vector<var>> y_return(y.size());
@@ -223,8 +215,7 @@ struct coupled_ode_system<F, double, var> {
  *
  * @tparam F type of base ODE system functor
  */
-template <typename F>
-struct coupled_ode_system<F, var, double> {
+template <typename F> struct coupled_ode_system<F, var, double> {
   const F &f_;
   const std::vector<var> &y0_;
   const std::vector<double> y0_dbl_;
@@ -253,15 +244,8 @@ struct coupled_ode_system<F, var, double> {
                      const std::vector<double> &theta,
                      const std::vector<double> &x,
                      const std::vector<int> &x_int, std::ostream *msgs)
-      : f_(f),
-        y0_(y0),
-        y0_dbl_(value_of(y0)),
-        theta_dbl_(theta),
-        x_(x),
-        x_int_(x_int),
-        msgs_(msgs),
-        N_(y0.size()),
-        M_(theta.size()),
+      : f_(f), y0_(y0), y0_dbl_(value_of(y0)), theta_dbl_(theta), x_(x),
+        x_int_(x_int), msgs_(msgs), N_(y0.size()), M_(theta.size()),
         size_(N_ + N_ * N_) {}
 
   /**
@@ -356,8 +340,8 @@ struct coupled_ode_system<F, var, double> {
    *
    * @param y the vector of the coupled states after solving the ode
    */
-  std::vector<std::vector<var>> decouple_states(
-      const std::vector<std::vector<double>> &y) const {
+  std::vector<std::vector<var>>
+  decouple_states(const std::vector<std::vector<double>> &y) const {
     using std::vector;
 
     vector<var> temp_vars(N_);
@@ -415,8 +399,7 @@ struct coupled_ode_system<F, var, double> {
  *
  * @tparam F the functor for the base ode system
  */
-template <typename F>
-struct coupled_ode_system<F, var, var> {
+template <typename F> struct coupled_ode_system<F, var, var> {
   const F &f_;
   const std::vector<var> &y0_;
   const std::vector<double> y0_dbl_;
@@ -446,17 +429,9 @@ struct coupled_ode_system<F, var, var> {
                      const std::vector<var> &theta,
                      const std::vector<double> &x,
                      const std::vector<int> &x_int, std::ostream *msgs)
-      : f_(f),
-        y0_(y0),
-        y0_dbl_(value_of(y0)),
-        theta_(theta),
-        theta_dbl_(value_of(theta)),
-        x_(x),
-        x_int_(x_int),
-        N_(y0.size()),
-        M_(theta.size()),
-        size_(N_ + N_ * (N_ + M_)),
-        msgs_(msgs) {}
+      : f_(f), y0_(y0), y0_dbl_(value_of(y0)), theta_(theta),
+        theta_dbl_(value_of(theta)), x_(x), x_int_(x_int), N_(y0.size()),
+        M_(theta.size()), size_(N_ + N_ * (N_ + M_)), msgs_(msgs) {}
 
   /**
    * Populates the derivative vector with derivatives of the
@@ -554,8 +529,8 @@ struct coupled_ode_system<F, var, var> {
    *
    * @param y the vector of the coupled states after solving the ode
    */
-  std::vector<std::vector<var>> decouple_states(
-      const std::vector<std::vector<double>> &y) const {
+  std::vector<std::vector<var>>
+  decouple_states(const std::vector<std::vector<double>> &y) const {
     using std::vector;
 
     vector<var> vars = y0_;
@@ -581,6 +556,6 @@ struct coupled_ode_system<F, var, var> {
   }
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

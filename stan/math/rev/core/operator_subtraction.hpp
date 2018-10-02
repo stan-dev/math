@@ -13,7 +13,7 @@ namespace math {
 
 namespace {
 class subtract_vv_vari : public op_vv_vari {
- public:
+public:
   subtract_vv_vari(vari *avi, vari *bvi)
       : op_vv_vari(avi->val_ - bvi->val_, avi, bvi) {}
   void chain() {
@@ -28,7 +28,7 @@ class subtract_vv_vari : public op_vv_vari {
 };
 
 class subtract_vd_vari : public op_vd_vari {
- public:
+public:
   subtract_vd_vari(vari *avi, double b) : op_vd_vari(avi->val_ - b, avi, b) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_) || is_nan(bd_)))
@@ -39,7 +39,7 @@ class subtract_vd_vari : public op_vd_vari {
 };
 
 class subtract_dv_vari : public op_dv_vari {
- public:
+public:
   subtract_dv_vari(double a, vari *bvi) : op_dv_vari(a - bvi->val_, a, bvi) {}
   void chain() {
     if (unlikely(is_nan(ad_) || is_nan(bvi_->val_)))
@@ -48,7 +48,7 @@ class subtract_dv_vari : public op_dv_vari {
       bvi_->adj_ -= adj_;
   }
 };
-}  // namespace
+} // namespace
 
 /**
  * Subtraction operator for variables (C++).
@@ -124,6 +124,6 @@ inline var operator-(double a, const var &b) {
   return var(new subtract_dv_vari(a, b.vi_));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -137,8 +137,8 @@ struct SinFunctor {
                              const Eigen::VectorXd &x) {
     N_ = x.size();
     Eigen::VectorXd out(N_);
-    x_mem_
-        = stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
+    x_mem_ =
+        stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
             N_);
 
     for (int n = 0; n < N_; ++n) {
@@ -234,8 +234,8 @@ struct RowVectorSinFunctor {
                                 const Eigen::RowVectorXd &x) {
     N_ = x.size();
     Eigen::RowVectorXd out(N_);
-    x_mem_
-        = stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
+    x_mem_ =
+        stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
             N_);
 
     for (int n = 0; n < N_; ++n) {
@@ -333,8 +333,8 @@ struct MatrixSinFunctor {
     N_ = x.rows();
     M_ = x.cols();
     Eigen::MatrixXd out(N_, M_);
-    x_mem_
-        = stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
+    x_mem_ =
+        stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
             N_ * M_);
 
     for (int n = 0; n < N_ * M_; ++n) {
@@ -423,17 +423,18 @@ TEST(AgradRev, test_matrix_sin_multiple_jac) {
  */
 struct WeirdArgumentListFunctor1 {
   template <size_t size>
-  Eigen::VectorXd operator()(
-      std::array<bool, size> needs_adj, double, int, const double &,
-      const int &, std::vector<double>, std::vector<int>,
-      const std::vector<double> &, const std::vector<int> &,
-      Eigen::Matrix<double, Eigen::Dynamic, 1>,
-      Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>,
-      Eigen::Matrix<double, 2, Eigen::Dynamic>, Eigen::Matrix<double, 5, 1>,
-      const Eigen::Matrix<double, Eigen::Dynamic, 1> &,
-      const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> &,
-      const Eigen::Matrix<double, 2, Eigen::Dynamic> &,
-      const Eigen::Matrix<double, 5, 1> &) {
+  Eigen::VectorXd
+  operator()(std::array<bool, size> needs_adj, double, int, const double &,
+             const int &, std::vector<double>, std::vector<int>,
+             const std::vector<double> &, const std::vector<int> &,
+             Eigen::Matrix<double, Eigen::Dynamic, 1>,
+             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>,
+             Eigen::Matrix<double, 2, Eigen::Dynamic>,
+             Eigen::Matrix<double, 5, 1>,
+             const Eigen::Matrix<double, Eigen::Dynamic, 1> &,
+             const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> &,
+             const Eigen::Matrix<double, 2, Eigen::Dynamic> &,
+             const Eigen::Matrix<double, 5, 1> &) {
     return Eigen::VectorXd(1);
   }
 
@@ -484,8 +485,8 @@ TEST(AgradRev,
   ev3.setZero();
   ev4.setZero();
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y1
-      = stan::math::adj_jac_apply<WeirdArgumentListFunctor1>(
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y1 =
+      stan::math::adj_jac_apply<WeirdArgumentListFunctor1>(
           d, i, d, i, vd, vi, vd, vi, ed1, ed2, ed3, ed4, ed1, ed2, ed3, ed4);
 
   y1(0).grad();
@@ -557,21 +558,21 @@ struct CheckAdjointsPassingThrough {
   int cols_ed2;
   int cols_ed3;
   template <size_t size>
-  Eigen::VectorXd operator()(
-      std::array<bool, size> needs_adj, const double &d,
-      const std::vector<double> &vd, const int &,
-      const Eigen::Matrix<double, Eigen::Dynamic, 1> &ed1,
-      const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> &ed2,
-      const std::vector<int> &,
-      const Eigen::Matrix<double, 1, Eigen::Dynamic> &ed3,
-      const Eigen::Matrix<double, 1, 1> &ed4) {
+  Eigen::VectorXd
+  operator()(std::array<bool, size> needs_adj, const double &d,
+             const std::vector<double> &vd, const int &,
+             const Eigen::Matrix<double, Eigen::Dynamic, 1> &ed1,
+             const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> &ed2,
+             const std::vector<int> &,
+             const Eigen::Matrix<double, 1, Eigen::Dynamic> &ed3,
+             const Eigen::Matrix<double, 1, 1> &ed4) {
     size_vd = vd.size();
     rows_ed1 = ed1.rows();
     rows_ed2 = ed2.rows();
     cols_ed2 = ed2.cols();
     cols_ed3 = ed3.cols();
-    Eigen::VectorXd out(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 + cols_ed3
-                        + 1);
+    Eigen::VectorXd out(1 + size_vd + rows_ed1 + rows_ed2 * cols_ed2 +
+                        cols_ed3 + 1);
 
     out(0) = d;
     for (int i = 0; i < size_vd; i++)
@@ -637,9 +638,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types) {
 
   ed4(0) = 1.0;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
-      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
-          d, vd, 5, ed1, ed2, vi, ed3, ed4);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y =
+      stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(d, vd, 5, ed1, ed2,
+                                                             vi, ed3, ed4);
 
   y(0).grad();
   EXPECT_FLOAT_EQ(y(0).val(), d.val());
@@ -774,9 +775,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_different_shapes) {
 
   ed4(0) = 1.0;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
-      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
-          d, vd, 3, ed1, ed2, vi, ed3, ed4);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y =
+      stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(d, vd, 3, ed1, ed2,
+                                                             vi, ed3, ed4);
 
   y(0).grad();
   EXPECT_FLOAT_EQ(y(0).val(), d.val());
@@ -911,9 +912,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_1) {
 
   ed4(0) = 1.0;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
-      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
-          d, vd, 3, ed1, ed2, vi, ed3, ed4);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y =
+      stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(d, vd, 3, ed1, ed2,
+                                                             vi, ed3, ed4);
 
   y(0).grad();
   EXPECT_FLOAT_EQ(y(0).val(), d);
@@ -1042,9 +1043,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_2) {
 
   ed4(0) = 1.0;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
-      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
-          d, vd, 3, ed1, ed2, vi, ed3, ed4);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y =
+      stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(d, vd, 3, ed1, ed2,
+                                                             vi, ed3, ed4);
 
   y(0).grad();
   EXPECT_FLOAT_EQ(y(0).val(), d.val());
@@ -1159,9 +1160,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_3) {
 
   ed4(0) = 1.0;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
-      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
-          d, vd, 3, ed1, ed2, vi, ed3, ed4);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y =
+      stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(d, vd, 3, ed1, ed2,
+                                                             vi, ed3, ed4);
 
   y(0).grad();
   EXPECT_FLOAT_EQ(y(0).val(), d.val());
@@ -1280,9 +1281,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_4) {
 
   ed4(0) = 1.0;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
-      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
-          d, vd, 3, ed1, ed2, vi, ed3, ed4);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y =
+      stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(d, vd, 3, ed1, ed2,
+                                                             vi, ed3, ed4);
 
   y(0).grad();
   EXPECT_FLOAT_EQ(y(0).val(), d.val());
@@ -1402,9 +1403,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_5) {
 
   ed4(0) = 1.0;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
-      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
-          d, vd, 3, ed1, ed2, vi, ed3, ed4);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y =
+      stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(d, vd, 3, ed1, ed2,
+                                                             vi, ed3, ed4);
 
   y(0).grad();
   EXPECT_FLOAT_EQ(y(0).val(), d.val());
@@ -1524,9 +1525,9 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_6) {
 
   ed4(0) = 1.0;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y
-      = stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(
-          d, vd, 3, ed1, ed2, vi, ed3, ed4);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y =
+      stan::math::adj_jac_apply<CheckAdjointsPassingThrough>(d, vd, 3, ed1, ed2,
+                                                             vi, ed3, ed4);
 
   y(0).grad();
   EXPECT_FLOAT_EQ(y(0).val(), d.val());
@@ -1648,8 +1649,9 @@ struct SinCosFunctor {
     Eigen::VectorXd out(N_);
 
     if (needs_adj[0]) {
-      x1_mem_ = stan::math::ChainableStack::instance()
-                    .memalloc_.alloc_array<double>(N_);
+      x1_mem_ =
+          stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
+              N_);
       std::copy(x1.data(), x1.data() + N_, x1_mem_);
     }
 
@@ -1657,8 +1659,9 @@ struct SinCosFunctor {
     EXPECT_FALSE(needs_adj[2]);
 
     if (needs_adj[3]) {
-      x4_mem_ = stan::math::ChainableStack::instance()
-                    .memalloc_.alloc_array<double>(N_);
+      x4_mem_ =
+          stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
+              N_);
       std::copy(x4.data(), x4.data() + N_, x4_mem_);
     }
 
@@ -1891,8 +1894,9 @@ struct SinCosFunctor2 {
     Eigen::VectorXd out(N_);
 
     if (needs_adj[0]) {
-      x1_mem_ = stan::math::ChainableStack::instance()
-                    .memalloc_.alloc_array<double>(N_);
+      x1_mem_ =
+          stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
+              N_);
       std::copy(x1.data(), x1.data() + N_, x1_mem_);
     }
 
@@ -2102,8 +2106,9 @@ struct SinCosFunctor3 {
     Eigen::VectorXd out(N_);
 
     if (needs_adj[1]) {
-      x1_mem_ = stan::math::ChainableStack::instance()
-                    .memalloc_.alloc_array<double>(N_);
+      x1_mem_ =
+          stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
+              N_);
       std::copy(x1.data(), x1.data() + N_, x1_mem_);
     }
 

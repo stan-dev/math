@@ -6,14 +6,12 @@
 namespace stan {
 namespace math {
 
-template <typename T>
-struct fvar;
+template <typename T> struct fvar;
 
-template <typename V, typename T>
-struct ad_promotable<V, fvar<T>> {
+template <typename V, typename T> struct ad_promotable<V, fvar<T>> {
   enum { value = ad_promotable<V, T>::value };
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

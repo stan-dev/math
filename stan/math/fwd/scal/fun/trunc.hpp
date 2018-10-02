@@ -15,11 +15,10 @@ namespace math {
  * @param[in] x Argument.
  * @return The truncated argument.
  */
-template <typename T>
-inline fvar<T> trunc(const fvar<T> &x) {
+template <typename T> inline fvar<T> trunc(const fvar<T> &x) {
   return fvar<T>(trunc(x.val_), 0);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

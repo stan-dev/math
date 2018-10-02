@@ -55,6 +55,6 @@ subtract(const Eigen::Matrix<T1, R, C> &m, const T2 &c) {
   return result;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

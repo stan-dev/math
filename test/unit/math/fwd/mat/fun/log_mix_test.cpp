@@ -9,8 +9,7 @@ using stan::math::row_vector_ffd;
 using stan::math::vector_fd;
 using stan::math::vector_ffd;
 
-template <typename T_a, typename T_b>
-void fvar_test(T_a a, T_b b) {
+template <typename T_a, typename T_b> void fvar_test(T_a a, T_b b) {
   a[0].val_ = 0.235;
   a[1].val_ = 0.152;
   a[2].val_ = 0.359;
@@ -62,8 +61,7 @@ void fvar_test(T_a a, T_b b) {
   EXPECT_FLOAT_EQ(std_out.d_, 15.164879);
 }
 
-template <typename T_a, typename T_b>
-void fvarfvar_test(T_a a, T_b b) {
+template <typename T_a, typename T_b> void fvarfvar_test(T_a a, T_b b) {
   a[0].val_ = 0.235;
   a[1].val_ = 0.152;
   a[2].val_ = 0.359;

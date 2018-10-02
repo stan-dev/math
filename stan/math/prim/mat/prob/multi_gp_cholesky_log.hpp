@@ -51,6 +51,6 @@ multi_gp_cholesky_log(
   return multi_gp_cholesky_lpdf<T_y, T_covar, T_w>(y, L, w);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

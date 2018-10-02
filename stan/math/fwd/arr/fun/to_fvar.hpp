@@ -30,6 +30,6 @@ inline std::vector<fvar<T>> to_fvar(const std::vector<fvar<T>> &v) {
   return v;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

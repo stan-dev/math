@@ -29,8 +29,8 @@ namespace math {
  *    factorized by factor_cov_matrix()
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> cov_matrix_free_lkj(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &y) {
+Eigen::Matrix<T, Eigen::Dynamic, 1>
+cov_matrix_free_lkj(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &y) {
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -55,6 +55,6 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> cov_matrix_free_lkj(
   return x;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

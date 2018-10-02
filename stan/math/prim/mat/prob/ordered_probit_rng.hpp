@@ -28,6 +28,6 @@ inline int ordered_probit_rng(double eta, const Eigen::VectorXd &c, RNG &rng) {
   return categorical_rng(cut, rng);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

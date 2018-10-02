@@ -69,6 +69,6 @@ inline void domain_error_vec(const char *function, const char *name, const T &y,
   domain_error_vec(function, name, y, i, msg, "");
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

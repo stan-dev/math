@@ -11,14 +11,14 @@ namespace math {
 
 namespace {
 class trunc_vari : public op_v_vari {
- public:
+public:
   explicit trunc_vari(vari *avi) : op_v_vari(trunc(avi->val_), avi) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_)))
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
   }
 };
-}  // namespace
+} // namespace
 
 /**
  * Returns the truncatation of the specified variable (C99).
@@ -52,6 +52,6 @@ class trunc_vari : public op_v_vari {
  */
 inline var trunc(const var &a) { return var(new trunc_vari(a.vi_)); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

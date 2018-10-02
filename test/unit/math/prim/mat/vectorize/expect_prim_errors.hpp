@@ -21,8 +21,7 @@
  *
  * @tparam F Test class used to define test case.
  */
-template <typename F>
-void expect_prim_errors() {
+template <typename F> void expect_prim_errors() {
   expect_int_scalar_error<F>();
   expect_int_std_vector_error<F>();
   expect_scalar_error<F, double>();

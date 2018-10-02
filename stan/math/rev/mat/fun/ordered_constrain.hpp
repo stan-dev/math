@@ -15,7 +15,7 @@ class ordered_constrain_op {
   int N_;
   double *exp_x_;
 
- public:
+public:
   /**
    * Return an increasing ordered vector derived from the specified
    * free vector.  The returned constrained vector will have the
@@ -73,7 +73,7 @@ class ordered_constrain_op {
     return std::make_tuple(adj_times_jac);
   }
 };
-}  // namespace
+} // namespace
 
 /**
  * Return an increasing ordered vector derived from the specified
@@ -83,11 +83,11 @@ class ordered_constrain_op {
  * @param x Free vector of scalars
  * @return Increasing ordered vector
  */
-inline Eigen::Matrix<var, Eigen::Dynamic, 1> ordered_constrain(
-    const Eigen::Matrix<var, Eigen::Dynamic, 1> &x) {
+inline Eigen::Matrix<var, Eigen::Dynamic, 1>
+ordered_constrain(const Eigen::Matrix<var, Eigen::Dynamic, 1> &x) {
   return adj_jac_apply<ordered_constrain_op>(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

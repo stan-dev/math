@@ -36,20 +36,18 @@ namespace internal {
  * @tparam member labels a specific data item for the call_id context
  * @tparam T the type of the object stored
  */
-template <int call_id, int member, typename T>
-class mpi_parallel_call_cache {
+template <int call_id, int member, typename T> class mpi_parallel_call_cache {
   static T local_;
   static bool is_valid_;
 
- public:
+public:
   typedef const T cache_t;
 
   mpi_parallel_call_cache() = delete;
-  mpi_parallel_call_cache(const mpi_parallel_call_cache<call_id, member, T> &)
-      = delete;
-  mpi_parallel_call_cache &operator=(
-      const mpi_parallel_call_cache<call_id, member, T> &)
-      = delete;
+  mpi_parallel_call_cache(const mpi_parallel_call_cache<call_id, member, T> &) =
+      delete;
+  mpi_parallel_call_cache &
+  operator=(const mpi_parallel_call_cache<call_id, member, T> &) = delete;
 
   /**
    * Query if cache is in valid which it is once data has been stored.
@@ -87,7 +85,7 @@ T mpi_parallel_call_cache<call_id, member, T>::local_;
 template <int call_id, int member, typename T>
 bool mpi_parallel_call_cache<call_id, member, T>::is_valid_ = false;
 
-}  // namespace internal
+} // namespace internal
 
 /**
  * The MPI parallel call class manages the distributed evaluation of a
@@ -185,7 +183,7 @@ class mpi_parallel_call {
   vector_d local_shared_params_dbl_;
   matrix_d local_job_params_dbl_;
 
- public:
+public:
   /**
    * Initiates a parallel MPI call on the root. The constructor
    * allocates the MPI ressource and initiates on all workers the MPI
@@ -269,13 +267,13 @@ class mpi_parallel_call {
     const std::vector<int> &job_chunks = cache_chunks::data();
     const int num_jobs = sum(job_chunks);
 
-    const int first_job
-        = std::accumulate(job_chunks.begin(), job_chunks.begin() + rank_, 0);
+    const int first_job =
+        std::accumulate(job_chunks.begin(), job_chunks.begin() + rank_, 0);
     const int num_local_jobs = local_job_params_dbl_.cols();
     int local_outputs_per_job = num_local_jobs == 0 ? 0 : num_outputs_per_job_;
-    matrix_d local_output(
-        local_outputs_per_job == -1 ? 0 : local_outputs_per_job,
-        num_local_jobs);
+    matrix_d local_output(local_outputs_per_job == -1 ? 0
+                                                      : local_outputs_per_job,
+                          num_local_jobs);
     std::vector<int> local_f_out(num_local_jobs, -1);
 
     typename cache_x_r::cache_t &local_x_r = cache_x_r::data();
@@ -284,9 +282,9 @@ class mpi_parallel_call {
     // check if we know already output sizes
     if (cache_f_out::is_valid()) {
       typename cache_f_out::cache_t &f_out = cache_f_out::data();
-      const int num_outputs
-          = std::accumulate(f_out.begin() + first_job,
-                            f_out.begin() + first_job + num_local_jobs, 0);
+      const int num_outputs =
+          std::accumulate(f_out.begin() + first_job,
+                          f_out.begin() + first_job + num_local_jobs, 0);
       local_output.resize(Eigen::NoChange, num_outputs);
     }
 
@@ -294,9 +292,9 @@ class mpi_parallel_call {
     try {
       for (int i = 0, offset = 0; i < num_local_jobs;
            offset += local_f_out[i], ++i) {
-        const matrix_d job_output
-            = ReduceF()(local_shared_params_dbl_, local_job_params_dbl_.col(i),
-                        local_x_r[i], local_x_i[i], 0);
+        const matrix_d job_output =
+            ReduceF()(local_shared_params_dbl_, local_job_params_dbl_.col(i),
+                      local_x_r[i], local_x_i[i], 0);
         local_f_out[i] = job_output.cols();
 
         if (local_outputs_per_job == -1) {
@@ -311,8 +309,8 @@ class mpi_parallel_call {
           local_output.conservativeResize(Eigen::NoChange,
                                           2 * (offset + local_f_out[i]));
 
-        local_output.block(0, offset, local_output.rows(), local_f_out[i])
-            = job_output;
+        local_output.block(0, offset, local_output.rows(), local_f_out[i]) =
+            job_output;
       }
     } catch (const std::exception &e) {
       // see note 1 above for an explanation why we do not rethrow
@@ -402,7 +400,7 @@ class mpi_parallel_call {
     return combine_(world_result, world_f_out);
   }
 
- private:
+private:
   /**
    * Performs a cached scatter of a 2D array (nested std::vector). On the
    * first call the data on the root is scattered to all workers and
@@ -419,8 +417,8 @@ class mpi_parallel_call {
    * @return 2D array chunk of the worker
    */
   template <typename T_cache>
-  typename T_cache::cache_t &scatter_array_2d_cached(
-      typename T_cache::cache_t &data) {
+  typename T_cache::cache_t &
+  scatter_array_2d_cached(typename T_cache::cache_t &data) {
     // distribute data only if not in cache yet
     if (T_cache::is_valid()) {
       return T_cache::data();
@@ -434,8 +432,8 @@ class mpi_parallel_call {
     boost::mpi::broadcast(world_, data_dims.data(), 2, 0);
 
     const std::vector<int> job_chunks = mpi_map_chunks(data_dims[0], 1);
-    const std::vector<int> data_chunks
-        = mpi_map_chunks(data_dims[0], data_dims[1]);
+    const std::vector<int> data_chunks =
+        mpi_map_chunks(data_dims[0], data_dims[1]);
 
     auto flat_data = to_array_1d(data);
     decltype(flat_data) local_flat_data(data_chunks[rank_]);
@@ -472,8 +470,8 @@ class mpi_parallel_call {
    * @return broadcasted vector originating from the root
    */
   template <typename T_cache>
-  typename T_cache::cache_t &broadcast_array_1d_cached(
-      typename T_cache::cache_t &data) {
+  typename T_cache::cache_t &
+  broadcast_array_1d_cached(typename T_cache::cache_t &data) {
     if (T_cache::is_valid()) {
       return T_cache::data();
     }
@@ -501,13 +499,12 @@ class mpi_parallel_call {
    * argument on workers
    * @return broadcasted vector originating from the root
    */
-  template <int meta_cache_id>
-  vector_d broadcast_vector(const vector_d &data) {
+  template <int meta_cache_id> vector_d broadcast_vector(const vector_d &data) {
     typedef internal::mpi_parallel_call_cache<call_id, meta_cache_id,
                                               std::vector<size_type>>
         meta_cache;
-    const std::vector<size_type> &data_size
-        = broadcast_array_1d_cached<meta_cache>({data.size()});
+    const std::vector<size_type> &data_size =
+        broadcast_array_1d_cached<meta_cache>({data.size()});
 
     vector_d local_data = data;
     local_data.resize(data_size[0]);
@@ -529,13 +526,12 @@ class mpi_parallel_call {
    * argument on workers.
    * @return matrix chunk for a given worker.
    */
-  template <int meta_cache_id>
-  matrix_d scatter_matrix(const matrix_d &data) {
+  template <int meta_cache_id> matrix_d scatter_matrix(const matrix_d &data) {
     typedef internal::mpi_parallel_call_cache<call_id, meta_cache_id,
                                               std::vector<size_type>>
         meta_cache;
-    const std::vector<size_type> &dims
-        = broadcast_array_1d_cached<meta_cache>({data.rows(), data.cols()});
+    const std::vector<size_type> &dims =
+        broadcast_array_1d_cached<meta_cache>({data.rows(), data.cols()});
     const size_type rows = dims[0];
     const size_type total_cols = dims[1];
 
@@ -566,8 +562,8 @@ class mpi_parallel_call {
 template <int call_id, typename ReduceF, typename CombineF>
 int mpi_parallel_call<call_id, ReduceF, CombineF>::num_outputs_per_job_ = -1;
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif
 

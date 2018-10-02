@@ -30,8 +30,7 @@ inline bool operator!=(const fvar<T> &x, const fvar<T> &y) {
  * @return true if the value of the first argument is not equal to
  * the second argument
  */
-template <typename T>
-inline bool operator!=(const fvar<T> &x, double y) {
+template <typename T> inline bool operator!=(const fvar<T> &x, double y) {
   return x.val_ != y;
 }
 
@@ -45,11 +44,10 @@ inline bool operator!=(const fvar<T> &x, double y) {
  * @return true if the first argument is not equal to the value of
  * the second argument
  */
-template <typename T>
-inline bool operator!=(double x, const fvar<T> &y) {
+template <typename T> inline bool operator!=(double x, const fvar<T> &y) {
   return x != y.val_;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

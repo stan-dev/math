@@ -33,8 +33,8 @@ namespace math {
  * sizes
  */
 template <typename T_shape1, typename T_shape2, class RNG>
-inline typename VectorBuilder<true, double, T_shape1, T_shape2>::type beta_rng(
-    const T_shape1 &alpha, const T_shape2 &beta, RNG &rng) {
+inline typename VectorBuilder<true, double, T_shape1, T_shape2>::type
+beta_rng(const T_shape1 &alpha, const T_shape2 &beta, RNG &rng) {
   using boost::random::gamma_distribution;
   using boost::random::uniform_real_distribution;
   using boost::variate_generator;
@@ -69,10 +69,10 @@ inline typename VectorBuilder<true, double, T_shape1, T_shape2>::type beta_rng(
           rng, gamma_distribution<>(alpha_vec[n] + 1, 1.0));
       variate_generator<RNG &, gamma_distribution<>> rng_gamma_beta(
           rng, gamma_distribution<>(beta_vec[n] + 1, 1.0));
-      double log_a = std::log(uniform_rng()) / alpha_vec[n]
-                     + std::log(rng_gamma_alpha());
-      double log_b
-          = std::log(uniform_rng()) / beta_vec[n] + std::log(rng_gamma_beta());
+      double log_a =
+          std::log(uniform_rng()) / alpha_vec[n] + std::log(rng_gamma_alpha());
+      double log_b =
+          std::log(uniform_rng()) / beta_vec[n] + std::log(rng_gamma_beta());
       double log_sum = log_sum_exp(log_a, log_b);
       output[n] = std::exp(log_a - log_sum);
     }
@@ -81,6 +81,6 @@ inline typename VectorBuilder<true, double, T_shape1, T_shape2>::type beta_rng(
   return output.data();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

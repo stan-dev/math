@@ -17,8 +17,8 @@ template <typename T>
 Eigen::Matrix<T, -1, -1> create_mat(Eigen::VectorXd inp, T alpha, T len,
                                     T jitter) {
   std::vector<double> test_inp = fill_vec(inp);
-  Eigen::Matrix<T, -1, -1> test_mat_dense
-      = stan::math::cov_exp_quad(test_inp, alpha, len);
+  Eigen::Matrix<T, -1, -1> test_mat_dense =
+      stan::math::cov_exp_quad(test_inp, alpha, len);
   for (int i = 0; i < inp.rows(); ++i)
     test_mat_dense(i, i) = test_mat_dense(i, i) + jitter;
   return test_mat_dense;
@@ -28,8 +28,7 @@ struct gp_chol {
   Eigen::VectorXd inp, mean, y;
   gp_chol(Eigen::VectorXd inp_, Eigen::VectorXd mean_, Eigen::VectorXd y_)
       : inp(inp_), mean(mean_), y(y_) {}
-  template <typename T>
-  T operator()(Eigen::Matrix<T, -1, 1> x) const {
+  template <typename T> T operator()(Eigen::Matrix<T, -1, 1> x) const {
     Eigen::Matrix<T, -1, -1> x_c = create_mat(inp, x[0], x[1], x[2]);
     Eigen::Matrix<T, -1, -1> L = stan::math::cholesky_decompose(x_c);
     T lp = stan::math::multi_normal_cholesky_lpdf(y, mean, L);
@@ -40,8 +39,7 @@ struct gp_chol {
 struct chol_functor {
   int i, j, K;
   chol_functor(int i_, int j_, int K_) : i(i_), j(j_), K(K_) {}
-  template <typename T>
-  T operator()(Eigen::Matrix<T, -1, 1> x) const {
+  template <typename T> T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::cholesky_decompose;
     using stan::math::cov_matrix_constrain;
     T lp(0.0);
@@ -56,8 +54,7 @@ struct chol_functor_mult_scal {
   int K;
   Eigen::VectorXd vec;
   chol_functor_mult_scal(int K_, Eigen::VectorXd vec_) : K(K_), vec(vec_) {}
-  template <typename T>
-  T operator()(Eigen::Matrix<T, -1, 1> x) const {
+  template <typename T> T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::cholesky_decompose;
     using stan::math::cov_matrix_constrain;
     using stan::math::multiply;
@@ -73,8 +70,7 @@ struct chol_functor_mult_scal {
 struct chol_functor_2 {
   int K;
   explicit chol_functor_2(int K_) : K(K_) {}
-  template <typename T>
-  T operator()(Eigen::Matrix<T, -1, 1> x) const {
+  template <typename T> T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::cholesky_decompose;
     using stan::math::cov_matrix_constrain;
     using stan::math::multi_normal_cholesky_log;
@@ -93,8 +89,7 @@ struct chol_functor_2 {
 struct chol_functor_simple {
   int i, j, K;
   chol_functor_simple(int i_, int j_, int K_) : i(i_), j(j_), K(K_) {}
-  template <typename T>
-  T operator()(Eigen::Matrix<T, -1, 1> x) const {
+  template <typename T> T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::cholesky_decompose;
     Eigen::Matrix<T, -1, -1> x_c(K, K);
     int pos = 0;
@@ -112,8 +107,7 @@ struct chol_functor_simple_vec {
   int K;
   Eigen::VectorXd vec;
   chol_functor_simple_vec(int K_, Eigen::VectorXd vec_) : K(K_), vec(vec_) {}
-  template <typename T>
-  T operator()(Eigen::Matrix<T, -1, 1> x) const {
+  template <typename T> T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::cholesky_decompose;
     using stan::math::multiply;
     using stan::math::transpose;
@@ -236,8 +230,8 @@ void test_gp_grad(int mat_size, double prec) {
     draw_vec(i) = stan::math::normal_rng(0.0, 0.1, rng);
   }
 
-  Eigen::MatrixXd cov_mat
-      = create_mat(test_vec, test_vals[0], test_vals[1], test_vals[2]);
+  Eigen::MatrixXd cov_mat =
+      create_mat(test_vec, test_vals[0], test_vals[1], test_vals[2]);
   Eigen::MatrixXd chol_cov = cov_mat.llt().matrixL();
   Eigen::VectorXd y_vec = chol_cov * draw_vec;
 

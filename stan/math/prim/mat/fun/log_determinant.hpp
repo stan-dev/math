@@ -20,6 +20,6 @@ inline T log_determinant(const Eigen::Matrix<T, R, C> &m) {
   return m.colPivHouseholderQr().logAbsDeterminant();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -37,6 +37,6 @@ mdivide_left_spd(const Eigen::Matrix<T1, R1, C1> &A,
               b));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

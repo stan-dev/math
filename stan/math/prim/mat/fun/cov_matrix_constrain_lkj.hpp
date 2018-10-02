@@ -29,8 +29,9 @@ namespace math {
  * @tparam T Type of scalar.
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain_lkj(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1> &x, size_t k) {
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+cov_matrix_constrain_lkj(const Eigen::Matrix<T, Eigen::Dynamic, 1> &x,
+                         size_t k) {
   size_t k_choose_2 = (k * (k - 1)) / 2;
   Eigen::Array<T, Eigen::Dynamic, 1> cpcs(k_choose_2);
   int pos = 0;
@@ -67,8 +68,9 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain_lkj(
  * @tparam T Type of scalar.
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain_lkj(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1> &x, size_t k, T &lp) {
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+cov_matrix_constrain_lkj(const Eigen::Matrix<T, Eigen::Dynamic, 1> &x, size_t k,
+                         T &lp) {
   size_t k_choose_2 = (k * (k - 1)) / 2;
   Eigen::Array<T, Eigen::Dynamic, 1> cpcs(k_choose_2);
   int pos = 0;
@@ -80,8 +82,8 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain_lkj(
   return read_cov_matrix(cpcs, sds, lp);
 }
 
-}  // namespace math
+} // namespace math
 
-}  // namespace stan
+} // namespace stan
 
 #endif

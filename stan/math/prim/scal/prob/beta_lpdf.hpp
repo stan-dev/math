@@ -51,8 +51,8 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_scale_succ,
           typename T_scale_fail>
-typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
-    const T_y &y, const T_scale_succ &alpha, const T_scale_fail &beta) {
+typename return_type<T_y, T_scale_succ, T_scale_fail>::type
+beta_lpdf(const T_y &y, const T_scale_succ &alpha, const T_scale_fail &beta) {
   static const char *function = "beta_lpdf";
 
   typedef
@@ -144,8 +144,8 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
       digamma_alpha_beta(max_size(alpha, beta));
 
   for (size_t n = 0; n < max_size(alpha, beta); n++) {
-    const T_partials_return alpha_beta
-        = value_of(alpha_vec[n]) + value_of(beta_vec[n]);
+    const T_partials_return alpha_beta =
+        value_of(alpha_vec[n]) + value_of(beta_vec[n]);
     if (include_summand<propto, T_scale_succ, T_scale_fail>::value)
       lgamma_alpha_beta[n] = lgamma(alpha_beta);
     if (contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value)
@@ -169,24 +169,24 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
       logp += (beta_dbl - 1.0) * log1m_y[n];
 
     if (!is_constant_struct<T_y>::value)
-      ops_partials.edge1_.partials_[n]
-          += (alpha_dbl - 1) / y_dbl + (beta_dbl - 1) / (y_dbl - 1);
+      ops_partials.edge1_.partials_[n] +=
+          (alpha_dbl - 1) / y_dbl + (beta_dbl - 1) / (y_dbl - 1);
     if (!is_constant_struct<T_scale_succ>::value)
-      ops_partials.edge2_.partials_[n]
-          += log_y[n] + digamma_alpha_beta[n] - digamma_alpha[n];
+      ops_partials.edge2_.partials_[n] +=
+          log_y[n] + digamma_alpha_beta[n] - digamma_alpha[n];
     if (!is_constant_struct<T_scale_fail>::value)
-      ops_partials.edge3_.partials_[n]
-          += log1m_y[n] + digamma_alpha_beta[n] - digamma_beta[n];
+      ops_partials.edge3_.partials_[n] +=
+          log1m_y[n] + digamma_alpha_beta[n] - digamma_beta[n];
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>
-inline typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
-    const T_y &y, const T_scale_succ &alpha, const T_scale_fail &beta) {
+inline typename return_type<T_y, T_scale_succ, T_scale_fail>::type
+beta_lpdf(const T_y &y, const T_scale_succ &alpha, const T_scale_fail &beta) {
   return beta_lpdf<false>(y, alpha, beta);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -15,8 +15,8 @@ namespace stan {
 namespace math {
 
 template <typename T, int R, int C>
-inline Eigen::Matrix<fvar<T>, R, C> inverse(
-    const Eigen::Matrix<fvar<T>, R, C> &m) {
+inline Eigen::Matrix<fvar<T>, R, C>
+inverse(const Eigen::Matrix<fvar<T>, R, C> &m) {
   check_square("inverse", "m", m);
   Eigen::Matrix<T, R, C> m_deriv(m.rows(), m.cols());
   Eigen::Matrix<T, R, C> m_inv(m.rows(), m.cols());
@@ -36,6 +36,6 @@ inline Eigen::Matrix<fvar<T>, R, C> inverse(
   return to_fvar(m_inv, m_deriv);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

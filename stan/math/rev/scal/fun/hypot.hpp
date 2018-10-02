@@ -9,7 +9,7 @@ namespace math {
 
 namespace {
 class hypot_vv_vari : public op_vv_vari {
- public:
+public:
   hypot_vv_vari(vari *avi, vari *bvi)
       : op_vv_vari(hypot(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
@@ -19,11 +19,11 @@ class hypot_vv_vari : public op_vv_vari {
 };
 
 class hypot_vd_vari : public op_v_vari {
- public:
+public:
   hypot_vd_vari(vari *avi, double b) : op_v_vari(hypot(avi->val_, b), avi) {}
   void chain() { avi_->adj_ += adj_ * avi_->val_ / val_; }
 };
-}  // namespace
+} // namespace
 
 /**
  * Returns the length of the hypoteneuse of a right triangle
@@ -104,6 +104,6 @@ inline var hypot(double a, const var &b) {
   return var(new hypot_vd_vari(b.vi_, a));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -8,51 +8,51 @@ using std::numeric_limits;
 using std::vector;
 
 class AgradDistributionWiener : public AgradDistributionTest {
- public:
+public:
   void valid_values(vector<vector<double>> &parameters,
                     vector<double> &log_prob) {
     vector<double> param(5);
 
     // using R: RWiener::dwiener(1.1, 2.1, .3, .55, .4, give_log=TRUE)
-    param[0] = 1.1;  // y
-    param[1] = 2.1;  // alpha
-    param[2] = .3;   // tau
-    param[3] = .55;  // beta
-    param[4] = .4;   // delta
+    param[0] = 1.1; // y
+    param[1] = 2.1; // alpha
+    param[2] = .3;  // tau
+    param[3] = .55; // beta
+    param[4] = .4;  // delta
     parameters.push_back(param);
-    log_prob.push_back(-0.892976431870503);  // expected log_prob
+    log_prob.push_back(-0.892976431870503); // expected log_prob
 
-    param[0] = 2.1;  // y
-    param[1] = 4.1;  // alpha
-    param[2] = 0.6;  // tau
-    param[3] = .05;  // beta
-    param[4] = .1;   // delta
+    param[0] = 2.1; // y
+    param[1] = 4.1; // alpha
+    param[2] = 0.6; // tau
+    param[3] = .05; // beta
+    param[4] = .1;  // delta
     parameters.push_back(param);
-    log_prob.push_back(-5.28933922584833);  // expected log_prob
+    log_prob.push_back(-5.28933922584833); // expected log_prob
 
-    param[0] = 1.2;   // y
-    param[1] = 10.1;  // alpha
-    param[2] = 0.35;  // tau
-    param[3] = .95;   // beta
-    param[4] = .5;    // delta
+    param[0] = 1.2;  // y
+    param[1] = 10.1; // alpha
+    param[2] = 0.35; // tau
+    param[3] = .95;  // beta
+    param[4] = .5;   // delta
     parameters.push_back(param);
-    log_prob.push_back(-1.36212169454714);  // expected log_prob
+    log_prob.push_back(-1.36212169454714); // expected log_prob
 
-    param[0] = 50.1;  // y
-    param[1] = 4.3;   // alpha
-    param[2] = 1.05;  // tau
-    param[3] = .65;   // beta
-    param[4] = .15;   // delta
+    param[0] = 50.1; // y
+    param[1] = 4.3;  // alpha
+    param[2] = 1.05; // tau
+    param[3] = .65;  // beta
+    param[4] = .15;  // delta
     parameters.push_back(param);
-    log_prob.push_back(-15.3049368722015);  // expected log_prob
+    log_prob.push_back(-15.3049368722015); // expected log_prob
 
-    param[0] = 1.51;  // y
-    param[1] = 1.1;   // alpha
-    param[2] = .9;    // tau
-    param[3] = .2;    // beta
-    param[4] = 10.5;  // delta
+    param[0] = 1.51; // y
+    param[1] = 1.1;  // alpha
+    param[2] = .9;   // tau
+    param[3] = .2;   // beta
+    param[4] = 10.5; // delta
     parameters.push_back(param);
-    log_prob.push_back(-26.4531852275477);  // expected log_prob
+    log_prob.push_back(-26.4531852275477); // expected log_prob
   }
 
   void invalid_values(vector<size_t> &index, vector<double> &value) {

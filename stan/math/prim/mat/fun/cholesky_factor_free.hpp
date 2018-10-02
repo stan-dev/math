@@ -40,6 +40,6 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> cholesky_factor_free(
   return x;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

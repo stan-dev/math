@@ -9,11 +9,10 @@ const char *msg1_ = "error_message ";
 const char *msg2_ = " second message";
 
 class ErrorHandlingScalar_invalid_argument_vec : public ::testing::Test {
- public:
+public:
   void SetUp() { index_ = 0; }
 
-  template <class T>
-  std::string expected_message_with_message(T y) {
+  template <class T> std::string expected_message_with_message(T y) {
     using stan::math::value_type;
     std::stringstream expected_message;
     expected_message << "function: " << y_name_ << "[" << 1 + index_ << "] "
@@ -21,8 +20,7 @@ class ErrorHandlingScalar_invalid_argument_vec : public ::testing::Test {
     return expected_message.str();
   }
 
-  template <class T>
-  std::string expected_message_without_message(T y) {
+  template <class T> std::string expected_message_without_message(T y) {
     using stan::math::value_type;
     std::stringstream expected_message;
     expected_message << "function: " << y_name_ << "[" << 1 + index_ << "] "
@@ -30,8 +28,7 @@ class ErrorHandlingScalar_invalid_argument_vec : public ::testing::Test {
     return expected_message.str();
   }
 
-  template <class T>
-  void test_throw(T y) {
+  template <class T> void test_throw(T y) {
     try {
       stan::math::invalid_argument_vec<T>(function_, y_name_, y, index_, msg1_,
                                           msg2_);

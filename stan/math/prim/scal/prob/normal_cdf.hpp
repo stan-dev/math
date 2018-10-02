@@ -36,8 +36,8 @@ namespace math {
  * @tparam T_scale Type of standard deviation paramater.
  */
 template <typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type normal_cdf(
-    const T_y &y, const T_loc &mu, const T_scale &sigma) {
+typename return_type<T_y, T_loc, T_scale>::type
+normal_cdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
   static const char *function = "normal_cdf";
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
@@ -68,8 +68,8 @@ typename return_type<T_y, T_loc, T_scale>::type normal_cdf(
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials_return scaled_diff
-        = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_2);
+    const T_partials_return scaled_diff =
+        (y_dbl - mu_dbl) / (sigma_dbl * SQRT_2);
     T_partials_return cdf_;
     if (scaled_diff < -37.5 * INV_SQRT_2)
       cdf_ = 0.0;
@@ -83,11 +83,11 @@ typename return_type<T_y, T_loc, T_scale>::type normal_cdf(
     cdf *= cdf_;
 
     if (contains_nonconstant_struct<T_y, T_loc, T_scale>::value) {
-      const T_partials_return rep_deriv
-          = (scaled_diff < -37.5 * INV_SQRT_2)
-                ? 0.0
-                : SQRT_TWO_OVER_PI * 0.5 * exp(-scaled_diff * scaled_diff)
-                      / cdf_ / sigma_dbl;
+      const T_partials_return rep_deriv =
+          (scaled_diff < -37.5 * INV_SQRT_2)
+              ? 0.0
+              : SQRT_TWO_OVER_PI * 0.5 * exp(-scaled_diff * scaled_diff) /
+                    cdf_ / sigma_dbl;
       if (!is_constant_struct<T_y>::value)
         ops_partials.edge1_.partials_[n] += rep_deriv;
       if (!is_constant_struct<T_loc>::value)
@@ -112,6 +112,6 @@ typename return_type<T_y, T_loc, T_scale>::type normal_cdf(
   return ops_partials.build(cdf);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

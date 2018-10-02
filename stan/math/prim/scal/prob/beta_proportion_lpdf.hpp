@@ -47,8 +47,8 @@ namespace math {
  * @tparam T_prec Type of prior precision.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_prec>
-typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lpdf(
-    const T_y &y, const T_loc &mu, const T_prec &kappa) {
+typename return_type<T_y, T_loc, T_prec>::type
+beta_proportion_lpdf(const T_y &y, const T_loc &mu, const T_prec &kappa) {
   static const char *function = "beta_proportion_lpdf";
 
   typedef typename stan::partials_return_type<T_y, T_loc, T_prec>::type
@@ -116,10 +116,10 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lpdf(
       digamma_kappa_mukappa(N_mukappa);
 
   for (size_t n = 0; n < N_mukappa; n++) {
-    const T_partials_return mukappa_dbl
-        = value_of(mu_vec[n]) * value_of(kappa_vec[n]);
-    const T_partials_return kappa_mukappa_dbl
-        = value_of(kappa_vec[n]) - mukappa_dbl;
+    const T_partials_return mukappa_dbl =
+        value_of(mu_vec[n]) * value_of(kappa_vec[n]);
+    const T_partials_return kappa_mukappa_dbl =
+        value_of(kappa_vec[n]) - mukappa_dbl;
 
     if (include_summand<propto, T_loc, T_prec>::value) {
       lgamma_mukappa[n] = lgamma(mukappa_dbl);
@@ -157,35 +157,34 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lpdf(
       logp -= lgamma_mukappa[n] + lgamma_kappa_mukappa[n];
     if (include_summand<propto, T_y, T_loc, T_prec>::value) {
       const T_partials_return mukappa_dbl = mu_dbl * kappa_dbl;
-      logp += (mukappa_dbl - 1) * log_y[n]
-              + (kappa_dbl - mukappa_dbl - 1) * log1m_y[n];
+      logp += (mukappa_dbl - 1) * log_y[n] +
+              (kappa_dbl - mukappa_dbl - 1) * log1m_y[n];
     }
 
     if (!is_constant_struct<T_y>::value) {
       const T_partials_return mukappa_dbl = mu_dbl * kappa_dbl;
-      ops_partials.edge1_.partials_[n]
-          += (mukappa_dbl - 1) / y_dbl
-             + (kappa_dbl - mukappa_dbl - 1) / (y_dbl - 1);
+      ops_partials.edge1_.partials_[n] +=
+          (mukappa_dbl - 1) / y_dbl +
+          (kappa_dbl - mukappa_dbl - 1) / (y_dbl - 1);
     }
     if (!is_constant_struct<T_loc>::value)
-      ops_partials.edge2_.partials_[n]
-          += kappa_dbl
-             * (digamma_kappa_mukappa[n] - digamma_mukappa[n] + log_y[n]
-                - log1m_y[n]);
+      ops_partials.edge2_.partials_[n] +=
+          kappa_dbl * (digamma_kappa_mukappa[n] - digamma_mukappa[n] +
+                       log_y[n] - log1m_y[n]);
     if (!is_constant_struct<T_prec>::value)
-      ops_partials.edge3_.partials_[n]
-          += digamma_kappa[n] + mu_dbl * (log_y[n] - digamma_mukappa[n])
-             + (1 - mu_dbl) * (log1m_y[n] - digamma_kappa_mukappa[n]);
+      ops_partials.edge3_.partials_[n] +=
+          digamma_kappa[n] + mu_dbl * (log_y[n] - digamma_mukappa[n]) +
+          (1 - mu_dbl) * (log1m_y[n] - digamma_kappa_mukappa[n]);
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_loc, typename T_prec>
-inline typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lpdf(
-    const T_y &y, const T_loc &mu, const T_prec &kappa) {
+inline typename return_type<T_y, T_loc, T_prec>::type
+beta_proportion_lpdf(const T_y &y, const T_loc &mu, const T_prec &kappa) {
   return beta_proportion_lpdf<false>(y, mu, kappa);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

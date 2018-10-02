@@ -17,8 +17,7 @@ namespace stan {
  *
  * @tparam T the wrapped type, either a Vector or std::vector of them.
  */
-template <typename T>
-class vector_seq_view {};
+template <typename T> class vector_seq_view {};
 
 /**
  * This class provides a low-cost wrapper for situations where you either need
@@ -33,7 +32,7 @@ class vector_seq_view {};
  */
 template <typename S>
 class vector_seq_view<Eigen::Matrix<S, Eigen::Dynamic, 1>> {
- public:
+public:
   explicit vector_seq_view(const Eigen::Matrix<S, Eigen::Dynamic, 1> &m)
       : m_(m) {}
   int size() const { return 1; }
@@ -41,7 +40,7 @@ class vector_seq_view<Eigen::Matrix<S, Eigen::Dynamic, 1>> {
     return m_;
   }
 
- private:
+private:
   const Eigen::Matrix<S, Eigen::Dynamic, 1> &m_;
 };
 
@@ -58,7 +57,7 @@ class vector_seq_view<Eigen::Matrix<S, Eigen::Dynamic, 1>> {
  */
 template <typename S>
 class vector_seq_view<Eigen::Matrix<S, 1, Eigen::Dynamic>> {
- public:
+public:
   explicit vector_seq_view(const Eigen::Matrix<S, 1, Eigen::Dynamic> &m)
       : m_(m) {}
   int size() const { return 1; }
@@ -66,7 +65,7 @@ class vector_seq_view<Eigen::Matrix<S, 1, Eigen::Dynamic>> {
     return m_;
   }
 
- private:
+private:
   const Eigen::Matrix<S, 1, Eigen::Dynamic> &m_;
 };
 
@@ -83,14 +82,14 @@ class vector_seq_view<Eigen::Matrix<S, 1, Eigen::Dynamic>> {
  */
 template <typename S>
 class vector_seq_view<std::vector<Eigen::Matrix<S, Eigen::Dynamic, 1>>> {
- public:
+public:
   explicit vector_seq_view(
       const std::vector<Eigen::Matrix<S, Eigen::Dynamic, 1>> &v)
       : v_(v) {}
   int size() const { return v_.size(); }
   Eigen::Matrix<S, Eigen::Dynamic, 1> operator[](int i) const { return v_[i]; }
 
- private:
+private:
   const std::vector<Eigen::Matrix<S, Eigen::Dynamic, 1>> &v_;
 };
 
@@ -107,16 +106,16 @@ class vector_seq_view<std::vector<Eigen::Matrix<S, Eigen::Dynamic, 1>>> {
  */
 template <typename S>
 class vector_seq_view<std::vector<Eigen::Matrix<S, 1, Eigen::Dynamic>>> {
- public:
+public:
   explicit vector_seq_view(
       const std::vector<Eigen::Matrix<S, 1, Eigen::Dynamic>> &v)
       : v_(v) {}
   int size() const { return v_.size(); }
   Eigen::Matrix<S, 1, Eigen::Dynamic> operator[](int i) const { return v_[i]; }
 
- private:
+private:
   const std::vector<Eigen::Matrix<S, 1, Eigen::Dynamic>> &v_;
 };
-}  // namespace stan
+} // namespace stan
 
 #endif

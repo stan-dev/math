@@ -42,13 +42,13 @@ inline var log_determinant_spd(const Eigen::Matrix<var, R, C> &m) {
   check_finite("log_determinant_spd",
                "log determininant of the matrix argument", val);
 
-  vari **operands
-      = ChainableStack::instance().memalloc_.alloc_array<vari *>(m.size());
+  vari **operands =
+      ChainableStack::instance().memalloc_.alloc_array<vari *>(m.size());
   for (int i = 0; i < m.size(); ++i)
     operands[i] = m(i).vi_;
 
-  double *gradients
-      = ChainableStack::instance().memalloc_.alloc_array<double>(m.size());
+  double *gradients =
+      ChainableStack::instance().memalloc_.alloc_array<double>(m.size());
   for (int i = 0; i < m.size(); ++i)
     gradients[i] = m_d(i);
 
@@ -56,7 +56,7 @@ inline var log_determinant_spd(const Eigen::Matrix<var, R, C> &m) {
       new precomputed_gradients_vari(val, m.size(), operands, gradients));
 }
 
-}  // namespace math
+} // namespace math
 
-}  // namespace stan
+} // namespace stan
 #endif

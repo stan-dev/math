@@ -41,8 +41,7 @@ inline fvar<T> hypot(const fvar<T> &x1, const fvar<T> &x2) {
  * @return Length of hypoteneuse of right triangle with opposite
  * and adjacent side lengths x1 and x2.
  */
-template <typename T>
-inline fvar<T> hypot(const fvar<T> &x1, double x2) {
+template <typename T> inline fvar<T> hypot(const fvar<T> &x1, double x2) {
   using std::sqrt;
   T u = hypot(x1.val_, x2);
   return fvar<T>(u, (x1.d_ * x1.val_) / u);
@@ -61,13 +60,12 @@ inline fvar<T> hypot(const fvar<T> &x1, double x2) {
  * @return Length of hypoteneuse of right triangle with opposite
  * and adjacent side lengths x1 and x2.
  */
-template <typename T>
-inline fvar<T> hypot(double x1, const fvar<T> &x2) {
+template <typename T> inline fvar<T> hypot(double x1, const fvar<T> &x2) {
   using std::sqrt;
   T u = hypot(x1, x2.val_);
   return fvar<T>(u, (x2.d_ * x2.val_) / u);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

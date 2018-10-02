@@ -44,8 +44,7 @@ inline fvar<T> fmax(const fvar<T> &x1, const fvar<T> &x2) {
  * @param x2 Second argument.
  * @return maximum of arguments, and if one is NaN return the other
  */
-template <typename T>
-inline fvar<T> fmax(double x1, const fvar<T> &x2) {
+template <typename T> inline fvar<T> fmax(double x1, const fvar<T> &x2) {
   if (unlikely(is_nan(x1))) {
     if (is_nan(x2.val_))
       return fvar<T>(fmax(x1, x2.val_), NOT_A_NUMBER);
@@ -70,8 +69,7 @@ inline fvar<T> fmax(double x1, const fvar<T> &x2) {
  * @param x2 Second argument.
  * @return maximum of arguments, and if one is NaN return the other
  */
-template <typename T>
-inline fvar<T> fmax(const fvar<T> &x1, double x2) {
+template <typename T> inline fvar<T> fmax(const fvar<T> &x1, double x2) {
   if (unlikely(is_nan(x1.val_))) {
     if (is_nan(x2))
       return fvar<T>(fmax(x1.val_, x2), NOT_A_NUMBER);
@@ -87,6 +85,6 @@ inline fvar<T> fmax(const fvar<T> &x1, double x2) {
     return fvar<T>(x2, 0.0);
   }
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

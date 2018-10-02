@@ -16,7 +16,7 @@ namespace math {
  */
 inline int is_inf(double x) { return boost::math::isinf(x); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

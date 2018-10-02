@@ -10,22 +10,21 @@ namespace math {
 namespace {
 
 class modified_bessel_first_kind_dv_vari : public op_dv_vari {
- public:
+public:
   modified_bessel_first_kind_dv_vari(int a, vari *bvi)
       : op_dv_vari(modified_bessel_first_kind(a, bvi->val_), a, bvi) {}
   void chain() {
-    bvi_->adj_
-        += adj_
-           * (-ad_ * modified_bessel_first_kind(ad_, bvi_->val_) / bvi_->val_
-              + modified_bessel_first_kind(ad_ - 1, bvi_->val_));
+    bvi_->adj_ += adj_ * (-ad_ * modified_bessel_first_kind(ad_, bvi_->val_) /
+                              bvi_->val_ +
+                          modified_bessel_first_kind(ad_ - 1, bvi_->val_));
   }
 };
-}  // namespace
+} // namespace
 
 inline var modified_bessel_first_kind(int v, const var &a) {
   return var(new modified_bessel_first_kind_dv_vari(v, a.vi_));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

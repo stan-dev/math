@@ -31,9 +31,8 @@ TEST(AgradFwdInvLogit, FvarVar_2ndDeriv) {
   VEC g;
   a.d_.grad(y, g);
   EXPECT_FLOAT_EQ(
-      1.3
-          * (inv_logit(0.5) * (1 - inv_logit(0.5))
-             - inv_logit(0.5) * 2.0 * inv_logit(0.5) * (1 - inv_logit(0.5))),
+      1.3 * (inv_logit(0.5) * (1 - inv_logit(0.5)) -
+             inv_logit(0.5) * 2.0 * inv_logit(0.5) * (1 - inv_logit(0.5))),
       g[0]);
 }
 
@@ -88,8 +87,8 @@ TEST(AgradFwdInvLogit, FvarFvarVar_2ndDeriv) {
   VEC g;
   a.val_.d_.grad(p, g);
   EXPECT_FLOAT_EQ(
-      (inv_logit(0.5) * (1 - inv_logit(0.5))
-       - inv_logit(0.5) * 2.0 * inv_logit(0.5) * (1 - inv_logit(0.5))),
+      (inv_logit(0.5) * (1 - inv_logit(0.5)) -
+       inv_logit(0.5) * 2.0 * inv_logit(0.5) * (1 - inv_logit(0.5))),
       g[0]);
 
   fvar<fvar<var>> y;
@@ -102,8 +101,8 @@ TEST(AgradFwdInvLogit, FvarFvarVar_2ndDeriv) {
   VEC r;
   b.d_.val_.grad(q, r);
   EXPECT_FLOAT_EQ(
-      (inv_logit(0.5) * (1 - inv_logit(0.5))
-       - inv_logit(0.5) * 2.0 * inv_logit(0.5) * (1 - inv_logit(0.5))),
+      (inv_logit(0.5) * (1 - inv_logit(0.5)) -
+       inv_logit(0.5) * 2.0 * inv_logit(0.5) * (1 - inv_logit(0.5))),
       r[0]);
 }
 TEST(AgradFwdInvLogit, FvarFvarVar_3rdDeriv) {
@@ -125,8 +124,7 @@ TEST(AgradFwdInvLogit, FvarFvarVar_3rdDeriv) {
 }
 
 struct inv_logit_fun {
-  template <typename T0>
-  inline T0 operator()(const T0 &arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return inv_logit(arg1);
   }
 };

@@ -19,6 +19,6 @@ inline var &var::operator*=(double b) {
   return *this;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

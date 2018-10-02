@@ -98,6 +98,6 @@ matrix_normal_prec_lpdf(
   return matrix_normal_prec_lpdf<false>(y, Mu, Sigma, D);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

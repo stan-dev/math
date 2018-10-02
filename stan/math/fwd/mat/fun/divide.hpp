@@ -12,8 +12,8 @@ namespace stan {
 namespace math {
 
 template <typename T, int R, int C>
-inline Eigen::Matrix<fvar<T>, R, C> divide(
-    const Eigen::Matrix<fvar<T>, R, C> &v, const fvar<T> &c) {
+inline Eigen::Matrix<fvar<T>, R, C>
+divide(const Eigen::Matrix<fvar<T>, R, C> &v, const fvar<T> &c) {
   Eigen::Matrix<fvar<T>, R, C> res(v.rows(), v.cols());
   for (int i = 0; i < v.rows(); i++) {
     for (int j = 0; j < v.cols(); j++)
@@ -23,8 +23,8 @@ inline Eigen::Matrix<fvar<T>, R, C> divide(
 }
 
 template <typename T, int R, int C>
-inline Eigen::Matrix<fvar<T>, R, C> divide(
-    const Eigen::Matrix<fvar<T>, R, C> &v, double c) {
+inline Eigen::Matrix<fvar<T>, R, C>
+divide(const Eigen::Matrix<fvar<T>, R, C> &v, double c) {
   Eigen::Matrix<fvar<T>, R, C> res(v.rows(), v.cols());
   for (int i = 0; i < v.rows(); i++) {
     for (int j = 0; j < v.cols(); j++)
@@ -45,22 +45,22 @@ inline Eigen::Matrix<fvar<T>, R, C> divide(const Eigen::Matrix<double, R, C> &v,
 }
 
 template <typename T, int R, int C>
-inline Eigen::Matrix<fvar<T>, R, C> operator/(
-    const Eigen::Matrix<fvar<T>, R, C> &v, const fvar<T> &c) {
+inline Eigen::Matrix<fvar<T>, R, C>
+operator/(const Eigen::Matrix<fvar<T>, R, C> &v, const fvar<T> &c) {
   return divide(v, c);
 }
 
 template <typename T, int R, int C>
-inline Eigen::Matrix<fvar<T>, R, C> operator/(
-    const Eigen::Matrix<fvar<T>, R, C> &v, double c) {
+inline Eigen::Matrix<fvar<T>, R, C>
+operator/(const Eigen::Matrix<fvar<T>, R, C> &v, double c) {
   return divide(v, c);
 }
 
 template <typename T, int R, int C>
-inline Eigen::Matrix<fvar<T>, R, C> operator/(
-    const Eigen::Matrix<double, R, C> &v, const fvar<T> &c) {
+inline Eigen::Matrix<fvar<T>, R, C>
+operator/(const Eigen::Matrix<double, R, C> &v, const fvar<T> &c) {
   return divide(v, c);
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

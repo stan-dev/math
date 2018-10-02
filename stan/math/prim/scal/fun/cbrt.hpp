@@ -34,6 +34,6 @@ inline double cbrt(double x) {
  */
 inline double cbrt(int x) { return cbrt(static_cast<double>(x)); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

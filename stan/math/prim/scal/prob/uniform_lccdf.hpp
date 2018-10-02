@@ -22,8 +22,8 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_low, typename T_high>
-typename return_type<T_y, T_low, T_high>::type uniform_lccdf(
-    const T_y &y, const T_low &alpha, const T_high &beta) {
+typename return_type<T_y, T_low, T_high>::type
+uniform_lccdf(const T_y &y, const T_low &alpha, const T_high &beta) {
   static const char *function = "uniform_lccdf";
   typedef typename stan::partials_return_type<T_y, T_low, T_high>::type
       T_partials_return;
@@ -68,15 +68,15 @@ typename return_type<T_y, T_low, T_high>::type uniform_lccdf(
     if (!is_constant_struct<T_y>::value)
       ops_partials.edge1_.partials_[n] -= 1.0 / b_min_a / ccdf_log_;
     if (!is_constant_struct<T_low>::value)
-      ops_partials.edge2_.partials_[n]
-          -= (y_dbl - beta_dbl) / b_min_a / b_min_a / ccdf_log_;
+      ops_partials.edge2_.partials_[n] -=
+          (y_dbl - beta_dbl) / b_min_a / b_min_a / ccdf_log_;
     if (!is_constant_struct<T_high>::value)
-      ops_partials.edge3_.partials_[n]
-          += (y_dbl - alpha_dbl) / b_min_a / b_min_a / ccdf_log_;
+      ops_partials.edge3_.partials_[n] +=
+          (y_dbl - alpha_dbl) / b_min_a / b_min_a / ccdf_log_;
   }
   return ops_partials.build(ccdf_log);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

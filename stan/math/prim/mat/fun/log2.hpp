@@ -18,10 +18,7 @@ struct log2_fun {
    * @param x argument
    * @return base two log of the argument
    */
-  template <typename T>
-  static inline T fun(const T &x) {
-    return log2(x);
-  }
+  template <typename T> static inline T fun(const T &x) { return log2(x); }
 };
 
 /**
@@ -39,7 +36,7 @@ inline typename apply_scalar_unary<log2_fun, T>::return_t log2(const T &x) {
   return apply_scalar_unary<log2_fun, T>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

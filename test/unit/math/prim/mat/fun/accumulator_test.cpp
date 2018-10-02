@@ -3,8 +3,7 @@
 #include <vector>
 
 // test sum of first n numbers for sum of a
-template <typename T>
-void test_sum(stan::math::accumulator<T> &a, int n) {
+template <typename T> void test_sum(stan::math::accumulator<T> &a, int n) {
   EXPECT_FLOAT_EQ((n * (n + 1)) / 2, a.sum());
 }
 

@@ -28,8 +28,8 @@ inline matrix_gpu transpose(const matrix_gpu &src) {
   }
   return dst;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif
 #endif

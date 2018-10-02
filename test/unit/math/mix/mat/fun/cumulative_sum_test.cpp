@@ -3,8 +3,7 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
-template <typename T>
-void test_cumulative_sum() {
+template <typename T> void test_cumulative_sum() {
   using stan::math::cumulative_sum;
 
   T c(1);
@@ -43,8 +42,7 @@ void test_cumulative_sum() {
   EXPECT_FLOAT_EQ(6.0, h[1].d_);
   EXPECT_FLOAT_EQ(9.0, h[2].d_);
 }
-template <typename T>
-void test_cumulative_sum2() {
+template <typename T> void test_cumulative_sum2() {
   using stan::math::cumulative_sum;
 
   T c(1);
@@ -92,8 +90,7 @@ void test_cumulative_sum2() {
   EXPECT_FLOAT_EQ(1.0, grad[1]);
   EXPECT_FLOAT_EQ(1.0, grad[2]);
 }
-template <typename T>
-void test_cumulative_sum3() {
+template <typename T> void test_cumulative_sum3() {
   using stan::math::cumulative_sum;
 
   T c(1);
@@ -132,8 +129,7 @@ void test_cumulative_sum3() {
   EXPECT_FLOAT_EQ(6.0, h[1].d_.val());
   EXPECT_FLOAT_EQ(9.0, h[2].d_.val());
 }
-template <typename T>
-void test_cumulative_sum4() {
+template <typename T> void test_cumulative_sum4() {
   using stan::math::cumulative_sum;
 
   T c(1);

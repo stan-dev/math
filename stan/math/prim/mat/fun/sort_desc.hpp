@@ -25,6 +25,6 @@ inline Eigen::Matrix<T, R, C> sort_desc(Eigen::Matrix<T, R, C> xs) {
   return xs;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

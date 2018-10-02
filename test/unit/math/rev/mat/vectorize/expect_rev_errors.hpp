@@ -8,8 +8,7 @@
 #include <test/unit/math/prim/mat/vectorize/expect_std_vector_error.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_vector_error.hpp>
 
-template <typename F>
-void expect_rev_errors() {
+template <typename F> void expect_rev_errors() {
   using stan::math::var;
   expect_scalar_error<F, var>();
   expect_std_vector_error<F, var>();

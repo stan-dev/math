@@ -7,13 +7,12 @@
 namespace stan {
 namespace math {
 
-template <typename T>
-inline fvar<T> cosh(const fvar<T> &x) {
+template <typename T> inline fvar<T> cosh(const fvar<T> &x) {
   using std::cosh;
   using std::sinh;
   return fvar<T>(cosh(x.val_), x.d_ * sinh(x.val_));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

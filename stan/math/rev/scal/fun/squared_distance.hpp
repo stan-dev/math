@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 class scal_squared_distance_vv_vari : public op_vv_vari {
- public:
+public:
   scal_squared_distance_vv_vari(vari *avi, vari *bvi)
       : op_vv_vari(squared_distance(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
@@ -18,13 +18,13 @@ class scal_squared_distance_vv_vari : public op_vv_vari {
   }
 };
 class scal_squared_distance_vd_vari : public op_vd_vari {
- public:
+public:
   scal_squared_distance_vd_vari(vari *avi, double b)
       : op_vd_vari(squared_distance(avi->val_, b), avi, b) {}
   void chain() { avi_->adj_ += adj_ * 2 * (avi_->val_ - bd_); }
 };
 class scal_squared_distance_dv_vari : public op_dv_vari {
- public:
+public:
   scal_squared_distance_dv_vari(double a, vari *bvi)
       : op_dv_vari(squared_distance(a, bvi->val_), a, bvi) {}
   void chain() { bvi_->adj_ -= adj_ * 2 * (ad_ - bvi_->val_); }
@@ -49,6 +49,6 @@ inline var squared_distance(double a, const var &b) {
   return var(new scal_squared_distance_dv_vari(a, b.vi_));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

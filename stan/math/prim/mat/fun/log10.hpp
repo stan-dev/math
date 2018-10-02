@@ -14,8 +14,7 @@ namespace math {
  * @return Log base-10 of x.
  */
 struct log10_fun {
-  template <typename T>
-  static inline T fun(const T &x) {
+  template <typename T> static inline T fun(const T &x) {
     using std::log10;
     return log10(x);
   }
@@ -32,7 +31,7 @@ inline typename apply_scalar_unary<log10_fun, T>::return_t log10(const T &x) {
   return apply_scalar_unary<log10_fun, T>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

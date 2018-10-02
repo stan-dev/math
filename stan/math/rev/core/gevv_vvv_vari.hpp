@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 class gevv_vvv_vari : public vari {
- protected:
+protected:
   vari *alpha_;
   vari **v1_;
   vari **v2_;
@@ -25,7 +25,7 @@ class gevv_vvv_vari : public vari {
     return alpha->vi_->val_ * result;
   }
 
- public:
+public:
   gevv_vvv_vari(const var *alpha, const var *v1, int stride1, const var *v2,
                 int stride2, size_t length)
       : vari(eval_gevv(alpha, v1, stride1, v2, stride2, length, &dotval_)),
@@ -51,6 +51,6 @@ class gevv_vvv_vari : public vari {
   }
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

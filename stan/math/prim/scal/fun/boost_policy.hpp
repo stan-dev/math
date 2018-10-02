@@ -21,6 +21,6 @@ typedef boost::math::policies::policy<
     boost::math::policies::pole_error<boost::math::policies::errno_on_error>>
     boost_policy_t;
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

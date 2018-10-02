@@ -6,17 +6,17 @@ using std::numeric_limits;
 using std::vector;
 
 class AgradCcdfLogPareto : public AgradCcdfLogTest {
- public:
+public:
   void valid_values(vector<vector<double>> &parameters,
                     vector<double> &ccdf_log) {
     vector<double> param(3);
 
-    param[0] = 0.75;  // y
-    param[1] = 0.5;   // y_min (Scale)
-    param[2] = 3.3;   // alpha (Shape)
+    param[0] = 0.75; // y
+    param[1] = 0.5;  // y_min (Scale)
+    param[2] = 3.3;  // alpha (Shape)
     parameters.push_back(param);
     ccdf_log.push_back(
-        std::log(1.0 - 0.7376392612457611797083));  // expected ccdf_log
+        std::log(1.0 - 0.7376392612457611797083)); // expected ccdf_log
   }
 
   void invalid_values(vector<size_t> &index, vector<double> &value) {
@@ -53,17 +53,17 @@ class AgradCcdfLogPareto : public AgradCcdfLogTest {
 
   template <typename T_y, typename T_scale, typename T_shape, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_scale, T_shape>::type ccdf_log(
-      const T_y &y, const T_scale &y_min, const T_shape &alpha, const T3 &,
-      const T4 &, const T5 &) {
+  typename stan::return_type<T_y, T_scale, T_shape>::type
+  ccdf_log(const T_y &y, const T_scale &y_min, const T_shape &alpha, const T3 &,
+           const T4 &, const T5 &) {
     return stan::math::pareto_ccdf_log(y, y_min, alpha);
   }
 
   template <typename T_y, typename T_scale, typename T_shape, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_scale, T_shape>::type ccdf_log_function(
-      const T_y &y, const T_scale &y_min, const T_shape &alpha, const T3 &,
-      const T4 &, const T5 &) {
+  typename stan::return_type<T_y, T_scale, T_shape>::type
+  ccdf_log_function(const T_y &y, const T_scale &y_min, const T_shape &alpha,
+                    const T3 &, const T4 &, const T5 &) {
     using std::exp;
     using std::log;
     return alpha * log(y_min / y);

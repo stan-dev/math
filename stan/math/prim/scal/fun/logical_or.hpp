@@ -24,12 +24,11 @@ namespace math {
  * @param x2 Second argument
  * @return <code>true</code> if either x1 or x2 is not equal to 0.
  */
-template <typename T1, typename T2>
-inline int logical_or(T1 x1, T2 x2) {
+template <typename T1, typename T2> inline int logical_or(T1 x1, T2 x2) {
   return (x1 != 0) || (x2 != 0);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

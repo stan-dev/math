@@ -15,10 +15,7 @@ namespace math {
  * @param[in] x free scalar
  * @return transformed input
  */
-template <typename T>
-inline T identity_constrain(const T &x) {
-  return x;
-}
+template <typename T> inline T identity_constrain(const T &x) { return x; }
 
 /**
  * Returns the result of applying the identity constraint
@@ -32,13 +29,12 @@ inline T identity_constrain(const T &x) {
  * @param[in] x scalar
  * @return transformed input
  */
-template <typename T>
-inline T identity_constrain(const T &x, T & /*lp*/) {
+template <typename T> inline T identity_constrain(const T &x, T & /*lp*/) {
   return x;
 }
 
-}  // namespace math
+} // namespace math
 
-}  // namespace stan
+} // namespace stan
 
 #endif

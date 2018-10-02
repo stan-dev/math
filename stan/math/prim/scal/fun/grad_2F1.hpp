@@ -66,13 +66,14 @@ void grad_2F1(T &g_a1, T &g_b1, const T &a1, const T &a2, const T &b1,
     log_t_new += log(fabs(p)) + log_z;
     log_t_new_sign = p >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
-    T term = log_g_old_sign[0] * log_t_old_sign * exp(log_g_old[0] - log_t_old)
-             + 1 / (a1 + k);
+    T term =
+        log_g_old_sign[0] * log_t_old_sign * exp(log_g_old[0] - log_t_old) +
+        1 / (a1 + k);
     log_g_old[0] = log_t_new + log(fabs(term));
     log_g_old_sign[0] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
-    term = log_g_old_sign[1] * log_t_old_sign * exp(log_g_old[1] - log_t_old)
-           - 1 / (b1 + k);
+    term = log_g_old_sign[1] * log_t_old_sign * exp(log_g_old[1] - log_t_old) -
+           1 / (b1 + k);
     log_g_old[1] = log_t_new + log(fabs(term));
     log_g_old_sign[1] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
@@ -80,7 +81,7 @@ void grad_2F1(T &g_a1, T &g_b1, const T &a1, const T &a2, const T &b1,
     g_b1 += log_g_old_sign[1] > 0 ? exp(log_g_old[1]) : -exp(log_g_old[1]);
 
     if (log_t_new <= log(precision))
-      return;  // implicit abs
+      return; // implicit abs
 
     log_t_old = log_t_new;
     log_t_old_sign = log_t_new_sign;
@@ -91,6 +92,6 @@ void grad_2F1(T &g_a1, T &g_b1, const T &a1, const T &a2, const T &b1,
   return;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -18,12 +18,12 @@ namespace math {
  * directly.
  */
 class precomputed_gradients_vari : public vari {
- protected:
+protected:
   const size_t size_;
   vari **varis_;
   double *gradients_;
 
- public:
+public:
   /**
    * Construct a precomputed vari with the specified value,
    * operands, and gradients.
@@ -50,8 +50,7 @@ class precomputed_gradients_vari : public vari {
    */
   precomputed_gradients_vari(double val, const std::vector<var> &vars,
                              const std::vector<double> &gradients)
-      : vari(val),
-        size_(vars.size()),
+      : vari(val), size_(vars.size()),
         varis_(ChainableStack::instance().memalloc_.alloc_array<vari *>(
             vars.size())),
         gradients_(ChainableStack::instance().memalloc_.alloc_array<double>(
@@ -89,6 +88,6 @@ inline var precomputed_gradients(double value, const std::vector<var> &operands,
                                  const std::vector<double> &gradients) {
   return var(new precomputed_gradients_vari(value, operands, gradients));
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

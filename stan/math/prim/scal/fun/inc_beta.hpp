@@ -11,6 +11,6 @@ inline double inc_beta(double a, double b, double x) {
   return ibeta(a, b, x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

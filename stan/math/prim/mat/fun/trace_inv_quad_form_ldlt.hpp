@@ -29,6 +29,6 @@ trace_inv_quad_form_ldlt(const LDLT_factor<T1, R2, C2> &A,
   return trace(multiply(transpose(B), mdivide_left_ldlt(A, B)));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

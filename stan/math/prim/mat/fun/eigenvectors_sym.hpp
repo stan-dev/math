@@ -9,8 +9,8 @@ namespace stan {
 namespace math {
 
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> eigenvectors_sym(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m) {
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+eigenvectors_sym(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m) {
   check_nonzero_size("eigenvectors_sym", "m", m);
   check_symmetric("eigenvalues_sym", "m", m);
 
@@ -20,6 +20,6 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> eigenvectors_sym(
   return solver.eigenvectors();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

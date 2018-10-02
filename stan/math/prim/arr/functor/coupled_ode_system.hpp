@@ -21,8 +21,7 @@ namespace math {
  * @tparam T1 type of the initial state
  * @tparam T2 type of the parameters
  */
-template <typename F, typename T1, typename T2>
-struct coupled_ode_system {};
+template <typename F, typename T1, typename T2> struct coupled_ode_system {};
 
 /**
  * The coupled ode system for known initial values and known
@@ -34,9 +33,8 @@ struct coupled_ode_system {};
  *
  * @tparam F type of system function for the base ODE system.
  */
-template <typename F>
-class coupled_ode_system<F, double, double> {
- public:
+template <typename F> class coupled_ode_system<F, double, double> {
+public:
   const F &f_;
   const std::vector<double> &y0_dbl_;
   const std::vector<double> &theta_dbl_;
@@ -63,15 +61,8 @@ class coupled_ode_system<F, double, double> {
                      const std::vector<double> &theta,
                      const std::vector<double> &x,
                      const std::vector<int> &x_int, std::ostream *msgs)
-      : f_(f),
-        y0_dbl_(y0),
-        theta_dbl_(theta),
-        x_(x),
-        x_int_(x_int),
-        N_(y0.size()),
-        M_(theta.size()),
-        size_(N_),
-        msgs_(msgs) {}
+      : f_(f), y0_dbl_(y0), theta_dbl_(theta), x_(x), x_int_(x_int),
+        N_(y0.size()), M_(theta.size()), size_(N_), msgs_(msgs) {}
 
   /**
    * Calculates the derivative of the coupled ode system with
@@ -131,12 +122,12 @@ class coupled_ode_system<F, double, double> {
    * @param y the vector of the coupled states after solving the ode
    * @return the decoupled states
    */
-  std::vector<std::vector<double>> decouple_states(
-      const std::vector<std::vector<double>> &y) const {
+  std::vector<std::vector<double>>
+  decouple_states(const std::vector<std::vector<double>> &y) const {
     return y;
   }
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

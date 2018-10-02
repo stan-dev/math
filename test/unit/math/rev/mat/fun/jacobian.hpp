@@ -52,6 +52,6 @@ inline void jacobian(std::vector<var> &dependents,
   }
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

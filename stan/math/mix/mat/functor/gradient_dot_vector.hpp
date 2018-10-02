@@ -23,6 +23,6 @@ void gradient_dot_vector(const F &f,
   grad_fx_dot_v = fx_fvar.d_;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

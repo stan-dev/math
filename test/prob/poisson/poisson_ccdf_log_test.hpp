@@ -6,28 +6,28 @@ using std::numeric_limits;
 using std::vector;
 
 class AgradCcdfLogPoisson : public AgradCcdfLogTest {
- public:
+public:
   void valid_values(vector<vector<double>> &parameters,
                     vector<double> &ccdf_log) {
     vector<double> param(2);
 
-    param[0] = 17;    // n
-    param[1] = 13.0;  // lambda
+    param[0] = 17;   // n
+    param[1] = 13.0; // lambda
     parameters.push_back(param);
     ccdf_log.push_back(
-        std::log(1.0 - 0.8904649795242025600572));  // expected ccdf_log
+        std::log(1.0 - 0.8904649795242025600572)); // expected ccdf_log
 
-    param[0] = 82;    // n
-    param[1] = 42.0;  // lambda
+    param[0] = 82;   // n
+    param[1] = 42.0; // lambda
     parameters.push_back(param);
     ccdf_log.push_back(
-        std::log(1.0 - 0.9999999845303266798879));  // expected ccdf_log
+        std::log(1.0 - 0.9999999845303266798879)); // expected ccdf_log
 
-    param[0] = 0.0;  // n
-    param[1] = 3.0;  // lambda
+    param[0] = 0.0; // n
+    param[1] = 3.0; // lambda
     parameters.push_back(param);
     ccdf_log.push_back(
-        std::log(1.0 - 0.04978706836786394446248));  // expected ccdf_log
+        std::log(1.0 - 0.04978706836786394446248)); // expected ccdf_log
   }
 
   void invalid_values(vector<size_t> &index, vector<double> &value) {
@@ -45,18 +45,17 @@ class AgradCcdfLogPoisson : public AgradCcdfLogTest {
 
   template <typename T_n, typename T_rate, typename T2, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_rate>::type ccdf_log(const T_n &n,
-                                                    const T_rate &lambda,
-                                                    const T2 &, const T3 &,
-                                                    const T4 &, const T5 &) {
+  typename stan::return_type<T_rate>::type
+  ccdf_log(const T_n &n, const T_rate &lambda, const T2 &, const T3 &,
+           const T4 &, const T5 &) {
     return stan::math::poisson_ccdf_log(n, lambda);
   }
 
   template <typename T_n, typename T_rate, typename T2, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_rate>::type ccdf_log_function(
-      const T_n &n, const T_rate &lambda, const T2 &, const T3 &, const T4 &,
-      const T5 &) {
+  typename stan::return_type<T_rate>::type
+  ccdf_log_function(const T_n &n, const T_rate &lambda, const T2 &, const T3 &,
+                    const T4 &, const T5 &) {
     using boost::math::lgamma;
     using stan::math::exp;
     using stan::math::lgamma;

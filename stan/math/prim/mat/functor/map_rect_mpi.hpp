@@ -41,9 +41,9 @@ map_rect_mpi(
                                            msgs);
   }
 }
-}  // namespace internal
-}  // namespace math
-}  // namespace stan
+} // namespace internal
+} // namespace math
+} // namespace stan
 
 #define STAN_REGISTER_MPI_MAP_RECT(CALLID, FUNCTOR, SHARED, JOB)               \
   namespace stan {                                                             \
@@ -63,12 +63,12 @@ map_rect_mpi(
   STAN_REGISTER_MPI_DISTRIBUTED_APPLY(                                         \
       stan::math::internal::mpi_mr_##CALLID##_##SHARED##_##JOB##_pcall_)
 
-#define STAN_REGISTER_MPI_MAP_RECT_ALL(CALLID, FUNCTOR) \
+#define STAN_REGISTER_MPI_MAP_RECT_ALL(CALLID, FUNCTOR)                        \
   STAN_REGISTER_MPI_MAP_RECT(CALLID, FUNCTOR, double, double)
 
 // redefine register macro to use MPI variant
 #undef STAN_REGISTER_MAP_RECT
-#define STAN_REGISTER_MAP_RECT(CALLID, FUNCTOR) \
+#define STAN_REGISTER_MAP_RECT(CALLID, FUNCTOR)                                \
   STAN_REGISTER_MPI_MAP_RECT_ALL(CALLID, FUNCTOR)
 
 #endif

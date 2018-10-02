@@ -29,6 +29,6 @@ neg_binomial_2_log_glm_log(const T_y &y, const T_x &x, const T_alpha &alpha,
                            const T_beta &beta, const T_precision &phi) {
   return neg_binomial_2_log_glm_lpmf<false>(y, x, alpha, beta, phi);
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

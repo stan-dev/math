@@ -26,12 +26,12 @@ namespace math {
 
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_shape>
-typename return_type<T_y, T_loc, T_scale, T_shape>::type skew_normal_lpdf(
-    const T_y &y, const T_loc &mu, const T_scale &sigma, const T_shape &alpha) {
+typename return_type<T_y, T_loc, T_scale, T_shape>::type
+skew_normal_lpdf(const T_y &y, const T_loc &mu, const T_scale &sigma,
+                 const T_shape &alpha) {
   static const char *function = "skew_normal_lpdf";
-  typedef
-      typename stan::partials_return_type<T_y, T_loc, T_scale, T_shape>::type
-          T_partials_return;
+  typedef typename stan::partials_return_type<T_y, T_loc, T_scale,
+                                              T_shape>::type T_partials_return;
 
   using stan::is_constant_struct;
   using std::exp;
@@ -79,8 +79,8 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type skew_normal_lpdf(
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
 
-    const T_partials_return y_minus_mu_over_sigma
-        = (y_dbl - mu_dbl) * inv_sigma[n];
+    const T_partials_return y_minus_mu_over_sigma =
+        (y_dbl - mu_dbl) * inv_sigma[n];
     const double pi_dbl = pi();
 
     if (include_summand<propto>::value)
@@ -92,28 +92,28 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type skew_normal_lpdf(
     if (include_summand<propto, T_y, T_loc, T_scale, T_shape>::value)
       logp += log(erfc(-alpha_dbl * y_minus_mu_over_sigma / std::sqrt(2.0)));
 
-    T_partials_return deriv_logerf
-        = 2.0 / std::sqrt(pi_dbl)
-          * exp(-alpha_dbl * y_minus_mu_over_sigma / std::sqrt(2.0) * alpha_dbl
-                * y_minus_mu_over_sigma / std::sqrt(2.0))
-          / (1 + erf(alpha_dbl * y_minus_mu_over_sigma / std::sqrt(2.0)));
+    T_partials_return deriv_logerf =
+        2.0 / std::sqrt(pi_dbl) *
+        exp(-alpha_dbl * y_minus_mu_over_sigma / std::sqrt(2.0) * alpha_dbl *
+            y_minus_mu_over_sigma / std::sqrt(2.0)) /
+        (1 + erf(alpha_dbl * y_minus_mu_over_sigma / std::sqrt(2.0)));
     if (!is_constant_struct<T_y>::value)
-      ops_partials.edge1_.partials_[n]
-          += -y_minus_mu_over_sigma / sigma_dbl
-             + deriv_logerf * alpha_dbl / (sigma_dbl * std::sqrt(2.0));
+      ops_partials.edge1_.partials_[n] +=
+          -y_minus_mu_over_sigma / sigma_dbl +
+          deriv_logerf * alpha_dbl / (sigma_dbl * std::sqrt(2.0));
     if (!is_constant_struct<T_loc>::value)
-      ops_partials.edge2_.partials_[n]
-          += y_minus_mu_over_sigma / sigma_dbl
-             + deriv_logerf * -alpha_dbl / (sigma_dbl * std::sqrt(2.0));
+      ops_partials.edge2_.partials_[n] +=
+          y_minus_mu_over_sigma / sigma_dbl +
+          deriv_logerf * -alpha_dbl / (sigma_dbl * std::sqrt(2.0));
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge3_.partials_[n]
-          += -1.0 / sigma_dbl
-             + y_minus_mu_over_sigma * y_minus_mu_over_sigma / sigma_dbl
-             - deriv_logerf * y_minus_mu_over_sigma * alpha_dbl
-                   / (sigma_dbl * std::sqrt(2.0));
+      ops_partials.edge3_.partials_[n] +=
+          -1.0 / sigma_dbl +
+          y_minus_mu_over_sigma * y_minus_mu_over_sigma / sigma_dbl -
+          deriv_logerf * y_minus_mu_over_sigma * alpha_dbl /
+              (sigma_dbl * std::sqrt(2.0));
     if (!is_constant_struct<T_shape>::value)
-      ops_partials.edge4_.partials_[n]
-          += deriv_logerf * y_minus_mu_over_sigma / std::sqrt(2.0);
+      ops_partials.edge4_.partials_[n] +=
+          deriv_logerf * y_minus_mu_over_sigma / std::sqrt(2.0);
   }
   return ops_partials.build(logp);
 }
@@ -125,6 +125,6 @@ skew_normal_lpdf(const T_y &y, const T_loc &mu, const T_scale &sigma,
   return skew_normal_lpdf<false>(y, mu, sigma, alpha);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -21,6 +21,6 @@ namespace math {
  */
 inline bool is_uninitialized(var x) { return x.is_uninitialized(); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -21,8 +21,8 @@ namespace math {
  *  lower triangular
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> chol2inv(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &L) {
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+chol2inv(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &L) {
   check_square("chol2inv", "L", L);
   check_lower_triangular("chol2inv", "L", L);
   int K = L.rows();
@@ -47,6 +47,6 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> chol2inv(
   return X;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

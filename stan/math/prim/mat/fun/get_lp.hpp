@@ -8,11 +8,11 @@ namespace stan {
 namespace math {
 
 template <typename T_lp, typename T_lp_accum>
-inline typename boost::math::tools::promote_args<T_lp, T_lp_accum>::type get_lp(
-    const T_lp &lp, const accumulator<T_lp_accum> &lp_accum) {
+inline typename boost::math::tools::promote_args<T_lp, T_lp_accum>::type
+get_lp(const T_lp &lp, const accumulator<T_lp_accum> &lp_accum) {
   return lp + lp_accum.sum();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

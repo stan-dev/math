@@ -12,8 +12,8 @@ namespace stan {
 namespace math {
 
 template <typename T, int R, int C>
-inline Eigen::Matrix<fvar<T>, R, R> multiply_lower_tri_self_transpose(
-    const Eigen::Matrix<fvar<T>, R, C> &m) {
+inline Eigen::Matrix<fvar<T>, R, R>
+multiply_lower_tri_self_transpose(const Eigen::Matrix<fvar<T>, R, C> &m) {
   if (m.rows() == 0)
     return Eigen::Matrix<fvar<T>, R, R>(0, 0);
   Eigen::Matrix<fvar<T>, R, C> L(m.rows(), m.cols());
@@ -26,6 +26,6 @@ inline Eigen::Matrix<fvar<T>, R, R> multiply_lower_tri_self_transpose(
   return multiply(L, transpose(L));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

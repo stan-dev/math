@@ -63,8 +63,7 @@ TEST(AgradFwdExpm1, FvarFvarDouble) {
 }
 
 struct expm1_fun {
-  template <typename T0>
-  inline T0 operator()(const T0 &arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return expm1(arg1);
   }
 };

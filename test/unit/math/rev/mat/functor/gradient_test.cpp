@@ -105,9 +105,9 @@ TEST(AgradAutoDiff, gradient_threaded) {
     x_local << 1.0 * i, 2.0 * i;
     VectorXd grad_fx_job = ad_result.tail(ad_result.size() - 1);
 
-    EXPECT_FLOAT_EQ(
-        x_local(0) * x_local(0) * x_local(1) + 3 * x_local(1) * x_local(1),
-        fx_job);
+    EXPECT_FLOAT_EQ(x_local(0) * x_local(0) * x_local(1) +
+                        3 * x_local(1) * x_local(1),
+                    fx_job);
     EXPECT_EQ(2, grad_fx_job.size());
     EXPECT_FLOAT_EQ(2 * x_local(0) * x_local(1), grad_fx_job(0));
     EXPECT_FLOAT_EQ(x_local(0) * x_local(0) + 3 * 2 * x_local(1),

@@ -19,6 +19,6 @@ inline var logit(const var &u) {
                                 1 / (u.val() - u.val() * u.val())));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

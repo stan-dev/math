@@ -10,11 +10,11 @@ namespace math {
 
 namespace {
 class tgamma_vari : public op_v_vari {
- public:
+public:
   explicit tgamma_vari(vari *avi) : op_v_vari(tgamma(avi->val_), avi) {}
   void chain() { avi_->adj_ += adj_ * val_ * digamma(avi_->val_); }
 };
-}  // namespace
+} // namespace
 
 /**
  * Return the Gamma function applied to the specified variable (C99).
@@ -54,6 +54,6 @@ class tgamma_vari : public op_v_vari {
  */
 inline var tgamma(const var &a) { return var(new tgamma_vari(a.vi_)); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -53,6 +53,6 @@ inline double squared_distance(const Eigen::Matrix<double, R1, C1> &v1,
   return (v1.transpose() - v2).squaredNorm();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

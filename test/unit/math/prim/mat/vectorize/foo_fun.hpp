@@ -14,8 +14,7 @@ namespace math {
  * The example includes a constrained, punctured version of exp().
  */
 struct foo_fun {
-  template <typename T>
-  static inline T fun(const T &x) {
+  template <typename T> static inline T fun(const T &x) {
     using std::exp;
     stan::math::check_less_or_equal("foo_fun vectorize", "x", x, 5);
     if (x == 0)
@@ -29,7 +28,7 @@ inline typename apply_scalar_unary<foo_fun, T>::return_t foo(const T &x) {
   return apply_scalar_unary<foo_fun, T>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

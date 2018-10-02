@@ -71,8 +71,8 @@ typename return_type<T_rate>::type poisson_cdf(const T_n &n,
     P *= Pi;
 
     if (!is_constant_struct<T_rate>::value)
-      ops_partials.edge1_.partials_[i]
-          -= exp(-lambda_dbl) * pow(lambda_dbl, n_dbl) / tgamma(n_dbl + 1) / Pi;
+      ops_partials.edge1_.partials_[i] -=
+          exp(-lambda_dbl) * pow(lambda_dbl, n_dbl) / tgamma(n_dbl + 1) / Pi;
   }
 
   if (!is_constant_struct<T_rate>::value) {
@@ -82,6 +82,6 @@ typename return_type<T_rate>::type poisson_cdf(const T_n &n,
   return ops_partials.build(P);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

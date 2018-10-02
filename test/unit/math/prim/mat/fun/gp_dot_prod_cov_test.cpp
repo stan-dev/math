@@ -45,8 +45,8 @@ TEST(MathPrimMat, vec_double_gp_dot_prod_cov0) {
 
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 3; j++)
-      EXPECT_FLOAT_EQ(sigma_sq + x[i] * x[j], cov(i, j))
-          << "index: (" << i << ", " << j << ")";
+      EXPECT_FLOAT_EQ(sigma_sq + x[i] * x[j], cov(i, j)) << "index: (" << i
+                                                         << ", " << j << ")";
 }
 
 TEST(MathPrimMat, vec_x_gp_dot_prod_cov0) {

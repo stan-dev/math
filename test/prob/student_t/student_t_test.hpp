@@ -6,24 +6,24 @@ using std::numeric_limits;
 using std::vector;
 
 class AgradDistributionsStudentT : public AgradDistributionTest {
- public:
+public:
   void valid_values(vector<vector<double>> &parameters,
                     vector<double> &log_prob) {
     vector<double> param(4);
 
-    param[0] = 1.0;  // y
-    param[1] = 1.0;  // nu
+    param[0] = 1.0; // y
+    param[1] = 1.0; // nu
+    param[2] = 0.0; // mu
+    param[3] = 1.0; // sigma
+    parameters.push_back(param);
+    log_prob.push_back(-1.837877066409345339082); // expected log_prob
+
+    param[0] = -3.0; // y
+    param[1] = 2.0;  // nu
     param[2] = 0.0;  // mu
     param[3] = 1.0;  // sigma
     parameters.push_back(param);
-    log_prob.push_back(-1.837877066409345339082);  // expected log_prob
-
-    param[0] = -3.0;  // y
-    param[1] = 2.0;   // nu
-    param[2] = 0.0;   // mu
-    param[3] = 1.0;   // sigma
-    parameters.push_back(param);
-    log_prob.push_back(-3.596842909197555560041);  // expected log_prob
+    log_prob.push_back(-3.596842909197555560041); // expected log_prob
   }
 
   void invalid_values(vector<size_t> &index, vector<double> &value) {
@@ -65,17 +65,17 @@ class AgradDistributionsStudentT : public AgradDistributionTest {
 
   template <class T_y, class T_dof, class T_loc, class T_scale, typename T4,
             typename T5>
-  typename stan::return_type<T_y, T_dof, T_loc, T_scale>::type log_prob(
-      const T_y &y, const T_dof &nu, const T_loc &mu, const T_scale &sigma,
-      const T4 &, const T5 &) {
+  typename stan::return_type<T_y, T_dof, T_loc, T_scale>::type
+  log_prob(const T_y &y, const T_dof &nu, const T_loc &mu, const T_scale &sigma,
+           const T4 &, const T5 &) {
     return stan::math::student_t_log(y, nu, mu, sigma);
   }
 
   template <bool propto, class T_y, class T_dof, class T_loc, class T_scale,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_dof, T_loc, T_scale>::type log_prob(
-      const T_y &y, const T_dof &nu, const T_loc &mu, const T_scale &sigma,
-      const T4 &, const T5 &) {
+  typename stan::return_type<T_y, T_dof, T_loc, T_scale>::type
+  log_prob(const T_y &y, const T_dof &nu, const T_loc &mu, const T_scale &sigma,
+           const T4 &, const T5 &) {
     return stan::math::student_t_log<propto>(y, nu, mu, sigma);
   }
 
@@ -90,8 +90,8 @@ class AgradDistributionsStudentT : public AgradDistributionTest {
     using stan::math::square;
     using std::log;
 
-    return lgamma((nu + 1.0) / 2.0) - lgamma(nu / 2.0) + NEG_LOG_SQRT_PI
-           - 0.5 * log(nu) - log(sigma)
-           - ((nu + 1.0) / 2.0) * log1p(square(((y - mu) / sigma)) / nu);
+    return lgamma((nu + 1.0) / 2.0) - lgamma(nu / 2.0) + NEG_LOG_SQRT_PI -
+           0.5 * log(nu) - log(sigma) -
+           ((nu + 1.0) / 2.0) * log1p(square(((y - mu) / sigma)) / nu);
   }
 };

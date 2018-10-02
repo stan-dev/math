@@ -56,6 +56,6 @@ lkj_cov_log(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y,
   return lkj_cov_lpdf<T_y, T_loc, T_scale, T_shape>(y, mu, sigma, eta);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

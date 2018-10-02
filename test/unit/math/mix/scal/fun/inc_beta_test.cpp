@@ -12,10 +12,10 @@ TEST(ProbInternalMath, inc_beta_fd) {
   g.d_ = 1.0;
 
   EXPECT_FLOAT_EQ(0.4, stan::math::inc_beta(a, b, g).val_);
-  EXPECT_NEAR(-0.36651629442883944183907601651838247842001142107486495485
-                  + 0.306495375042422864944011633197968575202046200428315551199
-                  + std::pow(1 - 0.4, 1.0 - 1.0) * std::pow(0.4, 1.0 - 1.0)
-                        / std::exp(stan::math::lbeta(1.0, 1.0)),
+  EXPECT_NEAR(-0.36651629442883944183907601651838247842001142107486495485 +
+                  0.306495375042422864944011633197968575202046200428315551199 +
+                  std::pow(1 - 0.4, 1.0 - 1.0) * std::pow(0.4, 1.0 - 1.0) /
+                      std::exp(stan::math::lbeta(1.0, 1.0)),
               stan::math::inc_beta(a, b, g).d_, 1e-6);
 }
 TEST(ProbInternalMath, inc_beta_fv) {
@@ -29,10 +29,10 @@ TEST(ProbInternalMath, inc_beta_fv) {
   g.d_ = 1.0;
 
   EXPECT_FLOAT_EQ(0.4, stan::math::inc_beta(a, b, g).val_.val());
-  EXPECT_NEAR(-0.36651629442883944183907601651838247842001142107486495485
-                  + 0.306495375042422864944011633197968575202046200428315551199
-                  + std::pow(1 - 0.4, 1.0 - 1.0) * std::pow(0.4, 1.0 - 1.0)
-                        / std::exp(stan::math::lbeta(1.0, 1.0)),
+  EXPECT_NEAR(-0.36651629442883944183907601651838247842001142107486495485 +
+                  0.306495375042422864944011633197968575202046200428315551199 +
+                  std::pow(1 - 0.4, 1.0 - 1.0) * std::pow(0.4, 1.0 - 1.0) /
+                      std::exp(stan::math::lbeta(1.0, 1.0)),
               stan::math::inc_beta(a, b, g).d_.val(), 1e-6);
 }
 TEST(ProbInternalMath, inc_beta_fv_2ndderiv1) {
@@ -99,10 +99,10 @@ TEST(ProbInternalMath, inc_beta_ffd) {
   g.d_ = 1.0;
 
   EXPECT_FLOAT_EQ(0.4, stan::math::inc_beta(a, b, g).val_.val_);
-  EXPECT_NEAR(-0.36651629442883944183907601651838247842001142107486495485
-                  + 0.306495375042422864944011633197968575202046200428315551199
-                  + std::pow(1 - 0.4, 1.0 - 1.0) * std::pow(0.4, 1.0 - 1.0)
-                        / std::exp(stan::math::lbeta(1.0, 1.0)),
+  EXPECT_NEAR(-0.36651629442883944183907601651838247842001142107486495485 +
+                  0.306495375042422864944011633197968575202046200428315551199 +
+                  std::pow(1 - 0.4, 1.0 - 1.0) * std::pow(0.4, 1.0 - 1.0) /
+                      std::exp(stan::math::lbeta(1.0, 1.0)),
               stan::math::inc_beta(a, b, g).d_.val_, 1e-6);
 }
 
@@ -117,10 +117,10 @@ TEST(ProbInternalMath, inc_beta_fvv) {
   g.d_ = 1.0;
 
   EXPECT_FLOAT_EQ(0.4, stan::math::inc_beta(a, b, g).val_.val_.val());
-  EXPECT_NEAR(-0.36651629442883944183907601651838247842001142107486495485
-                  + 0.306495375042422864944011633197968575202046200428315551199
-                  + std::pow(1 - 0.4, 1.0 - 1.0) * std::pow(0.4, 1.0 - 1.0)
-                        / std::exp(stan::math::lbeta(1.0, 1.0)),
+  EXPECT_NEAR(-0.36651629442883944183907601651838247842001142107486495485 +
+                  0.306495375042422864944011633197968575202046200428315551199 +
+                  std::pow(1 - 0.4, 1.0 - 1.0) * std::pow(0.4, 1.0 - 1.0) /
+                      std::exp(stan::math::lbeta(1.0, 1.0)),
               stan::math::inc_beta(a, b, g).d_.val_.val(), 1e-6);
 }
 

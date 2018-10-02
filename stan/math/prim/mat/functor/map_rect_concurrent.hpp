@@ -44,8 +44,8 @@ inline int get_num_threads(int num_jobs) {
   const char *env_stan_num_threads = std::getenv("STAN_NUM_THREADS");
   if (env_stan_num_threads != nullptr) {
     try {
-      const int env_num_threads
-          = boost::lexical_cast<int>(env_stan_num_threads);
+      const int env_num_threads =
+          boost::lexical_cast<int>(env_stan_num_threads);
       if (env_num_threads > 0)
         num_threads = env_num_threads;
       else if (env_num_threads == -1)
@@ -102,13 +102,13 @@ map_rect_concurrent(
 
 #ifdef STAN_THREADS
   if (num_threads > 1) {
-    const int num_big_threads
-        = (num_jobs - num_jobs_per_thread) % (num_threads - 1);
+    const int num_big_threads =
+        (num_jobs - num_jobs_per_thread) % (num_threads - 1);
     const int first_big_thread = num_threads - num_big_threads;
     for (int i = 1, job_start = num_jobs_per_thread, job_size = 0;
          i < num_threads; ++i, job_start += job_size) {
-      job_size = i >= first_big_thread ? num_jobs_per_thread + 1
-                                       : num_jobs_per_thread;
+      job_size =
+          i >= first_big_thread ? num_jobs_per_thread + 1 : num_jobs_per_thread;
       futures.emplace_back(
           std::async(std::launch::async, execute_chunk, job_start, job_size));
     }
@@ -135,8 +135,8 @@ map_rect_concurrent(
         world_output.conservativeResize(Eigen::NoChange,
                                         2 * (offset + num_job_outputs));
 
-      world_output.block(0, offset, world_output.rows(), num_job_outputs)
-          = job_result;
+      world_output.block(0, offset, world_output.rows(), num_job_outputs) =
+          job_result;
 
       offset += num_job_outputs;
     }
@@ -145,8 +145,8 @@ map_rect_concurrent(
   return combine(world_output, world_f_out);
 }
 
-}  // namespace internal
-}  // namespace math
-}  // namespace stan
+} // namespace internal
+} // namespace math
+} // namespace stan
 
 #endif

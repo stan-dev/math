@@ -18,6 +18,6 @@ inline Eigen::Matrix<T, R, C> inverse(const Eigen::Matrix<T, R, C> &m) {
   return m.inverse();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -19,8 +19,7 @@ namespace math {
  * @tparam V promoted type
  * @tparam T target type
  */
-template <typename V, typename T>
-struct ad_promotable {
+template <typename V, typename T> struct ad_promotable {
   enum { value = false };
 };
 
@@ -37,80 +36,70 @@ struct ad_promotable<
 /**
  * A long double may be promoted to a double.
  */
-template <>
-struct ad_promotable<long double, double> {
+template <> struct ad_promotable<long double, double> {
   enum { value = true };
 };
 
 /**
  * A double may be promoted to a double.
  */
-template <>
-struct ad_promotable<double, double> {
+template <> struct ad_promotable<double, double> {
   enum { value = true };
 };
 
 /**
  * A float may be promoted to a double.
  */
-template <>
-struct ad_promotable<float, double> {
+template <> struct ad_promotable<float, double> {
   enum { value = true };
 };
 
 /**
  * A long may be promoted to a double.
  */
-template <>
-struct ad_promotable<long, double> {  // NOLINT(runtime/int)
+template <> struct ad_promotable<long, double> { // NOLINT(runtime/int)
   enum { value = true };
 };
 
 /**
  * An int may be promoted to a double.
  */
-template <>
-struct ad_promotable<int, double> {
+template <> struct ad_promotable<int, double> {
   enum { value = true };
 };
 
 /**
  * A short may be promoted to a double.
  */
-template <>
-struct ad_promotable<short, double> {  // NOLINT(runtime/int)
+template <> struct ad_promotable<short, double> { // NOLINT(runtime/int)
   enum { value = true };
 };
 
 /**
  * A char may be promoted to a double.
  */
-template <>
-struct ad_promotable<char, double> {
+template <> struct ad_promotable<char, double> {
   enum { value = true };
 };
 
 /**
  * A blool may be promoted to a double.
  */
-template <>
-struct ad_promotable<bool, double> {
+template <> struct ad_promotable<bool, double> {
   enum { value = true };
 };
 
 /**
  * An unsigned long may be promoted to a double.
  */
-template <>
-struct ad_promotable<unsigned long, double> {  // NOLINT(runtime/int)
+template <> struct ad_promotable<unsigned long, double> { // NOLINT(runtime/int)
   enum { value = true };
 };
 
 /**
  * An unsigned int may be promoted to a double.
  */
-template <>
-struct ad_promotable<unsigned int, double> {
+template <> struct ad_promotable<unsigned int, double> {
   enum { value = true };
 };
 
@@ -118,18 +107,17 @@ struct ad_promotable<unsigned int, double> {
  * An unsigned short may be promoted to a double.
  */
 template <>
-struct ad_promotable<unsigned short, double> {  // NOLINT(runtime/int)
+struct ad_promotable<unsigned short, double> { // NOLINT(runtime/int)
   enum { value = true };
 };
 
 /**
  * An unsigned char may be promoted to a double.
  */
-template <>
-struct ad_promotable<unsigned char, double> {
+template <> struct ad_promotable<unsigned char, double> {
   enum { value = true };
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

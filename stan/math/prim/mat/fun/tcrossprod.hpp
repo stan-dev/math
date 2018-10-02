@@ -22,6 +22,6 @@ inline matrix_d tcrossprod(const matrix_d &M) {
   return result.setZero().selfadjointView<Eigen::Upper>().rankUpdate(M);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

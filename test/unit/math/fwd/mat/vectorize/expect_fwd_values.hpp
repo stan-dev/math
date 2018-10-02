@@ -9,8 +9,7 @@
 #include <test/unit/math/fwd/mat/vectorize/expect_fwd_vector_value.hpp>
 
 // Also tests derivatives
-template <typename F>
-void expect_fwd_values() {
+template <typename F> void expect_fwd_values() {
   using stan::math::fvar;
 
   expect_fwd_scalar_value<F, fvar<double>>();

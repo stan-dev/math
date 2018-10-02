@@ -12,11 +12,8 @@ namespace math {
  * @param v Variable.
  * @return Value of variable.
  */
-template <typename T>
-inline T value_of(const fvar<T> &v) {
-  return v.val_;
-}
+template <typename T> inline T value_of(const fvar<T> &v) { return v.val_; }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

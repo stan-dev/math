@@ -23,6 +23,6 @@ divide(const Eigen::Matrix<double, R, C> &m, T c) {
   return m / c;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

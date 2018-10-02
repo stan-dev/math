@@ -24,9 +24,9 @@ inline Eigen::MatrixXd inv_wishart_rng(double nu, const Eigen::MatrixXd &S,
   MatrixXd S_inv = MatrixXd::Identity(k, k);
   S_inv = S.ldlt().solve(S_inv);
   MatrixXd asym = inverse_spd(wishart_rng(nu, S_inv, rng));
-  return 0.5 * (asym.transpose() + asym);  // ensure symmetry
+  return 0.5 * (asym.transpose() + asym); // ensure symmetry
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

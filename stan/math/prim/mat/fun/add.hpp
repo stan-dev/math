@@ -73,6 +73,6 @@ add(const T1 &c, const Eigen::Matrix<T2, R, C> &m) {
   return result;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

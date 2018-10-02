@@ -26,8 +26,7 @@ namespace math {
  * @return second derivative of log Gamma function at argument
  *
  */
-template <typename T>
-inline T trigamma_impl(const T &x) {
+template <typename T> inline T trigamma_impl(const T &x) {
   using std::floor;
   using std::sin;
 
@@ -53,8 +52,8 @@ inline T trigamma_impl(const T &x) {
   // negative non-integers: use the reflection formula
   // see http://mathworld.wolfram.com/PolygammaFunction.html
   if ((x <= 0) && (floor(x) != x)) {
-    value = -trigamma_impl(-x + 1.0)
-            + (pi() / sin(-pi() * x)) * (pi() / sin(-pi() * x));
+    value = -trigamma_impl(-x + 1.0) +
+            (pi() / sin(-pi() * x)) * (pi() / sin(-pi() * x));
     return value;
   }
 
@@ -121,7 +120,7 @@ inline double trigamma(double u) { return trigamma_impl(u); }
  */
 inline double trigamma(int u) { return trigamma(static_cast<double>(u)); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

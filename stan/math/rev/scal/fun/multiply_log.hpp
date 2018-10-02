@@ -11,7 +11,7 @@ namespace math {
 
 namespace {
 class multiply_log_vv_vari : public op_vv_vari {
- public:
+public:
   multiply_log_vv_vari(vari *avi, vari *bvi)
       : op_vv_vari(multiply_log(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
@@ -29,7 +29,7 @@ class multiply_log_vv_vari : public op_vv_vari {
   }
 };
 class multiply_log_vd_vari : public op_vd_vari {
- public:
+public:
   multiply_log_vd_vari(vari *avi, double b)
       : op_vd_vari(multiply_log(avi->val_, b), avi, b) {}
   void chain() {
@@ -41,7 +41,7 @@ class multiply_log_vd_vari : public op_vd_vari {
   }
 };
 class multiply_log_dv_vari : public op_dv_vari {
- public:
+public:
   multiply_log_dv_vari(double a, vari *bvi)
       : op_dv_vari(multiply_log(a, bvi->val_), a, bvi) {}
   void chain() {
@@ -51,7 +51,7 @@ class multiply_log_dv_vari : public op_dv_vari {
       bvi_->adj_ += adj_ * ad_ / bvi_->val_;
   }
 };
-}  // namespace
+} // namespace
 
 /**
  * Return the value of a*log(b).
@@ -98,6 +98,6 @@ inline var multiply_log(double a, const var &b) {
   return var(new multiply_log_dv_vari(a, b.vi_));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

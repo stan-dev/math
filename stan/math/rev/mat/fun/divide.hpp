@@ -24,6 +24,6 @@ inline Eigen::Matrix<var, R, C> divide(const Eigen::Matrix<T1, R, C> &v,
   return to_var(v) / to_var(c);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -8,8 +8,7 @@
 #include <test/unit/math/rev/mat/vectorize/expect_rev_errors.hpp>
 #include <test/unit/math/rev/mat/vectorize/expect_rev_values.hpp>
 
-template <typename T>
-class rev_scalar_unary_test : public ::testing::Test {};
+template <typename T> class rev_scalar_unary_test : public ::testing::Test {};
 
 TYPED_TEST_CASE_P(rev_scalar_unary_test);
 

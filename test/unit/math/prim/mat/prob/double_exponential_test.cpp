@@ -7,7 +7,7 @@
 #include <vector>
 
 class DoubleExponentialTestRig : public VectorRealRNGTestRig {
- public:
+public:
   DoubleExponentialTestRig()
       : VectorRealRNGTestRig(10000, 10, {-2.5, -1.7, -0.1, 0.0, 2.0, 5.8},
                              {-3, -2, -1, 0, 2, 6}, {}, {},

@@ -20,10 +20,7 @@ inline T trace(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m) {
   return m.trace();
 }
 
-template <typename T>
-inline T trace(const T &m) {
-  return m;
-}
-}  // namespace math
-}  // namespace stan
+template <typename T> inline T trace(const T &m) { return m; }
+} // namespace math
+} // namespace stan
 #endif

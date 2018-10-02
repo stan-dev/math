@@ -26,6 +26,6 @@ inline var to_var(double x) { return var(x); }
  */
 inline var to_var(const var &x) { return x; }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

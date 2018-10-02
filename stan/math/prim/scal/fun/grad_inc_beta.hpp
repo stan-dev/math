@@ -31,6 +31,6 @@ inline void grad_inc_beta(double &g1, double &g2, double a, double b,
   g2 = c2 * c3 + C * dF1;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

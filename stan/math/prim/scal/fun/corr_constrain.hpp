@@ -20,10 +20,7 @@ namespace math {
  * @param[in] x value
  * @return tanh transform of value
  */
-template <typename T>
-inline T corr_constrain(const T &x) {
-  return tanh(x);
-}
+template <typename T> inline T corr_constrain(const T &x) { return tanh(x); }
 
 /**
  * Return the result of transforming the specified scalar to have
@@ -39,13 +36,12 @@ inline T corr_constrain(const T &x) {
  * @param[in] x value
  * @param[in,out] lp log density accumulator
  */
-template <typename T>
-inline T corr_constrain(const T &x, T &lp) {
+template <typename T> inline T corr_constrain(const T &x, T &lp) {
   T tanh_x = tanh(x);
   lp += log1m(square(tanh_x));
   return tanh_x;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

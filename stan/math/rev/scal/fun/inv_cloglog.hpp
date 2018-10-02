@@ -9,14 +9,14 @@ namespace math {
 
 namespace {
 class inv_cloglog_vari : public op_v_vari {
- public:
+public:
   explicit inv_cloglog_vari(vari *avi)
       : op_v_vari(inv_cloglog(avi->val_), avi) {}
   void chain() {
     avi_->adj_ += adj_ * std::exp(avi_->val_ - std::exp(avi_->val_));
   }
 };
-}  // namespace
+} // namespace
 
 /**
  * Return the inverse complementary log-log function applied
@@ -36,6 +36,6 @@ inline var inv_cloglog(const var &a) {
   return var(new inv_cloglog_vari(a.vi_));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

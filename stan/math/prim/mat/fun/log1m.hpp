@@ -14,10 +14,7 @@ namespace math {
  * @return Natural log of (1 - x).
  */
 struct log1m_fun {
-  template <typename T>
-  static inline T fun(const T &x) {
-    return log1m(x);
-  }
+  template <typename T> static inline T fun(const T &x) { return log1m(x); }
 };
 
 /**
@@ -31,7 +28,7 @@ inline typename apply_scalar_unary<log1m_fun, T>::return_t log1m(const T &x) {
   return apply_scalar_unary<log1m_fun, T>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

@@ -14,8 +14,7 @@ namespace math {
  * @return 1 - exp(-exp(x)).
  */
 struct inv_cloglog_fun {
-  template <typename T>
-  static inline T fun(const T &x) {
+  template <typename T> static inline T fun(const T &x) {
     return inv_cloglog(x);
   }
 };
@@ -27,12 +26,12 @@ struct inv_cloglog_fun {
  * @return 1 - exp(-exp()) applied to each value in x.
  */
 template <typename T>
-inline typename apply_scalar_unary<inv_cloglog_fun, T>::return_t inv_cloglog(
-    const T &x) {
+inline typename apply_scalar_unary<inv_cloglog_fun, T>::return_t
+inv_cloglog(const T &x) {
   return apply_scalar_unary<inv_cloglog_fun, T>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

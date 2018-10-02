@@ -45,6 +45,6 @@ inline void check_lower_triangular(
   }
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

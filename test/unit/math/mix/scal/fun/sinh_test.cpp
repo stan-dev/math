@@ -129,8 +129,7 @@ TEST_F(AgradFwdSinh, FvarFvarVar_3rdDeriv) {
 }
 
 struct sinh_fun {
-  template <typename T0>
-  inline T0 operator()(const T0 &arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return sinh(arg1);
   }
 };

@@ -26,8 +26,8 @@ struct promote_scalar_struct<T, Eigen::Matrix<S, -1, -1>> {
    * @param x input matrix.
    * @return matrix with values promoted from input vector.
    */
-  static Eigen::Matrix<typename promote_scalar_type<T, S>::type, -1, -1> apply(
-      const Eigen::Matrix<S, -1, -1> &x) {
+  static Eigen::Matrix<typename promote_scalar_type<T, S>::type, -1, -1>
+  apply(const Eigen::Matrix<S, -1, -1> &x) {
     Eigen::Matrix<typename promote_scalar_type<T, S>::type, -1, -1> y(x.rows(),
                                                                       x.cols());
     for (int i = 0; i < x.size(); ++i)
@@ -54,8 +54,8 @@ struct promote_scalar_struct<T, Eigen::Matrix<S, 1, -1>> {
    * @param x input column vector.
    * @return column vector with values promoted from input vector.
    */
-  static Eigen::Matrix<typename promote_scalar_type<T, S>::type, 1, -1> apply(
-      const Eigen::Matrix<S, 1, -1> &x) {
+  static Eigen::Matrix<typename promote_scalar_type<T, S>::type, 1, -1>
+  apply(const Eigen::Matrix<S, 1, -1> &x) {
     Eigen::Matrix<typename promote_scalar_type<T, S>::type, 1, -1> y(x.rows(),
                                                                      x.cols());
     for (int i = 0; i < x.size(); ++i)
@@ -82,8 +82,8 @@ struct promote_scalar_struct<T, Eigen::Matrix<S, -1, 1>> {
    * @param x input row vector.
    * @return row vector with values promoted from input vector.
    */
-  static Eigen::Matrix<typename promote_scalar_type<T, S>::type, -1, 1> apply(
-      const Eigen::Matrix<S, -1, 1> &x) {
+  static Eigen::Matrix<typename promote_scalar_type<T, S>::type, -1, 1>
+  apply(const Eigen::Matrix<S, -1, 1> &x) {
     Eigen::Matrix<typename promote_scalar_type<T, S>::type, -1, 1> y(x.rows(),
                                                                      x.cols());
     for (int i = 0; i < x.size(); ++i)
@@ -92,7 +92,7 @@ struct promote_scalar_struct<T, Eigen::Matrix<S, -1, 1>> {
   }
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

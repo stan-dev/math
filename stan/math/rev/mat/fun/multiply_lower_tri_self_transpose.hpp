@@ -30,7 +30,7 @@ inline matrix_v multiply_lower_tri_self_transpose(const matrix_v &L) {
   int Knz;
   if (K >= J)
     Knz = (K - J) * J + (J * (J + 1)) / 2;
-  else  // if (K < J)
+  else // if (K < J)
     Knz = (K * (K + 1)) / 2;
   vari **vs = reinterpret_cast<vari **>(
       ChainableStack::instance().memalloc_.alloc(Knz * sizeof(vari *)));
@@ -49,6 +49,6 @@ inline matrix_v multiply_lower_tri_self_transpose(const matrix_v &L) {
   return LLt;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

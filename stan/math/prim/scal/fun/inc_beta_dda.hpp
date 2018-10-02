@@ -31,13 +31,13 @@ namespace math {
  * @pre b >= 0
  * @pre 0 <= z <= 1
  */
-template <typename T>
-T inc_beta_dda(T a, T b, T z, T digamma_a, T digamma_ab) {
+template <typename T> T inc_beta_dda(T a, T b, T z, T digamma_a, T digamma_ab) {
   using std::log;
 
   if (b > a)
-    if ((0.1 < z && z <= 0.75 && b > 500) || (0.01 < z && z <= 0.1 && b > 2500)
-        || (0.001 < z && z <= 0.01 && b > 1e5))
+    if ((0.1 < z && z <= 0.75 && b > 500) ||
+        (0.01 < z && z <= 0.1 && b > 2500) ||
+        (0.001 < z && z <= 0.01 && b > 1e5))
       return -inc_beta_ddb(b, a, 1 - z, digamma_a, digamma_ab);
 
   if (z > 0.75 && a < 500)
@@ -51,7 +51,7 @@ T inc_beta_dda(T a, T b, T z, T digamma_a, T digamma_ab) {
 
   double threshold = 1e-10;
 
-  digamma_a += 1.0 / a;  // Need digamma(a + 1), not digamma(a);
+  digamma_a += 1.0 / a; // Need digamma(a + 1), not digamma(a);
 
   // Common prefactor to regularize numerator and denomentator
   T prefactor = (a + 1) / (a + b);
@@ -83,6 +83,6 @@ T inc_beta_dda(T a, T b, T z, T digamma_a, T digamma_ab) {
   return inc_beta(a, b, z) * (log(z) + sum_numer / sum_denom);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

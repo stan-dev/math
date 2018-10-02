@@ -45,6 +45,6 @@ primitive_value(const T &x) {
   return value_of(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

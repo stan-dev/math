@@ -11,8 +11,7 @@
 namespace stan {
 namespace math {
 
-template <typename T>
-inline fvar<T> fabs(const fvar<T> &x) {
+template <typename T> inline fvar<T> fabs(const fvar<T> &x) {
   using std::fabs;
 
   if (unlikely(is_nan(value_of(x.val_))))
@@ -25,6 +24,6 @@ inline fvar<T> fabs(const fvar<T> &x) {
     return fvar<T>(0, 0);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

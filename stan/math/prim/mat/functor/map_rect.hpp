@@ -142,26 +142,20 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1> &shared_params,
   const int size_x_r = dims(x_r)[1];
   const int size_x_i = dims(x_i)[1];
   for (int i = 1; i < job_params_dims[0]; i++) {
-    check_size_match(function,
-                     "Size of one of the vectors of "
-                     "the job specific parameters",
-                     job_params[i].size(),
-                     "size of another vector of the "
-                     "job specifc parameters",
+    check_size_match(function, "Size of one of the vectors of "
+                               "the job specific parameters",
+                     job_params[i].size(), "size of another vector of the "
+                                           "job specifc parameters",
                      size_job_params);
-    check_size_match(function,
-                     "Size of one of the arrays of "
-                     "the job specific real data",
-                     x_r[i].size(),
-                     "size of another array of the "
-                     "job specifc real data",
+    check_size_match(function, "Size of one of the arrays of "
+                               "the job specific real data",
+                     x_r[i].size(), "size of another array of the "
+                                    "job specifc real data",
                      size_x_r);
-    check_size_match(function,
-                     "Size of one of the arrays of "
-                     "the job specific int data",
-                     x_i[i].size(),
-                     "size of another array of the "
-                     "job specifc int data",
+    check_size_match(function, "Size of one of the arrays of "
+                               "the job specific int data",
+                     x_i[i].size(), "size of another array of the "
+                                    "job specifc int data",
                      size_x_i);
   }
 
@@ -177,7 +171,7 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1> &shared_params,
 #endif
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

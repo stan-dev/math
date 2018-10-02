@@ -61,15 +61,15 @@ namespace math {
  *
  */
 template <typename T>
-inline typename boost::math::tools::promote_args<T>::type falling_factorial(
-    const T &x, int n) {
+inline typename boost::math::tools::promote_args<T>::type
+falling_factorial(const T &x, int n) {
   static const char *function = "falling_factorial";
   check_not_nan(function, "first argument", x);
   check_nonnegative(function, "second argument", n);
   return boost::math::falling_factorial(x, n, boost_policy_t());
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

@@ -46,6 +46,6 @@ inline var operator+(const var &a) {
   return a;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

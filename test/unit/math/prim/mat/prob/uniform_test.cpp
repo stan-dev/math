@@ -7,7 +7,7 @@
 #include <vector>
 
 class UniformTestRig : public VectorRealRNGTestRig {
- public:
+public:
   UniformTestRig(std::vector<double> good_p1, std::vector<int> good_p1_int,
                  std::vector<double> bad_p1, std::vector<int> bad_p1_int,
                  std::vector<double> good_p2, std::vector<int> good_p2_int,

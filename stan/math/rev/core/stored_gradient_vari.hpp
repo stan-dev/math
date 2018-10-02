@@ -15,12 +15,12 @@ namespace math {
  * Like a simplified version of OperandsAndPartials.
  */
 class stored_gradient_vari : public vari {
- protected:
+protected:
   size_t size_;
   vari **dtrs_;
   double *partials_;
 
- public:
+public:
   /**
    * Construct a stored gradient vari with the specified
    * value, size, daughter varis, and partial derivatives.
@@ -44,7 +44,7 @@ class stored_gradient_vari : public vari {
   }
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

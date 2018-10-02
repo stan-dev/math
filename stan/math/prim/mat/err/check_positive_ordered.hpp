@@ -43,6 +43,6 @@ void check_positive_ordered(const char *function, const char *name,
   }
   check_ordered(function, name, y);
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

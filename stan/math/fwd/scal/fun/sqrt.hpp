@@ -8,11 +8,10 @@
 namespace stan {
 namespace math {
 
-template <typename T>
-inline fvar<T> sqrt(const fvar<T> &x) {
+template <typename T> inline fvar<T> sqrt(const fvar<T> &x) {
   using std::sqrt;
   return fvar<T>(sqrt(x.val_), 0.5 * x.d_ * inv_sqrt(x.val_));
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

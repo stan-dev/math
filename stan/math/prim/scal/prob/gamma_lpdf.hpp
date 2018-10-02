@@ -50,8 +50,8 @@ namespace math {
  * @tparam T_inv_scale Type of inverse scale.
  */
 template <bool propto, typename T_y, typename T_shape, typename T_inv_scale>
-typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lpdf(
-    const T_y &y, const T_shape &alpha, const T_inv_scale &beta) {
+typename return_type<T_y, T_shape, T_inv_scale>::type
+gamma_lpdf(const T_y &y, const T_shape &alpha, const T_inv_scale &beta) {
   static const char *function = "gamma_lpdf";
   typedef typename stan::partials_return_type<T_y, T_shape, T_inv_scale>::type
       T_partials_return;
@@ -136,8 +136,8 @@ typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lpdf(
     if (!is_constant_struct<T_y>::value)
       ops_partials.edge1_.partials_[n] += (alpha_dbl - 1) / y_dbl - beta_dbl;
     if (!is_constant_struct<T_shape>::value)
-      ops_partials.edge2_.partials_[n]
-          += -digamma_alpha[n] + log_beta[n] + log_y[n];
+      ops_partials.edge2_.partials_[n] +=
+          -digamma_alpha[n] + log_beta[n] + log_y[n];
     if (!is_constant_struct<T_inv_scale>::value)
       ops_partials.edge3_.partials_[n] += alpha_dbl / beta_dbl - y_dbl;
   }
@@ -145,11 +145,11 @@ typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lpdf(
 }
 
 template <typename T_y, typename T_shape, typename T_inv_scale>
-inline typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lpdf(
-    const T_y &y, const T_shape &alpha, const T_inv_scale &beta) {
+inline typename return_type<T_y, T_shape, T_inv_scale>::type
+gamma_lpdf(const T_y &y, const T_shape &alpha, const T_inv_scale &beta) {
   return gamma_lpdf<false>(y, alpha, beta);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

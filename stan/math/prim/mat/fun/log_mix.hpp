@@ -170,11 +170,11 @@ log_mix(const T_theta &theta,
 
   operands_and_partials<T_theta, T_lamvec_type> ops_partials(theta, lambda);
 
-  if (!(is_constant_struct<T_theta>::value
-        && is_constant_struct<T_lam>::value)) {
-    T_partials_mat derivs
-        = (lam_dbl - logp.transpose().replicate(M, 1))
-              .unaryExpr([](T_partials_return x) { return exp(x); });
+  if (!(is_constant_struct<T_theta>::value &&
+        is_constant_struct<T_lam>::value)) {
+    T_partials_mat derivs =
+        (lam_dbl - logp.transpose().replicate(M, 1))
+            .unaryExpr([](T_partials_return x) { return exp(x); });
     if (!is_constant_struct<T_theta>::value) {
       for (int m = 0; m < M; ++m)
         ops_partials.edge1_.partials_[m] = derivs.row(m).sum();
@@ -182,8 +182,8 @@ log_mix(const T_theta &theta,
 
     if (!is_constant_struct<T_lam>::value) {
       for (int n = 0; n < N; ++n)
-        ops_partials.edge2_.partials_vec_[n]
-            = derivs.col(n).cwiseProduct(theta_dbl);
+        ops_partials.edge2_.partials_vec_[n] =
+            derivs.col(n).cwiseProduct(theta_dbl);
     }
   }
   return ops_partials.build(logp.sum());
@@ -216,8 +216,8 @@ log_mix(const T_theta &theta,
  * @return log mixture of densities in specified proportion
  */
 template <typename T_theta, typename T_lam>
-typename return_type<T_theta, std::vector<std::vector<T_lam>>>::type log_mix(
-    const T_theta &theta, const std::vector<std::vector<T_lam>> &lambda) {
+typename return_type<T_theta, std::vector<std::vector<T_lam>>>::type
+log_mix(const T_theta &theta, const std::vector<std::vector<T_lam>> &lambda) {
   static const char *function = "log_mix";
   typedef typename stan::partials_return_type<
       T_theta, std::vector<std::vector<T_lam>>>::type T_partials_return;
@@ -256,9 +256,9 @@ typename return_type<T_theta, std::vector<std::vector<T_lam>>>::type log_mix(
   for (int n = 0; n < N; ++n)
     logp[n] = log_sum_exp(logp_tmp.col(n).eval());
 
-  T_partials_mat derivs
-      = (lam_dbl - logp.transpose().replicate(M, 1))
-            .unaryExpr([](T_partials_return x) { return exp(x); });
+  T_partials_mat derivs =
+      (lam_dbl - logp.transpose().replicate(M, 1))
+          .unaryExpr([](T_partials_return x) { return exp(x); });
 
   T_partials_mat lam_deriv(M, N);
   for (int n = 0; n < N; ++n)
@@ -277,6 +277,6 @@ typename return_type<T_theta, std::vector<std::vector<T_lam>>>::type log_mix(
   }
   return ops_partials.build(logp.sum());
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

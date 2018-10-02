@@ -43,7 +43,7 @@ inline std::vector<double> value_of_rec(const std::vector<double> &x) {
   return x;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

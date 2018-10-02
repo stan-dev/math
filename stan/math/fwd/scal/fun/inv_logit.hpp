@@ -16,13 +16,12 @@ namespace math {
  * @param x argument
  * @return inverse logit of argument
  */
-template <typename T>
-inline fvar<T> inv_logit(const fvar<T> &x) {
+template <typename T> inline fvar<T> inv_logit(const fvar<T> &x) {
   using std::exp;
   using std::pow;
   return fvar<T>(inv_logit(x.val_),
                  x.d_ * inv_logit(x.val_) * (1 - inv_logit(x.val_)));
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

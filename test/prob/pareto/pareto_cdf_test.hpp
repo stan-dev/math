@@ -6,15 +6,15 @@ using std::numeric_limits;
 using std::vector;
 
 class AgradCdfPareto : public AgradCdfTest {
- public:
+public:
   void valid_values(vector<vector<double>> &parameters, vector<double> &cdf) {
     vector<double> param(3);
 
-    param[0] = 0.75;  // y
-    param[1] = 0.5;   // y_min (Scale)
-    param[2] = 3.3;   // alpha (Shape)
+    param[0] = 0.75; // y
+    param[1] = 0.5;  // y_min (Scale)
+    param[2] = 3.3;  // alpha (Shape)
     parameters.push_back(param);
-    cdf.push_back(0.7376392612457611797083);  // expected CDF
+    cdf.push_back(0.7376392612457611797083); // expected CDF
   }
 
   void invalid_values(vector<size_t> &index, vector<double> &value) {
@@ -51,17 +51,17 @@ class AgradCdfPareto : public AgradCdfTest {
 
   template <typename T_y, typename T_scale, typename T_shape, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_scale, T_shape>::type cdf(
-      const T_y &y, const T_scale &y_min, const T_shape &alpha, const T3 &,
+  typename stan::return_type<T_y, T_scale, T_shape>::type
+  cdf(const T_y &y, const T_scale &y_min, const T_shape &alpha, const T3 &,
       const T4 &, const T5 &) {
     return stan::math::pareto_cdf(y, y_min, alpha);
   }
 
   template <typename T_y, typename T_scale, typename T_shape, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_scale, T_shape>::type cdf_function(
-      const T_y &y, const T_scale &y_min, const T_shape &alpha, const T3 &,
-      const T4 &, const T5 &) {
+  typename stan::return_type<T_y, T_scale, T_shape>::type
+  cdf_function(const T_y &y, const T_scale &y_min, const T_shape &alpha,
+               const T3 &, const T4 &, const T5 &) {
     using std::exp;
     using std::log;
     return 1.0 - exp(alpha * log(y_min / y));

@@ -6,8 +6,7 @@
 
 namespace stan {
 
-template <typename T, int R, int C>
-struct scalar_type<Eigen::Matrix<T, R, C>> {
+template <typename T, int R, int C> struct scalar_type<Eigen::Matrix<T, R, C>> {
   typedef typename scalar_type<T>::type type;
 };
 
@@ -26,9 +25,8 @@ struct scalar_type<const Eigen::Matrix<T, R, C> &> {
   typedef typename scalar_type<T>::type type;
 };
 
-template <typename T>
-struct scalar_type<Eigen::Block<T>> {
+template <typename T> struct scalar_type<Eigen::Block<T>> {
   typedef typename scalar_type<T>::type type;
 };
-}  // namespace stan
+} // namespace stan
 #endif

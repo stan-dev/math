@@ -24,12 +24,11 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_cdf(
-    const T_y &y, const T_loc &mu, const T_scale &lambda,
-    const T_shape &alpha) {
-  typedef
-      typename stan::partials_return_type<T_y, T_loc, T_scale, T_shape>::type
-          T_partials_return;
+typename return_type<T_y, T_loc, T_scale, T_shape>::type
+pareto_type_2_cdf(const T_y &y, const T_loc &mu, const T_scale &lambda,
+                  const T_shape &alpha) {
+  typedef typename stan::partials_return_type<T_y, T_loc, T_scale,
+                                              T_shape>::type T_partials_return;
 
   if (size_zero(y, mu, lambda, alpha))
     return 1.0;
@@ -71,8 +70,8 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_cdf(
   for (size_t i = 0; i < N; i++) {
     const T_partials_return lambda_dbl = value_of(lambda_vec[i]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
-    const T_partials_return temp
-        = 1 + (value_of(y_vec[i]) - value_of(mu_vec[i])) / lambda_dbl;
+    const T_partials_return temp =
+        1 + (value_of(y_vec[i]) - value_of(mu_vec[i])) / lambda_dbl;
     p1_pow_alpha[i] = pow(temp, -alpha_dbl);
 
     if (contains_nonconstant_struct<T_y, T_loc, T_scale>::value)
@@ -96,8 +95,8 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_cdf(
     if (!is_constant_struct<T_loc>::value)
       ops_partials.edge2_.partials_[n] -= grad_1_2[n] / Pn;
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge3_.partials_[n]
-          += (mu_dbl - y_dbl) * grad_1_2[n] / lambda_dbl / Pn;
+      ops_partials.edge3_.partials_[n] +=
+          (mu_dbl - y_dbl) * grad_1_2[n] / lambda_dbl / Pn;
     if (!is_constant_struct<T_shape>::value)
       ops_partials.edge4_.partials_[n] += grad_3[n] / Pn;
   }
@@ -121,6 +120,6 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_cdf(
   return ops_partials.build(P);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

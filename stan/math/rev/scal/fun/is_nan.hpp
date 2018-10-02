@@ -19,6 +19,6 @@ namespace math {
  */
 inline bool is_nan(const var &v) { return is_nan(v.val()); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

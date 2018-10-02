@@ -49,20 +49,20 @@ const char *matrix_multiply_kernel_code = STRINGIFY(
           const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
 
           A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                 [thread_block_row]
-              = A[(tiled_j + w * THREAD_BLOCK_SIZE_COL) * M + i];
+                 [thread_block_row] =
+                     A[(tiled_j + w * THREAD_BLOCK_SIZE_COL) * M + i];
 
           B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                 [thread_block_row]
-              = B[(j + w * THREAD_BLOCK_SIZE_COL) * K + tiled_i];
+                 [thread_block_row] =
+                     B[(j + w * THREAD_BLOCK_SIZE_COL) * K + tiled_i];
         }
         // wait until all tile values are loaded to the local memory
         barrier(CLK_LOCAL_MEM_FENCE);
         for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE; block_ind++) {
           for (int w = 0; w < WORK_PER_THREAD; w++) {
-            acc[w] += A_local[block_ind][thread_block_row]
-                      * B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                               [block_ind];
+            acc[w] += A_local[block_ind][thread_block_row] *
+                      B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                             [block_ind];
           }
         }
         barrier(CLK_LOCAL_MEM_FENCE);
@@ -74,7 +74,7 @@ const char *matrix_multiply_kernel_code = STRINGIFY(
       }
     }
     // \cond
-);
+    );
 // \endcond
 
 /**
@@ -84,8 +84,8 @@ const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int>
     matrix_multiply("matrix_multiply", matrix_multiply_kernel_code,
                     {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
 
-}  // namespace opencl_kernels
-}  // namespace math
-}  // namespace stan
+} // namespace opencl_kernels
+} // namespace math
+} // namespace stan
 #endif
 #endif

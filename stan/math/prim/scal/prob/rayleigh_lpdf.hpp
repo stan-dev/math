@@ -80,18 +80,18 @@ typename return_type<T_y, T_scale>::type rayleigh_lpdf(const T_y &y,
     if (!is_constant_struct<T_y>::value)
       ops_partials.edge1_.partials_[n] += 1.0 / y_dbl - scaled_diff;
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge2_.partials_[n]
-          += y_over_sigma * scaled_diff - 2.0 * inv_sigma[n];
+      ops_partials.edge2_.partials_[n] +=
+          y_over_sigma * scaled_diff - 2.0 * inv_sigma[n];
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_scale>
-inline typename return_type<T_y, T_scale>::type rayleigh_lpdf(
-    const T_y &y, const T_scale &sigma) {
+inline typename return_type<T_y, T_scale>::type
+rayleigh_lpdf(const T_y &y, const T_scale &sigma) {
   return rayleigh_lpdf<false>(y, sigma);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

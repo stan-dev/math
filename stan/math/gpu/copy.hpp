@@ -121,7 +121,7 @@ inline void copy(matrix_gpu &dst, const matrix_gpu &src) {
   }
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif
 #endif

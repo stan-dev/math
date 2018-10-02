@@ -139,8 +139,7 @@ TEST(AgradFwdTrigamma, FvarFvarVar_3rdDeriv) {
 }
 
 struct trigamma_fun {
-  template <typename T0>
-  inline T0 operator()(const T0 &arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return stan::math::trigamma(arg1);
   }
 };

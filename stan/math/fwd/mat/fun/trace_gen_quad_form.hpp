@@ -22,6 +22,6 @@ inline fvar<T> trace_gen_quad_form(const Eigen::Matrix<fvar<T>, RD, CD> &D,
   return trace(multiply(multiply(D, transpose(B)), multiply(A, B)));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

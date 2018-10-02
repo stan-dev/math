@@ -36,6 +36,6 @@ mdivide_right_spd(const Eigen::Matrix<T1, R1, C1> &b,
   return mdivide_left_spd(A, transpose(b)).transpose();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

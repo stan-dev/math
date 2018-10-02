@@ -46,8 +46,9 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta>
-typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
-    const T_y &y, const T_x &x, const T_alpha &alpha, const T_beta &beta) {
+typename return_type<T_x, T_alpha, T_beta>::type
+poisson_log_glm_lpmf(const T_y &y, const T_x &x, const T_alpha &alpha,
+                     const T_beta &beta) {
   static const char *function = "poisson_log_glm_lpmf";
   typedef typename stan::partials_return_type<T_y, T_x, T_alpha, T_beta>::type
       T_partials_return;
@@ -100,8 +101,8 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
       theta_derivative_sum += theta_derivative[n];
 
     // Compute the log-density.
-    if (!(theta_dbl_n == -std::numeric_limits<double>::infinity()
-          && y_seq_view[n] == 0)) {
+    if (!(theta_dbl_n == -std::numeric_limits<double>::infinity() &&
+          y_seq_view[n] == 0)) {
       if (include_summand<propto>::value)
         logp -= lgamma(y_seq_view[n] + 1.0);
       if (include_summand<propto, T_partials_return>::value)
@@ -111,11 +112,11 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
 
   // Compute the necessary derivatives.
   operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
-  if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
-        && is_constant_struct<T_alpha>::value)) {
+  if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value &&
+        is_constant_struct<T_alpha>::value)) {
     if (!is_constant_struct<T_beta>::value) {
-      ops_partials.edge3_.partials_
-          = value_of(x).transpose() * theta_derivative;
+      ops_partials.edge3_.partials_ =
+          value_of(x).transpose() * theta_derivative;
     }
     if (!is_constant_struct<T_x>::value) {
       ops_partials.edge1_.partials_ = theta_derivative * beta_dbl.transpose();
@@ -131,10 +132,11 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
 }
 
 template <typename T_y, typename T_x, typename T_alpha, typename T_beta>
-inline typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
-    const T_y &y, const T_x &x, const T_alpha &alpha, const T_beta &beta) {
+inline typename return_type<T_x, T_alpha, T_beta>::type
+poisson_log_glm_lpmf(const T_y &y, const T_x &x, const T_alpha &alpha,
+                     const T_beta &beta) {
   return poisson_log_glm_lpmf<false>(y, x, alpha, beta);
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -60,9 +60,9 @@ typename return_type<T1, T2>::type grad_reg_inc_gamma(T1 a, T2 z, T1 g, T1 dig,
     // asymptotic expansion http://dlmf.nist.gov/8.11#E2
     TP S = 0;
     T1 a_minus_one_minus_k = a - 1;
-    T1 fac = a_minus_one_minus_k;  // falling_factorial(a-1, k)
-    T1 dfac = 1;                   // d/da[falling_factorial(a-1, k)]
-    T2 zpow = z;                   // z ** k
+    T1 fac = a_minus_one_minus_k; // falling_factorial(a-1, k)
+    T1 dfac = 1;                  // d/da[falling_factorial(a-1, k)]
+    T2 zpow = z;                  // z ** k
     TP delta = dfac / zpow;
 
     for (int k = 1; k < 10; ++k) {
@@ -104,6 +104,6 @@ typename return_type<T1, T2>::type grad_reg_inc_gamma(T1 a, T2 z, T1 g, T1 dig,
   }
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

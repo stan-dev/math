@@ -16,5 +16,5 @@ void check_varis_on_stack(const Eigen::Matrix<stan::math::var, R, C> &x) {
           << i << ", " << j << " is not on the stack";
 }
 
-}  // namespace test
+} // namespace test
 #endif

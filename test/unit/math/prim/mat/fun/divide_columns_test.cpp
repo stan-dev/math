@@ -20,8 +20,8 @@ TEST(MathPrimMat, vec_of_rvec_vec) {
   out = stan::math::divide_columns(x, vec);
   for (int i = 0; i < 3; ++i) {
     for (int j = 0; j < 3; ++j) {
-      EXPECT_FLOAT_EQ(out[i][j], 1.0 / (j + 1.0))
-          << "index : ( " << i << ",  " << j << ")";
+      EXPECT_FLOAT_EQ(out[i][j], 1.0 / (j + 1.0)) << "index : ( " << i << ",  "
+                                                  << j << ")";
     }
   }
 }

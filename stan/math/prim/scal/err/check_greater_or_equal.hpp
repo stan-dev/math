@@ -12,8 +12,7 @@ namespace stan {
 namespace math {
 
 namespace {
-template <typename T_y, typename T_low, bool is_vec>
-struct greater_or_equal {
+template <typename T_y, typename T_low, bool is_vec> struct greater_or_equal {
   static void check(const char *function, const char *name, const T_y &y,
                     const T_low &low) {
     using stan::length;
@@ -48,7 +47,7 @@ struct greater_or_equal<T_y, T_low, true> {
     }
   }
 };
-}  // namespace
+} // namespace
 
 /**
  * Check if <code>y</code> is greater or equal
@@ -74,6 +73,6 @@ inline void check_greater_or_equal(const char *function, const char *name,
   greater_or_equal<T_y, T_low, is_vector_like<T_y>::value>::check(function,
                                                                   name, y, low);
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

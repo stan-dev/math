@@ -15,11 +15,8 @@ namespace math {
  * @param[in] b an integer that is the exponent
  * @return product of a times 2 to the power b
  */
-template <typename T>
-inline T ldexp(const T &a, int b) {
-  return a * exp2(b);
-}
-}  // namespace math
-}  // namespace stan
+template <typename T> inline T ldexp(const T &a, int b) { return a * exp2(b); }
+} // namespace math
+} // namespace stan
 
 #endif

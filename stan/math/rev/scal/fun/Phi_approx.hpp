@@ -51,6 +51,6 @@ inline var Phi_approx(const var &a) {
   return var(new precomp_v_vari(f, a.vi_, da));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

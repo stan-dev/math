@@ -14,8 +14,7 @@ namespace math {
  * @return Natural exponential of x minus one.
  */
 struct expm1_fun {
-  template <typename T>
-  static inline T fun(const T &x) {
+  template <typename T> static inline T fun(const T &x) {
     using boost::math::expm1;
     return expm1(x);
   }
@@ -32,7 +31,7 @@ inline typename apply_scalar_unary<expm1_fun, T>::return_t expm1(const T &x) {
   return apply_scalar_unary<expm1_fun, T>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

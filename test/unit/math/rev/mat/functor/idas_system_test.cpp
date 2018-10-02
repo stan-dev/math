@@ -272,11 +272,10 @@ TEST(IDAS_DAE_SYSTEM, constructor_errors) {
 
   std::vector<double> bad_double{yy0};
   bad_double[0] = std::numeric_limits<double>::infinity();
-  auto build_double = [&f, msgs, &x_i](const std::vector<int> &eq_id,
-                                       const std::vector<double> &yy0,
-                                       const std::vector<double> &yp0,
-                                       const std::vector<double> &theta,
-                                       const std::vector<double> &x_r) {
+  auto build_double = [&f, msgs, &x_i](
+      const std::vector<int> &eq_id, const std::vector<double> &yy0,
+      const std::vector<double> &yp0, const std::vector<double> &theta,
+      const std::vector<double> &x_r) {
     idas_forward_system<chemical_kinetics, double, double, double> dae{
         f, eq_id, yy0, yp0, theta, x_r, x_i, msgs};
   };
@@ -302,11 +301,10 @@ TEST(IDAS_DAE_SYSTEM, constructor_errors) {
 
   std::vector<var> bad_var{std::numeric_limits<double>::infinity(), 1.0, 0.1};
   std::vector<var> empty_var;
-  auto build_var = [&f, msgs, &x_i](const std::vector<int> &eq_id,
-                                    const std::vector<var> &yy0,
-                                    const std::vector<var> &yp0,
-                                    const std::vector<var> &theta,
-                                    const std::vector<double> &x_r) {
+  auto build_var = [&f, msgs, &x_i](
+      const std::vector<int> &eq_id, const std::vector<var> &yy0,
+      const std::vector<var> &yp0, const std::vector<var> &theta,
+      const std::vector<double> &x_r) {
     idas_forward_system<chemical_kinetics, var, var, var> dae{
         f, eq_id, yy0, yp0, theta, x_r, x_i, msgs};
   };

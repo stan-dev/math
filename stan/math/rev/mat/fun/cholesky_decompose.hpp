@@ -17,7 +17,7 @@ namespace stan {
 namespace math {
 
 class cholesky_block : public vari {
- public:
+public:
   int M_;
   int block_size_;
   typedef Eigen::Block<Eigen::MatrixXd> Block_;
@@ -42,8 +42,7 @@ class cholesky_block : public vari {
    */
   cholesky_block(const Eigen::Matrix<var, -1, -1> &A,
                  const Eigen::Matrix<double, -1, -1> &L_A)
-      : vari(0.0),
-        M_(A.rows()),
+      : vari(0.0), M_(A.rows()),
         variRefA_(ChainableStack::instance().memalloc_.alloc_array<vari *>(
             A.rows() * (A.rows() + 1) / 2)),
         variRefL_(ChainableStack::instance().memalloc_.alloc_array<vari *>(
@@ -72,8 +71,8 @@ class cholesky_block : public vari {
     using Eigen::Upper;
     L.transposeInPlace();
     Lbar = (L * Lbar.triangularView<Lower>()).eval();
-    Lbar.triangularView<StrictlyUpper>()
-        = Lbar.adjoint().triangularView<StrictlyUpper>();
+    Lbar.triangularView<StrictlyUpper>() =
+        Lbar.adjoint().triangularView<StrictlyUpper>();
     L.triangularView<Upper>().solveInPlace(Lbar);
     L.triangularView<Upper>().solveInPlace(Lbar.transpose());
   }
@@ -136,7 +135,7 @@ class cholesky_block : public vari {
 };
 
 class cholesky_scalar : public vari {
- public:
+public:
   int M_;
   vari **variRefA_;
   vari **variRefL_;
@@ -157,8 +156,7 @@ class cholesky_scalar : public vari {
    */
   cholesky_scalar(const Eigen::Matrix<var, -1, -1> &A,
                   const Eigen::Matrix<double, -1, -1> &L_A)
-      : vari(0.0),
-        M_(A.rows()),
+      : vari(0.0), M_(A.rows()),
         variRefA_(ChainableStack::instance().memalloc_.alloc_array<vari *>(
             A.rows() * (A.rows() + 1) / 2)),
         variRefL_(ChainableStack::instance().memalloc_.alloc_array<vari *>(
@@ -211,8 +209,8 @@ class cholesky_scalar : public vari {
           adjA.coeffRef(i, j) = 0.5 * adjL.coeff(i, j) / LA.coeff(i, j);
         } else {
           adjA.coeffRef(i, j) = adjL.coeff(i, j) / LA.coeff(j, j);
-          adjL.coeffRef(j, j)
-              -= adjL.coeff(i, j) * LA.coeff(i, j) / LA.coeff(j, j);
+          adjL.coeffRef(j, j) -=
+              adjL.coeff(i, j) * LA.coeff(i, j) / LA.coeff(j, j);
         }
         for (int k = j - 1; k >= 0; --k) {
           adjL.coeffRef(i, k) -= adjA.coeff(i, j) * LA.coeff(j, k);
@@ -235,8 +233,8 @@ class cholesky_scalar : public vari {
  * @param A Matrix
  * @return L cholesky factor of A
  */
-inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
-    const Eigen::Matrix<var, -1, -1> &A) {
+inline Eigen::Matrix<var, -1, -1>
+cholesky_decompose(const Eigen::Matrix<var, -1, -1> &A) {
   check_square("cholesky_decompose", "A", A);
   check_symmetric("cholesky_decompose", "A", A);
 
@@ -277,6 +275,6 @@ inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
   }
   return L;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

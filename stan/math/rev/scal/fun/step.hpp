@@ -26,6 +26,6 @@ inline var step(const var &a) {
   return var(new vari(a.vi_->val_ < 0.0 ? 0.0 : 1.0));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

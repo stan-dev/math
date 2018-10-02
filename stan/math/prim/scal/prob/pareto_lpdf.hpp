@@ -26,8 +26,8 @@ namespace math {
 
 // Pareto(y|y_m, alpha)  [y > y_m;  y_m > 0;  alpha > 0]
 template <bool propto, typename T_y, typename T_scale, typename T_shape>
-typename return_type<T_y, T_scale, T_shape>::type pareto_lpdf(
-    const T_y &y, const T_scale &y_min, const T_shape &alpha) {
+typename return_type<T_y, T_scale, T_shape>::type
+pareto_lpdf(const T_y &y, const T_scale &y_min, const T_shape &alpha) {
   static const char *function = "pareto_lpdf";
   typedef typename stan::partials_return_type<T_y, T_scale, T_shape>::type
       T_partials_return;
@@ -106,18 +106,18 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_lpdf(
     if (!is_constant_struct<T_scale>::value)
       ops_partials.edge2_.partials_[n] += alpha_dbl / value_of(y_min_vec[n]);
     if (!is_constant_struct<T_shape>::value)
-      ops_partials.edge3_.partials_[n]
-          += 1 / alpha_dbl + log_y_min[n] - log_y[n];
+      ops_partials.edge3_.partials_[n] +=
+          1 / alpha_dbl + log_y_min[n] - log_y[n];
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_scale, typename T_shape>
-inline typename return_type<T_y, T_scale, T_shape>::type pareto_lpdf(
-    const T_y &y, const T_scale &y_min, const T_shape &alpha) {
+inline typename return_type<T_y, T_scale, T_shape>::type
+pareto_lpdf(const T_y &y, const T_scale &y_min, const T_shape &alpha) {
   return pareto_lpdf<false>(y, y_min, alpha);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -17,5 +17,5 @@ namespace std {
  */
 inline int isnan(const stan::math::var &a) { return isnan(a.val()); }
 
-}  // namespace std
+} // namespace std
 #endif

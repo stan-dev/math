@@ -17,13 +17,12 @@ namespace math {
  * @return Vector in descending order.
  * @throw std::domain_error If any of the values are NaN.
  */
-template <typename T>
-inline std::vector<T> sort_desc(std::vector<T> xs) {
+template <typename T> inline std::vector<T> sort_desc(std::vector<T> xs) {
   check_not_nan("sort_asc", "container argument", xs);
   std::sort(xs.begin(), xs.end(), std::greater<T>());
   return xs;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

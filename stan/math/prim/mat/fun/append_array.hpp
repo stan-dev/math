@@ -73,6 +73,6 @@ inline std::vector<T1> append_array(const std::vector<T1> &x,
   z.insert(z.end(), y.begin(), y.end());
   return z;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -28,7 +28,7 @@ class idas_forward_system : public idas_system<F, Tyy, Typ, Tpar> {
   N_Vector *nv_yys_;
   N_Vector *nv_yps_;
 
- public:
+public:
   /**
    * Construct IDAS DAE system from initial condition and parameters
    *
@@ -83,7 +83,7 @@ class idas_forward_system : public idas_system<F, Tyy, Typ, Tpar> {
   /**
    * convert to void pointer for IDAS callbacks
    */
-  void *to_user_data() {  // prepare to inject DAE info
+  void *to_user_data() { // prepare to inject DAE info
     return static_cast<void *>(this);
   }
 
@@ -126,22 +126,22 @@ class idas_forward_system : public idas_system<F, Tyy, Typ, Tpar> {
         MatrixXd J, r;
         VectorXd f_val;
 
-        auto fyy
-            = [&t, &vyp, &vtheta, &N, &dae](const matrix_v &x) -> vector_v {
+        auto fyy = [&t, &vyp, &vtheta, &N,
+                    &dae](const matrix_v &x) -> vector_v {
           std::vector<var> yy(x.data(), x.data() + N);
-          auto eval
-              = dae->f_(t, yy, vyp, vtheta, dae->x_r_, dae->x_i_, dae->msgs_);
+          auto eval =
+              dae->f_(t, yy, vyp, vtheta, dae->x_r_, dae->x_i_, dae->msgs_);
           Eigen::Map<vector_v> res(eval.data(), N);
           return res;
         };
         stan::math::jacobian(fyy, vec_yy, f_val, J);
         r = J * yys_mat;
 
-        auto fyp
-            = [&t, &vyy, &vtheta, &N, &dae](const matrix_v &x) -> vector_v {
+        auto fyp = [&t, &vyy, &vtheta, &N,
+                    &dae](const matrix_v &x) -> vector_v {
           std::vector<var> yp(x.data(), x.data() + N);
-          auto eval
-              = dae->f_(t, vyy, yp, vtheta, dae->x_r_, dae->x_i_, dae->msgs_);
+          auto eval =
+              dae->f_(t, vyy, yp, vtheta, dae->x_r_, dae->x_i_, dae->msgs_);
           Eigen::Map<vector_v> res(eval.data(), N);
           return res;
         };
@@ -149,18 +149,17 @@ class idas_forward_system : public idas_system<F, Tyy, Typ, Tpar> {
         r += J * yps_mat;
 
         if (dae->is_var_par) {
-          auto fpar
-              = [&t, &vyy, &vyp, &N, &M, &dae](const matrix_v &x) -> vector_v {
+          auto fpar = [&t, &vyy, &vyp, &N, &M,
+                       &dae](const matrix_v &x) -> vector_v {
             std::vector<var> par(x.data(), x.data() + M);
-            auto eval
-                = dae->f_(t, vyy, vyp, par, dae->x_r_, dae->x_i_, dae->msgs_);
+            auto eval =
+                dae->f_(t, vyy, vyp, par, dae->x_r_, dae->x_i_, dae->msgs_);
             Eigen::Map<vector_v> res(eval.data(), N);
             return res;
           };
           stan::math::jacobian(fpar, vec_par, f_val, J);
           r.block(0, (dae->is_var_yy0 ? N : 0) + (dae->is_var_yp0 ? N : 0), N,
-                  M)
-              += J;  // only for theta
+                  M) += J; // only for theta
         }
 
         matrix_d_to_NVarray(r, ress, ns);
@@ -176,7 +175,7 @@ class idas_forward_system : public idas_system<F, Tyy, Typ, Tpar> {
   }
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

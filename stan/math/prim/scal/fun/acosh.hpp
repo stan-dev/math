@@ -34,6 +34,6 @@ inline double acosh(double x) {
  */
 inline double acosh(int x) { return acosh(static_cast<double>(x)); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

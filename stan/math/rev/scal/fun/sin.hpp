@@ -9,11 +9,11 @@ namespace math {
 
 namespace {
 class sin_vari : public op_v_vari {
- public:
+public:
   explicit sin_vari(vari *avi) : op_v_vari(std::sin(avi->val_), avi) {}
   void chain() { avi_->adj_ += adj_ * std::cos(avi_->val_); }
 };
-}  // namespace
+} // namespace
 
 /**
  * Return the sine of a radian-scaled variable (cmath).
@@ -44,6 +44,6 @@ class sin_vari : public op_v_vari {
  */
 inline var sin(const var &a) { return var(new sin_vari(a.vi_)); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

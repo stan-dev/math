@@ -12,10 +12,7 @@ namespace math {
 // initializations called for local variables generate in Stan
 // code; fills in all cells in first arg with second arg
 
-template <typename T>
-inline void initialize(T &x, const T &v) {
-  x = v;
-}
+template <typename T> inline void initialize(T &x, const T &v) { x = v; }
 template <typename T, typename V>
 inline typename boost::enable_if_c<boost::is_arithmetic<V>::value, void>::type
 initialize(T &x, V v) {
@@ -32,6 +29,6 @@ inline void initialize(std::vector<T> &x, const V &v) {
     initialize(x[i], v);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

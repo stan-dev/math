@@ -9,13 +9,13 @@ namespace math {
 
 namespace {
 class asin_vari : public op_v_vari {
- public:
+public:
   explicit asin_vari(vari *avi) : op_v_vari(std::asin(avi->val_), avi) {}
   void chain() {
     avi_->adj_ += adj_ / std::sqrt(1.0 - (avi_->val_ * avi_->val_));
   }
 };
-}  // namespace
+} // namespace
 
 /**
  * Return the principal value of the arc sine, in radians, of the
@@ -55,6 +55,6 @@ class asin_vari : public op_v_vari {
  */
 inline var asin(const var &a) { return var(new asin_vari(a.vi_)); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -15,8 +15,7 @@ namespace math {
  * @return Absolute value of x.
  */
 struct fabs_fun {
-  template <typename T>
-  static inline T fun(const T &x) {
+  template <typename T> static inline T fun(const T &x) {
     using std::fabs;
     return fabs(x);
   }
@@ -34,7 +33,7 @@ inline typename apply_scalar_unary<fabs_fun, T>::return_t fabs(const T &x) {
   return apply_scalar_unary<fabs_fun, T>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

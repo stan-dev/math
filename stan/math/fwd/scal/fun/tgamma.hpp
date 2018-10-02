@@ -16,12 +16,11 @@ namespace math {
  * @param x Argument.
  * @return Gamma function applied to argument.
  */
-template <typename T>
-inline fvar<T> tgamma(const fvar<T> &x) {
+template <typename T> inline fvar<T> tgamma(const fvar<T> &x) {
   using boost::math::digamma;
   T u = tgamma(x.val_);
   return fvar<T>(u, x.d_ * u * digamma(x.val_));
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

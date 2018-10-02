@@ -29,6 +29,6 @@ inline void print_stack(std::ostream &o) {
       << std::endl;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

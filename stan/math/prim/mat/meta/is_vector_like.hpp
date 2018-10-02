@@ -22,5 +22,5 @@ template <typename T>
 struct is_vector_like<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>> {
   enum { value = true };
 };
-}  // namespace stan
+} // namespace stan
 #endif

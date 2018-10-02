@@ -28,10 +28,10 @@ class var;
  * information via an implementation of chain().
  */
 class vari {
- private:
+private:
   friend class var;
 
- public:
+public:
   /**
    * The value of this variable.
    */
@@ -141,6 +141,6 @@ class vari {
   }
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

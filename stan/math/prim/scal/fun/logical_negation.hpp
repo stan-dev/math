@@ -12,11 +12,8 @@ namespace math {
  * @param x value
  * @return 1 if value is zero and 0 otherwise
  */
-template <typename T>
-inline int logical_negation(const T &x) {
-  return x == 0;
-}
+template <typename T> inline int logical_negation(const T &x) { return x == 0; }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

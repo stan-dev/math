@@ -24,18 +24,19 @@ namespace math {
  * @param[out] one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1 shared term in deriv
  * calculation.
  */
-inline void log_mix_partial_helper(
-    double theta_val, double lambda1_val, double lambda2_val,
-    double &one_m_exp_lam2_m_lam1, double &one_m_t_prod_exp_lam2_m_lam1,
-    double &one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1) {
+inline void
+log_mix_partial_helper(double theta_val, double lambda1_val, double lambda2_val,
+                       double &one_m_exp_lam2_m_lam1,
+                       double &one_m_t_prod_exp_lam2_m_lam1,
+                       double &one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1) {
   using std::exp;
   double lam2_m_lam1 = lambda2_val - lambda1_val;
   double exp_lam2_m_lam1 = exp(lam2_m_lam1);
   one_m_exp_lam2_m_lam1 = 1 - exp_lam2_m_lam1;
   double one_m_t = 1 - theta_val;
   one_m_t_prod_exp_lam2_m_lam1 = one_m_t * exp_lam2_m_lam1;
-  one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1
-      = 1 / (theta_val + one_m_t_prod_exp_lam2_m_lam1);
+  one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1 =
+      1 / (theta_val + one_m_t_prod_exp_lam2_m_lam1);
 }
 
 /**
@@ -78,8 +79,9 @@ inline void log_mix_partial_helper(
  * @return log mixture of densities in specified proportion
  */
 template <typename T_theta, typename T_lambda1, typename T_lambda2>
-inline typename return_type<T_theta, T_lambda1, T_lambda2>::type log_mix(
-    const T_theta &theta, const T_lambda1 &lambda1, const T_lambda2 &lambda2) {
+inline typename return_type<T_theta, T_lambda1, T_lambda2>::type
+log_mix(const T_theta &theta, const T_lambda1 &lambda1,
+        const T_lambda2 &lambda2) {
   using stan::is_constant_struct;
   using std::log;
 
@@ -90,8 +92,8 @@ inline typename return_type<T_theta, T_lambda1, T_lambda2>::type log_mix(
   const double lambda1_double = value_of(lambda1);
   const double lambda2_double = value_of(lambda2);
 
-  double log_mix_function_value
-      = log_mix(theta_double, lambda1_double, lambda2_double);
+  double log_mix_function_value =
+      log_mix(theta_double, lambda1_double, lambda2_double);
 
   double one_m_exp_lam2_m_lam1(0.0);
   double one_m_t_prod_exp_lam2_m_lam1(0.0);
@@ -111,19 +113,19 @@ inline typename return_type<T_theta, T_lambda1, T_lambda2>::type log_mix(
   }
 
   if (!is_constant_struct<T_theta>::value)
-    ops_partials.edge1_.partials_[0]
-        = one_m_exp_lam2_m_lam1 * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
+    ops_partials.edge1_.partials_[0] =
+        one_m_exp_lam2_m_lam1 * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
   if (!is_constant_struct<T_lambda1>::value)
-    ops_partials.edge2_.partials_[0]
-        = theta_double * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
+    ops_partials.edge2_.partials_[0] =
+        theta_double * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
   if (!is_constant_struct<T_lambda2>::value)
-    ops_partials.edge3_.partials_[0]
-        = one_m_t_prod_exp_lam2_m_lam1
-          * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
+    ops_partials.edge3_.partials_[0] =
+        one_m_t_prod_exp_lam2_m_lam1 *
+        one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
 
   return ops_partials.build(log_mix_function_value);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

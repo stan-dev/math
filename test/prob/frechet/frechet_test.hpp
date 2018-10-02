@@ -6,28 +6,28 @@ using std::numeric_limits;
 using std::vector;
 
 class AgradDistributionsFrechet : public AgradDistributionTest {
- public:
+public:
   void valid_values(vector<vector<double>> &parameters,
                     vector<double> &log_prob) {
     vector<double> param(3);
 
-    param[0] = 2.0;  // y
-    param[1] = 1.0;  // alpha
-    param[2] = 1.0;  // sigma
+    param[0] = 2.0; // y
+    param[1] = 1.0; // alpha
+    param[2] = 1.0; // sigma
     parameters.push_back(param);
-    log_prob.push_back(-1.88629436);  // expected log_prob
+    log_prob.push_back(-1.88629436); // expected log_prob
 
-    param[0] = 0.8;  // y
-    param[1] = 2.9;  // alpha
-    param[2] = 1.8;  // sigma
+    param[0] = 0.8; // y
+    param[1] = 2.9; // alpha
+    param[2] = 1.8; // sigma
     parameters.push_back(param);
-    log_prob.push_back(-6.86383351);  // expected log_prob
+    log_prob.push_back(-6.86383351); // expected log_prob
 
-    param[0] = 0.25;  // y
-    param[1] = 3.9;   // alpha
-    param[2] = 1.7;   // sigma
+    param[0] = 0.25; // y
+    param[1] = 3.9;  // alpha
+    param[2] = 1.7;  // sigma
     parameters.push_back(param);
-    log_prob.push_back(-1754.93950342517);  // expected log_prob
+    log_prob.push_back(-1754.93950342517); // expected log_prob
   }
 
   void invalid_values(vector<size_t> &index, vector<double> &value) {
@@ -50,33 +50,33 @@ class AgradDistributionsFrechet : public AgradDistributionTest {
 
   template <typename T_y, typename T_shape, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_shape, T_scale>::type log_prob(
-      const T_y &y, const T_shape &alpha, const T_scale &sigma, const T3 &,
-      const T4 &, const T5 &) {
+  typename stan::return_type<T_y, T_shape, T_scale>::type
+  log_prob(const T_y &y, const T_shape &alpha, const T_scale &sigma, const T3 &,
+           const T4 &, const T5 &) {
     return stan::math::frechet_log(y, alpha, sigma);
   }
 
   template <bool propto, typename T_y, typename T_shape, typename T_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_shape, T_scale>::type log_prob(
-      const T_y &y, const T_shape &alpha, const T_scale &sigma, const T3 &,
-      const T4 &, const T5 &) {
+  typename stan::return_type<T_y, T_shape, T_scale>::type
+  log_prob(const T_y &y, const T_shape &alpha, const T_scale &sigma, const T3 &,
+           const T4 &, const T5 &) {
     return stan::math::frechet_log<propto>(y, alpha, sigma);
   }
 
   template <typename T_y, typename T_shape, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_shape, T_scale>::type log_prob_function(
-      const T_y &y, const T_shape &alpha, const T_scale &sigma, const T3 &,
-      const T4 &, const T5 &) {
+  typename stan::return_type<T_y, T_shape, T_scale>::type
+  log_prob_function(const T_y &y, const T_shape &alpha, const T_scale &sigma,
+                    const T3 &, const T4 &, const T5 &) {
     using stan::math::include_summand;
     using stan::math::multiply_log;
     using stan::math::value_of;
     using std::log;
     using std::pow;
 
-    return log(alpha) + multiply_log(alpha, sigma) - multiply_log(alpha + 1, y)
-           - pow(sigma / y, alpha);
+    return log(alpha) + multiply_log(alpha, sigma) -
+           multiply_log(alpha + 1, y) - pow(sigma / y, alpha);
   }
 };
 

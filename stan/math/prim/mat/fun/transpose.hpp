@@ -11,6 +11,6 @@ Eigen::Matrix<T, C, R> inline transpose(const Eigen::Matrix<T, R, C> &m) {
   return m.transpose();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

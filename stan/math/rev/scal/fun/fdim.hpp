@@ -11,7 +11,7 @@ namespace math {
 
 namespace {
 class fdim_vv_vari : public op_vv_vari {
- public:
+public:
   fdim_vv_vari(vari *avi, vari *bvi)
       : op_vv_vari(avi->val_ - bvi->val_, avi, bvi) {}
   void chain() {
@@ -26,7 +26,7 @@ class fdim_vv_vari : public op_vv_vari {
 };
 
 class fdim_vd_vari : public op_vd_vari {
- public:
+public:
   fdim_vd_vari(vari *avi, double b) : op_vd_vari(avi->val_ - b, avi, b) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_) || is_nan(bd_)))
@@ -37,7 +37,7 @@ class fdim_vd_vari : public op_vd_vari {
 };
 
 class fdim_dv_vari : public op_dv_vari {
- public:
+public:
   fdim_dv_vari(double a, vari *bvi) : op_dv_vari(a - bvi->val_, a, bvi) {}
   void chain() {
     if (unlikely(is_nan(bvi_->val_) || is_nan(ad_)))
@@ -46,7 +46,7 @@ class fdim_dv_vari : public op_dv_vari {
       bvi_->adj_ -= adj_;
   }
 };
-}  // namespace
+} // namespace
 
 /**
  * Return the positive difference between the first variable's the value
@@ -127,6 +127,6 @@ inline var fdim(const var &a, double b) {
                           : var(new fdim_vd_vari(a.vi_, b));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

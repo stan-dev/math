@@ -16,9 +16,8 @@ namespace math {
  * This class should only be instantiated as part of an LDLT_factor object
  * and is only used in *ldlt_ functions.
  **/
-template <int R, int C>
-class LDLT_alloc : public chainable_alloc {
- public:
+template <int R, int C> class LDLT_alloc : public chainable_alloc {
+public:
   LDLT_alloc() : N_(0) {}
   explicit LDLT_alloc(const Eigen::Matrix<var, R, C> &A) : N_(0) { compute(A); }
 
@@ -52,6 +51,6 @@ class LDLT_alloc : public chainable_alloc {
   Eigen::LDLT<Eigen::Matrix<double, R, C>> ldlt_;
   Eigen::Matrix<vari *, R, C> variA_;
 };
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

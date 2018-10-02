@@ -29,8 +29,8 @@ void create_vec(const std::vector<double> &vals, std::vector<T> &created_vars) {
 struct third_order_mixed {
   template <typename T>
   inline T operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1> &x) const {
-    return x(0) * x(0) * x(0) * x(1) * x(1) + x(1) * x(1) * x(1) * x(0)
-           + x(2) * x(2) * x(2) * x(1) * x(0);
+    return x(0) * x(0) * x(0) * x(1) * x(1) + x(1) * x(1) * x(1) * x(0) +
+           x(2) * x(2) * x(2) * x(1) * x(0);
   }
 };
 
@@ -54,8 +54,8 @@ Eigen::Matrix<double, 3, 3> third_order_mixed_hess(
   return hess;
 }
 
-Eigen::Matrix<double, 3, 3> norm_hess(
-    const Eigen::Matrix<double, Eigen::Dynamic, 1> &inp_vec) {
+Eigen::Matrix<double, 3, 3>
+norm_hess(const Eigen::Matrix<double, Eigen::Dynamic, 1> &inp_vec) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
@@ -63,8 +63,8 @@ Eigen::Matrix<double, 3, 3> norm_hess(
   double inv_sigma_sq = 1 / (inp_vec(2) * inp_vec(2));
   double y_m_mu = inp_vec(0) - inp_vec(1);
   double part_1_3 = 2 * y_m_mu * inv_sigma_sq / inp_vec(2);
-  double part_3_3
-      = inv_sigma_sq - 3 * inv_sigma_sq * inv_sigma_sq * y_m_mu * y_m_mu;
+  double part_3_3 =
+      inv_sigma_sq - 3 * inv_sigma_sq * inv_sigma_sq * y_m_mu * y_m_mu;
   hess << -inv_sigma_sq, inv_sigma_sq, part_1_3, inv_sigma_sq, -inv_sigma_sq,
       -part_1_3, part_1_3, -part_1_3, part_3_3;
   return hess;

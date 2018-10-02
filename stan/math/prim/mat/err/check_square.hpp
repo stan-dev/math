@@ -23,13 +23,13 @@ namespace math {
  *    is not square
  */
 template <typename T_y>
-inline void check_square(
-    const char *function, const char *name,
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y) {
+inline void
+check_square(const char *function, const char *name,
+             const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y) {
   check_size_match(function, "Expecting a square matrix; rows of ", name,
                    y.rows(), "columns of ", name, y.cols());
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

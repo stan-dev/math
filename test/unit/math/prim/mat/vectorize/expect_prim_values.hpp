@@ -9,8 +9,7 @@
 
 // CALL THIS TO TEST EVERYTHING
 // see: apply_scalar_unary_test.cpp for an example
-template <typename F>
-void expect_prim_values() {
+template <typename F> void expect_prim_values() {
   expect_prim_scalar_value<F>();
   expect_prim_std_vector_value<F>();
   expect_prim_matrix_value<F>();

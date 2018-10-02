@@ -15,33 +15,29 @@ namespace math {
 
 namespace {
 class unit_vector_elt_vari : public vari {
- private:
+private:
   vari **y_;
   const double *unit_vector_y_;
   const int size_;
   const int idx_;
   const double norm_;
 
- public:
+public:
   unit_vector_elt_vari(double val, vari **y, const double *unit_vector_y,
                        int size, int idx, double norm)
-      : vari(val),
-        y_(y),
-        unit_vector_y_(unit_vector_y),
-        size_(size),
-        idx_(idx),
+      : vari(val), y_(y), unit_vector_y_(unit_vector_y), size_(size), idx_(idx),
         norm_(norm) {}
   void chain() {
     const double cubed_norm = norm_ * norm_ * norm_;
     for (int m = 0; m < size_; ++m) {
-      y_[m]->adj_
-          -= adj_ * unit_vector_y_[m] * unit_vector_y_[idx_] / cubed_norm;
+      y_[m]->adj_ -=
+          adj_ * unit_vector_y_[m] * unit_vector_y_[idx_] / cubed_norm;
       if (m == idx_)
         y_[m]->adj_ += adj_ / norm_;
     }
   }
 };
-}  // namespace
+} // namespace
 
 /**
  * Return the unit length vector corresponding to the free vector y.
@@ -52,8 +48,8 @@ class unit_vector_elt_vari : public vari {
  * @tparam T Scalar type.
  **/
 template <int R, int C>
-Eigen::Matrix<var, R, C> unit_vector_constrain(
-    const Eigen::Matrix<var, R, C> &y) {
+Eigen::Matrix<var, R, C>
+unit_vector_constrain(const Eigen::Matrix<var, R, C> &y) {
   check_vector("unit_vector", "y", y);
   check_nonzero_size("unit_vector", "y", y);
 
@@ -77,9 +73,9 @@ Eigen::Matrix<var, R, C> unit_vector_constrain(
 
   Eigen::Matrix<var, R, C> unit_vector_y(y.size());
   for (int k = 0; k < y.size(); ++k)
-    unit_vector_y.coeffRef(k) = var(
-        new unit_vector_elt_vari(unit_vector_d[k], y_vi_array,
-                                 unit_vector_y_d_array, y.size(), k, norm));
+    unit_vector_y.coeffRef(k) =
+        var(new unit_vector_elt_vari(unit_vector_d[k], y_vi_array,
+                                     unit_vector_y_d_array, y.size(), k, norm));
   return unit_vector_y;
 }
 
@@ -93,13 +89,13 @@ Eigen::Matrix<var, R, C> unit_vector_constrain(
  * @tparam T Scalar type.
  **/
 template <int R, int C>
-Eigen::Matrix<var, R, C> unit_vector_constrain(
-    const Eigen::Matrix<var, R, C> &y, var &lp) {
+Eigen::Matrix<var, R, C>
+unit_vector_constrain(const Eigen::Matrix<var, R, C> &y, var &lp) {
   Eigen::Matrix<var, R, C> x = unit_vector_constrain(y);
   lp -= 0.5 * dot_self(y);
   return x;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

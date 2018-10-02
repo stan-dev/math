@@ -30,8 +30,8 @@ namespace stan {
 namespace math {
 
 template <bool propto, typename T_y, typename T_loc, typename T_covar>
-typename return_type<T_y, T_loc, T_covar>::type multi_normal_prec_lpdf(
-    const T_y &y, const T_loc &mu, const T_covar &Sigma) {
+typename return_type<T_y, T_loc, T_covar>::type
+multi_normal_prec_lpdf(const T_y &y, const T_loc &mu, const T_covar &Sigma) {
   static const char *function = "multi_normal_prec_lpdf";
   typedef typename scalar_type<T_covar>::type T_covar_elem;
   typedef typename return_type<T_y, T_loc, T_covar>::type lp_type;
@@ -56,12 +56,10 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_prec_lpdf(
     int size_y_new;
     for (size_t i = 1, size_ = length_mvt(y); i < size_; i++) {
       int size_y_new = y_vec[i].size();
-      check_size_match(function,
-                       "Size of one of the vectors "
-                       "of the random variable",
-                       size_y_new,
-                       "Size of another vector of "
-                       "the random variable",
+      check_size_match(function, "Size of one of the vectors "
+                                 "of the random variable",
+                       size_y_new, "Size of another vector of "
+                                   "the random variable",
                        size_y_old);
       size_y_old = size_y_new;
     }
@@ -69,12 +67,10 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_prec_lpdf(
     int size_mu_new;
     for (size_t i = 1, size_ = length_mvt(mu); i < size_; i++) {
       int size_mu_new = mu_vec[i].size();
-      check_size_match(function,
-                       "Size of one of the vectors "
-                       "of the location variable",
-                       size_mu_new,
-                       "Size of another vector of "
-                       "the location variable",
+      check_size_match(function, "Size of one of the vectors "
+                                 "of the location variable",
+                       size_mu_new, "Size of another vector of "
+                                    "the location variable",
                        size_mu_old);
       size_mu_old = size_mu_new;
     }
@@ -120,11 +116,11 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_prec_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_covar>
-inline typename return_type<T_y, T_loc, T_covar>::type multi_normal_prec_lpdf(
-    const T_y &y, const T_loc &mu, const T_covar &Sigma) {
+inline typename return_type<T_y, T_loc, T_covar>::type
+multi_normal_prec_lpdf(const T_y &y, const T_loc &mu, const T_covar &Sigma) {
   return multi_normal_prec_lpdf<false>(y, mu, Sigma);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

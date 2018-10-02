@@ -7,7 +7,7 @@
 
 // This test fixture swallows output to std::cout
 class Math : public ::testing::Test {
- public:
+public:
   void SetUp() {
     output_.str("");
     cout_backup_ = std::cout.rdbuf();
@@ -57,16 +57,16 @@ TEST_F(Math, paper_example_2) {
             << std::endl;
 }
 
-namespace paper {  // paper_example_3
+namespace paper { // paper_example_3
 template <typename T1, typename T2, typename T3>
-inline typename boost::math::tools::promote_args<T1, T2, T3>::type normal_log(
-    const T1 &y, const T2 &mu, const T3 &sigma) {
+inline typename boost::math::tools::promote_args<T1, T2, T3>::type
+normal_log(const T1 &y, const T2 &mu, const T3 &sigma) {
   using std::log;
   using std::pow;
-  return -0.5 * pow((y - mu) / sigma, 2.0) - log(sigma)
-         - 0.5 * log(2 * stan::math::pi());
+  return -0.5 * pow((y - mu) / sigma, 2.0) - log(sigma) -
+         0.5 * log(2 * stan::math::pi());
 }
-}  // namespace paper
+} // namespace paper
 
 TEST_F(Math, paper_example_3) {
   double y = 1.3;
@@ -86,8 +86,7 @@ struct normal_ll {
 
   explicit normal_ll(const Matrix<double, Dynamic, 1> &y) : y_(y) {}
 
-  template <typename T>
-  T operator()(const Matrix<T, Dynamic, 1> &theta) const {
+  template <typename T> T operator()(const Matrix<T, Dynamic, 1> &theta) const {
     T mu = theta[0];
     T sigma = theta[1];
     T lp = 0;
@@ -96,7 +95,7 @@ struct normal_ll {
     return lp;
   }
 };
-}  // namespace paper
+} // namespace paper
 
 TEST_F(Math, paper_example_4) {
   using Eigen::Dynamic;
@@ -135,7 +134,7 @@ struct functor {
   }
 };
 
-}  // namespace paper_example_5
+} // namespace paper_example_5
 
 TEST_F(Math, paper_example_5) {
   using Eigen::Dynamic;

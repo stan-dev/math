@@ -25,8 +25,8 @@ namespace stan {
 namespace math {
 
 template <typename T_n, typename T_shape, typename T_inv_scale>
-typename return_type<T_shape, T_inv_scale>::type neg_binomial_cdf(
-    const T_n &n, const T_shape &alpha, const T_inv_scale &beta) {
+typename return_type<T_shape, T_inv_scale>::type
+neg_binomial_cdf(const T_n &n, const T_shape &alpha, const T_inv_scale &beta) {
   static const char *function = "neg_binomial_cdf";
   typedef typename stan::partials_return_type<T_n, T_shape, T_inv_scale>::type
       T_partials_return;
@@ -89,15 +89,15 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_cdf(
     P *= P_i;
 
     if (!is_constant_struct<T_shape>::value) {
-      ops_partials.edge1_.partials_[i]
-          += inc_beta_dda(alpha_dbl, n_dbl + 1, p_dbl, digamma_alpha_vec[i],
-                          digamma_sum_vec[i])
-             / P_i;
+      ops_partials.edge1_.partials_[i] +=
+          inc_beta_dda(alpha_dbl, n_dbl + 1, p_dbl, digamma_alpha_vec[i],
+                       digamma_sum_vec[i]) /
+          P_i;
     }
 
     if (!is_constant_struct<T_inv_scale>::value)
-      ops_partials.edge2_.partials_[i]
-          += inc_beta_ddz(alpha_dbl, n_dbl + 1.0, p_dbl) * d_dbl / P_i;
+      ops_partials.edge2_.partials_[i] +=
+          inc_beta_ddz(alpha_dbl, n_dbl + 1.0, p_dbl) * d_dbl / P_i;
   }
 
   if (!is_constant_struct<T_shape>::value) {
@@ -113,6 +113,6 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_cdf(
   return ops_partials.build(P);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

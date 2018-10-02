@@ -17,11 +17,10 @@ namespace math {
  * @param v Variable to test.
  * @return <code>true</code> if variable is infinite.
  */
-template <>
-inline bool isinf(const stan::math::var &v) {
+template <> inline bool isinf(const stan::math::var &v) {
   return (boost::math::isinf)(v.val());
 }
 
-}  // namespace math
-}  // namespace boost
+} // namespace math
+} // namespace boost
 #endif

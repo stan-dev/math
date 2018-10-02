@@ -39,10 +39,10 @@ inline void check_consistent_size(const char *function, const char *name,
       << "multidimensional values of the same shape.";
   std::string msg_str(msg.str());
 
-  invalid_argument(function, name, stan::size_of(x),
-                   "has dimension = ", msg_str.c_str());
+  invalid_argument(function, name, stan::size_of(x), "has dimension = ",
+                   msg_str.c_str());
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

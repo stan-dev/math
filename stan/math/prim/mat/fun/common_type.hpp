@@ -22,7 +22,7 @@ struct common_type<Eigen::Matrix<T1, R, C>, Eigen::Matrix<T2, R, C>> {
   typedef Eigen::Matrix<typename common_type<T1, T2>::type, R, C> type;
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

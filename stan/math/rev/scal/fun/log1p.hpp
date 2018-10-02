@@ -9,11 +9,11 @@ namespace math {
 
 namespace {
 class log1p_vari : public op_v_vari {
- public:
+public:
   explicit log1p_vari(vari *avi) : op_v_vari(log1p(avi->val_), avi) {}
   void chain() { avi_->adj_ += adj_ / (1 + avi_->val_); }
 };
-}  // namespace
+} // namespace
 
 /**
  * The log (1 + x) function for variables (C99).
@@ -27,6 +27,6 @@ class log1p_vari : public op_v_vari {
  */
 inline var log1p(const var &a) { return var(new log1p_vari(a.vi_)); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

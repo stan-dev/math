@@ -47,8 +47,7 @@ TEST(AgradRev, atan_boundry) {
 }
 
 struct atan_fun {
-  template <typename T0>
-  inline T0 operator()(const T0 &arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return atan(arg1);
   }
 };

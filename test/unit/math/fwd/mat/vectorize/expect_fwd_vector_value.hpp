@@ -7,8 +7,7 @@
 #include <test/unit/math/fwd/mat/vectorize/expect_val_deriv_eq.hpp>
 #include <vector>
 
-template <typename F, typename T>
-void expect_fwd_vector_value() {
+template <typename F, typename T> void expect_fwd_vector_value() {
   using stan::math::fvar;
   using std::vector;
   typedef Eigen::Matrix<T, Eigen::Dynamic, 1> vector_t;

@@ -42,17 +42,17 @@ const char *zeros_kernel_code = STRINGIFY(
       }
     }
     // \cond
-);
+    );
 // \endcond
 
 /**
  * See the docs for \link kernels/zeros.hpp zeros() \endlink
  */
-const global_range_kernel<cl::Buffer, int, int, TriangularViewGPU> zeros(
-    "zeros", zeros_kernel_code);
+const global_range_kernel<cl::Buffer, int, int, TriangularViewGPU>
+    zeros("zeros", zeros_kernel_code);
 
-}  // namespace opencl_kernels
-}  // namespace math
-}  // namespace stan
+} // namespace opencl_kernels
+} // namespace math
+} // namespace stan
 #endif
 #endif

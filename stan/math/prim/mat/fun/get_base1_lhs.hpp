@@ -97,9 +97,10 @@ inline T &get_base1_lhs(std::vector<std::vector<std::vector<T>>> &x, size_t i1,
  * @throw std::out_of_range if idx is out of range.
  */
 template <typename T>
-inline T &get_base1_lhs(
-    std::vector<std::vector<std::vector<std::vector<T>>>> &x, size_t i1,
-    size_t i2, size_t i3, size_t i4, const char *error_msg, size_t idx) {
+inline T &
+get_base1_lhs(std::vector<std::vector<std::vector<std::vector<T>>>> &x,
+              size_t i1, size_t i2, size_t i3, size_t i4, const char *error_msg,
+              size_t idx) {
   check_range("[]", "x", x.size(), i1, idx, error_msg);
   return get_base1_lhs(x[i1 - 1], i2, i3, i4, error_msg, idx + 1);
 }
@@ -216,12 +217,11 @@ inline T &get_base1_lhs(
  * @throw std::out_of_range if idx is out of range.
  */
 template <typename T>
-inline T &get_base1_lhs(
-    std::vector<std::vector<std::vector<
-        std::vector<std::vector<std::vector<std::vector<std::vector<T>>>>>>>>
-        &x,
-    size_t i1, size_t i2, size_t i3, size_t i4, size_t i5, size_t i6, size_t i7,
-    size_t i8, const char *error_msg, size_t idx) {
+inline T &
+get_base1_lhs(std::vector<std::vector<std::vector<std::vector<
+                  std::vector<std::vector<std::vector<std::vector<T>>>>>>>> &x,
+              size_t i1, size_t i2, size_t i3, size_t i4, size_t i5, size_t i6,
+              size_t i7, size_t i8, const char *error_msg, size_t idx) {
   check_range("[]", "x", x.size(), i1, idx, error_msg);
   return get_base1_lhs(x[i1 - 1], i2, i3, i4, i5, i6, i7, i8, error_msg,
                        idx + 1);
@@ -324,6 +324,6 @@ inline T &get_base1_lhs(Eigen::Matrix<T, 1, Eigen::Dynamic> &x, size_t n,
   return x(n - 1);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

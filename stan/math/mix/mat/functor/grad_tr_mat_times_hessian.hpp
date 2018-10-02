@@ -51,6 +51,6 @@ void grad_tr_mat_times_hessian(
   recover_memory_nested();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

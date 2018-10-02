@@ -36,7 +36,7 @@ namespace math {
  */
 template <typename Ta, int Ra, int Ca, typename Tb, int Cb>
 class multiply_mat_vari : public vari {
- public:
+public:
   int A_rows_;
   int A_cols_;
   int B_cols_;
@@ -66,12 +66,8 @@ class multiply_mat_vari : public vari {
    */
   multiply_mat_vari(const Eigen::Matrix<Ta, Ra, Ca> &A,
                     const Eigen::Matrix<Tb, Ca, Cb> &B)
-      : vari(0.0),
-        A_rows_(A.rows()),
-        A_cols_(A.cols()),
-        B_cols_(B.cols()),
-        A_size_(A.size()),
-        B_size_(B.size()),
+      : vari(0.0), A_rows_(A.rows()), A_cols_(A.cols()), B_cols_(B.cols()),
+        A_size_(A.size()), B_size_(B.size()),
         Ad_(ChainableStack::instance().memalloc_.alloc_array<double>(A_size_)),
         Bd_(ChainableStack::instance().memalloc_.alloc_array<double>(B_size_)),
         variRefA_(
@@ -90,8 +86,8 @@ class multiply_mat_vari : public vari {
       variRefB_[i] = B.coeffRef(i).vi_;
       Bd_[i] = B.coeffRef(i).val();
     }
-    MatrixXd AB = Map<MatrixXd>(Ad_, A_rows_, A_cols_)
-                  * Map<MatrixXd>(Bd_, A_cols_, B_cols_);
+    MatrixXd AB = Map<MatrixXd>(Ad_, A_rows_, A_cols_) *
+                  Map<MatrixXd>(Bd_, A_cols_, B_cols_);
     for (size_type i = 0; i < AB.size(); ++i)
       variRefAB_[i] = new vari(AB.coeffRef(i), false);
   }
@@ -131,7 +127,7 @@ class multiply_mat_vari : public vari {
  */
 template <typename Ta, int Ca, typename Tb>
 class multiply_mat_vari<Ta, 1, Ca, Tb, 1> : public vari {
- public:
+public:
   int size_;
   double *Ad_;
   double *Bd_;
@@ -157,8 +153,7 @@ class multiply_mat_vari<Ta, 1, Ca, Tb, 1> : public vari {
    */
   multiply_mat_vari(const Eigen::Matrix<Ta, 1, Ca> &A,
                     const Eigen::Matrix<Tb, Ca, 1> &B)
-      : vari(0.0),
-        size_(A.cols()),
+      : vari(0.0), size_(A.cols()),
         Ad_(ChainableStack::instance().memalloc_.alloc_array<double>(size_)),
         Bd_(ChainableStack::instance().memalloc_.alloc_array<double>(size_)),
         variRefA_(
@@ -214,7 +209,7 @@ class multiply_mat_vari<Ta, 1, Ca, Tb, 1> : public vari {
  */
 template <int Ra, int Ca, typename Tb, int Cb>
 class multiply_mat_vari<double, Ra, Ca, Tb, Cb> : public vari {
- public:
+public:
   int A_rows_;
   int A_cols_;
   int B_cols_;
@@ -243,12 +238,8 @@ class multiply_mat_vari<double, Ra, Ca, Tb, Cb> : public vari {
    */
   multiply_mat_vari(const Eigen::Matrix<double, Ra, Ca> &A,
                     const Eigen::Matrix<Tb, Ca, Cb> &B)
-      : vari(0.0),
-        A_rows_(A.rows()),
-        A_cols_(A.cols()),
-        B_cols_(B.cols()),
-        A_size_(A.size()),
-        B_size_(B.size()),
+      : vari(0.0), A_rows_(A.rows()), A_cols_(A.cols()), B_cols_(B.cols()),
+        A_size_(A.size()), B_size_(B.size()),
         Ad_(ChainableStack::instance().memalloc_.alloc_array<double>(A_size_)),
         Bd_(ChainableStack::instance().memalloc_.alloc_array<double>(B_size_)),
         variRefB_(
@@ -263,8 +254,8 @@ class multiply_mat_vari<double, Ra, Ca, Tb, Cb> : public vari {
       variRefB_[i] = B.coeffRef(i).vi_;
       Bd_[i] = B.coeffRef(i).val();
     }
-    MatrixXd AB = Map<MatrixXd>(Ad_, A_rows_, A_cols_)
-                  * Map<MatrixXd>(Bd_, A_cols_, B_cols_);
+    MatrixXd AB = Map<MatrixXd>(Ad_, A_rows_, A_cols_) *
+                  Map<MatrixXd>(Bd_, A_cols_, B_cols_);
     for (size_type i = 0; i < AB.size(); ++i)
       variRefAB_[i] = new vari(AB.coeffRef(i), false);
   }
@@ -300,7 +291,7 @@ class multiply_mat_vari<double, Ra, Ca, Tb, Cb> : public vari {
  */
 template <int Ca, typename Tb>
 class multiply_mat_vari<double, 1, Ca, Tb, 1> : public vari {
- public:
+public:
   int size_;
   double *Ad_;
   double *Bd_;
@@ -325,8 +316,7 @@ class multiply_mat_vari<double, 1, Ca, Tb, 1> : public vari {
    */
   multiply_mat_vari(const Eigen::Matrix<double, 1, Ca> &A,
                     const Eigen::Matrix<Tb, Ca, 1> &B)
-      : vari(0.0),
-        size_(A.cols()),
+      : vari(0.0), size_(A.cols()),
         Ad_(ChainableStack::instance().memalloc_.alloc_array<double>(size_)),
         Bd_(ChainableStack::instance().memalloc_.alloc_array<double>(size_)),
         variRefB_(
@@ -340,8 +330,8 @@ class multiply_mat_vari<double, 1, Ca, Tb, 1> : public vari {
       variRefB_[i] = B.coeffRef(i).vi_;
       Bd_[i] = B.coeffRef(i).val();
     }
-    double AB = Eigen::Map<RowVectorXd>(Ad_, 1, size_)
-                * Eigen::Map<VectorXd>(Bd_, size_, 1);
+    double AB = Eigen::Map<RowVectorXd>(Ad_, 1, size_) *
+                Eigen::Map<VectorXd>(Bd_, size_, 1);
     variRefAB_ = new vari(AB, false);
   }
 
@@ -376,7 +366,7 @@ class multiply_mat_vari<double, 1, Ca, Tb, 1> : public vari {
  */
 template <typename Ta, int Ra, int Ca, int Cb>
 class multiply_mat_vari<Ta, Ra, Ca, double, Cb> : public vari {
- public:
+public:
   int A_rows_;
   int A_cols_;
   int B_cols_;
@@ -405,12 +395,8 @@ class multiply_mat_vari<Ta, Ra, Ca, double, Cb> : public vari {
    */
   multiply_mat_vari(const Eigen::Matrix<Ta, Ra, Ca> &A,
                     const Eigen::Matrix<double, Ca, Cb> &B)
-      : vari(0.0),
-        A_rows_(A.rows()),
-        A_cols_(A.cols()),
-        B_cols_(B.cols()),
-        A_size_(A.size()),
-        B_size_(B.size()),
+      : vari(0.0), A_rows_(A.rows()), A_cols_(A.cols()), B_cols_(B.cols()),
+        A_size_(A.size()), B_size_(B.size()),
         Ad_(ChainableStack::instance().memalloc_.alloc_array<double>(A_size_)),
         Bd_(ChainableStack::instance().memalloc_.alloc_array<double>(B_size_)),
         variRefA_(
@@ -426,8 +412,8 @@ class multiply_mat_vari<Ta, Ra, Ca, double, Cb> : public vari {
     for (size_type i = 0; i < B_size_; ++i) {
       Bd_[i] = B.coeffRef(i);
     }
-    MatrixXd AB = Map<MatrixXd>(Ad_, A_rows_, A_cols_)
-                  * Map<MatrixXd>(Bd_, A_cols_, B_cols_);
+    MatrixXd AB = Map<MatrixXd>(Ad_, A_rows_, A_cols_) *
+                  Map<MatrixXd>(Bd_, A_cols_, B_cols_);
     for (size_type i = 0; i < AB.size(); ++i)
       variRefAB_[i] = new vari(AB.coeffRef(i), false);
   }
@@ -466,7 +452,7 @@ class multiply_mat_vari<Ta, Ra, Ca, double, Cb> : public vari {
  */
 template <typename Ta, int Ca>
 class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
- public:
+public:
   int size_;
   double *Ad_;
   double *Bd_;
@@ -491,8 +477,7 @@ class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
    */
   multiply_mat_vari(const Eigen::Matrix<Ta, 1, Ca> &A,
                     const Eigen::Matrix<double, Ca, 1> &B)
-      : vari(0.0),
-        size_(A.cols()),
+      : vari(0.0), size_(A.cols()),
         Ad_(ChainableStack::instance().memalloc_.alloc_array<double>(size_)),
         Bd_(ChainableStack::instance().memalloc_.alloc_array<double>(size_)),
         variRefA_(
@@ -533,8 +518,8 @@ class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
  */
 template <typename T1, typename T2>
 inline typename boost::enable_if_c<
-    (boost::is_scalar<T1>::value || boost::is_same<T1, var>::value)
-        && (boost::is_scalar<T2>::value || boost::is_same<T2, var>::value),
+    (boost::is_scalar<T1>::value || boost::is_same<T1, var>::value) &&
+        (boost::is_scalar<T2>::value || boost::is_same<T2, var>::value),
     typename boost::math::tools::promote_args<T1, T2>::type>::type
 multiply(const T1 &v, const T2 &c) {
   return v * c;
@@ -589,8 +574,8 @@ inline Eigen::Matrix<var, R1, C1> multiply(const Eigen::Matrix<T1, R1, C1> &m,
  * @return Product of scalar and matrix.
  */
 template <typename Ta, int Ra, int Ca, typename Tb, int Cb>
-inline typename boost::enable_if_c<boost::is_same<Ta, var>::value
-                                       || boost::is_same<Tb, var>::value,
+inline typename boost::enable_if_c<boost::is_same<Ta, var>::value ||
+                                       boost::is_same<Tb, var>::value,
                                    Eigen::Matrix<var, Ra, Cb>>::type
 multiply(const Eigen::Matrix<Ta, Ra, Ca> &A,
          const Eigen::Matrix<Tb, Ca, Cb> &B) {
@@ -599,8 +584,8 @@ multiply(const Eigen::Matrix<Ta, Ra, Ca> &A,
   check_not_nan("multiply", "B", B);
 
   // Memory managed with the arena allocator.
-  multiply_mat_vari<Ta, Ra, Ca, Tb, Cb> *baseVari
-      = new multiply_mat_vari<Ta, Ra, Ca, Tb, Cb>(A, B);
+  multiply_mat_vari<Ta, Ra, Ca, Tb, Cb> *baseVari =
+      new multiply_mat_vari<Ta, Ra, Ca, Tb, Cb>(A, B);
   Eigen::Matrix<var, Ra, Cb> AB_v(A.rows(), B.cols());
   for (size_type i = 0; i < AB_v.size(); ++i) {
     AB_v.coeffRef(i).vi_ = baseVari->variRefAB_[i];
@@ -627,12 +612,12 @@ multiply(const Eigen::Matrix<Ta, 1, Ca> &A, const Eigen::Matrix<Tb, Ca, 1> &B) {
   check_not_nan("multiply", "B", B);
 
   // Memory managed with the arena allocator.
-  multiply_mat_vari<Ta, 1, Ca, Tb, 1> *baseVari
-      = new multiply_mat_vari<Ta, 1, Ca, Tb, 1>(A, B);
+  multiply_mat_vari<Ta, 1, Ca, Tb, 1> *baseVari =
+      new multiply_mat_vari<Ta, 1, Ca, Tb, 1>(A, B);
   var AB_v;
   AB_v.vi_ = baseVari->variRefAB_;
   return AB_v;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

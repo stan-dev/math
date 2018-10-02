@@ -34,8 +34,7 @@ TEST(AgradRev, bessel_second_kind_int_var) {
 }
 
 struct bessel_second_kind_fun {
-  template <typename T0>
-  inline T0 operator()(const T0 &arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return bessel_second_kind(2, arg1);
   }
 };

@@ -38,8 +38,8 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type double_exponential_lccdf(
-    const T_y &y, const T_loc &mu, const T_scale &sigma) {
+typename return_type<T_y, T_loc, T_scale>::type
+double_exponential_lccdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
   static const char *function = "double_exponential_lccdf";
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
@@ -97,6 +97,6 @@ typename return_type<T_y, T_loc, T_scale>::type double_exponential_lccdf(
   return ops_partials.build(ccdf_log);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -41,8 +41,8 @@ namespace math {
  * @tparam T_scale Type of scale.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type cauchy_lpdf(
-    const T_y &y, const T_loc &mu, const T_scale &sigma) {
+typename return_type<T_y, T_loc, T_scale>::type
+cauchy_lpdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
   static const char *function = "cauchy_lpdf";
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
@@ -93,8 +93,8 @@ typename return_type<T_y, T_loc, T_scale>::type cauchy_lpdf(
     const T_partials_return y_minus_mu = y_dbl - mu_dbl;
     const T_partials_return y_minus_mu_squared = y_minus_mu * y_minus_mu;
     const T_partials_return y_minus_mu_over_sigma = y_minus_mu * inv_sigma[n];
-    const T_partials_return y_minus_mu_over_sigma_squared
-        = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
+    const T_partials_return y_minus_mu_over_sigma_squared =
+        y_minus_mu_over_sigma * y_minus_mu_over_sigma;
 
     if (include_summand<propto>::value)
       logp += NEG_LOG_PI;
@@ -104,25 +104,25 @@ typename return_type<T_y, T_loc, T_scale>::type cauchy_lpdf(
       logp -= log1p(y_minus_mu_over_sigma_squared);
 
     if (!is_constant_struct<T_y>::value)
-      ops_partials.edge1_.partials_[n]
-          -= 2 * y_minus_mu / (sigma_squared[n] + y_minus_mu_squared);
+      ops_partials.edge1_.partials_[n] -=
+          2 * y_minus_mu / (sigma_squared[n] + y_minus_mu_squared);
     if (!is_constant_struct<T_loc>::value)
-      ops_partials.edge2_.partials_[n]
-          += 2 * y_minus_mu / (sigma_squared[n] + y_minus_mu_squared);
+      ops_partials.edge2_.partials_[n] +=
+          2 * y_minus_mu / (sigma_squared[n] + y_minus_mu_squared);
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge3_.partials_[n]
-          += (y_minus_mu_squared - sigma_squared[n]) * inv_sigma[n]
-             / (sigma_squared[n] + y_minus_mu_squared);
+      ops_partials.edge3_.partials_[n] +=
+          (y_minus_mu_squared - sigma_squared[n]) * inv_sigma[n] /
+          (sigma_squared[n] + y_minus_mu_squared);
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline typename return_type<T_y, T_loc, T_scale>::type cauchy_lpdf(
-    const T_y &y, const T_loc &mu, const T_scale &sigma) {
+inline typename return_type<T_y, T_loc, T_scale>::type
+cauchy_lpdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
   return cauchy_lpdf<false>(y, mu, sigma);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

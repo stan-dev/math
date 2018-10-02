@@ -11,7 +11,7 @@ namespace math {
 
 namespace {
 class log_diff_exp_vv_vari : public op_vv_vari {
- public:
+public:
   log_diff_exp_vv_vari(vari *avi, vari *bvi)
       : op_vv_vari(log_diff_exp(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
@@ -20,18 +20,18 @@ class log_diff_exp_vv_vari : public op_vv_vari {
   }
 };
 class log_diff_exp_vd_vari : public op_vd_vari {
- public:
+public:
   log_diff_exp_vd_vari(vari *avi, double b)
       : op_vd_vari(log_diff_exp(avi->val_, b), avi, b) {}
   void chain() { avi_->adj_ += adj_ * calculate_chain(avi_->val_, val_); }
 };
 class log_diff_exp_dv_vari : public op_dv_vari {
- public:
+public:
   log_diff_exp_dv_vari(double a, vari *bvi)
       : op_dv_vari(log_diff_exp(a, bvi->val_), a, bvi) {}
   void chain() { bvi_->adj_ -= adj_ / expm1(ad_ - bvi_->val_); }
 };
-}  // namespace
+} // namespace
 
 /**
  * Returns the log difference of the exponentiated arguments.
@@ -66,6 +66,6 @@ inline var log_diff_exp(double a, const var &b) {
   return var(new log_diff_exp_dv_vari(a, b.vi_));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

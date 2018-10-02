@@ -18,10 +18,7 @@ struct acosh_fun {
    * @return Inverse hyperbolic cosine of the argument.
    * @tparam T Argument type.
    */
-  template <typename T>
-  static inline T fun(const T &x) {
-    return acosh(x);
-  }
+  template <typename T> static inline T fun(const T &x) { return acosh(x); }
 };
 
 /**
@@ -39,7 +36,7 @@ inline typename apply_scalar_unary<acosh_fun, T>::return_t acosh(const T &x) {
   return apply_scalar_unary<acosh_fun, T>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

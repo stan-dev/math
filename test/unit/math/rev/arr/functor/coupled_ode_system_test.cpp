@@ -392,8 +392,8 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
   std::vector<double> theta_double(1);
   theta_double[0] = 0.15;
 
-  std::vector<double> dy_dt_base
-      = harm_osc(0.0, y0_double, theta_double, x, x_int, &msgs);
+  std::vector<double> dy_dt_base =
+      harm_osc(0.0, y0_double, theta_double, x, x_int, &msgs);
 
   EXPECT_FLOAT_EQ(dy_dt_base[0], dy_dt[0]);
   EXPECT_FLOAT_EQ(dy_dt_base[1], dy_dt[1]);

@@ -10,11 +10,11 @@ namespace math {
 
 namespace {
 class inv_vari : public op_v_vari {
- public:
+public:
   explicit inv_vari(vari *avi) : op_v_vari(inv(avi->val_), avi) {}
   void chain() { avi_->adj_ -= adj_ / (avi_->val_ * avi_->val_); }
 };
-}  // namespace
+} // namespace
 
 /**
  *
@@ -37,6 +37,6 @@ class inv_vari : public op_v_vari {
  */
 inline var inv(const var &a) { return var(new inv_vari(a.vi_)); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

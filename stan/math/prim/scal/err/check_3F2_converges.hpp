@@ -67,8 +67,8 @@ inline void check_3F2_converges(const char *function, const T_a1 &a1,
     num_terms = floor(fabs(value_of_rec(a3)));
   }
 
-  bool is_undefined = (is_nonpositive_integer(b1) && fabs(b1) <= num_terms)
-                      || (is_nonpositive_integer(b2) && fabs(b2) <= num_terms);
+  bool is_undefined = (is_nonpositive_integer(b1) && fabs(b1) <= num_terms) ||
+                      (is_nonpositive_integer(b2) && fabs(b2) <= num_terms);
 
   if (is_polynomial && !is_undefined)
     return;
@@ -86,6 +86,6 @@ inline void check_3F2_converges(const char *function, const T_a1 &a1,
   throw std::domain_error(msg.str());
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

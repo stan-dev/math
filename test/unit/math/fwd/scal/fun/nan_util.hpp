@@ -34,8 +34,7 @@ void test_nan_ffd(const F &f, const double &arg1, const bool &throws) {
   }
 }
 
-template <typename F>
-void test_nan_fwd(const F &f, const bool &throws) {
+template <typename F> void test_nan_fwd(const F &f, const bool &throws) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   test_nan_fd(f, nan, throws);
   test_nan_ffd(f, nan, throws);

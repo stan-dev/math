@@ -90,6 +90,6 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
   return read_corr_matrix(cpcs, k, lp);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

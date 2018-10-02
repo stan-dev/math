@@ -53,9 +53,9 @@ double hypergeometric_lpmf(const T_n &n, const T_N &N, const T_a &a,
     return 0.0;
 
   for (size_t i = 0; i < size; i++)
-    logp += math::binomial_coefficient_log(a_vec[i], n_vec[i])
-            + math::binomial_coefficient_log(b_vec[i], N_vec[i] - n_vec[i])
-            - math::binomial_coefficient_log(a_vec[i] + b_vec[i], N_vec[i]);
+    logp += math::binomial_coefficient_log(a_vec[i], n_vec[i]) +
+            math::binomial_coefficient_log(b_vec[i], N_vec[i] - n_vec[i]) -
+            math::binomial_coefficient_log(a_vec[i] + b_vec[i], N_vec[i]);
   return logp;
 }
 
@@ -65,6 +65,6 @@ inline double hypergeometric_lpmf(const T_n &n, const T_N &N, const T_a &a,
   return hypergeometric_lpmf<false>(n, N, a, b);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

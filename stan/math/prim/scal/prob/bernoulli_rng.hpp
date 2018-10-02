@@ -27,8 +27,8 @@ namespace math {
  * greater than one.
  */
 template <typename T_theta, class RNG>
-inline typename VectorBuilder<true, int, T_theta>::type bernoulli_rng(
-    const T_theta &theta, RNG &rng) {
+inline typename VectorBuilder<true, int, T_theta>::type
+bernoulli_rng(const T_theta &theta, RNG &rng) {
   using boost::bernoulli_distribution;
   using boost::variate_generator;
 
@@ -50,6 +50,6 @@ inline typename VectorBuilder<true, int, T_theta>::type bernoulli_rng(
   return output.data();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

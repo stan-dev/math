@@ -14,6 +14,6 @@ namespace math {
  */
 inline int as_bool(const var &v) { return 0.0 != v.vi_->val_; }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

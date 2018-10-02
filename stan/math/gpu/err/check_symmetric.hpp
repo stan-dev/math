@@ -43,7 +43,7 @@ inline void check_symmetric(const char *function, const char *name,
   }
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif
 #endif

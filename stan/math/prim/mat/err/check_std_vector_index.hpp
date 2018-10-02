@@ -28,8 +28,8 @@ namespace math {
 template <typename T>
 inline void check_std_vector_index(const char *function, const char *name,
                                    const std::vector<T> &y, int i) {
-  if (i >= static_cast<int>(stan::error_index::value)
-      && i < static_cast<int>(y.size() + stan::error_index::value))
+  if (i >= static_cast<int>(stan::error_index::value) &&
+      i < static_cast<int>(y.size() + stan::error_index::value))
     return;
 
   std::stringstream msg;
@@ -38,6 +38,6 @@ inline void check_std_vector_index(const char *function, const char *name,
   out_of_range(function, y.size(), i, msg_str.c_str());
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

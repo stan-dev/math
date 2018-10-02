@@ -13,8 +13,7 @@ namespace stan {
 namespace math {
 
 namespace {
-template <typename T_y, typename T_high, bool is_vec>
-struct less {
+template <typename T_y, typename T_high, bool is_vec> struct less {
   static void check(const char *function, const char *name, const T_y &y,
                     const T_high &high) {
     using stan::length;
@@ -31,8 +30,7 @@ struct less {
   }
 };
 
-template <typename T_y, typename T_high>
-struct less<T_y, T_high, true> {
+template <typename T_y, typename T_high> struct less<T_y, T_high, true> {
   static void check(const char *function, const char *name, const T_y &y,
                     const T_high &high) {
     using stan::length;
@@ -48,7 +46,7 @@ struct less<T_y, T_high, true> {
     }
   }
 };
-}  // namespace
+} // namespace
 
 /**
  * Check if <code>y</code> is strictly less
@@ -73,6 +71,6 @@ inline void check_less(const char *function, const char *name, const T_y &y,
                        const T_high &high) {
   less<T_y, T_high, is_vector_like<T_y>::value>::check(function, name, y, high);
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

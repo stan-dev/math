@@ -29,6 +29,6 @@ inline int divide(int x, int y) {
   return x / y;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

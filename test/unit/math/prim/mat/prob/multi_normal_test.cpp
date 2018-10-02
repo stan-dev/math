@@ -318,7 +318,7 @@ TEST(ProbDistributionsMultiNormal, marginalThreeChiSquareGoodnessFitTest) {
 TEST(multiNormalRng, nonPosDefErrorTest) {
   using stan::math::multi_normal_rng;
   Eigen::MatrixXd S(2, 2);
-  S << 0, 1, 1, 0;  // not pos definite
+  S << 0, 1, 1, 0; // not pos definite
   Eigen::VectorXd mu(2);
   mu << 1, 2;
   boost::random::mt19937 rng;

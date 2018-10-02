@@ -6,15 +6,15 @@ using std::numeric_limits;
 using std::vector;
 
 class AgradCdfInvGamma : public AgradCdfTest {
- public:
+public:
   void valid_values(vector<vector<double>> &parameters, vector<double> &cdf) {
     vector<double> param(3);
 
-    param[0] = 3.0;  // y
-    param[1] = 0.5;  // alpha (Shape)
-    param[2] = 3.3;  // beta (Scale)
+    param[0] = 3.0; // y
+    param[1] = 0.5; // alpha (Shape)
+    param[2] = 3.3; // beta (Scale)
     parameters.push_back(param);
-    cdf.push_back(0.138010737568659559638900550956);  // expected CDF
+    cdf.push_back(0.138010737568659559638900550956); // expected CDF
   }
 
   void invalid_values(vector<size_t> &index, vector<double> &value) {
@@ -51,17 +51,17 @@ class AgradCdfInvGamma : public AgradCdfTest {
 
   template <typename T_y, typename T_shape, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_shape, T_scale>::type cdf(
-      const T_y &y, const T_shape &alpha, const T_scale &beta, const T3 &,
+  typename stan::return_type<T_y, T_shape, T_scale>::type
+  cdf(const T_y &y, const T_shape &alpha, const T_scale &beta, const T3 &,
       const T4 &, const T5 &) {
     return stan::math::inv_gamma_cdf(y, alpha, beta);
   }
 
   template <typename T_y, typename T_shape, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_shape, T_scale>::type cdf_function(
-      const T_y &y, const T_shape &alpha, const T_scale &beta, const T3 &,
-      const T4 &, const T5 &) {
+  typename stan::return_type<T_y, T_shape, T_scale>::type
+  cdf_function(const T_y &y, const T_shape &alpha, const T_scale &beta,
+               const T3 &, const T4 &, const T5 &) {
     using stan::math::gamma_q;
 
     return (gamma_q(alpha, beta / y));

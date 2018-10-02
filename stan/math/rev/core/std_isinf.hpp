@@ -17,5 +17,5 @@ inline int isinf(const stan::math::var &a) {
   return stan::math::is_inf(a.val());
 }
 
-}  // namespace std
+} // namespace std
 #endif

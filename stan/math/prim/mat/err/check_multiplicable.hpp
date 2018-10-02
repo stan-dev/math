@@ -36,6 +36,6 @@ inline void check_multiplicable(const char *function, const char *name1,
                    y2.rows());
   check_positive_size(function, name1, "cols()", y1.cols());
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

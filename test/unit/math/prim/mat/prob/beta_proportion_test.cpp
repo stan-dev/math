@@ -7,7 +7,7 @@
 #include <vector>
 
 class BetaProportionTestRig : public VectorRealRNGTestRig {
- public:
+public:
   BetaProportionTestRig()
       : VectorRealRNGTestRig(10000, 10, {0.3, 0.4, 0.5, 0.6, 0.7}, {1, 2, 3},
                              {-2.5, -1.7, -0.1, 0.0}, {-3, -2, -1, 0},

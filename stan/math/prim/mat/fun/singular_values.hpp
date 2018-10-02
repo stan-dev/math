@@ -15,12 +15,12 @@ namespace math {
  * @return Singular values of the matrix.
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> singular_values(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m) {
+Eigen::Matrix<T, Eigen::Dynamic, 1>
+singular_values(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m) {
   return Eigen::JacobiSVD<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>(m)
       .singularValues();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

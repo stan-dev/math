@@ -1,8 +1,7 @@
 #include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
 
-template <typename C>
-void expect_scalar_seq_view_values(C v) {
+template <typename C> void expect_scalar_seq_view_values(C v) {
   using stan::scalar_seq_view;
 
   v << 1.1, 2.2, 3.3, 4.4;

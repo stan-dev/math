@@ -16,7 +16,7 @@ using stan::scalar_type;
 using std::vector;
 
 class AgradCdfLogTest {
- public:
+public:
   virtual void valid_values(vector<vector<double>> & /*parameters*/,
                             vector<double> & /* cdf_log */) {
     throw std::runtime_error("valid_values() not implemented");
@@ -65,9 +65,8 @@ class AgradCdfLogTest {
   */
 };
 
-template <class T>
-class AgradCdfLogTestFixture : public ::testing::Test {
- public:
+template <class T> class AgradCdfLogTestFixture : public ::testing::Test {
+public:
   typename at_c<T, 0>::type TestClass;
   typedef typename at_c<typename at_c<T, 1>::type, 0>::type T0;
   typedef typename at_c<typename at_c<T, 1>::type, 1>::type T1;
@@ -220,8 +219,8 @@ class AgradCdfLogTestFixture : public ::testing::Test {
     plus[n] += e;
     minus[n] -= e;
 
-    double cdf_log_plus = TestClass.cdf_log(plus[0], plus[1], plus[2], plus[3],
-                                            plus[4], plus[5]);
+    double cdf_log_plus =
+        TestClass.cdf_log(plus[0], plus[1], plus[2], plus[3], plus[4], plus[5]);
     double cdf_log_minus = TestClass.cdf_log(minus[0], minus[1], minus[2],
                                              minus[3], minus[4], minus[5]);
 
@@ -380,18 +379,18 @@ class AgradCdfLogTestFixture : public ::testing::Test {
       vector<double> finite_diffs;
       vector<double> gradients;
 
-      if (!boost::is_same<Scalar0, fvar<double>>::value
-          && !boost::is_same<Scalar0, fvar<fvar<double>>>::value
-          && !boost::is_same<Scalar1, fvar<double>>::value
-          && !boost::is_same<Scalar1, fvar<fvar<double>>>::value
-          && !boost::is_same<Scalar2, fvar<double>>::value
-          && !boost::is_same<Scalar2, fvar<fvar<double>>>::value
-          && !boost::is_same<Scalar3, fvar<double>>::value
-          && !boost::is_same<Scalar3, fvar<fvar<double>>>::value
-          && !boost::is_same<Scalar4, fvar<double>>::value
-          && !boost::is_same<Scalar4, fvar<fvar<double>>>::value
-          && !boost::is_same<Scalar5, fvar<double>>::value
-          && !boost::is_same<Scalar5, fvar<fvar<double>>>::value) {
+      if (!boost::is_same<Scalar0, fvar<double>>::value &&
+          !boost::is_same<Scalar0, fvar<fvar<double>>>::value &&
+          !boost::is_same<Scalar1, fvar<double>>::value &&
+          !boost::is_same<Scalar1, fvar<fvar<double>>>::value &&
+          !boost::is_same<Scalar2, fvar<double>>::value &&
+          !boost::is_same<Scalar2, fvar<fvar<double>>>::value &&
+          !boost::is_same<Scalar3, fvar<double>>::value &&
+          !boost::is_same<Scalar3, fvar<fvar<double>>>::value &&
+          !boost::is_same<Scalar4, fvar<double>>::value &&
+          !boost::is_same<Scalar4, fvar<fvar<double>>>::value &&
+          !boost::is_same<Scalar5, fvar<double>>::value &&
+          !boost::is_same<Scalar5, fvar<fvar<double>>>::value) {
         calculate_finite_diff(parameters[n], finite_diffs);
         Scalar0 p0 = get_param<Scalar0>(parameters[n], 0);
         Scalar1 p1 = get_param<Scalar1>(parameters[n], 1);
@@ -403,10 +402,10 @@ class AgradCdfLogTestFixture : public ::testing::Test {
         vector<var> x1;
         add_vars(x1, p0, p1, p2, p3, p4, p5);
 
-        T_return_type cdf_log
-            = TestClass.template cdf_log<Scalar0, Scalar1, Scalar2, Scalar3,
-                                         Scalar4, Scalar5>(p0, p1, p2, p3, p4,
-                                                           p5);
+        T_return_type cdf_log =
+            TestClass.template cdf_log<Scalar0, Scalar1, Scalar2, Scalar3,
+                                       Scalar4, Scalar5>(p0, p1, p2, p3, p4,
+                                                         p5);
 
         calculate_gradients_1storder(gradients, cdf_log, x1);
 
@@ -467,14 +466,13 @@ class AgradCdfLogTestFixture : public ::testing::Test {
       add_vars(y2, p0, p1, p2, p3, p4, p5);
       add_vars(y3, p0, p1, p2, p3, p4, p5);
 
-      T_return_type cdf_log
-          = TestClass.template cdf_log<Scalar0, Scalar1, Scalar2, Scalar3,
-                                       Scalar4, Scalar5>(p0, p1, p2, p3, p4,
-                                                         p5);
+      T_return_type cdf_log =
+          TestClass.template cdf_log<Scalar0, Scalar1, Scalar2, Scalar3,
+                                     Scalar4, Scalar5>(p0, p1, p2, p3, p4, p5);
 
-      T_return_type cdf_log_funct
-          = TestClass.template cdf_log_function<Scalar0, Scalar1, Scalar2,
-                                                Scalar3, Scalar4, Scalar5>(
+      T_return_type cdf_log_funct =
+          TestClass.template cdf_log_function<Scalar0, Scalar1, Scalar2,
+                                              Scalar3, Scalar4, Scalar5>(
               p0, p1, p2, p3, p4, p5);
 
       calculate_gradients_1storder(expected_gradients1, cdf_log_funct, x1);
@@ -544,13 +542,13 @@ class AgradCdfLogTestFixture : public ::testing::Test {
       add_vars(s2, p0_, p1_, p2_, p3_, p4_, p5_);
       add_vars(s3, p0_, p1_, p2_, p3_, p4_, p5_);
 
-      T_return_type cdf_log
-          = TestClass.template cdf_log<Scalar0, Scalar1, Scalar2, Scalar3,
-                                       Scalar4, Scalar5>(p0_, p1_, p2_, p3_,
-                                                         p4_, p5_);
+      T_return_type cdf_log =
+          TestClass.template cdf_log<Scalar0, Scalar1, Scalar2, Scalar3,
+                                     Scalar4, Scalar5>(p0_, p1_, p2_, p3_, p4_,
+                                                       p5_);
 
-      double single_cdf_log
-          = calculate_gradients_1storder(single_gradients1, cdf_log, s1);
+      double single_cdf_log =
+          calculate_gradients_1storder(single_gradients1, cdf_log, s1);
       calculate_gradients_2ndorder(single_gradients2, cdf_log, s2);
       calculate_gradients_3rdorder(single_gradients3, cdf_log, s3);
 
@@ -561,9 +559,9 @@ class AgradCdfLogTestFixture : public ::testing::Test {
       T4 p4 = get_repeated_params<T4>(parameters[n], 4, N_REPEAT);
       T5 p5 = get_repeated_params<T5>(parameters[n], 5, N_REPEAT);
 
-      T_return_type multiple_cdf_log
-          = TestClass.template cdf_log<T0, T1, T2, T3, T4, T5>(p0, p1, p2, p3,
-                                                               p4, p5);
+      T_return_type multiple_cdf_log =
+          TestClass.template cdf_log<T0, T1, T2, T3, T4, T5>(p0, p1, p2, p3, p4,
+                                                             p5);
       vector<double> multiple_gradients1;
       vector<double> multiple_gradients2;
       vector<double> multiple_gradients3;
@@ -584,111 +582,111 @@ class AgradCdfLogTestFixture : public ::testing::Test {
 
       size_t pos_single = 0;
       size_t pos_multiple = 0;
-      if (!is_constant_struct<T0>::value && !is_empty<T0>::value
-          && !boost::is_same<Scalar0, fvar<double>>::value
-          && !boost::is_same<Scalar0, fvar<fvar<double>>>::value)
+      if (!is_constant_struct<T0>::value && !is_empty<T0>::value &&
+          !boost::is_same<Scalar0, fvar<double>>::value &&
+          !boost::is_same<Scalar0, fvar<fvar<double>>>::value)
         test_multiple_gradient_values(
             is_vector<T0>::value, single_cdf_log, single_gradients1, pos_single,
             multiple_gradients1, pos_multiple, N_REPEAT);
-      if (!is_constant_struct<T1>::value && !is_empty<T1>::value
-          && !boost::is_same<Scalar1, fvar<double>>::value
-          && !boost::is_same<Scalar1, fvar<fvar<double>>>::value)
+      if (!is_constant_struct<T1>::value && !is_empty<T1>::value &&
+          !boost::is_same<Scalar1, fvar<double>>::value &&
+          !boost::is_same<Scalar1, fvar<fvar<double>>>::value)
         test_multiple_gradient_values(
             is_vector<T1>::value, single_cdf_log, single_gradients1, pos_single,
             multiple_gradients1, pos_multiple, N_REPEAT);
-      if (!is_constant_struct<T2>::value && !is_empty<T2>::value
-          && !boost::is_same<Scalar2, fvar<double>>::value
-          && !boost::is_same<Scalar2, fvar<fvar<double>>>::value)
+      if (!is_constant_struct<T2>::value && !is_empty<T2>::value &&
+          !boost::is_same<Scalar2, fvar<double>>::value &&
+          !boost::is_same<Scalar2, fvar<fvar<double>>>::value)
         test_multiple_gradient_values(
             is_vector<T2>::value, single_cdf_log, single_gradients1, pos_single,
             multiple_gradients1, pos_multiple, N_REPEAT);
-      if (!is_constant_struct<T3>::value && !is_empty<T3>::value
-          && !boost::is_same<Scalar3, fvar<double>>::value
-          && !boost::is_same<Scalar3, fvar<fvar<double>>>::value)
+      if (!is_constant_struct<T3>::value && !is_empty<T3>::value &&
+          !boost::is_same<Scalar3, fvar<double>>::value &&
+          !boost::is_same<Scalar3, fvar<fvar<double>>>::value)
         test_multiple_gradient_values(
             is_vector<T3>::value, single_cdf_log, single_gradients1, pos_single,
             multiple_gradients1, pos_multiple, N_REPEAT);
-      if (!is_constant_struct<T4>::value && !is_empty<T4>::value
-          && !boost::is_same<Scalar4, fvar<double>>::value
-          && !boost::is_same<Scalar4, fvar<fvar<double>>>::value)
+      if (!is_constant_struct<T4>::value && !is_empty<T4>::value &&
+          !boost::is_same<Scalar4, fvar<double>>::value &&
+          !boost::is_same<Scalar4, fvar<fvar<double>>>::value)
         test_multiple_gradient_values(
             is_vector<T4>::value, single_cdf_log, single_gradients1, pos_single,
             multiple_gradients1, pos_multiple, N_REPEAT);
-      if (!is_constant_struct<T5>::value && !is_empty<T5>::value
-          && !boost::is_same<Scalar5, fvar<double>>::value
-          && !boost::is_same<Scalar5, fvar<fvar<double>>>::value)
+      if (!is_constant_struct<T5>::value && !is_empty<T5>::value &&
+          !boost::is_same<Scalar5, fvar<double>>::value &&
+          !boost::is_same<Scalar5, fvar<fvar<double>>>::value)
         test_multiple_gradient_values(
             is_vector<T5>::value, single_cdf_log, single_gradients1, pos_single,
             multiple_gradients1, pos_multiple, N_REPEAT);
 
       pos_single = 0;
       pos_multiple = 0;
-      if (!is_constant_struct<T0>::value && !is_empty<T0>::value
-          && (boost::is_same<Scalar0, fvar<var>>::value
-              || boost::is_same<Scalar0, fvar<fvar<var>>>::value))
+      if (!is_constant_struct<T0>::value && !is_empty<T0>::value &&
+          (boost::is_same<Scalar0, fvar<var>>::value ||
+           boost::is_same<Scalar0, fvar<fvar<var>>>::value))
         test_multiple_gradient_values(
             is_vector<T0>::value, single_cdf_log, single_gradients2, pos_single,
             multiple_gradients2, pos_multiple, N_REPEAT);
-      if (!is_constant_struct<T1>::value && !is_empty<T1>::value
-          && (boost::is_same<Scalar1, fvar<var>>::value
-              || boost::is_same<Scalar1, fvar<fvar<var>>>::value))
+      if (!is_constant_struct<T1>::value && !is_empty<T1>::value &&
+          (boost::is_same<Scalar1, fvar<var>>::value ||
+           boost::is_same<Scalar1, fvar<fvar<var>>>::value))
         test_multiple_gradient_values(
             is_vector<T1>::value, single_cdf_log, single_gradients2, pos_single,
             multiple_gradients2, pos_multiple, N_REPEAT);
-      if (!is_constant_struct<T2>::value && !is_empty<T2>::value
-          && (boost::is_same<Scalar2, fvar<var>>::value
-              || boost::is_same<Scalar2, fvar<fvar<var>>>::value))
+      if (!is_constant_struct<T2>::value && !is_empty<T2>::value &&
+          (boost::is_same<Scalar2, fvar<var>>::value ||
+           boost::is_same<Scalar2, fvar<fvar<var>>>::value))
         test_multiple_gradient_values(
             is_vector<T2>::value, single_cdf_log, single_gradients2, pos_single,
             multiple_gradients2, pos_multiple, N_REPEAT);
-      if (!is_constant_struct<T3>::value && !is_empty<T3>::value
-          && (boost::is_same<Scalar3, fvar<var>>::value
-              || boost::is_same<Scalar3, fvar<fvar<var>>>::value))
+      if (!is_constant_struct<T3>::value && !is_empty<T3>::value &&
+          (boost::is_same<Scalar3, fvar<var>>::value ||
+           boost::is_same<Scalar3, fvar<fvar<var>>>::value))
         test_multiple_gradient_values(
             is_vector<T3>::value, single_cdf_log, single_gradients2, pos_single,
             multiple_gradients2, pos_multiple, N_REPEAT);
-      if (!is_constant_struct<T4>::value && !is_empty<T4>::value
-          && (boost::is_same<Scalar4, fvar<var>>::value
-              || boost::is_same<Scalar4, fvar<fvar<var>>>::value))
+      if (!is_constant_struct<T4>::value && !is_empty<T4>::value &&
+          (boost::is_same<Scalar4, fvar<var>>::value ||
+           boost::is_same<Scalar4, fvar<fvar<var>>>::value))
         test_multiple_gradient_values(
             is_vector<T4>::value, single_cdf_log, single_gradients2, pos_single,
             multiple_gradients2, pos_multiple, N_REPEAT);
-      if (!is_constant_struct<T5>::value && !is_empty<T5>::value
-          && (boost::is_same<Scalar5, fvar<var>>::value
-              || boost::is_same<Scalar5, fvar<fvar<var>>>::value))
+      if (!is_constant_struct<T5>::value && !is_empty<T5>::value &&
+          (boost::is_same<Scalar5, fvar<var>>::value ||
+           boost::is_same<Scalar5, fvar<fvar<var>>>::value))
         test_multiple_gradient_values(
             is_vector<T5>::value, single_cdf_log, single_gradients2, pos_single,
             multiple_gradients2, pos_multiple, N_REPEAT);
 
       pos_single = 0;
       pos_multiple = 0;
-      if (!is_constant_struct<T0>::value && !is_empty<T0>::value
-          && boost::is_same<Scalar0, fvar<fvar<var>>>::value)
+      if (!is_constant_struct<T0>::value && !is_empty<T0>::value &&
+          boost::is_same<Scalar0, fvar<fvar<var>>>::value)
         test_multiple_gradient_values(
             is_vector<T0>::value, single_cdf_log, single_gradients3, pos_single,
             multiple_gradients3, pos_multiple, N_REPEAT);
-      if (!is_constant_struct<T1>::value && !is_empty<T1>::value
-          && boost::is_same<Scalar1, fvar<fvar<var>>>::value)
+      if (!is_constant_struct<T1>::value && !is_empty<T1>::value &&
+          boost::is_same<Scalar1, fvar<fvar<var>>>::value)
         test_multiple_gradient_values(
             is_vector<T1>::value, single_cdf_log, single_gradients3, pos_single,
             multiple_gradients3, pos_multiple, N_REPEAT);
-      if (!is_constant_struct<T2>::value && !is_empty<T2>::value
-          && boost::is_same<Scalar2, fvar<fvar<var>>>::value)
+      if (!is_constant_struct<T2>::value && !is_empty<T2>::value &&
+          boost::is_same<Scalar2, fvar<fvar<var>>>::value)
         test_multiple_gradient_values(
             is_vector<T2>::value, single_cdf_log, single_gradients3, pos_single,
             multiple_gradients3, pos_multiple, N_REPEAT);
-      if (!is_constant_struct<T3>::value && !is_empty<T3>::value
-          && boost::is_same<Scalar3, fvar<fvar<var>>>::value)
+      if (!is_constant_struct<T3>::value && !is_empty<T3>::value &&
+          boost::is_same<Scalar3, fvar<fvar<var>>>::value)
         test_multiple_gradient_values(
             is_vector<T3>::value, single_cdf_log, single_gradients3, pos_single,
             multiple_gradients3, pos_multiple, N_REPEAT);
-      if (!is_constant_struct<T4>::value && !is_empty<T4>::value
-          && boost::is_same<Scalar4, fvar<fvar<var>>>::value)
+      if (!is_constant_struct<T4>::value && !is_empty<T4>::value &&
+          boost::is_same<Scalar4, fvar<fvar<var>>>::value)
         test_multiple_gradient_values(
             is_vector<T4>::value, single_cdf_log, single_gradients3, pos_single,
             multiple_gradients3, pos_multiple, N_REPEAT);
-      if (!is_constant_struct<T5>::value && !is_empty<T5>::value
-          && boost::is_same<Scalar5, fvar<fvar<var>>>::value)
+      if (!is_constant_struct<T5>::value && !is_empty<T5>::value &&
+          boost::is_same<Scalar5, fvar<fvar<var>>>::value)
         test_multiple_gradient_values(
             is_vector<T5>::value, single_cdf_log, single_gradients3, pos_single,
             multiple_gradients3, pos_multiple, N_REPEAT);
@@ -705,8 +703,8 @@ class AgradCdfLogTestFixture : public ::testing::Test {
     if (!TestClass.has_lower_bound()) {
       if (!std::numeric_limits<Scalar0>::has_infinity) {
         for (size_t n = 0; n < parameters.size(); n++)
-          parameters[n][0] = value_of(
-              value_of(value_of(std::numeric_limits<Scalar0>::min())));
+          parameters[n][0] =
+              value_of(value_of(value_of(std::numeric_limits<Scalar0>::min())));
       } else {
         for (size_t n = 0; n < parameters.size(); n++)
           parameters[n][0] = -std::numeric_limits<double>::infinity();
@@ -724,9 +722,9 @@ class AgradCdfLogTestFixture : public ::testing::Test {
       T4 p4 = get_repeated_params<T4>(parameters[n], 4, N_REPEAT);
       T5 p5 = get_repeated_params<T5>(parameters[n], 5, N_REPEAT);
 
-      T_return_type cdf_log_at_lower_bound
-          = TestClass.template cdf_log<T0, T1, T2, T3, T4, T5>(p0, p1, p2, p3,
-                                                               p4, p5);
+      T_return_type cdf_log_at_lower_bound =
+          TestClass.template cdf_log<T0, T1, T2, T3, T4, T5>(p0, p1, p2, p3, p4,
+                                                             p5);
       EXPECT_TRUE(stan::math::negative_infinity() == cdf_log_at_lower_bound)
           << "cdf_log evaluated at lower bound should equal negative infinity";
     }
@@ -742,8 +740,8 @@ class AgradCdfLogTestFixture : public ::testing::Test {
     if (!TestClass.has_upper_bound()) {
       if (!std::numeric_limits<Scalar0>::has_infinity) {
         for (size_t n = 0; n < parameters.size(); n++)
-          parameters[n][0] = value_of(
-              value_of(value_of(std::numeric_limits<Scalar0>::max())));
+          parameters[n][0] =
+              value_of(value_of(value_of(std::numeric_limits<Scalar0>::max())));
       } else {
         for (size_t n = 0; n < parameters.size(); n++)
           parameters[n][0] = std::numeric_limits<double>::infinity();
@@ -761,9 +759,9 @@ class AgradCdfLogTestFixture : public ::testing::Test {
       T4 p4 = get_repeated_params<T4>(parameters[n], 4, N_REPEAT);
       T5 p5 = get_repeated_params<T5>(parameters[n], 5, N_REPEAT);
 
-      T_return_type cdf_log_at_upper_bound
-          = TestClass.template cdf_log<T0, T1, T2, T3, T4, T5>(p0, p1, p2, p3,
-                                                               p4, p5);
+      T_return_type cdf_log_at_upper_bound =
+          TestClass.template cdf_log<T0, T1, T2, T3, T4, T5>(p0, p1, p2, p3, p4,
+                                                             p5);
       EXPECT_TRUE(0.0 == cdf_log_at_upper_bound)
           << "cdf_log evaluated at upper bound should equal 0";
     }

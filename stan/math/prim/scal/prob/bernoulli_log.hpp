@@ -25,6 +25,6 @@ inline typename return_type<T_prob>::type bernoulli_log(const T_y &n,
   return bernoulli_lpmf<T_y, T_prob>(n, theta);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

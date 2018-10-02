@@ -8,23 +8,22 @@
 namespace stan {
 namespace math {
 namespace internal {
-template <typename Dx>
-class ops_partials_edge<Dx, fvar<Dx>> {
- public:
+template <typename Dx> class ops_partials_edge<Dx, fvar<Dx>> {
+public:
   typedef fvar<Dx> Op;
   Dx partial_;
   broadcast_array<Dx> partials_;
   explicit ops_partials_edge(const Op &op)
       : partial_(0), partials_(partial_), operand_(op) {}
 
- private:
+private:
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
   const Op &operand_;
 
   Dx dx() { return this->partials_[0] * this->operand_.d_; }
 };
-}  // namespace internal
+} // namespace internal
 
 /**
  * This class builds partial derivatives with respect to a set of
@@ -65,7 +64,7 @@ class ops_partials_edge<Dx, fvar<Dx>> {
 template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5,
           typename Dx>
 class operands_and_partials<Op1, Op2, Op3, Op4, Op5, fvar<Dx>> {
- public:
+public:
   internal::ops_partials_edge<Dx, Op1> edge1_;
   internal::ops_partials_edge<Dx, Op2> edge2_;
   internal::ops_partials_edge<Dx, Op3> edge3_;
@@ -98,11 +97,11 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, fvar<Dx>> {
    * @return the value with its derivative
    */
   T_return_type build(Dx value) {
-    Dx deriv
-        = edge1_.dx() + edge2_.dx() + edge3_.dx() + edge4_.dx() + edge5_.dx();
+    Dx deriv =
+        edge1_.dx() + edge2_.dx() + edge3_.dx() + edge4_.dx() + edge5_.dx();
     return T_return_type(value, deriv);
   }
 };
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

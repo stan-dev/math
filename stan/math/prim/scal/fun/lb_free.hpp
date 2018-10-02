@@ -26,8 +26,8 @@ namespace math {
  * @throw std::domain_error if y is lower than the lower bound
  */
 template <typename T, typename L>
-inline typename boost::math::tools::promote_args<T, L>::type lb_free(
-    const T &y, const L &lb) {
+inline typename boost::math::tools::promote_args<T, L>::type
+lb_free(const T &y, const L &lb) {
   using std::log;
   if (lb == -std::numeric_limits<double>::infinity())
     return identity_free(y);
@@ -35,6 +35,6 @@ inline typename boost::math::tools::promote_args<T, L>::type lb_free(
   return log(y - lb);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

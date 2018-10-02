@@ -16,8 +16,9 @@ namespace math {
 // Temporary neg_binomial_2_ccdf implementation that
 // transforms the input parameters and calls neg_binomial_ccdf
 template <typename T_n, typename T_location, typename T_precision>
-typename return_type<T_location, T_precision>::type neg_binomial_2_lccdf(
-    const T_n &n, const T_location &mu, const T_precision &phi) {
+typename return_type<T_location, T_precision>::type
+neg_binomial_2_lccdf(const T_n &n, const T_location &mu,
+                     const T_precision &phi) {
   if (size_zero(n, mu, phi))
     return 0.0;
 
@@ -42,6 +43,6 @@ typename return_type<T_location, T_precision>::type neg_binomial_2_lccdf(
   return neg_binomial_ccdf_log(n, phi, beta_vec.data());
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

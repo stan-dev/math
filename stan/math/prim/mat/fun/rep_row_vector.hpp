@@ -17,7 +17,7 @@ rep_row_vector(const T &x, int m) {
                        Eigen::Dynamic>::Constant(m, x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

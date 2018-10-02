@@ -12,13 +12,13 @@ namespace stan {
 namespace math {
 
 template <typename T, int R, int C>
-inline Eigen::Matrix<fvar<T>, R, R> tcrossprod(
-    const Eigen::Matrix<fvar<T>, R, C> &m) {
+inline Eigen::Matrix<fvar<T>, R, R>
+tcrossprod(const Eigen::Matrix<fvar<T>, R, C> &m) {
   if (m.rows() == 0)
     return Eigen::Matrix<fvar<T>, R, R>(0, 0);
   return multiply(m, transpose(m));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

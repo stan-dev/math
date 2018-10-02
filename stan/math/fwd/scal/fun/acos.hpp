@@ -8,13 +8,12 @@
 namespace stan {
 namespace math {
 
-template <typename T>
-inline fvar<T> acos(const fvar<T> &x) {
+template <typename T> inline fvar<T> acos(const fvar<T> &x) {
   using std::acos;
   using std::sqrt;
   return fvar<T>(acos(x.val_), x.d_ / -sqrt(1 - square(x.val_)));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

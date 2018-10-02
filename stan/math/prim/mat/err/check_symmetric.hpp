@@ -31,9 +31,9 @@ namespace math {
  *   main diagonal is <code>NaN</code>
  */
 template <typename T_y>
-inline void check_symmetric(
-    const char *function, const char *name,
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y) {
+inline void
+check_symmetric(const char *function, const char *name,
+                const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> &y) {
   check_square(function, name, y);
 
   using Eigen::Dynamic;
@@ -47,8 +47,8 @@ inline void check_symmetric(
     return;
   for (size_type m = 0; m < k; ++m) {
     for (size_type n = m + 1; n < k; ++n) {
-      if (!(fabs(value_of(y(m, n)) - value_of(y(n, m)))
-            <= CONSTRAINT_TOLERANCE)) {
+      if (!(fabs(value_of(y(m, n)) - value_of(y(n, m))) <=
+            CONSTRAINT_TOLERANCE)) {
         std::ostringstream msg1;
         msg1 << "is not symmetric. " << name << "["
              << stan::error_index::value + m << ","
@@ -65,6 +65,6 @@ inline void check_symmetric(
   }
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -48,8 +48,8 @@ namespace math {
  * @tparam T_dof Type of degrees of freedom.
  */
 template <bool propto, typename T_y, typename T_dof, typename T_scale>
-typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_lpdf(
-    const T_y &y, const T_dof &nu, const T_scale &s) {
+typename return_type<T_y, T_dof, T_scale>::type
+scaled_inv_chi_square_lpdf(const T_y &y, const T_dof &nu, const T_scale &s) {
   static const char *function = "scaled_inv_chi_square_lpdf";
   typedef typename stan::partials_return_type<T_y, T_dof, T_scale>::type
       T_partials_return;
@@ -137,18 +137,18 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_lpdf(
       logp -= half_nu[n] * s_dbl * s_dbl * inv_y[n];
 
     if (!is_constant_struct<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
-          += -(half_nu[n] + 1.0) * inv_y[n]
-             + half_nu[n] * s_dbl * s_dbl * inv_y[n] * inv_y[n];
+      ops_partials.edge1_.partials_[n] +=
+          -(half_nu[n] + 1.0) * inv_y[n] +
+          half_nu[n] * s_dbl * s_dbl * inv_y[n] * inv_y[n];
     }
     if (!is_constant_struct<T_dof>::value) {
-      ops_partials.edge2_.partials_[n]
-          += 0.5 * log_half_nu[n] + 0.5 - digamma_half_nu_over_two[n] + log_s[n]
-             - 0.5 * log_y[n] - 0.5 * s_dbl * s_dbl * inv_y[n];
+      ops_partials.edge2_.partials_[n] +=
+          0.5 * log_half_nu[n] + 0.5 - digamma_half_nu_over_two[n] + log_s[n] -
+          0.5 * log_y[n] - 0.5 * s_dbl * s_dbl * inv_y[n];
     }
     if (!is_constant_struct<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
-          += nu_dbl / s_dbl - nu_dbl * inv_y[n] * s_dbl;
+      ops_partials.edge3_.partials_[n] +=
+          nu_dbl / s_dbl - nu_dbl * inv_y[n] * s_dbl;
     }
   }
   return ops_partials.build(logp);
@@ -160,6 +160,6 @@ scaled_inv_chi_square_lpdf(const T_y &y, const T_dof &nu, const T_scale &s) {
   return scaled_inv_chi_square_lpdf<false>(y, nu, s);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -39,15 +39,15 @@ struct mpi_command {
   virtual void run() const = 0;
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(stan::math::mpi_command)
 
-#define STAN_REGISTER_MPI_COMMAND(command)                              \
-  BOOST_CLASS_IMPLEMENTATION(command,                                   \
-                             boost::serialization::object_serializable) \
-  BOOST_CLASS_EXPORT(command)                                           \
+#define STAN_REGISTER_MPI_COMMAND(command)                                     \
+  BOOST_CLASS_IMPLEMENTATION(command,                                          \
+                             boost::serialization::object_serializable)        \
+  BOOST_CLASS_EXPORT(command)                                                  \
   BOOST_CLASS_TRACKING(command, boost::serialization::track_never)
 
 #endif

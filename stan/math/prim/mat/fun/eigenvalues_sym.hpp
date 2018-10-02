@@ -18,8 +18,8 @@ namespace math {
  * @return Eigenvalues of matrix.
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> eigenvalues_sym(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m) {
+Eigen::Matrix<T, Eigen::Dynamic, 1>
+eigenvalues_sym(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m) {
   check_nonzero_size("eigenvalues_sym", "m", m);
   check_symmetric("eigenvalues_sym", "m", m);
 
@@ -29,6 +29,6 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> eigenvalues_sym(
   return solver.eigenvalues();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -110,8 +110,8 @@ csr_matrix_times_vector(int m, int n,
   }
   return result;
 }
-/** @}*/  // end of csr_format group
+/** @}*/ // end of csr_format group
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

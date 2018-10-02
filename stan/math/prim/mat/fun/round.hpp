@@ -14,8 +14,7 @@ namespace math {
  * @return Rounded value of x.
  */
 struct round_fun {
-  template <typename T>
-  static inline T fun(const T &x) {
+  template <typename T> static inline T fun(const T &x) {
     using stan::math::round;
     return round(x);
   }
@@ -32,7 +31,7 @@ inline typename apply_scalar_unary<round_fun, T>::return_t round(const T &x) {
   return apply_scalar_unary<round_fun, T>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

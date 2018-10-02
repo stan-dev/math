@@ -44,7 +44,7 @@ inline double log1m(double x) {
   return stan::math::log1p(-x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

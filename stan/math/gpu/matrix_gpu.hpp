@@ -30,7 +30,7 @@ namespace math {
  * The matrix data is stored in the oclBuffer_.
  */
 class matrix_gpu {
- private:
+private:
   /**
    * cl::Buffer provides functionality for working with OpenCL buffer.
    * An OpenCL buffer allocates the memory in the device that
@@ -40,7 +40,7 @@ class matrix_gpu {
   const int rows_;
   const int cols_;
 
- public:
+public:
   int rows() const { return rows_; }
 
   int cols() const { return cols_; }
@@ -83,8 +83,8 @@ class matrix_gpu {
       cl::Context &ctx = opencl_context.context();
       try {
         // creates the OpenCL buffer of the provided size
-        oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE,
-                                sizeof(double) * rows_ * cols_);
+        oclBuffer_ =
+            cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * rows_ * cols_);
       } catch (const cl::Error &e) {
         check_opencl_error("matrix constructor", e);
       }
@@ -110,8 +110,8 @@ class matrix_gpu {
       try {
         // creates the OpenCL buffer to copy the Eigen
         // matrix to the OpenCL device
-        oclBuffer_
-            = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
+        oclBuffer_ =
+            cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
         /**
          * Writes the contents of A to the OpenCL buffer
          * starting at the offset 0.
@@ -204,8 +204,8 @@ class matrix_gpu {
     if (nrows == 0 || ncols == 0) {
       return;
     }
-    if ((A_i + nrows) > A.rows() || (A_j + ncols) > A.cols()
-        || (this_i + nrows) > this->rows() || (this_j + ncols) > this->cols()) {
+    if ((A_i + nrows) > A.rows() || (A_j + ncols) > A.cols() ||
+        (this_i + nrows) > this->rows() || (this_j + ncols) > this->cols()) {
       domain_error("sub_block", "submatrix in *this", " is out of bounds", "");
     }
     cl::CommandQueue cmdQueue = opencl_context.queue();
@@ -220,8 +220,8 @@ class matrix_gpu {
   }
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif
 #endif

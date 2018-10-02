@@ -8,8 +8,7 @@
 #include <test/unit/math/fwd/mat/vectorize/expect_fwd_values.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_types.hpp>
 
-template <typename T>
-class fwd_scalar_unary_test : public ::testing::Test {};
+template <typename T> class fwd_scalar_unary_test : public ::testing::Test {};
 
 TYPED_TEST_CASE_P(fwd_scalar_unary_test);
 

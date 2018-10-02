@@ -34,8 +34,8 @@ auto compile_kernel(const char *name, const char *source,
                     std::map<const char *, int> options) {
   std::string kernel_opts = "";
   for (auto &&comp_opts : options) {
-    kernel_opts += std::string(" -D") + comp_opts.first + "="
-                   + std::to_string(comp_opts.second);
+    kernel_opts += std::string(" -D") + comp_opts.first + "=" +
+                   std::to_string(comp_opts.second);
   }
   std::string kernel_source(opencl_kernels::helpers);
   kernel_source.append(source);
@@ -57,7 +57,7 @@ auto compile_kernel(const char *name, const char *source,
       check_opencl_error(name, e);
     }
   }
-  return cl::Kernel();  // never reached because check_opencl_error throws
+  return cl::Kernel(); // never reached because check_opencl_error throws
 }
 
 /**
@@ -65,13 +65,12 @@ auto compile_kernel(const char *name, const char *source,
  *
  * @tparam Args Parameter pack of all kernel argument types.
  */
-template <typename... Args>
-class kernel_functor {
- private:
+template <typename... Args> class kernel_functor {
+private:
   cl::Kernel kernel_;
   std::map<const char *, int> opts_;
 
- public:
+public:
   /**
    * functor to access the kernel compiler.
    * @param name The name for the kernel.
@@ -100,8 +99,7 @@ class kernel_functor {
  *
  * @tparam Args Parameter pack of all kernel argument types.
  */
-template <typename... Args>
-struct global_range_kernel {
+template <typename... Args> struct global_range_kernel {
   const kernel_functor<Args...> make_functor;
   /**
    * Creates functor for kernels that only need access to defining
@@ -130,8 +128,7 @@ struct global_range_kernel {
  *  local and global work size.
  * @tparam Args Parameter pack of all kernel argument types.
  */
-template <typename... Args>
-struct local_range_kernel {
+template <typename... Args> struct local_range_kernel {
   const kernel_functor<Args...> make_functor;
   /**
    * Creates kernels that need access to defining the global thread
@@ -159,9 +156,9 @@ struct local_range_kernel {
   }
 };
 
-}  // namespace opencl_kernels
-}  // namespace math
-}  // namespace stan
+} // namespace opencl_kernels
+} // namespace math
+} // namespace stan
 
 #endif
 #endif

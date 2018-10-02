@@ -14,8 +14,7 @@ namespace math {
  * @return Hyperbolic cosine of x.
  */
 struct cosh_fun {
-  template <typename T>
-  static inline T fun(const T &x) {
+  template <typename T> static inline T fun(const T &x) {
     using std::cosh;
     return cosh(x);
   }
@@ -32,7 +31,7 @@ inline typename apply_scalar_unary<cosh_fun, T>::return_t cosh(const T &x) {
   return apply_scalar_unary<cosh_fun, T>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

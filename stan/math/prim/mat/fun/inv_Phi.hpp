@@ -15,10 +15,7 @@ namespace math {
  * @throw std::domain_error if x is not between 0 and 1.
  */
 struct inv_Phi_fun {
-  template <typename T>
-  static inline T fun(const T &x) {
-    return inv_Phi(x);
-  }
+  template <typename T> static inline T fun(const T &x) { return inv_Phi(x); }
 };
 
 /**
@@ -29,12 +26,12 @@ struct inv_Phi_fun {
  * @throw std::domain_error if any value is not between 0 and 1.
  */
 template <typename T>
-inline typename apply_scalar_unary<inv_Phi_fun, T>::return_t inv_Phi(
-    const T &x) {
+inline typename apply_scalar_unary<inv_Phi_fun, T>::return_t
+inv_Phi(const T &x) {
   return apply_scalar_unary<inv_Phi_fun, T>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

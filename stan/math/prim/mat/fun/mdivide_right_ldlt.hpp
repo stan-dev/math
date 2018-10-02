@@ -30,13 +30,13 @@ mdivide_right_ldlt(const Eigen::Matrix<T1, R1, C1> &b,
 }
 
 template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<double, R1, C2> mdivide_right_ldlt(
-    const Eigen::Matrix<double, R1, C1> &b,
-    const LDLT_factor<double, R2, C2> &A) {
+inline Eigen::Matrix<double, R1, C2>
+mdivide_right_ldlt(const Eigen::Matrix<double, R1, C1> &b,
+                   const LDLT_factor<double, R2, C2> &A) {
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A);
   return A.solveRight(b);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

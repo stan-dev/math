@@ -22,13 +22,12 @@ namespace math {
  * @return corresponding unconstrained value
  * @throw std::domain_error if y is not in (0, 1)
  */
-template <typename T>
-inline T prob_free(const T &y) {
+template <typename T> inline T prob_free(const T &y) {
   check_bounded<T, double, double>("prob_free", "Probability variable", y, 0,
                                    1);
   return logit(y);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

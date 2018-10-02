@@ -21,6 +21,6 @@ inline var log1m_inv_logit(const var &u) {
       new precomp_v_vari(log1m_inv_logit(u.val()), u.vi_, -inv_logit(u.val())));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

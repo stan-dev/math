@@ -136,9 +136,9 @@ TEST(ErrorHandlingScalar, CheckLessOrEqual_Matrix_one_indexed_message) {
     FAIL() << "threw the wrong error";
   }
 
-  EXPECT_EQ(std::string::npos, message.find("["))
-      << "no index provided" << std::endl
-      << message;
+  EXPECT_EQ(std::string::npos, message.find("[")) << "no index provided"
+                                                  << std::endl
+                                                  << message;
 }
 
 TEST(ErrorHandlingScalar, CheckLessOrEqual_nan) {

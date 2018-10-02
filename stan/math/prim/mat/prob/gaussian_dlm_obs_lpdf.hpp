@@ -84,9 +84,9 @@ gaussian_dlm_obs_lpdf(
                                                      T_C0>::type>::type T_lp;
   T_lp lp(0.0);
 
-  int r = y.rows();  // number of variables
-  int T = y.cols();  // number of observations
-  int n = G.rows();  // number of states
+  int r = y.rows(); // number of variables
+  int T = y.cols(); // number of observations
+  int n = G.rows(); // number of states
 
   check_finite(function, "y", y);
   check_not_nan(function, "y", y);
@@ -237,9 +237,9 @@ gaussian_dlm_obs_lpdf(
 
   using std::log;
 
-  int r = y.rows();  // number of variables
-  int T = y.cols();  // number of observations
-  int n = G.rows();  // number of states
+  int r = y.rows(); // number of variables
+  int T = y.cols(); // number of observations
+  int n = G.rows(); // number of states
 
   check_finite(function, "y", y);
   check_not_nan(function, "y", y);
@@ -345,6 +345,6 @@ gaussian_dlm_obs_lpdf(
   return gaussian_dlm_obs_lpdf<false>(y, F, G, V, W, m0, C0);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

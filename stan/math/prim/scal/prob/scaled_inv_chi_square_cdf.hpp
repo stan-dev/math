@@ -43,8 +43,8 @@ namespace math {
  * @tparam T_dof Type of degrees of freedom.
  */
 template <typename T_y, typename T_dof, typename T_scale>
-typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_cdf(
-    const T_y &y, const T_dof &nu, const T_scale &s) {
+typename return_type<T_y, T_dof, T_scale>::type
+scaled_inv_chi_square_cdf(const T_y &y, const T_dof &nu, const T_scale &s) {
   typedef typename stan::partials_return_type<T_y, T_dof, T_scale>::type
       T_partials_return;
 
@@ -107,31 +107,30 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_cdf(
     const T_partials_return half_nu_dbl = 0.5 * value_of(nu_vec[n]);
     const T_partials_return s_dbl = value_of(s_vec[n]);
     const T_partials_return half_s2_overx_dbl = 0.5 * s_dbl * s_dbl * y_inv_dbl;
-    const T_partials_return half_nu_s2_overx_dbl
-        = 2.0 * half_nu_dbl * half_s2_overx_dbl;
+    const T_partials_return half_nu_s2_overx_dbl =
+        2.0 * half_nu_dbl * half_s2_overx_dbl;
 
     const T_partials_return Pn = gamma_q(half_nu_dbl, half_nu_s2_overx_dbl);
-    const T_partials_return gamma_p_deriv
-        = exp(-half_nu_s2_overx_dbl)
-          * pow(half_nu_s2_overx_dbl, half_nu_dbl - 1) / tgamma(half_nu_dbl);
+    const T_partials_return gamma_p_deriv =
+        exp(-half_nu_s2_overx_dbl) *
+        pow(half_nu_s2_overx_dbl, half_nu_dbl - 1) / tgamma(half_nu_dbl);
 
     P *= Pn;
 
     if (!is_constant_struct<T_y>::value)
-      ops_partials.edge1_.partials_[n]
-          += half_nu_s2_overx_dbl * y_inv_dbl * gamma_p_deriv / Pn;
+      ops_partials.edge1_.partials_[n] +=
+          half_nu_s2_overx_dbl * y_inv_dbl * gamma_p_deriv / Pn;
 
     if (!is_constant_struct<T_dof>::value)
-      ops_partials.edge2_.partials_[n]
-          += (0.5
-                  * grad_reg_inc_gamma(half_nu_dbl, half_nu_s2_overx_dbl,
-                                       gamma_vec[n], digamma_vec[n])
-              - half_s2_overx_dbl * gamma_p_deriv)
-             / Pn;
+      ops_partials.edge2_.partials_[n] +=
+          (0.5 * grad_reg_inc_gamma(half_nu_dbl, half_nu_s2_overx_dbl,
+                                    gamma_vec[n], digamma_vec[n]) -
+           half_s2_overx_dbl * gamma_p_deriv) /
+          Pn;
 
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge3_.partials_[n]
-          += -2.0 * half_nu_dbl * s_dbl * y_inv_dbl * gamma_p_deriv / Pn;
+      ops_partials.edge3_.partials_[n] +=
+          -2.0 * half_nu_dbl * s_dbl * y_inv_dbl * gamma_p_deriv / Pn;
   }
 
   if (!is_constant_struct<T_y>::value) {
@@ -149,6 +148,6 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_cdf(
   return ops_partials.build(P);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

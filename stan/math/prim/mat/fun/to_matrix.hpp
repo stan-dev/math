@@ -22,8 +22,8 @@ namespace math {
  * @return the matrix representation of the input
  */
 template <typename T, int R, int C>
-inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
-    const Eigen::Matrix<T, R, C> &x) {
+inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+to_matrix(const Eigen::Matrix<T, R, C> &x) {
   return x;
 }
 
@@ -36,8 +36,8 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
  * @return the matrix representation of the input
  */
 template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
-    const std::vector<Eigen::Matrix<T, 1, Eigen::Dynamic>> &x) {
+inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+to_matrix(const std::vector<Eigen::Matrix<T, 1, Eigen::Dynamic>> &x) {
   int rows = x.size();
   if (rows == 0)
     return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>(0, 0);
@@ -89,8 +89,8 @@ to_matrix(const std::vector<std::vector<T>> &x) {
  * do not match
  */
 template <typename T, int R, int C>
-inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
-    const Eigen::Matrix<T, R, C> &x, int m, int n) {
+inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+to_matrix(const Eigen::Matrix<T, R, C> &x, int m, int n) {
   static const char *function = "to_matrix(matrix)";
   check_size_match(function, "rows * columns", m * n, "vector size", x.size());
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> y = x;
@@ -111,8 +111,8 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
  * if the sizes do not match
  */
 template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
-    const std::vector<T> &x, int m, int n) {
+inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+to_matrix(const std::vector<T> &x, int m, int n) {
   static const char *function = "to_matrix(array)";
   check_size_match(function, "rows * columns", m * n, "vector size", x.size());
   return Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>(
@@ -130,8 +130,8 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
  * @throw <code>std::invalid_argument</code>
  * if the sizes do not match
  */
-inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
-    const std::vector<int> &x, int m, int n) {
+inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>
+to_matrix(const std::vector<int> &x, int m, int n) {
   static const char *function = "to_matrix(array)";
   int size = x.size();
   check_size_match(function, "rows * columns", m * n, "vector size", size);
@@ -158,8 +158,8 @@ inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
  * if the sizes do not match
  */
 template <typename T, int R, int C>
-inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
-    const Eigen::Matrix<T, R, C> &x, int m, int n, bool col_major) {
+inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+to_matrix(const Eigen::Matrix<T, R, C> &x, int m, int n, bool col_major) {
   if (col_major)
     return to_matrix(x, m, n);
   check_size_match("to_matrix", "rows * columns", m * n, "matrix size",
@@ -204,6 +204,6 @@ to_matrix(const std::vector<T> &x, int m, int n, bool col_major) {
   return result;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -33,7 +33,7 @@ class matrix_exp_action_handler {
     return m.colwise().lpNorm<1>().maxCoeff();
   }
 
- public:
+public:
   /* Constructor
    */
   matrix_exp_action_handler() {}
@@ -83,7 +83,7 @@ class matrix_exp_action_handler {
           break;
       }
       res.col(col) = F;
-    }  // loop b columns
+    } // loop b columns
     return res;
   }
 
@@ -121,7 +121,7 @@ class matrix_exp_action_handler {
   }
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

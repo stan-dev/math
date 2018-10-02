@@ -31,8 +31,7 @@ namespace math {
  * @tparam F Type of function to apply.
  * @tparam T Type of argument to which function is applied.
  */
-template <typename F, typename T>
-struct apply_scalar_unary {
+template <typename F, typename T> struct apply_scalar_unary {
   /**
    * Type of underlying scalar for the matrix type T.
    */
@@ -68,8 +67,7 @@ struct apply_scalar_unary {
  *
  * @tparam F Type of function defining static apply function.
  */
-template <typename F>
-struct apply_scalar_unary<F, double> {
+template <typename F> struct apply_scalar_unary<F, double> {
   /**
    * The return type, double.
    */
@@ -95,8 +93,7 @@ struct apply_scalar_unary<F, double> {
  *
  * @tparam F Type of function defining static apply function.
  */
-template <typename F>
-struct apply_scalar_unary<F, int> {
+template <typename F> struct apply_scalar_unary<F, int> {
   /**
    * The return type, double.
    */
@@ -123,8 +120,7 @@ struct apply_scalar_unary<F, int> {
  * @tparam F Class defining a static apply function.
  * @tparam T Type of element contained in standard vector.
  */
-template <typename F, typename T>
-struct apply_scalar_unary<F, std::vector<T>> {
+template <typename F, typename T> struct apply_scalar_unary<F, std::vector<T>> {
   /**
    * Return type, which is calculated recursively as a standard
    * vector of the return type of the contained type T.
@@ -149,6 +145,6 @@ struct apply_scalar_unary<F, std::vector<T>> {
   }
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

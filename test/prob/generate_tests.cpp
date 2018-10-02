@@ -62,8 +62,7 @@ std::ostream &operator<<(std::ostream &o, pair<string, string> &p) {
   return o;
 }
 
-template <class T>
-std::ostream &operator<<(std::ostream &o, vector<T> &vec) {
+template <class T> std::ostream &operator<<(std::ostream &o, vector<T> &vec) {
   o << "vector size: " << vec.size() << endl;
   for (size_t n = 0; n < vec.size(); n++) {
     o << "  \'" << vec[n] << "\'" << endl;
@@ -189,14 +188,14 @@ bool check_all_double(string base, string arg) {
                           boost::token_compress_on);
 
   for (size_t i = 0; i < tokens.size(); i++) {
-    if (tokens[i] == "1" || tokens[i] == "Eigen::Dynamic>" || tokens[i] == "1>"
-        || tokens[i] == "Eigen::Dynamic")
+    if (tokens[i] == "1" || tokens[i] == "Eigen::Dynamic>" ||
+        tokens[i] == "1>" || tokens[i] == "Eigen::Dynamic")
       result = result && true;
     else {
-      temp = (tokens[i] == "double") || (tokens[i] == "std::vector<double>")
-             || (tokens[i] == "Eigen::Matrix<double") || (tokens[i] == "int")
-             || (tokens[i] == "std::vector<int>")
-             || (tokens[i] == "Eigen::Matrix<int");
+      temp = (tokens[i] == "double") || (tokens[i] == "std::vector<double>") ||
+             (tokens[i] == "Eigen::Matrix<double") || (tokens[i] == "int") ||
+             (tokens[i] == "std::vector<int>") ||
+             (tokens[i] == "Eigen::Matrix<int");
       result = result && temp;
     }
   }
@@ -358,23 +357,23 @@ int create_files(const int &argc, const char *argv[], const int &index,
 
   string in_name = argv[1];
 
-  size_t last_in_suffix
-      = in_name.find_last_of(in_suffix) + 1 - in_suffix.length();
+  size_t last_in_suffix =
+      in_name.find_last_of(in_suffix) + 1 - in_suffix.length();
   string out_name_base = in_name.substr(0, last_in_suffix);
 
   string file = read_file(in_name);
 
   string arguments = read_arguments_from_file(file);
-  vector<vector<string>> argument_sequence
-      = build_argument_sequence(arguments, index);
+  vector<vector<string>> argument_sequence =
+      build_argument_sequence(arguments, index);
 
   int num_tests;
   if (index == 1)
     num_tests = size(argument_sequence);
   else
-    num_tests = size(argument_sequence)
-                - std::pow(3 + ROW_VECTORS, num_ints(arguments))
-                      * std::pow(3 + ROW_VECTORS, num_doubles(arguments));
+    num_tests = size(argument_sequence) -
+                std::pow(3 + ROW_VECTORS, num_ints(arguments)) *
+                    std::pow(3 + ROW_VECTORS, num_doubles(arguments));
 
   vector<std::ostream *> outs;
   const double BATCHES = N_TESTS > 0 ? num_tests / N_TESTS : -N_TESTS;
@@ -423,11 +422,11 @@ int create_files(const int &argc, const char *argv[], const int &index,
  */
 int main(int argc, const char *argv[]) {
   int N_TESTS = atoi(argv[2]);
-  create_files(argc, argv, 1, -1, N_TESTS);  // create var tests
-  create_files(argc, argv, 2, -1, N_TESTS);  // create fd tests
-  create_files(argc, argv, 3, -1, N_TESTS);  // create fv tests
-  create_files(argc, argv, 4, -1, N_TESTS);  // create ffd tests
-  create_files(argc, argv, 5, -1, N_TESTS);  // create ffv tests
+  create_files(argc, argv, 1, -1, N_TESTS); // create var tests
+  create_files(argc, argv, 2, -1, N_TESTS); // create fd tests
+  create_files(argc, argv, 3, -1, N_TESTS); // create fv tests
+  create_files(argc, argv, 4, -1, N_TESTS); // create ffd tests
+  create_files(argc, argv, 5, -1, N_TESTS); // create ffv tests
 
   return 0;
 }

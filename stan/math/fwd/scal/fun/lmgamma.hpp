@@ -10,8 +10,8 @@ namespace stan {
 namespace math {
 
 template <typename T>
-inline fvar<typename stan::return_type<T, int>::type> lmgamma(
-    int x1, const fvar<T> &x2) {
+inline fvar<typename stan::return_type<T, int>::type>
+lmgamma(int x1, const fvar<T> &x2) {
   using std::log;
   T deriv = 0;
   for (int count = 1; count < x1 + 1; count++)
@@ -19,6 +19,6 @@ inline fvar<typename stan::return_type<T, int>::type> lmgamma(
   return fvar<typename stan::return_type<T, int>::type>(lmgamma(x1, x2.val_),
                                                         deriv);
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

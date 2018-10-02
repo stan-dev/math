@@ -99,8 +99,7 @@ inline std::vector<int> mpi_map_chunks(std::size_t num_jobs,
   return chunks;
 }
 
-template <typename T>
-std::unique_lock<std::mutex> mpi_broadcast_command();
+template <typename T> std::unique_lock<std::mutex> mpi_broadcast_command();
 
 /**
  * MPI cluster holds MPI resources and must be initialized only
@@ -206,8 +205,8 @@ struct mpi_cluster {
  * derived from mpi_command
  * @return A unique_lock instance locking the mpi_cluster
  */
-inline std::unique_lock<std::mutex> mpi_broadcast_command(
-    std::shared_ptr<mpi_command> &command) {
+inline std::unique_lock<std::mutex>
+mpi_broadcast_command(std::shared_ptr<mpi_command> &command) {
   boost::mpi::communicator world;
 
   if (world.rank() != 0)
@@ -234,15 +233,14 @@ inline std::unique_lock<std::mutex> mpi_broadcast_command(
  * mpi_command
  * @return A unique_lock instance locking the mpi_cluster
  */
-template <typename T>
-std::unique_lock<std::mutex> mpi_broadcast_command() {
+template <typename T> std::unique_lock<std::mutex> mpi_broadcast_command() {
   std::shared_ptr<mpi_command> command(new T);
 
   return mpi_broadcast_command(command);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif
 

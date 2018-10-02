@@ -35,8 +35,7 @@ inline int max(const std::vector<int> &x) {
  * @return Maximum coefficient value in the vector.
  * @tparam T Type of values being compared and returned
  */
-template <typename T>
-inline T max(const std::vector<T> &x) {
+template <typename T> inline T max(const std::vector<T> &x) {
   if (x.size() == 0)
     return -std::numeric_limits<T>::infinity();
   T max = x[0];
@@ -59,6 +58,6 @@ inline T max(const Eigen::Matrix<T, R, C> &m) {
   return m.maxCoeff();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

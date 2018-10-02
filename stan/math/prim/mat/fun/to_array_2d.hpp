@@ -9,8 +9,8 @@ namespace math {
 
 // real[, ] to_array_2d(matrix)
 template <typename T>
-inline std::vector<std::vector<T>> to_array_2d(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &matrix) {
+inline std::vector<std::vector<T>>
+to_array_2d(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &matrix) {
   using std::vector;
   const T *datap = matrix.data();
   int C = matrix.cols();
@@ -22,6 +22,6 @@ inline std::vector<std::vector<T>> to_array_2d(
   return result;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

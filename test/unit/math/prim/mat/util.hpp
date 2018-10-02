@@ -30,8 +30,7 @@ void expect_symmetric(const Eigen::MatrixXd &a) {
  * @param[in, out] rng Random number generator.
  * @return Random k x k symmetric, positive-definite matrix.
  */
-template <typename RNG>
-Eigen::MatrixXd spd_rng(int k, RNG &rng) {
+template <typename RNG> Eigen::MatrixXd spd_rng(int k, RNG &rng) {
   using Eigen::MatrixXd;
   using stan::math::normal_rng;
   MatrixXd sigma = MatrixXd::Zero(k, k);
@@ -39,14 +38,14 @@ Eigen::MatrixXd spd_rng(int k, RNG &rng) {
     for (int i = 0; i <= j; ++i)
       sigma(i, j) = normal_rng(0, 1, rng);
   for (int i = 0; i < k; ++i)
-    sigma(i, i) *= sigma(i, i);               // pos. diagonal
-  sigma = sigma.transpose() * sigma;          // reconstruct full matrix
-  sigma = 0.5 * (sigma + sigma.transpose());  // symmetrize
+    sigma(i, i) *= sigma(i, i);              // pos. diagonal
+  sigma = sigma.transpose() * sigma;         // reconstruct full matrix
+  sigma = 0.5 * (sigma + sigma.transpose()); // symmetrize
   for (int i = 0; i < k; ++i)
-    sigma(i, i) += 5;  // condition
+    sigma(i, i) += 5; // condition
   return sigma;
 }
-}  // namespace unit
-}  // namespace test
-}  // namespace stan
+} // namespace unit
+} // namespace test
+} // namespace stan
 #endif

@@ -8,7 +8,7 @@
 #include <vector>
 
 class NegativeBinomial2TestRig : public VectorIntRNGTestRig {
- public:
+public:
   NegativeBinomial2TestRig()
       : VectorIntRNGTestRig(10000, 10, {0, 1, 2, 3, 4, 5, 6}, {0.1, 1.7, 3.99},
                             {1, 2, 3}, {-2.1, -0.5, 0.0}, {-3, -1, 0},
@@ -21,8 +21,7 @@ class NegativeBinomial2TestRig : public VectorIntRNGTestRig {
     return stan::math::neg_binomial_2_rng(mu, phi, rng);
   }
 
-  template <typename T1>
-  double pmf(int y, T1 mu, double phi, double) const {
+  template <typename T1> double pmf(int y, T1 mu, double phi, double) const {
     return std::exp(stan::math::neg_binomial_2_lpmf(y, mu, phi));
   }
 };

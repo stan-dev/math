@@ -14,8 +14,7 @@ namespace math {
  * @return Arcsine of x in radians.
  */
 struct asin_fun {
-  template <typename T>
-  static inline T fun(const T &x) {
+  template <typename T> static inline T fun(const T &x) {
     using std::asin;
     return asin(x);
   }
@@ -32,7 +31,7 @@ inline typename apply_scalar_unary<asin_fun, T>::return_t asin(const T &x) {
   return apply_scalar_unary<asin_fun, T>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

@@ -115,8 +115,7 @@ TEST(AgradFwdModifiedBesselFirstKind, FvarFvarVar_3rdDeriv) {
 }
 
 struct modified_bessel_first_kind_fun {
-  template <typename T0>
-  inline T0 operator()(const T0 &arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return modified_bessel_first_kind(1, arg1);
   }
 };

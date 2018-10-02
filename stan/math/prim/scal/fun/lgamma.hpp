@@ -47,6 +47,6 @@ inline double lgamma(double x) {
  */
 inline double lgamma(int x) { return boost::math::lgamma(x, boost_policy_t()); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

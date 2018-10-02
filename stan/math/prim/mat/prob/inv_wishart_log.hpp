@@ -49,6 +49,6 @@ inv_wishart_log(
   return inv_wishart_lpdf<T_y, T_dof, T_scale>(W, nu, S);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

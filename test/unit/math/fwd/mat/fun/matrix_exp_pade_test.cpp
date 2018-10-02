@@ -132,23 +132,23 @@ TEST(MathMatrix, matrix_exp_100x100) {
   for (int i = 0; i < size; i++)
     diag_elements(i).d_ = 1.0;
 
-  Matrix<double, Dynamic, Dynamic> exp_diag_elements_d
-      = stan::math::exp(diag_elements_d),
-      exp_A = S * exp_diag_elements_d.asDiagonal() * S_inv;
+  Matrix<double, Dynamic, Dynamic> exp_diag_elements_d =
+                                       stan::math::exp(diag_elements_d),
+                                   exp_A = S *
+                                           exp_diag_elements_d.asDiagonal() *
+                                           S_inv;
 
-  matrix_fd A = S.cast<fvar<double>>() * diag_elements.asDiagonal()
-                * S_inv.cast<fvar<double>>(),
+  matrix_fd A = S.cast<fvar<double>>() * diag_elements.asDiagonal() *
+                S_inv.cast<fvar<double>>(),
             expm_A = stan::math::matrix_exp_pade(A);
 
   // Note: because of the way of matrix was constructed,
   // derivative should be the same as value (same case
   // as in the previous test).
-  double rel_err = 1e-6
-                   * std::max(exp_A.cwiseAbs().maxCoeff(),
-                              expm_A.cwiseAbs().maxCoeff().val_),
-         rel_err_d = 1e-6
-                     * std::max(exp_A.cwiseAbs().maxCoeff(),
-                                expm_A.cwiseAbs().maxCoeff().d_);
+  double rel_err = 1e-6 * std::max(exp_A.cwiseAbs().maxCoeff(),
+                                   expm_A.cwiseAbs().maxCoeff().val_),
+         rel_err_d = 1e-6 * std::max(exp_A.cwiseAbs().maxCoeff(),
+                                     expm_A.cwiseAbs().maxCoeff().d_);
 
   for (int i = 0; i < size; i++) {
     for (int j = 0; j < size; j++) {

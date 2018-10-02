@@ -22,8 +22,8 @@ namespace math {
  *   ordered scalars.
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> positive_ordered_free(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1> &y) {
+Eigen::Matrix<T, Eigen::Dynamic, 1>
+positive_ordered_free(const Eigen::Matrix<T, Eigen::Dynamic, 1> &y) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
@@ -40,6 +40,6 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> positive_ordered_free(
     x[i] = log(y[i] - y[i - 1]);
   return x;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

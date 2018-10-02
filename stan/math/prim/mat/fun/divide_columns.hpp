@@ -45,7 +45,7 @@ divide_columns(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
   }
   return out;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

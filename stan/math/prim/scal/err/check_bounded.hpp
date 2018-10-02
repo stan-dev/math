@@ -60,7 +60,7 @@ struct bounded<T_y, T_low, T_high, true> {
     }
   }
 };
-}  // namespace internal
+} // namespace internal
 
 /**
  * Check if the value is between the low and high
@@ -86,6 +86,6 @@ inline void check_bounded(const char *function, const char *name, const T_y &y,
       function, name, y, low, high);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -36,8 +36,8 @@ namespace math {
  * @tparam T_inv_scale Type of inverse scale.
  */
 template <typename T_y, typename T_inv_scale>
-typename return_type<T_y, T_inv_scale>::type exponential_cdf(
-    const T_y &y, const T_inv_scale &beta) {
+typename return_type<T_y, T_inv_scale>::type
+exponential_cdf(const T_y &y, const T_inv_scale &beta) {
   typedef typename stan::partials_return_type<T_y, T_inv_scale>::type
       T_partials_return;
 
@@ -81,6 +81,6 @@ typename return_type<T_y, T_inv_scale>::type exponential_cdf(
   return ops_partials.build(cdf);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

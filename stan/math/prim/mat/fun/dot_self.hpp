@@ -20,6 +20,6 @@ inline double dot_self(const Eigen::Matrix<double, R, C> &v) {
   return v.squaredNorm();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

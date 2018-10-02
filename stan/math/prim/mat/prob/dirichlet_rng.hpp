@@ -41,8 +41,8 @@ namespace math {
  * @param rng Pseudo-random number generator.
  */
 template <class RNG>
-inline Eigen::VectorXd dirichlet_rng(
-    const Eigen::Matrix<double, Eigen::Dynamic, 1> &alpha, RNG &rng) {
+inline Eigen::VectorXd
+dirichlet_rng(const Eigen::Matrix<double, Eigen::Dynamic, 1> &alpha, RNG &rng) {
   using Eigen::VectorXd;
   using boost::gamma_distribution;
   using boost::random::uniform_real_distribution;
@@ -78,6 +78,6 @@ inline Eigen::VectorXd dirichlet_rng(
   return y / y.sum();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

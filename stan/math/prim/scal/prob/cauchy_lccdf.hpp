@@ -38,8 +38,8 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type cauchy_lccdf(
-    const T_y &y, const T_loc &mu, const T_scale &sigma) {
+typename return_type<T_y, T_loc, T_scale>::type
+cauchy_lccdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
 
@@ -78,8 +78,8 @@ typename return_type<T_y, T_loc, T_scale>::type cauchy_lccdf(
     const T_partials_return Pn = 0.5 - atan(z) / pi();
     ccdf_log += log(Pn);
 
-    const T_partials_return rep_deriv
-        = 1.0 / (Pn * pi() * (z * z * sigma_dbl + sigma_dbl));
+    const T_partials_return rep_deriv =
+        1.0 / (Pn * pi() * (z * z * sigma_dbl + sigma_dbl));
     if (!is_constant_struct<T_y>::value)
       ops_partials.edge1_.partials_[n] -= rep_deriv;
     if (!is_constant_struct<T_loc>::value)
@@ -90,6 +90,6 @@ typename return_type<T_y, T_loc, T_scale>::type cauchy_lccdf(
   return ops_partials.build(ccdf_log);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

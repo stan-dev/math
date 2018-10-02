@@ -12,8 +12,7 @@ namespace math {
  * @tparam T type of promoted element
  * @tparam S type of input element, must be assignable to T
  */
-template <typename T, typename S>
-struct promote_elements {
+template <typename T, typename S> struct promote_elements {
   /**
    * Return input element.
    *
@@ -30,8 +29,7 @@ struct promote_elements {
  *
  * @tparam T type of elements
  */
-template <typename T>
-struct promote_elements<T, T> {
+template <typename T> struct promote_elements<T, T> {
   /**
    * Return input element.
    *
@@ -41,7 +39,7 @@ struct promote_elements<T, T> {
   inline static const T &promote(const T &u) { return u; }
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

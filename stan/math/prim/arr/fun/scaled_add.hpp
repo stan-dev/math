@@ -13,7 +13,7 @@ inline void scaled_add(std::vector<double> &x, const std::vector<double> &y,
     x[i] += lambda * y[i];
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

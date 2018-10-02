@@ -60,6 +60,6 @@ log_falling_factorial(const T1 x, const T2 n) {
   return lgamma(x + 1) - lgamma(x - n + 1);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

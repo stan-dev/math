@@ -35,9 +35,9 @@ TEST(AgradFwdErfc, FvarFvarDouble) {
   fvar<fvar<double>> a = erfc(x);
 
   EXPECT_FLOAT_EQ(erfc(0.5), a.val_.val_);
-  EXPECT_FLOAT_EQ(
-      -2 * exp(-0.5 * 0.5) / sqrt(boost::math::constants::pi<double>()),
-      a.val_.d_);
+  EXPECT_FLOAT_EQ(-2 * exp(-0.5 * 0.5) /
+                      sqrt(boost::math::constants::pi<double>()),
+                  a.val_.d_);
   EXPECT_FLOAT_EQ(0, a.d_.val_);
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 
@@ -48,15 +48,14 @@ TEST(AgradFwdErfc, FvarFvarDouble) {
   a = erfc(y);
   EXPECT_FLOAT_EQ(erfc(0.5), a.val_.val_);
   EXPECT_FLOAT_EQ(0, a.val_.d_);
-  EXPECT_FLOAT_EQ(
-      -2 * exp(-0.5 * 0.5) / sqrt(boost::math::constants::pi<double>()),
-      a.d_.val_);
+  EXPECT_FLOAT_EQ(-2 * exp(-0.5 * 0.5) /
+                      sqrt(boost::math::constants::pi<double>()),
+                  a.d_.val_);
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 }
 
 struct erfc_fun {
-  template <typename T0>
-  inline T0 operator()(const T0 &arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return erfc(arg1);
   }
 };

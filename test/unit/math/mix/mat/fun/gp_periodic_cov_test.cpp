@@ -1361,9 +1361,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov1_eigen_vec_invalid_values) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
 
   EXPECT_THROW(cov = gp_periodic_cov(x_vec_d, sigma_bad, l, p),
                std::domain_error);
@@ -1675,9 +1675,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov1_eigen_vec_nan_values) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
 
   EXPECT_THROW(cov = gp_periodic_cov(x_vec_d, sigma_bad, l, p),
                std::domain_error);
@@ -1989,9 +1989,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov1_eigen_rvec_invalid_values) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
 
   EXPECT_THROW(cov = gp_periodic_cov(x_vec_d, sigma_bad, l, p),
                std::domain_error);
@@ -2303,9 +2303,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov1_eigen_rvec_nan_values) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
 
   EXPECT_THROW(cov = gp_periodic_cov(x_vec_d, sigma_bad, l, p),
                std::domain_error);
@@ -2548,9 +2548,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_bad, p),
@@ -2561,21 +2561,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -2652,9 +2652,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_bad, p),
@@ -2665,21 +2665,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -2706,9 +2706,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_d_bad, p),
@@ -2719,21 +2719,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -2760,9 +2760,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_d_bad, p),
@@ -2773,21 +2773,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -2814,9 +2814,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_bad, p_d),
@@ -2827,21 +2827,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -2868,9 +2868,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_bad, p_d),
@@ -2881,21 +2881,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -3303,21 +3303,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -3327,24 +3327,24 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -3365,21 +3365,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -3389,24 +3389,24 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -3513,9 +3513,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
+               std::domain_error);
 
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv, sigma_d_bad, l, p),
                std::domain_error);
@@ -3539,9 +3539,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d, l_bad, p),
@@ -3552,21 +3552,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -3643,9 +3643,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_d_bad, p),
@@ -3656,21 +3656,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -3747,9 +3747,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_bad, p_d),
@@ -3760,21 +3760,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -3970,9 +3970,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_bad, p),
@@ -3983,21 +3983,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -4074,9 +4074,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_bad, p),
@@ -4087,21 +4087,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -4128,9 +4128,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_d_bad, p),
@@ -4141,21 +4141,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -4182,9 +4182,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_d_bad, p),
@@ -4195,21 +4195,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -4236,9 +4236,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_bad, p_d),
@@ -4249,21 +4249,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -4290,9 +4290,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_bad, p_d),
@@ -4303,21 +4303,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -4725,21 +4725,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -4749,24 +4749,24 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -4787,21 +4787,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -4811,24 +4811,24 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -4935,9 +4935,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
+               std::domain_error);
 
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv, sigma_d_bad, l, p),
                std::domain_error);
@@ -4961,9 +4961,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d, l_bad, p),
@@ -4974,21 +4974,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -5065,9 +5065,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_d_bad, p),
@@ -5078,21 +5078,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -5169,9 +5169,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_bad, p_d),
@@ -5182,21 +5182,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -5376,9 +5376,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_bad, p),
@@ -5389,21 +5389,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -5480,9 +5480,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_bad, p),
@@ -5493,21 +5493,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -5534,9 +5534,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_d_bad, p),
@@ -5547,21 +5547,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -5588,9 +5588,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_d_bad, p),
@@ -5601,21 +5601,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -5642,9 +5642,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_bad, p_d),
@@ -5655,21 +5655,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -5696,9 +5696,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_bad, p_d),
@@ -5709,21 +5709,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -6115,21 +6115,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -6139,24 +6139,24 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -6177,21 +6177,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -6201,24 +6201,24 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -6325,9 +6325,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
+               std::domain_error);
 
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv, sigma_d_bad, l, p),
                std::domain_error);
@@ -6351,9 +6351,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d, l_bad, p),
@@ -6364,21 +6364,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -6455,9 +6455,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_d_bad, p),
@@ -6468,21 +6468,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -6559,9 +6559,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_bad, p_d),
@@ -6572,21 +6572,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -6766,9 +6766,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_bad, p),
@@ -6779,21 +6779,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -6870,9 +6870,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_bad, p),
@@ -6883,21 +6883,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -6924,9 +6924,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_d_bad, p),
@@ -6937,21 +6937,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -6978,9 +6978,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_d_bad, p),
@@ -6991,21 +6991,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -7032,9 +7032,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_bad, p_d),
@@ -7045,21 +7045,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -7086,9 +7086,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_bad, p_d),
@@ -7099,21 +7099,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -7505,21 +7505,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -7529,24 +7529,24 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -7567,21 +7567,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -7591,24 +7591,24 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -7715,9 +7715,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
+               std::domain_error);
 
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv, sigma_d_bad, l, p),
                std::domain_error);
@@ -7741,9 +7741,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d, l_bad, p),
@@ -7754,21 +7754,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -7845,9 +7845,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_d_bad, p),
@@ -7858,21 +7858,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -7949,9 +7949,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_bad, p_d),
@@ -7962,21 +7962,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -8156,9 +8156,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_bad, p),
@@ -8169,21 +8169,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -8260,9 +8260,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_bad, p),
@@ -8273,21 +8273,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -8314,9 +8314,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_d_bad, p),
@@ -8327,21 +8327,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -8368,9 +8368,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_d_bad, p),
@@ -8381,21 +8381,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -8422,9 +8422,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_bad, p_d),
@@ -8435,21 +8435,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -8476,9 +8476,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_bad, p_d),
@@ -8489,21 +8489,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -8895,21 +8895,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -8919,24 +8919,24 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -8957,21 +8957,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -8981,24 +8981,24 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -9105,9 +9105,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
+               std::domain_error);
 
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv, sigma_d_bad, l, p),
                std::domain_error);
@@ -9131,9 +9131,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d, l_bad, p),
@@ -9144,21 +9144,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -9235,9 +9235,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_d_bad, p),
@@ -9248,21 +9248,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -9339,9 +9339,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_bad, p_d),
@@ -9352,21 +9352,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -9546,9 +9546,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_bad, p),
@@ -9559,21 +9559,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -9650,9 +9650,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_bad, p),
@@ -9663,21 +9663,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -9704,9 +9704,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_d_bad, p),
@@ -9717,21 +9717,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -9758,9 +9758,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_d_bad, p),
@@ -9771,21 +9771,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -9812,9 +9812,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_bad, p_d),
@@ -9825,21 +9825,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -9866,9 +9866,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_bad, p_d),
@@ -9879,21 +9879,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -10285,21 +10285,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -10309,24 +10309,24 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -10347,21 +10347,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -10371,24 +10371,24 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -10495,9 +10495,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
+               std::domain_error);
 
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv, sigma_d_bad, l, p),
                std::domain_error);
@@ -10521,9 +10521,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d, l_bad, p),
@@ -10534,21 +10534,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -10625,9 +10625,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_d_bad, p),
@@ -10638,21 +10638,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -10729,9 +10729,9 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_bad, p_d),
@@ -10742,21 +10742,21 @@ TEST(AgradMixMath, fv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -11656,9 +11656,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov1_eigen_vec_invalid_values) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
 
   EXPECT_THROW(cov = gp_periodic_cov(x_vec_d, sigma_bad, l, p),
                std::domain_error);
@@ -11970,9 +11970,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov1_eigen_vec_nan_values) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
 
   EXPECT_THROW(cov = gp_periodic_cov(x_vec_d, sigma_bad, l, p),
                std::domain_error);
@@ -12284,9 +12284,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov1_eigen_rvec_invalid_values) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
 
   EXPECT_THROW(cov = gp_periodic_cov(x_vec_d, sigma_bad, l, p),
                std::domain_error);
@@ -12598,9 +12598,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov1_eigen_rvec_nan_values) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x_vec_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
 
   EXPECT_THROW(cov = gp_periodic_cov(x_vec_d, sigma_bad, l, p),
                std::domain_error);
@@ -12843,9 +12843,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_bad, p),
@@ -12856,21 +12856,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -12947,9 +12947,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_bad, p),
@@ -12960,21 +12960,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -13001,9 +13001,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_d_bad, p),
@@ -13014,21 +13014,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -13055,9 +13055,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_d_bad, p),
@@ -13068,21 +13068,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -13109,9 +13109,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_bad, p_d),
@@ -13122,21 +13122,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -13163,9 +13163,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_bad, p_d),
@@ -13176,21 +13176,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -13598,21 +13598,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -13622,24 +13622,24 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -13660,21 +13660,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -13684,24 +13684,24 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -13808,9 +13808,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
+               std::domain_error);
 
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv, sigma_d_bad, l, p),
                std::domain_error);
@@ -13834,9 +13834,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d, l_bad, p),
@@ -13847,21 +13847,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -13938,9 +13938,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_d_bad, p),
@@ -13951,21 +13951,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -14042,9 +14042,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_bad, p_d),
@@ -14055,21 +14055,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -14265,9 +14265,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_bad, p),
@@ -14278,21 +14278,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -14369,9 +14369,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_bad, p),
@@ -14382,21 +14382,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -14423,9 +14423,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_d_bad, p),
@@ -14436,21 +14436,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -14477,9 +14477,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_d_bad, p),
@@ -14490,21 +14490,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -14531,9 +14531,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_bad, p_d),
@@ -14544,21 +14544,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -14585,9 +14585,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_bad, p_d),
@@ -14598,21 +14598,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -15021,21 +15021,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -15045,24 +15045,24 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -15083,21 +15083,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -15107,24 +15107,24 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -15231,9 +15231,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
+               std::domain_error);
 
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv, sigma_d_bad, l, p),
                std::domain_error);
@@ -15257,9 +15257,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d, l_bad, p),
@@ -15270,21 +15270,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -15361,9 +15361,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_d_bad, p),
@@ -15374,21 +15374,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -15465,9 +15465,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_bad, p_d),
@@ -15478,21 +15478,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -15672,9 +15672,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_bad, p),
@@ -15685,21 +15685,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -15776,9 +15776,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_bad, p),
@@ -15789,21 +15789,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -15830,9 +15830,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_d_bad, p),
@@ -15843,21 +15843,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -15884,9 +15884,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_d_bad, p),
@@ -15897,21 +15897,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -15938,9 +15938,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_bad, p_d),
@@ -15951,21 +15951,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -15992,9 +15992,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_bad, p_d),
@@ -16005,21 +16005,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -16411,21 +16411,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -16435,24 +16435,24 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -16473,21 +16473,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -16497,24 +16497,24 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -16621,9 +16621,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
+               std::domain_error);
 
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv, sigma_d_bad, l, p),
                std::domain_error);
@@ -16647,9 +16647,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d, l_bad, p),
@@ -16660,21 +16660,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -16751,9 +16751,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_d_bad, p),
@@ -16764,21 +16764,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -16855,9 +16855,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_bad, p_d),
@@ -16868,21 +16868,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -17062,9 +17062,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_bad, p),
@@ -17075,21 +17075,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -17166,9 +17166,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_bad, p),
@@ -17179,21 +17179,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -17220,9 +17220,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_d_bad, p),
@@ -17233,21 +17233,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -17274,9 +17274,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_d_bad, p),
@@ -17287,21 +17287,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -17328,9 +17328,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_bad, p_d),
@@ -17341,21 +17341,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -17382,9 +17382,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_bad, p_d),
@@ -17395,21 +17395,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -17801,21 +17801,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -17825,24 +17825,24 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -17863,21 +17863,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -17887,24 +17887,24 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -18011,9 +18011,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
+               std::domain_error);
 
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv, sigma_d_bad, l, p),
                std::domain_error);
@@ -18037,9 +18037,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d, l_bad, p),
@@ -18050,21 +18050,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -18141,9 +18141,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_d_bad, p),
@@ -18154,21 +18154,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -18245,9 +18245,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_bad, p_d),
@@ -18258,21 +18258,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_vec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -18452,9 +18452,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_bad, p),
@@ -18465,21 +18465,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -18556,9 +18556,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_bad, p),
@@ -18569,21 +18569,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -18610,9 +18610,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_d_bad, p),
@@ -18623,21 +18623,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -18664,9 +18664,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_d_bad, p),
@@ -18677,21 +18677,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -18718,9 +18718,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_bad, p_d),
@@ -18731,21 +18731,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -18772,9 +18772,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_bad, p_d),
@@ -18785,21 +18785,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -19191,21 +19191,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -19215,24 +19215,24 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -19253,21 +19253,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -19277,24 +19277,24 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -19401,9 +19401,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
+               std::domain_error);
 
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv, sigma_d_bad, l, p),
                std::domain_error);
@@ -19427,9 +19427,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d, l_bad, p),
@@ -19440,21 +19440,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -19531,9 +19531,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_d_bad, p),
@@ -19544,21 +19544,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -19635,9 +19635,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_bad, p_d),
@@ -19648,21 +19648,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_invalid_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -19842,9 +19842,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_bad, p),
@@ -19855,21 +19855,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -19946,9 +19946,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_bad, p),
@@ -19959,21 +19959,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -20000,9 +20000,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_d_bad, p),
@@ -20013,21 +20013,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -20054,9 +20054,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_d_bad, p),
@@ -20067,21 +20067,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -20108,9 +20108,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma, l_bad, p_d),
@@ -20121,21 +20121,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -20162,9 +20162,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma, l_bad, p_d),
@@ -20175,21 +20175,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_1) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);
@@ -20581,21 +20581,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -20605,24 +20605,24 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_fv_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_fv_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -20643,21 +20643,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
@@ -20667,24 +20667,24 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d, l_d, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv, x2_d_bad, sigma_d_bad, l_d_bad, p_d_bad),
       std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d, l_d, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_fv_bad, x2_d_bad, sigma_d_bad, l_d_bad, p_d),
       std::domain_error);
@@ -20791,9 +20791,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_d_bad, sigma_bad, l_bad, p_bad),
+               std::domain_error);
 
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv, sigma_d_bad, l, p),
                std::domain_error);
@@ -20817,9 +20817,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d, l_bad, p),
@@ -20830,21 +20830,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d, l, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_d_bad, l_bad, p_bad),
       std::domain_error);
@@ -20921,9 +20921,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_d_bad, p),
@@ -20934,21 +20934,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d_bad, p),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_d, p_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d, p_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_d_bad, p_bad),
       std::domain_error);
@@ -21025,9 +21025,9 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma, l_bad, p_d),
@@ -21038,21 +21038,21 @@ TEST(AgradMixMath, ffv_gp_periodic_cov2_eigen_rvec_nan_values_2) {
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l_bad, p_d),
                std::domain_error);
   EXPECT_THROW(cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma, l, p_d_bad),
                std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
-      std::domain_error);
-  EXPECT_THROW(
-      cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
-      std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d),
+               std::domain_error);
+  EXPECT_THROW(cov =
+                   gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l, p_d_bad),
+               std::domain_error);
   EXPECT_THROW(
       cov = gp_periodic_cov(x1_d_bad, x2_fv_bad, sigma_bad, l_bad, p_d_bad),
       std::domain_error);

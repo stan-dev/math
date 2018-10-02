@@ -22,6 +22,6 @@ inline typename return_type<T1, T2>::type distance(const T1 &x1, const T2 &x2) {
   check_finite("distance", "x2", x2);
   return abs(x1 - x2);
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

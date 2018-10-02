@@ -8,10 +8,7 @@ namespace stan {
 namespace math {
 // prints used in generator for print() statements in modeling language
 
-template <typename T>
-void stan_print(std::ostream *o, const T &x) {
-  *o << x;
-}
+template <typename T> void stan_print(std::ostream *o, const T &x) { *o << x; }
 
 template <typename T>
 void stan_print(std::ostream *o, const std::vector<T> &x) {
@@ -64,6 +61,6 @@ void stan_print(std::ostream *o,
   *o << ']';
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

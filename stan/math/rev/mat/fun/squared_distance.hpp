@@ -19,15 +19,15 @@ namespace math {
 namespace {
 
 class squared_distance_vv_vari : public vari {
- protected:
+protected:
   vari **v1_;
   vari **v2_;
   size_t length_;
 
   template <int R1, int C1, int R2, int C2>
-  inline static double var_squared_distance(
-      const Eigen::Matrix<var, R1, C1> &v1,
-      const Eigen::Matrix<var, R2, C2> &v2) {
+  inline static double
+  var_squared_distance(const Eigen::Matrix<var, R1, C1> &v1,
+                       const Eigen::Matrix<var, R2, C2> &v2) {
     using Eigen::Matrix;
     typedef typename index_type<Matrix<var, R1, R2>>::type idx_t;
     double result = 0;
@@ -38,7 +38,7 @@ class squared_distance_vv_vari : public vari {
     return result;
   }
 
- public:
+public:
   template <int R1, int C1, int R2, int C2>
   squared_distance_vv_vari(const Eigen::Matrix<var, R1, C1> &v1,
                            const Eigen::Matrix<var, R2, C2> &v2)
@@ -62,15 +62,15 @@ class squared_distance_vv_vari : public vari {
   }
 };
 class squared_distance_vd_vari : public vari {
- protected:
+protected:
   vari **v1_;
   double *v2_;
   size_t length_;
 
   template <int R1, int C1, int R2, int C2>
-  inline static double var_squared_distance(
-      const Eigen::Matrix<var, R1, C1> &v1,
-      const Eigen::Matrix<double, R2, C2> &v2) {
+  inline static double
+  var_squared_distance(const Eigen::Matrix<var, R1, C1> &v1,
+                       const Eigen::Matrix<double, R2, C2> &v2) {
     using Eigen::Matrix;
     typedef typename index_type<Matrix<double, R1, C1>>::type idx_t;
 
@@ -82,7 +82,7 @@ class squared_distance_vd_vari : public vari {
     return result;
   }
 
- public:
+public:
   template <int R1, int C1, int R2, int C2>
   squared_distance_vd_vari(const Eigen::Matrix<var, R1, C1> &v1,
                            const Eigen::Matrix<double, R2, C2> &v2)
@@ -103,7 +103,7 @@ class squared_distance_vd_vari : public vari {
     }
   }
 };
-}  // namespace
+} // namespace
 
 template <int R1, int C1, int R2, int C2>
 inline var squared_distance(const Eigen::Matrix<var, R1, C1> &v1,
@@ -130,6 +130,6 @@ inline var squared_distance(const Eigen::Matrix<double, R1, C1> &v1,
   return var(new squared_distance_vd_vari(v2, v1));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

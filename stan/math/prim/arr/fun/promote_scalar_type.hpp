@@ -23,6 +23,6 @@ struct promote_scalar_type<T, std::vector<S>> {
   typedef std::vector<typename promote_scalar_type<T, S>::type> type;
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -19,6 +19,6 @@ inline double trace_quad_form(const Eigen::Matrix<double, RA, CA> &A,
   return (B.transpose() * A * B).trace();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

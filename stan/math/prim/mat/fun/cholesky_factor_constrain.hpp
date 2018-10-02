@@ -24,8 +24,9 @@ namespace math {
  * @return Cholesky factor
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_factor_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1> &x, int M, int N) {
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+cholesky_factor_constrain(const Eigen::Matrix<T, Eigen::Dynamic, 1> &x, int M,
+                          int N) {
   using std::exp;
   check_greater_or_equal("cholesky_factor_constrain",
                          "num rows (must be greater or equal to num cols)", M,
@@ -66,8 +67,9 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_factor_constrain(
  * @return Cholesky factor
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_factor_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1> &x, int M, int N, T &lp) {
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+cholesky_factor_constrain(const Eigen::Matrix<T, Eigen::Dynamic, 1> &x, int M,
+                          int N, T &lp) {
   check_size_match("cholesky_factor_constrain", "x.size()", x.size(),
                    "((N * (N + 1)) / 2 + (M - N) * N)",
                    ((N * (N + 1)) / 2 + (M - N) * N));
@@ -81,6 +83,6 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_factor_constrain(
   return cholesky_factor_constrain(x, M, N);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

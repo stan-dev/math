@@ -45,6 +45,6 @@ void check_cholesky_factor_corr(
   }
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

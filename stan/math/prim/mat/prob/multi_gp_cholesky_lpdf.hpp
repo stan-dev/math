@@ -95,6 +95,6 @@ multi_gp_cholesky_lpdf(
   return multi_gp_cholesky_lpdf<false>(y, L, w);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

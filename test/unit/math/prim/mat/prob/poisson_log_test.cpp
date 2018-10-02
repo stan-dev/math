@@ -8,7 +8,7 @@
 #include <vector>
 
 class PoissonLogTestRig : public VectorIntRNGTestRig {
- public:
+public:
   PoissonLogTestRig()
       : VectorIntRNGTestRig(10000, 10, {0, 1, 2, 3, 4, 5, 6},
                             {-0.5, 0.0, 0.1, 1.7}, {-2, 0, 1, 2}, {}, {}) {}
@@ -19,8 +19,7 @@ class PoissonLogTestRig : public VectorIntRNGTestRig {
     return stan::math::poisson_log_rng(alpha, rng);
   }
 
-  template <typename T1>
-  double pmf(int y, T1 alpha, double, double) const {
+  template <typename T1> double pmf(int y, T1 alpha, double, double) const {
     return std::exp(stan::math::poisson_log_lpmf(y, alpha));
   }
 };

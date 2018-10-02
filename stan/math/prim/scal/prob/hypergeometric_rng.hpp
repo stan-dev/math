@@ -37,6 +37,6 @@ inline int hypergeometric_rng(int N, int a, int b, RNG &rng) {
   return min + 1;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

@@ -39,6 +39,6 @@ add_diag(const Eigen::Matrix<T_m, Eigen::Dynamic, Eigen::Dynamic> &mat,
 
   return out;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

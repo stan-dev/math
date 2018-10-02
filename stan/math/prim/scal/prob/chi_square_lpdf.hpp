@@ -120,9 +120,8 @@ typename return_type<T_y, T_dof>::type chi_square_lpdf(const T_y &y,
       ops_partials.edge1_.partials_[n] += (half_nu - 1.0) * inv_y[n] - 0.5;
     }
     if (!is_constant_struct<T_dof>::value) {
-      ops_partials.edge2_.partials_[n] += NEG_LOG_TWO_OVER_TWO
-                                          - digamma_half_nu_over_two[n]
-                                          + log_y[n] * 0.5;
+      ops_partials.edge2_.partials_[n] +=
+          NEG_LOG_TWO_OVER_TWO - digamma_half_nu_over_two[n] + log_y[n] * 0.5;
     }
   }
   return ops_partials.build(logp);
@@ -134,6 +133,6 @@ inline typename return_type<T_y, T_dof>::type chi_square_lpdf(const T_y &y,
   return chi_square_lpdf<false>(y, nu);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

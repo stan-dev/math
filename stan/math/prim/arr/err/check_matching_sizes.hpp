@@ -32,6 +32,6 @@ inline void check_matching_sizes(const char *function, const char *name1,
                    y2.size());
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

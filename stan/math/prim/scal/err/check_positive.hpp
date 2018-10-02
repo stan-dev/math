@@ -14,8 +14,7 @@ namespace math {
 
 namespace {
 
-template <typename T_y, bool is_vec>
-struct positive {
+template <typename T_y, bool is_vec> struct positive {
   static void check(const char *function, const char *name, const T_y &y) {
     // have to use not is_unsigned. is_signed will be false
     // floating point types that have no unsigned versions.
@@ -24,19 +23,18 @@ struct positive {
   }
 };
 
-template <typename T_y>
-struct positive<T_y, true> {
+template <typename T_y> struct positive<T_y, true> {
   static void check(const char *function, const char *name, const T_y &y) {
     using stan::length;
     for (size_t n = 0; n < length(y); n++) {
-      if (!boost::is_unsigned<typename value_type<T_y>::type>::value
-          && !(stan::get(y, n) > 0))
+      if (!boost::is_unsigned<typename value_type<T_y>::type>::value &&
+          !(stan::get(y, n) > 0))
         domain_error_vec(function, name, y, n, "is ", ", but must be > 0!");
     }
   }
 };
 
-}  // namespace
+} // namespace
 
 /**
  * Check if <code>y</code> is positive.
@@ -59,6 +57,6 @@ inline void check_positive(const char *function, const char *name,
   positive<T_y, is_vector_like<T_y>::value>::check(function, name, y);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

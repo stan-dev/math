@@ -12,7 +12,7 @@ namespace math {
 
 namespace {
 class lmgamma_dv_vari : public op_dv_vari {
- public:
+public:
   lmgamma_dv_vari(int a, vari *bvi)
       : op_dv_vari(lmgamma(a, bvi->val_), a, bvi) {}
   void chain() {
@@ -22,12 +22,12 @@ class lmgamma_dv_vari : public op_dv_vari {
     bvi_->adj_ += adj_ * deriv;
   }
 };
-}  // namespace
+} // namespace
 
 inline var lmgamma(int a, const var &b) {
   return var(new lmgamma_dv_vari(a, b.vi_));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

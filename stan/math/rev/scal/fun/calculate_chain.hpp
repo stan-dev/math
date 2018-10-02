@@ -7,9 +7,9 @@ namespace stan {
 namespace math {
 
 inline double calculate_chain(double x, double val) {
-  return std::exp(x - val);  // works out to inv_logit(x)
+  return std::exp(x - val); // works out to inv_logit(x)
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

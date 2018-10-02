@@ -166,8 +166,8 @@ TEST(AgradMixMatrixSum, fv_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(21.0, output.val_.val());
   EXPECT_FLOAT_EQ(6.0, output.d_.val());
 
-  AVEC q
-      = createAVEC(v(0, 0).val(), v(0, 1).val(), v(1, 0).val(), v(1, 1).val());
+  AVEC q =
+      createAVEC(v(0, 0).val(), v(0, 1).val(), v(1, 0).val(), v(1, 1).val());
   VEC h;
   output.val_.grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
@@ -201,8 +201,8 @@ TEST(AgradMixMatrixSum, fv_matrix_2ndDeriv) {
   fvar<var> output;
   output = sum(v);
 
-  AVEC q
-      = createAVEC(v(0, 0).val(), v(0, 1).val(), v(1, 0).val(), v(1, 1).val());
+  AVEC q =
+      createAVEC(v(0, 0).val(), v(0, 1).val(), v(1, 0).val(), v(1, 1).val());
   VEC h;
   output.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);

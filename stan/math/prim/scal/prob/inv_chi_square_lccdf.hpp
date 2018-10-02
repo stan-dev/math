@@ -109,20 +109,18 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lccdf(const T_y &y,
     P += log(Pn);
 
     if (!is_constant_struct<T_y>::value)
-      ops_partials.edge1_.partials_[n]
-          -= 0.5 * y_inv_dbl * y_inv_dbl * exp(-0.5 * y_inv_dbl)
-             * pow(0.5 * y_inv_dbl, 0.5 * nu_dbl - 1) / tgamma(0.5 * nu_dbl)
-             / Pn;
+      ops_partials.edge1_.partials_[n] -=
+          0.5 * y_inv_dbl * y_inv_dbl * exp(-0.5 * y_inv_dbl) *
+          pow(0.5 * y_inv_dbl, 0.5 * nu_dbl - 1) / tgamma(0.5 * nu_dbl) / Pn;
     if (!is_constant_struct<T_dof>::value)
-      ops_partials.edge2_.partials_[n]
-          -= 0.5
-             * grad_reg_inc_gamma(0.5 * nu_dbl, 0.5 * y_inv_dbl, gamma_vec[n],
-                                  digamma_vec[n])
-             / Pn;
+      ops_partials.edge2_.partials_[n] -=
+          0.5 * grad_reg_inc_gamma(0.5 * nu_dbl, 0.5 * y_inv_dbl, gamma_vec[n],
+                                   digamma_vec[n]) /
+          Pn;
   }
   return ops_partials.build(P);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

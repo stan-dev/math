@@ -42,8 +42,7 @@ TEST(AgradRev, log1p_exp) {
 }
 
 struct log1p_exp_fun {
-  template <typename T0>
-  inline T0 operator()(const T0 &arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return log1p_exp(arg1);
   }
 };

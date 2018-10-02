@@ -29,8 +29,8 @@ inline std::vector<T> to_array_1d(const std::vector<T> &x) {
 
 // real[] to_array_1d(...)
 template <typename T>
-inline std::vector<typename scalar_type<T>::type> to_array_1d(
-    const std::vector<std::vector<T>> &x) {
+inline std::vector<typename scalar_type<T>::type>
+to_array_1d(const std::vector<std::vector<T>> &x) {
   size_t size1 = x.size();
   size_t size2 = 0;
   if (size1 != 0)
@@ -42,6 +42,6 @@ inline std::vector<typename scalar_type<T>::type> to_array_1d(
   return to_array_1d(y);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

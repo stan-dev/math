@@ -19,6 +19,6 @@ namespace math {
  */
 inline var trigamma(const var &u) { return trigamma_impl(u); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

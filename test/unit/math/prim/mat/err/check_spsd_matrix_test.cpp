@@ -18,14 +18,14 @@ TEST(ErrorHandlingMatrix, checkSpsdMatrixPosDef) {
 }
 
 TEST(ErrorHandlingMatrix, checkSpsdMatrixZero) {
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y
-      = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>::Zero(3, 3);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y =
+      Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>::Zero(3, 3);
   EXPECT_NO_THROW(stan::math::check_spsd_matrix("checkSpsdMatrix", "y", y));
 }
 
 TEST(ErrorHandlingMatrix, checkSpsdNotSquare) {
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y
-      = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>::Zero(3, 2);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y =
+      Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>::Zero(3, 2);
   EXPECT_THROW(stan::math::check_spsd_matrix("checkSpsdMatrix", "y", y),
                std::invalid_argument);
 }

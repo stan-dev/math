@@ -17,6 +17,6 @@ inline fvar<T> dot_self(const Eigen::Matrix<fvar<T>, R, C> &v) {
   return dot_product(v, v);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

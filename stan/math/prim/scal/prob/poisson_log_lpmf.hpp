@@ -27,8 +27,8 @@ namespace math {
 
 // PoissonLog(n|alpha)  [n >= 0]   = Poisson(n|exp(alpha))
 template <bool propto, typename T_n, typename T_log_rate>
-typename return_type<T_log_rate>::type poisson_log_lpmf(
-    const T_n &n, const T_log_rate &alpha) {
+typename return_type<T_log_rate>::type
+poisson_log_lpmf(const T_n &n, const T_log_rate &alpha) {
   typedef typename stan::partials_return_type<T_n, T_log_rate>::type
       T_partials_return;
 
@@ -58,8 +58,8 @@ typename return_type<T_log_rate>::type poisson_log_lpmf(
     if (std::numeric_limits<double>::infinity() == alpha_vec[i])
       return LOG_ZERO;
   for (size_t i = 0; i < size; i++)
-    if (-std::numeric_limits<double>::infinity() == alpha_vec[i]
-        && n_vec[i] != 0)
+    if (-std::numeric_limits<double>::infinity() == alpha_vec[i] &&
+        n_vec[i] != 0)
       return LOG_ZERO;
 
   operands_and_partials<T_log_rate> ops_partials(alpha);
@@ -73,8 +73,8 @@ typename return_type<T_log_rate>::type poisson_log_lpmf(
       exp_alpha[i] = exp(value_of(alpha_vec[i]));
 
   for (size_t i = 0; i < size; i++) {
-    if (!(alpha_vec[i] == -std::numeric_limits<double>::infinity()
-          && n_vec[i] == 0)) {
+    if (!(alpha_vec[i] == -std::numeric_limits<double>::infinity() &&
+          n_vec[i] == 0)) {
       if (include_summand<propto>::value)
         logp -= lgamma(n_vec[i] + 1.0);
       if (include_summand<propto, T_log_rate>::value)
@@ -88,11 +88,11 @@ typename return_type<T_log_rate>::type poisson_log_lpmf(
 }
 
 template <typename T_n, typename T_log_rate>
-inline typename return_type<T_log_rate>::type poisson_log_lpmf(
-    const T_n &n, const T_log_rate &alpha) {
+inline typename return_type<T_log_rate>::type
+poisson_log_lpmf(const T_n &n, const T_log_rate &alpha) {
   return poisson_log_lpmf<false>(n, alpha);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

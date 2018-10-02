@@ -82,6 +82,6 @@ void finite_diff_grad_hessian(
   fx = f(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

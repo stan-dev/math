@@ -85,6 +85,6 @@ inline row_vector_v to_var(const row_vector_d &rv) {
  */
 inline row_vector_v to_var(const row_vector_v &rv) { return rv; }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

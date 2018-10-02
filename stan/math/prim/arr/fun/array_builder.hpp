@@ -15,12 +15,11 @@ namespace math {
  *
  * @tparam T type of array elements
  */
-template <typename T>
-class array_builder {
- private:
+template <typename T> class array_builder {
+private:
   std::vector<T> x_;
 
- public:
+public:
   /**
    * Construct an array_builder.
    */
@@ -32,8 +31,7 @@ class array_builder {
    * @param u element to add
    * @returns this array_builder object
    */
-  template <typename S>
-  array_builder &add(const S &u) {
+  template <typename S> array_builder &add(const S &u) {
     x_.push_back(promote_elements<T, S>::promote(u));
     return *this;
   }
@@ -46,6 +44,6 @@ class array_builder {
   std::vector<T> array() { return x_; }
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

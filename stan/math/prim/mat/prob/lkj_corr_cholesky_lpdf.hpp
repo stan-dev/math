@@ -72,13 +72,13 @@ lkj_corr_cholesky_lpdf(
     lp += do_lkj_constant(eta, K);
   if (include_summand<propto, T_covar, T_shape>::value) {
     const int Km1 = K - 1;
-    Eigen::Matrix<T_covar, Eigen::Dynamic, 1> log_diagonals
-        = L.diagonal().tail(Km1).array().log();
+    Eigen::Matrix<T_covar, Eigen::Dynamic, 1> log_diagonals =
+        L.diagonal().tail(Km1).array().log();
     Eigen::Matrix<lp_ret, Eigen::Dynamic, 1> values(Km1);
     for (int k = 0; k < Km1; k++)
       values(k) = (Km1 - k - 1) * log_diagonals(k);
-    if ((eta == 1.0)
-        && stan::is_constant<typename stan::scalar_type<T_shape>>::value) {
+    if ((eta == 1.0) &&
+        stan::is_constant<typename stan::scalar_type<T_shape>>::value) {
       lp += sum(values);
       return (lp);
     }
@@ -97,6 +97,6 @@ lkj_corr_cholesky_lpdf(
   return lkj_corr_cholesky_lpdf<false>(L, eta);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

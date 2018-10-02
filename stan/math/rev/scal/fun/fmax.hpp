@@ -120,6 +120,6 @@ inline var fmax(double a, const var &b) {
   return a > b ? var(a) : b;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

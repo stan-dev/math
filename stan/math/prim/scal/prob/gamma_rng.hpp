@@ -32,8 +32,8 @@ namespace math {
  * sizes
  */
 template <typename T_shape, typename T_inv, class RNG>
-inline typename VectorBuilder<true, double, T_shape, T_inv>::type gamma_rng(
-    const T_shape &alpha, const T_inv &beta, RNG &rng) {
+inline typename VectorBuilder<true, double, T_shape, T_inv>::type
+gamma_rng(const T_shape &alpha, const T_inv &beta, RNG &rng) {
   using boost::gamma_distribution;
   using boost::variate_generator;
 
@@ -60,6 +60,6 @@ inline typename VectorBuilder<true, double, T_shape, T_inv>::type gamma_rng(
   return output.data();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

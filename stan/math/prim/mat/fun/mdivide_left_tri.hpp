@@ -41,8 +41,8 @@ mdivide_left_tri(const Eigen::Matrix<T1, R1, C1> &A,
  * @throws std::domain_error if A is not square
  */
 template <int TriView, typename T, int R1, int C1>
-inline Eigen::Matrix<T, R1, C1> mdivide_left_tri(
-    const Eigen::Matrix<T, R1, C1> &A) {
+inline Eigen::Matrix<T, R1, C1>
+mdivide_left_tri(const Eigen::Matrix<T, R1, C1> &A) {
   check_square("mdivide_left_tri", "A", A);
   int n = A.rows();
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> b;
@@ -51,6 +51,6 @@ inline Eigen::Matrix<T, R1, C1> mdivide_left_tri(
   return b;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

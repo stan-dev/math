@@ -69,6 +69,6 @@ skew_normal_rng(const T_loc &mu, const T_scale &sigma, const T_shape &alpha,
   return output.data();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

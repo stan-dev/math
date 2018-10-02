@@ -22,11 +22,11 @@ void resize(std::vector<T> &x, const std::vector<int> &dims, int pos) {
   x.resize(dims[pos]);
   ++pos;
   if (pos >= static_cast<int>(dims.size()))
-    return;  // skips lowest loop to scalar
+    return; // skips lowest loop to scalar
   for (size_t i = 0; i < x.size(); ++i)
     resize(x[i], dims, pos);
 }
-}  // namespace
+} // namespace
 
 /**
  * Recursively resize the specified vector of vectors,
@@ -37,11 +37,10 @@ void resize(std::vector<T> &x, const std::vector<int> &dims, int pos) {
  * @param dims New dimensions.
  * @tparam T Type of object being resized.
  */
-template <typename T>
-inline void resize(T &x, std::vector<int> dims) {
+template <typename T> inline void resize(T &x, std::vector<int> dims) {
   resize(x, dims, 0U);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

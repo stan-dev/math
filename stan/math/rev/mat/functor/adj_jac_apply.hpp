@@ -99,24 +99,19 @@ void build_y_adj(vari **y_vi, const std::array<int, size> &M,
  * definition of dimensionality is deferred to specializations. By
  * default don't have a value (fail to compile)
  */
-template <typename T>
-struct compute_dims {};
+template <typename T> struct compute_dims {};
 
 /**
  * Compute the dimensionality of the given template argument. Double
  * types hav dimensionality zero.
  */
-template <>
-struct compute_dims<double> {
-  static constexpr size_t value = 0;
-};
+template <> struct compute_dims<double> { static constexpr size_t value = 0; };
 
 /**
  * Compute the dimensionality of the given template argument.
  * std::vector has dimension 1
  */
-template <typename T>
-struct compute_dims<std::vector<T>> {
+template <typename T> struct compute_dims<std::vector<T>> {
   static constexpr size_t value = 1;
 };
 
@@ -128,7 +123,7 @@ template <typename T, int R, int C>
 struct compute_dims<Eigen::Matrix<T, R, C>> {
   static constexpr size_t value = 2;
 };
-}  // namespace internal
+} // namespace internal
 
 /**
  * adj_jac_vari interfaces a user supplied functor  with the reverse mode
@@ -144,11 +139,10 @@ struct compute_dims<Eigen::Matrix<T, R, C>> {
  * @tparam F class of functor
  * @tparam Targs Types of arguments
  */
-template <typename F, typename... Targs>
-struct adj_jac_vari : public vari {
+template <typename F, typename... Targs> struct adj_jac_vari : public vari {
   std::array<bool, sizeof...(Targs)> is_var_;
-  using FReturnType
-      = std::result_of_t<F(decltype(is_var_), decltype(value_of(Targs()))...)>;
+  using FReturnType =
+      std::result_of_t<F(decltype(is_var_), decltype(value_of(Targs()))...)>;
 
   F f_;
   std::array<int, sizeof...(Targs)> offsets_;
@@ -182,7 +176,7 @@ struct adj_jac_vari : public vari {
   template <int R, int C, typename... Pargs>
   size_t count_memory(size_t count, const Eigen::Matrix<var, R, C> &x,
                       const Pargs &... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs)-1;
     offsets_[t] = count;
     count += x.size();
     return count_memory(count, args...);
@@ -191,7 +185,7 @@ struct adj_jac_vari : public vari {
   template <int R, int C, typename... Pargs>
   size_t count_memory(size_t count, const Eigen::Matrix<double, R, C> &x,
                       const Pargs &... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs)-1;
     offsets_[t] = count;
     return count_memory(count, args...);
   }
@@ -199,7 +193,7 @@ struct adj_jac_vari : public vari {
   template <typename... Pargs>
   size_t count_memory(size_t count, const std::vector<var> &x,
                       const Pargs &... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs)-1;
     offsets_[t] = count;
     count += x.size();
     return count_memory(count, args...);
@@ -208,7 +202,7 @@ struct adj_jac_vari : public vari {
   template <typename... Pargs>
   size_t count_memory(size_t count, const std::vector<double> &x,
                       const Pargs &... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs)-1;
     offsets_[t] = count;
     return count_memory(count, args...);
   }
@@ -216,14 +210,14 @@ struct adj_jac_vari : public vari {
   template <typename... Pargs>
   size_t count_memory(size_t count, const std::vector<int> &x,
                       const Pargs &... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs)-1;
     offsets_[t] = count;
     return count_memory(count, args...);
   }
 
   template <typename... Pargs>
   size_t count_memory(size_t count, const var &x, const Pargs &... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs)-1;
     offsets_[t] = count;
     count += 1;
     return count_memory(count, args...);
@@ -231,14 +225,14 @@ struct adj_jac_vari : public vari {
 
   template <typename... Pargs>
   size_t count_memory(size_t count, const double &x, const Pargs &... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs)-1;
     offsets_[t] = count;
     return count_memory(count, args...);
   }
 
   template <typename... Pargs>
   size_t count_memory(size_t count, const int &x, const Pargs &... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs)-1;
     offsets_[t] = count;
     return count_memory(count, args...);
   }
@@ -264,7 +258,7 @@ struct adj_jac_vari : public vari {
    */
   template <int R, int C, typename... Pargs>
   void prepare_x_vis(const Eigen::Matrix<var, R, C> &x, const Pargs &... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs)-1;
     for (int i = 0; i < x.size(); ++i) {
       x_vis_[offsets_[t] + i] = x(i).vi_;
     }
@@ -279,7 +273,7 @@ struct adj_jac_vari : public vari {
 
   template <typename... Pargs>
   void prepare_x_vis(const std::vector<var> &x, const Pargs &... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs)-1;
     for (size_t i = 0; i < x.size(); ++i) {
       x_vis_[offsets_[t] + i] = x[i].vi_;
     }
@@ -298,7 +292,7 @@ struct adj_jac_vari : public vari {
 
   template <typename... Pargs>
   void prepare_x_vis(const var &x, const Pargs &... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs)-1;
     x_vis_[offsets_[t]] = x.vi_;
     prepare_x_vis(args...);
   }
@@ -318,11 +312,10 @@ struct adj_jac_vari : public vari {
    * is a var (and false if not)
    */
   adj_jac_vari()
-      : vari(std::numeric_limits<double>::quiet_NaN()),  // The val_ in this
-                                                         // vari is unused
+      : vari(std::numeric_limits<double>::quiet_NaN()), // The val_ in this
+                                                        // vari is unused
         is_var_({{is_var<typename scalar_type<Targs>::type>::value...}}),
-        x_vis_(NULL),
-        y_vi_(NULL) {}
+        x_vis_(NULL), y_vi_(NULL) {}
 
   /**
    * Return a var with a new vari holding the given value
@@ -344,13 +337,13 @@ struct adj_jac_vari : public vari {
    * @param val_y output of F::operator()
    * @return std::vector of vars
    */
-  std::vector<var> build_return_varis_and_vars(
-      const std::vector<double> &val_y) {
+  std::vector<var>
+  build_return_varis_and_vars(const std::vector<double> &val_y) {
     M_[0] = val_y.size();
     std::vector<var> var_y(M_[0]);
 
-    y_vi_ = ChainableStack::instance().memalloc_.alloc_array<vari *>(
-        var_y.size());
+    y_vi_ =
+        ChainableStack::instance().memalloc_.alloc_array<vari *>(var_y.size());
     for (size_t m = 0; m < var_y.size(); ++m) {
       y_vi_[m] = new vari(val_y[m], false);
       var_y[m] = y_vi_[m];
@@ -370,14 +363,14 @@ struct adj_jac_vari : public vari {
    * @return Eigen::Matrix of vars
    */
   template <int R, int C>
-  Eigen::Matrix<var, R, C> build_return_varis_and_vars(
-      const Eigen::Matrix<double, R, C> &val_y) {
+  Eigen::Matrix<var, R, C>
+  build_return_varis_and_vars(const Eigen::Matrix<double, R, C> &val_y) {
     M_[0] = val_y.rows();
     M_[1] = val_y.cols();
     Eigen::Matrix<var, R, C> var_y(M_[0], M_[1]);
 
-    y_vi_ = ChainableStack::instance().memalloc_.alloc_array<vari *>(
-        var_y.size());
+    y_vi_ =
+        ChainableStack::instance().memalloc_.alloc_array<vari *>(var_y.size());
     for (int m = 0; m < var_y.size(); ++m) {
       y_vi_[m] = new vari(val_y(m), false);
       var_y(m) = y_vi_[m];
@@ -430,7 +423,7 @@ struct adj_jac_vari : public vari {
   template <int R, int C, typename... Pargs>
   void accumulate_adjoints(const Eigen::Matrix<double, R, C> &y_adj_jac,
                            const Pargs &... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs)-1;
     if (is_var_[t]) {
       for (int n = 0; n < y_adj_jac.size(); ++n) {
         x_vis_[offsets_[t] + n]->adj_ += y_adj_jac(n);
@@ -454,7 +447,7 @@ struct adj_jac_vari : public vari {
   template <typename... Pargs>
   void accumulate_adjoints(const std::vector<double> &y_adj_jac,
                            const Pargs &... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs)-1;
     if (is_var_[t]) {
       for (size_t n = 0; n < y_adj_jac.size(); ++n)
         x_vis_[offsets_[t] + n]->adj_ += y_adj_jac[n];
@@ -491,7 +484,7 @@ struct adj_jac_vari : public vari {
    */
   template <typename... Pargs>
   void accumulate_adjoints(const double &y_adj_jac, const Pargs &... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs)-1;
     if (is_var_[t]) {
       x_vis_[offsets_[t]]->adj_ += y_adj_jac;
     }
@@ -619,6 +612,6 @@ auto adj_jac_apply(const Targs &... args) {
   return (*vi)(args...);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

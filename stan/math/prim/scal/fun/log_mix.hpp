@@ -50,6 +50,6 @@ inline double log_mix(double theta, double lambda1, double lambda2) {
   return log_sum_exp(log(theta) + lambda1, log1m(theta) + lambda2);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

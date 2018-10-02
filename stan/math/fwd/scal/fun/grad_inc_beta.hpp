@@ -48,6 +48,6 @@ void grad_inc_beta(fvar<T> &g1, fvar<T> &g2, fvar<T> a, fvar<T> b, fvar<T> z) {
   g2 = c2 * c3 + C * dF1;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

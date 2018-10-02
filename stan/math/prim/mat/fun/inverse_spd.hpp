@@ -15,8 +15,8 @@ namespace math {
  * @return Inverse of the matrix.
  */
 template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> inverse_spd(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m) {
+inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+inverse_spd(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m) {
   using Eigen::Dynamic;
   using Eigen::LDLT;
   using Eigen::Matrix;
@@ -36,6 +36,6 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> inverse_spd(
       m.rows(), m.cols()));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

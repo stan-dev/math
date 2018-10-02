@@ -24,8 +24,7 @@ struct atanh_test {
    * @tparam R Return type.
    * @tparam T Argument type.
    */
-  template <typename R, typename T>
-  static R apply(const T &x) {
+  template <typename R, typename T> static R apply(const T &x) {
     using stan::math::atanh;
     return atanh(x);
   }
@@ -52,10 +51,7 @@ struct atanh_test {
    *
    * WARNING:  this is *not an independent test of the underlying function*.
    */
-  template <typename T>
-  static T apply_base(const T &x) {
-    return apply<T>(x);
-  }
+  template <typename T> static T apply_base(const T &x) { return apply<T>(x); }
 
   /**
    * Return sequence of valid double-valued inputs.

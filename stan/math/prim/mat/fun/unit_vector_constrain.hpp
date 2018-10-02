@@ -54,6 +54,6 @@ Eigen::Matrix<T, R, C> unit_vector_constrain(const Eigen::Matrix<T, R, C> &y,
   return y / sqrt(SN);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

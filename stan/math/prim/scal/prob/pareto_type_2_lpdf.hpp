@@ -26,13 +26,12 @@ namespace math {
 // pareto_type_2(y|lambda, alpha)  [y >= 0;  lambda > 0;  alpha > 0]
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_shape>
-typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lpdf(
-    const T_y &y, const T_loc &mu, const T_scale &lambda,
-    const T_shape &alpha) {
+typename return_type<T_y, T_loc, T_scale, T_shape>::type
+pareto_type_2_lpdf(const T_y &y, const T_loc &mu, const T_scale &lambda,
+                   const T_shape &alpha) {
   static const char *function = "pareto_type_2_lpdf";
-  typedef
-      typename stan::partials_return_type<T_y, T_loc, T_scale, T_shape>::type
-          T_partials_return;
+  typedef typename stan::partials_return_type<T_y, T_loc, T_scale,
+                                              T_shape>::type T_partials_return;
 
   using std::log;
   using std::log;
@@ -66,8 +65,8 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lpdf(
       log1p_scaled_diff(N);
   if (include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
     for (size_t n = 0; n < N; n++)
-      log1p_scaled_diff[n] = log1p((value_of(y_vec[n]) - value_of(mu_vec[n]))
-                                   / value_of(lambda_vec[n]));
+      log1p_scaled_diff[n] = log1p((value_of(y_vec[n]) - value_of(mu_vec[n])) /
+                                   value_of(lambda_vec[n]));
   }
 
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
@@ -115,8 +114,8 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lpdf(
     if (!is_constant_struct<T_loc>::value)
       ops_partials.edge2_.partials_[n] += deriv_1_2;
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge3_.partials_[n]
-          -= alpha_div_sum * (mu_dbl - y_dbl) / lambda_dbl + inv_sum;
+      ops_partials.edge3_.partials_[n] -=
+          alpha_div_sum * (mu_dbl - y_dbl) / lambda_dbl + inv_sum;
     if (!is_constant_struct<T_shape>::value)
       ops_partials.edge4_.partials_[n] += inv_alpha[n] - log1p_scaled_diff[n];
   }
@@ -130,6 +129,6 @@ pareto_type_2_lpdf(const T_y &y, const T_loc &mu, const T_scale &lambda,
   return pareto_type_2_lpdf<false>(y, mu, lambda, alpha);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

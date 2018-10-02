@@ -53,13 +53,13 @@ double_exponential_rng(const T_loc &mu, const T_scale &sigma, RNG &rng) {
       rng, uniform_real_distribution<>(-1.0, 1.0));
   for (size_t n = 0; n < N; ++n) {
     double z = z_rng();
-    output[n] = mu_vec[n]
-                - ((z > 0) ? 1.0 : -1.0) * sigma_vec[n] * std::log(std::abs(z));
+    output[n] = mu_vec[n] -
+                ((z > 0) ? 1.0 : -1.0) * sigma_vec[n] * std::log(std::abs(z));
   }
 
   return output.data();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

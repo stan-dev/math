@@ -42,6 +42,6 @@ inline int ordered_logistic_rng(
   return categorical_rng(cut, rng);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

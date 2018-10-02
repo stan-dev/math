@@ -19,9 +19,9 @@ namespace math {
  * @throw std::out_of_range if either index is out of range.
  */
 template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> block(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m, size_t i,
-    size_t j, size_t nrows, size_t ncols) {
+inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+block(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m, size_t i,
+      size_t j, size_t nrows, size_t ncols) {
   check_row_index("block", "i", m, i);
   check_row_index("block", "i+nrows-1", m, i + nrows - 1);
   check_column_index("block", "j", m, j);
@@ -29,6 +29,6 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> block(
   return m.block(i - 1, j - 1, nrows, ncols);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

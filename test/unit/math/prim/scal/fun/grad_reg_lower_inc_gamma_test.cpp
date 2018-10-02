@@ -9617,4 +9617,4 @@ TEST(PrimScalFun, lower_reg_inc_gamma_accuarcy) {
       EXPECT_NEAR(test[i][2], result, 1.0e-10);
     }
   }
-}  // NOLINT(readability/fn_size)
+} // NOLINT(readability/fn_size)

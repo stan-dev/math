@@ -114,15 +114,15 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
  * @return numeric integral of function f
  */
 template <typename F, typename T_a, typename T_b, typename T_theta>
-inline typename boost::enable_if_c<boost::is_same<T_a, var>::value
-                                       || boost::is_same<T_b, var>::value
-                                       || boost::is_same<T_theta, var>::value,
+inline typename boost::enable_if_c<boost::is_same<T_a, var>::value ||
+                                       boost::is_same<T_b, var>::value ||
+                                       boost::is_same<T_theta, var>::value,
                                    var>::type
 integrate_1d(const F &f, const T_a &a, const T_b &b,
              const std::vector<T_theta> &theta, const std::vector<double> &x_r,
              const std::vector<int> &x_i, std::ostream &msgs,
-             const double relative_tolerance
-             = std::sqrt(std::numeric_limits<double>::epsilon())) {
+             const double relative_tolerance =
+                 std::sqrt(std::numeric_limits<double>::epsilon())) {
   static const char *function = "integrate_1d";
   check_less_or_equal(function, "lower limit", a, b);
 
@@ -170,7 +170,7 @@ integrate_1d(const F &f, const T_a &a, const T_b &b,
   }
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

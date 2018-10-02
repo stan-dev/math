@@ -6,22 +6,22 @@ using std::numeric_limits;
 using std::vector;
 
 class AgradCcdfLogChiSquare : public AgradCcdfLogTest {
- public:
+public:
   void valid_values(vector<vector<double>> &parameters,
                     vector<double> &ccdf_log) {
     vector<double> param(2);
 
-    param[0] = 7.9;  // y
-    param[1] = 3.0;  // nu
+    param[0] = 7.9; // y
+    param[1] = 3.0; // nu
     parameters.push_back(param);
     ccdf_log.push_back(
-        std::log(1 - 0.951875748155839862541));  // expected ccdf_log
+        std::log(1 - 0.951875748155839862541)); // expected ccdf_log
 
-    param[0] = 1.9;  // y
-    param[1] = 0.5;  // nu
+    param[0] = 1.9; // y
+    param[1] = 0.5; // nu
     parameters.push_back(param);
     ccdf_log.push_back(
-        std::log(1 - 0.9267752080547182469417));  // expected ccdf_log
+        std::log(1 - 0.9267752080547182469417)); // expected ccdf_log
   }
 
   void invalid_values(vector<size_t> &index, vector<double> &value) {
@@ -48,17 +48,17 @@ class AgradCcdfLogChiSquare : public AgradCcdfLogTest {
 
   template <typename T_y, typename T_dof, typename T2, typename T3, typename T4,
             typename T5>
-  typename stan::return_type<T_y, T_dof, T2>::type ccdf_log(
-      const T_y &y, const T_dof &nu, const T2 &, const T3 &, const T4 &,
-      const T5 &) {
+  typename stan::return_type<T_y, T_dof, T2>::type
+  ccdf_log(const T_y &y, const T_dof &nu, const T2 &, const T3 &, const T4 &,
+           const T5 &) {
     return stan::math::chi_square_ccdf_log(y, nu);
   }
 
   template <typename T_y, typename T_dof, typename T2, typename T3, typename T4,
             typename T5>
-  typename stan::return_type<T_y, T_dof, T2>::type ccdf_log_function(
-      const T_y &y, const T_dof &nu, const T2 &, const T3 &, const T4 &,
-      const T5 &) {
+  typename stan::return_type<T_y, T_dof, T2>::type
+  ccdf_log_function(const T_y &y, const T_dof &nu, const T2 &, const T3 &,
+                    const T4 &, const T5 &) {
     using stan::math::gamma_q;
     using std::log;
 

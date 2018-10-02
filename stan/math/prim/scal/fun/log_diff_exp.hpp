@@ -46,14 +46,14 @@ namespace math {
  *
  */
 template <typename T1, typename T2>
-inline typename boost::math::tools::promote_args<T1, T2>::type log_diff_exp(
-    const T1 x, const T2 y) {
+inline typename boost::math::tools::promote_args<T1, T2>::type
+log_diff_exp(const T1 x, const T2 y) {
   if (x <= y)
     return std::numeric_limits<double>::quiet_NaN();
   return x + log1m_exp(y - x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

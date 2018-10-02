@@ -31,7 +31,7 @@ size_t fft_next_good_size(size_t N) {
     N++;
   }
 }
-}  // namespace
+} // namespace
 
 /**
  * Write autocorrelation estimates for every lag for the specified
@@ -183,6 +183,6 @@ void autocorrelation(const Eigen::MatrixBase<DerivedA> &y,
   autocorrelation(y, ac, fft);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

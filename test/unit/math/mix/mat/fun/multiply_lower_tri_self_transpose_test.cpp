@@ -103,8 +103,8 @@ TEST(AgradMixMatrixMultiplyLowerTriSelfTranspose, fv_3x2_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(10, output(2, 1).d_.val());
   EXPECT_FLOAT_EQ(12, output(2, 2).d_.val());
 
-  AVEC q
-      = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(1, 0).val(), Y(1, 1).val());
+  AVEC q =
+      createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(1, 0).val(), Y(1, 1).val());
   VEC h;
   output(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(2, h[0]);
@@ -125,8 +125,8 @@ TEST(AgradMixMatrixMultiplyLowerTriSelfTranspose, fv_3x2_matrix_2ndDeriv) {
   Y(2, 1).d_ = 2.0;
   matrix_fv output = stan::math::multiply_lower_tri_self_transpose(Y);
 
-  AVEC q
-      = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(1, 0).val(), Y(1, 1).val());
+  AVEC q =
+      createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(1, 0).val(), Y(1, 1).val());
   VEC h;
   output(0, 0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(4, h[0]);

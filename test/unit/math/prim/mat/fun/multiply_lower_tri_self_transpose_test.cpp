@@ -36,8 +36,8 @@ void test_multiply_lower_tri_self_transpose(const matrix_d &x) {
 TEST(MathMatrix, multiply_lower_tri_self_transpose) {
   using stan::math::check_symmetric;
   using stan::math::multiply_lower_tri_self_transpose;
-  static const char *function
-      = "stan::math::multiply_lower_tri_self_transpose(%1%)";
+  static const char *function =
+      "stan::math::multiply_lower_tri_self_transpose(%1%)";
   matrix_d x;
   test_multiply_lower_tri_self_transpose(x);
 

@@ -14,8 +14,7 @@ namespace math {
  * @return Least integer >= x.
  */
 struct ceil_fun {
-  template <typename T>
-  static inline T fun(const T &x) {
+  template <typename T> static inline T fun(const T &x) {
     using std::ceil;
     return ceil(x);
   }
@@ -32,7 +31,7 @@ inline typename apply_scalar_unary<ceil_fun, T>::return_t ceil(const T &x) {
   return apply_scalar_unary<ceil_fun, T>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

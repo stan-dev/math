@@ -20,12 +20,11 @@ namespace math {
  * @tparam T1 scalar type
  * @tparam T2 scalar type
  */
-template <typename T1, typename T2>
-struct common_type {
+template <typename T1, typename T2> struct common_type {
   typedef typename boost::math::tools::promote_args<T1, T2>::type type;
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

@@ -23,8 +23,8 @@ struct finite<Eigen::Matrix<T, R, C>, true> {
     }
   }
 };
-}  // namespace
-}  // namespace math
-}  // namespace stan
+} // namespace
+} // namespace math
+} // namespace stan
 
 #endif

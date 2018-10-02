@@ -18,9 +18,9 @@ namespace math {
 // Multinomial(ns|N, theta)   [0 <= n <= N;  SUM ns = N;
 //                            0 <= theta[n] <= 1;  SUM theta = 1]
 template <bool propto, typename T_prob>
-typename boost::math::tools::promote_args<T_prob>::type multinomial_lpmf(
-    const std::vector<int> &ns,
-    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1> &theta) {
+typename boost::math::tools::promote_args<T_prob>::type
+multinomial_lpmf(const std::vector<int> &ns,
+                 const Eigen::Matrix<T_prob, Eigen::Dynamic, 1> &theta) {
   static const char *function = "multinomial_lpmf";
 
   using boost::math::lgamma;
@@ -48,12 +48,12 @@ typename boost::math::tools::promote_args<T_prob>::type multinomial_lpmf(
 }
 
 template <typename T_prob>
-typename boost::math::tools::promote_args<T_prob>::type multinomial_lpmf(
-    const std::vector<int> &ns,
-    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1> &theta) {
+typename boost::math::tools::promote_args<T_prob>::type
+multinomial_lpmf(const std::vector<int> &ns,
+                 const Eigen::Matrix<T_prob, Eigen::Dynamic, 1> &theta) {
   return multinomial_lpmf<false>(ns, theta);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

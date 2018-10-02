@@ -42,8 +42,8 @@ inline matrix_gpu copy_triangular(const matrix_gpu &src) {
   }
   return dst;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif
 #endif

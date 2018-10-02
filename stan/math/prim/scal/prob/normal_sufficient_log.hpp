@@ -31,6 +31,6 @@ normal_sufficient_log(const T_y &y_bar, const T_s &s_squared, const T_n &n_obs,
       y_bar, s_squared, n_obs, mu, sigma);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

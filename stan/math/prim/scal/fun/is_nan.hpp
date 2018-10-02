@@ -16,7 +16,7 @@ namespace math {
  */
 inline bool is_nan(double x) { return boost::math::isnan(x); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

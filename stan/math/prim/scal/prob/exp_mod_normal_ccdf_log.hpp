@@ -18,6 +18,6 @@ exp_mod_normal_ccdf_log(const T_y &y, const T_loc &mu, const T_scale &sigma,
                                                                 lambda);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

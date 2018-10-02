@@ -5,7 +5,7 @@
 
 const char *function = "function";
 class ErrorHandlingMatrix : public ::testing::Test {
- public:
+public:
   void SetUp() {}
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
@@ -76,7 +76,7 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefinite_nan) {
         //                << y(i, j);
         // }
         EXPECT_THROW(check_pos_semidefinite(function, "y", y),
-                     std::domain_error);  // , expected_msg.str());
+                     std::domain_error); // , expected_msg.str());
       }
     }
 }

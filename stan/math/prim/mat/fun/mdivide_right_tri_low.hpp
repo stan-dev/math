@@ -28,6 +28,6 @@ mdivide_right_tri_low(const Eigen::Matrix<T1, R1, C1> &b,
       promote_common<Eigen::Matrix<T1, R2, C2>, Eigen::Matrix<T2, R2, C2>>(A));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

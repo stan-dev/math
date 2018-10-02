@@ -23,6 +23,6 @@ inline double trace_gen_quad_form(const Eigen::Matrix<double, RD, CD> &D,
   return (D * B.transpose() * A * B).trace();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

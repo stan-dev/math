@@ -34,6 +34,6 @@ inline double asinh(double x) {
  */
 inline double asinh(int x) { return asinh(static_cast<double>(x)); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

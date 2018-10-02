@@ -53,6 +53,6 @@ matrix_normal_prec_log(
   return matrix_normal_prec_lpdf<T_y, T_Mu, T_Sigma, T_D>(y, Mu, Sigma, D);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

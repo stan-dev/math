@@ -18,10 +18,7 @@ struct logit_fun {
    * @param x argument
    * @return log odds of the argument
    */
-  template <typename T>
-  static inline T fun(const T &x) {
-    return logit(x);
-  }
+  template <typename T> static inline T fun(const T &x) { return logit(x); }
 };
 
 /**
@@ -39,7 +36,7 @@ inline typename apply_scalar_unary<logit_fun, T>::return_t logit(const T &x) {
   return apply_scalar_unary<logit_fun, T>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

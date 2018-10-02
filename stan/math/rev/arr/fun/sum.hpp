@@ -12,7 +12,7 @@ namespace math {
  * There's an extension for Eigen matrices.
  */
 class sum_v_vari : public vari {
- protected:
+protected:
   vari **v_;
   size_t length_;
 
@@ -23,7 +23,7 @@ class sum_v_vari : public vari {
     return result;
   }
 
- public:
+public:
   explicit sum_v_vari(double value, vari **v, size_t length)
       : vari(value), v_(v), length_(length) {}
 
@@ -55,6 +55,6 @@ inline var sum(const std::vector<var> &m) {
   return var(new sum_v_vari(m));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

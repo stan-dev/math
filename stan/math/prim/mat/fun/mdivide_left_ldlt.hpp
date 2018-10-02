@@ -30,6 +30,6 @@ mdivide_left_ldlt(const LDLT_factor<T1, R1, C1> &A,
       promote_common<Eigen::Matrix<T1, R2, C2>, Eigen::Matrix<T2, R2, C2>>(b));
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

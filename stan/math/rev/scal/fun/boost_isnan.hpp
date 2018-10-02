@@ -16,11 +16,10 @@ namespace math {
  * @param v Variable to test.
  * @return <code>true</code> if variable is NaN.
  */
-template <>
-inline bool isnan(const stan::math::var &v) {
+template <> inline bool isnan(const stan::math::var &v) {
   return (boost::math::isnan)(v.val());
 }
 
-}  // namespace math
-}  // namespace boost
+} // namespace math
+} // namespace boost
 #endif

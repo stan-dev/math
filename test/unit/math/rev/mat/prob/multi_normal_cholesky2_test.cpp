@@ -17,8 +17,7 @@ struct multi_normal_cholesky_fun {
 
   explicit multi_normal_cholesky_fun(int K) : K_(K) {}
 
-  template <typename T>
-  T operator()(const std::vector<T> &x) const {
+  template <typename T> T operator()(const std::vector<T> &x) const {
     using Eigen::Dynamic;
     using Eigen::Matrix;
     using stan::math::var;
@@ -86,9 +85,8 @@ struct vectorized_multi_normal_cholesky_fun {
       int K, int L, bool M = false, bool N = false)
       : K_(K), L_(L), dont_vectorize_y(M), dont_vectorize_mu(N) {
     if ((dont_vectorize_y || dont_vectorize_mu) && L != 1)
-      throw std::runtime_error(
-          "attempt to disable vectorization with vector "
-          "bigger than 1");
+      throw std::runtime_error("attempt to disable vectorization with vector "
+                               "bigger than 1");
   }
 
   template <typename T_y, typename T_mu, typename T_sigma>
@@ -132,8 +130,7 @@ struct vectorized_multi_normal_cholesky_fun {
   }
 };
 
-template <int is_row_vec_y, int is_row_vec_mu>
-void test_all() {
+template <int is_row_vec_y, int is_row_vec_mu> void test_all() {
   {
     vector<double> y_(3), mu_(3), sigma_(6);
     // y

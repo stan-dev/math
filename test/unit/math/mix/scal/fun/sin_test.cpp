@@ -104,8 +104,7 @@ TEST(AgradFwdSin, FvarFvarVar_3rdDeriv) {
 }
 
 struct sin_fun {
-  template <typename T0>
-  inline T0 operator()(const T0 &arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return sin(arg1);
   }
 };

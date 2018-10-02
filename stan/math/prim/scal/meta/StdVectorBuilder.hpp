@@ -34,12 +34,12 @@ template <bool used, typename T1, typename T2, typename T3 = double,
           typename T4 = double, typename T5 = double, typename T6 = double,
           typename T7 = double>
 class StdVectorBuilder {
- private:
+private:
   typedef VectorBuilderHelper<
       T1, used, contains_std_vector<T2, T3, T4, T5, T6, T7>::value>
       helper;
 
- public:
+public:
   typedef typename helper::type type;
   helper a;
 
@@ -50,5 +50,5 @@ class StdVectorBuilder {
   inline type data() { return a.data(); }
 };
 
-}  // namespace stan
+} // namespace stan
 #endif

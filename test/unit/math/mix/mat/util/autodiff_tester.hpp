@@ -48,8 +48,7 @@ bool is_finite(const Eigen::Matrix<T, R, C> &x) {
  * @param x container to test
  * @return true if all container values are finite
  */
-template <typename T>
-bool is_finite(const std::vector<T> &x) {
+template <typename T> bool is_finite(const std::vector<T> &x) {
   for (size_t i = 0; i < x.size(); ++i)
     if (!is_finite(x[i]))
       return false;
@@ -65,16 +64,16 @@ template <typename T1, typename T2>
 void expect_near(const std::string &msg, const T1 &x1, const T2 &x2,
                  double tol = 1e-9) {
   if (is_nan(x1) || is_nan(x2))
-    EXPECT_TRUE(is_nan(x1) && is_nan(x2))
-        << "expect_near(" << x1 << ", " << x2 << ")" << std::endl
-        << msg << std::endl;
+    EXPECT_TRUE(is_nan(x1) && is_nan(x2)) << "expect_near(" << x1 << ", " << x2
+                                          << ")" << std::endl
+                                          << msg << std::endl;
   else if (is_inf(x1) || is_inf(x2))
     EXPECT_EQ(x1, x2) << "expect_near(" << x1 << ", " << x2 << ")" << std::endl
                       << msg << std::endl;
   else
-    EXPECT_NEAR(x1, x2, tol)
-        << "expect_near(" << x1 << ", " << x2 << ")" << std::endl
-        << msg << std::endl;
+    EXPECT_NEAR(x1, x2, tol) << "expect_near(" << x1 << ", " << x2 << ")"
+                             << std::endl
+                             << msg << std::endl;
 }
 
 /**
@@ -278,8 +277,7 @@ void test_functor(const F &f, const Eigen::VectorXd &x, double fx,
  * @tparam T1 type of first argument with double scalars
  * @tparam T2 type of second argument with double scalars
  */
-template <typename F, typename T1, typename T2>
-struct binder_binary {
+template <typename F, typename T1, typename T2> struct binder_binary {
   T1 x1_;
   T2 x2_;
   bool fixed1_;
@@ -378,8 +376,7 @@ void test_args(const std::vector<double> &xs) {
   test_args<F, is_comparison>(xs, xs);
 }
 
-template <typename F, bool is_comparison>
-void test_common_args() {
+template <typename F, bool is_comparison> void test_common_args() {
   std::vector<double> xs;
   xs.push_back(0.5);
   xs.push_back(0);
@@ -390,7 +387,7 @@ void test_common_args() {
   test_args<F, is_comparison>(xs, xs);
 }
 
-}  // namespace test
-}  // namespace math
-}  // namespace stan
+} // namespace test
+} // namespace math
+} // namespace stan
 #endif

@@ -42,9 +42,8 @@ namespace math {
  * ~~~
  *
  */
-template <int R, int C>
-class LDLT_factor<var, R, C> {
- public:
+template <int R, int C> class LDLT_factor<var, R, C> {
+public:
   /**
    * Default constructor.  The caller *MUST* call compute() after this.  Any
    * calls which use the LDLT_factor without calling compute() run the risk
@@ -136,6 +135,6 @@ class LDLT_factor<var, R, C> {
   LDLT_alloc<R, C> *alloc_;
 };
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

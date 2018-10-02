@@ -46,8 +46,7 @@ typedef Eigen::Matrix<ffv, Eigen::Dynamic, Eigen::Dynamic> Mffv;
  * @param n0 Ignored
  * @param z Output variable
  */
-template <typename T1>
-void build(int n1, int n0, T1 &z) {
+template <typename T1> void build(int n1, int n0, T1 &z) {
   std::random_device rd;
   std::mt19937 mt(rd());
   z = T1(rd());
@@ -88,8 +87,7 @@ void build(int n1, int n0, Eigen::Matrix<T1, R, C> &z) {
  * @param n0 Second dimension of last element
  * @param z Output variable
  */
-template <typename T1>
-void build(int n2, int n1, int n0, std::vector<T1> &z) {
+template <typename T1> void build(int n2, int n1, int n0, std::vector<T1> &z) {
   z.resize(n2);
   for (int i = 0; i < n2; i++) {
     build(n1, n0, z[i]);
@@ -165,8 +163,7 @@ double get_value(const ffv &z1) { return z1.val().val().val(); }
  * @param z1 First argument
  * @param z2 Second argument
  */
-template <typename T1, typename T2>
-void check_eq(const T1 &z1, const T2 &z2) {
+template <typename T1, typename T2> void check_eq(const T1 &z1, const T2 &z2) {
   EXPECT_FLOAT_EQ(get_value(z1), get_value(z2));
 }
 
@@ -176,10 +173,7 @@ void check_eq(const T1 &z1, const T2 &z2) {
  * @param z1 First integer
  * @param z2 Second integer
  */
-template <>
-void check_eq(const int &z1, const int &z2) {
-  EXPECT_EQ(z1, z2);
-}
+template <> void check_eq(const int &z1, const int &z2) { EXPECT_EQ(z1, z2); }
 
 /**
  * Check if elements of two matrices are equal via floating point macro
@@ -224,8 +218,7 @@ void check_eq(const std::vector<T1> &z1, const std::vector<T2> &z2) {
  * @tparam T2 Element type of second std::vector
  * @tparam T3 Element type of return std::vector
  */
-template <typename T1, typename T2, typename T3>
-void checkv() {
+template <typename T1, typename T2, typename T3> void checkv() {
   std::vector<T1> x;
   std::vector<T2> y;
   std::vector<T3> result;
@@ -254,8 +247,7 @@ void checkv() {
  * @tparam T2 Element type of second std::vector
  * @tparam T3 Element type of return std::vector
  */
-template <typename T1, typename T2, typename T3>
-void checkvv() {
+template <typename T1, typename T2, typename T3> void checkvv() {
   std::vector<std::vector<T1>> x;
   std::vector<std::vector<T2>> y;
   std::vector<std::vector<T3>> result;
@@ -283,8 +275,7 @@ void checkvv() {
  * @tparam T2 Element type of second container
  * @tparam T3 Element type of third container
  */
-template <typename T1, typename T2, typename T3>
-void check() {
+template <typename T1, typename T2, typename T3> void check() {
   // repeat the checks a few times since they're random
   for (int i = 0; i < 3; i++) {
     checkv<T1, T2, T3>();

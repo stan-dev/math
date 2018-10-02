@@ -120,8 +120,7 @@ TEST_F(AgradFwdLogit, FvarFvarVar_3rdDeriv) {
 }
 
 struct logit_fun {
-  template <typename T0>
-  inline T0 operator()(const T0 &arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return logit(arg1);
   }
 };

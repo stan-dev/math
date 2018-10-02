@@ -45,7 +45,7 @@ static void grad(vari *vi) {
   }
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

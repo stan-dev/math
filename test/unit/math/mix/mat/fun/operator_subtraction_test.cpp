@@ -35,8 +35,8 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_scalar_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0, result(1, 0).d_.val());
   EXPECT_FLOAT_EQ(1.0, result(1, 1).d_.val());
 
-  AVEC q
-      = createAVEC(v(0, 0).val(), v(0, 1).val(), v(1, 0).val(), v(1, 1).val());
+  AVEC q =
+      createAVEC(v(0, 0).val(), v(0, 1).val(), v(1, 0).val(), v(1, 1).val());
   VEC h;
   result(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
@@ -57,8 +57,8 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_scalar_matrix_2ndDeriv) {
   matrix_fv result;
   result = subtract(v, 2.0);
 
-  AVEC q
-      = createAVEC(v(0, 0).val(), v(0, 1).val(), v(1, 0).val(), v(1, 1).val());
+  AVEC q =
+      createAVEC(v(0, 0).val(), v(0, 1).val(), v(1, 0).val(), v(1, 1).val());
   VEC h;
   result(0, 0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -259,8 +259,8 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_vector_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(0, output(3).d_.val());
   EXPECT_FLOAT_EQ(0, output(4).d_.val());
 
-  AVEC q
-      = createAVEC(vv_1(0).val(), vv_1(1).val(), vv_1(2).val(), vv_1(3).val());
+  AVEC q =
+      createAVEC(vv_1(0).val(), vv_1(1).val(), vv_1(2).val(), vv_1(3).val());
   VEC h;
   output(0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
@@ -295,8 +295,8 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_vector_vector_2ndDeriv) {
   vv_2(4).d_ = 1.0;
   output = subtract(vv_1, vv_2);
 
-  AVEC q
-      = createAVEC(vv_1(0).val(), vv_1(1).val(), vv_1(2).val(), vv_1(3).val());
+  AVEC q =
+      createAVEC(vv_1(0).val(), vv_1(1).val(), vv_1(2).val(), vv_1(3).val());
   VEC h;
   output(0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);

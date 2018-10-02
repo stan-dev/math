@@ -29,17 +29,17 @@ const char *scalar_mul_kernel_code = STRINGIFY(
       }
     }
     // \cond
-);
+    );
 // \endcond
 
 /**
  * See the docs for \link kernels/scalar_mul.hpp add() \endlink
  */
-const global_range_kernel<cl::Buffer, cl::Buffer, double, int, int> scalar_mul(
-    "scalar_mul", scalar_mul_kernel_code);
+const global_range_kernel<cl::Buffer, cl::Buffer, double, int, int>
+    scalar_mul("scalar_mul", scalar_mul_kernel_code);
 
-}  // namespace opencl_kernels
-}  // namespace math
-}  // namespace stan
+} // namespace opencl_kernels
+} // namespace math
+} // namespace stan
 #endif
 #endif

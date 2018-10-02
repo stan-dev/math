@@ -38,8 +38,7 @@ TEST(AgradRev, fabs_var_3) {
 }
 
 struct fabs_fun {
-  template <typename T0>
-  inline T0 operator()(const T0 &arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return fabs(arg1);
   }
 };

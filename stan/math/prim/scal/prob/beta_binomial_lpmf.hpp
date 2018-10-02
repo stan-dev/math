@@ -44,8 +44,9 @@ namespace math {
  */
 template <bool propto, typename T_n, typename T_N, typename T_size1,
           typename T_size2>
-typename return_type<T_size1, T_size2>::type beta_binomial_lpmf(
-    const T_n &n, const T_N &N, const T_size1 &alpha, const T_size2 &beta) {
+typename return_type<T_size1, T_size2>::type
+beta_binomial_lpmf(const T_n &n, const T_N &N, const T_size1 &alpha,
+                   const T_size2 &beta) {
   static const char *function = "beta_binomial_lpmf";
   typedef typename stan::partials_return_type<T_size1, T_size2>::type
       T_partials_return;
@@ -97,8 +98,8 @@ typename return_type<T_size1, T_size2>::type beta_binomial_lpmf(
       lbeta_denominator(max_size(alpha, beta));
   for (size_t i = 0; i < max_size(alpha, beta); i++)
     if (include_summand<propto, T_size1, T_size2>::value)
-      lbeta_denominator[i]
-          = lbeta(value_of(alpha_vec[i]), value_of(beta_vec[i]));
+      lbeta_denominator[i] =
+          lbeta(value_of(alpha_vec[i]), value_of(beta_vec[i]));
 
   VectorBuilder<!is_constant_struct<T_size1>::value, T_partials_return, T_n,
                 T_size1>
@@ -112,16 +113,16 @@ typename return_type<T_size1, T_size2>::type beta_binomial_lpmf(
       digamma_N_plus_alpha_plus_beta(max_size(N, alpha, beta));
   for (size_t i = 0; i < max_size(N, alpha, beta); i++)
     if (contains_nonconstant_struct<T_size1, T_size2>::value)
-      digamma_N_plus_alpha_plus_beta[i]
-          = digamma(N_vec[i] + value_of(alpha_vec[i]) + value_of(beta_vec[i]));
+      digamma_N_plus_alpha_plus_beta[i] =
+          digamma(N_vec[i] + value_of(alpha_vec[i]) + value_of(beta_vec[i]));
 
   VectorBuilder<contains_nonconstant_struct<T_size1, T_size2>::value,
                 T_partials_return, T_size1, T_size2>
       digamma_alpha_plus_beta(max_size(alpha, beta));
   for (size_t i = 0; i < max_size(alpha, beta); i++)
     if (contains_nonconstant_struct<T_size1, T_size2>::value)
-      digamma_alpha_plus_beta[i]
-          = digamma(value_of(alpha_vec[i]) + value_of(beta_vec[i]));
+      digamma_alpha_plus_beta[i] =
+          digamma(value_of(alpha_vec[i]) + value_of(beta_vec[i]));
 
   VectorBuilder<!is_constant_struct<T_size1>::value, T_partials_return, T_size1>
       digamma_alpha(length(alpha));
@@ -142,24 +143,25 @@ typename return_type<T_size1, T_size2>::type beta_binomial_lpmf(
       logp += lbeta_numerator[i] - lbeta_denominator[i];
 
     if (!is_constant_struct<T_size1>::value)
-      ops_partials.edge1_.partials_[i]
-          += digamma_n_plus_alpha[i] - digamma_N_plus_alpha_plus_beta[i]
-             + digamma_alpha_plus_beta[i] - digamma_alpha[i];
+      ops_partials.edge1_.partials_[i] +=
+          digamma_n_plus_alpha[i] - digamma_N_plus_alpha_plus_beta[i] +
+          digamma_alpha_plus_beta[i] - digamma_alpha[i];
     if (!is_constant_struct<T_size2>::value)
-      ops_partials.edge2_.partials_[i]
-          += digamma(value_of(N_vec[i] - n_vec[i] + beta_vec[i]))
-             - digamma_N_plus_alpha_plus_beta[i] + digamma_alpha_plus_beta[i]
-             - digamma_beta[i];
+      ops_partials.edge2_.partials_[i] +=
+          digamma(value_of(N_vec[i] - n_vec[i] + beta_vec[i])) -
+          digamma_N_plus_alpha_plus_beta[i] + digamma_alpha_plus_beta[i] -
+          digamma_beta[i];
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_n, typename T_N, typename T_size1, typename T_size2>
-typename return_type<T_size1, T_size2>::type beta_binomial_lpmf(
-    const T_n &n, const T_N &N, const T_size1 &alpha, const T_size2 &beta) {
+typename return_type<T_size1, T_size2>::type
+beta_binomial_lpmf(const T_n &n, const T_N &N, const T_size1 &alpha,
+                   const T_size2 &beta) {
   return beta_binomial_lpmf<false>(n, N, alpha, beta);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

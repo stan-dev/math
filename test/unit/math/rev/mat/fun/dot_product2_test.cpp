@@ -244,9 +244,9 @@ TEST(AgradRevMatrix, varianceStdVector) {
 
   AVEC y2 = createAVEC(0.5, 2.0, 3.5);
   AVAR mean2 = (y2[0] + y2[1] + y2[2]) / 3.0;
-  AVAR sum_sq_diff_2 = (y2[0] - mean2) * (y2[0] - mean2)
-                       + (y2[1] - mean2) * (y2[1] - mean2)
-                       + (y2[2] - mean2) * (y2[2] - mean2);
+  AVAR sum_sq_diff_2 = (y2[0] - mean2) * (y2[0] - mean2) +
+                       (y2[1] - mean2) * (y2[1] - mean2) +
+                       (y2[2] - mean2) * (y2[2] - mean2);
   AVAR f2 = sum_sq_diff_2 / (3 - 1);
 
   EXPECT_EQ(f2.val(), f1_val);
@@ -270,9 +270,9 @@ TEST(AgradRevMatrix, sdStdVector) {
 
   AVEC y2 = createAVEC(0.5, 2.0, 3.5);
   AVAR mean2 = (y2[0] + y2[1] + y2[2]) / 3.0;
-  AVAR sum_sq_diff_2 = (y2[0] - mean2) * (y2[0] - mean2)
-                       + (y2[1] - mean2) * (y2[1] - mean2)
-                       + (y2[2] - mean2) * (y2[2] - mean2);
+  AVAR sum_sq_diff_2 = (y2[0] - mean2) * (y2[0] - mean2) +
+                       (y2[1] - mean2) * (y2[1] - mean2) +
+                       (y2[2] - mean2) * (y2[2] - mean2);
   AVAR f2 = sqrt(sum_sq_diff_2 / (3 - 1));
 
   EXPECT_EQ(f2.val(), f1_val);
@@ -914,8 +914,7 @@ TEST(AgradRevMatrix, crossprod) {
   //  test_tcrossprod_grad(K, K.rows(), K.cols());
 }
 
-template <typename T>
-void test_cumulative_sum() {
+template <typename T> void test_cumulative_sum() {
   using stan::math::cumulative_sum;
 
   T c(1);

@@ -147,6 +147,6 @@ inline fvar<T> dot_product(const std::vector<fvar<T>> &v1,
   return ret;
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

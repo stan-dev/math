@@ -118,8 +118,7 @@ TEST(AgradFwdCbrt, FvarFvarVar_3rdDeriv) {
 }
 
 struct cbrt_fun {
-  template <typename T0>
-  inline T0 operator()(const T0 &arg1) const {
+  template <typename T0> inline T0 operator()(const T0 &arg1) const {
     return cbrt(arg1);
   }
 };

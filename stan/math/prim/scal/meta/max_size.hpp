@@ -40,5 +40,5 @@ size_t max_size(const T1 &x1, const T2 &x2, const T3 &x3, const T4 &x4,
   return result;
 }
 
-}  // namespace stan
+} // namespace stan
 #endif

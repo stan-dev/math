@@ -23,7 +23,7 @@ inline typename common_type<T1, T2>::type promote_common(const F &u) {
   return promote_elements<typename common_type<T1, T2>::type, F>::promote(u);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 
 #endif

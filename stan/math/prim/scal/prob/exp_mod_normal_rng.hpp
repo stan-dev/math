@@ -55,12 +55,12 @@ exp_mod_normal_rng(const T_loc &mu, const T_scale &sigma,
   VectorBuilder<true, double, T_loc, T_scale, T_inv_scale> output(N);
 
   for (size_t n = 0; n < N; ++n)
-    output[n] = normal_rng(mu_vec[n], sigma_vec[n], rng)
-                + exponential_rng(lambda_vec[n], rng);
+    output[n] = normal_rng(mu_vec[n], sigma_vec[n], rng) +
+                exponential_rng(lambda_vec[n], rng);
 
   return output.data();
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

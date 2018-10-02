@@ -9,6 +9,6 @@ namespace math {
 
 inline void stan_print(std::ostream *o, const var &x) { *o << x.val(); }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

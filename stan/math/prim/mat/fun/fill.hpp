@@ -23,6 +23,6 @@ void fill(Eigen::Matrix<T, R, C> &x, const S &y) {
   x.fill(y);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

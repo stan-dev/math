@@ -26,8 +26,8 @@ namespace math {
  * @tparam T_scale Type of scale.
  */
 template <bool propto, typename T_y, typename T_shape, typename T_scale>
-typename return_type<T_y, T_shape, T_scale>::type inv_gamma_log(
-    const T_y &y, const T_shape &alpha, const T_scale &beta) {
+typename return_type<T_y, T_shape, T_scale>::type
+inv_gamma_log(const T_y &y, const T_shape &alpha, const T_scale &beta) {
   return inv_gamma_lpdf<propto, T_y, T_shape, T_scale>(y, alpha, beta);
 }
 
@@ -35,11 +35,11 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_log(
  * @deprecated use <code>inv_gamma_lpdf</code>
  */
 template <typename T_y, typename T_shape, typename T_scale>
-inline typename return_type<T_y, T_shape, T_scale>::type inv_gamma_log(
-    const T_y &y, const T_shape &alpha, const T_scale &beta) {
+inline typename return_type<T_y, T_shape, T_scale>::type
+inv_gamma_log(const T_y &y, const T_shape &alpha, const T_scale &beta) {
   return inv_gamma_lpdf<T_y, T_shape, T_scale>(y, alpha, beta);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

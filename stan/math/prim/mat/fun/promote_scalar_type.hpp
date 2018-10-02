@@ -65,8 +65,8 @@ struct promote_scalar_type<T, Eigen::Matrix<S, 1, Eigen::Dynamic>> {
       type;
 };
 
-}  // namespace math
+} // namespace math
 
-}  // namespace stan
+} // namespace stan
 
 #endif

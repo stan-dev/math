@@ -60,6 +60,6 @@ inline void invalid_argument(const char *function, const char *name, const T &y,
   invalid_argument(function, name, y, msg1, "");
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

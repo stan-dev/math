@@ -39,9 +39,9 @@ namespace math {
  * ascending order.
  */
 template <bool propto, typename T_loc, typename T_cut>
-typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
-    int y, const T_loc &lambda,
-    const Eigen::Matrix<T_cut, Eigen::Dynamic, 1> &c) {
+typename return_type<T_loc, T_cut>::type
+ordered_probit_lpmf(int y, const T_loc &lambda,
+                    const Eigen::Matrix<T_cut, Eigen::Dynamic, 1> &c) {
   using std::exp;
   using std::log;
 
@@ -65,9 +65,9 @@ typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
 }
 
 template <typename T_loc, typename T_cut>
-typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
-    int y, const T_loc &lambda,
-    const Eigen::Matrix<T_cut, Eigen::Dynamic, 1> &c) {
+typename return_type<T_loc, T_cut>::type
+ordered_probit_lpmf(int y, const T_loc &lambda,
+                    const Eigen::Matrix<T_cut, Eigen::Dynamic, 1> &c) {
   return ordered_probit_lpmf<false>(y, lambda, c);
 }
 
@@ -97,10 +97,10 @@ typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
  * lengths.
  */
 template <bool propto, typename T_loc, typename T_cut>
-typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
-    const std::vector<int> &y,
-    const Eigen::Matrix<T_loc, Eigen::Dynamic, 1> &lambda,
-    const Eigen::Matrix<T_cut, Eigen::Dynamic, 1> &c) {
+typename return_type<T_loc, T_cut>::type
+ordered_probit_lpmf(const std::vector<int> &y,
+                    const Eigen::Matrix<T_loc, Eigen::Dynamic, 1> &lambda,
+                    const Eigen::Matrix<T_cut, Eigen::Dynamic, 1> &c) {
   using std::exp;
   using std::log;
 
@@ -124,18 +124,18 @@ typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
     } else if (y[i] == K) {
       logp_n += log(Phi(lambda[i] - c[K - 2]));
     } else {
-      logp_n
-          += log(Phi(lambda[i] - c[y[i] - 2]) - Phi(lambda[i] - c[y[i] - 1]));
+      logp_n +=
+          log(Phi(lambda[i] - c[y[i] - 2]) - Phi(lambda[i] - c[y[i] - 1]));
     }
   }
   return logp_n;
 }
 
 template <typename T_loc, typename T_cut>
-typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
-    const std::vector<int> &y,
-    const Eigen::Matrix<T_loc, Eigen::Dynamic, 1> &lambda,
-    const Eigen::Matrix<T_cut, Eigen::Dynamic, 1> &c) {
+typename return_type<T_loc, T_cut>::type
+ordered_probit_lpmf(const std::vector<int> &y,
+                    const Eigen::Matrix<T_loc, Eigen::Dynamic, 1> &lambda,
+                    const Eigen::Matrix<T_cut, Eigen::Dynamic, 1> &c) {
   return ordered_probit_lpmf<false>(y, lambda, c);
 }
 
@@ -201,8 +201,8 @@ typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
     } else if (y[i] == K) {
       logp_n += log(Phi(lambda[i] - c[i][K - 2]));
     } else {
-      logp_n += log(Phi(lambda[i] - c[i][y[i] - 2])
-                    - Phi(lambda[i] - c[i][y[i] - 1]));
+      logp_n += log(Phi(lambda[i] - c[i][y[i] - 2]) -
+                    Phi(lambda[i] - c[i][y[i] - 1]));
     }
   }
   return logp_n;
@@ -215,6 +215,6 @@ typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
     const std::vector<Eigen::Matrix<T_cut, Eigen::Dynamic, 1>> &c) {
   return ordered_probit_lpmf<false>(y, lambda, c);
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

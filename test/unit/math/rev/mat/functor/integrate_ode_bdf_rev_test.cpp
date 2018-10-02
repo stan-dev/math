@@ -16,9 +16,9 @@ void sho_value_test(F harm_osc, std::vector<double> &y0, double t0,
   using stan::math::promote_scalar;
   using stan::math::var;
 
-  std::vector<std::vector<var>> ode_res_vd = stan::math::integrate_ode_bdf(
-      harm_osc, promote_scalar<T_y0>(y0), t0, ts,
-      promote_scalar<T_theta>(theta), x, x_int);
+  std::vector<std::vector<var>> ode_res_vd =
+      stan::math::integrate_ode_bdf(harm_osc, promote_scalar<T_y0>(y0), t0, ts,
+                                    promote_scalar<T_theta>(theta), x, x_int);
 
   EXPECT_NEAR(0.995029, ode_res_vd[0][0].val(), 1e-5);
   EXPECT_NEAR(-0.0990884, ode_res_vd[0][1].val(), 1e-5);
@@ -128,8 +128,8 @@ TEST(StanAgradRevOde_integrate_ode, harmonic_oscillator_error) {
   std::vector<int> x_int(2, 0);
 
   // aligned error handling with non-stiff case
-  std::string error_msg
-      = "cvodes_ode_data: dz_dt (3) and states (2) must match in size";
+  std::string error_msg =
+      "cvodes_ode_data: dz_dt (3) and states (2) must match in size";
 
   sho_error_test<double, var>(harm_osc, y0, t0, ts, theta, x, x_int, error_msg);
   sho_error_test<var, double>(harm_osc, y0, t0, ts, theta, x, x_int, error_msg);

@@ -27,8 +27,8 @@ namespace math {
 
 // Logistic(y|mu, sigma)    [sigma > 0]
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type logistic_lpdf(
-    const T_y &y, const T_loc &mu, const T_scale &sigma) {
+typename return_type<T_y, T_loc, T_scale>::type
+logistic_lpdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
   static const char *function = "logistic_lpdf";
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
@@ -101,30 +101,30 @@ typename return_type<T_y, T_loc, T_scale>::type logistic_lpdf(
       logp -= 2.0 * log1p(exp_m_y_minus_mu_div_sigma);
 
     if (!is_constant_struct<T_y>::value)
-      ops_partials.edge1_.partials_[n]
-          += (2 * inv_1p_exp_y_minus_mu_div_sigma - 1) * inv_sigma[n];
+      ops_partials.edge1_.partials_[n] +=
+          (2 * inv_1p_exp_y_minus_mu_div_sigma - 1) * inv_sigma[n];
     if (!is_constant_struct<T_loc>::value)
-      ops_partials.edge2_.partials_[n]
-          += (1
-              - 2 * exp_mu_div_sigma[n]
-                    / (exp_mu_div_sigma[n] + exp_y_div_sigma[n]))
-             * inv_sigma[n];
+      ops_partials.edge2_.partials_[n] +=
+          (1 -
+           2 * exp_mu_div_sigma[n] /
+               (exp_mu_div_sigma[n] + exp_y_div_sigma[n])) *
+          inv_sigma[n];
     if (!is_constant_struct<T_scale>::value)
-      ops_partials.edge3_.partials_[n]
-          += ((1 - 2 * inv_1p_exp_y_minus_mu_div_sigma) * y_minus_mu
-                  * inv_sigma[n]
-              - 1)
-             * inv_sigma[n];
+      ops_partials.edge3_.partials_[n] +=
+          ((1 - 2 * inv_1p_exp_y_minus_mu_div_sigma) * y_minus_mu *
+               inv_sigma[n] -
+           1) *
+          inv_sigma[n];
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline typename return_type<T_y, T_loc, T_scale>::type logistic_lpdf(
-    const T_y &y, const T_loc &mu, const T_scale &sigma) {
+inline typename return_type<T_y, T_loc, T_scale>::type
+logistic_lpdf(const T_y &y, const T_loc &mu, const T_scale &sigma) {
   return logistic_lpdf<false>(y, mu, sigma);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

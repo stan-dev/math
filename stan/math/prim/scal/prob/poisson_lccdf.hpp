@@ -76,6 +76,6 @@ typename return_type<T_rate>::type poisson_lccdf(const T_n &n,
   return ops_partials.build(P);
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif

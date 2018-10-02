@@ -85,8 +85,7 @@ namespace internal {
  * Scalar product traits specialization for Eigen for reverse-mode
  * autodiff variables.
  */
-template <>
-struct scalar_product_traits<stan::math::var, double> {
+template <> struct scalar_product_traits<stan::math::var, double> {
   typedef stan::math::var ReturnType;
 };
 
@@ -94,8 +93,7 @@ struct scalar_product_traits<stan::math::var, double> {
  * Scalar product traits specialization for Eigen for reverse-mode
  * autodiff variables.
  */
-template <>
-struct scalar_product_traits<double, stan::math::var> {
+template <> struct scalar_product_traits<double, stan::math::var> {
   typedef stan::math::var ReturnType;
 };
 
@@ -212,12 +210,12 @@ struct general_matrix_matrix_product<Index, stan::math::var, LhsStorageOrder,
           Index, LhsScalar, LhsMapper, LhsStorageOrder, ConjugateLhs, RhsScalar,
           RhsMapper,
           ConjugateRhs>::run(rows, depth, lhs, lhsStride,
-                             &rhs[static_cast<int>(RhsStorageOrder)
-                                          == static_cast<int>(ColMajor)
+                             &rhs[static_cast<int>(RhsStorageOrder) ==
+                                          static_cast<int>(ColMajor)
                                       ? i * rhsStride
                                       : i],
-                             static_cast<int>(RhsStorageOrder)
-                                     == static_cast<int>(ColMajor)
+                             static_cast<int>(RhsStorageOrder) ==
+                                     static_cast<int>(ColMajor)
                                  ? 1
                                  : rhsStride,
                              &res[i * resStride], 1, alpha);
@@ -243,8 +241,7 @@ struct general_matrix_matrix_product<Index, stan::math::var, LhsStorageOrder,
 /**
  * Implemented this for printing to stream.
  */
-template <>
-struct significant_decimals_default_impl<stan::math::var, false> {
+template <> struct significant_decimals_default_impl<stan::math::var, false> {
   static inline int run() {
     using std::ceil;
     using std::log;
@@ -257,8 +254,7 @@ struct significant_decimals_default_impl<stan::math::var, false> {
  * Scalar product traits override for Eigen for automatic
  * gradient variables.
  */
-template <>
-struct scalar_product_traits<stan::math::var, double> {
+template <> struct scalar_product_traits<stan::math::var, double> {
   typedef stan::math::var ReturnType;
 };
 
@@ -266,8 +262,7 @@ struct scalar_product_traits<stan::math::var, double> {
  * Scalar product traits override for Eigen for automatic
  * gradient variables.
  */
-template <>
-struct scalar_product_traits<double, stan::math::var> {
+template <> struct scalar_product_traits<double, stan::math::var> {
   typedef stan::math::var ReturnType;
 };
 
@@ -349,12 +344,12 @@ struct general_matrix_matrix_product<Index, stan::math::var, LhsStorageOrder,
       general_matrix_vector_product<
           Index, LhsScalar, LhsStorageOrder, ConjugateLhs, RhsScalar,
           ConjugateRhs>::run(rows, depth, lhs, lhsStride,
-                             &rhs[(static_cast<int>(RhsStorageOrder)
-                                   == static_cast<int>(ColMajor))
+                             &rhs[(static_cast<int>(RhsStorageOrder) ==
+                                   static_cast<int>(ColMajor))
                                       ? (i * rhsStride)
                                       : (i)],
-                             (static_cast<int>(RhsStorageOrder)
-                              == static_cast<int>(ColMajor))
+                             (static_cast<int>(RhsStorageOrder) ==
+                              static_cast<int>(ColMajor))
                                  ? (1)
                                  : (rhsStride),
                              &res[i * resStride], 1, alpha);
@@ -362,6 +357,6 @@ struct general_matrix_matrix_product<Index, stan::math::var, LhsStorageOrder,
   }
 };
 #endif
-}  // namespace internal
-}  // namespace Eigen
+} // namespace internal
+} // namespace Eigen
 #endif

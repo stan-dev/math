@@ -37,6 +37,6 @@ inline void check_ldlt_factor(const char *function, const char *name,
   }
 }
 
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif
