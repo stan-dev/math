@@ -1,7 +1,7 @@
-#include <cmath>
 #include <gtest/gtest.h>
-#include <limits>
 #include <stan/math/rev/mat.hpp>
+#include <cmath>
+#include <limits>
 #include <string>
 #include <vector>
 #include <type_traits>
