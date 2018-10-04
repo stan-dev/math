@@ -135,7 +135,7 @@ pipeline {
         stage('Always-run tests part 1') {
             parallel {
                 stage('Linux Unit with MPI') {
-                    agent { label 'linux' }
+                    agent { label 'linux && mpi' }
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
@@ -153,7 +153,7 @@ pipeline {
                         sh "echo CXX=${env.CXX} -Werror > make/local"
                         sh "echo STAN_OPENCL=true>> make/local"
                         sh "echo OPENCL_PLATFORM_ID=0>> make/local"
-                        sh "echo OPENCL_DEVICE_ID=1>> make/local"
+                        sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
                         runTests("test/unit/math/gpu")
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -197,6 +197,8 @@ pipeline {
                         sh "echo CXX=${env.CXX} -Werror > make/local"
                         sh "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
                         runTests("test/unit -f thread")
+                        sh "find . -name *_test.xml | xargs rm"
+                        runTests("test/unit -f map_rect")
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
