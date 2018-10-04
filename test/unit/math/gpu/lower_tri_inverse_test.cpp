@@ -62,7 +62,7 @@ void inverse_big(int size) {
   double max_error = 0;
   for (int i = 0; i < size; i++) {
     for (int j = 0; j <= i; j++) {
-      double abs_err = abs(m1_cpu(i, j) - m1_cl(i, j));
+      double abs_err = std::fabs(m1_cpu(i, j) - m1_cl(i, j));
       double a = std::max(abs_err / m1_cpu(i, j), abs_err / m1_cl(i, j));
       max_error = std::max(max_error, a);
     }
