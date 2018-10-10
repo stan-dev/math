@@ -17,7 +17,6 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
      * @param[in] temp Temporary matrix with the intermediate results.
      * @param A_rows Number of rows for A.
      * @param rows The number of rows in a single matrix of the batch
-     * @param non_padded_rows Number of rows in A not used for padding.
      * @note Code is a <code>const char*</code> held in
      * <code>lower_tri_inverse_step3_kernel_code.</code>
      *  Used in math/gpu/lower_tri_inverse.hpp.

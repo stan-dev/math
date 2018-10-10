@@ -18,7 +18,6 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
      * multiplications
      * @param A_rows The number of rows for A.
      * @param rows The number of rows in a single matrix of the batch
-     * @param non_padded_rows The number of rows in the non-padded matrix
      * @note Code is a <code>const char*</code> held in
      * <code>lower_tri_inverse_step2_kernel_code.</code>
      *  Used in math/gpu/lower_tri_inverse.hpp.
