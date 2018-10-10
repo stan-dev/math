@@ -52,42 +52,42 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
           const int temp_global_col = tiled_j + w * THREAD_BLOCK_SIZE_COL;
           const int C1_global_col = offset + j + w * THREAD_BLOCK_SIZE_COL;
           const int C1_global_row = tiled_i + offset;
+          const int local_col = thread_block_col + w * THREAD_BLOCK_SIZE_COL;
+          const int local_row = thread_block_row;
           if ((temp_global_col) < rows && (i) < rows) {
-            temp_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                      [thread_block_row]
-                = temp[result_matrix_id * rows * rows + temp_global_col * rows
-                       + i];
+            temp_local[local_col][local_row]
+                = temp[result_matrix_id * rows * rows
+                    + temp_global_col * rows + i];
           } else {
-            temp_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                      [thread_block_row]
-                = 0.0;
+            temp_local[local_col][local_row] = 0.0;
           }
           if (C1_global_col <= C1_global_row) {
-            C1_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                    [thread_block_row]
+            C1_local[local_col][local_row]
                 = A[C1_global_col * A_rows + C1_global_row];
           } else {
-            C1_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                    [thread_block_row]
-                = 0;
+            C1_local[local_col][local_row] = 0;
           }
         }
         // wait until all tile values are loaded to the local memory
         barrier(CLK_LOCAL_MEM_FENCE);
         for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE; block_ind++) {
           for (int w = 0; w < WORK_PER_THREAD; w++) {
-            acc[w] += temp_local[block_ind][thread_block_row]
-                      * C1_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                                [block_ind];
+			const int local_col = thread_block_col + w * THREAD_BLOCK_SIZE_COL;
+			const int local_row = thread_block_row;
+            acc[w] += temp_local[block_ind][local_row]
+                      * C1_local[local_col][block_ind];
           }
         }
         barrier(CLK_LOCAL_MEM_FENCE);
       }
       // save the values
+      const int A_global_row = i + rows + offset;
+      const int A_global_col_offset = offset + j;
       for (int w = 0; w < WORK_PER_THREAD; w++) {
+		 const int A_global_col = A_global_col_offset + w * THREAD_BLOCK_SIZE_COL;
         // each thread saves WORK_PER_THREAD values
-        A[(offset + j + w * THREAD_BLOCK_SIZE_COL) * A_rows + i + rows + offset]
-            = -acc[w];
+		A[A_global_col * A_rows + i + rows + offset]
+		  = -acc[w];
       }
     }
     // \cond
