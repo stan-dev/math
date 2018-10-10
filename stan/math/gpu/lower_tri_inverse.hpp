@@ -108,10 +108,10 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
         = cl::NDRange(result_matrix_dim_x, result_work_dim, parts);
     opencl_kernels::lower_tri_inverse_step2(
         result_ndrange, ndrange_2d, inv_padded.buffer(), temp.buffer(),
-        inv_padded.rows(), result_matrix_dim, inv_mat.rows());
+        inv_padded.rows(), result_matrix_dim);
     opencl_kernels::lower_tri_inverse_step3(
         result_ndrange, ndrange_2d, inv_padded.buffer(), temp.buffer(),
-        inv_padded.rows(), result_matrix_dim, inv_mat.rows());
+        inv_padded.rows(), result_matrix_dim);
     // if this is the last submatrix, end
     if (parts == 1) {
       parts = 0;

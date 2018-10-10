@@ -26,7 +26,7 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
      */
     __kernel void lower_tri_inverse_step2(
         __global read_only double* A, __global double* temp, const int A_rows,
-        const int rows, int non_padded_rows) {
+        const int rows) {
       int result_matrix_id = get_global_id(2);
       int offset = result_matrix_id * rows * 2;
       // thread index inside the thread_block
@@ -105,7 +105,7 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/matrix_multiply.hpp add() \endlink
  */
-const local_range_kernel<cl::Buffer, cl::Buffer, int, int, int>
+const local_range_kernel<cl::Buffer, cl::Buffer, int, int>
     lower_tri_inverse_step2("lower_tri_inverse_step2",
                             lower_tri_inverse_step2_kernel_code,
                             {{"THREAD_BLOCK_SIZE", 32},
