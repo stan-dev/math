@@ -44,19 +44,19 @@ const char* batch_identity_kernel_code = STRINGIFY(
      * Makes a batch of smaller identity matrices inside the input matrix
      *
      * @param[in,out] A The batched identity matrix output.
-     * @param batch_size The number of rows/cols for the smaller matrices in the
+     * @param batch_rows The number of rows/cols for the smaller matrices in the
      * batch
      * @param size The size of A.
      * @note Code is a <code>const char*</code> held in
      * <code>identity_kernel_code.</code>
      *  This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void batch_identity(__global double* A, unsigned int batch_size,
+    __kernel void batch_identity(__global double* A, unsigned int batch_rows,
                                  unsigned int size) {
       int batch_id = get_global_id(0);
       int batch_row = get_global_id(1);
       int batch_col = get_global_id(2);
-      int index = batch_id * batch_size * batch_size + batch_col * batch_size
+      int index = batch_id * batch_rows * batch_rows + batch_col * batch_rows
                   + batch_row;
       if (index < size) {
         if (batch_row == batch_col) {
