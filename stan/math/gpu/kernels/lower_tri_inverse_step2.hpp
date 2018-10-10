@@ -14,7 +14,7 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
      * Calculates the intermediate products in the lower_tri_inverse
      *
      * @param[in] A input matrix that is being inverted.
-     * @param[out] C output matrix with results of the batched matrix
+     * @param[out] temp output matrix with results of the batched matrix
      * multiplications
      * @param A_rows The number of rows for A.
      * @param rows The number of rows in a single matrix of the batch
@@ -25,7 +25,7 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
      *  This kernel uses the helper macros available in helpers.cl.
      */
     __kernel void lower_tri_inverse_step2(
-        __global read_only double* A, __global double* temp, const int A_rows,
+        __global double* A, __global double* temp, const int A_rows,
         const int rows) {
       int result_matrix_id = get_global_id(2);
       int offset = result_matrix_id * rows * 2;
