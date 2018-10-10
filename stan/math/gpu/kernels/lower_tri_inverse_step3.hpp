@@ -23,9 +23,9 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
      *  Used in math/gpu/lower_tri_inverse.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void lower_tri_inverse_step3(__global read_write double* A,
-                                          const __global double* temp, const int A_rows,
-                                          const int rows, int non_padded_rows) {
+    __kernel void lower_tri_inverse_step3(
+        __global read_write double* A, const __global double* temp,
+        const int A_rows, const int rows, int non_padded_rows) {
       int result_matrix_id = get_global_id(2);
       int offset = result_matrix_id * rows * 2;
       // thread index inside the thread_block
@@ -48,27 +48,27 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
         // memory
         for (int w = 0; w < WORK_PER_THREAD; w++) {
           const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
-          const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;		  
+          const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
           const int temp_global_col = tiled_j + w * THREAD_BLOCK_SIZE_COL;
           const int C1_global_col = offset + j + w * THREAD_BLOCK_SIZE_COL;
           const int C1_global_row = tiled_i + offset;
           if ((temp_global_col) < rows && (i) < rows) {
             temp_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                   [thread_block_row]
-                = temp[result_matrix_id * rows * rows
-                    + temp_global_col * rows + i];
+                      [thread_block_row]
+                = temp[result_matrix_id * rows * rows + temp_global_col * rows
+                       + i];
           } else {
             temp_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                   [thread_block_row]
+                      [thread_block_row]
                 = 0.0;
           }
           if (C1_global_col <= C1_global_row) {
             C1_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                   [thread_block_row]
+                    [thread_block_row]
                 = A[C1_global_col * A_rows + C1_global_row];
           } else {
             C1_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                   [thread_block_row]
+                    [thread_block_row]
                 = 0;
           }
         }
@@ -78,7 +78,7 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
           for (int w = 0; w < WORK_PER_THREAD; w++) {
             acc[w] += temp_local[block_ind][thread_block_row]
                       * C1_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                               [block_ind];
+                                [block_ind];
           }
         }
         barrier(CLK_LOCAL_MEM_FENCE);
@@ -86,8 +86,8 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
       // save the values
       for (int w = 0; w < WORK_PER_THREAD; w++) {
         // each thread saves WORK_PER_THREAD values
-		A[(offset + j + w * THREAD_BLOCK_SIZE_COL) * A_rows + i + rows + offset]
-		  = -acc[w];
+        A[(offset + j + w * THREAD_BLOCK_SIZE_COL) * A_rows + i + rows + offset]
+            = -acc[w];
       }
     }
     // \cond

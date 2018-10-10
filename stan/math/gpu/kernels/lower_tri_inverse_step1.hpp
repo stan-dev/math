@@ -14,7 +14,8 @@ const char* lower_tri_inverse_step1_kernel_code = STRINGIFY(
      * Calculates the inverse with no blocking
      *
      * @param[in,out] A The input matrix.
-     * @param[in, out] tmp_inv A temporary matrix for storing partial calculations.
+     * @param[in, out] tmp_inv A temporary matrix for storing partial
+     * calculations.
      * @param rows The number of rows for A.
      * @note Code is a <code>const char*</code> held in
      * <code>lower_tri_inverse_step1_kernel_code.</code>
@@ -36,15 +37,12 @@ const char* lower_tri_inverse_step1_kernel_code = STRINGIFY(
         barrier(CLK_LOCAL_MEM_FENCE);
         for (int i = max(k + 1, index); i < block_size; i++) {
           factor = A(offset + i, offset + k);
-            tmp_inv[tmp_offset + i]
-                -= tmp_inv[tmp_offset + k]
-                   * factor;
+          tmp_inv[tmp_offset + i] -= tmp_inv[tmp_offset + k] * factor;
         }
         barrier(CLK_LOCAL_MEM_FENCE);
       }
       for (int j = 0; j < block_size; j++) {
-        A(offset + j, offset + index)
-            = tmp_inv[tmp_offset + j];
+        A(offset + j, offset + index) = tmp_inv[tmp_offset + j];
       }
     }
     // \cond

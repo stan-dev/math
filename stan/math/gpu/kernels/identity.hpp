@@ -39,22 +39,25 @@ const char* identity_kernel_code = STRINGIFY(
 // \cond
 const char* batch_identity_kernel_code = STRINGIFY(
     // \endcond
-    
+
     /**
      * Makes a batch of smaller identity matrices inside the input matrix
      *
      * @param[in,out] A The batched identity matrix output.
-     * @param batch_size The number of rows/cols for the smaller matrices in the batch
+     * @param batch_size The number of rows/cols for the smaller matrices in the
+     * batch
      * @param size The size of A.
      * @note Code is a <code>const char*</code> held in
      * <code>identity_kernel_code.</code>
      *  This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void batch_identity(__global double* A, unsigned  int batch_size, unsigned int size) {
+    __kernel void batch_identity(__global double* A, unsigned int batch_size,
+                                 unsigned int size) {
       int batch_id = get_global_id(0);
       int batch_row = get_global_id(1);
       int batch_col = get_global_id(2);
-      int index = batch_id*batch_size*batch_size + batch_col*batch_size + batch_row;
+      int index = batch_id * batch_size * batch_size + batch_col * batch_size
+                  + batch_row;
       if (index < size) {
         if (batch_row == batch_col) {
           A[index] = 1.0;
@@ -67,18 +70,17 @@ const char* batch_identity_kernel_code = STRINGIFY(
 );
 // \endcond
 
-
 /**
  * See the docs for \link kernels/identity.hpp identity() \endlink
  */
 const global_range_kernel<cl::Buffer, int, int> identity("identity",
                                                          identity_kernel_code);
-                                                         
+
 /**
  * See the docs for \link kernels/identity.hpp batch_identity() \endlink
  */
-const global_range_kernel<cl::Buffer, int, int> batch_identity("batch_identity",
-                                                         batch_identity_kernel_code);
+const global_range_kernel<cl::Buffer, int, int> batch_identity(
+    "batch_identity", batch_identity_kernel_code);
 
 }  // namespace opencl_kernels
 }  // namespace math
