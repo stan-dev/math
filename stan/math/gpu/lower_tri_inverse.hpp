@@ -70,6 +70,9 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
   int parts = inv_padded.rows() / thread_block_size_1D;
   inv_padded.sub_block(inv_mat, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
   try {
+	// create a batch of identity matrices to be used in the first step
+    opencl_kernels::batch_identity(
+        cl::NDRange(parts, thread_block_size_1D, thread_block_size_1D), temp.buffer(), thread_block_size_1D, temp.size());
     // spawn parts thread blocks, each responsible for one block
     opencl_kernels::lower_tri_inverse_step1(
         cl::NDRange(parts * thread_block_size_1D),
