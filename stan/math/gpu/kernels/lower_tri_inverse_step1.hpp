@@ -35,7 +35,7 @@ const char* lower_tri_inverse_step1_kernel_code = STRINGIFY(
           tmp_inv[tmp_offset + k] /= factor;
         }
         barrier(CLK_LOCAL_MEM_FENCE);
-        for (int i = max(k + 1, index); i < block_size; i++) { // NOLINT
+        for (int i = max(k + 1, index); i < block_size; i++) {  // NOLINT
           factor = A(offset + i, offset + k);
           tmp_inv[tmp_offset + i] -= tmp_inv[tmp_offset + k] * factor;
         }

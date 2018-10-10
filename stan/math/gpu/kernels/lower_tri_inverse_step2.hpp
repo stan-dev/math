@@ -24,9 +24,9 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
      *  Used in math/gpu/lower_tri_inverse.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void lower_tri_inverse_step2(
-        __global double* A, __global double* temp, const int A_rows,
-        const int rows) {
+    __kernel void lower_tri_inverse_step2(__global double* A,
+                                          __global double* temp,
+                                          const int A_rows, const int rows) {
       int result_matrix_id = get_global_id(2);
       int offset = result_matrix_id * rows * 2;
       // thread index inside the thread_block
