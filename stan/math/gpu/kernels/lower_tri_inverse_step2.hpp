@@ -67,8 +67,7 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
             C2_local[local_col][local_row] = 0;
           }
           A3_local[local_col][local_row]
-             = A[A3_global_col * A_rows + A3_global_row];
-          
+              = A[A3_global_col * A_rows + A3_global_row];
         }
         // wait until all tile values are loaded to the local memory
         barrier(CLK_LOCAL_MEM_FENCE);
