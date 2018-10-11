@@ -66,13 +66,9 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
           } else {
             C2_local[local_col][local_row] = 0;
           }
-          if (((offset + global_thread_col + w * THREAD_BLOCK_SIZE_COL)
-               <= (tiled_i + rows + offset))) {
-            A3_local[local_col][local_row]
-                = A[A3_global_col * A_rows + A3_global_row];
-          } else {
-            A3_local[local_col][local_row] = 0.0;
-          }
+          A3_local[local_col][local_row]
+             = A[A3_global_col * A_rows + A3_global_row];
+          
         }
         // wait until all tile values are loaded to the local memory
         barrier(CLK_LOCAL_MEM_FENCE);

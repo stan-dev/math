@@ -33,7 +33,6 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
       // global thread index
       const int i = THREAD_BLOCK_SIZE * get_group_id(0) + thread_block_row;
       const int j = THREAD_BLOCK_SIZE * get_group_id(1) + thread_block_col;
-
       // local memory
       __local double temp_local[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];
       __local double C1_local[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];
@@ -53,7 +52,7 @@ const char* lower_tri_inverse_step3_kernel_code = STRINGIFY(
           const int C1_global_row = tiled_i + offset;
           const int local_col = thread_block_col + w * THREAD_BLOCK_SIZE_COL;
           const int local_row = thread_block_row;
-          if ((temp_global_col) < rows && (i) < rows) {
+          if ((temp_global_col) < rows && i < rows) {
             temp_local[local_col][local_row]
                 = temp[result_matrix_id * rows * rows + temp_global_col * rows
                        + i];
