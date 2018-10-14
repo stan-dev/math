@@ -45,14 +45,37 @@ TEST(MathPrimMat, output_type_checking) {
   x[1] = -1;
   x[2] = -0.5;
 
-  // If the scalar types of all arguments are doubles, the scalar type of the output should be a double
-  EXPECT_TRUE((std::is_same<Eigen::MatrixXd, decltype(stan::math::gp_matern52_cov(value_of(x), value_of(sigma), value_of(l)))>::value));
+  // If the scalar types of all arguments are doubles, the scalar type of the
+  // output should be a double
+  EXPECT_TRUE(
+      (std::is_same<Eigen::MatrixXd,
+                    decltype(stan::math::gp_matern52_cov(
+                        value_of(x), value_of(sigma), value_of(l)))>::value));
 
-  // If the scalar types of any argument is a var, the scalar type of the output should be a var
-  EXPECT_TRUE((std::is_same<Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>, decltype(stan::math::gp_matern52_cov(x, sigma, value_of(l)))>::value));
-  EXPECT_TRUE((std::is_same<Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>, decltype(stan::math::gp_matern52_cov(x, value_of(sigma), l))>::value));
-  EXPECT_TRUE((std::is_same<Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>, decltype(stan::math::gp_matern52_cov(x, value_of(sigma), value_of(l)))>::value));
-  EXPECT_TRUE((std::is_same<Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>, decltype(stan::math::gp_matern52_cov(value_of(x), sigma, l))>::value));
-  EXPECT_TRUE((std::is_same<Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>, decltype(stan::math::gp_matern52_cov(value_of(x), sigma, value_of(l)))>::value));
-  EXPECT_TRUE((std::is_same<Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>, decltype(stan::math::gp_matern52_cov(value_of(x), value_of(sigma), l))>::value));
+  // If the scalar types of any argument is a var, the scalar type of the output
+  // should be a var
+  EXPECT_TRUE((std::is_same<
+               Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>,
+               decltype(stan::math::gp_matern52_cov(x, sigma,
+                                                    value_of(l)))>::value));
+  EXPECT_TRUE((std::is_same<
+               Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>,
+               decltype(stan::math::gp_matern52_cov(x, value_of(sigma),
+                                                    l))>::value));
+  EXPECT_TRUE((std::is_same<
+               Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>,
+               decltype(stan::math::gp_matern52_cov(x, value_of(sigma),
+                                                    value_of(l)))>::value));
+  EXPECT_TRUE((std::is_same<
+               Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>,
+               decltype(stan::math::gp_matern52_cov(value_of(x), sigma,
+                                                    l))>::value));
+  EXPECT_TRUE((std::is_same<
+               Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>,
+               decltype(stan::math::gp_matern52_cov(value_of(x), sigma,
+                                                    value_of(l)))>::value));
+  EXPECT_TRUE((std::is_same<
+               Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>,
+               decltype(stan::math::gp_matern52_cov(
+                   value_of(x), value_of(sigma), l))>::value));
 }
