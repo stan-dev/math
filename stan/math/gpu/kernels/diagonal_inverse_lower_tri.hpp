@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_GPU_KERNELS_LOWER_TRI_INVERSE_STEP1_HPP
-#define STAN_MATH_GPU_KERNELS_LOWER_TRI_INVERSE_STEP1_HPP
+#ifndef STAN_MATH_GPU_KERNELS_DIAGONAL_INVERSE_LOWER_TRI_HPP
+#define STAN_MATH_GPU_KERNELS_DIAGONAL_INVERSE_LOWER_TRI_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/gpu/kernel_cl.hpp>
@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char* diagonal_inverse_lower_triangular_kernel_code = STRINGIFY(
+const char* diagonal_inverse_lower_tri_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Calculates inplace submatrix inversions along the matrix diagonal.
@@ -23,11 +23,11 @@ const char* diagonal_inverse_lower_triangular_kernel_code = STRINGIFY(
      * calculations.
      * @param rows The number of rows for A.
      * @note Code is a <code>const char*</code> held in
-     * <code>diagonal_inverse_lower_triangular_kernel_code.</code>
+     * <code>diagonal_inverse_lower_tri_kernel_code.</code>
      *  Used in math/gpu/lower_tri_inverse.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void diagonal_inverse_lower_triangular(
+    __kernel void diagonal_inverse_lower_tri(
         __global double* A, __global double* tmp_inv, int rows) {
       int index = get_local_id(0);
       int group = get_group_id(0);
@@ -55,14 +55,13 @@ const char* diagonal_inverse_lower_triangular_kernel_code = STRINGIFY(
 // \endcond
 
 /**
- * See the docs for \link kernels/diagonal_inverse_lower_triangular.hpp add()
+ * See the docs for \link kernels/diagonal_inverse_lower_tri.hpp add()
  * \endlink
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, int>
-    diagonal_inverse_lower_triangular(
-        "diagonal_inverse_lower_triangular",
-        diagonal_inverse_lower_triangular_kernel_code,
-        {{"THREAD_BLOCK_SIZE", 32}});
+    diagonal_inverse_lower_tri("diagonal_inverse_lower_tri",
+                               diagonal_inverse_lower_tri_kernel_code,
+                               {{"THREAD_BLOCK_SIZE", 32}});
 
 }  // namespace opencl_kernels
 }  // namespace math
