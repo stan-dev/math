@@ -48,26 +48,26 @@ TEST(MetaTraits, StdVectorBuilder_true_false) {
 
 TEST(MetaTraits, StdVectorBuilder_type_check) {
   using stan::StdVectorBuilder;
-  using stan::is_std_vector;
+  using stan::contains_std_vector;
 
-  bool r = is_std_vector<StdVectorBuilder<
+  bool r = contains_std_vector<StdVectorBuilder<
       true, double, std::vector<Eigen::VectorXd>>::type>::value;
   EXPECT_TRUE(r);
-  r = is_std_vector<StdVectorBuilder<
+  r = contains_std_vector<StdVectorBuilder<
       true, double, std::vector<Eigen::RowVectorXd>>::type>::value;
   EXPECT_TRUE(r);
-  r = is_std_vector<StdVectorBuilder<
+  r = contains_std_vector<StdVectorBuilder<
       true, double,
       std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>>::
-                        type>::value;
+                              type>::value;
   EXPECT_TRUE(r);
-  r = is_std_vector<
+  r = contains_std_vector<
       StdVectorBuilder<true, double, Eigen::VectorXd>::type>::value;
   EXPECT_FALSE(r);
-  r = is_std_vector<
+  r = contains_std_vector<
       StdVectorBuilder<true, double, Eigen::RowVectorXd>::type>::value;
   EXPECT_FALSE(r);
-  r = is_std_vector<StdVectorBuilder<
+  r = contains_std_vector<StdVectorBuilder<
       true, double,
       Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>::type>::value;
   EXPECT_FALSE(r);

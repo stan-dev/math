@@ -29,10 +29,11 @@ TEST(MetaTraits, StdVectorBuilder_true_false) {
 
 TEST(MetaTraits, StdVectorBuilder_type_check) {
   using stan::StdVectorBuilder;
-  using stan::is_std_vector;
+  using stan::contains_std_vector;
 
-  bool r = is_std_vector<StdVectorBuilder<true, double, int>::type>::value;
+  bool r
+      = contains_std_vector<StdVectorBuilder<true, double, int>::type>::value;
   EXPECT_FALSE(r);
-  r = is_std_vector<StdVectorBuilder<true, double, double>::type>::value;
+  r = contains_std_vector<StdVectorBuilder<true, double, double>::type>::value;
   EXPECT_FALSE(r);
 }
