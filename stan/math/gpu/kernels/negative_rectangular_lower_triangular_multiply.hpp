@@ -15,12 +15,12 @@ const char* negative_rectangular_lower_triangular_multiply_kernel_code
          * Calculates C = -B * A where B is rectangular and A is a lower
          * triangular.
          * The full inverse requires calculation of the lower left rectangular
-         * matrix within the lower left triangular C3 = -C2*A3*C1. where C2 is the
-         * inverse of the bottom right lower triangular, C1 is the inverse of the
-         * upper left lower and A3 is the original lower triangulars lower left
-         * rectangular. This kernel performs multiplications on submatrices in
-         * the input matrix A in parallel and includes optimizations
-         * to account for the lower triangular input matrix A.
+         * matrix within the lower left triangular C3 = -C2*A3*C1. where C2 is
+         * the inverse of the bottom right lower triangular, C1 is the inverse
+         * of the upper left lower and A3 is the original lower triangulars
+         * lower left rectangular. This kernel performs multiplications on
+         * submatrices in the input matrix A in parallel and includes
+         * optimizations to account for the lower triangular input matrix A.
          *
          *
          * @param[in, out] A Input matrix that is being inverted.
