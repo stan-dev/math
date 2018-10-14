@@ -8,22 +8,27 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char* lower_tri_inverse_step1_kernel_code = STRINGIFY(
+const char* diagonal_inverse_lower_triangular_kernel_code = STRINGIFY(
     // \endcond
     /**
-     * Calculates the inverse with no blocking
+     * Calculates inplace submatrix inversions along the matrix diagonal.
+     *
+     * In the special case that the thread block size is larger than the input
+     * matrix A then this kernel will perform the complete lower triangular
+     * of matrix A. Otherwise A will have lower triangular inverses calculated
+     * on submatrices along the diagonal equal to the size of the thread block.
      *
      * @param[in,out] A The input matrix.
      * @param[in, out] tmp_inv A temporary matrix for storing partial
      * calculations.
      * @param rows The number of rows for A.
      * @note Code is a <code>const char*</code> held in
-     * <code>lower_tri_inverse_step1_kernel_code.</code>
+     * <code>diagonal_inverse_lower_triangular_kernel_code.</code>
      *  Used in math/gpu/lower_tri_inverse.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void lower_tri_inverse_step1(__global double* A,
-                                          __global double* tmp_inv, int rows) {
+    __kernel void diagonal_inverse_lower_triangular(
+        __global double* A, __global double* tmp_inv, int rows) {
       int index = get_local_id(0);
       int group = get_group_id(0);
       int block_size = get_local_size(0);
@@ -50,11 +55,14 @@ const char* lower_tri_inverse_step1_kernel_code = STRINGIFY(
 // \endcond
 
 /**
- * See the docs for \link kernels/lower_tri_inverse_step1.hpp add() \endlink
+ * See the docs for \link kernels/diagonal_inverse_lower_triangular.hpp add()
+ * \endlink
  */
-const local_range_kernel<cl::Buffer, cl::Buffer, int> lower_tri_inverse_step1(
-    "lower_tri_inverse_step1", lower_tri_inverse_step1_kernel_code,
-    {{"THREAD_BLOCK_SIZE", 32}});
+const local_range_kernel<cl::Buffer, cl::Buffer, int>
+    diagonal_inverse_lower_triangular(
+        "diagonal_inverse_lower_triangular",
+        diagonal_inverse_lower_triangular_kernel_code,
+        {{"THREAD_BLOCK_SIZE", 32}});
 
 }  // namespace opencl_kernels
 }  // namespace math

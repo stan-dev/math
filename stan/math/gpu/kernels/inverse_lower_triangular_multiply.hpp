@@ -8,10 +8,20 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
+const char* inverse_lower_triangular_multiply_kernel_code = STRINGIFY(
     // \endcond
     /**
-     * Calculates the intermediate products in the lower_tri_inverse
+     * Calculates B = C * A. C is an inverse matrix and A is lower triangular.
+     *
+     * This kernel is used in the final iteration of the batched lower
+     * triangular inversion.
+     * The full inverse requires calculation of the lower left rectangular
+     * matrix within the lower left triangular C3 = -C2*A3*C1. where C2 is the
+     * inverse of the bottom right lower triangular, C1 is the inverse of the
+     * upper left lower and A3 is the original lower triangulars lower left
+     * rectangular. This kernel takes the output from
+     * <code>negative_rectangular_lower_triangular_multiply</code> and applies
+     * the submatrix multiplcation to get the final output for C3.
      *
      * @param[in] A input matrix that is being inverted.
      * @param[out] temp output matrix with results of the batched matrix
@@ -19,13 +29,13 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
      * @param A_rows The number of rows for A.
      * @param rows The number of rows in a single matrix of the batch
      * @note Code is a <code>const char*</code> held in
-     * <code>lower_tri_inverse_step2_kernel_code.</code>
+     * <code>inverse_lower_triangular_multiply_kernel_code.</code>
      *  Used in math/gpu/lower_tri_inverse.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void lower_tri_inverse_step2(__global double* A,
-                                          __global double* temp,
-                                          const int A_rows, const int rows) {
+    __kernel void inverse_lower_triangular_multiply(
+        __global double* A, __global double* temp, const int A_rows,
+        const int rows) {
       int result_matrix_id = get_global_id(2);
       int offset = result_matrix_id * rows * 2;
       // thread index inside the thread_block
@@ -100,10 +110,10 @@ const char* lower_tri_inverse_step2_kernel_code = STRINGIFY(
  * See the docs for \link kernels/matrix_multiply.hpp add() \endlink
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, int, int>
-    lower_tri_inverse_step2("lower_tri_inverse_step2",
-                            lower_tri_inverse_step2_kernel_code,
-                            {{"THREAD_BLOCK_SIZE", 32},
-                             {"WORK_PER_THREAD", 8}});
+    inverse_lower_triangular_multiply(
+        "inverse_lower_triangular_multiply",
+        inverse_lower_triangular_multiply_kernel_code,
+        {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
 
 }  // namespace opencl_kernels
 }  // namespace math

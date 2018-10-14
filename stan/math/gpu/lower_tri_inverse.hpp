@@ -3,9 +3,9 @@
 
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/matrix_gpu.hpp>
-#include <stan/math/gpu/kernels/lower_tri_inverse_step1.hpp>
-#include <stan/math/gpu/kernels/lower_tri_inverse_step2.hpp>
-#include <stan/math/gpu/kernels/lower_tri_inverse_step3.hpp>
+#include <stan/math/gpu/kernels/diagonal_inverse_lower_triangular.hpp>
+#include <stan/math/gpu/kernels/inverse_lower_triangular_multiply.hpp>
+#include <stan/math/gpu/kernels/negative_rectangular_lower_triangular_multiply.hpp>
 
 #include <stan/math/gpu/identity.hpp>
 #include <stan/math/gpu/err/check_square.hpp>
@@ -16,7 +16,6 @@ namespace stan {
 namespace math {
 /**
  * Computes the inverse of the lower triangular matrix
- * that resides in the GPU global memory
  *
  * @param A matrix on the GPU
  *
@@ -63,8 +62,9 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
   inv_padded.zeros<stan::math::TriangularViewGPU::Entire>();
 
   int work_per_thread
-      = opencl_kernels::lower_tri_inverse_step2.make_functor.get_opts().at(
-          "WORK_PER_THREAD");
+      = opencl_kernels::inverse_lower_triangular_multiply.make_functor
+            .get_opts()
+            .at("WORK_PER_THREAD");
   // the number of blocks in the first step
   // each block is inverted with using the regular forward substitution
   int parts = inv_padded.rows() / thread_block_size_1D;
@@ -75,7 +75,7 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
         cl::NDRange(parts, thread_block_size_1D, thread_block_size_1D),
         temp.buffer(), thread_block_size_1D, temp.size());
     // spawn parts thread blocks, each responsible for one block
-    opencl_kernels::lower_tri_inverse_step1(
+    opencl_kernels::diagonal_inverse_lower_triangular(
         cl::NDRange(parts * thread_block_size_1D),
         cl::NDRange(thread_block_size_1D), inv_padded.buffer(), temp.buffer(),
         inv_padded.rows());
@@ -106,10 +106,10 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
     auto result_work_dim = result_matrix_dim / work_per_thread;
     auto result_ndrange
         = cl::NDRange(result_matrix_dim_x, result_work_dim, parts);
-    opencl_kernels::lower_tri_inverse_step2(
+    opencl_kernels::inverse_lower_triangular_multiply(
         result_ndrange, ndrange_2d, inv_padded.buffer(), temp.buffer(),
         inv_padded.rows(), result_matrix_dim);
-    opencl_kernels::lower_tri_inverse_step3(
+    opencl_kernels::negative_rectangular_lower_triangular_multiply(
         result_ndrange, ndrange_2d, inv_padded.buffer(), temp.buffer(),
         inv_padded.rows(), result_matrix_dim);
     // if this is the last submatrix, end
