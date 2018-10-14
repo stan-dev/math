@@ -62,9 +62,8 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
   inv_padded.zeros<stan::math::TriangularViewGPU::Entire>();
 
   int work_per_thread
-      = opencl_kernels::inverse_lower_tri_multiply.make_functor
-            .get_opts()
-            .at("WORK_PER_THREAD");
+      = opencl_kernels::inverse_lower_tri_multiply.make_functor.get_opts().at(
+          "WORK_PER_THREAD");
   // the number of blocks in the first step
   // each block is inverted with using the regular forward substitution
   int parts = inv_padded.rows() / thread_block_size_1D;
