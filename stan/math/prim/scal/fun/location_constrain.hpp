@@ -35,8 +35,7 @@ namespace math {
  */
 template <typename T, typename M, typename S>
 inline typename boost::math::tools::promote_args<T, M, S>::type
-    location_constrain(
-      const T& x, const M& mu, const S& sigma) {
+location_constrain(const T& x, const M& mu, const S& sigma) {
   if (sigma == 1)
     if (mu == 0)
       return identity_constrain(x);
@@ -71,8 +70,7 @@ inline typename boost::math::tools::promote_args<T, M, S>::type
  */
 template <typename T, typename M, typename S>
 inline typename boost::math::tools::promote_args<T, M, S>::type
-    location_constrain(
-      const T& x, const M& mu, const S& sigma, T& lp) {
+location_constrain(const T& x, const M& mu, const S& sigma, T& lp) {
   using std::log;
   if (sigma == 1)
     if (mu == 0)
