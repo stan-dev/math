@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_GP_EXP_QUAD_COV_HPP
 #define STAN_MATH_PRIM_MAT_FUN_GP_EXP_QUAD_COV_HPP
 
+#include <cmath>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/divide.hpp>
 #include <stan/math/prim/mat/fun/divide_columns.hpp>
@@ -13,7 +14,6 @@
 #include <stan/math/prim/scal/fun/exp.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <cmath>
 #include <vector>
 
 namespace stan {
@@ -35,10 +35,10 @@ namespace math {
  */
 template <typename T_x, typename T_sigma, typename T_l>
 inline typename boost::enable_if_c<
-  is_constant<typename return_type<T_l>::type>::value,
+    is_constant<typename return_type<T_l>::type>::value,
     Eigen::Matrix<double, -1, -1>>::type
-    gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma,
-                    const T_l &length_scale) {
+gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma,
+                const T_l &length_scale) {
   using std::exp;
   check_positive("gp_exp_quad_cov", "magnitude", sigma);
   check_positive("gp_exp_quad_cov", "length scale", length_scale);
@@ -59,8 +59,8 @@ inline typename boost::enable_if_c<
   for (size_t j = 0; j < (x_size - 1); ++j) {
     cov(j, j) = sigma_sq;
     for (size_t i = j + 1; i < x_size; ++i) {
-      cov(i, j)
-          = sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
+      cov(i, j) =
+          sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
       cov(j, i) = cov(i, j);
     }
   }
@@ -167,8 +167,8 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   for (size_t i = 0; i < x1.size(); ++i) {
     for (size_t j = 0; j < x2.size(); ++j) {
-      cov(i, j)
-          = sigma_sq * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
+      cov(i, j) =
+          sigma_sq * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
     }
   }
   return cov;
@@ -237,6 +237,6 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
   }
   return cov;
 }
-}  // namespace math
-}  // namespace stan
+} // namespace math
+} // namespace stan
 #endif
