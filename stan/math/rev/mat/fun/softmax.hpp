@@ -4,37 +4,61 @@
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/softmax.hpp>
-#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/mat/functor/adj_jac_apply.hpp>
 #include <vector>
+#include <tuple>
 
 namespace stan {
 namespace math {
 
 namespace {
-class softmax_elt_vari : public vari {
- private:
-  vari** alpha_;
-  const double* softmax_alpha_;
-  const int size_;  // array sizes
-  const int idx_;   // in in softmax output
+class softmax_op {
+  int N_;
+  double* y_;  // Holds the results of the softmax
 
  public:
-  softmax_elt_vari(double val, vari** alpha, const double* softmax_alpha,
-                   int size, int idx)
-      : vari(val),
-        alpha_(alpha),
-        softmax_alpha_(softmax_alpha),
-        size_(size),
-        idx_(idx) {}
-  void chain() {
-    for (int m = 0; m < size_; ++m) {
-      if (m == idx_) {
-        alpha_[m]->adj_
-            += adj_ * softmax_alpha_[idx_] * (1 - softmax_alpha_[m]);
-      } else {
-        alpha_[m]->adj_ -= adj_ * softmax_alpha_[idx_] * softmax_alpha_[m];
-      }
+  softmax_op() : N_(0), y_(NULL) {}
+
+  /*
+   * Compute the softmax of the unconstrained input vector
+   *
+   * @param alpha Unconstrained input vector.
+   * @return Softmax of the input.
+   */
+  template <std::size_t size>
+  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
+                             const Eigen::VectorXd& alpha) {
+    N_ = alpha.size();
+    y_ = ChainableStack::instance().memalloc_.alloc_array<double>(N_);
+
+    auto y = softmax(alpha);
+    for (int n = 0; n < N_; ++n)
+      y_[n] = y(n);
+    return y;
+  }
+
+  /*
+   * Compute the result of multiply the transpose of the adjoint vector times
+   * the Jacobian of the softmax operator. It is more efficient to do this
+   * without actually computing the Jacobian and doing the vector-matrix
+   * product.
+   *
+   * @param adj Eigen::VectorXd of adjoints at the output of the softmax
+   * @return Eigen::VectorXd of adjoints propagated through softmax operation
+   */
+  template <std::size_t size>
+  std::tuple<Eigen::VectorXd> multiply_adjoint_jacobian(
+      const std::array<bool, size>& needs_adj,
+      const Eigen::VectorXd& adj) const {
+    Eigen::VectorXd adj_times_jac(N_);
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1> > y(y_, N_);
+
+    double adj_dot_y = adj.dot(y);
+    for (int n = 0; n < N_; ++n) {
+      adj_times_jac(n) = -y(n) * adj_dot_y + y(n) * adj(n);
     }
+
+    return std::make_tuple(adj_times_jac);
   }
 };
 }  // namespace
@@ -43,42 +67,15 @@ class softmax_elt_vari : public vari {
  * Return the softmax of the specified Eigen vector.  Softmax is
  * guaranteed to return a simplex.
  *
- * The gradient calculations are unfolded.
- *
  * @param alpha Unconstrained input vector.
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
 inline Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
     const Eigen::Matrix<var, Eigen::Dynamic, 1>& alpha) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-
   check_nonzero_size("softmax", "alpha", alpha);
 
-  vari** alpha_vi_array = reinterpret_cast<vari**>(
-      ChainableStack::instance().memalloc_.alloc(sizeof(vari*) * alpha.size()));
-  for (int i = 0; i < alpha.size(); ++i)
-    alpha_vi_array[i] = alpha(i).vi_;
-
-  Matrix<double, Dynamic, 1> alpha_d(alpha.size());
-  for (int i = 0; i < alpha_d.size(); ++i)
-    alpha_d(i) = alpha(i).val();
-
-  Matrix<double, Dynamic, 1> softmax_alpha_d = softmax(alpha_d);
-
-  double* softmax_alpha_d_array
-      = reinterpret_cast<double*>(ChainableStack::instance().memalloc_.alloc(
-          sizeof(double) * alpha_d.size()));
-  for (int i = 0; i < alpha_d.size(); ++i)
-    softmax_alpha_d_array[i] = softmax_alpha_d(i);
-
-  Matrix<var, Dynamic, 1> softmax_alpha(alpha.size());
-  for (int k = 0; k < softmax_alpha.size(); ++k)
-    softmax_alpha(k)
-        = var(new softmax_elt_vari(softmax_alpha_d[k], alpha_vi_array,
-                                   softmax_alpha_d_array, alpha.size(), k));
-  return softmax_alpha;
+  return adj_jac_apply<softmax_op>(alpha);
 }
 
 }  // namespace math

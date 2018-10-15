@@ -38,10 +38,22 @@ inline std::vector<typename child_type<T>::type> value_of(
  * @param x Specified std::vector.
  * @return Specified std::vector.
  */
-template <>
-inline std::vector<double> value_of(const std::vector<double>& x) {
+inline const std::vector<double>& value_of(const std::vector<double>& x) {
   return x;
 }
+
+/**
+ * Return the specified argument.
+ *
+ * <p>See <code>value_of(T)</code> for a polymorphic
+ * implementation using static casts.
+ *
+ * <p>This inline pass-through no-op should be compiled away.
+ *
+ * @param x Specified std::vector.
+ * @return Specified std::vector.
+ */
+inline const std::vector<int>& value_of(const std::vector<int>& x) { return x; }
 
 }  // namespace math
 }  // namespace stan

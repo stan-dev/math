@@ -4,29 +4,6 @@
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
 
-TEST(AgradRevMatrix, softmaxLeak) {
-  // FIXME: very brittle test depending on unrelated constants of
-  //        block sizes/growth in stan::math::stack_alloc
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-  using stan::math::softmax;
-  using stan::math::var;
-  using stan::math::vector_v;
-
-  int SIZE = 20;
-  int NUM = 112;  // alloc on stack: 458752; bug fix used: = 196608
-  Matrix<var, Dynamic, 1> x(SIZE);
-  for (int i = 0; i < NUM; ++i) {
-    for (int n = 0; n < x.size(); ++n) {
-      x(n) = 0.1 * n;
-    }
-    Matrix<var, Dynamic, 1> theta = softmax(x);
-  }
-  // test is greater than because leak is on heap, not stack
-  EXPECT_GT(stan::math::ChainableStack::instance().memalloc_.bytes_allocated(),
-            200000);
-}
-
 TEST(AgradRevMatrix, softmax) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -58,51 +35,35 @@ TEST(AgradRevMatrix, softmax) {
   EXPECT_FLOAT_EQ(exp(10) / (exp(-1) + exp(1) + exp(10.0)), theta3[2].val());
 }
 
-// compute grad using templated definition in math
-// to check custom derivatives
-std::vector<double> softmax_grad(
-    Eigen::Matrix<double, Eigen::Dynamic, 1>& alpha_dbl, int k) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-  using stan::math::var;
-  Matrix<var, Dynamic, 1> alpha(alpha_dbl.size());
-  for (int i = 0; i < alpha.size(); ++i)
-    alpha(i) = alpha_dbl(i);
-
-  std::vector<var> x(alpha.size());
-  for (size_t i = 0; i < x.size(); ++i)
-    x[i] = alpha(i);
-
-  var fx_k = stan::math::softmax(alpha)[k];
-  std::vector<double> grad(alpha.size());
-  fx_k.grad(x, grad);
-  return grad;
-}
-TEST(AgradRevSoftmax, Grad) {
+TEST(AgradRevSoftmax, gradient_check) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::softmax;
   using stan::math::var;
-  for (int k = 0; k < 3; ++k) {
-    Matrix<AVAR, Dynamic, 1> alpha(3);
-    alpha << 0.0, 3.0, -1.0;
-    Matrix<double, Dynamic, 1> alpha_dbl(3);
-    alpha_dbl << 0.0, 3.0, -1.0;
+  std::vector<std::vector<double> > inputs
+      = {{0.5, -1.0, 3.0}, {4.0, 3.0, -2.0}};
+  std::vector<double> vals = {0.07459555713221443, 0.729736214118415};
+  std::vector<std::vector<double> > grads
+      = {{0.06903105998834897, -0.001241607138856182, -0.06778945284949277},
+         {0.1972212719225377, -0.1959012993504623, -0.001319972572075391}};
+  for (size_t i = 0; i < inputs.size(); ++i) {
+    for (int j = 0; j < 3; ++j) {
+      stan::math::set_zero_all_adjoints();
 
-    AVEC x(3);
-    for (int i = 0; i < 3; ++i)
-      x[i] = alpha(i);
-    Matrix<AVAR, Dynamic, 1> theta = softmax(alpha);
-    AVAR fx_k = theta(k);
-    std::vector<double> grad;
-    fx_k.grad(x, grad);
+      Matrix<AVAR, Dynamic, 1> alpha(3);
+      for (int k = 0; k < 3; ++k)
+        alpha((j + k) % 3) = inputs[i][k];
 
-    std::vector<double> grad_expected = softmax_grad(alpha_dbl, k);
-    EXPECT_EQ(grad_expected.size(), grad.size());
-    for (size_t i = 0; i < grad_expected.size(); ++i)
-      EXPECT_FLOAT_EQ(grad_expected[i], grad[i]);
+      Matrix<AVAR, Dynamic, 1> theta = softmax(alpha);
+      theta(j).grad();
+
+      EXPECT_NEAR(vals[i], theta(j).val(), 1e-10);
+      for (size_t k = 0; k < 3; ++k)
+        EXPECT_NEAR(grads[i][k], alpha((j + k) % 3).adj(), 1e-10);
+    }
   }
 }
+
 TEST(AgradRevMatrix, check_varis_on_stack) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> alpha(3);
   alpha << 0.0, 3.0, -1.0;

@@ -3,6 +3,29 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+TEST(AgradPartialsVari, OperandsAndPartialsScal) {
+  using stan::math::operands_and_partials;
+  using stan::math::var;
+
+  double d1;
+  operands_and_partials<double> o3(d1);
+  EXPECT_EQ(5, sizeof(o3));
+
+  var v1 = var(0.0);
+
+  std::vector<var> v_stdvec;
+  v_stdvec.push_back(v1);
+
+  operands_and_partials<var> o4(v1);
+  o4.edge1_.partials_[0] += 10.0;
+
+  std::vector<double> grad;
+  var v = o4.build(10.0);
+  v.grad(v_stdvec, grad);
+  EXPECT_FLOAT_EQ(10.0, v.val());
+  EXPECT_FLOAT_EQ(10.0, grad[0]);
+}
+
 TEST(AgradPartialsVari, OperandsAndPartialsVec) {
   using stan::math::operands_and_partials;
   using stan::math::var;
