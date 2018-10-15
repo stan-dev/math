@@ -35,10 +35,10 @@ namespace math {
  */
 template <typename T_x, typename T_sigma, typename T_l>
 inline typename boost::enable_if_c<
-  is_constant<typename return_type<T_l>::type>::value,
+    is_constant<typename return_type<T_l>::type>::value,
     Eigen::Matrix<double, -1, -1>>::type
-    gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma,
-                    const T_l &length_scale) {
+gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma,
+                const T_l &length_scale) {
   using std::exp;
   check_positive("gp_exp_quad_cov", "magnitude", sigma);
   check_positive("gp_exp_quad_cov", "length scale", length_scale);
