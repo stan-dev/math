@@ -22,6 +22,13 @@ namespace internal {
  * This is the base template class that ends up getting instantiated
  * for arithmetic primitives (doubles and ints).
  *
+ * NB: since ops_partials_edge.partials_ and ops_partials_edge.partials_vec
+ * are sometimes represented internally as a broadcast_array, we need to take
+ * care with assignments to them. Indeed, we can assign any right hand side
+ * which allows for indexing to a broadcast_array. The resulting behaviour is
+ * that the entry for the first index is what gets assigned. The most common
+ * use-case should be where the rhs is some container of length 1.
+ *
  * @tparam ViewElt the type we expect to be at partials_[i]
  * @tparam Op the type of the operand
  */
@@ -82,13 +89,15 @@ template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5,
           typename T_return_type>
 class operands_and_partials {
  public:
-  explicit operands_and_partials(const Op1& op1) {}
-  operands_and_partials(const Op1& op1, const Op2& op2) {}
-  operands_and_partials(const Op1& op1, const Op2& op2, const Op3& op3) {}
-  operands_and_partials(const Op1& op1, const Op2& op2, const Op3& op3,
-                        const Op4& op4) {}
-  operands_and_partials(const Op1& op1, const Op2& op2, const Op3& op3,
-                        const Op4& op4, const Op5& op5) {}
+  explicit operands_and_partials(const Op1& /* op1 */) {}
+  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */) {}
+  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */,
+                        const Op3& /* op3 */) {}
+  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */,
+                        const Op3& /* op3 */, const Op4& /* op4 */) {}
+  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */,
+                        const Op3& /* op3 */, const Op4& /* op4 */,
+                        const Op5& /* op5 */) {}
 
   /**
    * Build the node to be stored on the autodiff graph.
