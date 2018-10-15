@@ -1,45 +1,39 @@
-N_TESTS ?= 100 # override this in make/local. If <= 0, N_TESTS + 1 is interpreted as the number of batches to group the tests into
+N_TESTS ?= 100
+# override this in make/local. If <= 0, N_TESTS + 1 is interpreted as the number of batches
+# to group the probability tests into
 
 ##
-# GTEST_MAIN is the file that contains the google test
+# Build test executables
 ##
-GTEST_MAIN = $(GTEST)/src/gtest_main.cc
-GTEST_CXXFLAGS += -isystem $(GTEST)/include -isystem $(GTEST) -O$O
+test/%$(EXE) : CXXFLAGS += $(CXXFLAGS_GTEST)
+test/%$(EXE) : CPPFLAGS += $(CPPFLAGS_GTEST)
+test/%$(EXE) : INC += $(INC_GTEST)
+
+test/%$(EXE) : test/%.o $(GTEST)/src/gtest_main.cc $(GTEST)/src/gtest-all.o $(MPI_TARGETS)
+	$(LINK.cpp) $^ $(LDLIBS) $(OUTPUT_OPTION)
 
 ##
-# Build the google test library.
+# Include dependency files for tests
 ##
-$(GTEST)/src/gtest-all.o: CXXFLAGS += $(GTEST_CXXFLAGS)
-
-test/%$(EXE) : CXXFLAGS += $(GTEST_CXXFLAGS)
-test/%$(EXE) : test/%.o $(GTEST_MAIN) $(GTEST)/src/gtest-all.o
-	$(LINK.cpp) -o $@ $^
-
-
-##
-# Rule for generating dependencies.
-##
-.PRECIOUS: test/%.d
-test/%.d : test/%.cpp
-	@mkdir -p $(dir $@)
-	@set -e; \
-	rm -f $@; \
-	$(COMPILE.cpp) -MM $< > $@.$$$$; \
-	sed -e 's,\($(*F)\)\.o[ :]*,$(@D)/\1.o $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
+ifneq ($(filter test/%,$(MAKECMDGOALS)),)
+-include $(patsubst %$(EXE),%.d,$(filter test/%,$(MAKECMDGOALS)))
+endif
 
 ##
 # Adding a test for multiple translation units. If this fails,
 # a new function is probably missing an inline
 ##
 
-test/unit/multiple_translation_units%.o : test/unit/multiple_translation_units%.cpp
-	$(COMPILE.cpp) -fPIC -O$O $< $(OUTPUT_OPTION)
+ifneq ($(OS),Windows_NT)
+test/unit/multiple_translation_units%.o : CXXFLAGS += -fPIC
+endif
+test/unit/multiple_translation_units%.o : CXXFLAGS += -pipe
+test/unit/libmultiple.so : LDFLAGS += -shared
 
-test/unit/libmultiple.so : test/unit/multiple_translation_units1.o test/unit/multiple_translation_units2.o
-	$(LINK.cpp) -shared -fPIC $(OUTPUT_OPTION) $^
+test/unit/libmultiple.so : test/unit/multiple_translation_units1.o test/unit/multiple_translation_units2.o $(MPI_TARGETS)
+	$(LINK.cpp) $^ $(LDLIBS) $(OUTPUT_OPTION)
 
-test/unit/multiple_translation_units_test.cpp : test/unit/libmultiple.so
+test/unit/multiple_translation_units_test$(EXE): test/unit/libmultiple.so
 
 ############################################################
 #
@@ -47,28 +41,17 @@ test/unit/multiple_translation_units_test.cpp : test/unit/libmultiple.so
 ##
 
 CVODES_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *cvodes*_test.cpp) $(shell find test -name *_bdf_*_test.cpp) $(shell find test -name *_adams_*_test.cpp))
-$(CVODES_TESTS) : $(LIBCVODES)
+$(CVODES_TESTS) : $(LIBSUNDIALS)
+
 
 ############################################################
 #
 # IDAS tests
 ##
 
-IDAS_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *idas*_test.cpp) $(shell find test -name *_dae_*_test.cpp))
-$(IDAS_TESTS) : $(LIBIDAS)
+IDAS_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *idas*_test.cpp) $(shell find test -name *_dae*_test.cpp))
+$(IDAS_TESTS) : $(LIBSUNDIALS)
 
-
-############################################################
-#
-# MPI tests
-##
-
-ifdef STAN_MPI
-  MPI_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *mpi_*test.cpp))
-  $(MPI_TESTS): LDFLAGS += $(LDFLAGS_MPI)
-  $(MPI_TESTS): CXXFLAGS += $(CXXFLAGS_MPI)
-  $(MPI_TESTS): $(BOOST)/stage/lib/libboost_mpi$(DLL) $(BOOST)/stage/lib/libboost_serialization$(DLL)
-endif
 
 ############################################################
 #
@@ -77,13 +60,12 @@ endif
 ##
 HEADER_TESTS := $(addsuffix -test,$(shell find stan -name '*.hpp' -type f))
 
-ifeq ($(OS_TYPE),win)
+ifeq ($(OS),Windows_NT)
   DEV_NULL = nul
 else
   DEV_NULL = /dev/null
 endif
 
-.PHONY: HEADER_TESTS
 %.hpp-test : %.hpp test/dummy.cpp
 	$(COMPILE.cpp) -O0 -include $^ -o $(DEV_NULL)
 
@@ -101,8 +83,7 @@ test-headers: $(HEADER_TESTS)
 ##
 test/prob/generate_tests$(EXE) : test/prob/generate_tests.cpp
 	@mkdir -p $(dir $@)
-	$(LINK.cpp) $< $(OUTPUT_OPTION)
-
+	$(LINK.cpp) $^ $(LDLIBS) $(OUTPUT_OPTION)
 
 
 ## FIXME: think about how to do this generally using test_types

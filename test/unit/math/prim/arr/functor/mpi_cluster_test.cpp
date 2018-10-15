@@ -2,25 +2,28 @@
 // MPI
 #ifdef STAN_MPI
 
+#include <gtest/gtest.h>
+
 #include <stan/math/prim/arr.hpp>
-#include <test/unit/math/prim/mat/functor/mpi_test_env.hpp>
 
 #include <iostream>
 #include <vector>
 #include <memory>
 
-MPI_TEST(mpi_cluster, chunk_mapping) {
-  if (rank != 0)
-    return;
+TEST(mpi_cluster, chunk_mapping) {
+  boost::mpi::communicator world;
+  const std::size_t world_size = world.size();
 
+  // when we have less jobs than workers, then the work is distributed
+  // starting from the root
   std::vector<int> small_load = stan::math::mpi_map_chunks(world_size - 1, 1);
 
   EXPECT_EQ(world_size, small_load.size());
 
   if (world_size > 1)
-    EXPECT_EQ(0, small_load[0]);
+    EXPECT_EQ(0, small_load[world_size - 1]);
 
-  for (std::size_t i = 1; i < world_size; ++i)
+  for (std::size_t i = 0; i < world_size - 1; ++i)
     EXPECT_EQ(1, small_load[i]);
 
   std::vector<int> med_load = stan::math::mpi_map_chunks(world_size + 1, 2);
@@ -37,11 +40,8 @@ MPI_TEST(mpi_cluster, chunk_mapping) {
   }
 }
 
-MPI_TEST(mpi_cluster, listen_state) {
-  if (rank != 0)
-    return;
-
-  EXPECT_TRUE(stan::math::mpi_cluster::is_listening());
+TEST(mpi_cluster, listen_state) {
+  EXPECT_TRUE(stan::math::mpi_cluster::listening_status());
 }
 
 /**
@@ -65,11 +65,9 @@ struct make_secret {
 // register worker command
 STAN_REGISTER_MPI_DISTRIBUTED_APPLY(make_secret)
 
-MPI_TEST(mpi_cluster, communication_apply) {
-  if (rank != 0)
-    return;
-
+TEST(mpi_cluster, communication_apply) {
   boost::mpi::communicator world;
+  const std::size_t world_size = world.size();
 
   std::unique_lock<std::mutex> cluster_lock;
   EXPECT_NO_THROW((cluster_lock = stan::math::mpi_broadcast_command<
@@ -138,11 +136,9 @@ struct shared_secret : public stan::math::mpi_command {
 // register worker command
 STAN_REGISTER_MPI_COMMAND(shared_secret)
 
-MPI_TEST(mpi_cluster, communication_command) {
-  if (rank != 0)
-    return;
-
+TEST(mpi_cluster, communication_command) {
   boost::mpi::communicator world;
+  const std::size_t world_size = world.size();
 
   const double common = 2 * 3.14;
 

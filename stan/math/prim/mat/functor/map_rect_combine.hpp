@@ -12,7 +12,18 @@ namespace stan {
 namespace math {
 namespace internal {
 
-/* Template class for the combine step of map_rect.
+/* Template class for the combine step of map_rect which implements
+ * the CombineF concept. The concept requires that
+ *
+ * - A nullary constructor creates a null combiner (used on the
+ *    children)
+ *
+ * - A constructor which takes the shared and job-specific parameters
+ *    (used on the root/main process)
+ *
+ * - Provides an operator() which takes as two arguments: (i) the
+ *   function outputs as a ragged matrix and (ii) as second argument
+ *   the output sizes of each function evaluation.
  *
  * This functor inserts the concatenated outputs of all reduce
  * operations into the autodiff stack. The concatenated results are

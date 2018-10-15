@@ -8,10 +8,9 @@
 #define STAN_REGISTER_MAP_RECT(CALLID, FUNCTOR)
 
 #ifdef STAN_MPI
-#include <stan/math/prim/mat/functor/map_rect_serial.hpp>
-// TODO(wds15): add MPI version
+#include <stan/math/prim/mat/functor/map_rect_mpi.hpp>
 #else
-#include <stan/math/prim/mat/functor/map_rect_serial.hpp>
+#include <stan/math/prim/mat/functor/map_rect_concurrent.hpp>
 #endif
 
 #include <vector>
@@ -37,9 +36,24 @@ namespace math {
  * ... ]'.
  *
  * The function is implemented with serial execution and with
- * parallelism (TODO) using MPI. The MPI version is only available if
- * STAN_MPI is defined. For the MPI version to work this function
- * has these special non-standard conventions:
+ * parallelism using threading or MPI (TODO). The threading version is
+ * used if the compiler flag STAN_THREADS is set during compilation
+ * while the MPI version is only available if STAN_MPI is defined. The
+ * MPI parallelism takes precedence over serial or threading execution
+ * of the function.
+ *
+ * For the threaded parallelism the N jobs are chunked into T blocks
+ * which are executed asynchronously using the async C++11
+ * facility. This ensure that at most T threads are used, but the
+ * actual number of threads is controlled by the implementation of
+ * async provided by the compiler. Note that nested calls of map_rect
+ * will lead to a multiplicative increase in the number of job chunks
+ * generated. The number of threads T is controlled at runtime via the
+ * STAN_NUM_threads environment variable, see the get_num_threads
+ * function for details.
+ *
+ * For the MPI version to work this function has these special
+ * non-standard conventions:
  *
  * - The call_id template parameter is considered as a label for the
  *   functor F and data combination. Since MPI communication is
@@ -155,9 +169,10 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
     return return_t();
 
 #ifdef STAN_MPI
-    // TODO(wds15): add MPI support
+  return internal::map_rect_mpi<call_id, F, T_shared_param, T_job_param>(
+      shared_params, job_params, x_r, x_i, msgs);
 #else
-  return internal::map_rect_serial<call_id, F, T_shared_param, T_job_param>(
+  return internal::map_rect_concurrent<call_id, F, T_shared_param, T_job_param>(
       shared_params, job_params, x_r, x_i, msgs);
 #endif
 }

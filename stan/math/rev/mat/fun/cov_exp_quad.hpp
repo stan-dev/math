@@ -20,17 +20,7 @@ namespace stan {
 namespace math {
 
 /**
- * This is a subclass of the vari class for precomputed
- * gradients of cov_exp_quad.
- *
- * The class stores the double values for the distance
- * matrix, pointers to the varis for the covariance
- * matrix, along with a pointer to the vari for sigma,
- * and the vari for l.
- *
- * @tparam T_x type of std::vector of elements
- * @tparam T_sigma type of sigma
- * @tparam T_l type of length scale
+ * @deprecated use <code>gp_exp_quad_cov_vari</code>
  */
 template <typename T_x, typename T_sigma, typename T_l>
 class cov_exp_quad_vari : public vari {
@@ -47,22 +37,7 @@ class cov_exp_quad_vari : public vari {
   vari** cov_diag_;
 
   /**
-   * Constructor for cov_exp_quad.
-   *
-   * All memory allocated in
-   * ChainableStack's stack_alloc arena.
-   *
-   * It is critical for the efficiency of this object
-   * that the constructor create new varis that aren't
-   * popped onto the var_stack_, but rather are
-   * popped onto the var_nochain_stack_. This is
-   * controlled to the second argument to
-   * vari's constructor.
-   *
-   * @param x std::vector input that can be used in square distance
-   *    Assumes each element of x is the same size
-   * @param sigma standard deviation
-   * @param l length scale
+   * @deprecated use <code>gp_exp_quad_cov_vari</code>
    */
   cov_exp_quad_vari(const std::vector<T_x>& x, const T_sigma& sigma,
                     const T_l& l)
@@ -72,14 +47,14 @@ class cov_exp_quad_vari : public vari {
         l_d_(value_of(l)),
         sigma_d_(value_of(sigma)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
-        dist_(ChainableStack::instance_.memalloc_.alloc_array<double>(
+        dist_(ChainableStack::instance().memalloc_.alloc_array<double>(
             size_ltri_)),
         l_vari_(l.vi_),
         sigma_vari_(sigma.vi_),
-        cov_lower_(
-            ChainableStack::instance_.memalloc_.alloc_array<vari*>(size_ltri_)),
+        cov_lower_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
+            size_ltri_)),
         cov_diag_(
-            ChainableStack::instance_.memalloc_.alloc_array<vari*>(size_)) {
+            ChainableStack::instance().memalloc_.alloc_array<vari*>(size_)) {
     double inv_half_sq_l_d = 0.5 / (l_d_ * l_d_);
     size_t pos = 0;
     for (size_t j = 0; j < size_ - 1; ++j) {
@@ -115,16 +90,7 @@ class cov_exp_quad_vari : public vari {
 };
 
 /**
- * This is a subclass of the vari class for precomputed
- * gradients of cov_exp_quad.
- *
- * The class stores the double values for the distance
- * matrix, pointers to the varis for the covariance
- * matrix, along with a pointer to the vari for sigma,
- * and the vari for l.
- *
- * @tparam T_x type of std::vector of elements
- * @tparam T_l type of length scale
+ * @deprecated use <code>gp_exp_quad_cov_vari</code>
  */
 template <typename T_x, typename T_l>
 class cov_exp_quad_vari<T_x, double, T_l> : public vari {
@@ -140,22 +106,7 @@ class cov_exp_quad_vari<T_x, double, T_l> : public vari {
   vari** cov_diag_;
 
   /**
-   * Constructor for cov_exp_quad.
-   *
-   * All memory allocated in
-   * ChainableStack's stack_alloc arena.
-   *
-   * It is critical for the efficiency of this object
-   * that the constructor create new varis that aren't
-   * popped onto the var_stack_, but rather are
-   * popped onto the var_nochain_stack_. This is
-   * controlled to the second argument to
-   * vari's constructor.
-   *
-   * @param x std::vector input that can be used in square distance
-   *    Assumes each element of x is the same size
-   * @param sigma standard deviation
-   * @param l length scale
+   * @deprecated use <code>gp_exp_quad_cov_vari</code>
    */
   cov_exp_quad_vari(const std::vector<T_x>& x, double sigma, const T_l& l)
       : vari(0.0),
@@ -164,13 +115,13 @@ class cov_exp_quad_vari<T_x, double, T_l> : public vari {
         l_d_(value_of(l)),
         sigma_d_(value_of(sigma)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
-        dist_(ChainableStack::instance_.memalloc_.alloc_array<double>(
+        dist_(ChainableStack::instance().memalloc_.alloc_array<double>(
             size_ltri_)),
         l_vari_(l.vi_),
-        cov_lower_(
-            ChainableStack::instance_.memalloc_.alloc_array<vari*>(size_ltri_)),
+        cov_lower_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
+            size_ltri_)),
         cov_diag_(
-            ChainableStack::instance_.memalloc_.alloc_array<vari*>(size_)) {
+            ChainableStack::instance().memalloc_.alloc_array<vari*>(size_)) {
     double inv_half_sq_l_d = 0.5 / (l_d_ * l_d_);
     size_t pos = 0;
     for (size_t j = 0; j < size_ - 1; ++j) {
@@ -198,87 +149,25 @@ class cov_exp_quad_vari<T_x, double, T_l> : public vari {
 };
 
 /**
- * Returns a squared exponential kernel.
- *
- * @param x std::vector input that can be used in square distance
- *    Assumes each element of x is the same size
- * @param sigma standard deviation
- * @param l length scale
- * @return squared distance
- * @throw std::domain_error if sigma <= 0, l <= 0, or
- *   x is nan or infinite
+ * @deprecated use <code>gp_exp_quad_cov_vari</code>
  */
 template <typename T_x>
 inline typename boost::enable_if_c<
     boost::is_same<typename scalar_type<T_x>::type, double>::value,
     Eigen::Matrix<var, -1, -1> >::type
 cov_exp_quad(const std::vector<T_x>& x, const var& sigma, const var& l) {
-  check_positive("cov_exp_quad", "sigma", sigma);
-  check_positive("cov_exp_quad", "l", l);
-  size_t x_size = x.size();
-  for (size_t i = 0; i < x_size; ++i)
-    check_not_nan("cov_exp_quad", "x", x[i]);
-
-  Eigen::Matrix<var, -1, -1> cov(x_size, x_size);
-  if (x_size == 0)
-    return cov;
-
-  cov_exp_quad_vari<T_x, var, var>* baseVari
-      = new cov_exp_quad_vari<T_x, var, var>(x, sigma, l);
-
-  size_t pos = 0;
-  for (size_t j = 0; j < x_size - 1; ++j) {
-    for (size_t i = (j + 1); i < x_size; ++i) {
-      cov.coeffRef(i, j).vi_ = baseVari->cov_lower_[pos];
-      cov.coeffRef(j, i).vi_ = cov.coeffRef(i, j).vi_;
-      ++pos;
-    }
-    cov.coeffRef(j, j).vi_ = baseVari->cov_diag_[j];
-  }
-  cov.coeffRef(x_size - 1, x_size - 1).vi_ = baseVari->cov_diag_[x_size - 1];
-  return cov;
+  return gp_exp_quad_cov(x, sigma, l);
 }
 
 /**
- * Returns a squared exponential kernel.
- *
- * @param x std::vector input that can be used in square distance
- *    Assumes each element of x is the same size
- * @param sigma standard deviation
- * @param l length scale
- * @return squared distance
- * @throw std::domain_error if sigma <= 0, l <= 0, or
- *   x is nan or infinite
+ * @deprecated use <code>gp_exp_quad_cov_vari</code>
  */
 template <typename T_x>
 inline typename boost::enable_if_c<
     boost::is_same<typename scalar_type<T_x>::type, double>::value,
     Eigen::Matrix<var, -1, -1> >::type
 cov_exp_quad(const std::vector<T_x>& x, double sigma, const var& l) {
-  check_positive("cov_exp_quad", "marginal variance", sigma);
-  check_positive("cov_exp_quad", "length-scale", l);
-  size_t x_size = x.size();
-  for (size_t i = 0; i < x_size; ++i)
-    check_not_nan("cov_exp_quad", "x", x[i]);
-
-  Eigen::Matrix<var, -1, -1> cov(x_size, x_size);
-  if (x_size == 0)
-    return cov;
-
-  cov_exp_quad_vari<T_x, double, var>* baseVari
-      = new cov_exp_quad_vari<T_x, double, var>(x, sigma, l);
-
-  size_t pos = 0;
-  for (size_t j = 0; j < x_size - 1; ++j) {
-    for (size_t i = (j + 1); i < x_size; ++i) {
-      cov.coeffRef(i, j).vi_ = baseVari->cov_lower_[pos];
-      cov.coeffRef(j, i).vi_ = cov.coeffRef(i, j).vi_;
-      ++pos;
-    }
-    cov.coeffRef(j, j).vi_ = baseVari->cov_diag_[j];
-  }
-  cov.coeffRef(x_size - 1, x_size - 1).vi_ = baseVari->cov_diag_[x_size - 1];
-  return cov;
+  return gp_exp_quad_cov(x, sigma, l);
 }
 
 }  // namespace math

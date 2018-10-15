@@ -10,5 +10,5 @@ TEST(MathMatrix, qr_Q) {
   using stan::math::transpose;
   EXPECT_THROW(qr_Q(m0), std::invalid_argument);
   EXPECT_NO_THROW(qr_Q(m1));
-  EXPECT_THROW(qr_Q(transpose(m1)), std::domain_error);
+  EXPECT_NO_THROW(qr_Q(transpose(m1)));
 }

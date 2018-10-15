@@ -2,27 +2,6 @@
 @Library('StanUtils')
 import org.stan.Utils
 
-def setupCC(Boolean failOnError = true) {
-    errorStr = failOnError ? "-Werror " : ""
-    "echo CC=${env.CXX} ${errorStr}> make/local"
-}
-
-def setup(Boolean failOnError = true) {
-    sh """
-        git clean -xffd
-        ${setupCC(failOnError)}
-    """
-}
-
-def mailBuildResults(String label, additionalEmails='') {
-    emailext (
-        subject: "[StanJenkins] ${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-        body: """${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]': Check console output at ${env.BUILD_URL}""",
-        recipientProviders: [[$class: 'RequesterRecipientProvider']],
-        to: "${env.CHANGE_AUTHOR_EMAIL}, ${additionalEmails}"
-    )
-}
-
 def runTests(String testPath) {
     sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only"
     try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" }
@@ -33,27 +12,32 @@ def utils = new org.stan.Utils()
 
 def isBranch(String b) { env.BRANCH_NAME == b }
 
-def alsoNotify() {
+String alsoNotify() {
     if (isBranch('master') || isBranch('develop')) {
         "stan-buildbot@googlegroups.com"
     } else ""
 }
-def isPR() { env.CHANGE_URL != null }
-def fork() { env.CHANGE_FORK ?: "stan-dev" }
-def branchName() { isPR() ? env.CHANGE_BRANCH :env.BRANCH_NAME }
+Boolean isPR() { env.CHANGE_URL != null }
+String fork() { env.CHANGE_FORK ?: "stan-dev" }
+String branchName() { isPR() ? env.CHANGE_BRANCH :env.BRANCH_NAME }
+String cmdstan_pr() { params.cmdstan_pr ?: "downstream_tests" }
+String stan_pr() { params.stan_pr ?: "downstream_tests" }
 
 pipeline {
     agent none
     parameters {
-        string(defaultValue: 'downstream tests', name: 'cmdstan_pr',
+        string(defaultValue: 'downstream_tests', name: 'cmdstan_pr',
           description: 'PR to test CmdStan upstream against e.g. PR-630')
-        string(defaultValue: 'downstream tests', name: 'stan_pr',
+        string(defaultValue: 'downstream_tests', name: 'stan_pr',
           description: 'PR to test Stan upstream against e.g. PR-630')
         booleanParam(defaultValue: false, description:
         'Run additional distribution tests on RowVectors (takes 5x as long)',
         name: 'withRowVector')
     }
-    options { skipDefaultCheckout() }
+    options {
+        skipDefaultCheckout()
+        preserveStashes(buildCount: 7)
+    }
     stages {
         stage('Kill previous builds') {
             when {
@@ -70,6 +54,7 @@ pipeline {
             agent any
             steps {
                 sh "printenv"
+                deleteDir()
                 retry(3) { checkout scm }
                 withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
                     usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
@@ -116,15 +101,16 @@ pipeline {
             agent any
             steps {
                 script {
+                    deleteDir()
                     retry(3) { checkout scm }
-                    setup(false)
+                    sh "git clean -xffd"
                     stash 'MathSetup'
-                    sh setupCC()
+                    sh "echo CXX=${env.CXX} -Werror > make/local"
+                    sh "echo BOOST_PARALLEL_JOBS=${env.PARALLEL} >> make/local"
                     parallel(
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh 'make test-math-dependencies' } ,
                         Documentation: { sh 'make doxygen' },
-                        Headers: { sh "make -j${env.PARALLEL} test-headers" }
                     )
                 }
             }
@@ -136,34 +122,54 @@ pipeline {
                 }
             }
         }
-        stage('Tests') {
+        stage('Headers check') {
+            agent any
+            steps {
+                deleteDir()
+                unstash 'MathSetup'
+                sh "echo CXX=${env.CXX} -Werror > make/local"
+                sh "make -j${env.PARALLEL} test-headers"
+            }
+            post { always { deleteDir() } }
+        }
+        stage('Always-run tests part 1') {
             parallel {
-                stage('Unit') {
-                    agent any
+                stage('Linux Unit with MPI') {
+                    agent { label 'linux && mpi' }
                     steps {
+                        deleteDir()
                         unstash 'MathSetup'
-                        sh setupCC()
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Unit with MPI') {
-                    agent any
-                    steps {
-                        unstash 'MathSetup'
-                        sh "echo CC=${MPICXX} -cxx=${CXX} >> make/local"
+                        sh "echo CXX=${MPICXX} >> make/local"
                         sh "echo STAN_MPI=true >> make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
+                stage('GPU Tests') {
+                    agent { label "gpu" }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh "echo CXX=${env.CXX} -Werror > make/local"
+                        sh "echo STAN_OPENCL=true>> make/local"
+                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
+                        sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
+                        runTests("test/unit/math/gpu")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+            }
+        }
+        stage('Always-run tests part 2') {
+            parallel {
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
                     steps {
+                        deleteDir()
                         unstash 'MathSetup'
                         sh """
-                            ${setupCC(false)}
-                            echo 'O=0' >> make/local
+                            echo CXX=${env.CXX} > make/local
+                            echo O=0 >> make/local
                             echo N_TESTS=${env.N_TESTS} >> make/local
                             """
                         script {
@@ -180,27 +186,77 @@ pipeline {
                         }
                         failure {
                             echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
-                        }
+                            }
                     }
+                }
+                stage('Threading tests') {
+                    agent any
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh "echo CXX=${env.CXX} -Werror > make/local"
+                        sh "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
+                        runTests("test/unit -f thread")
+                        sh "find . -name *_test.xml | xargs rm"
+                        runTests("test/unit -f map_rect")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+            }
+        }
+        stage('Additional merge tests') {
+            when { anyOf { branch 'develop'; branch 'master' } }
+            parallel {
+                stage('Unit with GPU') {
+                    agent { label "gelman-group-mac" }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh "echo CXX=${env.CXX} -Werror > make/local"
+                        sh "echo STAN_OPENCL=true>> make/local"
+                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
+                        sh "echo OPENCL_DEVICE_ID=1>> make/local"
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Linux Unit with Threading') {
+                    agent { label 'linux' }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh "echo CXX=${GCC} >> make/local"
+                        sh "echo CPPFLAGS=-DSTAN_THREADS >> make/local"
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Mac Unit with Threading') {
+                    agent  { label 'osx' }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh "echo CC=${env.CXX} -Werror > make/local"
+                        sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
                 }
             }
         }
         stage('Upstream tests') {
-            parallel {
-                stage('Stan Upstream Tests') {
-                    when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
-                    steps {
-                        build(job: "Stan/${params.stan_pr}",
-                              parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
-                                           string(name: 'cmdstan_pr', value: params.cmdstan_pr)])
-                    }
-                }
+            when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
+            steps {
+                build(job: "Stan/${stan_pr()}",
+                        parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
+                                    string(name: 'cmdstan_pr', value: cmdstan_pr())])
             }
         }
         stage('Upload doxygen') {
             agent any
             when { branch 'master'}
             steps {
+                deleteDir()
                 retry(3) { checkout scm }
                 withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
                                                   usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
@@ -225,15 +281,16 @@ pipeline {
     post {
         always {
             node("osx || linux") {
-                warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
-                warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
+                warnings canRunOnFailed: true, consoleParsers: [[parserName: 'Clang (LLVM based)']]
             }
         }
         success {
-            script { utils.updateUpstream(env, 'stan') }
-            mailBuildResults("SUCCESSFUL")
+            script {
+                utils.updateUpstream(env, 'stan')
+                utils.mailBuildResults("SUCCESSFUL")
+            }
         }
-        unstable { mailBuildResults("UNSTABLE", alsoNotify()) }
-        failure { mailBuildResults("FAILURE", alsoNotify()) }
+        unstable { script { utils.mailBuildResults("UNSTABLE", alsoNotify()) } }
+        failure { script { utils.mailBuildResults("FAILURE", alsoNotify()) } }
     }
 }
