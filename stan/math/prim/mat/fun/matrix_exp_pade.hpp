@@ -20,11 +20,7 @@ template <typename MatrixType>
 MatrixType matrix_exp_pade(const MatrixType& arg) {
   MatrixType U, V;
   int squarings;
-  MatrixType tmp(arg.rows(), arg.cols());
-  for (int i = 0; i < arg.size(); ++i) {
-    tmp(i) = value_of(arg(i));
-  }
-  Eigen::matrix_exp_computeUV<MatrixType>::run(tmp, U, V, squarings, tmp(0, 0));
+  Eigen::matrix_exp_computeUV<MatrixType>::run(arg, U, V, squarings, arg(0, 0));
   // Pade approximant is
   // (U+V) / (-U+V)
   MatrixType numer = U + V;
