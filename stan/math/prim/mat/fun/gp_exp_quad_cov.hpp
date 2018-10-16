@@ -13,6 +13,7 @@
 #include <stan/math/prim/scal/fun/divide.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/scal/meta/is_constant.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <vector>
 
@@ -35,7 +36,7 @@ namespace math {
  */
 template <typename T_x, typename T_sigma, typename T_l>
 inline typename boost::enable_if_c<
-    is_constant<typename return_type<T_l>::type>::value,
+  is_constant<typename return_type<T_l>::type>::value,
     Eigen::Matrix<double, -1, -1>>::type
 gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma,
                 const T_l &length_scale) {
