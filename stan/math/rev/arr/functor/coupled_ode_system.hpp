@@ -115,7 +115,6 @@ struct coupled_ode_system<F, double, var> {
 
       for (size_t i = 0; i < N_; i++) {
         dz_dt[i] = dy_dt_vars[i].val();
-        set_zero_all_adjoints_nested();
         dy_dt_vars[i].grad();
 
         for (size_t j = 0; j < M_; j++) {
@@ -128,6 +127,8 @@ struct coupled_ode_system<F, double, var> {
 
           dz_dt[N_ + i + j * N_] = temp_deriv;
         }
+
+        set_zero_all_adjoints_nested();
       }
     } catch (const std::exception& e) {
       recover_memory_nested();
@@ -289,7 +290,6 @@ struct coupled_ode_system<F, var, double> {
 
       for (size_t i = 0; i < N_; i++) {
         dz_dt[i] = dy_dt_vars[i].val();
-        set_zero_all_adjoints_nested();
         dy_dt_vars[i].grad();
 
         for (size_t j = 0; j < N_; j++) {
@@ -302,6 +302,8 @@ struct coupled_ode_system<F, var, double> {
 
           dz_dt[N_ + i + j * N_] = temp_deriv;
         }
+
+        set_zero_all_adjoints_nested();
       }
     } catch (const std::exception& e) {
       recover_memory_nested();
@@ -483,7 +485,6 @@ struct coupled_ode_system<F, var, var> {
 
       for (size_t i = 0; i < N_; i++) {
         dz_dt[i] = dy_dt_vars[i].val();
-        set_zero_all_adjoints_nested();
         dy_dt_vars[i].grad();
 
         for (size_t j = 0; j < N_; j++) {
@@ -504,6 +505,8 @@ struct coupled_ode_system<F, var, var> {
 
           dz_dt[N_ + N_ * N_ + i + j * N_] = temp_deriv;
         }
+
+        set_zero_all_adjoints_nested();
       }
     } catch (const std::exception& e) {
       recover_memory_nested();
