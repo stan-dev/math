@@ -224,6 +224,8 @@ quadratic_optimizer(const Fh& fh,
                                   Eigen::MatrixXd::Identity(n, n),
                                   Eigen::VectorXd::Zero(n),
                                   x);
+  // TEST
+  // std::cout << x << std::endl;
 
   // check that all the returned solutions are positive.
   std::ostringstream err_message;
