@@ -36,9 +36,11 @@ namespace math {
 template <typename T, typename M, typename S>
 inline typename boost::math::tools::promote_args<T, M, S>::type
 locscale_constrain(const T& x, const M& mu, const S& sigma) {
-  if (sigma == 1)
+  if (sigma == 1) {
     if (mu == 0)
       return identity_constrain(x);
+    return mu + x;
+  }
   check_positive_finite("locscale_constrain", "scale", sigma);
   return mu + sigma * x;
 }
@@ -72,9 +74,11 @@ template <typename T, typename M, typename S>
 inline typename boost::math::tools::promote_args<T, M, S>::type
 locscale_constrain(const T& x, const M& mu, const S& sigma, T& lp) {
   using std::log;
-  if (sigma == 1)
+  if (sigma == 1) {
     if (mu == 0)
       return identity_constrain(x);
+    return mu + x;
+  }
   check_positive_finite("locscale_constrain", "scale", sigma);
   lp += size_of(x) * log(abs(sigma));
   return mu + sigma * x;
