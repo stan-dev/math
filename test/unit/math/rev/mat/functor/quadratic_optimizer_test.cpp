@@ -708,4 +708,140 @@ TEST(MathMatrix, quadratic_optimizer_var_s2) {
     EXPECT_NEAR(J(k, 3), g[3], 0.0001);
     EXPECT_NEAR(J(k, 4), g[4], 0.0001);
 	}
-} /**/
+}
+
+// Shosh unit test 3 starts here
+struct fh_s3 {
+  template <typename T0>
+  inline Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic>
+  operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
+           const std::vector<double>& delta,
+           const std::vector<int>& delta_int,
+           std::ostream* pstream = 0) const {
+    int n = 5;
+
+    Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic>
+      H_mat = Eigen::MatrixXd::Zero(n, n);
+    H_mat(0,0) = pow(theta(0), 2) * theta(1);
+    H_mat(1,1) = pow(theta(0), 2) * theta(2);
+    H_mat(2,2) = pow(theta(0), 2) * theta(3);
+    H_mat(3,3) = pow(theta(0), 2) * theta(1);
+    H_mat(4,4) = pow(theta(0), 2) * theta(2);
+
+    return H_mat;
+  }
+};
+
+struct fv_s3 {
+  template <typename T0>
+  inline Eigen::Matrix<T0, Eigen::Dynamic, 1>
+  operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
+           const std::vector<double>& delta,
+           const std::vector<int>& delta_int,
+           std::ostream* pstream = 0) const {
+
+    // declare "data"
+    int n = 5;
+    VectorXd qa(n);
+    qa << 1,10,10.92,42.34,14.03;
+    // VectorXd qe(5);
+    // qe << 10,10,10.15,45,11;
+    VectorXd co(n);
+    co << 0.003,0.03,0.0085,0.0002,0.002;
+    // double s = 1.156736;
+
+    // theta signiature: (gamma, sigma1sq,sigma2sq, alpha)
+    Eigen::Matrix<T0, Eigen::Dynamic, 1> linear_term(n);
+    linear_term(0) = -( theta(0)*qa(0) + pow(theta(0),2)*theta(1)*theta(4)*co(0) );
+    linear_term(1) = -( theta(0)*qa(1) + pow(theta(0),2)*theta(2)*theta(4)*co(1) );
+    linear_term(2) = -( theta(0)*qa(2) + pow(theta(0),2)*theta(3)*theta(4)*co(2) );
+    linear_term(3) = -( theta(0)*qa(3) + pow(theta(0),2)*theta(4)*theta(4)*co(3) );
+    linear_term(4) = -( theta(0)*qa(4) + pow(theta(0),2)*theta(5)*theta(4)*co(4) );
+    
+    return linear_term;
+  }
+};
+
+struct fa_s3 {
+  template <typename T0>
+  Eigen::Matrix<T0, Eigen::Dynamic, 1>
+  inline operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
+                  const std::vector<double>& delta,
+                  const std::vector<int>& delta_int,
+                  std::ostream* pstream = 0) const {
+    // declare "data"
+    int n = 5;
+    VectorXd qe(n);
+    qe << 10,10,10.15,45,11;
+
+    // theta signiature: (gamma, sigma1sq,sigma2sq, alpha)
+    Eigen::Matrix<T0, Eigen::Dynamic, 1> linear_constraint(n);
+    linear_constraint(0) = qe(0);
+    linear_constraint(1) = qe(1);
+    linear_constraint(2) = qe(2);
+    linear_constraint(3) = qe(3);
+    linear_constraint(4) = qe(4);
+
+    return linear_constraint;
+  }
+};
+
+struct fb_s3 {
+  template <typename T0>
+  T0
+    inline operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
+                    const std::vector<double>& delta,
+                    const std::vector<int>& delta_int,
+                    std::ostream* pstream = 0) const {
+      
+      T0 lin_term = -1.156736;
+      return lin_term;
+    }
+};
+
+
+TEST(MathMatrix, quadratic_optimizer_s3) {
+  VectorXd theta(7);
+  theta << 1.5, 0.0134, 14, 27, 0.00000007, 0.0069, 1.3;
+  std::vector<double> delta;
+  std::vector<int> delta_int;
+  double tol = 1e-10;
+  int n = 5;
+
+  VectorXd x = quadratic_optimizer(fh_s3(), fv_s3(), fa_s3(), fb_s3(), theta,
+                                   delta, delta_int, n, 0, tol);
+
+  double err_tol = 0.01;
+  EXPECT_NEAR(x(0), 0, err_tol);
+  EXPECT_NEAR(x(1), 0, err_tol);
+  EXPECT_NEAR(x(2), 0, err_tol);
+  EXPECT_NEAR(x(3), 0, err_tol);
+  EXPECT_NEAR(x(4), 0.105158, err_tol);
+}
+
+// Unit test based on quadprog_test_5dim (see Stan file in script
+// directory).
+// struct fh_five {
+//   template <typename T0>
+//   inline Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic>
+//   operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
+//            const std::vector<double>& delta,
+//            const std::vector<int>& delta_int,
+//            std::ostream* pstream = 0) const {
+//     int T = delta_int[0];
+//     double gamma = theta[0];
+//     Eigen::VectorXd sigmasq_vec(delta_int[1]);
+//     for (int i = 0; i < delta_int[1]; i++)
+//       sigmasq_vec(i) = delta[T * 3 + i];
+// 
+//     Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic>
+//       H_mat = Eigen::MatrixXd::Zero(n, n);
+//     H_mat(0,0) = pow(theta(0), 2) * theta(1);
+//     H_mat(1,1) = pow(theta(0), 2) * theta(2);
+//     H_mat(2,2) = pow(theta(0), 2) * theta(3);
+//     H_mat(3,3) = pow(theta(0), 2) * theta(1);
+//     H_mat(4,4) = pow(theta(0), 2) * theta(2);
+//     
+//     return H_mat;
+//   }
+// };
