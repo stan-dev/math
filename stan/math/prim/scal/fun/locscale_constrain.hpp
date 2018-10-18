@@ -18,7 +18,7 @@ namespace math {
  *
  * <p>The transform applied is
  *
- * <p>\f$f(x) = mu + sigma * x$
+ * <p>\f$f(x) = mu + sigma * x\f$
  *
  * <p>where mu is the location and sigma is the scale.
  *
@@ -53,7 +53,7 @@ locscale_constrain(const T& x, const M& mu, const S& sigma) {
  *
  * <p>The transform applied is
  *
- * <p>\f$f(x) = mu + sigma * x$
+ * <p>\f$f(x) = mu + sigma * x\f$
  *
  * <p>where mu is the location and sigma is the scale.
  *
