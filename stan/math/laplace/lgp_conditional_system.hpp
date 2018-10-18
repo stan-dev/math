@@ -24,11 +24,11 @@ namespace math {
 
   /**
    * A structure for the parameters and data in a latent
-   * Gaussian Poission (lgp) model. Returns the gradient of 
+   * Gaussian Poisson (lgp) model. Returns the gradient of 
    * the density of the local parameter (theta) conditioned on 
    * the observed data (y) and the global parameter (phi), and
    * also returns the conditional hessian.
-   * 
+   *
    * Note theta is not a member of the structure. This is because
    * in one HMC iteration, theta is computed using a Newton 
    * solver (i.e. unlike the other parameters, it is not fixed).

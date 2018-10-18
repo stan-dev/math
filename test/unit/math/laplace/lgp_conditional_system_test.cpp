@@ -223,4 +223,3 @@ TEST(laplace, lgp_newton_solver) {
     EXPECT_FLOAT_EQ(powell_solution[1], value_of(theta(1)));
   }
 }
-
