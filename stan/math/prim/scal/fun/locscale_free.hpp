@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_LOCATION_FREE_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_LOCATION_FREE_HPP
+#ifndef STAN_MATH_PRIM_SCAL_FUN_LOCSCALE_FREE_HPP
+#define STAN_MATH_PRIM_SCAL_FUN_LOCSCALE_FREE_HPP
 
 #include <stan/math/prim/scal/fun/identity_free.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
@@ -41,12 +41,12 @@ namespace math {
  * @throw std::domain_error if sigma <= 0
  */
 template <typename T, typename M, typename S>
-inline typename boost::math::tools::promote_args<T, M, S>::type location_free(
+inline typename boost::math::tools::promote_args<T, M, S>::type locscale_free(
     const T& y, const M& mu, const S& sigma) {
   if (sigma == 1)
     if (mu == 0)
       return identity_free(y);
-  check_positive_finite("location_constrain", "scale", sigma);
+  check_positive_finite("locscale_constrain", "scale", sigma);
   return (y - mu) / sigma;
 }
 

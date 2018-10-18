@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_LOCATION_CONSTRAIN_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_LOCATION_CONSTRAIN_HPP
+#ifndef STAN_MATH_PRIM_SCAL_FUN_LOCSCALE_CONSTRAIN_HPP
+#define STAN_MATH_PRIM_SCAL_FUN_LOCSCALE_CONSTRAIN_HPP
 
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/scal/fun/identity_constrain.hpp>
@@ -35,12 +35,12 @@ namespace math {
  */
 template <typename T, typename M, typename S>
 inline typename boost::math::tools::promote_args<T, M, S>::type
-    location_constrain(
+    locscale_constrain(
       const T& x, const M& mu, const S& sigma) {
   if (sigma == 1)
     if (mu == 0)
       return identity_constrain(x);
-  check_positive_finite("location_constrain", "scale", sigma);
+  check_positive_finite("locscale_constrain", "scale", sigma);
   return mu + sigma * x;
 }
 
@@ -71,13 +71,13 @@ inline typename boost::math::tools::promote_args<T, M, S>::type
  */
 template <typename T, typename M, typename S>
 inline typename boost::math::tools::promote_args<T, M, S>::type
-    location_constrain(
+    locscale_constrain(
       const T& x, const M& mu, const S& sigma, T& lp) {
   using std::log;
   if (sigma == 1)
     if (mu == 0)
       return identity_constrain(x);
-  check_positive_finite("location_constrain", "scale", sigma);
+  check_positive_finite("locscale_constrain", "scale", sigma);
   lp += size_of(x) * log(abs(sigma));
   return mu + sigma * x;
 }
