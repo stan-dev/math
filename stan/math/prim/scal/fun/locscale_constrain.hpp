@@ -80,7 +80,7 @@ locscale_constrain(const T& x, const M& mu, const S& sigma, T& lp) {
     return mu + x;
   }
   check_positive_finite("locscale_constrain", "scale", sigma);
-  lp += size_of(x) * log(abs(sigma));
+  lp += size_of(x) * log(sigma);
   return mu + sigma * x;
 }
 
