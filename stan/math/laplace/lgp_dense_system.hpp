@@ -3,10 +3,6 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/mat.hpp>
-// #include <stan/math/prim/scal/meta/return_type.hpp>
-// #include <stan/math/prim/mat/fun/exp.hpp>
-// #include <stan/math/rev/mat/fun/multiply.hpp>
-// #include <stan/math/rev/mat/fun/mdivide_left.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -20,6 +16,30 @@ namespace math {
   // Functors for finding the mode of the conditional density
   // when doing a Poisson model with a latent gaussian
   // parameter. See Dan's experiment.
+
+
+  /**
+   * An operator which constructs the covariance matrix,
+   * based on the global paramter, phi.
+   * Note the covariance matrix is assumed to have a specific structure,
+   * namely same variance for all terms, and same correlation.
+   */
+  template <typename T>
+  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+  covariance (Eigen::Matrix<T, Eigen::Dynamic, 1> phi, int M) {
+    T sigma = phi[0];
+    T rho = phi[1];
+
+    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Sigma;
+    for (int i = 0; i < M; i++) {
+      for (int j = 0; j < (i - 1); j++) {
+        Sigma(i, j) = rho * sigma;
+        Sigma(j, i) = rho * sigma;
+      }
+      Sigma(i, i) = sigma;
+    }
+    return Sigma;
+  }
 
   /**
    * A structure for the parameters and data in a latent
@@ -35,41 +55,20 @@ namespace math {
    */
   template<typename T0>
   struct lgp_dense_system {
-    Eigen::Matrix<T0, Eigen::Dynamic, 1> theta_;  // local parameter
+    Eigen::Matrix<T0, Eigen::Dynamic, 1> phi_;
+    Eigen::VectorXd theta_;
     Eigen::VectorXd n_samples_;  // number of samples for local parameter
     Eigen::VectorXd sums_;  // sums of observation for local parameter
     Eigen::MatrixXd Sigma_;  // covariance matrix
 
-    /**
-     * An operator which constructs the covariance matrix,
-     * based on the global paramter, phi.
-     * Note the covariance matrix is assumed to have a specific structure,
-     * namely same variance for all terms, and same correlation.
-     */
-    template <typename T>
-    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-      covariance (Eigen::Matrix<T0, Eigen::Dynamic, 1> phi, int M) {
-        T0 sigma = phi[0];
-        T0 rho = phi[1];
-
-        Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic> Sigma;
-        for (int i = 0; i < M; i++) {
-          for (int j = 0; j < (i - 1); j++) {
-            Sigma[i, j] = rho * sigma;
-            Sigma[j, i] = rho * sigma;
-          }
-          Sigma[i, i] = sigma;
-        }
-      return Sigma;
-    }
-
     // Constructors
-    lgp_conditional_system() {}
+    lgp_dense_system() {}
 
-    lgp_conditional_system(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& phi,
-                           const Eigen::VectorXd n_samples,
-                           const Eigen::VectorXd& sums)
-      : phi_(phi), n_samples_(n_samples), sums_(sums) {
+    lgp_dense_system(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& phi,
+                     const Eigen::VectorXd theta,
+                     const Eigen::VectorXd n_samples,
+                     const Eigen::VectorXd& sums)
+      : phi_(phi), theta_(theta), n_samples_(n_samples), sums_(sums) {
       int M = n_samples.size();
       Sigma_ = Sigma(phi, M);
     }
@@ -110,7 +109,7 @@ namespace math {
     Eigen::Matrix<typename stan::return_type<T0, T1>::type, 
                          Eigen::Dynamic, Eigen::Dynamic>
     cond_hessian(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta) const {
-      return - add(elt_multiply(n_samples, exp(theta)), inverse(Sigma_));
+      return - add(elt_multiply(n_samples_, exp(theta)), inverse(Sigma_));
     }
     
     /**
@@ -121,15 +120,17 @@ namespace math {
      * phi, we only compute the (second) term, which depends on phi.
      */
     struct deriv_objective {
+      Eigen::VectorXd theta_;
+
+      deriv_objective (const Eigen::VectorXd theta) : theta_(theta) { }
+
       template <typename T>
-      inline Eigen::Matirx<T, Eigen::Dynamic, 1>
+      inline Eigen::Matrix<T, Eigen::Dynamic, 1>
       operator ()(const Eigen::Matrix<T, Eigen::Dynamic, 1>& phi) const {
-        using Eigen::VectorXd;
-        VectorXd theta_dbl = value_of(theta_);
         Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
           Sigma = covariance(phi);
 
-        return - m_divide_left(Sigma_, theta);
+        return - m_divide_left(Sigma, theta_);
       }
     };
 
@@ -145,7 +146,8 @@ namespace math {
     solver_gradient(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta) const {
       Eigen::VectorXd dummy;
       Eigen::MatrixXd phi_sensitivities;
-      Jacobian(deriv_objective(), phi, dummy, phi_sensitivities);
+      deriv_objective f(value_of(theta));
+      Jacobian(f, phi_, dummy, phi_sensitivities);
 
       return - m_divide_left(cond_hessian(theta), phi_sensitivities);
     }
