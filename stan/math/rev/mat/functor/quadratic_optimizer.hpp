@@ -191,8 +191,11 @@ struct quadratic_optimizer_vari : public vari {
  * @param[in] n the number of unknowns we solve for
  * @param[in, out] msgs the print stream for warning messages (??)
  * @param[in] tol the tolerance level; if the optimizer returns a solution
- *                below the this level, this solution is set to 0. This
- *                plays a critical role in the calculation of derivatives.
+ *                whose absolute value is below this value, this solution 
+ *                is treated (not set) as being 0. This is to address floating 
+ *                point precision errors, avoid wrongly flagging values as 
+ *                negative, and plays a critical role in the calculation of
+ *                derivatives.
  */
 template <typename Fh, typename Fv, typename Fa, typename Fb>
 Eigen::VectorXd
@@ -224,7 +227,8 @@ quadratic_optimizer(const Fh& fh,
                                   Eigen::MatrixXd::Identity(n, n),
                                   Eigen::VectorXd::Zero(n),
                                   x);
-  // TEST
+
+  // Print out solution before check; useful for testing.
   // std::cout << x << std::endl;
 
   // check that all the returned solutions are positive.
@@ -233,7 +237,7 @@ quadratic_optimizer(const Fh& fh,
               << "negative elements. This could be because the equality "
               << "and the inequality constraint cannot hold simultaneously.";
   for (int i = 0; i < x.size(); i++) {
-    if (x(i) < 0) throw boost::math::evaluation_error(err_message.str());
+    if (x(i) < -tol) throw boost::math::evaluation_error(err_message.str());
   }
 
   return x;
