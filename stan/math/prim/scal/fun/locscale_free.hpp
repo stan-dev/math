@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/fun/identity_free.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <cmath>
 #include <limits>
@@ -34,16 +35,18 @@ namespace math {
  * @return the free scalar that transforms to the input scalar
  *   given the location and scale
  * @throw std::domain_error if sigma <= 0
+ * @throw std::domain_error if mu is not finite
  */
 template <typename T, typename L, typename S>
 inline typename boost::math::tools::promote_args<T, L, S>::type locscale_free(
     const T& y, const L& mu, const S& sigma) {
+  check_finite("locscale_free", "location", mu);
   if (sigma == 1) {
     if (mu == 0)
       return identity_free(y);
     return y - mu;
   }
-  check_positive_finite("locscale_constrain", "scale", sigma);
+  check_positive_finite("locscale_free", "scale", sigma);
   return (y - mu) / sigma;
 }
 

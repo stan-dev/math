@@ -23,10 +23,25 @@ TEST(prob_transform, locscale_j) {
 }
 TEST(ProbTransform, locscaleException) {
   using stan::math::locscale_constrain;
+  using stan::math::locscale_free;
   EXPECT_THROW(locscale_constrain(5.0, 1.0, 0.0), std::domain_error);
+  EXPECT_THROW(locscale_constrain(5.0, std::numeric_limits<double>::infinity(), 1.0),
+               std::domain_error);
+  EXPECT_THROW(locscale_constrain(5.0, NAN, 1.0),
+               std::domain_error);
   EXPECT_NO_THROW(locscale_constrain(5.0, 1.0, 0.01));
+  EXPECT_THROW(locscale_free(5.0, 1.0, 0.0), std::domain_error);
+  EXPECT_THROW(locscale_free(5.0, std::numeric_limits<double>::infinity(), 1.0),
+               std::domain_error);
+  EXPECT_THROW(locscale_free(5.0, NAN, 1.0),
+               std::domain_error);
+  EXPECT_NO_THROW(locscale_free(5.0, 1.0, 0.01));
   double lp = 12;
   EXPECT_THROW(locscale_constrain(5.0, 1.0, 0.0, lp), std::domain_error);
+  EXPECT_THROW(locscale_constrain(5.0, std::numeric_limits<double>::infinity(), 1.0, lp),
+               std::domain_error);
+  EXPECT_THROW(locscale_constrain(5.0, NAN, 1.0, lp),
+               std::domain_error);
   EXPECT_NO_THROW(locscale_constrain(5.0, 1.0, 0.01, lp));
 }
 TEST(prob_transform, locscale_f) {

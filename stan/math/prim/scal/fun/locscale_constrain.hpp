@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/fun/abs.hpp>
 #include <stan/math/prim/scal/meta/size_of.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
 #include <cmath>
 #include <limits>
 
@@ -32,10 +33,13 @@ namespace math {
  * @param[in] mu location of constrained output
  * @param[in] sigma scale of constrained output
  * @return linear transformed value correspdonding to inputs
+ * @throw std::domain_error if sigma <= 0
+ * @throw std::domain_error if mu is not finite
  */
 template <typename T, typename M, typename S>
 inline typename boost::math::tools::promote_args<T, M, S>::type
 locscale_constrain(const T& x, const M& mu, const S& sigma) {
+  check_finite("locscale_constrain", "location", mu);
   if (sigma == 1) {
     if (mu == 0)
       return identity_constrain(x);
@@ -69,11 +73,13 @@ locscale_constrain(const T& x, const M& mu, const S& sigma) {
  * @param[in,out] lp Reference to log probability to increment.
  * @return linear transformed value corresponding to inputs
  * @throw std::domain_error if sigma <= 0
+ * @throw std::domain_error if mu is not finite
  */
 template <typename T, typename M, typename S>
 inline typename boost::math::tools::promote_args<T, M, S>::type
 locscale_constrain(const T& x, const M& mu, const S& sigma, T& lp) {
   using std::log;
+  check_finite("locscale_constrain", "location", mu);
   if (sigma == 1) {
     if (mu == 0)
       return identity_constrain(x);
