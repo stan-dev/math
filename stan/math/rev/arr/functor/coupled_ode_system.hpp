@@ -122,10 +122,11 @@ struct coupled_ode_system<F, double, var> {
           // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
           // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
           double temp_deriv = theta_vars[j].adj();
+          const size_t offset = N_ + N_ * j;
           for (size_t k = 0; k < N_; k++)
-            temp_deriv += z[N_ + N_ * j + k] * y_vars[k].adj();
+            temp_deriv += z[offset + k] * y_vars[k].adj();
 
-          dz_dt[N_ + i + j * N_] = temp_deriv;
+          dz_dt[offset + i] = temp_deriv;
         }
 
         set_zero_all_adjoints_nested();
@@ -297,10 +298,11 @@ struct coupled_ode_system<F, var, double> {
           // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
           // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
           double temp_deriv = 0;
+          const size_t offset = N_ + N_ * j;
           for (size_t k = 0; k < N_; k++)
-            temp_deriv += z[N_ + N_ * j + k] * y_vars[k].adj();
+            temp_deriv += z[offset + k] * y_vars[k].adj();
 
-          dz_dt[N_ + i + j * N_] = temp_deriv;
+          dz_dt[offset + i] = temp_deriv;
         }
 
         set_zero_all_adjoints_nested();
@@ -492,18 +494,20 @@ struct coupled_ode_system<F, var, var> {
           // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
           // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
           double temp_deriv = 0;
+          const size_t offset = N_ + N_ * j;
           for (size_t k = 0; k < N_; k++)
-            temp_deriv += z[N_ + N_ * j + k] * y_vars[k].adj();
+            temp_deriv += z[offset + k] * y_vars[k].adj();
 
-          dz_dt[N_ + i + j * N_] = temp_deriv;
+          dz_dt[offset + i] = temp_deriv;
         }
 
         for (size_t j = 0; j < M_; j++) {
           double temp_deriv = theta_vars[j].adj();
+          const size_t offset = N_ + N_ * N_ + N_ * j;
           for (size_t k = 0; k < N_; k++)
-            temp_deriv += z[N_ + N_ * N_ + N_ * j + k] * y_vars[k].adj();
+            temp_deriv += z[offset + k] * y_vars[k].adj();
 
-          dz_dt[N_ + N_ * N_ + i + j * N_] = temp_deriv;
+          dz_dt[offset + i] = temp_deriv;
         }
 
         set_zero_all_adjoints_nested();
