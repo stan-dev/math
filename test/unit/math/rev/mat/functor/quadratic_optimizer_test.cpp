@@ -13,6 +13,7 @@ using stan::math::quadratic_optimizer;
 using stan::math::quadratic_optimizer_analytical;
 using stan::math::f_theta;
 using stan::math::var;
+using stan::math::value_of;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 using Eigen::Matrix;
@@ -806,6 +807,7 @@ TEST(MathMatrix, quadratic_optimizer_s3) {
   // however treats it as 0, since tol = 1e-10.
   VectorXd theta(7);
   theta << 1.5, 0.0134, 14, 27, 0.00000007, 0.0069, 1.3;
+  // theta << 0.5, 0.0134, 14, 27, 0.00000007, 0.0069, 4.5;
   std::vector<double> delta;
   std::vector<int> delta_int;
   double tol = 1e-10;
@@ -821,3 +823,85 @@ TEST(MathMatrix, quadratic_optimizer_s3) {
   EXPECT_NEAR(x(3), 0, err_tol);
   EXPECT_NEAR(x(4), 0.105158, err_tol);
 }
+
+// Pathological gradients: seems to cause arithmetic precision errors.
+// TEST(MathMatrix, quadratic_optimizer_var_s3) {
+//   std::vector<double> delta;
+//   std::vector<int> delta_int;
+//   int n_x = 5;
+//   int n_theta = 7;
+//   // theta signiature: (gamma, sigma1sq,sigma2sq,sigma3, alpha)
+// 
+//   // Jacobian worked out by Shosh
+//   MatrixXd J = MatrixXd::Zero(n_x, n_theta);
+//   J(4, 0) = -0.000000000000114419;
+//   J(4, 1) = -39671.3;
+//   J(4, 2) = -0.00851447;
+//   J(4, 3) = -0.00170866;
+//   J(4, 4) = -8377240000000000.0;
+//   J(4, 5) = -0.0000000000191225;
+//   // All rows are zero, except for the last one which has
+//   //  -0.000000000000114419, -39671.3, -0.00851447, -0.00170866,
+//   // -8377240000000000.0, -0.0000000000191225, 0.0
+//   
+//   std::cout << J << std::endl << std::endl;
+//   
+//   // Jacobian obtained using finite diff
+//   double diff = 1e-10;
+//   MatrixXd J_finite(n_x, n_theta);
+//   for (int l = 0; l < n_theta; l++) {
+//     VectorXd theta(n_theta);
+//     theta << 1.5, 0.0134, 14, 27, 0.00000007, 0.0069, 1.3;
+// 
+//     VectorXd theta_lb = theta;
+//     VectorXd theta_ub = theta;
+//     theta_lb(l) = theta(l) - diff;
+//     theta_ub(l) = theta(l) + diff;
+// 
+//     MatrixXd x_lb, x_ub;
+//     x_lb = quadratic_optimizer(fh_s3(), fv_s3(), fa_s3(), fb_s3(),
+//                                theta_lb, delta, delta_int, n_x);
+//     x_ub = quadratic_optimizer(fh_s3(), fv_s3(), fa_s3(), fb_s3(),
+//                                theta_ub, delta, delta_int, n_x);
+// 
+//     for (int k = 0; k < n_x; k++)
+//       J_finite(k, l) = (x_ub(k) - x_lb(k)) / (2 * diff);
+//   }
+// 
+//   std::cout << J_finite << std::endl << std::endl;
+// 
+//   MatrixXd J_autodiff(n_x, n_theta);
+//   for (int k = 0; k < n_x; k++) {
+//     Matrix<var, Dynamic, 1> theta(n_theta);
+//     theta << 1.5, 0.0134, 14, 27, 0.00000007, 0.0069, 1.3;
+// 
+//     Matrix<var, Dynamic, 1> 
+//       x = quadratic_optimizer(fh_s3(), fv_s3(), fa_s3(), fb_s3(),
+//                               theta, delta, delta_int, n_x,
+//                               0, 1e-12);
+// 
+//     double err_tol = 1e-4;
+//     EXPECT_NEAR(x(0).val(), 0, err_tol);
+//     EXPECT_NEAR(x(1).val(), 0, err_tol);
+//     EXPECT_NEAR(x(2).val(), 0, err_tol);
+//     EXPECT_NEAR(x(3).val(), 0, err_tol);
+//     EXPECT_NEAR(x(4).val(), 0.105158, err_tol);
+// 
+//     AVEC parameter_vec = createAVEC(theta(0), theta(1), theta(2), theta(3),
+//                                     theta(4), theta(5), theta(6));
+//     VEC g;
+//     x(k).grad(parameter_vec, g);
+// 
+//     for (size_t i = 0; i < g.size(); i++) J_autodiff(k, i) = g[i];
+// 
+//     // EXPECT_NEAR(J(k, 0), g[0], err_tol);
+//     // EXPECT_NEAR(J(k, 1), g[1], err_tol);
+//     // EXPECT_NEAR(J(k, 2), g[2], err_tol);
+//     // EXPECT_NEAR(J(k, 3), g[3], err_tol);
+//     // EXPECT_NEAR(J(k, 4), g[4], err_tol);
+//     // EXPECT_NEAR(J(k, 5), g[5], err_tol);
+//     // EXPECT_NEAR(J(k, 6), g[6], err_tol);
+//   }
+//   
+//   std::cout << J_autodiff << std::endl << std::endl;
+// }
