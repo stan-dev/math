@@ -43,6 +43,19 @@ const char* batch_identity_kernel_code = STRINGIFY(
     /**
      * Makes a batch of smaller identity matrices inside the input matrix
      *
+     * This kernel operates inplace on the matrix A, filling it with smaller
+     *  identity matrices with a size of batch_rows x batch_rows. This kernel
+     *  This kernel expects a 3D organization of threads:
+     *      1st dim: the number of matrices in the batch.
+     *      2nd dim: the number of cols/rows in batch matrices.
+     *      3rd dim: the number of cols/rows in batch matrices.
+     *  Each thread in the organization assigns a single value in the batch.
+     *  In order to create a batch of 3 matrices the size of NxN you need
+     *  to run the kernel batch_identity(A, N, 3*N*N) with (3, N, N) threads.
+     *  The special case of batch_identity(A, N, N*N) executed on
+     *  (1, N, N) threads creates a single identity matrix the size of NxN and
+     *  is therefore equal to the basic identity kernel.
+     *
      * @param[in,out] A The batched identity matrix output.
      * @param batch_rows The number of rows/cols for the smaller matrices in the
      * batch
@@ -53,11 +66,14 @@ const char* batch_identity_kernel_code = STRINGIFY(
      */
     __kernel void batch_identity(__global double* A, unsigned int batch_rows,
                                  unsigned int size) {
+      // The ID of the matrix in the batch the thread is assigned to
       int batch_id = get_global_id(0);
+      // The row and column of the matrix in the batch
       int batch_row = get_global_id(1);
       int batch_col = get_global_id(2);
       int index = batch_id * batch_rows * batch_rows + batch_col * batch_rows
                   + batch_row;
+      // Check for potential overflows of A.
       if (index < size) {
         if (batch_row == batch_col) {
           A[index] = 1.0;
