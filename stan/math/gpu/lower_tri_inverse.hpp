@@ -74,10 +74,10 @@ inline matrix_gpu lower_triangular_inverse(const matrix_gpu& A) {
         cl::NDRange(parts, thread_block_size_1D, thread_block_size_1D),
         temp.buffer(), thread_block_size_1D, temp.size());
     // spawn parts thread blocks, each responsible for one block
-    opencl_kernels::diag_inv(
-        cl::NDRange(parts * thread_block_size_1D),
-        cl::NDRange(thread_block_size_1D), inv_padded.buffer(), temp.buffer(),
-        inv_padded.rows());
+    opencl_kernels::diag_inv(cl::NDRange(parts * thread_block_size_1D),
+                             cl::NDRange(thread_block_size_1D),
+                             inv_padded.buffer(), temp.buffer(),
+                             inv_padded.rows());
   } catch (cl::Error& e) {
     check_opencl_error("inverse step1", e);
   }
