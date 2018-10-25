@@ -1,3 +1,4 @@
+#ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/gpu/copy.hpp>
 #include <stan/math/gpu/multiply.hpp>
@@ -155,4 +156,5 @@ TEST(AgradRevMatrix, multiply_big) {
 
   EXPECT_MATRIX_NEAR(m3, m3_gpu_res, 1e-10);
 }
+#endif
 #endif
