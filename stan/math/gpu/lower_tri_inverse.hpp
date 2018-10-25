@@ -17,6 +17,11 @@ namespace math {
 /**
  * Computes the inverse of the lower triangular matrix
  *
+ * For a full guide to how this works and fits into Cholesky decompositions,
+ * see the reference report
+ * <a href="https://github.com/SteveBronder/stancon2018/blob/master/report.pdf">
+ * here</a>.
+ *
  * @param A matrix on the GPU
  *
  * @return the inverse of A
