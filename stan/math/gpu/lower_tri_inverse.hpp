@@ -20,10 +20,10 @@ namespace math {
  * For a full guide to how this works and fits into Cholesky decompositions,
  * see the reference report
  * <a href="https://github.com/SteveBronder/stancon2018/blob/master/report.pdf">
- * here</a>.
+ * here</a> and kernel doc
+ * <a href="https://github.com/stan-dev/math/wiki/GPU-Kernels">here</a>.
  *
  * @param A matrix on the GPU
- *
  * @return the inverse of A
  *
  * @throw <code>std::invalid_argument</code> if the matrix

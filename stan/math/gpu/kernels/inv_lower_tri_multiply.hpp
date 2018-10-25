@@ -43,27 +43,21 @@ const char* inv_lower_tri_multiply_kernel_code = STRINGIFY(
     __kernel void inv_lower_tri_multiply(__global double* A,
                                          __global double* temp,
                                          const int A_rows, const int rows) {
-      // The ID of the resulting matrix.
       int result_matrix_id = get_global_id(2);
-      // Calculate offset, which is ID * rows *2
       int offset = result_matrix_id * rows * 2;
-      // Thread index inside the thread_block
       const int thread_block_row = get_local_id(0);
       const int thread_block_col = get_local_id(1);
-      // Global thread index
       const int global_thread_row
           = THREAD_BLOCK_SIZE * get_group_id(0) + thread_block_row;
       const int global_thread_col
           = THREAD_BLOCK_SIZE * get_group_id(1) + thread_block_col;
 
-      // Local memory
       __local double C2_local[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];
       __local double A3_local[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];
 
       double acc[WORK_PER_THREAD] = {0};
 
       const int num_tiles = (rows + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
-      // Iterate over all tiles
       for (int tile_ind = 0; tile_ind < num_tiles; tile_ind++) {
         // Each thread copies WORK_PER_THREAD values to the local
         // memory

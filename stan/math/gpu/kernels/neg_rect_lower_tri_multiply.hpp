@@ -37,24 +37,19 @@ const char* neg_rect_lower_tri_multiply_kernel_code = STRINGIFY(
     __kernel void neg_rect_lower_tri_multiply(
         __global double* A, const __global double* temp, const int A_rows,
         const int rows) {
-      // The ID of the resulting matrix.
       int result_matrix_id = get_global_id(2);
-      // Calculate offset, which is ID * rows *2
       int offset = result_matrix_id * rows * 2;
-      // thread index inside the thread_block
       const int thread_block_row = get_local_id(0);
       const int thread_block_col = get_local_id(1);
-      // global thread index
       const int i = THREAD_BLOCK_SIZE * get_group_id(0) + thread_block_row;
       const int j = THREAD_BLOCK_SIZE * get_group_id(1) + thread_block_col;
-      // local memory
+
       __local double temp_local[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];
       __local double C1_local[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];
 
       double acc[WORK_PER_THREAD] = {0};
 
       const int num_tiles = (rows + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
-      // iterate over all tiles
       for (int tile_ind = 0; tile_ind < num_tiles; tile_ind++) {
         // each thread copies WORK_PER_THREAD values to the local
         // memory
@@ -107,7 +102,6 @@ const char* neg_rect_lower_tri_multiply_kernel_code = STRINGIFY(
       for (int w = 0; w < WORK_PER_THREAD; w++) {
         const int A_global_col
             = A_global_col_offset + w * THREAD_BLOCK_SIZE_COL;
-        // each thread saves WORK_PER_THREAD values
         A[A_global_col * A_rows + i + rows + offset] = -acc[w];
       }
     }

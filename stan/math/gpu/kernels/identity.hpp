@@ -44,7 +44,7 @@ const char* batch_identity_kernel_code = STRINGIFY(
      * Makes a batch of smaller identity matrices inside the input matrix
      *
      * This kernel operates inplace on the matrix A, filling it with smaller
-     *  identity matrices with a size of batch_rows x batch_rows. This kernel
+     *  identity matrices with a size of batch_rows x batch_rows.
      *  This kernel expects a 3D organization of threads:
      *      1st dim: the number of matrices in the batch.
      *      2nd dim: the number of cols/rows in batch matrices.
