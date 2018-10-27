@@ -119,6 +119,8 @@
 #include <stan/math/prim/scal/fun/ldexp.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/lmgamma.hpp>
+#include <stan/math/prim/scal/fun/locscale_constrain.hpp>
+#include <stan/math/prim/scal/fun/locscale_free.hpp>
 #include <stan/math/prim/scal/fun/log.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/log1m_exp.hpp>
@@ -167,6 +169,7 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
+#include <stan/math/prim/scal/fun/sqrt.hpp>
 #include <stan/math/prim/scal/fun/step.hpp>
 #include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/prim/scal/fun/trigamma.hpp>
