@@ -21,7 +21,7 @@ namespace math {
  * input matrices do not have matching dimensions
  *
  */
-inline matrix_gpu add(const matrix_gpu& A, const matrix_gpu& B) {
+inline auto add(const matrix_gpu& A, const matrix_gpu& B) {
   check_matching_dims("add", "A", A, "B", B);
   matrix_gpu C(A.rows(), A.cols());
   if (C.size() == 0) {
@@ -35,6 +35,22 @@ inline matrix_gpu add(const matrix_gpu& A, const matrix_gpu& B) {
     check_opencl_error("add", e);
   }
   return C;
+}
+
+/**
+ * Matrix addition on the GPU
+ *
+ * @param A first matrix
+ * @param B second matrix
+ *
+ * @return sum of A and B
+ *
+ * @throw <code>std::invalid_argument</code> if the
+ * input matrices do not have matching dimensions
+ *
+ */
+inline auto operator+(const matrix_gpu& A, const matrix_gpu& B) {
+    return add(A, B);
 }
 }  // namespace math
 }  // namespace stan

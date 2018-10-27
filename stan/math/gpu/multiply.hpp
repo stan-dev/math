@@ -37,7 +37,7 @@ inline matrix_gpu multiply(const matrix_gpu& A, const double scalar) {
  * @param A matrix
  * @return matrix multipled with scalar
  */
-inline matrix_gpu multiply(const double scalar, const matrix_gpu& A) {
+inline auto multiply(const double scalar, const matrix_gpu& A) {
   return multiply(A, scalar);
 }
 
@@ -53,7 +53,7 @@ inline matrix_gpu multiply(const double scalar, const matrix_gpu& A) {
  * @throw <code>std::invalid_argument</code> if the
  *   number of columns in A and rows in B do not match
  */
-inline matrix_gpu multiply(const matrix_gpu& A, const matrix_gpu& B) {
+inline auto multiply(const matrix_gpu& A, const matrix_gpu& B) {
   check_size_match("multiply (GPU)", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
   matrix_gpu temp(A.rows(), B.cols());
@@ -90,6 +90,23 @@ inline matrix_gpu multiply(const matrix_gpu& A, const matrix_gpu& B) {
   // unpadding the result matrix
   temp.sub_block(tempPad, 0, 0, 0, 0, temp.rows(), temp.cols());
   return temp;
+}
+
+/**
+ * Templated product operator for GPU matrices.
+ *
+ * Computes the matrix multiplication C[M, K] = A[M, N] x B[N, K]
+ *
+ * @param A A matrix or scalar
+ * @param B A matrix or scalar
+ * @return the product of the first and second arguments
+ *
+ * @throw <code>std::invalid_argument</code> if the
+ *   number of columns in A and rows in B do not match
+ */
+template <typename T1, typename T2>
+inline matrix_gpu operator*(const T1& A, const T2& B) {
+  return multiply(A, B);
 }
 }  // namespace math
 }  // namespace stan
