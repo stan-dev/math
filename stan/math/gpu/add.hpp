@@ -50,7 +50,7 @@ inline auto add(const matrix_gpu& A, const matrix_gpu& B) {
  *
  */
 inline auto operator+(const matrix_gpu& A, const matrix_gpu& B) {
-    return add(A, B);
+  return add(A, B);
 }
 }  // namespace math
 }  // namespace stan
