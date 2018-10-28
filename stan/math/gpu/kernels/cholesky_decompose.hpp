@@ -28,8 +28,6 @@ const char *cholesky_decompose_kernel_code = STRINGIFY(
      *  Used in math/gpu/cholesky_decompose.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      * 
-     * 
-     * 
      */
     __kernel void cholesky_decompose(__global double *A, __global double *B,
                                  int rows) {

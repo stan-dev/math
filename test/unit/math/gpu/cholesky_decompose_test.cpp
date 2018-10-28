@@ -40,10 +40,12 @@ void cholesky_decompose_test(int size) {
   stan::math::matrix_d m1_cl(size, size);
 
   m1_cpu = stan::math::cholesky_decompose(m1_pos_def);
-
+  /*
   stan::math::matrix_gpu m2(m1_pos_def);
   auto m3 = stan::math::cholesky_decompose(m2);
   stan::math::copy(m1_cl, m3);
+  */
+  m1_cl = stan::math::cholesky_decompose_gpu(m1_pos_def);
   double max_error = 0;
   for (int i = 0; i < size; i++) {
     for (int j = 0; j <= i; j++) {
