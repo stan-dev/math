@@ -107,25 +107,21 @@ class matrix_gpu {
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue& queue = opencl_context.queue();
     size_t buf_size;
-    try {
-      A.opencl_buffer_.getInfo(CL_MEM_SIZE, &buf_size);
+    if (A.opencl_cache_) {
       oclBuffer_
-          = cl::Buffer(ctx, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR,
-             sizeof(double) * A.size());
-     queue.enqueueCopyBuffer(A.opencl_buffer_, oclBuffer_, 0, 0,
-       sizeof(double) * A.size());
-    } catch (const cl::Error& e) {
-      //std:: cout << e.what() << " " << e.err() << "\n";
+          = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
+      queue.enqueueCopyBuffer(A.opencl_buffer_, oclBuffer_, 0, 0,
+                              sizeof(double) * A.size());
+    } else {
+      // std:: cout << e.what() << " " << e.err() << "\n";
       if (size() > 0) {
         try {
           // creates the OpenCL buffer to copy the Eigen
           // matrix to the OpenCL device
           oclBuffer_
-              = cl::Buffer(ctx, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR,
-                 sizeof(double) * A.size());
-           A.opencl_buffer_
-               = cl::Buffer(ctx, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR,
-                  sizeof(double) * A.size());
+              = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
+          A.opencl_buffer_
+              = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
           /**
            * Writes the contents of A to the OpenCL buffer
            * starting at the offset 0.
@@ -138,8 +134,9 @@ class matrix_gpu {
           queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0,
                                    sizeof(double) * A.size(), A.data());
           queue.enqueueCopyBuffer(oclBuffer_, A.opencl_buffer_, 0, 0,
-            sizeof(double) * A.size(), NULL, &copy_event);
+                                  sizeof(double) * A.size(), NULL, &copy_event);
           copy_event.wait();
+          A.opencl_cache_ = true;
         } catch (const cl::Error& e) {
           check_opencl_error("matrix constructor", e);
         }
