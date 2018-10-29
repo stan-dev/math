@@ -3,6 +3,10 @@
 #include <stan/math/gpu/copy.hpp>
 #include <stan/math/gpu/cholesky_decompose.hpp>
 #include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/err/check_pos_definite.hpp>
+#include <stan/math/prim/mat/err/check_square.hpp>
+#include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 #define EXPECT_MATRIX_NEAR(A, B, DELTA) \
@@ -32,6 +36,8 @@ TEST(MathMatrix, cholesky_decompose) {
   EXPECT_MATRIX_NEAR(m1, m1_res, 1e-8);  
 }
 
+  
+
 void cholesky_decompose_test(int size) {
   stan::math::matrix_d m1 = stan::math::matrix_d::Random(size, size);
   stan::math::matrix_d m1_pos_def = m1 * m1.transpose() + size*Eigen::MatrixXd::Identity(size, size);
@@ -39,13 +45,15 @@ void cholesky_decompose_test(int size) {
   stan::math::matrix_d m1_cpu(size, size);
   stan::math::matrix_d m1_cl(size, size);
 
-  m1_cpu = stan::math::cholesky_decompose(m1_pos_def);
-  /*
-  stan::math::matrix_gpu m2(m1_pos_def);
-  auto m3 = stan::math::cholesky_decompose(m2);
-  stan::math::copy(m1_cl, m3);
-  */
-  m1_cl = stan::math::cholesky_decompose_gpu(m1_pos_def);
+  stan::math::check_square("cholesky_decompose", "m", m1_pos_def);
+  stan::math::check_symmetric("cholesky_decompose", "m", m1_pos_def);
+  Eigen::LLT<stan::math::matrix_d > llt(m1_pos_def.rows());
+  llt.compute(m1_pos_def);
+  stan::math::check_pos_definite("cholesky_decompose", "m", llt);
+  m1_cpu = llt.matrixL();
+  
+  m1_cl = stan::math::cholesky_decompose(m1_pos_def);
+  
   double max_error = 0;
   for (int i = 0; i < size; i++) {
     for (int j = 0; j <= i; j++) {

@@ -5,6 +5,9 @@
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
+#ifdef STAN_OPENCL
+#include <stan/math/gpu/cholesky_decompose.hpp>	
+#endif
 
 namespace stan {
 namespace math {

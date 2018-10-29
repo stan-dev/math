@@ -84,7 +84,7 @@ const char* inv_lower_tri_multiply_kernel_code = STRINGIFY(
             C2_local[local_col][local_row] = 0;
           }
           if (A3_global_col < A_rows && A3_global_row < A_rows) {
-              = A[A3_global_col * A_rows + A3_global_row];				  A3_local[local_col][local_row]
+               A3_local[local_col][local_row]
 				  = A[A3_global_col * A_rows + A3_global_row];
 		  }else{
 			  A3_local[local_col][local_row]
