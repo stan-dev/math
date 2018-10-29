@@ -81,9 +81,13 @@ class kernel_functor {
   kernel_functor(const char* name, const char* source,
                  std::map<const char*, int> options) {
     auto base_opts = opencl_context.base_opts();
-    options.insert(base_opts.begin(), base_opts.end());
-    kernel_ = compile_kernel(name, source, options);
-    opts_ = options;
+    for (auto& it : options) {
+      if (base_opts[it.first] > it.second) {
+        base_opts[it.first] = it.second;
+      }
+    }
+    kernel_ = compile_kernel(name, source, base_opts);
+    opts_ = base_opts;
   }
 
   auto operator()() const { return cl::make_kernel<Args...>(kernel_); }
