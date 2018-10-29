@@ -11,7 +11,6 @@
 #include <stan/math/gpu/err/check_diagonal_zeros.hpp>
 #include <stan/math/gpu/err/check_nan.hpp>
 #include <CL/cl.hpp>
-#define VER_2 1
 namespace stan {
 namespace math {
 /**
@@ -109,27 +108,6 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A, int block = 100, int divider
   check_diagonal_zeros("cholesky_decompose_gpu", "Matrix m", A);
   A.zeros<stan::math::TriangularViewGPU::Upper>();
   return A;
-}
-
-/**
- * Return the lower-triangular Cholesky factor (i.e., matrix
- * square root) of the specified square, symmetric matrix.  The return
- * value \f$L\f$ will be a lower-traingular matrix such that the
- * original matrix \f$A\f$ is given by
- * <p>\f$A = L \times L^T\f$. The computation is done on a GPU.
- * @param m Symmetrix matrix.
- * @return Square root of matrix.
- * @throw std::domain_error if m is not a symmetric matrix or
- *   if m is not positive definite (if m has more than 0 elements)
- */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose_gpu(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
-  matrix_gpu m_gpu(m);  
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_chol(m.rows(), m.cols());
-  cholesky_decompose(m_gpu);
-  copy(m_chol, m_gpu);
-  return m_chol;
 }
 }  // namespace math
 }  // namespace stan
