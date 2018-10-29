@@ -104,26 +104,45 @@ class matrix_gpu {
   template <int R, int C>
   explicit matrix_gpu(const Eigen::Matrix<double, R, C>& A)
       : rows_(A.rows()), cols_(A.cols()) {
-    if (size() > 0) {
-      cl::Context& ctx = opencl_context.context();
-      cl::CommandQueue& queue = opencl_context.queue();
-      try {
-        // creates the OpenCL buffer to copy the Eigen
-        // matrix to the OpenCL device
-        oclBuffer_
-            = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
-        /**
-         * Writes the contents of A to the OpenCL buffer
-         * starting at the offset 0.
-         * CL_TRUE denotes that the call is blocking as
-         * we do not want to execute any further kernels
-         * on the device until we are sure that the data
-         * is finished transfering)
-         */
-        queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0,
-                                 sizeof(double) * A.size(), A.data());
-      } catch (const cl::Error& e) {
-        check_opencl_error("matrix constructor", e);
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    size_t buf_size;
+    try {
+      A.opencl_buffer_.getInfo(CL_MEM_SIZE, &buf_size);
+      oclBuffer_
+          = cl::Buffer(ctx, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR,
+             sizeof(double) * A.size());
+     queue.enqueueCopyBuffer(A.opencl_buffer_, oclBuffer_, 0, 0,
+       sizeof(double) * A.size());
+    } catch (const cl::Error& e) {
+      //std:: cout << e.what() << " " << e.err() << "\n";
+      if (size() > 0) {
+        try {
+          // creates the OpenCL buffer to copy the Eigen
+          // matrix to the OpenCL device
+          oclBuffer_
+              = cl::Buffer(ctx, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR,
+                 sizeof(double) * A.size());
+           A.opencl_buffer_
+               = cl::Buffer(ctx, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR,
+                  sizeof(double) * A.size());
+          /**
+           * Writes the contents of A to the OpenCL buffer
+           * starting at the offset 0.
+           * CL_TRUE denotes that the call is blocking as
+           * we do not want to execute any further kernels
+           * on the device until we are sure that the data
+           * is finished transfering)
+           */
+          cl::Event copy_event;
+          queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0,
+                                   sizeof(double) * A.size(), A.data());
+          queue.enqueueCopyBuffer(oclBuffer_, A.opencl_buffer_, 0, 0,
+            sizeof(double) * A.size(), NULL, &copy_event);
+          copy_event.wait();
+        } catch (const cl::Error& e) {
+          check_opencl_error("matrix constructor", e);
+        }
       }
     }
   }
