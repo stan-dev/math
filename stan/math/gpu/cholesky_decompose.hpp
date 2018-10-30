@@ -45,8 +45,8 @@ namespace math {
  *  positive definite (if m has more than 0 elements)
  */
 inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int block = 100,
-                               const int divider = 2,
-                               const int min_block = 100) {
+                                     const int divider = 2,
+                                     const int min_block = 100) {
   auto offset = 0;
   // NOTE: The code in this section follows the naming conventions
   // in the report linked in the docs.
