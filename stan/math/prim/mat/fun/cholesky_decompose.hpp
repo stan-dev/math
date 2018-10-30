@@ -6,7 +6,7 @@
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #ifdef STAN_OPENCL
-#include <stan/math/gpu/cholesky_decompose.hpp>	
+#include <stan/math/gpu/cholesky_decompose.hpp>
 #endif
 
 namespace stan {
@@ -27,7 +27,7 @@ template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
     const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
 #ifdef STAN_OPENCL
-  matrix_gpu m_gpu(m);  
+  matrix_gpu m_gpu(m);
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_chol(m.rows(), m.cols());
   cholesky_decompose(m_gpu);
   copy(m_chol, m_gpu);

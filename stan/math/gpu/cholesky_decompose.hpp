@@ -20,8 +20,8 @@ namespace math {
  * The return value \f$L\f$ will be a lower-traingular matrix such that the
  * original matrix \f$A\f$ is given by
  * <p>\f$A = L \times L^T\f$.
- * The Cholesky decomposition is computed on the GPU. This algorithm is recursive,
- * where The parameters <code>block</code>, <code>divider</code>, and
+ * The Cholesky decomposition is computed on the GPU. This algorithm is
+ * recursive, where The parameters <code>block</code>, <code>divider</code>, and
  *  <code>min_block</code> act as tuning parameters for the recursive step of
  *  the GPU based Cholesky decompostion. The matrix is subset by the
  *  <code>block</code> size, and if the <code>block</code> size is less than
@@ -44,8 +44,9 @@ namespace math {
  * @throw std::domain_error if m is not
  *  positive definite (if m has more than 0 elements)
  */
-inline auto cholesky_decompose(matrix_gpu  &A,
-   const int block = 100, const int divider = 2, const int min_block = 100) {
+inline auto cholesky_decompose(matrix_gpu& A, const int block = 100,
+                               const int divider = 2,
+                               const int min_block = 100) {
   auto offset = 0;
   // NOTE: The code in this section follows the naming conventions
   // in the report linked in the docs.
@@ -87,14 +88,14 @@ inline auto cholesky_decompose(matrix_gpu  &A,
     A.sub_block(L_21, 0, 0, block_offset, offset, block_subset, block);
     // Copies the A_22 submatrix from the input matrix,
     A_22.sub_block(A, block_offset, block_offset, 0, 0, block_subset,
-      block_subset);
+                   block_subset);
     // computes A_22 - L_21*(L_21^T)
     // and copies the resulting submatrix back to the input matrix
     matrix_gpu temp = multiply_transpose(L_21);
     // TODO(Steve): Replace with subtraction operator when that PR goes through
     matrix_gpu L_22 = subtract(A_22, temp);
     A.sub_block(L_22, 0, 0, block_offset, block_offset, block_subset,
-       block_subset);
+                block_subset);
     offset += block;
   }
   // Computes the Cholesky factor for the remaining part of the matrix

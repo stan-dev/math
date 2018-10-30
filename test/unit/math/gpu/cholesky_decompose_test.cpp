@@ -15,10 +15,10 @@
 
 TEST(MathMatrix, cholesky_decompose_cpu_vs_gpu_small) {
   stan::math::matrix_d m0(3, 3);
-  m0 <<  25, 15, -5, 15, 18,  0, -5,  0, 11;
+  m0 << 25, 15, -5, 15, 18, 0, -5, 0, 11;
 
   stan::math::matrix_d m1(4, 4);
-  m1 <<  18, 22,  54,  42, 22, 70,  86,  62, 54, 86, 174, 134, 42, 62, 134, 106;
+  m1 << 18, 22, 54, 42, 22, 70, 86, 62, 54, 86, 174, 134, 42, 62, 134, 106;
 
   stan::math::matrix_gpu m0_gpu(m0);
   stan::math::matrix_gpu m1_gpu(m1);
@@ -36,18 +36,17 @@ TEST(MathMatrix, cholesky_decompose_cpu_vs_gpu_small) {
   EXPECT_MATRIX_NEAR(m1, m1_res, 1e-8);
 }
 
-
-
 void cholesky_decompose_test(int size) {
   stan::math::matrix_d m1 = stan::math::matrix_d::Random(size, size);
-  stan::math::matrix_d m1_pos_def = m1 * m1.transpose() + size*Eigen::MatrixXd::Identity(size, size);
+  stan::math::matrix_d m1_pos_def
+      = m1 * m1.transpose() + size * Eigen::MatrixXd::Identity(size, size);
 
   stan::math::matrix_d m1_cpu(size, size);
   stan::math::matrix_d m1_cl(size, size);
 
   stan::math::check_square("cholesky_decompose", "m", m1_pos_def);
   stan::math::check_symmetric("cholesky_decompose", "m", m1_pos_def);
-  Eigen::LLT<stan::math::matrix_d > llt(m1_pos_def.rows());
+  Eigen::LLT<stan::math::matrix_d> llt(m1_pos_def.rows());
   llt.compute(m1_pos_def);
   stan::math::check_pos_definite("cholesky_decompose", "m", llt);
   m1_cpu = llt.matrixL();
@@ -76,6 +75,5 @@ TEST(MathMatrix, cholesky_decompose_big) {
   cholesky_decompose_test(1000);
   cholesky_decompose_test(2000);
 }
-
 
 #endif
