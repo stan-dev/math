@@ -13,30 +13,30 @@
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-TEST(MathMatrix, cholesky_decompose) {
+TEST(MathMatrix, cholesky_decompose_cpu_vs_gpu_small) {
   stan::math::matrix_d m0(3, 3);
   m0 <<  25, 15, -5, 15, 18,  0, -5,  0, 11;
 
   stan::math::matrix_d m1(4, 4);
   m1 <<  18, 22,  54,  42, 22, 70,  86,  62, 54, 86, 174, 134, 42, 62, 134, 106;
-  
+
   stan::math::matrix_gpu m0_gpu(m0);
   stan::math::matrix_gpu m1_gpu(m1);
-  
+
   stan::math::matrix_d m0_res = stan::math::cholesky_decompose(m0);
   stan::math::matrix_d m1_res = stan::math::cholesky_decompose(m1);
 
   stan::math::matrix_gpu m0_chol_gpu = stan::math::cholesky_decompose(m0_gpu);
   stan::math::matrix_gpu m1_chol_gpu = stan::math::cholesky_decompose(m1_gpu);
-  
+
   stan::math::copy(m0, m0_chol_gpu);
   stan::math::copy(m1, m1_chol_gpu);
 
   EXPECT_MATRIX_NEAR(m0, m0_res, 1e-8);
-  EXPECT_MATRIX_NEAR(m1, m1_res, 1e-8);  
+  EXPECT_MATRIX_NEAR(m1, m1_res, 1e-8);
 }
 
-  
+
 
 void cholesky_decompose_test(int size) {
   stan::math::matrix_d m1 = stan::math::matrix_d::Random(size, size);
@@ -51,9 +51,9 @@ void cholesky_decompose_test(int size) {
   llt.compute(m1_pos_def);
   stan::math::check_pos_definite("cholesky_decompose", "m", llt);
   m1_cpu = llt.matrixL();
-  
+
   m1_cl = stan::math::cholesky_decompose(m1_pos_def);
-  
+
   double max_error = 0;
   for (int i = 0; i < size; i++) {
     for (int j = 0; j <= i; j++) {

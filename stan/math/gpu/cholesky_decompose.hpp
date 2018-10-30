@@ -33,8 +33,7 @@ namespace math {
  *
  * For a full guide to how this works
  * see the Cholesy decompostion chapter in the  reference report
- * <a href="https://github.com/SteveBronder/stancon2018/blob/master/report.pdf">
- *
+ * <a href="https://goo.gl/6kWkJ5"> here</a>.
  * @param A Symmetric matrix on the GPU.
  * @param block Size of the block used to compute the cholesky decomposition.
  * @param divider Proportion to divide the submatrix by at each recursive step.
@@ -82,7 +81,7 @@ inline auto cholesky_decompose(matrix_gpu  &A,
     // and copies the resulting submatrix to the input matrix
     matrix_gpu A_11_inverse = lower_triangular_inverse(L_11);
     A_11_inverse = transpose(A_11_inverse);
-    // TODO(Steve): Replace with mult operator when that PR goes through 
+    // TODO(Steve): Replace with mult operator when that PR goes through
     matrix_gpu L_21 = multiply(A_21, A_11_inverse);
     A.sub_block(L_21, 0, 0, block_offset, offset, block_subset, block);
     // Copies the A_22 submatrix from the input matrix,
