@@ -7,6 +7,7 @@
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/cholesky_decompose.hpp>
+#include <algorithm>
 #endif
 
 namespace stan {
