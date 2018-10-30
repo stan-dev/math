@@ -11,6 +11,7 @@
 #include <stan/math/gpu/err/check_diagonal_zeros.hpp>
 #include <stan/math/gpu/err/check_nan.hpp>
 #include <CL/cl.hpp>
+#include <algorithm>
 namespace stan {
 namespace math {
 /**
