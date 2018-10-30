@@ -2,6 +2,7 @@
 #define STAN_MATH_LAPLACE_LGP_DENSE_SYSTEM_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <stan/math/rev/mat.hpp>
 #include <iostream>
 #include <string>
@@ -30,14 +31,16 @@ namespace math {
     T sigma = phi[0];
     T rho = phi[1];
 
-    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Sigma;
+    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Sigma(M, M);
+    
     for (int i = 0; i < M; i++) {
-      for (int j = 0; j < (i - 1); j++) {
+      for (int j = 0; j < i; j++) {
         Sigma(i, j) = rho * sigma;
         Sigma(j, i) = rho * sigma;
       }
       Sigma(i, i) = sigma;
     }
+
     return Sigma;
   }
 
@@ -70,7 +73,7 @@ namespace math {
                      const Eigen::VectorXd& sums)
       : phi_(phi), theta_(theta), n_samples_(n_samples), sums_(sums) {
       int M = n_samples.size();
-      Sigma_ = Sigma(phi, M);
+      Sigma_ = covariance(phi, M);
     }
 
     /**
@@ -82,13 +85,14 @@ namespace math {
     Eigen::MatrixXd get_Sigma() const { return Sigma_; }
 
     /**
-     * An operator that returns the conditional density, up to a
+     * An operator that returns the log conditional density, up to a
      * constant term. The returned object works as an
      * objective function we can optimize to find the mode. 
      */
     T0 log_density (const Eigen::VectorXd theta) const {
       Eigen::VectorXd poisson_term = elt_multiply(sums_, theta) - exp(theta);
-      return sum(poisson_term) - theta.transpose() * m_divide_left(Sigma_, theta);
+      return sum(poisson_term) -
+        0.5 * theta.transpose() * mdivide_left(Sigma_, theta);
     }
 
     /**
@@ -98,7 +102,7 @@ namespace math {
     Eigen::Matrix<typename stan::return_type<T0, T1>::type, 
                   Eigen::Dynamic, Eigen::Dynamic>
     cond_gradient(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta) const {
-      return sums_ - elt_multiply(n_samples_, exp(theta)) - m_divide_left(Sigma_, theta);
+      return sums_ - elt_multiply(n_samples_, exp(theta)) - mdivide_left(Sigma_, theta);
     }
 
     /**
@@ -109,7 +113,10 @@ namespace math {
     Eigen::Matrix<typename stan::return_type<T0, T1>::type, 
                          Eigen::Dynamic, Eigen::Dynamic>
     cond_hessian(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta) const {
-      return - add(elt_multiply(n_samples_, exp(theta)), inverse(Sigma_));
+      Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> first_term = 
+        elt_multiply(n_samples_, exp(theta)).asDiagonal();
+
+      return - (first_term + inverse(Sigma_));
     }
     
     /**

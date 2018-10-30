@@ -27,9 +27,9 @@ namespace math {
                            const lgp_conditional_system<double>& system,
                            const Eigen::VectorXd& theta_dbl)
       : vari(theta_dbl(0)),
-        phi_(ChainableStack::instance_.memalloc_.alloc_array<vari*>(1)),
+        phi_(ChainableStack::instance().memalloc_.alloc_array<vari*>(1)),
         theta_size_(theta_dbl.size()),
-        theta_(ChainableStack::instance_.memalloc_.alloc_array<vari*>(
+        theta_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
           theta_size_)) {
       using Eigen::Map;
       using Eigen::VectorXd;
