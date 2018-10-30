@@ -44,7 +44,7 @@ namespace math {
  * @throw std::domain_error if m is not
  *  positive definite (if m has more than 0 elements)
  */
-inline auto cholesky_decompose(matrix_gpu& A, const int block = 100,
+inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int block = 100,
                                const int divider = 2,
                                const int min_block = 100) {
   auto offset = 0;
