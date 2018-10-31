@@ -18,9 +18,8 @@ namespace math {
   // when doing a Poisson model with a latent gaussian
   // parameter. See Dan's experiment.
 
-
   /**
-   * An operator which constructs the covariance matrix,
+   * A function to constructs the covariance matrix,
    * based on the global paramter, phi.
    * Note the covariance matrix is assumed to have a specific structure,
    * namely same variance for all terms, and same correlation.
@@ -47,9 +46,9 @@ namespace math {
   /**
    * A structure for the parameters and data in a latent
    * Gaussian Poisson (lgp) model. Returns the gradient of 
-   * the density of the local parameter (theta) conditioned on 
-   * the observed data (y) and the global parameter (phi), and
-   * also returns the conditional hessian.
+   * the log density of the local parameter (theta) conditioned
+   * on the observed data (y) and the global parameter (phi),
+   * and also returns the conditional hessian.
    *
    * Note theta is not a member of the structure. This is because
    * in one HMC iteration, theta is computed using a Newton 
@@ -59,19 +58,17 @@ namespace math {
   template<typename T0>
   struct lgp_dense_system {
     Eigen::Matrix<T0, Eigen::Dynamic, 1> phi_;
-    Eigen::VectorXd theta_;
     Eigen::VectorXd n_samples_;  // number of samples for local parameter
     Eigen::VectorXd sums_;  // sums of observation for local parameter
-    Eigen::MatrixXd Sigma_;  // covariance matrix
+    Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic> Sigma_;  // covariance matrix
 
     // Constructors
     lgp_dense_system() {}
 
     lgp_dense_system(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& phi,
-                     const Eigen::VectorXd theta,
                      const Eigen::VectorXd n_samples,
                      const Eigen::VectorXd& sums)
-      : phi_(phi), theta_(theta), n_samples_(n_samples), sums_(sums) {
+      : phi_(phi), n_samples_(n_samples), sums_(sums) {
       int M = n_samples.size();
       Sigma_ = covariance(phi, M);
     }
@@ -89,8 +86,11 @@ namespace math {
      * constant term. The returned object works as an
      * objective function we can optimize to find the mode. 
      */
-    T0 log_density (const Eigen::VectorXd theta) const {
-      Eigen::VectorXd poisson_term = elt_multiply(sums_, theta) - exp(theta);
+    template <typename T1>
+    typename stan::return_type<T0, T1>::type
+    log_density (const Eigen::Matrix<T1, Eigen::Dynamic, 1> theta) const {
+      Eigen::Matrix<T1, Eigen::Dynamic, 1> 
+        poisson_term = elt_multiply(sums_, theta) - exp(theta);
       return sum(poisson_term) -
         0.5 * theta.transpose() * mdivide_left(Sigma_, theta);
     }
@@ -102,7 +102,8 @@ namespace math {
     Eigen::Matrix<typename stan::return_type<T0, T1>::type, 
                   Eigen::Dynamic, Eigen::Dynamic>
     cond_gradient(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta) const {
-      return sums_ - elt_multiply(n_samples_, exp(theta)) - mdivide_left(Sigma_, theta);
+      return sums_ - elt_multiply(n_samples_, exp(theta)) -
+        mdivide_left(Sigma_, theta);
     }
 
     /**
@@ -118,7 +119,7 @@ namespace math {
 
       return - (first_term + inverse(Sigma_));
     }
-    
+
     /**
      * A functor on which the Jacobian function can be called,
      * to compute the derivative of the objective function with
@@ -156,7 +157,7 @@ namespace math {
       deriv_objective f(value_of(theta));
       Jacobian(f, phi_, dummy, phi_sensitivities);
 
-      return - m_divide_left(cond_hessian(theta), phi_sensitivities);
+      return - mdivide_left(cond_hessian(theta), phi_sensitivities);
     }
   };
 

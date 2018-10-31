@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_LAPLACE_LGP_NEWTON_SOLVER_HPP
 #define STAN_MATH_LAPLACE_LGP_NEWTON_SOLVER_HPP
 
-#include <stan/math/laplace/lgp_conditional_system.hpp>
+#include <stan/math/laplace/lgp_dense_system.hpp>
 
 
 namespace stan {
@@ -12,7 +12,7 @@ namespace math {
    * Newton solver.
    */
   template <typename T>
-  struct lgp_newton_solver_vari : public vari {
+  struct lgp_dense_newton_solver_vari : public vari {
     /** global parameter */
     vari** phi_;
     /** size of solution */
@@ -23,9 +23,9 @@ namespace math {
     Eigen::VectorXd J_;
     // double* J_;
 
-    lgp_newton_solver_vari(const T& phi,
-                           const lgp_conditional_system<double>& system,
-                           const Eigen::VectorXd& theta_dbl)
+    lgp_dense_newton_solver_vari(const T& phi,
+                                 const lgp_dense_system<double>& system,
+                                 const Eigen::VectorXd& theta_dbl)
       : vari(theta_dbl(0)),
         phi_(ChainableStack::instance().memalloc_.alloc_array<vari*>(1)),
         theta_size_(theta_dbl.size()),
@@ -41,7 +41,7 @@ namespace math {
         theta_[i] = new vari(theta_dbl(i), false);
 
       // Compute the Jacobian and store in array, using
-      // the operator in the lgp_conditional_system structure.
+      // the operator in the lgp_dense_system structure.
       J_ = system.solver_gradient(theta_dbl);
 
       // CHECK - more memory efficient?
@@ -62,9 +62,9 @@ namespace math {
    * The initial guess can be passed as a parameter or fixed data.
    */
   template<typename T>  // template for variables
-  Eigen::Matrix<T, Eigen::Dynamic, 1> lgp_newton_solver(
+  Eigen::Matrix<T, Eigen::Dynamic, 1> lgp_dense_newton_solver(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta_0,  // initial guess
-    const lgp_conditional_system<double>& system,
+    const lgp_dense_system<double>& system,
     double tol = 1e-3,
     long int max_num_steps = 100,
     bool line_search = false) {  // NOLINT(runtime/int)
@@ -84,7 +84,8 @@ namespace math {
       }
 
       gradient = system.cond_gradient(theta_dbl);
-      direction = - elt_divide(gradient, system.cond_hessian(theta_dbl));
+      direction = - mdivide_left(system.cond_hessian(theta_dbl),
+                                 gradient);
 
       if (line_search == false) {
         theta_dbl += direction;
@@ -123,14 +124,14 @@ namespace math {
    * The initial guess can be passed as a parameter or fixed data.
    */
   template <typename T1, typename T2>
-  Eigen::Matrix<T2, Eigen::Dynamic, 1> lgp_newton_solver(
+  Eigen::Matrix<T2, Eigen::Dynamic, 1> lgp_dense_newton_solver(
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_0,  // initial guess
-    const lgp_conditional_system<T2>& system,
+    const lgp_dense_system<T2>& system,
     double tol = 1e-6,
     long int max_num_steps = 100,  // NOLINT(runtime/int)
     bool line_search = false) {
 
-    lgp_conditional_system<double> 
+    lgp_dense_system<double> 
       system_dbl(value_of(system.get_phi()),
                  system.get_n_samples(), 
                  system.get_sums());
@@ -140,8 +141,9 @@ namespace math {
                           line_search);
 
     // construct vari
-    lgp_newton_solver_vari<T2>* vi0
-      = new lgp_newton_solver_vari<T2>(system.get_phi(), system_dbl, theta_dbl);
+    lgp_dense_newton_solver_vari<T2>* vi0
+      = new lgp_dense_newton_solver_vari<T2>(system.get_phi(), 
+                                             system_dbl, theta_dbl);
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta(theta_dbl.size());
     theta(0) = var(vi0->theta_[0]);
@@ -153,12 +155,12 @@ namespace math {
 
   /**
    * Wrapper of the lgp solver for use in the Stan language. This is
-   * because we cannot pass an object of type lgp_conditional_system.
+   * because we cannot pass an object of type lgp_dense_system.
    * Note the wrapper automatically handles cases where phi is double
    * or var.
    */
   template <typename T1, typename T2>
-  Eigen::Matrix<T2, Eigen::Dynamic, 1> lgp_newton_solver(
+  Eigen::Matrix<T2, Eigen::Dynamic, 1> lgp_dense_newton_solver(
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_0,  // initial guess
     const T2& phi,
     const std::vector<int>& n_samples,
@@ -168,9 +170,9 @@ namespace math {
     int is_line_search = 0) {
 
     return lgp_newton_solver(theta_0,
-                             lgp_conditional_system<T2>(phi, 
-                                                        to_vector(n_samples), 
-                                                        to_vector(sums)),
+                             lgp_dense_system<T2>(phi,
+                                                  to_vector(n_samples), 
+                                                  to_vector(sums)),
                               tol,
                               max_num_steps,
                               is_line_search);
