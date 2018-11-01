@@ -13,28 +13,32 @@ namespace math {
    */
   template <typename T>
   struct lgp_dense_newton_solver_vari : public vari {
-    /** global parameter */
+    /** vector of (global) parameter */
     vari** phi_;
+    /** number of (global) parameters */
+    int phi_size_;
     /** size of solution */
     int theta_size_;
     /** vector of solution */
     vari** theta_;
     /** Jacobian of the solution with respect to the global parameter */
-    Eigen::VectorXd J_;
+    Eigen::MatrixXd J_;
     // double* J_;
 
-    lgp_dense_newton_solver_vari(const T& phi,
+    lgp_dense_newton_solver_vari(const Eigen::Matrix<T,
+                                   Eigen::Dynamic, 1>& phi,
                                  const lgp_dense_system<double>& system,
                                  const Eigen::VectorXd& theta_dbl)
       : vari(theta_dbl(0)),
-        phi_(ChainableStack::instance().memalloc_.alloc_array<vari*>(1)),
+        phi_(ChainableStack::instance().memalloc_.alloc_array<vari*>(phi.size())),
+        phi_size_(phi.size()),
         theta_size_(theta_dbl.size()),
         theta_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
           theta_size_)) {
       using Eigen::Map;
       using Eigen::VectorXd;
-
-      *phi_ = phi.vi_;  // CHECK - should be phi_ = phi.vi_?
+      for (int i = 0; i < phi_size_; i++)
+        phi_[i] = phi(i).vi_;
 
       theta_[0] = this;
       for (int i = 0; i < theta_size_; i++)
@@ -51,8 +55,9 @@ namespace math {
     }
 
     void chain() {
-      for (int i = 0; i < theta_size_; i++)
-        phi_[0]->adj_ += theta_[i]->adj_ * J_[i];
+      for (int j = 0; j < phi_size_; j++)
+        for (int i = 0; i < theta_size_; i++)
+          phi_[j]->adj_ += theta_[i]->adj_ * J_(i, j);
     }
   };
   
@@ -137,8 +142,8 @@ namespace math {
                  system.get_sums());
 
     Eigen::VectorXd theta_dbl 
-      = lgp_newton_solver(value_of(theta_0), system_dbl, tol, max_num_steps,
-                          line_search);
+      = lgp_dense_newton_solver(value_of(theta_0), system_dbl, tol,
+                                max_num_steps, line_search);
 
     // construct vari
     lgp_dense_newton_solver_vari<T2>* vi0

@@ -2,7 +2,9 @@
 #define STAN_MATH_LAPLACE_LGP_DENSE_SYSTEM_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/mdivide_left.hpp>
+// #include <stan/math/prim/mat/fun/mdivide_left.hpp>
+#include <stan/math/rev/mat/fun/mdivide_left.hpp>
+// #include <stan/math/rev/math/functor/jacobian.hpp>
 #include <stan/math/rev/mat.hpp>
 #include <iostream>
 #include <string>
@@ -129,16 +131,18 @@ namespace math {
      */
     struct deriv_objective {
       Eigen::VectorXd theta_;
+      int M_;
 
-      deriv_objective (const Eigen::VectorXd theta) : theta_(theta) { }
+      deriv_objective (const Eigen::VectorXd theta, int M) : 
+        theta_(theta), M_(M) { }
 
       template <typename T>
       inline Eigen::Matrix<T, Eigen::Dynamic, 1>
       operator ()(const Eigen::Matrix<T, Eigen::Dynamic, 1>& phi) const {
         Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-          Sigma = covariance(phi);
+          Sigma = covariance(phi, M_);
 
-        return - m_divide_left(Sigma, theta_);
+        return - mdivide_left(Sigma, theta_);
       }
     };
 
@@ -150,13 +154,13 @@ namespace math {
      */
     template<typename T1>
     Eigen::Matrix<typename stan::return_type<T0, T1>::type,
-                  Eigen::Dynamic, 1>
+                  Eigen::Dynamic, Eigen::Dynamic>
     solver_gradient(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta) const {
       Eigen::VectorXd dummy;
       Eigen::MatrixXd phi_sensitivities;
-      deriv_objective f(value_of(theta));
-      Jacobian(f, phi_, dummy, phi_sensitivities);
-
+      deriv_objective f(value_of(theta), theta.size());
+      jacobian(f, phi_, dummy, phi_sensitivities);
+      
       return - mdivide_left(cond_hessian(theta), phi_sensitivities);
     }
   };
