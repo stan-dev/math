@@ -225,7 +225,6 @@ TEST(laplace, lgp_newton_solver) {
     EXPECT_FLOAT_EQ(powell_solution[0], value_of(theta(0)));
     EXPECT_FLOAT_EQ(powell_solution[1], value_of(theta(1)));
   }
-  
 }
 
 
