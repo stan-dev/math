@@ -167,20 +167,20 @@ namespace math {
   template <typename T1, typename T2>
   Eigen::Matrix<T2, Eigen::Dynamic, 1> lgp_dense_newton_solver(
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_0,  // initial guess
-    const T2& phi,
+    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& phi,
     const std::vector<int>& n_samples,
     const std::vector<int>& sums,
     double tol = 1e-6,
     long int max_num_steps = 100,  // NOLINT(runtime/int)
     int is_line_search = 0) {
 
-    return lgp_newton_solver(theta_0,
-                             lgp_dense_system<T2>(phi,
-                                                  to_vector(n_samples), 
-                                                  to_vector(sums)),
-                              tol,
-                              max_num_steps,
-                              is_line_search);
+    return lgp_dense_newton_solver(theta_0,
+                                   lgp_dense_system<T2>(phi,
+                                                        to_vector(n_samples),
+                                                        to_vector(sums)),
+                                   tol,
+                                   max_num_steps,
+                                   is_line_search);
   }
 
 }  // namespace math
