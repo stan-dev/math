@@ -72,7 +72,6 @@ struct coupled_ode_system<F, double, var> {
       : f_(f),
         y0_dbl_(y0),
         theta_(theta),
-        theta_dbl_(value_of(theta)),
         x_(x),
         x_int_(x_int),
         N_(y0.size()),
@@ -106,30 +105,29 @@ struct coupled_ode_system<F, double, var> {
 
       vector<var> y_vars(z.begin(), z.begin() + N_);
 
-      vector<var> theta_vars(theta_dbl_.begin(), theta_dbl_.end());
-
-      vector<var> dy_dt_vars = f_(t, y_vars, theta_vars, x_, x_int_, msgs_);
+      vector<var> dy_dt_vars = f_(t, y_vars, theta_, x_, x_int_, msgs_);
 
       check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
                        "states", N_);
 
       for (size_t i = 0; i < N_; i++) {
         dz_dt[i] = dy_dt_vars[i].val();
+        for (size_t j = 0; j < M_; j++)
+          theta_[j].vi_->set_zero_adjoint();
+        set_zero_all_adjoints_nested();
         dy_dt_vars[i].grad();
 
         for (size_t j = 0; j < M_; j++) {
           // orders derivatives by equation (i.e. if there are 2 eqns
           // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
           // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
-          double temp_deriv = theta_vars[j].adj();
+          double temp_deriv = theta_[j].adj();
           const size_t offset = N_ + N_ * j;
           for (size_t k = 0; k < N_; k++)
             temp_deriv += z[offset + k] * y_vars[k].adj();
 
           dz_dt[offset + i] = temp_deriv;
         }
-
-        set_zero_all_adjoints_nested();
       }
     } catch (const std::exception& e) {
       recover_memory_nested();
@@ -222,7 +220,6 @@ template <typename F>
 struct coupled_ode_system<F, var, double> {
   const F& f_;
   const std::vector<var>& y0_;
-  const std::vector<double> y0_dbl_;
   const std::vector<double>& theta_dbl_;
   const std::vector<double>& x_;
   const std::vector<int>& x_int_;
@@ -250,7 +247,6 @@ struct coupled_ode_system<F, var, double> {
                      const std::vector<int>& x_int, std::ostream* msgs)
       : f_(f),
         y0_(y0),
-        y0_dbl_(value_of(y0)),
         theta_dbl_(theta),
         x_(x),
         x_int_(x_int),
@@ -338,7 +334,7 @@ struct coupled_ode_system<F, var, double> {
   std::vector<double> initial_state() const {
     std::vector<double> initial(size_, 0.0);
     for (size_t i = 0; i < N_; i++)
-      initial[i] = y0_dbl_[i];
+      initial[i] = value_of(y0_[i]);
     for (size_t i = 0; i < N_; i++)
       initial[N_ + i * N_ + i] = 1.0;
     return initial;
@@ -414,9 +410,7 @@ template <typename F>
 struct coupled_ode_system<F, var, var> {
   const F& f_;
   const std::vector<var>& y0_;
-  const std::vector<double> y0_dbl_;
   const std::vector<var>& theta_;
-  const std::vector<double> theta_dbl_;
   const std::vector<double>& x_;
   const std::vector<int>& x_int_;
   const size_t N_;
@@ -443,9 +437,7 @@ struct coupled_ode_system<F, var, var> {
                      const std::vector<int>& x_int, std::ostream* msgs)
       : f_(f),
         y0_(y0),
-        y0_dbl_(value_of(y0)),
         theta_(theta),
-        theta_dbl_(value_of(theta)),
         x_(x),
         x_int_(x_int),
         N_(y0.size()),
@@ -478,15 +470,16 @@ struct coupled_ode_system<F, var, var> {
 
       vector<var> y_vars(z.begin(), z.begin() + N_);
 
-      vector<var> theta_vars(theta_dbl_.begin(), theta_dbl_.end());
-
-      vector<var> dy_dt_vars = f_(t, y_vars, theta_vars, x_, x_int_, msgs_);
+      vector<var> dy_dt_vars = f_(t, y_vars, theta_, x_, x_int_, msgs_);
 
       check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
                        "states", N_);
 
       for (size_t i = 0; i < N_; i++) {
         dz_dt[i] = dy_dt_vars[i].val();
+        for (size_t j = 0; j < M_; j++)
+          theta_[j].vi_->set_zero_adjoint();
+        set_zero_all_adjoints_nested();
         dy_dt_vars[i].grad();
 
         for (size_t j = 0; j < N_; j++) {
@@ -502,7 +495,7 @@ struct coupled_ode_system<F, var, var> {
         }
 
         for (size_t j = 0; j < M_; j++) {
-          double temp_deriv = theta_vars[j].adj();
+          double temp_deriv = theta_[j].adj();
           const size_t offset = N_ + N_ * N_ + N_ * j;
           for (size_t k = 0; k < N_; k++)
             temp_deriv += z[offset + k] * y_vars[k].adj();
@@ -540,7 +533,7 @@ struct coupled_ode_system<F, var, var> {
   std::vector<double> initial_state() const {
     std::vector<double> initial(size_, 0.0);
     for (size_t i = 0; i < N_; i++)
-      initial[i] = y0_dbl_[i];
+      initial[i] = value_of(y0_[i]);
     for (size_t i = 0; i < N_; i++)
       initial[N_ + i * N_ + i] = 1.0;
     return initial;
