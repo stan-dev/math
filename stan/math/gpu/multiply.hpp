@@ -95,7 +95,7 @@ inline auto multiply(const matrix_gpu& A, const matrix_gpu& B) {
 /**
  * Templated product operator for GPU matrices.
  *
- * Computes the matrix multiplication C[M, K] = A[M, N] x B[N, K]
+ * Computes the matrix multiplication C[M, K] = A[M, N] x B[N, K].
  *
  * @param A A matrix or scalar
  * @param B A matrix or scalar
@@ -104,9 +104,14 @@ inline auto multiply(const matrix_gpu& A, const matrix_gpu& B) {
  * @throw <code>std::invalid_argument</code> if the
  *   number of columns in A and rows in B do not match
  */
-template <typename T1, typename T2>
-inline matrix_gpu operator*(const T1& A, const T2& B) {
+inline matrix_gpu operator*(const matrix_gpu& A, const matrix_gpu& B) {
   return multiply(A, B);
+}
+inline matrix_gpu operator*(const matrix_gpu& A, const double scalar) {
+  return multiply(A, scalar);
+}
+inline matrix_gpu operator*(const double scalar, const double B) {
+  return multiply(scalar, B);
 }
 }  // namespace math
 }  // namespace stan

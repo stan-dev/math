@@ -24,7 +24,6 @@ TEST(MathMatrixGPU, add_v_exception_pass_zero) {
   stan::math::matrix_gpu d22(d2);
   stan::math::matrix_gpu d33(0, 1);
   EXPECT_NO_THROW(d33 = d11 + d22);
-  EXPECT_NO_THROW(d33 = d11 + d22);
 }
 
 TEST(MathMatrixGPU, add_v_exception_pass_invalid_arg) {
