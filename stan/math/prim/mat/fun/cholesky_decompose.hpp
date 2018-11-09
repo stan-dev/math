@@ -27,8 +27,8 @@ namespace math {
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
     const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
-check_square("cholesky_decompose", "m", m);
-check_symmetric("cholesky_decompose", "m", m);
+  check_square("cholesky_decompose", "m", m);
+  check_symmetric("cholesky_decompose", "m", m);
 #ifdef STAN_OPENCL
   matrix_gpu m_gpu(m);
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_chol(m.rows(), m.cols());
