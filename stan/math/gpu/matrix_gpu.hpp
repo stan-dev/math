@@ -12,6 +12,7 @@
 #include <stan/math/gpu/kernels/triangular_transpose.hpp>
 #include <stan/math/gpu/kernels/zeros.hpp>
 #include <stan/math/prim/scal/meta/is_constant.hpp>
+#include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <CL/cl.hpp>
 #include <iostream>
 #include <string>
