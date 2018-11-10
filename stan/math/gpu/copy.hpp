@@ -68,7 +68,7 @@ void copy(matrix_gpu& dst, const Eigen::Matrix<T, R, C>& src) {
 }
 
 /**
- * Copies the source var Eigen matrix to
+ * Copies the source var type Eigen matrix to
  * the destination matrix that is stored
  * on the GPU.
  *

@@ -22,6 +22,7 @@ void test_cache_speed() {
   std::chrono::steady_clock::time_point second_end = std::chrono::steady_clock::now();
   size_t second_pass = std::chrono::duration_cast<std::chrono::nanoseconds>(second_end - second_begin).count();
   ASSERT_GT(first_pass, second_pass);
+  ASSERT_FALSE(m.opencl_buffer_() == NULL);
 }
 
 TEST(MathMatrixGPU, matrix_gpu_copy_cache) {
@@ -38,6 +39,13 @@ TEST(MathMatrixGPU, matrix_gpu_var_copy) {
   stan::math::matrix_gpu d1_gpu(5, 5);
   stan::math::copy(d1_gpu, m);
   EXPECT_TRUE(m.opencl_buffer_() == NULL);
+  stan::math::matrix_d d1_cpu_return(5, 5);
+  stan::math::copy(d1_cpu_return, d1_gpu);
+  EXPECT_EQ(1.1, d1_cpu_return(0, 0));
+  EXPECT_EQ(6.1, d1_cpu_return(1, 0));
+  EXPECT_EQ(11.1, d1_cpu_return(2, 0));
+  EXPECT_EQ(16.1, d1_cpu_return(3, 0));
+  EXPECT_EQ(21.1, d1_cpu_return(4, 0));
 }
 
 TEST(MathMatrixGPU, matrix_gpu_copy) {
