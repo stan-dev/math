@@ -3,8 +3,8 @@
 
 #ifdef STAN_OPENCL
 #include <CL/cl.hpp>
-#endif
 #define EIGEN_MATRIXBASE_PLUGIN "stan/math/prim/mat/matrix_addons.h"
+#endif
 #include <Eigen/Dense>
 #include <Eigen/QR>
 #include <Eigen/src/Core/NumTraits.h>

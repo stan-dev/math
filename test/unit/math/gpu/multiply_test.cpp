@@ -5,7 +5,6 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
-#ifdef STAN_OPENCL
 boost::random::mt19937 rng;
 
 #define EXPECT_MATRIX_NEAR(A, B, DELTA) \
@@ -156,5 +155,4 @@ TEST(AgradRevMatrix, multiply_big) {
 
   EXPECT_MATRIX_NEAR(m3, m3_gpu_res, 1e-10);
 }
-#endif
 #endif
