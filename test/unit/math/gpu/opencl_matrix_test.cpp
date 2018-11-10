@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <vector>
 
-void testy_mcVartest() {
+void testy_mcVarTest() {
   double pos = 1.1;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> m(5000, 5000);
   for (int i = 0; i < 5000; ++i)
@@ -26,7 +26,7 @@ void testy_mcVartest() {
   std::cout << "Second Copy Time:" << current << "\n";
 }
 
-void test_mcDoubleTest() {
+void testy_mcDoubleTest() {
   auto m = stan::math::matrix_d::Random(5000, 5000).eval();
   std::chrono::steady_clock::time_point begin1 = std::chrono::steady_clock::now();
   stan::math::matrix_gpu d33(m);
