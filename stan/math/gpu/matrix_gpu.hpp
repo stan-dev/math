@@ -112,7 +112,8 @@ class matrix_gpu {
    rows_(A.rows()), cols_(A.cols()) {
      cl::Context& ctx = opencl_context.context();
      cl::CommandQueue& queue = opencl_context.queue();
-     if (A.opencl_cache_ != NULL) {
+     if (!(A.opencl_buffer_() == NULL)) {
+       std::cout << "Used the Cache! \n";
        oclBuffer_
            = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
        queue.enqueueCopyBuffer(A.opencl_buffer_, oclBuffer_, 0, 0,
@@ -140,6 +141,7 @@ class matrix_gpu {
            queue.enqueueCopyBuffer(oclBuffer_, A.opencl_buffer_, 0, 0,
                                    sizeof(T) * A.size(), NULL, &copy_event);
            copy_event.wait();
+           std::cout << "Did not use the cache! \n";
          } catch (const cl::Error& e) {
            check_opencl_error("matrix constructor", e);
          }
@@ -163,6 +165,7 @@ class matrix_gpu {
       : rows_(A.rows()), cols_(A.cols()) {
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue& queue = opencl_context.queue();
+    std::cout << "Passing a var! \n";
     if (size() > 0) {
       try {
         // creates the OpenCL buffer to copy the Eigen
@@ -178,7 +181,7 @@ class matrix_gpu {
          * is finished transfering)
          */
         queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0,
-                                 sizeof(double) * A.size(), value_of_rec(A));
+                                 sizeof(double) * A.size(), value_of_rec(A).data());
       } catch (const cl::Error& e) {
         check_opencl_error("matrix constructor", e);
       }
