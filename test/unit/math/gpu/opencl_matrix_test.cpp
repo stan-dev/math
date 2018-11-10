@@ -10,14 +10,20 @@
 
 void test_cache_speed() {
   auto m = stan::math::matrix_d::Random(100, 100).eval();
-  std::chrono::steady_clock::time_point begin1 = std::chrono::steady_clock::now();
+  std::chrono::steady_clock::time_point begin1
+      = std::chrono::steady_clock::now();
   stan::math::matrix_gpu d33(m);
   std::chrono::steady_clock::time_point end1 = std::chrono::steady_clock::now();
-  size_t first_pass = std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - begin1).count();
-  std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-    stan::math::matrix_gpu d33b(m);
+  size_t first_pass
+      = std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - begin1)
+            .count();
+  std::chrono::steady_clock::time_point begin
+      = std::chrono::steady_clock::now();
+  stan::math::matrix_gpu d33b(m);
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-  size_t second_pass = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
+  size_t second_pass
+      = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin)
+            .count();
   ASSERT_GT(first_pass, second_pass);
   ASSERT_FALSE(m.opencl_buffer_() == NULL);
 }

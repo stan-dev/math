@@ -12,22 +12,28 @@
 void test_cache_speed() {
   auto m = stan::math::matrix_d::Random(100, 100).eval();
   stan::math::matrix_gpu d11(100, 100);
-    stan::math::matrix_gpu d12(100, 100);
-  std::chrono::steady_clock::time_point first_begin = std::chrono::steady_clock::now();
+  stan::math::matrix_gpu d12(100, 100);
+  std::chrono::steady_clock::time_point first_begin
+      = std::chrono::steady_clock::now();
   stan::math::copy(d11, m);
-  std::chrono::steady_clock::time_point first_end = std::chrono::steady_clock::now();
-  size_t first_pass = std::chrono::duration_cast<std::chrono::nanoseconds>(first_end - first_begin).count();
-  std::chrono::steady_clock::time_point second_begin = std::chrono::steady_clock::now();
+  std::chrono::steady_clock::time_point first_end
+      = std::chrono::steady_clock::now();
+  size_t first_pass = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                          first_end - first_begin)
+                          .count();
+  std::chrono::steady_clock::time_point second_begin
+      = std::chrono::steady_clock::now();
   stan::math::copy(d12, m);
-  std::chrono::steady_clock::time_point second_end = std::chrono::steady_clock::now();
-  size_t second_pass = std::chrono::duration_cast<std::chrono::nanoseconds>(second_end - second_begin).count();
+  std::chrono::steady_clock::time_point second_end
+      = std::chrono::steady_clock::now();
+  size_t second_pass = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                           second_end - second_begin)
+                           .count();
   ASSERT_GT(first_pass, second_pass);
   ASSERT_FALSE(m.opencl_buffer_() == NULL);
 }
 
-TEST(MathMatrixGPU, matrix_gpu_copy_cache) {
-  test_cache_speed();
-}
+TEST(MathMatrixGPU, matrix_gpu_copy_cache) { test_cache_speed(); }
 
 TEST(MathMatrixGPU, matrix_gpu_var_copy) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> m(5, 5);

@@ -30,8 +30,8 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
- template< typename T, int R, int C, typename =
-  typename std::enable_if<is_constant<T>::value, T>::type>
+template <typename T, int R, int C,
+          typename = typename std::enable_if<is_constant<T>::value, T>::type>
 void copy(matrix_gpu& dst, const Eigen::Matrix<T, R, C>& src) {
   check_size_match("copy (Eigen -> GPU)", "src.rows()", src.rows(),
                    "dst.rows()", dst.rows());
@@ -58,7 +58,7 @@ void copy(matrix_gpu& dst, const Eigen::Matrix<T, R, C>& src) {
         queue.enqueueWriteBuffer(dst.buffer(), CL_TRUE, 0,
                                  sizeof(double) * dst.size(), src.data());
         queue.enqueueCopyBuffer(dst.buffer(), src.opencl_buffer_, 0, 0,
-                               sizeof(T) * src.size(), NULL, &copy_event);
+                                sizeof(T) * src.size(), NULL, &copy_event);
         copy_event.wait();
       } catch (const cl::Error& e) {
         check_opencl_error("copy Eigen->GPU", e);
@@ -79,7 +79,7 @@ void copy(matrix_gpu& dst, const Eigen::Matrix<T, R, C>& src) {
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
-template<int R, int C>
+template <int R, int C>
 void copy(matrix_gpu& dst, const Eigen::Matrix<var, R, C>& src) {
   check_size_match("copy (Eigen -> GPU)", "src.rows()", src.rows(),
                    "dst.rows()", dst.rows());
@@ -96,7 +96,8 @@ void copy(matrix_gpu& dst, const Eigen::Matrix<var, R, C>& src) {
        * on the device until we are sure that the data is transferred)
        */
       queue.enqueueWriteBuffer(dst.buffer(), CL_TRUE, 0,
-                               sizeof(double) * dst.size(), value_of_rec(src).data());
+                               sizeof(double) * dst.size(),
+                               value_of_rec(src).data());
     } catch (const cl::Error& e) {
       check_opencl_error("copy Eigen->GPU", e);
     }
@@ -140,7 +141,6 @@ void copy(Eigen::Matrix<double, R, C>& dst, const matrix_gpu& src) {
   }
 }
 
-
 /**
  * Copies the source matrix to the
  * destination matrix. Both matrices
@@ -165,10 +165,10 @@ inline void copy(matrix_gpu& dst, const matrix_gpu& src) {
        * see the matrix_gpu(matrix_gpu&) constructor
        *  for explanation
        */
-       cl::Event copy_event;
-       queue.enqueueCopyBuffer(src.buffer(), dst.buffer(), 0, 0,
-                               sizeof(double) * dst.size(), NULL, &copy_event);
-       copy_event.wait();
+      cl::Event copy_event;
+      queue.enqueueCopyBuffer(src.buffer(), dst.buffer(), 0, 0,
+                              sizeof(double) * dst.size(), NULL, &copy_event);
+      copy_event.wait();
     } catch (const cl::Error& e) {
       std::cout << e.err() << std::endl;
       check_opencl_error("copy GPU->GPU", e);
