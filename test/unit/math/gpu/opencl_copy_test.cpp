@@ -2,65 +2,98 @@
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/gpu/opencl_context.hpp>
 #include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/rev/mat.hpp>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <stan/math/gpu/copy.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <vector>
 
+void test_cache_speed() {
+  auto m = stan::math::matrix_d::Random(100, 100).eval();
+  stan::math::matrix_gpu d11(100, 100);
+    stan::math::matrix_gpu d12(100, 100);
+  std::chrono::steady_clock::time_point first_begin = std::chrono::steady_clock::now();
+  stan::math::copy(d11, m);
+  std::chrono::steady_clock::time_point first_end = std::chrono::steady_clock::now();
+  size_t first_pass = std::chrono::duration_cast<std::chrono::nanoseconds>(first_end - first_begin).count();
+  std::chrono::steady_clock::time_point second_begin = std::chrono::steady_clock::now();
+  stan::math::copy(d12, m);
+  std::chrono::steady_clock::time_point second_end = std::chrono::steady_clock::now();
+  size_t second_pass = std::chrono::duration_cast<std::chrono::nanoseconds>(second_end - second_begin).count();
+  ASSERT_GT(first_pass, second_pass);
+}
+
+TEST(MathMatrixGPU, matrix_gpu_copy_cache) {
+  test_cache_speed();
+}
+
+TEST(MathMatrixGPU, matrix_gpu_var_copy) {
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> m(5, 5);
+  double pos_ = 1.1;
+  for (int i = 0; i < 5; ++i)
+    for (int j = 0; j < 5; ++j)
+      m(i, j) = pos_++;
+
+  stan::math::matrix_gpu d1_gpu(5, 5);
+  stan::math::copy(d1_gpu, m);
+  EXPECT_TRUE(m.opencl_buffer_() == NULL);
+}
+
 TEST(MathMatrixGPU, matrix_gpu_copy) {
-  stan::math::vector_d d1;
-  stan::math::vector_d d1_a;
-  stan::math::vector_d d1_b;
-  stan::math::matrix_d d2;
-  stan::math::matrix_d d2_a;
-  stan::math::matrix_d d2_b;
-  stan::math::matrix_d d0;
-  d1.resize(3);
-  d1_a.resize(3);
-  d1_b.resize(3);
-  d1 << 1, 2, 3;
-  d2.resize(2, 3);
-  d2_a.resize(2, 3);
-  d2_b.resize(2, 3);
-  d2 << 1, 2, 3, 4, 5, 6;
+  stan::math::vector_d d1_cpu;
+  stan::math::vector_d d1_a_cpu;
+  stan::math::vector_d d1_b_cpu;
+  stan::math::matrix_d d2_cpu;
+  stan::math::matrix_d d2_a_cpu;
+  stan::math::matrix_d d2_b_cpu;
+  stan::math::matrix_d d0_cpu;
+  d1_cpu.resize(3);
+  d1_a_cpu.resize(3);
+  d1_b_cpu.resize(3);
+  d1_cpu << 1, 2, 3;
+  d2_cpu.resize(2, 3);
+  d2_a_cpu.resize(2, 3);
+  d2_b_cpu.resize(2, 3);
+  d2_cpu << 1, 2, 3, 4, 5, 6;
   // vector
-  stan::math::matrix_gpu d11(3, 1);
-  stan::math::matrix_gpu d111(3, 1);
-  EXPECT_NO_THROW(stan::math::copy(d11, d1));
-  EXPECT_NO_THROW(stan::math::copy(d111, d11));
-  EXPECT_NO_THROW(stan::math::copy(d1_a, d11));
-  EXPECT_NO_THROW(stan::math::copy(d1_b, d111));
-  EXPECT_EQ(1, d1_a(0));
-  EXPECT_EQ(2, d1_a(1));
-  EXPECT_EQ(3, d1_a(2));
-  EXPECT_EQ(1, d1_b(0));
-  EXPECT_EQ(2, d1_b(1));
-  EXPECT_EQ(3, d1_b(2));
+  stan::math::matrix_gpu d1_gpu(3, 1);
+  stan::math::matrix_gpu d11_gpu(3, 1);
+  EXPECT_NO_THROW(stan::math::copy(d1_gpu, d1_cpu));
+  EXPECT_NO_THROW(stan::math::copy(d11_gpu, d1_gpu));
+  EXPECT_NO_THROW(stan::math::copy(d1_a_cpu, d1_gpu));
+  EXPECT_EQ(1, d1_a_cpu(0));
+  EXPECT_EQ(2, d1_a_cpu(1));
+  EXPECT_EQ(3, d1_a_cpu(2));
+  EXPECT_NO_THROW(stan::math::copy(d1_b_cpu, d11_gpu));
+  EXPECT_EQ(1, d1_b_cpu(0));
+  EXPECT_EQ(2, d1_b_cpu(1));
+  EXPECT_EQ(3, d1_b_cpu(2));
   // matrix
-  stan::math::matrix_gpu d00;
-  stan::math::matrix_gpu d000;
-  stan::math::matrix_gpu d22(2, 3);
-  stan::math::matrix_gpu d222(2, 3);
-  EXPECT_NO_THROW(stan::math::copy(d22, d2));
-  EXPECT_NO_THROW(stan::math::copy(d222, d22));
-  EXPECT_NO_THROW(stan::math::copy(d2_a, d22));
-  EXPECT_NO_THROW(stan::math::copy(d2_b, d222));
-  EXPECT_EQ(1, d2_a(0, 0));
-  EXPECT_EQ(2, d2_a(0, 1));
-  EXPECT_EQ(3, d2_a(0, 2));
-  EXPECT_EQ(4, d2_a(1, 0));
-  EXPECT_EQ(5, d2_a(1, 1));
-  EXPECT_EQ(6, d2_a(1, 2));
-  EXPECT_EQ(1, d2_b(0, 0));
-  EXPECT_EQ(2, d2_b(0, 1));
-  EXPECT_EQ(3, d2_b(0, 2));
-  EXPECT_EQ(4, d2_b(1, 0));
-  EXPECT_EQ(5, d2_b(1, 1));
-  EXPECT_EQ(6, d2_b(1, 2));
+  stan::math::matrix_gpu d00_gpu;
+  stan::math::matrix_gpu d000_gpu;
+  stan::math::matrix_gpu d22_gpu(2, 3);
+  stan::math::matrix_gpu d222_gpu(2, 3);
+  EXPECT_NO_THROW(stan::math::copy(d22_gpu, d2_cpu));
+  EXPECT_NO_THROW(stan::math::copy(d222_gpu, d22_gpu));
+  EXPECT_NO_THROW(stan::math::copy(d2_a_cpu, d22_gpu));
+  EXPECT_NO_THROW(stan::math::copy(d2_b_cpu, d222_gpu));
+  EXPECT_EQ(1, d2_a_cpu(0, 0));
+  EXPECT_EQ(2, d2_a_cpu(0, 1));
+  EXPECT_EQ(3, d2_a_cpu(0, 2));
+  EXPECT_EQ(4, d2_a_cpu(1, 0));
+  EXPECT_EQ(5, d2_a_cpu(1, 1));
+  EXPECT_EQ(6, d2_a_cpu(1, 2));
+  EXPECT_EQ(1, d2_b_cpu(0, 0));
+  EXPECT_EQ(2, d2_b_cpu(0, 1));
+  EXPECT_EQ(3, d2_b_cpu(0, 2));
+  EXPECT_EQ(4, d2_b_cpu(1, 0));
+  EXPECT_EQ(5, d2_b_cpu(1, 1));
+  EXPECT_EQ(6, d2_b_cpu(1, 2));
   // zero sized copy
-  EXPECT_NO_THROW(stan::math::copy(d00, d0));
-  EXPECT_NO_THROW(stan::math::copy(d0, d00));
-  EXPECT_NO_THROW(stan::math::copy(d000, d00));
+  EXPECT_NO_THROW(stan::math::copy(d00_gpu, d0_cpu));
+  EXPECT_NO_THROW(stan::math::copy(d0_cpu, d00_gpu));
+  EXPECT_NO_THROW(stan::math::copy(d000_gpu, d00_gpu));
 }
 
 TEST(MathMatrixGPU, barebone_buffer_copy) {

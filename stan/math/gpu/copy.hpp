@@ -8,6 +8,8 @@
 #include <stan/math/gpu/kernels/copy.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/scal/meta/is_constant.hpp>
+#include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <CL/cl.hpp>
 #include <iostream>
 #include <vector>
@@ -17,7 +19,7 @@ namespace stan {
 namespace math {
 
 /**
- * Copies the source Eigen matrix to
+ * Copies the source primitive type Eigen matrix to
  * the destination matrix that is stored
  * on the GPU.
  *
@@ -28,8 +30,57 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
-template <int R, int C>
-void copy(matrix_gpu& dst, const Eigen::Matrix<double, R, C>& src) {
+ template< typename T, int R, int C, typename =
+  typename std::enable_if<is_constant<T>::value, T>::type>
+void copy(matrix_gpu& dst, const Eigen::Matrix<T, R, C>& src) {
+  check_size_match("copy (Eigen -> GPU)", "src.rows()", src.rows(),
+                   "dst.rows()", dst.rows());
+  check_size_match("copy (Eigen -> GPU)", "src.cols()", src.cols(),
+                   "dst.cols()", dst.cols());
+  if (src.size() > 0) {
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue queue = opencl_context.queue();
+    if (src.opencl_buffer_() != NULL) {
+      queue.enqueueCopyBuffer(src.opencl_buffer_, dst.buffer(), 0, 0,
+                              sizeof(T) * src.size());
+    } else {
+      try {
+        src.opencl_buffer_
+            = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * src.size());
+        /**
+         * Writes the contents of src to the OpenCL buffer
+         * starting at the offset 0
+         * CL_TRUE denotes that the call is blocking
+         * We do not want to execute any further kernels
+         * on the device until we are sure that the data is transferred)
+         */
+        cl::Event copy_event;
+        queue.enqueueWriteBuffer(dst.buffer(), CL_TRUE, 0,
+                                 sizeof(double) * dst.size(), src.data());
+        queue.enqueueCopyBuffer(dst.buffer(), src.opencl_buffer_, 0, 0,
+                               sizeof(T) * src.size(), NULL, &copy_event);
+        copy_event.wait();
+      } catch (const cl::Error& e) {
+        check_opencl_error("copy Eigen->GPU", e);
+      }
+    }
+  }
+}
+
+/**
+ * Copies the source var Eigen matrix to
+ * the destination matrix that is stored
+ * on the GPU.
+ *
+ * @tparam T type of data in the Eigen matrix
+ * @param dst destination matrix on the GPU
+ * @param src source Eigen matrix
+ *
+ * @throw <code>std::invalid_argument</code> if the
+ * matrices do not have matching dimensions
+ */
+template<int R, int C>
+void copy(matrix_gpu& dst, const Eigen::Matrix<var, R, C>& src) {
   check_size_match("copy (Eigen -> GPU)", "src.rows()", src.rows(),
                    "dst.rows()", dst.rows());
   check_size_match("copy (Eigen -> GPU)", "src.cols()", src.cols(),
@@ -45,7 +96,7 @@ void copy(matrix_gpu& dst, const Eigen::Matrix<double, R, C>& src) {
        * on the device until we are sure that the data is transferred)
        */
       queue.enqueueWriteBuffer(dst.buffer(), CL_TRUE, 0,
-                               sizeof(double) * dst.size(), src.data());
+                               sizeof(double) * dst.size(), value_of_rec(src).data());
     } catch (const cl::Error& e) {
       check_opencl_error("copy Eigen->GPU", e);
     }
@@ -89,6 +140,7 @@ void copy(Eigen::Matrix<double, R, C>& dst, const matrix_gpu& src) {
   }
 }
 
+
 /**
  * Copies the source matrix to the
  * destination matrix. Both matrices
@@ -107,13 +159,16 @@ inline void copy(matrix_gpu& dst, const matrix_gpu& src) {
                    dst.cols());
   if (src.size() > 0) {
     try {
+      cl::CommandQueue queue = opencl_context.queue();
       /**
        * Copies the contents of the src buffer to the dst buffer
        * see the matrix_gpu(matrix_gpu&) constructor
        *  for explanation
        */
-      opencl_kernels::copy(cl::NDRange(dst.rows(), dst.cols()), src.buffer(),
-                           dst.buffer(), dst.rows(), dst.cols());
+       cl::Event copy_event;
+       queue.enqueueCopyBuffer(src.buffer(), dst.buffer(), 0, 0,
+                               sizeof(double) * dst.size(), NULL, &copy_event);
+       copy_event.wait();
     } catch (const cl::Error& e) {
       std::cout << e.err() << std::endl;
       check_opencl_error("copy GPU->GPU", e);

@@ -8,48 +8,48 @@
 #include <algorithm>
 #include <vector>
 
-void testy_mcVarTest() {
-  double pos = 1.1;
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> m(5000, 5000);
-  for (int i = 0; i < 5000; ++i)
-    for (int j = 0; j < 5000; ++j)
-      m(i, j) = pos++;
+void test_cache_speed() {
+  auto m = stan::math::matrix_d::Random(100, 100).eval();
   std::chrono::steady_clock::time_point begin1 = std::chrono::steady_clock::now();
   stan::math::matrix_gpu d33(m);
   std::chrono::steady_clock::time_point end1 = std::chrono::steady_clock::now();
-  size_t current1 = std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - begin1).count();
-  std::cout << "First Copy Time: " << current1 << "\n";
+  size_t first_pass = std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - begin1).count();
   std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     stan::math::matrix_gpu d33b(m);
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-  size_t current = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
-  std::cout << "Second Copy Time:" << current << "\n";
+  size_t second_pass = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
+  ASSERT_GT(first_pass, second_pass);
+  ASSERT_FALSE(m.opencl_buffer_() == NULL);
 }
 
-void testy_mcDoubleTest() {
-  auto m = stan::math::matrix_d::Random(5000, 5000).eval();
-  std::chrono::steady_clock::time_point begin1 = std::chrono::steady_clock::now();
-  stan::math::matrix_gpu d33(m);
-  std::chrono::steady_clock::time_point end1 = std::chrono::steady_clock::now();
-  size_t current1 = std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - begin1).count();
-    std::cout << "First Copy Time: " << current1 << "\n";
-  std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-    stan::math::matrix_gpu d33b(m);
-  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-  size_t current = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
-  std::cout << "Second Copy Time:  " << current << "\n";
+TEST(MathMatrixGPU, matrix_gpu_cache) {
+  for (int i = 0; i <= 10; i++) {
+    test_cache_speed();
+  }
 }
 
-TEST(MathMatrixGPU, matrix_gpu_creation) {
-  std::cout << "Var test:  \n";
+TEST(MathMatrixGPU, matrix_gpu_primitive_creation) {
+  stan::math::vector_d d1;
+  stan::math::matrix_d d2;
+  stan::math::matrix_d d3;
 
-  for (int i = 0; i <= 10; i++) {
-    testy_mcVarTest();
-  }
-  std::cout << "Normie test:\n";
-  for (int i = 0; i <= 10; i++) {
-    testy_mcDoubleTest();
-  }
+  d1.resize(3);
+  d2.resize(2, 3);
+  EXPECT_NO_THROW(stan::math::matrix_gpu A(1, 1));
+  EXPECT_NO_THROW(stan::math::matrix_gpu d11(d1));
+  EXPECT_NO_THROW(stan::math::matrix_gpu d22(d2));
+  EXPECT_NO_THROW(stan::math::matrix_gpu d33(d3));
+}
+
+TEST(MathMatrixGPU, matrix_gpu_var_creation) {
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> m(5, 5);
+  double pos_ = 1.1;
+  for (int i = 0; i < 5; ++i)
+    for (int j = 0; j < 5; ++j)
+      m(i, j) = pos_++;
+
+  EXPECT_NO_THROW(stan::math::matrix_gpu d11(m));
+  ASSERT_TRUE(m.opencl_buffer_() == NULL);
 }
 
 #endif
