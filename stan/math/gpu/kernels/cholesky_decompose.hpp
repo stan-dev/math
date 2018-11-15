@@ -36,8 +36,8 @@ const char *cholesky_decompose_kernel_code = STRINGIFY(
       // B is square so checking row length is fine for both i and j
       if (local_index < rows) {
         for (int k = 0; k < rows; k++) {
-            B(local_index, k) = 0;
-        }        
+          B(local_index, k) = 0;
+        }
       }
       // The following code is the sequential version of the non-inplace
       // cholesky decomposition. Only the innermost loops are parallelized. The
