@@ -58,12 +58,11 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int block = 100,
     auto block_subset = A.rows() - offset - block;
     matrix_gpu A_21(block_subset, block);
     matrix_gpu A_22(block_subset, block_subset);
-    // Copies the A_11 submatrix from the input
+    // Copies a block of the input A into A_11
     A_11.sub_block(A, offset, offset, 0, 0, block, block);
     // Calls the blocked cholesky for the submatrix A_11
     // or calls the kernel  directly if the size of the block is small enough
     if (block <= min_block || divider <= 1) {
-      L_11.zeros();
       try {
         opencl_kernels::cholesky_decompose(
             cl::NDRange(A_11.rows()), cl::NDRange(A_11.rows()), A_11.buffer(),
@@ -76,21 +75,18 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int block = 100,
     }
     // Copies the cholesky factor of A_11 back to the input matrix
     A.sub_block(L_11, 0, 0, offset, offset, block, block);
-    // Copies the A_21 submatrix from the input matrix,
+    // Copies a block of the input A into A_21
     auto block_offset = offset + block;
     A_21.sub_block(A, block_offset, offset, 0, 0, block_subset, block);
     // computes A_21*((L_11^-1)^T)
     // and copies the resulting submatrix to the input matrix
-    matrix_gpu A_11_inverse = lower_triangular_inverse(L_11);
-    A_11_inverse = transpose(A_11_inverse);
+    auto A_11_inverse_T = transpose(lower_triangular_inverse(L_11));
     // TODO(Steve): Replace with mult operator when that PR goes through
-    matrix_gpu L_21 = multiply(A_21, A_11_inverse);
+    matrix_gpu L_21 = multiply(A_21, A_11_inverse_T);
     A.sub_block(L_21, 0, 0, block_offset, offset, block_subset, block);
-    // Copies the A_22 submatrix from the input matrix,
     A_22.sub_block(A, block_offset, block_offset, 0, 0, block_subset,
                    block_subset);
     // computes A_22 - L_21*(L_21^T)
-    // and copies the resulting submatrix back to the input matrix
     matrix_gpu temp = multiply_transpose(L_21);
     // TODO(Steve): Replace with subtraction operator when that PR goes through
     matrix_gpu L_22 = subtract(A_22, temp);
@@ -107,7 +103,6 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int block = 100,
     // Calls the blocked cholesky for the submatrix A_11
     // or calls the kernel  directly if the size of the block is small enough
     if (block <= min_block || divider <= 1) {
-      L_11.zeros();
       try {
         opencl_kernels::cholesky_decompose(
             cl::NDRange(A_11.rows()), cl::NDRange(A_11.rows()), A_11.buffer(),

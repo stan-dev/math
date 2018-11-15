@@ -32,6 +32,13 @@ const char *cholesky_decompose_kernel_code = STRINGIFY(
     __kernel void cholesky_decompose(__global double *A, __global double *B,
                                      int rows) {
       int local_index = get_local_id(0);
+      // Fill B with zeros
+      int zero_i = get_global_id(0);
+      int zero_j = get_global_id(1);
+      // B is square so checking row length is fine for both i and j
+      if (zero_i < rows && zero_j < rows) {
+        B(zero_i, zero_j) = 0;
+      }
       // The following code is the sequential version of the non-inplace
       // cholesky decomposition. Only the innermost loops are parallelized. The
       // rows are processed sequentially. This loop process all the rows:
