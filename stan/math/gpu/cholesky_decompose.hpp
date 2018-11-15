@@ -14,6 +14,29 @@
 #include <algorithm>
 namespace stan {
 namespace math {
+inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int block = 100,
+                                     const int divider = 2,
+                                     const int min_block = 100);
+namespace internal {
+inline matrix_gpu cholesky_decompose_recursion(matrix_gpu& A,
+									const int block = 100,
+                                    const int divider = 2,
+                                    const int min_block = 100)	{		
+		matrix_gpu L(A.rows(), A.cols());
+		if (block <= min_block || divider <= 1) {
+		  try {
+			opencl_kernels::cholesky_decompose(
+				cl::NDRange(A.rows()), cl::NDRange(A.rows()), A.buffer(),
+				L.buffer(), A.rows());
+		  } catch (const cl::Error& e) {
+			check_opencl_error("cholesky_decompose", e);
+		  }
+		} else {
+		  L = stan::math::cholesky_decompose(A, block / divider);
+		}
+		return L;
+	}
+}
 /**
  * Return the lower-triangular Cholesky factor (i.e., matrix
  * square root) of the specified square, symmetric matrix.
@@ -44,14 +67,13 @@ namespace math {
  * @throw std::domain_error if m is not
  *  positive definite (if m has more than 0 elements)
  */
-inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int block = 100,
-                                     const int divider = 2,
-                                     const int min_block = 100) {
+inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int block,
+                                     const int divider,
+                                     const int min_block) {
   auto offset = 0;
   // NOTE: The code in this section follows the naming conventions
   // in the report linked in the docs.
   matrix_gpu A_11(block, block);
-  matrix_gpu L_11(block, block);
   // Repeats the blocked cholesky decomposition until the size of the remaining
   // submatrix is smaller or equal to the block size
   while ((offset + block) < (A.rows())) {
@@ -60,19 +82,10 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int block = 100,
     matrix_gpu A_22(block_subset, block_subset);
     // Copies a block of the input A into A_11
     A_11.sub_block(A, offset, offset, 0, 0, block, block);
-    // Calls the blocked cholesky for the submatrix A_11
+    // The following function either calls the 
+    // blocked cholesky recursively for the submatrix A_11
     // or calls the kernel  directly if the size of the block is small enough
-    if (block <= min_block || divider <= 1) {
-      try {
-        opencl_kernels::cholesky_decompose(
-            cl::NDRange(A_11.rows()), cl::NDRange(A_11.rows()), A_11.buffer(),
-            L_11.buffer(), A_11.rows());
-      } catch (const cl::Error& e) {
-        check_opencl_error("cholesky_decompose", e);
-      }
-    } else {
-      L_11 = cholesky_decompose(A_11, block / divider, divider, min_block);
-    }
+    matrix_gpu L_11 = stan::math::internal::cholesky_decompose_recursion(A_11, block, divider, min_block);
     // Copies L_11 back to the input matrix
     A.sub_block(L_11, 0, 0, offset, offset, block, block);
     // Copies a block of the input A into A_21
@@ -98,21 +111,9 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int block = 100,
   const auto remaining_rows = A.rows() - offset;
   if (remaining_rows > 0) {
     matrix_gpu A_11(remaining_rows, remaining_rows);
-    matrix_gpu L_11(remaining_rows, remaining_rows);
     A_11.sub_block(A, offset, offset, 0, 0, remaining_rows, remaining_rows);
-    // Calls the blocked cholesky for the submatrix A_11
-    // or calls the kernel  directly if the size of the block is small enough
-    if (block <= min_block || divider <= 1) {
-      try {
-        opencl_kernels::cholesky_decompose(
-            cl::NDRange(A_11.rows()), cl::NDRange(A_11.rows()), A_11.buffer(),
-            L_11.buffer(), A_11.rows());
-      } catch (const cl::Error& e) {
-        check_opencl_error("cholesky_decompose", e);
-      }
-    } else {
-      L_11 = cholesky_decompose(A_11, block / divider);
-    }
+    // calculate the cholesky factor for the remaining part of the matrix
+    matrix_gpu L_11 = stan::math::internal::cholesky_decompose_recursion(A_11, block, divider, min_block);
     A.sub_block(L_11, 0, 0, offset, offset, remaining_rows, remaining_rows);
   }
   check_nan("cholesky_decompose_gpu", "Matrix m", A);
