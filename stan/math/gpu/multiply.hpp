@@ -107,8 +107,8 @@ inline auto multiply(const matrix_gpu& A, const matrix_gpu& B) {
 inline matrix_gpu operator*(const matrix_gpu& A, const matrix_gpu& B) {
   return multiply(A, B);
 }
-inline matrix_gpu operator*(const matrix_gpu& A, const double scalar) {
-  return multiply(A, scalar);
+inline matrix_gpu operator*(const matrix_gpu& B, const double scalar) {
+  return multiply(B, scalar);
 }
 inline matrix_gpu operator*(const double scalar, const matrix_gpu& B) {
   return multiply(scalar, B);
