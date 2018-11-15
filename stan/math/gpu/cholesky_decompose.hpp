@@ -73,7 +73,7 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int block = 100,
     } else {
       L_11 = cholesky_decompose(A_11, block / divider, divider, min_block);
     }
-    // Copies the cholesky factor of A_11 back to the input matrix
+    // Copies L_11 back to the input matrix
     A.sub_block(L_11, 0, 0, offset, offset, block, block);
     // Copies a block of the input A into A_21
     auto block_offset = offset + block;
