@@ -94,13 +94,13 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int block,
     // computes A_21*((L_11^-1)^T)
     // and copies the resulting submatrix to the input matrix
     auto A_11_inverse_T = transpose(lower_triangular_inverse(L_11));
-    matrix_gpu L_21 = A_21*A_11_inverse_T;
+    matrix_gpu L_21 = A_21 * A_11_inverse_T;
     A.sub_block(L_21, 0, 0, block_offset, offset, block_subset, block);
     A_22.sub_block(A, block_offset, block_offset, 0, 0, block_subset,
                    block_subset);
     // computes A_22 - L_21*(L_21^T)
     matrix_gpu temp = multiply_transpose(L_21);
-    matrix_gpu L_22 = A_22-temp;
+    matrix_gpu L_22 = A_22 - temp;
     A.sub_block(L_22, 0, 0, block_offset, block_offset, block_subset,
                 block_subset);
     offset += block;
