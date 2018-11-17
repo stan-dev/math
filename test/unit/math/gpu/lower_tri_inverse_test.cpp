@@ -20,26 +20,7 @@ TEST(MathMatrixGPU, inverse_gpu_exception) {
   EXPECT_THROW(m3 = lower_triangular_inverse(m2), std::invalid_argument);
 }
 
-TEST(MathMatrixGPU, inverse_gpu_small) {
-  auto m1 = stan::math::matrix_d::Random(3, 3).eval();
-  m1.triangularView<Eigen::StrictlyUpper>()
-      = stan::math::matrix_d::Zero(3, 3).eval();
-
-  stan::math::matrix_d m1_cpu(3, 3);
-  stan::math::matrix_d m1_cl(3, 3);
-
-  m1_cpu = stan::math::mdivide_left_tri<Eigen::Lower>(m1);
-
-  stan::math::matrix_gpu m2(m1);
-  stan::math::matrix_gpu m3(3, 3);
-
-  EXPECT_NO_THROW(m3 = stan::math::lower_triangular_inverse(m2));
-  stan::math::copy(m1_cl, m3);
-
-  EXPECT_MATRIX_NEAR(m1_cl, m1_cpu, 1e-8);
-}
-
-void inverse_big(int size) {
+void inverse_test(int size) {
   boost::random::mt19937 rng;
   auto m1 = stan::math::matrix_d(size, size);
   for (int i = 0; i < size; i++) {
@@ -69,10 +50,15 @@ void inverse_big(int size) {
   }
   EXPECT_LT(max_error, 1e-8);
 }
+TEST(MathMatrixGPU, inverse_gpu_small) { inverse_test(3); }
 
-TEST(MathMatrixGPU, inverse_gpu_big) { inverse_big(512); }
+TEST(MathMatrixGPU, inverse_gpu_1under_block_size) { inverse_test(31); }
 
-TEST(MathMatrixGPU, inverse_gpu_big_2) { inverse_big(700); }
+TEST(MathMatrixGPU, inverse_gpu_1over_block_size) { inverse_test(33); }
 
-TEST(MathMatrixGPU, inverse_gpu_big_3) { inverse_big(1500); }
+TEST(MathMatrixGPU, inverse_gpu_big) { inverse_test(512); }
+
+TEST(MathMatrixGPU, inverse_gpu_big_2) { inverse_test(700); }
+
+TEST(MathMatrixGPU, inverse_gpu_big_3) { inverse_test(1500); }
 #endif
