@@ -45,6 +45,7 @@ struct coupled_ode_system<F, double, var> {
   const F& f_;
   const std::vector<double>& y0_dbl_;
   const std::vector<var>& theta_;
+  std::vector<double> theta_adj_;
   const std::vector<double>& x_;
   const std::vector<int>& x_int_;
   const size_t N_;
@@ -71,12 +72,21 @@ struct coupled_ode_system<F, double, var> {
       : f_(f),
         y0_dbl_(y0),
         theta_(theta),
+        theta_adj_(theta.size()),
         x_(x),
         x_int_(x_int),
         N_(y0.size()),
         M_(theta.size()),
         size_(N_ + N_ * M_),
-        msgs_(msgs) {}
+        msgs_(msgs) {
+    for (size_t j = 0; j < M_; j++)
+      theta_adj_[j] = theta_[j].adj();
+  }
+
+  ~coupled_ode_system() {
+    for (size_t j = 0; j < M_; j++)
+      theta_[j].vi_->adj_ = theta_adj_[j];
+  }
 
   /**
    * Assign the derivative vector with the system derivatives at
@@ -99,10 +109,6 @@ struct coupled_ode_system<F, double, var> {
                   double t) const {
     using std::vector;
 
-    vector<double> theta_adjoint(M_);
-    for (size_t j = 0; j < M_; j++)
-      theta_adjoint[j] = theta_[j].adj();
-
     try {
       start_nested();
 
@@ -113,11 +119,10 @@ struct coupled_ode_system<F, double, var> {
       check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
                        "states", N_);
 
-      for (size_t j = 0; j < M_; j++)
-        theta_[j].vi_->set_zero_adjoint();
-
       for (size_t i = 0; i < N_; i++) {
         dz_dt[i] = dy_dt_vars[i].val();
+        for (size_t j = 0; j < M_; j++)
+          theta_[j].vi_->set_zero_adjoint();
         dy_dt_vars[i].grad();
 
         for (size_t j = 0; j < M_; j++) {
@@ -125,7 +130,6 @@ struct coupled_ode_system<F, double, var> {
           // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
           // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
           double temp_deriv = theta_[j].adj();
-          theta_[j].vi_->set_zero_adjoint();
           const size_t offset = N_ + N_ * j;
           for (size_t k = 0; k < N_; k++)
             temp_deriv += z[offset + k] * y_vars[k].adj();
@@ -137,13 +141,9 @@ struct coupled_ode_system<F, double, var> {
       }
     } catch (const std::exception& e) {
       recover_memory_nested();
-      for (size_t j = 0; j < M_; j++)
-        theta_[j].vi_->adj_ = theta_adjoint[j];
       throw;
     }
     recover_memory_nested();
-    for (size_t j = 0; j < M_; j++)
-      theta_[j].vi_->adj_ = theta_adjoint[j];
   }
 
   /**
@@ -421,6 +421,7 @@ struct coupled_ode_system<F, var, var> {
   const F& f_;
   const std::vector<var>& y0_;
   const std::vector<var>& theta_;
+  std::vector<double> theta_adj_;
   const std::vector<double>& x_;
   const std::vector<int>& x_int_;
   const size_t N_;
@@ -448,12 +449,21 @@ struct coupled_ode_system<F, var, var> {
       : f_(f),
         y0_(y0),
         theta_(theta),
+        theta_adj_(theta.size()),
         x_(x),
         x_int_(x_int),
         N_(y0.size()),
         M_(theta.size()),
         size_(N_ + N_ * (N_ + M_)),
-        msgs_(msgs) {}
+        msgs_(msgs) {
+    for (size_t j = 0; j < M_; j++)
+      theta_adj_[j] = theta_[j].adj();
+  }
+
+  ~coupled_ode_system() {
+    for (size_t j = 0; j < M_; j++)
+      theta_[j].vi_->adj_ = theta_adj_[j];
+  }
 
   /**
    * Populates the derivative vector with derivatives of the
@@ -474,10 +484,6 @@ struct coupled_ode_system<F, var, var> {
   void operator()(const std::vector<double>& z, std::vector<double>& dz_dt,
                   double t) const {
     using std::vector;
-
-    vector<double> theta_adjoint(M_);
-    for (size_t j = 0; j < M_; j++)
-      theta_adjoint[j] = theta_[j].adj();
 
     try {
       start_nested();
@@ -521,13 +527,9 @@ struct coupled_ode_system<F, var, var> {
       }
     } catch (const std::exception& e) {
       recover_memory_nested();
-      for (size_t j = 0; j < M_; j++)
-        theta_[j].vi_->adj_ = theta_adjoint[j];
       throw;
     }
     recover_memory_nested();
-    for (size_t j = 0; j < M_; j++)
-      theta_[j].vi_->adj_ = theta_adjoint[j];
   }
 
   /**
