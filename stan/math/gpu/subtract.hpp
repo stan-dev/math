@@ -24,7 +24,7 @@ namespace math {
  * input matrices do not have matching dimensions.
  *
  */
-inline matrix_gpu subtract(const matrix_gpu& A, const matrix_gpu& B) {
+inline auto subtract(const matrix_gpu& A, const matrix_gpu& B) {
   check_matching_dims("subtract (GPU)", "A", A, "B", B);
   matrix_gpu C(A.rows(), A.cols());
   if (A.size() == 0) {
@@ -38,6 +38,25 @@ inline matrix_gpu subtract(const matrix_gpu& A, const matrix_gpu& B) {
     check_opencl_error("subtract", e);
   }
   return C;
+}
+
+/**
+ * Matrix subtraction on the GPU
+ * Subtracts the second matrix
+ * from the first matrix and stores
+ * the result in the third matrix (C=A-B)
+ *
+ * @param A first matrix
+ * @param B second matrix
+ *
+ * @return subtraction result matrix
+ *
+ * @throw <code>std::invalid_argument</code> if the
+ * input matrices do not have matching dimensions.
+ *
+ */
+inline auto operator-(const matrix_gpu& A, const matrix_gpu& B) {
+  return subtract(A, B);
 }
 }  // namespace math
 }  // namespace stan
