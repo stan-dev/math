@@ -99,6 +99,10 @@ struct coupled_ode_system<F, double, var> {
                   double t) const {
     using std::vector;
 
+    vector<double> theta_adjoint(M_);
+    for (size_t j = 0; j < M_; j++)
+      theta_adjoint[j] = theta_[j].adj();
+
     try {
       start_nested();
 
@@ -133,9 +137,13 @@ struct coupled_ode_system<F, double, var> {
       }
     } catch (const std::exception& e) {
       recover_memory_nested();
+      for (size_t j = 0; j < M_; j++)
+        theta_[j].vi_->adj_ = theta_adjoint[j];
       throw;
     }
     recover_memory_nested();
+    for (size_t j = 0; j < M_; j++)
+      theta_[j].vi_->adj_ = theta_adjoint[j];
   }
 
   /**
@@ -467,6 +475,10 @@ struct coupled_ode_system<F, var, var> {
                   double t) const {
     using std::vector;
 
+    vector<double> theta_adjoint(M_);
+    for (size_t j = 0; j < M_; j++)
+      theta_adjoint[j] = theta_[j].adj();
+
     try {
       start_nested();
 
@@ -477,11 +489,11 @@ struct coupled_ode_system<F, var, var> {
       check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
                        "states", N_);
 
-      for (size_t j = 0; j < M_; j++)
-        theta_[j].vi_->set_zero_adjoint();
-
       for (size_t i = 0; i < N_; i++) {
         dz_dt[i] = dy_dt_vars[i].val();
+        for (size_t j = 0; j < M_; j++)
+          theta_[j].vi_->set_zero_adjoint();
+
         dy_dt_vars[i].grad();
 
         for (size_t j = 0; j < N_; j++) {
@@ -498,7 +510,6 @@ struct coupled_ode_system<F, var, var> {
 
         for (size_t j = 0; j < M_; j++) {
           double temp_deriv = theta_[j].adj();
-          theta_[j].vi_->set_zero_adjoint();
           const size_t offset = N_ + N_ * N_ + N_ * j;
           for (size_t k = 0; k < N_; k++)
             temp_deriv += z[offset + k] * y_vars[k].adj();
@@ -510,9 +521,13 @@ struct coupled_ode_system<F, var, var> {
       }
     } catch (const std::exception& e) {
       recover_memory_nested();
+      for (size_t j = 0; j < M_; j++)
+        theta_[j].vi_->adj_ = theta_adjoint[j];
       throw;
     }
     recover_memory_nested();
+    for (size_t j = 0; j < M_; j++)
+      theta_[j].vi_->adj_ = theta_adjoint[j];
   }
 
   /**
