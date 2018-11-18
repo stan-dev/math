@@ -23,8 +23,7 @@ namespace math {
 template <typename T1, typename T2>
 inline typename boost::math::tools::promote_args<T1, T2>::type hypot(
     const T1& x, const T2& y) {
-  using std::sqrt;
-  return sqrt(x * x + y * y);
+  return std::hypot(x, y);
 }
 
 }  // namespace math

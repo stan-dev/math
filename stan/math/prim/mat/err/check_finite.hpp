@@ -5,7 +5,7 @@
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <Eigen/Dense>
-#include <boost/math/special_functions/fpclassify.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -16,7 +16,7 @@ struct finite<Eigen::Matrix<T, R, C>, true> {
                     const Eigen::Matrix<T, R, C>& y) {
     if (!value_of(y).allFinite()) {
       for (int n = 0; n < y.size(); ++n) {
-        if (!(boost::math::isfinite)(y(n)))
+        if (!(std::isfinite)(value_of_rec(stan::get(y, n))))
           domain_error_vec(function, name, y, n, "is ",
                            ", but must be finite!");
       }

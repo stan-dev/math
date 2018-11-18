@@ -4,8 +4,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/meta/likely.hpp>
-#include <stan/math/prim/scal/fun/boost_policy.hpp>
-#include <boost/math/special_functions/asinh.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -23,7 +22,7 @@ inline double asinh(double x) {
   if (unlikely(is_nan(x)))
     return x;
   else
-    return boost::math::asinh(x, boost_policy_t());
+    return std::asinh(x);
 }
 
 /**

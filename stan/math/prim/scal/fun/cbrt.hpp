@@ -1,11 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_CBRT_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_CBRT_HPP
 
-#include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <boost/math/special_functions/cbrt.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -22,7 +21,7 @@ inline double cbrt(double x) {
     return NOT_A_NUMBER;
   if (is_inf(x))
     return x < 0 ? NEGATIVE_INFTY : INFTY;
-  return boost::math::cbrt(x, boost_policy_t());
+  return std::cbrt(x);
 }
 
 /**

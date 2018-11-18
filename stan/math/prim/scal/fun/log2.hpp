@@ -18,8 +18,7 @@ namespace math {
  * @return base two logarithm of argument
  */
 inline double log2(double u) {
-  using std::log;
-  return log(u) / LOG_2;
+  return std::log2(u);
 }
 
 /**

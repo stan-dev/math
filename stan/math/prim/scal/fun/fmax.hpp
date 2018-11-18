@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <boost/math/tools/promotion.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -22,7 +23,7 @@ inline typename boost::math::tools::promote_args<T1, T2>::type fmax(
     return y;
   if (is_nan(y))
     return x;
-  return x > y ? x : y;
+  return std::fmax(x, y);
 }
 
 }  // namespace math

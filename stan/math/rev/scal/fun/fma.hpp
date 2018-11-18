@@ -127,6 +127,10 @@ inline var fma(const var& a, const var& b, double c) {
   return var(new fma_vvd_vari(a.vi_, b.vi_, c));
 }
 
+inline var fma(const var& a, const var& b, int c) {
+  return var(new fma_vvd_vari(a.vi_, b.vi_, static_cast<double>(c)));
+}
+
 /**
  * The fused multiply-add function for a variable, value, and
  * variable (C99).  This function returns the product of the first
@@ -145,6 +149,10 @@ inline var fma(const var& a, const var& b, double c) {
  */
 inline var fma(const var& a, double b, const var& c) {
   return var(new fma_vdv_vari(a.vi_, b, c.vi_));
+}
+
+inline var fma(const var& a, int b, const var& c) {
+  return var(new fma_vdv_vari(a.vi_, static_cast<double>(b), c.vi_));
 }
 
 /**
@@ -169,6 +177,11 @@ inline var fma(const var& a, double b, double c) {
   return var(new fma_vdd_vari(a.vi_, b, c));
 }
 
+inline var fma(const var& a, int b, int c) {
+  return var(new fma_vdd_vari(a.vi_, static_cast<double>(b),
+                                     static_cast<double>(c)));
+}
+
 /**
  * The fused multiply-add function for a value, variable, and
  * value (C99).  This function returns the product of the first
@@ -185,6 +198,11 @@ inline var fma(const var& a, double b, double c) {
  */
 inline var fma(double a, const var& b, double c) {
   return var(new fma_vdd_vari(b.vi_, a, c));
+}
+
+inline var fma(int a, const var& b, int c) {
+  return var(new fma_vdd_vari(b.vi_, static_cast<double>(a),
+                                     static_cast<double>(c)));
 }
 
 /**
@@ -205,6 +223,11 @@ inline var fma(double a, double b, const var& c) {
   return var(new fma_ddv_vari(a, b, c.vi_));
 }
 
+inline var fma(int a, int b, const var& c) {
+  return var(new fma_ddv_vari(static_cast<double>(a), static_cast<double>(b),
+                                                      c.vi_));
+}
+
 /**
  * The fused multiply-add function for a value and two variables
  * (C99).  This function returns the product of the first two
@@ -223,6 +246,11 @@ inline var fma(double a, double b, const var& c) {
  */
 inline var fma(double a, const var& b, const var& c) {
   return var(new fma_vdv_vari(b.vi_, a, c.vi_));  // a-b symmetry
+}
+
+inline var fma(int a, const var& b, const var& c) {
+  return var(new fma_vdv_vari(b.vi_, static_cast<double>(a),
+                                     c.vi_));  // a-b symmetry
 }
 
 }  // namespace math

@@ -4,8 +4,8 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/meta/likely.hpp>
-#include <stan/math/prim/scal/fun/boost_policy.hpp>
-#include <boost/math/special_functions/acosh.hpp>
+#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -19,10 +19,12 @@ namespace math {
  * @throw std::domain_error If argument is less than 1.
  */
 inline double acosh(double x) {
-  if (unlikely(is_nan(x)))
+  if (unlikely(is_nan(x))) {
     return x;
-  else
-    return boost::math::acosh(x, boost_policy_t());
+  } else {
+    check_greater_or_equal("acosh", "x", x, 1.0);
+    return std::acosh(x);
+  }
 }
 
 /**

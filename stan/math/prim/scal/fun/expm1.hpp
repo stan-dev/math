@@ -1,8 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_EXPM1_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_EXPM1_HPP
 
-#include <stan/math/prim/scal/fun/boost_policy.hpp>
-#include <boost/math/special_functions/expm1.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -16,7 +15,7 @@ namespace math {
  * @return Natural exponentiation of argument minus one.
  */
 inline double expm1(double x) {
-  return boost::math::expm1(x, boost_policy_t());
+  return std::expm1(x);
 }
 
 /**

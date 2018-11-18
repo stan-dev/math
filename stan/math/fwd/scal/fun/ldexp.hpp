@@ -1,6 +1,9 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_LDEXP_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_LDEXP_HPP
+#ifndef STAN_MATH_FWD_SCAL_FUN_LDEXP_HPP
+#define STAN_MATH_FWD_SCAL_FUN_LDEXP_HPP
 
+#include <stan/math/fwd/core.hpp>
+#include <stan/math/prim/scal/fun/exp2.hpp>
+#include <stan/math/prim/scal/fun/ldexp.hpp>
 #include <cmath>
 
 namespace stan {
@@ -16,12 +19,8 @@ namespace math {
  * @return product of a times 2 to the power b
  */
 template <typename T>
-inline T ldexp(const T& a, int b) {
-  return std::ldexp(a, b);
-}
-
-inline double ldexp(int a, int b) {
-  return std::ldexp(static_cast<double>(a), b);
+inline fvar<T> ldexp(const fvar<T>& a, int b) {
+  return fvar<T>(ldexp(a.val_, b), a.d_ * exp2(b));
 }
 }  // namespace math
 }  // namespace stan

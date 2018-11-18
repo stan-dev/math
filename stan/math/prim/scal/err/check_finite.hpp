@@ -6,7 +6,7 @@
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -15,7 +15,7 @@ namespace {
 template <typename T_y, bool is_vec>
 struct finite {
   static void check(const char* function, const char* name, const T_y& y) {
-    if (!(boost::math::isfinite)(value_of_rec(y)))
+    if (!(std::isfinite)(value_of_rec(y)))
       domain_error(function, name, y, "is ", ", but must be finite!");
   }
 };
@@ -25,7 +25,7 @@ struct finite<T_y, true> {
   static void check(const char* function, const char* name, const T_y& y) {
     using stan::length;
     for (size_t n = 0; n < length(y); n++) {
-      if (!(boost::math::isfinite)(value_of_rec(stan::get(y, n))))
+      if (!(std::isfinite)(value_of_rec(stan::get(y, n))))
         domain_error_vec(function, name, y, n, "is ", ", but must be finite!");
     }
   }

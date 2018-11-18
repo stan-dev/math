@@ -13,6 +13,7 @@
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
+#include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
@@ -70,7 +71,7 @@ typename return_type<T_y, T_dof>::type chi_square_lcdf(const T_y& y,
       return ops_partials.build(negative_infinity());
   }
 
-  using boost::math::tgamma;
+  using stan::math::tgamma;
   using std::exp;
   using std::exp;
   using std::log;

@@ -1,9 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_ERFC_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_ERFC_HPP
 
-#include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <boost/math/special_functions/erf.hpp>
+#include <cmath>
 #include <limits>
 
 namespace stan {
@@ -22,7 +21,7 @@ namespace math {
 inline double erfc(double x) {
   if (is_nan(x))
     return std::numeric_limits<double>::quiet_NaN();
-  return boost::math::erfc(x, boost_policy_t());
+  return std::erfc(x);
 }
 
 /**

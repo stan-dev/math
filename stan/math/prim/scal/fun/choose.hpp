@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
+#include <stan/math/prim/scal/fun/round.hpp>
 #include <boost/math/special_functions/binomial.hpp>
 #include <limits>
 #include <cmath>
@@ -35,7 +36,7 @@ inline int choose(int n, int k) {
   const double choices = boost::math::binomial_coefficient<double>(n, k);
   check_less_or_equal("choose", "n choose k", choices,
                       std::numeric_limits<int>::max());
-  return static_cast<int>(std::round(choices));
+  return static_cast<int>(stan::math::round(choices));
 }
 
 }  // namespace math

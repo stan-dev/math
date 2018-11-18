@@ -1,9 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_ROUND_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_ROUND_HPP
 
-#include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <boost/math/special_functions/round.hpp>
+#include <cmath>
 #include <limits>
 
 namespace stan {
@@ -19,7 +18,7 @@ namespace math {
 inline double round(double x) {
   if (is_nan(x))
     return std::numeric_limits<double>::quiet_NaN();
-  return boost::math::round(x, boost_policy_t());
+  return std::round(x);
 }
 
 /**
