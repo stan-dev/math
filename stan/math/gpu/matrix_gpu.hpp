@@ -4,13 +4,14 @@
 #include <stan/math/gpu/opencl_context.hpp>
 #include <stan/math/gpu/kernel_cl.hpp>
 #include <stan/math/gpu/constants.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/gpu/cache_copy.hpp>
 #include <stan/math/gpu/kernels/copy.hpp>
 #include <stan/math/gpu/kernels/sub_block.hpp>
 #include <stan/math/gpu/kernels/triangular_transpose.hpp>
 #include <stan/math/gpu/kernels/zeros.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/meta/is_constant.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <CL/cl.hpp>
@@ -106,42 +107,14 @@ class matrix_gpu {
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
-  template <typename T, int R, int C,
-            typename = typename std::enable_if<is_constant<T>::value, T>::type>
-  explicit matrix_gpu(const Eigen::Matrix<T, R, C>& A)
+  template <int R, int C>
+  explicit matrix_gpu(const Eigen::Matrix<double, R, C>& A)
       : rows_(A.rows()), cols_(A.cols()) {
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue& queue = opencl_context.queue();
-    if (A.opencl_buffer_() != NULL) {
-      oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
-      queue.enqueueCopyBuffer(A.opencl_buffer_, oclBuffer_, 0, 0,
-                              sizeof(T) * A.size());
-    } else {
-      if (size() > 0) {
-        try {
-          // creates the OpenCL buffer to copy the Eigen
-          // matrix to the OpenCL device
-          oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
-          A.opencl_buffer_
-              = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
-          /**
-           * Writes the contents of A to the OpenCL buffer
-           * starting at the offset 0.
-           * CL_TRUE denotes that the call is blocking as
-           * we do not want to execute any further kernels
-           * on the device until we are sure that the data
-           * is finished transfering)
-           */
-          cl::Event copy_event;
-          queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0, sizeof(T) * A.size(),
-                                   A.data());
-          queue.enqueueCopyBuffer(oclBuffer_, A.opencl_buffer_, 0, 0,
-                                  sizeof(T) * A.size(), NULL, &copy_event);
-          copy_event.wait();
-        } catch (const cl::Error& e) {
-          check_opencl_error("matrix constructor", e);
-        }
-      }
+    if (A.size() > 0) {
+      oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
+      cache_copy(oclBuffer_, A);
     }
   }
   /**

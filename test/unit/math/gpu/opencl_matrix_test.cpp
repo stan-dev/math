@@ -44,7 +44,7 @@ TEST(MathMatrixGPU, matrix_gpu_primitive_creation) {
   EXPECT_NO_THROW(stan::math::matrix_gpu A(1, 1));
   EXPECT_NO_THROW(stan::math::matrix_gpu d11(d1));
   EXPECT_NO_THROW(stan::math::matrix_gpu d22(d2));
-  EXPECT_NO_THROW(stan::math::matrix_gpu d33(d3));
+  stan::math::matrix_gpu d33(d3);
 }
 
 TEST(MathMatrixGPU, matrix_gpu_var_creation) {
