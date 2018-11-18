@@ -113,7 +113,8 @@ class matrix_gpu {
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue& queue = opencl_context.queue();
     if (A.size() > 0) {
-      oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
+      oclBuffer_
+          = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
       internal::cache_copy(oclBuffer_, A);
     }
   }
