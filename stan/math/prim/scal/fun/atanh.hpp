@@ -24,8 +24,8 @@ inline double atanh(double x) {
   if (unlikely(is_nan(x))) {
     return x;
   } else {
-      check_bounded("atanh", "x", x, -1.0, 1.0);
-      return std::atanh(x);
+    check_bounded("atanh", "x", x, -1.0, 1.0);
+    return std::atanh(x);
   }
 }
 

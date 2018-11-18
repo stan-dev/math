@@ -11,8 +11,8 @@ namespace math {
 namespace {
 class ldexp_vari : public op_vd_vari {
  public:
-  explicit ldexp_vari(vari* avi, int b) : op_vd_vari(ldexp(avi->val_, b),
-                                                     avi, b) {}
+  explicit ldexp_vari(vari* avi, int b)
+      : op_vd_vari(ldexp(avi->val_, b), avi, b) {}
   void chain() { avi_->adj_ += adj_ * exp2(bd_); }
 };
 }  // namespace

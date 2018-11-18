@@ -17,9 +17,7 @@ namespace math {
  * @param y argument.
  * @return exponent base 2 of argument.
  */
-inline double exp2(double y) {
-  return std::exp2(y);
-}
+inline double exp2(double y) { return std::exp2(y); }
 
 /**
  * Return the exponent base 2 of the specified argument (C99,

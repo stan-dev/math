@@ -14,9 +14,7 @@ namespace math {
  * @param[in] x Argument.
  * @return Natural exponentiation of argument minus one.
  */
-inline double expm1(double x) {
-  return std::expm1(x);
-}
+inline double expm1(double x) { return std::expm1(x); }
 
 /**
  * Integer version of expm1.

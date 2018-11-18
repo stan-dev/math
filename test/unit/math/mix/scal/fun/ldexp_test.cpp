@@ -8,9 +8,9 @@ class AgradFwdLdexp : public testing::Test {
 };
 
 TEST_F(AgradFwdLdexp, FvarVar_1stDeriv) {
-  using stan::math::ldexp;
   using stan::math::exp2;
   using stan::math::fvar;
+  using stan::math::ldexp;
   using stan::math::var;
 
   fvar<var> x(0.5, 1.3);
@@ -26,9 +26,9 @@ TEST_F(AgradFwdLdexp, FvarVar_1stDeriv) {
 }
 
 TEST_F(AgradFwdLdexp, FvarVar_2ndDeriv) {
-  using stan::math::ldexp;
   using stan::math::exp2;
   using stan::math::fvar;
+  using stan::math::ldexp;
   using stan::math::var;
 
   fvar<var> x(0.5, 1.3);
@@ -41,9 +41,9 @@ TEST_F(AgradFwdLdexp, FvarVar_2ndDeriv) {
 }
 
 TEST_F(AgradFwdLdexp, FvarFvarVar_1stDeriv) {
-  using stan::math::ldexp;
   using stan::math::exp2;
   using stan::math::fvar;
+  using stan::math::ldexp;
   using stan::math::var;
 
   fvar<fvar<var> > x;
@@ -80,9 +80,9 @@ TEST_F(AgradFwdLdexp, FvarFvarVar_1stDeriv) {
 }
 
 TEST_F(AgradFwdLdexp, FvarFvarVar_2ndDeriv) {
-  using stan::math::ldexp;
   using stan::math::exp2;
   using stan::math::fvar;
+  using stan::math::ldexp;
   using stan::math::var;
 
   fvar<fvar<var> > x;
@@ -119,9 +119,9 @@ TEST_F(AgradFwdLdexp, FvarFvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(0.0, r[0]);
 }
 TEST_F(AgradFwdLdexp, FvarFvarVar_3rdDeriv) {
-  using stan::math::ldexp;
   using stan::math::exp2;
   using stan::math::fvar;
+  using stan::math::ldexp;
   using stan::math::var;
 
   fvar<fvar<var> > x;

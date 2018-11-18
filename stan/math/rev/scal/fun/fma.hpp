@@ -178,8 +178,8 @@ inline var fma(const var& a, double b, double c) {
 }
 
 inline var fma(const var& a, int b, int c) {
-  return var(new fma_vdd_vari(a.vi_, static_cast<double>(b),
-                                     static_cast<double>(c)));
+  return var(
+      new fma_vdd_vari(a.vi_, static_cast<double>(b), static_cast<double>(c)));
 }
 
 /**
@@ -201,8 +201,8 @@ inline var fma(double a, const var& b, double c) {
 }
 
 inline var fma(int a, const var& b, int c) {
-  return var(new fma_vdd_vari(b.vi_, static_cast<double>(a),
-                                     static_cast<double>(c)));
+  return var(
+      new fma_vdd_vari(b.vi_, static_cast<double>(a), static_cast<double>(c)));
 }
 
 /**
@@ -224,8 +224,8 @@ inline var fma(double a, double b, const var& c) {
 }
 
 inline var fma(int a, int b, const var& c) {
-  return var(new fma_ddv_vari(static_cast<double>(a), static_cast<double>(b),
-                                                      c.vi_));
+  return var(
+      new fma_ddv_vari(static_cast<double>(a), static_cast<double>(b), c.vi_));
 }
 
 /**
@@ -250,7 +250,7 @@ inline var fma(double a, const var& b, const var& c) {
 
 inline var fma(int a, const var& b, const var& c) {
   return var(new fma_vdv_vari(b.vi_, static_cast<double>(a),
-                                     c.vi_));  // a-b symmetry
+                              c.vi_));  // a-b symmetry
 }
 
 }  // namespace math

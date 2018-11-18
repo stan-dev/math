@@ -7,9 +7,9 @@ class AgradFwdLdexp : public testing::Test {
 };
 
 TEST_F(AgradFwdLdexp, Fvar) {
-  using stan::math::ldexp;
   using stan::math::exp2;
   using stan::math::fvar;
+  using stan::math::ldexp;
 
   fvar<double> x(0.5, 1.0);
 
@@ -41,9 +41,9 @@ TEST_F(AgradFwdLdexp, Fvar) {
 }
 
 TEST_F(AgradFwdLdexp, FvarFvarDouble) {
-  using stan::math::ldexp;
   using stan::math::exp2;
   using stan::math::fvar;
+  using stan::math::ldexp;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 0.5;
