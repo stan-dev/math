@@ -30,16 +30,21 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
   check_square("cholesky_decompose", "m", m);
   check_symmetric("cholesky_decompose", "m", m);
 #ifdef STAN_OPENCL
-  matrix_gpu m_gpu(m);
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_chol(m.rows(), m.cols());
-  cholesky_decompose(m_gpu);
-  copy(m_chol, m_gpu);
-  return m_chol;
+  if (m.rows() >= 1800) {
+    matrix_gpu m_gpu(m);
+    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_chol(m.rows(), m.cols());
+    cholesky_decompose(m_gpu);
+    copy(m_chol, m_gpu);
+    return m_chol;
+  } else {
 #else
   Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > llt(m.rows());
   llt.compute(m);
   check_pos_definite("cholesky_decompose", "m", llt);
   return llt.matrixL();
+#endif
+#ifdef STAN_OPENCL
+  }
 #endif
 }
 
