@@ -9,7 +9,7 @@
 
 namespace stan {
 namespace math {
-
+namespace internal {
 template <int R, int C>
 void cache_copy(cl::Buffer dst, const Eigen::Matrix<double, R, C>& src) {
     cl::Context& ctx = opencl_context.context();
@@ -38,6 +38,7 @@ void cache_copy(cl::Buffer dst, const Eigen::Matrix<double, R, C>& src) {
         check_opencl_error("copy Eigen->GPU", e);
       }
     }
+}
 }
 }
 }

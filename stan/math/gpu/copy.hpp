@@ -36,7 +36,7 @@ void copy(matrix_gpu& dst, const Eigen::Matrix<double, R, C>& src) {
   check_size_match("copy (Eigen -> GPU)", "src.cols()", src.cols(),
                    "dst.cols()", dst.cols());
  if (src.size() > 0) {
-  cache_copy(dst.buffer(), src);
+  internal::cache_copy(dst.buffer(), src);
   }
 }
 
