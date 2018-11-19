@@ -123,12 +123,9 @@ inline var fma(const var& a, const var& b, const var& c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-inline var fma(const var& a, const var& b, double c) {
+template <typename Tc>
+inline var fma(const var& a, const var& b, const Tc& c) {
   return var(new fma_vvd_vari(a.vi_, b.vi_, c));
-}
-
-inline var fma(const var& a, const var& b, int c) {
-  return var(new fma_vvd_vari(a.vi_, b.vi_, static_cast<double>(c)));
 }
 
 /**
@@ -147,12 +144,9 @@ inline var fma(const var& a, const var& b, int c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-inline var fma(const var& a, double b, const var& c) {
+template <typename Tb>
+inline var fma(const var& a, const Tb& b, const var& c) {
   return var(new fma_vdv_vari(a.vi_, b, c.vi_));
-}
-
-inline var fma(const var& a, int b, const var& c) {
-  return var(new fma_vdv_vari(a.vi_, static_cast<double>(b), c.vi_));
 }
 
 /**
@@ -173,13 +167,9 @@ inline var fma(const var& a, int b, const var& c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-inline var fma(const var& a, double b, double c) {
+template <typename Tb, typename Tc>
+inline var fma(const var& a, const Tb& b, const Tc& c) {
   return var(new fma_vdd_vari(a.vi_, b, c));
-}
-
-inline var fma(const var& a, int b, int c) {
-  return var(
-      new fma_vdd_vari(a.vi_, static_cast<double>(b), static_cast<double>(c)));
 }
 
 /**
@@ -196,13 +186,9 @@ inline var fma(const var& a, int b, int c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-inline var fma(double a, const var& b, double c) {
+template <typename Ta, typename Tc>
+inline var fma(const Ta& a, const var& b, const Tc& c) {
   return var(new fma_vdd_vari(b.vi_, a, c));
-}
-
-inline var fma(int a, const var& b, int c) {
-  return var(
-      new fma_vdd_vari(b.vi_, static_cast<double>(a), static_cast<double>(c)));
 }
 
 /**
@@ -219,13 +205,9 @@ inline var fma(int a, const var& b, int c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-inline var fma(double a, double b, const var& c) {
+template <typename Ta, typename Tb>
+inline var fma(const Ta& a, const Tb& b, const var& c) {
   return var(new fma_ddv_vari(a, b, c.vi_));
-}
-
-inline var fma(int a, int b, const var& c) {
-  return var(
-      new fma_ddv_vari(static_cast<double>(a), static_cast<double>(b), c.vi_));
 }
 
 /**
@@ -244,13 +226,9 @@ inline var fma(int a, int b, const var& c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-inline var fma(double a, const var& b, const var& c) {
+template <typename Ta>
+inline var fma(const Ta& a, const var& b, const var& c) {
   return var(new fma_vdv_vari(b.vi_, a, c.vi_));  // a-b symmetry
-}
-
-inline var fma(int a, const var& b, const var& c) {
-  return var(new fma_vdv_vari(b.vi_, static_cast<double>(a),
-                              c.vi_));  // a-b symmetry
 }
 
 }  // namespace math

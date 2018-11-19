@@ -186,10 +186,10 @@ typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
     check_bounded(function, "Random variable", y[i], 1, K);
     check_greater(function, "Size of cut points parameter", c[i].size(), 0);
     check_ordered(function, "Cut-points", c[i]);
+    check_finite(function, "Cut-points", c[i]);
   }
 
   check_finite(function, "Location parameter", lambda);
-  check_finite(function, "Cut-points", c);
 
   typename return_type<T_loc, T_cut>::type logp_n(0.0);
 
