@@ -66,7 +66,7 @@ namespace math {
  * same size as the state variable, corresponding to a time in ts.
  */
 template <typename F, typename T1, typename T2>
-std::vector<std::vector<typename stan::return_type<T1, T2>::type> >
+std::vector<std::vector<typename stan::return_type<T1, T2>::type>>
 integrate_ode_rk45(const F& f, const std::vector<T1>& y0, double t0,
                    const std::vector<double>& ts, const std::vector<T2>& theta,
                    const std::vector<double>& x, const std::vector<int>& x_int,
@@ -108,8 +108,8 @@ integrate_ode_rk45(const F& f, const std::vector<T1>& y0, double t0,
   for (size_t n = 0; n < ts.size(); n++)
     ts_vec[n + 1] = ts[n];
 
-  std::vector<std::vector<double> > y_coupled(ts_vec.size());
-  coupled_ode_observer observer(y_coupled);
+  std::vector<std::vector<typename stan::return_type<T1, T2>::type>> y;
+  coupled_ode_observer<T1, T2> observer(y, y0, theta, ts.size());
 
   // the coupled system creates the coupled initial state
   std::vector<double> initial_coupled_state = coupled_system.initial_state();
@@ -123,10 +123,11 @@ integrate_ode_rk45(const F& f, const std::vector<T1>& y0, double t0,
       boost::end(ts_vec), step_size, observer, max_step_checker(max_num_steps));
 
   // remove the first state corresponding to the initial value
-  y_coupled.erase(y_coupled.begin());
+  // y_coupled.erase(y_coupled.begin());
 
   // the coupled system also encapsulates the decoupling operation
-  return coupled_system.decouple_states(y_coupled);
+  // return coupled_system.decouple_states(y_coupled);
+  return y;
 }
 
 }  // namespace math
