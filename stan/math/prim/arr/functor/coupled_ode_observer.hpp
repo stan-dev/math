@@ -8,6 +8,8 @@
 // grr... need to pull in the MAT operands_and_partials to make things
 // work with vector... should be moved!
 #include <stan/math/rev/mat/meta/operands_and_partials.hpp>
+
+#include <stan/math/rev/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/arr/fun/sum.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 
@@ -37,7 +39,7 @@ struct coupled_ode_observer {
   const std::vector<T2>& theta_;
   const std::vector<double>& x_;
   const std::vector<int>& x_int_;
-  std::ostream* msg_;
+  std::ostream* msgs_;
   std::vector<std::vector<return_t>>& y_;
   const std::size_t N_;
   const std::size_t M_;
@@ -51,13 +53,14 @@ struct coupled_ode_observer {
    * @param y_coupled reference to a vector of vector of doubles.
    */
   explicit coupled_ode_observer(const F& f, const std::vector<T1>& y0,
-                                const T_t0& t0, const std::vector<T_ts>& ts,
-                                const std::vector<T2>& theta,
+                                const std::vector<T2>& theta, const T_t0& t0,
+                                const std::vector<T_ts>& ts,
                                 const std::vector<double>& x,
                                 const std::vector<int>& x_int,
                                 std::ostream* msgs,
                                 std::vector<std::vector<return_t>>& y)
-      : y0_(y0),
+      : f_(f),
+        y0_(y0),
         t0_(t0),
         ts_(ts),
         theta_(theta),
@@ -83,13 +86,14 @@ struct coupled_ode_observer {
     std::vector<return_t> yt;
     yt.reserve(N_);
 
-    ops_partials_t ops_partials(y0_, theta_, t0_, ts_[n - 1]);
+    ops_partials_t ops_partials(y0_, theta_, t0_, ts_[n_ - 2]);
 
     std::vector<double> dy_dt;
     if (!is_constant_struct<T_ts>::value) {
       std::vector<double> y_dbl(coupled_state.begin(),
                                 coupled_state.begin() + N_);
-      dy_dt = f_(t, y_dbl, value_of(theta_), x_, x_int_, msgs_);
+      dy_dt = f_(value_of(ts_[n_ - 2]), y_dbl, value_of(theta_), x_, x_int_,
+                 msgs_);
       check_size_match("coupled_ode_observer", "dy_dt", dy_dt.size(), "states",
                        N_);
     }
@@ -108,10 +112,10 @@ struct coupled_ode_observer {
       }
 
       if (!is_constant_struct<T_ts>::value) {
-        ops_partials.edge3_.partials_[0] = dy_dt[j];
+        ops_partials.edge4_.partials_[0] = dy_dt[j];
       }
 
-      yt.emplace_back(ops_partials_.build(coupled_state[j]));
+      yt.emplace_back(ops_partials.build(coupled_state[j]));
     }
 
     y_.emplace_back(yt);
