@@ -120,21 +120,6 @@ class coupled_ode_system<F, double, double> {
       state[n] = y0_dbl_[n];
     return state;
   }
-
-  /**
-   * Returns the base portion of the coupled state.
-   *
-   * <p>In this class's implementation, the coupled system is
-   * equivalent to the base system, so this function just returns
-   * its input.
-   *
-   * @param y the vector of the coupled states after solving the ode
-   * @return the decoupled states
-   */
-  std::vector<std::vector<double> > decouple_states(
-      const std::vector<std::vector<double> >& y) const {
-    return y;
-  }
 };
 
 }  // namespace math
