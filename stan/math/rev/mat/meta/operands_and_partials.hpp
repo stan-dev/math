@@ -21,7 +21,7 @@ class ops_partials_edge<double, std::vector<var> > {
   partials_t partials_;                       // For univariate use-cases
   broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const Op& op)
-      : partials_(partials_t(op.size(), 0)),
+      : partials_(partials_t::Zero(op.size())),
         partials_vec_(partials_),
         operands_(op) {}
 
