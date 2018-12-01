@@ -4,16 +4,11 @@
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/broadcast_array.hpp>
-
-// grr... need to pull in the MAT operands_and_partials to make things
-// work with vector... should be moved!
-#include <stan/math/rev/mat/meta/operands_and_partials.hpp>
-
-#include <stan/math/rev/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/arr/fun/sum.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
-
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/rev/arr/meta/operands_and_partials.hpp>
+#include <stan/math/rev/scal/meta/operands_and_partials.hpp>
 
 #include <vector>
 
