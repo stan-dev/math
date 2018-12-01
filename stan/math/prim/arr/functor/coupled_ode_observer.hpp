@@ -23,22 +23,26 @@ namespace math {
  * an externally defined vector of vectors passed in at
  * construction time.
  */
-template <typename T1, typename T2>
+template <typename F, typename T1, typename T2, typename T_t0, typename T_ts>
 struct coupled_ode_observer {
-  typedef typename stan::return_type<T1, T2>::type return_t;
+  typedef typename stan::return_type<T1, T2, T_t0, T_ts>::type return_t;
 
-  typedef operands_and_partials<std::vector<T1>, std::vector<T2>>
+  typedef operands_and_partials<std::vector<T1>, std::vector<T2>, T_t0, T_ts>
       ops_partials_t;
 
+  const F& f_;
+  const std::vector<T1>& y0_;
+  const T_t0& t0_;
+  const std::vector<T_ts>& ts_;
+  const std::vector<T2>& theta_;
+  const std::vector<double>& x_;
+  const std::vector<int>& x_int_;
+  std::ostream* msg_;
   std::vector<std::vector<return_t>>& y_;
-  // const std::vector<T1>& y0_;
-  // const std::vector<T2>& theta_;
-  const std::size_t num_outputs_;
   const std::size_t N_;
   const std::size_t M_;
   const std::size_t index_offset_theta_;
   std::size_t n_;
-  ops_partials_t ops_partials_;
 
   /**
    * Construct a coupled ODE observer from the specified coupled
@@ -46,21 +50,28 @@ struct coupled_ode_observer {
    *
    * @param y_coupled reference to a vector of vector of doubles.
    */
-  explicit coupled_ode_observer(std::vector<std::vector<return_t>>& y,
-                                const std::vector<T1>& y0,
+  explicit coupled_ode_observer(const F& f, const std::vector<T1>& y0,
+                                const T_t0& t0, const std::vector<T_ts>& ts,
                                 const std::vector<T2>& theta,
-                                std::size_t num_outputs)
-      : y_(y),
-        // y0_(y0), theta_(theta),
-        num_outputs_(num_outputs),
+                                const std::vector<double>& x,
+                                const std::vector<int>& x_int,
+                                std::ostream* msgs,
+                                std::vector<std::vector<return_t>>& y)
+      : y0_(y0),
+        t0_(t0),
+        ts_(ts),
+        theta_(theta),
+        x_(x),
+        x_int_(x_int),
+        msgs_(msgs),
+        y_(y),
         N_(y0.size()),
         M_(theta.size()),
         index_offset_theta_(is_constant_struct<T1>::value ? 0 : N_ * N_),
-        n_(0),
-        ops_partials_(y0, theta) {}
+        n_(0) {}
 
   /**
-   * Callback function for Boost's ODE solver to record values.
+   * Callback function for ODE solvers to record values.
    *
    * @param coupled_state solution at the specified time.
    * @param t time of solution.
@@ -72,17 +83,32 @@ struct coupled_ode_observer {
     std::vector<return_t> yt;
     yt.reserve(N_);
 
+    ops_partials_t ops_partials(y0_, theta_, t0_, ts_[n - 1]);
+
+    std::vector<double> dy_dt;
+    if (!is_constant_struct<T_ts>::value) {
+      std::vector<double> y_dbl(coupled_state.begin(),
+                                coupled_state.begin() + N_);
+      dy_dt = f_(t, y_dbl, value_of(theta_), x_, x_int_, msgs_);
+      check_size_match("coupled_ode_observer", "dy_dt", dy_dt.size(), "states",
+                       N_);
+    }
+
     for (size_t j = 0; j < N_; j++) {
       // iterate over parameters for each equation
       if (!is_constant_struct<T1>::value) {
         for (std::size_t k = 0; k < N_; k++)
-          ops_partials_.edge1_.partials_[k] = coupled_state[N_ + N_ * k + j];
+          ops_partials.edge1_.partials_[k] = coupled_state[N_ + N_ * k + j];
       }
 
       if (!is_constant_struct<T2>::value) {
         for (std::size_t k = 0; k < M_; k++)
-          ops_partials_.edge2_.partials_[k]
+          ops_partials.edge2_.partials_[k]
               = coupled_state[N_ + index_offset_theta_ + N_ * k + j];
+      }
+
+      if (!is_constant_struct<T_ts>::value) {
+        ops_partials.edge3_.partials_[0] = dy_dt[j];
       }
 
       yt.emplace_back(ops_partials_.build(coupled_state[j]));
