@@ -47,6 +47,8 @@ namespace math {
  * @tparam F type of ODE system function.
  * @tparam T1 type of scalars for initial values.
  * @tparam T2 type of scalars for parameters.
+ * @tparam T_t0 type of scalar of initial time point.
+ * @tparam T_ts type of time-points where ODE solution is returned.
  * @param[in] f functor for the base ordinary differential equation.
  * @param[in] y0 initial state.
  * @param[in] t0 initial time.

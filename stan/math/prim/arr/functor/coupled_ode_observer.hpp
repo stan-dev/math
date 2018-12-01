@@ -21,9 +21,16 @@ namespace stan {
 namespace math {
 
 /**
- * Observer for the coupled states.  Holds a reference to
- * an externally defined vector of vectors passed in at
- * construction time.
+ * Observer for the coupled states.  Holds a reference to an
+ * externally defined vector of vectors passed in at construction time
+ * which holds the final result on the AD stack. Thus, whenever any of
+ * the inputs is varying, then the output will be varying as well. The
+ * sensitivities of the initials and the parameters are taken from the
+ * coupled state in the order as defined by the
+ * coupled_ode_system. The sensitivities for the initial time point is
+ * always zero, since the initial time-point is always skipped. The
+ * sensitivities for the time-points is given by the ODE RHS.
+ *
  */
 template <typename F, typename T1, typename T2, typename T_t0, typename T_ts>
 struct coupled_ode_observer {
@@ -50,7 +57,22 @@ struct coupled_ode_observer {
    * Construct a coupled ODE observer from the specified coupled
    * vector.
    *
-   * @param y_coupled reference to a vector of vector of doubles.
+   * @tparam F type of ODE system function.
+   * @tparam T1 type of scalars for initial values.
+   * @tparam T2 type of scalars for parameters.
+   * @tparam T_t0 type of scalar of initial time point.
+   * @tparam T_ts type of time-points where ODE solution is returned.
+   * @param[in] f functor for the base ordinary differential equation.
+   * @param[in] y0 initial state.
+   * @param[in] theta parameter vector for the ODE.
+   * @param[in] t0 initial time.
+   * @param[in] ts times of the desired solutions, in strictly
+   * increasing order, all greater than the initial time.
+   * @param[in] x continuous data vector for the ODE.
+   * @param[in] x_int integer data vector for the ODE.
+   * @param[out] msgs the print stream for warning messages.
+   * @param[out] y reference to a vector of vector of the final return
+   * type.
    */
   explicit coupled_ode_observer(const F& f, const std::vector<T1>& y0,
                                 const std::vector<T2>& theta, const T_t0& t0,
@@ -74,10 +96,12 @@ struct coupled_ode_observer {
         n_(0) {}
 
   /**
-   * Callback function for ODE solvers to record values.
+   * Callback function for ODE solvers to record values. The coupled
+   * state returned from the solver is added directly to the AD tree.
    *
    * @param coupled_state solution at the specified time.
-   * @param t time of solution.
+   * @param t time of solution. The time must correspond to the ts
+   * vector, respectively.
    */
   void operator()(const std::vector<double>& coupled_state, double t) {
     if (n_++ == 0)
