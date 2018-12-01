@@ -13,6 +13,4 @@
 #include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
 #include <stan/math/rev/arr/functor/integrate_1d.hpp>
 
-#include <stan/math/rev/arr/meta/operands_and_partials.hpp>
-
 #endif
