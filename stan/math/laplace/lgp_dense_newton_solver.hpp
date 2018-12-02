@@ -48,7 +48,7 @@ namespace math {
       // the operator in the lgp_dense_system structure.
       J_ = system.solver_gradient(theta_dbl);
 
-      // CHECK - more memory efficient?
+      // CHECK - is the code below more memory efficient?
       // std::cout << system.solver_gradient(theta_dbl) << std::endl;
       // Map<VectorXd>(&J_[0], theta_size_) = system.solver_gradient(theta_dbl);
       // std::cout << "marker d" << std::endl;
@@ -60,11 +60,27 @@ namespace math {
           phi_[j]->adj_ += theta_[i]->adj_ * J_(i, j);
     }
   };
-  
+
   /**
    * Newton solver for lgp model.
    * In this instantiation, the global parameter phi has type double.
    * The initial guess can be passed as a parameter or fixed data.
+   * 
+   * @tparam T. Type for the initial guess vector
+   * @param[in] theta_0. Initial guess for the solution.
+   * @param[in] system.An object which contains information about the
+   *            algebraic system to solve.
+   * @param[in] tol. The tolerance of the solver. Sets the acceptable norm
+   *            (i.e. deviation from the 0) of the solution. Should be
+   *            manually scaled with the dimension of the solution.
+   * @param[in] max_num_steps. The maximum number of iterations before the
+   *            solver breaks and returns an error message.
+   * @param[in] line_search. If TRUE, applies Amijo's method to adapt the
+   *            step size.
+   * @param[in] print_iteration. If TRUE, prints the number of iterations
+   *            required to reach a solution.
+   * @return The solution to the algebraic system posed by the Poisson
+   *         process with a latent Gaussian variable.  
    */
   template<typename T>  // template for variables
   Eigen::Matrix<T, Eigen::Dynamic, 1> lgp_dense_newton_solver(
@@ -72,7 +88,8 @@ namespace math {
     const lgp_dense_system<double>& system,
     double tol = 1e-3,
     long int max_num_steps = 100,
-    bool line_search = false) {  // NOLINT(runtime/int)
+    bool line_search = false,
+    bool print_iteration = false) {  // NOLINT(runtime/int)
 
     Eigen::VectorXd theta_dbl = value_of(theta_0);
     Eigen::MatrixXd gradient; 
@@ -112,10 +129,6 @@ namespace math {
         theta_dbl = theta_candidate;
       }
 
-      // Should really be an mdivide. However, the hessian is diagonal and 
-      // stored as a vector, so need to use elt_divide.
-      // theta_dbl -= mdivide_left(gradient, system.cond_hessian(theta_dbl));
-
       // Check solution is a root of the gradient
       if (gradient.norm() <= tol) break;
     }
@@ -125,8 +138,29 @@ namespace math {
 
   /**
    * lgp Newton solver.
-   * In this instantiation, phi is of type var.
+   * In this instantiation, phi is of type var. As a result,
+   * the unknown theta we solve for is also a var.
+   * Hence, in addition to solving the algebraic equation, we
+   * also need to propagate derivatives.
+   * 
    * The initial guess can be passed as a parameter or fixed data.
+   * 
+   * @tparam T1. Type for the initial guess vector
+   * @tparam T2. Type for the global parameter.
+   * @param[in] theta_0. Initial guess for the solution.
+   * @param[in] system.An object which contains information about the
+   *            algebraic system to solve.
+   * @param[in] tol. The tolerance of the solver. Sets the acceptable norm
+   *            (i.e. deviation from the 0) of the solution. Should be
+   *            manually scaled with the dimension of the solution.
+   * @param[in] max_num_steps. The maximum number of iterations before the
+   *            solver breaks and returns an error message.
+   * @param[in] line_search. If TRUE, applies Amijo's method to adapt the
+   *            step size.
+   * @param[in] print_iteration. If TRUE, prints the number of iterations
+   *            required to reach a solution.
+   * @return The solution to the algebraic system posed by the Poisson
+   *         process with a latent Gaussian variable. 
    */
   template <typename T1, typename T2>
   Eigen::Matrix<T2, Eigen::Dynamic, 1> lgp_dense_newton_solver(
