@@ -2,7 +2,9 @@
 #define STAN_MATH_GPU_ERR_CHECK_SYMMETRIC_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/gpu/err/check_square.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/gpu/kernels/check_symmetric.hpp>
 
 namespace stan {
