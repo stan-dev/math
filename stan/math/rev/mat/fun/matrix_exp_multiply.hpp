@@ -6,6 +6,7 @@
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/rev/mat/fun/multiply.hpp>
 #include <stan/math/rev/core.hpp>
 
