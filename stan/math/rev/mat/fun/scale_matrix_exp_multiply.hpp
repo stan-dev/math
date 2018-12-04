@@ -14,8 +14,8 @@ namespace stan {
 namespace math {
 
 /**
- * Return product of exp(At) and B, where A is a NxN matrix,                                                   
- * B is a NxCb matrix, and t is a double    
+ * Return product of exp(At) and B, where A is a NxN matrix,
+ * B is a NxCb matrix, and t is a double
  *
  * @tparam Ta scalar type matrix A
  * @tparam Tb scalar type matrix B
