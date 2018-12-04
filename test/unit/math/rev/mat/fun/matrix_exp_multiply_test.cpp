@@ -7,6 +7,38 @@
 #include <stan/math/rev/mat/fun/to_var.hpp>
 #include <vector>
 
+TEST(MathRev, matrix_multiply_exp__vd__segfault) {
+  Eigen::Matrix<stan::math::var, -1, -1> A(5, 5);
+  A << -0.96871, 0.398827, 0.241306, 0.741373, 0.108926,
+    0.888077, -0.915624, -0.373344, 0.255238, 0.717304,
+    -0.0899219, -0.898862, -0.800546, -0.222652, -0.271382,
+    0.683227, 0.827031, -0.780702, -0.104228, 0.885106,
+    -0.996585, -0.097802, 0.739617, 0.235266, -0.0247717;
+
+
+  Eigen::Matrix<double, -1, -1> B(5, 5);
+  B << -0.96871, 0.398827, 0.241306, 0.741373, 0.108926, 0.888077, -0.915624,
+    -0.373344, 0.255238, 0.717304, -0.0899219, -0.898862, -0.800546,
+    -0.222652, -0.271382, 0.683227, 0.827031, -0.780702, -0.104228, 0.885106,
+    -0.996585, -0.097802, 0.739617, 0.235266, -0.0247717;
+
+  Eigen::Matrix<stan::math::var, -1, -1> result = stan::math::matrix_exp_multiply(A, B);
+
+  std::vector<double> gradients;
+  stan::math::print_stack(std::cout);
+
+  std::vector<stan::math::var> vars = stan::math::to_array_1d(A);
+  result(0, 0).grad(vars, gradients);
+
+  std::cout << "gradients = " << std::endl;
+  for (size_t j = 0; j < gradients.size(); ++j)
+    std::cout << gradients[j] << " ";
+  std::cout << std::endl;
+
+  FAIL() << "There are no asserts in the tests." << std::endl
+         << "This test seg faults with the existing implementation." <<std::endl;
+}
+
 inline void test_matrix_exp_multiply_dv(int N, int M) {
   using stan::math::value_of;
   using stan::math::var;
