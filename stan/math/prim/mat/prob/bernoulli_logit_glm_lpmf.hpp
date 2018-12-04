@@ -115,7 +115,7 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   static const double cutoff = 20.0;
   Matrix<T_partials_return, Dynamic, 1> theta_derivative(N, 1);
   T_partials_return theta_derivative_sum = 0;
-  T_partials_return exp_m_ythetan;  
+  T_partials_return exp_m_ythetan;
 #ifndef STAN_MATH_FWD_CORE_HPP
 #pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(+ : logp) default(none) shared(N, ytheta, exp_m_ytheta, \

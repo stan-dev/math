@@ -120,7 +120,7 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
     reduction(+ : logp) default(none) shared(n, N, sigma_vec, inv_sigma, \
     y_minus_mu_over_sigma, y_vec, mu_minus_alpha_dbl, alpha_vec, \
     y_minus_mu_over_sigma_squared)
-#endif  
+#endif
   for (size_t n = 0; n < N; ++n) {
     if (include_summand<propto, T_scale>::value)
       logp -= log(value_of(sigma_vec[n]));
