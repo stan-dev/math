@@ -23,20 +23,41 @@ TEST(MathRev, matrix_multiply_exp__vd__segfault) {
     -0.996585, -0.097802, 0.739617, 0.235266, -0.0247717;
 
   Eigen::Matrix<stan::math::var, -1, -1> result = stan::math::matrix_exp_multiply(A, B);
+  // use this to debug how large the stack is: stan::math::print_stack(std::cout);
 
   std::vector<double> gradients;
-  stan::math::print_stack(std::cout);
 
   std::vector<stan::math::var> vars = stan::math::to_array_1d(A);
   result(0, 0).grad(vars, gradients);
 
-  std::cout << "gradients = " << std::endl;
-  for (size_t j = 0; j < gradients.size(); ++j)
-    std::cout << gradients[j] << " ";
-  std::cout << std::endl;
+  ASSERT_EQ(25, gradients.size());
+  EXPECT_FLOAT_EQ(gradients[0], -0.318076261);
+  EXPECT_FLOAT_EQ(gradients[1], -0.103184184);
+  EXPECT_FLOAT_EQ(gradients[2], -0.00582563332);
+  EXPECT_FLOAT_EQ(gradients[3], -0.178361665);
+  EXPECT_FLOAT_EQ(gradients[4], -0.111540085);
+  EXPECT_FLOAT_EQ(gradients[5], 0.131275181);
+  EXPECT_FLOAT_EQ(gradients[6], 0.068209884);
+  EXPECT_FLOAT_EQ(gradients[7], 0.000694387545);
+  EXPECT_FLOAT_EQ(gradients[8], 0.116771912);
+  EXPECT_FLOAT_EQ(gradients[9], 0.0798794545);
+  EXPECT_FLOAT_EQ(gradients[10], -0.0871212464);
+  EXPECT_FLOAT_EQ(gradients[11], -0.0246279672);
+  EXPECT_FLOAT_EQ(gradients[12], -0.00226500129);
+  EXPECT_FLOAT_EQ(gradients[13], -0.0429290518);
+  EXPECT_FLOAT_EQ(gradients[14], -0.0246780963);
+  EXPECT_FLOAT_EQ(gradients[15], 0.205020349);
+  EXPECT_FLOAT_EQ(gradients[16], 0.075942319);
+  EXPECT_FLOAT_EQ(gradients[17], 0.00365725736);
+  EXPECT_FLOAT_EQ(gradients[18], 0.131097209);
+  EXPECT_FLOAT_EQ(gradients[19], 0.0830377219);
+  EXPECT_FLOAT_EQ(gradients[20], -0.477182156);
+  EXPECT_FLOAT_EQ(gradients[21], -0.133762948);
+  EXPECT_FLOAT_EQ(gradients[22], -0.0104704174);
+  EXPECT_FLOAT_EQ(gradients[23], -0.232294833);
+  EXPECT_FLOAT_EQ(gradients[24], -0.13877342);
 
-  FAIL() << "There are no asserts in the tests." << std::endl
-         << "This test seg faults with the existing implementation." <<std::endl;
+  stan::math::recover_memory();
 }
 
 inline void test_matrix_exp_multiply_dv(int N, int M) {
