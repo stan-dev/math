@@ -22,9 +22,8 @@ const char *is_zero_on_diagonal_kernel_code = STRINGIFY(
      * Kernel for stan/math/gpu/err/check_diagonal_zeros.hpp.
      * This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void is_zero_on_diagonal(
-        __global read_only double *A, __global int *flag,
-        read_only unsigned int rows, write_only unsigned int cols) {
+    __kernel void is_zero_on_diagonal(__global double *A, __global int *flag,
+                                      unsigned int rows, unsigned int cols) {
       const int i = get_global_id(0);
       if (i < rows && i < cols) {
         if (A(i, i) == 0) {
