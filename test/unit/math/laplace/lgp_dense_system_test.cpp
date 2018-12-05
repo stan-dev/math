@@ -170,7 +170,9 @@ TEST(laplace, lgp_newton_solver) {
                                       tol, max_num_steps, line_search);
   EXPECT_FLOAT_EQ(powell_solution(0), theta_dbl(0));
   EXPECT_FLOAT_EQ(powell_solution(1), theta_dbl(1));
-  
+
+  std::cout << theta_dbl << std::endl;
+
   // Test lgp_dense_system computes the correct gradient
   Eigen::MatrixXd system_gradient = system.solver_gradient(powell_solution);
   EXPECT_FLOAT_EQ(solver_gradient(0, 1), system_gradient(0, 1));

@@ -77,8 +77,8 @@ namespace math {
    *            solver breaks and returns an error message.
    * @param[in] line_search. If TRUE, applies Amijo's method to adapt the
    *            step size.
-   * @param[in] print_iteration. If TRUE, prints the number of iterations
-   *            required to reach a solution.
+   * @param[in] print_iteration. If TRUE, print the number of iterations
+   *            required by the Newton solver to reach convergence.
    * @return The solution to the algebraic system posed by the Poisson
    *         process with a latent Gaussian variable.  
    */
@@ -89,14 +89,13 @@ namespace math {
     double tol = 1e-3,
     long int max_num_steps = 100,
     bool line_search = false,
-    bool print_iteration = false) {  // NOLINT(runtime/int)
+    bool print_iteration = false) {
 
     Eigen::VectorXd theta_dbl = value_of(theta_0);
     Eigen::MatrixXd gradient; 
     Eigen::MatrixXd direction;
 
     for (int i = 0; i <= max_num_steps; i++) {
-
       // check if the max number of steps has been reached
       if (i == max_num_steps) {
         std::ostringstream message;
@@ -130,7 +129,10 @@ namespace math {
       }
 
       // Check solution is a root of the gradient
-      if (gradient.norm() <= tol) break;
+      double gradient_norm = gradient.norm();
+      if (gradient_norm <= tol && print_iteration)
+        std::cout << "iterations: " << i << std::endl;
+      if (gradient_norm <= tol) break;
     }
 
     return theta_dbl;
@@ -168,7 +170,8 @@ namespace math {
     const lgp_dense_system<T2>& system,
     double tol = 1e-6,
     long int max_num_steps = 100,  // NOLINT(runtime/int)
-    bool line_search = false) {
+    bool line_search = false,
+    bool print_iteration = false) {
 
     lgp_dense_system<double> 
       system_dbl(value_of(system.get_phi()),
@@ -177,7 +180,8 @@ namespace math {
 
     Eigen::VectorXd theta_dbl 
       = lgp_dense_newton_solver(value_of(theta_0), system_dbl, tol,
-                                max_num_steps, line_search);
+                                max_num_steps, line_search,
+                                print_iteration);
 
     // construct vari
     lgp_dense_newton_solver_vari<T2>* vi0
@@ -206,7 +210,8 @@ namespace math {
     const std::vector<int>& sums,
     double tol = 1e-6,
     long int max_num_steps = 100,  // NOLINT(runtime/int)
-    int is_line_search = 0) {
+    int is_line_search = 0,
+    int print_iteration = 0) {
 
     return lgp_dense_newton_solver(theta_0,
                                    lgp_dense_system<T2>(phi,
@@ -214,8 +219,70 @@ namespace math {
                                                         to_vector(sums)),
                                    tol,
                                    max_num_steps,
-                                   is_line_search);
+                                   is_line_search,
+                                   print_iteration);
   }
+
+  /**
+   * Newton solver for computer experiment. Returns the solution
+   * and returns by reference the number of iterations required to
+   * reach convergence.
+   * For large scale experiments, better than simply printing the
+   * number of iterations.
+   */
+  // template<typename T>  // template for variables
+  // Eigen::Matrix<T, Eigen::Dynamic, 1> lgp_dense_newton_solver(
+  //     const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta_0,  // initial guess
+  //     const lgp_dense_system<double>& system,
+  //     int& iteration,
+  //     double tol = 1e-3,
+  //     long int max_num_steps = 100,
+  //     bool line_search = false) {
+  // 
+  //   Eigen::VectorXd theta_dbl = value_of(theta_0);
+  //   Eigen::MatrixXd gradient; 
+  //   Eigen::MatrixXd direction;
+  // 
+  //   for (int i = 0; i <= max_num_steps; i++) {
+  //     // check if the max number of steps has been reached
+  //     if (i == max_num_steps) {
+  //       std::ostringstream message;
+  //       message << "lgp_newton_solver: max number of iterations:"
+  //               << max_num_steps << " exceeded.";
+  //       throw boost::math::evaluation_error(message.str());
+  //     }
+  // 
+  //     gradient = system.cond_gradient(theta_dbl);
+  //     direction = - mdivide_left(system.cond_hessian(theta_dbl),
+  //                                gradient);
+  // 
+  //     if (line_search == false) {
+  //       theta_dbl += direction;
+  //     } else {
+  //       // do line search using Armijo's method (and tuning parameters from
+  //       // his paper).
+  //       double alpha = 1;  // max step size
+  //       double c = 0.5; 
+  //       double tau = 0.5;
+  //       double m = multiply(transpose(direction), gradient)(0);
+  //       Eigen::VectorXd theta_candidate = theta_dbl + alpha * direction;
+  // 
+  //       while (system.log_density(theta_candidate) 
+  //                > system.log_density(theta_dbl) + c * m) {
+  //         alpha = tau * alpha;
+  //         theta_candidate = theta_dbl + alpha * direction;
+  //       }
+  //       theta_dbl = theta_candidate;
+  //     }
+  // 
+  //     // Check solution is a root of the gradient
+  //     double gradient_norm = gradient.norm();
+  //     if (gradient_norm <= tol) iteration = i;
+  //     if (gradient_norm <= tol) break;
+  //   }
+  // 
+  //   return theta_dbl;
+  // }
 
 }  // namespace math
 }  // namespace stan
