@@ -89,82 +89,88 @@ TEST(laplace, lgp_performance) {
   int dim_phi = 2;
   Eigen::VectorXd phi(dim_phi);
   phi << 0.5, 0.9;
-
-  int dim_theta = 500;
-  Eigen::VectorXd n_samples(dim_theta);
-  Eigen::VectorXd sums(dim_theta);
-
-  // read data from csv file (using Mike's code as a template)
-  // to work out n_samples and sums.
-  std::ifstream input_data;
-  std::string dim_theta_string = std::to_string(dim_theta);
-  std::string file_m = "test/unit/math/laplace/data_cpp/m_" +
-    dim_theta_string + ".csv";
-  std::string file_sums = "test/unit/math/laplace/data_cpp/sums_" +
-    dim_theta_string + ".csv";
-
-  input_data.open(file_m);
-  double buffer = 0.0;
-  for (int n = 0; n < dim_theta; ++n) {
-    input_data >> buffer;
-    n_samples(n) = buffer;
-  }
-  input_data.close();
-
-  input_data.open(file_sums);
-  buffer = 0.0;
-  for (int n = 0; n < dim_theta; ++n) {
-    input_data >> buffer;
-    sums(n) = buffer;
-  }
-  input_data.close();
-  // std::cout << "n_samples: " << n_samples.transpose() << std::endl;
-  // std::cout << "sums: " << sums.transpose() << std::endl;
-
-  // phi << 0, 0.9;  // remove me!
-  lgp_dense_system<double> system(phi, n_samples, sums);
-
-  // tuning parameters for the algebraic solver
-  Eigen::VectorXd theta_0 = Eigen::VectorXd::Zero(dim_theta);
-  // theta_0 << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
+  
+  int n_dimensions = 5;
+  Eigen::VectorXd dimensions(n_dimensions);
+  dimensions << 10, 20, 50, 100, 500;
+  
+  // Open csv file to store results.
+  std::ofstream myfile;
+  myfile.open("test/unit/math/laplace/deliv/results.csv");
+  int n_guesses = 5;
+  for (int i = 0; i < n_guesses; i++)
+    myfile << i + 1 << ", ";
+  myfile << n_guesses + 1 << "\n";
+  
+  // Tuning parameters for the algebraic solver
   double tol = 1e-6;
   int max_num_steps = 1e+6;
 
-  std::cout << "Dim theta: " << dim_theta << std::endl << "Naive ";
-  Eigen::VectorXd theta
-    = lgp_dense_newton_solver(theta_0, system, tol, max_num_steps,
-                              false, true);
+  for (int k = 0; k < n_dimensions; k++) {
+    int dim_theta = dimensions(k);
+    Eigen::VectorXd n_samples(dim_theta);
+    Eigen::VectorXd sums(dim_theta);
 
-  // lgp_dense_newton_solver(theta_0, system, iteration, tol, max_num_steps);
-  // std::cout << iteration << std::endl;
+    // read data from csv file (using Mike's code as a template)
+    // to work out n_samples and sums.
+    std::ifstream input_data;
+    std::string dim_theta_string = std::to_string(dim_theta);
+    std::string file_m = "test/unit/math/laplace/data_cpp/m_" +
+      dim_theta_string + ".csv";
+    std::string file_sums = "test/unit/math/laplace/data_cpp/sums_" +
+      dim_theta_string + ".csv";
 
-  int n_guesses = 5;  // based on 2.5, 25, 50, 75, and 97.5% quantiles.
-                      // from model fit with dim_theta = 50
-  Eigen::VectorXd phi_grid(n_guesses);
-  phi_grid << 0.22, 0.35, 0.46, 0.60, 0.95;
+    input_data.open(file_m);
+    double buffer = 0.0;
+    for (int n = 0; n < dim_theta; ++n) {
+      input_data >> buffer;
+      n_samples(n) = buffer;
+    }
+    input_data.close();
 
-  for (int i = 0; i < n_guesses; i++) {
-    // std::cout << "grid point: " << i << std::endl;
-    Eigen::VectorXd grid_point(dim_phi);
-    grid_point << phi_grid(i), 0.9;
-    lgp_dense_system<double> system_grid(grid_point, n_samples, sums);
+    input_data.open(file_sums);
+    buffer = 0.0;
+    for (int n = 0; n < dim_theta; ++n) {
+      input_data >> buffer;
+      sums(n) = buffer;
+    }
+    input_data.close();
 
-    Eigen::VectorXd theta_grid
-      = lgp_dense_newton_solver(theta_0, system_grid, tol, max_num_steps,
-                                false, false);
+    lgp_dense_system<double> system(phi, n_samples, sums);
 
-    theta = lgp_dense_newton_solver(theta_grid, system, tol, max_num_steps,
-                                    false, true);
+    Eigen::VectorXd n_iterations(n_guesses + 1);
+    int iteration = 0;
+
+    Eigen::VectorXd theta_0 = Eigen::VectorXd::Zero(dim_theta);
+    Eigen::VectorXd theta;
+    theta = lgp_dense_newton_comp(theta_0, system, iteration, tol,
+                                  max_num_steps, false);
+    n_iterations(0) = iteration;
+
+    // Guesses are based on 2.5, 25, 50, 75, and 97.5% quantiles.
+    // obtained by fitting the model when dim_theta = 50.
+    Eigen::VectorXd phi_grid(n_guesses);
+    phi_grid << 0.22, 0.35, 0.46, 0.60, 0.95;
+
+    for (int i = 0; i < n_guesses; i++) {
+      Eigen::VectorXd grid_point(dim_phi);
+      grid_point << phi_grid(i), 0.9;
+      lgp_dense_system<double> system_grid(grid_point, n_samples, sums);
+
+      Eigen::VectorXd theta_grid
+        = lgp_dense_newton_solver(theta_0, system_grid, tol, max_num_steps,
+                                  false, false);
+
+      theta = lgp_dense_newton_comp(theta_grid, system, iteration, tol, max_num_steps,
+                                    false);
+      n_iterations(i + 1) = iteration;
+    }
+  
+    std::cout << "Dim theta: " << dim_theta 
+              << " Iterations: " << n_iterations.transpose() << std::endl;
+
+    for (int i = 0; i < n_guesses; i++)
+      myfile << n_iterations(i) << ", ";
+    myfile << n_iterations(n_guesses) << "\n";
   }
-
-  // Eigen::VectorXd phi_old(dim_phi);
-  // phi_old << 0.4, 0.9;
-  // lgp_dense_system<double> system_old(phi_old, n_samples, sums);
-  //
-  // Eigen::VectorXd theta_old
-  //   = lgp_dense_newton_solver(theta_0, system_old, tol, max_num_steps,
-  //                             false, false);
-  //
-  // theta = lgp_dense_newton_solver(theta_old, system, tol, max_num_steps,
-  //                                 false, true);
 }

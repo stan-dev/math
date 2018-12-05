@@ -229,60 +229,61 @@ namespace math {
    * reach convergence.
    * For large scale experiments, better than simply printing the
    * number of iterations.
+   * REMARK: cannot simply overload the function...
    */
-  // template<typename T>  // template for variables
-  // Eigen::Matrix<T, Eigen::Dynamic, 1> lgp_dense_newton_solver(
-  //     const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta_0,  // initial guess
-  //     const lgp_dense_system<double>& system,
-  //     int& iteration,
-  //     double tol = 1e-3,
-  //     long int max_num_steps = 100,
-  //     bool line_search = false) {
-  // 
-  //   Eigen::VectorXd theta_dbl = value_of(theta_0);
-  //   Eigen::MatrixXd gradient; 
-  //   Eigen::MatrixXd direction;
-  // 
-  //   for (int i = 0; i <= max_num_steps; i++) {
-  //     // check if the max number of steps has been reached
-  //     if (i == max_num_steps) {
-  //       std::ostringstream message;
-  //       message << "lgp_newton_solver: max number of iterations:"
-  //               << max_num_steps << " exceeded.";
-  //       throw boost::math::evaluation_error(message.str());
-  //     }
-  // 
-  //     gradient = system.cond_gradient(theta_dbl);
-  //     direction = - mdivide_left(system.cond_hessian(theta_dbl),
-  //                                gradient);
-  // 
-  //     if (line_search == false) {
-  //       theta_dbl += direction;
-  //     } else {
-  //       // do line search using Armijo's method (and tuning parameters from
-  //       // his paper).
-  //       double alpha = 1;  // max step size
-  //       double c = 0.5; 
-  //       double tau = 0.5;
-  //       double m = multiply(transpose(direction), gradient)(0);
-  //       Eigen::VectorXd theta_candidate = theta_dbl + alpha * direction;
-  // 
-  //       while (system.log_density(theta_candidate) 
-  //                > system.log_density(theta_dbl) + c * m) {
-  //         alpha = tau * alpha;
-  //         theta_candidate = theta_dbl + alpha * direction;
-  //       }
-  //       theta_dbl = theta_candidate;
-  //     }
-  // 
-  //     // Check solution is a root of the gradient
-  //     double gradient_norm = gradient.norm();
-  //     if (gradient_norm <= tol) iteration = i;
-  //     if (gradient_norm <= tol) break;
-  //   }
-  // 
-  //   return theta_dbl;
-  // }
+  template<typename T>  // template for variables
+  Eigen::Matrix<T, Eigen::Dynamic, 1> lgp_dense_newton_comp(
+      const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta_0,  // initial guess
+      const lgp_dense_system<double>& system,
+      int& iteration,
+      double tol = 1e-3,
+      long int max_num_steps = 100,
+      bool line_search = false) {
+
+    Eigen::VectorXd theta_dbl = value_of(theta_0);
+    Eigen::MatrixXd gradient;
+    Eigen::MatrixXd direction;
+
+    for (int i = 0; i <= max_num_steps; i++) {
+      // check if the max number of steps has been reached
+      if (i == max_num_steps) {
+        std::ostringstream message;
+        message << "lgp_newton_solver: max number of iterations:"
+                << max_num_steps << " exceeded.";
+        throw boost::math::evaluation_error(message.str());
+      }
+
+      gradient = system.cond_gradient(theta_dbl);
+      direction = - mdivide_left(system.cond_hessian(theta_dbl),
+                                 gradient);
+
+      if (line_search == false) {
+        theta_dbl += direction;
+      } else {
+        // do line search using Armijo's method (and tuning parameters from
+        // his paper).
+        double alpha = 1;  // max step size
+        double c = 0.5;
+        double tau = 0.5;
+        double m = multiply(transpose(direction), gradient)(0);
+        Eigen::VectorXd theta_candidate = theta_dbl + alpha * direction;
+
+        while (system.log_density(theta_candidate)
+                 > system.log_density(theta_dbl) + c * m) {
+          alpha = tau * alpha;
+          theta_candidate = theta_dbl + alpha * direction;
+        }
+        theta_dbl = theta_candidate;
+      }
+
+      // Check solution is a root of the gradient
+      double gradient_norm = gradient.norm();
+      if (gradient_norm <= tol) iteration = i;
+      if (gradient_norm <= tol) break;
+    }
+
+    return theta_dbl;
+  }
 
 }  // namespace math
 }  // namespace stan
