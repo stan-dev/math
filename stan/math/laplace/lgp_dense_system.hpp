@@ -96,6 +96,7 @@ struct lgp_dense_system {
   Eigen::VectorXd get_n_samples() const { return n_samples_; }
   Eigen::VectorXd get_sums() const { return sums_; }
   Eigen::MatrixXd get_Sigma() const { return Sigma_; }
+  bool get_space_matters() const { return space_matters_; }
 
   /**
   * An operator that returns the log conditional density, up to a
@@ -112,7 +113,7 @@ struct lgp_dense_system {
     }
 
   /**
-  * An operator that returns the gradient of the conditional density.
+  * An operator that returns the gradient of the log conditional density.
   */
   template <typename T1>
   Eigen::Matrix<typename stan::return_type<T0, T1>::type, 
@@ -123,7 +124,7 @@ struct lgp_dense_system {
   }
 
   /**
-  * An operator that returns the hessian of the conditional density.
+  * An operator that returns the hessian of the log conditional density.
   * Required for Newton solver.
   */
   template <typename T1>
