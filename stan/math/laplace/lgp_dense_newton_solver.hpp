@@ -171,12 +171,14 @@ namespace math {
     double tol = 1e-6,
     long int max_num_steps = 100,  // NOLINT(runtime/int)
     bool line_search = false,
-    bool print_iteration = false) {
+    bool print_iteration = false,
+    bool space_matters = false) {
 
     lgp_dense_system<double> 
       system_dbl(value_of(system.get_phi()),
                  system.get_n_samples(), 
-                 system.get_sums());
+                 system.get_sums(),
+                 space_matters);
 
     Eigen::VectorXd theta_dbl 
       = lgp_dense_newton_solver(value_of(theta_0), system_dbl, tol,
@@ -211,16 +213,19 @@ namespace math {
     double tol = 1e-6,
     long int max_num_steps = 100,  // NOLINT(runtime/int)
     int is_line_search = 0,
-    int print_iteration = 0) {
+    int print_iteration = 0,
+    int space_matters = 0) {
 
     return lgp_dense_newton_solver(theta_0,
                                    lgp_dense_system<T2>(phi,
                                                         to_vector(n_samples),
-                                                        to_vector(sums)),
+                                                        to_vector(sums),
+                                                        space_matters),
                                    tol,
                                    max_num_steps,
                                    is_line_search,
-                                   print_iteration);
+                                   print_iteration,
+                                   space_matters);
   }
 
   /**

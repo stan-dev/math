@@ -8,34 +8,6 @@
 #include <fstream>
 #include <vector>
 
-// functor for algebraic solver
-// struct lgp_functor {
-//   template <typename T0, typename T1>
-//   inline Eigen::Matrix<typename stan::return_type<T0, T1>::type,
-//                        Eigen::Dynamic, 1>
-//   operator ()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
-//             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
-//             const std::vector<double>& dat,
-//             const std::vector<int>& dat_int,
-//             std::ostream* pstream__) const {
-//     typedef typename stan::return_type<T0, T1>::type scalar;
-//     Eigen::Matrix<scalar, Eigen::Dynamic, 1> fgrad;
-//     int dim_theta = 2;
-//     
-//     Eigen::VectorXd n_samples(dim_theta);
-//     n_samples(0) = dat[0];
-//     n_samples(1) = dat[1];
-//     
-//     Eigen::VectorXd sums(dim_theta);
-//     sums(0) = dat[2];
-//     sums(1) = dat[3];
-//     
-//     return sums - stan::math::elt_multiply(n_samples,
-//                                            stan::math::exp(theta))
-//       - theta / (phi(0) * phi(0));
-//   }
-// };
-
 struct lgp_functor {
   template <typename T0, typename T1>
   inline Eigen::Matrix<typename stan::return_type<T0, T1>::type,
@@ -171,7 +143,7 @@ TEST(laplace, lgp_newton_solver) {
   EXPECT_FLOAT_EQ(powell_solution(0), theta_dbl(0));
   EXPECT_FLOAT_EQ(powell_solution(1), theta_dbl(1));
 
-  std::cout << theta_dbl << std::endl;
+  // std::cout << theta_dbl << std::endl;
 
   // Test lgp_dense_system computes the correct gradient
   Eigen::MatrixXd system_gradient = system.solver_gradient(powell_solution);
@@ -202,7 +174,7 @@ TEST(laplace, lgp_newton_solver) {
     EXPECT_FLOAT_EQ(solver_gradient(k, 0), g[0]);
     EXPECT_FLOAT_EQ(solver_gradient(k, 1), g[1]);
   }
-  
+
   // Test newton solver wrapper
   std::vector<int> n_samples_array(dim_theta);
   for (int i = 0; i < dim_theta; i++) n_samples_array[i] = n_samples(i);
@@ -228,5 +200,3 @@ TEST(laplace, lgp_newton_solver) {
     EXPECT_FLOAT_EQ(powell_solution[1], value_of(theta(1)));
   }
 }
-
-

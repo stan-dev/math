@@ -74,8 +74,9 @@ TEST(laplace, lgp_performance_dim2) {
 
 TEST(laplace, lgp_performance) {
   // Second test:
-  //  use spatial data with higher dimensions and correlation 0.9.
-  //  The data is generated in make_data_hd.r
+  //  use spatial data with higher dimensions.
+  //  The data is generated in make_data_hd.r,
+  //  with correlation 0.9 and phi = 1.0.
   //
   // NOTE: if phi = 0, solver does NOT converge. Makes sense if
   // we look at the math.
@@ -89,6 +90,7 @@ TEST(laplace, lgp_performance) {
   int dim_phi = 2;
   Eigen::VectorXd phi(dim_phi);
   phi << 0.5, 0.9;
+  bool space_matters = true;
   
   int n_dimensions = 5;
   Eigen::VectorXd dimensions(n_dimensions);
@@ -136,7 +138,7 @@ TEST(laplace, lgp_performance) {
     }
     input_data.close();
 
-    lgp_dense_system<double> system(phi, n_samples, sums);
+    lgp_dense_system<double> system(phi, n_samples, sums, space_matters);
 
     Eigen::VectorXd n_iterations(n_guesses + 1);
     int iteration = 0;
@@ -155,7 +157,8 @@ TEST(laplace, lgp_performance) {
     for (int i = 0; i < n_guesses; i++) {
       Eigen::VectorXd grid_point(dim_phi);
       grid_point << phi_grid(i), 0.9;
-      lgp_dense_system<double> system_grid(grid_point, n_samples, sums);
+      lgp_dense_system<double> system_grid(grid_point, n_samples, sums,
+                                           space_matters);
 
       Eigen::VectorXd theta_grid
         = lgp_dense_newton_solver(theta_0, system_grid, tol, max_num_steps,
