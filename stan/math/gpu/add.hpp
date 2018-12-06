@@ -36,6 +36,22 @@ inline matrix_gpu add(const matrix_gpu& A, const matrix_gpu& B) {
   }
   return C;
 }
+
+/**
+ * Matrix addition on the GPU
+ *
+ * @param A first matrix
+ * @param B second matrix
+ *
+ * @return sum of A and B
+ *
+ * @throw <code>std::invalid_argument</code> if the
+ * input matrices do not have matching dimensions
+ *
+ */
+inline auto operator+(const matrix_gpu& A, const matrix_gpu& B) {
+  return add(A, B);
+}
 }  // namespace math
 }  // namespace stan
 

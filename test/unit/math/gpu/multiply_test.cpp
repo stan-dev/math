@@ -18,7 +18,7 @@ TEST(MathMatrix, vector_row_vector) {
   stan::math::matrix_gpu v_gpu(v);
   stan::math::matrix_gpu rv_gpu(rv);
   stan::math::matrix_gpu m_gpu(1, 1);
-  EXPECT_NO_THROW(m_gpu = stan::math::multiply(rv_gpu, v_gpu));
+  EXPECT_NO_THROW(m_gpu = rv_gpu * v_gpu);
 }
 
 TEST(MathMatrix, one_dim_zero_matrix) {
@@ -27,13 +27,13 @@ TEST(MathMatrix, one_dim_zero_matrix) {
 
   stan::math::matrix_gpu m0_gpu(m0);
   stan::math::matrix_gpu m1_gpu(m1);
-  EXPECT_NO_THROW(stan::math::multiply(m0_gpu, m1_gpu));
+  EXPECT_NO_THROW(m0_gpu * m1_gpu);
 
-  EXPECT_NO_THROW(stan::math::multiply(m0_gpu, 2.0));
-  EXPECT_NO_THROW(stan::math::multiply(2.0, m0_gpu));
+  EXPECT_NO_THROW(m0_gpu * 2.0);
+  EXPECT_NO_THROW(2.0 * m0_gpu);
 
-  EXPECT_NO_THROW(stan::math::multiply(m1_gpu, 2.0));
-  EXPECT_NO_THROW(stan::math::multiply(2.0, m1_gpu));
+  EXPECT_NO_THROW(m1_gpu * 2.0);
+  EXPECT_NO_THROW(2.0 * m1_gpu);
 }
 
 TEST(MathMatrix, zero_result_matrix) {
@@ -42,7 +42,7 @@ TEST(MathMatrix, zero_result_matrix) {
 
   stan::math::matrix_gpu m0_gpu(m0);
   stan::math::matrix_gpu m1_gpu(m1);
-  EXPECT_NO_THROW(stan::math::multiply(m0_gpu, m1_gpu));
+  EXPECT_NO_THROW(m0_gpu * m1_gpu);
 }
 
 TEST(MathMatrix, zero_size_input_matrix) {
@@ -51,10 +51,10 @@ TEST(MathMatrix, zero_size_input_matrix) {
 
   stan::math::matrix_gpu m0_gpu(m0);
   stan::math::matrix_gpu m1_gpu(m1);
-  EXPECT_NO_THROW(stan::math::multiply(m0_gpu, m1_gpu));
+  EXPECT_NO_THROW(m0_gpu * m1_gpu);
 
-  EXPECT_NO_THROW(stan::math::multiply(m0_gpu, 2.0));
-  EXPECT_NO_THROW(stan::math::multiply(2.0, m0_gpu));
+  EXPECT_NO_THROW(m0_gpu * 2.0);
+  EXPECT_NO_THROW(2.0 * m0_gpu);
 }
 
 TEST(MathMatrix, non_matching_dim_excpetion) {
@@ -63,7 +63,7 @@ TEST(MathMatrix, non_matching_dim_excpetion) {
 
   stan::math::matrix_gpu m0_gpu(m0);
   stan::math::matrix_gpu m1_gpu(m1);
-  EXPECT_THROW(stan::math::multiply(m0_gpu, m1_gpu), std::invalid_argument);
+  EXPECT_THROW(m0_gpu * m1_gpu, std::invalid_argument);
 }
 
 TEST(MathMatrix, multiply_scalar) {
@@ -75,15 +75,15 @@ TEST(MathMatrix, multiply_scalar) {
   stan::math::matrix_d m_gpu_res(5, 5);
 
   stan::math::matrix_gpu v_gpu(v);
-  v_gpu = stan::math::multiply(v_gpu, 2.0);
+  v_gpu = v_gpu * 2.0;
   stan::math::copy(v_gpu_res, v_gpu);
 
   stan::math::matrix_gpu rv_gpu(rv);
-  rv_gpu = stan::math::multiply(rv_gpu, 2.0);
+  rv_gpu = rv_gpu * 2.0;
   stan::math::copy(rv_gpu_res, rv_gpu);
 
   stan::math::matrix_gpu m_gpu(m);
-  m_gpu = stan::math::multiply(m_gpu, 2.0);
+  m_gpu = m_gpu * 2.0;
   stan::math::copy(m_gpu_res, m_gpu);
 
   v = v * 2.0;
@@ -111,8 +111,8 @@ TEST(MathMatrix, row_vector_vector) {
   stan::math::matrix_gpu m0_gpu(1, 1);
   stan::math::matrix_gpu m1_gpu(5, 5);
 
-  m0_gpu = stan::math::multiply(rv_gpu, v_gpu);
-  m1_gpu = stan::math::multiply(v_gpu, rv_gpu);
+  m0_gpu = rv_gpu * v_gpu;
+  m1_gpu = v_gpu * rv_gpu;
   stan::math::copy(m0_gpu_res, m0_gpu);
   stan::math::copy(m1_gpu_res, m1_gpu);
 
@@ -131,7 +131,7 @@ TEST(AgradRevMatrix, multiply_small) {
 
   auto m3 = (m1 * m2).eval();
 
-  auto m33 = stan::math::multiply(m11, m22);
+  auto m33 = m11 * m22;
 
   stan::math::copy(m3_gpu_res, m33);
 
@@ -150,7 +150,7 @@ TEST(AgradRevMatrix, multiply_big) {
 
   auto m3 = (m1 * m2).eval();
 
-  auto m33 = stan::math::multiply(m11, m22);
+  auto m33 = m11 * m22;
 
   stan::math::copy(m3_gpu_res, m33);
 
