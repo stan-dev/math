@@ -96,21 +96,27 @@ map_rect_concurrent(
   };
 
   int num_threads = get_num_threads(num_jobs);
-  int num_jobs_per_thread = num_jobs / num_threads;
+  int small_job_size = num_jobs / num_threads;
   futures.emplace_back(
-      std::async(std::launch::deferred, execute_chunk, 0, num_jobs_per_thread));
+      std::async(std::launch::deferred, execute_chunk, 0, small_job_size));
 
 #ifdef STAN_THREADS
   if (num_threads > 1) {
-    const int num_big_threads
-        = (num_jobs - num_jobs_per_thread) % (num_threads - 1);
-    const int first_big_thread = num_threads - num_big_threads;
-    for (int i = 1, job_start = num_jobs_per_thread, job_size = 0;
-         i < num_threads; ++i, job_start += job_size) {
-      job_size = i >= first_big_thread ? num_jobs_per_thread + 1
-                                       : num_jobs_per_thread;
+    const int big_job_size = small_job_size + 1;
+    const int num_big_threads = num_threads - (num_jobs % num_threads); 
+    const int num_small_threads = num_threads - 1 - num_big_threads;
+    int job_start = small_job_size;
+    for (int i = 0; i < num_big_threads; ++i) {
       futures.emplace_back(
-          std::async(std::launch::async, execute_chunk, job_start, job_size));
+          std::async(std::launch::async, execute_chunk, job_start,
+	      big_job_size));
+      job_start += big_job_size;
+    }
+    for (int i = 0; i < num_small_threads; ++i) {
+      futures.emplace_back(
+          std::async(std::launch::async, execute_chunk, job_start,
+	      big_job_size));
+      job_start += small_job_size;
     }
   }
 #endif
