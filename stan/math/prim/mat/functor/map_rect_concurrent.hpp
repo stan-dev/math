@@ -103,19 +103,17 @@ map_rect_concurrent(
 #ifdef STAN_THREADS
   if (num_threads > 1) {
     const int big_job_size = small_job_size + 1;
-    const int num_big_threads = num_threads - (num_jobs % num_threads); 
+    const int num_big_threads = num_threads - (num_jobs % num_threads);
     const int num_small_threads = num_threads - 1 - num_big_threads;
     int job_start = small_job_size;
     for (int i = 0; i < num_big_threads; ++i) {
-      futures.emplace_back(
-          std::async(std::launch::async, execute_chunk, job_start,
-	      big_job_size));
+      futures.emplace_back(std::async(std::launch::async, execute_chunk,
+                                      job_start, big_job_size));
       job_start += big_job_size;
     }
     for (int i = 0; i < num_small_threads; ++i) {
-      futures.emplace_back(
-          std::async(std::launch::async, execute_chunk, job_start,
-	      big_job_size));
+      futures.emplace_back(std::async(std::launch::async, execute_chunk,
+                                      job_start, big_job_size));
       job_start += small_job_size;
     }
   }
