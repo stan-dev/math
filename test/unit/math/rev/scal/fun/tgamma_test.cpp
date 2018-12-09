@@ -6,12 +6,12 @@
 TEST(AgradRev, tgamma) {
   AVAR a = 3.5;
   AVAR f = stan::math::tgamma(a);
-  EXPECT_FLOAT_EQ(boost::math::tgamma(3.5), f.val());
+  EXPECT_FLOAT_EQ(stan::math::tgamma(3.5), f.val());
 
   AVEC x = createAVEC(a);
   VEC grad_f;
   f.grad(x, grad_f);
-  EXPECT_FLOAT_EQ(boost::math::digamma(3.5) * boost::math::tgamma(3.5),
+  EXPECT_FLOAT_EQ(boost::math::digamma(3.5) * stan::math::tgamma(3.5),
                   grad_f[0]);
 }
 

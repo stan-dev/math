@@ -6,7 +6,7 @@
 
 TEST(AgradFwdLgamma, Fvar) {
   using boost::math::digamma;
-  using boost::math::lgamma;
+  using stan::math::lgamma;
   using stan::math::fvar;
 
   fvar<double> x(0.5, 1.0);
@@ -18,7 +18,7 @@ TEST(AgradFwdLgamma, Fvar) {
 
 TEST(AgradFwdLgamma, FvarFvarDouble) {
   using boost::math::digamma;
-  using boost::math::lgamma;
+  using stan::math::lgamma;
   using stan::math::fvar;
 
   fvar<fvar<double> > x;
