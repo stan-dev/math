@@ -22,10 +22,10 @@ inline double acosh(double x) {
     return x;
   } else {
     check_greater_or_equal("acosh", "x", x, 1.0);
-    #ifdef _WIN32
-      if (is_inf(x))
-        return x;
-    #endif
+#ifdef _WIN32
+    if (is_inf(x))
+      return x;
+#endif
     return std::acosh(x);
   }
 }
@@ -42,10 +42,10 @@ inline double acosh(int x) {
     return x;
   } else {
     check_greater_or_equal("acosh", "x", x, 1);
-    #ifdef _WIN32
-      if (is_inf(x))
-        return x;
-    #endif
+#ifdef _WIN32
+    if (is_inf(x))
+      return x;
+#endif
     return std::acosh(x);
   }
 }
