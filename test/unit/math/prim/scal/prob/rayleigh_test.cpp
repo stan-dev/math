@@ -16,7 +16,7 @@ TEST(ProbDistributionsRayleigh, error_check) {
 TEST(ProbDistributionsRayleigh, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 10000;
-  int K = boost::math::round(2 * std::pow(N, 0.4));
+  int K = stan::math::round(2 * std::pow(N, 0.4));
 
   std::vector<double> samples;
   for (int i = 0; i < N; ++i) {

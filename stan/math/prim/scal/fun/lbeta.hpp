@@ -2,7 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LBETA_HPP
 
 #include <boost/math/tools/promotion.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
+
+#include <boost/math/special_functions/gamma.hpp>
 
 namespace stan {
 namespace math {
@@ -56,7 +57,7 @@ namespace math {
 template <typename T1, typename T2>
 inline typename boost::math::tools::promote_args<T1, T2>::type lbeta(
     const T1 a, const T2 b) {
-  using stan::math::lgamma;
+  using boost::math::lgamma;
   return lgamma(a) + lgamma(b) - lgamma(a + b);
 }
 

@@ -3,7 +3,7 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdTrunc, Fvar) {
-  using boost::math::trunc;
+  using stan::math::trunc;
   using stan::math::fvar;
 
   fvar<double> x(0.5, 1.0);

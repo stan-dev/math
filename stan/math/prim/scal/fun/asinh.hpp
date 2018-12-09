@@ -1,9 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_ASINH_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_ASINH_HPP
 
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/prim/scal/meta/likely.hpp>
 #include <cmath>
 
 namespace stan {
@@ -18,12 +15,7 @@ namespace math {
  * @param[in] x Argument.
  * @return Inverse hyperbolic sine of the argument.
  */
-inline double asinh(double x) {
-  if (unlikely(is_nan(x)))
-    return x;
-  else
-    return std::asinh(x);
-}
+inline double asinh(double x) { return std::asinh(x); }
 
 /**
  * Integer version of asinh.
@@ -31,7 +23,7 @@ inline double asinh(double x) {
  * @param[in] x Argument.
  * @return Inverse hyperbolic sine of the argument.
  */
-inline double asinh(int x) { return asinh(static_cast<double>(x)); }
+inline double asinh(int x) { return std::asinh(x); }
 
 }  // namespace math
 }  // namespace stan

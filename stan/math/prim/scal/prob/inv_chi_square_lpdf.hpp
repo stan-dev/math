@@ -14,7 +14,6 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
@@ -72,7 +71,7 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lpdf(const T_y& y,
       return LOG_ZERO;
 
   using boost::math::digamma;
-  using stan::math::lgamma;
+  using boost::math::lgamma;
   using std::log;
 
   VectorBuilder<include_summand<propto, T_y, T_dof>::value, T_partials_return,

@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <boost/math/tools/promotion.hpp>
-#include <cmath>
 #include <limits>
 
 namespace stan {
@@ -27,7 +26,7 @@ inline typename boost::math::tools::promote_args<T1, T2>::type fdim(T1 x,
   using std::numeric_limits;
   if (is_nan(x) || is_nan(y))
     return numeric_limits<return_t>::quiet_NaN();
-  return std::fdim(x, y);
+  return (x <= y) ? 0 : x - y;
 }
 
 }  // namespace math

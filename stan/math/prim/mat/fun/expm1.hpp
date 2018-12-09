@@ -16,7 +16,6 @@ namespace math {
 struct expm1_fun {
   template <typename T>
   static inline T fun(const T& x) {
-    using stan::math::expm1;
     return expm1(x);
   }
 };

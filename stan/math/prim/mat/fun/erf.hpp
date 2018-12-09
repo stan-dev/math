@@ -17,7 +17,6 @@ namespace math {
 struct erf_fun {
   template <typename T>
   static inline T fun(const T& x) {
-    using stan::math::erf;
     return erf(x);
   }
 };

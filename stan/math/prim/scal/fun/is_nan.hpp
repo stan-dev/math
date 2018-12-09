@@ -7,12 +7,12 @@ namespace stan {
 namespace math {
 
 /**
- * Returns 1 if the input is NaN and 0 otherwise.
+ * Returns true if the input is NaN and false otherwise.
  *
  * Delegates to <code>std::isnan</code>.
  *
  * @param x Value to test.
- * @return <code>1</code> if the value is NaN.
+ * @return <code>true</code> if the value is NaN.
  */
 inline bool is_nan(double x) { return std::isnan(x); }
 

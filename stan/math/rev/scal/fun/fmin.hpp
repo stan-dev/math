@@ -80,8 +80,7 @@ inline var fmin(const var& a, const var& b) {
  * value, the first variable, otherwise the second value promoted to a fresh
  * variable.
  */
-template <typename Tb>
-inline var fmin(const var& a, const Tb& b) {
+inline var fmin(const var& a, double b) {
   if (unlikely(is_nan(a))) {
     if (unlikely(is_nan(b)))
       return var(new precomp_v_vari(NOT_A_NUMBER, a.vi_, NOT_A_NUMBER));
@@ -106,8 +105,7 @@ inline var fmin(const var& a, const Tb& b) {
  * return the first value promoted to a variable, otherwise return the
  * second variable.
  */
-template <typename Ta>
-inline var fmin(const Ta& a, const var& b) {
+inline var fmin(double a, const var& b) {
   if (unlikely(is_nan(b))) {
     if (unlikely(is_nan(a)))
       return var(new precomp_v_vari(NOT_A_NUMBER, b.vi_, NOT_A_NUMBER));

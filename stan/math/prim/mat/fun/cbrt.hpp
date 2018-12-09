@@ -16,7 +16,6 @@ namespace math {
 struct cbrt_fun {
   template <typename T>
   static inline T fun(const T& x) {
-    using stan::math::cbrt;
     return cbrt(x);
   }
 };

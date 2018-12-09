@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LDEXP_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LDEXP_HPP
 
-#include <cmath>
+#include <stan/math/prim/scal/fun/exp2.hpp>
 
 namespace stan {
 namespace math {
@@ -17,11 +17,7 @@ namespace math {
  */
 template <typename T>
 inline T ldexp(const T& a, int b) {
-  return std::ldexp(a, b);
-}
-
-inline double ldexp(int a, int b) {
-  return std::ldexp(static_cast<double>(a), b);
+  return a * exp2(b);
 }
 }  // namespace math
 }  // namespace stan

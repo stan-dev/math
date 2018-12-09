@@ -57,8 +57,7 @@ inline var hypot(const var& a, const var& b) {
  * @param[in] b Length of second side.
  * @return Length of hypoteneuse.
  */
-template <typename Tb>
-inline var hypot(const var& a, const Tb& b) {
+inline var hypot(const var& a, double b) {
   return var(new hypot_vd_vari(a.vi_, b));
 }
 
@@ -101,8 +100,7 @@ inline var hypot(const var& a, const Tb& b) {
  * @param[in] b Length of second side.
  * @return Length of hypoteneuse.
  */
-template <typename Ta>
-inline var hypot(const Ta& a, const var& b) {
+inline var hypot(double a, const var& b) {
   return var(new hypot_vd_vari(b.vi_, a));
 }
 

@@ -7,12 +7,12 @@ namespace stan {
 namespace math {
 
 /**
- * Returns 1 if the input is infinite and 0 otherwise.
+ * Returns true if the input is infinite and false otherwise.
  *
  * Delegates to <code>std::isinf</code>.
  *
  * @param x Value to test.
- * @return <code>1</code> if the value is infinite.
+ * @return <code>true</code> if the value is infinite.
  */
 inline bool is_inf(double x) { return std::isinf(x); }
 

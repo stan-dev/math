@@ -1,11 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
 
-#include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/is_inf.hpp>
-#include <stan/math/prim/scal/meta/likely.hpp>
-#include <cmath>
+#include <stan/math/prim/scal/fun/boost_policy.hpp>
+#include <boost/math/special_functions/gamma.hpp>
 
 namespace stan {
 namespace math {
@@ -37,7 +34,7 @@ namespace math {
 * argument
 */
 inline double lgamma(double x) {
-  return x == 0 ? NOT_A_NUMBER : std::lgamma(x);
+  return boost::math::lgamma(x, boost_policy_t());
 }
 
 /**
@@ -48,7 +45,7 @@ inline double lgamma(double x) {
  * @return natural logarithm of the gamma function applied to
  * argument
  */
-inline double lgamma(int x) { return lgamma(static_cast<double>(x)); }
+inline double lgamma(int x) { return boost::math::lgamma(x, boost_policy_t()); }
 
 }  // namespace math
 }  // namespace stan

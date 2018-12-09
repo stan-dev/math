@@ -5,7 +5,7 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdTrunc, FvarVar_1stDeriv) {
-  using boost::math::trunc;
+  using stan::math::trunc;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -21,7 +21,7 @@ TEST(AgradFwdTrunc, FvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(0, g[0]);
 }
 TEST(AgradFwdTrunc, FvarVar_2ndDeriv) {
-  using boost::math::trunc;
+  using stan::math::trunc;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -35,7 +35,7 @@ TEST(AgradFwdTrunc, FvarVar_2ndDeriv) {
 }
 
 TEST(AgradFwdTrunc, FvarFvarVar_1stDeriv) {
-  using boost::math::trunc;
+  using stan::math::trunc;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -71,7 +71,7 @@ TEST(AgradFwdTrunc, FvarFvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(0, r[0]);
 }
 TEST(AgradFwdTrunc, FvarFvarVar_2ndDeriv) {
-  using boost::math::trunc;
+  using stan::math::trunc;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -98,7 +98,7 @@ TEST(AgradFwdTrunc, FvarFvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, r[0]);
 }
 TEST(AgradFwdTrunc, FvarFvarVar_3rdDeriv) {
-  using boost::math::trunc;
+  using stan::math::trunc;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -115,7 +115,7 @@ TEST(AgradFwdTrunc, FvarFvarVar_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, g[0]);
 }
 TEST(AgradFwdTrunc, FvarFvarDouble) {
-  using boost::math::trunc;
+  using stan::math::trunc;
   using stan::math::fvar;
 
   fvar<fvar<double> > x;

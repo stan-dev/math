@@ -4,7 +4,7 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdRound, Fvar) {
-  using boost::math::round;
+  using stan::math::round;
   using stan::math::fvar;
 
   fvar<double> x(0.5, 1.0);
@@ -30,7 +30,7 @@ TEST(AgradFwdRound, Fvar) {
 }
 
 TEST(AgradFwdRound, FvarFvarDouble) {
-  using boost::math::round;
+  using stan::math::round;
   using stan::math::fvar;
 
   fvar<fvar<double> > x;

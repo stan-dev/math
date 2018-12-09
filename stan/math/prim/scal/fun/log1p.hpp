@@ -1,11 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOG1P_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOG1P_HPP
 
-#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <limits>
-#include <cmath>
+#include <stan/math/prim/scal/fun/boost_policy.hpp>
+#include <boost/math/special_functions/log1p.hpp>
 
 namespace stan {
 namespace math {
@@ -26,10 +23,7 @@ namespace math {
  * @throw std::domain_error If argument is less than -1.
  */
 inline double log1p(double x) {
-  if (is_nan(x))
-    return NOT_A_NUMBER;
-  check_greater_or_equal("log1p", "x", x, -1.0);
-  return std::log1p(x);
+  return boost::math::log1p(x, boost_policy_t());
 }
 
 /**

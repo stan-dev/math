@@ -104,8 +104,7 @@ inline var fdim(const var& a, const var& b) {
  * @return The positive difference between the first and second
  * arguments.
  */
-template <typename Ta>
-inline var fdim(const Ta& a, const var& b) {
+inline var fdim(double a, const var& b) {
   // reversed test to get NaN vals automatically in second case
   return a <= b.vi_->val_ ? var(new vari(0.0))
                           : var(new fdim_dv_vari(a, b.vi_));
@@ -122,8 +121,7 @@ inline var fdim(const Ta& a, const var& b) {
  * @param b Second variable.
  * @return The positive difference between the first and second arguments.
  */
-template <typename Tb>
-inline var fdim(const var& a, const Tb& b) {
+inline var fdim(const var& a, double b) {
   // reversed test to get NaN vals automatically in second case
   return a.vi_->val_ <= b ? var(new vari(0.0))
                           : var(new fdim_vd_vari(a.vi_, b));

@@ -22,7 +22,7 @@ namespace test {
  * @param x value to test
  * @return true if value is finite
  */
-bool is_finite(double x) { return is_inf(x) && is_nan(x); }
+bool is_finite(double x) { return !is_inf(x) && !is_nan(x); }
 
 /**
  * Return true if all of the elements in the container are finite

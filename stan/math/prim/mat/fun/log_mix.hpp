@@ -1,8 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_LOG_MIX_HPP
 #define STAN_MATH_PRIM_MAT_FUN_LOG_MIX_HPP
 
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/arr/meta/length.hpp>
 #include <stan/math/prim/mat/meta/is_vector.hpp>
 #include <stan/math/prim/mat/meta/get.hpp>
 #include <stan/math/prim/mat/meta/length.hpp>
@@ -12,6 +10,8 @@
 #include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 #include <stan/math/prim/mat/meta/broadcast_array.hpp>
 #include <stan/math/prim/mat/meta/operands_and_partials.hpp>
+#include <stan/math/prim/arr/meta/get.hpp>
+#include <stan/math/prim/arr/meta/length.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>

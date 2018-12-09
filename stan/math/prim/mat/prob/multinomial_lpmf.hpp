@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTINOMIAL_LPMF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTINOMIAL_LPMF_HPP
 
+#include <boost/math/special_functions/gamma.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/mat/err/check_simplex.hpp>
@@ -9,7 +10,6 @@
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <vector>
 
@@ -23,8 +23,8 @@ typename boost::math::tools::promote_args<T_prob>::type multinomial_lpmf(
     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   static const char* function = "multinomial_lpmf";
 
+  using boost::math::lgamma;
   using boost::math::tools::promote_args;
-  using stan::math::lgamma;
 
   typename promote_args<T_prob>::type lp(0.0);
   check_nonnegative(function, "Number of trials variable", ns);

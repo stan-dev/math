@@ -22,7 +22,7 @@ inline double expm1(double x) { return std::expm1(x); }
  * @param[in] x Argument.
  * @return Natural exponentiation of argument minus one.
  */
-inline double expm1(int x) { return expm1(static_cast<double>(x)); }
+inline double expm1(int x) { return std::expm1(x); }
 
 }  // namespace math
 }  // namespace stan

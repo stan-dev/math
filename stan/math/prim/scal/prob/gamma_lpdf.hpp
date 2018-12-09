@@ -16,7 +16,6 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
@@ -87,7 +86,7 @@ typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lpdf(
   operands_and_partials<T_y, T_shape, T_inv_scale> ops_partials(y, alpha, beta);
 
   using boost::math::digamma;
-  using stan::math::lgamma;
+  using boost::math::lgamma;
   using std::log;
 
   VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,

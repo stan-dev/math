@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_EXP2_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_EXP2_HPP
 
+#include <boost/math/tools/promotion.hpp>
 #include <cmath>
 
 namespace stan {
@@ -17,7 +18,10 @@ namespace math {
  * @param y argument.
  * @return exponent base 2 of argument.
  */
-inline double exp2(double y) { return std::exp2(y); }
+inline double exp2(double y) {
+  using std::pow;
+  return pow(2.0, y);
+}
 
 /**
  * Return the exponent base 2 of the specified argument (C99,

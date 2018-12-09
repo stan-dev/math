@@ -78,8 +78,8 @@ TEST(MathMatrix, squared_distance_special_values) {
 
   v1 << 0;
   v2 << std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(boost::math::isinf(stan::math::squared_distance(v1, v2)));
-  EXPECT_TRUE(boost::math::isinf(stan::math::squared_distance(v2, v1)));
+  EXPECT_TRUE(stan::math::is_inf(stan::math::squared_distance(v1, v2)));
+  EXPECT_TRUE(stan::math::is_inf(stan::math::squared_distance(v2, v1)));
 
   v1 << std::numeric_limits<double>::infinity();
   v2 << std::numeric_limits<double>::infinity();
@@ -88,6 +88,6 @@ TEST(MathMatrix, squared_distance_special_values) {
 
   v1 << -std::numeric_limits<double>::infinity();
   v2 << std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(boost::math::isinf(stan::math::squared_distance(v1, v2)));
-  EXPECT_TRUE(boost::math::isinf(stan::math::squared_distance(v2, v1)));
+  EXPECT_TRUE(stan::math::is_inf(stan::math::squared_distance(v1, v2)));
+  EXPECT_TRUE(stan::math::is_inf(stan::math::squared_distance(v2, v1)));
 }

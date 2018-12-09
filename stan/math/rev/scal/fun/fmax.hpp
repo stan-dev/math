@@ -84,8 +84,7 @@ inline var fmax(const var& a, const var& b) {
  * to the second value, the first variable, otherwise the second
  * value promoted to a fresh variable.
  */
-template <typename Tb>
-inline var fmax(const var& a, const Tb& b) {
+inline var fmax(const var& a, double b) {
   if (unlikely(is_nan(a))) {
     if (unlikely(is_nan(b)))
       return var(new precomp_v_vari(NOT_A_NUMBER, a.vi_, NOT_A_NUMBER));
@@ -110,8 +109,7 @@ inline var fmax(const var& a, const Tb& b) {
  * return the first value promoted to a variable, otherwise return the
  * second variable.
  */
-template <typename Ta>
-inline var fmax(const Ta& a, const var& b) {
+inline var fmax(double a, const var& b) {
   if (unlikely(is_nan(b))) {
     if (unlikely(is_nan(a)))
       return var(new precomp_v_vari(NOT_A_NUMBER, b.vi_, NOT_A_NUMBER));
