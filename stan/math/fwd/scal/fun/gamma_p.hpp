@@ -60,7 +60,7 @@ inline fvar<T> gamma_p(double x1, const fvar<T> &x2) {
   if (is_inf(x1))
     return fvar<T>(u, std::numeric_limits<double>::quiet_NaN());
 
-  T der2 = exp(-x2.val_ + (x1 - 1.0) * log(x2.val_) - stan::math::lgamma(x1));
+  T der2 = exp(-x2.val_ + (x1 - 1.0) * log(x2.val_) - lgamma(x1));
 
   return fvar<T>(u, x2.d_ * der2);
 }
