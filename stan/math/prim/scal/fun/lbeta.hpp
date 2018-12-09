@@ -2,8 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LBETA_HPP
 
 #include <boost/math/tools/promotion.hpp>
-
-#include <boost/math/special_functions/gamma.hpp>
+#include <stan/math/prim/scal/fun/lgamma.hpp>
 
 namespace stan {
 namespace math {
@@ -21,7 +20,7 @@ namespace math {
  * \f$\log \mbox{B}(a, b) = \log \Gamma(a) + \log \Gamma(b) - \log
  \Gamma(a+b)\f$.
  *
- * See boost::math::lgamma() for the double-based and stan::math for the
+ * See stan::math::lgamma() for the double-based and stan::math for the
  * variable-based log Gamma function.
  *
  *
@@ -57,7 +56,6 @@ namespace math {
 template <typename T1, typename T2>
 inline typename boost::math::tools::promote_args<T1, T2>::type lbeta(
     const T1 a, const T2 b) {
-  using boost::math::lgamma;
   return lgamma(a) + lgamma(b) - lgamma(a + b);
 }
 
