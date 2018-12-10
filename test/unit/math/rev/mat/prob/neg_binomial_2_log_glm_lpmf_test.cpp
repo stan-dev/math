@@ -346,7 +346,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
   }
   Eigen::Matrix<int, -1, 1> yw1(W, 1);
   for (int n = 0; n < W; n++) {
-    yw1[n] = Eigen::Matrix<unsigned int, -1, 1>::Random(1, 1)[0] % 200);
+    yw1[n] = Eigen::Matrix<unsigned int, -1, 1>::Random(1, 1)[0] % 200;
   }
   Eigen::Matrix<int, -1, 1> yw2(N, 1);
   for (int n = 0; n < N; n++) {
