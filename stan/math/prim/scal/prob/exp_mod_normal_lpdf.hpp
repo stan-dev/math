@@ -9,6 +9,7 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/erfc.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
@@ -49,7 +50,6 @@ exp_mod_normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
   if (!include_summand<propto, T_y, T_loc, T_scale, T_inv_scale>::value)
     return 0.0;
 
-  using boost::math::erfc;
   using std::exp;
   using std::log;
   using std::sqrt;
