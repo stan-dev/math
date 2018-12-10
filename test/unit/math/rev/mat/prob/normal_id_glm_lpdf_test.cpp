@@ -34,7 +34,7 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles_rand) {
   for (size_t ii = 0; ii < 200; ii++) {
     Matrix<int, Dynamic, 1> y(3, 1);
     for (size_t i = 0; i < 3; i++) {
-      y[i] = abs(Matrix<int, 1, 1>::Random(1, 1)[0] % 200);
+      y[i] = Matrix<unsigned int, 1, 1>::Random(1, 1)[0] % 200;
     }
     Matrix<double, Dynamic, Dynamic> x
         = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
