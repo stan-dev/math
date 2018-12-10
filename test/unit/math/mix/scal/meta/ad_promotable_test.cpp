@@ -12,12 +12,12 @@ TEST(MathMeta, primitive_to_mix) {
   EXPECT_TRUE(
       (stan::math::ad_promotable<unsigned char,
                                  stan::math::fvar<stan::math::var>>::value));
-  // NOLINTNEXTLINE(runtime/int)
   EXPECT_TRUE(
+      // NOLINTNEXTLINE(runtime/int)
       (stan::math::ad_promotable<short,
                                  stan::math::fvar<stan::math::var>>::value));
-  // NOLINTNEXTLINE(runtime/int)
   EXPECT_TRUE(
+      // NOLINTNEXTLINE(runtime/int)
       (stan::math::ad_promotable<unsigned short,
                                  stan::math::fvar<stan::math::var>>::value));
   EXPECT_TRUE(
@@ -26,20 +26,20 @@ TEST(MathMeta, primitive_to_mix) {
   EXPECT_TRUE(
       (stan::math::ad_promotable<unsigned int,
                                  stan::math::fvar<stan::math::var>>::value));
-  // NOLINTNEXTLINE(runtime/int)
   EXPECT_TRUE(
+      // NOLINTNEXTLINE(runtime/int)
       (stan::math::ad_promotable<long,
                                  stan::math::fvar<stan::math::var>>::value));
-  // NOLINTNEXTLINE(runtime/int)
   EXPECT_TRUE(
+      // NOLINTNEXTLINE(runtime/int)
       (stan::math::ad_promotable<unsigned long,
                                  stan::math::fvar<stan::math::var>>::value));
-  // NOLINTNEXTLINE(runtime/int)
   EXPECT_TRUE(
+      // NOLINTNEXTLINE(runtime/int)
       (stan::math::ad_promotable<long long,
                                  stan::math::fvar<stan::math::var>>::value));
-  // NOLINTNEXTLINE(runtime/int)
   EXPECT_TRUE(
+      // NOLINTNEXTLINE(runtime/int)
       (stan::math::ad_promotable<unsigned long long,
                                  stan::math::fvar<stan::math::var>>::value));
   EXPECT_TRUE(
