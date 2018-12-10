@@ -13,7 +13,7 @@ namespace math {
  * type. All variables are promotable to themselves, and all
  * primitive arithmetic types are promotable to double.
  *
- * <p>It will delcare an enum <code>value</code> equal to
+ * <p>It will declare an enum <code>value</code> equal to
  * <code>false</code>.
  *
  * @tparam V promoted type
