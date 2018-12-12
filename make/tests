@@ -67,7 +67,7 @@ else
 endif
 
 %.hpp-test : %.hpp test/dummy.cpp
-	$(COMPILE.cpp) -O0 -include $^ -o $(DEV_NULL)
+	$(COMPILE.cpp) $(CXXFLAGS) -O0 -include $^ -o $(DEV_NULL)
 
 test/dummy.cpp:
 	@mkdir -p test
