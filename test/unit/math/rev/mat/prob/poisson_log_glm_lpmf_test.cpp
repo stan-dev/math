@@ -312,7 +312,7 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_error_checking) {
   }
   Eigen::Matrix<int, -1, 1> yw2(N, 1);
   for (int n = 0; n < N; n++) {
-    yw2[n] = -Eigen::Matrix<unsigned int, -1, 1>::Random(1, 1)[0] % 200;
+    yw2[n] = -(Eigen::Matrix<unsigned int, -1, 1>::Random(1, 1)[0] % 200);
   }
   Eigen::Matrix<double, -1, -1> x = Eigen::Matrix<double, -1, -1>::Random(N, M);
   Eigen::Matrix<double, -1, -1> xw1
