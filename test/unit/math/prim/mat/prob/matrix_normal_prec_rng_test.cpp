@@ -120,7 +120,7 @@ TEST(ProbDistributionsMatrixNormalPrecRng, ErrorSize) {
   MatrixXd D(3, 3);
   MatrixXd DWrong(4, 4);
   D << 1.0, 0.5, 0.1, 0.5, 1.0, 0.2, 0.1, 0.2, 1.0;
-  SigmaWrong << 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1;
+  DWrong << 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1;
 
   EXPECT_THROW(matrix_normal_prec_rng(Mu, D, SigmaWrong, rng),
                std::invalid_argument);
