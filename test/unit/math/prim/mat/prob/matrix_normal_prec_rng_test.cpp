@@ -58,8 +58,7 @@ TEST(ProbDistributionsMatrixNormalPrecRng, ErrorSigma) {
 
   // non square
   MatrixXd rect_Sigma(2, 3);
-  rect_Sigma << 1, 0, 0,
-                0, 1, 0;
+  rect_Sigma << 1, 0, 0, 0, 1, 0;
   EXPECT_THROW(matrix_normal_prec_rng(Mu, D, rect_Sigma, rng),
                std::invalid_argument);
 }
@@ -111,8 +110,7 @@ TEST(ProbDistributionsMatrixNormalPrecRng, ErrorD) {
 
   // non square
   MatrixXd rect_D(2, 3);
-  rect_D << 1, 0, 0,
-            0, 1, 0;
+  rect_D << 1, 0, 0, 0, 1, 0;
   EXPECT_THROW(matrix_normal_prec_rng(Mu, rect_D, Sigma, rng),
                std::invalid_argument);
 }
@@ -127,18 +125,12 @@ TEST(ProbDistributionsMatrixNormalPrecRng, ErrorSize) {
   MatrixXd SigmaWrong(4, 4);
   Sigma << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0,
       1.0, 0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
-  SigmaWrong << 1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1;
+  SigmaWrong << 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1;
 
   MatrixXd D(3, 3);
   MatrixXd DWrong(4, 4);
   D << 1.0, 0.5, 0.1, 0.5, 1.0, 0.2, 0.1, 0.2, 1.0;
-  DWrong << 1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1;
+  SigmaWrong << 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1;
 
   EXPECT_THROW(matrix_normal_prec_rng(Mu, D, SigmaWrong, rng),
                std::invalid_argument);

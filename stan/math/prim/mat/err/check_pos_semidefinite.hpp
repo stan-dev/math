@@ -57,7 +57,6 @@ inline void check_pos_semidefinite(
  * @param name Variable name (for error messages)
  * @param cholesky Eigen::LDLT to test, whose progenitor matrix must
  * not have any NaN elements.
- * @throw <code>std::invalid_argument</code> if the matrix has 0 size.
  * @throw <code>std::domain_error</code> if the matrix is not positive
  *   semi-definite.
  */
@@ -67,11 +66,8 @@ inline void check_pos_semidefinite(
     const Eigen::LDLT<Derived>& cholesky) {
   // From the Eigen::LDLT we cannot check for NaNs in the original
   // matrix, nor can we test for symmetry. Eigen::LDLT assumes the
-  // matrix is symmetric and uses only half of it.
-  // We also cannot check if that matrix was size 0. Eigen::LDLT on a
-  // size zero matrix can give a segfault, although this error
-  // behavior does not seem to be documented. So it is on the caller
-  // to handle this case.
+  // matrix is symmetric and uses only half of it. Checking for size 0
+  // or non-square matrices is also on the caller.
   if (cholesky.info() != Eigen::Success
       || (cholesky.vectorD().array() < 0.0).any())
     domain_error(function, name, "is not positive semi-definite.", "");

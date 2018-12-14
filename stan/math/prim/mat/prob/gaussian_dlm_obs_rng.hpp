@@ -24,9 +24,6 @@ namespace internal {
  * Return a multivariate normal random variate with the given location
  * and covariance using the specified random number generator.
  *
- * mu can be either an Eigen::VectorXd, an Eigen::RowVectorXd, or a
- * std::vector of either of those types.
- *
  * @tparam RNG Type of pseudo-random number generator
  * @param mu location parameter
  * @param S_ldlt Eigen::LDLT of covariance matrix, semidefinite is okay

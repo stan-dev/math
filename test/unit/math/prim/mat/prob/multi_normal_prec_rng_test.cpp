@@ -56,8 +56,7 @@ TEST(ProbDistributionsMultiNormalPrec, Sigma) {
   Matrix<double, Dynamic, 1> mu(2);
   mu << 1.0, -1.0;
   Matrix<double, Dynamic, Dynamic> Sigma(2, 2);
-  Sigma << 9.0, -3.0,
-           -3.0, 4.0;
+  Sigma << 9.0, -3.0, -3.0, 4.0;
   EXPECT_NO_THROW(stan::math::multi_normal_prec_rng(mu, Sigma, rng));
 
   // non-symmetric
@@ -74,8 +73,7 @@ TEST(ProbDistributionsMultiNormalPrec, Sigma) {
 
   // not square
   Matrix<double, Dynamic, Dynamic> rect_Sigma(2, 3);
-  rect_Sigma << 1, 0, 0,
-                0, 1, 0;
+  rect_Sigma << 1, 0, 0, 0, 1, 0;
   EXPECT_THROW(stan::math::multi_normal_prec_rng(mu, rect_Sigma, rng),
                std::invalid_argument);
 
