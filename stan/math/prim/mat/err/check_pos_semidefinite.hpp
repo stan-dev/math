@@ -61,9 +61,8 @@ inline void check_pos_semidefinite(
  *   semi-definite.
  */
 template <typename Derived>
-inline void check_pos_semidefinite(
-    const char* function, const char* name,
-    const Eigen::LDLT<Derived>& cholesky) {
+inline void check_pos_semidefinite(const char* function, const char* name,
+                                   const Eigen::LDLT<Derived>& cholesky) {
   // From the Eigen::LDLT we cannot check for NaNs in the original
   // matrix, nor can we test for symmetry. Eigen::LDLT assumes the
   // matrix is symmetric and uses only half of it. Checking for size 0

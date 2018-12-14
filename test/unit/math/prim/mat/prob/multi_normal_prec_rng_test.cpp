@@ -155,7 +155,7 @@ TEST(ProbDistributionsMultiNormalPrec, marginalOneChiSquareGoodnessFitTest) {
 
   Eigen::VectorXd a(mu[0].rows());
   std::vector<double> samples;
-  for (int count=0; count < N; ++count) {
+  for (int count = 0; count < N; ++count) {
     a = stan::math::multi_normal_prec_rng(mu, L, rng)[0];
     samples.push_back(a(0));
   }
@@ -186,7 +186,7 @@ TEST(ProbDistributionsMultiNormalPrec, marginalTwoChiSquareGoodnessFitTest) {
 
   Eigen::VectorXd a(mu[0].rows());
   std::vector<double> samples;
-  for (int count=0; count < N; ++count) {
+  for (int count = 0; count < N; ++count) {
     a = stan::math::multi_normal_prec_rng(mu, L, rng)[1];
     samples.push_back(a(1));
   }
@@ -212,7 +212,7 @@ TEST(ProbDistributionsMultiNormalPrec, marginalThreeChiSquareGoodnessFitTest) {
 
   Eigen::VectorXd a(mu.rows());
   std::vector<double> samples;
-  for (int count=0; count < N; ++count) {
+  for (int count = 0; count < N; ++count) {
     a = stan::math::multi_normal_prec_rng(mu, L, rng);
     samples.push_back(a(2));
   }

@@ -31,9 +31,7 @@ namespace math {
  */
 template <typename T_loc, class RNG>
 inline typename StdVectorBuilder<true, Eigen::VectorXd, T_loc>::type
-multi_normal_prec_rng(const T_loc& mu,
-                      const Eigen::MatrixXd& S,
-                      RNG& rng) {
+multi_normal_prec_rng(const T_loc& mu, const Eigen::MatrixXd& S, RNG& rng) {
   using boost::normal_distribution;
   using boost::variate_generator;
 
@@ -44,9 +42,7 @@ multi_normal_prec_rng(const T_loc& mu,
   check_symmetric(function, "Precision matrix", S);
 
   Eigen::LLT<Eigen::MatrixXd> llt_of_S = S.llt();
-  check_pos_definite(function,
-                     "precision matrix argument",
-                     llt_of_S);
+  check_pos_definite(function, "precision matrix argument", llt_of_S);
 
   vector_seq_view<T_loc> mu_vec(mu);
   size_t size_mu = mu_vec[0].size();
@@ -69,8 +65,8 @@ multi_normal_prec_rng(const T_loc& mu,
     check_finite(function, "Location parameter", mu_vec[i]);
   }
 
-  check_size_match(function, "Rows of location parameter", size_mu,
-                   "Rows of S", S.rows());
+  check_size_match(function, "Rows of location parameter", size_mu, "Rows of S",
+                   S.rows());
 
   StdVectorBuilder<true, Eigen::VectorXd, T_loc> output(N);
 

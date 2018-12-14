@@ -31,27 +31,23 @@ namespace internal {
  *
  */
 template <class RNG>
-inline Eigen::VectorXd
-multi_normal_semidefinite_rng(const Eigen::VectorXd& mu,
-                              const Eigen::LDLT<Eigen::MatrixXd>& S_ldlt,
-                              RNG& rng) {
+inline Eigen::VectorXd multi_normal_semidefinite_rng(
+    const Eigen::VectorXd& mu, const Eigen::LDLT<Eigen::MatrixXd>& S_ldlt,
+    RNG& rng) {
   using boost::normal_distribution;
   using boost::variate_generator;
 
   variate_generator<RNG&, normal_distribution<> > std_normal_rng(
       rng, normal_distribution<>(0, 1));
 
-  Eigen::VectorXd stddev =
-    S_ldlt.vectorD().array().sqrt().matrix();
+  Eigen::VectorXd stddev = S_ldlt.vectorD().array().sqrt().matrix();
   size_t M = S_ldlt.vectorD().size();
   Eigen::VectorXd z(M);
   for (int i = 0; i < M; i++)
     z(i) = stddev(i) * std_normal_rng();
 
-  Eigen::VectorXd Y =
-    mu +
-    (S_ldlt.transpositionsP().transpose() *
-      (S_ldlt.matrixL() * z));
+  Eigen::VectorXd Y
+      = mu + (S_ldlt.transpositionsP().transpose() * (S_ldlt.matrixL() * z));
   // The inner paranthesis matter, transpositionsP() gives a
   // permutation matrix from pivoting and matrixL() gives a lower
   // triangular matrix. The types cannot be directly multiplied.
@@ -88,17 +84,14 @@ multi_normal_semidefinite_rng(const Eigen::VectorXd& mu,
  * wrong or any input is NaN or non-finite, or if T is not positive.
  *
  */
-template<class RNG>
-inline Eigen::MatrixXd
-gaussian_dlm_obs_rng(
-    const Eigen::MatrixXd& F,
-    const Eigen::MatrixXd& G,
-    const Eigen::MatrixXd& V,
-    const Eigen::MatrixXd& W,
-    const Eigen::VectorXd& m0,
-    const Eigen::MatrixXd& C0,
-    const int T,
-    RNG& rng) {
+template <class RNG>
+inline Eigen::MatrixXd gaussian_dlm_obs_rng(const Eigen::MatrixXd& F,
+                                            const Eigen::MatrixXd& G,
+                                            const Eigen::MatrixXd& V,
+                                            const Eigen::MatrixXd& W,
+                                            const Eigen::VectorXd& m0,
+                                            const Eigen::MatrixXd& C0,
+                                            const int T, RNG& rng) {
   static const char* function = "gaussian_dlm_obs_rng";
 
   int r = F.cols();  // number of variables
@@ -139,8 +132,8 @@ gaussian_dlm_obs_rng(
   check_pos_semidefinite(function, "C0", C0_ldlt);
 
   Eigen::MatrixXd y(r, T);
-  Eigen::VectorXd theta_t =
-    internal::multi_normal_semidefinite_rng(m0, C0_ldlt, rng);
+  Eigen::VectorXd theta_t
+      = internal::multi_normal_semidefinite_rng(m0, C0_ldlt, rng);
   for (int t = 0; t < T; ++t) {
     y.col(t) = internal::multi_normal_semidefinite_rng(
         Eigen::VectorXd(F.transpose() * theta_t), V_ldlt, rng);
@@ -152,17 +145,12 @@ gaussian_dlm_obs_rng(
 
 template <class RNG>
 inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>
-gaussian_dlm_obs_rng(
-    const Eigen::MatrixXd& F,
-    const Eigen::MatrixXd& G,
-    const Eigen::VectorXd& V,
-    const Eigen::MatrixXd& W,
-    const Eigen::VectorXd& m0,
-    const Eigen::MatrixXd& C0,
-    const int T,
-    RNG& rng) {
-  return gaussian_dlm_obs_rng(
-      F, G, Eigen::MatrixXd(V.asDiagonal()), W, m0, C0, T, rng);
+gaussian_dlm_obs_rng(const Eigen::MatrixXd& F, const Eigen::MatrixXd& G,
+                     const Eigen::VectorXd& V, const Eigen::MatrixXd& W,
+                     const Eigen::VectorXd& m0, const Eigen::MatrixXd& C0,
+                     const int T, RNG& rng) {
+  return gaussian_dlm_obs_rng(F, G, Eigen::MatrixXd(V.asDiagonal()), W, m0, C0,
+                              T, rng);
 }
 
 }  // namespace math

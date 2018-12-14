@@ -303,32 +303,25 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, OutputCorrect) {
   double sigma2_vyy = 0.3;
   Matrix<double, Dynamic, Dynamic> C0_(n, n);
   C0_ <<
-    // x, y, t, vx,         vy,         1
-       0, 0, 0, 0,          0,          0,  // x
-       0, 0, 0, 0,          0,          0,  // y
-       0, 0, 0, 0,          0,          0,  // t
-       0, 0, 0, sigma2_vxx, sigma2_vxy, 0,  // vx
-       0, 0, 0, sigma2_vxy, sigma2_vyy, 0,  // vy
-       0, 0, 0, 0,          0,          0;  // 1
+      // x, y, t, vx,         vy,         1
+      0,
+      0, 0, 0, 0, 0,                       // x
+      0, 0, 0, 0, 0, 0,                    // y
+      0, 0, 0, 0, 0, 0,                    // t
+      0, 0, 0, sigma2_vxx, sigma2_vxy, 0,  // vx
+      0, 0, 0, sigma2_vxy, sigma2_vyy, 0,  // vy
+      0, 0, 0, 0, 0, 0;                    // 1
 
   // We observe just the position.
   Matrix<double, Dynamic, Dynamic> FF_(n, r);
-  FF_ <<
-    1, 0,
-    0, 1,
-    0, 0,
-    0, 0,
-    0, 0,
-    0, 0;
+  FF_ << 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0;
 
   // We observe the position with noise.
   double sigma2_obs_xx = 0.3;
   double sigma2_obs_xy = 0.1;
   double sigma2_obs_yy = 0.2;
   Matrix<double, Dynamic, Dynamic> V_(r, r);
-  V_ <<
-    sigma2_obs_xx, sigma2_obs_xy,
-    sigma2_obs_xy, sigma2_obs_yy;
+  V_ << sigma2_obs_xx, sigma2_obs_xy, sigma2_obs_xy, sigma2_obs_yy;
 
   // State transition
   // From physics:
@@ -347,40 +340,42 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, OutputCorrect) {
   // So in general, x ~ t ~ y.
   Matrix<double, Dynamic, Dynamic> GG_(n, n);
   GG_ <<
-    // x,  y, t, vx, vy, 1
-       1,  0, 0,  1,  0, 0,  // x
-       0,  1, 0,  0,  1, 0,  // y
-       0,  0, 1,  0,  0, 1,  // t
-      -1,  0, 1, -1,  0, 2,  // vx
-       0, -1, 1,  0, -1, 2,  // vx
-       0,  0, 0,  0,  0, 1;  // 1
+      // x,  y, t, vx, vy, 1
+      1,
+      0, 0, 1, 0, 0,       // x
+      0, 1, 0, 0, 1, 0,    // y
+      0, 0, 1, 0, 0, 1,    // t
+      -1, 0, 1, -1, 0, 2,  // vx
+      0, -1, 1, 0, -1, 2,  // vx
+      0, 0, 0, 0, 0, 1;    // 1
 
   // State transition noise.
   Matrix<double, Dynamic, Dynamic> W_(n, n);
   W_ <<
-    // x, y, t,  vx,         vy,         1
-       0, 0, 0,  0,          0,          0,  // x
-       0, 0, 0,  0,          0,          0,  // y
-       0, 0, 0,  0,          0,          0,  // t
-       0, 0, 0,  sigma2_vxx, sigma2_vxy, 0,  // vx
-       0, 0, 0,  sigma2_vxy, sigma2_vyy, 0,  // vy
-       0, 0, 0,  0,          0,          0;  // 1
+      // x, y, t,  vx,         vy,         1
+      0,
+      0, 0, 0, 0, 0,                       // x
+      0, 0, 0, 0, 0, 0,                    // y
+      0, 0, 0, 0, 0, 0,                    // t
+      0, 0, 0, sigma2_vxx, sigma2_vxy, 0,  // vx
+      0, 0, 0, sigma2_vxy, sigma2_vyy, 0,  // vy
+      0, 0, 0, 0, 0, 0;                    // 1
 
   // The Gaussian DLM process is stable by construction. So we can run
   // it for a while.
   unsigned int T_ = 100;
 
-  Matrix<double, Dynamic, Dynamic> y_ =
-    gaussian_dlm_obs_rng(FF_, GG_, V_, W_, m0_, C0_, T_, rng);
+  Matrix<double, Dynamic, Dynamic> y_
+      = gaussian_dlm_obs_rng(FF_, GG_, V_, W_, m0_, C0_, T_, rng);
 
   assert(y_.rows() == r && r == 2 && y_.cols() == T_);
 
   double sum_squared_errors = 0;
-  for (int t=0; t < T_; ++t) {
+  for (int t = 0; t < T_; ++t) {
     double observed_x_at_t = y_(0, t);
     double observed_y_at_t = y_(1, t);
-    sum_squared_errors +=
-      pow(observed_x_at_t - t, 2) + pow(observed_y_at_t - t, 2);
+    sum_squared_errors
+        += pow(observed_x_at_t - t, 2) + pow(observed_y_at_t - t, 2);
   }
 
   // x[0] = 0
@@ -403,8 +398,8 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, OutputCorrect) {
   // E[sum_squared_errors] ~=
   //    T * (sigma2_vxx + sigma2_vyy + sigma2_obs_xx + sigma2_obs_yy)
 
-  const double expected_sse = T_ * (sigma2_vxx + sigma2_vyy +
-                                    sigma2_obs_xx + sigma2_obs_yy);
+  const double expected_sse
+      = T_ * (sigma2_vxx + sigma2_vyy + sigma2_obs_xx + sigma2_obs_yy);
   // expected_sse ~ 100.
 
   const double tolerance = 5;
@@ -430,48 +425,43 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng,
   double sigma2_v = 1;
   Matrix<double, Dynamic, Dynamic> C0_(n, n);
   C0_ <<
-    // x, y, t, vx,       vy, 1
-       0, 0, 0, 0,        0,  0,  // x
-       0, 0, 0, 0,        0,  0,  // y
-       0, 0, 0, 0,        0,  0,  // t
-       0, 0, 0, sigma2_v, 0,  0,  // vx
-       0, 0, 0, 0,        0,  0,  // vy
-       0, 0, 0, 0,        0,  0;  // 1
+      // x, y, t, vx,       vy, 1
+      0,
+      0, 0, 0, 0, 0,            // x
+      0, 0, 0, 0, 0, 0,         // y
+      0, 0, 0, 0, 0, 0,         // t
+      0, 0, 0, sigma2_v, 0, 0,  // vx
+      0, 0, 0, 0, 0, 0,         // vy
+      0, 0, 0, 0, 0, 0;         // 1
 
   Matrix<double, Dynamic, Dynamic> FF_(n, r);
-  FF_ <<
-    1, 0,
-    0, 1,
-    0, 0,
-    0, 0,
-    0, 0,
-    0, 0;
+  FF_ << 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0;
 
   double sigma2_obs = sigma2_v;
   Matrix<double, Dynamic, Dynamic> V_(r, r);
-  V_ <<
-    0, 0,
-    0, sigma2_obs;
+  V_ << 0, 0, 0, sigma2_obs;
 
   Matrix<double, Dynamic, Dynamic> GG_(n, n);
   GG_ <<
-    // x,  y, t, vx, vy, 1
-       1,  0, 0,  1,  0, 0,  // x
-       0,  1, 0,  0,  1, 0,  // y
-       0,  0, 1,  0,  0, 1,  // t
-      -1,  0, 1, -1,  0, 2,  // vx
-       0, -1, 1,  0, -1, 2,  // vx
-       0,  0, 0,  0,  0, 1;  // 1
+      // x,  y, t, vx, vy, 1
+      1,
+      0, 0, 1, 0, 0,       // x
+      0, 1, 0, 0, 1, 0,    // y
+      0, 0, 1, 0, 0, 1,    // t
+      -1, 0, 1, -1, 0, 2,  // vx
+      0, -1, 1, 0, -1, 2,  // vx
+      0, 0, 0, 0, 0, 1;    // 1
 
   Matrix<double, Dynamic, Dynamic> W_(n, n);
   W_ <<
-    // x, y, t,  vx,       vy, 1
-       0, 0, 0,  0,        0,  0,  // x
-       0, 0, 0,  0,        0,  0,  // y
-       0, 0, 0,  0,        0,  0,  // t
-       0, 0, 0,  sigma2_v, 0,  0,  // vx
-       0, 0, 0,  0,        0,  0,  // vy
-       0, 0, 0,  0,        0,  0;  // 1
+      // x, y, t,  vx,       vy, 1
+      0,
+      0, 0, 0, 0, 0,            // x
+      0, 0, 0, 0, 0, 0,         // y
+      0, 0, 0, 0, 0, 0,         // t
+      0, 0, 0, sigma2_v, 0, 0,  // vx
+      0, 0, 0, 0, 0, 0,         // vy
+      0, 0, 0, 0, 0, 0;         // 1
 
   // We are sampling 10000 times, so T needs to be a bit small.
   unsigned int T_ = 10;
@@ -497,18 +487,18 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng,
   quantiles.push_back(std::numeric_limits<double>::max());
 
   std::vector<double> samples;
-  for (int count=0; count < N; ++count) {
-    Matrix<double, Dynamic, Dynamic> y_ =
-      gaussian_dlm_obs_rng(FF_, GG_, V_, W_, m0_, C0_, T_, rng);
+  for (int count = 0; count < N; ++count) {
+    Matrix<double, Dynamic, Dynamic> y_
+        = gaussian_dlm_obs_rng(FF_, GG_, V_, W_, m0_, C0_, T_, rng);
 
     assert(y_.rows() == r && r == 2 && y_.cols() == T_);
 
     double sum_squared_errors = 0;
-    for (int t=0; t < T_; ++t) {
+    for (int t = 0; t < T_; ++t) {
       double observed_x_at_t = y_(0, t);
       double observed_y_at_t = y_(1, t);
-      sum_squared_errors +=
-        pow(observed_x_at_t - t, 2) + pow(observed_y_at_t - t, 2);
+      sum_squared_errors
+          += pow(observed_x_at_t - t, 2) + pow(observed_y_at_t - t, 2);
     }
 
     samples.push_back(sum_squared_errors);

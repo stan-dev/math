@@ -24,8 +24,7 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefinite_size_1) {
   EXPECT_NO_THROW(check_pos_semidefinite(function, "y", y));
 
   y << -1.0;
-  EXPECT_THROW_MSG(check_pos_semidefinite(function, "y", y),
-                   std::domain_error,
+  EXPECT_THROW_MSG(check_pos_semidefinite(function, "y", y), std::domain_error,
                    "function: y is not positive semi-definite.");
 }
 
@@ -57,8 +56,7 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefinite) {
   EXPECT_NO_THROW(check_pos_semidefinite(function, "y", y));
 
   y << -1, 0, 0, 1;
-  EXPECT_THROW_MSG(check_pos_semidefinite(function, "y", y),
-                   std::domain_error,
+  EXPECT_THROW_MSG(check_pos_semidefinite(function, "y", y), std::domain_error,
                    "function: y is not positive semi-definite.");
 }
 
@@ -134,8 +132,8 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefiniteLDLT) {
 }
 
 TEST_F(ErrorHandlingMatrix, checkPosSemidefiniteLDLT_nan_undetected) {
-  using stan::math::check_pos_semidefinite;
   using stan::math::check_not_nan;
+  using stan::math::check_pos_semidefinite;
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   y.resize(3, 3);
@@ -148,8 +146,6 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefiniteLDLT_nan_undetected) {
   y(0, 2) = nan;
   y_ldlt.compute(y);
   EXPECT_NO_THROW(check_pos_semidefinite(function, "y", y_ldlt));
-  EXPECT_NO_THROW(check_not_nan(function,
-                                "y",
-                                Eigen::MatrixXd(y_ldlt.matrixL())));
+  EXPECT_NO_THROW(
+      check_not_nan(function, "y", Eigen::MatrixXd(y_ldlt.matrixL())));
 }
-

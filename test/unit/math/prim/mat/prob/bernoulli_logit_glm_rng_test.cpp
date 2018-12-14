@@ -18,8 +18,7 @@ TEST(ProbDistributionsBernoulliLogitGlm, NotVectorized) {
 TEST(ProbDistributionsBernoulliLogitGlm, Vectorized) {
   boost::random::mt19937 rng;
   Eigen::MatrixXd x(2, 2);
-  x << 3.5, -1.5,
-       4.0, 1.2;
+  x << 3.5, -1.5, 4.0, 1.2;
   std::vector<double> alpha{2.0, 1.0};
   std::vector<double> beta{2.0, 4.5};
   EXPECT_NO_THROW(stan::math::bernoulli_logit_glm_rng(x, alpha, beta, rng));
@@ -64,8 +63,7 @@ TEST(ProbDistributionsPoissonLogGLM,
 TEST(ProbDistributionsBernoulliLogitGlm, marginalChiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   Eigen::MatrixXd x(2, 2);
-  x << 3.5, -1.5,
-       2.0, -1.2;
+  x << 3.5, -1.5, 2.0, -1.2;
   std::vector<double> alpha{2.0, 1.0};
   std::vector<double> beta{2.0, 4.5};
 
@@ -100,8 +98,8 @@ TEST(ProbDistributionsBernoulliLogitGlm, marginalChiSquareGoodnessFitTest) {
   std::vector<double> samples1;
   std::vector<double> samples2;
   for (int i = 0; i < N; ++i) {
-    std::vector<int> sample =
-      stan::math::bernoulli_logit_glm_rng(x, alpha, beta, rng);
+    std::vector<int> sample
+        = stan::math::bernoulli_logit_glm_rng(x, alpha, beta, rng);
     samples1.push_back(sample[0]);
     samples2.push_back(sample[1]);
   }

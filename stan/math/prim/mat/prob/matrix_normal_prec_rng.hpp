@@ -31,12 +31,10 @@ namespace math {
  * @tparam RNG Type of pseudo-random number generator.
  */
 template <class RNG>
-inline Eigen::MatrixXd
-matrix_normal_prec_rng(
-    const Eigen::MatrixXd& Mu,
-    const Eigen::MatrixXd& Sigma,
-    const Eigen::MatrixXd& D,
-    RNG& rng) {
+inline Eigen::MatrixXd matrix_normal_prec_rng(const Eigen::MatrixXd& Mu,
+                                              const Eigen::MatrixXd& Sigma,
+                                              const Eigen::MatrixXd& D,
+                                              RNG& rng) {
   using boost::normal_distribution;
   using boost::variate_generator;
 
@@ -88,18 +86,18 @@ matrix_normal_prec_rng(
   int m = Sigma.rows();
   int n = D.rows();
 
-  variate_generator<RNG&, normal_distribution<> >
-    std_normal_rng(rng, normal_distribution<>(0, 1));
+  variate_generator<RNG&, normal_distribution<> > std_normal_rng(
+      rng, normal_distribution<>(0, 1));
 
   // X = sqrt[DS]^(-1) C sqrt[DD]^(-1)
   // X ~ N[0, DS, DD]
   Eigen::MatrixXd X(m, n);
-  Eigen::VectorXd row_stddev =
-    Sigma_ldlt.vectorD().array().inverse().sqrt().matrix();
-  Eigen::VectorXd col_stddev =
-    D_ldlt.vectorD().array().inverse().sqrt().matrix();
-  for (int row=0; row < m; ++row) {
-    for (int col=0; col < n; ++col) {
+  Eigen::VectorXd row_stddev
+      = Sigma_ldlt.vectorD().array().inverse().sqrt().matrix();
+  Eigen::VectorXd col_stddev
+      = D_ldlt.vectorD().array().inverse().sqrt().matrix();
+  for (int row = 0; row < m; ++row) {
+    for (int col = 0; col < n; ++col) {
       double stddev = row_stddev(row) * col_stddev(col);
       // C(row, col) = std_normal_rng();
       X(row, col) = stddev * std_normal_rng();
@@ -112,12 +110,12 @@ matrix_normal_prec_rng(
   // Y' = (LD^(-1)^T (LS^T.solve(X))^T)^T
   // Y' = (LD^T.solve((LS^T.solve(X))^T))^T
   // Y = Mu + PS^T Y' PD
-  Eigen::MatrixXd Y = Mu +
-    (Sigma_ldlt.transpositionsP().transpose()
-     * (D_ldlt.matrixU().solve(
-          (Sigma_ldlt.matrixU().solve(
-             X)).transpose())).transpose()
-     * D_ldlt.transpositionsP());
+  Eigen::MatrixXd Y = Mu
+                      + (Sigma_ldlt.transpositionsP().transpose()
+                         * (D_ldlt.matrixU().solve(
+                                (Sigma_ldlt.matrixU().solve(X)).transpose()))
+                               .transpose()
+                         * D_ldlt.transpositionsP());
 
   return Y;
 }

@@ -31,29 +31,24 @@ TEST(ProbDistributionsMatrixNormalPrecRng, ErrorSigma) {
 
   // non-symmetric
   Sigma(0, 1) = -2.5;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng),
-               std::domain_error);
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng), std::domain_error);
   Sigma(0, 1) = Sigma(1, 0);
 
   // non-spd
   Sigma(0, 0) = -3.0;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng),
-               std::domain_error);
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng), std::domain_error);
   Sigma(0, 0) = 9.0;
 
   // NaN
   Sigma(0, 0) = nan;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng),
-               std::domain_error);
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng), std::domain_error);
   Sigma(0, 0) = 9.0;
 
   // inf
   Sigma(0, 0) = inf;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng),
-               std::domain_error);
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng), std::domain_error);
   Sigma(0, 0) = ninf;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng),
-               std::domain_error);
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng), std::domain_error);
   Sigma(0, 0) = 9.0;
 
   // non square
@@ -83,29 +78,24 @@ TEST(ProbDistributionsMatrixNormalPrecRng, ErrorD) {
 
   // non-symmetric
   D(0, 1) = -2.5;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng),
-               std::domain_error);
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng), std::domain_error);
   D(0, 1) = Sigma(1, 0);
 
   // non-spd
   D(0, 0) = -3.0;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng),
-               std::domain_error);
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng), std::domain_error);
   D(0, 0) = 1.0;
 
   // NaN
   D(0, 0) = nan;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng),
-               std::domain_error);
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng), std::domain_error);
   D(0, 0) = 1.0;
 
   // inf
   D(0, 0) = inf;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng),
-               std::domain_error);
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng), std::domain_error);
   D(0, 0) = ninf;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng),
-               std::domain_error);
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng), std::domain_error);
   D(0, 0) = 1.0;
 
   // non square
@@ -142,10 +132,9 @@ TEST(ProbDistributionsMatrixNormalPrecRng, ErrorSize) {
  * Assert that the samples come from the normal distribution with this
  * mean and variance.
  */
-void assert_matches_normal_distribution(
-      const double mean,
-      const double variance,
-      const std::vector<double>& samples) {
+void assert_matches_normal_distribution(const double mean,
+                                        const double variance,
+                                        const std::vector<double>& samples) {
   int N = samples.size();
   int K = boost::math::round(2 * std::pow(N, 0.4));
   boost::math::normal_distribution<> dist(mean, sqrt(variance));
@@ -156,10 +145,8 @@ void assert_matches_normal_distribution(
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }
 
-std::vector<double> extract_entry(
-      const unsigned int r,
-      const unsigned int c,
-      const std::vector<MatrixXd>& samples) {
+std::vector<double> extract_entry(const unsigned int r, const unsigned int c,
+                                  const std::vector<MatrixXd>& samples) {
   std::vector<double> univariate_samples;
   for (auto sample : samples)
     univariate_samples.push_back(sample(r, c));
@@ -167,37 +154,26 @@ std::vector<double> extract_entry(
 }
 
 std::vector<double> extract_sum_of_entries(
-      const unsigned int r1,
-      const unsigned int c1,
-      const unsigned int r2,
-      const unsigned int c2,
-      const std::vector<MatrixXd>& samples) {
+    const unsigned int r1, const unsigned int c1, const unsigned int r2,
+    const unsigned int c2, const std::vector<MatrixXd>& samples) {
   std::vector<double> univariate_samples;
   for (auto sample : samples)
     univariate_samples.push_back(sample(r1, c1) + sample(r2, c2));
   return univariate_samples;
 }
 
-TEST(ProbDistributionsMatrixNormalPrecRng,
-     marginalChiSquareGoodnessFitTest) {
+TEST(ProbDistributionsMatrixNormalPrecRng, marginalChiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
 
   MatrixXd Mu(2, 3);
-  Mu <<
-    1, 2, 3,
-    4, 5, 6;
+  Mu << 1, 2, 3, 4, 5, 6;
 
   MatrixXd Sigma_cov(2, 2);
-  Sigma_cov <<
-    2, 1,
-    1, 3;
+  Sigma_cov << 2, 1, 1, 3;
   MatrixXd Sigma = Sigma_cov.inverse();
 
   MatrixXd D_cov(3, 3);
-  D_cov <<
-    4, 1, 2,
-    1, 5, 3,
-    2, 3, 6;
+  D_cov << 4, 1, 2, 1, 5, 3, 2, 3, 6;
   MatrixXd D = D_cov.inverse();
 
   // Kronecker product D_cov times Sigma_cov.
@@ -222,7 +198,7 @@ TEST(ProbDistributionsMatrixNormalPrecRng,
   int N = 10000;
 
   std::vector<MatrixXd> samples;
-  for (int count=0; count < N; ++count) {
+  for (int count = 0; count < N; ++count) {
     MatrixXd Y = matrix_normal_prec_rng(Mu, Sigma, D, rng);
     samples.push_back(Y);
   }
@@ -238,10 +214,7 @@ TEST(ProbDistributionsMatrixNormalPrecRng,
       // E[X + X2] = E[X] + E[X2].
       1 + 6,
       // var[X + X2] = var[X] + var[X2] + 2cov[X, X2].
-      8 + 18 + 2*2,
-      extract_sum_of_entries(0, 0, 1, 2, samples));
+      8 + 18 + 2 * 2, extract_sum_of_entries(0, 0, 1, 2, samples));
   assert_matches_normal_distribution(
-      2 + 4,
-      10 + 12 + 2*1,
-      extract_sum_of_entries(0, 1, 1, 0, samples));
+      2 + 4, 10 + 12 + 2 * 1, extract_sum_of_entries(0, 1, 1, 0, samples));
 }
