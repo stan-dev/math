@@ -40,6 +40,7 @@ multi_normal_prec_rng(const T_loc& mu,
   static const char* function = "multi_normal_prec_rng";
 
   check_positive(function, "Precision matrix rows", S.rows());
+  check_finite(function, "Precision matrix", S);
   check_symmetric(function, "Precision matrix", S);
 
   Eigen::LLT<Eigen::MatrixXd> llt_of_S = S.llt();
@@ -67,6 +68,9 @@ multi_normal_prec_rng(const T_loc& mu,
   for (size_t i = 0; i < N; i++) {
     check_finite(function, "Location parameter", mu_vec[i]);
   }
+
+  check_size_match(function, "Rows of location parameter", size_mu,
+                   "Rows of S", S.rows());
 
   StdVectorBuilder<true, Eigen::VectorXd, T_loc> output(N);
 
