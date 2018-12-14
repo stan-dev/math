@@ -90,12 +90,12 @@ TEST(ProbDistributionsBernoulliLogitGlm, marginalChiSquareGoodnessFitTest) {
   int N = 10000;
 
   // First bin is failures, second is successes. Take N samples, take
-  // their first component. Should be (1 - p1) * 100%
-  // failures. Likewise for the failures bin, and the second
-  // component.
-  std::vector<double> percentile_cutpoints{0.1, 1.1};
-  std::vector<double> ps1{(1 - p1), p1};
-  std::vector<double> ps2{(1 - p2), p2};
+  // their first component. Should be (1 - p1) * N failures in the
+  // first bin, or thereabouts. Now take their second
+  // component. Should be (1 - p2) * N failures in the first bin.
+  std::vector<double> bin_boundaries{0.1, 1.1};
+  std::vector<double> proportions1{(1 - p1), p1};
+  std::vector<double> proportions2{(1 - p2), p2};
 
   std::vector<double> samples1;
   std::vector<double> samples2;
@@ -106,6 +106,6 @@ TEST(ProbDistributionsBernoulliLogitGlm, marginalChiSquareGoodnessFitTest) {
     samples2.push_back(sample[1]);
   }
 
-  assert_matches_cutpoints(samples1, percentile_cutpoints, ps1, 1e-6);
-  assert_matches_cutpoints(samples2, percentile_cutpoints, ps2, 1e-6);
+  assert_matches_bins(samples1, bin_boundaries, proportions1, 1e-6);
+  assert_matches_bins(samples2, bin_boundaries, proportions2, 1e-6);
 }
