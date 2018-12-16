@@ -9,15 +9,16 @@
 #define STAN_THREADS
 #endif
 
-#include <stan/math/prim/mat.hpp>
+#include <stdlib.h>
+
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 #include <test/unit/math/prim/mat/functor/hard_work.hpp>
 
 #include <iostream>
 #include <vector>
 #include <string>
-#include <stdlib.h>
 
 // utility to set number of threads to use
 void set_n_threads(std::size_t num_threads) {

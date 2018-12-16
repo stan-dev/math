@@ -3,6 +3,9 @@
 
 #include <gtest/gtest.h>
 
+#include <string>
+#include <vector>
+
 struct for_each : public ::testing::Test {
   const int N = 11;
   std::vector<int> store;
