@@ -6,14 +6,9 @@
 
 #include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
 #include <stan/math/prim/mat/functor/map_rect_combine.hpp>
-#include <stan/math/prim/scal/err/invalid_argument.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/iterator/counting_iterator.hpp>
 
 #include <vector>
-#include <thread>
-#include <future>
-#include <cstdlib>
 
 namespace stan {
 namespace math {
