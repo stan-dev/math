@@ -85,19 +85,16 @@ UnaryFunction for_each_impl(InputIt first, InputIt last, UnaryFunction f,
   for (std::size_t i = 0; i < num_big_jobs; ++i)
     ++job_chunk_size[num_threads - i - 1];
 
-  auto execute_chunk = [&](InputIt start, InputIt end) -> void {
-    std::for_each(start, end, f);
-  };
-
   std::vector<std::future<void> > job_futures;
 
   InputIt cur_job_start = first;
   for (std::size_t i = 0; i < num_threads; ++i) {
     InputIt cur_job_end = cur_job_start;
     std::advance(cur_job_end, job_chunk_size[i]);
-    job_futures.emplace_back(
-        std::async(i == 0 ? std::launch::deferred : std::launch::async,
-                   execute_chunk, cur_job_start, cur_job_end));
+    job_futures.emplace_back(std::async(
+        i == 0 ? std::launch::deferred : std::launch::async, [=]() -> void {
+          std::for_each<InputIt, UnaryFunction>(cur_job_start, cur_job_end, f);
+        }));
     cur_job_start = cur_job_end;
   }
 
