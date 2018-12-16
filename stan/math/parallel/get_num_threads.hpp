@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 namespace internal {
 /**
- * Get number of threads to to use. The function uses the environment
+ * Get number of threads to use. The function uses the environment
  * variable STAN_NUM_THREADS and follows these conventions:
  *
  * - STAN_NUM_THREADS is not defined => num_threads=1
