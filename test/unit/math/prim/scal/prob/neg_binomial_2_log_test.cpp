@@ -63,7 +63,7 @@ TEST(ProbDistributionsNegBinomial, error_check) {
 TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 1000;
-  int K = boost::math::round(2 * std::pow(N, 0.4));
+  int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::negative_binomial_distribution<> dist(1.1,
                                                      1.1 / (1.1 + exp(2.4)));
   boost::math::chi_squared mydist(K - 1);
@@ -101,7 +101,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest) {
 TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest2) {
   boost::random::mt19937 rng;
   int N = 1000;
-  int K = boost::math::round(2 * std::pow(N, 0.4));
+  int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::negative_binomial_distribution<> dist(0.6,
                                                      0.6 / (0.6 + exp(2.4)));
   boost::math::chi_squared mydist(K - 1);
@@ -139,7 +139,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest2) {
 TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest3) {
   boost::random::mt19937 rng;
   int N = 1000;
-  int K = boost::math::round(2 * std::pow(N, 0.4));
+  int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::negative_binomial_distribution<> dist(121,
                                                      121 / (121 + exp(2.4)));
   boost::math::chi_squared mydist(K - 1);

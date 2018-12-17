@@ -1,0 +1,235 @@
+# Detect operating system, set default compiler, and detect compiler type
+# The defaults are configured for the compilers we test:
+# https://github.com/stan-dev/stan/wiki/Supported-C---Compilers-and-Language-Features
+
+## Detect operating system
+ifneq ($(OS),Windows_NT)
+  OS := $(shell uname -s)
+endif
+
+## Set default compiler
+ifeq (default,$(origin CXX))
+  ifeq ($(OS),Darwin)  ## Darwin is Mac OS X
+    CXX := clang++
+  endif
+  ifeq ($(OS),Linux)
+    CXX := g++
+  endif
+  ifeq ($(OS),Windows_NT)
+    CXX := g++
+  endif
+endif
+
+# Detect compiler type
+# - CXX_TYPE: {gcc, clang, mingw32-gcc, other}
+# - CXX_MAJOR: major version of CXX
+# - CXX_MINOR: minor version of CXX
+ifneq (,$(findstring clang,$(CXX)))
+  CXX_TYPE ?= clang
+endif
+ifneq (,$(findstring mingw32-g,$(CXX)))
+  CXX_TYPE ?= mingw32-gcc
+endif
+ifneq (,$(findstring gcc,$(CXX)))
+  CXX_TYPE ?= gcc
+endif
+ifneq (,$(findstring g++,$(CXX)))
+  CXX_TYPE ?= gcc
+endif
+CXX_TYPE ?= other
+CXX_MAJOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f1)
+CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
+
+################################################################################
+# Set default compiler flags
+#
+# The options that have been commented are things that the user can set.
+# They are commented because in make, undefined is different than empty;
+# we can test for that everywhere, but it's a lot easier using the set if
+# unassigned operator (`?=`) when it's not set.
+##
+O ?= 3
+
+## setup includes
+INC ?= $(INC_FIRST) -I $(if $(MATH),$(MATH),.) -I $(EIGEN) -I $(BOOST) $(INC_SUNDIALS)
+INC_SUNDIALS ?= -I $(SUNDIALS)/include
+INC_GTEST ?= -I $(GTEST)/include -I $(GTEST)
+
+## setup precompiler options
+CPPFLAGS_BOOST ?= -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION
+CPPFLAGS_SUNDIALS ?= -DNO_FPRINTF_OUTPUT
+CPPFLAGS_GTEST ?= -DGTEST_USE_OWN_TR1_TUPLE
+
+
+## setup compiler flags
+CXXFLAGS_LANG ?= -std=c++1y
+#CXXFLAGS_BOOST
+CXXFLAGS_SUNDIALS ?= -pipe
+#CXXFLAGS_GTEST
+
+
+## These are the other compiler flags that can be set.
+##
+## They are listed here for documentation and are intentionally
+## commented out.
+
+# CXXFLAGS_OS
+# CXXFLAGS_WARNINGS
+# CXXFLAGS_EIGEN
+
+## GPU specific flags
+# CXXFLAGS_OPENCL
+# LDFLAGS_OPENCL
+# LDLIBS_OPENCL
+
+## MPI specific flags
+# CXXFLAGS_MPI
+# LDFLAGS_MPI
+# LDLIBS_MPI
+
+################################################################################
+# Update compiler flags with operating system specific modifications
+##
+ifeq ($(OS),Windows_NT)
+  CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-variable -Wno-sign-compare -Wno-unused-local-typedefs
+  CPPFLAGS_GTEST ?= -DGTEST_HAS_PTHREAD=0
+  CPPFLAGS_OS ?= -D_USE_MATH_DEFINES
+  ## Detecting Process Bitness:
+  ## http://blogs.msdn.com/b/david.wang/archive/2006/03/26/howto-detect-process-bitness.aspx
+  ifeq ($(PROCESSOR_ARCHITECTURE)$(PROCESSOR_ARCHITEW6432),x86)
+    CXXFLAGS_OS ?= -m32
+  else
+    CXXFLAGS_OS ?= -m64
+  endif
+
+  ifneq (gcc,$(CXX_TYPE))
+    LDLIBS_OS ?= -static-libgcc
+  else
+    LDLIBS_OS ?= -static-libgcc -static-libstdc++
+  endif
+
+  EXE := .exe
+endif
+
+ifeq ($(OS),Darwin)
+  ifeq (clang,$(CXX_TYPE))
+    CXXFLAGS_OS ?= -Wno-unknown-warning-option -Wno-tautological-compare -Wno-sign-compare
+  endif
+endif
+
+ifeq ($(OS),Linux)
+  CPPFLAGS_GTEST ?= -DGTEST_HAS_PTHREAD=0
+  CXXFLAGS_WARNINGS ?= -Wno-sign-compare
+  ifeq (gcc,$(CXX_TYPE))
+    CXXFLAGS_OS ?= -pthread
+  endif
+  ifeq (mingw32-gcc,$(CXX_TYPE))
+    LDLIBS_OS ?= -static -lwinpthread
+    EXE := .exe
+    WINE ?= wine
+  endif
+  ifeq (clang,$(CXX_TYPE))
+    LDLIBS_OS ?= -lpthread
+  endif
+endif
+
+
+################################################################################
+# Setup GPU
+#
+# Adds the following to CXXFLAGS_OPENCL
+# OPENCL_DEVICE_ID - The ID of the GPU (default: 0)
+# OPENCL_PLATFORM_ID The ID of the OpenCL platform (default: 0)
+# Both IDs can be found through installing and calling clinfo
+
+ifdef STAN_OPENCL
+  ifeq ($(OS),Darwin)  # Mac OS X
+    LDLIBS_OPENCL ?= -framework OpenCL
+  else
+    LDLIBS_OPENCL ?= -lOpenCL
+  endif
+  OPENCL_DEVICE_ID ?= 0
+  OPENCL_PLATFORM_ID ?= 0
+
+  CPPFLAGS_OPENCL ?= -DSTAN_OPENCL -DOPENCL_DEVICE_ID=$(OPENCL_DEVICE_ID) -DOPENCL_PLATFORM_ID=$(OPENCL_PLATFORM_ID) -DCL_USE_DEPRECATED_OPENCL_1_2_APIS
+  CXXFLAGS_OPENCL ?= -I $(OPENCL)
+endif
+
+################################################################################
+# Setup MPI
+#
+# Sets up MPI CXXFLAGS_MPI and LDLIBS_MPI to compile and link to MPI
+
+ifdef STAN_MPI
+  ifeq ($(OS),Windows_NT)
+    $(error MPI is not supported on Windows.)
+  endif
+
+  ifeq ($(OS),Darwin)
+    BOOST_LIBRARY_SUFFIX := .dylib
+  endif
+
+  ifeq ($(OS),Linux)
+    BOOST_LIBRARY_SUFFIX := .so
+  endif
+
+  MPI_TARGETS ?= $(addsuffix $(BOOST_LIBRARY_SUFFIX),$(BOOST)/stage/lib/libboost_serialization $(BOOST)/stage/lib/libboost_mpi) $(MPI_TEMPLATE_INSTANTIATION)
+  CPPFLAGS_MPI ?= -DSTAN_MPI
+
+  BOOST_LIBRARY_ABSOLUTE_PATH = $(abspath $(BOOST)/stage/lib)
+
+  LDFLAGS_MPI ?= -Wl,-L,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" -Wl,-rpath,"$(BOOST_LIBRARY_ABSOLUTE_PATH)"
+  CXXFLAGS_MPI ?= -Wno-delete-non-virtual-dtor
+endif
+
+
+
+CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) -O$(O) $(INC)
+CPPFLAGS += $(CPPFLAGS_LANG) $(CPPFLAGS_OS) $(CPPFLAGS_WARNINGS) $(CPPFLAGS_BOOST) $(CPPFLAGS_EIGEN) $(CPPFLAGS_OPENCL) $(CPPFLAGS_MPI)
+LDFLAGS += $(LDFLAGS_LANG) $(LDFLAGS_OS) $(LDFLAGS_WARNINGS) $(LDFLAGS_BOOST) $(LDFLAGS_EIGEN) $(LDFLAGS_OPENCL) $(LDFLAGS_MPI)
+LDLIBS += $(LDLIBS_LANG) $(LDLIBS_OS) $(LDLIBS_WARNINGS) $(LDLIBS_BOOST) $(LDLIBS_EIGEN) $(LDLIBS_OPENCL) $(LDLIBS_MPI)
+
+.PHONY: print-compiler-flags
+print-compiler-flags:
+	@echo '  Current configuration:'
+	@echo '  - OS (Operating System):      ' $(OS)
+	@echo '  - CXX (Compiler):             ' $(CXX)
+	@echo '  - CXX_TYPE                    ' $(CXX_TYPE)
+	@echo '  - Compiler version:           ' $(CXX_MAJOR).$(CXX_MINOR)
+	@echo '  - O (Optimization Level):     ' $(O)
+	@echo '  Library configuration:'
+	@echo '  - EIGEN                       ' $(EIGEN)
+	@echo '  - BOOST                       ' $(BOOST)
+	@echo '  - SUNDIALS                    ' $(SUNDIALS)
+	@echo '  - GTEST                       ' $(GTEST)
+	@echo '  - STAN_OPENCL                 ' $(STAN_OPENCL)
+	@echo '  - STAN_MPI                    ' $(STAN_MPI)
+	@echo '  Compiler flags (each can be overriden separately):'
+	@echo '  - CXXFLAGS_LANG               ' $(CXXFLAGS_LANG)
+	@echo '  - CXXFLAGS_WARNINGS           ' $(CXXFLAGS_WARNINGS)
+	@echo '  - CXXFLAGS_BOOST              ' $(CXXFLAGS_BOOST)
+	@echo '  - CXXFLAGS_EIGEN              ' $(CXXFLAGS_EIGEN)
+	@echo '  - CXXFLAGS_OS                 ' $(CXXFLAGS_OS)
+	@echo '  - CXXFLAGS_GTEST              ' $(CXXFLAGS_GTEST)
+	@echo '  - CXXFLAGS_OPENCL             ' $(CXXFLAGS_OPENCL)
+	@echo '  - CXXFLAGS_MPI                ' $(CXXFLAGS_MPI)
+	@echo '  - CFLAGS_SUNDIALS             ' $(CFLAGS_SUNDIALS)
+	@echo '  LDLIBS:'
+	@echo '  - LDLIBS_LANG                 ' $(LDLIBS_LANG)
+	@echo '  - LDLIBS_WARNINGS             ' $(LDLIBS_WARNINGS)
+	@echo '  - LDLIBS_BOOST                ' $(LDLIBS_BOOST)
+	@echo '  - LDLIBS_EIGEN                ' $(LDLIBS_EIGEN)
+	@echo '  - LDLIBS_OS                   ' $(LDLIBS_OS)
+	@echo '  - LDLIBS_GTEST                ' $(LDLIBS_GTEST)
+	@echo '  - LDLIBS_OPENCL               ' $(LDLIBS_OPENCL)
+	@echo '  - LDLIBS_MPI                  ' $(LDLIBS_MPI)
+	@echo '  LDFLAGS:'
+	@echo '  - LDFLAGS_LANG                ' $(LDFLAGS_LANG)
+	@echo '  - LDFLAGS_WARNINGS            ' $(LDFLAGS_WARNINGS)
+	@echo '  - LDFLAGS_BOOST               ' $(LDFLAGS_BOOST)
+	@echo '  - LDFLAGS_EIGEN               ' $(LDFLAGS_EIGEN)
+	@echo '  - LDFLAGS_OS                  ' $(LDFLAGS_OS)
+	@echo '  - LDFLAGS_GTEST               ' $(LDFLAGS_GTEST)
+	@echo '  - LDFLAGS_OPENCL              ' $(LDFLAGS_OPENCL)
+	@echo '  - LDFLAGS_MPI                 ' $(LDFLAGS_MPI)
+	@echo ''

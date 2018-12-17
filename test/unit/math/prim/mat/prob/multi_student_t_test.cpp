@@ -245,7 +245,7 @@ TEST(ProbDistributionsMultiStudentT, marginalOneChiSquareGoodnessFitTest) {
   Matrix<double, Dynamic, Dynamic> s(3, 3);
   s << 10.0, 3.0, 11.0, 3.0, 9.0, 1.2, 11.0, 1.2, 16.0;
   int N = 10000;
-  int K = boost::math::round(2 * std::pow(N, 0.4));
+  int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::students_t_distribution<> dist(3.0);
   boost::math::chi_squared mydist(K - 1);
 
@@ -287,7 +287,7 @@ TEST(ProbDistributionsMultiStudentT, marginalTwoChiSquareGoodnessFitTest) {
   Matrix<double, Dynamic, Dynamic> s(3, 3);
   s << 10.0, 3.0, 11.0, 3.0, 9.0, 1.2, 11.0, 1.2, 16.0;
   int N = 10000;
-  int K = boost::math::round(2 * std::pow(N, 0.4));
+  int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::students_t_distribution<> dist(3.0);
   boost::math::chi_squared mydist(K - 1);
 
