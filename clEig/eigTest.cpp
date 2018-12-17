@@ -64,28 +64,31 @@ void chkTridiag(const Mat& a, Mat t, const Mat& q){
 }
 
 int miniTest() {
-  Mat a(5, 5);
-  a << 12, -51, 4, 4, 5,
-        6, 167, -68, 7, 9,
-        -6, 24, -41, 7, 6,
-        1, 2, 3, 4, 5,
-        1, 2, 3, 4, 5;
+  Mat a(6, 6);
+  a << 12, -51, 4, 4, 5, 9,
+        6, 167, -68, 7, 9, 4,
+        -6, 24, -41, 7, 6, 3,
+        1, 2, 3, 4, 5, 4,
+        1, 2, 3, 6, 5, 6,
+        1, -7, 3, 4, 5, 6;
   a+=a.transpose().eval();
   Mat t,q, vecs;
   Vec vals;
 
   cout << "a:" << endl << a << endl;
-  householder_tridiag2(a, t, q);
-  //block_householder_tridiag(a, t, q, 2);
+  householder_tridiag(a, t, q);
+  block_householder_tridiag2(a, t, q, 2);
+  cout << "t" << endl;
+  cout << t << endl;
   chkTridiag(a,t,q);
 }
 
 int main() {
-  //miniTest();
+  miniTest();
   //return 0;
 
   int A = 601;
-  const int MAX_BLOCK=400;
+  const int MAX_BLOCK=170;
   Mat a = Mat::Random(A, A);
   a+=a.transpose().eval();
   Mat t,q, vecs;
@@ -111,33 +114,44 @@ int main() {
        << "ms" << endl;
   t=slv2.matrixT();
   q=slv2.matrixQ();
-  cout << "CPU total: "
+  cout << "\t\tCPU total: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
   chkTridiag(a,t,q);
 
   start = std::chrono::steady_clock::now();
   householder_tridiag(a, t, q);
-  cout << "CPU my basic: "
+  cout << "\t\tCPU my basic: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
   chkTridiag(a,t,q);
 
   start = std::chrono::steady_clock::now();
   householder_tridiag2(a, t, q);
-  cout << "CPU my basic2: "
+  cout << "\t\tCPU my basic2: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
   chkTridiag(a,t,q);
 
-/*
+
   start = std::chrono::steady_clock::now();
-  block_householder_tridiag(a, t, q);
-  cout << "CPU my blocked: "
+  householder_tridiag3(a, t, q);
+  cout << "\t\tCPU my basic3: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
   chkTridiag(a,t,q);
-*/
+
+
+  for(int b=10;b<35;b+=1) {
+    cout << "b = " << b << endl;
+    start = std::chrono::steady_clock::now();
+    block_householder_tridiag2(a, t, q, b);
+    cout << "\t\tCPU my blocked: "
+         << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+         << "ms" << endl;
+    chkTridiag(a, t, q);
+  }
+
   /*
   //force kernel compilation
   cl::Kernel kernel_1 = opencl_context.get_kernel("householder_QR_1");

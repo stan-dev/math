@@ -18,33 +18,37 @@ using namespace std;
 namespace stan {
 namespace math {
 
-void p(const Eigen::MatrixXd& a) {
-  std::cout << a << std::endl;
-}
-
 void s(const Eigen::MatrixXd& a) {
-  std::cout << "(" << a.rows() << ", " << a.cols() << std::endl;
+  std::cout << "(" << a.rows() << ", " << a.cols() << ")" << std::endl;
 }
 
 void s(const Eigen::VectorXd& a) {
-  std::cout << "(" << a.rows() << ", " << a.cols() << std::endl;
+  std::cout << "(" << a.rows() << ", " << a.cols() << ")"  << std::endl;
 }
 
 void s(const Eigen::RowVectorXd& a) {
-  std::cout << "(" << a.rows() << ", " << a.cols() << std::endl;
+  std::cout << "(" << a.rows() << ", " << a.cols() << ")"  << std::endl;
+}
+void p(const Eigen::MatrixXd& a) {
+  s(a);
+  std::cout << a << std::endl;
 }
 
+
 void p(const Eigen::VectorXd& a) {
+  s(a);
   std::cout << a << std::endl;
 }
 
 void p(const Eigen::RowVectorXd& a) {
+  s(a);
   std::cout << a << std::endl;
 }
 
 void p(const matrix_gpu& a) {
   Eigen::MatrixXd b(a.rows(), a.cols());
   copy(b, a);
+  s(b);
   std::cout << b << std::endl;
 }
 
@@ -96,8 +100,44 @@ void householder_tridiag2(const Eigen::MatrixXd& A, Eigen::MatrixXd& T, Eigen::M
     v.tail(u.size()) -= 0.5 * cnst * u;
 
     Eigen::MatrixXd update = u * v.transpose();
-    T.bottomRightCorner(T.rows() - k -1, T.cols() - k) -= update;
-    T.bottomRightCorner(T.rows() - k, T.cols() - k -1) -= update.transpose();
+    //Eigen::MatrixXd T2=T;
+    //T2.bottomRightCorner(T.rows() - k - 1, T.cols() - k) -= update;
+    //T2.bottomRightCorner(T.rows() - k, T.cols() - k - 1) -= update.transpose();
+    T.bottomRightCorner(T.rows() - k - 1, T.cols() - k - 1) -= update.rightCols(update.cols() - 1) + update.rightCols(update.cols() - 1).transpose();
+    T.block(k + 1, k, T.rows() - k - 1, 1) -= update.leftCols(1);
+    T.block(k, k + 1, 1, T.rows() - k - 1) -= update.leftCols(1).transpose();
+
+    Q.rightCols(Q.cols() - k - 1) -= (Q.rightCols(Q.cols() - k - 1) * householder) * householder.transpose();
+  }
+}
+
+void householder_tridiag3(const Eigen::MatrixXd& A, Eigen::MatrixXd& T, Eigen::MatrixXd& Q) {
+  //matrix_gpu R_gpu(A);
+  //matrix_gpu Q_gpu(Eigen::MatrixXd::Identity(A.rows()));
+  T = A;
+  Q = Eigen::MatrixXd::Identity(T.rows(), T.rows());
+  for (size_t k = 0; k < T.rows() - 2; k++) {
+    Eigen::VectorXd householder = T.block(k + 1, k, T.rows() - k - 1, 1);
+    double q = householder.squaredNorm();
+    double alpha = -copysign(sqrt(q), T(k,k));
+    q -= householder[0] * householder[0];
+    householder[0] -= alpha;
+    q+=householder[0]*householder[0];
+    householder *= SQRT_2 / sqrt(q);
+
+    Eigen::VectorXd& u = householder;
+    Eigen::VectorXd y = T.bottomRightCorner(T.rows() - k, T.cols() - k - 1) * u;
+    double cnst = y.tail(u.size()).transpose() * u;
+    Eigen::VectorXd& v = y;
+    v.tail(u.size()) -= 0.5 * cnst * u;
+
+    Eigen::MatrixXd update = u * v.transpose();
+    //Eigen::MatrixXd T2=T;
+    //T2.bottomRightCorner(T.rows() - k - 1, T.cols() - k) -= update;
+    //T2.bottomRightCorner(T.rows() - k, T.cols() - k - 1) -= update.transpose();
+    T.bottomRightCorner(T.rows() - k - 1, T.cols() - k - 1) -= update.rightCols(update.cols() - 1) + update.rightCols(update.cols() - 1).transpose();
+    T.block(k + 1, k, T.rows() - k - 1, 1) -= update.col(0);
+    T.block(k, k + 1, 1, T.rows() - k - 1) -= update.col(0).transpose();
 
     Q.rightCols(Q.cols() - k - 1) -= (Q.rightCols(Q.cols() - k - 1) * householder) * householder.transpose();
   }
@@ -202,39 +242,47 @@ void block_householder_tridiag2(const Eigen::MatrixXd& A, Eigen::MatrixXd& T, Ei
   T = A;
   Q = Eigen::MatrixXd::Identity(T.rows(), T.rows());
   //Eigen::ArrayXd mags = A.triangularView<Eigen::Lower>().colwise().norm(); //householder norms could be calculated ahead of time (only below diadonal elements)
-  for (size_t k = 0; k < std::min(T.rows() - 1, T.cols()); k += r) {
-    int actual_r = std::min({r, static_cast<int>(T.rows() - k - 1)});
-    Eigen::MatrixXd V(T.rows() - k - 1, actual_r); // TODO manjši V
+  for (size_t k = 0; k < T.rows() - 2; k += r) {
+    int actual_r = std::min({r, static_cast<int>(T.rows() - k - 2)});
+    Eigen::MatrixXd V(T.rows() - k, actual_r);
+    Eigen::MatrixXd U(T.rows() - k, actual_r);
     V.triangularView<Eigen::StrictlyUpper>() = Eigen::MatrixXd::Constant(V.rows(), V.cols(), 0);
+    U.triangularView<Eigen::StrictlyUpper>() = Eigen::MatrixXd::Constant(U.rows(), U.cols(), 0);
 
     for (size_t j = 0; j < actual_r; j++) {
-      Eigen::VectorXd householder = T.block(k + j + 1, k + j, T.rows() - k - j - 1, 1);
-      householder[0] -= copysign(householder.norm(), householder[0]);
-      if (householder.rows() != 1) {
-        householder *= SQRT_2 / householder.norm();
+      Eigen::VectorXd householder = T.block(k + j, k + j, T.rows() - k - j, 1);
+      if(j!=0) {
+        householder -= U.leftCols(j).bottomRows(householder.size()) * V.leftCols(j).row(j).transpose() +
+                       V.leftCols(j).bottomRows(householder.size()) * U.leftCols(j).row(j).transpose();
+        /*householder -= U.block(j,0,householder.size(),j) * V.block(j,0,1,j).transpose() +
+                       V.block(j,0,householder.size(),j) * U.block(j,0,1,j).transpose();*/
       }
+      double q = householder.tail(householder.size()-1).squaredNorm();
+      double alpha = -copysign(sqrt(q), T(k,k));
+      householder[0]=0;
+      q -= householder[1] * householder[1];
+      householder[1] -= alpha;
+      q+=householder[1]*householder[1];
+      householder *= SQRT_2 / sqrt(q);
 
-      V.col(j).tail(V.rows() - j) = householder;
-      Eigen::MatrixXd partial_update = householder *
-                                       (T.block(k + j + 1, k + j, A.rows() - k - j - 1, actual_r - j).transpose() *
-                                        householder).transpose();
-      T.block(k + j + 1, k + j, A.rows() - k - j - 1, actual_r - j) -= partial_update;
-      T.block(k + j, k + j + 1, actual_r - j, A.rows() - k - j - 1) -= partial_update.transpose();
+      Eigen::VectorXd& u = householder;
+      Eigen::MatrixXd update = U.bottomLeftCorner(u.size(), j) * V.bottomLeftCorner(u.size(), j).transpose();
+      Eigen::VectorXd y = (T.bottomRightCorner(T.rows()- k - j, T.cols()- k - j) - update - update.transpose()) * u;
+      double val = y.transpose() * u;
+      Eigen::VectorXd v = y - 0.5 * val * u;
+      U.col(j).tail(U.rows() - j) = u;
+      V.col(j).tail(V.rows() - j) = v;
     }
 
-    Eigen::MatrixXd& Y = V;
-    Eigen::MatrixXd W = V;
+    Eigen::MatrixXd& Y = U;
+    Eigen::MatrixXd W = U;
     for (size_t j = 1; j < actual_r; j++) {
-      W.col(j) = V.col(j) - W.leftCols(j) * (Y.leftCols(j).transpose() * V.col(j));
+      W.col(j) = U.col(j) - W.leftCols(j) * (U.leftCols(j).transpose() * U.col(j));
     }
-    Eigen::MatrixXd Y_partial_update =
-            Y * (W.transpose() * T.block(k + 1, k + actual_r + 1, T.rows() - k - 1, T.cols() - k - actual_r - 1));
-    T.block(k + 1, k + actual_r + 1, T.rows() - k - 1, T.cols() - k - actual_r - 1) -= Y_partial_update;
-    T.block(k + actual_r + 1, k + 1, T.cols() - k - actual_r - 1, T.rows() - k - 1) -= Y_partial_update.transpose();
+    Eigen::MatrixXd Y_partial_update = U * V.transpose();
+    T.block(k , k, T.rows() - k, T.cols() - k) -= Y_partial_update + Y_partial_update.transpose();
 
-    Eigen::MatrixXd Q_partial_update = (Q.block(0, 1, Q.rows(), Q.cols() - k - 1) * W) * Y.transpose();
-    Q.block(0, 1, Q.rows(), Q.cols() - k - 1) -= Q_partial_update;
-    Q.block(1, 0, Q.cols() - k - 1, Q.rows()) -= Q_partial_update.transpose();
+    Q.rightCols(Q.cols() - k) -= (Q.rightCols(Q.cols() - k) * W) * Y.transpose();
   }
 }
 
