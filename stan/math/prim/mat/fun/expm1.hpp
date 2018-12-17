@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_EXPM1_HPP
 
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
-#include <boost/math/special_functions/expm1.hpp>
+#include <stan/math/prim/scal/fun/expm1.hpp>
 
 namespace stan {
 namespace math {
@@ -16,7 +16,6 @@ namespace math {
 struct expm1_fun {
   template <typename T>
   static inline T fun(const T& x) {
-    using boost::math::expm1;
     return expm1(x);
   }
 };
