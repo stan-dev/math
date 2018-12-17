@@ -40,8 +40,6 @@ TEST_F(StanAgradRevOde, observe_states_dv) {
                                    double>
       observer(mock_ode, y0, theta, t0, ts, x, x_int, &msgs, y);
 
-  observer(std::vector<double>(coupled_system.size(), 0.0), 0);
-
   size_t k = 0;
   std::vector<std::vector<double>> ys_coupled(T);
   for (size_t t = 0; t < T; t++) {
@@ -93,8 +91,6 @@ TEST_F(StanAgradRevOde, observe_states_vd) {
   stan::math::coupled_ode_observer<mock_ode_functor, var, double, double,
                                    double>
       observer(mock_ode, y0, theta, t0, ts, x, x_int, &msgs, y);
-
-  observer(std::vector<double>(coupled_system.size(), 0.0), 0);
 
   size_t k = 0;
   std::vector<std::vector<double>> ys_coupled(T);
@@ -148,8 +144,6 @@ TEST_F(StanAgradRevOde, observe_states_vv) {
 
   stan::math::coupled_ode_observer<harm_osc_ode_fun, var, var, double, double>
       observer(harm_osc, y0, theta, t0, ts, x, x_int, &msgs, y);
-
-  observer(std::vector<double>(coupled_system.size(), 0.0), 0);
 
   size_t k = 0;
   std::vector<std::vector<double>> ys_coupled(T);
@@ -206,8 +200,6 @@ TEST_F(StanAgradRevOde, observe_states_t0v) {
                                    double>
       observer(mock_ode, y0, theta, t0, ts, x, x_int, &msgs, y);
 
-  observer(std::vector<double>(coupled_system.size(), 0.0), 0);
-
   size_t k = 0;
   std::vector<std::vector<double>> ys_coupled(T);
   for (size_t t = 0; t < T; t++) {
@@ -260,8 +252,6 @@ TEST_F(StanAgradRevOde, observe_states_tsv) {
                                    var>
       observer(harm_osc, y0, theta, t0, ts, x, x_int, &msgs, y);
 
-  observer(std::vector<double>(coupled_system.size(), 0.0), 0);
-
   size_t k = 0;
   std::vector<std::vector<double>> ys_coupled(T);
   for (size_t t = 0; t < T; t++) {
@@ -299,8 +289,6 @@ TEST_F(StanAgradRevOde, observe_states_tsv) {
                                    var>
       throwing_observer(harm_osc, y0, theta, t0, ts, x, x_int, &msgs, y);
 
-  // not throwing as the first call is always ignored
-  throwing_observer(std::vector<double>(coupled_system.size(), 0.0), 0);
   // this one will throw
   std::string message = "this function was called with inconsistent state";
   EXPECT_THROW_MSG(

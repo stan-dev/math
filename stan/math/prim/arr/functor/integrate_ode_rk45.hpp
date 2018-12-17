@@ -16,6 +16,8 @@
 #endif
 #include <boost/numeric/odeint.hpp>
 #include <ostream>
+#include <functional>
+#include <iterator>
 #include <vector>
 
 namespace stan {
@@ -115,7 +117,7 @@ integrate_ode_rk45(const F& f, const std::vector<T1>& y0, const T_t0& t0,
   std::vector<std::vector<typename stan::return_type<T1, T2, T_t0, T_ts>::type>>
       y;
   coupled_ode_observer<F, T1, T2, T_t0, T_ts> observer(f, y0, theta, t0, ts, x,
-                                                       x_int, msgs, y);
+                                                       x_int, msgs, y, true);
 
   // the coupled system creates the coupled initial state
   std::vector<double> initial_coupled_state = coupled_system.initial_state();
@@ -125,8 +127,8 @@ integrate_ode_rk45(const F& f, const std::vector<T1>& y0, const T_t0& t0,
       make_dense_output(absolute_tolerance, relative_tolerance,
                         runge_kutta_dopri5<std::vector<double>, double,
                                            std::vector<double>, double>()),
-      boost::ref(coupled_system), initial_coupled_state, boost::begin(ts_vec),
-      boost::end(ts_vec), step_size, boost::ref(observer),
+      std::ref(coupled_system), initial_coupled_state, std::begin(ts_vec),
+      std::end(ts_vec), step_size, std::ref(observer),
       max_step_checker(max_num_steps));
 
   return y;

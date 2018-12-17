@@ -16,7 +16,7 @@ void sho_value_test(F harm_osc, std::vector<double>& y0, double t0,
   using stan::math::promote_scalar;
   using stan::math::var;
 
-  std::vector<std::vector<var> > ode_res_vd = stan::math::integrate_ode_rk45(
+  std::vector<std::vector<var>> ode_res_vd = stan::math::integrate_ode_rk45(
       harm_osc, promote_scalar<T_y0>(y0), t0, ts,
       promote_scalar<T_theta>(theta), x, x_int, 0);
   EXPECT_NEAR(0.995029, ode_res_vd[0][0].val(), 1e-5);
@@ -121,6 +121,7 @@ TEST(StanAgradRevOde_integrate_ode_rk45, lorenz_finite_diff) {
 TEST(StanAgradRevOde_integrate_ode_rk45, time_steps_as_param) {
   using stan::math::integrate_ode_rk45;
   using stan::math::to_var;
+  using stan::math::value_of;
 
   const double t0 = 0.0;
   forced_harm_osc_ode_fun ode;
@@ -135,16 +136,19 @@ TEST(StanAgradRevOde_integrate_ode_rk45, time_steps_as_param) {
   std::vector<stan::math::var> thetav = to_var(theta);
   stan::math::var t0v = 0.0;
 
-  std::vector<std::vector<stan::math::var> > res;
+  std::vector<std::vector<stan::math::var>> res;
 
-  // here we only test first & last steps, and reply on the
+  std::vector<std::vector<double>> res_d
+      = integrate_ode_rk45(ode, y0, t0, value_of(ts), theta, x, x_int);
+
+  // here we only test first & last steps, and rely on the
   // fact that results in-between affect the initial
   // condition of the last step to check their validity.
-  auto test_val = [&res]() {
-    EXPECT_NEAR(0.995029, res[0][0].val(), 1e-5);
-    EXPECT_NEAR(-0.0990884, res[0][1].val(), 1e-5);
-    EXPECT_NEAR(-0.421907, res[99][0].val(), 1e-5);
-    EXPECT_NEAR(0.246407, res[99][1].val(), 1e-5);
+  auto test_val = [&res_d, &res]() {
+    EXPECT_NEAR(res_d[0][0], res[0][0].val(), 1e-5);
+    EXPECT_NEAR(res_d[0][1], res[0][1].val(), 1e-5);
+    EXPECT_NEAR(res_d[99][0], res[99][0].val(), 1e-5);
+    EXPECT_NEAR(res_d[99][1], res[99][1].val(), 1e-5);
   };
   res = integrate_ode_rk45(ode, y0, t0, ts, theta, x, x_int);
   test_val();
@@ -188,7 +192,7 @@ TEST(StanAgradRevOde_integrate_ode_rk45, time_steps_as_param_AD) {
   std::vector<stan::math::var> thetav = to_var(theta);
   stan::math::var t0v = 0.0;
 
-  std::vector<std::vector<stan::math::var> > res;
+  std::vector<std::vector<stan::math::var>> res;
   std::vector<double> g;
   auto test_ad = [&res, &g, &ts, &ode, &nt, &ns, &theta, &x, &x_int, &msgs]() {
     for (auto i = 0; i < nt; ++i) {
@@ -243,7 +247,7 @@ TEST(StanAgradRevOde_integrate_ode_rk45, t0_as_param_AD) {
   std::vector<stan::math::var> thetav = to_var(theta);
   stan::math::var t0v = 0.0;
 
-  std::vector<std::vector<stan::math::var> > res;
+  std::vector<std::vector<stan::math::var>> res;
   auto test_ad = [&res, &t0v, &ode, &nt, &ns, &theta, &x, &x_int, &msgs]() {
     for (auto i = 0; i < nt; ++i) {
       std::vector<double> res_d = value_of(res[i]);
