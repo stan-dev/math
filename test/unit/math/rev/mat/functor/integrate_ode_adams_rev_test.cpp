@@ -3,6 +3,7 @@
 #include <boost/numeric/odeint.hpp>
 #include <test/unit/math/rev/mat/functor/util_cvodes_adams.hpp>
 #include <test/unit/math/prim/arr/functor/harmonic_oscillator.hpp>
+#include <test/unit/math/prim/arr/functor/forced_harmonic_oscillator.hpp>
 #include <test/unit/math/prim/arr/functor/lorenz.hpp>
 #include <iostream>
 #include <sstream>
@@ -188,9 +189,9 @@ TEST(StanAgradRevOde_integrate_ode_adams, time_steps_as_param_AD) {
   const int ns = 2;    // nb. of states
   std::ostream* msgs = NULL;
 
-  harm_osc_ode_fun ode;
+  forced_harm_osc_ode_fun ode;
 
-  std::vector<double> theta{0.15};
+  std::vector<double> theta{0.15, 0.25};
   std::vector<double> y0{1.0, 0.0};
   std::vector<stan::math::var> ts;
   for (int i = 0; i < nt; i++)
@@ -242,9 +243,9 @@ TEST(StanAgradRevOde_integrate_ode_adams, t0_as_param_AD) {
   const int ns = 2;    // nb. of states
   std::ostream* msgs = NULL;
 
-  harm_osc_ode_fun ode;
+  forced_harm_osc_ode_fun ode;
 
-  std::vector<double> theta{0.15};
+  std::vector<double> theta{0.15, 0.25};
   std::vector<double> y0{1.0, 0.0};
   std::vector<double> ts;
   for (int i = 0; i < nt; i++)
