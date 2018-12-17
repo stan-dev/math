@@ -20,10 +20,9 @@ const char* matrix_multiply_kernel_code = STRINGIFY(
      * @param[in] N Number of rows for matrix B
      * @param[in] K Number of cols for matrix A and number of rows for matrix B
      */
-    __kernel void matrix_multiply(
-        const __global read_only double* A, const __global read_only double* B,
-        __global write_only double* C, const read_only int M,
-        const read_only int N, const read_only int K) {
+    __kernel void matrix_multiply(const __global double* A,
+                                  const __global double* B, __global double* C,
+                                  const int M, const int N, const int K) {
       // thread index inside the thread_block
       const int thread_block_row = get_local_id(0);
       const int thread_block_col = get_local_id(1);

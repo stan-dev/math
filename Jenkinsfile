@@ -8,6 +8,17 @@ def runTests(String testPath) {
     finally { junit 'test/**/*.xml' }
 }
 
+def runTestsWin(String testPath) {
+    bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
+    try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
+    finally { junit 'test/**/*.xml' }
+}
+
+def deleteDirWin() {
+    bat "attrib -r -s /s /d"
+    deleteDir()
+}
+
 def utils = new org.stan.Utils()
 
 def isBranch(String b) { env.BRANCH_NAME == b }
@@ -105,7 +116,8 @@ pipeline {
                     retry(3) { checkout scm }
                     sh "git clean -xffd"
                     stash 'MathSetup'
-                    sh "echo CC=${env.CXX} -Werror > make/local"
+                    sh "echo CXX=${env.CXX} -Werror > make/local"
+                    sh "echo BOOST_PARALLEL_JOBS=${env.PARALLEL} >> make/local"
                     parallel(
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh 'make test-math-dependencies' } ,
@@ -126,23 +138,56 @@ pipeline {
             steps {
                 deleteDir()
                 unstash 'MathSetup'
-                sh "echo CC=${env.CXX} -Werror > make/local"
+                sh "echo CXX=${env.CXX} -Werror > make/local"
                 sh "make -j${env.PARALLEL} test-headers"
             }
             post { always { deleteDir() } }
         }
-        stage('Linux Unit with MPI') {
-            agent { label 'linux' }
-            steps {
-                deleteDir()
-                unstash 'MathSetup'
-                sh "echo CC=${MPICXX} >> make/local"
-                sh "echo STAN_MPI=true >> make/local"
-                runTests("test/unit")
+        stage('Always-run tests part 1') {
+            parallel {
+                stage('Linux Unit with MPI') {
+                    agent { label 'linux && mpi' }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh "echo CXX=${MPICXX} >> make/local"
+                        sh "echo STAN_MPI=true >> make/local"
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('GPU Tests') {
+                    agent { label "gpu" }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh "echo CXX=${env.CXX} -Werror > make/local"
+                        sh "echo STAN_OPENCL=true>> make/local"
+                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
+                        sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
+                        runTests("test/unit/math/gpu")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Windows Headers') {
+                    agent { label 'windows' }
+                    steps {
+                        deleteDirWin()
+                        unstash 'MathSetup'
+                        bat "make -j${env.PARALLEL} test-headers"
+                    }
+                }
+                stage('Windows Unit') {
+                    agent { label 'windows' }
+                    steps {
+                        deleteDirWin()
+                        unstash 'MathSetup'
+                        runTestsWin("test/unit")
+                    }
+                }
             }
-            post { always { retry(3) { deleteDir() } } }
         }
-        stage('Always-run tests') {
+        stage('Always-run tests part 2') {
             parallel {
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
@@ -150,8 +195,8 @@ pipeline {
                         deleteDir()
                         unstash 'MathSetup'
                         sh """
-                            echo CC=${env.CXX} > make/local
-                            echo 'O=0' >> make/local
+                            echo CXX=${env.CXX} > make/local
+                            echo O=0 >> make/local
                             echo N_TESTS=${env.N_TESTS} >> make/local
                             """
                         script {
@@ -168,17 +213,19 @@ pipeline {
                         }
                         failure {
                             echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
-                        }
+                            }
                     }
                 }
-                stage('Mac Unit with Threading') {
-                    agent  { label 'osx' }
+                stage('Threading tests') {
+                    agent any
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
-                        sh "echo CC=${env.CXX} -Werror > make/local"
-                        sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
-                        runTests("test/unit")
+                        sh "echo CXX=${env.CXX} -Werror > make/local"
+                        sh "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
+                        runTests("test/unit -f thread")
+                        sh "find . -name *_test.xml | xargs rm"
+                        runTests("test/unit -f map_rect")
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
@@ -192,10 +239,10 @@ pipeline {
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
-                        sh "echo CC=${env.CXX} -Werror > make/local"
+                        sh "echo CXX=${env.CXX} -Werror > make/local"
                         sh "echo STAN_OPENCL=true>> make/local"
                         sh "echo OPENCL_PLATFORM_ID=0>> make/local"
-                        sh "echo OPENCL_DEVICE_ID=0>> make/local"
+                        sh "echo OPENCL_DEVICE_ID=1>> make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -205,7 +252,18 @@ pipeline {
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
-                        sh "echo CC=${GCC} >> make/local"
+                        sh "echo CXX=${GCC} >> make/local"
+                        sh "echo CPPFLAGS=-DSTAN_THREADS >> make/local"
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Mac Unit with Threading') {
+                    agent  { label 'osx' }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh "echo CC=${env.CXX} -Werror > make/local"
                         sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
                         runTests("test/unit")
                     }

@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-TEST(MathFunctions, lgamma) { EXPECT_TRUE(boost::math::isinf(lgamma(0.0))); }
+TEST(MathFunctions, lgamma) { EXPECT_TRUE(stan::math::is_inf(lgamma(0.0))); }
 
 TEST(MathFunctions, lgammaStanMathUsing) { using stan::math::lgamma; }
 

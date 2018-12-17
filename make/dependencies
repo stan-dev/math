@@ -1,0 +1,16 @@
+##
+# Rule for generating dependencies.
+##
+DEPTARGETS = -MT $(patsubst %.d,%.o,$@)
+ifeq ($(OS),Windows_NT)
+  DEPFLAGS_OS ?= -M -E
+else
+  DEPFLAGS_OS ?= -MM -E
+endif
+DEPFLAGS = $(DEPTARGETS) $(DEPFLAGS_OS) -MG -MP -MF $@
+
+%.d: %.cpp
+	$(COMPILE.cpp) $(DEPFLAGS) $<
+
+%.d: %.hpp
+	$(COMPILE.cpp) $(DEPFLAGS) $<

@@ -10,7 +10,7 @@
 
 // Can't easily use std::string as putenv require non-const char*
 void set_n_threads_var(const char* value) {
-  char env_string[256];
+  static char env_string[256];
   snprintf(env_string, sizeof(env_string), "STAN_NUM_THREADS=%s", value);
   putenv(env_string);
 }

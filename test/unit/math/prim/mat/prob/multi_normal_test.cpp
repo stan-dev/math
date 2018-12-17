@@ -200,7 +200,7 @@ TEST(ProbDistributionsMultiNormal, marginalOneChiSquareGoodnessFitTest) {
   mu[1] << 7.0, -3.0, 5.0;
   mu[2] << 5.0, -6.0, 1.0;
   int N = 10000;
-  int K = boost::math::round(2 * std::pow(N, 0.4));
+  int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::normal_distribution<> dist(2.0, 3.0);
   boost::math::chi_squared mydist(K - 1);
 
@@ -244,7 +244,7 @@ TEST(ProbDistributionsMultiNormal, marginalTwoChiSquareGoodnessFitTest) {
   mu[1] << 2.0, -2.0, 11.0;
   mu[2] << 7.0, 0.0, 3.0;
   int N = 10000;
-  int K = boost::math::round(2 * std::pow(N, 0.4));
+  int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::normal_distribution<> dist(-2.0, 2.0);
   boost::math::chi_squared mydist(K - 1);
 
@@ -283,7 +283,7 @@ TEST(ProbDistributionsMultiNormal, marginalThreeChiSquareGoodnessFitTest) {
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 2.0, -2.0, 11.0;
   int N = 10000;
-  int K = boost::math::round(2 * std::pow(N, 0.4));
+  int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::normal_distribution<> dist(11.0, 4.0);
   boost::math::chi_squared mydist(K - 1);
 

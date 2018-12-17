@@ -37,7 +37,7 @@ inline matrix_gpu multiply(const matrix_gpu& A, const double scalar) {
  * @param A matrix
  * @return matrix multipled with scalar
  */
-inline matrix_gpu multiply(const double scalar, const matrix_gpu& A) {
+inline auto multiply(const double scalar, const matrix_gpu& A) {
   return multiply(A, scalar);
 }
 
@@ -53,11 +53,11 @@ inline matrix_gpu multiply(const double scalar, const matrix_gpu& A) {
  * @throw <code>std::invalid_argument</code> if the
  *   number of columns in A and rows in B do not match
  */
-inline matrix_gpu multiply(const matrix_gpu& A, const matrix_gpu& B) {
+inline auto multiply(const matrix_gpu& A, const matrix_gpu& B) {
   check_size_match("multiply (GPU)", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
   matrix_gpu temp(A.rows(), B.cols());
-  if (temp.size() == 0)
+  if (A.size() == 0 || B.size() == 0)
     return temp;
   int local = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
       "THREAD_BLOCK_SIZE");
@@ -71,6 +71,10 @@ inline matrix_gpu multiply(const matrix_gpu& A, const matrix_gpu& B) {
   matrix_gpu tempPad(Mpad, Npad);
   matrix_gpu Apad(Mpad, Kpad);
   matrix_gpu Bpad(Kpad, Npad);
+  opencl_kernels::zeros(cl::NDRange(Mpad, Kpad), Apad.buffer(), Mpad, Kpad,
+                        TriangularViewGPU::Entire);
+  opencl_kernels::zeros(cl::NDRange(Kpad, Npad), Bpad.buffer(), Kpad, Npad,
+                        TriangularViewGPU::Entire);
   Apad.sub_block(A, 0, 0, 0, 0, A.rows(), A.cols());
   Bpad.sub_block(B, 0, 0, 0, 0, B.rows(), B.cols());
   int wpt = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
@@ -86,6 +90,28 @@ inline matrix_gpu multiply(const matrix_gpu& A, const matrix_gpu& B) {
   // unpadding the result matrix
   temp.sub_block(tempPad, 0, 0, 0, 0, temp.rows(), temp.cols());
   return temp;
+}
+
+/**
+ * Templated product operator for GPU matrices.
+ *
+ * Computes the matrix multiplication C[M, K] = A[M, N] x B[N, K].
+ *
+ * @param A A matrix or scalar
+ * @param B A matrix or scalar
+ * @return the product of the first and second arguments
+ *
+ * @throw <code>std::invalid_argument</code> if the
+ *   number of columns in A and rows in B do not match
+ */
+inline matrix_gpu operator*(const matrix_gpu& A, const matrix_gpu& B) {
+  return multiply(A, B);
+}
+inline matrix_gpu operator*(const matrix_gpu& B, const double scalar) {
+  return multiply(B, scalar);
+}
+inline matrix_gpu operator*(const double scalar, const matrix_gpu& B) {
+  return multiply(scalar, B);
 }
 }  // namespace math
 }  // namespace stan

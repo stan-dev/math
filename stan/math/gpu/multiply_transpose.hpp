@@ -19,7 +19,7 @@ namespace math {
  */
 inline matrix_gpu multiply_transpose(const matrix_gpu& A) {
   matrix_gpu temp(A.rows(), A.rows());
-  if (temp.size() == 0)
+  if (A.size() == 0)
     return temp;
   // padding the matrices so the dimensions are divisible with local
   // improves performance becasuse we can omit if statements in the
@@ -30,6 +30,8 @@ inline matrix_gpu multiply_transpose(const matrix_gpu& A) {
   int Npad = ((A.cols() + local - 1) / local) * local;
   matrix_gpu tempPad(Mpad, Mpad);
   matrix_gpu Apad(Mpad, Npad);
+  opencl_kernels::zeros(cl::NDRange(Mpad, Npad), Apad.buffer(), Mpad, Npad,
+                        TriangularViewGPU::Entire);
   Apad.sub_block(A, 0, 0, 0, 0, A.rows(), A.cols());
   int wpt = opencl_kernels::multiply_transpose.make_functor.get_opts().at(
       "WORK_PER_THREAD");
