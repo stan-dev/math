@@ -67,7 +67,7 @@ TEST(ProbDistributionsBernoulliLogitGlm, vectorized) {
                                                       beta_vector_t, rng));
 }
 
-TEST(ProbDistributionsPoissonLogGLM, errorCheck) {
+TEST(ProbDistributionsBernoulliLogitGlm, errorCheck) {
   // Check errors for nonfinite and wrong sizes.
   boost::random::mt19937 rng;
 
