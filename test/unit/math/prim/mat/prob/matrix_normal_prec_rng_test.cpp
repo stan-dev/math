@@ -153,10 +153,9 @@ std::vector<double> extract_entry(const unsigned int r, const unsigned int c,
   return univariate_samples;
 }
 
-std::vector<double>
-extract_sum_of_entries(const unsigned int r1, const unsigned int c1,
-                       const unsigned int r2, const unsigned int c2,
-                       const std::vector<MatrixXd> &samples) {
+std::vector<double> extract_sum_of_entries(
+    const unsigned int r1, const unsigned int c1, const unsigned int r2,
+    const unsigned int c2, const std::vector<MatrixXd> &samples) {
   std::vector<double> univariate_samples;
   for (auto sample : samples)
     univariate_samples.push_back(sample(r1, c1) + sample(r2, c2));

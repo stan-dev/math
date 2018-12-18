@@ -12,7 +12,7 @@ using Eigen::VectorXd;
 using stan::math::gaussian_dlm_obs_rng;
 
 class ProbDistributionsGaussianDLMInputsRng : public ::testing::Test {
-protected:
+ protected:
   virtual void SetUp() {
     FF = MatrixXd::Random(2, 3);
     GG = MatrixXd::Random(2, 2);

@@ -142,8 +142,8 @@ TEST(ProbDistributionsBernoulliLogitGlm, marginalChiSquareGoodnessFitTest) {
   std::vector<double> samples1;
   std::vector<double> samples2;
   for (int i = 0; i < N; ++i) {
-    std::vector<int> sample =
-        stan::math::bernoulli_logit_glm_rng(x, alpha, beta, rng);
+    std::vector<int> sample
+        = stan::math::bernoulli_logit_glm_rng(x, alpha, beta, rng);
     samples1.push_back(sample[0]);
     samples2.push_back(sample[1]);
   }

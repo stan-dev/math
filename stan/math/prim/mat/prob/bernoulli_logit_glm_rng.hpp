@@ -41,9 +41,8 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 template <typename T_x, typename T_alpha, typename T_beta, class RNG>
-inline typename VectorBuilder<true, int, T_alpha>::type
-bernoulli_logit_glm_rng(const T_x &x, const T_alpha &alpha, const T_beta &beta,
-                        RNG &rng) {
+inline typename VectorBuilder<true, int, T_alpha>::type bernoulli_logit_glm_rng(
+    const T_x &x, const T_alpha &alpha, const T_beta &beta, RNG &rng) {
   using boost::bernoulli_distribution;
   using boost::variate_generator;
 
