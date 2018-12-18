@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_RK45_HPP
 #define STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_RK45_HPP
 
+#include <stan/math/prim/arr/err/check_size_match.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
