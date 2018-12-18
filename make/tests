@@ -3,8 +3,7 @@ N_TESTS ?= 100
 # to group the probability tests into
 
 ##
-# Anything targets in test/ (.d, .o, executable)
-# needs the GTEST flags
+# Any targets in test/ (.d, .o, executable) needs the GTEST flags
 ##
 test/% : CXXFLAGS += $(CXXFLAGS_GTEST)
 test/% : CPPFLAGS += $(CPPFLAGS_GTEST)
