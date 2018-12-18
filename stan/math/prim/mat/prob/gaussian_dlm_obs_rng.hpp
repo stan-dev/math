@@ -2,8 +2,9 @@
 #define STAN_MATH_PRIM_MAT_PROB_GAUSSIAN_DLM_OBS_RNG_HPP
 
 #include <stan/math/prim/mat/err/check_cov_matrix.hpp>
-#include <stan/math/prim/mat/err/check_symmetric.hpp>
+#include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_pos_semidefinite.hpp>
+#include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
@@ -24,6 +25,9 @@ namespace internal {
  * Return a multivariate normal random variate with the given location
  * and covariance using the specified random number generator.
  *
+ * No error checking or templating, takes the LDLT directly to avoid
+ * recomputation. Can sample from semidefinite covariance matrices.
+ *
  * @tparam RNG Type of pseudo-random number generator
  * @param mu location parameter
  * @param S_ldlt Eigen::LDLT of covariance matrix, semidefinite is okay
@@ -31,13 +35,14 @@ namespace internal {
  *
  */
 template <class RNG>
-inline Eigen::VectorXd multi_normal_semidefinite_rng(
-    const Eigen::VectorXd& mu, const Eigen::LDLT<Eigen::MatrixXd>& S_ldlt,
-    RNG& rng) {
+inline Eigen::VectorXd
+multi_normal_semidefinite_rng(const Eigen::VectorXd &mu,
+                              const Eigen::LDLT<Eigen::MatrixXd> &S_ldlt,
+                              RNG &rng) {
   using boost::normal_distribution;
   using boost::variate_generator;
 
-  variate_generator<RNG&, normal_distribution<> > std_normal_rng(
+  variate_generator<RNG &, normal_distribution<>> std_normal_rng(
       rng, normal_distribution<>(0, 1));
 
   Eigen::VectorXd stddev = S_ldlt.vectorD().array().sqrt().matrix();
@@ -46,11 +51,44 @@ inline Eigen::VectorXd multi_normal_semidefinite_rng(
   for (int i = 0; i < M; i++)
     z(i) = stddev(i) * std_normal_rng();
 
-  Eigen::VectorXd Y
-      = mu + (S_ldlt.transpositionsP().transpose() * (S_ldlt.matrixL() * z));
+  Eigen::VectorXd Y =
+      mu + (S_ldlt.transpositionsP().transpose() * (S_ldlt.matrixL() * z));
   // The inner paranthesis matter, transpositionsP() gives a
   // permutation matrix from pivoting and matrixL() gives a lower
   // triangular matrix. The types cannot be directly multiplied.
+
+  return Y;
+}
+
+/**
+ * Return a multivariate normal random variate with the given location
+ * and covariance using the specified random number generator.
+ *
+ * No error checking or templating, takes the LLT directly to avoid
+ * recomputation.
+ *
+ * @tparam RNG Type of pseudo-random number generator
+ * @param mu location parameter
+ * @param S_llt Eigen::LLT of positive definite covariance matrix.
+ * @param rng random number generator
+ *
+ */
+template <class RNG>
+inline Eigen::VectorXd
+multi_normal_definite_rng(const Eigen::VectorXd &mu,
+                          const Eigen::LLT<Eigen::MatrixXd> &S_llt, RNG &rng) {
+  using boost::normal_distribution;
+  using boost::variate_generator;
+
+  variate_generator<RNG &, normal_distribution<>> std_normal_rng(
+      rng, normal_distribution<>(0, 1));
+
+  size_t M = S_llt.matrixL().rows();
+  Eigen::VectorXd z(M);
+  for (int i = 0; i < M; i++)
+    z(i) = std_normal_rng();
+
+  Eigen::VectorXd Y = mu + S_llt.matrixL() * z;
 
   return Y;
 }
@@ -73,26 +111,28 @@ inline Eigen::VectorXd multi_normal_semidefinite_rng(
  * @param W A n x n matrix. The state covariance matrix.
  * @param m0 A n x 1 matrix. The mean vector of the distribution
  * of the initial state.
- * @param C0 A n x n matrix. The covariance matrix of the
- * distribution of the initial state.
+ * @param C0 A n x n matrix. The covariance matrix of the distribution
+ * of the initial state.
  * @param T a positive integer, how many timesteps to simulate.
  * @param rng Pseudo-random number generator.
- * @return A r x T matrix of simulated observations. Rows are variables,
- * columns are observations.
+ * @return A r x T matrix of simulated observations. Rows are
+ * variables, columns are observations. First column is the state
+ * after the first transition. Last column is the state after the last
+ * transition. Initial state not returned.
  * @throw std::domain_error if a matrix is not symmetric or not
  * positive semi-definite. Or throw std::invalid_argument if a size is
- * wrong or any input is NaN or non-finite, or if T is not positive.
+ * wrong or any input is NaN or non-finite, or if T is not
+ * positive. Require C0 in particular to be strictly positive
+ * definite. V and W can be semidefinite.
  *
  */
 template <class RNG>
-inline Eigen::MatrixXd gaussian_dlm_obs_rng(const Eigen::MatrixXd& F,
-                                            const Eigen::MatrixXd& G,
-                                            const Eigen::MatrixXd& V,
-                                            const Eigen::MatrixXd& W,
-                                            const Eigen::VectorXd& m0,
-                                            const Eigen::MatrixXd& C0,
-                                            const int T, RNG& rng) {
-  static const char* function = "gaussian_dlm_obs_rng";
+inline Eigen::MatrixXd
+gaussian_dlm_obs_rng(const Eigen::MatrixXd &F, const Eigen::MatrixXd &G,
+                     const Eigen::MatrixXd &V, const Eigen::MatrixXd &W,
+                     const Eigen::VectorXd &m0, const Eigen::MatrixXd &C0,
+                     const int T, RNG &rng) {
+  static const char *function = "gaussian_dlm_obs_rng";
 
   int r = F.cols();  // number of variables
   int n = G.rows();  // number of states
@@ -104,23 +144,17 @@ inline Eigen::MatrixXd gaussian_dlm_obs_rng(const Eigen::MatrixXd& F,
   check_size_match(function, "rows of V", V.rows(), "cols of F", F.cols());
   check_finite(function, "V", V);
   check_positive(function, "V rows", V.rows());
-  check_finite(function, "V", V);
   check_symmetric(function, "V", V);
   check_size_match(function, "rows of W", W.rows(), "rows of G", G.rows());
   check_finite(function, "W", W);
   check_positive(function, "W rows", W.rows());
-  check_finite(function, "W", W);
   check_symmetric(function, "W", W);
   check_size_match(function, "rows of W", W.rows(), "rows of G", G.rows());
   check_size_match(function, "size of m0", m0.size(), "rows of G", G.rows());
   check_finite(function, "m0", m0);
   check_size_match(function, "rows of C0", C0.rows(), "rows of G", G.rows());
   check_finite(function, "C0", C0);
-  // gaussian_dlm_obs_lpdf requires C0 to be positive definite.
-  // check_cov_matrix(function, "C0", C0);
-  // We require only semidefinite.
   check_positive(function, "C0 rows", C0.rows());
-  check_finite(function, "C0", C0);
   check_symmetric(function, "C0", C0);
   check_positive(function, "T", T);
 
@@ -128,27 +162,28 @@ inline Eigen::MatrixXd gaussian_dlm_obs_rng(const Eigen::MatrixXd& F,
   check_pos_semidefinite(function, "V", V_ldlt);
   Eigen::LDLT<Eigen::MatrixXd> W_ldlt = W.ldlt();
   check_pos_semidefinite(function, "W", W_ldlt);
-  Eigen::LDLT<Eigen::MatrixXd> C0_ldlt = C0.ldlt();
-  check_pos_semidefinite(function, "C0", C0_ldlt);
+  // Require strictly positive definite C0 for consistency with lpdf.
+  Eigen::LLT<Eigen::MatrixXd> C0_llt = C0.llt();
+  check_pos_definite(function, "C0", C0_llt);
 
   Eigen::MatrixXd y(r, T);
-  Eigen::VectorXd theta_t
-      = internal::multi_normal_semidefinite_rng(m0, C0_ldlt, rng);
+  Eigen::VectorXd theta_t =
+      internal::multi_normal_definite_rng(m0, C0_llt, rng);
   for (int t = 0; t < T; ++t) {
-    y.col(t) = internal::multi_normal_semidefinite_rng(
-        Eigen::VectorXd(F.transpose() * theta_t), V_ldlt, rng);
     theta_t = internal::multi_normal_semidefinite_rng(
         Eigen::VectorXd(G * theta_t), W_ldlt, rng);
+    y.col(t) = internal::multi_normal_semidefinite_rng(
+        Eigen::VectorXd(F.transpose() * theta_t), V_ldlt, rng);
   }
   return y;
 }
 
 template <class RNG>
 inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>
-gaussian_dlm_obs_rng(const Eigen::MatrixXd& F, const Eigen::MatrixXd& G,
-                     const Eigen::VectorXd& V, const Eigen::MatrixXd& W,
-                     const Eigen::VectorXd& m0, const Eigen::MatrixXd& C0,
-                     const int T, RNG& rng) {
+gaussian_dlm_obs_rng(const Eigen::MatrixXd &F, const Eigen::MatrixXd &G,
+                     const Eigen::VectorXd &V, const Eigen::MatrixXd &W,
+                     const Eigen::VectorXd &m0, const Eigen::MatrixXd &C0,
+                     const int T, RNG &rng) {
   return gaussian_dlm_obs_rng(F, G, Eigen::MatrixXd(V.asDiagonal()), W, m0, C0,
                               T, rng);
 }

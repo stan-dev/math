@@ -1,7 +1,7 @@
+#include <gtest/gtest.h>
 #include <boost/math/distributions.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <stan/math/prim/mat.hpp>
-#include <gtest/gtest.h>
 #include <test/unit/math/prim/scal/prob/util.hpp>
 #include <exception>
 #include <limits>
@@ -134,7 +134,7 @@ TEST(ProbDistributionsMatrixNormalPrecRng, ErrorSize) {
  */
 void assert_matches_normal_distribution(const double mean,
                                         const double variance,
-                                        const std::vector<double>& samples) {
+                                        const std::vector<double> &samples) {
   int N = samples.size();
   int K = boost::math::round(2 * std::pow(N, 0.4));
   boost::math::normal_distribution<> dist(mean, sqrt(variance));
@@ -146,16 +146,17 @@ void assert_matches_normal_distribution(const double mean,
 }
 
 std::vector<double> extract_entry(const unsigned int r, const unsigned int c,
-                                  const std::vector<MatrixXd>& samples) {
+                                  const std::vector<MatrixXd> &samples) {
   std::vector<double> univariate_samples;
   for (auto sample : samples)
     univariate_samples.push_back(sample(r, c));
   return univariate_samples;
 }
 
-std::vector<double> extract_sum_of_entries(
-    const unsigned int r1, const unsigned int c1, const unsigned int r2,
-    const unsigned int c2, const std::vector<MatrixXd>& samples) {
+std::vector<double>
+extract_sum_of_entries(const unsigned int r1, const unsigned int c1,
+                       const unsigned int r2, const unsigned int c2,
+                       const std::vector<MatrixXd> &samples) {
   std::vector<double> univariate_samples;
   for (auto sample : samples)
     univariate_samples.push_back(sample(r1, c1) + sample(r2, c2));

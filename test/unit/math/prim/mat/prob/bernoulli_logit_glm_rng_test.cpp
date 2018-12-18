@@ -1,32 +1,74 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <boost/math/distributions.hpp>
+#include <boost/random/mersenne_twister.hpp>
 #include <test/unit/math/prim/scal/prob/util.hpp>
 #include <limits>
 #include <vector>
 
-TEST(ProbDistributionsBernoulliLogitGlm, NotVectorized) {
+using stan::math::bernoulli_logit_glm_rng;
+
+TEST(ProbDistributionsBernoulliLogitGlm, vectorized) {
+  //  Test scalar/vector combinations.
   boost::random::mt19937 rng;
-  Eigen::Matrix<double, 1, Eigen::Dynamic> x(2);
-  x << 3.5, -1.5;
-  double alpha = 2.0;
-  std::vector<double> beta{2.0, 4.5};
+
+  Eigen::MatrixXd x(2, 3);
+  x << 3.5, -1.5, 0.0, 2.0, 1.0, 3.0;
+
+  double alpha_scalar = 1.0;
+  std::vector<double> alpha{1.0, 3.0};
+  Eigen::VectorXd alpha_vector(2);
+  alpha_vector << 1.0, 3.0;
+  Eigen::RowVectorXd alpha_vector_t(2);
+  alpha_vector_t = alpha_vector;
+
+  double beta_scalar = 2.0;
+  std::vector<double> beta{2.0, 4.5, -1.0};
+  Eigen::VectorXd beta_vector(3);
+  beta_vector << 2.0, 4.5, -1.0;
+  Eigen::RowVectorXd beta_vector_t(3);
+  beta_vector_t = beta_vector;
+
+  // Can't use VectorRNGTestRig since length(alpha) != length(beta) in general.
+
   EXPECT_NO_THROW(stan::math::bernoulli_logit_glm_rng(x, alpha, beta, rng));
+  EXPECT_NO_THROW(
+      stan::math::bernoulli_logit_glm_rng(x, alpha_scalar, beta, rng));
+  EXPECT_NO_THROW(
+      stan::math::bernoulli_logit_glm_rng(x, alpha_vector, beta, rng));
+  EXPECT_NO_THROW(
+      stan::math::bernoulli_logit_glm_rng(x, alpha_vector_t, beta, rng));
+
+  EXPECT_NO_THROW(
+      stan::math::bernoulli_logit_glm_rng(x, alpha, beta_scalar, rng));
+  EXPECT_NO_THROW(
+      stan::math::bernoulli_logit_glm_rng(x, alpha_scalar, beta_scalar, rng));
+  EXPECT_NO_THROW(
+      stan::math::bernoulli_logit_glm_rng(x, alpha_vector, beta_scalar, rng));
+  EXPECT_NO_THROW(
+      stan::math::bernoulli_logit_glm_rng(x, alpha_vector_t, beta_scalar, rng));
+
+  EXPECT_NO_THROW(
+      stan::math::bernoulli_logit_glm_rng(x, alpha, beta_vector, rng));
+  EXPECT_NO_THROW(
+      stan::math::bernoulli_logit_glm_rng(x, alpha_scalar, beta_vector, rng));
+  EXPECT_NO_THROW(
+      stan::math::bernoulli_logit_glm_rng(x, alpha_vector, beta_vector, rng));
+  EXPECT_NO_THROW(
+      stan::math::bernoulli_logit_glm_rng(x, alpha_vector_t, beta_vector, rng));
+
+  EXPECT_NO_THROW(
+      stan::math::bernoulli_logit_glm_rng(x, alpha, beta_vector_t, rng));
+  EXPECT_NO_THROW(
+      stan::math::bernoulli_logit_glm_rng(x, alpha_scalar, beta_vector_t, rng));
+  EXPECT_NO_THROW(
+      stan::math::bernoulli_logit_glm_rng(x, alpha_vector, beta_vector_t, rng));
+  EXPECT_NO_THROW(stan::math::bernoulli_logit_glm_rng(x, alpha_vector_t,
+                                                      beta_vector_t, rng));
 }
 
-TEST(ProbDistributionsBernoulliLogitGlm, Vectorized) {
-  boost::random::mt19937 rng;
-  Eigen::MatrixXd x(2, 2);
-  x << 3.5, -1.5, 4.0, 1.2;
-  std::vector<double> alpha{2.0, 1.0};
-  std::vector<double> beta{2.0, 4.5};
-  EXPECT_NO_THROW(stan::math::bernoulli_logit_glm_rng(x, alpha, beta, rng));
-}
-
-//  We check that the right errors are thrown.
-TEST(ProbDistributionsPoissonLogGLM,
-     glm_matches_bernoulli_logit_error_checking) {
+TEST(ProbDistributionsPoissonLogGLM, errorCheck) {
+  // Check errors for nonfinite and wrong sizes.
   boost::random::mt19937 rng;
 
   int N = 3;
@@ -44,6 +86,7 @@ TEST(ProbDistributionsPoissonLogGLM,
   Eigen::VectorXd betaw1 = Eigen::VectorXd::Random(W, 1);
   Eigen::VectorXd betaw2 = Eigen::VectorXd::Random(M, 1) * NAN;
 
+  EXPECT_NO_THROW(stan::math::bernoulli_logit_glm_rng(x, alpha, beta, rng));
   EXPECT_THROW(stan::math::bernoulli_logit_glm_rng(xw1, alpha, beta, rng),
                std::invalid_argument);
   EXPECT_THROW(stan::math::bernoulli_logit_glm_rng(xw2, alpha, beta, rng),
@@ -61,6 +104,7 @@ TEST(ProbDistributionsPoissonLogGLM,
 }
 
 TEST(ProbDistributionsBernoulliLogitGlm, marginalChiSquareGoodnessFitTest) {
+  // Check distribution of result.
   boost::random::mt19937 rng;
   Eigen::MatrixXd x(2, 2);
   x << 3.5, -1.5, 2.0, -1.2;
@@ -98,8 +142,8 @@ TEST(ProbDistributionsBernoulliLogitGlm, marginalChiSquareGoodnessFitTest) {
   std::vector<double> samples1;
   std::vector<double> samples2;
   for (int i = 0; i < N; ++i) {
-    std::vector<int> sample
-        = stan::math::bernoulli_logit_glm_rng(x, alpha, beta, rng);
+    std::vector<int> sample =
+        stan::math::bernoulli_logit_glm_rng(x, alpha, beta, rng);
     samples1.push_back(sample[0]);
     samples2.push_back(sample[1]);
   }

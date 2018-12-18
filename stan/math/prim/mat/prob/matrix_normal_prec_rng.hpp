@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MATRIX_NORMAL_PREC_RNG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MATRIX_NORMAL_PREC_RNG_HPP
 
+#include <boost/random/normal_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/mat/err/check_pos_semidefinite.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
@@ -31,14 +31,13 @@ namespace math {
  * @tparam RNG Type of pseudo-random number generator.
  */
 template <class RNG>
-inline Eigen::MatrixXd matrix_normal_prec_rng(const Eigen::MatrixXd& Mu,
-                                              const Eigen::MatrixXd& Sigma,
-                                              const Eigen::MatrixXd& D,
-                                              RNG& rng) {
+inline Eigen::MatrixXd
+matrix_normal_prec_rng(const Eigen::MatrixXd &Mu, const Eigen::MatrixXd &Sigma,
+                       const Eigen::MatrixXd &D, RNG &rng) {
   using boost::normal_distribution;
   using boost::variate_generator;
 
-  static const char* function = "matrix_normal_prec_rng";
+  static const char *function = "matrix_normal_prec_rng";
 
   check_positive(function, "Sigma rows", Sigma.rows());
   check_finite(function, "Sigma", Sigma);
@@ -86,16 +85,16 @@ inline Eigen::MatrixXd matrix_normal_prec_rng(const Eigen::MatrixXd& Mu,
   int m = Sigma.rows();
   int n = D.rows();
 
-  variate_generator<RNG&, normal_distribution<> > std_normal_rng(
+  variate_generator<RNG &, normal_distribution<>> std_normal_rng(
       rng, normal_distribution<>(0, 1));
 
   // X = sqrt[DS]^(-1) C sqrt[DD]^(-1)
   // X ~ N[0, DS, DD]
   Eigen::MatrixXd X(m, n);
-  Eigen::VectorXd row_stddev
-      = Sigma_ldlt.vectorD().array().inverse().sqrt().matrix();
-  Eigen::VectorXd col_stddev
-      = D_ldlt.vectorD().array().inverse().sqrt().matrix();
+  Eigen::VectorXd row_stddev =
+      Sigma_ldlt.vectorD().array().inverse().sqrt().matrix();
+  Eigen::VectorXd col_stddev =
+      D_ldlt.vectorD().array().inverse().sqrt().matrix();
   for (int row = 0; row < m; ++row) {
     for (int col = 0; col < n; ++col) {
       double stddev = row_stddev(row) * col_stddev(col);
@@ -110,12 +109,12 @@ inline Eigen::MatrixXd matrix_normal_prec_rng(const Eigen::MatrixXd& Mu,
   // Y' = (LD^(-1)^T (LS^T.solve(X))^T)^T
   // Y' = (LD^T.solve((LS^T.solve(X))^T))^T
   // Y = Mu + PS^T Y' PD
-  Eigen::MatrixXd Y = Mu
-                      + (Sigma_ldlt.transpositionsP().transpose()
-                         * (D_ldlt.matrixU().solve(
-                                (Sigma_ldlt.matrixU().solve(X)).transpose()))
-                               .transpose()
-                         * D_ldlt.transpositionsP());
+  Eigen::MatrixXd Y =
+      Mu +
+      (Sigma_ldlt.transpositionsP().transpose() *
+       (D_ldlt.matrixU().solve((Sigma_ldlt.matrixU().solve(X)).transpose()))
+           .transpose() *
+       D_ldlt.transpositionsP());
 
   return Y;
 }
