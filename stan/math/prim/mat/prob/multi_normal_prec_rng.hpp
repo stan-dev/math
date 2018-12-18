@@ -46,7 +46,7 @@ multi_normal_prec_rng(const T_loc &mu, const Eigen::MatrixXd &S, RNG &rng) {
 
   vector_seq_view<T_loc> mu_vec(mu);
   check_positive(function, "number of location parameter vectors",
-		 mu_vec.size());
+                 mu_vec.size());
   size_t size_mu = mu_vec[0].size();
 
   size_t N = mu_vec.size();
