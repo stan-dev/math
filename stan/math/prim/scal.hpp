@@ -119,8 +119,6 @@
 #include <stan/math/prim/scal/fun/ldexp.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/lmgamma.hpp>
-#include <stan/math/prim/scal/fun/locscale_constrain.hpp>
-#include <stan/math/prim/scal/fun/locscale_free.hpp>
 #include <stan/math/prim/scal/fun/log.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/log1m_exp.hpp>
