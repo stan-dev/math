@@ -41,7 +41,7 @@ void setup_job(int N, Eigen::VectorXd& shared_params_d,
   job_params_d.clear();
   for (int n = 0; n != N; ++n) {
     Eigen::VectorXd job_d(2);
-    job_d << 0, n * n;
+    job_d << 1.1, n * n;
     job_params_d.push_back(job_d);
   }
 
@@ -59,7 +59,7 @@ struct map_rect : public ::testing::Test {
   std::vector<Eigen::VectorXd> job_params_d;
   std::vector<std::vector<double> > x_r;
   std::vector<std::vector<int> > x_i;
-  std::vector<int> N_test{0, 1, 2, 7, 10, 13, 67, 100};
+  std::vector<int> N_test{0, 1, 2, 3, 4, 5, 7, 10, 13, 67, 100};
 
   virtual void SetUp() {}
 };
@@ -70,12 +70,20 @@ TEST_F(map_rect, concurrent_varying_num_threads_ragged_dd) {
   for (std::size_t i = 1; i < 20; ++i) {
     for (std::size_t n = 0; n < N_test.size(); ++n) {
       const int N = N_test[n];
+
       setup_job(N, shared_params_d, job_params_d, x_r, x_i);
 
       Eigen::VectorXd res1 = stan::math::map_rect<0, hard_work>(
           shared_params_d, job_params_d, x_r, x_i);
-
       EXPECT_EQ(res1.size(), 2 * N);
+      for (int i = 0, j = 0; i < N; i++) {
+        j = 2 * i;
+        EXPECT_FLOAT_EQ(res1(j), job_params_d[i](0) * job_params_d[i](0)
+                                     + shared_params_d(0));
+        EXPECT_FLOAT_EQ(res1(j + 1),
+                        x_r[i][0] * job_params_d[i](1) * job_params_d[i](0)
+                            + 2 * shared_params_d(0) + shared_params_d(1));
+      }
     }
     set_n_threads(i);
   }
@@ -90,7 +98,6 @@ TEST_F(map_rect, concurrent_varying_num_threads_ragged_dd) {
 
       Eigen::VectorXd res2 = stan::math::map_rect<0, hard_work>(
           shared_params_d, job_params_d, x_r, x_i);
-
       EXPECT_EQ(res2.size(), 2 * N + 1);
     }
     set_n_threads(i);
@@ -106,6 +113,7 @@ TEST_F(map_rect, concurrent_varying_num_threads_eval_ok_dd) {
 
       Eigen::VectorXd res1 = stan::math::map_rect<0, hard_work>(
           shared_params_d, job_params_d, x_r, x_i);
+      EXPECT_EQ(res1.size(), 2 * N);
       for (int i = 0, j = 0; i < N; i++) {
         j = 2 * i;
         EXPECT_FLOAT_EQ(res1(j), job_params_d[i](0) * job_params_d[i](0)
