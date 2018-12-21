@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_LOCSCALE_FREE_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_LOCSCALE_FREE_HPP
+#ifndef STAN_MATH_PRIM_SCAL_FUN_OFFSET_MULTIPLIER_FREE_HPP
+#define STAN_MATH_PRIM_SCAL_FUN_OFFSET_MULTIPLIER_FREE_HPP
 
 #include <stan/math/prim/scal/fun/identity_free.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>

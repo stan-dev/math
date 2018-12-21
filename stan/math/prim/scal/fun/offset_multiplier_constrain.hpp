@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_LOCSCALE_CONSTRAIN_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_LOCSCALE_CONSTRAIN_HPP
+#ifndef STAN_MATH_PRIM_SCAL_FUN_OFFSET_MULTIPLIER_CONSTRAIN_HPP
+#define STAN_MATH_PRIM_SCAL_FUN_OFFSET_MULTIPLIER_CONSTRAIN_HPP
 
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/scal/fun/identity_constrain.hpp>
