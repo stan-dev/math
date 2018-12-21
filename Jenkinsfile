@@ -201,7 +201,7 @@ pipeline {
                     post { always { retry(3) { deleteDir() } } }
                 }
                 stage('Unit with MPI') {
-                    agent any
+                    agent { label 'linux && mpi' }
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
