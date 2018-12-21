@@ -119,8 +119,6 @@
 #include <stan/math/prim/scal/fun/ldexp.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/lmgamma.hpp>
-#include <stan/math/prim/scal/fun/locscale_constrain.hpp>
-#include <stan/math/prim/scal/fun/locscale_free.hpp>
 #include <stan/math/prim/scal/fun/log.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/log1m_exp.hpp>
@@ -152,6 +150,8 @@
 #include <stan/math/prim/scal/fun/modified_bessel_second_kind.hpp>
 #include <stan/math/prim/scal/fun/modulus.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
+#include <stan/math/prim/scal/fun/offset_multiplier_constrain.hpp>
+#include <stan/math/prim/scal/fun/offset_multiplier_free.hpp>
 #include <stan/math/prim/scal/fun/owens_t.hpp>
 #include <stan/math/prim/scal/fun/Phi.hpp>
 #include <stan/math/prim/scal/fun/Phi_approx.hpp>
