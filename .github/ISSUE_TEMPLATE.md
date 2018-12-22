@@ -27,6 +27,5 @@ If this is a **feature request**, show what you expect to happen if the feature 
 ## Additional Information
 Any additional information goes here.
 
-
 ## Current Math Version
-v2.18.0
+v2.18.1
