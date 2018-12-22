@@ -85,8 +85,7 @@ map_rect_concurrent(
 
 #ifdef STAN_THREADS
   if (num_threads > 1) {
-    const int num_big_threads
-        = (num_jobs - num_jobs_per_thread) % (num_threads - 1);
+    const int num_big_threads = num_jobs % num_threads;
     const int first_big_thread = num_threads - num_big_threads;
     for (int i = 1, job_start = num_jobs_per_thread, job_size = 0;
          i < num_threads; ++i, job_start += job_size) {

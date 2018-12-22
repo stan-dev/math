@@ -32,15 +32,15 @@ String alsoNotify() {
 Boolean isPR() { env.CHANGE_URL != null }
 String fork() { env.CHANGE_FORK ?: "stan-dev" }
 String branchName() { isPR() ? env.CHANGE_BRANCH :env.BRANCH_NAME }
-String cmdstan_pr() { params.cmdstan_pr ?: "downstream_tests" }
-String stan_pr() { params.stan_pr ?: "downstream_tests" }
+String cmdstan_pr() { params.cmdstan_pr ?: ( env.CHANGE_TARGET == "master" ? "downstream_hotfix" : "downstream_tests" ) }
+String stan_pr() { params.stan_pr ?: ( env.CHANGE_TARGET == "master" ? "downstream_hotfix" : "downstream_tests" ) }
 
 pipeline {
     agent none
     parameters {
-        string(defaultValue: 'downstream_tests', name: 'cmdstan_pr',
+        string(defaultValue: '', name: 'cmdstan_pr',
           description: 'PR to test CmdStan upstream against e.g. PR-630')
-        string(defaultValue: 'downstream_tests', name: 'stan_pr',
+        string(defaultValue: '', name: 'stan_pr',
           description: 'PR to test Stan upstream against e.g. PR-630')
         booleanParam(defaultValue: false, description:
         'Run additional distribution tests on RowVectors (takes 5x as long)',
@@ -201,7 +201,7 @@ pipeline {
                     post { always { retry(3) { deleteDir() } } }
                 }
                 stage('Unit with MPI') {
-                    agent any
+                    agent { label 'linux && mpi' }
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
