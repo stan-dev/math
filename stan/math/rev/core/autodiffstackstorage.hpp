@@ -4,6 +4,8 @@
 #include <stan/math/memory/stack_alloc.hpp>
 #include <vector>
 
+#include "tbb/enumerable_thread_specific.h"
+
 namespace stan {
 namespace math {
 
@@ -63,19 +65,45 @@ struct AutodiffStackSingleton {
 
   static inline AutodiffStackStorage &instance() {
 #ifdef STAN_THREADS
+#ifdef STAN_TBB_TLS
+    // TBB TLS
+    return instance_.local();
+#else
+    // C++ TLS
     thread_local static AutodiffStackStorage instance_;
-#endif
     return instance_;
+#endif
+#else
+    // No TLS
+    return instance_;
+#endif
   }
 
-#ifndef STAN_THREADS
-
- private:
+#ifdef STAN_THREADS
+#ifdef STAN_TBB_TLS
+  // private:
+  // TBB TLS
+  typedef tbb::enumerable_thread_specific<
+      AutodiffStackStorage, tbb::cache_aligned_allocator<AutodiffStackStorage>,
+      tbb::ets_key_per_instance>
+      AutodiffStackStorage_tls_t;
+  static AutodiffStackStorage_tls_t instance_;
+#endif
+#else
+  // No TLS
+  // private:
   static AutodiffStackStorage instance_;
 #endif
 };
 
-#ifndef STAN_THREADS
+#ifdef STAN_THREADS
+#ifdef STAN_TBB_TLS
+template <typename ChainableT, typename ChainableAllocT>
+typename AutodiffStackSingleton<ChainableT,
+                                ChainableAllocT>::AutodiffStackStorage_tls_t
+    AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_;
+#endif
+#else
 template <typename ChainableT, typename ChainableAllocT>
 typename AutodiffStackSingleton<ChainableT,
                                 ChainableAllocT>::AutodiffStackStorage

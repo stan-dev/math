@@ -45,6 +45,31 @@ static void grad(vari* vi) {
   }
 }
 
+static void grad_global(vari* vi) {
+  // simple reference implementation (intended as doc):
+  //   vi->init_dependent();
+  //   size_t end = var_stack_.size();
+  //   size_t begin = empty_nested() ? 0 : end - nested_size();
+  //   for (size_t i = end; --i > begin; )
+  //     var_stack_[i]->chain();
+
+  // ignore nested stacks for the moment
+  typedef std::vector<vari*>::reverse_iterator it_t;
+  vi->init_dependent();
+
+  typedef ChainableStack::AutodiffStackStorage local_ad_stack_t;
+
+  std::for_each(ChainableStack::instance_.begin(),
+                ChainableStack::instance_.end(),
+                [](local_ad_stack_t& local_instance) {
+                  it_t begin = local_instance.var_stack_.rbegin();
+                  it_t end = local_instance.var_stack_.rend();
+                  for (it_t it = begin; it != end; ++it) {
+                    (*it)->chain();
+                  }
+                });
+}
+
 }  // namespace math
 }  // namespace stan
 

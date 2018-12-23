@@ -5,6 +5,8 @@
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 
+#include <algorithm>
+
 namespace stan {
 namespace math {
 
@@ -17,6 +19,23 @@ static void set_zero_all_adjoints() {
   for (auto &x : ChainableStack::instance().var_nochain_stack_)
     x->set_zero_adjoint();
 }
+
+// reset the stack globally for all threads
+#ifdef STAN_TBB_TLS
+static void set_zero_all_adjoints_global() {
+  typedef ChainableStack::AutodiffStackStorage_tls_t global_ad_stack_t;
+  typedef ChainableStack::AutodiffStackStorage local_ad_stack_t;
+
+  std::for_each(ChainableStack::instance_.begin(),
+                ChainableStack::instance_.end(),
+                [](local_ad_stack_t &local_instance) {
+                  for (auto &x : local_instance.var_stack_)
+                    x->set_zero_adjoint();
+                  for (auto &x : local_instance.var_nochain_stack_)
+                    x->set_zero_adjoint();
+                });
+}
+#endif
 
 }  // namespace math
 }  // namespace stan
