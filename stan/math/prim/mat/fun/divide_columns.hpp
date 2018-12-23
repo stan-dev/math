@@ -30,8 +30,8 @@ divide_columns(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
   size_t N = x.size();
   size_t D = x[0].size();
   check_size_match("divide_columns", "x dimension", D, "vector", vec.size());
-  Eigen::Map<const Eigen::Array<T_v, Eigen::Dynamic, 1>>
-    v_vec(&vec[0], vec.size());
+  Eigen::Map<const Eigen::Array<T_v, Eigen::Dynamic, 1>> v_vec(&vec[0],
+                                                               vec.size());
 
   std::vector<Eigen::Matrix<typename return_type<T_x, T_v, double>::type,
                             Eigen::Dynamic, 1>>

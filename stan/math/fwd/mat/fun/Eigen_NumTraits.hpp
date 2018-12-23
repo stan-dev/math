@@ -13,8 +13,7 @@ namespace Eigen {
  * gradient variables.
  */
 template <typename T>
-struct NumTraits<stan::math::fvar<T> >
-    : GenericNumTraits<stan::math::fvar<T> > {
+struct NumTraits<stan::math::fvar<T>> : GenericNumTraits<stan::math::fvar<T>> {
   enum {
     /**
      * stan::math::fvar requires initialization

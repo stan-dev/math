@@ -49,7 +49,7 @@ inline Eigen::Matrix<T, R, C> cumulative_sum(const Eigen::Matrix<T, R, C>& m) {
   if (m.size() == 0)
     return result;
   std::partial_sum(m.data(), m.data() + m.size(), result.data(),
-                    std::plus<T>());
+                   std::plus<T>());
   return result;
 }
 }  // namespace math

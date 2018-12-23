@@ -29,7 +29,8 @@ add_diag(const Eigen::Matrix<T_m, Eigen::Dynamic, Eigen::Dynamic> &mat,
                         length_diag);
 
   Eigen::Matrix<typename return_type<T_m, T_a>::type, Eigen::Dynamic,
-                Eigen::Dynamic> out = mat;
+                Eigen::Dynamic>
+      out = mat;
   out.diagonal().array() += to_add;
   return out;
 }

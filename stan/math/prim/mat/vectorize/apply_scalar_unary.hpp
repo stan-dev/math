@@ -54,9 +54,8 @@ struct apply_scalar_unary {
    * by F to the specified matrix.
    */
   static inline return_t apply(const T& x) {
-    return x.unaryExpr([](scalar_t x) {
-      return apply_scalar_unary<F, scalar_t>::apply(x);
-    });
+    return x.unaryExpr(
+        [](scalar_t x) { return apply_scalar_unary<F, scalar_t>::apply(x); });
   }
 };
 
