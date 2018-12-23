@@ -23,14 +23,10 @@ namespace math {
  */
 template <typename T1, typename T2, int R, int C>
 inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R,
-                     C>
-add(const Eigen::Matrix<T1, R, C>& m1, const Eigen::Matrix<T2, R, C>& m2) {
+                     C> add(const Eigen::Matrix<T1, R, C>& m1,
+                const Eigen::Matrix<T2, R, C>& m2) {
   check_matching_dims("add", "m1", m1, "m2", m2);
-  Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R, C>
-      result(m1.rows(), m1.cols());
-  for (int i = 0; i < result.size(); ++i)
-    result(i) = m1(i) + m2(i);
-  return result;
+  return m1 + m2;
 }
 
 /**
@@ -44,13 +40,8 @@ add(const Eigen::Matrix<T1, R, C>& m1, const Eigen::Matrix<T2, R, C>& m2) {
  */
 template <typename T1, typename T2, int R, int C>
 inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R,
-                     C>
-add(const Eigen::Matrix<T1, R, C>& m, const T2& c) {
-  Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R, C>
-      result(m.rows(), m.cols());
-  for (int i = 0; i < result.size(); ++i)
-    result(i) = m(i) + c;
-  return result;
+                     C> add(const Eigen::Matrix<T1, R, C>& m, const T2& c) {
+  return m.array() + c;
 }
 
 /**
@@ -64,13 +55,8 @@ add(const Eigen::Matrix<T1, R, C>& m, const T2& c) {
  */
 template <typename T1, typename T2, int R, int C>
 inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R,
-                     C>
-add(const T1& c, const Eigen::Matrix<T2, R, C>& m) {
-  Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R, C>
-      result(m.rows(), m.cols());
-  for (int i = 0; i < result.size(); ++i)
-    result(i) = c + m(i);
-  return result;
+                     C> add(const T1& c, const Eigen::Matrix<T2, R, C>& m) {
+  return c + m.array();
 }
 
 }  // namespace math

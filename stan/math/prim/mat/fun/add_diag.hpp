@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <algorithm>
 
@@ -30,14 +29,24 @@ add_diag(const Eigen::Matrix<T_m, Eigen::Dynamic, Eigen::Dynamic> &mat,
                         length_diag);
 
   Eigen::Matrix<typename return_type<T_m, T_a>::type, Eigen::Dynamic,
+                Eigen::Dynamic> out = mat;
+  out.diagonal().array() += to_add;
+  return out;
+}
+
+template <typename T_m, typename T_a, int R, int C>
+inline typename Eigen::Matrix<typename return_type<T_m, T_a>::type,
+                              Eigen::Dynamic, Eigen::Dynamic>
+add_diag(const Eigen::Matrix<T_m, Eigen::Dynamic, Eigen::Dynamic> &mat,
+         const Eigen::Matrix<T_a, R, C> &to_add) {
+  size_t length_diag = std::min(mat.rows(), mat.cols());
+  check_consistent_size("add_diag", "number of elements of to_add", to_add,
+                        length_diag);
+
+  Eigen::Matrix<typename return_type<T_m, T_a>::type, Eigen::Dynamic,
                 Eigen::Dynamic>
       out = mat;
-  scalar_seq_view<T_a> to_add_vec(to_add);
-
-  for (size_t i = 0; i < length_diag; ++i)
-    out(i, i) += to_add_vec[i];
-
-  return out;
+  return out += to_add.asDiagonal();
 }
 }  // namespace math
 }  // namespace stan

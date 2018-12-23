@@ -17,10 +17,8 @@ template <typename T>
 inline T prod(const std::vector<T>& v) {
   if (v.size() == 0)
     return 1;
-  T product = v[0];
-  for (size_t i = 1; i < v.size(); ++i)
-    product *= v[i];
-  return product;
+  Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>> m(&v[0], v.size());
+  return m.prod();
 }
 
 /**

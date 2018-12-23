@@ -55,6 +55,19 @@ struct NumTraits<stan::math::fvar<T> >
 
 namespace internal {
 #if EIGEN_VERSION_AT_LEAST(3, 3, 0)
+template <typename T>
+struct scalar_product_traits<stan::math::fvar<T>, double> {
+  typedef stan::math::fvar<T> ReturnType;
+};
+
+/**
+ * Scalar product traits specialization for Eigen for forward-mode
+ * autodiff variables.
+ */
+template <typename T>
+struct scalar_product_traits<double, stan::math::fvar<T>> {
+  typedef stan::math::fvar<T> ReturnType;
+};
 #else
 /**
  * Implemented this for printing to stream.

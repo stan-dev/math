@@ -47,15 +47,8 @@ inline Eigen::Matrix<T, Eigen::Dynamic, 1> softmax(
   using std::exp;
   check_nonzero_size("softmax", "v", v);
   Eigen::Matrix<T, Eigen::Dynamic, 1> theta(v.size());
-  T sum(0.0);
-  T max_v = v.maxCoeff();
-  for (int i = 0; i < v.size(); ++i) {
-    theta(i) = exp(v(i) - max_v);  // extra work for (v[i] == max_v)
-    sum += theta(i);               // extra work vs. sum() w. auto-diff
-  }
-  for (int i = 0; i < v.size(); ++i)
-    theta(i) /= sum;
-  return theta;
+  theta = (v.array() - v.maxCoeff()).exp();
+  return theta.array() / theta.sum();
 }
 
 }  // namespace math
