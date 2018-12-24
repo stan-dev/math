@@ -1,10 +1,10 @@
 Stan Math Library Release Notes
 ======================================================================
 
-v.2.18.1 (22 December 2018)
+v.2.18.1 (24 December 2018)
 ======================================================================
-Bugfix release - major bug in threading where certain thread count and 
-job size combinations could result in incorrect output. See 
+Bugfix release - major bug in threading where certain thread count and
+job size combinations could result in incorrect output. See
 https://discourse.mc-stan.org/t/bug-in-map-rect-with-threading-in-stan-2-18-0/7056
 for more details.
 
