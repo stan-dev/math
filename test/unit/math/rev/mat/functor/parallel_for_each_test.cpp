@@ -30,6 +30,7 @@ struct fun1 {
 
 // test threaded AD if enabled
 TEST(AgradAutoDiff, parallel_for_each) {
+  using stan::math::ChainableStack;
   using stan::math::var;
   typedef boost::counting_iterator<int> count_iter;
 
@@ -37,7 +38,7 @@ TEST(AgradAutoDiff, parallel_for_each) {
   tbb::task_scheduler_init task_scheduler(num_threads);
 
   fun1 f;
-  const int num_jobs = 20000;
+  const int num_jobs = 1000;
 
   vector<vector_v> x_ref_v(num_jobs);
   vector<vector_d> x_ref_d(num_jobs);
@@ -63,12 +64,38 @@ TEST(AgradAutoDiff, parallel_for_each) {
 
   std_par::for_each(exec_policy, count_iter(0), count_iter(num_jobs), apply_f);
 
+  // next: copy the AD tape from the threads to the main AD tape
+  typedef ChainableStack::AutodiffStackStorage local_ad_stack_t;
+
+  local_ad_stack_t& ad_tape = ChainableStack::instance();
+  std::for_each(ChainableStack::instance_.begin(),
+                ChainableStack::instance_.end(),
+                [&](local_ad_stack_t& local_instance) {
+                  if (&local_instance == &ad_tape) {
+                    std::cout << "Found main tape!" << std::endl;
+                    return;
+                  }
+                  ad_tape.var_stack_.insert(ad_tape.var_stack_.end(),
+                                            local_instance.var_stack_.begin(),
+                                            local_instance.var_stack_.end());
+                  local_instance.var_stack_.clear();
+                  /*
+                  it_t begin = local_instance.var_stack_.rbegin();
+                  it_t end = local_instance.var_stack_.rend();
+                  for (it_t it = begin; it != end; ++it) {
+                    (*it)->chain();
+                  }
+                  */
+                });
+
   for (int i = 0; i < num_jobs; ++i) {
     vector_d x_ref = x_ref_d[i];
     double fx_ref = value_of(fres[i]);
     vector<double> grad_fx_ref(2);
-    stan::math::set_zero_all_adjoints_global();
-    stan::math::grad_global(fres[i].vi_);
+    // stan::math::set_zero_all_adjoints_global();
+    // stan::math::grad_global(fres[i].vi_);
+    stan::math::set_zero_all_adjoints();
+    stan::math::grad(fres[i].vi_);
     grad_fx_ref[0] = x_ref_v[i](0).adj();
     grad_fx_ref[1] = x_ref_v[i](1).adj();
 
