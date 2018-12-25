@@ -3,13 +3,21 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-/*
-TEST(prob_transform, offset_multiplier) {
-  EXPECT_FLOAT_EQ(2.0 - 5.0 * 1.0,
-                  stan::math::offset_multiplier_constrain(-1.0, 2.0, 5.0));
 
-  EXPECT_FLOAT_EQ(1.7, stan::math::offset_multiplier_constrain(1.7, 0, 1));
+TEST(prob_transform, offset_multiplier) {
+  Eigen::Matrix<double, -1, -1> x(2, 1);
+  x << 3, 2;
+  Eigen::Matrix<double, -1, -1> mu(2, 1);
+  mu << 2, 1;
+  Eigen::Matrix<double, -1, -1> sigma(2, 2);
+  sigma << 3, 0, 2, 1;
+  Eigen::Matrix<double, -1, -1> result = stan::math::offset_multiplier_constrain(x, mu, sigma);
+  Eigen::Matrix<double, -1, -1> expected = mu + sigma * x;
+  for (size_t n = 0; n < 2; ++n) {
+    EXPECT_FLOAT_EQ(result(n), expected(n));
+  }
 }
+/*
 TEST(prob_transform, offset_multiplier_j) {
   double lp = -17.0;
   double L = 2.0;
