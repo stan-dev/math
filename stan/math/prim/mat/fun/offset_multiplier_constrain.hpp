@@ -6,6 +6,7 @@
 #include <stan/math/prim/mat/err/check_finite.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/scal/fun/identity_constrain.hpp>
 #include <stan/math/prim/mat/fun/diagonal.hpp>
 #include <cmath>
 #include <limits>
@@ -50,7 +51,7 @@ offset_multiplier_constrain(const Eigen::Matrix<T, -1, 1>& x, const Eigen::Matri
   const size_t N = sigma.col(0).size();
   if (sigma == Eigen::Matrix<S, -1, -1>::Identity(N, N)) {
     if (mu == Eigen::Matrix<M, -1, 1>::Zero(N, 1))
-      return x;
+      return identity_constrain(x);
     return mu + x;
   }
   return mu + sigma * x;
@@ -96,7 +97,7 @@ offset_multiplier_constrain(const Eigen::Matrix<T, -1, 1>& x, const Eigen::Matri
   const size_t N = sigma.col(0).size();
   if (sigma == Eigen::Matrix<S, -1, -1>::Identity(N, N)) {
     if (mu == Eigen::Matrix<M, -1, 1>::Zero(N, 1))
-      return x;
+      return identity_constrain(x);
     return mu + x;
   }
   lp += sum(log(diagonal(sigma)));

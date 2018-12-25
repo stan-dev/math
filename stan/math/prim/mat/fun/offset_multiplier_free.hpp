@@ -4,6 +4,7 @@
 #include <stan/math/prim/mat/err/check_cholesky_factor.hpp>
 #include <stan/math/prim/mat/err/check_finite.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
+#include <stan/math/prim/scal/fun/identity_free.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <boost/math/tools/promotion.hpp>
@@ -53,7 +54,7 @@ offset_multiplier_free(const Eigen::Matrix<T, -1, 1>& y, const Eigen::Matrix<L, 
   const size_t N = sigma.col(0).size();
   if (sigma == Eigen::Matrix<S, -1, -1>::Identity(N, N)) {
     if (mu == Eigen::Matrix<L, -1, 1>::Zero(N, 1))
-      return y;
+      return identity_free(y);
     return y - mu;
   }
   return mdivide_left_ldlt(sigma, y - mu);
