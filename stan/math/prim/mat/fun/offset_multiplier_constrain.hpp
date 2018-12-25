@@ -1,12 +1,13 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_OFFSET_MULTIPLIER_CONSTRAIN_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_OFFSET_MULTIPLIER_CONSTRAIN_HPP
+#ifndef STAN_MATH_PRIM_MAT_FUN_OFFSET_MULTIPLIER_CONSTRAIN_HPP
+#define STAN_MATH_PRIM_MAT_FUN_OFFSET_MULTIPLIER_CONSTRAIN_HPP
 
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/scal/fun/identity_constrain.hpp>
-#include <stan/math/prim/scal/fun/abs.hpp>
-#include <stan/math/prim/scal/meta/size_of.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/mat/err/check_cholesky_factor.hpp>
+#include <stan/math/prim/mat/err/check_square.hpp>
+#include <stan/math/prim/mat/err/check_finite.hpp>
+#include <stan/math/prim/mat/fun/log.hpp>
+#include <stan/math/prim/mat/fun/diagonal.hpp>
 #include <cmath>
 #include <limits>
 
@@ -26,10 +27,10 @@ namespace math {
  * <p>If the offset is zero and the multiplier is one this
  * reduces to <code>identity_constrain(x)</code>.
  *
- * @tparam T type of scalar
+ * @tparam T type of vector
  * @tparam M type of offset
  * @tparam S type of multiplier
- * @param[in] x Unconstrained scalar input
+ * @param[in] x Unconstrained vector input
  * @param[in] mu offset of constrained output
  * @param[in] sigma multiplier of constrained output
  * @return linear transformed value correspdonding to inputs
@@ -38,11 +39,18 @@ namespace math {
  */
 template <typename T, typename M, typename S>
 inline typename boost::math::tools::promote_args<T, M, S>::type
-offset_multiplier_constrain(const T& x, const M& mu, const S& sigma) {
-  check_finite("offset_multiplier_constrain", "offset", mu);
-  check_positive_finite("offset_multiplier_constrain", "multiplier", sigma);
-  if (sigma == 1) {
-    if (mu == 0)
+offset_multiplier_constrain(const T& x, const Eigen::Matrix<M, -1, -1>& mu,
+const Eigen::Matrix<S, -1, -1>& sigma) {
+  static const char *function = "offset_multiplier_constrain";
+  check_finite(function, "offset", mu);
+  check_finite(function, "multiplier", sigma);
+  check_cholesky_factor(function, "multiplier", sigma);
+  check_square(function, "multiplier", sigma);
+  check_consistent_sizes(function, "multiplier", sigma.col(0),
+                         "contrained vector", x);
+  const size_t N = sigma.col(0).size();
+  if (sigma == Eigen::Matrix<S, -1, -1>::Identity(N, N)) {
+    if (mu == Eigen::Matrix<M, -1, -1>::Zero(N, 1))
       return identity_constrain(x);
     return mu + x;
   }
@@ -64,10 +72,10 @@ offset_multiplier_constrain(const T& x, const M& mu, const S& sigma) {
  * If the offset is zero and multiplier is one, this function
  * reduces to <code>identity_constraint(x, lp)</code>.
  *
- * @tparam T type of scalar
+ * @tparam T type of vector
  * @tparam M type of offset
  * @tparam S type of multiplier
- * @param[in] x Unconstrained scalar input
+ * @param[in] x Unconstrained vector input
  * @param[in] mu offset of constrained output
  * @param[in] sigma multiplier of constrained output
  * @param[in,out] lp Reference to log probability to increment.
@@ -77,16 +85,22 @@ offset_multiplier_constrain(const T& x, const M& mu, const S& sigma) {
  */
 template <typename T, typename M, typename S>
 inline typename boost::math::tools::promote_args<T, M, S>::type
-offset_multiplier_constrain(const T& x, const M& mu, const S& sigma, T& lp) {
-  using std::log;
-  check_finite("offset_multiplier_constrain", "offset", mu);
-  check_positive_finite("offset_multiplier_constrain", "multiplier", sigma);
-  if (sigma == 1) {
-    if (mu == 0)
+offset_multiplier_constrain(const T& x,  const Eigen::Matrix<M, -1, -1>& mu,
+const Eigen::Matrix<S, -1, -1>& sigma, T& lp) {
+  static const char *function = "offset_multiplier_constrain";
+  check_finite(function, "offset", mu);
+  check_finite(function, "multiplier", sigma);
+  check_cholesky_factor(function, "multiplier", sigma);
+  check_square(function, "multiplier", sigma);
+  check_consistent_sizes(function, "multiplier", sigma.col(0),
+                         "contrained vector", x);
+  const size_t N = sigma.col(0).size();
+  if (sigma == Eigen::Matrix<S, -1, -1>::Identity(N, N)) {
+    if (mu == Eigen::Matrix<M, -1, -1>::Zero(N, 1))
       return identity_constrain(x);
     return mu + x;
   }
-  lp += size_of(x) * log(sigma);
+  lp += sum(log(diagonal(sigma)));
   return mu + sigma * x;
 }
 

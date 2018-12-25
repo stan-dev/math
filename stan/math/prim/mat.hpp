@@ -174,6 +174,8 @@
 #include <stan/math/prim/mat/fun/multiply.hpp>
 #include <stan/math/prim/mat/fun/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/prim/mat/fun/num_elements.hpp>
+#include <stan/math/prim/mat/fun/offset_multiplier_constrain.hpp>
+#include <stan/math/prim/mat/fun/offset_multiplier_free.hpp>
 #include <stan/math/prim/mat/fun/ordered_constrain.hpp>
 #include <stan/math/prim/mat/fun/ordered_free.hpp>
 #include <stan/math/prim/mat/fun/positive_ordered_constrain.hpp>
