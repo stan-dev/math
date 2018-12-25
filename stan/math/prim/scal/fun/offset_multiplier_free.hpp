@@ -16,7 +16,7 @@ namespace math {
  * specified offset and multiplier constrained scalar given the specified
  * offset and multiplier.
  *
- * <p>The transfrom in <code>locmultiplier_constrain(T, double, double)</code>,
+ * <p>The transfrom in <code>offset_multiplier_constrain(T, double, double)</code>,
  * is reversed by the reverse affine transformation,
  *
  * <p>\f$f^{-1}(y) = \frac{y - L}{S}\f$
