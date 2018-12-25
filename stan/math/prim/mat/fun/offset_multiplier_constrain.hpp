@@ -37,8 +37,9 @@ namespace math {
  * @throw std::domain_error if mu is not finite
  */
 template <typename T, typename M, typename S>
-inline Eigen::Matrix<typename return_type<T, M, S>::type, -1,  1>
-offset_multiplier_constrain(const Eigen::Matrix<T, -1, 1>& x, const Eigen::Matrix<M, -1, 1>& mu,
+inline Eigen::Matrix<typename return_type<T, M, S>::type, -1, 1>
+offset_multiplier_constrain(const Eigen::Matrix<T, -1, 1>& x,
+                            const Eigen::Matrix<M, -1, 1>& mu,
                             const Eigen::Matrix<S, -1, -1>& sigma) {
   static const char* function = "offset_multiplier_constrain";
   check_finite(function, "offset", mu);
@@ -83,8 +84,9 @@ offset_multiplier_constrain(const Eigen::Matrix<T, -1, 1>& x, const Eigen::Matri
  * @throw std::domain_error if mu is not finite
  */
 template <typename T, typename M, typename S>
-inline Eigen::Matrix<typename return_type<T, M, S>::type, -1,  1>
-offset_multiplier_constrain(const Eigen::Matrix<T, -1, 1>& x, const Eigen::Matrix<M, -1, 1>& mu,
+inline Eigen::Matrix<typename return_type<T, M, S>::type, -1, 1>
+offset_multiplier_constrain(const Eigen::Matrix<T, -1, 1>& x,
+                            const Eigen::Matrix<M, -1, 1>& mu,
                             const Eigen::Matrix<S, -1, -1>& sigma, T& lp) {
   static const char* function = "offset_multiplier_constrain";
   check_finite(function, "offset", mu);

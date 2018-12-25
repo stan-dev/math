@@ -40,8 +40,9 @@ namespace math {
  * @throw std::domain_error if mu is not finite
  */
 template <typename T, typename L, typename S>
-inline Eigen::Matrix<typename return_type<T, L, S>::type, -1,  1>
-offset_multiplier_free(const Eigen::Matrix<T, -1, 1>& y, const Eigen::Matrix<L, -1, 1>& mu,
+inline Eigen::Matrix<typename return_type<T, L, S>::type, -1, 1>
+offset_multiplier_free(const Eigen::Matrix<T, -1, 1>& y,
+                       const Eigen::Matrix<L, -1, 1>& mu,
                        const Eigen::Matrix<S, -1, -1>& sigma) {
   static const char* function = "offset_multiplier_free";
   check_finite(function, "offset", mu);
