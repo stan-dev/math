@@ -18,8 +18,8 @@ namespace math {
  * specified offset and multiplier constrained vector given the specified
  * offset and multiplier.
  *
- * <p>The transfrom in <code>offset_multiplier_constrain(T, double, double)</code>,
- * is reversed by the reverse affine transformation,
+ * <p>The transfrom in <code>offset_multiplier_constrain(T, double,
+ * double)</code>, is reversed by the reverse affine transformation,
  *
  * <p>\f$f^{-1}(y) = \frac{y - L}{S}\f$
  *
@@ -42,8 +42,8 @@ namespace math {
 template <typename T, typename L, typename S>
 inline typename boost::math::tools::promote_args<T, L, S>::type
 offset_multiplier_free(const T& y, const Eigen::Matrix<L, -1, -1>& mu,
-const Eigen::Matrix<S, -1, -1>& sigma) {
-  static const char *function = "offset_multiplier_free";
+                       const Eigen::Matrix<S, -1, -1>& sigma) {
+  static const char* function = "offset_multiplier_free";
   check_finite(function, "offset", mu);
   check_finite(function, "multiplier", sigma);
   check_cholesky_factor(function, "multiplier", sigma);
