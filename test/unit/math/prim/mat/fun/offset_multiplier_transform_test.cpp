@@ -5,32 +5,71 @@
 
 
 TEST(prob_transform, offset_multiplier) {
-  Eigen::Matrix<double, -1, -1> x(2, 1);
+  Eigen::Matrix<double, -1, 1> x(2, 1);
   x << 3, 2;
-  Eigen::Matrix<double, -1, -1> mu(2, 1);
+  Eigen::Matrix<double, -1, 1> mu(2, 1);
   mu << 2, 1;
   Eigen::Matrix<double, -1, -1> sigma(2, 2);
   sigma << 3, 0, 2, 1;
-  Eigen::Matrix<double, -1, -1> result = stan::math::offset_multiplier_constrain(x, mu, sigma);
-  Eigen::Matrix<double, -1, -1> expected = mu + sigma * x;
+  Eigen::Matrix<double, -1, 1> result = stan::math::offset_multiplier_constrain(x, mu, sigma);
+  Eigen::Matrix<double, -1, 1> expected = mu + sigma * x;
+  for (size_t n = 0; n < 2; ++n) {
+    EXPECT_FLOAT_EQ(result(n), expected(n));
+  }
+  
+  Eigen::Matrix<double, -1, -1> sigma2(2, 2);
+  sigma2 << 1, 0, 0, 1;
+  result = stan::math::offset_multiplier_constrain(x, mu, sigma2);
+  expected = mu + x;
+  for (size_t n = 0; n < 2; ++n) {
+    EXPECT_FLOAT_EQ(result(n), expected(n));
+  }
+
+  Eigen::Matrix<double, -1, 1> mu2(2, 1);
+  mu2 << 0, 0;
+  result = stan::math::offset_multiplier_constrain(x, mu2, sigma2);
+  expected = x;
   for (size_t n = 0; n < 2; ++n) {
     EXPECT_FLOAT_EQ(result(n), expected(n));
   }
 }
-/*
 TEST(prob_transform, offset_multiplier_j) {
   double lp = -17.0;
-  double L = 2.0;
-  double U = 5.0;
-  double x = -1.0;
-  EXPECT_FLOAT_EQ(L + U * x,
-                  stan::math::offset_multiplier_constrain(x, L, U, lp));
-  EXPECT_FLOAT_EQ(-17.0 + log(U), lp);
+  Eigen::Matrix<double, -1, 1> x(2, 1);
+  x << 4, 3;
+  Eigen::Matrix<double, -1, 1> mu(2, 1);
+  mu << 3, 2;
+  Eigen::Matrix<double, -1, -1> sigma(2, 2);
+  sigma << 4, 0, 3, 2;
+  Eigen::Matrix<double, -1, 1> result =
+    stan::math::offset_multiplier_constrain(x, mu, sigma, lp);
+  Eigen::Matrix<double, -1, 1> expected = mu + sigma * x;
+  for (size_t n = 0; n < 2; ++n) {
+    EXPECT_FLOAT_EQ(result(n), expected(n));
+  }
+  EXPECT_FLOAT_EQ(-17.0 + log(4) + log(2), lp);
 
-  double lp1 = -12.9;
-  EXPECT_FLOAT_EQ(1.7, stan::math::offset_multiplier_constrain(1.7, 0, 1, lp1));
-  EXPECT_FLOAT_EQ(-12.9, lp1);
+  lp = -12.0;
+  Eigen::Matrix<double, -1, -1> sigma2(2, 2);
+  sigma2 << 1, 0, 0, 1;
+  result = stan::math::offset_multiplier_constrain(x, mu, sigma2, lp);
+  expected = mu + x;
+  for (size_t n = 0; n < 2; ++n) {
+    EXPECT_FLOAT_EQ(result(n), expected(n));
+  }
+  EXPECT_FLOAT_EQ(-12.0, lp);
+
+  lp = -14.0;
+  Eigen::Matrix<double, -1, 1> mu2(2, 1);
+  mu2 << 0, 0;
+  result = stan::math::offset_multiplier_constrain(x, mu2, sigma2, lp);
+  expected = x;
+  for (size_t n = 0; n < 2; ++n) {
+    EXPECT_FLOAT_EQ(result(n), expected(n));
+  }
+  EXPECT_FLOAT_EQ(-14.0, lp);
 }
+/*
 TEST(ProbTransform, offset_multiplierException) {
   using stan::math::offset_multiplier_constrain;
   using stan::math::offset_multiplier_free;

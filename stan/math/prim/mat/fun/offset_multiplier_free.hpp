@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_OFFSET_MULTIPLIER_FREE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_OFFSET_MULTIPLIER_FREE_HPP
 
-#include <stan/math/prim/scal/fun/identity_free.hpp>
 #include <stan/math/prim/mat/err/check_cholesky_factor.hpp>
 #include <stan/math/prim/mat/err/check_finite.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <cmath>
 #include <limits>
@@ -40,8 +40,8 @@ namespace math {
  * @throw std::domain_error if mu is not finite
  */
 template <typename T, typename L, typename S>
-inline typename boost::math::tools::promote_args<T, L, S>::type
-offset_multiplier_free(const T& y, const Eigen::Matrix<L, -1, -1>& mu,
+inline Eigen::Matrix<typename return_type<T, L, S>::type, -1,  1>
+offset_multiplier_free(const Eigen::Matrix<T, -1, 1>& y, const Eigen::Matrix<L, -1, 1>& mu,
                        const Eigen::Matrix<S, -1, -1>& sigma) {
   static const char* function = "offset_multiplier_free";
   check_finite(function, "offset", mu);
@@ -52,8 +52,8 @@ offset_multiplier_free(const T& y, const Eigen::Matrix<L, -1, -1>& mu,
                          "contrained vector", y);
   const size_t N = sigma.col(0).size();
   if (sigma == Eigen::Matrix<S, -1, -1>::Identity(N, N)) {
-    if (mu == Eigen::Matrix<L, -1, -1>::Zero(N, 1))
-      return identity_free(y);
+    if (mu == Eigen::Matrix<L, -1, 1>::Zero(N, 1))
+      return y;
     return y - mu;
   }
   return mdivide_left_ldlt(sigma, y - mu);
