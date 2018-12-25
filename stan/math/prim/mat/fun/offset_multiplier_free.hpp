@@ -4,10 +4,12 @@
 #include <stan/math/prim/mat/err/check_cholesky_factor.hpp>
 #include <stan/math/prim/mat/err/check_finite.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
+#include <stan/math/prim/scal/err/check_consistent_size.hpp>
 #include <stan/math/prim/scal/fun/identity_free.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <boost/math/tools/promotion.hpp>
+#include <stan/math/prim/mat/fun/mdivide_left_tri_low.hpp>
 #include <cmath>
 #include <limits>
 
@@ -46,19 +48,21 @@ offset_multiplier_free(const Eigen::Matrix<T, -1, 1>& y,
                        const Eigen::Matrix<L, -1, 1>& mu,
                        const Eigen::Matrix<S, -1, -1>& sigma) {
   static const char* function = "offset_multiplier_free";
+  check_finite(function, "contrained vector", y);
   check_finite(function, "offset", mu);
   check_finite(function, "multiplier", sigma);
   check_cholesky_factor(function, "multiplier", sigma);
   check_square(function, "multiplier", sigma);
-  check_consistent_sizes(function, "multiplier", sigma.col(0),
-                         "contrained vector", y);
   const size_t N = sigma.col(0).size();
+  check_consistent_size(function, "contrained vector", y, N);
+  check_consistent_size(function, "offset", mu, N);
   if (sigma == Eigen::Matrix<S, -1, -1>::Identity(N, N)) {
     if (mu == Eigen::Matrix<L, -1, 1>::Zero(N, 1))
       return identity_free(y);
     return y - mu;
   }
-  return mdivide_left_ldlt(sigma, y - mu);
+  Eigen::Matrix<typename return_type<T, L>::type, -1, 1>&& diff = y - mu;
+  return mdivide_left_tri_low(sigma, diff);
 }
 
 }  // namespace math
