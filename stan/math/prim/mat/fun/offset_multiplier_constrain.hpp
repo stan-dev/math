@@ -40,8 +40,8 @@ namespace math {
 template <typename T, typename M, typename S>
 inline typename boost::math::tools::promote_args<T, M, S>::type
 offset_multiplier_constrain(const T& x, const Eigen::Matrix<M, -1, -1>& mu,
-const Eigen::Matrix<S, -1, -1>& sigma) {
-  static const char *function = "offset_multiplier_constrain";
+                            const Eigen::Matrix<S, -1, -1>& sigma) {
+  static const char* function = "offset_multiplier_constrain";
   check_finite(function, "offset", mu);
   check_finite(function, "multiplier", sigma);
   check_cholesky_factor(function, "multiplier", sigma);
@@ -85,9 +85,9 @@ const Eigen::Matrix<S, -1, -1>& sigma) {
  */
 template <typename T, typename M, typename S>
 inline typename boost::math::tools::promote_args<T, M, S>::type
-offset_multiplier_constrain(const T& x,  const Eigen::Matrix<M, -1, -1>& mu,
-const Eigen::Matrix<S, -1, -1>& sigma, T& lp) {
-  static const char *function = "offset_multiplier_constrain";
+offset_multiplier_constrain(const T& x, const Eigen::Matrix<M, -1, -1>& mu,
+                            const Eigen::Matrix<S, -1, -1>& sigma, T& lp) {
+  static const char* function = "offset_multiplier_constrain";
   check_finite(function, "offset", mu);
   check_finite(function, "multiplier", sigma);
   check_cholesky_factor(function, "multiplier", sigma);
