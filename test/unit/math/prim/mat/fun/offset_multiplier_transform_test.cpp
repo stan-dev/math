@@ -93,29 +93,41 @@ TEST(ProbTransform, offset_multiplierException) {
   sigma_bad2 << -3, 0, 2, 1;
   Eigen::Matrix<double, -1, -1> sigma_bad3(2, 2);
   sigma_bad3 << NAN, 0, 2, 1;
-  
+
   double lp = -18.0;
- 
-  EXPECT_THROW(offset_multiplier_constrain(x, mu, sigma_bad), std::domain_error);
 
-  EXPECT_THROW(offset_multiplier_constrain(x, mu, sigma_bad2), std::domain_error);
-  EXPECT_THROW(offset_multiplier_constrain(x, mu, sigma_bad3), std::domain_error);
+  EXPECT_THROW(offset_multiplier_constrain(x, mu, sigma_bad),
+               std::domain_error);
 
-  EXPECT_THROW(offset_multiplier_constrain(x_bad, mu, sigma), std::invalid_argument);
-  EXPECT_THROW(offset_multiplier_constrain(x_bad2, mu, sigma), std::domain_error);
-  EXPECT_THROW(offset_multiplier_constrain(x, mu_bad, sigma), std::invalid_argument);
-  EXPECT_THROW(offset_multiplier_constrain(x, mu_bad2, sigma), std::domain_error);
+  EXPECT_THROW(offset_multiplier_constrain(x, mu, sigma_bad2),
+               std::domain_error);
+  EXPECT_THROW(offset_multiplier_constrain(x, mu, sigma_bad3),
+               std::domain_error);
 
+  EXPECT_THROW(offset_multiplier_constrain(x_bad, mu, sigma),
+               std::invalid_argument);
+  EXPECT_THROW(offset_multiplier_constrain(x_bad2, mu, sigma),
+               std::domain_error);
+  EXPECT_THROW(offset_multiplier_constrain(x, mu_bad, sigma),
+               std::invalid_argument);
+  EXPECT_THROW(offset_multiplier_constrain(x, mu_bad2, sigma),
+               std::domain_error);
 
-  EXPECT_THROW(offset_multiplier_constrain(x, mu, sigma_bad, lp), std::domain_error);
-  EXPECT_THROW(offset_multiplier_constrain(x, mu, sigma_bad2, lp), std::domain_error);
-  EXPECT_THROW(offset_multiplier_constrain(x, mu, sigma_bad3, lp), std::domain_error);
-  EXPECT_THROW(offset_multiplier_constrain(x_bad, mu, sigma, lp), std::invalid_argument);
-  EXPECT_THROW(offset_multiplier_constrain(x_bad2, mu, sigma, lp), std::domain_error);
-  EXPECT_THROW(offset_multiplier_constrain(x, mu_bad, sigma, lp), std::invalid_argument);
-  EXPECT_THROW(offset_multiplier_constrain(x, mu_bad2, sigma, lp), std::domain_error);
+  EXPECT_THROW(offset_multiplier_constrain(x, mu, sigma_bad, lp),
+               std::domain_error);
+  EXPECT_THROW(offset_multiplier_constrain(x, mu, sigma_bad2, lp),
+               std::domain_error);
+  EXPECT_THROW(offset_multiplier_constrain(x, mu, sigma_bad3, lp),
+               std::domain_error);
+  EXPECT_THROW(offset_multiplier_constrain(x_bad, mu, sigma, lp),
+               std::invalid_argument);
+  EXPECT_THROW(offset_multiplier_constrain(x_bad2, mu, sigma, lp),
+               std::domain_error);
+  EXPECT_THROW(offset_multiplier_constrain(x, mu_bad, sigma, lp),
+               std::invalid_argument);
+  EXPECT_THROW(offset_multiplier_constrain(x, mu_bad2, sigma, lp),
+               std::domain_error);
 
-  
   EXPECT_THROW(offset_multiplier_free(x, mu, sigma_bad), std::domain_error);
   EXPECT_THROW(offset_multiplier_free(x, mu, sigma_bad2), std::domain_error);
   EXPECT_THROW(offset_multiplier_free(x, mu, sigma_bad3), std::domain_error);
@@ -123,7 +135,6 @@ TEST(ProbTransform, offset_multiplierException) {
   EXPECT_THROW(offset_multiplier_free(x_bad2, mu, sigma), std::domain_error);
   EXPECT_THROW(offset_multiplier_free(x, mu_bad, sigma), std::invalid_argument);
   EXPECT_THROW(offset_multiplier_free(x, mu_bad2, sigma), std::domain_error);
-  
 }
 
 TEST(prob_transform, offset_multiplier_f) {
@@ -133,19 +144,16 @@ TEST(prob_transform, offset_multiplier_f) {
   mu << 2, 1;
   Eigen::Matrix<double, -1, -1> sigma(2, 2);
   sigma << 3, 0, 2, 1;
-  Eigen::Matrix<double, -1, 1> result
-      = stan::math::offset_multiplier_free(
-          stan::math::offset_multiplier_constrain(x, mu, sigma), mu, sigma);
+  Eigen::Matrix<double, -1, 1> result = stan::math::offset_multiplier_free(
+      stan::math::offset_multiplier_constrain(x, mu, sigma), mu, sigma);
   Eigen::Matrix<double, -1, 1> expected = x;
   for (size_t n = 0; n < 2; ++n) {
     EXPECT_FLOAT_EQ(result(n), expected(n));
   }
-  result
-      = stan::math::offset_multiplier_constrain(
-          stan::math::offset_multiplier_free(x, mu, sigma), mu, sigma);
+  result = stan::math::offset_multiplier_constrain(
+      stan::math::offset_multiplier_free(x, mu, sigma), mu, sigma);
   expected = x;
   for (size_t n = 0; n < 2; ++n) {
     EXPECT_FLOAT_EQ(result(n), expected(n));
   }
 }
-
