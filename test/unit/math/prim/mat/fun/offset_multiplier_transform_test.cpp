@@ -3,7 +3,6 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-
 TEST(prob_transform, offset_multiplier) {
   Eigen::Matrix<double, -1, -1> x(2, 1);
   x << 3, 2;
@@ -11,7 +10,8 @@ TEST(prob_transform, offset_multiplier) {
   mu << 2, 1;
   Eigen::Matrix<double, -1, -1> sigma(2, 2);
   sigma << 3, 0, 2, 1;
-  Eigen::Matrix<double, -1, -1> result = stan::math::offset_multiplier_constrain(x, mu, sigma);
+  Eigen::Matrix<double, -1, -1> result
+      = stan::math::offset_multiplier_constrain(x, mu, sigma);
   Eigen::Matrix<double, -1, -1> expected = mu + sigma * x;
   for (size_t n = 0; n < 2; ++n) {
     EXPECT_FLOAT_EQ(result(n), expected(n));
