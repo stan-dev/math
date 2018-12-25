@@ -3,7 +3,6 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-
 TEST(prob_transform, offset_multiplier) {
   Eigen::Matrix<double, -1, 1> x(2, 1);
   x << 3, 2;
