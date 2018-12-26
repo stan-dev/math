@@ -23,7 +23,7 @@ class ParetoTestRig : public VectorRealRNGTestRig {
   std::vector<double> generate_quantiles(double ymin, double alpha,
                                          double) const {
     std::vector<double> quantiles;
-    double K = boost::math::round(2 * std::pow(N_, 0.4));
+    double K = stan::math::round(2 * std::pow(N_, 0.4));
     boost::math::pareto_distribution<> dist(ymin, alpha);
 
     for (int i = 1; i < K; ++i) {
