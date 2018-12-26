@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_CBRT_HPP
 
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
-#include <boost/math/special_functions/cbrt.hpp>
+#include <stan/math/prim/scal/fun/cbrt.hpp>
 
 namespace stan {
 namespace math {
@@ -16,7 +16,6 @@ namespace math {
 struct cbrt_fun {
   template <typename T>
   static inline T fun(const T& x) {
-    using boost::math::cbrt;
     return cbrt(x);
   }
 };

@@ -17,12 +17,12 @@ TEST(AgradRev, log_a) {
 
 TEST(AgradRev, log_inf) {
   AVAR a = std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(boost::math::isinf(log(a)));
+  EXPECT_TRUE(stan::math::is_inf(log(a)));
 }
 
 TEST(AgradRev, log_0) {
   AVAR a(0.0);
-  EXPECT_TRUE(boost::math::isinf(log(a)) && (log(a) < 0.0));
+  EXPECT_TRUE(stan::math::is_inf(log(a)) && (log(a) < 0.0));
 }
 
 TEST(AgradRev, log_neg) {

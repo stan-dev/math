@@ -91,7 +91,7 @@ double chi_square(std::vector<int> bin, std::vector<double> expect) {
 void test_dirichlet3_1(VectorXd alpha) {
   boost::random::mt19937 rng;
   int N = 10000;
-  int K = boost::math::round(2 * std::pow(N, 0.4));
+  int K = stan::math::round(2 * std::pow(N, 0.4));
 
   // bins 0 vs. 1 + 2
   boost::math::beta_distribution<> dist(alpha(0), alpha(1) + alpha(2));
@@ -117,7 +117,7 @@ void test_dirichlet3_1(VectorXd alpha) {
 void test_dirichlet3_2(VectorXd alpha) {
   boost::random::mt19937 rng;
   int N = 10000;
-  int K = boost::math::round(2 * std::pow(N, 0.4));
+  int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::beta_distribution<> dist(alpha(1), alpha(0) + alpha(2));
   boost::math::chi_squared mydist(K - 1);
 

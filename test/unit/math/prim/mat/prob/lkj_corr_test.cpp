@@ -67,7 +67,7 @@ TEST(ProbDistributionsLKJCorr, error_check) {
 TEST(ProbDistributionsLKJCorr, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 10000;
-  int K = boost::math::round(2 * std::pow(N, 0.4));
+  int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::beta_distribution<> dist(2.5, 2.5);
   boost::math::chi_squared mydist(K - 1);
 
