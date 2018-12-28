@@ -373,9 +373,9 @@ TEST(MathPrimMat, domain_error_training_sig_l) {
   msg1 = pull_msg(x, sigma, l_bad);
   msg2 = pull_msg(x, sigma_bad, l);
   msg3 = pull_msg(x, sigma_bad, l_bad);
-  EXPECT_TRUE(std::string::npos != msg1.find(" length-scale")) << msg1;
-  EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance")) << msg2;
-  EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance")) << msg3;
+  EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma, l_bad), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma_bad, l), std::domain_error);
@@ -430,9 +430,9 @@ TEST(MathPrimMat, nan_error_training_sig_l) {
   msg1 = pull_msg(x, sigma, l_bad);
   msg2 = pull_msg(x, sigma_bad, l);
   msg3 = pull_msg(x, sigma_bad, l_bad);
-  EXPECT_TRUE(std::string::npos != msg1.find(" length-scale")) << msg1;
-  EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance")) << msg2;
-  EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance")) << msg3;
+  EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma, l_bad), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma_bad, l), std::domain_error);
@@ -493,9 +493,9 @@ TEST(MathPrimMat, domain_error_cov_exp_quad2) {
   msg1 = pull_msg(x1, x2, sigma, l_bad);
   msg2 = pull_msg(x1, x2, sigma_bad, l);
   msg3 = pull_msg(x1, x2, sigma_bad, l_bad);
-  EXPECT_TRUE(std::string::npos != msg1.find(" length-scale")) << msg1;
-  EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance")) << msg2;
-  EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance")) << msg3;
+  EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
   EXPECT_THROW(stan::math::cov_exp_quad(x1, x2, sigma, l_bad),
                std::domain_error);
@@ -579,9 +579,9 @@ TEST(MathPrimMat, nan_domain_error_cov_exp_quad2) {
   msg1 = pull_msg(x1, x2, sigma, l_bad);
   msg2 = pull_msg(x1, x2, sigma_bad, l);
   msg3 = pull_msg(x1, x2, sigma_bad, l_bad);
-  EXPECT_TRUE(std::string::npos != msg1.find(" length-scale")) << msg1;
-  EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance")) << msg2;
-  EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance")) << msg3;
+  EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
   EXPECT_THROW(stan::math::cov_exp_quad(x1, x2, sigma, l_bad),
                std::domain_error);
