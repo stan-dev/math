@@ -775,49 +775,6 @@ TEST(MathPrimMat, nan_error_training_sig_vec_length_scale) {
                std::domain_error);
 }
 
-TEST(MathPrimMat, domain_error_gp_exp_quad_cov2_vec_length_scale) {
-  double sigma = 0.2;
-
-  std::vector<double> l(3);
-  for (int i = 0; i < 3; ++i) {
-    l[i] = i + 1;
-  }
-
-  double sigma_bad = -1;
-  std::vector<double> l_bad0(3);
-  std::vector<double> l_bad2(3);
-  for (int i = 0; i < 3; ++i) {
-    l_bad0[i] = i + 1;
-    l_bad2[i] = i + 1;
-  }
-  l_bad0[0] = -10;
-  l_bad2[2] = -7;
-
-  std::vector<Eigen::Matrix<double, -1, 1>> x_vec_1(3);
-  for (size_t i = 0; i < x_vec_1.size(); ++i) {
-    x_vec_1[i].resize(3, 1);
-    x_vec_1[i] << 1, 2, 3;
-  }
-
-  std::vector<Eigen::Matrix<double, -1, 1>> x_vec_2(4);
-  for (size_t i = 0; i < x_vec_2.size(); ++i) {
-    x_vec_2[i].resize(3, 1);
-    x_vec_2[i] << 4, 1, 3;
-  }
-
-  std::string msg1, msg2, msg3, msg4;
-  msg1 = pull_msg(x_vec_1, x_vec_2, sigma, l_bad0);
-  msg4 = pull_msg(x_vec_1, x_vec_2, sigma, l_bad2);
-
-  EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
-  EXPECT_TRUE(std::string::npos != msg4.find(" length scale")) << msg4;
-
-  EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_vec_2, sigma, l_bad2),
-               std::domain_error);
-  EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_vec_2, sigma, l_bad0),
-               std::domain_error);
-}
-
 TEST(MathPrimMat, nan_domain_error_gp_exp_quad_cov2_vec_length_scale) {
   double sigma = 0.2;
 
