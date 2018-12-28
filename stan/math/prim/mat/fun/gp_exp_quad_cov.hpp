@@ -38,8 +38,8 @@ template <typename T_x, typename T_sigma, typename T_l>
 inline
     typename Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
                            Eigen::Dynamic, Eigen::Dynamic>
-gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma,
-                const T_l &length_scale) {
+    gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma,
+                    const T_l &length_scale) {
   using std::exp;
   check_positive("gp_exp_quad_cov", "magnitude", sigma);
   check_positive("gp_exp_quad_cov", "length scale", length_scale);
