@@ -64,8 +64,8 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
   for (size_t i = 0; i < x_size; ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
-      typename return_type<T_x, T_s, T_l>::type distance =
-        sqrt(squared_distance(x[i], x[j]));
+      typename return_type<T_x, T_s, T_l>::type distance
+          = sqrt(squared_distance(x[i], x[j]));
       cov(i, j) = sigma_sq * (1.0 + root_3_inv_l * distance)
                   * exp(neg_root_3_inv_l * distance);
       cov(j, i) = cov(i, j);
@@ -193,8 +193,8 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      typename return_type<T_x1, T_x2>::type distance =
-        sqrt(squared_distance(x1[i], x2[j]));
+      typename return_type<T_x1, T_x2>::type distance
+          = sqrt(squared_distance(x1[i], x2[j]));
       cov(i, j) = sigma_sq * (1.0 + root_3_inv_l_sq * distance)
                   * exp(neg_root_3_inv_l_sq * distance);
     }
@@ -275,8 +275,8 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, R1, C1>> &x1,
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      typename return_type<T_x1, T_x2, T_s, T_l>::type distance =
-        sqrt(squared_distance(x1_new[i], x2_new[j]));
+      typename return_type<T_x1, T_x2, T_s, T_l>::type distance
+          = sqrt(squared_distance(x1_new[i], x2_new[j]));
       cov(i, j)
           = sigma_sq * (1.0 + root_3 * distance) * exp(neg_root_3 * distance);
     }
