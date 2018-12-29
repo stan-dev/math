@@ -1,5 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
+#include <stan/math/gpu/copy.hpp>
 #include <stan/math/gpu/matrix_gpu.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
@@ -16,7 +17,7 @@ TEST(MathMatrixGPU, sub_block_pass) {
 
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
-  EXPECT_NO_THROW(d22.sub_block(d11, 0, 0, 0, 0, 2, 2));
+  d22.sub_block(d11, 0, 0, 0, 0, 2, 2);
   stan::math::copy(d2, d22);
   EXPECT_EQ(1, d2(0, 0));
   EXPECT_EQ(2, d2(0, 1));

@@ -106,8 +106,8 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
 template <typename T_x, typename T_s, typename T_l>
 inline typename Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type,
                               Eigen::Dynamic, Eigen::Dynamic>
-gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
-                const std::vector<T_l> &length_scale) {
+gp_matern52_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
+                const T_s &sigma, const std::vector<T_l> &length_scale) {
   using std::exp;
 
   size_t x_size = x.size();
@@ -132,14 +132,15 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
   double five_thirds = 5.0 / 3.0;
   double neg_root_5 = -root_5;
 
-  std::vector<T_x> x_new = divide_columns(x, length_scale);
+  std::vector<Eigen::Matrix<typename return_type<T_x, T_l>::type, -1, 1>> x_new
+      = divide_columns(x, length_scale);
 
   for (size_t i = 0; i < x_size; ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
-      typename scalar_type<T_x>::type sq_distance
+      typename return_type<T_x>::type sq_distance
           = squared_distance(x_new[i], x_new[j]);
-      typename scalar_type<T_x>::type distance = sqrt(sq_distance);
+      typename return_type<T_x>::type distance = sqrt(sq_distance);
       cov(i, j) = sigma_sq
                   * (1.0 + root_5 * distance + five_thirds * sq_distance)
                   * exp(neg_root_5 * distance);
@@ -244,7 +245,8 @@ template <typename T_x1, typename T_x2, typename T_s, typename T_l>
 inline typename Eigen::Matrix<
     typename stan::return_type<T_x1, T_x2, T_s, T_l>::type, Eigen::Dynamic,
     Eigen::Dynamic>
-gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
+gp_matern52_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
+                const std::vector<Eigen::Matrix<T_x2, Eigen::Dynamic, 1>> &x2,
                 const T_s &sigma, const std::vector<T_l> &length_scale) {
   using std::exp;
 
@@ -276,8 +278,10 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   double five_thirds = 5.0 / 3.0;
   double neg_root_5 = -root_5;
 
-  std::vector<T_x1> x1_new = divide_columns(x1, length_scale);
-  std::vector<T_x2> x2_new = divide_columns(x2, length_scale);
+  std::vector<Eigen::Matrix<typename return_type<T_x1, T_l>::type, -1, 1>>
+      x1_new = divide_columns(x1, length_scale);
+  std::vector<Eigen::Matrix<typename return_type<T_x2, T_l>::type, -1, 1>>
+      x2_new = divide_columns(x2, length_scale);
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {

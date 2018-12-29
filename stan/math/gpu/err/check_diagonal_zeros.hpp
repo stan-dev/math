@@ -2,6 +2,7 @@
 #define STAN_MATH_GPU_ERR_CHECK_DIAGONAL_ZEROS_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/gpu/kernels/check_diagonal_zeros.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 
 namespace stan {
@@ -20,9 +21,6 @@ inline void check_diagonal_zeros(const char* function, const char* name,
                                  const matrix_gpu& y) {
   if (y.size() == 0)
     return;
-
-  cl::Kernel kernel_check_diagonal_zeros
-      = opencl_context.get_kernel("is_zero_on_diagonal");
   cl::CommandQueue cmd_queue = opencl_context.queue();
   cl::Context ctx = opencl_context.context();
   try {
@@ -30,13 +28,9 @@ inline void check_diagonal_zeros(const char* function, const char* name,
     cl::Buffer buffer_flag(ctx, CL_MEM_READ_WRITE, sizeof(int));
     cmd_queue.enqueueWriteBuffer(buffer_flag, CL_TRUE, 0, sizeof(int),
                                  &zero_on_diagonal_flag);
-    opencl_context.set_kernel_args(kernel_check_diagonal_zeros, y.buffer(),
-                                   y.rows(), y.cols(), buffer_flag);
-
-    cmd_queue.enqueueNDRangeKernel(kernel_check_diagonal_zeros, cl::NullRange,
-                                   cl::NDRange(y.rows(), y.cols()),
-                                   cl::NullRange);
-
+    opencl_kernels::check_diagonal_zeros(cl::NDRange(y.rows(), y.cols()),
+                                         y.buffer(), buffer_flag, y.rows(),
+                                         y.cols());
     cmd_queue.enqueueReadBuffer(buffer_flag, CL_TRUE, 0, sizeof(int),
                                 &zero_on_diagonal_flag);
     //  if zeros were found on the diagonal

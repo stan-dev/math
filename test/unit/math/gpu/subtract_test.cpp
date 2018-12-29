@@ -1,5 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
+#include <stan/math/gpu/copy.hpp>
 #include <stan/math/gpu/subtract.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
@@ -12,7 +13,7 @@ TEST(MathMatrixGPU, subtract_v_exception_pass) {
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
   stan::math::matrix_gpu d33(3, 1);
-  EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
+  EXPECT_NO_THROW(d33 = d11 - d22);
 }
 
 // TODO(Steve): This should probably throw expection?
@@ -24,7 +25,7 @@ TEST(MathMatrixGPU, subtract_v_exception_pass_zero) {
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
   stan::math::matrix_gpu d33(0, 1);
-  EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
+  EXPECT_NO_THROW(d33 = d11 - d22);
 }
 
 TEST(MathMatrixGPU, subtract_v_exception_fail_zero) {
@@ -34,7 +35,7 @@ TEST(MathMatrixGPU, subtract_v_exception_fail_zero) {
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
   stan::math::matrix_gpu d33(3, 3);
-  EXPECT_THROW(d33 = stan::math::subtract(d11, d22), std::invalid_argument);
+  EXPECT_THROW(d33 = d11 - d22, std::invalid_argument);
 }
 
 TEST(MathMatrixGPU, subtract_rv_exception_pass) {
@@ -45,7 +46,7 @@ TEST(MathMatrixGPU, subtract_rv_exception_pass) {
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
   stan::math::matrix_gpu d33(1, 3);
-  EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
+  EXPECT_NO_THROW(d33 = d11 - d22);
 }
 
 TEST(MathMatrixGPU, subtract_rv_exception_pass_zero) {
@@ -55,7 +56,7 @@ TEST(MathMatrixGPU, subtract_rv_exception_pass_zero) {
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
   stan::math::matrix_gpu d33(1, 0);
-  EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
+  EXPECT_NO_THROW(d33 = d11 - d22);
 }
 
 TEST(MathMatrixGPU, subtract_rv_exception_fail_zero) {
@@ -65,7 +66,7 @@ TEST(MathMatrixGPU, subtract_rv_exception_fail_zero) {
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
   stan::math::matrix_gpu d33(3, 1);
-  EXPECT_THROW(d33 = stan::math::subtract(d11, d22), std::invalid_argument);
+  EXPECT_THROW(d33 = d11 - d22, std::invalid_argument);
 }
 
 TEST(MathMatrixGPU, subtract_m_exception) {
@@ -75,7 +76,7 @@ TEST(MathMatrixGPU, subtract_m_exception) {
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
   stan::math::matrix_gpu d33(2, 3);
-  EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
+  EXPECT_NO_THROW(d33 = d11 - d22);
 }
 
 TEST(MathMatrixGPU, subtract_m_exception_pass_zero) {
@@ -85,7 +86,7 @@ TEST(MathMatrixGPU, subtract_m_exception_pass_zero) {
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
   stan::math::matrix_gpu d33(0, 0);
-  EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
+  EXPECT_NO_THROW(d33 = d11 - d22);
 }
 
 TEST(MathMatrixGPU, subtract_m_exception_fail) {
@@ -95,7 +96,7 @@ TEST(MathMatrixGPU, subtract_m_exception_fail) {
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
   stan::math::matrix_gpu d33(3, 2);
-  EXPECT_THROW(d33 = stan::math::subtract(d11, d22), std::invalid_argument);
+  EXPECT_THROW(d33 = d11 - d22, std::invalid_argument);
 }
 
 TEST(MathMatrixGPU, subtract_exception) {
@@ -125,9 +126,9 @@ TEST(MathMatrixGPU, subtract_exception) {
   matrix_gpu m11(m1);
   matrix_gpu m22(m2);
   matrix_gpu m33(m1);
-  EXPECT_THROW(v33 = subtract(v11, v22), std::invalid_argument);
-  EXPECT_THROW(rv33 = subtract(rv11, rv22), std::invalid_argument);
-  EXPECT_THROW(m33 = subtract(m11, m22), std::invalid_argument);
+  EXPECT_THROW(v33 = v11 - v22, std::invalid_argument);
+  EXPECT_THROW(rv33 = rv11 - rv22, std::invalid_argument);
+  EXPECT_THROW(m33 = m11 - m22, std::invalid_argument);
 }
 
 TEST(MathMatrixGPU, subtract_value_check) {
@@ -161,9 +162,9 @@ TEST(MathMatrixGPU, subtract_value_check) {
   matrix_gpu m22(m2);
   matrix_gpu m33(3, 3);
 
-  EXPECT_NO_THROW(v33 = subtract(v11, v22));
-  EXPECT_NO_THROW(rv33 = subtract(rv11, rv22));
-  EXPECT_NO_THROW(m33 = subtract(m11, m22));
+  EXPECT_NO_THROW(v33 = v11 - v22);
+  EXPECT_NO_THROW(rv33 = rv11 - rv22);
+  EXPECT_NO_THROW(m33 = m11 - m22);
 
   stan::math::copy(v3, v33);
   EXPECT_EQ(-9, v3(0));

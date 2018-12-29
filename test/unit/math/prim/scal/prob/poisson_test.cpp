@@ -28,7 +28,7 @@ TEST(ProbDistributionsPoisson, error_check) {
 TEST(ProbDistributionsPoisson, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 1000;
-  int K = boost::math::round(2 * std::pow(N, 0.4));
+  int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::poisson_distribution<> dist(5);
   boost::math::chi_squared mydist(K - 1);
 
@@ -67,7 +67,7 @@ TEST(ProbDistributionsPoisson, chiSquareGoodnessFitTest2) {
 
   boost::random::mt19937 rng;
   int N = 1000;
-  int K = boost::math::round(2 * std::pow(N, 0.4));
+  int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::poisson_distribution<> dist(5);
   boost::math::chi_squared mydist(K - 1);
 

@@ -8,7 +8,7 @@ TEST(MathGpu, getInfo) {
   cl::Context cl = stan::math::opencl_context.context();
   EXPECT_NE("", stan::math::opencl_context.description());
   EXPECT_NE("", stan::math::opencl_context.capabilities());
-  EXPECT_GT(stan::math::opencl_context.max_workgroup_size(), 0);
+  EXPECT_GT(stan::math::opencl_context.max_thread_block_size(), 0);
 }
 
 TEST(MathGpu, context_construction) {
@@ -16,17 +16,6 @@ TEST(MathGpu, context_construction) {
   cl::CommandQueue cq = stan::math::opencl_context.queue();
   std::vector<cl::Device> dv = stan::math::opencl_context.device();
   std::vector<cl::Platform> pl = stan::math::opencl_context.platform();
-}
-
-TEST(MathGpu, kernel_construction) {
-  EXPECT_NO_THROW(stan::math::opencl_context.get_kernel("dummy"));
-  EXPECT_NO_THROW(stan::math::opencl_context.get_kernel("dummy2"));
-
-  cl::Kernel dummy = stan::math::opencl_context.get_kernel("dummy");
-  EXPECT_STREQ("dummy", dummy.getInfo<CL_KERNEL_FUNCTION_NAME>().c_str());
-
-  cl::Kernel dummy2 = stan::math::opencl_context.get_kernel("dummy2");
-  EXPECT_STREQ("dummy2", dummy2.getInfo<CL_KERNEL_FUNCTION_NAME>().c_str());
 }
 
 TEST(opencl_context, platform) {
@@ -63,11 +52,11 @@ TEST(opencl_context, devices) {
         << msg.str();
 
     msg.str("");
-    msg << "max_workgroup_sizes: " << std::endl;
+    msg << "max_thead_block_sizes: " << std::endl;
     for (auto device : all_devices) {
-      size_t work_group_size;
-      device.getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE, &work_group_size);
-      msg << "- work_group_size: " << work_group_size << std::endl;
+      size_t thread_block_size;
+      device.getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE, &thread_block_size);
+      msg << "- thread_block_size: " << thread_block_size << std::endl;
     }
   } catch (const cl::Error& e) {
     stan::math::check_opencl_error("listing_devices_test", e);
