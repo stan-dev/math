@@ -119,7 +119,6 @@ TEST(MathPrimMat, vec_eigen_gp_matern32_cov1) {
   }
 }
 
-
 TEST(MathPrimMat, vec_eigen_rvec_eigen_gp_matern32_cov1) {
   double sigma = 0.3;
   double l = 2.3;
