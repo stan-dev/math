@@ -47,7 +47,7 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
   for (size_t n = 0; n < x_size; ++n)
     check_not_nan("gp_matern32_cov", "x", x[n]);
 
-  check_positive_finite("gp_matern32_cov", "marginal variance", sigma);
+  check_positive_finite("gp_matern32_cov", "magnitude", sigma);
   check_positive_finite("gp_matern32_cov", "length scale", length_scale);
 
   Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
@@ -60,12 +60,12 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
   T_s sigma_sq = square(sigma);
   T_l root_3_inv_l = sqrt(3.0) / length_scale;
   T_l neg_root_3_inv_l = -1.0 * sqrt(3.0) / length_scale;
-  typename return_type<T_x, T_s, T_l>::type distance;
 
   for (size_t i = 0; i < x_size; ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
-      distance = sqrt(squared_distance(x[i], x[j]));
+      typename return_type<T_x, T_s, T_l>::type distance =
+        sqrt(squared_distance(x[i], x[j]));
       cov(i, j) = sigma_sq * (1.0 + root_3_inv_l * distance)
                   * exp(neg_root_3_inv_l * distance);
       cov(j, i) = cov(i, j);
@@ -107,13 +107,13 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, R, C>> &x,
   for (size_t n = 0; n < x_size; ++n)
     check_not_nan("gp_matern32_cov", "x", x[n]);
 
-  check_positive_finite("gp_matern32_cov", "marginal variance", sigma);
+  check_positive_finite("gp_matern32_cov", "magnitude", sigma);
   check_positive_finite("gp_matern32_cov", "length scale", length_scale);
 
   for (size_t n = 0; n < x_size; ++n)
     check_not_nan("gp_matern32_cov", "length scale", length_scale[n]);
 
-  check_size_match("cov_exp_quad", "x dimension", x[0].size(),
+  check_size_match("gp_matern32_cov", "x dimension", x[0].size(),
                    "number of length scales", l_size);
 
   Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
@@ -177,7 +177,7 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   for (size_t n = 0; n < x2_size; ++n)
     check_not_nan("gp_matern32_cov", "x2", x2[n]);
 
-  check_positive_finite("gp_matern32_cov", "marginal variance", sigma);
+  check_positive_finite("gp_matern32_cov", "magnitude", sigma);
   check_positive_finite("gp_matern32_cov", "length scale", length_scale);
 
   Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
@@ -190,11 +190,11 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   T_s sigma_sq = square(sigma);
   T_l root_3_inv_l_sq = sqrt(3.0) / length_scale;
   T_l neg_root_3_inv_l_sq = -1.0 * sqrt(3.0) / length_scale;
-  typename return_type<T_x1, T_x2>::type distance;
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      distance = sqrt(squared_distance(x1[i], x2[j]));
+      typename return_type<T_x1, T_x2>::type distance =
+        sqrt(squared_distance(x1[i], x2[j]));
       cov(i, j) = sigma_sq * (1.0 + root_3_inv_l_sq * distance)
                   * exp(neg_root_3_inv_l_sq * distance);
     }
@@ -246,15 +246,15 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, R1, C1>> &x1,
   for (size_t n = 0; n < x2_size; ++n)
     check_not_nan("gp_matern32_cov", "x2", x2[n]);
 
-  check_positive_finite("gp_matern32_cov", "marginal variance", sigma);
+  check_positive_finite("gp_matern32_cov", "magnitude", sigma);
   check_positive_finite("gp_matern32_cov", "length scale", length_scale);
 
   for (size_t n = 0; n < l_size; ++n)
     check_not_nan("gp_matern32_cov", "length scale", length_scale[n]);
 
-  check_size_match("cov_exp_quad", "x1 dimension", x1[0].size(),
+  check_size_match("gp_matern32_cov", "x1 dimension", x1[0].size(),
                    "number of length scales", l_size);
-  check_size_match("cov_exp_quad", "x2 dimension", x2[0].size(),
+  check_size_match("gp_matern32_cov", "x2 dimension", x2[0].size(),
                    "number of length scales", l_size);
 
   Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
@@ -267,7 +267,6 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, R1, C1>> &x1,
   T_s sigma_sq = square(sigma);
   T_l root_3 = sqrt(3.0);
   T_l neg_root_3 = -1.0 * sqrt(3.0);
-  typename return_type<T_x1, T_x2, T_s, T_l>::type distance;
 
   std::vector<Eigen::Matrix<typename return_type<T_x1, T_l, T_s>::type, R1, C1>>
       x1_new = divide_columns(x1, length_scale);
@@ -276,7 +275,8 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, R1, C1>> &x1,
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      distance = sqrt(squared_distance(x1_new[i], x2_new[j]));
+      typename return_type<T_x1, T_x2, T_s, T_l>::type distance =
+        sqrt(squared_distance(x1_new[i], x2_new[j]));
       cov(i, j)
           = sigma_sq * (1.0 + root_3 * distance) * exp(neg_root_3 * distance);
     }
