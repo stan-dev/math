@@ -34,7 +34,8 @@ inline matrix_gpu cholesky_decompose_recursion(matrix_gpu& A,
       check_opencl_error("cholesky_decompose", e);
     }
   } else {
-    L = stan::math::cholesky_decompose(A, floor(block / divisor), divisor, min_block);
+    L = stan::math::cholesky_decompose(A, floor(block / divisor), divisor,
+                                       min_block);
   }
   return L;
 }

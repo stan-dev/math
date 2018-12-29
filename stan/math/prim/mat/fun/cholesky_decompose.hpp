@@ -35,7 +35,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
     matrix_gpu m_gpu(m);
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_chol(m.rows(), m.cols());
     cholesky_decompose(m_gpu, floor(m.rows() / 2), 2, 100);
-    copy(m_chol, m_gpu); // NOLINT
+    copy(m_chol, m_gpu);  // NOLINT
     return m_chol;
   } else {
 #endif
