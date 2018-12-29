@@ -224,8 +224,7 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 template <typename T_x1, typename T_x2, typename T_s, typename T_l>
 inline typename Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
                               Eigen::Dynamic, Eigen::Dynamic>
-gp_matern32_cov(const std::vector<T_x1> &x1,
-                const std::vector<T_x2> &x2,
+gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 const T_s &sigma, const std::vector<T_l> &length_scale) {
   using std::exp;
 
