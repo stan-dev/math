@@ -12,41 +12,63 @@
 
 namespace stan {
 namespace math {
+namespace internal {
 
-template <class Function, typename T1>
-Eigen::Matrix<typename return_type<T1>::type, Eigen::Dynamic, 1> parallel_for(
-    const Function& f, int start, int end,
-    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& arg1) {
-  typedef typename return_type<T1>::type T_return_elem;
-  typedef Eigen::Matrix<T_return_elem, Eigen::Dynamic, 1> T_return_job;
-  typedef boost::counting_iterator<int> count_iter;
+// base definition => compile error
+template <class InputIt, class UnaryFunction, class T_return_type>
+struct parallel_for_each_impl {};
+
+template <class InputIt, class UnaryFunction>
+struct parallel_for_each_impl<InputIt, UnaryFunction, double> {
+  auto operator()(InputIt first, InputIt last, UnaryFunction f) const {
+    typedef decltype(f(*first)) T_return_elem;
+    typedef Eigen::Matrix<typename return_type<T_return_elem>::type,
+                          Eigen::Dynamic, 1>
+        T_return;
+    typedef boost::counting_iterator<int> count_iter;
 
 #ifdef STAN_THREADS
-  constexpr std_par::execution::parallel_unsequenced_policy exec_policy
-      = std_par::execution::par_unseq;
+    constexpr std_par::execution::parallel_unsequenced_policy exec_policy
+        = std_par::execution::par_unseq;
 #else
-  constexpr std_par::execution::sequenced_policy exec_policy
-      = std_par::execution::seq;
+    constexpr std_par::execution::sequenced_policy exec_policy
+        = std_par::execution::seq;
 #endif
 
-  const int num_jobs = end - start;
+    const int num_jobs = std::distance(first, last);
 
-  std::vector<int> f_sizes(num_jobs);
-  std::vector<T_return_job> f_eval(num_jobs);
+    std::cout << "Running base parallel_for_each implementation..."
+              << std::endl;
 
-  std_par::for_each(exec_policy, count_iter(0), count_iter(num_jobs),
-                    [&](int i) -> void {
-                      f_eval[i] = f(i, arg1);
-                      f_sizes[i] = f_eval[i].rows();
-                    });
+    std::vector<int> f_sizes(num_jobs);
+    std::vector<T_return_elem> f_eval(num_jobs);
 
-  const int num_outputs = std::accumulate(f_sizes.begin(), f_sizes.end(), 0);
-  T_return_job results(num_outputs);
-  for (int i = 0, offset = 0; i < num_jobs; offset += f_sizes[i], ++i) {
-    results.block(offset, 0, f_sizes[i], 1) = f_eval[i];
+    std_par::for_each(exec_policy, count_iter(0), count_iter(num_jobs),
+                      [&](int i) -> void {
+                        InputIt elem = first;
+                        std::advance(elem, i);
+                        auto& elem_ref = *elem;
+                        f_eval[i] = f(elem_ref);
+                        f_sizes[i] = num_elements(f_eval[i]);
+                      });
+
+    const int num_outputs = std::accumulate(f_sizes.begin(), f_sizes.end(), 0);
+    T_return results(num_outputs);
+    for (int i = 0, offset = 0; i < num_jobs; offset += f_sizes[i], ++i) {
+      results.block(offset, 0, f_sizes[i], 1).swap(f_eval[i]);
+    }
+
+    return results;
   }
+};
 
-  return results;
+}  // namespace internal
+
+template <class InputIt, class UnaryFunction>
+auto parallel_for_each(InputIt first, InputIt last, UnaryFunction f) {
+  typedef typename return_type<decltype(f(*first))>::type return_base_t;
+  internal::parallel_for_each_impl<InputIt, UnaryFunction, return_base_t> impl;
+  return impl(first, last, f);
 }
 
 }  // namespace math
