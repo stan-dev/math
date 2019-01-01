@@ -1,6 +1,4 @@
 #include <stan/math/rev/mat.hpp>
-#include <stan/math/prim/scal/functor/parallel_for.hpp>
-#include <stan/math/rev/scal/functor/parallel_for.hpp>
 #include <stan/math/parallel/for_each.hpp>
 #include <stan/math/parallel/get_num_threads.hpp>
 #include <stan/math/rev/core/nest_chainablestack.hpp>

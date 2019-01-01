@@ -1,11 +1,8 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUNCTOR_PARALLEL_FOR_HPP
-#define STAN_MATH_PRIM_SCAL_FUNCTOR_PARALLEL_FOR_HPP
+#ifndef STAN_MATH_PRIM_SCAL_FUNCTOR_PARALLEL_FOR_EACH_HPP
+#define STAN_MATH_PRIM_SCAL_FUNCTOR_PARALLEL_FOR_EACH_HPP
 
 #include <stan/math/parallel/for_each.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
-
-#include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
-#include <stan/math/prim/mat/functor/map_rect_combine.hpp>
 #include <boost/iterator/counting_iterator.hpp>
 
 #include <vector>
@@ -64,6 +61,7 @@ struct parallel_for_each_impl<InputIt, UnaryFunction, double> {
 
 }  // namespace internal
 
+// constexpr??
 template <class InputIt, class UnaryFunction>
 auto parallel_for_each(InputIt first, InputIt last, UnaryFunction f) {
   typedef typename return_type<decltype(f(*first))>::type return_base_t;
