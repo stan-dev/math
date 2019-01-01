@@ -29,14 +29,10 @@ struct fun1 {
   }
 };
 
-// test if base case is ok (move me)
-
 static tbb::task_scheduler_init task_scheduler(
     stan::math::internal::get_num_threads());
 
 TEST(Base, parallel_for) {
-  // const int num_threads = stan::math::internal::get_num_threads();
-  // tbb::task_scheduler_init task_scheduler(num_threads);
   const int num_jobs = 1000;
   typedef boost::counting_iterator<int> count_iter;
 
@@ -69,9 +65,7 @@ TEST(Base, parallel_for) {
   stan::math::recover_memory_global();
 }
 
-TEST(AgradAutoDiff, parallel_for) {
-  // const int num_threads = stan::math::internal::get_num_threads();
-  // tbb::task_scheduler_init task_scheduler(num_threads);
+TEST(AgradAutoDiff, parallel_for_each) {
   typedef boost::counting_iterator<int> count_iter;
 
   const int num_jobs = 1000;
@@ -103,8 +97,10 @@ TEST(AgradAutoDiff, parallel_for) {
     EXPECT_FLOAT_EQ(x_ref(0) * x_ref(0) * x_ref(1) + 3 * x_ref(1) * x_ref(1),
                     fx_ref);
     vector<double> grad_fx_ref(2);
+    // std::cout << "i = " << i << "; setting adjoints to zero." << std::endl;
     stan::math::set_zero_all_adjoints_global();
     // stan::math::set_zero_all_adjoints();
+    // std::cout << "i = " << i << "; calling grad." << std::endl;
     stan::math::grad(parallel_result(i).vi_);
     grad_fx_ref[0] = fixed_arg.adj();
     grad_fx_ref[1] = x_ref_2(i).adj();
@@ -114,12 +110,12 @@ TEST(AgradAutoDiff, parallel_for) {
     EXPECT_FLOAT_EQ(x_ref(0) * x_ref(0) + 3 * 2 * x_ref(1), grad_fx_ref[1]);
   }
 
+  std::cout << "All good! Cleaning up..." << std::endl;
   stan::math::recover_memory_global();
+  // stan::math::recover_memory();
 }
 
 TEST(AgradAutoDiff, parallel_for_each_scalar) {
-  // const int num_threads = stan::math::internal::get_num_threads();
-  // tbb::task_scheduler_init task_scheduler(num_threads);
   typedef boost::counting_iterator<int> count_iter;
 
   const int num_jobs = 1000;
@@ -158,13 +154,16 @@ TEST(AgradAutoDiff, parallel_for_each_scalar) {
     EXPECT_EQ(2, grad_fx_ref.size());
     EXPECT_FLOAT_EQ(2 * x_ref(0) * x_ref(1), grad_fx_ref[0]);
     EXPECT_FLOAT_EQ(x_ref(0) * x_ref(0) + 3 * 2 * x_ref(1), grad_fx_ref[1]);
+    // std::cout << "OK?!" << std::endl;
   }
 
+  std::cout << "All good! Cleaning up..." << std::endl;
   stan::math::recover_memory_global();
+  // stan::math::recover_memory();
 }
-/**/
 
 // test threaded AD if enabled
+// more verbose old approach scheme
 /*
 TEST(AgradAutoDiff, parallel_for_each) {
   using stan::math::ChainableStack;

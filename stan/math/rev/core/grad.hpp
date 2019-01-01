@@ -45,6 +45,7 @@ static void grad(vari* vi) {
   }
 }
 
+#ifdef STAN_TBB_TLS
 static void grad_global(vari* vi) {
   // simple reference implementation (intended as doc):
   //   vi->init_dependent();
@@ -69,6 +70,7 @@ static void grad_global(vari* vi) {
                   }
                 });
 }
+#endif
 
 }  // namespace math
 }  // namespace stan

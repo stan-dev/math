@@ -8,6 +8,8 @@
 
 #include <boost/iterator/counting_iterator.hpp>
 
+#include <map>
+#include <utility>
 #include <vector>
 #include <thread>
 
@@ -32,57 +34,60 @@ struct parallel_for_each_impl<InputIt, UnaryFunction, var> {
 
     const int num_jobs = std::distance(first, last);
 
-    std::cout << "Running var parallel_for_each implementation..." << std::endl;
+    std::cout
+        << "Running NEW var parallel_for_each implementation (non-nestable)..."
+        << std::endl;
 
     typedef ChainableStack::AutodiffStackStorage chainablestack_t;
 
-    std::vector<bool> stack_is_local(num_jobs, false);
-    std::vector<chainablestack_t*> stack_used(num_jobs, nullptr);
-    std::vector<std::size_t> stack_starts(num_jobs);
-    std::vector<std::size_t> stack_ends(num_jobs);
+    // stack_id => stack size map
+    std::map<std::size_t, std::size_t> stack_starts;
 
-    std::size_t parent_stack_id = ChainableStack::instance().id_;
+    std::for_each(ChainableStack::instance_.begin(),
+                  ChainableStack::instance_.end(),
+                  [&](chainablestack_t& thread_stack) {
+                    stack_starts.insert(std::make_pair(
+                        thread_stack.id_, thread_stack.var_stack_.size()));
+                  });
 
-    std::vector<T_return_elem> f_eval(num_jobs, T_return_elem(0));
+    const std::size_t parent_stack_id = ChainableStack::instance().id_;
 
-    std_par::for_each(
-        exec_policy, count_iter(0), count_iter(num_jobs), [&](int i) -> void {
-          InputIt elem = first;
-          std::advance(elem, i);
-          auto& elem_ref = *elem;
-          chainablestack_t& thread_stack = ChainableStack::instance();
+    std::vector<T_return_elem> f_eval(num_jobs);
 
-          stack_is_local[i] = parent_stack_id == thread_stack.id_;
+    std_par::for_each(exec_policy, count_iter(0), count_iter(num_jobs),
+                      [&](int i) -> void {
+                        InputIt elem = first;
+                        std::advance(elem, i);
+                        f_eval[i] = f(*elem);
+                      });
 
-          stack_used[i] = &thread_stack;
-          stack_starts[i] = thread_stack.var_stack_.size();
-
-          f_eval[i] = f(elem_ref);
-
-          stack_ends[i] = thread_stack.var_stack_.size();
+    std::for_each(
+        ChainableStack::instance_.begin(), ChainableStack::instance_.end(),
+        [&](chainablestack_t& thread_stack) {
+          if (thread_stack.id_ == parent_stack_id)
+            return;
+          const std::size_t thread_stack_size = thread_stack.var_stack_.size();
+          if (thread_stack_size == 0)
+            return;
+          auto known = stack_starts.find(thread_stack.id_);
+          if (known != stack_starts.end()) {
+            if (known->second == thread_stack_size)
+              return;
+            std::cout << "registering remote AD tape (id = " << thread_stack.id_
+                      << ") for block " << known->second << " to "
+                      << thread_stack_size << std::endl;
+            stan::math::register_nested_chainablestack(
+                thread_stack, known->second, thread_stack_size);
+          } else {
+            // the AD stack got created, so the starting
+            // position is 0
+            std::cout << "registering CREATED remote AD tape (id = "
+                      << thread_stack.id_ << ") for block " << 0 << " to "
+                      << thread_stack_size << std::endl;
+            stan::math::register_nested_chainablestack(thread_stack, 0,
+                                                       thread_stack_size);
+          }
         });
-
-    for (int i = 0, cur_stack_start = 0; i < num_jobs; ++i) {
-      if (!stack_is_local[i]) {
-        // if the current end == next start => then we can lump these
-        // together
-        if (i + 1 != num_jobs && stack_used[i + 1] == stack_used[i]
-            && stack_starts[i + 1] == stack_ends[i]) {
-          // do nothing as we merge the current and the next job results
-          // std::cout << "merging block " << i << " and " << i + 1 <<
-          // std::endl;
-        } else {
-          std::cout << "registering remote AD tape (id = " << stack_used[i]->id_
-                    << ") for blocks " << cur_stack_start << " - " << i
-                    << std::endl;
-          stan::math::register_nested_chainablestack(
-              *stack_used[i], stack_starts[cur_stack_start], stack_ends[i]);
-          cur_stack_start = i + 1;
-        }
-      } else {
-        cur_stack_start = i;
-      }
-    }
 
     return concatenate_row(f_eval);
   }

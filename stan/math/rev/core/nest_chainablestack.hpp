@@ -33,6 +33,8 @@ class nested_chainablestack_vari : public vari {
 
   void chain() {
     typedef std::vector<vari*>::reverse_iterator it_t;
+    // std::cout << "Chaining nested stack " << nested_.id_ << " from " <<
+    // start_ << " to " << end_ << std::endl;
     const it_t rend
         = nested_.var_stack_.rbegin() + (nested_.var_stack_.size() - start_);
     for (it_t it
