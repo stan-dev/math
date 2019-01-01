@@ -108,6 +108,8 @@ TEST(AgradAutoDiff, parallel_for) {
     EXPECT_FLOAT_EQ(2 * x_ref(0) * x_ref(1), grad_fx_ref[0]);
     EXPECT_FLOAT_EQ(x_ref(0) * x_ref(0) + 3 * 2 * x_ref(1), grad_fx_ref[1]);
   }
+
+  stan::math::recover_memory_global();
 }
 /**/
 
