@@ -3,6 +3,7 @@
 
 #include <stan/math/memory/stack_alloc.hpp>
 #include <vector>
+#include <mutex>
 
 #include "tbb/enumerable_thread_specific.h"
 
@@ -45,6 +46,14 @@ struct AutodiffStackSingleton {
   typedef AutodiffStackSingleton<ChainableT, ChainableAllocT>
       AutodiffStackSingleton_t;
 
+  static inline std::size_t get_new_id() {
+    static std::mutex id_mutex;
+    static std::size_t id = 0;
+    std::lock_guard<std::mutex> id_lock(id_mutex);
+    std::size_t new_id = ++id;
+    return new_id;
+  }
+
   struct AutodiffStackStorage {
     AutodiffStackStorage &operator=(const AutodiffStackStorage &) = delete;
 
@@ -57,6 +66,8 @@ struct AutodiffStackSingleton {
     std::vector<size_t> nested_var_stack_sizes_;
     std::vector<size_t> nested_var_nochain_stack_sizes_;
     std::vector<size_t> nested_var_alloc_stack_starts_;
+
+    const std::size_t id_ = get_new_id();
   };
 
   AutodiffStackSingleton() = delete;

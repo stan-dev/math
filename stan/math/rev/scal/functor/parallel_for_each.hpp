@@ -41,7 +41,7 @@ struct parallel_for_each_impl<InputIt, UnaryFunction, var> {
     std::vector<std::size_t> stack_starts(num_jobs);
     std::vector<std::size_t> stack_ends(num_jobs);
 
-    std::thread::id parent_thread = std::this_thread::get_id();
+    std::size_t parent_stack_id = ChainableStack::instance().id_;
 
     std::vector<T_return_elem> f_eval(num_jobs, T_return_elem(0));
 
@@ -50,19 +50,16 @@ struct parallel_for_each_impl<InputIt, UnaryFunction, var> {
           InputIt elem = first;
           std::advance(elem, i);
           auto& elem_ref = *elem;
-          stack_is_local[i] = parent_thread == std::this_thread::get_id();
+          chainablestack_t& thread_stack = ChainableStack::instance();
 
-          chainablestack_t* thread_stack
-              = stack_is_local[i] ? nullptr : &ChainableStack::instance();
-          stack_used[i] = thread_stack;
+          stack_is_local[i] = parent_stack_id == thread_stack.id_;
 
-          if (!stack_is_local[i])
-            stack_starts[i] = thread_stack->var_stack_.size();
+          stack_used[i] = &thread_stack;
+          stack_starts[i] = thread_stack.var_stack_.size();
 
           f_eval[i] = f(elem_ref);
 
-          if (!stack_is_local[i])
-            stack_ends[i] = thread_stack->var_stack_.size();
+          stack_ends[i] = thread_stack.var_stack_.size();
         });
 
     for (int i = 0, cur_stack_start = 0; i < num_jobs; ++i) {
@@ -75,8 +72,9 @@ struct parallel_for_each_impl<InputIt, UnaryFunction, var> {
           // std::cout << "merging block " << i << " and " << i + 1 <<
           // std::endl;
         } else {
-          std::cout << "registering remote AD tape for blocks "
-                    << cur_stack_start << " - " << i << std::endl;
+          std::cout << "registering remote AD tape (id = " << stack_used[i]->id_
+                    << ") for blocks " << cur_stack_start << " - " << i
+                    << std::endl;
           stan::math::register_nested_chainablestack(
               *stack_used[i], stack_starts[cur_stack_start], stack_ends[i]);
           cur_stack_start = i + 1;
