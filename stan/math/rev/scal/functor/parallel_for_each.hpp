@@ -32,6 +32,8 @@ struct parallel_for_each_impl<InputIt, UnaryFunction, var> {
 
     const int num_jobs = std::distance(first, last);
 
+    std::cout << "Running var parallel_for_each implementation..." << std::endl;
+
     typedef ChainableStack::AutodiffStackStorage chainablestack_t;
 
     std::vector<bool> stack_is_local(num_jobs, false);
@@ -42,7 +44,7 @@ struct parallel_for_each_impl<InputIt, UnaryFunction, var> {
     std::thread::id parent_thread = std::this_thread::get_id();
 
     std::vector<int> f_sizes(num_jobs);
-    std::vector<T_return_elem> f_eval(num_jobs);
+    std::vector<T_return_elem> f_eval(num_jobs, T_return_elem(0));
 
     std_par::for_each(
         exec_policy, count_iter(0), count_iter(num_jobs), [&](int i) -> void {
@@ -69,14 +71,15 @@ struct parallel_for_each_impl<InputIt, UnaryFunction, var> {
     T_return results(num_outputs);
     for (int i = 0, offset = 0, cur_stack_start = 0; i < num_jobs;
          offset += f_sizes[i], ++i) {
-      //std::cout << "chunk i = " << i << std::endl;
+      // std::cout << "chunk i = " << i << std::endl;
       if (!stack_is_local[i]) {
         // if the current end == next start => then we can lump these
         // together
         if (i + 1 != num_jobs && stack_used[i + 1] == stack_used[i]
             && stack_starts[i + 1] == stack_ends[i]) {
           // do nothing as we merge the current and the next job results
-          //std::cout << "merging block " << i << " and " << i + 1 << std::endl;
+          // std::cout << "merging block " << i << " and " << i + 1 <<
+          // std::endl;
         } else {
           std::cout << "registering remote AD tape for blocks "
                     << cur_stack_start << " - " << i << std::endl;

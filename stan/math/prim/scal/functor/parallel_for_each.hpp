@@ -61,12 +61,11 @@ struct parallel_for_each_impl<InputIt, UnaryFunction, double> {
 
 }  // namespace internal
 
-// constexpr??
 template <class InputIt, class UnaryFunction>
-auto parallel_for_each(InputIt first, InputIt last, UnaryFunction f) {
+constexpr auto parallel_for_each(InputIt first, InputIt last, UnaryFunction f) {
   typedef typename return_type<decltype(f(*first))>::type return_base_t;
-  internal::parallel_for_each_impl<InputIt, UnaryFunction, return_base_t> impl;
-  return impl(first, last, f);
+  return internal::parallel_for_each_impl<InputIt, UnaryFunction,
+                                          return_base_t>()(first, last, f);
 }
 
 }  // namespace math
