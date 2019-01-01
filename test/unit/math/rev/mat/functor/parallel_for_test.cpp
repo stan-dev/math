@@ -32,18 +32,10 @@ struct fun1 {
 };
 
 // test if base case is ok (move me)
-/*
+
 TEST(Base, parallel_for) {
   const int num_jobs = 1000;
-
-  auto loop_fun = [] (int i, const vector_d& args) -> vector_d {
-                    fun1 f;
-                    vector_d res(1);
-                    vector_d iarg(2);
-                    iarg << 5, args(i);
-                    res(0) = f(iarg);
-                    return res;
-                  };
+  typedef boost::counting_iterator<int> count_iter;
 
   vector_d x_ref_2(num_jobs);
 
@@ -51,17 +43,26 @@ TEST(Base, parallel_for) {
     x_ref_2(i) = 7 + i;
   }
 
-  vector_d parallel_result = stan::math::parallel_for(loop_fun, 0, num_jobs,
-x_ref_2);
+  auto loop_fun = [&](int i) -> vector_d {
+    fun1 f;
+    vector_d res(1);
+    vector_d iarg(2);
+    iarg << 5, x_ref_2(i);
+    res(0) = f(iarg);
+    return res;
+  };
+
+  vector_d parallel_result = stan::math::parallel_for_each(
+      count_iter(0), count_iter(num_jobs), loop_fun);
 
   for (int i = 0; i < num_jobs; ++i) {
     vector_d x_ref(2);
     x_ref << 5, x_ref_2(i);
     double fx_ref = parallel_result(i);
     EXPECT_FLOAT_EQ(x_ref(0) * x_ref(0) * x_ref(1) + 3 * x_ref(1) * x_ref(1),
-                    fx_ref);  }
+                    fx_ref);
+  }
 }
-*/
 
 /**/
 TEST(AgradAutoDiff, parallel_for) {
