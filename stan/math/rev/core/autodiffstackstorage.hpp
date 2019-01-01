@@ -94,13 +94,12 @@ struct AutodiffStackSingleton {
 #ifdef STAN_TBB_TLS
   // private:
   // TBB TLS
-  // typedef tbb::enumerable_thread_specific<
-  //    AutodiffStackStorage,
-  //    tbb::cache_aligned_allocator<AutodiffStackStorage>,
-  //    tbb::ets_key_per_instance>
-  //    AutodiffStackStorage_tls_t;
-  typedef tbb::enumerable_thread_specific<AutodiffStackStorage>
+  typedef tbb::enumerable_thread_specific<
+      AutodiffStackStorage, tbb::cache_aligned_allocator<AutodiffStackStorage>,
+      tbb::ets_key_per_instance>
       AutodiffStackStorage_tls_t;
+  // typedef tbb::enumerable_thread_specific<AutodiffStackStorage>
+  //    AutodiffStackStorage_tls_t;
   static AutodiffStackStorage_tls_t instance_;
 #endif
 #else
