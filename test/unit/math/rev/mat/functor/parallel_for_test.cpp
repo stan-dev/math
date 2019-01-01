@@ -31,7 +31,12 @@ struct fun1 {
 
 // test if base case is ok (move me)
 
+static tbb::task_scheduler_init task_scheduler(
+    stan::math::internal::get_num_threads());
+
 TEST(Base, parallel_for) {
+  // const int num_threads = stan::math::internal::get_num_threads();
+  // tbb::task_scheduler_init task_scheduler(num_threads);
   const int num_jobs = 1000;
   typedef boost::counting_iterator<int> count_iter;
 
@@ -60,11 +65,13 @@ TEST(Base, parallel_for) {
     EXPECT_FLOAT_EQ(x_ref(0) * x_ref(0) * x_ref(1) + 3 * x_ref(1) * x_ref(1),
                     fx_ref);
   }
+
+  stan::math::recover_memory_global();
 }
 
 TEST(AgradAutoDiff, parallel_for) {
-  const int num_threads = stan::math::internal::get_num_threads();
-  tbb::task_scheduler_init task_scheduler(num_threads);
+  // const int num_threads = stan::math::internal::get_num_threads();
+  // tbb::task_scheduler_init task_scheduler(num_threads);
   typedef boost::counting_iterator<int> count_iter;
 
   const int num_jobs = 1000;
@@ -111,8 +118,8 @@ TEST(AgradAutoDiff, parallel_for) {
 }
 
 TEST(AgradAutoDiff, parallel_for_each_scalar) {
-  const int num_threads = stan::math::internal::get_num_threads();
-  tbb::task_scheduler_init task_scheduler(num_threads);
+  // const int num_threads = stan::math::internal::get_num_threads();
+  // tbb::task_scheduler_init task_scheduler(num_threads);
   typedef boost::counting_iterator<int> count_iter;
 
   const int num_jobs = 1000;

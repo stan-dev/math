@@ -32,6 +32,11 @@
 #include <thread>
 #include <future>
 
+#ifdef STAN_TBB
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+#endif
+
 #define std_par stan::math::internal
 
 namespace stan {
@@ -76,6 +81,20 @@ template <class InputIt, class UnaryFunction>
 UnaryFunction for_each_impl(InputIt first, InputIt last, UnaryFunction f,
                             std::true_type /* parallel mode */) {
   const int num_jobs = std::distance(first, last);
+
+#ifdef STAN_TBB
+  // in case we have the TBB run the for_each loop using Intel TBB
+  // parallel_for
+  tbb::parallel_for(tbb::blocked_range<std::size_t>(0, num_jobs),
+                    [=](const tbb::blocked_range<size_t>& r) {
+                      InputIt block_start = first;
+                      std::advance(block_start, r.begin());
+                      InputIt block_end = first;
+                      std::advance(block_end, r.end());
+                      std::for_each<InputIt, UnaryFunction>(block_start,
+                                                            block_end, f);
+                    });
+#else
   const int num_threads = std::min(get_num_threads(), num_jobs);
   const int small_job_size = num_jobs / num_threads;
   const int num_big_jobs = num_jobs % num_threads;
@@ -100,6 +119,7 @@ UnaryFunction for_each_impl(InputIt first, InputIt last, UnaryFunction f,
 
   for (std::size_t i = 0; i < num_threads; ++i)
     job_futures[i].wait();
+#endif
 
   return std::move(f);
 }
