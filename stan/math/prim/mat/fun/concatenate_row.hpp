@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/dims.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/mat/fun/to_vector.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <vector>
 #include <algorithm>
@@ -11,6 +11,17 @@
 namespace stan {
 namespace math {
 
+/**
+ * Return the result of stacking all elements in the array
+ * row-wise. All elements in the array must have matching number of
+ * columns.
+ *
+ * @tparam T Scalar type.
+ * @tparam R Row specification.
+ * @tparam C Column specification.
+ * @param M Array of all elements to be stacked.
+ * @return Result of stacking all elements of the array row-wise.
+ */
 template <typename T, int R, int C>
 inline Eigen::Matrix<T, Eigen::Dynamic, C> concatenate_row(
     const std::vector<Eigen::Matrix<T, R, C>>& M) {
@@ -35,17 +46,19 @@ inline Eigen::Matrix<T, Eigen::Dynamic, C> concatenate_row(
   return result;
 }
 
+/**
+ * Return the result of stacking all elements in the array
+ * row-wise. Whenever all elements are a scalar then this is the same
+ * as converting to a vector.
+ *
+ * @tparam T Scalar type.
+ * @param M Array of all elements to be stacked.
+ * @return Result of stacking all elements of the array row-wise.
+ */
 template <typename T>
 inline Eigen::Matrix<T, Eigen::Dynamic, 1> concatenate_row(
     const std::vector<T>& M) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-
-  Matrix<T, Dynamic, 1> result(M.size(), 1);
-  for (int i = 0; i < M.size(); ++i) {
-    result(i) = M[i];
-  }
-  return result;
+  return to_vector(M);
 }
 
 }  // namespace math
