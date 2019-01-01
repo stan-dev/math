@@ -3,6 +3,7 @@
 
 #include <stan/math/parallel/for_each.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/prim/mat/fun/concatenate_row.hpp>
 #include <boost/iterator/counting_iterator.hpp>
 
 #include <vector>
@@ -37,7 +38,6 @@ struct parallel_for_each_impl<InputIt, UnaryFunction, double> {
     std::cout << "Running base parallel_for_each implementation..."
               << std::endl;
 
-    std::vector<int> f_sizes(num_jobs);
     std::vector<T_return_elem> f_eval(num_jobs);
 
     std_par::for_each(exec_policy, count_iter(0), count_iter(num_jobs),
@@ -46,16 +46,9 @@ struct parallel_for_each_impl<InputIt, UnaryFunction, double> {
                         std::advance(elem, i);
                         auto& elem_ref = *elem;
                         f_eval[i] = f(elem_ref);
-                        f_sizes[i] = num_elements(f_eval[i]);
                       });
 
-    const int num_outputs = std::accumulate(f_sizes.begin(), f_sizes.end(), 0);
-    T_return results(num_outputs);
-    for (int i = 0, offset = 0; i < num_jobs; offset += f_sizes[i], ++i) {
-      results.block(offset, 0, f_sizes[i], 1).swap(f_eval[i]);
-    }
-
-    return results;
+    return concatenate_row(f_eval);
   }
 };
 

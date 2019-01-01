@@ -23,7 +23,6 @@ static void set_zero_all_adjoints() {
 // reset the stack globally for all threads
 #ifdef STAN_TBB_TLS
 static void set_zero_all_adjoints_global() {
-  typedef ChainableStack::AutodiffStackStorage_tls_t global_ad_stack_t;
   typedef ChainableStack::AutodiffStackStorage local_ad_stack_t;
 
   std::for_each(ChainableStack::instance_.begin(),

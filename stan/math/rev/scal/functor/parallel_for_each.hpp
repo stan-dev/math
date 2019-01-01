@@ -43,7 +43,6 @@ struct parallel_for_each_impl<InputIt, UnaryFunction, var> {
 
     std::thread::id parent_thread = std::this_thread::get_id();
 
-    std::vector<int> f_sizes(num_jobs);
     std::vector<T_return_elem> f_eval(num_jobs, T_return_elem(0));
 
     std_par::for_each(
@@ -61,17 +60,12 @@ struct parallel_for_each_impl<InputIt, UnaryFunction, var> {
             stack_starts[i] = thread_stack->var_stack_.size();
 
           f_eval[i] = f(elem_ref);
-          f_sizes[i] = num_elements(f_eval[i]);
 
           if (!stack_is_local[i])
             stack_ends[i] = thread_stack->var_stack_.size();
         });
 
-    const int num_outputs = std::accumulate(f_sizes.begin(), f_sizes.end(), 0);
-    T_return results(num_outputs);
-    for (int i = 0, offset = 0, cur_stack_start = 0; i < num_jobs;
-         offset += f_sizes[i], ++i) {
-      // std::cout << "chunk i = " << i << std::endl;
+    for (int i = 0, cur_stack_start = 0; i < num_jobs; ++i) {
       if (!stack_is_local[i]) {
         // if the current end == next start => then we can lump these
         // together
@@ -90,10 +84,9 @@ struct parallel_for_each_impl<InputIt, UnaryFunction, var> {
       } else {
         cur_stack_start = i;
       }
-      results.block(offset, 0, f_sizes[i], 1).swap(f_eval[i]);
     }
 
-    return results;
+    return concatenate_row(f_eval);
   }
 };
 
