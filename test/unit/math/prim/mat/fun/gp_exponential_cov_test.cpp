@@ -234,270 +234,171 @@ TEST(MathPrimMat, domain_err_training_sig_l) {
   msg1 = pull_msg(x, sigma, l_bad);
   msg2 = pull_msg(x, sigma_bad, l_bad);
   msg3 = pull_msg(x, sigma_bad, l_bad);
-  EXPECT_TRUE(std::string::npos != msg1.find(" length-scale")) << msg1;
-  EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance")) << msg2;
-  EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance")) << msg3;
+  EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
   msg1 = pull_msg(x, sigma, l_bad);
   msg3 = pull_msg(x, sigma_bad, l_bad);
-  EXPECT_TRUE(std::string::npos != msg1.find(" length-scale")) << msg1;
-  EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance")) << msg3;
+  EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
+  EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
   msg1 = pull_msg(x_2, sigma, l_bad);
-  msg2 = pull_msg(x_2, sigma_bad, l);
   msg3 = pull_msg(x_2, sigma_bad, l_bad);
-  EXPECT_TRUE(std::string::npos != msg1.find(" length-scale")) << msg1;
-  EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance")) << msg2;
-  EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance")) << msg3;
+  EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
+  EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
-  // msg1 = pull_msg(x_2, sigma, l_bad);
-  // msg2 = pull_msg(x_2, sigma_bad, l_vec);
-  // msg3 = pull_msg(x_2, sigma_bad, l_bad);
-  // EXPECT_TRUE(std::string::npos != msg1.find(" length-scale")) << msg1;
-  // EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance")) << msg2;
-  // EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance")) << msg3;
+  msg1 = pull_msg(x_2, sigma, l_vec_bad);
+  msg2 = pull_msg(x_2, sigma_bad, l_vec_bad);
+  msg3 = pull_msg(x_2, sigma_bad, l_vec);
+  EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
-  // msg1 = pull_msg(x_2, sigma, l_vec_bad);
-  // msg2 = pull_msg(x_2, sigma_bad, l_vec_bad);
-  // msg3 = pull_msg(x_2, sigma_bad, l_vec);
-  // EXPECT_TRUE(std::string::npos != msg1.find(" length-scale")) << msg1;
-  // EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance")) << msg2;
-  // EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance")) << msg3;
+  msg1 = pull_msg(x_2, x_2, sigma, l_bad);
+  msg2 = pull_msg(x_2, x_2, sigma_bad, l);
+  msg3 = pull_msg(x_2, x_2, sigma_bad, l_bad);
+  EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
-  // msg1 = pull_msg(x_2, x_2, sigma, l_bad);
-  // msg2 = pull_msg(x_2, x_2, sigma_bad, l);
-  // msg3 = pull_msg(x_2, x_2, sigma_bad, l_bad);
-  // EXPECT_TRUE(std::string::npos != msg1.find(" length-scale")) << msg1;
-  // EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance")) << msg2;
-  // EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance")) << msg3;
+  msg1 = pull_msg(x_2, x_2, sigma, l_bad);
+  msg2 = pull_msg(x_2, x_2, sigma_bad, l_vec);
+  msg3 = pull_msg(x_2, x_2, sigma_bad, l_bad);
+  EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
-  // msg1 = pull_msg(x_2, x_2, sigma, l_bad);
-  // msg2 = pull_msg(x_2, x_2, sigma_bad, l_vec);
-  // msg3 = pull_msg(x_2, x_2, sigma_bad, l_bad);
-  // EXPECT_TRUE(std::string::npos != msg1.find(" length-scale")) << msg1;
-  // EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance")) << msg2;
-  // EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance")) << msg3;
+  msg1 = pull_msg(x_2, x_2, sigma, l_vec_bad);
+  msg2 = pull_msg(x_2, x_2, sigma_bad, l_vec_bad);
+  msg3 = pull_msg(x_2, x_2, sigma_bad, l_vec);
+  EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
-  // msg1 = pull_msg(x_2, x_2, sigma, l_vec_bad);
-  // msg2 = pull_msg(x_2, x_2, sigma_bad, l_vec_bad);
-  // msg3 = pull_msg(x_2, x_2, sigma_bad, l_vec);
-  // EXPECT_TRUE(std::string::npos != msg1.find(" length-scale")) << msg1;
-  // EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance")) << msg2;
-  // EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance")) << msg3;
+  msg1 = pull_msg(x_2, x_2, sigma, l_vec_bad);
+  msg2 = pull_msg(x_2, x_2, sigma_bad, l_vec_bad);
+  msg3 = pull_msg(x_2, x_2, sigma_bad, l_vec);
+  EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
-  // msg1 = pull_msg(x_2, x_2, sigma, l_vec_bad);
-  // msg2 = pull_msg(x_2, x_2, sigma_bad, l_vec_bad);
-  // msg3 = pull_msg(x_2, x_2, sigma_bad, l_vec);
-  // EXPECT_TRUE(std::string::npos != msg1.find(" length-scale")) << msg1;
-  // EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance")) << msg2;
-  // EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance")) << msg3;
-
-  // msg1 = pull_msg(x_2, x_2, sigma, l_vec_bad);
-  // msg2 = pull_msg(x_2, x_2, sigma_bad, l_vec_bad);
-  // msg3 = pull_msg(x_2, x_2, sigma_bad, l_vec);
-  // EXPECT_TRUE(std::string::npos != msg1.find(" length-scale")) << msg1;
-  // EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance")) << msg2;
-  // EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance")) << msg3;
+  msg1 = pull_msg(x_2, x_2, sigma, l_vec_bad);
+  msg2 = pull_msg(x_2, x_2, sigma_bad, l_vec_bad);
+  msg3 = pull_msg(x_2, x_2, sigma_bad, l_vec);
+  EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 }
 
-// // TEST(MathPrimMat, nan_error_training_sig_l_gamma) {
-// //   double sigma = 0.2;
-// //   double l = 5;
+TEST(MathPrimMat, nan_error_training_sig_l) {
+  double sigma = 0.2;
+  double l = 5;
 
-// //   std::vector<double> x(3);
-// //   x[0] = -2;
-// //   x[1] = -1;
-// //   x[2] = -0.5;
+  std::vector<double> x(3);
+  x[0] = -2;
+  x[1] = -1;
+  x[2] = -0.5;
 
-// //   std::vector<Eigen::Matrix<double, -1, 1>> x_2(3);
-// //   for (size_t i = 0; i < x_2.size(); ++i) {
-// //     x_2[i].resize(3, 1);
-// //     x_2[i] << 1, 2, 3;
-// //   }
+  std::vector<Eigen::Matrix<double, -1, 1>> x_2(3);
+  for (size_t i = 0; i < x_2.size(); ++i) {
+    x_2[i].resize(3, 1);
+    x_2[i] << 1, 2, 3;
+  }
 
-// //   std::vector<Eigen::Matrix<double, 1, -1>> x_3(3);
-// //   for (size_t i = 0; i < x_3.size(); ++i) {
-// //     x_3[i].resize(1, 3);
-// //     x_3[i] << 1, 2, 3;
-// //   }
+  std::vector<double> l_vec(2);
+  l_vec[0] = 1;
+  l_vec[1] = 2;
+  l_vec[2] = 3;
+  
+  std::vector<double> l_vec_bad(2);
+  l_vec_bad[0] = 1;
+  l_vec_bad[1] = -1;
+  l_vec_bad[2] = 3;
+  
+  std::vector<double> x_bad(x);
+  x_bad[1] = std::numeric_limits<double>::quiet_NaN();
 
-// //   std::vector<double> l_vec(2);
-// //   l_vec[0] = 1;
-// //   l_vec[1] = 2;
+  std::vector<Eigen::Matrix<double, -1, 1>> x_bad_2(x_2);
+  x_bad_2[1](1) = std::numeric_limits<double>::quiet_NaN();
 
-// //   std::vector<double> l_vec_bad(2);
-// //   l_vec_bad[0] = 1;
-// //   l_vec_bad[1] = -1;
+  double sigma_bad = std::numeric_limits<double>::quiet_NaN();
+  double l_bad = std::numeric_limits<double>::quiet_NaN();
 
-// //   std::vector<double> x_bad(x);
-// //   x_bad[1] = std::numeric_limits<double>::quiet_NaN();
+  std::string msg1, msg2, msg3, msg4;
+  msg1 = pull_msg(x, sigma, l_bad);
+  msg2 = pull_msg(x, sigma_bad, l);
+  msg3 = pull_msg(x, sigma_bad, l_bad);
+  EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
-// //   std::vector<Eigen::Matrix<double, -1, 1>> x_bad_2(x_2);
-// //   x_bad_2[1](1) = std::numeric_limits<double>::quiet_NaN();
+  EXPECT_THROW(stan::math::gp_exponential_cov(x, sigma, l_bad),
+               std::domain_error);
+  EXPECT_THROW(stan::math::gp_exponential_cov(x, sigma_bad, l),
+               std::domain_error);
+  EXPECT_THROW(stan::math::gp_exponential_cov(x, sigma_bad, l_bad),
+               std::domain_error);
 
-// //   std::vector<Eigen::Matrix<double, 1, -1>> x_bad_3(x_3);
-// //   x_bad_3[1](1) = std::numeric_limits<double>::quiet_NaN();
+  EXPECT_THROW(stan::math::gp_exponential_cov(x_bad, l, sigma),
+               std::domain_error);
+  EXPECT_THROW(stan::math::gp_exponential_cov(x_bad, sigma_bad, l),
+               std::domain_error);
+  EXPECT_THROW(stan::math::gp_exponential_cov(x_bad, sigma_bad, l_bad),
+               std::domain_error);
+  EXPECT_THROW(stan::math::gp_exponential_cov(x_bad, sigma, l_bad),
+               std::domain_error);
 
-// //   double sigma_bad = std::numeric_limits<double>::quiet_NaN();
-// //   double l_bad = std::numeric_limits<double>::quiet_NaN();
+  EXPECT_THROW(stan::math::gp_exponential_cov(x_2, sigma, l_bad),
+               std::domain_error);
+  EXPECT_THROW(stan::math::gp_exponential_cov(x_2, sigma_bad, l),
+               std::domain_error);
+  EXPECT_THROW(stan::math::gp_exponential_cov(x_2, sigma_bad, l_bad),
+               std::domain_error);
 
-// //   std::string msg1, msg2, msg3, msg4;
-// //   msg1 = pull_msg(x, sigma, l_bad);
-// //   msg2 = pull_msg(x, sigma_bad, l);
-// //   msg3 = pull_msg(x, sigma_bad, l_bad);
-// //   EXPECT_TRUE(std::string::npos != msg1.find(" length-scale")) << msg1;
-// //   EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance")) << msg2;
-// //   EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance")) << msg3;
+  EXPECT_THROW(stan::math::gp_exponential_cov(x_bad_2, sigma, l_bad),
+               std::domain_error);
+  EXPECT_THROW(stan::math::gp_exponential_cov(x_bad_2, sigma_bad, l),
+               std::domain_error);
+  EXPECT_THROW(stan::math::gp_exponential_cov(x_bad_2, sigma, l),
+               std::domain_error);
+  EXPECT_THROW(stan::math::gp_exponential_cov(x_bad_2, sigma_bad, l_bad),
+               std::domain_error);
 
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x, sigma, l_bad),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x, sigma_bad, l),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x, sigma_bad, l_bad),
-// //                std::domain_error);
+  EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad, l, sigma),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad, sigma_bad, l),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad, sigma_bad, l_bad),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad, sigma, l_bad),
-// //                std::domain_error);
+  EXPECT_THROW(stan::math::gp_exponential_cov(x_2, sigma, l_vec_bad),
+               std::domain_error);
+  EXPECT_THROW(stan::math::gp_exponential_cov(x_2, sigma_bad, l_vec),
+               std::domain_error);
+  EXPECT_THROW(stan::math::gp_exponential_cov(x_2, sigma_bad, l_vec_bad),
+               std::domain_error);
 
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_2, sigma, l_bad),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_2, sigma_bad, l),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_2, sigma_bad, l_bad),
-// //                std::domain_error);
+  EXPECT_THROW(stan::math::gp_exponential_cov(x_bad_2, sigma, l_vec_bad),
+               std::domain_error);
+  EXPECT_THROW(stan::math::gp_exponential_cov(x_bad_2, sigma_bad, l_vec),
+               std::domain_error);
+  EXPECT_THROW(stan::math::gp_exponential_cov(x_bad_2, sigma_bad, l_vec_bad),
+               std::domain_error);
+}
 
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad_2, sigma, l_bad),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad_2, sigma_bad, l),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad_2, sigma, l),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad_2, sigma_bad, l_bad),
-// //                std::domain_error);
+// TEST(MathPrimMat, dim_mismatch_vec_eigen_vec_gp_exponential_cov2) {
+//   double sigma = 0.2;
+//   double l = 5;
 
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_3, sigma, l_bad),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_3, sigma_bad, l),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_3, sigma_bad, l_bad),
-// //                std::domain_error);
+//   std::vector<Eigen::Matrix<double, -1, 1>> x_vec_1(3);
+//   for (size_t i = 0; i < x_vec_1.size(); ++i) {
+//     x_vec_1[i].resize(1, 3);
+//     x_vec_1[i] << 1, 2, 3;
+//   }
 
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad_3, sigma, l_bad),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad_3, sigma_bad, l),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad_3, sigma_bad, l_bad),
-// //                std::domain_error);
-
-// //   EXPECT_TRUE(std::string::npos != msg1.find(" length-scale")) << msg1;
-// //   EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance")) << msg2;
-// //   EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance")) << msg3;
-
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x, sigma, l_vec_bad),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x, sigma_bad, l_vec),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x, sigma_bad, l_vec_bad),
-// //                std::domain_error);
-
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad, sigma, l_vec),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad, sigma_bad, l_vec),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad, sigma_bad, l_vec_bad),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad, sigma, l_vec_bad),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad, sigma_bad, l_vec_bad),
-// //                std::domain_error);
-
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_2, sigma, l_vec_bad),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_2, sigma_bad, l_vec),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_2, sigma_bad, l_vec_bad),
-// //                std::domain_error);
-
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad_2, sigma, l_vec_bad),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad_2, sigma_bad, l_vec),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad_2, sigma_bad, l_vec_bad),
-// //                std::domain_error);
-
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_3, sigma, l_vec_bad),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_3, sigma_bad, l_vec),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_3, sigma_bad, l_vec_bad),
-// //                std::domain_error);
-
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad_3, sigma, l_vec_bad),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad_3, sigma_bad, l_vec),
-// //                std::domain_error);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad_3, sigma_bad, l_vec_bad),
-// //                std::domain_error);
-// // }
-
-// // TEST(MathPrimMat, dim_mismatch_vec_eigen_rvec_gp_exponential_cov2) {
-// //   double sigma = 0.2;
-// //   double l = 5;
-
-// //   std::vector<Eigen::Matrix<double, 1, -1>> x_vec_1(3);
-// //   for (size_t i = 0; i < x_vec_1.size(); ++i) {
-// //     x_vec_1[i].resize(1, 3);
-// //     x_vec_1[i] << 1, 2, 3;
-// //   }
-
-// //   std::vector<Eigen::Matrix<double, 1, -1>> x_vec_2(4);
-// //   for (size_t i = 0; i < x_vec_2.size(); ++i) {
-// //     x_vec_2[i].resize(1, 4);
-// //     x_vec_2[i] << 4, 1, 3, 1;
-// //   }
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_vec_1, x_vec_2, sigma, l),
-// //                std::invalid_argument);
-// // }
-
-// // TEST(MathPrimMat, dim_mismatch_vec_eigen_mixed_gp_exponential_cov) {
-// //   double sigma = 0.2;
-// //   double l = 5;
-
-// //   std::vector<Eigen::Matrix<double, 1, -1>> x_rvec_1(3);
-// //   for (size_t i = 0; i < x_rvec_1.size(); ++i) {
-// //     x_rvec_1[i].resize(1, 3);
-// //     x_rvec_1[i] << 1, 2, 3;
-// //   }
-
-// //   std::vector<Eigen::Matrix<double, -1, 1>> x_vec_1(4);
-// //   for (size_t i = 0; i < x_vec_1.size(); ++i) {
-// //     x_vec_1[i].resize(4, 1);
-// //     x_vec_1[i] << 4, 1, 3, 1;
-// //   }
-
-// //   std::vector<Eigen::Matrix<double, -1, 1>> x_vec_2(3);
-// //   for (size_t i = 0; i < x_vec_2.size(); ++i) {
-// //     x_vec_2[i].resize(3, 1);
-// //     x_vec_2[i] << 1, 2, 3;
-// //   }
-
-// //   std::vector<Eigen::Matrix<double, 1, -1>> x_rvec_2(4);
-// //   for (size_t i = 0; i < x_rvec_2.size(); ++i) {
-// //     x_rvec_2[i].resize(1, 4);
-// //     x_rvec_2[i] << 1, 2, 3, 4;
-// //   }
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_rvec_1, x_vec_1, sigma, l),
-// //                std::invalid_argument);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_vec_1, x_rvec_1, sigma, l),
-// //                std::invalid_argument);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_rvec_2, x_vec_2, sigma, l),
-// //                std::invalid_argument);
-// //   EXPECT_THROW(stan::math::gp_exponential_cov(x_vec_2, x_rvec_2, sigma, l),
-// //                std::invalid_argument);
-// // }
+//   std::vector<Eigen::Matrix<double, -1, 1>> x_vec_2(4);
+//   for (size_t i = 0; i < x_vec_2.size(); ++i) {
+//     x_vec_2[i].resize(1, 4);
+//     x_vec_2[i] << 4, 1, 3, 1;
+//   }
+//   EXPECT_THROW(stan::math::gp_exponential_cov(x_vec_1, x_vec_2, sigma, l),
+//                std::invalid_argument);
+// }
