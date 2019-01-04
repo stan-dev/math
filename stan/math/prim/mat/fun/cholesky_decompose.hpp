@@ -47,10 +47,10 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
   }
 #endif
 #ifdef STAN_OPENCL
-  }
-#endif
 }
-
+#endif
 }  // namespace math
+
+}  // namespace stan
 }  // namespace stan
 #endif
