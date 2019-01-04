@@ -7,8 +7,9 @@
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/cholesky_decompose.hpp>
-#include <algorithm>
 #endif
+
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -30,18 +31,20 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
   check_square("cholesky_decompose", "m", m);
   check_symmetric("cholesky_decompose", "m", m);
 #ifdef STAN_OPENCL
-  if (m.rows() >= 1800) {
+  if (m.rows() > 1800) {
     matrix_gpu m_gpu(m);
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_chol(m.rows(), m.cols());
-    cholesky_decompose(m_gpu);
-    copy(m_chol, m_gpu);
+    cholesky_decompose(m_gpu, floor(m.rows() / 2), 2, 100);
+    copy(m_chol, m_gpu);  // NOLINT
     return m_chol;
   } else {
-#else
-  Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > llt(m.rows());
-  llt.compute(m);
-  check_pos_definite("cholesky_decompose", "m", llt);
-  return llt.matrixL();
+#endif
+    Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > llt(m.rows());
+    llt.compute(m);
+    check_pos_definite("cholesky_decompose", "m", llt);
+    return llt.matrixL();
+#ifdef STAN_OPENCL
+  }
 #endif
 #ifdef STAN_OPENCL
   }
