@@ -17,7 +17,7 @@ namespace stan {
 namespace math {
 
 /**
- * Returns a Matern 3/2 covariance matrix with one input vector
+ * Returns a Matern 3/2 covariance matrix
  *
  * \f[ k(x, x') = \sigma^2(1 +
  *  \frac{\sqrt{3}d(x, x')}{l})exp(-\frac{\sqrt{3}d(x, x')}{l})
@@ -75,8 +75,7 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
 }
 
 /**
- * Returns a Matern 3/2 Kernel with one input vector,
- * with automatic relevance determination (ARD)
+ * Returns a Matern 3/2 covariance matrix
  *
  * \f[ k(x, x') = \sigma^2(1 + \sqrt{3}
  *   \sqrt{\sum_{k=1}^{K}\frac{d{(x, x')^2}}{l_k^2}})
@@ -125,8 +124,8 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
   T_l root_3 = sqrt(3.0);
   T_l neg_root_3 = -1.0 * sqrt(3.0);
 
-  std::vector<Eigen::Matrix<typename return_type<T_x, T_l>::type, -1, 1>>
-    x_new = divide_columns(x, length_scale);
+  std::vector<Eigen::Matrix<typename return_type<T_x, T_l>::type, -1, 1>> x_new
+      = divide_columns(x, length_scale);
 
   for (size_t i = 0; i < x_size; ++i) {
     for (size_t j = i; j < x_size; ++j) {
@@ -141,7 +140,7 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
 }
 
 /**
- * Returns a Matern 3/2 covariance matrix with two input vectors
+ * Returns a Matern 3/2 cross covariance matrix
  *
  * \f[ k(x, x') = \sigma^2(1 +
  *  \frac{\sqrt{3}d(x, x')}{l})exp(-\sqrt{3}\frac{d(x, x')}{l})
@@ -201,8 +200,7 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 }
 
 /**
- * Returns a Matern 3/2 Kernel with two input vectors with automatic
- * relevance determination (ARD)
+ * Returns a Matern 3/2 cross covariance matrix
  *
  * \f[ k(x, x') = \sigma^2(1 + \sqrt{3}
  *   \sqrt{\sum_{k=1}^{K}\frac{d(x, x')^}{l_k^2}})
