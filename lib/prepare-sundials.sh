@@ -9,7 +9,7 @@ mv sundials-${SUNDIALS_VERSION} sundials_${SUNDIALS_VERSION}
 
 cd sundials_${SUNDIALS_VERSION}
 
-rm -rf INSTALL_GUIDE.pdf config/ doc/ examples/ test/
+rm -rf INSTALL_GUIDE.pdf config/ doc/ examples/ test/ */cvode */ida */arkode */kinsol
 find . -name CMakeLists.txt -exec rm {} \;
 
 find src -name "*.c" -type f -exec sed -E -i _orig  's#[^sf]printf\(#STAN_SUNDIALS_PRINTF(#'g {} \;
