@@ -96,8 +96,8 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
 template <typename T_x, typename T_s, typename T_l>
 inline typename Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type,
                               Eigen::Dynamic, Eigen::Dynamic>
-gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
-                const T_s &sigma, const std::vector<T_l> &length_scale) {
+gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
+                const std::vector<T_l> &length_scale) {
   using std::exp;
 
   size_t x_size = x.size();
@@ -125,8 +125,7 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
   T_l root_3 = sqrt(3.0);
   T_l neg_root_3 = -1.0 * sqrt(3.0);
 
-  std::vector<Eigen::Matrix<typename return_type<T_x, T_l>::type, -1, 1>>
-    x_new = divide_columns(x, length_scale);
+  std::vector<T_x> x_new = divide_columns(x, length_scale);
 
   for (size_t i = 0; i < x_size; ++i) {
     for (size_t j = i; j < x_size; ++j) {
@@ -225,8 +224,7 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 template <typename T_x1, typename T_x2, typename T_s, typename T_l>
 inline typename Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
                               Eigen::Dynamic, Eigen::Dynamic>
-gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
-                const std::vector<Eigen::Matrix<T_x2, -1, 1>> &x2,
+gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 const T_s &sigma, const std::vector<T_l> &length_scale) {
   using std::exp;
 
