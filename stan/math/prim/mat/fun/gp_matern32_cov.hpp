@@ -125,7 +125,8 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
   T_l root_3 = sqrt(3.0);
   T_l neg_root_3 = -1.0 * sqrt(3.0);
 
-  std::vector<T_x> x_new = divide_columns(x, length_scale);
+  std::vector<Eigen::Matrix<typename return_type<T_x, T_l>::type, -1, 1>>
+    x_new = divide_columns(x, length_scale);
 
   for (size_t i = 0; i < x_size; ++i) {
     for (size_t j = i; j < x_size; ++j) {
