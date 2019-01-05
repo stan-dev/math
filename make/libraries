@@ -5,7 +5,7 @@ MATH ?=
 BOOST ?= $(MATH)lib/boost_1.66.0
 EIGEN ?= $(MATH)lib/eigen_3.3.3
 OPENCL ?= $(MATH)lib/opencl_1.2.8
-SUNDIALS ?= $(MATH)lib/sundials_3.1.0
+SUNDIALS ?= $(MATH)lib/sundials_4.0.1
 
 GTEST ?= $(MATH)lib/gtest_1.8.1
 CPPLINT ?= $(MATH)lib/cpplint_4.45
@@ -15,20 +15,24 @@ CPPLINT ?= $(MATH)lib/cpplint_4.45
 ##
 
 SUNDIALS_CVODES := $(patsubst %.c,%.o,\
-  $(addprefix $(SUNDIALS)/src/cvodes/, cvodes.c cvodes_io.c cvodea.c cvodea_io.c cvodes_direct.c cvodes_diag.c cvodes_spils.c cvodes_bandpre.c cvodes_bbdpre.c) \
+  $(wildcard $(SUNDIALS)/src/cvodes/*.c) \
   $(wildcard $(SUNDIALS)/src/sundials/*.c) \
-  $(wildcard $(SUNDIALS)/src/sunmat_band/*.c) \
-  $(wildcard $(SUNDIALS)/src/sunmat_dense/*.c) \
-  $(wildcard $(SUNDIALS)/src/sunlinsol_band/*.c) \
-  $(wildcard $(SUNDIALS)/src/sunlinsol_dense/*.c))
+  $(wildcard $(SUNDIALS)/src/sunmat_band/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunmat_dense/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol_band/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol_dense/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunnonlinsol/newton/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunnonlinsol/fixedpoint/[^f]*.c))
 
 SUNDIALS_IDAS := $(patsubst %.c,%.o,\
-  $(addprefix $(SUNDIALS)/src/idas/, idaa.c idaa_io.c idas.c idas_bbdpre.c idas_direct.c idas_ic.c idas_io.c idas_spils.c) \
+  $(wildcard $(SUNDIALS)/src/idas/*.c) \
   $(wildcard $(SUNDIALS)/src/sundials/*.c) \
-  $(wildcard $(SUNDIALS)/src/sunmat_band/*.c) \
-  $(wildcard $(SUNDIALS)/src/sunmat_dense/*.c) \
-  $(wildcard $(SUNDIALS)/src/sunlinsol_band/*.c) \
-  $(wildcard $(SUNDIALS)/src/sunlinsol_dense/*.c))
+  $(wildcard $(SUNDIALS)/src/sunmat_band/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunmat_dense/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol_band/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol_dense/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunnonlinsol/newton/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunnonlinsol/fixedpoint/[^f]*.c))
 
 SUNDIALS_NVECSERIAL := $(patsubst %.c,%.o,\
   $(addprefix $(SUNDIALS)/src/, nvec_ser/nvector_serial.c sundials/sundials_math.c))

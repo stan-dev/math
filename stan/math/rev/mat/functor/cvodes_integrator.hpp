@@ -108,7 +108,7 @@ class cvodes_integrator {
     typedef cvodes_ode_data<F, T_initial, T_param> ode_data;
     ode_data cvodes_data(f, y0, theta, x, x_int, msgs);
 
-    void* cvodes_mem = CVodeCreate(Lmm, CV_NEWTON);
+    void* cvodes_mem = CVodeCreate(Lmm);
     if (cvodes_mem == nullptr)
       throw std::runtime_error("CVodeCreate failed to allocate memory");
 
