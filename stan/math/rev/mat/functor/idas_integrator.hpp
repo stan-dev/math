@@ -9,6 +9,7 @@
 #include <stan/math/rev/mat/functor/idas_forward_system.hpp>
 #include <idas/idas.h>
 #include <sunmatrix/sunmatrix_dense.h>
+#include <sunlinsol/sunlinsol_dense.h>
 #include <nvector/nvector_serial.h>
 #include <ostream>
 #include <vector>

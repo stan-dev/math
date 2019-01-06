@@ -6,6 +6,7 @@
 #include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
 #include <cvodes/cvodes.h>
 #include <sunmatrix/sunmatrix_dense.h>
+#include <sunlinsol/sunlinsol_dense.h>
 #include <nvector/nvector_serial.h>
 #include <algorithm>
 #include <vector>
