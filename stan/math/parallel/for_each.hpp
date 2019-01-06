@@ -23,7 +23,8 @@
 
 #include <stan/math/parallel/get_num_threads.hpp>
 
-// fall-back solution which is based on C++11 features only (async)
+// fall-back solution which is based on C++11 features only (async) or
+// the Intel TBB if available
 #include <algorithm>
 #include <type_traits>
 #include <iterator>
@@ -80,21 +81,12 @@ static constexpr parallel_unsequenced_policy par_unseq{};
 template <class InputIt, class UnaryFunction>
 UnaryFunction for_each_impl(InputIt first, InputIt last, UnaryFunction f,
                             std::true_type /* parallel mode */) {
-  const int num_jobs = std::distance(first, last);
-
 #ifdef STAN_TBB
-  // in case we have the TBB run the for_each loop using Intel TBB
-  // parallel_for
-  tbb::parallel_for(tbb::blocked_range<std::size_t>(0, num_jobs),
-                    [=](const tbb::blocked_range<size_t>& r) {
-                      InputIt block_start = first;
-                      std::advance(block_start, r.begin());
-                      InputIt block_end = first;
-                      std::advance(block_end, r.end());
-                      std::for_each<InputIt, UnaryFunction>(block_start,
-                                                            block_end, f);
-                    });
+  // in case we have the TBB run the for_each loop using the Intel TBB
+  // parallel_for_each
+  tbb::parallel_for_each(first, last, f);
 #else
+  const int num_jobs = std::distance(first, last);
   const int num_threads = std::min(get_num_threads(), num_jobs);
   const int small_job_size = num_jobs / num_threads;
   const int num_big_jobs = num_jobs % num_threads;
@@ -111,7 +103,7 @@ UnaryFunction for_each_impl(InputIt first, InputIt last, UnaryFunction f,
     InputIt cur_job_end = cur_job_start;
     std::advance(cur_job_end, job_chunk_size[i]);
     job_futures.emplace_back(std::async(
-        i == 0 ? std::launch::deferred : std::launch::async, [=]() -> void {
+        i == 0 ? std::launch::deferred : std::launch::async, [=, &f]() -> void {
           std::for_each<InputIt, UnaryFunction>(cur_job_start, cur_job_end, f);
         }));
     cur_job_start = cur_job_end;
