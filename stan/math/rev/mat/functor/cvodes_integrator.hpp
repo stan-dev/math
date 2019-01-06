@@ -13,7 +13,7 @@
 #include <stan/math/rev/mat/functor/cvodes_utils.hpp>
 #include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>
 #include <cvodes/cvodes.h>
-#include <cvodes/cvodes_direct.h>
+#include <sunlinsol/sunlinsol_dense.h>
 #include <algorithm>
 #include <ostream>
 #include <vector>
@@ -135,11 +135,11 @@ class cvodes_integrator {
       // create matrix object and linear solver object; resource
       // (de-)allocation is handled in the cvodes_ode_data
       cvodes_check_flag(
-          CVDlsSetLinearSolver(cvodes_mem, cvodes_data.LS_, cvodes_data.A_),
-          "CVDlsSetLinearSolver");
+          CVodeSetLinearSolver(cvodes_mem, cvodes_data.LS_, cvodes_data.A_),
+          "CVodeSetLinearSolver");
       cvodes_check_flag(
-          CVDlsSetJacFn(cvodes_mem, &ode_data::cv_jacobian_states),
-          "CVDlsSetJacFn");
+          CVodeSetJacFn(cvodes_mem, &ode_data::cv_jacobian_states),
+          "CVodeSetJacFn");
 
       // initialize forward sensitivity system of CVODES as needed
       if (S > 0) {
