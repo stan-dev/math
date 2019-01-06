@@ -34,8 +34,7 @@
 #include <future>
 
 #ifdef STAN_TBB
-#include <tbb/parallel_for.h>
-#include <tbb/blocked_range.h>
+#include <tbb/parallel_for_each.h>
 #endif
 
 #define std_par stan::math::internal

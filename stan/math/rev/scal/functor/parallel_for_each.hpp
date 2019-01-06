@@ -2,27 +2,29 @@
 #define STAN_MATH_REV_SCAL_FUNCTOR_PARALLEL_FOR_EACH_HPP
 
 #include <stan/math/parallel/for_each.hpp>
+#include <stan/math/prim/scal/functor/parallel_for_each.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 
 #include <stan/math/rev/core/nest_chainablestack.hpp>
 
 #include <boost/iterator/counting_iterator.hpp>
 
+#include <iostream>
+#include <iterator>
 #include <map>
-#include <utility>
 #include <vector>
-#include <thread>
 
 namespace stan {
 namespace math {
 namespace internal {
 
 template <class InputIt, class UnaryFunction>
-struct parallel_for_each_impl<InputIt, UnaryFunction, var> {
+struct parallel_map_impl<InputIt, UnaryFunction, var> {
   auto operator()(InputIt first, InputIt last, UnaryFunction f) const {
     typedef decltype(f(*first)) T_return_elem;
-    typedef Eigen::Matrix<var, Eigen::Dynamic, 1> T_return;
-    typedef boost::counting_iterator<int> count_iter;
+    typedef std::vector<decltype(f(*first))>
+        T_return;
+    typedef boost::counting_iterator<std::size_t> count_iter;
 
 #ifdef STAN_THREADS
     constexpr std_par::execution::parallel_unsequenced_policy exec_policy
@@ -32,7 +34,7 @@ struct parallel_for_each_impl<InputIt, UnaryFunction, var> {
         = std_par::execution::seq;
 #endif
 
-    const int num_jobs = std::distance(first, last);
+    const std::size_t num_jobs = std::distance(first, last);
 
     std::cout
         << "Running NEW var parallel_for_each implementation (non-nestable)..."
@@ -52,11 +54,11 @@ struct parallel_for_each_impl<InputIt, UnaryFunction, var> {
 
     const std::size_t parent_stack_id = ChainableStack::instance().id_;
 
-    std::vector<T_return_elem> f_eval(num_jobs);
+    T_return f_eval(num_jobs);
 
     std_par::for_each(exec_policy, count_iter(0), count_iter(num_jobs),
                       [&](int i) -> void {
-                        InputIt elem = first;
+                        auto elem = first;
                         std::advance(elem, i);
                         f_eval[i] = f(*elem);
                       });
@@ -76,7 +78,7 @@ struct parallel_for_each_impl<InputIt, UnaryFunction, var> {
             std::cout << "registering remote AD tape (id = " << thread_stack.id_
                       << ") for block " << known->second << " to "
                       << thread_stack_size << std::endl;
-            stan::math::register_nested_chainablestack(
+            register_nested_chainablestack(
                 thread_stack, known->second, thread_stack_size);
           } else {
             // the AD stack got created, so the starting
@@ -84,12 +86,12 @@ struct parallel_for_each_impl<InputIt, UnaryFunction, var> {
             std::cout << "registering CREATED remote AD tape (id = "
                       << thread_stack.id_ << ") for block " << 0 << " to "
                       << thread_stack_size << std::endl;
-            stan::math::register_nested_chainablestack(thread_stack, 0,
-                                                       thread_stack_size);
+            register_nested_chainablestack(thread_stack, 0,
+                                           thread_stack_size);
           }
         });
 
-    return concatenate_row(f_eval);
+    return std::move(f_eval);
   }
 };
 

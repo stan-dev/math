@@ -51,8 +51,8 @@ TEST(Base, parallel_for) {
     return res;
   };
 
-  vector_d parallel_result = stan::math::parallel_for_each(
-      count_iter(0), count_iter(num_jobs), loop_fun);
+  vector_d parallel_result = stan::math::concatenate_row(stan::math::parallel_map(
+      count_iter(0), count_iter(num_jobs), loop_fun));
 
   for (int i = 0; i < num_jobs; ++i) {
     vector_d x_ref(2);
@@ -87,8 +87,8 @@ TEST(AgradAutoDiff, parallel_for_each) {
     return res;
   };
 
-  vector_v parallel_result = stan::math::parallel_for_each(
-      count_iter(0), count_iter(num_jobs), loop_fun);
+  vector_v parallel_result = stan::math::concatenate_row(stan::math::parallel_map(
+      count_iter(0), count_iter(num_jobs), loop_fun));
 
   for (int i = 0; i < num_jobs; ++i) {
     vector_d x_ref(2);
@@ -135,8 +135,8 @@ TEST(AgradAutoDiff, parallel_for_each_scalar) {
     return f(iarg);
   };
 
-  vector_v parallel_result = stan::math::parallel_for_each(
-      count_iter(0), count_iter(num_jobs), loop_fun);
+  vector_v parallel_result = stan::math::concatenate_row(stan::math::parallel_map(
+      count_iter(0), count_iter(num_jobs), loop_fun));
 
   for (int i = 0; i < num_jobs; ++i) {
     vector_d x_ref(2);

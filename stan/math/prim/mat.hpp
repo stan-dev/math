@@ -79,6 +79,7 @@
 #include <stan/math/prim/mat/fun/columns_dot_product.hpp>
 #include <stan/math/prim/mat/fun/columns_dot_self.hpp>
 #include <stan/math/prim/mat/fun/common_type.hpp>
+#include <stan/math/prim/mat/fun/concatenate_row.hpp>
 #include <stan/math/prim/mat/fun/corr_matrix_constrain.hpp>
 #include <stan/math/prim/mat/fun/corr_matrix_free.hpp>
 #include <stan/math/prim/mat/fun/cos.hpp>
