@@ -324,3 +324,33 @@ TEST(multiNormalRng, nonPosDefErrorTest) {
   boost::random::mt19937 rng;
   EXPECT_THROW(multi_normal_rng(mu, S, rng), std::domain_error);
 }
+
+TEST(ProbDistributionsMultiNormal, WrongSize) {
+  vector<Matrix<double, Dynamic, 1> > vec_y_2(2);
+  vector<Matrix<double, Dynamic, 1> > vec_y_3(3);
+  Matrix<double, Dynamic, 1> y(3);
+  y << 2.0, -2.0, 11.0;
+  vec_y_2[0] = y;
+  vec_y_3[0] = y;
+  y << 4.0, -2.0, 1.0;
+  vec_y_2[1] = y;
+  vec_y_3[1] = y;
+  y << 2.0, -1.0, 1.0;
+  vec_y_3[2] = y;
+
+  vector<Matrix<double, Dynamic, 1> > vec_mu(3);
+  Matrix<double, Dynamic, 1> mu(3);
+  mu << 1.0, -1.0, 3.0;
+  vec_mu[0] = mu;
+  mu << 2.0, -1.0, 4.0;
+  vec_mu[1] = mu;
+  mu << 3.0, -2.0, 1.0;
+  vec_mu[2] = mu;
+
+  Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
+  Sigma << 10.0, -3.0, 0.0, -3.0, 5.0, 0.0, 0.0, 0.0, 5.0;
+
+  EXPECT_NO_THROW(stan::math::multi_normal_log(vec_y_3, vec_mu, Sigma));
+  EXPECT_THROW(stan::math::multi_normal_log(vec_y_2, vec_mu, Sigma),
+               std::invalid_argument);
+}
