@@ -22,6 +22,7 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/meta/length_mvt.hpp>
 #include <stan/math/prim/scal/meta/max_size_mvt.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
@@ -45,6 +46,16 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_prec_lpdf(
 
   using Eigen::Matrix;
   using std::vector;
+
+  size_t number_of_y = length_mvt(y);
+  size_t number_of_mu = length_mvt(mu);
+  if (number_of_y == 0 || number_of_mu == 0)
+    return 0.0;
+  if (number_of_y > 1 && number_of_mu > 1)
+    check_size_match(function, "Number of vectors of the random variable",
+                     number_of_y, "Number of vectors of the mean",
+                     number_of_mu);
+
   vector_seq_view<T_y> y_vec(y);
   vector_seq_view<T_loc> mu_vec(mu);
   size_t size_vec = max_size_mvt(y, mu);
