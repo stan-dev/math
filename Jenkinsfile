@@ -272,7 +272,6 @@ pipeline {
             }
         }
         stage('Upstream tests') {
-            when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
             steps {
                 build(job: "Stan/${stan_pr()}",
                         parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
