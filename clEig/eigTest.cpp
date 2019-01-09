@@ -76,10 +76,18 @@ int miniTest() {
   Vec vals;
 
   cout << "a:" << endl << a << endl;
-  householder_tridiag6(a, t, q);
+  householder_tridiag8(a, t, q);
+  cout << "t" << endl;
+  cout << t << endl;
+  cout << "q" << endl;
+  cout << q << endl;
+  chkTridiag(a,t,q);
+  householder_tridiag9(a, t, q);
   //block_householder_tridiag2(a, t, q, 2);
   cout << "t" << endl;
   cout << t << endl;
+  cout << "q" << endl;
+  cout << q << endl;
   chkTridiag(a,t,q);
 }
 
@@ -87,14 +95,15 @@ int main() {
   //miniTest();
   //return 0;
 
-  int A = 2000;
+  int A = 1000;
   const int MAX_BLOCK=170;
   Mat a = Mat::Random(A, A);
   a+=a.transpose().eval();
+  a=-a;
   Mat t,q, vecs;
   Vec vals;
-
   auto start = std::chrono::steady_clock::now();
+/*
   SelfAdjointEigenSolver<Mat> slv(a);
   cout << "CPU: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
@@ -105,7 +114,7 @@ int main() {
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
   chkEig(a,vecs,vals);
-
+*/
 
   start = std::chrono::steady_clock::now();
   Tridiagonalization<Mat> slv2(a);
@@ -176,32 +185,16 @@ int main() {
 
 
   start = std::chrono::steady_clock::now();
-  householder_tridiag6(a, t, q);
-  cout << "\t\tCPU my basic6: "
+  householder_tridiag8(a, t, q);
+  cout << "\t\tCPU my basic8: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
   chkTridiag(a,t,q);
 
 
   start = std::chrono::steady_clock::now();
-  householder_tridiag7(a, t, q);
-  cout << "\t\tCPU my basic7: "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-       << "ms" << endl;
-  chkTridiag(a,t,q);
-
-
-  start = std::chrono::steady_clock::now();
-  householder_tridiag6(a, t, q);
-  cout << "\t\tCPU my basic6: "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-       << "ms" << endl;
-  chkTridiag(a,t,q);
-
-
-  start = std::chrono::steady_clock::now();
-  householder_tridiag7(a, t, q);
-  cout << "\t\tCPU my basic7: "
+  householder_tridiag9(a, t, q);
+  cout << "\t\tCPU my basic9: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
   chkTridiag(a,t,q);

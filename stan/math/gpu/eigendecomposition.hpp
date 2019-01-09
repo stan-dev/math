@@ -15,7 +15,7 @@ using namespace std;
 #ifdef STAN_OPENCL
 
 //#define TIME_IT
-//#define SKIP_Q
+#define SKIP_Q
 
 namespace stan {
 namespace math {
@@ -326,19 +326,25 @@ void householder_tridiag7(const Eigen::MatrixXd& A, Eigen::MatrixXd& T, Eigen::M
     householder[0] = 0;
     householder[1] -= alpha;
     q+=householder[1]*householder[1];
-    householder *= SQRT_2 / sqrt(q);
+    q=sqrt(q);
+    householder *= SQRT_2 / q;
 
     Eigen::VectorXd& u = householder;
     Eigen::VectorXd v = T.bottomRightCorner(T.rows() - k, T.cols() - k).template selfadjointView<Eigen::Lower>() * householder;
+    //cout << v[0] << v[0] - q / SQRT_2 << " " << v[0] - (q / SQRT_2 + alpha * householder[1]) << " " << v[0] - (q / SQRT_2 - alpha * householder[1]) /*<< " " << v[0] - (SQRT_2/q*(q*q-u[1]*u[1]+))*/ << endl;
     double cnst = v.transpose() * u;
     v -= 0.5 * cnst * u;
+    //p(v);
 
-    T(k + 1, k) -= u[0] * v[1] + v[0] * u[1];
-    T.col(k).tail(u.size()-2) = Eigen::VectorXd::Constant(u.size()-2,0);
     for(size_t i=1; i < u.size(); i++){
       T.col(i + k).tail(u.size() - i) -= u[i] * v.tail(u.size()-i) +
                                          v[i] * u.tail(u.size()-i);
     }
+    //p(u);
+    //cout << T(k + 1, k) << " - " << u[0] * v[1] + v[0] * u[1];
+    T(k + 1, k) -= u[0] * v[1] + v[0] * u[1];
+    //cout << " = " << T(k + 1, k) << endl;
+    T.col(k).tail(u.size()-2) = Eigen::VectorXd::Constant(u.size()-2,0);
 
 #ifdef TIME_IT
     t1+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
@@ -354,6 +360,168 @@ void householder_tridiag7(const Eigen::MatrixXd& A, Eigen::MatrixXd& T, Eigen::M
 #ifdef TIME_IT
     t2+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
 #endif
+  }
+#ifdef TIME_IT
+  start = std::chrono::steady_clock::now();
+#endif
+  T=T.template selfadjointView<Eigen::Lower>();
+#ifdef TIME_IT
+  cout << "out copy: "
+       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+       << "ms" << endl;
+  cout << "T: " << t1/1000. << "ms" << endl;
+  cout << "Q: " << t2/1000. << "ms" << endl;
+#endif
+}
+
+void householder_tridiag8(const Eigen::MatrixXd& A, Eigen::MatrixXd& T, Eigen::MatrixXd& Q) {
+  //matrix_gpu R_gpu(A);
+  //matrix_gpu Q_gpu(Eigen::MatrixXd::Identity(A.rows()));
+  T = A;
+#ifndef SKIP_Q
+  Q = Eigen::MatrixXd::Identity(T.rows(), T.rows());
+  Eigen::VectorXd scratchSpace(T.rows());
+#endif
+#ifdef TIME_IT
+  long long t1=0, t2=0, t3=0;
+  auto start = std::chrono::steady_clock::now();
+#endif
+  for (size_t k = 0; k < T.rows() - 2; k++) {
+#ifdef TIME_IT
+    start = std::chrono::steady_clock::now();
+#endif
+    //auto householder = T.block(k, k, T.rows() - k, 1);
+    /*Eigen::VectorXd*/auto householder = T.col(k).tail(T.rows()-k);
+    double q = householder.tail(householder.size() - 1).squaredNorm();
+    double alpha = -copysign(sqrt(q), householder[0]);
+    q -= householder[1] * householder[1];
+    double tmp=householder[0];
+    householder[0] = 0;
+    householder[1] -= alpha;
+    q+=householder[1]*householder[1];
+    q=sqrt(q);
+    householder *= SQRT_2 / q;
+
+    //cout << "############" << k << endl;
+    auto& u = householder;
+    //p(static_cast<Eigen::VectorXd>(u));
+    //p(T);
+    Eigen::VectorXd v = T.bottomRightCorner(T.rows() - k, T.cols() - k).template selfadjointView<Eigen::Lower>() * householder;
+    //v[0] = q * SQRT_2 - alpha * householder[1];
+    v[0] = q / SQRT_2;// - alpha * householder[1];
+    //p(v);
+    //cout << v[0] - q / SQRT_2 << endl;
+    double cnst = v.transpose() * u;
+    v -= 0.5 * cnst * u;
+    //p(v);
+
+    for(size_t i=1; i < u.size(); i++){
+      T.col(i + k).tail(u.size() - i) -= u[i] * v.tail(u.size()-i) +
+                                         v[i] * u.tail(u.size()-i);
+    }
+
+
+#ifdef TIME_IT
+    t1+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+    start = std::chrono::steady_clock::now();
+#endif
+#ifndef SKIP_Q
+//    Eigen::MatrixXd update = u * v.transpose();
+//    Eigen::MatrixXd update2=update+update.transpose();
+    //T.bottomRightCorner(T.rows() - k, T.cols() - k).template triangularView<Eigen::Lower>() -= update + update.transpose();
+    scratchSpace.noalias() = Q.rightCols(Q.cols() - k - 1) * householder.tail(householder.size() - 1);
+    Q.rightCols(Q.cols() - k - 1).noalias() -= scratchSpace * householder.tail(householder.size() - 1).transpose();
+#endif
+#ifdef TIME_IT
+    t2+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+#endif
+    //p(static_cast<Eigen::VectorXd>(u));
+    //cout << T(k + 1, k) * q / SQRT_2 + alpha << " - " << (u[0] * v[1] + v[0] * u[1]);
+    T(k + 1, k) = T(k + 1, k) * q / SQRT_2 + alpha - v[0] * u[1];
+    //cout << " = " << T(k + 1, k) << endl;
+    householder[0]=tmp;
+    T.col(k).tail(u.size()-2) = Eigen::VectorXd::Constant(u.size()-2,0);
+    //T(k + 1, k) -= u[0] * v[1] + v[0] * u[1];
+  }
+#ifdef TIME_IT
+  start = std::chrono::steady_clock::now();
+#endif
+  T=T.template selfadjointView<Eigen::Lower>();
+#ifdef TIME_IT
+  cout << "out copy: "
+       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+       << "ms" << endl;
+  cout << "T: " << t1/1000. << "ms" << endl;
+  cout << "Q: " << t2/1000. << "ms" << endl;
+#endif
+}
+
+void householder_tridiag9(const Eigen::MatrixXd& A, Eigen::MatrixXd& T, Eigen::MatrixXd& Q) {
+  //matrix_gpu R_gpu(A);
+  //matrix_gpu Q_gpu(Eigen::MatrixXd::Identity(A.rows()));
+  T = A;
+#ifndef SKIP_Q
+  Q = Eigen::MatrixXd::Identity(T.rows(), T.rows());
+  Eigen::VectorXd scratchSpace(T.rows());
+#endif
+#ifdef TIME_IT
+  long long t1=0, t2=0, t3=0;
+  auto start = std::chrono::steady_clock::now();
+#endif
+  for (size_t k = 0; k < T.rows() - 2; k++) {
+#ifdef TIME_IT
+    start = std::chrono::steady_clock::now();
+#endif
+    //auto householder = T.block(k, k, T.rows() - k, 1);
+    /*Eigen::VectorXd*/auto householder = T.col(k).tail(T.rows()-k -1);
+    double q = householder.squaredNorm();
+    double alpha = -copysign(sqrt(q), T(k,k));
+    q -= householder[0] * householder[0];
+    householder[0] -= alpha;
+    q+=householder[0]*householder[0];
+    q=sqrt(q);
+    householder *= SQRT_2 / q;
+
+    //cout << "############" << k << endl;
+    auto& u = householder;
+    //p(static_cast<Eigen::VectorXd>(u));
+    //p(T);
+    Eigen::VectorXd v(householder.size()+1);
+    v.tail(householder.size()) = T.bottomRightCorner(T.rows() - k - 1, T.cols() - k - 1).template selfadjointView<Eigen::Lower>() * householder;
+    //v[0] = q * SQRT_2 - alpha * householder[1];
+    v[0] = q / SQRT_2;// - alpha * householder[1];
+    //cout << v[0] - q / SQRT_2 << endl;
+    //p(v);
+    double cnst = v.tail(householder.size()).transpose() * u;
+    v.tail(householder.size()) -= 0.5 * cnst * u;
+    //p(v);
+
+    for(size_t i=1; i < v.size(); i++){
+      T.col(i + k).tail(v.size() - i) -= u[i-1] * v.tail(v.size()-i) +
+                                         v[i] * u.tail(v.size()-i);
+    }
+
+
+#ifdef TIME_IT
+    t1+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+    start = std::chrono::steady_clock::now();
+#endif
+#ifndef SKIP_Q
+    //    Eigen::MatrixXd update = u * v.transpose();
+//    Eigen::MatrixXd update2=update+update.transpose();
+    //T.bottomRightCorner(T.rows() - k, T.cols() - k).template triangularView<Eigen::Lower>() -= update + update.transpose();
+    scratchSpace.noalias() = Q.rightCols(Q.cols() - k - 1) * householder;
+    Q.rightCols(Q.cols() - k - 1).noalias() -= scratchSpace * householder.transpose();
+#endif
+#ifdef TIME_IT
+    t2+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+#endif
+    //p(static_cast<Eigen::VectorXd>(u));
+    //cout << T(k + 1, k) * q / SQRT_2 + alpha << " - " << (u[0] * v[1] + v[0] * u[1]);
+    T(k + 1, k) = T(k + 1, k) * q / SQRT_2 + alpha - v[0] * u[0];
+    //cout << " = " << T(k + 1, k) << endl;
+    T.col(k).tail(v.size()-2) = Eigen::VectorXd::Constant(v.size()-2,0);
+    //T(k + 1, k) -= u[0] * v[1] + v[0] * u[1];
   }
 #ifdef TIME_IT
   start = std::chrono::steady_clock::now();
