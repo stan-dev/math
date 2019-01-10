@@ -63,6 +63,23 @@ void chkTridiag(const Mat& a, Mat t, const Mat& q){
   cout << "tridiag: " << t.array().abs().sum() << endl;
 }
 
+void chkTridiagPacked(const Mat& a, const Mat& packed){
+  Mat t = Mat::Constant(a.rows(), a.cols(), 0);
+  t.diagonal()=packed.diagonal();
+  t.diagonal(1)=packed.diagonal(1);
+  t.diagonal(-1)=packed.diagonal(1);
+  if(a.rows()<10 && a.cols()<10){
+    cout << "T: " << endl << t;
+  }
+  Mat q=Mat::Identity(a.rows(),a.cols());
+  apply_packed_Q(packed, q);
+  if(a.rows()<10 && a.cols()<10){
+    cout << "Q: " << endl << q;
+  }
+  cout << "reconstruct: " << (a - q * t * q.transpose()).array().abs().sum() << endl;
+  cout << "ID: " << (q * q.transpose()).array().abs().sum() - q.rows() << endl;
+}
+
 int miniTest() {
   Mat a(6, 6);
   a << 12, -51, 4, 4, 5, 9,
@@ -76,31 +93,46 @@ int miniTest() {
   Vec vals;
 
   cout << "a:" << endl << a << endl;
-  householder_tridiag8(a, t, q);
-  cout << "t" << endl;
-  cout << t << endl;
-  cout << "q" << endl;
-  cout << q << endl;
-  chkTridiag(a,t,q);
+  /*householder_tridiag8(a, t, q);
+  cout << "t" << endl << t << endl;
+  cout << "q" << endl << q << endl;
+  chkTridiag(a,t,q);*/
   householder_tridiag9(a, t, q);
   //block_householder_tridiag2(a, t, q, 2);
-  cout << "t" << endl;
-  cout << t << endl;
-  cout << "q" << endl;
-  cout << q << endl;
+  cout << "t" << endl << t << endl;
+  cout << "q" << endl << q << endl;
   chkTridiag(a,t,q);
 }
 
+int miniTest2() {
+  Mat a(6, 6);
+  a << 12, -51, 4, 4, 5, 9,
+          6, 167, -68, 7, 9, 4,
+          -6, 24, -41, 7, 6, 3,
+          1, 2, 3, 4, 5, 4,
+          1, 2, 3, 6, 5, 6,
+          1, -7, 3, 4, 5, 6;
+  a+=a.transpose().eval();
+  Mat packed, vecs;
+  Vec vals;
+
+  cout << "a:" << endl << a << endl;
+  householder_tridiag_packed(a, packed);
+  cout << "packed:" << endl << packed << endl;
+  chkTridiagPacked(a,packed);
+}
+
 int main() {
-  //miniTest();
-  //return 0;
+  /*miniTest();
+  miniTest2();
+  return 0;*/
 
   int A = 1000;
   const int MAX_BLOCK=170;
   Mat a = Mat::Random(A, A);
   a+=a.transpose().eval();
   a=-a;
-  Mat t,q, vecs;
+  Mat t,q, vecs, packed;
   Vec vals;
   auto start = std::chrono::steady_clock::now();
 /*
@@ -199,7 +231,32 @@ int main() {
        << "ms" << endl;
   chkTridiag(a,t,q);
 
-/*
+
+  start = std::chrono::steady_clock::now();
+  householder_tridiag_packed(a, packed);
+  cout << "\t\tCPU my basic packed: "
+       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+       << "ms" << endl;
+  t = Mat::Constant(a.rows(), a.cols(), 0);
+  t.diagonal()=packed.diagonal();
+  t.diagonal(1)=packed.diagonal(1);
+  t.diagonal(-1)=packed.diagonal(1);
+  start = std::chrono::steady_clock::now();
+  q=Mat::Identity(a.rows(),a.cols());
+  apply_packed_Q(packed,q);
+  cout << "\t\tCPU apply packed Q: "
+       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+       << "ms" << endl;
+  chkTridiag(a,t,q);
+  start = std::chrono::steady_clock::now();
+  q=Mat::Identity(a.rows(),a.cols());
+  block_apply_packed_Q(packed,q);
+  cout << "\t\tCPU block apply packed Q: "
+       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+       << "ms" << endl;
+  chkTridiag(a,t,q);
+
+
   for(int b=10;b<35;b+=1) {
     cout << "b = " << b << endl;
     start = std::chrono::steady_clock::now();
@@ -209,7 +266,7 @@ int main() {
          << "ms" << endl;
     chkTridiag(a, t, q);
   }
-*/
+
   /*
   //force kernel compilation
   cl::Kernel kernel_1 = opencl_context.get_kernel("householder_QR_1");

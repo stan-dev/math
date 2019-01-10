@@ -15,7 +15,7 @@ using namespace std;
 #ifdef STAN_OPENCL
 
 //#define TIME_IT
-#define SKIP_Q
+//#define SKIP_Q
 
 namespace stan {
 namespace math {
@@ -535,6 +535,94 @@ void householder_tridiag9(const Eigen::MatrixXd& A, Eigen::MatrixXd& T, Eigen::M
   cout << "Q: " << t2/1000. << "ms" << endl;
 #endif
 }
+
+void householder_tridiag_packed(const Eigen::MatrixXd& A, Eigen::MatrixXd& T) {
+  //matrix_gpu R_gpu(A);
+  //matrix_gpu Q_gpu(Eigen::MatrixXd::Identity(A.rows()));
+  T = A;
+#ifdef TIME_IT
+  long long t1=0;
+  auto start = std::chrono::steady_clock::now();
+#endif
+  for (size_t k = 0; k < T.rows() - 2; k++) {
+#ifdef TIME_IT
+    start = std::chrono::steady_clock::now();
+#endif
+    //auto householder = T.block(k, k, T.rows() - k, 1);
+    /*Eigen::VectorXd*/auto householder = T.col(k).tail(T.rows()-k -1);
+    double q = householder.squaredNorm();
+    double alpha = -copysign(sqrt(q), T(k,k));
+    q -= householder[0] * householder[0];
+    householder[0] -= alpha;
+    q+=householder[0]*householder[0];
+    q=sqrt(q);
+    householder *= SQRT_2 / q;
+
+    //cout << "############" << k << endl;
+    auto& u = householder;
+    //p(static_cast<Eigen::VectorXd>(u));
+    //p(T);
+    Eigen::VectorXd v(householder.size()+1);
+    v.tail(householder.size()) = T.bottomRightCorner(T.rows() - k - 1, T.cols() - k - 1).template selfadjointView<Eigen::Lower>() * householder;
+    //v[0] = q * SQRT_2 - alpha * householder[1];
+    v[0] = q / SQRT_2;// - alpha * householder[1];
+    //cout << v[0] - q / SQRT_2 << endl;
+    //p(v);
+    double cnst = v.tail(householder.size()).transpose() * u;
+    v.tail(householder.size()) -= 0.5 * cnst * u;
+    //p(v);
+
+    for(size_t i=1; i < v.size(); i++){
+      T.col(i + k).tail(v.size() - i) -= u[i-1] * v.tail(v.size()-i) +
+                                         v[i] * u.tail(v.size()-i);
+    }
+    //p(static_cast<Eigen::VectorXd>(u));
+    //cout << T(k + 1, k) * q / SQRT_2 + alpha << " - " << (u[0] * v[1] + v[0] * u[1]);
+    T(k, k + 1) = T(k + 1, k) * q / SQRT_2 + alpha - v[0] * u[0];
+    //cout << " = " << T(k + 1, k) << endl;
+    //T.col(k).tail(v.size()-2) = Eigen::VectorXd::Constant(v.size()-2,0);
+    //T(k + 1, k) -= u[0] * v[1] + v[0] * u[1];
+#ifdef TIME_IT
+    t1+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+#endif
+  }
+  T(T.rows()-2, T.cols()-1) = T(T.rows()-1, T.cols()-2);
+#ifdef TIME_IT
+  cout << "T: " << t1/1000. << "ms" << endl;
+#endif
+}
+
+void apply_packed_Q(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A){
+  //if input A==Identity, constructs Q
+  Eigen::VectorXd scratchSpace(A.rows());
+  for (size_t k = 0; k < packed.rows() - 2; k++) {
+    auto householder = packed.col(k).tail(packed.rows() - k - 1);
+
+    scratchSpace.noalias() = A.rightCols(A.cols() - k - 1) * householder;
+    A.rightCols(A.cols() - k - 1).noalias() -= scratchSpace * householder.transpose();
+  }
+}
+
+void block_apply_packed_Q(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 60){
+  //if input A==Identity, constructs Q
+  Eigen::VectorXd scratchSpace(A.rows());
+  for (size_t k = 0; k < packed.rows() - 2; k += r) {
+    int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
+    /*auto householder = packed.col(k).tail(packed.rows() - k - 1);
+
+    scratchSpace.noalias() = A.rightCols(A.cols() - k - 1) * householder;
+    A.rightCols(A.cols() - k - 1).noalias() -= scratchSpace * householder.transpose();*/
+
+    Eigen::MatrixXd U = packed.block(k,k,packed.rows()-k,actual_r).triangularView<Eigen::StrictlyLower>();
+    auto& Y = U;
+    Eigen::MatrixXd W = U;
+    for (size_t j = 1; j < actual_r; j++) {
+      W.col(j) = U.col(j) - W.leftCols(j) * (U.leftCols(j).transpose() * U.col(j));
+    }
+    A.rightCols(A.cols() - k) -= (A.rightCols(A.cols() - k) * W) * Y.transpose();
+  }
+}
+
 
 /*
 void block_householder_tridiag(const Eigen::MatrixXd& A, Eigen::MatrixXd& T, Eigen::MatrixXd& Q, int r = 60) {
