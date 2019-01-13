@@ -4,6 +4,7 @@
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/mat/meta/operands_and_partials.hpp>
+#include <stan/math/prim/mat/err/check_consistent_sizes_mvt.hpp>
 #include <stan/math/prim/mat/fun/dot_self.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_tri.hpp>
@@ -19,7 +20,6 @@
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -64,14 +64,7 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
   size_t number_of_mu = length_mvt(mu);
   if (number_of_y == 0 || number_of_mu == 0)
     return 0.0;
-  bool y_contains_vectors
-      = is_vector<typename std::remove_reference<decltype(y[0])>::type>::value;
-  bool mu_contains_vectors
-      = is_vector<typename std::remove_reference<decltype(mu[0])>::type>::value;
-  if (y_contains_vectors && mu_contains_vectors)
-    check_size_match(function, "Number of vectors of the random variable",
-                     number_of_y, "Number of vectors of the mean",
-                     number_of_mu);
+  check_consistent_sizes_mvt(function, "y", y, "mu", mu);
 
   vector_seq_view<T_y> y_vec(y);
   vector_seq_view<T_loc> mu_vec(mu);

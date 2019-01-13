@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_LPDF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_LPDF_HPP
 
+#include <stan/math/prim/mat/err/check_consistent_sizes_mvt.hpp>
 #include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/fun/trace_inv_quad_form_ldlt.hpp>
@@ -17,7 +18,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -43,14 +43,7 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_lpdf(
   size_t number_of_mu = length_mvt(mu);
   if (number_of_y == 0 || number_of_mu == 0)
     return 0.0;
-  bool y_contains_vectors
-      = is_vector<typename std::remove_reference<decltype(y[0])>::type>::value;
-  bool mu_contains_vectors
-      = is_vector<typename std::remove_reference<decltype(mu[0])>::type>::value;
-  if (y_contains_vectors && mu_contains_vectors)
-    check_size_match(function, "Number of vectors of the random variable",
-                     number_of_y, "Number of vectors of the mean",
-                     number_of_mu);
+  check_consistent_sizes_mvt(function, "y", y, "mu", mu);
 
   vector_seq_view<T_y> y_vec(y);
   vector_seq_view<T_loc> mu_vec(mu);
