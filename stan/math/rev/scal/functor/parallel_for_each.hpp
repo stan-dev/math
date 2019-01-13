@@ -49,7 +49,8 @@ struct parallel_map_impl<InputIt, UnaryFunction, var> {
                                     // which AD tapes
                                     tbb::combinable< std::vector<nested_chunk_t> > child_chunks;
                                     
-                                    const std::size_t parent_ad_tape_idx = tbb::this_task_arena::current_thread_index();
+                                    //const std::size_t parent_ad_tape_idx = tbb::this_task_arena::current_thread_index();
+                                    const std::size_t parent_ad_tape_idx = ChainableStack::instance().id_;
 
                                     tbb::parallel_for( tbb::blocked_range<std::size_t>( 0, num_jobs ),
                                                        [&](const tbb::blocked_range<size_t>& r) {
@@ -61,7 +62,7 @@ struct parallel_map_impl<InputIt, UnaryFunction, var> {
                                                            f_eval[i] = f(*elem);
                                                          }
                                                          const std::size_t end_stack_size = local_tape.var_stack_.size();
-                                                         if(parent_ad_tape_idx != tbb::this_task_arena::current_thread_index())
+                                                         if(parent_ad_tape_idx != local_tape.id_)
                                                            child_chunks.local().emplace_back(nested_chunk_t(local_tape, start_stack_size, end_stack_size));
                                                        });
 

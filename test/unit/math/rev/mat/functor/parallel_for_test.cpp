@@ -33,8 +33,8 @@ struct fun1 {
   }
 };
 
-static tbb::task_scheduler_init task_scheduler(
-    stan::math::internal::get_num_threads());
+//static tbb::task_scheduler_init task_scheduler(
+//    stan::math::internal::get_num_threads());
 
 TEST(Base, parallel_for) {
   const int num_jobs = 1000;

@@ -2,11 +2,18 @@
 #define STAN_MATH_REV_CORE_AUTODIFFSTACKSTORAGE_HPP
 
 #include <stan/math/memory/stack_alloc.hpp>
+#include <stan/math/parallel/get_num_threads.hpp>
+
 #include <vector>
+#include <array>
 #include <mutex>
 
-#include "tbb/enumerable_thread_specific.h"
-#include "tbb/task_arena.h"
+#include <tbb/task_scheduler_init.h>
+#include <tbb/enumerable_thread_specific.h>
+#include <tbb/task_arena.h>
+
+static tbb::task_scheduler_init task_scheduler(
+    stan::math::internal::get_num_threads());
 
 namespace stan {
 namespace math {
@@ -75,12 +82,13 @@ struct AutodiffStackSingleton {
   explicit AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
   AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
 
-  static std::vector<AutodiffStackStorage> thread_tapes_;
+  //static std::array<AutodiffStackStorage, 64> thread_tapes_;
 
-  static inline AutodiffStackStorage &instance() {
+  constexpr static inline AutodiffStackStorage &instance() {
     // TBB TLS
     //return instance_.local();
-    return thread_tapes_[tbb::this_task_arena::current_thread_index()];
+    return instance_;
+    //return thread_tapes_[tbb::this_task_arena::current_thread_index()];
   }
 
   // TBB TLS
@@ -91,6 +99,7 @@ struct AutodiffStackSingleton {
       AutodiffStackStorage_tls_t;
   static AutodiffStackStorage_tls_t instance_;
   */
+  static thread_local AutodiffStackStorage instance_;
 };
 
 /*
@@ -98,12 +107,27 @@ template <typename ChainableT, typename ChainableAllocT>
 typename AutodiffStackSingleton<ChainableT,
                                 ChainableAllocT>::AutodiffStackStorage_tls_t
     AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_;
-*/
+    */
 
+template <typename ChainableT, typename ChainableAllocT>
+thread_local typename AutodiffStackSingleton<ChainableT,
+                                ChainableAllocT>::AutodiffStackStorage
+    AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_;
+
+/*
 template <typename ChainableT, typename ChainableAllocT>
 std::vector<typename AutodiffStackSingleton<ChainableT,
                                    ChainableAllocT>::AutodiffStackStorage>
-AutodiffStackSingleton<ChainableT, ChainableAllocT>::thread_tapes_(tbb::this_task_arena::max_concurrency());
+AutodiffStackSingleton<ChainableT, ChainableAllocT>::thread_tapes_(64);
+*/
+
+/*
+template <typename ChainableT, typename ChainableAllocT>
+std::array<typename AutodiffStackSingleton<ChainableT,
+                                           ChainableAllocT>::AutodiffStackStorage, 64>
+AutodiffStackSingleton<ChainableT, ChainableAllocT>::thread_tapes_;
+*/
+
 
 }  // namespace math
 }  // namespace stan
