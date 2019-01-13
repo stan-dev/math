@@ -22,6 +22,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <cstdlib>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -57,7 +58,11 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type multi_student_t_lpdf(
   size_t number_of_mu = length_mvt(mu);
   if (number_of_y == 0 || number_of_mu == 0)
     return 0.0;
-  if (number_of_y > 1 && number_of_mu > 1)
+  bool y_contains_vectors
+      = is_vector<typename std::remove_reference<decltype(y[0])>::type>::value;
+  bool mu_contains_vectors
+      = is_vector<typename std::remove_reference<decltype(mu[0])>::type>::value;
+  if (y_contains_vectors && mu_contains_vectors)
     check_size_match(function, "Number of vectors of the random variable",
                      number_of_y, "Number of vectors of the mean",
                      number_of_mu);

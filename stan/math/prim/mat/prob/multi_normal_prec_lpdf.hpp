@@ -26,6 +26,7 @@
 #include <stan/math/prim/scal/meta/max_size_mvt.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -51,7 +52,11 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_prec_lpdf(
   size_t number_of_mu = length_mvt(mu);
   if (number_of_y == 0 || number_of_mu == 0)
     return 0.0;
-  if (number_of_y > 1 && number_of_mu > 1)
+  bool y_contains_vectors
+      = is_vector<typename std::remove_reference<decltype(y[0])>::type>::value;
+  bool mu_contains_vectors
+      = is_vector<typename std::remove_reference<decltype(mu[0])>::type>::value;
+  if (y_contains_vectors && mu_contains_vectors)
     check_size_match(function, "Number of vectors of the random variable",
                      number_of_y, "Number of vectors of the mean",
                      number_of_mu);
