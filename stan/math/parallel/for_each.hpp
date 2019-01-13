@@ -35,6 +35,8 @@
 
 #ifdef STAN_TBB
 #include <tbb/parallel_for_each.h>
+#include <tbb/task_arena.h>
+#include <tbb/task_group.h>
 #endif
 
 #define std_par stan::math::internal

@@ -45,7 +45,7 @@ static void grad(vari* vi) {
   }
 }
 
-#ifdef STAN_TBB_TLS
+/*
 static void grad_global(vari* vi) {
   // simple reference implementation (intended as doc):
   //   vi->init_dependent();
@@ -60,8 +60,8 @@ static void grad_global(vari* vi) {
 
   typedef ChainableStack::AutodiffStackStorage local_ad_stack_t;
 
-  std::for_each(ChainableStack::instance_.begin(),
-                ChainableStack::instance_.end(),
+  std::for_each(ChainableStack::thread_tapes_.begin(),
+                ChainableStack::thread_tapes_.end(),
                 [](local_ad_stack_t& local_instance) {
                   it_t begin = local_instance.var_stack_.rbegin();
                   it_t end = local_instance.var_stack_.rend();
@@ -70,7 +70,7 @@ static void grad_global(vari* vi) {
                   }
                 });
 }
-#endif
+*/
 
 }  // namespace math
 }  // namespace stan

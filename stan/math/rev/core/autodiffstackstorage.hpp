@@ -6,6 +6,7 @@
 #include <mutex>
 
 #include "tbb/enumerable_thread_specific.h"
+#include "tbb/task_arena.h"
 
 namespace stan {
 namespace math {
@@ -74,54 +75,42 @@ struct AutodiffStackSingleton {
   explicit AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
   AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
 
+  static std::vector<AutodiffStackStorage> thread_tapes_;
+  //static int num_tapes_;
+
   static inline AutodiffStackStorage &instance() {
-#ifdef STAN_THREADS
-#ifdef STAN_TBB_TLS
     // TBB TLS
-    return instance_.local();
-#else
-    // C++ TLS
-    thread_local static AutodiffStackStorage instance_;
-    return instance_;
-#endif
-#else
-    // No TLS
-    return instance_;
-#endif
+    //return instance_.local();
+    return thread_tapes_[tbb::this_task_arena::current_thread_index()];
   }
 
-#ifdef STAN_THREADS
-#ifdef STAN_TBB_TLS
-  // private:
   // TBB TLS
+  /*
   typedef tbb::enumerable_thread_specific<
       AutodiffStackStorage, tbb::cache_aligned_allocator<AutodiffStackStorage>,
       tbb::ets_key_per_instance>
       AutodiffStackStorage_tls_t;
-  // typedef tbb::enumerable_thread_specific<AutodiffStackStorage>
-  //    AutodiffStackStorage_tls_t;
   static AutodiffStackStorage_tls_t instance_;
-#endif
-#else
-  // No TLS
-  // private:
-  static AutodiffStackStorage instance_;
-#endif
+  */
 };
 
-#ifdef STAN_THREADS
-#ifdef STAN_TBB_TLS
+/*
 template <typename ChainableT, typename ChainableAllocT>
 typename AutodiffStackSingleton<ChainableT,
                                 ChainableAllocT>::AutodiffStackStorage_tls_t
     AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_;
-#endif
-#else
+*/
+
 template <typename ChainableT, typename ChainableAllocT>
-typename AutodiffStackSingleton<ChainableT,
-                                ChainableAllocT>::AutodiffStackStorage
-    AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_;
-#endif
+std::vector<typename AutodiffStackSingleton<ChainableT,
+                                   ChainableAllocT>::AutodiffStackStorage>
+AutodiffStackSingleton<ChainableT, ChainableAllocT>::thread_tapes_(tbb::this_task_arena::max_concurrency());
+
+/*
+template <typename ChainableT, typename ChainableAllocT>
+int AutodiffStackSingleton<ChainableT,
+                                ChainableAllocT>::num_tapes_ = tbb::this_task_arena::max_concurrency();
+*/
 
 }  // namespace math
 }  // namespace stan

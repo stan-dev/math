@@ -4,7 +4,11 @@
 #include <stan/math/rev/core/nest_chainablestack.hpp>
 #include <gtest/gtest.h>
 
-#include <tbb/task_scheduler_init.h>
+
+#define TBB_PREVIEW_LOCAL_OBSERVER 1
+
+// #include <tbb/task_scheduler_init.h>
+#include <tbb/tbb.h>
 
 #include <boost/iterator/counting_iterator.hpp>
 
@@ -115,8 +119,72 @@ TEST(AgradAutoDiff, parallel_for_each) {
   // stan::math::recover_memory();
 }
 
+class ad_tape_observer: public tbb::task_scheduler_observer {
+public:
+  //affinity_mask_t m_mask; // HW affinity mask to be used with an arena
+  ad_tape_observer()
+    : tbb::task_scheduler_observer() {
+    std::cout << "Observer created" << std::endl;
+    observe(true); // activate the observer
+  }
+
+  ~ad_tape_observer() {
+    std::cout << "Observer destructed" << std::endl;
+  }
+  
+  /*override*/ void on_scheduler_entry( bool worker ) {
+    if (worker)
+      std::cout << "a worker thread is joining to do some work." << std::endl;
+    else
+      std::cout << "the main thread is joining to do some work." << std::endl;
+  }
+  /*override*/ void on_scheduler_exit( bool worker ) {
+    if (worker)
+      std::cout << "a worker thread is finished to do some work." << std::endl;
+    else
+      std::cout << "the main thread is finished to do some work." << std::endl;
+  }
+};
+
+static tbb::enumerable_thread_specific<int> arena_id;
+
+class arena_observer : public tbb::task_scheduler_observer {
+    const int id_;               // unique observer/arena id within a test
+    void on_scheduler_entry( bool worker ) {
+      if (worker)
+        std::cout << "a worker thread is joining to do some work." << std::endl;
+      else
+        std::cout << "the main thread is joining to do some work." << std::endl;
+
+      arena_id.local() = id_;
+      
+      std::cout << "this is from arena " << id_ << " thread " << tbb::this_task_arena::current_thread_index() << " / " << tbb::this_task_arena::max_concurrency() << std::endl;
+    }
+  
+    void on_scheduler_exit( bool worker ) {
+    if (worker)
+      std::cout << "a worker thread is finished to do some work from arena " << id_ <<  ": thread " << tbb::this_task_arena::current_thread_index() << " / " << tbb::this_task_arena::max_concurrency() << std::endl;
+    else
+      std::cout << "the main thread is finished to do some work from arena " << id_ <<  ": thread " << tbb::this_task_arena::current_thread_index() << " / " << tbb::this_task_arena::max_concurrency() << std::endl;
+    }
+public:
+    arena_observer(tbb::task_arena &a, int id)
+        : tbb::task_scheduler_observer(a)
+        , id_(id) {
+        observe(true);
+    }
+};
+
 TEST(AgradAutoDiff, parallel_for_each_scalar) {
   typedef boost::counting_iterator<int> count_iter;
+
+  tbb::task_arena arena1(4);
+  arena_observer obs1(arena1, 1);
+
+  tbb::task_arena arena2(4);
+  arena_observer obs2(arena2, 2);
+
+  tbb::task& test_task = tbb::task::self();
 
   const int num_jobs = 1000;
   fun1 f;
@@ -135,8 +203,14 @@ TEST(AgradAutoDiff, parallel_for_each_scalar) {
     return f(iarg);
   };
 
-  vector_v parallel_result = stan::math::concatenate_row(stan::math::parallel_map(
-      count_iter(0), count_iter(num_jobs), loop_fun));
+  vector_v parallel_result;
+
+  arena1.execute([&] {
+                   parallel_result = stan::math::concatenate_row(stan::math::parallel_map(
+                       count_iter(0), count_iter(num_jobs), loop_fun));
+                 });
+
+  test_task.wait_for_all();
 
   for (int i = 0; i < num_jobs; ++i) {
     vector_d x_ref(2);

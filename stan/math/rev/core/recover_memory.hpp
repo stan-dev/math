@@ -30,12 +30,11 @@ static inline void recover_memory() {
 }
 
 // recover memory the stack globally for all threads
-#ifdef STAN_TBB_TLS
 static inline void recover_memory_global() {
   typedef ChainableStack::AutodiffStackStorage local_ad_stack_t;
 
-  std::for_each(ChainableStack::instance_.begin(),
-                ChainableStack::instance_.end(),
+  std::for_each(ChainableStack::thread_tapes_.begin(),
+                ChainableStack::thread_tapes_.end(),
                 [](local_ad_stack_t &local_instance) {
                   if (!local_instance.nested_var_stack_sizes_.empty())
                     throw std::logic_error(
@@ -50,7 +49,6 @@ static inline void recover_memory_global() {
                   local_instance.memalloc_.recover_all();
                 });
 }
-#endif
 
 }  // namespace math
 }  // namespace stan
