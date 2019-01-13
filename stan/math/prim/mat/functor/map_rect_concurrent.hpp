@@ -43,7 +43,6 @@ map_rect_concurrent(
   std::vector<int> world_f_out(num_jobs);
   std::vector<matrix_d> world_job_output(num_jobs);
 
-  for_each(exec_policy, count_iter(0), count_iter(num_jobs), [&](int i) {
     world_job_output[i] = ReduceF()(shared_params_dbl, value_of(job_params[i]),
                                     x_r[i], x_i[i], msgs);
     world_f_out[i] = world_job_output[i].cols();
