@@ -76,7 +76,6 @@ struct AutodiffStackSingleton {
   AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
 
   static std::vector<AutodiffStackStorage> thread_tapes_;
-  //static int num_tapes_;
 
   static inline AutodiffStackStorage &instance() {
     // TBB TLS
@@ -105,12 +104,6 @@ template <typename ChainableT, typename ChainableAllocT>
 std::vector<typename AutodiffStackSingleton<ChainableT,
                                    ChainableAllocT>::AutodiffStackStorage>
 AutodiffStackSingleton<ChainableT, ChainableAllocT>::thread_tapes_(tbb::this_task_arena::max_concurrency());
-
-/*
-template <typename ChainableT, typename ChainableAllocT>
-int AutodiffStackSingleton<ChainableT,
-                                ChainableAllocT>::num_tapes_ = tbb::this_task_arena::max_concurrency();
-*/
 
 }  // namespace math
 }  // namespace stan

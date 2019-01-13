@@ -119,6 +119,8 @@ TEST(AgradAutoDiff, parallel_for_each) {
   // stan::math::recover_memory();
 }
 
+static std::mutex cout_mutex;
+
 class ad_tape_observer: public tbb::task_scheduler_observer {
 public:
   //affinity_mask_t m_mask; // HW affinity mask to be used with an arena
@@ -133,12 +135,14 @@ public:
   }
   
   /*override*/ void on_scheduler_entry( bool worker ) {
+    std::lock_guard<std::mutex> cout_lock(cout_mutex);
     if (worker)
       std::cout << "a worker thread is joining to do some work." << std::endl;
     else
       std::cout << "the main thread is joining to do some work." << std::endl;
   }
   /*override*/ void on_scheduler_exit( bool worker ) {
+    std::lock_guard<std::mutex> cout_lock(cout_mutex);
     if (worker)
       std::cout << "a worker thread is finished to do some work." << std::endl;
     else
@@ -151,6 +155,7 @@ static tbb::enumerable_thread_specific<int> arena_id;
 class arena_observer : public tbb::task_scheduler_observer {
     const int id_;               // unique observer/arena id within a test
     void on_scheduler_entry( bool worker ) {
+      std::lock_guard<std::mutex> cout_lock(cout_mutex);
       if (worker)
         std::cout << "a worker thread is joining to do some work." << std::endl;
       else
@@ -162,6 +167,7 @@ class arena_observer : public tbb::task_scheduler_observer {
     }
   
     void on_scheduler_exit( bool worker ) {
+      std::lock_guard<std::mutex> cout_lock(cout_mutex);
     if (worker)
       std::cout << "a worker thread is finished to do some work from arena " << id_ <<  ": thread " << tbb::this_task_arena::current_thread_index() << " / " << tbb::this_task_arena::max_concurrency() << std::endl;
     else
