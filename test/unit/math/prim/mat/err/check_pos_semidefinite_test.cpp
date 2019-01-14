@@ -108,9 +108,6 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefiniteLDLT_size_1) {
                    "function: y is not positive semi-definite.");
 }
 
-// No checks for non-square and zero-size matrices, since we can't
-// test those conditions from the LDLT.
-
 TEST_F(ErrorHandlingMatrix, checkPosSemidefiniteLDLT) {
   using stan::math::check_pos_semidefinite;
 
