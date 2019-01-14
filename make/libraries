@@ -110,6 +110,11 @@ clean-mpi:
 
 endif
 
+STACK_TEMPLATE_INSTANTIATION_CPP := $(shell find $(MATH)stan -type f -name 'chainablestack_inst.cpp')
+STACK_TEMPLATE_INSTANTIATION := $(STACK_TEMPLATE_INSTANTIATION_CPP:%.cpp=%.o)
+
+$(STACK_TEMPLATE_INSTANTIATION) : CXXFLAGS += -fPIC
+
 ############################################################
 # Google Test:
 #   Build the google test library.
