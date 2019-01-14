@@ -60,8 +60,8 @@ inline void check_pos_semidefinite(
  *   semi-definite.
  */
 template <typename Derived>
-inline void check_pos_semidefinite(const char *function, const char *name,
-                                   const Eigen::LDLT<Derived> &cholesky) {
+inline void check_pos_semidefinite(const char* function, const char* name,
+                                   const Eigen::LDLT<Derived>& cholesky) {
   if (cholesky.info() != Eigen::Success
       || (cholesky.vectorD().array() < 0.0).any())
     domain_error(function, name, "is not positive semi-definite.", "");
