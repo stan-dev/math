@@ -115,6 +115,10 @@ STACK_TEMPLATE_INSTANTIATION := $(STACK_TEMPLATE_INSTANTIATION_CPP:%.cpp=%.o)
 
 $(STACK_TEMPLATE_INSTANTIATION) : CXXFLAGS += -fPIC
 
+clean-math:
+	@echo '  cleaning stan-math targets'
+	$(RM) $(STACK_TEMPLATE_INSTANTIATION)
+
 ############################################################
 # Google Test:
 #   Build the google test library.
@@ -128,4 +132,4 @@ $(GTEST)/src/gtest-all.o: INC += $(INC_GTEST)
 # Clean all libraries
 
 .PHONY: clean-libraries clean-sundials clean-mpi
-clean-libraries: clean-sundials clean-mpi
+clean-libraries: clean-sundials clean-mpi clean-math
