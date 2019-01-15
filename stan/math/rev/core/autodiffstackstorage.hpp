@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_CORE_AUTODIFFSTACKSTORAGE_HPP
 
 #include <stan/math/memory/stack_alloc.hpp>
+#include <mutex>
 #include <vector>
 
 namespace stan {
@@ -66,6 +67,8 @@ struct AutodiffStackSingleton {
   }
 
   static inline AutodiffStackStorage* instantiate() {
+    static thread_local std::mutex init_mutex;
+    std::lock_guard<std::mutex> init_lock(init_mutex);
     if(instance_ == 0)
       instance_ = new AutodiffStackStorage();
     return instance_;

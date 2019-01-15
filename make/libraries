@@ -110,14 +110,14 @@ clean-mpi:
 
 endif
 
-STACK_TEMPLATE_INSTANTIATION_CPP := $(shell find $(MATH)stan -type f -name 'chainablestack_inst.cpp')
-STACK_TEMPLATE_INSTANTIATION := $(STACK_TEMPLATE_INSTANTIATION_CPP:%.cpp=%.o)
+STACK_INSTANTIATION_CPP := $(shell find $(MATH)stan -type f -name 'chainablestack_inst.cpp')
+STACK_INSTANTIATION := $(STACK_INSTANTIATION_CPP:%.cpp=%.o)
 
-$(STACK_TEMPLATE_INSTANTIATION) : CXXFLAGS += -fPIC
+$(STACK_INSTANTIATION) : CXXFLAGS += -fPIC
 
 clean-math:
 	@echo '  cleaning stan-math targets'
-	$(RM) $(STACK_TEMPLATE_INSTANTIATION)
+	$(RM) $(STACK_INSTANTIATION)
 
 ############################################################
 # Google Test:

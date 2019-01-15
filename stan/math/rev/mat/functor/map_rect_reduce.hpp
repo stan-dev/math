@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/rev/mat/fun/to_var.hpp>
@@ -23,6 +24,7 @@ struct map_rect_reduce<F, var, var> {
     const size_type num_shared_params = shared_params.rows();
     const size_type num_job_specific_params = job_specific_params.rows();
     matrix_d out(1 + num_shared_params + num_job_specific_params, 0);
+    ChainableStack::instantiate();
 
     try {
       start_nested();

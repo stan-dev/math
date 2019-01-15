@@ -46,16 +46,17 @@ TEST(AgradAutoDiff, gradient_threaded) {
   EXPECT_FLOAT_EQ(x_ref(0) * x_ref(0) + 3 * 2 * x_ref(1), grad_fx_ref(1));
 
   auto thread_job = [&](double x1, double x2) {
-    double fx;
-    VectorXd x_local(2);
-    x_local << x1, x2;
-    VectorXd grad_fx;
-    stan::math::gradient(fun1(), x_local, fx, grad_fx);
-    VectorXd res(1 + grad_fx.size());
-    res(0) = fx;
-    res.tail(grad_fx.size()) = grad_fx;
-    return res;
-  };
+                      stan::math::ChainableStack::instantiate();
+                      double fx;
+                      VectorXd x_local(2);
+                      x_local << x1, x2;
+                      VectorXd grad_fx;
+                      stan::math::gradient(fun1(), x_local, fx, grad_fx);
+                      VectorXd res(1 + grad_fx.size());
+                      res(0) = fx;
+                      res.tail(grad_fx.size()) = grad_fx;
+                      return res;
+                    };
 
   // schedule a bunch of jobs which all do the same
   std::vector<std::future<VectorXd>> ad_futures_ref;
