@@ -24,7 +24,7 @@ struct map_rect_reduce<F, var, var> {
     const size_type num_shared_params = shared_params.rows();
     const size_type num_job_specific_params = job_specific_params.rows();
     matrix_d out(1 + num_shared_params + num_job_specific_params, 0);
-    ChainableStack::instantiate();
+    init();
 
     try {
       start_nested();
