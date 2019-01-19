@@ -46,7 +46,9 @@ class map_rect_reduce<F, double, double> {
                       std::ostream* msgs = nullptr) const {
     // It is rather unclear why the init of the AD stack must happen
     // here. Otherwise we get segfaults with example stan programs
-    // which cannot be reproduced (yet) using tests.
+    // which cannot be reproduced (yet) using tests. The unit tests
+    // for prim and rev work just fine when the init is not given
+    // here!
     init();
     return F()(shared_params, job_specific_params, x_r, x_i, msgs).transpose();
   }

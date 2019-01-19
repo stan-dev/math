@@ -20,7 +20,7 @@ struct map_rect : public ::testing::Test {
   std::vector<Eigen::VectorXd> job_params_d;
   std::vector<std::vector<double> > x_r;
   std::vector<std::vector<int> > x_i;
-  const std::size_t N = 10;
+  const std::size_t N = 100;
 
   virtual void SetUp() {
     shared_params_d.resize(2);
