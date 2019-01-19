@@ -66,6 +66,7 @@ struct map_rect_reduce<F, double, var> {
                       std::ostream* msgs = nullptr) const {
     const size_type num_job_specific_params = job_specific_params.rows();
     matrix_d out(1 + num_job_specific_params, 0);
+    init();
 
     try {
       start_nested();
@@ -102,6 +103,7 @@ struct map_rect_reduce<F, var, double> {
                       std::ostream* msgs = nullptr) const {
     const size_type num_shared_params = shared_params.rows();
     matrix_d out(1 + num_shared_params, 0);
+    init();
 
     try {
       start_nested();

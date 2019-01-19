@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_REDUCE_HPP
 
 #include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/rev/core/chainablestack.hpp>
 
 #include <vector>
 
@@ -43,6 +44,10 @@ class map_rect_reduce<F, double, double> {
                       const std::vector<double>& x_r,
                       const std::vector<int>& x_i,
                       std::ostream* msgs = nullptr) const {
+    // It is rather unclear why the init of the AD stack must happen
+    // here. Otherwise we get segfaults with example stan programs
+    // which cannot be reproduced (yet) using tests.
+    init();
     return F()(shared_params, job_specific_params, x_r, x_i, msgs).transpose();
   }
 };
