@@ -7,8 +7,8 @@ namespace stan {
 namespace math {
 namespace internal {
 
-  const ChainableStack::AutodiffStackStorage* __chainable_stack = ChainableStack::instantiate();
-
+const ChainableStack::AutodiffStackStorage* __chainable_stack
+    = ChainableStack::instantiate();
 }
 }  // namespace math
 }  // namespace stan

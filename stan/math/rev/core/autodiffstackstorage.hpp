@@ -66,29 +66,30 @@ struct AutodiffStackSingleton {
     return *instance_;
   }
 
-  static inline AutodiffStackStorage* instantiate() {
+  static inline AutodiffStackStorage *instantiate() {
     static thread_local std::mutex init_mutex;
     std::lock_guard<std::mutex> init_lock(init_mutex);
-    if(instance_ == 0)
+    if (instance_ == 0)
       instance_ = new AutodiffStackStorage();
     return instance_;
   }
-  
+
  private:
   static
 #ifdef STAN_THREADS
-  thread_local
+      thread_local
 #endif
-  AutodiffStackStorage* instance_;
+      AutodiffStackStorage *instance_;
 };
 
 template <typename ChainableT, typename ChainableAllocT>
 #ifdef STAN_THREADS
 thread_local
 #endif
-typename AutodiffStackSingleton<ChainableT,
-                                ChainableAllocT>::AutodiffStackStorage*
-AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_ = 0;
+    typename AutodiffStackSingleton<ChainableT,
+                                    ChainableAllocT>::AutodiffStackStorage
+        *AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_
+    = 0;
 
 }  // namespace math
 }  // namespace stan
