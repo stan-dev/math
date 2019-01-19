@@ -25,7 +25,7 @@ TEST(init, thread_initialize) {
     EXPECT_TRUE(stan::math::ChainableStack::instance_ != nullptr);
     stan::math::init();
     EXPECT_TRUE(stan::math::ChainableStack::instance_ != nullptr);
-    EXPECT_TRUE(stan::math::ChainableStack::instance_ != &main_ad_stack);
+    EXPECT_TRUE(stan::math::ChainableStack::instance_ == &main_ad_stack);
   };
 #endif
   std::thread other_work(thread_tester);
@@ -34,7 +34,9 @@ TEST(init, thread_initialize) {
 }
 
 TEST(init, thread_instances) {
-  // place a var on the stack
+  // place a var on the stack such that a fresh stack in another
+  // thread will be different at initialization (if STAN_THREADS is
+  // set)
   stan::math::var a = 1;
 
   stan::math::ChainableStack::AutodiffStackStorage& main_ad_stack

@@ -110,7 +110,7 @@ clean-mpi:
 
 endif
 
-STACK_INSTANTIATION_CPP := $(shell find $(MATH)stan -type f -name 'chainablestack_inst.cpp')
+STACK_INSTANTIATION_CPP := $(MATH)stan/math/rev/core/chainablestack_inst.cpp
 STACK_INSTANTIATION := $(STACK_INSTANTIATION_CPP:%.cpp=%.o)
 
 $(STACK_INSTANTIATION) : CXXFLAGS += -fPIC
