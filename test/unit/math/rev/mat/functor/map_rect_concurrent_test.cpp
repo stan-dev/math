@@ -5,10 +5,11 @@
 #undef STAN_MPI
 #endif
 
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 
 #include <test/unit/math/prim/mat/functor/hard_work.hpp>
+#include <test/unit/math/prim/mat/functor/utils_threads.hpp>
 
 #include <iostream>
 #include <vector>
@@ -23,6 +24,7 @@ struct map_rect : public ::testing::Test {
   const std::size_t N = 100;
 
   virtual void SetUp() {
+    set_n_threads(4);
     shared_params_d.resize(2);
     shared_params_d << 2, 0;
 
