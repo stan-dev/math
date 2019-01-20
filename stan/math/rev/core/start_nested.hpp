@@ -11,6 +11,20 @@ namespace math {
  * can find it.
  */
 static inline void start_nested() {
+  ChainableStack::AutodiffStackQueue& queue = ChainableStack::queue();
+
+  const std::size_t next_instance = queue.current_instance_ + 1;
+
+  while (queue.instance_stack_.size() < next_instance + 1) {
+    queue.emplace_back(
+        std::shared_ptr<AutodiffStackStorage>(new AutodiffStackStorage()));
+  }
+
+  /*
+  current = 0;
+  size = 1;
+  next = 1;
+
   ChainableStack::instance().nested_var_stack_sizes_.push_back(
       ChainableStack::instance().var_stack_.size());
   ChainableStack::instance().nested_var_nochain_stack_sizes_.push_back(
@@ -18,6 +32,7 @@ static inline void start_nested() {
   ChainableStack::instance().nested_var_alloc_stack_starts_.push_back(
       ChainableStack::instance().var_alloc_stack_.size());
   ChainableStack::instance().memalloc_.start_nested();
+  */
 }
 
 }  // namespace math

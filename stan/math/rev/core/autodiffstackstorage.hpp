@@ -57,6 +57,14 @@ struct AutodiffStackSingleton {
     std::vector<size_t> nested_var_alloc_stack_starts_;
   };
 
+  struct AutodiffStackQueue {
+    AutodiffStackQueue &operator=(const AutodiffStackQueue &) = delete;
+
+    std::vector<std::shared_ptr<AutodiffStackStorage> > instance_stack_;
+
+    std::size_t current_instance_;
+  };
+
   AutodiffStackSingleton() = delete;
   explicit AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
   AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
