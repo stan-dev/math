@@ -110,6 +110,15 @@ clean-mpi:
 
 endif
 
+STACK_INSTANTIATION_CPP := $(MATH)stan/math/rev/core/chainablestack_inst.cpp
+STACK_INSTANTIATION := $(STACK_INSTANTIATION_CPP:%.cpp=%.o)
+
+$(STACK_INSTANTIATION) : CXXFLAGS += -fPIC
+
+clean-math:
+	@echo '  cleaning stan-math targets'
+	$(RM) $(STACK_INSTANTIATION)
+
 ############################################################
 # Google Test:
 #   Build the google test library.
@@ -123,4 +132,4 @@ $(GTEST)/src/gtest-all.o: INC += $(INC_GTEST)
 # Clean all libraries
 
 .PHONY: clean-libraries clean-sundials clean-mpi
-clean-libraries: clean-sundials clean-mpi
+clean-libraries: clean-sundials clean-mpi clean-math

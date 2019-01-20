@@ -2,27 +2,48 @@
 #define STAN_MATH_REV_CORE_AUTODIFFSTACKSTORAGE_HPP
 
 #include <stan/math/memory/stack_alloc.hpp>
+#include <mutex>
 #include <vector>
 
 namespace stan {
 namespace math {
 
 /**
- * Provides a thread_local singleton if needed. Read warnings below!
- * For performance reasons the singleton is a global static for the
- * case of no threading which is returned by a function. This design
- * should allow the compiler to apply necessary inlining to get
+ * Provides a thread_local storage (TLS) singleton if needed. Read
+ * warnings below!  For performance reasons the singleton is a global
+ * static pointer which is initialized to a constant expression (the
+ * nullptr). Doing allows for a faster access to the TLS pointer
+ * instance. If one were to directly initialize the pointer with a
+ * call to new, the compiler will insert additional code for each
+ * reference in the code to the TLS. The additional code checks the
+ * initialization status thus everytime one accesses the TLS, see [4]
+ * for details and an example which demonstrates this. However, this
+ * design requires that the pointer must be initialized with the
+ * init() function before any var's are
+ * instantiated. Otherwise a segfault will occur. The init() function
+ * must be called for any thread which wants to use reverse mode
+ * autodiff facilites.
+ *
+ * Furthermore, the declaration as a global (possibly thread local)
+ * pointer allows the compiler to apply necessary inlining to get
  * maximal performance. However, this design suffers from "the static
  * init order fiasco"[0].  Anywhere this is used, we must be
  * absolutely positive that it doesn't matter when the singleton will
  * get initialized relative to other static variables.  In exchange,
- * we get a more performant singleton pattern for the non-threading
- * case. In the threading case we use the defacto standard C++11
+ * we get a more performant singleton pattern.
+ *
+ * Formely, stan-math used in the threading case the defacto standard C++11
  * singleton pattern relying on a function wrapping a static local
  * variable. This standard pattern is expected to be well supported
  * by the major compilers (as its standard), but it does incur some
  * performance penalty.  There has been some discussion on this; see
- * [1] and [2] and the discussions those PRs link to as well.
+ * [1] and [2] and the discussions those PRs link to as well. The
+ * current design has a much reduced/almost no performance penalty
+ * since the access to the TLS is not wrapped in extra function
+ * calls. Moreover, the thread_local declaration below can be changed
+ * to the __thread keyword which is a compiler-specific extension of
+ * g++,clang++&intel and is around for much longer than C++11 such
+ * that these compilers should support this design just as robust.
  *
  * These are thread_local only if the user asks for it with
  * -DSTAN_THREADS. This is primarily because Apple clang compilers
@@ -37,6 +58,7 @@ namespace math {
  * [2] https://github.com/stan-dev/math/pull/826
  * [3]
  * http://discourse.mc-stan.org/t/potentially-dropping-support-for-older-versions-of-apples-version-of-clang/3780/
+ * [4] https://discourse.mc-stan.org/t/thread-performance-penalty/7306/8
  */
 template <typename ChainableT, typename ChainableAllocT>
 struct AutodiffStackSingleton {
@@ -69,26 +91,25 @@ struct AutodiffStackSingleton {
   explicit AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
   AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
 
-  static inline AutodiffStackStorage &instance() {
-#ifdef STAN_THREADS
-    thread_local static AutodiffStackStorage instance_;
-#endif
-    return instance_;
+  constexpr static inline AutodiffStackStorage &instance() {
+    return *instance_;
   }
 
-#ifndef STAN_THREADS
-
- private:
-  static AutodiffStackStorage instance_;
+  static
+#ifdef STAN_THREADS
+      thread_local
 #endif
+      AutodiffStackStorage *instance_;
 };
 
-#ifndef STAN_THREADS
 template <typename ChainableT, typename ChainableAllocT>
-typename AutodiffStackSingleton<ChainableT,
-                                ChainableAllocT>::AutodiffStackStorage
-    AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_;
+#ifdef STAN_THREADS
+thread_local
 #endif
+    typename AutodiffStackSingleton<ChainableT,
+                                    ChainableAllocT>::AutodiffStackStorage
+        *AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_
+    = nullptr;
 
 }  // namespace math
 }  // namespace stan

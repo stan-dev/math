@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/rev/mat/fun/to_var.hpp>
@@ -14,6 +15,19 @@ namespace math {
 namespace internal {
 
 template <typename F>
+class map_rect_reduce<F, double, double> {
+ public:
+  matrix_d operator()(const vector_d& shared_params,
+                      const vector_d& job_specific_params,
+                      const std::vector<double>& x_r,
+                      const std::vector<int>& x_i,
+                      std::ostream* msgs = nullptr) const {
+    init();
+    return F()(shared_params, job_specific_params, x_r, x_i, msgs).transpose();
+  }
+};
+
+template <typename F>
 struct map_rect_reduce<F, var, var> {
   matrix_d operator()(const vector_d& shared_params,
                       const vector_d& job_specific_params,
@@ -23,6 +37,7 @@ struct map_rect_reduce<F, var, var> {
     const size_type num_shared_params = shared_params.rows();
     const size_type num_job_specific_params = job_specific_params.rows();
     matrix_d out(1 + num_shared_params + num_job_specific_params, 0);
+    init();
 
     try {
       start_nested();
@@ -64,6 +79,7 @@ struct map_rect_reduce<F, double, var> {
                       std::ostream* msgs = nullptr) const {
     const size_type num_job_specific_params = job_specific_params.rows();
     matrix_d out(1 + num_job_specific_params, 0);
+    init();
 
     try {
       start_nested();
@@ -100,6 +116,7 @@ struct map_rect_reduce<F, var, double> {
                       std::ostream* msgs = nullptr) const {
     const size_type num_shared_params = shared_params.rows();
     matrix_d out(1 + num_shared_params, 0);
+    init();
 
     try {
       start_nested();
