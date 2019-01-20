@@ -18,8 +18,10 @@ typedef AutodiffStackSingleton<vari, chainable_alloc> ChainableStack;
  * reverse mode autodiff operations.
  */
 static inline ChainableStack::AutodiffStackStorage* init() {
-  if (ChainableStack::instance_ == nullptr)
-    ChainableStack::instance_ = new ChainableStack::AutodiffStackStorage();
+  if (ChainableStack::instance_ == nullptr) {
+    ChainableStack::AutodiffStackQueue& queue = ChainableStack::queue();
+    ChainableStack::instance_ = queue.instance_stack_[0].get();
+  }
   return ChainableStack::instance_;
 }
 

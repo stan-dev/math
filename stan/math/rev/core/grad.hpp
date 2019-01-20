@@ -38,11 +38,11 @@ static void grad(vari* vi) {
   typedef std::vector<vari*>::reverse_iterator it_t;
   vi->init_dependent();
   it_t begin = ChainableStack::instance().var_stack_.rbegin();
-  it_t end = empty_nested() ? ChainableStack::instance().var_stack_.rend()
-                            : begin + nested_size();
-  for (it_t it = begin; it < end; ++it) {
+  it_t end = ChainableStack::instance().var_stack_.rend();
+  // it_t end = empty_nested() ? ChainableStack::instance().var_stack_.rend()
+  //                          : begin + nested_size();
+  for (it_t it = begin; it != end; ++it)
     (*it)->chain();
-  }
 }
 
 }  // namespace math

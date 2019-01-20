@@ -3,6 +3,7 @@
 
 #include <stan/math/memory/stack_alloc.hpp>
 #include <mutex>
+#include <memory>
 #include <vector>
 
 namespace stan {
@@ -74,12 +75,19 @@ struct AutodiffStackSingleton {
     stack_alloc memalloc_;
 
     // nested positions
+    /*
     std::vector<size_t> nested_var_stack_sizes_;
     std::vector<size_t> nested_var_nochain_stack_sizes_;
     std::vector<size_t> nested_var_alloc_stack_starts_;
+    */
   };
 
   struct AutodiffStackQueue {
+    AutodiffStackQueue()
+        : instance_stack_(1, std::shared_ptr<AutodiffStackStorage>(
+                                 new AutodiffStackStorage())),
+          current_instance_(0) {}
+
     AutodiffStackQueue &operator=(const AutodiffStackQueue &) = delete;
 
     std::vector<std::shared_ptr<AutodiffStackStorage> > instance_stack_;
@@ -93,6 +101,15 @@ struct AutodiffStackSingleton {
 
   constexpr static inline AutodiffStackStorage &instance() {
     return *instance_;
+  }
+
+  static inline AutodiffStackQueue &queue() {
+    static
+#ifdef STAN_THREADS
+        thread_local
+#endif
+        AutodiffStackQueue queue_;
+    return queue_;
   }
 
   static

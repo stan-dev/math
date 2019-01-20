@@ -3,6 +3,9 @@
 
 #include <stan/math/rev/core/chainablestack.hpp>
 
+#include <memory>
+#include <vector>
+
 namespace stan {
 namespace math {
 
@@ -16,9 +19,13 @@ static inline void start_nested() {
   const std::size_t next_instance = queue.current_instance_ + 1;
 
   while (queue.instance_stack_.size() < next_instance + 1) {
-    queue.emplace_back(
-        std::shared_ptr<AutodiffStackStorage>(new AutodiffStackStorage()));
+    queue.instance_stack_.emplace_back(
+        std::shared_ptr<ChainableStack::AutodiffStackStorage>(
+            new ChainableStack::AutodiffStackStorage()));
   }
+
+  ChainableStack::instance_ = queue.instance_stack_[next_instance].get();
+  queue.current_instance_ = next_instance;
 
   /*
   current = 0;
