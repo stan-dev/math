@@ -15,6 +15,19 @@ namespace math {
 namespace internal {
 
 template <typename F>
+class map_rect_reduce<F, double, double> {
+ public:
+  matrix_d operator()(const vector_d& shared_params,
+                      const vector_d& job_specific_params,
+                      const std::vector<double>& x_r,
+                      const std::vector<int>& x_i,
+                      std::ostream* msgs = nullptr) const {
+    init();
+    return F()(shared_params, job_specific_params, x_r, x_i, msgs).transpose();
+  }
+};
+
+template <typename F>
 struct map_rect_reduce<F, var, var> {
   matrix_d operator()(const vector_d& shared_params,
                       const vector_d& job_specific_params,
