@@ -28,10 +28,6 @@ static inline void start_nested() {
   queue.current_instance_ = next_instance;
 
   /*
-  current = 0;
-  size = 1;
-  next = 1;
-
   ChainableStack::instance().nested_var_stack_sizes_.push_back(
       ChainableStack::instance().var_stack_.size());
   ChainableStack::instance().nested_var_nochain_stack_sizes_.push_back(
