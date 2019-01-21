@@ -5,6 +5,7 @@
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/empty_nested.hpp>
+#include <stan/math/rev/core/set_zero_all_adjoints.hpp>
 #include <stdexcept>
 
 namespace stan {
