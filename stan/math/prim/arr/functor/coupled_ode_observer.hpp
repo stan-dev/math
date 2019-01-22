@@ -9,10 +9,6 @@
 #include <stan/math/prim/arr/fun/sum.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-// the mat file defines the needed ops_partial_edge for
-// std::vector<var> operands which are needed here
-#include <stan/math/rev/mat/meta/operands_and_partials.hpp>
-#include <stan/math/rev/scal/meta/operands_and_partials.hpp>
 
 #include <vector>
 
