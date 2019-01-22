@@ -28,6 +28,7 @@
 #include <stan/math/prim/arr/fun/promote_elements.hpp>
 #include <stan/math/prim/arr/fun/promote_scalar.hpp>
 #include <stan/math/prim/arr/fun/promote_scalar_type.hpp>
+#include <stan/math/prim/arr/fun/quantile.hpp>
 #include <stan/math/prim/arr/fun/rep_array.hpp>
 #include <stan/math/prim/arr/fun/scaled_add.hpp>
 #include <stan/math/prim/arr/fun/sort_asc.hpp>
