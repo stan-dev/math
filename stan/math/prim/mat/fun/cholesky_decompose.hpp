@@ -43,14 +43,9 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
     llt.compute(m);
     check_pos_definite("cholesky_decompose", "m", llt);
     return llt.matrixL();
-#ifdef STAN_OPENCL
   }
-#endif
-#ifdef STAN_OPENCL
 }
-#endif
 }  // namespace math
 
-}  // namespace stan
 }  // namespace stan
 #endif
