@@ -127,8 +127,7 @@ pipeline {
             }
             post {
                 always {
-                    warnings consoleParsers: [[parserName: 'CppLint']], canRunOnFailed: true
-                    warnings consoleParsers: [[parserName: 'math-dependencies']], canRunOnFailed: true
+                    recordIssues enabledForFailure: true, tool: cppLint()
                     deleteDir()
                 }
             }
@@ -308,7 +307,7 @@ pipeline {
     post {
         always {
             node("osx || linux") {
-                warnings canRunOnFailed: true, consoleParsers: [[parserName: 'Clang (LLVM based)']]
+                recordIssues enabledForFailure: false, tool: clang()
             }
         }
         success {
