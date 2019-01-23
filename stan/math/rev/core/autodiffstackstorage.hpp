@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_CORE_AUTODIFFSTACKSTORAGE_HPP
 
 #include <stan/math/memory/stack_alloc.hpp>
-#include <mutex>
 #include <vector>
 
 namespace stan {
