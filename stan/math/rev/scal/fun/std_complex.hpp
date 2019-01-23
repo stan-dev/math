@@ -80,16 +80,13 @@ complex<stan::math::var> operator*(const complex<stan::math::var>& z,
 
 complex<stan::math::var> operator*(const complex<stan::math::var>& z,
                                    double w) {
-  return complex<stan::math::var>{z.real() * w,
-                                  z.imag() * w};
+  return complex<stan::math::var>{z.real() * w, z.imag() * w};
 }
 
 complex<stan::math::var> operator*(double z,
                                    const complex<stan::math::var>& w) {
-  return complex<stan::math::var>{z * w.real(),
-                                  z * w.imag()};
+  return complex<stan::math::var>{z * w.real(), z * w.imag()};
 }
-
 
 template <>
 template <>
