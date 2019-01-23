@@ -38,12 +38,16 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
     copy(m_chol, m_gpu);  // NOLINT
     return m_chol;
   } else {
-#endif
     Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > llt(m.rows());
     llt.compute(m);
     check_pos_definite("cholesky_decompose", "m", llt);
     return llt.matrixL();
   }
+#endif
+  Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > llt(m.rows());
+  llt.compute(m);
+  check_pos_definite("cholesky_decompose", "m", llt);
+  return llt.matrixL();
 }
 }  // namespace math
 
