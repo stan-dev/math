@@ -78,6 +78,19 @@ complex<stan::math::var> operator*(const complex<stan::math::var>& z,
                                   z.real() * w.imag() + z.imag() * w.real()};
 }
 
+complex<stan::math::var> operator*(const complex<stan::math::var>& z,
+                                   double w) {
+  return complex<stan::math::var>{z.real() * w,
+                                  z.imag() * w};
+}
+
+complex<stan::math::var> operator*(double z,
+                                   const complex<stan::math::var>& w) {
+  return complex<stan::math::var>{z * w.real(),
+                                  z * w.imag()};
+}
+
+
 template <>
 template <>
 complex<stan::math::var>& complex<stan::math::var>::operator/=(
@@ -166,7 +179,19 @@ inline complex<stan::math::var> exp(const complex<stan::math::var>& z) {
 template <>
 inline complex<stan::math::var> pow(const complex<stan::math::var>& x,
                                     const complex<stan::math::var>& y) {
-  return (x == 0.0) ? complex<stan::math::var>(0.0, 0.0)
+  return (x == 0.0) ? complex<stan::math::var>(1.0, 0.0)
+                    : std::exp(y * std::log(x));
+}
+
+inline complex<stan::math::var> pow(const complex<stan::math::var>& x,
+                                    double y) {
+  return (x == 0.0) ? complex<stan::math::var>(1.0, 0.0)
+                    : std::exp(y * std::log(x));
+}
+
+inline complex<stan::math::var> pow(double x,
+                                    const complex<stan::math::var>& y) {
+  return (x == 0.0) ? complex<stan::math::var>(1.0, 0.0)
                     : std::exp(y * std::log(x));
 }
 

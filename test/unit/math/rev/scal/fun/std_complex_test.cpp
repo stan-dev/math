@@ -505,13 +505,13 @@ TEST_F(MathRev, sqrt_zero_real) {
 
 TEST_F(MathRev, pow) {
   std::complex<stan::math::var> i(0, 1);
-  auto f = pow(i, i);
+  std::complex<stan::math::var> f = pow(i, i);
   EXPECT_EQ(real(f).val(), exp(-stan::math::pi() / 2));
 }
 
 TEST_F(MathRev, pow_zero) {
   std::complex<stan::math::var> i(0, 0);
-  auto f = pow(i, i);
-  EXPECT_EQ(0, real(f).val());
+  std::complex<stan::math::var> f = pow(i, i);
+  EXPECT_EQ(1, real(f).val());
   EXPECT_EQ(0, imag(f).val());
 }
