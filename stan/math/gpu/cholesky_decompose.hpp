@@ -46,7 +46,7 @@ inline matrix_gpu cholesky_decompose_recursion(matrix_gpu& A,
  *  <code>A.rows() / 2</code>, and if the <code>block</code> size is less than
  * 100 then the cholesky decomposition on the GPU is computed
  * using that submatrix. If <code>block</code> is greater than
- * 100 then <code>cholesky_decompose</code> is run again
+ * 100 or <code>min_block</code> then <code>cholesky_decompose</code> is run again
  * with <code>block</code> equal to <code>A.rows() / 2</code>. Once the
  * Cholesky Decomposition is computed, the full matrix cholesky is created
  * by propogating the cholesky forward as given in the reference report below.
@@ -55,6 +55,7 @@ inline matrix_gpu cholesky_decompose_recursion(matrix_gpu& A,
  * see the Cholesy decompostion chapter in the  reference report
  * <a href="https://goo.gl/6kWkJ5"> here</a>.
  * @param A Symmetric matrix on the GPU.
+ * @param min_block The minimum block size to execute the cholesky on.
  * @return Square root of matrix on the GPU.
  * @throw std::domain_error if m is not
  *  positive definite (if m has more than 0 elements)
