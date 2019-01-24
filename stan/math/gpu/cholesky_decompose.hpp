@@ -21,7 +21,7 @@ namespace internal {
 inline matrix_gpu cholesky_decompose_recursion(matrix_gpu& A,
                                                const int min_block) {
   matrix_gpu L(A.rows(), A.cols());
-  if (A.rows() <= min_block | A.rows() < 100) {
+  if (A.rows() <= min_block || A.rows() < 100) {
     try {
       opencl_kernels::cholesky_decompose(cl::NDRange(A.rows()),
                                          cl::NDRange(A.rows()), A.buffer(),
