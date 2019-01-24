@@ -18,7 +18,8 @@ namespace stan {
 namespace math {
 inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int min_block);
 namespace internal {
-inline matrix_gpu cholesky_decompose_recursion(matrix_gpu& A, const int min_block) {
+inline matrix_gpu cholesky_decompose_recursion(matrix_gpu& A,
+                                               const int min_block) {
   matrix_gpu L(A.rows(), A.cols());
   if (A.rows() <= min_block | A.rows() < 100) {
     try {
@@ -75,7 +76,8 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int min_block) {
     // The following function either calls the
     // blocked cholesky recursively for the submatrix A_11
     // or calls the kernel  directly if the size of the block is small enough
-    matrix_gpu L_11 = stan::math::internal::cholesky_decompose_recursion(A_11, min_block);
+    matrix_gpu L_11
+        = stan::math::internal::cholesky_decompose_recursion(A_11, min_block);
     // Copies L_11 back to the input matrix
     A.sub_block(L_11, 0, 0, offset, offset, block, block);
     // Copies a block of the input A into A_21
@@ -99,7 +101,8 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int min_block) {
     matrix_gpu A_11(remaining_rows, remaining_rows);
     A_11.sub_block(A, offset, offset, 0, 0, remaining_rows, remaining_rows);
     // calculate the cholesky factor for the remaining part of the matrix
-    matrix_gpu L_11 = stan::math::internal::cholesky_decompose_recursion(A_11, min_block);
+    matrix_gpu L_11
+        = stan::math::internal::cholesky_decompose_recursion(A_11, min_block);
     A.sub_block(L_11, 0, 0, offset, offset, remaining_rows, remaining_rows);
   }
   check_nan("cholesky_decompose_gpu", "Matrix m", A);
