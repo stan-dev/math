@@ -86,6 +86,12 @@ struct AutodiffStackSingleton {
     return *instance_;
   }
 
+  static AutodiffStackStorage *init() {
+    if (instance_ == nullptr)
+      instance_ = new AutodiffStackStorage();
+    return instance_;
+  }
+
   static
 #ifdef STAN_THREADS
       thread_local
@@ -100,7 +106,11 @@ thread_local
     typename AutodiffStackSingleton<ChainableT,
                                     ChainableAllocT>::AutodiffStackStorage
         *AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_
+#ifdef STAN_THREADS
     = nullptr;
+#else
+    = AutodiffStackSingleton<ChainableT, ChainableAllocT>::init();
+#endif
 
 }  // namespace math
 }  // namespace stan
