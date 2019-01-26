@@ -11,19 +11,19 @@ TEST(init, thread_initialize) {
   stan::math::ChainableStack::AutodiffStackStorage& main_ad_stack
       = stan::math::ChainableStack::instance();
 
-  EXPECT_TRUE(&main_ad_stack == stan::math::init());
+  EXPECT_TRUE(&main_ad_stack == stan::math::ChainableStack::init());
 
 #ifdef STAN_THREADS
   auto thread_tester = [&]() -> void {
     EXPECT_TRUE(stan::math::ChainableStack::instance_ == nullptr);
-    stan::math::init();
+    stan::math::ChainableStack::init();
     EXPECT_TRUE(stan::math::ChainableStack::instance_ != nullptr);
     EXPECT_TRUE(stan::math::ChainableStack::instance_ != &main_ad_stack);
   };
 #else
   auto thread_tester = [&]() -> void {
     EXPECT_TRUE(stan::math::ChainableStack::instance_ != nullptr);
-    stan::math::init();
+    stan::math::ChainableStack::init();
     EXPECT_TRUE(stan::math::ChainableStack::instance_ != nullptr);
     EXPECT_TRUE(stan::math::ChainableStack::instance_ == &main_ad_stack);
   };
@@ -44,13 +44,13 @@ TEST(init, thread_instances) {
 
 #ifdef STAN_THREADS
   auto thread_tester = [&]() -> void {
-    stan::math::init();
+    stan::math::ChainableStack::init();
     EXPECT_TRUE(main_ad_stack.var_stack_.size()
                 > stan::math::ChainableStack::instance().var_stack_.size());
   };
 #else
   auto thread_tester = [&]() -> void {
-    stan::math::init();
+    stan::math::ChainableStack::init();
     EXPECT_TRUE(main_ad_stack.var_stack_.size()
                 == stan::math::ChainableStack::instance().var_stack_.size());
   };

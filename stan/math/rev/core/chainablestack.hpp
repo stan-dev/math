@@ -17,13 +17,11 @@ typedef AutodiffStackSingleton<vari, chainable_alloc> ChainableStack;
  * variable get's instantiated within any thread which performs
  * reverse mode autodiff operations.
  */
+/*
 static inline ChainableStack::AutodiffStackStorage* init() {
-  if (ChainableStack::instance_ == nullptr) {
-    ChainableStack::AutodiffStackQueue& queue = ChainableStack::queue();
-    ChainableStack::instance_ = queue.instance_stack_[0].get();
-  }
-  return ChainableStack::instance_;
+  return ChainableStack::init();
 }
+*/
 
 }  // namespace math
 }  // namespace stan
