@@ -21,7 +21,7 @@ static void grad(vari* vi);
  * Independent (input) and dependent (output) variables for gradients.
  *
  * This class acts as a smart pointer, with resources managed by
- * an agenda-based memory manager scoped to a single gradient
+ * an arena-based memory manager scoped to a single gradient
  * calculation.
  *
  * An var is constructed with a double and used like any
