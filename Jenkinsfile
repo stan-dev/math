@@ -8,6 +8,17 @@ def runTests(String testPath) {
     finally { junit 'test/**/*.xml' }
 }
 
+def runTestsWin(String testPath) {
+    bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
+    try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
+    finally { junit 'test/**/*.xml' }
+}
+
+def deleteDirWin() {
+    bat "attrib -r -s /s /d"
+    deleteDir()
+}
+
 def utils = new org.stan.Utils()
 
 def isBranch(String b) { env.BRANCH_NAME == b }
@@ -20,15 +31,15 @@ String alsoNotify() {
 Boolean isPR() { env.CHANGE_URL != null }
 String fork() { env.CHANGE_FORK ?: "stan-dev" }
 String branchName() { isPR() ? env.CHANGE_BRANCH :env.BRANCH_NAME }
-String cmdstan_pr() { params.cmdstan_pr ?: "downstream_tests" }
-String stan_pr() { params.stan_pr ?: "downstream_tests" }
+String cmdstan_pr() { params.cmdstan_pr ?: ( env.CHANGE_TARGET == "master" ? "downstream_hotfix" : "downstream_tests" ) }
+String stan_pr() { params.stan_pr ?: ( env.CHANGE_TARGET == "master" ? "downstream_hotfix" : "downstream_tests" ) }
 
 pipeline {
     agent none
     parameters {
-        string(defaultValue: 'downstream_tests', name: 'cmdstan_pr',
+        string(defaultValue: '', name: 'cmdstan_pr',
           description: 'PR to test CmdStan upstream against e.g. PR-630')
-        string(defaultValue: 'downstream_tests', name: 'stan_pr',
+        string(defaultValue: '', name: 'stan_pr',
           description: 'PR to test Stan upstream against e.g. PR-630')
         booleanParam(defaultValue: false, description:
         'Run additional distribution tests on RowVectors (takes 5x as long)',
@@ -157,6 +168,22 @@ pipeline {
                         runTests("test/unit/math/gpu")
                     }
                     post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Windows Headers') {
+                    agent { label 'windows' }
+                    steps {
+                        deleteDirWin()
+                        unstash 'MathSetup'
+                        bat "make -j${env.PARALLEL} test-headers"
+                    }
+                }
+                stage('Windows Unit') {
+                    agent { label 'windows' }
+                    steps {
+                        deleteDirWin()
+                        unstash 'MathSetup'
+                        runTestsWin("test/unit")
+                    }
                 }
             }
         }

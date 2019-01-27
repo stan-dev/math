@@ -1,10 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_ERFC_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_ERFC_HPP
 
-#include <stan/math/prim/scal/fun/boost_policy.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <boost/math/special_functions/erf.hpp>
-#include <limits>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -19,11 +16,7 @@ namespace math {
  * @param[in] x Argument.
  * @return Complementary error function of the argument.
  */
-inline double erfc(double x) {
-  if (is_nan(x))
-    return std::numeric_limits<double>::quiet_NaN();
-  return boost::math::erfc(x, boost_policy_t());
-}
+inline double erfc(double x) { return std::erfc(x); }
 
 /**
  * Return the error function of the specified argument.  This
@@ -32,7 +25,7 @@ inline double erfc(double x) {
  * @param[in] x Argument.
  * @return Complementary error function value of the argument.
  */
-inline double erfc(int x) { return erfc(static_cast<double>(x)); }
+inline double erfc(int x) { return std::erfc(x); }
 
 }  // namespace math
 }  // namespace stan
