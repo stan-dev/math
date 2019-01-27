@@ -31,10 +31,10 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
   check_square("cholesky_decompose", "m", m);
   check_symmetric("cholesky_decompose", "m", m);
 #ifdef STAN_OPENCL
-  if (m.rows() > 1800) {
+  if (m.rows() > 1200) {
     matrix_gpu m_gpu(m);
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_chol(m.rows(), m.cols());
-    cholesky_decompose(m_gpu, floor(m_gpu.rows() * 0.03));
+    cholesky_decompose(m_gpu);
     copy(m_chol, m_gpu);  // NOLINT
     return m_chol;
   } else {

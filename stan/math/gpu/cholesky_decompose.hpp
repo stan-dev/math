@@ -16,7 +16,7 @@
 
 namespace stan {
 namespace math {
-
+namespace internal {
   /**
    * Return the lower-triangular Cholesky factor (i.e., matrix
    * square root) of the specified square, symmetric matrix.
@@ -25,13 +25,14 @@ namespace math {
    * <p>\f$A = L \times L^T\f$.
    * The Cholesky decomposition is computed on the GPU. This algorithm is
    * recursive. The matrix is subset into a matrix of size
-   *  <code>A.rows() / 2</code>, and if the submatrix size is less than
-   * 100 then the cholesky decomposition on the GPU is computed
-   * using that submatrix. If the submatrix is greater than
-   * 100 or <code>min_block</code> then <code>cholesky_decompose</code> is run
-   * again with <code>block</code> equal to <code>A.rows() / 2</code>. Once the
-   * Cholesky Decomposition is computed, the full matrix cholesky is created
-   * by propogating the cholesky forward as given in the reference report below.
+   *  <code>A.rows() / 4</code>, and if the submatrix size is less than
+   * 25 or <code>min_block</code> then the cholesky decomposition on the GPU
+   *  is computed using that submatrix. If the submatrix is greater than
+   * 25 or <code>min_block</code> then <code>cholesky_decompose</code> is run
+   * again on a submatrix with size equal to <code>submat.rows() / 4</code>.
+   * Once the Cholesky Decomposition is computed, the full matrix cholesky
+   * is created by propogating the cholesky forward as given in the reference
+   * report below.
    *
    * For a full guide to how this works
    * see the Cholesy decompostion chapter in the  reference report
@@ -48,7 +49,7 @@ namespace math {
     // Repeats the blocked cholesky decomposition until the size of the remaining
     // submatrix is smaller or equal to the minimum blocks size
     // or a heuristic of 100
-    if (A.rows() <= min_block || A.rows() < 100) {
+    if (A.rows() <= min_block || A.rows() < 50) {
       try {
         opencl_kernels::cholesky_decompose(cl::NDRange(A.rows()),
                                            cl::NDRange(A.rows()), A.buffer(),
@@ -60,7 +61,7 @@ namespace math {
     } else {
       // NOTE: The code in this section follows the naming conventions
       // in the report linked in the docs.
-      auto block = floor(A.rows() / 2);
+      auto block = floor(A.rows() / 4);
       // Subset the top left block of the input A into A_11
       matrix_gpu A_11(block, block);
       A_11.sub_block(A, 0, 0, 0, 0, block, block);
@@ -68,7 +69,7 @@ namespace math {
       // blocked cholesky recursively for the submatrix A_11
       // or calls the kernel  directly if the size of the block is small enough
       matrix_gpu L_11
-          = stan::math::cholesky_decompose(A_11, min_block);
+          = stan::math::internal::cholesky_decompose(A_11, min_block);
       // Copies L_11 back to the input matrix
       A.sub_block(L_11, 0, 0, 0, 0, block, block);
 
@@ -89,7 +90,7 @@ namespace math {
       matrix_gpu A_rem_11(block_subset, block_subset);
       A_rem_11.sub_block(A, block, block, 0, 0, block_subset, block_subset);
       matrix_gpu L_rem_11
-          = stan::math::cholesky_decompose(A_rem_11, min_block);
+          = stan::math::internal::cholesky_decompose(A_rem_11, min_block);
       A.sub_block(L_rem_11, 0, 0, block, block, block_subset, block_subset);
       check_nan("cholesky_decompose_gpu", "Matrix m", A);
       check_diagonal_zeros("cholesky_decompose_gpu", "Matrix m", A);
@@ -99,6 +100,27 @@ namespace math {
     // This should never happen
     return A;
   }
+} // namespace internal
+
+/**
+ * Return the lower-triangular Cholesky factor (i.e., matrix
+ * square root) of the specified square, symmetric matrix.
+ * The return value \f$L\f$ will be a lower-traingular matrix such that the
+ * original matrix \f$A\f$ is given by
+ * <p>\f$A = L \times L^T\f$.
+ * The Cholesky decomposition is computed on the GPU.
+ * This function calls the internal recursive <code>cholesky_decompose</code>.
+ * For a full guide to how this works
+ * see the Cholesy decompostion chapter in the  reference report
+ * <a href="https://goo.gl/6kWkJ5"> here</a>.
+ * @param A Symmetric matrix on the GPU.
+ * @return Square root of matrix on the GPU.
+ * @throw std::domain_error if m is not
+ *  positive definite (if m has more than 0 elements)
+ */
+inline matrix_gpu cholesky_decompose(matrix_gpu& A) {
+    return internal::cholesky_decompose(A, floor(A.rows() * 0.04));
+}
 
 }  // namespace math
 }  // namespace stan
