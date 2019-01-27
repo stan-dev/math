@@ -43,11 +43,12 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
     check_pos_definite("cholesky_decompose", "m", llt);
     return llt.matrixL();
   }
-#endif
+#else
   Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > llt(m.rows());
   llt.compute(m);
   check_pos_definite("cholesky_decompose", "m", llt);
   return llt.matrixL();
+#endif
 }
 }  // namespace math
 
