@@ -45,7 +45,7 @@ struct coupled_ode_system<F, double, var> {
   const F& f_;
   const std::vector<double>& y0_dbl_;
   const std::vector<var>& theta_;
-  const std::vector<var> theta_copy_;
+  std::vector<var> theta_copy_;
   const std::vector<double>& x_;
   const std::vector<int>& x_int_;
   const size_t N_;
@@ -72,13 +72,15 @@ struct coupled_ode_system<F, double, var> {
       : f_(f),
         y0_dbl_(y0),
         theta_(theta),
-        theta_copy_(theta),
         x_(x),
         x_int_(x_int),
         N_(y0.size()),
         M_(theta.size()),
         size_(N_ + N_ * M_),
-        msgs_(msgs) {}
+        msgs_(msgs) {
+    for (auto& p : theta)
+      theta_copy_.emplace_back(var(new vari(value_of(p), false)));
+  }
 
   /**
    * Assign the derivative vector with the system derivatives at
@@ -413,7 +415,7 @@ struct coupled_ode_system<F, var, var> {
   const F& f_;
   const std::vector<var>& y0_;
   const std::vector<var>& theta_;
-  const std::vector<var> theta_copy_;
+  std::vector<var> theta_copy_;
   const std::vector<double>& x_;
   const std::vector<int>& x_int_;
   const size_t N_;
@@ -441,13 +443,15 @@ struct coupled_ode_system<F, var, var> {
       : f_(f),
         y0_(y0),
         theta_(theta),
-        theta_copy_(theta),
         x_(x),
         x_int_(x_int),
         N_(y0.size()),
         M_(theta.size()),
         size_(N_ + N_ * (N_ + M_)),
-        msgs_(msgs) {}
+        msgs_(msgs) {
+    for (auto& p : theta)
+      theta_copy_.emplace_back(var(new vari(value_of(p), false)));
+  }
 
   /**
    * Populates the derivative vector with derivatives of the
