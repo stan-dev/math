@@ -26,9 +26,9 @@ namespace internal {
  * The Cholesky decomposition is computed on the GPU. This algorithm is
  * recursive. The matrix is subset into a matrix of size
  *  <code>A.rows() / 4</code>, and if the submatrix size is less than
- * 25 or <code>min_block</code> then the cholesky decomposition on the GPU
+ * 50 or <code>min_block</code> then the cholesky decomposition on the GPU
  *  is computed using that submatrix. If the submatrix is greater than
- * 25 or <code>min_block</code> then <code>cholesky_decompose</code> is run
+ * 50 or <code>min_block</code> then <code>cholesky_decompose</code> is run
  * again on a submatrix with size equal to <code>submat.rows() / 4</code>.
  * Once the Cholesky Decomposition is computed, the full matrix cholesky
  * is created by propogating the cholesky forward as given in the reference
