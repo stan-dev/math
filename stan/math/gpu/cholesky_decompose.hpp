@@ -121,7 +121,7 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int min_block) {
  *  positive definite (if m has more than 0 elements)
  */
 inline matrix_gpu cholesky_decompose(matrix_gpu& A) {
-  auto perc_row = exp(-(A.rows() + 800)/2000) + 0.02;
+  auto perc_row = exp(-(A.rows() + 800) / 2000) + 0.02;
   return internal::cholesky_decompose(A, floor(A.rows() * perc_row));
 }
 
