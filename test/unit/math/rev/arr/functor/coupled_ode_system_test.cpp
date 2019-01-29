@@ -19,7 +19,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_dv) {
   using stan::math::coupled_ode_system;
 
   stan::math::start_nested();
-  
+
   harm_osc_ode_fun harm_osc;
 
   std::vector<stan::math::var> theta;
@@ -53,7 +53,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_dv) {
   EXPECT_FLOAT_EQ(-1.075, dy_dt[1]);
   EXPECT_FLOAT_EQ(2, dy_dt[2]);
   EXPECT_FLOAT_EQ(-1.8, dy_dt[3]);
-  
+
   stan::math::recover_memory_nested();
 }
 TEST_F(StanAgradRevOde, decouple_states_dv) {
@@ -196,7 +196,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vd) {
   using stan::math::coupled_ode_system;
 
   stan::math::start_nested();
-  
+
   harm_osc_ode_fun harm_osc;
 
   std::vector<double> theta;
@@ -236,7 +236,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vd) {
   EXPECT_FLOAT_EQ(-1.0 * 1.0 - 0.15 * 0.0, dy_dt[3]);
   EXPECT_FLOAT_EQ(0.0 * 0.0 + 1.0 * 1.0, dy_dt[4]);
   EXPECT_FLOAT_EQ(-1.0 * 0.0 - 0.15 * 1.0, dy_dt[5]);
-  
+
   stan::math::recover_memory_nested();
 }
 TEST_F(StanAgradRevOde, decouple_states_vd) {
@@ -379,7 +379,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
   using stan::math::coupled_ode_system;
 
   stan::math::start_nested();
-  
+
   std::vector<stan::math::var> y0_var;
   y0_var.push_back(1.0);
   y0_var.push_back(0.5);
@@ -393,7 +393,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
 
   coupled_ode_system<harm_osc_ode_fun, stan::math::var, stan::math::var> system(
       harm_osc, y0_var, theta_var, x, x_int, &msgs);
-  
+
   EXPECT_EQ(stan::math::nested_size(), stack_size);
 
   std::vector<double> coupled_y0(8, 0);
@@ -426,7 +426,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
   EXPECT_FLOAT_EQ(-0.15, dy_dt[5]);
   EXPECT_FLOAT_EQ(0, dy_dt[6]);
   EXPECT_FLOAT_EQ(-0.5, dy_dt[7]);
-  
+
   stan::math::recover_memory_nested();
 }
 TEST_F(StanAgradRevOde, decouple_states_vv) {
