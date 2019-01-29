@@ -49,8 +49,10 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int min_block) {
   matrix_gpu L(A.rows(), A.cols());
   // Repeats the blocked cholesky decomposition until the size of the remaining
   // submatrix is smaller or equal to the minimum blocks size
-  // or a heuristic of 100
-  if (A.rows() <= min_block || A.rows() < 50) {
+  // or a heuristic of 100.
+  // Because the max local buffer size is 1024 we also have to recurse
+  // if the row size is greater than 1024.
+  if (A.rows() < 1024 && (A.rows() <= min_block || A.rows() < 100)) {
     try {
       opencl_kernels::cholesky_decompose(cl::NDRange(A.rows()),
                                          cl::NDRange(A.rows()), A.buffer(),
@@ -119,7 +121,8 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int min_block) {
  *  positive definite (if m has more than 0 elements)
  */
 inline matrix_gpu cholesky_decompose(matrix_gpu& A) {
-  return internal::cholesky_decompose(A, floor(A.rows() * 0.04));
+  auto perc_row = exp(-(A.rows() + 800)/2000) + 0.02;
+  return internal::cholesky_decompose(A, floor(A.rows() * perc_row));
 }
 
 }  // namespace math

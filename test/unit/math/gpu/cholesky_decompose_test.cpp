@@ -73,7 +73,7 @@ TEST(MathMatrix, cholesky_decompose_small) {
 }
 
 TEST(MathMatrix, cholesky_decompose_big) {
-  cholesky_decompose_test(1200);
+  cholesky_decompose_test(1251);
   cholesky_decompose_test(1704);
   cholesky_decompose_test(2000);
 }
