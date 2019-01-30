@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_GPU_CHOLESKY_DECOMPOSE_HPP
 #define STAN_MATH_GPU_CHOLESKY_DECOMPOSE_HPP
 #ifdef STAN_OPENCL
+#include <stan/math/gpu/opencl_context.hpp>
 #include <stan/math/gpu/matrix_gpu.hpp>
 #include <stan/math/gpu/kernels/cholesky_decompose.hpp>
 #include <stan/math/gpu/multiply.hpp>
@@ -50,9 +51,10 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int min_block) {
   // Repeats the blocked cholesky decomposition until the size of the remaining
   // submatrix is smaller or equal to the minimum blocks size
   // or a heuristic of 100.
-  // Because the max local buffer size is 1024 we also have to recurse
-  // if the row size is greater than 1024.
-  if (A.rows() < 1024 && (A.rows() <= min_block || A.rows() < 100)) {
+  // The Cholesky GPU algorithm only uses one local block so we need the matrix
+  // To be less than the max thread block size.
+  if (A.rows() < opencl_context.max_thread_block_size() &&
+   (A.rows() <= min_block || A.rows() < 100)) {
     try {
       opencl_kernels::cholesky_decompose(cl::NDRange(A.rows()),
                                          cl::NDRange(A.rows()), A.buffer(),
@@ -61,45 +63,42 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int min_block) {
       check_opencl_error("cholesky_decompose", e);
     }
     return L;
-  } else {
-    // NOTE: The code in this section follows the naming conventions
-    // in the report linked in the docs.
-    auto block = floor(A.rows() / 4);
-    // Subset the top left block of the input A into A_11
-    matrix_gpu A_11(block, block);
-    A_11.sub_block(A, 0, 0, 0, 0, block, block);
-    // The following function either calls the
-    // blocked cholesky recursively for the submatrix A_11
-    // or calls the kernel  directly if the size of the block is small enough
-    matrix_gpu L_11 = stan::math::internal::cholesky_decompose(A_11, min_block);
-    // Copies L_11 back to the input matrix
-    A.sub_block(L_11, 0, 0, 0, 0, block, block);
-
-    auto block_subset = A.rows() - block;
-    matrix_gpu A_21(block_subset, block);
-    A_21.sub_block(A, block, 0, 0, 0, block_subset, block);
-    // computes A_21*((L_11^-1)^T)
-    // and copies the resulting submatrix to the right hand corner of A
-    matrix_gpu L_21 = A_21 * transpose(lower_triangular_inverse(L_11));
-    A.sub_block(L_21, 0, 0, block, 0, block_subset, block);
-    matrix_gpu A_22(block_subset, block_subset);
-    A_22.sub_block(A, block, block, 0, 0, block_subset, block_subset);
-    // computes A_22 - L_21*(L_21^T)
-    matrix_gpu L_22 = A_22 - multiply_transpose(L_21);
-    // copy L_22 into A's left hand corner
-    A.sub_block(L_22, 0, 0, block, block, block_subset, block_subset);
-    // Computes the Cholesky factor for the remaining submatrix
-    matrix_gpu A_rem_11(block_subset, block_subset);
-    A_rem_11.sub_block(A, block, block, 0, 0, block_subset, block_subset);
-    matrix_gpu L_rem_11
-        = stan::math::internal::cholesky_decompose(A_rem_11, min_block);
-    A.sub_block(L_rem_11, 0, 0, block, block, block_subset, block_subset);
-    check_nan("cholesky_decompose_gpu", "Matrix m", A);
-    check_diagonal_zeros("cholesky_decompose_gpu", "Matrix m", A);
-    A.zeros<stan::math::TriangularViewGPU::Upper>();
-    return A;
   }
-  // This should never happen
+  // NOTE: The code in this section follows the naming conventions
+  // in the report linked in the docs.
+  const int block = floor(A.rows() / 4);
+  // Subset the top left block of the input A into A_11
+  matrix_gpu A_11(block, block);
+  A_11.sub_block(A, 0, 0, 0, 0, block, block);
+  // The following function either calls the
+  // blocked cholesky recursively for the submatrix A_11
+  // or calls the kernel  directly if the size of the block is small enough
+  matrix_gpu L_11 = stan::math::internal::cholesky_decompose(A_11, min_block);
+  // Copies L_11 back to the input matrix
+  A.sub_block(L_11, 0, 0, 0, 0, block, block);
+
+  const int block_subset = A.rows() - block;
+  matrix_gpu A_21(block_subset, block);
+  A_21.sub_block(A, block, 0, 0, 0, block_subset, block);
+  // computes A_21*((L_11^-1)^T)
+  // and copies the resulting submatrix to the lower left hand corner of A
+  matrix_gpu L_21 = A_21 * transpose(lower_triangular_inverse(L_11));
+  A.sub_block(L_21, 0, 0, block, 0, block_subset, block);
+  matrix_gpu A_22(block_subset, block_subset);
+  A_22.sub_block(A, block, block, 0, 0, block_subset, block_subset);
+  // computes A_22 - L_21*(L_21^T)
+  matrix_gpu L_22 = A_22 - multiply_transpose(L_21);
+  // copy L_22 into A's lower left hand corner
+  A.sub_block(L_22, 0, 0, block, block, block_subset, block_subset);
+  // Computes the Cholesky factor for the remaining submatrix
+  matrix_gpu A_rem_11(block_subset, block_subset);
+  A_rem_11.sub_block(A, block, block, 0, 0, block_subset, block_subset);
+  matrix_gpu L_rem_11
+      = stan::math::internal::cholesky_decompose(A_rem_11, min_block);
+  A.sub_block(L_rem_11, 0, 0, block, block, block_subset, block_subset);
+  check_nan("cholesky_decompose_gpu", "Matrix m", A);
+  check_diagonal_zeros("cholesky_decompose_gpu", "Matrix m", A);
+  A.zeros<stan::math::TriangularViewGPU::Upper>();
   return A;
 }
 }  // namespace internal
@@ -121,7 +120,7 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int min_block) {
  *  positive definite (if m has more than 0 elements)
  */
 inline matrix_gpu cholesky_decompose(matrix_gpu& A) {
-  auto perc_row = exp(-(A.rows() + 800) / 2000) + 0.02;
+  double perc_row = exp(-(A.rows() + 800) / 2000) + 0.02;
   return internal::cholesky_decompose(A, floor(A.rows() * perc_row));
 }
 
