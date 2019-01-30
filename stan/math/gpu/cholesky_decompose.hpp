@@ -53,8 +53,8 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A, const int min_block) {
   // or a heuristic of 100.
   // The Cholesky GPU algorithm only uses one local block so we need the matrix
   // To be less than the max thread block size.
-  if (A.rows() < opencl_context.max_thread_block_size() &&
-   (A.rows() <= min_block || A.rows() < 100)) {
+  if (A.rows() < opencl_context.max_thread_block_size()
+      && (A.rows() <= min_block || A.rows() < 100)) {
     try {
       opencl_kernels::cholesky_decompose(cl::NDRange(A.rows()),
                                          cl::NDRange(A.rows()), A.buffer(),
