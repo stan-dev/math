@@ -3,11 +3,9 @@
 
 #include <type_traits>
 #include <vector>
+#include <stan/math/prim/scal/meta/contains_std_vector.hpp>
 
 namespace stan {
-
-template <typename... Ts>
-struct contains_std_vector : std::false_type {};
 
 template <typename T, typename... Ts>
 struct contains_std_vector<std::vector<T>, Ts...> : std::true_type {};
