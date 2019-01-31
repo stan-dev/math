@@ -10,7 +10,7 @@ $(eval _math_warnings_str+=$(_new_math_warnings_str))
 endef
 
 define print_math_warnings
-@echo $(_math_warnings_str)
+@$(_math_warnings_str)
 @exit $(if $(strip $(_math_warnings_str)),1,0)
 endef
 
