@@ -128,6 +128,7 @@ pipeline {
             post {
                 always {
                     recordIssues enabledForFailure: true, tool: cppLint()
+                    recordIssues enabledForFailure: true, tool: cppLint()
                     deleteDir()
                 }
             }
