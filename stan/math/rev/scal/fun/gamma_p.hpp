@@ -20,7 +20,6 @@ class gamma_p_vv_vari : public op_vv_vari {
   gamma_p_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(gamma_p(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
-    using boost::math::lgamma;
     using std::exp;
     using std::fabs;
     using std::log;
