@@ -52,8 +52,8 @@ namespace math {
  * positive
  */
 template <typename T1, typename T2>
-inline typename return_type<T1, T2>::type
-log_falling_factorial(const T1 x, const T2 n) {
+inline typename return_type<T1, T2>::type log_falling_factorial(const T1 x,
+                                                                const T2 n) {
   if (is_nan(x) || is_nan(n))
     return std::numeric_limits<double>::quiet_NaN();
   static const char* function = "log_falling_factorial";
