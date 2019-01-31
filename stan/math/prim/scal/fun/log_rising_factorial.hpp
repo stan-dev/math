@@ -4,6 +4,7 @@
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <limits>
 
 namespace stan {
@@ -48,8 +49,8 @@ namespace math {
  * @throw std::domain_error if the first argument is not positive
  */
 template <typename T1, typename T2>
-inline typename boost::math::tools::promote_args<T1, T2>::type
-log_rising_factorial(const T1& x, const T2& n) {
+inline typename return_type<T1, T2>::type log_rising_factorial(const T1& x,
+                                                               const T2& n) {
   if (is_nan(x) || is_nan(n))
     return std::numeric_limits<double>::quiet_NaN();
   static const char* function = "log_rising_factorial";
