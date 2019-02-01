@@ -128,6 +128,7 @@ pipeline {
             post {
                 always {
                     recordIssues enabledForFailure: true, tool: cppLint()
+		    warnings consoleParsers: [[parserName: 'math-dependencies']], canRunOnFailed: true
                     deleteDir()
                 }
             }
