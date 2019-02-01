@@ -120,15 +120,16 @@ pipeline {
                     sh "echo BOOST_PARALLEL_JOBS=${env.PARALLEL} >> make/local"
                     parallel(
                         CppLint: { sh "make cpplint" },
-                        Dependencies: { sh 'make test-math-dependencies' } ,
+                        Dependencies: { sh 'make test-math-dependencies 2>&1 > dependencies.log' } ,
                         Documentation: { sh 'make doxygen' },
                     )
                 }
             }
             post {
                 always {
-                    recordIssues enabledForFailure: true, tool: cppLint()
-		    warnings consoleParsers: [[parserName: 'math-dependencies']], canRunOnFailed: true
+                    recordIssues enabledForFailure: true, tools:
+                        [cppLint(),
+                         groovyScript(parserId: 'mathDependencies', pattern: '**/dependencies.log')]
                     deleteDir()
                 }
             }
