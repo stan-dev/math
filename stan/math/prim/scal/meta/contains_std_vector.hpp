@@ -5,8 +5,8 @@
 #include <type_traits>
 
 namespace stan {
-  template <typename... Ts>
-  struct contains_std_vector : std::false_type {};
-}
+template <typename... Ts>
+struct contains_std_vector : std::false_type {};
+}  // namespace stan
 
 #endif
