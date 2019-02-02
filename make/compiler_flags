@@ -52,7 +52,7 @@ O ?= 3
 
 ## setup includes
 INC ?= $(INC_FIRST) -I $(if $(MATH),$(MATH),.) -I $(EIGEN) -I $(BOOST) $(INC_SUNDIALS)
-INC_SUNDIALS ?= -I $(SUNDIALS)/include
+INC_SUNDIALS ?= -I $(SUNDIALS)/include -I $(SUNDIALS_CONFIG)/include
 INC_GTEST ?= -I $(GTEST)/include -I $(GTEST)
 
 ## setup precompiler options

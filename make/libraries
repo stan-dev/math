@@ -6,6 +6,7 @@ BOOST ?= $(MATH)lib/boost_1.66.0
 EIGEN ?= $(MATH)lib/eigen_3.3.3
 OPENCL ?= $(MATH)lib/opencl_1.2.8
 SUNDIALS ?= $(MATH)lib/sundials_4.0.1
+SUNDIALS_CONFIG ?= $(MATH)lib/sundials-config
 
 GTEST ?= $(MATH)lib/gtest_1.8.1
 CPPLINT ?= $(MATH)lib/cpplint_4.45
@@ -41,7 +42,7 @@ $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL)) : CXXFLAGS = 
 $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL)) : CPPFLAGS = $(CPPFLAGS_SUNDIALS) $(CPPFLAGS_OS)
 $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL)) : %.o : %.c
 	@mkdir -p $(dir $@)
-	$(COMPILE.cpp) -x c -include $(SUNDIALS)/include/stan_sundials_printf_override.hpp $< $(OUTPUT_OPTION)
+	$(COMPILE.cpp) -x c -include $(SUNDIALS_CONFIG)/include/stan_sundials_printf_override.hpp $< $(OUTPUT_OPTION)
 
 $(SUNDIALS)/lib/libsundials_cvodes.a: $(SUNDIALS_CVODES)
 	@mkdir -p $(dir $@)
