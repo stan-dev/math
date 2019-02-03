@@ -129,7 +129,7 @@ class opencl_context_base {
   cl::Device device_;                // The selected GPU device
   std::string device_name_;          // The name of the GPU
   size_t
-    max_thread_block_size_;  // The maximum size of a block of workers on GPU
+      max_thread_block_size_;  // The maximum size of a block of workers on GPU
   // TODO:(Steve) This should be tuned in a higher part of the stan language
   int max_cholesky_size_;  // Thread block size for the Cholesky
 
@@ -317,9 +317,9 @@ class opencl_context {
   /**
    * Returns the thread block size for the Cholesky Decompositions L_11.
    */
-   inline int max_cholesky_size() {
-     return opencl_context_base::getInstance().max_cholesky_size_;
-   }
+  inline int max_cholesky_size() {
+    return opencl_context_base::getInstance().max_cholesky_size_;
+  }
 
   /**
    * Returns a vector containing the OpenCL device used to create the context
