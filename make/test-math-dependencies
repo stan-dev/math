@@ -3,9 +3,15 @@ $(eval type:= $1)
 $(eval all_headers := $(shell find $2 -name '*.hpp' -o -name '*.cpp'))
 $(eval pattern := $3)
 $(eval msg := $4)
-$(foreach file,\
-   $(shell grep -r -n -e $(pattern) $(all_headers) | sed 's|\([^:]*\):\([0-9]*\):.*|\1(\2)|g'),\
-   echo '$(file): $(msg) [$(type)]';)
+$(eval _new_math_warnings_str:=$(foreach file,\
+  $(shell grep -r -n -e $(pattern) $(all_headers) | grep -v ": \* " | sed 's|\([^:]*\):\([0-9]*\):.*|\1(\2)|g'),\
+  echo '$(file): $(msg) [$(type)]';))
+$(eval _math_warnings_str+=$(_new_math_warnings_str))
+endef
+
+define print_math_warnings
+@$(_math_warnings_str)
+@exit $(if $(strip $(_math_warnings_str)),1,0)
 endef
 
 .PHONY: test-math-dependencies
@@ -60,3 +66,4 @@ test-math-dependencies:
              '<Eigen', 'File includes an Eigen header.')
 	@$(call math_warnings, 'arr', stan/math/*/arr,\
              'Eigen::', 'File uses Eigen.')
+	@$(call print_math_warnings)
