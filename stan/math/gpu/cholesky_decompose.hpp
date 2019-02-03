@@ -38,7 +38,6 @@ namespace math {
  * see the Cholesy decompostion chapter in the  reference report
  * <a href="https://goo.gl/6kWkJ5"> here</a>.
  * @param A Symmetric matrix on the GPU.
- * @param min_block The minimum block size to execute the cholesky on.
  * @return Square root of matrix on the GPU.
  * @throw std::domain_error if m is not
  *  positive definite (if m has more than 0 elements)

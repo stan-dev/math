@@ -319,6 +319,7 @@ class opencl_context {
 
   /**
    * Returns the thread block size for the Cholesky Decompositions L_11.
+   * @param id The name of a tuning parameter.
    */
    inline int tuning_opts(const char* id) {
      return opencl_context_base::getInstance().tuning_opts_[id];
