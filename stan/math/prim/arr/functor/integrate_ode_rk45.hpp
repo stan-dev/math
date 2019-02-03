@@ -15,6 +15,7 @@
 #include <boost/serialization/array_wrapper.hpp>
 #endif
 #include <boost/numeric/odeint.hpp>
+#include <algorithm>
 #include <ostream>
 #include <functional>
 #include <iterator>
