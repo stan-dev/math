@@ -858,7 +858,7 @@ TEST(MathPrimMat, zero_size) {
   Eigen::MatrixXd cov2;
   cov = stan::math::gp_exp_quad_cov(x, sigma, l);
   cov2 = stan::math::gp_exp_quad_cov(x, x, sigma, l);
-  
+
   EXPECT_EQ(0, cov.rows());
   EXPECT_EQ(0, cov.cols());
 }

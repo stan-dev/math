@@ -154,7 +154,7 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   size_t x2_size = x2.size();
   Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
-    cov(x1_size, x2_size);
+      cov(x1_size, x2_size);
   if (x1_size == 0 || x2_size == 0)
     return cov;
 
