@@ -349,6 +349,7 @@ double test_gradient(int size, double prec) {
   EXPECT_FLOAT_EQ(evals_fd, evals_ad);
   return grads_ad.sum();
 }
+
 TEST(AgradRevMatrix, mat_cholesky) {
   using stan::math::cholesky_decompose;
   using stan::math::matrix_v;
@@ -413,7 +414,7 @@ TEST(AgradRevMatrix, check_varis_on_stack_small) {
 TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients) {
   test_gradient(36, 1e-08);
   test_gp_grad(100, 1e-08);
-  test_gp_grad(1000, 1e-08);
+  test_gp_grad(1300, 1e-08);
   test_chol_mult(37, 1e-08);
   test_simple_vec_mult(45, 1e-08);
 }
