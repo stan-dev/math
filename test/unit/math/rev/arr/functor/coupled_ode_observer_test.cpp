@@ -6,14 +6,14 @@
 #include <vector>
 #include <string>
 
-struct StanAgradRevOde : public ::testing::Test {
-  void SetUp() { stan::math::recover_memory(); }
+struct StanRevOde : public ::testing::Test {
+  void TearDown() { stan::math::recover_memory(); }
   std::stringstream msgs;
   std::vector<double> x;
   std::vector<int> x_int;
 };
 
-TEST_F(StanAgradRevOde, observe_states_dv) {
+TEST_F(StanRevOde, observe_states_dv) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
 
@@ -65,7 +65,7 @@ TEST_F(StanAgradRevOde, observe_states_dv) {
   }
 }
 
-TEST_F(StanAgradRevOde, observe_states_vd) {
+TEST_F(StanRevOde, observe_states_vd) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
 
@@ -119,7 +119,7 @@ TEST_F(StanAgradRevOde, observe_states_vd) {
   }
 }
 
-TEST_F(StanAgradRevOde, observe_states_vv) {
+TEST_F(StanRevOde, observe_states_vv) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
 
@@ -173,7 +173,7 @@ TEST_F(StanAgradRevOde, observe_states_vv) {
   }
 }
 
-TEST_F(StanAgradRevOde, observe_states_t0v) {
+TEST_F(StanRevOde, observe_states_t0v) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
 
@@ -225,7 +225,7 @@ TEST_F(StanAgradRevOde, observe_states_t0v) {
   }
 }
 
-TEST_F(StanAgradRevOde, observe_states_tsv) {
+TEST_F(StanRevOde, observe_states_tsv) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
 

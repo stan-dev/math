@@ -12,7 +12,6 @@ namespace stan {
 namespace math {
 namespace internal {
 // Vectorized Univariate
-// Vectorized Univariate
 template <>
 class ops_partials_edge<double, std::vector<var> > {
  public:

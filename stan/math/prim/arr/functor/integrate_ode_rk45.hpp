@@ -110,9 +110,9 @@ integrate_ode_rk45(const F& f, const std::vector<T1>& y0, const T_t0& t0,
   coupled_ode_system<F, T1, T2> coupled_system(f, y0, theta, x, x_int, msgs);
 
   // first time in the vector must be time of initial state
-  std::vector<double> ts_vec(1);
+  std::vector<double> ts_vec(ts.size() + 1);
   ts_vec[0] = t0_dbl;
-  ts_vec.insert(ts_vec.end(), ts_dbl.begin(), ts_dbl.end());
+  std::copy(ts_dbl.begin(), ts_dbl.end(), ts_vec.begin() + 1);
 
   std::vector<std::vector<typename stan::return_type<T1, T2, T_t0, T_ts>::type>>
       y;

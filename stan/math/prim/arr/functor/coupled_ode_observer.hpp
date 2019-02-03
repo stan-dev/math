@@ -22,10 +22,16 @@ namespace math {
  * the inputs is varying, then the output will be varying as well. The
  * sensitivities of the initials and the parameters are taken from the
  * coupled state in the order as defined by the
- * coupled_ode_system. The sensitivities for the initial time point is
- * always zero, since the initial time-point is always skipped and not
- * part of the ts vector. The sensitivities for the time-points is
- * given by the ODE RHS.
+ * coupled_ode_system. The sensitivities at each time-point is simply
+ * the ODE RHS evaluated at that time point.
+ *
+ * The output of this class is for all time-points in the ts vector
+ * which does not contain the initial time-point by the convention
+ * used in stan-math. However, the odeint integrator always calls the
+ * observer class at the initial time-point whereas our CVODES
+ * integrator does not. To accomodate the different conventions the
+ * constructor has the skip_first_state boolean to indicate which
+ * convention to follow (true=odeint, false=CVODES convention).
  *
  */
 template <typename F, typename T1, typename T2, typename T_t0, typename T_ts>
@@ -48,10 +54,13 @@ struct coupled_ode_observer {
   const std::size_t N_;
   const std::size_t M_;
   const std::size_t index_offset_theta_;
+  // counter pointing to the element in the ts vector which is
+  // currently being referred to. Initialized to -1 when the first
+  // state is not skipped and -2 if the first state is skipped.
   int n_;
 
   /**
-   * Construct a coupled ODE observer from the specified coupled
+   * Construct a coupled ODE observer for the specified coupled
    * vector.
    *
    * @tparam F type of ODE system function.
@@ -74,11 +83,13 @@ struct coupled_ode_observer {
    * boosts integrators). Defaults to false.
    * type.
    */
-  explicit coupled_ode_observer(
-      const F& f, const std::vector<T1>& y0, const std::vector<T2>& theta,
-      const T_t0& t0, const std::vector<T_ts>& ts, const std::vector<double>& x,
-      const std::vector<int>& x_int, std::ostream* msgs,
-      std::vector<std::vector<return_t>>& y, bool skip_first_state = false)
+  coupled_ode_observer(const F& f, const std::vector<T1>& y0,
+                       const std::vector<T2>& theta, const T_t0& t0,
+                       const std::vector<T_ts>& ts,
+                       const std::vector<double>& x,
+                       const std::vector<int>& x_int, std::ostream* msgs,
+                       std::vector<std::vector<return_t>>& y,
+                       bool skip_first_state = false)
       : f_(f),
         y0_(y0),
         t0_(t0),
@@ -97,6 +108,11 @@ struct coupled_ode_observer {
   /**
    * Callback function for ODE solvers to record values. The coupled
    * state returned from the solver is added directly to the AD tree.
+   *
+   * The coupled state follows the convention as defined in the
+   * coupled_ode_system. In brief, the coupled state consists of {f,
+   * df/dy0, df/dtheta}. Here df/dy0 and df/dtheta are only present if
+   * their respective sensitivites have been requested.
    *
    * @param coupled_state solution at the specified time.
    * @param t time of solution. The time must correspond to the ts
