@@ -3,7 +3,7 @@
 #ifdef STAN_OPENCL
 #define __CL_ENABLE_EXCEPTIONS
 
-#define DEVICE_FILTER CL_DEVICE_TYPE_GPU
+#define DEVICE_FILTER CL_DEVICE_TYPE_ALL
 #ifndef OPENCL_DEVICE_ID
 #error OPENCL_DEVICE_ID_NOT_SET
 #endif
@@ -106,6 +106,10 @@ class opencl_context_base {
         base_opts_["THREAD_BLOCK_SIZE"] = thread_block_size_sqrt;
         base_opts_["WORK_PER_THREAD"] = 1;
       }
+      // Thread block size for the Cholesky
+      // TODO:(Steve) This should be tuned in a higher part of the stan language
+      max_cholesky_size_ = 256;
+
     } catch (const cl::Error& e) {
       check_opencl_error("opencl_context", e);
     }
@@ -121,7 +125,9 @@ class opencl_context_base {
   cl::Device device_;                // The selected GPU device
   std::string device_name_;          // The name of the GPU
   size_t
-      max_thread_block_size_;  // The maximum size of a block of workers on GPU
+    max_thread_block_size_;  // The maximum size of a block of workers on GPU
+  // TODO:(Steve) This should be tuned in a higher part of the stan language
+  int max_cholesky_size_;  // Thread block size for the Cholesky
 
   // Holds Default parameter values for each Kernel.
   typedef std::map<const char*, int> map_base_opts;
@@ -229,7 +235,7 @@ class opencl_context {
 
       try {
         std::vector<cl::Device> all_devices;
-        platform.getDevices(CL_DEVICE_TYPE_GPU, &all_devices);
+        platform.getDevices(CL_DEVICE_TYPE_ALL, &all_devices);
 
         for (auto device_iter : all_devices) {
           cl::Device device(device_iter);
@@ -303,6 +309,13 @@ class opencl_context {
   inline int max_thread_block_size() {
     return opencl_context_base::getInstance().max_thread_block_size_;
   }
+
+  /**
+   * Returns the thread block size for the Cholesky Decompositions L_11.
+   */
+   inline int max_cholesky_size() {
+     return opencl_context_base::getInstance().max_cholesky_size_;
+   }
 
   /**
    * Returns a vector containing the OpenCL device used to create the context
