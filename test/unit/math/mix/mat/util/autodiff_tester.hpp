@@ -116,7 +116,7 @@ template <typename F>
 void test_gradient(const F& f, const Eigen::VectorXd& x, double fx,
                    bool test_derivs) {
   Eigen::VectorXd grad_ad;
-  double fx_ad;
+  double fx_ad = fx;
   gradient<F>(f, x, fx_ad, grad_ad);
   expect_near("test_gradient fx = fx_ad", fx, fx_ad);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
@@ -137,7 +137,7 @@ template <typename F>
 void test_gradient_fvar(const F& f, const Eigen::VectorXd& x, double fx,
                         bool test_derivs) {
   Eigen::VectorXd grad_ad;
-  double fx_ad;
+  double fx_ad = fx;
   gradient<double, F>(f, x, fx_ad, grad_ad);
   expect_near("gradient_fvar fx == fx_ad", fx, fx_ad);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
