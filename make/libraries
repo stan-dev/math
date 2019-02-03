@@ -13,6 +13,9 @@ CPPLINT ?= $(MATH)lib/cpplint_4.45
 
 ################################################################################
 # SUNDIALS build rules
+# Note: Files starting with f* are by SUNDIALS convention files needed for
+#       Fortran bindings which we do not need for stan-math. Thus these targets
+#       are ignored here. This convention was introduced with 4.0.
 ##
 
 SUNDIALS_CVODES := $(patsubst %.c,%.o,\
