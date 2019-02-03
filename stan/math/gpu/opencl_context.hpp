@@ -108,7 +108,11 @@ class opencl_context_base {
       }
       // Thread block size for the Cholesky
       // TODO:(Steve) This should be tuned in a higher part of the stan language
-      max_cholesky_size_ = 256;
+      if (max_thread_block_size_ >= 256) {
+        max_cholesky_size_ = 256;
+      } else {
+        max_cholesky_size_ = max_thread_block_size_;
+      }
 
     } catch (const cl::Error& e) {
       check_opencl_error("opencl_context", e);
