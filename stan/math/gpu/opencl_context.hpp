@@ -128,7 +128,7 @@ class opencl_context_base {
   cl::Device device_;                // The selected GPU device
   std::string device_name_;          // The name of the GPU
   size_t
-    max_thread_block_size_;  // The maximum size of a block of workers on GPU
+      max_thread_block_size_;  // The maximum size of a block of workers on GPU
 
   // Holds Default parameter values for each Kernel.
   typedef std::map<const char*, int> map_base_opts;
@@ -142,10 +142,7 @@ class opencl_context_base {
          {"WORK_PER_THREAD", 8}};
   // TODO(Steve): Make these tunable during warmup
   map_base_opts tuning_opts_ = {
-    {"cholesky_size", 256},
-    {"cholesky_partition", 4},
-    {"move_to_gpu", 1250}
-  };
+      {"cholesky_size", 256}, {"cholesky_partition", 4}, {"move_to_gpu", 1250}};
 
   static opencl_context_base& getInstance() {
     static opencl_context_base instance_;
@@ -321,9 +318,9 @@ class opencl_context {
    * Returns the thread block size for the Cholesky Decompositions L_11.
    * @param id The name of a tuning parameter.
    */
-   inline int tuning_opts(const char* id) {
-     return opencl_context_base::getInstance().tuning_opts_[id];
-   }
+  inline int tuning_opts(const char* id) {
+    return opencl_context_base::getInstance().tuning_opts_[id];
+  }
 
   /**
    * Returns a vector containing the OpenCL device used to create the context
