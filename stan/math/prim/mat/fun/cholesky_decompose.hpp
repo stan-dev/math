@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
 
+#include <stan/math/gpu/opencl_context.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
@@ -31,7 +32,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
   check_square("cholesky_decompose", "m", m);
   check_symmetric("cholesky_decompose", "m", m);
 #ifdef STAN_OPENCL
-  if (m.rows() > 1250) {
+  if (m.rows() > opencl_context.tuning_opts("move_to_gpu")) {
     matrix_gpu m_gpu(m);
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_chol(m.rows(), m.cols());
     cholesky_decompose(m_gpu);

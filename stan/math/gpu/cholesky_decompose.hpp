@@ -51,7 +51,7 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A) {
   // or a heuristic of 100.
   // The Cholesky GPU algorithm only uses one local block so we need the matrix
   // To be less than the max thread block size.
-  if (A.rows() <= opencl_context.max_cholesky_size()) {
+  if (A.rows() <= opencl_context.tuning_opts("cholesky_size")) {
     matrix_gpu L(A.rows(), A.cols());
     try {
       opencl_kernels::cholesky_decompose(cl::NDRange(A.rows()),
@@ -64,7 +64,8 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A) {
   }
   // NOTE: The code in this section follows the naming conventions
   // in the report linked in the docs.
-  const int block = floor(A.rows() / 4);
+  const int block = floor(A.rows() /
+   opencl_context.tuning_opts("cholesky_partition"));
   // Subset the top left block of the input A into A_11
   matrix_gpu A_11(block, block);
   A_11.sub_block(A, 0, 0, 0, 0, block, block);

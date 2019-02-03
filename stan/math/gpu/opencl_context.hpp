@@ -107,13 +107,12 @@ class opencl_context_base {
         base_opts_["WORK_PER_THREAD"] = 1;
       }
       // Thread block size for the Cholesky
-      // TODO:(Steve) This should be tuned in a higher part of the stan language
+      // TODO(Steve): This should be tuned in a higher part of the stan language
       if (max_thread_block_size_ >= 256) {
-        max_cholesky_size_ = 256;
+        tuning_opts_["cholesky_size"] = 256;
       } else {
-        max_cholesky_size_ = max_thread_block_size_;
+        tuning_opts_["cholesky_size"] = max_thread_block_size_;
       }
-
     } catch (const cl::Error& e) {
       check_opencl_error("opencl_context", e);
     }
@@ -130,8 +129,6 @@ class opencl_context_base {
   std::string device_name_;          // The name of the GPU
   size_t
     max_thread_block_size_;  // The maximum size of a block of workers on GPU
-  // TODO:(Steve) This should be tuned in a higher part of the stan language
-  int max_cholesky_size_;  // Thread block size for the Cholesky
 
   // Holds Default parameter values for each Kernel.
   typedef std::map<const char*, int> map_base_opts;
@@ -143,6 +140,12 @@ class opencl_context_base {
          {"LOWER_TO_UPPER", static_cast<int>(TriangularMapGPU::LowerToUpper)},
          {"THREAD_BLOCK_SIZE", 32},
          {"WORK_PER_THREAD", 8}};
+  // TODO(Steve): Make these tunable during warmup
+  map_base_opts tuning_opts_ = {
+    {"cholesky_size", 256},
+    {"cholesky_partition", 4},
+    {"move_to_gpu", 1250}
+  };
 
   static opencl_context_base& getInstance() {
     static opencl_context_base instance_;
@@ -317,8 +320,8 @@ class opencl_context {
   /**
    * Returns the thread block size for the Cholesky Decompositions L_11.
    */
-   inline int max_cholesky_size() {
-     return opencl_context_base::getInstance().max_cholesky_size_;
+   inline int tuning_opts(const char* id) {
+     return opencl_context_base::getInstance().tuning_opts_[id];
    }
 
   /**
