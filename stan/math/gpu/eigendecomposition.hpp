@@ -703,6 +703,7 @@ void apply_packed_Q3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A){
   }
 }
 
+/*
 void apply_packed_Q4(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A){
   //if input A==Identity, constructs Q
   Eigen::VectorXd scratchSpace(A.rows());
@@ -745,6 +746,7 @@ void block_apply_packed_Q2(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, in
     A.rightCols(A.cols() - k - 1).noalias() -= scratchSpace.leftCols(actual_r) * packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>();
   }
 }
+ */
 
 /*
 //ne dela
@@ -776,6 +778,710 @@ void block_apply_packed_Q3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, in
   }
 }
  */
+//#define DEBUG_PRINT
+
+/*
+void dqds_work(Eigen::VectorXd& q, Eigen::VectorXd& e, int start, int stop){
+  const double eps=1e-26;
+
+  double shift=0;
+  while (start!=stop) {
+    //norm = 0;
+    double d = q[start] - shift;
+    double new_shift = INFTY;
+    //unroll while loop and dont check for splits in every iteration
+    int short_stop=stop;
+    for (int i = start; i < stop; i++) {
+      q[i] = d + e[i];
+      double temp = q[i + 1] / q[i];
+      e[i] *= temp;
+      d = d * temp - shift;
+      if (d < 0) {
+        cout << "ERROR" << endl;
+        throw;
+      }
+      //if(e[i] * e[i] / (q[i] * q[i]) + e[i] * e[i] / (q[i+1] * q[i+1]) < eps){
+      if(e[i] * e[i] * (q[i] * q[i] + q[i+1] * q[i+1]) < eps * q[i] * q[i] * q[i+1] * q[i+1]){
+        if(i==stop-1){
+          short_stop--;
+          #ifdef DEBUG_PRINT
+          cout << "stop=" << short_stop << endl;
+        #endif
+        }
+        else if (i!=start){
+          #ifdef DEBUG_PRINT
+          cout << "Split! " << start << " " << i+1 << " " << stop << endl;
+          #endif
+          dqds_work(q,e,start,i+1);
+          //dqds_work(q,e,i+1,stop);
+          //return;
+          start=i+1;
+          continue;
+        }
+        else{
+          start++;
+          #ifdef DEBUG_PRINT
+          cout << "start=" << start << endl;
+        #endif
+        }
+      }
+//      if(i==0){
+//        //temp = q[i] + e[i] - sqrt(q[i + 1] * e[i]);
+//        temp = q[i] - abs(e[i]);
+//      }
+//      else {
+//        temp = q[i] - abs(e[i]) - abs(e[i-1]);
+//        //temp = q[i] + e[i] - sqrt(q[i] * e[i - 1]) - sqrt(q[i + 1] * e[i]);
+//      }
+//      new_shift=std::min(new_shift,temp);
+//      //norm += e[i] * e[i] / (q[i] * q[i]) + e[i] * e[i] / (q[i+1] * q[i+1]);
+
+    }
+    q[stop] = d;
+    stop=short_stop;
+    for(int j=0;j<15;j++) {
+      if (start == stop) {
+        break;
+      }
+      d = q[start] - shift;
+      for (int i = start; i < stop; i++) {
+        q[i] = d + e[i];
+        double temp = q[i + 1] / q[i];
+        e[i] *= temp;
+        d = d * temp - shift;
+        if (d < 0) {
+          cout << "ERROR" << endl;
+          throw;
+        }
+      }
+      q[stop] = d;
+      if (e[stop - 1] * e[stop - 1] / (q[stop - 1] * q[stop - 1]) + e[stop - 1] * e[stop - 1] / (q[stop] * q[stop]) < eps) {
+        stop--;
+#ifdef DEBUG_PRINT
+        cout << "stop=" << stop << endl;
+#endif
+      }
+    }
+    //shift = std::max(0.,new_shift);
+    //cout << "next shift: " << shift << endl;
+    //q[stop] -= e[stop-1] - shift;
+  }
+}
+
+void dqds(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag, Eigen::VectorXd& eigenvals){
+  int n = subdiag.size();
+  //za bidiag
+//  Eigen::VectorXd q=diag.array()*diag.array();
+//  Eigen::VectorXd e=subdiag.array()*subdiag.array();
+  double min_eigval = diag[0] - abs(subdiag[0]); //calc lower bound on eigvals using Gresgorin discs
+  for(int i=1;i<n;i++){
+    min_eigval = std::min(min_eigval, diag[i] - abs(subdiag[i]) - abs(subdiag[i-1]));
+  }
+  min_eigval = std::min(min_eigval, diag[n] - abs(subdiag[n-1]));
+  cout << "min eigval:" << min_eigval << endl;
+  Eigen::VectorXd q(n+1);
+  Eigen::VectorXd e(n);
+  q[0] = diag[0] - min_eigval;
+  for(int i=0; i < n; i++){//TODO is this LDL?
+    e[i] = (subdiag[i] / q[i]) * subdiag[i];
+    q[i+1] = diag[i+1] - e[i] - min_eigval;
+  }
+
+  //double norm=2*eps*n;
+  dqds_work(q,e,0,n);
+  cout << "end" << endl;
+  eigenvals = q.array() + min_eigval;
+}
+ */
+
+
+void get_ldl(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag, double shift, Eigen::VectorXd& l, Eigen::VectorXd& d_plus){
+  d_plus[0] = diag[0] - shift;
+  for(int i = 0; i < subdiag.size(); i++){
+    l[i] = subdiag[i] / d_plus[i];
+    d_plus[i+1] = diag[i+1] - shift - l[i] * subdiag[i];
+  }
+}
+
+/*
+void get_udu(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag, Eigen::VectorXd& u, Eigen::VectorXd& d_minus){
+  int n = subdiag.size();
+  d_minus[n] = diag[n];
+  for(int i = n - 1; i >= 0; i--){
+    u[i] = subdiag[i] / d_minus[i+1];
+    d_minus[i] = diag[i] - u[i] * subdiag[i];
+  }
+}
+ */
+
+/*
+//stationary qds
+void get_shifted_ldl(const Eigen::VectorXd& d, const Eigen::VectorXd& l, double shift, Eigen::VectorXd& l_plus, Eigen::VectorXd& d_plus, Eigen::VectorXd& s){
+  int n = l.size();
+  s[0] = -shift;
+  for(int i=0; i < n; i++){
+    d_plus[i] = s[i] + d[i];
+    l_plus[i] = l[i] * d[i] / d_plus[i];
+    s[i+1] = l_plus[i] * l[i] * s[i] - shift;
+  }
+  d_plus[n] = s[n] + d[n];
+}
+ */
+
+inline double get_random_perturbation_multiplier(){
+  static const double perturbation_range = 1e-14;
+  static const double rand_norm = perturbation_range / RAND_MAX;
+  static const double almost_one = 1 - perturbation_range * 0.5;
+  return almost_one + std::rand() * rand_norm;
+}
+
+//stationary qds
+double get_perturbed_shifted_ldl(const Eigen::VectorXd& d, const Eigen::VectorXd& l, double shift, Eigen::VectorXd& l_plus, Eigen::VectorXd& d_plus){
+  int n = l.size();
+  double s = -shift;
+  double element_growth = 0;
+  double element_growth_denominator = 0;
+  for(int i=0; i < n; i++){
+    double di_perturbed = d[i] * get_random_perturbation_multiplier();
+    double li_perturbed = l[i] * get_random_perturbation_multiplier();
+    d_plus[i] = s + di_perturbed;
+    element_growth += abs(d_plus[i]);
+    element_growth_denominator += d_plus[i];
+    l_plus[i] = li_perturbed * di_perturbed / d_plus[i];
+    if(is_inf(d_plus[i]) && is_inf(s)) { // this happens if d_plus[i]==0 -> in next iteration d_plus==inf and s==inf
+      s = li_perturbed * li_perturbed * di_perturbed - shift;
+    }
+    else {
+      s = l_plus[i] * li_perturbed * s - shift;
+    }
+  }
+  d_plus[n] = s + d[n] * get_random_perturbation_multiplier();
+  element_growth += abs(d_plus[n]);
+  return element_growth / abs(element_growth_denominator);
+}
+
+/*
+//progressive qds
+void get_shifted_udu(const Eigen::VectorXd& d, const Eigen::VectorXd& l, double shift, Eigen::VectorXd& u_minus, Eigen::VectorXd& d_minus, Eigen::VectorXd& p){
+  int n = l.size();
+  p[n]=d[n]-shift;
+  for(int i = n - 1; i >= 0; i--){
+    d_minus[i+1] = d[i] * l[i] * l[i] + p[i+1];
+    u_minus[i] = l[i] * d[i] / d_minus[i+1];
+    p[i] = p[i+1] / d_minus[i+1] * d[i] - shift;
+  }
+  d_minus[0] = p[0];
+}
+ */
+
+const static double zero_threshold = 1. / std::numeric_limits<double>::max(); // if abs(i)<zero_threshold then 1/i==inf
+//dtwqds
+int get_twisted_factorization(const Eigen::VectorXd& d, const Eigen::VectorXd& l, double shift, Eigen::VectorXd& l_plus, Eigen::VectorXd& u_minus){
+  int n = l.size();
+  //calculate shifted ldl
+  Eigen::VectorXd s(n+1);
+  s[0] = -shift;
+  for(int i=0; i < n; i++){
+    double d_plus = s[i] + d[i];
+    l_plus[i] = l[i] * d[i] / d_plus;
+    if(is_nan(l_plus[i])){ //d_plus==0
+      //one (or both) of d[i], l[i] is very close to 0
+      if(abs(l[i])<abs(d[i])){
+        l_plus[i] = d[i] * copysign(1.,l[i]) * copysign(1.,d_plus);
+      }
+      else{
+        l_plus[i] = l[i] * copysign(1.,d[i]) * copysign(1.,d_plus);
+      }
+    }
+    s[i+1] = l_plus[i] * l[i] * s[i] - shift;
+    if(is_nan(s[i+1])){
+      if(abs(l_plus[i])>abs(s[i])){ //l_plus[i]==inf
+        if(abs(s[i])>abs(l[i])){ //l[i]==0
+          s[i+1] = s[i] * copysign(1.,l[i]) * copysign(1.,l_plus[i]) - shift;
+        }
+        else{ //s[i]==0
+          s[i+1] = l[i] * copysign(1.,s[i]) * copysign(1.,l_plus[i]) - shift;
+        }
+      }
+      else{ //s[i]==inf
+        if(abs(l_plus[i])>abs(l[i])){ //l[i]==0
+          s[i+1] = l_plus[i] * copysign(1.,l[i]) * copysign(1.,s[i]) - shift;
+        }
+        else{ //l_plus[i]==0
+          s[i+1] = l[i] * copysign(1.,s[i]) * copysign(1.,l_plus[i]) - shift;
+        }
+      }
+    }
+    /*if(is_nan(s[i+1])){
+      if(is_inf(d_plus)){ // this happens if d_plus==0 -> in next iteration d_plus==inf and s==inf
+        s[i+1] = l[i] * l[i] * d[i] - shift;
+      }
+      else if(d_plus==0){
+        if(l[i]==0){
+          l_plus[i]=d[i];
+        }
+        else if(d[i]==0){
+          l_plus[i]=l[i];
+        }
+        s[i+1] = l_plus[i] * l[i] * s[i] - shift;
+      }
+    }*/
+  }
+  //calculate shifted udu and twist index
+  double p=d[n]-shift;
+  double min_gamma = abs(s[n] + d[n]);
+  int twist_index=n;
+
+  for(int i = n - 1; i >= 0; i--){
+    double d_minus = d[i] * l[i] * l[i] + p; //0                                          inf
+    double t = d[i] / d_minus; //inf    //TODO: NaN                                       0
+    u_minus[i] = l[i] * t; //inf      //TODO: NaN                                         0
+    if(is_nan(u_minus[i])){
+      if(is_nan(t)){
+        t = copysign(1.,d[i]) * copysign(1.,d_minus);
+        u_minus[i] = l[i] * t;
+      }
+      else{ //t==inf, l[i]==0
+        u_minus[i] = d[i] * copysign(1.,l[i]) * copysign(1.,t);
+      }
+    }
+    double gamma = abs(s[i] + t * p);//inf   TODO: all inf/nan -> need other shift!       NaN
+    if(is_nan(gamma)){ //t==inf, p==0 OR t==0, p==inf
+      double d_sign = d[i] * copysign(1.,d_minus) * copysign(1.,t);
+      gamma = abs(s[i] + d_sign);
+      p = d_sign - shift;
+    }
+    else{ //usual case
+      p = p * t - shift;
+    }
+    if(gamma < min_gamma){
+      min_gamma = gamma;
+      twist_index = i;
+    }
+
+    /*if(d_minus != 0) {
+      p = p * t - shift; //inf                                                              NaN
+    }
+    else{ // d_minus==0, (t==inf/nan, u_minus[i]==inf/nan, gamma==inf/nan)
+      if(abs(d[i]) < zero_threshold){ //t==nan, u_minus[i]==nan, gamma==nan
+        u_minus[i] = l[i];
+        gamma = abs(s[i] + p);
+        if(gamma < min_gamma){
+          min_gamma = gamma;
+          twist_index = i;
+        }
+        p -= shift;
+      }
+      else{
+        if(is_nan(u_minus[i])){ //l[i]==0
+          u_minus[i] = d[i];
+        }
+        //special case for next iteration of the for loop: p==inf, d_minus==inf, t==0
+        i--;
+        if(i < 0){
+          break;
+        }
+        u_minus[i] = 0;
+        gamma = abs(s[i] + d[i]);
+        if(gamma < min_gamma){
+          min_gamma = gamma;
+          twist_index = i;
+        }
+        p = d[i] - shift;
+      }
+    }*/
+    /*if(is_nan(p)){
+      if(is_inf(d_minus)){ //since previous p==inf
+        p = d[i] - shift;
+        if(is_nan(t)){ //d[i]==0
+          u_minus[i] = l[i];
+        }
+        else if(is_nan(u_minus[i])){ //t==inf && l[i]==0
+          u_minus[i]=1;
+        }
+      }
+    }*/
+  }
+  return twist_index;
+}
+
+/*
+int getSturmCount(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiagSquared, double shift){
+  int n = subdiagSquared.size();
+  int count=0;
+  double f1 = 1;
+  double f2 = diag[0] - shift;
+  count += f2>0;
+  for(int i=0; i < n; i++){
+    double f3 = (diag[i+1] - shift) * f2 - subdiagSquared[i] * f1;
+    if(is_inf(f3)){
+      return n+1;
+    }
+    count += (f3*f2>0) + (f2==0); //zero at the end does not count
+    f1=f2;
+    f2=f3;
+  }
+  return count;
+}
+ */
+/*
+int getSturmCountLdl(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiagSquared, double shift){
+  double d = diag[0] - shift;
+  int count = d>0;
+  for(int i = 1; i < diag.size(); i++){
+//    l = subdiag[i] / d_plus;
+//    d_plus = diag[i+1] - shift - l * subdiag[i];
+    d = diag[i] - shift - subdiagSquared[i-1] / d;
+    count += d>0;
+  }
+  return count;
+}
+*/
+
+int getSturmCountLdlLdl(const Eigen::VectorXd& d, const Eigen::VectorXd& l, double shift){
+  int n = l.size();
+  double s = -shift;
+  double l_plus, d_plus;
+  int count = 0;
+  for(int i=0; i < n; i++){
+    d_plus = s + d[i];
+    count += d_plus>=0;
+    //l_plus = l[i] * d[i] / d_plus;
+    if (is_inf(d_plus) && is_inf(s)){ // this happens if d_plus==0 -> in next iteration d_plus==inf and s==inf
+      s = l[i] * l[i] * d[i] - shift;
+    }
+    else{
+      s = l[i] * l[i] * d[i] * s / d_plus - shift;
+    }
+  }
+  d_plus = s + d[n];
+  count += d_plus>=0;
+  return count;
+}
+
+/*
+void eigenvalsBisect(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag,  Eigen::VectorXd& eigenvals){
+  int n = diag.size();
+  double eps = 1e-11;
+
+  double min_eigval = diag[0] - abs(subdiag[0]); //calc bounds on eigvals using Gresgorin discs
+  double max_eigval = diag[0] + abs(subdiag[0]);
+  for(int i=1;i<n-1;i++){
+    min_eigval = std::min(min_eigval, diag[i] - abs(subdiag[i]) - abs(subdiag[i-1]));
+    max_eigval = std::max(max_eigval, diag[i] + abs(subdiag[i]) + abs(subdiag[i-1]));
+  }
+  min_eigval = std::min(min_eigval, diag[n-1] - abs(subdiag[n-2]));
+  max_eigval = std::max(max_eigval, diag[n-1] + abs(subdiag[n-2]));
+
+  Eigen::VectorXd subdiagSquared = subdiag.array() * subdiag.array();
+  for(int i=0; i<n; i++){
+    double low=min_eigval;
+    double high=max_eigval;
+    while(abs((high-low)/low)>eps){
+      double mid=(high+low)*0.5;
+      if(getSturmCountLdl(diag, subdiagSquared, mid)>i){
+        low=mid;
+      }
+      else{
+        high=mid;
+      }
+    }
+    eigenvals[i]=(high+low)*0.5;
+  }
+}
+ */
+
+double eigenvalBisectRefine(const Eigen::VectorXd& d, const Eigen::VectorXd& l, double& low, double& high, int i){
+  int n = d.size();
+  double eps = 1e-14;
+  while(abs((high-low)/(high+low))>eps && abs(high-low)>std::numeric_limits<double>::min()){ // second term is for the case where the eigenvalue is 0 and division yields NaN
+    double mid=(high+low)*0.5;
+    if(getSturmCountLdlLdl(d, l, mid)>i){
+      low=mid;
+    }
+    else{
+      high=mid;
+    }
+  }
+}
+
+#define BISECT_K 8
+/*
+void eigenvalsBisect2(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag,  Eigen::VectorXd& eigenvals){
+  int n = diag.size();
+  double eps = 1e-11;
+
+  double min_eigval = diag[0] - abs(subdiag[0]); //calc bounds on eigvals using Gresgorin discs
+  double max_eigval = diag[0] + abs(subdiag[0]);
+  for(int i=1;i<n-1;i++){
+    min_eigval = std::min(min_eigval, diag[i] - abs(subdiag[i]) - abs(subdiag[i-1]));
+    max_eigval = std::max(max_eigval, diag[i] + abs(subdiag[i]) + abs(subdiag[i-1]));
+  }
+  min_eigval = std::min(min_eigval, diag[n-1] - abs(subdiag[n-2]));
+  max_eigval = std::max(max_eigval, diag[n-1] + abs(subdiag[n-2]));
+
+  Eigen::VectorXd subdiagSquared = subdiag.array() * subdiag.array();
+  Eigen::Array<double, BISECT_K, 1> low;
+  Eigen::Array<double, BISECT_K, 1> high;
+  for(int i=0; i<n; i += BISECT_K){
+    low=Eigen::Array<double, BISECT_K, 1>::Constant(min_eigval);
+    high=Eigen::Array<double, BISECT_K, 1>::Constant(max_eigval);
+    while((abs((high-low)/low)>eps).any()){
+      Eigen::Array<double, BISECT_K, 1> shifts = (high+low)*0.5;
+      Eigen::Array<double, BISECT_K, 1> d = diag[0] - shifts;
+      Eigen::Array<int, BISECT_K, 1> counts = (d>0).cast<int>();
+      for(int j = 1; j < diag.size(); j++){ //Sturm count via LDL factorization
+        d = diag[j] - shifts - subdiagSquared[j-1] / d;
+        counts += (d>0).cast<int>();
+      }
+      for(int j=0;j<BISECT_K;j++){
+        if(counts[j]>i+j){
+          low[j]=shifts[j];
+        }
+        else{
+          high[j]=shifts[j];
+        }
+      }
+    }
+    int n_valid = std::min(BISECT_K,n-i);
+    eigenvals.segment(i,n_valid)=((high+low)*0.5).head(n_valid);
+  }
+}
+ */
+
+void getGresgorin(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag, double& min_eigval, double& max_eigval) {
+  int n = diag.size();
+  min_eigval = diag[0] - abs(subdiag[0]);
+  max_eigval = diag[0] + abs(subdiag[0]);
+  for(int i=1;i<n-1;i++){
+    min_eigval = std::min(min_eigval, diag[i] - abs(subdiag[i]) - abs(subdiag[i - 1]));
+    max_eigval = std::max(max_eigval, diag[i] + abs(subdiag[i]) + abs(subdiag[i - 1]));
+  }
+  min_eigval = std::min(min_eigval, diag[n - 1] - abs(subdiag[n - 2]));
+  max_eigval = std::max(max_eigval, diag[n - 1] + abs(subdiag[n - 2]));
+}
+
+void eigenvalsBisect3(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiagSquared, double min_eigval, double max_eigval, Eigen::VectorXd& low, Eigen::VectorXd& high){
+  int n = diag.size();
+  double eps = 1e-14;
+
+  for(int i=0; i<n; i += BISECT_K){
+    int n_valid = std::min(BISECT_K,n-i);
+    auto low_work = low.segment(i,n_valid).array();
+    auto high_work = high.segment(i,n_valid).array();
+    low_work=Eigen::Array<double, Eigen::Dynamic, 1>::Constant(n_valid, min_eigval);
+    high_work=Eigen::Array<double, Eigen::Dynamic, 1>::Constant(n_valid, max_eigval);
+    while((abs((high_work-low_work)/low_work)>eps).any()){
+      Eigen::Array<double, BISECT_K, 1> shifts;
+      shifts.head(n_valid) = (high_work+low_work)*0.5;
+      Eigen::Array<double, BISECT_K, 1> d;
+      d.head(n_valid) = diag[0] - shifts.head(n_valid);
+      Eigen::Array<int, BISECT_K, 1> counts;
+      counts.head(n_valid) = (d.head(n_valid)>=0).cast<int>();
+      for(int j = 1; j < diag.size(); j++){ //Sturm count via LDL factorization
+        d.head(n_valid) = diag[j] - shifts.head(n_valid) - subdiagSquared[j-1] / d.head(n_valid);
+        counts.head(n_valid) += (d.head(n_valid)>=0).cast<int>();
+      }
+      for(int k=0;k<n_valid;k++){
+        if(counts[k]>i+k){
+          low_work[k]=shifts[k];
+        }
+        else{
+          high_work[k]=shifts[k];
+        }
+      }
+    }
+    //eigenvals.segment(i,n_valid)=((high_work+low_work)*0.5).head(n_valid);
+  }
+}
+
+#undef BISECT_K
+
+
+void mrrr(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag,  Eigen::VectorXd& eigenvals, Eigen::MatrixXd& eigenvecs){
+  double min_rel_sep=1e-2;
+  double max_ele_growth = 2;
+  int n=diag.size();
+  Eigen::VectorXd high(n), low(n);
+  double min_eigval;
+  double max_eigval;
+  getGresgorin(diag, subdiag, min_eigval, max_eigval);
+  double span = max_eigval - min_eigval;
+  Eigen::VectorXd subdiagSquared = subdiag.array() * subdiag.array();
+  eigenvalsBisect3(diag, subdiagSquared, min_eigval, max_eigval, low, high);
+  Eigen::VectorXd l(n-1), d(n);
+  double shift0 = min_eigval;
+  get_ldl(diag, subdiag, shift0, l, d); //TODO: what if we have element growth?!
+  Eigen::VectorXd l2(n-1), d2(n), l3(n-1), d3(n), l_plus(n-1), d_plus(n), u_minus(n-1), d_minus(n), s(n), p(n);
+
+  double T_norm = sqrt((diag.array()*diag.array()).sum() + subdiagSquared.sum());
+  cout << "initial element growth: " << d.array().abs().sum()/abs(d.array().sum()) << endl;
+  //cout << "span: " << span << endl;
+  for(int i=0;i<n;i++){
+    eigenvals[i]=(high[i]+low[i])*0.5;
+    double shift = 0;
+    int twist_idx;
+    double low_gap = i==0 ? std::numeric_limits<double>::infinity() : low[i-1] - high[i];
+    double high_gap = i==n-1 ? std::numeric_limits<double>::infinity() : low[i] - high[i+1];
+    double min_gap = std::min(low_gap, high_gap);
+    if(abs(low_gap / eigenvals[i]) > min_rel_sep || abs(high_gap / eigenvals[i]) < min_rel_sep){
+      //TODO: do we need more shift options?
+      std::vector<double> shifts;
+      shifts.push_back(low[i]);
+      shifts.push_back(high[i]);
+      double max_shift = min_gap / min_rel_sep;
+      if(i!=0){
+        if((high[i-1] - low[i]) * 0.5 < max_shift){
+          shifts.push_back(high[i] + (high[i-1] - low[i]) * 0.5);
+        }
+        if((high[i-1] - low[i]) * 0.25 < max_shift){
+          shifts.push_back(high[i] + (high[i-1] - low[i]) * 0.25);
+        }
+        if((high[i-1] - low[i]) < max_shift){
+          shifts.push_back(high[i] + (high[i-1] - low[i]));
+        }
+        if((high[i-1] - low[i]) * 3 < max_shift){
+          shifts.push_back(high[i] + (high[i-1] - low[i]) * 3);
+        }
+      }
+      if(i!=n-1){
+        if((high[i]-low[i+1]) * 0.5 < max_shift){
+          shifts.push_back(low[i] - (high[i]-low[i+1]) * 0.5);
+        }
+        if((high[i]-low[i+1]) * 0.25 < max_shift){
+          shifts.push_back(low[i] - (high[i]-low[i+1]) * 0.25);
+        }
+        if((high[i]-low[i+1]) < max_shift){
+          shifts.push_back(low[i] - (high[i]-low[i+1]));
+        }
+        if((high[i]-low[i+1]) * 3 < max_shift){
+          shifts.push_back(low[i] - (high[i]-low[i+1]) * 3);
+        }
+      }
+      shifts.push_back(high[i] - max_shift);
+      shifts.push_back(low[i] + max_shift);
+      double min_element_growth = std::numeric_limits<double>::infinity();
+      for(double sh : shifts){
+        double element_growth = get_perturbed_shifted_ldl(d, l, sh, l3, d3);
+        if(l3.unaryExpr([](double x){return is_nan(x);}).any()){
+          cout << "nan l3" << endl;
+        }
+        if(d3.unaryExpr([](double x){return is_nan(x);}).any()){
+          cout << "nan d3" << endl;
+        }
+        //cout << i << " element growth: " << element_growth << " at " << sh << endl;
+        if(element_growth<min_element_growth){
+          l2.swap(l3);
+          d2.swap(d3);
+          shift = sh + shift0;
+          min_element_growth=element_growth;
+        }
+        if(element_growth<=max_ele_growth){
+          break;
+        }
+      }
+      /*double element_growth = get_perturbed_shifted_ldl(d, l, low[i], l2, d2);
+      if(element_growth<=span) {
+        shift = low[i];
+        cout << i << " element growth:" << element_growth << endl;
+      }
+      else {
+        double element_growth2 = get_perturbed_shifted_ldl(d, l, high[i], l3, d3);
+        if(element_growth2<element_growth){
+          l2.swap(l3);
+          d2.swap(d3);
+          shift=high[i];
+          cout << i << "element growth: " << element_growth2 << endl;
+        }
+        else {
+          shift = low[i];
+          cout << i << "element growth:" << element_growth << endl;
+        }
+      }*/
+
+      //refine eigenvalue
+      double shifted_low=low[i] - shift;
+      double shifted_high=high[i] - shift;
+      eigenvalBisectRefine(d2, l2, shifted_low, shifted_high, i);
+      double shifted_eigenval = (shifted_low + shifted_high) * 0.5;
+      //get_shifted_ldl(d2, l2, shifted_eigenval, l_plus, d_plus, s);
+      //get_shifted_udu(d2, l2, shifted_eigenval, u_minus, d_minus, p);
+      twist_idx = get_twisted_factorization(d2, l2, shifted_eigenval, l_plus, u_minus);
+    }
+    else {
+      //get_shifted_ldl(d, l, eigenvals[i], l_plus, d_plus, s);
+      //get_shifted_udu(d, l, eigenvals[i], u_minus, d_minus, p);
+      twist_idx = get_twisted_factorization(d, l, eigenvals[i] - shift0, l_plus, u_minus);
+    }
+    if(l_plus.unaryExpr([](double x){return is_nan(x);}).any()){
+      cout << "nan l_plus" << endl;
+    }
+    if(u_minus.unaryExpr([](double x){return is_nan(x);}).any()){
+      cout << "nan u_minus" << endl;
+    }
+    /*//find twist index
+    double gamma_min=std::numeric_limits<double>::infinity();
+    int twist_idx;
+    for(int j=0;j<n;j++){
+      double gamma = abs(s[j] + diag[j]/d_minus[j] *p[j]);
+      if(gamma < gamma_min){
+        gamma_min = gamma;
+        twist_idx = j;
+      }
+    }*/
+    //calculate eigenvector
+    auto vec = eigenvecs.col(i);
+    vec[twist_idx] = 1;
+    for(int j=twist_idx+1;j<n;j++){
+      if(vec[j-1]!=0) {
+        vec[j] = -u_minus[j - 1] * vec[j - 1];
+      }
+      else{
+        vec[j] = -subdiag[j - 2] * vec[j - 2] / subdiag[j - 1];
+        if(is_nan(vec[j]) || is_inf(vec[j])){ //subdiag[j - 1]==0
+          vec[j]=0;
+          /*if(abs(subdiag[j - 2]) < abs(vec[j-2])){ //subdiag[j - 2]==0
+            vec[j] = -vec[j - 2] * copysign(1.,subdiag[j - 2]) * copysign(1.,subdiag[j - 1]);
+          }
+          else{ // vec[j - 2]==0
+            vec[j] = -subdiag[j - 2] * copysign(1.,vec[j - 2]) * copysign(1.,subdiag[j - 1]);
+          }*/
+        }
+        if(is_inf(vec[j])){
+          cout << "tukaj";
+        }
+      }
+    }
+    for(int j = twist_idx - 1; j >= 0;j--){
+      if(vec[j+1]!=0){
+        vec[j] = -l_plus[j] * vec[j + 1];
+      }
+      else{
+        vec[j] = -subdiag[j + 1] * vec[j + 2] / subdiag[j];
+        if(is_nan(vec[j]) || is_inf(vec[j])) { //subdiag[j]==0
+          vec[j]=0;
+          /*if(abs(subdiag[j + 1]) < abs(vec[j + 2])){ //subdiag[j + 1]==0
+            vec[j] = -vec[j + 2] * copysign(1.,subdiag[j + 1]) * copysign(1.,subdiag[j]);
+          }
+          else{ // vec[j + 2]==0
+            vec[j] = -subdiag[j + 1] * copysign(1.,vec[j + 2]) * copysign(1.,subdiag[j]);
+          }*/
+        }
+        if(is_inf(vec[j])){
+          cout << "tukaj";
+        }
+      }
+    }
+    if(vec.unaryExpr([](double x){return is_nan(x);}).any()){
+      cout << "nan vec" << endl;
+    }
+    if(vec.unaryExpr([](double x){return is_inf(x);}).any()){
+      cout << "inf vec" << endl;
+    }
+    //vec /= vec.norm();
+  }
+  //TODO check special cases(inf/nan)
+}
 
 }
 }
