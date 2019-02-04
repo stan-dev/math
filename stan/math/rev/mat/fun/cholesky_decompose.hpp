@@ -296,14 +296,15 @@ public:
         ++pos;
       }
     }
+
     matrix_gpu L(L_);
     matrix_gpu Lbar(Lbar_);
     int M = M_;
-    int block_size_ = 128;
-    block_size_ = std::max((M / 8 / 16) * 16, 8);
+    int block_size_ = std::max((M / 8 / 16) * 16, 8);
     block_size_ = std::min(block_size_, 512);
-    // Iterate from top of matrix_gpu downward
-    // Follows chol_blocked_rev on page 9 of paper
+    // The following is a GPU implementation of
+    // the chain() function from the cholesky_block
+    // vari class implementation
     for (int k = M; k > 0; k -= block_size_) {
       int j = std::max(0, k - block_size_);
       int k_j_ind = k - j;
@@ -336,13 +337,14 @@ public:
         Dbar = Dbar - transpose(Cbar) * C;
       }
 
-      // TODO(STEVE): Need to doc this
-      // It's a mix of chol_blocked_rev and chol_unblocked_rev
+      // the implementation of the symbolic_rev inline function
+      // for the GPU 
       Dbar = transpose(D) * Dbar;
       Dbar.triangular_transpose<TriangularMapGPU::LowerToUpper>();
       D = transpose(lower_triangular_inverse(D));
       Dbar = D * transpose(D * Dbar);
       Dbar.triangular_transpose<TriangularMapGPU::LowerToUpper>();
+      // end of symbolic_rev inline function 
 
       Rbar = Rbar - transpose(Cbar) * B;
       Rbar = Rbar - Dbar * R;
