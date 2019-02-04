@@ -3,7 +3,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/opencl_context.hpp>
 #include <stan/math/gpu/matrix_gpu.hpp>
-#include <stan/math/gpu/copy_triangular.hpp>
 #include <stan/math/gpu/kernels/cholesky_decompose.hpp>
 #include <stan/math/gpu/multiply.hpp>
 #include <stan/math/gpu/multiply_transpose.hpp>
