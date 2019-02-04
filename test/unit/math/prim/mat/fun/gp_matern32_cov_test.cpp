@@ -481,3 +481,20 @@ TEST(MathPrimMat, dim_mismatch_vec_eigen_mixed_gp_matern32_cov) {
   EXPECT_THROW(stan::math::gp_matern32_cov(x_vec_2, x_rvec_2, sigma, l),
                std::invalid_argument);
 }
+
+TEST(MathPrimMat, zero_size) {
+  double sigma = 0.2;
+
+  std::vector<double> l(0);
+
+  std::vector<Eigen::Matrix<double, -1, 1>> x(0);
+
+  Eigen::MatrixXd cov;
+  Eigen::MatrixXd cov2;
+  cov = stan::math::gp_matern32_cov(x, sigma, l);
+  cov2 = stan::math::gp_matern32_cov(x, x, sigma, l);
+  EXPECT_EQ(0, cov.rows());
+  EXPECT_EQ(0, cov.cols());
+}
+
+

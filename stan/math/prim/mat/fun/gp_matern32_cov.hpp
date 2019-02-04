@@ -29,7 +29,7 @@ namespace math {
  * @tparam T_s type of element of sigma, marginal standard deviation
  * @tparam T_l type of elements of length scale
  *
- * @param x std::vector of elements that can be used in stan::math::distance
+ * @param x std::vector of scalars or vectors
  * @param length_scale length scale
  * @param sigma standard deviation that can be used in stan::math::square
  * @throw std::domain error if sigma <= 0, l <= 0, or x is nan or inf
@@ -44,18 +44,18 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
   using std::pow;
 
   size_t x_size = x.size();
-  for (size_t n = 0; n < x_size; ++n)
-    check_not_nan("gp_matern32_cov", "x", x[n]);
-
-  check_positive_finite("gp_matern32_cov", "magnitude", sigma);
-  check_positive_finite("gp_matern32_cov", "length scale", length_scale);
-
   Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x_size, x_size);
 
   if (x_size == 0)
     return cov;
+
+  for (size_t n = 0; n < x_size; ++n)
+    check_not_nan("gp_matern32_cov", "x", x[n]);
+
+  check_positive_finite("gp_matern32_cov", "magnitude", sigma);
+  check_positive_finite("gp_matern32_cov", "length scale", length_scale);
 
   T_s sigma_sq = square(sigma);
   T_l root_3_inv_l = sqrt(3.0) / length_scale;
@@ -83,11 +83,11 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
  *
  * where \f$d(x, x')\f$ is the Euclidean distance.
  *
- * @tparam T_x type of elements contained in vector x
+ * @tparam T_x type of scalar
  * @tparam T_s type of element of sigma, marginal standard deviation
  * @tparam T_l type of elements of length scale
  *
- * @param x std::vector of elements that can be used in stan::math::distance
+ * @param x std::vector of Eigen column vectors of scalars.
  * @param length_scale length scale
  * @param sigma standard deviation that can be used in stan::math::square
  * @throw std::domain error if sigma <= 0, l <= 0, or x is nan or inf
@@ -95,11 +95,18 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
 template <typename T_x, typename T_s, typename T_l>
 inline typename Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type,
                               Eigen::Dynamic, Eigen::Dynamic>
-gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
+gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
+                const T_s &sigma,
                 const std::vector<T_l> &length_scale) {
   using std::exp;
 
   size_t x_size = x.size();
+  Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
+                Eigen::Dynamic>
+      cov(x_size, x_size);
+
+  if (x_size == 0)
+    return cov;
   size_t l_size = length_scale.size();
   for (size_t n = 0; n < x_size; ++n)
     check_not_nan("gp_matern32_cov", "x", x[n]);
@@ -112,13 +119,6 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
 
   check_size_match("gp_matern32_cov", "x dimension", x[0].size(),
                    "number of length scales", l_size);
-
-  Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
-                Eigen::Dynamic>
-      cov(x_size, x_size);
-
-  if (x_size == 0)
-    return cov;
 
   T_s sigma_sq = square(sigma);
   T_l root_3 = sqrt(3.0);
@@ -153,8 +153,9 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
  * @tparam T_s type of element of sigma, marginal standard deviation
  * @tparam T_l type of elements of length scale
  *
- * @param x1 std::vector of elements that can be used in stan::math::distance
- * @param x2 std::vector of elements that can be used in stan::math::distance
+ * @param x1 std::vector of scalars or vectors
+ * @param x2 std::vector of scalars of vectors
+ *    This function assumes all elements of x1 and x2 are the same length.
  * @param length_scale length scale
  * @param sigma standard deviation that can be used in stan::math::square
  * @throw std::domain error if sigma <= 0, l <= 0, or x1, x2 are nan or inf
@@ -169,6 +170,13 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
+  Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
+                Eigen::Dynamic, Eigen::Dynamic>
+      cov(x1_size, x2_size);
+
+  if (x1_size == 0 || x2_size == 0)
+    return cov;
+
   for (size_t n = 0; n < x1_size; ++n)
     check_not_nan("gp_matern32_cov", "x1", x1[n]);
   for (size_t n = 0; n < x2_size; ++n)
@@ -176,13 +184,6 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   check_positive_finite("gp_matern32_cov", "magnitude", sigma);
   check_positive_finite("gp_matern32_cov", "length scale", length_scale);
-
-  Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
-                Eigen::Dynamic, Eigen::Dynamic>
-      cov(x1_size, x2_size);
-
-  if (x1_size == 0 || x2_size == 0)
-    return cov;
 
   T_s sigma_sq = square(sigma);
   T_l root_3_inv_l_sq = sqrt(3.0) / length_scale;
@@ -208,13 +209,14 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  *
  * where \f$d(x, x')\f$ is the Euclidean distance
  *
- * @tparam T_x1 type of elements contained in vector x1
- * @tparam T_x2 type of elements contained in vector x2
+ * @tparam T_x1 type of scalars
+ * @tparam T_x2 type of scalars
  * @tparam T_s type of element of sigma, marginal standard deviation
  * @tparam T_l type of elements of length scale
  *
- * @param x1 std::vector of elements that can be used in stan::math::distance
- * @param x2 std::vector of elements that can be used in stan::math::distance
+ * @param x1 std::vector of Eigen column vectors of scalars
+ * @param x2 std::vector of Eigen column vectors of scalars
+ *    This function assumes each column of x1 and x2 are the same size.
  * @param length_scale length scale
  * @param sigma standard deviation that can be used in stan::math::square
  * @throw std::domain error if sigma <= 0, l <= 0, or x1, x2 are nan or inf
@@ -223,13 +225,19 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 template <typename T_x1, typename T_x2, typename T_s, typename T_l>
 inline typename Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
                               Eigen::Dynamic, Eigen::Dynamic>
-gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
+gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
+                const std::vector<Eigen::Matrix<T_x2, -1, 1>> &x2,
                 const T_s &sigma, const std::vector<T_l> &length_scale) {
   using std::exp;
 
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
-  size_t l_size = length_scale.size();
+  Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
+                Eigen::Dynamic, Eigen::Dynamic>
+      cov(x1_size, x2_size);
+
+  if (x1_size == 0 || x2_size == 0)
+    return cov;
 
   for (size_t n = 0; n < x1_size; ++n)
     check_not_nan("gp_matern32_cov", "x1", x1[n]);
@@ -239,6 +247,7 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   check_positive_finite("gp_matern32_cov", "magnitude", sigma);
   check_positive_finite("gp_matern32_cov", "length scale", length_scale);
 
+  size_t l_size = length_scale.size();
   for (size_t n = 0; n < l_size; ++n)
     check_not_nan("gp_matern32_cov", "length scale", length_scale[n]);
 
@@ -246,13 +255,6 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                    "number of length scales", l_size);
   check_size_match("gp_matern32_cov", "x2 dimension", x2[0].size(),
                    "number of length scales", l_size);
-
-  Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
-                Eigen::Dynamic, Eigen::Dynamic>
-      cov(x1_size, x2_size);
-
-  if (x1_size == 0 || x2_size == 0)
-    return cov;
 
   T_s sigma_sq = square(sigma);
   T_l root_3 = sqrt(3.0);
