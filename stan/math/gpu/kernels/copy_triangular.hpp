@@ -38,11 +38,11 @@ const char *copy_triangular_kernel_code = STRINGIFY(
         if (!lower_upper && j <= i) {
           A(i, j) = B(i, j);
         } else if (!lower_upper) {
-          A(i, j) = B(j, i);
+          A(i, j) = 0;
         } else if (lower_upper && j >= i) {
           A(i, j) = B(i, j);
         } else if (lower_upper && j < i) {
-          A(i, j) = B(j, i);
+          A(i, j) = 0;
         }
       }
     }
