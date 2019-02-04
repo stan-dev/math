@@ -303,80 +303,55 @@ public:
     block_size_ = std::max((M / 8 / 16) * 16, 8);
     block_size_ = std::min(block_size_, 512);
     // Iterate from top of matrix_gpu downward
+    // Follows chol_blocked_rev on page 9 of paper
     for (int k = M; k > 0; k -= block_size_) {
       int j = std::max(0, k - block_size_);
-      matrix_gpu R(k-j, j);
-      matrix_gpu D(k-j, k-j);
-      matrix_gpu Dinv(k-j, k-j);
-      matrix_gpu B(M-k, j);
-      matrix_gpu C(M-k, k-j);
+      int k_j_ind = k - j;
+      int m_k_ind = M - k;
 
-      matrix_gpu Rbar(k-j, j);
-      matrix_gpu Dbar(k-j, k-j);
-      matrix_gpu Dbar2(k-j, k-j);
-      matrix_gpu Bbar(M-k, j);
-      matrix_gpu Bbar2(M-k, j);
-      matrix_gpu Cbar(M-k, k-j);
-      matrix_gpu Cbar2(k-j, M-k);
-      matrix_gpu Cbar3(k-j, M-k);
-      matrix_gpu temp(k-j, j);
+      matrix_gpu R(k_j_ind, j);
+      matrix_gpu D(k_j_ind, k_j_ind);
+      matrix_gpu B(m_k_ind, j);
+      matrix_gpu C(m_k_ind, k_j_ind);
 
-      R.sub_block(L, j, 0, 0, 0, k-j, j);
-      D.sub_block(L, j, j, 0, 0, k-j, k-j);
-      B.sub_block(L, k, 0, 0, 0, M-k, j);
-      C.sub_block(L, k, j, 0, 0, M-k, k-j);
+      matrix_gpu Rbar(k_j_ind, j);
+      matrix_gpu Dbar(k_j_ind, k_j_ind);
+      matrix_gpu Bbar(m_k_ind, j);
+      matrix_gpu Cbar(m_k_ind, k_j_ind);
 
-      Rbar.sub_block(Lbar, j, 0, 0, 0, k-j, j);
-      Dbar.sub_block(Lbar, j, j, 0, 0, k-j, k-j);
-      Bbar.sub_block(Lbar, k, 0, 0, 0, M-k, j);
-      Cbar.sub_block(Lbar, k, j, 0, 0, M-k, k-j);
+      R.sub_block(L, j, 0, 0, 0, k_j_ind, j);
+      D.sub_block(L, j, j, 0, 0, k_j_ind, k_j_ind);
+      B.sub_block(L, k, 0, 0, 0, m_k_ind, j);
+      C.sub_block(L, k, j, 0, 0, m_k_ind, k_j_ind);
 
+      Rbar.sub_block(Lbar, j, 0, 0, 0, k_j_ind, j);
+      Dbar.sub_block(Lbar, j, j, 0, 0, k_j_ind, k_j_ind);
+      Bbar.sub_block(Lbar, k, 0, 0, 0, m_k_ind, j);
+      Cbar.sub_block(Lbar, k, j, 0, 0, m_k_ind, k_j_ind);
+
+      // TODO(STEVE): Figure out why this if needs to be here.
       if (Cbar.size() > 0) {
-        copy(Dinv, D);
-        Dinv = transpose(lower_triangular_inverse(Dinv));
-        Cbar2 = transpose(Cbar);
-
-        Cbar3 = Dinv * Cbar2;
-        Cbar = transpose(Cbar3);
-
-        Bbar2 = Cbar * R;
-        Bbar = Bbar - Bbar2;
-
-        Cbar3 = transpose(Cbar);
-        Dbar2 = Cbar3 * C;
-        Dbar = Dbar - Dbar2;
+        Cbar = Cbar * lower_triangular_inverse(D);
+        Bbar = Bbar - Cbar * R;
+        Dbar = Dbar - transpose(Cbar) * C;
       }
 
-      D = transpose(D);
-      Dbar.zeros<TriangularViewGPU::Upper>();
-      Dbar2 = D * Dbar;
-      Dbar2.triangular_transpose<TriangularMapGPU::LowerToUpper>();
-      D = transpose(D);
-      D = lower_triangular_inverse(D);
-      D = transpose(D);
-      Dbar = D * Dbar2;
-      Dbar = transpose(Dbar);
-      Dbar2 = D * Dbar;
+      // TODO(STEVE): Need to doc this
+      // It's a mix of chol_blocked_rev and chol_unblocked_rev
+      Dbar = transpose(D) * Dbar;
+      Dbar.triangular_transpose<TriangularMapGPU::LowerToUpper>();
+      D = transpose(lower_triangular_inverse(D));
+      Dbar = D * transpose(D * Dbar);
+      Dbar.triangular_transpose<TriangularMapGPU::LowerToUpper>();
 
-      if (Cbar.size() > 0 && B.size() > 0) {
-        Cbar2 = transpose(Cbar);
-        temp = Cbar2 * B;
-        Rbar = Rbar - temp;
-      }
+      Rbar = Rbar - transpose(Cbar) * B;
+      Rbar = Rbar - Dbar * R;
+      Dbar = diagonal_multiply(Dbar, 0.5);
 
-      if (Dbar.size() > 0 && R.size() > 0) {
-        copy(Dbar, Dbar2);
-        Dbar.triangular_transpose<TriangularMapGPU::LowerToUpper>();
-        temp = Dbar * R;
-        Rbar = Rbar - temp;
-      }
-      Dbar2 = diagonal_multiply(Dbar2, 0.5);
-      Dbar2.zeros<TriangularViewGPU::Upper>();
-
-      Lbar.sub_block(Rbar, 0, 0, j, 0, k-j, j);
-      Lbar.sub_block(Dbar2, 0, 0, j, j, k-j, k-j);
-      Lbar.sub_block(Bbar, 0, 0, k, 0, M-k, j);
-      Lbar.sub_block(Cbar, 0, 0, k, j, M-k, k-j);
+      Lbar.sub_block(Rbar, 0, 0, j, 0, k_j_ind, j);
+      Lbar.sub_block(Dbar, 0, 0, j, j, k_j_ind, k_j_ind);
+      Lbar.sub_block(Bbar, 0, 0, k, 0, m_k_ind, j);
+      Lbar.sub_block(Cbar, 0, 0, k, j, m_k_ind, k_j_ind);
     }
     copy(Lbar_, Lbar);
     pos = 0;
@@ -406,9 +381,9 @@ inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
   Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
 #ifdef STAN_OPENCL
   if (L_A.rows() > opencl_context.tuning_opts("move_to_gpu")) {
-    printf("CALLED FROM REV");
+    // NOTE: We don't do the pos def check here because
+    // The GPU cholesky only returns the lower left
     L_A = cholesky_decompose(L_A);
-    check_pos_definite("cholesky_decompose", "m", L_A);
   } else {
     Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
     check_pos_definite("cholesky_decompose", "m", L_factor);
@@ -437,35 +412,34 @@ inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
       accum += j;
       accum_i = accum;
     }
-#ifdef STAN_OPENCL
-} else if (L_A.rows() < opencl_context.tuning_opts("move_to_gpu")) {
-#else
   } else {
-#endif
-    cholesky_block* baseVari = new cholesky_block(A, L_A);
-    size_t pos = 0;
-    for (size_type j = 0; j < L.cols(); ++j) {
-      for (size_type i = j; i < L.cols(); ++i) {
-        L.coeffRef(i, j).vi_ = baseVari->variRefL_[pos++];
-      }
-      for (size_type k = 0; k < j; ++k)
-        L.coeffRef(k, j).vi_ = dummy;
-    }
 #ifdef STAN_OPENCL
-  } else {
-    cholesky_gpu* baseVari = new cholesky_gpu(A, L_A);
-    size_t pos = 0;
-    for (size_type j = 0; j < L.cols(); ++j) {
-      for (size_type i = j; i < L.cols(); ++i) {
-        L.coeffRef(i, j).vi_ = baseVari->variRefL_[pos++];
-      }
-      for (size_type k = 0; k < j; ++k)
-        L.coeffRef(k, j).vi_ = dummy;
-    }
-  }
-#else
-  }
+    if (L_A.rows() < opencl_context.tuning_opts("move_to_gpu")) {
 #endif
+      cholesky_block* baseVari = new cholesky_block(A, L_A);
+      size_t pos = 0;
+      for (size_type j = 0; j < L.cols(); ++j) {
+        for (size_type i = j; i < L.cols(); ++i) {
+          L.coeffRef(i, j).vi_ = baseVari->variRefL_[pos++];
+        }
+        for (size_type k = 0; k < j; ++k)
+          L.coeffRef(k, j).vi_ = dummy;
+      }
+#ifdef STAN_OPENCL
+    } else {
+      cholesky_gpu* baseVari = new cholesky_gpu(A, L_A);
+      size_t pos = 0;
+      for (size_type j = 0; j < L.cols(); ++j) {
+        for (size_type i = j; i < L.cols(); ++i) {
+          L.coeffRef(i, j).vi_ = baseVari->variRefL_[pos++];
+        }
+        for (size_type k = 0; k < j; ++k)
+          L.coeffRef(k, j).vi_ = dummy;
+      }
+    }
+#endif
+  }
+
   return L;
 }
 }  // namespace math
