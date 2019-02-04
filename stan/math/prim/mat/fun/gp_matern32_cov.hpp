@@ -96,8 +96,7 @@ template <typename T_x, typename T_s, typename T_l>
 inline typename Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type,
                               Eigen::Dynamic, Eigen::Dynamic>
 gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
-                const T_s &sigma,
-                const std::vector<T_l> &length_scale) {
+                const T_s &sigma, const std::vector<T_l> &length_scale) {
   using std::exp;
 
   size_t x_size = x.size();

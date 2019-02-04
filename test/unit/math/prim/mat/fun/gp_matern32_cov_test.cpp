@@ -496,5 +496,3 @@ TEST(MathPrimMat, zero_size) {
   EXPECT_EQ(0, cov.rows());
   EXPECT_EQ(0, cov.cols());
 }
-
-
