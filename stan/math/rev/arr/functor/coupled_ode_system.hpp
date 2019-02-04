@@ -87,8 +87,8 @@ struct coupled_ode_system<F, double, var> {
         M_(theta.size()),
         size_(N_ + N_ * M_),
         msgs_(msgs) {
-    for (auto& p : theta)
-      theta_nochain_.emplace_back(var(new vari(value_of(p), false)));
+    for (const var& p : theta)
+      theta_nochain_.emplace_back(var(new vari(p.val(), false)));
   }
 
   /**
@@ -462,8 +462,8 @@ struct coupled_ode_system<F, var, var> {
         M_(theta.size()),
         size_(N_ + N_ * (N_ + M_)),
         msgs_(msgs) {
-    for (auto& p : theta)
-      theta_nochain_.emplace_back(var(new vari(value_of(p), false)));
+    for (const var& p : theta)
+      theta_nochain_.emplace_back(var(new vari(p.val(), false)));
   }
 
   /**
