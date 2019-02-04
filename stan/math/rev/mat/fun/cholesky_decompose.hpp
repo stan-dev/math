@@ -283,111 +283,106 @@ public:
    */
   virtual void chain() {
     using Eigen::MatrixXd;
-    using Eigen::Lower;
-    using Eigen::Block;
-    using Eigen::Upper;
-    using Eigen::StrictlyUpper;
-    using Eigen::StrictlyLower;
-    MatrixXd Lbar(M_, M_);
-    MatrixXd L(M_, M_);
-    Lbar.setZero();
-    L.setZero();
+    MatrixXd Lbar_(M_, M_);
+    MatrixXd L_(M_, M_);
+    Lbar_.setZero();
+    L_.setZero();
 
     size_t pos = 0;
     for (size_type j = 0; j < M_; ++j) {
       for (size_type i = j; i < M_; ++i) {
-        Lbar.coeffRef(i, j) = variRefL_[pos]->adj_;
-        L.coeffRef(i, j) = variRefL_[pos]->val_;
+        Lbar_.coeffRef(i, j) = variRefL_[pos]->adj_;
+        L_.coeffRef(i, j) = variRefL_[pos]->val_;
         ++pos;
       }
     }
-    matrix_gpu L_gpu(L);
-    matrix_gpu Lbar_gpu(Lbar);
+    matrix_gpu L(L_);
+    matrix_gpu Lbar(Lbar_);
     int M = M_;
     int block_size_ = 128;
     block_size_ = std::max((M / 8 / 16) * 16, 8);
     block_size_ = std::min(block_size_, 512);
+    // Iterate from top of matrix_gpu downward
     for (int k = M; k > 0; k -= block_size_) {
       int j = std::max(0, k - block_size_);
-      matrix_gpu R_gpu(k-j, j);
-      matrix_gpu D_gpu(k-j, k-j);
-      matrix_gpu Dinv_gpu(k-j, k-j);
-      matrix_gpu B_gpu(M-k, j);
-      matrix_gpu C_gpu(M-k, k-j);
+      matrix_gpu R(k-j, j);
+      matrix_gpu D(k-j, k-j);
+      matrix_gpu Dinv(k-j, k-j);
+      matrix_gpu B(M-k, j);
+      matrix_gpu C(M-k, k-j);
 
-      matrix_gpu Rbar_gpu(k-j, j);
-      matrix_gpu Dbar_gpu(k-j, k-j);
-      matrix_gpu Dbar2_gpu(k-j, k-j);
-      matrix_gpu Bbar_gpu(M-k, j);
-      matrix_gpu Bbar2_gpu(M-k, j);
-      matrix_gpu Cbar_gpu(M-k, k-j);
-      matrix_gpu Cbar2_gpu(k-j, M-k);
-      matrix_gpu Cbar3_gpu(k-j, M-k);
-      matrix_gpu temp_gpu(k-j, j);
+      matrix_gpu Rbar(k-j, j);
+      matrix_gpu Dbar(k-j, k-j);
+      matrix_gpu Dbar2(k-j, k-j);
+      matrix_gpu Bbar(M-k, j);
+      matrix_gpu Bbar2(M-k, j);
+      matrix_gpu Cbar(M-k, k-j);
+      matrix_gpu Cbar2(k-j, M-k);
+      matrix_gpu Cbar3(k-j, M-k);
+      matrix_gpu temp(k-j, j);
 
-      R_gpu.sub_block(L_gpu, j, 0, 0, 0, k-j, j);
-      D_gpu.sub_block(L_gpu, j, j, 0, 0, k-j, k-j);
-      B_gpu.sub_block(L_gpu, k, 0, 0, 0, M-k, j);
-      C_gpu.sub_block(L_gpu, k, j, 0, 0, M-k, k-j);
+      R.sub_block(L, j, 0, 0, 0, k-j, j);
+      D.sub_block(L, j, j, 0, 0, k-j, k-j);
+      B.sub_block(L, k, 0, 0, 0, M-k, j);
+      C.sub_block(L, k, j, 0, 0, M-k, k-j);
 
-      Rbar_gpu.sub_block(Lbar_gpu, j, 0, 0, 0, k-j, j);
-      Dbar_gpu.sub_block(Lbar_gpu, j, j, 0, 0, k-j, k-j);
-      Bbar_gpu.sub_block(Lbar_gpu, k, 0, 0, 0, M-k, j);
-      Cbar_gpu.sub_block(Lbar_gpu, k, j, 0, 0, M-k, k-j);
+      Rbar.sub_block(Lbar, j, 0, 0, 0, k-j, j);
+      Dbar.sub_block(Lbar, j, j, 0, 0, k-j, k-j);
+      Bbar.sub_block(Lbar, k, 0, 0, 0, M-k, j);
+      Cbar.sub_block(Lbar, k, j, 0, 0, M-k, k-j);
 
-      if (Cbar_gpu.size() > 0) {
-        copy(D_gpu, Dinv_gpu);
-        Dinv_gpu = lower_triangular_inverse(Dinv_gpu);
-        Dinv_gpu = transpose(Dinv_gpu);
-        Cbar2_gpu = transpose(Cbar_gpu);
+      if (Cbar.size() > 0) {
+        copy(Dinv, D);
+        Dinv = transpose(lower_triangular_inverse(Dinv));
+        Cbar2 = transpose(Cbar);
 
-        Cbar3_gpu = multiply(Dinv_gpu, Cbar2_gpu);
-        Cbar_gpu = transpose(Cbar3_gpu);
+        Cbar3 = Dinv * Cbar2;
+        Cbar = transpose(Cbar3);
 
-        Bbar2_gpu = multiply(Cbar_gpu, R_gpu);
-        Bbar_gpu = subtract(Bbar_gpu, Bbar2_gpu);
+        Bbar2 = Cbar * R;
+        Bbar = Bbar - Bbar2;
 
-        Cbar3_gpu = transpose(Cbar_gpu);
-        Dbar2_gpu = multiply(Cbar3_gpu, C_gpu);
-        Dbar_gpu = subtract(Dbar_gpu, Dbar2_gpu);
+        Cbar3 = transpose(Cbar);
+        Dbar2 = Cbar3 * C;
+        Dbar = Dbar - Dbar2;
       }
 
-      D_gpu = transpose(D_gpu);
-      Dbar_gpu.zeros<TriangularViewGPU::Upper>();
-      Dbar2_gpu = multiply(D_gpu, Dbar_gpu);
-      Dbar2_gpu.triangular_transpose<TriangularMapGPU::LowerToUpper>();
-      D_gpu = transpose(D_gpu);
-      D_gpu = lower_triangular_inverse(D_gpu);
-      D_gpu = transpose(D_gpu);
-      Dbar_gpu = multiply(D_gpu, Dbar2_gpu);
-      Dbar_gpu = transpose(Dbar_gpu);
-      Dbar2_gpu = multiply(D_gpu, Dbar_gpu);
+      D = transpose(D);
+      Dbar.zeros<TriangularViewGPU::Upper>();
+      Dbar2 = D * Dbar;
+      Dbar2.triangular_transpose<TriangularMapGPU::LowerToUpper>();
+      D = transpose(D);
+      D = lower_triangular_inverse(D);
+      D = transpose(D);
+      Dbar = D * Dbar2;
+      Dbar = transpose(Dbar);
+      Dbar2 = D * Dbar;
 
-      if (Cbar_gpu.size() > 0 && B_gpu.size() > 0) {
-        Cbar2_gpu = transpose(Cbar_gpu);
-        temp_gpu = multiply(Cbar2_gpu, B_gpu);
-        Rbar_gpu = subtract(Rbar_gpu, temp_gpu);
+      if (Cbar.size() > 0 && B.size() > 0) {
+        Cbar2 = transpose(Cbar);
+        temp = Cbar2 * B;
+        Rbar = Rbar - temp;
       }
 
-      if (Dbar_gpu.size() > 0 && R_gpu.size() > 0) {
-        copy(Dbar2_gpu, Dbar_gpu);
-        Dbar_gpu.triangular_transpose<TriangularMapGPU::LowerToUpper>();
-        temp_gpu = multiply(Dbar_gpu, R_gpu);
-        Rbar_gpu = subtract(Rbar_gpu, temp_gpu);
+      if (Dbar.size() > 0 && R.size() > 0) {
+        copy(Dbar, Dbar2);
+        Dbar.triangular_transpose<TriangularMapGPU::LowerToUpper>();
+        temp = Dbar * R;
+        Rbar = Rbar - temp;
       }
-      Dbar2_gpu = diagonal_multiply(Dbar2_gpu, 0.5);
-      Dbar2_gpu.zeros<TriangularViewGPU::Upper>();
+      Dbar2 = diagonal_multiply(Dbar2, 0.5);
+      Dbar2.zeros<TriangularViewGPU::Upper>();
 
-      Lbar_gpu.sub_block(Rbar_gpu, 0, 0, j, 0, k-j, j);
-      Lbar_gpu.sub_block(Dbar2_gpu, 0, 0, j, j, k-j, k-j);
-      Lbar_gpu.sub_block(Bbar_gpu, 0, 0, k, 0, M-k, j);
-      Lbar_gpu.sub_block(Cbar_gpu, 0, 0, k, j, M-k, k-j);
+      Lbar.sub_block(Rbar, 0, 0, j, 0, k-j, j);
+      Lbar.sub_block(Dbar2, 0, 0, j, j, k-j, k-j);
+      Lbar.sub_block(Bbar, 0, 0, k, 0, M-k, j);
+      Lbar.sub_block(Cbar, 0, 0, k, j, M-k, k-j);
     }
-    copy(Lbar_gpu, Lbar);
+    copy(Lbar_, Lbar);
     pos = 0;
     for (size_type j = 0; j < M_; ++j)
       for (size_type i = j; i < M_; ++i)
-        variRefA_[pos++]->adj_ += Lbar.coeffRef(i, j);
+        variRefA_[pos++]->adj_ += Lbar_.coeffRef(i, j);
   }
 };
 
@@ -411,6 +406,7 @@ inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
   Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
 #ifdef STAN_OPENCL
   if (L_A.rows() > opencl_context.tuning_opts("move_to_gpu")) {
+    printf("CALLED FROM REV");
     L_A = cholesky_decompose(L_A);
     check_pos_definite("cholesky_decompose", "m", L_A);
   } else {

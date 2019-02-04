@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/opencl_context.hpp>
 #include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/gpu/copy_triangular.hpp>
 #include <stan/math/gpu/kernels/cholesky_decompose.hpp>
 #include <stan/math/gpu/multiply.hpp>
 #include <stan/math/gpu/multiply_transpose.hpp>
@@ -91,7 +92,6 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A) {
   A.sub_block(L_rem_11, 0, 0, block, block, block_subset, block_subset);
   check_nan("cholesky_decompose_gpu", "Matrix m", A);
   check_diagonal_zeros("cholesky_decompose_gpu", "Matrix m", A);
-  A.zeros<stan::math::TriangularViewGPU::Upper>();
   return A;
 }
 
