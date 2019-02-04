@@ -846,3 +846,19 @@ TEST(MathPrimMat, nan_domain_error_gp_exp_quad_cov2_vec_length_scale) {
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_vec_2, sigma, l_bad4),
                std::domain_error);
 }
+
+TEST(MathPrimMat, zero_size) {
+  double sigma = 0.2;
+
+  std::vector<double> l(0);
+
+  std::vector<Eigen::Matrix<double, -1, 1>> x(0);
+
+  Eigen::MatrixXd cov;
+  Eigen::MatrixXd cov2;
+  cov = stan::math::gp_exp_quad_cov(x, sigma, l);
+  cov2 = stan::math::gp_exp_quad_cov(x, x, sigma, l);
+  
+  EXPECT_EQ(0, cov.rows());
+  EXPECT_EQ(0, cov.cols());
+}

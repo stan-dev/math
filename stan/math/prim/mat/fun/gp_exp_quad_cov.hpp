@@ -43,21 +43,22 @@ inline
   using std::exp;
   check_positive("gp_exp_quad_cov", "magnitude", sigma);
   check_positive("gp_exp_quad_cov", "length scale", length_scale);
-  for (size_t n = 0; n < x.size(); ++n)
-    check_not_nan("gp_exp_quad_cov", "x", x[n]);
-
-  Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
-                Eigen::Dynamic, Eigen::Dynamic>
-      cov(x.size(), x.size());
 
   size_t x_size = x.size();
+  Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
+                Eigen::Dynamic, Eigen::Dynamic>
+      cov(x_size, x_size);
+
   if (x_size == 0)
     return cov;
+
+  for (size_t n = 0; n < x.size(); ++n)
+    check_not_nan("gp_exp_quad_cov", "x", x[n]);
 
   T_sigma sigma_sq = square(sigma);
   T_l neg_half_inv_l_sq = -0.5 / square(length_scale);
 
-  for (size_t j = 0; j < (x_size - 1); ++j) {
+  for (size_t j = 0; j < x_size; ++j) {
     cov(j, j) = sigma_sq;
     for (size_t i = j + 1; i < x_size; ++i) {
       cov(i, j)
@@ -65,7 +66,6 @@ inline
       cov(j, i) = cov(i, j);
     }
   }
-  cov(x_size - 1, x_size - 1) = sigma_sq;
   return cov;
 }
 
@@ -76,9 +76,8 @@ inline
  * @tparam T_sigma type of sigma
  * @tparam T_l type of std::vector of length scale
  *
- * @param x std::vector of elements that can be used in square distance.
- *    This function assumes each element of x is the same size.
- *    This function assumes the dimension if x and l are the same.
+ * @param x std::vector of Eigen column vectors of scalars.
+ *    This function assumes each column vector of x is the same size.
  * @param sigma standard deviation
  * @param length_scale std::vector length scale
  * @return squared distance
@@ -94,19 +93,19 @@ inline
                     const std::vector<T_l> &length_scale) {
   using std::exp;
 
-  size_t x_size = x.size();
-  size_t l_size = length_scale.size();
   check_positive_finite("gp_exp_quad_cov", "magnitude", sigma);
   check_positive_finite("gp_exp_quad_cov", "length scale", length_scale);
-  check_size_match("gp_exp_quad_cov", "x dimension", x[0].size(),
-                   "number of length scales", l_size);
 
+  size_t x_size = x.size();
   Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
-
   if (x_size == 0)
     return cov;
+
+  size_t l_size = length_scale.size();
+  check_size_match("gp_exp_quad_cov", "x dimension", x[0].size(),
+                   "number of length scales", l_size);
 
   T_sigma sigma_sq = square(sigma);
   std::vector<
@@ -152,17 +151,18 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   check_positive(function_name, "length scale", length_scale);
 
   size_t x1_size = x1.size();
+  size_t x2_size = x2.size();
+  Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type,
+                Eigen::Dynamic, Eigen::Dynamic>
+    cov(x1_size, x2_size);
+  if (x1_size == 0 || x2_size == 0)
+    return cov;
+
   for (size_t i = 0; i < x1_size; ++i)
     check_not_nan(function_name, "x1", x1[i]);
-  size_t x2_size = x2.size();
   for (size_t i = 0; i < x2_size; ++i)
     check_not_nan(function_name, "x2", x2[i]);
 
-  Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type,
-                Eigen::Dynamic, Eigen::Dynamic>
-      cov(x1.size(), x2.size());
-  if (x1.size() == 0 || x2.size() == 0)
-    return cov;
   T_sigma sigma_sq = square(sigma);
   T_l neg_half_inv_l_sq = -0.5 / square(length_scale);
 
@@ -183,11 +183,12 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * @tparam T_s type of sigma
  * @tparam T_l type of length scale
  *
- * @param x1 std::vector of elements that can be used in square distance
- * @param x2 std::vector of elements that can be used in square distance
+ * @param x1 std::vector of Eigen column vectors of scalars.
+ * @param x2 std::vector of Eigen column vectors of scalars.
  * @param sigma standard deviation
  * @param length_scale std::vector of length scale
- *    This function assumes the dimension if x1, x2 and l are the same.
+ *    This function assumes the column vectors of x1 and x2
+ *    are the same size.
  * @return squared distance
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
@@ -204,6 +205,12 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
   size_t x2_size = x2.size();
   size_t l_size = length_scale.size();
 
+  Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_s, T_l>::type,
+                Eigen::Dynamic, Eigen::Dynamic>
+      cov(x1_size, x2_size);
+  if (x1_size == 0 || x2_size == 0)
+    return cov;
+
   const char *function_name = "gp_exp_quad_cov";
   for (size_t i = 0; i < x1_size; ++i)
     check_not_nan(function_name, "x1", x1[i]);
@@ -215,12 +222,6 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
                    "number of length scales", l_size);
   check_size_match(function_name, "x dimension", x2[0].size(),
                    "number of length scales", l_size);
-
-  Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_s, T_l>::type,
-                Eigen::Dynamic, Eigen::Dynamic>
-      cov(x1_size, x2_size);
-  if (x1_size == 0 || x2_size == 0)
-    return cov;
 
   T_s sigma_sq = square(sigma);
 
