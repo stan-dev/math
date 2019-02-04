@@ -32,7 +32,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
   check_square("cholesky_decompose", "m", m);
   check_symmetric("cholesky_decompose", "m", m);
 #ifdef STAN_OPENCL
-  if (m.rows() > opencl_context.tuning_opts("move_to_gpu")) {
+  if (m.rows() >= opencl_context.tuning_opts("move_to_gpu")) {
     matrix_gpu m_gpu(m);
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_chol(m.rows(), m.cols());
     cholesky_decompose(m_gpu);

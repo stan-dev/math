@@ -91,7 +91,6 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A) {
   A.sub_block(L_rem_11, 0, 0, block, block, block_subset, block_subset);
   check_nan("cholesky_decompose_gpu", "Matrix m", A);
   check_diagonal_zeros("cholesky_decompose_gpu", "Matrix m", A);
-  A.zeros<stan::math::TriangularViewGPU::Upper>();
   return A;
 }
 
