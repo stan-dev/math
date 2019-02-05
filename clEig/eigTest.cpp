@@ -23,7 +23,7 @@ using namespace stan::math;
 
 using Mat=Matrix<double, Dynamic, Dynamic>;
 using Vec=VectorXd;
-
+/*
 void p(const Eigen::MatrixXd& a) {
   std::cout << a << std::endl;
 }
@@ -41,7 +41,8 @@ void p(const matrix_gpu& a) {
   copy(b, a);
   std::cout << b << std::endl;
 }
-
+ */
+/*
 void chk(const Mat& a, const Mat& Q, const Mat& R){
 #ifndef SKIP_CHECKS
   Mat R2 = R;
@@ -51,6 +52,7 @@ void chk(const Mat& a, const Mat& Q, const Mat& R){
   cout << "ID: " << (Q.transpose() * Q).array().abs().sum() - Q.rows() << endl;
 #endif
 }
+ */
 
 void chkEig(const Mat& a, const Mat& eigenvecs, const Vec& eigenvals){
 #ifndef SKIP_CHECKS
@@ -63,7 +65,7 @@ void chkEig(const Mat& a, const Mat& eigenvecs, const Vec& eigenvals){
   cout << "eigen max loss of orthogonality: " << (eigenvecs.transpose() * eigenvecs - Mat::Identity(A,A)).array().abs().maxCoeff() << endl;
 #endif
 }
-/*
+
 void chkTridiag(const Mat& a, Mat t, const Mat& q){
 #ifndef SKIP_CHECKS
   cout << "reconstruct: " << (a - q * t * q.transpose()).array().abs().sum() << endl;
@@ -75,8 +77,9 @@ void chkTridiag(const Mat& a, Mat t, const Mat& q){
   cout << "tridiag: " << t.array().abs().sum() << endl;
 #endif
 }
- */
 
+
+/*
 void chkTridiagPacked(const Mat& a, const Mat& packed){
 #ifndef SKIP_CHECKS
   Mat t = Mat::Constant(a.rows(), a.cols(), 0);
@@ -98,6 +101,7 @@ void chkTridiagPacked(const Mat& a, const Mat& packed){
   cout << "apply: " << (q * a - a2).array().abs().sum() << endl;
 #endif
 }
+ */
 /*
 int miniTest() {
   Mat a(6, 6);
@@ -142,27 +146,24 @@ int miniTest2() {
   chkTridiagPacked(a,packed);
 }
 */
-
-int main() {
+/*
+void testMrrr(){
   auto start = std::chrono::steady_clock::now();
-  /*miniTest();
-  miniTest2();
-  return 0;*/
   cout.precision(4);
-  int A = 2000;
+  int A = 7;
   for(unsigned int i=443;i<1e7;i++) {
     cout << "i=" << i << endl;
     srand(i);
 
     Vec diag = Vec::Random(A).array();
     Vec subdiag = Vec::Random(A - 1).array();
-    /*subdiag[2]=0;
-    subdiag[3]=0;
-    diag[5]=0;
-    diag[6]=0;
-    diag[10]=0;
-    diag[11]=0;
-    subdiag[10]=0;*/
+//    subdiag[2]=0;
+//    subdiag[3]=0;
+//    diag[5]=0;
+//    diag[6]=0;
+//    diag[10]=0;
+//    diag[11]=0;
+//    subdiag[10]=0;
     Vec eigenvals(A), d(A), d_plus(A), d_minus(A), l(A - 1), l_plus(A - 1), u(A - 1), u_minus(A - 1), s(A), p_(A), low(A), high(A);
     Mat eigenvecs(A, A), eigenvecs2(A, A);
     Mat T = Mat::Constant(A, A, 0);
@@ -184,10 +185,10 @@ int main() {
     if(eigenvecs2.unaryExpr([](double x){return is_inf(x);}).any()){
       cout << "inf in eigenvecs!" << endl;
     }
-    /*if((eigenvecs.transpose() * eigenvecs - Mat::Identity(A,A)).array().maxCoeff()<0.1 ||
-    (T * eigenvecs - eigenvecs * eigenvals.asDiagonal()).array().colwise().sum().maxCoeff() <0.1){
-      continue;
-    }*/
+//    if((eigenvecs.transpose() * eigenvecs - Mat::Identity(A,A)).array().maxCoeff()<0.1 ||
+//    (T * eigenvecs - eigenvecs * eigenvals.asDiagonal()).array().colwise().sum().maxCoeff() <0.1){
+//      continue;
+//    }
 //    cout << endl;
     if (A < 15) {
       cout << "mat:" << endl;
@@ -203,7 +204,6 @@ int main() {
 //      cout << eigenvecs * eigenvals.asDiagonal() << endl << endl;
 //      cout << eigenvecs.transpose() * eigenvecs;
     }
-    /**/
     chkEig(T, eigenvecs, eigenvals);
 
     SelfAdjointEigenSolver<Mat> slv(T);
@@ -294,193 +294,169 @@ int main() {
 //       << "ms" << endl;
 //  //cout << "eigvals: " << eigenvals << endl;
 //  cout << "trace diff: " << sum(diag)-sum(eigenvals) << endl;
-//
-  return 0;
+}*/
 
-/*
+int main() {
+  auto start = std::chrono::steady_clock::now();
+  /*miniTest();
+  miniTest2();
+  return 0;*/
+
+
+  int A=3000;
   Mat a = Mat::Random(A, A);
   a+=a.transpose().eval();
   a=-100*a;
   Mat t,q, vecs, packed, qa, qa2, q2;
   Vec vals;
 
-//  SelfAdjointEigenSolver<Mat> slv(a);
-//  cout << "CPU: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
-//  vals=slv.eigenvalues();
-//  vecs=slv.eigenvectors();
-//  cout << "CPU total: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
-//  chkEig(a,vecs,vals);
-
-
   start = std::chrono::steady_clock::now();
-  Tridiagonalization<Mat> slv2(a);
+  SelfAdjointEigenSolver<Mat> slv(a);
   cout << "CPU: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
-  t=slv2.matrixT();
-  q=slv2.matrixQ();
-  cout << "\t\tCPU total: "
+  vals=slv.eigenvalues();
+  vecs=slv.eigenvectors();
+  cout << "CPU total: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
-  chkTridiag(a,t,q);
+  chkEig(a,vecs,vals);
 
-//  start = std::chrono::steady_clock::now();
-//  householder_tridiag(a, t, q);
-//  cout << "\t\tCPU my basic: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
-//  chkTridiag(a,t,q);
-//
-//  start = std::chrono::steady_clock::now();
-//  householder_tridiag2(a, t, q);
-//  cout << "\t\tCPU my basic2: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
-//  chkTridiag(a,t,q);
-//
-//  start = std::chrono::steady_clock::now();
-//  householder_tridiag3(a, t, q);
-//  cout << "\t\tCPU my basic3: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
-//  chkTridiag(a,t,q);
-
-
-
-//  start = std::chrono::steady_clock::now();
-//  householder_tridiag4(a, t, q);
-//  cout << "\t\tCPU my basic4: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
-//  chkTridiag(a,t,q);
-//
-//
-//  start = std::chrono::steady_clock::now();
-//  householder_tridiag5(a, t, q);
-//  cout << "\t\tCPU my basic5: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
-//  chkTridiag(a,t,q);
-//
-//
-//  start = std::chrono::steady_clock::now();
-//  householder_tridiag6(a, t, q);
-//  cout << "\t\tCPU my basic6: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
-//  chkTridiag(a,t,q);
-//
-//
-//  start = std::chrono::steady_clock::now();
-//  householder_tridiag7(a, t, q);
-//  cout << "\t\tCPU my basic7: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
-//  chkTridiag(a,t,q);
-//
-//
-//  start = std::chrono::steady_clock::now();
-//  householder_tridiag8(a, t, q);
-//  cout << "\t\tCPU my basic8: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
-//  chkTridiag(a,t,q);
-//
-//
-//  start = std::chrono::steady_clock::now();
-//  householder_tridiag9(a, t, q);
-//  cout << "\t\tCPU my basic9: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
-//  chkTridiag(a,t,q);
-
-
+  vals.setZero();
+  vecs.setZero();
   start = std::chrono::steady_clock::now();
-  householder_tridiag_packed(a, packed);
-  cout << "\t\tCPU my basic packed: "
+  cout << "CPU: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
-
-  start = std::chrono::steady_clock::now();
-  block_householder_tridiag3(a, packed);
-  cout << "\t\tCPU my blocked packed: "
+  symmetricEigenSolver(a,vals, vecs);
+  cout << "CPU total: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
+  chkEig(a,vecs,vals);
 
-  t = Mat::Constant(a.rows(), a.cols(), 0);
-  t.diagonal()=packed.diagonal();
-  t.diagonal(1)=packed.diagonal(1);
-  t.diagonal(-1)=packed.diagonal(1);
+
 
 //  start = std::chrono::steady_clock::now();
-//  q=Mat::Identity(a.rows(),a.cols());
-//  apply_packed_Q(packed,q);
-//  cout << "\t\tCPU apply packed Q: "
+//  Tridiagonalization<Mat> slv2(a);
+//  cout << "CPU: "
+//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+//       << "ms" << endl;
+//  t=slv2.matrixT();
+//  q=slv2.matrixQ();
+//  cout << "\t\tCPU total: "
 //       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
 //       << "ms" << endl;
 //  chkTridiag(a,t,q);
+
+
+//  start = std::chrono::steady_clock::now();
+//  householder_tridiag_packed(a, packed);
+//  cout << "\t\tCPU my basic packed: "
+//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+//       << "ms" << endl;
+
+//  start = std::chrono::steady_clock::now();
+//  block_householder_tridiag3(a, packed);
+//  cout << "\t\tCPU my blocked packed: "
+//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+//       << "ms" << endl;
+//
+//  t = Mat::Constant(a.rows(), a.cols(), 0);
+//  t.diagonal()=packed.diagonal();
+//  t.diagonal(1)=packed.diagonal(1);
+//  t.diagonal(-1)=packed.diagonal(1);
+//
+////  start = std::chrono::steady_clock::now();
+////  q=Mat::Identity(a.rows(),a.cols());
+////  apply_packed_Q(packed,q);
+////  cout << "\t\tCPU apply packed Q: "
+////       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+////       << "ms" << endl;
+////  chkTridiag(a,t,q);
+////
+////  start = std::chrono::steady_clock::now();
+////  q=Mat::Identity(a.rows(),a.cols());
+////  apply_packed_Q2(packed,q);
+////  cout << "\t\tCPU apply packed Q2: "
+////       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+////       << "ms" << endl;
+////  chkTridiag(a,t,q);
 //
 //  start = std::chrono::steady_clock::now();
 //  q=Mat::Identity(a.rows(),a.cols());
-//  apply_packed_Q2(packed,q);
-//  cout << "\t\tCPU apply packed Q2: "
+//  apply_packed_Q3(packed,q);
+//  cout << "\t\tCPU apply packed Q3: "
 //       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
 //       << "ms" << endl;
 //  chkTridiag(a,t,q);
-
-  start = std::chrono::steady_clock::now();
-  q=Mat::Identity(a.rows(),a.cols());
-  apply_packed_Q3(packed,q);
-  cout << "\t\tCPU apply packed Q3: "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-       << "ms" << endl;
-  chkTridiag(a,t,q);
-  qa2=a;
-  apply_packed_Q3(packed,qa2);
-  q2=q;
-
-
-  start = std::chrono::steady_clock::now();
-  q=Mat::Identity(a.rows(),a.cols());
-  apply_packed_Q4(packed,q);
-  cout << "\t\tCPU apply packed Q4: "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-       << "ms" << endl;
-  chkTridiag(a,t,q);
-  qa=a;
-  apply_packed_Q4(packed,qa);
-  cout << "qa: " << (qa-qa2).array().abs().sum() << endl;
-  cout << "q: " << (q-q2).array().abs().sum() << endl;
-
-
-  start = std::chrono::steady_clock::now();
-  q=Mat::Identity(a.rows(),a.cols());
-  block_apply_packed_Q(packed,q);
-  cout << "\t\tCPU block apply packed Q: "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-       << "ms" << endl;
-  chkTridiag(a,t,q);
-  qa=a;
-  block_apply_packed_Q(packed,qa);
-  cout << "qa: " << (qa-qa2).array().abs().sum() << endl;
-  cout << "q: " << (q-q2).array().abs().sum() << endl;
-
-  start = std::chrono::steady_clock::now();
-  q=Mat::Identity(a.rows(),a.cols());
-  block_apply_packed_Q2(packed,q);
-  cout << "\t\tCPU block apply packed Q2: "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-       << "ms" << endl;
-  chkTridiag(a,t,q);
-  qa=a;
-  block_apply_packed_Q2(packed,qa);
-  cout << "qa: " << (qa-qa2).array().abs().sum() << endl;
-  cout << "q: " << (q-q2).array().abs().sum() << endl;
-
+//  qa2=a;
+//  apply_packed_Q3(packed,qa2);
+//  cout << "apply left" << (qa2 - q * a).array().abs().sum() << endl;
+//  cout << "apply right" << (qa2 - a * q).array().abs().sum() << endl;
+//
+//  start = std::chrono::steady_clock::now();
+//  q=Mat::Identity(a.rows(),a.cols());
+//  apply_packed_Q4(packed,q);
+//  cout << "\t\tCPU apply packed Q4: "
+//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+//       << "ms" << endl;
+//  chkTridiag(a,t,q);
+//  qa2=a;
+//  apply_packed_Q4(packed,qa2);
+//  cout << "apply left" << (qa2 - q * a).array().abs().sum() << endl;
+//  cout << "apply right" << (qa2 - a * q).array().abs().sum() << endl;
+//
+//
+////  start = std::chrono::steady_clock::now();
+////  q=Mat::Identity(a.rows(),a.cols());
+////  apply_packed_Q4(packed,q);
+////  cout << "\t\tCPU apply packed Q4: "
+////       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+////       << "ms" << endl;
+////  chkTridiag(a,t,q);
+////  qa=a;
+////  apply_packed_Q4(packed,qa);
+////  cout << "qa: " << (qa-qa2).array().abs().sum() << endl;
+////  cout << "q: " << (q-q2).array().abs().sum() << endl;
+////
+////
+////  start = std::chrono::steady_clock::now();
+////  q=Mat::Identity(a.rows(),a.cols());
+////  block_apply_packed_Q(packed,q);
+////  cout << "\t\tCPU block apply packed Q: "
+////       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+////       << "ms" << endl;
+////  chkTridiag(a,t,q);
+////  qa=a;
+////  block_apply_packed_Q(packed,qa);
+////  cout << "qa: " << (qa-qa2).array().abs().sum() << endl;
+////  cout << "q: " << (q-q2).array().abs().sum() << endl;
+//
+//  start = std::chrono::steady_clock::now();
+//  q=Mat::Identity(a.rows(),a.cols());
+//  block_apply_packed_Q2(packed,q);
+//  cout << "\t\tCPU block apply packed Q2: "
+//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+//       << "ms" << endl;
+//  chkTridiag(a,t,q);
+//  qa=a;
+//  block_apply_packed_Q2(packed,qa);
+//  cout << "apply left" << (qa - q * a).array().abs().sum() << endl;
+//  cout << "apply right" << (qa - a * q).array().abs().sum() << endl;
+//
+//
+//  start = std::chrono::steady_clock::now();
+//  q=Mat::Identity(a.rows(),a.cols());
+//  block_apply_packed_Q3(packed,q);
+//  cout << "\t\tCPU block apply packed Q3: "
+//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+//       << "ms" << endl;
+//  chkTridiag(a,t,q);
+//  qa=a;
+//  block_apply_packed_Q3(packed,qa);
+//  cout << "apply left" << (qa - q * a).array().abs().sum() << endl;
+//  cout << "apply right" << (qa - a * q).array().abs().sum() << endl;
+//
 //  start = std::chrono::steady_clock::now();
 //  q=Mat::Identity(a.rows(),a.cols());
 //  block_apply_packed_Q3(packed,q,3);
@@ -490,21 +466,22 @@ int main() {
 //  chkTridiag(a,t,q);
 //  qa=a;
 //  block_apply_packed_Q3(packed,qa,3);
+//  cout << "apply left" << (qa - q * a).array().abs().sum() << endl;
+//  cout << "apply right" << (qa - a * q).array().abs().sum() << endl;
+
+//  start = std::chrono::steady_clock::now();
+//  qa=q*a;
+//  cout << "\t\tCPU multiply q*a: "
+//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+//       << "ms" << endl;
 //  cout << "qa: " << (qa-qa2).array().abs().sum() << endl;
-
-  start = std::chrono::steady_clock::now();
-  qa=q*a;
-  cout << "\t\tCPU multiply q*a: "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-       << "ms" << endl;
-  cout << "qa: " << (qa-qa2).array().abs().sum() << endl;
-
-  start = std::chrono::steady_clock::now();
-  qa=a*q;
-  cout << "\t\tCPU multiply a*q: "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-       << "ms" << endl;
-  cout << "aq: " << (qa-qa2).array().abs().sum() << endl;
+//
+//  start = std::chrono::steady_clock::now();
+//  qa=a*q;
+//  cout << "\t\tCPU multiply a*q: "
+//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+//       << "ms" << endl;
+//  cout << "aq: " << (qa-qa2).array().abs().sum() << endl;
 //  cout << q.transpose()*a*q << endl;
 //  cout << q*a*q.transpose() << endl;
 //  cout << endl << t << endl;
@@ -542,5 +519,5 @@ int main() {
 //       << "ms" << endl;
 //  chk(a,Q,R);
 
-  return 0;*/
+  return 0;
 }

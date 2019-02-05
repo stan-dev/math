@@ -539,6 +539,7 @@ void householder_tridiag9(const Eigen::MatrixXd& A, Eigen::MatrixXd& T, Eigen::M
 
 */
 
+/*
 void householder_tridiag_packed(const Eigen::MatrixXd& A, Eigen::MatrixXd& packed) {
   packed = A;
 #ifdef TIME_IT
@@ -583,6 +584,7 @@ void householder_tridiag_packed(const Eigen::MatrixXd& A, Eigen::MatrixXd& packe
   cout << "packed: " << t1/1000. << "ms" << endl;
 #endif
 }
+*/
 
 void block_householder_tridiag3(const Eigen::MatrixXd& A, Eigen::MatrixXd& packed, int r = 60) {
   packed = A;
@@ -691,7 +693,7 @@ void apply_packed_Q2(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A){
   A.transposeInPlace();
 }
  */
-
+/*
 void apply_packed_Q3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A){
   //if input A==Identity, constructs Q
   Eigen::RowVectorXd scratchSpace(A.rows());
@@ -703,7 +705,21 @@ void apply_packed_Q3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A){
   }
 }
 
+void apply_packed_Q4(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A){
+  //if input A==Identity, constructs Q
+  Eigen::RowVectorXd scratchSpace(A.rows());
+  //for (size_t k = 0; k < packed.rows() - 2; k++) {
+  for (int k = packed.rows() - 3; k >=0; k--) {
+    auto householder = packed.col(k).tail(packed.rows() - k - 1);
+    scratchSpace.head(A.cols()).noalias() = householder.transpose() * A.bottomRows(A.cols() - k - 1);
+    A.bottomRows(A.cols() - k - 1).noalias() -= householder * scratchSpace.head(A.cols());
+  }
+}
+ */
+
 /*
+
+
 void apply_packed_Q4(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A){
   //if input A==Identity, constructs Q
   Eigen::VectorXd scratchSpace(A.rows());
@@ -714,7 +730,9 @@ void apply_packed_Q4(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A){
     A.bottomRightCorner(A.cols() - k - 1, A.cols() - k - 1).noalias() -= householder * scratchSpace.head(A.cols() - k - 1).transpose();
   }
 }
+*/
 
+/*
 void block_apply_packed_Q(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 100){
   //if input A==Identity, constructs Q
   for (size_t k = 0; k < packed.rows() - 2; k += r) {
@@ -729,11 +747,35 @@ void block_apply_packed_Q(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int
     A.rightCols(A.cols() - k) -= (A.rightCols(A.cols() - k) * W) * Y.transpose();
   }
 }
+ */
 
+/*
+//ne dela
 void block_apply_packed_Q2(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 100){
   //if input A==Identity, constructs Q
   Eigen::MatrixXd scratchSpace(A.rows(), r);
-  for (size_t k = 0; k < packed.rows() - 2; k += r) {
+  for (int k = (packed.rows() - 3)/r*r; k >=0; k -= r) {
+    int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
+    Eigen::MatrixXd W(packed.rows() - k - 1, actual_r);
+    W.col(0).head(actual_r - 1) = Eigen::VectorXd::Constant(actual_r-1, 0);
+    W.col(0).tail(W.rows() - actual_r + 1) = packed.col(k + actual_r - 1).tail(W.rows() - actual_r + 1);
+//    for (int j = 1; j < actual_r; j++) {
+    for (int j = actual_r-2; j >= 0; j--) {
+      scratchSpace.col(0).head(actual_r - j - 1).noalias() = packed.block(k + j + 1, k + j + 1, packed.rows() - k - j - 1, actual_r - j - 1).transpose() * packed.col(j + k).tail(packed.rows() - k - j - 1); //TODO za 1 krajsi vec
+      W.col(j).noalias() = - W.rightCols(actual_r - j - 1) * scratchSpace.col(0).head(actual_r - j - 1); //TODO .col(j).tail( ... )
+      W.col(j).tail(W.rows() - j) += packed.col(j + k).tail(packed.rows() - k - j - 1);
+    }
+    scratchSpace.leftCols(actual_r).noalias() = A.rightCols(A.cols() - k - 1) * W;
+    A.rightCols(A.cols() - k - 1).noalias() -= scratchSpace.leftCols(actual_r) * packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>();
+  }
+}
+ */
+
+void block_apply_packed_Q3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 100){
+  //if input A==Identity, constructs Q
+  Eigen::MatrixXd scratchSpace(A.rows(), r);
+  //for (size_t k = 0; k < packed.rows() - 2; k += r) {
+  for (int k = (packed.rows() - 3)/r*r; k >=0; k -= r) {
     int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
     Eigen::MatrixXd W(packed.rows() - k -1, actual_r);
     W.col(0) = packed.col(k).tail(W.rows());
@@ -742,11 +784,13 @@ void block_apply_packed_Q2(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, in
       W.col(j).noalias() = - W.leftCols(j) * scratchSpace.col(0).head(j);
       W.col(j).tail(W.rows() - j) += packed.col(j + k).tail(packed.rows() - k - j - 1);
     }
-    scratchSpace.leftCols(actual_r).noalias() = A.rightCols(A.cols() - k - 1) * W;
-    A.rightCols(A.cols() - k - 1).noalias() -= scratchSpace.leftCols(actual_r) * packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>();
+//    scratchSpace.leftCols(actual_r).noalias() = A.rightCols(A.cols() - k - 1) * W;
+//    A.rightCols(A.cols() - k - 1).noalias() -= scratchSpace.leftCols(actual_r) * packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>();
+    scratchSpace.transpose().bottomRows(actual_r).noalias() = packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>() * A.bottomRows(A.rows() - k - 1);
+    A.bottomRows(A.cols() - k - 1).noalias() -= W * scratchSpace.transpose().bottomRows(actual_r);
+    //A.bottomRows(A.rows() - k - 1) -= W * packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>() * A.bottomRows(A.rows() - k - 1);
   }
 }
- */
 
 /*
 //ne dela
@@ -777,8 +821,8 @@ void block_apply_packed_Q3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, in
     A.bottomRightCorner(A.cols() - k - 1, A.cols() - k - 1).noalias() -= (scratchSpace2 * packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>()).transpose();
   }
 }
- */
-//#define DEBUG_PRINT
+*/
+ //#define DEBUG_PRINT
 
 /*
 void dqds_work(Eigen::VectorXd& q, Eigen::VectorXd& e, int start, int stop){
@@ -974,7 +1018,6 @@ void get_shifted_udu(const Eigen::VectorXd& d, const Eigen::VectorXd& l, double 
 }
  */
 
-const static double zero_threshold = 1. / std::numeric_limits<double>::max(); // if abs(i)<zero_threshold then 1/i==inf
 //dtwqds
 int get_twisted_factorization(const Eigen::VectorXd& d, const Eigen::VectorXd& l, double shift, Eigen::VectorXd& l_plus, Eigen::VectorXd& u_minus){
   int n = l.size();
@@ -1033,9 +1076,9 @@ int get_twisted_factorization(const Eigen::VectorXd& d, const Eigen::VectorXd& l
   int twist_index=n;
 
   for(int i = n - 1; i >= 0; i--){
-    double d_minus = d[i] * l[i] * l[i] + p; //0                                          inf
-    double t = d[i] / d_minus; //inf    //TODO: NaN                                       0
-    u_minus[i] = l[i] * t; //inf      //TODO: NaN                                         0
+    double d_minus = d[i] * l[i] * l[i] + p;
+    double t = d[i] / d_minus;
+    u_minus[i] = l[i] * t;
     if(is_nan(u_minus[i])){
       if(is_nan(t)){
         t = copysign(1.,d[i]) * copysign(1.,d_minus);
@@ -1045,7 +1088,7 @@ int get_twisted_factorization(const Eigen::VectorXd& d, const Eigen::VectorXd& l
         u_minus[i] = d[i] * copysign(1.,l[i]) * copysign(1.,t);
       }
     }
-    double gamma = abs(s[i] + t * p);//inf   TODO: all inf/nan -> need other shift!       NaN
+    double gamma = abs(s[i] + t * p);//TODO: all inf/nan -> need other shift!
     if(is_nan(gamma)){ //t==inf, p==0 OR t==0, p==inf
       double d_sign = d[i] * copysign(1.,d_minus) * copysign(1.,t);
       gamma = abs(s[i] + d_sign);
@@ -1193,7 +1236,7 @@ void eigenvalsBisect(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag
 
 double eigenvalBisectRefine(const Eigen::VectorXd& d, const Eigen::VectorXd& l, double& low, double& high, int i){
   int n = d.size();
-  double eps = 1e-14;
+  double eps = 3e-16;
   while(abs((high-low)/(high+low))>eps && abs(high-low)>std::numeric_limits<double>::min()){ // second term is for the case where the eigenvalue is 0 and division yields NaN
     double mid=(high+low)*0.5;
     if(getSturmCountLdlLdl(d, l, mid)>i){
@@ -1249,6 +1292,7 @@ void eigenvalsBisect2(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdia
 }
  */
 
+
 void getGresgorin(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag, double& min_eigval, double& max_eigval) {
   int n = diag.size();
   min_eigval = diag[0] - abs(subdiag[0]);
@@ -1263,7 +1307,7 @@ void getGresgorin(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag, d
 
 void eigenvalsBisect3(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiagSquared, double min_eigval, double max_eigval, Eigen::VectorXd& low, Eigen::VectorXd& high){
   int n = diag.size();
-  double eps = 1e-14;
+  double eps = 3e-16;
 
   for(int i=0; i<n; i += BISECT_K){
     int n_valid = std::min(BISECT_K,n-i);
@@ -1271,7 +1315,7 @@ void eigenvalsBisect3(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdia
     auto high_work = high.segment(i,n_valid).array();
     low_work=Eigen::Array<double, Eigen::Dynamic, 1>::Constant(n_valid, min_eigval);
     high_work=Eigen::Array<double, Eigen::Dynamic, 1>::Constant(n_valid, max_eigval);
-    while((abs((high_work-low_work)/low_work)>eps).any()){
+    while((abs((high_work-low_work)/low_work)>eps && abs(high_work-low_work)>std::numeric_limits<double>::min()).any()){
       Eigen::Array<double, BISECT_K, 1> shifts;
       shifts.head(n_valid) = (high_work+low_work)*0.5;
       Eigen::Array<double, BISECT_K, 1> d;
@@ -1291,7 +1335,6 @@ void eigenvalsBisect3(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdia
         }
       }
     }
-    //eigenvals.segment(i,n_valid)=((high_work+low_work)*0.5).head(n_valid);
   }
 }
 
@@ -1299,8 +1342,8 @@ void eigenvalsBisect3(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdia
 
 
 void mrrr(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag,  Eigen::VectorXd& eigenvals, Eigen::MatrixXd& eigenvecs){
-  double min_rel_sep=1e-2;
-  double max_ele_growth = 2;
+  double min_rel_sep=1e-1;
+  double max_ele_growth = 1.7;
   int n=diag.size();
   Eigen::VectorXd high(n), low(n);
   double min_eigval;
@@ -1311,12 +1354,10 @@ void mrrr(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag,  Eigen::V
   eigenvalsBisect3(diag, subdiagSquared, min_eigval, max_eigval, low, high);
   Eigen::VectorXd l(n-1), d(n);
   double shift0 = min_eigval;
-  get_ldl(diag, subdiag, shift0, l, d); //TODO: what if we have element growth?!
+  get_ldl(diag, subdiag, shift0, l, d);
   Eigen::VectorXd l2(n-1), d2(n), l3(n-1), d3(n), l_plus(n-1), d_plus(n), u_minus(n-1), d_minus(n), s(n), p(n);
 
   double T_norm = sqrt((diag.array()*diag.array()).sum() + subdiagSquared.sum());
-  cout << "initial element growth: " << d.array().abs().sum()/abs(d.array().sum()) << endl;
-  //cout << "span: " << span << endl;
   for(int i=0;i<n;i++){
     eigenvals[i]=(high[i]+low[i])*0.5;
     double shift = 0;
@@ -1363,12 +1404,6 @@ void mrrr(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag,  Eigen::V
       double min_element_growth = std::numeric_limits<double>::infinity();
       for(double sh : shifts){
         double element_growth = get_perturbed_shifted_ldl(d, l, sh, l3, d3);
-        if(l3.unaryExpr([](double x){return is_nan(x);}).any()){
-          cout << "nan l3" << endl;
-        }
-        if(d3.unaryExpr([](double x){return is_nan(x);}).any()){
-          cout << "nan d3" << endl;
-        }
         //cout << i << " element growth: " << element_growth << " at " << sh << endl;
         if(element_growth<min_element_growth){
           l2.swap(l3);
@@ -1380,55 +1415,17 @@ void mrrr(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag,  Eigen::V
           break;
         }
       }
-      /*double element_growth = get_perturbed_shifted_ldl(d, l, low[i], l2, d2);
-      if(element_growth<=span) {
-        shift = low[i];
-        cout << i << " element growth:" << element_growth << endl;
-      }
-      else {
-        double element_growth2 = get_perturbed_shifted_ldl(d, l, high[i], l3, d3);
-        if(element_growth2<element_growth){
-          l2.swap(l3);
-          d2.swap(d3);
-          shift=high[i];
-          cout << i << "element growth: " << element_growth2 << endl;
-        }
-        else {
-          shift = low[i];
-          cout << i << "element growth:" << element_growth << endl;
-        }
-      }*/
 
       //refine eigenvalue
       double shifted_low=low[i] - shift;
       double shifted_high=high[i] - shift;
       eigenvalBisectRefine(d2, l2, shifted_low, shifted_high, i);
       double shifted_eigenval = (shifted_low + shifted_high) * 0.5;
-      //get_shifted_ldl(d2, l2, shifted_eigenval, l_plus, d_plus, s);
-      //get_shifted_udu(d2, l2, shifted_eigenval, u_minus, d_minus, p);
       twist_idx = get_twisted_factorization(d2, l2, shifted_eigenval, l_plus, u_minus);
     }
     else {
-      //get_shifted_ldl(d, l, eigenvals[i], l_plus, d_plus, s);
-      //get_shifted_udu(d, l, eigenvals[i], u_minus, d_minus, p);
       twist_idx = get_twisted_factorization(d, l, eigenvals[i] - shift0, l_plus, u_minus);
     }
-    if(l_plus.unaryExpr([](double x){return is_nan(x);}).any()){
-      cout << "nan l_plus" << endl;
-    }
-    if(u_minus.unaryExpr([](double x){return is_nan(x);}).any()){
-      cout << "nan u_minus" << endl;
-    }
-    /*//find twist index
-    double gamma_min=std::numeric_limits<double>::infinity();
-    int twist_idx;
-    for(int j=0;j<n;j++){
-      double gamma = abs(s[j] + diag[j]/d_minus[j] *p[j]);
-      if(gamma < gamma_min){
-        gamma_min = gamma;
-        twist_idx = j;
-      }
-    }*/
     //calculate eigenvector
     auto vec = eigenvecs.col(i);
     vec[twist_idx] = 1;
@@ -1440,15 +1437,6 @@ void mrrr(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag,  Eigen::V
         vec[j] = -subdiag[j - 2] * vec[j - 2] / subdiag[j - 1];
         if(is_nan(vec[j]) || is_inf(vec[j])){ //subdiag[j - 1]==0
           vec[j]=0;
-          /*if(abs(subdiag[j - 2]) < abs(vec[j-2])){ //subdiag[j - 2]==0
-            vec[j] = -vec[j - 2] * copysign(1.,subdiag[j - 2]) * copysign(1.,subdiag[j - 1]);
-          }
-          else{ // vec[j - 2]==0
-            vec[j] = -subdiag[j - 2] * copysign(1.,vec[j - 2]) * copysign(1.,subdiag[j - 1]);
-          }*/
-        }
-        if(is_inf(vec[j])){
-          cout << "tukaj";
         }
       }
     }
@@ -1460,28 +1448,24 @@ void mrrr(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag,  Eigen::V
         vec[j] = -subdiag[j + 1] * vec[j + 2] / subdiag[j];
         if(is_nan(vec[j]) || is_inf(vec[j])) { //subdiag[j]==0
           vec[j]=0;
-          /*if(abs(subdiag[j + 1]) < abs(vec[j + 2])){ //subdiag[j + 1]==0
-            vec[j] = -vec[j + 2] * copysign(1.,subdiag[j + 1]) * copysign(1.,subdiag[j]);
-          }
-          else{ // vec[j + 2]==0
-            vec[j] = -subdiag[j + 1] * copysign(1.,vec[j + 2]) * copysign(1.,subdiag[j]);
-          }*/
-        }
-        if(is_inf(vec[j])){
-          cout << "tukaj";
         }
       }
     }
-    if(vec.unaryExpr([](double x){return is_nan(x);}).any()){
-      cout << "nan vec" << endl;
-    }
-    if(vec.unaryExpr([](double x){return is_inf(x);}).any()){
-      cout << "inf vec" << endl;
-    }
-    //vec /= vec.norm();
+    vec /= vec.norm();
   }
-  //TODO check special cases(inf/nan)
 }
+
+void symmetricEigenSolver(const Eigen::MatrixXd& A, Eigen::VectorXd& eigenvals, Eigen::MatrixXd& eigenvecs){
+  Eigen::MatrixXd packed;
+  block_householder_tridiag3(A, packed);
+  Eigen::VectorXd diag = packed.diagonal();
+  Eigen::VectorXd subdiag = packed.diagonal(1);
+  mrrr(diag, subdiag, eigenvals, eigenvecs);
+  //Eigen::MatrixXd q = Eigen::MatrixXd::Identity(eigenvecs.rows(), eigenvecs.cols());
+  block_apply_packed_Q3(packed, eigenvecs);
+  //eigenvecs = q * eigenvecs;
+}
+
 
 }
 }
