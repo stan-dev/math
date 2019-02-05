@@ -337,7 +337,7 @@ void mrrr(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag,  Eigen::V
     double low_gap = i==0 ? std::numeric_limits<double>::infinity() : low[i-1] - high[i];
     double high_gap = i==n-1 ? std::numeric_limits<double>::infinity() : low[i] - high[i+1];
     double min_gap = std::min(low_gap, high_gap);
-    if(abs(low_gap / eigenvals[i]) > min_rel_sep || abs(high_gap / eigenvals[i]) < min_rel_sep){ //TODO shift0
+    if(abs(min_gap / (eigenvals[i] - shift0)) > min_rel_sep){
       //TODO: do we need more shift options?
       std::vector<double> shifts;
       shifts.push_back(low[i]);
@@ -375,6 +375,7 @@ void mrrr(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag,  Eigen::V
       shifts.push_back(low[i] + max_shift);
       double min_element_growth = std::numeric_limits<double>::infinity();
       for(double sh : shifts){
+        sh -= shift0;
         double element_growth = get_perturbed_shifted_ldl(d, l, sh, l3, d3);
         cout << i << " element growth: " << element_growth << " at " << sh + shift0 << endl;
         if(element_growth<min_element_growth){
@@ -382,9 +383,9 @@ void mrrr(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag,  Eigen::V
           d2.swap(d3);
           shift = sh + shift0;
           min_element_growth=element_growth;
-        }
-        if(element_growth<=max_ele_growth){
-          break;
+          if(element_growth<=max_ele_growth){
+            break;
+          }
         }
       }
       cout << "\t\t" << i << " element growth: " << min_element_growth << " at " << shift << endl;

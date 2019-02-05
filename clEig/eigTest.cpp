@@ -306,7 +306,8 @@ int main() {
   return 0;*/
 
 
-  int A=7;
+  srand(time(0));
+  int A=2000;
   Mat a = Mat::Random(A, A);
   a+=a.transpose().eval();
   //a.diagonal()+=Eigen::VectorXd::Constant(A,A);
