@@ -60,9 +60,12 @@ void chkEig(const Mat& a, const Mat& eigenvecs, const Vec& eigenvals){
   cout << "trace diff: " << a.diagonal().sum() - sum(eigenvals) << endl;
   cout << "eigen EQ: " << (a - eigenvecs * eigenvals.asDiagonal() * eigenvecs.transpose()).array().abs().sum() << endl;
   cout << "eigen total residuals: " << (a * eigenvecs - eigenvecs * eigenvals.asDiagonal()).array().abs().sum() << endl;
-  cout << "eigen max residual: " << (a * eigenvecs - eigenvecs * eigenvals.asDiagonal()).array().abs().colwise().sum().maxCoeff() << endl;
+  MatrixXd::Index i,j;
+  double tmp = (a * eigenvecs - eigenvecs * eigenvals.asDiagonal()).array().abs().colwise().sum().maxCoeff(&i, &j);
+  cout << "eigen max residual: " << tmp << " for eigenpair: " << j << endl;
   cout << "eigen total loss of orthogonality: " << (eigenvecs.transpose() * eigenvecs - Mat::Identity(A,A)).array().abs().sum() << endl;
-  cout << "eigen max loss of orthogonality: " << (eigenvecs.transpose() * eigenvecs - Mat::Identity(A,A)).array().abs().maxCoeff() << endl;
+  tmp=(eigenvecs.transpose() * eigenvecs - Mat::Identity(A,A)).array().abs().maxCoeff(&i,&j);
+  cout << "eigen max loss of orthogonality: " << tmp << " between eigenvectors: " << i << " " << j << " (eigenvalues " << eigenvals[i] << " " << eigenvals[j] << ")" << endl;
 #endif
 }
 
@@ -303,10 +306,10 @@ int main() {
   return 0;*/
 
 
-  int A=3000;
+  int A=7;
   Mat a = Mat::Random(A, A);
   a+=a.transpose().eval();
-  a=-100*a;
+  //a.diagonal()+=Eigen::VectorXd::Constant(A,A);
   Mat t,q, vecs, packed, qa, qa2, q2;
   Vec vals;
 
