@@ -159,6 +159,10 @@ endif
 # Setup Intel TBB
 #
 
+ifeq ($(OS),Windows_NT)
+  LIBRARY_SUFFIX := .dll
+endif
+
 ifeq ($(OS),Darwin)
   LIBRARY_SUFFIX := .dylib
 endif
