@@ -6,6 +6,7 @@ BOOST ?= $(MATH)lib/boost_1.66.0
 EIGEN ?= $(MATH)lib/eigen_3.3.3
 OPENCL ?= $(MATH)lib/opencl_1.2.8
 SUNDIALS ?= $(MATH)lib/sundials_3.1.0
+TBB ?= $(MATH)lib/tbb_2019_U3
 
 GTEST ?= $(MATH)lib/gtest_1.8.1
 CPPLINT ?= $(MATH)lib/cpplint_4.45
@@ -60,6 +61,36 @@ clean-sundials:
 	@echo '  cleaning sundials targets'
 	$(RM) $(wildcard $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS)))
 
+
+############################################################
+# TBB build rules
+
+#workaround for non-depend targets tbb and tbbmalloc which both depend on version_string.ver
+#According to documentation, recursively invoked make commands can process their targets in parallel
+.NOTPARALLEL: tbb tbbmalloc
+
+PHONY: tbb tbbmalloc
+
+tbb:
+	@mkdir -p $(TBB)/lib
+	tbb_root="$(TBB_ABSOLUTE_PATH)" $(MAKE) -C $(TBB)/lib -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbb" cfg=release
+
+tbbmalloc: tbb 
+	@mkdir -p $(TBB)/lib
+	tbb_root="$(TBB_ABSOLUTE_PATH)" make -C $(TBB)/lib -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" cfg=release malloc
+
+$(TBB)/lib/libtbb.so: tbb
+$(TBB)/lib/libtbbmalloc.so: tbbmalloc
+
+$(TBB)/lib/libtbb.dylib: tbb
+	install_name_tool -add_rpath "$(TBB_ABSOLUTE_PATH)/lib" "$(TBB)/lib/libtbb.dylib"
+
+$(TBB)/lib/libtbbmalloc.dylib: tbbmalloc
+	install_name_tool -add_rpath "$(TBB_ABSOLUTE_PATH)/lib" "$(TBB)/lib/libtbbmalloc.dylib"
+
+clean-tbb:
+	@echo '  cleaning Intel TBB targets'
+	$(RM) -rf $(TBB)/lib
 
 ############################################################
 # MPI build rules
@@ -122,5 +153,5 @@ $(GTEST)/src/gtest-all.o: INC += $(INC_GTEST)
 ############################################################
 # Clean all libraries
 
-.PHONY: clean-libraries clean-sundials clean-mpi
-clean-libraries: clean-sundials clean-mpi
+.PHONY: clean-libraries clean-sundials clean-mpi clean-tbb
+clean-libraries: clean-sundials clean-mpi clean-tbb

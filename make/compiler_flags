@@ -156,6 +156,25 @@ ifdef STAN_OPENCL
 endif
 
 ################################################################################
+# Setup Intel TBB
+#
+
+ifeq ($(OS),Darwin)
+  LIBRARY_SUFFIX := .dylib
+endif
+
+ifeq ($(OS),Linux)
+  LIBRARY_SUFFIX := .so
+endif
+
+TBB_ABSOLUTE_PATH = $(abspath $(TBB))
+
+TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(TBB)/lib/libtbb $(TBB)/lib/libtbbmalloc)
+
+LDFLAGS += -L $(TBB)/lib
+
+
+################################################################################
 # Setup MPI
 #
 # Sets up MPI CXXFLAGS_MPI and LDLIBS_MPI to compile and link to MPI

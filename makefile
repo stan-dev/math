@@ -102,6 +102,8 @@ clean-deps:
 
 clean-all: clean clean-doxygen clean-deps clean-libraries
 
+tbb-lib: $(TBB_TARGETS)
+
 ##
 # Debug target that allows you to print a variable
 ##
