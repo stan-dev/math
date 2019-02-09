@@ -1,18 +1,71 @@
 #ifndef STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_CONCURRENT_HPP
 #define STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_CONCURRENT_HPP
 
-#include <stan/math/parallel/for_each.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 
 #include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
 #include <stan/math/prim/mat/functor/map_rect_combine.hpp>
-#include <boost/iterator/counting_iterator.hpp>
+#include <stan/math/prim/scal/err/invalid_argument.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <vector>
+#include <thread>
+#include <cstdlib>
 
 namespace stan {
 namespace math {
 namespace internal {
+
+/**
+ * Get number of threads to use for num_jobs jobs. The function uses
+ * the environment variable STAN_NUM_THREADS and follows these
+ * conventions:
+ *
+ * - STAN_NUM_THREADS is not defined => num_threads=1
+ * - STAN_NUM_THREADS is positive => num_threads is set to the
+ *   specified number
+ * - STAN_NUM_THREADS is set to -1 => num_threads is the number of
+ *   available cores on the machine
+ * - STAN_NUM_THREADS < -1, STAN_NUM_THREADS = 0 or STAN_NUM_THREADS is
+ *   not numeric => throws an exception
+ *
+ * Should num_threads exceed the number of jobs, then num_threads will
+ * be set equal to the number of jobs.
+ *
+ * @param num_jobs number of jobs
+ * @return number of threads to use
+ * @throws std::runtime_error if the value of STAN_NUM_THREADS env. variable
+ * is invalid
+ */
+inline int get_num_threads(int num_jobs) {
+  int num_threads = 1;
+#ifdef STAN_THREADS
+  const char* env_stan_num_threads = std::getenv("STAN_NUM_THREADS");
+  if (env_stan_num_threads != nullptr) {
+    try {
+      const int env_num_threads
+          = boost::lexical_cast<int>(env_stan_num_threads);
+      if (env_num_threads > 0)
+        num_threads = env_num_threads;
+      else if (env_num_threads == -1)
+        num_threads = std::thread::hardware_concurrency();
+      else
+        invalid_argument("get_num_threads(int)", "STAN_NUM_THREADS",
+                         env_stan_num_threads,
+                         "The STAN_NUM_THREADS environment variable is '",
+                         "' but it must be positive or -1");
+    } catch (boost::bad_lexical_cast) {
+      invalid_argument("get_num_threads(int)", "STAN_NUM_THREADS",
+                       env_stan_num_threads,
+                       "The STAN_NUM_THREADS environment variable is '",
+                       "' but it must be a positive number or -1");
+    }
+  }
+  if (num_threads > num_jobs)
+    num_threads = num_jobs;
+#endif
+  return num_threads;
+}
 
 template <int call_id, typename F, typename T_shared_param,
           typename T_job_param>
@@ -23,49 +76,7 @@ map_rect_concurrent(
     const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&
         job_params,
     const std::vector<std::vector<double>>& x_r,
-    const std::vector<std::vector<int>>& x_i, std::ostream* msgs = nullptr) {
-  typedef map_rect_reduce<F, T_shared_param, T_job_param> ReduceF;
-  typedef map_rect_combine<F, T_shared_param, T_job_param> CombineF;
-  typedef boost::counting_iterator<int> count_iter;
-
-#ifdef STAN_THREADS
-  constexpr std_par::execution::parallel_unsequenced_policy exec_policy
-      = std_par::execution::par_unseq;
-#else
-  constexpr std_par::execution::sequenced_policy exec_policy
-      = std_par::execution::seq;
-#endif
-  using std_par::for_each;
-
-  const int num_jobs = job_params.size();
-  const vector_d shared_params_dbl = value_of(shared_params);
-
-  std::vector<int> world_f_out(num_jobs);
-  std::vector<matrix_d> world_job_output(num_jobs);
-
-  for_each(exec_policy, count_iter(0), count_iter(num_jobs), [&](int i) {
-    world_job_output[i] = ReduceF()(shared_params_dbl, value_of(job_params[i]),
-                                    x_r[i], x_i[i], msgs);
-    world_f_out[i] = world_job_output[i].cols();
-  });
-
-  // collect results
-  const int num_world_output
-      = std::accumulate(world_f_out.begin(), world_f_out.end(), 0);
-  matrix_d world_output(world_job_output[0].rows(), num_world_output);
-
-  int offset = 0;
-  for (const auto& job_result : world_job_output) {
-    const int num_job_outputs = job_result.cols();
-
-    world_output.block(0, offset, world_output.rows(), num_job_outputs)
-        = job_result;
-
-    offset += num_job_outputs;
-  }
-  CombineF combine(shared_params, job_params);
-  return combine(world_output, world_f_out);
-}
+    const std::vector<std::vector<int>>& x_i, std::ostream* msgs = nullptr);
 
 }  // namespace internal
 }  // namespace math

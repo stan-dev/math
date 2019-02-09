@@ -28,6 +28,13 @@ namespace internal {
  *
  * No higher order output format is defined yet.
  *
+ * In the prim folder we only keep the basic defintion while all
+ * specialisations are in rev. This is to ensure that the AD tape of
+ * all thread can be initialized. This includes the variant which has
+ * no var arguments involved since nested AD operations can be
+ * performed (as for example is the case when calling the CVODES
+ * integrator which needs the Jacobian).
+ *
  * @tparam F user functor
  * @tparam T_shared_param type of shared parameters
  * @tparam T_job_param type of job specific parameters

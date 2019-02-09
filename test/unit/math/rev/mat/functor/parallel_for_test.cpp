@@ -4,7 +4,6 @@
 #include <stan/math/rev/core/nest_chainablestack.hpp>
 #include <gtest/gtest.h>
 
-
 #define TBB_PREVIEW_LOCAL_OBSERVER 1
 
 // #include <tbb/task_scheduler_init.h>
@@ -33,8 +32,39 @@ struct fun1 {
   }
 };
 
-//static tbb::task_scheduler_init task_scheduler(
-//    stan::math::internal::get_num_threads());
+static tbb::task_scheduler_init task_scheduler(
+    stan::math::internal::get_num_threads());
+
+static std::mutex cout_mutex;
+
+class ad_tape_observer : public tbb::task_scheduler_observer {
+ public:
+  // affinity_mask_t m_mask; // HW affinity mask to be used with an arena
+  ad_tape_observer() : tbb::task_scheduler_observer() {
+    std::cout << "Observer created" << std::endl;
+    observe(true);  // activate the observer
+  }
+
+  ~ad_tape_observer() { std::cout << "Observer destructed" << std::endl; }
+
+  /*override*/ void on_scheduler_entry(bool worker) {
+    stan::math::ChainableStack::init();
+    std::lock_guard<std::mutex> cout_lock(cout_mutex);
+    if (worker)
+      std::cout << "a worker thread is joining to do some work." << std::endl;
+    else
+      std::cout << "the main thread is joining to do some work." << std::endl;
+  }
+  /*override*/ void on_scheduler_exit(bool worker) {
+    std::lock_guard<std::mutex> cout_lock(cout_mutex);
+    if (worker)
+      std::cout << "a worker thread is finished to do some work." << std::endl;
+    else
+      std::cout << "the main thread is finished to do some work." << std::endl;
+  }
+};
+
+static ad_tape_observer tape_initializer;
 
 TEST(Base, parallel_for) {
   const int num_jobs = 1000;
@@ -55,8 +85,8 @@ TEST(Base, parallel_for) {
     return res;
   };
 
-  vector_d parallel_result = stan::math::concatenate_row(stan::math::parallel_map(
-      count_iter(0), count_iter(num_jobs), loop_fun));
+  vector_d parallel_result = stan::math::concatenate_row(
+      stan::math::parallel_map(count_iter(0), count_iter(num_jobs), loop_fun));
 
   for (int i = 0; i < num_jobs; ++i) {
     vector_d x_ref(2);
@@ -66,7 +96,7 @@ TEST(Base, parallel_for) {
                     fx_ref);
   }
 
-  stan::math::recover_memory_global();
+  stan::math::recover_memory();
 }
 
 TEST(AgradAutoDiff, parallel_for_each) {
@@ -91,8 +121,8 @@ TEST(AgradAutoDiff, parallel_for_each) {
     return res;
   };
 
-  vector_v parallel_result = stan::math::concatenate_row(stan::math::parallel_map(
-      count_iter(0), count_iter(num_jobs), loop_fun));
+  vector_v parallel_result = stan::math::concatenate_row(
+      stan::math::parallel_map(count_iter(0), count_iter(num_jobs), loop_fun));
 
   for (int i = 0; i < num_jobs; ++i) {
     vector_d x_ref(2);
@@ -102,8 +132,8 @@ TEST(AgradAutoDiff, parallel_for_each) {
                     fx_ref);
     vector<double> grad_fx_ref(2);
     // std::cout << "i = " << i << "; setting adjoints to zero." << std::endl;
-    stan::math::set_zero_all_adjoints_global();
-    // stan::math::set_zero_all_adjoints();
+    // stan::math::set_zero_all_adjoints_global();
+    stan::math::set_zero_all_adjoints();
     // std::cout << "i = " << i << "; calling grad." << std::endl;
     stan::math::grad(parallel_result(i).vi_);
     grad_fx_ref[0] = fixed_arg.adj();
@@ -115,70 +145,47 @@ TEST(AgradAutoDiff, parallel_for_each) {
   }
 
   std::cout << "All good! Cleaning up..." << std::endl;
-  stan::math::recover_memory_global();
+  stan::math::recover_memory();
   // stan::math::recover_memory();
 }
 
-static std::mutex cout_mutex;
+static tbb::enumerable_thread_specific<int> arena_id;
 
-class ad_tape_observer: public tbb::task_scheduler_observer {
-public:
-  //affinity_mask_t m_mask; // HW affinity mask to be used with an arena
-  ad_tape_observer()
-    : tbb::task_scheduler_observer() {
-    std::cout << "Observer created" << std::endl;
-    observe(true); // activate the observer
-  }
-
-  ~ad_tape_observer() {
-    std::cout << "Observer destructed" << std::endl;
-  }
-  
-  /*override*/ void on_scheduler_entry( bool worker ) {
+class arena_observer : public tbb::task_scheduler_observer {
+  const int id_;  // unique observer/arena id within a test
+  void on_scheduler_entry(bool worker) {
     std::lock_guard<std::mutex> cout_lock(cout_mutex);
     if (worker)
       std::cout << "a worker thread is joining to do some work." << std::endl;
     else
       std::cout << "the main thread is joining to do some work." << std::endl;
+
+    arena_id.local() = id_;
+
+    std::cout << "this is from arena " << id_ << " thread "
+              << tbb::this_task_arena::current_thread_index() << " / "
+              << tbb::this_task_arena::max_concurrency() << std::endl;
   }
-  /*override*/ void on_scheduler_exit( bool worker ) {
+
+  void on_scheduler_exit(bool worker) {
     std::lock_guard<std::mutex> cout_lock(cout_mutex);
     if (worker)
-      std::cout << "a worker thread is finished to do some work." << std::endl;
+      std::cout << "a worker thread is finished to do some work from arena "
+                << id_ << ": thread "
+                << tbb::this_task_arena::current_thread_index() << " / "
+                << tbb::this_task_arena::max_concurrency() << std::endl;
     else
-      std::cout << "the main thread is finished to do some work." << std::endl;
+      std::cout << "the main thread is finished to do some work from arena "
+                << id_ << ": thread "
+                << tbb::this_task_arena::current_thread_index() << " / "
+                << tbb::this_task_arena::max_concurrency() << std::endl;
   }
-};
 
-static tbb::enumerable_thread_specific<int> arena_id;
-
-class arena_observer : public tbb::task_scheduler_observer {
-    const int id_;               // unique observer/arena id within a test
-    void on_scheduler_entry( bool worker ) {
-      std::lock_guard<std::mutex> cout_lock(cout_mutex);
-      if (worker)
-        std::cout << "a worker thread is joining to do some work." << std::endl;
-      else
-        std::cout << "the main thread is joining to do some work." << std::endl;
-
-      arena_id.local() = id_;
-      
-      std::cout << "this is from arena " << id_ << " thread " << tbb::this_task_arena::current_thread_index() << " / " << tbb::this_task_arena::max_concurrency() << std::endl;
-    }
-  
-    void on_scheduler_exit( bool worker ) {
-      std::lock_guard<std::mutex> cout_lock(cout_mutex);
-    if (worker)
-      std::cout << "a worker thread is finished to do some work from arena " << id_ <<  ": thread " << tbb::this_task_arena::current_thread_index() << " / " << tbb::this_task_arena::max_concurrency() << std::endl;
-    else
-      std::cout << "the main thread is finished to do some work from arena " << id_ <<  ": thread " << tbb::this_task_arena::current_thread_index() << " / " << tbb::this_task_arena::max_concurrency() << std::endl;
-    }
-public:
-    arena_observer(tbb::task_arena &a, int id)
-        : tbb::task_scheduler_observer(a)
-        , id_(id) {
-        observe(true);
-    }
+ public:
+  arena_observer(tbb::task_arena& a, int id)
+      : tbb::task_scheduler_observer(a), id_(id) {
+    observe(true);
+  }
 };
 
 TEST(AgradAutoDiff, parallel_for_each_scalar) {
@@ -212,9 +219,9 @@ TEST(AgradAutoDiff, parallel_for_each_scalar) {
   vector_v parallel_result;
 
   arena1.execute([&] {
-                   parallel_result = stan::math::concatenate_row(stan::math::parallel_map(
-                       count_iter(0), count_iter(num_jobs), loop_fun));
-                 });
+    parallel_result = stan::math::concatenate_row(stan::math::parallel_map(
+        count_iter(0), count_iter(num_jobs), loop_fun));
+  });
 
   test_task.wait_for_all();
 
@@ -225,8 +232,8 @@ TEST(AgradAutoDiff, parallel_for_each_scalar) {
     EXPECT_FLOAT_EQ(x_ref(0) * x_ref(0) * x_ref(1) + 3 * x_ref(1) * x_ref(1),
                     fx_ref);
     vector<double> grad_fx_ref(2);
-    stan::math::set_zero_all_adjoints_global();
-    // stan::math::set_zero_all_adjoints();
+    // stan::math::set_zero_all_adjoints_global();
+    stan::math::set_zero_all_adjoints();
     stan::math::grad(parallel_result(i).vi_);
     grad_fx_ref[0] = fixed_arg.adj();
     grad_fx_ref[1] = x_ref_2(i).adj();
@@ -238,7 +245,7 @@ TEST(AgradAutoDiff, parallel_for_each_scalar) {
   }
 
   std::cout << "All good! Cleaning up..." << std::endl;
-  stan::math::recover_memory_global();
+  stan::math::recover_memory();
   // stan::math::recover_memory();
 }
 

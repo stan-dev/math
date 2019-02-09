@@ -2,38 +2,47 @@
 #define STAN_MATH_REV_CORE_AUTODIFFSTACKSTORAGE_HPP
 
 #include <stan/math/memory/stack_alloc.hpp>
-#include <stan/math/parallel/get_num_threads.hpp>
-
 #include <vector>
-#include <array>
-#include <mutex>
-
-#include <tbb/task_scheduler_init.h>
-#include <tbb/enumerable_thread_specific.h>
-#include <tbb/task_arena.h>
-
-static tbb::task_scheduler_init task_scheduler(
-    stan::math::internal::get_num_threads());
 
 namespace stan {
 namespace math {
 
 /**
- * Provides a thread_local singleton if needed. Read warnings below!
- * For performance reasons the singleton is a global static for the
- * case of no threading which is returned by a function. This design
- * should allow the compiler to apply necessary inlining to get
+ * Provides a thread_local storage (TLS) singleton if needed. Read
+ * warnings below!  For performance reasons the singleton is a global
+ * static pointer which is initialized to a constant expression (the
+ * nullptr). Doing allows for a faster access to the TLS pointer
+ * instance. If one were to directly initialize the pointer with a
+ * call to new, the compiler will insert additional code for each
+ * reference in the code to the TLS. The additional code checks the
+ * initialization status thus everytime one accesses the TLS, see [4]
+ * for details and an example which demonstrates this. However, this
+ * design requires that the pointer must be initialized with the
+ * init() function before any var's are
+ * instantiated. Otherwise a segfault will occur. The init() function
+ * must be called for any thread which wants to use reverse mode
+ * autodiff facilites.
+ *
+ * Furthermore, the declaration as a global (possibly thread local)
+ * pointer allows the compiler to apply necessary inlining to get
  * maximal performance. However, this design suffers from "the static
  * init order fiasco"[0].  Anywhere this is used, we must be
  * absolutely positive that it doesn't matter when the singleton will
  * get initialized relative to other static variables.  In exchange,
- * we get a more performant singleton pattern for the non-threading
- * case. In the threading case we use the defacto standard C++11
+ * we get a more performant singleton pattern.
+ *
+ * Formely, stan-math used in the threading case the defacto standard C++11
  * singleton pattern relying on a function wrapping a static local
  * variable. This standard pattern is expected to be well supported
  * by the major compilers (as its standard), but it does incur some
  * performance penalty.  There has been some discussion on this; see
- * [1] and [2] and the discussions those PRs link to as well.
+ * [1] and [2] and the discussions those PRs link to as well. The
+ * current design has a much reduced/almost no performance penalty
+ * since the access to the TLS is not wrapped in extra function
+ * calls. Moreover, the thread_local declaration below can be changed
+ * to the __thread keyword which is a compiler-specific extension of
+ * g++,clang++&intel and is around for much longer than C++11 such
+ * that these compilers should support this design just as robust.
  *
  * These are thread_local only if the user asks for it with
  * -DSTAN_THREADS. This is primarily because Apple clang compilers
@@ -48,19 +57,12 @@ namespace math {
  * [2] https://github.com/stan-dev/math/pull/826
  * [3]
  * http://discourse.mc-stan.org/t/potentially-dropping-support-for-older-versions-of-apples-version-of-clang/3780/
+ * [4] https://discourse.mc-stan.org/t/thread-performance-penalty/7306/8
  */
 template <typename ChainableT, typename ChainableAllocT>
 struct AutodiffStackSingleton {
   typedef AutodiffStackSingleton<ChainableT, ChainableAllocT>
       AutodiffStackSingleton_t;
-
-  static inline std::size_t get_new_id() {
-    static std::mutex id_mutex;
-    static std::size_t id = 0;
-    std::lock_guard<std::mutex> id_lock(id_mutex);
-    std::size_t new_id = ++id;
-    return new_id;
-  }
 
   struct AutodiffStackStorage {
     AutodiffStackStorage &operator=(const AutodiffStackStorage &) = delete;
@@ -71,63 +73,68 @@ struct AutodiffStackSingleton {
     stack_alloc memalloc_;
 
     // nested positions
+    /*
     std::vector<size_t> nested_var_stack_sizes_;
     std::vector<size_t> nested_var_nochain_stack_sizes_;
     std::vector<size_t> nested_var_alloc_stack_starts_;
+    */
+  };
 
-    const std::size_t id_ = get_new_id();
+  struct AutodiffStackQueue {
+    AutodiffStackQueue()
+        : instance_stack_(1, std::shared_ptr<AutodiffStackStorage>(
+                                 new AutodiffStackStorage())),
+          current_instance_(0) {}
+
+    AutodiffStackQueue &operator=(const AutodiffStackQueue &) = delete;
+
+    std::vector<std::shared_ptr<AutodiffStackStorage> > instance_stack_;
+
+    std::size_t current_instance_;
   };
 
   AutodiffStackSingleton() = delete;
   explicit AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
   AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
 
-  //static std::array<AutodiffStackStorage, 64> thread_tapes_;
-
   constexpr static inline AutodiffStackStorage &instance() {
-    // TBB TLS
-    //return instance_.local();
-    return instance_;
-    //return thread_tapes_[tbb::this_task_arena::current_thread_index()];
+    return *instance_;
   }
 
-  // TBB TLS
-  /*
-  typedef tbb::enumerable_thread_specific<
-      AutodiffStackStorage, tbb::cache_aligned_allocator<AutodiffStackStorage>,
-      tbb::ets_key_per_instance>
-      AutodiffStackStorage_tls_t;
-  static AutodiffStackStorage_tls_t instance_;
-  */
-  static thread_local AutodiffStackStorage instance_;
+  static inline AutodiffStackQueue &queue() {
+    static
+#ifdef STAN_THREADS
+        thread_local
+#endif
+        AutodiffStackQueue queue_;
+    return queue_;
+  }
+
+  static AutodiffStackStorage *init() {
+    if (instance_ == nullptr)
+      instance_ = new AutodiffStackStorage();
+    return instance_;
+  }
+
+  static
+#ifdef STAN_THREADS
+      thread_local
+#endif
+      AutodiffStackStorage *instance_;
 };
 
-/*
 template <typename ChainableT, typename ChainableAllocT>
-typename AutodiffStackSingleton<ChainableT,
-                                ChainableAllocT>::AutodiffStackStorage_tls_t
-    AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_;
-    */
-
-template <typename ChainableT, typename ChainableAllocT>
-thread_local typename AutodiffStackSingleton<ChainableT,
-                                ChainableAllocT>::AutodiffStackStorage
-    AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_;
-
-/*
-template <typename ChainableT, typename ChainableAllocT>
-std::vector<typename AutodiffStackSingleton<ChainableT,
-                                   ChainableAllocT>::AutodiffStackStorage>
-AutodiffStackSingleton<ChainableT, ChainableAllocT>::thread_tapes_(64);
-*/
-
-/*
-template <typename ChainableT, typename ChainableAllocT>
-std::array<typename AutodiffStackSingleton<ChainableT,
-                                           ChainableAllocT>::AutodiffStackStorage, 64>
-AutodiffStackSingleton<ChainableT, ChainableAllocT>::thread_tapes_;
-*/
-
+#ifdef STAN_THREADS
+thread_local
+#endif
+    typename AutodiffStackSingleton<ChainableT,
+                                    ChainableAllocT>::AutodiffStackStorage
+        *AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_
+#ifdef STAN_THREADS
+    = nullptr;
+#else
+    = AutodiffStackSingleton<ChainableT, ChainableAllocT>::init();
+#endif
 
 }  // namespace math
 }  // namespace stan

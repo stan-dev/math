@@ -23,6 +23,24 @@ static inline void recover_memory_nested() {
         "empty_nested() must be false"
         " before calling recover_memory_nested()");
 
+  ChainableStack::AutodiffStackStorage& nested_stack
+      = ChainableStack::instance();
+  ChainableStack::AutodiffStackQueue& queue = ChainableStack::queue();
+
+  nested_stack.var_stack_.clear();
+  nested_stack.var_nochain_stack_.clear();
+
+  for (size_t i = 0; i < nested_stack.var_alloc_stack_.size(); ++i) {
+    delete nested_stack.var_alloc_stack_[i];
+  }
+  nested_stack.var_alloc_stack_.clear();
+  nested_stack.memalloc_.recover_all();
+
+  --queue.current_instance_;
+  ChainableStack::instance_
+      = queue.instance_stack_[queue.current_instance_].get();
+
+  /*
   ChainableStack::instance().var_stack_.resize(
       ChainableStack::instance().nested_var_stack_sizes_.back());
   ChainableStack::instance().nested_var_stack_sizes_.pop_back();
@@ -41,6 +59,7 @@ static inline void recover_memory_nested() {
   ChainableStack::instance().nested_var_alloc_stack_starts_.pop_back();
 
   ChainableStack::instance().memalloc_.recover_nested();
+  */
 }
 
 }  // namespace math

@@ -5,6 +5,7 @@
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/empty_nested.hpp>
+#include <stan/math/rev/core/set_zero_all_adjoints.hpp>
 #include <stdexcept>
 
 namespace stan {
@@ -14,11 +15,13 @@ namespace math {
  * Reset all adjoint values in the top nested portion of the stack
  * to zero.
  */
-static void set_zero_all_adjoints_nested() {
+static inline void set_zero_all_adjoints_nested() {
   if (empty_nested())
     throw std::logic_error(
         "empty_nested() must be false before calling"
         " set_zero_all_adjoints_nested()");
+  set_zero_all_adjoints();
+  /*
   size_t start1 = ChainableStack::instance().nested_var_stack_sizes_.back();
   // avoid wrap with unsigned when start1 == 0
   for (size_t i = (start1 == 0U) ? 0U : (start1 - 1);
@@ -31,6 +34,7 @@ static void set_zero_all_adjoints_nested() {
        i < ChainableStack::instance().var_nochain_stack_.size(); ++i) {
     ChainableStack::instance().var_nochain_stack_[i]->set_zero_adjoint();
   }
+  */
 }
 
 }  // namespace math
