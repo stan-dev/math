@@ -144,7 +144,7 @@ class opencl_context_base {
   struct tuning_struct {
     int cholesky_min_L11_size = 256;
     int cholesky_partition = 4;
-    int cholesky_size_worth_transfer = 10;
+    int cholesky_size_worth_transfer = 1250;
   } tuning_opts_;
 
   static opencl_context_base& getInstance() {
