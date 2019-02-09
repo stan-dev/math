@@ -12,6 +12,7 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
+#include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
@@ -75,7 +76,6 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lcdf(const T_y& y,
     if (value_of(y_vec[i]) == 0)
       return ops_partials.build(negative_infinity());
 
-  using boost::math::tgamma;
   using std::exp;
   using std::log;
   using std::pow;
