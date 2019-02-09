@@ -109,9 +109,9 @@ class opencl_context_base {
       // Thread block size for the Cholesky
       // TODO(Steve): This should be tuned in a higher part of the stan language
       if (max_thread_block_size_ >= 256) {
-        tuning_opts_["cholesky_size"] = 256;
+        tuning_opts_.cholesky_min_L11_size = 256;
       } else {
-        tuning_opts_["cholesky_size"] = max_thread_block_size_;
+        tuning_opts_.cholesky_min_L11_size = max_thread_block_size_;
       }
     } catch (const cl::Error& e) {
       check_opencl_error("opencl_context", e);
@@ -141,8 +141,11 @@ class opencl_context_base {
          {"THREAD_BLOCK_SIZE", 32},
          {"WORK_PER_THREAD", 8}};
   // TODO(Steve): Make these tunable during warmup
-  map_base_opts tuning_opts_ = {
-      {"cholesky_size", 256}, {"cholesky_partition", 4}, {"move_to_gpu", 1250}};
+  struct tuning_struct {
+    int cholesky_min_L11_size = 256;
+    int cholesky_partition = 4;
+    int cholesky_size_worth_transfer = 1250;
+  } tuning_opts_;
 
   static opencl_context_base& getInstance() {
     static opencl_context_base instance_;
@@ -316,10 +319,9 @@ class opencl_context {
 
   /**
    * Returns the thread block size for the Cholesky Decompositions L_11.
-   * @param id The name of a tuning parameter.
    */
-  inline int tuning_opts(const char* id) {
-    return opencl_context_base::getInstance().tuning_opts_[id];
+  inline opencl_context_base::tuning_struct& tuning_opts() {
+    return opencl_context_base::getInstance().tuning_opts_;
   }
 
   /**

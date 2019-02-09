@@ -2,6 +2,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/gpu/copy.hpp>
 #include <stan/math/gpu/cholesky_decompose.hpp>
+#include <stan/math/gpu/opencl_context.hpp>
 #include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
@@ -9,6 +10,8 @@
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
+#include <vector>
+
 #define EXPECT_MATRIX_NEAR(A, B, DELTA) \
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
@@ -74,6 +77,24 @@ TEST(MathMatrix, cholesky_decompose_big) {
   cholesky_decompose_test(1251);
   cholesky_decompose_test(1704);
   cholesky_decompose_test(2000);
+}
+
+TEST(MathMatrix, cholesky_decompose_big_tuning_opts) {
+  std::vector<int> size_transfer({256, 512, 1024, 1300});
+  std::vector<int> cholesky_min_size({64, 128, 256});
+  std::vector<int> cholesky_part({2, 4, 6, 8});
+  for (auto&& size_t_ : size_transfer) {
+    for (auto&& min_size_ : cholesky_min_size) {
+      for (auto&& part_ : cholesky_part) {
+        stan::math::opencl_context.tuning_opts().cholesky_size_worth_transfer
+            = size_t_;
+        stan::math::opencl_context.tuning_opts().cholesky_min_L11_size
+            = min_size_;
+        stan::math::opencl_context.tuning_opts().cholesky_partition = part_;
+        cholesky_decompose_test(1300);
+      }
+    }
+  }
 }
 
 #endif
