@@ -84,14 +84,15 @@ TEST(MathMatrix, cholesky_decompose_big_tuning_opts) {
   for (auto&& size_t_ : size_transfer) {
     for (auto&& min_size_ : cholesky_min_size) {
       for (auto&& part_ : cholesky_part) {
-        stan::math::opencl_context.tuning_opts().cholesky_size_worth_transfer = size_t_;
-        stan::math::opencl_context.tuning_opts().cholesky_min_L11_size = min_size_;
+        stan::math::opencl_context.tuning_opts().cholesky_size_worth_transfer
+            = size_t_;
+        stan::math::opencl_context.tuning_opts().cholesky_min_L11_size
+            = min_size_;
         stan::math::opencl_context.tuning_opts().cholesky_partition = part_;
         cholesky_decompose_test(1300);
       }
     }
   }
 }
-
 
 #endif
