@@ -236,7 +236,9 @@ class cholesky_scalar : public vari {
 
 class cholesky_gpu : public vari {
 public:
-  int M_;
+  int M_;  
+  int block_size_;
+  typedef Eigen::Block<Eigen::MatrixXd> Block_;
   vari** variRefA_;
   vari** variRefL_;
 
@@ -272,7 +274,23 @@ public:
           }
         }
       }
-
+  /**
+   * Symbolic adjoint calculation for cholesky factor A
+   *
+   * @param L cholesky factor
+   * @param Lbar matrix of adjoints of L
+   */
+  inline void symbolic_rev(Block_& L, Block_& Lbar) {
+    using Eigen::Lower;
+    using Eigen::StrictlyUpper;
+    using Eigen::Upper;
+    L.transposeInPlace();
+    Lbar = (L * Lbar.triangularView<Lower>()).eval();
+    Lbar.triangularView<StrictlyUpper>()
+        = Lbar.adjoint().triangularView<StrictlyUpper>();
+    L.triangularView<Upper>().solveInPlace(Lbar);
+    L.triangularView<Upper>().solveInPlace(Lbar.transpose());
+  }
   /**
    * Reverse mode differentiation algorithm using a GPU
    *
@@ -282,7 +300,54 @@ public:
    *
    */
   virtual void chain() {
+    using Eigen::Block;
+    using Eigen::Lower;
     using Eigen::MatrixXd;
+    using Eigen::StrictlyUpper;
+    using Eigen::Upper;
+    MatrixXd Lbar(M_, M_);
+    MatrixXd L(M_, M_);
+
+    Lbar.setZero();
+    L.setZero();
+    size_t pos = 0;
+    for (size_type j = 0; j < M_; ++j) {
+      for (size_type i = j; i < M_; ++i) {
+        Lbar.coeffRef(i, j) = variRefL_[pos]->adj_;
+        L.coeffRef(i, j) = variRefL_[pos]->val_;
+        ++pos;
+      }
+    }
+
+    for (int k = M_; k > 0; k -= block_size_) {
+      int j = std::max(0, k - block_size_);
+      Block_ R = L.block(j, 0, k - j, j);
+      Block_ D = L.block(j, j, k - j, k - j);
+      Block_ B = L.block(k, 0, M_ - k, j);
+      Block_ C = L.block(k, j, M_ - k, k - j);
+      Block_ Rbar = Lbar.block(j, 0, k - j, j);
+      Block_ Dbar = Lbar.block(j, j, k - j, k - j);
+      Block_ Bbar = Lbar.block(k, 0, M_ - k, j);
+      Block_ Cbar = Lbar.block(k, j, M_ - k, k - j);
+      if (Cbar.size() > 0) {
+        Cbar = D.transpose()
+                   .triangularView<Upper>()
+                   .solve(Cbar.transpose())
+                   .transpose();
+        Bbar.noalias() -= Cbar * R;
+        Dbar.noalias() -= Cbar.transpose() * C;
+      }
+      symbolic_rev(D, Dbar);
+      Rbar.noalias() -= Cbar.transpose() * B;
+      Rbar.noalias() -= Dbar.selfadjointView<Lower>() * R;
+      Dbar.diagonal() *= 0.5;
+      Dbar.triangularView<StrictlyUpper>().setZero();
+    }
+    pos = 0;
+    for (size_type j = 0; j < M_; ++j)
+      for (size_type i = j; i < M_; ++i)
+        variRefA_[pos++]->adj_ += Lbar.coeffRef(i, j);
+    /*using Eigen::MatrixXd;
     MatrixXd Lbar_(M_, M_);
     MatrixXd L_(M_, M_);
     Lbar_.setZero();
@@ -359,7 +424,7 @@ public:
     pos = 0;
     for (size_type j = 0; j < M_; ++j)
       for (size_type i = j; i < M_; ++i)
-        variRefA_[pos++]->adj_ += Lbar_.coeffRef(i, j);
+        variRefA_[pos++]->adj_ += Lbar_.coeffRef(i, j);*/
   }
 };
 
@@ -382,11 +447,13 @@ inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
 
   Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
 #ifdef STAN_OPENCL
-  if (L_A.rows() > opencl_context.tuning_opts("move_to_gpu")) {
+  if (L_A.rows() > opencl_context.tuning_opts().cholesky_size_worth_transfer) {
     // NOTE: We don't do the pos def check here because
     // The GPU cholesky only returns the lower left
+    std::cout  << "runs primitve cholesky with OpenCL" << std::endl;
     L_A = cholesky_decompose(L_A);
   } else {
+    std::cout  << "runs primitve cholesky without OpenCL" << std::endl;
     Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
     check_pos_definite("cholesky_decompose", "m", L_factor);
   }
@@ -416,8 +483,20 @@ inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
     }
   } else {
 #ifdef STAN_OPENCL
-    if (L_A.rows() < opencl_context.tuning_opts("move_to_gpu")) {
+    if (L_A.rows() > opencl_context.tuning_opts().cholesky_size_worth_transfer) {
+      std::cout  << "runs rev cholesky with OpenCL" << std::endl;
+      cholesky_gpu* baseVari = new cholesky_gpu(A, L_A);
+      size_t pos = 0;
+      for (size_type j = 0; j < L.cols(); ++j) {
+        for (size_type i = j; i < L.cols(); ++i) {
+          L.coeffRef(i, j).vi_ = baseVari->variRefL_[pos++];
+        }
+        for (size_type k = 0; k < j; ++k)
+          L.coeffRef(k, j).vi_ = dummy;
+      }      
+    } else {
 #endif
+      std::cout  << "runs rev cholesky without OpenCL" << std::endl;
       cholesky_block* baseVari = new cholesky_block(A, L_A);
       size_t pos = 0;
       for (size_type j = 0; j < L.cols(); ++j) {
@@ -428,16 +507,6 @@ inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
           L.coeffRef(k, j).vi_ = dummy;
       }
 #ifdef STAN_OPENCL
-    } else {
-      cholesky_gpu* baseVari = new cholesky_gpu(A, L_A);
-      size_t pos = 0;
-      for (size_type j = 0; j < L.cols(); ++j) {
-        for (size_type i = j; i < L.cols(); ++i) {
-          L.coeffRef(i, j).vi_ = baseVari->variRefL_[pos++];
-        }
-        for (size_type k = 0; k < j; ++k)
-          L.coeffRef(k, j).vi_ = dummy;
-      }
     }
 #endif
   }

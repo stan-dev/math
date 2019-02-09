@@ -31,14 +31,27 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
     const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
   check_square("cholesky_decompose", "m", m);
   check_symmetric("cholesky_decompose", "m", m);
+
 #ifdef STAN_OPENCL
   if (m.rows() >= opencl_context.tuning_opts().cholesky_size_worth_transfer) {
+    std::cout  << "runs primitve cholesky without OpenCL" << std::endl;
+    Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > llt(m.rows());
     matrix_gpu m_gpu(m);
+    llt.compute(m);
+    check_pos_definite("cholesky_decompose", "m", llt);
+    
+    
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_chol(m.rows(), m.cols());
     cholesky_decompose(m_gpu);
-    copy(m_chol, m_gpu);  // NOLINT
+    copy(m_chol, m_gpu);  // NOLINT    
+    for(int i=0;i<m.rows();i++){
+      for(int j=0;j<=i;j++){
+      std::cout << llt.matrixL()(i,j) << "\t" << m_chol(i,j) << std::endl;
+      } 
+    }
     return m_chol;
   } else {
+    std::cout  << "runs primitve cholesky without OpenCL" << std::endl;
     Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > llt(m.rows());
     llt.compute(m);
     check_pos_definite("cholesky_decompose", "m", llt);
