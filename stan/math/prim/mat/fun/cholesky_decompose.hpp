@@ -8,6 +8,7 @@
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/cholesky_decompose.hpp>
+#include <stan/math/gpu/copy.hpp>
 #endif
 
 #include <cmath>
@@ -35,7 +36,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
   if (m.rows() >= opencl_context.tuning_opts().cholesky_size_worth_transfer) {
     matrix_gpu m_gpu(m);
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_chol(m.rows(), m.cols());
-    cholesky_decompose(m_gpu);
+    m_gpu = cholesky_decompose(m_gpu);
     copy(m_chol, m_gpu);  // NOLINT
     return m_chol;
   } else {
