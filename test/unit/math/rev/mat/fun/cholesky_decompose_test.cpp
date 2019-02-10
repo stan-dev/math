@@ -230,7 +230,7 @@ void test_gp_grad(int mat_size, double prec) {
   Eigen::VectorXd test_vals(3);
   test_vals[0] = 1;
   test_vals[1] = 1.5;
-  test_vals[2] = 1;
+  test_vals[2] = 10;
 
   boost::random::mt19937 rng(2);
 
@@ -353,127 +353,6 @@ double test_gradient(int size, double prec) {
   EXPECT_FLOAT_EQ(evals_fd, evals_ad);
   return grads_ad.sum();
 }
-/*
-TEST(AgradRevMatrix, mat_cholesky) {
-  using stan::math::cholesky_decompose;
-  using stan::math::matrix_v;
-  using stan::math::singular_values;
-  using stan::math::transpose;
-
-  // symmetric
-  matrix_v X(2, 2);
-  AVAR a = 3.0;
-  AVAR b = -1.0;
-  AVAR c = -1.0;
-  AVAR d = 1.0;
-  X << a, b, c, d;
-
-  matrix_v L = cholesky_decompose(X);
-
-  matrix_v LL_trans = multiply(L, transpose(L));
-  EXPECT_FLOAT_EQ(a.val(), LL_trans(0, 0).val());
-  EXPECT_FLOAT_EQ(b.val(), LL_trans(0, 1).val());
-  EXPECT_FLOAT_EQ(c.val(), LL_trans(1, 0).val());
-  EXPECT_FLOAT_EQ(d.val(), LL_trans(1, 1).val());
-
-  EXPECT_NO_THROW(singular_values(X));
-}
-
-#ifdef STAN_OPENCL 
-TEST(AgradRevMatrix, mat_cholesky_opencl) {
-  using stan::math::cholesky_decompose;
-  using stan::math::matrix_v;
-  using stan::math::singular_values;
-  using stan::math::transpose;
-  //a big enough size to force the use of OpenCL
-  int size = 1300;
-  
-  matrix_v X_opencl(size, size);
-  for (int j = 0; j < size; ++j) {
-    AVAR temp = double(size);
-    X_opencl(j, j) = temp;
-  }
-  for (int i = 0; i < size; ++i) {
-    for (int j = i + 1; j < size; ++j) {
-      AVAR temp = double(size - (j - i));
-      X_opencl(i, j) = temp;
-      X_opencl(j, i) = temp;
-    }
-  }
-
-  matrix_v L_opencl = cholesky_decompose(X_opencl);
-
-  matrix_v LL_trans_opencl = multiply(L_opencl, transpose(L_opencl));
-  for (int i = 0; i < size; ++i) {
-    for (int j = i; j < size; ++j) {
-      if (i == j) {
-        EXPECT_FLOAT_EQ(double(size), LL_trans_opencl(i, j).val());
-      } else {
-        EXPECT_FLOAT_EQ(double(size - (j - i)), LL_trans_opencl(i, j).val());
-        EXPECT_FLOAT_EQ(double(size - (j - i)), LL_trans_opencl(j, i).val());
-      }
-    }
-  }
-}
-#endif
-
-TEST(AgradRevMatrix, exception_mat_cholesky) {
-  stan::math::matrix_v m;
-
-  // not positive definite
-  m.resize(2, 2);
-  m << 1.0, 2.0, 2.0, 3.0;
-  EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
-
-  // zero size
-  m.resize(0, 0);
-  EXPECT_NO_THROW(stan::math::cholesky_decompose(m));
-
-  // not square
-  m.resize(2, 3);
-  EXPECT_THROW(stan::math::cholesky_decompose(m), std::invalid_argument);
-
-  // not symmetric
-  m.resize(2, 2);
-  m << 1.0, 2.0, 3.0, 4.0;
-  EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
-}
-#ifdef STAN_OPENCL 
-TEST(AgradRevMatrix, exception_mat_cholesky_opencl) {
-  //a big enough size to force the use of OpenCL
-  int size = 1300;
-  stan::math::matrix_v m;
-  // not positive definite 
-  m.resize(size, size);
-  for (int j = 0; j < size; ++j) {
-    m(j, j) = j;
-  }
-  for (int i = 0; i < size; ++i) {
-    for (int j = i + 1; j < size; ++j) {
-      m(i, j) = i;
-      m(j, i) = i;
-    }
-  }    
-  EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
-
-  // not square
-  // TODO(Steve): doesnt really call OpenCL as the function exits on square check
-  // so I guess its not really?
-  m.resize(size, size + 100);
-  EXPECT_THROW(stan::math::cholesky_decompose(m), std::invalid_argument);
-
-  // not symmetric
-  // TODO(Steve): doesnt really call OpenCL as the function exits on symmetric check
-  // so I guess its not really?
-  m.resize(size, size);
-  for (int i = 0; i < size; ++i) {
-    for (int j = 0; j < size; ++j) {
-      m(i, j) = i;
-    }
-  }
-  EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
-}
-#endif
 
 TEST(AgradRevMatrix, mat_cholesky_1st_deriv_small) {
   test_gradients(9, 1e-10);
@@ -496,19 +375,6 @@ TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients) {
   test_chol_mult(37, 1e-08);
   test_simple_vec_mult(45, 1e-08);
 }
-*/
-
-#ifdef STAN_OPENCL
-TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients_opencl) {
-  // TODO(Steve): This test fail for 1300, both with Eigen or OpenCL
-  // due to Inf value it finds the matrices non-symmetric. Should we just ignore it?
-  //test_gradient(1300, 1e-05);
-  test_gp_grad(1300, 1e-08);
-  //TODO(Rok): Check what happens here
-  //test_chol_mult(37, 1e-08);
-  //test_simple_vec_mult(45, 1e-08);
-}
-#endif
 
 TEST(AgradRevMatrix, check_varis_on_stack_large) {
   stan::math::matrix_v X(50, 50);
@@ -524,21 +390,22 @@ TEST(AgradRevMatrix, check_varis_on_stack_large) {
   X = stan::math::multiply(X, stan::math::transpose(X));
   test::check_varis_on_stack(stan::math::cholesky_decompose(X));
 }
+
+#ifdef STAN_OPENCL
+TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients_opencl) {
+  test_gradient(51, 1e-08);
+  test_gp_grad(1300, 1e-08);
+  test_gp_grad(2000, 1e-08);
+  test_chol_mult(50, 1e-08);
+  test_simple_vec_mult(45, 1e-08);
+}
+
 //TODO(Steve): This test fails but I suspect the matrix is not pos-def
 // do we need to check varis on stack, since we havent changed anything in terms of varis on stack?
-#ifdef STAN_OPENCL
 TEST(AgradRevMatrix, check_varis_on_stack_large_opencl) {
-  stan::math::matrix_v X(1300, 1300);
-  for (int j = 0; j < X.cols() - 1; ++j) {
-    X(j, j) = 1;
-    for (int i = j + 1; i < X.cols(); ++i) {
-      X(i, j) = (i + 1) * (j + 1);
-      X(j, i) = 0;
-    }
-  }
-  X(X.cols() - 1, X.cols() - 1) = 1;
-
-  X = stan::math::multiply(X, stan::math::transpose(X));
-  test::check_varis_on_stack(stan::math::cholesky_decompose(X));
+  stan::math::matrix_v m1 = stan::math::matrix_v::Random(1250, 1250);
+  stan::math::matrix_v m1_pos_def
+      = m1 * m1.transpose() + 500 * stan::math::matrix_v::Identity(1250, 1250);
+  test::check_varis_on_stack(stan::math::cholesky_decompose(m1_pos_def));
 }
 #endif
