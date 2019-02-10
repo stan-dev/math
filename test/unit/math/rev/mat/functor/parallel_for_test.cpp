@@ -32,10 +32,12 @@ struct fun1 {
   }
 };
 
+static std::mutex cout_mutex;
+
+/*
+
 static tbb::task_scheduler_init task_scheduler(
     stan::math::internal::get_num_threads());
-
-static std::mutex cout_mutex;
 
 class ad_tape_observer : public tbb::task_scheduler_observer {
  public:
@@ -47,7 +49,7 @@ class ad_tape_observer : public tbb::task_scheduler_observer {
 
   ~ad_tape_observer() { std::cout << "Observer destructed" << std::endl; }
 
-  /*override*/ void on_scheduler_entry(bool worker) {
+  void on_scheduler_entry(bool worker) {
     stan::math::ChainableStack::init();
     std::lock_guard<std::mutex> cout_lock(cout_mutex);
     if (worker)
@@ -55,7 +57,7 @@ class ad_tape_observer : public tbb::task_scheduler_observer {
     else
       std::cout << "the main thread is joining to do some work." << std::endl;
   }
-  /*override*/ void on_scheduler_exit(bool worker) {
+  void on_scheduler_exit(bool worker) {
     std::lock_guard<std::mutex> cout_lock(cout_mutex);
     if (worker)
       std::cout << "a worker thread is finished to do some work." << std::endl;
@@ -65,6 +67,7 @@ class ad_tape_observer : public tbb::task_scheduler_observer {
 };
 
 static ad_tape_observer tape_initializer;
+*/
 
 TEST(Base, parallel_for) {
   const int num_jobs = 1000;
@@ -188,6 +191,7 @@ class arena_observer : public tbb::task_scheduler_observer {
   }
 };
 
+/**/
 TEST(AgradAutoDiff, parallel_for_each_scalar) {
   typedef boost::counting_iterator<int> count_iter;
 
@@ -216,7 +220,8 @@ TEST(AgradAutoDiff, parallel_for_each_scalar) {
     return f(iarg);
   };
 
-  vector_v parallel_result;
+  vector_v parallel_result = stan::math::concatenate_row(
+      stan::math::parallel_map(count_iter(0), count_iter(num_jobs), loop_fun));
 
   arena1.execute([&] {
     parallel_result = stan::math::concatenate_row(stan::math::parallel_map(
@@ -248,6 +253,7 @@ TEST(AgradAutoDiff, parallel_for_each_scalar) {
   stan::math::recover_memory();
   // stan::math::recover_memory();
 }
+/*  */
 
 // test threaded AD if enabled
 // more verbose old approach scheme

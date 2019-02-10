@@ -94,6 +94,13 @@ struct AutodiffStackSingleton {
         instance_nochain_stack_;
 
     std::size_t current_instance_;
+
+    // creates a new nochain stack and returns a pointer to it. This
+    // operation is thread-safe.
+    std::shared_ptr<AutodiffStackStorage> get_nochain_stack() {
+      return *instance_nochain_stack_.emplace_back(
+          std::shared_ptr<AutodiffStackStorage>(new AutodiffStackStorage()));
+    }
   };
 
   AutodiffStackSingleton() = delete;
