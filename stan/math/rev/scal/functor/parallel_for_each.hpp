@@ -41,6 +41,8 @@ struct parallel_map_impl<InputIt, UnaryFunction, var> {
 
     T_return f_eval(num_jobs);
 
+    // All AD terms are written to thread-local AD tapes which are all
+    // stored as part of the parent nochain stacks.
     chainablequeue_t& parent_queue = ChainableStack::queue();
 
     // we could tweak this for the

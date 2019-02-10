@@ -13,6 +13,10 @@ namespace stan {
 namespace math {
 
 /**
+ * Obsolete by swapping AD tape pointers.
+ **/
+
+/**
  * A variable implementation which allows to nest a ChainableStack
  * instance as part of another ChainableStack. This is useful if the
  * AD tape is written in independent processes and is then merged
