@@ -3,6 +3,7 @@
 
 #include <stan/math/memory/stack_alloc.hpp>
 #include <vector>
+#include <tbb/concurrent_vector.h>
 
 namespace stan {
 namespace math {
@@ -88,7 +89,9 @@ struct AutodiffStackSingleton {
 
     AutodiffStackQueue &operator=(const AutodiffStackQueue &) = delete;
 
-    std::vector<std::shared_ptr<AutodiffStackStorage> > instance_stack_;
+    std::vector<std::shared_ptr<AutodiffStackStorage>> instance_stack_;
+    tbb::concurrent_vector<std::shared_ptr<AutodiffStackStorage>>
+        instance_nochain_stack_;
 
     std::size_t current_instance_;
   };
@@ -111,8 +114,11 @@ struct AutodiffStackSingleton {
   }
 
   static AutodiffStackStorage *init() {
-    if (instance_ == nullptr)
-      instance_ = new AutodiffStackStorage();
+    if (instance_ == nullptr) {
+      AutodiffStackQueue &local_queue = queue();
+      instance_
+          = local_queue.instance_stack_[local_queue.current_instance_].get();
+    }
     return instance_;
   }
 

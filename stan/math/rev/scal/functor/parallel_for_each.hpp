@@ -11,6 +11,7 @@
 #include <tbb/task_arena.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
+//#include <tbb/enumerable_thread_specific.h>
 #include <tbb/combinable.h>
 
 #include <iostream>
@@ -48,6 +49,12 @@ struct parallel_map_impl<InputIt, UnaryFunction, var> {
       // record the chunks executed on
       // which AD tapes
       tbb::combinable<std::vector<nested_chunk_t> > child_chunks;
+
+      // auto
+      // tbb::enumerable_thread_specific<std::shared_ptr<AutodiffStackStorage>>
+      // child_stacks;
+
+      //          instance_nochain_stack_;
 
       const std::size_t parent_ad_tape_idx
           = tbb::this_task_arena::current_thread_index();
