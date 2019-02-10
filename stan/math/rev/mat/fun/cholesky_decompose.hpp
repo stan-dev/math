@@ -330,11 +330,11 @@ public:
       Cbar.sub_block(Lbar, k, j, 0, 0, m_k_ind, k_j_ind);
 
       // TODO(STEVE): Figure out why this if needs to be here.
-      if (Cbar.size() > 0) {
+      //if (Cbar.size() > 0) {
         Cbar = Cbar * lower_triangular_inverse(D);
         Bbar = Bbar - Cbar * R;
         Dbar = Dbar - transpose(Cbar) * C;
-      }
+      //}
 
       // the implementation of the symbolic_rev inline function
       // for the GPU 
@@ -348,6 +348,7 @@ public:
       Rbar = Rbar - transpose(Cbar) * B;
       Rbar = Rbar - Dbar * R;
       Dbar = diagonal_multiply(Dbar, 0.5);
+      Dbar.zeros<stan::math::TriangularViewGPU::Upper>();   
 
       Lbar.sub_block(Rbar, 0, 0, j, 0, k_j_ind, j);
       Lbar.sub_block(Dbar, 0, 0, j, j, k_j_ind, k_j_ind);
