@@ -329,13 +329,10 @@ public:
       Bbar.sub_block(Lbar, k, 0, 0, 0, m_k_ind, j);
       Cbar.sub_block(Lbar, k, j, 0, 0, m_k_ind, k_j_ind);
 
-      // TODO(STEVE): Figure out why this if needs to be here.
-      //if (Cbar.size() > 0) {
-        Cbar = Cbar * lower_triangular_inverse(D);
-        Bbar = Bbar - Cbar * R;
-        Dbar = Dbar - transpose(Cbar) * C;
-      //}
-
+      Cbar = Cbar * lower_triangular_inverse(D);
+      Bbar = Bbar - Cbar * R;
+      Dbar = Dbar - transpose(Cbar) * C;
+      
       // the implementation of the symbolic_rev inline function
       // for the GPU 
       Dbar = transpose(D) * Dbar;
