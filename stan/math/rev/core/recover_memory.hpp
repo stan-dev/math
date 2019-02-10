@@ -20,13 +20,21 @@ static inline void recover_memory() {
     throw std::logic_error(
         "empty_nested() must be true"
         " before calling recover_memory()");
-  ChainableStack::instance().var_stack_.clear();
-  ChainableStack::instance().var_nochain_stack_.clear();
-  for (auto &x : ChainableStack::instance().var_alloc_stack_) {
-    delete x;
-  }
-  ChainableStack::instance().var_alloc_stack_.clear();
-  ChainableStack::instance().memalloc_.recover_all();
+
+  auto clean_instance = [](ChainableStack::AutodiffStackStorage& instance) {
+    instance.var_stack_.clear();
+    instance.var_nochain_stack_.clear();
+    for (auto& x : instance.var_alloc_stack_) {
+      delete x;
+    }
+    instance.var_alloc_stack_.clear();
+    instance.memalloc_.recover_all();
+  };
+
+  clean_instance(ChainableStack::instance());
+
+  for (auto& instance_ptr : ChainableStack::queue().instance_nochain_stack_)
+    clean_instance(*instance_ptr);
 }
 
 // recover memory the stack globally for all threads

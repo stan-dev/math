@@ -220,8 +220,7 @@ TEST(AgradAutoDiff, parallel_for_each_scalar) {
     return f(iarg);
   };
 
-  vector_v parallel_result = stan::math::concatenate_row(
-      stan::math::parallel_map(count_iter(0), count_iter(num_jobs), loop_fun));
+  vector_v parallel_result;
 
   arena1.execute([&] {
     parallel_result = stan::math::concatenate_row(stan::math::parallel_map(
