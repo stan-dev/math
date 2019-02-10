@@ -233,7 +233,7 @@ class cholesky_scalar : public vari {
     }
   }
 };
-
+#ifdef STAN_OPENCL
 class cholesky_gpu : public vari {
 public:
   int M_;  
@@ -361,7 +361,7 @@ public:
         variRefA_[pos++]->adj_ += Lbar_.coeffRef(i, j);
   }
 };
-
+#endif
 
 /**
  * Reverse mode specialization of cholesky decomposition
