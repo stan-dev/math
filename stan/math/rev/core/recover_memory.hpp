@@ -33,8 +33,14 @@ static inline void recover_memory() {
 
   clean_instance(ChainableStack::instance());
 
-  for (auto& instance_ptr : ChainableStack::queue().instance_nochain_stack_)
-    clean_instance(*instance_ptr);
+  const std::size_t stack_id = ChainableStack::queue().stack_id_;
+
+  for (auto& instance_ptr : ChainableStack::global_stack()) {
+    if (instance_ptr && instance_ptr->stack_id_ == stack_id) {
+      clean_instance(*instance_ptr);
+      instance_ptr.reset();
+    }
+  }
 }
 
 // recover memory the stack globally for all threads

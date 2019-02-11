@@ -17,13 +17,16 @@ static inline void start_nested() {
   ChainableStack::AutodiffStackQueue& queue = ChainableStack::queue();
 
   const std::size_t next_instance = queue.current_instance_ + 1;
+  const std::size_t current_stack_id
+      = queue.instance_stack_[queue.current_instance_]->stack_id_;
 
   while (queue.instance_stack_.size() < next_instance + 1) {
     queue.instance_stack_.emplace_back(
         std::shared_ptr<ChainableStack::AutodiffStackStorage>(
-            new ChainableStack::AutodiffStackStorage()));
+            new ChainableStack::AutodiffStackStorage(current_stack_id)));
   }
 
+  queue.instance_stack_[next_instance]->stack_id_ = current_stack_id;
   ChainableStack::instance_ = queue.instance_stack_[next_instance].get();
   queue.current_instance_ = next_instance;
 

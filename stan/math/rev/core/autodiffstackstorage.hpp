@@ -3,6 +3,8 @@
 
 #include <stan/math/memory/stack_alloc.hpp>
 #include <vector>
+#include <mutex>
+#include <atomic>
 #include <tbb/concurrent_vector.h>
 
 namespace stan {
@@ -65,7 +67,30 @@ struct AutodiffStackSingleton {
   typedef AutodiffStackSingleton<ChainableT, ChainableAllocT>
       AutodiffStackSingleton_t;
 
+  static std::size_t get_new_stack_id() {
+    static std::atomic<std::size_t> stack_counter{0};
+    return stack_counter.fetch_add(1);
+    /*
+    static std::mutex stack_counter_mutex;
+    std::lock_guard<std::mutex> stack_counter_lock(stack_counter_mutex);
+    static std::size_t stack_counter = 0;
+    std::size_t new_stack_id = stack_count
+    */
+  }
+
+  struct AutodiffStackStorage;
+
+  typedef tbb::concurrent_vector<std::shared_ptr<AutodiffStackStorage>>
+      global_stack_t;
+
+  static global_stack_t &global_stack() {
+    static global_stack_t global_stack_;
+    return global_stack_;
+  }
+
   struct AutodiffStackStorage {
+    explicit AutodiffStackStorage(std::size_t stack_id) : stack_id_(stack_id){};
+
     AutodiffStackStorage &operator=(const AutodiffStackStorage &) = delete;
 
     std::vector<ChainableT *> var_stack_;
@@ -73,34 +98,36 @@ struct AutodiffStackSingleton {
     std::vector<ChainableAllocT *> var_alloc_stack_;
     stack_alloc memalloc_;
 
+    std::size_t stack_id_;
+
     // nested positions
     /*
     std::vector<size_t> nested_var_stack_sizes_;
     std::vector<size_t> nested_var_nochain_stack_sizes_;
     std::vector<size_t> nested_var_alloc_stack_starts_;
     */
+
+    // creates a new nochain stack and returns a pointer to it. This
+    // operation is thread-safe.
+    std::shared_ptr<AutodiffStackStorage> get_child_stack() {
+      return *(
+          global_stack().emplace_back(std::shared_ptr<AutodiffStackStorage>(
+              new AutodiffStackStorage(stack_id_))));
+    }
   };
 
   struct AutodiffStackQueue {
     AutodiffStackQueue()
-        : instance_stack_(1, std::shared_ptr<AutodiffStackStorage>(
-                                 new AutodiffStackStorage())),
-          current_instance_(0) {}
+        : stack_id_(get_new_stack_id()),
+          current_instance_(0),
+          instance_stack_(1, std::shared_ptr<AutodiffStackStorage>(
+                                 new AutodiffStackStorage(stack_id_))) {}
 
     AutodiffStackQueue &operator=(const AutodiffStackQueue &) = delete;
 
-    std::vector<std::shared_ptr<AutodiffStackStorage>> instance_stack_;
-    tbb::concurrent_vector<std::shared_ptr<AutodiffStackStorage>>
-        instance_nochain_stack_;
-
+    const std::size_t stack_id_;
     std::size_t current_instance_;
-
-    // creates a new nochain stack and returns a pointer to it. This
-    // operation is thread-safe.
-    std::shared_ptr<AutodiffStackStorage> get_nochain_stack() {
-      return *instance_nochain_stack_.emplace_back(
-          std::shared_ptr<AutodiffStackStorage>(new AutodiffStackStorage()));
-    }
+    std::vector<std::shared_ptr<AutodiffStackStorage>> instance_stack_;
   };
 
   AutodiffStackSingleton() = delete;
@@ -148,6 +175,14 @@ thread_local
 #else
     = AutodiffStackSingleton<ChainableT, ChainableAllocT>::init();
 #endif
+
+/*
+template <typename ChainableT, typename ChainableAllocT>
+typename AutodiffStackSingleton<ChainableT,
+                                    ChainableAllocT>::global_stack_t
+        global_stack_ = typename AutodiffStackSingleton<ChainableT,
+                                                        ChainableAllocT>::global_stack_t();
+*/
 
 }  // namespace math
 }  // namespace stan

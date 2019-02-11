@@ -44,13 +44,15 @@ struct parallel_map_impl<InputIt, UnaryFunction, var> {
     // All AD terms are written to thread-local AD tapes which are all
     // stored as part of the parent nochain stacks.
     chainablequeue_t& parent_queue = ChainableStack::queue();
+    chainablestack_t& parent_stack = ChainableStack::instance();
 
     // we could tweak this for the
     // parent thread which can write
     // directly to it's own tape
     tbb::enumerable_thread_specific<std::shared_ptr<chainablestack_t>>
         child_stacks(
-            [&parent_queue]() { return parent_queue.get_nochain_stack(); });
+            [&parent_stack]() { return parent_stack.get_child_stack(); });
+    // todo: need get child stacks with the stack_id of the current tape!!!
 
     tbb::parallel_for(
         tbb::blocked_range<std::size_t>(0, num_jobs),
@@ -80,22 +82,20 @@ struct parallel_map_impl<InputIt, UnaryFunction, var> {
             recover_memory_nested();
           } catch (const std::exception& e) {
             local_queue.instance_stack_[local_queue.current_instance_].reset(
-                new chainablestack_t());
+                new chainablestack_t(ChainableStack::queue().stack_id_));
             recover_memory_nested();
             throw;
           }
         });
 
-    chainablestack_t& parent_tape = ChainableStack::instance();
-
     child_stacks.combine_each(
-        [&parent_tape](const std::shared_ptr<chainablestack_t>& other_stack) {
-          parent_tape.var_stack_.insert(parent_tape.var_stack_.end(),
-                                        other_stack->var_stack_.begin(),
-                                        other_stack->var_stack_.end());
+        [&parent_stack](const std::shared_ptr<chainablestack_t>& other_stack) {
+          parent_stack.var_stack_.insert(parent_stack.var_stack_.end(),
+                                         other_stack->var_stack_.begin(),
+                                         other_stack->var_stack_.end());
           other_stack->var_stack_.clear();
-          parent_tape.var_nochain_stack_.insert(
-              parent_tape.var_nochain_stack_.end(),
+          parent_stack.var_nochain_stack_.insert(
+              parent_stack.var_nochain_stack_.end(),
               other_stack->var_nochain_stack_.begin(),
               other_stack->var_nochain_stack_.end());
           other_stack->var_nochain_stack_.clear();
