@@ -8,7 +8,7 @@
 
 namespace stan {
 namespace math {
-  
+
 /**
  * Check if <code>y</code> is positive.
  *
@@ -29,9 +29,9 @@ inline bool is_scal_pos(const T_y& y) {
       return false;
   }
   return true;
-  }
 }
-
 }  // namespace math
+
+}  // namespace stan
 }  // namespace stan
 #endif
