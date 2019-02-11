@@ -1,8 +1,6 @@
 #ifndef STAN_MATH_PRIM_ARR_ERR_IS_ORDERED_HPP
 #define STAN_MATH_PRIM_ARR_ERR_IS_ORDERED_HPP
 
-#include <stderr>
-#include <sstream>
 #include <vector>
 #include <string>
 
