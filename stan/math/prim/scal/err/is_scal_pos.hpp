@@ -30,8 +30,8 @@ inline bool is_scal_pos(const T_y& y) {
   }
   return true;
 }
-}  // namespace math
 
+}  // namespace math
 }  // namespace stan
-}  // namespace stan
+
 #endif
