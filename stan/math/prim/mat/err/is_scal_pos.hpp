@@ -15,15 +15,15 @@ namespace math {
  * @tparam T type of scalar
  *
  * @param y Matrix to test
- * 
+ *
  * @return <code>true</code> if matrix is square
  */
-template<typename T_y>
+template <typename T_y>
 inline bool is_square(
-	    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
   is_scal_size_match(y.rows(), y.cols());
 }
 
-} // namespace math
-} // namepsace stan
+}  // namespace math
+}  // namespace stan
 #endif

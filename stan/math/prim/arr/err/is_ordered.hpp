@@ -18,15 +18,15 @@ namespace math {
  *
  * @return <code>true</code> if vector is sorted in ascending order
  */
-template<typename T_y>
+template <typename T_y>
 inline bool is_ordered(const std::vector<T_y>& y) {
   for (size_t n = 1; n < y.size(); n++) {
-    if (!(y[n] > y[n-1])) 
-        return false;
+    if (!(y[n] > y[n - 1]))
+      return false;
   }
   return true;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

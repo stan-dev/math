@@ -9,7 +9,7 @@ namespace math {
 /**
  * Check if the specified matrix is lower triangular.
  *
- * A matrix x is not lower triangular if there is a 
+ * A matrix x is not lower triangular if there is a
  * non-zero entry x[m, n] with m &lt; n. This function
  * only inspect the upper and triangular portion of the
  * matrix, not including the diagonal.
@@ -22,16 +22,16 @@ namespace math {
  */
 template <typename T_y>
 inline bool is_lower_triangular(
-	    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
   for (int n = 1; n < y.cols(); n++) {
     for (int m = 0; m < n && m < y.rows(); m++) {
-      if (y(m,n) != 0) 
+      if (y(m, n) != 0)
         return false;
     }
   }
   return true;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

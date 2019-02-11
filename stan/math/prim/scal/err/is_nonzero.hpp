@@ -14,15 +14,15 @@ namespace math {
  * @param y structure Structure to test. Matrices or vector.
  *
  * @return <code>true</code> if <code>size()</code> returns
- *   greater than 0 
+ *   greater than 0
  */
-template<typename T_y>
+template <typename T_y>
 inline bool is_nonzero(const T_y& y) {
-  if (y.size() > 0) 
-      return true;
+  if (y.size() > 0)
+    return true;
   return false;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

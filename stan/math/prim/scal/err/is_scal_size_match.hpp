@@ -25,6 +25,6 @@ inline bool is_scal_size_match(T_size1 i, T_size2 j) {
   return false;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
