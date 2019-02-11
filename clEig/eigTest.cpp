@@ -54,6 +54,26 @@ void chk(const Mat& a, const Mat& Q, const Mat& R){
 }
  */
 
+void getGluedWilkinsonMatrix(int n, int num, Vec& diag, Vec& subdiag, double glue=1e-8){
+  int singleSize = (2*n+1);
+  int size=singleSize*num;
+  diag.resize(size);
+  subdiag = Vec::Constant(size-1,1);
+  for(int i=0;i<num;i++){
+    for(int j=0;j<n;j++){
+      diag[i*singleSize + j] = n  - j;
+      diag[i*singleSize + 2*n - j] = n - j;
+    }
+    diag[i*singleSize+n]=0;
+  }
+  for(int i=1;i<num;i++){
+    diag[i*singleSize-1] += glue;
+    diag[i*singleSize] += glue;
+    subdiag[i*singleSize-1] = glue;
+  }
+
+}
+
 void chkEig(const Mat& a, const Mat& eigenvecs, const Vec& eigenvals){
 #ifndef SKIP_CHECKS
   double A=a.rows();
@@ -149,17 +169,18 @@ int miniTest2() {
   chkTridiagPacked(a,packed);
 }
 */
-/*
+
 void testMrrr(){
   auto start = std::chrono::steady_clock::now();
-  cout.precision(4);
-  int A = 7;
+  //cout.precision(4);
+  int A = 1005;
   for(unsigned int i=443;i<1e7;i++) {
     cout << "i=" << i << endl;
     srand(i);
 
     Vec diag = Vec::Random(A).array();
     Vec subdiag = Vec::Random(A - 1).array();
+    getGluedWilkinsonMatrix(100, 5, diag, subdiag,1e-16);
 //    subdiag[2]=0;
 //    subdiag[3]=0;
 //    diag[5]=0;
@@ -197,7 +218,7 @@ void testMrrr(){
       cout << "mat:" << endl;
       cout << diag << endl << endl;
       cout << subdiag << endl << endl;
-      cout << "my results:" << endl;
+      cout << "\t\t\t\tmy results:" << endl;
       cout << "eigenvectors:" << endl << eigenvecs2 << endl << endl;
       cout << "eigenvectors:" << endl << eigenvecs << endl << endl;
       cout << "eigenvalues:" << endl << eigenvals << endl << endl;
@@ -219,7 +240,7 @@ void testMrrr(){
          << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
          << "ms" << endl;
     if (A < 15) {
-      cout << "eigen results:" << endl;
+      cout << "\t\t\t\teigen results:" << endl;
       cout << "eigenvectors:" << endl << eigenvecs.rowwise().reverse() << endl << endl;
       cout << "eigenvalues:" << endl << eigenvals.reverse() << endl << endl;
     }
@@ -297,16 +318,17 @@ void testMrrr(){
 //       << "ms" << endl;
 //  //cout << "eigvals: " << eigenvals << endl;
 //  cout << "trace diff: " << sum(diag)-sum(eigenvals) << endl;
-}*/
+}
 
 int main() {
   auto start = std::chrono::steady_clock::now();
-  /*miniTest();
-  miniTest2();
-  return 0;*/
+  testMrrr();
+//  miniTest();
+//  miniTest2();
+  return 0;
 
 
-  srand(time(0));
+  //srand(time(0));
   int A=2000;
   Mat a = Mat::Random(A, A);
   a+=a.transpose().eval();

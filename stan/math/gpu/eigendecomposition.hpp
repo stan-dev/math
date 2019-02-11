@@ -117,19 +117,22 @@ void block_apply_packed_Q3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, in
   }
 }
 
+const double perturbation_range = 1e-13;
+inline double get_random_perturbation_multiplier(){
+  static const double rand_norm = perturbation_range / RAND_MAX;
+  static const double almost_one = 1 - perturbation_range * 0.5;
+  return almost_one + std::rand() * rand_norm;
+}
+
 void get_ldl(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag, double shift, Eigen::VectorXd& l, Eigen::VectorXd& d_plus){
   d_plus[0] = diag[0] - shift;
   for(int i = 0; i < subdiag.size(); i++){
     l[i] = subdiag[i] / d_plus[i];
+    //d_plus[i] *= get_random_perturbation_multiplier();
     d_plus[i+1] = diag[i+1] - shift - l[i] * subdiag[i];
+    //l[i] *= get_random_perturbation_multiplier();
   }
-}
-
-inline double get_random_perturbation_multiplier(){
-  static const double perturbation_range = 1e-14;
-  static const double rand_norm = perturbation_range / RAND_MAX;
-  static const double almost_one = 1 - perturbation_range * 0.5;
-  return almost_one + std::rand() * rand_norm;
+  //d_plus[subdiag.size()] *= get_random_perturbation_multiplier();
 }
 
 //stationary qds
@@ -139,12 +142,12 @@ double get_perturbed_shifted_ldl(const Eigen::VectorXd& d, const Eigen::VectorXd
   double element_growth = 0;
   double element_growth_denominator = 0;
   for(int i=0; i < n; i++){
-    double di_perturbed = d[i] * get_random_perturbation_multiplier();
-    double li_perturbed = l[i] * get_random_perturbation_multiplier();
+    double di_perturbed = d[i];// * get_random_perturbation_multiplier();
+    double li_perturbed = l[i];// * get_random_perturbation_multiplier();
     d_plus[i] = s + di_perturbed;
     element_growth += abs(d_plus[i]);
     element_growth_denominator += d_plus[i];
-    l_plus[i] = li_perturbed * di_perturbed / d_plus[i];
+    l_plus[i] = li_perturbed * (di_perturbed / d_plus[i]);
     if(is_inf(d_plus[i]) && is_inf(s)) { // this happens if d_plus[i]==0 -> in next iteration d_plus==inf and s==inf
       s = li_perturbed * li_perturbed * di_perturbed - shift;
     }
@@ -152,7 +155,7 @@ double get_perturbed_shifted_ldl(const Eigen::VectorXd& d, const Eigen::VectorXd
       s = l_plus[i] * li_perturbed * s - shift;
     }
   }
-  d_plus[n] = s + d[n] * get_random_perturbation_multiplier();
+  d_plus[n] = s + d[n];// * get_random_perturbation_multiplier();
   element_growth += abs(d_plus[n]);
   return element_growth / abs(element_growth_denominator);
 }
@@ -165,7 +168,7 @@ int get_twisted_factorization(const Eigen::VectorXd& d, const Eigen::VectorXd& l
   s[0] = -shift;
   for(int i=0; i < n; i++){
     double d_plus = s[i] + d[i];
-    l_plus[i] = l[i] * d[i] / d_plus;
+    l_plus[i] = l[i] * (d[i] / d_plus);
     if(is_nan(l_plus[i])){ //d_plus==0
       //one (or both) of d[i], l[i] is very close to 0
       if(abs(l[i])<abs(d[i])){
@@ -242,7 +245,7 @@ int getSturmCountLdlLdl(const Eigen::VectorXd& d, const Eigen::VectorXd& l, doub
       s = l[i] * l[i] * d[i] - shift;
     }
     else{
-      s = l[i] * l[i] * d[i] * s / d_plus - shift;
+      s = l[i] * l[i] * s * (d[i] / d_plus) - shift;
     }
   }
   d_plus = s + d[n];
@@ -314,8 +317,8 @@ void eigenvalsBisect3(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdia
 
 
 void mrrr(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag,  Eigen::VectorXd& eigenvals, Eigen::MatrixXd& eigenvecs){
-  double min_rel_sep=1e-1;
-  double max_ele_growth = 1.7;
+  double min_rel_sep=1e-2;
+  double max_ele_growth = 2;
   int n=diag.size();
   Eigen::VectorXd high(n), low(n);
   double min_eigval;
@@ -324,20 +327,107 @@ void mrrr(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag,  Eigen::V
   double span = max_eigval - min_eigval;
   Eigen::VectorXd subdiagSquared = subdiag.array() * subdiag.array();
   eigenvalsBisect3(diag, subdiagSquared, min_eigval, max_eigval, low, high);
-  Eigen::VectorXd l(n-1), d(n);
-  double shift0 = min_eigval;
-  get_ldl(diag, subdiag, shift0, l, d);
+  Eigen::VectorXd l(n-1), d(n), l0(n-1), d0(n);
+  double shift0 = min_eigval - (max_eigval - min_eigval) * 0.1;
+  get_ldl(diag, subdiag, shift0, l0, d0);
   Eigen::VectorXd l2(n-1), d2(n), l3(n-1), d3(n), l_plus(n-1), d_plus(n), u_minus(n-1), d_minus(n), s(n), p(n);
 
   double T_norm = sqrt((diag.array()*diag.array()).sum() + subdiagSquared.sum());
-  for(int i=0;i<n;i++){
+  for(int i=0;i<n;i++) {
     eigenvals[i]=(high[i]+low[i])*0.5;
-    double shift = 0;
+    //from here on eigenvals[i] constins original eigenval
+    if(i!=n-1) {
+      l[i] = l0[i] * get_random_perturbation_multiplier();
+    }
+    d[i]=d0[i]*get_random_perturbation_multiplier();
+    low[i] -= shift0;
+    high[i] -= shift0;
+    //from here on high[i] and low[i] contain bounds on shifted representation
+  }
+  low[0] = low[0] * (1 - copysign(perturbation_range * n, low[0]));
+  high[0] = high[0] * (1 + copysign(perturbation_range * n, high[0]));
+  eigenvalBisectRefine(d, l, low[0], high[0], 0);
+  
+  double shift = std::numeric_limits<double>::infinity();
+  double min_element_growth = std::numeric_limits<double>::infinity();
+  int cluster_start=-1, cluster_end=-1;
+  for(int i=0;i<n;i++){
+    if(i>cluster_end){
+      //double start_threshold = high[i] * (1 + copysign(sqrt(perturbation_range) * n, high[i]));
+      double end_threshold = low[i] * (1 - copysign(sqrt(perturbation_range) * n, low[i]));
+      /*for(cluster_start=i;cluster_start>1;cluster_start--){
+        if(low[cluster_start-1]>start_threshold){
+          break;
+        }
+      }*/
+      cluster_start=i;
+      for(cluster_end=i;cluster_end<n-1;cluster_end++){
+        int next = cluster_end + 1;
+        low[next] = low[next] * (1 - copysign(perturbation_range * n, low[next]));
+        high[next] = high[next] * (1 + copysign(perturbation_range * n, high[next]));
+        eigenvalBisectRefine(d, l, low[next], high[next], next);
+        if(high[next] < end_threshold){
+          break;
+        }
+      }
+      while(true) { // perturb the representation if any eigenvalues in the cluster are too close
+        bool is_ok = true;
+        for(int j=cluster_start;j<cluster_end;j++){
+          if(high[j+1] >= low[j]){//problem - need new perturb
+            is_ok = false;
+            break;
+          }
+        }
+        if(is_ok){
+          break;
+        }
+        cout << "perturbing at i = " << i << " cluster: " << cluster_start << ", " << cluster_end << endl;
+        for (int j = 0; j < n - 1; j++) {
+          l[j] = l0[j] * get_random_perturbation_multiplier();
+          d[j] = d0[j] * get_random_perturbation_multiplier();
+        }
+        d[n - 1] = d0[n - 1] * get_random_perturbation_multiplier();
+        //eigenvalBisectRefine(d, l, low[i], high[i], i);
+        for(int j=cluster_start;j<=cluster_end;j++){
+          low[j] = low[j] * (1 - copysign(perturbation_range * n, low[j]));
+          high[j] = high[j] * (1 + copysign(perturbation_range * n, high[j]));
+          eigenvalBisectRefine(d, l, low[j], high[j], j);
+        }
+        /*if(i!=0 && high[i]>=low[i-1]){//problem - need new perturb
+          continue;
+        }*/
+      }
+      if(cluster_end!=n-1){
+        int next = cluster_end + 1;
+        low[next] = low[next] * (1 - copysign(perturbation_range * n, low[next]));
+        high[next] = high[next] * (1 + copysign(perturbation_range * n, high[next]));
+        eigenvalBisectRefine(d, l, low[next], high[next], next);
+      }
+//      low_gap = i==0 ? std::numeric_limits<double>::infinity() : low[i-1] - high[i];
+//      high_gap = i==n-1 ? std::numeric_limits<double>::infinity() : low[i] - high[i+1];
+//      min_gap = std::min(low_gap, high_gap);
+      min_element_growth = std::numeric_limits<double>::infinity();
+    }
     int twist_idx;
     double low_gap = i==0 ? std::numeric_limits<double>::infinity() : low[i-1] - high[i];
     double high_gap = i==n-1 ? std::numeric_limits<double>::infinity() : low[i] - high[i+1];
     double min_gap = std::min(low_gap, high_gap);
-    if(abs(min_gap / (eigenvals[i] - shift0)) > min_rel_sep){
+    //if(min_gap<0){ //this and the next eigenvalue are the same!
+
+    //}
+    if(abs(min_gap / ((high[i]+low[i])*0.5)) > min_rel_sep){
+      twist_idx = get_twisted_factorization(d, l, eigenvals[i] - shift0, l_plus, u_minus);
+      cout << "\t\t" << i << " UNSHIFTED gap: " << min_gap/(eigenvals[i]-shift0) << endl;
+    }
+    else if(abs(min_gap / ((high[i]+low[i])*0.5 - shift)) > min_rel_sep && min_element_growth < max_ele_growth){
+      double shifted_low=low[i] - shift;
+      double shifted_high=high[i] - shift;
+      eigenvalBisectRefine(d2, l2, shifted_low, shifted_high, i);
+      double shifted_eigenval = (shifted_low + shifted_high) * 0.5;
+      twist_idx = get_twisted_factorization(d2, l2, shifted_eigenval, l_plus, u_minus);
+      cout << "\t\t" << i << " prev shift gap: " << min_gap/((high[i]+low[i])*0.5-shift) << endl;
+    }
+    else {
       //TODO: do we need more shift options?
       std::vector<double> shifts;
       shifts.push_back(low[i]);
@@ -373,15 +463,21 @@ void mrrr(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag,  Eigen::V
       }
       shifts.push_back(high[i] - max_shift);
       shifts.push_back(low[i] + max_shift);
-      double min_element_growth = std::numeric_limits<double>::infinity();
+      shifts.push_back(high[i] - max_shift * 0.5);
+      shifts.push_back(low[i] + max_shift * 0.5);
+      shifts.push_back(high[i] - max_shift * 0.25);
+      shifts.push_back(low[i] + max_shift * 0.25);
+      shifts.push_back(high[i] - max_shift * 0.75);
+      shifts.push_back(low[i] + max_shift * 0.75);
+      min_element_growth = std::numeric_limits<double>::infinity();
       for(double sh : shifts){
-        sh -= shift0;
+        //sh -= shift0;
         double element_growth = get_perturbed_shifted_ldl(d, l, sh, l3, d3);
         cout << i << " element growth: " << element_growth << " at " << sh + shift0 << endl;
         if(element_growth<min_element_growth){
           l2.swap(l3);
           d2.swap(d3);
-          shift = sh + shift0;
+          shift = sh;// + shift0;
           min_element_growth=element_growth;
           if(element_growth<=max_ele_growth){
             break;
@@ -389,17 +485,14 @@ void mrrr(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag,  Eigen::V
         }
       }
       cout << "\t\t" << i << " element growth: " << min_element_growth << " at " << shift << endl;
-      cout << "\t\t" << i << " shifted gap: " << min_gap/(eigenvals[i]-shift) << endl;
 
       //shift and refine eigenvalue
       double shifted_low=low[i] - shift;
       double shifted_high=high[i] - shift;
       eigenvalBisectRefine(d2, l2, shifted_low, shifted_high, i);
       double shifted_eigenval = (shifted_low + shifted_high) * 0.5;
+      cout << "\t\t" << i << " shifted gap: " << min_gap/shifted_eigenval << endl;
       twist_idx = get_twisted_factorization(d2, l2, shifted_eigenval, l_plus, u_minus);
-    }
-    else {
-      twist_idx = get_twisted_factorization(d, l, eigenvals[i] - shift0, l_plus, u_minus);
     }
     //calculate eigenvector
     auto vec = eigenvecs.col(i);
@@ -426,17 +519,35 @@ void mrrr(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag,  Eigen::V
         }
       }
     }
-    vec /= vec.norm();
+    //vec /= vec.norm();
   }
 }
 
 void symmetricEigenSolver(const Eigen::MatrixXd& A, Eigen::VectorXd& eigenvals, Eigen::MatrixXd& eigenvecs){
   Eigen::MatrixXd packed;
+  auto start = std::chrono::steady_clock::now();
   block_householder_tridiag3(A, packed);
+
+  cout << "tridiag: "
+       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+       << "ms" << endl;
+  start = std::chrono::steady_clock::now();
   Eigen::VectorXd diag = packed.diagonal();
   Eigen::VectorXd subdiag = packed.diagonal(1);
+  cout << "extract: "
+       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+       << "ms" << endl;
+  start = std::chrono::steady_clock::now();
   mrrr(diag, subdiag, eigenvals, eigenvecs);
+
+  cout << "mrrr: "
+       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+       << "ms" << endl;
+  start = std::chrono::steady_clock::now();
   block_apply_packed_Q3(packed, eigenvecs);
+  cout << "apply q: "
+       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+       << "ms" << endl;
 }
 
 
