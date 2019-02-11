@@ -6,8 +6,6 @@
 #include <stan/math/prim/scal/meta/get.hpp>
 #include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <boost/type_traits/is_unsigned.hpp>
-#include <stderr>
-#include <sstream>
 
 namespace stan {
 namespace math {
