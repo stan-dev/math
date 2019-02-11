@@ -1,9 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_IS_NONZERO_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_IS_NONZERO_HPP
 
-#include <sstream>
-#include <stderr>
-
 namespace stan {
 namespace math {
 
