@@ -3,8 +3,6 @@
 
 #include <boost/type_traits/common_type.hpp>
 #include <stan/math/prim/scal/meta/likely.hpp>
-#include <sstream>
-#include <string>
 
 namespace stan {
 namespace math {
