@@ -5,7 +5,7 @@
 #include <vector>
 
 #ifdef STAN_OPENCL
-#include <stan/math/rev/scal/fun/to_var.hpp>
+#include <stan/math/gpu/opencl_context.hpp>
 #endif
 
 template <typename T_x>
@@ -393,6 +393,7 @@ TEST(AgradRevMatrix, check_varis_on_stack_large) {
 
 #ifdef STAN_OPENCL
 TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients_opencl) {
+  stan::math::opencl_context.tuning_opts().cholesky_size_worth_transfer = 25;
   test_gradient(51, 1e-08);
   test_gp_grad(1300, 1e-08);
   test_gp_grad(2000, 1e-08);
@@ -400,8 +401,6 @@ TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients_opencl) {
   test_simple_vec_mult(45, 1e-08);
 }
 
-//TODO(Steve): This test fails but I suspect the matrix is not pos-def
-// do we need to check varis on stack, since we havent changed anything in terms of varis on stack?
 TEST(AgradRevMatrix, check_varis_on_stack_large_opencl) {
   stan::math::matrix_v m1 = stan::math::matrix_v::Random(1250, 1250);
   stan::math::matrix_v m1_pos_def
