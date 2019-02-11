@@ -173,14 +173,14 @@ int miniTest2() {
 void testMrrr(){
   auto start = std::chrono::steady_clock::now();
   //cout.precision(4);
-  int A = 1005;
+  int A = 2010;
   for(unsigned int i=443;i<1e7;i++) {
     cout << "i=" << i << endl;
     srand(i);
 
     Vec diag = Vec::Random(A).array();
     Vec subdiag = Vec::Random(A - 1).array();
-    getGluedWilkinsonMatrix(100, 5, diag, subdiag,1e-16);
+    getGluedWilkinsonMatrix(100, 10, diag, subdiag,1e-8);
 //    subdiag[2]=0;
 //    subdiag[3]=0;
 //    diag[5]=0;
