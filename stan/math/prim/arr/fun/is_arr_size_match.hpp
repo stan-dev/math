@@ -1,9 +1,6 @@
 #ifndef STAN_MATH_PRIM_ARR_FUN_IS_ARR_SIZE_MATCH.HPP
 #define STAN_MATH_PRIM_ARR_FUN_IS_ARR_SIZE_MATCH.HPP
 
-#include <stderr>
-#include <sstream>
-
 namespace stan {
 namespace math {
 
