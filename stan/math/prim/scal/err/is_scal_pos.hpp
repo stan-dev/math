@@ -4,24 +4,11 @@
 #include <stan/math/prim/scal/meta/value_type.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/get.hpp>
-#include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <boost/type_traits/is_unsigned.hpp>
 
 namespace stan {
 namespace math {
-
-template <typename T_y>
-struct positive<T_y, true> {
-  static bool check(const T_y& y) {
-    for (size_t n = 0; n < length(y); n++) {
-      if (!boost::is_unsigned<typename value_type<T_y>::type>::value
-          && !(stan::get(y, n) > 0))
-        return false;
-    }
-    return true;
-  }
-};
-
+  
 /**
  * Check if <code>y</code> is positive.
  *
@@ -36,7 +23,13 @@ struct positive<T_y, true> {
  */
 template <typename T_y>
 inline bool is_scal_pos(const T_y& y) {
-  positive<T_y>::check(y);
+  for (size_t n = 0; n < stan::length(y); n++) {
+    if (!boost::is_unsigned<typename value_type<T_y>::type>::value
+        && !(stan::get(y, n) > 0))
+      return false;
+  }
+  return true;
+  }
 }
 
 }  // namespace math
