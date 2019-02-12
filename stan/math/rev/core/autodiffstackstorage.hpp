@@ -83,6 +83,7 @@ struct AutodiffStackSingleton {
   typedef tbb::concurrent_vector<std::shared_ptr<AutodiffStackStorage>>
       global_stack_t;
 
+  static std::mutex global_stack_mutex_;
   static global_stack_t &global_stack() {
     static global_stack_t global_stack_;
     return global_stack_;
@@ -175,6 +176,10 @@ thread_local
 #else
     = AutodiffStackSingleton<ChainableT, ChainableAllocT>::init();
 #endif
+
+template <typename ChainableT, typename ChainableAllocT>
+std::mutex
+    AutodiffStackSingleton<ChainableT, ChainableAllocT>::global_stack_mutex_;
 
 }  // namespace math
 }  // namespace stan

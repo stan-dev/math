@@ -35,10 +35,24 @@ static inline void recover_memory() {
 
   const std::size_t stack_id = ChainableStack::queue().stack_id_;
 
-  for (auto& instance_ptr : ChainableStack::global_stack()) {
-    if (instance_ptr && instance_ptr->stack_id_ == stack_id) {
-      clean_instance(*instance_ptr);
-      instance_ptr.reset();
+  std::lock_guard<std::mutex> global_stack_lock(
+      ChainableStack::global_stack_mutex_);
+
+  ChainableStack::global_stack_t old_global_stack;
+  ChainableStack::global_stack_t& global_stack = ChainableStack::global_stack();
+
+  old_global_stack.swap(global_stack);
+
+  global_stack.reserve(old_global_stack.size());
+
+  for (auto& instance_ptr : old_global_stack) {
+    if (instance_ptr) {
+      if (instance_ptr->stack_id_ == stack_id) {
+        clean_instance(*instance_ptr);
+        instance_ptr.reset();
+      } else {
+        global_stack.emplace_back(instance_ptr);
+      }
     }
   }
 }
