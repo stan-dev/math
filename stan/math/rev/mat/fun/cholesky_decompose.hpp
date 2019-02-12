@@ -299,7 +299,7 @@ class cholesky_gpu : public vari {
     matrix_gpu L(L_);
     matrix_gpu Lbar(Lbar_);
     int M = M_;
-    int block_size_ = std::max((M / 8 / 16) * 16, 8);
+    int block_size_ = std::max((M / 8), 8);
     block_size_ = std::min(block_size_, 512);
     // The following is a GPU implementation of
     // the chain() function from the cholesky_block
