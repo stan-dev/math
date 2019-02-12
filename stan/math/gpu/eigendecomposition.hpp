@@ -4,6 +4,7 @@
 
 #include <Eigen/QR>
 #include <iostream>
+#include <queue>
 
 #include <stan/math/gpu/matrix_gpu.hpp>
 
@@ -118,7 +119,7 @@ void block_apply_packed_Q3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, in
   }
 }
 
-const double perturbation_range = 1e-13;
+const double perturbation_range = 1e-14;
 
 inline double get_random_perturbation_multiplier() {
   static const double rand_norm = perturbation_range / RAND_MAX;
@@ -281,7 +282,31 @@ void getGresgorin(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag, d
   max_eigval = std::max(max_eigval, diag[n - 1] + abs(subdiag[n - 2]));
 }
 
-#define BISECT_K 8
+const int BISECT_K = 4;
+
+Eigen::Array<int, BISECT_K, 1> getSturmCountTVec(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiagSquared, Eigen::Array<double, BISECT_K, 1>& shifts, int n_valid) {
+  Eigen::Array<double, BISECT_K, 1> d;
+  d.head(n_valid) = diag[0] - shifts.head(n_valid);
+  Eigen::Array<int, BISECT_K, 1> counts;
+  counts.head(n_valid) = (d.head(n_valid) >= 0).cast<int>();
+  for (int j = 1; j < diag.size(); j++) { //Sturm count via LDL factorization
+    d.head(n_valid) = diag[j] - shifts.head(n_valid) - subdiagSquared[j - 1] / d.head(n_valid);
+    counts.head(n_valid) += (d.head(n_valid) >= 0).cast<int>();
+  }
+  return counts;
+}
+
+Eigen::Array<int, BISECT_K, 1> getSturmCountTVec2(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiagSquared, Eigen::Array<double, BISECT_K, 1>& shifts, int n_valid) {
+  Eigen::Array<double, BISECT_K, 1> d;
+  d.head(n_valid) = diag[0] - shifts.head(n_valid);
+  Eigen::Array<int, BISECT_K, 1> counts;
+  counts.head(n_valid) = (d.head(n_valid) < 0).cast<int>();
+  for (int j = 1; j < diag.size(); j++) { //Sturm count via LDL factorization
+    d.head(n_valid) = diag[j] - shifts.head(n_valid) - subdiagSquared[j - 1] / d.head(n_valid);
+    counts.head(n_valid) += (d.head(n_valid) < 0).cast<int>();
+  }
+  return counts;
+}
 
 void eigenvalsBisect3(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiagSquared, double min_eigval, double max_eigval, Eigen::VectorXd& low, Eigen::VectorXd& high) {
   int n = diag.size();
@@ -296,14 +321,7 @@ void eigenvalsBisect3(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdia
     while ((abs((high_work - low_work) / low_work) > eps && abs(high_work - low_work) > std::numeric_limits<double>::min()).any()) {
       Eigen::Array<double, BISECT_K, 1> shifts;
       shifts.head(n_valid) = (high_work + low_work) * 0.5;
-      Eigen::Array<double, BISECT_K, 1> d;
-      d.head(n_valid) = diag[0] - shifts.head(n_valid);
-      Eigen::Array<int, BISECT_K, 1> counts;
-      counts.head(n_valid) = (d.head(n_valid) >= 0).cast<int>();
-      for (int j = 1; j < diag.size(); j++) { //Sturm count via LDL factorization
-        d.head(n_valid) = diag[j] - shifts.head(n_valid) - subdiagSquared[j - 1] / d.head(n_valid);
-        counts.head(n_valid) += (d.head(n_valid) >= 0).cast<int>();
-      }
+      Eigen::Array<int, BISECT_K, 1> counts = getSturmCountTVec(diag, subdiagSquared, shifts, n_valid);
       for (int k = 0; k < n_valid; k++) {
         if (counts[k] > i + k) {
           low_work[k] = shifts[k];
@@ -316,7 +334,73 @@ void eigenvalsBisect3(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdia
   }
 }
 
-#undef BISECT_K
+struct task{
+    int start, end;
+    double low, high;
+};
+
+void eigenvalsBisect4(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiagSquared, double min_eigval, double max_eigval, Eigen::VectorXd& low, Eigen::VectorXd& high) {
+  int n = diag.size();
+  double eps = 3e-16;
+
+  std::queue<task> tQueue;
+  tQueue.push(task{0, n, min_eigval, max_eigval});
+  while(!tQueue.empty()){
+    int n_valid = std::min(BISECT_K, static_cast<int>(tQueue.size()));
+    Eigen::Array<double, BISECT_K, 1> shifts;
+    task t[BISECT_K];
+    for(int i=0;i<n_valid;i++){
+      t[i] = tQueue.front();
+      tQueue.pop();
+    }
+    for(int i=0;i<BISECT_K;i++) {
+      int task_idx = i%n_valid;
+      int idx_in_task = i/n_valid;
+      int task_total = BISECT_K/n_valid + (BISECT_K%n_valid > task_idx);
+      shifts[i] = t[task_idx].low + (t[task_idx].high - t[task_idx].low) * (idx_in_task+1.) / (task_total+1);
+    }
+    Eigen::Array<int, BISECT_K, 1> counts = getSturmCountTVec2(diag, subdiagSquared, shifts, BISECT_K);
+    for(int i=0;i<n_valid;i++){
+      if(counts[i]>=t[i].start+1){ //TODO +/- ?
+        if((t[i].high - shifts[i])/abs(shifts[i]) > eps && abs(t[i].high - shifts[i]) > std::numeric_limits<double>::min()){
+          tQueue.push({t[i].start, counts[i], t[i].low, shifts[i]});
+        }
+        else{
+          int n_eq = counts[i] - t[i].start;
+          low.segment(t[i].start, n_eq) = Eigen::VectorXd::Constant(n_eq, t[i].low);
+          high.segment(t[i].start, n_eq) = Eigen::VectorXd::Constant(n_eq, shifts[i]);
+        }
+      }
+    }
+    for(int i=0;i<BISECT_K;i++) {
+      int task_idx = i%n_valid;
+      int idx_in_task = i/n_valid;
+      int task_total = BISECT_K/n_valid + (BISECT_K%n_valid > task_idx);
+      int my_end = t[task_idx].end;
+      double my_high = t[task_idx].high;
+      if(i+n_valid<BISECT_K){
+        my_end = counts[i+n_valid];
+        my_high = shifts[i+n_valid];
+      }
+      if(counts[i] <= my_end - 1){ //TODO +/- ?
+        if((my_high - shifts[i])/abs(shifts[i]) > eps && abs(my_high - shifts[i]) > std::numeric_limits<double>::min()) {
+          tQueue.push({counts[i], my_end, shifts[i], my_high});
+        }
+        else{
+          int my_start = t[task_idx].start;
+          if(i-n_valid>=0){
+            my_start = counts[i-n_valid];
+          }
+          int n_eq = my_end - counts[i];
+          low.segment(counts[i], n_eq) = Eigen::VectorXd::Constant(n_eq, shifts[i]);
+          high.segment(counts[i], n_eq) = Eigen::VectorXd::Constant(n_eq, my_high);
+        }
+      }
+    }
+  }
+  low=low.reverse().eval();
+  high=high.reverse().eval();
+}
 
 
 void constructAndRefineCluster(const Eigen::VectorXd& l, const Eigen::VectorXd& d, int i, Eigen::VectorXd& high, Eigen::VectorXd& low, int& cluster_start, int& cluster_end) {
@@ -382,21 +466,58 @@ void calculateEigenvector(const Eigen::VectorXd& l_plus, const Eigen::VectorXd& 
   //vec /= vec.norm();
 }
 
+void findShift(const Eigen::VectorXd& l, const Eigen::VectorXd& d, double low, double high, double max_ele_growth, double max_shift,
+        Eigen::VectorXd& l2, Eigen::VectorXd& d2, double& shift, double& min_element_growth) {
+  Eigen::VectorXd l3(l2.size()), d3(d2.size());
+  vector<double> shifts = {
+          low,
+          high - max_shift * 0.1,
+          low + max_shift * 0.1,
+          high - max_shift * 0.25,
+          low + max_shift * 0.25,
+          high - max_shift * 0.5,
+          low + max_shift * 0.5,
+          high - max_shift * 0.75,
+          low + max_shift * 0.75,
+          high - max_shift,
+          low + max_shift,
+  };
+  min_element_growth = numeric_limits<double>::infinity();
+  for (double sh : shifts) {
+    //sh -= shift0;
+    double element_growth = get_perturbed_shifted_ldl(d, l, sh, l3, d3);
+    cout << " element growth: " << element_growth << " at " << sh << endl;
+    if (element_growth < min_element_growth) {
+      l2.swap(l3);
+      d2.swap(d3);
+      shift = sh;
+      min_element_growth = element_growth;
+      if (element_growth <= max_ele_growth) {
+        break;
+      }
+    }
+  }
+  cout << "\t\t" << " element growth: " << min_element_growth << " at " << shift << endl;
+}
+
 void mrrr(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag, Eigen::VectorXd& eigenvals, Eigen::MatrixXd& eigenvecs, double min_rel_sep = 1e-2, double max_ele_growth = 2) {
   int n = diag.size();
   Eigen::VectorXd high(n), low(n);
   double min_eigval;
   double max_eigval;
   getGresgorin(diag, subdiag, min_eigval, max_eigval);
-  double span = max_eigval - min_eigval;
+  //double span = max_eigval - min_eigval;
   Eigen::VectorXd subdiagSquared = subdiag.array() * subdiag.array();
-  eigenvalsBisect3(diag, subdiagSquared, min_eigval, max_eigval, low, high);
+  auto start = std::chrono::steady_clock::now();
+  eigenvalsBisect4(diag, subdiagSquared, min_eigval, max_eigval, low, high);
+  cout << "bisect: "
+       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+       << "ms" << endl;
   Eigen::VectorXd l(n - 1), d(n), l0(n - 1), d0(n);
   double shift0 = min_eigval - (max_eigval - min_eigval) * 0.1;
   get_ldl(diag, subdiag, shift0, l0, d0);
   Eigen::VectorXd l2(n - 1), d2(n), l3(n - 1), d3(n), l_plus(n - 1), d_plus(n), u_minus(n - 1), d_minus(n), s(n), p(n);
 
-  double T_norm = sqrt((diag.array() * diag.array()).sum() + subdiagSquared.sum());
   for (int i = 0; i < n; i++) {
     eigenvals[i] = (high[i] + low[i]) * 0.5;
     //from here on eigenvals[i] constins original eigenval
@@ -416,7 +537,7 @@ void mrrr(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag, Eigen::Ve
   double min_element_growth = std::numeric_limits<double>::infinity();
   int cluster_start = -1, cluster_end = -1;
   for (int i = 0; i < n; i++) {
-    if (i > cluster_end) {
+    /*if (i > cluster_end) {
       constructAndRefineCluster(l, d, i, high, low, cluster_start, cluster_end);
       while (true) {
         // perturb the representation if any eigenvalues in the cluster are too close
@@ -438,6 +559,11 @@ void mrrr(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag, Eigen::Ve
         eigenvalBisectRefine(d, l, low[next], high[next], next);
       }
       min_element_growth = std::numeric_limits<double>::infinity();
+    }*/
+    if(i!=n-1){
+      low[i] = low[i] * (1 - copysign(perturbation_range * n, low[i]));
+      high[i] = high[i] * (1 + copysign(perturbation_range * n, high[i]));
+      eigenvalBisectRefine(d, l, low[i+1], high[i+1], i+1);
     }
     int twist_idx;
     double low_gap = i == 0 ? std::numeric_limits<double>::infinity() : low[i - 1] - high[i];
@@ -457,87 +583,100 @@ void mrrr(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag, Eigen::Ve
     }
     else {
       double max_shift = min_gap / min_rel_sep;
-      std::vector<double> shifts = {
-              low[i],
-              high[i] - max_shift * 0.1,
-              low[i] + max_shift * 0.1,
-              high[i] - max_shift * 0.25,
-              low[i] + max_shift * 0.25,
-              high[i] - max_shift * 0.5,
-              low[i] + max_shift * 0.5,
-              high[i] - max_shift * 0.75,
-              low[i] + max_shift * 0.75,
-              high[i] - max_shift,
-              low[i] + max_shift,
-      };
-      /*
-      shifts.push_back(low[i]);
-      shifts.push_back(high[i]);
-      if(i!=0){
-        if((high[i-1] - low[i]) * 0.5 < max_shift){
-          shifts.push_back(high[i] + (high[i-1] - low[i]) * 0.5);
-        }
-        if((high[i-1] - low[i]) * 0.25 < max_shift){
-          shifts.push_back(high[i] + (high[i-1] - low[i]) * 0.25);
-        }
-        if((high[i-1] - low[i]) < max_shift){
-          shifts.push_back(high[i] + (high[i-1] - low[i]));
-        }
-        if((high[i-1] - low[i]) * 3 < max_shift){
-          shifts.push_back(high[i] + (high[i-1] - low[i]) * 3);
-        }
+      bool need_aditional_step=false;
+      if(max_shift<=0){
+        max_shift=(high[i]-low[i])*10;
+        need_aditional_step=true;
       }
-      if(i!=n-1){
-        if((high[i]-low[i+1]) * 0.5 < max_shift){
-          shifts.push_back(low[i] - (high[i]-low[i+1]) * 0.5);
-        }
-        if((high[i]-low[i+1]) * 0.25 < max_shift){
-          shifts.push_back(low[i] - (high[i]-low[i+1]) * 0.25);
-        }
-        if((high[i]-low[i+1]) < max_shift){
-          shifts.push_back(low[i] - (high[i]-low[i+1]));
-        }
-        if((high[i]-low[i+1]) * 3 < max_shift){
-          shifts.push_back(low[i] - (high[i]-low[i+1]) * 3);
-        }
-      }
-      shifts.push_back(high[i] - max_shift);
-      shifts.push_back(low[i] + max_shift);
-      shifts.push_back(high[i] - max_shift * 0.5);
-      shifts.push_back(low[i] + max_shift * 0.5);
-      shifts.push_back(high[i] - max_shift * 0.25);
-      shifts.push_back(low[i] + max_shift * 0.25);
-      shifts.push_back(high[i] - max_shift * 0.75);
-      shifts.push_back(low[i] + max_shift * 0.75);*/
-      min_element_growth = std::numeric_limits<double>::infinity();
-      for (double sh : shifts) {
-        //sh -= shift0;
-        double element_growth = get_perturbed_shifted_ldl(d, l, sh, l3, d3);
-        cout << i << " element growth: " << element_growth << " at " << sh + shift0 << endl;
-        if (element_growth < min_element_growth) {
-          l2.swap(l3);
-          d2.swap(d3);
-          shift = sh;// + shift0;
-          min_element_growth = element_growth;
-          if (element_growth <= max_ele_growth) {
-            break;
-          }
-        }
-      }
-      cout << "\t\t" << i << " element growth: " << min_element_growth << " at " << shift << endl;
+      findShift(l, d, low[i], high[i], max_ele_growth, max_shift, l2, d2, shift, min_element_growth);
 
       //shift and refine eigenvalue
       double shifted_low = low[i] - shift;
       double shifted_high = high[i] - shift;
       eigenvalBisectRefine(d2, l2, shifted_low, shifted_high, i);
-      double shifted_eigenval = (shifted_low + shifted_high) * 0.5;
-      cout << "\t\t" << i << " shifted gap: " << min_gap / shifted_eigenval << endl;
-      twist_idx = get_twisted_factorization(d2, l2, shifted_eigenval, l_plus, u_minus);
+      if(need_aditional_step){
+        cout << "aditional step!" << endl;
+        low_gap = std::numeric_limits<double>::infinity();
+        high_gap = std::numeric_limits<double>::infinity();
+        if(i!=0){
+          double shifted_prev_low = low[i-1] - shift;
+          double shifted_prev_high = high[i-1] - shift;
+          eigenvalBisectRefine(d2, l2, shifted_prev_low, shifted_prev_high, i-1);
+          low_gap = shifted_prev_low - shifted_high;
+        }
+        if(i!=n-1){
+          double shifted_next_low =low[i+1] - shift;
+          double shifted_next_high = high[i+1] - shift;
+          eigenvalBisectRefine(d2, l2, shifted_next_low, shifted_next_high, i+1);
+          high_gap = shifted_low - shifted_next_high;
+        }
+        min_gap = std::min(low_gap, high_gap);
+        if(min_gap<0){//TODO perturb
+          cout << "################# TODO: need perturb";
+        }
+        max_shift = min_gap / min_rel_sep;
+        double shift2;
+        findShift(l2, d2, shifted_low, shifted_high, max_ele_growth, max_shift, l3, d3, shift2, min_element_growth);
+        shifted_low -= shift2;
+        shifted_high -= shift2;
+        eigenvalBisectRefine(d3, l3, shifted_low, shifted_high, i);
+        double shifted_eigenval = (shifted_low + shifted_high) * 0.5;
+        cout << "\t\t" << i << " shifted gap: " << min_gap / shifted_eigenval << endl;
+        twist_idx = get_twisted_factorization(d3, l3, shifted_eigenval, l_plus, u_minus);
+      }
+      else {
+        double shifted_eigenval = (shifted_low + shifted_high) * 0.5;
+        cout << "\t\t" << i << " shifted gap: " << min_gap / shifted_eigenval << endl;
+        twist_idx = get_twisted_factorization(d2, l2, shifted_eigenval, l_plus, u_minus);
+      }
     }
     //calculate eigenvector
     calculateEigenvector(l_plus, u_minus, subdiag, i, twist_idx, eigenvecs);
   }
 }
+/*
+Eigen::Array<int, BISECT_K, 1> getSturmCountLdlVec(const Eigen::VectorXd& d, const Eigen::VectorXd& l, Eigen::Array<double, BISECT_K, 1> shifts, int n_valid){
+  int n = l.size();
+  Eigen::Array<double, BISECT_K, 1> s;
+  s.head(n_valid) = -shifts.head(n_valid);
+  Eigen::Array<double, BISECT_K, 1> d_plus, l_plus;
+  Eigen::Array<bool, BISECT_K, 1> cond;
+  Eigen::Array<int, BISECT_K, 1> counts;
+  counts.head(n_valid) = Eigen::ArrayXd(n_valid,0);
+  for (int i = 0; i < n; i++) {
+    d_plus.head(n_valid) = s.head(n_valid) + d[i];
+    counts.head(n_valid) += (d_plus.head(n_valid) >= 0).cast<int>();
+    cond.head(n_valid) = d_plus.head(n_valid).unaryExpr([](double x){return is_inf(x);}) &&
+                              s.head(n_valid).unaryExpr([](double x){return is_inf(x);});
+    s.head(n_valid) = l[i] * l[i] * s.head(n_valid) * (d[i] / d_plus.head(n_valid)) - shifts.head(n_valid);
+    for(int j=0;j<n_valid;j++){
+      if(cond[j]){
+        s[j] = l[i] * l[i] * d[i] - shifts[j];
+      }
+    }
+  }
+  return Eigen::Array<int, BISECT_K, 1>;
+}
+
+void mrrr2(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag, Eigen::VectorXd& eigenvals, Eigen::MatrixXd& eigenvecs, double min_rel_sep = 1e-2, double max_ele_growth = 2) {
+  int n = diag.size();
+  Eigen::VectorXd high(n), low(n);
+  double min_eigval;
+  double max_eigval;
+  getGresgorin(diag, subdiag, min_eigval, max_eigval);
+  double shift0 = min_eigval - (max_eigval - min_eigval) * 0.1;
+  Eigen::VectorXd l(n - 1), d(n), l0(n - 1), d0(n);
+  get_ldl(diag, subdiag, shift0, l0, d0);
+  for (int i = 0; i < n; i++) {
+    if (i != n - 1) {
+      l[i] = l0[i] * get_random_perturbation_multiplier();
+    }
+    d[i] = d0[i] * get_random_perturbation_multiplier();
+  }
+  Eigen::VectorXd subdiagSquared = subdiag.array() * subdiag.array();
+  eigenvalsBisect4(diag, subdiagSquared, min_eigval, max_eigval);
+}
+*/
 
 void symmetricEigenSolver(const Eigen::MatrixXd& A, Eigen::VectorXd& eigenvals, Eigen::MatrixXd& eigenvecs) {
   Eigen::MatrixXd packed;
