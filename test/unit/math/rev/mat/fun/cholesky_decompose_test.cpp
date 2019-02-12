@@ -354,6 +354,53 @@ double test_gradient(int size, double prec) {
   return grads_ad.sum();
 }
 
+TEST(AgradRevMatrix, mat_cholesky) {
+  using stan::math::cholesky_decompose;
+  using stan::math::matrix_v;
+  using stan::math::singular_values;
+  using stan::math::transpose;
+
+  // symmetric
+  matrix_v X(2, 2);
+  AVAR a = 3.0;
+  AVAR b = -1.0;
+  AVAR c = -1.0;
+  AVAR d = 1.0;
+  X << a, b, c, d;
+
+  matrix_v L = cholesky_decompose(X);
+
+  matrix_v LL_trans = multiply(L, transpose(L));
+  EXPECT_FLOAT_EQ(a.val(), LL_trans(0, 0).val());
+  EXPECT_FLOAT_EQ(b.val(), LL_trans(0, 1).val());
+  EXPECT_FLOAT_EQ(c.val(), LL_trans(1, 0).val());
+  EXPECT_FLOAT_EQ(d.val(), LL_trans(1, 1).val());
+
+  EXPECT_NO_THROW(singular_values(X));
+}
+
+TEST(AgradRevMatrix, exception_mat_cholesky) {
+  stan::math::matrix_v m;
+
+  // not positive definite
+  m.resize(2, 2);
+  m << 1.0, 2.0, 2.0, 3.0;
+  EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
+
+  // zero size
+  m.resize(0, 0);
+  EXPECT_NO_THROW(stan::math::cholesky_decompose(m));
+
+  // not square
+  m.resize(2, 3);
+  EXPECT_THROW(stan::math::cholesky_decompose(m), std::invalid_argument);
+
+  // not symmetric
+  m.resize(2, 2);
+  m << 1.0, 2.0, 3.0, 4.0;
+  EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
+}
+
 TEST(AgradRevMatrix, mat_cholesky_1st_deriv_small) {
   test_gradients(9, 1e-10);
   test_gradients_simple(10, 1e-10);
