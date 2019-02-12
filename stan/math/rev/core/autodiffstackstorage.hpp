@@ -176,14 +176,6 @@ thread_local
     = AutodiffStackSingleton<ChainableT, ChainableAllocT>::init();
 #endif
 
-/*
-template <typename ChainableT, typename ChainableAllocT>
-typename AutodiffStackSingleton<ChainableT,
-                                    ChainableAllocT>::global_stack_t
-        global_stack_ = typename AutodiffStackSingleton<ChainableT,
-                                                        ChainableAllocT>::global_stack_t();
-*/
-
 }  // namespace math
 }  // namespace stan
 #endif
