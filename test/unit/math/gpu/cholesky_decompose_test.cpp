@@ -80,9 +80,9 @@ TEST(MathMatrix, cholesky_decompose_big) {
 }
 
 TEST(MathMatrix, cholesky_decompose_big_tuning_opts) {
-  std::vector<int> size_transfer({256, 512, 1024, 1300});
-  std::vector<int> cholesky_min_size({64, 128, 256});
-  std::vector<int> cholesky_part({2, 4, 6, 8});
+  std::vector<int> size_transfer({256, 512, 1300});
+  std::vector<int> cholesky_min_size({64, 256});
+  std::vector<int> cholesky_part({2, 4});
   for (auto&& size_t_ : size_transfer) {
     for (auto&& min_size_ : cholesky_min_size) {
       for (auto&& part_ : cholesky_part) {
@@ -94,6 +94,14 @@ TEST(MathMatrix, cholesky_decompose_big_tuning_opts) {
         cholesky_decompose_test(1300);
       }
     }
+    stan::math::opencl_context.tuning_opts().cholesky_size_worth_transfer = 128;
+    stan::math::opencl_context.tuning_opts().cholesky_min_L11_size = 64;
+    stan::math::opencl_context.tuning_opts().cholesky_partition = 4;
+    cholesky_decompose_test(128);
+    cholesky_decompose_test(65);
+    cholesky_decompose_test(130);
+    cholesky_decompose_test(128 * 4);
+    cholesky_decompose_test(128 * 4 - 1);
   }
 }
 
