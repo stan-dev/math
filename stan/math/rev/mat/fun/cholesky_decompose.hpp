@@ -235,11 +235,10 @@ class cholesky_scalar : public vari {
 };
 #ifdef STAN_OPENCL
 class cholesky_gpu : public vari {
-public:
-  int M_;  
+ public:
+  int M_;
   vari** variRefA_;
   vari** variRefL_;
-
 
   /**
    * Constructor for GPU cholesky function.
@@ -258,20 +257,21 @@ public:
    */
   cholesky_gpu(const Eigen::Matrix<var, -1, -1>& A,
                const Eigen::Matrix<double, -1, -1>& L_A)
-    : vari(0.0),
-      M_(A.rows()),
-      variRefA_(ChainableStack::instance().memalloc_.alloc_array<vari*>
-                (A.rows() * (A.rows() + 1) / 2)),
-      variRefL_(ChainableStack::instance().memalloc_.alloc_array<vari*>
-                (A.rows() * (A.rows() + 1) / 2)) {
-        size_t pos = 0;
-        for (size_type j = 0; j < M_; ++j) {
-          for (size_type i = j; i < M_; ++i) {
-            variRefA_[pos] = A.coeffRef(i, j).vi_;
-            variRefL_[pos] = new vari(L_A.coeffRef(i, j), false); ++pos;
-          }
-        }
+      : vari(0.0),
+        M_(A.rows()),
+        variRefA_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
+            A.rows() * (A.rows() + 1) / 2)),
+        variRefL_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
+            A.rows() * (A.rows() + 1) / 2)) {
+    size_t pos = 0;
+    for (size_type j = 0; j < M_; ++j) {
+      for (size_type i = j; i < M_; ++i) {
+        variRefA_[pos] = A.coeffRef(i, j).vi_;
+        variRefL_[pos] = new vari(L_A.coeffRef(i, j), false);
+        ++pos;
       }
+    }
+  }
   /**
    * Reverse mode differentiation algorithm using a GPU
    *
@@ -332,20 +332,20 @@ public:
       Cbar = Cbar * lower_triangular_inverse(D);
       Bbar = Bbar - Cbar * R;
       Dbar = Dbar - transpose(Cbar) * C;
-      
+
       // the implementation of the symbolic_rev inline function
-      // for the GPU 
+      // for the GPU
       Dbar = transpose(D) * Dbar;
       Dbar.triangular_transpose<TriangularMapGPU::LowerToUpper>();
       D = transpose(lower_triangular_inverse(D));
       Dbar = D * transpose(D * Dbar);
       Dbar.triangular_transpose<TriangularMapGPU::LowerToUpper>();
-      // end of symbolic_rev inline function 
+      // end of symbolic_rev inline function
 
       Rbar = Rbar - transpose(Cbar) * B;
       Rbar = Rbar - Dbar * R;
       Dbar = diagonal_multiply(Dbar, 0.5);
-      Dbar.zeros<stan::math::TriangularViewGPU::Upper>();   
+      Dbar.zeros<stan::math::TriangularViewGPU::Upper>();
 
       Lbar.sub_block(Rbar, 0, 0, j, 0, k_j_ind, j);
       Lbar.sub_block(Dbar, 0, 0, j, j, k_j_ind, k_j_ind);
@@ -413,7 +413,8 @@ inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
     }
   } else {
 #ifdef STAN_OPENCL
-    if (L_A.rows() > opencl_context.tuning_opts().cholesky_size_worth_transfer) {
+    if (L_A.rows()
+        > opencl_context.tuning_opts().cholesky_size_worth_transfer) {
       cholesky_gpu* baseVari = new cholesky_gpu(A, L_A);
       size_t pos = 0;
       for (size_type j = 0; j < L.cols(); ++j) {
