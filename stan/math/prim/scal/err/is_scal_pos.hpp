@@ -19,7 +19,7 @@ namespace math {
  *
  * @param y Variable to check
  *
- * @return <code>true</code> is vector contains only positive elements
+ * @return <code>true</code> if vector contains only positive elements
  */
 template <typename T_y>
 inline bool is_scal_pos(const T_y& y) {
@@ -33,5 +33,4 @@ inline bool is_scal_pos(const T_y& y) {
 
 }  // namespace math
 }  // namespace stan
-
 #endif
