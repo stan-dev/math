@@ -23,12 +23,12 @@ namespace math {
  *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
- * @param theta Vector to test.
+ * @param theta Vector to test
  *
  * @throw <code>std::invalid_argument</code> if <code>theta</code>
- *   is a 0-vector.
+ *   is a 0-vector
  * @throw <code>std::domain_error</code> if the vector is not a unit
- *   vector or if any element is <code>NaN</code>.
+ *   vector or if any element is <code>NaN</code>
  */
 template <typename T_prob>
 void check_unit_vector(const char* function, const char* name,

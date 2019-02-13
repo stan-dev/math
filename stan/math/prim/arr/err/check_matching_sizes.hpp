@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 /**
- * Check if two structures at the same size.
+ * Check if two structures are the same size.
  *
  * This function only checks the runtime sizes for variables that
  * implement a <code>size()</code> method.

@@ -22,7 +22,7 @@ namespace math {
  * in OpenCL 2.0. If no matching error number is found,
  * it throws the error with the number.
  *
- * @param function the name of the function where the error occured
+ * @param function The name of the function where the error occured
  * @param e The error number
  *
  */

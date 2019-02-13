@@ -17,7 +17,7 @@ namespace math {
  *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
- * @param y Container to test. This will accept matrices and vectors
+ * @param y Container to test, this will accept matrices and vectors
  *
  * @throw <code>std::invalid_argument</code> if the specified matrix/vector
  *   has zero size

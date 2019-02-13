@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_ERR_IS_SCAL_POS
-#define STAN_MATH_PRIM_SCAL_ERR_IS_SCAL_POS
+#ifndef STAN_MATH_PRIM_SCAL_ERR_IS_POS
+#define STAN_MATH_PRIM_SCAL_ERR_IS_POS
 
 #include <stan/math/prim/scal/meta/value_type.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
@@ -22,7 +22,7 @@ namespace math {
  * @return <code>true</code> if vector contains only positive elements
  */
 template <typename T_y>
-inline bool is_scal_pos(const T_y& y) {
+inline bool is_pos(const T_y& y) {
   for (size_t n = 0; n < stan::length(y); n++) {
     if (!boost::is_unsigned<typename value_type<T_y>::type>::value
         && !(stan::get(y, n) > 0))

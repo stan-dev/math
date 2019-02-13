@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_ERR_IS_SQUARE_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/is_scal_size_match.hpp>
+#include <stan/math/prim/scal/err/is_size_match.hpp>
 
 namespace stan {
 namespace math {
@@ -21,7 +21,7 @@ namespace math {
 template <typename T_y>
 inline bool is_square(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
-  is_scal_size_match(y.rows(), y.cols());
+  is_size_match(y.rows(), y.cols());
 }
 
 }  // namespace math
