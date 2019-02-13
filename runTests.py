@@ -40,10 +40,9 @@ def processCLIArgs():
     parser.add_argument("tests", nargs="+", type=str,
                         help=tests_help_msg)
     f_help_msg = "Only tests with file names matching these will be executed.\n"
-    f_help_msg += "Example: '-f chol', '-f gpu', '-f prim mat'"
-    parser.add_argument("-f", nargs="+", type=str, default = "",
+    f_help_msg += "Example: '-f chol', '-f gpu', '-f prim'"
+    parser.add_argument("-f", type=str, default = [], action="append",
                         help=f_help_msg)
-
     parser.add_argument("-d", "--debug", dest="debug", action="store_true",
                         help="request additional script debugging output.")
     parser.add_argument("-m", "--make-only", dest="make_only",
@@ -158,6 +157,8 @@ def main():
     tests = findTests(inputs.tests, inputs.f)
     if not tests:
         stopErr("No matching tests found.", -1)
+    if inputs.debug:
+        print("Collected the following tests:\n", tests)
 
     # pass 1: make test executables
     for batch in batched(tests):
