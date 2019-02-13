@@ -27,7 +27,7 @@ namespace math {
 
 template <typename T_prob>
 inline bool is_unit_vector(
-              const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>&theta) {
+    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   if (is_nonzero_size(theta)) {
     T_prob ssq = theta.squaredNorm();
     if (!(fabs(1.0 - seq) <= CONSTRAINT_TOLERANCE))
@@ -37,6 +37,6 @@ inline bool is_unit_vector(
     false;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

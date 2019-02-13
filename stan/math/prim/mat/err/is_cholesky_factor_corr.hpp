@@ -29,12 +29,12 @@ namespace math {
  *
  * @return <code>true</code>
  */
-template<typename T_y>
+template <typename T_y>
 inline bool is_cholesky_factor_corr(
-               const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
   using Eigen::Dynamic;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

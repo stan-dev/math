@@ -28,4 +28,3 @@ inline bool is_size_match(T_size1 i, T_size2 j) {
 }  // namespace math
 }  // namespace stan
 #endif
-
