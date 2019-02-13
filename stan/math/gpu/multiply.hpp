@@ -57,8 +57,10 @@ inline auto multiply(const matrix_gpu& A, const matrix_gpu& B) {
   check_size_match("multiply (GPU)", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
   matrix_gpu temp(A.rows(), B.cols());
-  if (A.size() == 0 || B.size() == 0)
+  if (A.size() == 0 || B.size() == 0) {
+    temp.zeros();
     return temp;
+  }
   int local = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
       "THREAD_BLOCK_SIZE");
   int Mpad = ((A.rows() + local - 1) / local) * local;
