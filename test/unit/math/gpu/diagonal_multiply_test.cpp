@@ -1,10 +1,9 @@
-#ifdef STAN_OPENCL
-
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/gpu/diagonal_multiply.hpp>
 #include <stan/math/gpu/copy.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
+#ifdef STAN_OPENCL
 
 using stan::math::matrix_d;
 using stan::math::matrix_gpu;

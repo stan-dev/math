@@ -73,8 +73,7 @@ const char* neg_rect_lower_tri_multiply_kernel_code = STRINGIFY(
             temp_local[local_col][local_row] = 0.0;
           }
           // Element above the diagonal will not be transferred.
-          if (C1_global_col <= C1_global_row && C1_global_col < A_rows
-              && C1_global_row < A_rows) {
+          if (C1_global_col <= C1_global_row) {
             C1_local[local_col][local_row]
                 = A[C1_global_col * A_rows + C1_global_row];
           } else {
@@ -103,9 +102,7 @@ const char* neg_rect_lower_tri_multiply_kernel_code = STRINGIFY(
       for (int w = 0; w < WORK_PER_THREAD; w++) {
         const int A_global_col
             = A_global_col_offset + w * THREAD_BLOCK_SIZE_COL;
-        if (A_global_col < A_rows && (i + rows + offset) < A_rows) {
-          A[A_global_col * A_rows + i + rows + offset] = -acc[w];
-        }
+        A[A_global_col * A_rows + i + rows + offset] = -acc[w];
       }
     }
     // \cond
