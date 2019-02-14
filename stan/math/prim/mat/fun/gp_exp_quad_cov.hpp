@@ -22,13 +22,13 @@ namespace math {
 /**
  * Returns a squared exponential kernel.
  *
- * @tparam T_x type of std::vector of elements
- * @tparam T_sigma type of sigma
- * @tparam T_l type of length scale
+ * @tparam T_x type for each scalar
+ * @tparam T_sigma type of parameter sigma
+ * @tparam T_l type of parameter length scale
  *
- * @param x std::vector of elements that can be used in square distance.
+ * @param x std::vector of scalars that can be used in square distance.
  *    This function assumes each element of x is the same size.
- * @param sigma standard deviation
+ * @param sigma marginal standard deviation or magnitude
  * @param length_scale length scale
  * @return squared distance
  * @throw std::domain_error if sigma <= 0, l <= 0, or
@@ -72,13 +72,12 @@ inline
 /**
  * Returns a squared exponential kernel.
  *
- * @tparam T_x type of std::vector of elements
- * @tparam T_sigma type of sigma
- * @tparam T_l type of std::vector of length scale
+ * @tparam T_x type for each scalar
+ * @tparam T_sigma type of parameter sigma
+ * @tparam T_l type of each length scale parameter
  *
- * @param x std::vector of Eigen column vectors of scalars.
- *    This function assumes each column vector of x is the same size.
- * @param sigma standard deviation
+ * @param x std::vector of Eigen vectors of scalars.
+ * @param sigma marginal standard deviation or magnitude
  * @param length_scale std::vector length scale
  * @return squared distance
  * @throw std::domain_error if sigma <= 0, l <= 0, or
@@ -124,9 +123,13 @@ inline
 
 /**
  * Returns a squared exponential kernel.
+ * 
+ * This function is for the cross covariance matrix
+ * needed to compute posterior predictive density.
  *
- * @tparam T_x1 type of first std::vector of elements
- * @tparam T_x2 type of second std::vector of elements
+ * @tparam T_x1 type of first std::vector of scalars
+ * @tparam T_x2 type of second std::vector of scalars
+ *    This function assumes each element of x1 and x2 are the same size.
  * @tparam T_sigma type of sigma
  * @tparam T_l type of of length scale
  *
@@ -178,17 +181,18 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 /**
  * Returns a squared exponential kernel.
  *
+ * This function is for the cross covariance
+ * matrix needed to compute the posterior predictive density.
+ *
  * @tparam T_x1 type of first std::vector of elements
  * @tparam T_x2 type of second std::vector of elements
  * @tparam T_s type of sigma
  * @tparam T_l type of length scale
  *
- * @param x1 std::vector of Eigen column vectors of scalars.
- * @param x2 std::vector of Eigen column vectors of scalars.
+ * @param x1 std::vector of Eigen vectors of scalars.
+ * @param x2 std::vector of Eigen vectors of scalars.
  * @param sigma standard deviation
  * @param length_scale std::vector of length scale
- *    This function assumes the column vectors of x1 and x2
- *    are the same size.
  * @return squared distance
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
