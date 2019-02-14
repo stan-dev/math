@@ -172,19 +172,19 @@ int miniTest2() {
 
 void testMrrr(){
   auto start = std::chrono::steady_clock::now();
-  //cout.precision(4);
-  int A = 2000;
+  cout.precision(17);
+  int A = 1005;
   for(unsigned int i=443;i<1e7;i++) {
     cout << "i=" << i << endl;
     srand(i);
 
-    Vec diag = Vec::Random(A).array();
-    Vec subdiag = Vec::Random(A - 1).array();
 //    Vec diag(A);// = Vec::Random(A).array();
 //    Vec subdiag(A-1);// = Vec::Random(A - 1).array();
-//    diag << 1,2,3;
-//    subdiag << 0,0;
-    //getGluedWilkinsonMatrix(100, 5, diag, subdiag,1e-8);
+//    diag << 1,2,3,3;
+//    subdiag << 0,0,0;
+    Vec diag = Vec::Random(A).array() * 0 + 1;
+    Vec subdiag = Vec::Random(A - 1).array() * 1e-13;
+    getGluedWilkinsonMatrix(100, 5, diag, subdiag,1e-8);
 //    subdiag[2]=0;
 //    subdiag[3]=0;
 //    diag[5]=0;
@@ -200,7 +200,8 @@ void testMrrr(){
     T.diagonal(-1) = subdiag;
 
     start = std::chrono::steady_clock::now();
-    mrrr(diag, subdiag, eigenvals, eigenvecs2);
+    //reducibleTridiagEigenSolver(diag, subdiag, eigenvals, eigenvecs2);
+    mrrr2(diag, subdiag, eigenvals, eigenvecs2);
     if(A>=15) {
       cout << "mrrr: "
            << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
@@ -234,7 +235,7 @@ void testMrrr(){
     }
     chkEig(T, eigenvecs, eigenvals);
 
-    SelfAdjointEigenSolver<Mat> slv(T);
+    /*SelfAdjointEigenSolver<Mat> slv(T);
     cout << "CPU: "
          << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
          << "ms" << endl;
@@ -248,7 +249,7 @@ void testMrrr(){
       cout << "eigenvectors:" << endl << eigenvecs.rowwise().reverse() << endl << endl;
       cout << "eigenvalues:" << endl << eigenvals.reverse() << endl << endl;
     }
-    chkEig(T,eigenvecs,eigenvals);
+    chkEig(T,eigenvecs,eigenvals);*/
     //break;
   }
 
