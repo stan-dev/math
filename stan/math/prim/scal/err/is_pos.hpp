@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_ERR_IS_POS
-#define STAN_MATH_PRIM_SCAL_ERR_IS_POS
+#ifndef STAN_MATH_PRIM_SCAL_ERR_IS_POS_HPP
+#define STAN_MATH_PRIM_SCAL_ERR_IS_POS_HPP
 
 #include <stan/math/prim/scal/meta/value_type.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
