@@ -123,7 +123,7 @@ inline
 
 /**
  * Returns a squared exponential kernel.
- * 
+ *
  * This function is for the cross covariance matrix
  * needed to compute posterior predictive density.
  *

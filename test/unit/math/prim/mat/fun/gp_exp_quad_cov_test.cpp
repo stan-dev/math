@@ -851,7 +851,7 @@ TEST(MathPrimMat, zero_size) {
   double sigma = 0.2;
 
   std::vector<double> l(0);
-  
+
   std::vector<Eigen::Matrix<double, -1, 1>> x(0);
 
   Eigen::MatrixXd cov;
@@ -867,14 +867,15 @@ TEST(MathPrimMat, numerical_accuracy_ard) {
   double sigma = 1.0;
 
   std::vector<double> l(2);
-  l[0] = 1; l[1] = 2;
+  l[0] = 1;
+  l[1] = 2;
 
   std::vector<Eigen::Matrix<double, -1, 1>> x(2);
   x[0].resize(2, 1);
   x[0] << 1, 1;
   x[1].resize(2, 1);
   x[1] << 2, 4;
-  
+
   Eigen::MatrixXd cov;
   Eigen::MatrixXd cov2;
   cov = stan::math::gp_exp_quad_cov(x, sigma, l);
@@ -882,10 +883,10 @@ TEST(MathPrimMat, numerical_accuracy_ard) {
 
   EXPECT_FLOAT_EQ(1.0, cov(0, 0));
   EXPECT_FLOAT_EQ(1.0, cov2(0, 0));
-  EXPECT_FLOAT_EQ(exp(-(1 + 9.0/4.0)/2), cov(1, 0));
-  EXPECT_FLOAT_EQ(exp(-(1 + 9.0/4.0)/2), cov2(1, 0));
-  EXPECT_FLOAT_EQ(exp(-(1 + 9.0/4.0)/2), cov(0, 1));
-  EXPECT_FLOAT_EQ(exp(-(1 + 9.0/4.0)/2), cov2(0, 1));
+  EXPECT_FLOAT_EQ(exp(-(1 + 9.0 / 4.0) / 2), cov(1, 0));
+  EXPECT_FLOAT_EQ(exp(-(1 + 9.0 / 4.0) / 2), cov2(1, 0));
+  EXPECT_FLOAT_EQ(exp(-(1 + 9.0 / 4.0) / 2), cov(0, 1));
+  EXPECT_FLOAT_EQ(exp(-(1 + 9.0 / 4.0) / 2), cov2(0, 1));
   EXPECT_FLOAT_EQ(1.0, cov(1, 1));
   EXPECT_FLOAT_EQ(1.0, cov2(1, 1));
 }
