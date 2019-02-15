@@ -56,6 +56,14 @@ void p(const matrix_gpu& a) {
   std::cout << b << std::endl;
 }
 
+/**
+ * Tridiagonalize a symmetric matrix using block Housholder algorithm. A = Q * T * Q^T
+ * @param A Input matrix
+ * @param[out] packed Packed form of the tridiagonal matrix. Elements of the resulting symmetric tridiagonal matrix T are in the diagonal and first superdiagonal.
+ * Columns bellow diagonal contain householder vectors that can be used to construct orthogonal matrix Q.
+ * @param r Block size. Affect only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes larger value is optimal.
+ */
+
 void block_householder_tridiag3(const Eigen::MatrixXd& A, Eigen::MatrixXd& packed, int r = 60) {
   packed = A;
   for (size_t k = 0; k < packed.rows() - 2; k += r) {
@@ -102,6 +110,12 @@ void block_householder_tridiag3(const Eigen::MatrixXd& A, Eigen::MatrixXd& packe
   packed(packed.rows() - 2, packed.cols() - 1) = packed(packed.rows() - 1, packed.cols() - 2);
 }
 
+/**
+ * Calculates Q*A in place. To construct Q pass identity matrix as input A.
+ * @param packed Packed result of tridiagonalization that contains householder vectors that define Q in columns bellow the diagonal. Usually result of a call to `block_householder_tridiag3`.
+ * @param[in,out] On input a matrix to multiply with Q. On output the product Q*A.
+ * @param r Block size. Affect only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes larger value is optimal.
+ */
 void block_apply_packed_Q3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 100) {
   //if input A==Identity, constructs Q
   Eigen::MatrixXd scratchSpace(A.rows(), r);
@@ -120,13 +134,26 @@ void block_apply_packed_Q3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, in
 }
 
 const double perturbation_range = 1e-15;
-
+/**
+ * Generates a random number for perturbing a relatively robust representation-
+ * @return A uniformly distributed random number between `1 - perturbation_range / 2` and `1 + perturbation_range / 2`.
+ */
 inline double get_random_perturbation_multiplier() {
   static const double rand_norm = perturbation_range / RAND_MAX;
   static const double almost_one = 1 - perturbation_range * 0.5;
   return almost_one + std::rand() * rand_norm;
 }
 
+/**
+ * Calculates LDL decomposition of a shifted triagonal matrix T. D is diagonal, L is lower unit triangular (diagonal elements are 1,
+ * all elements except diagonal and subdiagonal are 0),T - shift * I = L * D * L^T. Also calculates element growth of D: sum(abs(D)) / abs(sum(D)).
+ * @param diag Diagonal of T
+ * @param subdiag Subdiagonal of T.
+ * @param shift Shift.
+ * @param[out] l Subdiagonal of L.
+ * @param[out] d_plus Diagonal of D.
+ * @return Element growth.
+ */
 double get_ldl(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const Eigen::VectorXd> subdiag, double shift, Eigen::VectorXd& l, Eigen::VectorXd& d_plus) {
   d_plus[0] = diag[0] - shift;
   double element_growth = abs(d_plus[0]);
@@ -143,7 +170,18 @@ double get_ldl(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<co
   return element_growth / abs(element_growth_denominator);
 }
 
-//stationary qds
+/**
+ * Shifts a LDL decomposition. The algorithm is sometimes called stationary quotients-differences with shifts (stqds).
+ * D and D+ are diagonal, L and L+ are lower unit triangular (diagonal elements are 1,
+ * all elements except diagonal and subdiagonal are 0). L * D * L^T - shift * I = L+ * D * L+^T.
+ * Also calculates element growth of D+: sum(abs(D+)) / abs(sum(D+)).
+ * @param d Diagonal of D.
+ * @param l Subdiagonal of L.
+ * @param shift Shift.
+ * @param[out] l_plus Subdiagonal of L+.
+ * @param[out] d_plus Diagonal of D+.
+ * @return Element growth.
+ */
 double get_perturbed_shifted_ldl(const Eigen::VectorXd& d, const Eigen::VectorXd& l, double shift, Eigen::VectorXd& l_plus, Eigen::VectorXd& d_plus) {
   int n = l.size();
   double s = -shift;
@@ -168,7 +206,19 @@ double get_perturbed_shifted_ldl(const Eigen::VectorXd& d, const Eigen::VectorXd
   return element_growth / abs(element_growth_denominator);
 }
 
-//dtwqds
+/**
+ * Calculates shifted LDL and UDU factorizations. Combined with twist index they form twisted factorization for calculation
+ * of an eigenvector corresponding to eigenvalue that is equal to the shift. Tha algorithm is sometimes called diferential twisted quotient-differences with shifts (dtwqds).
+ * L * D * L^T - shift * I = L+ * D+ * L+^T = U- * D- * U-^T
+ * D, D+ and D- are diagonal, L and L+ are lower unit triangular (diagonal elements are 1, all elements except diagonal and subdiagonal are 0),
+ * U- is upper unit triangular (diagonal elements are 1, all elements except diagonal and superdiagonal are 0)
+ * @param d Diagonal of D.
+ * @param l Subdiagonal of L.
+ * @param shift Shift.
+ * @param[out] l_plus Subdiagonal of L+.
+ * @param[out] u_minus Superdiagonal of U-.
+ * @return Twist index.
+ */
 int get_twisted_factorization(const Eigen::VectorXd& d, const Eigen::VectorXd& l, double shift, Eigen::VectorXd& l_plus, Eigen::VectorXd& u_minus) {
   int n = l.size();
   //calculate shifted ldl
@@ -241,6 +291,14 @@ int get_twisted_factorization(const Eigen::VectorXd& d, const Eigen::VectorXd& l
   return twist_index;
 }
 
+/**
+ * Calculates Sturm count of a LDL decomposition of a tridiagonal matrix - number of eigenvalues larger or equal to shift.
+ * Uses stqds - calculation of shifted LDL decomposition algorithm and counts number of positive elements in D.
+ * @param d Diagonal of D.
+ * @param l Subdiagonal of L.
+ * @param shift Shift.
+ * @return Sturm count.
+ */
 int getSturmCountLdl(const Eigen::VectorXd& d, const Eigen::VectorXd& l, double shift) {
   int n = l.size();
   double s = -shift;
@@ -261,7 +319,15 @@ int getSturmCountLdl(const Eigen::VectorXd& d, const Eigen::VectorXd& l, double 
   return count;
 }
 
-double eigenvalBisectRefine(const Eigen::VectorXd& d, const Eigen::VectorXd& l, double& low, double& high, int i) {
+/**
+ * Refines bounds on the i-th largest eigenvalue of LDL decomposition of a matrix using bisection.
+ * @param d Diagonal of D.
+ * @param l Subdiagonal of L.
+ * @param low[in,out] Low bound on the eigenvalue.
+ * @param high[in,out] High bound on the eigenvalue.
+ * @param i i-th eigenvalue
+ */
+void eigenvalBisectRefine(const Eigen::VectorXd& d, const Eigen::VectorXd& l, double& low, double& high, int i) {
   int n = d.size();
   double eps = 3e-16;
   while (abs((high - low) / (high + low)) > eps && abs(high - low) > std::numeric_limits<double>::min()) { // second term is for the case where the eigenvalue is 0 and division yields NaN
@@ -275,6 +341,13 @@ double eigenvalBisectRefine(const Eigen::VectorXd& d, const Eigen::VectorXd& l, 
   }
 }
 
+/**
+ * Calculates bounds on eigenvalues of a symmetric tridiagonal matrix T using Gresgorin discs.
+ * @param diag Diagonal of T
+ * @param subdiag Subdiagonal of T
+ * @param min_eigval[out] Lower bound on eigenvalues.
+ * @param max_eigval[out] Upper bound on eigenvalues.
+ */
 void getGresgorin(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const Eigen::VectorXd> subdiag, double& min_eigval, double& max_eigval) {
   int n = diag.size();
   min_eigval = diag[0] - abs(subdiag[0]);
@@ -289,6 +362,14 @@ void getGresgorin(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref
 
 const int BISECT_K = 4;
 
+/**
+ * Calculates lower Sturm count of a tridiagonal matrix T - number of eigenvalues lower than shift for up to BISECT_K different shifts.
+ * @param diag Diagonal of T.
+ * @param subdiagSquared Squared elements of subdiagonal of T.
+ * @param shifts Up to 8 different shifts. First `n_valid` are used.
+ * @param n_valid How many Sturm counts to actually compute.
+ * @return Array of Sturm counts of size BISECT_K. First `n_valid` are actual results.
+ */
 Eigen::Array<int, BISECT_K, 1> getSturmCountTVec2(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::VectorXd& subdiagSquared, Eigen::Array<double, BISECT_K, 1>& shifts, int n_valid) {
   Eigen::Array<double, BISECT_K, 1> d;
   d.head(n_valid) = diag[0] - shifts.head(n_valid);
@@ -344,6 +425,15 @@ struct bisectionTask{
     double low, high;
 };
 
+/**
+ * Calculates eigenvalues of tridiagonal matrix T using bisection.
+ * @param diag Diagonal of T.
+ * @param subdiagSquared Squared elements of the subdiagonal.
+ * @param min_eigval Lower bound on all eigenvalues.
+ * @param max_eigval Upper bound on all eigenvalues.
+ * @param low[out] Lower bounds on eigenvalues.
+ * @param high[out] Upper bounds on eigenvalues.
+ */
 void eigenvalsBisect4(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::VectorXd& subdiagSquared, double min_eigval, double max_eigval, Eigen::VectorXd& low, Eigen::VectorXd& high) {
   int n = diag.size();
   double eps = 3e-16;
@@ -366,7 +456,7 @@ void eigenvalsBisect4(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen:
     }
     Eigen::Array<int, BISECT_K, 1> counts = getSturmCountTVec2(diag, subdiagSquared, shifts, BISECT_K);
     for(int i=0;i<n_valid;i++){
-      if(counts[i]>=t[i].start+1){ //TODO +/- ?
+      if(counts[i]>=t[i].start+1){
         if((t[i].high - shifts[i])/abs(shifts[i]) > eps && abs(t[i].high - shifts[i]) > std::numeric_limits<double>::min()){
           tQueue.push({t[i].start, counts[i], t[i].low, shifts[i]});
         }
@@ -387,7 +477,7 @@ void eigenvalsBisect4(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen:
         my_end = counts[i+n_valid];
         my_high = shifts[i+n_valid];
       }
-      if(counts[i] <= my_end - 1){ //TODO +/- ?
+      if(counts[i] <= my_end - 1){
         if((my_high - shifts[i])/abs(shifts[i]) > eps && abs(my_high - shifts[i]) > std::numeric_limits<double>::min()) {
           tQueue.push({counts[i], my_end, shifts[i], my_high});
         }
@@ -442,6 +532,16 @@ void perturbRepresentation(const Eigen::VectorXd& l0, const Eigen::VectorXd& d0,
   d[n] = d0[n] * get_random_perturbation_multiplier();
 }
 */
+
+/**
+ * Calculates an eigenvector from twisted factorization T - shift * I = L+ * D+ * L+^T = U- * D- * U-^T.
+ * @param l_plus Subdiagonal of the L+.
+ * @param u_minus Superdiagonal of the U-.
+ * @param subdiag Subdiagonal of T
+ * @param i At which column of `eigenvecs` to store resulting vector.
+ * @param twist_idx Twist index.
+ * @param[out] eigenvecs Matrix in which to sstore resulting vector.
+ */
 void calculateEigenvector(const Eigen::VectorXd& l_plus, const Eigen::VectorXd& u_minus, const Eigen::Ref<const Eigen::VectorXd>& subdiag, int i, int twist_idx, Eigen::Ref<Eigen::MatrixXd>& eigenvecs) {
   auto vec = eigenvecs.col(i);
   int n = vec.size();
@@ -471,6 +571,19 @@ void calculateEigenvector(const Eigen::VectorXd& l_plus, const Eigen::VectorXd& 
   vec /= vec.norm();
 }
 
+/**
+ * Finds good shift and shifts a LDL decomposition so as to keep element growth low. L * D * L^T - shift * I = L2 * D2 * L2^T.
+ * @param l Subdiagonal of L.
+ * @param d Diagonal of D.
+ * @param low Low bound on wanted shift.
+ * @param high High bound on wanted shift.
+ * @param max_ele_growth Maximum desired element growth. If no better options are found it might be exceeded.
+ * @param max_shift Maximal difference of shhift from wanted bounds.
+ * @param l2 Subdiagonal of L2.
+ * @param d2 Diagonal of D2.
+ * @param shift Shift.
+ * @param min_element_growth Element growth achieved with resulting shift.
+ */
 void findShift(const Eigen::VectorXd& l, const Eigen::VectorXd& d, double low, double high, double max_ele_growth, double max_shift,
         Eigen::VectorXd& l2, Eigen::VectorXd& d2, double& shift, double& min_element_growth) {
   Eigen::VectorXd l3(l2.size()), d3(d2.size());
@@ -502,7 +615,7 @@ void findShift(const Eigen::VectorXd& l, const Eigen::VectorXd& d, double low, d
       }
     }
   }
-  cout << "\t\t" << " element growth: " << min_element_growth << " at " << shift << endl;
+//  cout << "\t\t" << " element growth: " << min_element_growth << " at " << shift << endl;
 }
 /*
 void mrrr(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag, Eigen::VectorXd& eigenvals, Eigen::MatrixXd& eigenvecs, double min_rel_sep = 1e-2, double max_ele_growth = 2) {
@@ -664,13 +777,17 @@ Eigen::Array<int, BISECT_K, 1> getSturmCountLdlVec(const Eigen::VectorXd& d, con
   return counts;
 }*/
 
-struct mrrrTask{
-    int start, end;
-    double shift; //total shift, not just last one
-    Eigen::VectorXd l, d;
-    int level;
-};
-
+/**
+ * Finds a good value for shift of the initial LDL factorization T - shift * I = L * D * L^T.
+ * @param diag Diagonal of T.
+ * @param subdiag Subdiagonal of T.
+ * @param l0 Subdiagonal of L.
+ * @param d0 Diagonal of D.
+ * @param min_eigval Lower bound on eigenvalues of T.
+ * @param max_eigval High bound on eigenvalues of T
+ * @param max_ele_growth Maximum desired element growth.
+ * @return
+ */
 double findInitialShift(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const Eigen::VectorXd> subdiag, Eigen::VectorXd& l0, Eigen::VectorXd& d0, double min_eigval, double max_eigval, double max_ele_growth){
   double shift = 0;
   if(min_eigval>0){
@@ -691,6 +808,22 @@ double findInitialShift(const Eigen::Ref<const Eigen::VectorXd> diag, const Eige
   return shift + plus;
 }
 
+struct mrrrTask{
+    int start, end;
+    double shift; //total shift, not just last one
+    Eigen::VectorXd l, d;
+    int level;
+};
+
+ /**
+  * Calculates eigenvalues and eigenvectors of a (preferrably irreducible) tridiagonal matrix T using MRRR algorithm.
+  * @param diag Diagonal of of T.
+  * @param subdiag Subdiagonal of T.
+  * @param eigenvals[out] Eigenvlues.
+  * @param eigenvecs[out] Eigenvectors.
+  * @param min_rel_sep Minimal relative separation of eigenvalues before computing eigenvectors.
+  * @param max_ele_growth Maximal desired element growth of LDL decompositions.
+  */
 void mrrr2(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const Eigen::VectorXd> subdiag, Eigen::Ref<Eigen::VectorXd> eigenvals,
            Eigen::Ref<Eigen::MatrixXd> eigenvecs, double min_rel_sep = 1e-1, double max_ele_growth = 2) {
   double shift_error = 1e-14;
@@ -701,8 +834,8 @@ void mrrr2(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const 
   getGresgorin(diag, subdiag, min_eigval, max_eigval);
   Eigen::VectorXd l(n - 1), d(n), l0(n - 1), d0(n);
   double shift0 = findInitialShift(diag, subdiag,l0, d0,min_eigval, max_eigval,max_ele_growth);
-  cout << "init ele growth " << d0.array().abs().sum() / abs(d0.array().sum()) << endl;
-  cout << "shift0 " << shift0 << endl;
+//  cout << "init ele growth " << d0.array().abs().sum() / abs(d0.array().sum()) << endl;
+//  cout << "shift0 " << shift0 << endl;
   for (int i = 0; i < n; i++) {
     if (i != n - 1) {
       l[i] = l0[i] * get_random_perturbation_multiplier();
@@ -726,7 +859,7 @@ void mrrr2(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const 
   while (!blockQueue.empty()) {
     mrrrTask block = blockQueue.front();
     blockQueue.pop();
-    cout << "at level "<< block.level << " (" << block.start << ", " << block.end << ")" << endl;
+//    cout << "at level "<< block.level << " (" << block.start << ", " << block.end << ")" << endl;
     double shift = std::numeric_limits<double>::infinity();
     double min_element_growth = std::numeric_limits<double>::infinity();
     Eigen::VectorXd l2(n - 1), d2(n), l_plus(n - 1), u_minus(n - 1);
@@ -745,22 +878,22 @@ void mrrr2(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const 
         double currentShift, min_ele_growth;
         findShift(block.l, block.d, low[cluster_end], high[i],max_ele_growth, max_shift, l, d, currentShift, min_ele_growth);
         for(int j=i;j<=cluster_end;j++){
-          if(j >= getSturmCountLdl(block.d, block.l, low[j]) || j < getSturmCountLdl(block.d, block.l, high[j])){
-            cout << "PRE-REFINE ERROR!!!!!" << endl;
-          }
+//          if(j >= getSturmCountLdl(block.d, block.l, low[j]) || j < getSturmCountLdl(block.d, block.l, high[j])){
+//            cout << "PRE-REFINE ERROR!!!!!" << endl;
+//          }
           low[j] = low[j] * (1 - copysign(shift_error, low[j])) - currentShift;
           high[j] = high[j] * (1 + copysign(shift_error, high[j])) - currentShift;
-          if(j >= getSturmCountLdl(d, l, low[j]) || j < getSturmCountLdl(d, l, high[j])){
-            cout << "PRE-REFINE ERROR!!!!!" << endl;
-          }
+//          if(j >= getSturmCountLdl(d, l, low[j]) || j < getSturmCountLdl(d, l, high[j])){
+//            cout << "PRE-REFINE ERROR!!!!!" << endl;
+//          }
           eigenvalBisectRefine(d, l, low[j], high[j], j);
-          if(j >= getSturmCountLdl(d, l, low[j]) || j < getSturmCountLdl(d, l, high[j])){
-            cout << "REFINE ERROR!!!!!" << endl;
-          }
+//          if(j >= getSturmCountLdl(d, l, low[j]) || j < getSturmCountLdl(d, l, high[j])){
+//            cout << "REFINE ERROR!!!!!" << endl;
+//          }
         }
-        if(cluster_end+1 == getSturmCountLdl(d, l, low[cluster_end]) && 1 == getSturmCountLdl(d, l, high[i])){
-          cout << "BLOCK ERROR!!!!!" << endl;
-        }
+//        if(cluster_end+1 == getSturmCountLdl(d, l, low[cluster_end]) && 1 == getSturmCountLdl(d, l, high[i])){
+//          cout << "BLOCK ERROR!!!!!" << endl;
+//        }
         blockQueue.push(mrrrTask{i,cluster_end+1,block.shift + currentShift, std::move(l), std::move(d), block.level+1});
         l.resize(n-1); //after move out
         d.resize(n);
@@ -768,52 +901,52 @@ void mrrr2(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const 
         i=cluster_end;
       }
       else{ //isolated eigenvalue
-        cout << "\t\t\t\t\t\t\t\tgetting eigenvector " << i << " (eigenvalue " << eigenvals[i] << ")" << endl;
+//        cout << "\t\t\t\t\t\t\t\tgetting eigenvector " << i << " (eigenvalue " << eigenvals[i] << ")" << endl;
         double low_t=low[i], high_t=high[i];
-        if(i+1 != getSturmCountLdl(block.d, block.l, low[i]) || i != getSturmCountLdl(block.d, block.l, high[i])){
-          cout << "SINGLE ERROR!!!!!" << endl;
-        }
+//        if(i+1 != getSturmCountLdl(block.d, block.l, low[i]) || i != getSturmCountLdl(block.d, block.l, high[i])){
+//          cout << "SINGLE ERROR!!!!!" << endl;
+//        }
         int twist_idx;
         double low_gap = i == block.start ? std::numeric_limits<double>::infinity() : low[i - 1] - high[i];
         double high_gap = i == block.end - 1 ? std::numeric_limits<double>::infinity() : low[i] - high[i + 1];
         double min_gap = std::min(low_gap, high_gap);
         if (abs(min_gap / ((high[i] + low[i]) * 0.5)) > min_rel_sep) {
           twist_idx = get_twisted_factorization(block.d, block.l, (low[i]+high[i])*0.5, l_plus, u_minus);
-          cout << "\t\t" << i << " UNSHIFTED gap: " << min_gap / ((high[i] + low[i]) * 0.5) << endl;
+//          cout << "\t\t" << i << " UNSHIFTED gap: " << min_gap / ((high[i] + low[i]) * 0.5) << endl;
         }
         else if (abs(min_gap / ((high[i] + low[i]) * 0.5 - shift)) > min_rel_sep && min_element_growth < max_ele_growth) {
           low[i] = low[i] * (1 - copysign(shift_error, low[i])) - shift;
           high[i] = high[i] * (1 + copysign(shift_error, high[i])) - shift;
-          if(i >= getSturmCountLdl(d2, l2, low[i]) || i < getSturmCountLdl(d2, l2, high[i])){
-            cout << "SINGLE ERROR!!!!!" << endl;
-          }
+//          if(i >= getSturmCountLdl(d2, l2, low[i]) || i < getSturmCountLdl(d2, l2, high[i])){
+//            cout << "SINGLE ERROR!!!!!" << endl;
+//          }
           eigenvalBisectRefine(d2, l2, low[i], high[i], i);
-          if(i+1 != getSturmCountLdl(d2, l2, low[i]) || i != getSturmCountLdl(d2, l2, high[i])){
-            cout << "SINGLE ERROR!!!!!" << endl;
-          }
+//          if(i+1 != getSturmCountLdl(d2, l2, low[i]) || i != getSturmCountLdl(d2, l2, high[i])){
+//            cout << "SINGLE ERROR!!!!!" << endl;
+//          }
           double shifted_eigenval = (low[i] + high[i]) * 0.5;
           twist_idx = get_twisted_factorization(d2, l2, shifted_eigenval, l_plus, u_minus);
-          cout << "\t\t" << i << " prev shift gap: " << min_gap / ((high[i] + low[i]) * 0.5 - shift) << endl;
+//          cout << "\t\t" << i << " prev shift gap: " << min_gap / ((high[i] + low[i]) * 0.5 - shift) << endl;
         }
         else {
           double max_shift = min_gap / min_rel_sep;
-          if(max_shift<=0){
-            cout << "ERROR!!!!!" << endl;
-          }
+//          if(max_shift<=0){
+//            cout << "ERROR!!!!!" << endl;
+//          }
           findShift(block.l, block.d, low[i], high[i], max_ele_growth, max_shift, l2, d2, shift, min_element_growth);
 
           //shift and refine eigenvalue
           low[i] = low[i] * (1 - copysign(shift_error, low[i])) - shift;
           high[i] = high[i] * (1 + copysign(shift_error, high[i])) - shift;
-          if(i >= getSturmCountLdl(d2, l2, low[i]) || i < getSturmCountLdl(d2, l2, high[i])){
-            cout << "SINGLE ERROR!!!!!" << endl;
-          }
+//          if(i >= getSturmCountLdl(d2, l2, low[i]) || i < getSturmCountLdl(d2, l2, high[i])){
+//            cout << "SINGLE ERROR!!!!!" << endl;
+//          }
           eigenvalBisectRefine(d2, l2, low[i], high[i], i);
-          if(i+1 != getSturmCountLdl(d2, l2, low[i]) || i != getSturmCountLdl(d2, l2, high[i])){
-            cout << "SINGLE ERROR!!!!!" << endl;
-          }
+//          if(i+1 != getSturmCountLdl(d2, l2, low[i]) || i != getSturmCountLdl(d2, l2, high[i])){
+//            cout << "SINGLE ERROR!!!!!" << endl;
+//          }
           double shifted_eigenval = (low[i] + high[i]) * 0.5;
-          cout << "\t\t" << i << " shifted gap: " << min_gap / shifted_eigenval << endl;
+//          cout << "\t\t" << i << " shifted gap: " << min_gap / shifted_eigenval << endl;
           twist_idx = get_twisted_factorization(d2, l2, shifted_eigenval, l_plus, u_minus);
         }
         //calculate eigenvector
@@ -823,12 +956,21 @@ void mrrr2(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const 
   }
 }
 
+/**
+* Calculates eigenvalues and eigenvectors of a tridiagonal matrix T using MRRR algorithm.
+* If a subdiagonal element is close to zero compared to neighbors on diagonal the problem can be split into smaller ones.
+* @param diag Diagonal of of T.
+* @param subdiag Subdiagonal of T.
+* @param eigenvals[out] Eigenvlues.
+* @param eigenvecs[out] Eigenvectors.
+* @param splitThreshold Threshold for splitting the problem
+*/
 void reducibleTridiagEigenSolver(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag, Eigen::VectorXd& eigenvals, Eigen::MatrixXd& eigenvecs, double splitThreshold = 1e-12) {
   int n = diag.size();
   int last = 0;
   for (int i = 0; i < subdiag.size(); i++) {
     if (abs(subdiag[i] / diag[i]) < splitThreshold && abs(subdiag[i] / diag[i + 1]) < splitThreshold) {
-      cout << "split: " << i << endl;
+//      cout << "split: " << i << endl;
       eigenvecs.block(last, i + 1, i + 1 - last, n - i - 1) = Eigen::MatrixXd::Constant(i + 1 - last, n - i - 1, 0);
       eigenvecs.block(i + 1, last, n - i - 1, i + 1 - last) = Eigen::MatrixXd::Constant(n - i - 1, i + 1 - last, 0);
       if(last==i){
@@ -857,7 +999,12 @@ void reducibleTridiagEigenSolver(const Eigen::VectorXd& diag, const Eigen::Vecto
   }
 }
 
-
+/**
+ * Calculates eigenvalues and eigenvectors of a symmetric matrix.
+ * @param A The matrix
+ * @param eigenvals[out] Eigenvalues.
+ * @param eigenvecs[out] Eigenvectors.
+ */
 void symmetricEigenSolver(const Eigen::MatrixXd& A, Eigen::VectorXd& eigenvals, Eigen::MatrixXd& eigenvecs) {
   Eigen::MatrixXd packed;
   auto start = std::chrono::steady_clock::now();
