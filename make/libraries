@@ -63,6 +63,9 @@ LIBSUNDIALS := $(SUNDIALS)/lib/libsundials_nvecserial.a $(SUNDIALS)/lib/libsundi
 STAN_SUNDIALS_HEADERS := $(shell find $(MATH)stan -name *cvodes*.hpp) $(shell find $(MATH)stan -name *idas*.hpp)
 $(STAN_SUNDIALS_HEADERS) : $(LIBSUNDIALS)
 
+.PHONY: sundials
+sundials: $(LIBSUNDIALS)
+
 clean-sundials:
 	@echo '  cleaning sundials targets'
 	$(RM) $(wildcard $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS)))
