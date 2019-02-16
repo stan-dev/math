@@ -1,0 +1,86 @@
+# -*- mode: cmake -*-
+# -----------------------------------------------------------------
+# Programmer: Radu Serban @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2019, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# CMakeLists.txt for @SOLVER@ Fortran parallel examples
+#
+# This file is generated from a template using  various variables
+# set at configuration time. It can be used as a template for
+# other user CMakeLists configuration files.
+# -----------------------------------------------------------------
+
+cmake_minimum_required(VERSION 2.8)
+
+# Specify project name
+PROJECT(F@SOLVER@_parallel_examples Fortran)
+
+MARK_AS_ADVANCED(EXECUTABLE_OUTPUT_PATH LIBRARY_OUTPUT_PATH)
+
+# Set the names of the examples to be built
+SET(examples @EXAMPLES@)
+
+# Set name of MPI compiler to be used (F77 or MPIF77)
+SET(MPI_MPIF77 @MPIF77@ CACHE STRING "MPIF77 compiler script")
+SET(CMAKE_Fortran_COMPILER ${MPI_MPIF77})
+
+# Specify path to SUNDIALS header files
+SET(SUNDIALS_INC_DIR
+  @includedir@
+  CACHE STRING
+  "Location of SUNDIALS header files")
+
+# Add path to SUNDIALS header files
+INCLUDE_DIRECTORIES(${SUNDIALS_INC_DIR})
+
+# Set search path for SUNDIALS libraries 
+SET(SUNDIALS_LIB_DIR @libdir@)
+
+# Find the SUNDIALS solver's library
+FIND_LIBRARY(SUNDIALS_SOLVER_LIB
+  @SOLVER_LIB@ ${SUNDIALS_LIB_DIR}
+  DOC "@SOLVER@ library")
+
+FIND_LIBRARY(SUNDIALS_SOLVER_FLIB
+  @SOLVER_FLIB@ ${SUNDIALS_LIB_DIR}
+  DOC "@SOLVER@ Fortran-C library")
+
+# Find the NVECTOR library
+FIND_LIBRARY(SUNDIALS_NVEC_LIB
+  sundials_nvecparallel ${SUNDIALS_LIB_DIR}
+  DOC "NVECTOR library")
+
+FIND_LIBRARY(SUNDIALS_NVEC_FLIB
+  sundials_fnvecparallel ${SUNDIALS_LIB_DIR}
+  DOC "NVECTOR Fortran-C library")
+
+# Set additional libraries
+SET(SUNDIALS_EXTRA_LIB @LIBS@ CACHE STRING "Additional libraries")
+
+# List of all libraries
+SET(SUNDIALS_LIBS 
+  ${SUNDIALS_SOLVER_FLIB}
+  ${SUNDIALS_SOLVER_LIB} 
+  ${SUNDIALS_NVEC_FLIB}
+  ${SUNDIALS_NVEC_LIB} 
+  ${SUNDIALS_EXTRA_LIB})
+
+# Build each example one by one
+FOREACH(example ${examples})
+
+  # example source files
+  ADD_EXECUTABLE(${example} ${example}.f)
+  
+  # libraries to link against
+  TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_LIBS})
+
+ENDFOREACH(example ${examples})

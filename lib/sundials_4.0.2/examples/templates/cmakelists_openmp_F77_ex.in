@@ -1,0 +1,209 @@
+# -*- mode: cmake -*-
+# -----------------------------------------------------------------
+# Programmer(s): Radu Serban @ LLNL
+#                David J. Gardner @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2019, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# CMakeLists.txt for @SOLVER@ OpenMP examples
+#
+# This file is generated from a template using variables
+# set at configuration time. It can be used as a template for
+# other user CMakeLists configuration files.
+# -----------------------------------------------------------------
+
+cmake_minimum_required(VERSION 2.8)
+
+# Specify project name
+PROJECT(F@SOLVER@_openmp_examples Fortran C)
+
+MARK_AS_ADVANCED(EXECUTABLE_OUTPUT_PATH LIBRARY_OUTPUT_PATH)
+
+# Examples using SUNDIALS linear solvers
+SET(examples @EXAMPLES@)
+
+# Examples using LAPACK linear solvers
+SET(examples_bl @EXAMPLES_BL@)
+
+# Examples using KLU linear solvers
+SET(examples_klu @EXAMPLES_KLU@)
+
+# Examples using SuperLU_MT linear solvers
+SET(examples_slumt @EXAMPLES_SLUMT@)
+
+# Specify path to SUNDIALS header files
+SET(SUNDIALS_INC_DIR
+  @includedir@
+  CACHE STRING
+  "Location of SUNDIALS header files")
+
+# Add path to SUNDIALS header files
+INCLUDE_DIRECTORIES(${SUNDIALS_INC_DIR})
+
+# Set search path for SUNDIALS libraries 
+SET(SUNDIALS_LIB_DIR @libdir@)
+
+# Find the SUNDIALS solver's library
+FIND_LIBRARY(SUNDIALS_SOLVER_LIB
+  @SOLVER_LIB@ ${SUNDIALS_LIB_DIR}
+  DOC "@SOLVER@ library")
+
+FIND_LIBRARY(SUNDIALS_SOLVER_FLIB
+  @SOLVER_FLIB@ ${SUNDIALS_LIB_DIR}
+  DOC "@SOLVER@ Fortran-C library")
+
+# Find the NVECTOR library
+FIND_LIBRARY(SUNDIALS_NVEC_LIB
+  sundials_nvecopenmp ${SUNDIALS_LIB_DIR}
+  DOC "NVECTOR library")
+
+FIND_LIBRARY(SUNDIALS_NVEC_FLIB
+  sundials_fnvecopenmp ${SUNDIALS_LIB_DIR}
+  DOC "NVECTOR Fortran-C library")
+
+# Set additional libraries
+SET(SUNDIALS_EXTRA_LIB @LIBS@ CACHE STRING "Additional libraries")
+
+# Set other libraries libraries
+SET(BLAS_LIBRARIES @BLAS_LIBS@ CACHE STRING "Blas libraries")
+SET(LAPACK_LIBRARIES @LAPACK_LIBS@ CACHE STRING "Lapack libraries")
+
+INCLUDE_DIRECTORIES(@SUPERLUMT_INCLUDE_DIR@)
+SET(SUPERLUMT_LIBRARIES @SUPERLUMT_LIBRARIES@ CACHE STRING "SuperLUMT libraries")
+
+INCLUDE_DIRECTORIES(@KLU_INCLUDE_DIR@)
+SET(KLU_LIBRARIES @KLU_LIBRARIES@ CACHE STRING "KLU libraries")
+
+FIND_PACKAGE(OpenMP)
+IF(OPENMP_FOUND)
+  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+  # Use C flags for linker as well.
+  SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_C_FLAGS}")
+ELSE(OPENMP_FOUND)
+  message(STATUS "Disabling OpenMP support, could not determine compiler flags")
+ENDIF(OPENMP_FOUND)
+
+# List of Sundials libraries shared across all examples
+SET(SUNDIALS_LIBS
+  ${SUNDIALS_SOLVER_FLIB}
+  ${SUNDIALS_SOLVER_LIB}
+  ${SUNDIALS_NVEC_FLIB}
+  ${SUNDIALS_NVEC_LIB}
+  ${SUNDIALS_EXTRA_LIB})
+
+
+# Build examples with SUNDIALS linear solvers one by one
+FOREACH(example ${examples})
+
+  # example source files
+  ADD_EXECUTABLE(${example} ${example}.f)
+
+  # libraries to link against
+  TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_LIBS})
+
+ENDFOREACH(example ${examples})
+
+
+# Build each example with LAPACK linear solvers one by one
+IF(LAPACK_LIBRARIES)
+  FOREACH(example ${examples_bl})
+
+    # Find the Sundials linear solver libraries
+    FIND_LIBRARY(SUNDIALS_SUNLINSOLLAPACKBAND_LIB
+      sundials_sunlinsollapackband ${SUNDIALS_LIB_DIR}
+      DOC "Sundials banded LAPACK linear solver library")
+
+    FIND_LIBRARY(SUNDIALS_SUNLINSOLLAPACKBAND_FLIB
+      sundials_fsunlinsollapackband ${SUNDIALS_LIB_DIR}
+      DOC "Sundials banded LAPACK linear solver Fortran-C library")
+
+    FIND_LIBRARY(SUNDIALS_SUNLINSOLLAPACKDENSE_LIB
+      sundials_sunlinsollapackdense ${SUNDIALS_LIB_DIR}
+      DOC "Sundials dense LAPACK linear solver library")
+
+    FIND_LIBRARY(SUNDIALS_SUNLINSOLLAPACKDENSE_FLIB
+      sundials_fsunlinsollapackdense ${SUNDIALS_LIB_DIR}
+      DOC "Sundials dense LAPACK linear solver Fortran-C library")
+
+    # example source files
+    ADD_EXECUTABLE(${example} ${example}.f)
+  
+    # libraries to link against
+    TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_LIBS})
+    TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_SUNLINSOLLAPACKBAND_LIB})
+    TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_SUNLINSOLLAPACKDENSE_LIB})
+    TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_SUNLINSOLLAPACKBAND_FLIB})
+    TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_SUNLINSOLLAPACKDENSE_FLIB})
+    TARGET_LINK_LIBRARIES(${example} ${LAPACK_LIBRARIES})
+
+    IF(BLAS_LIBRARIES)
+      TARGET_LINK_LIBRARIES(${example} ${BLAS_LIBRARIES})
+    ENDIF()
+
+  ENDFOREACH(example ${examples_bl})
+ENDIF()
+
+
+# Build each example with KLU linear solvers one by one
+IF(KLU_LIBRARIES)
+  FOREACH(example ${examples_klu})
+
+    # Find the Sundials linear solver libraries
+    FIND_LIBRARY(SUNDIALS_SUNLINSOLKLU_LIB
+      sundials_sunlinsolklu ${SUNDIALS_LIB_DIR}
+      DOC "Sundials KLU linear solver library")
+
+    FIND_LIBRARY(SUNDIALS_SUNLINSOLKLU_FLIB
+      sundials_fsunlinsolklu ${SUNDIALS_LIB_DIR}
+      DOC "Sundials KLU linear solver Fortran-C library")
+
+    # example source files
+    ADD_EXECUTABLE(${example} ${example}.f)
+  
+    # libraries to link against
+    TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_LIBS})
+    TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_SUNLINSOLKLU_LIB})
+    TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_SUNLINSOLKLU_FLIB})
+    TARGET_LINK_LIBRARIES(${example} ${KLU_LIBRARIES})
+
+  ENDFOREACH(example ${examples_klu})
+ENDIF()
+
+
+# Build each example with SuperLU_MT linear solvers one by one
+IF(SUPERLUMT_LIBRARIES)
+  FOREACH(example ${examples_slumt})
+
+    # Find the Sundials linear solver libraries
+    FIND_LIBRARY(SUNDIALS_SUNLINSOLSLUMT_LIB
+      sundials_sunlinsolsuperlumt ${SUNDIALS_LIB_DIR}
+      DOC "Sundials KLU linear solver library")
+
+    FIND_LIBRARY(SUNDIALS_SUNLINSOLSLUMT_FLIB
+      sundials_fsunlinsolsuperlumt ${SUNDIALS_LIB_DIR}
+      DOC "Sundials KLU linear solver Fortran-C library")
+
+    # example source files
+    ADD_EXECUTABLE(${example} ${example}.f)
+  
+    # libraries to link against
+    TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_LIBS})
+    TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_SUNLINSOLSLUMT_LIB})
+    TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_SUNLINSOLSLUMT_FLIB})
+    TARGET_LINK_LIBRARIES(${example} ${SUPERLUMT_LIBRARIES})
+
+    IF(BLAS_LIBRARIES)
+      TARGET_LINK_LIBRARIES(${example} ${BLAS_LIBRARIES})
+    ENDIF()
+
+  ENDFOREACH(example ${examples_slumt})
+ENDIF()

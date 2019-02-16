@@ -1,0 +1,49 @@
+
+2D Heat PDE test problem:
+   nprocs = 1
+   nx = 60
+   ny = 120
+   kx = 0.5
+   ky = 0.75
+   rtol = 1e-05
+   atol = 1e-10
+   nxl (proc 0) = 60
+   nyl (proc 0) = 120
+
+        t      ||u||_rms
+   ----------------------
+    0.000000    0.000000
+    0.015000    0.005780
+    0.030000    0.009224
+    0.045000    0.011275
+    0.060000    0.012497
+    0.075000    0.013224
+    0.090000    0.013658
+    0.105000    0.013916
+    0.120000    0.014070
+    0.135000    0.014162
+    0.150000    0.014216
+    0.165000    0.014249
+    0.180000    0.014268
+    0.195000    0.014280
+    0.210000    0.014287
+    0.225000    0.014291
+    0.240000    0.014293
+    0.255000    0.014295
+    0.270000    0.014295
+    0.285000    0.014296
+    0.300000    0.014296
+   ----------------------
+
+Final Solver Statistics:
+   Internal solver steps = 51 (attempted = 51)
+   Total RHS evals:  Fe = 0,  Fi = 513
+   Total linear solver setups = 18
+   Total linear iterations = 4451
+   Total number of Jacobian-vector products = 4451
+   Total number of Preconditioner setups = 1
+   Total number of Preconditioner solves = 4666
+   Total number of linear solver convergence failures = 215
+   Total number of Newton iterations = 255
+   Total number of nonlinear solver convergence failures = 0
+   Total number of error test failures = 0

@@ -1,0 +1,140 @@
+
+2-species diurnal advection-diffusion problem
+  10 by 10 mesh on 4 processors
+  Using CVBBDPRE preconditioner module
+    Difference-quotient half-bandwidths are mudq = 10,  mldq = 10
+    Retained band block half-bandwidths are mukeep = 2,  mlkeep = 2
+
+Preconditioner type is:  jpre = PREC_LEFT
+
+t = 7.20e+03   no. steps = 190   order = 5   stepsize = 1.61e+02
+At bottom left:  c1, c2 =    1.047e+04    2.527e+11 
+At top right:    c1, c2 =    1.119e+04    2.700e+11 
+
+t = 1.44e+04   no. steps = 221   order = 5   stepsize = 3.85e+02
+At bottom left:  c1, c2 =    6.659e+06    2.582e+11 
+At top right:    c1, c2 =    7.301e+06    2.833e+11 
+
+t = 2.16e+04   no. steps = 247   order = 5   stepsize = 3.00e+02
+At bottom left:  c1, c2 =    2.665e+07    2.993e+11 
+At top right:    c1, c2 =    2.931e+07    3.313e+11 
+
+t = 2.88e+04   no. steps = 272   order = 4   stepsize = 2.13e+02
+At bottom left:  c1, c2 =    8.702e+06    3.380e+11 
+At top right:    c1, c2 =    9.650e+06    3.751e+11 
+
+t = 3.60e+04   no. steps = 311   order = 4   stepsize = 9.70e+01
+At bottom left:  c1, c2 =    1.404e+04    3.387e+11 
+At top right:    c1, c2 =    1.561e+04    3.765e+11 
+
+t = 4.32e+04   no. steps = 368   order = 4   stepsize = 3.95e+02
+At bottom left:  c1, c2 =    6.243e-08    3.382e+11 
+At top right:    c1, c2 =    7.021e-08    3.804e+11 
+
+t = 5.04e+04   no. steps = 388   order = 5   stepsize = 4.74e+02
+At bottom left:  c1, c2 =    3.000e-07    3.358e+11 
+At top right:    c1, c2 =    3.306e-07    3.864e+11 
+
+t = 5.76e+04   no. steps = 401   order = 5   stepsize = 3.61e+02
+At bottom left:  c1, c2 =   -1.096e-10    3.320e+11 
+At top right:    c1, c2 =   -6.268e-11    3.909e+11 
+
+t = 6.48e+04   no. steps = 414   order = 5   stepsize = 6.38e+02
+At bottom left:  c1, c2 =    1.186e-11    3.313e+11 
+At top right:    c1, c2 =    6.568e-14    3.963e+11 
+
+t = 7.20e+04   no. steps = 425   order = 5   stepsize = 6.38e+02
+At bottom left:  c1, c2 =   -7.713e-12    3.330e+11 
+At top right:    c1, c2 =    5.432e-13    4.039e+11 
+
+t = 7.92e+04   no. steps = 436   order = 5   stepsize = 6.38e+02
+At bottom left:  c1, c2 =    2.525e-13    3.334e+11 
+At top right:    c1, c2 =   -2.072e-14    4.120e+11 
+
+t = 8.64e+04   no. steps = 448   order = 5   stepsize = 6.38e+02
+At bottom left:  c1, c2 =    4.758e-15    3.352e+11 
+At top right:    c1, c2 =    7.572e-17    4.163e+11 
+
+
+Final Statistics: 
+
+lenrw   =  2696     leniw   =   156
+lenrwls =  2454     leniwls =   126
+nst     =   448
+nfe     =   580     nfels   =   509
+nni     =   577     nli     =   509
+nsetups =    76     netf    =    26
+npe     =     8     nps     =  1029
+ncfn    =     0     ncfl    =     0
+
+In CVBBDPRE: real/integer local work space sizes = 1300, 192
+             no. flocal evals. = 176
+
+
+-------------------------------------------------------------------
+
+
+Preconditioner type is:  jpre = PREC_RIGHT
+
+t = 7.20e+03   no. steps = 191   order = 5   stepsize = 1.22e+02
+At bottom left:  c1, c2 =    1.047e+04    2.527e+11 
+At top right:    c1, c2 =    1.119e+04    2.700e+11 
+
+t = 1.44e+04   no. steps = 223   order = 5   stepsize = 2.79e+02
+At bottom left:  c1, c2 =    6.659e+06    2.582e+11 
+At top right:    c1, c2 =    7.301e+06    2.833e+11 
+
+t = 2.16e+04   no. steps = 249   order = 5   stepsize = 4.31e+02
+At bottom left:  c1, c2 =    2.665e+07    2.993e+11 
+At top right:    c1, c2 =    2.931e+07    3.313e+11 
+
+t = 2.88e+04   no. steps = 309   order = 4   stepsize = 1.32e+02
+At bottom left:  c1, c2 =    8.702e+06    3.380e+11 
+At top right:    c1, c2 =    9.650e+06    3.751e+11 
+
+t = 3.60e+04   no. steps = 342   order = 5   stepsize = 1.28e+02
+At bottom left:  c1, c2 =    1.404e+04    3.387e+11 
+At top right:    c1, c2 =    1.561e+04    3.765e+11 
+
+t = 4.32e+04   no. steps = 393   order = 4   stepsize = 3.91e+02
+At bottom left:  c1, c2 =    1.998e-09    3.382e+11 
+At top right:    c1, c2 =    2.210e-09    3.804e+11 
+
+t = 5.04e+04   no. steps = 406   order = 5   stepsize = 6.68e+02
+At bottom left:  c1, c2 =    4.173e-11    3.358e+11 
+At top right:    c1, c2 =    4.509e-11    3.864e+11 
+
+t = 5.76e+04   no. steps = 421   order = 4   stepsize = 1.46e+02
+At bottom left:  c1, c2 =    1.346e-13    3.320e+11 
+At top right:    c1, c2 =    1.429e-13    3.909e+11 
+
+t = 6.48e+04   no. steps = 436   order = 4   stepsize = 5.90e+02
+At bottom left:  c1, c2 =    4.188e-18    3.313e+11 
+At top right:    c1, c2 =   -4.796e-15    3.963e+11 
+
+t = 7.20e+04   no. steps = 448   order = 4   stepsize = 5.90e+02
+At bottom left:  c1, c2 =   -4.919e-18    3.330e+11 
+At top right:    c1, c2 =    8.770e-17    4.039e+11 
+
+t = 7.92e+04   no. steps = 460   order = 4   stepsize = 5.90e+02
+At bottom left:  c1, c2 =    2.462e-20    3.334e+11 
+At top right:    c1, c2 =   -2.599e-20    4.120e+11 
+
+t = 8.64e+04   no. steps = 472   order = 4   stepsize = 5.90e+02
+At bottom left:  c1, c2 =    3.021e-23    3.352e+11 
+At top right:    c1, c2 =   -3.233e-23    4.163e+11 
+
+
+Final Statistics: 
+
+lenrw   =  2696     leniw   =   156
+lenrwls =  2454     leniwls =   126
+nst     =   472
+nfe     =   603     nfels   =   758
+nni     =   600     nli     =   758
+nsetups =    94     netf    =    29
+npe     =     9     nps     =  1257
+ncfn    =     0     ncfl    =     0
+
+In CVBBDPRE: real/integer local work space sizes = 1300, 192
+             no. flocal evals. = 198

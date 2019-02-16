@@ -1,0 +1,65 @@
+
+fidaHeat2D_kry_bbd_p: Heat equation, parallel example for FIDA
+                Discretized heat equation on 2D unit square.
+                Zero boundary conditions, polynomial conditions.
+                Mesh dimensions: 10 x 10         Total system size: 100
+
+Subgrid dimensions:  5 x  5           Processor array:  2 x  2
+Tolerance parameters: rtol = 0.00E+00   atol = 0.10E-02
+Constraints set to force all solution components >= 0.
+SUPPRESSALG = SUNTRUE to remove boundary components from the error test.
+Linear solver: SPGMR.    Preconditioner: BBDPRE - Banded-block-diagonal.
+
+
+Case  1
+  Difference quotient half-bandwidths = 5
+  Retained matrix half-bandwidths = 1
+
+Output Summary
+  umax = max-norm of solution
+  nre = nre + nreLS (total number of RES evals.)
+
+   time         umax       k nst  nni  nli   nre   nge      h     npe  nps
+--------------------------------------------------------------------------
+ 0.1000E-01   0.82411E+00  2  12   14    7  14+ 7   96   0.26E-02   8   21
+ 0.2000E-01   0.68812E+00  3  15   18   12  18+12   96   0.51E-02   8   30
+ 0.4000E-01   0.47075E+00  3  18   24   22  24+22  108   0.66E-02   9   46
+ 0.8000E-01   0.21660E+00  3  22   29   30  29+30  108   0.13E-01   9   59
+ 0.1600E+00   0.45659E-01  4  28   37   43  37+43  120   0.26E-01  10   80
+ 0.3200E+00   0.21095E-02  4  35   45   59  45+59  120   0.24E-01  10  104
+ 0.6400E+00   0.34044E-04  1  40   54   71  54+71  156   0.19E+00  13  125
+ 0.1280E+01   0.36151E-18  1  42   56   71  56+71  180   0.76E+00  15  127
+ 0.2560E+01   0.81974E-20  1  43   57   71  57+71  192   0.15E+01  16  128
+ 0.5120E+01   0.17133E-19  1  44   58   71  58+71  204   0.30E+01  17  129
+ 0.1024E+02   0.36660E-19  1  45   59   71  59+71  216   0.61E+01  18  130
+
+Error test failures            =  1
+Nonlinear convergence failures =  0
+Linear convergence failures    =  0
+
+
+Case  2
+  Difference quotient half-bandwidths = 1
+  Retained matrix half-bandwidths = 1
+
+Output Summary
+  umax = max-norm of solution
+  nre = nre + nreLS (total number of RES evals.)
+
+   time         umax       k nst  nni  nli   nre   nge      h     npe  nps
+--------------------------------------------------------------------------
+ 0.1000E-01   0.82411E+00  2  12   14    7  14+ 7   32   0.26E-02   8   21
+ 0.2000E-01   0.68812E+00  3  15   18   12  18+12   32   0.51E-02   8   30
+ 0.4000E-01   0.47093E+00  3  19   23   20  23+20   36   0.10E-01   9   43
+ 0.8000E-01   0.21655E+00  3  23   27   32  27+32   36   0.10E-01   9   59
+ 0.1600E+00   0.45225E-01  4  27   33   44  33+44   40   0.20E-01  10   77
+ 0.3200E+00   0.21868E-02  3  34   41   67  41+67   44   0.41E-01  11  108
+ 0.6400E+00   0.79056E-20  1  39   49   86  49+86   52   0.16E+00  13  135
+ 0.1280E+01   0.18819E-19  1  41   51   86  51+86   60   0.66E+00  15  137
+ 0.2560E+01   0.20662E-18  1  42   52   86  52+86   64   0.13E+01  16  138
+ 0.5120E+01   0.20095E-17  1  43   53   86  53+86   68   0.26E+01  17  139
+ 0.1024E+02   0.12941E-16  1  44   54   86  54+86   72   0.52E+01  18  140
+
+Error test failures            =  0
+Nonlinear convergence failures =  0
+Linear convergence failures    =  0

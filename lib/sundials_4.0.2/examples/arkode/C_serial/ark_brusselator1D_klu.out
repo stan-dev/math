@@ -1,0 +1,29 @@
+
+1D Brusselator PDE test problem (KLU solver):
+    N = 201,  NEQ = 603
+    problem parameters:  a = 0.6,  b = 2,  ep = 1e-05
+    diffusion coefficients:  du = 0.025,  dv = 0.025,  dw = 0.025
+    reltol = 1.0e-06,  abstol = 1.0e-10
+
+        t      ||u||_rms   ||v||_rms   ||w||_rms
+   ----------------------------------------------
+    1.000000    0.791135    3.140510    1.999984
+    2.000000    0.960033    2.757430    1.999981
+    3.000000    0.930299    2.532868    1.999982
+    4.000000    0.681809    2.696300    1.999986
+    5.000000    0.506326    3.007843    1.999990
+    6.000000    0.449425    3.275283    1.999991
+    7.000000    0.446297    3.465934    1.999991
+    8.000000    0.463486    3.586728    1.999991
+    9.000000    0.491684    3.644311    1.999990
+   10.000000    0.530857    3.640396    1.999990
+   ----------------------------------------------
+
+Final Solver Statistics:
+   Internal solver steps = 99 (attempted = 99)
+   Total RHS evals:  Fe = 0,  Fi = 1694
+   Total linear solver setups = 35
+   Total number of Jacobian evaluations = 14
+   Total number of nonlinear iterations = 1196
+   Total number of nonlinear solver convergence failures = 0
+   Total number of error test failures = 0

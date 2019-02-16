@@ -1,0 +1,68 @@
+# -*- mode: makefile -*-
+# -----------------------------------------------------------------
+# Programmer: Radu Serban @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2019, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# Makefile for @SOLVER@ fortran parallel examples
+#
+# This file is generated from a template using various variables
+# set at configuration time. It can be used as a template for
+# other user Makefiles.
+# -----------------------------------------------------------------
+
+SHELL = @SHELL@
+
+prefix       = @prefix@
+exec_prefix  = @exec_prefix@
+includedir   = @includedir@
+libdir       = @libdir@
+
+FFLAGS       = @FFLAGS@
+F77_LDFLAGS  = @F77_LDFLAGS@
+F77_LIBS     = @F77_LIBS@
+
+LINKFLAGS = -Wl,-rpath,@libdir@
+
+MPIF77       = @MPIF77@
+MPI_INC_DIR  = @MPI_INC_DIR@
+MPI_FLAGS    = @MPI_FLAGS@
+MPIF77_LNKR  = @MPIF77_LNKR@
+MPI_LIB_DIR  = @MPI_LIB_DIR@
+MPI_LIBS     = @MPI_LIBS@
+
+TMP_INCS = ${includedir} ${MPI_INC_DIR}
+INCLUDES = $(addprefix -I, ${TMP_INCS})
+LIBRARIES = -l@SOLVER_FLIB@ -l@SOLVER_LIB@ -lsundials_fnvecparallel -lsundials_nvecparallel ${LIBS}
+
+EXAMPLES = @EXAMPLES@
+OBJECTS  = ${EXAMPLES:=.o}
+
+# -----------------------------------------------------------------------------------------
+
+.SUFFIXES : .o .f
+
+.f.o :
+	${MPIF77} ${FFLAGS} ${MPI_FLAGS} -I${MPI_INC_DIR} ${INCLUDES} -c $<
+
+# -----------------------------------------------------------------------------------------
+
+all: ${OBJECTS}
+	@for i in ${EXAMPLES} ; do \
+	  echo "${MPIF77_LNKR} -o $${i} $${i}.o ${MPI_FLAGS} ${F77_LDFLAGS} ${F77_LIBS} ${INCLUDES} -L${libdir} ${LIBRARIES} -L${MPI_LIB_DIR} ${MPI_LIBS} ${LINKFLAGS}" ; \
+	  ${MPIF77_LNKR} -o $${i} $${i}.o ${MPI_FLAGS} ${F77_LDFLAGS} ${F77_LIBS} ${INCLUDES} -L${libdir} ${LIBRARIES} -L${MPI_LIB_DIR} ${MPI_LIBS} ${LINKFLAGS} ; \
+	done
+
+clean:
+	rm -f ${OBJECTS}
+	rm -f ${EXAMPLES}
+
+# -----------------------------------------------------------------------------------------

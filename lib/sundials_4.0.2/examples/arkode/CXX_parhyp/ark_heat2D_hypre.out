@@ -1,0 +1,50 @@
+
+2D Heat PDE test problem:
+   nprocs = 4
+   nx = 60
+   ny = 120
+   kx = 0.5
+   ky = 0.75
+   rtol = 1e-05
+   atol = 1e-10
+   nxl (proc 0) = 30
+   nyl (proc 0) = 60
+
+        t      ||u||_rms    ||uerr||      hcur
+
+   ----------------------------------------------
+    0.000000    0.000000   0.00000e+00    ----
+    0.015000    0.005780   3.18681e-07   1.5e-03
+    0.030000    0.009224   9.24035e-07   2.3e-03
+    0.045000    0.011275   1.53138e-06   2.3e-03
+    0.060000    0.012497   2.04102e-06   2.3e-03
+    0.075000    0.013224   2.43230e-06   2.3e-03
+    0.090000    0.013658   2.71774e-06   3.5e-03
+    0.105000    0.013916   2.91900e-06   3.5e-03
+    0.120000    0.014070   3.05748e-06   3.5e-03
+    0.135000    0.014162   3.15094e-06   3.5e-03
+    0.150000    0.014216   3.21437e-06   8.1e-03
+    0.165000    0.014249   3.25462e-06   1.0e-02
+    0.180000    0.014268   3.28120e-06   3.1e-03
+    0.195000    0.014280   3.29941e-06   1.3e-02
+    0.210000    0.014287   3.31064e-06   1.2e-02
+    0.225000    0.014291   3.31719e-06   1.2e-02
+    0.240000    0.014293   3.32112e-06   1.2e-02
+    0.255000    0.014295   3.32417e-06   1.2e-02
+    0.270000    0.014295   3.32605e-06   1.2e-02
+    0.285000    0.014296   3.32715e-06   1.2e-02
+    0.300000    0.014296   3.32790e-06   2.0e-02
+   ----------------------------------------------
+
+Final Solver Statistics:
+   Internal solver steps = 88 (attempted = 94)
+   Total RHS evals:  Fe = 0,  Fi = 943
+   Total linear solver setups = 28
+   Total linear iterations = 2255
+   Total number of Jacobian-vector products = 0
+   Total number of Jacobian evaluations = 8
+   Total number of linear solver convergence failures = 0
+   Total number of Nonlinear iterations = 470
+   Total number of nonlinear solver convergence failures = 0
+   Total number of error test failures = 6
+   Error: max = 6.87361e-06, rms = 2.90167e-06

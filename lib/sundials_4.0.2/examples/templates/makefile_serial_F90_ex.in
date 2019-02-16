@@ -1,0 +1,110 @@
+# -*- mode: makefile -*-
+# -----------------------------------------------------------------
+# Programmer(s): Daniel R. Reynolds @ SMU
+#                David J. Gardner @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2019, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# Makefile for @SOLVER@ Fortran90 serial examples
+#
+# This file is generated from a template using variables
+# set at configuration time. It can be used as a template for
+# other user Makefiles.
+# -----------------------------------------------------------------
+
+SHELL = @SHELL@
+
+prefix       = @prefix@
+exec_prefix  = @exec_prefix@
+includedir   = @includedir@
+libdir       = @libdir@
+
+F90         = @F90@
+F90FLAGS    = @F90FLAGS@
+F90_LDFLAGS = @F90_LDFLAGS@
+F90_LIBS    = @F90_LIBS@
+
+LINKFLAGS = -Wl,-rpath,@libdir@
+
+# -----------------------------------------------------------------------------------------
+
+LIBRARIES_LAPACK = -lsundials_fsunlinsollapackdense -lsundials_fsunlinsollapackband -lsundials_sunlinsollapackdense -lsundials_sunlinsollapackband @LAPACK_LIBS@ @BLAS_LIBS@
+LINKFLAGS_LAPACK = ${LINKFLAGS}:@LAPACK_LIBRARY_DIR@:@BLAS_LIBRARY_DIR@
+
+INCLUDES_KLU  = @KLU_INCLUDE_DIR@
+LIBRARIES_KLU = -lsundials_fsunlinsolklu -lsundials_sunlinsolklu @KLU_LIBS@
+LINKFLAGS_KLU = ${LINKFLAGS}:@KLU_LIBRARY_DIR@
+
+INCLUDES_SLUMT  = @SUPERLUMT_INCLUDE_DIR@
+LIBRARIES_SLUMT = -lsundials_fsunlinsolsuperlumt -lsundials_sunlinsolsuperlumt @SUPERLUMT_LIBS@ @BLAS_LIBS@
+LINKFLAGS_SLUMT = ${LINKFLAGS}:@SUPERLUMT_LIBRARY_DIR@:@BLAS_LIBRARY_DIR@
+
+TMP_INCS  = ${includedir} ${INCLUDES_SLUMT} ${INCLUDES_KLU}
+INCLUDES  = $(addprefix -I, ${TMP_INCS})
+LIBRARIES = -l@SOLVER_FLIB@ -l@SOLVER_LIB@ -lsundials_fnvecserial -lsundials_nvecserial ${LIBS}
+
+# -----------------------------------------------------------------------------------------
+
+EXAMPLES = @EXAMPLES@
+OBJECTS  = ${EXAMPLES:=.o}
+
+# LAPACK Examples
+EXAMPLES_BL = @EXAMPLES_BL@
+OBJECTS_BL  = ${EXAMPLES_BL:=.o}
+
+# KLU Examples
+EXAMPLES_KLU = @EXAMPLES_KLU@
+OBJECTS_KLU  = ${EXAMPLES_KLU:=.o}
+
+# SuperLU_MT Examples
+EXAMPLES_SLUMT = @EXAMPLES_SLUMT@
+OBJECTS_SLUMT  = ${EXAMPLES_SLUMT:=.o}
+
+# -----------------------------------------------------------------------------------------
+
+.SUFFIXES : .o .f90
+
+.f90.o :
+	${F90} ${F90FLAGS} ${INCLUDES} -c $<
+
+# -----------------------------------------------------------------------------------------
+
+all: examples examples_bl examples_klu examples_slumt
+
+examples: ${OBJECTS}
+	@for i in ${EXAMPLES} ; do \
+	  echo "${F90} -o $${i} $${i}.o ${F90_LDFLAGS} ${F90_LIBS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LINKFLAGS}" ; \
+	  ${F90} -o $${i} $${i}.o ${F90_LDFLAGS} ${F90_LIBS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LINKFLAGS} ; \
+	done
+
+examples_bl: ${OBJECTS_BL}
+	@for i in ${EXAMPLES_BL} ; do \
+	  echo "${F90} -o $${i} $${i}.o ${F90_LDFLAGS} ${F90_LIBS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LIBRARIES_LAPACK} ${LINKFLAGS_LAPACK}" ; \
+	  ${F90} -o $${i} $${i}.o ${F90_LDFLAGS} ${F90_LIBS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LIBRARIES_LAPACK} ${LINKFLAGS_LAPACK} ; \
+	done
+
+examples_klu: ${OBJECTS_KLU}
+	@for i in ${EXAMPLES_KLU} ; do \
+	  echo "${F90} -o $${i} $${i}.o ${F90_LDFLAGS} ${F90_LIBS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LIBRARIES_KLU} ${LINKFLAGS_KLU}" ; \
+	  ${F90} -o $${i} $${i}.o ${F90_LDFLAGS} ${F90_LIBS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LIBRARIES_KLU} ${LINKFLAGS_KLU} ; \
+	done
+
+examples_slumt: ${OBJECTS_SLUMT}
+	@for i in ${EXAMPLES_SLUMT} ; do \
+	  echo "${F90} -o $${i} $${i}.o ${F90_LDFLAGS} ${F90_LIBS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LIBRARIES_SLUMT} ${LINKFLAGS_SLUMT}" ; \
+	  ${F90} -o $${i} $${i}.o ${F90_LDFLAGS} ${F90_LIBS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LIBRARIES_SLUMT} ${LINKFLAGS_SLUMT} ; \
+	done
+
+clean:
+	rm -f ${OBJECTS} ${OBJECTS_BL} ${OBJECTS_KLU} ${OBJECTS_SLUMT}
+	rm -f ${EXAMPLES} ${EXAMPLES_BL} ${EXAMPLES_KLU} ${EXAMPLES_SLUMT}
+
+# -----------------------------------------------------------------------------------------

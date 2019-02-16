@@ -1,0 +1,46 @@
+List of parallel HYPRE ARKODE C++ examples
+
+  ark_heat2D_hypre : 2-D heat equation with user-supplied HYPRE matrix and linear solver objects
+
+Sample results:
+
+The following CMake command was used to configure SUNDIALS:
+
+ cmake \
+cmake \
+ -DCMAKE_INSTALL_PREFIX:PATH="$PWD/../install_opt" \
+ -DEXAMPLES_INSTALL_PATH:PATH="$PWD/../examples_opt" \
+ -DCMAKE_C_COMPILER=/usr/local/mpich-3.2.1/gnu/bin/mpicc \
+ -DMPI_C_COMPILER=/usr/local/mpich-3.2.1/gnu/bin/mpicc \
+ -DCMAKE_Fortran_COMPILER=/usr/local/mpich-3.2.1/gnu/bin/mpif90 \
+ -DMPI_Fortran_COMPILER=/usr/local/mpich-3.2.1/gnu/bin/mpif90 \
+ -DCMAKE_CXX_COMPILER=/usr/local/mpich-3.2.1/gnu/bin/mpicxx \
+ -DMPI_CXX_COMPILER=/usr/local/mpich-3.2.1/gnu/bin/mpicxx \
+ -DMPIEXEC_EXECUTABLE=/usr/local/mpich-3.2.1/gnu/bin/mpiexec \
+ -DCMAKE_C_FLAGS:STRING="-O0 -g -fPIC" \
+ -DCMAKE_Fortran_FLAGS:STRING="-O0 -g -fPIC" \
+ -DCMAKE_CXX_FLAGS:STRING="-O0 -g -fPIC" \
+ -DOpenMP_C_FLAGS:STRING="-fopenmp" \
+ -DOpenMP_CXX_FLAGS:STRING="-fopenmp" \
+ -DSUNDIALS_PRECISION:STRING="double" \
+ -DSUNDIALS_INDEX_TYPE:STRING="int64_t" \
+ -DEXAMPLES_ENABLE_C:BOOL="1" \
+ -DEXAMPLES_ENABLE_CXX:BOOL="1" \
+ -DEXAMPLES_ENABLE_F90:BOOL="1" \
+ -DEXAMPLES_INSTALL:BOOL="1" \
+ -DSUNDIALS_DEVTESTS=ON \
+ -DFCMIX_ENABLE:BOOL="1" \
+ -DMPI_ENABLE:BOOL="1" \
+ -DOPENMP_ENABLE:BOOL="1" \
+ -DPTHREAD_ENABLE:BOOL="1" \
+ -DBUILD_SHARED_LIBS:BOOL="1" \
+ -DHYPRE_ENABLE:BOOL="1" \
+ -DHYPRE_INCLUDE_DIR:STRING="/usr/local/hypre-2.14.0/gnu_int64/include" \
+ -DHYPRE_LIBRARY_DIR:FILEPATH="/usr/local/hypre-2.14.0/gnu_int64/lib" \
+ ../sundials
+
+  System Architecture: x86_64
+  Processor Type: Intel(R) Xeon(R) CPU E5-2630 v3 @ 2.40GHz
+  Operating System: Ubuntu 18.04
+  C/Fortran Compilers: gcc/gfortran v7.3.0
+  MPI: MPICH v3.2.1
