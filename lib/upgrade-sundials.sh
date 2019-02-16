@@ -8,15 +8,23 @@
 # This script will also manage the git process so the different steps are in
 # separate git commits.
 #
-# This script will:
-# 1. Remove the old version of Sundials and add a new git commit.
-# 2. Unpack the new Sundials version and add a new git commit.
-# 3. Prune Sundials and add a new git commit.
-# 4. Modify Sundials so it passes CRAN and add a new git commit.
+# This script will take these steps and add a git commit after each:
+# 1. Remove the old version of Sundials.
+# 2. Modify makefiles and README with new version numbers
+# 3. Unpack the new Sundials version.
+# 4. Prune Sundials.
+# 5. Add cmake-generated config files to Sundials.
+# 6. Modify Sundials by removing printf and fprintf (for CRAN)
 #
 # This script should be run from the lib/ folder and the argument should be the
 # name of the sundials-*.tar.gz file.
 #===============================================================================
+set -e
+err_report() {
+    echo "Error on line $1"
+}
+
+trap 'err_report $LINENO' ERR
 
 usage() {
     cat <<HELP_USAGE
@@ -31,7 +39,7 @@ usage() {
     making modifications to the library as necessary. The modifications
     will be separate git commits for verification.
 
-    If there are any unstaged modifications or staged modifications that 
+    If there are any unstaged modifications or staged modifications that
     haven't been git committed, this script will quit prior to adding any
     git commits.
 
@@ -53,7 +61,7 @@ if [[ -z "$sundials_version" ]] ; then
 
     Can not parse the Sundials version from the filename.
     Expecting: sundials-<version>.tar.gz
-        
+
     Is the filename correct? "$sundials_filename"
 
 SUNDIALS_VERSION_ERROR
@@ -72,29 +80,76 @@ GIT_ERROR
     exit 1
 fi
 
-echo "Version $sundials_version"
+sundials_old_version=`expr "$(ls -d sundials_*/)" : '^sundials_\(.*\)/'`
 
-## 1. Remove the old version of Sundials and add a new git commit.
-git rm -r sundials_*/
+echo "Old version:  $sundials_old_version"
+echo "New version:  $sundials_version"
 
+# 1. Remove the old version of Sundials.
+git rm -r sundials_${sundials_old_version}/
+rm -rf sundials_${sundials_old_version}/
+git commit -m "upgrading to sundials v${sundials_version}; removing old sundials library"
 
+# 2. Modify makefiles and README with new version number
+sed -i -e "s|lib/sundials_${sundials_old_version}|lib/sundials_${sundials_version}|g" ../README.md ../make/*
+sed -i -e "s|SUNDIALS (version ${sundials_old_version})|SUNDIALS (version ${sundials_version})|g" ../README.md
+rm -f ../README.md*-e ../make/*-e
+git add ../README.md ../make/*
+git commit -m "upgrading to sundials v${sundials_version}; modifying with new version number"
 
+# 3. Unpack the new Sundials version.
+tar xvzf $sundials_filename
+mv sundials-${sundials_version} sundials_${sundials_version}
+git add sundials_${sundials_version}
+git commit -m "upgrading to sundials v${sundials_version}; adding unmodified sundials library"
 
-# SUNDIALS_VERSION="4.0.1"
+# 4. Prune Sundials.
+cd sundials_${sundials_version}
 
-# SUNDIALS_TAR=sundials-${SUNDIALS_VERSION}.tar.gz
+# generate sundials_config.h and sundials_fconfig.h prior to removing these files
+mkdir build
+cd build
+cmake ..
+cd ..
 
-# tar xvzf $SUNDIALS_TAR
-# mv sundials-${SUNDIALS_VERSION} sundials_${SUNDIALS_VERSION}
+git rm -rf INSTALL_GUIDE.pdf config/ doc/ examples/ test/ */cvode */ida */arkode */kinsol
+find . -name CMakeLists.txt -exec git rm {} \;
+git commit -m "upgrading to sundials v${sundials_version}; pruning files"
 
-# cd sundials_${SUNDIALS_VERSION}
+# 5. Add cmake-generated config files to Sundials.
+cp build/include/sundials/*config.h include/sundials/
+rm -rf build
+git add include
+git commit -m "upgrading to sundials v${sundials_version}; adding config files"
 
-# rm -rf INSTALL_GUIDE.pdf config/ doc/ examples/ test/ */cvode */ida */arkode */kinsol
-# find . -name CMakeLists.txt -exec rm {} \;
+# 6. Modify Sundials by removing printf and fprintf (for CRAN)
+cat >include/stan_sundials_printf_override.hpp <<EOF
+#ifndef STAN_MATH_SUNDIALS_PRINTF_OVERRIDE_HPP
+#define STAN_MATH_SUNDIALS_PRINTF_OVERRIDE_HPP
 
-# find src -name "*.c" -type f -exec sed -E -i _orig  's#[^sf]printf\(#STAN_SUNDIALS_PRINTF(#'g {} \;
-# find src -name "*.c" -type f -exec sed -E -i _orig  's#fprintf\(#STAN_SUNDIALS_FPRINTF(#'g {} \;
+#ifdef WITH_SUNDIAL_PRINTF
+#define STAN_SUNDIALS_PRINTF(...) printf(__VA_ARGS__)
+#define STAN_SUNDIALS_FPRINTF(...) fprintf(__VA_ARGS__)
+#else
+#define STAN_SUNDIALS_PRINTF(...)
+#define STAN_SUNDIALS_FPRINTF(...)
+#endif
 
-# find src -name "*.c_orig" -exec rm {} \;
+#endif
+EOF
 
-# echo "In case of a large version change please consider updating sundials_config.h in sundials-config/include/sundials"
+find src -name "*.c" -type f -exec sed -E -i _orig  's#[^sf]printf\(#STAN_SUNDIALS_PRINTF(#'g {} \;
+find src -name "*.c" -type f -exec sed -E -i _orig  's#fprintf\(#STAN_SUNDIALS_FPRINTF(#'g {} \;
+find src -name "*.c_orig" -exec rm {} \;
+git add src include/stan_sundials_printf_override.hpp
+git commit -m "upgrading to sundials v${sundials_version}; removing printf and fprintf for CRAN"
+
+cat <<EOF
+
+    Done upgrading Sundials from v${sundials_old_version} to v${sundials_version}.
+
+    Please check the upgrade worked by running a test with CVODES linked.
+    Example (from Math home directory):
+      ./runTests.py test/unit/math/rev/mat/functor/cvodes_ode_data_prim_test.cpp
+
+EOF
