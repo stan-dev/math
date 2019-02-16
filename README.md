@@ -8,12 +8,11 @@ The Stan Math Library is licensed under the [new BSD license](LICENSE.md).
 
 Required Libraries
 ------------------
-Stan Math depends on four libraries:
+Stan Math depends on three libraries:
 
 - Boost (version 1.66.0): [Boost Home Page](http://www.boost.org)
 - Eigen (version 3.3.3): [Eigen Home Page](http://eigen.tuxfamily.org/index.php?title=Main_Page)
-- CVODES (version 4.0.1): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
-- IDAS (version 3.0.1): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
+- SUNDIALS (version 4.0.1): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
 
 These are distributed under the `lib/` subdirectory. Only these versions of the dependent libraries have been tested with Stan Math.
 
