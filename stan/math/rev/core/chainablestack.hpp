@@ -34,12 +34,12 @@ namespace {
 
 struct ad_tape_initializer {
   ad_tape_initializer() {
-    std::cout << "Initializer created" << std::endl;
+    // std::cout << "Initializer created" << std::endl;
     tape_ = stan::math::ChainableStack::init();
   }
   ~ad_tape_initializer() {
     // std::lock_guard<std::mutex> cout_lock(cout_mutex_init);
-    std::cout << "Initializer destructed" << std::endl;
+    // std::cout << "Initializer destructed" << std::endl;
   }
 
   typedef ChainableStack::AutodiffStackStorage* tape_ptr_t;
