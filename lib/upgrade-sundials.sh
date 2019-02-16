@@ -31,27 +31,70 @@ usage() {
     making modifications to the library as necessary. The modifications
     will be separate git commits for verification.
 
+    If there are any unstaged modifications or staged modifications that 
+    haven't been git committed, this script will quit prior to adding any
+    git commits.
+
 HELP_USAGE
     exit 0
 }
 
 [ -z "$1" ] && { usage; }
 
-SUNDIALS_VERSION="4.0.1"
 
-SUNDIALS_TAR=sundials-${SUNDIALS_VERSION}.tar.gz
+sundials_filename=$1
+## extract version number from argument
+## ex: sundials-4.0.1.tar.gz -> version=4.0.1
 
-tar xvzf $SUNDIALS_TAR
-mv sundials-${SUNDIALS_VERSION} sundials_${SUNDIALS_VERSION}
+sundials_version=`expr "$sundials_filename" : '^sundials-\(.*\)\.tar\.gz'`
 
-cd sundials_${SUNDIALS_VERSION}
+if [[ -z "$sundials_version" ]] ; then
+    cat <<SUNDIALS_VERSION_ERROR
 
-rm -rf INSTALL_GUIDE.pdf config/ doc/ examples/ test/ */cvode */ida */arkode */kinsol
-find . -name CMakeLists.txt -exec rm {} \;
+    Can not parse the Sundials version from the filename.
+    Expecting: sundials-<version>.tar.gz
+        
+    Is the filename correct? "$sundials_filename"
 
-find src -name "*.c" -type f -exec sed -E -i _orig  's#[^sf]printf\(#STAN_SUNDIALS_PRINTF(#'g {} \;
-find src -name "*.c" -type f -exec sed -E -i _orig  's#fprintf\(#STAN_SUNDIALS_FPRINTF(#'g {} \;
+SUNDIALS_VERSION_ERROR
+    exit 1
+fi
 
-find src -name "*.c_orig" -exec rm {} \;
+## check git tree for modifications
+if ! git diff-index --quiet HEAD --
+then
+    cat <<GIT_ERROR
 
-echo "In case of a large version change please consider updating sundials_config.h in sundials-config/include/sundials"
+    Please commit or stash any git changes prior to
+    running this script. Quitting.
+
+GIT_ERROR
+    exit 1
+fi
+
+echo "Version $sundials_version"
+
+## 1. Remove the old version of Sundials and add a new git commit.
+git rm -r sundials_*/
+
+
+
+
+# SUNDIALS_VERSION="4.0.1"
+
+# SUNDIALS_TAR=sundials-${SUNDIALS_VERSION}.tar.gz
+
+# tar xvzf $SUNDIALS_TAR
+# mv sundials-${SUNDIALS_VERSION} sundials_${SUNDIALS_VERSION}
+
+# cd sundials_${SUNDIALS_VERSION}
+
+# rm -rf INSTALL_GUIDE.pdf config/ doc/ examples/ test/ */cvode */ida */arkode */kinsol
+# find . -name CMakeLists.txt -exec rm {} \;
+
+# find src -name "*.c" -type f -exec sed -E -i _orig  's#[^sf]printf\(#STAN_SUNDIALS_PRINTF(#'g {} \;
+# find src -name "*.c" -type f -exec sed -E -i _orig  's#fprintf\(#STAN_SUNDIALS_FPRINTF(#'g {} \;
+
+# find src -name "*.c_orig" -exec rm {} \;
+
+# echo "In case of a large version change please consider updating sundials_config.h in sundials-config/include/sundials"
