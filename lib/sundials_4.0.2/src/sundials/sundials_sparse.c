@@ -298,7 +298,7 @@ int SparseCopyMat(const SlsMat A, SlsMat B)
   int A_nz = A->indexptrs[A->NP];
   
   if(A->M != B->M || A->N != B->N) {
-    /* fprintf(stderr, "Error: Copying sparse matrices of different size!\n"); */
+    /* STAN_SUNDIALS_FPRINTF(stderr, "Error: Copying sparse matrices of different size!\n"); */
     return (-1);
   }
     
@@ -527,7 +527,7 @@ int SparseAddMat(SlsMat A, const SlsMat B)
 
   /* ensure that matrix dimensions agree */
   if ((A->M != B->M) || (A->N != B->N)) {
-    /* fprintf(stderr, "Error: Adding sparse matrices of different size!\n"); */
+    /* STAN_SUNDIALS_FPRINTF(stderr, "Error: Adding sparse matrices of different size!\n"); */
     return(-1);
   }
   
@@ -753,24 +753,24 @@ void SparsePrintMat(const SlsMat A, FILE* outfile)
   }
 
 
-  fprintf(outfile, "\n");
+  STAN_SUNDIALS_FPRINTF(outfile, "\n");
   
-  fprintf(outfile, "%d by %d %s matrix, NNZ: %d \n", A->M, A->N, matrixtype, NNZ);
+  STAN_SUNDIALS_FPRINTF(outfile, "%d by %d %s matrix, NNZ: %d \n", A->M, A->N, matrixtype, NNZ);
   for (j=0; j < A->NP; j++) {
-    fprintf(outfile, "%s %d : locations %d to %d\n", indexname, j, (A->indexptrs)[j], (A->indexptrs)[j+1]-1);
-    fprintf(outfile, "  ");
+    STAN_SUNDIALS_FPRINTF(outfile, "%s %d : locations %d to %d\n", indexname, j, (A->indexptrs)[j], (A->indexptrs)[j+1]-1);
+    STAN_SUNDIALS_FPRINTF(outfile, "  ");
     for (i = (A->indexptrs)[j]; i < (A->indexptrs)[j+1]; i++) {
 #if defined(SUNDIALS_EXTENDED_PRECISION)
-      fprintf(outfile, "%d: %Lg   ", A->indexvals[i], A->data[i]);
+      STAN_SUNDIALS_FPRINTF(outfile, "%d: %Lg   ", A->indexvals[i], A->data[i]);
 #elif defined(SUNDIALS_DOUBLE_PRECISION)
-      fprintf(outfile, "%d: %g   ", A->indexvals[i], A->data[i]);
+      STAN_SUNDIALS_FPRINTF(outfile, "%d: %g   ", A->indexvals[i], A->data[i]);
 #else
-      fprintf(outfile, "%d: %g   ", A->indexvals[i], A->data[i]);
+      STAN_SUNDIALS_FPRINTF(outfile, "%d: %g   ", A->indexvals[i], A->data[i]);
 #endif
     }
-    fprintf(outfile, "\n");
+    STAN_SUNDIALS_FPRINTF(outfile, "\n");
   }
-  fprintf(outfile, "\n");
+  STAN_SUNDIALS_FPRINTF(outfile, "\n");
     
 }
 
