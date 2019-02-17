@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char* triangular_transpose_kernel_code = STRINGIFY(
+static const char* triangular_transpose_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Copies a lower/upper triangular of a matrix to it's upper/lower.
