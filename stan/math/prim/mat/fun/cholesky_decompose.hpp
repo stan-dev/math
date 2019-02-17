@@ -24,6 +24,9 @@ namespace math {
  * <p>\f$A = L \times L^T\f$.
  * @param m Symmetrix matrix.
  * @return Square root of matrix.
+ * @note Because OpenCL only works on doubles there are two
+ * <code>cholesky_decompose</code> functions. One that works on doubles
+ * (this one) and another that works on all other types.
  * @throw std::domain_error if m is not a symmetric matrix or
  *   if m is not positive definite (if m has more than 0 elements)
  */
@@ -62,6 +65,9 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
  * <p>\f$A = L \times L^T\f$.
  * @param m Symmetrix matrix.
  * @return Square root of matrix.
+ * @note Because OpenCL only works on doubles there are two
+ * <code>cholesky_decompose</code> functions. One that works on doubles
+ * and another that works on all other types (this one).
  * @throw std::domain_error if m is not a symmetric matrix or
  *   if m is not positive definite (if m has more than 0 elements)
  */
