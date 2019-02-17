@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char *cholesky_decompose_kernel_code = STRINGIFY(
+static const char *cholesky_decompose_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Calculates the Cholesky Decomposition of a matrix on a GPU

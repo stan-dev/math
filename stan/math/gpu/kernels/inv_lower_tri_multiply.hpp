@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char* inv_lower_tri_multiply_kernel_code = STRINGIFY(
+static const char* inv_lower_tri_multiply_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Calculates B = C * A. C is an inverse matrix and A is lower triangular.
