@@ -31,7 +31,7 @@ namespace opencl_kernels {
  *  compilation for ease of writing and reading kernels.
  */
 inline auto compile_kernel(const char* name, const char* source,
-                    std::map<const char*, int> options) {
+                           std::map<const char*, int> options) {
   std::string kernel_opts = "";
   for (auto&& comp_opts : options) {
     kernel_opts += std::string(" -D") + comp_opts.first + "="
