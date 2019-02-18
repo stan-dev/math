@@ -1,8 +1,9 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_MODIFIED_BESSEL_SECOND_KIND_FRAC_HPP
 #define STAN_MATH_REV_SCAL_FUN_MODIFIED_BESSEL_SECOND_KIND_FRAC_HPP
 
-#include <stan/math/rev/core.hpp>
 #include <stan/math/rev/arr/functor/integrate_1d.hpp>
+#include <stan/math/rev/core.hpp>
+#include <vector>
 
 namespace {
 // Note: This HAS to be outside the stan::math namespace, otherwise resolution

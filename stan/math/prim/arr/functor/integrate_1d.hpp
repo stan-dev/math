@@ -125,7 +125,7 @@ inline double integrate(const F& f, double a, double b,
   if (used_two_integrals) {
     if (error1 > relative_tolerance * L1) {
       char message[1024];
-      sprintf(message,
+      snprintf(message, 1024,
               " exceeds the given relative tolerance times norm of integral "
               "below zero (threshold = %e)",
               relative_tolerance * L1);
@@ -135,7 +135,7 @@ inline double integrate(const F& f, double a, double b,
     }
     if (error2 > relative_tolerance * L2) {
       char message[1024];
-      sprintf(message,
+      snprintf(message, 1024,
               " exceeds the given relative tolerance times norm of integral "
               "above zero (threshold = %e)",
               relative_tolerance * L2);
@@ -146,7 +146,7 @@ inline double integrate(const F& f, double a, double b,
   } else {
     if (error1 > relative_tolerance * L1) {
       char message[1024];
-      sprintf(message,
+      snprintf(message, 1024,
               " exceeds the given relative tolerance times norm of integral "
               "(threshold = %e)",
               relative_tolerance * L1);

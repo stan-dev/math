@@ -46,7 +46,6 @@ struct TestValue {
 // Print["};"]
 
 std::array<TestValue, 24> testValues = {
-
     TestValue(1.11, 0.08, 2.818523457573867, 2.829911601437736,
               -14.036580746277),
 
@@ -116,8 +115,7 @@ std::array<TestValue, 24> testValues = {
               -5.881782356650216),
 
     TestValue(31.4, 15.61, 8.8739384452097, 1.436044516907569,
-              -2.252872461450695),
-
+              -2.252872461450695)
 };
 
 double allowed_rel_error = 1e-6;
@@ -146,7 +144,6 @@ TEST(AgradRev, log_modified_bessel_second_kind_frac_double_double) {
                   double f1 = stan::math::log_modified_bessel_second_kind_frac(
                       test.v, test.z, err_out);
                   EXPECT_REL_ERROR(test.value, f1);
-
                 });
 }
 
