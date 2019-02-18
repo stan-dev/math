@@ -63,12 +63,32 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
  * Compute the integral of the single variable function f from a to b to within
  * a specified relative tolerance. a and b can be finite or infinite.
  *
- * f should be compatible with reverse mode autodiff and have the signature:
- *   var f(double x, double xc, const std::vector<var>& theta,
- *     const std::vector<double>& x_r, const std::vector<int> &x_i,
- * std::ostream* msgs)
- *
- * It should return the value of the function evaluated at x. Any errors
+ * f should be compatible with reverse mode autodiff and needs to work with 
+ * several combinations of double and stan::math::var inputs.
+ * Some methods to define a valid f are:
+ * 
+ * Templated functor (call as integrate_1d(f{}, ...)):
+ *    struct f {
+ *     template <typename T1, typename T2, typename T3>
+ *     inline typename stan::return_type<T1, T2, T3>::type operator()(
+ *        const T1 &x, const T2 &xc, const std::vector<T3> &theta,
+ *        const std::vector<double> &x_r, const std::vector<int> &x_i,
+ *        std::ostream *msgs) const {
+ *      return exp(x) + theta[0]; 
+ *     }
+ *    };
+ * 
+ * Lambda:
+ *    auto f = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
+ *                 std::ostream *msgs) {
+ *       return exp(stan::math::beta_lpdf(x, theta[0], theta[1]));
+ *    }; 
+ * 
+ * Note also that defining f within stan::math namespace may prevent standard
+ * functions such as pow from resolving properly across all the var/double 
+ * instantiations of f.
+ * 
+ * f should return the value of the function evaluated at x. Any errors
  * should be printed to the msgs stream.
  *
  * Integrals that cross zero are broken into two, and the separate integrals are
