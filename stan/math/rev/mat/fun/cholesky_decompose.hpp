@@ -260,7 +260,7 @@ class cholesky_opencl : public vari {
    * @param L_A matrix, cholesky factor of A
    */
   cholesky_opencl(const Eigen::Matrix<var, -1, -1>& A,
-               const Eigen::Matrix<double, -1, -1>& L_A)
+                  const Eigen::Matrix<double, -1, -1>& L_A)
       : vari(0.0),
         M_(A.rows()),
         variRefA_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
@@ -302,11 +302,11 @@ class cholesky_opencl : public vari {
 
     matrix_gpu L(L_);
     matrix_gpu Lbar(Lbar_);
-    int block_size_ = M_ /
-       opencl_context.tuning_opts().cholesky_rev_block_partition;
+    int block_size_
+        = M_ / opencl_context.tuning_opts().cholesky_rev_block_partition;
     block_size_ = std::max(block_size_, 8);
-    block_size_ = std::min(block_size_,
-       opencl_context.tuning_opts().cholesky_rev_min_block_size);
+    block_size_ = std::min(
+        block_size_, opencl_context.tuning_opts().cholesky_rev_min_block_size);
     // The following is a GPU implementation of
     // the chain() function from the cholesky_block
     // vari class implementation
