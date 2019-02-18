@@ -30,8 +30,8 @@ namespace opencl_kernels {
  * @note The macros defined in kernels/helpers.hpp are included in the kernel
  *  compilation for ease of writing and reading kernels.
  */
-auto compile_kernel(const char* name, const char* source,
-                    std::map<const char*, int> options) {
+inline auto compile_kernel(const char* name, const char* source,
+                           std::map<const char*, int> options) {
   std::string kernel_opts = "";
   for (auto&& comp_opts : options) {
     kernel_opts += std::string(" -D") + comp_opts.first + "="

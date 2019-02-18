@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char* neg_rect_lower_tri_multiply_kernel_code = STRINGIFY(
+static const char* neg_rect_lower_tri_multiply_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Calculates C = -B * A where B is rectangular and A is a lower
