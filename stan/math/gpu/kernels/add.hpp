@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char *add_kernel_code = STRINGIFY(
+static const char *add_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Matrix addition on the GPU

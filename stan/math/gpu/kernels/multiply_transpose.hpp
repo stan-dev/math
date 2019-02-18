@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char* multiply_transpose_kernel_code = STRINGIFY(
+static const char* multiply_transpose_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Matrix multiplication of the form A*A^T on the GPU
