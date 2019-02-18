@@ -298,16 +298,15 @@ class cholesky_gpu : public vari {
 
     matrix_gpu L(L_);
     matrix_gpu Lbar(Lbar_);
-    int M = M_;
-    int block_size_ = std::max((M / 8), 8);
+    int block_size_ = std::max((M_ / 8), 8);
     block_size_ = std::min(block_size_, 512);
     // The following is a GPU implementation of
     // the chain() function from the cholesky_block
     // vari class implementation
     for (int k = M; k > 0; k -= block_size_) {
-      int j = std::max(0, k - block_size_);
-      int k_j_ind = k - j;
-      int m_k_ind = M - k;
+      const int j = std::max(0, k - block_size_);
+      const int k_j_ind = k - j;
+      const int m_k_ind = M - k;
 
       matrix_gpu R(k_j_ind, j);
       matrix_gpu D(k_j_ind, k_j_ind);
