@@ -172,19 +172,12 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                stage('Windows Headers') {
+                stage('Windows Headers & Unit') {
                     agent { label 'windows' }
                     steps {
                         deleteDirWin()
                         unstash 'MathSetup'
                         bat "make -j${env.PARALLEL} test-headers"
-                    }
-                }
-                stage('Windows Unit') {
-                    agent { label 'windows' }
-                    steps {
-                        deleteDirWin()
-                        unstash 'MathSetup'
                         runTestsWin("test/unit")
                     }
                 }
