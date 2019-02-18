@@ -1,12 +1,12 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
 
-#include <stan/math/gpu/opencl_context.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #ifdef STAN_OPENCL
+#include <stan/math/gpu/opencl_context.hpp>
 #include <stan/math/gpu/cholesky_decompose.hpp>
 #include <stan/math/gpu/copy.hpp>
 #endif
