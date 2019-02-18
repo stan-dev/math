@@ -64,7 +64,7 @@ inline matrix_gpu cholesky_decompose(matrix_gpu& A) {
   // NOTE: The code in this section follows the naming conventions
   // in the report linked in the docs.
   const int block
-      = floor(A.rows() / opencl_context.tuning_opts().cholesky_partition);
+      = std::floor(A.rows() / opencl_context.tuning_opts().cholesky_partition);
   // Subset the top left block of the input A into A_11
   matrix_gpu A_11(block, block);
   A_11.sub_block(A, 0, 0, 0, 0, block, block);
