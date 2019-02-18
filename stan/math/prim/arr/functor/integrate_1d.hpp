@@ -126,9 +126,9 @@ inline double integrate(const F& f, double a, double b,
     if (error1 > relative_tolerance * L1) {
       char message[1024];
       snprintf(message, 1024,
-              " exceeds the given relative tolerance times norm of integral "
-              "below zero (threshold = %e)",
-              relative_tolerance * L1);
+               " exceeds the given relative tolerance times norm of integral "
+               "below zero (threshold = %e)",
+               relative_tolerance * L1);
 
       domain_error(function, "error estimate of integral below zero", error1,
                    "", message);
@@ -136,9 +136,9 @@ inline double integrate(const F& f, double a, double b,
     if (error2 > relative_tolerance * L2) {
       char message[1024];
       snprintf(message, 1024,
-              " exceeds the given relative tolerance times norm of integral "
-              "above zero (threshold = %e)",
-              relative_tolerance * L2);
+               " exceeds the given relative tolerance times norm of integral "
+               "above zero (threshold = %e)",
+               relative_tolerance * L2);
 
       domain_error(function, "error estimate of integral above zero", error2,
                    "", message);
@@ -147,9 +147,9 @@ inline double integrate(const F& f, double a, double b,
     if (error1 > relative_tolerance * L1) {
       char message[1024];
       snprintf(message, 1024,
-              " exceeds the given relative tolerance times norm of integral "
-              "(threshold = %e)",
-              relative_tolerance * L1);
+               " exceeds the given relative tolerance times norm of integral "
+               "(threshold = %e)",
+               relative_tolerance * L1);
 
       domain_error(function, "error estimate of integral", error1, "", message);
     }
