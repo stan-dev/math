@@ -11,15 +11,19 @@
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
+
+#ifdef STAN_OPENCL
 #include <stan/math/gpu/cholesky_decompose.hpp>
 #include <stan/math/gpu/constants.hpp>
-#include <stan/math/gpu/diagonal_multiply.hpp>
 #include <stan/math/gpu/copy.hpp>
+#include <stan/math/gpu/diagonal_multiply.hpp>
 #include <stan/math/gpu/lower_tri_inverse.hpp>
 #include <stan/math/gpu/matrix_gpu.hpp>
 #include <stan/math/gpu/multiply.hpp>
+#include <stan/math/gpu/opencl_context.hpp>
 #include <stan/math/gpu/err/check_square.hpp>
 #include <stan/math/gpu/err/check_symmetric.hpp>
+#endif
 
 #include <algorithm>
 
@@ -234,7 +238,7 @@ class cholesky_scalar : public vari {
   }
 };
 #ifdef STAN_OPENCL
-class cholesky_gpu : public vari {
+class cholesky_opencl : public vari {
  public:
   int M_;
   vari** variRefA_;
@@ -255,7 +259,7 @@ class cholesky_gpu : public vari {
    * @param A matrix
    * @param L_A matrix, cholesky factor of A
    */
-  cholesky_gpu(const Eigen::Matrix<var, -1, -1>& A,
+  cholesky_opencl(const Eigen::Matrix<var, -1, -1>& A,
                const Eigen::Matrix<double, -1, -1>& L_A)
       : vari(0.0),
         M_(A.rows()),
@@ -298,16 +302,18 @@ class cholesky_gpu : public vari {
 
     matrix_gpu L(L_);
     matrix_gpu Lbar(Lbar_);
-    int M = M_;
-    int block_size_ = std::max((M / 8), 8);
-    block_size_ = std::min(block_size_, 512);
+    int block_size_ = M_ /
+       opencl_context.tuning_opts().cholesky_rev_block_partition;
+    block_size_ = std::max(block_size_, 8);
+    block_size_ = std::min(block_size_,
+       opencl_context.tuning_opts().cholesky_rev_min_block_size);
     // The following is a GPU implementation of
     // the chain() function from the cholesky_block
     // vari class implementation
-    for (int k = M; k > 0; k -= block_size_) {
-      int j = std::max(0, k - block_size_);
-      int k_j_ind = k - j;
-      int m_k_ind = M - k;
+    for (int k = M_; k > 0; k -= block_size_) {
+      const int j = std::max(0, k - block_size_);
+      const int k_j_ind = k - j;
+      const int m_k_ind = M_ - k;
 
       matrix_gpu R(k_j_ind, j);
       matrix_gpu D(k_j_ind, k_j_ind);
@@ -415,7 +421,7 @@ inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
 #ifdef STAN_OPENCL
     if (L_A.rows()
         > opencl_context.tuning_opts().cholesky_size_worth_transfer) {
-      cholesky_gpu* baseVari = new cholesky_gpu(A, L_A);
+      cholesky_opencl* baseVari = new cholesky_opencl(A, L_A);
       size_t pos = 0;
       for (size_type j = 0; j < L.cols(); ++j) {
         for (size_type i = j; i < L.cols(); ++i) {
