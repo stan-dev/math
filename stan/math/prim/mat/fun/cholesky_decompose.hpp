@@ -28,7 +28,8 @@ namespace math {
  * @throw std::domain_error if m is not a symmetric matrix or
  *   if m is not positive definite (if m has more than 0 elements)
  */
-template <typename T, typename std::enable_if_t<std::is_same<T, double>::value, T>* = nullptr>
+template <typename T, typename std::enable_if_t<std::is_same<T, double>::value,
+                                                T>* = nullptr>
 inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
     const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
   check_square("cholesky_decompose", "m", m);
@@ -66,7 +67,8 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
  * @throw std::domain_error if m is not a symmetric matrix or
  *   if m is not positive definite (if m has more than 0 elements)
  */
-template <typename T, typename std::enable_if_t<!std::is_same<T, double>::value, T>* = nullptr>
+template <typename T, typename std::enable_if_t<!std::is_same<T, double>::value,
+                                                T>* = nullptr>
 inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
     const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
   check_square("cholesky_decompose", "m", m);
@@ -76,7 +78,6 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
   check_pos_definite("cholesky_decompose", "m", llt);
   return llt.matrixL();
 }
-
 
 }  // namespace math
 
