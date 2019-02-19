@@ -15,6 +15,8 @@
 # 4. Prune Sundials.
 # 5. Add cmake-generated config files to Sundials.
 # 6. Modify Sundials by removing printf and fprintf (for CRAN)
+# 7. Remove unused bits from Sundials which have compilation problems and are
+#    not needed.
 #
 # This script should be run from the lib/ folder and the argument should be the
 # name of the sundials-*.tar.gz file.
@@ -143,6 +145,10 @@ find src -name "*.c" -type f -exec sed -E -i _orig  's#fprintf\(#STAN_SUNDIALS_F
 find src -name "*.c_orig" -exec rm {} \;
 git add src include/stan_sundials_printf_override.hpp
 git commit -m "upgrading to sundials v${sundials_version}; removing printf and fprintf for CRAN"
+
+# 7. Get rid of troublesome c files not needed
+git rm src/sundials/sundials_spfgmr.c src/sundials/sundials_spgmr.c
+git commit -m "upgrading to sundials v${sundials_version}; removing troublesome and not needed sundials c modules"
 
 cat <<EOF
 
