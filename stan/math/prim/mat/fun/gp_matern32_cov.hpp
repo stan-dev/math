@@ -25,15 +25,15 @@ namespace math {
  *
  * where \f$ d(x, x') \f$ is the Euclidean distance.
  *
- * @tparam T_x type of elements contained in vector x
- * @tparam T_s type of element of sigma, marginal standard deviation
- * @tparam T_l type of elements of length scale
+ * @tparam T_x type for each scalar
+ * @tparam T_s type of parameter of sigma
+ * @tparam T_l type of parameter length scale
  *
- * @param x std::vector of scalars or vectors
+ * @param x std::vector of scalars that can be used in squared distance
+ *    This function assumes each element of x is the same size.
  * @param length_scale length scale
- * @param sigma standard deviation that can be used in stan::math::square
+ * @param sigma marginal standard deviation or magnitude
  * @throw std::domain error if sigma <= 0, l <= 0, or x is nan or inf
- *
  */
 template <typename T_x, typename T_s, typename T_l>
 inline typename Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type,
@@ -83,12 +83,12 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
  *
  * where \f$d(x, x')\f$ is the Euclidean distance.
  *
- * @tparam T_x type of scalar
- * @tparam T_s type of element of sigma, marginal standard deviation
- * @tparam T_l type of elements of length scale
+ * @tparam T_x type for each scalar
+ * @tparam T_s type of element of parameter sigma
+ * @tparam T_l type of each length scale parameter
  *
- * @param x std::vector of Eigen column vectors of scalars.
- * @param length_scale length scale
+ * @param x std::vector of Eigen vectors of scalars.
+ * @param length_scale std::vector of length scales
  * @param sigma standard deviation that can be used in stan::math::square
  * @throw std::domain error if sigma <= 0, l <= 0, or x is nan or inf
  */
@@ -147,13 +147,16 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
  *
  * where \f$d(x, x')\f$ is the Euclidean distance.
  *
- * @tparam T_x1 type of elements contained in vector x1
- * @tparam T_x2 type of elements contained in vector x2
- * @tparam T_s type of element of sigma, marginal standard deviation
- * @tparam T_l type of elements of length scale
+ * This function is for the cross covariance matrix neededed
+ * to compute the posterior predictive density.
  *
- * @param x1 std::vector of scalars or vectors
- * @param x2 std::vector of scalars of vectors
+ * @tparam T_x1 first type of scalars contained in vector x1
+ * @tparam T_x2 second type of scalars contained in vector x2
+ * @tparam T_s type of parameter sigma, marginal standard deviation
+ * @tparam T_l type of parameter length scale
+ *
+ * @param x1 std::vector of scalars that can be used in squared_distance
+ * @param x2 std::vector of scalars that can be used in squared_distance
  *    This function assumes all elements of x1 and x2 are the same length.
  * @param length_scale length scale
  * @param sigma standard deviation that can be used in stan::math::square
@@ -208,15 +211,18 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  *
  * where \f$d(x, x')\f$ is the Euclidean distance
  *
- * @tparam T_x1 type of scalars
- * @tparam T_x2 type of scalars
- * @tparam T_s type of element of sigma, marginal standard deviation
- * @tparam T_l type of elements of length scale
+ * This function is for the cross covariance matrix neededed
+ * to compute the posterior predictive density.
  *
- * @param x1 std::vector of Eigen column vectors of scalars
- * @param x2 std::vector of Eigen column vectors of scalars
+ * @tparam T_x1 first type of std::vector of scalars
+ * @tparam T_x2 second type of std::vector of scalars
+ * @tparam T_s type of parameter sigma, marginal standard deviation
+ * @tparam T_l type of parameter length scale
+ *
+ * @param x1 std::vector of Eigen vectors of scalars
+ * @param x2 std::vector of Eigen vectors of scalars
  *    This function assumes each column of x1 and x2 are the same size.
- * @param length_scale length scale
+ * @param length_scale parameter length scale
  * @param sigma standard deviation that can be used in stan::math::square
  * @throw std::domain error if sigma <= 0, l <= 0, or x1, x2 are nan or inf
  *

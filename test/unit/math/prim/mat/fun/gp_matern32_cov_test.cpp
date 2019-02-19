@@ -491,8 +491,64 @@ TEST(MathPrimMat, zero_size) {
 
   Eigen::MatrixXd cov;
   Eigen::MatrixXd cov2;
-  cov = stan::math::gp_matern32_cov(x, sigma, l);
-  cov2 = stan::math::gp_matern32_cov(x, x, sigma, l);
+  EXPECT_NO_THROW(cov = stan::math::gp_matern32_cov(x, sigma, l));
+  EXPECT_NO_THROW(cov2 = stan::math::gp_matern32_cov(x, x, sigma, l));
   EXPECT_EQ(0, cov.rows());
   EXPECT_EQ(0, cov.cols());
+}
+
+TEST(MathPrimMat, calculations) {
+  double sigma = 1.0;
+  double l = 1.0;
+
+  std::vector<double> x1(2);
+  x1[0] = 1; x1[1] = 2;
+
+  std::vector<double> x2(2);
+  x2[0] = 2; x2[1] = 3;
+
+  Eigen::MatrixXd cov;
+  EXPECT_NO_THROW(cov = stan::math::gp_matern32_cov(x1, sigma, l));
+  ASSERT_FLOAT_EQ(1.0, cov(0, 0));
+  ASSERT_FLOAT_EQ(1.0, cov(1, 1));
+  ASSERT_FLOAT_EQ((1.0 + sqrt(3)) * exp(-sqrt(3)), cov(1, 0));
+  ASSERT_FLOAT_EQ((1.0 + sqrt(3)) * exp(-sqrt(3)), cov(0, 1));
+  EXPECT_NO_THROW(cov = stan::math::gp_matern32_cov(x1, x2, sigma, l));
+  ASSERT_FLOAT_EQ((1.0 + sqrt(3)) * exp(-sqrt(3)), cov(0, 0));
+  ASSERT_FLOAT_EQ((1.0 + sqrt(3)) * exp(-sqrt(3)), cov(1, 1));
+  ASSERT_FLOAT_EQ(1.0, cov(1, 0));
+  ASSERT_FLOAT_EQ((1.0 + sqrt(3) * 2.0) * exp(-sqrt(3) * 2.0), cov(0, 1));
+}
+
+
+TEST(MathPrimMat, calculations_ard) {
+  double sigma = 1.0;
+
+  std::vector<double> l(2);
+  l[0] = 1.0;
+  l[1] = 2.0;
+
+  std::vector<Eigen::Matrix<double, -1, 1>> x(2);
+  x[0].resize(2, 1);
+  x[0] << 1, 1;
+  x[1].resize(2, 1);
+  x[1] << 2, 4;
+
+  Eigen::MatrixXd cov;
+  Eigen::MatrixXd cov2;
+  cov = stan::math::gp_matern32_cov(x, sigma, l);
+  cov2 = stan::math::gp_matern32_cov(x, x, sigma, l);
+
+  EXPECT_FLOAT_EQ(1.0, cov(0, 0));
+  EXPECT_FLOAT_EQ(1.0, cov2(0, 0));
+  EXPECT_FLOAT_EQ((1.0 + sqrt(3.0) * sqrt(1 + 9.0 / 4.0)) *
+                  exp(-sqrt(3.0) * sqrt(1 + 9.0 / 4.0)), cov(1, 0));
+  EXPECT_FLOAT_EQ((1.0 + sqrt(3.0) * sqrt(1 + 9.0 / 4.0)) *
+                  exp(-sqrt(3.0) * sqrt(1 + 9.0 / 4.0)), cov2(1, 0));
+  EXPECT_FLOAT_EQ((1.0 + sqrt(3.0) * sqrt(1 + 9.0 / 4.0)) *
+                  exp(-sqrt(3.0) * sqrt(1 + 9.0 / 4.0)), cov(0, 1));
+  EXPECT_FLOAT_EQ((1.0 + sqrt(3.0) * sqrt(1 + 9.0 / 4.0)) *
+                  exp(-sqrt(3.0) * sqrt(1 + 9.0 / 4.0)), cov2(0, 1));
+  EXPECT_FLOAT_EQ(1.0, cov(1, 1));
+  EXPECT_FLOAT_EQ(1.0, cov2(1, 1));
 }
