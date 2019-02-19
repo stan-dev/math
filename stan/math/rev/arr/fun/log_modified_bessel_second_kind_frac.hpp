@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_SCAL_FUN_MODIFIED_BESSEL_SECOND_KIND_FRAC_HPP
 
 #include <stan/math/rev/arr/functor/integrate_1d.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/rev/core.hpp>
 #include <vector>
 
@@ -73,7 +74,7 @@ log_modified_bessel_second_kind_frac(const T0__ &v, const T1__ &z,
   // Note: we increase the relative tolerance, as the integrator fails with low
   // tolerance, although the results of the full function still passes the tests
   T_Ret Q = integrate_1d(integrate_func{}, 0.0, 1.0, theta,
-                         std::vector<double>(), std::vector<int>(), msgs, 1e-4);
+                         std::vector<double>(), std::vector<int>(), msgs, 1e-6);
 
   return lead + log(Q);
 }
