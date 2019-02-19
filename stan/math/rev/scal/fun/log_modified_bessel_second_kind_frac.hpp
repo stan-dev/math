@@ -1,9 +1,12 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_LOG_MODIFIED_BESSEL_SECOND_KIND_FRAC_HPP
 #define STAN_MATH_REV_SCAL_FUN_LOG_MODIFIED_BESSEL_SECOND_KIND_FRAC_HPP
 
-#include <stan/math/rev/arr/functor/integrate_1d.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/scal/fun/value_of.hpp>
+#include <stan/math/rev/scal/meta/is_var.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <boost/math/quadrature/tanh_sinh.hpp>
 #include <vector>
 #include <iostream>
 

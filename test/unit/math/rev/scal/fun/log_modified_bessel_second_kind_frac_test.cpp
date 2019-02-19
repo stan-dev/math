@@ -1,4 +1,4 @@
-#include <stan/math/rev/arr/fun/log_modified_bessel_second_kind_frac.hpp>
+#include <stan/math/rev/scal/fun/log_modified_bessel_second_kind_frac.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
