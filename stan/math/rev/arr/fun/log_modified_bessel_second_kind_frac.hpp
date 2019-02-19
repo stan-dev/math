@@ -1,24 +1,41 @@
-#ifndef STAN_MATH_REV_SCAL_FUN_MODIFIED_BESSEL_SECOND_KIND_FRAC_HPP
-#define STAN_MATH_REV_SCAL_FUN_MODIFIED_BESSEL_SECOND_KIND_FRAC_HPP
+#ifndef STAN_MATH_REV_SCAL_FUN_LOG_MODIFIED_BESSEL_SECOND_KIND_FRAC_HPP
+#define STAN_MATH_REV_SCAL_FUN_LOG_MODIFIED_BESSEL_SECOND_KIND_FRAC_HPP
 
 #include <stan/math/rev/arr/functor/integrate_1d.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/rev/core.hpp>
 #include <vector>
+#include <iostream>
+
+
+// The formulas and code are based on
+// https://github.com/stan-dev/stan/wiki/Stan-Development-Meeting-Agenda/0ca4e1be9f7fc800658bfbd97331e800a4f50011
+// Which is in turn based on Equation 26 of Rothwell: Computation of the
+// logarithm of Bessel functions of complex argument and fractional order
+// https://scholar.google.com/scholar?cluster=2908870453394922596&hl=en&as_sdt=5,33&sciodt=0,33
+
+
+namespace stan {
+namespace math {
 
 namespace {
-// Note: This HAS to be outside the stan::math namespace, otherwise resolution
-// between std::pow and stan::math::pow fails
-struct integrate_func {
-  template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
-      const T1 &u, const T2 &, const std::vector<T3> &theta,
-      const std::vector<double> &, const std::vector<int> &,
-      std::ostream *) const {
-    typedef typename stan::return_type<T1, T2, T3>::type T_Ret;
 
-    auto v = theta[0];
-    auto z = theta[1];
+template <typename T_v, typename T_z, typename T_u>
+class inner_integral {
+  private:
+    T_v v;
+    T_z z;
+  public:
+
+  typedef typename boost::math::tools::promote_args<T_v, T_z, T_u>::type T_Ret;
+
+  inner_integral(const T_v& v, const T_z& z) : 
+    v(v),
+    z(z)
+  {}
+
+  inline T_Ret operator()(
+      const T_u &u, const T_u &) const {
 
     auto v_ = fabs(v);
     auto v_mhalf = v_ - 0.5;
@@ -35,9 +52,48 @@ struct integrate_func {
   }
 };
 
+// Uses nested autodiff to get gradient with respect to v
+// Gradient with respect to z can be computed analytically
+// Code modified from gradient_of_f
+template <typename T>
+class inner_integral_grad_v {
+  private:
+    T v;
+    T z;
+  public:
+  inner_integral_grad_v(const T& v, const T& z) : 
+    v(v), z(z)
+  {}
 
-double
-compute_inner_integral_with_gradient(const double &v, const double &z) {
+  inline T operator()(
+      const T &u, const T &uc) const {
+        double gradient = 0.0;
+        start_nested();
+        var v_var(v);
+        try {
+          auto f = inner_integral<var, T, T>(v_var, z);
+          var fx = f(u, uc);
+          fx.grad();
+          gradient = v_var.adj();
+          if (is_nan(gradient)) {
+            if (fx.val() == 0) {
+              gradient = 0;
+            } else {
+              domain_error("inner_integral_grad_v", 
+                "The gradient of inner_integral is nan", 0, "", "");
+            }
+          }
+        } catch (const std::exception &e) {
+          recover_memory_nested();
+          throw;
+        }
+        recover_memory_nested();        
+        return gradient;
+  }
+};
+
+
+double compute_inner_integral_with_gradient(const double &v, const double &z) {
   double relative_tolerance = std::sqrt(std::numeric_limits<double>::epsilon());
 
   double error;
@@ -46,102 +102,59 @@ compute_inner_integral_with_gradient(const double &v, const double &z) {
 
   boost::math::quadrature::tanh_sinh<double> integrator;
   
-  std::vector<double> theta = {v, z};
-
-  auto f_wrap = [&](double x, double xc) { 
-    integrate_func f;  
-    return f(x, xc, theta, std::vector<double>(), std::vector<int>(), 0); 
-  };
-  double integral = integrator.integrate(f_wrap, 0.0, 1.0, relative_tolerance, 
+  auto f = inner_integral<double, double, double>(v,z);
+  double integral = integrator.integrate(f, 0.0, 1.0, relative_tolerance, 
                                 &error, &L1, &levels);
 
-  //TODO: check error
-
+  if(error > 1e-6 * L1) {
+    domain_error("compute_inner_integral_with_gradient", 
+                  "error estimate of integral / L1 ", error / L1,
+                   "", "is larger than 1e-6");
+  }
   return integral;
 }
 
 
-template <typename T_v, typename T_z>
-typename boost::enable_if_c<boost::is_same<T_v, stan::math::var>::value
-                                       || boost::is_same<T_z, stan::math::var>::value,
-                                   stan::math::var>::type
-compute_inner_integral_with_gradient(const T_v &v, const T_z &z) {
-  typedef typename boost::math::tools::promote_args<T_v, T_z>::type T_Ret;
+var compute_inner_integral_with_gradient(const var &v, const double &z) {
+  double integral = compute_inner_integral_with_gradient(
+    stan::math::value_of(v), stan::math::value_of(z));
+
+  std::vector<stan::math::var> theta_concat;
+  std::vector<double> dintegral_dtheta;
+
+  theta_concat.push_back(v);
+  auto f = inner_integral_grad_v<double>(v.val(), z);
 
   double error;
   double L1;
   size_t levels;
   double condition_number;
   double relative_tolerance = std::sqrt(std::numeric_limits<double>::epsilon());
-
-  std::vector<T_Ret> theta = {v, z};
-
   boost::math::quadrature::tanh_sinh<double> integrator;
-  
-  double integral = compute_inner_integral_with_gradient(stan::math::value_of(v), stan::math::value_of(z));
 
-  std::vector<stan::math::var> theta_concat;
-  std::vector<double> dintegral_dtheta;
+  dintegral_dtheta.push_back(
+    integrator.integrate(
+          f,
+          0.0, 1.0, relative_tolerance,
+          &error, &L1, &levels
+          )
+  );
 
-  std::vector<double> theta_vals = stan::math::value_of(theta);
+  if(error > 1e-6 * L1) {
+    domain_error("compute_inner_integral_with_gradient", 
+                  "error estimate of integral / L1 ", error / L1,
+                   "", "is larger than 1e-6");
+  }
+   
 
-  std::ostringstream msgs;
-
-  if(stan::is_var<T_v>::value) {
-    theta_concat.push_back(v);
-    auto gradient1_wrap = [&](double x, double xc) { return 
-        stan::math::gradient_of_f(integrate_func{}, 
-            x, xc, theta_vals, 
-                              std::vector<double>(), std::vector<int>(), 0,
-                              std::ref(msgs));
-    };
-    dintegral_dtheta.push_back(
-      integrator.integrate(
-            gradient1_wrap,
-            0.0, 1.0, relative_tolerance,
-            &error, &L1, &levels
-            )
-    );
-    //TODO check error
-  }  
-
-  if(stan::is_var<T_z>::value) {
-    theta_concat.push_back(z);
-    auto gradient2_wrap = [&](double x, double xc) { return 
-        stan::math::gradient_of_f(integrate_func{}, 
-            x, xc, theta_vals, 
-                              std::vector<double>(), std::vector<int>(), 1,
-                              std::ref(msgs));
-    };
-    dintegral_dtheta.push_back(
-      integrator.integrate(
-            gradient2_wrap,
-            0.0, 1.0, relative_tolerance,
-            &error, &L1, &levels
-            )
-    );
-    //TODO check error
-  }    
-
-  return stan::math::precomputed_gradients(integral, theta_concat, dintegral_dtheta);
+  return stan::math::precomputed_gradients(
+    integral, theta_concat, dintegral_dtheta);
 }
-
-}  // namespace
-
-namespace stan {
-namespace math {
 
 template <typename T_v, typename T_z>
 typename boost::math::tools::promote_args<T_v, T_z>::type
-log_modified_bessel_second_kind_frac(const T_v &v, const T_z &z,
-                                     std::ostream &msgs) {
+compute_lead(const T_v &v, const T_z &z) {
   typedef typename boost::math::tools::promote_args<T_v, T_z>::type T_Ret;
-
-  // Based on
-  // https://github.com/stan-dev/stan/wiki/Stan-Development-Meeting-Agenda/0ca4e1be9f7fc800658bfbd97331e800a4f50011
-  // Which is in turn based on Equation 26 of Rothwell: Computation of the
-  // logarithm of Bessel functions of complex argument and fractional order
-  // https://scholar.google.com/scholar?cluster=2908870453394922596&hl=en&as_sdt=5,33&sciodt=0,33
 
   using std::exp;
   using std::fabs;
@@ -156,10 +169,43 @@ log_modified_bessel_second_kind_frac(const T_v &v, const T_z &z,
     return -z + 0.5 * log(0.5 * M_PI / z);
   const T_v beta = 16.0 / (2 * v_ + 1);
 
-  T_Ret Q = compute_inner_integral_with_gradient(v, z);
-  
+  return lead;
+}
+}  // namespace
+
+template <typename T_v>
+T_v log_modified_bessel_second_kind_frac(const T_v &v, const double &z) {
+  T_v lead = compute_lead(v, z);
+  T_v Q = compute_inner_integral_with_gradient(v, z);  
   return lead + log(Q);
 }
+
+template <typename T_v>
+var log_modified_bessel_second_kind_frac(const T_v &v, const var &z) {
+  T_v lead = compute_lead(v, z.val());
+
+  T_v Q = compute_inner_integral_with_gradient(v, z.val());
+  
+  T_v value = lead + log(Q);
+
+  double value_vm1 = 
+    log_modified_bessel_second_kind_frac(value_of(v) - 1, z.val());
+  double gradient_dz = 
+    -exp(value_vm1 - value_of(value)) - value_of(v) / z.val();
+
+  std::vector<var> operands;
+  std::vector<double> gradients;
+  if(is_var<T_v>::value) {
+    //A trick to combine the autodiff gradient with precomputed_gradients
+    operands.push_back(value);
+    gradients.push_back(1);
+  }
+  operands.push_back(z);
+  gradients.push_back(gradient_dz);
+
+  return precomputed_gradients(value_of(value), operands, gradients);
+}
+
 
 }  // namespace math
 }  // namespace stan
