@@ -9,6 +9,7 @@
 #include <boost/math/quadrature/tanh_sinh.hpp>
 #include <vector>
 #include <iostream>
+#include <limits>
 
 // The formulas and code are based on
 // https://github.com/stan-dev/stan/wiki/Stan-Development-Meeting-Agenda/0ca4e1be9f7fc800658bfbd97331e800a4f50011

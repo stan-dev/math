@@ -1,4 +1,4 @@
-#include <stan/math/rev/scal/fun/log_modified_bessel_second_kind_frac.hpp>
+#include <stan/math/rev/arr/fun/log_modified_bessel_second_kind_frac.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
@@ -41,7 +41,6 @@ struct TestValue {
 // }];
 // Print["};"]
 std::array<TestValue, 24> testValues = {
-
     TestValue(1.11, 0.08, 2.818523457573867, 2.829911601437736,
               -14.03658220085253),
 
@@ -112,8 +111,7 @@ std::array<TestValue, 24> testValues = {
               -5.881782356655926),
 
     TestValue(31.4, 15.61, 8.8739384452097, 1.436044516907569,
-              -2.252872461451006),
-
+              -2.252872461451006)
 };
 
 double allowed_rel_error = 1e-6;

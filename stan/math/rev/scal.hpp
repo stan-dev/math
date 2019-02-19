@@ -74,7 +74,6 @@
 #include <stan/math/rev/scal/fun/log_falling_factorial.hpp>
 #include <stan/math/rev/scal/fun/log_inv_logit.hpp>
 #include <stan/math/rev/scal/fun/log_inv_logit_diff.hpp>
-#include <stan/math/rev/scal/fun/log_modified_bessel_second_kind_frac.hpp>
 #include <stan/math/rev/scal/fun/log_mix.hpp>
 #include <stan/math/rev/scal/fun/log_rising_factorial.hpp>
 #include <stan/math/rev/scal/fun/log_sum_exp.hpp>
