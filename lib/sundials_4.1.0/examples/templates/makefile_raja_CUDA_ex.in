@@ -1,0 +1,87 @@
+# -*- mode: makefile -*-
+# -----------------------------------------------------------------
+# Programmer: Slaven Peles, Cody Balos @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2019, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# Makefile for @SOLVER@ RAJA examples
+#
+# This file is generated from a template using various variables
+# set at configuration time. It can be used as a template for
+# other user Makefiles.
+# -----------------------------------------------------------------
+
+SHELL = @SHELL@
+
+prefix       = @prefix@
+exec_prefix  = @exec_prefix@
+includedir   = @includedir@
+libdir       = @libdir@
+
+CC      	  = @CMAKE_C_COMPILER@
+CFLAGS      = @CMAKE_C_FLAGS@
+CXX         = @CMAKE_CXX_COMPILER@
+LDFLAGS     = @LDFLAGS@ -Wl,-rpath,${libdir}:${CUDALIBDIR}
+LIBS        = @LIBS@
+MPI_INC_DIR = @MPI_CXX_INCLUDE_PATH@
+NVCC        = @CUDA_NVCC_EXECUTABLE@
+NVCCFLAGS   = $(subst ;, ,@CUDA_NVCC_FLAGS@)
+CUDALIBS    = @CUDA_CUDART_LIBRARY@
+CUDALIBDIR  = $(dir ${CUDALIBS})
+RAJA_INC_DIR= @RAJA_INCLUDE_PATH@
+RAJA_LIB_DIR= @RAJA_LIB_DIR@
+RAJALIBS    = -lRAJA
+
+TMP_INCS 		 = ${includedir} ${RAJA_INC_DIR}
+INCLUDES 		 = $(addprefix -I, ${TMP_INCS})
+TMP_INCS     = ${includedir} ${RAJA_INC_DIR} ${MPI_INC_DIR}
+NVCCINCLUDES = $(addprefix -I, ${TMP_INCS})
+
+TMP_LIBDIRS  = ${libdir} ${RAJA_LIB_DIR}
+LIBDIRS      = $(addprefix -L, ${TMP_LIBDIRS})
+
+TMP_SUNDIALSLIBS = @SOLVER_LIB@ @NVECTOR_LIB@ 
+SUNDIALSLIBS     = $(addprefix -l, ${TMP_SUNDIALSLIBS})
+LIBRARIES = ${SUNDIALSLIBS} ${RAJALIBS} ${CUDALIBS} ${LIBS}
+
+EXAMPLES = @EXAMPLES@ @EXAMPLES_BL@
+EXAMPLES_DEPENDENCIES = @EXAMPLES_DEPENDENCIES@
+
+OBJECTS = ${EXAMPLES:=.o}
+OBJECTS_DEPENDENCIES = ${EXAMPLES_DEPENDENCIES:=.o}
+
+# -----------------------------------------------------------------------------------------
+
+.SUFFIXES : .o .cu
+
+.c.o :
+	${CC} ${CFLAGS} ${INCLUDES} -c $<
+
+.cu.o :
+	${NVCC} ${NVCCFLAGS} ${NVCCINCLUDES} -c $<
+
+# -----------------------------------------------------------------------------------------
+
+all: ${OBJECTS}
+	@for i in ${EXAMPLES} ; do \
+	  echo "${CXX} -o $${i} $${i}.o ${OBJECTS_DEPENDENCIES} ${INCLUDES} ${LIBDIRS} ${LIBRARIES} ${LDFLAGS}"; \
+	  ${CXX} -o $${i} $${i}.o ${OBJECTS_DEPENDENCIES} ${INCLUDES} ${LIBDIRS} ${LIBRARIES} ${LDFLAGS}; \
+	done
+
+${OBJECTS}: ${OBJECTS_DEPENDENCIES}
+
+clean:
+	rm -f ${OBJECTS_DEPENDENCIES}
+	rm -f ${OBJECTS}
+	rm -f ${EXAMPLES}
+
+# -----------------------------------------------------------------------------------------
+

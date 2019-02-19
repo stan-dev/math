@@ -1,0 +1,102 @@
+                               CVODE
+                      Release 4.1.0, Feb 2019
+                 Alan C. Hindmarsh and Radu Serban
+            Center for Applied Scientific Computing, LLNL
+
+CVODE is a solver for stiff and nonstiff ODE systems (initial value problem) 
+given in explicit form dy/dt = f(t,y). It is written in ANSI standard C.
+
+CVODE can be used both on serial and parallel computers.  The main
+difference is in the NVECTOR module of vector kernels.  The desired
+version is obtained when compiling the example files by linking the
+appropriate library of NVECTOR kernels.  In the parallel versions,
+communication between processors is done with MPI, with OpenMP, or with Pthreads.
+
+When used with the serial NVECTOR module, CVODE provides both direct (dense 
+and band) and preconditioned Krylov (iterative) linear solvers. Three different
+iterative solvers are available: scaled preconditioned GMRES (SPGMR), scaled 
+preconditioned BiCGStab (SPBCG), and scaled preconditioned TFQMR (SPTFQMR). 
+When CVODE is used with the parallel NVECTOR module, only the Krylov linear solvers 
+are available. (An approximate diagonal Jacobian option is available with both 
+versions.)  For the serial version, there is a banded preconditioner module 
+called CVBANDPRE available for use with the Krylov solvers, while for the parallel 
+version there is a preconditioner module called CVBBDPRE which provides a
+band-block-diagonal preconditioner.
+
+CVODE is part of a software family called SUNDIALS: SUite of Nonlinear
+and DIfferential/ALgebraic equation Solvers.  This suite consists of
+CVODE, CVODES, ARKode, KINSOL, IDAS, and IDA, and variants of these.  
+The directory structure of the package supplied reflects this family 
+relationship.
+
+For use with Fortran applications, a set of Fortran/C interface routines,
+called FCVODE, is also supplied.  These are written in C, but assume that
+the user calling program and all user-supplied routines are in Fortran.
+
+The notes below provide the location of documentation, directions for the 
+installation of the CVODE package, and relevant references. Following that 
+is a brief history of revisions to the package.
+
+
+A. Documentation
+----------------
+
+/sundials/doc/cvode/ contains PDF files for the CVODE User Guide [1] (cv_guide.pdf)
+and the CVODE Examples [2] (cv_examples.pdf) documents.
+
+
+B. Installation
+---------------
+
+For basic installation instructions see the file /sundials/INSTALL_GUIDE.pdf. 
+For complete installation instructions see the "Installation Procedure"
+chapter in the CVODE User Guide.
+
+
+C. References
+-------------
+
+[1] A. C. Hindmarsh and R. Serban, "User Documentation for CVODE v2.9.0," 
+    LLNL technical report UCRL-SM-208108, March 2016.
+
+[2] A. C. Hindmarsh and R. Serban, "Example Programs for CVODE v2.9.0," 
+    LLNL technical report UCRL-SM-208110, March 2016.
+
+[3] S.D. Cohen and A.C. Hindmarsh, "CVODE, a Stiff/nonstiff ODE Solver in C,"
+    Computers in Physics, 10(2), pp. 138-143, 1996.
+
+[4] A. C. Hindmarsh, P. N. Brown, K. E. Grant, S. L. Lee, R. Serban, 
+    D. E. Shumaker, and C. S. Woodward, "SUNDIALS, Suite of Nonlinear and 
+    Differential/Algebraic Equation Solvers," ACM Trans. Math. Softw., 
+    31(3), pp. 363-396, 2005.
+
+
+D. Releases
+-----------
+
+v. 4.1.0       - Feb. 2019
+v. 4.0.2       - Jan. 2019
+v. 4.0.1       - Dec. 2018
+v. 4.0.0       - Dec. 2018
+v. 3.2.1       - Oct. 2018
+v. 3.2.0       - Sep. 2018
+v. 3.1.2       - Jul. 2018
+v. 3.1.1       - May  2018
+v. 3.1.0       - Nov. 2017
+v. 3.0.0       - Sep. 2017
+v. 2.9.0       - Sep. 2016
+v. 2.8.2       - Aug. 2015
+v. 2.8.1       - Mar. 2015
+v. 2.8.0       - Mar. 2015
+v. 2.7.0       - Mar. 2012
+v. 2.6.0       - May  2009
+v. 2.5.0       - Nov. 2006
+v. 2.4.0       - Mar. 2006
+v. 2.3.0       - Apr. 2005
+v. 2.2.2       - Mar. 2005
+v. 2.2.1       - Jan. 2005
+v. 2.2.0       - Dec. 2004
+v. 2.0         - Jul. 2002 (first SUNDIALS release)
+v. 1.0         - Mar. 2002 (CVODE and PVODE combined)
+v. 1.0 (PVODE) - Jul. 1997 (date written)
+v. 1.0 (CVODE) - Sep. 1994 (date written)

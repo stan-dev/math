@@ -1,0 +1,32 @@
+
+Robertson ODE test problem (with rootfinding):
+    initial conditions:  u0 = 1,  v0 = 0,  w0 = 0
+        t             u             v             w
+   -----------------------------------------------------
+   0.00000e+00   1.00000e+00   0.00000e+00   0.00000e+00
+   2.64019e-01   9.89965e-01   3.47058e-05   1.00000e-02
+      rootsfound[] =   0   1
+   4.00000e+00   9.05519e-01   2.24048e-05   9.44589e-02
+   4.00000e+01   7.15827e-01   9.18557e-06   2.84164e-01
+   4.00000e+02   4.50519e-01   3.22289e-06   5.49478e-01
+   4.00000e+03   1.83202e-01   8.94239e-07   8.16797e-01
+   4.00000e+04   3.89834e-02   1.62177e-07   9.61016e-01
+   4.00000e+05   4.93828e-03   1.98557e-08   9.95062e-01
+   4.00000e+06   5.16807e-04   2.07133e-09   9.99483e-01
+   2.07957e+07   1.00000e-04   3.99831e-10   9.99900e-01
+      rootsfound[] =  -1   0
+   4.00000e+08   5.20791e-06   2.05800e-11   9.99995e-01
+   4.00000e+09   5.20859e-07   2.07683e-12   9.99999e-01
+   4.00000e+10   5.20842e-08   3.85950e-13   1.00000e+00
+   -----------------------------------------------------
+
+Final Solver Statistics:
+   Internal solver steps = 955 (attempted = 1157)
+   Total RHS evals:  Fe = 0,  Fi = 32554
+   Total linear solver setups = 534
+   Total RHS evals for setting up the linear system = 0
+   Total number of Jacobian evaluations = 68
+   Total number of Newton iterations = 26813
+   Total root-function g evals = 981
+   Total number of nonlinear solver convergence failures = 15
+   Total number of error test failures = 187

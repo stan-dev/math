@@ -1,0 +1,102 @@
+ ------- 
+| SPGMR |
+ -------
+
+idaKrylovDemo_ls: Heat equation, serial example problem for IDA
+               Discretized heat equation on 2D unit square.
+               Zero boundary conditions, polynomial initial conditions.
+         Mesh dimensions: 10 x 10       Total system size: 100
+
+Tolerance parameters:  rtol = 0   atol = 0.001
+Constraints set to force all solution components >= 0. 
+Linear solver: SPGMR, preconditioner using diagonal elements. 
+
+   Output Summary (umax = max-norm of solution) 
+
+  time     umax       k  nst  nni  nje   nre   nreLS    h      npe nps
+----------------------------------------------------------------------
+  0.01   8.24106e-01  2   12   14    7    14     7   2.56e-03    8  21
+  0.02   6.88134e-01  3   15   18   12    18    12   5.12e-03    8  30
+  0.04   4.70711e-01  3   18   24   21    24    21   6.58e-03    9  45
+  0.08   2.16509e-01  3   22   29   30    29    30   1.32e-02    9  59
+  0.16   4.57687e-02  4   28   36   44    36    44   1.32e-02    9  80
+  0.32   2.09938e-03  4   35   44   67    44    67   2.63e-02   10 111
+  0.64   0.00000e+00  1   39   51   77    51    77   1.05e-01   12 128
+  1.28   0.00000e+00  1   41   53   77    53    77   4.21e-01   14 130
+  2.56   0.00000e+00  1   43   55   77    55    77   1.69e+00   16 132
+  5.12   0.00000e+00  1   44   56   77    56    77   3.37e+00   17 133
+ 10.24   0.00000e+00  1   45   57   77    57    77   6.74e+00   18 134
+
+Error test failures            = 1
+Nonlinear convergence failures = 0
+Linear convergence failures    = 0
+
+======================================================================
+
+ ------- 
+| SPBCGS |
+ -------
+
+idaKrylovDemo_ls: Heat equation, serial example problem for IDA
+               Discretized heat equation on 2D unit square.
+               Zero boundary conditions, polynomial initial conditions.
+         Mesh dimensions: 10 x 10       Total system size: 100
+
+Tolerance parameters:  rtol = 0   atol = 0.001
+Constraints set to force all solution components >= 0. 
+Linear solver: SPBCG, preconditioner using diagonal elements. 
+
+   Output Summary (umax = max-norm of solution) 
+
+  time     umax       k  nst  nni  nje   nre   nreLS    h      npe nps
+----------------------------------------------------------------------
+  0.01   8.24105e-01  2   12   14    8    14     8   2.56e-03    8  22
+  0.02   6.88129e-01  3   15   18   14    18    14   5.12e-03    8  32
+  0.04   4.70820e-01  3   19   23   22    23    22   1.02e-02    9  45
+  0.08   2.16332e-01  3   23   27   32    27    32   1.02e-02    9  59
+  0.16   4.48774e-02  4   27   33   44    33    44   2.05e-02   10  77
+  0.32   1.75557e-03  3   33   41   70    41    70   4.10e-02   11 111
+  0.64   2.47770e-05  1   38   48   82    48    82   1.64e-01   13 130
+  1.28   2.56426e-22  1   40   50   82    50    82   6.55e-01   15 132
+  2.56   1.42353e-22  1   41   51   82    51    82   1.31e+00   16 133
+  5.12   2.57480e-22  1   42   52   82    52    82   2.62e+00   17 134
+ 10.24   5.23935e-22  1   43   53   82    53    82   5.24e+00   18 135
+
+Error test failures            = 0
+Nonlinear convergence failures = 0
+Linear convergence failures    = 0
+
+======================================================================
+
+ --------- 
+| SPTFQMR |
+ ---------
+
+idaKrylovDemo_ls: Heat equation, serial example problem for IDA
+               Discretized heat equation on 2D unit square.
+               Zero boundary conditions, polynomial initial conditions.
+         Mesh dimensions: 10 x 10       Total system size: 100
+
+Tolerance parameters:  rtol = 0   atol = 0.001
+Constraints set to force all solution components >= 0. 
+Linear solver: SPTFQMR, preconditioner using diagonal elements. 
+
+   Output Summary (umax = max-norm of solution) 
+
+  time     umax       k  nst  nni  nje   nre   nreLS    h      npe nps
+----------------------------------------------------------------------
+  0.01   8.24104e-01  2   12   14   11    14    11   2.56e-03    8  28
+  0.02   6.88133e-01  3   15   18   19    18    19   5.12e-03    8  42
+  0.04   4.70857e-01  3   19   23   33    23    33   1.02e-02    9  64
+  0.08   2.16481e-01  3   23   27   57    27    57   1.02e-02    9  96
+  0.16   4.51083e-02  4   27   33   84    33    84   2.05e-02   10 133
+  0.32   1.78483e-03  4   34   42  139    42   139   4.10e-02   11 204
+  0.64   4.09047e-04  1   39   51  183    51   183   1.47e-01   13 262
+  1.28   4.63930e-04  1   41   54  200    54   200   5.90e-01   15 284
+  2.56   2.45428e-05  1   43   56  203    56   203   1.18e+00   16 290
+  5.12   9.56073e-21  1   45   58  203    58   203   2.36e+00   17 292
+ 10.24   6.86586e-20  1   46   59  203    59   203   4.72e+00   18 293
+
+Error test failures            = 0
+Nonlinear convergence failures = 0
+Linear convergence failures    = 0

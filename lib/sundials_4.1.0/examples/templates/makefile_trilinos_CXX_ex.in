@@ -1,0 +1,80 @@
+# -*- mode: makefile -*-
+# -----------------------------------------------------------------
+# Programmer: Slaven Peles @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2019, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# Makefile for @SOLVER@ Trilinos examples
+#
+# This file is generated from a template using various variables
+# set at configuration time. It can be used as a template for
+# other user Makefiles.
+# -----------------------------------------------------------------
+
+SHELL = @SHELL@
+
+prefix       = @prefix@
+exec_prefix  = @exec_prefix@
+includedir   = @includedir@
+libdir       = @libdir@
+
+CC       = @Trilinos_C_COMPILER@
+CXX      = @Trilinos_CXX_COMPILER@
+CFLAGS   = @Trilinos_C_COMPILER_FLAGS@
+CXXFLAGS = @Trilinos_CXX_COMPILER_FLAGS@
+LDFLAGS  = @LDFLAGS@
+RPATH    = -Wl,-rpath,@libdir@ -Wl,-rpath,@Trilinos_LIBRARY_DIRS@
+LIBS     = @LIBS@
+
+
+INCLUDES_TRILINOS = @Trilinos_INCLUDE_DIRS@
+TMP_INCS = ${includedir} ${INCLUDES_TRILINOS}
+INCLUDES = $(addprefix -I, ${TMP_INCS})
+
+TRILINOS_LIBRARIES = -L@Trilinos_LIBRARY_DIRS@;@Trilinos_LIBRARIES@
+TRILINOS_TPL_LIBRARIES  = @Trilinos_TPL_LIBRARIES@
+TRILIBS = $(subst ;, -l, ${TRILINOS_LIBRARIES})
+TRITPLS = $(subst ;, , ${TRILINOS_TPL_LIBRARIES})
+LIBRARIES = -lsundials_nvectrilinos -l@SOLVER_LIB@ ${TRILIBS} ${LIBS} ${TRITPLS}
+
+EXAMPLES = @EXAMPLES@
+EXAMPLES_DEPENDENCIES = @EXAMPLES_DEPENDENCIES@
+
+OBJECTS = ${EXAMPLES:=.o}
+OBJECTS_DEPENDENCIES = ${EXAMPLES_DEPENDENCIES:=.o}
+
+# -----------------------------------------------------------------------------------------
+
+.SUFFIXES : .o .cpp
+
+.c.o :
+	${CC} ${CFLAGS} ${INCLUDES} -c $<
+
+.cpp.o :
+	${CXX} ${CXXFLAGS} ${INCLUDES} -c $<
+
+# -----------------------------------------------------------------------------------------
+
+all: ${OBJECTS}
+	@for i in ${EXAMPLES} ; do \
+	  echo "${CXX} -o $${i} $${i}.o ${OBJECTS_DEPENDENCIES} ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${RPATH}" ; \
+	  ${CXX} -o $${i} $${i}.o ${OBJECTS_DEPENDENCIES} ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${RPATH} ; \
+	done
+
+${OBJECTS}: ${OBJECTS_DEPENDENCIES}
+
+clean:
+	rm -f ${OBJECTS_DEPENDENCIES}
+	rm -f ${OBJECTS}
+	rm -f ${EXAMPLES}
+
+# -----------------------------------------------------------------------------------------
+

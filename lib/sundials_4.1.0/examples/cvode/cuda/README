@@ -1,0 +1,3 @@
+List of CUDA CVODE examples
+
+  cvAdvDiff_kry_cuda       : 2-D advection-diffusion (nonstiff)

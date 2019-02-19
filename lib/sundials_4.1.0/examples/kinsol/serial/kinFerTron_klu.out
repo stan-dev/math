@@ -1,0 +1,71 @@
+
+Ferraris and Tronconi test problem
+Tolerance parameters:
+  fnormtol  =      1e-05
+  scsteptol =      1e-05
+
+------------------------------------------
+
+Initial guess on lower bounds
+  [x1,x2] =      0.25       1.5
+
+Exact Newton
+Solution:
+  [x1,x2] =  0.299448   2.83693
+Final Statistics:
+  nni =     4    nfe  =     5 
+  nje =     4    
+
+Exact Newton with line search
+Solution:
+  [x1,x2] =  0.299448   2.83693
+Final Statistics:
+  nni =     4    nfe  =     5 
+  nje =     4    
+
+Modified Newton
+Solution:
+  [x1,x2] =  0.299448   2.83693
+Final Statistics:
+  nni =    12    nfe  =    13 
+  nje =     2    
+
+Modified Newton with line search
+Solution:
+  [x1,x2] =  0.299448   2.83693
+Final Statistics:
+  nni =    12    nfe  =    13 
+  nje =     2    
+
+------------------------------------------
+
+Initial guess in middle of feasible region
+  [x1,x2] =     0.625   3.89159
+
+Exact Newton
+Solution:
+  [x1,x2] =  0.499999    3.1416
+Final Statistics:
+  nni =     6    nfe  =     7 
+  nje =     6    
+
+Exact Newton with line search
+Solution:
+  [x1,x2] =  0.500001   3.14159
+Final Statistics:
+  nni =     6    nfe  =     8 
+  nje =     6    
+
+Modified Newton
+Solution:
+  [x1,x2] =       0.5   3.14159
+Final Statistics:
+  nni =    14    nfe  =    15 
+  nje =     2    
+
+Modified Newton with line search
+Solution:
+  [x1,x2] =       0.5   3.14159
+Final Statistics:
+  nni =    14    nfe  =    15 
+  nje =     2    

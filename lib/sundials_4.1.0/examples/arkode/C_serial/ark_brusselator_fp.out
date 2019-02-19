@@ -1,0 +1,27 @@
+
+Brusselator ODE test problem, fixed-point solver:
+    initial conditions:  u0 = 3,  v0 = 3,  w0 = 3.5
+    problem parameters:  a = 0.5,  b = 3,  ep = 0.0005
+    reltol = 1.0e-06,  abstol = 1.0e-10
+
+        t           u           v           w
+   ----------------------------------------------
+    1.000000    1.897255    1.274939    2.997155
+    2.000000    0.346125    2.366448    2.999481
+    3.000000    0.147442    2.862061    2.999778
+    4.000000    0.140733    3.226731    2.999788
+    5.000000    0.142659    3.583206    2.999788
+    6.000000    0.145095    3.936910    2.999782
+    7.000000    0.147720    4.287893    2.999780
+    8.000000    0.150542    4.635957    2.999774
+    9.000000    0.153590    4.980863    2.999768
+   10.000000    0.156901    5.322330    2.999763
+   ----------------------------------------------
+
+Final Solver Statistics:
+   Internal solver steps = 731 (attempted = 732)
+   Total RHS evals:  Fe = 4395,  Fi = 18845
+   Total number of fixed-point iterations = 14450
+   Total number of nonlinear solver convergence failures = 0
+   Total number of error test failures = 1
+

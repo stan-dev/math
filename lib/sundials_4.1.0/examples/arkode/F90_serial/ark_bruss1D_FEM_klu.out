@@ -1,0 +1,59 @@
+ARKode solver parameters:
+  Dense output order 3
+  Solver relative tolerance = 1e-06
+  Solver absolute tolerance = 1e-11
+  Absolute residual tolerance = 1e-11
+
+ARKStep time step module parameters:
+  Method order 4
+  Implicit integrator
+  Maximum step increase (first step) = 10000
+  Step reduction factor on multiple error fails = 0.3
+  Minimum error fails before above factor is used = 2
+  Step reduction factor on nonlinear convergence failure = 0.25
+  Time step adaptivity method 0
+     Safety factor = 0.96
+     Bias factor = 1.5
+     Growth factor = 20
+     Step growth lower bound = 1
+     Step growth upper bound = 1.5
+     k1 = 0.58
+     k2 = 0.21
+     k3 = 0.1
+  Default explicit stability function
+  Maximum number of error test failures = 7
+  Maximum number of convergence test failures = 10
+  Implicit predictor method = 0
+  Implicit solver tolerance coefficient = 0.1
+  Maximum number of nonlinear corrections = 3
+  Nonlinear convergence rate constant = 0.3
+  Nonlinear divergence tolerance = 2.3
+  Gamma factor LSetup tolerance = 0.2
+  Number of steps between LSetup calls = 20
+
+         t         ||u||_rms    ||v||_rms    ||w||_rms
+   ----------------------------------------------------
+    0.00000E+00  6.32978E-01  3.36571E+00  2.03247E+00
+    1.00000E+00  6.97285E-01  3.23962E+00  1.99999E+00
+    2.00000E+00  7.89501E-01  3.05139E+00  1.99999E+00
+    3.00000E+00  7.83681E-01  2.93001E+00  1.99999E+00
+    4.00000E+00  6.48122E-01  3.00833E+00  1.99999E+00
+    5.00000E+00  5.52223E-01  3.17028E+00  1.99999E+00
+    6.00000E+00  5.22111E-01  3.30889E+00  1.99999E+00
+    7.00000E+00  5.20869E-01  3.40614E+00  1.99999E+00
+    8.00000E+00  5.30276E-01  3.46669E+00  1.99999E+00
+    9.00000E+00  5.45196E-01  3.49456E+00  1.99999E+00
+    1.00000E+01  5.65426E-01  3.49094E+00  1.99999E+00
+   ----------------------------------------------------
+   
+ Final Solver Statistics:
+    Internal solver steps =                   104  (attempted =                  104 )
+    Total RHS evals:  Fe =                     0   Fi =                  1732
+    Total linear solver setups =                    48
+    Total RHS evals for setting up the linear system =                     0
+    Total number of Jacobian evaluations =                    11
+    Total number of nonlinear iterations =                  1209
+    Total number of nonlinear solver convergence failures =                     0
+    Total number of error test failures =                     0
+    Total number of mass matrix evaluations =                     1
+   

@@ -1,0 +1,67 @@
+# -*- mode: makefile -*-
+# -----------------------------------------------------------------
+# Programmer: Daniel R. Reynolds @ SMU
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2019, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# Makefile for @SOLVER@ fortran parallel examples
+#
+# This file is generated from a template using various variables
+# set at configuration time. It can be used as a template for
+# other user Makefiles.
+# -----------------------------------------------------------------
+
+SHELL = @SHELL@
+
+prefix       = @prefix@
+exec_prefix  = @exec_prefix@
+includedir   = @includedir@
+libdir       = @libdir@
+
+F90FLAGS     = @F90FLAGS@
+F90_LDFLAGS  = @F90_LDFLAGS@
+F90_LIBS     = @F90_LIBS@
+
+LINKFLAGS = -Wl,-rpath,@libdir@
+
+MPIF90       = @MPIF90@
+MPI_INC_DIR  = @MPI_INC_DIR@
+MPI_FLAGS    = @MPI_FLAGS@
+MPI_LIB_DIR  = @MPI_LIB_DIR@
+MPI_LIBS     = @MPI_LIBS@
+
+TMP_INCS  = ${includedir} ${MPI_INC_DIR}
+INCLUDES  = $(addprefix -I, ${TMP_INCS})
+LIBRARIES = -l@SOLVER_FLIB@ -l@SOLVER_LIB@ -lsundials_fnvecparallel -lsundials_nvecparallel ${LIBS}
+
+EXAMPLES = @EXAMPLES@
+OBJECTS  = ${EXAMPLES:=.o}
+
+# -----------------------------------------------------------------------------------------
+
+.SUFFIXES : .o .f90
+
+.f90.o :
+	${MPIF90} ${F90FLAGS} ${MPI_FLAGS} -I${MPI_INC_DIR} ${INCLUDES} -c $<
+
+# -----------------------------------------------------------------------------------------
+
+all: ${OBJECTS}
+	@for i in ${EXAMPLES} ; do \
+	  echo "${MPIF90} -o $${i} $${i}.o ${MPI_FLAGS} ${F90_LDFLAGS} ${F90_LIBS} ${INCLUDES} -L${libdir} ${LIBRARIES} -L${MPI_LIB_DIR} ${MPI_LIBS} ${LINKFLAGS}" ; \
+	  ${MPIF90} -o $${i} $${i}.o ${MPI_FLAGS} ${F90_LDFLAGS} ${F90_LIBS} ${INCLUDES} -L${libdir} ${LIBRARIES} -L${MPI_LIB_DIR} ${MPI_LIBS} ${LINKFLAGS} ; \
+	done
+
+clean:
+	rm -f ${OBJECTS}
+	rm -f ${EXAMPLES}
+
+# -----------------------------------------------------------------------------------------

@@ -1,0 +1,31 @@
+
+Brusselator ODE test problem:
+    initial conditions:  u0 = 1.2,  v0 = 3.1,  w0 = 3
+    problem parameters:  a = 1,  b = 3.5,  ep = 5e-06
+    reltol = 1.0e-06,  abstol = 1.0e-10
+
+        t           u           v           w
+   -------------------------------------------
+    0.000000    1.200000    3.100000    3.000000
+    1.000000    1.103849    3.013163    3.499981
+    2.000000    0.688000    3.521381    3.499988
+    3.000000    0.409466    4.277885    3.499993
+    4.000000    0.367886    4.942005    3.499994
+    5.000000    0.413854    5.510624    3.499993
+    6.000000    0.589233    5.855678    3.499990
+    7.000000    4.756553    0.735408    3.499917
+    8.000000    1.813439    1.575779    3.499968
+    9.000000    0.527897    2.807368    3.499991
+   10.000000    0.305599    3.657381    3.499995
+   -------------------------------------------
+
+Final Solver Statistics:
+   Internal solver steps = 254 (attempted = 258)
+   Total RHS evals:  Fe = 0,  Fi = 4713
+   Total linear solver setups = 99
+   Total RHS evals for setting up the linear system = 0
+   Total number of Jacobian evaluations = 66
+   Total number of Newton iterations = 3428
+   Total number of linear solver convergence failures = 2
+   Total number of error test failures = 2
+

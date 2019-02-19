@@ -1,0 +1,34 @@
+Diagonal test problem:
+
+ NEQ =   8
+ NLOCAL =   2
+ parameter alpha =    1.250
+ ydot_i = -alpha*i * y_i (i = 1,...,NEQ)
+ RTOL, ATOL =    0.1E-04   0.1E-09
+ Method is ERK
+ Number of processors =   4
+
+
+ t =   0.10D+00     steps =    12  (attempted =    12),  fe =    75  fi =     0
+ t =   0.20D+00     steps =    21  (attempted =    21),  fe =   129  fi =     0
+ t =   0.30D+00     steps =    31  (attempted =    31),  fe =   189  fi =     0
+ t =   0.40D+00     steps =    40  (attempted =    40),  fe =   243  fi =     0
+ t =   0.50D+00     steps =    50  (attempted =    50),  fe =   303  fi =     0
+ t =   0.60D+00     steps =    59  (attempted =    59),  fe =   357  fi =     0
+ t =   0.70D+00     steps =    69  (attempted =    69),  fe =   417  fi =     0
+ t =   0.80D+00     steps =    78  (attempted =    78),  fe =   471  fi =     0
+ t =   0.90D+00     steps =    88  (attempted =    88),  fe =   531  fi =     0
+ t =   0.10D+01     steps =    97  (attempted =    97),  fe =   585  fi =     0
+
+Max. absolute error is   0.22E-08
+
+
+Final statistics:
+
+ number of steps =    97
+ number of step attempts =    97
+ number of fe evals. =   585
+ number of fi evals. =     0
+ number of nonlinear iters. =     0
+ number of nonlinear conv. failures =   0
+ number of error test failures =   0

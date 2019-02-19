@@ -1,0 +1,50 @@
+List of serial IDA FCMIX examples
+
+  fidaRoberts_dns : chemical kinetics example (DENSE)
+
+
+The following CMake command was used to configure SUNDIALS:
+
+ cmake \
+-DCMAKE_BUILD_TYPE=DEBUG \
+-DBUILD_ARKODE=ON \
+-DBUILD_CVODE=ON \
+-DBUILD_CVODES=ON \
+-DBUILD_IDA=ON \
+-DBUILD_IDAS=ON \
+-DBUILD_KINSOL=ON \
+-DCMAKE_INSTALL_PREFIX=/home/user1/sundials/build/install \
+-DEXAMPLES_INSTALL_PATH=/home/user1/sundials/build/install/examples \
+-DBUILD_SHARED_LIBS=OFF \
+-DBUILD_STATIC_LIBS=ON \
+-DEXAMPLES_ENABLE_C=ON \
+-DEXAMPLES_ENABLE_CXX=ON \
+-DEXAMPLES_ENABLE_F77=ON \
+-DEXAMPLES_ENABLE_F90=ON \
+-DEXAMPLES_INSTALL=ON \
+-DMPI_ENABLE=ON \
+-DFCMIX_ENABLE=ON \
+-DLAPACK_ENABLE=ON \
+-DKLU_ENABLE=ON \
+-DKLU_INCLUDE_DIR=/usr/casc/sundials/apps/rh6/suitesparse/4.5.3/include \
+-DKLU_LIBRARY_DIR=/usr/casc/sundials/apps/rh6/suitesparse/4.5.3/lib \
+-DHYPRE_ENABLE=ON \
+-DHYPRE_INCLUDE_DIR=/usr/casc/sundials/apps/rh6/hypre/2.11.1/include \
+-DHYPRE_LIBRARY=/usr/casc/sundials/apps/rh6/hypre/2.11.1/lib/libHYPRE.a \
+-DOPENMP_ENABLE=ON \
+-DPTHREAD_ENABLE=ON \
+-DF90_ENABLE=ON \
+-DSUPERLUMT_ENABLE=ON \
+-DSUPERLUMT_INCLUDE_DIR=/usr/casc/sundials/apps/rh6/superlu_mt/SuperLU_MT_3.1/SRC \
+-DSUPERLUMT_LIBRARY_DIR=/usr/casc/sundials/apps/rh6/superlu_mt/SuperLU_MT_3.1/lib \
+-DSUPERLUMT_THREAD_TYPE=Pthread \
+-DPETSC_ENABLE=ON \
+-DPETSC_INCLUDE_DIR=/usr/casc/sundials/apps/rh6/petsc/3.7.2/include \
+-DPETSC_LIBRARY_DIR=/usr/casc/sundials/apps/rh6/petsc/3.7.2/lib \
+../sundials
+
+  System Architecture: x86_64
+  Processor Type: Intel(R) Xeon(R) CPU E31230 @ 3.20GHz
+  Operating System: Red Hat 6.8
+  C/Fortran Compilers: gcc/gfortran v4.4.7
+  MPI: Open MPI v1.8.8

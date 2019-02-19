@@ -1,0 +1,31 @@
+
+Predator-prey test problem --  KINSol (parallel version)
+
+Mesh dimensions = 20 X 20
+Number of species = 6
+Total system size = 2400
+
+Subgrid dimensions = 10 X 10
+Processor array is 2 X 2
+
+Flag globalstrategy = 0 (0 = None, 1 = Linesearch)
+Linear solver is SPGMR with maxl = 20, maxlrst = 2
+Preconditioning uses interaction-only block-diagonal matrix
+Tolerance parameters:  fnormtol = 1e-07   scsteptol = 1e-13
+
+Initial profile of concentration
+At all mesh points:  1 1 1   30000 30000 30000
+
+
+Computed equilibrium species concentrations:
+
+At bottom left:
+ 1.165 1.165 1.165 34949 34949 34949
+
+At top right:
+ 1.25552 1.25552 1.25552 37663.2 37663.2 37663.2
+
+Final Statistics.. 
+nni    =    19    nli   =  1140
+nfe    =    20    nfeSG =  1159
+nps    =  1159    npe   =     2     ncfl  =    19

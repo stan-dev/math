@@ -1,0 +1,110 @@
+                               IDA
+                     Release 4.1.0, Feb 2019
+                Alan C. Hindmarsh and Radu Serban 
+           Center for Applied Scientific Computing, LLNL
+
+
+IDA is a package for the solution of differential-algebraic equation
+(DAE) systems.  It is written in C, but derived from the package DASPK
+[4,5], which is written in FORTRAN. 
+
+IDA can be used both on serial and parallel computers.  The main
+difference is in the NVECTOR module of vector kernels.  The desired
+version is obtained when compiling the example files by linking the
+appropriate library of NVECTOR kernels.  In the parallel versions,
+communication between processors is done with MPI, with OpenMP, 
+or with Pthreads.
+
+When used with the serial NVECTOR module, IDA provides both direct 
+(dense and band) linear solvers and preconditioned Krylov (iterative) 
+linear solvers. Three different iterative solvers are available: scaled 
+preconditioned GMRES (SPGMR), scaled preconditioned BiCGStab (SPBCG), and 
+scaled preconditioned TFQMR (SPTFQMR). When IDA is used with the parallel 
+NVECTOR module, only the Krylov linear solvers are available.  For the 
+latter case, in addition to the basic solver, the IDA package also contains 
+a preconditioner module called IDABBDPRE, which provides a band-block-diagonal 
+preconditioner.
+
+IDA is part of a software family called SUNDIALS: SUite of Nonlinear and 
+DIfferential/ALgebraic equation Solvers [3].  This suite consists of CVODE, 
+CVODES, ARKode, IDA, IDAS, and KINSOL.  The directory structure of the 
+package supplied reflects this family relationship.
+
+For use with Fortran applications, a set of Fortran/C interface routines,
+called FIDA, is also supplied.  These are written in C, but assume that
+the user calling program and all user-supplied routines are in Fortran.
+
+Several examples problem programs are included, covering both serial
+and parallel cases, both small and large problem sizes, and both
+linear and nonlinear problems.
+
+The notes below provide the location of documentation, directions for the 
+installation of the IDA package, and relevant references. Following that 
+is a brief history of revisions to the package.
+
+
+A. Documentation
+----------------
+
+/sundials/doc/ida/ contains PDF files for the IDA User Guide [1] (ida_guide.pdf)
+and the IDA Examples [2] (ida_examples.pdf) documents.
+
+
+B. Installation
+---------------
+
+For basic installation instructions see the file /sundials/INSTALL_GUIDE.pdf. 
+For complete installation instructions see the "Installation Procedure"
+chapter in the IDA User Guide.
+
+
+C. References
+-------------
+
+[1] A. C. Hindmarsh, R. Serban, and A. Collier, "User Documentation for IDA v2.9.0," 
+    LLNL technical report UCRL-SM-208112, March 2016.
+
+[2] A. C. Hindmarsh, R. Serban, and A. Collier, "Example Programs for IDA v2.9.0," 
+    LLNL technical report UCRL-SM-208113, March 2016.
+
+[3] A. C. Hindmarsh, P. N. Brown, K. E. Grant, S. L. Lee, R. Serban, 
+    D. E. Shumaker, and C. S. Woodward, "SUNDIALS, Suite of Nonlinear and 
+    Differential/Algebraic Equation Solvers," ACM Trans. Math. Softw., 
+    31(3), pp. 363-396, 2005.
+
+[4] P. N. Brown, A. C. Hindmarsh, and L. R. Petzold, Using Krylov Methods 
+    in the Solution of Large-Scale Differential-Algebraic Systems, 
+    SIAM J. Sci. Comp., 15 (1994), pp. 1467-1488.
+
+[5] P. N. Brown, A. C. Hindmarsh, and L. R. Petzold, Consistent Initial 
+    Condition Calculation for Differential-Algebraic Systems, 
+    SIAM J. Sci. Comp., 19 (1998), pp. 1495-1512.
+
+
+D. Releases
+-----------
+
+v. 4.1.0       - Feb. 2019
+v. 4.0.2       - Jan. 2019
+v. 4.0.1       - Dec. 2018
+v. 4.0.0       - Dec. 2018
+v. 3.2.1       - Oct. 2018
+v. 3.2.0       - Sep. 2018
+v. 3.1.2       - Jul. 2018
+v. 3.1.1       - May  2018
+v. 3.1.0       - Nov. 2017
+v. 3.0.0       - Sep. 2017
+v. 2.9.0       - Sep. 2016
+v. 2.8.2       - Aug. 2015
+v. 2.8.1       - Mar. 2015
+v. 2.8.0       - Mar. 2015
+v. 2.7.0       - Mar. 2012
+v. 2.6.0       - May  2009
+v. 2.5.0       - Nov. 2006
+v. 2.4.0       - Mar. 2006
+v. 2.3.0       - Apr. 2005
+v. 2.2.2       - Mar. 2005
+v. 2.2.1       - Jan. 2005
+v. 2.2.0       - Dec. 2004
+v. 2.0         - Jul. 2002 (first SUNDIALS release)
+v. 1.0         - Feb. 1999 (date written)

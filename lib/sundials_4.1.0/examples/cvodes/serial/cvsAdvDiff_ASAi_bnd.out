@@ -1,0 +1,18 @@
+
+Create and allocate CVODES memory for forward runs
+
+Allocate global memory
+
+Forward integration
+
+ncheck = 3
+
+Create and allocate CVODES memory for backward run
+
+Backward integration
+
+Maximum sensitivity
+  lambda max = 1.128855e-01
+at
+  x = 1.170732e+00
+  y = 4.761905e-01
