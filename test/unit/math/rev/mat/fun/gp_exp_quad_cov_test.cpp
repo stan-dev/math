@@ -965,9 +965,9 @@ TEST(RevMath, gp_exp_quad_cov_domain_error_training) {
   msg1 = pull_msg(x, sigma, l_bad);
   msg2 = pull_msg(x, sigma_bad, l);
   msg3 = pull_msg(x, sigma_bad, l_bad);
-  EXPECT_TRUE(std::string::npos != msg1.find(" length-scale")) << msg1;
-  EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance")) << msg2;
-  EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance")) << msg3;
+  EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x, sigma, l_bad), std::domain_error);
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x, sigma_bad, l), std::domain_error);
@@ -1027,9 +1027,9 @@ TEST(RevMath, gp_exp_quad_cov_nan_error_training) {
   msg1 = pull_msg(x, sigma, l_bad);
   msg2 = pull_msg(x, sigma_bad, l);
   msg3 = pull_msg(x, sigma_bad, l_bad);
-  EXPECT_TRUE(std::string::npos != msg1.find(" length-scale")) << msg1;
-  EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance")) << msg2;
-  EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance")) << msg3;
+  EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x, sigma, l_bad), std::domain_error);
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x, sigma_bad, l), std::domain_error);
@@ -1097,9 +1097,9 @@ TEST(RevMath, gp_exp_quad_cov_domain_error) {
   msg1 = pull_msg(x1, x2, sigma, l_bad);
   msg2 = pull_msg(x1, x2, sigma_bad, l);
   msg3 = pull_msg(x1, x2, sigma_bad, l_bad);
-  EXPECT_TRUE(std::string::npos != msg1.find(" length-scale")) << msg1;
-  EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance")) << msg2;
-  EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance")) << msg3;
+  EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x1, x2, sigma, l_bad),
                std::domain_error);
