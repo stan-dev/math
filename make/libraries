@@ -20,20 +20,20 @@ CPPLINT ?= $(MATH)lib/cpplint_4.45
 SUNDIALS_CVODES := $(patsubst %.c,%.o,\
   $(wildcard $(SUNDIALS)/src/cvodes/*.c) \
   $(wildcard $(SUNDIALS)/src/sundials/*.c) \
-  $(wildcard $(SUNDIALS)/src/sunmat_band/[^f]*.c) \
-  $(wildcard $(SUNDIALS)/src/sunmat_dense/[^f]*.c) \
-  $(wildcard $(SUNDIALS)/src/sunlinsol_band/[^f]*.c) \
-  $(wildcard $(SUNDIALS)/src/sunlinsol_dense/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunmatrix/band/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunmatrix/dense/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol/band/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol/dense/[^f]*.c) \
   $(wildcard $(SUNDIALS)/src/sunnonlinsol/newton/[^f]*.c) \
   $(wildcard $(SUNDIALS)/src/sunnonlinsol/fixedpoint/[^f]*.c))
 
 SUNDIALS_IDAS := $(patsubst %.c,%.o,\
   $(wildcard $(SUNDIALS)/src/idas/*.c) \
   $(wildcard $(SUNDIALS)/src/sundials/*.c) \
-  $(wildcard $(SUNDIALS)/src/sunmat_band/[^f]*.c) \
-  $(wildcard $(SUNDIALS)/src/sunmat_dense/[^f]*.c) \
-  $(wildcard $(SUNDIALS)/src/sunlinsol_band/[^f]*.c) \
-  $(wildcard $(SUNDIALS)/src/sunlinsol_dense/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunmatrix/band/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunmatrix/dense/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol/band/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol/dense/[^f]*.c) \
   $(wildcard $(SUNDIALS)/src/sunnonlinsol/newton/[^f]*.c) \
   $(wildcard $(SUNDIALS)/src/sunnonlinsol/fixedpoint/[^f]*.c))
 
