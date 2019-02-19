@@ -38,18 +38,21 @@ inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
 #ifdef STAN_OPENCL
   if (m.rows() >= opencl_context.tuning_opts().cholesky_size_worth_transfer) {
     matrix_gpu m_gpu(m);
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m_chol(m.rows(), m.cols());
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m_chol(m.rows(),
+                                                                 m.cols());
     m_gpu = cholesky_decompose(m_gpu);
     copy(m_chol, m_gpu);  // NOLINT
     return m_chol;
   } else {
-    Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt(m.rows());
+    Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt(
+        m.rows());
     llt.compute(m);
     check_pos_definite("cholesky_decompose", "m", llt);
     return llt.matrixL();
   }
 #else
-  Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt(m.rows());
+  Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt(
+      m.rows());
   llt.compute(m);
   check_pos_definite("cholesky_decompose", "m", llt);
   return llt.matrixL();
