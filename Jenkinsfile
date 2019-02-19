@@ -138,6 +138,7 @@ pipeline {
             steps {
                 deleteDir()
                 unstash 'MathSetup'
+		sh "make -j${env.PARALLEL} sundials"
                 sh "echo CXX=${env.CXX} -Werror > make/local"
                 sh "make -j${env.PARALLEL} test-headers"
             }
