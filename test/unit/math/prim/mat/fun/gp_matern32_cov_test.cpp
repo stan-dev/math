@@ -502,10 +502,12 @@ TEST(MathPrimMat, calculations) {
   double l = 1.0;
 
   std::vector<double> x1(2);
-  x1[0] = 1; x1[1] = 2;
+  x1[0] = 1;
+  x1[1] = 2;
 
   std::vector<double> x2(2);
-  x2[0] = 2; x2[1] = 3;
+  x2[0] = 2;
+  x2[1] = 3;
 
   Eigen::MatrixXd cov;
   EXPECT_NO_THROW(cov = stan::math::gp_matern32_cov(x1, sigma, l));
@@ -519,7 +521,6 @@ TEST(MathPrimMat, calculations) {
   ASSERT_FLOAT_EQ(1.0, cov(1, 0));
   ASSERT_FLOAT_EQ((1.0 + sqrt(3) * 2.0) * exp(-sqrt(3) * 2.0), cov(0, 1));
 }
-
 
 TEST(MathPrimMat, calculations_ard) {
   double sigma = 1.0;
@@ -541,14 +542,18 @@ TEST(MathPrimMat, calculations_ard) {
 
   EXPECT_FLOAT_EQ(1.0, cov(0, 0));
   EXPECT_FLOAT_EQ(1.0, cov2(0, 0));
-  EXPECT_FLOAT_EQ((1.0 + sqrt(3.0) * sqrt(1 + 9.0 / 4.0)) *
-                  exp(-sqrt(3.0) * sqrt(1 + 9.0 / 4.0)), cov(1, 0));
-  EXPECT_FLOAT_EQ((1.0 + sqrt(3.0) * sqrt(1 + 9.0 / 4.0)) *
-                  exp(-sqrt(3.0) * sqrt(1 + 9.0 / 4.0)), cov2(1, 0));
-  EXPECT_FLOAT_EQ((1.0 + sqrt(3.0) * sqrt(1 + 9.0 / 4.0)) *
-                  exp(-sqrt(3.0) * sqrt(1 + 9.0 / 4.0)), cov(0, 1));
-  EXPECT_FLOAT_EQ((1.0 + sqrt(3.0) * sqrt(1 + 9.0 / 4.0)) *
-                  exp(-sqrt(3.0) * sqrt(1 + 9.0 / 4.0)), cov2(0, 1));
+  EXPECT_FLOAT_EQ((1.0 + sqrt(3.0) * sqrt(1 + 9.0 / 4.0))
+                      * exp(-sqrt(3.0) * sqrt(1 + 9.0 / 4.0)),
+                  cov(1, 0));
+  EXPECT_FLOAT_EQ((1.0 + sqrt(3.0) * sqrt(1 + 9.0 / 4.0))
+                      * exp(-sqrt(3.0) * sqrt(1 + 9.0 / 4.0)),
+                  cov2(1, 0));
+  EXPECT_FLOAT_EQ((1.0 + sqrt(3.0) * sqrt(1 + 9.0 / 4.0))
+                      * exp(-sqrt(3.0) * sqrt(1 + 9.0 / 4.0)),
+                  cov(0, 1));
+  EXPECT_FLOAT_EQ((1.0 + sqrt(3.0) * sqrt(1 + 9.0 / 4.0))
+                      * exp(-sqrt(3.0) * sqrt(1 + 9.0 / 4.0)),
+                  cov2(0, 1));
   EXPECT_FLOAT_EQ(1.0, cov(1, 1));
   EXPECT_FLOAT_EQ(1.0, cov2(1, 1));
 }
