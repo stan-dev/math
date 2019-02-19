@@ -38,7 +38,7 @@ SUNDIALS_IDAS := $(patsubst %.c,%.o,\
   $(wildcard $(SUNDIALS)/src/sunnonlinsol/fixedpoint/[^f]*.c))
 
 SUNDIALS_NVECSERIAL := $(patsubst %.c,%.o,\
-  $(addprefix $(SUNDIALS)/src/, nvec_ser/nvector_serial.c sundials/sundials_math.c))
+  $(addprefix $(SUNDIALS)/src/, nvector/serial/nvector_serial.c sundials/sundials_math.c))
 
 $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL)) : CXXFLAGS = $(CXXFLAGS_SUNDIALS) $(CXXFLAGS_OS) -O$(O) $(INC_SUNDIALS)
 $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL)) : CPPFLAGS = $(CPPFLAGS_SUNDIALS) $(CPPFLAGS_OS)
