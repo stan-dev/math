@@ -3,12 +3,21 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
+
+#include <stan/math/rev/scal/fun/pow.hpp>
+#include <stan/math/rev/scal/fun/fabs.hpp>
+
+#include <stan/math/rev/scal/fun/exp.hpp>
+#include <stan/math/prim/scal/fun/exp.hpp>
+
+
 #include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <boost/math/quadrature/tanh_sinh.hpp>
 #include <vector>
-#include <iostream>
 #include <limits>
 
 // The formulas and code are based on
@@ -17,10 +26,14 @@
 // logarithm of Bessel functions of complex argument and fractional order
 // https://scholar.google.com/scholar?cluster=2908870453394922596&hl=en&as_sdt=5,33&sciodt=0,33
 
-namespace stan {
-namespace math {
-
 namespace {
+
+using stan::math::var;
+using stan::math::domain_error;
+using stan::math::start_nested;
+using stan::math::recover_memory_nested;
+using stan::math::is_nan;
+using stan::math::is_inf;
 
 template <typename T_v, typename T_z, typename T_u>
 class inner_integral {
@@ -160,6 +173,11 @@ typename boost::math::tools::promote_args<T_v, T_z>::type compute_lead(
 }
 }  // namespace
 
+namespace stan {
+namespace math {
+
+
+
 template <typename T_v>
 T_v log_modified_bessel_second_kind_frac(const T_v &v, const double &z) {
   T_v lead = compute_lead(v, z);
@@ -178,7 +196,7 @@ var log_modified_bessel_second_kind_frac(const T_v &v, const var &z) {
   double value_vm1
       = log_modified_bessel_second_kind_frac(value_of(v) - 1, z.val());
   double gradient_dz
-      = -exp(value_vm1 - value_of(value)) - value_of(v) / z.val();
+      = -std::exp(value_vm1 - value_of(value)) - value_of(v) / z.val();
 
   std::vector<var> operands;
   std::vector<double> gradients;
