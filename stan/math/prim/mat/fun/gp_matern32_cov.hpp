@@ -57,9 +57,9 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
   check_positive_finite("gp_matern32_cov", "magnitude", sigma);
   check_positive_finite("gp_matern32_cov", "length scale", length_scale);
 
-  T_s sigma_sq = square(sigma);
-  T_l root_3_inv_l = sqrt(3.0) / length_scale;
-  T_l neg_root_3_inv_l = -1.0 * sqrt(3.0) / length_scale;
+  double sigma_sq = square(sigma);
+  double root_3_inv_l = sqrt(3.0) / length_scale;
+  double neg_root_3_inv_l = -1.0 * sqrt(3.0) / length_scale;
 
   for (size_t i = 0; i < x_size; ++i) {
     cov(i, i) = sigma_sq;
@@ -119,9 +119,9 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
   check_size_match("gp_matern32_cov", "x dimension", x[0].size(),
                    "number of length scales", l_size);
 
-  T_s sigma_sq = square(sigma);
-  T_l root_3 = sqrt(3.0);
-  T_l neg_root_3 = -1.0 * sqrt(3.0);
+  double sigma_sq = square(sigma);
+  double root_3 = sqrt(3.0);
+  double neg_root_3 = -1.0 * sqrt(3.0);
 
   std::vector<Eigen::Matrix<typename return_type<T_x, T_l>::type, -1, 1>> x_new
       = divide_columns(x, length_scale);
@@ -187,9 +187,9 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   check_positive_finite("gp_matern32_cov", "magnitude", sigma);
   check_positive_finite("gp_matern32_cov", "length scale", length_scale);
 
-  T_s sigma_sq = square(sigma);
-  T_l root_3_inv_l_sq = sqrt(3.0) / length_scale;
-  T_l neg_root_3_inv_l_sq = -1.0 * sqrt(3.0) / length_scale;
+  double sigma_sq = square(sigma);
+  double root_3_inv_l_sq = sqrt(3.0) / length_scale;
+  double neg_root_3_inv_l_sq = -1.0 * sqrt(3.0) / length_scale;
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
@@ -221,7 +221,6 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  *
  * @param x1 std::vector of Eigen vectors of scalars
  * @param x2 std::vector of Eigen vectors of scalars
- *    This function assumes each column of x1 and x2 are the same size.
  * @param length_scale parameter length scale
  * @param sigma standard deviation that can be used in stan::math::square
  * @throw std::domain error if sigma <= 0, l <= 0, or x1, x2 are nan or inf
@@ -261,9 +260,9 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
   check_size_match("gp_matern32_cov", "x2 dimension", x2[0].size(),
                    "number of length scales", l_size);
 
-  T_s sigma_sq = square(sigma);
-  T_l root_3 = sqrt(3.0);
-  T_l neg_root_3 = -1.0 * sqrt(3.0);
+  double sigma_sq = square(sigma);
+  double root_3 = sqrt(3.0);
+  double neg_root_3 = -1.0 * sqrt(3.0);
 
   std::vector<Eigen::Matrix<typename return_type<T_x1, T_l>::type, -1, 1>>
       x1_new = divide_columns(x1, length_scale);
