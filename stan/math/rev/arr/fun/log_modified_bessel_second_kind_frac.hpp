@@ -11,7 +11,6 @@
 #include <stan/math/rev/scal/fun/exp.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
 
-
 #include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 
@@ -28,12 +27,12 @@
 
 namespace {
 
-using stan::math::var;
 using stan::math::domain_error;
-using stan::math::start_nested;
-using stan::math::recover_memory_nested;
-using stan::math::is_nan;
 using stan::math::is_inf;
+using stan::math::is_nan;
+using stan::math::recover_memory_nested;
+using stan::math::start_nested;
+using stan::math::var;
 
 template <typename T_v, typename T_z, typename T_u>
 class inner_integral {
@@ -175,8 +174,6 @@ typename boost::math::tools::promote_args<T_v, T_z>::type compute_lead(
 
 namespace stan {
 namespace math {
-
-
 
 template <typename T_v>
 T_v log_modified_bessel_second_kind_frac(const T_v &v, const double &z) {
