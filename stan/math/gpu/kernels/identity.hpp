@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char* identity_kernel_code = STRINGIFY(
+static const char* identity_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Makes an identity matrix on the GPU
@@ -37,7 +37,7 @@ const char* identity_kernel_code = STRINGIFY(
 );
 // \endcond
 // \cond
-const char* batch_identity_kernel_code = STRINGIFY(
+static const char* batch_identity_kernel_code = STRINGIFY(
     // \endcond
 
     /**
