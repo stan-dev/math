@@ -61,26 +61,57 @@ struct AutodiffStackSingleton {
   explicit AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
   AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
 
-  static inline AutodiffStackStorage &instance() {
-#ifdef STAN_THREADS
-    thread_local static AutodiffStackStorage instance_;
-#endif
-    return instance_;
+  constexpr static inline AutodiffStackStorage &instance() {
+    return *instance_;
   }
 
-#ifndef STAN_THREADS
+  static AutodiffStackStorage *set_instance() {
+#ifdef STAN_THREADS
+    thread_local
+#endif
+        static AutodiffStackStorage *instance
+        = new AutodiffStackStorage();
+    instance_ = instance;
+    return instance;
+  }
+
+  struct AutodiffStackStorageInit {
+    AutodiffStackStorageInit() { instance_ = set_instance(); }
+
+   private:
+    static
+#ifdef STAN_THREADS
+        thread_local
+#endif
+        AutodiffStackStorage *instance_;
+  };
 
  private:
-  static AutodiffStackStorage instance_;
+  static
+#ifdef STAN_THREADS
+      thread_local
 #endif
+      AutodiffStackStorage *instance_;
 };
 
-#ifndef STAN_THREADS
+template <typename ChainableT, typename ChainableAllocT>
+#ifdef STAN_THREADS
+thread_local
+#endif
+    typename AutodiffStackSingleton<ChainableT,
+                                    ChainableAllocT>::AutodiffStackStorage
+        *AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_
+    = nullptr;
+
 template <typename ChainableT, typename ChainableAllocT>
 typename AutodiffStackSingleton<ChainableT,
                                 ChainableAllocT>::AutodiffStackStorage
-    AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_;
+#ifdef STAN_THREADS
+    thread_local
 #endif
+        *AutodiffStackSingleton<
+            ChainableT, ChainableAllocT>::AutodiffStackStorageInit::instance_
+    = AutodiffStackSingleton<ChainableT, ChainableAllocT>::set_instance();
 
 }  // namespace math
 }  // namespace stan

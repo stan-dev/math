@@ -11,6 +11,11 @@ class chainable_alloc;
 
 typedef AutodiffStackSingleton<vari, chainable_alloc> ChainableStack;
 
+namespace {
+
+ChainableStack::AutodiffStackStorageInit global_initializer;
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
