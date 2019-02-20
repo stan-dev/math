@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char *scalar_mul_diagonal_kernel_code = STRINGIFY(
+static const char *scalar_mul_diagonal_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Multiplication of the matrix A diagonal with a scalar

@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char* diag_inv_kernel_code = STRINGIFY(
+static const char* diag_inv_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Calculates inplace submatrix inversions along the matrix diagonal.
