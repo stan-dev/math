@@ -65,18 +65,23 @@ struct AutodiffStackSingleton {
     return *instance_;
   }
 
-  static AutodiffStackStorage *set_instance() {
+  static AutodiffStackStorage *init_instance() {
+    if (instance_ == nullptr)
+      instance_ = new AutodiffStackStorage();
+    /*
 #ifdef STAN_THREADS
     thread_local
 #endif
         static AutodiffStackStorage *instance
         = new AutodiffStackStorage();
     instance_ = instance;
-    return instance;
+    */
+    return instance_;
   }
 
+  /*
   struct AutodiffStackStorageInit {
-    AutodiffStackStorageInit() { instance_ = set_instance(); }
+    AutodiffStackStorageInit() { instance_ = init_instance(); }
 
    private:
     static
@@ -85,8 +90,9 @@ struct AutodiffStackSingleton {
 #endif
         AutodiffStackStorage *instance_;
   };
+  */
 
- private:
+  // private:
   static
 #ifdef STAN_THREADS
       thread_local
@@ -103,6 +109,7 @@ thread_local
         *AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_
     = nullptr;
 
+/*
 template <typename ChainableT, typename ChainableAllocT>
 typename AutodiffStackSingleton<ChainableT,
                                 ChainableAllocT>::AutodiffStackStorage
@@ -111,7 +118,8 @@ typename AutodiffStackSingleton<ChainableT,
 #endif
         *AutodiffStackSingleton<
             ChainableT, ChainableAllocT>::AutodiffStackStorageInit::instance_
-    = AutodiffStackSingleton<ChainableT, ChainableAllocT>::set_instance();
+    = AutodiffStackSingleton<ChainableT, ChainableAllocT>::init_instance();
+*/
 
 }  // namespace math
 }  // namespace stan
