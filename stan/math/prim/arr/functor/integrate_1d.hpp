@@ -124,34 +124,32 @@ inline double integrate(const F& f, double a, double b,
   static const char* function = "integrate";
   if (used_two_integrals) {
     if (error1 > relative_tolerance * L1) {
-      char message[1024];
-      snprintf(message, sizeof(message),
-               " exceeds the given relative tolerance times norm of integral "
-               "below zero (threshold = %e)",
-               relative_tolerance * L1);
+      std::ostringstream message;
+      message << " exceeds the given relative tolerance times norm of integral "
+              << "below zero (threshold = "  
+              << (relative_tolerance * L1) << ")";
 
       domain_error(function, "error estimate of integral below zero", error1,
-                   "", message);
+                   "", message.str().c_str());
     }
     if (error2 > relative_tolerance * L2) {
-      char message[1024];
-      snprintf(message, sizeof(message),
-               " exceeds the given relative tolerance times norm of integral "
-               "above zero (threshold = %e)",
-               relative_tolerance * L2);
+      std::ostringstream message;
+      message << " exceeds the given relative tolerance times norm of integral "
+              << "above zero (threshold = "  
+              << (relative_tolerance * L2) << ")";
 
       domain_error(function, "error estimate of integral above zero", error2,
-                   "", message);
+                   "", message.str().c_str());
     }
   } else {
     if (error1 > relative_tolerance * L1) {
-      char message[1024];
-      snprintf(message, sizeof(message),
-               " exceeds the given relative tolerance times norm of integral "
-               "(threshold = %e)",
-               relative_tolerance * L1);
+      std::ostringstream message;
+      message << " exceeds the given relative tolerance times norm of integral "
+              << "(threshold = "  
+              << (relative_tolerance * L1) << ")";
 
-      domain_error(function, "error estimate of integral", error1, "", message);
+      domain_error(function, "error estimate of integral", error1, "", 
+                   message.str().c_str());
     }
   }
   return Q;
