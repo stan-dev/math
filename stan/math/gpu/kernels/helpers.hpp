@@ -11,7 +11,7 @@ namespace opencl_kernels {
 /*
  * Defines some helper macros for the kernels
  */
-std::string helpers =
+static const char* helpers =
     R"(
     // Matrix access helpers
   #ifndef A
@@ -37,7 +37,7 @@ std::string helpers =
   #ifndef dst
   #define dst(i,j) dst[(j) * dst_rows + (i)]
   #endif
-  
+
   // The local memory column for each thread block
   #define THREAD_BLOCK_SIZE_COL THREAD_BLOCK_SIZE/WORK_PER_THREAD
 

@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char* zeros_kernel_code = STRINGIFY(
+static const char* zeros_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Stores zeros in the matrix on the GPU.
