@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char *transpose_kernel_code = STRINGIFY(
+static const char *transpose_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Takes the transpose of the matrix on the GPU.

@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char *is_nan_kernel_code = STRINGIFY(
+static const char *is_nan_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Check if the <code>matrix_gpu</code> has NaN values

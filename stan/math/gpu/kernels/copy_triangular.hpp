@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char *copy_triangular_kernel_code = STRINGIFY(
+static const char *copy_triangular_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Copies the lower or upper

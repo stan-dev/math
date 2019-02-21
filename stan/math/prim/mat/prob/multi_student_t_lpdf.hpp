@@ -15,6 +15,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
+#include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -36,7 +37,6 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type multi_student_t_lpdf(
     const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& Sigma) {
   static const char* function = "multi_student_t";
 
-  using boost::math::lgamma;
   using std::log;
 
   typedef typename scalar_type<T_scale>::type T_scale_elem;

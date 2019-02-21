@@ -1,11 +1,9 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_ATANH_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_ATANH_HPP
 
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/prim/scal/meta/likely.hpp>
-#include <stan/math/prim/scal/fun/boost_policy.hpp>
-#include <boost/math/special_functions/atanh.hpp>
+#include <stan/math/prim/scal/err/check_bounded.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -21,10 +19,12 @@ namespace math {
  * @throw std::domain_error If argument is not in [-1, 1].
  */
 inline double atanh(double x) {
-  if (unlikely(is_nan(x)))
+  if (is_nan(x)) {
     return x;
-  else
-    return boost::math::atanh(x, boost_policy_t());
+  } else {
+    check_bounded("atanh", "x", x, -1.0, 1.0);
+    return std::atanh(x);
+  }
 }
 
 /**
@@ -34,7 +34,14 @@ inline double atanh(double x) {
  * @return Inverse hyperbolic tangent of the argument.
  * @throw std::domain_error If argument is less than 1.
  */
-inline double atanh(int x) { return atanh(static_cast<double>(x)); }
+inline double atanh(int x) {
+  if (is_nan(x)) {
+    return x;
+  } else {
+    check_bounded("atanh", "x", x, -1, 1);
+    return std::atanh(x);
+  }
+}
 
 }  // namespace math
 }  // namespace stan
