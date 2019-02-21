@@ -372,8 +372,8 @@ class cholesky_opencl : public vari {
  * @param variRef Values to be set in lower right triangular of L.
  * @return Matrix of vars
  */
-inline Eigen::Matrix<var, -1, -1>
- set_lower_tri_coeff_ref(Eigen::Matrix<var, -1, -1>& L, vari**& variRef) {
+inline Eigen::Matrix<var, -1, -1> set_lower_tri_coeff_ref(
+    Eigen::Matrix<var, -1, -1>& L, vari**& variRef) {
   size_t pos = 0;
   vari* dummy = new vari(0.0, false);
 
@@ -438,7 +438,8 @@ inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
     }
   } else {
 #ifdef STAN_OPENCL
-    if (L_A.rows() > opencl_context.tuning_opts().cholesky_size_worth_transfer) {
+    if (L_A.rows()
+        > opencl_context.tuning_opts().cholesky_size_worth_transfer) {
       cholesky_opencl* baseVari = new cholesky_opencl(A, L_A);
       L = set_lower_tri_coeff_ref(L, baseVari->variRefL_);
     } else {
