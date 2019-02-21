@@ -7,6 +7,12 @@
 #include <queue>
 
 #include <stan/math/gpu/matrix_gpu.hpp>
+#include <stan/math/gpu/multiply.hpp>
+#include <stan/math/gpu/subtract.hpp>
+#include <stan/math/gpu/add.hpp>
+#include <stan/math/gpu/transpose.hpp>
+
+#include <stan/math/gpu/kernels/eigendecomposition.hpp>
 
 using namespace std;
 
@@ -57,14 +63,13 @@ void p(const matrix_gpu& a) {
 }
 
 /**
- * Tridiagonalize a symmetric matrix using block Housholder algorithm. A = Q * T * Q^T
+ * Tridiagonalize a symmetric matrix using block Housholder algorithm. A = Q * T * Q^T, where T is tridiagonal and Q is orthonormal.
  * @param A Input matrix
  * @param[out] packed Packed form of the tridiagonal matrix. Elements of the resulting symmetric tridiagonal matrix T are in the diagonal and first superdiagonal.
  * Columns bellow diagonal contain householder vectors that can be used to construct orthogonal matrix Q.
- * @param r Block size. Affect only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes larger value is optimal.
+ * @param r Block size. Affect only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes a larger value is optimal.
  */
-
-void block_householder_tridiag3(const Eigen::MatrixXd& A, Eigen::MatrixXd& packed, int r = 60) {
+void block_householder_tridiag4(const Eigen::MatrixXd& A, Eigen::MatrixXd& packed, int r = 60) {
   packed = A;
   for (size_t k = 0; k < packed.rows() - 2; k += r) {
     int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
@@ -102,13 +107,132 @@ void block_householder_tridiag3(const Eigen::MatrixXd& A, Eigen::MatrixXd& packe
       V.col(j).tail(V.rows() - j) = v.tail(V.rows() - j);
     }
 
-    Eigen::MatrixXd& Y = U;
-    Eigen::MatrixXd Y_partial_update = U * V.transpose();
-    packed.block(k + actual_r, k + actual_r, packed.rows() - k - actual_r, packed.cols() - k - actual_r).triangularView<Eigen::Lower>() -=
-            (Y_partial_update + Y_partial_update.transpose()).bottomRightCorner(Y_partial_update.rows() - actual_r + 1, Y_partial_update.cols() - actual_r + 1);
+    Eigen::MatrixXd partial_update = U.bottomRows(U.rows() - actual_r + 1) * V.bottomRows(V.rows() - actual_r + 1).transpose();
+    packed.block(k + actual_r, k + actual_r, packed.rows() - k - actual_r, packed.cols() - k - actual_r).triangularView<Eigen::Lower>() -= partial_update + partial_update.transpose();
   }
   packed(packed.rows() - 2, packed.cols() - 1) = packed(packed.rows() - 1, packed.cols() - 2);
 }
+
+/**
+ * Tridiagonalize a symmetric matrix using block Housholder algorithm. A = Q * T * Q^T, where T is tridiagonal and Q is orthonormal.
+ * @param A Input matrix
+ * @param[out] packed Packed form of the tridiagonal matrix. Elements of the resulting symmetric tridiagonal matrix T are in the diagonal and first superdiagonal.
+ * Columns bellow diagonal contain householder vectors that can be used to construct orthogonal matrix Q.
+ * @param r Block size. Affect only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes a larger value is optimal.
+ */
+void block_householder_tridiag_gpu(const Eigen::MatrixXd& A, Eigen::MatrixXd& packed, int r = 60) {
+  packed = A;
+  for (size_t k = 0; k < packed.rows() - 2; k += r) {
+    int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
+    Eigen::MatrixXd V(packed.rows() - k - 1, actual_r);
+    Eigen::MatrixXd U(packed.rows() - k - 1, actual_r);
+    V.triangularView<Eigen::StrictlyUpper>() = Eigen::MatrixXd::Constant(V.rows(), V.cols(), 0);
+    U.triangularView<Eigen::StrictlyUpper>() = Eigen::MatrixXd::Constant(U.rows(), U.cols(), 0);
+
+    for (size_t j = 0; j < actual_r; j++) {
+      auto householder = packed.col(k + j).tail(packed.rows() - k - j - 1);
+      if (j != 0) {
+        auto householder_whole = packed.col(k + j).tail(packed.rows() - k - j);
+        householder_whole -= U.block(j - 1, 0, householder_whole.size(), j) * V.block(j - 1, 0, 1, j).transpose() +
+                             V.block(j - 1, 0, householder_whole.size(), j) * U.block(j - 1, 0, 1, j).transpose();
+      }
+      double q = householder.squaredNorm();
+      double alpha = -copysign(sqrt(q), packed(k + j, k + j));
+      q -= householder[0] * householder[0];
+      householder[0] -= alpha;
+      q += householder[0] * householder[0];
+      q = sqrt(q);
+      householder *= SQRT_2 / q;
+
+      auto& u = householder;
+      Eigen::VectorXd v(householder.size() + 1);
+      v.tail(householder.size()) = packed.bottomRightCorner(packed.rows() - k - j - 1, packed.cols() - k - j - 1).selfadjointView<Eigen::Lower>() * u
+                                   - U.bottomLeftCorner(u.size(), j) * (V.bottomLeftCorner(u.size(), j).transpose() * u)
+                                   - V.bottomLeftCorner(u.size(), j) * (U.bottomLeftCorner(u.size(), j).transpose() * u);
+      v[0] = q / SQRT_2;// - alpha * householder[1];
+      double cnst = v.tail(householder.size()).transpose() * u;
+      v.tail(householder.size()) -= 0.5 * cnst * u;
+
+      packed(k + j, k + j + 1) = packed(k + j + 1, k + j) * q / SQRT_2 + alpha - v[0] * u[0];
+      U.col(j).tail(U.rows() - j) = u;
+      V.col(j).tail(V.rows() - j) = v.tail(V.rows() - j);
+    }
+    matrix_gpu U_gpu(U.bottomRows(U.rows() - actual_r + 1).eval());
+    matrix_gpu V_T_gpu(V.bottomRows(V.rows() - actual_r + 1).transpose().eval());
+    matrix_gpu partial_update_gpu = U_gpu * V_T_gpu;
+    Eigen::MatrixXd partial_update(partial_update_gpu.rows(), partial_update_gpu.cols());
+    copy(partial_update, partial_update_gpu);
+    packed.block(k + actual_r, k + actual_r, packed.rows() - k - actual_r, packed.cols() - k - actual_r).triangularView<Eigen::Lower>() -= partial_update + partial_update.transpose();
+  }
+  packed(packed.rows() - 2, packed.cols() - 1) = packed(packed.rows() - 1, packed.cols() - 2);
+}
+
+/**
+ * Tridiagonalize a symmetric matrix using block Housholder algorithm. A = Q * T * Q^T, where T is tridiagonal and Q is orthonormal.
+ * @param A Input matrix
+ * @param[out] packed Packed form of the tridiagonal matrix. Elements of the resulting symmetric tridiagonal matrix T are in the diagonal and first superdiagonal.
+ * Columns bellow diagonal contain householder vectors that can be used to construct orthogonal matrix Q.
+ * @param r Block size. Affect only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes a larger value is optimal.
+ */
+void block_householder_tridiag_gpu2(const Eigen::MatrixXd& A, Eigen::MatrixXd& packed, int r = 60) {
+  packed = A;
+  for (size_t k = 0; k < packed.rows() - 2; k += r) {
+    int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
+    Eigen::MatrixXd V(packed.rows() - k - 1, actual_r);
+    Eigen::MatrixXd U(packed.rows() - k - 1, actual_r);
+    V.triangularView<Eigen::StrictlyUpper>() = Eigen::MatrixXd::Constant(V.rows(), V.cols(), 0);
+    U.triangularView<Eigen::StrictlyUpper>() = Eigen::MatrixXd::Constant(U.rows(), U.cols(), 0);
+
+    for (size_t j = 0; j < actual_r; j++) {
+      auto householder = packed.col(k + j).tail(packed.rows() - k - j - 1);
+      if (j != 0) {
+        auto householder_whole = packed.col(k + j).tail(packed.rows() - k - j);
+        householder_whole -= U.block(j - 1, 0, householder_whole.size(), j) * V.block(j - 1, 0, 1, j).transpose() +
+                             V.block(j - 1, 0, householder_whole.size(), j) * U.block(j - 1, 0, 1, j).transpose();
+      }
+      double q = householder.squaredNorm();
+      double alpha = -copysign(sqrt(q), packed(k + j, k + j));
+      q -= householder[0] * householder[0];
+      householder[0] -= alpha;
+      q += householder[0] * householder[0];
+      q = sqrt(q);
+      householder *= SQRT_2 / q;
+
+      auto& u = householder;
+      Eigen::VectorXd v(householder.size() + 1);
+
+//      matrix_gpu U_gpu_bl(u_gpu.rows(), j), V_gpu_bl(u_gpu.rows(), j);
+//      U_gpu_bl.sub_block(U_gpu, U_gpu.rows() - u_gpu.rows(), U_gpu.rows() - j, 0, 0, u_gpu.rows(), j);
+//      V_gpu_bl.sub_block(V_gpu, V_gpu.rows() - u_gpu.rows(), V_gpu.rows() - j, 0, 0, u_gpu.rows(), j);
+
+      matrix_gpu u_gpu(householder.eval());
+//      matrix_gpu v_gpu(householder.size() + 1, 1);
+      matrix_gpu U_gpu_bl(U.bottomLeftCorner(u.size(), j).eval());
+      matrix_gpu V_gpu_bl(V.bottomLeftCorner(u.size(), j).eval());
+      matrix_gpu tmp_gpu = U_gpu_bl * (transpose(V_gpu_bl) * u_gpu) +
+                           V_gpu_bl * (transpose(U_gpu_bl) * u_gpu);
+      Eigen::VectorXd tmp(householder.size());
+      copy(tmp,tmp_gpu);
+
+      v.tail(householder.size()) = packed.bottomRightCorner(packed.rows() - k - j - 1, packed.cols() - k - j - 1).selfadjointView<Eigen::Lower>() * u - tmp;
+      v[0] = q / SQRT_2;// - alpha * householder[1];
+      double cnst = v.tail(householder.size()).transpose() * u;
+      v.tail(householder.size()) -= 0.5 * cnst * u;
+
+      packed(k + j, k + j + 1) = packed(k + j + 1, k + j) * q / SQRT_2 + alpha - v[0] * u[0];
+      U.col(j).tail(U.rows() - j) = u;
+      V.col(j).tail(V.rows() - j) = v.tail(V.rows() - j);
+    }
+    matrix_gpu U_gpu(U.bottomRows(U.rows() - actual_r + 1).eval());
+    matrix_gpu V_T_gpu(V.bottomRows(V.rows() - actual_r + 1).transpose().eval());
+    matrix_gpu partial_update_gpu = U_gpu * V_T_gpu;
+    Eigen::MatrixXd partial_update(partial_update_gpu.rows(), partial_update_gpu.cols());
+    copy(partial_update, partial_update_gpu);
+    packed.block(k + actual_r, k + actual_r, packed.rows() - k - actual_r, packed.cols() - k - actual_r).triangularView<Eigen::Lower>() -= partial_update + partial_update.transpose();
+  }
+  packed(packed.rows() - 2, packed.cols() - 1) = packed(packed.rows() - 1, packed.cols() - 2);
+}
+
 
 /**
  * Calculates Q*A in place. To construct Q pass identity matrix as input A.
@@ -133,9 +257,140 @@ void block_apply_packed_Q3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, in
   }
 }
 
+/**
+ * Calculates Q*A in place. To construct Q pass an appropriate identity matrix as input A.
+ * @param packed Packed result of tridiagonalization that contains householder vectors that define Q in columns bellow the diagonal. Usually result of a call to `block_householder_tridiag3`.
+ * @param[in,out] A On input a matrix to multiply with Q. On output the product Q*A.
+ * @param r Block size. Affect only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes larger value is optimal.
+ */
+void block_apply_packed_Q_gpu(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 100) {
+  //if input A==Identity, constructs Q
+  Eigen::MatrixXd scratchSpace(A.rows(), r);
+  for (int k = (packed.rows() - 3) / r * r; k >= 0; k -= r) {
+    int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
+    Eigen::MatrixXd W(packed.rows() - k - 1, actual_r);
+    W.col(0) = packed.col(k).tail(W.rows());
+    for (size_t j = 1; j < actual_r; j++) {
+      scratchSpace.col(0).head(j).noalias() = packed.block(k + j + 1, k, packed.rows() - k - j - 1, j).transpose() * packed.col(j + k).tail(packed.rows() - k - j - 1);
+      W.col(j).noalias() = -W.leftCols(j) * scratchSpace.col(0).head(j);
+      W.col(j).tail(W.rows() - j) += packed.col(j + k).tail(packed.rows() - k - j - 1);
+    }
+    Eigen::MatrixXd packed_block_transpose_triang = packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>();
+    matrix_gpu packed_block_transpose_triang_gpu(packed_block_transpose_triang);
+    matrix_gpu A_bottom(A.bottomRows(A.rows() - k - 1).eval());
+    matrix_gpu W_gpu(W);
+    matrix_gpu tmp_gpu = packed_block_transpose_triang_gpu * A_bottom;
+    matrix_gpu tmp_gpu2 = W_gpu * tmp_gpu;
+    Eigen::MatrixXd tmp2(tmp_gpu2.rows(), tmp_gpu2.cols());
+    copy(tmp2,tmp_gpu2);
+    A.bottomRows(A.cols() - k - 1) -= tmp2;
+//    scratchSpace.transpose().bottomRows(actual_r).noalias() = packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>() * A.bottomRows(A.rows() - k - 1);
+//    A.bottomRows(A.cols() - k - 1).noalias() -= W * scratchSpace.transpose().bottomRows(actual_r);
+  }
+}
+
+/**
+ * Calculates Q*A in place. To construct Q pass an appropriate identity matrix as input A.
+ * @param packed Packed result of tridiagonalization that contains householder vectors that define Q in columns bellow the diagonal. Usually result of a call to `block_householder_tridiag3`.
+ * @param[in,out] A On input a matrix to multiply with Q. On output the product Q*A.
+ * @param r Block size. Affect only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes larger value is optimal.
+ */
+void block_apply_packed_Q_gpu2(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 100) {
+  //if input A==Identity, constructs Q
+  matrix_gpu A_gpu(A);
+  Eigen::MatrixXd scratchSpace(A.rows(), r);
+  for (int k = (packed.rows() - 3) / r * r; k >= 0; k -= r) {
+    int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
+    Eigen::MatrixXd W(packed.rows() - k - 1, actual_r);
+    W.col(0) = packed.col(k).tail(W.rows());
+    for (size_t j = 1; j < actual_r; j++) {
+      scratchSpace.col(0).head(j).noalias() = packed.block(k + j + 1, k, packed.rows() - k - j - 1, j).transpose() * packed.col(j + k).tail(packed.rows() - k - j - 1);
+      W.col(j).noalias() = -W.leftCols(j) * scratchSpace.col(0).head(j);
+      W.col(j).tail(W.rows() - j) += packed.col(j + k).tail(packed.rows() - k - j - 1);
+    }
+    Eigen::MatrixXd packed_block_transpose_triang = packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>();
+    matrix_gpu packed_block_transpose_triang_gpu(packed_block_transpose_triang);
+    matrix_gpu A_bottom_gpu(A.rows() - k - 1, A.cols());
+    A_bottom_gpu.sub_block(A_gpu, k+1, 0, 0, 0, A_bottom_gpu.rows(), A_bottom_gpu.cols());
+    matrix_gpu W_gpu(W);
+    A_bottom_gpu = A_bottom_gpu - W_gpu * (packed_block_transpose_triang_gpu * A_bottom_gpu);
+    A_gpu.sub_block(A_bottom_gpu, 0, 0, k+1, 0, A_bottom_gpu.rows(), A_bottom_gpu.cols());
+//    scratchSpace.transpose().bottomRows(actual_r).noalias() = packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>() * A.bottomRows(A.rows() - k - 1);
+//    A.bottomRows(A.cols() - k - 1).noalias() -= W * scratchSpace.transpose().bottomRows(actual_r);
+  }
+  copy(A,A_gpu);
+}
+
+/**
+ * Calculates Q*A in place. To construct Q pass an appropriate identity matrix as input A.
+ * @param packed Packed result of tridiagonalization that contains householder vectors that define Q in columns bellow the diagonal. Usually result of a call to `block_householder_tridiag3`.
+ * @param[in,out] A On input a matrix to multiply with Q. On output the product Q*A.
+ * @param r Block size. Affect only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes larger value is optimal.
+ */
+void block_apply_packed_Q_gpu3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 100) {
+  //if input A==Identity, constructs Q
+  matrix_gpu A_gpu(A);
+  matrix_gpu packed_gpu(packed);
+//  Eigen::MatrixXd scratchSpace(A.rows(), r);
+  for (int k = (packed.rows() - 3) / r * r; k >= 0; k -= r) {
+    int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
+//    Eigen::MatrixXd W(packed.rows() - k - 1, actual_r);
+    matrix_gpu W_gpu(packed.rows() - k - 1, actual_r);
+//    W.col(0) = packed.col(k).tail(W.rows());
+    W_gpu.sub_block(packed_gpu, packed.rows() - W_gpu.rows(), k, 0, 0, W_gpu.rows(), 1);
+    for (size_t j = 1; j < actual_r; j++) {
+//      scratchSpace.col(0).head(j).noalias() = packed.block(k + j + 1, k, packed.rows() - k - j - 1, j).transpose() * packed.col(j + k).tail(packed.rows() - k - j - 1);
+//      W.col(j).noalias() = -W.leftCols(j) * scratchSpace.col(0).head(j);
+//      Eigen::VectorXd tmp0 = scratchSpace.col(0).head(j);
+//      Eigen::VectorXd tmp1 = W.col(j);
+//      Eigen::VectorXd tmp2 = packed.col(j + k).tail(packed.rows() - k - j - 1);
+//      W.col(j).tail(W.rows() - j) += packed.col(j + k).tail(packed.rows() - k - j - 1);
+
+      matrix_gpu temp(j,1);
+      try {
+        opencl_kernels::eigendecomp_apply_Q1(
+                cl::NDRange(((j+63)/64)*64), cl::NDRange(64),
+                packed_gpu.buffer(), temp.buffer(), packed_gpu.rows(),
+                packed_gpu.cols(), k + j + 1, k, k + j);
+        opencl_kernels::eigendecomp_apply_Q2(
+                cl::NDRange(((W_gpu.rows()+63)/64)*64), cl::NDRange(64),
+                W_gpu.buffer(), temp.buffer(), packed_gpu.buffer(),
+                W_gpu.rows(), W_gpu.cols(), j, k);
+      } catch (cl::Error& e) {
+        check_opencl_error("block_apply_packed_Q_gpu3", e);
+      }
+
+//      matrix_gpu packed_block(packed.rows() - k - j - 1, j);
+//      packed_block.sub_block(packed_gpu, k + j + 1, k, 0, 0, packed.rows() - k - j - 1, j);
+//      matrix_gpu packed_col(packed.rows() - k - j - 1, 1);
+//      packed_col.sub_block(packed_gpu, k + j + 1, j + k, 0, 0, packed.rows() - k - j - 1, 1);
+//      matrix_gpu W_left(W_gpu.rows(), j);
+//      W_left.sub_block(W_gpu,0,0,0,0,W_gpu.rows(),j);
+//
+//      //matrix_gpu W_col = -1 * (W_left * (transpose(packed_block) * packed_col));
+//      matrix_gpu W_col = -1 * (W_left * temp);
+//      matrix_gpu W_tmp(W_gpu.rows() - j, 1);
+//      W_tmp.sub_block(W_col, j, 0, 0, 0, W_gpu.rows() - j, 1);
+//      W_tmp = W_tmp + packed_col;
+//      W_gpu.sub_block(W_col, 0, 0, 0, j, j, 1);
+//      W_gpu.sub_block(W_tmp, 0, 0, j, j, W_gpu.rows() - j, 1);
+
+    }
+    Eigen::MatrixXd packed_block_transpose_triang = packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>();
+    matrix_gpu packed_block_transpose_triang_gpu(packed_block_transpose_triang);
+    matrix_gpu A_bottom_gpu(A.rows() - k - 1, A.cols());
+    A_bottom_gpu.sub_block(A_gpu, k + 1, 0, 0, 0, A_bottom_gpu.rows(), A_bottom_gpu.cols());
+    A_bottom_gpu = A_bottom_gpu - W_gpu * (packed_block_transpose_triang_gpu * A_bottom_gpu);
+    A_gpu.sub_block(A_bottom_gpu, 0, 0, k + 1, 0, A_bottom_gpu.rows(), A_bottom_gpu.cols());
+//    scratchSpace.transpose().bottomRows(actual_r).noalias() = packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>() * A.bottomRows(A.rows() - k - 1);
+//    A.bottomRows(A.cols() - k - 1).noalias() -= W * scratchSpace.transpose().bottomRows(actual_r);
+  }
+  copy(A, A_gpu);
+}
+
 const double perturbation_range = 1e-15;
 /**
- * Generates a random number for perturbing a relatively robust representation-
+ * Generates a random number for perturbing a relatively robust representation
  * @return A uniformly distributed random number between `1 - perturbation_range / 2` and `1 + perturbation_range / 2`.
  */
 inline double get_random_perturbation_multiplier() {
@@ -360,7 +615,7 @@ void getGresgorin(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref
   max_eigval = std::max(max_eigval, diag[n - 1] + abs(subdiag[n - 2]));
 }
 
-const int BISECT_K = 4;
+const int BISECT_K = 8;
 
 /**
  * Calculates lower Sturm count of a tridiagonal matrix T - number of eigenvalues lower than shift for up to BISECT_K different shifts.
@@ -967,6 +1222,8 @@ void mrrr2(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const 
 */
 void reducibleTridiagEigenSolver(const Eigen::VectorXd& diag, const Eigen::VectorXd& subdiag, Eigen::VectorXd& eigenvals, Eigen::MatrixXd& eigenvecs, double splitThreshold = 1e-12) {
   int n = diag.size();
+  eigenvecs.resize(n,n);
+  eigenvals.resize(n);
   int last = 0;
   for (int i = 0; i < subdiag.size(); i++) {
     if (abs(subdiag[i] / diag[i]) < splitThreshold && abs(subdiag[i] / diag[i + 1]) < splitThreshold) {
@@ -1002,13 +1259,13 @@ void reducibleTridiagEigenSolver(const Eigen::VectorXd& diag, const Eigen::Vecto
 /**
  * Calculates eigenvalues and eigenvectors of a symmetric matrix.
  * @param A The matrix
- * @param eigenvals[out] Eigenvalues.
+ * @param eigenvals[out] Eigenvalues.b
  * @param eigenvecs[out] Eigenvectors.
  */
 void symmetricEigenSolver(const Eigen::MatrixXd& A, Eigen::VectorXd& eigenvals, Eigen::MatrixXd& eigenvecs) {
   Eigen::MatrixXd packed;
   auto start = std::chrono::steady_clock::now();
-  block_householder_tridiag3(A, packed);
+  block_householder_tridiag4(A, packed);
 
   cout << "tridiag: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
@@ -1020,7 +1277,7 @@ void symmetricEigenSolver(const Eigen::MatrixXd& A, Eigen::VectorXd& eigenvals, 
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
   start = std::chrono::steady_clock::now();
-  mrrr2(diag, subdiag, eigenvals, eigenvecs);
+  reducibleTridiagEigenSolver(diag, subdiag, eigenvals, eigenvecs);
 
   cout << "mrrr: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
