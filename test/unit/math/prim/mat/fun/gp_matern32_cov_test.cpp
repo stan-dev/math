@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/meta/size_of.hpp>
 #include <cmath>
 #include <limits>
 #include <string>
@@ -556,4 +557,35 @@ TEST(MathPrimMat, calculations_ard) {
                   cov2(0, 1));
   EXPECT_FLOAT_EQ(1.0, cov(1, 1));
   EXPECT_FLOAT_EQ(1.0, cov2(1, 1));
+}
+
+
+TEST(MathPrimMat, check_dim_mismatch) {
+  double sig = 1.0;
+  double l = 1.0;
+  
+  std::vector<Eigen::Matrix<double, -1, 1>> x(2);
+  x[0].resize(2, 1);
+  x[0] << 1, 2;
+  x[1].resize(3, 1);
+  x[1] << 1, 2, 3;
+  
+  EXPECT_THROW(stan::math::gp_matern32_cov(x, sig, l),
+               std::invalid_argument);
+
+
+  std::vector<Eigen::Matrix<double, -1, 1>> x1(2);
+  x1[0].resize(2, 1);
+  x1[0] << 1, 2;
+  x1[1].resize(2, 1);
+  x1[1] << 1, 2;
+
+  std::vector<Eigen::Matrix<double, -1, 1>> x2(3);
+  x2[0].resize(2, 1);
+  x2[0] << 1, 2;
+  x2[1].resize(3, 1);
+  x2[1] << 1, 2, 3;
+
+  EXPECT_THROW(stan::math::gp_matern32_cov(x1, x2, sig, l),
+               std::invalid_argument);
 }

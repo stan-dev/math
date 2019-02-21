@@ -10,6 +10,7 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/scal/meta/size_of.hpp>
 #include <cmath>
 #include <vector>
 
@@ -30,7 +31,6 @@ namespace math {
  * @tparam T_l type of parameter length scale
  *
  * @param x std::vector of scalars that can be used in squared distance
- *    This function assumes each element of x is the same size.
  * @param length_scale length scale
  * @param sigma marginal standard deviation or magnitude
  * @throw std::domain error if sigma <= 0, l <= 0, or x is nan or inf
@@ -42,8 +42,8 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
                 const T_l &length_scale) {
   using std::exp;
   using std::pow;
-
-  size_t x_size = x.size();
+  
+  size_t x_size = size_of(x);
   Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x_size, x_size);
@@ -51,15 +51,23 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
   if (x_size == 0)
     return cov;
 
+  const char* function = "gp_matern32_cov";
+  for (size_t i = 0; i < x_size; ++i)
+    for (size_t ii = i; ii < x_size; ++ii)
+      check_size_match(function, "x row", size_of(x[i]),
+                       "x's other row", size_of(x[ii]));
+
   for (size_t n = 0; n < x_size; ++n)
-    check_not_nan("gp_matern32_cov", "x", x[n]);
+    check_not_nan(function, "x", x[n]);
 
-  check_positive_finite("gp_matern32_cov", "magnitude", sigma);
-  check_positive_finite("gp_matern32_cov", "length scale", length_scale);
+  check_positive_finite(function, "magnitude", sigma);
+  check_positive_finite(function, "length scale", length_scale);
 
-  double sigma_sq = square(sigma);
-  double root_3_inv_l = sqrt(3.0) / length_scale;
-  double neg_root_3_inv_l = -1.0 * sqrt(3.0) / length_scale;
+  T_s sigma_sq = square(sigma);
+  typename return_type<double, T_l>::type
+    root_3_inv_l = sqrt(3.0) / length_scale;
+  typename return_type<double, T_l>::type
+    neg_root_3_inv_l = -1.0 * sqrt(3.0) / length_scale;
 
   for (size_t i = 0; i < x_size; ++i) {
     cov(i, i) = sigma_sq;
@@ -99,27 +107,28 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
                 const T_s &sigma, const std::vector<T_l> &length_scale) {
   using std::exp;
 
-  size_t x_size = x.size();
+  size_t x_size = size_of(x);
   Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x_size, x_size);
 
   if (x_size == 0)
     return cov;
+  const char* function = "gp_matern32_cov";
   size_t l_size = length_scale.size();
   for (size_t n = 0; n < x_size; ++n)
-    check_not_nan("gp_matern32_cov", "x", x[n]);
+    check_not_nan(function, "x", x[n]);
 
-  check_positive_finite("gp_matern32_cov", "magnitude", sigma);
-  check_positive_finite("gp_matern32_cov", "length scale", length_scale);
+  check_positive_finite(function, "magnitude", sigma);
+  check_positive_finite(function, "length scale", length_scale);
 
   for (size_t n = 0; n < x_size; ++n)
-    check_not_nan("gp_matern32_cov", "length scale", length_scale[n]);
+    check_not_nan(function, "length scale", length_scale[n]);
 
-  check_size_match("gp_matern32_cov", "x dimension", x[0].size(),
+  check_size_match(function, "x dimension", size_of(x[0]),
                    "number of length scales", l_size);
 
-  double sigma_sq = square(sigma);
+  T_s sigma_sq = square(sigma);
   double root_3 = sqrt(3.0);
   double neg_root_3 = -1.0 * sqrt(3.0);
 
@@ -157,7 +166,6 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
  *
  * @param x1 std::vector of scalars that can be used in squared_distance
  * @param x2 std::vector of scalars that can be used in squared_distance
- *    This function assumes all elements of x1 and x2 are the same length.
  * @param length_scale length scale
  * @param sigma standard deviation that can be used in stan::math::square
  * @throw std::domain error if sigma <= 0, l <= 0, or x1, x2 are nan or inf
@@ -170,26 +178,37 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 const T_s &sigma, const T_l &length_scale) {
   using std::exp;
 
-  size_t x1_size = x1.size();
-  size_t x2_size = x2.size();
+  size_t x1_size = size_of(x1);
+  size_t x2_size = size_of(x2);
   Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x1_size, x2_size);
 
   if (x1_size == 0 || x2_size == 0)
     return cov;
+  const char* function = "gp_matern32_cov";
+
+  for (size_t i = 0; i < x1_size; ++i)
+    for (size_t ii = i; ii < x1_size; ++ii)
+      check_size_match(function, "x1's row", size_of(x1[i]),
+                       "x1's other row", size_of(x1[ii]));
+  for (size_t i = 0; i < x2_size; ++i)
+    check_size_match(function, "x1's row", size_of(x1[0]),
+                     "x2's other row", size_of(x2[i]));
 
   for (size_t n = 0; n < x1_size; ++n)
-    check_not_nan("gp_matern32_cov", "x1", x1[n]);
+    check_not_nan(function, "x1", x1[n]);
   for (size_t n = 0; n < x2_size; ++n)
-    check_not_nan("gp_matern32_cov", "x2", x2[n]);
+    check_not_nan(function, "x2", x2[n]);
 
-  check_positive_finite("gp_matern32_cov", "magnitude", sigma);
-  check_positive_finite("gp_matern32_cov", "length scale", length_scale);
+  check_positive_finite(function, "magnitude", sigma);
+  check_positive_finite(function, "length scale", length_scale);
 
-  double sigma_sq = square(sigma);
-  double root_3_inv_l_sq = sqrt(3.0) / length_scale;
-  double neg_root_3_inv_l_sq = -1.0 * sqrt(3.0) / length_scale;
+  T_s sigma_sq = square(sigma);
+  typename return_type<double, T_l>::type
+    root_3_inv_l_sq = sqrt(3.0) / length_scale;
+  typename return_type<double, T_l>::type
+    neg_root_3_inv_l_sq = -1.0 * sqrt(3.0) / length_scale;
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
@@ -234,8 +253,8 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
                 const T_s &sigma, const std::vector<T_l> &length_scale) {
   using std::exp;
 
-  size_t x1_size = x1.size();
-  size_t x2_size = x2.size();
+  size_t x1_size = size_of(x1);
+  size_t x2_size = size_of(x2);
   Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x1_size, x2_size);
@@ -243,24 +262,25 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
   if (x1_size == 0 || x2_size == 0)
     return cov;
 
+  const char* function = "gp_matern_32_cov";
   for (size_t n = 0; n < x1_size; ++n)
-    check_not_nan("gp_matern32_cov", "x1", x1[n]);
+    check_not_nan(function, "x1", x1[n]);
   for (size_t n = 0; n < x2_size; ++n)
-    check_not_nan("gp_matern32_cov", "x2", x2[n]);
+    check_not_nan(function, "x2", x2[n]);
 
-  check_positive_finite("gp_matern32_cov", "magnitude", sigma);
-  check_positive_finite("gp_matern32_cov", "length scale", length_scale);
+  check_positive_finite(function, "magnitude", sigma);
+  check_positive_finite(function, "length scale", length_scale);
 
   size_t l_size = length_scale.size();
   for (size_t n = 0; n < l_size; ++n)
-    check_not_nan("gp_matern32_cov", "length scale", length_scale[n]);
+    check_not_nan(function, "length scale", length_scale[n]);
 
-  check_size_match("gp_matern32_cov", "x1 dimension", x1[0].size(),
+  check_size_match(function, "x1 dimension", size_of(x1[0]),
                    "number of length scales", l_size);
-  check_size_match("gp_matern32_cov", "x2 dimension", x2[0].size(),
+  check_size_match(function, "x2 dimension", size_of(x2[0]),
                    "number of length scales", l_size);
 
-  double sigma_sq = square(sigma);
+  T_s sigma_sq = square(sigma);
   double root_3 = sqrt(3.0);
   double neg_root_3 = -1.0 * sqrt(3.0);
 
