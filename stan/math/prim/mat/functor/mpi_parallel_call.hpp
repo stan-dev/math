@@ -290,7 +290,7 @@ class mpi_parallel_call {
       local_output.resize(Eigen::NoChange, num_outputs);
     }
 
-    int local_ok = 1;
+    string local_ok = "";
     try {
       for (int i = 0, offset = 0; i < num_local_jobs;
            offset += local_f_out[i], ++i) {
@@ -317,7 +317,7 @@ class mpi_parallel_call {
     } catch (const std::exception& e) {
       // see note 1 above for an explanation why we do not rethrow
       // here, but mereley flag it to keep the cluster synchronized
-      local_ok = 0;
+      local_ok = e.what();
     }
 
     // during first execution we distribute the output sizes from
@@ -327,14 +327,16 @@ class mpi_parallel_call {
       // before we can cache the sizes locally we must ensure
       // that no exception has been fired from any node. Hence,
       // share the info about the current status across all nodes.
-      int cluster_status = 0;
-      boost::mpi::reduce(world_, local_ok, cluster_status, std::plus<int>(), 0);
-      bool all_ok = cluster_status == static_cast<int>(world_size_);
+      string cluster_status = "";
+      boost::mpi::reduce(world_, local_ok, cluster_status, std::plus<string>(),
+                         0);
+      bool all_ok = cluster_status == "";
       boost::mpi::broadcast(world_, all_ok, 0);
       if (!all_ok) {
         // err out on the root
         if (rank_ == 0) {
-          throw std::domain_error("MPI error on first evaluation.");
+          throw std::domain_error("MPI error on first evaluation: "
+                                  + cluster_status);
         }
         // and ensure on the workers that they return into their
         // listening state
