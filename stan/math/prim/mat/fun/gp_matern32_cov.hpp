@@ -42,7 +42,7 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
                 const T_l &length_scale) {
   using std::exp;
   using std::pow;
-  
+
   size_t x_size = size_of(x);
   Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
                 Eigen::Dynamic>
@@ -51,11 +51,11 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
   if (x_size == 0)
     return cov;
 
-  const char* function = "gp_matern32_cov";
+  const char *function = "gp_matern32_cov";
   for (size_t i = 0; i < x_size; ++i)
     for (size_t ii = i; ii < x_size; ++ii)
-      check_size_match(function, "x row", size_of(x[i]),
-                       "x's other row", size_of(x[ii]));
+      check_size_match(function, "x row", size_of(x[i]), "x's other row",
+                       size_of(x[ii]));
 
   for (size_t n = 0; n < x_size; ++n)
     check_not_nan(function, "x", x[n]);
@@ -64,10 +64,10 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
   check_positive_finite(function, "length scale", length_scale);
 
   T_s sigma_sq = square(sigma);
-  typename return_type<double, T_l>::type
-    root_3_inv_l = sqrt(3.0) / length_scale;
-  typename return_type<double, T_l>::type
-    neg_root_3_inv_l = -1.0 * sqrt(3.0) / length_scale;
+  typename return_type<double, T_l>::type root_3_inv_l
+      = sqrt(3.0) / length_scale;
+  typename return_type<double, T_l>::type neg_root_3_inv_l
+      = -1.0 * sqrt(3.0) / length_scale;
 
   for (size_t i = 0; i < x_size; ++i) {
     cov(i, i) = sigma_sq;
@@ -114,7 +114,7 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
 
   if (x_size == 0)
     return cov;
-  const char* function = "gp_matern32_cov";
+  const char *function = "gp_matern32_cov";
   size_t l_size = length_scale.size();
   for (size_t n = 0; n < x_size; ++n)
     check_not_nan(function, "x", x[n]);
@@ -186,15 +186,15 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   if (x1_size == 0 || x2_size == 0)
     return cov;
-  const char* function = "gp_matern32_cov";
+  const char *function = "gp_matern32_cov";
 
   for (size_t i = 0; i < x1_size; ++i)
     for (size_t ii = i; ii < x1_size; ++ii)
-      check_size_match(function, "x1's row", size_of(x1[i]),
-                       "x1's other row", size_of(x1[ii]));
+      check_size_match(function, "x1's row", size_of(x1[i]), "x1's other row",
+                       size_of(x1[ii]));
   for (size_t i = 0; i < x2_size; ++i)
-    check_size_match(function, "x1's row", size_of(x1[0]),
-                     "x2's other row", size_of(x2[i]));
+    check_size_match(function, "x1's row", size_of(x1[0]), "x2's other row",
+                     size_of(x2[i]));
 
   for (size_t n = 0; n < x1_size; ++n)
     check_not_nan(function, "x1", x1[n]);
@@ -205,10 +205,10 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   check_positive_finite(function, "length scale", length_scale);
 
   T_s sigma_sq = square(sigma);
-  typename return_type<double, T_l>::type
-    root_3_inv_l_sq = sqrt(3.0) / length_scale;
-  typename return_type<double, T_l>::type
-    neg_root_3_inv_l_sq = -1.0 * sqrt(3.0) / length_scale;
+  typename return_type<double, T_l>::type root_3_inv_l_sq
+      = sqrt(3.0) / length_scale;
+  typename return_type<double, T_l>::type neg_root_3_inv_l_sq
+      = -1.0 * sqrt(3.0) / length_scale;
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
@@ -262,7 +262,7 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
   if (x1_size == 0 || x2_size == 0)
     return cov;
 
-  const char* function = "gp_matern_32_cov";
+  const char *function = "gp_matern_32_cov";
   for (size_t n = 0; n < x1_size; ++n)
     check_not_nan(function, "x1", x1[n]);
   for (size_t n = 0; n < x2_size; ++n)
