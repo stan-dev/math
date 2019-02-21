@@ -152,6 +152,10 @@ git commit -m "upgrading to sundials v${sundials_version}; removing troublesome 
 
 cat <<EOF
 
+
+
+
+
     Done upgrading Sundials from v${sundials_old_version} to v${sundials_version}.
 
     Please check the upgrade worked by running a test with CVODES linked.
