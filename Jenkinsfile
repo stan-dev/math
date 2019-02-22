@@ -50,7 +50,7 @@ pipeline {
         preserveStashes(buildCount: 7)
     }
     environment {
-        STAN_NUM_THREADS = "4"
+        STAN_NUM_THREADS = '4'
     }
     stages {
         stage('Kill previous builds') {
