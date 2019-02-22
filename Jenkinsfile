@@ -184,6 +184,17 @@ pipeline {
                         runTestsWin("test/unit")
                     }
                 }
+                stage('Windows Threading tests') {
+                    agent { label 'windows' }
+                    steps {
+                        deleteDirWin()
+                        unstash 'MathSetup'
+                        bat "echo CXX=${env.CXX} -Werror > make/local"
+                        bat "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
+                        runTestsWin("test/unit -f thread")
+                        runTestsWin("test/unit -f map_rect")
+                    }
+                }
             }
         }
         stage('Always-run tests part 2') {
@@ -227,18 +238,6 @@ pipeline {
                         runTests("test/unit -f map_rect")
                     }
                     post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Windows Threading tests') {
-                    agent { label 'windows' }
-                    steps {
-                        deleteDirWin()
-                        unstash 'MathSetup'
-                        bat "echo CXX=${env.CXX} -Werror > make/local"
-                        bat "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
-                        runTestsWin("test/unit -f thread")
-                        bat "find . -name *_test.xml -exec rm {} \\;"
-                        runTestsWin("test/unit -f map_rect")
-                    }
                 }
             }
         }
