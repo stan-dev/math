@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_CORE_CHAINABLESTACK_HPP
 
 #include <stan/math/rev/core/autodiffstackstorage.hpp>
+#include <iostream>
 
 namespace stan {
 namespace math {
@@ -11,18 +12,19 @@ class chainable_alloc;
 
 typedef AutodiffStackSingleton<vari, chainable_alloc> ChainableStack;
 
-namespace {
+// namespace {
 
+/**/
 struct ChainableStackInit {
-  ChainableStackInit() { instance_ = ChainableStack::init_instance(); }
+  ChainableStackInit() {
+    std::cout << "ChainableStackInit instance." << std::endl;
+    ChainableStack::init_instance();
+  }
   ~ChainableStackInit() {}
 
   typedef ChainableStack::AutodiffStackStorage* chainable_stack_ptr_t;
 
-#ifdef STAN_THREADS
-  thread_local
-#endif
-      static chainable_stack_ptr_t instance_;
+  thread_local static chainable_stack_ptr_t instance_;
 };
 
 #ifdef STAN_THREADS
@@ -31,9 +33,9 @@ thread_local
     ChainableStackInit::chainable_stack_ptr_t ChainableStackInit::instance_
     = ChainableStack::init_instance();
 
-ChainableStackInit global_initializer;
-
-}  // namespace
+static ChainableStackInit thread_initializer;
+/**/
+//}  // namespace
 
 }  // namespace math
 }  // namespace stan

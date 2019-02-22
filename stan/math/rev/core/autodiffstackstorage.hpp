@@ -3,6 +3,7 @@
 
 #include <stan/math/memory/stack_alloc.hpp>
 #include <vector>
+#include <iostream>
 
 namespace stan {
 namespace math {
@@ -62,19 +63,21 @@ struct AutodiffStackSingleton {
   AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
 
   constexpr static inline AutodiffStackStorage &instance() {
+    // if (unlikely(instance_ == nullptr))
+    //  return *init_instance();
     return *instance_;
   }
 
   static AutodiffStackStorage *init_instance() {
-    if (instance_ == nullptr)
+    // std::cout << "Initializing instance." << std::endl;
+    if (unlikely(instance_ == nullptr))
       instance_ = new AutodiffStackStorage();
     /*
 #ifdef STAN_THREADS
     thread_local
 #endif
-        static AutodiffStackStorage *instance
-        = new AutodiffStackStorage();
-    instance_ = instance;
+        static AutodiffStackStorage instance;
+    instance_ = &instance;
     */
     return instance_;
   }
@@ -95,14 +98,16 @@ struct AutodiffStackSingleton {
   // private:
   static
 #ifdef STAN_THREADS
-      thread_local
+      __thread
+  // thread_local
 #endif
       AutodiffStackStorage *instance_;
 };
 
 template <typename ChainableT, typename ChainableAllocT>
 #ifdef STAN_THREADS
-thread_local
+__thread
+// thread_local
 #endif
     typename AutodiffStackSingleton<ChainableT,
                                     ChainableAllocT>::AutodiffStackStorage
@@ -111,7 +116,7 @@ thread_local
 
 /*
 template <typename ChainableT, typename ChainableAllocT>
-typename AutodiffStackSingleton<ChainableT,
+typename AutodiffStackSingsleton<ChainableT,
                                 ChainableAllocT>::AutodiffStackStorage
 #ifdef STAN_THREADS
     thread_local

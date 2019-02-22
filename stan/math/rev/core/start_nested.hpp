@@ -11,7 +11,7 @@ namespace math {
  * can find it.
  */
 static inline void start_nested() {
-  ChainableStack::instance().nested_var_stack_sizes_.push_back(
+  ChainableStack::init_instance()->nested_var_stack_sizes_.push_back(
       ChainableStack::instance().var_stack_.size());
   ChainableStack::instance().nested_var_nochain_stack_sizes_.push_back(
       ChainableStack::instance().var_nochain_stack_.size());
