@@ -236,7 +236,7 @@ pipeline {
                         bat "echo CXX=${env.CXX} -Werror > make/local"
                         bat "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
                         runTestsWin("test/unit -f thread")
-                        bat "find . -name *_test.xml -exec rm {} \;"
+                        bat "find . -name *_test.xml -exec rm {} \\;"
                         runTestsWin("test/unit -f map_rect")
                     }
                 }
