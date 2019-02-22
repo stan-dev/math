@@ -344,7 +344,7 @@ int main() {
   auto kernel_4 = opencl_kernels::copy;
 
   //srand(time(0));
-  int A=1000;
+  int A=3001;
   Mat a = Mat::Random(A, A);
   a+=a.transpose().eval();
   //a.diagonal()+=Eigen::VectorXd::Constant(A,A);
@@ -390,17 +390,17 @@ int main() {
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
 
-//  start = std::chrono::steady_clock::now();
-//  block_householder_tridiag_gpu(a, packed);
-//  cout << "\t\tGPU my blocked packed: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
-//
-//  start = std::chrono::steady_clock::now();
-//  block_householder_tridiag_gpu2(a, packed);
-//  cout << "\t\tGPU my blocked packed 2: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
+  start = std::chrono::steady_clock::now();
+  block_householder_tridiag_gpu(a, packed);
+  cout << "\t\tGPU my blocked packed: "
+       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+       << "ms" << endl;
+
+  start = std::chrono::steady_clock::now();
+  block_householder_tridiag_gpu2(a, packed);
+  cout << "\t\tGPU my blocked packed 2: "
+       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+       << "ms" << endl;
 
   t = Mat::Constant(a.rows(), a.cols(), 0);
   t.diagonal()=packed.diagonal();
@@ -415,18 +415,6 @@ int main() {
        << "ms" << endl;
   qa=a;
   block_apply_packed_Q3(packed,qa);
-  cout << "apply left " << (qa - q * a).array().abs().sum() << endl;
-//  cout << "apply right " << (qa - a * q).array().abs().sum() << endl;
-  chkTridiag(a,t,q);
-
-  start = std::chrono::steady_clock::now();
-  q=Mat::Identity(a.rows(),a.cols());
-  block_apply_packed_Q_gpu(packed,q);
-  cout << "\t\tGPU block apply packed Q: "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-       << "ms" << endl;
-  qa=a;
-  block_apply_packed_Q_gpu(packed,qa);
   cout << "apply left " << (qa - q * a).array().abs().sum() << endl;
 //  cout << "apply right " << (qa - a * q).array().abs().sum() << endl;
   chkTridiag(a,t,q);

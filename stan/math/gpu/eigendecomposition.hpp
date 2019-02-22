@@ -21,7 +21,7 @@ using namespace std;
 
 #ifdef STAN_OPENCL
 
-//#define TIME_IT
+#define TIME_IT
 //#define SKIP_Q
 
 namespace stan {
@@ -67,10 +67,14 @@ void p(const matrix_gpu& a) {
  * @param A Input matrix
  * @param[out] packed Packed form of the tridiagonal matrix. Elements of the resulting symmetric tridiagonal matrix T are in the diagonal and first superdiagonal.
  * Columns bellow diagonal contain householder vectors that can be used to construct orthogonal matrix Q.
- * @param r Block size. Affect only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes a larger value is optimal.
+ * @param r Block size. Affects only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes a larger value is optimal.
  */
 void block_householder_tridiag4(const Eigen::MatrixXd& A, Eigen::MatrixXd& packed, int r = 60) {
   packed = A;
+#ifdef TIME_IT
+  int t1=0, t2=0, t3=0, t4=0;
+  auto start = std::chrono::steady_clock::now();
+#endif
   for (size_t k = 0; k < packed.rows() - 2; k += r) {
     int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
     Eigen::MatrixXd V(packed.rows() - k - 1, actual_r);
@@ -79,6 +83,9 @@ void block_householder_tridiag4(const Eigen::MatrixXd& A, Eigen::MatrixXd& packe
     U.triangularView<Eigen::StrictlyUpper>() = Eigen::MatrixXd::Constant(U.rows(), U.cols(), 0);
 
     for (size_t j = 0; j < actual_r; j++) {
+#ifdef TIME_IT
+      start = std::chrono::steady_clock::now();
+#endif
       auto householder = packed.col(k + j).tail(packed.rows() - k - j - 1);
       if (j != 0) {
         auto householder_whole = packed.col(k + j).tail(packed.rows() - k - j);
@@ -92,6 +99,10 @@ void block_householder_tridiag4(const Eigen::MatrixXd& A, Eigen::MatrixXd& packe
       q += householder[0] * householder[0];
       q = sqrt(q);
       householder *= SQRT_2 / q;
+#ifdef TIME_IT
+      t1+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+      start = std::chrono::steady_clock::now();
+#endif
 
       auto& u = householder;
       Eigen::VectorXd v(householder.size() + 1);
@@ -101,16 +112,31 @@ void block_householder_tridiag4(const Eigen::MatrixXd& A, Eigen::MatrixXd& packe
       v[0] = q / SQRT_2;// - alpha * householder[1];
       double cnst = v.tail(householder.size()).transpose() * u;
       v.tail(householder.size()) -= 0.5 * cnst * u;
+#ifdef TIME_IT
+      t2+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+      start = std::chrono::steady_clock::now();
+#endif
 
       packed(k + j, k + j + 1) = packed(k + j + 1, k + j) * q / SQRT_2 + alpha - v[0] * u[0];
       U.col(j).tail(U.rows() - j) = u;
       V.col(j).tail(V.rows() - j) = v.tail(V.rows() - j);
+#ifdef TIME_IT
+      t3+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+#endif
     }
-
+#ifdef TIME_IT
+    start = std::chrono::steady_clock::now();
+#endif
     Eigen::MatrixXd partial_update = U.bottomRows(U.rows() - actual_r + 1) * V.bottomRows(V.rows() - actual_r + 1).transpose();
     packed.block(k + actual_r, k + actual_r, packed.rows() - k - actual_r, packed.cols() - k - actual_r).triangularView<Eigen::Lower>() -= partial_update + partial_update.transpose();
+#ifdef TIME_IT
+    t4+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+#endif
   }
   packed(packed.rows() - 2, packed.cols() - 1) = packed(packed.rows() - 1, packed.cols() - 2);
+#ifdef TIME_IT
+  std::cout << "block_householder_tridiag4 detailed timings: " << t1/1000 << " " << t2/1000 << " " << t3/1000 << " " << t4/1000 << std::endl;
+#endif
 }
 
 /**
@@ -118,10 +144,14 @@ void block_householder_tridiag4(const Eigen::MatrixXd& A, Eigen::MatrixXd& packe
  * @param A Input matrix
  * @param[out] packed Packed form of the tridiagonal matrix. Elements of the resulting symmetric tridiagonal matrix T are in the diagonal and first superdiagonal.
  * Columns bellow diagonal contain householder vectors that can be used to construct orthogonal matrix Q.
- * @param r Block size. Affect only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes a larger value is optimal.
+ * @param r Block size. Affects only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes a larger value is optimal.
  */
 void block_householder_tridiag_gpu(const Eigen::MatrixXd& A, Eigen::MatrixXd& packed, int r = 60) {
   packed = A;
+#ifdef TIME_IT
+  int t1=0, t2=0, t3=0, t4=0;
+  auto start = std::chrono::steady_clock::now();
+#endif
   for (size_t k = 0; k < packed.rows() - 2; k += r) {
     int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
     Eigen::MatrixXd V(packed.rows() - k - 1, actual_r);
@@ -130,6 +160,9 @@ void block_householder_tridiag_gpu(const Eigen::MatrixXd& A, Eigen::MatrixXd& pa
     U.triangularView<Eigen::StrictlyUpper>() = Eigen::MatrixXd::Constant(U.rows(), U.cols(), 0);
 
     for (size_t j = 0; j < actual_r; j++) {
+#ifdef TIME_IT
+      start = std::chrono::steady_clock::now();
+#endif
       auto householder = packed.col(k + j).tail(packed.rows() - k - j - 1);
       if (j != 0) {
         auto householder_whole = packed.col(k + j).tail(packed.rows() - k - j);
@@ -143,6 +176,10 @@ void block_householder_tridiag_gpu(const Eigen::MatrixXd& A, Eigen::MatrixXd& pa
       q += householder[0] * householder[0];
       q = sqrt(q);
       householder *= SQRT_2 / q;
+#ifdef TIME_IT
+      t1+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+      start = std::chrono::steady_clock::now();
+#endif
 
       auto& u = householder;
       Eigen::VectorXd v(householder.size() + 1);
@@ -152,19 +189,35 @@ void block_householder_tridiag_gpu(const Eigen::MatrixXd& A, Eigen::MatrixXd& pa
       v[0] = q / SQRT_2;// - alpha * householder[1];
       double cnst = v.tail(householder.size()).transpose() * u;
       v.tail(householder.size()) -= 0.5 * cnst * u;
+#ifdef TIME_IT
+      t2+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+      start = std::chrono::steady_clock::now();
+#endif
 
       packed(k + j, k + j + 1) = packed(k + j + 1, k + j) * q / SQRT_2 + alpha - v[0] * u[0];
       U.col(j).tail(U.rows() - j) = u;
       V.col(j).tail(V.rows() - j) = v.tail(V.rows() - j);
+#ifdef TIME_IT
+      t3+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+#endif
     }
+#ifdef TIME_IT
+    start = std::chrono::steady_clock::now();
+#endif
     matrix_gpu U_gpu(U.bottomRows(U.rows() - actual_r + 1).eval());
     matrix_gpu V_T_gpu(V.bottomRows(V.rows() - actual_r + 1).transpose().eval());
     matrix_gpu partial_update_gpu = U_gpu * V_T_gpu;
     Eigen::MatrixXd partial_update(partial_update_gpu.rows(), partial_update_gpu.cols());
     copy(partial_update, partial_update_gpu);
     packed.block(k + actual_r, k + actual_r, packed.rows() - k - actual_r, packed.cols() - k - actual_r).triangularView<Eigen::Lower>() -= partial_update + partial_update.transpose();
+#ifdef TIME_IT
+    t4+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+#endif
   }
   packed(packed.rows() - 2, packed.cols() - 1) = packed(packed.rows() - 1, packed.cols() - 2);
+#ifdef TIME_IT
+  std::cout << "block_householder_tridiag_gpu detailed timings: " << t1/1000 << " " << t2/1000 << " " << t3/1000 << " " << t4/1000 << std::endl;
+#endif
 }
 
 /**
@@ -172,10 +225,14 @@ void block_householder_tridiag_gpu(const Eigen::MatrixXd& A, Eigen::MatrixXd& pa
  * @param A Input matrix
  * @param[out] packed Packed form of the tridiagonal matrix. Elements of the resulting symmetric tridiagonal matrix T are in the diagonal and first superdiagonal.
  * Columns bellow diagonal contain householder vectors that can be used to construct orthogonal matrix Q.
- * @param r Block size. Affect only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes a larger value is optimal.
+ * @param r Block size. Affects only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes a larger value is optimal.
  */
 void block_householder_tridiag_gpu2(const Eigen::MatrixXd& A, Eigen::MatrixXd& packed, int r = 60) {
   packed = A;
+#ifdef TIME_IT
+  int t1=0, t2=0, t3=0, t4=0;
+  auto start = std::chrono::steady_clock::now();
+#endif
   for (size_t k = 0; k < packed.rows() - 2; k += r) {
     int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
     Eigen::MatrixXd V(packed.rows() - k - 1, actual_r);
@@ -197,7 +254,6 @@ void block_householder_tridiag_gpu2(const Eigen::MatrixXd& A, Eigen::MatrixXd& p
       q += householder[0] * householder[0];
       q = sqrt(q);
       householder *= SQRT_2 / q;
-
       auto& u = householder;
       Eigen::VectorXd v(householder.size() + 1);
 
@@ -205,32 +261,53 @@ void block_householder_tridiag_gpu2(const Eigen::MatrixXd& A, Eigen::MatrixXd& p
 //      U_gpu_bl.sub_block(U_gpu, U_gpu.rows() - u_gpu.rows(), U_gpu.rows() - j, 0, 0, u_gpu.rows(), j);
 //      V_gpu_bl.sub_block(V_gpu, V_gpu.rows() - u_gpu.rows(), V_gpu.rows() - j, 0, 0, u_gpu.rows(), j);
 
+#ifdef TIME_IT
+      start = std::chrono::steady_clock::now();
+#endif
       matrix_gpu u_gpu(householder.eval());
 //      matrix_gpu v_gpu(householder.size() + 1, 1);
       matrix_gpu U_gpu_bl(U.bottomLeftCorner(u.size(), j).eval());
       matrix_gpu V_gpu_bl(V.bottomLeftCorner(u.size(), j).eval());
+#ifdef TIME_IT
+      t1+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+      start = std::chrono::steady_clock::now();
+#endif
       matrix_gpu tmp_gpu = U_gpu_bl * (transpose(V_gpu_bl) * u_gpu) +
                            V_gpu_bl * (transpose(U_gpu_bl) * u_gpu);
       Eigen::VectorXd tmp(householder.size());
       copy(tmp,tmp_gpu);
-
+#ifdef TIME_IT
+      t2+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+      start = std::chrono::steady_clock::now();
+#endif
       v.tail(householder.size()) = packed.bottomRightCorner(packed.rows() - k - j - 1, packed.cols() - k - j - 1).selfadjointView<Eigen::Lower>() * u - tmp;
       v[0] = q / SQRT_2;// - alpha * householder[1];
       double cnst = v.tail(householder.size()).transpose() * u;
       v.tail(householder.size()) -= 0.5 * cnst * u;
-
+#ifdef TIME_IT
+      t3+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+#endif
       packed(k + j, k + j + 1) = packed(k + j + 1, k + j) * q / SQRT_2 + alpha - v[0] * u[0];
       U.col(j).tail(U.rows() - j) = u;
       V.col(j).tail(V.rows() - j) = v.tail(V.rows() - j);
     }
+#ifdef TIME_IT
+    start = std::chrono::steady_clock::now();
+#endif
     matrix_gpu U_gpu(U.bottomRows(U.rows() - actual_r + 1).eval());
     matrix_gpu V_T_gpu(V.bottomRows(V.rows() - actual_r + 1).transpose().eval());
     matrix_gpu partial_update_gpu = U_gpu * V_T_gpu;
     Eigen::MatrixXd partial_update(partial_update_gpu.rows(), partial_update_gpu.cols());
     copy(partial_update, partial_update_gpu);
     packed.block(k + actual_r, k + actual_r, packed.rows() - k - actual_r, packed.cols() - k - actual_r).triangularView<Eigen::Lower>() -= partial_update + partial_update.transpose();
+#ifdef TIME_IT
+    t4+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+#endif
   }
   packed(packed.rows() - 2, packed.cols() - 1) = packed(packed.rows() - 1, packed.cols() - 2);
+#ifdef TIME_IT
+  std::cout << "block_householder_tridiag_gpu2 detailed timings: " << t1/1000 << " " << t2/1000 << " " << t3/1000 << " " << t4/1000 << std::endl;
+#endif
 }
 
 
@@ -261,76 +338,74 @@ void block_apply_packed_Q3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, in
  * Calculates Q*A in place. To construct Q pass an appropriate identity matrix as input A.
  * @param packed Packed result of tridiagonalization that contains householder vectors that define Q in columns bellow the diagonal. Usually result of a call to `block_householder_tridiag3`.
  * @param[in,out] A On input a matrix to multiply with Q. On output the product Q*A.
- * @param r Block size. Affect only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes larger value is optimal.
- */
-void block_apply_packed_Q_gpu(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 100) {
-  //if input A==Identity, constructs Q
-  Eigen::MatrixXd scratchSpace(A.rows(), r);
-  for (int k = (packed.rows() - 3) / r * r; k >= 0; k -= r) {
-    int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
-    Eigen::MatrixXd W(packed.rows() - k - 1, actual_r);
-    W.col(0) = packed.col(k).tail(W.rows());
-    for (size_t j = 1; j < actual_r; j++) {
-      scratchSpace.col(0).head(j).noalias() = packed.block(k + j + 1, k, packed.rows() - k - j - 1, j).transpose() * packed.col(j + k).tail(packed.rows() - k - j - 1);
-      W.col(j).noalias() = -W.leftCols(j) * scratchSpace.col(0).head(j);
-      W.col(j).tail(W.rows() - j) += packed.col(j + k).tail(packed.rows() - k - j - 1);
-    }
-    Eigen::MatrixXd packed_block_transpose_triang = packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>();
-    matrix_gpu packed_block_transpose_triang_gpu(packed_block_transpose_triang);
-    matrix_gpu A_bottom(A.bottomRows(A.rows() - k - 1).eval());
-    matrix_gpu W_gpu(W);
-    matrix_gpu tmp_gpu = packed_block_transpose_triang_gpu * A_bottom;
-    matrix_gpu tmp_gpu2 = W_gpu * tmp_gpu;
-    Eigen::MatrixXd tmp2(tmp_gpu2.rows(), tmp_gpu2.cols());
-    copy(tmp2,tmp_gpu2);
-    A.bottomRows(A.cols() - k - 1) -= tmp2;
-//    scratchSpace.transpose().bottomRows(actual_r).noalias() = packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>() * A.bottomRows(A.rows() - k - 1);
-//    A.bottomRows(A.cols() - k - 1).noalias() -= W * scratchSpace.transpose().bottomRows(actual_r);
-  }
-}
-
-/**
- * Calculates Q*A in place. To construct Q pass an appropriate identity matrix as input A.
- * @param packed Packed result of tridiagonalization that contains householder vectors that define Q in columns bellow the diagonal. Usually result of a call to `block_householder_tridiag3`.
- * @param[in,out] A On input a matrix to multiply with Q. On output the product Q*A.
- * @param r Block size. Affect only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes larger value is optimal.
+ * @param r Block size. Affects only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes larger value is optimal.
  */
 void block_apply_packed_Q_gpu2(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 100) {
   //if input A==Identity, constructs Q
   matrix_gpu A_gpu(A);
   Eigen::MatrixXd scratchSpace(A.rows(), r);
+#ifdef TIME_IT
+  int t1=0, t2=0, t3=0, t4=0;
+  auto start = std::chrono::steady_clock::now();
+#endif
   for (int k = (packed.rows() - 3) / r * r; k >= 0; k -= r) {
     int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
     Eigen::MatrixXd W(packed.rows() - k - 1, actual_r);
     W.col(0) = packed.col(k).tail(W.rows());
     for (size_t j = 1; j < actual_r; j++) {
+#ifdef TIME_IT
+      start = std::chrono::steady_clock::now();
+#endif
       scratchSpace.col(0).head(j).noalias() = packed.block(k + j + 1, k, packed.rows() - k - j - 1, j).transpose() * packed.col(j + k).tail(packed.rows() - k - j - 1);
+#ifdef TIME_IT
+      t1+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+      start = std::chrono::steady_clock::now();
+#endif
       W.col(j).noalias() = -W.leftCols(j) * scratchSpace.col(0).head(j);
       W.col(j).tail(W.rows() - j) += packed.col(j + k).tail(packed.rows() - k - j - 1);
+#ifdef TIME_IT
+      t2+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+#endif
     }
+#ifdef TIME_IT
+    start = std::chrono::steady_clock::now();
+#endif
     Eigen::MatrixXd packed_block_transpose_triang = packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>();
     matrix_gpu packed_block_transpose_triang_gpu(packed_block_transpose_triang);
     matrix_gpu A_bottom_gpu(A.rows() - k - 1, A.cols());
     A_bottom_gpu.sub_block(A_gpu, k+1, 0, 0, 0, A_bottom_gpu.rows(), A_bottom_gpu.cols());
     matrix_gpu W_gpu(W);
+#ifdef TIME_IT
+    t3+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+    start = std::chrono::steady_clock::now();
+#endif
     A_bottom_gpu = A_bottom_gpu - W_gpu * (packed_block_transpose_triang_gpu * A_bottom_gpu);
     A_gpu.sub_block(A_bottom_gpu, 0, 0, k+1, 0, A_bottom_gpu.rows(), A_bottom_gpu.cols());
+#ifdef TIME_IT
+    t4+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+#endif
 //    scratchSpace.transpose().bottomRows(actual_r).noalias() = packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>() * A.bottomRows(A.rows() - k - 1);
 //    A.bottomRows(A.cols() - k - 1).noalias() -= W * scratchSpace.transpose().bottomRows(actual_r);
   }
   copy(A,A_gpu);
+#ifdef TIME_IT
+  std::cout << "block_apply_packed_Q_gpu2 detailed timings: " << t1/1000 << " " << t2/1000 << " " << t3/1000 << " " << t4/1000 << std::endl;
+#endif
 }
 
 /**
  * Calculates Q*A in place. To construct Q pass an appropriate identity matrix as input A.
  * @param packed Packed result of tridiagonalization that contains householder vectors that define Q in columns bellow the diagonal. Usually result of a call to `block_householder_tridiag3`.
  * @param[in,out] A On input a matrix to multiply with Q. On output the product Q*A.
- * @param r Block size. Affect only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes larger value is optimal.
+ * @param r Block size. Affects only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes larger value is optimal.
  */
 void block_apply_packed_Q_gpu3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 100) {
-  //if input A==Identity, constructs Q
   matrix_gpu A_gpu(A);
   matrix_gpu packed_gpu(packed);
+#ifdef TIME_IT
+  int t1=0, t2=0, t3=0, t4=0;
+  auto start = std::chrono::steady_clock::now();
+#endif
 //  Eigen::MatrixXd scratchSpace(A.rows(), r);
   for (int k = (packed.rows() - 3) / r * r; k >= 0; k -= r) {
     int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
@@ -348,14 +423,24 @@ void block_apply_packed_Q_gpu3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A
 
       matrix_gpu temp(j,1);
       try {
+#ifdef TIME_IT
+        start = std::chrono::steady_clock::now();
+#endif
         opencl_kernels::eigendecomp_apply_Q1(
-                cl::NDRange(((j+63)/64)*64), cl::NDRange(64),
+                cl::NDRange(30*64), cl::NDRange(64),
                 packed_gpu.buffer(), temp.buffer(), packed_gpu.rows(),
                 packed_gpu.cols(), k + j + 1, k, k + j);
+#ifdef TIME_IT
+        t1+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+        start = std::chrono::steady_clock::now();
+#endif
         opencl_kernels::eigendecomp_apply_Q2(
-                cl::NDRange(((W_gpu.rows()+63)/64)*64), cl::NDRange(64),
+                cl::NDRange((W_gpu.rows()+63)/64*64), cl::NDRange(64),
                 W_gpu.buffer(), temp.buffer(), packed_gpu.buffer(),
                 W_gpu.rows(), W_gpu.cols(), j, k);
+#ifdef TIME_IT
+        t2+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+#endif
       } catch (cl::Error& e) {
         check_opencl_error("block_apply_packed_Q_gpu3", e);
       }
@@ -376,16 +461,29 @@ void block_apply_packed_Q_gpu3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A
 //      W_gpu.sub_block(W_tmp, 0, 0, j, j, W_gpu.rows() - j, 1);
 
     }
+#ifdef TIME_IT
+    start = std::chrono::steady_clock::now();
+#endif
     Eigen::MatrixXd packed_block_transpose_triang = packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>();
     matrix_gpu packed_block_transpose_triang_gpu(packed_block_transpose_triang);
+#ifdef TIME_IT
+    t3+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+    start = std::chrono::steady_clock::now();
+#endif
     matrix_gpu A_bottom_gpu(A.rows() - k - 1, A.cols());
     A_bottom_gpu.sub_block(A_gpu, k + 1, 0, 0, 0, A_bottom_gpu.rows(), A_bottom_gpu.cols());
     A_bottom_gpu = A_bottom_gpu - W_gpu * (packed_block_transpose_triang_gpu * A_bottom_gpu);
     A_gpu.sub_block(A_bottom_gpu, 0, 0, k + 1, 0, A_bottom_gpu.rows(), A_bottom_gpu.cols());
 //    scratchSpace.transpose().bottomRows(actual_r).noalias() = packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>() * A.bottomRows(A.rows() - k - 1);
 //    A.bottomRows(A.cols() - k - 1).noalias() -= W * scratchSpace.transpose().bottomRows(actual_r);
+#ifdef TIME_IT
+    t4+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+#endif
   }
   copy(A, A_gpu);
+#ifdef TIME_IT
+  std::cout << "block_apply_packed_Q_gpu3 detailed timings: " << t1/1000 << " " << t2/1000 << " " << t3/1000 << " " << t4/1000 << std::endl;
+#endif
 }
 
 const double perturbation_range = 1e-15;
