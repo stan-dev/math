@@ -3,12 +3,14 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/divide_columns.hpp>
+#include <stan/math/prim/mat/fun/distance.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/fun/divide.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
+#include <stan/math/prim/scal/fun/distance.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/size_of.hpp>
 #include <cmath>
@@ -52,10 +54,10 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
     return cov;
 
   const char *function = "gp_matern32_cov";
+  size_t x_obs_size = size_of(x[0]);
   for (size_t i = 0; i < x_size; ++i)
-    for (size_t ii = i; ii < x_size; ++ii)
-      check_size_match(function, "x row", size_of(x[i]), "x's other row",
-                       size_of(x[ii]));
+    check_size_match(function, "x row", x_obs_size, "x's other row",
+                     size_of(x[i]));
 
   for (size_t n = 0; n < x_size; ++n)
     check_not_nan(function, "x", x[n]);
@@ -64,18 +66,15 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
   check_positive_finite(function, "length scale", length_scale);
 
   T_s sigma_sq = square(sigma);
-  typename return_type<double, T_l>::type root_3_inv_l
-      = sqrt(3.0) / length_scale;
-  typename return_type<double, T_l>::type neg_root_3_inv_l
-      = -1.0 * sqrt(3.0) / length_scale;
+  T_l root_3_inv_l = sqrt(3.0) / length_scale;
+  T_l neg_root_3_inv_l = -1.0 * sqrt(3.0) / length_scale;
 
   for (size_t i = 0; i < x_size; ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
-      typename return_type<T_x, T_s, T_l>::type distance
-          = sqrt(squared_distance(x[i], x[j]));
-      cov(i, j) = sigma_sq * (1.0 + root_3_inv_l * distance)
-                  * exp(neg_root_3_inv_l * distance);
+      typename return_type<T_x>::type dist = distance(x[i], x[j]);
+      cov(i, j) = sigma_sq * (1.0 + root_3_inv_l * dist)
+                  * exp(neg_root_3_inv_l * dist);
       cov(j, i) = cov(i, j);
     }
   }
@@ -137,10 +136,9 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
 
   for (size_t i = 0; i < x_size; ++i) {
     for (size_t j = i; j < x_size; ++j) {
-      typename return_type<T_x, T_s, T_l>::type distance
-          = sqrt(squared_distance(x_new[i], x_new[j]));
+      typename return_type<T_x, T_l>::type dist = distance(x_new[i], x_new[j]);
       cov(i, j)
-          = sigma_sq * (1.0 + root_3 * distance) * exp(neg_root_3 * distance);
+          = sigma_sq * (1.0 + root_3 * dist) * exp(neg_root_3 * dist);
       cov(j, i) = cov(i, j);
     }
   }
@@ -186,14 +184,14 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   if (x1_size == 0 || x2_size == 0)
     return cov;
-  const char *function = "gp_matern32_cov";
 
+  const char *function = "gp_matern32_cov";
+  size_t x1_obs_size = size_of(x1[0]);
   for (size_t i = 0; i < x1_size; ++i)
-    for (size_t ii = i; ii < x1_size; ++ii)
-      check_size_match(function, "x1's row", size_of(x1[i]), "x1's other row",
-                       size_of(x1[ii]));
+      check_size_match(function, "x1's row", x1_obs_size, "x1's other row",
+                       size_of(x1[i]));
   for (size_t i = 0; i < x2_size; ++i)
-    check_size_match(function, "x1's row", size_of(x1[0]), "x2's other row",
+    check_size_match(function, "x1's row", x1_obs_size, "x2's other row",
                      size_of(x2[i]));
 
   for (size_t n = 0; n < x1_size; ++n)
@@ -205,17 +203,14 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   check_positive_finite(function, "length scale", length_scale);
 
   T_s sigma_sq = square(sigma);
-  typename return_type<double, T_l>::type root_3_inv_l_sq
-      = sqrt(3.0) / length_scale;
-  typename return_type<double, T_l>::type neg_root_3_inv_l_sq
-      = -1.0 * sqrt(3.0) / length_scale;
+  T_l root_3_inv_l_sq = sqrt(3.0) / length_scale;
+  T_l neg_root_3_inv_l_sq = -1.0 * sqrt(3.0) / length_scale;
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      typename return_type<T_x1, T_x2>::type distance
-          = sqrt(squared_distance(x1[i], x2[j]));
-      cov(i, j) = sigma_sq * (1.0 + root_3_inv_l_sq * distance)
-                  * exp(neg_root_3_inv_l_sq * distance);
+      typename return_type<T_x1, T_x2>::type dist = distance(x1[i], x2[j]);
+      cov(i, j) = sigma_sq * (1.0 + root_3_inv_l_sq * dist)
+                  * exp(neg_root_3_inv_l_sq * dist);
     }
   }
   return cov;
@@ -275,10 +270,12 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
   for (size_t n = 0; n < l_size; ++n)
     check_not_nan(function, "length scale", length_scale[n]);
 
-  check_size_match(function, "x1 dimension", size_of(x1[0]),
-                   "number of length scales", l_size);
-  check_size_match(function, "x2 dimension", size_of(x2[0]),
-                   "number of length scales", l_size);
+  for (size_t i = 0; i < x1_size; ++i)
+    check_size_match(function, "x1's row", size_of(x1[i]),
+                     "number of length scales", l_size);
+  for (size_t i = 0; i < x2_size; ++i)
+    check_size_match(function, "x2's row", size_of(x2[i]),
+                     "number of length scales", l_size);
 
   T_s sigma_sq = square(sigma);
   double root_3 = sqrt(3.0);
@@ -291,10 +288,10 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      typename return_type<T_x1, T_x2, T_s, T_l>::type distance
-          = sqrt(squared_distance(x1_new[i], x2_new[j]));
+      typename return_type<T_x1, T_x2, T_l>::type dist
+        = distance(x1_new[i], x2_new[j]);
       cov(i, j)
-          = sigma_sq * (1.0 + root_3 * distance) * exp(neg_root_3 * distance);
+        = sigma_sq * (1.0 + root_3 * dist) * exp(neg_root_3 * dist);
     }
   }
   return cov;
