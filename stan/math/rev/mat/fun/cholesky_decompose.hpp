@@ -440,7 +440,8 @@ inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
     }
   } else {
 #ifdef STAN_OPENCL
-    if (L_A.rows() > opencl_context.tuning_opts().cholesky_size_worth_transfer) {
+    if (L_A.rows()
+        > opencl_context.tuning_opts().cholesky_size_worth_transfer) {
       cholesky_opencl* baseVari = new cholesky_opencl(A, L_A);
       internal::set_lower_tri_coeff_ref(L, baseVari->variRefL_);
     } else {
