@@ -28,6 +28,29 @@
 namespace stan {
 namespace math {
 
+namespace internal {
+  /**
+   * Set the lower right triangular of a var matrix given a set of vari**
+   *
+   * @param L Matrix of vars
+   * @param variRef Values to be set in lower right triangular of L.
+   * @return None, L modified by reference.
+   */
+  inline void
+   set_lower_tri_coeff_ref(Eigen::Matrix<var, -1, -1>& L, vari**& variRef) {
+    size_t pos = 0;
+    vari* dummy = new vari(0.0, false);
+
+    for (size_type j = 0; j < L.cols(); ++j) {
+      for (size_type i = j; i < L.cols(); ++i) {
+        L.coeffRef(i, j).vi_ = variRef[pos++];
+      }
+      for (size_type k = 0; k < j; ++k)
+        L.coeffRef(k, j).vi_ = dummy;
+    }
+    return ;
+  }
+}
 class cholesky_block : public vari {
  public:
   int M_;
@@ -61,7 +84,7 @@ class cholesky_block : public vari {
         variRefL_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
             A.rows() * (A.rows() + 1) / 2)) {
     size_t pos = 0;
-    block_size_ = std::max((M_ / 8 / 16) * 16, 8);
+    block_size_ = std::max(M_ / 8, 8);
     block_size_ = std::min(block_size_, 128);
     for (size_type j = 0; j < M_; ++j) {
       for (size_type i = j; i < M_; ++i) {
@@ -366,27 +389,6 @@ class cholesky_opencl : public vari {
 #endif
 
 /**
- * Set the lower right triangular of a var matrix given a set of vari**
- *
- * @param L Matrix of vars
- * @param variRef Values to be set in lower right triangular of L.
- * @return Matrix of vars
- */
-inline Eigen::Matrix<var, -1, -1>
- set_lower_tri_coeff_ref(Eigen::Matrix<var, -1, -1>& L, vari**& variRef) {
-  size_t pos = 0;
-  vari* dummy = new vari(0.0, false);
-
-  for (size_type j = 0; j < L.cols(); ++j) {
-    for (size_type i = j; i < L.cols(); ++i) {
-      L.coeffRef(i, j).vi_ = variRef[pos++];
-    }
-    for (size_type k = 0; k < j; ++k)
-      L.coeffRef(k, j).vi_ = dummy;
-  }
-  return L;
-}
-/**
  * Reverse mode specialization of cholesky decomposition
  *
  * Internally calls Eigen::LLT rather than using
@@ -440,14 +442,14 @@ inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
 #ifdef STAN_OPENCL
     if (L_A.rows() > opencl_context.tuning_opts().cholesky_size_worth_transfer) {
       cholesky_opencl* baseVari = new cholesky_opencl(A, L_A);
-      L = set_lower_tri_coeff_ref(L, baseVari->variRefL_);
+      internal::set_lower_tri_coeff_ref(L, baseVari->variRefL_);
     } else {
       cholesky_block* baseVari = new cholesky_block(A, L_A);
-      L = set_lower_tri_coeff_ref(L, baseVari->variRefL_);
+      internal::set_lower_tri_coeff_ref(L, baseVari->variRefL_);
     }
 #else
     cholesky_block* baseVari = new cholesky_block(A, L_A);
-    L = set_lower_tri_coeff_ref(L, baseVari->variRefL_);
+    internal::set_lower_tri_coeff_ref(L, baseVari->variRefL_);
 #endif
   }
 
