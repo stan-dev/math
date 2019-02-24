@@ -402,17 +402,17 @@ class cholesky_opencl : public vari {
 inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
     const Eigen::Matrix<var, -1, -1>& A) {
   check_square("cholesky_decompose", "A", A);
-  check_symmetric("cholesky_decompose", "A", A);
-
   Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
 #ifdef STAN_OPENCL
   if (L_A.rows() > opencl_context.tuning_opts().cholesky_size_worth_transfer) {
     L_A = cholesky_decompose(L_A);
   } else {
+    check_symmetric("cholesky_decompose", "A", A);
     Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
     check_pos_definite("cholesky_decompose", "m", L_factor);
   }
 #else
+  check_symmetric("cholesky_decompose", "A", A);
   Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
   check_pos_definite("cholesky_decompose", "m", L_factor);
 #endif

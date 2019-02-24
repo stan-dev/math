@@ -449,9 +449,10 @@ TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients_opencl) {
 }
 
 TEST(AgradRevMatrix, check_varis_on_stack_large_opencl) {
-  stan::math::matrix_v m1 = stan::math::matrix_v::Random(1250, 1250);
+  stan::math::opencl_context.tuning_opts().cholesky_size_worth_transfer = 25;
+  stan::math::matrix_v m1 = stan::math::matrix_v::Random(50, 50);
   stan::math::matrix_v m1_pos_def
-      = m1 * m1.transpose() + 500 * stan::math::matrix_v::Identity(1250, 1250);
+      = m1 * m1.transpose() + 50 * stan::math::matrix_v::Identity(50, 50);
   test::check_varis_on_stack(stan::math::cholesky_decompose(m1_pos_def));
 }
 #endif
