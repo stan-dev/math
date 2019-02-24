@@ -7,6 +7,7 @@
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/opencl_context.hpp>
+#include <stan/math/gpu/err/check_symmetric.hpp>
 #include <stan/math/gpu/cholesky_decompose.hpp>
 #include <stan/math/gpu/copy.hpp>
 #endif
@@ -59,16 +60,17 @@ template <>
 inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
     const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& m) {
   check_square("cholesky_decompose", "m", m);
-  check_symmetric("cholesky_decompose", "m", m);
 #ifdef STAN_OPENCL
   if (m.rows() >= opencl_context.tuning_opts().cholesky_size_worth_transfer) {
     matrix_gpu m_gpu(m);
+    check_symmetric("cholesky_decompose", "m", m_gpu);
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m_chol(m.rows(),
                                                                  m.cols());
     m_gpu = cholesky_decompose(m_gpu);
     copy(m_chol, m_gpu);  // NOLINT
     return m_chol;
   } else {
+    check_symmetric("cholesky_decompose", "m", m);
     Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt(
         m.rows());
     llt.compute(m);
@@ -76,6 +78,7 @@ inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
     return llt.matrixL();
   }
 #else
+  check_symmetric("cholesky_decompose", "m", m);
   Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt(
       m.rows());
   llt.compute(m);
