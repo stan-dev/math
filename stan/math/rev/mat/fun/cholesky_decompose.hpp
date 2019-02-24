@@ -407,8 +407,6 @@ inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
   Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
 #ifdef STAN_OPENCL
   if (L_A.rows() > opencl_context.tuning_opts().cholesky_size_worth_transfer) {
-    // NOTE: We don't do the pos def check here because
-    // The GPU cholesky only returns the lower left
     L_A = cholesky_decompose(L_A);
   } else {
     Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
