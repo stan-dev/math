@@ -29,28 +29,28 @@ namespace stan {
 namespace math {
 
 namespace internal {
-  /**
-   * Set the lower right triangular of a var matrix given a set of vari**
-   *
-   * @param L Matrix of vars
-   * @param variRef Values to be set in lower right triangular of L.
-   * @return None, L modified by reference.
-   */
-  inline void
-   set_lower_tri_coeff_ref(Eigen::Matrix<var, -1, -1>& L, vari**& variRef) {
-    size_t pos = 0;
-    vari* dummy = new vari(0.0, false);
+/**
+ * Set the lower right triangular of a var matrix given a set of vari**
+ *
+ * @param L Matrix of vars
+ * @param variRef Values to be set in lower right triangular of L.
+ * @return None, L modified by reference.
+ */
+inline void set_lower_tri_coeff_ref(Eigen::Matrix<var, -1, -1>& L,
+                                    vari**& variRef) {
+  size_t pos = 0;
+  vari* dummy = new vari(0.0, false);
 
-    for (size_type j = 0; j < L.cols(); ++j) {
-      for (size_type i = j; i < L.cols(); ++i) {
-        L.coeffRef(i, j).vi_ = variRef[pos++];
-      }
-      for (size_type k = 0; k < j; ++k)
-        L.coeffRef(k, j).vi_ = dummy;
+  for (size_type j = 0; j < L.cols(); ++j) {
+    for (size_type i = j; i < L.cols(); ++i) {
+      L.coeffRef(i, j).vi_ = variRef[pos++];
     }
-    return ;
+    for (size_type k = 0; k < j; ++k)
+      L.coeffRef(k, j).vi_ = dummy;
   }
+  return;
 }
+}  // namespace internal
 class cholesky_block : public vari {
  public:
   int M_;
