@@ -10,7 +10,7 @@
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <boost/utility/enable_if.hpp>
-#include <boost/type_traits.hpp>
+#include <type_traits>
 #include <vector>
 
 namespace stan {
@@ -197,7 +197,7 @@ class dot_product_vari : public vari {
  */
 template <typename T1, int R1, int C1, typename T2, int R2, int C2>
 inline typename boost::enable_if_c<
-    boost::is_same<T1, var>::value || boost::is_same<T2, var>::value, var>::type
+    std::is_same<T1, var>::value || std::is_same<T2, var>::value, var>::type
 dot_product(const Eigen::Matrix<T1, R1, C1>& v1,
             const Eigen::Matrix<T2, R2, C2>& v2) {
   check_vector("dot_product", "v1", v1);
@@ -215,7 +215,7 @@ dot_product(const Eigen::Matrix<T1, R1, C1>& v1,
  */
 template <typename T1, typename T2>
 inline typename boost::enable_if_c<
-    boost::is_same<T1, var>::value || boost::is_same<T2, var>::value, var>::type
+    std::is_same<T1, var>::value || std::is_same<T2, var>::value, var>::type
 dot_product(const T1* v1, const T2* v2, size_t length) {
   return var(new dot_product_vari<T1, T2>(v1, v2, length));
 }
@@ -230,7 +230,7 @@ dot_product(const T1* v1, const T2* v2, size_t length) {
  */
 template <typename T1, typename T2>
 inline typename boost::enable_if_c<
-    boost::is_same<T1, var>::value || boost::is_same<T2, var>::value, var>::type
+    std::is_same<T1, var>::value || std::is_same<T2, var>::value, var>::type
 dot_product(const std::vector<T1>& v1, const std::vector<T2>& v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
   return var(new dot_product_vari<T1, T2>(&v1[0], &v2[0], v1.size()));
