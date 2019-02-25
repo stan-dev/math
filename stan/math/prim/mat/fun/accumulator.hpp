@@ -6,6 +6,7 @@
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <vector>
+#include <type_traits>
 
 namespace stan {
 namespace math {

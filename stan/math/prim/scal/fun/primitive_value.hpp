@@ -3,6 +3,7 @@
 
 #include <boost/utility/enable_if.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <type_traits>
 
 namespace stan {
 namespace math {

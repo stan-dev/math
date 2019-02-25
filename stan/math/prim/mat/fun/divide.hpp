@@ -3,6 +3,7 @@
 
 #include <boost/utility/enable_if.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <type_traits>
 
 namespace stan {
 namespace math {
