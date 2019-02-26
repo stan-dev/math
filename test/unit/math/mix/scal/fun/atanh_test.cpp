@@ -5,7 +5,7 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdAtanh, FvarVar_1stDeriv) {
-  using boost::math::atanh;
+  using stan::math::atanh;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -22,7 +22,7 @@ TEST(AgradFwdAtanh, FvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdAtanh, FvarVar_2ndDeriv) {
-  using boost::math::atanh;
+  using stan::math::atanh;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -36,7 +36,7 @@ TEST(AgradFwdAtanh, FvarVar_2ndDeriv) {
 }
 
 TEST(AgradFwdAtanh, FvarFvarVar_1stDeriv) {
-  using boost::math::atanh;
+  using stan::math::atanh;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -73,7 +73,7 @@ TEST(AgradFwdAtanh, FvarFvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdAtanh, FvarFvarVar_2ndDeriv) {
-  using boost::math::atanh;
+  using stan::math::atanh;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -109,7 +109,7 @@ TEST(AgradFwdAtanh, FvarFvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(1.7777778, r[0]);
 }
 TEST(AgradFwdAtanh, FvarFvarVar_3rdDeriv) {
-  using boost::math::atanh;
+  using stan::math::atanh;
   using stan::math::fvar;
   using stan::math::var;
 

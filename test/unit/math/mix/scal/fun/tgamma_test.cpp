@@ -6,8 +6,8 @@
 
 TEST(AgradFwdTgamma, FvarVar_1stDeriv) {
   using boost::math::digamma;
-  using boost::math::tgamma;
   using stan::math::fvar;
+  using stan::math::tgamma;
   using stan::math::var;
 
   fvar<var> x(0.5, 1.3);
@@ -23,8 +23,8 @@ TEST(AgradFwdTgamma, FvarVar_1stDeriv) {
 }
 TEST(AgradFwdTgamma, FvarVar_2ndDeriv) {
   using boost::math::digamma;
-  using boost::math::tgamma;
   using stan::math::fvar;
+  using stan::math::tgamma;
   using stan::math::var;
 
   fvar<var> x(0.5, 1.3);
@@ -38,8 +38,8 @@ TEST(AgradFwdTgamma, FvarVar_2ndDeriv) {
 
 TEST(AgradFwdTgamma, FvarFvarDouble) {
   using boost::math::digamma;
-  using boost::math::tgamma;
   using stan::math::fvar;
+  using stan::math::tgamma;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 0.5;
@@ -64,8 +64,8 @@ TEST(AgradFwdTgamma, FvarFvarDouble) {
 }
 TEST(AgradFwdTgamma, FvarFvarVar_1stDeriv) {
   using boost::math::digamma;
-  using boost::math::tgamma;
   using stan::math::fvar;
+  using stan::math::tgamma;
   using stan::math::var;
 
   fvar<fvar<var> > x;
@@ -101,8 +101,8 @@ TEST(AgradFwdTgamma, FvarFvarVar_1stDeriv) {
 }
 TEST(AgradFwdTgamma, FvarFvarVar_2ndDeriv) {
   using boost::math::digamma;
-  using boost::math::tgamma;
   using stan::math::fvar;
+  using stan::math::tgamma;
   using stan::math::var;
 
   fvar<fvar<var> > x;
@@ -129,8 +129,8 @@ TEST(AgradFwdTgamma, FvarFvarVar_2ndDeriv) {
 }
 TEST(AgradFwdTgamma, FvarFvarVar_3rdDeriv) {
   using boost::math::digamma;
-  using boost::math::tgamma;
   using stan::math::fvar;
+  using stan::math::tgamma;
   using stan::math::var;
 
   fvar<fvar<var> > x;

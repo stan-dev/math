@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_META_STDVECTORBUILDER_HPP
 
 #include <stan/math/prim/scal/meta/VectorBuilderHelper.hpp>
-#include <stan/math/prim/arr/meta/contains_std_vector.hpp>
+#include <stan/math/prim/scal/meta/contains_std_vector.hpp>
 
 namespace stan {
 
@@ -29,7 +29,6 @@ namespace stan {
  *      and operator[] throws a std::logic_error.
  *  @tparam T1 Type of vector to build
  */
-
 template <bool used, typename T1, typename T2, typename T3 = double,
           typename T4 = double, typename T5 = double, typename T6 = double,
           typename T7 = double>

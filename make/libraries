@@ -5,33 +5,40 @@ MATH ?=
 BOOST ?= $(MATH)lib/boost_1.66.0
 EIGEN ?= $(MATH)lib/eigen_3.3.3
 OPENCL ?= $(MATH)lib/opencl_1.2.8
-SUNDIALS ?= $(MATH)lib/sundials_3.1.0
+SUNDIALS ?= $(MATH)lib/sundials_4.1.0
 
 GTEST ?= $(MATH)lib/gtest_1.8.1
 CPPLINT ?= $(MATH)lib/cpplint_4.45
 
 ################################################################################
 # SUNDIALS build rules
+# Note: Files starting with f* are by SUNDIALS convention files needed for
+#       Fortran bindings which we do not need for stan-math. Thus these targets
+#       are ignored here. This convention was introduced with 4.0.
 ##
 
 SUNDIALS_CVODES := $(patsubst %.c,%.o,\
-  $(addprefix $(SUNDIALS)/src/cvodes/, cvodes.c cvodes_io.c cvodea.c cvodea_io.c cvodes_direct.c cvodes_diag.c cvodes_spils.c cvodes_bandpre.c cvodes_bbdpre.c) \
+  $(wildcard $(SUNDIALS)/src/cvodes/*.c) \
   $(wildcard $(SUNDIALS)/src/sundials/*.c) \
-  $(wildcard $(SUNDIALS)/src/sunmat_band/*.c) \
-  $(wildcard $(SUNDIALS)/src/sunmat_dense/*.c) \
-  $(wildcard $(SUNDIALS)/src/sunlinsol_band/*.c) \
-  $(wildcard $(SUNDIALS)/src/sunlinsol_dense/*.c))
+  $(wildcard $(SUNDIALS)/src/sunmatrix/band/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunmatrix/dense/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol/band/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol/dense/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunnonlinsol/newton/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunnonlinsol/fixedpoint/[^f]*.c))
 
 SUNDIALS_IDAS := $(patsubst %.c,%.o,\
-  $(addprefix $(SUNDIALS)/src/idas/, idaa.c idaa_io.c idas.c idas_bbdpre.c idas_direct.c idas_ic.c idas_io.c idas_spils.c) \
+  $(wildcard $(SUNDIALS)/src/idas/*.c) \
   $(wildcard $(SUNDIALS)/src/sundials/*.c) \
-  $(wildcard $(SUNDIALS)/src/sunmat_band/*.c) \
-  $(wildcard $(SUNDIALS)/src/sunmat_dense/*.c) \
-  $(wildcard $(SUNDIALS)/src/sunlinsol_band/*.c) \
-  $(wildcard $(SUNDIALS)/src/sunlinsol_dense/*.c))
+  $(wildcard $(SUNDIALS)/src/sunmatrix/band/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunmatrix/dense/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol/band/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol/dense/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunnonlinsol/newton/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunnonlinsol/fixedpoint/[^f]*.c))
 
 SUNDIALS_NVECSERIAL := $(patsubst %.c,%.o,\
-  $(addprefix $(SUNDIALS)/src/, nvec_ser/nvector_serial.c sundials/sundials_math.c))
+  $(addprefix $(SUNDIALS)/src/, nvector/serial/nvector_serial.c sundials/sundials_math.c))
 
 $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL)) : CXXFLAGS = $(CXXFLAGS_SUNDIALS) $(CXXFLAGS_OS) -O$(O) $(INC_SUNDIALS)
 $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL)) : CPPFLAGS = $(CPPFLAGS_SUNDIALS) $(CPPFLAGS_OS)

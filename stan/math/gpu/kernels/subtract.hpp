@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char *subtract_kernel_code = STRINGIFY(
+static const char *subtract_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Matrix subtraction on the GPU Subtracts the second matrix
