@@ -30,8 +30,8 @@ struct ad_promotable {
  * @tparam T promoted and target type
  */
 template <typename T>
-struct ad_promotable<
-    typename boost::enable_if<std::is_arithmetic<T>, T>::type, T> {
+struct ad_promotable<typename boost::enable_if<std::is_arithmetic<T>, T>::type,
+                     T> {
   enum { value = true };
 };
 
