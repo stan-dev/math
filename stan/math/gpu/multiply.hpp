@@ -4,6 +4,7 @@
 #include <stan/math/gpu/matrix_gpu.hpp>
 #include <stan/math/gpu/kernels/scalar_mul.hpp>
 #include <stan/math/gpu/kernels/matrix_multiply.hpp>
+#include <stan/math/gpu/kernels/lower_tri_rect_multiply.hpp>
 #include <Eigen/Dense>
 
 namespace stan {
@@ -83,6 +84,60 @@ inline auto multiply(const matrix_gpu& A, const matrix_gpu& B) {
       "WORK_PER_THREAD");
   try {
     opencl_kernels::matrix_multiply(
+        cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
+        Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
+        Bpad.cols(), Bpad.rows());
+  } catch (cl::Error& e) {
+    check_opencl_error("multiply", e);
+  }
+  // unpadding the result matrix
+  temp.sub_block(tempPad, 0, 0, 0, 0, temp.rows(), temp.cols());
+  return temp;
+}
+
+/**
+ * Computes the special case of a product of the specified GPU matrices.
+ *
+ * Computes the matrix multiplication C[M, K] = A[M, N] x B[N, K]
+ * where A is a lower triangular matrix and B is a rectengular matrix
+ *
+ * @param A first matrix
+ * @param B second matrix
+ * @return the product of the first and second matrix
+ *
+ * @throw <code>std::invalid_argument</code> if the
+ *   number of columns in A and rows in B do not match
+ */
+inline auto lower_tri_rect_multiply(const matrix_gpu& A, const matrix_gpu& B) {
+  check_size_match("multiply_lower_tri_rect (GPU)", "A.cols()", A.cols(), "B.rows()",
+                   B.rows());
+  matrix_gpu temp(A.rows(), B.cols());
+  if (A.size() == 0 || B.size() == 0) {
+    temp.zeros();
+    return temp;
+  }
+  int local = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
+      "THREAD_BLOCK_SIZE");
+  int Mpad = ((A.rows() + local - 1) / local) * local;
+  int Npad = ((B.cols() + local - 1) / local) * local;
+  int Kpad = ((A.cols() + local - 1) / local) * local;
+  // padding the matrices so the dimensions are divisible with local
+  // improves performance and readability because we can omit
+  // if statements in the
+  // multiply kernel
+  matrix_gpu tempPad(Mpad, Npad);
+  matrix_gpu Apad(Mpad, Kpad);
+  matrix_gpu Bpad(Kpad, Npad);
+  opencl_kernels::zeros(cl::NDRange(Mpad, Kpad), Apad.buffer(), Mpad, Kpad,
+                        TriangularViewGPU::Entire);
+  opencl_kernels::zeros(cl::NDRange(Kpad, Npad), Bpad.buffer(), Kpad, Npad,
+                        TriangularViewGPU::Entire);
+  Apad.sub_block(A, 0, 0, 0, 0, A.rows(), A.cols());
+  Bpad.sub_block(B, 0, 0, 0, 0, B.rows(), B.cols());
+  int wpt = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
+      "WORK_PER_THREAD");
+  try {
+    opencl_kernels::lower_tri_rect_multiply(
         cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
         Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
         Bpad.cols(), Bpad.rows());

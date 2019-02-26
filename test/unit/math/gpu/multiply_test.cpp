@@ -5,13 +5,12 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
-#ifdef STAN_OPENCL
 boost::random::mt19937 rng;
 
 #define EXPECT_MATRIX_NEAR(A, B, DELTA) \
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
-
+/*
 TEST(MathMatrix, vector_row_vector) {
   stan::math::vector_d v(3);
   stan::math::row_vector_d rv(3);
@@ -156,5 +155,46 @@ TEST(AgradRevMatrix, multiply_big) {
 
   EXPECT_MATRIX_NEAR(m3, m3_gpu_res, 1e-10);
 }
-#endif
+*/
+TEST(AgradRevMatrix, lower_tri_rect_multiply_small) {
+  using stan::math::multiply;
+  auto m1 = stan::math::matrix_d::Random(3, 3).eval();
+  auto m2 = stan::math::matrix_d::Random(3, 3).eval();
+  stan::math::matrix_d m3_gpu_res(3, 3);
+  
+  m1.triangularView<Eigen::StrictlyUpper>().setZero();
+  
+  stan::math::matrix_gpu m11(m1);
+  stan::math::matrix_gpu m22(m2);
+  
+  auto m3 = (m1 * m2).eval();
+
+  auto m33 = lower_tri_rect_multiply(m11, m22);
+
+  stan::math::copy(m3_gpu_res, m33);
+
+  EXPECT_MATRIX_NEAR(m3, m3_gpu_res, 1e-10);
+}
+
+TEST(AgradRevMatrix, lower_tri_rect_multiply_big) {
+  using stan::math::multiply;
+  int size = 512;
+  auto m1 = stan::math::matrix_d::Random(size, size).eval();
+  auto m2 = stan::math::matrix_d::Random(size, size).eval();
+  stan::math::matrix_d m3_gpu_res(size, size);
+
+  m1.triangularView<Eigen::StrictlyUpper>().setZero();
+  
+  stan::math::matrix_gpu m11(m1);
+  stan::math::matrix_gpu m22(m2);
+
+  auto m3 = (m1 * m2).eval();
+
+  auto m33 = lower_tri_rect_multiply(m11, m22);
+
+  stan::math::copy(m3_gpu_res, m33);
+
+  EXPECT_MATRIX_NEAR(m3, m3_gpu_res, 1e-10);
+}
+
 #endif
