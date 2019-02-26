@@ -2,8 +2,8 @@
 #define TEST__UNIT__UTIL_HPP
 
 #include <boost/typeof/typeof.hpp>
-#include <type_traits>
 #include <gtest/gtest.h>
+#include <type_traits>
 #include <string>
 
 #define EXPECT_THROW_MSG(expr, T_e, msg)            \
