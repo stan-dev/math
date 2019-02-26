@@ -12,6 +12,7 @@
 #include <stan/math/rev/mat/fun/dot_product.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <vector>
+#include <type_traits>
 
 namespace stan {
 namespace math {

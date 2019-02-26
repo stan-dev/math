@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/fun/log_mix.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <cmath>
+#include <type_traits>
 
 namespace stan {
 namespace math {
