@@ -149,9 +149,9 @@ class cholesky_block : public vari {
       Block_ C_adj = L_adj.block(k, j, M_ - k, k - j);
       if (C_adj.size() > 0) {
         C_adj = D.transpose()
-                   .triangularView<Upper>()
-                   .solve(C_adj.transpose())
-                   .transpose();
+                    .triangularView<Upper>()
+                    .solve(C_adj.transpose())
+                    .transpose();
         B_adj.noalias() -= C_adj * R;
         D_adj.noalias() -= C_adj.transpose() * C;
       }
@@ -303,11 +303,11 @@ class cholesky_opencl : public vari {
    * @param L_adj matrix of adjoints of L
    */
   inline void symbolic_rev(matrix_gpu& L, matrix_gpu& L_adj) {
-      L_adj = transpose(L) * L_adj;
-      L_adj.triangular_transpose<TriangularMapGPU::LowerToUpper>();
-      L = transpose(lower_triangular_inverse(L));
-      L_adj = L * transpose(L * L_adj);
-      L_adj.triangular_transpose<TriangularMapGPU::LowerToUpper>();
+    L_adj = transpose(L) * L_adj;
+    L_adj.triangular_transpose<TriangularMapGPU::LowerToUpper>();
+    L = transpose(lower_triangular_inverse(L));
+    L_adj = L * transpose(L * L_adj);
+    L_adj.triangular_transpose<TriangularMapGPU::LowerToUpper>();
   }
 
   /**
@@ -451,7 +451,7 @@ inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
 #else
     cholesky_block* baseVari = new cholesky_block(A, L_A);
     internal::set_lower_tri_coeff_ref(L, baseVari->vari_ref_L_);
-#endif    
+#endif
   }
 
   return L;
