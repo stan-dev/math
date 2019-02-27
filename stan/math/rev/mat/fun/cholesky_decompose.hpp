@@ -33,17 +33,17 @@ namespace internal {
  * Set the lower right triangular of a var matrix given a set of vari**
  *
  * @param L Matrix of vars
- * @param variRef Values to be set in lower right triangular of L.
+ * @param vari_ref Values to be set in lower right triangular of L.
  * @return None, L modified by reference.
  */
 inline void set_lower_tri_coeff_ref(Eigen::Matrix<var, -1, -1>& L,
-                                    vari** variRef) {
+                                    vari** vari_ref) {
   size_t pos = 0;
   vari* dummy = new vari(0.0, false);
 
   for (size_type j = 0; j < L.cols(); ++j) {
     for (size_type i = j; i < L.cols(); ++i) {
-      L.coeffRef(i, j).vi_ = variRef[pos++];
+      L.coeffRef(i, j).vi_ = vari_ref[pos++];
     }
     for (size_type k = 0; k < j; ++k)
       L.coeffRef(k, j).vi_ = dummy;
@@ -99,18 +99,18 @@ class cholesky_block : public vari {
    * Symbolic adjoint calculation for cholesky factor A
    *
    * @param L cholesky factor
-   * @param Lbar matrix of adjoints of L
+   * @param L_adj matrix of adjoints of L
    */
-  inline void symbolic_rev(Block_& L, Block_& Lbar) {
+  inline void symbolic_rev(Block_& L, Block_& L_adj) {
     using Eigen::Lower;
     using Eigen::StrictlyUpper;
     using Eigen::Upper;
     L.transposeInPlace();
-    Lbar = (L * Lbar.triangularView<Lower>()).eval();
-    Lbar.triangularView<StrictlyUpper>()
-        = Lbar.adjoint().triangularView<StrictlyUpper>();
-    L.triangularView<Upper>().solveInPlace(Lbar);
-    L.triangularView<Upper>().solveInPlace(Lbar.transpose());
+    L_adj = (L * L_adj.triangularView<Lower>()).eval();
+    L_adj.triangularView<StrictlyUpper>()
+        = L_adj.adjoint().triangularView<StrictlyUpper>();
+    L.triangularView<Upper>().solveInPlace(L_adj);
+    L.triangularView<Upper>().solveInPlace(L_adj.transpose());
   }
 
   /**
@@ -125,15 +125,15 @@ class cholesky_block : public vari {
     using Eigen::MatrixXd;
     using Eigen::StrictlyUpper;
     using Eigen::Upper;
-    MatrixXd Lbar(M_, M_);
+    MatrixXd L_adj(M_, M_);
     MatrixXd L(M_, M_);
 
-    Lbar.setZero();
+    L_adj.setZero();
     L.setZero();
     size_t pos = 0;
     for (size_type j = 0; j < M_; ++j) {
       for (size_type i = j; i < M_; ++i) {
-        Lbar.coeffRef(i, j) = vari_ref_L_[pos]->adj_;
+        L_adj.coeffRef(i, j) = vari_ref_L_[pos]->adj_;
         L.coeffRef(i, j) = vari_ref_L_[pos]->val_;
         ++pos;
       }
@@ -145,28 +145,28 @@ class cholesky_block : public vari {
       Block_ D = L.block(j, j, k - j, k - j);
       Block_ B = L.block(k, 0, M_ - k, j);
       Block_ C = L.block(k, j, M_ - k, k - j);
-      Block_ Rbar = Lbar.block(j, 0, k - j, j);
-      Block_ Dbar = Lbar.block(j, j, k - j, k - j);
-      Block_ Bbar = Lbar.block(k, 0, M_ - k, j);
-      Block_ Cbar = Lbar.block(k, j, M_ - k, k - j);
-      if (Cbar.size() > 0) {
-        Cbar = D.transpose()
+      Block_ R_adj = L_adj.block(j, 0, k - j, j);
+      Block_ D_adj = L_adj.block(j, j, k - j, k - j);
+      Block_ B_adj = L_adj.block(k, 0, M_ - k, j);
+      Block_ C_adj = L_adj.block(k, j, M_ - k, k - j);
+      if (C_adj.size() > 0) {
+        C_adj = D.transpose()
                    .triangularView<Upper>()
-                   .solve(Cbar.transpose())
+                   .solve(C_adj.transpose())
                    .transpose();
-        Bbar.noalias() -= Cbar * R;
-        Dbar.noalias() -= Cbar.transpose() * C;
+        B_adj.noalias() -= C_adj * R;
+        D_adj.noalias() -= C_adj.transpose() * C;
       }
-      symbolic_rev(D, Dbar);
-      Rbar.noalias() -= Cbar.transpose() * B;
-      Rbar.noalias() -= Dbar.selfadjointView<Lower>() * R;
-      Dbar.diagonal() *= 0.5;
-      Dbar.triangularView<StrictlyUpper>().setZero();
+      symbolic_rev(D, D_adj);
+      R_adj.noalias() -= C_adj.transpose() * B;
+      R_adj.noalias() -= D_adj.selfadjointView<Lower>() * R;
+      D_adj.diagonal() *= 0.5;
+      D_adj.triangularView<StrictlyUpper>().setZero();
     }
     pos = 0;
     for (size_type j = 0; j < M_; ++j)
       for (size_type i = j; i < M_; ++i)
-        vari_ref_A_[pos++]->adj_ += Lbar.coeffRef(i, j);
+        vari_ref_A_[pos++]->adj_ += L_adj.coeffRef(i, j);
   }
 };
 
@@ -307,22 +307,22 @@ class cholesky_opencl : public vari {
    */
   virtual void chain() {
     using Eigen::MatrixXd;
-    MatrixXd Lbar_cpu(M_, M_);
+    MatrixXd L_adj_cpu(M_, M_);
     MatrixXd L_cpu(M_, M_);
-    Lbar_cpu.setZero();
+    L_adj_cpu.setZero();
     L_cpu.setZero();
 
     size_t pos = 0;
     for (size_type j = 0; j < M_; ++j) {
       for (size_type i = j; i < M_; ++i) {
-        Lbar_cpu.coeffRef(i, j) = vari_ref_L_[pos]->adj_;
+        L_adj_cpu.coeffRef(i, j) = vari_ref_L_[pos]->adj_;
         L_cpu.coeffRef(i, j) = vari_ref_L_[pos]->val_;
         ++pos;
       }
     }
 
     matrix_gpu L(L_cpu);
-    matrix_gpu Lbar(Lbar_cpu);
+    matrix_gpu L_adj(L_adj_cpu);
     int block_size
         = M_ / opencl_context.tuning_opts().cholesky_rev_block_partition;
     block_size = std::max(block_size, 8);
@@ -341,49 +341,48 @@ class cholesky_opencl : public vari {
       matrix_gpu B(m_k_ind, j);
       matrix_gpu C(m_k_ind, k_j_ind);
 
-      matrix_gpu Rbar(k_j_ind, j);
-      matrix_gpu Dbar(k_j_ind, k_j_ind);
-      matrix_gpu Bbar(m_k_ind, j);
-      matrix_gpu Cbar(m_k_ind, k_j_ind);
+      matrix_gpu R_adj(k_j_ind, j);
+      matrix_gpu D_adj(k_j_ind, k_j_ind);
+      matrix_gpu B_adj(m_k_ind, j);
+      matrix_gpu C_adj(m_k_ind, k_j_ind);
 
       R.sub_block(L, j, 0, 0, 0, k_j_ind, j);
       D.sub_block(L, j, j, 0, 0, k_j_ind, k_j_ind);
       B.sub_block(L, k, 0, 0, 0, m_k_ind, j);
       C.sub_block(L, k, j, 0, 0, m_k_ind, k_j_ind);
 
-      Rbar.sub_block(Lbar, j, 0, 0, 0, k_j_ind, j);
-      Dbar.sub_block(Lbar, j, j, 0, 0, k_j_ind, k_j_ind);
-      Bbar.sub_block(Lbar, k, 0, 0, 0, m_k_ind, j);
-      Cbar.sub_block(Lbar, k, j, 0, 0, m_k_ind, k_j_ind);
+      R_adj.sub_block(L_adj, j, 0, 0, 0, k_j_ind, j);
+      D_adj.sub_block(L_adj, j, j, 0, 0, k_j_ind, k_j_ind);
+      B_adj.sub_block(L_adj, k, 0, 0, 0, m_k_ind, j);
+      C_adj.sub_block(L_adj, k, j, 0, 0, m_k_ind, k_j_ind);
 
-      Cbar = Cbar * lower_triangular_inverse(D);
-      Bbar = Bbar - Cbar * R;
-      Dbar = Dbar - transpose(Cbar) * C;
+      C_adj = C_adj * lower_triangular_inverse(D);
+      B_adj = B_adj - C_adj * R;
+      D_adj = D_adj - transpose(C_adj) * C;
 
       // the implementation of the symbolic_rev inline function
       // for the GPU
-      Dbar = transpose(D) * Dbar;
-      Dbar.triangular_transpose<TriangularMapGPU::LowerToUpper>();
+      D_adj = transpose(D) * D_adj;
+      D_adj.triangular_transpose<TriangularMapGPU::LowerToUpper>();
       D = transpose(lower_triangular_inverse(D));
-      Dbar = D * transpose(D * Dbar);
-      Dbar.triangular_transpose<TriangularMapGPU::LowerToUpper>();
+      D_adj = D * transpose(D * D_adj);
+      D_adj.triangular_transpose<TriangularMapGPU::LowerToUpper>();
       // end of symbolic_rev inline function
 
-      Rbar = Rbar - transpose(Cbar) * B;
-      Rbar = Rbar - Dbar * R;
-      Dbar = diagonal_multiply(Dbar, 0.5);
-      Dbar.zeros<stan::math::TriangularViewGPU::Upper>();
+      R_adj = R_adj - transpose(C_adj) * B - D_adj * R;
+      D_adj = diagonal_multiply(D_adj, 0.5);
+      D_adj.zeros<stan::math::TriangularViewGPU::Upper>();
 
-      Lbar.sub_block(Rbar, 0, 0, j, 0, k_j_ind, j);
-      Lbar.sub_block(Dbar, 0, 0, j, j, k_j_ind, k_j_ind);
-      Lbar.sub_block(Bbar, 0, 0, k, 0, m_k_ind, j);
-      Lbar.sub_block(Cbar, 0, 0, k, j, m_k_ind, k_j_ind);
+      L_adj.sub_block(R_adj, 0, 0, j, 0, k_j_ind, j);
+      L_adj.sub_block(D_adj, 0, 0, j, j, k_j_ind, k_j_ind);
+      L_adj.sub_block(B_adj, 0, 0, k, 0, m_k_ind, j);
+      L_adj.sub_block(C_adj, 0, 0, k, j, m_k_ind, k_j_ind);
     }
-    copy(Lbar_cpu, Lbar);
+    copy(L_adj_cpu, L_adj);
     pos = 0;
     for (size_type j = 0; j < M_; ++j)
       for (size_type i = j; i < M_; ++i)
-        vari_ref_A_[pos++]->adj_ += Lbar_cpu.coeffRef(i, j);
+        vari_ref_A_[pos++]->adj_ += L_adj_cpu.coeffRef(i, j);
   }
 };
 #endif
