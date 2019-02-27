@@ -446,6 +446,9 @@ TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients_opencl) {
   test_gp_grad(2000, 1e-08);
   test_chol_mult(50, 1e-08);
   test_simple_vec_mult(45, 1e-08);
+  // below the threshold
+  test_gradient(10, 1e-08);
+  test_gp_grad(10, 1e-08);
 }
 
 TEST(AgradRevMatrix, check_varis_on_stack_large_opencl) {
