@@ -341,10 +341,15 @@ int main() {
   auto kernel_1 = opencl_kernels::matrix_multiply;
   auto kernel_2 = opencl_kernels::subtract;
   auto kernel_3 = opencl_kernels::add;
-  auto kernel_4 = opencl_kernels::copy;
+  auto kernel_4 = opencl_kernels::eigendecomp_householder;
+  auto kernel_5 = opencl_kernels::eigendecomp_v1;
+  auto kernel_6 = opencl_kernels::eigendecomp_v2;
+  auto kernel_7 = opencl_kernels::eigendecomp_apply_Q1;
+  auto kernel_8 = opencl_kernels::eigendecomp_apply_Q2;
+  auto kernel_9 = opencl_kernels::subtract_twice;
 
   //srand(time(0));
-  int A=3001;
+  int A=2001;
   Mat a = Mat::Random(A, A);
   a+=a.transpose().eval();
   //a.diagonal()+=Eigen::VectorXd::Constant(A,A);
@@ -387,6 +392,12 @@ int main() {
   start = std::chrono::steady_clock::now();
   block_householder_tridiag4(a, packed);
   cout << "\t\tCPU my blocked packed 4: "
+       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+       << "ms" << endl;
+
+  start = std::chrono::steady_clock::now();
+  block_householder_tridiag5(a, packed);
+  cout << "\t\tCPU my blocked packed 5: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
 

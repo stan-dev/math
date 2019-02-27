@@ -11,11 +11,12 @@ namespace opencl_kernels {
 const char* eigendecomp_householder_kernel_code = STRINGIFY(
 // \endcond
         /**
-         * Calculates householder vector.
+         * Calculates householder vector and first element of the vector v.
          * Must be run with 1 workgroup of 128 threads.
          */
-        __kernel void eigendecomp_householder(const __global double* P, __global double* U, __global double* V,
-                                              const int P_start, const int P_end, const int j, const int UV_rows) {
+        __kernel void eigendecomp_householder(__global double* P, __global double* V, __global double* q_glob,
+                                              const int P_rows, const int V_rows,
+                                              const int j, const int k) {
           const int lid = get_local_id(0);
           const int gid = get_global_id(0);
           const int gsize = get_global_size(0);
@@ -25,43 +26,203 @@ const char* eigendecomp_householder_kernel_code = STRINGIFY(
 
           double q = 0;
 
-          const int P_span = P_end - P_start;
+          const int P_start = P_rows * (k+j) + k + j;
+          const int P_span = P_rows * (k+j+1) - P_start;
+//          printf("pstart=%d, pspan=%d\n", P_start, P_span);
           for (int i = lid; i < P_span; i += lsize) {
             double acc = 0;
             if (j != 0) {
-              for (int k = 0; k < j; k++) {
-                acc += U[UV_rows * k + j - 1 + i] * V[UV_rows * k + j - 1] +
-                       V[UV_rows * k + j - 1 + i] * U[UV_rows * k + j - 1];
+              for (int l = 0; l < j; l++) {
+//                printf("%d using %lf, %lf\n",gid, P[P_rows * (k + l) + k + j + i], V[V_rows * l + j - 1 + i]);
+                acc += P[P_rows * (k + l) + k + j + i] * V[V_rows * l + j - 1] +
+                       V[V_rows * l + j - 1 + i] * P[P_rows * (k + l) + k + j];
               }
             }
             double tmp = P[P_start + i] - acc;
+//            printf("%d writing %d\n",gid, P_start + i);
             P[P_start + i] = tmp;
-            q += tmp * tmp;
+            if(i!=0) {
+              q += tmp * tmp;
+            }
           }
-          __local double norm_local[128];
+          __local double q_local[128];
           q_local[lid] = q;
           barrier(CLK_LOCAL_MEM_FENCE);
+          double alpha;
           if (gid == 0) {
             for (int i = 1; i < 128; i++) {
               q += q_local[i];
             }
+//            printf("q_SqNorm=%lf\n", q);
 
             double p1 = P[P_start + 1];
-            double alpha = -copysign(sqrt(q), p1);
+//            printf("p1=%lf\n", p1);
+            alpha = -copysign(sqrt(q), P[P_start]);
             q -= p1 * p1;
+//            printf("q after - %lf\n", q);
             p1 -= alpha;
             P[P_start + 1] = p1;
             q += p1 * p1;
-            q_local[0] = sqrt(q);
+//            printf("q after + %lf\n", q);
+            q=sqrt(q);
+            q_local[0] = q;
             q_local[1] = alpha;
-            V[UV_rows*j]=q/sqrt(2.);
+            *q_glob=q;
+//            V[V_rows*j]=q/sqrt(2.);
+//            printf("q=%lf, alpha=%lf\n", q_local[0], q_local[1]);
           }
           barrier(CLK_LOCAL_MEM_FENCE);
           q = q_local[0];
           alpha = q_local[1];
           double multi = sqrt(2.) / q;
           for (int i = lid + 1; i < P_span; i += lsize) {
-            P[i] *= multi;
+            P[P_start + i] *= multi;
+          }
+          if(gid==0){
+            P[P_rows * (k + j + 1) + k + j] = P[P_rows * (k + j) + k + j + 1] * q / sqrt(2.) + alpha;
+          }
+        }
+// \cond
+);
+// \endcond
+
+// \cond
+const char* eigendecomp_v1_kernel_code = STRINGIFY(
+// \endcond
+        /**
+         * Calculates R1 = Pb * u and R2 = Vl * u. U is
+         */
+        __kernel void eigendecomp_v1(const __global double* P, const __global double* V, __global double* R1, __global double* R2,
+                const int P_rows, const int V_rows, const int k) {
+          const int lid = get_local_id(0);
+          const int gid = get_global_id(0);
+          const int gsize = get_global_size(0);
+          const int lsize = get_local_size(0);
+          const int ngroups = get_num_groups(0);
+          const int wgid = get_group_id(0);
+
+          __local double res_loc1[64];
+          __local double res_loc2[64];
+          double acc1 = 0;
+          double acc2 = 0;
+
+          const __global double* vec = P + P_rows * (k + ngroups) + k + ngroups + 1;
+          const __global double* M1 = P + P_rows * (k + wgid) + k + ngroups + 1;
+          const __global double* M2 = V + V_rows * wgid + ngroups;
+          for (int i = lid; i < P_rows - k - ngroups - 1; i += 64) { //go over column of the matrix in steps of 64
+            double v = vec[i];
+            acc1 += M1[i] * v;
+            acc2 += M2[i] * v;
+//            printf("%d using %lf, \t %lf \t %lf\n", gid, M1[i], M2[i], vec[i]);
+          }
+          res_loc1[lid]=acc1;
+          res_loc2[lid]=acc2;
+          barrier(CLK_LOCAL_MEM_FENCE);
+          if(lid==0){
+            for(int i=1;i<lsize;i++){
+              acc1+=res_loc1[i];
+              acc2+=res_loc2[i];
+            }
+            R1[wgid]=acc1;
+            R2[wgid]=acc2;
+          }
+        }
+// \cond
+);
+// \endcond
+
+// \cond
+const char* eigendecomp_v2_kernel_code = STRINGIFY(
+// \endcond
+        __kernel void eigendecomp_v2(const __global double* P, __global double* V, const __global double* Uu, const __global double* Vu,
+                                     const int P_rows, const int V_rows, const int k, const int j) {
+          const int lid = get_local_id(0);
+          const int gid = get_global_id(0);
+          const int gsize = get_global_size(0);
+          const int lsize = get_local_size(0);
+          const int ngroups = get_num_groups(0);
+          const int wgid = get_group_id(0);
+
+          __local double res_loc[64];
+          double acc = 0;
+
+          const __global double* vec = P + P_rows * (k + j) + k + j + 1;
+          const __global double* M1 = P + P_rows * (k + j + 1) + k + j + 1;
+          const __global double* M2 = P + P_rows * k + k + j + 1;
+          const __global double* M3 = V + j;
+          for (int i = lid; i < ngroups; i += 64) {
+//            printf("%d at %d %d\n", gid, i, wgid);
+            if(i>wgid) {
+              acc += M1[P_rows * wgid + i] * vec[i];
+//              printf("%3d using %lf, \t %lf\n", gid, M1[P_rows * wgid + i] , vec[i]);
+            }
+            else{
+              acc += M1[P_rows * i + wgid] * vec[i];
+//              printf("%3d using %lf, \t %lf\n", gid, M1[P_rows * i + wgid] , vec[i]);
+            }
+          }
+          for(int i=lid;i<j;i+=64){
+            acc -= M2[P_rows * i + wgid] * Vu[i];
+            acc -= M3[V_rows * i + wgid] * Uu[i];
+//            acc -= M2[0] * Vu[i];
+//            acc -= M3[0] * Uu[i];
+//            printf("%3d using2 %lf, \t %lf, \t %lf, \t %lf\n", gid, M2[P_rows * i + wgid],
+//                                                                    M3[V_rows * i + wgid], Vu[i], Uu[i]);
+          }
+          res_loc[lid]=acc;
+          barrier(CLK_LOCAL_MEM_FENCE);
+          if(lid==0){
+            for(int i=1;i<64;i++){
+              acc+=res_loc[i];
+            }
+//            printf("%3d writing %d\n", gid, V_rows * j + wgid + j);
+            V[V_rows * j + wgid + j]=acc;
+//            V[0]=acc;
+          }
+        }
+// \cond
+);
+// \endcond
+
+// \cond
+const char* eigendecomp_v3_kernel_code = STRINGIFY(
+// \endcond
+        __kernel void eigendecomp_v3(__global double* P, __global double* V, __global double* q,
+                                     const int P_rows, const int V_rows, const int k, const int j) {
+          const int lid = get_local_id(0);
+          const int gid = get_global_id(0);
+          const int gsize = get_global_size(0);
+          const int lsize = get_local_size(0);
+          const int ngroups = get_num_groups(0);
+          const int wgid = get_group_id(0);
+
+
+          __global double* u = P + P_rows * (k + j) + k + j + 1;
+          __global double* v = V + V_rows * j + j;
+          double acc = 0;
+
+          for (int i = lid; i < P_rows - k - j - 1; i += 128) {
+            acc+=u[i]*v[i];
+//            printf("%3d using %lf, \t %lf\n", gid, u[i], v[i]);
+          }
+          __local double res_loc[128];
+          res_loc[lid]=acc;
+          barrier(CLK_LOCAL_MEM_FENCE);
+          if(lid==0){
+            for(int i=1;i<128;i++){
+              acc+=res_loc[i];
+            }
+            res_loc[0]=acc;
+//            printf("cnst=%lf\n", acc);
+          }
+          barrier(CLK_LOCAL_MEM_FENCE);
+          acc=res_loc[0]*0.5;
+          for (int i = lid; i < P_rows - k - j - 1; i += 128) {
+            v[i] -= acc * u[i];
+          }
+          if(gid==0) {
+//            printf("%3d SUB using %lf, \t %lf\n", gid, u[0], *q / sqrt(2.));
+            P[P_rows * (k + j + 1) + k + j] -= *q / sqrt(2.) * u[0];
           }
         }
 // \cond
@@ -90,6 +251,7 @@ const char* eigendecomp_apply_Q1_kernel_code = STRINGIFY(
       const int lsize = get_local_size(0);
       const int ngroups = get_num_groups(0);
       const int wgid = get_group_id(0);
+
       __local double res_loc[64];
       double acc = 0;
       int ncols = end_col - start_col;
@@ -220,71 +382,17 @@ const char* eigendecomp_apply_Q2_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
-const char* subtract_matrix_multiply_kernel_code = STRINGIFY(
+const char* subtract_twice_kernel_code = STRINGIFY(
 // \endcond
-/**
- * Calculates Cb -= A * B, where Cb is bottom part of the matrix C, while A and B are matrices.
- *
- * @param[in] A the left matrix in matrix multiplication
- * @param[in] B the right matrix in matrix multiplication
- * @param[out] C the output matrix
- * @param[in] M Number of rows for matrix A and bottom rows for C
- * @param[in] N Number of cols for matrix B
- * @param[in] K Number of cols for matrix A and number of rows for matrix B
- * @param[int] toatal_rows Number of rows for matrix C
- */
-        __kernel void matrix_multiply(const __global double* A,
-                                      const __global double* B, __global double* C,
-                                      const int M, const int N, const int K, const int total_rows) {
-          // thread index inside the thread_block
-          const int thread_block_row = get_local_id(0);
-          const int thread_block_col = get_local_id(1);
-          // global thread index
-          const int i = THREAD_BLOCK_SIZE * get_group_id(0) + thread_block_row;
-          const int j = THREAD_BLOCK_SIZE * get_group_id(1) + thread_block_col;
-
-          // local memory
-          __local double A_local[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];
-          __local double B_local[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];
-
-          double acc[WORK_PER_THREAD];
-          for (int w = 0; w < WORK_PER_THREAD; w++) {
-            acc[w] = 0.0;
-          }
-
-          const int num_tiles = (K + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
-          // iterate over all tiles
-          for (int tile_ind = 0; tile_ind < num_tiles; tile_ind++) {
-            // each thread copies WORK_PER_THREAD values to the local
-            // memory
-            for (int w = 0; w < WORK_PER_THREAD; w++) {
-              const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
-              const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
-
-              A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-              [thread_block_row]
-                      = A[(tiled_j + w * THREAD_BLOCK_SIZE_COL) * M + i];
-
-              B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-              [thread_block_row]
-                      = B[(j + w * THREAD_BLOCK_SIZE_COL) * K + tiled_i];
-            }
-            // wait until all tile values are loaded to the local memory
-            barrier(CLK_LOCAL_MEM_FENCE);
-            for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE; block_ind++) {
-              for (int w = 0; w < WORK_PER_THREAD; w++) {
-                acc[w] += A_local[block_ind][thread_block_row]
-                          * B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                          [block_ind];
-              }
-            }
-            barrier(CLK_LOCAL_MEM_FENCE);
-          }
-          int skip_rows = total_rows - M;
-          // save the values
-          for (int w = 0; w < WORK_PER_THREAD; w++) {
-            // each thread saves WORK_PER_THREAD values
-            C[(j + w * THREAD_BLOCK_SIZE_COL) * total_rows + skip_rows + i] = acc[w];
+        /**
+         * Calculates A -= B + B ^ T, for lower triangular part of bottom right corner of A.
+         */
+        __kernel void subtract_twice(__global double* A, const __global double* B,
+                const int A_rows, const int B_rows, const int start) {
+          const int y = get_global_id(0);
+          const int x = get_global_id(1);
+          if(y>=x){
+            A[A_rows * (start + x) + start + y] -= B[B_rows * x + y] + B[B_rows * y + x];
           }
         }
 // \cond
@@ -298,8 +406,24 @@ const char* subtract_matrix_multiply_kernel_code = STRINGIFY(
 //    matrix_multiply("matrix_multiply", matrix_multiply_kernel_code,
 //                    {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
 
+
+const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int, int>
+        eigendecomp_householder("eigendecomp_householder", eigendecomp_householder_kernel_code);
+
+const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, int, int, int>
+        eigendecomp_v1("eigendecomp_v1", eigendecomp_v1_kernel_code);
+
+const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, int, int, int, int>
+        eigendecomp_v2("eigendecomp_v2", eigendecomp_v2_kernel_code);
+
+const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int, int>
+        eigendecomp_v3("eigendecomp_v3", eigendecomp_v3_kernel_code);
+
+const global_range_kernel<cl::Buffer, cl::Buffer, int, int, int>
+        subtract_twice("subtract_twice", subtract_twice_kernel_code);
+
 const local_range_kernel<cl::Buffer, cl::Buffer, int, int, int, int, int>
-    eigendecomp_apply_Q1("eigendecomp_apply_Q1", eigendecomp_apply_Q1v2_kernel_code);
+    eigendecomp_apply_Q1("eigendecomp_apply_Q1", eigendecomp_apply_Q1_kernel_code);
 
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int, int>
         eigendecomp_apply_Q2("eigendecomp_apply_Q2", eigendecomp_apply_Q2_kernel_code);
