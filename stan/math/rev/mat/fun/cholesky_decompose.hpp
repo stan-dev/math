@@ -125,11 +125,9 @@ class cholesky_block : public vari {
     using Eigen::MatrixXd;
     using Eigen::StrictlyUpper;
     using Eigen::Upper;
-    MatrixXd L_adj(M_, M_);
-    MatrixXd L(M_, M_);
+    auto L_adj = Eigen::MatrixXd::Zero(M_, M_).eval();
+    auto L = Eigen::MatrixXd::Zero(M_, M_).eval();
 
-    L_adj.setZero();
-    L.setZero();
     size_t pos = 0;
     for (size_type j = 0; j < M_; ++j) {
       for (size_type i = j; i < M_; ++i) {
@@ -297,6 +295,21 @@ class cholesky_opencl : public vari {
       }
     }
   }
+
+  /**
+   * Symbolic adjoint calculation for cholesky factor A
+   *
+   * @param L cholesky factor
+   * @param L_adj matrix of adjoints of L
+   */
+  inline void symbolic_rev(matrix_gpu& L, matrix_gpu& L_adj) {
+      L_adj = transpose(L) * L_adj;
+      L_adj.triangular_transpose<TriangularMapGPU::LowerToUpper>();
+      L = transpose(lower_triangular_inverse(L));
+      L_adj = L * transpose(L * L_adj);
+      L_adj.triangular_transpose<TriangularMapGPU::LowerToUpper>();
+  }
+
   /**
    * Reverse mode differentiation algorithm using a GPU
    *
@@ -306,11 +319,8 @@ class cholesky_opencl : public vari {
    *
    */
   virtual void chain() {
-    using Eigen::MatrixXd;
-    MatrixXd L_adj_cpu(M_, M_);
-    MatrixXd L_cpu(M_, M_);
-    L_adj_cpu.setZero();
-    L_cpu.setZero();
+    auto L_adj_cpu = Eigen::MatrixXd::Zero(M_, M_).eval();
+    auto L_cpu = Eigen::MatrixXd::Zero(M_, M_).eval();
 
     size_t pos = 0;
     for (size_type j = 0; j < M_; ++j) {
@@ -360,14 +370,7 @@ class cholesky_opencl : public vari {
       B_adj = B_adj - C_adj * R;
       D_adj = D_adj - transpose(C_adj) * C;
 
-      // the implementation of the symbolic_rev inline function
-      // for the GPU
-      D_adj = transpose(D) * D_adj;
-      D_adj.triangular_transpose<TriangularMapGPU::LowerToUpper>();
-      D = transpose(lower_triangular_inverse(D));
-      D_adj = D * transpose(D * D_adj);
-      D_adj.triangular_transpose<TriangularMapGPU::LowerToUpper>();
-      // end of symbolic_rev inline function
+      symbolic_rev(D, D_adj);
 
       R_adj = R_adj - transpose(C_adj) * B - D_adj * R;
       D_adj = diagonal_multiply(D_adj, 0.5);
