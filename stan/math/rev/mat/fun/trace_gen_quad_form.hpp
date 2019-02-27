@@ -94,9 +94,9 @@ class trace_gen_quad_form_vari : public vari {
 template <typename Td, int Rd, int Cd, typename Ta, int Ra, int Ca, typename Tb,
           int Rb, int Cb>
 inline typename std::enable_if<std::is_same<Td, var>::value
-                                       || std::is_same<Ta, var>::value
-                                       || std::is_same<Tb, var>::value,
-                                   var>::type
+                                   || std::is_same<Ta, var>::value
+                                   || std::is_same<Tb, var>::value,
+                               var>::type
 trace_gen_quad_form(const Eigen::Matrix<Td, Rd, Cd>& D,
                     const Eigen::Matrix<Ta, Ra, Ca>& A,
                     const Eigen::Matrix<Tb, Rb, Cb>& B) {

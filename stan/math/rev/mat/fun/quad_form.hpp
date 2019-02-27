@@ -112,8 +112,8 @@ class quad_form_vari : public vari {
 
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
 inline typename std::enable_if<std::is_same<Ta, var>::value
-                                       || std::is_same<Tb, var>::value,
-                                   Eigen::Matrix<var, Cb, Cb> >::type
+                                   || std::is_same<Tb, var>::value,
+                               Eigen::Matrix<var, Cb, Cb> >::type
 quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
           const Eigen::Matrix<Tb, Rb, Cb>& B) {
   check_square("quad_form", "A", A);

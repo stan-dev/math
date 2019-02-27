@@ -114,9 +114,9 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
  */
 template <typename F, typename T_a, typename T_b, typename T_theta>
 inline typename std::enable_if<std::is_same<T_a, var>::value
-                                       || std::is_same<T_b, var>::value
-                                       || std::is_same<T_theta, var>::value,
-                                   var>::type
+                                   || std::is_same<T_b, var>::value
+                                   || std::is_same<T_theta, var>::value,
+                               var>::type
 integrate_1d(const F &f, const T_a &a, const T_b &b,
              const std::vector<T_theta> &theta, const std::vector<double> &x_r,
              const std::vector<int> &x_i, std::ostream &msgs,

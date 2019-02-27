@@ -29,8 +29,8 @@ struct ad_promotable {
  * @tparam T promoted and target type
  */
 template <typename T>
-struct ad_promotable<typename std::enable_if<std::is_arithmetic<T>::value, T>::type,
-                     T> {
+struct ad_promotable<
+    typename std::enable_if<std::is_arithmetic<T>::value, T>::type, T> {
   enum { value = true };
 };
 

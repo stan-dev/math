@@ -589,8 +589,8 @@ inline Eigen::Matrix<var, R1, C1> multiply(const Eigen::Matrix<T1, R1, C1>& m,
  */
 template <typename Ta, int Ra, int Ca, typename Tb, int Cb>
 inline typename std::enable_if<std::is_same<Ta, var>::value
-                                       || std::is_same<Tb, var>::value,
-                                   Eigen::Matrix<var, Ra, Cb> >::type
+                                   || std::is_same<Tb, var>::value,
+                               Eigen::Matrix<var, Ra, Cb> >::type
 multiply(const Eigen::Matrix<Ta, Ra, Ca>& A,
          const Eigen::Matrix<Tb, Ca, Cb>& B) {
   check_multiplicable("multiply", "A", A, "B", B);

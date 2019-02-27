@@ -18,8 +18,8 @@ namespace math {
 
 template <typename T1, int R1, int C1, typename T2, int R2, int C2>
 inline typename std::enable_if<std::is_same<T1, var>::value
-                                       || std::is_same<T2, var>::value,
-                                   Eigen::Matrix<var, 1, C1> >::type
+                                   || std::is_same<T2, var>::value,
+                               Eigen::Matrix<var, 1, C1> >::type
 columns_dot_product(const Eigen::Matrix<T1, R1, C1>& v1,
                     const Eigen::Matrix<T2, R2, C2>& v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);

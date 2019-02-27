@@ -17,7 +17,7 @@ namespace math {
  */
 template <int R, int C, typename T>
 inline typename std::enable_if<std::is_arithmetic<T>::value,
-                                   Eigen::Matrix<double, R, C> >::type
+                               Eigen::Matrix<double, R, C> >::type
 divide(const Eigen::Matrix<double, R, C>& m, T c) {
   return m / c;
 }
