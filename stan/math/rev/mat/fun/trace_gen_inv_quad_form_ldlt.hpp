@@ -5,10 +5,10 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/meta/is_var.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/rev/mat/fun/trace_inv_quad_form_ldlt.hpp>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -20,7 +20,7 @@ namespace math {
  **/
 template <typename T1, int R1, int C1, typename T2, int R2, int C2, typename T3,
           int R3, int C3>
-inline typename boost::enable_if_c<stan::is_var<T1>::value
+inline typename std::enable_if<stan::is_var<T1>::value
                                        || stan::is_var<T2>::value
                                        || stan::is_var<T3>::value,
                                    var>::type

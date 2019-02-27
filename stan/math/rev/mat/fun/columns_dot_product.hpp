@@ -10,7 +10,6 @@
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/rev/mat/fun/dot_product.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <vector>
 #include <type_traits>
 
@@ -18,7 +17,7 @@ namespace stan {
 namespace math {
 
 template <typename T1, int R1, int C1, typename T2, int R2, int C2>
-inline typename boost::enable_if_c<std::is_same<T1, var>::value
+inline typename std::enable_if<std::is_same<T1, var>::value
                                        || std::is_same<T2, var>::value,
                                    Eigen::Matrix<var, 1, C1> >::type
 columns_dot_product(const Eigen::Matrix<T1, R1, C1>& v1,

@@ -11,7 +11,6 @@
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <boost/math/tools/promotion.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -532,7 +531,7 @@ class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
  * @return Product of scalars
  */
 template <typename T1, typename T2>
-inline typename boost::enable_if_c<
+inline typename std::enable_if<
     (boost::is_scalar<T1>::value || std::is_same<T1, var>::value)
         && (boost::is_scalar<T2>::value || std::is_same<T2, var>::value),
     typename boost::math::tools::promote_args<T1, T2>::type>::type
@@ -589,7 +588,7 @@ inline Eigen::Matrix<var, R1, C1> multiply(const Eigen::Matrix<T1, R1, C1>& m,
  * @return Product of scalar and matrix.
  */
 template <typename Ta, int Ra, int Ca, typename Tb, int Cb>
-inline typename boost::enable_if_c<std::is_same<Ta, var>::value
+inline typename std::enable_if<std::is_same<Ta, var>::value
                                        || std::is_same<Tb, var>::value,
                                    Eigen::Matrix<var, Ra, Cb> >::type
 multiply(const Eigen::Matrix<Ta, Ra, Ca>& A,
@@ -619,7 +618,7 @@ multiply(const Eigen::Matrix<Ta, Ra, Ca>& A,
  * @return Scalar product of row vector and vector
  */
 template <typename Ta, int Ca, typename Tb>
-inline typename boost::enable_if_c<
+inline typename std::enable_if<
     std::is_same<Ta, var>::value || std::is_same<Tb, var>::value, var>::type
 multiply(const Eigen::Matrix<Ta, 1, Ca>& A, const Eigen::Matrix<Tb, Ca, 1>& B) {
   check_multiplicable("multiply", "A", A, "B", B);

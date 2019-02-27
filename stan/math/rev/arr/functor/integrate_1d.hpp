@@ -8,7 +8,6 @@
 #include <stan/math/rev/scal/fun/is_nan.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <type_traits>
 #include <string>
 #include <vector>
@@ -114,7 +113,7 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
  * @return numeric integral of function f
  */
 template <typename F, typename T_a, typename T_b, typename T_theta>
-inline typename boost::enable_if_c<std::is_same<T_a, var>::value
+inline typename std::enable_if<std::is_same<T_a, var>::value
                                        || std::is_same<T_b, var>::value
                                        || std::is_same<T_theta, var>::value,
                                    var>::type

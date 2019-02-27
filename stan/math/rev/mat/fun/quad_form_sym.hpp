@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_REV_MAT_FUN_QUAD_FORM_SYM_HPP
 #define STAN_MATH_REV_MAT_FUN_QUAD_FORM_SYM_HPP
 
-#include <boost/utility/enable_if.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
@@ -18,7 +17,7 @@ namespace stan {
 namespace math {
 
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
-inline typename boost::enable_if_c<std::is_same<Ta, var>::value
+inline typename std::enable_if<std::is_same<Ta, var>::value
                                        || std::is_same<Tb, var>::value,
                                    Eigen::Matrix<var, Cb, Cb> >::type
 quad_form_sym(const Eigen::Matrix<Ta, Ra, Ca>& A,
@@ -34,7 +33,7 @@ quad_form_sym(const Eigen::Matrix<Ta, Ra, Ca>& A,
 }
 
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb>
-inline typename boost::enable_if_c<
+inline typename std::enable_if<
     std::is_same<Ta, var>::value || std::is_same<Tb, var>::value, var>::type
 quad_form_sym(const Eigen::Matrix<Ta, Ra, Ca>& A,
               const Eigen::Matrix<Tb, Rb, 1>& B) {
