@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_MAT_FUN_GP_PERIODIC_COV_HPP
 
 #include <boost/math/tools/promotion.hpp>
-#include <boost/type_traits.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -15,6 +14,7 @@
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <cmath>
 #include <vector>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -301,7 +301,7 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
  */
 template <typename T_x>
 inline typename boost::enable_if_c<
-    boost::is_same<typename scalar_type<T_x>::type, double>::value,
+    std::is_same<typename scalar_type<T_x>::type, double>::value,
     Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>>::type
 gp_periodic_cov(const std::vector<T_x> &x, const var &sigma, const var &l,
                 const var &p) {
@@ -353,7 +353,7 @@ gp_periodic_cov(const std::vector<T_x> &x, const var &sigma, const var &l,
  */
 template <typename T_x>
 inline typename boost::enable_if_c<
-    boost::is_same<typename scalar_type<T_x>::type, double>::value,
+    std::is_same<typename scalar_type<T_x>::type, double>::value,
     Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>>::type
 gp_periodic_cov(const std::vector<T_x> &x, double sigma, const var &l,
                 const var &p) {

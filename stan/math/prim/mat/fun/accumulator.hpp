@@ -4,7 +4,6 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
 #include <boost/utility/enable_if.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <vector>
 #include <type_traits>
 
@@ -67,7 +66,7 @@ class accumulator {
   template <typename S>
   typename boost::disable_if<
       std::is_arithmetic<S>,
-      typename boost::enable_if<boost::is_same<S, T>, void>::type>::type
+      typename boost::enable_if<std::is_same<S, T>, void>::type>::type
   add(const S& x) {
     buf_.push_back(x);
   }
