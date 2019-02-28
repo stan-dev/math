@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char *sub_block_kernel_code = STRINGIFY(
+static const char *sub_block_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Copies a submatrix of the source matrix to

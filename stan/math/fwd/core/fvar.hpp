@@ -4,7 +4,6 @@
 #include <stan/math/prim/scal/meta/likely.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/fwd/scal/meta/ad_promotable.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <ostream>
 
 namespace stan {
@@ -102,7 +101,7 @@ struct fvar {
    */
   template <typename V>
   fvar(const V& v,
-       typename boost::enable_if_c<ad_promotable<V, T>::value>::type* dummy = 0)
+       typename std::enable_if<ad_promotable<V, T>::value>::type* dummy = 0)
       : val_(v), d_(0.0) {
     if (unlikely(is_nan(v)))
       d_ = v;

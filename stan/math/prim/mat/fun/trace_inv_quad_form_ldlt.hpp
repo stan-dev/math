@@ -19,7 +19,7 @@ namespace math {
  * where the LDLT_factor of A is provided.
  */
 template <typename T1, typename T2, int R2, int C2, int R3, int C3>
-inline typename boost::enable_if_c<
+inline typename std::enable_if<
     !stan::is_var<T1>::value && !stan::is_var<T2>::value,
     typename boost::math::tools::promote_args<T1, T2>::type>::type
 trace_inv_quad_form_ldlt(const LDLT_factor<T1, R2, C2> &A,
