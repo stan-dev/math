@@ -150,24 +150,16 @@ const char* eigendecomp_v2_kernel_code = STRINGIFY(
           const __global double* M1 = P + P_rows * (k + j + 1) + k + j + 1;
           const __global double* M2 = P + P_rows * k + k + j + 1;
           const __global double* M3 = V + j;
-          for (int i = lid; i < ngroups; i += 64) {
-//            printf("%d at %d %d\n", gid, i, wgid);
-            if(i>wgid) {
-              acc += M1[P_rows * wgid + i] * vec[i];
-//              printf("%3d using %lf, \t %lf\n", gid, M1[P_rows * wgid + i] , vec[i]);
-            }
-            else{
-              acc += M1[P_rows * i + wgid] * vec[i];
-//              printf("%3d using %lf, \t %lf\n", gid, M1[P_rows * i + wgid] , vec[i]);
-            }
+          int i;
+          for (i = lid; i < wgid; i += 64) {//non-coalesced
+            acc += M1[P_rows * i + wgid] * vec[i];
+          }
+          for (; i < ngroups; i += 64) {
+            acc += M1[P_rows * wgid + i] * vec[i];
           }
           for(int i=lid;i<j;i+=64){
             acc -= M2[P_rows * i + wgid] * Vu[i];
             acc -= M3[V_rows * i + wgid] * Uu[i];
-//            acc -= M2[0] * Vu[i];
-//            acc -= M3[0] * Uu[i];
-//            printf("%3d using2 %lf, \t %lf, \t %lf, \t %lf\n", gid, M2[P_rows * i + wgid],
-//                                                                    M3[V_rows * i + wgid], Vu[i], Uu[i]);
           }
           res_loc[lid]=acc;
           barrier(CLK_LOCAL_MEM_FENCE);
