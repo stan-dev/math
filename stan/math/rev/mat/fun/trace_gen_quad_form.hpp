@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_REV_MAT_FUN_TRACE_GEN_QUAD_FORM_HPP
 #define STAN_MATH_REV_MAT_FUN_TRACE_GEN_QUAD_FORM_HPP
 
-#include <boost/utility/enable_if.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/core.hpp>
@@ -94,10 +93,10 @@ class trace_gen_quad_form_vari : public vari {
 
 template <typename Td, int Rd, int Cd, typename Ta, int Ra, int Ca, typename Tb,
           int Rb, int Cb>
-inline typename boost::enable_if_c<std::is_same<Td, var>::value
-                                       || std::is_same<Ta, var>::value
-                                       || std::is_same<Tb, var>::value,
-                                   var>::type
+inline typename std::enable_if<std::is_same<Td, var>::value
+                                   || std::is_same<Ta, var>::value
+                                   || std::is_same<Tb, var>::value,
+                               var>::type
 trace_gen_quad_form(const Eigen::Matrix<Td, Rd, Cd>& D,
                     const Eigen::Matrix<Ta, Ra, Ca>& A,
                     const Eigen::Matrix<Tb, Rb, Cb>& B) {
