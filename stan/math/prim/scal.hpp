@@ -58,6 +58,7 @@
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <stan/math/prim/scal/err/invalid_argument_vec.hpp>
 #include <stan/math/prim/scal/err/out_of_range.hpp>
+#include <stan/math/prim/scal/err/is_size_match.hpp>
 
 #include <stan/math/prim/scal/fun/abs.hpp>
 #include <stan/math/prim/scal/fun/acosh.hpp>
