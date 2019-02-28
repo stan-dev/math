@@ -26,6 +26,6 @@ inline bool is_matching_size(const T_y1& y1, const T_y2& y2) {
   return is_size_match(y1.size(), y2.size());
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

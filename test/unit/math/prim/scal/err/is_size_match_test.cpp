@@ -12,7 +12,6 @@ TEST(ErrorHandlingMatrix, checkSizeMatch) {
   EXPECT_FALSE(is_size_match(x, y));
   EXPECT_FALSE(is_size_match(x, y));
 
-
   EXPECT_FALSE(is_size_match(x, y));
   EXPECT_FALSE(is_size_match(x, y));
 

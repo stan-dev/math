@@ -20,6 +20,6 @@ inline bool is_nonzero_size(const T_y& y) {
   return false;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
