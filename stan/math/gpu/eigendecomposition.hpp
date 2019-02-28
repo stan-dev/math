@@ -310,13 +310,13 @@ void block_householder_tridiag_gpu2(const Eigen::MatrixXd& A, Eigen::MatrixXd& p
   int t1=0, t2=0, t3=0, t4=0, t5=0, t6=0, t7=0, t8=0, t9=0;
   auto start = std::chrono::steady_clock::now();
 #endif
-  for (size_t k = 0; k < packed.rows() - 2; k += r) {
-    int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
+  for (size_t k = 0; k < A.rows() - 2; k += r) {
+    int actual_r = std::min({r, static_cast<int>(A.rows() - k - 2)});
 
 #ifdef TIME_IT
     start = std::chrono::steady_clock::now();
 #endif
-    matrix_gpu V_gpu(packed.rows() - k - 1, actual_r);
+    matrix_gpu V_gpu(A.rows() - k - 1, actual_r);
     V_gpu.zeros<TriangularViewGPU::Upper>();
 #ifdef TIME_IT
     t1+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
@@ -347,7 +347,7 @@ void block_householder_tridiag_gpu2(const Eigen::MatrixXd& A, Eigen::MatrixXd& p
         start = std::chrono::steady_clock::now();
 #endif
         opencl_kernels::eigendecomp_v2(
-                cl::NDRange((packed.rows() - k - j - 1)*64),cl::NDRange(64),
+                cl::NDRange((A.rows() - k - j - 1)*64),cl::NDRange(64),
                             packed_gpu.buffer(), V_gpu.buffer(), Uu.buffer(), Vu.buffer(),
                             packed_gpu.rows(), V_gpu.rows(), k, j);
 #ifdef TIME_IT
@@ -370,7 +370,7 @@ void block_householder_tridiag_gpu2(const Eigen::MatrixXd& A, Eigen::MatrixXd& p
     start = std::chrono::steady_clock::now();
 #endif
     matrix_gpu U_gpu(V_gpu.rows() - actual_r + 1, V_gpu.cols());
-    U_gpu.sub_block(packed_gpu, k + actual_r, k, 0, 0, packed.rows() - k - actual_r, actual_r);
+    U_gpu.sub_block(packed_gpu, k + actual_r, k, 0, 0, A.rows() - k - actual_r, actual_r);
 //    matrix_gpu V_T_gpu(V.bottomRows(V.rows() - actual_r + 1).transpose().eval());
     matrix_gpu Vb_gpu(V_gpu.rows() - actual_r + 1, V_gpu.cols());
     Vb_gpu.sub_block(V_gpu, actual_r - 1, 0, 0, 0, V_gpu.rows() - actual_r + 1, actual_r);

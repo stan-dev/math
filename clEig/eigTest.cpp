@@ -15,7 +15,7 @@
 #include <Eigen/QR>
 #include <stan/math/gpu/eigendecomposition.hpp>
 
-//#define SKIP_CHECKS
+#define SKIP_CHECKS
 
 using namespace Eigen;
 using namespace std;
@@ -335,7 +335,6 @@ int main() {
 //  testMrrr();
 //  miniTest();
 //  miniTest2();
-//  return 0;
 
   //force kernel compilation before timing
   auto kernel_1 = opencl_kernels::matrix_multiply;
@@ -349,7 +348,7 @@ int main() {
   auto kernel_9 = opencl_kernels::subtract_twice;
 
   //srand(time(0));
-  int A=2001;
+  int A=8000;
   Mat a = Mat::Random(A, A);
   a+=a.transpose().eval();
   //a.diagonal()+=Eigen::VectorXd::Constant(A,A);
@@ -389,23 +388,23 @@ int main() {
 //       << "ms" << endl;
 //  chkTridiag(a,t,q);
 
-  start = std::chrono::steady_clock::now();
-  block_householder_tridiag4(a, packed);
-  cout << "\t\tCPU my blocked packed 4: "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-       << "ms" << endl;
-
-  start = std::chrono::steady_clock::now();
-  block_householder_tridiag5(a, packed);
-  cout << "\t\tCPU my blocked packed 5: "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-       << "ms" << endl;
-
-  start = std::chrono::steady_clock::now();
-  block_householder_tridiag_gpu(a, packed);
-  cout << "\t\tGPU my blocked packed: "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-       << "ms" << endl;
+//  start = std::chrono::steady_clock::now();
+//  block_householder_tridiag4(a, packed);
+//  cout << "\t\tCPU my blocked packed 4: "
+//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+//       << "ms" << endl;
+//
+//  start = std::chrono::steady_clock::now();
+//  block_householder_tridiag5(a, packed);
+//  cout << "\t\tCPU my blocked packed 5: "
+//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+//       << "ms" << endl;
+//
+//  start = std::chrono::steady_clock::now();
+//  block_householder_tridiag_gpu(a, packed);
+//  cout << "\t\tGPU my blocked packed: "
+//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+//       << "ms" << endl;
 
   start = std::chrono::steady_clock::now();
   block_householder_tridiag_gpu2(a, packed);
