@@ -7,7 +7,7 @@ namespace stan {
 namespace math {
 
 /**
- * Check if two structures are the same size.
+ * @return <code>true</code> if the variable sizes match
  *
  * This function checks the runtime sizes for
  * variables that implement a <code>size()</code>
@@ -18,8 +18,6 @@ namespace math {
  *
  * @param y1 First variable
  * @param y2 Second variable
- *
- * @return <code>true</code> if the variable sizes match
  */
 template <typename T_y1, typename T_y2>
 inline bool is_matching_size(const T_y1& y1, const T_y2& y2) {
