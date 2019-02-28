@@ -10,9 +10,8 @@ namespace math {
 /**
  * @return <code>true</code> if vector is sorted in ascending order
  *
- * Requires runtime access to the <code>size</code> method.
- *
- * @tparam T_y Type of scalar
+ * @tparam T_y Type of scalar, requires function 
+ *    access to <code>.size()</code>
  *
  * @param y <code>std::vector</code> to test
  */
