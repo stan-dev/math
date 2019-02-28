@@ -9,7 +9,7 @@ namespace math {
  *
  * @tparam T_y Type of container
  *
- * @param y Container to test -- matrix/vector, requires function 
+ * @param y Container to test -- matrix/vector, requires function
  *    access to <code>.size()</code>
  */
 template <typename T_y>
