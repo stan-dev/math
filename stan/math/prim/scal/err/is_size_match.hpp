@@ -10,9 +10,9 @@ namespace math {
 /**
  * @return <code>true</code> if provided dimensions match
  *
- * @tparam T_size1 Type of size 1, requires function 
+ * @tparam T_size1 Type of size 1, requires function
  *    access to <code>.size()</code>
- * @tparam T_size2 Type of size 2, requires function 
+ * @tparam T_size2 Type of size 2, requires function
  *    access to <code>.size()</code>
  *
  * @param i Size 1
