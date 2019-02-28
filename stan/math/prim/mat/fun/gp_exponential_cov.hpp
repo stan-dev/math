@@ -43,7 +43,7 @@ gp_exponential_cov(const std::vector<T_x> &x, const T_s &sigma,
   size_t x_size = size_of(x);
   Eigen::Matrix<typename stan::return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
                 Eigen::Dynamic>
-      cov(x_size, x_size);  
+      cov(x_size, x_size);
   if (x_size == 0)
     return cov;
 
@@ -103,7 +103,7 @@ gp_exponential_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
   if (x_size == 0)
     return cov;
 
-  const char* function = "gp_exponential_cov";
+  const char *function = "gp_exponential_cov";
   for (size_t n = 0; n < x_size; ++n)
     check_not_nan(function, "x", x[n]);
 
@@ -114,23 +114,21 @@ gp_exponential_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
   check_size_match(function, "x dimension", x[0].size(),
                    "number of length scales", l_size);
 
-  std::vector<Eigen::Matrix<typename return_type<T_x, T_l>::type, -1, 1>>
-              x_new = divide_columns(x, length_scale);
+  std::vector<Eigen::Matrix<typename return_type<T_x, T_l>::type, -1, 1>> x_new
+      = divide_columns(x, length_scale);
 
   T_s sigma_sq = square(sigma);
   for (size_t i = 0; i < x_size; ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
-      typename return_type<T_x, T_l>::type dist =
-        distance(x_new[i], x_new[j]);
-      cov(i, j) =
-        sigma_sq * exp(-dist);
+      typename return_type<T_x, T_l>::type dist = distance(x_new[i], x_new[j]);
+      cov(i, j) = sigma_sq * exp(-dist);
       cov(j, i) = cov(i, j);
     }
   }
   return cov;
 }
-  
+
 /**
  * Returns a Matern exponential cross covariance matrix
  *
@@ -189,8 +187,7 @@ gp_exponential_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   T_l neg_inv_l = -1.0 / length_scale;
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      cov(i, j) =
-          sigma_sq * exp(neg_inv_l * distance(x1[i], x2[j]));
+      cov(i, j) = sigma_sq * exp(neg_inv_l * distance(x1[i], x2[j]));
     }
   }
   return cov;
@@ -218,9 +215,8 @@ gp_exponential_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * @throw std::domain error if sigma <= 0, l <= 0, or x1, x2 are nan or inf
  */
 template <typename T_x1, typename T_x2, typename T_s, typename T_l>
-inline typename Eigen::Matrix<
-    typename return_type<T_x1, T_x2, T_s, T_l>::type, Eigen::Dynamic,
-    Eigen::Dynamic>
+inline typename Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
+                              Eigen::Dynamic, Eigen::Dynamic>
 gp_exponential_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
                    const std::vector<Eigen::Matrix<T_x2, -1, 1>> &x2,
                    const T_s &sigma, const std::vector<T_l> &length_scale) {
@@ -236,7 +232,7 @@ gp_exponential_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
   if (x1_size == 0 || x2_size == 0)
     return cov;
 
-  const char* function = "gp_exponential_cov";
+  const char *function = "gp_exponential_cov";
   for (size_t n = 0; n < x1_size; ++n)
     check_not_nan(function, "x1", x1[n]);
   for (size_t n = 0; n < x2_size; ++n)
@@ -251,19 +247,18 @@ gp_exponential_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
   for (size_t i = 0; i < x2_size; ++i)
     check_size_match(function, "x2's row", size_of(x2[i]),
                      "number of length scales", l_size);
-  
+
   T_s sigma_sq = square(sigma);
   T_l temp;
 
   std::vector<Eigen::Matrix<typename return_type<T_x1, T_l>::type, -1, 1>>
-    x1_new = divide_columns(x1, length_scale);
+      x1_new = divide_columns(x1, length_scale);
   std::vector<Eigen::Matrix<typename return_type<T_x2, T_l>::type, -1, 1>>
-    x2_new = divide_columns(x2, length_scale);
+      x2_new = divide_columns(x2, length_scale);
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      cov(i, j) =
-        sigma_sq * exp(-distance(x1_new[i], x2_new[j]));
+      cov(i, j) = sigma_sq * exp(-distance(x1_new[i], x2_new[j]));
     }
   }
   return cov;
