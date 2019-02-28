@@ -377,21 +377,102 @@ TEST(MathPrimMat, nan_error_training_sig_l) {
                std::domain_error);
 }
 
-TEST(MathPrimMat, dim_mismatch_vec_eigen_vec_gp_exponential_cov2) {
-  double sigma = 0.2;
-  double l = 5;
+TEST(MathPrimMat, check_dim_mismatch) {
+  double sig = 1.0;
+  double l = 1.0;
 
-  std::vector<Eigen::Matrix<double, -1, 1>> x_vec_1(3);
-  for (size_t i = 0; i < x_vec_1.size(); ++i) {
-    x_vec_1[i].resize(3, 1);
-    x_vec_1[i] << 1, 2, 3;
-  }
+  std::vector<Eigen::Matrix<double, -1, 1>> x(2);
+  x[0].resize(2, 1);
+  x[0] << 1, 2;
+  x[1].resize(3, 1);
+  x[1] << 1, 2, 3;
 
-  std::vector<Eigen::Matrix<double, -1, 1>> x_vec_2(4);
-  for (size_t i = 0; i < x_vec_2.size(); ++i) {
-    x_vec_2[i].resize(4, 1);
-    x_vec_2[i] << 4, 1, 3, 1;
-  }
-  EXPECT_THROW(stan::math::gp_exponential_cov(x_vec_1, x_vec_2, sigma, l),
+  EXPECT_THROW(stan::math::gp_exponential_cov(x, sig, l), std::invalid_argument);
+
+  std::vector<Eigen::Matrix<double, -1, 1>> x1(2);
+  x1[0].resize(2, 1);
+  x1[0] << 1, 2;
+  x1[1].resize(2, 1);
+  x1[1] << 1, 2;
+
+  std::vector<Eigen::Matrix<double, -1, 1>> x2(3);
+  x2[0].resize(2, 1);
+  x2[0] << 1, 2;
+  x2[1].resize(3, 1);
+  x2[1] << 1, 2, 3;
+
+  EXPECT_THROW(stan::math::gp_exponential_cov(x1, x2, sig, l),
                std::invalid_argument);
+}
+
+TEST(MathPrimMat, zero_size) {
+  double sigma = 0.2;
+
+  std::vector<double> l(0);
+
+  std::vector<Eigen::Matrix<double, -1, 1>> x(0);
+
+  Eigen::MatrixXd cov;
+  Eigen::MatrixXd cov2;
+  EXPECT_NO_THROW(cov = stan::math::gp_exponential_cov(x, sigma, l));
+  EXPECT_NO_THROW(cov2 = stan::math::gp_exponential_cov(x, x, sigma, l));
+  EXPECT_EQ(0, cov.rows());
+  EXPECT_EQ(0, cov.cols());
+}
+
+TEST(MathPrimMat, calculations) {
+  double sigma = 1.0;
+  double l = 1.0;
+
+  std::vector<double> x1(2);
+  x1[0] = 1;
+  x1[1] = 2;
+
+  std::vector<double> x2(2);
+  x2[0] = 2;
+  x2[1] = 3;
+
+  Eigen::MatrixXd cov;
+  EXPECT_NO_THROW(cov = stan::math::gp_exponential_cov(x1, sigma, l));
+  ASSERT_FLOAT_EQ(1.0, cov(0, 0));
+  ASSERT_FLOAT_EQ(1.0, cov(1, 1));
+  ASSERT_FLOAT_EQ(exp(-1), cov(1, 0));
+  ASSERT_FLOAT_EQ(exp(-1), cov(0, 1));
+  EXPECT_NO_THROW(cov = stan::math::gp_exponential_cov(x1, x2, sigma, l));
+  ASSERT_FLOAT_EQ(exp(-1), cov(0, 0));
+  ASSERT_FLOAT_EQ(exp(-1), cov(1, 1));
+  ASSERT_FLOAT_EQ(1.0, cov(1, 0));
+  ASSERT_FLOAT_EQ(exp(-2), cov(0, 1));
+}
+
+TEST(MathPrimMat, calculations_ard) {
+  double sigma = 1.0;
+
+  std::vector<double> l(2);
+  l[0] = 1.0;
+  l[1] = 2.0;
+
+  std::vector<Eigen::Matrix<double, -1, 1>> x(2);
+  x[0].resize(2, 1);
+  x[0] << 1, 1;
+  x[1].resize(2, 1);
+  x[1] << 2, 4;
+
+  Eigen::MatrixXd cov;
+  Eigen::MatrixXd cov2;
+  cov = stan::math::gp_exponential_cov(x, sigma, l);
+  cov2 = stan::math::gp_exponential_cov(x, x, sigma, l);
+
+  EXPECT_FLOAT_EQ(1.0, cov(0, 0));
+  EXPECT_FLOAT_EQ(1.0, cov2(0, 0));
+  EXPECT_FLOAT_EQ(exp(-sqrt(1 + 9.0 / 4.0)),
+                  cov(1, 0));
+  EXPECT_FLOAT_EQ(exp(-sqrt(1 + 9.0 / 4.0)),
+                  cov2(1, 0));
+  EXPECT_FLOAT_EQ(exp(-sqrt(1 + 9.0 / 4.0)),
+                  cov(0, 1));
+  EXPECT_FLOAT_EQ(exp(-sqrt(1 + 9.0 / 4.0)),
+                  cov2(0, 1));
+  EXPECT_FLOAT_EQ(1.0, cov(1, 1));
+  EXPECT_FLOAT_EQ(1.0, cov2(1, 1));
 }
