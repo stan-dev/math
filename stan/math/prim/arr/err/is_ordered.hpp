@@ -8,15 +8,13 @@ namespace stan {
 namespace math {
 
 /**
- * Tests for ascedning order in a vector.
+ * @return <code>true</code> if vector is sorted in ascending order
  *
  * Requires runtime access to the <code>size</code> method.
  *
  * @tparam T_y Type of scalar
  *
  * @param y <code>std::vector</code> to test
- *
- * @return <code>true</code> if vector is sorted in ascending order
  */
 template <typename T_y>
 inline bool is_ordered(const std::vector<T_y>& y) {
