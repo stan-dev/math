@@ -7,10 +7,10 @@ namespace math {
 /**
  * @return <code>true</code> if container has size zero
  *
- * @tparam T_y Type of container
- *
- * @param y Container to test -- matrix/vector, requires function
+ * @tparam T_y Type of container, requires function 
  *    access to <code>.size()</code>
+ *
+ * @param y Container to test -- matrix/vector
  */
 template <typename T_y>
 inline bool is_nonzero_size(const T_y& y) {
