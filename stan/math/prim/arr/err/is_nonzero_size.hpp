@@ -7,7 +7,7 @@ namespace math {
 /**
  * @return <code>true</code> if container has size zero
  *
- * @tparam T_y Type of container, requires function 
+ * @tparam T_y Type of container, requires function
  *    access to <code>.size()</code>
  *
  * @param y Container to test -- matrix/vector

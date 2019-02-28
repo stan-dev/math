@@ -13,9 +13,9 @@ namespace math {
  * variables that implement a <code>size()</code>
  * method.
  *
- * @tparam T_y1 Type of the first variable, requires function 
+ * @tparam T_y1 Type of the first variable, requires function
  *    access to <code>.size()</code>
- * @tparam T_y2 Type of the second variable, requires function 
+ * @tparam T_y2 Type of the second variable, requires function
  *    access to <code>.size()</code>
  *
  * @param y1 First variable
