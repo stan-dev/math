@@ -5,7 +5,7 @@
 #undef STAN_MPI
 #endif
 
-#include <stan/math/prim/mat.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 
 #include <test/unit/math/prim/mat/functor/hard_work.hpp>

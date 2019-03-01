@@ -11,7 +11,7 @@
 #include <stdlib.h>
 
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat.hpp>
+#include <stan/math/rev/mat.hpp>
 
 #include <test/unit/math/prim/mat/functor/hard_work.hpp>
 
