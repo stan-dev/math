@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_var.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
-#include <stan/math/prim/arr/meta/and.hpp>
+#include <stan/math/prim/scal/meta/and.hpp>
 #include <type_traits>
 
 namespace stan {

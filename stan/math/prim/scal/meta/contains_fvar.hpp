@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_fvar.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
-#include <stan/math/prim/arr/meta/or.hpp>
+#include <stan/math/prim/scal/meta/or.hpp>
 
 namespace stan {
 
