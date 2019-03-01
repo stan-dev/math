@@ -15,5 +15,16 @@ template<typename Cond, typename... Conds>
   : std::conditional<Cond::value, std::true_type, or_<Conds...>>::type
   { };
 
+template<typename... Conds>
+  struct or_not_
+  : std::false_type
+  { };
+
+template<typename Cond, typename... Conds>
+  struct or_not_<Cond, Conds...>
+  : std::conditional<!Cond::value, std::true_type, or_<Conds...>>::type
+  { };
+
+
 }  // namespace stan
 #endif
