@@ -6,8 +6,8 @@
 #include <type_traits>
 namespace stan {
 
-template<typename... T>
-  using contains_nonconstant_struct =  or_not_<is_constant_struct<T>...>;
+template <typename... T>
+using contains_nonconstant_struct = or_not_<is_constant_struct<T>...>;
 
 }  // namespace stan
 #endif

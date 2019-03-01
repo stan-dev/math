@@ -10,11 +10,14 @@ namespace stan {
 
 template <typename T>
 struct is_var_or_arithmetic_ {
-  enum { value = (is_var<typename scalar_type<T>::type>::value || std::is_arithmetic<typename scalar_type<T>::type>::value) };
+  enum {
+    value = (is_var<typename scalar_type<T>::type>::value
+             || std::is_arithmetic<typename scalar_type<T>::type>::value)
+  };
 };
 
-template<typename... T>
-  using is_var_or_arithmetic =  and_<is_var_or_arithmetic_<T>...>;
+template <typename... T>
+using is_var_or_arithmetic = and_<is_var_or_arithmetic_<T>...>;
 
 }  // namespace stan
 #endif

@@ -11,8 +11,8 @@ namespace stan {
  * Metaprogram to calculate the base scalar return type resulting
  * from promoting all the scalar types of the template parameters.
  */
-template<typename... T>
-  using contains_fvar =  or_<is_fvar<typename scalar_type<T>::type>...>;
+template <typename... T>
+using contains_fvar = or_<is_fvar<typename scalar_type<T>::type>...>;
 
 }  // namespace stan
 #endif
