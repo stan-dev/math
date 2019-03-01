@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_PRIMITIVE_VALUE_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_PRIMITIVE_VALUE_HPP
 
-#include <boost/utility/enable_if.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <type_traits>
 
@@ -24,7 +23,7 @@ namespace math {
  * @return input unmodified.
  */
 template <typename T>
-inline typename boost::enable_if<std::is_arithmetic<T>, T>::type
+inline typename std::enable_if<std::is_arithmetic<T>::value, T>::type
 primitive_value(T x) {
   return x;
 }
@@ -40,7 +39,7 @@ primitive_value(T x) {
  * @return value of input.
  */
 template <typename T>
-inline typename boost::disable_if<std::is_arithmetic<T>, double>::type
+inline typename std::enable_if<!std::is_arithmetic<T>::value, double>::type
 primitive_value(const T& x) {
   return value_of(x);
 }

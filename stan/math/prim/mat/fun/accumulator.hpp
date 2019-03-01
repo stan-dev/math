@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <vector>
 #include <type_traits>
 
@@ -47,7 +46,7 @@ class accumulator {
    * @param x Value to add
    */
   template <typename S>
-  typename boost::enable_if<std::is_arithmetic<S>, void>::type add(S x) {
+  typename std::enable_if<std::is_arithmetic<S>::value, void>::type add(S x) {
     buf_.push_back(static_cast<T>(x));
   }
 
@@ -64,9 +63,9 @@ class accumulator {
    * @param x Value to add
    */
   template <typename S>
-  typename boost::disable_if<
-      std::is_arithmetic<S>,
-      typename boost::enable_if<std::is_same<S, T>, void>::type>::type
+  typename std::enable_if<
+      !std::is_arithmetic<S>::value,
+      typename std::enable_if<std::is_same<S, T>::value, void>::type>::type
   add(const S& x) {
     buf_.push_back(x);
   }
