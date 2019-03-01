@@ -5,15 +5,12 @@
 
 namespace stan {
 
-template<typename... Conds>
-  struct and_
-  : std::true_type
-  { };
+template <typename... Conds>
+struct and_ : std::true_type {};
 
-template<typename Cond, typename... Conds>
-  struct and_<Cond, Conds...>
-  : std::conditional<Cond::value, and_<Conds...>, std::false_type>::type
-  { };
+template <typename Cond, typename... Conds>
+struct and_<Cond, Conds...>
+    : std::conditional<Cond::value, and_<Conds...>, std::false_type>::type {};
 
 }  // namespace stan
 #endif
