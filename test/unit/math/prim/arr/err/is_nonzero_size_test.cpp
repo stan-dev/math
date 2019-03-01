@@ -15,9 +15,6 @@ TEST(ErrorHandlingMatrix, IsNonzeroSizeMatrix) {
 
   EXPECT_TRUE(stan::math::is_nonzero_size(a));
 
-  a.resize(2);
-  EXPECT_TRUE(stan::math::is_nonzero_size(a));
-
   a.resize(0);
   EXPECT_FALSE(stan::math::is_nonzero_size(a));
 }
@@ -31,9 +28,6 @@ TEST(ErrorHandlingMatrix, IsNonzeroSizeMatrix_nan) {
   a.push_back(nan);
   a.push_back(nan);
 
-  EXPECT_TRUE(stan::math::is_nonzero_size(a));
-
-  a.resize(2);
   EXPECT_TRUE(stan::math::is_nonzero_size(a));
 
   a.resize(0);

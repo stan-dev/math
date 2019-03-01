@@ -5,12 +5,13 @@ namespace stan {
 namespace math {
 
 /**
- * @return <code>true</code> if container has size zero
+ * Returns <code>true</code> if the container has size zero.
  *
- * @tparam T_y Type of container, requires function
- *    access to <code>.size()</code>
+ * @tparam T_y Type of container, requires class method <code>.size()</code>
  *
  * @param y Container to test -- matrix/vector
+ *
+ * @return <code>true</code> if container has size zero
  */
 template <typename T_y>
 inline bool is_nonzero_size(const T_y& y) {
