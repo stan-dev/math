@@ -87,6 +87,138 @@ const char* eigendecomp_householder_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
+const char* eigendecomp_householder_v1_kernel_code = STRINGIFY(
+// \endcond
+/**
+ * Calculates householder vector and first element of the vector v.
+ * Must be run with 1 workgroup of 128 threads.
+ */
+        __kernel void eigendecomp_householder_v1(__global double* P, __global double* V, __global double* q_glob, __global double* R1, __global double* R2,
+                                              const int P_rows, const int V_rows,
+                                              const int j, const int k) {
+          const int lid = get_local_id(0);
+          const int gid = get_global_id(0);
+          const int gsize = get_global_size(0);
+          const int lsize = get_local_size(0);
+          const int ngroups = get_num_groups(0);
+          const int wgid = get_group_id(0);
+
+          double q = 0;
+
+          const int P_start = P_rows * (k+j) + k + j;
+          const int P_span = P_rows * (k+j+1) - P_start;
+//          printf("pstart=%d, pspan=%d\n", P_start, P_span);
+          for (int i = lid; i < P_span; i += lsize) {
+            double acc = 0;
+            if (j != 0) {
+              for (int l = 0; l < j; l++) {
+//                printf("%d using %lf, %lf\n",gid, P[P_rows * (k + l) + k + j + i], V[V_rows * l + j - 1 + i]);
+                acc += P[P_rows * (k + l) + k + j + i] * V[V_rows * l + j - 1] +
+                       V[V_rows * l + j - 1 + i] * P[P_rows * (k + l) + k + j];
+              }
+            }
+            double tmp = P[P_start + i] - acc;
+//            printf("%d writing %d\n",gid, P_start + i);
+            P[P_start + i] = tmp;
+            if(i!=0) {
+              q += tmp * tmp;
+            }
+          }
+          __local double q_local[128];
+          q_local[lid] = q;
+          barrier(CLK_LOCAL_MEM_FENCE);
+          double alpha;
+          if (gid == 0) {
+            for (int i = 1; i < 128; i++) {
+              q += q_local[i];
+            }
+//            printf("q_SqNorm=%lf\n", q);
+
+            double p1 = P[P_start + 1];
+//            printf("p1=%lf\n", p1);
+            alpha = -copysign(sqrt(q), P[P_start]);
+            q -= p1 * p1;
+//            printf("q after - %lf\n", q);
+            p1 -= alpha;
+            P[P_start + 1] = p1;
+            q += p1 * p1;
+//            printf("q after + %lf\n", q);
+            q=sqrt(q);
+            q_local[0] = q;
+            q_local[1] = alpha;
+            *q_glob=q;
+//            V[V_rows*j]=q/sqrt(2.);
+//            printf("q=%lf, alpha=%lf\n", q_local[0], q_local[1]);
+          }
+          barrier(CLK_LOCAL_MEM_FENCE);
+          q = q_local[0];
+          alpha = q_local[1];
+          double multi = sqrt(2.) / q;
+          for (int i = lid + 1; i < P_span; i += lsize) {
+            P[P_start + i] *= multi;
+          }
+          if(gid==0){
+            P[P_rows * (k + j + 1) + k + j] = P[P_rows * (k + j) + k + j + 1] * q / sqrt(2.) + alpha;
+          }
+          //from here on doing v1 stuff
+          barrier(CLK_LOCAL_MEM_FENCE);
+          if(j==0){
+            return;
+          }
+          //divide threads in j subgroups - 1 / result element
+          int subgroup_size = 128 / j;
+          int working_threads = subgroup_size * j;
+          int idx_in_subgroup = gid % subgroup_size;
+          int subgroup_idx = gid / subgroup_size;
+          const __global double* vec = P + P_rows * (k + j) + k + j + 1;
+          const __global double* M1 =  P + P_rows * (k + subgroup_idx) + k + j + 1;
+          const __global double* M2 = V + V_rows * subgroup_idx + j;
+          double acc1=0;
+          double acc2=0;
+          if(gid<working_threads) {
+            for (int i = idx_in_subgroup; i < P_span - 1; i += subgroup_size) {
+              double v = vec[i];
+              acc1 += M1[i] * v;
+              acc2 += M2[i] * v;
+//              printf("%d using %lf, \t %lf \t %lf\n", gid, M1[i], M2[i], vec[i]);
+            }
+          }
+          __local double res_loc1[128];
+          __local double res_loc2[128];
+          res_loc1[lid]=acc1;
+          res_loc2[lid]=acc2;
+          barrier(CLK_LOCAL_MEM_FENCE);
+          if(gid<working_threads && idx_in_subgroup==0){
+            for(int i=lid+1;i<min(lid+subgroup_size, working_threads);i+=1){
+              acc1+=res_loc1[i];
+              acc2+=res_loc2[i];
+//              printf("%d adding %d\n", gid, i);
+            }
+            R1[subgroup_idx]=acc1;
+            R2[subgroup_idx]=acc2;
+//            printf("%d writing at %d: %lf, \t %lf\n", gid, subgroup_idx, acc1, acc2);
+          }
+//          for(int i=lid;i<j;i+=128){ //TODO opt?
+//            const __global double* vec = P + P_rows * (k + j) + k + j + 1;
+//            const __global double* M1 =  P + P_rows * (k + i) + k + j + 1; //not the same starts (i/j)
+//            const __global double* M2 = V + V_rows * i + j;
+//            double acc1=0;
+//            double acc2=0;
+//            for(int l=0;l<P_span-1;l++){
+//              double v = vec[l];
+//              acc1 += M1[l] * v;
+//              acc2 += M2[l] * v;
+////              printf("%d using %lf, \t %lf \t %lf\n", gid, M1[l], M2[l], vec[l]);
+//            }
+//            R1[i]=acc1;
+//            R2[i]=acc2;
+//          }
+        }
+// \cond
+);
+// \endcond
+
+// \cond
 const char* eigendecomp_v1_kernel_code = STRINGIFY(
 // \endcond
         /**
@@ -513,6 +645,9 @@ const char* subtract_twice_kernel_code = STRINGIFY(
 
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int, int>
         eigendecomp_householder("eigendecomp_householder", eigendecomp_householder_kernel_code);
+
+const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, int, int, int, int>
+        eigendecomp_householder_v1("eigendecomp_householder_v1", eigendecomp_householder_v1_kernel_code);
 
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, int, int, int>
         eigendecomp_v1("eigendecomp_v1", eigendecomp_v1_kernel_code);

@@ -348,7 +348,7 @@ int main() {
   auto kernel_9 = opencl_kernels::subtract_twice;
 
   //srand(time(0));
-  int A=8000;
+  int A=500;
   Mat a = Mat::Random(A, A);
   a+=a.transpose().eval();
   //a.diagonal()+=Eigen::VectorXd::Constant(A,A);
@@ -406,11 +406,14 @@ int main() {
 //       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
 //       << "ms" << endl;
 
+  for(int r1=30;r1<1000;r1+=10) {
+//  int r1=60;
   start = std::chrono::steady_clock::now();
-  block_householder_tridiag_gpu2(a, packed);
-  cout << "\t\tGPU my blocked packed 2: "
+  block_householder_tridiag_gpu2(a, packed, r1);
+  cout << "\t\tGPU my blocked packed 2, r = " << r1 << ": "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
+  }
 
   t = Mat::Constant(a.rows(), a.cols(), 0);
   t.diagonal()=packed.diagonal();

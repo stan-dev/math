@@ -184,6 +184,8 @@ void block_householder_tridiag5(const Eigen::MatrixXd& A, Eigen::MatrixXd& packe
 
       auto& u = householder;
       Eigen::VectorXd v(householder.size() + 1);
+//      Eigen::VectorXd R1 = V.bottomLeftCorner(u.size(), j).transpose() * u;
+//      Eigen::VectorXd R2 = packed.block(k + j + 1, k, u.size(), j).transpose() * u;
       v.tail(householder.size()) = packed.bottomRightCorner(packed.rows() - k - j - 1, packed.cols() - k - j - 1).selfadjointView<Eigen::Lower>() * u
                                    - packed.block(k + j + 1, k, u.size(), j) * (V.bottomLeftCorner(u.size(), j).transpose() * u)
                                    - V.bottomLeftCorner(u.size(), j) * (packed.block(k + j + 1, k, u.size(), j).transpose() * u);
@@ -328,6 +330,10 @@ void block_householder_tridiag_gpu2(const Eigen::MatrixXd& A, Eigen::MatrixXd& p
 #endif
       matrix_gpu Uu(j,1), Vu(j,1), q_gpu(1,1);
       try{
+//        opencl_kernels::eigendecomp_householder_v1(
+//                cl::NDRange(128), cl::NDRange(128),
+//                packed_gpu.buffer(), V_gpu.buffer(), q_gpu.buffer(), Uu.buffer(), Vu.buffer(),
+//                packed_gpu.rows(), V_gpu.rows(), j, k);
         opencl_kernels::eigendecomp_householder(
                 cl::NDRange(128), cl::NDRange(128),
                 packed_gpu.buffer(), V_gpu.buffer(), q_gpu.buffer(),
