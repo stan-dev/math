@@ -177,6 +177,118 @@ const char* eigendecomp_v2_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
+const char* eigendecomp_v2_2_kernel_code = STRINGIFY(
+// \endcond
+        __kernel void eigendecomp_v2(const __global double* P, __global double* V, const __global double* Uu, const __global double* Vu,
+                                     const int P_rows, const int V_rows, const int k, const int j) {
+          const int lid = get_local_id(0);
+          const int gid = get_global_id(0);
+          const int gsize = get_global_size(0);
+          const int lsize = get_local_size(0);
+          const int ngroups = get_num_groups(0);
+          const int wgid = get_group_id(0);
+
+          int work = P_rows - k - j - 1;
+          //printf("%d work %d",gid, work);
+          double acc = 0;
+
+          const __global double* vec = P + P_rows * (k + j) + k + j + 1;
+          const __global double* M1 = P + P_rows * (k + j + 1) + k + j + 1;
+          const __global double* M2 = P + P_rows * k + k + j + 1;
+          const __global double* M3 = V + j;
+          int i;
+          if(gid<work) {
+            for (i = 0; i <= gid; i++) {
+              acc += M1[P_rows * i + gid] * vec[i];
+//              printf("%d using1 %lf, \t %lf\n", gid, M1[P_rows * i + gid], vec[i]);
+            }
+            //i=gid
+//          for (; i < work; i++) {
+//            acc += M1[P_rows * gid + i] * vec[i];//non-coalesced
+////              printf("%d using2 %lf, \t %lf\n", gid, M1[P_rows * gid + i], vec[i]);
+//          }
+          }
+          __local double loc[33][33]; //+1 to avoid bank conflicts
+          //handle diagonal blocks
+          i=wgid*32;
+          if(i+32<work) { //general diagonal case
+            for (int l = 0; l < 32; l++) {
+              loc[l][lid] = M1[P_rows * (wgid*32 + l) + i + lid];
+            }
+          }
+          else{ //last diagonal block
+            for (int l = 0; l < 32; l++) {
+              if(wgid*32+l<work && i+lid<work) {
+                loc[l][lid] = M1[P_rows * (wgid*32 + l) + i + lid];
+              }
+            }
+          }
+          barrier(CLK_LOCAL_MEM_FENCE);
+//          int l;
+//          for(l=0;l<min(lid, work - i);l++){
+//            acc+=loc[l][lid] * vec[i+l];
+//            printf("%d using(di1) %lf, \t %lf\n", gid, loc[l][lid], vec[i+l]);
+//          }
+
+          for(int l=lid+1;l<min(32, work - i);l++){
+            acc+=loc[lid][l] * vec[i+l];
+//            printf("%d using(di2) %lf, \t %lf\n", gid, loc[lid][l], vec[i+l]);
+          }
+          barrier(CLK_LOCAL_MEM_FENCE);
+
+          //general case (blocks going down from diagonal)
+          for(i=(wgid+1)*32;i<work-32;i+=32){
+            for(int l=0;l<32;l++){
+              loc[l][lid] = M1[P_rows * (wgid * 32 + l) + i + lid];
+            }
+            barrier(CLK_LOCAL_MEM_FENCE);
+            for(int l=0;l<32;l++){
+              acc+=loc[lid][l] * vec[i + l];
+//              printf("%d using(gen) %lf, \t %lf\n", gid, loc[lid][l], vec[i + l]);
+            }
+            barrier(CLK_LOCAL_MEM_FENCE);
+          }
+
+          //handle last block in column
+          if(i<work) { //if not diagonal at same time
+            for (int l = 0; l < 32; l++) {
+              if (i + lid < work) {
+                loc[l][lid] = M1[P_rows * (wgid * 32 + l) + i + lid];
+              }
+            }
+            barrier(CLK_LOCAL_MEM_FENCE);
+            for (int l = 0; l < work - i; l++) {
+              acc += loc[lid][l] * vec[i + l];
+//              printf("%d using(lst) %lf, \t %lf\n", gid, loc[lid][l], vec[i + l]);
+            }
+            barrier(CLK_LOCAL_MEM_FENCE);
+          }
+
+          if(gid<work) {
+            for (int i = 0; i < j; i++) {
+              acc -= M2[P_rows * i + gid] * Vu[i];
+              acc -= M3[V_rows * i + gid] * Uu[i];
+//                printf("%d using(sml) %lf, \t %lf, \t %lf\n", gid, M2[P_rows * i + gid], M3[V_rows * i + gid], Vu[i]);
+            }
+            V[V_rows * j + gid + j] = acc;
+//            printf("%d writing at %d: %lf\n", gid, V_rows * j + gid + j, acc);
+          }
+//          res_loc[lid]=acc;
+//          barrier(CLK_LOCAL_MEM_FENCE);
+//          if(lid==0){
+//            for(int i=1;i<32;i++){
+//              acc+=res_loc[i];
+//            }
+////            printf("%3d writing %d\n", gid, V_rows * j + wgid + j);
+//            V[V_rows * j + wgid + j]=acc;
+////            V[0]=acc;
+//          }
+        }
+// \cond
+);
+// \endcond
+
+// \cond
 const char* eigendecomp_v3_kernel_code = STRINGIFY(
 // \endcond
         __kernel void eigendecomp_v3(__global double* P, __global double* V, __global double* q,
@@ -407,6 +519,9 @@ const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, int, in
 
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, int, int, int, int>
         eigendecomp_v2("eigendecomp_v2", eigendecomp_v2_kernel_code);
+
+const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, int, int, int, int>
+        eigendecomp_v2_2("eigendecomp_v2", eigendecomp_v2_2_kernel_code);
 
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int, int>
         eigendecomp_v3("eigendecomp_v3", eigendecomp_v3_kernel_code);

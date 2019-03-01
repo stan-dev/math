@@ -15,7 +15,7 @@
 #include <Eigen/QR>
 #include <stan/math/gpu/eigendecomposition.hpp>
 
-#define SKIP_CHECKS
+//#define SKIP_CHECKS
 
 using namespace Eigen;
 using namespace std;

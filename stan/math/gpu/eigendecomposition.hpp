@@ -348,8 +348,12 @@ void block_householder_tridiag_gpu2(const Eigen::MatrixXd& A, Eigen::MatrixXd& p
 #endif
         opencl_kernels::eigendecomp_v2(
                 cl::NDRange((A.rows() - k - j - 1)*64),cl::NDRange(64),
-                            packed_gpu.buffer(), V_gpu.buffer(), Uu.buffer(), Vu.buffer(),
-                            packed_gpu.rows(), V_gpu.rows(), k, j);
+                packed_gpu.buffer(), V_gpu.buffer(), Uu.buffer(), Vu.buffer(),
+                packed_gpu.rows(), V_gpu.rows(), k, j);
+//        opencl_kernels::eigendecomp_v2_2(
+//                cl::NDRange((A.rows() - k - j - 1 + 31)/32*32),cl::NDRange(32),
+//                packed_gpu.buffer(), V_gpu.buffer(), Uu.buffer(), Vu.buffer(),
+//                packed_gpu.rows(), V_gpu.rows(), k, j);
 #ifdef TIME_IT
         t4+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
         start = std::chrono::steady_clock::now();
