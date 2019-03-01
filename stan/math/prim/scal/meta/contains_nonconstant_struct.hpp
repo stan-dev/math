@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_META_CONTAINS_NONCONSTANT_STRUCT_HPP
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/arr/meta/or.hpp>
+#include <stan/math/prim/scal/meta/or.hpp>
 #include <type_traits>
 namespace stan {
 
