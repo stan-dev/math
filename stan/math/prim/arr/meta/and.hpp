@@ -1,0 +1,19 @@
+#ifndef STAN_MATH_PRIM_ARR_META_AND_HPP
+#define STAN_MATH_PRIM_ARR_META_AND_HPP
+
+#include <type_traits>
+
+namespace stan {
+
+template<typename... Conds>
+  struct and_
+  : std::true_type
+  { };
+
+template<typename Cond, typename... Conds>
+  struct and_<Cond, Conds...>
+  : std::conditional<Cond::value, and_<Conds...>, std::false_type>::type
+  { };
+
+}  // namespace stan
+#endif
