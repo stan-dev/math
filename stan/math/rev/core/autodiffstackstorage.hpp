@@ -8,6 +8,9 @@ namespace stan {
 namespace math {
 
 /**
+ * TODO (SW): Update comments here to reflect pointer implementation
+ * reason.
+ *
  * Provides a thread_local singleton if needed. Read warnings below!
  * For performance reasons the singleton is a global static for the
  * case of no threading which is returned by a function. This design
