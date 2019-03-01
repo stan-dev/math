@@ -1,8 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_QUAD_FORM_HPP
 #define STAN_MATH_PRIM_MAT_FUN_QUAD_FORM_HPP
 
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
