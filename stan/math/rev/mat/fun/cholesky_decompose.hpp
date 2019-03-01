@@ -406,7 +406,7 @@ inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
   check_square("cholesky_decompose", "A", A);
   Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
 #ifdef STAN_OPENCL
-  L_A = cholesky_decompose(L_A);  
+  L_A = cholesky_decompose(L_A);
 #else
   check_symmetric("cholesky_decompose", "A", A);
   Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
