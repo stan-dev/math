@@ -14,8 +14,8 @@ TEST(MathMeta, is_var_or_arithmetic_simple) {
   bool temp
       = is_var_or_arithmetic<int&, double>::value;
   EXPECT_FALSE(temp);
-  temp = is_var_or_arithmetic<double, double>::value;
+  temp = is_var_or_arithmetic<double, std::vector<double>>::value;
   EXPECT_TRUE(temp);
-  temp = is_var_or_arithmetic<double, double, double, double, double, double&>::value;
+  temp = is_var_or_arithmetic<double, double, std::vector<double>, double, std::vector<double>, double&>::value;
   EXPECT_FALSE(temp);
 }
