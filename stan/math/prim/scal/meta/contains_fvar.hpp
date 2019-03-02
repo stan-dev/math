@@ -12,7 +12,7 @@ namespace stan {
  * from promoting all the scalar types of the template parameters.
  */
 template <typename... T>
-using contains_fvar = or_<is_fvar<typename scalar_type<T>::type>...>;
+using contains_fvar = math::or_<is_fvar<typename scalar_type<T>::type>...>;
 
 }  // namespace stan
 #endif

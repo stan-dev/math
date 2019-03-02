@@ -7,7 +7,7 @@
 namespace stan {
 
 template <typename... T>
-using contains_vector = or_<is_vector<T>...>;
+using contains_vector = math::or_<is_vector<T>...>;
 
 }  // namespace stan
 #endif
