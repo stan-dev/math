@@ -60,7 +60,13 @@ struct AutodiffStackSingleton {
   typedef AutodiffStackSingleton<ChainableT, ChainableAllocT>
       AutodiffStackSingleton_t;
 
-  AutodiffStackSingleton() { init(); }
+  AutodiffStackSingleton() : own_instance_(init()) {}
+  ~AutodiffStackSingleton() {
+    if (own_instance_) {
+      delete instance_;
+      instance_ = nullptr;
+    }
+  }
 
   struct AutodiffStackStorage {
     AutodiffStackStorage &operator=(const AutodiffStackStorage &) = delete;
@@ -83,13 +89,15 @@ struct AutodiffStackSingleton {
     return *instance_;
   }
 
-  static AutodiffStackStorage *init() {
-    if (!instance_)
+ private:
+  static bool init() {
+    if (!instance_) {
       instance_ = new AutodiffStackStorage();
-    return instance_;
+      return true;
+    }
+    return false;
   }
 
- private:
   static
 #ifdef STAN_THREADS
 #ifdef __GNUC__
@@ -99,6 +107,8 @@ struct AutodiffStackSingleton {
 #endif
 #endif
       AutodiffStackStorage *instance_;
+
+  bool own_instance_;
 };
 
 template <typename ChainableT, typename ChainableAllocT>
