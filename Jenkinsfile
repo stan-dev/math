@@ -159,8 +159,8 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                stage('GPU Tests') {
-                    agent { label "gpu" }
+                stage('OpenCL Tests') {
+                    agent { label "opencl" }
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
@@ -168,7 +168,7 @@ pipeline {
                         sh "echo STAN_OPENCL=true>> make/local"
                         sh "echo OPENCL_PLATFORM_ID=0>> make/local"
                         sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
-                        runTests("test/unit/math/gpu")
+                        runTests("test/unit/math/opencl")
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
@@ -230,7 +230,7 @@ pipeline {
         stage('Additional merge tests') {
             when { anyOf { branch 'develop'; branch 'master' } }
             parallel {
-                stage('Unit with GPU') {
+                stage('Unit with OpenCL') {
                     agent { label "gelman-group-mac" }
                     steps {
                         deleteDir()
