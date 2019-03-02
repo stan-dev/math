@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char *copy_kernel_code = STRINGIFY(
+static const char *copy_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Copy one matrix to another

@@ -1,11 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_ACOSH_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_ACOSH_HPP
 
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/prim/scal/meta/likely.hpp>
-#include <stan/math/prim/scal/fun/boost_policy.hpp>
-#include <boost/math/special_functions/acosh.hpp>
+#include <stan/math/prim/scal/fun/is_inf.hpp>
+#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -19,10 +18,16 @@ namespace math {
  * @throw std::domain_error If argument is less than 1.
  */
 inline double acosh(double x) {
-  if (unlikely(is_nan(x)))
+  if (is_nan(x)) {
     return x;
-  else
-    return boost::math::acosh(x, boost_policy_t());
+  } else {
+    check_greater_or_equal("acosh", "x", x, 1.0);
+#ifdef _WIN32
+    if (is_inf(x))
+      return x;
+#endif
+    return std::acosh(x);
+  }
 }
 
 /**
@@ -32,7 +37,18 @@ inline double acosh(double x) {
  * @return Inverse hyperbolic cosine of the argument.
  * @throw std::domain_error If argument is less than 1.
  */
-inline double acosh(int x) { return acosh(static_cast<double>(x)); }
+inline double acosh(int x) {
+  if (is_nan(x)) {
+    return x;
+  } else {
+    check_greater_or_equal("acosh", "x", x, 1);
+#ifdef _WIN32
+    if (is_inf(x))
+      return x;
+#endif
+    return std::acosh(x);
+  }
+}
 
 }  // namespace math
 }  // namespace stan

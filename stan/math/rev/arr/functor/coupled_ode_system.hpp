@@ -148,6 +148,10 @@ struct coupled_ode_system<F, double, var> {
         }
 
         set_zero_all_adjoints_nested();
+        // Parameters stored on the outer (non-nested) nochain stack are not
+        // reset to zero by the last call. This is done as a separate step here.
+        // See efficiency note above on template specalization for more details
+        // on this.
         for (size_t j = 0; j < M_; ++j)
           theta_[j].vi_->set_zero_adjoint();
       }
@@ -541,6 +545,10 @@ struct coupled_ode_system<F, var, var> {
         }
 
         set_zero_all_adjoints_nested();
+        // Parameters stored on the outer (non-nested) nochain stack are not
+        // reset to zero by the last call. This is done as a separate step here.
+        // See efficiency note above on template specalization for more details
+        // on this.
         for (size_t j = 0; j < M_; ++j)
           theta_[j].vi_->set_zero_adjoint();
       }

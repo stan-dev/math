@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char* inv_lower_tri_multiply_kernel_code = STRINGIFY(
+static const char* inv_lower_tri_multiply_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Calculates B = C * A. C is an inverse matrix and A is lower triangular.
@@ -77,14 +77,19 @@ const char* inv_lower_tri_multiply_kernel_code = STRINGIFY(
           const int local_col = thread_block_col + w * THREAD_BLOCK_SIZE_COL;
           const int local_row = thread_block_row;
           // Element above the diagonal will not be transferred.
-          if (C2_global_col <= C2_global_row) {
+          if (C2_global_col <= C2_global_row && C2_global_col < A_rows
+              && C2_global_row < A_rows) {
             C2_local[local_col][local_row]
                 = A[C2_global_col * A_rows + C2_global_row];
           } else {
             C2_local[local_col][local_row] = 0;
           }
-          A3_local[local_col][local_row]
-              = A[A3_global_col * A_rows + A3_global_row];
+          if (A3_global_col < A_rows && A3_global_row < A_rows) {
+            A3_local[local_col][local_row]
+                = A[A3_global_col * A_rows + A3_global_row];
+          } else {
+            A3_local[local_col][local_row] = 0.0;
+          }
         }
         // Wait until all tile values are loaded to the local memory
         barrier(CLK_LOCAL_MEM_FENCE);
