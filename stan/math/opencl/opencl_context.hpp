@@ -128,7 +128,8 @@ class opencl_context_base {
   cl::Device device_;                // The selected OpenCL device
   std::string device_name_;          // The name of the OpenCL device
   size_t
-      max_thread_block_size_;  // The maximum size of a block of workers on the OpenCL device
+      max_thread_block_size_;  // The maximum size of a block of workers
+                               // on the OpenCL device
 
   // Holds Default parameter values for each Kernel.
   typedef std::map<const char*, int> map_base_opts;

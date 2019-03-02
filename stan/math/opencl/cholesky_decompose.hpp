@@ -48,8 +48,8 @@ inline matrix_cl cholesky_decompose(matrix_cl& A) {
   // Repeats the blocked cholesky decomposition until the size of the remaining
   // submatrix is smaller or equal to the minimum blocks size
   // or a heuristic of 100.
-  // The Cholesky OpenCL algorithm only uses one local block so we need the matrix
-  // To be less than the max thread block size.
+  // The Cholesky OpenCL algorithm only uses one local block so
+  // we need the matrix to be less than the max thread block size.
   if (A.rows() <= opencl_context.tuning_opts().cholesky_min_L11_size) {
     matrix_cl L(A.rows(), A.cols());
     try {

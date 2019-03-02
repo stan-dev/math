@@ -98,10 +98,10 @@ void copy(Eigen::Matrix<double, R, C>& dst, const matrix_cl& src) {
  * matrices do not have matching dimensions
  */
 inline void copy(matrix_cl& dst, const matrix_cl& src) {
-  check_size_match("copy (OpenCL -> OpenCL)", "src.rows()", src.rows(), "dst.rows()",
-                   dst.rows());
-  check_size_match("copy (OpenCL -> OpenCL)", "src.cols()", src.cols(), "dst.cols()",
-                   dst.cols());
+  check_size_match("copy (OpenCL -> OpenCL)", "src.rows()",
+                   src.rows(), "dst.rows()", dst.rows());
+  check_size_match("copy (OpenCL -> OpenCL)", "src.cols()",
+                   src.cols(), "dst.cols()", dst.cols());
   if (src.size() > 0) {
     try {
       /**
