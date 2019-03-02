@@ -9,9 +9,6 @@ namespace math {
 /**
  * Return <code>true</code> if the variable sizes match.
  *
- * This function checks the runtime sizes for
- * variables that implement a <code>size()</code> method.
- *
  * @tparam T_y1 Type of the first variable, requires class method
  *    <code>.size()</code>
  * @tparam T_y2 Type of the second variable, requires class method
