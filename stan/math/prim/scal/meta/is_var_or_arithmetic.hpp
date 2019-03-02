@@ -17,7 +17,7 @@ struct is_var_or_arithmetic_ {
 };
 
 template <typename... T>
-using is_var_or_arithmetic = and_<is_var_or_arithmetic_<T>...>;
+using is_var_or_arithmetic = math::and_<is_var_or_arithmetic_<T>...>;
 
 }  // namespace stan
 #endif
