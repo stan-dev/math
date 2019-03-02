@@ -6,8 +6,9 @@
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include <thread>
 #include <cstdlib>
+#include <vector>
+#include <thread>
 
 namespace stan {
 namespace math {
