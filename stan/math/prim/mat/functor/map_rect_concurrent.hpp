@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <boost/lexical_cast.hpp>
 
