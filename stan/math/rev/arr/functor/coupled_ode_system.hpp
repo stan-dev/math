@@ -54,7 +54,7 @@ struct coupled_ode_system<F, double, var> {
   const F& f_;
   const std::vector<double>& y0_dbl_;
   const std::vector<var>& theta_;
-  mutable std::vector<double> theta_adj_;
+  std::vector<double> theta_adj_;
   const std::vector<double>& x_;
   const std::vector<int>& x_int_;
   const size_t N_;
@@ -87,7 +87,18 @@ struct coupled_ode_system<F, double, var> {
         N_(y0.size()),
         M_(theta.size()),
         size_(N_ + N_ * M_),
-        msgs_(msgs) {}
+        msgs_(msgs) {
+    for (size_t j = 0; j < M_; ++j) {
+      theta_adj_[j] = theta_[j].adj();
+      theta_[j].vi_->set_zero_adjoint();
+    }
+  }
+
+  ~coupled_ode_system() {
+    for (size_t j = 0; j < M_; ++j) {
+      theta_[j].vi_->adj_ = theta_adj_[j];
+    }
+  }
 
   /**
    * Assign the derivative vector with the system derivatives at
@@ -109,11 +120,6 @@ struct coupled_ode_system<F, double, var> {
   void operator()(const std::vector<double>& z, std::vector<double>& dz_dt,
                   double t) const {
     using std::vector;
-
-    for (size_t j = 0; j < M_; ++j) {
-      theta_adj_[j] = theta_[j].adj();
-      theta_[j].vi_->set_zero_adjoint();
-    }
 
     try {
       start_nested();
@@ -146,16 +152,10 @@ struct coupled_ode_system<F, double, var> {
           theta_[j].vi_->set_zero_adjoint();
       }
     } catch (const std::exception& e) {
-      for (size_t j = 0; j < M_; ++j) {
-        theta_[j].vi_->adj_ = theta_adj_[j];
-      }
       recover_memory_nested();
       throw;
     }
 
-    for (size_t j = 0; j < M_; ++j) {
-      theta_[j].vi_->adj_ = theta_adj_[j];
-    }
     recover_memory_nested();
   }
 
@@ -438,7 +438,7 @@ struct coupled_ode_system<F, var, var> {
   const F& f_;
   const std::vector<var>& y0_;
   const std::vector<var>& theta_;
-  mutable std::vector<double> theta_adj_;
+  std::vector<double> theta_adj_;
   const std::vector<double>& x_;
   const std::vector<int>& x_int_;
   const size_t N_;
@@ -472,7 +472,18 @@ struct coupled_ode_system<F, var, var> {
         N_(y0.size()),
         M_(theta.size()),
         size_(N_ + N_ * (N_ + M_)),
-        msgs_(msgs) {}
+        msgs_(msgs) {
+    for (size_t j = 0; j < M_; ++j) {
+      theta_adj_[j] = theta_[j].adj();
+      theta_[j].vi_->set_zero_adjoint();
+    }
+  }
+
+  ~coupled_ode_system() {
+    for (size_t j = 0; j < M_; ++j) {
+      theta_[j].vi_->adj_ = theta_adj_[j];
+    }
+  }
 
   /**
    * Populates the derivative vector with derivatives of the
@@ -493,11 +504,6 @@ struct coupled_ode_system<F, var, var> {
   void operator()(const std::vector<double>& z, std::vector<double>& dz_dt,
                   double t) const {
     using std::vector;
-
-    for (size_t j = 0; j < M_; ++j) {
-      theta_adj_[j] = theta_[j].adj();
-      theta_[j].vi_->set_zero_adjoint();
-    }
 
     try {
       start_nested();
@@ -539,16 +545,10 @@ struct coupled_ode_system<F, var, var> {
           theta_[j].vi_->set_zero_adjoint();
       }
     } catch (const std::exception& e) {
-      for (size_t j = 0; j < M_; ++j) {
-        theta_[j].vi_->adj_ = theta_adj_[j];
-      }
       recover_memory_nested();
       throw;
     }
 
-    for (size_t j = 0; j < M_; ++j) {
-      theta_[j].vi_->adj_ = theta_adj_[j];
-    }
     recover_memory_nested();
   }
 
