@@ -127,9 +127,8 @@ class opencl_context_base {
   std::vector<cl::Device> devices_;  // All available OpenCL devices
   cl::Device device_;                // The selected OpenCL device
   std::string device_name_;          // The name of the OpenCL device
-  size_t
-      max_thread_block_size_;  // The maximum size of a block of workers
-                               // on the OpenCL device
+  size_t max_thread_block_size_;     // The maximum size of a block of workers
+                                     // on the OpenCL device
 
   // Holds Default parameter values for each Kernel.
   typedef std::map<const char*, int> map_base_opts;
@@ -170,7 +169,7 @@ class opencl_context {
 
   /**
    * Returns the description of the OpenCL platform and device that is used.
-   * Devices are CPUs and GPUs while  Platforms are 
+   * Devices are CPUs and GPUs while  Platforms are
    * specific OpenCL implemenations such as AMD SDK's
    * or Nvidia's OpenCL implimentation.
    */
@@ -227,7 +226,7 @@ class opencl_context {
 
   /**
    * Returns the description of the OpenCL platforms and devices that
-   * are available. Devices are CPUs and GPUs while  Platforms are 
+   * are available. Devices are CPUs and GPUs while  Platforms are
    * specific OpenCL implemenations such as AMD SDK's
    * or Nvidia's OpenCL implimentation.
    */
