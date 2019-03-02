@@ -8,7 +8,6 @@ namespace math {
 namespace {
 
 ChainableStack global_stack_instance_init;
-
 }
 }  // namespace math
 }  // namespace stan
