@@ -45,7 +45,7 @@ inline matrix_cl add(const matrix_cl& A, const matrix_cl& B) {
  *
  * @return sum of A and B
  *
- * @throw <code>std::invalid_argument</code> if the
+ * @throw <code>std::invalid_argument</code> if the 
  * input matrices do not have matching dimensions
  *
  */
