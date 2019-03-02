@@ -5,7 +5,7 @@ namespace stan {
 namespace math {
 
 /**
- * Returns <code>true</code> if the specified matrix/vector is size  nonzero.
+ * Returns <code>true</code> if the specified matrix/vector is size nonzero.
  *
  * @tparam T_y Type of container, requires class method <code>.size()</code>
  *
