@@ -170,8 +170,7 @@ class matrix_cl {
    * @throw <code>std::invalid_argument</code> if the matrix is not square.
    *
    */
-  template <TriangularMapCL triangular_map
-            = TriangularMapCL::LowerToUpper>
+  template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   void triangular_transpose() {
     if (size() == 0 || size() == 1) {
       return;
