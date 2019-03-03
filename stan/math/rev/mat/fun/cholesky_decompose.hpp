@@ -264,7 +264,7 @@ class cholesky_opencl : public vari {
   vari** vari_ref_L_;
 
   /**
-   * Constructor for GPU cholesky function.
+   * Constructor for OpenCL cholesky function.
    *
    * Stores varis for A.  Instantiates and stores varis for L.
    * Instantiates and stores dummy vari for upper triangular part of var
@@ -304,14 +304,14 @@ class cholesky_opencl : public vari {
    */
   inline void symbolic_rev(matrix_cl& L, matrix_cl& L_adj) {
     L_adj = transpose(L) * L_adj;
-    L_adj.triangular_transpose<TriangularMapGPU::LowerToUpper>();
+    L_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
     L = transpose(lower_triangular_inverse(L));
     L_adj = L * transpose(L * L_adj);
-    L_adj.triangular_transpose<TriangularMapGPU::LowerToUpper>();
+    L_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
   }
 
   /**
-   * Reverse mode differentiation algorithm using a GPU
+   * Reverse mode differentiation algorithm using OpenCL
    *
    * Reference:
    *
@@ -338,7 +338,7 @@ class cholesky_opencl : public vari {
     block_size = std::max(block_size, 8);
     block_size = std::min(
         block_size, opencl_context.tuning_opts().cholesky_rev_min_block_size);
-    // The following is a GPU implementation of
+    // The following is an OpenCL implementation of
     // the chain() function from the cholesky_block
     // vari class implementation
     for (int k = M_; k > 0; k -= block_size) {
@@ -374,7 +374,7 @@ class cholesky_opencl : public vari {
 
       R_adj = R_adj - transpose(C_adj) * B - D_adj * R;
       D_adj = diagonal_multiply(D_adj, 0.5);
-      D_adj.zeros<stan::math::TriangularViewOpencl::Upper>();
+      D_adj.zeros<stan::math::TriangularViewCL::Upper>();
 
       L_adj.sub_block(R_adj, 0, 0, j, 0, k_j_ind, j);
       L_adj.sub_block(D_adj, 0, 0, j, j, k_j_ind, k_j_ind);

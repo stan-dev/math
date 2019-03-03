@@ -19,13 +19,13 @@ namespace math {
  * @param src the source matrix
  * @tparam triangular_map int to describe
  * which part of the matrix to copy:
- * TriangularViewOpencl::Lower - copies the lower triangular
- * TriangularViewOpencl::Upper - copes the upper triangular
+ * TriangularViewCL::Lower - copies the lower triangular
+ * TriangularViewCL::Upper - copes the upper triangular
  *
  * @return the matrix with the copied content
  *
  */
-template <TriangularViewOpencl triangular_view = TriangularViewOpencl::Entire>
+template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
 inline matrix_cl copy_triangular(const matrix_cl& src) {
   if (src.size() == 0 || src.size() == 1) {
     matrix_cl dst(src);

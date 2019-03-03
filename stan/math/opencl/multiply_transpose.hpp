@@ -31,7 +31,7 @@ inline matrix_cl multiply_transpose(const matrix_cl& A) {
   matrix_cl tempPad(Mpad, Mpad);
   matrix_cl Apad(Mpad, Npad);
   opencl_kernels::zeros(cl::NDRange(Mpad, Npad), Apad.buffer(), Mpad, Npad,
-                        TriangularViewOpencl::Entire);
+                        TriangularViewCL::Entire);
   Apad.sub_block(A, 0, 0, 0, 0, A.rows(), A.cols());
   int wpt = opencl_kernels::multiply_transpose.make_functor.get_opts().at(
       "WORK_PER_THREAD");

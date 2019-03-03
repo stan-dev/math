@@ -10,16 +10,16 @@ TEST(MathMatrixGPU, copy_triangular_m_exception_pass) {
   stan::math::matrix_cl m0;
 
   EXPECT_NO_THROW(
-      stan::math::copy_triangular<stan::math::TriangularViewOpencl::Upper>(m0));
+      stan::math::copy_triangular<stan::math::TriangularViewCL::Upper>(m0));
   EXPECT_NO_THROW(
-      stan::math::copy_triangular<stan::math::TriangularViewOpencl::Lower>(m0));
+      stan::math::copy_triangular<stan::math::TriangularViewCL::Lower>(m0));
 
   stan::math::matrix_cl m1(1, 1);
 
   EXPECT_NO_THROW(
-      stan::math::copy_triangular<stan::math::TriangularViewOpencl::Upper>(m1));
+      stan::math::copy_triangular<stan::math::TriangularViewCL::Upper>(m1));
   EXPECT_NO_THROW(
-      stan::math::copy_triangular<stan::math::TriangularViewOpencl::Lower>(m1));
+      stan::math::copy_triangular<stan::math::TriangularViewCL::Lower>(m1));
 }
 
 TEST(MathMatrixGPU, copy_triangular_m_pass) {
@@ -33,7 +33,7 @@ TEST(MathMatrixGPU, copy_triangular_m_pass) {
 
   EXPECT_NO_THROW(
       m00_dst
-      = stan::math::copy_triangular<stan::math::TriangularViewOpencl::Upper>(
+      = stan::math::copy_triangular<stan::math::TriangularViewCL::Upper>(
           m00));
   EXPECT_NO_THROW(stan::math::copy(m0_dst, m00_dst));
   EXPECT_EQ(1, m0_dst(0, 0));
@@ -43,7 +43,7 @@ TEST(MathMatrixGPU, copy_triangular_m_pass) {
 
   EXPECT_NO_THROW(
       m00_dst
-      = stan::math::copy_triangular<stan::math::TriangularViewOpencl::Lower>(
+      = stan::math::copy_triangular<stan::math::TriangularViewCL::Lower>(
           m00));
   EXPECT_NO_THROW(stan::math::copy(m0_dst, m00_dst));
   EXPECT_EQ(1, m0_dst(0, 0));

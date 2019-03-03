@@ -74,9 +74,9 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   matrix_cl Apad(Mpad, Kpad);
   matrix_cl Bpad(Kpad, Npad);
   opencl_kernels::zeros(cl::NDRange(Mpad, Kpad), Apad.buffer(), Mpad, Kpad,
-                        TriangularViewOpencl::Entire);
+                        TriangularViewCL::Entire);
   opencl_kernels::zeros(cl::NDRange(Kpad, Npad), Bpad.buffer(), Kpad, Npad,
-                        TriangularViewOpencl::Entire);
+                        TriangularViewCL::Entire);
   Apad.sub_block(A, 0, 0, 0, 0, A.rows(), A.cols());
   Bpad.sub_block(B, 0, 0, 0, 0, B.rows(), B.cols());
   int wpt = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
