@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the identity matrix stored on the Opencl device
+ * Returns the identity matrix stored on the OpenCL device
  *
  * @param rows_cols the number of rows and columns
  *

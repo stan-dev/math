@@ -11,7 +11,7 @@ namespace opencl_kernels {
 static const char *transpose_kernel_code = STRINGIFY(
     // \endcond
     /**
-     * Takes the transpose of the matrix on Opencl device.
+     * Takes the transpose of the matrix on the OpenCL device.
      *
      * @param[out] B The output matrix to hold transpose of A.
      * @param[in] A The input matrix to transpose into B.

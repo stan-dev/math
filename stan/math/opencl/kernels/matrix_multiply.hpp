@@ -11,7 +11,7 @@ namespace opencl_kernels {
 static const char* matrix_multiply_kernel_code = STRINGIFY(
     // \endcond
     /**
-     * Matrix multiplication on Opencl device
+     * Matrix multiplication on the OpenCL device
      *
      * @param[in] A the left matrix in matrix multiplication
      * @param[in] B the right matrix in matrix multiplication

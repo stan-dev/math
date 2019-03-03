@@ -23,7 +23,7 @@ namespace math {
  * here</a> and kernel doc
  * <a href="https://github.com/stan-dev/math/wiki/GPU-Kernels">here</a>.
  *
- * @param A matrix on the Opencl device
+ * @param A matrix on the OpenCL device
  * @return the inverse of A
  *
  * @throw <code>std::invalid_argument</code> if the matrix

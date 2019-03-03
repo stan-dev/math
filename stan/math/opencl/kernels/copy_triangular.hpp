@@ -14,7 +14,7 @@ static const char *copy_triangular_kernel_code = STRINGIFY(
      * Copies the lower or upper
      * triangular of the source matrix to
      * the destination matrix.
-     * Both matrices are stored on Opencl device.
+     * Both matrices are stored on the OpenCL device.
      *
      * @param[out] A Output matrix to copy triangular to.
      * @param[in] B The matrix to copy the triangular from.

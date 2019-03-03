@@ -14,7 +14,7 @@ namespace math {
  * Copies the lower or upper
  * triangular of the source matrix to
  * the destination matrix.
- * Both matrices are stored on the Opencl device.
+ * Both matrices are stored on the OpenCL device.
  *
  * @param src the source matrix
  * @tparam triangular_map int to describe

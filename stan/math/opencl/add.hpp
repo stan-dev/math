@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 
 /**
- * Matrix addition on the Opencl device
+ * Matrix addition on the OpenCL device
  *
  * @param A first matrix
  * @param B second matrix
@@ -38,7 +38,7 @@ inline matrix_cl add(const matrix_cl& A, const matrix_cl& B) {
 }
 
 /**
- * Matrix addition on Opencl device
+ * Matrix addition on the OpenCL device
  *
  * @param A first matrix
  * @param B second matrix

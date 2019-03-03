@@ -11,8 +11,10 @@ namespace opencl_kernels {
 static const char *subtract_kernel_code = STRINGIFY(
     // \endcond
     /**
-     * Matrix subtraction on Opencl device Subtracts the second matrix
-     * from the first matrix and stores the result in the third matrix (C=A-B).
+     * Matrix subtraction on the OpenCL device
+     * Subtracts the second matrix from the
+     * first matrix and stores the result
+     * in the third matrix (C=A-B).
      *
      * @param[out] C The output matrix.
      * @param[in] B RHS input matrix.

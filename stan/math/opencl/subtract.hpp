@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 
 /**
- * Matrix subtraction on the Opencl device
+ * Matrix subtraction on the OpenCL device
  * Subtracts the second matrix
  * from the first matrix and stores
  * the result in the third matrix (C=A-B)
@@ -41,7 +41,7 @@ inline auto subtract(const matrix_cl& A, const matrix_cl& B) {
 }
 
 /**
- * Matrix subtraction on the Opencl device
+ * Matrix subtraction on the OpenCL device
  * Subtracts the second matrix
  * from the first matrix and stores
  * the result in the third matrix (C=A-B)

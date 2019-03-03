@@ -11,7 +11,7 @@ namespace opencl_kernels {
 static const char* multiply_transpose_kernel_code = STRINGIFY(
     // \endcond
     /**
-     * Matrix multiplication of the form A*A^T on Opencl device
+     * Matrix multiplication of the form A*A^T on the OpenCL device
      *
      * @param[in] A matrix A
      * @param[out] B the output matrix

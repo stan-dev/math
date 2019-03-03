@@ -19,10 +19,10 @@ namespace math {
 /**
  * Copies the source Eigen matrix to
  * the destination matrix that is stored
- * on the Opencl device.
+ * on the OpenCL device.
  *
  * @tparam T type of data in the Eigen matrix
- * @param dst destination matrix on the Opencl device
+ * @param dst destination matrix on the OpenCL device
  * @param src source Eigen matrix
  *
  * @throw <code>std::invalid_argument</code> if the
@@ -54,12 +54,12 @@ void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
 
 /**
  * Copies the source matrix that is stored
- * on the Opencl device to the destination Eigen
+ * on the OpenCL device to the destination Eigen
  * matrix.
  *
  * @tparam T type of data in the Eigen matrix
  * @param dst destination Eigen matrix
- * @param src source matrix on the Opencl device
+ * @param src source matrix on the OpenCL device
  *
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
@@ -92,7 +92,7 @@ void copy(Eigen::Matrix<double, R, C>& dst, const matrix_cl& src) {
 /**
  * Copies the source matrix to the
  * destination matrix. Both matrices
- * are stored on the Opencl device.
+ * are stored on the OpenCL device.
  *
  * @param dst destination matrix
  * @param src source matrix

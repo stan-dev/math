@@ -9,7 +9,7 @@
 #include <map>
 #include <vector>
 
-// Used for importing the Opencl kernels at compile time.
+// Used for importing the OpenCL kernels at compile time.
 // There has been much discussion about the best ways to do this:
 // https://github.com/bstatcomp/math/pull/7
 // and https://github.com/stan-dev/math/pull/966

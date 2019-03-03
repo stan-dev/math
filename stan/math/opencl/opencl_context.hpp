@@ -67,7 +67,7 @@ class opencl_context_base {
    *  OPENCL_DEVICE_ID.
    * 3. Creates the OpenCL context with the device.
    * 4. Creates the OpenCL command queue for the selected device.
-   * 5. Sets Opencl device dependent kernel parameters
+   * 5. Sets OpenCL device dependent kernel parameters
    * @throw std::system_error if an OpenCL error occurs.
    */
   opencl_context_base() {
@@ -126,7 +126,7 @@ class opencl_context_base {
   std::string platform_name_;  // The platform such as NVIDIA OpenCL or AMD SDK
   std::vector<cl::Device> devices_;  // All available OpenCL devices
   cl::Device device_;                // The selected OpenCL device
-  std::string device_name_;          // The name of Opencl device
+  std::string device_name_;          // The name of OpenCL device
   size_t max_thread_block_size_;  // The maximum size of a block of workers on
                                   // the device
 

@@ -11,7 +11,7 @@ namespace opencl_kernels {
 static const char* identity_kernel_code = STRINGIFY(
     // \endcond
     /**
-     * Makes an identity matrix on Opencl device
+     * Makes an identity matrix on the OpenCL device
      *
      * @param[in,out] A The identity matrix output.
      * @param rows The number of rows for A.

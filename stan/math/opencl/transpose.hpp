@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 /**
- * Takes the transpose of the matrix on the Opencl device.
+ * Takes the transpose of the matrix on the OpenCL device.
  *
  * @param src the input matrix
  *

@@ -19,13 +19,13 @@
 
 /**
  *  @file stan/math/opencl/matrix_cl.hpp
- *  @brief The matrix_cl class - allocates memory space on the Opencl device,
- *    functions for transfering matrices to and from Opencl devices
+ *  @brief The matrix_cl class - allocates memory space on the OpenCL device,
+ *    functions for transfering matrices to and from OpenCL devices
  */
 namespace stan {
 namespace math {
 /**
- * Represents a matrix on the Opencl device.
+ * Represents a matrix on the OpenCL device.
  *
  * The matrix data is stored in the oclBuffer_.
  */
@@ -69,7 +69,7 @@ class matrix_cl {
   }
   /**
    * Constructor for the matrix_cl that
-   * only allocates the buffer on the Opencl device.
+   * only allocates the buffer on the OpenCL device.
    *
    * @param rows number of matrix rows, must be greater or equal to 0
    * @param cols number of matrix columns, must be greater or equal to 0
@@ -92,7 +92,7 @@ class matrix_cl {
   }
   /**
    * Constructor for the matrix_cl that
-   * creates a copy of the Eigen matrix on the Opencl device.
+   * creates a copy of the Eigen matrix on the OpenCL device.
    *
    *
    * @tparam T type of data in the Eigen matrix
@@ -138,7 +138,7 @@ class matrix_cl {
   }
 
   /**
-   * Stores zeros in the matrix on Opencl device.
+   * Stores zeros in the matrix on the OpenCL device.
    * Supports writing zeroes to the lower and upper triangular or
    * the whole matrix.
    *

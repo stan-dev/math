@@ -11,7 +11,7 @@ namespace opencl_kernels {
 static const char* zeros_kernel_code = STRINGIFY(
     // \endcond
     /**
-     * Stores zeros in the matrix on Opencl device.
+     * Stores zeros in the matrix on the OpenCL device.
      * Supports writing zeroes to the lower and upper triangular or
      * the whole matrix.
      *

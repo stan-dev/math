@@ -11,7 +11,7 @@ namespace opencl_kernels {
 static const char *add_kernel_code = STRINGIFY(
     // \endcond
     /**
-     * Matrix addition on Opencl device
+     * Matrix addition on the OpenCL device
      *
      * @param[out] C Output matrix.
      * @param[in] A LHS of matrix addition.

@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 /**
- * Multiplies the specified matrix on the Opencl device
+ * Multiplies the specified matrix on the OpenCL device
  * with the specified scalar.
  *
  * @param A matrix
@@ -30,7 +30,7 @@ inline matrix_cl multiply(const matrix_cl& A, const double scalar) {
 }
 
 /**
- * Multiplies the specified matrix on the Opencl device
+ * Multiplies the specified matrix on the OpenCL device
  * with the specified scalar.
  *
  * @param scalar scalar
