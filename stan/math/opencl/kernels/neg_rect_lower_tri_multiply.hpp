@@ -14,7 +14,8 @@ static const char* neg_rect_lower_tri_multiply_kernel_code = STRINGIFY(
      * Calculates C = -B * A where B is rectangular and A is a lower
      * triangular.
      *  For a full guide to the inverse lower triangular kernels see the link
-     * <a href="https://github.com/stan-dev/math/wiki/(OpenCL)-Kernels">here</a>.
+     * <a
+     href="https://github.com/stan-dev/math/wiki/(OpenCL)-Kernels">here</a>.
      *
      * ![Inverse Calculation](https://goo.gl/6jBjEG)
      *

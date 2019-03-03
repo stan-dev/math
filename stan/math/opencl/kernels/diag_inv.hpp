@@ -14,7 +14,8 @@ static const char* diag_inv_kernel_code = STRINGIFY(
      * Calculates inplace submatrix inversions along the matrix diagonal.
      *
      *  For a full guide to the inverse lower triangular kernels see the link
-     * <a href="https://github.com/stan-dev/math/wiki/(OpenCL)-Kernels">here</a>.
+     * <a
+     * href="https://github.com/stan-dev/math/wiki/(OpenCL)-Kernels">here</a>.
      * In the special case that the thread block size is larger than the input
      * matrix A then this kernel will perform the complete lower triangular
      * of matrix A. More often, TB is smaller than A and A will have lower

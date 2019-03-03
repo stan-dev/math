@@ -127,19 +127,19 @@ class opencl_context_base {
   std::vector<cl::Device> devices_;  // All available OpenCL devices
   cl::Device device_;                // The selected OpenCL device
   std::string device_name_;          // The name of Opencl device
-  size_t
-      max_thread_block_size_;  // The maximum size of a block of workers on the device
+  size_t max_thread_block_size_;  // The maximum size of a block of workers on
+                                  // the device
 
   // Holds Default parameter values for each Kernel.
   typedef std::map<const char*, int> map_base_opts;
-  map_base_opts base_opts_
-      = {{"LOWER", static_cast<int>(TriangularViewOpencl::Lower)},
-         {"UPPER", static_cast<int>(TriangularViewOpencl::Upper)},
-         {"ENTIRE", static_cast<int>(TriangularViewOpencl::Entire)},
-         {"UPPER_TO_LOWER", static_cast<int>(TriangularMapOpencl::UpperToLower)},
-         {"LOWER_TO_UPPER", static_cast<int>(TriangularMapOpencl::LowerToUpper)},
-         {"THREAD_BLOCK_SIZE", 32},
-         {"WORK_PER_THREAD", 8}};
+  map_base_opts base_opts_ = {
+      {"LOWER", static_cast<int>(TriangularViewOpencl::Lower)},
+      {"UPPER", static_cast<int>(TriangularViewOpencl::Upper)},
+      {"ENTIRE", static_cast<int>(TriangularViewOpencl::Entire)},
+      {"UPPER_TO_LOWER", static_cast<int>(TriangularMapOpencl::UpperToLower)},
+      {"LOWER_TO_UPPER", static_cast<int>(TriangularMapOpencl::LowerToUpper)},
+      {"THREAD_BLOCK_SIZE", 32},
+      {"WORK_PER_THREAD", 8}};
   // TODO(Steve): Make these tunable during warmup
   struct tuning_struct {
     // Used in stan/math/opencl/cholesky_decompose
@@ -225,8 +225,8 @@ class opencl_context {
 
   /**
    * Returns the description of the OpenCL platforms and devices that
-   * are available. Devices will be an OpenCL and Platforms are a specific OpenCL
-   * implimenation such as AMD SDK's or Nvidia's OpenCL implimentation.
+   * are available. Devices will be an OpenCL and Platforms are a specific
+   * OpenCL implimenation such as AMD SDK's or Nvidia's OpenCL implimentation.
    */
   inline std::string capabilities() const {
     std::vector<cl::Platform> all_platforms;
