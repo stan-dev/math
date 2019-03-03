@@ -16,7 +16,8 @@ static const char* inv_lower_tri_multiply_kernel_code = STRINGIFY(
      * This kernel is used in the final iteration of the batched lower
      * triangular inversion.
      *  For a full guide to the inverse lower triangular kernels see the link
-     * <a href="https://github.com/stan-dev/math/wiki/(OpenCL)-Kernels">here</a>.
+     * <a
+     * href="https://github.com/stan-dev/math/wiki/(OpenCL)-Kernels">here</a>.
      * The full inverse requires calculation of the lower left rectangular
      * matrix within the lower left triangular C3 = -C2*A3*C1. where C2 is the
      * inverse of the bottom right lower triangular, C1 is the inverse of the

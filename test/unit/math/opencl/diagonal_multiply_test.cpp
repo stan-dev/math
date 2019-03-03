@@ -6,8 +6,8 @@
 #include <gtest/gtest.h>
 #include <algorithm>
 
-using stan::math::matrix_d;
 using stan::math::matrix_cl;
+using stan::math::matrix_d;
 
 TEST(MathMatrix, multiply_m_exception_pass_diagonal_mul) {
   auto m0 = matrix_d::Ones(3, 2).eval();

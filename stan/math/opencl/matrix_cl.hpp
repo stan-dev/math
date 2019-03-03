@@ -129,10 +129,10 @@ class matrix_cl {
   }
 
   matrix_cl& operator=(const matrix_cl& a) {
-    check_size_match("assignment of (OpenCL) matrices", "source.rows()", a.rows(),
-                     "destination.rows()", rows());
-    check_size_match("assignment of (OpenCL) matrices", "source.cols()", a.cols(),
-                     "destination.cols()", cols());
+    check_size_match("assignment of (OpenCL) matrices", "source.rows()",
+                     a.rows(), "destination.rows()", rows());
+    check_size_match("assignment of (OpenCL) matrices", "source.cols()",
+                     a.cols(), "destination.cols()", cols());
     oclBuffer_ = a.buffer();
     return *this;
   }
@@ -170,7 +170,8 @@ class matrix_cl {
    * @throw <code>std::invalid_argument</code> if the matrix is not square.
    *
    */
-  template <TriangularMapOpencl triangular_map = TriangularMapOpencl::LowerToUpper>
+  template <TriangularMapOpencl triangular_map
+            = TriangularMapOpencl::LowerToUpper>
   void triangular_transpose() {
     if (size() == 0 || size() == 1) {
       return;

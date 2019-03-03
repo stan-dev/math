@@ -8,7 +8,8 @@
 namespace stan {
 namespace math {
 /**
- * Multiplies the diagonal of a matrix on the Opencl device with the specified scalar.
+ * Multiplies the diagonal of a matrix on the Opencl device with the specified
+ * scalar.
  *
  * @param A input matrix
  * @param scalar scalar
