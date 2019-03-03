@@ -13,14 +13,14 @@
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 
 #ifdef STAN_OPENCL
-#include <stan/math/gpu/cholesky_decompose.hpp>
-#include <stan/math/gpu/constants.hpp>
-#include <stan/math/gpu/copy.hpp>
-#include <stan/math/gpu/diagonal_multiply.hpp>
-#include <stan/math/gpu/lower_tri_inverse.hpp>
-#include <stan/math/gpu/matrix_gpu.hpp>
-#include <stan/math/gpu/multiply.hpp>
-#include <stan/math/gpu/opencl_context.hpp>
+#include <stan/math/opencl/cholesky_decompose.hpp>
+#include <stan/math/opencl/constants.hpp>
+#include <stan/math/opencl/copy.hpp>
+#include <stan/math/opencl/diagonal_multiply.hpp>
+#include <stan/math/opencl/lower_tri_inverse.hpp>
+#include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/multiply.hpp>
+#include <stan/math/opencl/opencl_context.hpp>
 #endif
 
 #include <algorithm>
@@ -302,7 +302,7 @@ class cholesky_opencl : public vari {
    * @param L cholesky factor
    * @param L_adj matrix of adjoints of L
    */
-  inline void symbolic_rev(matrix_gpu& L, matrix_gpu& L_adj) {
+  inline void symbolic_rev(matrix_cl& L, matrix_cl& L_adj) {
     L_adj = transpose(L) * L_adj;
     L_adj.triangular_transpose<TriangularMapGPU::LowerToUpper>();
     L = transpose(lower_triangular_inverse(L));
@@ -331,8 +331,8 @@ class cholesky_opencl : public vari {
       }
     }
 
-    matrix_gpu L(L_cpu);
-    matrix_gpu L_adj(L_adj_cpu);
+    matrix_cl L(L_cpu);
+    matrix_cl L_adj(L_adj_cpu);
     int block_size
         = M_ / opencl_context.tuning_opts().cholesky_rev_block_partition;
     block_size = std::max(block_size, 8);
@@ -346,15 +346,15 @@ class cholesky_opencl : public vari {
       const int k_j_ind = k - j;
       const int m_k_ind = M_ - k;
 
-      matrix_gpu R(k_j_ind, j);
-      matrix_gpu D(k_j_ind, k_j_ind);
-      matrix_gpu B(m_k_ind, j);
-      matrix_gpu C(m_k_ind, k_j_ind);
+      matrix_cl R(k_j_ind, j);
+      matrix_cl D(k_j_ind, k_j_ind);
+      matrix_cl B(m_k_ind, j);
+      matrix_cl C(m_k_ind, k_j_ind);
 
-      matrix_gpu R_adj(k_j_ind, j);
-      matrix_gpu D_adj(k_j_ind, k_j_ind);
-      matrix_gpu B_adj(m_k_ind, j);
-      matrix_gpu C_adj(m_k_ind, k_j_ind);
+      matrix_cl R_adj(k_j_ind, j);
+      matrix_cl D_adj(k_j_ind, k_j_ind);
+      matrix_cl B_adj(m_k_ind, j);
+      matrix_cl C_adj(m_k_ind, k_j_ind);
 
       R.sub_block(L, j, 0, 0, 0, k_j_ind, j);
       D.sub_block(L, j, j, 0, 0, k_j_ind, k_j_ind);
