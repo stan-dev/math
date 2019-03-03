@@ -159,8 +159,8 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                stage('OpenCL Tests') {
-                    agent { label "opencl" }
+                stage('GPU Tests') {
+                    agent { label "gpu" }
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
