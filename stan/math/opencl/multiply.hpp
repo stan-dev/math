@@ -109,8 +109,8 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
  */
 template <TriangularViewCL triangular_view = TriangularViewCL::Lower>
 inline auto tri_rect_multiply(const matrix_cl& A, const matrix_cl& B) {
-  check_size_match("multiply_lower_tri_rect (GPU)", "A.cols()", A.cols(), "B.rows()",
-                   B.rows());
+  check_size_match("multiply_lower_tri_rect (GPU)",
+                   "A.cols()", A.cols(), "B.rows()", B.rows());
   matrix_cl temp(A.rows(), B.cols());
   if (A.size() == 0 || B.size() == 0) {
     temp.zeros();

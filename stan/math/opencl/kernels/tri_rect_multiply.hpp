@@ -23,7 +23,8 @@ static const char* tri_rect_multiply_kernel_code = STRINGIFY(
      */
     __kernel void tri_rect_multiply(const __global double* A,
                                   const __global double* B, __global double* C,
-                                  const int M, const int N, const int K, unsigned int lower_upper) {
+                                  const int M, const int N, const int K,
+                                  unsigned int lower_upper) {
       // thread index inside the thread_block
       const int thread_block_row = get_local_id(0);
       const int thread_block_col = get_local_id(1);
@@ -51,25 +52,27 @@ static const char* tri_rect_multiply_kernel_code = STRINGIFY(
         int do_mult = 0;
         // check if the of multiplication of the tiles must be performed
         // whole tile multiplies have to be performed even if some thread
-        // are above/below the diagonal for lower/upper matrices. This is 
-        // due to the shared memory mechanism where all threads in the block 
-        // copy the data
-        // if A is lower tri and the smallest tile index in the thread block is smaller
-        // than the row number, then perform the tile multiply
-        do_mult |= lower_upper == LOWER && ((THREAD_BLOCK_SIZE * (tile_ind)) <= i);
-        // if A is upper tri and the largest index in the thread block is larger
-        // than the row number, then perform the tile multiply
-        do_mult |= lower_upper == UPPER && ((THREAD_BLOCK_SIZE * (tile_ind+1)) >= i);
+        // are above/below the diagonal for lower/upper matrices. This is
+        // due to the shared memory mechanism where all threads in the block
+        // copy the data.
+        // if A is lower tri and the smallest tile index in the thread
+        // block is smaller than the row number, then perform the tile multiply
+        do_mult |= lower_upper == LOWER &&
+                   ((THREAD_BLOCK_SIZE * (tile_ind)) <= i);
+        // if A is upper tri and the largest index in the thread block
+        // is larger than the row number, then perform the tile multiply
+        do_mult |= lower_upper == UPPER &&
+                   ((THREAD_BLOCK_SIZE * (tile_ind+1)) >= i);
         if (do_mult) {
           const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
           const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
           // each thread copies WORK_PER_THREAD values to the local
-          // memory        
+          // memory
           for (int w = 0; w < WORK_PER_THREAD; w++) {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                   [thread_block_row]
                 = A[(tiled_j + w * THREAD_BLOCK_SIZE_COL) * M + i];
-            
+
             B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                   [thread_block_row]
                 = B[(j + w * THREAD_BLOCK_SIZE_COL) * K + tiled_i];
@@ -79,12 +82,12 @@ static const char* tri_rect_multiply_kernel_code = STRINGIFY(
           for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE; block_ind++) {
             for (int w = 0; w < WORK_PER_THREAD; w++) {
                 acc[w] += A_local[block_ind][thread_block_row]
-                          * B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                                  [block_ind];
+                          * B_local[thread_block_col
+                          * + w * THREAD_BLOCK_SIZE_COL][block_ind];
             }
           }
-          barrier(CLK_LOCAL_MEM_FENCE);        
-        }        
+          barrier(CLK_LOCAL_MEM_FENCE);
+        }
       }
       // save the values
       for (int w = 0; w < WORK_PER_THREAD; w++) {
@@ -99,7 +102,8 @@ static const char* tri_rect_multiply_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/lower_tri_rect_multiply.hpp add() \endlink
  */
-const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int, TriangularViewCL>
+const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer,
+                         int, int, int, TriangularViewCL>
     tri_rect_multiply("tri_rect_multiply", tri_rect_multiply_kernel_code,
                     {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
 
