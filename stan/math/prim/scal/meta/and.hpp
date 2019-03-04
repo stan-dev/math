@@ -5,13 +5,18 @@
 
 namespace stan {
 namespace math {
-
-template <typename... Conds>
+/**
+ * A helper metaprogram to peform conjuction
+ * on type conditionals for zero or more provided types.
+ * See \link prim/scal/meta/is_var_or_arithmetic.hpp \endlink
+ * for an example.
+ */
+template <typename... T>
 struct and_ : std::true_type {};
 
-template <typename Cond, typename... Conds>
-struct and_<Cond, Conds...>
-    : std::conditional<Cond::value, and_<Conds...>, std::false_type>::type {};
+template <typename T, typename... Ts>
+struct and_<T, Ts...>
+    : std::conditional<T::value, and_<Ts...>, std::false_type>::type {};
 
 }  // namespace math
 }  // namespace stan

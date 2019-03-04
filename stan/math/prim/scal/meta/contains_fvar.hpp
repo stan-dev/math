@@ -8,8 +8,8 @@
 namespace stan {
 
 /**
- * Metaprogram to calculate the base scalar return type resulting
- * from promoting all the scalar types of the template parameters.
+ * Metaprogram to determine if any of the
+ * provided types is a fvar.
  */
 template <typename... T>
 using contains_fvar = math::or_<is_fvar<typename scalar_type<T>::type>...>;

@@ -5,7 +5,11 @@
 #include <stan/math/prim/scal/meta/or.hpp>
 #include <type_traits>
 namespace stan {
-
+/**
+ * Metaprogram to determine if any of the
+ * provided types have a base scalar
+ * type that can not be assigned to type double.
+ */
 template <typename... T>
 using contains_nonconstant_struct = math::or_not_<is_constant_struct<T>...>;
 
