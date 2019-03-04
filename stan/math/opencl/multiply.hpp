@@ -4,7 +4,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/scalar_mul.hpp>
 #include <stan/math/opencl/kernels/matrix_multiply.hpp>
-#include <stan/math/opencl/kernels/lower_tri_rect_multiply.hpp>
+#include <stan/math/opencl/kernels/tri_rect_multiply.hpp>
 #include <Eigen/Dense>
 
 namespace stan {
@@ -97,16 +97,18 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
 
 /**
  * Computes the OpenCL matrix multiplication C[M, K] = A[M, N] x B[N, K]
- * where A is a lower triangular matrix and B is a rectengular matrix
+ * where A is a lower or upper triangular matrix and
+ * B is a rectengular matrix
  *
- * @param A first matrix
- * @param B second matrix
+ * @param A triangular matrix
+ * @param B second, rectangular matrix
  * @return the product of the first and second matrix
  *
  * @throw <code>std::invalid_argument</code> if the
  *   number of columns in A and rows in B do not match
  */
-inline auto lower_tri_rect_multiply(const matrix_cl& A, const matrix_cl& B) {
+template <TriangularViewCL triangular_view = TriangularViewCL::Lower>
+inline auto tri_rect_multiply(const matrix_cl& A, const matrix_cl& B) {
   check_size_match("multiply_lower_tri_rect (GPU)", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
   matrix_cl temp(A.rows(), B.cols());
@@ -135,10 +137,10 @@ inline auto lower_tri_rect_multiply(const matrix_cl& A, const matrix_cl& B) {
   int wpt = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
       "WORK_PER_THREAD");
   try {
-    opencl_kernels::lower_tri_rect_multiply(
+    opencl_kernels::tri_rect_multiply(
         cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
         Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
-        Bpad.cols(), Bpad.rows());
+        Bpad.cols(), Bpad.rows(), triangular_view);
   } catch (cl::Error& e) {
     check_opencl_error("multiply", e);
   }
