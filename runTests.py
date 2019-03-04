@@ -40,7 +40,7 @@ def processCLIArgs():
     parser.add_argument("tests", nargs="+", type=str,
                         help=tests_help_msg)
     f_help_msg = "Only tests with file names matching these will be executed.\n"
-    f_help_msg += "Example: '-f chol', '-f gpu', '-f prim'"
+    f_help_msg += "Example: '-f chol', '-f opencl', '-f prim'"
     parser.add_argument("-f", type=str, default = [], action="append",
                         help=f_help_msg)
     parser.add_argument("-d", "--debug", dest="debug", action="store_true",
