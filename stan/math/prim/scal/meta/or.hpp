@@ -4,6 +4,7 @@
 #include <type_traits>
 
 namespace stan {
+namespace math {
 
 /**
  * A helper metaprogram to peform disjunction
@@ -32,5 +33,6 @@ struct or_not_<Cond, Conds...>
     : std::conditional<!Cond::value, std::true_type, or_not_<Conds...>>::type {
 };
 
+}  // namespace math
 }  // namespace stan
 #endif
