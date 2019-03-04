@@ -5,7 +5,10 @@
 #include <stan/math/prim/scal/meta/or.hpp>
 
 namespace stan {
-
+/**
+ * Metaprogram to determine if any of the
+ * provided types is a std::vector.
+ */
 template <typename... T>
 using contains_vector = math::or_<is_vector<T>...>;
 

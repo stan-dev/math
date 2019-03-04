@@ -8,6 +8,11 @@
 
 namespace stan {
 
+/**
+ * Metaprogram to determine if the provided
+ * type is either a var or an arithmetic
+ * type.
+ */
 template <typename T>
 struct is_var_or_arithmetic_ {
   enum {
@@ -16,6 +21,11 @@ struct is_var_or_arithmetic_ {
   };
 };
 
+/**
+ * A generalized metaprogram to determine
+ * if all provided types are either a var
+ * or an arithmetic type.
+ */
 template <typename... T>
 using is_var_or_arithmetic = math::and_<is_var_or_arithmetic_<T>...>;
 
