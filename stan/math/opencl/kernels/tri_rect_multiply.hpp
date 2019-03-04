@@ -11,7 +11,7 @@ namespace opencl_kernels {
 static const char* tri_rect_multiply_kernel_code = STRINGIFY(
     // \endcond
     /**
-     * OpenCL Matrix multiplication of a triangular and rectangular matrix 
+     * OpenCL Matrix multiplication of a triangular and rectangular matrix
      *
      * @param[in] A the lower/upper triangular matrix in matrix multiplication
      * @param[in] B the right matrix in matrix multiplication
@@ -21,10 +21,9 @@ static const char* tri_rect_multiply_kernel_code = STRINGIFY(
      * @param[in] K Number of cols for matrix A and number of rows for matrix B
      * @param[in] lower_upper the triangularity of A (lower or upper)
      */
-    __kernel void tri_rect_multiply(const __global double* A,
-                                  const __global double* B, __global double* C,
-                                  const int M, const int N, const int K,
-                                  unsigned int lower_upper) {
+    __kernel void tri_rect_multiply(
+        const __global double* A, const __global double* B, __global double* C,
+        const int M, const int N, const int K, unsigned int lower_upper) {
       // thread index inside the thread_block
       const int thread_block_row = get_local_id(0);
       const int thread_block_col = get_local_id(1);
@@ -57,12 +56,12 @@ static const char* tri_rect_multiply_kernel_code = STRINGIFY(
         // copy the data.
         // if A is lower tri and the smallest tile index in the thread
         // block is smaller than the row number, then perform the tile multiply
-        do_mult |= lower_upper == LOWER &&
-                   ((THREAD_BLOCK_SIZE * (tile_ind)) <= i);
+        do_mult
+            |= lower_upper == LOWER && ((THREAD_BLOCK_SIZE * (tile_ind)) <= i);
         // if A is upper tri and the largest index in the thread block
         // is larger than the row number, then perform the tile multiply
-        do_mult |= lower_upper == UPPER &&
-                   ((THREAD_BLOCK_SIZE * (tile_ind+1)) >= i);
+        do_mult |= lower_upper == UPPER
+                   && ((THREAD_BLOCK_SIZE * (tile_ind + 1)) >= i);
         if (do_mult) {
           const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
           const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
@@ -70,20 +69,20 @@ static const char* tri_rect_multiply_kernel_code = STRINGIFY(
           // memory
           for (int w = 0; w < WORK_PER_THREAD; w++) {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                  [thread_block_row]
+                   [thread_block_row]
                 = A[(tiled_j + w * THREAD_BLOCK_SIZE_COL) * M + i];
 
             B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                  [thread_block_row]
+                   [thread_block_row]
                 = B[(j + w * THREAD_BLOCK_SIZE_COL) * K + tiled_i];
           }
           // wait until all tile values are loaded to the local memory
           barrier(CLK_LOCAL_MEM_FENCE);
           for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE; block_ind++) {
             for (int w = 0; w < WORK_PER_THREAD; w++) {
-                acc[w] += A_local[block_ind][thread_block_row]
-                          * B_local[thread_block_col
-                          * + w * THREAD_BLOCK_SIZE_COL][block_ind];
+              acc[w] += A_local[block_ind][thread_block_row]
+                        * B_local[thread_block_col * +w * THREAD_BLOCK_SIZE_COL]
+                                 [block_ind];
             }
           }
           barrier(CLK_LOCAL_MEM_FENCE);
@@ -102,10 +101,10 @@ static const char* tri_rect_multiply_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/lower_tri_rect_multiply.hpp add() \endlink
  */
-const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer,
-                         int, int, int, TriangularViewCL>
+const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int,
+                         TriangularViewCL>
     tri_rect_multiply("tri_rect_multiply", tri_rect_multiply_kernel_code,
-                    {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
+                      {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
 
 }  // namespace opencl_kernels
 }  // namespace math
