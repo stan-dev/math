@@ -4,6 +4,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/scalar_mul.hpp>
 #include <stan/math/opencl/kernels/matrix_multiply.hpp>
+#include <stan/math/opencl/kernels/lower_tri_rect_multiply.hpp>
 #include <Eigen/Dense>
 
 namespace stan {
@@ -105,10 +106,10 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
  * @throw <code>std::invalid_argument</code> if the
  *   number of columns in A and rows in B do not match
  */
-inline auto lower_tri_rect_multiply(const matrix_gpu& A, const matrix_gpu& B) {
+inline auto lower_tri_rect_multiply(const matrix_cl& A, const matrix_cl& B) {
   check_size_match("multiply_lower_tri_rect (GPU)", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
-  matrix_gpu temp(A.rows(), B.cols());
+  matrix_cl temp(A.rows(), B.cols());
   if (A.size() == 0 || B.size() == 0) {
     temp.zeros();
     return temp;
@@ -122,13 +123,13 @@ inline auto lower_tri_rect_multiply(const matrix_gpu& A, const matrix_gpu& B) {
   // improves performance and readability because we can omit
   // if statements in the
   // multiply kernel
-  matrix_gpu tempPad(Mpad, Npad);
-  matrix_gpu Apad(Mpad, Kpad);
-  matrix_gpu Bpad(Kpad, Npad);
+  matrix_cl tempPad(Mpad, Npad);
+  matrix_cl Apad(Mpad, Kpad);
+  matrix_cl Bpad(Kpad, Npad);
   opencl_kernels::zeros(cl::NDRange(Mpad, Kpad), Apad.buffer(), Mpad, Kpad,
-                        TriangularViewGPU::Entire);
+                        TriangularViewCL::Entire);
   opencl_kernels::zeros(cl::NDRange(Kpad, Npad), Bpad.buffer(), Kpad, Npad,
-                        TriangularViewGPU::Entire);
+                        TriangularViewCL::Entire);
   Apad.sub_block(A, 0, 0, 0, 0, A.rows(), A.cols());
   Bpad.sub_block(B, 0, 0, 0, 0, B.rows(), B.cols());
   int wpt = opencl_kernels::matrix_multiply.make_functor.get_opts().at(

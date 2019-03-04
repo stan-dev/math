@@ -1,8 +1,8 @@
-#ifndef STAN_MATH_GPU_KERNELS_LOWER_TRI_RECT_MULTIPLY_HPP
-#define STAN_MATH_GPU_KERNELS_LOWER_TRI_RECT_MULTIPLY_HPP
+#ifndef STAN_MATH_OPENCL_KERNELS_LOWER_TRI_RECT_MULTIPLY_HPP
+#define STAN_MATH_OPENCL_KERNELS_LOWER_TRI_RECT_MULTIPLY_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/gpu/kernel_cl.hpp>
+#include <stan/math/opencl/kernel_cl.hpp>
 
 namespace stan {
 namespace math {
@@ -11,8 +11,7 @@ namespace opencl_kernels {
 static const char* lower_tri_rect_multiply_kernel_code = STRINGIFY(
     // \endcond
     /**
-     * Matrix multiplication of a lower triangular and rectengular matrix 
-     * on the GPU
+     * OpenCL Matrix multiplication of a lower triangular and rectengular matrix 
      *
      * @param[in] A the left lower triangular matrix in matrix multiplication
      * @param[in] B the right matrix in matrix multiplication
@@ -48,36 +47,33 @@ static const char* lower_tri_rect_multiply_kernel_code = STRINGIFY(
       const int num_tiles = (K + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
       // iterate over all tiles
       for (int tile_ind = 0; tile_ind < num_tiles; tile_ind++) {
-        const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
-        const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
-        // if the data needs to be loaded to local memory
-        if (jMin >= iMax) {
+        if ((THREAD_BLOCK_SIZE * tile_ind) <= i) {
+          const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
+          const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
           // each thread copies WORK_PER_THREAD values to the local
-          // memory
+          // memory        
           for (int w = 0; w < WORK_PER_THREAD; w++) {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                   [thread_block_row]
                 = A[(tiled_j + w * THREAD_BLOCK_SIZE_COL) * M + i];
-
+            
             B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                   [thread_block_row]
                 = B[(j + w * THREAD_BLOCK_SIZE_COL) * K + tiled_i];
           }
-        }
-        // wait until all tile values are loaded to the local memory
-        barrier(CLK_LOCAL_MEM_FENCE);
-        for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE; block_ind++) {
-          for (int w = 0; w < WORK_PER_THREAD; w++) {
-            if (jMin >= iMax) {
-            if ((THREAD_BLOCK_SIZE * tile_ind + block_ind) <= i) {
-              acc[w] += A_local[block_ind][thread_block_row]
-                        * B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                                [block_ind];
-            }
+          // wait until all tile values are loaded to the local memory
+          barrier(CLK_LOCAL_MEM_FENCE);
+          for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE; block_ind++) {
+            for (int w = 0; w < WORK_PER_THREAD; w++) {
+              if ((THREAD_BLOCK_SIZE * tile_ind + block_ind) <= i) {
+                acc[w] += A_local[block_ind][thread_block_row]
+                          * B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                                  [block_ind];
+              }
             }
           }
+          barrier(CLK_LOCAL_MEM_FENCE);
         }
-        barrier(CLK_LOCAL_MEM_FENCE);
       }
       // save the values
       for (int w = 0; w < WORK_PER_THREAD; w++) {
