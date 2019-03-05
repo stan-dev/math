@@ -1,5 +1,8 @@
-#ifndef STAN_MATH_GPU_KERNELS_EIGENDECOMPOSITION_HPP
-#define STAN_MATH_GPU_KERNELS_EIGENDECOMPOSITION_HPP
+#ifndef STAN_MATH_GPU_KERNELS_TRIDIAGONALIZATION_HPP
+#define STAN_MATH_GPU_KERNELS_TRIDIAGONALIZATION_HPP
+#ifndef STAN_OPENCL
+#error "NO STAN_OPENCL"
+#endif
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
@@ -8,13 +11,13 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char* eigendecomp_householder_kernel_code = STRINGIFY(
+const char* tridiagonalization_householder_kernel_code = STRINGIFY(
 // \endcond
         /**
          * Calculates householder vector and first element of the vector v.
          * Must be run with 1 workgroup of 128 threads.
          */
-        __kernel void eigendecomp_householder(__global double* P, __global double* V, __global double* q_glob,
+        __kernel void tridiagonalization_householder(__global double* P, __global double* V, __global double* q_glob,
                                               const int P_rows, const int V_rows,
                                               const int j, const int k) {
           const int lid = get_local_id(0);
@@ -87,13 +90,13 @@ const char* eigendecomp_householder_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
-const char* eigendecomp_householder_v1_kernel_code = STRINGIFY(
+const char* tridiagonalization_householder_v1_kernel_code = STRINGIFY(
 // \endcond
 /**
  * Calculates householder vector and first element of the vector v.
  * Must be run with 1 workgroup of 128 threads.
  */
-        __kernel void eigendecomp_householder_v1(__global double* P, __global double* V, __global double* q_glob, __global double* R1, __global double* R2,
+        __kernel void tridiagonalization_householder_v1(__global double* P, __global double* V, __global double* q_glob, __global double* R1, __global double* R2,
                                               const int P_rows, const int V_rows,
                                               const int j, const int k) {
           const int lid = get_local_id(0);
@@ -219,12 +222,12 @@ const char* eigendecomp_householder_v1_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
-const char* eigendecomp_v1_kernel_code = STRINGIFY(
+const char* tridiagonalization_v1_kernel_code = STRINGIFY(
 // \endcond
         /**
          * Calculates R1 = Pb * u and R2 = Vl * u. U is
          */
-        __kernel void eigendecomp_v1(const __global double* P, const __global double* V, __global double* R1, __global double* R2,
+        __kernel void tridiagonalization_v1(const __global double* P, const __global double* V, __global double* R1, __global double* R2,
                 const int P_rows, const int V_rows, const int k) {
           const int lid = get_local_id(0);
           const int gid = get_global_id(0);
@@ -264,9 +267,9 @@ const char* eigendecomp_v1_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
-const char* eigendecomp_v2_kernel_code = STRINGIFY(
+const char* tridiagonalization_v2_kernel_code = STRINGIFY(
 // \endcond
-        __kernel void eigendecomp_v2(const __global double* P, __global double* V, const __global double* Uu, const __global double* Vu,
+        __kernel void tridiagonalization_v2(const __global double* P, __global double* V, const __global double* Uu, const __global double* Vu,
                                      const int P_rows, const int V_rows, const int k, const int j) {
           const int lid = get_local_id(0);
           const int gid = get_global_id(0);
@@ -309,9 +312,9 @@ const char* eigendecomp_v2_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
-const char* eigendecomp_v2_2_kernel_code = STRINGIFY(
+const char* tridiagonalization_v2_2_kernel_code = STRINGIFY(
 // \endcond
-        __kernel void eigendecomp_v2(const __global double* P, __global double* V, const __global double* Uu, const __global double* Vu,
+        __kernel void tridiagonalization_v2(const __global double* P, __global double* V, const __global double* Uu, const __global double* Vu,
                                      const int P_rows, const int V_rows, const int k, const int j) {
           const int lid = get_local_id(0);
           const int gid = get_global_id(0);
@@ -421,9 +424,9 @@ const char* eigendecomp_v2_2_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
-const char* eigendecomp_v3_kernel_code = STRINGIFY(
+const char* tridiagonalization_v3_kernel_code = STRINGIFY(
 // \endcond
-        __kernel void eigendecomp_v3(__global double* P, __global double* V, __global double* q,
+        __kernel void tridiagonalization_v3(__global double* P, __global double* V, __global double* q,
                                      const int P_rows, const int V_rows, const int k, const int j) {
           const int lid = get_local_id(0);
           const int gid = get_global_id(0);
@@ -466,7 +469,7 @@ const char* eigendecomp_v3_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
-const char* eigendecomp_apply_Q1_kernel_code = STRINGIFY(
+const char* tridiagonalization_apply_Q1_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Calculates res = Pb^T * Pc, where Pb is a block of matrix P, and Pc is a column of matrix P. Both only from start_row down.
@@ -479,7 +482,7 @@ const char* eigendecomp_apply_Q1_kernel_code = STRINGIFY(
      * @param start_col First column of the block to use for left side of the multiplication.
      * @param end_col Column to use for right side of multiplication, but not left side.
      */
-    __kernel void eigendecomp_apply_Q1(const __global double* P, __global double* res, const int total_rows,
+    __kernel void tridiagonalization_apply_Q1(const __global double* P, __global double* res, const int total_rows,
             const int total_cols, const int start_row, const int start_col, const int end_col) {
       const int lid = get_local_id(0);
       const int gid = get_global_id(0);
@@ -512,7 +515,7 @@ const char* eigendecomp_apply_Q1_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
-const char* eigendecomp_apply_Q1v2_kernel_code = STRINGIFY(
+const char* tridiagonalization_apply_Q1v2_kernel_code = STRINGIFY(
 // \endcond
 /**
  * Calculates res = Pb^T * Pc, where Pb is a block of matrix P, and Pc is a column of matrix P. Both only from start_row down.
@@ -525,7 +528,7 @@ const char* eigendecomp_apply_Q1v2_kernel_code = STRINGIFY(
  * @param start_col First column of the block to use for left side of the multiplication.
  * @param end_col Column to use for right side of multiplication, but not left side.
  */
-        __kernel void eigendecomp_apply_Q1(const __global double* P, __global double* res, const int total_rows,
+        __kernel void tridiagonalization_apply_Q1(const __global double* P, __global double* res, const int total_rows,
                                            const int total_cols, const int start_row, const int start_col, const int end_col) {
           const int lid = get_local_id(0);
           const int gid = get_global_id(0);
@@ -560,7 +563,7 @@ const char* eigendecomp_apply_Q1v2_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
-const char* eigendecomp_apply_Q2_kernel_code = STRINGIFY(
+const char* tridiagonalization_apply_Q2_kernel_code = STRINGIFY(
 // \endcond
     /**
      * Calculates Mc = Vc - Ml * v, where Mc is the ncols-th column of the matrix M, Vc is the ncols-th column of the matrix V,
@@ -573,7 +576,7 @@ const char* eigendecomp_apply_Q2_kernel_code = STRINGIFY(
      * @param total_cols Number of columns of M.
      * @param ncols Number of columns of M to use for multiplication.
      */
-    __kernel void eigendecomp_apply_Q2(__global double* M, const __global double* v, const __global double* V,
+    __kernel void tridiagonalization_apply_Q2(__global double* M, const __global double* v, const __global double* V,
             const int total_rows, const int total_cols, const int ncols, const int k) {
       const int lid = get_local_id(0);
       const int gid = get_global_id(0);
@@ -635,62 +638,6 @@ const char* subtract_twice_kernel_code = STRINGIFY(
 );
 // \endcond
 
-// \cond
-const char* eigenvals_bisect_kernel_code = STRINGIFY(
-// \endcond
-        int getSturmCountLdl(__global double* l, const __global double* d, double shift, int n){
-          double s = -shift;
-          double l_plus;
-          double d_plus;
-          int count = 0;
-          for (int i = 0; i < n; i++) {
-            d_plus = s + d[i];
-            count += d_plus >= 0;
-            if (isinf(d_plus) && isinf(s)) { // this happens if d_plus==0 -> in next iteration d_plus==inf and s==inf
-              s = l[i] * l[i] * d[i] - shift;
-            }
-            else {
-              s = l[i] * l[i] * s * (d[i] / d_plus) - shift;
-            }
-          }
-          d_plus = s + d[n];
-          count += d_plus >= 0;
-          return count;
-        }
-
-        __kernel void eigenvals_bisect(__global double* l, const __global double* d, __global double* low_res, __global double* high_res,
-                const double min_eigval, const double max_eigval, const int n) {
-          const int lid = get_local_id(0);
-          const int gid = get_global_id(0);
-          const int gsize = get_global_size(0);
-          const int lsize = get_local_size(0);
-          const int ngroups = get_num_groups(0);
-          const int wgid = get_group_id(0);
-
-          double eps = 3e-16;
-          double min_norm = 3e-308; //(approximately) smallest normalized double, larger than 0
-
-          int i=gid;
-          double low = min_eigval;
-          double high = max_eigval;
-
-          while (fabs((high - low) / (high + low)) > eps && fabs(high - low) > min_norm) {
-            double mid = (high + low) * 0.5;
-            int count = getSturmCountLdl(l, d, mid, n-1);
-            if (count > i) {
-              low = mid;
-            }
-            else {
-              high = mid;
-            }
-          }
-          low_res[i]=low;
-          high_res[i]=high;
-        }
-// \cond
-);
-// \endcond
-
 /**
  * See the docs for \link kernels/matrix_multiply.hpp add() \endlink
  */
@@ -700,34 +647,31 @@ const char* eigenvals_bisect_kernel_code = STRINGIFY(
 
 
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int, int>
-        eigendecomp_householder("eigendecomp_householder", eigendecomp_householder_kernel_code);
+        tridiagonalization_householder("tridiagonalization_householder", tridiagonalization_householder_kernel_code);
 
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, int, int, int, int>
-        eigendecomp_householder_v1("eigendecomp_householder_v1", eigendecomp_householder_v1_kernel_code);
+        tridiagonalization_householder_v1("tridiagonalization_householder_v1", tridiagonalization_householder_v1_kernel_code);
 
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, int, int, int>
-        eigendecomp_v1("eigendecomp_v1", eigendecomp_v1_kernel_code);
+        tridiagonalization_v1("tridiagonalization_v1", tridiagonalization_v1_kernel_code);
 
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, int, int, int, int>
-        eigendecomp_v2("eigendecomp_v2", eigendecomp_v2_kernel_code);
+        tridiagonalization_v2("tridiagonalization_v2", tridiagonalization_v2_kernel_code);
 
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, int, int, int, int>
-        eigendecomp_v2_2("eigendecomp_v2", eigendecomp_v2_2_kernel_code);
+        tridiagonalization_v2_2("tridiagonalization_v2", tridiagonalization_v2_2_kernel_code);
 
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int, int>
-        eigendecomp_v3("eigendecomp_v3", eigendecomp_v3_kernel_code);
+        tridiagonalization_v3("tridiagonalization_v3", tridiagonalization_v3_kernel_code);
 
 const global_range_kernel<cl::Buffer, cl::Buffer, int, int, int>
         subtract_twice("subtract_twice", subtract_twice_kernel_code);
 
 const local_range_kernel<cl::Buffer, cl::Buffer, int, int, int, int, int>
-    eigendecomp_apply_Q1("eigendecomp_apply_Q1", eigendecomp_apply_Q1_kernel_code);
+    tridiagonalization_apply_Q1("tridiagonalization_apply_Q1", tridiagonalization_apply_Q1_kernel_code);
 
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int, int>
-        eigendecomp_apply_Q2("eigendecomp_apply_Q2", eigendecomp_apply_Q2_kernel_code);
-
-const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, double, double, int >
-        eigenvals_bisect("eigenvals_bisect", eigenvals_bisect_kernel_code);
+        tridiagonalization_apply_Q2("tridiagonalization_apply_Q2", tridiagonalization_apply_Q2_kernel_code);
 
 }  // namespace opencl_kernels
 }  // namespace math
