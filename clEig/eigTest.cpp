@@ -74,20 +74,20 @@ void getGluedWilkinsonMatrix(int n, int num, Vec& diag, Vec& subdiag, double glu
 
 }
 
-//void chkEig(const Mat& a, const Mat& eigenvecs, const Vec& eigenvals){
-//#ifndef SKIP_CHECKS
-//  double A=a.rows();
-//  cout << "trace diff: " << a.diagonal().sum() - sum(eigenvals) << endl;
-//  cout << "eigen EQ: " << (a - eigenvecs * eigenvals.asDiagonal() * eigenvecs.transpose()).array().abs().sum() << endl;
-//  cout << "eigen total residuals: " << (a * eigenvecs - eigenvecs * eigenvals.asDiagonal()).array().abs().sum() << endl;
-//  MatrixXd::Index i,j;
-//  double tmp = (a * eigenvecs - eigenvecs * eigenvals.asDiagonal()).array().abs().colwise().sum().maxCoeff(&i, &j);
-//  cout << "eigen max residual: " << tmp << " for eigenpair: " << j << endl;
-//  cout << "eigen total loss of orthogonality: " << (eigenvecs.transpose() * eigenvecs - Mat::Identity(A,A)).array().abs().sum() << endl;
-//  tmp=(eigenvecs.transpose() * eigenvecs - Mat::Identity(A,A)).array().abs().maxCoeff(&i,&j);
-//  cout << "eigen max loss of orthogonality: " << tmp << " between eigenvectors: " << i << " " << j << " (eigenvalues " << eigenvals[i] << " " << eigenvals[j] << ")" << endl;
-//#endif
-//}
+void chkEig(const Mat& a, const Mat& eigenvecs, const Vec& eigenvals){
+#ifndef SKIP_CHECKS
+  double A=a.rows();
+  cout << "trace diff: " << a.diagonal().sum() - sum(eigenvals) << endl;
+  cout << "eigen EQ: " << (a - eigenvecs * eigenvals.asDiagonal() * eigenvecs.transpose()).array().abs().sum() << endl;
+  cout << "eigen total residuals: " << (a * eigenvecs - eigenvecs * eigenvals.asDiagonal()).array().abs().sum() << endl;
+  MatrixXd::Index i,j;
+  double tmp = (a * eigenvecs - eigenvecs * eigenvals.asDiagonal()).array().abs().colwise().sum().maxCoeff(&i, &j);
+  cout << "eigen max residual: " << tmp << " for eigenpair: " << j << endl;
+  cout << "eigen total loss of orthogonality: " << (eigenvecs.transpose() * eigenvecs - Mat::Identity(A,A)).array().abs().sum() << endl;
+  tmp=(eigenvecs.transpose() * eigenvecs - Mat::Identity(A,A)).array().abs().maxCoeff(&i,&j);
+  cout << "eigen max loss of orthogonality: " << tmp << " between eigenvectors: " << i << " " << j << " (eigenvalues " << eigenvals[i] << " " << eigenvals[j] << ")" << endl;
+#endif
+}
 
 void chkTridiag(const Mat& a, Mat t, const Mat& q){
 #ifndef SKIP_CHECKS
@@ -174,12 +174,12 @@ int miniTest2() {
 }
 */
 
-/*
+
 void testMrrr(){
   auto start = std::chrono::steady_clock::now();
   cout.precision(17);
-  int A = 2010;
-  for(unsigned int i=443;i<1e7;i++) {
+  int A = 8000;
+  for(unsigned int i=443+1;i<1e7;i++) {
     cout << "i=" << i << endl;
     srand(i);
 
@@ -189,7 +189,7 @@ void testMrrr(){
 //    subdiag << 0,0,0;
     Vec diag = Vec::Random(A).array();
     Vec subdiag = Vec::Random(A - 1).array();
-    getGluedWilkinsonMatrix(100, 10, diag, subdiag,1e-8);
+    //getGluedWilkinsonMatrix(100, 10, diag, subdiag,1e-8);
 //    subdiag[2]=0;
 //    subdiag[3]=0;
 //    diag[5]=0;
@@ -328,11 +328,12 @@ void testMrrr(){
 //       << "ms" << endl;
 //  //cout << "eigvals: " << eigenvals << endl;
 //  cout << "trace diff: " << sum(diag)-sum(eigenvals) << endl;
-}*/
+}
 
 int main() {
   auto start = std::chrono::steady_clock::now();
-//  testMrrr();
+  testMrrr();
+  return 0;
 //  miniTest();
 //  miniTest2();
 
@@ -348,7 +349,7 @@ int main() {
   auto kernel_9 = opencl_kernels::subtract_twice;
 
   //srand(time(0));
-  int A=500;
+  int A=8000;
   Mat a = Mat::Random(A, A);
   a+=a.transpose().eval();
   //a.diagonal()+=Eigen::VectorXd::Constant(A,A);
@@ -406,14 +407,14 @@ int main() {
 //       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
 //       << "ms" << endl;
 
-  for(int r1=30;r1<1000;r1+=10) {
-//  int r1=60;
+  //for(int r1=30;r1<1000;r1+=10) {
+  int r1=60;
   start = std::chrono::steady_clock::now();
   block_householder_tridiag_gpu2(a, packed, r1);
   cout << "\t\tGPU my blocked packed 2, r = " << r1 << ": "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
-  }
+  //}
 
   t = Mat::Constant(a.rows(), a.cols(), 0);
   t.diagonal()=packed.diagonal();
