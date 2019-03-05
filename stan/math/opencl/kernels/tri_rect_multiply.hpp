@@ -77,16 +77,15 @@ static const char* tri_rect_multiply_kernel_code = STRINGIFY(
             B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
                 = B[(j + w * THREAD_BLOCK_SIZE_COL) * K + tiled_i];
-            }
-            barrier(CLK_LOCAL_MEM_FENCE);
-            for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE;
-                     block_ind++) {
-              for (int w = 0; w < WORK_PER_THREAD; w++) {
+          }
+          barrier(CLK_LOCAL_MEM_FENCE);
+          for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE; block_ind++) {
+            for (int w = 0; w < WORK_PER_THREAD; w++) {
               acc[w] += A_local[block_ind][thread_block_row]
-                    * B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                              [block_ind];
-              }
+                        * B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                                 [block_ind];
             }
+          }
         }
         barrier(CLK_LOCAL_MEM_FENCE);
       }
