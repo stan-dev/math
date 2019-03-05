@@ -8,7 +8,7 @@ class AgradFwdAsinh : public testing::Test {
 };
 
 TEST_F(AgradFwdAsinh, Fvar) {
-  using boost::math::asinh;
+  using stan::math::asinh;
   using stan::math::fvar;
   using std::sqrt;
 
@@ -30,7 +30,7 @@ TEST_F(AgradFwdAsinh, Fvar) {
 }
 
 TEST_F(AgradFwdAsinh, FvarFvarDouble) {
-  using boost::math::asinh;
+  using stan::math::asinh;
   using stan::math::fvar;
 
   fvar<fvar<double> > x;

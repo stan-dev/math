@@ -1,10 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_ROUND_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_ROUND_HPP
 
-#include <stan/math/prim/scal/fun/boost_policy.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <boost/math/special_functions/round.hpp>
-#include <limits>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -16,11 +13,7 @@ namespace math {
  * @param x Argument.
  * @return The rounded value of the argument.
  */
-inline double round(double x) {
-  if (is_nan(x))
-    return std::numeric_limits<double>::quiet_NaN();
-  return boost::math::round(x, boost_policy_t());
-}
+inline double round(double x) { return std::round(x); }
 
 /**
  * Return the closest integer to the specified argument, with
@@ -29,7 +22,7 @@ inline double round(double x) {
  * @param x Argument.
  * @return The rounded value of the argument.
  */
-inline double round(int x) { return round(static_cast<double>(x)); }
+inline double round(int x) { return std::round(x); }
 
 }  // namespace math
 }  // namespace stan

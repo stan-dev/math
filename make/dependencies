@@ -1,7 +1,7 @@
 ##
 # Rule for generating dependencies.
 ##
-DEPTARGETS = -MT $(patsubst %.d,%.o,$@) -MT $@
+DEPTARGETS = -MT $(patsubst %.d,%.o,$@)
 ifeq ($(OS),Windows_NT)
   DEPFLAGS_OS ?= -M -E
 else

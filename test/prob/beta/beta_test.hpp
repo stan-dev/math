@@ -1,6 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
 #include <stan/math/prim/scal.hpp>
-#include <boost/utility/enable_if.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

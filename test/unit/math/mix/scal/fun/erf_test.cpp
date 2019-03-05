@@ -5,7 +5,7 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdErf, FvarVar_1stDeriv) {
-  using boost::math::erf;
+  using stan::math::erf;
   using stan::math::fvar;
   using stan::math::var;
   using std::exp;
@@ -26,7 +26,7 @@ TEST(AgradFwdErf, FvarVar_1stDeriv) {
       2 * exp(-0.5 * 0.5) / sqrt(boost::math::constants::pi<double>()), g[0]);
 }
 TEST(AgradFwdErf, FvarVar_2ndDeriv) {
-  using boost::math::erf;
+  using stan::math::erf;
   using stan::math::fvar;
   using stan::math::var;
   using std::exp;
@@ -44,7 +44,7 @@ TEST(AgradFwdErf, FvarVar_2ndDeriv) {
 }
 
 TEST(AgradFwdErf, FvarFvarVar_1stDeriv) {
-  using boost::math::erf;
+  using stan::math::erf;
   using stan::math::fvar;
   using stan::math::var;
   using std::exp;
@@ -89,7 +89,7 @@ TEST(AgradFwdErf, FvarFvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdErf, FvarFvarVar_2ndDeriv) {
-  using boost::math::erf;
+  using stan::math::erf;
   using stan::math::fvar;
   using stan::math::var;
   using std::exp;
@@ -133,7 +133,7 @@ TEST(AgradFwdErf, FvarFvarVar_2ndDeriv) {
       -2 * exp(-0.5 * 0.5) / sqrt(boost::math::constants::pi<double>()), r[0]);
 }
 TEST(AgradFwdErf, FvarFvarVar_3rdDeriv) {
-  using boost::math::erf;
+  using stan::math::erf;
   using stan::math::fvar;
   using stan::math::var;
   using std::exp;
