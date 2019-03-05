@@ -28,14 +28,19 @@ namespace math {
  * __thread keyword gurantees that constant initialization and it's
  * implied speedup, is used.
  *
- * The initialzation of the AD instance is handled by the init()
- * method which gets called by the constructor of the
- * singleton. Within stan-math the initialization of the AD instance
- * for the main thread of the program is handled by instantiating once
- * the singleton once in the init_chainablestack.hpp file. Whenever
- * STAN_THREADS is defined then all created child threads must call the
- * init() method of the AD singleton in order to initialize the TLS if
- * child threads want to perform AD operations.
+ * The initialzation of the AD instance is handled by the lifetime of
+ * a AutodiffStackSingleton object. More specifically, the first
+ * instance of the AutodiffStackSingleton object will initialize the
+ * AD instance and take ownership. Thus whenever the first instance of
+ * the AutodiffStackSingleton object gets destructed, the AD tape will
+ * be destructed as well.  Within stan-math the initialization of the
+ * AD instance for the main thread of the program is handled by
+ * instantiating once the singleton once in the
+ * init_chainablestack.hpp file. Whenever STAN_THREADS is defined then
+ * all created child threads must call the init() method of the AD
+ * singleton in order to initialize the TLS if child threads want to
+ * perform AD operations (the initialization in the main process is
+ * already taken care of in any case).
  *
  * The design of a globally held (optionally TLS) pointer, which is
  * globally initialized, allows the compiler to apply necessary
