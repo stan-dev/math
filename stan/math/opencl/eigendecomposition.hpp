@@ -6,13 +6,13 @@
 #include <iostream>
 #include <queue>
 
-#include <stan/math/gpu/matrix_gpu.hpp>
-#include <stan/math/gpu/multiply.hpp>
-#include <stan/math/gpu/subtract.hpp>
-#include <stan/math/gpu/add.hpp>
-#include <stan/math/gpu/transpose.hpp>
+#include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/multiply.hpp>
+#include <stan/math/opencl/subtract.hpp>
+#include <stan/math/opencl/add.hpp>
+#include <stan/math/opencl/transpose.hpp>
 
-#include <stan/math/gpu/kernels/eigendecomposition.hpp>
+#include <stan/math/opencl/kernels/eigendecomposition.hpp>
 
 using namespace std;
 
@@ -55,7 +55,7 @@ void p(const Eigen::RowVectorXd& a) {
   std::cout << a << std::endl;
 }
 
-void p(const matrix_gpu& a) {
+void p(const matrix_cl& a) {
   Eigen::MatrixXd b(a.rows(), a.cols());
   copy(b, a);
   s(b);
@@ -283,9 +283,9 @@ void block_householder_tridiag_gpu(const Eigen::MatrixXd& A, Eigen::MatrixXd& pa
 #ifdef TIME_IT
     start = std::chrono::steady_clock::now();
 #endif
-    matrix_gpu U_gpu(U.bottomRows(U.rows() - actual_r + 1).eval());
-    matrix_gpu V_T_gpu(V.bottomRows(V.rows() - actual_r + 1).transpose().eval());
-    matrix_gpu partial_update_gpu = U_gpu * V_T_gpu;
+    matrix_cl U_gpu(U.bottomRows(U.rows() - actual_r + 1).eval());
+    matrix_cl V_T_gpu(V.bottomRows(V.rows() - actual_r + 1).transpose().eval());
+    matrix_cl partial_update_gpu = U_gpu * V_T_gpu;
     Eigen::MatrixXd partial_update(partial_update_gpu.rows(), partial_update_gpu.cols());
     copy(partial_update, partial_update_gpu);
     packed.block(k + actual_r, k + actual_r, packed.rows() - k - actual_r, packed.cols() - k - actual_r).triangularView<Eigen::Lower>() -= partial_update + partial_update.transpose();
@@ -307,7 +307,7 @@ void block_householder_tridiag_gpu(const Eigen::MatrixXd& A, Eigen::MatrixXd& pa
  * @param r Block size. Affects only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes a larger value is optimal.
  */
 void block_householder_tridiag_gpu2(const Eigen::MatrixXd& A, Eigen::MatrixXd& packed, int r = 60) {
-  matrix_gpu packed_gpu(A);
+  matrix_cl packed_gpu(A);
 #ifdef TIME_IT
   int t1=0, t2=0, t3=0, t4=0, t5=0, t6=0, t7=0, t8=0, t9=0;
   auto start = std::chrono::steady_clock::now();
@@ -318,8 +318,8 @@ void block_householder_tridiag_gpu2(const Eigen::MatrixXd& A, Eigen::MatrixXd& p
 #ifdef TIME_IT
     start = std::chrono::steady_clock::now();
 #endif
-    matrix_gpu V_gpu(A.rows() - k - 1, actual_r);
-    V_gpu.zeros<TriangularViewGPU::Upper>();
+    matrix_cl V_gpu(A.rows() - k - 1, actual_r);
+    V_gpu.zeros<TriangularViewCL::Upper>();
 #ifdef TIME_IT
     t1+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
 #endif
@@ -328,7 +328,7 @@ void block_householder_tridiag_gpu2(const Eigen::MatrixXd& A, Eigen::MatrixXd& p
 #ifdef TIME_IT
       start = std::chrono::steady_clock::now();
 #endif
-      matrix_gpu Uu(j,1), Vu(j,1), q_gpu(1,1);
+      matrix_cl Uu(j,1), Vu(j,1), q_gpu(1,1);
       try{
 //        opencl_kernels::eigendecomp_householder_v1(
 //                cl::NDRange(128), cl::NDRange(128),
@@ -379,16 +379,16 @@ void block_householder_tridiag_gpu2(const Eigen::MatrixXd& A, Eigen::MatrixXd& p
 #ifdef TIME_IT
     start = std::chrono::steady_clock::now();
 #endif
-    matrix_gpu U_gpu(V_gpu.rows() - actual_r + 1, V_gpu.cols());
+    matrix_cl U_gpu(V_gpu.rows() - actual_r + 1, V_gpu.cols());
     U_gpu.sub_block(packed_gpu, k + actual_r, k, 0, 0, A.rows() - k - actual_r, actual_r);
-//    matrix_gpu V_T_gpu(V.bottomRows(V.rows() - actual_r + 1).transpose().eval());
-    matrix_gpu Vb_gpu(V_gpu.rows() - actual_r + 1, V_gpu.cols());
+//    matrix_cl V_T_gpu(V.bottomRows(V.rows() - actual_r + 1).transpose().eval());
+    matrix_cl Vb_gpu(V_gpu.rows() - actual_r + 1, V_gpu.cols());
     Vb_gpu.sub_block(V_gpu, actual_r - 1, 0, 0, 0, V_gpu.rows() - actual_r + 1, actual_r);
 #ifdef TIME_IT
     t6+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
     start = std::chrono::steady_clock::now();
 #endif
-    matrix_gpu partial_update_gpu = U_gpu * transpose(Vb_gpu);
+    matrix_cl partial_update_gpu = U_gpu * transpose(Vb_gpu);
 #ifdef TIME_IT
     t7+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
     start = std::chrono::steady_clock::now();
@@ -454,7 +454,7 @@ void block_apply_packed_Q3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, in
  */
 void block_apply_packed_Q_gpu2(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 100) {
   //if input A==Identity, constructs Q
-  matrix_gpu A_gpu(A);
+  matrix_cl A_gpu(A);
   Eigen::MatrixXd scratchSpace(A.rows(), r);
 #ifdef TIME_IT
   int t1=0, t2=0, t3=0, t4=0;
@@ -483,10 +483,10 @@ void block_apply_packed_Q_gpu2(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A
     start = std::chrono::steady_clock::now();
 #endif
     Eigen::MatrixXd packed_block_transpose_triang = packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>();
-    matrix_gpu packed_block_transpose_triang_gpu(packed_block_transpose_triang);
-    matrix_gpu A_bottom_gpu(A.rows() - k - 1, A.cols());
+    matrix_cl packed_block_transpose_triang_gpu(packed_block_transpose_triang);
+    matrix_cl A_bottom_gpu(A.rows() - k - 1, A.cols());
     A_bottom_gpu.sub_block(A_gpu, k+1, 0, 0, 0, A_bottom_gpu.rows(), A_bottom_gpu.cols());
-    matrix_gpu W_gpu(W);
+    matrix_cl W_gpu(W);
 #ifdef TIME_IT
     t3+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
     start = std::chrono::steady_clock::now();
@@ -512,8 +512,8 @@ void block_apply_packed_Q_gpu2(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A
  * @param r Block size. Affects only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes larger value is optimal.
  */
 void block_apply_packed_Q_gpu3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 100) {
-  matrix_gpu A_gpu(A);
-  matrix_gpu packed_gpu(packed);
+  matrix_cl A_gpu(A);
+  matrix_cl packed_gpu(packed);
 #ifdef TIME_IT
   int t1=0, t2=0, t3=0, t4=0;
   auto start = std::chrono::steady_clock::now();
@@ -522,7 +522,7 @@ void block_apply_packed_Q_gpu3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A
   for (int k = (packed.rows() - 3) / r * r; k >= 0; k -= r) {
     int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
 //    Eigen::MatrixXd W(packed.rows() - k - 1, actual_r);
-    matrix_gpu W_gpu(packed.rows() - k - 1, actual_r);
+    matrix_cl W_gpu(packed.rows() - k - 1, actual_r);
 //    W.col(0) = packed.col(k).tail(W.rows());
     W_gpu.sub_block(packed_gpu, packed.rows() - W_gpu.rows(), k, 0, 0, W_gpu.rows(), 1);
     for (size_t j = 1; j < actual_r; j++) {
@@ -533,7 +533,7 @@ void block_apply_packed_Q_gpu3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A
 //      Eigen::VectorXd tmp2 = packed.col(j + k).tail(packed.rows() - k - j - 1);
 //      W.col(j).tail(W.rows() - j) += packed.col(j + k).tail(packed.rows() - k - j - 1);
 
-      matrix_gpu temp(j,1);
+      matrix_cl temp(j,1);
       try {
 #ifdef TIME_IT
         start = std::chrono::steady_clock::now();
@@ -557,16 +557,16 @@ void block_apply_packed_Q_gpu3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A
         check_opencl_error("block_apply_packed_Q_gpu3", e);
       }
 
-//      matrix_gpu packed_block(packed.rows() - k - j - 1, j);
+//      matrix_cl packed_block(packed.rows() - k - j - 1, j);
 //      packed_block.sub_block(packed_gpu, k + j + 1, k, 0, 0, packed.rows() - k - j - 1, j);
-//      matrix_gpu packed_col(packed.rows() - k - j - 1, 1);
+//      matrix_cl packed_col(packed.rows() - k - j - 1, 1);
 //      packed_col.sub_block(packed_gpu, k + j + 1, j + k, 0, 0, packed.rows() - k - j - 1, 1);
-//      matrix_gpu W_left(W_gpu.rows(), j);
+//      matrix_cl W_left(W_gpu.rows(), j);
 //      W_left.sub_block(W_gpu,0,0,0,0,W_gpu.rows(),j);
 //
-//      //matrix_gpu W_col = -1 * (W_left * (transpose(packed_block) * packed_col));
-//      matrix_gpu W_col = -1 * (W_left * temp);
-//      matrix_gpu W_tmp(W_gpu.rows() - j, 1);
+//      //matrix_cl W_col = -1 * (W_left * (transpose(packed_block) * packed_col));
+//      matrix_cl W_col = -1 * (W_left * temp);
+//      matrix_cl W_tmp(W_gpu.rows() - j, 1);
 //      W_tmp.sub_block(W_col, j, 0, 0, 0, W_gpu.rows() - j, 1);
 //      W_tmp = W_tmp + packed_col;
 //      W_gpu.sub_block(W_col, 0, 0, 0, j, j, 1);
@@ -577,12 +577,12 @@ void block_apply_packed_Q_gpu3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A
     start = std::chrono::steady_clock::now();
 #endif
     Eigen::MatrixXd packed_block_transpose_triang = packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>();
-    matrix_gpu packed_block_transpose_triang_gpu(packed_block_transpose_triang);
+    matrix_cl packed_block_transpose_triang_gpu(packed_block_transpose_triang);
 #ifdef TIME_IT
     t3+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
     start = std::chrono::steady_clock::now();
 #endif
-    matrix_gpu A_bottom_gpu(A.rows() - k - 1, A.cols());
+    matrix_cl A_bottom_gpu(A.rows() - k - 1, A.cols());
     A_bottom_gpu.sub_block(A_gpu, k + 1, 0, 0, 0, A_bottom_gpu.rows(), A_bottom_gpu.cols());
     A_bottom_gpu = A_bottom_gpu - W_gpu * (packed_block_transpose_triang_gpu * A_bottom_gpu);
     A_gpu.sub_block(A_bottom_gpu, 0, 0, k + 1, 0, A_bottom_gpu.rows(), A_bottom_gpu.cols());
@@ -1498,10 +1498,10 @@ void mrrr_gpu(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<con
 //    eigenvalBisectRefine(d, l, low[i], high[i], i);
 //  }
 
-  matrix_gpu l_gpu(l);
-  matrix_gpu d_gpu(d);
-  matrix_gpu low_gpu(n,1);
-  matrix_gpu high_gpu(n,1);
+  matrix_cl l_gpu(l);
+  matrix_cl d_gpu(d);
+  matrix_cl low_gpu(n,1);
+  matrix_cl high_gpu(n,1);
   try{
     opencl_kernels::eigenvals_bisect(
             cl::NDRange(n),

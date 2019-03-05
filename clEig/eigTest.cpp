@@ -9,11 +9,11 @@
 #define OPENCL_DEVICE_ID 0
 
 #include <stan/math.hpp>
-#include <stan/math/gpu/add.hpp>
-#include <stan/math/gpu/copy.hpp>
+#include <stan/math/opencl/add.hpp>
+#include <stan/math/opencl/copy.hpp>
 #include <chrono>
 #include <Eigen/QR>
-#include <stan/math/gpu/eigendecomposition.hpp>
+#include <stan/math/opencl/eigendecomposition.hpp>
 
 //#define SKIP_CHECKS
 
@@ -36,7 +36,7 @@ void p(const Eigen::VectorXd& a) {
   std::cout << a << std::endl;
 }
 
-void p(const matrix_gpu& a) {
+void p(const matrix_cl& a) {
   Eigen::MatrixXd b(a.rows(), a.cols());
   copy(b, a);
   std::cout << b << std::endl;
@@ -472,14 +472,14 @@ int main() {
        << "ms" << endl;
 
   start = std::chrono::steady_clock::now();
-  matrix_gpu a_gpu(a);
-  matrix_gpu q_gpu(q);
+  matrix_cl a_gpu(a);
+  matrix_cl q_gpu(q);
   cout << "\t\tcopy q a: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
 
   start = std::chrono::steady_clock::now();
-  matrix_gpu res= q_gpu * a_gpu;
+  matrix_cl res= q_gpu * a_gpu;
   cout << "\t\tGPU multiply q*a: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;

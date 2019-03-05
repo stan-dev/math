@@ -2,7 +2,7 @@
 #define STAN_MATH_GPU_KERNELS_EIGENDECOMPOSITION_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/gpu/kernel_cl.hpp>
+#include <stan/math/opencl/kernel_cl.hpp>
 
 namespace stan {
 namespace math {
