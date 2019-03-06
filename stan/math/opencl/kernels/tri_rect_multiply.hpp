@@ -19,11 +19,13 @@ static const char* tri_rect_multiply_kernel_code = STRINGIFY(
      * @param[in] M Number of rows for matrix A
      * @param[in] N Number of rows for matrix B
      * @param[in] K Number of cols for matrix A and number of rows for matrix B
-     * @param[in] lower_upper the triangularity of A (lower or upper)
+     * @param[in] lower_upper_A the triangularity of A (lower, upper or none)
+     * @param[in] lower_upper_B the triangularity of B (lower, upper or none)
      */
     __kernel void tri_rect_multiply(
         const __global double* A, const __global double* B, __global double* C,
-        const int M, const int N, const int K, unsigned int lower_upper) {
+        const int M, const int N, const int K, unsigned int lower_upper_A,
+        unsigned int lower_upper_B) {
       // thread index inside the thread_block
       const int thread_block_row = get_local_id(0);
       const int thread_block_col = get_local_id(1);
@@ -47,44 +49,66 @@ static const char* tri_rect_multiply_kernel_code = STRINGIFY(
 
       const int num_tiles = (K + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
       // iterate over all tiles
-      for (int tile_ind = 0; tile_ind < num_tiles; tile_ind++) {
-        int do_mult = 0;
-        // check if the of multiplication of the tiles must be performed
-        // whole tile multiplies have to be performed even if some thread
-        // are above/below the diagonal for lower/upper matrices. This is
-        // due to the shared memory mechanism where all threads in the block
-        // copy the data.
-        // if A is lower tri and the smallest tile index in the thread
-        // block is smaller than the row number, then perform the tile multiply
-        do_mult
-            |= lower_upper == LOWER && ((THREAD_BLOCK_SIZE * (tile_ind)) <= i);
-        // if A is upper tri and the largest index in the thread block
-        // is larger than the row number, then perform the tile multiply
-        do_mult |= lower_upper == UPPER
-                   && ((THREAD_BLOCK_SIZE * (tile_ind + 1)) >= i);
-        if (do_mult) {
+      int is_A_lower = lower_upper_A == LOWER;
+      int is_A_upper = lower_upper_A == UPPER;
+      int is_B_lower = lower_upper_B == LOWER;
+      int is_B_upper = lower_upper_B == UPPER;
+      int end_tile_A = !is_A_lower*(num_tiles-1)
+                       + is_A_lower*(i/THREAD_BLOCK_SIZE);
+      int end_tile_B = !is_B_upper*(num_tiles-1)
+                       + is_B_upper*(j/THREAD_BLOCK_SIZE);
+      int start_tile_A = is_A_upper*(i/THREAD_BLOCK_SIZE);
+      int start_tile_B = is_B_lower*(j/THREAD_BLOCK_SIZE);
+      int start_tile = 0;
+      int end_tile = num_tiles-1;
+      if (start_tile_A > start_tile_B) {
+        start_tile = start_tile_A;
+      } else {
+        start_tile = start_tile_B;
+      }
+      if (end_tile_A > end_tile_B) {
+        end_tile = end_tile_B;
+      } else {
+        end_tile = end_tile_A;
+      }
+      for (int tile_ind = start_tile; tile_ind <= end_tile; tile_ind++) {
+        const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
+        const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
+        // each thread copies WORK_PER_THREAD values to the local
+        // memory
+        for (int w = 0; w < WORK_PER_THREAD; w++) {
           const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
           const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
-          // each thread copies WORK_PER_THREAD values to the local
-          // memory
-          for (int w = 0; w < WORK_PER_THREAD; w++) {
-            const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
-            const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
+          // if matrix A does not have zeros above/below the diagonal
+          // we need to set zeros for the diagonal tile
+          if ((is_A_lower && ((tiled_j + w * THREAD_BLOCK_SIZE_COL) <= i)) ||
+             (is_A_upper && ((tiled_j + w * THREAD_BLOCK_SIZE_COL) >= i)) ||
+             (!is_A_lower && !is_A_upper)) {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                   [thread_block_row]
-                = A[(tiled_j + w * THREAD_BLOCK_SIZE_COL) * M + i];
-
-            B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                   [thread_block_row]
-                = B[(j + w * THREAD_BLOCK_SIZE_COL) * K + tiled_i];
+                  [thread_block_row]
+              = A[(tiled_j + w * THREAD_BLOCK_SIZE_COL) * M + i];
+          } else {
+            A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                  [thread_block_row] = 0.0;
           }
-          barrier(CLK_LOCAL_MEM_FENCE);
-          for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE; block_ind++) {
-            for (int w = 0; w < WORK_PER_THREAD; w++) {
-              acc[w] += A_local[block_ind][thread_block_row]
-                        * B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                                 [block_ind];
-            }
+          if ((is_B_lower && ((j + w * THREAD_BLOCK_SIZE_COL) <= tiled_i)) ||
+             (is_B_upper && ((j + w * THREAD_BLOCK_SIZE_COL) >= tiled_i)) ||
+             (!is_B_lower && !is_B_upper)) {
+            B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                    [thread_block_row]
+                = B[(j + w * THREAD_BLOCK_SIZE_COL) * K + tiled_i];
+          } else {
+            B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                  [thread_block_row]
+              = 0.0;
+          }
+        }
+        barrier(CLK_LOCAL_MEM_FENCE);
+        for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE; block_ind++) {
+          for (int w = 0; w < WORK_PER_THREAD; w++) {
+            acc[w] += A_local[block_ind][thread_block_row]
+                      * B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                                [block_ind];
           }
         }
         barrier(CLK_LOCAL_MEM_FENCE);
@@ -103,7 +127,7 @@ static const char* tri_rect_multiply_kernel_code = STRINGIFY(
  * See the docs for \link kernels/tri_rect_multiply.hpp add() \endlink
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int,
-                         TriangularViewCL>
+                         TriangularViewCL, TriangularViewCL>
     tri_rect_multiply("tri_rect_multiply", tri_rect_multiply_kernel_code,
                       {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
 

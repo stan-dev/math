@@ -285,119 +285,141 @@ TEST(MathMatrix, upper_tri_rect_multiply_big_rect) {
 
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
-void test_size_lower(int size) {
-  auto m1 = stan::math::matrix_d::Random(size, size).eval();
-  auto m2 = stan::math::matrix_d::Random(size, size).eval();
-  stan::math::matrix_d m3_cl_res(size, size);
 
-  m1.triangularView<Eigen::StrictlyUpper>().setZero();
+TEST(MathMatrix, rect_lower_tri_multiply_small) {
+  using stan::math::multiply;
+  using stan::math::tri_rect_multiply;
+  auto m1 = stan::math::matrix_d::Random(3, 3).eval();
+  auto m2 = stan::math::matrix_d::Random(3, 3).eval();
+  stan::math::matrix_d m3_cl_res(3, 3);
 
-  std::chrono::high_resolution_clock::time_point t1
-      = std::chrono::high_resolution_clock::now();
-
-  stan::math::matrix_cl m11(m1);
-  stan::math::matrix_cl m22(m2);
-
-  auto m33 = stan::math::tri_rect_multiply<stan::math::TriangularViewCL::Lower>(
-      m11, m22);
-
-  stan::math::copy(m3_cl_res, m33);
-
-  std::chrono::high_resolution_clock::time_point t2
-      = std::chrono::high_resolution_clock::now();
-
-  auto duration
-      = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-
-  std::cout << size << "\t" << duration << "\t";
-
-  t1 = std::chrono::high_resolution_clock::now();
-  stan::math::matrix_cl m11_normal(m1);
-  stan::math::matrix_cl m22_normal(m2);
-
-  auto m33_normal = multiply(m11_normal, m22_normal);
-
-  stan::math::copy(m3_cl_res, m33_normal);
-  t2 = std::chrono::high_resolution_clock::now();
-  auto duration_normal
-      = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-  std::cout << duration_normal << "\t"
-            << static_cast<double>(duration)
-                   / static_cast<double>(duration_normal)
-            << std::endl;
-}
-
-void test_size_upper(int size) {
-  auto m1 = stan::math::matrix_d::Random(size, size).eval();
-  auto m2 = stan::math::matrix_d::Random(size, size).eval();
-  stan::math::matrix_d m3_cl_res(size, size);
-
-  m1.triangularView<Eigen::StrictlyLower>().setZero();
-
-  std::chrono::high_resolution_clock::time_point t1
-      = std::chrono::high_resolution_clock::now();
+  m2.triangularView<Eigen::StrictlyUpper>().setZero();
 
   stan::math::matrix_cl m11(m1);
   stan::math::matrix_cl m22(m2);
 
-  auto m33 = stan::math::tri_rect_multiply<stan::math::TriangularViewCL::Upper>(
-      m11, m22);
+  auto m3 = (m1 * m2).eval();
+
+  auto m33 = tri_rect_multiply<stan::math::TriangularViewCL::Entire,
+                               stan::math::TriangularViewCL::Lower>(m11, m22);
 
   stan::math::copy(m3_cl_res, m33);
 
-  std::chrono::high_resolution_clock::time_point t2
-      = std::chrono::high_resolution_clock::now();
-
-  auto duration
-      = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-
-  std::cout << size << "\t" << duration << "\t";
-
-  t1 = std::chrono::high_resolution_clock::now();
-  stan::math::matrix_cl m11_normal(m1);
-  stan::math::matrix_cl m22_normal(m2);
-
-  auto m33_normal = multiply(m11_normal, m22_normal);
-
-  stan::math::copy(m3_cl_res, m33_normal);
-  t2 = std::chrono::high_resolution_clock::now();
-  auto duration_normal
-      = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-  std::cout << duration_normal << "\t"
-            << static_cast<double>(duration)
-                   / static_cast<double>(duration_normal)
-            << std::endl;
+  EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
-/*
-TEST(MathMatrix, upper_tri_rect_multiply_big_rect_perf) {
-    std::cout << "N\tlower_tri\tnormal\tlower_tri/normal" << std::endl;
-    test_size_lower(1024);
-    test_size_lower(1536);
-    test_size_lower(2048);
-    test_size_lower(2560);
-    test_size_lower(3072);
-    test_size_lower(3584);
-    test_size_lower(4096);
-    test_size_lower(5120);
-    test_size_lower(6144);
-    test_size_lower(7168);
-    test_size_lower(8192);
-    test_size_lower(9216);
-    test_size_lower(10240);
 
-    std::cout << "N\tupper_tri\tnormal\tupper_tri/normal" << std::endl;
-    test_size_upper(1024);
-    test_size_upper(1536);
-    test_size_upper(2048);
-    test_size_upper(2560);
-    test_size_upper(3072);
-    test_size_upper(3584);
-    test_size_upper(4096);
-    test_size_upper(5120);
-    test_size_upper(6144);
-    test_size_upper(7168);
-    test_size_upper(8192);
-    test_size_upper(9216);
-    test_size_upper(10240);
-}*/
+TEST(MathMatrix, rect_lower_tri_multiply_big) {
+  using stan::math::multiply;
+  using stan::math::tri_rect_multiply;
+  int size = 512;
+  auto m1 = stan::math::matrix_d::Random(size, size).eval();
+  auto m2 = stan::math::matrix_d::Random(size, size).eval();
+  stan::math::matrix_d m3_cl_res(size, size);
+
+  m2.triangularView<Eigen::StrictlyUpper>().setZero();
+
+  stan::math::matrix_cl m11(m1);
+  stan::math::matrix_cl m22(m2);
+
+  auto m3 = (m1 * m2).eval();
+
+  auto m33 = tri_rect_multiply<stan::math::TriangularViewCL::Entire,
+                               stan::math::TriangularViewCL::Lower>(m11, m22);
+
+  stan::math::copy(m3_cl_res, m33);
+
+  EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
+}
+
+TEST(MathMatrix, rect_lower_tri_multiply_big_rect) {
+  using stan::math::multiply;
+  using stan::math::tri_rect_multiply;
+  int size = 512;
+  auto m1 = stan::math::matrix_d::Random(size, size).eval();
+  auto m2 = stan::math::matrix_d::Random(size, size * 3).eval();
+  stan::math::matrix_d m3_cl_res(size, size * 3);
+
+  m2.triangularView<Eigen::StrictlyUpper>().setZero();
+
+  stan::math::matrix_cl m11(m1);
+  stan::math::matrix_cl m22(m2);
+
+  auto m3 = (m1 * m2).eval();
+
+  auto m33 = tri_rect_multiply<stan::math::TriangularViewCL::Entire,
+                               stan::math::TriangularViewCL::Lower>(m11, m22);
+
+  stan::math::copy(m3_cl_res, m33);
+
+  EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
+}
+
+TEST(MathMatrix, rect_upper_tri_multiply_small) {
+  using stan::math::multiply;
+  using stan::math::tri_rect_multiply;
+  auto m1 = stan::math::matrix_d::Random(3, 3).eval();
+  auto m2 = stan::math::matrix_d::Random(3, 3).eval();
+  stan::math::matrix_d m3_cl_res(3, 3);
+
+  m2.triangularView<Eigen::StrictlyLower>().setZero();
+
+  stan::math::matrix_cl m11(m1);
+  stan::math::matrix_cl m22(m2);
+
+  auto m3 = (m1 * m2).eval();
+
+  auto m33 = tri_rect_multiply<stan::math::TriangularViewCL::Entire,
+                               stan::math::TriangularViewCL::Upper>(m11, m22);
+
+  stan::math::copy(m3_cl_res, m33);
+
+  EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
+}
+
+TEST(MathMatrix, rect_upper_tri_multiply_big) {
+  using stan::math::multiply;
+  using stan::math::tri_rect_multiply;
+  int size = 512;
+  auto m1 = stan::math::matrix_d::Random(size, size).eval();
+  auto m2 = stan::math::matrix_d::Random(size, size).eval();
+  stan::math::matrix_d m3_cl_res(size, size);
+
+  m2.triangularView<Eigen::StrictlyLower>().setZero();
+
+  stan::math::matrix_cl m11(m1);
+  stan::math::matrix_cl m22(m2);
+
+  auto m3 = (m1 * m2).eval();
+
+  auto m33 = tri_rect_multiply<stan::math::TriangularViewCL::Entire,
+                               stan::math::TriangularViewCL::Upper>(m11, m22);
+
+  stan::math::copy(m3_cl_res, m33);
+
+  EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
+}
+
+TEST(MathMatrix, rect_upper_tri_multiply_big_rect) {
+  using stan::math::multiply;
+  using stan::math::tri_rect_multiply;
+  int size = 512;
+  auto m1 = stan::math::matrix_d::Random(size * 3, size).eval();
+  auto m2 = stan::math::matrix_d::Random(size, size).eval();
+  stan::math::matrix_d m3_cl_res(size * 3, size);
+
+  m2.triangularView<Eigen::StrictlyLower>().setZero();
+
+  stan::math::matrix_cl m11(m1);
+  stan::math::matrix_cl m22(m2);
+
+  auto m3 = (m1 * m2).eval();
+
+  auto m33 = tri_rect_multiply<stan::math::TriangularViewCL::Entire,
+                               stan::math::TriangularViewCL::Upper>(m11, m22);
+
+  stan::math::copy(m3_cl_res, m33);
+
+  EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
+}
+
 #endif
