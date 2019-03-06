@@ -68,6 +68,8 @@ static const char* tri_rect_multiply_kernel_code = STRINGIFY(
           // each thread copies WORK_PER_THREAD values to the local
           // memory
           for (int w = 0; w < WORK_PER_THREAD; w++) {
+            const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
+            const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
                 = A[(tiled_j + w * THREAD_BLOCK_SIZE_COL) * M + i];
@@ -76,17 +78,16 @@ static const char* tri_rect_multiply_kernel_code = STRINGIFY(
                    [thread_block_row]
                 = B[(j + w * THREAD_BLOCK_SIZE_COL) * K + tiled_i];
           }
-          // wait until all tile values are loaded to the local memory
           barrier(CLK_LOCAL_MEM_FENCE);
           for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE; block_ind++) {
             for (int w = 0; w < WORK_PER_THREAD; w++) {
               acc[w] += A_local[block_ind][thread_block_row]
-                        * B_local[thread_block_col * +w * THREAD_BLOCK_SIZE_COL]
+                        * B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                                  [block_ind];
             }
           }
-          barrier(CLK_LOCAL_MEM_FENCE);
         }
+        barrier(CLK_LOCAL_MEM_FENCE);
       }
       // save the values
       for (int w = 0; w < WORK_PER_THREAD; w++) {
@@ -99,7 +100,7 @@ static const char* tri_rect_multiply_kernel_code = STRINGIFY(
 // \endcond
 
 /**
- * See the docs for \link kernels/lower_tri_rect_multiply.hpp add() \endlink
+ * See the docs for \link kernels/tri_rect_multiply.hpp add() \endlink
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int,
                          TriangularViewCL>
