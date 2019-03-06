@@ -3,7 +3,7 @@
 
 #include <stan/math/rev/mat.hpp>
 #include <test/prob/utility.hpp>
-#include <boost/type_traits/is_same.hpp>
+#include <type_traits>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -380,18 +380,18 @@ class AgradCdfLogTestFixture : public ::testing::Test {
       vector<double> finite_diffs;
       vector<double> gradients;
 
-      if (!boost::is_same<Scalar0, fvar<double> >::value
-          && !boost::is_same<Scalar0, fvar<fvar<double> > >::value
-          && !boost::is_same<Scalar1, fvar<double> >::value
-          && !boost::is_same<Scalar1, fvar<fvar<double> > >::value
-          && !boost::is_same<Scalar2, fvar<double> >::value
-          && !boost::is_same<Scalar2, fvar<fvar<double> > >::value
-          && !boost::is_same<Scalar3, fvar<double> >::value
-          && !boost::is_same<Scalar3, fvar<fvar<double> > >::value
-          && !boost::is_same<Scalar4, fvar<double> >::value
-          && !boost::is_same<Scalar4, fvar<fvar<double> > >::value
-          && !boost::is_same<Scalar5, fvar<double> >::value
-          && !boost::is_same<Scalar5, fvar<fvar<double> > >::value) {
+      if (!std::is_same<Scalar0, fvar<double> >::value
+          && !std::is_same<Scalar0, fvar<fvar<double> > >::value
+          && !std::is_same<Scalar1, fvar<double> >::value
+          && !std::is_same<Scalar1, fvar<fvar<double> > >::value
+          && !std::is_same<Scalar2, fvar<double> >::value
+          && !std::is_same<Scalar2, fvar<fvar<double> > >::value
+          && !std::is_same<Scalar3, fvar<double> >::value
+          && !std::is_same<Scalar3, fvar<fvar<double> > >::value
+          && !std::is_same<Scalar4, fvar<double> >::value
+          && !std::is_same<Scalar4, fvar<fvar<double> > >::value
+          && !std::is_same<Scalar5, fvar<double> >::value
+          && !std::is_same<Scalar5, fvar<fvar<double> > >::value) {
         calculate_finite_diff(parameters[n], finite_diffs);
         Scalar0 p0 = get_param<Scalar0>(parameters[n], 0);
         Scalar1 p1 = get_param<Scalar1>(parameters[n], 1);
@@ -585,38 +585,38 @@ class AgradCdfLogTestFixture : public ::testing::Test {
       size_t pos_single = 0;
       size_t pos_multiple = 0;
       if (!is_constant_struct<T0>::value && !is_empty<T0>::value
-          && !boost::is_same<Scalar0, fvar<double> >::value
-          && !boost::is_same<Scalar0, fvar<fvar<double> > >::value)
+          && !std::is_same<Scalar0, fvar<double> >::value
+          && !std::is_same<Scalar0, fvar<fvar<double> > >::value)
         test_multiple_gradient_values(
             is_vector<T0>::value, single_cdf_log, single_gradients1, pos_single,
             multiple_gradients1, pos_multiple, N_REPEAT);
       if (!is_constant_struct<T1>::value && !is_empty<T1>::value
-          && !boost::is_same<Scalar1, fvar<double> >::value
-          && !boost::is_same<Scalar1, fvar<fvar<double> > >::value)
+          && !std::is_same<Scalar1, fvar<double> >::value
+          && !std::is_same<Scalar1, fvar<fvar<double> > >::value)
         test_multiple_gradient_values(
             is_vector<T1>::value, single_cdf_log, single_gradients1, pos_single,
             multiple_gradients1, pos_multiple, N_REPEAT);
       if (!is_constant_struct<T2>::value && !is_empty<T2>::value
-          && !boost::is_same<Scalar2, fvar<double> >::value
-          && !boost::is_same<Scalar2, fvar<fvar<double> > >::value)
+          && !std::is_same<Scalar2, fvar<double> >::value
+          && !std::is_same<Scalar2, fvar<fvar<double> > >::value)
         test_multiple_gradient_values(
             is_vector<T2>::value, single_cdf_log, single_gradients1, pos_single,
             multiple_gradients1, pos_multiple, N_REPEAT);
       if (!is_constant_struct<T3>::value && !is_empty<T3>::value
-          && !boost::is_same<Scalar3, fvar<double> >::value
-          && !boost::is_same<Scalar3, fvar<fvar<double> > >::value)
+          && !std::is_same<Scalar3, fvar<double> >::value
+          && !std::is_same<Scalar3, fvar<fvar<double> > >::value)
         test_multiple_gradient_values(
             is_vector<T3>::value, single_cdf_log, single_gradients1, pos_single,
             multiple_gradients1, pos_multiple, N_REPEAT);
       if (!is_constant_struct<T4>::value && !is_empty<T4>::value
-          && !boost::is_same<Scalar4, fvar<double> >::value
-          && !boost::is_same<Scalar4, fvar<fvar<double> > >::value)
+          && !std::is_same<Scalar4, fvar<double> >::value
+          && !std::is_same<Scalar4, fvar<fvar<double> > >::value)
         test_multiple_gradient_values(
             is_vector<T4>::value, single_cdf_log, single_gradients1, pos_single,
             multiple_gradients1, pos_multiple, N_REPEAT);
       if (!is_constant_struct<T5>::value && !is_empty<T5>::value
-          && !boost::is_same<Scalar5, fvar<double> >::value
-          && !boost::is_same<Scalar5, fvar<fvar<double> > >::value)
+          && !std::is_same<Scalar5, fvar<double> >::value
+          && !std::is_same<Scalar5, fvar<fvar<double> > >::value)
         test_multiple_gradient_values(
             is_vector<T5>::value, single_cdf_log, single_gradients1, pos_single,
             multiple_gradients1, pos_multiple, N_REPEAT);
@@ -624,38 +624,38 @@ class AgradCdfLogTestFixture : public ::testing::Test {
       pos_single = 0;
       pos_multiple = 0;
       if (!is_constant_struct<T0>::value && !is_empty<T0>::value
-          && (boost::is_same<Scalar0, fvar<var> >::value
-              || boost::is_same<Scalar0, fvar<fvar<var> > >::value))
+          && (std::is_same<Scalar0, fvar<var> >::value
+              || std::is_same<Scalar0, fvar<fvar<var> > >::value))
         test_multiple_gradient_values(
             is_vector<T0>::value, single_cdf_log, single_gradients2, pos_single,
             multiple_gradients2, pos_multiple, N_REPEAT);
       if (!is_constant_struct<T1>::value && !is_empty<T1>::value
-          && (boost::is_same<Scalar1, fvar<var> >::value
-              || boost::is_same<Scalar1, fvar<fvar<var> > >::value))
+          && (std::is_same<Scalar1, fvar<var> >::value
+              || std::is_same<Scalar1, fvar<fvar<var> > >::value))
         test_multiple_gradient_values(
             is_vector<T1>::value, single_cdf_log, single_gradients2, pos_single,
             multiple_gradients2, pos_multiple, N_REPEAT);
       if (!is_constant_struct<T2>::value && !is_empty<T2>::value
-          && (boost::is_same<Scalar2, fvar<var> >::value
-              || boost::is_same<Scalar2, fvar<fvar<var> > >::value))
+          && (std::is_same<Scalar2, fvar<var> >::value
+              || std::is_same<Scalar2, fvar<fvar<var> > >::value))
         test_multiple_gradient_values(
             is_vector<T2>::value, single_cdf_log, single_gradients2, pos_single,
             multiple_gradients2, pos_multiple, N_REPEAT);
       if (!is_constant_struct<T3>::value && !is_empty<T3>::value
-          && (boost::is_same<Scalar3, fvar<var> >::value
-              || boost::is_same<Scalar3, fvar<fvar<var> > >::value))
+          && (std::is_same<Scalar3, fvar<var> >::value
+              || std::is_same<Scalar3, fvar<fvar<var> > >::value))
         test_multiple_gradient_values(
             is_vector<T3>::value, single_cdf_log, single_gradients2, pos_single,
             multiple_gradients2, pos_multiple, N_REPEAT);
       if (!is_constant_struct<T4>::value && !is_empty<T4>::value
-          && (boost::is_same<Scalar4, fvar<var> >::value
-              || boost::is_same<Scalar4, fvar<fvar<var> > >::value))
+          && (std::is_same<Scalar4, fvar<var> >::value
+              || std::is_same<Scalar4, fvar<fvar<var> > >::value))
         test_multiple_gradient_values(
             is_vector<T4>::value, single_cdf_log, single_gradients2, pos_single,
             multiple_gradients2, pos_multiple, N_REPEAT);
       if (!is_constant_struct<T5>::value && !is_empty<T5>::value
-          && (boost::is_same<Scalar5, fvar<var> >::value
-              || boost::is_same<Scalar5, fvar<fvar<var> > >::value))
+          && (std::is_same<Scalar5, fvar<var> >::value
+              || std::is_same<Scalar5, fvar<fvar<var> > >::value))
         test_multiple_gradient_values(
             is_vector<T5>::value, single_cdf_log, single_gradients2, pos_single,
             multiple_gradients2, pos_multiple, N_REPEAT);
@@ -663,32 +663,32 @@ class AgradCdfLogTestFixture : public ::testing::Test {
       pos_single = 0;
       pos_multiple = 0;
       if (!is_constant_struct<T0>::value && !is_empty<T0>::value
-          && boost::is_same<Scalar0, fvar<fvar<var> > >::value)
+          && std::is_same<Scalar0, fvar<fvar<var> > >::value)
         test_multiple_gradient_values(
             is_vector<T0>::value, single_cdf_log, single_gradients3, pos_single,
             multiple_gradients3, pos_multiple, N_REPEAT);
       if (!is_constant_struct<T1>::value && !is_empty<T1>::value
-          && boost::is_same<Scalar1, fvar<fvar<var> > >::value)
+          && std::is_same<Scalar1, fvar<fvar<var> > >::value)
         test_multiple_gradient_values(
             is_vector<T1>::value, single_cdf_log, single_gradients3, pos_single,
             multiple_gradients3, pos_multiple, N_REPEAT);
       if (!is_constant_struct<T2>::value && !is_empty<T2>::value
-          && boost::is_same<Scalar2, fvar<fvar<var> > >::value)
+          && std::is_same<Scalar2, fvar<fvar<var> > >::value)
         test_multiple_gradient_values(
             is_vector<T2>::value, single_cdf_log, single_gradients3, pos_single,
             multiple_gradients3, pos_multiple, N_REPEAT);
       if (!is_constant_struct<T3>::value && !is_empty<T3>::value
-          && boost::is_same<Scalar3, fvar<fvar<var> > >::value)
+          && std::is_same<Scalar3, fvar<fvar<var> > >::value)
         test_multiple_gradient_values(
             is_vector<T3>::value, single_cdf_log, single_gradients3, pos_single,
             multiple_gradients3, pos_multiple, N_REPEAT);
       if (!is_constant_struct<T4>::value && !is_empty<T4>::value
-          && boost::is_same<Scalar4, fvar<fvar<var> > >::value)
+          && std::is_same<Scalar4, fvar<fvar<var> > >::value)
         test_multiple_gradient_values(
             is_vector<T4>::value, single_cdf_log, single_gradients3, pos_single,
             multiple_gradients3, pos_multiple, N_REPEAT);
       if (!is_constant_struct<T5>::value && !is_empty<T5>::value
-          && boost::is_same<Scalar5, fvar<fvar<var> > >::value)
+          && std::is_same<Scalar5, fvar<fvar<var> > >::value)
         test_multiple_gradient_values(
             is_vector<T5>::value, single_cdf_log, single_gradients3, pos_single,
             multiple_gradients3, pos_multiple, N_REPEAT);
