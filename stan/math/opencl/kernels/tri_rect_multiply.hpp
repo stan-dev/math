@@ -100,7 +100,7 @@ static const char* tri_rect_multiply_kernel_code = STRINGIFY(
 // \endcond
 
 /**
- * See the docs for \link kernels/lower_tri_rect_multiply.hpp add() \endlink
+ * See the docs for \link kernels/tri_rect_multiply.hpp add() \endlink
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int,
                          TriangularViewCL>
