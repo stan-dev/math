@@ -777,6 +777,7 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const E
       }
       cluster_end--; //now this is the index of the last element of the cluster
       if (cluster_end - i > 0) {//cluster
+        start = std::chrono::steady_clock::now();
         double max_shift = (high[i] - low[cluster_end]) * 10;
         double currentShift, min_ele_growth;
         findShift(block.l, block.d, low[cluster_end], high[i], max_ele_growth, max_shift, l, d, currentShift, min_ele_growth);
@@ -802,6 +803,7 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const E
         d.resize(n);
 
         i = cluster_end;
+        t1 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
       }
       else { //isolated eigenvalue
 //        cout << "\t\t\t\t\t\t\t\tgetting eigenvector " << i << " (eigenvalue " << eigenvals[i] << ")" << endl;
@@ -813,6 +815,33 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const E
         double low_gap = i == block.start ? std::numeric_limits<double>::infinity() : low[i - 1] - high[i];
         double high_gap = i == block.end - 1 ? std::numeric_limits<double>::infinity() : low[i] - high[i + 1];
         double min_gap = std::min(low_gap, high_gap);
+//        Eigen::VectorXd *l_ptr, *d_ptr;
+//        if(!(abs(min_gap / ((high[i] + low[i]) * 0.5)) > min_rel_sep)){
+//          if (!(abs(min_gap / ((high[i] + low[i]) * 0.5 - shift)) > min_rel_sep && min_element_growth < max_ele_growth)){
+//            double max_shift = min_gap / min_rel_sep;
+//            start = std::chrono::steady_clock::now();
+//            findShift(block.l, block.d, low[i], high[i], max_ele_growth, max_shift, l2, d2, shift, min_element_growth);
+//            t2 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+//          }
+//          low[i] = low[i] * (1 - copysign(shift_error, low[i])) - shift;
+//          high[i] = high[i] * (1 + copysign(shift_error, high[i])) - shift;
+////          if(i >= getSturmCountLdl(d2, l2, low[i]) || i < getSturmCountLdl(d2, l2, high[i])){
+////            cout << "SINGLE ERROR!!!!!" << endl;
+////          }
+//          start = std::chrono::steady_clock::now();
+//          eigenvalBisectRefine(d2, l2, low[i], high[i], i);
+//          t3 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+//          l_ptr=&l2;
+//          d_ptr=&d2;
+//        }
+//        else{
+//          l_ptr=&block.l;
+//          d_ptr=&block.d;
+//        }
+//        start = std::chrono::steady_clock::now();
+//        twist_idx = get_twisted_factorization(*d_ptr, *l_ptr, (low[i] + high[i]) * 0.5, l_plus, u_minus);
+//        t4 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+
         if (abs(min_gap / ((high[i] + low[i]) * 0.5)) > min_rel_sep) {
           start = std::chrono::steady_clock::now();
           twist_idx = get_twisted_factorization(block.d, block.l, (low[i] + high[i]) * 0.5, l_plus, u_minus);
@@ -965,6 +994,7 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<cons
       }
       cluster_end--; //now this is the index of the last element of the cluster
       if (cluster_end - i > 0) {//cluster
+        start = std::chrono::steady_clock::now();
         double max_shift = (high[i] - low[cluster_end]) * 10;
         double currentShift, min_ele_growth;
         findShift(block.l, block.d, low[cluster_end], high[i], max_ele_growth, max_shift, l, d, currentShift, min_ele_growth);
@@ -990,6 +1020,7 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<cons
         d.resize(n);
 
         i = cluster_end;
+        t1 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
       }
       else { //isolated eigenvalue
 //        cout << "\t\t\t\t\t\t\t\tgetting eigenvector " << i << " (eigenvalue " << eigenvals[i] << ")" << endl;
@@ -1001,6 +1032,33 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<cons
         double low_gap = i == block.start ? std::numeric_limits<double>::infinity() : low[i - 1] - high[i];
         double high_gap = i == block.end - 1 ? std::numeric_limits<double>::infinity() : low[i] - high[i + 1];
         double min_gap = std::min(low_gap, high_gap);
+//        Eigen::VectorXd *l_ptr, *d_ptr;
+//        if(!(abs(min_gap / ((high[i] + low[i]) * 0.5)) > min_rel_sep)){
+//          if (!(abs(min_gap / ((high[i] + low[i]) * 0.5 - shift)) > min_rel_sep && min_element_growth < max_ele_growth)){
+//            double max_shift = min_gap / min_rel_sep;
+//            start = std::chrono::steady_clock::now();
+//            findShift(block.l, block.d, low[i], high[i], max_ele_growth, max_shift, l2, d2, shift, min_element_growth);
+//            t2 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+//          }
+//          low[i] = low[i] * (1 - copysign(shift_error, low[i])) - shift;
+//          high[i] = high[i] * (1 + copysign(shift_error, high[i])) - shift;
+////          if(i >= getSturmCountLdl(d2, l2, low[i]) || i < getSturmCountLdl(d2, l2, high[i])){
+////            cout << "SINGLE ERROR!!!!!" << endl;
+////          }
+//          start = std::chrono::steady_clock::now();
+//          eigenvalBisectRefine(d2, l2, low[i], high[i], i);
+//          t3 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+//          l_ptr=&l2;
+//          d_ptr=&d2;
+//        }
+//        else{
+//          l_ptr=&block.l;
+//          d_ptr=&block.d;
+//        }
+//        start = std::chrono::steady_clock::now();
+//        twist_idx = get_twisted_factorization(*d_ptr, *l_ptr, (low[i] + high[i]) * 0.5, l_plus, u_minus);
+//        t4 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+
         if (abs(min_gap / ((high[i] + low[i]) * 0.5)) > min_rel_sep) {
           start = std::chrono::steady_clock::now();
           twist_idx = get_twisted_factorization(block.d, block.l, (low[i] + high[i]) * 0.5, l_plus, u_minus);

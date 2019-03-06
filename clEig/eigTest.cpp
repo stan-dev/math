@@ -182,7 +182,7 @@ int miniTest2() {
 void testMrrr(){
   auto start = std::chrono::steady_clock::now();
   cout.precision(17);
-  int A = 8000;
+  int A = 2000;
   for(unsigned int i=443+1;i<1e7;i++) {
     cout << "i=" << i << endl;
     srand(i);
@@ -193,7 +193,7 @@ void testMrrr(){
 //    subdiag << 0,0,0;
     Vec diag = Vec::Random(A).array();
     Vec subdiag = Vec::Random(A - 1).array();
-    //getGluedWilkinsonMatrix(100, 10, diag, subdiag,1e-8);
+//    getGluedWilkinsonMatrix(100, 5, diag, subdiag,1e-8);
 //    subdiag[2]=0;
 //    subdiag[3]=0;
 //    diag[5]=0;
@@ -336,8 +336,8 @@ void testMrrr(){
 
 int main() {
   auto start = std::chrono::steady_clock::now();
-//  testMrrr();
-//  return 0;
+  testMrrr();
+  return 0;
 //  miniTest();
 //  miniTest2();
 
@@ -351,6 +351,7 @@ int main() {
   auto kernel_7 = opencl_kernels::tridiagonalization_apply_Q1;
   auto kernel_8 = opencl_kernels::tridiagonalization_apply_Q2;
   auto kernel_9 = opencl_kernels::subtract_twice;
+  auto kernel_10 = opencl_kernels::eigenvals_bisect;
 
   //srand(time(0));
   int A=8000;
