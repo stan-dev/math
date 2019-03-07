@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_SCAL_ERR_IS_SIZE_MATCH_HPP
 
 #include <boost/type_traits/common_type.hpp>
-#include <stan/math/prim/scal/meta/likely.hpp>
 
 namespace stan {
 namespace math {
@@ -17,7 +16,7 @@ namespace math {
  */
 template <typename T_size1, typename T_size2>
 inline bool is_size_match(T_size1 i, T_size2 j) {
-  return likely(i == static_cast<T_size1>(j));
+  return i == static_cast<T_size1>(j);
 }
 
 }  // namespace math
