@@ -457,8 +457,11 @@ const char* tridiagonalization_v2_3_kernel_code = STRINGIFY(
             V[V_rows * j + gid + j] = acc;
 //            printf("%d writing12 at %d: %lf\n", gid, V_rows * j + gid + j, acc);
           }
-
-          for(int i=wgid;i<work;i+=ngroups){
+          float work_per_group=(float)work/ngroups;
+          int start=work_per_group*wgid;
+          int end=work_per_group*(wgid+1);
+          for(int i=start;i<end;i+=1){
+//          for(int i=lid;i<work;i+=ngroups){
             __local double res_loc[64];
             acc = 0;
             for(int l=i+1+lid;l<work;l+=64){
@@ -467,12 +470,23 @@ const char* tridiagonalization_v2_3_kernel_code = STRINGIFY(
             }
             res_loc[lid]=acc;
             barrier(CLK_LOCAL_MEM_FENCE);
-            if(lid==0) {
-              for (int i = 1; i < 64; i++) {
-                acc += res_loc[i];
-              }
-              V[V_rows * (j+1) + i + j]=acc;
-//              printf("%d writing3 at %d: %lf\n", gid, V_rows * (j+1) + i + j, acc);
+//            if(lid==0) {
+//              for (int i = 1; i < 64; i++) {
+//                acc += res_loc[i];
+//              }
+//              V[V_rows * (j+1) + i + j]=acc;
+////              printf("%d writing3 at %d: %lf\n", gid, V_rows * (j+1) + i + j, acc);
+//            }
+            if(lid<16) {//efficient parallel reduction
+              res_loc[lid] += res_loc[lid + 16] + res_loc[lid + 32] + res_loc[lid + 48];
+            }
+            barrier(CLK_LOCAL_MEM_FENCE);
+            if(lid<4) {
+              res_loc[lid] += res_loc[lid + 4] + res_loc[lid + 8] + res_loc[lid + 12];
+            }
+            barrier(CLK_LOCAL_MEM_FENCE);
+            if(lid==0){
+              V[V_rows * (j+1) + i + j]=res_loc[lid]+res_loc[lid+1]+res_loc[lid+2]+res_loc[lid+3];
             }
             barrier(CLK_LOCAL_MEM_FENCE);
           }
