@@ -102,12 +102,15 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
  *
  * @param A triangular matrix
  * @param B second, rectangular matrix
+ * @tparam triangular_view_A the triangularity of matrix A
+ * @tparam triangular_view_B the triangularity of matrix B
  * @return the product of the first and second matrix
  *
  * @throw <code>std::invalid_argument</code> if the
  *   number of columns in A and rows in B do not match
  */
-template <TriangularViewCL triangular_view = TriangularViewCL::Lower>
+template <TriangularViewCL triangular_view_A = TriangularViewCL::Lower,
+          TriangularViewCL triangular_view_B = TriangularViewCL::Entire>
 inline auto tri_rect_multiply(const matrix_cl& A, const matrix_cl& B) {
   check_size_match("multiply_lower_tri_rect (GPU)", "A.cols()", A.cols(),
                    "B.rows()", B.rows());
@@ -123,8 +126,7 @@ inline auto tri_rect_multiply(const matrix_cl& A, const matrix_cl& B) {
   int Kpad = ((A.cols() + local - 1) / local) * local;
   // padding the matrices so the dimensions are divisible with local
   // improves performance and readability because we can omit
-  // if statements in the
-  // multiply kernel
+  // if statements in the multiply kernel
   matrix_cl tempPad(Mpad, Npad);
   matrix_cl Apad(Mpad, Kpad);
   matrix_cl Bpad(Kpad, Npad);
@@ -140,7 +142,7 @@ inline auto tri_rect_multiply(const matrix_cl& A, const matrix_cl& B) {
     opencl_kernels::tri_rect_multiply(
         cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
         Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
-        Bpad.cols(), Bpad.rows(), triangular_view);
+        Bpad.cols(), Bpad.rows(), triangular_view_A, triangular_view_B);
   } catch (cl::Error& e) {
     check_opencl_error("multiply", e);
   }
