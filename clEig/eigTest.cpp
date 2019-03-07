@@ -354,7 +354,7 @@ int main() {
   auto kernel_10 = opencl_kernels::eigenvals_bisect;
 
   //srand(time(0));
-  int A=8000;
+  int A=1000;
   Mat a = Mat::Random(A, A);
   a+=a.transpose().eval();
   //a.diagonal()+=Eigen::VectorXd::Constant(A,A);
@@ -437,18 +437,18 @@ int main() {
   t.diagonal(1)=packed.diagonal(1);
   t.diagonal(-1)=packed.diagonal(1);
 
-  start = std::chrono::steady_clock::now();
-  q=Mat::Identity(a.rows(),a.cols());
-  block_apply_packed_Q3(packed,q);
-  cout << "\t\tCPU block apply packed Q3: "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-       << "ms" << endl;
-  if(A<=2001) {
-    qa = a;
-    block_apply_packed_Q3(packed, qa);
-    cout << "apply left " << (qa - q * a).array().abs().sum() << endl;
-    chkTridiag(a, t, q);
-  }
+//  start = std::chrono::steady_clock::now();
+//  q=Mat::Identity(a.rows(),a.cols());
+//  block_apply_packed_Q3(packed,q);
+//  cout << "\t\tCPU block apply packed Q3: "
+//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+//       << "ms" << endl;
+//  if(A<=2001) {
+//    qa = a;
+//    block_apply_packed_Q3(packed, qa);
+//    cout << "apply left " << (qa - q * a).array().abs().sum() << endl;
+//    chkTridiag(a, t, q);
+//  }
 
   start = std::chrono::steady_clock::now();
   q=Mat::Identity(a.rows(),a.cols());
@@ -485,55 +485,25 @@ int main() {
     chkTridiag(a, t, q);
   }
 
-  start = std::chrono::steady_clock::now();
-  qa=q*a;
-  cout << "\t\tCPU multiply q*a: "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-       << "ms" << endl;
-
-  start = std::chrono::steady_clock::now();
-  matrix_cl a_gpu(a);
-  matrix_cl q_gpu(q);
-  cout << "\t\tcopy q a: "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-       << "ms" << endl;
-
-  start = std::chrono::steady_clock::now();
-  matrix_cl res= q_gpu * a_gpu;
-  cout << "\t\tGPU multiply q*a: "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-       << "ms" << endl;
-
-
-
-//  for(int b=5;b<400;b+=5) {
-//    cout << "b = " << b << endl;
-//
-////    cout << "b = " << b << endl;
-////    start = std::chrono::steady_clock::now();
-////    block_householder_tridiag2(a, t, q, b);
-////    cout << "\t\tCPU my blocked: "
-////         << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-////         << "ms" << endl;
-////    chkTridiag(a, t, q);
-//  }
-
-
-//
 //  start = std::chrono::steady_clock::now();
-//  block_householder_qr_gpu_hybrid(a, Q, R, 120);
-//  cout << "GPU - hybrid my block 120: "
+//  qa=q*a;
+//  cout << "\t\tCPU multiply q*a: "
 //       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
 //       << "ms" << endl;
-//  chk(a,Q,R);
 //
-//  block_householder_qr_gpu(a, Q, R, 160);
 //  start = std::chrono::steady_clock::now();
-//  block_householder_qr_gpu(a, Q, R, 160);
-//  cout << "GPU my block 160: "
+//  matrix_cl a_gpu(a);
+//  matrix_cl q_gpu(q);
+//  cout << "\t\tcopy q a: "
 //       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
 //       << "ms" << endl;
-//  chk(a,Q,R);
+//
+//  start = std::chrono::steady_clock::now();
+//  matrix_cl res= q_gpu * a_gpu;
+//  cout << "\t\tGPU multiply q*a: "
+//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+//       << "ms" << endl;
+
 
   return 0;
 }
