@@ -13,16 +13,18 @@ TEST(ErrorHandling, checkOrdered) {
   y = {0, 1, std::numeric_limits<double>::infinity()};
   EXPECT_NO_THROW(check_ordered("check_ordered", "y", y));
 
-  y = { -10, 1, std::numeric_limits<double>::infinity()};
+  y = {-10, 1, std::numeric_limits<double>::infinity()};
   EXPECT_NO_THROW(check_ordered("check_ordered", "y", y));
 
-  y = {-std::numeric_limits<double>::infinity(), 1, std::numeric_limits<double>::infinity()};
+  y = {-std::numeric_limits<double>::infinity(), 1,
+       std::numeric_limits<double>::infinity()};
   EXPECT_NO_THROW(check_ordered("check_ordered", "y", y));
 
   y = {0, 0, 0};
   EXPECT_THROW(check_ordered("check_ordered", "y", y), std::domain_error);
 
-  y = {0, std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
+  y = {0, std::numeric_limits<double>::infinity(),
+       std::numeric_limits<double>::infinity()};
   EXPECT_THROW(check_ordered("check_ordered", "y", y), std::domain_error);
 }
 

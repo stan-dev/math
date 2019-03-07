@@ -11,7 +11,7 @@ TEST(ErrorHandlingScalar, CheckPositiveFinite_Vector) {
   ASSERT_NO_THROW(check_positive_finite(function, "x", x))
       << "check_positive_finite should be true with finite x";
 
-  x= {1, 2, std::numeric_limits<double>::infinity()};
+  x = {1, 2, std::numeric_limits<double>::infinity()};
   EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error)
       << "check_positive_finite should throw exception on Inf";
 

@@ -7,7 +7,7 @@
 TEST(ErrorHandlingMatrix, IsNonzeroSizeMatrix) {
   using stan::math::is_nonzero_size;
 
-  std::vector<double> a{4,3};
+  std::vector<double> a{4, 3};
   EXPECT_TRUE(stan::math::is_nonzero_size(a));
 
   a.resize(0);
