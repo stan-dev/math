@@ -354,7 +354,7 @@ int main() {
   auto kernel_10 = opencl_kernels::eigenvals_bisect;
 
   //srand(time(0));
-  int A=1000;
+  int A=8000;
   Mat a = Mat::Random(A, A);
   a+=a.transpose().eval();
   //a.diagonal()+=Eigen::VectorXd::Constant(A,A);

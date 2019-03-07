@@ -313,7 +313,7 @@ void block_householder_tridiag_cl2(const Eigen::MatrixXd& A, Eigen::MatrixXd& pa
 #ifdef TIME_IT
     start = std::chrono::steady_clock::now();
 #endif
-    matrix_cl V_gpu(A.rows() - k - 1, actual_r);
+    matrix_cl V_gpu(A.rows() - k - 1, actual_r+1);
     V_gpu.zeros<TriangularViewCL::Upper>();
 #ifdef TIME_IT
     t1+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
@@ -347,19 +347,27 @@ void block_householder_tridiag_cl2(const Eigen::MatrixXd& A, Eigen::MatrixXd& pa
         t3+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
         start = std::chrono::steady_clock::now();
 #endif
-        opencl_kernels::tridiagonalization_v2(
-                cl::NDRange((A.rows() - k - j - 1)*64),cl::NDRange(64),
-                packed_gpu.buffer(), V_gpu.buffer(), Uu.buffer(), Vu.buffer(),
-                packed_gpu.rows(), V_gpu.rows(), k, j);
+//        opencl_kernels::tridiagonalization_v2(
+//                cl::NDRange((A.rows() - k - j - 1)*64),cl::NDRange(64),
+//                packed_gpu.buffer(), V_gpu.buffer(), Uu.buffer(), Vu.buffer(),
+//                packed_gpu.rows(), V_gpu.rows(), k, j);
 //        opencl_kernels::tridiagonalization_v2_2(
 //                cl::NDRange((A.rows() - k - j - 1 + 31)/32*32),cl::NDRange(32),
 //                packed_gpu.buffer(), V_gpu.buffer(), Uu.buffer(), Vu.buffer(),
 //                packed_gpu.rows(), V_gpu.rows(), k, j);
+        opencl_kernels::tridiagonalization_v2_3(
+                cl::NDRange((A.rows() - k - j - 1 + 63)/64*64),cl::NDRange(64),
+                packed_gpu.buffer(), V_gpu.buffer(), Uu.buffer(), Vu.buffer(),
+                packed_gpu.rows(), V_gpu.rows(), k, j);
 #ifdef TIME_IT
         t4+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
         start = std::chrono::steady_clock::now();
 #endif
-        opencl_kernels::tridiagonalization_v3(
+//        opencl_kernels::tridiagonalization_v3(
+//                cl::NDRange(128),cl::NDRange(128),
+//                packed_gpu.buffer(), V_gpu.buffer(), q_gpu.buffer(),
+//                packed_gpu.rows(), V_gpu.rows(), k, j);
+        opencl_kernels::tridiagonalization_v3_2(
                 cl::NDRange(128),cl::NDRange(128),
                 packed_gpu.buffer(), V_gpu.buffer(), q_gpu.buffer(),
                 packed_gpu.rows(), V_gpu.rows(), k, j);
@@ -374,10 +382,10 @@ void block_householder_tridiag_cl2(const Eigen::MatrixXd& A, Eigen::MatrixXd& pa
 #ifdef TIME_IT
     start = std::chrono::steady_clock::now();
 #endif
-    matrix_cl U_gpu(V_gpu.rows() - actual_r + 1, V_gpu.cols());
+    matrix_cl U_gpu(V_gpu.rows() - actual_r + 1, actual_r);
     U_gpu.sub_block(packed_gpu, k + actual_r, k, 0, 0, A.rows() - k - actual_r, actual_r);
 //    matrix_cl V_T_gpu(V.bottomRows(V.rows() - actual_r + 1).transpose().eval());
-    matrix_cl Vb_gpu(V_gpu.rows() - actual_r + 1, V_gpu.cols());
+    matrix_cl Vb_gpu(V_gpu.rows() - actual_r + 1, actual_r);
     Vb_gpu.sub_block(V_gpu, actual_r - 1, 0, 0, 0, V_gpu.rows() - actual_r + 1, actual_r);
 #ifdef TIME_IT
     t6+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();

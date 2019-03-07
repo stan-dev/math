@@ -424,6 +424,111 @@ const char* tridiagonalization_v2_2_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
+const char* tridiagonalization_v2_3_kernel_code = STRINGIFY(
+// \endcond
+        __kernel void tridiagonalization_v2(const __global double* P, __global double* V, const __global double* Uu, const __global double* Vu,
+                                            const int P_rows, const int V_rows, const int k, const int j) {
+          const int lid = get_local_id(0);
+          const int gid = get_global_id(0);
+          const int gsize = get_global_size(0);
+          const int lsize = get_local_size(0);
+          const int ngroups = get_num_groups(0);
+          const int wgid = get_group_id(0);
+
+          int work = P_rows - k - j - 1;
+          //printf("%d work %d",gid, work);
+          double acc = 0;
+
+          const __global double* vec = P + P_rows * (k + j) + k + j + 1;
+          const __global double* M1 = P + P_rows * (k + j + 1) + k + j + 1;
+          const __global double* M2 = P + P_rows * k + k + j + 1;
+          const __global double* M3 = V + j;
+          int i;
+          if(gid<work) {
+            for (i = 0; i <= gid; i++) {
+              acc += M1[P_rows * i + gid] * vec[i];
+//              printf("%d using1 %lf, \t %lf\n", gid, M1[P_rows * i + gid], vec[i]);
+            }
+            for (int i = 0; i < j; i++) {
+              acc -= M2[P_rows * i + gid] * Vu[i];
+              acc -= M3[V_rows * i + gid] * Uu[i];
+//              printf("%d using2 %lf, \t %lf, \t %lf\n", gid, M2[P_rows * i + gid], M3[V_rows * i + gid], Vu[i]);
+            }
+            V[V_rows * j + gid + j] = acc;
+//            printf("%d writing12 at %d: %lf\n", gid, V_rows * j + gid + j, acc);
+          }
+
+          for(int i=wgid;i<work;i+=ngroups){
+            __local double res_loc[64];
+            acc = 0;
+            for(int l=i+1+lid;l<work;l+=64){
+              acc += M1[P_rows * i + l] * vec[l];
+//              printf("%d using3 %lf, \t %lf\n", gid, M1[P_rows * i + l], vec[l]);
+            }
+            res_loc[lid]=acc;
+            barrier(CLK_LOCAL_MEM_FENCE);
+            if(lid==0) {
+              for (int i = 1; i < 64; i++) {
+                acc += res_loc[i];
+              }
+              V[V_rows * (j+1) + i + j]=acc;
+//              printf("%d writing3 at %d: %lf\n", gid, V_rows * (j+1) + i + j, acc);
+            }
+            barrier(CLK_LOCAL_MEM_FENCE);
+          }
+        }
+// \cond
+);
+// \endcond
+
+// \cond
+const char* tridiagonalization_v3_2_kernel_code = STRINGIFY(
+// \endcond
+        __kernel void tridiagonalization_v3(__global double* P, __global double* V, __global double* q,
+                                            const int P_rows, const int V_rows, const int k, const int j) {
+          const int lid = get_local_id(0);
+          const int gid = get_global_id(0);
+          const int gsize = get_global_size(0);
+          const int lsize = get_local_size(0);
+          const int ngroups = get_num_groups(0);
+          const int wgid = get_group_id(0);
+
+
+          __global double* u = P + P_rows * (k + j) + k + j + 1;
+          __global double* v = V + V_rows * j + j;
+          double acc = 0;
+
+          for (int i = lid; i < P_rows - k - j - 1; i += 128) {
+            double vi = v[i] + v[i+V_rows];
+            v[i]=vi;
+            acc+=u[i]*vi;
+//            printf("%3d using %lf, \t %lf\n", gid, u[i], vi);
+          }
+          __local double res_loc[128];
+          res_loc[lid]=acc;
+          barrier(CLK_LOCAL_MEM_FENCE);
+          if(lid==0){
+            for(int i=1;i<128;i++){
+              acc+=res_loc[i];
+            }
+            res_loc[0]=acc;
+//            printf("cnst=%lf\n", acc);
+          }
+          barrier(CLK_LOCAL_MEM_FENCE);
+          acc=res_loc[0]*0.5;
+          for (int i = lid; i < P_rows - k - j - 1; i += 128) {
+            v[i] -= acc * u[i];
+          }
+          if(gid==0) {
+//            printf("%3d SUB using %lf, \t %lf\n", gid, u[0], *q / sqrt(2.));
+            P[P_rows * (k + j + 1) + k + j] -= *q / sqrt(2.) * u[0];
+          }
+        }
+// \cond
+);
+// \endcond
+
+// \cond
 const char* tridiagonalization_v3_kernel_code = STRINGIFY(
 // \endcond
         __kernel void tridiagonalization_v3(__global double* P, __global double* V, __global double* q,
@@ -661,8 +766,14 @@ const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, int, in
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, int, int, int, int>
         tridiagonalization_v2_2("tridiagonalization_v2", tridiagonalization_v2_2_kernel_code);
 
+const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, int, int, int, int>
+        tridiagonalization_v2_3("tridiagonalization_v2", tridiagonalization_v2_3_kernel_code);
+
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int, int>
         tridiagonalization_v3("tridiagonalization_v3", tridiagonalization_v3_kernel_code);
+
+const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int, int>
+        tridiagonalization_v3_2("tridiagonalization_v3", tridiagonalization_v3_2_kernel_code);
 
 const global_range_kernel<cl::Buffer, cl::Buffer, int, int, int>
         subtract_twice("subtract_twice", subtract_twice_kernel_code);
