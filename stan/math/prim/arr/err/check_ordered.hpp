@@ -18,7 +18,7 @@ namespace math {
  * @param name Variable name (for error messages)
  * @param y <code>std::vector</code> to test
  * @throw <code>std::domain_error</code> if the vector elements are
- *   not ordered, if there are duplicated values, or if any element 
+ *   not ordered, if there are duplicated values, or if any element
  *   is <code>NaN</code>.
  */
 template <typename T_y>

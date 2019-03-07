@@ -17,27 +17,27 @@ TEST(ErrorHandling, isMatchingSize) {
 }
 
 TEST(ErrorHandling, isMatchingSize_arr) {
-  std::array<double,4> a;
-  std::array<double,4> b;
+  std::array<double, 4> a;
+  std::array<double, 4> b;
   EXPECT_TRUE(stan::math::is_matching_size(a, b));
-  
-  std::array<double,0> c;
+
+  std::array<double, 0> c;
   EXPECT_FALSE(stan::math::is_matching_size(c, b));
 
-  std::array<double,0> d;
+  std::array<double, 0> d;
   EXPECT_TRUE(stan::math::is_matching_size(c, d));
 }
 
 TEST(ErrorHandling, isMatchingSize_mat) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> a;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> b;
-  a.resize(4,4);
-  b.resize(4,4);
-  EXPECT_TRUE(stan::math::is_matching_size(a,b));
-  
-  a.resize(2,4);
-  EXPECT_FALSE(stan::math::is_matching_size(a,b));
-  
-  b.resize(2,4);
-  EXPECT_TRUE(stan::math::is_matching_size(a,b));
+  a.resize(4, 4);
+  b.resize(4, 4);
+  EXPECT_TRUE(stan::math::is_matching_size(a, b));
+
+  a.resize(2, 4);
+  EXPECT_FALSE(stan::math::is_matching_size(a, b));
+
+  b.resize(2, 4);
+  EXPECT_TRUE(stan::math::is_matching_size(a, b));
 }
