@@ -348,7 +348,7 @@ void eigenvalsBisect4(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen:
     Eigen::Array<int, BISECT_K, 1> counts = getSturmCountTVec2(diag, subdiagSquared, shifts, BISECT_K);
     for (int i = 0; i < n_valid; i++) {
       if (counts[i] >= t[i].start + 1) {
-        if ((t[i].high - shifts[i]) / abs(shifts[i]) > eps && abs(t[i].high - shifts[i]) > std::numeric_limits<double>::min()) {
+        if ((t[i].high - shifts[i]) / abs(shifts[i]) > eps && shifts[i] - t[i].low > std::numeric_limits<double>::min()) {
           tQueue.push({t[i].start, counts[i], t[i].low, shifts[i]});
         }
         else {
@@ -369,7 +369,7 @@ void eigenvalsBisect4(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen:
         my_high = shifts[i + n_valid];
       }
       if (counts[i] <= my_end - 1) {
-        if ((my_high - shifts[i]) / abs(shifts[i]) > eps && abs(my_high - shifts[i]) > std::numeric_limits<double>::min()) {
+        if ((my_high - shifts[i]) / abs(shifts[i]) > eps && my_high - shifts[i] > std::numeric_limits<double>::min()) {
           tQueue.push({counts[i], my_end, shifts[i], my_high});
         }
         else {

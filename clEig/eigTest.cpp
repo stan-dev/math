@@ -336,8 +336,8 @@ void testMrrr(){
 
 int main() {
   auto start = std::chrono::steady_clock::now();
-//  testMrrr();
-//  return 0;
+  testMrrr();
+  return 0;
 //  miniTest();
 //  miniTest2();
 
