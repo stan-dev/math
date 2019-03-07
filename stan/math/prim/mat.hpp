@@ -135,6 +135,7 @@
 #include <stan/math/prim/mat/fun/inv_cloglog.hpp>
 #include <stan/math/prim/mat/fun/inv_logit.hpp>
 #include <stan/math/prim/mat/fun/inv_sqrt.hpp>
+#include <stan/math/prim/mat/fun/inv_sqrt_spd.hpp>
 #include <stan/math/prim/mat/fun/inv_square.hpp>
 #include <stan/math/prim/mat/fun/inverse.hpp>
 #include <stan/math/prim/mat/fun/inverse_spd.hpp>
@@ -221,6 +222,7 @@
 #include <stan/math/prim/mat/fun/sort_indices_asc.hpp>
 #include <stan/math/prim/mat/fun/sort_indices_desc.hpp>
 #include <stan/math/prim/mat/fun/sqrt.hpp>
+#include <stan/math/prim/mat/fun/sqrt_spd.hpp>
 #include <stan/math/prim/mat/fun/square.hpp>
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
 #include <stan/math/prim/mat/fun/stan_print.hpp>
