@@ -15,7 +15,7 @@ const char* tridiagonalization_householder_kernel_code = STRINGIFY(
 // \endcond
         /**
          * Calculates householder vector and first element of the vector v.
-         * Must be run with 1 workgroup of 128 threads.
+         * Must be run with 1 workgroup of 1024 threads.
          */
         __kernel void tridiagonalization_householder(__global double* P, __global double* V, __global double* q_glob,
                                               const int P_rows, const int V_rows,
@@ -48,14 +48,35 @@ const char* tridiagonalization_householder_kernel_code = STRINGIFY(
               q += tmp * tmp;
             }
           }
-          __local double q_local[128];
+          __local double q_local[1024];
           q_local[lid] = q;
           barrier(CLK_LOCAL_MEM_FENCE);
           double alpha;
-          if (gid == 0) {
-            for (int i = 1; i < 128; i++) {
-              q += q_local[i];
-            }
+          //efficient parallel reduction
+          if(lid<256) {
+            q_local[lid] += q_local[lid + 256] + q_local[lid + 512] + q_local[lid + 768];
+          }
+          barrier(CLK_LOCAL_MEM_FENCE);
+          if(lid<64) {
+            q_local[lid] += q_local[lid + 64] + q_local[lid + 128] + q_local[lid + 192];
+          }
+          barrier(CLK_LOCAL_MEM_FENCE);
+          if(lid<16) {
+            q_local[lid] += q_local[lid + 16] + q_local[lid + 32] + q_local[lid + 48];
+          }
+          barrier(CLK_LOCAL_MEM_FENCE);
+          if(lid<4) {
+            q_local[lid] += q_local[lid + 4] + q_local[lid + 8] + q_local[lid + 12];
+          }
+          barrier(CLK_LOCAL_MEM_FENCE);
+          if(lid==0){
+            q=q_local[lid]+q_local[lid+1]+q_local[lid+2]+q_local[lid+3];
+//          }
+//          barrier(CLK_LOCAL_MEM_FENCE);
+//          if (gid == 0) {
+//            for (int i = 1; i < 1024; i++) {
+//              q += q_local[i];
+//            }
 //            printf("q_SqNorm=%lf\n", q);
 
             double p1 = P[P_start + 1];

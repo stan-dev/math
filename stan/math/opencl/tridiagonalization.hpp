@@ -330,7 +330,7 @@ void block_householder_tridiag_cl2(const Eigen::MatrixXd& A, Eigen::MatrixXd& pa
 //                packed_gpu.buffer(), V_gpu.buffer(), q_gpu.buffer(), Uu.buffer(), Vu.buffer(),
 //                packed_gpu.rows(), V_gpu.rows(), j, k);
         opencl_kernels::tridiagonalization_householder(
-                cl::NDRange(128), cl::NDRange(128),
+                cl::NDRange(1024), cl::NDRange(1024),
                 packed_gpu.buffer(), V_gpu.buffer(), q_gpu.buffer(),
                 packed_gpu.rows(), V_gpu.rows(), j, k);
 #ifdef TIME_IT
