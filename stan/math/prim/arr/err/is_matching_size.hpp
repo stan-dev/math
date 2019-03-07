@@ -8,15 +8,15 @@ namespace math {
 
 /**
  * Return <code>true</code> if two structures are the same size.
- *
+ * This is a top-level sizing function for <code>std::vector</code>
+ * where a 2x3 vector returns 2,and a total sizing function for
+ * <code>Eigen::Matrix</code> where a 2x3 matrix will return 6.
  * @tparam T_y1 Type of the first variable, requires class method
  *    <code>.size()</code>
  * @tparam T_y2 Type of the second variable, requires class method
  *    <code>.size()</code>
- *
  * @param y1 First variable
  * @param y2 Second variable
- *
  * @return <code>true</code> if the variable sizes match
  */
 template <typename T_y1, typename T_y2>

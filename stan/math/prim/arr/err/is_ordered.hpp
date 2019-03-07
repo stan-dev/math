@@ -9,12 +9,9 @@ namespace math {
 
 /**
  * Return <code>true</code> if the vector is sorted into strictly
- * increasing order.
- *
+ * increasing order.s
  * @tparam T_y Type of scalar, requires class method <code>.size()</code>
- *
  * @param y <code>std::vector</code> to test
- *
  * @return <code>true</code> if vector is sorted in ascending order
  */
 template <typename T_y>

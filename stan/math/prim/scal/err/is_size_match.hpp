@@ -9,20 +9,15 @@ namespace math {
 
 /**
  * Return <code>true</code> if the provided sizes match.
- *
  * @tparam T_size1 Type of size 1
  * @tparam T_size2 Type of size 2
- *
  * @param i Size 1
  * @param j Size 2
- *
  * @return <code>true</code> if provided dimensions match
  */
 template <typename T_size1, typename T_size2>
 inline bool is_size_match(T_size1 i, T_size2 j) {
-  if (likely(i == static_cast<T_size1>(j)))
-    return true;
-  return false;
+  return likely(i == static_cast<T_size1>(j));
 }
 
 }  // namespace math

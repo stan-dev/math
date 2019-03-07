@@ -6,18 +6,13 @@ namespace math {
 
 /**
  * Returns <code>true</code> if the specified matrix/vector is size nonzero.
- *
  * @tparam T_y Type of container, requires class method <code>.size()</code>
- *
  * @param y Container to test -- matrix/vector
- *
  * @return <code>true</code> if container has size zero
  */
 template <typename T_y>
 inline bool is_nonzero_size(const T_y& y) {
-  if (y.size() > 0)
-    return true;
-  return false;
+  return y.size() > 0;
 }
 
 }  // namespace math
