@@ -449,11 +449,14 @@ void block_apply_packed_Q3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, in
  */
 void block_apply_packed_Q_cl2(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 100) {
   //if input A==Identity, constructs Q
+  auto start = std::chrono::steady_clock::now();
   matrix_cl A_gpu(A);
+  Eigen::MatrixXd packed_transpose_triang = packed.transpose().triangularView<Eigen::StrictlyUpper>();
+  matrix_cl packed_transpose_triang_gpu(packed_transpose_triang);
   Eigen::MatrixXd scratchSpace(A.rows(), r);
 #ifdef TIME_IT
+  int t0=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
   int t1=0, t2=0, t3=0, t4=0;
-  auto start = std::chrono::steady_clock::now();
 #endif
   for (int k = (packed.rows() - 3) / r * r; k >= 0; k -= r) {
     int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
@@ -477,8 +480,10 @@ void block_apply_packed_Q_cl2(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A,
 #ifdef TIME_IT
     start = std::chrono::steady_clock::now();
 #endif
-    Eigen::MatrixXd packed_block_transpose_triang = packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>();
-    matrix_cl packed_block_transpose_triang_gpu(packed_block_transpose_triang);
+//    Eigen::MatrixXd packed_block_transpose_triang = packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>();
+//    matrix_cl packed_block_transpose_triang_gpu(packed_block_transpose_triang);
+    matrix_cl packed_block_transpose_triang_gpu(actual_r, packed.rows() - k - 1);
+    packed_block_transpose_triang_gpu.sub_block(packed_transpose_triang_gpu, k, k+1, 0, 0, actual_r, packed.rows() - k - 1);
     matrix_cl A_bottom_gpu(A.rows() - k - 1, A.cols());
     A_bottom_gpu.sub_block(A_gpu, k+1, 0, 0, 0, A_bottom_gpu.rows(), A_bottom_gpu.cols());
     matrix_cl W_gpu(W);
@@ -486,7 +491,7 @@ void block_apply_packed_Q_cl2(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A,
     t3+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
     start = std::chrono::steady_clock::now();
 #endif
-    A_bottom_gpu = A_bottom_gpu - W_gpu * (packed_block_transpose_triang_gpu * A_bottom_gpu);
+    A_bottom_gpu = A_bottom_gpu - W_gpu * tri_rect_multiply<TriangularViewCL::Upper>(packed_block_transpose_triang_gpu, A_bottom_gpu);
     A_gpu.sub_block(A_bottom_gpu, 0, 0, k+1, 0, A_bottom_gpu.rows(), A_bottom_gpu.cols());
 #ifdef TIME_IT
     t4+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
@@ -496,7 +501,7 @@ void block_apply_packed_Q_cl2(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A,
   }
   copy(A,A_gpu);
 #ifdef TIME_IT
-  std::cout << "block_apply_packed_Q_cl2 detailed timings: " << t1/1000 << " " << t2/1000 << " " << t3/1000 << " " << t4/1000 << std::endl;
+  std::cout << "block_apply_packed_Q_cl2 detailed timings: " << t0/1000 << " " << t1/1000 << " " << t2/1000 << " " << t3/1000 << " " << t4/1000 << std::endl;
 #endif
 }
 
@@ -579,7 +584,7 @@ void block_apply_packed_Q_cl3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A,
 #endif
     matrix_cl A_bottom_gpu(A.rows() - k - 1, A.cols());
     A_bottom_gpu.sub_block(A_gpu, k + 1, 0, 0, 0, A_bottom_gpu.rows(), A_bottom_gpu.cols());
-    A_bottom_gpu = A_bottom_gpu - W_gpu * (packed_block_transpose_triang_gpu * A_bottom_gpu);
+    A_bottom_gpu = A_bottom_gpu - W_gpu * tri_rect_multiply<TriangularViewCL::Upper>(packed_block_transpose_triang_gpu, A_bottom_gpu);
     A_gpu.sub_block(A_bottom_gpu, 0, 0, k + 1, 0, A_bottom_gpu.rows(), A_bottom_gpu.cols());
 //    scratchSpace.transpose().bottomRows(actual_r).noalias() = packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>() * A.bottomRows(A.rows() - k - 1);
 //    A.bottomRows(A.cols() - k - 1).noalias() -= W * scratchSpace.transpose().bottomRows(actual_r);
