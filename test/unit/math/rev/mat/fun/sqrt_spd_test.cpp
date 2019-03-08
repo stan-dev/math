@@ -14,8 +14,8 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
 
 struct make_zero {
   template <typename T>
-  Eigen::Matrix<T, Eigen::Dynamic, 1>
-  operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1> &a) const {
+  Eigen::Matrix<T, Eigen::Dynamic, 1> operator()(
+      const Eigen::Matrix<T, Eigen::Dynamic, 1> &a) const {
     typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
     const int K = static_cast<int>(sqrt(a.rows()));
     matrix_t A(K, K);
