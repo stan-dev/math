@@ -100,7 +100,7 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
           Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
           Bpad.cols(), Bpad.rows());
     } else {
-      opencl_kernels::tri_rect_multiply(
+      opencl_kernels::tri_multiply(
           cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
           Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
           Bpad.cols(), Bpad.rows(), triangular_view_A, triangular_view_B);
