@@ -53,7 +53,8 @@ inline auto multiply(const double scalar, const matrix_cl& A) {
  *  lower/upper triangular or a rectangular matrix
  * @tparam triangular_view_B specifies whether the matrix B is a
  *  lower/upper triangular or a rectangular matrix
- *
+ * @return the product of the first and second matrix
+ * 
  * @throw <code>std::invalid_argument</code> if the
  *   number of columns in A and rows in B do not match
  */
