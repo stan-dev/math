@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_KERNELS_TRI_RECT_MULTIPLY_HPP
-#define STAN_MATH_OPENCL_KERNELS_TRI_RECT_MULTIPLY_HPP
+#ifndef STAN_MATH_OPENCL_KERNELS_TRI_MULTIPLY_HPP
+#define STAN_MATH_OPENCL_KERNELS_TRI_MULTIPLY_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char* tri_rect_multiply_kernel_code = STRINGIFY(
+static const char* tri_multiply_kernel_code = STRINGIFY(
     // \endcond
     /**
      * OpenCL Matrix multiplication of a triangular and rectangular matrix
@@ -22,7 +22,7 @@ static const char* tri_rect_multiply_kernel_code = STRINGIFY(
      * @param[in] lower_upper_A the triangularity of A (lower, upper or none)
      * @param[in] lower_upper_B the triangularity of B (lower, upper or none)
      */
-    __kernel void tri_rect_multiply(
+    __kernel void tri_multiply(
         const __global double* A, const __global double* B, __global double* C,
         const int M, const int N, const int K, unsigned int lower_upper_A,
         unsigned int lower_upper_B) {
@@ -128,7 +128,7 @@ static const char* tri_rect_multiply_kernel_code = STRINGIFY(
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int,
                          TriangularViewCL, TriangularViewCL>
-    tri_rect_multiply("tri_rect_multiply", tri_rect_multiply_kernel_code,
+    tri_multiply("tri_multiply", tri_multiply_kernel_code,
                       {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
 
 }  // namespace opencl_kernels
