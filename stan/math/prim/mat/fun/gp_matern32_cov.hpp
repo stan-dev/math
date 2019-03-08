@@ -85,7 +85,7 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
  * Returns a Matern 3/2 covariance matrix
  *
  * \f[ k(x, x') = \sigma^2(1 + \sqrt{3}
- *   \sqrt{\sum_{k=1}^{K}\frac{d{(x, x')^2}}{l_k^2}})
+ *   \sqrt{\sum_{k=1}^{K}\frac{d(x, x')^2}{l_k^2}})
  *   exp(-\sqrt{3}\sqrt{\sum_{k=1}^{K}\frac{d(x, x')^2}{l_k^2}}) \f]
  *
  * where \f$d(x, x')\f$ is the Euclidean distance.
@@ -219,7 +219,7 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * Returns a Matern 3/2 cross covariance matrix
  *
  * \f[ k(x, x') = \sigma^2(1 + \sqrt{3}
- *   \sqrt{\sum_{k=1}^{K}\frac{d(x, x')^}{l_k^2}})
+ *   \sqrt{\sum_{k=1}^{K}\frac{d(x, x')^2}{l_k^2}})
  *   exp(-\sqrt{3}\sqrt{\sum_{k=1}^{K}\frac{d(x, x')^2}{l_k^2}}) \f]
  *
  * where \f$d(x, x')\f$ is the Euclidean distance
