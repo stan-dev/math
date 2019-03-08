@@ -294,7 +294,7 @@ TEST(MathMatrix, rect_lower_tri_multiply_small) {
   auto m3 = (m1 * m2).eval();
 
   auto m33 = multiply<stan::math::TriangularViewCL::Entire,
-                               stan::math::TriangularViewCL::Lower>(m11, m22);
+                      stan::math::TriangularViewCL::Lower>(m11, m22);
 
   stan::math::copy(m3_cl_res, m33);
 
@@ -316,7 +316,7 @@ TEST(MathMatrix, rect_lower_tri_multiply_big) {
   auto m3 = (m1 * m2).eval();
 
   auto m33 = multiply<stan::math::TriangularViewCL::Entire,
-                               stan::math::TriangularViewCL::Lower>(m11, m22);
+                      stan::math::TriangularViewCL::Lower>(m11, m22);
 
   stan::math::copy(m3_cl_res, m33);
 
@@ -338,7 +338,7 @@ TEST(MathMatrix, rect_lower_tri_multiply_big_rect) {
   auto m3 = (m1 * m2).eval();
 
   auto m33 = multiply<stan::math::TriangularViewCL::Entire,
-                               stan::math::TriangularViewCL::Lower>(m11, m22);
+                      stan::math::TriangularViewCL::Lower>(m11, m22);
 
   stan::math::copy(m3_cl_res, m33);
 
@@ -359,7 +359,7 @@ TEST(MathMatrix, rect_upper_tri_multiply_small) {
   auto m3 = (m1 * m2).eval();
 
   auto m33 = multiply<stan::math::TriangularViewCL::Entire,
-                               stan::math::TriangularViewCL::Upper>(m11, m22);
+                      stan::math::TriangularViewCL::Upper>(m11, m22);
 
   stan::math::copy(m3_cl_res, m33);
 
@@ -381,7 +381,7 @@ TEST(MathMatrix, rect_upper_tri_multiply_big) {
   auto m3 = (m1 * m2).eval();
 
   auto m33 = multiply<stan::math::TriangularViewCL::Entire,
-                               stan::math::TriangularViewCL::Upper>(m11, m22);
+                      stan::math::TriangularViewCL::Upper>(m11, m22);
 
   stan::math::copy(m3_cl_res, m33);
 
@@ -403,7 +403,7 @@ TEST(MathMatrix, rect_upper_tri_multiply_big_rect) {
   auto m3 = (m1 * m2).eval();
 
   auto m33 = multiply<stan::math::TriangularViewCL::Entire,
-                               stan::math::TriangularViewCL::Upper>(m11, m22);
+                      stan::math::TriangularViewCL::Upper>(m11, m22);
 
   stan::math::copy(m3_cl_res, m33);
 

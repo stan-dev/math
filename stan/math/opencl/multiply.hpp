@@ -48,10 +48,10 @@ inline auto multiply(const double scalar, const matrix_cl& A) {
  * Computes the matrix multiplication C[M, K] = A[M, N] x B[N, K]
  *
  * @param A first matrix
- * @param B second matrix 
- * @tparam triangular_view_A specifies whether the matrix A is a 
+ * @param B second matrix
+ * @tparam triangular_view_A specifies whether the matrix A is a
  *  lower/upper triangular or a rectangular matrix
- * @tparam triangular_view_B specifies whether the matrix B is a 
+ * @tparam triangular_view_B specifies whether the matrix B is a
  *  lower/upper triangular or a rectangular matrix
  *
  * @throw <code>std::invalid_argument</code> if the
@@ -89,17 +89,17 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   int wpt = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
       "WORK_PER_THREAD");
   try {
-    if (triangular_view_A == TriangularViewCL::Entire &&
-        triangular_view_B == TriangularViewCL::Entire) {
+    if (triangular_view_A == TriangularViewCL::Entire
+        && triangular_view_B == TriangularViewCL::Entire) {
       opencl_kernels::matrix_multiply(
-        cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
-        Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
-        Bpad.cols(), Bpad.rows());
+          cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
+          Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
+          Bpad.cols(), Bpad.rows());
     } else {
       opencl_kernels::tri_rect_multiply(
-        cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
-        Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
-        Bpad.cols(), Bpad.rows(), triangular_view_A, triangular_view_B); 
+          cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
+          Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
+          Bpad.cols(), Bpad.rows(), triangular_view_A, triangular_view_B);
     }
   } catch (cl::Error& e) {
     check_opencl_error("multiply", e);

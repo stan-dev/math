@@ -53,14 +53,14 @@ static const char* tri_multiply_kernel_code = STRINGIFY(
       int is_A_upper = lower_upper_A == UPPER;
       int is_B_lower = lower_upper_B == LOWER;
       int is_B_upper = lower_upper_B == UPPER;
-      int end_tile_A = !is_A_lower*(num_tiles-1)
-                       + is_A_lower*(i/THREAD_BLOCK_SIZE);
-      int end_tile_B = !is_B_upper*(num_tiles-1)
-                       + is_B_upper*(j/THREAD_BLOCK_SIZE);
-      int start_tile_A = is_A_upper*(i/THREAD_BLOCK_SIZE);
-      int start_tile_B = is_B_lower*(j/THREAD_BLOCK_SIZE);
+      int end_tile_A = !is_A_lower * (num_tiles - 1)
+                       + is_A_lower * (i / THREAD_BLOCK_SIZE);
+      int end_tile_B = !is_B_upper * (num_tiles - 1)
+                       + is_B_upper * (j / THREAD_BLOCK_SIZE);
+      int start_tile_A = is_A_upper * (i / THREAD_BLOCK_SIZE);
+      int start_tile_B = is_B_lower * (j / THREAD_BLOCK_SIZE);
       int start_tile = 0;
-      int end_tile = num_tiles-1;
+      int end_tile = num_tiles - 1;
       if (start_tile_A > start_tile_B) {
         start_tile = start_tile_A;
       } else {
@@ -81,26 +81,27 @@ static const char* tri_multiply_kernel_code = STRINGIFY(
           const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
           // if matrix A does not have zeros above/below the diagonal
           // we need to set zeros for the diagonal tile
-          if ((is_A_lower && ((tiled_j + w * THREAD_BLOCK_SIZE_COL) <= i)) ||
-             (is_A_upper && ((tiled_j + w * THREAD_BLOCK_SIZE_COL) >= i)) ||
-             (!is_A_lower && !is_A_upper)) {
+          if ((is_A_lower && ((tiled_j + w * THREAD_BLOCK_SIZE_COL) <= i))
+              || (is_A_upper && ((tiled_j + w * THREAD_BLOCK_SIZE_COL) >= i))
+              || (!is_A_lower && !is_A_upper)) {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                  [thread_block_row]
-              = A[(tiled_j + w * THREAD_BLOCK_SIZE_COL) * M + i];
+                   [thread_block_row]
+                = A[(tiled_j + w * THREAD_BLOCK_SIZE_COL) * M + i];
           } else {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                  [thread_block_row] = 0.0;
+                   [thread_block_row]
+                = 0.0;
           }
-          if ((is_B_lower && ((j + w * THREAD_BLOCK_SIZE_COL) <= tiled_i)) ||
-             (is_B_upper && ((j + w * THREAD_BLOCK_SIZE_COL) >= tiled_i)) ||
-             (!is_B_lower && !is_B_upper)) {
+          if ((is_B_lower && ((j + w * THREAD_BLOCK_SIZE_COL) <= tiled_i))
+              || (is_B_upper && ((j + w * THREAD_BLOCK_SIZE_COL) >= tiled_i))
+              || (!is_B_lower && !is_B_upper)) {
             B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                    [thread_block_row]
+                   [thread_block_row]
                 = B[(j + w * THREAD_BLOCK_SIZE_COL) * K + tiled_i];
           } else {
             B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                  [thread_block_row]
-              = 0.0;
+                   [thread_block_row]
+                = 0.0;
           }
         }
         barrier(CLK_LOCAL_MEM_FENCE);
@@ -108,7 +109,7 @@ static const char* tri_multiply_kernel_code = STRINGIFY(
           for (int w = 0; w < WORK_PER_THREAD; w++) {
             acc[w] += A_local[block_ind][thread_block_row]
                       * B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                                [block_ind];
+                               [block_ind];
           }
         }
         barrier(CLK_LOCAL_MEM_FENCE);
@@ -129,7 +130,7 @@ static const char* tri_multiply_kernel_code = STRINGIFY(
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int,
                          TriangularViewCL, TriangularViewCL>
     tri_multiply("tri_multiply", tri_multiply_kernel_code,
-                      {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
+                 {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
 
 }  // namespace opencl_kernels
 }  // namespace math
