@@ -14,8 +14,8 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
 
 struct make_zero {
   template <typename T>
-  Eigen::Matrix<T, Eigen::Dynamic, 1> operator()(
-      const Eigen::Matrix<T, Eigen::Dynamic, 1>& a) const {
+  Eigen::Matrix<T, Eigen::Dynamic, 1>
+  operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1> &a) const {
     typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
     const int K = static_cast<int>(sqrt(a.rows()));
     matrix_t A(K, K);
@@ -37,7 +37,7 @@ TEST(AgradRevMatrix, sqrt_spd) {
   using stan::math::sqrt_spd;
   using stan::math::vector_v;
 
-  int K = 2;
+  int K = 9;
   matrix_d A(K, K);
   A.setRandom();
   A = A.transpose() * A;
@@ -53,7 +53,6 @@ TEST(AgradRevMatrix, sqrt_spd) {
       EXPECT_NEAR(f_x(pos++), 0, TOL);
   for (int i = 0; i < J.rows(); i++)
     for (int j = 0; j < J.cols(); j++)
-      if (i != j)
-        EXPECT_NEAR(J(i, j), 0, TOL);
+      EXPECT_NEAR(J(i, j), 0, TOL);
   EXPECT_TRUE(J.array().any());
 }
