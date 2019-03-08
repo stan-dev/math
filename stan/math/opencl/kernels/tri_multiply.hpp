@@ -48,17 +48,32 @@ static const char* tri_multiply_kernel_code = STRINGIFY(
       }
 
       const int num_tiles = (K + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
-      // iterate over all tiles
-      int is_A_lower = lower_upper_A == LOWER;
-      int is_A_upper = lower_upper_A == UPPER;
-      int is_B_lower = lower_upper_B == LOWER;
-      int is_B_upper = lower_upper_B == UPPER;
-      int end_tile_A = !is_A_lower * (num_tiles - 1)
-                       + is_A_lower * (i / THREAD_BLOCK_SIZE);
-      int end_tile_B = !is_B_upper * (num_tiles - 1)
-                       + is_B_upper * (j / THREAD_BLOCK_SIZE);
-      int start_tile_A = is_A_upper * (i / THREAD_BLOCK_SIZE);
-      int start_tile_B = is_B_lower * (j / THREAD_BLOCK_SIZE);
+      
+      const int is_A_lower = lower_upper_A == LOWER;
+      const int is_A_upper = lower_upper_A == UPPER;
+      const int is_B_lower = lower_upper_B == LOWER;
+      const int is_B_upper = lower_upper_B == UPPER;
+      // This kernel is based on the kernel for the regular
+      // matrix multiply where the multiplitcation is split
+      // in tiles.
+      // In cases where a matrix is lower triangular
+      // its not necessary to multiply the elements
+      // over the diagonal, therefore those tiles
+      // in the matrix multiply can be skipped.
+      // With upper triangular matrices we dont need 
+      // to multiply the elements under the diagonal,
+      // so thosee tiles can be skipped.
+      // The following code determines the start and
+      // end tile based on triangularity of the input matrices
+      // If no matrices are triangular the starting tile 
+      // is 0 and the end tile is num_tiles-1 which 
+      // is the same as in \link kernels/multiply.hpp multiply()
+      const int end_tile_A = !is_A_lower*(num_tiles-1)
+                       + is_A_lower*(i/THREAD_BLOCK_SIZE);
+      const int end_tile_B = !is_B_upper*(num_tiles-1)
+                       + is_B_upper*(j/THREAD_BLOCK_SIZE);
+      const int start_tile_A = is_A_upper*(i/THREAD_BLOCK_SIZE);
+      const int start_tile_B = is_B_lower*(j/THREAD_BLOCK_SIZE);
       int start_tile = 0;
       int end_tile = num_tiles - 1;
       if (start_tile_A > start_tile_B) {
@@ -79,11 +94,12 @@ static const char* tri_multiply_kernel_code = STRINGIFY(
         for (int w = 0; w < WORK_PER_THREAD; w++) {
           const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
           const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
-          // if matrix A does not have zeros above/below the diagonal
-          // we need to set zeros for the diagonal tile
-          if ((is_A_lower && ((tiled_j + w * THREAD_BLOCK_SIZE_COL) <= i))
-              || (is_A_upper && ((tiled_j + w * THREAD_BLOCK_SIZE_COL) >= i))
-              || (!is_A_lower && !is_A_upper)) {
+          // For the tiles on the diagonal we can ignore the values over
+          // the diagonal if the matrix is lower triangular or under
+          // the diagonal if the matrix is upper triangular
+          if ((is_A_lower && ((tiled_j + w * THREAD_BLOCK_SIZE_COL) <= i)) ||
+             (is_A_upper && ((tiled_j + w * THREAD_BLOCK_SIZE_COL) >= i)) ||
+             (!is_A_lower && !is_A_upper)) {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
                 = A[(tiled_j + w * THREAD_BLOCK_SIZE_COL) * M + i];
@@ -125,7 +141,7 @@ static const char* tri_multiply_kernel_code = STRINGIFY(
 // \endcond
 
 /**
- * See the docs for \link kernels/tri_rect_multiply.hpp add() \endlink
+ * See the docs for \link kernels/tri_multiply.hpp tri_multiply() \endlink
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int,
                          TriangularViewCL, TriangularViewCL>

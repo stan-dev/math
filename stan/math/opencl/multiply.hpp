@@ -90,8 +90,11 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   int wpt = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
       "WORK_PER_THREAD");
   try {
-    if (triangular_view_A == TriangularViewCL::Entire
-        && triangular_view_B == TriangularViewCL::Entire) {
+    // when neither of the matrices are lower/upper triangular
+    // use the regural matrix multiply
+    // otherwise use the triangular multiply kernel
+    if (triangular_view_A == TriangularViewCL::Entire &&
+        triangular_view_B == TriangularViewCL::Entire) {
       opencl_kernels::matrix_multiply(
           cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
           Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
