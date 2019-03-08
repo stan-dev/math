@@ -66,33 +66,31 @@ double get_ldl(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<co
  * D and D+ are diagonal, L and L+ are lower unit triangular (diagonal elements are 1,
  * all elements except diagonal and subdiagonal are 0). L * D * L^T - shift * I = L+ * D * L+^T.
  * Also calculates element growth of D+: sum(abs(D+)) / abs(sum(D+)).
- * @param d Diagonal of D.
  * @param l Subdiagonal of L.
+ * @param d Diagonal of D.
  * @param shift Shift.
  * @param[out] l_plus Subdiagonal of L+.
  * @param[out] d_plus Diagonal of D+.
  * @return Element growth.
  */
-double get_perturbed_shifted_ldl(const Eigen::VectorXd& d, const Eigen::VectorXd& l, double shift, Eigen::VectorXd& l_plus, Eigen::VectorXd& d_plus) {
+double get_shifted_ldl(const Eigen::VectorXd& l, const Eigen::VectorXd& d, double shift, Eigen::VectorXd& l_plus, Eigen::VectorXd& d_plus) {
   int n = l.size();
   double s = -shift;
   double element_growth = 0;
   double element_growth_denominator = 0;
   for (int i = 0; i < n; i++) {
-    double di_perturbed = d[i];
-    double li_perturbed = l[i];
-    d_plus[i] = s + di_perturbed;
+    d_plus[i] = s + d[i];
     element_growth += abs(d_plus[i]);
     element_growth_denominator += d_plus[i];
-    l_plus[i] = li_perturbed * (di_perturbed / d_plus[i]);
+    l_plus[i] = l[i] * (d[i] / d_plus[i]);
     if (is_inf(d_plus[i]) && is_inf(s)) { // this happens if d_plus[i]==0 -> in next iteration d_plus==inf and s==inf
-      s = li_perturbed * li_perturbed * di_perturbed - shift;
+      s = l[i] * l[i] * d[i] - shift;
     }
     else {
-      s = l_plus[i] * li_perturbed * s - shift;
+      s = l_plus[i] * l[i] * s - shift;
     }
   }
-  d_plus[n] = s + d[n];// * get_random_perturbation_multiplier();
+  d_plus[n] = s + d[n];
   element_growth += abs(d_plus[n]);
   return element_growth / abs(element_growth_denominator);
 }
@@ -103,14 +101,14 @@ double get_perturbed_shifted_ldl(const Eigen::VectorXd& d, const Eigen::VectorXd
  * L * D * L^T - shift * I = L+ * D+ * L+^T = U- * D- * U-^T
  * D, D+ and D- are diagonal, L and L+ are lower unit triangular (diagonal elements are 1, all elements except diagonal and subdiagonal are 0),
  * U- is upper unit triangular (diagonal elements are 1, all elements except diagonal and superdiagonal are 0)
- * @param d Diagonal of D.
  * @param l Subdiagonal of L.
+ * @param d Diagonal of D.
  * @param shift Shift.
  * @param[out] l_plus Subdiagonal of L+.
  * @param[out] u_minus Superdiagonal of U-.
  * @return Twist index.
  */
-int get_twisted_factorization(const Eigen::VectorXd& d, const Eigen::VectorXd& l, double shift, Eigen::VectorXd& l_plus, Eigen::VectorXd& u_minus) {
+int get_twisted_factorization(const Eigen::VectorXd& l, const Eigen::VectorXd& d, double shift, Eigen::VectorXd& l_plus, Eigen::VectorXd& u_minus) {
   int n = l.size();
   //calculate shifted ldl
   Eigen::VectorXd s(n + 1);
@@ -185,12 +183,12 @@ int get_twisted_factorization(const Eigen::VectorXd& d, const Eigen::VectorXd& l
 /**
  * Calculates Sturm count of a LDL decomposition of a tridiagonal matrix - number of eigenvalues larger or equal to shift.
  * Uses stqds - calculation of shifted LDL decomposition algorithm and counts number of positive elements in D.
- * @param d Diagonal of D.
  * @param l Subdiagonal of L.
+ * @param d Diagonal of D.
  * @param shift Shift.
  * @return Sturm count.
  */
-int getSturmCountLdl(const Eigen::VectorXd& d, const Eigen::VectorXd& l, double shift) {
+int getSturmCountLdl(const Eigen::VectorXd& l, const Eigen::VectorXd& d, double shift) {
   int n = l.size();
   double s = -shift;
   double l_plus, d_plus;
@@ -212,18 +210,18 @@ int getSturmCountLdl(const Eigen::VectorXd& d, const Eigen::VectorXd& l, double 
 
 /**
  * Refines bounds on the i-th largest eigenvalue of LDL decomposition of a matrix using bisection.
- * @param d Diagonal of D.
  * @param l Subdiagonal of L.
+ * @param d Diagonal of D.
  * @param low[in,out] Low bound on the eigenvalue.
  * @param high[in,out] High bound on the eigenvalue.
  * @param i i-th eigenvalue
  */
-void eigenvalBisectRefine(const Eigen::VectorXd& d, const Eigen::VectorXd& l, double& low, double& high, int i) {
+void eigenvalBisectRefine(const Eigen::VectorXd& l, const Eigen::VectorXd& d, double& low, double& high, int i) {
   int n = d.size();
   double eps = 3e-16;
   while (abs((high - low) / (high + low)) > eps && abs(high - low) > std::numeric_limits<double>::min()) { // second term is for the case where the eigenvalue is 0 and division yields NaN
     double mid = (high + low) * 0.5;
-    if (getSturmCountLdl(d, l, mid) > i) {
+    if (getSturmCountLdl(l, d, mid) > i) {
       low = mid;
     }
     else {
@@ -431,10 +429,9 @@ void perturbRepresentation(const Eigen::VectorXd& l0, const Eigen::VectorXd& d0,
  * @param subdiag Subdiagonal of T
  * @param i At which column of `eigenvecs` to store resulting vector.
  * @param twist_idx Twist index.
- * @param[out] eigenvecs Matrix in which to sstore resulting vector.
+ * @param[out] eigenvecs Matrix in which to store resulting vector.
  */
-void
-calculateEigenvector(const Eigen::VectorXd& l_plus, const Eigen::VectorXd& u_minus, const Eigen::Ref<const Eigen::VectorXd>& subdiag, int i, int twist_idx, Eigen::Ref<Eigen::MatrixXd>& eigenvecs) {
+void calculateEigenvector(const Eigen::VectorXd& l_plus, const Eigen::VectorXd& u_minus, const Eigen::Ref<const Eigen::VectorXd>& subdiag, int i, int twist_idx, Eigen::Ref<Eigen::MatrixXd>& eigenvecs) {
   auto vec = eigenvecs.col(i);
   int n = vec.size();
   vec[twist_idx] = 1;
@@ -460,7 +457,7 @@ calculateEigenvector(const Eigen::VectorXd& l_plus, const Eigen::VectorXd& u_min
       }
     }
   }
-  vec /= vec.norm();
+  vec *= 1./vec.norm();
 }
 
 /**
@@ -495,7 +492,7 @@ void findShift(const Eigen::VectorXd& l, const Eigen::VectorXd& d, double low, d
   min_element_growth = numeric_limits<double>::infinity();
   for (double sh : shifts) {
     //sh -= shift0;
-    double element_growth = get_perturbed_shifted_ldl(d, l, sh, l3, d3);
+    double element_growth = get_shifted_ldl(l, d, sh, l3, d3);
     //cout << " element growth: " << element_growth << " at " << sh << endl;
     if (element_growth < min_element_growth) {
       l2.swap(l3);
@@ -749,7 +746,7 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const E
   for (int i = 0; i < n; i++) {
     low[i] = low[i] * (1 - copysign(perturbation_range * n, low[i]));
     high[i] = high[i] * (1 + copysign(perturbation_range * n, high[i]));
-    eigenvalBisectRefine(d, l, low[i], high[i], i);
+    eigenvalBisectRefine(l, d, low[i], high[i], i);
   }
   std::cout << "refine0 (shift0 = " << shift0 << "(" << min_eigval << " - " << max_eigval << ")): "
             << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
@@ -790,7 +787,7 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const E
 //          if(j >= getSturmCountLdl(d, l, low[j]) || j < getSturmCountLdl(d, l, high[j])){
 //            cout << "PRE-REFINE ERROR!!!!!" << endl;
 //          }
-          eigenvalBisectRefine(d, l, low[j], high[j], j);
+          eigenvalBisectRefine(l, d, low[j], high[j], j);
 //          if(j >= getSturmCountLdl(d, l, low[j]) || j < getSturmCountLdl(d, l, high[j])){
 //            cout << "REFINE ERROR!!!!!" << endl;
 //          }
@@ -815,84 +812,33 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const E
         double low_gap = i == block.start ? std::numeric_limits<double>::infinity() : low[i - 1] - high[i];
         double high_gap = i == block.end - 1 ? std::numeric_limits<double>::infinity() : low[i] - high[i + 1];
         double min_gap = std::min(low_gap, high_gap);
-//        Eigen::VectorXd *l_ptr, *d_ptr;
-//        if(!(abs(min_gap / ((high[i] + low[i]) * 0.5)) > min_rel_sep)){
-//          if (!(abs(min_gap / ((high[i] + low[i]) * 0.5 - shift)) > min_rel_sep && min_element_growth < max_ele_growth)){
-//            double max_shift = min_gap / min_rel_sep;
-//            start = std::chrono::steady_clock::now();
-//            findShift(block.l, block.d, low[i], high[i], max_ele_growth, max_shift, l2, d2, shift, min_element_growth);
-//            t2 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-//          }
-//          low[i] = low[i] * (1 - copysign(shift_error, low[i])) - shift;
-//          high[i] = high[i] * (1 + copysign(shift_error, high[i])) - shift;
-////          if(i >= getSturmCountLdl(d2, l2, low[i]) || i < getSturmCountLdl(d2, l2, high[i])){
-////            cout << "SINGLE ERROR!!!!!" << endl;
-////          }
-//          start = std::chrono::steady_clock::now();
-//          eigenvalBisectRefine(d2, l2, low[i], high[i], i);
-//          t3 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-//          l_ptr=&l2;
-//          d_ptr=&d2;
-//        }
-//        else{
-//          l_ptr=&block.l;
-//          d_ptr=&block.d;
-//        }
-//        start = std::chrono::steady_clock::now();
-//        twist_idx = get_twisted_factorization(*d_ptr, *l_ptr, (low[i] + high[i]) * 0.5, l_plus, u_minus);
-//        t4 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-
-        if (abs(min_gap / ((high[i] + low[i]) * 0.5)) > min_rel_sep) {
-          start = std::chrono::steady_clock::now();
-          twist_idx = get_twisted_factorization(block.d, block.l, (low[i] + high[i]) * 0.5, l_plus, u_minus);
-          t1 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-//          cout << "\t\t" << i << " UNSHIFTED gap: " << min_gap / ((high[i] + low[i]) * 0.5) << endl;
-        }
-        else if (abs(min_gap / ((high[i] + low[i]) * 0.5 - shift)) > min_rel_sep && min_element_growth < max_ele_growth) {
+        Eigen::VectorXd *l_ptr, *d_ptr;
+        if(!(abs(min_gap / ((high[i] + low[i]) * 0.5)) > min_rel_sep)){
+          if (!(abs(min_gap / ((high[i] + low[i]) * 0.5 - shift)) > min_rel_sep && min_element_growth < max_ele_growth)){
+            double max_shift = min_gap / min_rel_sep;
+            start = std::chrono::steady_clock::now();
+            findShift(block.l, block.d, low[i], high[i], max_ele_growth, max_shift, l2, d2, shift, min_element_growth);
+            t2 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+          }
           low[i] = low[i] * (1 - copysign(shift_error, low[i])) - shift;
           high[i] = high[i] * (1 + copysign(shift_error, high[i])) - shift;
 //          if(i >= getSturmCountLdl(d2, l2, low[i]) || i < getSturmCountLdl(d2, l2, high[i])){
 //            cout << "SINGLE ERROR!!!!!" << endl;
 //          }
           start = std::chrono::steady_clock::now();
-          eigenvalBisectRefine(d2, l2, low[i], high[i], i);
-          t2 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-//          if(i+1 != getSturmCountLdl(d2, l2, low[i]) || i != getSturmCountLdl(d2, l2, high[i])){
-//            cout << "SINGLE ERROR!!!!!" << endl;
-//          }
-          double shifted_eigenval = (low[i] + high[i]) * 0.5;
-          start = std::chrono::steady_clock::now();
-          twist_idx = get_twisted_factorization(d2, l2, shifted_eigenval, l_plus, u_minus);
+          eigenvalBisectRefine(l2, d2, low[i], high[i], i);
           t3 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-//          cout << "\t\t" << i << " prev shift gap: " << min_gap / ((high[i] + low[i]) * 0.5 - shift) << endl;
+          l_ptr=&l2;
+          d_ptr=&d2;
         }
-        else {
-          double max_shift = min_gap / min_rel_sep;
-//          if(max_shift<=0){
-//            cout << "ERROR!!!!!" << endl;
-//          }
-          start = std::chrono::steady_clock::now();
-          findShift(block.l, block.d, low[i], high[i], max_ele_growth, max_shift, l2, d2, shift, min_element_growth);
-          t4 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+        else{
+          l_ptr=&block.l;
+          d_ptr=&block.d;
+        }
+        start = std::chrono::steady_clock::now();
+        twist_idx = get_twisted_factorization(*l_ptr, *d_ptr, (low[i] + high[i]) * 0.5, l_plus, u_minus);
+        t4 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
 
-          //shift and refine eigenvalue
-          low[i] = low[i] * (1 - copysign(shift_error, low[i])) - shift;
-          high[i] = high[i] * (1 + copysign(shift_error, high[i])) - shift;
-//          if(i >= getSturmCountLdl(d2, l2, low[i]) || i < getSturmCountLdl(d2, l2, high[i])){
-//            cout << "SINGLE ERROR!!!!!" << endl;
-//          }
-          start = std::chrono::steady_clock::now();
-          eigenvalBisectRefine(d2, l2, low[i], high[i], i);
-          t5 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-//          if(i+1 != getSturmCountLdl(d2, l2, low[i]) || i != getSturmCountLdl(d2, l2, high[i])){
-//            cout << "SINGLE ERROR!!!!!" << endl;
-//          }
-          double shifted_eigenval = (low[i] + high[i]) * 0.5;
-//          cout << "\t\t" << i << " shifted gap: " << min_gap / shifted_eigenval << endl;
-          start = std::chrono::steady_clock::now();
-          twist_idx = get_twisted_factorization(d2, l2, shifted_eigenval, l_plus, u_minus);
-          t6 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-        }
         //calculate eigenvector
         start = std::chrono::steady_clock::now();
         calculateEigenvector(l_plus, u_minus, subdiag, i, twist_idx, eigenvecs);
@@ -1007,7 +953,7 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<cons
 //          if(j >= getSturmCountLdl(d, l, low[j]) || j < getSturmCountLdl(d, l, high[j])){
 //            cout << "PRE-REFINE ERROR!!!!!" << endl;
 //          }
-          eigenvalBisectRefine(d, l, low[j], high[j], j);
+          eigenvalBisectRefine(l, d, low[j], high[j], j);
 //          if(j >= getSturmCountLdl(d, l, low[j]) || j < getSturmCountLdl(d, l, high[j])){
 //            cout << "REFINE ERROR!!!!!" << endl;
 //          }
@@ -1024,7 +970,6 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<cons
       }
       else { //isolated eigenvalue
 //        cout << "\t\t\t\t\t\t\t\tgetting eigenvector " << i << " (eigenvalue " << eigenvals[i] << ")" << endl;
-        double low_t = low[i], high_t = high[i];
 //        if(i+1 != getSturmCountLdl(block.d, block.l, low[i]) || i != getSturmCountLdl(block.d, block.l, high[i])){
 //          cout << "SINGLE ERROR!!!!!" << endl;
 //        }
@@ -1032,84 +977,34 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<cons
         double low_gap = i == block.start ? std::numeric_limits<double>::infinity() : low[i - 1] - high[i];
         double high_gap = i == block.end - 1 ? std::numeric_limits<double>::infinity() : low[i] - high[i + 1];
         double min_gap = std::min(low_gap, high_gap);
-//        Eigen::VectorXd *l_ptr, *d_ptr;
-//        if(!(abs(min_gap / ((high[i] + low[i]) * 0.5)) > min_rel_sep)){
-//          if (!(abs(min_gap / ((high[i] + low[i]) * 0.5 - shift)) > min_rel_sep && min_element_growth < max_ele_growth)){
-//            double max_shift = min_gap / min_rel_sep;
-//            start = std::chrono::steady_clock::now();
-//            findShift(block.l, block.d, low[i], high[i], max_ele_growth, max_shift, l2, d2, shift, min_element_growth);
-//            t2 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-//          }
-//          low[i] = low[i] * (1 - copysign(shift_error, low[i])) - shift;
-//          high[i] = high[i] * (1 + copysign(shift_error, high[i])) - shift;
-////          if(i >= getSturmCountLdl(d2, l2, low[i]) || i < getSturmCountLdl(d2, l2, high[i])){
-////            cout << "SINGLE ERROR!!!!!" << endl;
-////          }
-//          start = std::chrono::steady_clock::now();
-//          eigenvalBisectRefine(d2, l2, low[i], high[i], i);
-//          t3 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-//          l_ptr=&l2;
-//          d_ptr=&d2;
-//        }
-//        else{
-//          l_ptr=&block.l;
-//          d_ptr=&block.d;
-//        }
-//        start = std::chrono::steady_clock::now();
-//        twist_idx = get_twisted_factorization(*d_ptr, *l_ptr, (low[i] + high[i]) * 0.5, l_plus, u_minus);
-//        t4 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
 
-        if (abs(min_gap / ((high[i] + low[i]) * 0.5)) > min_rel_sep) {
-          start = std::chrono::steady_clock::now();
-          twist_idx = get_twisted_factorization(block.d, block.l, (low[i] + high[i]) * 0.5, l_plus, u_minus);
-          t1 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-//          cout << "\t\t" << i << " UNSHIFTED gap: " << min_gap / ((high[i] + low[i]) * 0.5) << endl;
-        }
-        else if (abs(min_gap / ((high[i] + low[i]) * 0.5 - shift)) > min_rel_sep && min_element_growth < max_ele_growth) {
+        Eigen::VectorXd *l_ptr, *d_ptr;
+        if(!(abs(min_gap / ((high[i] + low[i]) * 0.5)) > min_rel_sep)){
+          if (!(abs(min_gap / ((high[i] + low[i]) * 0.5 - shift)) > min_rel_sep && min_element_growth < max_ele_growth)){
+            double max_shift = min_gap / min_rel_sep;
+            start = std::chrono::steady_clock::now();
+            findShift(block.l, block.d, low[i], high[i], max_ele_growth, max_shift, l2, d2, shift, min_element_growth);
+            t2 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+          }
           low[i] = low[i] * (1 - copysign(shift_error, low[i])) - shift;
           high[i] = high[i] * (1 + copysign(shift_error, high[i])) - shift;
 //          if(i >= getSturmCountLdl(d2, l2, low[i]) || i < getSturmCountLdl(d2, l2, high[i])){
 //            cout << "SINGLE ERROR!!!!!" << endl;
 //          }
           start = std::chrono::steady_clock::now();
-          eigenvalBisectRefine(d2, l2, low[i], high[i], i);
-          t2 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-//          if(i+1 != getSturmCountLdl(d2, l2, low[i]) || i != getSturmCountLdl(d2, l2, high[i])){
-//            cout << "SINGLE ERROR!!!!!" << endl;
-//          }
-          double shifted_eigenval = (low[i] + high[i]) * 0.5;
-          start = std::chrono::steady_clock::now();
-          twist_idx = get_twisted_factorization(d2, l2, shifted_eigenval, l_plus, u_minus);
+          eigenvalBisectRefine(l2, d2, low[i], high[i], i);
           t3 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-//          cout << "\t\t" << i << " prev shift gap: " << min_gap / ((high[i] + low[i]) * 0.5 - shift) << endl;
+          l_ptr=&l2;
+          d_ptr=&d2;
         }
-        else {
-          double max_shift = min_gap / min_rel_sep;
-//          if(max_shift<=0){
-//            cout << "ERROR!!!!!" << endl;
-//          }
-          start = std::chrono::steady_clock::now();
-          findShift(block.l, block.d, low[i], high[i], max_ele_growth, max_shift, l2, d2, shift, min_element_growth);
-          t4 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+        else{
+          l_ptr=&block.l;
+          d_ptr=&block.d;
+        }
+        start = std::chrono::steady_clock::now();
+        twist_idx = get_twisted_factorization(*l_ptr, *d_ptr, (low[i] + high[i]) * 0.5, l_plus, u_minus);
+        t4 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
 
-          //shift and refine eigenvalue
-          low[i] = low[i] * (1 - copysign(shift_error, low[i])) - shift;
-          high[i] = high[i] * (1 + copysign(shift_error, high[i])) - shift;
-//          if(i >= getSturmCountLdl(d2, l2, low[i]) || i < getSturmCountLdl(d2, l2, high[i])){
-//            cout << "SINGLE ERROR!!!!!" << endl;
-//          }
-          start = std::chrono::steady_clock::now();
-          eigenvalBisectRefine(d2, l2, low[i], high[i], i);
-          t5 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-//          if(i+1 != getSturmCountLdl(d2, l2, low[i]) || i != getSturmCountLdl(d2, l2, high[i])){
-//            cout << "SINGLE ERROR!!!!!" << endl;
-//          }
-          double shifted_eigenval = (low[i] + high[i]) * 0.5;
-//          cout << "\t\t" << i << " shifted gap: " << min_gap / shifted_eigenval << endl;
-          start = std::chrono::steady_clock::now();
-          twist_idx = get_twisted_factorization(d2, l2, shifted_eigenval, l_plus, u_minus);
-          t6 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-        }
         //calculate eigenvector
         start = std::chrono::steady_clock::now();
         calculateEigenvector(l_plus, u_minus, subdiag, i, twist_idx, eigenvecs);

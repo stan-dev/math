@@ -182,7 +182,7 @@ int miniTest2() {
 void testMrrr(){
   auto start = std::chrono::steady_clock::now();
   cout.precision(17);
-  int A = 2000;
+  int A = 8000;
   for(unsigned int i=443+1;i<1e7;i++) {
     cout << "i=" << i << endl;
     srand(i);
@@ -209,7 +209,7 @@ void testMrrr(){
     T.diagonal(-1) = subdiag;
 
     start = std::chrono::steady_clock::now();
-    tridiagonal_eigensolver(diag, subdiag, eigenvals, eigenvecs2);
+    tridiagonal_eigensolver_cl(diag, subdiag, eigenvals, eigenvecs2);
     //mrrr2(diag, subdiag, eigenvals, eigenvecs2);
     if(A>=15) {
       cout << "mrrr: "
@@ -284,7 +284,7 @@ void testMrrr(){
 //  cout << "shifted LDL: " << (T-(Mat::Identity(A,A).array()*shift).matrix()-L*d_plus.asDiagonal() *L.transpose()).array().abs().sum() << endl;
 //  cout << "shifted UDU: " << (T-(Mat::Identity(A,A).array()*shift).matrix()-U*d_minus.asDiagonal()*U.transpose()).array().abs().sum() << endl;
 //
-//  get_perturbed_shifted_ldl(d,l, shift, l_plus, d_plus);
+//  get_shifted_ldl(d,l, shift, l_plus, d_plus);
 //  L.diagonal(-1)=l_plus;
 //  cout << "perturbed shifted LDL: " << (T-(Mat::Identity(A,A).array()*shift).matrix()-L*d_plus.asDiagonal() *L.transpose()).array().abs().sum() << endl;
 
@@ -485,24 +485,24 @@ int main() {
     chkTridiag(a, t, q);
   }
 
-//  start = std::chrono::steady_clock::now();
-//  qa=q*a;
-//  cout << "\t\tCPU multiply q*a: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
-//
-//  start = std::chrono::steady_clock::now();
-//  matrix_cl a_gpu(a);
-//  matrix_cl q_gpu(q);
-//  cout << "\t\tcopy q a: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
-//
-//  start = std::chrono::steady_clock::now();
-//  matrix_cl res= q_gpu * a_gpu;
-//  cout << "\t\tGPU multiply q*a: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
+  start = std::chrono::steady_clock::now();
+  qa=q*a;
+  cout << "\t\tCPU multiply q*a: "
+       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+       << "ms" << endl;
+
+  start = std::chrono::steady_clock::now();
+  matrix_cl a_gpu(a);
+  matrix_cl q_gpu(q);
+  cout << "\t\tcopy q a: "
+       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+       << "ms" << endl;
+
+  start = std::chrono::steady_clock::now();
+  matrix_cl res= q_gpu * a_gpu;
+  cout << "\t\tGPU multiply q*a: "
+       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+       << "ms" << endl;
 
 
   return 0;
