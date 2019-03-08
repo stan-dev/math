@@ -8,12 +8,10 @@
 
 #include <stan/math/rev/mat/fun/Eigen_NumTraits.hpp>
 
+#include <stan/math/rev/mat/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/rev/arr.hpp>
-#include <stan/math/rev/mat/vectorize/apply_scalar_unary.hpp>
 
-#include <stan/math/rev/mat/fun/LDLT_alloc.hpp>
-#include <stan/math/rev/mat/fun/LDLT_factor.hpp>
 #include <stan/math/rev/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_product.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_self.hpp>
@@ -26,6 +24,8 @@
 #include <stan/math/rev/mat/fun/gp_periodic_cov.hpp>
 #include <stan/math/rev/mat/fun/grad.hpp>
 #include <stan/math/rev/mat/fun/initialize_variable.hpp>
+#include <stan/math/rev/mat/fun/LDLT_alloc.hpp>
+#include <stan/math/rev/mat/fun/LDLT_factor.hpp>
 #include <stan/math/rev/mat/fun/log_determinant.hpp>
 #include <stan/math/rev/mat/fun/log_determinant_ldlt.hpp>
 #include <stan/math/rev/mat/fun/log_determinant_spd.hpp>

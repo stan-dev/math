@@ -35,19 +35,23 @@ public:
   //  derivative-or-differential-of-symmetric-square-root-of-a-matrix
 
   template <std::size_t size>
-  std::tuple<Eigen::VectorXd>
+  std::tuple<Eigen::MatrixXd>
   multiply_adjoint_jacobian(const std::array<bool, size> &needs_adj,
-                            const Eigen::VectorXd &adj) const {
+                            const Eigen::MatrixXd &adj) const {
     using Eigen::kroneckerProduct;
     using Eigen::MatrixXd;
+    Eigen::MatrixXd output(K_, K_);
+    Eigen::Map<const Eigen::VectorXd> map_input(adj.data(), adj.size());
+    Eigen::Map<Eigen::VectorXd> map_output(output.data(), output.size());
     Eigen::Map<MatrixXd> sqrt_m(y_, K_, K_);
-    return std::make_tuple(
-        (kroneckerProduct(sqrt_m, MatrixXd::Identity(K_, K_)) +
-         kroneckerProduct(MatrixXd::Identity(K_, K_), sqrt_m))
-            // the above is symmetric so can skip the transpose
-            .ldlt()
-            .solve(adj)
-            .eval());
+
+    map_output = (kroneckerProduct(sqrt_m, MatrixXd::Identity(K_, K_)) +
+		  kroneckerProduct(MatrixXd::Identity(K_, K_), sqrt_m))
+      // the above is symmetric so can skip the transpose
+      .ldlt()
+      .solve(map_input);
+
+    return std::make_tuple(output);
   }
 };
 } // namespace

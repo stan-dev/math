@@ -12,7 +12,7 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   test::check_varis_on_stack(sqrt_spd(a));
 }
 
-/*
+
 struct make_zero {
   template <typename T>
   Eigen::Matrix<T, Eigen::Dynamic, 1> operator()(
@@ -57,4 +57,4 @@ TEST(AgradRevMatrix, sqrt_spd) {
       if (i != j) EXPECT_NEAR(J(i, j), 0, TOL);
   EXPECT_TRUE(J.array().any());
 }
-*/
+
