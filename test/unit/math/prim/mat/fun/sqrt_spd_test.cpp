@@ -12,4 +12,6 @@ TEST(MathMatrix, sqrt_spd) {
   EXPECT_THROW(sqrt_spd(m0), std::invalid_argument);
   EXPECT_NEAR(2.0, sqrt_spd(ev_m1)(0, 0), 1e-16);
   EXPECT_THROW(sqrt_spd(m1), std::invalid_argument);
+  ev_m1(0, 0) = -1;
+  EXPECT_TRUE(std::isnan(sqrt_spd(ev_m1)(0, 0)));
 }
