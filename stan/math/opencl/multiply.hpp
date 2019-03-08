@@ -54,7 +54,7 @@ inline auto multiply(const double scalar, const matrix_cl& A) {
  * @tparam triangular_view_B specifies whether the matrix B is a
  *  lower/upper triangular or a rectangular matrix
  * @return the product of the first and second matrix
- * 
+ *
  * @throw <code>std::invalid_argument</code> if the
  *   number of columns in A and rows in B do not match
  */
@@ -93,8 +93,8 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
     // when neither of the matrices are lower/upper triangular
     // use the regural matrix multiply
     // otherwise use the triangular multiply kernel
-    if (triangular_view_A == TriangularViewCL::Entire &&
-        triangular_view_B == TriangularViewCL::Entire) {
+    if (triangular_view_A == TriangularViewCL::Entire
+        && triangular_view_B == TriangularViewCL::Entire) {
       opencl_kernels::matrix_multiply(
           cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
           Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
