@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_REV_MAT_FUN_SQRT_SPD_HPP
 #define STAN_MATH_REV_MAT_FUN_SQRT_SPD_HPP
 
-#include <cstddef>
 #include <stan/math/prim/mat/fun/sqrt_spd.hpp>
 #include <stan/math/rev/mat/functor/adj_jac_apply.hpp>
-#include <tuple>
 #include <unsupported/Eigen/KroneckerProduct>
+#include <cstddef>
+#include <tuple>
 #include <vector>
 
 namespace stan {
