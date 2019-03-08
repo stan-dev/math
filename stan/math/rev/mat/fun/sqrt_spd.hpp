@@ -14,9 +14,9 @@ namespace math {
 namespace {
 class sqrt_spd_op {
   int K_;
-  double *y_; // Holds the output, which has K_^2 elements
+  double *y_;  // Holds the output, which has K_^2 elements
 
-public:
+ public:
   sqrt_spd_op() : K_(0), y_(nullptr) {}
 
   template <std::size_t size>
@@ -35,32 +35,32 @@ public:
   //  derivative-or-differential-of-symmetric-square-root-of-a-matrix
 
   template <std::size_t size>
-  std::tuple<Eigen::MatrixXd>
-  multiply_adjoint_jacobian(const std::array<bool, size> &needs_adj,
-                            const Eigen::MatrixXd &adj) const {
-    using Eigen::kroneckerProduct;
+  std::tuple<Eigen::MatrixXd> multiply_adjoint_jacobian(
+      const std::array<bool, size> &needs_adj,
+      const Eigen::MatrixXd &adj) const {
     using Eigen::MatrixXd;
+    using Eigen::kroneckerProduct;
     Eigen::MatrixXd output(K_, K_);
     Eigen::Map<const Eigen::VectorXd> map_input(adj.data(), adj.size());
     Eigen::Map<Eigen::VectorXd> map_output(output.data(), output.size());
     Eigen::Map<MatrixXd> sqrt_m(y_, K_, K_);
 
-    map_output = (kroneckerProduct(sqrt_m, MatrixXd::Identity(K_, K_)) +
-		  kroneckerProduct(MatrixXd::Identity(K_, K_), sqrt_m))
-      // the above is symmetric so can skip the transpose
-      .ldlt()
-      .solve(map_input);
+    map_output = (kroneckerProduct(sqrt_m, MatrixXd::Identity(K_, K_))
+                  + kroneckerProduct(MatrixXd::Identity(K_, K_), sqrt_m))
+                     // the above is symmetric so can skip the transpose
+                     .ldlt()
+                     .solve(map_input);
 
     return std::make_tuple(output);
   }
 };
-} // namespace
+}  // namespace
 
-inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
-sqrt_spd(const Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> &m) {
+inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> sqrt_spd(
+    const Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> &m) {
   return adj_jac_apply<sqrt_spd_op>(m);
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

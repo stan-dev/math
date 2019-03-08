@@ -23,8 +23,8 @@ namespace math {
  */
 
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-sqrt_spd(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m) {
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> sqrt_spd(
+    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m) {
   check_nonzero_size("sqrt_spd", "m", m);
   check_symmetric("sqrt_spd", "m", m);
 
@@ -34,6 +34,6 @@ sqrt_spd(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m) {
   return solver.operatorSqrt();
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
