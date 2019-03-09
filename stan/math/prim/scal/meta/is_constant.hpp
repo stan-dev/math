@@ -5,15 +5,6 @@
 
 namespace stan {
 
-template <typename T>
-struct is_nonconstant {
-  /**
-   * A boolean constant with equal to <code>true</code> if the
-   * type parameter <code>T</code> is a mathematical constant.
-   */
-  enum { value = !(std::is_convertible<T, double>::value) };
-};
-
 /**
  * Metaprogramming struct to detect whether a given type is constant
  * in the mathematical sense (not the C++ <code>const</code>
