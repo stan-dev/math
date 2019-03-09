@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_META_CONTAINS_VECTOR_HPP
 
 #include <stan/math/prim/scal/meta/is_vector.hpp>
-#include <stan/math/prim/scal/meta/or.hpp>
+#include <stan/math/prim/scal/meta/disjunction.hpp>
 
 namespace stan {
 /**
@@ -10,7 +10,7 @@ namespace stan {
  * provided types is a std::vector.
  */
 template <typename... T>
-using contains_vector = math::or_<is_vector<T>...>;
+using contains_vector = math::disjunction<is_vector<T>...>;
 
 }  // namespace stan
 #endif
