@@ -12,7 +12,8 @@ namespace stan {
  * type that cannot be assigned to type double.
  */
 template <typename... T>
-using contains_nonconstant_struct = math::disjunction<is_nonconstant_struct<T>...>;
+using contains_nonconstant_struct
+    = math::disjunction<is_nonconstant_struct<T>...>;
 
 }  // namespace stan
 #endif

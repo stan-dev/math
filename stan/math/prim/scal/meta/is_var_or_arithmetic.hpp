@@ -27,7 +27,7 @@ struct is_var_or_arithmetic_ {
  * or an arithmetic type.
  */
 template <typename... T>
-  using is_var_or_arithmetic = math::conjunction<is_var_or_arithmetic_<T>...>;
+using is_var_or_arithmetic = math::conjunction<is_var_or_arithmetic_<T>...>;
 
 }  // namespace stan
 #endif
