@@ -63,23 +63,24 @@ static const char* multiply_transpose_kernel_code = STRINGIFY(
                    [thread_block_row]
                 = A[(j + w * THREAD_BLOCK_SIZE_COL) + tiled_i * M];
           }
-        }
-        // wait till all tile values are loaded to the local memory
-        barrier(CLK_LOCAL_MEM_FENCE);
-        // multiply the tile products
-        for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE; block_ind++) {
-          // each thread multiplies WORK_PER_THREAD values
-          for (int w = 0; w < WORK_PER_THREAD; w++) {
-            if (jMin <= iMax) {
-              if ((j + w * THREAD_BLOCK_SIZE_COL) <= i) {
-                acc[w] += A_local[block_ind][thread_block_row]
-                          * B_local[thread_block_col
-                                    + w * THREAD_BLOCK_SIZE_COL][block_ind];
+        
+          // wait till all tile values are loaded to the local memory
+          barrier(CLK_LOCAL_MEM_FENCE);
+          // multiply the tile products
+          for (int block_ind = 0; block_ind < THREAD_BLOCK_SIZE; block_ind++) {
+            // each thread multiplies WORK_PER_THREAD values
+            for (int w = 0; w < WORK_PER_THREAD; w++) {
+              if (jMin <= iMax) {
+                if ((j + w * THREAD_BLOCK_SIZE_COL) <= i) {
+                  acc[w] += A_local[block_ind][thread_block_row]
+                            * B_local[thread_block_col
+                                      + w * THREAD_BLOCK_SIZE_COL][block_ind];
+                }
               }
             }
           }
+          barrier(CLK_LOCAL_MEM_FENCE);
         }
-        barrier(CLK_LOCAL_MEM_FENCE);
       }
       // save the values
       for (int w = 0; w < WORK_PER_THREAD; w++) {
