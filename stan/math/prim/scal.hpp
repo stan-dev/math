@@ -15,6 +15,7 @@
 #include <stan/math/prim/scal/meta/index_type.hpp>
 #include <stan/math/prim/scal/meta/is_constant.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/is_nonconstant_struct.hpp>
 #include <stan/math/prim/scal/meta/is_fvar.hpp>
 #include <stan/math/prim/scal/meta/is_var.hpp>
 #include <stan/math/prim/scal/meta/is_var_or_arithmetic.hpp>
