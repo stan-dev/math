@@ -6,9 +6,9 @@
 namespace stan {
 namespace math {
 /**
- * Extends std::true_type when instantiated with zero or more template parameters,
- * all of which extend the std::true_type. Extends std::false_type if any of them
- * extend the std::false_type.
+ * Extends std::true_type when instantiated with zero or more template
+ * parameters, all of which extend the std::true_type. Extends std::false_type
+ * if any of them extend the std::false_type.
  */
 template <typename... T>
 struct conjunction : std::true_type {};

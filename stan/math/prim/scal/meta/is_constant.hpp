@@ -27,7 +27,5 @@ struct is_constant {
   enum { value = std::is_convertible<T, double>::value };
 };
 
-
-
 }  // namespace stan
 #endif
