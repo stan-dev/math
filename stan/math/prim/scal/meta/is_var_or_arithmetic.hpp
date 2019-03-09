@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_var.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
-#include <stan/math/prim/scal/meta/and.hpp>
+#include <stan/math/prim/scal/meta/conjunction.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -27,7 +27,7 @@ struct is_var_or_arithmetic_ {
  * or an arithmetic type.
  */
 template <typename... T>
-using is_var_or_arithmetic = math::and_<is_var_or_arithmetic_<T>...>;
+  using is_var_or_arithmetic = math::conjunction<is_var_or_arithmetic_<T>...>;
 
 }  // namespace stan
 #endif

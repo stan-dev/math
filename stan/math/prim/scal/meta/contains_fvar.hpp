@@ -3,16 +3,16 @@
 
 #include <stan/math/prim/scal/meta/is_fvar.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
-#include <stan/math/prim/scal/meta/or.hpp>
+#include <stan/math/prim/scal/meta/disjunction.hpp>
 
 namespace stan {
 
 /**
- * Metaprogram to determine if any of the
- * provided types is a fvar.
+ * Defines a public enum named value which is defined to be true (1)
+ * if any of the template parameters includes a fvar as their base scalar and false (0) otherwise.
  */
 template <typename... T>
-using contains_fvar = math::or_<is_fvar<typename scalar_type<T>::type>...>;
+using contains_fvar = math::disjunction<is_fvar<typename scalar_type<T>::type>...>;
 
 }  // namespace stan
 #endif
