@@ -22,11 +22,11 @@ struct is_var_or_arithmetic_type {
 };
 
 /**
- * Extends std::true_type if all the provided types are either var or 
+ * Extends std::true_type if all the provided types are either var or
  * an arithmetic type, extends std::false_type otherwise.
  */
 template <typename... T>
-  using is_var_or_arithmetic = math::conjunction<is_var_or_arithmetic_type<T>...>;
+using is_var_or_arithmetic = math::conjunction<is_var_or_arithmetic_type<T>...>;
 
 }  // namespace stan
 #endif
