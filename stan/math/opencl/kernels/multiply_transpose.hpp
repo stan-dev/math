@@ -63,7 +63,7 @@ static const char* multiply_transpose_kernel_code = STRINGIFY(
                    [thread_block_row]
                 = A[(j + w * THREAD_BLOCK_SIZE_COL) + tiled_i * M];
           }
-        
+
           // wait till all tile values are loaded to the local memory
           barrier(CLK_LOCAL_MEM_FENCE);
           // multiply the tile products
