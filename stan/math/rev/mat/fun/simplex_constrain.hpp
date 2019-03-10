@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class simplex_constrain_op {
   int N_;
   double* diag_;  // diagonal of the Jacobian of the operator

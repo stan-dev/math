@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class multiply_log_vv_vari : public op_vv_vari {
  public:
   multiply_log_vv_vari(vari* avi, vari* bvi)

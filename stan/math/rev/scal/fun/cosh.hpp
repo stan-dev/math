@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class cosh_vari : public op_v_vari {
  public:
   explicit cosh_vari(vari* avi) : op_v_vari(std::cosh(avi->val_), avi) {}

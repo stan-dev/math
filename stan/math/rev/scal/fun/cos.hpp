@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class cos_vari : public op_v_vari {
  public:
   explicit cos_vari(vari* avi) : op_v_vari(std::cos(avi->val_), avi) {}

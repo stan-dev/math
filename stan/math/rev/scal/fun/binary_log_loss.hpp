@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class binary_log_loss_1_vari : public op_v_vari {
  public:
   explicit binary_log_loss_1_vari(vari* avi)

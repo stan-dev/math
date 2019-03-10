@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class dot_self_vari : public vari {
  protected:
   vari** v_;

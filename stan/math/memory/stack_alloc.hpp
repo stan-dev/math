@@ -30,7 +30,7 @@ bool is_aligned(T* ptr, unsigned int bytes_aligned) {
   return (reinterpret_cast<uintptr_t>(ptr) % bytes_aligned) == 0U;
 }
 
-namespace internal{
+namespace internal {
 const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
 
 // FIXME: enforce alignment

@@ -8,7 +8,7 @@
 
 namespace stan {
 namespace math {
-namespace internal{
+namespace internal {
 
 /**
  * Returns the log det of the matrix whose LDLT factorization is given

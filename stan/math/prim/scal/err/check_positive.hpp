@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 
 template <typename T_y, bool is_vec>
 struct positive {

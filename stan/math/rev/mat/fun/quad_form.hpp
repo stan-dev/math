@@ -15,7 +15,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
 class quad_form_vari_alloc : public chainable_alloc {
  private:

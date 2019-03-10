@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 template <int R1, int C1, int R2, int C2>
 class mdivide_left_spd_alloc : public chainable_alloc {
  public:

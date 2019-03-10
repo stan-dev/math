@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class softmax_op {
   int N_;
   double* y_;  // Holds the results of the softmax

@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 template <typename T_y, typename T_high, bool is_vec>
 struct less {
   static void check(const char* function, const char* name, const T_y& y,
@@ -71,7 +71,8 @@ struct less<T_y, T_high, true> {
 template <typename T_y, typename T_high>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high) {
-  internal::less<T_y, T_high, is_vector_like<T_y>::value>::check(function, name, y, high);
+  internal::less<T_y, T_high,
+   is_vector_like<T_y>::value>::check(function, name, y, high);
 }
 }  // namespace math
 }  // namespace stan

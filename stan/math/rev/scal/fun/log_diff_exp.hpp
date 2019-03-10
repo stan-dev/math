@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class log_diff_exp_vv_vari : public op_vv_vari {
  public:
   log_diff_exp_vv_vari(vari* avi, vari* bvi)

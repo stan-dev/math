@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class lmgamma_dv_vari : public op_dv_vari {
  public:
   lmgamma_dv_vari(int a, vari* bvi)

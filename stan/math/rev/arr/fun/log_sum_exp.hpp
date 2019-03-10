@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 double log_sum_exp_as_double(const std::vector<var>& x) {
   using std::exp;
   using std::log;

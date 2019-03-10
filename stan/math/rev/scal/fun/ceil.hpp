@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class ceil_vari : public op_v_vari {
  public:
   explicit ceil_vari(vari* avi) : op_v_vari(std::ceil(avi->val_), avi) {}

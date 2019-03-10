@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 
 // if x.size() = N, and x[i] = x[j] =
 // then lim sd(x) -> 0 [ d/dx[n] sd(x) ] = sqrt(N) / N

@@ -13,7 +13,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class unit_vector_elt_vari : public vari {
  private:
   vari** y_;

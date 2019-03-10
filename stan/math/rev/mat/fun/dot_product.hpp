@@ -15,7 +15,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 template <typename T>
 struct dot_product_store_type;
 

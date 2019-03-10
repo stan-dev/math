@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class inv_cloglog_vari : public op_v_vari {
  public:
   explicit inv_cloglog_vari(vari* avi)

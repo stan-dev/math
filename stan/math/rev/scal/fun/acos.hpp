@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class acos_vari : public op_v_vari {
  public:
   explicit acos_vari(vari* avi) : op_v_vari(std::acos(avi->val_), avi) {}

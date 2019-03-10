@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class log10_vari : public op_v_vari {
  public:
   const double exp_val_;

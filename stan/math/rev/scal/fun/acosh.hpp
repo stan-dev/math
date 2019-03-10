@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class acosh_vari : public op_v_vari {
  public:
   acosh_vari(double val, vari* avi) : op_v_vari(val, avi) {}

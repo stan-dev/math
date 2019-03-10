@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 template <typename T_y, bool is_vec>
 struct finite {
   static void check(const char* function, const char* name, const T_y& y) {

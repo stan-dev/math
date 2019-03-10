@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 // (a/b)' = a' * (1 / b) - b' * (a / [b * b])
 class divide_vv_vari : public op_vv_vari {
  public:

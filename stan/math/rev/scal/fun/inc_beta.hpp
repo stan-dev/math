@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 
 class inc_beta_vvv_vari : public op_vvv_vari {
  public:
