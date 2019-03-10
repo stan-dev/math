@@ -14,7 +14,7 @@ namespace internal {
  * Find the optimal next size for the FFT so that
  * a minimum number of zeros are padded.
  */
-size_t fft_next_good_size(size_t N) {
+inline size_t fft_next_good_size(size_t N) {
   if (N <= 2)
     return 2;
   while (true) {

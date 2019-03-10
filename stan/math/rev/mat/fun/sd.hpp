@@ -17,7 +17,7 @@ namespace internal {
 // if x.size() = N, and x[i] = x[j] =
 // then lim sd(x) -> 0 [ d/dx[n] sd(x) ] = sqrt(N) / N
 
-var calc_sd(size_t size, const var* dtrs) {
+inline var calc_sd(size_t size, const var* dtrs) {
   using std::sqrt;
   vari** varis = reinterpret_cast<vari**>(
       ChainableStack::instance().memalloc_.alloc(size * sizeof(vari*)));

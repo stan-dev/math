@@ -15,7 +15,7 @@ namespace internal {
  *
  * Handles negative values of b properly.
  */
-double ibeta_hypergeometric_helper(double a, double b, double z,
+inline double ibeta_hypergeometric_helper(double a, double b, double z,
                                    double precision = 1e-8,
                                    double max_steps = 1000) {
   double val = 0;
