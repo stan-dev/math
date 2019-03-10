@@ -39,7 +39,7 @@ class square_vari : public op_v_vari {
  * @param x Variable to square.
  * @return Square of variable.
  */
-inline var square(const var& x) { return var(new square_vari(x.vi_)); }
+inline var square(const var& x) { return var(new internal::square_vari(x.vi_)); }
 
 }  // namespace math
 }  // namespace stan

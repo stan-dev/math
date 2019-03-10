@@ -17,7 +17,7 @@ namespace math {
  * @tparam ascending true if sorting in ascending order
  * @tparam C container type
  */
-namespace {
+namespace internal{
 template <bool ascending, typename C>
 class index_comparator {
   const C& xs_;
@@ -47,6 +47,8 @@ class index_comparator {
   }
 };
 
+}  // namespace internal
+
 /**
  * Return an integer array of indices of the specified container
  * sorting the values in ascending or descending order based on
@@ -69,8 +71,6 @@ std::vector<int> sort_indices(const C& xs) {
   std::sort(idxs.begin(), idxs.end(), comparator);
   return idxs;
 }
-
-}  // namespace
 
 }  // namespace math
 }  // namespace stan

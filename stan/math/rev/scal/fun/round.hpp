@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-namespace internal::{
+namespace internal{
 class round_vari : public op_v_vari {
  public:
   explicit round_vari(vari* avi) : op_v_vari(round(avi->val_), avi) {}
