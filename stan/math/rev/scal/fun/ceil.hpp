@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal{
 class ceil_vari : public op_v_vari {
  public:
   explicit ceil_vari(vari* avi) : op_v_vari(std::ceil(avi->val_), avi) {}
@@ -19,7 +19,7 @@ class ceil_vari : public op_v_vari {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Return the ceiling of the specified variable (cmath).
