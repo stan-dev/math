@@ -6,7 +6,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal{
 class square_vari : public op_v_vari {
  public:
   explicit square_vari(vari* avi) : op_v_vari(avi->val_ * avi->val_, avi) {}
