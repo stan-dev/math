@@ -1,8 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_AD_PROMOTABLE_HPP
 #define STAN_MATH_PRIM_SCAL_META_AD_PROMOTABLE_HPP
 
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits/is_arithmetic.hpp>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -31,7 +30,7 @@ struct ad_promotable {
  */
 template <typename T>
 struct ad_promotable<
-    typename boost::enable_if<boost::is_arithmetic<T>, T>::type, T> {
+    typename std::enable_if<std::is_arithmetic<T>::value, T>::type, T> {
   enum { value = true };
 };
 

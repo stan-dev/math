@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/fun/log_mix.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <cmath>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -28,7 +29,6 @@ inline void log_mix_partial_helper(
     const T_theta& theta, const T_lambda1& lambda1, const T_lambda2& lambda2,
     typename boost::math::tools::promote_args<
         T_theta, T_lambda1, T_lambda2>::type (&partials_array)[N]) {
-  using boost::is_same;
   using boost::math::tools::promote_args;
   using std::exp;
   typedef typename promote_args<T_theta, T_lambda1, T_lambda2>::type
@@ -48,16 +48,16 @@ inline void log_mix_partial_helper(
       = 1.0 / t_plus_one_m_t_prod_exp_lam2_m_lam1;
 
   unsigned int offset = 0;
-  if (is_same<T_theta, partial_return_type>::value) {
+  if (std::is_same<T_theta, partial_return_type>::value) {
     partials_array[offset]
         = one_m_exp_lam2_m_lam1 * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
     ++offset;
   }
-  if (is_same<T_lambda1, partial_return_type>::value) {
+  if (std::is_same<T_lambda1, partial_return_type>::value) {
     partials_array[offset] = theta * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
     ++offset;
   }
-  if (is_same<T_lambda2, partial_return_type>::value) {
+  if (std::is_same<T_lambda2, partial_return_type>::value) {
     partials_array[offset] = one_m_t_prod_exp_lam2_m_lam1
                              * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
   }
