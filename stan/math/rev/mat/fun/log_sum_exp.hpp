@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal{
 
 // these function and the following class just translate
 // log_sum_exp for std::vector for Eigen::Matrix
@@ -42,7 +42,7 @@ class log_sum_exp_matrix_vari : public op_matrix_vari {
     }
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Returns the log sum of exponentials.
@@ -51,7 +51,7 @@ class log_sum_exp_matrix_vari : public op_matrix_vari {
  */
 template <int R, int C>
 inline var log_sum_exp(const Eigen::Matrix<var, R, C>& x) {
-  return var(new log_sum_exp_matrix_vari(x));
+  return var(new internal::log_sum_exp_matrix_vari(x));
 }
 
 }  // namespace math

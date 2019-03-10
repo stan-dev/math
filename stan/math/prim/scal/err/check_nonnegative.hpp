@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal{
 template <typename T_y, bool is_vec>
 struct nonnegative {
   static void check(const char* function, const char* name, const T_y& y) {
@@ -54,7 +54,7 @@ struct nonnegative<T_y, true> {
 template <typename T_y>
 inline void check_nonnegative(const char* function, const char* name,
                               const T_y& y) {
-  nonnegative<T_y, is_vector_like<T_y>::value>::check(function, name, y);
+  internal::nonnegative<T_y, is_vector_like<T_y>::value>::check(function, name, y);
 }
 }  // namespace math
 }  // namespace stan
