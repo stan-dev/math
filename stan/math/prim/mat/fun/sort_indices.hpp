@@ -27,7 +27,7 @@ class index_comparator {
    * Construct an index comparator holding a reference
    * to the specified container.
    *
-   * @patam xs Container
+   * @param xs Container
    */
   explicit index_comparator(const C& xs) : xs_(xs) {}
 
