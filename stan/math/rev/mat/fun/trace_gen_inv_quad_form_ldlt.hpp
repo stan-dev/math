@@ -18,8 +18,8 @@ namespace math {
  *       trace(D B^T A^-1 B)
  * where D is a square matrix and the LDLT_factor of A is provided.
  **/
-template <typename T1, int R1, int C1, typename T2, int R2,
-          int C2, typename T3, int R3, int C3>
+template <typename T1, int R1, int C1, typename T2, int R2, int C2, typename T3,
+          int R3, int C3>
 inline
     typename std::enable_if<stan::is_var<T1>::value || stan::is_var<T2>::value
                                 || stan::is_var<T3>::value,

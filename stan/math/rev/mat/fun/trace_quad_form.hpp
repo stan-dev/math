@@ -90,8 +90,8 @@ trace_quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
   internal::trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>* baseVari
       = new internal::trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>(A, B);
 
-  return var(new internal::trace_quad_form_vari<Ta, Ra, Ca,
-                                                Tb, Rb, Cb>(baseVari));
+  return var(
+      new internal::trace_quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>(baseVari));
 }
 
 }  // namespace math

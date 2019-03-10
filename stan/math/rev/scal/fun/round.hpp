@@ -18,7 +18,7 @@ class round_vari : public op_v_vari {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Returns the rounded form of the specified variable (C99).

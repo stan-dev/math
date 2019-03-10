@@ -88,8 +88,9 @@ class fdim_dv_vari : public op_dv_vari {
  */
 inline var fdim(const var& a, const var& b) {
   // reversed test to get NaN vals automatically in second case
-  return (a.vi_->val_ <= b.vi_->val_) ? var(new vari(0.0))
-                              : var(new internal::fdim_vv_vari(a.vi_, b.vi_));
+  return (a.vi_->val_ <= b.vi_->val_)
+             ? var(new vari(0.0))
+             : var(new internal::fdim_vv_vari(a.vi_, b.vi_));
 }
 
 /**

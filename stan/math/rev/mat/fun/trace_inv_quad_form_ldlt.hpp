@@ -164,11 +164,12 @@ inline
   check_multiplicable("trace_inv_quad_form_ldlt", "A", A, "B", B);
 
   internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *impl_
-      = new internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2,
-                                                    T3, R3, C3>(A, B);
+      = new internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3>(A,
+                                                                            B);
 
-  return var(new internal::trace_inv_quad_form_ldlt_vari<T2, R2, C2, T3,
-                                                         R3, C3>(impl_));
+  return var(
+      new internal::trace_inv_quad_form_ldlt_vari<T2, R2, C2, T3, R3, C3>(
+          impl_));
 }
 
 }  // namespace math
