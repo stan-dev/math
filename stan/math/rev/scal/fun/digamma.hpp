@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class digamma_vari : public op_v_vari {
  public:
   explicit digamma_vari(vari* avi) : op_v_vari(digamma(avi->val_), avi) {}
@@ -16,7 +16,9 @@ class digamma_vari : public op_v_vari {
 };
 }  // namespace internal
 
-inline var digamma(const var& a) { return var(new internal::digamma_vari(a.vi_)); }
+inline var digamma(const var& a) {
+  return var(new internal::digamma_vari(a.vi_));
+}
 
 }  // namespace math
 }  // namespace stan

@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 
 // these function and the following class just translate
 // log_sum_exp for std::vector for Eigen::Matrix

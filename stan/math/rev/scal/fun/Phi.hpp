@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class Phi_vari : public op_v_vari {
  public:
   explicit Phi_vari(vari* avi) : op_v_vari(Phi(avi->val_), avi) {}

@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class neg_vari : public op_v_vari {
  public:
   explicit neg_vari(vari* avi) : op_v_vari(-(avi->val_), avi) {}
@@ -46,7 +46,9 @@ class neg_vari : public op_v_vari {
  * @param a Argument variable.
  * @return Negation of variable.
  */
-inline var operator-(const var& a) { return var(new internal::neg_vari(a.vi_)); }
+inline var operator-(const var& a) {
+  return var(new internal::neg_vari(a.vi_));
+}
 
 }  // namespace math
 }  // namespace stan

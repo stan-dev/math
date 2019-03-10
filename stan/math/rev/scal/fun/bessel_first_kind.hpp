@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 
 class bessel_first_kind_dv_vari : public op_dv_vari {
  public:

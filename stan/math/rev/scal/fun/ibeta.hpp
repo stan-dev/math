@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 /**
  * Calculates the generalized hypergeometric 3F2(a, a, b; a + 1, a + 1; z).
  *

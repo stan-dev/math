@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class inv_logit_vari : public op_v_vari {
  public:
   explicit inv_logit_vari(vari* avi) : op_v_vari(inv_logit(avi->val_), avi) {}
@@ -28,7 +28,9 @@ class inv_logit_vari : public op_v_vari {
  * @param a Argument variable.
  * @return Inverse logit of argument.
  */
-inline var inv_logit(const var& a) { return var(new internal::inv_logit_vari(a.vi_)); }
+inline var inv_logit(const var& a) {
+  return var(new internal::inv_logit_vari(a.vi_));
+}
 
 }  // namespace math
 }  // namespace stan

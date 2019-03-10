@@ -9,7 +9,7 @@
 
 namespace stan {
 namespace math {
-namespace internal{
+namespace internal {
 template <typename T, int R, int C>
 struct finite<Eigen::Matrix<T, R, C>, true> {
   static void check(const char* function, const char* name,

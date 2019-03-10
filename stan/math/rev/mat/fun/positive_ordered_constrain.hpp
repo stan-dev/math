@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class positive_ordered_constrain_op {
   int N_;
   double* exp_x_;

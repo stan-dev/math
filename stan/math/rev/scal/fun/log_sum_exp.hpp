@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 
 class log_sum_exp_vv_vari : public op_vv_vari {
  public:

@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 template <int R, int C>
 class determinant_vari : public vari {
   int rows_;

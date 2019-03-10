@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 
 inline var calc_variance(size_t size, const var* dtrs) {
   vari** varis = ChainableStack::instance().memalloc_.alloc_array<vari*>(size);

@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class hypot_vv_vari : public op_vv_vari {
  public:
   hypot_vv_vari(vari* avi, vari* bvi)

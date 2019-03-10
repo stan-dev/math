@@ -16,7 +16,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 
 class squared_distance_vv_vari : public vari {
  protected:

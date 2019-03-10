@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class exp2_vari : public op_v_vari {
  public:
   explicit exp2_vari(vari* avi) : op_v_vari(std::pow(2.0, avi->val_), avi) {}

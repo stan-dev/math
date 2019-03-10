@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 
 class log_rising_factorial_vv_vari : public op_vv_vari {
  public:

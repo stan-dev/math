@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class fma_vvv_vari : public op_vvv_vari {
  public:
   fma_vvv_vari(vari* avi, vari* bvi, vari* cvi)

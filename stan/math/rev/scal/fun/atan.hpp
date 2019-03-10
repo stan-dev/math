@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class atan_vari : public op_v_vari {
  public:
   explicit atan_vari(vari* avi) : op_v_vari(std::atan(avi->val_), avi) {}

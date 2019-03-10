@@ -6,7 +6,7 @@
 
 namespace stan {
 namespace math {
-namespace internal{
+namespace internal {
 template <typename T, int R, int C>
 void resize(Eigen::Matrix<T, R, C>& x, const std::vector<int>& dims, int pos) {
   x.resize(dims[pos], dims[pos + 1]);

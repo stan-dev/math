@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class trunc_vari : public op_v_vari {
  public:
   explicit trunc_vari(vari* avi) : op_v_vari(trunc(avi->val_), avi) {}

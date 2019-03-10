@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class erf_vari : public op_v_vari {
  public:
   explicit erf_vari(vari* avi) : op_v_vari(erf(avi->val_), avi) {}

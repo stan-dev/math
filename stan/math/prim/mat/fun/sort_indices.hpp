@@ -17,7 +17,7 @@ namespace math {
  * @tparam ascending true if sorting in ascending order
  * @tparam C container type
  */
-namespace internal{
+namespace internal {
 template <bool ascending, typename C>
 class index_comparator {
   const C& xs_;

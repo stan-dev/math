@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-namespace internal{
+namespace internal {
 class log2_vari : public op_v_vari {
  public:
   explicit log2_vari(vari* avi) : op_v_vari(log2(avi->val_), avi) {}
