@@ -12,7 +12,7 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   test::check_varis_on_stack(inv_sqrt_spd(a));
 }
 
-struct make_zero {
+struct make_I {
   template <typename T>
   Eigen::Matrix<T, Eigen::Dynamic, 1> operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1> &a) const {
@@ -25,9 +25,9 @@ struct make_zero {
         A(i, j) = a[pos++];
 
     matrix_t inv_sqrt_A = stan::math::inv_sqrt_spd(A);
-    matrix_t zero = A.inverse() - inv_sqrt_A * inv_sqrt_A;
-    zero.resize(K * K, 1);
-    return zero;
+    matrix_t I = inv_sqrt_A * A * inv_sqrt_A;
+    I.resize(K * K, 1);
+    return I;
   }
 };
 
@@ -37,24 +37,22 @@ TEST(AgradRevMatrix, sqrt_spd) {
   using stan::math::sqrt_spd;
   using stan::math::vector_v;
 
-  int K = 2;
+  int K = 7;
   matrix_d A(K, K);
   A.setRandom();
   A = A.transpose() * A;
   matrix_d J;
   Eigen::VectorXd f_x;
   A.resize(K * K, 1);
-  make_zero f;
+  make_I f;
   stan::math::jacobian(f, A, f_x, J);
-  const double TOL = 1e-14;
+  const double TOL = 1e-13;
   int pos = 0;
   for (int i = 0; i < K; i++)
     for (int j = 0; j < K; j++)
-      EXPECT_NEAR(f_x(pos++), 0, TOL);
-  /*
-    for (int i = 0; i < J.rows(); i++)
-      for (int j = 0; j < J.cols(); j++)
-        if (i != j) EXPECT_NEAR(J(i, j), 0, TOL);
-  */
+      EXPECT_NEAR(f_x(pos++), i == j, TOL);
+  for (int i = 0; i < J.rows(); i++)
+    for (int j = 0; j < J.cols(); j++)
+      EXPECT_NEAR(J(i, j), 0, 10 * TOL);
   EXPECT_TRUE(J.array().any());
 }

@@ -3,6 +3,60 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::inverse_spd;
+  using stan::math::matrix_v;
+
+  matrix_v a(2, 2);
+  a << 2.0, 3.0, 3.0, 7.0;
+
+  test::check_varis_on_stack(stan::math::inverse_spd(a));
+}
+
+struct make_I {
+  template <typename T>
+  Eigen::Matrix<T, Eigen::Dynamic, 1> operator()(
+      const Eigen::Matrix<T, Eigen::Dynamic, 1> &a) const {
+    typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
+    const int K = static_cast<int>(sqrt(a.rows()));
+    matrix_t A(K, K);
+    int pos = 0;
+    for (int i = 0; i < K; i++)
+      for (int j = 0; j < K; j++)
+        A(i, j) = a[pos++];
+
+    matrix_t I = A * stan::math::inverse_spd(A);
+    I.resize(K * K, 1);
+    return I;
+  }
+};
+
+TEST(AgradRevMatrix, inverse) {
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::sqrt_spd;
+  using stan::math::vector_v;
+
+  int K = 11;
+  matrix_d A(K, K);
+  A.setRandom();
+  A = A.transpose() * A;
+  matrix_d J;
+  Eigen::VectorXd f_x;
+  A.resize(K * K, 1);
+  make_I f;
+  stan::math::jacobian(f, A, f_x, J);
+  const double TOL = 1e-13;
+  int pos = 0;
+  for (int i = 0; i < K; i++)
+    for (int j = 0; j < K; j++)
+      EXPECT_NEAR(f_x(pos++), i == j, TOL);
+  for (int i = 0; i < J.rows(); i++)
+    for (int j = 0; j < J.cols(); j++)
+      EXPECT_NEAR(J(i, j), 0, 10 * TOL);
+  EXPECT_TRUE(J.array().any());
+}
+
 TEST(AgradRevMatrix, inverse_spd_val) {
   using stan::math::inverse_spd;
   using stan::math::matrix_v;
@@ -26,7 +80,7 @@ TEST(AgradRevMatrix, inverse_spd_val) {
   a << 1.0, -1.0, -1.0, -1.0;
   EXPECT_THROW(inverse_spd(a), std::domain_error);
 }
-
+/*
 TEST(AgradRevMatrix, inverse_spd_grad) {
   using stan::math::inverse_spd;
   using stan::math::matrix_v;
@@ -39,12 +93,13 @@ TEST(AgradRevMatrix, inverse_spd_grad) {
       AVEC x = createAVEC(ad(0, 0), ad(0, 1), ad(1, 0), ad(1, 1));
 
       matrix_v ad_inv = inverse_spd(ad);
+      std::cout << "ad_inv = " << std::endl << ad_inv << std::endl;
 
       // int k = 0;
       // int l = 1;
-      VEC g;
+      VEC g(4);
       (0.5 * (ad_inv(k, l) + ad_inv(l, k))).grad(x, g);
-
+      std::cout << "passed" << std::endl;
       int idx = 0;
       for (int i = 0; i < 2; ++i) {
         for (int j = 0; j < 2; ++j) {
@@ -85,13 +140,4 @@ TEST(AgradRevMatrix, inverse_spd_inverse_spd_sum) {
     }
   }
 }
-
-TEST(AgradRevMatrix, check_varis_on_stack) {
-  using stan::math::inverse_spd;
-  using stan::math::matrix_v;
-
-  matrix_v a(2, 2);
-  a << 2.0, 3.0, 3.0, 7.0;
-
-  test::check_varis_on_stack(stan::math::inverse_spd(a));
-}
+*/

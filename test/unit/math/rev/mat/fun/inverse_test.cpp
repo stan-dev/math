@@ -3,6 +3,50 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 
+struct make_I {
+  template <typename T>
+  Eigen::Matrix<T, Eigen::Dynamic, 1> operator()(
+      const Eigen::Matrix<T, Eigen::Dynamic, 1> &a) const {
+    typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
+    const int K = static_cast<int>(sqrt(a.rows()));
+    matrix_t A(K, K);
+    int pos = 0;
+    for (int i = 0; i < K; i++)
+      for (int j = 0; j < K; j++)
+        A(i, j) = a[pos++];
+
+    matrix_t I = A * stan::math::inverse(A);
+    I.resize(K * K, 1);
+    return I;
+  }
+};
+
+TEST(AgradRevMatrix, inverse) {
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::sqrt_spd;
+  using stan::math::vector_v;
+
+  int K = 7;
+  matrix_d A(K, K);
+  A.setRandom();
+  A = A.transpose() * A;
+  matrix_d J;
+  Eigen::VectorXd f_x;
+  A.resize(K * K, 1);
+  make_I f;
+  stan::math::jacobian(f, A, f_x, J);
+  const double TOL = 1e-13;
+  int pos = 0;
+  for (int i = 0; i < K; i++)
+    for (int j = 0; j < K; j++)
+      EXPECT_NEAR(f_x(pos++), i == j, TOL);
+  for (int i = 0; i < J.rows(); i++)
+    for (int j = 0; j < J.cols(); j++)
+      EXPECT_NEAR(J(i, j), 0, 100 * TOL);
+  EXPECT_TRUE(J.array().any());
+}
+
 TEST(AgradRevMatrix, inverse_val) {
   using stan::math::inverse;
   using stan::math::matrix_v;
@@ -21,6 +65,7 @@ TEST(AgradRevMatrix, inverse_val) {
 
   EXPECT_THROW(inverse(matrix_v(2, 3)), std::invalid_argument);
 }
+
 TEST(AgradRevMatrix, inverse_grad) {
   using stan::math::inverse;
   using stan::math::matrix_v;
