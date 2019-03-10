@@ -24,9 +24,9 @@ class inv_sqrt_spd_op {
   template <std::size_t size>
   Eigen::MatrixXd operator()(const std::array<bool, size> &needs_adj,
                              const Eigen::MatrixXd &m) {
-    using Eigen::kroneckerProduct;
     using Eigen::MatrixXd;
     using Eigen::VectorXd;
+    using Eigen::kroneckerProduct;
     K_ = m.rows();
     Eigen::SelfAdjointEigenSolver<MatrixXd> solver(m);
     MatrixXd V = solver.eigenvectors();
