@@ -20,7 +20,7 @@ class decrement_vari : public op_v_vari {
       avi_->adj_ += adj_;
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Prefix decrement operator for variables (C++).

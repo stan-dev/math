@@ -71,8 +71,8 @@ struct greater<T_y, T_low, true> {
 template <typename T_y, typename T_low>
 inline void check_greater(const char* function, const char* name, const T_y& y,
                           const T_low& low) {
-  internal::greater<T_y, T_low,
-                    is_vector_like<T_y>::value>::check(function, name, y, low);
+  internal::greater<T_y, T_low, is_vector_like<T_y>::value>::check(
+      function, name, y, low);
 }
 }  // namespace math
 }  // namespace stan

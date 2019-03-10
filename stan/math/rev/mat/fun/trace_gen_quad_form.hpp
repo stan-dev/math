@@ -105,15 +105,13 @@ trace_gen_quad_form(const Eigen::Matrix<Td, Rd, Cd>& D,
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
   check_multiplicable("trace_gen_quad_form", "B", B, "D", D);
 
-  internal::trace_gen_quad_form_vari_alloc<Td, Rd, Cd,
-                                           Ta, Ra, Ca, Tb, Rb, Cb>* baseVari
-      = new internal::trace_gen_quad_form_vari_alloc<Td, Rd, Cd,
-                                                     Ta, Ra, Ca, Tb, Rb, Cb>(
-          D, A, B);
+  internal::trace_gen_quad_form_vari_alloc<Td, Rd, Cd, Ta, Ra, Ca, Tb, Rb, Cb>*
+      baseVari
+      = new internal::trace_gen_quad_form_vari_alloc<Td, Rd, Cd, Ta, Ra, Ca, Tb,
+                                                     Rb, Cb>(D, A, B);
 
-  return var(new internal::trace_gen_quad_form_vari<Td, Rd, Cd,
-                                                    Ta, Ra, Ca, Tb, Rb, Cb>(
-      baseVari));
+  return var(new internal::trace_gen_quad_form_vari<Td, Rd, Cd, Ta, Ra, Ca, Tb,
+                                                    Rb, Cb>(baseVari));
 }
 
 }  // namespace math
