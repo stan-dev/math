@@ -11,7 +11,7 @@ namespace stan {
 namespace math {
 
 namespace internal {
-double log_sum_exp_as_double(const std::vector<var>& x) {
+inline double log_sum_exp_as_double(const std::vector<var>& x) {
   using std::exp;
   using std::log;
   using std::numeric_limits;
