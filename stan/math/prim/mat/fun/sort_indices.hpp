@@ -67,7 +67,7 @@ std::vector<int> sort_indices(const C& xs) {
   idxs.resize(size);
   for (idx_t i = 0; i < size; ++i)
     idxs[i] = i + 1;
-  index_comparator<ascending, C> comparator(xs);
+  internal::index_comparator<ascending, C> comparator(xs);
   std::sort(idxs.begin(), idxs.end(), comparator);
   return idxs;
 }
