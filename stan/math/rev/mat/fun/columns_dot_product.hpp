@@ -25,7 +25,7 @@ columns_dot_product(const Eigen::Matrix<T1, R1, C1>& v1,
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
   Eigen::Matrix<var, 1, C1> ret(1, v1.cols());
   for (size_type j = 0; j < v1.cols(); ++j) {
-    ret(j) = var(new dot_product_vari<T1, T2>(v1.col(j), v2.col(j)));
+    ret(j) = var(new internal::dot_product_vari<T1, T2>(v1.col(j), v2.col(j)));
   }
   return ret;
 }

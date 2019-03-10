@@ -130,7 +130,7 @@ inline var pow(const var& base, double exponent) {
     return inv(base);
   if (exponent == -0.5)
     return inv_sqrt(base);
-  return var(new pow_vd_vari(base.vi_, exponent));
+  return var(new internal::pow_vd_vari(base.vi_, exponent));
 }
 
 /**
@@ -146,7 +146,7 @@ inline var pow(const var& base, double exponent) {
  * @return Base raised to the exponent.
  */
 inline var pow(double base, const var& exponent) {
-  return var(new pow_dv_vari(base, exponent.vi_));
+  return var(new internal::pow_dv_vari(base, exponent.vi_));
 }
 
 }  // namespace math
