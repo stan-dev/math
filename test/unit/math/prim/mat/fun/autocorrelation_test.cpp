@@ -60,12 +60,12 @@ TEST(ProbAutocorrelation, test2) {
 }
 
 TEST(ProbAutocorrelation, fft_next_good_size) {
-  EXPECT_EQ(2U, stan::math::fft_next_good_size(0));
-  EXPECT_EQ(2U, stan::math::fft_next_good_size(1));
-  EXPECT_EQ(2U, stan::math::fft_next_good_size(2));
-  EXPECT_EQ(3U, stan::math::fft_next_good_size(3));
+  EXPECT_EQ(2U, stan::math::internal::fft_next_good_size(0));
+  EXPECT_EQ(2U, stan::math::internal::fft_next_good_size(1));
+  EXPECT_EQ(2U, stan::math::internal::fft_next_good_size(2));
+  EXPECT_EQ(3U, stan::math::internal::fft_next_good_size(3));
 
-  EXPECT_EQ(4U, stan::math::fft_next_good_size(4));
-  EXPECT_EQ(128U, stan::math::fft_next_good_size(128));
-  EXPECT_EQ(135U, stan::math::fft_next_good_size(129));
+  EXPECT_EQ(4U, stan::math::internal::fft_next_good_size(4));
+  EXPECT_EQ(128U, stan::math::internal::fft_next_good_size(128));
+  EXPECT_EQ(135U, stan::math::internal::fft_next_good_size(129));
 }
