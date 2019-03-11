@@ -467,10 +467,10 @@ void calculateEigenvector(const Eigen::VectorXd& l_plus, const Eigen::VectorXd& 
  * @param high High bound on wanted shift.
  * @param max_ele_growth Maximum desired element growth. If no better options are found it might be exceeded.
  * @param max_shift Maximal difference of shhift from wanted bounds.
- * @param l2 Subdiagonal of L2.
- * @param d2 Diagonal of D2.
- * @param shift Shift.
- * @param min_element_growth Element growth achieved with resulting shift.
+ * @param[out] l2 Subdiagonal of L2.
+ * @param[out] d2 Diagonal of D2.
+ * @param[out] shift Shift.
+ * @param[out] min_element_growth Element growth achieved with resulting shift.
  */
 void findShift(const Eigen::VectorXd& l, const Eigen::VectorXd& d, double low, double high, double max_ele_growth, double max_shift,
                Eigen::VectorXd& l2, Eigen::VectorXd& d2, double& shift, double& min_element_growth) {
@@ -1057,7 +1057,7 @@ void tridiagonal_eigensolver(const Eigen::VectorXd& diag, const Eigen::VectorXd&
 }
 
 /**
-* Calculates eigenvalues and eigenvectors of a tridiagonal matrix T using MRRR algorithm.
+* Calculates eigenvalues and eigenvectors of a tridiagonal matrix T using MRRR algorithm on GPU.
 * If a subdiagonal element is close to zero compared to neighbors on diagonal the problem can be split into smaller ones.
 * @param diag Diagonal of of T.
 * @param subdiag Subdiagonal of T.

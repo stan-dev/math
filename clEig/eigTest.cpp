@@ -13,11 +13,11 @@
 #include <stan/math/opencl/copy.hpp>
 #include <chrono>
 #include <Eigen/QR>
+#include <stan/math/opencl/kernels/tridiagonalization.hpp>
+#include <stan/math/opencl/kernels/mrrr.hpp>
 #include <stan/math/opencl/tridiagonalization.hpp>
 #include <stan/math/opencl/mrrr.hpp>
 #include <stan/math/opencl/symmetric_eigensolver.hpp>
-#include <stan/math/opencl/kernels/tridiagonalization.hpp>
-#include <stan/math/opencl/kernels/mrrr.hpp>
 
 //#define SKIP_CHECKS
 
@@ -356,7 +356,7 @@ int main() {
   auto kernel_10 = opencl_kernels::eigenvals_bisect;
 
   //srand(time(0));
-  int A=8000;
+  int A=1000;
   Mat a = Mat::Random(A, A);
   a+=a.transpose().eval();
   //a.diagonal()+=Eigen::VectorXd::Constant(A,A);
@@ -387,7 +387,7 @@ int main() {
   vals.setZero();
   vecs.setZero();
   start = std::chrono::steady_clock::now();
-  symmetric_eigensolver_cl(a,vals, vecs);
+  symmetric_eigensolver(a,vals, vecs);
   cout << "GPU total: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;

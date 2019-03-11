@@ -14,6 +14,14 @@ namespace opencl_kernels {
 // \cond
 const char* eigenvals_bisect_kernel_code = STRINGIFY(
 // \endcond
+        /**
+         * Calculates Sturm count of a LDL decomposition of a tridiagonal matrix - number of eigenvalues larger or equal to shift.
+         * Uses stqds - calculation of shifted LDL decomposition algorithm and counts number of positive elements in D.
+         * @param l Subdiagonal of L.
+         * @param d Diagonal of D.
+         * @param shift Shift.
+         * @return Sturm count.
+         */
         int getSturmCountLdl(__global double* l, const __global double* d, double shift, int n){
           double s = -shift;
           double l_plus;
@@ -34,6 +42,15 @@ const char* eigenvals_bisect_kernel_code = STRINGIFY(
           return count;
         }
 
+        /**
+         * Calculates eigenvalues of tridiagonal matrix represented by a LDL decomposition using bisection.
+         * @param l Subdiagonal of L.
+         * @param d Diagonal of D.
+         * @param[out] low_res Resulting low bounds on eigenvalues.
+         * @param[out] high_res Resulting high bounds on eigenvalues.
+         * @param min_eigval Lower bound on all eigenvalues.
+         * @param max_eigval Upper bound on all eigenvalues.
+         */
         __kernel void eigenvals_bisect(__global double* l, const __global double* d, __global double* low_res, __global double* high_res,
                 const double min_eigval, const double max_eigval, const int n) {
           const int lid = get_local_id(0);
@@ -71,6 +88,18 @@ const char* eigenvals_bisect_kernel_code = STRINGIFY(
 const char* get_eigenvectors_kernel_code = STRINGIFY(
 // \endcond
 
+        /**
+         * Shifts a LDL decomposition. The algorithm is sometimes called stationary quotients-differences with shifts (stqds).
+         * D and D+ are diagonal, L and L+ are lower unit triangular (diagonal elements are 1,
+         * all elements except diagonal and subdiagonal are 0). L * D * L^T - shift * I = L+ * D * L+^T.
+         * Also calculates element growth of D+: sum(abs(D+)) / abs(sum(D+)).
+         * @param l Subdiagonal of L.
+         * @param d Diagonal of D.
+         * @param shift Shift.
+         * @param[out] l_plus Subdiagonal of L+.
+         * @param[out] d_plus Diagonal of D+.
+         * @return Element growth.
+         */
         double get_shifted_ldl(const __global double* l, const __global double* d, double shift, __global double* l_plus, __global double* d_plus) {
           int n=get_global_size(0);
           int m=n-1;
@@ -95,12 +124,33 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
           return element_growth / fabs(element_growth_denominator);
         }
 
+        /**
+         * Swaps two pointers.
+         * @param a First pointer.
+         * @param b Second pointer.
+         */
         void swap(__global double** a, __global double** b){
           __global double* c=*a;
           *a=*b;
           *b=c;
         }
 
+
+        /**
+         * Finds good shift and shifts a LDL decomposition so as to keep element growth low. L * D * L^T - shift * I = L2 * D2 * L2^T.
+         * @param l Subdiagonal of L.
+         * @param d Diagonal of D.
+         * @param low Low bound on wanted shift.
+         * @param high High bound on wanted shift.
+         * @param max_ele_growth Maximum desired element growth. If no better options are found it might be exceeded.
+         * @param max_shift Maximal difference of shhift from wanted bounds.
+         * @param[out] l2 Subdiagonal of L2.
+         * @param[out] d2 Diagonal of D2.
+         * @param l3 Temporary array of the same size as d.
+         * @param d3 Temporary array of the same size as d
+         * @param[out] shift Shift.
+         * @param[out] min_element_growth Element growth achieved with resulting shift.
+         */
         void findShift(const __global double* l, const __global double* d, double low, double high, double max_ele_growth, double max_shift,
                        __global double** l2, __global double** d2, __global double** l3, __global double** d3, double* shift, double* min_element_growth
                        ) {
@@ -135,6 +185,14 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
 //  cout << "\t\t" << " element growth: " << min_element_growth << " at " << shift << endl;
         }
 
+        /**
+         * Calculates Sturm count of a LDL decomposition of a tridiagonal matrix - number of eigenvalues larger or equal to shift.
+         * Uses stqds - calculation of shifted LDL decomposition algorithm and counts number of positive elements in D.
+         * @param l Subdiagonal of L.
+         * @param d Diagonal of D.
+         * @param shift Shift.
+         * @return Sturm count.
+         */
         int getSturmCountLdl(const __global double* l, const __global double* d, double shift){
           int gid = get_global_id(0);
           int n = get_global_size(0);
@@ -157,6 +215,13 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
           return count;
         }
 
+        /**
+         * Refines bounds on eigenvalues of LDL decomposition of a matrix using bisection.
+         * @param l Subdiagonal of L.
+         * @param d Diagonal of D.
+         * @param low[in,out] Low bound on the eigenvalue.
+         * @param high[in,out] High bound on the eigenvalue.
+         */
         void eigenvalBisectRefine(const __global double* l, const __global double* d, double* low, double* high) {
           int i=get_global_id(0);
           double eps = 3e-16;
@@ -171,6 +236,20 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
           }
         }
 
+        /**
+         * Calculates shifted LDL and UDU factorizations. Combined with twist index they form twisted factorization for calculation
+         * of an eigenvector corresponding to eigenvalue that is equal to the shift. Tha algorithm is sometimes called diferential twisted quotient-differences with shifts (dtwqds).
+         * L * D * L^T - shift * I = L+ * D+ * L+^T = U- * D- * U-^T
+         * D, D+ and D- are diagonal, L and L+ are lower unit triangular (diagonal elements are 1, all elements except diagonal and subdiagonal are 0),
+         * U- is upper unit triangular (diagonal elements are 1, all elements except diagonal and superdiagonal are 0)
+         * @param l Subdiagonal of L.
+         * @param d Diagonal of D.
+         * @param shift Shift.
+         * @param[out] l_plus Subdiagonal of L+.
+         * @param[out] u_minus Superdiagonal of U-.
+         * @param s Temporary array of the same size as d.
+         * @return Twist index.
+         */
         int get_twisted_factorization(const __global double* l, const __global double* d, double shift, __global double* l_plus, __global double* u_minus, __global double* s) {
           int n = get_global_size(0);
           int gid = get_global_id(0);
@@ -247,6 +326,15 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
           return twist_index;
         }
 
+
+        /**
+          * Calculates eigenvectors from twisted factorization T - shift * I = L+ * D+ * L+^T = U- * D- * U-^T.
+          * @param l_plus Subdiagonal of the L+.
+          * @param u_minus Superdiagonal of the U-.
+          * @param subdiag Subdiagonal of T
+          * @param twist_idx Twist index.
+          * @param[out] eigenvecs Matrix in which to store resulting vectors.
+          */
         void calculateEigenvector(const __global double* l_plus, const __global double* u_minus, const __global double* subdiag, int twist_idx, __global double* eigenvecs) {
           int n = get_global_size(0);
           int gid = get_global_id(0);
@@ -283,8 +371,22 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
 //          }
         }
 
-        /*
-         * l,d, eigenvecs: vrstica za en eigenvec
+        /**
+         * Calculates eigenvectors for distinct (shifted) eigenvalues.
+         * @param subdiag Subdiagonal of the tridiagonal matrix.
+         * @param l Each row is a subdiagonal of the matrix L from LDL decomposition for one eigenvalue.
+         * @param d Each row is a diagonal of the matrix D from LDL decomposition for one eigenvalue.
+         * @param low_glob Lower bounds on shifted eigenvalues
+         * @param high_glob High bounds on shifted eigenvalues.
+         * @param min_gap_glob Minimal absolute gap of each eigenvalue to the closest eigenvalue
+         * @param l2 Temporary array of the same size as d
+         * @param d2 Temporary array of the same size as d
+         * @param temp1 Temporary array of the same size as d
+         * @param temp2 Temporary array of the same size as d
+         * @param temp3 Temporary array of the same size as d
+         * @param eigenvecs Each row is one eigenvector.
+         * @param min_rel_sep Minimal relative separation of eigenvalues before computing eigenvectors.
+         * @param max_ele_growth Maximal desired element growth of LDL decompositions.
          */
         __kernel void get_eigenvectors(const __global double* subdiag, const __global double* l, const __global double* d,
                 const __global double* low_glob, const __global double* high_glob, const __global double* min_gap_glob,

@@ -16,6 +16,13 @@ const char* tridiagonalization_householder_kernel_code = STRINGIFY(
         /**
          * Calculates householder vector and first element of the vector v.
          * Must be run with 1 workgroup of 1024 threads.
+         * @param[in,out] P packed matrix being constructed
+         * @param[in,out] V matrix V
+         * @param[out] q_glob q
+         * @param P_rows Number of rows of the packed matrix
+         * @param V_rows Number of rows of the matrix V
+         * @param j Start column of the block to work on
+         * @param k Index of the householder vector in the block to create
          */
         __kernel void tridiagonalization_householder(__global double* P, __global double* V, __global double* q_glob,
                                               const int P_rows, const int V_rows,
@@ -113,10 +120,10 @@ const char* tridiagonalization_householder_kernel_code = STRINGIFY(
 // \cond
 const char* tridiagonalization_householder_v1_kernel_code = STRINGIFY(
 // \endcond
-/**
- * Calculates householder vector and first element of the vector v.
- * Must be run with 1 workgroup of 128 threads.
- */
+        /**
+         * Calculates householder vector and first element of the vector v.
+         * Must be run with 1 workgroup of 128 threads.
+         */
         __kernel void tridiagonalization_householder_v1(__global double* P, __global double* V, __global double* q_glob, __global double* R1, __global double* R2,
                                               const int P_rows, const int V_rows,
                                               const int j, const int k) {
@@ -246,9 +253,18 @@ const char* tridiagonalization_householder_v1_kernel_code = STRINGIFY(
 const char* tridiagonalization_v1_kernel_code = STRINGIFY(
 // \endcond
         /**
-         * Calculates R1 = Pb * u and R2 = Vl * u. U is
+         * Calculates first part of constructing the vector v: Uu = Pb * u and Vu = Vl * u. Pb is a block of packed matrix,
+         * Vl is left part of matrix V and u is householder vector.
+         * Must be run with number of work groups equal to size of resulting vectors and 64 threads per work group.
+         * @param P Packed matrix being constructed.
+         * @param V Matrix V.
+         * @param[out] Uu First resulting vector.
+         * @param[out] Vu Second resulting vector.
+         * @param P_rows Number of rows of the packed matrix
+         * @param V_rows Number of rows of the matrix V
+         * @param k Index of the householder vector in the block we use as input
          */
-        __kernel void tridiagonalization_v1(const __global double* P, const __global double* V, __global double* R1, __global double* R2,
+        __kernel void tridiagonalization_v1(const __global double* P, const __global double* V, __global double* Uu, __global double* Vu,
                 const int P_rows, const int V_rows, const int k) {
           const int lid = get_local_id(0);
           const int gid = get_global_id(0);
@@ -279,8 +295,8 @@ const char* tridiagonalization_v1_kernel_code = STRINGIFY(
               acc1+=res_loc1[i];
               acc2+=res_loc2[i];
             }
-            R1[wgid]=acc1;
-            R2[wgid]=acc2;
+            Uu[wgid]=acc1;
+            Vu[wgid]=acc2;
           }
         }
 // \cond
@@ -290,6 +306,17 @@ const char* tridiagonalization_v1_kernel_code = STRINGIFY(
 // \cond
 const char* tridiagonalization_v2_kernel_code = STRINGIFY(
 // \endcond
+        /**
+         * Second part in constructing vector v.
+         * @param P Packed matrix being constructed.
+         * @param V Matrix V.
+         * @param Uu Uu from previous kernel.
+         * @param Vu Vu from previous kernel.
+         * @param P_rows Number of rows of the packed matrix
+         * @param V_rows Number of rows of the matrix V
+         * @param k Index of the householder vector in the block we use as input
+         * @param j Start column of the block to work on
+         */
         __kernel void tridiagonalization_v2(const __global double* P, __global double* V, const __global double* Uu, const __global double* Vu,
                                      const int P_rows, const int V_rows, const int k, const int j) {
           const int lid = get_local_id(0);
@@ -335,6 +362,17 @@ const char* tridiagonalization_v2_kernel_code = STRINGIFY(
 // \cond
 const char* tridiagonalization_v2_2_kernel_code = STRINGIFY(
 // \endcond
+        /**
+         * Second part in constructing vector v.
+         * @param P Packed matrix being constructed.
+         * @param V Matrix V.
+         * @param Uu Uu from previous kernel.
+         * @param Vu Vu from previous kernel.
+         * @param P_rows Number of rows of the packed matrix
+         * @param V_rows Number of rows of the matrix V
+         * @param k Index of the householder vector in the block we use as input
+         * @param j Start column of the block to work on
+         */
         __kernel void tridiagonalization_v2(const __global double* P, __global double* V, const __global double* Uu, const __global double* Vu,
                                      const int P_rows, const int V_rows, const int k, const int j) {
           const int lid = get_local_id(0);
@@ -447,6 +485,21 @@ const char* tridiagonalization_v2_2_kernel_code = STRINGIFY(
 // \cond
 const char* tridiagonalization_v2_3_kernel_code = STRINGIFY(
 // \endcond
+        /**
+         * Second part in constructing vector v: v = Pb * u + V * Uu + U * Vu. Pb is a block of packed matrix
+         * and U is householder vector. Pb is symmetric with only lower triangel having values. That is why
+         * two columns of V are written that must be added to obtain the vector v.
+         * Must be run with 64 threads per work group and total number of threads equal or greater than size of
+         * result vector.
+         * @param P Packed matrix being constructed.
+         * @param V Matrix V.
+         * @param Uu Uu from previous kernel.
+         * @param Vu Vu from previous kernel.
+         * @param P_rows Number of rows of the packed matrix
+         * @param V_rows Number of rows of the matrix V
+         * @param k Index of the householder vector in the block we use as input
+         * @param j Start column of the block to work on
+         */
         __kernel void tridiagonalization_v2(const __global double* P, __global double* V, const __global double* Uu, const __global double* Vu,
                                             const int P_rows, const int V_rows, const int k, const int j) {
           const int lid = get_local_id(0);
@@ -519,6 +572,16 @@ const char* tridiagonalization_v2_3_kernel_code = STRINGIFY(
 // \cond
 const char* tridiagonalization_v3_2_kernel_code = STRINGIFY(
 // \endcond
+        /**
+         * Third part in constructing vector v: v-=0.5*(v^T*u)*u, where u is householder vector.
+         * @param[in,out] P packed matrix being constructed
+         * @param[in,out] V matrix V
+         * @param[out] q q
+         * @param P_rows Number of rows of the packed matrix
+         * @param V_rows Number of rows of the matrix V
+         * @param k Index of the householder vector in the block to create
+         * @param j Start column of the block to work on
+         */
         __kernel void tridiagonalization_v3(__global double* P, __global double* V, __global double* q,
                                             const int P_rows, const int V_rows, const int k, const int j) {
           const int lid = get_local_id(0);
@@ -566,6 +629,16 @@ const char* tridiagonalization_v3_2_kernel_code = STRINGIFY(
 // \cond
 const char* tridiagonalization_v3_kernel_code = STRINGIFY(
 // \endcond
+        /**
+         * Third part in constructing vector v: v-=0.5*(v^T*u)*u, where u is householder vector.
+         * @param[in,out] P packed matrix being constructed
+         * @param[in,out] V matrix V
+         * @param[out] q q
+         * @param P_rows Number of rows of the packed matrix
+         * @param V_rows Number of rows of the matrix V
+         * @param k Index of the householder vector in the block to create
+         * @param j Start column of the block to work on
+         */
         __kernel void tridiagonalization_v3(__global double* P, __global double* V, __global double* q,
                                      const int P_rows, const int V_rows, const int k, const int j) {
           const int lid = get_local_id(0);
@@ -708,7 +781,7 @@ const char* tridiagonalization_apply_Q2_kernel_code = STRINGIFY(
     /**
      * Calculates Mc = Vc - Ml * v, where Mc is the ncols-th column of the matrix M, Vc is the ncols-th column of the matrix V,
      * Ml is left part (ncols columns) of the matrix M and v is a vector. Instead of first ncols elements of Vc zeros are used.
-     * Launch 1 thread per element of result vector, rounded up to multiple of 64. Local size must be 64.
+     * Must be run with 1 thread per element of result vector, rounded up to multiple of 64. Local size must be 64.
      * @param[in,out] M Matrix M.
      * @param v Vector v.
      * @param V Matrix V.
@@ -765,6 +838,11 @@ const char* subtract_twice_kernel_code = STRINGIFY(
 // \endcond
         /**
          * Calculates A -= B + B ^ T, for lower triangular part of bottom right corner of A.
+         * @param A[in,out] First matrix.
+         * @param B Second matrix.
+         * @param A_rows Number of rows of A.
+         * @param B_rows Number of rows of B.
+         * @param start At which row and column of A to start.
          */
         __kernel void subtract_twice(__global double* A, const __global double* B,
                 const int A_rows, const int B_rows, const int start) {
@@ -777,14 +855,6 @@ const char* subtract_twice_kernel_code = STRINGIFY(
 // \cond
 );
 // \endcond
-
-/**
- * See the docs for \link kernels/matrix_multiply.hpp add() \endlink
- */
-//const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int>
-//    matrix_multiply("matrix_multiply", matrix_multiply_kernel_code,
-//                    {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
-
 
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int, int>
         tridiagonalization_householder("tridiagonalization_householder", tridiagonalization_householder_kernel_code);
