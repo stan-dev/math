@@ -269,7 +269,7 @@ TEST(StanMath_integrate_1d, TestThrows) {
   EXPECT_THROW(stan::math::integrate_1d(
                    f11{}, 0.0, std::numeric_limits<double>::infinity(),
                    std::vector<double>(), {}, {}, msgs, 1e-6),
-               std::domain_error);
+               std::runtime_error);
   EXPECT_THROW(
       stan::math::integrate_1d(f11{}, std::numeric_limits<double>::infinity(),
                                0.0, std::vector<double>(), {}, {}, msgs, 1e-6),
