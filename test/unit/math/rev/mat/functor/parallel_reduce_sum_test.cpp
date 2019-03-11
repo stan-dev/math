@@ -3,6 +3,7 @@
 #include <stan/math/parallel/get_num_threads.hpp>
 #include <stan/math/rev/core/nest_chainablestack.hpp>
 #include <stan/math/prim/scal/functor/parallel_reduce_sum.hpp>
+#include <stan/math/rev/scal/functor/parallel_reduce_sum.hpp>
 #include <gtest/gtest.h>
 
 #define TBB_PREVIEW_LOCAL_OBSERVER 1
@@ -98,6 +99,70 @@ TEST(Base, parallel_reduce_sum) {
   double poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda);
 
   EXPECT_FLOAT_EQ(poisson_lpdf, poisson_lpdf_ref);
+}
+
+TEST(AgradAutoDiff, parallel_reduce_sum) {
+  typedef boost::counting_iterator<std::size_t> count_iter;
+  using stan::math::var;
+
+  const std::size_t elems = 10000000;
+  std::vector<int> data(elems);
+
+  for (std::size_t i = 0; i != elems; ++i)
+    data[i] = i;
+
+  var lambda = 10.0;
+
+  count_lpdf<var> reduce_op(data, lambda);
+
+  var poisson_lpdf = stan::math::parallel_reduce_sum(
+      count_iter(0), count_iter(elems), var(0.0), reduce_op);
+
+  var lambda_ref = 10.0;
+  var poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_ref);
+
+  EXPECT_FLOAT_EQ(value_of(poisson_lpdf), value_of(poisson_lpdf_ref));
+
+  stan::math::grad(poisson_lpdf.vi_);
+  stan::math::grad(poisson_lpdf_ref.vi_);
+
+  EXPECT_FLOAT_EQ(poisson_lpdf.adj(), poisson_lpdf_ref.adj());
+}
+
+TEST(AgradAutoDiff, parallel_reduce_sum_speed) {
+  typedef boost::counting_iterator<std::size_t> count_iter;
+  using stan::math::var;
+
+  const std::size_t elems = 100000000;
+  std::vector<int> data(elems);
+
+  for (std::size_t i = 0; i != elems; ++i)
+    data[i] = i;
+
+  var lambda = 10.0;
+
+  count_lpdf<var> reduce_op(data, lambda);
+
+  var poisson_lpdf = stan::math::parallel_reduce_sum(
+      count_iter(0), count_iter(elems), var(0.0), reduce_op);
+
+  var lambda_ref = 10.0;
+  var poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_ref);
+
+  stan::math::grad(poisson_lpdf.vi_);
+}
+
+TEST(AgradAutoDiff, serial) {
+  typedef boost::counting_iterator<std::size_t> count_iter;
+  using stan::math::var;
+
+  const std::size_t elems = 100000000;
+  std::vector<int> data(elems);
+
+  var lambda_ref = 10.0;
+  var poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_ref);
+
+  stan::math::grad(poisson_lpdf_ref.vi_);
 }
 
 /*

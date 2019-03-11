@@ -110,7 +110,7 @@ struct AutodiffStackSingleton {
 
     // creates a new nochain stack and returns a pointer to it. This
     // operation is thread-safe.
-    std::shared_ptr<AutodiffStackStorage> get_child_stack() {
+    std::shared_ptr<AutodiffStackStorage> get_child_stack() const {
       return *(
           global_stack().emplace_back(std::shared_ptr<AutodiffStackStorage>(
               new AutodiffStackStorage(stack_id_))));
