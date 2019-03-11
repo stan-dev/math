@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_IS_SCAL_FINITE_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_IS_SCAL_FINITE_HPP
 
-#include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
@@ -19,8 +18,8 @@ namespace math {
  */
 template <typename T_y>
 inline bool is_scal_finite(const T_y& y) {
-  for (size_t n = 0; n < length(y); ++n) {
-    if (!(boost::math::isfinite)(value_of_rec(stan::get(y, n))))
+  for (size_t n = 0; n < stan::length(y); ++n) {
+    if (!(boost::math::isfinite(value_of_rec(stan::get(y, n)))))
       return false;
   }
   return true;

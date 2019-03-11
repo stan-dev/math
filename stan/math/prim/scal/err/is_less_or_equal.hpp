@@ -1,8 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_IS_LESS_OR_EQUAL_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_IS_LESS_OR_EQUAL_HPP
 
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/get.hpp>
 #include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
