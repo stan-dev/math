@@ -191,7 +191,7 @@ int get_twisted_factorization(const Eigen::VectorXd& l, const Eigen::VectorXd& d
 int getSturmCountLdl(const Eigen::VectorXd& l, const Eigen::VectorXd& d, double shift) {
   int n = l.size();
   double s = -shift;
-  double l_plus, d_plus;
+  double d_plus;
   int count = 0;
   for (int i = 0; i < n; i++) {
     d_plus = s + d[i];
@@ -217,7 +217,6 @@ int getSturmCountLdl(const Eigen::VectorXd& l, const Eigen::VectorXd& d, double 
  * @param i i-th eigenvalue
  */
 void eigenvalBisectRefine(const Eigen::VectorXd& l, const Eigen::VectorXd& d, double& low, double& high, int i) {
-  int n = d.size();
   double eps = 3e-16;
   while (abs((high - low) / (high + low)) > eps && abs(high - low) > std::numeric_limits<double>::min()) { // second term is for the case where the eigenvalue is 0 and division yields NaN
     double mid = (high + low) * 0.5;
@@ -860,7 +859,7 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const E
  * @param min_rel_sep Minimal relative separation of eigenvalues before computing eigenvectors.
  * @param max_ele_growth Maximal desired element growth of LDL decompositions.
  */
-void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const Eigen::VectorXd> subdiag, Eigen::Ref<Eigen::VectorXd> eigenvals,
+void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::VectorXd& subdiag, Eigen::Ref<Eigen::VectorXd> eigenvals,
              Eigen::Ref<Eigen::MatrixXd> eigenvecs, double min_rel_sep = 1e-1, double max_ele_growth = 2) {
   double shift_error = 1e-14;
   int n = diag.size();
@@ -922,6 +921,8 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<cons
   blockQueue.push(mrrrTask{0, n, shift0, std::move(l), std::move(d), 0});
   l.resize(n - 1); //after move out
   d.resize(n);
+  Eigen::MatrixXd l_big(n-1,n), d_big(n,n);
+  Eigen::VectorXd min_gap_big(n);
   while (!blockQueue.empty()) {
     mrrrTask block = blockQueue.front();
     blockQueue.pop();
@@ -945,22 +946,10 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<cons
         double currentShift, min_ele_growth;
         findShift(block.l, block.d, low[cluster_end], high[i], max_ele_growth, max_shift, l, d, currentShift, min_ele_growth);
         for (int j = i; j <= cluster_end; j++) {
-//          if(j >= getSturmCountLdl(block.d, block.l, low[j]) || j < getSturmCountLdl(block.d, block.l, high[j])){
-//            cout << "PRE-REFINE ERROR!!!!!" << endl;
-//          }
           low[j] = low[j] * (1 - copysign(shift_error, low[j])) - currentShift;
           high[j] = high[j] * (1 + copysign(shift_error, high[j])) - currentShift;
-//          if(j >= getSturmCountLdl(d, l, low[j]) || j < getSturmCountLdl(d, l, high[j])){
-//            cout << "PRE-REFINE ERROR!!!!!" << endl;
-//          }
           eigenvalBisectRefine(l, d, low[j], high[j], j);
-//          if(j >= getSturmCountLdl(d, l, low[j]) || j < getSturmCountLdl(d, l, high[j])){
-//            cout << "REFINE ERROR!!!!!" << endl;
-//          }
         }
-//        if(cluster_end+1 == getSturmCountLdl(d, l, low[cluster_end]) && 1 == getSturmCountLdl(d, l, high[i])){
-//          cout << "BLOCK ERROR!!!!!" << endl;
-//        }
         blockQueue.push(mrrrTask{i, cluster_end + 1, block.shift + currentShift, std::move(l), std::move(d), block.level + 1});
         l.resize(n - 1); //after move out
         d.resize(n);
@@ -969,49 +958,54 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<cons
         t1 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
       }
       else { //isolated eigenvalue
-//        cout << "\t\t\t\t\t\t\t\tgetting eigenvector " << i << " (eigenvalue " << eigenvals[i] << ")" << endl;
-//        if(i+1 != getSturmCountLdl(block.d, block.l, low[i]) || i != getSturmCountLdl(block.d, block.l, high[i])){
-//          cout << "SINGLE ERROR!!!!!" << endl;
-//        }
+        start = std::chrono::steady_clock::now();
         int twist_idx;
         double low_gap = i == block.start ? std::numeric_limits<double>::infinity() : low[i - 1] - high[i];
         double high_gap = i == block.end - 1 ? std::numeric_limits<double>::infinity() : low[i] - high[i + 1];
         double min_gap = std::min(low_gap, high_gap);
-
-        Eigen::VectorXd *l_ptr, *d_ptr;
-        if(!(abs(min_gap / ((high[i] + low[i]) * 0.5)) > min_rel_sep)){
-          if (!(abs(min_gap / ((high[i] + low[i]) * 0.5 - shift)) > min_rel_sep && min_element_growth < max_ele_growth)){
-            double max_shift = min_gap / min_rel_sep;
-            start = std::chrono::steady_clock::now();
-            findShift(block.l, block.d, low[i], high[i], max_ele_growth, max_shift, l2, d2, shift, min_element_growth);
-            t2 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-          }
-          low[i] = low[i] * (1 - copysign(shift_error, low[i])) - shift;
-          high[i] = high[i] * (1 + copysign(shift_error, high[i])) - shift;
-//          if(i >= getSturmCountLdl(d2, l2, low[i]) || i < getSturmCountLdl(d2, l2, high[i])){
-//            cout << "SINGLE ERROR!!!!!" << endl;
-//          }
-          start = std::chrono::steady_clock::now();
-          eigenvalBisectRefine(l2, d2, low[i], high[i], i);
-          t3 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-          l_ptr=&l2;
-          d_ptr=&d2;
-        }
-        else{
-          l_ptr=&block.l;
-          d_ptr=&block.d;
-        }
-        start = std::chrono::steady_clock::now();
-        twist_idx = get_twisted_factorization(*l_ptr, *d_ptr, (low[i] + high[i]) * 0.5, l_plus, u_minus);
-        t4 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-
-        //calculate eigenvector
-        start = std::chrono::steady_clock::now();
-        calculateEigenvector(l_plus, u_minus, subdiag, i, twist_idx, eigenvecs);
-        t7 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+        min_gap_big[i]=min_gap;
+        l_big.col(i) = block.l;
+        d_big.col(i) = block.d;
+        t2 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
       }
     }
   }
+  start = std::chrono::steady_clock::now();
+  matrix_cl subdiag_gpu(subdiag);
+  matrix_cl l_big_gpu(l_big);
+  matrix_cl l_big_t_gpu = transpose(l_big_gpu);
+  matrix_cl d_big_gpu(d_big);
+  matrix_cl d_big_t_gpu = transpose(d_big_gpu);
+  copy(low_gpu,low);
+  copy(high_gpu, high);
+  matrix_cl min_gap_gpu(min_gap_big);
+
+  matrix_cl temp1(n,n);
+  matrix_cl temp2(n,n);
+  matrix_cl temp3(n,n);
+  matrix_cl temp4(n,n);
+  matrix_cl temp5(n,n);
+  matrix_cl eigenvecs_t_gpu(n,n);
+  t3 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+  start = std::chrono::steady_clock::now();
+  try {
+    opencl_kernels::get_eigenvectors(
+            cl::NDRange(n),
+            subdiag_gpu.buffer(), l_big_t_gpu.buffer(), d_big_t_gpu.buffer(),
+            low_gpu.buffer(), high_gpu.buffer(), min_gap_gpu.buffer(),
+            temp1.buffer(),temp2.buffer(),temp3.buffer(),temp4.buffer(),temp5.buffer(),
+            eigenvecs_t_gpu.buffer(), min_rel_sep, max_ele_growth);
+  }
+  catch (cl::Error& e) {
+    check_opencl_error("block_apply_packed_Q_cl3", e);
+  }
+  t4 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+  start = std::chrono::steady_clock::now();
+  matrix_cl eigenvecs_gpu = transpose(eigenvecs_t_gpu);
+  Eigen::MatrixXd eigenvecs_tmp(n,n);
+  copy(eigenvecs_tmp, eigenvecs_gpu);
+  eigenvecs = eigenvecs_tmp;
+  t5 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
 #ifdef TIME_IT
   std::cout << "mrrr_cl detailed timings: " << t1 / 1000 << " " << t2 / 1000 << " " << t3 / 1000 << " " << t4 / 1000 << " " << t5 / 1000 << " " << t6 / 1000 << " " << t7 / 1000 << std::endl;
 #endif

@@ -209,20 +209,22 @@ void testMrrr(){
     T.diagonal(-1) = subdiag;
 
     start = std::chrono::steady_clock::now();
+//    tridiagonal_eigensolver(diag, subdiag, eigenvals, eigenvecs2);
     tridiagonal_eigensolver_cl(diag, subdiag, eigenvals, eigenvecs2);
-    //mrrr2(diag, subdiag, eigenvals, eigenvecs2);
+//    mrrr(diag, subdiag, eigenvals, eigenvecs2);
+//    mrrr_cl(diag, subdiag, eigenvals, eigenvecs2);
     if(A>=15) {
       cout << "mrrr: "
            << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
            << "ms" << endl;
     }
     eigenvecs = eigenvecs2.array().rowwise() / eigenvecs2.colwise().norm().array();
-    if(eigenvecs2.unaryExpr([](double x){return is_nan(x);}).any()){
-      cout << "nan in eigenvecs!" << endl;
-    }
-    if(eigenvecs2.unaryExpr([](double x){return is_inf(x);}).any()){
-      cout << "inf in eigenvecs!" << endl;
-    }
+//    if(eigenvecs2.unaryExpr([](double x){return is_nan(x);}).any()){
+//      cout << "nan in eigenvecs!" << endl;
+//    }
+//    if(eigenvecs2.unaryExpr([](double x){return is_inf(x);}).any()){
+//      cout << "inf in eigenvecs!" << endl;
+//    }
 //    if((eigenvecs.transpose() * eigenvecs - Mat::Identity(A,A)).array().maxCoeff()<0.1 ||
 //    (T * eigenvecs - eigenvecs * eigenvals.asDiagonal()).array().colwise().sum().maxCoeff() <0.1){
 //      continue;
@@ -336,8 +338,8 @@ void testMrrr(){
 
 int main() {
   auto start = std::chrono::steady_clock::now();
-  testMrrr();
-  return 0;
+//  testMrrr();
+//  return 0;
 //  miniTest();
 //  miniTest2();
 
@@ -381,17 +383,17 @@ int main() {
 //       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
 //       << "ms" << endl;
 //  chkEig(a,vecs,vals);
-//
-//  vals.setZero();
-//  vecs.setZero();
-//  start = std::chrono::steady_clock::now();
-//  symmetric_eigensolver_cl(a,vals, vecs);
-//  cout << "GPU total: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
-//  chkEig(a,vecs,vals);
-//
-//  return 0;
+
+  vals.setZero();
+  vecs.setZero();
+  start = std::chrono::steady_clock::now();
+  symmetric_eigensolver_cl(a,vals, vecs);
+  cout << "GPU total: "
+       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+       << "ms" << endl;
+  chkEig(a,vecs,vals);
+
+  return 0;
 
 //  start = std::chrono::steady_clock::now();
 //  Tridiagonalization<Mat> slv2(a);
