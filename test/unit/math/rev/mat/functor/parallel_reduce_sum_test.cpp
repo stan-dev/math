@@ -43,7 +43,63 @@ struct count_lpdf {
   }
 };
 
+// without copying
+template <typename T_rate>
+struct fast_count_lpdf {
+  typedef std::vector<int> T_n;
+  const std::vector<int>& n_;
+  const T_rate& lambda_;
+
+  fast_count_lpdf(const std::vector<int>& data, const T_rate& lambda)
+      : n_(data), lambda_(lambda) {}
+
+  inline T_rate operator()(std::size_t start, std::size_t end) const {
+    typedef typename stan::partials_return_type<T_n, T_rate>::type
+        T_partials_return;
+
+    T_partials_return logp(0.0);
+
+    stan::scalar_seq_view<T_n> n_vec(n_);
+    stan::scalar_seq_view<T_rate> lambda_vec(lambda_);
+    // size_t size = max_size(n_, lambda_);
+    std::size_t size = end - start;
+
+    stan::math::operands_and_partials<T_rate> ops_partials(lambda_);
+
+    for (std::size_t i = start; i != end; i++) {
+      if (!(lambda_vec[i] == 0 && n_vec[i] == 0)) {
+        if (stan::math::include_summand<false>::value)
+          logp -= stan::math::lgamma(n_vec[i] + 1.0);
+        if (stan::math::include_summand<false, T_rate>::value)
+          logp += stan::math::multiply_log(n_vec[i],
+                                           stan::math::value_of(lambda_vec[i]))
+                  - stan::math::value_of(lambda_vec[i]);
+      }
+
+      if (!stan::is_constant_struct<T_rate>::value)
+        ops_partials.edge1_.partials_[i]
+            += n_vec[i] / stan::math::value_of(lambda_vec[i]) - 1.0;
+    }
+    return ops_partials.build(logp);
+  }
+};
+
 static std::mutex cout_mutex;
+
+struct benchmark : public ::testing::Test {
+  const std::size_t elems = 100000000;
+  const std::size_t num_iter = 1;
+  std::vector<int> data;
+  double lambda_d = 10.0;
+
+  virtual void SetUp() {
+    data.resize(elems);
+    for (std::size_t i = 0; i != elems; ++i)
+      data[i] = i;
+  }
+
+  virtual void TearDown() { stan::math::recover_memory(); }
+};
 
 /*
 
@@ -80,16 +136,11 @@ class ad_tape_observer : public tbb::task_scheduler_observer {
 static ad_tape_observer tape_initializer;
 */
 
-TEST(Base, parallel_reduce_sum) {
+/*
+TEST_F(benchmark, parallel_reduce_sum_d) {
   typedef boost::counting_iterator<std::size_t> count_iter;
 
-  const std::size_t elems = 10000;
-  std::vector<int> data(elems);
-
-  for (std::size_t i = 0; i != elems; ++i)
-    data[i] = i;
-
-  double lambda = 10.0;
+  double lambda = lambda_d;
 
   count_lpdf<double> reduce_op(data, lambda);
 
@@ -101,24 +152,18 @@ TEST(Base, parallel_reduce_sum) {
   EXPECT_FLOAT_EQ(poisson_lpdf, poisson_lpdf_ref);
 }
 
-TEST(AgradAutoDiff, parallel_reduce_sum) {
+TEST_F(benchmark, parallel_reduce_sum_v) {
   typedef boost::counting_iterator<std::size_t> count_iter;
   using stan::math::var;
 
-  const std::size_t elems = 10000000;
-  std::vector<int> data(elems);
-
-  for (std::size_t i = 0; i != elems; ++i)
-    data[i] = i;
-
-  var lambda = 10.0;
+  var lambda = lambda_d;
 
   count_lpdf<var> reduce_op(data, lambda);
 
   var poisson_lpdf = stan::math::parallel_reduce_sum(
       count_iter(0), count_iter(elems), var(0.0), reduce_op);
 
-  var lambda_ref = 10.0;
+  var lambda_ref = lambda_d;
   var poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_ref);
 
   EXPECT_FLOAT_EQ(value_of(poisson_lpdf), value_of(poisson_lpdf_ref));
@@ -128,41 +173,85 @@ TEST(AgradAutoDiff, parallel_reduce_sum) {
 
   EXPECT_FLOAT_EQ(poisson_lpdf.adj(), poisson_lpdf_ref.adj());
 }
+*/
 
-TEST(AgradAutoDiff, parallel_reduce_sum_speed) {
+TEST_F(benchmark, fast_parallel_reduce_sum_speed) {
   typedef boost::counting_iterator<std::size_t> count_iter;
   using stan::math::var;
 
-  const std::size_t elems = 100000000;
-  std::vector<int> data(elems);
+  for (std::size_t i = 0; i != num_iter; ++i) {
+    var lambda = lambda_d;
 
-  for (std::size_t i = 0; i != elems; ++i)
-    data[i] = i;
+    fast_count_lpdf<var> reduce_op(data, lambda);
 
-  var lambda = 10.0;
+    var poisson_lpdf = stan::math::parallel_reduce_sum(
+        count_iter(0), count_iter(elems), var(0.0), reduce_op);
 
-  count_lpdf<var> reduce_op(data, lambda);
-
-  var poisson_lpdf = stan::math::parallel_reduce_sum(
-      count_iter(0), count_iter(elems), var(0.0), reduce_op);
-
-  var lambda_ref = 10.0;
-  var poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_ref);
-
-  stan::math::grad(poisson_lpdf.vi_);
+    stan::math::grad(poisson_lpdf.vi_);
+    stan::math::recover_memory();
+  }
 }
 
-TEST(AgradAutoDiff, serial) {
+TEST_F(benchmark, fast_count_serial) {
   typedef boost::counting_iterator<std::size_t> count_iter;
   using stan::math::var;
 
-  const std::size_t elems = 100000000;
-  std::vector<int> data(elems);
+  for (std::size_t i = 0; i != num_iter; ++i) {
+    var lambda = lambda_d;
 
-  var lambda_ref = 10.0;
-  var poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_ref);
+    fast_count_lpdf<var> reduce_op(data, lambda);
 
-  stan::math::grad(poisson_lpdf_ref.vi_);
+    var poisson_lpdf = reduce_op(0, elems);
+
+    stan::math::grad(poisson_lpdf.vi_);
+    stan::math::recover_memory();
+  }
+}
+
+TEST_F(benchmark, parallel_reduce_sum_speed) {
+  typedef boost::counting_iterator<std::size_t> count_iter;
+  using stan::math::var;
+
+  for (std::size_t i = 0; i != num_iter; ++i) {
+    var lambda = lambda_d;
+
+    count_lpdf<var> reduce_op(data, lambda);
+
+    var poisson_lpdf = stan::math::parallel_reduce_sum(
+        count_iter(0), count_iter(elems), var(0.0), reduce_op);
+
+    stan::math::grad(poisson_lpdf.vi_);
+    stan::math::recover_memory();
+  }
+}
+
+TEST_F(benchmark, count_serial) {
+  typedef boost::counting_iterator<std::size_t> count_iter;
+  using stan::math::var;
+
+  for (std::size_t i = 0; i != num_iter; ++i) {
+    var lambda = lambda_d;
+
+    count_lpdf<var> reduce_op(data, lambda);
+
+    var poisson_lpdf = reduce_op(0, elems);
+
+    stan::math::grad(poisson_lpdf.vi_);
+    stan::math::recover_memory();
+  }
+}
+
+TEST_F(benchmark, serial) {
+  typedef boost::counting_iterator<std::size_t> count_iter;
+  using stan::math::var;
+
+  for (std::size_t i = 0; i != num_iter; ++i) {
+    var lambda_ref = lambda_d;
+    var poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_ref);
+
+    stan::math::grad(poisson_lpdf_ref.vi_);
+    stan::math::recover_memory();
+  }
 }
 
 /*
