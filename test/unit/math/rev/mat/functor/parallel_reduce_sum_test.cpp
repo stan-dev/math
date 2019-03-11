@@ -87,8 +87,8 @@ struct fast_count_lpdf {
 static std::mutex cout_mutex;
 
 struct benchmark : public ::testing::Test {
-  const std::size_t elems = 100000000;
-  const std::size_t num_iter = 1;
+  const std::size_t elems = 10000;
+  const std::size_t num_iter = 1000;
   std::vector<int> data;
   double lambda_d = 10.0;
 

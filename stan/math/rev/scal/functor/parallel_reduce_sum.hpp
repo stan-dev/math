@@ -174,6 +174,10 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
 
     // static tbb::affinity_partitioner partitioner;
     tbb::auto_partitioner partitioner;
+    // tbb::static_partitioner partitioner;
+    // it seems that best performance is attained with the simple
+    // partititioner and a reasonable grainsize
+    // tbb::simple_partitioner partitioner;
 
     // TODO: make grainsize a parameter??!!!
     tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, num_jobs, 1),
