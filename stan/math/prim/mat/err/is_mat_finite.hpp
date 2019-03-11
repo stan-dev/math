@@ -18,16 +18,16 @@ namespace math {
  * @param y Matrix to test
  * @return <code>true</code> if the matrix is finite
  **/
- template <typename T, int R, int C>
- inline bool is_mat_finite(const Eigen::Matrix<T, R, C>& y) {
-      if (!value_of(y).allFinite()) {
-        for (int n = 0; n < y.size(); ++n) {
-          if (!(boost::math::isfinite)(y(n)))
-            return false;
-        }
-      }
-      return true;
- }
+template <typename T, int R, int C>
+inline bool is_mat_finite(const Eigen::Matrix<T, R, C>& y) {
+  if (!value_of(y).allFinite()) {
+    for (int n = 0; n < y.size(); ++n) {
+      if (!(boost::math::isfinite)(y(n)))
+        return false;
+    }
+  }
+  return true;
+}
 
 }  // namespace math
 }  // namespace stan

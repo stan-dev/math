@@ -16,7 +16,6 @@ TEST(ErrorHandlingMatrix, isCorrMatrix) {
   EXPECT_FALSE(is_corr_matrix(y));
 }
 
-
 TEST(ErrorHandlingMatrix, isCorrMatrix_nan) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
   y.resize(2, 2);

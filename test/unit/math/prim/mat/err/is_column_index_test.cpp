@@ -9,7 +9,7 @@ TEST(ErrorHandlingMatrix, isColumnIndexMatrix) {
   i = 2;
   y.resize(3, 3);
   EXPECT_TRUE(stan::math::is_column_index(y, i));
-  
+
   i = 3;
   EXPECT_TRUE(stan::math::is_column_index(y, i));
 
@@ -29,7 +29,7 @@ TEST(ErrorHandlingMatrix, isColumnIndexMatrix_nan) {
   y.resize(3, 3);
   y << nan, nan, nan, nan, nan, nan, nan, nan, nan;
   EXPECT_TRUE(stan::math::is_column_index(y, i));
-  
+
   i = 3;
   EXPECT_TRUE(stan::math::is_column_index(y, i));
 
