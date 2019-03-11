@@ -11,10 +11,10 @@ namespace math {
 
 /**
  * Return <code>true</code> is the specified matrix is finite.
- * @tparams T Scalar type of the matrix, requires class method
+ * @tparam T Scalar type of the matrix, requires class method
  *   <code>.size()</code>
- * @tparams R Compile time rows of the matrix
- * @tparams C Compile time columns of the matrix
+ * @tparam R Compile time rows of the matrix
+ * @tparam C Compile time columns of the matrix
  * @param y Matrix to test
  * @return <code>true</code> if the matrix is finite
  **/
