@@ -31,7 +31,7 @@ namespace math {
  *   or if the matrix is 0x0
  * @throw <code>std::domain_error</code> if the matrix is non-symmetric,
  *   diagonals not near 1, not positive definite, or any of the
- *   elements nan.
+ *   elements nan
  */
 template <typename T_y>
 inline void check_corr_matrix(

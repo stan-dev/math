@@ -59,7 +59,7 @@ struct less_or_equal<T_y, T_high, true> {
  * @param y Variable to check
  * @param high Upper bound
  * @throw <code>std::domain_error</code> if y is not less than or equal
- *   to low or if any element of y or high is NaN.
+ *   to low or if any element of y or high is NaN
  */
 template <typename T_y, typename T_high>
 inline void check_less_or_equal(const char* function, const char* name,

@@ -40,7 +40,7 @@ struct not_nan<T_y, true> {
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
- * @throw <code>domain_error</code> if any element of y is NaN.
+ * @throw <code>domain_error</code> if any element of y is NaN
  */
 template <typename T_y>
 inline void check_not_nan(const char* function, const char* name,

@@ -30,7 +30,6 @@ namespace math {
 template <typename T_y>
 inline bool is_cholesky_factor_corr(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
-  using Eigen::Dynamic;
   if (is_square(y)) {
     if (is_lower_triangular(y)) {
       for (int i = 0; i < y.rows(); ++i) {
@@ -38,7 +37,7 @@ inline bool is_cholesky_factor_corr(
           return false;
       }
       for (int i = 0; i < y.rows(); ++i) {
-        Eigen::Matrix<T_y, Dynamic, 1> y_i = y.row(i).transpose();
+        Eigen::Matrix<T_y, Eigen::Dynamic, 1> y_i = y.row(i).transpose();
         if (!is_unit_vector(y_i))
           return false;
       }

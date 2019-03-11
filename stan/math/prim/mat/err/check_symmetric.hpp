@@ -18,7 +18,7 @@ namespace math {
  * Check if the specified matrix is symmetric.
  * The error message is either 0 or 1 indexed, specified by
  * <code>stan::error_index::value</code>.
- * @tparam T_y Type of scalar.
+ * @tparam T_y Type of scalar
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Matrix to test
@@ -34,7 +34,6 @@ inline void check_symmetric(
 
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using std::fabs;
 
   typedef typename index_type<Matrix<T_y, Dynamic, Dynamic> >::type size_type;
 

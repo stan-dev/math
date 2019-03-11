@@ -24,7 +24,6 @@ inline bool is_symmetric(
   if (is_square(y)) {
     using Eigen::Dynamic;
     using Eigen::Matrix;
-    using std::fabs;
 
     typedef typename index_type<Matrix<T_y, Dynamic, Dynamic>>::type size_type;
 

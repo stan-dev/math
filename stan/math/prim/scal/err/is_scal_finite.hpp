@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_IS_SCAL_FINITE_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_IS_SCAL_FINITE_HPP
 
+#include <stan/math/prim/mat/meta/get.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>

@@ -8,8 +8,8 @@ namespace stan {
 namespace math {
 
 /**
- * Return <code>true</code> if the specified LDLT factor is invalid.  An
- * <code>LDLT_factor</code> is invalid if it was constructed from
+ * Return <code>true</code> if the specified LDLT factor is invalid.  
+ * An <code>LDLT_factor</code> is invalid if it was constructed from
  * a matrix that is not positive definite.  The check is that the
  * <code>.success()</code> method returns <code>true</code>.
  * @tparam T Type of scalar

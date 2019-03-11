@@ -11,8 +11,8 @@ namespace math {
  * Return <code>true</code> if the provided sizes match.
  * @tparam T_size1 Type of size 1
  * @tparam T_size2 Type of size 2
- * @param i Size 1
- * @param j Size 2
+ * @param i Size of variable 1
+ * @param j Size of variable 2
  * @return <code>true</code> if provided dimensions match
  */
 template <typename T_size1, typename T_size2>

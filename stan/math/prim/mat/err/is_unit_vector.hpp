@@ -11,7 +11,7 @@ namespace math {
 /**
  * Return <code>true</code> if the vector is not a unit vector or if any
  * element is <code>NaN</code>.
- * A valid unit vector is on where the square elements
+ * A valid unit vector is one where the square elements
  * summed is equal to 1. This function tests that the sum
  * is within the tolerance specified by <code>CONSTRAINT_TOLERANCE</code>.
  * This function only accpets <code>Eigen::Matrix</code> vectors, statically
