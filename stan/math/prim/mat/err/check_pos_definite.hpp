@@ -61,7 +61,7 @@ inline void check_pos_definite(const char* function, const char* name,
 }
 
 /**
- * Check if the specified LLT decomposition transform resulted in 
+ * Check if the specified LLT decomposition transform resulted in
  * <code>Eigen::Success</code>
  * @tparam Derived Derived type of the Eigen::LLT transform.
  * @param function Function name (for error messages)

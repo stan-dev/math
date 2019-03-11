@@ -17,7 +17,7 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the matrix is not square
  *   or if the matrix is 0x0
  * @throw <code>std::domain_error</code> if the matrix is not symmetric,
- *   if the matrix is not positive definite, or if any element of the matrix 
+ *   if the matrix is not positive definite, or if any element of the matrix
  *   is nan
  */
 template <typename T_y>
