@@ -17,9 +17,7 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the specified square, symmetric
- * matrix is positive definite.
- *
+ * Check if the specified square, symmetric matrix is positive definite.
  * @tparam T_y Type of scalar of the matrix
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -45,9 +43,7 @@ inline void check_pos_definite(const char* function, const char* name,
 }
 
 /**
- * Check if the specified LDLT transform of a matrix
- * is positive definite.
- *
+ * Check if the specified LDLT transform of a matrix is positive definite.
  * @tparam Derived Derived type of the Eigen::LDLT transform.
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -67,14 +63,11 @@ inline void check_pos_definite(const char* function, const char* name,
 /**
  * Check if the specified LLT decomposition
  * transform resulted in <code>Eigen::Success</code>
- *
  * @tparam Derived Derived type of the Eigen::LLT transform.
- *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param cholesky Eigen::LLT to test, whose progenitor
  * must not have any NaN elements
- *
  * @throw <code>std::domain_error</code> if the diagonal of the
  * L matrix is not positive.
  */

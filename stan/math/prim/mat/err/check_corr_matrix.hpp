@@ -17,22 +17,16 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the specified matrix is a valid
- * correlation matrix.
- *
+ * Check if the specified matrix is a valid correlation matrix.
  * A valid correlation matrix is symmetric, has a unit diagonal
  * (all 1 values), and has all values between -1 and 1
  * (inclusive).
- *
  * This function throws exceptions if the variable is not a valid
  * correlation matrix.
- *
  * @tparam T_y Type of scalar
- *
  * @param function Name of the function this was called from
  * @param name Name of the variable
  * @param y Matrix to test
- *
  * @throw <code>std::invalid_argument</code> if the matrix is not square
  *   or if the matrix is 0x0
  * @throw <code>std::domain_error</code> if the matrix is non-symmetric,

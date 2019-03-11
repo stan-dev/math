@@ -40,16 +40,12 @@ struct positive<T_y, true> {
 
 /**
  * Check if <code>y</code> is positive.
- *
  * This function is vectorized and will check each element of
  * <code>y</code>.
- *
  * @tparam T_y Type of y
- *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
- *
  * @throw <code>domain_error</code> if y is negative or zero or
  *   if any element of y is NaN.
  */

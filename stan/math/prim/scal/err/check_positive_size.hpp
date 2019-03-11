@@ -10,12 +10,10 @@ namespace math {
 
 /**
  * Check if <code>size</code> is positive.
- *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param expr Expression for the dimension size (for error messages)
  * @param size Size value to check
- *
  * @throw <code>std::invalid_argument</code> if <code>size</code> is
  *   zero or negative.
  */
