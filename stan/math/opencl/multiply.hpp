@@ -81,7 +81,7 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   temp.sub_block(tempPad, 0, 0, 0, 0, temp.rows(), temp.cols());
   return temp;
 }
-} // namespace opencl
+}  // namespace opencl
 
 /**
  * Multiplies the specified matrix on the OpenCL device
