@@ -27,6 +27,6 @@ inline bool is_not_nan(const T_y& y) {
   return true;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

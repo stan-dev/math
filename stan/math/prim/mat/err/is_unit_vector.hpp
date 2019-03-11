@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return <code>true</code> if the vector is not a unit vector or if any 
+ * Return <code>true</code> if the vector is not a unit vector or if any
  * element is <code>NaN</code>.
  * A valid unit vector is on where the square elements
  * summed is equal to 1. This function tests that the sum
@@ -17,7 +17,7 @@ namespace math {
  * This function only accpets <code>Eigen::Matrix</code> vectors, statically
  * typed vectors, not general matrices with 1 column.
  * @tparam T_prob Scalar type of the vector, reqires class method
- *   <code>.squaredNorm()</code> 
+ *   <code>.squaredNorm()</code>
  * @param theta Eigen vector to test
  * @return <code>true</code> if the vector is not a unit
  *   vector or if any element is <code>NaN</code>
@@ -25,7 +25,7 @@ namespace math {
 
 template <typename T_prob>
 inline bool is_unit_vector(
-              const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>&theta) {
+    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   if (is_nonzero_size(theta)) {
     T_prob seq = theta.squaredNorm();
     return fabs(1.0 - seq) <= CONSTRAINT_TOLERANCE;

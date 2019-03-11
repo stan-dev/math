@@ -11,7 +11,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return <code>true</code> if the matrix is square, and no element 
+ * Return <code>true</code> if the matrix is square, and no element
  * not on the main diagonal is <code>NaN</code>.
  * @tparam T_y Type of scalar, requires class method <code>.rows()</code>
  * @param y Matrix to test
@@ -29,13 +29,13 @@ inline bool is_symmetric(
     typedef typename index_type<Matrix<T_y, Dynamic, Dynamic>>::type size_type;
 
     size_type k = y.rows();
-    if (k==1)
+    if (k == 1)
       return true;
     for (size_type m = 0; m < k; ++m) {
       for (size_type n = m + 1; n < k; ++n) {
         if (!fabs(value_of(y(m, n)) - value_of(y(n, m)))
             <= CONSTRAINT_TOLERANCE)
-             return false;
+          return false;
       }
     }
     return true;
@@ -43,6 +43,6 @@ inline bool is_symmetric(
   return false;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif

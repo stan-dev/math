@@ -150,7 +150,7 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_non_pos_definite) {
 
 TEST_F(ErrorHandlingMatrix, checkPosDefinite_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
- 
+
   y.resize(1, 1);
   y << nan;
 

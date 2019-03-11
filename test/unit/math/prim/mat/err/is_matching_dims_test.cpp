@@ -10,7 +10,7 @@ TEST(ErrorHandlingMatrix, isMatchingDimsMatrix) {
   y.resize(3, 3);
   x.resize(3, 3);
   EXPECT_TRUE(stan::math::is_matching_dims(x, y));
-  
+
   x.resize(0, 0);
   y.resize(0, 0);
   EXPECT_TRUE(stan::math::is_matching_dims(x, y));
@@ -32,7 +32,7 @@ TEST(ErrorHandlingMatrix, isMatchingDimsMatrix_nan) {
   y << nan, nan, nan, nan, nan, nan, nan, nan, nan;
   x << nan, nan, nan, nan, nan, nan, nan, nan, nan;
   EXPECT_TRUE(stan::math::is_matching_dims(x, y));
-  
+
   x.resize(0, 0);
   y.resize(0, 0);
   EXPECT_TRUE(stan::math::is_matching_dims(x, y));
@@ -55,13 +55,13 @@ TEST(ErrorHandlingMatrix, isMatchingDims_compile_time_sizes) {
 
   m_dynamic.resize(2, 2);
   EXPECT_TRUE(is_matching_dims(m_dynamic, m_2x2));
-  
+
   m_dynamic.resize(3, 3);
   EXPECT_FALSE(is_matching_dims(m_dynamic, m_2x2));
 
   m_dynamic.resize(4, 1);
   EXPECT_TRUE(is_matching_dims(m_dynamic, vector));
-  
+
   m_dynamic.resize(3, 1);
   EXPECT_FALSE(is_matching_dims(m_dynamic, vector));
 

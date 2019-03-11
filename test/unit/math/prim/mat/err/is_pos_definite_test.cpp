@@ -55,7 +55,8 @@ TEST_F(ErrorHandlingMatrix, isPosDefinite_0_size) {
 
   Eigen::MatrixXd x;
   x.resize(0, 0);
-  Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt(x.rows());
+  Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt(
+      x.rows());
   llt.compute(x);
   EXPECT_TRUE(is_pos_definite(llt));
 
@@ -82,7 +83,8 @@ TEST_F(ErrorHandlingMatrix, isPosDefinite_non_pos_definite) {
   y << -1, 0, 0, 0, -1, 0, 0, 0, -1;
   EXPECT_FALSE(is_pos_definite(y));
 
-  Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt_err1(y);
+  Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt_err1(
+      y);
   EXPECT_FALSE(is_pos_definite(llt_err1));
 
   Eigen::LDLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > ldlt_err1
@@ -93,7 +95,8 @@ TEST_F(ErrorHandlingMatrix, isPosDefinite_non_pos_definite) {
   y << 1, 2, 2, 1;
   EXPECT_FALSE(is_pos_definite(y));
 
-  Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt_err2(y);
+  Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt_err2(
+      y);
   EXPECT_FALSE(is_pos_definite(llt_err2));
 
   Eigen::LDLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > ldlt_err2
@@ -103,9 +106,10 @@ TEST_F(ErrorHandlingMatrix, isPosDefinite_non_pos_definite) {
   y << 1, 1, 1, 1;
   EXPECT_FALSE(is_pos_definite(y));
 
-  Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt_err3(y);
+  Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt_err3(
+      y);
   EXPECT_FALSE(is_pos_definite(llt_err3));
-  
+
   Eigen::LDLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > ldlt_err3
       = y.ldlt();
   EXPECT_FALSE(is_pos_definite(ldlt_err3));
@@ -118,7 +122,8 @@ TEST_F(ErrorHandlingMatrix, isPosDefinite_nan) {
   y << nan;
   EXPECT_FALSE(is_pos_definite(y));
 
-  Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt_err1(y);
+  Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt_err1(
+      y);
   EXPECT_FALSE(is_pos_definite(llt_err1));
 
   Eigen::LDLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > ldlt_err1
@@ -138,7 +143,8 @@ TEST_F(ErrorHandlingMatrix, isPosDefinite_nan) {
     }
 
   y << 2, -1, nan, -1, 2, -1, nan, -1, nan;
-  Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt_err2(y);
+  Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt_err2(
+      y);
   EXPECT_FALSE(is_pos_definite(llt_err2));
 
   Eigen::LDLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > ldlt_err2

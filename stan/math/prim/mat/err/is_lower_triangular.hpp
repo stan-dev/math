@@ -8,8 +8,8 @@ namespace math {
 
 /**
  * Return <code>true</code> is matrix is lower triangular.
- * A matrix x is not lower triangular if there is a non-zero entry 
- * x[m, n] with m &lt; n. This function only inspect the upper and 
+ * A matrix x is not lower triangular if there is a non-zero entry
+ * x[m, n] with m &lt; n. This function only inspect the upper and
  * triangular portion of the matrix, not including the diagonal.
  * @tparam T Type of scalar of the matrix, requires class method
  *   <code>.rows()</code> and <code>.cols()</code>

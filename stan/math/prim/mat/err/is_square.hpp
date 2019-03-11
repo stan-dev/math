@@ -15,7 +15,8 @@ namespace math {
  * @return <code>true</code> if matrix is square
  */
 template <typename T_y>
-inline bool is_square(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
+inline bool is_square(
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
   return is_size_match(y.rows(), y.cols());
 }
 

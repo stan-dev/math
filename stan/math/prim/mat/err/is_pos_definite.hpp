@@ -30,12 +30,12 @@ template <typename T_y>
 inline bool is_pos_definite(const Eigen::Matrix<T_y, -1, -1>& y) {
   if (is_square(y)) {
     if (is_positive_size(y.rows())) {
-        if (y.rows() == 1 && !(y(0, 0) > CONSTRAINT_TOLERANCE))
-          return false;
-        Eigen::LDLT<Eigen::MatrixXd> cholesky = value_of_rec(y).ldlt();
-        if (cholesky.info() != Eigen::Success || !cholesky.isPositive()
-            || (cholesky.vectorD().array() <= 0.0).any())
-          return false; 
+      if (y.rows() == 1 && !(y(0, 0) > CONSTRAINT_TOLERANCE))
+        return false;
+      Eigen::LDLT<Eigen::MatrixXd> cholesky = value_of_rec(y).ldlt();
+      if (cholesky.info() != Eigen::Success || !cholesky.isPositive()
+          || (cholesky.vectorD().array() <= 0.0).any())
+        return false;
     }
     return is_not_nan(y);
   }
@@ -54,13 +54,14 @@ inline bool is_pos_definite(const Eigen::Matrix<T_y, -1, -1>& y) {
 template <typename Derived>
 inline bool is_pos_definite(const Eigen::LDLT<Derived>& cholesky) {
   return !(cholesky.info() != Eigen::Success || !cholesky.isPositive()
-          || !(cholesky.vectorD().array() > 0.0).all());
+           || !(cholesky.vectorD().array() > 0.0).all());
 }
 
 /**
  * Return <code>true</code> if diagonal of the L matrix is positive.
  * @tparam Derived Derived type of the Eigen::LLT transform, requires
- *   class method <code>.info()</code> and <code>.matrixLLT().diagonal().array()</code>
+ *   class method <code>.info()</code> and
+ * <code>.matrixLLT().diagonal().array()</code>
  * @param cholesky Eigen::LLT to test, whose progenitor
  * must not have any NaN elements
  * @return <code>true</code> if diagonal of the L matrix is positive
@@ -68,9 +69,9 @@ inline bool is_pos_definite(const Eigen::LDLT<Derived>& cholesky) {
 template <typename Derived>
 inline bool is_pos_definite(const Eigen::LLT<Derived>& cholesky) {
   return !(cholesky.info() != Eigen::Success
-          || !(cholesky.matrixLLT().diagonal().array() > 0.0).all());
+           || !(cholesky.matrixLLT().diagonal().array() > 0.0).all());
 }
 
-}  // namespace stan
 }  // namespace math
+}  // namespace stan
 #endif

@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 /**
  * Return <code>true</code> if y is a valid Choleksy factor, if
- * number of rows is not less than the number of columns, if there 
+ * number of rows is not less than the number of columns, if there
  * are no 0 columns, and no element in matrix is <code>NaN</code>.
  * A Cholesky factor is a lower triangular matrix whose diagonal
  * elements are all positive.  Note that Cholesky factors need not
@@ -25,18 +25,17 @@ namespace math {
  */
 template <typename T_y>
 inline bool is_cholesky_factor(
-             const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
-  if (!is_less_or_equal(y.cols(), y.rows())
-      || !is_positive(y.cols())
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
+  if (!is_less_or_equal(y.cols(), y.rows()) || !is_positive(y.cols())
       || !is_lower_triangular(y))
     return false;
   for (int i = 0; i < y.cols(); ++i) {
-    if (!is_positive(y(i,i)))
+    if (!is_positive(y(i, i)))
       return false;
   }
   return true;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
