@@ -9,41 +9,10 @@
 
 namespace stan {
 namespace math {
+namespace opencl {
 /**
- * Multiplies the specified matrix on the OpenCL device
- * with the specified scalar.
- *
- * @param A matrix
- * @param scalar scalar
- * @return matrix multipled with scalar
- */
-inline matrix_cl multiply(const matrix_cl& A, const double scalar) {
-  matrix_cl temp(A.rows(), A.cols());
-  if (A.size() == 0)
-    return temp;
-  try {
-    opencl_kernels::scalar_mul(cl::NDRange(A.rows(), A.cols()), temp.buffer(),
-                               A.buffer(), scalar, A.rows(), A.cols());
-  } catch (const cl::Error& e) {
-    check_opencl_error("multiply scalar", e);
-  }
-  return temp;
-}
-
-/**
- * Multiplies the specified matrix on the OpenCL device
- * with the specified scalar.
- *
- * @param scalar scalar
- * @param A matrix
- * @return matrix multipled with scalar
- */
-inline auto multiply(const double scalar, const matrix_cl& A) {
-  return multiply(A, scalar);
-}
-
-/**
- * Computes the product of the specified matrices.
+ * Computes the product of the specified matrices with the option
+ * of specifying the triangularity of either input matrices.
  *
  * Computes the matrix multiplication C[M, K] = A[M, N] x B[N, K]
  *
@@ -112,6 +81,56 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   temp.sub_block(tempPad, 0, 0, 0, 0, temp.rows(), temp.cols());
   return temp;
 }
+} // namespace opencl
+
+/**
+ * Multiplies the specified matrix on the OpenCL device
+ * with the specified scalar.
+ *
+ * @param A matrix
+ * @param scalar scalar
+ * @return matrix multipled with scalar
+ */
+inline matrix_cl multiply(const matrix_cl& A, const double scalar) {
+  matrix_cl temp(A.rows(), A.cols());
+  if (A.size() == 0)
+    return temp;
+  try {
+    opencl_kernels::scalar_mul(cl::NDRange(A.rows(), A.cols()), temp.buffer(),
+                               A.buffer(), scalar, A.rows(), A.cols());
+  } catch (const cl::Error& e) {
+    check_opencl_error("multiply scalar", e);
+  }
+  return temp;
+}
+
+/**
+ * Multiplies the specified matrix on the OpenCL device
+ * with the specified scalar.
+ *
+ * @param scalar scalar
+ * @param A matrix
+ * @return matrix multipled with scalar
+ */
+inline auto multiply(const double scalar, const matrix_cl& A) {
+  return multiply(A, scalar);
+}
+
+/**
+ * Computes the product of the specified matrices.
+ *
+ * Computes the matrix multiplication C[M, K] = A[M, N] x B[N, K]
+ *
+ * @param A first matrix
+ * @param B second matrix
+ * @return the product of the first and second matrix
+ *
+ * @throw <code>std::invalid_argument</code> if the
+ *   number of columns in A and rows in B do not match
+ */
+inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
+  return opencl::multiply(A, B);
+}
 
 /**
  * Templated product operator for OpenCL matrices.
@@ -126,7 +145,7 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
  *   number of columns in A and rows in B do not match
  */
 inline matrix_cl operator*(const matrix_cl& A, const matrix_cl& B) {
-  return multiply(A, B);
+  return opencl::multiply(A, B);
 }
 inline matrix_cl operator*(const matrix_cl& B, const double scalar) {
   return multiply(B, scalar);
