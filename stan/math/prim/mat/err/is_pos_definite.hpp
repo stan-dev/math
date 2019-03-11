@@ -19,7 +19,7 @@ namespace math {
  * Return <code>true</code> if the matrix is square or if the matrix has
  * non-zero size, or if the matrix is symmetric, or if it is positive
  * definite, or if no element is <code>NaN</code>.
- * @tparam T_y Type of scalar of the matrix, requires class method 
+ * @tparam T_y Type of scalar of the matrix, requires class method
  *   <code>.rows()</code>
  * @param y Matrix to test
  * @return <code>true</code> if the matrix is square or if the matrix has non-0
