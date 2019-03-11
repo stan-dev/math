@@ -5,9 +5,6 @@
 #include <stan/math/prim/prob/matrix_normal_prec_lpdf.hpp>
 #include <boost/math/tools/promotion.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 /**

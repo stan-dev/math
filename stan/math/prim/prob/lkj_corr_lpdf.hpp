@@ -45,49 +45,6 @@
 #include <stan/math/prim/fun/cov_matrix_constrain_lkj.hpp>
 #include <stan/math/prim/fun/cov_matrix_free_lkj.hpp>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

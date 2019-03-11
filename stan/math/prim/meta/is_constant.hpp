@@ -3,7 +3,6 @@
 
 #include <type_traits>
 
-
 namespace stan {
 
 /**

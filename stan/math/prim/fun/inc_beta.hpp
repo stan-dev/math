@@ -3,7 +3,6 @@
 
 #include <boost/math/special_functions/beta.hpp>
 
-
 namespace stan {
 namespace math {
 

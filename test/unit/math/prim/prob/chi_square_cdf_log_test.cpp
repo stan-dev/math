@@ -1,6 +1,5 @@
 
 
-
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 TEST(ProbChiSquare, cdf_log_matches_lcdf) {

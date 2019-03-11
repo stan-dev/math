@@ -1,6 +1,5 @@
 
 
-
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 TEST(ProbParetoType2, ccdf_log_matches_lccdf) {

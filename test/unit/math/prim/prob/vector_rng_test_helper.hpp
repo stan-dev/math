@@ -14,18 +14,6 @@
 #include <tuple>
 #include <vector>
 
-
-
-
-
-
-
-
-
-
-
-
-
 using ArgumentTypes
     = std::tuple<int, double, std::vector<int>, std::vector<double>,
                  Eigen::VectorXd, Eigen::RowVectorXd>;

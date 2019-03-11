@@ -5,8 +5,6 @@
 #include <stan/math/prim/meta/is_vector_like.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 
-
-
 namespace stan {
 
 /**
@@ -58,12 +56,6 @@ struct is_vector_like<const T> {
   enum { value = stan::is_vector_like<T>::value };
 };
 }  // namespace stan
-
-
-
-
-
-
 
 namespace stan {
 

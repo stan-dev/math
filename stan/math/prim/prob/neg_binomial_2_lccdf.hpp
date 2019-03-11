@@ -10,14 +10,6 @@
 #include <stan/math/prim/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/prob/neg_binomial_ccdf_log.hpp>
 
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

@@ -1,8 +1,5 @@
 
 
-
-
-
 #include <stan/math/prim.hpp>
 #include <stan/math/prim/fun/matrix_exp_2x2.hpp>
 #include <gtest/gtest.h>

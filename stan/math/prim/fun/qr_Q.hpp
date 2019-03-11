@@ -7,11 +7,6 @@
 #include <Eigen/QR>
 #include <algorithm>
 
-
-
-
-
-
 namespace stan {
 namespace math {
 

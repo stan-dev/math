@@ -5,9 +5,6 @@
 #include <stan/math/prim/fun/read_corr_L.hpp>
 #include <stan/math/prim/fun/multiply_lower_tri_self_transpose.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 

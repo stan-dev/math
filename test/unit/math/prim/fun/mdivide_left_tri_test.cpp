@@ -1,6 +1,5 @@
 
 
-
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 TEST(MathMatrix, mdivide_left_tri_val) {

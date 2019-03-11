@@ -4,8 +4,6 @@
 #include <stan/math/prim/err/check_bounded.hpp>
 #include <cmath>
 
-
-
 namespace stan {
 namespace math {
 

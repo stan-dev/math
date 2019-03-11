@@ -4,13 +4,6 @@
 #include <limits>
 #include <vector>
 
-
-
-
-
-
-
-
 TEST(ErrorHandling, checkMatchingSizes) {
   std::vector<double> a;
   std::vector<double> b;
@@ -49,10 +42,6 @@ TEST(ErrorHandling, checkMatchingSizes_nan) {
   EXPECT_NO_THROW(
       stan::math::check_matching_sizes("checkMatchingSizes", "a", a, "b", b));
 }
-
-
-
-
 
 TEST(ErrorHandlingMatrix_mat, checkMatchingSizesMatrix) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;

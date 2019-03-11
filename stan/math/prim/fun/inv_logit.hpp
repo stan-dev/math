@@ -6,10 +6,6 @@
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
 
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -64,12 +60,6 @@ inline double inv_logit(double a) {
 
 }  // namespace math
 }  // namespace stan
-
-
-
-
-
-
 
 namespace stan {
 namespace math {

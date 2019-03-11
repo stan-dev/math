@@ -3,12 +3,6 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-
-
-
-
-
-
 TEST(MetaTraits, contains_vector) {
   using stan::contains_vector;
   EXPECT_FALSE(contains_vector<double>::value);
@@ -20,9 +14,6 @@ TEST(MetaTraits, contains_vector) {
   EXPECT_FALSE(contains_vector<const size_t>::value);
 }
 
-
-
-
 TEST(MetaTraits_arr, contains_vector) {
   using stan::contains_vector;
   using std::vector;
@@ -32,8 +23,6 @@ TEST(MetaTraits_arr, contains_vector) {
   EXPECT_TRUE(contains_vector<std::vector<const double> >::value);
   EXPECT_TRUE(contains_vector<std::vector<const int> >::value);
 }
-
-
 
 TEST(MetaTraits_mat, contains_vector) {
   using Eigen::Dynamic;

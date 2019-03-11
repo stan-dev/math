@@ -3,12 +3,6 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-
-
-
-
-
-
 TEST(MetaTraits, isConstantStruct) {
   using stan::is_constant_struct;
   EXPECT_TRUE(is_constant_struct<int>::value);
@@ -17,9 +11,6 @@ TEST(MetaTraits, isConstantStruct) {
   EXPECT_TRUE(is_constant_struct<int32_t>::value);
 }
 
-
-
-
 TEST(MetaTraits_arr, isConstantStruct) {
   using stan::is_constant_struct;
   using std::vector;
@@ -27,9 +18,6 @@ TEST(MetaTraits_arr, isConstantStruct) {
   EXPECT_TRUE(is_constant_struct<vector<vector<double> > >::value);
   EXPECT_TRUE(is_constant_struct<vector<vector<vector<double> > > >::value);
 }
-
-
-
 
 typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> const_t1;
 typedef std::vector<const_t1> const_t2;

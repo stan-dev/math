@@ -7,11 +7,6 @@
 #include <vector>
 #include <numeric>
 
-
-
-
-
-
 namespace stan {
 namespace math {
 

@@ -5,8 +5,6 @@
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/fun/asinh.hpp>
 
-
-
 namespace stan {
 namespace math {
 
@@ -31,12 +29,6 @@ inline double asinh(int x) { return std::asinh(x); }
 
 }  // namespace math
 }  // namespace stan
-
-
-
-
-
-
 
 namespace stan {
 namespace math {

@@ -1,15 +1,10 @@
 
 
-
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/prim/functor/hard_work.hpp>
 #include <iostream>
 #include <vector>
-
-
-
-
 
 // the tests here check that map_rect refuses mal-formatted input as
 // such it does not matter if STAN_MPI is defined or not

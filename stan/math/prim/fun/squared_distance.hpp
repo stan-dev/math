@@ -8,10 +8,6 @@
 #include <stan/math/prim/err/check_matching_sizes.hpp>
 #include <stan/math/prim/fun/squared_distance.hpp>
 
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -33,14 +29,6 @@ inline typename boost::math::tools::promote_args<T1, T2>::type squared_distance(
 }
 }  // namespace math
 }  // namespace stan
-
-
-
-
-
-
-
-
 
 namespace stan {
 namespace math {

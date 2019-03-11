@@ -6,10 +6,6 @@
 #include <stan/math/prim/err/check_less_or_equal.hpp>
 #include <stan/math/prim/err/check_lower_triangular.hpp>
 
-
-
-
-
 namespace stan {
 namespace math {
 /**

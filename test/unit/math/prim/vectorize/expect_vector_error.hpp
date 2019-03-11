@@ -6,10 +6,6 @@
 #include <exception>
 #include <vector>
 
-
-
-
-
 template <typename F, typename T>
 void expect_vector_error() {
   using std::vector;

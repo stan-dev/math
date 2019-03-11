@@ -6,21 +6,6 @@
 #include <type_traits>
 #include <vector>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 using stan::math::promote_elements;
 using stan::math::var;
 
@@ -47,12 +32,6 @@ TEST(MathFunctionsScalPromote_Elements, double2var) {
   bool same = std::is_same<var, result_t>::value;
   EXPECT_TRUE(same);
 }
-
-
-
-
-
-
 
 using stan::math::promote_elements;
 using stan::math::var;
@@ -90,11 +69,6 @@ TEST(MathFunctionsArrPromote_Elements_arr, doubleVec2varVec) {
   bool same = std::is_same<vector<var>, result_t>::value;
   EXPECT_TRUE(same);
 }
-
-
-
-
-
 
 using Eigen::Matrix;
 using stan::math::promote_elements;

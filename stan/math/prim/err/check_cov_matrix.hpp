@@ -4,8 +4,6 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/err/check_pos_definite.hpp>
 
-
-
 namespace stan {
 namespace math {
 /**

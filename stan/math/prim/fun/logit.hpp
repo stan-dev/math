@@ -5,8 +5,6 @@
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/fun/logit.hpp>
 
-
-
 namespace stan {
 namespace math {
 
@@ -57,12 +55,6 @@ inline double logit(int u) { return logit(static_cast<double>(u)); }
 
 }  // namespace math
 }  // namespace stan
-
-
-
-
-
-
 
 namespace stan {
 namespace math {

@@ -9,14 +9,6 @@
 #include <iostream>
 #include <vector>
 
-
-
-
-
-
-
-
-
 using stan::math::matrix_d;
 using stan::math::vector_d;
 

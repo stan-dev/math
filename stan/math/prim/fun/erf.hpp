@@ -5,8 +5,6 @@
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/fun/erf.hpp>
 
-
-
 namespace stan {
 namespace math {
 
@@ -33,12 +31,6 @@ inline double erf(int x) { return std::erf(x); }
 
 }  // namespace math
 }  // namespace stan
-
-
-
-
-
-
 
 namespace stan {
 namespace math {

@@ -7,11 +7,6 @@
 #include <stan/math/prim/meta/return_type.hpp>
 #include <vector>
 
-
-
-
-
-
 namespace stan {
 namespace math {
 /**

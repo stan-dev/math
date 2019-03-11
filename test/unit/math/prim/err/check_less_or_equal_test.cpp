@@ -4,11 +4,6 @@
 #include <limits>
 #include <string>
 
-
-
-
-
-
 using stan::math::check_less_or_equal;
 
 TEST(ErrorHandlingScalar, CheckLessOrEqual) {
@@ -53,10 +48,6 @@ TEST(ErrorHandlingScalar, CheckLessOrEqual_nan) {
   EXPECT_THROW(check_less_or_equal(function, "x", x, nan), std::domain_error);
   EXPECT_THROW(check_less_or_equal(function, "x", nan, nan), std::domain_error);
 }
-
-
-
-
 
 using stan::math::check_less_or_equal;
 

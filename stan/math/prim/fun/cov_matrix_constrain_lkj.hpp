@@ -6,10 +6,6 @@
 #include <stan/math/prim/fun/positive_constrain.hpp>
 #include <stan/math/prim/fun/read_cov_matrix.hpp>
 
-
-
-
-
 namespace stan {
 namespace math {
 

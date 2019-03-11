@@ -4,8 +4,6 @@
 #include <stan/math/prim/meta/return_type.hpp>
 #include <stan/math/prim/prob/poisson_lccdf.hpp>
 
-
-
 namespace stan {
 namespace math {
 

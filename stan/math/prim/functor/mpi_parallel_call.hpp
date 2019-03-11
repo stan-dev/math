@@ -12,17 +12,6 @@
 #include <type_traits>
 #include <functional>
 
-
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

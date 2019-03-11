@@ -6,11 +6,6 @@
 #include <vector>
 #include <stan/math/prim/fun/Eigen.hpp>
 
-
-
-
-
-
 namespace stan {
 namespace math {
 /**
@@ -36,14 +31,6 @@ struct common_type {
 }  // namespace math
 }  // namespace stan
 
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 /**
@@ -61,14 +48,6 @@ struct common_type<std::vector<T1>, std::vector<T2> > {
 
 }  // namespace math
 }  // namespace stan
-
-
-
-
-
-
-
-
 
 namespace stan {
 namespace math {

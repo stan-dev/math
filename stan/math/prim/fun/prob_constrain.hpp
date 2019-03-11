@@ -5,9 +5,6 @@
 #include <stan/math/prim/fun/log1m.hpp>
 #include <cmath>
 
-
-
-
 namespace stan {
 namespace math {
 

@@ -4,8 +4,6 @@
 #include <stan/math/prim/meta/return_type.hpp>
 #include <stan/math/prim/prob/normal_id_glm_lpdf.hpp>
 
-
-
 namespace stan {
 namespace math {
 

@@ -6,10 +6,6 @@
 #include <boost/math/special_functions/beta.hpp>
 #include <cmath>
 
-
-
-
-
 namespace stan {
 namespace math {
 

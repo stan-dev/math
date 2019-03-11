@@ -9,18 +9,6 @@
 #include <string>
 #include <stan/math/prim/fun/Eigen.hpp>
 
-
-
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -56,17 +44,6 @@ void check_ordered(const char* function, const char* name,
 }
 }  // namespace math
 }  // namespace stan
-
-
-
-
-
-
-
-
-
-
-
 
 namespace stan {
 namespace math {

@@ -5,9 +5,6 @@
 #include <stan/math/prim/prob/multi_gp_lpdf.hpp>
 #include <boost/math/tools/promotion.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 

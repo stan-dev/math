@@ -6,10 +6,6 @@
 #include <stan/math/prim/err/check_unit_vector.hpp>
 #include <cmath>
 
-
-
-
-
 namespace stan {
 namespace math {
 

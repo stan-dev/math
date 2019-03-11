@@ -10,14 +10,6 @@
 #undef STAN_MPI
 #endif
 
-
-
-
-
-
-
-
-
 STAN_REGISTER_MAP_RECT(0, hard_work)
 STAN_REGISTER_MAP_RECT(1, hard_work)
 

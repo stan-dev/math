@@ -8,12 +8,6 @@
 #include <stan/math/prim/fun/corr_free.hpp>
 #include <cmath>
 
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

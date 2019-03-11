@@ -4,8 +4,6 @@
 #include <stan/math/prim/fun/matrix_exp_pade.hpp>
 #include <stan/math/prim/fun/matrix_exp_2x2.hpp>
 
-
-
 namespace stan {
 namespace math {
 

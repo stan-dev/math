@@ -5,7 +5,6 @@
 #include <vector>
 #include <stan/math/prim/fun/Eigen.hpp>
 
-
 namespace stan {
 namespace math {
 
@@ -26,12 +25,6 @@ void fill(T& x, const S& y) {
 
 }  // namespace math
 }  // namespace stan
-
-
-
-
-
-
 
 namespace stan {
 namespace math {
@@ -55,11 +48,6 @@ void fill(std::vector<T>& x, const S& y) {
 
 }  // namespace math
 }  // namespace stan
-
-
-
-
-
 
 namespace stan {
 namespace math {

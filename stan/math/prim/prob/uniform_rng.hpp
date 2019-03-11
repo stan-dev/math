@@ -12,16 +12,6 @@
 #include <stan/math/prim/meta/VectorBuilder.hpp>
 #include <stan/math/prim/meta/include_summand.hpp>
 
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

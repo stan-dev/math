@@ -5,9 +5,6 @@
 #include <stdexcept>
 #include <string>
 
-
-
-
 namespace stan {
 namespace math {
 

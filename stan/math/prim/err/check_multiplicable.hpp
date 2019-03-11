@@ -5,9 +5,6 @@
 #include <stan/math/prim/err/check_size_match.hpp>
 #include <stan/math/prim/err/check_positive_size.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 

@@ -1,10 +1,5 @@
 
 
-
-
-
-
-
 #include <stan/math/prim.hpp>
 #include <stan/math/prim/fun/matrix_exp_pade.hpp>
 #include <gtest/gtest.h>

@@ -5,8 +5,6 @@
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 
-
-
 namespace stan {
 namespace math {
 
@@ -21,13 +19,6 @@ inline double exp(int x) { return std::exp(x); }
 
 }  // namespace math
 }  // namespace stan
-
-
-
-
-
-
-
 
 namespace stan {
 namespace math {

@@ -3,14 +3,6 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-
-
-
-
-
-
-
-
 TEST(MetaTraits, contains_std_vector_false) {
   using stan::contains_std_vector;
 
@@ -19,9 +11,6 @@ TEST(MetaTraits, contains_std_vector_false) {
   EXPECT_FALSE(contains_std_vector<const double>::value);
   EXPECT_FALSE(contains_std_vector<const int>::value);
 }
-
-
-
 
 TEST(MetaTraits_arr, contains_vector_true) {
   using stan::contains_std_vector;
@@ -60,9 +49,6 @@ TEST(MetaTraits_arr, contains_std_vector_false) {
   EXPECT_FALSE(contains_std_vector<const double>::value);
   EXPECT_FALSE(contains_std_vector<const int>::value);
 }
-
-
-
 
 TEST(MetaTraits_mat, contains_vector_true) {
   using stan::contains_std_vector;

@@ -6,10 +6,6 @@
 #include <stan/math/prim/meta/VectorBuilderHelper.hpp>
 #include <vector>
 
-
-
-
-
 namespace stan {
 
 /**
@@ -58,13 +54,6 @@ class VectorBuilderHelper<T1, true, false> {
 };
 
 }  // namespace stan
-
-
-
-
-
-
-
 
 namespace stan {
 

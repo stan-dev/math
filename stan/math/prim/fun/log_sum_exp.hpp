@@ -10,18 +10,6 @@
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 
-
-
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -72,15 +60,6 @@ inline typename boost::math::tools::promote_args<T1, T2>::type log_sum_exp(
 }  // namespace math
 }  // namespace stan
 
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -116,16 +95,6 @@ inline double log_sum_exp(const std::vector<double>& x) {
 
 }  // namespace math
 }  // namespace stan
-
-
-
-
-
-
-
-
-
-
 
 namespace stan {
 namespace math {

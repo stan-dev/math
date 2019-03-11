@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/err/invalid_argument.hpp>
 
-
 namespace stan {
 namespace math {
 

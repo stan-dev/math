@@ -6,10 +6,6 @@
 #include <stan/math/prim/fun/divide.hpp>
 #include <stan/math/prim/err/check_matching_dims.hpp>
 
-
-
-
-
 namespace stan {
 namespace math {
 

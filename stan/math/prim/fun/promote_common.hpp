@@ -4,8 +4,6 @@
 #include <stan/math/prim/fun/common_type.hpp>
 #include <stan/math/prim/fun/promote_elements.hpp>
 
-
-
 namespace stan {
 namespace math {
 

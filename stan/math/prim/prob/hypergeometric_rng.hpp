@@ -6,11 +6,6 @@
 #include <stan/math/prim/err/check_positive.hpp>
 #include <stan/math/prim/prob/uniform_rng.hpp>
 
-
-
-
-
-
 namespace stan {
 namespace math {
 

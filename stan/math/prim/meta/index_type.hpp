@@ -5,7 +5,6 @@
 #include <vector>
 #include <Eigen/Core>
 
-
 namespace stan {
 namespace math {
 
@@ -36,13 +35,6 @@ struct index_type<const T> {
 }  // namespace math
 }  // namespace stan
 
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -62,13 +54,6 @@ struct index_type<std::vector<T> > {
 
 }  // namespace math
 }  // namespace stan
-
-
-
-
-
-
-
 
 namespace stan {
 namespace math {

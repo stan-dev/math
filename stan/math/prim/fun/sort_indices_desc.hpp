@@ -7,10 +7,7 @@
 #include <algorithm>  // std::sort
 #include <vector>
 
-
-
-  // std::sort
-
+// std::sort
 
 namespace stan {
 namespace math {

@@ -11,18 +11,6 @@
 #include <stan/math/prim/fun/value_of.hpp>
 #include <Eigen/Dense>
 
-
-
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -68,15 +56,6 @@ inline void check_finite(const char* function, const char* name, const T_y& y) {
 }
 }  // namespace math
 }  // namespace stan
-
-
-
-
-
-
-
-
-
 
 namespace stan {
 namespace math {

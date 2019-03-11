@@ -8,12 +8,6 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <cmath>
 
-
-
-
-
-
-
 namespace stan {
 
 namespace math {

@@ -6,10 +6,6 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/err/check_vector.hpp>
 
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -22,12 +18,6 @@ inline double dot_self(const std::vector<double>& x) {
 
 }  // namespace math
 }  // namespace stan
-
-
-
-
-
-
 
 namespace stan {
 namespace math {

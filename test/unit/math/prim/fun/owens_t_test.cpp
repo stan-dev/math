@@ -1,9 +1,5 @@
 
 
-
-
-
-
 #include <stan/math/prim.hpp>
 #include <boost/math/special_functions/owens_t.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>

@@ -7,11 +7,6 @@
 #include <stan/math/prim/err/check_square.hpp>
 #include <boost/math/tools/promotion.hpp>
 
-
-
-
-
-
 namespace stan {
 namespace math {
 

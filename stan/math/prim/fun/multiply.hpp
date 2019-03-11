@@ -6,10 +6,6 @@
 #include <stan/math/prim/err/check_multiplicable.hpp>
 #include <type_traits>
 
-
-
-
-
 namespace stan {
 namespace math {
 

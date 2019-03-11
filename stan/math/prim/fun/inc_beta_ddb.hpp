@@ -6,10 +6,6 @@
 #include <stan/math/prim/fun/inc_beta_dda.hpp>
 #include <cmath>
 
-
-
-
-
 namespace stan {
 namespace math {
 

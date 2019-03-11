@@ -4,8 +4,6 @@
 #include <stan/math/prim/meta/return_type.hpp>
 #include <stan/math/prim/prob/von_mises_lpdf.hpp>
 
-
-
 namespace stan {
 namespace math {
 

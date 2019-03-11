@@ -5,8 +5,6 @@
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 
-
-
 namespace stan {
 namespace math {
 
@@ -50,12 +48,6 @@ inline double lgamma(int x) { return std::lgamma(x); }
 
 }  // namespace math
 }  // namespace stan
-
-
-
-
-
-
 
 namespace stan {
 namespace math {

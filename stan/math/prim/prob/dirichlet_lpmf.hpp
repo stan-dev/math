@@ -17,21 +17,6 @@
 #include <stan/math/prim/meta/length.hpp>
 #include <stan/math/prim/meta/vector_seq_view.hpp>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

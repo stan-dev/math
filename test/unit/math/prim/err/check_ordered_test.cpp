@@ -5,15 +5,6 @@
 #include <string>
 #include <vector>
 
-
-
-
-
-
-
-
-
-
 using stan::math::check_ordered;
 
 TEST(ErrorHandling, checkOrdered) {
@@ -80,10 +71,6 @@ TEST(ErrorHandling, checkOrdered_nan) {
     EXPECT_THROW(check_ordered("check_ordered", "y", y_), std::domain_error);
   }
 }
-
-
-
-
 
 using stan::math::check_ordered;
 

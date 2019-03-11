@@ -7,9 +7,6 @@
 #include <cstddef>
 #include <stan/math/prim/fun/Eigen.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 
@@ -65,14 +62,6 @@ inline int value_of(int x) { return x; }
 }  // namespace math
 }  // namespace stan
 
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -124,14 +113,6 @@ inline const std::vector<int>& value_of(const std::vector<int>& x) { return x; }
 
 }  // namespace math
 }  // namespace stan
-
-
-
-
-
-
-
-
 
 namespace stan {
 namespace math {

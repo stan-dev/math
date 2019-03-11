@@ -8,12 +8,6 @@
 #include <stan/math/prim/meta/scalar_seq_view.hpp>
 #include <string>
 
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

@@ -4,8 +4,6 @@
 #include <stan/math/prim/err/check_bounded.hpp>
 #include <stan/math/prim/fun/logit.hpp>
 
-
-
 namespace stan {
 namespace math {
 

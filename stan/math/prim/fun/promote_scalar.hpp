@@ -7,14 +7,6 @@
 #include <vector>
 #include <stan/math/prim/fun/Eigen.hpp>
 
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -77,14 +69,6 @@ typename promote_scalar_type<T, S>::type promote_scalar(const S& x) {
 }  // namespace math
 }  // namespace stan
 
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -120,13 +104,6 @@ struct promote_scalar_struct<T, std::vector<S> > {
 
 }  // namespace math
 }  // namespace stan
-
-
-
-
-
-
-
 
 namespace stan {
 namespace math {

@@ -24,13 +24,6 @@ inline double square(double x) { return x * x; }
 }  // namespace math
 }  // namespace stan
 
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

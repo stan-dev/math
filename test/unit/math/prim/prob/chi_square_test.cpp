@@ -8,19 +8,6 @@
 #include <vector>
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 TEST(ProbDistributionsChiSquare, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::chi_square_rng(2.0, rng));
@@ -52,13 +39,6 @@ TEST(ProbDistributionsChiSquare, chiSquareGoodnessFitTest) {
   // Assert that they match
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }
-
-
-
-
-
-
-
 
 class ChiSquareTestRig : public VectorRealRNGTestRig {
  public:

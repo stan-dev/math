@@ -7,11 +7,6 @@
 #include <stan/math/prim/err/check_nonzero_size.hpp>
 #include <stan/math/prim/err/domain_error.hpp>
 
-
-
-
-
-
 namespace stan {
 namespace math {
 

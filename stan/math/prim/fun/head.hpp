@@ -7,11 +7,6 @@
 #include <stan/math/prim/err/check_std_vector_index.hpp>
 #include <vector>
 
-
-
-
-
-
 namespace stan {
 namespace math {
 

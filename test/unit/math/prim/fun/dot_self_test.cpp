@@ -5,15 +5,6 @@
 #include <limits>
 #include <vector>
 
-
-
-
-
-
-
-
-
-
 TEST(MathFunctions, dot_self) {
   std::vector<double> x(3), y(3);
   x[0] = 2.33;
@@ -43,8 +34,6 @@ TEST(MathFunctions, dot_self_nan) {
   x[2] = nan;
   EXPECT_PRED1(boost::math::isnan<double>, stan::math::dot_self(x));
 }
-
-
 
 TEST(MathMatrix_mat, dot_self) {
   using stan::math::dot_self;

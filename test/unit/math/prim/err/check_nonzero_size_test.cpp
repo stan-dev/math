@@ -5,15 +5,6 @@
 #include <limits>
 #include <vector>
 
-
-
-
-
-
-
-
-
-
 TEST(ErrorHandlingMatrix, checkNonzeroSizeMatrix) {
   using stan::math::check_nonzero_size;
 
@@ -51,10 +42,6 @@ TEST(ErrorHandlingMatrix, checkNonzeroSizeMatrix_nan) {
   EXPECT_THROW_MSG(stan::math::check_nonzero_size("checkNonzeroSize", "a", a),
                    std::invalid_argument, "has size 0");
 }
-
-
-
-
 
 TEST(ErrorHandlingMatrix_mat, checkNonzeroSizeMatrix) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;

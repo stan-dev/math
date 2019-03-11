@@ -11,13 +11,6 @@ inline double inv(double x) { return 1.0 / x; }
 }  // namespace math
 }  // namespace stan
 
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

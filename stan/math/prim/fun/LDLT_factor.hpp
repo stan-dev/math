@@ -6,10 +6,6 @@
 #include <stan/math/prim/fun/is_nan.hpp>
 #include <boost/shared_ptr.hpp>
 
-
-
-
-
 namespace stan {
 namespace math {
 

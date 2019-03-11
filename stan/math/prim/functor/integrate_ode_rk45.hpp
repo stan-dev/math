@@ -16,21 +16,9 @@
 #include <ostream>
 #include <vector>
 
-
-
-
-
-
-
-
-
-
 #if BOOST_VERSION == 106400
 
 #endif
-
-
-
 
 namespace stan {
 namespace math {

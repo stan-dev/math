@@ -2,9 +2,6 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 
-
-
-
 TEST(ProbBernoulliLogit, log_matches_lpmf) {
   int n = 1;
   double theta = 1.2;
@@ -22,8 +19,6 @@ TEST(ProbBernoulliLogit, log_matches_lpmf) {
   EXPECT_FLOAT_EQ((stan::math::bernoulli_logit_lpmf<double>(n, theta)),
                   (stan::math::bernoulli_logit_log<double>(n, theta)));
 }
-
-
 
 using Eigen::Dynamic;
 using Eigen::Matrix;

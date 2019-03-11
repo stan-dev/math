@@ -9,14 +9,6 @@
 #include <stan/math/prim/functor/mpi_parallel_call.hpp>
 #include <vector>
 
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 namespace internal {

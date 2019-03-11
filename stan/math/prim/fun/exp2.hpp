@@ -6,10 +6,6 @@
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/fun/exp2.hpp>
 
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -40,12 +36,6 @@ inline double exp2(int y) { return exp2(static_cast<double>(y)); }
 
 }  // namespace math
 }  // namespace stan
-
-
-
-
-
-
 
 namespace stan {
 namespace math {

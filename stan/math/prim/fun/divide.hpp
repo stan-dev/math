@@ -9,16 +9,6 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <type_traits>
 
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -43,12 +33,6 @@ inline int divide(int x, int y) {
 
 }  // namespace math
 }  // namespace stan
-
-
-
-
-
-
 
 namespace stan {
 namespace math {

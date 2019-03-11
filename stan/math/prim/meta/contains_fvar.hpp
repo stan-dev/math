@@ -4,8 +4,6 @@
 #include <stan/math/prim/meta/is_fvar.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
 
-
-
 namespace stan {
 
 /**

@@ -5,9 +5,6 @@
 #include <boost/math/tools/promotion.hpp>
 #include <cmath>
 
-
-
-
 namespace stan {
 namespace math {
 

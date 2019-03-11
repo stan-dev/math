@@ -6,10 +6,6 @@
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/fun/log1m_inv_logit.hpp>
 
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -57,12 +53,6 @@ inline double log1m_inv_logit(int u) {
 
 }  // namespace math
 }  // namespace stan
-
-
-
-
-
-
 
 namespace stan {
 namespace math {

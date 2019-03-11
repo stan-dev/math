@@ -4,8 +4,6 @@
 #include <vector>
 #include <cstddef>
 
-
-
 namespace stan {
 namespace math {
 

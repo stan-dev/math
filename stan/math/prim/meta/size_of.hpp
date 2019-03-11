@@ -4,8 +4,6 @@
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <cstddef>
 
-
-
 namespace stan {
 
 template <typename T, bool is_vec>

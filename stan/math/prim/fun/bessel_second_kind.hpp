@@ -3,7 +3,6 @@
 
 #include <boost/math/special_functions/bessel.hpp>
 
-
 namespace stan {
 namespace math {
 

@@ -5,9 +5,6 @@
 #include <stan/math/prim/fun/log1p_exp.hpp>
 #include <boost/math/tools/promotion.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 

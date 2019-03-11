@@ -7,11 +7,6 @@
 #include <test/unit/util.hpp>
 #include <stdlib.h>
 
-
-
-
-
-
 // Can't easily use std::string as putenv require non-const char*
 void set_n_threads_var(const char* value) {
   static char env_string[256];

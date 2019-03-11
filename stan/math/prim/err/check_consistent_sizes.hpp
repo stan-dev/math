@@ -4,8 +4,6 @@
 #include <stan/math/prim/err/check_consistent_size.hpp>
 #include <algorithm>
 
-
-
 namespace stan {
 namespace math {
 

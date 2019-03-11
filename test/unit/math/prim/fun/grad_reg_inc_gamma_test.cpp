@@ -1,8 +1,5 @@
 
 
-
-
-
 #include <gtest/gtest.h>
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/tgamma.hpp>
