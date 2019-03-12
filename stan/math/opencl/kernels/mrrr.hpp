@@ -1,8 +1,6 @@
 #ifndef STAN_MATH_GPU_KERNELS_MRRR_HPP
 #define STAN_MATH_GPU_KERNELS_MRRR_HPP
-#ifndef STAN_OPENCL
-#error "NO STAN_OPENCL"
-#endif
+
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>

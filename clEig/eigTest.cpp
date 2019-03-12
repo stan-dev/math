@@ -1,7 +1,3 @@
-//
-// Created by tadej on 7. 12. 2018.
-//
-
 #include <iostream>
 
 #define STAN_OPENCL
@@ -27,7 +23,7 @@ using namespace stan::math;
 
 using Mat=Matrix<double, Dynamic, Dynamic>;
 using Vec=VectorXd;
-/*
+
 void p(const Eigen::MatrixXd& a) {
   std::cout << a << std::endl;
 }
@@ -45,7 +41,7 @@ void p(const matrix_cl& a) {
   copy(b, a);
   std::cout << b << std::endl;
 }
- */
+
 /*
 void chk(const Mat& a, const Mat& Q, const Mat& R){
 #ifndef SKIP_CHECKS

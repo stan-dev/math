@@ -3,8 +3,6 @@
 
 #ifdef STAN_OPENCL
 
-#include <Eigen/QR>
-#include <iostream>
 #include <queue>
 
 #include <stan/math/opencl/matrix_cl.hpp>
@@ -14,10 +12,6 @@
 #include <stan/math/opencl/transpose.hpp>
 
 #include <stan/math/opencl/kernels/mrrr.hpp>
-
-using namespace std;
-
-//#define TIME_IT
 
 namespace stan {
 namespace math {
@@ -116,8 +110,7 @@ int get_twisted_factorization(const Eigen::VectorXd& l, const Eigen::VectorXd& d
     double d_plus = s[i] + d[i];
     l_plus[i] = l[i] * (d[i] / d_plus);
     if (is_nan(l_plus[i])) { //d_plus==0
-      //one (or both) of d[i], l[i] is very close to 0
-      if (abs(l[i]) < abs(d[i])) {
+      if (abs(l[i]) < abs(d[i])) { //one (or both) of d[i], l[i] is very close to 0
         l_plus[i] = d[i] * copysign(1., l[i]) * copysign(1., d_plus);
       }
       else {
@@ -400,7 +393,7 @@ void calculateEigenvector(const Eigen::VectorXd& l_plus, const Eigen::VectorXd& 
 void findShift(const Eigen::VectorXd& l, const Eigen::VectorXd& d, double low, double high, double max_ele_growth, double max_shift,
                Eigen::VectorXd& l2, Eigen::VectorXd& d2, double& shift, double& min_element_growth) {
   Eigen::VectorXd l3(l2.size()), d3(d2.size());
-  vector<double> shifts = {
+  std::vector<double> shifts = {
           low,
           high - max_shift * 0.1,
           low + max_shift * 0.1,
@@ -413,7 +406,7 @@ void findShift(const Eigen::VectorXd& l, const Eigen::VectorXd& d, double low, d
           high - max_shift,
           low + max_shift,
   };
-  min_element_growth = numeric_limits<double>::infinity();
+  min_element_growth = std::numeric_limits<double>::infinity();
   for (double sh : shifts) {
     double element_growth = get_shifted_ldl(l, d, sh, l3, d3);
     if (element_growth < min_element_growth) {
@@ -453,7 +446,7 @@ double findInitialShift(const Eigen::Ref<const Eigen::VectorXd> diag, const Eige
     return shift;
   }
   double plus = (max_eigval - min_eigval) * 1e-15;
-  while (!(element_growth < max_ele_growth)) { //if condition is fliped it would be wrong for the case where element_growth is nan
+  while (!(element_growth < max_ele_growth)) { //if condition is flipped it would be wrong for the case where element_growth is nan
     plus *= -2;
     element_growth = get_ldl(diag, subdiag, shift + plus, l0, d0);
   }
@@ -494,32 +487,15 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const E
   }
   Eigen::VectorXd subdiagSquared = subdiag.array() * subdiag.array();
 
-#ifdef TIME_IT
-  auto start = std::chrono::steady_clock::now();
-#endif
   eigenvalsBisect4(diag, subdiagSquared, min_eigval, max_eigval, low, high);
-#ifdef TIME_IT
-  std::cout << "eigenvals: "
-            << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-            << "ms" << endl;
-#endif
   eigenvals = (high + low) * 0.5;
   low.array() -= shift0;
   high.array() -= shift0;
-#ifdef TIME_IT
-  start = std::chrono::steady_clock::now();
-#endif
   for (int i = 0; i < n; i++) {
     low[i] = low[i] * (1 - copysign(perturbation_range * n, low[i]));
     high[i] = high[i] * (1 + copysign(perturbation_range * n, high[i]));
     eigenvalBisectRefine(l, d, low[i], high[i], i);
   }
-#ifdef TIME_IT
-  std::cout << "refine0 (shift0 = " << shift0 << "(" << min_eigval << " - " << max_eigval << ")): "
-            << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-            << "ms" << endl;
-  int t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0;
-#endif
   std::queue<mrrrTask> blockQueue;
   blockQueue.push(mrrrTask{0, n, shift0, std::move(l), std::move(d), 0});
   l.resize(n - 1); //after move out
@@ -541,9 +517,6 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const E
       }
       cluster_end--; //now this is the index of the last element of the cluster
       if (cluster_end - i > 0) {//cluster
-#ifdef TIME_IT
-        start = std::chrono::steady_clock::now();
-#endif
         double max_shift = (high[i] - low[cluster_end]) * 10;
         double currentShift, min_ele_growth;
         findShift(block.l, block.d, low[cluster_end], high[i], max_ele_growth, max_shift, l, d, currentShift, min_ele_growth);
@@ -557,9 +530,6 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const E
         d.resize(n);
 
         i = cluster_end;
-#ifdef TIME_IT
-        t1 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-#endif
       }
       else { //isolated eigenvalue
         double low_t = low[i], high_t = high[i];
@@ -571,23 +541,11 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const E
         if(!(abs(min_gap / ((high[i] + low[i]) * 0.5)) > min_rel_sep)){
           if (!(abs(min_gap / ((high[i] + low[i]) * 0.5 - shift)) > min_rel_sep && min_element_growth < max_ele_growth)){
             double max_shift = min_gap / min_rel_sep;
-#ifdef TIME_IT
-            start = std::chrono::steady_clock::now();
-#endif
             findShift(block.l, block.d, low[i], high[i], max_ele_growth, max_shift, l2, d2, shift, min_element_growth);
-#ifdef TIME_IT
-            t2 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-#endif
           }
           low[i] = low[i] * (1 - copysign(shift_error, low[i])) - shift;
           high[i] = high[i] * (1 + copysign(shift_error, high[i])) - shift;
-#ifdef TIME_IT
-          start = std::chrono::steady_clock::now();
-#endif
           eigenvalBisectRefine(l2, d2, low[i], high[i], i);
-#ifdef TIME_IT
-          t3 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-#endif
           l_ptr=&l2;
           d_ptr=&d2;
         }
@@ -595,24 +553,11 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::Ref<const E
           l_ptr=&block.l;
           d_ptr=&block.d;
         }
-#ifdef TIME_IT
-        start = std::chrono::steady_clock::now();
-#endif
         twist_idx = get_twisted_factorization(*l_ptr, *d_ptr, (low[i] + high[i]) * 0.5, l_plus, u_minus);
-#ifdef TIME_IT
-        t4 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-        start = std::chrono::steady_clock::now();
-#endif
         calculateEigenvector(l_plus, u_minus, subdiag, i, twist_idx, eigenvecs);
-#ifdef TIME_IT
-        t7 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-#endif
       }
     }
   }
-#ifdef TIME_IT
-  std::cout << "mrrr detailed timings: " << t1 / 1000 << " " << t2 / 1000 << " " << t3 / 1000 << " " << t4 / 1000 << " " << t5 / 1000 << " " << t6 / 1000 << " " << t7 / 1000 << std::endl;
-#endif
 }
 
 /**
@@ -642,10 +587,6 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::VectorXd
   }
   Eigen::VectorXd subdiagSquared = subdiag.array() * subdiag.array();
 
-#ifdef TIME_IT
-  auto start = std::chrono::steady_clock::now();
-#endif
-
   matrix_cl l_gpu(l);
   matrix_cl d_gpu(d);
   matrix_cl low_gpu(n, 1);
@@ -662,12 +603,6 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::VectorXd
   copy(low, low_gpu);
   copy(high, high_gpu);
   eigenvals = (high + low).array() * 0.5 + shift0;
-#ifdef TIME_IT
-  std::cout << "gpu eigenvals (shift0 = " << shift0 << "(" << min_eigval << " - " << max_eigval << ")): "
-            << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-            << "ms" << endl;
-  int t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0;
-#endif
   std::queue<mrrrTask> blockQueue;
   blockQueue.push(mrrrTask{0, n, shift0, std::move(l), std::move(d), 0});
   l.resize(n - 1); //after move out
@@ -691,9 +626,6 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::VectorXd
       }
       cluster_end--; //now this is the index of the last element of the cluster
       if (cluster_end - i > 0) {//cluster
-#ifdef TIME_IT
-        start = std::chrono::steady_clock::now();
-#endif
         double max_shift = (high[i] - low[cluster_end]) * 10;
         double currentShift, min_ele_growth;
         findShift(block.l, block.d, low[cluster_end], high[i], max_ele_growth, max_shift, l, d, currentShift, min_ele_growth);
@@ -707,14 +639,8 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::VectorXd
         d.resize(n);
 
         i = cluster_end;
-#ifdef TIME_IT
-        t1 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-#endif
       }
       else { //isolated eigenvalue
-#ifdef TIME_IT
-        start = std::chrono::steady_clock::now();
-#endif
         int twist_idx;
         double low_gap = i == block.start ? std::numeric_limits<double>::infinity() : low[i - 1] - high[i];
         double high_gap = i == block.end - 1 ? std::numeric_limits<double>::infinity() : low[i] - high[i + 1];
@@ -722,15 +648,9 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::VectorXd
         min_gap_big[i]=min_gap;
         l_big.col(i) = block.l;
         d_big.col(i) = block.d;
-#ifdef TIME_IT
-        t2 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-#endif
       }
     }
   }
-#ifdef TIME_IT
-  start = std::chrono::steady_clock::now();
-#endif
   matrix_cl subdiag_gpu(subdiag);
   matrix_cl l_big_gpu(l_big);
   matrix_cl l_big_t_gpu = transpose(l_big_gpu);
@@ -746,10 +666,6 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::VectorXd
   matrix_cl temp4(n,n);
   matrix_cl temp5(n,n);
   matrix_cl eigenvecs_t_gpu(n,n);
-#ifdef TIME_IT
-  t3 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-  start = std::chrono::steady_clock::now();
-#endif
   try {
     opencl_kernels::get_eigenvectors(
             cl::NDRange(n),
@@ -761,18 +677,10 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diag, const Eigen::VectorXd
   catch (cl::Error& e) {
     check_opencl_error("block_apply_packed_Q_cl3", e);
   }
-#ifdef TIME_IT
-  t4 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-  start = std::chrono::steady_clock::now();
-#endif
   matrix_cl eigenvecs_gpu = transpose(eigenvecs_t_gpu);
   Eigen::MatrixXd eigenvecs_tmp(n,n);
   copy(eigenvecs_tmp, eigenvecs_gpu);
   eigenvecs = eigenvecs_tmp;
-#ifdef TIME_IT
-  t5 += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
-  std::cout << "mrrr_cl detailed timings: " << t1 / 1000 << " " << t2 / 1000 << " " << t3 / 1000 << " " << t4 / 1000 << " " << t5 / 1000 << " " << t6 / 1000 << " " << t7 / 1000 << std::endl;
-#endif
 }
 
 /**
