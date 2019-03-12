@@ -53,7 +53,7 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_lpdf(
       T_partials_return;
 
   using boost::math::tools::promote_args;
-  
+
   if (size_zero(y, alpha, beta))
     return 0.0;
 
