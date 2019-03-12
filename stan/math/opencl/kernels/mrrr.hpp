@@ -365,10 +365,10 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
             }
             norm += eigenvecs[j*n+gid] * eigenvecs[j*n+gid];
           }
-//          norm=1/sqrt(norm);
-//          for(int j=0;j<n;j++){
-//            eigenvecs[j*n+gid]*=norm;
-//          }
+          norm=1/sqrt(norm);
+          for(int j=0;j<n;j++){
+            eigenvecs[j*n+gid]*=norm;
+          }
         }
 
         /**
