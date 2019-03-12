@@ -31,7 +31,7 @@ namespace math {
  * matrices do not have matching dimensions
  */
 template <int R, int C>
-void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
+inline void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
   check_size_match("copy (Eigen -> (OpenCL))", "src.rows()", src.rows(),
                    "dst.rows()", dst.rows());
   check_size_match("copy (Eigen -> (OpenCL))", "src.cols()", src.cols(),
@@ -54,7 +54,7 @@ void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
  * matrices do not have matching dimensions
  */
 template <int R, int C>
-void copy(matrix_cl& dst, const Eigen::Matrix<var, R, C>& src) {
+inline void copy(matrix_cl& dst, const Eigen::Matrix<var, R, C>& src) {
   check_size_match("copy (Eigen -> GPU)", "src.rows()", src.rows(),
                    "dst.rows()", dst.rows());
   check_size_match("copy (Eigen -> GPU)", "src.cols()", src.cols(),
@@ -91,7 +91,7 @@ void copy(matrix_cl& dst, const Eigen::Matrix<var, R, C>& src) {
  * matrices do not have matching dimensions
  */
 template <int R, int C>
-void copy(Eigen::Matrix<double, R, C>& dst, const matrix_cl& src) {
+inline void copy(Eigen::Matrix<double, R, C>& dst, const matrix_cl& src) {
   check_size_match("copy ((OpenCL) -> Eigen)", "src.rows()", src.rows(),
                    "dst.rows()", dst.rows());
   check_size_match("copy ((OpenCL) -> Eigen)", "src.cols()", src.cols(),

@@ -1,4 +1,5 @@
 #ifdef STAN_OPENCL
+#define STAN_OPENCL_CACHE
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
@@ -7,33 +8,17 @@
 #include <algorithm>
 #include <vector>
 
-void test_cache_speed() {
+
+TEST(MathMatrixOpenCL, matrix_cl_copy_cache) {
   auto m = stan::math::matrix_d::Random(100, 100).eval();
   stan::math::matrix_cl d11(100, 100);
   stan::math::matrix_cl d12(100, 100);
-  std::chrono::steady_clock::time_point first_begin
-      = std::chrono::steady_clock::now();
   stan::math::copy(d11, m);
-  std::chrono::steady_clock::time_point first_end
-      = std::chrono::steady_clock::now();
-  size_t first_pass = std::chrono::duration_cast<std::chrono::nanoseconds>(
-                          first_end - first_begin)
-                          .count();
-  std::chrono::steady_clock::time_point second_begin
-      = std::chrono::steady_clock::now();
   stan::math::copy(d12, m);
-  std::chrono::steady_clock::time_point second_end
-      = std::chrono::steady_clock::now();
-  size_t second_pass = std::chrono::duration_cast<std::chrono::nanoseconds>(
-                           second_end - second_begin)
-                           .count();
-  ASSERT_GT(first_pass, second_pass);
   ASSERT_FALSE(m.opencl_buffer_() == NULL);
-}
+ }
 
-TEST(MathMatrixGPU, matrix_cl_copy_cache) { test_cache_speed(); }
-
-TEST(MathMatrixGPU, matrix_cl_var_copy) {
+TEST(MathMatrixOpenCL, matrix_cl_var_copy) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> m(5, 5);
   double pos_ = 1.1;
   for (int i = 0; i < 5; ++i)
@@ -52,7 +37,7 @@ TEST(MathMatrixGPU, matrix_cl_var_copy) {
   EXPECT_EQ(21.1, d1_cpu_return(4, 0));
 }
 
-TEST(MathMatrixGPU, matrix_cl_copy) {
+TEST(MathMatrixOpenCL, matrix_cl_copy) {
   stan::math::vector_d d1;
   stan::math::vector_d d1_a;
   stan::math::vector_d d1_b;
@@ -112,7 +97,7 @@ TEST(MathMatrixGPU, matrix_cl_copy) {
   EXPECT_NO_THROW(stan::math::copy(d000, d00));
 }
 
-TEST(MathMatrixGPU, barebone_buffer_copy) {
+TEST(MathMatrixOpenCL, barebone_buffer_copy) {
   // a barebone OpenCL example of copying
   // a vector of doubles to the GPU and back
   size_t size = 512;

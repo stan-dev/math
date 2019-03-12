@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_GPU_CACHE_COPY_HPP
-#define STAN_MATH_GPU_CACHE_COPY_HPP
+#ifndef STAN_MATH_OPENCL_CACHE_COPY_HPP
+#define STAN_MATH_OPENCL_CACHE_COPY_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/opencl_context.hpp>
@@ -11,9 +11,10 @@ namespace stan {
 namespace math {
 namespace internal {
 template <int R, int C>
-void cache_copy(cl::Buffer dst, const Eigen::Matrix<double, R, C>& src) {
+inline void cache_copy(cl::Buffer dst, const Eigen::Matrix<double, R, C>& src) {
   cl::Context& ctx = opencl_context.context();
   cl::CommandQueue queue = opencl_context.queue();
+#ifdef STAN_OPENCL_CACHE
   if (src.opencl_buffer_() != NULL) {
     queue.enqueueCopyBuffer(src.opencl_buffer_, dst, 0, 0,
                             sizeof(double) * src.size());
@@ -38,6 +39,10 @@ void cache_copy(cl::Buffer dst, const Eigen::Matrix<double, R, C>& src) {
       check_opencl_error("copy Eigen->GPU", e);
     }
   }
+#else
+    queue.enqueueWriteBuffer(dst, CL_TRUE, 0, sizeof(double) * src.size(),
+     src.data());
+#endif
 }
 }  // namespace internal
 }  // namespace math
