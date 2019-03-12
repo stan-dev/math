@@ -25,7 +25,7 @@ rows_dot_product(const Eigen::Matrix<T1, R1, C1>& v1,
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
   Eigen::Matrix<var, R1, 1> ret(v1.rows(), 1);
   for (size_type j = 0; j < v1.rows(); ++j) {
-    ret(j) = var(new dot_product_vari<T1, T2>(v1.row(j), v2.row(j)));
+    ret(j) = var(new internal::dot_product_vari<T1, T2>(v1.row(j), v2.row(j)));
   }
   return ret;
 }

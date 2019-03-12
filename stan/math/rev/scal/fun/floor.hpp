@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class floor_vari : public op_v_vari {
  public:
   explicit floor_vari(vari* avi) : op_v_vari(std::floor(avi->val_), avi) {}
@@ -19,7 +19,7 @@ class floor_vari : public op_v_vari {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Return the floor of the specified variable (cmath).
@@ -55,7 +55,7 @@ class floor_vari : public op_v_vari {
  * @param a Input variable.
  * @return Floor of the variable.
  */
-inline var floor(const var& a) { return var(new floor_vari(a.vi_)); }
+inline var floor(const var& a) { return var(new internal::floor_vari(a.vi_)); }
 
 }  // namespace math
 }  // namespace stan

@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 
 class modified_bessel_second_kind_dv_vari : public op_dv_vari {
  public:
@@ -20,10 +20,10 @@ class modified_bessel_second_kind_dv_vari : public op_dv_vari {
               + modified_bessel_second_kind(ad_ - 1, bvi_->val_));
   }
 };
-}  // namespace
+}  // namespace internal
 
 inline var modified_bessel_second_kind(int v, const var& a) {
-  return var(new modified_bessel_second_kind_dv_vari(v, a.vi_));
+  return var(new internal::modified_bessel_second_kind_dv_vari(v, a.vi_));
 }
 
 }  // namespace math

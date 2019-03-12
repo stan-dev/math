@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class positive_ordered_constrain_op {
   int N_;
   double* exp_x_;
@@ -71,7 +71,7 @@ class positive_ordered_constrain_op {
     return std::make_tuple(adj_times_jac);
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Return an increasing positive ordered vector derived from the specified
@@ -83,7 +83,7 @@ class positive_ordered_constrain_op {
  */
 inline Eigen::Matrix<var, Eigen::Dynamic, 1> positive_ordered_constrain(
     const Eigen::Matrix<var, Eigen::Dynamic, 1>& x) {
-  return adj_jac_apply<positive_ordered_constrain_op>(x);
+  return adj_jac_apply<internal::positive_ordered_constrain_op>(x);
 }
 
 }  // namespace math
