@@ -138,51 +138,6 @@ void chkTridiagPacked(const Mat& a, const Mat& packed){
 #endif
 }
  */
-/*
-int miniTest() {
-  Mat a(6, 6);
-  a << 12, -51, 4, 4, 5, 9,
-        6, 167, -68, 7, 9, 4,
-        -6, 24, -41, 7, 6, 3,
-        1, 2, 3, 4, 5, 4,
-        1, 2, 3, 6, 5, 6,
-        1, -7, 3, 4, 5, 6;
-  a+=a.transpose().eval();
-  Mat t,q, vecs;
-  Vec vals;
-
-  cout << "a:" << endl << a << endl;
-  householder_tridiag8(a, t, q);
-  cout << "t" << endl << t << endl;
-  cout << "q" << endl << q << endl;
-  chkTridiag(a,t,q);
-  householder_tridiag9(a, t, q);
-  //block_householder_tridiag2(a, t, q, 2);
-  cout << "t" << endl << t << endl;
-  cout << "q" << endl << q << endl;
-  chkTridiag(a,t,q);
-}
- */
-/*
-int miniTest2() {
-  Mat a(6, 6);
-  a << 12, -51, 4, 4, 5, 9,
-          6, 167, -68, 7, 9, 4,
-          -6, 24, -41, 7, 6, 3,
-          1, 2, 3, 4, 5, 4,
-          1, 2, 3, 6, 5, 6,
-          1, -7, 3, 4, 5, 6;
-  a+=a.transpose().eval();
-  Mat packed, vecs;
-  Vec vals;
-
-  cout << "a:" << endl << a << endl;
-  householder_tridiag_packed(a, packed);
-  cout << "packed:" << endl << packed << endl;
-  chkTridiagPacked(a,packed);
-}
-*/
-
 
 void testMrrr(){
   auto start = std::chrono::steady_clock::now();
@@ -400,11 +355,10 @@ int main() {
   auto kernel_4 = opencl_kernels::tridiagonalization_householder;
   auto kernel_5 = opencl_kernels::tridiagonalization_v1;
   auto kernel_6 = opencl_kernels::tridiagonalization_v2;
-  auto kernel_7 = opencl_kernels::tridiagonalization_apply_Q1;
-  auto kernel_8 = opencl_kernels::tridiagonalization_apply_Q2;
-  auto kernel_9 = opencl_kernels::subtract_twice;
-  auto kernel_10 = opencl_kernels::eigenvals_bisect;
-  auto kernel_11 = opencl_kernels::get_eigenvectors;
+  auto kernel_7 = opencl_kernels::tridiagonalization_v3;
+  auto kernel_8 = opencl_kernels::subtract_twice;
+  auto kernel_9 = opencl_kernels::eigenvals_bisect;
+  auto kernel_10 = opencl_kernels::get_eigenvectors;
 
 //  speedTest();
 //  return 0;
@@ -429,26 +383,26 @@ int main() {
 //       << "ms" << endl;
 //  chkEig(a,vecs,vals);
 
-//  vals.setZero();
-//  vecs.setZero();
-//  start = std::chrono::steady_clock::now();
-//  symmetric_eigensolver(a,vals, vecs);
-//  cout << "CPU total: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
-//  chkEig(a,vecs,vals);
+  vals.setZero();
+  vecs.setZero();
+  start = std::chrono::steady_clock::now();
+  symmetric_eigensolver(a,vals, vecs);
+  cout << "CPU total: "
+       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+       << "ms" << endl;
+  chkEig(a,vecs,vals);
 
 
-//  vals.setZero();
-//  vecs.setZero();
-//  start = std::chrono::steady_clock::now();
-//  symmetric_eigensolver_cl(a,vals, vecs);
-//  cout << "GPU total: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
-//  chkEig(a,vecs,vals);
-//
-//  return 0;
+  vals.setZero();
+  vecs.setZero();
+  start = std::chrono::steady_clock::now();
+  symmetric_eigensolver_cl(a,vals, vecs);
+  cout << "GPU total: "
+       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+       << "ms" << endl;
+  chkEig(a,vecs,vals);
+
+  return 0;
 
 //  start = std::chrono::steady_clock::now();
 //  Tridiagonalization<Mat> slv2(a);
@@ -462,28 +416,16 @@ int main() {
 //       << "ms" << endl;
 //  chkTridiag(a,t,q);
 
-//  start = std::chrono::steady_clock::now();
-//  block_householder_tridiag4(a, packed);
-//  cout << "\t\tCPU my blocked packed 4: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
-//
   start = std::chrono::steady_clock::now();
-  block_householder_tridiag5(a, packed);
+  block_householder_tridiag(a, packed);
   cout << "\t\tCPU my blocked packed 5: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
-//
-//  start = std::chrono::steady_clock::now();
-//  block_householder_tridiag_cl(a, packed);
-//  cout << "\t\tGPU my blocked packed: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
 
 ////  for(int r1=48;r1<74;r1+=1) {
 //  int r1=60;
 //  start = std::chrono::steady_clock::now();
-//  block_householder_tridiag_cl2(a, packed, r1);
+//  block_householder_tridiag_cl(a, packed, r1);
 //  cout << "\t\tGPU my blocked packed 2, r = " << r1 << ": "
 //       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
 //       << "ms" << endl;
@@ -496,13 +438,13 @@ int main() {
 
 //  start = std::chrono::steady_clock::now();
 //  q=Mat::Identity(a.rows(),a.cols());
-//  block_apply_packed_Q3(packed,q);
+//  block_apply_packed_Q(packed,q);
 //  cout << "\t\tCPU block apply packed Q3: "
 //       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
 //       << "ms" << endl;
 //  if(A<=2001) {
 //    qa = a;
-//    block_apply_packed_Q3(packed, qa);
+//    block_apply_packed_Q(packed, qa);
 //    cout << "apply left " << (qa - q * a).array().abs().sum() << endl;
 //    chkTridiag(a, t, q);
 //  }
@@ -511,14 +453,14 @@ int main() {
   int r2=200;
   q=Mat::Identity(a.rows(),a.cols());
   start = std::chrono::steady_clock::now();
-  block_apply_packed_Q_cl2(packed, q, r2);
+  block_apply_packed_Q_cl(packed, q, r2);
     cout << "\t\tGPU block apply packed Q2 r=" << r2 << ": "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
 //  }
   qa=a;
   if(A<=2001) {
-    block_apply_packed_Q_cl2(packed, qa);
+    block_apply_packed_Q_cl(packed, qa);
     cout << "apply left " << (qa - q * a).array().abs().sum() << endl;
     chkTridiag(a,t,q);
   }
@@ -526,23 +468,6 @@ int main() {
   if(A<=7){
     cout << "packed";
     p(packed);
-  }
-
-//  for(int r=100;r<160;r+=2) {
-  int r=120;
-  start = std::chrono::steady_clock::now();
-  q = Mat::Identity(a.rows(), a.cols());
-  block_apply_packed_Q_cl3(packed, q, r);
-  cout << "\t\tGPU block apply packed Q3 r=" << r << ": "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-       << "ms" << endl;
-//  }
-  if(A<=2001) {
-    qa = a;
-    block_apply_packed_Q_cl3(packed, qa);
-    cout << "apply left " << (qa - q * a).array().abs().sum() << endl;
-//  cout << "apply right " << (qa - a * q).array().abs().sum() << endl;
-    chkTridiag(a, t, q);
   }
 
   start = std::chrono::steady_clock::now();

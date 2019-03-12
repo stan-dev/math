@@ -35,7 +35,7 @@ void symmetric_eigensolver(const Eigen::MatrixXd& A, Eigen::VectorXd& eigenvals,
 #ifdef TIME_IT
   auto start = std::chrono::steady_clock::now();
 #endif
-  block_householder_tridiag4(A, packed);
+  block_householder_tridiag(A, packed);
 
 #ifdef TIME_IT
   cout << "tridiag: "
@@ -59,7 +59,7 @@ void symmetric_eigensolver(const Eigen::MatrixXd& A, Eigen::VectorXd& eigenvals,
        << "ms" << endl;
   start = std::chrono::steady_clock::now();
 #endif
-  block_apply_packed_Q3(packed, eigenvecs);
+  block_apply_packed_Q(packed, eigenvecs);
 #ifdef TIME_IT
   cout << "apply q: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
@@ -78,7 +78,7 @@ void symmetric_eigensolver_cl(const Eigen::MatrixXd& A, Eigen::VectorXd& eigenva
 #ifdef TIME_IT
   auto start = std::chrono::steady_clock::now();
 #endif
-  block_householder_tridiag_cl2(A, packed);
+  block_householder_tridiag_cl(A, packed);
 
 #ifdef TIME_IT
   cout << "tridiag: "
@@ -102,7 +102,7 @@ void symmetric_eigensolver_cl(const Eigen::MatrixXd& A, Eigen::VectorXd& eigenva
        << "ms" << endl;
   start = std::chrono::steady_clock::now();
 #endif
-  block_apply_packed_Q_cl2(packed, eigenvecs);
+  block_apply_packed_Q_cl(packed, eigenvecs);
 #ifdef TIME_IT
   cout << "apply q: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
