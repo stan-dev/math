@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_ERFC_HPP
 
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
-#include <boost/math/special_functions/erf.hpp>
+#include <stan/math/prim/scal/fun/erfc.hpp>
 
 namespace stan {
 namespace math {
@@ -16,7 +16,6 @@ namespace math {
 struct erfc_fun {
   template <typename T>
   static inline T fun(const T& x) {
-    using boost::math::erfc;
     return erfc(x);
   }
 };

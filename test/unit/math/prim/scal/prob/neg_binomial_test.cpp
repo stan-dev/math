@@ -55,7 +55,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest) {
   double alpha = 5;
   double beta = p / (1 - p);
   int N = 1000;
-  int K = boost::math::round(2 * std::pow(N, (1 - p)));
+  int K = stan::math::round(2 * std::pow(N, (1 - p)));
   boost::math::chi_squared mydist(K - 1);
 
   int loc[K - 1];
@@ -93,7 +93,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest2) {
   double alpha = 2.4;
   double beta = p / (1 - p);
   int N = 1000;
-  int K = boost::math::round(2 * std::pow(N, (1 - p)));
+  int K = stan::math::round(2 * std::pow(N, (1 - p)));
   boost::math::chi_squared mydist(K - 1);
 
   int loc[K - 1];
@@ -131,7 +131,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest3) {
   double alpha = 0.4;
   double beta = p / (1 - p);
   int N = 1000;
-  int K = boost::math::round(2 * std::pow(N, (1 - p)));
+  int K = stan::math::round(2 * std::pow(N, (1 - p)));
   boost::math::chi_squared mydist(K - 1);
 
   int loc[K - 1];

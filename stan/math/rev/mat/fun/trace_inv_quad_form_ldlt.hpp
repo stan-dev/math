@@ -5,9 +5,9 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/LDLT_alloc.hpp>
 #include <stan/math/rev/mat/fun/LDLT_factor.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -156,10 +156,11 @@ class trace_inv_quad_form_ldlt_vari : public vari {
  * where the LDLT_factor of A is provided.
  **/
 template <typename T2, int R2, int C2, typename T3, int R3, int C3>
-inline typename boost::enable_if_c<
-    stan::is_var<T2>::value || stan::is_var<T3>::value, var>::type
-trace_inv_quad_form_ldlt(const LDLT_factor<T2, R2, C2> &A,
-                         const Eigen::Matrix<T3, R3, C3> &B) {
+inline
+    typename std::enable_if<stan::is_var<T2>::value || stan::is_var<T3>::value,
+                            var>::type
+    trace_inv_quad_form_ldlt(const LDLT_factor<T2, R2, C2> &A,
+                             const Eigen::Matrix<T3, R3, C3> &B) {
   check_multiplicable("trace_inv_quad_form_ldlt", "A", A, "B", B);
 
   trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *impl_

@@ -20,7 +20,7 @@ TEST(ProbDistributionsFrechet, error_check) {
 TEST(ProbDistributionsFrechet, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 10000;
-  int K = boost::math::round(2 * std::pow(N, 0.4));
+  int K = stan::math::round(2 * std::pow(N, 0.4));
 
   // and invert them to compare to Weibull
   std::vector<double> samples;
