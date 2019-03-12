@@ -41,7 +41,6 @@ typename return_type<T_prob>::type bernoulli_logit_lpmf(const T_n& n,
   typedef
       typename stan::partials_return_type<T_n, T_prob>::type T_partials_return;
 
-  using stan::is_constant_struct;
   using std::exp;
 
   if (size_zero(n, theta))
