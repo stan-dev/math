@@ -73,7 +73,7 @@ public:
     size_t pos = 0;
     for (size_t j = 0; j < size_ - 1; ++j) {
       for (size_t i = j + 1; i < size_; ++i) {
-        double dist = distance(x[i], x[j]);
+        double dist = distance(x[i], x[j]).val();
         dist_[pos] = dist;
         cov_lower_[pos] =
             new vari(sigma_sq_d_ * exp(dist * neg_inv_l), false);
@@ -273,9 +273,7 @@ public:
  *   x is nan or infinite
  */
 template <typename T_x>
-inline typename boost::enable_if_c<
-    boost::is_same<typename scalar_type<T_x>::type, double>::value,
-    Eigen::Matrix<var, -1, -1>>::type
+inline typename Eigen::Matrix<var, -1, -1>
 gp_exponential_cov(const std::vector<T_x> &x, const var &sigma, const var &l) {
   const char *function = "gp_exponential_cov";
   check_positive_finite(function, "sigma", sigma);
