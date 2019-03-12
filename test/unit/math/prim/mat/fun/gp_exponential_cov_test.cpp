@@ -37,10 +37,7 @@ TEST(MathPrimMat, vec_double_gp_exponential_cov1) {
   double sigma = 0.2;
   double l = 5.0;
 
-  std::vector<double> x(3);
-  x[0] = -2;
-  x[1] = -1;
-  x[2] = -0.5;
+  std::vector<double> x = {-2, -1, -0.5};
 
   Eigen::MatrixXd cov;
   cov = stan::math::gp_exponential_cov(x, sigma, l);
@@ -56,15 +53,9 @@ TEST(MathPrimMat, vec_double_double_gp_exponential_cov1) {
   double sigma = 0.2;
   double l = 5.0;
 
-  std::vector<double> x1(3);
-  x1[0] = -2;
-  x1[1] = -1;
-  x1[2] = -0.5;
+  std::vector<double> x1 = {-2, -1, -0.5};
 
-  std::vector<double> x2(3);
-  x2[0] = 3;
-  x2[1] = -4;
-  x2[2] = -0.7;
+  std::vector<double> x2 = {3, -4, -0.7};
 
   Eigen::MatrixXd cov;
   cov = stan::math::gp_exponential_cov(x1, x2, sigma, l);
@@ -147,10 +138,7 @@ TEST(MathPrimMat, vec_eigen_vec_eigen_ard_gp_exponential_cov1) {
   double sigma = 0.3;
   double temp;
 
-  std::vector<double> l(3);
-  l[0] = 1;
-  l[1] = 2;
-  l[2] = 3;
+  std::vector<double> l = {1, 2, 3};
 
   std::vector<Eigen::Matrix<double, -1, 1>> x1(3);
   for (size_t i = 0; i < x1.size(); ++i) {
@@ -197,20 +185,11 @@ TEST(MathPrimMat, domain_err_training_sig_l) {
   double sigma_bad = -1.0;
   double l_bad = -1.0;
 
-  std::vector<double> l_vec(2);
-  l_vec[0] = 1;
-  l_vec[1] = 2;
-  l_vec[2] = 3;
+  std::vector<double> l_vec = {1, 2, 3};
 
-  std::vector<double> l_vec_bad(2);
-  l_vec_bad[0] = 1;
-  l_vec_bad[1] = -1;
-  l_vec_bad[2] = 2;
+  std::vector<double> l_vec_bad = {1, -1, 2};
 
-  std::vector<double> x(3);
-  x[0] = -2;
-  x[1] = -1;
-  x[2] = -0.5;
+  std::vector<double> x = {-2, -1, -0.5};
 
   std::vector<Eigen::Matrix<double, -1, 1>> x_2(3);
   for (size_t i = 0; i < x_2.size(); ++i) {
@@ -283,10 +262,7 @@ TEST(MathPrimMat, nan_error_training_sig_l) {
   double sigma = 0.2;
   double l = 5;
 
-  std::vector<double> x(3);
-  x[0] = -2;
-  x[1] = -1;
-  x[2] = -0.5;
+  std::vector<double> x = {-2, -1, -0.5};
 
   std::vector<Eigen::Matrix<double, -1, 1>> x_2(3);
   for (size_t i = 0; i < x_2.size(); ++i) {
@@ -294,15 +270,9 @@ TEST(MathPrimMat, nan_error_training_sig_l) {
     x_2[i] << 1, 2, 3;
   }
 
-  std::vector<double> l_vec(2);
-  l_vec[0] = 1;
-  l_vec[1] = 2;
-  l_vec[2] = 3;
+  std::vector<double> l_vec = {1, 2, 3};
 
-  std::vector<double> l_vec_bad(2);
-  l_vec_bad[0] = 1;
-  l_vec_bad[1] = -1;
-  l_vec_bad[2] = 3;
+  std::vector<double> l_vec_bad = {1, -1, 3};
 
   std::vector<double> x_bad(x);
   x_bad[1] = std::numeric_limits<double>::quiet_NaN();
@@ -420,13 +390,8 @@ TEST(MathPrimMat, calculations) {
   double sigma = 1.0;
   double l = 1.0;
 
-  std::vector<double> x1(2);
-  x1[0] = 1;
-  x1[1] = 2;
-
-  std::vector<double> x2(2);
-  x2[0] = 2;
-  x2[1] = 3;
+  std::vector<double> x1 = {1, 2};
+  std::vector<double> x2 = {2, 3};
 
   Eigen::MatrixXd cov;
   EXPECT_NO_THROW(cov = stan::math::gp_exponential_cov(x1, sigma, l));
@@ -444,9 +409,7 @@ TEST(MathPrimMat, calculations) {
 TEST(MathPrimMat, calculations_ard) {
   double sigma = 1.0;
 
-  std::vector<double> l(2);
-  l[0] = 1.0;
-  l[1] = 2.0;
+  std::vector<double> l = {1, 2};
 
   std::vector<Eigen::Matrix<double, -1, 1>> x(2);
   x[0].resize(2, 1);
