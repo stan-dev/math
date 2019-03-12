@@ -90,6 +90,11 @@ void chkEig(const Mat& a, const Mat& eigenvecs, const Vec& eigenvals){
   cout << "eigen total loss of orthogonality: " << (eigenvecs.transpose() * eigenvecs - Mat::Identity(A,A)).array().abs().sum() << endl;
   tmp=(eigenvecs.transpose() * eigenvecs - Mat::Identity(A,A)).array().abs().maxCoeff(&i,&j);
   cout << "eigen max loss of orthogonality: " << tmp << " between eigenvectors: " << i << " " << j << " (eigenvalues " << eigenvals[i] << " " << eigenvals[j] << ")" << endl;
+  if(A<=7){
+    cout << "a:\n" << a << endl;
+    cout << "eigenvecs:\n" << eigenvecs << endl;
+    cout << "eigenvals:\n" << eigenvals << endl;
+  }
 #endif
 }
 
@@ -336,6 +341,51 @@ void testMrrr(){
 //  cout << "trace diff: " << sum(diag)-sum(eigenvals) << endl;
 }
 
+void speedTest(int rep=5){
+  auto start = std::chrono::steady_clock::now();
+  Mat vecs;
+  Vec vals;
+  for(int size : {500,1000,2000,4000,8000}){
+    Mat a = Mat::Random(size, size);
+    a+=a.transpose().eval();
+    vecs.resize(size, size);
+    vals.resize(size);
+    int sum=0;
+    cout << "size: " << size << endl;
+//    cout << "\tEigen CPU: ";
+//    for(int i=0; i < rep; i++) {
+//      start = std::chrono::steady_clock::now();
+//      SelfAdjointEigenSolver<Mat> slv(a);
+//      vals = slv.eigenvalues();
+//      vecs = slv.eigenvectors();
+//      int t = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
+//      sum+=t;
+//      cout << t << ", ";
+//    }
+//    cout << endl << "\tEigen CPU avg: " << sum/(float)rep << endl;
+    sum=0;
+    cout << "\tMy GPU: ";
+    for(int i=0; i < rep; i++) {
+      start = std::chrono::steady_clock::now();
+      symmetric_eigensolver_cl(a,vals, vecs);
+      int t = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
+      sum+=t;
+      cout << t << ", ";
+    }
+    cout << endl << "\tmy GPU avg: " << sum/(float)rep << endl;
+//    sum=0;
+//    cout << "\tMy CPU: ";
+//    for(int i=0; i < rep; i++) {
+//      start = std::chrono::steady_clock::now();
+//      symmetric_eigensolver(a,vals, vecs);
+//      int t = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
+//      sum+=t;
+//      cout << t << ", ";
+//    }
+//    cout << endl << "\tmy CPU avg: " << sum/(float)rep << endl;
+  }
+}
+
 int main() {
   auto start = std::chrono::steady_clock::now();
 //  testMrrr();
@@ -354,9 +404,13 @@ int main() {
   auto kernel_8 = opencl_kernels::tridiagonalization_apply_Q2;
   auto kernel_9 = opencl_kernels::subtract_twice;
   auto kernel_10 = opencl_kernels::eigenvals_bisect;
+  auto kernel_11 = opencl_kernels::get_eigenvectors;
+
+//  speedTest();
+//  return 0;
 
   //srand(time(0));
-  int A=1000;
+  int A=4000;
   Mat a = Mat::Random(A, A);
   a+=a.transpose().eval();
   //a.diagonal()+=Eigen::VectorXd::Constant(A,A);
@@ -384,10 +438,11 @@ int main() {
 //       << "ms" << endl;
 //  chkEig(a,vecs,vals);
 
+
   vals.setZero();
   vecs.setZero();
   start = std::chrono::steady_clock::now();
-  symmetric_eigensolver(a,vals, vecs);
+  symmetric_eigensolver_cl(a,vals, vecs);
   cout << "GPU total: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
@@ -425,14 +480,14 @@ int main() {
 //       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
 //       << "ms" << endl;
 
-  //for(int r1=30;r1<1000;r1+=10) {
+//  for(int r1=48;r1<74;r1+=1) {
   int r1=60;
   start = std::chrono::steady_clock::now();
   block_householder_tridiag_cl2(a, packed, r1);
   cout << "\t\tGPU my blocked packed 2, r = " << r1 << ": "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
-  //}
+//  }
 
   t = Mat::Constant(a.rows(), a.cols(), 0);
   t.diagonal()=packed.diagonal();
@@ -452,12 +507,15 @@ int main() {
 //    chkTridiag(a, t, q);
 //  }
 
-  start = std::chrono::steady_clock::now();
+//  for(int r2=60;r2<320;r2+=2) {
+  int r2=200;
   q=Mat::Identity(a.rows(),a.cols());
-  block_apply_packed_Q_cl2(packed, q);
-  cout << "\t\tGPU block apply packed Q2: "
+  start = std::chrono::steady_clock::now();
+  block_apply_packed_Q_cl2(packed, q, r2);
+    cout << "\t\tGPU block apply packed Q2 r=" << r2 << ": "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
+//  }
   qa=a;
   if(A<=2001) {
     block_apply_packed_Q_cl2(packed, qa);
@@ -470,15 +528,15 @@ int main() {
     p(packed);
   }
 
-  //for(int r=30;r<1000;r+=10) {
-  int r=100;
+//  for(int r=100;r<160;r+=2) {
+  int r=120;
   start = std::chrono::steady_clock::now();
   q = Mat::Identity(a.rows(), a.cols());
   block_apply_packed_Q_cl3(packed, q, r);
   cout << "\t\tGPU block apply packed Q3 r=" << r << ": "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
-  //}
+//  }
   if(A<=2001) {
     qa = a;
     block_apply_packed_Q_cl3(packed, qa);

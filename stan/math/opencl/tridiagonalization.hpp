@@ -16,7 +16,7 @@
 
 using namespace std;
 
-#define TIME_IT
+//#define TIME_IT
 //#define SKIP_Q
 
 namespace stan {
@@ -455,7 +455,7 @@ void block_apply_packed_Q3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, in
  * @param[in,out] A On input a matrix to multiply with Q. On output the product Q*A.
  * @param r Block size. Affects only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes larger value is optimal.
  */
-void block_apply_packed_Q_cl2(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 100) {
+void block_apply_packed_Q_cl2(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 200) {
   //if input A==Identity, constructs Q
   auto start = std::chrono::steady_clock::now();
   matrix_cl A_gpu(A);
@@ -519,7 +519,7 @@ void block_apply_packed_Q_cl2(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A,
  * @param[in,out] A On input a matrix to multiply with Q. On output the product Q*A.
  * @param r Block size. Affects only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes larger value is optimal.
  */
-void block_apply_packed_Q_cl3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 100) {
+void block_apply_packed_Q_cl3(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 120) {
   matrix_cl A_gpu(A);
   matrix_cl packed_gpu(packed);
 #ifdef TIME_IT
