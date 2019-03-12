@@ -50,7 +50,7 @@ inline var fabs(const var& a) {
   if (a.val() > 0.0)
     return a;
   else if (a.val() < 0.0)
-    return var(new neg_vari(a.vi_));
+    return var(new internal::neg_vari(a.vi_));
   else if (a.val() == 0)
     return var(new vari(0));
   else

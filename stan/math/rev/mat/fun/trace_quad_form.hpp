@@ -14,7 +14,7 @@
 
 namespace stan {
 namespace math {
-namespace {
+namespace internal {
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
 class trace_quad_form_vari_alloc : public chainable_alloc {
  public:
@@ -77,7 +77,7 @@ class trace_quad_form_vari : public vari {
 
   trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>* impl_;
 };
-}  // namespace
+}  // namespace internal
 
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
 inline typename std::enable_if<
@@ -87,10 +87,11 @@ trace_quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
 
-  trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>* baseVari
-      = new trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>(A, B);
+  internal::trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>* baseVari
+      = new internal::trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>(A, B);
 
-  return var(new trace_quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>(baseVari));
+  return var(
+      new internal::trace_quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>(baseVari));
 }
 
 }  // namespace math

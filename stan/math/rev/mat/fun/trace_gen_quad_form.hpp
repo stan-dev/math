@@ -14,7 +14,7 @@
 
 namespace stan {
 namespace math {
-namespace {
+namespace internal {
 template <typename Td, int Rd, int Cd, typename Ta, int Ra, int Ca, typename Tb,
           int Rb, int Cb>
 class trace_gen_quad_form_vari_alloc : public chainable_alloc {
@@ -89,7 +89,7 @@ class trace_gen_quad_form_vari : public vari {
 
   trace_gen_quad_form_vari_alloc<Td, Rd, Cd, Ta, Ra, Ca, Tb, Rb, Cb>* impl_;
 };
-}  // namespace
+}  // namespace internal
 
 template <typename Td, int Rd, int Cd, typename Ta, int Ra, int Ca, typename Tb,
           int Rb, int Cb>
@@ -105,12 +105,13 @@ trace_gen_quad_form(const Eigen::Matrix<Td, Rd, Cd>& D,
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
   check_multiplicable("trace_gen_quad_form", "B", B, "D", D);
 
-  trace_gen_quad_form_vari_alloc<Td, Rd, Cd, Ta, Ra, Ca, Tb, Rb, Cb>* baseVari
-      = new trace_gen_quad_form_vari_alloc<Td, Rd, Cd, Ta, Ra, Ca, Tb, Rb, Cb>(
-          D, A, B);
+  internal::trace_gen_quad_form_vari_alloc<Td, Rd, Cd, Ta, Ra, Ca, Tb, Rb, Cb>*
+      baseVari
+      = new internal::trace_gen_quad_form_vari_alloc<Td, Rd, Cd, Ta, Ra, Ca, Tb,
+                                                     Rb, Cb>(D, A, B);
 
-  return var(new trace_gen_quad_form_vari<Td, Rd, Cd, Ta, Ra, Ca, Tb, Rb, Cb>(
-      baseVari));
+  return var(new internal::trace_gen_quad_form_vari<Td, Rd, Cd, Ta, Ra, Ca, Tb,
+                                                    Rb, Cb>(baseVari));
 }
 
 }  // namespace math
