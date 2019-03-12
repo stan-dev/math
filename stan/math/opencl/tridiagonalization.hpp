@@ -150,8 +150,6 @@ void block_householder_tridiag5(const Eigen::MatrixXd& A, Eigen::MatrixXd& packe
   for (size_t k = 0; k < packed.rows() - 2; k += r) {
     int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
     Eigen::MatrixXd V(packed.rows() - k - 1, actual_r);
-    Eigen::MatrixXd U(packed.rows() - k - 1, actual_r);
-    V.triangularView<Eigen::StrictlyUpper>() = Eigen::MatrixXd::Constant(V.rows(), V.cols(), 0);
 
     for (size_t j = 0; j < actual_r; j++) {
 #ifdef TIME_IT
@@ -310,7 +308,6 @@ void block_householder_tridiag_cl2(const Eigen::MatrixXd& A, Eigen::MatrixXd& pa
     start = std::chrono::steady_clock::now();
 #endif
     matrix_cl V_gpu(A.rows() - k - 1, actual_r+1);
-    V_gpu.zeros<TriangularViewCL::Upper>();
 #ifdef TIME_IT
     t1+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
 #endif

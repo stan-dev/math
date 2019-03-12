@@ -439,16 +439,16 @@ int main() {
 //  chkEig(a,vecs,vals);
 
 
-  vals.setZero();
-  vecs.setZero();
-  start = std::chrono::steady_clock::now();
-  symmetric_eigensolver_cl(a,vals, vecs);
-  cout << "GPU total: "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-       << "ms" << endl;
-  chkEig(a,vecs,vals);
-
-  return 0;
+//  vals.setZero();
+//  vecs.setZero();
+//  start = std::chrono::steady_clock::now();
+//  symmetric_eigensolver_cl(a,vals, vecs);
+//  cout << "GPU total: "
+//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+//       << "ms" << endl;
+//  chkEig(a,vecs,vals);
+//
+//  return 0;
 
 //  start = std::chrono::steady_clock::now();
 //  Tridiagonalization<Mat> slv2(a);
@@ -468,11 +468,11 @@ int main() {
 //       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
 //       << "ms" << endl;
 //
-//  start = std::chrono::steady_clock::now();
-//  block_householder_tridiag5(a, packed);
-//  cout << "\t\tCPU my blocked packed 5: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
+  start = std::chrono::steady_clock::now();
+  block_householder_tridiag5(a, packed);
+  cout << "\t\tCPU my blocked packed 5: "
+       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+       << "ms" << endl;
 //
 //  start = std::chrono::steady_clock::now();
 //  block_householder_tridiag_cl(a, packed);
@@ -480,14 +480,14 @@ int main() {
 //       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
 //       << "ms" << endl;
 
-//  for(int r1=48;r1<74;r1+=1) {
-  int r1=60;
-  start = std::chrono::steady_clock::now();
-  block_householder_tridiag_cl2(a, packed, r1);
-  cout << "\t\tGPU my blocked packed 2, r = " << r1 << ": "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-       << "ms" << endl;
-//  }
+////  for(int r1=48;r1<74;r1+=1) {
+//  int r1=60;
+//  start = std::chrono::steady_clock::now();
+//  block_householder_tridiag_cl2(a, packed, r1);
+//  cout << "\t\tGPU my blocked packed 2, r = " << r1 << ": "
+//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+//       << "ms" << endl;
+////  }
 
   t = Mat::Constant(a.rows(), a.cols(), 0);
   t.diagonal()=packed.diagonal();
