@@ -117,7 +117,6 @@ class matrix_cl {
     }
   }
 
-
   matrix_cl& operator=(const matrix_cl& a) {
     check_size_match("assignment of (OpenCL) matrices", "source.rows()",
                      a.rows(), "destination.rows()", rows());
@@ -166,7 +165,6 @@ class matrix_cl {
       }
     }
   }
-
 
   /**
    * Stores zeros in the matrix on the OpenCL device.
