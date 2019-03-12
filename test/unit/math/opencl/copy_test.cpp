@@ -7,7 +7,6 @@
 #include <algorithm>
 #include <vector>
 
-
 TEST(MathMatrixOpenCL, matrix_cl_var_copy) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> m(5, 5);
   double pos_ = 1.1;

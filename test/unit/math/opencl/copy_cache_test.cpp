@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <vector>
 
-
 TEST(MathMatrixOpenCL, matrix_cl_copy_cache) {
   auto m = stan::math::matrix_d::Random(100, 100).eval();
   stan::math::matrix_cl d11(100, 100);
@@ -16,7 +15,7 @@ TEST(MathMatrixOpenCL, matrix_cl_copy_cache) {
   stan::math::copy(d11, m);
   stan::math::copy(d12, m);
   ASSERT_FALSE(m.opencl_buffer_() == NULL);
- }
+}
 
 TEST(MathMatrixOpenCL, matrix_cl_var_copy) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> m(5, 5);
