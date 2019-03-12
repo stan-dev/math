@@ -70,7 +70,7 @@ void symmetric_eigensolver(const Eigen::MatrixXd& A, Eigen::VectorXd& eigenvals,
 /**
  * Calculates eigenvalues and eigenvectors of a symmetric matrix.
  * @param A The matrix
- * @param eigenvals[out] Eigenvalues.b
+ * @param eigenvals[out] Eigenvalues.
  * @param eigenvecs[out] Eigenvectors.
  */
 void symmetric_eigensolver_cl(const Eigen::MatrixXd& A, Eigen::VectorXd& eigenvals, Eigen::MatrixXd& eigenvecs) {
@@ -112,5 +112,5 @@ void symmetric_eigensolver_cl(const Eigen::MatrixXd& A, Eigen::VectorXd& eigenva
 
 }
 }
-#endif //STAN_OPENCL
-#endif //STAN_MATH_PRIM_MAT_FUN_OPENCL_EIGENDECOMPOSITION_HPP
+#endif
+#endif

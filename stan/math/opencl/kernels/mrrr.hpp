@@ -169,9 +169,7 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
 
           *min_element_growth = INFINITY;
           for (int i=0;i<sizeof(shifts)/(sizeof(shifts[0]));i++) {
-            //sh -= shift0;
             double element_growth = get_shifted_ldl(l, d, shifts[i], *l3, *d3);
-            //cout << " element growth: " << element_growth << " at " << sh << endl;
             if (element_growth < *min_element_growth) {
               swap(l2,l3);
               swap(d2,d3);
@@ -182,7 +180,6 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
               }
             }
           }
-//  cout << "\t\t" << " element growth: " << min_element_growth << " at " << shift << endl;
         }
 
         /**
@@ -268,7 +265,6 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
                 l_plus[i*n+gid] = l[i*n+gid] * copysign(1., d[i*n+gid]) * copysign(1., d_plus);
               }
             }
-//            printf("%d set l_plus to %lf", gid, l_plus[i*n+gid]);
             s[(i + 1)*n+gid] = l_plus[i*n+gid] * l[i*n+gid] * s[i*n+gid] - shift;
             if (isnan(s[(i + 1)*n+gid])) {
               if (fabs(l_plus[i*n+gid]) > fabs(s[i*n+gid])) { //l_plus[i*n+gid]==inf
@@ -288,7 +284,6 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
                 }
               }
             }
-//            printf("%d set s to %lf", gid, s[(i + 1)*n+gid]);
           }
           //calculate shifted udu and twist index
           double p = d[m*n+gid] - shift;
@@ -308,7 +303,6 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
                 u_minus[i*n+gid] = d[i*n+gid] * copysign(1., l[i*n+gid]) * copysign(1., t);
               }
             }
-//            printf("%d set u_minus to %lf", gid, u_minus[i*n+gid]);
             double gamma = fabs(s[i*n+gid] + t * p);
             if (isnan(gamma)) { //t==inf, p==0 OR t==0, p==inf
               double d_sign = d[i*n+gid] * copysign(1., d_minus) * copysign(1., t);
@@ -408,7 +402,6 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
             double shift;
             double min_element_growth;
             findShift(l, d, low, high, max_ele_growth, max_shift, &l2, &d2, &temp1, &temp2, &shift, &min_element_growth);
-//            printf("%d shift: %lf\n", gid, shift);
             low = low * (1 - copysign(shift_error, low)) - shift;
             high = high * (1 + copysign(shift_error, high)) - shift;
             eigenvalBisectRefine(l2, d2, &low, &high);
@@ -416,42 +409,12 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
             d_ptr = d2;
           }
           else {
-//            printf("%d default ok\n", gid);
             l_ptr = l;
             d_ptr = d;
           }
-//          printf("%d eigval: %lf %lf\n", gid, low, high);
           __global double* l_plus = temp1;
           __global double* u_minus = temp2;
-//          for(int i=0;i<4;i++){
-//            barrier(CLK_LOCAL_MEM_FENCE);
-//            if(gid==i){
-//              printf("%d: ",gid);
-//              for(int j=0;j<3;j++){
-//                printf("%lf, ",l_ptr[j*n+gid]);
-//              }
-//              printf("\n%d: ", gid);
-//              for(int j=0;j<4;j++){
-//                printf("%lf, ",d_ptr[j*n+gid]);
-//              }
-//              printf("\n");
-//            }
-//          }
           int twist_idx = get_twisted_factorization(l_ptr, d_ptr, (low + high) * 0.5, l_plus, u_minus, temp3);
-//          for(int i=0;i<4;i++){
-//            barrier(CLK_LOCAL_MEM_FENCE);
-//            if(gid==i){
-//              printf("%d: ",gid);
-//              for(int j=0;j<3;j++){
-//                printf("%lf, ",l_plus[j*n+gid]);
-//              }
-//              printf("\n%d: ", gid);
-//              for(int j=0;j<3;j++){
-//                printf("%lf, ",u_minus[j*n+gid]);
-//              }
-//              printf("\n");
-//            }
-//          }
           calculateEigenvector(l_plus, u_minus, subdiag, twist_idx, eigenvecs);
         }
 // \cond
