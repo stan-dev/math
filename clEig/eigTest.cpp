@@ -1,8 +1,8 @@
 #include <iostream>
 
-//#define STAN_OPENCL
-//#define OPENCL_PLATFORM_ID 0
-//#define OPENCL_DEVICE_ID 0
+#define STAN_OPENCL
+#define OPENCL_PLATFORM_ID 0
+#define OPENCL_DEVICE_ID 0
 
 #include <stan/math.hpp>
 #include <stan/math/opencl/add.hpp>
@@ -140,17 +140,19 @@ void chkTridiagPacked(const Mat& a, const Mat& packed){
 void testMrrr(){
   auto start = std::chrono::steady_clock::now();
   cout.precision(17);
-  int A = 8000;
+  int A = 7;
   for(unsigned int i=443+1;i<1e7;i++) {
     cout << "i=" << i << endl;
-    srand(i);
+    srand(0);
 
 //    Vec diag(A);// = Vec::Random(A).array();
 //    Vec subdiag(A-1);// = Vec::Random(A - 1).array();
 //    diag << 1,2,3,3;
 //    subdiag << 0,0,0;
-    Vec diag = Vec::Random(A).array();
-    Vec subdiag = Vec::Random(A - 1).array();
+    Vec diag = Vec::Random(A);
+    Vec subdiag = Vec::Random(A - 1);
+//    diag << 1.5,1.2,-2;
+//    subdiag << 0,0;
 //    getGluedWilkinsonMatrix(100, 5, diag, subdiag,1e-8);
 //    subdiag[2]=0;
 //    subdiag[3]=0;
@@ -339,6 +341,7 @@ void speedTest(int rep=5){
   }
 }
 
+#include <gtest/gtest.h>
 int main() {
   auto start = std::chrono::steady_clock::now();
 //  testMrrr();
@@ -363,7 +366,8 @@ int main() {
 //  return 0;
 
   //srand(time(0));
-  int A=2000;
+  int A=345;
+  srand(0);
   Mat a = Mat::Random(A, A);
   a+=a.transpose().eval();
   //a.diagonal()+=Eigen::VectorXd::Constant(A,A);
@@ -401,7 +405,7 @@ int main() {
 //       << "ms" << endl;
 //  chkEig(a,vecs,vals);
 
-  return 0;
+//  return 0;
 
 //  start = std::chrono::steady_clock::now();
 //  Tridiagonalization<Mat> slv2(a);
@@ -417,7 +421,7 @@ int main() {
 
   start = std::chrono::steady_clock::now();
   block_householder_tridiag(a, packed);
-  cout << "\t\tCPU my blocked packed 5: "
+  cout << "\t\tCPU my blocked packed: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
 
@@ -435,18 +439,18 @@ int main() {
   t.diagonal(1)=packed.diagonal(1);
   t.diagonal(-1)=packed.diagonal(1);
 
-//  start = std::chrono::steady_clock::now();
-//  q=Mat::Identity(a.rows(),a.cols());
-//  block_apply_packed_Q(packed,q);
-//  cout << "\t\tCPU block apply packed Q3: "
-//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-//       << "ms" << endl;
-//  if(A<=2001) {
-//    qa = a;
-//    block_apply_packed_Q(packed, qa);
-//    cout << "apply left " << (qa - q * a).array().abs().sum() << endl;
-//    chkTridiag(a, t, q);
-//  }
+  start = std::chrono::steady_clock::now();
+  q=Mat::Identity(a.rows(),a.cols());
+  block_apply_packed_Q(packed,q);
+  cout << "\t\tCPU block apply packed Q: "
+       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+       << "ms" << endl;
+  if(A<=2001) {
+    qa = a;
+    block_apply_packed_Q(packed, qa);
+    cout << "apply left " << (qa - q * a).array().abs().sum() << endl;
+    chkTridiag(a, t, q);
+  }
 
 #ifdef STAN_OPENCL
 //  for(int r2=60;r2<320;r2+=2) {
@@ -454,7 +458,7 @@ int main() {
   q=Mat::Identity(a.rows(),a.cols());
   start = std::chrono::steady_clock::now();
   block_apply_packed_Q_cl(packed, q, r2);
-    cout << "\t\tGPU block apply packed Q2 r=" << r2 << ": "
+    cout << "\t\tGPU block apply packed Q r=" << r2 << ": "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
 //  }

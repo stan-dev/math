@@ -8,6 +8,7 @@
 #include <stan/math/prim/mat/fun/tridiagonalization.hpp>
 #include <stan/math/prim/mat/fun/mrrr.hpp>
 
+#include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/tridiagonalization.hpp>
 #include <stan/math/opencl/mrrr.hpp>
 

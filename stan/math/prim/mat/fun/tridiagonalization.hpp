@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_TRIDIAGONALIZATION_HPP
 
 #include <Eigen/Dense>
+#include <stan/math/prim/scal/fun/constants.hpp>
 
 namespace stan {
 namespace math {
@@ -32,7 +33,9 @@ void block_householder_tridiag(const Eigen::MatrixXd& A, Eigen::MatrixXd& packed
       householder[0] -= alpha;
       q += householder[0] * householder[0];
       q = sqrt(q);
-      householder *= SQRT_2 / q;
+      if(q!=0) {
+        householder *= SQRT_2 / q;
+      }
 
       auto& u = householder;
       Eigen::VectorXd v(householder.size() + 1);

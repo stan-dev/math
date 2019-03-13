@@ -80,7 +80,6 @@ void block_householder_tridiag_cl(const Eigen::MatrixXd& A, Eigen::MatrixXd& pac
  * @param r Block size. Affects only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes larger value is optimal.
  */
 void block_apply_packed_Q_cl(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 200) {
-  auto start = std::chrono::steady_clock::now();
   matrix_cl A_gpu(A);
   Eigen::MatrixXd scratchSpace(A.rows(), r);
   for (int k = (packed.rows() - 3) / r * r; k >= 0; k -= r) {
