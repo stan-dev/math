@@ -10,15 +10,12 @@ TEST(ErrorHandling, checkMatchingSizes) {
   EXPECT_NO_THROW(
       stan::math::check_matching_sizes("checkMatchingSizes", "a", a, "b", b));
 
-  a.push_back(3.0);
-  a.push_back(3.0);
-
+  a = {3, 3};
   EXPECT_THROW(
       stan::math::check_matching_sizes("checkMatchingSizes", "a", a, "b", b),
       std::invalid_argument);
 
-  b.push_back(3.0);
-  b.push_back(3.0);
+  b = {3, 3};
   EXPECT_NO_THROW(
       stan::math::check_matching_sizes("checkMatchingSizes", "a", a, "b", b));
 }
@@ -30,14 +27,12 @@ TEST(ErrorHandling, checkMatchingSizes_nan) {
   EXPECT_NO_THROW(
       stan::math::check_matching_sizes("checkMatchingSizes", "a", a, "b", b));
 
-  a.push_back(nan);
-  a.push_back(nan);
+  a = {nan, nan};
   EXPECT_THROW(
       stan::math::check_matching_sizes("checkMatchingSizes", "a", a, "b", b),
       std::invalid_argument);
 
-  b.push_back(nan);
-  b.push_back(nan);
+  b = {nan, nan};
   EXPECT_NO_THROW(
       stan::math::check_matching_sizes("checkMatchingSizes", "a", a, "b", b));
 }

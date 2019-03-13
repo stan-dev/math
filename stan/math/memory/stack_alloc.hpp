@@ -30,7 +30,7 @@ bool is_aligned(T* ptr, unsigned int bytes_aligned) {
   return (reinterpret_cast<uintptr_t>(ptr) % bytes_aligned) == 0U;
 }
 
-namespace {
+namespace internal {
 const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
 
 // FIXME: enforce alignment
@@ -47,7 +47,7 @@ inline char* eight_byte_aligned_malloc(size_t size) {
   }
   return ptr;
 }
-}  // namespace
+}  // namespace internal
 
 /**
  * An instance of this class provides a memory pool through
@@ -102,7 +102,7 @@ class stack_alloc {
       size_t newsize = sizes_.back() * 2;
       if (newsize < len)
         newsize = len;
-      blocks_.push_back(eight_byte_aligned_malloc(newsize));
+      blocks_.push_back(internal::eight_byte_aligned_malloc(newsize));
       if (!blocks_.back())
         throw std::bad_alloc();
       sizes_.push_back(newsize);
@@ -124,8 +124,8 @@ class stack_alloc {
    * @throws std::runtime_error if the underlying malloc is not 8-byte
    * aligned.
    */
-  explicit stack_alloc(size_t initial_nbytes = DEFAULT_INITIAL_NBYTES)
-      : blocks_(1, eight_byte_aligned_malloc(initial_nbytes)),
+  explicit stack_alloc(size_t initial_nbytes = internal::DEFAULT_INITIAL_NBYTES)
+      : blocks_(1, internal::eight_byte_aligned_malloc(initial_nbytes)),
         sizes_(1, initial_nbytes),
         cur_block_(0),
         cur_block_end_(blocks_[0] + initial_nbytes),

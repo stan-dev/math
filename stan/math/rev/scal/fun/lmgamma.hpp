@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class lmgamma_dv_vari : public op_dv_vari {
  public:
   lmgamma_dv_vari(int a, vari* bvi)
@@ -22,10 +22,10 @@ class lmgamma_dv_vari : public op_dv_vari {
     bvi_->adj_ += adj_ * deriv;
   }
 };
-}  // namespace
+}  // namespace internal
 
 inline var lmgamma(int a, const var& b) {
-  return var(new lmgamma_dv_vari(a, b.vi_));
+  return var(new internal::lmgamma_dv_vari(a, b.vi_));
 }
 
 }  // namespace math

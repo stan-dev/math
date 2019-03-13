@@ -126,7 +126,7 @@ pipeline {
                         Dependencies: { sh """#!/bin/bash
                             set -o pipefail
                             make test-math-dependencies 2>&1 | tee dependencies.log""" } ,
-                        Documentation: { sh 'make doxygen' },
+                        Documentation: { sh "make doxygen" },
                     )
                 }
             }
@@ -162,7 +162,7 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                stage('GPU Tests') {
+                stage('Full unit with GPU') {
                     agent { label "gpu" }
                     steps {
                         deleteDir()
@@ -171,7 +171,7 @@ pipeline {
                         sh "echo STAN_OPENCL=true>> make/local"
                         sh "echo OPENCL_PLATFORM_ID=0>> make/local"
                         sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
-                        runTests("test/unit/math/gpu")
+                        runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
@@ -244,19 +244,6 @@ pipeline {
         stage('Additional merge tests') {
             when { anyOf { branch 'develop'; branch 'master' } }
             parallel {
-                stage('Unit with GPU') {
-                    agent { label "gelman-group-mac" }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CXX=${env.CXX} -Werror > make/local"
-                        sh "echo STAN_OPENCL=true>> make/local"
-                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
-                        sh "echo OPENCL_DEVICE_ID=1>> make/local"
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
                 stage('Linux Unit with Threading') {
                     agent { label 'linux' }
                     steps {

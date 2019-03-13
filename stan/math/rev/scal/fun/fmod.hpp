@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class fmod_vv_vari : public op_vv_vari {
  public:
   fmod_vv_vari(vari* avi, vari* bvi)
@@ -50,7 +50,7 @@ class fmod_dv_vari : public op_dv_vari {
     }
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Return the floating point remainder after dividing the
@@ -96,7 +96,7 @@ class fmod_dv_vari : public op_dv_vari {
  * by the second.
  */
 inline var fmod(const var& a, const var& b) {
-  return var(new fmod_vv_vari(a.vi_, b.vi_));
+  return var(new internal::fmod_vv_vari(a.vi_, b.vi_));
 }
 
 /**
@@ -113,7 +113,7 @@ inline var fmod(const var& a, const var& b) {
  * the second scalar.
  */
 inline var fmod(const var& a, double b) {
-  return var(new fmod_vd_vari(a.vi_, b));
+  return var(new internal::fmod_vd_vari(a.vi_, b));
 }
 
 /**
@@ -130,7 +130,7 @@ inline var fmod(const var& a, double b) {
  * the second variable.
  */
 inline var fmod(double a, const var& b) {
-  return var(new fmod_dv_vari(a, b.vi_));
+  return var(new internal::fmod_dv_vari(a, b.vi_));
 }
 
 }  // namespace math

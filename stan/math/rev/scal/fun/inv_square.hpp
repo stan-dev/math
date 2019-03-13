@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class inv_square_vari : public op_v_vari {
  public:
   explicit inv_square_vari(vari* avi) : op_v_vari(inv_square(avi->val_), avi) {}
@@ -16,7 +16,7 @@ class inv_square_vari : public op_v_vari {
     avi_->adj_ -= 2 * adj_ / (avi_->val_ * avi_->val_ * avi_->val_);
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  *
@@ -37,7 +37,9 @@ class inv_square_vari : public op_v_vari {
    \f]
  *
  */
-inline var inv_square(const var& a) { return var(new inv_square_vari(a.vi_)); }
+inline var inv_square(const var& a) {
+  return var(new internal::inv_square_vari(a.vi_));
+}
 
 }  // namespace math
 }  // namespace stan
