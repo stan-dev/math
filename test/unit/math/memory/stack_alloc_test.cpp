@@ -104,9 +104,11 @@ TEST(stack_alloc, in_stack) {
 TEST(stack_alloc, in_stack_second_block) {
   stan::math::stack_alloc allocator;
 
-  char* x = allocator.alloc_array<char>(stan::math::DEFAULT_INITIAL_NBYTES);
+  char* x = allocator.alloc_array<char>(
+      stan::math::internal::DEFAULT_INITIAL_NBYTES);
   EXPECT_TRUE(allocator.in_stack(x));
-  EXPECT_FALSE(allocator.in_stack(x + stan::math::DEFAULT_INITIAL_NBYTES));
+  EXPECT_FALSE(
+      allocator.in_stack(x + stan::math::internal::DEFAULT_INITIAL_NBYTES));
 
   char* y = allocator.alloc_array<char>(1);
   EXPECT_TRUE(allocator.in_stack(x));

@@ -16,7 +16,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 
 class squared_distance_vv_vari : public vari {
  protected:
@@ -103,7 +103,7 @@ class squared_distance_vd_vari : public vari {
     }
   }
 };
-}  // namespace
+}  // namespace internal
 
 template <int R1, int C1, int R2, int C2>
 inline var squared_distance(const Eigen::Matrix<var, R1, C1>& v1,
@@ -111,7 +111,7 @@ inline var squared_distance(const Eigen::Matrix<var, R1, C1>& v1,
   check_vector("squared_distance", "v1", v1);
   check_vector("squared_distance", "v2", v2);
   check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-  return var(new squared_distance_vv_vari(v1, v2));
+  return var(new internal::squared_distance_vv_vari(v1, v2));
 }
 template <int R1, int C1, int R2, int C2>
 inline var squared_distance(const Eigen::Matrix<var, R1, C1>& v1,
@@ -119,7 +119,7 @@ inline var squared_distance(const Eigen::Matrix<var, R1, C1>& v1,
   check_vector("squared_distance", "v1", v1);
   check_vector("squared_distance", "v2", v2);
   check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-  return var(new squared_distance_vd_vari(v1, v2));
+  return var(new internal::squared_distance_vd_vari(v1, v2));
 }
 template <int R1, int C1, int R2, int C2>
 inline var squared_distance(const Eigen::Matrix<double, R1, C1>& v1,
@@ -127,7 +127,7 @@ inline var squared_distance(const Eigen::Matrix<double, R1, C1>& v1,
   check_vector("squared_distance", "v1", v1);
   check_vector("squared_distance", "v2", v2);
   check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-  return var(new squared_distance_vd_vari(v2, v1));
+  return var(new internal::squared_distance_vd_vari(v2, v1));
 }
 
 }  // namespace math

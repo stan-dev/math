@@ -1,5 +1,6 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/scal/meta/is_constant.hpp>
 #include <vector>
 
 using stan::length;
@@ -21,7 +22,7 @@ TEST(MetaTraits, containsNonconstantStruct) {
   using Eigen::Matrix;
   using stan::contains_nonconstant_struct;
   using std::vector;
-
+  std::cout << stan::is_nonconstant_struct<double>::value << std::endl;
   EXPECT_TRUE(contains_nonconstant_struct<var_t1>::value);
   EXPECT_TRUE(contains_nonconstant_struct<var_t2>::value);
   EXPECT_TRUE(contains_nonconstant_struct<var_t3>::value);
