@@ -8,6 +8,10 @@
 #include <stan/math/rev/scal/fun/pow.hpp>
 #include <stan/math/rev/scal/fun/fabs.hpp>
 
+#include <stan/math/rev/scal/fun/cos.hpp>
+
+#include <stan/math/rev/arr/fun/log_sum_exp.hpp>
+
 #include <stan/math/rev/scal/fun/exp.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
 
@@ -16,26 +20,25 @@
 
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <boost/math/quadrature/tanh_sinh.hpp>
+#include <boost/math/quadrature/exp_sinh.hpp>
 #include <vector>
 #include <limits>
 
-// The formulas and code are based on
+// The formulas and code for small z are based on
 // https://github.com/stan-dev/stan/wiki/Stan-Development-Meeting-Agenda/0ca4e1be9f7fc800658bfbd97331e800a4f50011
 // Which is in turn based on Equation 26 of Rothwell: Computation of the
 // logarithm of Bessel functions of complex argument and fractional order
 // https://scholar.google.com/scholar?cluster=2908870453394922596&hl=en&as_sdt=5,33&sciodt=0,33
+// 
+// http://mathworld.wolfram.com/ModifiedBesselFunctionoftheSecondKind.html
+
+namespace stan {
+namespace math {
 
 namespace {
 
-using stan::math::domain_error;
-using stan::math::is_inf;
-using stan::math::is_nan;
-using stan::math::recover_memory_nested;
-using stan::math::start_nested;
-using stan::math::var;
-
 template <typename T_v, typename T_z, typename T_u>
-class inner_integral {
+class inner_integral_rothwell {
  private:
   T_v v;
   T_z z;
@@ -43,28 +46,72 @@ class inner_integral {
  public:
   typedef typename boost::math::tools::promote_args<T_v, T_z, T_u>::type T_Ret;
 
-  inner_integral(const T_v &v, const T_z &z) : v(v), z(z) {}
+  inner_integral_rothwell(const T_v &v, const T_z &z) : v(v), z(z) {}
 
-  inline T_Ret operator()(const T_u &u, const T_u &) const {
+  inline T_Ret operator()(const T_u &u) const {
+    using std::pow;
+    using std::exp;
+    using std::fabs;
+
     auto v_ = fabs(v);
     auto v_mhalf = v_ - 0.5;
     auto neg2v_m1 = -2 * v_ - 1;
     auto beta = 16.0 / (2 * v_ + 1);
 
+    T_Ret value;
     T_Ret uB = pow(u, beta);
     T_Ret first
         = beta * exp(-uB) * pow(2 * z + uB, v_mhalf) * boost::math::pow<7>(u);
     T_Ret second = exp(-1.0 / u);
     if (second > 0)
       second = second * pow(u, neg2v_m1) * pow(2 * z * u + 1, v_mhalf);
-    return first + second;
+    value = first + second;
+    
+    return value;
   }
+
+  template<class F> 
+  static double integrate(const F f, double tolerance, double* error, double* L1, std::size_t* levels) {
+    boost::math::quadrature::tanh_sinh<double> integrator;
+    return integrator.integrate(f, 0.0, 1.0, tolerance, error, L1, levels);
+  };  
+};
+
+
+
+template <typename T_v, typename T_z, typename T_u>
+class inner_integral_mathematica {
+ private:
+  T_v v;
+  T_z z;
+
+ public:
+  typedef typename boost::math::tools::promote_args<T_v, T_z, T_u>::type T_Ret;
+
+  inner_integral_mathematica(const T_v &v, const T_z &z) : v(v), z(z) {}
+
+  inline T_Ret operator()(const T_u &u) const {
+    using std::pow;
+    using std::fabs;
+    using std::cos;
+
+    auto v_ = fabs(v);
+
+    return cos(u) / pow(u * u + z * z, v_ + 0.5);
+  }
+
+  template<class F>
+  static double integrate(const F f, double tolerance, double* error, double* L1, std::size_t* levels) {
+    boost::math::quadrature::exp_sinh<double> integrator;
+    return integrator.integrate(f, tolerance, error, L1, levels);
+  };
+
 };
 
 // Uses nested autodiff to get gradient with respect to v
 // Gradient with respect to z can be computed analytically
 // Code modified from gradient_of_f
-template <typename T>
+template <typename F, typename T>
 class inner_integral_grad_v {
  private:
   T v;
@@ -73,13 +120,13 @@ class inner_integral_grad_v {
  public:
   inner_integral_grad_v(const T &v, const T &z) : v(v), z(z) {}
 
-  inline T operator()(const T &u, const T &uc) const {
+  inline T operator()(const T &u) const {
     double gradient = 0.0;
     start_nested();
-    var v_var(v);
+    var v_var(stan::math::value_of(v));
     try {
-      auto f = inner_integral<var, T, T>(v_var, z);
-      var fx = f(u, uc);
+      auto f = F(v_var, z);
+      var fx = f(u);
       fx.grad();
       gradient = v_var.adj();
       if (is_nan(gradient)) {
@@ -99,6 +146,7 @@ class inner_integral_grad_v {
   }
 };
 
+template <template<typename,typename,typename> class INTEGRAL>
 double compute_inner_integral_with_gradient(const double &v, const double &z) {
   double relative_tolerance = std::sqrt(std::numeric_limits<double>::epsilon());
 
@@ -106,42 +154,42 @@ double compute_inner_integral_with_gradient(const double &v, const double &z) {
   double L1;
   size_t levels;
 
-  boost::math::quadrature::tanh_sinh<double> integrator;
 
-  auto f = inner_integral<double, double, double>(v, z);
-  double integral = integrator.integrate(f, 0.0, 1.0, relative_tolerance,
+  auto f = INTEGRAL<double,double,double>(v, z);
+  double integral = INTEGRAL<double,double,double>::integrate(f, relative_tolerance,
                                          &error, &L1, &levels);
 
   if (error > 1e-6 * L1) {
-    domain_error("compute_inner_integral_with_gradient",
+    domain_error("compute_inner_integral_with_gradient(double, double)",
                  "error estimate of integral / L1 ", error / L1, "",
                  "is larger than 1e-6");
   }
   return integral;
 }
 
+template <template<typename,typename,typename> class INTEGRAL>
 var compute_inner_integral_with_gradient(const var &v, const double &z) {
-  double integral = compute_inner_integral_with_gradient(
+  double integral = compute_inner_integral_with_gradient<INTEGRAL>(
       stan::math::value_of(v), stan::math::value_of(z));
 
   std::vector<stan::math::var> theta_concat;
   std::vector<double> dintegral_dtheta;
 
   theta_concat.push_back(v);
-  auto f = inner_integral_grad_v<double>(v.val(), z);
+  auto f = inner_integral_grad_v<INTEGRAL<var, double, double>, double>(v.val(), z);
 
   double error;
   double L1;
   size_t levels;
   double condition_number;
   double relative_tolerance = std::sqrt(std::numeric_limits<double>::epsilon());
-  boost::math::quadrature::tanh_sinh<double> integrator;
+  
 
-  dintegral_dtheta.push_back(integrator.integrate(
-      f, 0.0, 1.0, relative_tolerance, &error, &L1, &levels));
+  dintegral_dtheta.push_back(INTEGRAL<var, double, double>::integrate(
+      f, relative_tolerance, &error, &L1, &levels));
 
   if (error > 1e-6 * L1) {
-    domain_error("compute_inner_integral_with_gradient",
+    domain_error("compute_inner_integral_with_gradient(var, double)",
                  "error estimate of integral / L1 ", error / L1, "",
                  "is larger than 1e-6");
   }
@@ -151,7 +199,20 @@ var compute_inner_integral_with_gradient(const var &v, const double &z) {
 }
 
 template <typename T_v, typename T_z>
-typename boost::math::tools::promote_args<T_v, T_z>::type compute_lead(
+typename boost::math::tools::promote_args<T_v, T_z>::type compute_lead_mathematica(
+    const T_v &v, const T_z &z) {
+  typedef typename boost::math::tools::promote_args<T_v, T_z>::type T_Ret;
+
+  using std::fabs;
+  using std::log;
+  
+  const T_v v_ = fabs(v);
+
+  return lgamma(v_ + 0.5) + v_ * (log(2) + log(z)) - 0.5 * log(pi());
+}
+
+template <typename T_v, typename T_z>
+typename boost::math::tools::promote_args<T_v, T_z>::type compute_lead_rothwell(
     const T_v &v, const T_z &z) {
   typedef typename boost::math::tools::promote_args<T_v, T_z>::type T_Ret;
 
@@ -160,35 +221,164 @@ typename boost::math::tools::promote_args<T_v, T_z>::type compute_lead(
   using std::log;
   using std::pow;
 
-  if (v == 0.5)
-    return 0.5 * log(M_PI / (2 * z)) - z;
   const T_v v_ = fabs(v);
-  const T_Ret lead = 0.5 * log(M_PI) - lgamma(v_ + 0.5) - v_ * log(2 * z) - z;
+  const T_Ret lead = 0.5 * log(pi()) - lgamma(v_ + 0.5) - v_ * log(2 * z) - z;
   if (is_inf(lead))
-    return -z + 0.5 * log(0.5 * M_PI / z);
-  const T_v beta = 16.0 / (2 * v_ + 1);
+    return -z + 0.5 * log(0.5 * pi() / z);
 
   return lead;
 }
+
+void check_params(const double& v, const double& z) {
+  const char *function = "log_modified_bessel_second_kind_frac";
+  if(!std::isfinite(v)) {
+    stan::math::domain_error(function, 
+      "v must be finite", v, "");
+  }
+  if(!std::isfinite(z)) {
+    stan::math::domain_error(function, 
+      "z must be finite", z, "");
+  }
+  if(z < 0) {
+    stan::math::domain_error(function, 
+      "z is negative", z, "");
+  }
+}
+
+// Using the first two terms from
+// Sidi & Hoggan 2011 "ASYMPTOTICS OF MODIFIED BESSELFUNCTIONS OF HIGH ORDER"
+// https://pdfs.semanticscholar.org/d659/ecd3e66fefb2c2fafe16bf3086fcf41c573d.pdf
+// Without the second term, the approximation is worse and third term
+// did not help for v in [-1000, 1000].
+// With only the first term the formula reduces to 1.10 of
+// Temme, Journal of Computational Physics, vol 19, 324 (1975)
+// https://doi.org/10.1016/0021-9991(75)90082-0
+template <typename T_v>
+T_v
+asymptotic_large_v(const T_v &v, const double &z) {
+  using std::fabs;
+  using std::log;
+
+  //return 0.5 * (log(stan::math::pi()) - log(2) - log(v)) - v * (log(z) - log(2) - log(v));
+  T_v v_ = fabs(v);
+  return stan::math::LOG_2 - v_ * (log(z) - stan::math::LOG_2) + lgamma(v_) 
+      //+ log(1 + (0.25 * boost::math::pow<2>(z) / v) ) 
+      //Third term, currently removed
+      //+ (- 0.25 * boost::math::pow<2>(z) +  
+      //    0.5 * 0.125 * boost::math::pow<4>(z)) / boost::math::pow<2>(v)             
+      ;
+}
+
+// https://dlmf.nist.gov/10.40
+// does not really work
+template <typename T_v>
+T_v
+asymptotic_large_z(const T_v &v, const double &z) {
+  using std::fabs;  
+  using std::pow;
+  using std::log;
+
+  const int max_terms = 50;
+  int n_terms = std::min(max_terms, static_cast<int>(value_of(v) + 0.5));
+
+  T_v log_series_sum;
+  if(n_terms > 1) {
+    std::vector<T_v> log_terms;
+    log_terms.reserve(max_terms - 1);
+
+    T_v log_a_k(0);
+    T_v v_ = fabs(v);
+    double log_z = log(z);
+    T_v v_squared_4 = v_ * v_ * 4;
+    double log_8 = log(8);
+    
+    for(int k = 1; k < n_terms; k++) {
+      log_a_k = log_a_k + log(v_squared_4 - (2 * k - 1)) - log(k) - k * log_8;
+      log_terms.push_back(log_a_k - k * log_z);
+      if(log_terms.back() < -10) {
+        break;
+      }
+    }
+
+    log_series_sum = log_sum_exp(log_terms);
+  } else {
+    log_series_sum = 0;
+  }
+  return 0.5 * (log(pi()) - log(2) - log(z)) -z + log_series_sum;
+}
+
 }  // namespace
 
-namespace stan {
-namespace math {
+const double log_modified_bessel_second_kind_frac_medium_v_bound = 30;
+const double log_modified_bessel_second_kind_frac_medium_z_bound = 2;
+const double log_modified_bessel_second_kind_frac_large_z_bound = 100;
+const double log_modified_bessel_second_kind_frac_large_v_bound1 = 30;
+const double log_modified_bessel_second_kind_frac_large_v_bound2 = 100;
+
 
 template <typename T_v>
 T_v log_modified_bessel_second_kind_frac(const T_v &v, const double &z) {
-  T_v lead = compute_lead(v, z);
-  T_v Q = compute_inner_integral_with_gradient(v, z);
-  return lead + log(Q);
+  using std::pow;
+  using std::fabs;
+  check_params(value_of(v), value_of(z));
+
+  double v_ = fabs(value_of(v));
+  if(z == 0) {
+    return std::numeric_limits<double>::infinity();
+  }
+  if(!is_inf(pow(2*z, v_ - 0.5)) && 
+    !is_inf(pow(1e-8, -2 * v_)))
+  {
+    std::cout << "Rothwell" << std::endl;
+    T_v lead = compute_lead_rothwell(v, z);
+    T_v Q = compute_inner_integral_with_gradient<inner_integral_rothwell>(v, z);
+    return lead + log(Q);
+  } else if( pow(z*z, v_ + 0.5) > 0.5 && pow(z*z, v_ + 0.5) < 1e100) {
+    std::cout << "Mathematica" << std::endl;
+    T_v lead = compute_lead_mathematica(v, z);
+    T_v Q = compute_inner_integral_with_gradient<inner_integral_mathematica>(v, z);
+    return lead + log(Q);    
+  }
+  else if(v_ > z){
+    std::cout << "Asymp_v" << std::endl;
+    return asymptotic_large_v(v, z);
+  }
+  else {
+    std::cout << "Asymp_z" << std::endl;
+    return asymptotic_large_z(v, z);
+  }
+
+  // if(fabs(value_of(v)) > log_modified_bessel_second_kind_frac_large_v_bound2 || 
+  //  (z < 1 && fabs(value_of(v) > log_modified_bessel_second_kind_frac_medium_v_bound)))
+  // {
+  //   return asymptotic_large_v(v, z);
+  // }
+  // else if(fabs(value_of(z)) > log_modified_bessel_second_kind_frac_large_z_bound && 
+  //   fabs(value_of(v) > log_modified_bessel_second_kind_frac_medium_v_bound)) {
+  //    //return asymptotic_large_z(v, z);
+  //    return asymptotic_large_v(v, z);
+  // }
+  // else if
+  //   ((fabs(value_of(v)) > log_modified_bessel_second_kind_frac_medium_v_bound &&
+  //   value_of(z) > log_modified_bessel_second_kind_frac_medium_z_bound) ||
+  //   (fabs(value_of(v)) > log_modified_bessel_second_kind_frac_large_v_bound1 &&
+  //   z > 1)) {
+  //   T_v lead = compute_lead_mathematica(v, z);
+  //   T_v Q = compute_inner_integral_with_gradient<inner_integral_mathematica>(v, z);
+  //   return lead + log(Q);
+
+  // } else  {
+  //   T_v lead = compute_lead_rothwell(v, z);
+  //   T_v Q = compute_inner_integral_with_gradient<inner_integral_rothwell>(v, z);
+  //   return lead + log(Q);
+  // }
 }
 
 template <typename T_v>
 var log_modified_bessel_second_kind_frac(const T_v &v, const var &z) {
-  T_v lead = compute_lead(v, z.val());
+  check_params(value_of(v), value_of(z));
 
-  T_v Q = compute_inner_integral_with_gradient(v, z.val());
-
-  T_v value = lead + log(Q);
+  T_v value = log_modified_bessel_second_kind_frac(v, z.val());
 
   double value_vm1
       = log_modified_bessel_second_kind_frac(value_of(v) - 1, z.val());
