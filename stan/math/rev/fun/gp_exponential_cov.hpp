@@ -9,6 +9,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <iostream>
 #include <vector>
 
 namespace stan {
@@ -71,12 +72,19 @@ public:
             ChainableStack::instance().memalloc_.alloc_array<vari *>(size_)) {
     double neg_inv_l = -1.0 / l_d_;
     size_t pos = 0;
-    for (size_t j = 0; j < size_ - 1; ++j) {
+    for (size_t j = 0; j < size_; ++j) {
       for (size_t i = j + 1; i < size_; ++i) {
         double dist = distance(x[i], x[j]).val();
+        // std::cout << "in constructor\n";
+        // std::cout << x[i] << "\n";
+        // std::cout << x[j] << "\n";
+        // std::cout << dist << "\n";
+        // std::cout << "above is distance\n";
         dist_[pos] = dist;
         cov_lower_[pos] =
-            new vari(sigma_sq_d_ * exp(dist * neg_inv_l), false);
+          new vari(sigma_sq_d_ * std::exp(dist_[pos] * neg_inv_l), false);
+        std::cout << "exp_val constructor\n";
+        std::cout << std::exp(dist_[pos] * neg_inv_l) << "\n";
         ++pos;
       }
     }
@@ -288,7 +296,6 @@ gp_exponential_cov(const std::vector<T_x> &x, const var &sigma, const var &l) {
 
   gp_exponential_cov_vari<T_x, var, var> *baseVari =
       new gp_exponential_cov_vari<T_x, var, var>(x, sigma, l);
-
   size_t pos = 0;
   for (size_t j = 0; j < x_size - 1; ++j) {
     for (size_t i = (j + 1); i < x_size; ++i) {
