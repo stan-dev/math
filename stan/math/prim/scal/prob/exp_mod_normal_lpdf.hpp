@@ -31,7 +31,6 @@ exp_mod_normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
       typename stan::partials_return_type<T_y, T_loc, T_scale,
                                           T_inv_scale>::type T_partials_return;
 
-  using stan::is_constant_struct;
   using std::log;
 
   if (size_zero(y, mu, sigma, lambda))
