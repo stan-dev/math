@@ -39,6 +39,8 @@ class matrix_cl {
    * is provided by the context.
    */
   cl::Buffer oclBuffer_;
+  cl::Buffer oclBuffer_val_;
+  cl::Buffer oclBuffer_adj_;
   const int rows_;
   const int cols_;
 
@@ -50,8 +52,11 @@ class matrix_cl {
   int size() const { return rows_ * cols_; }
 
   const cl::Buffer& buffer() const { return oclBuffer_; }
-
   matrix_cl() : rows_(0), cols_(0) {}
+  template<int R, int C>
+  matrix_cl(const cl::Buffer& A) : rows_(R), cols_(C) {
+      oclBuffer_ = &A;
+  }
 
   matrix_cl(const matrix_cl& A) : rows_(A.rows()), cols_(A.cols()) {
     if (A.size() == 0)
@@ -117,18 +122,62 @@ class matrix_cl {
     }
   }
 
-  matrix_cl& operator=(const matrix_cl& a) {
-    check_size_match("assignment of (OpenCL) matrices", "source.rows()",
-                     a.rows(), "destination.rows()", rows());
-    check_size_match("assignment of (OpenCL) matrices", "source.cols()",
-                     a.cols(), "destination.cols()", cols());
-    oclBuffer_ = a.buffer();
-    return *this;
+  /**
+   * Constructor for the matrix_cl that
+   * creates a copy of a var.val_ type Eigen matrix on the GPU.
+   *
+   *
+   * @tparam R rows of matrix
+   * @tparam C cols of matrix
+   * @param A the Eigen matrix
+   *
+   * @throw <code>std::system_error</code> if the
+   * matrices do not have matching dimensions
+   */
+  template <int R, int C>
+  explicit matrix_cl(const vari& A)
+      : rows_(R), cols_(C) {
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    if (size() > 0) {
+      try {
+        const int vari_size = sizeof(double) * (A.size() / 2);
+        // creates the OpenCL buffer to copy the Eigen
+        // matrix to the OpenCL device
+        oclBuffer_val_
+            = cl::Buffer(ctx, CL_MEM_READ_WRITE, vari_size);
+        oclBuffer_adj_
+            = cl::Buffer(ctx, CL_MEM_READ_WRITE, vari_size);
+        /**
+         * Writes the contents of A to the OpenCL buffer
+         * starting at the offset 0.
+         * CL_TRUE denotes that the call is blocking as
+         * we do not want to execute any further kernels
+         * on the device until we are sure that the data
+         * is finished transfering)
+         */
+        if (vari_view) {
+          char* val_ptr = queue.enqueueMapBuffer(oclBuffer_val_, CL_MAP_READ | CL_MAP_WRITE,
+             CL_MEM_READ_WRITE, 0, vari_size);
+          char* adj_ptr = queue.enqueueMapBuffer(oclBuffer_adj_, CL_MAP_READ | CL_MAP_WRITE,
+             CL_MEM_READ_WRITE, 0, vari_size);
+
+          for (std::size_t i = 0; i < (A.size() / 2); i++) {
+            val_ptr[i] = A[i]->val_;
+            adj_ptr[i] = A[i]->adj_;
+          }
+          queue.enqueueUnMapMemObject(oclBuffer_val_, val_ptr);
+          queue.enqueueUnMapMemObject(oclBuffer_adj_, adj_ptr);
+        }
+      } catch (const cl::Error& e) {
+        check_opencl_error("matrix constructor", e);
+      }
+    }
   }
 
   /**
    * Constructor for the matrix_cl that
-   * creates a copy of a var.val_ type Eigen matrix on the GPU.
+   * creates a copy of a var type Eigen matrix on the GPU.
    *
    *
    * @tparam R rows of matrix
@@ -165,6 +214,7 @@ class matrix_cl {
       }
     }
   }
+
 
   /**
    * Stores zeros in the matrix on the OpenCL device.
