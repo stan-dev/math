@@ -17,7 +17,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
      * @param[in] B the right matrix in matrix multiplication
      * @param[out] C the output matrix
      * @param[in] M Number of rows for matrix A
-     * @param[in] N Number of rows for matrix B
+     * @param[in] N Number of cols for matrix B
      * @param[in] K Number of cols for matrix A and number of rows for matrix B
      */
     __kernel void matrix_multiply(const __global double* A,
