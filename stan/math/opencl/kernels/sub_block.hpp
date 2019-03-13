@@ -48,12 +48,12 @@ static const char *sub_block_kernel_code = STRINGIFY(
       int j = get_global_id(1);
       if ((i + src_offset_i) < src_rows && (j + src_offset_j) < src_cols
           && (i + dst_offset_i) < dst_rows && (j + dst_offset_j) < dst_cols) {
-          if( (triangular_view == LOWER && i>=j) 
-            || (triangular_view == UPPER && i<=j)
-            || triangular_view == ENTIRE ) {
-            dst((dst_offset_i + i), (dst_offset_j + j))
-                = src((src_offset_i + i), (src_offset_j + j));
-          }
+        if ((triangular_view == LOWER && i >= j)
+            || (triangular_view == UPPER && i <= j)
+            || triangular_view == ENTIRE) {
+          dst((dst_offset_i + i), (dst_offset_j + j))
+              = src((src_offset_i + i), (src_offset_j + j));
+        }
       }
     }
     // \cond

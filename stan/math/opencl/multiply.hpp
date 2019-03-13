@@ -59,9 +59,9 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
       "WORK_PER_THREAD");
   try {
     opencl_kernels::matrix_multiply(
-          cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
-          Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
-          Bpad.cols(), Bpad.rows(), triangular_view_A, triangular_view_B);
+        cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
+        Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
+        Bpad.cols(), Bpad.rows(), triangular_view_A, triangular_view_B);
   } catch (cl::Error& e) {
     check_opencl_error("multiply", e);
   }

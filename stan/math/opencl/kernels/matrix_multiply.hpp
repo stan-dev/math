@@ -59,14 +59,14 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
       // If no matrices are triangular the starting tile
       // is 0 and the end tile is num_tiles-1 which
       // is then a general matrix multiply
-      const int end_tile_A =
-            lower_upper_A == LOWER ? (i / THREAD_BLOCK_SIZE) : (num_tiles - 1);
-      const int end_tile_B =
-            lower_upper_B == UPPER ? (j / THREAD_BLOCK_SIZE) : (num_tiles - 1);
-      const int start_tile_A =
-                          lower_upper_A == UPPER ? (i / THREAD_BLOCK_SIZE) : 0;
-      const int start_tile_B =
-                          lower_upper_B == LOWER ? (j / THREAD_BLOCK_SIZE) : 0;
+      const int end_tile_A
+          = lower_upper_A == LOWER ? (i / THREAD_BLOCK_SIZE) : (num_tiles - 1);
+      const int end_tile_B
+          = lower_upper_B == UPPER ? (j / THREAD_BLOCK_SIZE) : (num_tiles - 1);
+      const int start_tile_A
+          = lower_upper_A == UPPER ? (i / THREAD_BLOCK_SIZE) : 0;
+      const int start_tile_B
+          = lower_upper_B == LOWER ? (j / THREAD_BLOCK_SIZE) : 0;
       const int start_tile = max(start_tile_A, start_tile_B);
       const int end_tile = min(end_tile_A, end_tile_B);  // NOLINT
 
@@ -80,10 +80,10 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
           // the diagonal if the matrix is lower triangular or under
           // the diagonal if the matrix is upper triangular
           A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                  [thread_block_row]
+                 [thread_block_row]
               = A[(tiled_j + w * THREAD_BLOCK_SIZE_COL) * M + i];
           B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                  [thread_block_row]
+                 [thread_block_row]
               = B[(j + w * THREAD_BLOCK_SIZE_COL) * K + tiled_i];
         }
         barrier(CLK_LOCAL_MEM_FENCE);
@@ -112,7 +112,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int,
                          TriangularViewCL, TriangularViewCL>
     matrix_multiply("matrix_multiply", matrix_multiply_kernel_code,
-                 {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
+                    {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
 
 }  // namespace opencl_kernels
 }  // namespace math

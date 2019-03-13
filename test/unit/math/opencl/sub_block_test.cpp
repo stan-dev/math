@@ -59,4 +59,3 @@ TEST(MathMatrixGPU, sub_block_lower_pass) {
 }
 
 #endif
-
