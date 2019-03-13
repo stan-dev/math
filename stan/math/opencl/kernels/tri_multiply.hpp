@@ -70,7 +70,7 @@ static const char* tri_multiply_kernel_code = STRINGIFY(
       const int start_tile_A = is_A_upper ? (i / THREAD_BLOCK_SIZE) : 0;
       const int start_tile_B = is_B_lower ? (j / THREAD_BLOCK_SIZE) : 0;
       const int start_tile = max(start_tile_A, start_tile_B);
-      const int end_tile = min(end_tile_A, end_tile_B);
+      const int end_tile = min(end_tile_A, end_tile_B); // NOLINT
 
       for (int tile_idx = start_tile; tile_idx <= end_tile; tile_idx++) {
         const int tiled_i = THREAD_BLOCK_SIZE * tile_idx + thread_block_row;
