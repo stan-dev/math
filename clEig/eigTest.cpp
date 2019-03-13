@@ -1,8 +1,8 @@
 #include <iostream>
 
-#define STAN_OPENCL
-#define OPENCL_PLATFORM_ID 0
-#define OPENCL_DEVICE_ID 0
+//#define STAN_OPENCL
+//#define OPENCL_PLATFORM_ID 0
+//#define OPENCL_DEVICE_ID 0
 
 #include <stan/math.hpp>
 #include <stan/math/opencl/add.hpp>
@@ -13,7 +13,7 @@
 #include <stan/math/opencl/kernels/mrrr.hpp>
 #include <stan/math/opencl/tridiagonalization.hpp>
 #include <stan/math/opencl/mrrr.hpp>
-#include <stan/math/opencl/symmetric_eigensolver.hpp>
+#include <stan/math/prim/mat/fun/symmetric_eigensolver.hpp>
 
 //#define SKIP_CHECKS
 
@@ -36,11 +36,13 @@ void p(const Eigen::VectorXd& a) {
   std::cout << a << std::endl;
 }
 
+#ifdef STAN_OPENCL
 void p(const matrix_cl& a) {
   Eigen::MatrixXd b(a.rows(), a.cols());
   copy(b, a);
   std::cout << b << std::endl;
 }
+#endif
 
 /*
 void chk(const Mat& a, const Mat& Q, const Mat& R){
@@ -165,8 +167,8 @@ void testMrrr(){
     T.diagonal(-1) = subdiag;
 
     start = std::chrono::steady_clock::now();
-//    tridiagonal_eigensolver(diag, subdiag, eigenvals, eigenvecs2);
-    tridiagonal_eigensolver_cl(diag, subdiag, eigenvals, eigenvecs2);
+    tridiagonal_eigensolver(diag, subdiag, eigenvals, eigenvecs2);
+//    tridiagonal_eigensolver_cl(diag, subdiag, eigenvals, eigenvecs2);
 //    mrrr(diag, subdiag, eigenvals, eigenvecs2);
 //    mrrr_cl(diag, subdiag, eigenvals, eigenvecs2);
     if(A>=15) {
@@ -314,26 +316,26 @@ void speedTest(int rep=5){
 //      cout << t << ", ";
 //    }
 //    cout << endl << "\tEigen CPU avg: " << sum/(float)rep << endl;
-    sum=0;
-    cout << "\tMy GPU: ";
-    for(int i=0; i < rep; i++) {
-      start = std::chrono::steady_clock::now();
-      symmetric_eigensolver_cl(a,vals, vecs);
-      int t = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
-      sum+=t;
-      cout << t << ", ";
-    }
-    cout << endl << "\tmy GPU avg: " << sum/(float)rep << endl;
 //    sum=0;
-//    cout << "\tMy CPU: ";
+//    cout << "\tMy GPU: ";
 //    for(int i=0; i < rep; i++) {
 //      start = std::chrono::steady_clock::now();
-//      symmetric_eigensolver(a,vals, vecs);
+//      symmetric_eigensolver_cl(a,vals, vecs);
 //      int t = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
 //      sum+=t;
 //      cout << t << ", ";
 //    }
-//    cout << endl << "\tmy CPU avg: " << sum/(float)rep << endl;
+//    cout << endl << "\tmy GPU avg: " << sum/(float)rep << endl;
+    sum=0;
+    cout << "\tMy CPU: ";
+    for(int i=0; i < rep; i++) {
+      start = std::chrono::steady_clock::now();
+      symmetric_eigensolver(a,vals, vecs);
+      int t = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
+      sum+=t;
+      cout << t << ", ";
+    }
+    cout << endl << "\tmy CPU avg: " << sum/(float)rep << endl;
   }
 }
 
@@ -344,6 +346,7 @@ int main() {
 //  miniTest();
 //  miniTest2();
 
+#ifdef STAN_OPENCL
   //force kernel compilation before timing
   auto kernel_1 = opencl_kernels::matrix_multiply;
   auto kernel_2 = opencl_kernels::subtract;
@@ -355,7 +358,7 @@ int main() {
   auto kernel_8 = opencl_kernels::subtract_twice;
   auto kernel_9 = opencl_kernels::eigenvals_bisect;
   auto kernel_10 = opencl_kernels::get_eigenvectors;
-
+#endif
 //  speedTest();
 //  return 0;
 
@@ -389,14 +392,14 @@ int main() {
   chkEig(a,vecs,vals);
 
 
-  vals.setZero();
-  vecs.setZero();
-  start = std::chrono::steady_clock::now();
-  symmetric_eigensolver_cl(a,vals, vecs);
-  cout << "GPU total: "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
-       << "ms" << endl;
-  chkEig(a,vecs,vals);
+//  vals.setZero();
+//  vecs.setZero();
+//  start = std::chrono::steady_clock::now();
+//  symmetric_eigensolver_cl(a,vals, vecs);
+//  cout << "GPU total: "
+//       << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
+//       << "ms" << endl;
+//  chkEig(a,vecs,vals);
 
   return 0;
 
@@ -445,6 +448,7 @@ int main() {
 //    chkTridiag(a, t, q);
 //  }
 
+#ifdef STAN_OPENCL
 //  for(int r2=60;r2<320;r2+=2) {
   int r2=200;
   q=Mat::Identity(a.rows(),a.cols());
@@ -484,6 +488,7 @@ int main() {
   cout << "\t\tGPU multiply q*a: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()
        << "ms" << endl;
+#endif
 
 
   return 0;
