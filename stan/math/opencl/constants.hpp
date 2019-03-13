@@ -5,6 +5,7 @@ namespace stan {
 namespace math {
 enum class TriangularViewCL { Lower = 0, Upper = 1, Entire = 2 };
 enum class TriangularMapCL { UpperToLower = 0, LowerToUpper = 1 };
+enum class VariViewCL {Adjoint = 0, Value = 1};
 }  // namespace math
 }  // namespace stan
 #endif
