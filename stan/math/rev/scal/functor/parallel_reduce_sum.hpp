@@ -104,7 +104,7 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
       }
     }
 
-    void join(const recursive_reducer& child) {
+    void join(recursive_reducer& child) {
       // std::cout << "Joining a child " << child.worker_id_ << " into worker "
       // << worker_id_ << std::endl;
       chainablequeue_t& local_queue = ChainableStack::queue();
@@ -117,7 +117,12 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
         local_queue.instance_stack_[nested_stack_instance] = worker_stack_ptr_;
         ChainableStack::instance_ = worker_stack_ptr_.get();
 
-        sum_terms_.emplace_back(sum(child.sum_terms_));
+        if (child.sum_terms_.size() == 1) {
+          sum_terms_.emplace_back(child.sum_terms_[0]);
+        } else {
+          sum_terms_.emplace_back(sum(child.sum_terms_));
+        }
+        child.sum_terms_.clear();
 
         local_queue.instance_stack_[nested_stack_instance] = nested_stack;
         ChainableStack::instance_ = nested_stack.get();
@@ -178,6 +183,8 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
     // it seems that best performance is attained with the simple
     // partititioner and a reasonable grainsize
     // tbb::simple_partitioner partitioner;
+
+    // TODO: add thread_local AD tapes
 
     // TODO: make grainsize a parameter??!!!
     tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, num_jobs, 1),
