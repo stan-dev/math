@@ -329,8 +329,6 @@ class idas_system {
   }
 
   void check_ic_consistency(const double& t0, const double& tol) {
-    using stan::math::dot_self;
-    using stan::math::value_of;
     const std::vector<double> theta_d(value_of(theta_));
     const std::vector<double> yy_d(value_of(yy_));
     const std::vector<double> yp_d(value_of(yp_));

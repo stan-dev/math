@@ -34,8 +34,6 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_lpdf(
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
 
-  using stan::is_constant_struct;
-
   if (size_zero(y, mu, sigma))
     return 0.0;
 
