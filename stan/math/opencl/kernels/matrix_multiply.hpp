@@ -63,7 +63,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
             lower_upper_A == LOWER ? (i / THREAD_BLOCK_SIZE) : (num_tiles - 1);
       const int end_tile_B =
             lower_upper_B == UPPER ? (j / THREAD_BLOCK_SIZE) : (num_tiles - 1);
-      const int start_tile_A = 
+      const int start_tile_A =
                           lower_upper_A == UPPER ? (i / THREAD_BLOCK_SIZE) : 0;
       const int start_tile_B =
                           lower_upper_B == LOWER ? (j / THREAD_BLOCK_SIZE) : 0;
