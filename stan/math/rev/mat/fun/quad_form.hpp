@@ -15,7 +15,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
 class quad_form_vari_alloc : public chainable_alloc {
  private:
@@ -108,7 +108,7 @@ class quad_form_vari : public vari {
 
   quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>* impl_;
 };
-}  // namespace
+}  // namespace internal
 
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
 inline typename std::enable_if<std::is_same<Ta, var>::value
@@ -119,8 +119,8 @@ quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
 
-  quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>* baseVari
-      = new quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>(A, B);
+  internal::quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>* baseVari
+      = new internal::quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>(A, B);
 
   return baseVari->impl_->C_;
 }
@@ -133,8 +133,8 @@ quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
 
-  quad_form_vari<Ta, Ra, Ca, Tb, Rb, 1>* baseVari
-      = new quad_form_vari<Ta, Ra, Ca, Tb, Rb, 1>(A, B);
+  internal::quad_form_vari<Ta, Ra, Ca, Tb, Rb, 1>* baseVari
+      = new internal::quad_form_vari<Ta, Ra, Ca, Tb, Rb, 1>(A, B);
 
   return baseVari->impl_->C_(0, 0);
 }

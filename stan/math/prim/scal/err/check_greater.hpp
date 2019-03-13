@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 template <typename T_y, typename T_low, bool is_vec>
 struct greater {
   static void check(const char* function, const char* name, const T_y& y,
@@ -48,7 +48,7 @@ struct greater<T_y, T_low, true> {
     }
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Check if <code>y</code> is strictly greater
@@ -71,8 +71,8 @@ struct greater<T_y, T_low, true> {
 template <typename T_y, typename T_low>
 inline void check_greater(const char* function, const char* name, const T_y& y,
                           const T_low& low) {
-  greater<T_y, T_low, is_vector_like<T_y>::value>::check(function, name, y,
-                                                         low);
+  internal::greater<T_y, T_low, is_vector_like<T_y>::value>::check(
+      function, name, y, low);
 }
 }  // namespace math
 }  // namespace stan

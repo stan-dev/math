@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class erf_vari : public op_v_vari {
  public:
   explicit erf_vari(vari* avi) : op_v_vari(erf(avi->val_), avi) {}
@@ -17,7 +17,7 @@ class erf_vari : public op_v_vari {
     avi_->adj_ += adj_ * TWO_OVER_SQRT_PI * std::exp(-avi_->val_ * avi_->val_);
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * The error function for variables (C99).
@@ -54,7 +54,7 @@ class erf_vari : public op_v_vari {
  * @param a The variable.
  * @return Error function applied to the variable.
  */
-inline var erf(const var& a) { return var(new erf_vari(a.vi_)); }
+inline var erf(const var& a) { return var(new internal::erf_vari(a.vi_)); }
 
 }  // namespace math
 }  // namespace stan

@@ -22,7 +22,7 @@ inline Eigen::Matrix<var, 1, C> columns_dot_self(
     const Eigen::Matrix<var, R, C>& x) {
   Eigen::Matrix<var, 1, C> ret(1, x.cols());
   for (size_type i = 0; i < x.cols(); i++) {
-    ret(i) = var(new dot_self_vari(x.col(i)));
+    ret(i) = var(new internal::dot_self_vari(x.col(i)));
   }
   return ret;
 }

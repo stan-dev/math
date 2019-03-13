@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class inv_sqrt_vari : public op_v_vari {
  public:
   explicit inv_sqrt_vari(vari* avi) : op_v_vari(inv_sqrt(avi->val_), avi) {}
@@ -16,7 +16,7 @@ class inv_sqrt_vari : public op_v_vari {
     avi_->adj_ -= 0.5 * adj_ / (avi_->val_ * std::sqrt(avi_->val_));
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  *
@@ -37,7 +37,9 @@ class inv_sqrt_vari : public op_v_vari {
    \f]
  *
  */
-inline var inv_sqrt(const var& a) { return var(new inv_sqrt_vari(a.vi_)); }
+inline var inv_sqrt(const var& a) {
+  return var(new internal::inv_sqrt_vari(a.vi_));
+}
 
 }  // namespace math
 }  // namespace stan
