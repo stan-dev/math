@@ -45,9 +45,9 @@ static const char* multiply_transpose_kernel_code = STRINGIFY(
         acc[w] = 0.0;
       }
       if (j_min <= i_max) {
-        const int numTiles = (N + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
+        const int num_tiles = (N + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
         // iterate over all tiles
-        for (int tile_ind = 0; tile_ind < numTiles; tile_ind++) {
+        for (int tile_ind = 0; tile_ind < num_tiles; tile_ind++) {
           // in each tile
           const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
           const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
