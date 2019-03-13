@@ -4,7 +4,6 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/scalar_mul.hpp>
 #include <stan/math/opencl/kernels/matrix_multiply.hpp>
-#include <stan/math/opencl/kernels/tri_multiply.hpp>
 #include <Eigen/Dense>
 
 namespace stan {
@@ -54,26 +53,15 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
                         TriangularViewCL::Entire);
   opencl_kernels::zeros(cl::NDRange(Kpad, Npad), Bpad.buffer(), Kpad, Npad,
                         TriangularViewCL::Entire);
-  Apad.sub_block(A, 0, 0, 0, 0, A.rows(), A.cols());
-  Bpad.sub_block(B, 0, 0, 0, 0, B.rows(), B.cols());
+  Apad.sub_block<triangular_view_A>(A, 0, 0, 0, 0, A.rows(), A.cols());
+  Bpad.sub_block<triangular_view_B>(B, 0, 0, 0, 0, B.rows(), B.cols());
   int wpt = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
       "WORK_PER_THREAD");
   try {
-    // when neither of the matrices are lower/upper triangular
-    // use the regural matrix multiply
-    // otherwise use the triangular multiply kernel
-    if (triangular_view_A == TriangularViewCL::Entire
-        && triangular_view_B == TriangularViewCL::Entire) {
-      opencl_kernels::matrix_multiply(
-          cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
-          Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
-          Bpad.cols(), Bpad.rows());
-    } else {
-      opencl_kernels::tri_multiply(
+    opencl_kernels::matrix_multiply(
           cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
           Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
           Bpad.cols(), Bpad.rows(), triangular_view_A, triangular_view_B);
-    }
   } catch (cl::Error& e) {
     check_opencl_error("multiply", e);
   }
