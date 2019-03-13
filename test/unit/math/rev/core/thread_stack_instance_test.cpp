@@ -7,8 +7,9 @@ TEST(thread_stack_instance, initialize) {
   using stan::math::ChainableStack;
 
   // the main thread must be initialized by the time this code is
-  // reached
-  EXPECT_TRUE(&ChainableStack::instance() != nullptr);
+  // reached. This will actually segfault if this is not the case.
+  // The pointer to the reference returned must evaluate to true.
+  EXPECT_TRUE(&ChainableStack::instance());
 
   ChainableStack::AutodiffStackStorage& main_ad_stack
       = ChainableStack::instance();
@@ -16,13 +17,13 @@ TEST(thread_stack_instance, initialize) {
 #ifdef STAN_THREADS
   auto thread_tester = [&]() -> void {
     ChainableStack thread_instance;
-    EXPECT_TRUE(&ChainableStack::instance() != nullptr);
+    EXPECT_TRUE(&ChainableStack::instance());
     EXPECT_TRUE(&ChainableStack::instance() != &main_ad_stack);
   };
 #else
   auto thread_tester = [&]() -> void {
     ChainableStack thread_instance;
-    EXPECT_TRUE(&ChainableStack::instance() != nullptr);
+    EXPECT_TRUE(&ChainableStack::instance());
     EXPECT_TRUE(&ChainableStack::instance() == &main_ad_stack);
   };
 #endif
