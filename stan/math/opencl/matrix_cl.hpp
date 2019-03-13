@@ -244,7 +244,8 @@ class matrix_v_cl {
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
-  matrix_v_cl(const vari**& A, const int& R, const int& C) : rows_(R), cols_(C) {
+  matrix_v_cl(const vari**& A, const int& R, const int& C)
+      : rows_(R), cols_(C) {
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue& queue = opencl_context.queue();
     if (size() > 0) {
@@ -258,12 +259,12 @@ class matrix_v_cl {
             = cl::Buffer(ctx, CL_MEM_READ_WRITE, vari_size);
         // We want to do a single loop over the vari so we use the map
         // method to copy the data over.
-        char* val_ptr
-            = (char*)queue.enqueueMapBuffer(oclBuffer_val, CL_MAP_READ | CL_MAP_WRITE,
-                                     CL_MEM_READ_WRITE, 0, vari_size);
-        char* adj_ptr
-            = (char*)queue.enqueueMapBuffer(oclBuffer_adj, CL_MAP_READ | CL_MAP_WRITE,
-                                     CL_MEM_READ_WRITE, 0, vari_size);
+        char* val_ptr = (char*)queue.enqueueMapBuffer(
+            oclBuffer_val, CL_MAP_READ | CL_MAP_WRITE, CL_MEM_READ_WRITE, 0,
+            vari_size);
+        char* adj_ptr = (char*)queue.enqueueMapBuffer(
+            oclBuffer_adj, CL_MAP_READ | CL_MAP_WRITE, CL_MEM_READ_WRITE, 0,
+            vari_size);
 
         for (std::size_t i = 0; i < ((R * C) / 2); i++) {
           val_ptr[i] = A[i]->val_;
@@ -315,8 +316,8 @@ class matrix_v_cl {
                                      CL_MEM_READ_WRITE, 0, vari_size);
 
         for (std::size_t i = 0; i < A.size(); i++) {
-            val_ptr[i] = A.coeffRef(i).vi_->val_;
-            adj_ptr[i] = A.coeffRef(i).vi_->adj_;
+          val_ptr[i] = A.coeffRef(i).vi_->val_;
+          adj_ptr[i] = A.coeffRef(i).vi_->adj_;
         }
         queue.enqueueUnmapMemObject(oclBuffer_val, val_ptr);
         queue.enqueueUnmapMemObject(oclBuffer_adj, adj_ptr);
