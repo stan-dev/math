@@ -63,8 +63,10 @@ static const char* tri_multiply_kernel_code = STRINGIFY(
       // If no matrices are triangular the starting tile
       // is 0 and the end tile is num_tiles-1 which
       // is the same as in \link kernels/multiply.hpp multiply()
-      const int end_tile_A = is_A_lower ? (i / THREAD_BLOCK_SIZE) : (num_tiles - 1);
-      const int end_tile_B = is_B_upper ? (j / THREAD_BLOCK_SIZE) : (num_tiles - 1);
+      const int end_tile_A
+          = is_A_lower ? (i / THREAD_BLOCK_SIZE) : (num_tiles - 1);
+      const int end_tile_B
+          = is_B_upper ? (j / THREAD_BLOCK_SIZE) : (num_tiles - 1);
       const int start_tile_A = is_A_upper ? (i / THREAD_BLOCK_SIZE) : 0;
       const int start_tile_B = is_B_lower ? (j / THREAD_BLOCK_SIZE) : 0;
       const int start_tile = max(start_tile_A, start_tile_B);
