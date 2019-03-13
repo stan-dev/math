@@ -88,9 +88,11 @@ const char* tridiagonalization_householder_kernel_code = STRINGIFY(
           barrier(CLK_LOCAL_MEM_FENCE);
           q = q_local[0];
           alpha = q_local[1];
-          double multi = sqrt(2.) / q;
-          for (int i = lid + 1; i < P_span; i += lsize) {
-            P[P_start + i] *= multi;
+          if(q != 0) {
+            double multi = sqrt(2.) / q;
+            for (int i = lid + 1; i < P_span; i += lsize) {
+              P[P_start + i] *= multi;
+            }
           }
           if(gid==0){
             P[P_rows * (k + j + 1) + k + j] = P[P_rows * (k + j) + k + j + 1] * q / sqrt(2.) + alpha;

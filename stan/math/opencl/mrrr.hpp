@@ -12,6 +12,7 @@
 #include <stan/math/opencl/subtract.hpp>
 #include <stan/math/opencl/add.hpp>
 #include <stan/math/opencl/transpose.hpp>
+#include <stan/math/opencl/copy.hpp>
 
 #include <stan/math/opencl/kernels/mrrr.hpp>
 
@@ -156,7 +157,7 @@ void tridiagonal_eigensolver_cl(const Eigen::VectorXd& diag, const Eigen::Vector
   eigenvals.resize(n);
   int last = 0;
   for (int i = 0; i < subdiag.size(); i++) {
-    if (abs(subdiag[i] / diag[i]) < splitThreshold && abs(subdiag[i] / diag[i + 1]) < splitThreshold) {
+    if (std::fabs(subdiag[i] / diag[i]) < splitThreshold && std::fabs(subdiag[i] / diag[i + 1]) < splitThreshold) {
       eigenvecs.block(last, i + 1, i + 1 - last, n - i - 1) = Eigen::MatrixXd::Constant(i + 1 - last, n - i - 1, 0);
       eigenvecs.block(i + 1, last, n - i - 1, i + 1 - last) = Eigen::MatrixXd::Constant(n - i - 1, i + 1 - last, 0);
       if (last == i) {

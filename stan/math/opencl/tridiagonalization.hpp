@@ -8,6 +8,7 @@
 #include <stan/math/opencl/subtract.hpp>
 #include <stan/math/opencl/add.hpp>
 #include <stan/math/opencl/transpose.hpp>
+#include <stan/math/opencl/copy.hpp>
 
 #include <stan/math/opencl/kernels/tridiagonalization.hpp>
 

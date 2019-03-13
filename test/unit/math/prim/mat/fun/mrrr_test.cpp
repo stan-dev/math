@@ -52,6 +52,6 @@ TEST(MathMatrix, tridiag_eigensolver_large) {
   t.diagonal(-1)=subdiag;
 
   EXPECT_NEAR(diag.sum(), eigenvals.sum(), 1e-9);
-  EXPECT_TRUE((eigenvecs*eigenvecs.transpose()).isApprox(Eigen::MatrixXd::Identity(size,size)));
-  EXPECT_TRUE((t*eigenvecs).isApprox(eigenvecs*eigenvals.asDiagonal()));
+  EXPECT_TRUE((eigenvecs*eigenvecs.transpose()).isApprox(Eigen::MatrixXd::Identity(size,size),1e-9));
+  EXPECT_TRUE((t*eigenvecs).isApprox(eigenvecs*eigenvals.asDiagonal(),1e-9));
 }
