@@ -40,8 +40,8 @@ inline void cache_copy(cl::Buffer dst, const Eigen::Matrix<double, R, C>& src) {
     }
   }
 #else
-    queue.enqueueWriteBuffer(dst, CL_TRUE, 0, sizeof(double) * src.size(),
-     src.data());
+  queue.enqueueWriteBuffer(dst, CL_TRUE, 0, sizeof(double) * src.size(),
+                           src.data());
 #endif
 }
 }  // namespace internal
