@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_FACTOR_U_HPP
 #define STAN_MATH_PRIM_FUN_FACTOR_U_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <cmath>
 #include <cstddef>
@@ -28,6 +28,9 @@ namespace math {
  * @param CPCs fill this unbounded
  */
 template <typename T>
+//inline typename
+// std::enable_if<
+//   !is_vector_like<T>::value, void>::type
 void factor_U(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& U,
               Eigen::Array<T, Eigen::Dynamic, 1>& CPCs) {
   size_t K = U.rows();
@@ -40,7 +43,7 @@ void factor_U(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& U,
   }
 
   Eigen::Array<T, 1, Eigen::Dynamic> temp = U.row(0).tail(pull);
-
+  
   CPCs.head(pull) = temp;
 
   Eigen::Array<T, Eigen::Dynamic, 1> acc(K);
@@ -50,7 +53,8 @@ void factor_U(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& U,
     position += pull;
     pull--;
     temp = U.row(i).tail(pull);
-    temp /= sqrt(acc.tail(pull) / acc(i));
+    Eigen::Array<T, -1, 1> temp2 = sqrt(acc.tail(pull) / acc(i));
+    temp /= temp2;
     CPCs.segment(position, pull) = temp;
     acc.tail(pull) *= 1.0 - temp.square();
   }
