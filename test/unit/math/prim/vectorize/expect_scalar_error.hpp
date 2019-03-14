@@ -5,6 +5,9 @@
 #include <exception>
 #include <vector>
 
+
+
+
 template <typename F, typename T>
 void expect_scalar_error() {
   using std::vector;

@@ -5,6 +5,9 @@
 #include <stan/math/prim/err/check_row_index.hpp>
 #include <stan/math/prim/err/check_column_index.hpp>
 
+
+
+
 namespace stan {
 namespace math {
 

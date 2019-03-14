@@ -4,6 +4,15 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+
+
+
+
+
+
+
+
+
 TEST(MathFunctionsPromoteScalar, Match) {
   using stan::math::promote_scalar;
   EXPECT_FLOAT_EQ(1.3, promote_scalar<double>(1.3));
@@ -17,6 +26,10 @@ TEST(MathFunctionsPromoteScalar, Mismatch) {
   EXPECT_FLOAT_EQ(2.0, promote_scalar<double>(2));
   expect_type<double>(promote_scalar<double>(2));
 }
+
+
+
+
 
 TEST(MathFunctionsPromoteScalar_arr, VectorMismatch) {
   using stan::math::promote_scalar;
@@ -80,6 +93,10 @@ TEST(MathFunctionsPromoteScalar_arr, Vector2Match) {
   EXPECT_FLOAT_EQ(5.5, y[1][1]);
   EXPECT_FLOAT_EQ(6.6, y[1][2]);
 }
+
+
+
+
 
 TEST(MathMatrixPromoteScalar_mat, MatrixMismatch) {
   using Eigen::Dynamic;

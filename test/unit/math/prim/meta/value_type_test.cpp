@@ -5,6 +5,13 @@
 #include <vector>
 #include <stan/math/prim/meta/value_type.hpp>
 
+
+
+
+
+
+
+
 TEST(MathMeta, value_type) {
   using stan::math::value_type;
   using std::vector;
@@ -21,6 +28,10 @@ TEST(MathMeta, value_type) {
   expect_same_type<vector<vector<int> >::value_type,
                    value_type<const vector<vector<int> > >::type>();
 }
+
+
+
+
 
 TEST(MathMeta_mat, index_type) {
   using Eigen::Dynamic;

@@ -4,10 +4,23 @@
 #include <test/unit/util.hpp>
 #include <vector>
 
+
+
+
+
+
+
+
+
+
 TEST(MetaTraits, ScalarTypeScal) {
   test::expect_same_type<double, stan::scalar_type<double>::type>();
   test::expect_same_type<int, stan::scalar_type<int>::type>();
 }
+
+
+
+
 
 TEST(MetaTraits_arr, ScalarTypeArray) {
   using stan::scalar_type;
@@ -40,6 +53,10 @@ TEST(MetaTraits_arr, ScalarTypeArrayConstConst) {
       const double,
       scalar_type<const vector<const vector<const double> > >::type>();
 }
+
+
+
+
 
 TEST(MetaTraits_mat, ScalarTypeMat) {
   using Eigen::MatrixXd;

@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta/scalar_type.hpp>
 
+
 namespace stan {
 /**
  * scalar_seq_view provides a uniform sequence-like wrapper around either a

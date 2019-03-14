@@ -5,6 +5,7 @@
 #include <vector>
 #include <stan/math/prim/fun/Eigen.hpp>
 
+
 namespace stan {
 
 // FIXME: use boost::type_traits::remove_all_extents to
@@ -16,6 +17,12 @@ struct is_vector {
   typedef T type;
 };
 }  // namespace stan
+
+
+
+
+
+
 
 namespace stan {
 
@@ -33,6 +40,12 @@ struct is_vector<std::vector<T> > {
   typedef T type;
 };
 }  // namespace stan
+
+
+
+
+
+
 
 namespace stan {
 

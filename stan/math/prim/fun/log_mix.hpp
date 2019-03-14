@@ -22,6 +22,16 @@
 #include <stan/math/prim/meta/is_constant_struct.hpp>
 #include <vector>
 
+
+
+
+
+
+
+
+
+
+
 namespace stan {
 namespace math {
 
@@ -67,6 +77,32 @@ inline double log_mix(double theta, double lambda1, double lambda2) {
 
 }  // namespace math
 }  // namespace stan
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 namespace stan {
 namespace math {

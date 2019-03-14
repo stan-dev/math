@@ -8,6 +8,14 @@
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/fun/Phi.hpp>
 
+
+
+
+
+
+
+
+
 namespace stan {
 namespace math {
 
@@ -42,6 +50,12 @@ inline double Phi(double x) {
 
 }  // namespace math
 }  // namespace stan
+
+
+
+
+
+
 
 namespace stan {
 namespace math {

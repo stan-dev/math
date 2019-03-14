@@ -18,6 +18,22 @@
 #include <boost/random/bernoulli_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 namespace stan {
 namespace math {
 

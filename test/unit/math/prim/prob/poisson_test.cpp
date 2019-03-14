@@ -8,6 +8,13 @@
 #include <limits>
 #include <vector>
 
+
+
+
+
+
+
+
 TEST(ProbDistributionsPoisson, error_check) {
   using std::log;
 
@@ -105,6 +112,14 @@ TEST(ProbDistributionsPoisson, chiSquareGoodnessFitTest2) {
 
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
+
+
+
+
+
+
+
+
 
 class PoissonTestRig : public VectorIntRNGTestRig {
  public:

@@ -4,6 +4,11 @@
 #include <limits>
 #include <boost/math/special_functions/fpclassify.hpp>
 
+
+
+
+
+
 TEST(MathFunctions, squared_distance) {
   double x1 = 1;
   double x2 = 4;
@@ -31,6 +36,10 @@ TEST(MathFunctions, squared_distance_inf) {
   EXPECT_THROW(stan::math::squared_distance(inf, x), std::domain_error);
   EXPECT_THROW(stan::math::squared_distance(inf, inf), std::domain_error);
 }
+
+
+
+
 
 TEST(MathMatrix_mat, squared_distance_vector_vector) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> v1, v2;

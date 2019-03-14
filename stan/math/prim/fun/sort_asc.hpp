@@ -6,6 +6,12 @@
 #include <vector>
 #include <stan/math/prim/fun/Eigen.hpp>
 
+
+
+
+
+
+
 namespace stan {
 namespace math {
 
@@ -26,6 +32,13 @@ inline std::vector<T> sort_asc(std::vector<T> xs) {
 
 }  // namespace math
 }  // namespace stan
+
+
+
+
+
+
+
 
 namespace stan {
 namespace math {

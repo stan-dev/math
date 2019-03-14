@@ -3,6 +3,11 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+
+
+
+
+
 using stan::math::array_builder;
 using std::vector;
 
@@ -32,6 +37,9 @@ TEST(MathArray, arrayBuilder) {
   EXPECT_EQ(5, v3v2[2][0]);
   EXPECT_EQ(6, v3v2[2][1]);
 }
+
+
+
 
 using Eigen::Dynamic;
 using Eigen::Matrix;

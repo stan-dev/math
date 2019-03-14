@@ -3,6 +3,12 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+
+
+
+
+
+
 TEST(MetaTraits, is_vector) {
   using stan::is_vector;
   EXPECT_FALSE(is_vector<double>::value);
@@ -14,6 +20,9 @@ TEST(MetaTraits, is_vector) {
   EXPECT_FALSE(is_vector<const size_t>::value);
 }
 
+
+
+
 TEST(MetaTraits_arr, is_vector) {
   using stan::is_vector;
   using std::vector;
@@ -23,6 +32,8 @@ TEST(MetaTraits_arr, is_vector) {
   EXPECT_TRUE(is_vector<std::vector<const double> >::value);
   EXPECT_TRUE(is_vector<std::vector<const int> >::value);
 }
+
+
 
 TEST(MetaTraits_mat, is_vector) {
   using Eigen::Dynamic;

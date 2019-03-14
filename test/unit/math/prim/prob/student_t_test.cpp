@@ -8,6 +8,19 @@
 #include <vector>
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 TEST(ProbDistributionsStudentT, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::student_t_rng(3.0, 2.0, 2.0, rng));
@@ -50,6 +63,13 @@ TEST(ProbDistributionsStudentT, chiSquareGoodnessFitTest) {
   // Assert that they match
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }
+
+
+
+
+
+
+
 
 class StudentTTestRig : public VectorRealRNGTestRig {
  public:

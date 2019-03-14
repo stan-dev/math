@@ -8,6 +8,19 @@
 #include <vector>
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 TEST(ProbDistributionsBetaProportion, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::beta_proportion_rng(0.5, 3.0, rng));
@@ -87,6 +100,13 @@ TEST(ProbDistributionsBetaProportion, chiSquareGoodnessFitTest2) {
   // Assert that they match
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }
+
+
+
+
+
+
+
 
 class BetaProportionTestRig : public VectorRealRNGTestRig {
  public:

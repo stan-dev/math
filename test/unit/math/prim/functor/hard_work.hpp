@@ -3,6 +3,7 @@
 
 #include <vector>
 
+
 struct hard_work {
   hard_work() {}
   template <typename T1, typename T2>

@@ -6,6 +6,10 @@
 #include <exception>
 #include <vector>
 
+
+
+
+
 template <typename F, typename T>
 void expect_matrix_error() {
   using std::vector;

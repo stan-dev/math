@@ -9,6 +9,15 @@
 #include <test/unit/math/prim/prob/VectorIntRNGTestRig.hpp>
 #include <limits>
 
+
+
+
+
+
+
+
+
+
 TEST(ProbDistributionsBernoulliLogit, error_check) {
   boost::random::mt19937 rng;
 
@@ -39,6 +48,14 @@ TEST(ProbDistributionsBernoulliLogit, logitChiSquareGoodnessFitTest) {
 
   assert_chi_squared(counts, expected, 1e-6);
 }
+
+
+
+
+
+
+
+
 
 class BernoulliLogitTestRig : public VectorIntRNGTestRig {
  public:

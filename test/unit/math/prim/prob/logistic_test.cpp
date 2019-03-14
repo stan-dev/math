@@ -8,6 +8,19 @@
 #include <vector>
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 TEST(ProbDistributionsLogistic, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::logistic_rng(4.0, 3.0, rng));
@@ -43,6 +56,13 @@ TEST(ProbDistributionsLogistic, chiSquareGoodnessFitTest) {
   // Assert that they match
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }
+
+
+
+
+
+
+
 
 class LogisticTestRig : public VectorRealRNGTestRig {
  public:

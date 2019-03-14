@@ -1,5 +1,6 @@
 
 
+
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 TEST(primMatFunCols, matrix) {

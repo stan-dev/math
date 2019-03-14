@@ -4,6 +4,8 @@
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
+
+
 namespace stan {
 namespace math {
 

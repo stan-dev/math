@@ -7,6 +7,12 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 
+
+
+
+
+
+
 namespace stan {
 namespace math {
 
@@ -24,6 +30,13 @@ inline T sum(const std::vector<T>& xs) {
 
 }  // namespace math
 }  // namespace stan
+
+
+
+
+
+
+
 
 namespace stan {
 namespace math {

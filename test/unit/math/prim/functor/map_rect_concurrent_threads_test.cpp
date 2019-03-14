@@ -15,6 +15,17 @@
 #undef STAN_MPI
 #endif
 
+
+
+
+
+
+
+
+
+
+
+
 // utility to set number of threads to use
 void set_n_threads(int num_threads) {
   static char env_string[256];

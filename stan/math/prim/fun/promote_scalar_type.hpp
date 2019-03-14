@@ -5,6 +5,7 @@
 #include <vector>
 #include <stan/math/prim/fun/Eigen.hpp>
 
+
 namespace stan {
 namespace math {
 
@@ -25,6 +26,12 @@ struct promote_scalar_type {
 
 }  // namespace math
 }  // namespace stan
+
+
+
+
+
+
 
 namespace stan {
 namespace math {
@@ -47,6 +54,13 @@ struct promote_scalar_type<T, std::vector<S> > {
 
 }  // namespace math
 }  // namespace stan
+
+
+
+
+
+
+
 
 namespace stan {
 namespace math {

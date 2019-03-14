@@ -3,6 +3,12 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+
+
+
+
+
+
 using stan::length;
 
 TEST(MetaTraits, length) {
@@ -11,11 +17,16 @@ TEST(MetaTraits, length) {
   EXPECT_EQ(1U, length(3));
 }
 
+
+
+
 TEST(MetaTraits_arr, length) {
   using stan::length;
   std::vector<double> x(10);
   EXPECT_EQ(10U, length(x));
 }
+
+
 
 TEST(MetaTraits_mat, length) {
   using stan::length;

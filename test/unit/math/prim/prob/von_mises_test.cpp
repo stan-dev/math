@@ -7,6 +7,13 @@
 #include <limits>
 #include <vector>
 
+
+
+
+
+
+
+
 TEST(ProbDistributionsVonMises, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::von_mises_rng(1.0, 2.0, rng));
@@ -156,6 +163,13 @@ TEST(ProbDistributionsVonMises, chiSquareGoodnessFitTest3) {
 
   EXPECT_LT(chi, quantile(complement(mydist, 1e-6)));
 }
+
+
+
+
+
+
+
 
 class VonMisesTestRig : public VectorRNGTestRig {
  public:

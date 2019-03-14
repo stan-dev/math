@@ -1,5 +1,6 @@
 
 
+
 #include <stan/math/prim/meta/ad_promotable.hpp>
 #include <gtest/gtest.h>
 TEST(MathMeta, primitive_to_double) {

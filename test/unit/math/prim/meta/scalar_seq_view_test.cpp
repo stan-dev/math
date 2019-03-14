@@ -3,6 +3,14 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+
+
+
+
+
+
+
+
 TEST(MetaTraits, ScalarSeqViewDouble) {
   using stan::scalar_seq_view;
 
@@ -13,6 +21,9 @@ TEST(MetaTraits, ScalarSeqViewDouble) {
 
   EXPECT_EQ(1, sv.size());
 }
+
+
+
 
 TEST(MetaTraits_arr, ScalarSeqViewArray) {
   using stan::scalar_seq_view;
@@ -27,6 +38,8 @@ TEST(MetaTraits_arr, ScalarSeqViewArray) {
 
   EXPECT_EQ(v.size(), sv.size());
 }
+
+
 
 template <typename C>
 void expect_scalar_seq_view_values(C v) {

@@ -6,6 +6,16 @@
 #include <string>
 #include <stdexcept>
 
+
+
+
+
+
+
+
+
+
+
 using stan::math::check_not_nan;
 
 TEST(ErrorHandlingScalar, CheckNotNan) {
@@ -27,6 +37,11 @@ TEST(ErrorHandlingScalar, CheckNotNan) {
   EXPECT_THROW(check_not_nan(function, "x", x), std::domain_error)
       << "check_not_nan should throw exception on NaN: " << x;
 }
+
+
+
+
+
 
 using stan::math::check_not_nan;
 
@@ -71,6 +86,10 @@ TEST(ErrorHandlingScalar_arr, CheckNotNanVectorized_one_indexed_message) {
 
   EXPECT_NE(std::string::npos, message.find("[3]")) << message;
 }
+
+
+
+
 
 TEST(ErrorHandlingMatrix_mat, checkNotNanEigenRow) {
   stan::math::vector_d y;

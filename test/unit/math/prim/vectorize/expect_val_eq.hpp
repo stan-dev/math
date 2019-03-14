@@ -4,6 +4,8 @@
 #include <stan/math/prim/fun/is_nan.hpp>
 #include <gtest/gtest.h>
 
+
+
 void expect_val_eq(double exp_val, double test_val) {
   using stan::math::is_nan;
   if (is_nan(exp_val) && is_nan(test_val)) {

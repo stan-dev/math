@@ -8,6 +8,14 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 
+
+
+
+
+
+
+
+
 namespace stan {
 namespace math {
 
@@ -28,6 +36,15 @@ inline std::vector<T> sort_desc(std::vector<T> xs) {
 
 }  // namespace math
 }  // namespace stan
+
+
+
+
+
+
+
+
+
 
 namespace stan {
 namespace math {

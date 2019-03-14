@@ -1,5 +1,6 @@
 
 
+
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 TEST(ProbBinomialLogit, log_matches_lpmf) {

@@ -6,6 +6,11 @@
 #include <vector>
 #include <stan/math/prim/fun/Eigen.hpp>
 
+
+
+
+
+
 namespace stan {
 
 /**
@@ -19,6 +24,13 @@ struct is_constant_struct {
 
 }  // namespace stan
 
+
+
+
+
+
+
+
 namespace stan {
 
 template <typename T>
@@ -27,6 +39,13 @@ struct is_constant_struct<std::vector<T> > {
 };
 
 }  // namespace stan
+
+
+
+
+
+
+
 
 namespace stan {
 

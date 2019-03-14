@@ -10,6 +10,13 @@ inline double inv_square(double x) { return 1.0 / (x * x); }
 }  // namespace math
 }  // namespace stan
 
+
+
+
+
+
+
+
 namespace stan {
 namespace math {
 

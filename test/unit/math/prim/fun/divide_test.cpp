@@ -2,6 +2,9 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 
+
+
+
 TEST(MathFunctions, divide) {
   using stan::math::divide;
   EXPECT_EQ(2, divide(4, 2));
@@ -53,6 +56,8 @@ TEST(MathFunctions, int_divide_by_0) {
   int y = 0;
   EXPECT_THROW(stan::math::divide(x, y), std::domain_error);
 }
+
+
 
 TEST(MathMatrix_mat, divide) {
   stan::math::vector_d v0;

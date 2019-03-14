@@ -6,6 +6,8 @@
 #include <cstddef>
 #include <stan/math/prim/fun/Eigen.hpp>
 
+
+
 namespace stan {
 namespace math {
 
@@ -48,6 +50,14 @@ struct promote_elements<T, T> {
 
 }  // namespace math
 }  // namespace stan
+
+
+
+
+
+
+
+
 
 namespace stan {
 namespace math {
@@ -100,6 +110,13 @@ struct promote_elements<std::vector<T>, std::vector<T> > {
 
 }  // namespace math
 }  // namespace stan
+
+
+
+
+
+
+
 
 namespace stan {
 namespace math {

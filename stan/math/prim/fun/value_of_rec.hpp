@@ -6,6 +6,8 @@
 #include <cstddef>
 #include <stan/math/prim/fun/Eigen.hpp>
 
+
+
 namespace stan {
 namespace math {
 
@@ -48,6 +50,13 @@ inline double value_of_rec<double>(double x) {
 }  // namespace math
 }  // namespace stan
 
+
+
+
+
+
+
+
 namespace stan {
 namespace math {
 
@@ -88,6 +97,13 @@ inline std::vector<double> value_of_rec(const std::vector<double>& x) {
 
 }  // namespace math
 }  // namespace stan
+
+
+
+
+
+
+
 
 namespace stan {
 namespace math {

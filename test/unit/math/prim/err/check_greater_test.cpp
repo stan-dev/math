@@ -4,6 +4,11 @@
 #include <limits>
 #include <string>
 
+
+
+
+
+
 using stan::math::check_greater;
 
 TEST(ErrorHandlingScalar, CheckGreater) {
@@ -47,6 +52,10 @@ TEST(ErrorHandlingScalar, CheckGreater_nan) {
   EXPECT_THROW(check_greater(function, "x", x, nan), std::domain_error);
   EXPECT_THROW(check_greater(function, "x", nan, nan), std::domain_error);
 }
+
+
+
+
 
 using stan::math::check_greater;
 TEST(ErrorHandlingScalar_mat, CheckGreater_Matrix) {

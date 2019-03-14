@@ -5,6 +5,10 @@
 #include <vector>
 #include <stan/math/prim/fun/Eigen.hpp>
 
+
+
+
+
 namespace stan {
 
 template <typename T>
@@ -13,6 +17,12 @@ size_t length(const T& /*x*/) {
 }
 }  // namespace stan
 
+
+
+
+
+
+
 namespace stan {
 
 template <typename T>
@@ -20,6 +30,11 @@ size_t length(const std::vector<T>& x) {
   return x.size();
 }
 }  // namespace stan
+
+
+
+
+
 
 namespace stan {
 

@@ -7,6 +7,15 @@
 #include <test/unit/util.hpp>
 #include <type_traits>
 
+
+
+
+
+
+
+
+
+
 TEST(MathFunctions, sumZeroSize) {
   std::vector<double> x;
   EXPECT_FLOAT_EQ(0.0, stan::math::sum(x));
@@ -40,6 +49,11 @@ TEST(MathMatrix, sum_vector_int) {
   x[2] = 3;
   EXPECT_EQ(6, stan::math::sum(x));
 }
+
+
+
+
+
 
 TEST(MathMatrix_mat, sumVector) {
   using Eigen::Dynamic;

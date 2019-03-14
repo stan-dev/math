@@ -11,6 +11,15 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <vector>
 
+
+
+
+
+
+
+
+
+
 TEST(MathFunctions, log_mix_exceptions) {
   using stan::math::log_mix;
   EXPECT_THROW(log_mix(-1, 10, 20), std::domain_error);
@@ -34,6 +43,16 @@ TEST(MathFunctions, log_mix_values) {
   test_log_mix(0.0001, 197, -3000);
   test_log_mix(0.999999, 197, -3000);
 }
+
+
+
+
+
+
+
+
+
+
 
 using stan::math::log_mix;
 using stan::math::row_vector_d;

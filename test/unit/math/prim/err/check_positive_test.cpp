@@ -4,6 +4,15 @@
 #include <limits>
 #include <vector>
 
+
+
+
+
+
+
+
+
+
 TEST(ErrorHandlingScalar, CheckPositive) {
   using stan::math::check_positive;
   const char* function = "check_positive";
@@ -19,6 +28,10 @@ TEST(ErrorHandlingScalar, CheckPositive_nan) {
 
   EXPECT_THROW(check_positive(function, "x", nan), std::domain_error);
 }
+
+
+
+
 
 TEST(ErrorHandlingScalar_arr, CheckPositive) {
   using stan::math::check_positive;
@@ -51,6 +64,9 @@ TEST(ErrorHandlingScalar_arr, CheckPositive_nan) {
     x[i] = i;
   }
 }
+
+
+
 
 TEST(ErrorHandlingScalar_mat, CheckPositive) {
   using stan::math::check_positive;

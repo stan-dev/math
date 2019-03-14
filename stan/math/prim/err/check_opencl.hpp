@@ -9,6 +9,11 @@
 #include <stdexcept>
 #include <string>
 
+
+
+
+
+
 /** @file stan/math/prim/arr/err/check_opencl.hpp
  *    @brief checking OpenCL error numbers
  */

@@ -5,6 +5,10 @@
 #include <boost/math/special_functions/digamma.hpp>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
+
+
+
+
 namespace stan {
 namespace math {
 
@@ -49,6 +53,12 @@ inline double digamma(double x) {
 
 }  // namespace math
 }  // namespace stan
+
+
+
+
+
+
 
 namespace stan {
 namespace math {

@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta/is_vector.hpp>
 
+
 namespace stan {
 
 template <typename T1, typename T2 = double, typename T3 = double,

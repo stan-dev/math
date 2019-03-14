@@ -3,6 +3,7 @@
 
 #include <tuple>
 
+
 /*
  * apply_template_permutations_helper is the entry point for the template
  * recursion needed for apply_template_permutations. It calls func<types1[I],

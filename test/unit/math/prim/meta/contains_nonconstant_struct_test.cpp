@@ -3,6 +3,12 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+
+
+
+
+
+
 TEST(MetaTraits, containsNonconstantStruct) {
   using stan::contains_nonconstant_struct;
   EXPECT_FALSE(contains_nonconstant_struct<int>::value);
@@ -10,6 +16,9 @@ TEST(MetaTraits, containsNonconstantStruct) {
   EXPECT_FALSE(contains_nonconstant_struct<float>::value);
   EXPECT_FALSE(contains_nonconstant_struct<int32_t>::value);
 }
+
+
+
 
 TEST(MetaTraits_arr, containsNonconstantStruct) {
   using stan::contains_nonconstant_struct;
@@ -19,6 +28,9 @@ TEST(MetaTraits_arr, containsNonconstantStruct) {
   EXPECT_FALSE(
       contains_nonconstant_struct<vector<vector<vector<double> > > >::value);
 }
+
+
+
 
 typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> const_t1;
 typedef std::vector<const_t1> const_t2;

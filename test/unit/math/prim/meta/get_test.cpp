@@ -3,11 +3,20 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+
+
+
+
+
+
 TEST(MetaTraits, get) {
   using stan::get;
 
   EXPECT_FLOAT_EQ(2.0, get(2.0, 1));
 }
+
+
+
 
 TEST(MetaTraits_arr, get) {
   using stan::get;
@@ -16,6 +25,8 @@ TEST(MetaTraits_arr, get) {
   x[1] = 5.0;
   EXPECT_EQ(5.0, get(x, 1));
 }
+
+
 
 TEST(MetaTraits_mat, get) {
   using stan::get;

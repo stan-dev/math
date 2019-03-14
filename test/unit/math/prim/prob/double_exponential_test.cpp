@@ -8,6 +8,19 @@
 #include <vector>
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 TEST(ProbDistributionsDoubleExponential, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::double_exponential_rng(2.0, 1.0, rng));
@@ -44,6 +57,13 @@ TEST(ProbDistributionsDoubleExponential, chiSquareGoodnessFitTest) {
   // Assert that they match
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }
+
+
+
+
+
+
+
 
 class DoubleExponentialTestRig : public VectorRealRNGTestRig {
  public:

@@ -4,6 +4,8 @@
 #include <boost/math/special_functions/beta.hpp>
 #include <stan/math/prim/err/check_not_nan.hpp>
 
+
+
 namespace stan {
 namespace math {
 

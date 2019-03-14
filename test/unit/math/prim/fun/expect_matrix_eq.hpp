@@ -3,6 +3,7 @@
 
 #include <gtest/gtest.h>
 
+
 void expect_matrix_eq(
     const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& a,
     const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& b) {

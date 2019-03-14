@@ -6,6 +6,7 @@
 
 // stan::scalar_type
 
+
 namespace stan {
 namespace math {
 

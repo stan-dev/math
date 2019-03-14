@@ -6,6 +6,10 @@
 #include <test/unit/math/prim/vectorize/expect_prim_errors.hpp>
 #include <gtest/gtest.h>
 
+
+
+
+
 template <typename T>
 class prim_scalar_unary_test : public ::testing::Test {};
 

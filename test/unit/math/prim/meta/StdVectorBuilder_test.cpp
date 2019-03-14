@@ -3,6 +3,12 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+
+
+
+
+
+
 TEST(MetaTraits, StdVectorBuilder_false_false) {
   using stan::StdVectorBuilder;
   using stan::length;
@@ -39,6 +45,9 @@ TEST(MetaTraits, StdVectorBuilder_type_check) {
   r = contains_std_vector<StdVectorBuilder<true, double, double>::type>::value;
   EXPECT_FALSE(r);
 }
+
+
+
 
 TEST(MetaTraits_arr, StdVectorBuilder_false_false) {
   using stan::StdVectorBuilder;
@@ -79,6 +88,9 @@ TEST(MetaTraits_arr, StdVectorBuilder_type_check) {
       StdVectorBuilder<true, double, std::vector<double>>::type>::value;
   EXPECT_TRUE(r);
 }
+
+
+
 
 TEST(MetaTraits_mat, StdVectorBuilder_false_false) {
   using Eigen::Dynamic;

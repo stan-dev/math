@@ -6,6 +6,13 @@
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 #include <vector>
 
+
+
+
+
+
+
+
 TEST(ProbDistributionsExpModNormal, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::exp_mod_normal_rng(10.0, 2.0, 1.0, rng));
@@ -21,6 +28,10 @@ TEST(ProbDistributionsExpModNormal, error_check) {
                                               2, 1.0, rng),
                std::domain_error);
 }
+
+
+
+
 
 class ExpModNormalTestRig : public VectorRNGTestRig {
  public:

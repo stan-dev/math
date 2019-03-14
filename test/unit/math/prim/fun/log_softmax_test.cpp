@@ -1,5 +1,6 @@
 
 
+
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 void test_log_softmax(const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta) {

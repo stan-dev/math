@@ -5,6 +5,8 @@
 #include <stan/math/prim/meta/broadcast_array.hpp>
 #include <Eigen/Dense>
 
+
+
 namespace stan {
 namespace math {
 namespace internal {
@@ -48,6 +50,14 @@ class empty_broadcast_array {
 }  // namespace internal
 }  // namespace math
 }  // namespace stan
+
+
+
+
+
+
+
+
 
 namespace stan {
 namespace math {

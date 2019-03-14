@@ -7,6 +7,14 @@
 #include <vector>
 #include <stan/math/prim/fun/Eigen.hpp>
 
+
+
+
+
+
+
+
+
 namespace stan {
 
 template <typename T>
@@ -16,6 +24,12 @@ inline T get(const T& x, size_t n) {
 
 }  // namespace stan
 
+
+
+
+
+
+
 namespace stan {
 
 template <typename T>
@@ -24,6 +38,11 @@ inline T get(const std::vector<T>& x, size_t n) {
 }
 
 }  // namespace stan
+
+
+
+
+
 
 namespace stan {
 

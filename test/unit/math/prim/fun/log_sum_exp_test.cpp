@@ -6,6 +6,17 @@
 #include <limits>
 #include <vector>
 
+
+
+
+
+
+
+
+
+
+
+
 void test_log_sum_exp(double a, double b) {
   using stan::math::log_sum_exp;
   using std::exp;
@@ -62,6 +73,8 @@ TEST(MathFunctions, log_sum_exp_nan) {
 
   EXPECT_PRED1(boost::math::isnan<double>, stan::math::log_sum_exp(nan, nan));
 }
+
+
 
 template <int R, int C>
 void test_log_sum_exp(const Eigen::Matrix<double, R, C>& as) {

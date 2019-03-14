@@ -8,6 +8,9 @@
 #include <limits>
 #include <vector>
 
+
+
+
 TEST(ProbPoisson, log_matches_lpmf) {
   int y = 3;
   double lambda = 2.3;
@@ -25,6 +28,14 @@ TEST(ProbPoisson, log_matches_lpmf) {
   EXPECT_FLOAT_EQ((stan::math::poisson_lpmf<int, double>(y, lambda)),
                   (stan::math::poisson_log<int, double>(y, lambda)));
 }
+
+
+
+
+
+
+
+
 
 class PoissonLogTestRig : public VectorIntRNGTestRig {
  public:

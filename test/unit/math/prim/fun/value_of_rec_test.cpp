@@ -3,12 +3,21 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+
+
+
+
+
+
 TEST(MathFunctions, value_of_rec) {
   using stan::math::value_of_rec;
   double x = 5.0;
   EXPECT_FLOAT_EQ(5.0, value_of_rec(x));
   EXPECT_FLOAT_EQ(5.0, value_of_rec(5));
 }
+
+
+
 
 TEST(MathMatrix_arr, value_of_rec) {
   using stan::math::value_of_rec;
@@ -31,6 +40,8 @@ TEST(MathMatrix_arr, value_of_rec) {
   for (int i = 0; i < 10; ++i)
     EXPECT_FLOAT_EQ(a[i], d_a[i]);
 }
+
+
 
 TEST(MathMatrix_mat, value_of_rec) {
   using stan::math::value_of_rec;

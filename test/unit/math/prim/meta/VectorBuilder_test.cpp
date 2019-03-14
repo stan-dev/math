@@ -3,6 +3,12 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+
+
+
+
+
+
 TEST(MetaTraits, VectorBuilder_false_false) {
   using stan::VectorBuilder;
   using stan::length;
@@ -28,6 +34,9 @@ TEST(MetaTraits, VectorBuilder_true_false) {
   EXPECT_NO_THROW(data1 = dvv1.data());
   EXPECT_FLOAT_EQ(0.0, data1);
 }
+
+
+
 
 TEST(MetaTraits_arr, VectorBuilder_false_false) {
   using stan::VectorBuilder;
@@ -56,6 +65,8 @@ TEST(MetaTraits_arr, VectorBuilder_true_false) {
   EXPECT_NO_THROW(data2 = dvv2.data());
   EXPECT_FLOAT_EQ(0.0, data2);
 }
+
+
 
 TEST(MetaTraits_mat, VectorBuilder_false_false) {
   using Eigen::Dynamic;

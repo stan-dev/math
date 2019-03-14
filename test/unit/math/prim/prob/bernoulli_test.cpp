@@ -9,6 +9,15 @@
 #include <test/unit/math/prim/prob/VectorIntRNGTestRig.hpp>
 #include <limits>
 
+
+
+
+
+
+
+
+
+
 TEST(ProbDistributionsBernoulli, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::bernoulli_rng(0.6, rng));
@@ -34,6 +43,14 @@ TEST(ProbDistributionsBernoulli, chiSquareGoodnessFitTest) {
 
   assert_chi_squared(counts, expected, 1e-6);
 }
+
+
+
+
+
+
+
+
 
 class BernoulliTestRig : public VectorIntRNGTestRig {
  public:

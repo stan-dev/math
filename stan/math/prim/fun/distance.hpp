@@ -10,6 +10,12 @@
 #include <stan/math/prim/err/check_matching_sizes.hpp>
 #include <boost/math/tools/promotion.hpp>
 
+
+
+
+
+
+
 namespace stan {
 namespace math {
 
@@ -29,6 +35,15 @@ inline typename return_type<T1, T2>::type distance(const T1& x1, const T2& x2) {
 }
 }  // namespace math
 }  // namespace stan
+
+
+
+
+
+
+
+
+
 
 namespace stan {
 namespace math {

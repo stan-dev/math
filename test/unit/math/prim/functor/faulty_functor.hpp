@@ -4,6 +4,8 @@
 #include <vector>
 #include <stdexcept>
 
+
+
 struct faulty_functor {
   template <typename T1, typename T2>
   Eigen::Matrix<typename stan::return_type<T1, T2>::type, Eigen::Dynamic, 1>

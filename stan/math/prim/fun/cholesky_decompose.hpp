@@ -11,9 +11,17 @@
 #include <stan/math/opencl/copy.hpp>
 #include <cmath>
 
+
+
+
 #ifdef STAN_OPENCL
 
+
+
+
 #endif
+
+
 
 namespace stan {
 namespace math {

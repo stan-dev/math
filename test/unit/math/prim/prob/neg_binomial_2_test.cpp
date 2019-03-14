@@ -9,6 +9,15 @@
 #include <limits>
 #include <vector>
 
+
+
+
+
+
+
+
+
+
 TEST(ProbDistributionsNegBinomial, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::neg_binomial_2_rng(6, 2, rng));
@@ -219,6 +228,14 @@ TEST(ProbDistributionsNegBinomial, extreme_values) {
     EXPECT_LT(logp, 0);
   }
 }
+
+
+
+
+
+
+
+
 
 class NegativeBinomial2TestRig : public VectorIntRNGTestRig {
  public:

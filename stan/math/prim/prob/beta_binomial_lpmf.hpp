@@ -22,6 +22,26 @@
 #include <stan/math/prim/fun/F32.hpp>
 #include <stan/math/prim/fun/grad_F32.hpp>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 namespace stan {
 namespace math {
 

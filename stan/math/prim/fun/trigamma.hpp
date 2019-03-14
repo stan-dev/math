@@ -6,12 +6,16 @@
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/fun/trigamma.hpp>
 
+
 // Reference:
 //   BE Schneider,
 //   Algorithm AS 121:
 //   Trigamma Function,
 //   Applied Statistics,
 //   Volume 27, Number 1, pages 97-99, 1978.
+
+
+
 
 namespace stan {
 namespace math {
@@ -125,6 +129,13 @@ inline double trigamma(int u) { return trigamma(static_cast<double>(u)); }
 
 }  // namespace math
 }  // namespace stan
+
+
+
+
+
+
+
 
 namespace stan {
 namespace math {

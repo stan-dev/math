@@ -6,6 +6,10 @@
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
 
+
+
+
+
 namespace stan {
 namespace math {
 
@@ -51,6 +55,13 @@ inline double log1p_exp(double a) {
 
 }  // namespace math
 }  // namespace stan
+
+
+
+
+
+
+
 
 namespace stan {
 namespace math {

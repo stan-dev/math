@@ -8,6 +8,15 @@
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 #include <limits>
 
+
+
+
+
+
+
+
+
+
 TEST(ProbDistributionsUniform, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::uniform_rng(1.0, 2.0, rng));
@@ -41,6 +50,13 @@ TEST(ProbDistributionsUniform, chiSquareGoodnessFitTest) {
   // Assert that they match.
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }
+
+
+
+
+
+
+
 
 class UniformTestRig : public VectorRealRNGTestRig {
  public:

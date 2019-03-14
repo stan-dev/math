@@ -6,6 +6,10 @@
 #include <boost/typeof/typeof.hpp>
 #include <type_traits>
 
+
+
+
+
 template <typename T, typename S>
 void expect_type(S s) {
   typedef BOOST_TYPEOF_TPL(stan::math::promote_scalar<T>(s)) result_t;

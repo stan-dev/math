@@ -9,6 +9,15 @@
 #include <limits>
 #include <vector>
 
+
+
+
+
+
+
+
+
+
 TEST(ProbDistributionsNegBinomial, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::neg_binomial_rng(6, 2, rng));
@@ -167,6 +176,14 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest3) {
 
   EXPECT_LT(chi, boost::math::quantile(boost::math::complement(mydist, 1e-6)));
 }
+
+
+
+
+
+
+
+
 
 class NegativeBinomialTestRig : public VectorIntRNGTestRig {
  public:

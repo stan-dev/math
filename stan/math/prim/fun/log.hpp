@@ -5,6 +5,8 @@
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/fun/log.hpp>
 
+
+
 namespace stan {
 namespace math {
 
@@ -19,6 +21,13 @@ inline double log(int x) { return std::log(x); }
 
 }  // namespace math
 }  // namespace stan
+
+
+
+
+
+
+
 
 namespace stan {
 namespace math {

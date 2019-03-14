@@ -4,6 +4,8 @@
 #include <test/unit/math/prim/prob/VectorRNGTestRig.hpp>
 #include <vector>
 
+
+
 /*
  * VectorRealRNGTestRig is a subclass of VectorRNGTestRig specialized for
  * testing random numbers generated from continuous distributions

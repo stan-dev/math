@@ -5,6 +5,8 @@
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/fun/round.hpp>
 
+
+
 namespace stan {
 namespace math {
 
@@ -28,6 +30,12 @@ inline double round(int x) { return std::round(x); }
 
 }  // namespace math
 }  // namespace stan
+
+
+
+
+
+
 
 namespace stan {
 namespace math {

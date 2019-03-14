@@ -4,11 +4,24 @@
 #include <test/unit/math/prim/fun/promote_type_test_util.hpp>
 #include <vector>
 
+
+
+
+
+
+
+
+
+
 TEST(MathFunctionsPromoteScalarType, primitive) {
   using std::vector;
   expect_promote_type<double, double, double>();
   expect_promote_type<double, double, int>();
 }
+
+
+
+
 
 TEST(MathFunctionsPromoteScalarType_arr, StdVector) {
   using std::vector;
@@ -17,6 +30,10 @@ TEST(MathFunctionsPromoteScalarType_arr, StdVector) {
   expect_promote_type<vector<vector<double> >, double,
                       vector<vector<double> > >();
 }
+
+
+
+
 
 TEST(MathFunctionsPromoteScalar_mat, TypeMatrix) {
   using Eigen::Dynamic;

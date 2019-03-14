@@ -7,6 +7,13 @@
 #include <vector>
 #include <limits>
 
+
+
+
+
+
+
+
 TEST(ProbDistributionsParetoType2, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 10000;
@@ -69,6 +76,11 @@ TEST(ProbDistributionsParetoType2, chiSquareGoodnessFitTest) {
 
   EXPECT_LT(chi, quantile(complement(mydist, 1e-6)));
 }
+
+
+
+
+
 
 class ParetoType2TestRig : public VectorRNGTestRig {
  public:
