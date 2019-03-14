@@ -8,12 +8,6 @@
 #include <stan/math/prim/err/constraint_tolerance.hpp>
 #include <stan/math/prim/err/check_unit_vector.hpp>
 
-
-
-
-
-
-
 namespace stan {
 namespace math {
 /**

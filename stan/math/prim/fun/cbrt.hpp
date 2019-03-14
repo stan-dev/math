@@ -4,9 +4,6 @@
 #include <cmath>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 
@@ -27,18 +24,6 @@ inline double cbrt(double x) { return std::cbrt(x); }
  * @throw std::domain_error If argument is less than 1.
  */
 inline double cbrt(int x) { return std::cbrt(x); }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap cbrt() so it can be vectorized.

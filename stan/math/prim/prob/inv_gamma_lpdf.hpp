@@ -26,30 +26,6 @@
 #include <stan/math/prim/meta/include_summand.hpp>
 #include <cmath>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

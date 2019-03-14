@@ -5,9 +5,6 @@
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <vector>
 
-
-
-
 namespace stan {
 namespace math {
 

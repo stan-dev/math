@@ -4,8 +4,6 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/functor/finite_diff_gradient.hpp>
 
-
-
 namespace stan {
 namespace math {
 

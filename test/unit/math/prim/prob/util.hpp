@@ -5,9 +5,6 @@
 #include <algorithm>
 #include <vector>
 
-
-
-
 /**
  * Uses a chi-squared test to assert that a vector of observed counts
  * is consistent with a vector of expected counts. Useful for testing RNGs.

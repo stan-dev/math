@@ -4,7 +4,6 @@
 #include <vector>
 #include <stan/math/prim/fun/Eigen.hpp>
 
-
 namespace stan {
 namespace math {
 
@@ -23,18 +22,6 @@ void fill(T& x, const S& y) {
   x = y;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * Fill the specified container with the specified value.
  *
@@ -51,17 +38,6 @@ void fill(std::vector<T>& x, const S& y) {
   for (typename std::vector<T>::size_type i = 0; i < x.size(); ++i)
     fill(x[i], y);
 }
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Fill the specified container with the specified value.

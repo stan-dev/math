@@ -14,18 +14,6 @@
 #include <boost/random/variate_generator.hpp>
 #include <vector>
 
-
-
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

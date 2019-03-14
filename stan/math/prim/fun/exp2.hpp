@@ -5,11 +5,6 @@
 #include <cmath>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -37,18 +32,6 @@ inline double exp2(double y) {
  * @return exponent base 2 of argument
  */
 inline double exp2(int y) { return exp2(static_cast<double>(y)); }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap exp2() so it can be vectorized.

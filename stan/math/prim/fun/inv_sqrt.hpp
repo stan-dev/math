@@ -4,9 +4,6 @@
 #include <cmath>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 
@@ -14,19 +11,6 @@ inline double inv_sqrt(double x) {
   using std::sqrt;
   return 1.0 / sqrt(x);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap inv_sqrt() so that it can be vectorized.

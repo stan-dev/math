@@ -4,8 +4,6 @@
 #include <stan/math/prim/prob/multi_student_t_lpdf.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
 
-
-
 namespace stan {
 namespace math {
 

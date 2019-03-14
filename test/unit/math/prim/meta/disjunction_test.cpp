@@ -1,7 +1,5 @@
 
 
-
-
 #include <stan/math/prim.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>
 #include <gtest/gtest.h>

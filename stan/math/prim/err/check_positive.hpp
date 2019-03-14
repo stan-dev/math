@@ -9,13 +9,6 @@
 #include <stan/math/prim/meta/is_vector_like.hpp>
 #include <type_traits>
 
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

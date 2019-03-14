@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/fun/exp2.hpp>
 
-
 namespace stan {
 namespace math {
 

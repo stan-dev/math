@@ -4,9 +4,6 @@
 #include <cmath>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 
@@ -52,19 +49,6 @@ inline double inv_cloglog(double x) {
   using std::exp;
   return 1 - exp(-exp(x));
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap inv_cloglog() so that it can be vectorized.

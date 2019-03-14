@@ -5,10 +5,6 @@
 #include <boost/math/special_functions/digamma.hpp>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -50,18 +46,6 @@ namespace math {
 inline double digamma(double x) {
   return boost::math::digamma(x, boost_policy_t());
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap digamma() so it can be vectorized.

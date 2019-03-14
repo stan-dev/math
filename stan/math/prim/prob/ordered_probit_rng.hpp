@@ -7,11 +7,6 @@
 #include <stan/math/prim/err/check_ordered.hpp>
 #include <stan/math/prim/prob/categorical_rng.hpp>
 
-
-
-
-
-
 namespace stan {
 namespace math {
 

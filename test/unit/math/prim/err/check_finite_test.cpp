@@ -5,15 +5,6 @@
 #include <vector>
 #include <string>
 
-
-
-
-
-
-
-
-
-
 using stan::math::check_finite;
 
 TEST(ErrorHandlingScalar, CheckFinite) {
@@ -40,10 +31,6 @@ TEST(ErrorHandlingScalar, CheckFinite_nan) {
 
   EXPECT_THROW(check_finite(function, "x", nan), std::domain_error);
 }
-
-
-
-
 
 using stan::math::check_finite;
 
@@ -80,10 +67,6 @@ TEST(ErrorHandlingScalar_arr, CheckFinite_nan) {
   x = {1, 0, nan};
   EXPECT_THROW(check_finite(function, "x", x), std::domain_error);
 }
-
-
-
-
 
 using stan::math::check_finite;
 

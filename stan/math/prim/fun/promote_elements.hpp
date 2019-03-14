@@ -6,8 +6,6 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 
-
-
 namespace stan {
 namespace math {
 
@@ -47,20 +45,6 @@ struct promote_elements<T, T> {
    */
   inline static const T& promote(const T& u) { return u; }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Struct with static function for elementwise type promotion.
@@ -107,19 +91,6 @@ struct promote_elements<std::vector<T>, std::vector<T> > {
     return u;
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Struct with static function for elementwise type promotion.

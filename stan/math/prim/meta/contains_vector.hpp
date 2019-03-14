@@ -4,8 +4,6 @@
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>
 
-
-
 namespace stan {
 /**
  * Metaprogram to determine if any of the

@@ -4,8 +4,6 @@
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <boost/math/tools/promotion.hpp>
 
-
-
 namespace stan {
 
 /**

@@ -7,11 +7,6 @@
 #include <limits>
 #include <vector>
 
-
-
-
-
-
 namespace stan {
 namespace math {
 

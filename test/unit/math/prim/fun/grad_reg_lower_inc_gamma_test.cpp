@@ -1,7 +1,5 @@
 
 
-
-
 #include <stan/math/prim/fun/grad_reg_lower_inc_gamma.hpp>
 #include <gtest/gtest.h>
 #include <vector>

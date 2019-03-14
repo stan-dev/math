@@ -5,8 +5,6 @@
 
 #include <Eigen/Dense>
 
-
-
 namespace stan {
 namespace math {
 namespace internal {
@@ -48,18 +46,6 @@ class empty_broadcast_array {
   void operator=(const Y& /*A*/);
 };
 }  // namespace internal
-
-
-
-
-
-
-
-
-
-
-
-
 
 namespace internal {
 template <typename ViewElt, typename OpElt, int R, int C>

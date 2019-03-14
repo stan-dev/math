@@ -11,18 +11,6 @@
 #include <stan/math/prim/fun/value_of.hpp>
 #include <Eigen/Dense>
 
-
-
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -66,19 +54,6 @@ template <typename T_y>
 inline void check_finite(const char* function, const char* name, const T_y& y) {
   internal::finite<T_y, is_vector_like<T_y>::value>::check(function, name, y);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 namespace internal {
 template <typename T, int R, int C>

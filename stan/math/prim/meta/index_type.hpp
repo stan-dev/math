@@ -5,7 +5,6 @@
 
 #include <Eigen/Core>
 
-
 namespace stan {
 namespace math {
 
@@ -33,19 +32,6 @@ struct index_type<const T> {
   typedef typename index_type<T>::type type;
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * Template metaprogram class to compute the type of index for a
  * standard vector.
@@ -59,19 +45,6 @@ struct index_type<std::vector<T> > {
    */
   typedef typename std::vector<T>::size_type type;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Template metaprogram defining typedef for the type of index for

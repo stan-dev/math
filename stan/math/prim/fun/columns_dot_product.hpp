@@ -5,9 +5,6 @@
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/err/check_matching_sizes.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 

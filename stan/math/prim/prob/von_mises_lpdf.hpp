@@ -19,23 +19,6 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <cmath>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

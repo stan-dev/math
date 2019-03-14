@@ -25,29 +25,6 @@
 #include <stan/math/prim/meta/include_summand.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*
   TODO: time-varying system matrices
   TODO: use sequential processing even for non-diagonal obs

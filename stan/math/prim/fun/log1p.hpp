@@ -6,13 +6,6 @@
 #include <cmath>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -57,18 +50,6 @@ inline double log1p(int x) {
     return std::log1p(x);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap log1p() so it can be vectorized.

@@ -9,15 +9,6 @@
 #include <limits>
 #include <vector>
 
-
-
-
-
-
-
-
-
-
 TEST(ProbDistributionsNegBinomial, error_check) {
   using std::log;
 
@@ -213,14 +204,6 @@ TEST(ProbNegBinomial2, log_matches_lpmf) {
       (stan::math::neg_binomial_2_lpmf<double, double, double>(y, mu, phi)),
       (stan::math::neg_binomial_2_log<double, double, double>(y, mu, phi)));
 }
-
-
-
-
-
-
-
-
 
 class NegativeBinomial2LogTestRig : public VectorIntRNGTestRig {
  public:

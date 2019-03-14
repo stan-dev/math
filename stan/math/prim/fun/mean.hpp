@@ -6,10 +6,6 @@
 #include <boost/math/tools/promotion.hpp>
 #include <vector>
 
-
-
-
-
 namespace stan {
 namespace math {
 

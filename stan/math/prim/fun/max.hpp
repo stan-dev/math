@@ -8,12 +8,6 @@
 #include <stdexcept>
 #include <vector>
 
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

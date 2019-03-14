@@ -5,9 +5,6 @@
 #include <stan/math/prim/prob/lkj_corr_cholesky_rng.hpp>
 #include <stan/math/prim/err/check_positive.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 

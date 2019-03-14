@@ -5,7 +5,6 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 
-
 namespace stan {
 namespace math {
 
@@ -24,18 +23,6 @@ struct promote_scalar_type {
   typedef T type;
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * Template metaprogram to calculate a type for a container whose
  * underlying scalar is converted from the second template
@@ -51,19 +38,6 @@ struct promote_scalar_type<T, std::vector<S> > {
    */
   typedef std::vector<typename promote_scalar_type<T, S>::type> type;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Template metaprogram to calculate a type for a matrix whose

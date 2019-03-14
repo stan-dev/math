@@ -6,10 +6,6 @@
 #include <stan/math/prim/meta/conjunction.hpp>
 #include <type_traits>
 
-
-
-
-
 namespace stan {
 
 /**

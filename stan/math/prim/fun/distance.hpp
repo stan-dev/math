@@ -10,12 +10,6 @@
 #include <stan/math/prim/err/check_matching_sizes.hpp>
 #include <boost/math/tools/promotion.hpp>
 
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -33,20 +27,6 @@ inline typename return_type<T1, T2>::type distance(const T1& x1, const T2& x2) {
   check_finite("distance", "x2", x2);
   return abs(x1 - x2);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Returns the distance between the specified vectors.

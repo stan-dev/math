@@ -21,25 +21,6 @@
 #include <boost/random/variate_generator.hpp>
 #include <limits>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

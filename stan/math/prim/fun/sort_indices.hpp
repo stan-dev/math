@@ -6,11 +6,6 @@
 #include <algorithm>
 #include <vector>
 
-
-
-
-
-
 namespace stan {
 namespace math {
 

@@ -5,9 +5,6 @@
 #include <stan/math/prim.hpp>
 #include <vector>
 
-
-
-
 /*
  * VectorRNGTestRig is a class for wrapping up random number
  * generators in a way so that they can be tested to

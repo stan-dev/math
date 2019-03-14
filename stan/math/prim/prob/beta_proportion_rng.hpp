@@ -12,16 +12,6 @@
 #include <stan/math/prim/meta/max_size.hpp>
 #include <stan/math/prim/meta/scalar_seq_view.hpp>
 
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

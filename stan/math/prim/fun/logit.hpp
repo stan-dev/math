@@ -4,9 +4,6 @@
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 
@@ -54,18 +51,6 @@ inline double logit(double u) {
  * @return log odds of argument
  */
 inline double logit(int u) { return logit(static_cast<double>(u)); }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap logit() so it can be vectorized.

@@ -8,13 +8,6 @@
 #include <limits>
 #include <vector>
 
-
-
-
-
-
-
-
 TEST(ProbDistributionBinomiali, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::binomial_rng(4, 0.6, rng));
@@ -62,14 +55,6 @@ TEST(ProbDistributionsBinomial, chiSquareGoodnessFitTest) {
 
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
-
-
-
-
-
-
-
-
 
 class BinomialTestRig : public VectorIntRNGTestRig {
  public:

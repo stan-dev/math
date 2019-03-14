@@ -6,8 +6,6 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 
-
-
 namespace stan {
 namespace math {
 
@@ -47,19 +45,6 @@ inline double value_of_rec<double>(double x) {
   return x;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * Convert a std::vector of type T to a std::vector of doubles.
  *
@@ -94,19 +79,6 @@ template <>
 inline std::vector<double> value_of_rec(const std::vector<double>& x) {
   return x;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Convert a matrix of type T to a matrix of doubles.

@@ -4,8 +4,6 @@
 #include <stan/math/prim/meta/return_type.hpp>
 #include <stan/math/prim/prob/pareto_type_2_lpdf.hpp>
 
-
-
 namespace stan {
 namespace math {
 

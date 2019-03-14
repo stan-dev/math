@@ -7,15 +7,6 @@
 #include <cmath>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -59,18 +50,6 @@ inline double acosh(int x) {
     return std::acosh(x);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap acosh() so it can be vectorized.

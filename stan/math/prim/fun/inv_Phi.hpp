@@ -7,15 +7,6 @@
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -81,18 +72,6 @@ inline double inv_Phi(double p) {
 
   return x;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap inv_Phi() so it can be vectorized.

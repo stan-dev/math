@@ -8,18 +8,6 @@ namespace math {
 
 inline double inv_square(double x) { return 1.0 / (x * x); }
 
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * Structure to wrap inv_square() so that it can be vectorized.
  * @param x Variable.

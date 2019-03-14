@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta/is_constant_struct.hpp>
 
-
 namespace stan {
 
 /**

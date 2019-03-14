@@ -4,9 +4,6 @@
 #include <cmath>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 
@@ -18,19 +15,6 @@ namespace math {
  * @return Natural exponential of argument.
  */
 inline double exp(int x) { return std::exp(x); }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap <code>exp()</code> so that it can be

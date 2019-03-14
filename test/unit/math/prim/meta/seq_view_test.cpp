@@ -1,8 +1,5 @@
 
 
-
-
-
 #include <gtest/gtest.h>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/meta/seq_view.hpp>

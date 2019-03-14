@@ -5,9 +5,6 @@
 #include <stdexcept>
 #include <vector>
 
-
-
-
 struct harm_osc_ode_fun {
   template <typename T0, typename T1, typename T2>
   inline std::vector<typename stan::return_type<T1, T2>::type>

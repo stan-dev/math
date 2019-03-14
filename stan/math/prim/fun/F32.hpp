@@ -7,11 +7,6 @@
 #include <stan/math/prim/err/check_3F2_converges.hpp>
 #include <cmath>
 
-
-
-
-
-
 namespace stan {
 namespace math {
 

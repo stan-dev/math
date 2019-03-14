@@ -10,14 +10,6 @@
 #include <test/unit/math/prim/vectorize/expect_row_vector_error.hpp>
 #include <gtest/gtest.h>
 
-
-
-
-
-
-
-
-
 /**
  * Tests that the function defined statically in the template class
  * throws errors when supplied with illegal values.  The illegal

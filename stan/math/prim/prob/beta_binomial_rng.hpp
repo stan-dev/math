@@ -5,9 +5,6 @@
 #include <stan/math/prim/prob/binomial_rng.hpp>
 #include <stan/math/prim/prob/beta_rng.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 

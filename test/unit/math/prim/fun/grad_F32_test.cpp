@@ -1,7 +1,5 @@
 
 
-
-
 #include <gtest/gtest.h>
 #include <stan/math/prim/fun/grad_F32.hpp>
 #include <vector>

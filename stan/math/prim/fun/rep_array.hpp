@@ -4,8 +4,6 @@
 #include <stan/math/prim/err/check_nonnegative.hpp>
 #include <vector>
 
-
-
 namespace stan {
 namespace math {
 

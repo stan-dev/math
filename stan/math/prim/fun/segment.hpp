@@ -6,10 +6,6 @@
 #include <stan/math/prim/err/check_less_or_equal.hpp>
 #include <vector>
 
-
-
-
-
 namespace stan {
 namespace math {
 

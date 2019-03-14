@@ -5,7 +5,6 @@
 
 #include <Eigen/Core>
 
-
 namespace stan {
 namespace math {
 
@@ -33,18 +32,6 @@ struct value_type<const T> {
   typedef typename value_type<T>::type type;
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * Template metaprogram class to compute the type of values stored
  * in a standard vector.
@@ -59,18 +46,6 @@ struct value_type<std::vector<T> > {
    */
   typedef T type;
 };
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Template metaprogram defining the type of values stored in an

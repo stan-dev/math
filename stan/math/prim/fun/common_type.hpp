@@ -6,11 +6,6 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 
-
-
-
-
-
 namespace stan {
 namespace math {
 /**
@@ -33,19 +28,6 @@ struct common_type {
   typedef typename boost::math::tools::promote_args<T1, T2>::type type;
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * Struct which calculates type promotion over two types.
  *
@@ -58,19 +40,6 @@ template <typename T1, typename T2>
 struct common_type<std::vector<T1>, std::vector<T2> > {
   typedef std::vector<typename common_type<T1, T2>::type> type;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Struct which calculates type promotion over two types.

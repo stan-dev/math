@@ -9,13 +9,6 @@
 #include <stan/math/prim/err/check_positive.hpp>
 #include <vector>
 
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

@@ -8,12 +8,6 @@
 #include <stan/math/prim/err/domain_error.hpp>
 #include <string>
 
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

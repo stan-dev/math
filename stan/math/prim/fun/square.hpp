@@ -21,19 +21,6 @@ namespace math {
  */
 inline double square(double x) { return x * x; }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * Structure to wrap square() so that it can be vectorized.
  * @param x Variable.

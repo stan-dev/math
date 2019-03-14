@@ -8,9 +8,6 @@
 #include <stan/math/prim/functor/map_rect_concurrent.hpp>
 #include <vector>
 
-
-
-
 #define STAN_REGISTER_MAP_RECT(CALLID, FUNCTOR)
 
 #ifdef STAN_MPI
@@ -18,8 +15,6 @@
 #else
 
 #endif
-
-
 
 namespace stan {
 namespace math {

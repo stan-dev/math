@@ -13,17 +13,6 @@
 #include <vector>
 #include <cmath>
 
-
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

@@ -4,9 +4,6 @@
 #include <cmath>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 
@@ -47,18 +44,6 @@ inline double lgamma(double x) { return std::lgamma(x); }
  * argument
  */
 inline double lgamma(int x) { return std::lgamma(x); }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap lgamma() so that it can be vectorized.

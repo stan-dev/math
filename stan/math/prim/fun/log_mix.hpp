@@ -22,16 +22,6 @@
 #include <stan/math/prim/meta/is_constant_struct.hpp>
 #include <vector>
 
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -74,38 +64,6 @@ inline double log_mix(double theta, double lambda1, double lambda2) {
   check_bounded("log_mix", "theta", theta, 0, 1);
   return log_sum_exp(log(theta) + lambda1, log1m(theta) + lambda2);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Return the log mixture density with specified mixing proportions

@@ -5,8 +5,6 @@
 #include <stan/math/prim/meta/disjunction.hpp>
 #include <type_traits>
 
-
-
 namespace stan {
 
 /**

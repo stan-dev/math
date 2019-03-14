@@ -5,15 +5,6 @@
 #include <vector>
 #include <string>
 
-
-
-
-
-
-
-
-
-
 using stan::math::check_positive_finite;
 
 TEST(ErrorHandlingScalar, CheckPositiveFinite) {
@@ -46,10 +37,6 @@ TEST(ErrorHandlingScalar, CheckPositiveFinite_nan) {
 
   EXPECT_THROW(check_positive_finite(function, "x", nan), std::domain_error);
 }
-
-
-
-
 
 using stan::math::check_positive_finite;
 
@@ -92,10 +79,6 @@ TEST(ErrorHandlingScalar_arr, CheckPositiveFinite_nan) {
     x[i] = i;
   }
 }
-
-
-
-
 
 using stan::math::check_positive_finite;
 
@@ -152,7 +135,8 @@ TEST(ErrorHandlingScalar_mat, CheckPositiveFinite_Matrix_one_indexed_message) {
 
   EXPECT_NE(std::string::npos, message.find("[3]")) << message;
 }
-TEST(ErrorHandlingScalar_mat, CheckPositiveFinite_Matrix_one_indexed_message_2) {
+TEST(ErrorHandlingScalar_mat,
+     CheckPositiveFinite_Matrix_one_indexed_message_2) {
   const char* function = "check_positive_finite";
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
   std::string message;
@@ -171,7 +155,8 @@ TEST(ErrorHandlingScalar_mat, CheckPositiveFinite_Matrix_one_indexed_message_2) 
   EXPECT_NE(std::string::npos, message.find("[1]")) << message;
 }
 
-TEST(ErrorHandlingScalar_mat, CheckPositiveFinite_Matrix_one_indexed_message_3) {
+TEST(ErrorHandlingScalar_mat,
+     CheckPositiveFinite_Matrix_one_indexed_message_3) {
   const char* function = "check_positive_finite";
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
   std::string message;

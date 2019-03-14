@@ -8,13 +8,6 @@
 #include <limits>
 #include <vector>
 
-
-
-
-
-
-
-
 TEST(ProbDistributionBetaBinomial, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::beta_binomial_rng(4, 0.6, 2.0, rng));
@@ -32,14 +25,6 @@ TEST(ProbDistributionBetaBinomial, error_check) {
                    4, 0.6, stan::math::positive_infinity(), rng),
                std::domain_error);
 }
-
-
-
-
-
-
-
-
 
 class BetaBinomialTestRig : public VectorIntRNGTestRig {
  public:

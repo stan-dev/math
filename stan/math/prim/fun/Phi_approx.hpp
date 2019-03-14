@@ -5,11 +5,6 @@
 #include <cmath>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -37,19 +32,6 @@ inline double Phi_approx(double x) {
  * equal to argument.
  */
 inline double Phi_approx(int x) { return Phi_approx(static_cast<double>(x)); }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap Phi_approx() so it can be vectorized.

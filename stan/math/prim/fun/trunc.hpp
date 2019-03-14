@@ -4,9 +4,6 @@
 #include <cmath>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 
@@ -27,18 +24,6 @@ inline double trunc(double x) { return std::trunc(x); }
  * @return The truncated argument.
  */
 inline double trunc(int x) { return std::trunc(x); }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap trunc() so it can be vectorized.

@@ -7,10 +7,6 @@
 #include <Eigen/Dense>
 #include <vector>
 
-
-
-
-
 namespace stan {
 namespace math {
 template <typename Op1 = double, typename Op2 = double, typename Op3 = double,
@@ -128,20 +124,6 @@ class operands_and_partials {
   internal::ops_partials_edge<double, Op4> edge4_;
   internal::ops_partials_edge<double, Op5> edge5_;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 namespace internal {
 

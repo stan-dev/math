@@ -6,10 +6,6 @@
 #include <stan/math/prim/fun/mdivide_right_tri.hpp>
 #include <stan/math/prim/fun/promote_common.hpp>
 
-
-
-
-
 namespace stan {
 namespace math {
 

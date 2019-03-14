@@ -4,8 +4,6 @@
 #include <cmath>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
 namespace stan {
 namespace math {
 
@@ -17,18 +15,6 @@ namespace math {
  * @return Natural exponential of argument.
  */
 inline double sqrt(int x) { return std::sqrt(x); }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap sqrt() so that it can be vectorized.

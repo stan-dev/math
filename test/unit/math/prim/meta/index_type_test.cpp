@@ -5,15 +5,6 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-
-
-
-
-
-
-
-
-
 TEST(MathMeta, index_type) {
   using stan::math::index_type;
   using std::vector;
@@ -30,9 +21,6 @@ TEST(MathMeta, index_type) {
   expect_same_type<vector<vector<int> >::size_type,
                    index_type<const vector<vector<int> > >::type>();
 }
-
-
-
 
 TEST(MathMeta_mat, index_type) {
   using Eigen::Dynamic;

@@ -5,11 +5,6 @@
 #include <vector>
 #include <string>
 
-
-
-
-
-
 using stan::math::check_nonnegative;
 
 TEST(ErrorHandlingScalar, CheckNonnegative) {
@@ -42,11 +37,6 @@ TEST(ErrorHandlingScalar, CheckNonnegative_nan) {
 
   EXPECT_THROW(check_nonnegative(function, "x", nan), std::domain_error);
 }
-
-
-
-
-
 
 using stan::math::check_nonnegative;
 

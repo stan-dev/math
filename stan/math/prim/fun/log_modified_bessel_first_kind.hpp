@@ -18,21 +18,6 @@
 #include <stan/math/prim/fun/square.hpp>
 #include <limits>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

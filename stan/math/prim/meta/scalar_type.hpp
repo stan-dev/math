@@ -6,15 +6,6 @@
 #include <vector>
 #include <stan/math/prim/fun/Eigen.hpp>
 
-
-
-
-
-
-
-
-
-
 namespace stan {
 /**
  * Metaprogram structure to determine the base scalar type
@@ -35,12 +26,6 @@ struct scalar_type<T*> {
 };
 
 }  // namespace stan
-
-
-
-
-
-
 
 namespace stan {
 template <typename T>
@@ -63,12 +48,6 @@ struct scalar_type<const std::vector<T>&> {
   typedef typename scalar_type<T>::type type;
 };
 }  // namespace stan
-
-
-
-
-
-
 
 namespace stan {
 

@@ -6,13 +6,6 @@
 #include <cmath>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -27,18 +20,6 @@ inline double tgamma(double x) {
     domain_error("tgamma", "x", x, "x == 0 or negative integer");
   return std::tgamma(x);
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap tgamma() so that it can be vectorized.

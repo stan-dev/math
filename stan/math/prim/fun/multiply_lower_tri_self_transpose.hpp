@@ -4,8 +4,6 @@
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/fun/square.hpp>
 
-
-
 namespace stan {
 namespace math {
 

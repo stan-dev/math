@@ -10,18 +10,6 @@
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 
-
-
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -69,21 +57,6 @@ inline typename boost::math::tools::promote_args<T1, T2>::type log_sum_exp(
   return b + log1p_exp(a - b);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * Return the log of the sum of the exponentiated values of the specified
  * sequence of values.
@@ -113,22 +86,6 @@ inline double log_sum_exp(const std::vector<double>& x) {
 
   return max + log(sum);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Return the log of the sum of the exponentiated values of the specified

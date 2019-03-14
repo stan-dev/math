@@ -7,15 +7,6 @@
 #include <stan/math/prim/err/check_not_nan.hpp>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -47,18 +38,6 @@ inline double Phi(double x) {
   else
     return 0.5 * (1.0 + erf(INV_SQRT_2 * x));
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap Phi() so it can be vectorized.

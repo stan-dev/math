@@ -7,9 +7,6 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 
@@ -62,20 +59,6 @@ inline double value_of<double>(double x) {
  */
 inline int value_of(int x) { return x; }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * Convert a std::vector of type T to a std::vector of
  * child_type<T>::type.
@@ -121,20 +104,6 @@ inline const std::vector<double>& value_of(const std::vector<double>& x) {
  * @return Specified std::vector.
  */
 inline const std::vector<int>& value_of(const std::vector<int>& x) { return x; }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Convert a matrix of type T to a matrix of doubles.

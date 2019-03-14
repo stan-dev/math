@@ -7,15 +7,6 @@
 #include <limits>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -61,19 +52,6 @@ inline double log1m_exp(double a) {
   else
     return log1m(exp(a));
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap log1m_exp() so it can be vectorized.

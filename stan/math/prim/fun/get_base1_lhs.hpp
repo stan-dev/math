@@ -5,9 +5,6 @@
 #include <stan/math/prim/err/check_range.hpp>
 #include <vector>
 
-
-
-
 namespace stan {
 namespace math {
 

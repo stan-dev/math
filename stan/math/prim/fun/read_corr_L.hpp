@@ -7,11 +7,6 @@
 #include <stan/math/prim/fun/sum.hpp>
 #include <cstddef>
 
-
-
-
-
-
 namespace stan {
 namespace math {
 

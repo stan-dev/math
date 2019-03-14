@@ -1,6 +1,5 @@
 
 
-
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 void test_crossprod(const stan::math::matrix_d& x) {

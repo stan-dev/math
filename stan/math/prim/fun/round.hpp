@@ -4,9 +4,6 @@
 #include <cmath>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 
@@ -27,18 +24,6 @@ inline double round(double x) { return std::round(x); }
  * @return The rounded value of the argument.
  */
 inline double round(int x) { return std::round(x); }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap round() so it can be vectorized.

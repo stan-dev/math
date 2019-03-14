@@ -6,12 +6,6 @@
 #include <vector>
 #include <stan/math/prim/fun/Eigen.hpp>
 
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -29,19 +23,6 @@ inline std::vector<T> sort_asc(std::vector<T> xs) {
   std::sort(xs.begin(), xs.end());
   return xs;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Return the specified vector in ascending order.

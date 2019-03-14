@@ -4,9 +4,6 @@
 #include <cmath>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 
@@ -30,18 +27,6 @@ inline double erf(double x) { return std::erf(x); }
  * @return Error function of the argument.
  */
 inline double erf(int x) { return std::erf(x); }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap erf() so it can be vectorized.

@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/fun/MatrixExponential.h>
 
-
 namespace stan {
 namespace math {
 

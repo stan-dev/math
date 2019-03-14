@@ -1,8 +1,5 @@
 
 
-
-
-
 #include <stan/math/prim.hpp>
 #include <stan/math/prim/meta/is_var_or_arithmetic.hpp>
 #include <gtest/gtest.h>

@@ -6,13 +6,6 @@
 #include <stan/math/prim/err/check_less_or_equal.hpp>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -51,19 +44,6 @@ inline double log1m(double x) {
     check_less_or_equal("log1m", "x", x, 1);
   return stan::math::log1p(-x);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap log1m() so it can be vectorized.

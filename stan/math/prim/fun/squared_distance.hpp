@@ -7,11 +7,6 @@
 #include <stan/math/prim/err/check_vector.hpp>
 #include <stan/math/prim/err/check_matching_sizes.hpp>
 
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -31,19 +26,6 @@ inline typename boost::math::tools::promote_args<T1, T2>::type squared_distance(
   check_finite("squared_distance", "x2", x2);
   return square(x1 - x2);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Returns the squared distance between the specified vectors

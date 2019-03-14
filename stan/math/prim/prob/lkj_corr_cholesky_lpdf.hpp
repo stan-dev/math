@@ -45,49 +45,6 @@
 #include <stan/math/prim/prob/lkj_corr_log.hpp>
 #include <stan/math/prim/fun/multiply.hpp>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

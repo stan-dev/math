@@ -5,22 +5,10 @@
 
 #include <vector>
 
-
-
-
-
 namespace stan {
 template <typename... Ts>
 struct contains_std_vector : std::false_type {};
 }  // namespace stan
-
-
-
-
-
-
-
-
 
 namespace stan {
 

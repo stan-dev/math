@@ -5,9 +5,6 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/err/check_matching_dims.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 

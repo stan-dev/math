@@ -5,9 +5,6 @@
 #include <stan/math/prim/err/check_symmetric.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 

@@ -4,8 +4,6 @@
 #include <stan/math/prim/fun/value_of.hpp>
 #include <type_traits>
 
-
-
 namespace stan {
 namespace math {
 

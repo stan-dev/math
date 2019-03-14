@@ -6,19 +6,6 @@
 #include <vector>
 #include <type_traits>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 TEST(MathFunctions, value_of) {
   using stan::math::value_of;
   double x = 5.0;
@@ -31,10 +18,6 @@ TEST(MathFunctions, value_of_nan) {
 
   EXPECT_PRED1(boost::math::isnan<double>, stan::math::value_of(nan));
 }
-
-
-
-
 
 TEST(MathMatrix_arr, value_of) {
   using stan::math::value_of;
@@ -81,9 +64,6 @@ TEST(MathFunctions_arr, value_of_double_return_type_short_circuit) {
   EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(a)),
                             const std::vector<double>&>::value));
 }
-
-
-
 
 TEST(MathMatrix_mat, value_of) {
   using stan::math::value_of;
@@ -156,7 +136,8 @@ TEST(MathFunctions_mat, value_of_return_type_short_circuit_matrix_xd) {
                                                 Eigen::Dynamic>&>::value));
 }
 
-TEST(MathFunctions_mat, value_of_return_type_short_circuit_static_sized_matrix) {
+TEST(MathFunctions_mat,
+     value_of_return_type_short_circuit_static_sized_matrix) {
   Eigen::Matrix<double, 5, 4> a;
   EXPECT_FALSE((std::is_same<decltype(stan::math::value_of(a)),
                              Eigen::Matrix<double, 5, 4>>::value));

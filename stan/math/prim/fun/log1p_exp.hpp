@@ -5,11 +5,6 @@
 #include <cmath>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -52,19 +47,6 @@ inline double log1p_exp(double a) {
     return a + log1p(exp(-a));
   return log1p(exp(a));
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap log1m_exp() so that it can be vectorized.

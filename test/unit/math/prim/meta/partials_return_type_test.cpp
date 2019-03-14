@@ -5,8 +5,6 @@
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
-
-
 using stan::math::fvar;
 using stan::math::var;
 using stan::partials_return_type;

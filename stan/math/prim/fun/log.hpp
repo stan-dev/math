@@ -4,9 +4,6 @@
 #include <cmath>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 
@@ -18,19 +15,6 @@ namespace math {
  * @return Natural log of argument.
  */
 inline double log(int x) { return std::log(x); }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap log() so that it can be vectorized.

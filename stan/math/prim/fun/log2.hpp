@@ -5,11 +5,6 @@
 #include <cmath>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -43,19 +38,6 @@ inline double log2(int u) { return log2(static_cast<double>(u)); }
  * @return Natural logarithm of two.
  */
 inline double log2() { return LOG_2; }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap log2() so it can be vectorized.

@@ -1,8 +1,5 @@
 
 
-
-
-
 #include <stan/math/prim.hpp>
 #include <test/unit/math/prim/vectorize/vector_builder.hpp>
 #include <gtest/gtest.h>

@@ -9,14 +9,6 @@
 #include <stdexcept>
 #include <vector>
 
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -28,7 +20,7 @@ namespace math {
  * @param CPCs fill this unbounded
  */
 template <typename T>
-//inline typename
+// inline typename
 // std::enable_if<
 //   !is_vector_like<T>::value, void>::type
 void factor_U(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& U,

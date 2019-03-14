@@ -8,19 +8,6 @@
 #include <vector>
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 TEST(ProbDistributionsWeibull, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::weibull_rng(2.0, 3.0, rng));
@@ -54,13 +41,6 @@ TEST(ProbDistributionsWeibull, chiSquareGoodnessFitTest) {
   // Assert that they match
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }
-
-
-
-
-
-
-
 
 class WeibullTestRig : public VectorRealRNGTestRig {
  public:

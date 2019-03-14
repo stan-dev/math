@@ -9,16 +9,6 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <type_traits>
 
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -40,18 +30,6 @@ inline int divide(int x, int y) {
     domain_error("divide", "denominator is", y, "");
   return x / y;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Return specified matrix divided by specified scalar.

@@ -4,8 +4,6 @@
 #include <stan/math/prim/meta/VectorBuilderHelper.hpp>
 #include <stan/math/prim/meta/contains_std_vector.hpp>
 
-
-
 namespace stan {
 
 /**

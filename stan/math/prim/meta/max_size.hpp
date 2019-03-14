@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta/length.hpp>
 
-
 namespace stan {
 
 template <typename T1, typename T2>

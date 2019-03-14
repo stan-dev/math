@@ -4,8 +4,6 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/err/check_size_match.hpp>
 
-
-
 namespace stan {
 namespace math {
 

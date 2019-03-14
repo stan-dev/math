@@ -6,13 +6,6 @@
 #include <cmath>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -50,18 +43,6 @@ inline double atanh(int x) {
     return std::atanh(x);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap atanh() so it can be vectorized.

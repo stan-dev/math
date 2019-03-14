@@ -5,11 +5,6 @@
 #include <cmath>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -61,18 +56,6 @@ inline double inv_logit(double a) {
   }
   return 1 / (1 + exp(-a));
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap inv_logit() so that it can be vectorized.

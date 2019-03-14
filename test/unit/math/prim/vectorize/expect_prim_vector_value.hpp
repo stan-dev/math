@@ -5,9 +5,6 @@
 #include <Eigen/Dense>
 #include <vector>
 
-
-
-
 template <typename F>
 void expect_prim_vector_value() {
   using Eigen::VectorXd;

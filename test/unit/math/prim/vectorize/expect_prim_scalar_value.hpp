@@ -4,8 +4,6 @@
 #include <test/unit/math/prim/vectorize/expect_val_eq.hpp>
 #include <vector>
 
-
-
 template <typename F>
 void expect_prim_scalar_value() {
   using std::vector;

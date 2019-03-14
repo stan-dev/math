@@ -1,8 +1,5 @@
 
 
-
-
-
 #include <stan/math/prim.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>

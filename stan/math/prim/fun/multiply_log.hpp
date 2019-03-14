@@ -3,7 +3,6 @@
 
 #include <boost/math/tools/promotion.hpp>
 
-
 namespace stan {
 namespace math {
 

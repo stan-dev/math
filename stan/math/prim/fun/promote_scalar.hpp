@@ -7,14 +7,6 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -74,20 +66,6 @@ typename promote_scalar_type<T, S>::type promote_scalar(const S& x) {
   return promote_scalar_struct<T, S>::apply(x);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * Struct to hold static function for promoting underlying scalar
  * types.  This specialization is for standard vector inputs.
@@ -117,19 +95,6 @@ struct promote_scalar_struct<T, std::vector<S> > {
     return y;
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Struct to hold static function for promoting underlying scalar

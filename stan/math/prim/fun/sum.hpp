@@ -6,13 +6,6 @@
 #include <numeric>
 #include <stan/math/prim/fun/Eigen.hpp>
 
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 
@@ -27,19 +20,6 @@ template <typename T>
 inline T sum(const std::vector<T>& xs) {
   return std::accumulate(xs.begin(), xs.end(), T{0});
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Returns the sum of the coefficients of the specified

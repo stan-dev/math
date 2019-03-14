@@ -19,23 +19,6 @@
 #include <stan/math/prim/meta/VectorBuilder.hpp>
 #include <limits>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

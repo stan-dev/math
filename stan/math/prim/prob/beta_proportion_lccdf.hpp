@@ -23,27 +23,6 @@
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <cmath>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

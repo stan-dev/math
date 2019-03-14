@@ -16,20 +16,6 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <boost/math/distributions.hpp>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 namespace stan {
 namespace math {
 

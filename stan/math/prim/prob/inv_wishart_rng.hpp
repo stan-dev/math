@@ -7,11 +7,6 @@
 #include <stan/math/prim/prob/wishart_rng.hpp>
 #include <stan/math/prim/err/check_greater.hpp>
 
-
-
-
-
-
 namespace stan {
 namespace math {
 

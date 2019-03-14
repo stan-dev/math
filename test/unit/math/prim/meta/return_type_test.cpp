@@ -4,11 +4,6 @@
 #include <test/unit/util.hpp>
 #include <vector>
 
-
-
-
-
-
 using stan::return_type;
 
 TEST(MetaTraits, ReturnTypeDouble) {
@@ -28,10 +23,6 @@ TEST(MetaTraits, ReturnTypeScalarTenParams) {
                          return_type<double, int, double, float, float, double,
                                      float, int, double, double>::type>();
 }
-
-
-
-
 
 using Eigen::MatrixXd;
 using Eigen::RowVectorXd;

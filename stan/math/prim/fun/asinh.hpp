@@ -4,9 +4,6 @@
 #include <cmath>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
-
-
-
 namespace stan {
 namespace math {
 
@@ -28,18 +25,6 @@ inline double asinh(double x) { return std::asinh(x); }
  * @return Inverse hyperbolic sine of the argument.
  */
 inline double asinh(int x) { return std::asinh(x); }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Structure to wrap asinh() so it can be vectorized.
