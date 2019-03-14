@@ -10,8 +10,8 @@
 namespace stan {
 namespace math {
 
-namespace {
-double log_sum_exp_as_double(const std::vector<var>& x) {
+namespace internal {
+inline double log_sum_exp_as_double(const std::vector<var>& x) {
   using std::exp;
   using std::log;
   using std::numeric_limits;
@@ -36,13 +36,13 @@ class log_sum_exp_vector_vari : public op_vector_vari {
     }
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Returns the log sum of exponentials.
  */
 inline var log_sum_exp(const std::vector<var>& x) {
-  return var(new log_sum_exp_vector_vari(x));
+  return var(new internal::log_sum_exp_vector_vari(x));
 }
 
 }  // namespace math

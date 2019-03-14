@@ -1,8 +1,6 @@
 #ifndef STAN_MATH_REV_MAT_FUN_TRACE_QUAD_FORM_HPP
 #define STAN_MATH_REV_MAT_FUN_TRACE_QUAD_FORM_HPP
 
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
@@ -12,10 +10,11 @@
 #include <stan/math/prim/mat/fun/trace_quad_form.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
+#include <type_traits>
 
 namespace stan {
 namespace math {
-namespace {
+namespace internal {
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
 class trace_quad_form_vari_alloc : public chainable_alloc {
  public:
@@ -78,20 +77,21 @@ class trace_quad_form_vari : public vari {
 
   trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>* impl_;
 };
-}  // namespace
+}  // namespace internal
 
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
-inline typename boost::enable_if_c<
-    boost::is_same<Ta, var>::value || boost::is_same<Tb, var>::value, var>::type
+inline typename std::enable_if<
+    std::is_same<Ta, var>::value || std::is_same<Tb, var>::value, var>::type
 trace_quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
                 const Eigen::Matrix<Tb, Rb, Cb>& B) {
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
 
-  trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>* baseVari
-      = new trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>(A, B);
+  internal::trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>* baseVari
+      = new internal::trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>(A, B);
 
-  return var(new trace_quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>(baseVari));
+  return var(
+      new internal::trace_quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>(baseVari));
 }
 
 }  // namespace math

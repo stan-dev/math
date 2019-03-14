@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class round_vari : public op_v_vari {
  public:
   explicit round_vari(vari* avi) : op_v_vari(round(avi->val_), avi) {}
@@ -18,7 +18,7 @@ class round_vari : public op_v_vari {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Returns the rounded form of the specified variable (C99).
@@ -50,7 +50,7 @@ class round_vari : public op_v_vari {
  * @param a Specified variable.
  * @return Rounded variable.
  */
-inline var round(const var& a) { return var(new round_vari(a.vi_)); }
+inline var round(const var& a) { return var(new internal::round_vari(a.vi_)); }
 
 }  // namespace math
 }  // namespace stan
