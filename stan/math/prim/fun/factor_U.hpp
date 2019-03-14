@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_FACTOR_U_HPP
 #define STAN_MATH_PRIM_FUN_FACTOR_U_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <cmath>
 #include <cstddef>
@@ -43,7 +43,7 @@ void factor_U(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& U,
   }
 
   Eigen::Array<T, 1, Eigen::Dynamic> temp = U.row(0).tail(pull);
-  
+
   CPCs.head(pull) = temp;
 
   Eigen::Array<T, Eigen::Dynamic, 1> acc(K);
