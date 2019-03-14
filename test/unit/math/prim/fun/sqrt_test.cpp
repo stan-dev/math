@@ -1,7 +1,10 @@
-#include <stan/math/prim.hpp>
+
+
+
+
+#include <stan/math.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <gtest/gtest.h>
-
 TEST(MathFunctions, sqrtInt) {
   using stan::math::sqrt;
   using std::sqrt;
