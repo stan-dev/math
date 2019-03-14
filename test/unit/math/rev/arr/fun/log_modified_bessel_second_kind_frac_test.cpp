@@ -13,8 +13,8 @@ using namespace stan::math;
 using namespace stan::math::besselk_internal;
 
 //TODO add values close to other boundaries, v = 0
-std::array<double, 15> v_to_test = { 3.15e-7, 2.62e-6, 9.2e-5, 0.0026, 0.0843, 0.17345,
-  1, 1.63, 7.42, 42.42424, 148.7565, 513.6, 712.456, 714.456, 15330.75
+std::array<double, 21> v_to_test = { 3.15e-7, 2.62e-6, 9.2e-5, 0.0026, 0.0843, 0.17345,
+  1, 1.63, 7.42, 42.42424, 86.5, 113.8, 148.7565, 180.6, 246.3, 300.5, 513.6, 712.456, 714.456, 15330.75
   };
 
 //TODO: not working for very small z
@@ -32,6 +32,8 @@ const char* computation_type_to_string(ComputationType c) {
       return "Rothwell";
     case ComputationType::Mathematica :
       return "Mathematica";
+    case ComputationType::Mathematica_Large :
+      return "Mathematica_Large";
     case ComputationType::Asymp_v :
       return "Asymp_v";
     case ComputationType::Asymp_z :
