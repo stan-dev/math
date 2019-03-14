@@ -33,7 +33,7 @@ static const char *scalar_mul_kernel_code = STRINGIFY(
 // \endcond
 
 /**
- * See the docs for \link kernels/scalar_mul.hpp add() \endlink
+ * See the docs for \link kernels/scalar_mul.hpp scalar_mul() \endlink
  */
 const global_range_kernel<cl::Buffer, cl::Buffer, double, int, int> scalar_mul(
     "scalar_mul", scalar_mul_kernel_code);

@@ -28,7 +28,7 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
-template <int R, int C, triangular_view_CL triangular_view = triangular_view_CL::ENTIRE>
+template <int R, int C>
 void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
   check_size_match("copy (Eigen -> (OpenCL))", "src.rows()", src.rows(),
                    "dst.rows()", dst.rows());

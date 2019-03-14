@@ -80,7 +80,7 @@ static const char* diag_inv_kernel_code = STRINGIFY(
 // \endcond
 
 /**
- * See the docs for \link kernels/diag_inv.hpp add()
+ * See the docs for \link kernels/diag_inv.hpp diag_inv()
  * \endlink
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, int> diag_inv(

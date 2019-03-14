@@ -122,7 +122,7 @@ static const char* inv_lower_tri_multiply_kernel_code = STRINGIFY(
 // \endcond
 
 /**
- * See the docs for \link kernels/inv_lower_tri_multiply.hpp add() \endlink
+ * See the docs for \link kernels/inv_lower_tri_multiply.hpp inv_lower_tri_multiply() \endlink
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, int, int>
     inv_lower_tri_multiply("inv_lower_tri_multiply",

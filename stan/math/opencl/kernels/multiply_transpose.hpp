@@ -94,7 +94,7 @@ static const char* multiply_transpose_kernel_code = STRINGIFY(
 // \endcond
 
 /**
- * See the docs for \link kernels/multiply_transpose.hpp add() \endlink
+ * See the docs for \link kernels/multiply_transpose.hpp multiply_transpose() \endlink
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, int, int> multiply_transpose(
     "multiply_transpose", multiply_transpose_kernel_code,
