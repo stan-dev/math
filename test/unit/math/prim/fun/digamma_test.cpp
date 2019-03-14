@@ -18,5 +18,6 @@ TEST(MathFunctions, digamma_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   EXPECT_PRED1(boost::math::isnan<double>, stan::math::digamma(nan));
-  EXPECT_THROW(stan::math::digamma(-1), std::domain_error);
+
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::digamma(-1));
 }
