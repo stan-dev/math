@@ -13,7 +13,7 @@ namespace math {
  * @param[in] x Argument.
  * @return Natural exponential of argument.
  */
-inline double sqrt(int x) { return std::sqrt(static_cast<double>(x)); }
+inline double sqrt(int x) { return std::sqrt(x); }
 
 }  // namespace math
 }  // namespace stan

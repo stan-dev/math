@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class tanh_vari : public op_v_vari {
  public:
   explicit tanh_vari(vari* avi) : op_v_vari(std::tanh(avi->val_), avi) {}
@@ -16,7 +16,7 @@ class tanh_vari : public op_v_vari {
     avi_->adj_ += adj_ / (cosh * cosh);
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Return the hyperbolic tangent of the specified variable (cmath).
@@ -45,7 +45,7 @@ class tanh_vari : public op_v_vari {
  * @param a Variable.
  * @return Hyperbolic tangent of variable.
  */
-inline var tanh(const var& a) { return var(new tanh_vari(a.vi_)); }
+inline var tanh(const var& a) { return var(new internal::tanh_vari(a.vi_)); }
 
 }  // namespace math
 }  // namespace stan

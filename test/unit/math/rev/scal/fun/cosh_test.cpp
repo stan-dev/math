@@ -36,7 +36,7 @@ TEST(AgradRev, cosh_inf) {
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x, g);
-  EXPECT_EQ(boost::math::isinf(g[0]), (g[0] > 0));
+  EXPECT_EQ(stan::math::is_inf(g[0]), (g[0] > 0));
 }
 
 TEST(AgradRev, cosh_neg_inf) {
@@ -48,7 +48,7 @@ TEST(AgradRev, cosh_neg_inf) {
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x, g);
-  EXPECT_EQ(boost::math::isinf(g[0]), (g[0] < 0));
+  EXPECT_EQ(stan::math::is_inf(g[0]), (g[0] < 0));
 }
 
 struct cosh_fun {

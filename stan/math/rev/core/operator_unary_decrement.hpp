@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class decrement_vari : public op_v_vari {
  public:
   explicit decrement_vari(vari* avi) : op_v_vari(avi->val_ - 1.0, avi) {}
@@ -20,7 +20,7 @@ class decrement_vari : public op_v_vari {
       avi_->adj_ += adj_;
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Prefix decrement operator for variables (C++).
@@ -36,7 +36,7 @@ class decrement_vari : public op_v_vari {
  * @return Reference the result of decrementing this input variable.
  */
 inline var& operator--(var& a) {
-  a.vi_ = new decrement_vari(a.vi_);
+  a.vi_ = new internal::decrement_vari(a.vi_);
   return a;
 }
 
@@ -53,7 +53,7 @@ inline var& operator--(var& a) {
  */
 inline var operator--(var& a, int /*dummy*/) {
   var temp(a);
-  a.vi_ = new decrement_vari(a.vi_);
+  a.vi_ = new internal::decrement_vari(a.vi_);
   return temp;
 }
 

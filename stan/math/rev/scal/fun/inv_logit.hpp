@@ -7,13 +7,13 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class inv_logit_vari : public op_v_vari {
  public:
   explicit inv_logit_vari(vari* avi) : op_v_vari(inv_logit(avi->val_), avi) {}
   void chain() { avi_->adj_ += adj_ * val_ * (1.0 - val_); }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * The inverse logit function for variables (stan).
@@ -28,7 +28,9 @@ class inv_logit_vari : public op_v_vari {
  * @param a Argument variable.
  * @return Inverse logit of argument.
  */
-inline var inv_logit(const var& a) { return var(new inv_logit_vari(a.vi_)); }
+inline var inv_logit(const var& a) {
+  return var(new internal::inv_logit_vari(a.vi_));
+}
 
 }  // namespace math
 }  // namespace stan
