@@ -9,15 +9,15 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 /**
  * Calculates the generalized hypergeometric 3F2(a, a, b; a + 1, a + 1; z).
  *
  * Handles negative values of b properly.
  */
-double ibeta_hypergeometric_helper(double a, double b, double z,
-                                   double precision = 1e-8,
-                                   double max_steps = 1000) {
+inline double ibeta_hypergeometric_helper(double a, double b, double z,
+                                          double precision = 1e-8,
+                                          double max_steps = 1000) {
   double val = 0;
   double diff = 1;
   double k = 0;
@@ -184,7 +184,7 @@ class ibeta_ddv_vari : public op_ddv_vari {
     cvi_->adj_ += adj_ * boost::math::ibeta_derivative(a, b, c);
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * The normalized incomplete beta function of a, b, and x.
@@ -205,7 +205,7 @@ class ibeta_ddv_vari : public op_ddv_vari {
  * @throws if any argument is NaN.
  */
 inline var ibeta(const var& a, const var& b, const var& x) {
-  return var(new ibeta_vvv_vari(a.vi_, b.vi_, x.vi_));
+  return var(new internal::ibeta_vvv_vari(a.vi_, b.vi_, x.vi_));
 }
 
 }  // namespace math

@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 
 class log_falling_factorial_vv_vari : public op_vv_vari {
  public:
@@ -53,18 +53,18 @@ class log_falling_factorial_dv_vari : public op_dv_vari {
       bvi_->adj_ += adj_ * digamma(ad_ - bvi_->val_ + 1);
   }
 };
-}  // namespace
+}  // namespace internal
 
 inline var log_falling_factorial(const var& a, double b) {
-  return var(new log_falling_factorial_vd_vari(a.vi_, b));
+  return var(new internal::log_falling_factorial_vd_vari(a.vi_, b));
 }
 
 inline var log_falling_factorial(const var& a, const var& b) {
-  return var(new log_falling_factorial_vv_vari(a.vi_, b.vi_));
+  return var(new internal::log_falling_factorial_vv_vari(a.vi_, b.vi_));
 }
 
 inline var log_falling_factorial(double a, const var& b) {
-  return var(new log_falling_factorial_dv_vari(a, b.vi_));
+  return var(new internal::log_falling_factorial_dv_vari(a, b.vi_));
 }
 
 }  // namespace math

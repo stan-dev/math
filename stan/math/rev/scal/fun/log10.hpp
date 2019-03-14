@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class log10_vari : public op_v_vari {
  public:
   const double exp_val_;
@@ -16,7 +16,7 @@ class log10_vari : public op_v_vari {
       : op_v_vari(std::log10(avi->val_), avi), exp_val_(avi->val_) {}
   void chain() { avi_->adj_ += adj_ / (LOG_10 * exp_val_); }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Return the base 10 log of the specified variable (cmath).
@@ -47,7 +47,7 @@ class log10_vari : public op_v_vari {
  * @param a Variable whose log is taken.
  * @return Base 10 log of variable.
  */
-inline var log10(const var& a) { return var(new log10_vari(a.vi_)); }
+inline var log10(const var& a) { return var(new internal::log10_vari(a.vi_)); }
 
 }  // namespace math
 }  // namespace stan

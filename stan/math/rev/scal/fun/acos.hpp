@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class acos_vari : public op_v_vari {
  public:
   explicit acos_vari(vari* avi) : op_v_vari(std::acos(avi->val_), avi) {}
@@ -16,7 +16,7 @@ class acos_vari : public op_v_vari {
     avi_->adj_ -= adj_ / std::sqrt(1.0 - (avi_->val_ * avi_->val_));
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Return the principal value of the arc cosine of a variable,
@@ -54,7 +54,7 @@ class acos_vari : public op_v_vari {
  * @param a Variable in range [-1, 1].
  * @return Arc cosine of variable, in radians.
  */
-inline var acos(const var& a) { return var(new acos_vari(a.vi_)); }
+inline var acos(const var& a) { return var(new internal::acos_vari(a.vi_)); }
 
 }  // namespace math
 }  // namespace stan
