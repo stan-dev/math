@@ -32,7 +32,7 @@ static const char *sub_block_kernel_code = STRINGIFY(
      * @param src_rows The number of rows in the destination matrix.
      * @param dst_cols The number of cols in the destination matrix.
      * @param dst_rows The number of rows in the destination matrix.
-     * @param view the triangularity of src (LOWER, UPPER, ENTIRE)
+     * @param tri_view the triangularity of src (LOWER, UPPER, ENTIRE)
      * @note Code is a <code>const char*</code> held in
      * <code>sub_block_kernel_code.</code>
      * Used in math/opencl/copy_submatrix_opencl.hpp.
@@ -44,13 +44,13 @@ static const char *sub_block_kernel_code = STRINGIFY(
         unsigned int src_offset_j, unsigned int dst_offset_i,
         unsigned int dst_offset_j, unsigned int size_i, unsigned int size_j,
         unsigned int src_rows, unsigned int src_cols, unsigned int dst_rows,
-        unsigned int dst_cols, triangular_view view) {
+        unsigned int dst_cols, triangular_view tri_view) {
       int i = get_global_id(0);
       int j = get_global_id(1);
       if ((i + src_offset_i) < src_rows && (j + src_offset_j) < src_cols
           && (i + dst_offset_i) < dst_rows && (j + dst_offset_j) < dst_cols) {
-        if ((view == LOWER && i >= j) || (view == UPPER && i <= j)
-            || view == ENTIRE) {
+        if ((tri_view == LOWER && i >= j) || (tri_view == UPPER && i <= j)
+            || tri_view == ENTIRE) {
           dst((dst_offset_i + i), (dst_offset_j + j))
               = src((src_offset_i + i), (src_offset_j + j));
         }

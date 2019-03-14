@@ -17,6 +17,7 @@ static const char *copy_kernel_code = STRINGIFY(
      * @param[out] B The matrix to copy A to.
      * @param rows The number of rows in A.
      * @param cols The number of cols in A.
+     * @param tri_view which part of the matrix to copy
      * @note Code is a <code>const char*</code> held in
      * <code>copy_kernel_code.</code>
      * Kernel used in math/opencl/matrix_cl.hpp.
