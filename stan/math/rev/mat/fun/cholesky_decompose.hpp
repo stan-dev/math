@@ -306,7 +306,7 @@ class cholesky_opencl : public vari {
     L_adj = transpose(L) * L_adj;
     L_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
     L = transpose(lower_triangular_inverse(L));
-    L_adj = L * transpose(L * L_adj);
+    L_adj = L * transpose(opencl::multiply<TriangularViewCL::Entire, TriangularViewCL::Upper>(L, L_adj));
     L_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
   }
 
@@ -366,7 +366,7 @@ class cholesky_opencl : public vari {
       B_adj.sub_block(L_adj, k, 0, 0, 0, m_k_ind, j);
       C_adj.sub_block(L_adj, k, j, 0, 0, m_k_ind, k_j_ind);
 
-      C_adj = C_adj * lower_triangular_inverse(D);
+      C_adj = opencl::multiply<TriangularViewCL::Entire, TriangularViewCL::Lower>(C_adj * lower_triangular_inverse(D));
       B_adj = B_adj - C_adj * R;
       D_adj = D_adj - transpose(C_adj) * C;
 
