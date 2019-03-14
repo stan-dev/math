@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_TRIDIAGONALIZATION_HPP
 #define STAN_MATH_PRIM_MAT_FUN_TRIDIAGONALIZATION_HPP
 
+#include <cmath>
 #include <Eigen/Dense>
 #include <stan/math/prim/scal/fun/constants.hpp>
 
@@ -24,12 +25,13 @@ void block_householder_tridiag(const Eigen::MatrixXd& A, Eigen::MatrixXd& packed
     for (size_t j = 0; j < actual_r; j++) {
       auto householder = packed.col(k + j).tail(packed.rows() - k - j - 1);
       if (j != 0) {
+
         auto householder_whole = packed.col(k + j).tail(packed.rows() - k - j);
         householder_whole -= packed.block(j + k, k, householder_whole.size(), j) * V.block(j - 1, 0, 1, j).transpose() +
                              V.block(j - 1, 0, householder_whole.size(), j) * packed.block(j + k, k, 1, j).transpose();
       }
       double q = householder.squaredNorm();
-      double alpha = -copysign(sqrt(q), packed(k + j, k + j));
+      double alpha = -std::copysign(sqrt(q), packed(k + j, k + j));
       q -= householder[0] * householder[0];
       householder[0] -= alpha;
       q += householder[0] * householder[0];

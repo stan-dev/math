@@ -3,6 +3,7 @@
 
 #ifdef STAN_OPENCL
 
+#include <cmath>
 #include <queue>
 
 #include <stan/math/prim/mat/fun/mrrr.hpp>
@@ -31,6 +32,7 @@ namespace internal {
  */
 void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal, const Eigen::VectorXd& subdiagonal, Eigen::Ref<Eigen::VectorXd> eigenvalues,
              Eigen::Ref<Eigen::MatrixXd> eigenvectors, double min_rel_sep = 1e-1, double max_ele_growth = 2) {
+  using std::copysign;
   double shift_error = 1e-14;
   int n = diagonal.size();
   Eigen::VectorXd high(n), low(n);
