@@ -71,7 +71,16 @@ TEST_F(ErrorHandlingScalar_out_of_range, double) {
   test_throw(y, 5);
 }
 
-class ErrorHandlingScalar_out_of_range0 : public ::testing::Test {
+
+
+
+
+
+const char* function_ = "function";
+const char* msg1_ = "error_message1 ";
+const char* msg2_ = "error_message2 ";
+
+class ErrorHandlingScalar_out_of_range : public ::testing::Test {
  public:
   void SetUp() {}
 
@@ -117,7 +126,7 @@ class ErrorHandlingScalar_out_of_range0 : public ::testing::Test {
   }
 };
 
-TEST_F(ErrorHandlingScalar_out_of_range0, double) {
+TEST_F(ErrorHandlingScalar_out_of_range, double) {
   std::vector<double> y(4);
 
   test_throw(y, 0);
