@@ -304,10 +304,10 @@ class cholesky_opencl : public vari {
    */
   inline void symbolic_rev(matrix_cl& L, matrix_cl& L_adj) {
     L_adj = transpose(L) * L_adj;
-    L_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
+    L_adj.triangular_transpose<triangular_map_CL::LOWER_TO_UPPER>();
     L = transpose(lower_triangular_inverse(L));
     L_adj = L * transpose(L * L_adj);
-    L_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
+    L_adj.triangular_transpose<triangular_map_CL::LOWER_TO_UPPER>();
   }
 
   /**
@@ -374,7 +374,7 @@ class cholesky_opencl : public vari {
 
       R_adj = R_adj - transpose(C_adj) * B - D_adj * R;
       D_adj = diagonal_multiply(D_adj, 0.5);
-      D_adj.zeros<stan::math::TriangularViewCL::Upper>();
+      D_adj.zeros<stan::math::triangular_view_CL::UPPER>();
 
       L_adj.sub_block(R_adj, 0, 0, j, 0, k_j_ind, j);
       L_adj.sub_block(D_adj, 0, 0, j, j, k_j_ind, k_j_ind);

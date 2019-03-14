@@ -13,24 +13,24 @@ TEST(MathMatrixGPU, triangular_transpose_m_exception_pass) {
   stan::math::matrix_cl m3(3, 4);
 
   EXPECT_NO_THROW(
-      m0.triangular_transpose<stan::math::TriangularMapCL::LowerToUpper>());
+      m0.triangular_transpose<stan::math::triangular_map_CL::LOWER_TO_UPPER>());
   EXPECT_NO_THROW(
-      m0.triangular_transpose<stan::math::TriangularMapCL::UpperToLower>());
+      m0.triangular_transpose<stan::math::triangular_map_CL::UPPER_TO_LOWER>());
   EXPECT_NO_THROW(
-      m1.triangular_transpose<stan::math::TriangularMapCL::LowerToUpper>());
+      m1.triangular_transpose<stan::math::triangular_map_CL::LOWER_TO_UPPER>());
   EXPECT_NO_THROW(
-      m1.triangular_transpose<stan::math::TriangularMapCL::UpperToLower>());
+      m1.triangular_transpose<stan::math::triangular_map_CL::UPPER_TO_LOWER>());
   EXPECT_THROW(
-      m2.triangular_transpose<stan::math::TriangularMapCL::LowerToUpper>(),
+      m2.triangular_transpose<stan::math::triangular_map_CL::LOWER_TO_UPPER>(),
       std::invalid_argument);
   EXPECT_THROW(
-      m2.triangular_transpose<stan::math::TriangularMapCL::UpperToLower>(),
+      m2.triangular_transpose<stan::math::triangular_map_CL::UPPER_TO_LOWER>(),
       std::invalid_argument);
   EXPECT_THROW(
-      m3.triangular_transpose<stan::math::TriangularMapCL::LowerToUpper>(),
+      m3.triangular_transpose<stan::math::triangular_map_CL::LOWER_TO_UPPER>(),
       std::invalid_argument);
   EXPECT_THROW(
-      m3.triangular_transpose<stan::math::TriangularMapCL::UpperToLower>(),
+      m3.triangular_transpose<stan::math::triangular_map_CL::UPPER_TO_LOWER>(),
       std::invalid_argument);
 }
 
@@ -43,7 +43,7 @@ TEST(MathMatrixGPU, triangular_transpose_m_pass) {
   stan::math::matrix_cl m11(m0);
 
   EXPECT_NO_THROW(
-      m00.triangular_transpose<stan::math::TriangularMapCL::LowerToUpper>());
+      m00.triangular_transpose<stan::math::triangular_map_CL::LOWER_TO_UPPER>());
   EXPECT_NO_THROW(stan::math::copy(m0_dst, m00));
   EXPECT_EQ(1, m0_dst(0, 0));
   EXPECT_EQ(3, m0_dst(0, 1));
@@ -51,7 +51,7 @@ TEST(MathMatrixGPU, triangular_transpose_m_pass) {
   EXPECT_EQ(4, m0_dst(1, 1));
 
   EXPECT_NO_THROW(
-      m11.triangular_transpose<stan::math::TriangularMapCL::UpperToLower>());
+      m11.triangular_transpose<stan::math::triangular_map_CL::UPPER_TO_LOWER>());
   EXPECT_NO_THROW(stan::math::copy(m0_dst, m11));
   EXPECT_EQ(1, m0_dst(0, 0));
   EXPECT_EQ(2, m0_dst(0, 1));

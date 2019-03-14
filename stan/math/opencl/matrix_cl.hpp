@@ -144,9 +144,9 @@ class matrix_cl {
    *
    * @tparam triangular_view Specifies if zeros are assigned to
    * the entire matrix, lower triangular or upper triangular. The
-   * value must be of type TriangularViewCL
+   * value must be of type triangular_view_CL
    */
-  template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
+  template <triangular_view_CL triangular_view = triangular_view_CL::ENTIRE>
   void zeros() {
     if (size() == 0)
       return;
@@ -170,7 +170,7 @@ class matrix_cl {
    * @throw <code>std::invalid_argument</code> if the matrix is not square.
    *
    */
-  template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
+  template <triangular_map_CL triangular_map = triangular_map_CL::LOWER_TO_UPPER>
   void triangular_transpose() {
     if (size() == 0 || size() == 1) {
       return;
@@ -199,7 +199,7 @@ class matrix_cl {
    * @param nrows the number of rows in the submatrix
    * @param ncols the number of columns in the submatrix
    */
-  template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
+  template <triangular_view_CL triangular_view = triangular_view_CL::ENTIRE>
   void sub_block(const matrix_cl& A, int A_i, int A_j, int this_i, int this_j,
                  int nrows, int ncols) {
     if (nrows == 0 || ncols == 0) {

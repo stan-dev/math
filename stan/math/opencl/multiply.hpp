@@ -27,8 +27,8 @@ namespace opencl {
  *   number of columns in A and rows in B do not match
  */
 
-template <TriangularViewCL triangular_view_A = TriangularViewCL::Entire,
-          TriangularViewCL triangular_view_B = TriangularViewCL::Entire>
+template <triangular_view_CL triangular_view_A = triangular_view_CL::ENTIRE,
+          triangular_view_CL triangular_view_B = triangular_view_CL::ENTIRE>
 inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   check_size_match("multiply ((OpenCL))", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
@@ -50,9 +50,9 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   matrix_cl Apad(Mpad, Kpad);
   matrix_cl Bpad(Kpad, Npad);
   opencl_kernels::zeros(cl::NDRange(Mpad, Kpad), Apad.buffer(), Mpad, Kpad,
-                        TriangularViewCL::Entire);
+                        triangular_view_CL::ENTIRE);
   opencl_kernels::zeros(cl::NDRange(Kpad, Npad), Bpad.buffer(), Kpad, Npad,
-                        TriangularViewCL::Entire);
+                        triangular_view_CL::ENTIRE);
   Apad.sub_block<triangular_view_A>(A, 0, 0, 0, 0, A.rows(), A.cols());
   Bpad.sub_block<triangular_view_B>(B, 0, 0, 0, 0, B.rows(), B.cols());
   int wpt = opencl_kernels::matrix_multiply.make_functor.get_opts().at(

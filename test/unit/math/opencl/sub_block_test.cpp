@@ -49,7 +49,7 @@ TEST(MathMatrixGPU, sub_block_lower_pass) {
 
   stan::math::matrix_cl d11(d1);
   stan::math::matrix_cl d22(d2);
-  d22.sub_block<stan::math::TriangularViewCL::Lower>(d11, 0, 0, 0, 0, 3, 3);
+  d22.sub_block<stan::math::triangular_view_CL::LOWER>(d11, 0, 0, 0, 0, 3, 3);
   stan::math::copy(d2, d22);
   EXPECT_EQ(1, d2(0, 0));
   EXPECT_EQ(15, d2(0, 1));

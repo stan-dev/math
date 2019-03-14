@@ -65,7 +65,7 @@ static const char *sub_block_kernel_code = STRINGIFY(
  * See the docs for \link kernels/sub_block.hpp sub_block() \endlink
  */
 const global_range_kernel<cl::Buffer, cl::Buffer, int, int, int, int, int, int,
-                          int, int, int, int, TriangularViewCL>
+                          int, int, int, int, triangular_view_CL>
     sub_block("sub_block", sub_block_kernel_code);
 
 }  // namespace opencl_kernels

@@ -62,9 +62,9 @@ inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
   matrix_cl inv_padded(A_rows_padded, A_rows_padded);
   matrix_cl inv_mat(A);
   matrix_cl zero_mat(A_rows_padded - A.rows(), A_rows_padded);
-  zero_mat.zeros<stan::math::TriangularViewCL::Entire>();
-  temp.zeros<stan::math::TriangularViewCL::Entire>();
-  inv_padded.zeros<stan::math::TriangularViewCL::Entire>();
+  zero_mat.zeros<stan::math::triangular_view_CL::ENTIRE>();
+  temp.zeros<stan::math::triangular_view_CL::ENTIRE>();
+  inv_padded.zeros<stan::math::triangular_view_CL::ENTIRE>();
 
   int work_per_thread
       = opencl_kernels::inv_lower_tri_multiply.make_functor.get_opts().at(
@@ -89,7 +89,7 @@ inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
   // set the padded part of the matrix and the upper triangular to zeros
   inv_padded.sub_block(zero_mat, 0, 0, inv_mat.rows(), 0, zero_mat.rows(),
                        zero_mat.cols());
-  inv_padded.zeros<stan::math::TriangularViewCL::Upper>();
+  inv_padded.zeros<stan::math::triangular_view_CL::UPPER>();
   if (parts == 1) {
     inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
     return inv_mat;
@@ -126,7 +126,7 @@ inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
     // set the padded part and upper diagonal to zeros
     inv_padded.sub_block(zero_mat, 0, 0, inv_mat.rows(), 0, zero_mat.rows(),
                          zero_mat.cols());
-    inv_padded.zeros<stan::math::TriangularViewCL::Upper>();
+    inv_padded.zeros<stan::math::triangular_view_CL::UPPER>();
   }
   // un-pad and return
   inv_mat.sub_block(inv_padded, 0, 0, 0, 0, A.rows(), A.rows());
