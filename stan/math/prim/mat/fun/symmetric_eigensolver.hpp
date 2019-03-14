@@ -18,24 +18,24 @@ namespace math {
 /**
  * Calculates eigenvalues and eigenvectors of a symmetric matrix.
  * @param A The matrix
- * @param eigenvals[out] Eigenvalues.
- * @param eigenvecs[out] Eigenvectors - one per column.
+ * @param eigenvalues[out] Eigenvalues.
+ * @param eigenvectors[out] Eigenvectors - one per column.
  */
-void symmetric_eigensolver(const Eigen::MatrixXd& A, Eigen::VectorXd& eigenvals, Eigen::MatrixXd& eigenvecs) {
+void symmetric_eigensolver(const Eigen::MatrixXd& A, Eigen::VectorXd& eigenvalues, Eigen::MatrixXd& eigenvectors) {
   Eigen::MatrixXd packed;
 #ifdef STAN_OPENCL
   block_householder_tridiag_cl(A, packed);
 #else
   block_householder_tridiag(A, packed);
 #endif
-  Eigen::VectorXd diag = packed.diagonal();
-  Eigen::VectorXd subdiag = packed.diagonal(1);
+  Eigen::VectorXd diagonal = packed.diagonal();
+  Eigen::VectorXd subdiagonal = packed.diagonal(1);
 #ifdef STAN_OPENCL
-  tridiagonal_eigensolver_cl(diag, subdiag, eigenvals, eigenvecs);
-  block_apply_packed_Q_cl(packed, eigenvecs);
+  tridiagonal_eigensolver_cl(diagonal, subdiagonal, eigenvalues, eigenvectors);
+  block_apply_packed_Q_cl(packed, eigenvectors);
 #else
-  tridiagonal_eigensolver(diag, subdiag, eigenvals, eigenvecs);
-  block_apply_packed_Q(packed, eigenvecs);
+  tridiagonal_eigensolver(diagonal, subdiagonal, eigenvalues, eigenvectors);
+  block_apply_packed_Q(packed, eigenvectors);
 #endif
 }
 

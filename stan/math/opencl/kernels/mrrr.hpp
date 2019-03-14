@@ -20,7 +20,7 @@ const char* eigenvals_bisect_kernel_code = STRINGIFY(
          * @param shift Shift.
          * @return Sturm count.
          */
-        int getSturmCountLdl(__global double* l, const __global double* d, double shift, int n){
+        int get_sturm_count_ldl(__global double* l, const __global double* d, double shift, int n){
           double s = -shift;
           double l_plus;
           double d_plus;
@@ -67,7 +67,7 @@ const char* eigenvals_bisect_kernel_code = STRINGIFY(
 
           while (fabs((high - low) / (high + low)) > eps && fabs(high - low) > min_norm) {
             double mid = (high + low) * 0.5;
-            int count = getSturmCountLdl(l, d, mid, n-1);
+            int count = get_sturm_count_ldl(l, d, mid, n-1);
             if (count > i) {
               low = mid;
             }
@@ -133,7 +133,6 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
           *b=c;
         }
 
-
         /**
          * Finds good shift and shifts a LDL decomposition so as to keep element growth low. L * D * L^T - shift * I = L2 * D2 * L2^T.
          * @param l Subdiagonal of L.
@@ -149,7 +148,7 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
          * @param[out] shift Shift.
          * @param[out] min_element_growth Element growth achieved with resulting shift.
          */
-        void findShift(const __global double* l, const __global double* d, double low, double high, double max_ele_growth, double max_shift,
+        void find_shift(const __global double* l, const __global double* d, double low, double high, double max_ele_growth, double max_shift,
                        __global double** l2, __global double** d2, __global double** l3, __global double** d3, double* shift, double* min_element_growth
                        ) {
           double shifts[11];
@@ -188,7 +187,7 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
          * @param shift Shift.
          * @return Sturm count.
          */
-        int getSturmCountLdl(const __global double* l, const __global double* d, double shift){
+        int get_sturm_count_ldl(const __global double* l, const __global double* d, double shift){
           int gid = get_global_id(0);
           int n = get_global_size(0);
           int m = n - 1;
@@ -217,12 +216,12 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
          * @param low[in,out] Low bound on the eigenvalue.
          * @param high[in,out] High bound on the eigenvalue.
          */
-        void eigenvalBisectRefine(const __global double* l, const __global double* d, double* low, double* high) {
+        void eigenval_bisect_refine(const __global double* l, const __global double* d, double* low, double* high) {
           int i=get_global_id(0);
           double eps = 3e-16;
           while (fabs((*high - *low) / (*high + *low)) > eps && fabs(*high - *low) > DBL_MIN) { // second term is for the case where the eigenvalue is 0 and division yields NaN
             double mid = (*high + *low) * 0.5;
-            if (getSturmCountLdl(l, d, mid) > i) {
+            if (get_sturm_count_ldl(l, d, mid) > i) {
               *low = mid;
             }
             else {
@@ -325,41 +324,41 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
           * @param u_minus Superdiagonal of the U-.
           * @param subdiag Subdiagonal of T
           * @param twist_idx Twist index.
-          * @param[out] eigenvecs Matrix in which to store resulting vectors.
+          * @param[out] eigenvectors Matrix in which to store resulting vectors.
           */
-        void calculateEigenvector(const __global double* l_plus, const __global double* u_minus, const __global double* subdiag, int twist_idx, __global double* eigenvecs) {
+        void calculate_eigenvector(const __global double* l_plus, const __global double* u_minus, const __global double* subdiag, int twist_idx, __global double* eigenvectors) {
           int n = get_global_size(0);
           int gid = get_global_id(0);
           int i = gid;
-          eigenvecs[twist_idx*n+gid] = 1;
+          eigenvectors[twist_idx*n+gid] = 1;
           double norm=1;
           for (int j = twist_idx + 1; j < n; j++) {
-            if (eigenvecs[(j - 1)*n+gid] != 0) {
-              eigenvecs[j*n+gid] = -u_minus[(j - 1)*n+gid] * eigenvecs[(j - 1)*n+gid];
+            if (eigenvectors[(j - 1)*n+gid] != 0) {
+              eigenvectors[j*n+gid] = -u_minus[(j - 1)*n+gid] * eigenvectors[(j - 1)*n+gid];
             }
             else {
-              eigenvecs[j*n+gid] = -subdiag[j - 2] * eigenvecs[(j - 2)*n+gid] / subdiag[j - 1];
-              if (isnan(eigenvecs[j*n+gid]) || isinf(eigenvecs[j*n+gid])) { //subdiag[j - 1]==0
-                eigenvecs[j*n+gid] = 0;
+              eigenvectors[j*n+gid] = -subdiag[j - 2] * eigenvectors[(j - 2)*n+gid] / subdiag[j - 1];
+              if (isnan(eigenvectors[j*n+gid]) || isinf(eigenvectors[j*n+gid])) { //subdiag[j - 1]==0
+                eigenvectors[j*n+gid] = 0;
               }
             }
-            norm += eigenvecs[j*n+gid] * eigenvecs[j*n+gid];
+            norm += eigenvectors[j*n+gid] * eigenvectors[j*n+gid];
           }
           for (int j = twist_idx - 1; j >= 0; j--) {
-            if (eigenvecs[(j + 1)*n+gid] != 0) {
-              eigenvecs[j*n+gid] = -l_plus[j*n+gid] * eigenvecs[(j + 1)*n+gid];
+            if (eigenvectors[(j + 1)*n+gid] != 0) {
+              eigenvectors[j*n+gid] = -l_plus[j*n+gid] * eigenvectors[(j + 1)*n+gid];
             }
             else {
-              eigenvecs[j*n+gid] = -subdiag[j + 1] * eigenvecs[(j + 2)*n+gid] / subdiag[j];
-              if (isnan(eigenvecs[j*n+gid]) || isinf(eigenvecs[j*n+gid])) { //subdiag[j]==0
-                eigenvecs[j*n+gid] = 0;
+              eigenvectors[j*n+gid] = -subdiag[j + 1] * eigenvectors[(j + 2)*n+gid] / subdiag[j];
+              if (isnan(eigenvectors[j*n+gid]) || isinf(eigenvectors[j*n+gid])) { //subdiag[j]==0
+                eigenvectors[j*n+gid] = 0;
               }
             }
-            norm += eigenvecs[j*n+gid] * eigenvecs[j*n+gid];
+            norm += eigenvectors[j*n+gid] * eigenvectors[j*n+gid];
           }
           norm=1/sqrt(norm);
           for(int j=0;j<n;j++){
-            eigenvecs[j*n+gid]*=norm;
+            eigenvectors[j*n+gid]*=norm;
           }
         }
 
@@ -376,13 +375,13 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
          * @param temp1 Temporary array of the same size as d
          * @param temp2 Temporary array of the same size as d
          * @param temp3 Temporary array of the same size as d
-         * @param eigenvecs Each row is one eigenvector.
+         * @param eigenvectors Each row is one eigenvector.
          * @param min_rel_sep Minimal relative separation of eigenvalues before computing eigenvectors.
          * @param max_ele_growth Maximal desired element growth of LDL decompositions.
          */
         __kernel void get_eigenvectors(const __global double* subdiag, const __global double* l, const __global double* d,
                 const __global double* low_glob, const __global double* high_glob, const __global double* min_gap_glob,
-                __global double* l2, __global double* d2, __global double* temp1, __global double* temp2, __global double* temp3, __global double* eigenvecs,
+                __global double* l2, __global double* d2, __global double* temp1, __global double* temp2, __global double* temp3, __global double* eigenvectors,
                 double min_rel_sep, double max_ele_growth) {
           const int gid = get_global_id(0);
           const int n = get_global_size(0);
@@ -399,10 +398,10 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
             double max_shift = min_gap / min_rel_sep;
             double shift;
             double min_element_growth;
-            findShift(l, d, low, high, max_ele_growth, max_shift, &l2, &d2, &temp1, &temp2, &shift, &min_element_growth);
+            find_shift(l, d, low, high, max_ele_growth, max_shift, &l2, &d2, &temp1, &temp2, &shift, &min_element_growth);
             low = low * (1 - copysign(shift_error, low)) - shift;
             high = high * (1 + copysign(shift_error, high)) - shift;
-            eigenvalBisectRefine(l2, d2, &low, &high);
+            eigenval_bisect_refine(l2, d2, &low, &high);
             l_ptr = l2;
             d_ptr = d2;
           }
@@ -413,13 +412,13 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
           __global double* l_plus = temp1;
           __global double* u_minus = temp2;
           int twist_idx = get_twisted_factorization(l_ptr, d_ptr, (low + high) * 0.5, l_plus, u_minus, temp3);
-          calculateEigenvector(l_plus, u_minus, subdiag, twist_idx, eigenvecs);
+          calculate_eigenvector(l_plus, u_minus, subdiag, twist_idx, eigenvectors);
         }
 // \cond
 );
 // \endcond
 
-const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, double, double, int >
+const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, double, double, int>
         eigenvals_bisect("eigenvals_bisect", eigenvals_bisect_kernel_code);
 
 const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, cl::Buffer, double, double>

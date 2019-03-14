@@ -56,9 +56,9 @@ void block_householder_tridiag_cl(const Eigen::MatrixXd& A, Eigen::MatrixXd& pac
     }
     matrix_cl U_gpu(V_gpu.rows() - actual_r + 1, actual_r);
     U_gpu.sub_block(packed_gpu, k + actual_r, k, 0, 0, A.rows() - k - actual_r, actual_r);
-    matrix_cl Vb_gpu(V_gpu.rows() - actual_r + 1, actual_r);
-    Vb_gpu.sub_block(V_gpu, actual_r - 1, 0, 0, 0, V_gpu.rows() - actual_r + 1, actual_r);
-    matrix_cl partial_update_gpu = U_gpu * transpose(Vb_gpu);
+    matrix_cl V_block_gpu(V_gpu.rows() - actual_r + 1, actual_r);
+    V_block_gpu.sub_block(V_gpu, actual_r - 1, 0, 0, 0, V_gpu.rows() - actual_r + 1, actual_r);
+    matrix_cl partial_update_gpu = U_gpu * transpose(V_block_gpu);
     try{
       opencl_kernels::subtract_twice(
               cl::NDRange(partial_update_gpu.rows(), partial_update_gpu.cols()),
@@ -82,14 +82,14 @@ void block_householder_tridiag_cl(const Eigen::MatrixXd& A, Eigen::MatrixXd& pac
  */
 void block_apply_packed_Q_cl(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 200) {
   matrix_cl A_gpu(A);
-  Eigen::MatrixXd scratchSpace(A.rows(), r);
+  Eigen::MatrixXd scratch_space(A.rows(), r);
   for (int k = (packed.rows() - 3) / r * r; k >= 0; k -= r) {
     int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
     Eigen::MatrixXd W(packed.rows() - k - 1, actual_r);
     W.col(0) = packed.col(k).tail(W.rows());
     for (size_t j = 1; j < actual_r; j++) {
-      scratchSpace.col(0).head(j).noalias() = packed.block(k + j + 1, k, packed.rows() - k - j - 1, j).transpose() * packed.col(j + k).tail(packed.rows() - k - j - 1);
-      W.col(j).noalias() = -W.leftCols(j) * scratchSpace.col(0).head(j);
+      scratch_space.col(0).head(j).noalias() = packed.block(k + j + 1, k, packed.rows() - k - j - 1, j).transpose() * packed.col(j + k).tail(packed.rows() - k - j - 1);
+      W.col(j).noalias() = -W.leftCols(j) * scratch_space.col(0).head(j);
       W.col(j).tail(W.rows() - j) += packed.col(j + k).tail(packed.rows() - k - j - 1);
     }
     Eigen::MatrixXd packed_block_transpose_triang = packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>();

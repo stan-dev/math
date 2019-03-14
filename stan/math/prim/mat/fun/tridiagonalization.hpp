@@ -63,18 +63,18 @@ void block_householder_tridiag(const Eigen::MatrixXd& A, Eigen::MatrixXd& packed
  */
 void block_apply_packed_Q(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 100) {
   //if input A==Identity, constructs Q
-  Eigen::MatrixXd scratchSpace(A.rows(), r);
+  Eigen::MatrixXd scratch_space(A.rows(), r);
   for (int k = (packed.rows() - 3) / r * r; k >= 0; k -= r) {
     int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
     Eigen::MatrixXd W(packed.rows() - k - 1, actual_r);
     W.col(0) = packed.col(k).tail(W.rows());
     for (size_t j = 1; j < actual_r; j++) {
-      scratchSpace.col(0).head(j).noalias() = packed.block(k + j + 1, k, packed.rows() - k - j - 1, j).transpose() * packed.col(j + k).tail(packed.rows() - k - j - 1);
-      W.col(j).noalias() = -W.leftCols(j) * scratchSpace.col(0).head(j);
+      scratch_space.col(0).head(j).noalias() = packed.block(k + j + 1, k, packed.rows() - k - j - 1, j).transpose() * packed.col(j + k).tail(packed.rows() - k - j - 1);
+      W.col(j).noalias() = -W.leftCols(j) * scratch_space.col(0).head(j);
       W.col(j).tail(W.rows() - j) += packed.col(j + k).tail(packed.rows() - k - j - 1);
     }
-    scratchSpace.transpose().bottomRows(actual_r).noalias() = packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>() * A.bottomRows(A.rows() - k - 1);
-    A.bottomRows(A.cols() - k - 1).noalias() -= W * scratchSpace.transpose().bottomRows(actual_r);
+    scratch_space.transpose().bottomRows(actual_r).noalias() = packed.block(k + 1, k, packed.rows() - k - 1, actual_r).transpose().triangularView<Eigen::Upper>() * A.bottomRows(A.rows() - k - 1);
+    A.bottomRows(A.cols() - k - 1).noalias() -= W * scratch_space.transpose().bottomRows(actual_r);
   }
 }
 
