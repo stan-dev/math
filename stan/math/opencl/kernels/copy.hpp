@@ -23,11 +23,23 @@ static const char *copy_kernel_code = STRINGIFY(
      *  This kernel uses the helper macros available in helpers.cl.
      */
     __kernel void copy(__global double *A, __global double *B,
-                       unsigned int rows, unsigned int cols) {
+                       unsigned int rows, unsigned int cols,
+                       triangular_view tri_view) {
       int i = get_global_id(0);
       int j = get_global_id(1);
       if (i < rows && j < cols) {
-        B(i, j) = A(i, j);
+        if (tri_view == LOWER && j <= i) {
+          B(i, j) = A(i, j);
+        } else if (tri_view == LOWER) {
+          B(i, j) = 0;
+        } else if (tri_view == UPPER && j >= i) {
+          B(i, j) = A(i, j);
+        } else if (tri_view == UPPER) {
+          B(i, j) = 0;
+        } else {
+          // tri_view == ENTIRE
+          B(i, j) = A(i, j);
+        }
       }
     }
     // \cond
@@ -37,7 +49,8 @@ static const char *copy_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/copy.hpp copy() \endlink
  */
-const global_range_kernel<cl::Buffer, cl::Buffer, int, int> copy(
+const global_range_kernel<cl::Buffer, cl::Buffer, int, int,
+                                     triangular_view_CL> copy(
     "copy", copy_kernel_code);
 
 }  // namespace opencl_kernels

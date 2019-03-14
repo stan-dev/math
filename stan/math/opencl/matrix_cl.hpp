@@ -62,7 +62,8 @@ class matrix_cl {
       oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size());
 
       opencl_kernels::copy(cl::NDRange(rows_, cols_), A.buffer(),
-                           this->buffer(), rows_, cols_);
+                           this->buffer(), rows_, cols_,
+                           triangular_view_CL::ENTIRE);
     } catch (const cl::Error& e) {
       check_opencl_error("copy (OpenCL)->(OpenCL)", e);
     }

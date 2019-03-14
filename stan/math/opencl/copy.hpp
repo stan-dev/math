@@ -28,7 +28,7 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
-template <int R, int C>
+template <int R, int C, triangular_view_CL triangular_view = triangular_view_CL::ENTIRE>
 void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
   check_size_match("copy (Eigen -> (OpenCL))", "src.rows()", src.rows(),
                    "dst.rows()", dst.rows());
@@ -100,6 +100,7 @@ void copy(Eigen::Matrix<double, R, C>& dst, const matrix_cl& src) {
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
+template <triangular_view_CL triangular_view = triangular_view_CL::ENTIRE>
 inline void copy(matrix_cl& dst, const matrix_cl& src) {
   check_size_match("copy ((OpenCL) -> (OpenCL))", "src.rows()", src.rows(),
                    "dst.rows()", dst.rows());
@@ -113,7 +114,8 @@ inline void copy(matrix_cl& dst, const matrix_cl& src) {
        *  for explanation
        */
       opencl_kernels::copy(cl::NDRange(dst.rows(), dst.cols()), src.buffer(),
-                           dst.buffer(), dst.rows(), dst.cols());
+                           dst.buffer(), dst.rows(), dst.cols(),
+                           triangular_view);
     } catch (const cl::Error& e) {
       std::cout << e.err() << std::endl;
       check_opencl_error("copy (OpenCL)->(OpenCL)", e);
