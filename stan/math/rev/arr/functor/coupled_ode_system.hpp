@@ -38,14 +38,23 @@ namespace math {
  * <p>The final M states correspond to the sensitivities with respect
  * to the second base system equation, etc.
  *
- * <p>Note: For efficiency reasons we place a deep copy of the theta_
- * parameter vector on the nochain var stack as theta_nochain_. Doing
- * so separates the parameter vector from it's own operands and allows
- * to use the same parameter vector instance as input for the ODE RHS
- * functor f_. Since the jacobian of the ODE RHS is constructed in a
- * nested AD operation we have to reset the adjoints of the
- * theta_nochain_ variables with an additional for loop after
- * set_zero_all_adjoints_nested().
+ * <p>Note: For efficiency reasons the parameter vector is used as
+ * part of the nested autodiff performed when evaluating the Jacobian
+ * wrt to the parameters of the ODE RHS. This links the nested
+ * autodiff with the outer global autodiff stack. At construction of
+ * the coupled_ode_system the adjoints of the parameter vector are
+ * saved. Upon destruction of the instance, these adjoints are
+ * restored to their original values at instantiation of the
+ * class. Throughout the life-time of the coupled_ode_system the
+ * adjoints of the parameter vector, which is part of the surrounding
+ * global autodiff stack, are used and modified. Thus, concurrent
+ * access to the outer autodiff stack is unsafe while a
+ * coupled_ode_system instance is in use.
+ *
+ * Finally, since the parameter vector is part of the outer autodiff
+ * stack, the set_zero_adjoint_nested() call does not set these
+ * adjoints to zero which is why these are zeroed in an extra loop
+ * following the set_zero_adjoint_nested() call.
  *
  * @tparam F type of functor for the base ode system.
  */
@@ -431,9 +440,23 @@ struct coupled_ode_system<F, var, double> {
  * + M) states. (derivatives of each state with respect to each
  * initial value and each theta)
  *
- * <p>Note: Please refer to the efficiency note of the
- * coupled_ode_system<F, double, var> partial template specialization
- * for the rationale behind theta_nochain_.
+ * <p>Note: For efficiency reasons the parameter vector is used as
+ * part of the nested autodiff performed when evaluating the Jacobian
+ * wrt to the parameters of the ODE RHS. This links the nested
+ * autodiff with the outer global autodiff stack. At construction of
+ * the coupled_ode_system the adjoints of the parameter vector are
+ * saved. Upon destruction of the instance, these adjoints are
+ * restored to their original values at instantiation of the
+ * class. Throughout the life-time of the coupled_ode_system the
+ * adjoints of the parameter vector, which is part of the surrounding
+ * global autodiff stack, are used and modified. Thus, concurrent
+ * access to the outer autodiff stack is unsafe while a
+ * coupled_ode_system instance is in use.
+ *
+ * Finally, since the parameter vector is part of the outer autodiff
+ * stack, the set_zero_adjoint_nested() call does not set these
+ * adjoints to zero which is why these are zeroed in an extra loop
+ * following the set_zero_adjoint_nested() call.
  *
  * @tparam F the functor for the base ode system
  */
