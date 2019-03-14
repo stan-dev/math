@@ -32,6 +32,7 @@ static const char *sub_block_kernel_code = STRINGIFY(
      * @param src_rows The number of rows in the destination matrix.
      * @param dst_cols The number of cols in the destination matrix.
      * @param dst_rows The number of rows in the destination matrix.
+     * @param triangular_view the triangularity of src (lower, upper or none)
      * @note Code is a <code>const char*</code> held in
      * <code>sub_block_kernel_code.</code>
      * Used in math/opencl/copy_submatrix_opencl.hpp.
@@ -43,13 +44,17 @@ static const char *sub_block_kernel_code = STRINGIFY(
         unsigned int src_offset_j, unsigned int dst_offset_i,
         unsigned int dst_offset_j, unsigned int size_i, unsigned int size_j,
         unsigned int src_rows, unsigned int src_cols, unsigned int dst_rows,
-        unsigned int dst_cols) {
+        unsigned int dst_cols, unsigned int triangular_view) {
       int i = get_global_id(0);
       int j = get_global_id(1);
       if ((i + src_offset_i) < src_rows && (j + src_offset_j) < src_cols
           && (i + dst_offset_i) < dst_rows && (j + dst_offset_j) < dst_cols) {
-        dst((dst_offset_i + i), (dst_offset_j + j))
-            = src((src_offset_i + i), (src_offset_j + j));
+        if ((triangular_view == LOWER && i >= j)
+            || (triangular_view == UPPER && i <= j)
+            || triangular_view == ENTIRE) {
+          dst((dst_offset_i + i), (dst_offset_j + j))
+              = src((src_offset_i + i), (src_offset_j + j));
+        }
       }
     }
     // \cond
@@ -60,7 +65,7 @@ static const char *sub_block_kernel_code = STRINGIFY(
  * See the docs for \link kernels/sub_block.hpp sub_block() \endlink
  */
 const global_range_kernel<cl::Buffer, cl::Buffer, int, int, int, int, int, int,
-                          int, int, int, int>
+                          int, int, int, int, TriangularViewCL>
     sub_block("sub_block", sub_block_kernel_code);
 
 }  // namespace opencl_kernels
