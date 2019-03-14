@@ -1,4 +1,5 @@
-
+#include <stan/math/prim.hpp>
+#include <gtest/gtest.h>
 
 TEST(ProbSkewNormal, cdf_log_matches_lcdf) {
   double y = 0.8;
@@ -6,8 +7,6 @@ TEST(ProbSkewNormal, cdf_log_matches_lcdf) {
   double sigma = 2.3;
   double alpha = -3;
 
-#include <stan/math/prim.hpp>
-#include <gtest/gtest.h>
   EXPECT_FLOAT_EQ((stan::math::skew_normal_lcdf(y, mu, sigma, alpha)),
                   (stan::math::skew_normal_cdf_log(y, mu, sigma, alpha)));
   EXPECT_FLOAT_EQ(
