@@ -8,6 +8,7 @@
 
 namespace stan {
 namespace math {
+namespace internal {
 
 const double perturbation_range = 1e-15;
 
@@ -243,7 +244,8 @@ const int BISECT_K = 8;
  * @param n_valid How many Sturm counts to actually compute.
  * @return Array of Sturm counts of size BISECT_K. First `n_valid` are actual results.
  */
-Eigen::Array<int, BISECT_K, 1> get_sturm_count_T_vec(const Eigen::Ref<const Eigen::VectorXd> diagonal, const Eigen::VectorXd& subdiagonal_squared, Eigen::Array<double, BISECT_K, 1>& shifts, int n_valid) {
+Eigen::Array<int, BISECT_K, 1>
+get_sturm_count_T_vec(const Eigen::Ref<const Eigen::VectorXd> diagonal, const Eigen::VectorXd& subdiagonal_squared, Eigen::Array<double, BISECT_K, 1>& shifts, int n_valid) {
   Eigen::Array<double, BISECT_K, 1> d;
   d.head(n_valid) = diagonal[0] - shifts.head(n_valid);
   Eigen::Array<int, BISECT_K, 1> counts;
@@ -368,7 +370,7 @@ void calculate_eigenvector(const Eigen::VectorXd& l_plus, const Eigen::VectorXd&
       }
     }
   }
-  vec *= 1./vec.norm();
+  vec *= 1. / vec.norm();
 }
 
 /**
@@ -426,7 +428,8 @@ void find_shift(const Eigen::VectorXd& l, const Eigen::VectorXd& d, double low, 
  * @param max_ele_growth Maximum desired element growth.
  * @return
  */
-double find_initial_shift(const Eigen::Ref<const Eigen::VectorXd> diagonal, const Eigen::Ref<const Eigen::VectorXd> subdiagonal, Eigen::VectorXd& l0, Eigen::VectorXd& d0, double min_eigval, double max_eigval,
+double find_initial_shift(const Eigen::Ref<const Eigen::VectorXd> diagonal, const Eigen::Ref<const Eigen::VectorXd> subdiagonal, Eigen::VectorXd& l0, Eigen::VectorXd& d0, double min_eigval,
+                          double max_eigval,
                           double max_ele_growth) {
   double shift = 0;
   if (min_eigval > 0) {
@@ -464,7 +467,7 @@ struct mrrr_task {
  * @param max_ele_growth Maximal desired element growth of LDL decompositions.
  */
 void mrrr(const Eigen::Ref<const Eigen::VectorXd> diagonal, const Eigen::Ref<const Eigen::VectorXd> subdiagonal, Eigen::Ref<Eigen::VectorXd> eigenvalues,
-           Eigen::Ref<Eigen::MatrixXd> eigenvectors, double min_rel_sep = 1e-1, double max_ele_growth = 2) {
+          Eigen::Ref<Eigen::MatrixXd> eigenvectors, double min_rel_sep = 1e-1, double max_ele_growth = 2) {
   double shift_error = 1e-14;
   int n = diagonal.size();
   Eigen::VectorXd high(n), low(n);
@@ -531,21 +534,21 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diagonal, const Eigen::Ref<con
         double low_gap = i == block.start ? std::numeric_limits<double>::infinity() : low[i - 1] - high[i];
         double high_gap = i == block.end - 1 ? std::numeric_limits<double>::infinity() : low[i] - high[i + 1];
         double min_gap = std::min(low_gap, high_gap);
-        Eigen::VectorXd *l_ptr, *d_ptr;
-        if(!(std::fabs(min_gap / ((high[i] + low[i]) * 0.5)) > min_rel_sep)){
-          if (!(std::fabs(min_gap / ((high[i] + low[i]) * 0.5 - shift)) > min_rel_sep && min_element_growth < max_ele_growth)){
+        Eigen::VectorXd* l_ptr, * d_ptr;
+        if (!(std::fabs(min_gap / ((high[i] + low[i]) * 0.5)) > min_rel_sep)) {
+          if (!(std::fabs(min_gap / ((high[i] + low[i]) * 0.5 - shift)) > min_rel_sep && min_element_growth < max_ele_growth)) {
             double max_shift = min_gap / min_rel_sep;
             find_shift(block.l, block.d, low[i], high[i], max_ele_growth, max_shift, l2, d2, shift, min_element_growth);
           }
           low[i] = low[i] * (1 - copysign(shift_error, low[i])) - shift;
           high[i] = high[i] * (1 + copysign(shift_error, high[i])) - shift;
           eigenval_bisect_refine(l2, d2, low[i], high[i], i);
-          l_ptr=&l2;
-          d_ptr=&d2;
+          l_ptr = &l2;
+          d_ptr = &d2;
         }
-        else{
-          l_ptr=&block.l;
-          d_ptr=&block.d;
+        else {
+          l_ptr = &block.l;
+          d_ptr = &block.d;
         }
         twist_idx = get_twisted_factorization(*l_ptr, *d_ptr, (low[i] + high[i]) * 0.5, l_plus, u_minus);
         calculate_eigenvector(l_plus, u_minus, subdiagonal, i, twist_idx, eigenvectors);
@@ -578,9 +581,9 @@ void tridiagonal_eigensolver(const Eigen::VectorXd& diagonal, const Eigen::Vecto
       }
       else {
         mrrr(diagonal.segment(last, i + 1 - last),
-                 subdiagonal.segment(last, i - last),
-                 eigenvalues.segment(last, i + 1 - last),
-                 eigenvectors.block(last, last, i + 1 - last, i + 1 - last));
+             subdiagonal.segment(last, i - last),
+             eigenvalues.segment(last, i + 1 - last),
+             eigenvectors.block(last, last, i + 1 - last, i + 1 - last));
       }
 
       last = i + 1;
@@ -592,12 +595,13 @@ void tridiagonal_eigensolver(const Eigen::VectorXd& diagonal, const Eigen::Vecto
   }
   else {
     mrrr(diagonal.segment(last, n - last),
-             subdiagonal.segment(last, subdiagonal.size() - last),
-             eigenvalues.segment(last, n - last),
-             eigenvectors.block(last, last, n - last, n - last));
+         subdiagonal.segment(last, subdiagonal.size() - last),
+         eigenvalues.segment(last, n - last),
+         eigenvectors.block(last, last, n - last, n - last));
   }
 }
 
+}
 }
 }
 

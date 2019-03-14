@@ -18,6 +18,7 @@
 
 namespace stan {
 namespace math {
+namespace internal {
 
 /**
  * Calculates eigenvalues and eigenvectors of a (preferrably irreducible) tridiagonal matrix T using MRRR algorithm.
@@ -65,7 +66,7 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal, const Eigen::Vect
   block_queue.push(mrrr_task{0, n, shift0, std::move(l), std::move(d), 0});
   l.resize(n - 1); //after move out
   d.resize(n);
-  Eigen::MatrixXd l_big(n-1,n), d_big(n,n);
+  Eigen::MatrixXd l_big(n - 1, n), d_big(n, n);
   Eigen::VectorXd min_gap_big(n);
   while (!block_queue.empty()) {
     mrrr_task block = block_queue.front();
@@ -103,7 +104,7 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal, const Eigen::Vect
         double low_gap = i == block.start ? std::numeric_limits<double>::infinity() : low[i - 1] - high[i];
         double high_gap = i == block.end - 1 ? std::numeric_limits<double>::infinity() : low[i] - high[i + 1];
         double min_gap = std::min(low_gap, high_gap);
-        min_gap_big[i]=min_gap;
+        min_gap_big[i] = min_gap;
         l_big.col(i) = block.l;
         d_big.col(i) = block.d;
       }
@@ -114,29 +115,29 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal, const Eigen::Vect
   matrix_cl l_big_t_gpu = transpose(l_big_gpu);
   matrix_cl d_big_gpu(d_big);
   matrix_cl d_big_t_gpu = transpose(d_big_gpu);
-  copy(low_gpu,low);
+  copy(low_gpu, low);
   copy(high_gpu, high);
   matrix_cl min_gap_gpu(min_gap_big);
 
-  matrix_cl temp1(n,n);
-  matrix_cl temp2(n,n);
-  matrix_cl temp3(n,n);
-  matrix_cl temp4(n,n);
-  matrix_cl temp5(n,n);
-  matrix_cl eigenvectors_t_gpu(n,n);
+  matrix_cl temp1(n, n);
+  matrix_cl temp2(n, n);
+  matrix_cl temp3(n, n);
+  matrix_cl temp4(n, n);
+  matrix_cl temp5(n, n);
+  matrix_cl eigenvectors_t_gpu(n, n);
   try {
     opencl_kernels::get_eigenvectors(
             cl::NDRange(n),
             subdiagonal_gpu.buffer(), l_big_t_gpu.buffer(), d_big_t_gpu.buffer(),
             low_gpu.buffer(), high_gpu.buffer(), min_gap_gpu.buffer(),
-            temp1.buffer(),temp2.buffer(),temp3.buffer(),temp4.buffer(),temp5.buffer(),
+            temp1.buffer(), temp2.buffer(), temp3.buffer(), temp4.buffer(), temp5.buffer(),
             eigenvectors_t_gpu.buffer(), min_rel_sep, max_ele_growth);
   }
   catch (cl::Error& e) {
     check_opencl_error("block_apply_packed_Q_cl3", e);
   }
   matrix_cl eigenvectors_gpu = transpose(eigenvectors_t_gpu);
-  Eigen::MatrixXd eigenvectors_tmp(n,n);
+  Eigen::MatrixXd eigenvectors_tmp(n, n);
   copy(eigenvectors_tmp, eigenvectors_gpu);
   eigenvectors = eigenvectors_tmp;
 }
@@ -185,6 +186,7 @@ void tridiagonal_eigensolver_cl(const Eigen::VectorXd& diagonal, const Eigen::Ve
   }
 }
 
+}
 }
 }
 

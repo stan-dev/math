@@ -7,7 +7,7 @@ TEST(MathMatrix, tridiag_eigensolver_trivial) {
   subdiag << 0,0;
 
   Eigen::MatrixXd eigenvecs(3,3);
-  stan::math::tridiagonal_eigensolver(diag, subdiag, eigenvals, eigenvecs);
+  stan::math::internal::tridiagonal_eigensolver(diag, subdiag, eigenvals, eigenvecs);
   EXPECT_TRUE(eigenvals.isApprox(diag));
   EXPECT_TRUE(eigenvecs.isApprox(Eigen::MatrixXd::Identity(3,3)));
 }
@@ -21,7 +21,7 @@ TEST(MathMatrix, tridiag_eigensolver_small) {
 
   Eigen::VectorXd eigenvals;
   Eigen::MatrixXd eigenvecs;
-  stan::math::tridiagonal_eigensolver(diag, subdiag, eigenvals, eigenvecs);
+  stan::math::internal::tridiagonal_eigensolver(diag, subdiag, eigenvals, eigenvecs);
 
   Eigen::MatrixXd t=Eigen::MatrixXd::Constant(size, size, 0);
   t.diagonal()=diag;
@@ -44,7 +44,7 @@ TEST(MathMatrix, tridiag_eigensolver_large) {
 
   Eigen::VectorXd eigenvals;
   Eigen::MatrixXd eigenvecs;
-  stan::math::tridiagonal_eigensolver(diag, subdiag, eigenvals, eigenvecs);
+  stan::math::internal::tridiagonal_eigensolver(diag, subdiag, eigenvals, eigenvecs);
 
   Eigen::MatrixXd t=Eigen::MatrixXd::Constant(size, size, 0);
   t.diagonal()=diag;

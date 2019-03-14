@@ -24,18 +24,18 @@ namespace math {
 void symmetric_eigensolver(const Eigen::MatrixXd& A, Eigen::VectorXd& eigenvalues, Eigen::MatrixXd& eigenvectors) {
   Eigen::MatrixXd packed;
 #ifdef STAN_OPENCL
-  block_householder_tridiag_cl(A, packed);
+  internal::block_householder_tridiag_cl(A, packed);
 #else
-  block_householder_tridiag(A, packed);
+  internal::block_householder_tridiag(A, packed);
 #endif
   Eigen::VectorXd diagonal = packed.diagonal();
   Eigen::VectorXd subdiagonal = packed.diagonal(1);
 #ifdef STAN_OPENCL
-  tridiagonal_eigensolver_cl(diagonal, subdiagonal, eigenvalues, eigenvectors);
-  block_apply_packed_Q_cl(packed, eigenvectors);
+  internal::tridiagonal_eigensolver_cl(diagonal, subdiagonal, eigenvalues, eigenvectors);
+  internal::block_apply_packed_Q_cl(packed, eigenvectors);
 #else
-  tridiagonal_eigensolver(diagonal, subdiagonal, eigenvalues, eigenvectors);
-  block_apply_packed_Q(packed, eigenvectors);
+  internal::tridiagonal_eigensolver(diagonal, subdiagonal, eigenvalues, eigenvectors);
+  internal::block_apply_packed_Q(packed, eigenvectors);
 #endif
 }
 
