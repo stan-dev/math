@@ -18,6 +18,9 @@
 #include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 
+#include <boost/math/special_functions/bessel.hpp>
+
+
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <boost/math/quadrature/tanh_sinh.hpp>
 #include <boost/math/quadrature/exp_sinh.hpp>
@@ -32,10 +35,13 @@
 // 
 // http://mathworld.wolfram.com/ModifiedBesselFunctionoftheSecondKind.html
 
+// Assuming all v's positive (flipped at the top-level call)
+
+
 namespace stan {
 namespace math {
 
-namespace {
+namespace besselk_internal {
 
 template <typename T_v, typename T_z, typename T_u>
 class inner_integral_rothwell {
@@ -51,21 +57,26 @@ class inner_integral_rothwell {
   inline T_Ret operator()(const T_u &u) const {
     using std::pow;
     using std::exp;
-    using std::fabs;
 
-    auto v_ = fabs(v);
-    auto v_mhalf = v_ - 0.5;
-    auto neg2v_m1 = -2 * v_ - 1;
-    auto beta = 16.0 / (2 * v_ + 1);
+    auto v_mhalf = v - 0.5;
+    auto neg2v_m1 = -2 * v - 1;
+    auto beta = 16.0 / (2 * v + 1);
 
     T_Ret value;
     T_Ret uB = pow(u, beta);
     T_Ret first
         = beta * exp(-uB) * pow(2 * z + uB, v_mhalf) * boost::math::pow<7>(u);
     T_Ret second = exp(-1.0 / u);
-    if (second > 0)
-      second = second * pow(u, neg2v_m1) * pow(2 * z * u + 1, v_mhalf);
+    if (second > 0) {
+      second = second * pow(u, neg2v_m1);
+      if(is_inf(second)) {
+        second = exp(-1.0 / u + neg2v_m1 * log(u));
+      }
+      second = second * pow(2 * z * u + 1, v_mhalf);
+    }
     value = first + second;
+
+    //std::cout << std::setprecision(22) << "U: " << u  << " val: " << value << std::endl;
     
     return value;
   }
@@ -92,12 +103,10 @@ class inner_integral_mathematica {
 
   inline T_Ret operator()(const T_u &u) const {
     using std::pow;
-    using std::fabs;
     using std::cos;
 
-    auto v_ = fabs(v);
-
-    return cos(u) / pow(u * u + z * z, v_ + 0.5);
+    T_Ret denominator = pow(u * u + z * z, v + 0.5);
+    return cos(u) / denominator;
   }
 
   template<class F>
@@ -203,12 +212,9 @@ typename boost::math::tools::promote_args<T_v, T_z>::type compute_lead_mathemati
     const T_v &v, const T_z &z) {
   typedef typename boost::math::tools::promote_args<T_v, T_z>::type T_Ret;
 
-  using std::fabs;
   using std::log;
   
-  const T_v v_ = fabs(v);
-
-  return lgamma(v_ + 0.5) + v_ * (log(2) + log(z)) - 0.5 * log(pi());
+  return lgamma(v + 0.5) + v * (log(2) + log(z)) - 0.5 * log(pi());
 }
 
 template <typename T_v, typename T_z>
@@ -217,16 +223,96 @@ typename boost::math::tools::promote_args<T_v, T_z>::type compute_lead_rothwell(
   typedef typename boost::math::tools::promote_args<T_v, T_z>::type T_Ret;
 
   using std::exp;
-  using std::fabs;
   using std::log;
   using std::pow;
 
-  const T_v v_ = fabs(v);
-  const T_Ret lead = 0.5 * log(pi()) - lgamma(v_ + 0.5) - v_ * log(2 * z) - z;
+  const T_Ret lead = 0.5 * log(pi()) - lgamma(v + 0.5) - v * log(2 * z) - z;
   if (is_inf(lead))
     return -z + 0.5 * log(0.5 * pi() / z);
 
   return lead;
+}
+
+// Using the first two terms from
+// Sidi & Hoggan 2011 "ASYMPTOTICS OF MODIFIED BESSELFUNCTIONS OF HIGH ORDER"
+// https://pdfs.semanticscholar.org/d659/ecd3e66fefb2c2fafe16bf3086fcf41c573d.pdf
+// Without the second term, the approximation is slightly worse and third term
+// did actually do some harm.
+// With only the first term the formula reduces to 1.10 of
+// Temme, Journal of Computational Physics, vol 19, 324 (1975)
+// https://doi.org/10.1016/0021-9991(75)90082-0
+template <typename T_v>
+T_v
+asymptotic_large_v(const T_v &v, const double &z) {
+  using std::log;
+
+  //return 0.5 * (log(stan::math::pi()) - log(2) - log(v)) - v * (log(z) - log(2) - log(v));
+  return stan::math::LOG_2 - v * (log(z) - stan::math::LOG_2) + lgamma(v) 
+      + log(1 + (0.25 * boost::math::pow<2>(z) / v) ) 
+      //Third term, currently removed
+      //+ (- 0.25 * boost::math::pow<2>(z) +  
+      //    0.5 * 0.125 * boost::math::pow<4>(z)) / boost::math::pow<2>(v)             
+      ;
+}
+
+// https://dlmf.nist.gov/10.40
+// does not really work
+template <typename T_v>
+T_v
+asymptotic_large_z(const T_v &v, const double &z) {
+  using std::pow;
+  using std::log;
+
+  const int max_terms = 50;
+  int n_terms = std::min(max_terms, static_cast<int>(value_of(v) + 0.5));
+
+  T_v log_series_sum;
+  if(n_terms > 1) {
+    std::vector<T_v> log_terms;
+    log_terms.reserve(max_terms - 1);
+
+    T_v log_a_k(0);
+    double log_z = log(z);
+    T_v v_squared_4 = v * v * 4;
+    double log_8 = log(8);
+    
+    for(int k = 1; k < n_terms; k++) {
+      log_a_k = log_a_k + log(v_squared_4 - (2 * k - 1)) - log(k) - k * log_8;
+      log_terms.push_back(log_a_k - k * log_z);
+      if(log_terms.back() < -20) {
+        break;
+      }
+    }
+
+    log_series_sum = log_sum_exp(log_terms);
+  } else {
+    log_series_sum = 0;
+  }
+  return 0.5 * (log(pi()) - log(2) - log(z)) -z + log_series_sum;
+}
+
+//The code to choose computation method is separate, because it is 
+//referenced from the test code.
+enum class ComputationType { Rothwell, Mathematica, Asymp_v, Asymp_z};
+
+inline ComputationType choose_computation_type(const double& v, const double& z) {
+  using std::fabs;
+  using std::pow;
+  double v_ = fabs(v);
+  double inv_critical_u = 2*v_ + 1;
+  if(!is_inf(pow(2*z, v_ - 0.5)) && 
+    !is_inf( exp(inv_critical_u * (log(inv_critical_u) - 1)) ))
+  {
+    return ComputationType::Rothwell;
+  } else if( pow(z*z, v_ + 0.5) > 0.5 ) {
+    return ComputationType::Mathematica;
+  }
+  else if(v_ > z){
+    return ComputationType::Asymp_v;
+  }
+  else {
+    return ComputationType::Asymp_z;
+  }
 }
 
 void check_params(const double& v, const double& z) {
@@ -245,145 +331,59 @@ void check_params(const double& v, const double& z) {
   }
 }
 
-// Using the first two terms from
-// Sidi & Hoggan 2011 "ASYMPTOTICS OF MODIFIED BESSELFUNCTIONS OF HIGH ORDER"
-// https://pdfs.semanticscholar.org/d659/ecd3e66fefb2c2fafe16bf3086fcf41c573d.pdf
-// Without the second term, the approximation is worse and third term
-// did not help for v in [-1000, 1000].
-// With only the first term the formula reduces to 1.10 of
-// Temme, Journal of Computational Physics, vol 19, 324 (1975)
-// https://doi.org/10.1016/0021-9991(75)90082-0
-template <typename T_v>
-T_v
-asymptotic_large_v(const T_v &v, const double &z) {
-  using std::fabs;
-  using std::log;
-
-  //return 0.5 * (log(stan::math::pi()) - log(2) - log(v)) - v * (log(z) - log(2) - log(v));
-  T_v v_ = fabs(v);
-  return stan::math::LOG_2 - v_ * (log(z) - stan::math::LOG_2) + lgamma(v_) 
-      //+ log(1 + (0.25 * boost::math::pow<2>(z) / v) ) 
-      //Third term, currently removed
-      //+ (- 0.25 * boost::math::pow<2>(z) +  
-      //    0.5 * 0.125 * boost::math::pow<4>(z)) / boost::math::pow<2>(v)             
-      ;
-}
-
-// https://dlmf.nist.gov/10.40
-// does not really work
-template <typename T_v>
-T_v
-asymptotic_large_z(const T_v &v, const double &z) {
-  using std::fabs;  
-  using std::pow;
-  using std::log;
-
-  const int max_terms = 50;
-  int n_terms = std::min(max_terms, static_cast<int>(value_of(v) + 0.5));
-
-  T_v log_series_sum;
-  if(n_terms > 1) {
-    std::vector<T_v> log_terms;
-    log_terms.reserve(max_terms - 1);
-
-    T_v log_a_k(0);
-    T_v v_ = fabs(v);
-    double log_z = log(z);
-    T_v v_squared_4 = v_ * v_ * 4;
-    double log_8 = log(8);
-    
-    for(int k = 1; k < n_terms; k++) {
-      log_a_k = log_a_k + log(v_squared_4 - (2 * k - 1)) - log(k) - k * log_8;
-      log_terms.push_back(log_a_k - k * log_z);
-      if(log_terms.back() < -10) {
-        break;
-      }
-    }
-
-    log_series_sum = log_sum_exp(log_terms);
-  } else {
-    log_series_sum = 0;
-  }
-  return 0.5 * (log(pi()) - log(2) - log(z)) -z + log_series_sum;
-}
-
-}  // namespace
-
-const double log_modified_bessel_second_kind_frac_medium_v_bound = 30;
-const double log_modified_bessel_second_kind_frac_medium_z_bound = 2;
-const double log_modified_bessel_second_kind_frac_large_z_bound = 100;
-const double log_modified_bessel_second_kind_frac_large_v_bound1 = 30;
-const double log_modified_bessel_second_kind_frac_large_v_bound2 = 100;
+}  // namespace besselk_internal
 
 
 template <typename T_v>
 T_v log_modified_bessel_second_kind_frac(const T_v &v, const double &z) {
   using std::pow;
   using std::fabs;
+  using namespace besselk_internal;
   check_params(value_of(v), value_of(z));
 
-  double v_ = fabs(value_of(v));
   if(z == 0) {
     return std::numeric_limits<double>::infinity();
   }
-  if(!is_inf(pow(2*z, v_ - 0.5)) && 
-    !is_inf(pow(1e-8, -2 * v_)))
-  {
-    std::cout << "Rothwell" << std::endl;
-    T_v lead = compute_lead_rothwell(v, z);
-    T_v Q = compute_inner_integral_with_gradient<inner_integral_rothwell>(v, z);
-    return lead + log(Q);
-  } else if( pow(z*z, v_ + 0.5) > 0.5 && pow(z*z, v_ + 0.5) < 1e100) {
-    std::cout << "Mathematica" << std::endl;
-    T_v lead = compute_lead_mathematica(v, z);
-    T_v Q = compute_inner_integral_with_gradient<inner_integral_mathematica>(v, z);
-    return lead + log(Q);    
-  }
-  else if(v_ > z){
-    std::cout << "Asymp_v" << std::endl;
-    return asymptotic_large_v(v, z);
-  }
-  else {
-    std::cout << "Asymp_z" << std::endl;
-    return asymptotic_large_z(v, z);
-  }
 
-  // if(fabs(value_of(v)) > log_modified_bessel_second_kind_frac_large_v_bound2 || 
-  //  (z < 1 && fabs(value_of(v) > log_modified_bessel_second_kind_frac_medium_v_bound)))
-  // {
-  //   return asymptotic_large_v(v, z);
-  // }
-  // else if(fabs(value_of(z)) > log_modified_bessel_second_kind_frac_large_z_bound && 
-  //   fabs(value_of(v) > log_modified_bessel_second_kind_frac_medium_v_bound)) {
-  //    //return asymptotic_large_z(v, z);
-  //    return asymptotic_large_v(v, z);
-  // }
-  // else if
-  //   ((fabs(value_of(v)) > log_modified_bessel_second_kind_frac_medium_v_bound &&
-  //   value_of(z) > log_modified_bessel_second_kind_frac_medium_z_bound) ||
-  //   (fabs(value_of(v)) > log_modified_bessel_second_kind_frac_large_v_bound1 &&
-  //   z > 1)) {
-  //   T_v lead = compute_lead_mathematica(v, z);
-  //   T_v Q = compute_inner_integral_with_gradient<inner_integral_mathematica>(v, z);
-  //   return lead + log(Q);
-
-  // } else  {
-  //   T_v lead = compute_lead_rothwell(v, z);
-  //   T_v Q = compute_inner_integral_with_gradient<inner_integral_rothwell>(v, z);
-  //   return lead + log(Q);
-  // }
+  T_v v_ = fabs(v);
+  switch(choose_computation_type(value_of(v_), value_of(z))) {
+    case ComputationType::Rothwell : {
+      T_v lead = compute_lead_rothwell(v_, z);
+      T_v Q = compute_inner_integral_with_gradient<inner_integral_rothwell>(v_, z);
+      return lead + log(Q);
+    }
+    case ComputationType::Mathematica : {
+      T_v lead = compute_lead_mathematica(v_, z);
+      T_v Q = compute_inner_integral_with_gradient<inner_integral_mathematica>(v_, z);
+      return lead + log(Q);    
+    }
+    case ComputationType::Asymp_v : {
+      return asymptotic_large_v(v_, z);
+    }
+    case ComputationType::Asymp_z : {
+      return asymptotic_large_z(v_, z);
+    } 
+    default : {
+          stan::math::domain_error("log_modified_bessel_second_kind_frac", 
+      "Invalid computation type ", 0, "");
+      return asymptotic_large_v(v_, z);
+    }
+  }
 }
 
 template <typename T_v>
-var log_modified_bessel_second_kind_frac(const T_v &v, const var &z) {
-  check_params(value_of(v), value_of(z));
-
+var log_modified_bessel_second_kind_frac(const T_v &v, const var &z) {  
   T_v value = log_modified_bessel_second_kind_frac(v, z.val());
 
   double value_vm1
       = log_modified_bessel_second_kind_frac(value_of(v) - 1, z.val());
   double gradient_dz
       = -std::exp(value_vm1 - value_of(value)) - value_of(v) / z.val();
+  // double gradient_dz = 
+  //   -boost::math::cyl_bessel_k(value_of(v) - 1, value_of(z)) / 
+  //    boost::math::cyl_bessel_k(value_of(v), value_of(z))
+  //    - value_of(v) / value_of(z);
+
 
   std::vector<var> operands;
   std::vector<double> gradients;
