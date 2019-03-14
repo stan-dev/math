@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_OPENCL_CONSTANTS_HPP
 #define STAN_MATH_OPENCL_CONSTANTS_HPP
 #ifdef STAN_OPENCL
+#include <string>
 namespace stan {
 namespace math {
 enum class triangular_view_CL { LOWER = 0, UPPER = 1, ENTIRE = 2 };
