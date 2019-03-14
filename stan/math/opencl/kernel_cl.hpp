@@ -38,6 +38,7 @@ inline auto compile_kernel(const char* name, const char* source,
                    + std::to_string(comp_opts.second);
   }
   std::string kernel_source(opencl_kernels::helpers);
+  kernel_source.append(opencl_kernels::get_opencl_enum_string());
   kernel_source.append(source);
   cl::Program program;
   try {

@@ -18,25 +18,24 @@ static const char* zeros_kernel_code = STRINGIFY(
      * @param[out] A matrix
      * @param rows Number of rows for matrix A
      * @param cols Number of columns for matrix A
-     * @param part optional parameter that describes where to assign zeros:
+     * @param view which part of the matrix to assign zeros to
      *  LOWER - lower triangular
      *  UPPER - upper triangular
-     * if the part parameter is not specified,
-     * zeros are assigned to the whole matrix.
+     *  ENTIRE - entire matrix
      * @note Code is a <code>const char*</code> held in
      * <code>zeros_kernel_code.</code>
      * This kernel uses the helper macros available in helpers.cl.
      */
     __kernel void zeros(__global double* A, unsigned int rows,
-                        unsigned int cols, unsigned int part) {
+                        unsigned int cols, triangular_view view) {
       int i = get_global_id(0);
       int j = get_global_id(1);
       if (i < rows && j < cols) {
-        if (part == LOWER && j < i) {
+        if (view == LOWER && j < i) {
           A(i, j) = 0;
-        } else if (part == UPPER && j > i) {
+        } else if (view == UPPER && j > i) {
           A(i, j) = 0;
-        } else if (part == ENTIRE) {
+        } else if (view == ENTIRE) {
           A(i, j) = 0;
         }
       }

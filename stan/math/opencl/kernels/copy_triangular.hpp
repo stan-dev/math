@@ -31,17 +31,17 @@ static const char *copy_triangular_kernel_code = STRINGIFY(
      */
     __kernel void copy_triangular(__global double *A, __global double *B,
                                   unsigned int rows, unsigned int cols,
-                                  unsigned int lower_upper) {
+                                  triangular_view tri_view) {
       int i = get_global_id(0);
       int j = get_global_id(1);
       if (i < rows && j < cols) {
-        if (!lower_upper && j <= i) {
+        if (tri_view == LOWER && j <= i) {
           A(i, j) = B(i, j);
-        } else if (!lower_upper) {
+        } else if (tri_view == LOWER) {
           A(i, j) = 0;
-        } else if (lower_upper && j >= i) {
+        } else if (tri_view == UPPER && j >= i) {
           A(i, j) = B(i, j);
-        } else if (lower_upper && j < i) {
+        } else if (tri_view == UPPER && j < i) {
           A(i, j) = 0;
         }
       }

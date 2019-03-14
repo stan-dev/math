@@ -133,12 +133,7 @@ class opencl_context_base {
   // Holds Default parameter values for each Kernel.
   typedef std::map<const char*, int> map_base_opts;
   map_base_opts base_opts_
-      = {{"LOWER", static_cast<int>(triangular_view_CL::LOWER)},
-         {"UPPER", static_cast<int>(triangular_view_CL::UPPER)},
-         {"ENTIRE", static_cast<int>(triangular_view_CL::ENTIRE)},
-         {"UPPER_TO_LOWER", static_cast<int>(triangular_map_CL::UPPER_TO_LOWER)},
-         {"LOWER_TO_UPPER", static_cast<int>(triangular_map_CL::LOWER_TO_UPPER)},
-         {"THREAD_BLOCK_SIZE", 32},
+      = {{"THREAD_BLOCK_SIZE", 32},
          {"WORK_PER_THREAD", 8}};
   // TODO(Steve): Make these tunable during warmup
   struct tuning_struct {

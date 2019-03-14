@@ -16,10 +16,9 @@ static const char* triangular_transpose_kernel_code = STRINGIFY(
      * @param[in,out] A The matrix.
      * @param rows The number of rows in A.
      * @param cols The number of cols in A.
-     * @param copy_direction A value of zero or one specifying
-     *  which direction to copy
-     *  LOWER_TO_UPPER: 1
-     *  UPPER_TO_LOWER: 0
+     * @param copy_direction specifies the direction of the copy
+     *  LOWER_TO_UPPER - copy the lower triangular to the upper
+     *  UPPER_TO_LOWER - copy the upper triangular to the lower
      * @note Code is a <code>const char*</code> held in
      * <code>triangular_transpose_kernel_code.</code>
      * Used in mat/opencl/triangular_transpose.hpp.
@@ -27,7 +26,7 @@ static const char* triangular_transpose_kernel_code = STRINGIFY(
      */
     __kernel void triangular_transpose(__global double* A, unsigned int rows,
                                        unsigned int cols,
-                                       unsigned int copy_direction) {
+                                       triangular_view copy_direction) {
       int i = get_global_id(0);
       int j = get_global_id(1);
       if (i < rows && j < cols) {

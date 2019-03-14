@@ -19,13 +19,13 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
      * @param[in] M Number of rows for matrix A
      * @param[in] N Number of cols for matrix B
      * @param[in] K Number of cols for matrix A and number of rows for matrix B
-     * @param[in] lower_upper_A the triangularity of A (lower, upper or none)
-     * @param[in] lower_upper_B the triangularity of B (lower, upper or none)
+     * @param[in] tri_view_A the triangularity of A (lower, upper or none)
+     * @param[in] tri_view_B the triangularity of B (lower, upper or none)
      */
     __kernel void matrix_multiply(
         const __global double* A, const __global double* B, __global double* C,
-        const int M, const int N, const int K, unsigned int lower_upper_A,
-        unsigned int lower_upper_B) {
+        const int M, const int N, const int K, triangular_view tri_view_A,
+        triangular_view tri_view_B) {
       // thread index inside the thread_block
       const int thread_block_row = get_local_id(0);
       const int thread_block_col = get_local_id(1);
@@ -60,13 +60,13 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
       // is 0 and the end tile is num_tiles-1 which
       // is then a general matrix multiply
       const int end_tile_A
-          = lower_upper_A == LOWER ? (i / THREAD_BLOCK_SIZE) : (num_tiles - 1);
+          = tri_view_A == LOWER ? (i / THREAD_BLOCK_SIZE) : (num_tiles - 1);
       const int end_tile_B
-          = lower_upper_B == UPPER ? (j / THREAD_BLOCK_SIZE) : (num_tiles - 1);
+          = tri_view_B == UPPER ? (j / THREAD_BLOCK_SIZE) : (num_tiles - 1);
       const int start_tile_A
-          = lower_upper_A == UPPER ? (i / THREAD_BLOCK_SIZE) : 0;
+          = tri_view_A == UPPER ? (i / THREAD_BLOCK_SIZE) : 0;
       const int start_tile_B
-          = lower_upper_B == LOWER ? (j / THREAD_BLOCK_SIZE) : 0;
+          = tri_view_B == LOWER ? (j / THREAD_BLOCK_SIZE) : 0;
       const int start_tile = max(start_tile_A, start_tile_B);
       const int end_tile = min(end_tile_A, end_tile_B);  // NOLINT
 
