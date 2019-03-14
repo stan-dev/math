@@ -8,10 +8,6 @@
 #include <stan/math/prim/mat/fun/tridiagonalization.hpp>
 #include <stan/math/prim/mat/fun/mrrr.hpp>
 
-#include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/tridiagonalization.hpp>
-#include <stan/math/opencl/mrrr.hpp>
-
 namespace stan {
 namespace math {
 
@@ -23,20 +19,11 @@ namespace math {
  */
 void symmetric_eigensolver(const Eigen::MatrixXd& A, Eigen::VectorXd& eigenvals, Eigen::MatrixXd& eigenvecs) {
   Eigen::MatrixXd packed;
-#ifdef STAN_OPENCL
-  block_householder_tridiag_cl(A, packed);
-#else
   block_householder_tridiag(A, packed);
-#endif
   Eigen::VectorXd diag = packed.diagonal();
   Eigen::VectorXd subdiag = packed.diagonal(1);
-#ifdef STAN_OPENCL
-  tridiagonal_eigensolver_cl(diag, subdiag, eigenvals, eigenvecs);
-  block_apply_packed_Q_cl(packed, eigenvecs);
-#else
   tridiagonal_eigensolver(diag, subdiag, eigenvals, eigenvecs);
   block_apply_packed_Q(packed, eigenvecs);
-#endif
 }
 
 }
