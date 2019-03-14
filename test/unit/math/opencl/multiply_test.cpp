@@ -168,8 +168,9 @@ TEST(MathMatrix, lower_tri_rect_multiply_small) {
 
   auto m3 = (m1 * m2).eval();
 
-  auto m33 = stan::math::opencl::multiply<stan::math::triangular_view_CL::LOWER>(
-      m11, m22);
+  auto m33
+      = stan::math::opencl::multiply<stan::math::triangular_view_CL::LOWER>(
+          m11, m22);
 
   stan::math::copy(m3_cl_res, m33);
 
@@ -189,8 +190,9 @@ TEST(MathMatrix, lower_tri_rect_multiply_big) {
 
   auto m3 = (m1 * m2).eval();
 
-  auto m33 = stan::math::opencl::multiply<stan::math::triangular_view_CL::LOWER>(
-      m11, m22);
+  auto m33
+      = stan::math::opencl::multiply<stan::math::triangular_view_CL::LOWER>(
+          m11, m22);
 
   stan::math::copy(m3_cl_res, m33);
 
@@ -210,8 +212,9 @@ TEST(MathMatrix, lower_tri_rect_multiply_big_rect) {
 
   auto m3 = (m1 * m2).eval();
 
-  auto m33 = stan::math::opencl::multiply<stan::math::triangular_view_CL::LOWER>(
-      m11, m22);
+  auto m33
+      = stan::math::opencl::multiply<stan::math::triangular_view_CL::LOWER>(
+          m11, m22);
 
   stan::math::copy(m3_cl_res, m33);
 
@@ -230,8 +233,9 @@ TEST(MathMatrix, upper_tri_rect_multiply_small) {
 
   auto m3 = (m1 * m2).eval();
 
-  auto m33 = stan::math::opencl::multiply<stan::math::triangular_view_CL::UPPER>(
-      m11, m22);
+  auto m33
+      = stan::math::opencl::multiply<stan::math::triangular_view_CL::UPPER>(
+          m11, m22);
 
   stan::math::copy(m3_cl_res, m33);
 
@@ -251,8 +255,9 @@ TEST(MathMatrix, upper_tri_rect_multiply_big) {
 
   auto m3 = (m1 * m2).eval();
 
-  auto m33 = stan::math::opencl::multiply<stan::math::triangular_view_CL::UPPER>(
-      m11, m22);
+  auto m33
+      = stan::math::opencl::multiply<stan::math::triangular_view_CL::UPPER>(
+          m11, m22);
 
   stan::math::copy(m3_cl_res, m33);
 
@@ -272,8 +277,9 @@ TEST(MathMatrix, upper_tri_rect_multiply_big_rect) {
 
   auto m3 = (m1 * m2).eval();
 
-  auto m33 = stan::math::opencl::multiply<stan::math::triangular_view_CL::UPPER>(
-      m11, m22);
+  auto m33
+      = stan::math::opencl::multiply<stan::math::triangular_view_CL::UPPER>(
+          m11, m22);
 
   stan::math::copy(m3_cl_res, m33);
 
@@ -292,9 +298,10 @@ TEST(MathMatrix, rect_lower_tri_multiply_small) {
 
   auto m3 = (m1 * m2).eval();
 
-  auto m33 = stan::math::opencl::multiply<stan::math::triangular_view_CL::ENTIRE,
-                                          stan::math::triangular_view_CL::LOWER>(
-      m11, m22);
+  auto m33
+      = stan::math::opencl::multiply<stan::math::triangular_view_CL::ENTIRE,
+                                     stan::math::triangular_view_CL::LOWER>(
+          m11, m22);
 
   stan::math::copy(m3_cl_res, m33);
 
@@ -314,9 +321,10 @@ TEST(MathMatrix, rect_lower_tri_multiply_big) {
 
   auto m3 = (m1 * m2).eval();
 
-  auto m33 = stan::math::opencl::multiply<stan::math::triangular_view_CL::ENTIRE,
-                                          stan::math::triangular_view_CL::LOWER>(
-      m11, m22);
+  auto m33
+      = stan::math::opencl::multiply<stan::math::triangular_view_CL::ENTIRE,
+                                     stan::math::triangular_view_CL::LOWER>(
+          m11, m22);
 
   stan::math::copy(m3_cl_res, m33);
 
@@ -336,9 +344,10 @@ TEST(MathMatrix, rect_lower_tri_multiply_big_rect) {
 
   auto m3 = (m1 * m2).eval();
 
-  auto m33 = stan::math::opencl::multiply<stan::math::triangular_view_CL::ENTIRE,
-                                          stan::math::triangular_view_CL::LOWER>(
-      m11, m22);
+  auto m33
+      = stan::math::opencl::multiply<stan::math::triangular_view_CL::ENTIRE,
+                                     stan::math::triangular_view_CL::LOWER>(
+          m11, m22);
 
   stan::math::copy(m3_cl_res, m33);
 
@@ -357,9 +366,10 @@ TEST(MathMatrix, rect_upper_tri_multiply_small) {
 
   auto m3 = (m1 * m2).eval();
 
-  auto m33 = stan::math::opencl::multiply<stan::math::triangular_view_CL::ENTIRE,
-                                          stan::math::triangular_view_CL::UPPER>(
-      m11, m22);
+  auto m33
+      = stan::math::opencl::multiply<stan::math::triangular_view_CL::ENTIRE,
+                                     stan::math::triangular_view_CL::UPPER>(
+          m11, m22);
 
   stan::math::copy(m3_cl_res, m33);
 
@@ -379,9 +389,10 @@ TEST(MathMatrix, rect_upper_tri_multiply_big) {
 
   auto m3 = (m1 * m2).eval();
 
-  auto m33 = stan::math::opencl::multiply<stan::math::triangular_view_CL::ENTIRE,
-                                          stan::math::triangular_view_CL::UPPER>(
-      m11, m22);
+  auto m33
+      = stan::math::opencl::multiply<stan::math::triangular_view_CL::ENTIRE,
+                                     stan::math::triangular_view_CL::UPPER>(
+          m11, m22);
 
   stan::math::copy(m3_cl_res, m33);
 
@@ -401,9 +412,10 @@ TEST(MathMatrix, rect_upper_tri_multiply_big_rect) {
 
   auto m3 = (m1 * m2).eval();
 
-  auto m33 = stan::math::opencl::multiply<stan::math::triangular_view_CL::ENTIRE,
-                                          stan::math::triangular_view_CL::UPPER>(
-      m11, m22);
+  auto m33
+      = stan::math::opencl::multiply<stan::math::triangular_view_CL::ENTIRE,
+                                     stan::math::triangular_view_CL::UPPER>(
+          m11, m22);
 
   stan::math::copy(m3_cl_res, m33);
 

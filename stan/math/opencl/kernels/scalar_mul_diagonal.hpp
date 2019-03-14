@@ -31,7 +31,8 @@ static const char *scalar_mul_diagonal_kernel_code = STRINGIFY(
 // \endcond
 
 /**
- * See the docs for \link kernels/scalar_mul_diagonal.hpp scalar_mul_diagonal() \endlink
+ * See the docs for \link kernels/scalar_mul_diagonal.hpp scalar_mul_diagonal()
+ * \endlink
  */
 const global_range_kernel<cl::Buffer, double, int, int> scalar_mul_diagonal(
     "scalar_mul_diagonal", scalar_mul_diagonal_kernel_code);

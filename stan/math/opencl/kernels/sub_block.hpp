@@ -44,13 +44,12 @@ static const char *sub_block_kernel_code = STRINGIFY(
         unsigned int src_offset_j, unsigned int dst_offset_i,
         unsigned int dst_offset_j, unsigned int size_i, unsigned int size_j,
         unsigned int src_rows, unsigned int src_cols, unsigned int dst_rows,
-        unsigned int dst_cols, triangular_view view ) {
+        unsigned int dst_cols, triangular_view view) {
       int i = get_global_id(0);
       int j = get_global_id(1);
       if ((i + src_offset_i) < src_rows && (j + src_offset_j) < src_cols
           && (i + dst_offset_i) < dst_rows && (j + dst_offset_j) < dst_cols) {
-        if ((view == LOWER && i >= j)
-            || (view == UPPER && i <= j)
+        if ((view == LOWER && i >= j) || (view == UPPER && i <= j)
             || view == ENTIRE) {
           dst((dst_offset_i + i), (dst_offset_j + j))
               = src((src_offset_i + i), (src_offset_j + j));

@@ -133,8 +133,7 @@ class opencl_context_base {
   // Holds Default parameter values for each Kernel.
   typedef std::map<const char*, int> map_base_opts;
   map_base_opts base_opts_
-      = {{"THREAD_BLOCK_SIZE", 32},
-         {"WORK_PER_THREAD", 8}};
+      = {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}};
   // TODO(Steve): Make these tunable during warmup
   struct tuning_struct {
     // Used in stan/math/opencl/cholesky_decompose

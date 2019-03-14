@@ -13,22 +13,20 @@ namespace opencl_kernels {
  * @return enum string
  */
 inline std::string get_opencl_enum_string() {
-        std::ostringstream enums;
-        enums << "typedef enum {\n";
-        enums << "    LOWER=" <<
-                        static_cast<int>(triangular_view_CL::LOWER) << ",\n";
-        enums << "    UPPER=" <<
-                        static_cast<int>(triangular_view_CL::UPPER) << ",\n";
-        enums << "    ENTIRE=" <<
-                        static_cast<int>(triangular_view_CL::ENTIRE) << "\n";
-        enums << "} triangular_view;";
-        enums << "typedef enum {\n";
-        enums << "    UPPER_TO_LOWER=" << 
-                static_cast<int>(triangular_map_CL::UPPER_TO_LOWER) << ",\n";
-        enums << "    LOWER_TO_UPPER=" << 
-                static_cast<int>(triangular_map_CL::LOWER_TO_UPPER) << "\n";
-        enums << "} triangular_map;";
-        return enums.str();
+  std::ostringstream enums;
+  enums << "typedef enum {\n";
+  enums << "    LOWER=" << static_cast<int>(triangular_view_CL::LOWER) << ",\n";
+  enums << "    UPPER=" << static_cast<int>(triangular_view_CL::UPPER) << ",\n";
+  enums << "    ENTIRE=" << static_cast<int>(triangular_view_CL::ENTIRE)
+        << "\n";
+  enums << "} triangular_view;";
+  enums << "typedef enum {\n";
+  enums << "    UPPER_TO_LOWER="
+        << static_cast<int>(triangular_map_CL::UPPER_TO_LOWER) << ",\n";
+  enums << "    LOWER_TO_UPPER="
+        << static_cast<int>(triangular_map_CL::LOWER_TO_UPPER) << "\n";
+  enums << "} triangular_map;";
+  return enums.str();
 }
 }  // namespace opencl_kernels
 }  // namespace math
