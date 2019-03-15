@@ -228,8 +228,8 @@ int get_sturm_count_ldl(const Eigen::VectorXd& l, const Eigen::VectorXd& d,
  * matrix using bisection.
  * @param l Subdiagonal of L.
  * @param d Diagonal of D.
- * @param low[in,out] Low bound on the eigenvalue.
- * @param high[in,out] High bound on the eigenvalue.
+ * @param[in,out] low Low bound on the eigenvalue.
+ * @param[in,out] high High bound on the eigenvalue.
  * @param i i-th eigenvalue
  */
 void eigenval_bisect_refine(const Eigen::VectorXd& l, const Eigen::VectorXd& d,
@@ -256,8 +256,8 @@ void eigenval_bisect_refine(const Eigen::VectorXd& l, const Eigen::VectorXd& d,
  * Gresgorin discs.
  * @param diagonal Diagonal of T
  * @param subdiagonal Subdiagonal of T
- * @param min_eigval[out] Lower bound on eigenvalues.
- * @param max_eigval[out] Upper bound on eigenvalues.
+ * @param[out] min_eigval Lower bound on eigenvalues.
+ * @param[out] max_eigval Upper bound on eigenvalues.
  */
 void get_gresgorin(const Eigen::Ref<const Eigen::VectorXd> diagonal,
                    const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
@@ -315,8 +315,8 @@ struct bisection_task {
  * @param subdiagonal_squared Squared elements of the subdiagonal.
  * @param min_eigval Lower bound on all eigenvalues.
  * @param max_eigval Upper bound on all eigenvalues.
- * @param low[out] Lower bounds on eigenvalues.
- * @param high[out] Upper bounds on eigenvalues.
+ * @param[out] low Lower bounds on eigenvalues.
+ * @param[out] high Upper bounds on eigenvalues.
  */
 void eigenvals_bisect(const Eigen::Ref<const Eigen::VectorXd> diagonal,
                       const Eigen::VectorXd& subdiagonal_squared,
@@ -536,8 +536,8 @@ struct mrrr_task {
  * element might be (very close to) zero.
  * @param diagonal Diagonal of of T.
  * @param subdiagonal Subdiagonal of T.
- * @param eigenvalues[out] Eigenvlues.
- * @param eigenvectors[out] Eigenvectors.
+ * @param[out] eigenvalues Eigenvlues.
+ * @param[out] eigenvectors Eigenvectors.
  * @param min_rel_sep Minimal relative separation of eigenvalues before
  * computing eigenvectors.
  * @param max_ele_growth Maximal desired element growth of LDL decompositions.
@@ -657,8 +657,8 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diagonal,
  * diagonal the problem can be split into smaller ones.
  * @param diagonal Diagonal of of T.
  * @param subdiagonal Subdiagonal of T.
- * @param eigenvalues[out] Eigenvlues.
- * @param eigenvectors[out] Eigenvectors.
+ * @param[out] eigenvalues Eigenvlues.
+ * @param[out] eigenvectors Eigenvectors.
  * @param split_threshold Threshold for splitting the problem
  */
 void tridiagonal_eigensolver(const Eigen::VectorXd& diagonal,

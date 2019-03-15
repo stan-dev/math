@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <Eigen/Dense>
+#include <algorithm>
 #include <cmath>
 
 namespace stan {
