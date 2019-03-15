@@ -26,20 +26,29 @@
 #include <vector>
 #include <limits>
 
-// The formulas and code for small z are based on
-// https://github.com/stan-dev/stan/wiki/Stan-Development-Meeting-Agenda/0ca4e1be9f7fc800658bfbd97331e800a4f50011
-// Which is in turn based on Equation 26 of Rothwell: Computation of the
-// logarithm of Bessel functions of complex argument and fractional order
-// https://scholar.google.com/scholar?cluster=2908870453394922596&hl=en&as_sdt=5,33&sciodt=0,33
-//
-// http://mathworld.wolfram.com/ModifiedBesselFunctionoftheSecondKind.html
-
-// Assuming all v's positive (flipped at the top-level call)
+// Combining multiple approaches, documented at relevant sections
+// Due to symmetry around v, the code assumes all v's positive except for 
+// top-level calls which pass the absolute value.
 
 namespace stan {
 namespace math {
 
 namespace besselk_internal {
+
+////////////////////////////////////////////////////////////////
+//                    FORMULAE                                //
+////////////////////////////////////////////////////////////////
+
+// The formulas that contain integrals are split into a function representing
+// the integral body and "lead" - the logarithm of the term before the integral
+// The function object also references the integration method, as some integrate
+// From 0 to 1 and others from 0 to infinity.
+
+// The formulas for Rothwell approach and code for small z are based on
+// https://github.com/stan-dev/stan/wiki/Stan-Development-Meeting-Agenda/0ca4e1be9f7fc800658bfbd97331e800a4f50011
+// Which is in turn based on Equation 26 of Rothwell: Computation of the
+// logarithm of Bessel functions of complex argument and fractional order
+// https://scholar.google.com/scholar?cluster=2908870453394922596&hl=en&as_sdt=5,33&sciodt=0,33
 
 template <typename T_v, typename T_z, typename T_u>
 class inner_integral_rothwell {
@@ -74,9 +83,6 @@ class inner_integral_rothwell {
     }
     value = first + second;
 
-    // std::cout << std::setprecision(22) << "U: " << u  << " val: " << value <<
-    // std::endl;
-
     return value;
   }
 
@@ -87,6 +93,25 @@ class inner_integral_rothwell {
     return integrator.integrate(f, 0.0, 1.0, tolerance, error, L1, levels);
   };
 };
+
+template <typename T_v, typename T_z>
+typename boost::math::tools::promote_args<T_v, T_z>::type compute_lead_rothwell(
+    const T_v &v, const T_z &z) {
+  typedef typename boost::math::tools::promote_args<T_v, T_z>::type T_Ret;
+
+  using std::exp;
+  using std::log;
+  using std::pow;
+
+  const T_Ret lead = 0.5 * log(pi()) - lgamma(v + 0.5) - v * log(2 * z) - z;
+  if (is_inf(lead))
+    return -z + 0.5 * log(0.5 * pi() / z);
+
+  return lead;
+}
+
+// The mathematica approach is based on formula 5 of
+// http://mathworld.wolfram.com/ModifiedBesselFunctionoftheSecondKind.html
 
 template <typename T_v, typename T_z, typename T_u>
 class inner_integral_mathematica {
@@ -113,6 +138,21 @@ class inner_integral_mathematica {
     return integrator.integrate(f, tolerance, error, L1, levels);
   };
 };
+
+template <typename T_v, typename T_z>
+typename boost::math::tools::promote_args<T_v, T_z>::type
+compute_lead_mathematica(const T_v &v, const T_z &z) {
+  typedef typename boost::math::tools::promote_args<T_v, T_z>::type T_Ret;
+
+  using std::log;
+
+  return lgamma(v + 0.5) + v * (log(2) + log(z)) - 0.5 * log(pi());
+}
+
+
+// The mathematica_large approach is the same as mathematica,
+// but moves most terms within the integral to keep the integral from
+// rounding to 0. It helps only for a small range of values.
 
 template <typename T_v, typename T_z, typename T_u>
 class inner_integral_mathematica_large {
@@ -147,121 +187,6 @@ class inner_integral_mathematica_large {
   };
 };
 
-// Uses nested autodiff to get gradient with respect to v
-// Gradient with respect to z can be computed analytically
-// Code modified from gradient_of_f
-template <typename F, typename T>
-class inner_integral_grad_v {
- private:
-  T v;
-  T z;
-
- public:
-  inner_integral_grad_v(const T &v, const T &z) : v(v), z(z) {}
-
-  inline T operator()(const T &u) const {
-    double gradient = 0.0;
-    start_nested();
-    var v_var(stan::math::value_of(v));
-    try {
-      auto f = F(v_var, z);
-      var fx = f(u);
-      fx.grad();
-      gradient = v_var.adj();
-      if (is_nan(gradient)) {
-        if (fx.val() == 0) {
-          gradient = 0;
-        } else {
-          domain_error("inner_integral_grad_v",
-                       "The gradient of inner_integral is nan", 0, "", "");
-        }
-      }
-    } catch (const std::exception &e) {
-      recover_memory_nested();
-      throw;
-    }
-    recover_memory_nested();
-    return gradient;
-  }
-};
-
-template <template <typename, typename, typename> class INTEGRAL>
-double compute_inner_integral_with_gradient(const double &v, const double &z) {
-  double relative_tolerance = std::sqrt(std::numeric_limits<double>::epsilon());
-
-  double error;
-  double L1;
-  size_t levels;
-
-  auto f = INTEGRAL<double, double, double>(v, z);
-  double integral = INTEGRAL<double, double, double>::integrate(
-      f, relative_tolerance, &error, &L1, &levels);
-
-  if (error > 1e-6 * L1) {
-    domain_error("compute_inner_integral_with_gradient(double, double)",
-                 "error estimate of integral / L1 ", error / L1, "",
-                 "is larger than 1e-6");
-  }
-  return integral;
-}
-
-template <template <typename, typename, typename> class INTEGRAL>
-var compute_inner_integral_with_gradient(const var &v, const double &z) {
-  double integral = compute_inner_integral_with_gradient<INTEGRAL>(
-      stan::math::value_of(v), stan::math::value_of(z));
-
-  std::vector<stan::math::var> theta_concat;
-  std::vector<double> dintegral_dtheta;
-
-  theta_concat.push_back(v);
-  auto f = inner_integral_grad_v<INTEGRAL<var, double, double>, double>(v.val(),
-                                                                        z);
-
-  double error;
-  double L1;
-  size_t levels;
-  double condition_number;
-  double relative_tolerance = std::sqrt(std::numeric_limits<double>::epsilon());
-
-  dintegral_dtheta.push_back(INTEGRAL<var, double, double>::integrate(
-      f, relative_tolerance, &error, &L1, &levels));
-
-  if (error > 1e-6 * L1) {
-    domain_error("compute_inner_integral_with_gradient(var, double)",
-                 "error estimate of integral / L1 ", error / L1, "",
-                 "is larger than 1e-6");
-  }
-
-  return stan::math::precomputed_gradients(integral, theta_concat,
-                                           dintegral_dtheta);
-}
-
-template <typename T_v, typename T_z>
-typename boost::math::tools::promote_args<T_v, T_z>::type compute_lead_rothwell(
-    const T_v &v, const T_z &z) {
-  typedef typename boost::math::tools::promote_args<T_v, T_z>::type T_Ret;
-
-  using std::exp;
-  using std::log;
-  using std::pow;
-
-  const T_Ret lead = 0.5 * log(pi()) - lgamma(v + 0.5) - v * log(2 * z) - z;
-  if (is_inf(lead))
-    return -z + 0.5 * log(0.5 * pi() / z);
-
-  return lead;
-}
-
-template <typename T_v, typename T_z>
-typename boost::math::tools::promote_args<T_v, T_z>::type
-compute_lead_mathematica(const T_v &v, const T_z &z) {
-  typedef typename boost::math::tools::promote_args<T_v, T_z>::type T_Ret;
-
-  using std::log;
-
-  return lgamma(v + 0.5) + v * (log(2) + log(z)) - 0.5 * log(pi());
-}
-
 template <typename T_v, typename T_z>
 typename boost::math::tools::promote_args<T_v, T_z>::type
 compute_lead_mathematica_large(const T_v &v, const T_z &z) {
@@ -273,12 +198,7 @@ compute_lead_mathematica_large(const T_v &v, const T_z &z) {
   return -0.5 * log(pi());
 }
 
-// Using the first two terms from
-// Sidi & Hoggan 2011 "ASYMPTOTICS OF MODIFIED BESSELFUNCTIONS OF HIGH ORDER"
-// https://pdfs.semanticscholar.org/d659/ecd3e66fefb2c2fafe16bf3086fcf41c573d.pdf
-// Without the second term, the approximation is slightly worse and third term
-// did actually do some harm.
-// With only the first term the formula reduces to 1.10 of
+// Formula 1.10 of
 // Temme, Journal of Computational Physics, vol 19, 324 (1975)
 // https://doi.org/10.1016/0021-9991(75)90082-0
 template <typename T_v>
@@ -295,8 +215,7 @@ T_v asymptotic_large_v(const T_v &v, const double &z) {
       ;
 }
 
-// https://dlmf.nist.gov/10.40
-// does not really work
+// Formula 10.40.2 from https://dlmf.nist.gov/10.40
 template <typename T_v>
 T_v asymptotic_large_z(const T_v &v, const double &z) {
   using std::log;
@@ -329,6 +248,11 @@ T_v asymptotic_large_z(const T_v &v, const double &z) {
   }
   return 0.5 * (log(pi()) - log(2) - log(z)) - z + log_series_sum;
 }
+
+////////////////////////////////////////////////////////////////
+//                    CHOOSING AMONG FORMULAE                 //
+////////////////////////////////////////////////////////////////
+
 
 // The code to choose computation method is separate, because it is
 // referenced from the test code.
@@ -372,6 +296,105 @@ inline ComputationType choose_computation_type(const double &v,
   }
 }
 
+////////////////////////////////////////////////////////////////
+//                    UTILITY FUNCTIONS                       //
+////////////////////////////////////////////////////////////////
+
+// Uses nested autodiff to get gradient with respect to v
+// Gradient with respect to z can be computed analytically
+// Code modified from gradient_of_f
+template <typename F, typename T>
+class inner_integral_grad_v {
+ private:
+  T v;
+  T z;
+
+ public:
+  inner_integral_grad_v(const T &v, const T &z) : v(v), z(z) {}
+
+  inline T operator()(const T &u) const {
+    double gradient = 0.0;
+    start_nested();
+    var v_var(stan::math::value_of(v));
+    try {
+      auto f = F(v_var, z);
+      var fx = f(u);
+      fx.grad();
+      gradient = v_var.adj();
+      if (is_nan(gradient)) {
+        if (fx.val() == 0) {
+          gradient = 0;
+        } else {
+          domain_error("inner_integral_grad_v",
+                       "The gradient of inner_integral is nan", 0, "", "");
+        }
+      }
+    } catch (const std::exception &e) {
+      recover_memory_nested();
+      throw;
+    }
+    recover_memory_nested();
+    return gradient;
+  }
+};
+
+// Wrapper to call the correct integrator
+// Code simplified from integrate_1d
+template <template <typename, typename, typename> class INTEGRAL>
+double compute_inner_integral(const double &v, const double &z) {
+  double relative_tolerance = std::sqrt(std::numeric_limits<double>::epsilon());
+
+  double error;
+  double L1;
+  size_t levels;
+
+  auto f = INTEGRAL<double, double, double>(v, z);
+  double integral = INTEGRAL<double, double, double>::integrate(
+      f, relative_tolerance, &error, &L1, &levels);
+
+  if (error > 1e-6 * L1) {
+    domain_error("compute_inner_integral(double, double)",
+                 "error estimate of integral / L1 ", error / L1, "",
+                 "is larger than 1e-6");
+  }
+  return integral;
+}
+
+// Using inner_integral_grad_v to copute the derivative wrt. v as 
+// integral of the derivative of the integral body.
+// Code simplified from integrate_1d
+template <template <typename, typename, typename> class INTEGRAL>
+var compute_inner_integral(const var &v, const double &z) {
+  double integral = compute_inner_integral<INTEGRAL>(
+      stan::math::value_of(v), stan::math::value_of(z));
+
+  std::vector<stan::math::var> theta_concat;
+  std::vector<double> dintegral_dtheta;
+
+  theta_concat.push_back(v);
+  auto f = inner_integral_grad_v<INTEGRAL<var, double, double>, double>(v.val(),
+                                                                        z);
+
+  double error;
+  double L1;
+  size_t levels;
+  double condition_number;
+  double relative_tolerance = std::sqrt(std::numeric_limits<double>::epsilon());
+
+  dintegral_dtheta.push_back(INTEGRAL<var, double, double>::integrate(
+      f, relative_tolerance, &error, &L1, &levels));
+
+  if (error > 1e-6 * L1) {
+    domain_error("compute_inner_integral(var, double)",
+                 "error estimate of integral / L1 ", error / L1, "",
+                 "is larger than 1e-6");
+  }
+
+  return stan::math::precomputed_gradients(integral, theta_concat,
+                                           dintegral_dtheta);
+}
+
+
 void check_params(const double &v, const double &z) {
   const char *function = "log_modified_bessel_second_kind_frac";
   if (!std::isfinite(v)) {
@@ -386,6 +409,11 @@ void check_params(const double &v, const double &z) {
 }
 
 }  // namespace besselk_internal
+
+////////////////////////////////////////////////////////////////
+//                    TOP LEVEL FUNCTIONS                     //
+////////////////////////////////////////////////////////////////
+
 
 template <typename T_v>
 T_v log_modified_bessel_second_kind_frac(const T_v &v, const double &z) {
@@ -402,19 +430,18 @@ T_v log_modified_bessel_second_kind_frac(const T_v &v, const double &z) {
   switch (choose_computation_type(value_of(v_), value_of(z))) {
     case ComputationType::Rothwell: {
       T_v lead = compute_lead_rothwell(v_, z);
-      T_v Q = compute_inner_integral_with_gradient<inner_integral_rothwell>(v_,
-                                                                            z);
+      T_v Q = compute_inner_integral<inner_integral_rothwell>(v_, z);
       return lead + log(Q);
     }
     case ComputationType::Mathematica_Large: {
       T_v lead = compute_lead_mathematica_large(v_, z);
-      T_v Q = compute_inner_integral_with_gradient<
+      T_v Q = compute_inner_integral<
           inner_integral_mathematica_large>(v_, z);
       return lead + log(Q);
     }
     case ComputationType::Mathematica: {
       T_v lead = compute_lead_mathematica(v_, z);
-      T_v Q = compute_inner_integral_with_gradient<inner_integral_mathematica>(
+      T_v Q = compute_inner_integral<inner_integral_mathematica>(
           v_, z);
       return lead + log(Q);
     }
@@ -440,7 +467,8 @@ var log_modified_bessel_second_kind_frac(const T_v &v, const var &z) {
       = log_modified_bessel_second_kind_frac(value_of(v) - 1, z.val());
   double gradient_dz
       = -std::exp(value_vm1 - value_of(value)) - value_of(v) / z.val();
-  // Compute using boost, seems to be less stable
+
+  // Compute gradient using boost, avoiding log sacale, seems to be less stable
   // double gradient_dz =
   //   -boost::math::cyl_bessel_k(value_of(v) - 1, value_of(z)) /
   //    boost::math::cyl_bessel_k(value_of(v), value_of(z))
