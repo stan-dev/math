@@ -27,7 +27,7 @@
 #include <limits>
 
 // Combining multiple approaches, documented at relevant sections
-// Due to symmetry around v, the code assumes all v's positive except for 
+// Due to symmetry around v, the code assumes all v's positive except for
 // top-level calls which pass the absolute value.
 
 namespace stan {
@@ -149,7 +149,6 @@ compute_lead_mathematica(const T_v &v, const T_z &z) {
   return lgamma(v + 0.5) + v * (log(2) + log(z)) - 0.5 * log(pi());
 }
 
-
 // The mathematica_large approach is the same as mathematica,
 // but moves most terms within the integral to keep the integral from
 // rounding to 0. It helps only for a small range of values.
@@ -252,7 +251,6 @@ T_v asymptotic_large_z(const T_v &v, const double &z) {
 ////////////////////////////////////////////////////////////////
 //                    CHOOSING AMONG FORMULAE                 //
 ////////////////////////////////////////////////////////////////
-
 
 // The code to choose computation method is separate, because it is
 // referenced from the test code.
@@ -360,13 +358,13 @@ double compute_inner_integral(const double &v, const double &z) {
   return integral;
 }
 
-// Using inner_integral_grad_v to copute the derivative wrt. v as 
+// Using inner_integral_grad_v to copute the derivative wrt. v as
 // integral of the derivative of the integral body.
 // Code simplified from integrate_1d
 template <template <typename, typename, typename> class INTEGRAL>
 var compute_inner_integral(const var &v, const double &z) {
-  double integral = compute_inner_integral<INTEGRAL>(
-      stan::math::value_of(v), stan::math::value_of(z));
+  double integral = compute_inner_integral<INTEGRAL>(stan::math::value_of(v),
+                                                     stan::math::value_of(z));
 
   std::vector<stan::math::var> theta_concat;
   std::vector<double> dintegral_dtheta;
@@ -394,7 +392,6 @@ var compute_inner_integral(const var &v, const double &z) {
                                            dintegral_dtheta);
 }
 
-
 void check_params(const double &v, const double &z) {
   const char *function = "log_modified_bessel_second_kind_frac";
   if (!std::isfinite(v)) {
@@ -413,7 +410,6 @@ void check_params(const double &v, const double &z) {
 ////////////////////////////////////////////////////////////////
 //                    TOP LEVEL FUNCTIONS                     //
 ////////////////////////////////////////////////////////////////
-
 
 template <typename T_v>
 T_v log_modified_bessel_second_kind_frac(const T_v &v, const double &z) {
@@ -435,14 +431,12 @@ T_v log_modified_bessel_second_kind_frac(const T_v &v, const double &z) {
     }
     case ComputationType::Mathematica_Large: {
       T_v lead = compute_lead_mathematica_large(v_, z);
-      T_v Q = compute_inner_integral<
-          inner_integral_mathematica_large>(v_, z);
+      T_v Q = compute_inner_integral<inner_integral_mathematica_large>(v_, z);
       return lead + log(Q);
     }
     case ComputationType::Mathematica: {
       T_v lead = compute_lead_mathematica(v_, z);
-      T_v Q = compute_inner_integral<inner_integral_mathematica>(
-          v_, z);
+      T_v Q = compute_inner_integral<inner_integral_mathematica>(v_, z);
       return lead + log(Q);
     }
     case ComputationType::Asymp_v: {
