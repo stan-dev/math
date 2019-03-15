@@ -4,10 +4,10 @@
 TEST(MathMatrix, tridiagonalization_trivial) {
   Eigen::MatrixXd id = Eigen::MatrixXd::Identity(3,3);
   Eigen::MatrixXd packed;
-  stan::math::block_householder_tridiag(id,packed);
+  stan::math::internal::block_householder_tridiag(id,packed);
   EXPECT_TRUE(packed.isApprox(id));
   Eigen::MatrixXd q = id;
-  stan::math::block_apply_packed_Q(packed,q);
+  stan::math::internal::block_apply_packed_Q(packed,q);
   EXPECT_TRUE(q.isApprox(id));
 }
 
@@ -18,9 +18,9 @@ TEST(MathMatrix, tridiagonalization_small) {
   input += input.transpose().eval();
   Eigen::MatrixXd packed;
 
-  stan::math::block_householder_tridiag(input,packed);
+  stan::math::internal::block_householder_tridiag(input,packed);
   Eigen::MatrixXd q = Eigen::MatrixXd::Identity(size,size);
-  stan::math::block_apply_packed_Q(packed,q);
+  stan::math::internal::block_apply_packed_Q(packed,q);
 
   Eigen::MatrixXd t=Eigen::MatrixXd::Constant(size, size, 0);
   t.diagonal()=packed.diagonal();
@@ -37,9 +37,9 @@ TEST(MathMatrix, tridiagonalization_large) {
   input += input.transpose().eval();
   Eigen::MatrixXd packed;
 
-  stan::math::block_householder_tridiag(input,packed);
+  stan::math::internal::block_householder_tridiag(input,packed);
   Eigen::MatrixXd q = Eigen::MatrixXd::Identity(size,size);
-  stan::math::block_apply_packed_Q(packed,q);
+  stan::math::internal::block_apply_packed_Q(packed,q);
 
   Eigen::MatrixXd t=Eigen::MatrixXd::Constant(size, size, 0);
   t.diagonal()=packed.diagonal();
