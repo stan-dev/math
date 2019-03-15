@@ -134,8 +134,7 @@ T_v asymptotic_large_z(const T_v &v, const double &z) {
   T_v v_squared_4 = v * v * 4;
 
   for (int k = 1; k < max_terms; k++) {
-    a_k_z_k *= 
-      (v_squared_4 - boost::math::pow<2>(2 * k - 1)) / (k * z * 8);
+    a_k_z_k *= (v_squared_4 - boost::math::pow<2>(2 * k - 1)) / (k * z * 8);
     series_sum += a_k_z_k;
     if (fabs(a_k_z_k) < 1e-8) {
       break;
@@ -292,16 +291,16 @@ void check_params(const double &v, const double &z) {
 
 template <typename T_v>
 T_v log_modified_bessel_second_kind_frac(const T_v &v, const double &z) {
-  using std::fabs;
-  using std::pow;
-  using besselk_internal::check_params;
-  using besselk_internal::choose_computation_type;
-  using besselk_internal::ComputationType; 
-  using besselk_internal::compute_lead_rothwell;
+  using besselk_internal::ComputationType;
   using besselk_internal::asymptotic_large_v;
   using besselk_internal::asymptotic_large_z;
+  using besselk_internal::check_params;
+  using besselk_internal::choose_computation_type;
   using besselk_internal::compute_inner_integral;
+  using besselk_internal::compute_lead_rothwell;
   using besselk_internal::inner_integral_rothwell;
+  using std::fabs;
+  using std::pow;
 
   check_params(value_of(v), value_of(z));
 
@@ -345,10 +344,10 @@ var log_modified_bessel_second_kind_frac(const T_v &v, const var &z) {
   //    boost::math::cyl_bessel_k(value_of(v), value_of(z))
   //    - value_of(v) / value_of(z);
 
- if (is_var<T_v>::value) {
+  if (is_var<T_v>::value) {
     // A trick to combine the autodiff gradient with precomputed_gradients
-    return var(new precomp_vv_vari(value_of(value), 
-      to_var(value).vi_, z.vi_, 1, gradient_dz));
+    return var(new precomp_vv_vari(value_of(value), to_var(value).vi_, z.vi_, 1,
+                                   gradient_dz));
   } else {
     return var(new precomp_v_vari(value_of(value), z.vi_, gradient_dz));
   }
