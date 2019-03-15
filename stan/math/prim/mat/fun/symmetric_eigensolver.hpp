@@ -17,15 +17,18 @@ namespace math {
  * @param eigenvalues[out] Eigenvalues.
  * @param eigenvectors[out] Eigenvectors - one per column.
  */
-void symmetric_eigensolver(const Eigen::MatrixXd& A, Eigen::VectorXd& eigenvalues, Eigen::MatrixXd& eigenvectors) {
+void symmetric_eigensolver(const Eigen::MatrixXd& A,
+                           Eigen::VectorXd& eigenvalues,
+                           Eigen::MatrixXd& eigenvectors) {
   Eigen::MatrixXd packed;
   internal::block_householder_tridiag(A, packed);
   Eigen::VectorXd diagonal = packed.diagonal();
   Eigen::VectorXd subdiagonal = packed.diagonal(1);
-  internal::tridiagonal_eigensolver(diagonal, subdiagonal, eigenvalues, eigenvectors);
+  internal::tridiagonal_eigensolver(diagonal, subdiagonal, eigenvalues,
+                                    eigenvectors);
   internal::block_apply_packed_Q(packed, eigenvectors);
 }
 
-}
-}
+}  // namespace math
+}  // namespace stan
 #endif
