@@ -167,11 +167,7 @@ T_v asymptotic_large_z(const T_v &v, const double &z) {
 
 // The code to choose computation method is separate, because it is
 // referenced from the test code.
-enum class ComputationType {
-  Rothwell,
-  Asymp_v,
-  Asymp_z
-};
+enum class ComputationType { Rothwell, Asymp_v, Asymp_z };
 
 const double rothwell_max_v = 75;
 const double rothwell_max_log_z_over_v = 600;
