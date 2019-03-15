@@ -335,27 +335,38 @@ asymptotic_large_z(const T_v &v, const double &z) {
 
 //The code to choose computation method is separate, because it is 
 //referenced from the test code.
-enum class ComputationType { Rothwell, Mathematica, Mathematica_Large, Asymp_v, Asymp_z};
+enum class ComputationType { 
+  Rothwell, Mathematica, Mathematica_Large, Asymp_v, Asymp_z
+  };
 
-inline ComputationType choose_computation_type(const double& v, const double& z) {
+const double rothwell_max_v = 75;
+const double rothwell_max_log_z_over_v = 600;
+const double mathematica_min_log_factor = -200;
+const double mathematica_max_log_factor = 100;
+
+inline ComputationType 
+choose_computation_type(const double& v, const double& z) {
   using std::fabs;
   using std::pow;
   const double v_ = fabs(v);
-  const double inv_critical_u = 2*v_ + 1;
-  const double mathematica_denominator = pow(z*z, v_ + 0.5);
-  const double mathematica_log_factor = 
-    inner_integral_mathematica_large<double,double,double>::log_factor(0, v_, z);
+  const double rothwell_log_z_boundary = 
+    rothwell_max_log_z_over_v * (v_ - 0.5) - log(2);
+  const double mathematica_log_factor = -(v_ + 0.5) * 2 * log(z);
+  const double mathematica_large_log_factor = 
+    inner_integral_mathematica_large<double,double,double>::log_factor(
+      0, v_, z);
 
-  if(!is_inf(pow(2*z, v_ - 0.5)) && 
-    !is_inf( exp(inv_critical_u * (log(inv_critical_u) - 1)) ))
+  if(v_ < rothwell_max_v && 
+    (v_ <= 0.5 || log(z) < rothwell_log_z_boundary))
   {
     return ComputationType::Rothwell;
-  } else if(mathematica_denominator > 0.5 && mathematica_denominator < 1e100) {
+  } else if(mathematica_log_factor < mathematica_max_log_factor && 
+    mathematica_log_factor > mathematica_min_log_factor) {
       return ComputationType::Mathematica;
-  } else if(mathematica_log_factor < 5 && mathematica_log_factor > -500) {
+  } else if(mathematica_large_log_factor < mathematica_max_log_factor && 
+    mathematica_large_log_factor > mathematica_min_log_factor) {
       return ComputationType::Mathematica_Large;
-  } 
-  else if(v_ > z){
+  } else if(v_ > z){
     return ComputationType::Asymp_v;
   }
   else {
@@ -397,7 +408,8 @@ T_v log_modified_bessel_second_kind_frac(const T_v &v, const double &z) {
   switch(choose_computation_type(value_of(v_), value_of(z))) {
     case ComputationType::Rothwell : {
       T_v lead = compute_lead_rothwell(v_, z);
-      T_v Q = compute_inner_integral_with_gradient<inner_integral_rothwell>(v_, z);
+      T_v Q = compute_inner_integral_with_gradient<inner_integral_rothwell>(
+        v_, z);
       return lead + log(Q);
     }
     case ComputationType::Mathematica_Large : {
@@ -407,7 +419,8 @@ T_v log_modified_bessel_second_kind_frac(const T_v &v, const double &z) {
     }
     case ComputationType::Mathematica : {
       T_v lead = compute_lead_mathematica(v_, z);
-      T_v Q = compute_inner_integral_with_gradient<inner_integral_mathematica>(v_, z);
+      T_v Q = compute_inner_integral_with_gradient<inner_integral_mathematica>(
+        v_, z);
       return lead + log(Q);    
     }
     case ComputationType::Asymp_v : {
@@ -432,6 +445,7 @@ var log_modified_bessel_second_kind_frac(const T_v &v, const var &z) {
       = log_modified_bessel_second_kind_frac(value_of(v) - 1, z.val());
   double gradient_dz
       = -std::exp(value_vm1 - value_of(value)) - value_of(v) / z.val();
+  // Compute using boost, seems to be less stable
   // double gradient_dz = 
   //   -boost::math::cyl_bessel_k(value_of(v) - 1, value_of(z)) / 
   //    boost::math::cyl_bessel_k(value_of(v), value_of(z))
