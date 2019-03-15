@@ -1,10 +1,14 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MRRR_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MRRR_HPP
 
-#include <queue>
-#include <cmath>
-
 #include <Eigen/Dense>
+
+#include <queue>
+#include <vector>
+#include <algorithm>
+#include <limits>
+
+#include <cmath>
 
 namespace stan {
 namespace math {

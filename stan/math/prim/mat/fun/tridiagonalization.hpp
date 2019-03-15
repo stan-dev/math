@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_TRIDIAGONALIZATION_HPP
 #define STAN_MATH_PRIM_MAT_FUN_TRIDIAGONALIZATION_HPP
 
-#include <cmath>
-#include <Eigen/Dense>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <Eigen/Dense>
+#include <cmath>
 
 namespace stan {
 namespace math {
