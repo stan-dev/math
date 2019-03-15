@@ -15,7 +15,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 template <typename T>
 struct dot_product_store_type;
 
@@ -184,7 +184,7 @@ class dot_product_vari : public vari {
   }
   virtual void chain() { chain(v1_, v2_); }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Returns the dot product.
@@ -202,7 +202,7 @@ dot_product(const Eigen::Matrix<T1, R1, C1>& v1,
   check_vector("dot_product", "v1", v1);
   check_vector("dot_product", "v2", v2);
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
-  return var(new dot_product_vari<T1, T2>(v1, v2));
+  return var(new internal::dot_product_vari<T1, T2>(v1, v2));
 }
 /**
  * Returns the dot product.
@@ -216,7 +216,7 @@ template <typename T1, typename T2>
 inline typename std::enable_if<
     std::is_same<T1, var>::value || std::is_same<T2, var>::value, var>::type
 dot_product(const T1* v1, const T2* v2, size_t length) {
-  return var(new dot_product_vari<T1, T2>(v1, v2, length));
+  return var(new internal::dot_product_vari<T1, T2>(v1, v2, length));
 }
 
 /**
@@ -232,7 +232,7 @@ inline typename std::enable_if<
     std::is_same<T1, var>::value || std::is_same<T2, var>::value, var>::type
 dot_product(const std::vector<T1>& v1, const std::vector<T2>& v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
-  return var(new dot_product_vari<T1, T2>(&v1[0], &v2[0], v1.size()));
+  return var(new internal::dot_product_vari<T1, T2>(&v1[0], &v2[0], v1.size()));
 }
 
 }  // namespace math

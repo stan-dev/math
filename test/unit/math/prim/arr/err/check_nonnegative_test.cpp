@@ -57,10 +57,7 @@ TEST(ErrorHandlingScalar, CheckNonnegative_nan) {
   const char* function = "check_nonnegative";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  std::vector<double> x;
-  x.push_back(1.0);
-  x.push_back(2.0);
-  x.push_back(3.0);
+  std::vector<double> x = {1, 2, 3};
 
   for (size_t i = 0; i < x.size(); i++) {
     x[i] = nan;

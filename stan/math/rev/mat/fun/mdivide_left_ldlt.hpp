@@ -9,7 +9,7 @@
 
 namespace stan {
 namespace math {
-namespace {
+namespace internal {
 template <int R1, int C1, int R2, int C2>
 class mdivide_left_ldlt_alloc : public chainable_alloc {
  public:
@@ -231,7 +231,7 @@ class mdivide_left_ldlt_vd_vari : public vari {
         alloc_ldlt_->variA_(i, j)->adj_ += adjA(i, j);
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Returns the solution of the system Ax=b given an LDLT_factor of A
@@ -247,8 +247,8 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
 
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
 
-  mdivide_left_ldlt_vv_vari<R1, C1, R2, C2> *baseVari
-      = new mdivide_left_ldlt_vv_vari<R1, C1, R2, C2>(A, b);
+  internal::mdivide_left_ldlt_vv_vari<R1, C1, R2, C2> *baseVari
+      = new internal::mdivide_left_ldlt_vv_vari<R1, C1, R2, C2>(A, b);
 
   int pos = 0;
   for (int j = 0; j < res.cols(); j++)
@@ -272,8 +272,8 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
 
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
 
-  mdivide_left_ldlt_vd_vari<R1, C1, R2, C2> *baseVari
-      = new mdivide_left_ldlt_vd_vari<R1, C1, R2, C2>(A, b);
+  internal::mdivide_left_ldlt_vd_vari<R1, C1, R2, C2> *baseVari
+      = new internal::mdivide_left_ldlt_vd_vari<R1, C1, R2, C2>(A, b);
 
   int pos = 0;
   for (int j = 0; j < res.cols(); j++)
@@ -297,8 +297,8 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
 
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
 
-  mdivide_left_ldlt_dv_vari<R1, C1, R2, C2> *baseVari
-      = new mdivide_left_ldlt_dv_vari<R1, C1, R2, C2>(A, b);
+  internal::mdivide_left_ldlt_dv_vari<R1, C1, R2, C2> *baseVari
+      = new internal::mdivide_left_ldlt_dv_vari<R1, C1, R2, C2>(A, b);
 
   int pos = 0;
   for (int j = 0; j < res.cols(); j++)

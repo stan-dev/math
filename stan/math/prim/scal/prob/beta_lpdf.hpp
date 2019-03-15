@@ -59,8 +59,6 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
       typename stan::partials_return_type<T_y, T_scale_succ, T_scale_fail>::type
           T_partials_return;
 
-  using stan::is_constant_struct;
-  using stan::is_vector;
   using std::log;
 
   if (size_zero(y, alpha, beta))

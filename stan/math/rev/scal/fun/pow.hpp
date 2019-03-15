@@ -14,7 +14,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class pow_vv_vari : public op_vv_vari {
  public:
   pow_vv_vari(vari* avi, vari* bvi)
@@ -61,7 +61,7 @@ class pow_dv_vari : public op_dv_vari {
     }
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Return the base raised to the power of the exponent (cmath).
@@ -102,7 +102,7 @@ class pow_dv_vari : public op_dv_vari {
  * @return Base raised to the exponent.
  */
 inline var pow(const var& base, const var& exponent) {
-  return var(new pow_vv_vari(base.vi_, exponent.vi_));
+  return var(new internal::pow_vv_vari(base.vi_, exponent.vi_));
 }
 
 /**
@@ -130,7 +130,7 @@ inline var pow(const var& base, double exponent) {
     return inv(base);
   if (exponent == -0.5)
     return inv_sqrt(base);
-  return var(new pow_vd_vari(base.vi_, exponent));
+  return var(new internal::pow_vd_vari(base.vi_, exponent));
 }
 
 /**
@@ -146,7 +146,7 @@ inline var pow(const var& base, double exponent) {
  * @return Base raised to the exponent.
  */
 inline var pow(double base, const var& exponent) {
-  return var(new pow_dv_vari(base, exponent.vi_));
+  return var(new internal::pow_dv_vari(base, exponent.vi_));
 }
 
 }  // namespace math
