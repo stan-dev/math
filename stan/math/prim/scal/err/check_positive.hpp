@@ -7,19 +7,19 @@
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/get.hpp>
 #include <stan/math/prim/scal/meta/is_vector_like.hpp>
-#include <boost/type_traits/is_unsigned.hpp>
+#include <type_traits>
 
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 
 template <typename T_y, bool is_vec>
 struct positive {
   static void check(const char* function, const char* name, const T_y& y) {
     // have to use not is_unsigned. is_signed will be false
     // floating point types that have no unsigned versions.
-    if (!boost::is_unsigned<T_y>::value && !(y > 0))
+    if (!std::is_unsigned<T_y>::value && !(y > 0))
       domain_error(function, name, y, "is ", ", but must be > 0!");
   }
 };
@@ -29,14 +29,14 @@ struct positive<T_y, true> {
   static void check(const char* function, const char* name, const T_y& y) {
     using stan::length;
     for (size_t n = 0; n < length(y); n++) {
-      if (!boost::is_unsigned<typename value_type<T_y>::type>::value
+      if (!std::is_unsigned<typename value_type<T_y>::type>::value
           && !(stan::get(y, n) > 0))
         domain_error_vec(function, name, y, n, "is ", ", but must be > 0!");
     }
   }
 };
 
-}  // namespace
+}  // namespace internal
 
 /**
  * Check if <code>y</code> is positive.
@@ -56,7 +56,7 @@ struct positive<T_y, true> {
 template <typename T_y>
 inline void check_positive(const char* function, const char* name,
                            const T_y& y) {
-  positive<T_y, is_vector_like<T_y>::value>::check(function, name, y);
+  internal::positive<T_y, is_vector_like<T_y>::value>::check(function, name, y);
 }
 
 }  // namespace math

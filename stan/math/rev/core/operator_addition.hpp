@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class add_vv_vari : public op_vv_vari {
  public:
   add_vv_vari(vari* avi, vari* bvi)
@@ -36,7 +36,7 @@ class add_vd_vari : public op_vd_vari {
       avi_->adj_ += adj_;
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Addition operator for variables (C++).
@@ -77,7 +77,7 @@ class add_vd_vari : public op_vd_vari {
  * @return Variable result of adding two variables.
  */
 inline var operator+(const var& a, const var& b) {
-  return var(new add_vv_vari(a.vi_, b.vi_));
+  return var(new internal::add_vv_vari(a.vi_, b.vi_));
 }
 
 /**
@@ -94,7 +94,7 @@ inline var operator+(const var& a, const var& b) {
 inline var operator+(const var& a, double b) {
   if (b == 0.0)
     return a;
-  return var(new add_vd_vari(a.vi_, b));
+  return var(new internal::add_vd_vari(a.vi_, b));
 }
 
 /**
@@ -111,7 +111,7 @@ inline var operator+(const var& a, double b) {
 inline var operator+(double a, const var& b) {
   if (a == 0.0)
     return b;
-  return var(new add_vd_vari(b.vi_, a));  // by symmetry
+  return var(new internal::add_vd_vari(b.vi_, a));  // by symmetry
 }
 
 }  // namespace math

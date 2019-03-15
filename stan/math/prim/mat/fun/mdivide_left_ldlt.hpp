@@ -6,7 +6,7 @@
 #include <stan/math/prim/mat/fun/LDLT_factor.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/fun/promote_common.hpp>
-#include <boost/type_traits/is_same.hpp>
+#include <type_traits>
 
 namespace stan {
 namespace math {

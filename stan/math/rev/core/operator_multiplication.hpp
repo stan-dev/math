@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class multiply_vv_vari : public op_vv_vari {
  public:
   multiply_vv_vari(vari* avi, vari* bvi)
@@ -36,7 +36,7 @@ class multiply_vd_vari : public op_vd_vari {
       avi_->adj_ += adj_ * bd_;
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Multiplication operator for two variables (C++).
@@ -76,7 +76,7 @@ class multiply_vd_vari : public op_vd_vari {
  * @return Variable result of multiplying operands.
  */
 inline var operator*(const var& a, const var& b) {
-  return var(new multiply_vv_vari(a.vi_, b.vi_));
+  return var(new internal::multiply_vv_vari(a.vi_, b.vi_));
 }
 
 /**
@@ -93,7 +93,7 @@ inline var operator*(const var& a, const var& b) {
 inline var operator*(const var& a, double b) {
   if (b == 1.0)
     return a;
-  return var(new multiply_vd_vari(a.vi_, b));
+  return var(new internal::multiply_vd_vari(a.vi_, b));
 }
 
 /**
@@ -110,7 +110,7 @@ inline var operator*(const var& a, double b) {
 inline var operator*(double a, const var& b) {
   if (a == 1.0)
     return b;
-  return var(new multiply_vd_vari(b.vi_, a));  // by symmetry
+  return var(new internal::multiply_vd_vari(b.vi_, a));  // by symmetry
 }
 
 }  // namespace math

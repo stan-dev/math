@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class inv_cloglog_vari : public op_v_vari {
  public:
   explicit inv_cloglog_vari(vari* avi)
@@ -16,7 +16,7 @@ class inv_cloglog_vari : public op_v_vari {
     avi_->adj_ += adj_ * std::exp(avi_->val_ - std::exp(avi_->val_));
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Return the inverse complementary log-log function applied
@@ -33,7 +33,7 @@ class inv_cloglog_vari : public op_v_vari {
  * argument.
  */
 inline var inv_cloglog(const var& a) {
-  return var(new inv_cloglog_vari(a.vi_));
+  return var(new internal::inv_cloglog_vari(a.vi_));
 }
 
 }  // namespace math

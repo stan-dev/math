@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 template <typename T_y, bool is_vec>
 struct not_nan {
   static void check(const char* function, const char* name, const T_y& y) {
@@ -29,7 +29,7 @@ struct not_nan<T_y, true> {
     }
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Check if <code>y</code> is not
@@ -50,7 +50,7 @@ struct not_nan<T_y, true> {
 template <typename T_y>
 inline void check_not_nan(const char* function, const char* name,
                           const T_y& y) {
-  not_nan<T_y, is_vector_like<T_y>::value>::check(function, name, y);
+  internal::not_nan<T_y, is_vector_like<T_y>::value>::check(function, name, y);
 }
 
 }  // namespace math

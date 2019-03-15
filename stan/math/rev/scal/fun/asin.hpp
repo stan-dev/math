@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class asin_vari : public op_v_vari {
  public:
   explicit asin_vari(vari* avi) : op_v_vari(std::asin(avi->val_), avi) {}
@@ -15,7 +15,7 @@ class asin_vari : public op_v_vari {
     avi_->adj_ += adj_ / std::sqrt(1.0 - (avi_->val_ * avi_->val_));
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Return the principal value of the arc sine, in radians, of the
@@ -53,7 +53,7 @@ class asin_vari : public op_v_vari {
  * @param a Variable in range [-1, 1].
  * @return Arc sine of variable, in radians.
  */
-inline var asin(const var& a) { return var(new asin_vari(a.vi_)); }
+inline var asin(const var& a) { return var(new internal::asin_vari(a.vi_)); }
 
 }  // namespace math
 }  // namespace stan

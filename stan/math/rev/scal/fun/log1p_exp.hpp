@@ -8,19 +8,21 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class log1p_exp_v_vari : public op_v_vari {
  public:
   explicit log1p_exp_v_vari(vari* avi) : op_v_vari(log1p_exp(avi->val_), avi) {}
   void chain() { avi_->adj_ += adj_ * calculate_chain(avi_->val_, val_); }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Return the log of 1 plus the exponential of the specified
  * variable.
  */
-inline var log1p_exp(const var& a) { return var(new log1p_exp_v_vari(a.vi_)); }
+inline var log1p_exp(const var& a) {
+  return var(new internal::log1p_exp_v_vari(a.vi_));
+}
 
 }  // namespace math
 }  // namespace stan
