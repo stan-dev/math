@@ -243,11 +243,6 @@ template <template <typename, typename, typename> class INTEGRAL>
 var compute_inner_integral(const var &v, const double &z) {
   double integral = compute_inner_integral<INTEGRAL>(stan::math::value_of(v),
                                                      stan::math::value_of(z));
-
-  std::vector<stan::math::var> theta_concat;
-  std::vector<double> dintegral_dtheta;
-
-  theta_concat.push_back(v);
   auto f = inner_integral_grad_v<INTEGRAL<var, double, double>, double>(v.val(),
                                                                         z);
 
@@ -257,8 +252,8 @@ var compute_inner_integral(const var &v, const double &z) {
   double condition_number;
   double relative_tolerance = std::sqrt(std::numeric_limits<double>::epsilon());
 
-  dintegral_dtheta.push_back(INTEGRAL<var, double, double>::integrate(
-      f, relative_tolerance, &error, &L1, &levels));
+  double dintegral_dv = INTEGRAL<var, double, double>::integrate(
+      f, relative_tolerance, &error, &L1, &levels);
 
   if (error > 1e-6 * L1) {
     domain_error("compute_inner_integral(var, double)",
@@ -266,8 +261,7 @@ var compute_inner_integral(const var &v, const double &z) {
                  "is larger than 1e-6");
   }
 
-  return stan::math::precomputed_gradients(integral, theta_concat,
-                                           dintegral_dtheta);
+  return var(new precomp_v_vari(integral, v.vi_, dintegral_dv));
 }
 
 void check_params(const double &v, const double &z) {
