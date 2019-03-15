@@ -14,19 +14,17 @@ TEST(thread_stack_instance, initialize) {
   ChainableStack::AutodiffStackStorage& main_ad_stack
       = ChainableStack::instance();
 
+  auto thread_tester = [&]() -> void {
+    ChainableStack thread_instance;
+    EXPECT_TRUE(&ChainableStack::instance());
+    EXPECT_TRUE(&ChainableStack::instance()
 #ifdef STAN_THREADS
-  auto thread_tester = [&]() -> void {
-    ChainableStack thread_instance;
-    EXPECT_TRUE(&ChainableStack::instance());
-    EXPECT_TRUE(&ChainableStack::instance() != &main_ad_stack);
-  };
+                !=
 #else
-  auto thread_tester = [&]() -> void {
-    ChainableStack thread_instance;
-    EXPECT_TRUE(&ChainableStack::instance());
-    EXPECT_TRUE(&ChainableStack::instance() == &main_ad_stack);
-  };
+                ==
 #endif
+                &main_ad_stack);
+  };
   std::thread other_work(thread_tester);
 
   other_work.join();
@@ -42,19 +40,16 @@ TEST(thread_stack_instance, child_instances) {
   ChainableStack::AutodiffStackStorage& main_ad_stack
       = ChainableStack::instance();
 
+  auto thread_tester = [&]() -> void {
+    ChainableStack thread_instance;
+    EXPECT_TRUE(main_ad_stack.var_stack_.size()
 #ifdef STAN_THREADS
-  auto thread_tester = [&]() -> void {
-    ChainableStack thread_instance;
-    EXPECT_TRUE(main_ad_stack.var_stack_.size()
-                > ChainableStack::instance().var_stack_.size());
-  };
+                >
 #else
-  auto thread_tester = [&]() -> void {
-    ChainableStack thread_instance;
-    EXPECT_TRUE(main_ad_stack.var_stack_.size()
-                == ChainableStack::instance().var_stack_.size());
-  };
+                ==
 #endif
+                ChainableStack::instance().var_stack_.size());
+  };
 
   std::thread other_work(thread_tester);
 

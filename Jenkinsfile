@@ -190,7 +190,7 @@ pipeline {
                         deleteDirWin()
                         unstash 'MathSetup'
                         bat "echo CXX=${env.CXX} -Werror > make/local"
-                        bat "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
+                        bat "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
                         runTestsWin("test/unit -f thread")
                         runTestsWin("test/unit -f map_rect")
                     }
@@ -232,7 +232,7 @@ pipeline {
                         deleteDir()
                         unstash 'MathSetup'
                         sh "echo CXX=${env.CXX} -Werror > make/local"
-                        sh "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
+                        sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
                         runTests("test/unit -f thread")
                         sh "find . -name *_test.xml | xargs rm"
                         runTests("test/unit -f map_rect")
@@ -250,7 +250,7 @@ pipeline {
                         deleteDir()
                         unstash 'MathSetup'
                         sh "echo CXX=${GCC} >> make/local"
-                        sh "echo CPPFLAGS=-DSTAN_THREADS >> make/local"
+                        sh "echo CXXFLAGS=-DSTAN_THREADS >> make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
