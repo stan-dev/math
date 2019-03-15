@@ -16,10 +16,10 @@ namespace internal {
  * Columns bellow diagonal contain householder vectors that can be used to construct orthogonal matrix Q.
  * @param r Block size. Affects only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes a larger value is optimal.
  */
-void block_householder_tridiag(const Eigen::MatrixXd& A, Eigen::MatrixXd& packed, int r = 60) {
+void block_householder_tridiag(const Eigen::MatrixXd& A, Eigen::MatrixXd& packed, const int r = 60) {
   packed = A;
   for (size_t k = 0; k < packed.rows() - 2; k += r) {
-    int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
+    const int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
     Eigen::MatrixXd V(packed.rows() - k - 1, actual_r);
 
     for (size_t j = 0; j < actual_r; j++) {
@@ -31,7 +31,7 @@ void block_householder_tridiag(const Eigen::MatrixXd& A, Eigen::MatrixXd& packed
                              V.block(j - 1, 0, householder_whole.size(), j) * packed.block(j + k, k, 1, j).transpose();
       }
       double q = householder.squaredNorm();
-      double alpha = -std::copysign(sqrt(q), packed(k + j, k + j));
+      const double alpha = -std::copysign(sqrt(q), packed(k + j, k + j));
       q -= householder[0] * householder[0];
       householder[0] -= alpha;
       q += householder[0] * householder[0];
@@ -46,7 +46,7 @@ void block_householder_tridiag(const Eigen::MatrixXd& A, Eigen::MatrixXd& packed
                                    - packed.block(k + j + 1, k, u.size(), j) * (V.bottomLeftCorner(u.size(), j).transpose() * u)
                                    - V.bottomLeftCorner(u.size(), j) * (packed.block(k + j + 1, k, u.size(), j).transpose() * u);
       v[0] = q / SQRT_2;
-      double cnst = v.tail(householder.size()).transpose() * u;
+      const double cnst = v.tail(householder.size()).transpose() * u;
       v.tail(householder.size()) -= 0.5 * cnst * u;
 
       packed(k + j, k + j + 1) = packed(k + j + 1, k + j) * q / SQRT_2 + alpha - v[0] * u[0];
@@ -64,11 +64,11 @@ void block_householder_tridiag(const Eigen::MatrixXd& A, Eigen::MatrixXd& packed
  * @param[in,out] A On input a matrix to multiply with Q. On output the product Q*A.
  * @param r Block size. Affects only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes a larger value is optimal.
  */
-void block_apply_packed_Q(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 100) {
+void block_apply_packed_Q(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, const int r = 100) {
   //if input A==Identity, constructs Q
   Eigen::MatrixXd scratch_space(A.rows(), r);
   for (int k = (packed.rows() - 3) / r * r; k >= 0; k -= r) {
-    int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
+    const int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
     Eigen::MatrixXd W(packed.rows() - k - 1, actual_r);
     W.col(0) = packed.col(k).tail(W.rows());
     for (size_t j = 1; j < actual_r; j++) {

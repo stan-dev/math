@@ -31,16 +31,16 @@ namespace internal {
  * @param max_ele_growth Maximal desired element growth of LDL decompositions.
  */
 void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal, const Eigen::VectorXd& subdiagonal, Eigen::Ref<Eigen::VectorXd> eigenvalues,
-             Eigen::Ref<Eigen::MatrixXd> eigenvectors, double min_rel_sep = 1e-1, double max_ele_growth = 2) {
+             Eigen::Ref<Eigen::MatrixXd> eigenvectors, const double min_rel_sep = 1e-1, const double max_ele_growth = 2) {
   using std::copysign;
-  double shift_error = 1e-14;
-  int n = diagonal.size();
+  const double shift_error = 1e-14;
+  const int n = diagonal.size();
   Eigen::VectorXd high(n), low(n);
   double min_eigval;
   double max_eigval;
   get_gresgorin(diagonal, subdiagonal, min_eigval, max_eigval);
   Eigen::VectorXd l(n - 1), d(n), l0(n - 1), d0(n);
-  double shift0 = find_initial_shift(diagonal, subdiagonal, l0, d0, min_eigval, max_eigval, max_ele_growth);
+  const double shift0 = find_initial_shift(diagonal, subdiagonal, l0, d0, min_eigval, max_eigval, max_ele_growth);
   for (int i = 0; i < n; i++) {
     if (i != n - 1) {
       l[i] = l0[i] * get_random_perturbation_multiplier();
@@ -79,15 +79,15 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal, const Eigen::Vect
     for (int i = block.start; i < block.end; i++) {
       int cluster_end;
       for (cluster_end = i + 1; cluster_end < block.end; cluster_end++) {
-        int prev = cluster_end - 1;
-        double end_threshold = low[prev] * (1 - copysign(shift_error, low[prev]));
+        const int prev = cluster_end - 1;
+        const double end_threshold = low[prev] * (1 - copysign(shift_error, low[prev]));
         if (high[cluster_end] < end_threshold) {
           break;
         }
       }
       cluster_end--; //now this is the index of the last element of the cluster
       if (cluster_end - i > 0) {//cluster
-        double max_shift = (high[i] - low[cluster_end]) * 10;
+        const double max_shift = (high[i] - low[cluster_end]) * 10;
         double next_shift, min_ele_growth;
         find_shift(block.l, block.d, low[cluster_end], high[i], max_ele_growth, max_shift, l, d, next_shift, min_ele_growth);
         for (int j = i; j <= cluster_end; j++) {
@@ -103,9 +103,9 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal, const Eigen::Vect
       }
       else { //isolated eigenvalue
         int twist_idx;
-        double low_gap = i == block.start ? std::numeric_limits<double>::infinity() : low[i - 1] - high[i];
-        double high_gap = i == block.end - 1 ? std::numeric_limits<double>::infinity() : low[i] - high[i + 1];
-        double min_gap = std::min(low_gap, high_gap);
+        const double low_gap = i == block.start ? std::numeric_limits<double>::infinity() : low[i - 1] - high[i];
+        const double high_gap = i == block.end - 1 ? std::numeric_limits<double>::infinity() : low[i] - high[i + 1];
+        const double min_gap = std::min(low_gap, high_gap);
         min_gap_big[i] = min_gap;
         l_big.col(i) = block.l;
         d_big.col(i) = block.d;
@@ -153,8 +153,8 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal, const Eigen::Vect
 * @param eigenvectors[out] Eigenvectors.
 * @param split_threshold Threshold for splitting the problem
 */
-void tridiagonal_eigensolver_cl(const Eigen::VectorXd& diagonal, const Eigen::VectorXd& subdiagonal, Eigen::VectorXd& eigenvalues, Eigen::MatrixXd& eigenvectors, double split_threshold = 1e-12) {
-  int n = diagonal.size();
+void tridiagonal_eigensolver_cl(const Eigen::VectorXd& diagonal, const Eigen::VectorXd& subdiagonal, Eigen::VectorXd& eigenvalues, Eigen::MatrixXd& eigenvectors, const double split_threshold = 1e-12) {
+  const int n = diagonal.size();
   eigenvectors.resize(n, n);
   eigenvalues.resize(n);
   int last = 0;

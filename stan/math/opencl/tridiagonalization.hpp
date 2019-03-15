@@ -23,10 +23,10 @@ namespace internal {
  * Columns bellow diagonal contain householder vectors that can be used to construct orthogonal matrix Q.
  * @param r Block size. Affects only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes a larger value is optimal.
  */
-void block_householder_tridiag_cl(const Eigen::MatrixXd& A, Eigen::MatrixXd& packed, int r = 60) {
+void block_householder_tridiag_cl(const Eigen::MatrixXd& A, Eigen::MatrixXd& packed, const int r = 60) {
   matrix_cl packed_gpu(A);
   for (size_t k = 0; k < A.rows() - 2; k += r) {
-    int actual_r = std::min({r, static_cast<int>(A.rows() - k - 2)});
+    const int actual_r = std::min({r, static_cast<int>(A.rows() - k - 2)});
     matrix_cl V_gpu(A.rows() - k - 1, actual_r + 1);
 
     for (size_t j = 0; j < actual_r; j++) {
@@ -81,11 +81,11 @@ void block_householder_tridiag_cl(const Eigen::MatrixXd& A, Eigen::MatrixXd& pac
  * @param[in,out] A On input a matrix to multiply with Q. On output the product Q*A.
  * @param r Block size. Affects only performance of the algorithm. Optimal value depends on the size of A and cache of the processor. For larger matrices or larger cache sizes larger value is optimal.
  */
-void block_apply_packed_Q_cl(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, int r = 200) {
+void block_apply_packed_Q_cl(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, const int r = 200) {
   matrix_cl A_gpu(A);
   Eigen::MatrixXd scratch_space(A.rows(), r);
   for (int k = (packed.rows() - 3) / r * r; k >= 0; k -= r) {
-    int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
+    const int actual_r = std::min({r, static_cast<int>(packed.rows() - k - 2)});
     Eigen::MatrixXd W(packed.rows() - k - 1, actual_r);
     W.col(0) = packed.col(k).tail(W.rows());
     for (size_t j = 1; j < actual_r; j++) {
