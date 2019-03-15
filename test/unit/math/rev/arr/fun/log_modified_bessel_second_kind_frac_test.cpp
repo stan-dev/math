@@ -5,23 +5,31 @@
 #include <test/unit/math/rev/scal/util.hpp>
 #include <iostream>
 #include <fstream>
+#include <limits>
 
 // Set to true to write CSV file with recurrence test results for analysis
-bool output_debug_csv = true;
+bool output_debug_csv = false;
 
-using namespace stan::math;
-using namespace stan::math::besselk_internal;
+using stan::math::var;
+using stan::math::log_modified_bessel_second_kind_frac;
+using stan::math::log_sum_exp;
+using stan::math::log_diff_exp;
+using stan::math::recover_memory;
+using stan::math::LOG_2;
+using stan::math::besselk_internal::choose_computation_type;
+using stan::math::besselk_internal::ComputationType;
 
-// TODO add values close to other boundaries, v = 0
+// TODO(martinmodrak) add values close to decision boundaries
 std::array<double, 25> v_to_test
     = {0,     3.15e-7,  2.62e-6, 9.2e-5,   0.0026,  0.0843,  0.17345,
        1,     1.63,     7.42,    42.42424, 86.5,    113.8,   148.7565,
        180.6, 246.3,    300.5,   513.6,    712.456, 714.456, 1235.6,
        8656,  15330.75, 37634.2, 85323};
 
-std::array<double, 16> z_to_test
+std::array<double, 19> z_to_test
     = {1.48e-7,  3.6e-6, 7.248e-5, 4.32e-4, 8.7e-3,  0.04523, 0.17532, 1, 3,
-       11.32465, 105.6,  1038.4,   4236,    11457.6, 62384,   105321.6};
+       11.32465, 105.6,  1038.4,   4236,    11457.6, 62384,   105321.6,
+       158742.3, 196754, 1.98e6};
 
 double allowed_recurrence_error = 1e-7;
 
@@ -100,22 +108,25 @@ TEST(AgradRev, log_modified_bessel_second_kind_frac_recurrence) {
           AVAR log_K_vp2
               = log_modified_bessel_second_kind_frac(v_var + 2, z_var);
 
-          if (fabs(v - 1) < 1e-4) {
-            right_hand = log_diff_exp(
+          //Trying to find the most numerically stable way to compute the
+          //recursive formula
+          if (v > 0) {
+            if (v < 1 + 1e-4) {
+              right_hand = log_diff_exp(
                 log_K_vp2, LOG_2 + log(v_var + 1) - log(z_var) + log_K_vp1);
-          } else if (fabs(v + 1) < 1e-4) {
-            right_hand = log_diff_exp(
-                log_K_vm2, LOG_2 + log(-v_var + 1) - log(z_var) + log_K_vm1);
-          } else if (v > 1) {
-            right_hand = log_sum_exp(
-                log_K_vm2, LOG_2 + log(v_var - 1) - log(z_var) + log_K_vm1);
-          } else if (v < -1) {
-            right_hand = log_sum_exp(
-                log_K_vp2, LOG_2 + log(-v_var - 1) - log(z_var) + log_K_vp1);
+            } else {
+              right_hand = log_sum_exp(
+                  log_K_vm2, LOG_2 + log(v_var - 1) - log(z_var) + log_K_vm1);
+            }            
           } else {
-            right_hand = log_diff_exp(
-                log_K_vm2, LOG_2 + log(-v_var + 1) - log(z_var) + log_K_vm1);
-          }
+            if (v > -1 - 1e-4) {
+              right_hand = log_diff_exp(
+                  log_K_vm2, LOG_2 + log(-v_var + 1) - log(z_var) + log_K_vm1);
+            } else {
+              right_hand = log_sum_exp(
+                  log_K_vp2, LOG_2 + log(-v_var - 1) - log(z_var) + log_K_vp1);
+            }
+          } 
 
           AVAR ratio = left_hand / right_hand;
 
@@ -211,7 +222,6 @@ struct TestValue {
 //   }];
 // Print["};"]
 std::array<TestValue, 48> testValues = {
-
     TestValue(3.e-8, 4.e-8, 2.842016709795352,
               2.965102177697192015626573541625171847363e-6,
               -1.4576989270969522e6),
@@ -352,7 +362,6 @@ std::array<TestValue, 48> testValues = {
 
     TestValue(31.4, 15.61, 8.8739384452097, 1.436044516907569,
               -2.252872461451006),
-
 };
 
 double allowed_rel_error = 1e-8;
@@ -393,8 +402,7 @@ TEST(AgradRev, log_modified_bessel_second_kind_frac_double_var) {
       VEC g;
       f.grad(x, g);
       EXPECT_REL_ERROR(test.grad_z, g[0])
-          << "grad_z at v = " << test.v << ", z = " << test.z;
-      ;
+          << "grad_z at v = " << test.v << ", z = " << test.z;      
     } catch (const std::domain_error& err) {
       std::cout << "\nAt v = " << test.v << ", z = " << test.z << ":\n";
       throw;

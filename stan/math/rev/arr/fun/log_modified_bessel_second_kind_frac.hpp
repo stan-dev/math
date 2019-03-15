@@ -4,13 +4,12 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/rev/scal/fun/to_var.hpp>
 
 #include <stan/math/rev/scal/fun/pow.hpp>
 #include <stan/math/rev/scal/fun/fabs.hpp>
 
 #include <stan/math/rev/scal/fun/cos.hpp>
-
-#include <stan/math/rev/arr/fun/log_sum_exp.hpp>
 
 #include <stan/math/rev/scal/fun/exp.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
@@ -18,13 +17,11 @@
 #include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 
-#include <boost/math/special_functions/bessel.hpp>
-
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <boost/math/quadrature/tanh_sinh.hpp>
 #include <boost/math/quadrature/exp_sinh.hpp>
-#include <vector>
 #include <limits>
+#include <algorithm>
 
 // Combining multiple approaches, documented at relevant sections
 // Due to symmetry around v, the code assumes all v's positive except for
@@ -91,7 +88,7 @@ class inner_integral_rothwell {
                           double *L1, std::size_t *levels) {
     boost::math::quadrature::tanh_sinh<double> integrator;
     return integrator.integrate(f, 0.0, 1.0, tolerance, error, L1, levels);
-  };
+  }
 };
 
 template <typename T_v, typename T_z>
@@ -119,12 +116,7 @@ T_v asymptotic_large_v(const T_v &v, const double &z) {
 
   // return 0.5 * (log(stan::math::pi()) - log(2) - log(v)) - v * (log(z) -
   // log(2) - log(v));
-  return stan::math::LOG_2 - v * (log(z) - stan::math::LOG_2) + lgamma(v)
-      //+ log(1 + (0.25 * boost::math::pow<2>(z) / v) )
-      // Third term, currently removed
-      //+ (- 0.25 * boost::math::pow<2>(z) +
-      //    0.5 * 0.125 * boost::math::pow<4>(z)) / boost::math::pow<2>(v)
-      ;
+  return stan::math::LOG_2 - v * (log(z) - stan::math::LOG_2) + lgamma(v);
 }
 
 // Formula 10.40.2 from https://dlmf.nist.gov/10.40
@@ -133,32 +125,24 @@ T_v asymptotic_large_z(const T_v &v, const double &z) {
   using std::log;
   using std::pow;
 
-  const int max_terms = 50;
-  int n_terms = std::min(max_terms, static_cast<int>(value_of(v) + 0.5));
+  const int max_terms = 10;
 
-  T_v log_series_sum;
-  if (n_terms > 1) {
-    std::vector<T_v> log_terms;
-    log_terms.reserve(max_terms - 1);
+  T_v series_sum(1);
+  T_v a_k_z_k(1);
 
-    T_v log_a_k(0);
-    double log_z = log(z);
-    T_v v_squared_4 = v * v * 4;
-    double log_8 = log(8);
+  double log_z = log(z);
+  T_v v_squared_4 = v * v * 4;
 
-    for (int k = 1; k < n_terms; k++) {
-      log_a_k = log_a_k + log(v_squared_4 - (2 * k - 1)) - log(k) - k * log_8;
-      log_terms.push_back(log_a_k - k * log_z);
-      if (log_terms.back() < -20) {
-        break;
-      }
+  for (int k = 1; k < max_terms; k++) {
+    a_k_z_k *= 
+      (v_squared_4 - boost::math::pow<2>(2 * k - 1)) / (k * z * 8);
+    series_sum += a_k_z_k;
+    if (fabs(a_k_z_k) < 1e-8) {
+      break;
     }
-
-    log_series_sum = log_sum_exp(log_terms);
-  } else {
-    log_series_sum = 0;
   }
-  return 0.5 * (log(pi()) - log(2) - log(z)) - z + log_series_sum;
+
+  return 0.5 * (log(pi()) - log(2) - log(z)) - z + log(series_sum);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -170,7 +154,7 @@ T_v asymptotic_large_z(const T_v &v, const double &z) {
 enum class ComputationType { Rothwell, Asymp_v, Asymp_z };
 
 const double rothwell_max_v = 75;
-const double rothwell_max_log_z_over_v = 600;
+const double rothwell_max_log_z_over_v = 300;
 
 inline ComputationType choose_computation_type(const double &v,
                                                const double &z) {
@@ -178,7 +162,7 @@ inline ComputationType choose_computation_type(const double &v,
   using std::pow;
   const double v_ = fabs(v);
   const double rothwell_log_z_boundary
-      = rothwell_max_log_z_over_v * (v_ - 0.5) - log(2);
+      = rothwell_max_log_z_over_v / (v_ - 0.5) - log(2);
 
   if (v_ < rothwell_max_v && (v_ <= 0.5 || log(z) < rothwell_log_z_boundary)) {
     return ComputationType::Rothwell;
@@ -310,7 +294,15 @@ template <typename T_v>
 T_v log_modified_bessel_second_kind_frac(const T_v &v, const double &z) {
   using std::fabs;
   using std::pow;
-  using namespace besselk_internal;
+  using besselk_internal::check_params;
+  using besselk_internal::choose_computation_type;
+  using besselk_internal::ComputationType; 
+  using besselk_internal::compute_lead_rothwell;
+  using besselk_internal::asymptotic_large_v;
+  using besselk_internal::asymptotic_large_z;
+  using besselk_internal::compute_inner_integral;
+  using besselk_internal::inner_integral_rothwell;
+
   check_params(value_of(v), value_of(z));
 
   if (z == 0) {
@@ -353,17 +345,13 @@ var log_modified_bessel_second_kind_frac(const T_v &v, const var &z) {
   //    boost::math::cyl_bessel_k(value_of(v), value_of(z))
   //    - value_of(v) / value_of(z);
 
-  std::vector<var> operands;
-  std::vector<double> gradients;
-  if (is_var<T_v>::value) {
+ if (is_var<T_v>::value) {
     // A trick to combine the autodiff gradient with precomputed_gradients
-    operands.push_back(value);
-    gradients.push_back(1);
+    return var(new precomp_vv_vari(value_of(value), 
+      to_var(value).vi_, z.vi_, 1, gradient_dz));
+  } else {
+    return var(new precomp_v_vari(value_of(value), z.vi_, gradient_dz));
   }
-  operands.push_back(z);
-  gradients.push_back(gradient_dz);
-
-  return precomputed_gradients(value_of(value), operands, gradients);
 }
 
 }  // namespace math
