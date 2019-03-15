@@ -110,93 +110,6 @@ typename boost::math::tools::promote_args<T_v, T_z>::type compute_lead_rothwell(
   return lead;
 }
 
-// The mathematica approach is based on formula 5 of
-// http://mathworld.wolfram.com/ModifiedBesselFunctionoftheSecondKind.html
-
-template <typename T_v, typename T_z, typename T_u>
-class inner_integral_mathematica {
- private:
-  T_v v;
-  T_z z;
-
- public:
-  typedef typename boost::math::tools::promote_args<T_v, T_z, T_u>::type T_Ret;
-
-  inner_integral_mathematica(const T_v &v, const T_z &z) : v(v), z(z) {}
-
-  inline T_Ret operator()(const T_u &u) const {
-    using std::cos;
-    using std::pow;
-
-    return cos(u) / pow(u * u + z * z, v + 0.5);
-  }
-
-  template <class F>
-  static double integrate(const F f, double tolerance, double *error,
-                          double *L1, std::size_t *levels) {
-    boost::math::quadrature::exp_sinh<double> integrator;
-    return integrator.integrate(f, tolerance, error, L1, levels);
-  };
-};
-
-template <typename T_v, typename T_z>
-typename boost::math::tools::promote_args<T_v, T_z>::type
-compute_lead_mathematica(const T_v &v, const T_z &z) {
-  typedef typename boost::math::tools::promote_args<T_v, T_z>::type T_Ret;
-
-  using std::log;
-
-  return lgamma(v + 0.5) + v * (log(2) + log(z)) - 0.5 * log(pi());
-}
-
-// The mathematica_large approach is the same as mathematica,
-// but moves most terms within the integral to keep the integral from
-// rounding to 0. It helps only for a small range of values.
-
-template <typename T_v, typename T_z, typename T_u>
-class inner_integral_mathematica_large {
- private:
-  T_v v;
-  T_z z;
-
- public:
-  typedef typename boost::math::tools::promote_args<T_v, T_z, T_u>::type T_Ret;
-
-  inner_integral_mathematica_large(const T_v &v, const T_z &z) : v(v), z(z) {}
-
-  inline static T_Ret log_factor(const T_u &u, const T_v &v, const T_z &z) {
-    // return v * (log(2) + log(z)) - (v + 0.5) * (log(u*u + z *z));
-    return v * (log(2) + log(z)) + lgamma(v + 0.5)
-           - (v + 0.5) * (log(u * u + z * z));
-  }
-
-  inline T_Ret operator()(const T_u &u) const {
-    using std::cos;
-    using std::exp;
-    using std::log;
-
-    return cos(u) * exp(log_factor(u, v, z));
-  }
-
-  template <class F>
-  static double integrate(const F f, double tolerance, double *error,
-                          double *L1, std::size_t *levels) {
-    boost::math::quadrature::exp_sinh<double> integrator;
-    return integrator.integrate(f, tolerance, error, L1, levels);
-  };
-};
-
-template <typename T_v, typename T_z>
-typename boost::math::tools::promote_args<T_v, T_z>::type
-compute_lead_mathematica_large(const T_v &v, const T_z &z) {
-  typedef typename boost::math::tools::promote_args<T_v, T_z>::type T_Ret;
-
-  using std::log;
-  // return lgamma(v + 0.5) - 0.5 * log(pi());
-  // return v * (log(2) + log(z)) - 0.5 * log(pi());
-  return -0.5 * log(pi());
-}
-
 // Formula 1.10 of
 // Temme, Journal of Computational Physics, vol 19, 324 (1975)
 // https://doi.org/10.1016/0021-9991(75)90082-0
@@ -256,16 +169,12 @@ T_v asymptotic_large_z(const T_v &v, const double &z) {
 // referenced from the test code.
 enum class ComputationType {
   Rothwell,
-  Mathematica,
-  Mathematica_Large,
   Asymp_v,
   Asymp_z
 };
 
 const double rothwell_max_v = 75;
 const double rothwell_max_log_z_over_v = 600;
-const double mathematica_min_log_factor = -200;
-const double mathematica_max_log_factor = 100;
 
 inline ComputationType choose_computation_type(const double &v,
                                                const double &z) {
@@ -274,19 +183,9 @@ inline ComputationType choose_computation_type(const double &v,
   const double v_ = fabs(v);
   const double rothwell_log_z_boundary
       = rothwell_max_log_z_over_v * (v_ - 0.5) - log(2);
-  const double mathematica_log_factor = -(v_ + 0.5) * 2 * log(z);
-  const double mathematica_large_log_factor
-      = inner_integral_mathematica_large<double, double, double>::log_factor(
-          0, v_, z);
 
   if (v_ < rothwell_max_v && (v_ <= 0.5 || log(z) < rothwell_log_z_boundary)) {
     return ComputationType::Rothwell;
-  } else if (mathematica_log_factor < mathematica_max_log_factor
-             && mathematica_log_factor > mathematica_min_log_factor) {
-    return ComputationType::Mathematica;
-  } else if (mathematica_large_log_factor < mathematica_max_log_factor
-             && mathematica_large_log_factor > mathematica_min_log_factor) {
-    return ComputationType::Mathematica_Large;
   } else if (v_ > z) {
     return ComputationType::Asymp_v;
   } else {
@@ -300,7 +199,7 @@ inline ComputationType choose_computation_type(const double &v,
 
 // Uses nested autodiff to get gradient with respect to v
 // Gradient with respect to z can be computed analytically
-// Code modified from gradient_of_f
+// Code modified from gradient_of_f, to avoid depending on integrate_1d
 template <typename F, typename T>
 class inner_integral_grad_v {
  private:
@@ -427,16 +326,6 @@ T_v log_modified_bessel_second_kind_frac(const T_v &v, const double &z) {
     case ComputationType::Rothwell: {
       T_v lead = compute_lead_rothwell(v_, z);
       T_v Q = compute_inner_integral<inner_integral_rothwell>(v_, z);
-      return lead + log(Q);
-    }
-    case ComputationType::Mathematica_Large: {
-      T_v lead = compute_lead_mathematica_large(v_, z);
-      T_v Q = compute_inner_integral<inner_integral_mathematica_large>(v_, z);
-      return lead + log(Q);
-    }
-    case ComputationType::Mathematica: {
-      T_v lead = compute_lead_mathematica(v_, z);
-      T_v Q = compute_inner_integral<inner_integral_mathematica>(v_, z);
       return lead + log(Q);
     }
     case ComputationType::Asymp_v: {

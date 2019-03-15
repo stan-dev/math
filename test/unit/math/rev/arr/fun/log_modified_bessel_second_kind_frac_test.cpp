@@ -7,7 +7,7 @@
 #include <fstream>
 
 // Set to true to write CSV file with recurrence test results for analysis
-bool output_debug_csv = false;
+bool output_debug_csv = true;
 
 using namespace stan::math;
 using namespace stan::math::besselk_internal;
@@ -29,10 +29,6 @@ const char* computation_type_to_string(ComputationType c) {
   switch (c) {
     case ComputationType::Rothwell:
       return "Rothwell";
-    case ComputationType::Mathematica:
-      return "Mathematica";
-    case ComputationType::Mathematica_Large:
-      return "Mathematica_Large";
     case ComputationType::Asymp_v:
       return "Asymp_v";
     case ComputationType::Asymp_z:
