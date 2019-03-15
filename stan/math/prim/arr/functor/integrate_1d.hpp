@@ -126,8 +126,7 @@ inline double integrate(const F& f, double a, double b,
     if (error1 > relative_tolerance * L1) {
       std::ostringstream message;
       message << " exceeds the given relative tolerance times norm of integral "
-              << "below zero (threshold = "  
-              << (relative_tolerance * L1) << ")";
+              << "below zero (threshold = " << (relative_tolerance * L1) << ")";
 
       domain_error(function, "error estimate of integral below zero", error1,
                    "", message.str().c_str());
@@ -135,8 +134,7 @@ inline double integrate(const F& f, double a, double b,
     if (error2 > relative_tolerance * L2) {
       std::ostringstream message;
       message << " exceeds the given relative tolerance times norm of integral "
-              << "above zero (threshold = "  
-              << (relative_tolerance * L2) << ")";
+              << "above zero (threshold = " << (relative_tolerance * L2) << ")";
 
       domain_error(function, "error estimate of integral above zero", error2,
                    "", message.str().c_str());
@@ -145,10 +143,9 @@ inline double integrate(const F& f, double a, double b,
     if (error1 > relative_tolerance * L1) {
       std::ostringstream message;
       message << " exceeds the given relative tolerance times norm of integral "
-              << "(threshold = "  
-              << (relative_tolerance * L1) << ")";
+              << "(threshold = " << (relative_tolerance * L1) << ")";
 
-      domain_error(function, "error estimate of integral", error1, "", 
+      domain_error(function, "error estimate of integral", error1, "",
                    message.str().c_str());
     }
   }
