@@ -80,8 +80,9 @@ inline matrix_cl cholesky_decompose(matrix_cl& A) {
   A_21.sub_block(A, block, 0, 0, 0, block_subset, block);
   // computes A_21*((L_11^-1)^T)
   // and copies the resulting submatrix to the lower left hand corner of A
-  matrix_cl L_21 = opencl::multiply<TriangularViewCL::Entire,
-      TriangularViewCL::Upper>(A_21, transpose(lower_triangular_inverse(L_11)));
+  matrix_cl L_21
+      = opencl::multiply<TriangularViewCL::Entire, TriangularViewCL::Upper>(
+          A_21, transpose(lower_triangular_inverse(L_11)));
   A.sub_block(L_21, 0, 0, block, 0, block_subset, block);
   matrix_cl A_22(block_subset, block_subset);
   A_22.sub_block(A, block, block, 0, 0, block_subset, block_subset);
