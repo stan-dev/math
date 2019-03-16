@@ -131,7 +131,6 @@ class matrix_cl {
     return *this;
   }
 
-
   /**
    * Constructor for the matrix_cl that
    * creates a copy of a var type Eigen matrix on the GPU.
@@ -144,20 +143,19 @@ class matrix_cl {
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
-   template <int R, int C>
-   explicit matrix_cl(const Eigen::Matrix<var, R, C>& A)
-       : rows_(A.rows()), cols_(A.cols()) {
-     cl::Context& ctx = opencl_context.context();
-     cl::CommandQueue& queue = opencl_context.queue();
-     if (A.size() > 0) {
-       Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
-       oclBuffer_
-           = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * L_A.size());
-       queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0, sizeof(double) * L_A.size(),
-        L_A.data());
-     }
-   }
-
+  template <int R, int C>
+  explicit matrix_cl(const Eigen::Matrix<var, R, C>& A)
+      : rows_(A.rows()), cols_(A.cols()) {
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    if (A.size() > 0) {
+      Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
+      oclBuffer_
+          = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * L_A.size());
+      queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0,
+                               sizeof(double) * L_A.size(), L_A.data());
+    }
+  }
 
   /**
    * Stores zeros in the matrix on the OpenCL device.
@@ -276,7 +274,8 @@ class matrix_v_cl {
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
-  matrix_v_cl(vari**& A, const int& M) : rows_(M), cols_(M), val_(M, M), adj_(M, M) {
+  matrix_v_cl(vari**& A, const int& M)
+      : rows_(M), cols_(M), val_(M, M), adj_(M, M) {
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue& queue = opencl_context.queue();
     if (size() > 0) {
@@ -296,9 +295,9 @@ class matrix_v_cl {
             adj_cpy.push_back(0);
           }
           for (size_type i = j; i < M; ++i) {
-              val_cpy.push_back(A[pos]->val_);
-              adj_cpy.push_back(A[pos]->adj_);
-              ++pos;
+            val_cpy.push_back(A[pos]->val_);
+            adj_cpy.push_back(A[pos]->adj_);
+            ++pos;
           }
         }
         printf("val size: %i \n ", val_cpy.size());
@@ -306,10 +305,10 @@ class matrix_v_cl {
             = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * vari_size);
         cl::Buffer oclBuffer_adj
             = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * vari_size);
-        queue.enqueueWriteBuffer(oclBuffer_val, CL_TRUE, 0, sizeof(double) * vari_size,
-         val_cpy.data());
-        queue.enqueueWriteBuffer(oclBuffer_adj, CL_TRUE, 0, sizeof(double) * vari_size,
-         adj_cpy.data());
+        queue.enqueueWriteBuffer(oclBuffer_val, CL_TRUE, 0,
+                                 sizeof(double) * vari_size, val_cpy.data());
+        queue.enqueueWriteBuffer(oclBuffer_adj, CL_TRUE, 0,
+                                 sizeof(double) * vari_size, adj_cpy.data());
         val_ = matrix_cl(oclBuffer_val, M, M);
         adj_ = matrix_cl(oclBuffer_adj, M, M);
       } catch (const cl::Error& e) {

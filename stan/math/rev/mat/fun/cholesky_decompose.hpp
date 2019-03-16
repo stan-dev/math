@@ -319,8 +319,6 @@ class cholesky_opencl : public vari {
    *
    */
   virtual void chain() {
-
-
     matrix_v_cl L(vari_ref_L_, M_);
     int block_size
         = M_ / opencl_context.tuning_opts().cholesky_rev_block_partition;
