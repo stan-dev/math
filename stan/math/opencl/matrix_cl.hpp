@@ -8,6 +8,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/meta/is_var.hpp>
 #include <stan/math/opencl/kernels/copy.hpp>
 #include <stan/math/opencl/kernels/sub_block.hpp>
 #include <stan/math/opencl/kernels/triangular_transpose.hpp>
@@ -16,6 +17,7 @@
 #include <CL/cl.hpp>
 #include <iostream>
 #include <string>
+#include <type_traits>
 #include <vector>
 #include <algorithm>
 
@@ -127,6 +129,33 @@ class matrix_cl {
     oclBuffer_ = a.buffer();
     return *this;
   }
+
+  /**
+   * Constructor for the matrix_cl that
+   * creates a copy of a var type Eigen matrix on the GPU.
+   *
+   *
+   * @tparam R rows of matrix
+   * @tparam C cols of matrix
+   * @param A the Eigen matrix
+   *
+   * @throw <code>std::system_error</code> if the
+   * matrices do not have matching dimensions
+   */
+   template <int R, int C>
+   explicit matrix_cl(const Eigen::Matrix<var, R, C>& A)
+       : rows_(A.rows()), cols_(A.cols()) {
+     cl::Context& ctx = opencl_context.context();
+     cl::CommandQueue& queue = opencl_context.queue();
+     if (A.size() > 0) {
+       Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
+       oclBuffer_
+           = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * L_A.size());
+       queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0, sizeof(double) * L_A.size(),
+        L_A.data());
+     }
+   }
+
 
   /**
    * Stores zeros in the matrix on the OpenCL device.
@@ -259,11 +288,11 @@ class matrix_v_cl {
         // We want to do a single loop over the vari so we use the map
         // method to copy the data over.
         char* val_ptr
-            = (char*)queue.enqueueMapBuffer(oclBuffer_val, CL_MAP_READ | CL_MAP_WRITE,
-                                     CL_MEM_READ_WRITE, 0, vari_size);
+            = reinterpret_cast<char*>(queue.enqueueMapBuffer(oclBuffer_val,
+               CL_MAP_READ | CL_MAP_WRITE, CL_MEM_READ_WRITE, 0, vari_size));
         char* adj_ptr
-            = (char*)queue.enqueueMapBuffer(oclBuffer_adj, CL_MAP_READ | CL_MAP_WRITE,
-                                     CL_MEM_READ_WRITE, 0, vari_size);
+            = reinterpret_cast<char*>(queue.enqueueMapBuffer(oclBuffer_adj,
+               CL_MAP_READ | CL_MAP_WRITE, CL_MEM_READ_WRITE, 0, vari_size));
 
         for (std::size_t i = 0; i < ((R * C) / 2); i++) {
           val_ptr[i] = A[i]->val_;
