@@ -15,6 +15,7 @@
 #include <stan/math/opencl/kernels/zeros.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <CL/cl.hpp>
+#include <boost/optional.hpp>
 #include <iostream>
 #include <string>
 #include <type_traits>
@@ -129,6 +130,7 @@ class matrix_cl {
     oclBuffer_ = a.buffer();
     return *this;
   }
+
 
   /**
    * Constructor for the matrix_cl that
@@ -274,89 +276,49 @@ class matrix_v_cl {
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
-  matrix_v_cl(const vari**& A, const int& R, const int& C) : rows_(R), cols_(C) {
+  matrix_v_cl(vari**& A, const int& M) : rows_(M), cols_(M), val_(M, M), adj_(M, M) {
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue& queue = opencl_context.queue();
     if (size() > 0) {
       try {
-        const int vari_size = sizeof(double) * ((R * C) / 2);
+        const int vari_size = M * M;
         // creates the OpenCL buffer to copy the Eigen
         // matrix to the OpenCL device
-        cl::Buffer oclBuffer_val
-            = cl::Buffer(ctx, CL_MEM_READ_WRITE, vari_size);
-        cl::Buffer oclBuffer_adj
-            = cl::Buffer(ctx, CL_MEM_READ_WRITE, vari_size);
-        // We want to do a single loop over the vari so we use the map
-        // method to copy the data over.
-        char* val_ptr
-            = reinterpret_cast<char*>(queue.enqueueMapBuffer(oclBuffer_val,
-               CL_MAP_READ | CL_MAP_WRITE, CL_MEM_READ_WRITE, 0, vari_size));
-        char* adj_ptr
-            = reinterpret_cast<char*>(queue.enqueueMapBuffer(oclBuffer_adj,
-               CL_MAP_READ | CL_MAP_WRITE, CL_MEM_READ_WRITE, 0, vari_size));
-
-        for (std::size_t i = 0; i < ((R * C) / 2); i++) {
-          val_ptr[i] = A[i]->val_;
-          adj_ptr[i] = A[i]->adj_;
+        std::vector<double> val_cpy;
+        std::vector<double> adj_cpy;
+        val_cpy.reserve(vari_size);
+        adj_cpy.reserve(vari_size);
+        // Make a flat version of a lower triangular
+        size_t pos = 0;
+        for (size_type j = 0; j < M; ++j) {
+          for (size_type k = 0; k < j; ++k) {
+            val_cpy.push_back(0);
+            adj_cpy.push_back(0);
+          }
+          for (size_type i = j; i < M; ++i) {
+              val_cpy.push_back(A[pos]->val_);
+              adj_cpy.push_back(A[pos]->adj_);
+              ++pos;
+          }
         }
-        queue.enqueueUnmapMemObject(oclBuffer_val, val_ptr);
-        queue.enqueueUnmapMemObject(oclBuffer_adj, adj_ptr);
-        val_ = matrix_cl(oclBuffer_val, R, C);
-        adj_ = matrix_cl(oclBuffer_adj, R, C);
+        printf("val size: %i \n ", val_cpy.size());
+        cl::Buffer oclBuffer_val
+            = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * vari_size);
+        cl::Buffer oclBuffer_adj
+            = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * vari_size);
+        queue.enqueueWriteBuffer(oclBuffer_val, CL_TRUE, 0, sizeof(double) * vari_size,
+         val_cpy.data());
+        queue.enqueueWriteBuffer(oclBuffer_adj, CL_TRUE, 0, sizeof(double) * vari_size,
+         adj_cpy.data());
+        val_ = matrix_cl(oclBuffer_val, M, M);
+        adj_ = matrix_cl(oclBuffer_adj, M, M);
       } catch (const cl::Error& e) {
         check_opencl_error("matrix constructor", e);
       }
     }
   }
-  /**
-   * Constructor for the matrix_cl that
-   * creates a copy of a var type Eigen matrix on the GPU.
-   *
-   *
-   * @tparam R rows of matrix
-   * @tparam C cols of matrix
-   * @param A the Eigen matrix
-   *
-   * @throw <code>std::system_error</code> if the
-   * matrices do not have matching dimensions
-   */
-  template <int R, int C>
-  explicit matrix_v_cl(const Eigen::Matrix<var, R, C>& A)
-      : rows_(A.rows()), cols_(A.cols()) {
-    cl::Context& ctx = opencl_context.context();
-    cl::CommandQueue& queue = opencl_context.queue();
-    if (size() > 0) {
-      try {
-        const int vari_size = sizeof(double) * ((R * C) / 2);
-        // creates the OpenCL buffer to copy the Eigen
-        // matrix to the OpenCL device
-        cl::Buffer oclBuffer_val
-            = cl::Buffer(ctx, CL_MEM_READ_WRITE, vari_size);
-        cl::Buffer oclBuffer_adj
-            = cl::Buffer(ctx, CL_MEM_READ_WRITE, vari_size);
 
-        // We want to do a single loop over the vari so we use the map
-        // method to copy the data over.
-        char* val_ptr
-            = queue.enqueueMapBuffer(oclBuffer_val, CL_MAP_READ | CL_MAP_WRITE,
-                                     CL_MEM_READ_WRITE, 0, vari_size);
-        char* adj_ptr
-            = queue.enqueueMapBuffer(oclBuffer_adj, CL_MAP_READ | CL_MAP_WRITE,
-                                     CL_MEM_READ_WRITE, 0, vari_size);
 
-        for (std::size_t i = 0; i < A.size(); i++) {
-            val_ptr[i] = A.coeffRef(i).vi_->val_;
-            adj_ptr[i] = A.coeffRef(i).vi_->adj_;
-        }
-        queue.enqueueUnmapMemObject(oclBuffer_val, val_ptr);
-        queue.enqueueUnmapMemObject(oclBuffer_adj, adj_ptr);
-        val_ = matrix_cl(oclBuffer_val, R, C);
-        adj_ = matrix_cl(oclBuffer_adj, R, C);
-      } catch (const cl::Error& e) {
-        check_opencl_error("matrix constructor", e);
-      }
-    }
-  }
 };
 
 }  // namespace math

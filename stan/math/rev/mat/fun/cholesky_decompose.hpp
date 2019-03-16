@@ -319,20 +319,9 @@ class cholesky_opencl : public vari {
    *
    */
   virtual void chain() {
-    auto L_adj_cpu = Eigen::MatrixXd::Zero(M_, M_).eval();
-    auto L_cpu = Eigen::MatrixXd::Zero(M_, M_).eval();
 
-    size_t pos = 0;
-    for (size_type j = 0; j < M_; ++j) {
-      for (size_type i = j; i < M_; ++i) {
-        L_adj_cpu.coeffRef(i, j) = vari_ref_L_[pos]->adj_;
-        L_cpu.coeffRef(i, j) = vari_ref_L_[pos]->val_;
-        ++pos;
-      }
-    }
 
-    matrix_cl L(L_cpu);
-    matrix_cl L_adj(L_adj_cpu);
+    matrix_v_cl L(vari_ref_L_, M_);
     int block_size
         = M_ / opencl_context.tuning_opts().cholesky_rev_block_partition;
     block_size = std::max(block_size, 8);
@@ -356,15 +345,15 @@ class cholesky_opencl : public vari {
       matrix_cl B_adj(m_k_ind, j);
       matrix_cl C_adj(m_k_ind, k_j_ind);
 
-      R.sub_block(L, j, 0, 0, 0, k_j_ind, j);
-      D.sub_block(L, j, j, 0, 0, k_j_ind, k_j_ind);
-      B.sub_block(L, k, 0, 0, 0, m_k_ind, j);
-      C.sub_block(L, k, j, 0, 0, m_k_ind, k_j_ind);
+      R.sub_block(L.val_, j, 0, 0, 0, k_j_ind, j);
+      D.sub_block(L.val_, j, j, 0, 0, k_j_ind, k_j_ind);
+      B.sub_block(L.val_, k, 0, 0, 0, m_k_ind, j);
+      C.sub_block(L.val_, k, j, 0, 0, m_k_ind, k_j_ind);
 
-      R_adj.sub_block(L_adj, j, 0, 0, 0, k_j_ind, j);
-      D_adj.sub_block(L_adj, j, j, 0, 0, k_j_ind, k_j_ind);
-      B_adj.sub_block(L_adj, k, 0, 0, 0, m_k_ind, j);
-      C_adj.sub_block(L_adj, k, j, 0, 0, m_k_ind, k_j_ind);
+      R_adj.sub_block(L.adj_, j, 0, 0, 0, k_j_ind, j);
+      D_adj.sub_block(L.adj_, j, j, 0, 0, k_j_ind, k_j_ind);
+      B_adj.sub_block(L.adj_, k, 0, 0, 0, m_k_ind, j);
+      C_adj.sub_block(L.adj_, k, j, 0, 0, m_k_ind, k_j_ind);
 
       C_adj = C_adj * lower_triangular_inverse(D);
       B_adj = B_adj - C_adj * R;
@@ -376,13 +365,14 @@ class cholesky_opencl : public vari {
       D_adj = diagonal_multiply(D_adj, 0.5);
       D_adj.zeros<stan::math::TriangularViewCL::Upper>();
 
-      L_adj.sub_block(R_adj, 0, 0, j, 0, k_j_ind, j);
-      L_adj.sub_block(D_adj, 0, 0, j, j, k_j_ind, k_j_ind);
-      L_adj.sub_block(B_adj, 0, 0, k, 0, m_k_ind, j);
-      L_adj.sub_block(C_adj, 0, 0, k, j, m_k_ind, k_j_ind);
+      L.adj_.sub_block(R_adj, 0, 0, j, 0, k_j_ind, j);
+      L.adj_.sub_block(D_adj, 0, 0, j, j, k_j_ind, k_j_ind);
+      L.adj_.sub_block(B_adj, 0, 0, k, 0, m_k_ind, j);
+      L.adj_.sub_block(C_adj, 0, 0, k, j, m_k_ind, k_j_ind);
     }
-    copy(L_adj_cpu, L_adj);
-    pos = 0;
+    auto L_adj_cpu = Eigen::MatrixXd::Zero(M_, M_).eval();
+    copy(L_adj_cpu, L.adj_);
+    int pos = 0;
     for (size_type j = 0; j < M_; ++j)
       for (size_type i = j; i < M_; ++i)
         vari_ref_A_[pos++]->adj_ += L_adj_cpu.coeffRef(i, j);
