@@ -13,7 +13,7 @@ TEST(MathMatrixOpenCL, matrix_cl_copy_cache) {
   stan::math::matrix_cl d11(100, 100);
   stan::math::copy(d11, m);
   stan::math::copy(m_back, d11);
- }
+}
 
 TEST(MathMatrixOpenCL, matrix_cl_var_copy) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> m(5, 5);

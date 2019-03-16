@@ -317,8 +317,6 @@ class matrix_v_cl {
       }
     }
   }
-
-
 };
 
 }  // namespace math
