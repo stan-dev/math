@@ -265,13 +265,12 @@ class matrix_v_cl {
   matrix_v_cl() : rows_(0), cols_(0) {}
 
   /**
-   * Constructor for the matrix_cl that
-   * creates a copy of a var.val_ type Eigen matrix on the GPU.
+   * Constructor for the matrix_v_cl
+   * for triangular matrices.
    *
    *
-   * @tparam R rows of matrix
-   * @tparam C cols of matrix
    * @param A the Eigen matrix
+   * @param M The Rows and Columns of the matrix
    *
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
