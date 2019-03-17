@@ -22,7 +22,7 @@ namespace math {
  * the entire matrix, lower triangular or upper triangular. The
  * value must be of type TriangularViewGPU
  */
-template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
+template <TriangularViewCL triangular_view>
 inline void matrix_cl::zeros() {
   if (size() == 0)
     return;

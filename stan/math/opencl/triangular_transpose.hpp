@@ -23,7 +23,7 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the matrix is not square.
  *
  */
-template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
+template <TriangularMapCL triangular_map>
 inline void matrix_cl::triangular_transpose() {
   if (size() == 0 || size() == 1) {
     return;
