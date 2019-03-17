@@ -41,7 +41,7 @@ static const char* pack_kernel_code = STRINGIFY(
           }
         } else {
           const int column_offset = j * (j + 1) / 2;
-          if (j <= i) {
+          if (j >= i) {
             A[column_offset + i] = B(i, j);
           }
         }

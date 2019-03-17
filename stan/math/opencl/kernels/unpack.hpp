@@ -44,7 +44,7 @@ static const char* unpack_kernel_code = STRINGIFY(
           }
         } else {
           const int column_offset = j * (j + 1) / 2;
-          if (j <= i) {
+          if (j >= i) {
             B(i, j) = A[column_offset + i];
           } else {
             B(i, j) = 0.0;
