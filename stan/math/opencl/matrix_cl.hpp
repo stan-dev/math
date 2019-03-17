@@ -43,8 +43,8 @@ class matrix_cl {
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   inline void triangular_transpose();
   template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
-  inline void sub_block(const matrix_cl& A, int A_i, int A_j, int this_i, int this_j,
-                 int nrows, int ncols);
+  inline void sub_block(const matrix_cl& A, int A_i, int A_j, int this_i,
+                        int this_j, int nrows, int ncols);
   int rows() const { return rows_; }
 
   int cols() const { return cols_; }
