@@ -329,8 +329,8 @@ class cholesky_opencl : public vari {
     L_val_cpu.reserve(packed_size);
 
     for (size_type j = 0; j < packed_size; ++j) {
-        L_adj_cpu[j] = vari_ref_L_[j]->adj_;
-        L_val_cpu[j] = vari_ref_L_[j]->val_;
+      L_adj_cpu[j] = vari_ref_L_[j]->adj_;
+      L_val_cpu[j] = vari_ref_L_[j]->val_;
     }
     matrix_cl L(M_, M_);
     matrix_cl L_adj(M_, M_);
@@ -388,7 +388,7 @@ class cholesky_opencl : public vari {
     }
     packed_copy<TriangularViewCL::Lower>(L_adj_cpu, L_adj);
     for (size_type j = 0; j < packed_size; ++j) {
-        vari_ref_A_[j]->adj_ += L_adj_cpu[j];
+      vari_ref_A_[j]->adj_ += L_adj_cpu[j];
     }
   }
 };
