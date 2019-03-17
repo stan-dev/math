@@ -62,8 +62,7 @@ using enable_if_no_event_stack
  * Ends the recurstion to extract the event stack.
  * @return An empty event vector.
  */
-inline const void event_concat_cl() {
-}
+inline const void event_concat_cl() {}
 
 /**
  * Ends the recursion to extract the event stack.
@@ -83,7 +82,6 @@ inline const std::vector<cl::Event>& event_concat_cl(
 inline const std::vector<cl::Event>& event_concat_cl(const matrix_cl& A) {
   return A.events();
 }
-
 
 /**
  * Ends the recurstion to extract the event stack.
