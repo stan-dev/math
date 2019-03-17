@@ -106,13 +106,11 @@ inline void packed_copy(std::vector<double>& dst, const matrix_cl& src) {
     dst.reserve(packed_size);
     cl::CommandQueue queue = opencl_context.queue();
     try {
-      cl::Buffer oclBuffer_packed
-          = cl::Buffer(opencl_context.context(), CL_MEM_READ_WRITE,
-                       sizeof(double) * packed_size);
+      matrix_cl packed(packed_size, 1);
       stan::math::opencl_kernels::pack(cl::NDRange(src.rows(), src.rows()),
-                                       oclBuffer_packed, src.buffer(),
+                                       packed.buffer(), src.buffer(),
                                        src.rows(), src.rows(), triangular_view);
-      queue.enqueueReadBuffer(oclBuffer_packed, CL_TRUE, 0,
+      queue.enqueueReadBuffer(packed.buffer(), CL_TRUE, 0,
                               sizeof(double) * packed_size, dst.data());
     } catch (const cl::Error& e) {
       check_opencl_error("packed_copy (OpenCL)->std::vector", e);
@@ -140,13 +138,11 @@ inline void packed_copy(matrix_cl& dst, const std::vector<double>& src) {
   if (src.size() > 0) {
     cl::CommandQueue queue = opencl_context.queue();
     try {
-      cl::Buffer oclBuffer_packed
-          = cl::Buffer(opencl_context.context(), CL_MEM_READ_WRITE,
-                       sizeof(double) * packed_size);
-      queue.enqueueWriteBuffer(oclBuffer_packed, CL_TRUE, 0,
+      matrix_cl packed(packed_size, 1);
+      queue.enqueueWriteBuffer(packed.buffer(), CL_TRUE, 0,
                                sizeof(double) * packed_size, src.data());
       stan::math::opencl_kernels::unpack(
-          cl::NDRange(dst.rows(), dst.rows()), dst.buffer(), oclBuffer_packed,
+          cl::NDRange(dst.rows(), dst.rows()), dst.buffer(), packed.buffer(),
           dst.rows(), dst.rows(), triangular_view);
     } catch (const cl::Error& e) {
       check_opencl_error("packed_copy std::vector->OpenCL", e);
