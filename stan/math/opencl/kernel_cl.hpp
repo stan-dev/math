@@ -26,6 +26,18 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 
+namespace internal {
+template <typename T>
+struct to_matrix {
+  typedef T type;
+};
+
+template <>
+struct to_matrix<cl::Buffer> {
+  typedef matrix_cl type;
+};
+}  // namespace internal
+
 /**
  * Compile an OpenCL kernel.
  *
@@ -128,8 +140,9 @@ struct global_range_kernel {
    * @param args The arguments to pass to the kernel.
    * @tparam Args Parameter pack of all kernel argument types.
    */
-  template <typename... Margs>
-  auto operator()(cl::NDRange global_thread_size, const Margs&... args) const {
+  auto operator()(
+      cl::NDRange global_thread_size,
+      const typename internal::to_matrix<Args>::type&... args) const {
     auto f = make_functor();
     std::vector<cl::Event> kernel_events
         = event_concat_cl(get_event_cl(args)...);
@@ -163,9 +176,9 @@ struct local_range_kernel {
    * @param args The arguments to pass to the kernel.
    * @tparam Args Parameter pack of all kernel argument types.
    */
-  template <typename... Margs>
-  auto operator()(cl::NDRange global_thread_size, cl::NDRange thread_block_size,
-                  const Margs&... args) const {
+  auto operator()(
+      cl::NDRange global_thread_size, cl::NDRange thread_block_size,
+      const typename internal::to_matrix<Args>::type&... args) const {
     auto f = make_functor();
     std::vector<cl::Event> kernel_events
         = event_concat_cl(get_event_cl(args)...);
