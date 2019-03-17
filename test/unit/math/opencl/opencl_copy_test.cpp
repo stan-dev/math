@@ -107,10 +107,8 @@ TEST(MathMatrixCL, matrix_cl_matrix_copy_arithmetic) {
   stan::math::matrix_cl d222_cl(2, 3);
   EXPECT_NO_THROW(stan::math::copy(d22_cl, test_val));
   EXPECT_NO_THROW(stan::math::copy(test_val, d22_cl));
-  EXPECT_THROW(copy(d222_cl, test_val),
-               std::invalid_argument);
- EXPECT_THROW(copy(test_val, d222_cl),
-              std::invalid_argument);
+  EXPECT_THROW(copy(d222_cl, test_val), std::invalid_argument);
+  EXPECT_THROW(copy(test_val, d222_cl), std::invalid_argument);
 }
 
 #endif
