@@ -30,7 +30,9 @@ namespace internal {
 
 /**
  * meta template struct for changing cl::Buffer argument types to matrix_cl.
- * @tparam T A template typename that for cases of cl::Buffer will return a typedef with a matrix_cl type. Otherwise will return a typedef with the input's type.
+ * @tparam T A template typename that for cases of cl::Buffer will return a
+ * typedef with a matrix_cl type. Otherwise will return a typedef with the
+ * input's type.
  */
 template <typename T = cl::Buffer>
 struct to_matrix {
@@ -39,7 +41,9 @@ struct to_matrix {
 
 /**
  * meta template struct for changing cl::Buffer argument types to matrix_cl.
- * @tparam T A template typename that for cases of cl::Buffer will return a typedef with a matrix_cl type. Otherwise will return a typedef with the input's type.
+ * @tparam T A template typename that for cases of cl::Buffer will return a
+ * typedef with a matrix_cl type. Otherwise will return a typedef with the
+ * input's type.
  */
 template <>
 struct to_matrix<cl::Buffer> {
