@@ -28,11 +28,11 @@ inline void check_diagonal_zeros(const char* function, const char* name,
   try {
     int zero_on_diagonal_flag = 0;
     matrix_cl zeros_flag(1, 1);
-    copy(zeros_flag, zero_on_diagonal_flag);
+    copy(zeros_flag, zero_on_diagonal_flag); // NOLINT
     cl::Event check_event = opencl_kernels::check_diagonal_zeros(
         cl::NDRange(y.rows(), y.cols()), y, zeros_flag, y.rows(), y.cols());
     zeros_flag.add_event(check_event);
-    copy(zero_on_diagonal_flag, zeros_flag);
+    copy(zero_on_diagonal_flag, zeros_flag); // NOLINT
     //  if zeros were found on the diagonal
     if (zero_on_diagonal_flag) {
       domain_error(function, name, "has zeros on the diagonal.", "");
