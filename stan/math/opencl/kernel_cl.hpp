@@ -6,6 +6,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/event_concat_cl.hpp>
 #include <stan/math/opencl/get_kernel_arg.hpp>
+#include <stan/math/opencl/get_event_cl.hpp>
 #include <CL/cl.hpp>
 #include <string>
 #include <algorithm>
@@ -130,7 +131,8 @@ struct global_range_kernel {
   template <typename... Margs>
   auto operator()(cl::NDRange global_thread_size, const Margs&... args) const {
     auto f = make_functor();
-    std::vector<cl::Event> kernel_events = event_concat_cl(args...);
+    std::vector<cl::Event> kernel_events
+        = event_concat_cl(get_event_cl(args)...);
     cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
                           global_thread_size);
     return f(eargs, get_kernel_arg(args)...);
@@ -165,7 +167,8 @@ struct local_range_kernel {
   auto operator()(cl::NDRange global_thread_size, cl::NDRange thread_block_size,
                   const Margs&... args) const {
     auto f = make_functor();
-    std::vector<cl::Event> kernel_events = event_concat_cl(args...);
+    std::vector<cl::Event> kernel_events
+        = event_concat_cl(get_event_cl(args)...);
     cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
                           global_thread_size, thread_block_size);
     return f(eargs, get_kernel_arg(args)...);
