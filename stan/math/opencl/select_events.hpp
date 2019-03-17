@@ -18,6 +18,10 @@ inline const std::vector<cl::Event>& select_events(const matrix_cl& m) {
   return m.events();
 }
 
+inline const std::vector<cl::Event>& select_events(matrix_cl* const& m) {
+  return m->events();
+}
+
 inline const std::vector<cl::Event>& select_events(
     const std::vector<cl::Event>& m) {
   return m;
