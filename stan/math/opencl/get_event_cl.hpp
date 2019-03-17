@@ -3,7 +3,6 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/has_event_stack.hpp>
 #include <CL/cl.hpp>
 #include <type_traits>
 #include <vector>
@@ -12,10 +11,9 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 
-template <typename T, enable_if_no_event_stack<T> = 0>
+template <typename T>
 inline const std::vector<cl::Event> get_event_cl(const T& t) {
-  const std::vector<cl::Event> vec_concat;
-  return vec_concat;
+  return std::vector<cl::Event>();
 }
 
 inline const std::vector<cl::Event>& get_event_cl(const matrix_cl& m) {

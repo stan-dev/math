@@ -3,7 +3,6 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/has_event_stack.hpp>
 #include <CL/cl.hpp>
 #include <type_traits>
 #include <vector>
@@ -31,7 +30,7 @@ inline const std::vector<cl::Event>& event_concat_cl(
  * @tparam Args Types for variadic.
  * @return An empty event vector.
  */
-template <typename T, enable_if_no_event_stack<T> = 0, typename... Args>
+template <typename T, typename... Args>
 inline const std::vector<cl::Event> event_concat_cl(const T& throwaway_val,
                                                     const Args... args) {
   return event_concat_cl(args...);
