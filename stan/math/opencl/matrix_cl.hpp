@@ -51,11 +51,11 @@ class matrix_cl {
 
   int size() const { return rows_ * cols_; }
 
-  inline const std::vector<cl::Event>& events() const { return events_; };
+  inline const std::vector<cl::Event>& events() const { return events_; }
   // push a new event onto the event stack
   inline void events(cl::Event new_event) {
     return this->events_.push_back(new_event);
-  };
+  }
 
   const cl::Buffer& buffer() const { return oclBuffer_; }
 

@@ -6,7 +6,7 @@
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/opencl/kernels/check_symmetric.hpp>
-
+#include <vector>
 namespace stan {
 namespace math {
 /**

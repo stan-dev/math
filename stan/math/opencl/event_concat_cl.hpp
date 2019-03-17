@@ -3,8 +3,9 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <type_traits>
 #include <CL/cl.hpp>
+#include <type_traits>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -61,9 +62,7 @@ using enable_if_no_event_stack
  * Ends the recurstion to extract the event stack.
  * @return An empty event vector.
  */
-inline const std::vector<cl::Event> event_concat_cl() {
-  const std::vector<cl::Event> vec_concat;
-  return vec_concat;
+inline const void event_concat_cl() {
 }
 
 /**
@@ -85,41 +84,15 @@ inline const std::vector<cl::Event>& event_concat_cl(const matrix_cl& A) {
   return A.events();
 }
 
-/**
- * Ends the recurstion to extract the event stack.
- * @param v1 Events on the OpenCL event stack.
- * @param throwaway_val A value that does not have an event stack.
- * @return input vector v1.
- */
-template <typename T, enable_if_has_event_stack<T> = 0>
-inline const std::vector<cl::Event>& event_concat_cl(
-    const std::vector<cl::Event>& v1, const T& throwaway_val) {
-  return v1;
-}
 
 /**
  * Ends the recurstion to extract the event stack.
- * @param throwaway_val1 A value that does not have an event stack.
- * @param throwaway_val2 A value that does not have an event stack.
+ * @param throwaway_val A value that does not have an event stack.
  * @tparam T checks if either has an event stack and if not then fails
  * compilation.
  * @return An empty event vector.
  */
 template <typename T, enable_if_no_event_stack<T> = 0>
-inline const std::vector<cl::Event> event_concat_cl(const T& throwaway_val1,
-                                                    const T& throwaway_val2) {
-  const std::vector<cl::Event> vec_concat;
-  return vec_concat;
-}
-
-/**
- * Ends the recurstion to extract the event stack.
- * @param throwaway_val A value that does not have an event stack.
- * @tparam T checks if either has an event stack and if not then fails
- * compilation.
- * @return An empty event vector.
- */
-template <typename T, enable_if_has_event_stack<T> = 0>
 inline const std::vector<cl::Event> event_concat_cl(const T& throwaway_val) {
   const std::vector<cl::Event> vec_concat;
   return vec_concat;
@@ -138,28 +111,6 @@ template <typename T, enable_if_no_event_stack<T> = 0, typename... Args>
 inline const std::vector<cl::Event> event_concat_cl(const T& throwaway_val,
                                                     const Args... args) {
   return event_concat_cl(args...);
-}
-
-/**
- * Recursion for when there is a vector of events and a matrix_cl type.
- * @param v1 A event stack to roll up.
- * @param B A matric_cl holding a vector of events.
- * @return Vector of OpenCL events
- */
-inline const std::vector<cl::Event> event_concat_cl(
-    const std::vector<cl::Event>& v1, const matrix_cl& B) {
-  return event_concat_cl(v1, B.events());
-}
-
-/**
- * Ends the recurstion to extract the event stack.
- * @param A matrix with an event stack.
- * @param B matrix with an event stack.
- * @return Vector of OpenCL events
- */
-inline const std::vector<cl::Event> event_concat_cl(const matrix_cl& A,
-                                                    const matrix_cl& B) {
-  return event_concat_cl(A.events(), B.events());
 }
 
 /**
@@ -187,8 +138,7 @@ inline const std::vector<cl::Event> event_concat_cl(
 template <typename... Args>
 inline const std::vector<cl::Event> event_concat_cl(const matrix_cl& A,
                                                     const Args... args) {
-  const std::vector<cl::Event> first_events = A.events();
-  return event_concat_cl(first_events, args...);
+  return event_concat_cl(A.events(), args...);
 }
 
 /**
@@ -202,10 +152,8 @@ inline const std::vector<cl::Event> event_concat_cl(const matrix_cl& A,
 template <typename... Args>
 inline const std::vector<cl::Event> event_concat_cl(const matrix_cl* const& A,
                                                     const Args... args) {
-  const std::vector<cl::Event> first_events = A->events();
-  return event_concat_cl(first_events, args...);
+  return event_concat_cl(A->events(), args...);
 }
-
 }  // namespace math
 }  // namespace stan
 

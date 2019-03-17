@@ -5,6 +5,8 @@
 #include <stan/math/opencl/kernels/check_nan.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 
+#include <vector>
+
 namespace stan {
 namespace math {
 /**

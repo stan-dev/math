@@ -133,7 +133,7 @@ struct global_range_kernel {
     std::vector<cl::Event> kernel_events = event_concat_cl(args...);
     cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
                           global_thread_size);
-    return f(eargs, internal::get_kernel_arg(args)...);
+    return f(eargs, get_kernel_arg(args)...);
   }
 };
 /**
@@ -168,7 +168,7 @@ struct local_range_kernel {
     std::vector<cl::Event> kernel_events = event_concat_cl(args...);
     cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
                           global_thread_size, thread_block_size);
-    return f(eargs, internal::get_kernel_arg(args)...);
+    return f(eargs, get_kernel_arg(args)...);
   }
 };
 

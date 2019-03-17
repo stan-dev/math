@@ -4,6 +4,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/check_diagonal_zeros.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
+#include <vector>
 
 namespace stan {
 namespace math {
