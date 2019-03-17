@@ -21,6 +21,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/multiply.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
+#include <vector>
 #endif
 
 #include <algorithm>

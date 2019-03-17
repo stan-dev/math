@@ -92,13 +92,12 @@ void copy(Eigen::Matrix<double, R, C>& dst, const matrix_cl& src) {
 }
 
 /**
- * Packs the triangular source matrix
- * on the OpenCL device and copies it to the
- * packed destination std::vector.
- *
+ * Packs the flat triagnular matrix on the OpenCL device and 
+ * copies it to the std::vector.
+ * 
  * @tparam triangular_view the triangularity of the source matrix
  * @param dst the destination std::vector
- * @param src source matrix on the OpenCL device
+ * @param src the flat triangular source matrix on the OpenCL device
  */
 template <TriangularViewCL triangular_view>
 inline void packed_copy(std::vector<double>& dst, const matrix_cl& src) {
@@ -122,9 +121,8 @@ inline void packed_copy(std::vector<double>& dst, const matrix_cl& src) {
 }
 
 /**
- * Copies the packed triangular matrix in the
- * source std::vector and unpacks it to a
- * flat matrix on the OpenCL device.
+ * Copies and unpacks the packed triangular matrix from
+ * the source std::vector to the flat matrix_cl on the OpenCL device.
  *
  * @tparam triangular_view the triangularity of the source matrix
  * @param src the packed source std::vector
