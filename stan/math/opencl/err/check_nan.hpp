@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/check_nan.hpp>
+#include <stan/math/opencl/copy.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 
 #include <vector>
@@ -28,17 +29,13 @@ inline void check_nan(const char* function, const char* name,
   cl::Context& ctx = opencl_context.context();
   try {
     int nan_flag = 0;
-    cl::Buffer buffer_nan_flag(ctx, CL_MEM_READ_WRITE, sizeof(int));
-    cmd_queue.enqueueWriteBuffer(buffer_nan_flag, CL_TRUE, 0, sizeof(int),
-                                 &nan_flag);
+    matrix_cl nan_chk(1,1);
+    copy(nan_chk, nan_flag);
     cl::Event check_event
         = opencl_kernels::check_nan(cl::NDRange(y.rows(), y.cols()), y,
-                                    buffer_nan_flag, y.rows(), y.cols());
-    std::vector<cl::Event> check_stack;
-    check_stack.insert(check_stack.end(), y.events().begin(), y.events().end());
-    check_stack.push_back(check_event);
-    cmd_queue.enqueueReadBuffer(buffer_nan_flag, CL_TRUE, 0, sizeof(int),
-                                &nan_flag, &check_stack);
+                                    nan_chk, y.rows(), y.cols());
+    nan_chk.add_event(check_event);
+    copy(nan_flag, nan_chk);
     //  if NaN values were found in the matrix
     if (nan_flag) {
       domain_error(function, name, "has NaN values", "");

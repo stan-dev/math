@@ -63,7 +63,7 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
         cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt), Apad,
         Bpad, tempPad, Apad.rows(), Bpad.cols(), Bpad.rows(), triangular_view_A,
         triangular_view_B);
-    tempPad.events(mat_mul_event);
+    tempPad.add_event(mat_mul_event);
   } catch (cl::Error& e) {
     check_opencl_error("multiply", e);
   }
@@ -88,7 +88,7 @@ inline matrix_cl multiply(const matrix_cl& A, const double scalar) {
   try {
     cl::Event scalar_mul_event = opencl_kernels::scalar_mul(
         cl::NDRange(A.rows(), A.cols()), temp, A, scalar, A.rows(), A.cols());
-    temp.events(scalar_mul_event);
+    temp.add_event(scalar_mul_event);
   } catch (const cl::Error& e) {
     check_opencl_error("multiply scalar", e);
   }

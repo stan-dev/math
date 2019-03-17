@@ -81,12 +81,13 @@ inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
     cl::Event batch_event = opencl_kernels::batch_identity(
         cl::NDRange(parts, thread_block_size_1D, thread_block_size_1D), temp,
         thread_block_size_1D, temp.size());
-    temp.events(batch_event);
+    temp.add_event(batch_event);
     // spawn parts thread blocks, each responsible for one block
     cl::Event diag_inv_event = opencl_kernels::diag_inv(
         cl::NDRange(parts * thread_block_size_1D),
         cl::NDRange(thread_block_size_1D), inv_padded, temp, inv_padded.rows());
-    inv_padded.events(diag_inv_event);
+    inv_padded.add_event(diag_inv_event);
+    temp.add_event(diag_inv_event);
   } catch (cl::Error& e) {
     check_opencl_error("inverse step1", e);
   }
@@ -117,11 +118,11 @@ inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
     cl::Event inv_lower_tri_event = opencl_kernels::inv_lower_tri_multiply(
         result_ndrange, ndrange_2d, inv_padded, temp, inv_padded.rows(),
         result_matrix_dim);
-    temp.events(inv_lower_tri_event);
+    temp.add_event(inv_lower_tri_event);
     cl::Event neg_rect_event = opencl_kernels::neg_rect_lower_tri_multiply(
         result_ndrange, ndrange_2d, inv_padded, temp, inv_padded.rows(),
         result_matrix_dim);
-    inv_padded.events(neg_rect_event);
+    inv_padded.add_event(neg_rect_event);
     // if this is the last submatrix, end
     if (parts == 1) {
       parts = 0;

@@ -28,9 +28,9 @@ inline void matrix_cl::zeros() {
     return;
   try {
     cl::Event zero_event
-        = opencl_kernels::zeros(cl::NDRange(this->rows(), this->cols()), this,
+        = opencl_kernels::zeros(cl::NDRange(this->rows(), this->cols()), *this,
                                 this->rows(), this->cols(), triangular_view);
-    this->events(zero_event);
+    this->add_event(zero_event);
   } catch (const cl::Error& e) {
     check_opencl_error("zeros", e);
   }

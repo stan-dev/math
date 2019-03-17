@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/check_diagonal_zeros.hpp>
+#include <stan/math/opencl/copy.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <vector>
 
@@ -26,16 +27,12 @@ inline void check_diagonal_zeros(const char* function, const char* name,
   cl::Context ctx = opencl_context.context();
   try {
     int zero_on_diagonal_flag = 0;
-    cl::Buffer buffer_flag(ctx, CL_MEM_READ_WRITE, sizeof(int));
-    cmd_queue.enqueueWriteBuffer(buffer_flag, CL_TRUE, 0, sizeof(int),
-                                 &zero_on_diagonal_flag);
+    matrix_cl zeros_flag(1,1);
+    copy(zeros_flag, zero_on_diagonal_flag);
     cl::Event check_event = opencl_kernels::check_diagonal_zeros(
-        cl::NDRange(y.rows(), y.cols()), y, buffer_flag, y.rows(), y.cols());
-    std::vector<cl::Event> check_stack;
-    check_stack.insert(check_stack.end(), y.events().begin(), y.events().end());
-    check_stack.push_back(check_event);
-    cmd_queue.enqueueReadBuffer(buffer_flag, CL_TRUE, 0, sizeof(int),
-                                &zero_on_diagonal_flag, &check_stack);
+        cl::NDRange(y.rows(), y.cols()), y, zeros_flag, y.rows(), y.cols());
+    zeros_flag.add_event(check_event);
+    copy(zero_on_diagonal_flag, zeros_flag);
     //  if zeros were found on the diagonal
     if (zero_on_diagonal_flag) {
       domain_error(function, name, "has zeros on the diagonal.", "");

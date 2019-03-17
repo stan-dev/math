@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/opencl/kernels/check_symmetric.hpp>
+#include <stan/math/opencl/copy.hpp>
 #include <vector>
 namespace stan {
 namespace math {
@@ -28,17 +29,13 @@ inline void check_symmetric(const char* function, const char* name,
   cl::Context& ctx = opencl_context.context();
   try {
     int symmetric_flag = 1;
-    cl::Buffer buffer_symmetric_flag(ctx, CL_MEM_READ_WRITE, sizeof(int));
-    cmd_queue.enqueueWriteBuffer(buffer_symmetric_flag, CL_TRUE, 0, sizeof(int),
-                                 &symmetric_flag);
+    matrix_cl symm_flag(1,1);
+    copy(symm_flag, symmetric_flag);
     cl::Event check_event = opencl_kernels::check_symmetric(
-        cl::NDRange(y.rows(), y.cols()), y, buffer_symmetric_flag, y.rows(),
+        cl::NDRange(y.rows(), y.cols()), y, symm_flag, y.rows(),
         y.cols(), math::CONSTRAINT_TOLERANCE);
-    std::vector<cl::Event> check_stack;
-    check_stack.insert(check_stack.end(), y.events().begin(), y.events().end());
-    check_stack.push_back(check_event);
-    cmd_queue.enqueueReadBuffer(buffer_symmetric_flag, CL_TRUE, 0, sizeof(int),
-                                &symmetric_flag, &check_stack);
+    symm_flag.add_event(check_event);
+    copy(symmetric_flag, symm_flag);
     //  if the matrix is not symmetric
     if (!symmetric_flag) {
       domain_error(function, name, "is not symmetric", "");

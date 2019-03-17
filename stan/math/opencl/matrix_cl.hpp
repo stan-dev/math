@@ -53,7 +53,7 @@ class matrix_cl {
 
   inline const std::vector<cl::Event>& events() const { return events_; }
   // push a new event onto the event stack
-  inline void events(cl::Event new_event) {
+  inline void add_event(cl::Event new_event) {
     return this->events_.push_back(new_event);
   }
 
@@ -75,7 +75,7 @@ class matrix_cl {
       queue.enqueueCopyBuffer(A.buffer(), this->buffer(), 0, 0,
                               A.size() * sizeof(double), &A.events(),
                               &cstr_event);
-      this->events(cstr_event);
+      this->add_event(cstr_event);
     } catch (const cl::Error& e) {
       check_opencl_error("copy (OpenCL)->(OpenCL)", e);
     }
@@ -91,7 +91,7 @@ class matrix_cl {
    * matrices do not have matching dimensions
    *
    */
-  matrix_cl(int rows, int cols) : rows_(rows), cols_(cols) {
+  matrix_cl(const int& rows, const int& cols) : rows_(rows), cols_(cols) {
     if (size() > 0) {
       cl::Context& ctx = opencl_context.context();
       try {
@@ -137,7 +137,7 @@ class matrix_cl {
         queue.enqueueWriteBuffer(oclBuffer_, CL_FALSE, 0,
                                  sizeof(double) * A.size(), A.data(), NULL,
                                  &transfer_event);
-        this->events(transfer_event);
+        this->add_event(transfer_event);
       } catch (const cl::Error& e) {
         check_opencl_error("matrix constructor", e);
       }

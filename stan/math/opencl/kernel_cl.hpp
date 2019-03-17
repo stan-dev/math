@@ -27,7 +27,7 @@ namespace math {
 namespace opencl_kernels {
 
 namespace internal {
-template <typename T>
+template <typename T = cl::Buffer>
 struct to_matrix {
   typedef T type;
 };
@@ -35,6 +35,8 @@ template <>
 struct to_matrix<cl::Buffer> {
   typedef matrix_cl type;
 };
+
+
 }  // namespace internal
 
 /**

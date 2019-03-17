@@ -12,6 +12,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -48,7 +49,7 @@ void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
       queue.enqueueWriteBuffer(dst.buffer(), CL_FALSE, 0,
                                sizeof(double) * dst.size(), src.data(), NULL,
                                &copy_event);
-      dst.events(copy_event);
+      dst.add_event(copy_event);
     } catch (const cl::Error& e) {
       check_opencl_error("copy Eigen->(OpenCL)", e);
     }
@@ -121,11 +122,58 @@ inline void copy(matrix_cl& dst, const matrix_cl& src) {
       cl::Event copy_event
           = opencl_kernels::copy(cl::NDRange(dst.rows(), dst.cols()), src, dst,
                                  dst.rows(), dst.cols());
-      dst.events(copy_event);
+      dst.add_event(copy_event);
     } catch (const cl::Error& e) {
       std::cout << e.err() << std::endl;
       check_opencl_error("copy (OpenCL)->(OpenCL)", e);
     }
+  }
+}
+
+/**
+ * Copy A 1 by 1 source matrix from the Device to  the host.
+ * @tparam An arithmetic type to pass the value from the OpenCL matrix to.
+ * @param dst Arithmetic to receive the matrix_cl value.
+ * @param src A 1x1 matrix on the device.
+ */
+template <typename T, std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+inline void copy(T& dst, const matrix_cl& src) {
+  check_size_match("copy ((OpenCL) -> (OpenCL))", "src.rows()", src.rows(),
+                   "dst.rows()", 1);
+  check_size_match("copy ((OpenCL) -> (OpenCL))", "src.cols()", src.cols(),
+                   "dst.cols()", 1);
+ try {
+    cl::CommandQueue queue = opencl_context.queue();
+    cl::Event copy_event;
+    queue.enqueueReadBuffer(src.buffer(), CL_TRUE, 0, sizeof(int),
+                               &dst, &src.events(), &copy_event);
+   } catch (const cl::Error& e) {
+     std::cout << e.err() << std::endl;
+     check_opencl_error("copy (OpenCL)->(OpenCL)", e);
+   }
+}
+
+/**
+ * Copy an arithmetic type to the device.
+ * @tparam An arithmetic type to pass the value from the OpenCL matrix to.
+ * @param src Arithmetic to receive the matrix_cl value.
+ * @param dst A 1x1 matrix on the device.
+ */
+template <typename T, std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+inline void copy(matrix_cl& dst, const T& src) {
+  check_size_match("copy ((OpenCL) -> (OpenCL))", "src.rows()", dst.rows(),
+                   "dst.rows()", 1);
+  check_size_match("copy ((OpenCL) -> (OpenCL))", "src.cols()", dst.cols(),
+                   "dst.cols()", 1);
+  try {
+    cl::CommandQueue queue = opencl_context.queue();
+    cl::Event copy_event;
+    queue.enqueueWriteBuffer(dst.buffer(), CL_FALSE, 0, sizeof(T), &src,
+      &dst.events(), &copy_event);
+    dst.add_event(copy_event);
+  } catch (const cl::Error& e) {
+    std::cout << e.err() << std::endl;
+    check_opencl_error("copy (OpenCL)->(OpenCL)", e);
   }
 }
 

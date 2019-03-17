@@ -22,7 +22,7 @@ inline matrix_cl transpose(const matrix_cl& src) {
   try {
     cl::Event transpose_event = opencl_kernels::transpose(
         cl::NDRange(src.rows(), src.cols()), dst, src, src.rows(), src.cols());
-    dst.events(transpose_event);
+    dst.add_event(transpose_event);
   } catch (const cl::Error& e) {
     check_opencl_error("transpose", e);
   }
