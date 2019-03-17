@@ -14,8 +14,8 @@ static const char* unpack_kernel_code = STRINGIFY(
      * Unpacks a packed triangular matrix to a flat
      * matrix
      *
-     * @param[in] A packed buffer
      * @param[out] B flat matrix
+     * @param[in] A packed buffer
      * @param rows number of columns for matrix B
      * @param cols number of columns for matrix B
      * @param part parameter that defines the triangularity of the
@@ -27,7 +27,7 @@ static const char* unpack_kernel_code = STRINGIFY(
      * <code>unpack_kernel_code.</code>
      * This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void unpack(__global double* A, __global double* B,
+    __kernel void unpack(__global double* B, __global double* A,
                          unsigned int rows, unsigned int cols,
                          unsigned int part) {
       int i = get_global_id(0);

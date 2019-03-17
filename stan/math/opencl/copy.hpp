@@ -146,7 +146,7 @@ inline void packed_copy(matrix_cl& dst, const std::vector<double>& src) {
       queue.enqueueWriteBuffer(oclBuffer_packed, CL_TRUE, 0,
                                sizeof(double) * packed_size, src.data());
       stan::math::opencl_kernels::unpack(
-          cl::NDRange(dst.rows(), dst.rows()), oclBuffer_packed, dst.buffer(),
+          cl::NDRange(dst.rows(), dst.rows()), dst.buffer(), oclBuffer_packed,
           dst.rows(), dst.rows(), triangular_view);
     } catch (const cl::Error& e) {
       check_opencl_error("packed_copy std::vector->OpenCL", e);
