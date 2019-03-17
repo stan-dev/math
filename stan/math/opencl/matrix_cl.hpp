@@ -8,17 +8,13 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/scal/meta/is_var.hpp>
 #include <stan/math/opencl/kernels/copy.hpp>
 #include <stan/math/opencl/kernels/sub_block.hpp>
 #include <stan/math/opencl/kernels/triangular_transpose.hpp>
 #include <stan/math/opencl/kernels/zeros.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <CL/cl.hpp>
-#include <boost/optional.hpp>
-#include <iostream>
 #include <string>
-#include <type_traits>
 #include <vector>
 #include <algorithm>
 
@@ -135,13 +131,9 @@ class matrix_cl {
    * Constructor for the matrix_cl that
    * creates a copy of a var type Eigen matrix on the GPU.
    *
-   *
    * @tparam R rows of matrix
    * @tparam C cols of matrix
    * @param A the Eigen matrix
-   *
-   * @throw <code>std::system_error</code> if the
-   * matrices do not have matching dimensions
    */
   template <int R, int C>
   explicit matrix_cl(const Eigen::Matrix<var, R, C>& A)
@@ -240,14 +232,14 @@ class matrix_cl {
     }
   }
 };
-
+/**
+ * Represents a matrix of varis on the OpenCL device.
+ *
+ * The matrix data is stored in two separate matrix_cl
+ * members for values (val_) and adjoints (adj_).
+ */
 class matrix_v_cl {
  private:
-  /**
-   * cl::Buffer provides functionality for working with the OpenCL buffer.
-   * An OpenCL buffer allocates the memory in the device that
-   * is provided by the context.
-   */
   const int rows_;
   const int cols_;
 
@@ -299,7 +291,6 @@ class matrix_v_cl {
             ++pos;
           }
         }
-        printf("val size: %i \n ", val_cpy.size());
         cl::Buffer oclBuffer_val
             = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * vari_size);
         cl::Buffer oclBuffer_adj
