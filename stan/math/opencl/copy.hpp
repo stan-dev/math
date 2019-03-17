@@ -6,6 +6,8 @@
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/copy.hpp>
+#include <stan/math/opencl/kernels/pack.hpp>
+#include <stan/math/opencl/kernels/unpack.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <CL/cl.hpp>
@@ -85,6 +87,71 @@ void copy(Eigen::Matrix<double, R, C>& dst, const matrix_cl& src) {
                               sizeof(double) * dst.size(), dst.data());
     } catch (const cl::Error& e) {
       check_opencl_error("copy (OpenCL)->Eigen", e);
+    }
+  }
+}
+
+/**
+ * Packs the triangular source matrix
+ * on the OpenCL device and copies it to the
+ * packed destination std::vector.
+ *
+ * @tparam triangular_view the triangularity of the source matrix
+ * @param dst the destination std::vector
+ * @param src source matrix on the OpenCL device
+ */
+template <TriangularViewCL triangular_view>
+inline void packed_copy(std::vector<double>& dst, const matrix_cl& src) {
+  if (src.size() > 0) {
+    int packed_size = src.rows() * (src.rows() + 1) / 2;
+    dst.reserve(packed_size);
+    cl::CommandQueue queue = opencl_context.queue();
+    try {
+      cl::Buffer oclBuffer_packed
+          = cl::Buffer(opencl_context.context(), CL_MEM_READ_WRITE,
+                       sizeof(double) * packed_size);
+      stan::math::opencl_kernels::pack(cl::NDRange(src.rows(), src.rows()),
+                                       oclBuffer_packed, src.buffer(),
+                                       src.rows(), src.rows(), triangular_view);
+      queue.enqueueReadBuffer(oclBuffer_packed, CL_TRUE, 0,
+                              sizeof(double) * packed_size, dst.data());
+    } catch (const cl::Error& e) {
+      check_opencl_error("packed_copy (OpenCL)->std::vector", e);
+    }
+  }
+}
+
+/**
+ * Copies the packed triangular matrix in the
+ * source std::vector and unpacks it to a
+ * flat matrix on the OpenCL device.
+ *
+ * @tparam triangular_view the triangularity of the source matrix
+ * @param src the packed source std::vector
+ * @param dst the destination flat matrix on the OpenCL device
+ * @throw <code>std::invalid_argument</code> if the
+ * size of the vector does not match the expected size
+ * for the packed triangular matrix
+ */
+template <TriangularViewCL triangular_view>
+inline void packed_copy(matrix_cl& dst, const std::vector<double>& src) {
+  int packed_size = dst.rows() * (dst.rows() + 1) / 2;
+  check_size_match("copy (packed std::vector -> OpenCL)", "src.size()",
+                   src.size(), "dst.rows() * (dst.rows() + 1) / 2",
+                   packed_size);
+  if (src.size() > 0) {
+    cl::CommandQueue queue = opencl_context.queue();
+    try {
+      cl::Buffer oclBuffer_packed
+          = cl::Buffer(opencl_context.context(), CL_MEM_READ_WRITE,
+                       sizeof(double) * packed_size);
+      queue.enqueueWriteBuffer(oclBuffer_packed, CL_TRUE, 0,
+                               sizeof(double) * packed_size, src.data());
+      stan::math::opencl_kernels::unpack(
+          cl::NDRange(dst.rows(), dst.rows()), oclBuffer_packed, dst.buffer(),
+          dst.rows(), dst.rows(), triangular_view);
+    } catch (const cl::Error& e) {
+      check_opencl_error("packed_copy std::vector->OpenCL", e);
     }
   }
 }
