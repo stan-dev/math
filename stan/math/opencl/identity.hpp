@@ -22,8 +22,8 @@ inline matrix_cl identity(int rows_cols) {
     return A;
   }
   try {
-    cl::Event ident_event = opencl_kernels::identity(cl::NDRange(A.rows(), A.cols()), A,
-                             A.rows(), A.cols());
+    cl::Event ident_event = opencl_kernels::identity(
+        cl::NDRange(A.rows(), A.cols()), A, A.rows(), A.cols());
     A.events(ident_event);
   } catch (const cl::Error& e) {
     check_opencl_error("identity", e);

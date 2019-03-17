@@ -11,15 +11,21 @@ namespace math {
 namespace internal {
 
 template <typename T>
-inline const T& get_kernel_arg(const T& t) { return t; }
-
-inline const cl::Buffer& get_kernel_arg(const matrix_cl& m) { return m.buffer(); }
-
-inline const cl::Buffer& get_kernel_arg(matrix_cl* const& m) { return m->buffer(); }
-
+inline const T& get_kernel_arg(const T& t) {
+  return t;
 }
+
+inline const cl::Buffer& get_kernel_arg(const matrix_cl& m) {
+  return m.buffer();
 }
+
+inline const cl::Buffer& get_kernel_arg(matrix_cl* const& m) {
+  return m->buffer();
 }
+
+}  // namespace internal
+}  // namespace math
+}  // namespace stan
 
 #endif
 #endif

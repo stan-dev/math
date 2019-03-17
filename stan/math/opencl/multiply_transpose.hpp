@@ -39,8 +39,8 @@ inline matrix_cl multiply_transpose(const matrix_cl& A) {
       "WORK_PER_THREAD");
   try {
     cl::Event mult_event = opencl_kernels::multiply_transpose(
-        cl::NDRange(Mpad, Mpad / wpt), cl::NDRange(local, local / wpt),
-        Apad, tempPad, Apad.rows(), Apad.cols());
+        cl::NDRange(Mpad, Mpad / wpt), cl::NDRange(local, local / wpt), Apad,
+        tempPad, Apad.rows(), Apad.cols());
     tempPad.events(mult_event);
   } catch (cl::Error& e) {
     check_opencl_error("multiply self transpose", e);

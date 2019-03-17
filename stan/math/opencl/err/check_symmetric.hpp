@@ -32,8 +32,8 @@ inline void check_symmetric(const char* function, const char* name,
     cmd_queue.enqueueWriteBuffer(buffer_symmetric_flag, CL_TRUE, 0, sizeof(int),
                                  &symmetric_flag);
     cl::Event check_event = opencl_kernels::check_symmetric(
-      cl::NDRange(y.rows(), y.cols()), y, buffer_symmetric_flag, y.rows(),
-      y.cols(), math::CONSTRAINT_TOLERANCE);
+        cl::NDRange(y.rows(), y.cols()), y, buffer_symmetric_flag, y.rows(),
+        y.cols(), math::CONSTRAINT_TOLERANCE);
     std::vector<cl::Event> check_stack;
     check_stack.insert(check_stack.end(), y.events().begin(), y.events().end());
     check_stack.push_back(check_event);

@@ -34,10 +34,10 @@ class matrix_cl {
   cl::Buffer oclBuffer_;
   const int rows_;
   const int cols_;
-  std::vector<cl::Event> events_; //Used to track jobs in queue
+  std::vector<cl::Event> events_;  // Used to track jobs in queue
 
  public:
-   // Forward declare the methods that work in place on the matrix
+  // Forward declare the methods that work in place on the matrix
   template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
   void zeros();
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
@@ -51,7 +51,7 @@ class matrix_cl {
 
   int size() const { return rows_ * cols_; }
 
-  inline const std::vector<cl::Event>& events() const {return events_;};
+  inline const std::vector<cl::Event>& events() const { return events_; };
   // push a new event onto the event stack
   inline void events(cl::Event new_event) {
     return this->events_.push_back(new_event);
@@ -73,7 +73,8 @@ class matrix_cl {
       oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size());
       cl::Event cstr_event;
       queue.enqueueCopyBuffer(A.buffer(), this->buffer(), 0, 0,
-       A.size() * sizeof(double), &A.events(), &cstr_event);
+                              A.size() * sizeof(double), &A.events(),
+                              &cstr_event);
       this->events(cstr_event);
     } catch (const cl::Error& e) {
       check_opencl_error("copy (OpenCL)->(OpenCL)", e);
@@ -134,8 +135,8 @@ class matrix_cl {
          */
         cl::Event transfer_event;
         queue.enqueueWriteBuffer(oclBuffer_, CL_FALSE, 0,
-                                 sizeof(double) * A.size(), A.data(),
-                                 NULL, &transfer_event);
+                                 sizeof(double) * A.size(), A.data(), NULL,
+                                 &transfer_event);
         this->events(transfer_event);
       } catch (const cl::Error& e) {
         check_opencl_error("matrix constructor", e);
@@ -151,7 +152,6 @@ class matrix_cl {
     oclBuffer_ = a.buffer();
     return *this;
   }
-
 };
 
 }  // namespace math

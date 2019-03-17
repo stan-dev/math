@@ -44,16 +44,18 @@ struct has_event_stack<std::vector<cl::Event>> {
  * @tparam Type to check.
  * @return None, will fail compilation and pass to next template ala SFINAE.
  */
-template<typename T>
-using enable_if_has_event_stack = std::enable_if_t<has_event_stack<T>::value, int>;
+template <typename T>
+using enable_if_has_event_stack
+    = std::enable_if_t<has_event_stack<T>::value, int>;
 
 /**
  * Helper template that enables function if type does not have event stack.
  * @tparam Type to check.
  * @return None, will fail compilation and pass to next template ala SFINAE.
  */
-template<typename T>
-using enable_if_no_event_stack = std::enable_if_t<!has_event_stack<T>::value, int>;
+template <typename T>
+using enable_if_no_event_stack
+    = std::enable_if_t<!has_event_stack<T>::value, int>;
 
 /**
  * Ends the recurstion to extract the event stack.
@@ -69,7 +71,8 @@ inline const std::vector<cl::Event> event_concat_cl() {
  * @param v1 Events on the OpenCL event stack.
  * @return returns input vector.
  */
-inline const std::vector<cl::Event>& event_concat_cl(const std::vector<cl::Event>& v1) {
+inline const std::vector<cl::Event>& event_concat_cl(
+    const std::vector<cl::Event>& v1) {
   return v1;
 }
 
@@ -89,8 +92,8 @@ inline const std::vector<cl::Event>& event_concat_cl(const matrix_cl& A) {
  * @return input vector v1.
  */
 template <typename T, enable_if_has_event_stack<T> = 0>
-inline const std::vector<cl::Event>& event_concat_cl(const std::vector<cl::Event>& v1,
-                                             const T& throwaway_val) {
+inline const std::vector<cl::Event>& event_concat_cl(
+    const std::vector<cl::Event>& v1, const T& throwaway_val) {
   return v1;
 }
 
@@ -98,12 +101,13 @@ inline const std::vector<cl::Event>& event_concat_cl(const std::vector<cl::Event
  * Ends the recurstion to extract the event stack.
  * @param throwaway_val1 A value that does not have an event stack.
  * @param throwaway_val2 A value that does not have an event stack.
- * @tparam T checks if either has an event stack and if not then fails compilation.
+ * @tparam T checks if either has an event stack and if not then fails
+ * compilation.
  * @return An empty event vector.
  */
 template <typename T, enable_if_no_event_stack<T> = 0>
 inline const std::vector<cl::Event> event_concat_cl(const T& throwaway_val1,
-                                             const T& throwaway_val2) {
+                                                    const T& throwaway_val2) {
   const std::vector<cl::Event> vec_concat;
   return vec_concat;
 }
@@ -111,7 +115,8 @@ inline const std::vector<cl::Event> event_concat_cl(const T& throwaway_val1,
 /**
  * Ends the recurstion to extract the event stack.
  * @param throwaway_val A value that does not have an event stack.
- * @tparam T checks if either has an event stack and if not then fails compilation.
+ * @tparam T checks if either has an event stack and if not then fails
+ * compilation.
  * @return An empty event vector.
  */
 template <typename T, enable_if_has_event_stack<T> = 0>
@@ -124,12 +129,14 @@ inline const std::vector<cl::Event> event_concat_cl(const T& throwaway_val) {
  * Passes over an argument without an event stack.
  * @param throwaway_val A value that does not have an event stack.
  * @param args variadic arcs passed down to the next recursion.
- * @tparam T checks if either has an event stack and if not then fails compilation.
+ * @tparam T checks if either has an event stack and if not then fails
+ * compilation.
  * @tparam Args Types for variadic.
  * @return An empty event vector.
  */
 template <typename T, enable_if_no_event_stack<T> = 0, typename... Args>
-inline const std::vector<cl::Event> event_concat_cl(const T& throwaway_val, const Args... args) {
+inline const std::vector<cl::Event> event_concat_cl(const T& throwaway_val,
+                                                    const Args... args) {
   return event_concat_cl(args...);
 }
 
@@ -139,7 +146,8 @@ inline const std::vector<cl::Event> event_concat_cl(const T& throwaway_val, cons
  * @param B A matric_cl holding a vector of events.
  * @return Vector of OpenCL events
  */
-inline const std::vector<cl::Event> event_concat_cl(const std::vector<cl::Event>& v1, const matrix_cl& B) {
+inline const std::vector<cl::Event> event_concat_cl(
+    const std::vector<cl::Event>& v1, const matrix_cl& B) {
   return event_concat_cl(v1, B.events());
 }
 
@@ -149,7 +157,8 @@ inline const std::vector<cl::Event> event_concat_cl(const std::vector<cl::Event>
  * @param B matrix with an event stack.
  * @return Vector of OpenCL events
  */
-inline const std::vector<cl::Event> event_concat_cl(const matrix_cl& A, const matrix_cl& B) {
+inline const std::vector<cl::Event> event_concat_cl(const matrix_cl& A,
+                                                    const matrix_cl& B) {
   return event_concat_cl(A.events(), B.events());
 }
 
@@ -161,7 +170,8 @@ inline const std::vector<cl::Event> event_concat_cl(const matrix_cl& A, const ma
  * @return Vector of OpenCL events
  */
 template <typename... Args>
-inline const std::vector<cl::Event> event_concat_cl(const std::vector<cl::Event>& v1, const Args... args) {
+inline const std::vector<cl::Event> event_concat_cl(
+    const std::vector<cl::Event>& v1, const Args... args) {
   std::vector<cl::Event> vec_concat = event_concat_cl(args...);
   vec_concat.insert(vec_concat.end(), v1.begin(), v1.end());
   return vec_concat;
@@ -175,24 +185,26 @@ inline const std::vector<cl::Event> event_concat_cl(const std::vector<cl::Event>
  * @return Vector of OpenCL events
  */
 template <typename... Args>
-inline const std::vector<cl::Event> event_concat_cl(const matrix_cl& A, const Args... args) {
+inline const std::vector<cl::Event> event_concat_cl(const matrix_cl& A,
+                                                    const Args... args) {
   const std::vector<cl::Event> first_events = A.events();
   return event_concat_cl(first_events, args...);
 }
 
 /**
  * Recursion when called from within matrix_cl.
- * @param A A pointer to a matrix_cl type, this is called from within a matrix_cl.
+ * @param A A pointer to a matrix_cl type, this is called from within a
+ * matrix_cl.
  * @param args variadic arcs passed down to the next recursion.
  * @tparam Args Types for variadic.
  * @return Vector of OpenCL events
  */
 template <typename... Args>
-inline const std::vector<cl::Event> event_concat_cl(const matrix_cl* const& A, const Args... args) {
+inline const std::vector<cl::Event> event_concat_cl(const matrix_cl* const& A,
+                                                    const Args... args) {
   const std::vector<cl::Event> first_events = A->events();
   return event_concat_cl(first_events, args...);
 }
-
 
 }  // namespace math
 }  // namespace stan

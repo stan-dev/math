@@ -24,8 +24,8 @@ namespace math {
  * @param ncols the number of columns in the submatrix
  */
 template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
-inline void matrix_cl::sub_block(const matrix_cl& A, int A_i, int A_j, int this_i, int this_j,
-               int nrows, int ncols) {
+inline void matrix_cl::sub_block(const matrix_cl& A, int A_i, int A_j,
+                                 int this_i, int this_j, int nrows, int ncols) {
   if (nrows == 0 || ncols == 0) {
     return;
   }
@@ -34,10 +34,9 @@ inline void matrix_cl::sub_block(const matrix_cl& A, int A_i, int A_j, int this_
     domain_error("sub_block", "submatrix in *this", " is out of bounds", "");
   }
   try {
-    cl::Event sub_block_event = opencl_kernels::sub_block(cl::NDRange(nrows, ncols), A,
-                              *this, A_i, A_j, this_i, this_j, nrows,
-                              ncols, A.rows(), A.cols(), this->rows(),
-                              this->cols(), triangular_view);
+    cl::Event sub_block_event = opencl_kernels::sub_block(
+        cl::NDRange(nrows, ncols), A, *this, A_i, A_j, this_i, this_j, nrows,
+        ncols, A.rows(), A.cols(), this->rows(), this->cols(), triangular_view);
     this->events(sub_block_event);
   } catch (const cl::Error& e) {
     check_opencl_error("copy_submatrix", e);

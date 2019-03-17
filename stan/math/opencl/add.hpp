@@ -28,7 +28,8 @@ inline matrix_cl add(const matrix_cl& A, const matrix_cl& B) {
     return C;
   }
   try {
-    cl::Event add_event = opencl_kernels::add(cl::NDRange(A.rows(), A.cols()), C, A, B, A.rows(), A.cols());
+    cl::Event add_event = opencl_kernels::add(cl::NDRange(A.rows(), A.cols()),
+                                              C, A, B, A.rows(), A.cols());
     C.events(add_event);
   } catch (const cl::Error& e) {
     check_opencl_error("add", e);

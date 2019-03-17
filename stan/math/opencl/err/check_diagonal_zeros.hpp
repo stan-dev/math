@@ -29,7 +29,7 @@ inline void check_diagonal_zeros(const char* function, const char* name,
     cmd_queue.enqueueWriteBuffer(buffer_flag, CL_TRUE, 0, sizeof(int),
                                  &zero_on_diagonal_flag);
     cl::Event check_event = opencl_kernels::check_diagonal_zeros(
-      cl::NDRange(y.rows(), y.cols()), y, buffer_flag, y.rows(), y.cols());
+        cl::NDRange(y.rows(), y.cols()), y, buffer_flag, y.rows(), y.cols());
     std::vector<cl::Event> check_stack;
     check_stack.insert(check_stack.end(), y.events().begin(), y.events().end());
     check_stack.push_back(check_event);

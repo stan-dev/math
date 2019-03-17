@@ -131,7 +131,8 @@ struct global_range_kernel {
   auto operator()(cl::NDRange global_thread_size, const Margs&... args) const {
     auto f = make_functor();
     std::vector<cl::Event> kernel_events = event_concat_cl(args...);
-    cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events, global_thread_size);
+    cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
+                          global_thread_size);
     return f(eargs, internal::get_kernel_arg(args)...);
   }
 };
@@ -165,8 +166,8 @@ struct local_range_kernel {
                   const Margs&... args) const {
     auto f = make_functor();
     std::vector<cl::Event> kernel_events = event_concat_cl(args...);
-    cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events, global_thread_size,
-                          thread_block_size);
+    cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
+                          global_thread_size, thread_block_size);
     return f(eargs, internal::get_kernel_arg(args)...);
   }
 };

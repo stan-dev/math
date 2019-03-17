@@ -33,8 +33,8 @@ inline void matrix_cl::triangular_transpose() {
                    "columns of ", "A", cols());
   try {
     cl::Event triangular_event = opencl_kernels::triangular_transpose(
-      cl::NDRange(this->rows(), this->cols()), this, this->rows(), this->cols(),
-      triangular_map);
+        cl::NDRange(this->rows(), this->cols()), this, this->rows(),
+        this->cols(), triangular_map);
     this->events(triangular_event);
   } catch (const cl::Error& e) {
     check_opencl_error("triangular_transpose", e);
