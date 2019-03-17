@@ -36,7 +36,6 @@ struct to_matrix<cl::Buffer> {
   typedef matrix_cl type;
 };
 
-
 }  // namespace internal
 
 /**

@@ -27,7 +27,7 @@ inline void check_diagonal_zeros(const char* function, const char* name,
   cl::Context ctx = opencl_context.context();
   try {
     int zero_on_diagonal_flag = 0;
-    matrix_cl zeros_flag(1,1);
+    matrix_cl zeros_flag(1, 1);
     copy(zeros_flag, zero_on_diagonal_flag);
     cl::Event check_event = opencl_kernels::check_diagonal_zeros(
         cl::NDRange(y.rows(), y.cols()), y, zeros_flag, y.rows(), y.cols());

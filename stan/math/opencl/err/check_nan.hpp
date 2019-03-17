@@ -29,11 +29,10 @@ inline void check_nan(const char* function, const char* name,
   cl::Context& ctx = opencl_context.context();
   try {
     int nan_flag = 0;
-    matrix_cl nan_chk(1,1);
+    matrix_cl nan_chk(1, 1);
     copy(nan_chk, nan_flag);
-    cl::Event check_event
-        = opencl_kernels::check_nan(cl::NDRange(y.rows(), y.cols()), y,
-                                    nan_chk, y.rows(), y.cols());
+    cl::Event check_event = opencl_kernels::check_nan(
+        cl::NDRange(y.rows(), y.cols()), y, nan_chk, y.rows(), y.cols());
     nan_chk.add_event(check_event);
     copy(nan_flag, nan_chk);
     //  if NaN values were found in the matrix

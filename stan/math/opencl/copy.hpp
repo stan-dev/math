@@ -142,15 +142,15 @@ inline void copy(T& dst, const matrix_cl& src) {
                    "dst.rows()", 1);
   check_size_match("copy ((OpenCL) -> (OpenCL))", "src.cols()", src.cols(),
                    "dst.cols()", 1);
- try {
+  try {
     cl::CommandQueue queue = opencl_context.queue();
     cl::Event copy_event;
-    queue.enqueueReadBuffer(src.buffer(), CL_TRUE, 0, sizeof(int),
-                               &dst, &src.events(), &copy_event);
-   } catch (const cl::Error& e) {
-     std::cout << e.err() << std::endl;
-     check_opencl_error("copy (OpenCL)->(OpenCL)", e);
-   }
+    queue.enqueueReadBuffer(src.buffer(), CL_TRUE, 0, sizeof(int), &dst,
+                            &src.events(), &copy_event);
+  } catch (const cl::Error& e) {
+    std::cout << e.err() << std::endl;
+    check_opencl_error("copy (OpenCL)->(OpenCL)", e);
+  }
 }
 
 /**
@@ -169,7 +169,7 @@ inline void copy(matrix_cl& dst, const T& src) {
     cl::CommandQueue queue = opencl_context.queue();
     cl::Event copy_event;
     queue.enqueueWriteBuffer(dst.buffer(), CL_FALSE, 0, sizeof(T), &src,
-      &dst.events(), &copy_event);
+                             &dst.events(), &copy_event);
     dst.add_event(copy_event);
   } catch (const cl::Error& e) {
     std::cout << e.err() << std::endl;
