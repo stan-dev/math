@@ -98,28 +98,27 @@ TEST(MathMatrixGPU, matrix_cl_pack_unpack_copy_lower) {
   int packed_size = size * (size + 1) / 2;
   std::vector<double> packed_mat(packed_size);
   std::vector<double> packed_mat_dst(packed_size);
-  for(size_t i = 0; i < packed_mat.size(); i++)
-  {
-    packed_mat[i] = i; 
+  for (size_t i = 0; i < packed_mat.size(); i++) {
+    packed_mat[i] = i;
   }
   stan::math::matrix_cl m_cl(size, size);
   stan::math::matrix_d m_flat_cpu(size, size);
-  stan::math::packed_copy<stan::math::TriangularViewCL::Lower>(m_cl, packed_mat);
+  stan::math::packed_copy<stan::math::TriangularViewCL::Lower>(m_cl,
+                                                               packed_mat);
   stan::math::copy(m_flat_cpu, m_cl);
   size_t pos = 0;
   for (size_t j = 0; j < size; ++j) {
-    for(size_t i = 0; i < j; i++)
-    {
+    for (size_t i = 0; i < j; i++) {
       EXPECT_EQ(m_flat_cpu(i, j), 0.0);
-    }    
+    }
     for (size_t i = j; i < size; ++i) {
       EXPECT_EQ(m_flat_cpu(i, j), packed_mat[pos]);
       pos++;
     }
   }
-  stan::math::packed_copy<stan::math::TriangularViewCL::Lower>(packed_mat_dst, m_cl);
-  for(size_t i = 0; i < packed_mat.size(); i++)
-  {
+  stan::math::packed_copy<stan::math::TriangularViewCL::Lower>(packed_mat_dst,
+                                                               m_cl);
+  for (size_t i = 0; i < packed_mat.size(); i++) {
     EXPECT_EQ(packed_mat[i], packed_mat_dst[i]);
   }
 }
@@ -129,28 +128,27 @@ TEST(MathMatrixGPU, matrix_cl_pack_unpack_copy_upper) {
   int packed_size = size * (size + 1) / 2;
   std::vector<double> packed_mat(packed_size);
   std::vector<double> packed_mat_dst(packed_size);
-  for(size_t i = 0; i < packed_mat.size(); i++)
-  {
-    packed_mat[i] = i; 
+  for (size_t i = 0; i < packed_mat.size(); i++) {
+    packed_mat[i] = i;
   }
   stan::math::matrix_cl m_cl(size, size);
   stan::math::matrix_d m_flat_cpu(size, size);
-  stan::math::packed_copy<stan::math::TriangularViewCL::Upper>(m_cl, packed_mat);
+  stan::math::packed_copy<stan::math::TriangularViewCL::Upper>(m_cl,
+                                                               packed_mat);
   stan::math::copy(m_flat_cpu, m_cl);
   size_t pos = 0;
   for (size_t j = 0; j < size; ++j) {
-    for(size_t i = 0; i <= j; i++)
-    {
+    for (size_t i = 0; i <= j; i++) {
       EXPECT_EQ(m_flat_cpu(i, j), packed_mat[pos]);
-      pos++;      
-    }    
-    for (size_t i = j+1; i < size; ++i) {
+      pos++;
+    }
+    for (size_t i = j + 1; i < size; ++i) {
       EXPECT_EQ(m_flat_cpu(i, j), 0.0);
     }
   }
-  stan::math::packed_copy<stan::math::TriangularViewCL::Upper>(packed_mat_dst, m_cl);
-  for(size_t i = 0; i < packed_mat.size(); i++)
-  {
+  stan::math::packed_copy<stan::math::TriangularViewCL::Upper>(packed_mat_dst,
+                                                               m_cl);
+  for (size_t i = 0; i < packed_mat.size(); i++) {
     EXPECT_EQ(packed_mat[i], packed_mat_dst[i]);
   }
 }

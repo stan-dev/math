@@ -321,11 +321,10 @@ class cholesky_opencl : public vari {
    *
    */
   virtual void chain() {
-    
     int packed_size = M_ * (M_ + 1) / 2;
     std::vector<double> L_adj_cpu(packed_size);
     std::vector<double> L_val_cpu(packed_size);
-    
+
     size_t pos = 0;
     for (size_type j = 0; j < M_; ++j) {
       for (size_type i = j; i < M_; ++i) {
