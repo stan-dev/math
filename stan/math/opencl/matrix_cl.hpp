@@ -280,12 +280,12 @@ class matrix_v_cl {
         adj_cpy.reserve(vari_size);
         // Make a flat version of a lower triangular
         size_t pos = 0;
-        for (size_type j = 0; j < M; ++j) {
-          for (size_type k = 0; k < j; ++k) {
+        for (size_t j = 0; j < M; ++j) {
+          for (size_t k = 0; k < j; ++k) {
             val_cpy.push_back(0);
             adj_cpy.push_back(0);
           }
-          for (size_type i = j; i < M; ++i) {
+          for (size_t i = j; i < M; ++i) {
             val_cpy.push_back(A[pos]->val_);
             adj_cpy.push_back(A[pos]->adj_);
             ++pos;
