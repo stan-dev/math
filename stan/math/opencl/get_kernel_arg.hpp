@@ -26,8 +26,7 @@ inline const T& get_kernel_arg(const T& t) {
 /**
  * Extracts the kernel's arguments, used in the global and local kernel
  * constructor.
- * @tparam For a matrix_cl this will pass back the buffer.
- * @param t The matrix to extract the buffer from.
+ * @param m The matrix to extract the buffer from.
  * @return the input t's buffer.
  */
 inline const cl::Buffer& get_kernel_arg(const matrix_cl& m) {
@@ -37,8 +36,7 @@ inline const cl::Buffer& get_kernel_arg(const matrix_cl& m) {
 /**
  * Extracts the kernel's arguments, used in the global and local kernel
  * constructor.
- * @tparam For a pointer to a matrix_cl this will pass back the buffer.
- * @param t The matrix to extract the buffer from.
+ * @param m The matrix to extract the buffer from.
  * @return the input t's buffer.
  */
 inline const cl::Buffer& get_kernel_arg(matrix_cl* const& m) {
