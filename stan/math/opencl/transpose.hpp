@@ -19,10 +19,10 @@ inline matrix_cl transpose(const matrix_cl& src) {
   matrix_cl dst(src.cols(), src.rows());
   if (dst.size() == 0)
     return dst;
-  cl::CommandQueue cmdQueue = opencl_context.queue();
   try {
-    opencl_kernels::transpose(cl::NDRange(src.rows(), src.cols()), dst.buffer(),
-                              src.buffer(), src.rows(), src.cols());
+    cl::Event transpose_event = opencl_kernels::transpose(cl::NDRange(src.rows(), src.cols()), dst,
+                              src, src.rows(), src.cols());
+    dst.events(transpose_event);
   } catch (const cl::Error& e) {
     check_opencl_error("transpose", e);
   }

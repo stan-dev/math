@@ -32,11 +32,11 @@ inline matrix_cl copy_triangular(const matrix_cl& src) {
     return dst;
   }
   matrix_cl dst(src.rows(), src.cols());
-  cl::CommandQueue cmdQueue = opencl_context.queue();
   try {
-    opencl_kernels::copy_triangular(cl::NDRange(dst.rows(), dst.cols()),
-                                    dst.buffer(), src.buffer(), dst.rows(),
+    cl::Event copy_event = opencl_kernels::copy_triangular(cl::NDRange(dst.rows(), dst.cols()),
+                                    dst, src, dst.rows(),
                                     dst.cols(), triangular_view);
+    dst.events(copy_event);
   } catch (const cl::Error& e) {
     check_opencl_error("copy_triangular", e);
   }

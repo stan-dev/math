@@ -21,6 +21,10 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/multiply.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
+#include <stan/math/opencl/sub_block.hpp>
+#include <stan/math/opencl/triangular_transpose.hpp>
+#include <stan/math/opencl/zeros.hpp>
+
 #endif
 
 #include <algorithm>

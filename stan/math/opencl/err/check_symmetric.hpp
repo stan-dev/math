@@ -31,11 +31,14 @@ inline void check_symmetric(const char* function, const char* name,
     cl::Buffer buffer_symmetric_flag(ctx, CL_MEM_READ_WRITE, sizeof(int));
     cmd_queue.enqueueWriteBuffer(buffer_symmetric_flag, CL_TRUE, 0, sizeof(int),
                                  &symmetric_flag);
-    opencl_kernels::check_symmetric(cl::NDRange(y.rows(), y.cols()), y.buffer(),
-                                    buffer_symmetric_flag, y.rows(), y.cols(),
-                                    math::CONSTRAINT_TOLERANCE);
+    cl::Event check_event = opencl_kernels::check_symmetric(
+      cl::NDRange(y.rows(), y.cols()), y, buffer_symmetric_flag, y.rows(),
+      y.cols(), math::CONSTRAINT_TOLERANCE);
+    std::vector<cl::Event> check_stack;
+    check_stack.insert(check_stack.end(), y.events().begin(), y.events().end());
+    check_stack.push_back(check_event);
     cmd_queue.enqueueReadBuffer(buffer_symmetric_flag, CL_TRUE, 0, sizeof(int),
-                                &symmetric_flag);
+                                &symmetric_flag, &check_stack);
     //  if the matrix is not symmetric
     if (!symmetric_flag) {
       domain_error(function, name, "is not symmetric", "");

@@ -11,6 +11,7 @@
 #include <stan/math/opencl/subtract.hpp>
 #include <stan/math/opencl/err/check_diagonal_zeros.hpp>
 #include <stan/math/opencl/err/check_nan.hpp>
+#include <stan/math/opencl/sub_block.hpp>
 #include <CL/cl.hpp>
 #include <algorithm>
 #include <cmath>
@@ -53,9 +54,9 @@ inline matrix_cl cholesky_decompose(matrix_cl& A) {
   if (A.rows() <= opencl_context.tuning_opts().cholesky_min_L11_size) {
     matrix_cl L(A.rows(), A.cols());
     try {
-      opencl_kernels::cholesky_decompose(cl::NDRange(A.rows()),
-                                         cl::NDRange(A.rows()), A.buffer(),
-                                         L.buffer(), A.rows());
+      cl::Event chol_event = opencl_kernels::cholesky_decompose(cl::NDRange(A.rows()),
+                                         cl::NDRange(A.rows()), A, L, A.rows());
+      L.events(chol_event);
     } catch (const cl::Error& e) {
       check_opencl_error("cholesky_decompose", e);
     }

@@ -2,15 +2,10 @@
 #define STAN_MATH_OPENCL_MATRIX_CL_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/constants.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/opencl/kernels/copy.hpp>
-#include <stan/math/opencl/kernels/sub_block.hpp>
-#include <stan/math/opencl/kernels/triangular_transpose.hpp>
-#include <stan/math/opencl/kernels/zeros.hpp>
 #include <CL/cl.hpp>
 #include <iostream>
 #include <string>
@@ -39,13 +34,28 @@ class matrix_cl {
   cl::Buffer oclBuffer_;
   const int rows_;
   const int cols_;
+  std::vector<cl::Event> events_; //Used to track jobs in queue
 
  public:
+   // Forward declare the methods that work in place on the matrix
+  template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
+  void zeros();
+  template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
+  void triangular_transpose();
+  template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
+  void sub_block(const matrix_cl& A, int A_i, int A_j, int this_i, int this_j,
+                 int nrows, int ncols);
   int rows() const { return rows_; }
 
   int cols() const { return cols_; }
 
   int size() const { return rows_ * cols_; }
+
+  inline const std::vector<cl::Event>& events() const {return events_;};
+  // push a new event onto the event stack
+  inline void events(cl::Event new_event) {
+    return this->events_.push_back(new_event);
+  };
 
   const cl::Buffer& buffer() const { return oclBuffer_; }
 
@@ -56,13 +66,15 @@ class matrix_cl {
       return;
     // the context is needed to create the buffer object
     cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue queue = opencl_context.queue();
     try {
       // creates a read&write object for "size" double values
       // in the provided context
       oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size());
-
-      opencl_kernels::copy(cl::NDRange(rows_, cols_), A.buffer(),
-                           this->buffer(), rows_, cols_);
+      cl::Event cstr_event;
+      queue.enqueueCopyBuffer(A.buffer(), this->buffer(), 0, 0,
+       A.size() * sizeof(double), &A.events(), &cstr_event);
+      this->events(cstr_event);
     } catch (const cl::Error& e) {
       check_opencl_error("copy (OpenCL)->(OpenCL)", e);
     }
@@ -120,8 +132,11 @@ class matrix_cl {
          * on the device until we are sure that the data
          * is finished transfering)
          */
-        queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0,
-                                 sizeof(double) * A.size(), A.data());
+        cl::Event transfer_event;
+        queue.enqueueWriteBuffer(oclBuffer_, CL_FALSE, 0,
+                                 sizeof(double) * A.size(), A.data(),
+                                 NULL, &transfer_event);
+        this->events(transfer_event);
       } catch (const cl::Error& e) {
         check_opencl_error("matrix constructor", e);
       }
@@ -137,88 +152,6 @@ class matrix_cl {
     return *this;
   }
 
-  /**
-   * Stores zeros in the matrix on the OpenCL device.
-   * Supports writing zeroes to the lower and upper triangular or
-   * the whole matrix.
-   *
-   * @tparam triangular_view Specifies if zeros are assigned to
-   * the entire matrix, lower triangular or upper triangular. The
-   * value must be of type TriangularViewCL
-   */
-  template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
-  void zeros() {
-    if (size() == 0)
-      return;
-    cl::CommandQueue cmdQueue = opencl_context.queue();
-    try {
-      opencl_kernels::zeros(cl::NDRange(this->rows(), this->cols()),
-                            this->buffer(), this->rows(), this->cols(),
-                            triangular_view);
-    } catch (const cl::Error& e) {
-      check_opencl_error("zeros", e);
-    }
-  }
-
-  /**
-   * Copies a lower/upper triangular of a matrix to it's upper/lower.
-   *
-   * @tparam triangular_map Specifies if the copy is
-   * lower-to-upper or upper-to-lower triangular. The value
-   * must be of type TriangularMap
-   *
-   * @throw <code>std::invalid_argument</code> if the matrix is not square.
-   *
-   */
-  template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
-  void triangular_transpose() {
-    if (size() == 0 || size() == 1) {
-      return;
-    }
-    check_size_match("triangular_transpose ((OpenCL))",
-                     "Expecting a square matrix; rows of ", "A", rows(),
-                     "columns of ", "A", cols());
-
-    cl::CommandQueue cmdQueue = opencl_context.queue();
-    try {
-      opencl_kernels::triangular_transpose(
-          cl::NDRange(this->rows(), this->cols()), this->buffer(), this->rows(),
-          this->cols(), triangular_map);
-    } catch (const cl::Error& e) {
-      check_opencl_error("triangular_transpose", e);
-    }
-  }
-  /**
-   * Write the context of A into
-   * <code>this</code> starting at the top left of <code>this</code>
-   * @param A input matrix
-   * @param A_i the offset row in A
-   * @param A_j the offset column in A
-   * @param this_i the offset row for the matrix to be subset into
-   * @param this_j the offset col for the matrix to be subset into
-   * @param nrows the number of rows in the submatrix
-   * @param ncols the number of columns in the submatrix
-   */
-  template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
-  void sub_block(const matrix_cl& A, int A_i, int A_j, int this_i, int this_j,
-                 int nrows, int ncols) {
-    if (nrows == 0 || ncols == 0) {
-      return;
-    }
-    if ((A_i + nrows) > A.rows() || (A_j + ncols) > A.cols()
-        || (this_i + nrows) > this->rows() || (this_j + ncols) > this->cols()) {
-      domain_error("sub_block", "submatrix in *this", " is out of bounds", "");
-    }
-    cl::CommandQueue cmdQueue = opencl_context.queue();
-    try {
-      opencl_kernels::sub_block(cl::NDRange(nrows, ncols), A.buffer(),
-                                this->buffer(), A_i, A_j, this_i, this_j, nrows,
-                                ncols, A.rows(), A.cols(), this->rows(),
-                                this->cols(), triangular_view);
-    } catch (const cl::Error& e) {
-      check_opencl_error("copy_submatrix", e);
-    }
-  }
 };
 
 }  // namespace math

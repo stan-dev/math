@@ -4,6 +4,9 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/scalar_mul.hpp>
 #include <stan/math/opencl/kernels/matrix_multiply.hpp>
+#include <stan/math/opencl/sub_block.hpp>
+#include <stan/math/opencl/zeros.hpp>
+
 #include <Eigen/Dense>
 
 namespace stan {
@@ -49,19 +52,18 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   matrix_cl tempPad(Mpad, Npad);
   matrix_cl Apad(Mpad, Kpad);
   matrix_cl Bpad(Kpad, Npad);
-  opencl_kernels::zeros(cl::NDRange(Mpad, Kpad), Apad.buffer(), Mpad, Kpad,
-                        TriangularViewCL::Entire);
-  opencl_kernels::zeros(cl::NDRange(Kpad, Npad), Bpad.buffer(), Kpad, Npad,
-                        TriangularViewCL::Entire);
+  Apad.zeros<TriangularViewCL::Entire>();
+  Bpad.zeros<TriangularViewCL::Entire>();
   Apad.sub_block<triangular_view_A>(A, 0, 0, 0, 0, A.rows(), A.cols());
   Bpad.sub_block<triangular_view_B>(B, 0, 0, 0, 0, B.rows(), B.cols());
   int wpt = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
       "WORK_PER_THREAD");
   try {
-    opencl_kernels::matrix_multiply(
+    cl::Event mat_mul_event = opencl_kernels::matrix_multiply(
         cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
-        Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
+        Apad, Bpad, tempPad, Apad.rows(),
         Bpad.cols(), Bpad.rows(), triangular_view_A, triangular_view_B);
+    tempPad.events(mat_mul_event);
   } catch (cl::Error& e) {
     check_opencl_error("multiply", e);
   }
@@ -84,8 +86,9 @@ inline matrix_cl multiply(const matrix_cl& A, const double scalar) {
   if (A.size() == 0)
     return temp;
   try {
-    opencl_kernels::scalar_mul(cl::NDRange(A.rows(), A.cols()), temp.buffer(),
-                               A.buffer(), scalar, A.rows(), A.cols());
+    cl::Event scalar_mul_event = opencl_kernels::scalar_mul(cl::NDRange(A.rows(), A.cols()), temp,
+                               A, scalar, A.rows(), A.cols());
+    temp.events(scalar_mul_event);
   } catch (const cl::Error& e) {
     check_opencl_error("multiply scalar", e);
   }

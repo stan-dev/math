@@ -3,11 +3,15 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/kernels/helpers.hpp>
+#include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/event_concat_cl.hpp>
+#include <stan/math/opencl/get_kernel_arg.hpp>
 #include <CL/cl.hpp>
 #include <string>
 #include <algorithm>
 #include <map>
 #include <vector>
+#include <utility>
 
 // Used for importing the OpenCL kernels at compile time.
 // There has been much discussion about the best ways to do this:
@@ -123,10 +127,12 @@ struct global_range_kernel {
    * @param args The arguments to pass to the kernel.
    * @tparam Args Parameter pack of all kernel argument types.
    */
-  auto operator()(cl::NDRange global_thread_size, Args... args) const {
+  template <typename... Margs>
+  auto operator()(cl::NDRange global_thread_size, const Margs&... args) const {
     auto f = make_functor();
-    cl::EnqueueArgs eargs(opencl_context.queue(), global_thread_size);
-    f(eargs, args...).wait();
+    std::vector<cl::Event> kernel_events = event_concat_cl(args...);
+    cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events, global_thread_size);
+    return f(eargs, internal::get_kernel_arg(args)...);
   }
 };
 /**
@@ -154,12 +160,14 @@ struct local_range_kernel {
    * @param args The arguments to pass to the kernel.
    * @tparam Args Parameter pack of all kernel argument types.
    */
+  template <typename... Margs>
   auto operator()(cl::NDRange global_thread_size, cl::NDRange thread_block_size,
-                  Args... args) const {
+                  const Margs&... args) const {
     auto f = make_functor();
-    cl::EnqueueArgs eargs(opencl_context.queue(), global_thread_size,
+    std::vector<cl::Event> kernel_events = event_concat_cl(args...);
+    cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events, global_thread_size,
                           thread_block_size);
-    f(eargs, args...).wait();
+    return f(eargs, internal::get_kernel_arg(args)...);
   }
 };
 

@@ -29,10 +29,13 @@ inline void check_nan(const char* function, const char* name,
     cl::Buffer buffer_nan_flag(ctx, CL_MEM_READ_WRITE, sizeof(int));
     cmd_queue.enqueueWriteBuffer(buffer_nan_flag, CL_TRUE, 0, sizeof(int),
                                  &nan_flag);
-    opencl_kernels::check_nan(cl::NDRange(y.rows(), y.cols()), y.buffer(),
-                              buffer_nan_flag, y.rows(), y.cols());
+    cl::Event check_event = opencl_kernels::check_nan(
+      cl::NDRange(y.rows(), y.cols()), y, buffer_nan_flag, y.rows(), y.cols());
+    std::vector<cl::Event> check_stack;
+    check_stack.insert(check_stack.end(), y.events().begin(), y.events().end());
+    check_stack.push_back(check_event);
     cmd_queue.enqueueReadBuffer(buffer_nan_flag, CL_TRUE, 0, sizeof(int),
-                                &nan_flag);
+                                &nan_flag, &check_stack);
     //  if NaN values were found in the matrix
     if (nan_flag) {
       domain_error(function, name, "has NaN values", "");
