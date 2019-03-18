@@ -119,6 +119,7 @@ inline std::vector<double> packed_copy(const matrix_cl& src) {
   } catch (const cl::Error& e) {
     check_opencl_error("packed_copy (OpenCL->std::vector)", e);
   }
+  return dst;
 }
 
 /**
