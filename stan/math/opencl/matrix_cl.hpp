@@ -199,6 +199,7 @@ class matrix_cl {
    * @param nrows the number of rows in the submatrix
    * @param ncols the number of columns in the submatrix
    */
+  template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
   void sub_block(const matrix_cl& A, int A_i, int A_j, int this_i, int this_j,
                  int nrows, int ncols) {
     if (nrows == 0 || ncols == 0) {
@@ -213,7 +214,7 @@ class matrix_cl {
       opencl_kernels::sub_block(cl::NDRange(nrows, ncols), A.buffer(),
                                 this->buffer(), A_i, A_j, this_i, this_j, nrows,
                                 ncols, A.rows(), A.cols(), this->rows(),
-                                this->cols());
+                                this->cols(), triangular_view);
     } catch (const cl::Error& e) {
       check_opencl_error("copy_submatrix", e);
     }
