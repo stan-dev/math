@@ -162,28 +162,6 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                stage('Full unit with GPU') {
-                    agent { label "gpu" }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CXX=${env.CXX} -Werror > make/local"
-                        sh "echo STAN_OPENCL=true>> make/local"
-                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
-                        sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Windows Headers & Unit') {
-                    agent { label 'windows' }
-                    steps {
-                        deleteDirWin()
-                        unstash 'MathSetup'
-                        bat "make -j${env.PARALLEL} test-headers"
-                        runTestsWin("test/unit")
-                    }
-                }
                 stage('Windows Threading tests') {
                     agent { label 'windows' }
                     steps {
@@ -199,6 +177,19 @@ pipeline {
         }
         stage('Always-run tests part 2') {
             parallel {
+                stage('Full unit with GPU') {
+                    agent { label "gpu" }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh "echo CXX=${env.CXX} -Werror > make/local"
+                        sh "echo STAN_OPENCL=true>> make/local"
+                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
+                        sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
                     steps {
@@ -265,6 +256,15 @@ pipeline {
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Windows Headers & Unit') {
+                    agent { label 'windows' }
+                    steps {
+                        deleteDirWin()
+                        unstash 'MathSetup'
+                        bat "make -j${env.PARALLEL} test-headers"
+                        runTestsWin("test/unit")
+                    }
                 }
             }
         }
