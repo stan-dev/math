@@ -99,7 +99,7 @@ void copy(Eigen::Matrix<double, R, C>& dst, const matrix_cl& src) {
  *
  * @tparam triangular_view the triangularity of the source matrix
  * @param src the flat triangular source matrix on the OpenCL device
- * @return the packed std::vector 
+ * @return the packed std::vector
  */
 template <TriangularViewCL triangular_view>
 inline std::vector<double> packed_copy(const matrix_cl& src) {
@@ -138,8 +138,7 @@ template <TriangularViewCL triangular_view>
 inline matrix_cl packed_copy(const std::vector<double>& src, int rows) {
   const int packed_size = rows * (rows + 1) / 2;
   check_size_match("copy (packed std::vector -> OpenCL)", "src.size()",
-                   src.size(), "rows * (rows + 1) / 2",
-                   packed_size);
+                   src.size(), "rows * (rows + 1) / 2", packed_size);
   matrix_cl dst(rows, rows);
   if (dst.size() == 0) {
     return dst;
