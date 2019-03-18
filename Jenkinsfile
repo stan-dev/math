@@ -217,19 +217,6 @@ pipeline {
                             }
                     }
                 }
-                stage('Threading tests') {
-                    agent any
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CXX=${env.CXX} -Werror > make/local"
-                        sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
-                        runTests("test/unit -f thread")
-                        sh "find . -name *_test.xml | xargs rm"
-                        runTests("test/unit -f map_rect")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
             }
         }
         stage('Additional merge tests') {
