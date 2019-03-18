@@ -12,12 +12,12 @@
 namespace stan {
 namespace math {
 
-namespace {  // anonymous
+namespace internal {
 
 // if x.size() = N, and x[i] = x[j] =
 // then lim sd(x) -> 0 [ d/dx[n] sd(x) ] = sqrt(N) / N
 
-var calc_sd(size_t size, const var* dtrs) {
+inline var calc_sd(size_t size, const var* dtrs) {
   using std::sqrt;
   vari** varis = reinterpret_cast<vari**>(
       ChainableStack::instance().memalloc_.alloc(size * sizeof(vari*)));
@@ -48,7 +48,7 @@ var calc_sd(size_t size, const var* dtrs) {
   return var(new stored_gradient_vari(sd, size, varis, partials));
 }
 
-}  // namespace
+}  // namespace internal
 
 /**
  * Return the sample standard deviation of the specified standard
@@ -61,7 +61,7 @@ inline var sd(const std::vector<var>& v) {
   check_nonzero_size("sd", "v", v);
   if (v.size() == 1)
     return 0;
-  return calc_sd(v.size(), &v[0]);
+  return internal::calc_sd(v.size(), &v[0]);
 }
 
 /*
@@ -79,7 +79,7 @@ var sd(const Eigen::Matrix<var, R, C>& m) {
   check_nonzero_size("sd", "m", m);
   if (m.size() == 1)
     return 0;
-  return calc_sd(m.size(), &m(0));
+  return internal::calc_sd(m.size(), &m(0));
 }
 
 }  // namespace math

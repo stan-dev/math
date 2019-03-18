@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class multiply_log_vv_vari : public op_vv_vari {
  public:
   multiply_log_vv_vari(vari* avi, vari* bvi)
@@ -51,7 +51,7 @@ class multiply_log_dv_vari : public op_dv_vari {
       bvi_->adj_ += adj_ * ad_ / bvi_->val_;
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Return the value of a*log(b).
@@ -66,7 +66,7 @@ class multiply_log_dv_vari : public op_dv_vari {
  * @return Value of a*log(b)
  */
 inline var multiply_log(const var& a, const var& b) {
-  return var(new multiply_log_vv_vari(a.vi_, b.vi_));
+  return var(new internal::multiply_log_vv_vari(a.vi_, b.vi_));
 }
 /**
  * Return the value of a*log(b).
@@ -79,7 +79,7 @@ inline var multiply_log(const var& a, const var& b) {
  * @return Value of a*log(b)
  */
 inline var multiply_log(const var& a, double b) {
-  return var(new multiply_log_vd_vari(a.vi_, b));
+  return var(new internal::multiply_log_vd_vari(a.vi_, b));
 }
 /**
  * Return the value of a*log(b).
@@ -95,7 +95,7 @@ inline var multiply_log(const var& a, double b) {
 inline var multiply_log(double a, const var& b) {
   if (a == 1.0)
     return log(b);
-  return var(new multiply_log_dv_vari(a, b.vi_));
+  return var(new internal::multiply_log_dv_vari(a, b.vi_));
 }
 
 }  // namespace math

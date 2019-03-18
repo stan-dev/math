@@ -98,7 +98,7 @@ void block_apply_packed_Q_cl(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A, 
     matrix_cl A_bottom_gpu(A.rows() - k - 1, A.cols());
     A_bottom_gpu.sub_block(A_gpu, k + 1, 0, 0, 0, A_bottom_gpu.rows(), A_bottom_gpu.cols());
     matrix_cl W_gpu(W);
-    A_bottom_gpu = A_bottom_gpu - W_gpu * tri_rect_multiply<TriangularViewCL::Upper>(packed_block_transpose_triang_gpu, A_bottom_gpu);
+    A_bottom_gpu = A_bottom_gpu - W_gpu * opencl::multiply<TriangularViewCL::Upper, TriangularViewCL::Entire>(packed_block_transpose_triang_gpu, A_bottom_gpu);
     A_gpu.sub_block(A_bottom_gpu, 0, 0, k + 1, 0, A_bottom_gpu.rows(), A_bottom_gpu.cols());
   }
   copy(A, A_gpu);

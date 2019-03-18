@@ -1,10 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_SYMMETRIC_EIGENSOLVER_HPP
 #define STAN_MATH_PRIM_MAT_FUN_SYMMETRIC_EIGENSOLVER_HPP
 
-#include <queue>
-
-#include <Eigen/Dense>
-
 #include <stan/math/prim/mat/fun/tridiagonalization.hpp>
 #include <stan/math/prim/mat/fun/mrrr.hpp>
 
@@ -12,16 +8,20 @@
 #include <stan/math/opencl/tridiagonalization.hpp>
 #include <stan/math/opencl/mrrr.hpp>
 
+#include <Eigen\Dense>
+
 namespace stan {
 namespace math {
 
 /**
  * Calculates eigenvalues and eigenvectors of a symmetric matrix.
  * @param A The matrix
- * @param eigenvalues[out] Eigenvalues.
- * @param eigenvectors[out] Eigenvectors - one per column.
+ * @param[out] eigenvalues Eigenvalues.
+ * @param[out] eigenvectors Eigenvectors - one per column.
  */
-void symmetric_eigensolver(const Eigen::MatrixXd& A, Eigen::VectorXd& eigenvalues, Eigen::MatrixXd& eigenvectors) {
+void symmetric_eigensolver(const Eigen::MatrixXd& A,
+                           Eigen::VectorXd& eigenvalues,
+                           Eigen::MatrixXd& eigenvectors) {
   Eigen::MatrixXd packed;
 #ifdef STAN_OPENCL
   internal::block_householder_tridiag_cl(A, packed);

@@ -33,8 +33,6 @@ typename return_type<T_y>::type std_normal_lpdf(const T_y& y) {
   static const char* function = "std_normal_lpdf";
   typedef typename stan::partials_return_type<T_y>::type T_partials_return;
 
-  using stan::is_constant_struct;
-
   if (size_zero(y))
     return 0.0;
 
