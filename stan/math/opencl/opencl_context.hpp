@@ -92,14 +92,13 @@ class opencl_context_base {
       device_ = devices_[OPENCL_DEVICE_ID];
       // context and queue
       context_ = cl::Context(device_);
-      // Macs do not support out of order execution mode
-      #ifdef __APPLE__
-      command_queue_ = cl::CommandQueue(
-          context_, device_, 0, nullptr);
-      #else
+// Macs do not support out of order execution mode
+#ifdef __APPLE__
+      command_queue_ = cl::CommandQueue(context_, device_, 0, nullptr);
+#else
       command_queue_ = cl::CommandQueue(
           context_, device_, CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE, nullptr);
-      #endif
+#endif
       device_.getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
                               &max_thread_block_size_);
       int thread_block_size_sqrt
