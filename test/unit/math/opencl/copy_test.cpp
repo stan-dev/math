@@ -93,4 +93,73 @@ TEST(MathMatrixGPU, barebone_buffer_copy) {
   }
 }
 
+TEST(MathMatrixGPU, matrix_cl_pack_unpack_copy_lower) {
+  int size = 42;
+  int packed_size = size * (size + 1) / 2;
+  std::vector<double> packed_mat(packed_size);
+  std::vector<double> packed_mat_dst(packed_size);
+  for (size_t i = 0; i < packed_mat.size(); i++) {
+    packed_mat[i] = i;
+  }
+  stan::math::matrix_d m_flat_cpu(size, size);
+  auto m_cl = stan::math::packed_copy<stan::math::TriangularViewCL::Lower>(
+      packed_mat, size);
+  stan::math::copy(m_flat_cpu, m_cl);
+  size_t pos = 0;
+  for (size_t j = 0; j < size; ++j) {
+    for (size_t i = 0; i < j; i++) {
+      EXPECT_EQ(m_flat_cpu(i, j), 0.0);
+    }
+    for (size_t i = j; i < size; ++i) {
+      EXPECT_EQ(m_flat_cpu(i, j), packed_mat[pos]);
+      pos++;
+    }
+  }
+  packed_mat_dst
+      = stan::math::packed_copy<stan::math::TriangularViewCL::Lower>(m_cl);
+  for (size_t i = 0; i < packed_mat.size(); i++) {
+    EXPECT_EQ(packed_mat[i], packed_mat_dst[i]);
+  }
+}
+
+TEST(MathMatrixGPU, matrix_cl_pack_unpack_copy_upper) {
+  int size = 51;
+  int packed_size = size * (size + 1) / 2;
+  std::vector<double> packed_mat(packed_size);
+  std::vector<double> packed_mat_dst(packed_size);
+  for (size_t i = 0; i < packed_mat.size(); i++) {
+    packed_mat[i] = i;
+  }
+  stan::math::matrix_d m_flat_cpu(size, size);
+  auto m_cl = stan::math::packed_copy<stan::math::TriangularViewCL::Upper>(
+      packed_mat, size);
+  stan::math::copy(m_flat_cpu, m_cl);
+  size_t pos = 0;
+  for (size_t j = 0; j < size; ++j) {
+    for (size_t i = 0; i <= j; i++) {
+      EXPECT_EQ(m_flat_cpu(i, j), packed_mat[pos]);
+      pos++;
+    }
+    for (size_t i = j + 1; i < size; ++i) {
+      EXPECT_EQ(m_flat_cpu(i, j), 0.0);
+    }
+  }
+  packed_mat_dst
+      = stan::math::packed_copy<stan::math::TriangularViewCL::Upper>(m_cl);
+  for (size_t i = 0; i < packed_mat.size(); i++) {
+    EXPECT_EQ(packed_mat[i], packed_mat_dst[i]);
+  }
+}
+
+TEST(MathMatrixGPU, matrix_cl_pack_unpack_copy_exception) {
+  std::vector<double> packed_mat;
+  stan::math::matrix_cl m_cl_zero;
+  EXPECT_NO_THROW(stan::math::packed_copy<stan::math::TriangularViewCL::Upper>(
+      packed_mat, 0));
+  EXPECT_NO_THROW(
+      stan::math::packed_copy<stan::math::TriangularViewCL::Upper>(m_cl_zero));
+  EXPECT_THROW(stan::math::packed_copy<stan::math::TriangularViewCL::Upper>(
+                   packed_mat, 1),
+               std::invalid_argument);
+}
 #endif
