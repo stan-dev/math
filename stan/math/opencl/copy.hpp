@@ -49,7 +49,7 @@ void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
      * on the device until we are sure that the data is transferred)
      */
     queue.enqueueWriteBuffer(dst.buffer(), CL_TRUE, 0,
-                              sizeof(double) * dst.size(), src.data());
+                             sizeof(double) * dst.size(), src.data());
   } catch (const cl::Error& e) {
     check_opencl_error("copy Eigen->(OpenCL)", e);
   }
@@ -114,8 +114,8 @@ inline void packed_copy(std::vector<double>& dst, const matrix_cl& src) {
   try {
     matrix_cl packed(packed_size, 1);
     stan::math::opencl_kernels::pack(cl::NDRange(src.rows(), src.rows()),
-                                      packed.buffer(), src.buffer(),
-                                      src.rows(), src.rows(), triangular_view);
+                                     packed.buffer(), src.buffer(), src.rows(),
+                                     src.rows(), triangular_view);
     queue.enqueueReadBuffer(packed.buffer(), CL_TRUE, 0,
                             sizeof(double) * packed_size, dst.data());
   } catch (const cl::Error& e) {
@@ -147,10 +147,10 @@ inline void packed_copy(matrix_cl& dst, const std::vector<double>& src) {
   try {
     matrix_cl packed(packed_size, 1);
     queue.enqueueWriteBuffer(packed.buffer(), CL_TRUE, 0,
-                              sizeof(double) * packed_size, src.data());
-    stan::math::opencl_kernels::unpack(
-        cl::NDRange(dst.rows(), dst.rows()), dst.buffer(), packed.buffer(),
-        dst.rows(), dst.rows(), triangular_view);
+                             sizeof(double) * packed_size, src.data());
+    stan::math::opencl_kernels::unpack(cl::NDRange(dst.rows(), dst.rows()),
+                                       dst.buffer(), packed.buffer(),
+                                       dst.rows(), dst.rows(), triangular_view);
   } catch (const cl::Error& e) {
     check_opencl_error("packed_copy (std::vector->OpenCL)", e);
   }
@@ -182,7 +182,7 @@ inline void copy(matrix_cl& dst, const matrix_cl& src) {
      *  for explanation
      */
     opencl_kernels::copy(cl::NDRange(dst.rows(), dst.cols()), src.buffer(),
-                          dst.buffer(), dst.rows(), dst.cols());
+                         dst.buffer(), dst.rows(), dst.cols());
   } catch (const cl::Error& e) {
     std::cout << e.err() << std::endl;
     check_opencl_error("copy (OpenCL)->(OpenCL)", e);
