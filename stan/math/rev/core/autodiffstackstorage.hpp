@@ -9,7 +9,7 @@ namespace math {
 
 /**
  * Provides a thread_local singleton if needed. Read warnings below!
- * With STAN_THREADS=true, the singleton is a thread_local static pointer
+ * With STAN_THREADS defined, the singleton is a thread_local static pointer
  * for performance reasons. When STAN_THREADS is not set, we have the old
  * static AD stack in the instance_ field because we saw odd performance
  * issues on the Mac Pro[4]. The rest of this commentary is specifically
