@@ -19,6 +19,7 @@ const char* eigenvals_bisect_kernel_code = STRINGIFY(
          * @param d Diagonal of D.
          * @param shift Shift.
          * @return Sturm count.
+         * @param n Length of L.
          */
         int get_sturm_count_ldl(__global double* l, const __global double* d, double shift, int n){
           double s = -shift;
@@ -48,6 +49,7 @@ const char* eigenvals_bisect_kernel_code = STRINGIFY(
          * @param[out] high_res Resulting high bounds on eigenvalues.
          * @param min_eigval Lower bound on all eigenvalues.
          * @param max_eigval Upper bound on all eigenvalues.
+         * @param n Length of D.
          */
         __kernel void eigenvals_bisect(__global double* l, const __global double* d, __global double* low_res, __global double* high_res,
                 const double min_eigval, const double max_eigval, const int n) {
@@ -213,8 +215,8 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
          * Refines bounds on eigenvalues of LDL decomposition of a matrix using bisection.
          * @param l Subdiagonal of L.
          * @param d Diagonal of D.
-         * @param low[in,out] Low bound on the eigenvalue.
-         * @param high[in,out] High bound on the eigenvalue.
+         * @param[in,out] low Low bound on the eigenvalue.
+         * @param[in,out] high High bound on the eigenvalue.
          */
         void eigenval_bisect_refine(const __global double* l, const __global double* d, double* low, double* high) {
           int i=get_global_id(0);

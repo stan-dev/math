@@ -29,7 +29,6 @@ static const char *sub_block_kernel_code = STRINGIFY(
      * @param size_j The number of columns in the submatrix.
      * @param src_rows The number of rows in the source matrix.
      * @param src_cols The number of cols in the source matrix.
-     * @param src_rows The number of rows in the destination matrix.
      * @param dst_cols The number of cols in the destination matrix.
      * @param dst_rows The number of rows in the destination matrix.
      * @param triangular_view the triangularity of src (lower, upper or none)

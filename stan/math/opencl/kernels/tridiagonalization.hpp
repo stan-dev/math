@@ -288,7 +288,7 @@ const char* subtract_twice_kernel_code = STRINGIFY(
 // \endcond
         /**
          * Calculates A -= B + B ^ T, for lower triangular part of bottom right corner of A.
-         * @param A[in,out] First matrix.
+         * @param[in,out] A First matrix.
          * @param B Second matrix.
          * @param A_rows Number of rows of A.
          * @param B_rows Number of rows of B.

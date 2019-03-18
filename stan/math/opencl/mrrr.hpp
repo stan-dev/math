@@ -25,8 +25,8 @@ namespace internal {
  * Calculates eigenvalues and eigenvectors of a (preferrably irreducible) tridiagonal matrix T using MRRR algorithm.
  * @param diagonal Diagonal of of T.
  * @param subdiagonal Subdiagonal of T.
- * @param eigenvalues[out] Eigenvlues.
- * @param eigenvectors[out] Eigenvectors.
+ * @param[out] eigenvalues Eigenvlues.
+ * @param[out] eigenvectors Eigenvectors.
  * @param min_rel_sep Minimal relative separation of eigenvalues before computing eigenvectors.
  * @param max_ele_growth Maximal desired element growth of LDL decompositions.
  */
@@ -149,8 +149,8 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal, const Eigen::Vect
 * If a subdiagonal element is close to zero compared to neighbors on diagonal the problem can be split into smaller ones.
 * @param diagonal Diagonal of of T.
 * @param subdiagonal Subdiagonal of T.
-* @param eigenvalues[out] Eigenvlues.
-* @param eigenvectors[out] Eigenvectors.
+* @param[out] eigenvalues Eigenvlues.
+* @param[out] eigenvectors Eigenvectors.
 * @param split_threshold Threshold for splitting the problem
 */
 void tridiagonal_eigensolver_cl(const Eigen::VectorXd& diagonal, const Eigen::VectorXd& subdiagonal, Eigen::VectorXd& eigenvalues, Eigen::MatrixXd& eigenvectors, const double split_threshold = 1e-12) {
