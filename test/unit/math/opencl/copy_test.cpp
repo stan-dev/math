@@ -171,8 +171,8 @@ TEST(MathMatrixGPU, matrix_cl_pack_unpack_copy_exception) {
                std::invalid_argument);
 
   EXPECT_NO_THROW(stan::math::packed_copy<stan::math::TriangularViewCL::Upper>(
-      m_cl, packed_mat));
+      m_cl_zero, packed_mat));
   EXPECT_NO_THROW(stan::math::packed_copy<stan::math::TriangularViewCL::Upper>(
-      packed_mat_dst, m_cl));
+      packed_mat_dst, m_cl_zero));
 }
 #endif
