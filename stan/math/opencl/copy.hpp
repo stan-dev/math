@@ -98,17 +98,15 @@ void copy(Eigen::Matrix<double, R, C>& dst, const matrix_cl& src) {
  * copies it to the std::vector.
  *
  * @tparam triangular_view the triangularity of the source matrix
- * @param dst the destination std::vector
  * @param src the flat triangular source matrix on the OpenCL device
+ * @return the packed std::vector 
  */
 template <TriangularViewCL triangular_view>
-inline void packed_copy(std::vector<double>& dst, const matrix_cl& src) {
+inline std::vector<double> packed_copy(const matrix_cl& src) {
   const int packed_size = src.rows() * (src.rows() + 1) / 2;
-  check_size_match("copy (OpenCL -> packed std::vector)", "dst.size()",
-                   dst.size(), "src.rows() * (src.rows() + 1) / 2",
-                   packed_size);
-  if (src.size() == 0) {
-    return;
+  std::vector<double> dst(packed_size);
+  if (dst.size() == 0) {
+    return dst;
   }
   cl::CommandQueue queue = opencl_context.queue();
   try {
@@ -124,24 +122,27 @@ inline void packed_copy(std::vector<double>& dst, const matrix_cl& src) {
 }
 
 /**
- * Copies and unpacks the packed triangular matrix from
- * the source std::vector to the flat matrix_cl on the OpenCL device.
+ * Copies the packed triangular matrix from
+ * the source std::vector to an OpenCL buffer and
+ * unpacks it to a flat matrix on the OpenCL device.
  *
  * @tparam triangular_view the triangularity of the source matrix
  * @param src the packed source std::vector
- * @param dst the destination flat matrix on the OpenCL device
+ * @param rows the number of rows in the flat matrix
+ * @return the destination flat matrix on the OpenCL device
  * @throw <code>std::invalid_argument</code> if the
  * size of the vector does not match the expected size
  * for the packed triangular matrix
  */
 template <TriangularViewCL triangular_view>
-inline void packed_copy(matrix_cl& dst, const std::vector<double>& src) {
-  const int packed_size = dst.rows() * (dst.rows() + 1) / 2;
+inline matrix_cl packed_copy(const std::vector<double>& src, int rows) {
+  const int packed_size = rows * (rows + 1) / 2;
   check_size_match("copy (packed std::vector -> OpenCL)", "src.size()",
-                   src.size(), "dst.rows() * (dst.rows() + 1) / 2",
+                   src.size(), "rows * (rows + 1) / 2",
                    packed_size);
-  if (src.size() == 0) {
-    return;
+  matrix_cl dst(rows, rows);
+  if (dst.size() == 0) {
+    return dst;
   }
   cl::CommandQueue queue = opencl_context.queue();
   try {
@@ -154,6 +155,7 @@ inline void packed_copy(matrix_cl& dst, const std::vector<double>& src) {
   } catch (const cl::Error& e) {
     check_opencl_error("packed_copy (std::vector->OpenCL)", e);
   }
+  return dst;
 }
 
 /**
