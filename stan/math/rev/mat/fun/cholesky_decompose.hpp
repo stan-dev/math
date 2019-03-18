@@ -322,7 +322,7 @@ class cholesky_opencl : public vari {
    *
    */
   virtual void chain() {
-    int packed_size = M_ * (M_ + 1) / 2;
+    const int packed_size = M_ * (M_ + 1) / 2;
     std::vector<double> L_adj_cpu;
     L_adj_cpu.reserve(packed_size);
     std::vector<double> L_val_cpu;

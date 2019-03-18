@@ -152,4 +152,27 @@ TEST(MathMatrixGPU, matrix_cl_pack_unpack_copy_upper) {
     EXPECT_EQ(packed_mat[i], packed_mat_dst[i]);
   }
 }
+
+TEST(MathMatrixGPU, matrix_cl_pack_unpack_copy_exception) {
+  int size = 51;
+  int packed_size = size * (size + 1) / 2;
+  std::vector<double> packed_mat;
+  std::vector<double> packed_mat_dst;
+  for (size_t i = 0; i < packed_mat.size(); i++) {
+    packed_mat[i] = i;
+  }
+  stan::math::matrix_cl m_cl(size, size);
+  stan::math::matrix_cl m_cl_zero;
+  EXPECT_THROW(stan::math::packed_copy<stan::math::TriangularViewCL::Upper>(m_cl,
+                                                               packed_mat), std::invalid_argument);
+  EXPECT_THROW(stan::math::packed_copy<stan::math::TriangularViewCL::Upper>(packed_mat_dst,
+                                                               m_cl), std::invalid_argument);
+
+  EXPECT_NO_THROW(stan::math::packed_copy<stan::math::TriangularViewCL::Upper>(m_cl,
+                                                               packed_mat));
+  EXPECT_NO_THROW(stan::math::packed_copy<stan::math::TriangularViewCL::Upper>(packed_mat_dst,
+                                                               m_cl));
+  
+  
+}
 #endif
