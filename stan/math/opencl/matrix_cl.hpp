@@ -61,31 +61,35 @@ class matrix_cl {
       return;
     // the context is needed to create the buffer object
     cl::Context& ctx = opencl_context.context();
-    cl::CommandQueue& queue = opencl_context.queue();      
+    cl::CommandQueue& queue = opencl_context.queue();
     try {
       oclBuffer_
           = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
       queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0,
-                              sizeof(double) * A.size(), value_of_rec(A).data());
+                               sizeof(double) * A.size(),
+                               value_of_rec(A).data());
     } catch (const cl::Error& e) {
       check_opencl_error("matrix_cl(std::vector<T>) constructor", e);
     }
   }
 
   template <typename T>
-  explicit matrix_cl(std::vector<T> A, int rows, int cols) : rows_(rows), cols_(cols) {
+  explicit matrix_cl(std::vector<T> A, int rows, int cols)
+      : rows_(rows), cols_(cols) {
     if (A.size() == 0)
       return;
     // the context is needed to create the buffer object
     cl::Context& ctx = opencl_context.context();
-    cl::CommandQueue& queue = opencl_context.queue();      
+    cl::CommandQueue& queue = opencl_context.queue();
     try {
       oclBuffer_
           = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
       queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0,
-                              sizeof(double) * A.size(), value_of_rec(A).data());
+                               sizeof(double) * A.size(),
+                               value_of_rec(A).data());
     } catch (const cl::Error& e) {
-      check_opencl_error("matrix_cl(std::vector<T>, rows, cols) constructor", e);
+      check_opencl_error("matrix_cl(std::vector<T>, rows, cols) constructor",
+                         e);
     }
   }
 
@@ -301,8 +305,7 @@ class matrix_v_cl {
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
-  matrix_v_cl(vari**& A, int M)
-      : rows_(M), cols_(M), val_(M, M), adj_(M, M) {
+  matrix_v_cl(vari**& A, int M) : rows_(M), cols_(M), val_(M, M), adj_(M, M) {
     if (size() == 0)
       return;
     cl::Context& ctx = opencl_context.context();
@@ -312,21 +315,21 @@ class matrix_v_cl {
       std::vector<double> val_cpy(vari_size);
       std::vector<double> adj_cpy(vari_size);
       for (size_t j = 0; j < vari_size; ++j) {
-          val_cpy[j] = A[j]->val_;
-          adj_cpy[j] = A[j]->adj_;
+        val_cpy[j] = A[j]->val_;
+        adj_cpy[j] = A[j]->adj_;
       }
       matrix_cl packed_val(val_cpy);
       matrix_cl packed_adj(adj_cpy);
       queue.enqueueWriteBuffer(packed_val.buffer(), CL_TRUE, 0,
-                              sizeof(double) * vari_size, val_cpy.data());
+                               sizeof(double) * vari_size, val_cpy.data());
       queue.enqueueWriteBuffer(packed_adj.buffer(), CL_TRUE, 0,
-                              sizeof(double) * vari_size, adj_cpy.data());
-      stan::math::opencl_kernels::unpack(cl::NDRange(M, M),
-                                          val_.buffer(), packed_val.buffer(),
-                                          M, M, triangular_view);
-      stan::math::opencl_kernels::unpack(cl::NDRange(M, M),
-                                          adj_.buffer(), packed_adj.buffer(),
-                                          M, M, triangular_view);
+                               sizeof(double) * vari_size, adj_cpy.data());
+      stan::math::opencl_kernels::unpack(cl::NDRange(M, M), val_.buffer(),
+                                         packed_val.buffer(), M, M,
+                                         triangular_view);
+      stan::math::opencl_kernels::unpack(cl::NDRange(M, M), adj_.buffer(),
+                                         packed_adj.buffer(), M, M,
+                                         triangular_view);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
     }
@@ -334,19 +337,20 @@ class matrix_v_cl {
 };
 
 // if the triangular view is entire dont unpack, just copy
-template<> matrix_v_cl<TriangularViewCL::Entire>::matrix_v_cl(vari**& A, int M)
-      : rows_(M), cols_(M), val_(M, M), adj_(M, M) {
-    if (size() == 0)
-      return;
-    const int vari_size = M * M;
-    std::vector<double> val_cpy(vari_size);
-    std::vector<double> adj_cpy(vari_size);
-    for (size_t j = 0; j < vari_size; ++j) {
-        val_cpy[j] = A[j]->val_;
-        adj_cpy[j] = A[j]->adj_;
-    }
-    val_ = matrix_cl(val_cpy, M, M);
-    val_ = matrix_cl(adj_cpy, M, M);
+template <>
+matrix_v_cl<TriangularViewCL::Entire>::matrix_v_cl(vari**& A, int M)
+    : rows_(M), cols_(M), val_(M, M), adj_(M, M) {
+  if (size() == 0)
+    return;
+  const int vari_size = M * M;
+  std::vector<double> val_cpy(vari_size);
+  std::vector<double> adj_cpy(vari_size);
+  for (size_t j = 0; j < vari_size; ++j) {
+    val_cpy[j] = A[j]->val_;
+    adj_cpy[j] = A[j]->adj_;
+  }
+  val_ = matrix_cl(val_cpy, M, M);
+  val_ = matrix_cl(adj_cpy, M, M);
 }
 
 }  // namespace math
@@ -354,4 +358,3 @@ template<> matrix_v_cl<TriangularViewCL::Entire>::matrix_v_cl(vari**& A, int M)
 
 #endif
 #endif
-
