@@ -322,7 +322,7 @@ class cholesky_opencl : public vari {
    *
    */
   virtual void chain() {
-    matrix_v_cl L<TriangularViewCL::Lower>(vari_ref_L_, M_);
+    matrix_v_cl<TriangularViewCL::Lower> L(vari_ref_L_, M_);
     int block_size
         = M_ / opencl_context.tuning_opts().cholesky_rev_block_partition;
     block_size = std::max(block_size, 8);
@@ -373,6 +373,7 @@ class cholesky_opencl : public vari {
       L.adj_.sub_block(B_adj, 0, 0, k, 0, m_k_ind, j);
       L.adj_.sub_block(C_adj, 0, 0, k, j, m_k_ind, k_j_ind);
     }
+    const int packed_size = M_ * (M_ + 1) / 2;
     auto L_adj_cpu = packed_copy<TriangularViewCL::Lower>(L.adj_);
     for (size_type j = 0; j < packed_size; ++j) {
       vari_ref_A_[j]->adj_ += L_adj_cpu[j];
