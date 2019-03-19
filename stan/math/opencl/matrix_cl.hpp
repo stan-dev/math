@@ -10,6 +10,7 @@
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/opencl/kernels/copy.hpp>
 #include <stan/math/opencl/kernels/sub_block.hpp>
+#include <stan/math/opencl/kernels/unpack.hpp>
 #include <stan/math/opencl/kernels/triangular_transpose.hpp>
 #include <stan/math/opencl/kernels/zeros.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
@@ -265,47 +266,41 @@ class matrix_v_cl {
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
+  template <TriangularViewCL triangular_view>
   matrix_v_cl(vari**& A, const int& M)
       : rows_(M), cols_(M), val_(M, M), adj_(M, M) {
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue& queue = opencl_context.queue();
     if (size() > 0) {
       try {
-        const int vari_size = M * M;
-        // creates the OpenCL buffer to copy the Eigen
-        // matrix to the OpenCL device
-        std::vector<double> val_cpy;
-        std::vector<double> adj_cpy;
-        val_cpy.reserve(vari_size);
-        adj_cpy.reserve(vari_size);
-        // Make a flat version of a lower triangular
-        size_t pos = 0;
-        for (size_t j = 0; j < M; ++j) {
-          for (size_t k = 0; k < j; ++k) {
-            val_cpy.push_back(0);
-            adj_cpy.push_back(0);
-          }
-          for (size_t i = j; i < M; ++i) {
-            val_cpy.push_back(A[pos]->val_);
-            adj_cpy.push_back(A[pos]->adj_);
-            ++pos;
-          }
+        const int vari_size = M * (M + 1) / 2;
+        check_size_match("matri_v_cl constructor(packed varis)", "A.size()",
+                        A.size(), "M * (M + 1) / 2", vari_size);
+        std::vector<double> val_cpy(vari_size);
+        std::vector<double> adj_cpy(vari_size);
+        for (size_t j = 0; j < vari_size; ++j) {
+            val_cpy[j] = A[j]->val_;
+            adj_cpy[j] = A[j]->adj_;
         }
-        cl::Buffer oclBuffer_val
-            = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * vari_size);
-        cl::Buffer oclBuffer_adj
-            = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * vari_size);
-        queue.enqueueWriteBuffer(oclBuffer_val, CL_TRUE, 0,
+        matrix_cl packed_val(vari_size, 1);
+        matrix_cl packed_adj(vari_size, 1);
+        queue.enqueueWriteBuffer(packed_val.buffer(), CL_TRUE, 0,
                                  sizeof(double) * vari_size, val_cpy.data());
-        queue.enqueueWriteBuffer(oclBuffer_adj, CL_TRUE, 0,
+        queue.enqueueWriteBuffer(packed_adj.buffer(), CL_TRUE, 0,
                                  sizeof(double) * vari_size, adj_cpy.data());
-        val_ = matrix_cl(oclBuffer_val, M, M);
-        adj_ = matrix_cl(oclBuffer_adj, M, M);
+        val_ = matrix_cl(M, M);
+        adj_ = matrix_cl(M, M);
+        stan::math::opencl_kernels::unpack(cl::NDRange(M, M),
+                                            val_.buffer(), packed_val.buffer(),
+                                            M, M, triangular_view);
+        stan::math::opencl_kernels::unpack(cl::NDRange(M, M),
+                                            adj_.buffer(), packed_adj.buffer(),
+                                            M, M, triangular_view);
       } catch (const cl::Error& e) {
         check_opencl_error("matrix constructor", e);
       }
     }
-  }
+  } 
 };
 
 }  // namespace math
@@ -313,3 +308,4 @@ class matrix_v_cl {
 
 #endif
 #endif
+

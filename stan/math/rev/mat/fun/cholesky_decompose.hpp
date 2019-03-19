@@ -21,6 +21,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/multiply.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
+#include <vector>
 #endif
 
 #include <algorithm>
@@ -321,7 +322,7 @@ class cholesky_opencl : public vari {
    *
    */
   virtual void chain() {
-    matrix_v_cl L(vari_ref_L_, M_);
+    matrix_v_cl L<TriangularViewCL::Lower>(vari_ref_L_, M_);
     int block_size
         = M_ / opencl_context.tuning_opts().cholesky_rev_block_partition;
     block_size = std::max(block_size, 8);
@@ -372,12 +373,10 @@ class cholesky_opencl : public vari {
       L.adj_.sub_block(B_adj, 0, 0, k, 0, m_k_ind, j);
       L.adj_.sub_block(C_adj, 0, 0, k, j, m_k_ind, k_j_ind);
     }
-    auto L_adj_cpu = Eigen::MatrixXd::Zero(M_, M_).eval();
-    copy(L_adj_cpu, L.adj_);
-    int pos = 0;
-    for (size_type j = 0; j < M_; ++j)
-      for (size_type i = j; i < M_; ++i)
-        vari_ref_A_[pos++]->adj_ += L_adj_cpu.coeffRef(i, j);
+    auto L_adj_cpu = packed_copy<TriangularViewCL::Lower>(L.adj_);
+    for (size_type j = 0; j < packed_size; ++j) {
+      vari_ref_A_[j]->adj_ += L_adj_cpu[j];
+    }
   }
 };
 #endif
