@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include <stan/math/fwd/core/fvar.hpp>
 #include <stan/math/rev/core/var.hpp>
-#include <stan/math/rev/core/init_chainablestack.hpp>
 #include <stan/math/prim/scal/meta/broadcast_array.hpp>
 #include <vector>
 
