@@ -262,36 +262,26 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_interface_types) {
   int i = 1;
   std::vector<double> vi = {{1, 0}};
   double d = 1.0;
-  std::vector<double> vd = {{1.0, 2.0}};
   Eigen::VectorXd ev(2);
-  Eigen::RowVectorXd rv(2);
   Eigen::MatrixXd m1(1, 1);
   m1 << 1.0;
   Eigen::MatrixXd m(2, 2);
   ev << 1.0, 2.0;
-  rv << 1.0, 2.0;
   m << 1.0, 2.0, 3.0, 4.0;
 
   value += stan::math::poisson_log_glm_lpmf(i, m1, d, d);
-  value += stan::math::poisson_log_glm_lpmf(vi, m, vd, vd);
   value += stan::math::poisson_log_glm_lpmf(vi, m, ev, ev);
-  value += stan::math::poisson_log_glm_lpmf(vi, m, rv, rv);
 
   var v = 1.0;
-  std::vector<var> vv = {{1.0, 2.0}};
   Eigen::Matrix<var, -1, 1> evv(2);
-  Eigen::Matrix<var, 1, -1> rvv(2);
   Eigen::Matrix<var, -1, -1> m1v(1, 1);
   m1v << 1.0;
   Eigen::Matrix<var, -1, -1> mv(2, 2);
   evv << 1.0, 2.0;
-  rvv << 1.0, 2.0;
   mv << 1.0, 2.0, 3.0, 4.0;
 
   value2 += stan::math::poisson_log_glm_lpmf(i, m1v, v, v).val();
-  value2 += stan::math::poisson_log_glm_lpmf(vi, mv, vv, vv).val();
   value2 += stan::math::poisson_log_glm_lpmf(vi, mv, evv, evv).val();
-  value2 += stan::math::poisson_log_glm_lpmf(vi, mv, rvv, rvv).val();
 
   EXPECT_FLOAT_EQ(value, value2);
 }

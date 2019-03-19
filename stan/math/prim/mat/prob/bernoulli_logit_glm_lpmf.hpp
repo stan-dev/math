@@ -55,6 +55,10 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   static const char *function = "bernoulli_logit_glm_lpmf";
   typedef typename stan::partials_return_type<T_y, T_x, T_alpha, T_beta>::type
       T_partials_return;
+  typedef typename std::conditional<
+      is_vector<T_alpha>::value,
+      Eigen::Array<typename stan::partials_return_type<T_alpha>::type, -1, 1>,
+      typename stan::partials_return_type<T_alpha>::type>::type T_alpha_val;
 
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -69,7 +73,6 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   const size_t M = x.row(0).size();
 
   check_bounded(function, "Vector of dependent variables", y, 0, 1);
-  check_finite(function, "Matrix of independent variables", x);
   check_finite(function, "Weight vector", beta);
   check_finite(function, "Intercept", alpha);
   check_consistent_size(function, "Vector of dependent variables", y, N);
@@ -95,9 +98,9 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
       beta_dbl[m] = value_of(beta_vec[m]);
     }
   }
+  const T_alpha_val &alpha_val = value_of(alpha);
   Eigen::Array<T_partials_return, Dynamic, 1> ytheta
-      = signs.array() * (value_of(x) * beta_dbl).array();
-  scalar_seq_view<T_alpha> alpha_vec(alpha);
+      = signs.array() * ((value_of(x) * beta_dbl).array() + alpha_val);
 
   // Compute the log-density and handle extreme values gracefully
   // using Taylor approximations.
@@ -107,7 +110,7 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   T_partials_return theta_derivative_sum = 0;
   T_partials_return exp_m_ythetan;
   for (size_t n = 0; n < N; ++n) {
-    ytheta[n] += signs[n] * value_of(alpha_vec[n]);
+    check_finite(function, "Matrix of independent variables", ytheta[n]);
     exp_m_ythetan = exp(-ytheta[n]);
     if (ytheta[n] > cutoff) {
       logp -= exp_m_ythetan;
