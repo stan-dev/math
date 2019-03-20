@@ -338,7 +338,7 @@ class matrix_v_cl {
 
 // if the triangular view is entire dont unpack, just copy
 template <>
-matrix_v_cl<TriangularViewCL::Entire>::matrix_v_cl(vari**& A, int M)
+inline matrix_v_cl<TriangularViewCL::Entire>::matrix_v_cl(vari**& A, int M)
     : rows_(M), cols_(M), val_(M, M), adj_(M, M) {
   if (size() == 0)
     return;
