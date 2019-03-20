@@ -5,7 +5,7 @@ namespace stan {
 namespace math {
 
 /**
- * Acts as the identity function.
+ * Calculates sum of values given as input. For scalar inputs this is identity function.
  *
  * @tparam T Type of element.
  * @param v Specified value.
