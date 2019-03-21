@@ -75,8 +75,8 @@ inline void copy(matrix_cl& dst, const Eigen::Matrix<var, R, C>& src) {
      * on the device until we are sure that the data is transferred)
      */
     queue.enqueueWriteBuffer(dst.buffer(), CL_TRUE, 0,
-                              sizeof(double) * dst.size(),
-                              value_of_rec(src).data());
+                             sizeof(double) * dst.size(),
+                             value_of_rec(src).data());
   } catch (const cl::Error& e) {
     check_opencl_error("copy Eigen->(OpenCL)", e);
   }
