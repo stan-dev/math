@@ -38,15 +38,15 @@ namespace opencl {
  * A helper function to convert a std::vector
  * to cl::size_t<3>
  */
-template <size_t len=3>
+template <size_t len = 3>
 cl::size_t<len> to_size_t(std::vector<size_t> values) {
-  assert(values.size() ==len);
+  assert(values.size() == len);
   cl::size_t<len> s;
   for (size_t i = 0; i < len; i++)
     s[i] = values[i];
   return s;
-}  
 }
+}  // namespace opencl
 /**
  * The <code>opencl_context_base</code> class represents an OpenCL context
  * in the standard Meyers singleton design pattern.
