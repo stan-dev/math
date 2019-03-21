@@ -32,8 +32,6 @@ typename return_type<T_y, T_loc, T_scale>::type von_mises_lpdf(
   if (size_zero(y, mu, kappa))
     return 0.0;
 
-  using stan::is_constant_struct;
-
   using std::log;
 
   T_partials_return logp = 0.0;

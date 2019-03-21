@@ -9,10 +9,12 @@ namespace math {
 
 /**
  * Provides a thread_local singleton if needed. Read warnings below!
- * For performance reasons the singleton is a global static pointer
- * which is stored as thread local (TLS) if STAN_THREADS is
- * defined. The use of a pointer is motivated by performance reasons
- * for the threading case. When a TLS is used then initialization with
+ * With STAN_THREADS defined, the singleton is a thread_local static pointer
+ * for performance reasons. When STAN_THREADS is not set, we have the old
+ * static AD stack in the instance_ field because we saw odd performance
+ * issues on the Mac Pro[4]. The rest of this commentary is specifically
+ * talking about the design choices in the STAN_THREADS=true case.
+ * When a TLS is used then initialization with
  * a constant expression is required for fast access to the TLS. As
  * the AD storage struct is non-POD it must be initialized as a
  * dynamic expression such that compilers will wrap any access to the
@@ -59,6 +61,7 @@ namespace math {
  * [2] https://github.com/stan-dev/math/pull/826
  * [3]
  * http://discourse.mc-stan.org/t/potentially-dropping-support-for-older-versions-of-apples-version-of-clang/3780/
+ * [4] https://github.com/stan-dev/math/pull/1135
  */
 template <typename ChainableT, typename ChainableAllocT>
 struct AutodiffStackSingleton {
@@ -67,10 +70,12 @@ struct AutodiffStackSingleton {
 
   AutodiffStackSingleton() : own_instance_(init()) {}
   ~AutodiffStackSingleton() {
+#ifdef STAN_THREADS
     if (own_instance_) {
       delete instance_;
       instance_ = nullptr;
     }
+#endif
   }
 
   struct AutodiffStackStorage {
@@ -91,15 +96,21 @@ struct AutodiffStackSingleton {
   AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
 
   static constexpr inline AutodiffStackStorage &instance() {
-    return *instance_;
+    return
+#ifdef STAN_THREADS
+        *
+#endif
+        instance_;
   }
 
  private:
   static bool init() {
+#ifdef STAN_THREADS
     if (!instance_) {
       instance_ = new AutodiffStackStorage();
       return true;
     }
+#endif
     return false;
   }
 
@@ -111,7 +122,11 @@ struct AutodiffStackSingleton {
       thread_local
 #endif
 #endif
-      AutodiffStackStorage *instance_;
+      AutodiffStackStorage
+#ifdef STAN_THREADS
+          *
+#endif
+              instance_;
 
   bool own_instance_;
 };
@@ -126,8 +141,13 @@ thread_local
 #endif
     typename AutodiffStackSingleton<ChainableT,
                                     ChainableAllocT>::AutodiffStackStorage
+
+#ifdef STAN_THREADS
         *AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_
     = nullptr;
+#else
+    AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_;
+#endif
 
 }  // namespace math
 }  // namespace stan
