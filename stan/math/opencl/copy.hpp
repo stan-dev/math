@@ -38,9 +38,10 @@ inline void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
                    "dst.rows()", dst.rows());
   check_size_match("copy (Eigen -> (OpenCL))", "src.cols()", src.cols(),
                    "dst.cols()", dst.cols());
-  if (src.size() > 0) {
-    internal::cache_copy(dst.buffer(), src);
+  if (src.size() == 0) {
+    return;
   }
+  internal::cache_copy(dst.buffer(), src);
 }
 
 /**
@@ -61,22 +62,23 @@ inline void copy(matrix_cl& dst, const Eigen::Matrix<var, R, C>& src) {
                    "dst.rows()", dst.rows());
   check_size_match("copy (Eigen -> GPU)", "src.cols()", src.cols(),
                    "dst.cols()", dst.cols());
-  if (src.size() > 0) {
-    cl::CommandQueue queue = opencl_context.queue();
-    try {
-      /**
-       * Writes the contents of src to the OpenCL buffer
-       * starting at the offset 0
-       * CL_TRUE denotes that the call is blocking
-       * We do not want to execute any further kernels
-       * on the device until we are sure that the data is transferred)
-       */
-      queue.enqueueWriteBuffer(dst.buffer(), CL_TRUE, 0,
-                               sizeof(double) * dst.size(),
-                               value_of_rec(src).data());
-    } catch (const cl::Error& e) {
-      check_opencl_error("copy Eigen->(OpenCL)", e);
-    }
+  if (src.size() == 0) {
+    return;
+  }
+  cl::CommandQueue queue = opencl_context.queue();
+  try {
+    /**
+     * Writes the contents of src to the OpenCL buffer
+     * starting at the offset 0
+     * CL_TRUE denotes that the call is blocking
+     * We do not want to execute any further kernels
+     * on the device until we are sure that the data is transferred)
+     */
+    queue.enqueueWriteBuffer(dst.buffer(), CL_TRUE, 0,
+                              sizeof(double) * dst.size(),
+                              value_of_rec(src).data());
+  } catch (const cl::Error& e) {
+    check_opencl_error("copy Eigen->(OpenCL)", e);
   }
 }
 
@@ -199,22 +201,23 @@ inline void copy(matrix_cl& dst, const matrix_cl& src) {
                    "dst.rows()", dst.rows());
   check_size_match("copy ((OpenCL) -> (OpenCL))", "src.cols()", src.cols(),
                    "dst.cols()", dst.cols());
-  if (src.size() > 0) {
-    try {
-      cl::CommandQueue queue = opencl_context.queue();
-      /**
-       * Copies the contents of the src buffer to the dst buffer
-       * see the matrix_cl(matrix_cl&) constructor
-       *  for explanation
-       */
-      cl::Event copy_event;
-      queue.enqueueCopyBuffer(src.buffer(), dst.buffer(), 0, 0,
-                              sizeof(double) * dst.size(), NULL, &copy_event);
-      copy_event.wait();
-    } catch (const cl::Error& e) {
-      std::cout << e.err() << std::endl;
-      check_opencl_error("copy (OpenCL)->(OpenCL)", e);
-    }
+  if (src.size() == 0) {
+    return;
+  }
+  try {
+    cl::CommandQueue queue = opencl_context.queue();
+    /**
+     * Copies the contents of the src buffer to the dst buffer
+     * see the matrix_cl(matrix_cl&) constructor
+     *  for explanation
+     */
+    cl::Event copy_event;
+    queue.enqueueCopyBuffer(src.buffer(), dst.buffer(), 0, 0,
+                            sizeof(double) * dst.size(), NULL, &copy_event);
+    copy_event.wait();
+  } catch (const cl::Error& e) {
+    std::cout << e.err() << std::endl;
+    check_opencl_error("copy (OpenCL)->(OpenCL)", e);
   }
 }
 

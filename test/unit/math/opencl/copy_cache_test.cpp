@@ -1,5 +1,5 @@
 #ifdef STAN_OPENCL
-#define STAN_OPENCL_CACHE
+#ifdef STAN_OPENCL_CACHE
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
@@ -125,5 +125,5 @@ TEST(MathMatrixOpenCL, barebone_buffer_copy) {
     EXPECT_EQ(i * 1.0, cpu_dst_buffer[i]);
   }
 }
-#undef STAN_OPENCL_CACHE
+#endif
 #endif
