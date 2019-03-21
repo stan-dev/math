@@ -90,19 +90,6 @@ struct AutodiffStackSingleton {
   explicit AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
   AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
 
-  static constexpr inline AutodiffStackStorage &instance() {
-    return *instance_;
-  }
-
- private:
-  static bool init() {
-    if (!instance_) {
-      instance_ = new AutodiffStackStorage();
-      return true;
-    }
-    return false;
-  }
-
   static
 #ifdef STAN_THREADS
 #ifdef __GNUC__
@@ -112,6 +99,15 @@ struct AutodiffStackSingleton {
 #endif
 #endif
       AutodiffStackStorage *instance_;
+
+ private:
+  static bool init() {
+    if (!instance_) {
+      instance_ = new AutodiffStackStorage();
+      return true;
+    }
+    return false;
+  }
 
   bool own_instance_;
 };
