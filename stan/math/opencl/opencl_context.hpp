@@ -35,7 +35,8 @@ namespace stan {
 namespace math {
 namespace opencl {
 /**
- * A helper function to 
+ * A helper function to convert a std::vector
+ * to cl::size_t<3>
  */
 template <size_t len=3>
 cl::size_t<len> to_size_t(std::vector<size_t> values) {
