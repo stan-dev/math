@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 template <typename T2, int R2, int C2, typename T3, int R3, int C3>
 class trace_inv_quad_form_ldlt_impl : public chainable_alloc {
  protected:
@@ -148,7 +148,7 @@ class trace_inv_quad_form_ldlt_vari : public vari {
   trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *impl_;
 };
 
-}  // namespace
+}  // namespace internal
 
 /**
  * Compute the trace of an inverse quadratic form.  I.E., this computes
@@ -163,10 +163,13 @@ inline
                              const Eigen::Matrix<T3, R3, C3> &B) {
   check_multiplicable("trace_inv_quad_form_ldlt", "A", A, "B", B);
 
-  trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *impl_
-      = new trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3>(A, B);
+  internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *impl_
+      = new internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3>(A,
+                                                                            B);
 
-  return var(new trace_inv_quad_form_ldlt_vari<T2, R2, C2, T3, R3, C3>(impl_));
+  return var(
+      new internal::trace_inv_quad_form_ldlt_vari<T2, R2, C2, T3, R3, C3>(
+          impl_));
 }
 
 }  // namespace math

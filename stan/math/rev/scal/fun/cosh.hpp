@@ -8,13 +8,13 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class cosh_vari : public op_v_vari {
  public:
   explicit cosh_vari(vari* avi) : op_v_vari(std::cosh(avi->val_), avi) {}
   void chain() { avi_->adj_ += adj_ * std::sinh(avi_->val_); }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Return the hyperbolic cosine of the specified variable (cmath).
@@ -43,7 +43,7 @@ class cosh_vari : public op_v_vari {
  * @param a Variable.
  * @return Hyperbolic cosine of variable.
  */
-inline var cosh(const var& a) { return var(new cosh_vari(a.vi_)); }
+inline var cosh(const var& a) { return var(new internal::cosh_vari(a.vi_)); }
 
 }  // namespace math
 }  // namespace stan

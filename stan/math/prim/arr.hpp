@@ -17,7 +17,9 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim/arr/err/check_opencl.hpp>
 #endif
-
+#include <stan/math/prim/arr/err/is_matching_size.hpp>
+#include <stan/math/prim/arr/err/is_nonzero_size.hpp>
+#include <stan/math/prim/arr/err/is_ordered.hpp>
 #include <stan/math/prim/arr/fun/array_builder.hpp>
 #include <stan/math/prim/arr/fun/common_type.hpp>
 #include <stan/math/prim/arr/fun/dot.hpp>

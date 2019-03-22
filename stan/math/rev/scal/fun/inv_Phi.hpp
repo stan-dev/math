@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class inv_Phi_vari : public op_v_vari {
  public:
   explicit inv_Phi_vari(vari* avi) : op_v_vari(inv_Phi(avi->val_), avi) {}
@@ -19,7 +19,7 @@ class inv_Phi_vari : public op_v_vari {
         += adj_ * SQRT_2_TIMES_SQRT_PI / std::exp(NEG_HALF * val_ * val_);
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * The inverse of unit normal cumulative density function.
@@ -31,7 +31,9 @@ class inv_Phi_vari : public op_v_vari {
  * @param p Probability
  * @return The unit normal inverse cdf evaluated at p
  */
-inline var inv_Phi(const var& p) { return var(new inv_Phi_vari(p.vi_)); }
+inline var inv_Phi(const var& p) {
+  return var(new internal::inv_Phi_vari(p.vi_));
+}
 
 }  // namespace math
 }  // namespace stan
