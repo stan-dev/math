@@ -35,14 +35,12 @@ namespace stan {
 namespace math {
 namespace opencl {
 /**
- * A helper function to convert a std::vector
- * to cl::size_t<3>
+ * A helper function to convert an array to a cl::size_t<N>
  */
-template <size_t len = 3>
-cl::size_t<len> to_size_t(std::vector<size_t> values) {
-  assert(values.size() == len);
-  cl::size_t<len> s;
-  for (size_t i = 0; i < len; i++)
+template <int N>
+auto to_size_t(const size_t (&values)[N]) {
+  cl::size_t<N> s;
+  for (size_t i = 0; i < N; i++)
     s[i] = values[i];
   return s;
 }
