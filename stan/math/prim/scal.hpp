@@ -65,8 +65,10 @@
 #include <stan/math/prim/scal/fun/acosh.hpp>
 #include <stan/math/prim/scal/fun/asinh.hpp>
 #include <stan/math/prim/scal/fun/atanh.hpp>
-#include <stan/math/prim/scal/fun/as_array.hpp>
+#include <stan/math/prim/scal/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/scal/fun/as_bool.hpp>
+#include <stan/math/prim/scal/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/scal/fun/as_scalar.hpp>
 #include <stan/math/prim/scal/fun/bessel_first_kind.hpp>
 #include <stan/math/prim/scal/fun/bessel_second_kind.hpp>
 #include <stan/math/prim/scal/fun/binary_log_loss.hpp>

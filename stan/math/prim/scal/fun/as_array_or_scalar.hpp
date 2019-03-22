@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_AS_ARRAY_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_AS_ARRAY_HPP
+#ifndef STAN_MATH_PRIM_SCAL_FUN_AS_ARRAY_OR_SCALAR_HPP
+#define STAN_MATH_PRIM_SCAL_FUN_AS_ARRAY_OR_SCALAR_HPP
 
 namespace stan {
 namespace math {
@@ -12,7 +12,7 @@ namespace math {
  * @return Same value.
  */
 template <typename T>
-inline T as_array(const T& v) {
+inline T as_array_or_scalar(const T& v) {
   return v;
 }
 

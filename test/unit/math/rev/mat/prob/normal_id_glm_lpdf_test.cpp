@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <vector>
 #include <cmath>
 
 using Eigen::Dynamic;
@@ -366,26 +367,36 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_interface_types) {
   double value2 = 0;
 
   double d = 1.0;
+  std::vector<double> vd = {{1.0, 2.0}};
   Eigen::VectorXd ev(2);
+  Eigen::RowVectorXd rv(2);
   Eigen::MatrixXd m1(1, 1);
   m1 << 1.0;
   Eigen::MatrixXd m(2, 2);
   ev << 1.0, 2.0;
+  rv << 1.0, 2.0;
   m << 1.0, 2.0, 3.0, 4.0;
 
   value += stan::math::normal_id_glm_lpdf(d, m1, d, d, d);
+  value += stan::math::normal_id_glm_lpdf(vd, m, vd, vd, vd);
   value += stan::math::normal_id_glm_lpdf(ev, m, ev, ev, ev);
+  value += stan::math::normal_id_glm_lpdf(rv, m, rv, rv, rv);
 
   var v = 1.0;
+  std::vector<var> vv = {{1.0, 2.0}};
   Eigen::Matrix<var, -1, 1> evv(2);
+  Eigen::Matrix<var, 1, -1> rvv(2);
   Eigen::Matrix<var, -1, -1> m1v(1, 1);
   m1v << 1.0;
   Eigen::Matrix<var, -1, -1> mv(2, 2);
   evv << 1.0, 2.0;
+  rvv << 1.0, 2.0;
   mv << 1.0, 2.0, 3.0, 4.0;
 
   value2 += stan::math::normal_id_glm_lpdf(v, m1v, v, v, v).val();
+  value2 += stan::math::normal_id_glm_lpdf(vv, mv, vv, vv, vv).val();
   value2 += stan::math::normal_id_glm_lpdf(evv, mv, evv, evv, evv).val();
+  value2 += stan::math::normal_id_glm_lpdf(rvv, mv, rvv, rvv, rvv).val();
 
   EXPECT_FLOAT_EQ(value, value2);
 }
@@ -399,7 +410,7 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_error_checking) {
   Eigen::Matrix<double, -1, 1> y = Eigen::Matrix<double, -1, 1>::Random(N, 1);
   Eigen::Matrix<double, -1, 1> yw1 = Eigen::Matrix<double, -1, 1>::Random(W, 1);
   Eigen::Matrix<double, -1, 1> yw2
-      = Eigen::Matrix<double, -1, 1>::Random(W, 1) * NAN;
+      = Eigen::Matrix<double, -1, 1>::Random(N, 1) * NAN;
   Eigen::Matrix<double, -1, -1> x = Eigen::Matrix<double, -1, -1>::Random(N, M);
   Eigen::Matrix<double, -1, -1> xw1
       = Eigen::Matrix<double, -1, -1>::Random(W, M);
