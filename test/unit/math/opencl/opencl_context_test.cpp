@@ -4,7 +4,6 @@
 #include <vector>
 #include <fstream>
 
-
 TEST(MathGpu, to_size_t_test) {
   cl::size_t<3> a = stan::math::opencl::to_size_t<3>({1, 2, 3});
   EXPECT_EQ(a[0], 1);
