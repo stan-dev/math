@@ -103,8 +103,7 @@ class matrix_cl {
       oclBuffer_
           = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
       queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0,
-                               sizeof(double) * A.size(),
-                               A.data());
+                               sizeof(double) * A.size(), A.data());
     } catch (const cl::Error& e) {
       check_opencl_error("matrix_cl(std::vector<T>, rows, cols) constructor",
                          e);
