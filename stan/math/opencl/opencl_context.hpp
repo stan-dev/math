@@ -36,14 +36,28 @@ namespace math {
 namespace opencl {
 /**
  * A helper function to convert an array to a cl::size_t<N>.
- *
+ * This implementation throws because cl::size_t<N> for N!=3
+ * should throw.
+ * 
  * @param values the input array to be converted
  * @return the cl::size_t<N> converted from the input array
  */
 template <int N>
-auto to_size_t(const size_t (&values)[N]) {
-  cl::size_t<N> s;
-  for (size_t i = 0; i < N; i++)
+cl::size_t<N> to_size_t(const size_t (&values)[N]) {
+  throw std::domain_error("cl::size_t<N> is not supported for N != 3");
+}
+
+/**
+ * A template specialization of the helper function
+ * to convert an array to a cl::size_t<3>.
+ *
+ * @param values the input array to be converted
+ * @return the cl::size_t<3> converted from the input array
+ */
+template <>
+cl::size_t<3> to_size_t(const size_t (&values)[3]) {
+  cl::size_t<3> s;
+  for (size_t i = 0; i < 3; i++)
     s[i] = values[i];
   return s;
 }
