@@ -4,7 +4,7 @@
 #include <stan/math/prim/scal/functor/parallel_reduce_sum.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 
-#include <stan/math/rev/core/nest_chainablestack.hpp>
+#include <stan/math/rev/core/scoped_chainablestack.hpp>
 
 #include <boost/iterator/counting_iterator.hpp>
 
