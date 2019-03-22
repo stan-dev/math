@@ -17,8 +17,11 @@ struct ScopedChainableStack {
   ScopedChainableStack()
       : local_stack_(ChainableStack::instance().get_child_stack()) {}
 
+  ScopedChainableStack(chainablestack_t& parent_stack)
+      : local_stack_(parent_stack.get_child_stack()) {}
+
   template <typename F>
-  auto execute(F& f) {
+  void execute(const F& f) {
     chainablequeue_t& local_queue = ChainableStack::queue();
 
     try {
@@ -30,20 +33,29 @@ struct ScopedChainableStack {
       ChainableStack::instance_
           = local_queue.instance_stack_[nested_stack_instance].get();
 
-      auto&& result = f();
+      f();
 
       local_queue.instance_stack_[nested_stack_instance] = nested_stack;
       ChainableStack::instance_ = nested_stack.get();
       recover_memory_nested();
-      return result;
     } catch (const std::exception& e) {
       local_queue.instance_stack_[local_queue.current_instance_].reset(
           new chainablestack_t(ChainableStack::queue().stack_id_));
       recover_memory_nested();
       throw;
     }
+  }
 
-    return f();
+  void append_to_stack(chainablestack_t& destination_stack) {
+    destination_stack.var_stack_.insert(destination_stack.var_stack_.end(),
+                                        local_stack_->var_stack_.begin(),
+                                        local_stack_->var_stack_.end());
+    local_stack_->var_stack_.clear();
+    destination_stack.var_nochain_stack_.insert(
+        destination_stack.var_nochain_stack_.end(),
+        local_stack_->var_nochain_stack_.begin(),
+        local_stack_->var_nochain_stack_.end());
+    local_stack_->var_nochain_stack_.clear();
   }
 };
 
