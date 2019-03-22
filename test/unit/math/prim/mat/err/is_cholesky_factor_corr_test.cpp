@@ -51,7 +51,7 @@ TEST(ErrorHandlingMatrix, isCorrCholeskyMatrix_nan) {
 
   using stan::math::is_cholesky_factor_corr;
   using std::sqrt;
-  
+
   y.resize(1, 1);
   y << nan;
   EXPECT_FALSE(is_cholesky_factor_corr(y));

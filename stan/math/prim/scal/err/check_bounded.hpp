@@ -10,7 +10,7 @@
 
 namespace stan {
 namespace math {
-    
+
 namespace internal {
 
 // implemented using structs because there is no partial specialization

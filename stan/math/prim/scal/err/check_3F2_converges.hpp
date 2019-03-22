@@ -40,7 +40,7 @@ inline void check_3F2_converges(const char* function, const T_a1& a1,
                                 const T_b2& b2, const T_z& z) {
   using std::fabs;
   using std::floor;
-  
+
   check_not_nan("check_3F2_converges", "a1", a1);
   check_not_nan("check_3F2_converges", "a2", a2);
   check_not_nan("check_3F2_converges", "a3", a3);

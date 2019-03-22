@@ -37,9 +37,8 @@ template <typename T_y>
 inline void check_corr_matrix(
     const char* function, const char* name,
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
-
-  typedef typename 
-    index_type<Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> >::type size_t;
+  typedef typename index_type<
+      Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> >::type size_t;
 
   check_size_match(function, "Rows of correlation matrix", y.rows(),
                    "columns of correlation matrix", y.cols());
