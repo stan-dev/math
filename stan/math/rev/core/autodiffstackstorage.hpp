@@ -60,6 +60,22 @@ namespace math {
  * [3]
  * http://discourse.mc-stan.org/t/potentially-dropping-support-for-older-versions-of-apples-version-of-clang/3780/
  */
+
+// Internal macro used to modify global pointer definition to the
+// global AD instance. Whenever STAN_THREADS is set a TLS keyword is
+// used. For reasons explained above we use the GNU compiler extension
+// __thread if supported by the compiler while the generic
+// thread_local C++11 keyword is used otherwise. In case STAN_THREADS
+// is not set, then no modifier is needed.
+#ifdef STAN_THREADS
+#ifdef __GNUC__
+#define STAN_THREADS_DEF __thread
+#else
+#define STAN_THREADS_DEF thread_local
+#endif
+#define STAN_THREADS_DEF
+#endif
+
 template <typename ChainableT, typename ChainableAllocT>
 struct AutodiffStackSingleton {
   typedef AutodiffStackSingleton<ChainableT, ChainableAllocT>
@@ -90,15 +106,7 @@ struct AutodiffStackSingleton {
   explicit AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
   AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
 
-  static
-#ifdef STAN_THREADS
-#ifdef __GNUC__
-      __thread
-#else
-      thread_local
-#endif
-#endif
-      AutodiffStackStorage *instance_;
+  static STAN_THREADS_DEF AutodiffStackStorage *instance_;
 
  private:
   static bool init() {
@@ -113,13 +121,7 @@ struct AutodiffStackSingleton {
 };
 
 template <typename ChainableT, typename ChainableAllocT>
-#ifdef STAN_THREADS
-#ifdef __GNUC__
-__thread
-#else
-thread_local
-#endif
-#endif
+STAN_THREADS_DEF
     typename AutodiffStackSingleton<ChainableT,
                                     ChainableAllocT>::AutodiffStackStorage
         *AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_
