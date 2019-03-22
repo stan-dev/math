@@ -8,7 +8,6 @@
 
 namespace stan {
 namespace math {
-
 /**
  * Return <code>true</code> if <code>y</code> is positive.
  * This function is vectorized and will check each element of
@@ -20,7 +19,7 @@ namespace math {
 template <typename T_y>
 inline bool is_positive(const T_y& y) {
   for (size_t n = 0; n < stan::length(y); n++) {
-    if (!boost::is_unsigned<T_y>::value && !(stan::get(y, n) > 0))
+    if (!std::is_unsigned<T_y>::value && !(stan::get(y, n) > 0))
       return false;
   }
   return true;
