@@ -10,7 +10,8 @@ TEST(MathGpu, to_size_t_test) {
   EXPECT_EQ(a[1], 2);
   EXPECT_EQ(a[2], 3);
 
-  EXPECT_THROW(stan::math::opencl::to_size_t<4>({1, 2, 3, 4}), std::domain_error);
+  EXPECT_THROW(stan::math::opencl::to_size_t<4>({1, 2, 3, 4}),
+               std::domain_error);
 }
 
 TEST(MathGpu, getInfo) {
