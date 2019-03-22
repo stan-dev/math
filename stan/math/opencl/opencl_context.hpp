@@ -37,7 +37,7 @@ namespace opencl {
 /**
  * A helper function to convert an array to a cl::size_t<N>.
  * 
- * @param the input array to be converted
+ * @param values the input array to be converted
  * @return the cl::size_t<N> converted from the input array
  */
 template <int N>
