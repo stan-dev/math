@@ -31,14 +31,13 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
   typedef ChainableStack::AutodiffStackStorage chainablestack_t;
   typedef ChainableStack::AutodiffStackQueue chainablequeue_t;
   typedef std::shared_ptr<chainablestack_t> stack_ptr_t;
+  typedef tbb::enumerable_thread_specific<stack_ptr_t> tls_stack_ptr_t;
 
   struct recursive_reducer {
     InputIt first_;
     const BinaryFunction& f_;
-    chainablestack_t& parent_stack_;
-    stack_ptr_t worker_stack_ptr_;
+    tls_stack_ptr_t& tls_stack_ptr_;
     std::vector<var> sum_terms_;
-    std::vector<stack_ptr_t> child_stack_ptr_;
     /*
     const std::size_t worker_id_;
 
@@ -49,13 +48,10 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
     */
 
     recursive_reducer(InputIt first, const T& init, const BinaryFunction& f,
-                      chainablestack_t& parent_stack,
-                      chainablequeue_t& parent_queue)
+                      tls_stack_ptr_t& tls_stack_ptr)
         : first_(first),
           f_(f),
-          parent_stack_(parent_stack),
-          worker_stack_ptr_(
-              parent_queue.instance_stack_[parent_queue.current_instance_]),
+          tls_stack_ptr_(tls_stack_ptr),
           sum_terms_(1, init)  //,
                                // worker_id_(get_worker_count())
     {}
@@ -63,10 +59,7 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
     recursive_reducer(recursive_reducer& other, tbb::split)
         : first_(other.first_),
           f_(other.f_),
-          parent_stack_(other.parent_stack_),
-          worker_stack_ptr_(parent_stack_.get_child_stack())  //,
-    // worker_id_(get_worker_count())
-    {
+          tls_stack_ptr_(other.tls_stack_ptr_) {
       // std::cout << "Splitting off some work with worker id " << worker_id_ <<
       // "..." << std::endl;
     }
@@ -82,10 +75,12 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
       try {
         start_nested();
         const std::size_t nested_stack_instance = local_queue.current_instance_;
-        std::shared_ptr<chainablestack_t> nested_stack
+        stack_ptr_t nested_stack
             = local_queue.instance_stack_[nested_stack_instance];
-        local_queue.instance_stack_[nested_stack_instance] = worker_stack_ptr_;
-        ChainableStack::instance_ = worker_stack_ptr_.get();
+        local_queue.instance_stack_[nested_stack_instance]
+            = tls_stack_ptr_.local();
+        ChainableStack::instance_
+            = local_queue.instance_stack_[nested_stack_instance].get();
 
         auto start = first_;
         std::advance(start, r.begin());
@@ -112,10 +107,12 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
       try {
         start_nested();
         const std::size_t nested_stack_instance = local_queue.current_instance_;
-        std::shared_ptr<chainablestack_t> nested_stack
+        stack_ptr_t nested_stack
             = local_queue.instance_stack_[nested_stack_instance];
-        local_queue.instance_stack_[nested_stack_instance] = worker_stack_ptr_;
-        ChainableStack::instance_ = worker_stack_ptr_.get();
+        local_queue.instance_stack_[nested_stack_instance]
+            = tls_stack_ptr_.local();
+        ChainableStack::instance_
+            = local_queue.instance_stack_[nested_stack_instance].get();
 
         if (child.sum_terms_.size() == 1) {
           sum_terms_.emplace_back(child.sum_terms_[0]);
@@ -134,10 +131,12 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
         throw;
       }
 
+      /*
       child_stack_ptr_.emplace_back(child.worker_stack_ptr_);
       child_stack_ptr_.insert(child_stack_ptr_.end(),
                               child.child_stack_ptr_.begin(),
                               child.child_stack_ptr_.end());
+      */
 
       /*
          worker_stack_ptr_->var_stack_.insert(
@@ -175,7 +174,10 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
 
     // partial_sum_buffer_t partial_sums;
 
-    recursive_reducer worker(first, init, f, parent_stack, parent_queue);
+    tls_stack_ptr_t child_stacks(
+        [&parent_stack]() { return parent_stack.get_child_stack(); });
+
+    recursive_reducer worker(first, init, f, child_stacks);
 
     // static tbb::affinity_partitioner partitioner;
     tbb::auto_partitioner partitioner;
@@ -190,17 +192,17 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
     tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, num_jobs, 1),
                          worker, partitioner);
 
-    for (auto& child_stack_ptr : worker.child_stack_ptr_) {
+    child_stacks.combine_each([&parent_stack](const stack_ptr_t& other_stack) {
       parent_stack.var_stack_.insert(parent_stack.var_stack_.end(),
-                                     child_stack_ptr->var_stack_.begin(),
-                                     child_stack_ptr->var_stack_.end());
-      child_stack_ptr->var_stack_.clear();
+                                     other_stack->var_stack_.begin(),
+                                     other_stack->var_stack_.end());
+      other_stack->var_stack_.clear();
       parent_stack.var_nochain_stack_.insert(
           parent_stack.var_nochain_stack_.end(),
-          child_stack_ptr->var_nochain_stack_.begin(),
-          child_stack_ptr->var_nochain_stack_.end());
-      child_stack_ptr->var_nochain_stack_.clear();
-    }
+          other_stack->var_nochain_stack_.begin(),
+          other_stack->var_nochain_stack_.end());
+      other_stack->var_nochain_stack_.clear();
+    });
 
     // TODO: make this into a fast vectorized expression by
     // introducing a specialization to concurrent_vector of sum
