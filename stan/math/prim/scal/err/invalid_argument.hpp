@@ -7,14 +7,12 @@
 
 namespace stan {
 namespace math {
-
 /**
  * Throw an invalid_argument exception with a consistently formatted message.
  * This is an abstraction for all Stan functions to use when throwing
  * invalid argument. This will allow us to change the behavior for all
  * functions at once.
- * The message is:
- * "<function>: <name> <msg1><y><msg2>"
+ * The message is: "<function>: <name> <msg1><y><msg2>"
  * @tparam T Type of variable
  * @param function Name of the function
  * @param name Name of the variable
@@ -37,7 +35,7 @@ inline void invalid_argument(const char* function, const char* name, const T& y,
  * invalid argument. This will allow us to change the behavior for all
  * functions at once. (We've already changed behavior mulitple times up
  * to Stan v2.5.0.)
- * The message is: <function>: <name> <msg1><y>"
+ * The message is: "<function>: <name> <msg1><y>"
  * @tparam T Type of variable
  * @param function Name of the function
  * @param name Name of the variable
