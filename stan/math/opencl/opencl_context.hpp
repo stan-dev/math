@@ -35,7 +35,10 @@ namespace stan {
 namespace math {
 namespace opencl {
 /**
- * A helper function to convert an array to a cl::size_t<N>
+ * A helper function to convert an array to a cl::size_t<N>.
+ * 
+ * @param the input array to be converted
+ * @return the cl::size_t<N> converted from the input array
  */
 template <int N>
 auto to_size_t(const size_t (&values)[N]) {
