@@ -17,9 +17,7 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the specified square, symmetric
- * matrix is positive definite.
- *
+ * Check if the specified square, symmetric matrix is positive definite.
  * @tparam T_y Type of scalar of the matrix
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -27,7 +25,7 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the matrix is not square
  * or if the matrix has 0 size.
  * @throw <code>std::domain_error</code> if the matrix is not symmetric,
- * if it is not positive definite, or if any element is <code>NaN</code>.
+ * if it is not positive definite, or if any element is <code>NaN</code>
  */
 template <typename T_y>
 inline void check_pos_definite(const char* function, const char* name,
@@ -45,16 +43,14 @@ inline void check_pos_definite(const char* function, const char* name,
 }
 
 /**
- * Check if the specified LDLT transform of a matrix
- * is positive definite.
- *
+ * Check if the specified LDLT transform of a matrix is positive definite.
  * @tparam Derived Derived type of the Eigen::LDLT transform.
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param cholesky Eigen::LDLT to test, whose progenitor
  * must not have any NaN elements
  * @throw <code>std::domain_error</code> if the matrix is not
- * positive definite.
+ * positive definite
  */
 template <typename Derived>
 inline void check_pos_definite(const char* function, const char* name,
@@ -65,18 +61,15 @@ inline void check_pos_definite(const char* function, const char* name,
 }
 
 /**
- * Check if the specified LLT decomposition
- * transform resulted in <code>Eigen::Success</code>
- *
+ * Check if the specified LLT decomposition transform resulted in
+ * <code>Eigen::Success</code>
  * @tparam Derived Derived type of the Eigen::LLT transform.
- *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param cholesky Eigen::LLT to test, whose progenitor
  * must not have any NaN elements
- *
  * @throw <code>std::domain_error</code> if the diagonal of the
- * L matrix is not positive.
+ * L matrix is not positive
  */
 template <typename Derived>
 inline void check_pos_definite(const char* function, const char* name,

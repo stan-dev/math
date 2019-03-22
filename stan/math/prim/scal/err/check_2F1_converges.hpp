@@ -16,19 +16,16 @@ namespace math {
  * Check if the hypergeometric function (2F1) called with
  * supplied arguments will converge, assuming arguments are
  * finite values.
- *
  * @tparam T_a1 Type of a1
  * @tparam T_a2 Type of a2
  * @tparam T_b1 Type of b1
  * @tparam T_z Type of z
- *
  * @param function Name of function ultimately relying on 2F1 (for error
  *   messages)
  * @param a1 Variable to check
  * @param a2 Variable to check
  * @param b1 Variable to check
  * @param z Variable to check
- *
  * @throw <code>domain_error</code> if 2F1(a1, a2, b1, z)
  *   does not meet convergence conditions, or if any coefficient is NaN.
  */
@@ -37,7 +34,7 @@ inline void check_2F1_converges(const char* function, const T_a1& a1,
                                 const T_a2& a2, const T_b1& b1, const T_z& z) {
   using std::fabs;
   using std::floor;
-
+  
   check_not_nan("check_3F2_converges", "a1", a1);
   check_not_nan("check_3F2_converges", "a2", a2);
   check_not_nan("check_3F2_converges", "b1", b1);
