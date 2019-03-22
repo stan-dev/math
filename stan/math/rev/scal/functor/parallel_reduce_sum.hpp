@@ -26,7 +26,6 @@ namespace internal {
 template <class InputIt, class T, class BinaryFunction>
 struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
   typedef ChainableStack::AutodiffStackStorage chainablestack_t;
-  typedef ChainableStack::AutodiffStackQueue chainablequeue_t;
   typedef tbb::enumerable_thread_specific<ScopedChainableStack>
       tls_scoped_stack_t;
 
@@ -64,7 +63,6 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
     void operator()(const tbb::blocked_range<size_t>& r) {
       // std::cout << "Summing " << r.begin() << " - " << r.end() << " with
       // worker " << worker_id_ << std::endl;
-
       tls_scoped_stack_.local().execute([&] {
         auto start = first_;
         std::advance(start, r.begin());
@@ -77,7 +75,6 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
     void join(recursive_reducer& child) {
       // std::cout << "Joining a child " << child.worker_id_ << " into worker "
       // << worker_id_ << std::endl;
-
       tls_scoped_stack_.local().execute([&] {
         if (child.sum_terms_.size() == 1) {
           sum_terms_.emplace_back(child.sum_terms_[0]);
@@ -97,7 +94,6 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
 
     // All AD terms are written to thread-local AD tapes which are all
     // stored as part of the parent nochain stacks.
-    chainablequeue_t& parent_queue = ChainableStack::queue();
     chainablestack_t& parent_stack = ChainableStack::instance();
 
     tls_scoped_stack_t child_stacks(

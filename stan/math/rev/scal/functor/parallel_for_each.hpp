@@ -37,7 +37,6 @@ struct parallel_map_impl<InputIt, UnaryFunction, var> {
         << std::endl;
 
     typedef ChainableStack::AutodiffStackStorage chainablestack_t;
-    typedef ChainableStack::AutodiffStackQueue chainablequeue_t;
     typedef tbb::enumerable_thread_specific<ScopedChainableStack>
         tls_scoped_stack_t;
 
@@ -45,7 +44,6 @@ struct parallel_map_impl<InputIt, UnaryFunction, var> {
 
     // All AD terms are written to thread-local AD tapes which are all
     // stored as part of the parent nochain stacks.
-    chainablequeue_t& parent_queue = ChainableStack::queue();
     chainablestack_t& parent_stack = ChainableStack::instance();
 
     tls_scoped_stack_t tls_scoped_stacks(
@@ -53,7 +51,6 @@ struct parallel_map_impl<InputIt, UnaryFunction, var> {
 
     tbb::parallel_for(tbb::blocked_range<std::size_t>(0, num_jobs),
                       [&](const tbb::blocked_range<size_t>& r) {
-
                         tls_scoped_stacks.local().execute([&] {
                           auto elem = first;
                           std::advance(elem, r.begin());
