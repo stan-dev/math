@@ -6,7 +6,6 @@
 #include <stan/math/opencl/constants.hpp>
 #include <stan/math/opencl/cache_copy.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/arr.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/opencl/kernels/copy.hpp>
@@ -87,6 +86,25 @@ class matrix_cl {
       queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0,
                                sizeof(double) * A.size(),
                                value_of_rec(A).data());
+    } catch (const cl::Error& e) {
+      check_opencl_error("matrix_cl(std::vector<T>, rows, cols) constructor",
+                         e);
+    }
+  }
+
+  explicit matrix_cl(std::vector<double> A, int rows, int cols)
+      : rows_(rows), cols_(cols) {
+    if (A.size() == 0)
+      return;
+    // the context is needed to create the buffer object
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    try {
+      oclBuffer_
+          = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
+      queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0,
+                               sizeof(double) * A.size(),
+                               A.data());
     } catch (const cl::Error& e) {
       check_opencl_error("matrix_cl(std::vector<T>, rows, cols) constructor",
                          e);
