@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-/**
+/*
  * Returns the natural logarithm of the difference of the
  * inverse logits of the specified arguments and its gradients.
  *
