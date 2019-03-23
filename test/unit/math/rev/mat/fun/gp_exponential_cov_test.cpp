@@ -44,7 +44,7 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
       x[1] = -1;
       x[2] = -0.5;
       EXPECT_NO_THROW(cov = stan::math::gp_exponential_cov(x, sigma, l));
-      
+
       std::vector<double> grad;
       std::vector<stan::math::var> params;
       params.push_back(sigma);
@@ -60,7 +60,8 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
           << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * dist / (l.val() * l.val()),
+      EXPECT_FLOAT_EQ(
+          sigma.val() * sigma.val() * exp_val * dist / (l.val() * l.val()),
           grad[1])
           << "index: (" << i << ", " << j << ")";
 
@@ -75,7 +76,7 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
       //     << "index: (" << i << ", " << j << ")";
       // } else {
       //   EXPECT_FLOAT_EQ(0, grad[2])
-      //     << "index: (" << i << ", " << j << ")";        
+      //     << "index: (" << i << ", " << j << ")";
       // }
 
       // if (x[i] > x[j]) {  // since the distance isn't squared
@@ -88,7 +89,7 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
       //     << "index: (" << i << ", " << j << ")";
       // } else {
       //   EXPECT_FLOAT_EQ(0, grad[3])
-      //     << "index: (" << i << ", " << j << ")";    
+      //     << "index: (" << i << ", " << j << ")";
       // }
       stan::math::recover_memory();
     }
@@ -167,7 +168,8 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
 //       double exp_val = exp(sq_distance / (-2.0 * sq_l));
 //       EXPECT_FLOAT_EQ(stan::math::square(sigma) * exp_val, cov(i, j).val())
 //           << "index: (" << i << ", " << j << ")";
-//       EXPECT_FLOAT_EQ(sigma * sigma * exp_val * sq_distance / (sq_l * l.val()),
+//       EXPECT_FLOAT_EQ(sigma * sigma * exp_val * sq_distance / (sq_l *
+//       l.val()),
 //                       grad[0])
 //           << "index: (" << i << ", " << j << ")";
 //       EXPECT_FLOAT_EQ(sigma * sigma * exp_val * -distance / sq_l, grad[1])
@@ -248,8 +250,8 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
 //       EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
 //           << "index: (" << i << ", " << j << ")";
 //       EXPECT_FLOAT_EQ(
-//           sigma.val() * sigma.val() * exp_val * sq_distance / (sq_l * l.val()),
-//           grad[1])
+//           sigma.val() * sigma.val() * exp_val * sq_distance / (sq_l *
+//           l.val()), grad[1])
 //           << "index: (" << i << ", " << j << ")";
 
 //       stan::math::recover_memory();
@@ -318,7 +320,8 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
 //       double exp_val = exp(sq_distance / (-2.0 * sq_l));
 //       EXPECT_FLOAT_EQ(stan::math::square(sigma) * exp_val, cov(i, j).val())
 //           << "index: (" << i << ", " << j << ")";
-//       EXPECT_FLOAT_EQ(sigma * sigma * exp_val * sq_distance / (sq_l * l.val()),
+//       EXPECT_FLOAT_EQ(sigma * sigma * exp_val * sq_distance / (sq_l *
+//       l.val()),
 //                       grad[0]);
 
 //       stan::math::recover_memory();
@@ -372,19 +375,23 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
 //       EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
 //           << "index: (" << i << ", " << j << ")";
 //       EXPECT_FLOAT_EQ(
-//           sigma.val() * sigma.val() * exp_val * sq_distance / (sq_l * l.val()),
-//           grad[1])
+//           sigma.val() * sigma.val() * exp_val * sq_distance / (sq_l *
+//           l.val()), grad[1])
 //           << "index: (" << i << ", " << j << ")";
-//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](0).val() - x[j](0).val()) / sq_l,
+//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](0).val() - x[j](0).val()) /
+//       sq_l,
 //                       grad[2])
 //           << "index: (" << i << ", " << j << ")";
-//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](1).val() - x[j](1).val()) / sq_l,
+//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](1).val() - x[j](1).val()) /
+//       sq_l,
 //                       grad[3])
 //           << "index: (" << i << ", " << j << ")";
-//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](0).val() - x[i](0).val()) / sq_l,
+//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](0).val() - x[i](0).val()) /
+//       sq_l,
 //                       grad[4])
 //           << "index: (" << i << ", " << j << ")";
-//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](1).val() - x[i](1).val()) / sq_l,
+//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](1).val() - x[i](1).val()) /
+//       sq_l,
 //                       grad[5])
 //           << "index: (" << i << ", " << j << ")";
 
@@ -437,16 +444,20 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
 //           << "index: (" << i << ", " << j << ")";
 //       EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
 //           << "index: (" << i << ", " << j << ")";
-//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](0).val() - x[j](0).val()) / sq_l,
+//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](0).val() - x[j](0).val()) /
+//       sq_l,
 //                       grad[1])
 //           << "index: (" << i << ", " << j << ")";
-//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](1).val() - x[j](1).val()) / sq_l,
+//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](1).val() - x[j](1).val()) /
+//       sq_l,
 //                       grad[2])
 //           << "index: (" << i << ", " << j << ")";
-//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](0).val() - x[i](0).val()) / sq_l,
+//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](0).val() - x[i](0).val()) /
+//       sq_l,
 //                       grad[3])
 //           << "index: (" << i << ", " << j << ")";
-//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](1).val() - x[i](1).val()) / sq_l,
+//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](1).val() - x[i](1).val()) /
+//       sq_l,
 //                       grad[4])
 //           << "index: (" << i << ", " << j << ")";
 
@@ -496,19 +507,24 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
 //       double exp_val = exp(sq_distance / (-2.0 * sq_l));
 //       EXPECT_FLOAT_EQ(stan::math::square(sigma) * exp_val, cov(i, j).val())
 //           << "index: (" << i << ", " << j << ")";
-//       EXPECT_FLOAT_EQ(sigma * sigma * exp_val * sq_distance / (sq_l * l.val()),
+//       EXPECT_FLOAT_EQ(sigma * sigma * exp_val * sq_distance / (sq_l *
+//       l.val()),
 //                       grad[0])
 //           << "index: (" << i << ", " << j << ")";
-//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](0).val() - x[j](0).val()) / sq_l,
+//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](0).val() - x[j](0).val()) /
+//       sq_l,
 //                       grad[1])
 //           << "index: (" << i << ", " << j << ")";
-//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](1).val() - x[j](1).val()) / sq_l,
+//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](1).val() - x[j](1).val()) /
+//       sq_l,
 //                       grad[2])
 //           << "index: (" << i << ", " << j << ")";
-//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](0).val() - x[i](0).val()) / sq_l,
+//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](0).val() - x[i](0).val()) /
+//       sq_l,
 //                       grad[3])
 //           << "index: (" << i << ", " << j << ")";
-//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](1).val() - x[i](1).val()) / sq_l,
+//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](1).val() - x[i](1).val()) /
+//       sq_l,
 //                       grad[4])
 //           << "index: (" << i << ", " << j << ")";
 
@@ -556,16 +572,20 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
 //       double exp_val = exp(sq_distance / (-2.0 * sq_l));
 //       EXPECT_FLOAT_EQ(stan::math::square(sigma) * exp_val, cov(i, j).val())
 //           << "index: (" << i << ", " << j << ")";
-//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](0).val() - x[j](0).val()) / sq_l,
+//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](0).val() - x[j](0).val()) /
+//       sq_l,
 //                       grad[0])
 //           << "index: (" << i << ", " << j << ")";
-//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](1).val() - x[j](1).val()) / sq_l,
+//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](1).val() - x[j](1).val()) /
+//       sq_l,
 //                       grad[1])
 //           << "index: (" << i << ", " << j << ")";
-//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](0).val() - x[i](0).val()) / sq_l,
+//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](0).val() - x[i](0).val()) /
+//       sq_l,
 //                       grad[2])
 //           << "index: (" << i << ", " << j << ")";
-//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](1).val() - x[i](1).val()) / sq_l,
+//       EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](1).val() - x[i](1).val()) /
+//       sq_l,
 //                       grad[3])
 //           << "index: (" << i << ", " << j << ")";
 
@@ -725,7 +745,8 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
 //       double exp_val = exp(sq_distance / (-2.0 * sq_l));
 //       EXPECT_FLOAT_EQ(stan::math::square(sigma) * exp_val, cov(i, j).val())
 //           << "index: (" << i << ", " << j << ")";
-//       EXPECT_FLOAT_EQ(sigma * sigma * exp_val * sq_distance / (sq_l * l.val()),
+//       EXPECT_FLOAT_EQ(sigma * sigma * exp_val * sq_distance / (sq_l *
+//       l.val()),
 //                       grad[0])
 //           << "index: (" << i << ", " << j << ")";
 
@@ -840,10 +861,9 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
 //   }
 
 //   Eigen::Matrix<var, -1, -1> cov;
-//   EXPECT_NO_THROW(cov = stan::math::gp_exp_quad_cov(x1_rvec, x2_vec, sigma, l));
-//   EXPECT_EQ(3, cov.rows());
-//   EXPECT_EQ(4, cov.cols());
-//   for (int i = 0; i < 3; i++)
+//   EXPECT_NO_THROW(cov = stan::math::gp_exp_quad_cov(x1_rvec, x2_vec, sigma,
+//   l)); EXPECT_EQ(3, cov.rows()); EXPECT_EQ(4, cov.cols()); for (int i = 0; i
+//   < 3; i++)
 //     for (int j = 0; j < 4; j++)
 //       EXPECT_FLOAT_EQ(sigma.val() * sigma.val()
 //                           * exp(squared_distance(x1_rvec[i], x2_vec[j]).val()
@@ -984,9 +1004,10 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
 //   EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
 //   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
-//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x, sigma, l_bad), std::domain_error);
-//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x, sigma_bad, l), std::domain_error);
-//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x, sigma_bad, l_bad),
+//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x, sigma, l_bad),
+//   std::domain_error); EXPECT_THROW(stan::math::gp_exp_quad_cov(x, sigma_bad,
+//   l), std::domain_error); EXPECT_THROW(stan::math::gp_exp_quad_cov(x,
+//   sigma_bad, l_bad),
 //                std::domain_error);
 
 //   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_2, sigma, l_bad),
@@ -1046,12 +1067,14 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
 //   EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
 //   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
-//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x, sigma, l_bad), std::domain_error);
-//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x, sigma_bad, l), std::domain_error);
-//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x, sigma_bad, l_bad),
+//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x, sigma, l_bad),
+//   std::domain_error); EXPECT_THROW(stan::math::gp_exp_quad_cov(x, sigma_bad,
+//   l), std::domain_error); EXPECT_THROW(stan::math::gp_exp_quad_cov(x,
+//   sigma_bad, l_bad),
 //                std::domain_error);
-//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_bad, sigma, l), std::domain_error);
-//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_bad, sigma_bad, l),
+//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_bad, sigma, l),
+//   std::domain_error); EXPECT_THROW(stan::math::gp_exp_quad_cov(x_bad,
+//   sigma_bad, l),
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_bad, sigma, l_bad),
 //                std::domain_error);
@@ -1139,7 +1162,8 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_vec_2, sigma, l_bad),
 //                std::domain_error);
-//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_vec_2, sigma_bad, l_bad),
+//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_vec_2, sigma_bad,
+//   l_bad),
 //                std::domain_error);
 
 //   std::vector<Eigen::Matrix<var, 1, -1> > x_rvec_1(3);
@@ -1166,14 +1190,16 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_rvec_2, sigma, l_bad),
 //                std::domain_error);
-//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_rvec_2, sigma_bad, l_bad),
+//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_rvec_2, sigma_bad,
+//   l_bad),
 //                std::domain_error);
 
 //   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_vec_2, sigma_bad, l),
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_vec_2, sigma, l_bad),
 //                std::domain_error);
-//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_vec_2, sigma_bad, l_bad),
+//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_vec_2, sigma_bad,
+//   l_bad),
 //                std::domain_error);
 // }
 
@@ -1219,7 +1245,8 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_vec_2, sigma, l_bad),
 //                std::domain_error);
-//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_vec_2, sigma_bad, l_bad),
+//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_vec_2, sigma_bad,
+//   l_bad),
 //                std::domain_error);
 
 //   std::vector<Eigen::Matrix<var, 1, -1> > x_rvec_1(3);
@@ -1246,14 +1273,16 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_rvec_2, sigma, l_bad),
 //                std::domain_error);
-//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_rvec_2, sigma_bad, l_bad),
+//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_rvec_2, sigma_bad,
+//   l_bad),
 //                std::domain_error);
 
 //   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_vec_2, sigma_bad, l),
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_vec_2, sigma, l_bad),
 //                std::domain_error);
-//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_vec_2, sigma_bad, l_bad),
+//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_vec_2, sigma_bad,
+//   l_bad),
 //                std::domain_error);
 
 //   std::vector<var> x1_bad(x1);
@@ -1282,7 +1311,8 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_vec_2_bad, sigma, l),
 //                std::domain_error);
-//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1_bad, x_vec_2_bad, sigma, l),
+//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1_bad, x_vec_2_bad, sigma,
+//   l),
 //                std::domain_error);
 
 //   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1_bad, x_rvec_2, sigma, l),
@@ -1301,9 +1331,11 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
 //                std::domain_error);
 //   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_vec_2_bad, sigma, l),
 //                std::domain_error);
-//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1_bad, x_rvec_2_bad, sigma, l),
+//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1_bad, x_rvec_2_bad, sigma,
+//   l),
 //                std::domain_error);
-//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1_bad, x_vec_2_bad, sigma, l),
+//   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1_bad, x_vec_2_bad, sigma,
+//   l),
 //                std::domain_error);
 // }
 
@@ -1403,9 +1435,10 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
 //       stan::math::gp_exp_quad_cov(to_var(x), to_var(sigma), l));
 //   test::check_varis_on_stack(
 //       stan::math::gp_exp_quad_cov(to_var(x), sigma, to_var(l)));
-//   test::check_varis_on_stack(stan::math::gp_exp_quad_cov(to_var(x), sigma, l));
-//   test::check_varis_on_stack(
+//   test::check_varis_on_stack(stan::math::gp_exp_quad_cov(to_var(x), sigma,
+//   l)); test::check_varis_on_stack(
 //       stan::math::gp_exp_quad_cov(x, to_var(sigma), to_var(l)));
-//   test::check_varis_on_stack(stan::math::gp_exp_quad_cov(x, to_var(sigma), l));
-//   test::check_varis_on_stack(stan::math::gp_exp_quad_cov(x, sigma, to_var(l)));
+//   test::check_varis_on_stack(stan::math::gp_exp_quad_cov(x, to_var(sigma),
+//   l)); test::check_varis_on_stack(stan::math::gp_exp_quad_cov(x, sigma,
+//   to_var(l)));
 // }
