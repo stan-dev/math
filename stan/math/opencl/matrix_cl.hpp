@@ -72,6 +72,23 @@ class matrix_cl {
     }
   }
 
+  explicit matrix_cl(std::vector<double> A) : rows_(1), cols_(A.size()) {
+    if (A.size() == 0)
+      return;
+    // the context is needed to create the buffer object
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    try {
+      oclBuffer_
+          = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
+      queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0,
+                               sizeof(double) * A.size(),
+                               A.data());
+    } catch (const cl::Error& e) {
+      check_opencl_error("matrix_cl(std::vector<T>) constructor", e);
+    }
+  }
+
   template <typename T>
   explicit matrix_cl(std::vector<T> A, int rows, int cols)
       : rows_(rows), cols_(cols) {
