@@ -213,11 +213,11 @@ class matrix_cl {
     try {
       if (triangular_view == TriangularViewCL::Entire) {
         cl::size_t<3> src_offset
-            = opencl::to_size_t({A_i * sizeof(double), A_j, 0});
+            = opencl::to_size_t<3>({A_i * sizeof(double), A_j, 0});
         cl::size_t<3> dst_offset
-            = opencl::to_size_t({this_i * sizeof(double), this_j, 0});
+            = opencl::to_size_t<3>({this_i * sizeof(double), this_j, 0});
         cl::size_t<3> size
-            = opencl::to_size_t({nrows * sizeof(double), ncols, 1});
+            = opencl::to_size_t<3>({nrows * sizeof(double), ncols, 1});
         cmdQueue.enqueueCopyBufferRect(
             A.buffer(), this->buffer(), src_offset, dst_offset, size,
             A.rows() * sizeof(double), A.rows() * A.cols() * sizeof(double),
