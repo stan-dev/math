@@ -29,7 +29,6 @@ template <typename T1, typename T2>
 inline void check_consistent_sizes(const char* function, const char* name1,
                                    const T1& x1, const char* name2,
                                    const T2& x2) {
-  using stan::is_vector;
   size_t max_size = std::max(is_vector<T1>::value * size_of(x1),
                              is_vector<T2>::value * size_of(x2));
   check_consistent_size(function, name1, x1, max_size);

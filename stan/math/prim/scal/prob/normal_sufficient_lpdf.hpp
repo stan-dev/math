@@ -56,13 +56,6 @@ typename return_type<T_y, T_s, T_loc, T_scale>::type normal_sufficient_lpdf(
       typename stan::partials_return_type<T_y, T_s, T_n, T_loc, T_scale>::type
           T_partials_return;
 
-  using stan::is_constant_struct;
-  using stan::math::check_consistent_sizes;
-  using stan::math::check_finite;
-  using stan::math::check_not_nan;
-  using stan::math::check_positive;
-  using stan::math::include_summand;
-  using stan::math::value_of;
   using std::log;
 
   // check if any vectors are zero length
