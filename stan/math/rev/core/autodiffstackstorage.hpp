@@ -147,6 +147,7 @@ struct AutodiffStackSingleton {
     /**/
   };
 
+  // the queue is used to keep record of nested AD tapes
   struct AutodiffStackQueue {
     AutodiffStackQueue()
         : stack_id_(get_new_stack_id()),

@@ -20,12 +20,16 @@ struct ScopedChainableStack {
   ScopedChainableStack(chainablestack_t& parent_stack)
       : local_stack_(parent_stack.get_child_stack()) {}
 
+  // execute in the current thread a nullary function and write the AD
+  // tape to local_stack_ of this instance
   template <typename F>
   void execute(const F& f) {
     chainablequeue_t& local_queue = ChainableStack::queue();
 
     try {
       start_nested();
+      // replace the nested AD tape with the local one from this
+      // instance
       const std::size_t nested_stack_instance = local_queue.current_instance_;
       stack_ptr_t nested_stack
           = local_queue.instance_stack_[nested_stack_instance];
@@ -35,6 +39,7 @@ struct ScopedChainableStack {
 
       f();
 
+      // revert the replacement
       local_queue.instance_stack_[nested_stack_instance] = nested_stack;
       ChainableStack::instance_ = nested_stack.get();
       recover_memory_nested();

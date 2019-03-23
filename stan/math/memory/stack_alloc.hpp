@@ -11,6 +11,7 @@
 #include <stdexcept>
 #include <vector>
 #include <algorithm>
+#include <iostream>
 
 namespace stan {
 namespace math {
@@ -71,15 +72,16 @@ inline char* eight_byte_aligned_malloc(size_t size) {
  */
 class stack_alloc {
  private:
-  std::vector<char*> blocks_;  // storage for blocks,
-                               // may be bigger than cur_block_
-  std::vector<size_t> sizes_;  // could store initial & shift for
-                               // others
-  std::vector<bool> dirty_;    // marks if a block is in use and thus dirty
-  size_t cur_block_;           // index into blocks_ for next alloc
-  char* cur_block_end_;        // ptr to cur_block_ptr_ + sizes_[cur_block_]
-  char* next_loc_;             // ptr to next available spot in cur
-                               // block
+  std::vector<char*> blocks_;          // storage for blocks,
+                                       // may be bigger than cur_block_
+  std::vector<size_t> sizes_;          // could store initial & shift for
+                                       // others
+  std::vector<char*> managed_blocks_;  // blocks for which ownership
+                                       // is taken over from other instances
+  size_t cur_block_;                   // index into blocks_ for next alloc
+  char* cur_block_end_;  // ptr to cur_block_ptr_ + sizes_[cur_block_]
+  char* next_loc_;       // ptr to next available spot in cur
+                         // block
   // next three for keeping track of nested allocations on top of
   // stack:
   /*
@@ -100,8 +102,7 @@ class stack_alloc {
     char* result;
     ++cur_block_;
     // Find the next block (if any) containing at least len bytes.
-    while ((cur_block_ < blocks_.size()) && (sizes_[cur_block_] < len)
-           && dirty_[cur_block_])
+    while ((cur_block_ < blocks_.size()) && (sizes_[cur_block_] < len))
       ++cur_block_;
     // Allocate a new block if necessary.
     if (unlikely(cur_block_ >= blocks_.size())) {
@@ -113,9 +114,7 @@ class stack_alloc {
       if (!blocks_.back())
         throw std::bad_alloc();
       sizes_.push_back(newsize);
-      dirty_.push_back(true);
     }
-    dirty_[cur_block_] = true;
     result = blocks_[cur_block_];
     // Get the object's state back in order.
     next_loc_ = result + len;
@@ -136,7 +135,7 @@ class stack_alloc {
   explicit stack_alloc(size_t initial_nbytes = internal::DEFAULT_INITIAL_NBYTES)
       : blocks_(1, internal::eight_byte_aligned_malloc(initial_nbytes)),
         sizes_(1, initial_nbytes),
-        dirty_(1, true),
+        managed_blocks_(),
         cur_block_(0),
         cur_block_end_(blocks_[0] + initial_nbytes),
         next_loc_(blocks_[0]) {
@@ -153,6 +152,9 @@ class stack_alloc {
   ~stack_alloc() {
     // free ALL blocks
     for (auto& block : blocks_)
+      if (block)
+        free(block);
+    for (auto& block : managed_blocks_)
       if (block)
         free(block);
   }
@@ -196,14 +198,17 @@ class stack_alloc {
    * Recover all the memory used by the stack allocator.  The stack
    * of memory blocks allocated so far will be available for further
    * allocations.  To free memory back to the system, use the
-   * function free_all().
+   * function free_all(). The managed_blocks_ from other stacks will
+   * be freed to the system.
    */
   inline void recover_all() {
+    for (auto& block : managed_blocks_)
+      if (block)
+        free(block);
+    managed_blocks_.clear();
     cur_block_ = 0;
     next_loc_ = blocks_[0];
     cur_block_end_ = next_loc_ + sizes_[0];
-    std::fill(dirty_.begin(), dirty_.end(), false);
-    dirty_[0] = true;
   }
 
   /**
@@ -249,7 +254,6 @@ class stack_alloc {
         free(blocks_[i]);
     sizes_.resize(1);
     blocks_.resize(1);
-    dirty_.resize(1);
     recover_all();
   }
 
@@ -289,22 +293,20 @@ class stack_alloc {
   }
 
   /**
-   * Stores the blocks of another stack as part of this stack and
-   * resets the other stack.
+   * Stores the blocks of another stack as part of this stack's
+   * managed_blocks_ and resets the other stack.
    */
   void store_stack(stack_alloc& other_stack) {
-    const std::size_t other_size = other_stack.blocks_.size();
-    blocks_.insert(blocks_.end(), other_stack.blocks_.begin(),
-                   other_stack.blocks_.end());
-    sizes_.insert(sizes_.end(), other_stack.sizes_.begin(),
-                  other_stack.sizes_.end());
-    dirty_.insert(dirty_.end(), other_stack.dirty_.begin(),
-                  other_stack.dirty_.end());
+    managed_blocks_.insert(managed_blocks_.end(), other_stack.blocks_.begin(),
+                           other_stack.blocks_.end());
+    managed_blocks_.insert(managed_blocks_.end(),
+                           other_stack.managed_blocks_.begin(),
+                           other_stack.managed_blocks_.end());
     other_stack.sizes_.resize(1);
     other_stack.blocks_.resize(1);
-    other_stack.dirty_.resize(1);
+    other_stack.managed_blocks_.clear();
     other_stack.blocks_[0]
-        = internal::eight_byte_aligned_malloc(internal::DEFAULT_INITIAL_NBYTES);
+        = internal::eight_byte_aligned_malloc(other_stack.sizes_[0]);
     if (!other_stack.blocks_[0])
       throw std::bad_alloc();
     other_stack.recover_all();
