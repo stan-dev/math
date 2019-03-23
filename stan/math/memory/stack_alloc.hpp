@@ -115,6 +115,7 @@ class stack_alloc {
       sizes_.push_back(newsize);
       dirty_.push_back(true);
     }
+    dirty_[cur_block_] = true;
     result = blocks_[cur_block_];
     // Get the object's state back in order.
     next_loc_ = result + len;
