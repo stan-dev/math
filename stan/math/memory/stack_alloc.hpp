@@ -299,7 +299,16 @@ class stack_alloc {
                   other_stack.sizes_.end());
     dirty_.insert(dirty_.end(), other_stack.dirty_.begin(),
                   other_stack.dirty_.end());
-    other_stack = stack_alloc();
+    other_stack.sizes_.resize(1);
+    other_stack.blocks_.resize(1);
+    other_stack.dirty_.resize(1);
+    other_stack.blocks_[0]
+        = internal::eight_byte_aligned_malloc(internal::DEFAULT_INITIAL_NBYTES);
+    if (!other_stack.blocks_[0])
+      throw std::bad_alloc();
+    other_stack.recover_all();
+    // other_stack = stack_alloc(internal::DEFAULT_INITIAL_NBYTES); //should be
+    // the same?? But it's not, though?
   }
 };
 

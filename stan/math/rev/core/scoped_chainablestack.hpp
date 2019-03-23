@@ -56,6 +56,7 @@ struct ScopedChainableStack {
         local_stack_->var_nochain_stack_.begin(),
         local_stack_->var_nochain_stack_.end());
     local_stack_->var_nochain_stack_.clear();
+    destination_stack.memalloc_.store_stack(local_stack_->memalloc_);
   }
 };
 
