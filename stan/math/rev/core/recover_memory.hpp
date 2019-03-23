@@ -33,6 +33,14 @@ static inline void recover_memory() {
 
   clean_instance(ChainableStack::instance());
 
+  for (auto& instance_stack_ptr : ChainableStack::queue().instance_stack_) {
+    clean_instance(*instance_stack_ptr);
+  }
+
+  // not needed, since this function may only be called if we are not nested
+  // ChainableStack::queue().current_instance_ = 0;
+
+  /*
   const std::size_t stack_id = ChainableStack::queue().stack_id_;
 
   std::lock_guard<std::mutex> global_stack_lock(
@@ -55,6 +63,7 @@ static inline void recover_memory() {
       }
     }
   }
+  */
 }
 
 // recover memory the stack globally for all threads

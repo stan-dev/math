@@ -103,6 +103,7 @@ struct AutodiffStackSingleton {
 
   struct AutodiffStackStorage;
 
+  /*
   typedef tbb::concurrent_vector<std::shared_ptr<AutodiffStackStorage>>
       global_stack_t;
 
@@ -111,6 +112,7 @@ struct AutodiffStackSingleton {
     static global_stack_t global_stack_;
     return global_stack_;
   }
+  */
 
   struct AutodiffStackStorage {
     explicit AutodiffStackStorage(std::size_t stack_id) : stack_id_(stack_id){};
@@ -132,12 +134,17 @@ struct AutodiffStackSingleton {
     */
 
     // creates a new nochain stack and returns a pointer to it. This
-    // operation is thread-safe.
+    // operation is thread-safe. Not really needed anymore as global
+    // stack went away.
+    /**/
     std::shared_ptr<AutodiffStackStorage> get_child_stack() const {
-      return *(
-          global_stack().emplace_back(std::shared_ptr<AutodiffStackStorage>(
-              new AutodiffStackStorage(stack_id_))));
+      return std::shared_ptr<AutodiffStackStorage>(
+          new AutodiffStackStorage(stack_id_));
+      // return *(
+      //    global_stack().emplace_back(std::shared_ptr<AutodiffStackStorage>(
+      //        new AutodiffStackStorage(stack_id_))));
     }
+    /**/
   };
 
   struct AutodiffStackQueue {
@@ -190,9 +197,12 @@ STAN_THREADS_DEF
         *AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_
     = nullptr;
 
+/*
 template <typename ChainableT, typename ChainableAllocT>
 std::mutex
-    AutodiffStackSingleton<ChainableT, ChainableAllocT>::global_stack_mutex_;
+    AutodiffStackSingleton<ChainableT,
+    ChainableAllocT>::global_stack_mutex_;
+*/
 
 }  // namespace math
 }  // namespace stan
