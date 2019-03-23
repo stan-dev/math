@@ -98,29 +98,23 @@ TEST(RevMath, gp_exponential_cov_vvd) {
       EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
           << "index: (" << i << ", " << j << ")";
       if (x[i] < x[j]) {  // since the distance isn't squared
-        EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val / l,
-                        grad[1])
-          << "index: (" << i << ", " << j << ")";
+        EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val / l, grad[1])
+            << "index: (" << i << ", " << j << ")";
       } else if (x[i] > x[j]) {
-        EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * -exp_val / l,
-                        grad[1])
-          << "index: (" << i << ", " << j << ")";
+        EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * -exp_val / l, grad[1])
+            << "index: (" << i << ", " << j << ")";
       } else {
-        EXPECT_FLOAT_EQ(0, grad[1])
-          << "index: (" << i << ", " << j << ")";        
+        EXPECT_FLOAT_EQ(0, grad[1]) << "index: (" << i << ", " << j << ")";
       }
 
       if (x[i] > x[j]) {  // since the distance isn't squared
-        EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val / l,
-                        grad[2])
-          << "index: (" << i << ", " << j << ")";
+        EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val / l, grad[2])
+            << "index: (" << i << ", " << j << ")";
       } else if (x[i] < x[j]) {
-        EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * -exp_val / l,
-                        grad[2])
-          << "index: (" << i << ", " << j << ")";
+        EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * -exp_val / l, grad[2])
+            << "index: (" << i << ", " << j << ")";
       } else {
-        EXPECT_FLOAT_EQ(0, grad[2])
-          << "index: (" << i << ", " << j << ")";    
+        EXPECT_FLOAT_EQ(0, grad[2]) << "index: (" << i << ", " << j << ")";
       }
 
       stan::math::recover_memory();
