@@ -62,10 +62,33 @@ namespace math {
  * http://discourse.mc-stan.org/t/potentially-dropping-support-for-older-versions-of-apples-version-of-clang/3780/
  * [4] https://discourse.mc-stan.org/t/thread-performance-penalty/7306/8
  */
+
+// Internal macro used to modify global pointer definition to the
+// global AD instance.
+#ifdef STAN_THREADS
+// Whenever STAN_THREADS is set a TLS keyword is used. For reasons
+// explained above we use the GNU compiler extension __thread if
+// supported by the compiler while the generic thread_local C++11
+// keyword is used otherwise.
+#ifdef __GNUC__
+#define STAN_THREADS_DEF __thread
+#else
+#define STAN_THREADS_DEF thread_local
+#endif
+#else
+// In case STAN_THREADS is not set, then no modifier is needed.
+#define STAN_THREADS_DEF
+#endif
+
 template <typename ChainableT, typename ChainableAllocT>
 struct AutodiffStackSingleton {
   typedef AutodiffStackSingleton<ChainableT, ChainableAllocT>
       AutodiffStackSingleton_t;
+
+  /*
+  AutodiffStackSingleton() { init(); }
+  ~AutodiffStackSingleton() {}
+  */
 
   static std::size_t get_new_stack_id() {
     static std::atomic<std::size_t> stack_counter{0};
@@ -149,7 +172,7 @@ struct AutodiffStackSingleton {
   }
 
   static AutodiffStackStorage *init() {
-    if (instance_ == nullptr) {
+    if (!instance_) {
       AutodiffStackQueue &local_queue = queue();
       instance_
           = local_queue.instance_stack_[local_queue.current_instance_].get();
@@ -157,25 +180,15 @@ struct AutodiffStackSingleton {
     return instance_;
   }
 
-  static
-#ifdef STAN_THREADS
-      thread_local
-#endif
-      AutodiffStackStorage *instance_;
+  static STAN_THREADS_DEF AutodiffStackStorage *instance_;
 };
 
 template <typename ChainableT, typename ChainableAllocT>
-#ifdef STAN_THREADS
-thread_local
-#endif
+STAN_THREADS_DEF
     typename AutodiffStackSingleton<ChainableT,
                                     ChainableAllocT>::AutodiffStackStorage
         *AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_
-#ifdef STAN_THREADS
     = nullptr;
-#else
-    = AutodiffStackSingleton<ChainableT, ChainableAllocT>::init();
-#endif
 
 template <typename ChainableT, typename ChainableAllocT>
 std::mutex
