@@ -58,19 +58,36 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
       EXPECT_FLOAT_EQ(stan::math::square(sigma.val()) * exp_val,
                       cov(i, j).val())
           << "index: (" << i << ", " << j << ")";
-      // EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
-      //     << "index: (" << i << ", " << j << ")";
-      // EXPECT_FLOAT_EQ(
-      //     sigma.val() * sigma.val() * exp_val * sq_distance / (sq_l * l.val()),
-      //     grad[1])
-      //     << "index: (" << i << ", " << j << ")";
-      // EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * -distance / sq_l,
-      //                 grad[2])
-      //     << "index: (" << i << ", " << j << ")";
-      // EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * distance / sq_l,
-      //                 grad[3])
-      //     << "index: (" << i << ", " << j << ")";
+      EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
+          << "index: (" << i << ", " << j << ")";
+      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * dist / (l.val() * l.val()),
+          grad[1])
+          << "index: (" << i << ", " << j << ")";
+      if (x[i] < x[j]) {  // since the distance isn't squared
+        EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val / l.val(),
+                        grad[2])
+          << "index: (" << i << ", " << j << ")";
+      } else if (x[i] > x[j]) {
+        EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * -exp_val / l.val(),
+                        grad[2])
+          << "index: (" << i << ", " << j << ")";
+      } else {
+        EXPECT_FLOAT_EQ(0, grad[2])
+          << "index: (" << i << ", " << j << ")";        
+      }
 
+      if (x[i] > x[j]) {  // since the distance isn't squared
+        EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val / l.val(),
+                        grad[3])
+          << "index: (" << i << ", " << j << ")";
+      } else if (x[i] < x[j]) {
+        EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * -exp_val / l.val(),
+                        grad[3])
+          << "index: (" << i << ", " << j << ")";
+      } else {
+        EXPECT_FLOAT_EQ(0, grad[3])
+          << "index: (" << i << ", " << j << ")";        
+      }
       stan::math::recover_memory();
     }
   }
