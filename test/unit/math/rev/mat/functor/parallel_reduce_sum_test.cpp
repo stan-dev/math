@@ -34,7 +34,7 @@ struct count_lpdf {
   count_lpdf(const std::vector<int>& data, const T& lambda)
       : data_(data), lambda_(lambda) {}
 
-  T operator()(std::size_t start, std::size_t end) const {
+  inline T operator()(std::size_t start, std::size_t end) const {
     const std::size_t elems = end - start;
     std::vector<int> partial_data;
     partial_data.insert(partial_data.end(), data_.begin() + start,
@@ -250,6 +250,26 @@ TEST_F(benchmark, serial) {
     var poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_ref);
 
     stan::math::grad(poisson_lpdf_ref.vi_);
+    stan::math::recover_memory();
+  }
+}
+
+TEST_F(benchmark, parallel_reduce_sum_lambda) {
+  typedef boost::counting_iterator<std::size_t> count_iter;
+  using stan::math::var;
+
+  for (std::size_t i = 0; i != num_iter; ++i) {
+    var lambda = lambda_d;
+
+    var poisson_lpdf = stan::math::parallel_reduce_sum(
+        count_iter(0), count_iter(elems), var(0.0),
+        [&](std::size_t start, std::size_t end) {
+          const std::vector<int> partial_data(data.begin() + start,
+                                              data.begin() + end);
+          return stan::math::poisson_lpmf(partial_data, lambda);
+        });
+
+    stan::math::grad(poisson_lpdf.vi_);
     stan::math::recover_memory();
   }
 }
