@@ -53,14 +53,11 @@ TEST(RevMath, gp_exp_quad_cov_vvv) {
       params.push_back(x[j]);
 
       cov(i, j).grad(params, grad);
-
-      double dist = x[i].val() - x[j].val();
-      double sq_distance = stan::math::square(distance);
-      double sq_l = stan::math::square(l.val());
-      double exp_val = exp(sq_distance / (-2.0 * sq_l));
-      // EXPECT_FLOAT_EQ(stan::math::square(sigma.val()) * exp_val,
-      //                 cov(i, j).val())
-      //     << "index: (" << i << ", " << j << ")";
+      double dist = std::abs(x[i].val() - x[j].val());
+      double exp_val = exp(-dist / l.val());
+      EXPECT_FLOAT_EQ(stan::math::square(sigma.val()) * exp_val,
+                      cov(i, j).val())
+          << "index: (" << i << ", " << j << ")";
       // EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
       //     << "index: (" << i << ", " << j << ")";
       // EXPECT_FLOAT_EQ(
