@@ -81,7 +81,10 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
           // the diagonal if the matrix is upper triangular
           const A_temp_j = tiled_j + w * THREAD_BLOCK_SIZE_COL;
           const B_temp_j = j + w * THREAD_BLOCK_SIZE_COL;
-          if((tiled_j + w * THREAD_BLOCK_SIZE_COL) >= K || i >= M
+          // check if the indexes are outside the matrix
+          // or under/above the diagonal with upper/lower
+          // triangular matrices
+          if(A_temp_j >= K || i >= M
              || (lower_upper_A == LOWER && A_temp_j > i)
              || (lower_upper_A == UPPER && A_temp_j < i)) {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
@@ -115,6 +118,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
       // save the values
       for (int w = 0; w < WORK_PER_THREAD; w++) {
         // each thread saves WORK_PER_THREAD values
+        // padded threads should not access C
         if ((j + w * THREAD_BLOCK_SIZE_COL) < N && i < M) {
           C[(j + w * THREAD_BLOCK_SIZE_COL) * M + i] = acc[w];
         }        
