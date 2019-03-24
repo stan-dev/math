@@ -8,13 +8,13 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class atan_vari : public op_v_vari {
  public:
   explicit atan_vari(vari* avi) : op_v_vari(std::atan(avi->val_), avi) {}
   void chain() { avi_->adj_ += adj_ / (1.0 + (avi_->val_ * avi_->val_)); }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Return the principal value of the arc tangent, in radians, of the
@@ -46,7 +46,7 @@ class atan_vari : public op_v_vari {
  * @param a Variable in range [-1, 1].
  * @return Arc tangent of variable, in radians.
  */
-inline var atan(const var& a) { return var(new atan_vari(a.vi_)); }
+inline var atan(const var& a) { return var(new internal::atan_vari(a.vi_)); }
 
 }  // namespace math
 }  // namespace stan

@@ -6,7 +6,7 @@
 
 namespace stan {
 namespace math {
-namespace {
+namespace internal {
 template <typename T, int R, int C>
 void resize(Eigen::Matrix<T, R, C>& x, const std::vector<int>& dims, int pos) {
   x.resize(dims[pos], dims[pos + 1]);
@@ -26,7 +26,7 @@ void resize(std::vector<T>& x, const std::vector<int>& dims, int pos) {
   for (size_t i = 0; i < x.size(); ++i)
     resize(x[i], dims, pos);
 }
-}  // namespace
+}  // namespace internal
 
 /**
  * Recursively resize the specified vector of vectors,
@@ -39,7 +39,7 @@ void resize(std::vector<T>& x, const std::vector<int>& dims, int pos) {
  */
 template <typename T>
 inline void resize(T& x, std::vector<int> dims) {
-  resize(x, dims, 0U);
+  internal::resize(x, dims, 0U);
 }
 
 }  // namespace math

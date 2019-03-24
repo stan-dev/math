@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 
 class inc_beta_vvv_vari : public op_vvv_vari {
  public:
@@ -34,10 +34,10 @@ class inc_beta_vvv_vari : public op_vvv_vari {
   }
 };
 
-}  // namespace
+}  // namespace internal
 
 inline var inc_beta(const var& a, const var& b, const var& c) {
-  return var(new inc_beta_vvv_vari(a.vi_, b.vi_, c.vi_));
+  return var(new internal::inc_beta_vvv_vari(a.vi_, b.vi_, c.vi_));
 }
 
 }  // namespace math

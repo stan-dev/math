@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class hypot_vv_vari : public op_vv_vari {
  public:
   hypot_vv_vari(vari* avi, vari* bvi)
@@ -23,7 +23,7 @@ class hypot_vd_vari : public op_v_vari {
   hypot_vd_vari(vari* avi, double b) : op_v_vari(hypot(avi->val_, b), avi) {}
   void chain() { avi_->adj_ += adj_ * avi_->val_ / val_; }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Returns the length of the hypoteneuse of a right triangle
@@ -42,7 +42,7 @@ class hypot_vd_vari : public op_v_vari {
  * @return Length of hypoteneuse.
  */
 inline var hypot(const var& a, const var& b) {
-  return var(new hypot_vv_vari(a.vi_, b.vi_));
+  return var(new internal::hypot_vv_vari(a.vi_, b.vi_));
 }
 
 /**
@@ -58,7 +58,7 @@ inline var hypot(const var& a, const var& b) {
  * @return Length of hypoteneuse.
  */
 inline var hypot(const var& a, double b) {
-  return var(new hypot_vd_vari(a.vi_, b));
+  return var(new internal::hypot_vd_vari(a.vi_, b));
 }
 
 /**
@@ -101,7 +101,7 @@ inline var hypot(const var& a, double b) {
  * @return Length of hypoteneuse.
  */
 inline var hypot(double a, const var& b) {
-  return var(new hypot_vd_vari(b.vi_, a));
+  return var(new internal::hypot_vd_vari(b.vi_, a));
 }
 
 }  // namespace math

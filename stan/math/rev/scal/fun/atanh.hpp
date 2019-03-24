@@ -8,13 +8,13 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class atanh_vari : public op_v_vari {
  public:
   atanh_vari(double val, vari* avi) : op_v_vari(val, avi) {}
   void chain() { avi_->adj_ += adj_ / (1.0 - avi_->val_ * avi_->val_); }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * The inverse hyperbolic tangent function for variables (C99).
@@ -56,7 +56,7 @@ class atanh_vari : public op_v_vari {
    * @throw std::domain_error if a < -1 or a > 1
    */
 inline var atanh(const var& a) {
-  return var(new atanh_vari(atanh(a.val()), a.vi_));
+  return var(new internal::atanh_vari(atanh(a.val()), a.vi_));
 }
 
 }  // namespace math

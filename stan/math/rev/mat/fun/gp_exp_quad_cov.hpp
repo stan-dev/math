@@ -2,8 +2,6 @@
 #define STAN_MATH_REV_MAT_FUN_GP_EXP_QUAD_COV_HPP
 
 #include <boost/math/tools/promotion.hpp>
-#include <boost/type_traits.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
@@ -15,6 +13,7 @@
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <vector>
 #include <cmath>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -210,8 +209,8 @@ class gp_exp_quad_cov_vari<T_x, double, T_l> : public vari {
  *   x is nan or infinite
  */
 template <typename T_x>
-inline typename boost::enable_if_c<
-    boost::is_same<typename scalar_type<T_x>::type, double>::value,
+inline typename std::enable_if<
+    std::is_same<typename scalar_type<T_x>::type, double>::value,
     Eigen::Matrix<var, -1, -1>>::type
 gp_exp_quad_cov(const std::vector<T_x> &x, const var &sigma,
                 const var &length_scale) {
@@ -253,8 +252,8 @@ gp_exp_quad_cov(const std::vector<T_x> &x, const var &sigma,
  *   x is nan or infinite
  */
 template <typename T_x>
-inline typename boost::enable_if_c<
-    boost::is_same<typename scalar_type<T_x>::type, double>::value,
+inline typename std::enable_if<
+    std::is_same<typename scalar_type<T_x>::type, double>::value,
     Eigen::Matrix<var, -1, -1>>::type
 gp_exp_quad_cov(const std::vector<T_x> &x, double sigma,
                 const var &length_scale) {
