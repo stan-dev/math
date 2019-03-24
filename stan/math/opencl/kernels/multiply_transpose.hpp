@@ -94,7 +94,7 @@ static const char* multiply_transpose_kernel_code = STRINGIFY(
         // save the values
         for (int w = 0; w < WORK_PER_THREAD; w++) {
           // padded threads should not access B
-          if ((j + w * THREAD_BLOCK_SIZE_COL) < N && i < M) {
+          if ((j + w * THREAD_BLOCK_SIZE_COL) < M && i < M) {
             // each thread saves WORK_PER_THREAD values
             if ((j + w * THREAD_BLOCK_SIZE_COL) <= i) {
               B[i + (j + w * THREAD_BLOCK_SIZE_COL) * M] = acc[w];
