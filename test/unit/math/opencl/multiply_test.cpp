@@ -223,7 +223,6 @@ TEST(MathMatrix, upper_tri_rect_multiply_small) {
   auto m2 = stan::math::matrix_d::Random(3, 3).eval();
   stan::math::matrix_d m3_cl_res(3, 3);
 
-  
   stan::math::matrix_cl m11(m1);
   m1.triangularView<Eigen::StrictlyLower>().setZero();
   stan::math::matrix_cl m22(m2);

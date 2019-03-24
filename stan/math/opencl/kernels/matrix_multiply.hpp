@@ -84,24 +84,26 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
           // check if the indexes are outside the matrix
           // or under/above the diagonal with upper/lower
           // triangular matrices
-          if(A_temp_j >= K || i >= M
-             || (lower_upper_A == LOWER && A_temp_j > i)
-             || (lower_upper_A == UPPER && A_temp_j < i)) {
+          if (A_temp_j >= K || i >= M
+              || (lower_upper_A == LOWER && A_temp_j > i)
+              || (lower_upper_A == UPPER && A_temp_j < i)) {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                 [thread_block_row] = 0.0;
+                   [thread_block_row]
+                = 0.0;
           } else {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                  [thread_block_row]
+                   [thread_block_row]
                 = A[A_temp_j * M + i];
           }
-          if(B_temp_j >= N || tiled_i >= K
-             || (lower_upper_B == LOWER && B_temp_j > tiled_i)
-             || (lower_upper_B == UPPER && B_temp_j < tiled_i)) {
+          if (B_temp_j >= N || tiled_i >= K
+              || (lower_upper_B == LOWER && B_temp_j > tiled_i)
+              || (lower_upper_B == UPPER && B_temp_j < tiled_i)) {
             B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                  [thread_block_row] = 0.0;
+                   [thread_block_row]
+                = 0.0;
           } else {
             B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                  [thread_block_row]
+                   [thread_block_row]
                 = B[B_temp_j * K + tiled_i];
           }
         }
@@ -121,7 +123,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
         // padded threads should not access C
         if ((j + w * THREAD_BLOCK_SIZE_COL) < N && i < M) {
           C[(j + w * THREAD_BLOCK_SIZE_COL) * M + i] = acc[w];
-        }        
+        }
       }
     }
     // \cond

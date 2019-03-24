@@ -46,8 +46,8 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   try {
     opencl_kernels::matrix_multiply(
         cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
-        A.buffer(), B.buffer(), temp.buffer(), A.rows(),
-        B.cols(), B.rows(), triangular_view_A, triangular_view_B);
+        A.buffer(), B.buffer(), temp.buffer(), A.rows(), B.cols(), B.rows(),
+        triangular_view_A, triangular_view_B);
   } catch (cl::Error& e) {
     check_opencl_error("multiply", e);
   }
