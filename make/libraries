@@ -112,7 +112,7 @@ $(TBB)/lib/libtbb.dylib: tbb
 $(TBB)/lib/libtbbmalloc.dylib: tbbmalloc
 	install_name_tool -add_rpath "$(TBB_ABSOLUTE_PATH)/lib" "$(TBB)/lib/libtbbmalloc.dylib"
 
-$(TBB)/lib/libtbbmalloc.dylib: tbbmalloc
+$(TBB)/lib/libtbbmalloc_proxy.dylib: tbbmalloc
 	install_name_tool -add_rpath "$(TBB_ABSOLUTE_PATH)/lib" "$(TBB)/lib/libtbbmalloc_proxy.dylib"
 
 clean-tbb:
