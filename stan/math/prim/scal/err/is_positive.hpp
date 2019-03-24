@@ -19,7 +19,7 @@ namespace math {
 template <typename T_y>
 inline bool is_positive(const T_y& y) {
   for (size_t n = 0; n < stan::length(y); n++) {
-    if (!std::is_unsigned<T_y>::value && !(stan::get(y, n) > 0))
+    if (!boost::is_unsigned<T_y>::value && !(stan::get(y, n) > 0))
       return false;
   }
   return true;
