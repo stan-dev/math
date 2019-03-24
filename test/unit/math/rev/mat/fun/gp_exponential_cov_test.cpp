@@ -98,7 +98,7 @@ TEST(RevMath, gp_exponential_cov_vvd) {
           << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
           << "index: (" << i << ", " << j << ")";
-      if (x[i] < x[j]) {  // since the distance isn't squared
+      if (x[i] < x[j]) {
         EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val / l, grad[1])
             << "index: (" << i << ", " << j << ")";
       } else if (x[i] > x[j]) {
@@ -108,7 +108,7 @@ TEST(RevMath, gp_exponential_cov_vvd) {
         EXPECT_FLOAT_EQ(0, grad[1]) << "index: (" << i << ", " << j << ")";
       }
 
-      if (x[i] > x[j]) {  // since the distance isn't squared
+      if (x[i] > x[j]) {
         EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val / l, grad[2])
             << "index: (" << i << ", " << j << ")";
       } else if (x[i] < x[j]) {
@@ -151,7 +151,7 @@ TEST(RevMath, gp_exponential_cov_vdv) {
       EXPECT_FLOAT_EQ(sigma * sigma * exp_val * dist / (l.val() * l.val()),
                       grad[0])
           << "index: (" << i << ", " << j << ")";
-      if (x[i] < x[j]) {  // since the distance isn't squared
+      if (x[i] < x[j]) {
         EXPECT_FLOAT_EQ(sigma * sigma * exp_val / l.val(), grad[1])
             << "index: (" << i << ", " << j << ")";
       } else if (x[i] > x[j]) {
@@ -161,7 +161,7 @@ TEST(RevMath, gp_exponential_cov_vdv) {
         EXPECT_FLOAT_EQ(0, grad[1]) << "index: (" << i << ", " << j << ")";
       }
 
-      if (x[i] > x[j]) {  // since the distance isn't squared
+      if (x[i] > x[j]) {
         EXPECT_FLOAT_EQ(sigma * sigma * exp_val / l.val(), grad[2])
             << "index: (" << i << ", " << j << ")";
       } else if (x[i] < x[j]) {
