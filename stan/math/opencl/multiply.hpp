@@ -4,6 +4,8 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/scalar_mul.hpp>
 #include <stan/math/opencl/kernels/matrix_multiply.hpp>
+#include <stan/math/opencl/kernels/multiply_rect.hpp>
+#include <stan/math/opencl/kernels/add.hpp>
 #include <Eigen/Dense>
 
 namespace stan {
@@ -29,7 +31,7 @@ namespace opencl {
 
 template <TriangularViewCL triangular_view_A = TriangularViewCL::Entire,
           TriangularViewCL triangular_view_B = TriangularViewCL::Entire>
-inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
+inline auto multiply(const matrix_cl& A, const matrix_cl& B, int split = 1) {
   check_size_match("multiply ((OpenCL))", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
   matrix_cl temp(A.rows(), B.cols());
@@ -46,22 +48,36 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   // improves performance and readability because we can omit
   // if statements in the
   // multiply kernel
-  matrix_cl tempPad(Mpad, Npad);
+  if (split < 1) {
+    split = 1;
+  }
+  matrix_cl tempPad(Mpad, Npad * split);
   matrix_cl Apad(Mpad, Kpad);
   matrix_cl Bpad(Kpad, Npad);
   opencl_kernels::zeros(cl::NDRange(Mpad, Kpad), Apad.buffer(), Mpad, Kpad,
                         TriangularViewCL::Entire);
   opencl_kernels::zeros(cl::NDRange(Kpad, Npad), Bpad.buffer(), Kpad, Npad,
                         TriangularViewCL::Entire);
+  opencl_kernels::zeros(cl::NDRange(Mpad, Npad * split), tempPad.buffer(), Mpad,
+                        Npad * split, TriangularViewCL::Entire);
   Apad.sub_block<triangular_view_A>(A, 0, 0, 0, 0, A.rows(), A.cols());
   Bpad.sub_block<triangular_view_B>(B, 0, 0, 0, 0, B.rows(), B.cols());
   int wpt = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
       "WORK_PER_THREAD");
   try {
-    opencl_kernels::matrix_multiply(
+    if(split <= 1) {
+      opencl_kernels::matrix_multiply(
         cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
         Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
         Bpad.cols(), Bpad.rows(), triangular_view_A, triangular_view_B);
+    } else {
+      opencl_kernels::multiply_rect(
+        cl::NDRange(Mpad, Npad / wpt, split), cl::NDRange(local, local / wpt, 1),
+        Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
+        Bpad.cols(), Bpad.rows(), triangular_view_A, triangular_view_B);
+      opencl_kernels::add_batch(cl::NDRange(Mpad, Npad),
+                                        tempPad.buffer(), Mpad, Npad, split);
+    }
   } catch (cl::Error& e) {
     check_opencl_error("multiply", e);
   }

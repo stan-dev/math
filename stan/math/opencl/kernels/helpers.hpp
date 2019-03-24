@@ -14,6 +14,9 @@ namespace opencl_kernels {
 static const char* helpers =
     R"(
     // Matrix access helpers
+  #ifndef A_batch
+  #define A_batch(i,j,k) A[(k) * cols * rows + (j) * rows + (i)]
+  #endif
   #ifndef A
   #define A(i,j) A[(j) * rows + (i)]
   #endif
