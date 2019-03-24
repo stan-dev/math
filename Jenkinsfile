@@ -177,7 +177,7 @@ pipeline {
                     steps {
                         deleteDirWin()
                         unstash 'MathSetup'
-                        bat "make -j${env.PARALLEL} test-headers"
+                        bat "mingw32-make -j${env.PARALLEL} test-headers"
                         runTestsWin("test/unit")
                     }
                 }
