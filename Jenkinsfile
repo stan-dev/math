@@ -154,6 +154,7 @@ pipeline {
                         deleteDir()
                         unstash 'MathSetup'
                         sh "echo CXX=${MPICXX} >> make/local"
+                        sh "echo CXX_TYPE=gcc >> make/local"                        
                         sh "echo STAN_MPI=true >> make/local"
                         runTests("test/unit")
                     }
