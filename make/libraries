@@ -71,6 +71,20 @@ clean-sundials:
 
 ############################################################
 # TBB build rules
+#
+# TBB_CXX_TYPE can be icl, icc, gcc or clang; See tbb documentation for more info
+# for gcc and clang this is derived from stan makefile defaults automatically
+#
+
+ifeq ($(CXX_TYPE),mingw32-gcc)
+  TBB_CXX_TYPE ?= gcc
+endif
+ifeq ($(CXX_TYPE),mingw32-gcc)
+  ifeq (,$(TBB_CXX_TYPE))
+    $(warning "Need to set TBB_CXX_TYPE for non-standard compiler.")
+  endif
+endif
+TBB_CXX_TYPE ?= $(CXX_TYPE)
 
 #workaround for non-depend targets tbb and tbbmalloc which both depend on version_string.ver
 #According to documentation, recursively invoked make commands can process their targets in parallel
@@ -80,11 +94,11 @@ PHONY: tbb tbbmalloc
 
 tbb:
 	@mkdir -p $(TBB)/lib
-	tbb_root="$(TBB_ABSOLUTE_PATH)" $(MAKE) -C $(TBB)/lib -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbb" cfg=release
+	tbb_root="$(TBB_ABSOLUTE_PATH)" $(MAKE) -C $(TBB)/lib -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbb" compiler=$(TBB_CXX_TYPE) cfg=release
 
 tbbmalloc: tbb 
 	@mkdir -p $(TBB)/lib
-	tbb_root="$(TBB_ABSOLUTE_PATH)" $(MAKE) -C $(TBB)/lib -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" cfg=release malloc
+	tbb_root="$(TBB_ABSOLUTE_PATH)" $(MAKE) -C $(TBB)/lib -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" compiler=$(TBB_CXX_TYPE) cfg=release malloc
 
 $(TBB)/lib/libtbb.so: tbb
 $(TBB)/lib/libtbbmalloc.so: tbbmalloc
