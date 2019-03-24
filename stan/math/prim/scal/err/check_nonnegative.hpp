@@ -17,7 +17,7 @@ struct nonnegative {
   static void check(const char* function, const char* name, const T_y& y) {
     // have to use not is_unsigned. is_signed will be false
     // floating point types that have no unsigned versions.
-    if (!boost::is_unsigned<T_y>::value && !(y >= 0))
+    if (!std::is_unsigned<T_y>::value && !(y >= 0))
       domain_error(function, name, y, "is ", ", but must be >= 0!");
   }
 };
@@ -26,7 +26,7 @@ template <typename T_y>
 struct nonnegative<T_y, true> {
   static void check(const char* function, const char* name, const T_y& y) {
     for (size_t n = 0; n < stan::length(y); n++) {
-      if (!boost::is_unsigned<typename value_type<T_y>::type>::value
+      if (!std::is_unsigned<typename value_type<T_y>::type>::value
           && !(stan::get(y, n) >= 0))
         domain_error_vec(function, name, y, n, "is ", ", but must be >= 0!");
     }
