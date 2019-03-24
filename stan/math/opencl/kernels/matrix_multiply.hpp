@@ -81,7 +81,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
           // the diagonal if the matrix is upper triangular
           const A_temp_j = tiled_j + w * THREAD_BLOCK_SIZE_COL;
           const B_temp_j = j + w * THREAD_BLOCK_SIZE_COL;
-          if((tiled_j + w * THREAD_BLOCK_SIZE_COL) >= K && i >= M
+          if((tiled_j + w * THREAD_BLOCK_SIZE_COL) >= K || i >= M
              || (lower_upper_A == LOWER && A_temp_j > i)
              || (lower_upper_A == UPPER && A_temp_j < i)) {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
@@ -91,7 +91,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
                   [thread_block_row]
                 = A[A_temp_j * M + i];
           }
-          if(B_temp_j >= N && tiled_i >= K
+          if(B_temp_j >= N || tiled_i >= K
              || (lower_upper_B == LOWER && B_temp_j > tiled_i)
              || (lower_upper_B == UPPER && B_temp_j < tiled_i)) {
             B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
