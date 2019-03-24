@@ -81,7 +81,7 @@ ifeq ($(CXX_TYPE),mingw32-gcc)
 endif
 ifeq ($(CXX_TYPE),mingw32-gcc)
   ifeq (,$(TBB_CXX_TYPE))
-    $(warning "Need to set TBB_CXX_TYPE for non-standard compiler.")
+    $(error "Need to set TBB_CXX_TYPE for non-standard compiler.")
   endif
 endif
 TBB_CXX_TYPE ?= $(CXX_TYPE)
@@ -94,11 +94,11 @@ PHONY: tbb tbbmalloc
 
 tbb:
 	@mkdir -p $(TBB)/lib
-	tbb_root="$(TBB_ABSOLUTE_PATH)" $(MAKE) -C $(TBB)/lib -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbb" compiler=$(TBB_CXX_TYPE) cfg=release
+	tbb_root="$(TBB_ABSOLUTE_PATH)" CXX="$(CXX)" $(MAKE) -C $(TBB)/lib -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbb" compiler=$(TBB_CXX_TYPE) cfg=release
 
 tbbmalloc: tbb 
 	@mkdir -p $(TBB)/lib
-	tbb_root="$(TBB_ABSOLUTE_PATH)" $(MAKE) -C $(TBB)/lib -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" compiler=$(TBB_CXX_TYPE) cfg=release malloc
+	tbb_root="$(TBB_ABSOLUTE_PATH)" CXX="$(CXX)" $(MAKE) -C $(TBB)/lib -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" compiler=$(TBB_CXX_TYPE) cfg=release malloc
 
 $(TBB)/lib/libtbb.so: tbb
 $(TBB)/lib/libtbbmalloc.so: tbbmalloc
@@ -111,6 +111,9 @@ $(TBB)/lib/libtbb.dylib: tbb
 
 $(TBB)/lib/libtbbmalloc.dylib: tbbmalloc
 	install_name_tool -add_rpath "$(TBB_ABSOLUTE_PATH)/lib" "$(TBB)/lib/libtbbmalloc.dylib"
+
+$(TBB)/lib/libtbbmalloc.dylib: tbbmalloc
+	install_name_tool -add_rpath "$(TBB_ABSOLUTE_PATH)/lib" "$(TBB)/lib/libtbbmalloc_proxy.dylib"
 
 clean-tbb:
 	@echo '  cleaning Intel TBB targets'

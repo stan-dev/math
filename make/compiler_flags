@@ -7,6 +7,19 @@ ifneq ($(OS),Windows_NT)
   OS := $(shell uname -s)
 endif
 
+## Set OS specific library filename extensions
+ifeq ($(OS),Windows_NT)
+  LIBRARY_SUFFIX := .dll
+endif
+
+ifeq ($(OS),Darwin)
+  LIBRARY_SUFFIX := .dylib
+endif
+
+ifeq ($(OS),Linux)
+  LIBRARY_SUFFIX := .so
+endif
+
 ## Set default compiler
 ifeq (default,$(origin CXX))
   ifeq ($(OS),Darwin)  ## Darwin is Mac OS X
@@ -81,6 +94,11 @@ CXXFLAGS_SUNDIALS ?= -pipe
 # CXXFLAGS_OPENCL
 # LDFLAGS_OPENCL
 # LDLIBS_OPENCL
+
+## TBB specific flags
+# CXXFLAGS_TBB
+# LDFLAGS_TBB
+# LDLIBS_TBB
 
 ## MPI specific flags
 # CXXFLAGS_MPI
@@ -159,21 +177,9 @@ endif
 # Setup Intel TBB
 #
 
-ifeq ($(OS),Windows_NT)
-  LIBRARY_SUFFIX := .dll
-endif
-
-ifeq ($(OS),Darwin)
-  LIBRARY_SUFFIX := .dylib
-endif
-
-ifeq ($(OS),Linux)
-  LIBRARY_SUFFIX := .so
-endif
-
 TBB_ABSOLUTE_PATH = $(abspath $(TBB))
 
-TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(TBB)/lib/libtbb $(TBB)/lib/libtbbmalloc)
+TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(TBB)/lib/libtbb $(TBB)/lib/libtbbmalloc_proxy)
 
 CXXFLAGS_TBB ?= -I $(TBB)/include
 LDFLAGS_TBB ?= -Wl,-L,"$(TBB_ABSOLUTE_PATH)/lib" -Wl,-rpath,"$(TBB_ABSOLUTE_PATH)/lib"
@@ -190,15 +196,7 @@ ifdef STAN_MPI
     $(error MPI is not supported on Windows.)
   endif
 
-  ifeq ($(OS),Darwin)
-    BOOST_LIBRARY_SUFFIX := .dylib
-  endif
-
-  ifeq ($(OS),Linux)
-    BOOST_LIBRARY_SUFFIX := .so
-  endif
-
-  MPI_TARGETS ?= $(addsuffix $(BOOST_LIBRARY_SUFFIX),$(BOOST)/stage/lib/libboost_serialization $(BOOST)/stage/lib/libboost_mpi) $(MPI_TEMPLATE_INSTANTIATION)
+  MPI_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(BOOST)/stage/lib/libboost_serialization $(BOOST)/stage/lib/libboost_mpi) $(MPI_TEMPLATE_INSTANTIATION)
   CPPFLAGS_MPI ?= -DSTAN_MPI
 
   BOOST_LIBRARY_ABSOLUTE_PATH = $(abspath $(BOOST)/stage/lib)
