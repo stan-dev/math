@@ -79,12 +79,28 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
           // For the tiles on the diagonal we can ignore the values over
           // the diagonal if the matrix is lower triangular or under
           // the diagonal if the matrix is upper triangular
-          A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                 [thread_block_row]
-              = A[(tiled_j + w * THREAD_BLOCK_SIZE_COL) * M + i];
-          B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                 [thread_block_row]
-              = B[(j + w * THREAD_BLOCK_SIZE_COL) * K + tiled_i];
+          const A_temp_j = tiled_j + w * THREAD_BLOCK_SIZE_COL;
+          const B_temp_j = j + w * THREAD_BLOCK_SIZE_COL;
+          if((tiled_j + w * THREAD_BLOCK_SIZE_COL) >= K && i >= M
+             || (lower_upper_A == LOWER && A_temp_j > i)
+             || (lower_upper_A == UPPER && A_temp_j < i)) {
+            A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                 [thread_block_row] = 0.0;
+          } else {
+            A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                  [thread_block_row]
+                = A[A_temp_j * M + i];
+          }
+          if(B_temp_j >= N && tiled_i >= K
+             || (lower_upper_B == LOWER && B_temp_j > tiled_i)
+             || (lower_upper_B == UPPER && B_temp_j < tiled_i)) {
+            B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                  [thread_block_row] = 0.0;
+          } else {
+            B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                  [thread_block_row]
+                = B[B_temp_j * K + tiled_i];
+          }
         }
         barrier(CLK_LOCAL_MEM_FENCE);
         for (int block_idx = 0; block_idx < THREAD_BLOCK_SIZE; block_idx++) {
@@ -99,7 +115,9 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
       // save the values
       for (int w = 0; w < WORK_PER_THREAD; w++) {
         // each thread saves WORK_PER_THREAD values
-        C[(j + w * THREAD_BLOCK_SIZE_COL) * M + i] = acc[w];
+        if ((j + w * THREAD_BLOCK_SIZE_COL) < N && i < M) {
+          C[(j + w * THREAD_BLOCK_SIZE_COL) * M + i] = acc[w];
+        }        
       }
     }
     // \cond
