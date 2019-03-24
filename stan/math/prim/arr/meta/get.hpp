@@ -7,7 +7,7 @@
 namespace stan {
 /**
  * Returns the n-th element of the provided std::vector.
- * 
+ *
  * @param x input vector
  * @param n index of the element to return
  * @return n-th element of the input vector

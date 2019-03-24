@@ -7,7 +7,7 @@ namespace stan {
 
 /**
  * Returns the size of the provided Eigen matrix.
- * 
+ *
  * @param m a const Eigen matrix
  * @tparam T type of matrix.
  * @tparam R number of rows in the input matrix.

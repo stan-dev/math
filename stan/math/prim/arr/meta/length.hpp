@@ -7,7 +7,7 @@
 namespace stan {
 /**
  * Returns the length of the provided std::vector.
- * 
+ *
  * @param x input vector
  * @tparam T type of the elements in the vector
  * @return the length of the input vector
