@@ -9,8 +9,8 @@ def runTests(String testPath) {
 }
 
 def runTestsWin(String testPath) {
-    bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
-    try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
+    bat "runWinTests.py -j${env.PARALLEL} ${testPath} --make-only"
+    try { bat "runWinTests.py -j${env.PARALLEL} ${testPath}" }
     finally { junit 'test/**/*.xml' }
 }
 
@@ -136,6 +136,7 @@ pipeline {
                 }
             }
         }
+/* disable temporarily
         stage('Headers check') {
             agent any
             steps {
@@ -146,6 +147,7 @@ pipeline {
             }
             post { always { deleteDir() } }
         }
+*/
         stage('Always-run tests part 1') {
             parallel {
                 stage('Linux Unit with MPI') {
