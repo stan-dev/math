@@ -96,9 +96,9 @@ ifeq ($(OS),Windows_NT)
   ## Detecting Process Bitness:
   #  ## http://blogs.msdn.com/b/david.wang/archive/2006/03/26/howto-detect-process-bitness.aspx
   ifeq ($(PROCESSOR_ARCHITECTURE)$(PROCESSOR_ARCHITEW6432),x86)
-    TBB_WINDOWS_ARCH ?= intel64
-  else
     TBB_WINDOWS_ARCH ?= ia32
+  else
+    TBB_WINDOWS_ARCH ?= intel64
   endif
 endif
 
