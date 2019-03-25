@@ -111,7 +111,6 @@ TEST(MathMatrixCL, matrix_cl_matrix_copy_arithmetic) {
   EXPECT_THROW(copy(test_val, d222_cl), std::invalid_argument);
 }
 
-
 TEST(MathMatrixGPU, matrix_cl_pack_unpack_copy_lower) {
   int size = 42;
   int packed_size = size * (size + 1) / 2;
