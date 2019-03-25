@@ -136,6 +136,7 @@ pipeline {
                 }
             }
         }
+/* disable temporarily
         stage('Headers check') {
             agent any
             steps {
@@ -146,6 +147,7 @@ pipeline {
             }
             post { always { deleteDir() } }
         }
+*/
         stage('Always-run tests part 1') {
             parallel {
                 stage('Linux Unit with MPI') {
