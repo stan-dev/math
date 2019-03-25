@@ -108,9 +108,9 @@ $(TBB)/lib/libtbb.so: tbb
 $(TBB)/lib/libtbbmalloc.so: tbbmalloc
 $(TBB)/lib/libtbbmalloc_proxy.so: tbbmalloc
 
-$(TBB)/lib/libtbb.dll: tbb
-$(TBB)/lib/libtbbmalloc.dll: tbbmalloc
-$(TBB)/lib/libtbbmalloc_proxy.dll: tbbmalloc
+$(TBB)/lib/tbb.dll: tbb
+$(TBB)/lib/tbbmalloc.dll: tbbmalloc
+$(TBB)/lib/tbbmalloc_proxy.dll: tbbmalloc
 
 #$(TBB)/lib/libtbb.dylib: tbb
 #	install_name_tool -add_rpath "$(TBB_ABSOLUTE_PATH)/lib" "$(TBB)/lib/libtbb.dylib"
