@@ -13,33 +13,35 @@
 namespace stan {
 namespace math {
 
-/**
- * Copies a lower/upper triangular of a matrix to it's upper/lower.
- *
- * @tparam triangular_map Specifies if the copy is
- * lower-to-upper or upper-to-lower triangular. The value
- * must be of type TriangularMap
- *
- * @throw <code>std::invalid_argument</code> if the matrix is not square.
- *
- */
-template <TriangularMapCL triangular_map>
-inline void matrix_cl::triangular_transpose() {
-  if (size() == 0 || size() == 1) {
-    return;
+  /**
+   * Copies a lower/upper triangular of a matrix to it's upper/lower.
+   *
+   * @tparam triangular_map Specifies if the copy is
+   * lower-to-upper or upper-to-lower triangular. The value
+   * must be of type TriangularMap
+   *
+   * @throw <code>std::invalid_argument</code> if the matrix is not square.
+   *
+   */
+  template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
+  void triangular_transpose() {
+    if (size() == 0 || size() == 1) {
+      return;
+    }
+    check_size_match("triangular_transpose ((OpenCL))",
+                     "Expecting a square matrix; rows of ", "A", rows(),
+                     "columns of ", "A", cols());
+
+    cl::CommandQueue cmdQueue = opencl_context.queue();
+    try {
+      opencl_kernels::triangular_transpose(
+          cl::NDRange(this->rows(), this->cols()), this->buffer(), this->rows(),
+          this->cols(), triangular_map);
+    } catch (const cl::Error& e) {
+      check_opencl_error("triangular_transpose", e);
+    }
   }
-  check_size_match("triangular_transpose (GPU)",
-                   "Expecting a square matrix; rows of ", "A", rows(),
-                   "columns of ", "A", cols());
-  try {
-    cl::Event triangular_event = opencl_kernels::triangular_transpose(
-        cl::NDRange(this->rows(), this->cols()), *this, this->rows(),
-        this->cols(), triangular_map);
-    this->add_event(triangular_event);
-  } catch (const cl::Error& e) {
-    check_opencl_error("triangular_transpose", e);
-  }
-}
+
 
 }  // namespace math
 }  // namespace stan

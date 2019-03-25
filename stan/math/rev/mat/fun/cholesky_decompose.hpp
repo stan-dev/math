@@ -28,6 +28,7 @@
 #endif
 
 #include <algorithm>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -325,19 +326,16 @@ class cholesky_opencl : public vari {
    *
    */
   virtual void chain() {
-    auto L_adj_cpu = Eigen::MatrixXd::Zero(M_, M_).eval();
-    auto L_cpu = Eigen::MatrixXd::Zero(M_, M_).eval();
+    const int packed_size = M_ * (M_ + 1) / 2;
+    std::vector<double> L_adj_cpu(packed_size);
+    std::vector<double> L_val_cpu(packed_size);
 
-    size_t pos = 0;
-    for (size_type j = 0; j < M_; ++j) {
-      for (size_type i = j; i < M_; ++i) {
-        L_adj_cpu.coeffRef(i, j) = vari_ref_L_[pos]->adj_;
-        L_cpu.coeffRef(i, j) = vari_ref_L_[pos]->val_;
-        ++pos;
-      }
+    for (size_type j = 0; j < packed_size; ++j) {
+      L_adj_cpu[j] = vari_ref_L_[j]->adj_;
+      L_val_cpu[j] = vari_ref_L_[j]->val_;
     }
-    matrix_cl L(L_cpu);
-    matrix_cl L_adj(L_adj_cpu);
+    matrix_cl L = packed_copy<TriangularViewCL::Lower>(L_val_cpu, M_);
+    matrix_cl L_adj = packed_copy<TriangularViewCL::Lower>(L_adj_cpu, M_);
     int block_size
         = M_ / opencl_context.tuning_opts().cholesky_rev_block_partition;
     block_size = std::max(block_size, 8);
@@ -388,11 +386,10 @@ class cholesky_opencl : public vari {
       L_adj.sub_block(B_adj, 0, 0, k, 0, m_k_ind, j);
       L_adj.sub_block(C_adj, 0, 0, k, j, m_k_ind, k_j_ind);
     }
-    copy(L_adj_cpu, L_adj);
-    pos = 0;
-    for (size_type j = 0; j < M_; ++j)
-      for (size_type i = j; i < M_; ++i)
-        vari_ref_A_[pos++]->adj_ += L_adj_cpu.coeffRef(i, j);
+    L_adj_cpu = packed_copy<TriangularViewCL::Lower>(L_adj);
+    for (size_type j = 0; j < packed_size; ++j) {
+      vari_ref_A_[j]->adj_ += L_adj_cpu[j];
+    }
   }
 };
 #endif

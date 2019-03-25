@@ -39,12 +39,13 @@ class matrix_cl {
  public:
   // Forward declare the methods that work in place on the matrix
   template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
-  inline void zeros();
+  void zeros();
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
-  inline void triangular_transpose();
+  void triangular_transpose();
   template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
-  inline void sub_block(const matrix_cl& A, int A_i, int A_j, int this_i,
-                        int this_j, int nrows, int ncols);
+  void sub_block(const matrix_cl& A, size_t A_i, size_t A_j, size_t this_i,
+                 size_t this_j, size_t nrows, size_t ncols);
+
   int rows() const { return rows_; }
 
   int cols() const { return cols_; }

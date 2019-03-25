@@ -23,25 +23,51 @@ namespace math {
  * @param nrows the number of rows in the submatrix
  * @param ncols the number of columns in the submatrix
  */
-template <TriangularViewCL triangular_view>
-inline void matrix_cl::sub_block(const matrix_cl& A, int A_i, int A_j,
-                                 int this_i, int this_j, int nrows, int ncols) {
-  if (nrows == 0 || ncols == 0) {
-    return;
-  }
-  if ((A_i + nrows) > A.rows() || (A_j + ncols) > A.cols()
-      || (this_i + nrows) > this->rows() || (this_j + ncols) > this->cols()) {
-    domain_error("sub_block", "submatrix in *this", " is out of bounds", "");
-  }
-  try {
-    cl::Event sub_block_event = opencl_kernels::sub_block(
-        cl::NDRange(nrows, ncols), A, *this, A_i, A_j, this_i, this_j, nrows,
-        ncols, A.rows(), A.cols(), this->rows(), this->cols(), triangular_view);
-    this->add_event(sub_block_event);
-  } catch (const cl::Error& e) {
-    check_opencl_error("copy_submatrix", e);
-  }
-}
+ /**
+  * Write the context of A into
+  * <code>this</code> starting at the top left of <code>this</code>
+  * @param A input matrix
+  * @param A_i the offset row in A
+  * @param A_j the offset column in A
+  * @param this_i the offset row for the matrix to be subset into
+  * @param this_j the offset col for the matrix to be subset into
+  * @param nrows the number of rows in the submatrix
+  * @param ncols the number of columns in the submatrix
+  */
+ template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
+ void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j, size_t this_i,
+                size_t this_j, size_t nrows, size_t ncols) {
+   if (nrows == 0 || ncols == 0) {
+     return;
+   }
+   if ((A_i + nrows) > A.rows() || (A_j + ncols) > A.cols()
+       || (this_i + nrows) > this->rows() || (this_j + ncols) > this->cols()) {
+     domain_error("sub_block", "submatrix in *this", " is out of bounds", "");
+   }
+   cl::CommandQueue cmdQueue = opencl_context.queue();
+   try {
+     if (triangular_view == TriangularViewCL::Entire) {
+       cl::size_t<3> src_offset
+           = opencl::to_size_t<3>({A_i * sizeof(double), A_j, 0});
+       cl::size_t<3> dst_offset
+           = opencl::to_size_t<3>({this_i * sizeof(double), this_j, 0});
+       cl::size_t<3> size
+           = opencl::to_size_t<3>({nrows * sizeof(double), ncols, 1});
+       cmdQueue.enqueueCopyBufferRect(
+           A.buffer(), this->buffer(), src_offset, dst_offset, size,
+           A.rows() * sizeof(double), A.rows() * A.cols() * sizeof(double),
+           sizeof(double) * this->rows(),
+           this->rows() * this->cols() * sizeof(double));
+     } else {
+       opencl_kernels::sub_block(cl::NDRange(nrows, ncols), A.buffer(),
+                                 this->buffer(), A_i, A_j, this_i, this_j,
+                                 nrows, ncols, A.rows(), A.cols(),
+                                 this->rows(), this->cols(), triangular_view);
+     }
+   } catch (const cl::Error& e) {
+     check_opencl_error("copy_submatrix", e);
+   }
+ }
 
 }  // namespace math
 }  // namespace stan
