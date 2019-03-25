@@ -9,8 +9,8 @@ def runTests(String testPath) {
 }
 
 def runTestsWin(String testPath) {
-    bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
-    try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
+    bat "runWinTests.py -j${env.PARALLEL} ${testPath} --make-only"
+    try { bat "runWinTests.py -j${env.PARALLEL} ${testPath}" }
     finally { junit 'test/**/*.xml' }
 }
 
