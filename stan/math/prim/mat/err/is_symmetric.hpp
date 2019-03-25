@@ -30,7 +30,8 @@ inline bool is_symmetric(
       return true;
     for (size_type m = 0; m < k; ++m) {
       for (size_type n = m + 1; n < k; ++n) {
-        if (!(fabs(value_of(y(m, n)) - value_of(y(n, m))) <= CONSTRAINT_TOLERANCE))
+        if (!(fabs(value_of(y(m, n)) - value_of(y(n, m)))
+              <= CONSTRAINT_TOLERANCE))
           return false;
       }
     }

@@ -34,7 +34,7 @@ inline bool is_cholesky_factor(
     }
     return true;
   }
-return false;
+  return false;
 }
 
 }  // namespace math
