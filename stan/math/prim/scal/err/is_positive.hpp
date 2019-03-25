@@ -4,7 +4,7 @@
 #include <stan/math/prim/scal/meta/get.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/value_type.hpp>
-#include <stan/math/prim/scal/meta/is_vector_like.hpp>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -19,7 +19,7 @@ namespace math {
 template <typename T_y>
 inline bool is_positive(const T_y& y) {
   for (size_t n = 0; n < stan::length(y); n++) {
-    if (!std::is_unsigned<T_y>::value && !(stan::get(y, n) > 0))
+    if (!(std::is_unsigned<T_y>::value && !(stan::get(y, n) > 0)))
       return false;
   }
   return true;
