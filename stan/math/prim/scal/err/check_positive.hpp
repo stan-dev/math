@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-namespace internal {
+namespace {
 
 template <typename T_y, bool is_vec>
 struct positive {
@@ -27,7 +27,8 @@ struct positive {
 template <typename T_y>
 struct positive<T_y, true> {
   static void check(const char* function, const char* name, const T_y& y) {
-    for (size_t n = 0; n < stan::length(y); n++) {
+    using stan::length;
+    for (size_t n = 0; n < length(y); n++) {
       if (!std::is_unsigned<typename value_type<T_y>::type>::value
           && !(stan::get(y, n) > 0))
         domain_error_vec(function, name, y, n, "is ", ", but must be > 0!");
@@ -35,7 +36,7 @@ struct positive<T_y, true> {
   }
 };
 
-}  // namespace internal
+}  // namespace
 
 /**
  * Check if <code>y</code> is positive.
@@ -46,12 +47,12 @@ struct positive<T_y, true> {
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @throw <code>domain_error</code> if y is negative or zero or
- *   if any element of y is NaN.
+ *   if any element of y is NaN
  */
 template <typename T_y>
 inline void check_positive(const char* function, const char* name,
                            const T_y& y) {
-  internal::positive<T_y, is_vector_like<T_y>::value>::check(function, name, y);
+  positive<T_y, is_vector_like<T_y>::value>::check(function, name, y);
 }
 
 }  // namespace math

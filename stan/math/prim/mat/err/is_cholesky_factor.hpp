@@ -26,14 +26,15 @@ namespace math {
 template <typename T_y>
 inline bool is_cholesky_factor(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
-  if (!is_less_or_equal(y.cols(), y.rows()) || !is_positive(y.cols())
-      || !is_lower_triangular(y))
-    return false;
-  for (int i = 0; i < y.cols(); ++i) {
-    if (!is_positive(y(i, i)))
-      return false;
+  if (is_less_or_equal(y.cols(), y.rows()) && is_positive(y.cols())
+      && is_lower_triangular(y)) {
+    for (int i = 0; i < y.cols(); ++i) {
+      if (!is_positive(y(i, i)))
+        return false;
+    }
+    return true;
   }
-  return true;
+return false;
 }
 
 }  // namespace math
