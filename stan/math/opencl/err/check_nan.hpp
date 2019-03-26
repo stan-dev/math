@@ -21,7 +21,7 @@ namespace math {
  *    any element of the matrix is <code>NaN</code>.
  */
 inline void check_nan(const char* function, const char* name,
-                      const matrix_cl& y) {
+                      matrix_cl& y) {
   if (y.size() == 0)
     return;
 

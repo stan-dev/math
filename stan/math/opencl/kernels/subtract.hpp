@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/buffer_types.hpp>
 
 namespace stan {
 namespace math {
@@ -42,7 +43,7 @@ static const char *subtract_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/subtract.hpp subtract() \endlink
  */
-const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int>
+const global_range_kernel<write_buffer, read_buffer, read_buffer, int, int>
     subtract("subtract", subtract_kernel_code);
 
 }  // namespace opencl_kernels

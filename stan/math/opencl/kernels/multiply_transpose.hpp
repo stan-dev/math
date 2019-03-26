@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/buffer_types.hpp>
 
 namespace stan {
 namespace math {
@@ -96,7 +97,7 @@ static const char* multiply_transpose_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/multiply_transpose.hpp add() \endlink
  */
-const local_range_kernel<cl::Buffer, cl::Buffer, int, int> multiply_transpose(
+const local_range_kernel<read_buffer, write_buffer, int, int> multiply_transpose(
     "multiply_transpose", multiply_transpose_kernel_code,
     {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 4}});
 

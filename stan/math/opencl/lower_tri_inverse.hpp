@@ -32,7 +32,7 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the matrix
  *    is not square
  */
-inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
+inline matrix_cl lower_triangular_inverse(matrix_cl& A) {
   check_square("lower_triangular_inverse (OpenCL)", "A", A);
 
   int thread_block_2D_dim = 32;

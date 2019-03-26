@@ -21,7 +21,7 @@ namespace math {
  *    the matrix is not symmetric.
  */
 inline void check_symmetric(const char* function, const char* name,
-                            const matrix_cl& y) {
+                            matrix_cl& y) {
   if (y.size() == 0)
     return;
   check_square(function, name, y);

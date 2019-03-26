@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/buffer_types.hpp>
 
 namespace stan {
 namespace math {
@@ -46,7 +47,7 @@ static const char* triangular_transpose_kernel_code = STRINGIFY(
  * See the docs for \link kernels/triangular_transpose.hpp
  * triangular_transpose() \endlink
  */
-const global_range_kernel<cl::Buffer, int, int, TriangularMapCL>
+const global_range_kernel<write_buffer, int, int, TriangularMapCL>
     triangular_transpose("triangular_transpose",
                          triangular_transpose_kernel_code);
 

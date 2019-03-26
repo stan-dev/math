@@ -38,7 +38,6 @@ void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
   check_size_match("copy (Eigen -> (OpenCL))", "src.cols()", src.cols(),
                    "dst.cols()", dst.cols());
   if (src.size() > 0) {
-    cl::CommandQueue queue = opencl_context.queue();
     try {
       /**
        * Writes the contents of src to the OpenCL buffer
@@ -47,6 +46,7 @@ void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
        * This means that future kernels need to know about the copy_event
        * So that they do not execute until this transfer finishes.
        */
+      cl::CommandQueue queue = opencl_context.queue();
       cl::Event copy_event;
       queue.enqueueWriteBuffer(dst.buffer(), CL_FALSE, 0,
                                sizeof(double) * dst.size(), src.data(), NULL,
@@ -77,7 +77,6 @@ void copy(Eigen::Matrix<double, R, C>& dst, const matrix_cl& src) {
   check_size_match("copy ((OpenCL) -> Eigen)", "src.cols()", src.cols(),
                    "dst.cols()", dst.cols());
   if (src.size() > 0) {
-    cl::CommandQueue queue = opencl_context.queue();
     try {
       /**
        * Reads the contents of the OpenCL buffer
@@ -87,6 +86,7 @@ void copy(Eigen::Matrix<double, R, C>& dst, const matrix_cl& src) {
        * We do not want to pass data back to the CPU until all of the jobs
        * called on the source matrix are finished.
        */
+      cl::CommandQueue queue = opencl_context.queue();
       cl::Event copy_event;
       queue.enqueueReadBuffer(src.buffer(), CL_TRUE, 0,
                               sizeof(double) * dst.size(), dst.data(),
@@ -107,18 +107,18 @@ void copy(Eigen::Matrix<double, R, C>& dst, const matrix_cl& src) {
  * @return the packed std::vector
  */
 template <TriangularViewCL triangular_view>
-inline std::vector<double> packed_copy(const matrix_cl& src) {
+inline std::vector<double> packed_copy(matrix_cl& src) {
   const int packed_size = src.rows() * (src.rows() + 1) / 2;
   std::vector<double> dst(packed_size);
   if (dst.size() == 0) {
     return dst;
   }
-  cl::CommandQueue queue = opencl_context.queue();
   try {
+    cl::CommandQueue queue = opencl_context.queue();
     matrix_cl packed(packed_size, 1);
     stan::math::opencl_kernels::pack(cl::NDRange(src.rows(), src.rows()),
-                                     packed.buffer(), src.buffer(), src.rows(),
-                                     src.rows(), triangular_view);
+                                     packed, src, src.rows(), src.rows(),
+                                     triangular_view);
     queue.enqueueReadBuffer(packed.buffer(), CL_TRUE, 0,
                             sizeof(double) * packed_size, dst.data());
   } catch (const cl::Error& e) {
@@ -149,14 +149,14 @@ inline matrix_cl packed_copy(const std::vector<double>& src, int rows) {
   if (dst.size() == 0) {
     return dst;
   }
-  cl::CommandQueue queue = opencl_context.queue();
   try {
+    cl::CommandQueue queue = opencl_context.queue();
     matrix_cl packed(packed_size, 1);
     queue.enqueueWriteBuffer(packed.buffer(), CL_TRUE, 0,
                              sizeof(double) * packed_size, src.data());
     stan::math::opencl_kernels::unpack(cl::NDRange(dst.rows(), dst.rows()),
-                                       dst.buffer(), packed.buffer(),
-                                       dst.rows(), dst.rows(), triangular_view);
+                                       dst, packed, dst.rows(), dst.rows(),
+                                       triangular_view);
   } catch (const cl::Error& e) {
     check_opencl_error("packed_copy (std::vector->OpenCL)", e);
   }
@@ -174,7 +174,7 @@ inline matrix_cl packed_copy(const std::vector<double>& src, int rows) {
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
-inline void copy(matrix_cl& dst, const matrix_cl& src) {
+inline void copy(matrix_cl& dst, matrix_cl& src) {
   check_size_match("copy ((OpenCL) -> (OpenCL))", "src.rows()", src.rows(),
                    "dst.rows()", dst.rows());
   check_size_match("copy ((OpenCL) -> (OpenCL))", "src.cols()", src.cols(),
@@ -188,6 +188,7 @@ inline void copy(matrix_cl& dst, const matrix_cl& src) {
      * see the matrix_cl(matrix_cl&) constructor
      *  for explanation
      */
+    cl::CommandQueue queue = opencl_context.queue();
     cl::Event copy_event;
     queue.enqueueCopyBuffer(src.buffer(), dst.buffer(), 0, 0,
                              sizeof(double) * src.size(), NULL, &copy_event);

@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/buffer_types.hpp>
 
 namespace stan {
 namespace math {
@@ -109,7 +110,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/matrix_multiply.hpp matrix_multiply() \endlink
  */
-const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int,
+const local_range_kernel<read_buffer, read_buffer, write_buffer, int, int, int,
                          TriangularViewCL, TriangularViewCL>
     matrix_multiply("matrix_multiply", matrix_multiply_kernel_code,
                     {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});

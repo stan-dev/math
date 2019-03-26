@@ -6,6 +6,8 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/opencl/constants.hpp>
+#include <stan/math/prim/arr/fun/vec_concat.hpp>
 #include <CL/cl.hpp>
 #include <iostream>
 #include <string>
@@ -34,8 +36,9 @@ class matrix_cl {
   cl::Buffer oclBuffer_;
   const int rows_;
   const int cols_;
-  std::vector<cl::Event> events_;  // Used to track jobs in queue
-
+  std::vector<cl::Event> read_events_;  // Used to track read jobs in queue
+  std::vector<cl::Event> write_events_; // Used to track write jobs in queue
+  std::vector<cl::Event> read_write_events_;
  public:
   // Forward declare the methods that work in place on the matrix
   template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
@@ -43,7 +46,7 @@ class matrix_cl {
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   void triangular_transpose();
   template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
-  void sub_block(const matrix_cl& A, size_t A_i, size_t A_j, size_t this_i,
+  void sub_block(matrix_cl& A, size_t A_i, size_t A_j, size_t this_i,
                  size_t this_j, size_t nrows, size_t ncols);
 
   int rows() const { return rows_; }
@@ -51,11 +54,28 @@ class matrix_cl {
   int cols() const { return cols_; }
 
   int size() const { return rows_ * cols_; }
-
-  inline const std::vector<cl::Event>& events() const { return events_; }
+  template <eventTypeCL event_type = eventTypeCL::read_write>
+  inline const std::vector<cl::Event>& events() const {
+    if (event_type == eventTypeCL::read) {
+      return write_events_;
+    } else if (event_type == eventTypeCL::write) {
+      return read_events_;
+    } else if (event_type == eventTypeCL::read_write) {
+      return read_write_events_;
+    }
+  }
   // push a new event onto the event stack
+  template <eventTypeCL event_type = eventTypeCL::read_write>
   inline void add_event(cl::Event new_event) {
-    return this->events_.push_back(new_event);
+    if (event_type == eventTypeCL::read) {
+      this->read_events_.push_back(new_event);
+      this->read_write_events_.push_back(new_event);
+    } else if (event_type == eventTypeCL::write) {
+      this->write_events_.push_back(new_event);
+      this->read_write_events_.push_back(new_event);
+    } else if (event_type == eventTypeCL::read_write) {
+      this->read_write_events_.push_back(new_event);
+    }
   }
 
   const cl::Buffer& buffer() const { return oclBuffer_; }

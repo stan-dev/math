@@ -35,7 +35,7 @@ void triangular_transpose() {
   cl::CommandQueue cmdQueue = opencl_context.queue();
   try {
     opencl_kernels::triangular_transpose(
-        cl::NDRange(this->rows(), this->cols()), this->buffer(), this->rows(),
+        cl::NDRange(this->rows(), this->cols()), *this, this->rows(),
         this->cols(), triangular_map);
   } catch (const cl::Error& e) {
     check_opencl_error("triangular_transpose", e);

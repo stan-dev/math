@@ -20,7 +20,7 @@ namespace math {
  * @return the product of the input matrix and its transpose
  *
  */
-inline matrix_cl multiply_transpose(const matrix_cl& A) {
+inline matrix_cl multiply_transpose(matrix_cl& A) {
   matrix_cl temp(A.rows(), A.rows());
   if (A.size() == 0)
     return temp;

@@ -14,15 +14,17 @@ inline const std::vector<cl::Event> select_events(const T& t) {
   return std::vector<cl::Event>();
 }
 
-inline const std::vector<cl::Event>& select_events(const matrix_cl& m) {
-  return m.events();
+template <typename P = read_write_buffer>
+inline const std::vector<cl::Event> select_events(const matrix_cl& m) {
+  return m.events<P::event_type>();
 }
 
-inline const std::vector<cl::Event>& select_events(matrix_cl* const& m) {
-  return m->events();
+template <typename P = read_write_buffer>
+inline const std::vector<cl::Event> select_events(matrix_cl* const& m) {
+  return m->events<P::event_type>();
 }
 
-inline const std::vector<cl::Event>& select_events(
+inline const std::vector<cl::Event> select_events(
     const std::vector<cl::Event>& m) {
   return m;
 }

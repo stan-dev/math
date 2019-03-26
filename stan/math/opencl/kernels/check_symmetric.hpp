@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/buffer_types.hpp>
 
 namespace stan {
 namespace math {
@@ -43,7 +44,7 @@ static const char *is_symmetric_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/check_symmetric.hpp check_symmetric() \endlink
  */
-const global_range_kernel<cl::Buffer, cl::Buffer, int, int, const double>
+const global_range_kernel<read_buffer, write_buffer, int, int, const double>
     check_symmetric("is_symmetric", is_symmetric_kernel_code);
 
 }  // namespace opencl_kernels

@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/buffer_types.hpp>
 
 namespace stan {
 namespace math {
@@ -70,7 +71,7 @@ static const char *cholesky_decompose_kernel_code = STRINGIFY(
  * See the docs for \link kernels/cholesky_decompose.hpp cholesky_decompose()
  * \endlink
  */
-const local_range_kernel<cl::Buffer, cl::Buffer, int> cholesky_decompose(
+const local_range_kernel<read_buffer, read_write_buffer, int> cholesky_decompose(
     "cholesky_decompose", cholesky_decompose_kernel_code);
 
 }  // namespace opencl_kernels

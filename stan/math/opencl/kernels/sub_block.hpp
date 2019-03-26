@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/buffer_types.hpp>
 
 namespace stan {
 namespace math {
@@ -64,7 +65,7 @@ static const char *sub_block_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/sub_block.hpp sub_block() \endlink
  */
-const global_range_kernel<cl::Buffer, cl::Buffer, int, int, int, int, int, int,
+const global_range_kernel<read_buffer, write_buffer, int, int, int, int, int, int,
                           int, int, int, int, TriangularViewCL>
     sub_block("sub_block", sub_block_kernel_code);
 

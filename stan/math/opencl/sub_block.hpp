@@ -35,7 +35,7 @@ namespace math {
  * @param ncols the number of columns in the submatrix
  */
 template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
-void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
+void matrix_cl::sub_block(matrix_cl& A, size_t A_i, size_t A_j,
                           size_t this_i, size_t this_j, size_t nrows,
                           size_t ncols) {
   if (nrows == 0 || ncols == 0) {
@@ -60,8 +60,8 @@ void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
           sizeof(double) * this->rows(),
           this->rows() * this->cols() * sizeof(double));
     } else {
-      opencl_kernels::sub_block(cl::NDRange(nrows, ncols), A.buffer(),
-                                this->buffer(), A_i, A_j, this_i, this_j, nrows,
+      opencl_kernels::sub_block(cl::NDRange(nrows, ncols), A,
+                                *this, A_i, A_j, this_i, this_j, nrows,
                                 ncols, A.rows(), A.cols(), this->rows(),
                                 this->cols(), triangular_view);
     }

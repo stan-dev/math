@@ -20,7 +20,7 @@ namespace math {
  *    any diagonal element of the matrix is zero.
  */
 inline void check_diagonal_zeros(const char* function, const char* name,
-                                 const matrix_cl& y) {
+                                 matrix_cl& y) {
   if (y.size() == 0)
     return;
   cl::CommandQueue cmd_queue = opencl_context.queue();

@@ -26,7 +26,7 @@ namespace math {
  *
  */
 template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
-inline matrix_cl copy_triangular(const matrix_cl& src) {
+inline matrix_cl copy_triangular(matrix_cl& src) {
   if (src.size() == 0 || src.size() == 1) {
     matrix_cl dst(src);
     return dst;

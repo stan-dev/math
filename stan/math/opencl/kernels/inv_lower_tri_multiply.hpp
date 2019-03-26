@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/buffer_types.hpp>
 
 namespace stan {
 namespace math {
@@ -124,7 +125,7 @@ static const char* inv_lower_tri_multiply_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/inv_lower_tri_multiply.hpp add() \endlink
  */
-const local_range_kernel<cl::Buffer, cl::Buffer, int, int>
+const local_range_kernel<read_buffer, write_buffer, int, int>
     inv_lower_tri_multiply("inv_lower_tri_multiply",
                            inv_lower_tri_multiply_kernel_code,
                            {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});

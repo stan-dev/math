@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/buffer_types.hpp>
 
 namespace stan {
 namespace math {
@@ -118,7 +119,7 @@ static const char* neg_rect_lower_tri_multiply_kernel_code = STRINGIFY(
  * for \link kernels/neg_rect_lower_tri_multiply.hpp
  * neg_rect_lower_tri_multiply() \endlink
  */
-const local_range_kernel<cl::Buffer, cl::Buffer, int, int>
+const local_range_kernel<read_write_buffer, read_buffer, int, int>
     neg_rect_lower_tri_multiply("neg_rect_lower_tri_multiply",
                                 neg_rect_lower_tri_multiply_kernel_code,
                                 {{"THREAD_BLOCK_SIZE", 32},
