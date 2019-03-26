@@ -5,39 +5,31 @@
 namespace stan {
 namespace math {
 namespace opencl_kernels {
+
+// A read buffer will only add events to the read_write stack.
 struct read_buffer {
   typedef cl::Buffer buffer;
   static const eventTypeCL event_type = eventTypeCL::read;
 };
 
+// Write buffers will add events to the write event stack.
 struct write_buffer {
   typedef cl::Buffer buffer;
   static const eventTypeCL event_type = eventTypeCL::write;
 };
 
-struct read_write_buffer {
-  typedef cl::Buffer buffer;
-  static const eventTypeCL event_type = eventTypeCL::read_write;
-};
-
 namespace internal {
 
 /**
- * meta template struct for changing cl::Buffer argument types to matrix_cl.
- * @tparam T A template typename that for cases of cl::Buffer will return a
- * typedef with a matrix_cl type. Otherwise will return a typedef with the
- * input's type.
+ * meta template struct for changing read/write buffer argument types to cl::Buffer types.
+ * @tparam T A template typename that for cases of non-read/write buffer cases will return a
+ * typedef holding only it's original type. For read and write buffers this will return the a cl::Buffer.
  */
 template <typename T = cl::Buffer>
 struct to_buffer {
   typedef T type;
 };
 
-/**
- * meta template struct for changing cl::Buffer argument types to matrix_cl.
- * typedef with a matrix_cl type. Otherwise will return a typedef with the
- * input's type.
- */
 template <>
 struct to_buffer<read_buffer> {
   typedef cl::Buffer type;
@@ -45,11 +37,6 @@ struct to_buffer<read_buffer> {
 
 template <>
 struct to_buffer<write_buffer> {
-  typedef cl::Buffer type;
-};
-
-template <>
-struct to_buffer<read_write_buffer> {
   typedef cl::Buffer type;
 };
 
@@ -70,7 +57,7 @@ struct to_matrix<cl::Buffer> {
 };
 
 /**
- * meta template struct for changing cl::Buffer argument types to matrix_cl.
+ * meta template struct for changing read and write buffer argument types to matrix_cl.
  * typedef with a matrix_cl type. Otherwise will return a typedef with the
  * input's type.
  */
@@ -84,10 +71,6 @@ struct to_matrix<write_buffer> {
   typedef matrix_cl type;
 };
 
-template <>
-struct to_matrix<read_write_buffer> {
-  typedef matrix_cl type;
-};
 
 }  // namespace internal
 }  // namespace opencl_kernels

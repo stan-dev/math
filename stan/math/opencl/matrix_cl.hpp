@@ -35,11 +35,8 @@ class matrix_cl {
   cl::Buffer oclBuffer_;
   const int rows_;
   const int cols_;
-  mutable std::vector<cl::Event>
-      read_events_;  // Used to track read jobs in queue
-  mutable std::vector<cl::Event>
-      write_events_;  // Used to track write jobs in queue
-  mutable std::vector<cl::Event> read_write_events_;
+  mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
+  mutable std::vector<cl::Event> read_write_events_; // Tracks reads and writes
 
  public:
   // Forward declare the methods that work in place on the matrix
@@ -56,26 +53,32 @@ class matrix_cl {
   int cols() const { return cols_; }
 
   int size() const { return rows_ * cols_; }
-  template <eventTypeCL event_type = eventTypeCL::read_write>
+
+  /**
+   * Get the events from the event stacks.
+   * @tparam event_type Specifies which event stack to return.
+   *
+   */
+  template <eventTypeCL event_type = eventTypeCL::write>
   inline const std::vector<cl::Event>& events() const {
     if (event_type == eventTypeCL::read) {
       return write_events_;
     } else if (event_type == eventTypeCL::write) {
-      return read_events_;
-    } else if (event_type == eventTypeCL::read_write) {
       return read_write_events_;
     }
   }
-  // push a new event onto the event stack
-  template <eventTypeCL event_type = eventTypeCL::read_write>
+
+  /**
+   * Get the events from the event stacks.
+   * @tparam event_type Specifies which event stack to add to.
+   * @param new_event The event to be pushed on the event stack.
+   */
+  template <eventTypeCL event_type = eventTypeCL::write>
   inline void add_event(cl::Event new_event) const {
     if (event_type == eventTypeCL::read) {
-      this->read_events_.push_back(new_event);
       this->read_write_events_.push_back(new_event);
     } else if (event_type == eventTypeCL::write) {
       this->write_events_.push_back(new_event);
-      this->read_write_events_.push_back(new_event);
-    } else if (event_type == eventTypeCL::read_write) {
       this->read_write_events_.push_back(new_event);
     }
   }

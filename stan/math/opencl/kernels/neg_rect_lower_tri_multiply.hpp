@@ -119,7 +119,7 @@ static const char* neg_rect_lower_tri_multiply_kernel_code = STRINGIFY(
  * for \link kernels/neg_rect_lower_tri_multiply.hpp
  * neg_rect_lower_tri_multiply() \endlink
  */
-const local_range_kernel<read_write_buffer, read_buffer, int, int>
+const local_range_kernel<write_buffer, read_buffer, int, int>
     neg_rect_lower_tri_multiply("neg_rect_lower_tri_multiply",
                                 neg_rect_lower_tri_multiply_kernel_code,
                                 {{"THREAD_BLOCK_SIZE", 32},

@@ -38,7 +38,7 @@ static const char *copy_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/copy.hpp copy() \endlink
  */
-const global_range_kernel<write_buffer, read_buffer, int, int> copy(
+const global_range_kernel<read_buffer, write_buffer, int, int> copy(
     "copy", copy_kernel_code);
 
 }  // namespace opencl_kernels

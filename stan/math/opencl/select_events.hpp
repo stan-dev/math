@@ -9,21 +9,39 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 
+/**
+ * Specialization for non-matrix_cl types for getting event stack from matrix_cls.
+ * @tparam A non-matrix_cl type.
+ * @return An empty vector.
+ */
 template <typename T>
 inline const std::vector<cl::Event> select_events(const T& t) {
   return std::vector<cl::Event>();
 }
 
-template <typename P = read_write_buffer>
+/**
+ * Gets the event stack for matrix_cls
+ * @tparam event_buffer Whether the matrix is to be treated as read or write.
+ * @param m A matrix_cl holding an event stack.
+ * @return Depending on the template type will return either the read or read_write event stacks.
+ */
+template <typename event_buffer = write_buffer>
 inline const std::vector<cl::Event> select_events(const matrix_cl& m) {
-  return m.events<P::event_type>();
+  return m.events<event_buffer::event_type>();
 }
 
-template <typename P = read_write_buffer>
+/**
+ * Gets the event stack for matrix_cl pointers
+ * @tparam event_buffer Whether the matrix is to be treated as read or write.
+ * @param m A pointer to a matrix_cl holding an event stack.
+ * @return Depending on the template type will return either the read or read_write event stacks.
+ */
+template <typename event_buffer = write_buffer>
 inline const std::vector<cl::Event> select_events(matrix_cl* const& m) {
-  return m->events<P::event_type>();
+  return m->events<event_buffer::event_type>();
 }
 
+// Generic method for returning a vector of events.
 inline const std::vector<cl::Event> select_events(
     const std::vector<cl::Event>& m) {
   return m;
