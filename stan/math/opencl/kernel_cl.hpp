@@ -113,7 +113,8 @@ class kernel_functor {
  */
 template <typename... Args>
 struct global_range_kernel {
-  const kernel_functor<const typename internal::to_buffer<Args>::type&...> make_functor;
+  const kernel_functor<const typename internal::to_buffer<Args>::type&...>
+      make_functor;
   /**
    * Creates functor for kernels that only need access to defining
    *  the global work size.
@@ -134,7 +135,8 @@ struct global_range_kernel {
       cl::NDRange global_thread_size,
       const typename internal::to_matrix<Args>::type&... args) const {
     auto f = make_functor();
-    std::vector<cl::Event> kernel_events = vec_concat(select_events<Args>(args)...);
+    std::vector<cl::Event> kernel_events
+        = vec_concat(select_events<Args>(args)...);
     cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
                           global_thread_size);
     cl::Event kern_event = f(eargs, get_kernel_arg(args)...);
@@ -150,7 +152,8 @@ struct global_range_kernel {
  */
 template <typename... Args>
 struct local_range_kernel {
-  const kernel_functor<const typename internal::to_buffer<Args>::type&...> make_functor;
+  const kernel_functor<const typename internal::to_buffer<Args>::type&...>
+      make_functor;
   /**
    * Creates kernels that need access to defining the global thread
    * siez and the thread block size.
@@ -172,14 +175,14 @@ struct local_range_kernel {
       cl::NDRange global_thread_size, cl::NDRange thread_block_size,
       const typename internal::to_matrix<Args>::type&... args) const {
     auto f = make_functor();
-    std::vector<cl::Event> kernel_events = vec_concat(select_events<Args>(args)...);
+    std::vector<cl::Event> kernel_events
+        = vec_concat(select_events<Args>(args)...);
     cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
                           global_thread_size, thread_block_size);
     cl::Event kern_event = f(eargs, get_kernel_arg(args)...);
     // This is just a dummy to set off the variadic function
     int dummy[] = {0, (assign_event<Args>(args, kern_event), 0)...};
     return kern_event;
-
   }
 };
 

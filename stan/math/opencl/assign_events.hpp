@@ -19,8 +19,8 @@ inline void assign_event(const matrix_cl& m, cl::Event new_event) {
 }
 
 template <typename P = read_write_buffer>
-inline void assign_event(const matrix_cl* & m, cl::Event new_event) {
-   m->add_event<P::event_type>(new_event);
+inline void assign_event(const matrix_cl*& m, cl::Event new_event) {
+  m->add_event<P::event_type>(new_event);
 }
 
 }  // namespace opencl_kernels

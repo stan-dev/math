@@ -154,8 +154,8 @@ inline matrix_cl packed_copy(const std::vector<double>& src, int rows) {
     matrix_cl packed(packed_size, 1);
     queue.enqueueWriteBuffer(packed.buffer(), CL_TRUE, 0,
                              sizeof(double) * packed_size, src.data());
-    stan::math::opencl_kernels::unpack(cl::NDRange(dst.rows(), dst.rows()),
-                                       dst, packed, dst.rows(), dst.rows(),
+    stan::math::opencl_kernels::unpack(cl::NDRange(dst.rows(), dst.rows()), dst,
+                                       packed, dst.rows(), dst.rows(),
                                        triangular_view);
   } catch (const cl::Error& e) {
     check_opencl_error("packed_copy (std::vector->OpenCL)", e);
@@ -191,7 +191,7 @@ inline void copy(matrix_cl& dst, const matrix_cl& src) {
     cl::CommandQueue queue = opencl_context.queue();
     cl::Event copy_event;
     queue.enqueueCopyBuffer(src.buffer(), dst.buffer(), 0, 0,
-                             sizeof(double) * src.size(), NULL, &copy_event);
+                            sizeof(double) * src.size(), NULL, &copy_event);
     dst.add_event(copy_event);
   } catch (const cl::Error& e) {
     check_opencl_error("copy (OpenCL)->(OpenCL)", e);
