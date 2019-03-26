@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_FUN_AS_COLUMN_VECTOR_HPP
-#define STAN_MATH_PRIM_MAT_FUN_AS_COLUMN_VECTOR_HPP
+#ifndef STAN_MATH_PRIM_MAT_FUN_AS_COLUMN_VECTOR_OR_SCALAR_HPP
+#define STAN_MATH_PRIM_MAT_FUN_AS_COLUMN_VECTOR_OR_SCALAR_HPP
 
 #include <Eigen\Dense>
 #include <vector>
@@ -32,7 +32,7 @@ Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>> as_column_vector_or_scalar
 }
 
 /**
- * Converts input argument to a column vector or a scalar. Std::vector are converted to column vectors.
+ * Converts input argument to a column vector or a scalar. Std::vector will be converted to a column vector.
  *
  * @tparam T Type of scalar element.
  * @param a Specified vector.

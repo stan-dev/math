@@ -72,8 +72,8 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
 
   T_partials_return logp(0.0);
 
-  const size_t N = x.col(0).size();
-  const size_t M = x.row(0).size();
+  const size_t N = x.rows();
+  const size_t M = x.cols();
 
   check_nonnegative(function, "Vector of dependent variables", y);
   check_consistent_size(function, "Vector of dependent variables", y, N);
