@@ -69,9 +69,9 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   typedef typename stan::partials_return_type<T_y, T_x, T_alpha, T_beta>::type
       T_partials_return;
   typedef typename std::conditional<
-          is_vector<T_y>::value,
-          Eigen::Matrix<typename stan::partials_return_type<T_y>::type, -1, 1>,
-          typename stan::partials_return_type<T_y>::type>::type T_y_val;
+      is_vector<T_y>::value,
+      Eigen::Matrix<typename stan::partials_return_type<T_y>::type, -1, 1>,
+      typename stan::partials_return_type<T_y>::type>::type T_y_val;
 
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -95,27 +95,31 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   if (!include_summand<propto, T_x, T_alpha, T_beta>::value)
     return 0.0;
 
-  const auto& x_val = value_of(x);
-  const auto& y_val = value_of(y);
-  const auto& beta_val = value_of(beta);
-  const auto& alpha_val = value_of(alpha);
+  const auto &x_val = value_of(x);
+  const auto &y_val = value_of(y);
+  const auto &beta_val = value_of(beta);
+  const auto &alpha_val = value_of(alpha);
 
-  const auto& y_val_vec = as_column_vector_or_scalar(y_val);
-  const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
-  const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
+  const auto &y_val_vec = as_column_vector_or_scalar(y_val);
+  const auto &beta_val_vec = as_column_vector_or_scalar(beta_val);
+  const auto &alpha_val_vec = as_column_vector_or_scalar(alpha_val);
 
   T_y_val signs = 2 * as_array_or_scalar(y_val_vec) - 1;
 
   Eigen::Array<T_partials_return, Dynamic, 1> ytheta
-      = as_array_or_scalar(signs) * ((x_val * beta_val_vec).array() + as_array_or_scalar(alpha_val_vec));
+      = as_array_or_scalar(signs)
+        * ((x_val * beta_val_vec).array() + as_array_or_scalar(alpha_val_vec));
 
   // Compute the log-density and handle extreme values gracefully
   // using Taylor approximations.
   // And compute the derivatives wrt theta.
   static const double cutoff = 20.0;
   Eigen::Array<T_partials_return, Dynamic, 1> exp_m_ytheta = exp(-ytheta);
-  logp += (ytheta > cutoff).select(-exp_m_ytheta, (ytheta < -cutoff).select(ytheta, -log1p(exp_m_ytheta))).sum();
-  if(!std::isfinite(logp)){
+  logp += (ytheta > cutoff)
+              .select(-exp_m_ytheta,
+                      (ytheta < -cutoff).select(ytheta, -log1p(exp_m_ytheta)))
+              .sum();
+  if (!std::isfinite(logp)) {
     check_finite(function, "Weight vector", beta);
     check_finite(function, "Intercept", alpha);
     for (size_t n = 0; n < N; ++n) {
@@ -125,13 +129,21 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
 
   // Compute the necessary derivatives.
   operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
-  if(!is_constant_struct<T_beta>::value || !is_constant_struct<T_x>::value || !is_constant_struct<T_alpha>::value) {
-    Matrix<T_partials_return, Dynamic, 1> theta_derivative = (ytheta > cutoff).select(-exp_m_ytheta, (ytheta < -cutoff).select(as_array_or_scalar(signs), as_array_or_scalar(signs) * exp_m_ytheta / (exp_m_ytheta + 1)));
+  if (!is_constant_struct<T_beta>::value || !is_constant_struct<T_x>::value
+      || !is_constant_struct<T_alpha>::value) {
+    Matrix<T_partials_return, Dynamic, 1> theta_derivative
+        = (ytheta > cutoff)
+              .select(-exp_m_ytheta,
+                      (ytheta < -cutoff)
+                          .select(as_array_or_scalar(signs),
+                                  as_array_or_scalar(signs) * exp_m_ytheta
+                                      / (exp_m_ytheta + 1)));
     if (!is_constant_struct<T_beta>::value) {
       ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
     }
     if (!is_constant_struct<T_x>::value) {
-      ops_partials.edge1_.partials_ = (beta_val_vec * theta_derivative.transpose()).transpose();
+      ops_partials.edge1_.partials_
+          = (beta_val_vec * theta_derivative.transpose()).transpose();
     }
     if (!is_constant_struct<T_alpha>::value) {
       if (is_vector<T_alpha>::value)

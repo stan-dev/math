@@ -105,22 +105,29 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
 
   T_scale_val inv_sigma = 1 / as_array_or_scalar(sigma_val_vec);
 
-  Array<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma = x_val * beta_val_vec;
-  y_minus_mu_over_sigma = (as_array_or_scalar(y_val_vec) - y_minus_mu_over_sigma - as_array_or_scalar(alpha_val_vec))*inv_sigma;
+  Array<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma
+      = x_val * beta_val_vec;
+  y_minus_mu_over_sigma = (as_array_or_scalar(y_val_vec) - y_minus_mu_over_sigma
+                           - as_array_or_scalar(alpha_val_vec))
+                          * inv_sigma;
 
   // Compute the derivatives.
   operands_and_partials<T_y, T_x, T_alpha, T_beta, T_scale> ops_partials(
       y, x, alpha, beta, sigma);
-  double y_minus_mu_over_sigma_squared_sum; // the most efficient way to calculate this depends on template parameters
+  double y_minus_mu_over_sigma_squared_sum;  // the most efficient way to
+                                             // calculate this depends on
+                                             // template parameters
   if (!(is_constant_struct<T_y>::value && is_constant_struct<T_x>::value
         && is_constant_struct<T_beta>::value
         && is_constant_struct<T_alpha>::value)) {
-    Matrix<T_partials_return, Dynamic, 1> mu_derivative = inv_sigma * y_minus_mu_over_sigma;
+    Matrix<T_partials_return, Dynamic, 1> mu_derivative
+        = inv_sigma * y_minus_mu_over_sigma;
     if (!is_constant_struct<T_y>::value) {
       ops_partials.edge1_.partials_ = -mu_derivative;
     }
     if (!is_constant_struct<T_x>::value) {
-      ops_partials.edge2_.partials_ = (beta_val_vec * mu_derivative.transpose()).transpose();
+      ops_partials.edge2_.partials_
+          = (beta_val_vec * mu_derivative.transpose()).transpose();
     }
     if (!is_constant_struct<T_beta>::value) {
       ops_partials.edge4_.partials_ = mu_derivative.transpose() * x_val;
@@ -133,26 +140,34 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
     }
     if (!is_constant_struct<T_scale>::value) {
       if (is_vector<T_scale>::value) {
-        Array<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma_squared = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
+        Array<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma_squared
+            = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
         y_minus_mu_over_sigma_squared_sum = y_minus_mu_over_sigma_squared.sum();
         ops_partials.edge5_.partials_
             = (y_minus_mu_over_sigma_squared - 1) * inv_sigma;
       } else {
-        y_minus_mu_over_sigma_squared_sum = (y_minus_mu_over_sigma * y_minus_mu_over_sigma).sum();
+        y_minus_mu_over_sigma_squared_sum
+            = (y_minus_mu_over_sigma * y_minus_mu_over_sigma).sum();
         ops_partials.edge5_.partials_[0]
             = (y_minus_mu_over_sigma_squared_sum - N) * as_scalar(inv_sigma);
       }
     }
-  }
-  else{
-    y_minus_mu_over_sigma_squared_sum = (y_minus_mu_over_sigma * y_minus_mu_over_sigma).sum();
+  } else {
+    y_minus_mu_over_sigma_squared_sum
+        = (y_minus_mu_over_sigma * y_minus_mu_over_sigma).sum();
   }
 
-  if(!std::isfinite(y_minus_mu_over_sigma_squared_sum)){ //only do potentially expensive checks if they are really needed
+  if (!std::isfinite(
+          y_minus_mu_over_sigma_squared_sum)) {  // only do potentially
+                                                 // expensive checks if they are
+                                                 // really needed
     check_finite(function, "Vector of dependent variables", y);
     check_finite(function, "Weight vector", beta);
     check_finite(function, "Intercept", alpha);
-    check_finite(function, "Matrix of independent variables", y_minus_mu_over_sigma_squared_sum); // if all other checks passed this will only fail if x is not finite
+    check_finite(function, "Matrix of independent variables",
+                 y_minus_mu_over_sigma_squared_sum);  // if all other checks
+                                                      // passed this will only
+                                                      // fail if x is not finite
   }
 
   // Compute log probability.

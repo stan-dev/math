@@ -7,15 +7,14 @@ namespace stan {
 namespace math {
 
 /**
- * Converts input to a scalar. For scalar arguments this is an identity function.
+ * Converts input to a scalar. For scalar arguments this is an identity
+ * function.
  * @param a Input value
  * @return Same value
  */
-double as_scalar(double a){
-  return a;
-}
+double as_scalar(double a) { return a; }
 
-}
-}
+}  // namespace math
+}  // namespace stan
 
 #endif

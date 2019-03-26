@@ -8,42 +8,51 @@ namespace stan {
 namespace math {
 
 /**
- * Converts input argument to a column vector or a scalar. For column vector inputs this is an identity function.
+ * Converts input argument to a column vector or a scalar. For column vector
+ * inputs this is an identity function.
  *
  * @tparam T Type of scalar element.
  * @param a Specified vector.
  * @return Same vector.
  */
-template<typename T>
-const Eigen::Matrix <T, Eigen::Dynamic, 1>& as_column_vector_or_scalar(const Eigen::Matrix <T, Eigen::Dynamic, 1>& a) {
+template <typename T>
+const Eigen::Matrix<T, Eigen::Dynamic, 1>& as_column_vector_or_scalar(
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& a) {
   return a;
 }
 
 /**
- * Converts input argument to a column vector or a scalar. For a row vector input this is transpose.
+ * Converts input argument to a column vector or a scalar. For a row vector
+ * input this is transpose.
  *
  * @tparam T Type of scalar element.
  * @param a Specified vector.
  * @return Transposed vector.
  */
-template<typename T>
-Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>> as_column_vector_or_scalar(const Eigen::Matrix <T, 1, Eigen::Dynamic>& a) {
-  return Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>> (a.data(), a.size()); //uses Eigen::Map instead of .transpose() so that there are less possible output types
+template <typename T>
+Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>>
+as_column_vector_or_scalar(const Eigen::Matrix<T, 1, Eigen::Dynamic>& a) {
+  return Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>>(
+      a.data(), a.size());  // uses Eigen::Map instead of .transpose() so that
+                            // there are less possible output types
 }
 
 /**
- * Converts input argument to a column vector or a scalar. Std::vector will be converted to a column vector.
+ * Converts input argument to a column vector or a scalar. Std::vector will be
+ * converted to a column vector.
  *
  * @tparam T Type of scalar element.
  * @param a Specified vector.
  * @return intut converted to a column vector.
  */
-template<typename T>
-Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>> as_column_vector_or_scalar(const std::vector<T>& a) {
-  return Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>> (a.data(), a.size());
+template <typename T>
+Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>>
+as_column_vector_or_scalar(const std::vector<T>& a) {
+  return Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>>(a.data(),
+                                                               a.size());
 }
 
-}
-}
+}  // namespace math
+}  // namespace stan
 
 #endif

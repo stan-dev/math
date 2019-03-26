@@ -54,14 +54,14 @@ namespace math {
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta>
 typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
-    const T_y &y, const T_x &x, const T_alpha &alpha, const T_beta &beta) {
+    const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
   static const char* function = "poisson_log_glm_lpmf";
   typedef typename stan::partials_return_type<T_y, T_x, T_alpha, T_beta>::type
-          T_partials_return;
+      T_partials_return;
   typedef typename std::conditional<
-          is_vector<T_alpha>::value,
-          Eigen::Array<typename stan::partials_return_type<T_alpha>::type, -1, 1>,
-          typename stan::partials_return_type<T_alpha>::type>::type T_alpha_val;
+      is_vector<T_alpha>::value,
+      Eigen::Array<typename stan::partials_return_type<T_alpha>::type, -1, 1>,
+      typename stan::partials_return_type<T_alpha>::type>::type T_alpha_val;
 
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -95,25 +95,26 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
 
   Matrix<T_partials_return, Dynamic, 1> theta
-          = (x_val * beta_val_vec).array() + as_array_or_scalar(alpha_val_vec);
+      = (x_val * beta_val_vec).array() + as_array_or_scalar(alpha_val_vec);
 
-  Matrix<T_partials_return, Dynamic, 1> theta_derivative = as_array_or_scalar(y_val_vec) - exp(theta.array());
+  Matrix<T_partials_return, Dynamic, 1> theta_derivative
+      = as_array_or_scalar(y_val_vec) - exp(theta.array());
   double theta_derivative_sum = theta_derivative.sum();
-  if(!std::isfinite(theta_derivative_sum)){
+  if (!std::isfinite(theta_derivative_sum)) {
     check_finite(function, "Weight vector", beta);
     check_finite(function, "Intercept", alpha);
     check_finite(function, "Matrix of independent variables", theta);
   }
   if (include_summand<propto>::value) {
-    if(is_vector<T_y>::value) {
+    if (is_vector<T_y>::value) {
       logp -= sum(lgamma(as_array_or_scalar(y_val_vec) + 1.0));
-    }
-    else{
+    } else {
       logp -= lgamma(as_scalar(y_val) + 1.0);
     }
   }
   if (include_summand<propto, T_partials_return>::value) {
-    logp += (as_array_or_scalar(y_val_vec) * theta.array() - exp(theta.array())).sum();
+    logp += (as_array_or_scalar(y_val_vec) * theta.array() - exp(theta.array()))
+                .sum();
   }
 
   // Compute the necessary derivatives.
@@ -121,11 +122,11 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
   if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
         && is_constant_struct<T_alpha>::value)) {
     if (!is_constant_struct<T_beta>::value) {
-      ops_partials.edge3_.partials_
-          = x_val.transpose() * theta_derivative;
+      ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
     }
     if (!is_constant_struct<T_x>::value) {
-      ops_partials.edge1_.partials_ = (beta_val_vec * theta_derivative.transpose()).transpose();
+      ops_partials.edge1_.partials_
+          = (beta_val_vec * theta_derivative.transpose()).transpose();
     }
     if (!is_constant_struct<T_alpha>::value) {
       if (is_vector<T_alpha>::value)
@@ -139,7 +140,7 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
 
 template <typename T_y, typename T_x, typename T_alpha, typename T_beta>
 inline typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
-    const T_y &y, const T_x &x, const T_alpha &alpha, const T_beta &beta) {
+    const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
   return poisson_log_glm_lpmf<false>(y, x, alpha, beta);
 }
 }  // namespace math
