@@ -20,9 +20,7 @@ namespace math {
  */
 template <typename T, int R, int C>
 inline bool is_ldlt_factor(LDLT_factor<T, R, C>& A) {
-  if (!A.success())
-    return false;
-  return true;
+  return A.success();
 }
 
 }  // namespace math
