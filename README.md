@@ -10,7 +10,7 @@ Required Libraries
 ------------------
 Stan Math depends on three libraries:
 
-- Boost (version 1.66.0): [Boost Home Page](http://www.boost.org)
+- Boost (version 1.69.0): [Boost Home Page](http://www.boost.org)
 - Eigen (version 3.3.3): [Eigen Home Page](http://eigen.tuxfamily.org/index.php?title=Main_Page)
 - SUNDIALS (version 4.1.0): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
 
