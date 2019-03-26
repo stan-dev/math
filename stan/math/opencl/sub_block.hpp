@@ -36,8 +36,8 @@ namespace math {
  */
 template <TriangularViewCL triangular_view>
 inline void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
-                          size_t this_i, size_t this_j, size_t nrows,
-                          size_t ncols) {
+                                 size_t this_i, size_t this_j, size_t nrows,
+                                 size_t ncols) {
   if (nrows == 0 || ncols == 0) {
     return;
   }
