@@ -36,9 +36,12 @@ class matrix_cl {
   cl::Buffer oclBuffer_;
   const int rows_;
   const int cols_;
-  mutable std::vector<cl::Event> read_events_;  // Used to track read jobs in queue
-  mutable std::vector<cl::Event> write_events_; // Used to track write jobs in queue
+  mutable std::vector<cl::Event>
+      read_events_;  // Used to track read jobs in queue
+  mutable std::vector<cl::Event>
+      write_events_;  // Used to track write jobs in queue
   mutable std::vector<cl::Event> read_write_events_;
+
  public:
   // Forward declare the methods that work in place on the matrix
   template <TriangularViewCL triangular_view = TriangularViewCL::Entire>

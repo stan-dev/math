@@ -2,24 +2,23 @@
 #define STAN_MATH_OPENCL_BUFFER_TYPES_HPP
 #ifdef STAN_OPENCL
 
-
 namespace stan {
 namespace math {
 namespace opencl_kernels {
-  struct read_buffer {
-    typedef cl::Buffer buffer;
-    static const eventTypeCL event_type = eventTypeCL::read;
-  };
+struct read_buffer {
+  typedef cl::Buffer buffer;
+  static const eventTypeCL event_type = eventTypeCL::read;
+};
 
-  struct write_buffer {
-    typedef cl::Buffer buffer;
-    static const eventTypeCL event_type = eventTypeCL::write;
-  };
+struct write_buffer {
+  typedef cl::Buffer buffer;
+  static const eventTypeCL event_type = eventTypeCL::write;
+};
 
-  struct read_write_buffer {
-    typedef cl::Buffer buffer;
-    static const eventTypeCL event_type = eventTypeCL::read_write;
-  };
+struct read_write_buffer {
+  typedef cl::Buffer buffer;
+  static const eventTypeCL event_type = eventTypeCL::read_write;
+};
 
 namespace internal {
 
@@ -90,11 +89,10 @@ struct to_matrix<read_write_buffer> {
   typedef matrix_cl type;
 };
 
-
-}
-}
-}
-}
+}  // namespace internal
+}  // namespace opencl_kernels
+}  // namespace math
+}  // namespace stan
 
 #endif
 #endif

@@ -60,10 +60,10 @@ void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
           sizeof(double) * this->rows(),
           this->rows() * this->cols() * sizeof(double));
     } else {
-      opencl_kernels::sub_block(cl::NDRange(nrows, ncols), A,
-                                *this, A_i, A_j, this_i, this_j, nrows,
-                                ncols, A.rows(), A.cols(), this->rows(),
-                                this->cols(), triangular_view);
+      opencl_kernels::sub_block(cl::NDRange(nrows, ncols), A, *this, A_i, A_j,
+                                this_i, this_j, nrows, ncols, A.rows(),
+                                A.cols(), this->rows(), this->cols(),
+                                triangular_view);
     }
   } catch (const cl::Error& e) {
     check_opencl_error("copy_submatrix", e);
