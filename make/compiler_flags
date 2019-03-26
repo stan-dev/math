@@ -180,14 +180,14 @@ endif
 TBB_ABSOLUTE_PATH = $(abspath $(TBB))
 
 ifeq ($(OS),Windows_NT)
-  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(TBB)/lib/tbb $(TBB)/lib/tbbmalloc_proxy)
+  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(TBB)/lib/tbb $(TBB)/lib/tbbmalloc $(TBB)/lib/tbbmalloc_proxy)
 else
-  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(TBB)/lib/libtbb $(TBB)/lib/libtbbmalloc_proxy)
+  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(TBB)/lib/libtbb $(TBB)/lib/libtbbmalloc $(TBB)/lib/libtbbmalloc_proxy)
 endif
 
 CXXFLAGS_TBB ?= -I $(TBB)/include
 LDFLAGS_TBB ?= -Wl,-L,"$(TBB_ABSOLUTE_PATH)/lib" -Wl,-rpath,"$(TBB_ABSOLUTE_PATH)/lib"
-LDLIBS_TBB ?= -ltbb -ltbbmalloc_proxy
+LDLIBS_TBB ?= -ltbb -ltbbmalloc -ltbbmalloc_proxy
 
 
 ################################################################################
