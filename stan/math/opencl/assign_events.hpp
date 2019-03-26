@@ -19,7 +19,8 @@ inline void assign_event(const T& t, cl::Event new_event) {}
 
 /**
  * Adds event to matrices appropriate event stack.
- * @tparam buffer_type Whether the matrix_cl should add to it's read or write stack.
+ * @tparam buffer_type Whether the matrix_cl should add to it's read or write
+ * stack.
  * @param m Matrix to add the event to it's event stack.
  * @param new_event The event to add to the matrices event stack.
  */
