@@ -21,7 +21,7 @@ namespace math {
  * input matrices do not have matching dimensions
  *
  */
-inline matrix_cl add(matrix_cl& A, matrix_cl& B) {
+inline matrix_cl add(const matrix_cl& A, const matrix_cl& B) {
   check_matching_dims("add", "A", A, "B", B);
   matrix_cl C(A.rows(), A.cols());
   if (C.size() == 0) {
@@ -48,7 +48,7 @@ inline matrix_cl add(matrix_cl& A, matrix_cl& B) {
  * input matrices do not have matching dimensions
  *
  */
-inline auto operator+(matrix_cl& A, matrix_cl& B) {
+inline auto operator+(const matrix_cl& A, const matrix_cl& B) {
   return add(A, B);
 }
 }  // namespace math

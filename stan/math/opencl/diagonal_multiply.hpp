@@ -15,7 +15,7 @@ namespace math {
  * @param scalar scalar
  * @return copy of the input matrix with the diagonal multiplied by scalar
  */
-inline matrix_cl diagonal_multiply(matrix_cl& A, const double scalar) {
+inline matrix_cl diagonal_multiply(const matrix_cl& A, const double scalar) {
   matrix_cl B(A);
   if (B.size() == 0)
     return B;

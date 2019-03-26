@@ -14,12 +14,12 @@ template <typename T>
 inline void assign_event(const T& t, cl::Event new_event) {}
 
 template <typename P = read_write_buffer>
-inline void assign_event(matrix_cl& m, cl::Event new_event) {
+inline void assign_event(const matrix_cl& m, cl::Event new_event) {
   m.add_event<P::event_type>(new_event);
 }
 
 template <typename P = read_write_buffer>
-inline void assign_event(matrix_cl* & m, cl::Event new_event) {
+inline void assign_event(const matrix_cl* & m, cl::Event new_event) {
    m->add_event<P::event_type>(new_event);
 }
 

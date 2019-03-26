@@ -107,7 +107,7 @@ void copy(Eigen::Matrix<double, R, C>& dst, const matrix_cl& src) {
  * @return the packed std::vector
  */
 template <TriangularViewCL triangular_view>
-inline std::vector<double> packed_copy(matrix_cl& src) {
+inline std::vector<double> packed_copy(const matrix_cl& src) {
   const int packed_size = src.rows() * (src.rows() + 1) / 2;
   std::vector<double> dst(packed_size);
   if (dst.size() == 0) {
@@ -174,7 +174,7 @@ inline matrix_cl packed_copy(const std::vector<double>& src, int rows) {
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
-inline void copy(matrix_cl& dst, matrix_cl& src) {
+inline void copy(matrix_cl& dst, const matrix_cl& src) {
   check_size_match("copy ((OpenCL) -> (OpenCL))", "src.rows()", src.rows(),
                    "dst.rows()", dst.rows());
   check_size_match("copy ((OpenCL) -> (OpenCL))", "src.cols()", src.cols(),

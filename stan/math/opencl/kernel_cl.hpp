@@ -132,7 +132,7 @@ struct global_range_kernel {
    */
   auto operator()(
       cl::NDRange global_thread_size,
-      typename internal::to_matrix<Args>::type&... args) const {
+      const typename internal::to_matrix<Args>::type&... args) const {
     auto f = make_functor();
     std::vector<cl::Event> kernel_events = vec_concat(select_events<Args>(args)...);
     cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
@@ -170,7 +170,7 @@ struct local_range_kernel {
    */
   auto operator()(
       cl::NDRange global_thread_size, cl::NDRange thread_block_size,
-      typename internal::to_matrix<Args>::type&... args) const {
+      const typename internal::to_matrix<Args>::type&... args) const {
     auto f = make_functor();
     std::vector<cl::Event> kernel_events = vec_concat(select_events<Args>(args)...);
     cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,

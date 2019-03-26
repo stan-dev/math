@@ -43,7 +43,7 @@ namespace math {
  * @throw std::domain_error if m is not
  *  positive definite (if m has more than 0 elements)
  */
-inline matrix_cl cholesky_decompose(matrix_cl& A) {
+inline matrix_cl cholesky_decompose(const matrix_cl& A) {
   if (A.rows() == 0)
     return A;
   // Repeats the blocked cholesky decomposition until the size of the remaining

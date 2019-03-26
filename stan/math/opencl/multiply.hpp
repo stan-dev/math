@@ -32,7 +32,7 @@ namespace opencl {
 
 template <TriangularViewCL triangular_view_A = TriangularViewCL::Entire,
           TriangularViewCL triangular_view_B = TriangularViewCL::Entire>
-inline auto multiply(matrix_cl& A, matrix_cl& B) {
+inline auto multiply(matrix_cl A, matrix_cl B) {
   check_size_match("multiply ((OpenCL))", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
   matrix_cl temp(A.rows(), B.cols());
@@ -81,7 +81,7 @@ inline auto multiply(matrix_cl& A, matrix_cl& B) {
  * @param scalar scalar
  * @return matrix multipled with scalar
  */
-inline matrix_cl multiply(matrix_cl& A, const double scalar) {
+inline matrix_cl multiply(matrix_cl A, const double scalar) {
   matrix_cl temp(A.rows(), A.cols());
   if (A.size() == 0)
     return temp;
@@ -103,7 +103,7 @@ inline matrix_cl multiply(matrix_cl& A, const double scalar) {
  * @param A matrix
  * @return matrix multipled with scalar
  */
-inline auto multiply(const double scalar, matrix_cl& A) {
+inline auto multiply(const double scalar, matrix_cl A) {
   return multiply(A, scalar);
 }
 
@@ -119,7 +119,7 @@ inline auto multiply(const double scalar, matrix_cl& A) {
  * @throw <code>std::invalid_argument</code> if the
  *   number of columns in A and rows in B do not match
  */
-inline auto multiply(matrix_cl& A, matrix_cl& B) {
+inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   return opencl::multiply(A, B);
 }
 
@@ -135,13 +135,13 @@ inline auto multiply(matrix_cl& A, matrix_cl& B) {
  * @throw <code>std::invalid_argument</code> if the
  *   number of columns in A and rows in B do not match
  */
-inline matrix_cl operator*(matrix_cl& A, matrix_cl& B) {
+inline matrix_cl operator*(const matrix_cl& A, const matrix_cl& B) {
   return opencl::multiply(A, B);
 }
-inline matrix_cl operator*(matrix_cl& B, const double scalar) {
+inline matrix_cl operator*(const matrix_cl& B, const double scalar) {
   return multiply(B, scalar);
 }
-inline matrix_cl operator*(const double scalar, matrix_cl& B) {
+inline matrix_cl operator*(const double scalar, const matrix_cl& B) {
   return multiply(scalar, B);
 }
 }  // namespace math

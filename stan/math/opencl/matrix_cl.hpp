@@ -36,9 +36,9 @@ class matrix_cl {
   cl::Buffer oclBuffer_;
   const int rows_;
   const int cols_;
-  std::vector<cl::Event> read_events_;  // Used to track read jobs in queue
-  std::vector<cl::Event> write_events_; // Used to track write jobs in queue
-  std::vector<cl::Event> read_write_events_;
+  mutable std::vector<cl::Event> read_events_;  // Used to track read jobs in queue
+  mutable std::vector<cl::Event> write_events_; // Used to track write jobs in queue
+  mutable std::vector<cl::Event> read_write_events_;
  public:
   // Forward declare the methods that work in place on the matrix
   template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
@@ -46,7 +46,7 @@ class matrix_cl {
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   void triangular_transpose();
   template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
-  void sub_block(matrix_cl& A, size_t A_i, size_t A_j, size_t this_i,
+  void sub_block(const matrix_cl& A, size_t A_i, size_t A_j, size_t this_i,
                  size_t this_j, size_t nrows, size_t ncols);
 
   int rows() const { return rows_; }
@@ -66,7 +66,7 @@ class matrix_cl {
   }
   // push a new event onto the event stack
   template <eventTypeCL event_type = eventTypeCL::read_write>
-  inline void add_event(cl::Event new_event) {
+  inline void add_event(cl::Event new_event) const {
     if (event_type == eventTypeCL::read) {
       this->read_events_.push_back(new_event);
       this->read_write_events_.push_back(new_event);
@@ -170,6 +170,10 @@ class matrix_cl {
                      a.rows(), "destination.rows()", rows());
     check_size_match("assignment of (OpenCL) matrices", "source.cols()",
                      a.cols(), "destination.cols()", cols());
+    cl::CommandQueue& queue = opencl_context.queue();
+    cl::Event assign_event;
+    assign_event.waitForEvents(a.events());
+    assign_event.wait();
     oclBuffer_ = a.buffer();
     return *this;
   }

@@ -62,7 +62,7 @@ struct to_buffer<read_write_buffer> {
  */
 template <typename T = cl::Buffer>
 struct to_matrix {
-  typedef const T type;
+  typedef T type;
 };
 
 template <>
