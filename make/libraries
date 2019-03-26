@@ -88,31 +88,13 @@ TBB_CXX_TYPE ?= $(CXX_TYPE)
 
 #workaround for non-depend targets tbb and tbbmalloc which both depend on version_string.ver
 #According to documentation, recursively invoked make commands can process their targets in parallel
-.NOTPARALLEL: tbb tbbmalloc tbb-windows tbbmalloc-windows
+.NOTPARALLEL: tbb tbbmalloc
 
-PHONY: tbb tbbmalloc tbb-windows tbbmalloc-windows
-
-ifeq ($(OS),Windows_NT)
-  ## Detecting Process Bitness:
-  #  ## http://blogs.msdn.com/b/david.wang/archive/2006/03/26/howto-detect-process-bitness.aspx
-  ifeq ($(PROCESSOR_ARCHITECTURE)$(PROCESSOR_ARCHITEW6432),x86)
-    TBB_WINDOWS_ARCH ?= ia32
-  else
-    TBB_WINDOWS_ARCH ?= intel64
-  endif
-endif
-
-tbb-windows:
-	@mkdir -p $(TBB)/lib
-	tbb_root="$(TBB_ABSOLUTE_PATH)" CXX="$(CXX)" $(MAKE) -C $(TBB)/lib -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbb" compiler=$(TBB_CXX_TYPE) arch=$(TBB_WINDOWS_ARCH) runtime=mingw cfg=release
+PHONY: tbb tbbmalloc
 
 tbb:
 	@mkdir -p $(TBB)/lib
 	tbb_root="$(TBB_ABSOLUTE_PATH)" CXX="$(CXX)" $(MAKE) -C $(TBB)/lib -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbb" compiler=$(TBB_CXX_TYPE) cfg=release
-
-tbbmalloc-windows: tbb-windows
-	@mkdir -p $(TBB)/lib
-	tbb_root="$(TBB_ABSOLUTE_PATH)" CXX="$(CXX)" $(MAKE) -C $(TBB)/lib -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" compiler=$(TBB_CXX_TYPE) arch=$(TBB_WINDOWS_ARCH) runtime=mingw cfg=release malloc
 
 tbbmalloc: tbb 
 	@mkdir -p $(TBB)/lib
@@ -126,9 +108,9 @@ $(TBB)/lib/libtbb.so: tbb
 $(TBB)/lib/libtbbmalloc.so: tbbmalloc
 $(TBB)/lib/libtbbmalloc_proxy.so: tbbmalloc
 
-$(TBB)/lib/libtbb.dll: tbb-windows
-$(TBB)/lib/libtbbmalloc.dll: tbbmalloc-windows
-$(TBB)/lib/libtbbmalloc_proxy.dll: tbbmalloc-windows
+$(TBB)/lib/tbb.dll: tbb
+$(TBB)/lib/tbbmalloc.dll: tbbmalloc
+$(TBB)/lib/tbbmalloc_proxy.dll: tbbmalloc
 
 #$(TBB)/lib/libtbb.dylib: tbb
 #	install_name_tool -add_rpath "$(TBB_ABSOLUTE_PATH)/lib" "$(TBB)/lib/libtbb.dylib"
