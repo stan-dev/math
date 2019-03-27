@@ -101,7 +101,8 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   T_y_val signs = 2 * as_array_or_scalar(y_val_vec) - 1;
 
   Eigen::Array<T_partials_return, Dynamic, 1> ytheta = x_val * beta_val_vec;
-  ytheta = as_array_or_scalar(signs) * (ytheta + as_array_or_scalar(alpha_val_vec));
+  ytheta = as_array_or_scalar(signs)
+           * (ytheta + as_array_or_scalar(alpha_val_vec));
 
   // Compute the log-density and handle extreme values gracefully
   // using Taylor approximations.
