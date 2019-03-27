@@ -138,9 +138,8 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
   const auto& y_arr = as_array_or_scalar(y_val_vec);
   const auto& phi_arr = as_array_or_scalar(phi_val_vec);
 
-  Array<T_partials_return, Dynamic, 1> theta
-      = (value_of(x) * beta_val_vec).array()
-        + as_array_or_scalar(alpha_val_vec);
+  Array<T_partials_return, Dynamic, 1> theta = value_of(x) * beta_val_vec;
+  theta += as_array_or_scalar(alpha_val_vec);
   for (size_t n = 0; n < N; ++n)
     check_finite(function, "Matrix of independent variables", theta[n]);
   T_precision_val log_phi = log(phi_arr);

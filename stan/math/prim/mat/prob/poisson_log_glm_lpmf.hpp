@@ -94,8 +94,8 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
   const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
 
-  Matrix<T_partials_return, Dynamic, 1> theta
-      = (x_val * beta_val_vec).array() + as_array_or_scalar(alpha_val_vec);
+  Matrix<T_partials_return, Dynamic, 1> theta = x_val * beta_val_vec;
+  theta.array() += as_array_or_scalar(alpha_val_vec);
 
   Matrix<T_partials_return, Dynamic, 1> theta_derivative
       = as_array_or_scalar(y_val_vec) - exp(theta.array());
@@ -119,21 +119,18 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
 
   // Compute the necessary derivatives.
   operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
-  if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
-        && is_constant_struct<T_alpha>::value)) {
-    if (!is_constant_struct<T_beta>::value) {
-      ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
-    }
-    if (!is_constant_struct<T_x>::value) {
-      ops_partials.edge1_.partials_
-          = (beta_val_vec * theta_derivative.transpose()).transpose();
-    }
-    if (!is_constant_struct<T_alpha>::value) {
-      if (is_vector<T_alpha>::value)
-        ops_partials.edge2_.partials_ = theta_derivative;
-      else
-        ops_partials.edge2_.partials_[0] = theta_derivative_sum;
-    }
+  if (!is_constant_struct<T_beta>::value) {
+    ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
+  }
+  if (!is_constant_struct<T_x>::value) {
+    ops_partials.edge1_.partials_
+        = (beta_val_vec * theta_derivative.transpose()).transpose();
+  }
+  if (!is_constant_struct<T_alpha>::value) {
+    if (is_vector<T_alpha>::value)
+      ops_partials.edge2_.partials_ = theta_derivative;
+    else
+      ops_partials.edge2_.partials_[0] = theta_derivative_sum;
   }
   return ops_partials.build(logp);
 }
