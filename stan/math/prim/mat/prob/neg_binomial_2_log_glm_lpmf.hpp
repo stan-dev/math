@@ -155,13 +155,14 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
     logp -= sum(lgamma(y_arr + 1));
   }
   if (include_summand<propto, T_precision>::value) {
-    if(is_vector<T_precision>::value) {
+    if (is_vector<T_precision>::value) {
       scalar_seq_view<decltype(phi_val)> phi_vec(phi_val);
       for (size_t n = 0; n < N; ++n)
         logp += multiply_log(phi_vec[n], phi_vec[n]) - lgamma(phi_vec[n]);
-    }
-    else{
-      logp += N * (multiply_log(as_scalar(phi_val), as_scalar(phi_val)) - lgamma(as_scalar(phi_val)));
+    } else {
+      logp += N
+              * (multiply_log(as_scalar(phi_val), as_scalar(phi_val))
+                 - lgamma(as_scalar(phi_val)));
     }
   }
   if (include_summand<propto, T_x, T_alpha, T_beta, T_precision>::value)
