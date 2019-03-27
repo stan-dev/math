@@ -13,7 +13,7 @@ namespace math {
  * @return 1x1 matrix that contains the value of scalar.
  */
 template <typename T>
-T as_column_vector_or_scalar(const T a) {
+inline T as_column_vector_or_scalar(const T a) {
   return a;
 }
 

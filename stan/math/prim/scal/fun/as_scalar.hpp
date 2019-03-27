@@ -10,7 +10,7 @@ namespace math {
  * @param a Input value
  * @return Same value
  */
-double as_scalar(double a) { return a; }
+inline double as_scalar(double a) { return a; }
 
 }  // namespace math
 }  // namespace stan

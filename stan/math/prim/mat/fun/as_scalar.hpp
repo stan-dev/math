@@ -18,7 +18,7 @@ namespace math {
  * @return Never returns
  */
 template <typename Derived>
-double as_scalar(const Eigen::DenseBase<Derived>& a) {
+inline double as_scalar(const Eigen::DenseBase<Derived>& a) {
   throw std::runtime_error("A matrix can not be used as a scalar!");
 }
 

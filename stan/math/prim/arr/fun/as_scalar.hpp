@@ -17,7 +17,7 @@ namespace math {
  * @return Never returns
  */
 template <typename T>
-double as_scalar(const std::vector<T>& a) {
+inline double as_scalar(const std::vector<T>& a) {
   throw std::runtime_error("A vector can not be used as a scalar!");
 }
 

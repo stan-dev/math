@@ -16,7 +16,7 @@ namespace math {
  * @return Same vector.
  */
 template <typename T>
-const Eigen::Matrix<T, Eigen::Dynamic, 1>& as_column_vector_or_scalar(
+inline const Eigen::Matrix<T, Eigen::Dynamic, 1>& as_column_vector_or_scalar(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& a) {
   return a;
 }
@@ -30,7 +30,7 @@ const Eigen::Matrix<T, Eigen::Dynamic, 1>& as_column_vector_or_scalar(
  * @return Transposed vector.
  */
 template <typename T>
-Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>>
+inline Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>>
 as_column_vector_or_scalar(const Eigen::Matrix<T, 1, Eigen::Dynamic>& a) {
   return Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>>(
       a.data(), a.size());  // uses Eigen::Map instead of .transpose() so that
@@ -46,7 +46,7 @@ as_column_vector_or_scalar(const Eigen::Matrix<T, 1, Eigen::Dynamic>& a) {
  * @return intut converted to a column vector.
  */
 template <typename T>
-Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>>
+inline Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>>
 as_column_vector_or_scalar(const std::vector<T>& a) {
   return Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>>(a.data(),
                                                                a.size());
