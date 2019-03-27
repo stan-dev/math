@@ -23,12 +23,6 @@
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/fun/as_array_or_scalar.hpp>
-#include <stan/math/prim/scal/fun/as_scalar.hpp>
-#include <stan/math/prim/mat/fun/as_scalar.hpp>
-#include <stan/math/prim/arr/fun/as_scalar.hpp>
-#include <stan/math/prim/mat/fun/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/scal/fun/as_column_vector_or_scalar.hpp>
 #include <cmath>
 
 namespace stan {

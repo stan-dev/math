@@ -12,7 +12,6 @@
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/mat/fun/lgamma.hpp>
-#include <stan/math/rev/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/log_sum_exp.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
@@ -26,6 +25,7 @@
 #include <stan/math/prim/mat/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/scal/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/scal/fun/sum.hpp>
+#include <vector>
 #include <cmath>
 
 namespace stan {
@@ -198,13 +198,13 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
         ops_partials.edge4_.partials_
             = 1 - y_plus_phi / (theta_exp + phi_arr) + log_phi
               - logsumexp_theta_logphi + as_array_or_scalar(digamma(y_plus_phi))
-              - as_array_or_scalar(digamma(phi_val));
+              - as_array_or_scalar(digamma(phi_val_vec));
       } else {
         ops_partials.edge4_.partials_[0]
             = (1 - y_plus_phi / (theta_exp + phi_arr) + log_phi
                - logsumexp_theta_logphi
                + as_array_or_scalar(digamma(y_plus_phi))
-               - as_array_or_scalar(digamma(phi_val)))
+               - as_array_or_scalar(digamma(phi_val_vec)))
                   .sum();
       }
     }

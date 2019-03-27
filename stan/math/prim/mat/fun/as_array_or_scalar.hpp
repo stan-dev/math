@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_AS_ARRAY_OR_SCALAR_HPP
 
 #include <Eigen\Dense>
+#include <vector>
 
 namespace stan {
 namespace math {
