@@ -182,7 +182,6 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
   }
   if (include_summand<propto, T_y, T_x, T_alpha, T_beta, T_scale>::value)
     logp -= 0.5 * y_minus_mu_over_sigma_squared_sum;
-
   return ops_partials.build(logp);
 }
 
