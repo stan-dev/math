@@ -43,33 +43,14 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B, int split = 1) {
       "THREAD_BLOCK_SIZE");
   int Mpad = ((A.rows() + local - 1) / local) * local;
   int Npad = ((B.cols() + local - 1) / local) * local;
-  int Kpad = ((A.cols() + local - 1) / local) * local;
-  // padding the matrices so the dimensions are divisible with local
-  // improves performance and readability because we can omit
-  // if statements in the
-  // multiply kernel
-  if (split < 1) {
-    split = 1;
-  }
-  matrix_cl tempPad(Mpad, Npad * split);
-  matrix_cl Apad(Mpad, Kpad);
-  matrix_cl Bpad(Kpad, Npad);
-  opencl_kernels::zeros(cl::NDRange(Mpad, Kpad), Apad.buffer(), Mpad, Kpad,
-                        TriangularViewCL::Entire);
-  opencl_kernels::zeros(cl::NDRange(Kpad, Npad), Bpad.buffer(), Kpad, Npad,
-                        TriangularViewCL::Entire);
-  opencl_kernels::zeros(cl::NDRange(Mpad, Npad * split), tempPad.buffer(), Mpad,
-                        Npad * split, TriangularViewCL::Entire);
-  Apad.sub_block<triangular_view_A>(A, 0, 0, 0, 0, A.rows(), A.cols());
-  Bpad.sub_block<triangular_view_B>(B, 0, 0, 0, 0, B.rows(), B.cols());
   int wpt = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
       "WORK_PER_THREAD");
   try {
-    if(split <= 1) {
+    if (split <= 1) {
       opencl_kernels::matrix_multiply(
         cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
-        Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
-        Bpad.cols(), Bpad.rows(), triangular_view_A, triangular_view_B);
+        A.buffer(), B.buffer(), temp.buffer(), A.rows(), B.cols(), B.rows(),
+        triangular_view_A, triangular_view_B);
     } else {
       opencl_kernels::multiply_rect(
         cl::NDRange(Mpad, Npad / wpt, split), cl::NDRange(local, local / wpt, 1),
@@ -81,8 +62,6 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B, int split = 1) {
   } catch (cl::Error& e) {
     check_opencl_error("multiply", e);
   }
-  // unpadding the result matrix
-  temp.sub_block(tempPad, 0, 0, 0, 0, temp.rows(), temp.cols());
   return temp;
 }
 }  // namespace opencl

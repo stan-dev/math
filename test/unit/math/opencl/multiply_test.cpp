@@ -223,9 +223,8 @@ TEST(MathMatrix, upper_tri_rect_multiply_small) {
   auto m2 = stan::math::matrix_d::Random(3, 3).eval();
   stan::math::matrix_d m3_cl_res(3, 3);
 
-  m1.triangularView<Eigen::StrictlyLower>().setZero();
-
   stan::math::matrix_cl m11(m1);
+  m1.triangularView<Eigen::StrictlyLower>().setZero();
   stan::math::matrix_cl m22(m2);
 
   auto m3 = (m1 * m2).eval();
@@ -265,9 +264,8 @@ TEST(MathMatrix, upper_tri_rect_multiply_big_rect) {
   auto m2 = stan::math::matrix_d::Random(size, size * 3).eval();
   stan::math::matrix_d m3_cl_res(size, size * 3);
 
-  m1.triangularView<Eigen::StrictlyLower>().setZero();
-
   stan::math::matrix_cl m11(m1);
+  m1.triangularView<Eigen::StrictlyLower>().setZero();
   stan::math::matrix_cl m22(m2);
 
   auto m3 = (m1 * m2).eval();
@@ -329,10 +327,10 @@ TEST(MathMatrix, rect_lower_tri_multiply_big_rect) {
   auto m2 = stan::math::matrix_d::Random(size, size * 3).eval();
   stan::math::matrix_d m3_cl_res(size, size * 3);
 
-  m2.triangularView<Eigen::StrictlyUpper>().setZero();
-
   stan::math::matrix_cl m11(m1);
   stan::math::matrix_cl m22(m2);
+
+  m2.triangularView<Eigen::StrictlyUpper>().setZero();
 
   auto m3 = (m1 * m2).eval();
 

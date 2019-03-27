@@ -52,18 +52,30 @@ static const char* multiply_transpose_kernel_code = STRINGIFY(
           const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
           const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
           // if the data needs to be loaded to local memory
-
           // each thread copies WORK_PER_THREAD values to the
           // local memory
           for (int w = 0; w < WORK_PER_THREAD; w++) {
-            A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                   [thread_block_row]
-                = A[i + (tiled_j + w * THREAD_BLOCK_SIZE_COL) * M];
-            B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                   [thread_block_row]
-                = A[(j + w * THREAD_BLOCK_SIZE_COL) + tiled_i * M];
+            const A_temp_j = tiled_j + w * THREAD_BLOCK_SIZE_COL;
+            const AT_temp_j = j + w * THREAD_BLOCK_SIZE_COL;
+            if (A_temp_j >= N || i >= M) {
+              A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                     [thread_block_row]
+                  = 0.0;
+            } else {
+              A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                     [thread_block_row]
+                  = A[A_temp_j * M + i];
+            }
+            if (AT_temp_j >= M || tiled_i >= N) {
+              B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                     [thread_block_row]
+                  = 0.0;
+            } else {
+              B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                     [thread_block_row]
+                  = A[AT_temp_j + tiled_i * M];
+            }
           }
-
           // wait till all tile values are loaded to the local memory
           barrier(CLK_LOCAL_MEM_FENCE);
           // multiply the tile products
@@ -81,10 +93,13 @@ static const char* multiply_transpose_kernel_code = STRINGIFY(
         }
         // save the values
         for (int w = 0; w < WORK_PER_THREAD; w++) {
-          // each thread saves WORK_PER_THREAD values
-          if ((j + w * THREAD_BLOCK_SIZE_COL) <= i) {
-            B[i + (j + w * THREAD_BLOCK_SIZE_COL) * M] = acc[w];
-            B[(j + w * THREAD_BLOCK_SIZE_COL) + i * M] = acc[w];
+          // padded threads should not access B
+          if ((j + w * THREAD_BLOCK_SIZE_COL) < M && i < M) {
+            // each thread saves WORK_PER_THREAD values
+            if ((j + w * THREAD_BLOCK_SIZE_COL) <= i) {
+              B[i + (j + w * THREAD_BLOCK_SIZE_COL) * M] = acc[w];
+              B[(j + w * THREAD_BLOCK_SIZE_COL) + i * M] = acc[w];
+            }
           }
         }
       }
