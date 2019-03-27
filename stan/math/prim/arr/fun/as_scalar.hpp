@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_ARR_FUN_AS_SCALAR_HPP
 
 #include <vector>
-#include <exception>
+#include <stdexcept>
 
 namespace stan {
 namespace math {

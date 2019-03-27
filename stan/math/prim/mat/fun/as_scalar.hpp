@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_AS_SCALAR_HPP
 
 #include <Eigen/Dense>
-#include <exception>
+#include <stdexcept>
 
 namespace stan {
 namespace math {
