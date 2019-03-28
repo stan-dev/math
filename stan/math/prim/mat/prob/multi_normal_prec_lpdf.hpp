@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_PREC_LPDF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_PREC_LPDF_HPP
 
+#include <stan/math/prim/mat/err/check_consistent_sizes_mvt.hpp>
 #include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/fun/columns_dot_product.hpp>
@@ -22,6 +23,7 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/meta/length_mvt.hpp>
 #include <stan/math/prim/scal/meta/max_size_mvt.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
@@ -45,6 +47,13 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_prec_lpdf(
 
   using Eigen::Matrix;
   using std::vector;
+
+  size_t number_of_y = length_mvt(y);
+  size_t number_of_mu = length_mvt(mu);
+  if (number_of_y == 0 || number_of_mu == 0)
+    return 0.0;
+  check_consistent_sizes_mvt(function, "y", y, "mu", mu);
+
   vector_seq_view<T_y> y_vec(y);
   vector_seq_view<T_loc> mu_vec(mu);
   size_t size_vec = max_size_mvt(y, mu);

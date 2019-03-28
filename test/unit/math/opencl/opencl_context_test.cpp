@@ -4,6 +4,16 @@
 #include <vector>
 #include <fstream>
 
+TEST(MathGpu, to_size_t_test) {
+  cl::size_t<3> a = stan::math::opencl::to_size_t<3>({1, 2, 3});
+  EXPECT_EQ(a[0], 1);
+  EXPECT_EQ(a[1], 2);
+  EXPECT_EQ(a[2], 3);
+
+  EXPECT_THROW(stan::math::opencl::to_size_t<4>({1, 2, 3, 4}),
+               std::domain_error);
+}
+
 TEST(MathGpu, getInfo) {
   cl::Context cl = stan::math::opencl_context.context();
   EXPECT_NE("", stan::math::opencl_context.description());
