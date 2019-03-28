@@ -104,9 +104,9 @@ $(TBB)/lib/libtbb.dylib: tbb
 $(TBB)/lib/libtbbmalloc.dylib: tbbmalloc
 $(TBB)/lib/libtbbmalloc_proxy.dylib: tbbmalloc
 
-$(TBB)/lib/libtbb.so: tbb
-$(TBB)/lib/libtbbmalloc.so: tbbmalloc
-$(TBB)/lib/libtbbmalloc_proxy.so: tbbmalloc
+$(TBB)/lib/libtbb.so.2: tbb
+$(TBB)/lib/libtbbmalloc.so.2: tbbmalloc
+$(TBB)/lib/libtbbmalloc_proxy.so.2: tbbmalloc
 
 $(TBB)/lib/tbb.dll: tbb
 $(TBB)/lib/tbbmalloc.dll: tbbmalloc
