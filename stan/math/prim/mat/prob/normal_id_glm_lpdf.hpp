@@ -7,7 +7,7 @@
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/mat/fun/value_of.hpp>
+#include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/mat/meta/is_vector.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
@@ -18,7 +18,7 @@
 #include <stan/math/prim/arr/fun/as_scalar.hpp>
 #include <stan/math/prim/mat/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/scal/fun/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/arr/fun/value_of.hpp>
+#include <stan/math/prim/arr/fun/value_of_rec.hpp>
 #include <cmath>
 
 namespace stan {
@@ -92,11 +92,11 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
   if (!include_summand<propto, T_y, T_x, T_alpha, T_beta, T_scale>::value)
     return 0.0;
 
-  const auto &x_val = value_of(x);
-  const auto &beta_val = value_of(beta);
-  const auto &alpha_val = value_of(alpha);
-  const auto &sigma_val = value_of(sigma);
-  const auto &y_val = value_of(y);
+  const auto &x_val = value_of_rec(x);
+  const auto &beta_val = value_of_rec(beta);
+  const auto &alpha_val = value_of_rec(alpha);
+  const auto &sigma_val = value_of_rec(sigma);
+  const auto &y_val = value_of_rec(y);
 
   const auto &beta_val_vec = as_column_vector_or_scalar(beta_val);
   const auto &alpha_val_vec = as_column_vector_or_scalar(alpha_val);

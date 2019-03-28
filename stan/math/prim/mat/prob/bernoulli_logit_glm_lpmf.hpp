@@ -10,8 +10,8 @@
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/mat/fun/value_of.hpp>
-#include <stan/math/prim/arr/fun/value_of.hpp>
+#include <stan/math/prim/mat/fun/value_of_rec.hpp>
+#include <stan/math/prim/arr/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/scal/fun/as_scalar.hpp>
 #include <stan/math/prim/mat/fun/as_scalar.hpp>
@@ -89,10 +89,10 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   if (!include_summand<propto, T_x, T_alpha, T_beta>::value)
     return 0.0;
 
-  const auto &x_val = value_of(x);
-  const auto &y_val = value_of(y);
-  const auto &beta_val = value_of(beta);
-  const auto &alpha_val = value_of(alpha);
+  const auto &x_val = value_of_rec(x);
+  const auto &y_val = value_of_rec(y);
+  const auto &beta_val = value_of_rec(beta);
+  const auto &alpha_val = value_of_rec(alpha);
 
   const auto &y_val_vec = as_column_vector_or_scalar(y_val);
   const auto &beta_val_vec = as_column_vector_or_scalar(beta_val);

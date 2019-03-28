@@ -13,8 +13,8 @@
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/mat/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/log_sum_exp.hpp>
-#include <stan/math/prim/mat/fun/value_of.hpp>
-#include <stan/math/prim/arr/fun/value_of.hpp>
+#include <stan/math/prim/mat/fun/value_of_rec.hpp>
+#include <stan/math/prim/arr/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/mat/meta/is_vector.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
@@ -124,11 +124,11 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
   if (!include_summand<propto, T_x, T_alpha, T_beta, T_precision>::value)
     return 0.0;
 
-  const auto& x_val = value_of(x);
-  const auto& y_val = value_of(y);
-  const auto& beta_val = value_of(beta);
-  const auto& alpha_val = value_of(alpha);
-  const auto& phi_val = value_of(phi);
+  const auto& x_val = value_of_rec(x);
+  const auto& y_val = value_of_rec(y);
+  const auto& beta_val = value_of_rec(beta);
+  const auto& alpha_val = value_of_rec(alpha);
+  const auto& phi_val = value_of_rec(phi);
 
   const auto& y_val_vec = as_column_vector_or_scalar(y_val);
   const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
