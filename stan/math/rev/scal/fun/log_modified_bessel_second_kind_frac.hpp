@@ -4,6 +4,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/scal/meta/complex_step.hpp>
 #include <stan/math/rev/scal/fun/to_var.hpp>
 
 #include <stan/math/rev/scal/fun/pow.hpp>
@@ -29,6 +30,20 @@
 
 namespace stan {
 namespace math {
+
+template <typename _Tp> 
+inline int is_inf(const std::complex<_Tp>& c) { 
+  return is_inf(c.imag()) || is_inf(c.real()); 
+}
+
+template <typename _Tp> 
+inline bool non_zero(const std::complex<_Tp>& c) {
+  return abs(c) > 0;
+}
+
+inline bool non_zero(const double& c) {
+  return c > 0;
+}
 
 namespace besselk_internal {
 
@@ -63,31 +78,44 @@ class inner_integral_rothwell {
     using std::pow;
 
     auto v_mhalf = v - 0.5;
-    auto neg2v_m1 = -2 * v - 1;
-    auto beta = 16.0 / (2 * v + 1);
+    auto neg2v_m1 = -2.0 * v - 1.0;
+    auto beta = 16.0 / (2.0 * v + 1.0);
 
     T_Ret value;
     T_Ret uB = pow(u, beta);
     T_Ret first
-        = beta * exp(-uB) * pow(2 * z + uB, v_mhalf) * boost::math::pow<7>(u);
+        = beta * exp(-uB) * pow(2.0 * z + uB, v_mhalf) * boost::math::pow<7>(u);
     T_Ret second = exp(-1.0 / u);
-    if (second > 0) {
+    if (non_zero(second)) {
+//    if (abs(second) > 0) {
       second = second * pow(u, neg2v_m1);
       if (is_inf(second)) {
         second = exp(-1.0 / u + neg2v_m1 * log(u));
       }
-      second = second * pow(2 * z * u + 1, v_mhalf);
+      second = second * pow(2.0 * z * u + 1.0, v_mhalf);
     }
     value = first + second;
 
     return value;
   }
 
-  template <class F>
-  static double integrate(const F f, double tolerance, double *error,
-                          double *L1, std::size_t *levels) {
-    boost::math::quadrature::tanh_sinh<double> integrator;
-    return integrator.integrate(f, 0.0, 1.0, tolerance, error, L1, levels);
+  T_Ret integrate() {
+    typedef T_u value_type;
+    value_type tolerance = std::sqrt(std::numeric_limits<value_type>::epsilon());
+
+    value_type error;
+    value_type L1;
+    size_t levels;
+
+    boost::math::quadrature::tanh_sinh<value_type> integrator;
+    T_Ret value = integrator.integrate(*this, 0.0, 1.0, tolerance, &error, &L1, &levels);
+    if (error > 1e-6 * L1) {
+      domain_error("inner_integral_rothwell",
+                  "error estimate of integral / L1 ", error / L1, "",
+                  "is larger than 1e-6");
+    }
+
+    return value;
   }
 };
 
@@ -152,7 +180,7 @@ T_v asymptotic_large_z(const T_v &v, const double &z) {
 // referenced from the test code.
 enum class ComputationType { Rothwell, Asymp_v, Asymp_z };
 
-const double rothwell_max_v = 75;
+const double rothwell_max_v = 50;
 const double rothwell_max_log_z_over_v = 300;
 
 inline ComputationType choose_computation_type(const double &v,
@@ -176,64 +204,13 @@ inline ComputationType choose_computation_type(const double &v,
 //                    UTILITY FUNCTIONS                       //
 ////////////////////////////////////////////////////////////////
 
-// Uses nested autodiff to get gradient with respect to v
-// Gradient with respect to z can be computed analytically
-// Code modified from gradient_of_f, to avoid depending on integrate_1d
-template <typename F, typename T>
-class inner_integral_grad_v {
- private:
-  T v;
-  T z;
-
- public:
-  inner_integral_grad_v(const T &v, const T &z) : v(v), z(z) {}
-
-  inline T operator()(const T &u) const {
-    double gradient = 0.0;
-    start_nested();
-    var v_var(stan::math::value_of(v));
-    try {
-      auto f = F(v_var, z);
-      var fx = f(u);
-      fx.grad();
-      gradient = v_var.adj();
-      if (is_nan(gradient)) {
-        if (fx.val() == 0) {
-          gradient = 0;
-        } else {
-          domain_error("inner_integral_grad_v",
-                       "The gradient of inner_integral is nan", 0, "", "");
-        }
-      }
-    } catch (const std::exception &e) {
-      recover_memory_nested();
-      throw;
-    }
-    recover_memory_nested();
-    return gradient;
-  }
-};
 
 // Wrapper to call the correct integrator
 // Code simplified from integrate_1d
 template <template <typename, typename, typename> class INTEGRAL>
 double compute_inner_integral(const double &v, const double &z) {
-  double relative_tolerance = std::sqrt(std::numeric_limits<double>::epsilon());
-
-  double error;
-  double L1;
-  size_t levels;
-
   auto f = INTEGRAL<double, double, double>(v, z);
-  double integral = INTEGRAL<double, double, double>::integrate(
-      f, relative_tolerance, &error, &L1, &levels);
-
-  if (error > 1e-6 * L1) {
-    domain_error("compute_inner_integral(double, double)",
-                 "error estimate of integral / L1 ", error / L1, "",
-                 "is larger than 1e-6");
-  }
-  return integral;
+  return f.integrate();
 }
 
 // Using inner_integral_grad_v to copute the derivative wrt. v as
@@ -243,23 +220,13 @@ template <template <typename, typename, typename> class INTEGRAL>
 var compute_inner_integral(const var &v, const double &z) {
   double integral = compute_inner_integral<INTEGRAL>(stan::math::value_of(v),
                                                      stan::math::value_of(z));
-  auto f = inner_integral_grad_v<INTEGRAL<var, double, double>, double>(v.val(),
-                                                                        z);
+  typedef std::complex<double> Complex;
+  auto complex_integral = [z](const Complex& v) {
+    auto f = INTEGRAL<Complex, double, double>(v, z);
+    return f.integrate(); 
+  }; 
 
-  double error;
-  double L1;
-  size_t levels;
-  double condition_number;
-  double relative_tolerance = std::sqrt(std::numeric_limits<double>::epsilon());
-
-  double dintegral_dv = INTEGRAL<var, double, double>::integrate(
-      f, relative_tolerance, &error, &L1, &levels);
-
-  if (error > 1e-6 * L1) {
-    domain_error("compute_inner_integral(var, double)",
-                 "error estimate of integral / L1 ", error / L1, "",
-                 "is larger than 1e-6");
-  }
+  double dintegral_dv = complex_step(complex_integral, stan::math::value_of(v));
 
   return var(new precomp_v_vari(integral, v.vi_, dintegral_dv));
 }
@@ -325,6 +292,8 @@ T_v log_modified_bessel_second_kind_frac(const T_v &v, const double &z) {
 
 template <typename T_v>
 var log_modified_bessel_second_kind_frac(const T_v &v, const var &z) {
+  using stan::is_var;
+
   T_v value = log_modified_bessel_second_kind_frac(v, z.val());
 
   double value_vm1
