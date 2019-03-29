@@ -210,16 +210,24 @@ T_v asymptotic_large_z(const T_v &v, const double &z) {
   return 0.5 * (log(pi()) - log(2) - log(z)) - z + log(series_sum);
 }
 
+// From https://en.wikipedia.org/w/index.php?title=Bessel_function&oldid=888330504#Asymptotic_forms
+template <typename T_v>
+T_v asymptotic_small_z_relative(const T_v &v, const double &z) {
+  return lgamma(v) - log(2) + v * (log(2) - log(z));
+}
+
 ////////////////////////////////////////////////////////////////
 //                    CHOOSING AMONG FORMULAE                 //
 ////////////////////////////////////////////////////////////////
 
 // The code to choose computation method is separate, because it is
 // referenced from the test code.
-enum class ComputationType { Rothwell, Asymp_v, Asymp_z };
+enum class ComputationType { Rothwell, Asymp_v, Asymp_z, Asymp_small_z_relative };
 
 const double rothwell_max_v = 50;
 const double rothwell_max_log_z_over_v = 300;
+const double small_z_factor = 10;
+const double small_z_min_v = 15;
 
 inline ComputationType choose_computation_type(const double &v,
                                                const double &z) {
@@ -229,7 +237,9 @@ inline ComputationType choose_computation_type(const double &v,
   const double rothwell_log_z_boundary
       = rothwell_max_log_z_over_v / (v_ - 0.5) - log(2);
 
-  if (v_ < rothwell_max_v && (v_ <= 0.5 || log(z) < rothwell_log_z_boundary)) {
+  if (v_ >= small_z_min_v && z * small_z_factor < sqrt(v_ + 1)) {
+    return ComputationType::Asymp_small_z_relative;
+  } else if (v_ < rothwell_max_v && (v_ <= 0.5 || log(z) < rothwell_log_z_boundary)) {
     return ComputationType::Rothwell;
   } else if (v_ > z) {
     return ComputationType::Asymp_v;
@@ -266,6 +276,7 @@ T_v log_modified_bessel_second_kind_frac(const T_v &v, const double &z) {
   using besselk_internal::ComputationType;
   using besselk_internal::asymptotic_large_v;
   using besselk_internal::asymptotic_large_z;
+  using besselk_internal::asymptotic_small_z_relative;
   using besselk_internal::check_params;
   using besselk_internal::choose_computation_type;
   using besselk_internal::compute_rothwell;
@@ -288,6 +299,9 @@ T_v log_modified_bessel_second_kind_frac(const T_v &v, const double &z) {
     }
     case ComputationType::Asymp_z: {
       return asymptotic_large_z(v_, z);
+    }
+    case ComputationType::Asymp_small_z_relative: {
+      return asymptotic_small_z_relative(v_, z);
     }
     default: {
       stan::math::domain_error("log_modified_bessel_second_kind_frac",
