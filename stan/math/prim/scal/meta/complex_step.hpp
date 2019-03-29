@@ -8,15 +8,16 @@
 namespace stan {
 namespace math {
 
-template <class F> 
-// Complex step differentiation as described at: 
+template <class F>
+// Complex step differentiation as described at:
 // https://blogs.mathworks.com/cleve/2013/10/14/complex-step-differentiation/
-double complex_step(F f, const double& x, 
-    const double& step = std::sqrt(std::numeric_limits<double>::epsilon())) {
-    typedef std::complex<double> Complex;
-    Complex x_step(x, step);
-    Complex f_x_step = f(x_step);
-    return f_x_step.imag() / step;
+double complex_step(F f, const double& x,
+                    const double& step
+                    = std::sqrt(std::numeric_limits<double>::epsilon())) {
+  typedef std::complex<double> Complex;
+  Complex x_step(x, step);
+  Complex f_x_step = f(x_step);
+  return f_x_step.imag() / step;
 }
 
 }  // namespace math

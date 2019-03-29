@@ -31,19 +31,17 @@
 namespace stan {
 namespace math {
 
-template <typename _Tp> 
-inline int is_inf(const std::complex<_Tp>& c) { 
-  return is_inf(c.imag()) || is_inf(c.real()); 
+template <typename _Tp>
+inline int is_inf(const std::complex<_Tp> &c) {
+  return is_inf(c.imag()) || is_inf(c.real());
 }
 
-template <typename _Tp> 
-inline bool non_zero(const std::complex<_Tp>& c) {
+template <typename _Tp>
+inline bool non_zero(const std::complex<_Tp> &c) {
   return abs(c) > 0;
 }
 
-inline bool non_zero(const double& c) {
-  return c > 0;
-}
+inline bool non_zero(const double &c) { return c > 0; }
 
 namespace besselk_internal {
 
@@ -87,7 +85,7 @@ class inner_integral_rothwell {
         = beta * exp(-uB) * pow(2.0 * z + uB, v_mhalf) * boost::math::pow<7>(u);
     T_Ret second = exp(-1.0 / u);
     if (non_zero(second)) {
-//    if (abs(second) > 0) {
+      //    if (abs(second) > 0) {
       second = second * pow(u, neg2v_m1);
       if (is_inf(second)) {
         second = exp(-1.0 / u + neg2v_m1 * log(u));
@@ -101,18 +99,20 @@ class inner_integral_rothwell {
 
   T_Ret integrate() {
     typedef T_u value_type;
-    value_type tolerance = std::sqrt(std::numeric_limits<value_type>::epsilon());
+    value_type tolerance
+        = std::sqrt(std::numeric_limits<value_type>::epsilon());
 
     value_type error;
     value_type L1;
     size_t levels;
 
     boost::math::quadrature::tanh_sinh<value_type> integrator;
-    T_Ret value = integrator.integrate(*this, 0.0, 1.0, tolerance, &error, &L1, &levels);
+    T_Ret value = integrator.integrate(*this, 0.0, 1.0, tolerance, &error, &L1,
+                                       &levels);
     if (error > 1e-6 * L1) {
       domain_error("inner_integral_rothwell",
-                  "error estimate of integral / L1 ", error / L1, "",
-                  "is larger than 1e-6");
+                   "error estimate of integral / L1 ", error / L1, "",
+                   "is larger than 1e-6");
     }
 
     return value;
@@ -124,10 +124,10 @@ typename boost::math::tools::promote_args<T_v, T_z>::type compute_lead_rothwell(
     const T_v &v, const T_z &z) {
   typedef typename boost::math::tools::promote_args<T_v, T_z>::type T_Ret;
 
+  using boost::math::lgamma;
   using std::exp;
   using std::log;
   using std::pow;
-  using boost::math::lgamma;
 
   const T_Ret lead = 0.5 * log(pi()) - lgamma(v + 0.5) - v * log(2 * z) - z;
   if (is_inf(lead))
@@ -136,26 +136,21 @@ typename boost::math::tools::promote_args<T_v, T_z>::type compute_lead_rothwell(
   return lead;
 }
 
-
 template <typename T_v, typename T_z>
-typename boost::math::tools::promote_args<T_v, T_z>::type compute_log_integral_rothwell(
-    const T_v &v, const T_z &z) {
+typename boost::math::tools::promote_args<T_v, T_z>::type
+compute_log_integral_rothwell(const T_v &v, const T_z &z) {
   typedef typename boost::math::tools::promote_args<T_v, T_z>::type T_Ret;
 
   inner_integral_rothwell<T_v, T_z, double> f(v, z);
   return log(f.integrate());
-
 }
 
 template <>
-var compute_log_integral_rothwell(
-    const var &v, const double &z) {
-
+var compute_log_integral_rothwell(const var &v, const double &z) {
   double value = compute_log_integral_rothwell(value_of(v), z);
   typedef std::complex<double> Complex;
-  auto complex_func = [z](const Complex& v) {
-    return compute_log_integral_rothwell(v, z);
-  }; 
+  auto complex_func
+      = [z](const Complex &v) { return compute_log_integral_rothwell(v, z); };
 
   double d_dv = complex_step(complex_func, stan::math::value_of(v));
 
@@ -170,7 +165,6 @@ typename boost::math::tools::promote_args<T_v, T_z>::type compute_rothwell(
   T_v lead = compute_lead_rothwell(v, z);
   T_v log_integral = compute_log_integral_rothwell(v, z);
   return lead + log_integral;
-
 }
 
 // Formula 1.10 of
@@ -210,7 +204,8 @@ T_v asymptotic_large_z(const T_v &v, const double &z) {
   return 0.5 * (log(pi()) - log(2) - log(z)) - z + log(series_sum);
 }
 
-// From https://en.wikipedia.org/w/index.php?title=Bessel_function&oldid=888330504#Asymptotic_forms
+// From
+// https://en.wikipedia.org/w/index.php?title=Bessel_function&oldid=888330504#Asymptotic_forms
 template <typename T_v>
 T_v asymptotic_small_z_relative(const T_v &v, const double &z) {
   return lgamma(v) - log(2) + v * (log(2) - log(z));
@@ -222,7 +217,12 @@ T_v asymptotic_small_z_relative(const T_v &v, const double &z) {
 
 // The code to choose computation method is separate, because it is
 // referenced from the test code.
-enum class ComputationType { Rothwell, Asymp_v, Asymp_z, Asymp_small_z_relative };
+enum class ComputationType {
+  Rothwell,
+  Asymp_v,
+  Asymp_z,
+  Asymp_small_z_relative
+};
 
 const double rothwell_max_v = 50;
 const double rothwell_max_log_z_over_v = 300;
@@ -239,7 +239,8 @@ inline ComputationType choose_computation_type(const double &v,
 
   if (v_ >= small_z_min_v && z * small_z_factor < sqrt(v_ + 1)) {
     return ComputationType::Asymp_small_z_relative;
-  } else if (v_ < rothwell_max_v && (v_ <= 0.5 || log(z) < rothwell_log_z_boundary)) {
+  } else if (v_ < rothwell_max_v
+             && (v_ <= 0.5 || log(z) < rothwell_log_z_boundary)) {
     return ComputationType::Rothwell;
   } else if (v_ > z) {
     return ComputationType::Asymp_v;

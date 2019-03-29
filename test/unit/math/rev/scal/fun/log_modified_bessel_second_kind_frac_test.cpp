@@ -22,14 +22,39 @@ using stan::math::recover_memory;
 using stan::math::var;
 
 // TODO(martinmodrak) add values close to decision boundaries
-std::array<double, 33> v_to_test
-    = {0,     3.15e-7,  2.62e-6, 9.2e-5,   0.0026,  0.0843,  0.17345,
-       1,     1.63,     7.42,    42.42424, 86.5,    113.8,   148.7565,
-       180.6, 246.3,    300.5,   513.6,    712.456, 714.456, 1235.6,
-       8656,  15330.75, 37634.2, 85323, rothwell_max_v - 1, 
-       rothwell_max_v - 1e-8, rothwell_max_v, rothwell_max_v + 1,
-       small_z_min_v - 1, small_z_min_v - 1e-8, small_z_min_v, 
-       small_z_min_v + 1};
+std::array<double, 33> v_to_test = {0,
+                                    3.15e-7,
+                                    2.62e-6,
+                                    9.2e-5,
+                                    0.0026,
+                                    0.0843,
+                                    0.17345,
+                                    1,
+                                    1.63,
+                                    7.42,
+                                    42.42424,
+                                    86.5,
+                                    113.8,
+                                    148.7565,
+                                    180.6,
+                                    246.3,
+                                    300.5,
+                                    513.6,
+                                    712.456,
+                                    714.456,
+                                    1235.6,
+                                    8656,
+                                    15330.75,
+                                    37634.2,
+                                    85323,
+                                    rothwell_max_v - 1,
+                                    rothwell_max_v - 1e-8,
+                                    rothwell_max_v,
+                                    rothwell_max_v + 1,
+                                    small_z_min_v - 1,
+                                    small_z_min_v - 1e-8,
+                                    small_z_min_v,
+                                    small_z_min_v + 1};
 
 std::array<double, 19> z_to_test
     = {1.48e-7, 3.6e-6,   7.248e-5, 4.32e-4, 8.7e-3, 0.04523, 0.17532,
