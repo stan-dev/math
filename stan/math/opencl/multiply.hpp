@@ -45,7 +45,7 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   const int Npad = ((B.cols() + local - 1) / local) * local;
   const int wpt = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
       "WORK_PER_THREAD");
-  int split = (A.cols() * B.rows())/(A.rows() * B.cols());
+  int split = A.cols()/std::sqrt(A.rows() * B.cols());
   if (split > 100) {
     split = 100;
   }
