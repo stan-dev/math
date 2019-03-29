@@ -1,7 +1,7 @@
 #include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 #include <Eigen/Dense>
+#include <vector>
 
 TEST(MetaTraits, size_of) {
   using stan::size_of;
