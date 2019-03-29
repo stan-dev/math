@@ -127,12 +127,50 @@ typename boost::math::tools::promote_args<T_v, T_z>::type compute_lead_rothwell(
   using std::exp;
   using std::log;
   using std::pow;
+  using boost::math::lgamma;
 
   const T_Ret lead = 0.5 * log(pi()) - lgamma(v + 0.5) - v * log(2 * z) - z;
   if (is_inf(lead))
     return -z + 0.5 * log(0.5 * pi() / z);
 
   return lead;
+}
+
+
+template <typename T_v, typename T_z>
+typename boost::math::tools::promote_args<T_v, T_z>::type compute_log_integral_rothwell(
+    const T_v &v, const T_z &z) {
+  typedef typename boost::math::tools::promote_args<T_v, T_z>::type T_Ret;
+
+  inner_integral_rothwell<T_v, T_z, double> f(v, z);
+  return log(f.integrate());
+
+}
+
+template <>
+var compute_log_integral_rothwell(
+    const var &v, const double &z) {
+
+  double value = compute_log_integral_rothwell(value_of(v), z);
+  typedef std::complex<double> Complex;
+  auto complex_func = [z](const Complex& v) {
+    return compute_log_integral_rothwell(v, z);
+  }; 
+
+  double d_dv = complex_step(complex_func, stan::math::value_of(v));
+
+  return var(new precomp_v_vari(value, v.vi_, d_dv));
+}
+
+template <typename T_v, typename T_z>
+typename boost::math::tools::promote_args<T_v, T_z>::type compute_rothwell(
+    const T_v &v, const T_z &z) {
+  typedef typename boost::math::tools::promote_args<T_v, T_z>::type T_Ret;
+
+  T_v lead = compute_lead_rothwell(v, z);
+  T_v log_integral = compute_log_integral_rothwell(v, z);
+  return lead + log_integral;
+
 }
 
 // Formula 1.10 of
@@ -204,33 +242,6 @@ inline ComputationType choose_computation_type(const double &v,
 //                    UTILITY FUNCTIONS                       //
 ////////////////////////////////////////////////////////////////
 
-
-// Wrapper to call the correct integrator
-// Code simplified from integrate_1d
-template <template <typename, typename, typename> class INTEGRAL>
-double compute_inner_integral(const double &v, const double &z) {
-  auto f = INTEGRAL<double, double, double>(v, z);
-  return f.integrate();
-}
-
-// Using inner_integral_grad_v to copute the derivative wrt. v as
-// integral of the derivative of the integral body.
-// Code simplified from integrate_1d
-template <template <typename, typename, typename> class INTEGRAL>
-var compute_inner_integral(const var &v, const double &z) {
-  double integral = compute_inner_integral<INTEGRAL>(stan::math::value_of(v),
-                                                     stan::math::value_of(z));
-  typedef std::complex<double> Complex;
-  auto complex_integral = [z](const Complex& v) {
-    auto f = INTEGRAL<Complex, double, double>(v, z);
-    return f.integrate(); 
-  }; 
-
-  double dintegral_dv = complex_step(complex_integral, stan::math::value_of(v));
-
-  return var(new precomp_v_vari(integral, v.vi_, dintegral_dv));
-}
-
 void check_params(const double &v, const double &z) {
   const char *function = "log_modified_bessel_second_kind_frac";
   if (!std::isfinite(v)) {
@@ -257,9 +268,7 @@ T_v log_modified_bessel_second_kind_frac(const T_v &v, const double &z) {
   using besselk_internal::asymptotic_large_z;
   using besselk_internal::check_params;
   using besselk_internal::choose_computation_type;
-  using besselk_internal::compute_inner_integral;
-  using besselk_internal::compute_lead_rothwell;
-  using besselk_internal::inner_integral_rothwell;
+  using besselk_internal::compute_rothwell;
   using std::fabs;
   using std::pow;
 
@@ -272,9 +281,7 @@ T_v log_modified_bessel_second_kind_frac(const T_v &v, const double &z) {
   T_v v_ = fabs(v);
   switch (choose_computation_type(value_of(v_), value_of(z))) {
     case ComputationType::Rothwell: {
-      T_v lead = compute_lead_rothwell(v_, z);
-      T_v Q = compute_inner_integral<inner_integral_rothwell>(v_, z);
-      return lead + log(Q);
+      return compute_rothwell(v_, z);
     }
     case ComputationType::Asymp_v: {
       return asymptotic_large_v(v_, z);
