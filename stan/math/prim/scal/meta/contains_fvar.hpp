@@ -8,9 +8,10 @@
 namespace stan {
 
 /**
- * Defines a public enum named value which is defined to be true (1)
- * if any of the template parameters includes a fvar as their base scalar and
- * false (0) otherwise.
+ * Extends std::true_type when instantiated with at least 1
+ * template parameter that is a fvar. Extends std::false_type
+ * otherwise.
+ * @tparam T Types to test
  */
 template <typename... T>
 using contains_fvar
