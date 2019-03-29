@@ -54,10 +54,10 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B, int split = 1) {
     } else {
       opencl_kernels::multiply_rect(
         cl::NDRange(Mpad, Npad / wpt, split), cl::NDRange(local, local / wpt, 1),
-        Apad.buffer(), Bpad.buffer(), tempPad.buffer(), Apad.rows(),
-        Bpad.cols(), Bpad.rows(), triangular_view_A, triangular_view_B);
+        A.buffer(), B.buffer(), temp.buffer(), A.rows(),
+        B.cols(), B.rows(), triangular_view_A, triangular_view_B);
       opencl_kernels::add_batch(cl::NDRange(Mpad, Npad),
-                                        tempPad.buffer(), Mpad, Npad, split);
+                                        temp.buffer(), Mpad, Npad, split);
     }
   } catch (cl::Error& e) {
     check_opencl_error("multiply", e);
