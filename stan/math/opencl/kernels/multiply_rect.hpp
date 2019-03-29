@@ -53,7 +53,7 @@ static const char* multiply_rect_kernel_code = STRINGIFY(
         split_tiles++;
       } else {
         split_offset_tiles = split_offset_tiles + split_remainder;
-      }      
+      }
       // This kernel is based on the well known
       // general matrix multiplication kernels that
       // use tiling for shared memory
@@ -80,7 +80,7 @@ static const char* multiply_rect_kernel_code = STRINGIFY(
       int start_tile = max(start_tile_A, start_tile_B);
       start_tile = max(start_tile, split_offset_tiles);
       int end_tile = min(end_tile_A, end_tile_B);  // NOLINT
-      end_tile = min(end_tile, split_offset_tiles + split_tiles -1);
+      end_tile = min(end_tile, split_offset_tiles + split_tiles -1); // NOLINT
       for (int tile_idx = start_tile; tile_idx <= end_tile; tile_idx++) {
         const int tiled_i = THREAD_BLOCK_SIZE * tile_idx + thread_block_row;
         const int tiled_j = THREAD_BLOCK_SIZE * tile_idx + thread_block_col;

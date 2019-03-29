@@ -62,7 +62,7 @@ static const char *add_batch_kernel_code = STRINGIFY(
       const int j = get_global_id(1);
       if (i < rows && j < cols) {
         double temp = 0.0;
-        for(int k = 0;k < batch_size;k++){
+        for (int k = 0; k < batch_size; k++) {
           temp += A_batch(i, j, k);
         }
         B(i, j) = temp;

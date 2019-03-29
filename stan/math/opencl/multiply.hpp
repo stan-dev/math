@@ -65,7 +65,6 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
       opencl_kernels::add_batch(cl::NDRange(A.rows(), B.cols()),
                         temp.buffer(), tempSplit.buffer(),
                         A.rows(), B.cols(), split);
-      
     }
   } catch (cl::Error& e) {
     check_opencl_error("multiply", e);
