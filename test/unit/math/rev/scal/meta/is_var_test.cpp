@@ -3,5 +3,5 @@
 
 TEST(MetaTraits, is_var) {
   using stan::is_var;
-  EXPECT_FALSE(is_var<stan::math::var>::value);
+  EXPECT_TRUE(is_var<stan::math::var>::value);
 }
