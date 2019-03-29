@@ -9,5 +9,4 @@ TEST(MetaTraits, max_size_mvt) {
   EXPECT_THROW(max_size_mvt(x1, x2), std::invalid_argument);
   EXPECT_THROW(max_size_mvt(x1, x2, x3), std::invalid_argument);
   EXPECT_THROW(max_size_mvt(x1, x2, x3, x4), std::invalid_argument);
-
 }

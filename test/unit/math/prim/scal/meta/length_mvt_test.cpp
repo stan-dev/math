@@ -10,5 +10,4 @@ TEST(MetaTraits, length_mvt) {
 
   int x2;
   EXPECT_THROW(length_mvt(x2), std::invalid_argument);
-
 }
