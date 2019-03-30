@@ -93,12 +93,12 @@ static const char* multiply_transpose_kernel_code = STRINGIFY(
         }
         // each thread saves WORK_PER_THREAD values to C
         for (int w = 0; w < WORK_PER_THREAD; w++) {
-        // This prevents threads from accessing elements 
-        // outside the allocated memory for C. The check
-        // is in the loop because some threads
-        // can be assigned elements in and out of
-        // the allocated memory.
-          if ((j + w * THREAD_BLOCK_SIZE_COL) < M && i < M) {            
+          // This prevents threads from accessing elements
+          // outside the allocated memory for C. The check
+          // is in the loop because some threads
+          // can be assigned elements in and out of
+          // the allocated memory.
+          if ((j + w * THREAD_BLOCK_SIZE_COL) < M && i < M) {
             if ((j + w * THREAD_BLOCK_SIZE_COL) <= i) {
               B[i + (j + w * THREAD_BLOCK_SIZE_COL) * M] = acc[w];
               B[(j + w * THREAD_BLOCK_SIZE_COL) + i * M] = acc[w];

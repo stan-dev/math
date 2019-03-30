@@ -119,7 +119,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
       }
       // each thread saves WORK_PER_THREAD values
       for (int w = 0; w < WORK_PER_THREAD; w++) {
-        // This prevents threads from accessing elements 
+        // This prevents threads from accessing elements
         // outside the allocated memory for C. The check
         // is in the loop because some threads
         // can be assigned elements in and out of
