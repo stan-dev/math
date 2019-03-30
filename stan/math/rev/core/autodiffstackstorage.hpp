@@ -7,27 +7,49 @@
 namespace stan {
 namespace math {
 
+// Internal macro used to modify global pointer definition to the
+// global AD instance.
+#ifdef STAN_THREADS
+// Whenever STAN_THREADS is set a TLS keyword is used. For reasons
+// explained above we use the GNU compiler extension __thread if
+// supported by the compiler while the generic thread_local C++11
+// keyword is used otherwise.
+#ifdef __GNUC__
+#define STAN_THREADS_DEF __thread
+#else
+#define STAN_THREADS_DEF thread_local
+#endif
+#else
+// In case STAN_THREADS is not set, then no modifier is needed.
+#define STAN_THREADS_DEF
+#endif
+
 /**
- * This struct always provides access to an optionally thread local
- * stack using the singleton pattern. Read warnings below!  For
- * performance reasons the singleton is a global static pointer which
- * is stored as thread local (TLS) if STAN_THREADS is defined. The use
- * of a pointer is motivated by performance reasons for the threading
- * case. When a TLS is used then initialization with a constant
+ * This struct always provides access to the autodiff stack using
+ * the singleton pattern. Read warnings below!
+ *
+ * The singleton <code>instance_<code> is a global static pointer,
+ * which is thread local (TLS) if the STAN_THREADS preprocess variable
+ * is defined.
+ *
+ * The use of a pointer is motivated by performance reasons for the
+ * threading case. When a TLS is used, initialization with a constant
  * expression at compile time is required for fast access to the
- * TLS. As the AD storage struct is non-POD its initialization is a
- * dynamic expression at compile time. These dynamic expressions are
- * wrapped in the TLS case by a TLS wrapper function which slows down
- * its access. Using a pointer instead allows to initialize at compile
- * time to the nullptr, which is a compile time constant. In this case
- * the compiler avoids the use of a TLS wrapper function. Furthermore
- * we use the __thread keyword on compilers which support it. The
- * __thread keyword is a GNU compiler-specific (gcc, clang, Intel)
- * extension which requires initialization with a compile time
- * constant expression. The C++11 keyword thread_local does allow for
- * constant and dynamic initialization of the TLS. Thus, only the
- * __thread keyword gurantees that constant initialization and it's
- * implied speedup, is used.
+ * TLS. As the autodiff storage struct is non-POD, its initialization
+ * is a dynamic expression at compile time. These dynamic expressions
+ * are wrapped, in the TLS case, by a TLS wrapper function which slows
+ * down its access. Using a pointer instead allows to initialize at
+ * compile time to <code>nullptr</code>, which is a compile time
+ * constant. In this case, the compiler avoids the use of a TLS
+ * wrapper function.
+ * 
+ * For performance reasons we use the __thread keyword on compilers
+ * which support it. The __thread keyword is a GNU compiler-specific
+ * (gcc, clang, Intel) extension which requires initialization with a
+ * compile time constant expression. The C++11 keyword thread_local
+ * does allow for constant and dynamic initialization of the
+ * TLS. Thus, only the __thread keyword gurantees that constant
+ * initialization and it's implied speedup, is used.
  *
  * The initialzation of the AD instance at run-time is handled by the
  * lifetime of a AutodiffStackSingleton object. More specifically, the
@@ -37,7 +59,7 @@ namespace math {
  * the first instance of the AutodiffStackSingleton object gets
  * destructed, the AD tape will be destructed as well. Within
  * stan-math the initialization of the AD instance for the main thread
- * of the program is handled by instantiating once the singleton in
+ * of the program is handled by instantiating the singleton once in
  * the init_chainablestack.hpp file. Whenever STAN_THREADS is defined
  * then all created child threads must instantiate a
  * AutodiffStackSingleton object within the child thread before
@@ -63,24 +85,6 @@ namespace math {
  * [3]
  * http://discourse.mc-stan.org/t/potentially-dropping-support-for-older-versions-of-apples-version-of-clang/3780/
  */
-
-// Internal macro used to modify global pointer definition to the
-// global AD instance.
-#ifdef STAN_THREADS
-// Whenever STAN_THREADS is set a TLS keyword is used. For reasons
-// explained above we use the GNU compiler extension __thread if
-// supported by the compiler while the generic thread_local C++11
-// keyword is used otherwise.
-#ifdef __GNUC__
-#define STAN_THREADS_DEF __thread
-#else
-#define STAN_THREADS_DEF thread_local
-#endif
-#else
-// In case STAN_THREADS is not set, then no modifier is needed.
-#define STAN_THREADS_DEF
-#endif
-
 template <typename ChainableT, typename ChainableAllocT>
 struct AutodiffStackSingleton {
   typedef AutodiffStackSingleton<ChainableT, ChainableAllocT>
