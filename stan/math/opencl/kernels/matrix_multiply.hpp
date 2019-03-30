@@ -117,10 +117,13 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
         }
         barrier(CLK_LOCAL_MEM_FENCE);
       }
-      // save the values
+      // each thread saves WORK_PER_THREAD values
       for (int w = 0; w < WORK_PER_THREAD; w++) {
-        // each thread saves WORK_PER_THREAD values
-        // padded threads should not access C
+        // This prevents threads from accessing elements 
+        // outside the allocated memory for C. The check
+        // is in the loop because some threads
+        // can be assigned elements in and out of
+        // the allocated memory.
         if ((j + w * THREAD_BLOCK_SIZE_COL) < N && i < M) {
           C[(j + w * THREAD_BLOCK_SIZE_COL) * M + i] = acc[w];
         }
