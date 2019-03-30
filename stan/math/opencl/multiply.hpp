@@ -46,8 +46,14 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   const int wpt = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
       "WORK_PER_THREAD");
   int split = A.cols()/std::sqrt(A.rows() * B.cols());
-  if (split > 100) {
-    split = 100;
+  if (split > 20) {
+    split = 20;
+  }
+  // when there result matrix is large, there is no benefit of splitting
+  // as the number of created threads is large enough to occupy all
+  // compute units in the OpenCL device
+  if (temp.size()>opencl_context.tuning_opts().multiply_split_upper_limit) {
+    split = 1;
   }
   try {
     if (split <= 1) {
