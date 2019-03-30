@@ -42,7 +42,7 @@ namespace math {
  * compile time to <code>nullptr</code>, which is a compile time
  * constant. In this case, the compiler avoids the use of a TLS
  * wrapper function.
- * 
+ *
  * For performance reasons we use the __thread keyword on compilers
  * which support it. The __thread keyword is a GNU compiler-specific
  * (gcc, clang, Intel) extension which requires initialization with a
