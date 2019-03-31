@@ -11,7 +11,7 @@ namespace math {
 // global AD instance.
 #ifdef STAN_THREADS
 // Whenever STAN_THREADS is set a TLS keyword is used. For reasons
-// explained above we use the GNU compiler extension __thread if
+// explained below we use the GNU compiler extension __thread if
 // supported by the compiler while the generic thread_local C++11
 // keyword is used otherwise.
 #ifdef __GNUC__
@@ -28,7 +28,7 @@ namespace math {
  * This struct always provides access to the autodiff stack using
  * the singleton pattern. Read warnings below!
  *
- * The singleton <code>instance_<code> is a global static pointer,
+ * The singleton <code>instance_</code> is a global static pointer,
  * which is thread local (TLS) if the STAN_THREADS preprocess variable
  * is defined.
  *
