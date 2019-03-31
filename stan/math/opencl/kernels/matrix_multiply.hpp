@@ -103,32 +103,32 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
           // For the tiles on the diagonal we can ignore the values over
           // the diagonal if the matrix is lower triangular or under
           // the diagonal if the matrix is upper triangular
-          const A_temp_j = tiled_j + w * THREAD_BLOCK_SIZE_COL;
-          const B_temp_j = j + w * THREAD_BLOCK_SIZE_COL;
+          const A_curr_j = tiled_j + w * THREAD_BLOCK_SIZE_COL;
+          const B_curr_j = j + w * THREAD_BLOCK_SIZE_COL;
           // check if the indexes are outside the matrix
           // or under/above the diagonal with upper/lower
           // triangular matrices
-          if (A_temp_j >= K || i >= M
-              || (lower_upper_A == LOWER && A_temp_j > i)
-              || (lower_upper_A == UPPER && A_temp_j < i)) {
+          if (A_curr_j >= K || i >= M
+              || (lower_upper_A == LOWER && A_curr_j > i)
+              || (lower_upper_A == UPPER && A_curr_j < i)) {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
                 = 0.0;
           } else {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
-                = A[A_temp_j * M + i];
+                = A[A_curr_j * M + i];
           }
-          if (B_temp_j >= N || tiled_i >= K
-              || (lower_upper_B == LOWER && B_temp_j > tiled_i)
-              || (lower_upper_B == UPPER && B_temp_j < tiled_i)) {
+          if (B_curr_j >= N || tiled_i >= K
+              || (lower_upper_B == LOWER && B_curr_j > tiled_i)
+              || (lower_upper_B == UPPER && B_curr_j < tiled_i)) {
             B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
                 = 0.0;
           } else {
             B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
-                = B[B_temp_j * K + tiled_i];
+                = B[B_curr_j * K + tiled_i];
           }
         }
         barrier(CLK_LOCAL_MEM_FENCE);
@@ -141,10 +141,13 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
         }
         barrier(CLK_LOCAL_MEM_FENCE);
       }
-      // save the values
+      // each thread saves WORK_PER_THREAD values
       for (int w = 0; w < WORK_PER_THREAD; w++) {
-        // each thread saves WORK_PER_THREAD values
-        // padded threads should not access C
+        // This prevents threads from accessing elements
+        // outside the allocated memory for C. The check
+        // is in the loop because some threads
+        // can be assigned elements in and out of
+        // the allocated memory.
         if ((j + w * THREAD_BLOCK_SIZE_COL) < N && i < M) {
           C[split_id * M * N
             + (j + w * THREAD_BLOCK_SIZE_COL) * M + i] = acc[w];

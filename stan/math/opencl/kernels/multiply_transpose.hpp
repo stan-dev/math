@@ -91,11 +91,14 @@ static const char* multiply_transpose_kernel_code = STRINGIFY(
           }
           barrier(CLK_LOCAL_MEM_FENCE);
         }
-        // save the values
+        // each thread saves WORK_PER_THREAD values to C
         for (int w = 0; w < WORK_PER_THREAD; w++) {
-          // padded threads should not access B
+          // This prevents threads from accessing elements
+          // outside the allocated memory for C. The check
+          // is in the loop because some threads
+          // can be assigned elements in and out of
+          // the allocated memory.
           if ((j + w * THREAD_BLOCK_SIZE_COL) < M && i < M) {
-            // each thread saves WORK_PER_THREAD values
             if ((j + w * THREAD_BLOCK_SIZE_COL) <= i) {
               B[i + (j + w * THREAD_BLOCK_SIZE_COL) * M] = acc[w];
               B[(j + w * THREAD_BLOCK_SIZE_COL) + i * M] = acc[w];
