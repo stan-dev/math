@@ -8,9 +8,7 @@
 namespace stan {
 namespace math {
 
-double notNan(double x) {
-  return std::isnan(x) ? 1.0 : x;
-}
+double notNan(double x) { return std::isnan(x) ? 1.0 : x; }
 /**
  * Return <code>true</code> is matrix is lower triangular.
  * A matrix x is not lower triangular if there is a non-zero entry
@@ -25,7 +23,7 @@ template <typename T_y>
 inline bool is_lower_triangular(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
   Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> m
-    = y.unaryExpr(std::ptr_fun(notNan));
+      = y.unaryExpr(std::ptr_fun(notNan));
   return m.transpose().isUpperTriangular();
 }
 

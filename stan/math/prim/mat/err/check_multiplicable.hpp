@@ -20,7 +20,7 @@ namespace math {
  * @param y1 First matrix to test, requires class access to <code>.rows()</code>
  *   and <code>.cols()</code>
  * @param name2 Variable name for the second matrix (for error messages)
- * @param y2 Second matrix to test, requires class access to 
+ * @param y2 Second matrix to test, requires class access to
  *   <code>.rows()</code> and <code>.cols()</code>
  * @throw <code>std::invalid_argument</code> if the matrices are not
  *   multiplicable or if either matrix is size 0 for either rows or columns

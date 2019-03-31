@@ -27,10 +27,8 @@ template <typename T_y>
 inline bool is_cholesky_factor(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
   Eigen::Matrix<T_y, -1, 1> y_diag = y.diagonal();
-  return is_less_or_equal(y.cols(), y.rows())
-    && is_positive(y.cols())
-    && is_lower_triangular(y)
-    && is_positive(y_diag);
+  return is_less_or_equal(y.cols(), y.rows()) && is_positive(y.cols())
+         && is_lower_triangular(y) && is_positive(y_diag);
 }
 
 }  // namespace math

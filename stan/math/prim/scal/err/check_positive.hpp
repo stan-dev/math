@@ -67,7 +67,7 @@ inline void check_positive(const char* function, const char* name,
  *   zero or negative.
  */
 inline void check_positive(const char* function, const char* name,
-                                const char* expr, int size) {
+                           const char* expr, int size) {
   if (size <= 0) {
     std::stringstream msg;
     msg << "; dimension size expression = " << expr;

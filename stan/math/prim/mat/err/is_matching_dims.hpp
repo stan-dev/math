@@ -49,8 +49,7 @@ template <bool check_compile, typename T1, typename T2, int R1, int C1, int R2,
           int C2>
 inline bool is_matching_dims(const Eigen::Matrix<T1, R1, C1>& y1,
                              const Eigen::Matrix<T2, R2, C2>& y2) {
-  return !(check_compile && (R1 != R2 || C1 != C2))
-    && is_matching_dims(y1, y2);
+  return !(check_compile && (R1 != R2 || C1 != C2)) && is_matching_dims(y1, y2);
 }
 
 }  // namespace math
