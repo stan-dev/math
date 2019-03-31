@@ -4,7 +4,6 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/scalar_mul.hpp>
 #include <stan/math/opencl/kernels/matrix_multiply.hpp>
-#include <stan/math/opencl/kernels/multiply_rect.hpp>
 #include <stan/math/opencl/kernels/add.hpp>
 #include <Eigen/Dense>
 
@@ -63,7 +62,7 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
         triangular_view_A, triangular_view_B);
     } else {
       matrix_cl tempSplit(A.rows(), B.cols() * split);
-      opencl_kernels::multiply_rect(
+      opencl_kernels::matrix_multiply(
         cl::NDRange(Mpad, Npad / wpt, split),
         cl::NDRange(local, local / wpt, 1),
         A.buffer(), B.buffer(), tempSplit.buffer(), A.rows(),
