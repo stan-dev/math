@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 inline double notLowerNan(double x) { return std::isnan(x) ? 1.0 : x; }
-    
+
 /**
  * Return <code>true</code> is matrix is lower triangular.
  * A matrix x is not lower triangular if there is a non-zero entry
