@@ -13,15 +13,11 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the specified vector is sorted into
- * strictly increasing order.
- *
+ * Check if the specified vector is sorted into strictly increasing order.
  * @tparam T_y Type of scalar
- *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Vector to test
- *
  * @throw <code>std::domain_error</code> if the vector elements are
  *   not ordered, if there are duplicated
  *   values, or if any element is <code>NaN</code>.

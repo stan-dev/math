@@ -17,19 +17,15 @@ namespace math {
  * Check if the specified vector is simplex.
  * To be a simplex, all values must be greater than or equal to 0
  * and the values must sum to 1.
- *
  * A valid simplex is one where the sum of hte elements is equal
  * to 1.  This function tests that the sum is within the tolerance
  * specified by <code>CONSTRAINT_TOLERANCE</code>. This function
  * only accepts Eigen vectors, statically typed vectors, not
  * general matrices with 1 column.
- *
  * @tparam T_prob Scalar type of the vector
- *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param theta Vector to test.
- *
  * @throw <code>std::invalid_argument</code> if <code>theta</code>
  *   is a 0-vector.
  * @throw <code>std::domain_error</code> if the vector is not a

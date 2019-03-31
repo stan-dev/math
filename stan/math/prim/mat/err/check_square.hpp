@@ -9,8 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the specified matrix is square.
- * This check allows 0x0 matrices.
+ * Check if the specified matrix is square. This check allows 0x0 matrices.
  * @tparam T Type of scalar
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)

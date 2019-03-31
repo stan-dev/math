@@ -14,6 +14,7 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Return <code>true</code> if the matrix is square or if the matrix has
  * non-zero size, or if the matrix is symmetric, or if it is positive
@@ -39,6 +40,7 @@ inline bool is_pos_definite(const Eigen::Matrix<T_y, -1, -1>& y) {
     return false;
   return is_not_nan(y);
 }
+
 /**
  * Return <code>true</code> if the matrix is positive definite.
  * @tparam Derived Derived type of the Eigen::LDLT transform, requires
@@ -53,6 +55,7 @@ inline bool is_pos_definite(const Eigen::LDLT<Derived>& cholesky) {
   return cholesky.info() == Eigen::Success && cholesky.isPositive()
          && (cholesky.vectorD().array() > 0.0).all();
 }
+
 /**
  * Return <code>true</code> if diagonal of the L matrix is positive.
  * @tparam Derived Derived type of the Eigen::LLT transform, requires

@@ -12,7 +12,7 @@ namespace math {
  * An <code>LDLT_factor</code> is invalid if it was constructed from
  * a matrix that is not positive definite.  The check is that the
  * <code>.success()</code> method returns <code>true</code>.
- * @tparam T Type of scalar
+ * @tparam T Type of scalar, requires class access to <code>.success()</code>
  * @tparam R Rows of the matrix
  * @tparam C Columns of the matrix
  * @param A The LDLT factor to check for validity

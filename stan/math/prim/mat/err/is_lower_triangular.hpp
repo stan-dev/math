@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_IS_LOWER_TRIANGULAR_HPP
 #define STAN_MATH_PRIM_MAT_ERR_IS_LOWER_TRIANGULAR_HPP
 
-//#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <Eigen/Dense>
 #include <math.h>
 
@@ -9,6 +8,7 @@ namespace stan {
 namespace math {
 
 double notNan(double x) { return std::isnan(x) ? 1.0 : x; }
+
 /**
  * Return <code>true</code> is matrix is lower triangular.
  * A matrix x is not lower triangular if there is a non-zero entry

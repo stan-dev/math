@@ -7,6 +7,7 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Return <code>true</code> if <code>y</code> is positive.
  * This function is vectorized and will check each element of

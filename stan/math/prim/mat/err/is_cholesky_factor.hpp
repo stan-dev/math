@@ -8,6 +8,7 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Return <code>true</code> if y is a valid Choleksy factor, if
  * number of rows is not less than the number of columns, if there
@@ -17,7 +18,7 @@ namespace math {
  * be square, but requires at least as many rows M as columns N
  * (i.e., M &gt;= N).
  * @tparam T_y Type of elements of Cholesky factor, requires class method
- *   <code>.rows()</code> and <code>.cols()</code>
+ *   <code>.rows()</code>, <code>.cols()</code>, and <code>.diagonal()</code>
  * @param y Matrix to test
  * @return <code>true</code> if y is a valid Choleksy factor, if
  *   number of rows is not less than the number of columns,

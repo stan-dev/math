@@ -10,16 +10,16 @@ namespace math {
 /**
  * Return <code>true</code> if the two matrices are of the same size.
  * This function checks the runtime sizes only.
- * @tparam T1 Scalar type of the first matrix
- * @tparam T2 Scalar type of the second matrix
+ * @tparam T1 Scalar type of the first matrix, requires class method
+ *   <code>.size()</code>
+ * @tparam T2 Scalar type of the second matrix, requires class method
+ *   <code>.size()</code>
  * @tparam R1 Rows specified at compile time of the first matrix
  * @tparam C1 Columns specified at compile time of the first matrix
  * @tparam R2 Rows specified at compile time of the second matrix
  * @tparam C2 Columns specified at compile time of the second matrix
- * @param y1 First matrix to test, requires class method
- *   <code>.size()</code>
- * @param y2 Second matrix to test, requires class method
- *   <code>.size()</code>
+ * @param y1 First matrix to test,
+ * @param y2 Second matrix to test
  * @return <code>true</code> if the dimensions of the matrices match
  */
 template <typename T1, typename T2, int R1, int C1, int R2, int C2>

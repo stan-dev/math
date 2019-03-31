@@ -8,6 +8,7 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Check if the specified matrix is a valid Cholesky factor.
  * A Cholesky factor is a lower triangular matrix whose diagonal

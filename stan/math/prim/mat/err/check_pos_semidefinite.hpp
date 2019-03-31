@@ -16,13 +16,10 @@ namespace math {
 
 /**
  * Check if the specified matrix is positive definite
- *
  * @tparam T_y scalar type of the matrix
- *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Matrix to test
- *
  * @throw <code>std::invalid_argument</code> if the matrix is not square
  *   or if the matrix has 0 size.
  * @throw <code>std::domain_error</code> if the matrix is not symmetric,

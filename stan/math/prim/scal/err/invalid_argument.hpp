@@ -7,6 +7,7 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Throw an invalid_argument exception with a consistently formatted message.
  * This is an abstraction for all Stan functions to use when throwing

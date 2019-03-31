@@ -10,6 +10,7 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Check if the specified vector is unit vector.
  * A valid unit vector is one where the square of the elements

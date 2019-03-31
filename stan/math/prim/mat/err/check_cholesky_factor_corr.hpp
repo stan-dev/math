@@ -10,6 +10,7 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Check if the specified matrix is a valid Cholesky factor of a
  * correlation matrix.
