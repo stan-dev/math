@@ -5,7 +5,7 @@
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_size.hpp>
+#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
@@ -34,7 +34,7 @@ inline void check_pos_semidefinite(
     const char* function, const char* name,
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
   check_symmetric(function, name, y);
-  check_positive_size(function, name, "rows", y.rows());
+  check_positive(function, name, "rows", y.rows());
 
   if (y.rows() == 1 && !(y(0, 0) >= 0.0))
     domain_error(function, name, "is not positive semi-definite.", "");
