@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 namespace internal {
-  inline double notLowerNan(double x) { return std::isnan(x) ? 1.0 : x; }
+inline double notLowerNan(double x) { return std::isnan(x) ? 1.0 : x; }
 }  // namespace internal
 
 /**
@@ -25,7 +25,8 @@ template <typename T_y>
 inline bool is_lower_triangular(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
   return y.unaryExpr(std::ptr_fun(internal::notLowerNan))
-    .transpose().isUpperTriangular();
+      .transpose()
+      .isUpperTriangular();
 }
 
 }  // namespace math
