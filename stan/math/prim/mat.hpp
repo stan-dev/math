@@ -23,6 +23,8 @@
 #include <stan/math/prim/mat/err/check_cholesky_factor.hpp>
 #include <stan/math/prim/mat/err/check_cholesky_factor_corr.hpp>
 #include <stan/math/prim/mat/err/check_column_index.hpp>
+#include <stan/math/prim/mat/err/check_consistent_size_mvt.hpp>
+#include <stan/math/prim/mat/err/check_consistent_sizes_mvt.hpp>
 #include <stan/math/prim/mat/err/check_corr_matrix.hpp>
 #include <stan/math/prim/mat/err/check_cov_matrix.hpp>
 #include <stan/math/prim/mat/err/check_finite.hpp>
