@@ -21,7 +21,7 @@ template <typename T_y>
 inline bool is_symmetric(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
   if (!is_square(y))
-      return false;
+    return false;
 
   typedef typename index_type<
       Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>>::type size_type;

@@ -12,7 +12,7 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the specified vector contains non-negative values and is sorted into 
+ * Check if the specified vector contains non-negative values and is sorted into
  * strictly increasing order.
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
