@@ -195,12 +195,12 @@ static const char* row_vector_matrix_multiply_kernel_code = STRINGIFY(
 // \endcond
 
 /**
- * See the docs for \link kernels/matrix_multiply.hpp row_vector_matrix_multiply()
- * \endlink
+ * See the docs for \link kernels/matrix_multiply.hpp
+ * row_vector_matrix_multiply() \endlink
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int>
     row_vector_matrix_multiply("row_vector_matrix_multiply",
-                           row_vector_matrix_multiply_kernel_code);
+                               row_vector_matrix_multiply_kernel_code);
 
 }  // namespace opencl_kernels
 }  // namespace math
