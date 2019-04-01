@@ -91,9 +91,9 @@ struct coupled_ode_system<F, double, var> {
     for (const var& p : theta)
       theta_nochain_.emplace_back(var(new vari(p.val(), false)));
   }
-  
+
   ~coupled_ode_system() {
-    //recover_memory_nested();
+    // recover_memory_nested();
   }
 
   /**
@@ -193,7 +193,6 @@ struct coupled_ode_system<F, double, var> {
    */
   std::vector<std::vector<var> > decouple_states(
       const std::vector<std::vector<double> >& y) const {
-
     // after calling decouple_states the object cannot be used anymore!
     recover_memory_nested();
 
@@ -481,7 +480,7 @@ struct coupled_ode_system<F, var, var> {
   }
 
   ~coupled_ode_system() {
-    //recover_memory_nested();
+    // recover_memory_nested();
   }
 
   /**
@@ -590,7 +589,6 @@ struct coupled_ode_system<F, var, var> {
    */
   std::vector<std::vector<var> > decouple_states(
       const std::vector<std::vector<double> >& y) const {
-
     // after calling decouple_states the object cannot be used anymore!
     recover_memory_nested();
 
