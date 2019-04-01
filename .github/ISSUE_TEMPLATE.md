@@ -24,8 +24,5 @@ If this is a **bug report**, show what you expected to happen. Please also show 
 If this is a **feature request**, show what you expect to happen if the feature exists.
 
 
-## Additional Information
-Any additional information goes here.
-
-## Current Math Version
-v2.18.1
+#### Current Version:
+v2.19.0

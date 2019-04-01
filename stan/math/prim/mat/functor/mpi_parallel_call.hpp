@@ -440,8 +440,15 @@ class mpi_parallel_call {
     auto flat_data = to_array_1d(data);
     decltype(flat_data) local_flat_data(data_chunks[rank_]);
 
-    boost::mpi::scatterv(world_, flat_data.data(), data_chunks,
-                         local_flat_data.data(), 0);
+    if (data_dims[0] * data_dims[1] > 0) {
+      if (rank_ == 0) {
+        boost::mpi::scatterv(world_, flat_data.data(), data_chunks,
+                             local_flat_data.data(), 0);
+      } else {
+        boost::mpi::scatterv(world_, local_flat_data.data(), data_chunks[rank_],
+                             0);
+      }
+    }
 
     std::vector<decltype(flat_data)> local_data;
     auto local_iter = local_flat_data.begin();
@@ -542,8 +549,14 @@ class mpi_parallel_call {
     const std::vector<int> job_chunks = mpi_map_chunks(total_cols, 1);
     const std::vector<int> data_chunks = mpi_map_chunks(total_cols, rows);
     matrix_d local_data(rows, job_chunks[rank_]);
-    boost::mpi::scatterv(world_, data.data(), data_chunks, local_data.data(),
-                         0);
+    if (rows * total_cols > 0) {
+      if (rank_ == 0) {
+        boost::mpi::scatterv(world_, data.data(), data_chunks,
+                             local_data.data(), 0);
+      } else {
+        boost::mpi::scatterv(world_, local_data.data(), data_chunks[rank_], 0);
+      }
+    }
 
     return local_data;
   }

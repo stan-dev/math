@@ -120,15 +120,18 @@ pipeline {
                     sh "echo BOOST_PARALLEL_JOBS=${env.PARALLEL} >> make/local"
                     parallel(
                         CppLint: { sh "make cpplint" },
-                        Dependencies: { sh 'make test-math-dependencies' } ,
-                        Documentation: { sh 'make doxygen' },
+                        Dependencies: { sh """#!/bin/bash
+                            set -o pipefail
+                            make test-math-dependencies 2>&1 | tee dependencies.log""" } ,
+                        Documentation: { sh "make doxygen" },
                     )
                 }
             }
             post {
                 always {
-                    warnings consoleParsers: [[parserName: 'CppLint']], canRunOnFailed: true
-                    warnings consoleParsers: [[parserName: 'math-dependencies']], canRunOnFailed: true
+                    recordIssues enabledForFailure: true, tools:
+                        [cppLint(),
+                         groovyScript(parserId: 'mathDependencies', pattern: '**/dependencies.log')]
                     deleteDir()
                 }
             }
@@ -156,7 +159,7 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                stage('GPU Tests') {
+                stage('Full unit with GPU') {
                     agent { label "gpu" }
                     steps {
                         deleteDir()
@@ -165,23 +168,16 @@ pipeline {
                         sh "echo STAN_OPENCL=true>> make/local"
                         sh "echo OPENCL_PLATFORM_ID=0>> make/local"
                         sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
-                        runTests("test/unit/math/gpu")
+                        runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                stage('Windows Headers') {
+                stage('Windows Headers & Unit') {
                     agent { label 'windows' }
                     steps {
                         deleteDirWin()
                         unstash 'MathSetup'
                         bat "make -j${env.PARALLEL} test-headers"
-                    }
-                }
-                stage('Windows Unit') {
-                    agent { label 'windows' }
-                    steps {
-                        deleteDirWin()
-                        unstash 'MathSetup'
                         runTestsWin("test/unit")
                     }
                 }
@@ -234,19 +230,6 @@ pipeline {
         stage('Additional merge tests') {
             when { anyOf { branch 'develop'; branch 'master' } }
             parallel {
-                stage('Unit with GPU') {
-                    agent { label "gelman-group-mac" }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CXX=${env.CXX} -Werror > make/local"
-                        sh "echo STAN_OPENCL=true>> make/local"
-                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
-                        sh "echo OPENCL_DEVICE_ID=1>> make/local"
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
                 stage('Linux Unit with Threading') {
                     agent { label 'linux' }
                     steps {
@@ -308,7 +291,7 @@ pipeline {
     post {
         always {
             node("osx || linux") {
-                warnings canRunOnFailed: true, consoleParsers: [[parserName: 'Clang (LLVM based)']]
+                recordIssues enabledForFailure: false, tool: clang()
             }
         }
         success {

@@ -77,7 +77,7 @@ CXXFLAGS_SUNDIALS ?= -pipe
 # CXXFLAGS_WARNINGS
 # CXXFLAGS_EIGEN
 
-## GPU specific flags
+## OPENCL specific flags
 # CXXFLAGS_OPENCL
 # LDFLAGS_OPENCL
 # LDLIBS_OPENCL
@@ -135,10 +135,10 @@ endif
 
 
 ################################################################################
-# Setup GPU
+# Setup OpenCL
 #
 # Adds the following to CXXFLAGS_OPENCL
-# OPENCL_DEVICE_ID - The ID of the GPU (default: 0)
+# OPENCL_DEVICE_ID - The ID of the OpenCL device (default: 0)
 # OPENCL_PLATFORM_ID The ID of the OpenCL platform (default: 0)
 # Both IDs can be found through installing and calling clinfo
 

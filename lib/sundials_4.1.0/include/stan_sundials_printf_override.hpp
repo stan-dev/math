@@ -1,0 +1,12 @@
+#ifndef STAN_MATH_SUNDIALS_PRINTF_OVERRIDE_HPP
+#define STAN_MATH_SUNDIALS_PRINTF_OVERRIDE_HPP
+
+#ifdef WITH_SUNDIAL_PRINTF
+#define STAN_SUNDIALS_PRINTF(...) printf(__VA_ARGS__)
+#define STAN_SUNDIALS_FPRINTF(...) fprintf(__VA_ARGS__)
+#else
+#define STAN_SUNDIALS_PRINTF(...)
+#define STAN_SUNDIALS_FPRINTF(...)
+#endif
+
+#endif

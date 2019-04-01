@@ -23,6 +23,8 @@
 #include <stan/math/prim/mat/err/check_cholesky_factor.hpp>
 #include <stan/math/prim/mat/err/check_cholesky_factor_corr.hpp>
 #include <stan/math/prim/mat/err/check_column_index.hpp>
+#include <stan/math/prim/mat/err/check_consistent_size_mvt.hpp>
+#include <stan/math/prim/mat/err/check_consistent_sizes_mvt.hpp>
 #include <stan/math/prim/mat/err/check_corr_matrix.hpp>
 #include <stan/math/prim/mat/err/check_cov_matrix.hpp>
 #include <stan/math/prim/mat/err/check_finite.hpp>
@@ -125,6 +127,8 @@
 #include <stan/math/prim/mat/fun/get_base1_lhs.hpp>
 #include <stan/math/prim/mat/fun/get_lp.hpp>
 #include <stan/math/prim/mat/fun/gp_dot_prod_cov.hpp>
+#include <stan/math/prim/mat/fun/gp_exponential_cov.hpp>
+#include <stan/math/prim/mat/fun/gp_matern32_cov.hpp>
 #include <stan/math/prim/mat/fun/gp_matern52_cov.hpp>
 #include <stan/math/prim/mat/fun/gp_periodic_cov.hpp>
 #include <stan/math/prim/mat/fun/head.hpp>

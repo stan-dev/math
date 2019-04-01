@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class asinh_vari : public op_v_vari {
  public:
   asinh_vari(double val, vari* avi) : op_v_vari(val, avi) {}
@@ -16,7 +16,7 @@ class asinh_vari : public op_v_vari {
     avi_->adj_ += adj_ / std::sqrt(avi_->val_ * avi_->val_ + 1.0);
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * The inverse hyperbolic sine function for variables (C99).
@@ -52,7 +52,7 @@ class asinh_vari : public op_v_vari {
  * @return Inverse hyperbolic sine of the variable.
  */
 inline var asinh(const var& a) {
-  return var(new asinh_vari(asinh(a.val()), a.vi_));
+  return var(new internal::asinh_vari(asinh(a.val()), a.vi_));
 }
 
 }  // namespace math

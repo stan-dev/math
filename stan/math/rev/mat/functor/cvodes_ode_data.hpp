@@ -5,8 +5,6 @@
 #include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
 #include <cvodes/cvodes.h>
-#include <cvodes/cvodes_direct.h>
-#include <sundials/sundials_dense.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
 #include <nvector/nvector_serial.h>
