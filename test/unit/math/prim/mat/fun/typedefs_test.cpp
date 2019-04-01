@@ -2,9 +2,7 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathPrimMat, test_size_type) {
-  const size_type test_size_type = 1.0;
-}
+TEST(MathPrimMat, test_size_type) { const size_type test_size_type = 1.0; }
 
 TEST(MathPrimMat, test_matrix_d) {
   using stan::math::matrix_d;
