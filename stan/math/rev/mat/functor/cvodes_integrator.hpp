@@ -13,7 +13,7 @@
 #include <stan/math/rev/mat/functor/cvodes_utils.hpp>
 #include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>
 #include <cvodes/cvodes.h>
-#include <cvodes/cvodes_direct.h>
+#include <sunlinsol/sunlinsol_dense.h>
 #include <algorithm>
 #include <ostream>
 #include <vector>
@@ -48,6 +48,13 @@ class cvodes_integrator {
    * The solver used is based on the backward differentiation
    * formula which is an implicit numerical integration scheme
    * appropiate for stiff ODE systems.
+   *
+   * During ODE integration the global autodiff tape is continuously
+   * used. Thus, the overall autodiff tape is used and must not be
+   * used concurrently while ODE integration is executed. In
+   * particular, the adjoints of the parameter vector are used for
+   * Jacobian calculations. For details, please refer to the
+   * coupled_ode_system documentation.
    *
    * @tparam F type of ODE system function.
    * @tparam T_initial type of scalars for initial values.
@@ -108,7 +115,7 @@ class cvodes_integrator {
     typedef cvodes_ode_data<F, T_initial, T_param> ode_data;
     ode_data cvodes_data(f, y0, theta, x, x_int, msgs);
 
-    void* cvodes_mem = CVodeCreate(Lmm, CV_NEWTON);
+    void* cvodes_mem = CVodeCreate(Lmm);
     if (cvodes_mem == nullptr)
       throw std::runtime_error("CVodeCreate failed to allocate memory");
 
@@ -135,11 +142,11 @@ class cvodes_integrator {
       // create matrix object and linear solver object; resource
       // (de-)allocation is handled in the cvodes_ode_data
       cvodes_check_flag(
-          CVDlsSetLinearSolver(cvodes_mem, cvodes_data.LS_, cvodes_data.A_),
-          "CVDlsSetLinearSolver");
+          CVodeSetLinearSolver(cvodes_mem, cvodes_data.LS_, cvodes_data.A_),
+          "CVodeSetLinearSolver");
       cvodes_check_flag(
-          CVDlsSetJacFn(cvodes_mem, &ode_data::cv_jacobian_states),
-          "CVDlsSetJacFn");
+          CVodeSetJacFn(cvodes_mem, &ode_data::cv_jacobian_states),
+          "CVodeSetJacFn");
 
       // initialize forward sensitivity system of CVODES as needed
       if (S > 0) {

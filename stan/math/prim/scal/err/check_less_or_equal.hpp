@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 template <typename T_y, typename T_high, bool is_vec>
 struct less_or_equal {
   static void check(const char* function, const char* name, const T_y& y,
@@ -48,7 +48,7 @@ struct less_or_equal<T_y, T_high, true> {
     }
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Check if <code>y</code> is less or equal to
@@ -71,8 +71,8 @@ struct less_or_equal<T_y, T_high, true> {
 template <typename T_y, typename T_high>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
-  less_or_equal<T_y, T_high, is_vector_like<T_y>::value>::check(function, name,
-                                                                y, high);
+  internal::less_or_equal<T_y, T_high, is_vector_like<T_y>::value>::check(
+      function, name, y, high);
 }
 }  // namespace math
 }  // namespace stan

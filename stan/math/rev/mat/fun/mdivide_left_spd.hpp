@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 template <int R1, int C1, int R2, int C2>
 class mdivide_left_spd_alloc : public chainable_alloc {
  public:
@@ -240,7 +240,7 @@ class mdivide_left_spd_vd_vari : public vari {
         variRefA_[pos++]->adj_ += adjA(i, j);
   }
 };
-}  // namespace
+}  // namespace internal
 
 template <int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
@@ -254,8 +254,8 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  mdivide_left_spd_vv_vari<R1, C1, R2, C2> *baseVari
-      = new mdivide_left_spd_vv_vari<R1, C1, R2, C2>(A, b);
+  internal::mdivide_left_spd_vv_vari<R1, C1, R2, C2> *baseVari
+      = new internal::mdivide_left_spd_vv_vari<R1, C1, R2, C2>(A, b);
 
   size_t pos = 0;
   for (size_type j = 0; j < res.cols(); j++)
@@ -278,8 +278,8 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  mdivide_left_spd_vd_vari<R1, C1, R2, C2> *baseVari
-      = new mdivide_left_spd_vd_vari<R1, C1, R2, C2>(A, b);
+  internal::mdivide_left_spd_vd_vari<R1, C1, R2, C2> *baseVari
+      = new internal::mdivide_left_spd_vd_vari<R1, C1, R2, C2>(A, b);
 
   size_t pos = 0;
   for (size_type j = 0; j < res.cols(); j++)
@@ -302,8 +302,8 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  mdivide_left_spd_dv_vari<R1, C1, R2, C2> *baseVari
-      = new mdivide_left_spd_dv_vari<R1, C1, R2, C2>(A, b);
+  internal::mdivide_left_spd_dv_vari<R1, C1, R2, C2> *baseVari
+      = new internal::mdivide_left_spd_dv_vari<R1, C1, R2, C2>(A, b);
 
   size_t pos = 0;
   for (size_type j = 0; j < res.cols(); j++)

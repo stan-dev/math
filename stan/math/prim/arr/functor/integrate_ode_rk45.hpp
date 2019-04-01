@@ -44,6 +44,13 @@ namespace math {
  * method</a> as implemented in Boost's <code>
  * boost::numeric::odeint::runge_kutta_dopri5</code> integrator.
  *
+ * During ODE integration the global autodiff tape is continuously
+ * used. Thus, the overall autodiff tape is used and must not be
+ * used concurrently while ODE integration is executed. In
+ * particular, the adjoints of the parameter vector are used for
+ * Jacobian calculations. For details, please refer to the
+ * coupled_ode_system documentation.
+ *
  * @tparam F type of ODE system function.
  * @tparam T1 type of scalars for initial values.
  * @tparam T2 type of scalars for parameters.
