@@ -84,7 +84,7 @@ class dot_product_vari : public vari {
                          vari** shared = nullptr) {
     if (shared == nullptr) {
       mem_v = reinterpret_cast<vari**>(
-          ChainableStack::instance().memalloc_.alloc(length_ * sizeof(vari*)));
+          ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
       for (size_t i = 0; i < length_; i++)
         mem_v[i] = inv[i].vi_;
     } else {
@@ -96,7 +96,7 @@ class dot_product_vari : public vari {
                          vari** shared = nullptr) {
     if (shared == nullptr) {
       mem_v = reinterpret_cast<vari**>(
-          ChainableStack::instance().memalloc_.alloc(length_ * sizeof(vari*)));
+          ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
       for (size_t i = 0; i < length_; i++)
         mem_v[i] = inv(i).vi_;
     } else {
@@ -108,7 +108,7 @@ class dot_product_vari : public vari {
                          double* shared = nullptr) {
     if (shared == nullptr) {
       mem_d = reinterpret_cast<double*>(
-          ChainableStack::instance().memalloc_.alloc(length_ * sizeof(double)));
+          ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(double)));
       for (size_t i = 0; i < length_; i++)
         mem_d[i] = ind[i];
     } else {
@@ -120,7 +120,7 @@ class dot_product_vari : public vari {
                          double* shared = nullptr) {
     if (shared == nullptr) {
       mem_d = reinterpret_cast<double*>(
-          ChainableStack::instance().memalloc_.alloc(length_ * sizeof(double)));
+          ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(double)));
       for (size_t i = 0; i < length_; i++)
         mem_d[i] = ind(i);
     } else {
