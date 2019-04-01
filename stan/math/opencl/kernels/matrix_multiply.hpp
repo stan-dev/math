@@ -115,13 +115,13 @@ const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int,
                     {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
 
 // \cond
-const char* matrix_vector_multiply_kernel_code = STRINGIFY(
+static const char* matrix_vector_multiply_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Matrix-vector multiplication R=A*B on the OpenCL device
      *
      * @param[in] A matrix in matrix-vector multiplication
-     * @param[in] B the vector in matri-vector multiplication
+     * @param[in] B vector in matrix-vector multiplication
      * @param[out] R the output vector
      * @param[in] M Number of rows for matrix A
      * @param[in] N Number of cols for matrix A and number of rows for vector B
@@ -150,18 +150,18 @@ const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int>
                            matrix_vector_multiply_kernel_code);
 
 // \cond
-const char* vector_matrix_multiply_kernel_code = STRINGIFY(
+static const char* row_vector_matrix_multiply_kernel_code = STRINGIFY(
     // \endcond
     /**
-     * Vector-matrix multiplication R=A*B on the OpenCL device
+     * Row vector-matrix multiplication R=A*B on the OpenCL device
      *
-     * @param[in] A matrix in vector-matrix multiplication
-     * @param[in] B the vector in vector-matrix multiplication
+     * @param[in] A row vector in row vector-matrix multiplication
+     * @param[in] B matrix in row vector-matrix multiplication
      * @param[out] R the output vector
      * @param[in] N Number of cols for vector A and number of rows for matrix B
      * @param[in] K Number of cols for matrix B
      */
-    __kernel void vector_matrix_multiply(
+    __kernel void row_vector_matrix_multiply(
         const __global double* A, const __global double* B, __global double* R,
         const int N, const int K) {
       const int lid = get_local_id(0);
@@ -195,12 +195,12 @@ const char* vector_matrix_multiply_kernel_code = STRINGIFY(
 // \endcond
 
 /**
- * See the docs for \link kernels/matrix_multiply.hpp vector_matrix_multiply()
+ * See the docs for \link kernels/matrix_multiply.hpp row_vector_matrix_multiply()
  * \endlink
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int>
-    vector_matrix_multiply("vector_matrix_multiply",
-                           vector_matrix_multiply_kernel_code);
+    row_vector_matrix_multiply("row_vector_matrix_multiply",
+                           row_vector_matrix_multiply_kernel_code);
 
 }  // namespace opencl_kernels
 }  // namespace math

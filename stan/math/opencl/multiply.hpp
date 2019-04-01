@@ -40,7 +40,7 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   if (A.rows() == 1 && triangular_view_A == TriangularViewCL::Entire
       && triangular_view_B == TriangularViewCL::Entire) {
     try {
-      opencl_kernels::vector_matrix_multiply(
+      opencl_kernels::row_vector_matrix_multiply(
           cl::NDRange(temp.cols() * 64), cl::NDRange(64), A.buffer(),
           B.buffer(), temp.buffer(), B.rows(), B.cols());
     } catch (cl::Error& e) {
