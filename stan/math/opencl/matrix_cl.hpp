@@ -200,8 +200,8 @@ class matrix_cl {
    * @param ncols the number of columns in the submatrix
    */
   template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
-  void sub_block(const matrix_cl& A, int A_i, int A_j, int this_i, int this_j,
-                 int nrows, int ncols) {
+  void sub_block(const matrix_cl& A, size_t A_i, size_t A_j, size_t this_i,
+                 size_t this_j, size_t nrows, size_t ncols) {
     if (nrows == 0 || ncols == 0) {
       return;
     }
@@ -211,10 +211,24 @@ class matrix_cl {
     }
     cl::CommandQueue cmdQueue = opencl_context.queue();
     try {
-      opencl_kernels::sub_block(cl::NDRange(nrows, ncols), A.buffer(),
-                                this->buffer(), A_i, A_j, this_i, this_j, nrows,
-                                ncols, A.rows(), A.cols(), this->rows(),
-                                this->cols(), triangular_view);
+      if (triangular_view == TriangularViewCL::Entire) {
+        cl::size_t<3> src_offset
+            = opencl::to_size_t<3>({A_i * sizeof(double), A_j, 0});
+        cl::size_t<3> dst_offset
+            = opencl::to_size_t<3>({this_i * sizeof(double), this_j, 0});
+        cl::size_t<3> size
+            = opencl::to_size_t<3>({nrows * sizeof(double), ncols, 1});
+        cmdQueue.enqueueCopyBufferRect(
+            A.buffer(), this->buffer(), src_offset, dst_offset, size,
+            A.rows() * sizeof(double), A.rows() * A.cols() * sizeof(double),
+            sizeof(double) * this->rows(),
+            this->rows() * this->cols() * sizeof(double));
+      } else {
+        opencl_kernels::sub_block(cl::NDRange(nrows, ncols), A.buffer(),
+                                  this->buffer(), A_i, A_j, this_i, this_j,
+                                  nrows, ncols, A.rows(), A.cols(),
+                                  this->rows(), this->cols(), triangular_view);
+      }
     } catch (const cl::Error& e) {
       check_opencl_error("copy_submatrix", e);
     }
