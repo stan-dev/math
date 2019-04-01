@@ -41,9 +41,9 @@ elt_divide(const Eigen::Matrix<T1, R, C>& m1,
  * @return Elementwise division of a scalar by matrix.
  */
 template <typename T1, typename T2, int R, int C>
-auto elt_divide(const Eigen::Matrix<T1, R, C>& m, T2 s) {
-  auto out = m.array() / s;
-  return out;
+Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R, C>
+  elt_divide(const Eigen::Matrix<T1, R, C>& m, T2 s) {
+  return m.array() / s;
 }
 
 /**
@@ -59,9 +59,9 @@ auto elt_divide(const Eigen::Matrix<T1, R, C>& m, T2 s) {
  * @return Elementwise division of a scalar by matrix.
  */
 template <typename T1, typename T2, int R, int C>
-auto elt_divide(T1 s, const Eigen::Matrix<T2, R, C>& m) {
-  auto out = s / m.array();
-  return out;
+Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R, C>
+  elt_divide(T1 s, const Eigen::Matrix<T2, R, C>& m) {
+  return s / m.array();
 }
 
 }  // namespace math
