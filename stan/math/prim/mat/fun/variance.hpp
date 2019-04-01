@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/mean.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <vector>
 
@@ -23,9 +24,13 @@ inline typename boost::math::tools::promote_args<T>::type variance(
   check_nonzero_size("variance", "v", v);
   if (v.size() == 1)
     return 0.0;
-  Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>> m(&v[0], v.size());
-
-  return (m.array() - m.mean()).matrix().squaredNorm() / (m.size() - 1);
+  T v_mean(mean(v));
+  T sum_sq_diff(0);
+  for (size_t i = 0; i < v.size(); ++i) {
+    T diff = v[i] - v_mean;
+    sum_sq_diff += diff * diff;
+  }
+  return sum_sq_diff / (v.size() - 1);
 }
 
 /**
@@ -41,8 +46,13 @@ inline typename boost::math::tools::promote_args<T>::type variance(
 
   if (m.size() == 1)
     return 0.0;
-
-  return (m.array() - m.mean()).matrix().squaredNorm() / (m.size() - 1);
+  typename boost::math::tools::promote_args<T>::type mn(mean(m));
+  typename boost::math::tools::promote_args<T>::type sum_sq_diff(0);
+  for (int i = 0; i < m.size(); ++i) {
+    typename boost::math::tools::promote_args<T>::type diff = m(i) - mn;
+    sum_sq_diff += diff * diff;
+  }
+  return sum_sq_diff / (m.size() - 1);
 }
 
 }  // namespace math

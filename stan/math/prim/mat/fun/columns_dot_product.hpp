@@ -21,7 +21,7 @@ inline Eigen::Matrix<double, 1, C1> columns_dot_product(
     const Eigen::Matrix<double, R1, C1>& v1,
     const Eigen::Matrix<double, R2, C2>& v2) {
   check_matching_sizes("columns_dot_product", "v1", v1, "v2", v2);
-  return v1.cwiseProduct(v2).colwise().sum();
+  return (v1.transpose() * v2).diagonal();
 }
 
 }  // namespace math

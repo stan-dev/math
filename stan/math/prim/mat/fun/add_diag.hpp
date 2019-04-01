@@ -47,7 +47,8 @@ add_diag(const Eigen::Matrix<T_m, Eigen::Dynamic, Eigen::Dynamic> &mat,
   Eigen::Matrix<typename return_type<T_m, T_a>::type, Eigen::Dynamic,
                 Eigen::Dynamic>
       out = mat;
-  return out += to_add.asDiagonal();
+  out.diagonal() += to_add;
+  return out;
 }
 }  // namespace math
 }  // namespace stan
