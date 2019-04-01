@@ -38,23 +38,14 @@ namespace math {
  * <p>The final M states correspond to the sensitivities with respect
  * to the second base system equation, etc.
  *
- * <p>Note: For efficiency reasons the parameter vector is used as
- * part of the nested autodiff performed when evaluating the Jacobian
- * wrt to the parameters of the ODE RHS. This links the nested
- * autodiff with the outer global autodiff stack. At construction of
- * the coupled_ode_system the adjoints of the parameter vector are
- * saved. Upon destruction of the instance, these adjoints are
- * restored to their original values at instantiation of the
- * class. Throughout the life-time of the coupled_ode_system the
- * adjoints of the parameter vector, which is part of the surrounding
- * global autodiff stack, are used and modified. Thus, concurrent
- * access to the outer autodiff stack is unsafe while a
- * coupled_ode_system instance is in use.
- *
- * Finally, since the parameter vector is part of the outer autodiff
- * stack, the set_zero_adjoint_nested() call does not set these
- * adjoints to zero which is why these are zeroed in an extra loop
- * following the set_zero_adjoint_nested() call.
+ * <p>Note: For efficiency reasons we place a deep copy of the theta_
+ * parameter vector on the nochain var stack as theta_nochain_. Doing
+ * so separates the parameter vector from it's own operands and allows
+ * to use the same parameter vector instance as input for the ODE RHS
+ * functor f_. Since the jacobian of the ODE RHS is constructed in a
+ * nested AD operation we have to reset the adjoints of the
+ * theta_nochain_ variables with an additional for loop after
+ * set_zero_all_adjoints_nested().
  *
  * @tparam F type of functor for the base ode system.
  */
@@ -63,7 +54,7 @@ struct coupled_ode_system<F, double, var> {
   const F& f_;
   const std::vector<double>& y0_dbl_;
   const std::vector<var>& theta_;
-  std::vector<double> theta_adj_;
+  std::vector<var> theta_nochain_;
   const std::vector<double>& x_;
   const std::vector<int>& x_int_;
   const size_t N_;
@@ -90,23 +81,19 @@ struct coupled_ode_system<F, double, var> {
       : f_(f),
         y0_dbl_(y0),
         theta_(theta),
-        theta_adj_(theta.size()),
         x_(x),
         x_int_(x_int),
         N_(y0.size()),
         M_(theta.size()),
         size_(N_ + N_ * M_),
         msgs_(msgs) {
-    for (size_t j = 0; j < M_; ++j) {
-      theta_adj_[j] = theta_[j].adj();
-      theta_[j].vi_->set_zero_adjoint();
-    }
+    start_nested();
+    for (const var& p : theta)
+      theta_nochain_.emplace_back(var(new vari(p.val(), false)));
   }
-
+  
   ~coupled_ode_system() {
-    for (size_t j = 0; j < M_; ++j) {
-      theta_[j].vi_->adj_ = theta_adj_[j];
-    }
+    //recover_memory_nested();
   }
 
   /**
@@ -135,7 +122,7 @@ struct coupled_ode_system<F, double, var> {
 
       const vector<var> y_vars(z.begin(), z.begin() + N_);
 
-      vector<var> dy_dt_vars = f_(t, y_vars, theta_, x_, x_int_, msgs_);
+      vector<var> dy_dt_vars = f_(t, y_vars, theta_nochain_, x_, x_int_, msgs_);
 
       check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
                        "states", N_);
@@ -148,7 +135,7 @@ struct coupled_ode_system<F, double, var> {
           // orders derivatives by equation (i.e. if there are 2 eqns
           // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
           // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
-          double temp_deriv = theta_[j].adj();
+          double temp_deriv = theta_nochain_[j].adj();
           const size_t offset = N_ + N_ * j;
           for (size_t k = 0; k < N_; k++)
             temp_deriv += z[offset + k] * y_vars[k].adj();
@@ -162,13 +149,12 @@ struct coupled_ode_system<F, double, var> {
         // See efficiency note above on template specalization for more details
         // on this.
         for (size_t j = 0; j < M_; ++j)
-          theta_[j].vi_->set_zero_adjoint();
+          theta_nochain_[j].vi_->set_zero_adjoint();
       }
     } catch (const std::exception& e) {
       recover_memory_nested();
       throw;
     }
-
     recover_memory_nested();
   }
 
@@ -207,6 +193,10 @@ struct coupled_ode_system<F, double, var> {
    */
   std::vector<std::vector<var> > decouple_states(
       const std::vector<std::vector<double> >& y) const {
+
+    // after calling decouple_states the object cannot be used anymore!
+    recover_memory_nested();
+
     std::vector<var> temp_vars(N_);
     std::vector<double> temp_gradients(M_);
     std::vector<std::vector<var> > y_return(y.size());
@@ -440,23 +430,9 @@ struct coupled_ode_system<F, var, double> {
  * + M) states. (derivatives of each state with respect to each
  * initial value and each theta)
  *
- * <p>Note: For efficiency reasons the parameter vector is used as
- * part of the nested autodiff performed when evaluating the Jacobian
- * wrt to the parameters of the ODE RHS. This links the nested
- * autodiff with the outer global autodiff stack. At construction of
- * the coupled_ode_system the adjoints of the parameter vector are
- * saved. Upon destruction of the instance, these adjoints are
- * restored to their original values at instantiation of the
- * class. Throughout the life-time of the coupled_ode_system the
- * adjoints of the parameter vector, which is part of the surrounding
- * global autodiff stack, are used and modified. Thus, concurrent
- * access to the outer autodiff stack is unsafe while a
- * coupled_ode_system instance is in use.
- *
- * Finally, since the parameter vector is part of the outer autodiff
- * stack, the set_zero_adjoint_nested() call does not set these
- * adjoints to zero which is why these are zeroed in an extra loop
- * following the set_zero_adjoint_nested() call.
+ * <p>Note: Please refer to the efficiency note of the
+ * coupled_ode_system<F, double, var> partial template specialization
+ * for the rationale behind theta_nochain_.
  *
  * @tparam F the functor for the base ode system
  */
@@ -465,7 +441,7 @@ struct coupled_ode_system<F, var, var> {
   const F& f_;
   const std::vector<var>& y0_;
   const std::vector<var>& theta_;
-  std::vector<double> theta_adj_;
+  std::vector<var> theta_nochain_;
   const std::vector<double>& x_;
   const std::vector<int>& x_int_;
   const size_t N_;
@@ -493,23 +469,19 @@ struct coupled_ode_system<F, var, var> {
       : f_(f),
         y0_(y0),
         theta_(theta),
-        theta_adj_(theta.size()),
         x_(x),
         x_int_(x_int),
         N_(y0.size()),
         M_(theta.size()),
         size_(N_ + N_ * (N_ + M_)),
         msgs_(msgs) {
-    for (size_t j = 0; j < M_; ++j) {
-      theta_adj_[j] = theta_[j].adj();
-      theta_[j].vi_->set_zero_adjoint();
-    }
+    start_nested();
+    for (const var& p : theta)
+      theta_nochain_.emplace_back(var(new vari(p.val(), false)));
   }
 
   ~coupled_ode_system() {
-    for (size_t j = 0; j < M_; ++j) {
-      theta_[j].vi_->adj_ = theta_adj_[j];
-    }
+    //recover_memory_nested();
   }
 
   /**
@@ -537,7 +509,7 @@ struct coupled_ode_system<F, var, var> {
 
       const vector<var> y_vars(z.begin(), z.begin() + N_);
 
-      vector<var> dy_dt_vars = f_(t, y_vars, theta_, x_, x_int_, msgs_);
+      vector<var> dy_dt_vars = f_(t, y_vars, theta_nochain_, x_, x_int_, msgs_);
 
       check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
                        "states", N_);
@@ -559,7 +531,7 @@ struct coupled_ode_system<F, var, var> {
         }
 
         for (size_t j = 0; j < M_; j++) {
-          double temp_deriv = theta_[j].adj();
+          double temp_deriv = theta_nochain_[j].adj();
           const size_t offset = N_ + N_ * N_ + N_ * j;
           for (size_t k = 0; k < N_; k++)
             temp_deriv += z[offset + k] * y_vars[k].adj();
@@ -573,13 +545,12 @@ struct coupled_ode_system<F, var, var> {
         // See efficiency note above on template specalization for more details
         // on this.
         for (size_t j = 0; j < M_; ++j)
-          theta_[j].vi_->set_zero_adjoint();
+          theta_nochain_[j].vi_->set_zero_adjoint();
       }
     } catch (const std::exception& e) {
       recover_memory_nested();
       throw;
     }
-
     recover_memory_nested();
   }
 
@@ -619,6 +590,10 @@ struct coupled_ode_system<F, var, var> {
    */
   std::vector<std::vector<var> > decouple_states(
       const std::vector<std::vector<double> >& y) const {
+
+    // after calling decouple_states the object cannot be used anymore!
+    recover_memory_nested();
+
     using std::vector;
 
     vector<var> vars = y0_;
