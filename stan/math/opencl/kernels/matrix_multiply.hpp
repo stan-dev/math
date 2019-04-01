@@ -151,8 +151,8 @@ const char* vector_matrix_multiply_kernel_code = STRINGIFY(
     /**
      * Vector-matrix multiplication R=A*B on the OpenCL device
      *
-     * @param[in] M matrix in vector-matrix multiplication
-     * @param[in] V the vector in vector-matrix multiplication
+     * @param[in] A matrix in vector-matrix multiplication
+     * @param[in] B the vector in vector-matrix multiplication
      * @param[out] R the output vector
      * @param[in] N Number of cols for vector A and number of rows for matrix B
      * @param[in] K Number of cols for matrix B
