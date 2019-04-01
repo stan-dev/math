@@ -29,7 +29,7 @@ class softmax_op {
   Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
                              const Eigen::VectorXd& alpha) {
     N_ = alpha.size();
-    y_ = ChainableStack::instance_->memalloc_.alloc_array<double>(N_);
+    y_ = ChainableStack::instance().memalloc_.alloc_array<double>(N_);
 
     auto y = softmax(alpha);
     for (int n = 0; n < N_; ++n)

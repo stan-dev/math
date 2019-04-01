@@ -30,19 +30,19 @@ class mdivide_left_tri_vv_vari : public vari {
         M_(A.rows()),
         N_(B.cols()),
         A_(reinterpret_cast<double *>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(double) * A.rows()
+            ChainableStack::instance().memalloc_.alloc(sizeof(double) * A.rows()
                                                        * A.cols()))),
         C_(reinterpret_cast<double *>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(double) * B.rows()
+            ChainableStack::instance().memalloc_.alloc(sizeof(double) * B.rows()
                                                        * B.cols()))),
         variRefA_(reinterpret_cast<vari **>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * A.rows()
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * A.rows()
                                                        * (A.rows() + 1) / 2))),
         variRefB_(reinterpret_cast<vari **>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))),
         variRefC_(reinterpret_cast<vari **>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))) {
     using Eigen::Map;
     using Eigen::Matrix;
@@ -143,16 +143,16 @@ class mdivide_left_tri_dv_vari : public vari {
         M_(A.rows()),
         N_(B.cols()),
         A_(reinterpret_cast<double *>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(double) * A.rows()
+            ChainableStack::instance().memalloc_.alloc(sizeof(double) * A.rows()
                                                        * A.cols()))),
         C_(reinterpret_cast<double *>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(double) * B.rows()
+            ChainableStack::instance().memalloc_.alloc(sizeof(double) * B.rows()
                                                        * B.cols()))),
         variRefB_(reinterpret_cast<vari **>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))),
         variRefC_(reinterpret_cast<vari **>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))) {
     using Eigen::Map;
     using Eigen::Matrix;
@@ -228,16 +228,16 @@ class mdivide_left_tri_vd_vari : public vari {
         M_(A.rows()),
         N_(B.cols()),
         A_(reinterpret_cast<double *>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(double) * A.rows()
+            ChainableStack::instance().memalloc_.alloc(sizeof(double) * A.rows()
                                                        * A.cols()))),
         C_(reinterpret_cast<double *>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(double) * B.rows()
+            ChainableStack::instance().memalloc_.alloc(sizeof(double) * B.rows()
                                                        * B.cols()))),
         variRefA_(reinterpret_cast<vari **>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * A.rows()
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * A.rows()
                                                        * (A.rows() + 1) / 2))),
         variRefC_(reinterpret_cast<vari **>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
+            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))) {
     using Eigen::Map;
     using Eigen::Matrix;
