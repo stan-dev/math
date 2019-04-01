@@ -116,7 +116,7 @@ const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int,
 
 // \cond
 const char* matrix_vector_multiply_kernel_code = STRINGIFY(
-// \endcond
+    // \endcond
     /**
      * Matrix-vector multiplication R=A*B on the OpenCL device
      *
@@ -126,28 +126,32 @@ const char* matrix_vector_multiply_kernel_code = STRINGIFY(
      * @param[in] M Number of rows for matrix A
      * @param[in] N Number of cols for matrix A and number of rows for vector B
      */
-    __kernel void matrix_vector_multiply(const __global double* A, const __global double* B, __global double* R, const int M, const int N) {
+    __kernel void matrix_vector_multiply(
+        const __global double* A, const __global double* B, __global double* R,
+        const int M, const int N) {
       const int gid = get_global_id(0);
 
       double acc = 0;
-      for (int i = 0, j=0; i < N; i ++, j += M) {
-        acc += A[j+gid] * B[i];
+      for (int i = 0, j = 0; i < N; i++, j += M) {
+        acc += A[j + gid] * B[i];
       }
-      R[gid]=acc;
+      R[gid] = acc;
     }
-// \cond
+    // \cond
 );
 // \endcond
 
 /**
- * See the docs for \link kernels/matrix_multiply.hpp matrix_vector_multiply() \endlink
+ * See the docs for \link kernels/matrix_multiply.hpp matrix_vector_multiply()
+ * \endlink
  */
 const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int>
-        matrix_vector_multiply("matrix_vector_multiply", matrix_vector_multiply_kernel_code);
+    matrix_vector_multiply("matrix_vector_multiply",
+                           matrix_vector_multiply_kernel_code);
 
 // \cond
 const char* vector_matrix_multiply_kernel_code = STRINGIFY(
-// \endcond
+    // \endcond
     /**
      * Vector-matrix multiplication R=A*B on the OpenCL device
      *
@@ -157,40 +161,46 @@ const char* vector_matrix_multiply_kernel_code = STRINGIFY(
      * @param[in] N Number of cols for vector A and number of rows for matrix B
      * @param[in] K Number of cols for matrix B
      */
-        __kernel void vector_matrix_multiply(const __global double* A, const __global double* B, __global double* R, const int N, const int K) {
-          const int lid = get_local_id(0);
-          const int gid = get_global_id(0);
-          const int wgid = get_group_id(0);
+    __kernel void vector_matrix_multiply(
+        const __global double* A, const __global double* B, __global double* R,
+        const int N, const int K) {
+      const int lid = get_local_id(0);
+      const int gid = get_global_id(0);
+      const int wgid = get_group_id(0);
 
-          double acc = 0;
-          for (int i = lid; i < N; i += 64) {
-            acc += A[i] * B[i + wgid * N];
-          }
-          __local double res_loc[64];
-          res_loc[lid] = acc;
-          barrier(CLK_LOCAL_MEM_FENCE);
-          if (lid < 16) {
-            res_loc[lid] += res_loc[lid + 16] + res_loc[lid + 32] + res_loc[lid + 48];
-          }
-          barrier(CLK_LOCAL_MEM_FENCE);
-          if (lid < 4) {
-            res_loc[lid] += res_loc[lid + 4] + res_loc[lid + 8] + res_loc[lid + 12];
-          }
-          barrier(CLK_LOCAL_MEM_FENCE);
-          if (lid == 0) {
-            acc = res_loc[lid] + res_loc[lid + 1] + res_loc[lid + 2] + res_loc[lid + 3];
-            R[wgid] = acc;
-          }
-        }
-// \cond
+      double acc = 0;
+      for (int i = lid; i < N; i += 64) {
+        acc += A[i] * B[i + wgid * N];
+      }
+      __local double res_loc[64];
+      res_loc[lid] = acc;
+      barrier(CLK_LOCAL_MEM_FENCE);
+      if (lid < 16) {
+        res_loc[lid]
+            += res_loc[lid + 16] + res_loc[lid + 32] + res_loc[lid + 48];
+      }
+      barrier(CLK_LOCAL_MEM_FENCE);
+      if (lid < 4) {
+        res_loc[lid] += res_loc[lid + 4] + res_loc[lid + 8] + res_loc[lid + 12];
+      }
+      barrier(CLK_LOCAL_MEM_FENCE);
+      if (lid == 0) {
+        acc = res_loc[lid] + res_loc[lid + 1] + res_loc[lid + 2]
+              + res_loc[lid + 3];
+        R[wgid] = acc;
+      }
+    }
+    // \cond
 );
 // \endcond
 
 /**
- * See the docs for \link kernels/matrix_multiply.hpp vector_matrix_multiply() \endlink
+ * See the docs for \link kernels/matrix_multiply.hpp vector_matrix_multiply()
+ * \endlink
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int>
-        vector_matrix_multiply("vector_matrix_multiply", vector_matrix_multiply_kernel_code);
+    vector_matrix_multiply("vector_matrix_multiply",
+                           vector_matrix_multiply_kernel_code);
 
 }  // namespace opencl_kernels
 }  // namespace math

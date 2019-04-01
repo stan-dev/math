@@ -156,7 +156,7 @@ TEST(MathMatrix, matrix_vector_big) {
 }
 
 TEST(MathMatrix, row_vector_matrix_small) {
-  auto m = stan::math::matrix_d::Random(5,4).eval();
+  auto m = stan::math::matrix_d::Random(5, 4).eval();
   auto rv = stan::math::row_vector_d::Random(5).eval();
   stan::math::matrix_d m0(1, 4);
   stan::math::matrix_d m0_cl_res(1, 4);
@@ -174,7 +174,7 @@ TEST(MathMatrix, row_vector_matrix_small) {
 }
 
 TEST(MathMatrix, row_vector_matrix_big) {
-  auto m = stan::math::matrix_d::Random(600,400).eval();
+  auto m = stan::math::matrix_d::Random(600, 400).eval();
   auto rv = stan::math::row_vector_d::Random(600).eval();
   stan::math::matrix_d m0(1, 400);
   stan::math::matrix_d m0_cl_res(1, 400);

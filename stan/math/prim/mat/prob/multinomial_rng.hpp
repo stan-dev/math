@@ -22,7 +22,7 @@ inline std::vector<int> multinomial_rng(
     const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta, int N, RNG& rng) {
   static const char* function = "multinomial_rng";
 
-  check_simplex(function, "Probabilites parameter", theta);
+  check_simplex(function, "Probabilities parameter", theta);
   check_positive(function, "number of trials variables", N);
 
   std::vector<int> result(theta.size(), 0);

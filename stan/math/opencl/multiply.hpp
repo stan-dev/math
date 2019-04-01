@@ -37,17 +37,23 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
     temp.zeros();
     return temp;
   }
-  if(A.rows()==1 && triangular_view_A == TriangularViewCL::Entire && triangular_view_B == TriangularViewCL::Entire){
-    try{
-      opencl_kernels::vector_matrix_multiply(cl::NDRange(temp.cols()*64), cl::NDRange(64), A.buffer(), B.buffer(), temp.buffer(), B.rows(), B.cols());
+  if (A.rows() == 1 && triangular_view_A == TriangularViewCL::Entire
+      && triangular_view_B == TriangularViewCL::Entire) {
+    try {
+      opencl_kernels::vector_matrix_multiply(
+          cl::NDRange(temp.cols() * 64), cl::NDRange(64), A.buffer(),
+          B.buffer(), temp.buffer(), B.rows(), B.cols());
     } catch (cl::Error& e) {
       check_opencl_error("multiply", e);
     }
     return temp;
   }
-  if(B.cols()==1 && triangular_view_A == TriangularViewCL::Entire && triangular_view_B == TriangularViewCL::Entire){
-    try{
-      opencl_kernels::matrix_vector_multiply(cl::NDRange(temp.rows()), A.buffer(), B.buffer(), temp.buffer(), A.rows(), A.cols());
+  if (B.cols() == 1 && triangular_view_A == TriangularViewCL::Entire
+      && triangular_view_B == TriangularViewCL::Entire) {
+    try {
+      opencl_kernels::matrix_vector_multiply(cl::NDRange(temp.rows()),
+                                             A.buffer(), B.buffer(),
+                                             temp.buffer(), A.rows(), A.cols());
     } catch (cl::Error& e) {
       check_opencl_error("multiply", e);
     }
