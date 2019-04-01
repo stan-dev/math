@@ -119,6 +119,78 @@ TEST(MathMatrix, row_vector_vector) {
   EXPECT_MATRIX_NEAR(m1, m1_cl_res, 1e-10);
 }
 
+TEST(MathMatrix, matrix_vector_small) {
+  auto m = stan::math::matrix_d::Random(4, 5).eval();
+  auto v = stan::math::vector_d::Random(5).eval();
+  stan::math::matrix_d m0(4, 1);
+  stan::math::matrix_d m0_cl_res(4, 1);
+
+  m0 = m * v;
+
+  stan::math::matrix_cl v_cl(v);
+  stan::math::matrix_cl m_cl(m);
+  stan::math::matrix_cl m0_cl(4, 1);
+
+  m0_cl = m_cl * v_cl;
+  stan::math::copy(m0_cl_res, m0_cl);
+
+  EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
+}
+
+TEST(MathMatrix, matrix_vector_big) {
+  auto m = stan::math::matrix_d::Random(400, 600).eval();
+  auto v = stan::math::vector_d::Random(600).eval();
+  stan::math::matrix_d m0(400, 1);
+  stan::math::matrix_d m0_cl_res(400, 1);
+
+  m0 = m * v;
+
+  stan::math::matrix_cl v_cl(v);
+  stan::math::matrix_cl m_cl(m);
+  stan::math::matrix_cl m0_cl(400, 1);
+
+  m0_cl = m_cl * v_cl;
+  stan::math::copy(m0_cl_res, m0_cl);
+
+  EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
+}
+
+TEST(MathMatrix, row_vector_matrix_small) {
+  auto m = stan::math::matrix_d::Random(5,4).eval();
+  auto rv = stan::math::row_vector_d::Random(5).eval();
+  stan::math::matrix_d m0(1, 4);
+  stan::math::matrix_d m0_cl_res(1, 4);
+
+  m0 = rv * m;
+
+  stan::math::matrix_cl m_cl(m);
+  stan::math::matrix_cl rv_cl(rv);
+  stan::math::matrix_cl m0_cl(1, 4);
+
+  m0_cl = rv_cl * m_cl;
+  stan::math::copy(m0_cl_res, m0_cl);
+
+  EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
+}
+
+TEST(MathMatrix, row_vector_matrix_big) {
+  auto m = stan::math::matrix_d::Random(600,400).eval();
+  auto rv = stan::math::row_vector_d::Random(600).eval();
+  stan::math::matrix_d m0(1, 400);
+  stan::math::matrix_d m0_cl_res(1, 400);
+
+  m0 = rv * m;
+
+  stan::math::matrix_cl m_cl(m);
+  stan::math::matrix_cl rv_cl(rv);
+  stan::math::matrix_cl m0_cl(1, 400);
+
+  m0_cl = rv_cl * m_cl;
+  stan::math::copy(m0_cl_res, m0_cl);
+
+  EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
+}
+
 TEST(MathMatrix, multiply_small) {
   using stan::math::multiply;
   auto m1 = stan::math::matrix_d::Random(3, 3).eval();
