@@ -5,6 +5,15 @@
 
 namespace stan {
 
+/**
+ * Returns the size of the provided Eigen matrix.
+ *
+ * @param m a const Eigen matrix
+ * @tparam T type of matrix.
+ * @tparam R number of rows in the input matrix.
+ * @tparam C number of columns in the input matrix.
+ * @return the size of the input matrix
+ */
 template <typename T, int R, int C>
 size_t length(const Eigen::Matrix<T, R, C>& m) {
   return m.size();
