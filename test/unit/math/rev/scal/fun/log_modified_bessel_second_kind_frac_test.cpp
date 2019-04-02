@@ -145,7 +145,7 @@ TEST(AgradRev, log_modified_bessel_second_kind_frac_recurrence) {
           // recursive formula
           if (v > 0) {
             if (v < 1 + 1e-4) {
-              if (z > 1) {
+              if (z > 1e-3) {
                 right_hand = log_diff_exp(
                    log_K_vp2, LOG_2 + log(v_var + 1) - log(z_var) + log_K_vp1);
               } else {
@@ -158,7 +158,7 @@ TEST(AgradRev, log_modified_bessel_second_kind_frac_recurrence) {
             }
           } else {
             if (v > -1 - 1e-4) {
-              if (z > 1) {
+              if (z > 1e-3) {
                 right_hand = log_diff_exp(log_K_vm2, 
                   LOG_2 + log(-v_var + 1) - log(z_var) + log_K_vm1);
               } else {
