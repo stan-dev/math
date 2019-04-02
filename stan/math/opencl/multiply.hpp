@@ -39,11 +39,12 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   }
   if (A.rows() == 1 && triangular_view_A == TriangularViewCL::Entire
       && triangular_view_B == TriangularViewCL::Entire) {
-    int local_size = opencl_kernels::row_vector_matrix_multiply.make_functor.get_opts().at("LOCAL_SIZE_");
+    int local_size = opencl_kernels::row_vector_matrix_multiply.make_functor.
+            get_opts().at("LOCAL_SIZE_");
     try {
       opencl_kernels::row_vector_matrix_multiply(
-          cl::NDRange(temp.cols() * local_size), cl::NDRange(local_size), A.buffer(),
-          B.buffer(), temp.buffer(), B.rows(), B.cols());
+          cl::NDRange(temp.cols() * local_size), cl::NDRange(local_size),
+          A.buffer(), B.buffer(), temp.buffer(), B.rows(), B.cols());
     } catch (cl::Error& e) {
       check_opencl_error("row_vector - matrix multiply", e);
     }
