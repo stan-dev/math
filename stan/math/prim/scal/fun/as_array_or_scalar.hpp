@@ -5,15 +5,14 @@ namespace stan {
 namespace math {
 
 /**
- * Converts a matrix type to an array. For scalar inputs this is identity
- * function.
+ * Returns specified input value.
  *
  * @tparam T Type of element.
  * @param v Specified value.
  * @return Same value.
  */
 template <typename T>
-inline T as_array_or_scalar(const T& v) {
+inline const T& as_array_or_scalar(const T& v) {
   return v;
 }
 

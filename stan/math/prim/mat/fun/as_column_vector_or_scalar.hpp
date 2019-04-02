@@ -38,7 +38,7 @@ as_column_vector_or_scalar(const Eigen::Matrix<T, 1, Eigen::Dynamic>& a) {
 }
 
 /**
- * Converts input argument to a column vector or a scalar. Std::vector will be
+ * Converts input argument to a column vector or a scalar. std::vector will be
  * converted to a column vector.
  *
  * @tparam T Type of scalar element.

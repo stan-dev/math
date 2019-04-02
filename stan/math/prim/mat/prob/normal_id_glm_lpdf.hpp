@@ -64,8 +64,8 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
                                               T_scale>::type T_partials_return;
   typedef typename std::conditional<
       is_vector<T_scale>::value,
-      Eigen::Array<typename stan::partials_return_type<T_scale>::type, -1, 1>,
-      typename stan::partials_return_type<T_scale>::type>::type T_scale_val;
+      Eigen::Array<typename partials_return_type<T_scale>::type, -1, 1>,
+      typename partials_return_type<T_scale>::type>::type T_scale_val;
 
   using Eigen::Array;
   using Eigen::Dynamic;
@@ -92,16 +92,16 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
   if (!include_summand<propto, T_y, T_x, T_alpha, T_beta, T_scale>::value)
     return 0.0;
 
-  const auto &x_val = value_of_rec(x);
-  const auto &beta_val = value_of_rec(beta);
-  const auto &alpha_val = value_of_rec(alpha);
-  const auto &sigma_val = value_of_rec(sigma);
-  const auto &y_val = value_of_rec(y);
+  const auto& x_val = value_of_rec(x);
+  const auto& beta_val = value_of_rec(beta);
+  const auto& alpha_val = value_of_rec(alpha);
+  const auto& sigma_val = value_of_rec(sigma);
+  const auto& y_val = value_of_rec(y);
 
-  const auto &beta_val_vec = as_column_vector_or_scalar(beta_val);
-  const auto &alpha_val_vec = as_column_vector_or_scalar(alpha_val);
-  const auto &sigma_val_vec = as_column_vector_or_scalar(sigma_val);
-  const auto &y_val_vec = as_column_vector_or_scalar(y_val);
+  const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
+  const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
+  const auto& sigma_val_vec = as_column_vector_or_scalar(sigma_val);
+  const auto& y_val_vec = as_column_vector_or_scalar(y_val);
 
   T_scale_val inv_sigma = 1 / as_array_or_scalar(sigma_val_vec);
 
@@ -136,31 +136,29 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
       if (is_vector<T_alpha>::value)
         ops_partials.edge3_.partials_ = mu_derivative;
       else
-        ops_partials.edge3_.partials_[0] = mu_derivative.sum();
+        ops_partials.edge3_.partials_[0] = sum(mu_derivative);
     }
     if (!is_constant_struct<T_scale>::value) {
       if (is_vector<T_scale>::value) {
         Array<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma_squared
             = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
-        y_minus_mu_over_sigma_squared_sum = y_minus_mu_over_sigma_squared.sum();
+        y_minus_mu_over_sigma_squared_sum = sum(y_minus_mu_over_sigma_squared);
         ops_partials.edge5_.partials_
             = (y_minus_mu_over_sigma_squared - 1) * inv_sigma;
       } else {
         y_minus_mu_over_sigma_squared_sum
-            = (y_minus_mu_over_sigma * y_minus_mu_over_sigma).sum();
+            = sum(y_minus_mu_over_sigma * y_minus_mu_over_sigma);
         ops_partials.edge5_.partials_[0]
             = (y_minus_mu_over_sigma_squared_sum - N) * as_scalar(inv_sigma);
       }
     }
   } else {
     y_minus_mu_over_sigma_squared_sum
-        = (y_minus_mu_over_sigma * y_minus_mu_over_sigma).sum();
+        = sum(y_minus_mu_over_sigma * y_minus_mu_over_sigma);
   }
 
   if (!std::isfinite(
-          y_minus_mu_over_sigma_squared_sum)) {  // only do potentially
-                                                 // expensive checks if they are
-                                                 // really needed
+          y_minus_mu_over_sigma_squared_sum)) {
     check_finite(function, "Vector of dependent variables", y);
     check_finite(function, "Weight vector", beta);
     check_finite(function, "Intercept", alpha);

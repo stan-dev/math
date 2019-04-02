@@ -5,15 +5,24 @@ namespace stan {
 namespace math {
 
 /**
- * Calculates sum of values given as input. For scalar inputs this is identity
- * function.
+ * Returns specified input value.
  *
  * @tparam T Type of element.
  * @param v Specified value.
  * @return Same value (the sum of one value).
  */
-template <typename T>
-inline T sum(const T& v) {
+inline double sum(double v) {
+  return v;
+}
+
+/**
+ * Returns specified input value.
+ *
+ * @tparam T Type of element.
+ * @param v Specified value.
+ * @return Same value (the sum of one value).
+ */
+inline int sum(int v) {
   return v;
 }
 

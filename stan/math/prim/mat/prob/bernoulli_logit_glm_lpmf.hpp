@@ -60,12 +60,12 @@ template <bool propto, typename T_y, typename T_x, typename T_alpha,
 typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
     const T_y &y, const T_x &x, const T_alpha &alpha, const T_beta &beta) {
   static const char *function = "bernoulli_logit_glm_lpmf";
-  typedef typename stan::partials_return_type<T_y, T_x, T_alpha, T_beta>::type
+  typedef typename partials_return_type<T_y, T_x, T_alpha, T_beta>::type
       T_partials_return;
   typedef typename std::conditional<
       is_vector<T_y>::value,
-      Eigen::Matrix<typename stan::partials_return_type<T_y>::type, -1, 1>,
-      typename stan::partials_return_type<T_y>::type>::type T_y_val;
+      Eigen::Matrix<typename partials_return_type<T_y>::type, -1, 1>,
+      typename partials_return_type<T_y>::type>::type T_y_val;
 
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -89,14 +89,14 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   if (!include_summand<propto, T_x, T_alpha, T_beta>::value)
     return 0.0;
 
-  const auto &x_val = value_of_rec(x);
-  const auto &y_val = value_of_rec(y);
-  const auto &beta_val = value_of_rec(beta);
-  const auto &alpha_val = value_of_rec(alpha);
+  const auto& x_val = value_of_rec(x);
+  const auto& y_val = value_of_rec(y);
+  const auto& beta_val = value_of_rec(beta);
+  const auto& alpha_val = value_of_rec(alpha);
 
-  const auto &y_val_vec = as_column_vector_or_scalar(y_val);
-  const auto &beta_val_vec = as_column_vector_or_scalar(beta_val);
-  const auto &alpha_val_vec = as_column_vector_or_scalar(alpha_val);
+  const auto& y_val_vec = as_column_vector_or_scalar(y_val);
+  const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
+  const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
 
   T_y_val signs = 2 * as_array_or_scalar(y_val_vec) - 1;
 
@@ -109,16 +109,13 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   // And compute the derivatives wrt theta.
   static const double cutoff = 20.0;
   Eigen::Array<T_partials_return, Dynamic, 1> exp_m_ytheta = exp(-ytheta);
-  logp += (ytheta > cutoff)
+  logp += sum((ytheta > cutoff)
               .select(-exp_m_ytheta,
-                      (ytheta < -cutoff).select(ytheta, -log1p(exp_m_ytheta)))
-              .sum();
+                      (ytheta < -cutoff).select(ytheta, -log1p(exp_m_ytheta))));
   if (!std::isfinite(logp)) {
     check_finite(function, "Weight vector", beta);
     check_finite(function, "Intercept", alpha);
-    for (size_t n = 0; n < N; ++n) {
-      check_finite(function, "Matrix of independent variables", ytheta[n]);
-    }
+    check_finite(function, "Matrix of independent variables", ytheta);
   }
 
   // Compute the necessary derivatives.
@@ -143,7 +140,7 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
       if (is_vector<T_alpha>::value)
         ops_partials.edge2_.partials_ = theta_derivative;
       else
-        ops_partials.edge2_.partials_[0] = theta_derivative.sum();
+        ops_partials.edge2_.partials_[0] = sum(theta_derivative);
     }
   }
   return ops_partials.build(logp);
