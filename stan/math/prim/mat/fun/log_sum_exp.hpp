@@ -24,7 +24,7 @@ namespace math {
  */
 template <int R, int C>
 double log_sum_exp(const Eigen::Matrix<double, R, C>& x) {
-  double max = x.maxCoeff();
+  const double max = x.maxCoeff();
   return max + std::log((x.array() - max).exp().sum());
 }
 
