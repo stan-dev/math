@@ -147,10 +147,10 @@ TEST(AgradRev, log_modified_bessel_second_kind_frac_recurrence) {
             if (v < 1 + 1e-4) {
               if (z > 1e-3) {
                 right_hand = log_diff_exp(
-                   log_K_vp2, LOG_2 + log(v_var + 1) - log(z_var) + log_K_vp1);
+                    log_K_vp2, LOG_2 + log(v_var + 1) - log(z_var) + log_K_vp1);
               } else {
-                right_hand = log(z_var) - log(2) - log(v_var) +
-                  log_diff_exp(log_K_vp1, log_K_vm1);
+                right_hand = log(z_var) - log(2) - log(v_var)
+                             + log_diff_exp(log_K_vp1, log_K_vm1);
               }
             } else {
               right_hand = log_sum_exp(
@@ -159,18 +159,19 @@ TEST(AgradRev, log_modified_bessel_second_kind_frac_recurrence) {
           } else {
             if (v > -1 - 1e-4) {
               if (z > 1e-3) {
-                right_hand = log_diff_exp(log_K_vm2, 
-                  LOG_2 + log(-v_var + 1) - log(z_var) + log_K_vm1);
+                right_hand
+                    = log_diff_exp(log_K_vm2, LOG_2 + log(-v_var + 1)
+                                                  - log(z_var) + log_K_vm1);
               } else {
                 if (v == 0) {
-                  AVAR right_hand_base =
-                    log(modified_bessel_second_kind(0, z_var));
+                  AVAR right_hand_base
+                      = log(modified_bessel_second_kind(0, z_var));
                   right_hand = var(new stan::math::precomp_vv_vari(
-                    value_of(right_hand_base), v_var.vi_, right_hand_base.vi_,
+                      value_of(right_hand_base), v_var.vi_, right_hand_base.vi_,
                       0, 1));
                 } else {
-                  right_hand = log(z_var) - log(2) - log(-v_var) +
-                    log_diff_exp(log_K_vm1, log_K_vp1);
+                  right_hand = log(z_var) - log(2) - log(-v_var)
+                               + log_diff_exp(log_K_vm1, log_K_vp1);
                 }
               }
             } else {
