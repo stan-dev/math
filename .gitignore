@@ -47,6 +47,9 @@
 # temporary vim files
 .*.swp
 
+# VS Code files and cache
+/.vscode/
+
 # depedencies files
 *.d
 *.d.*

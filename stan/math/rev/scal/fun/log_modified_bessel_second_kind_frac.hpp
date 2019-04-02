@@ -4,7 +4,6 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/complex_step.hpp>
 #include <stan/math/rev/scal/fun/to_var.hpp>
 
 #include <stan/math/rev/scal/fun/pow.hpp>
@@ -19,8 +18,10 @@
 #include <stan/math/prim/scal/meta/return_type.hpp>
 
 #include <stan/math/prim/scal/err/domain_error.hpp>
+
 #include <boost/math/quadrature/tanh_sinh.hpp>
 #include <boost/math/quadrature/exp_sinh.hpp>
+#include <boost/math/tools/numerical_differentiation.hpp>
 #include <limits>
 #include <algorithm>
 
@@ -124,10 +125,10 @@ typename boost::math::tools::promote_args<T_v, T_z>::type compute_lead_rothwell(
     const T_v &v, const T_z &z) {
   typedef typename boost::math::tools::promote_args<T_v, T_z>::type T_Ret;
 
-  using boost::math::lgamma;
   using std::exp;
   using std::log;
   using std::pow;
+  using std::lgamma;
 
   const T_Ret lead = 0.5 * log(pi()) - lgamma(v + 0.5) - v * log(2 * z) - z;
   if (is_inf(lead))
@@ -152,7 +153,8 @@ var compute_log_integral_rothwell(const var &v, const double &z) {
   auto complex_func
       = [z](const Complex &v) { return compute_log_integral_rothwell(v, z); };
 
-  double d_dv = complex_step(complex_func, stan::math::value_of(v));
+  double d_dv = boost::math::tools::
+    complex_step_derivative(complex_func, stan::math::value_of(v));
 
   return var(new precomp_v_vari(value, v.vi_, d_dv));
 }
@@ -173,6 +175,7 @@ typename boost::math::tools::promote_args<T_v, T_z>::type compute_rothwell(
 template <typename T_v>
 T_v asymptotic_large_v(const T_v &v, const double &z) {
   using std::log;
+  using std::lgamma;
 
   // return 0.5 * (log(stan::math::pi()) - log(2) - log(v)) - v * (log(z) -
   // log(2) - log(v));
@@ -208,6 +211,8 @@ T_v asymptotic_large_z(const T_v &v, const double &z) {
 // https://en.wikipedia.org/w/index.php?title=Bessel_function&oldid=888330504#Asymptotic_forms
 template <typename T_v>
 T_v asymptotic_small_z_relative(const T_v &v, const double &z) {
+  using std::log;
+  using std::lgamma;
   return lgamma(v) - log(2) + v * (log(2) - log(z));
 }
 
