@@ -169,25 +169,22 @@ static const char* row_vector_matrix_multiply_kernel_code = STRINGIFY(
       const int wgid = get_group_id(0);
 
       double acc = 0;
-      for (int i = lid; i < N; i += 64) {
+      for (int i = lid; i < N; i += LOCAL_SIZE_) {
         acc += A[i] * B[i + wgid * N];
       }
-      __local double res_loc[64];
+      __local double res_loc[LOCAL_SIZE_];
       res_loc[lid] = acc;
       barrier(CLK_LOCAL_MEM_FENCE);
-      if (lid < 16) {
-        res_loc[lid]
-            += res_loc[lid + 16] + res_loc[lid + 32] + res_loc[lid + 48];
+      for(int step = LOCAL_SIZE_/REDUCTION_STEP_SIZE; step>0; step/=REDUCTION_STEP_SIZE){
+        if (lid < step) {
+          for(int i=1;i<REDUCTION_STEP_SIZE;i++){
+            res_loc[lid] += res_loc[lid + step*i];
+          }
+        }
+        barrier(CLK_LOCAL_MEM_FENCE);
       }
-      barrier(CLK_LOCAL_MEM_FENCE);
-      if (lid < 4) {
-        res_loc[lid] += res_loc[lid + 4] + res_loc[lid + 8] + res_loc[lid + 12];
-      }
-      barrier(CLK_LOCAL_MEM_FENCE);
       if (lid == 0) {
-        acc = res_loc[lid] + res_loc[lid + 1] + res_loc[lid + 2]
-              + res_loc[lid + 3];
-        R[wgid] = acc;
+        R[wgid] = res_loc[0];
       }
     }
     // \cond
@@ -200,7 +197,7 @@ static const char* row_vector_matrix_multiply_kernel_code = STRINGIFY(
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int>
     row_vector_matrix_multiply("row_vector_matrix_multiply",
-                               row_vector_matrix_multiply_kernel_code);
+                               row_vector_matrix_multiply_kernel_code, {{"LOCAL_SIZE_", 64}, {"REDUCTION_STEP_SIZE", 4}});
 
 }  // namespace opencl_kernels
 }  // namespace math
