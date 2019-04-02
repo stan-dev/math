@@ -36,7 +36,7 @@ class positive_ordered_constrain_op {
     if (N_ == 0)
       return y;
 
-    exp_x_ = ChainableStack::instance_->memalloc_.alloc_array<double>(N_);
+    exp_x_ = ChainableStack::instance().memalloc_.alloc_array<double>(N_);
 
     exp_x_[0] = exp(x[0]);
     y[0] = exp_x_[0];
