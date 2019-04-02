@@ -181,8 +181,12 @@ TBB_ABSOLUTE_PATH = $(abspath $(TBB))
 
 ifeq ($(OS),Windows_NT)
   TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(TBB)/lib/tbb $(TBB)/lib/tbbmalloc $(TBB)/lib/tbbmalloc_proxy)
-else
+endif
+ifeq ($(OS),Darwin)
   TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(TBB)/lib/libtbb $(TBB)/lib/libtbbmalloc $(TBB)/lib/libtbbmalloc_proxy)
+endif
+ifeq ($(OS),Linux)
+  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX).2,$(TBB)/lib/libtbb $(TBB)/lib/libtbbmalloc $(TBB)/lib/libtbbmalloc_proxy)
 endif
 
 CXXFLAGS_TBB ?= -I $(TBB)/include
