@@ -178,7 +178,7 @@ class opencl_context_base {
     int cholesky_rev_min_block_size = 512;
     int cholesky_rev_block_partition = 8;
     // used in math/opencl/multiply
-    int multiply_split_upper_limit = 16000000;
+    int multiply_split_upper_limit = 2000000;
   } tuning_opts_;
 
   static opencl_context_base& getInstance() {
