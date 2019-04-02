@@ -56,8 +56,8 @@ static const char *add_batch_kernel_code = STRINGIFY(
      * This kernel uses the helper macros available in helpers.cl.
      */
     __kernel void add_batch(__global double *B, __global double *A,
-                      unsigned int rows, unsigned int cols,
-                      unsigned int batch_size) {
+                            unsigned int rows, unsigned int cols,
+                            unsigned int batch_size) {
       const int i = get_global_id(0);
       const int j = get_global_id(1);
       if (i < rows && j < cols) {

@@ -56,7 +56,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
       int split_tiles = num_tiles / split_size;
       const int split_remainder = num_tiles % split_size;
       int split_offset_tiles = split_id * split_tiles;
-      if ( split_id < split_remainder ) {
+      if (split_id < split_remainder) {
         split_offset_tiles = split_offset_tiles + split_id;
         split_tiles++;
       } else {
@@ -92,8 +92,8 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
       // or end them at smaller cols/rows.
       int start_tile = max(start_tile_A, start_tile_B);
       start_tile = max(start_tile, split_offset_tiles);
-      int end_tile = min(end_tile_A, end_tile_B);  // NOLINT
-      end_tile = min(end_tile, split_offset_tiles + split_tiles -1); // NOLINT
+      int end_tile = min(end_tile_A, end_tile_B);                      // NOLINT
+      end_tile = min(end_tile, split_offset_tiles + split_tiles - 1);  // NOLINT
       for (int tile_idx = start_tile; tile_idx <= end_tile; tile_idx++) {
         const int tiled_i = THREAD_BLOCK_SIZE * tile_idx + thread_block_row;
         const int tiled_j = THREAD_BLOCK_SIZE * tile_idx + thread_block_col;
@@ -149,8 +149,8 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
         // can be assigned elements in and out of
         // the allocated memory.
         if ((j + w * THREAD_BLOCK_SIZE_COL) < N && i < M) {
-          C[split_id * M * N
-            + (j + w * THREAD_BLOCK_SIZE_COL) * M + i] = acc[w];
+          C[split_id * M * N + (j + w * THREAD_BLOCK_SIZE_COL) * M + i]
+              = acc[w];
         }
       }
     }
