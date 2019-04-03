@@ -8,6 +8,8 @@
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <CL/cl.hpp>
+#include <vector>
+
 
 namespace stan {
 namespace math {
