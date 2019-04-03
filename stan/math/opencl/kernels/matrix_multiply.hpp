@@ -152,6 +152,8 @@ static const char* matrix_vector_multiply_kernel_code = STRINGIFY(
      * @param[out] R the output vector
      * @param[in] M Number of rows for matrix A
      * @param[in] N Number of cols for matrix A and number of rows for vector B
+     * @param[in] lower_upper_A the triangularity of A (lower, upper or none)
+     * @param[in] lower_upper_B the triangularity of B (lower, upper or none)
      */
     __kernel void matrix_vector_multiply(
         const __global double* A, const __global double* B, __global double* R,
@@ -200,6 +202,8 @@ static const char* row_vector_matrix_multiply_kernel_code = STRINGIFY(
      * @param[out] R the output vector
      * @param[in] N Number of cols for vector A and number of rows for matrix B
      * @param[in] K Number of cols for matrix B
+     * @param[in] lower_upper_A the triangularity of A (lower, upper or none)
+     * @param[in] lower_upper_B the triangularity of B (lower, upper or none)
      */
     __kernel void row_vector_matrix_multiply(
         const __global double* A, const __global double* B, __global double* R,
