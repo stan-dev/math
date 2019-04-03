@@ -88,7 +88,6 @@ inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
         cl::NDRange(parts * thread_block_size_1D),
         cl::NDRange(thread_block_size_1D), inv_padded, temp, inv_padded.rows());
     diag_inv_event.wait();
-
   } catch (cl::Error& e) {
     check_opencl_error("inverse step1", e);
   }
