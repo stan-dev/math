@@ -10,7 +10,6 @@
 #include <CL/cl.hpp>
 #include <vector>
 
-
 namespace stan {
 namespace math {
 
