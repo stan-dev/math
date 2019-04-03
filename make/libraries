@@ -88,29 +88,31 @@ TBB_CXX_TYPE ?= $(CXX_TYPE)
 
 #workaround for non-depend targets tbb and tbbmalloc which both depend on version_string.ver
 #According to documentation, recursively invoked make commands can process their targets in parallel
-.NOTPARALLEL: tbb tbbmalloc
+.NOTPARALLEL: $(TBB)/lib/tbb.def $(TBB)/lib/tbbmalloc.def $(TBB)/lib/tbbmallocproxy.def
 
-PHONY: tbb tbbmalloc
-
-tbb:
+$(TBB)/lib/tbb.def:
 	@mkdir -p $(TBB)/lib
 	tbb_root="$(TBB_ABSOLUTE_PATH)" CXX="$(CXX)" $(MAKE) -C $(TBB)/lib -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbb" compiler=$(TBB_CXX_TYPE) cfg=release
 
-tbbmalloc: tbb 
+$(TBB)/lib/tbbmalloc.def:
 	@mkdir -p $(TBB)/lib
 	tbb_root="$(TBB_ABSOLUTE_PATH)" CXX="$(CXX)" $(MAKE) -C $(TBB)/lib -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" compiler=$(TBB_CXX_TYPE) cfg=release malloc
 
-$(TBB)/lib/libtbb.dylib: tbb
-$(TBB)/lib/libtbbmalloc.dylib: tbbmalloc
-$(TBB)/lib/libtbbmalloc_proxy.dylib: tbbmalloc
+$(TBB)/lib/tbbmallocproxy.def:
+	@mkdir -p $(TBB)/lib
+	tbb_root="$(TBB_ABSOLUTE_PATH)" CXX="$(CXX)" $(MAKE) -C $(TBB)/lib -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" compiler=$(TBB_CXX_TYPE) cfg=release malloc
 
-$(TBB)/lib/libtbb.so.2: tbb
-$(TBB)/lib/libtbbmalloc.so.2: tbbmalloc
-$(TBB)/lib/libtbbmalloc_proxy.so.2: tbbmalloc
+$(TBB)/lib/libtbb.dylib: $(TBB)/lib/tbb.def
+$(TBB)/lib/libtbbmalloc.dylib: (TBB)/lib/tbbmalloc.def
+$(TBB)/lib/libtbbmalloc_proxy.dylib: $(TBB)/lib/tbbmallocproxy.def
 
-$(TBB)/lib/tbb.dll: tbb
-$(TBB)/lib/tbbmalloc.dll: tbbmalloc
-$(TBB)/lib/tbbmalloc_proxy.dll: tbbmalloc
+$(TBB)/lib/libtbb.so.2: $(TBB)/lib/tbb.def
+$(TBB)/lib/libtbbmalloc.so.2: $(TBB)/lib/tbbmalloc.def
+$(TBB)/lib/libtbbmalloc_proxy.so.2: $(TBB)/lib/tbbmallocproxy.def
+
+$(TBB)/lib/tbb.dll: $(TBB)/lib/tbb.def
+$(TBB)/lib/tbbmalloc.dll: $(TBB)/lib/tbbmalloc.def
+$(TBB)/lib/tbbmalloc_proxy.dll: $(TBB)/lib/tbbmallocproxy.def
 
 #$(TBB)/lib/libtbb.dylib: tbb
 #	install_name_tool -add_rpath "$(TBB_ABSOLUTE_PATH)/lib" "$(TBB)/lib/libtbb.dylib"
