@@ -31,8 +31,8 @@ inline auto subtract(const matrix_cl& A, const matrix_cl& B) {
     return C;
   }
   try {
-    opencl_kernels::subtract(
-        cl::NDRange(A.rows(), A.cols()), C, A, B, A.rows(), A.cols());
+    opencl_kernels::subtract(cl::NDRange(A.rows(), A.cols()), C, A, B, A.rows(),
+                             A.cols());
   } catch (cl::Error& e) {
     check_opencl_error("subtract", e);
   }

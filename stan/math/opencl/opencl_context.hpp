@@ -120,17 +120,17 @@ class opencl_context_base {
       device_ = devices_[OPENCL_DEVICE_ID];
       // context and queue
       cl_command_queue_properties device_properties;
-      device_.getInfo<cl_command_queue_properties>(CL_DEVICE_QUEUE_PROPERTIES, &device_properties);
+      device_.getInfo<cl_command_queue_properties>(CL_DEVICE_QUEUE_PROPERTIES,
+                                                   &device_properties);
       device_.getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
                               &max_thread_block_size_);
 
       context_ = cl::Context(device_);
       if (device_properties & CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE) {
-          command_queue_ = cl::CommandQueue(
-              context_, device_, CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE, nullptr);
-      } else {
         command_queue_ = cl::CommandQueue(
-            context_, device_, 0, nullptr);
+            context_, device_, CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE, nullptr);
+      } else {
+        command_queue_ = cl::CommandQueue(context_, device_, 0, nullptr);
       }
       int thread_block_size_sqrt
           = static_cast<int>(sqrt(static_cast<double>(max_thread_block_size_)));

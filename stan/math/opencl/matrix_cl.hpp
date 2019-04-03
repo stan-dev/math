@@ -182,7 +182,7 @@ class matrix_cl {
     cl::CommandQueue& queue = opencl_context.queue();
     queue.enqueueBarrierWithWaitList(&this->events(), &assign_event);
     assign_event.wait();
-    write_events_= a.events<eventTypeCL::write>();
+    write_events_ = a.events<eventTypeCL::write>();
     read_write_events_ = a.events<eventTypeCL::read>();
 
     oclBuffer_ = a.buffer();

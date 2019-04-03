@@ -87,7 +87,7 @@ inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
     cl::Event diag_inv_event = opencl_kernels::diag_inv(
         cl::NDRange(parts * thread_block_size_1D),
         cl::NDRange(thread_block_size_1D), inv_padded, temp, inv_padded.rows());
-        diag_inv_event.wait();
+    diag_inv_event.wait();
 
   } catch (cl::Error& e) {
     check_opencl_error("inverse step1", e);
@@ -119,12 +119,12 @@ inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
     cl::Event inv_lower_tri_event = opencl_kernels::inv_lower_tri_multiply(
         result_ndrange, ndrange_2d, inv_padded, temp, inv_padded.rows(),
         result_matrix_dim);
-        inv_lower_tri_event.wait();
+    inv_lower_tri_event.wait();
 
     cl::Event neg_rect_event = opencl_kernels::neg_rect_lower_tri_multiply(
         result_ndrange, ndrange_2d, inv_padded, temp, inv_padded.rows(),
         result_matrix_dim);
-        neg_rect_event.wait();
+    neg_rect_event.wait();
     // if this is the last submatrix, end
     if (parts == 1) {
       parts = 0;

@@ -54,8 +54,8 @@ inline matrix_cl cholesky_decompose(matrix_cl A) {
   if (A.rows() <= opencl_context.tuning_opts().cholesky_min_L11_size) {
     matrix_cl L(A.rows(), A.cols());
     try {
-      opencl_kernels::cholesky_decompose(
-          cl::NDRange(A.rows()), cl::NDRange(A.rows()), A, L, A.rows());
+      opencl_kernels::cholesky_decompose(cl::NDRange(A.rows()),
+                                         cl::NDRange(A.rows()), A, L, A.rows());
     } catch (const cl::Error& e) {
       check_opencl_error("cholesky_decompose", e);
     }

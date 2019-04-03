@@ -33,9 +33,9 @@ inline matrix_cl multiply_transpose(const matrix_cl& A) {
   int wpt = opencl_kernels::multiply_transpose.make_functor.get_opts().at(
       "WORK_PER_THREAD");
   try {
-    opencl_kernels::multiply_transpose(
-        cl::NDRange(Mpad, Mpad / wpt), cl::NDRange(local, local / wpt),
-        A, temp, A.rows(), A.cols());
+    opencl_kernels::multiply_transpose(cl::NDRange(Mpad, Mpad / wpt),
+                                       cl::NDRange(local, local / wpt), A, temp,
+                                       A.rows(), A.cols());
   } catch (cl::Error& e) {
     check_opencl_error("multiply self transpose", e);
   }
