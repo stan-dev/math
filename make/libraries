@@ -79,7 +79,7 @@ clean-sundials:
 ifeq ($(CXX_TYPE),mingw32-gcc)
   TBB_CXX_TYPE ?= gcc
 endif
-ifeq ($(CXX_TYPE),mingw32-gcc)
+ifeq ($(CXX_TYPE),other)
   ifeq (,$(TBB_CXX_TYPE))
     $(error "Need to set TBB_CXX_TYPE for non-standard compiler.")
   endif
@@ -103,7 +103,7 @@ $(TBB)/lib/tbbmallocproxy.def:
 	tbb_root="$(TBB_ABSOLUTE_PATH)" CXX="$(CXX)" $(MAKE) -C $(TBB)/lib -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" compiler=$(TBB_CXX_TYPE) cfg=release malloc
 
 $(TBB)/lib/libtbb.dylib: $(TBB)/lib/tbb.def
-$(TBB)/lib/libtbbmalloc.dylib: (TBB)/lib/tbbmalloc.def
+$(TBB)/lib/libtbbmalloc.dylib: $(TBB)/lib/tbbmalloc.def
 $(TBB)/lib/libtbbmalloc_proxy.dylib: $(TBB)/lib/tbbmallocproxy.def
 
 $(TBB)/lib/libtbb.so.2: $(TBB)/lib/tbb.def
