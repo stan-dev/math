@@ -129,11 +129,24 @@ static const char* matrix_vector_multiply_kernel_code = STRINGIFY(
         __kernel void matrix_vector_multiply(
                 const __global double* A, const __global double* B,
                 __global double* R,
-                const int M, const int N) {
+                const int M, const int N, unsigned int lower_upper_A,
+                unsigned int lower_upper_B) {
           const int gid = get_global_id(0);
 
+          int start=0;
+          int stop=N;
+          if(lower_upper_A==UPPER){
+            start=gid;
+          }
+          else if(lower_upper_A==LOWER){
+            stop=gid+1;
+          }
+          if(lower_upper_B==UPPER){
+            stop=1;
+          }
+
           double acc = 0;
-          for (int i = 0, j = 0; i < N; i++, j += M) {
+          for (int i = start, j = M * start; i < stop; i++, j += M) {
             acc += A[j + gid] * B[i];
           }
           R[gid] = acc;
@@ -146,7 +159,7 @@ static const char* matrix_vector_multiply_kernel_code = STRINGIFY(
  * See the docs for \link kernels/matrix_multiply.hpp matrix_vector_multiply()
  * \endlink
  */
-const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int>
+const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, TriangularViewCL, TriangularViewCL>
         matrix_vector_multiply("matrix_vector_multiply",
                                matrix_vector_multiply_kernel_code);
 
@@ -165,15 +178,29 @@ static const char* row_vector_matrix_multiply_kernel_code = STRINGIFY(
         __kernel void row_vector_matrix_multiply(
                 const __global double* A, const __global double* B,
                 __global double* R,
-                const int N, const int K) {
+                const int N, const int K, unsigned int lower_upper_A,
+                unsigned int lower_upper_B) {
           const int lid = get_local_id(0);
           const int gid = get_global_id(0);
           const int wgid = get_group_id(0);
 
+          int start=0;
+          int stop=N;
+          if(lower_upper_B==UPPER){
+            stop=wgid+1;
+          }
+          else if(lower_upper_B==LOWER){
+            start=wgid;
+          }
+          if(lower_upper_A==LOWER){
+            stop=1;
+          }
+
           double acc = 0;
-          for (int i = lid; i < N; i += LOCAL_SIZE_) {
+          for (int i = lid + start; i < stop; i += LOCAL_SIZE_) {
             acc += A[i] * B[i + wgid * N];
           }
+
           __local double res_loc[LOCAL_SIZE_];
           res_loc[lid] = acc;
           barrier(CLK_LOCAL_MEM_FENCE);
@@ -198,7 +225,7 @@ static const char* row_vector_matrix_multiply_kernel_code = STRINGIFY(
  * See the docs for \link kernels/matrix_multiply.hpp
  * row_vector_matrix_multiply() \endlink
  */
-const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int>
+const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, TriangularViewCL, TriangularViewCL>
         row_vector_matrix_multiply("row_vector_matrix_multiply",
                                    row_vector_matrix_multiply_kernel_code,
                                    {{"LOCAL_SIZE_",         64},
