@@ -68,6 +68,7 @@ inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
   zero_mat.zeros<stan::math::TriangularViewCL::Entire>();
   temp.zeros<stan::math::TriangularViewCL::Entire>();
   inv_padded.zeros<stan::math::TriangularViewCL::Entire>();
+  cl::Event assign_event;
 
   int work_per_thread
       = opencl_kernels::inv_lower_tri_multiply.make_functor.get_opts().at(
@@ -81,13 +82,13 @@ inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
     cl::Event batch_event = opencl_kernels::batch_identity(
         cl::NDRange(parts, thread_block_size_1D, thread_block_size_1D), temp,
         thread_block_size_1D, temp.size());
-    temp.add_event(batch_event);
+    batch_event.wait();
     // spawn parts thread blocks, each responsible for one block
     cl::Event diag_inv_event = opencl_kernels::diag_inv(
         cl::NDRange(parts * thread_block_size_1D),
         cl::NDRange(thread_block_size_1D), inv_padded, temp, inv_padded.rows());
-    inv_padded.add_event(diag_inv_event);
-    temp.add_event(diag_inv_event);
+        diag_inv_event.wait();
+
   } catch (cl::Error& e) {
     check_opencl_error("inverse step1", e);
   }
@@ -118,11 +119,12 @@ inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
     cl::Event inv_lower_tri_event = opencl_kernels::inv_lower_tri_multiply(
         result_ndrange, ndrange_2d, inv_padded, temp, inv_padded.rows(),
         result_matrix_dim);
-    temp.add_event(inv_lower_tri_event);
+        inv_lower_tri_event.wait();
+
     cl::Event neg_rect_event = opencl_kernels::neg_rect_lower_tri_multiply(
         result_ndrange, ndrange_2d, inv_padded, temp, inv_padded.rows(),
         result_matrix_dim);
-    inv_padded.add_event(neg_rect_event);
+        neg_rect_event.wait();
     // if this is the last submatrix, end
     if (parts == 1) {
       parts = 0;

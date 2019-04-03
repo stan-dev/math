@@ -155,7 +155,7 @@ inline matrix_cl packed_copy(const std::vector<double>& src, int rows) {
     cl::CommandQueue queue = opencl_context.queue();
     matrix_cl packed(packed_size, 1);
     cl::Event packed_event;
-    queue.enqueueWriteBuffer(packed.buffer(), CL_FALSE, 0,
+    queue.enqueueWriteBuffer(packed.buffer(), CL_TRUE, 0,
                              sizeof(double) * packed_size, src.data(), NULL,
                              &packed_event);
     packed.add_event<eventTypeCL::write>(packed_event);
@@ -241,7 +241,7 @@ inline void copy(matrix_cl& dst, const T& src) {
   try {
     cl::CommandQueue queue = opencl_context.queue();
     cl::Event copy_event;
-    queue.enqueueWriteBuffer(dst.buffer(), CL_FALSE, 0, sizeof(T), &src,
+    queue.enqueueWriteBuffer(dst.buffer(), CL_TRUE, 0, sizeof(T), &src,
                              &dst.events(), &copy_event);
     dst.add_event<eventTypeCL::write>(copy_event);
   } catch (const cl::Error& e) {

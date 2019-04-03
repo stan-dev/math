@@ -61,6 +61,8 @@ class matrix_cl {
    */
   template <eventTypeCL event_type = eventTypeCL::write>
   inline const std::vector<cl::Event>& events() const {
+    cl::Event assign_event;
+    cl::CommandQueue queue = opencl_context.queue();
     if (event_type == eventTypeCL::read) {
       return write_events_;
     } else if (event_type == eventTypeCL::write) {
@@ -175,10 +177,14 @@ class matrix_cl {
                      a.rows(), "destination.rows()", rows());
     check_size_match("assignment of (OpenCL) matrices", "source.cols()",
                      a.cols(), "destination.cols()", cols());
-    cl::CommandQueue& queue = opencl_context.queue();
+    // Need to wait for all of matrices events before destroying old buffer
     cl::Event assign_event;
-    assign_event.waitForEvents(a.events());
+    cl::CommandQueue& queue = opencl_context.queue();
+    queue.enqueueBarrierWithWaitList(&this->events(), &assign_event);
     assign_event.wait();
+    write_events_= a.events<eventTypeCL::write>();
+    read_write_events_ = a.events<eventTypeCL::read>();
+
     oclBuffer_ = a.buffer();
     return *this;
   }

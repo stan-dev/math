@@ -59,11 +59,10 @@ inline auto multiply(matrix_cl A, matrix_cl B) {
   int wpt = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
       "WORK_PER_THREAD");
   try {
-    cl::Event mat_mul_event = opencl_kernels::matrix_multiply(
+    opencl_kernels::matrix_multiply(
         cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt), Apad,
         Bpad, tempPad, Apad.rows(), Bpad.cols(), Bpad.rows(), triangular_view_A,
         triangular_view_B);
-    tempPad.add_event(mat_mul_event);
   } catch (cl::Error& e) {
     check_opencl_error("multiply", e);
   }
@@ -86,9 +85,8 @@ inline matrix_cl multiply(matrix_cl A, const double scalar) {
   if (A.size() == 0)
     return temp;
   try {
-    cl::Event scalar_mul_event = opencl_kernels::scalar_mul(
+    opencl_kernels::scalar_mul(
         cl::NDRange(A.rows(), A.cols()), temp, A, scalar, A.rows(), A.cols());
-    temp.add_event(scalar_mul_event);
   } catch (const cl::Error& e) {
     check_opencl_error("multiply scalar", e);
   }
