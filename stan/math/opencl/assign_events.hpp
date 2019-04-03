@@ -34,7 +34,7 @@ inline void assign_event(const matrix_cl& m, cl::Event new_event) {
  * @param m Pointer to matrix to add the event to it's event stack.
  * @param new_event The event to add to the matrices event stack.
  */
-template <typename buffer_type = write_buffer>
+template <typename buffer_type>
 inline void assign_event(const matrix_cl*& m, cl::Event new_event) {
   m->add_event<buffer_type::event_type>(new_event);
 }

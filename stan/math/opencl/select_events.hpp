@@ -39,7 +39,7 @@ inline const std::vector<cl::Event> select_events(const matrix_cl& m) {
  * @return Depending on the template type will return either the read or
  * read_write event stacks.
  */
-template <typename event_buffer = write_buffer>
+template <typename event_buffer>
 inline const std::vector<cl::Event> select_events(matrix_cl* const& m) {
   return m->events<event_buffer::event_type>();
 }
