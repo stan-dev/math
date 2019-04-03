@@ -44,30 +44,16 @@ inline auto multiply(matrix_cl A, matrix_cl B) {
       "THREAD_BLOCK_SIZE");
   int Mpad = ((A.rows() + local - 1) / local) * local;
   int Npad = ((B.cols() + local - 1) / local) * local;
-  int Kpad = ((A.cols() + local - 1) / local) * local;
-  // padding the matrices so the dimensions are divisible with local
-  // improves performance and readability because we can omit
-  // if statements in the
-  // multiply kernel
-  matrix_cl tempPad(Mpad, Npad);
-  matrix_cl Apad(Mpad, Kpad);
-  matrix_cl Bpad(Kpad, Npad);
-  Apad.zeros<TriangularViewCL::Entire>();
-  Bpad.zeros<TriangularViewCL::Entire>();
-  Apad.sub_block<triangular_view_A>(A, 0, 0, 0, 0, A.rows(), A.cols());
-  Bpad.sub_block<triangular_view_B>(B, 0, 0, 0, 0, B.rows(), B.cols());
   int wpt = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
       "WORK_PER_THREAD");
   try {
     opencl_kernels::matrix_multiply(
-        cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt), Apad,
-        Bpad, tempPad, Apad.rows(), Bpad.cols(), Bpad.rows(), triangular_view_A,
-        triangular_view_B);
+        cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt),
+        A, B, temp, A.rows(), B.cols(), B.rows(),
+        triangular_view_A, triangular_view_B);
   } catch (cl::Error& e) {
     check_opencl_error("multiply", e);
   }
-  // unpadding the result matrix
-  temp.sub_block(tempPad, 0, 0, 0, 0, temp.rows(), temp.cols());
   return temp;
 }
 }  // namespace opencl

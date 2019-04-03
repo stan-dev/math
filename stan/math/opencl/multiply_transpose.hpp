@@ -30,21 +30,15 @@ inline matrix_cl multiply_transpose(const matrix_cl& A) {
   int local = opencl_kernels::multiply_transpose.make_functor.get_opts().at(
       "THREAD_BLOCK_SIZE");
   int Mpad = ((A.rows() + local - 1) / local) * local;
-  int Npad = ((A.cols() + local - 1) / local) * local;
-  matrix_cl tempPad(Mpad, Mpad);
-  matrix_cl Apad(Mpad, Npad);
-  Apad.zeros<TriangularViewCL::Entire>();
-  Apad.sub_block(A, 0, 0, 0, 0, A.rows(), A.cols());
   int wpt = opencl_kernels::multiply_transpose.make_functor.get_opts().at(
       "WORK_PER_THREAD");
   try {
     opencl_kernels::multiply_transpose(
-        cl::NDRange(Mpad, Mpad / wpt), cl::NDRange(local, local / wpt), Apad,
-        tempPad, Apad.rows(), Apad.cols());
+        cl::NDRange(Mpad, Mpad / wpt), cl::NDRange(local, local / wpt),
+        A, temp, A.rows(), A.cols());
   } catch (cl::Error& e) {
     check_opencl_error("multiply self transpose", e);
   }
-  temp.sub_block(tempPad, 0, 0, 0, 0, temp.rows(), temp.cols());
   return temp;
 }
 }  // namespace math

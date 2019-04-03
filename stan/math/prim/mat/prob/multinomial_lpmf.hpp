@@ -28,7 +28,7 @@ typename boost::math::tools::promote_args<T_prob>::type multinomial_lpmf(
 
   typename promote_args<T_prob>::type lp(0.0);
   check_nonnegative(function, "Number of trials variable", ns);
-  check_simplex(function, "Probabilites parameter", theta);
+  check_simplex(function, "Probabilities parameter", theta);
   check_size_match(function, "Size of number of trials variable", ns.size(),
                    "rows of probabilities parameter", theta.rows());
 
