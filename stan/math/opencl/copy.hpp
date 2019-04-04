@@ -11,6 +11,7 @@
 #include <stan/math/opencl/buffer_types.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/opencl/err/check_opencl.hpp>
 #include <CL/cl.hpp>
 #include <iostream>
 #include <vector>
@@ -52,7 +53,7 @@ void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
       queue.enqueueWriteBuffer(dst.buffer(), CL_FALSE, 0,
                                sizeof(double) * dst.size(), src.data(), NULL,
                                &copy_event);
-      dst.add_event<eventTypeCL::write>(copy_event);
+      dst.add_event<event_cl::write>(copy_event);
     } catch (const cl::Error& e) {
       check_opencl_error("copy Eigen->(OpenCL)", e);
     }
@@ -158,7 +159,7 @@ inline matrix_cl packed_copy(const std::vector<double>& src, int rows) {
     queue.enqueueWriteBuffer(packed.buffer(), CL_TRUE, 0,
                              sizeof(double) * packed_size, src.data(), NULL,
                              &packed_event);
-    packed.add_event<eventTypeCL::write>(packed_event);
+    packed.add_event<event_cl::write>(packed_event);
     stan::math::opencl_kernels::unpack(cl::NDRange(dst.rows(), dst.rows()), dst,
                                        packed, dst.rows(), dst.rows(),
                                        triangular_view);
@@ -197,8 +198,8 @@ inline void copy(matrix_cl& dst, const matrix_cl& src) {
     cl::Event copy_event;
     queue.enqueueCopyBuffer(src.buffer(), dst.buffer(), 0, 0,
                             sizeof(double) * src.size(), NULL, &copy_event);
-    dst.add_event<eventTypeCL::write>(copy_event);
-    src.add_event<eventTypeCL::read>(copy_event);
+    dst.add_event<event_cl::write>(copy_event);
+    src.add_event<event_cl::read>(copy_event);
   } catch (const cl::Error& e) {
     check_opencl_error("copy (OpenCL)->(OpenCL)", e);
   }
@@ -243,7 +244,7 @@ inline void copy(matrix_cl& dst, const T& src) {
     cl::Event copy_event;
     queue.enqueueWriteBuffer(dst.buffer(), CL_TRUE, 0, sizeof(T), &src,
                              &dst.events(), &copy_event);
-    dst.add_event<eventTypeCL::write>(copy_event);
+    dst.add_event<event_cl::write>(copy_event);
   } catch (const cl::Error& e) {
     check_opencl_error("copy (OpenCL)->(OpenCL)", e);
   }

@@ -11,6 +11,7 @@
 #include <stan/math/opencl/subtract.hpp>
 #include <stan/math/opencl/err/check_diagonal_zeros.hpp>
 #include <stan/math/opencl/err/check_nan.hpp>
+#include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/sub_block.hpp>
 #include <CL/cl.hpp>
 #include <algorithm>

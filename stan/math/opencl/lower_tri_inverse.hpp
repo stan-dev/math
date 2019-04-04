@@ -6,6 +6,7 @@
 #include <stan/math/opencl/kernels/diag_inv.hpp>
 #include <stan/math/opencl/kernels/inv_lower_tri_multiply.hpp>
 #include <stan/math/opencl/kernels/neg_rect_lower_tri_multiply.hpp>
+#include <stan/math/opencl/err/check_opencl.hpp>
 
 #include <stan/math/opencl/identity.hpp>
 #include <stan/math/opencl/err/check_square.hpp>

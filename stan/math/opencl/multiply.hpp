@@ -2,8 +2,10 @@
 #define STAN_MATH_OPENCL_MULTIPLY_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/kernels/scalar_mul.hpp>
 #include <stan/math/opencl/kernels/matrix_multiply.hpp>
+
 #include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/zeros.hpp>
 

@@ -3,6 +3,8 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/transpose.hpp>
+#include <stan/math/opencl/err/check_opencl.hpp>
+
 #include <CL/cl.hpp>
 
 namespace stan {

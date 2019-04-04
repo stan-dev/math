@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/constants.hpp>
+#include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
@@ -59,13 +60,13 @@ class matrix_cl {
    * @tparam event_type Specifies which event stack to return.
    *
    */
-  template <eventTypeCL event_type = eventTypeCL::write>
+  template <event_cl event_type = event_cl::write>
   inline const std::vector<cl::Event>& events() const {
     cl::Event assign_event;
     cl::CommandQueue queue = opencl_context.queue();
-    if (event_type == eventTypeCL::read) {
+    if (event_type == event_cl::read) {
       return write_events_;
-    } else if (event_type == eventTypeCL::write) {
+    } else if (event_type == event_cl::write) {
       return read_write_events_;
     }
   }
@@ -75,11 +76,11 @@ class matrix_cl {
    * @tparam event_type Specifies which event stack to add to.
    * @param new_event The event to be pushed on the event stack.
    */
-  template <eventTypeCL event_type = eventTypeCL::write>
+  template <event_cl event_type = event_cl::write>
   inline void add_event(cl::Event new_event) const {
-    if (event_type == eventTypeCL::read) {
+    if (event_type == event_cl::read) {
       this->read_write_events_.push_back(new_event);
-    } else if (event_type == eventTypeCL::write) {
+    } else if (event_type == event_cl::write) {
       this->write_events_.push_back(new_event);
       this->read_write_events_.push_back(new_event);
     }
@@ -182,8 +183,8 @@ class matrix_cl {
     cl::CommandQueue& queue = opencl_context.queue();
     queue.enqueueBarrierWithWaitList(&this->events(), &assign_event);
     assign_event.wait();
-    write_events_ = a.events<eventTypeCL::write>();
-    read_write_events_ = a.events<eventTypeCL::read>();
+    write_events_ = a.events<event_cl::write>();
+    read_write_events_ = a.events<event_cl::read>();
 
     oclBuffer_ = a.buffer();
     return *this;

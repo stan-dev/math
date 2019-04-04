@@ -2,6 +2,9 @@
 #define STAN_MATH_OPENCL_BUFFER_TYPES_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/opencl/constants.hpp>
+#include <CL/cl.hpp>
+
 namespace stan {
 namespace math {
 namespace opencl_kernels {
@@ -9,13 +12,13 @@ namespace opencl_kernels {
 // A read buffer will only add events to the read_write stack.
 struct read_buffer {
   typedef cl::Buffer buffer;
-  static const eventTypeCL event_type = eventTypeCL::read;
+  static const event_cl event_type = event_cl::read;
 };
 
 // Write buffers will add events to the write event stack.
 struct write_buffer {
   typedef cl::Buffer buffer;
-  static const eventTypeCL event_type = eventTypeCL::write;
+  static const event_cl event_type = event_cl::write;
 };
 
 namespace internal {

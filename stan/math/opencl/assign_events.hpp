@@ -4,6 +4,8 @@
 
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
+
+#include <CL/cl.hpp>
 #include <vector>
 
 namespace stan {

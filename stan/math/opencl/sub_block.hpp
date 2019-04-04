@@ -56,21 +56,20 @@ inline void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
       cl::size_t<3> size
           = opencl::to_size_t<3>({nrows * sizeof(double), ncols, 1});
       std::vector<cl::Event> kernel_events
-          = vec_concat(A.events(), this->events());
-      cl::Event foo;
+          = vec_concat(A.events<event_cl::read>(), this->events<event_cl::write>());
+      cl::Event copy_event;
       cmdQueue.enqueueCopyBufferRect(
           A.buffer(), this->buffer(), src_offset, dst_offset, size,
           A.rows() * sizeof(double), A.rows() * A.cols() * sizeof(double),
           sizeof(double) * this->rows(),
-          this->rows() * this->cols() * sizeof(double), &kernel_events, &foo);
-      A.add_event(foo);
-      this->add_event(foo);
+          this->rows() * this->cols() * sizeof(double), &kernel_events, &copy_event);
+      A.add_event<event_cl::read>(copy_event);
+      this->add_event<event_cl::write>(copy_event);
     } else {
-      cl::Event foo = opencl_kernels::sub_block(
+      opencl_kernels::sub_block(
           cl::NDRange(nrows, ncols), A, *this, A_i, A_j, this_i, this_j, nrows,
           ncols, A.rows(), A.cols(), this->rows(), this->cols(),
           triangular_view);
-      foo.wait();
     }
   } catch (const cl::Error& e) {
     check_opencl_error("copy_submatrix", e);

@@ -8,6 +8,7 @@
 #include <stan/math/opencl/buffer_types.hpp>
 #include <stan/math/opencl/select_events.hpp>
 #include <stan/math/opencl/assign_events.hpp>
+#include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
 #include <CL/cl.hpp>
 #include <string>
