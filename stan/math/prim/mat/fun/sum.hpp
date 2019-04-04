@@ -16,7 +16,8 @@ namespace math {
  * @return Sum of coefficients of argument.
  */
 template <typename Derived>
-inline typename Eigen::DenseBase<Derived>::Scalar sum(const Eigen::DenseBase<Derived>& v) {
+inline typename Eigen::DenseBase<Derived>::Scalar sum(
+    const Eigen::DenseBase<Derived>& v) {
   return v.sum();
 }
 

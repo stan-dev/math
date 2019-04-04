@@ -37,7 +37,7 @@ struct is_vector_like<Eigen::Matrix<T, R, C> > {
  */
 template <typename T, int R, int C>
 struct is_vector_like<Eigen::Array<T, R, C> > {
-    enum { value = true };
+  enum { value = true };
 };
 }  // namespace stan
 #endif
