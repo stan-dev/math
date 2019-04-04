@@ -10,7 +10,6 @@
 #error OPENCL_PLATFORM_ID_NOT_SET
 #endif
 
-
 #include <stan/math/opencl/constants.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/scal/err/system_error.hpp>
