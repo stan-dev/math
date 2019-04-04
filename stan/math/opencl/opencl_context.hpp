@@ -134,9 +134,10 @@ class opencl_context_base {
         base_opts_["THREAD_BLOCK_SIZE"] = thread_block_size_sqrt;
         base_opts_["WORK_PER_THREAD"] = 1;
       }
-      if(max_thread_block_size_ < base_opts_["LOCAL_SIZE_"]){
-        //must be a power of base_opts_["REDUCTION_STEP_SIZE"]
-        int p = log(max_thread_block_size_)/log(base_opts_["REDUCTION_STEP_SIZE"]);
+      if (max_thread_block_size_ < base_opts_["LOCAL_SIZE_"]) {
+        // must be a power of base_opts_["REDUCTION_STEP_SIZE"]
+        int p = log(max_thread_block_size_)
+                / log(base_opts_["REDUCTION_STEP_SIZE"]);
         base_opts_["LOCAL_SIZE_"] = pow(base_opts_["REDUCTION_STEP_SIZE"], p);
       }
       // Thread block size for the Cholesky
