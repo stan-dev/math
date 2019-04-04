@@ -138,7 +138,8 @@ class opencl_context_base {
         // must be a power of base_opts_["REDUCTION_STEP_SIZE"]
         int p = std::log(max_thread_block_size_)
                 / std::log(base_opts_["REDUCTION_STEP_SIZE"]);
-        base_opts_["LOCAL_SIZE_"] = std::pow(base_opts_["REDUCTION_STEP_SIZE"], p);
+        base_opts_["LOCAL_SIZE_"]
+            = std::pow(base_opts_["REDUCTION_STEP_SIZE"], p);
       }
       // Thread block size for the Cholesky
       // TODO(Steve): This should be tuned in a higher part of the stan language
