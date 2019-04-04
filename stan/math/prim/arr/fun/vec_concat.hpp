@@ -10,15 +10,17 @@ namespace math {
 
 namespace internal {
 
-template<typename T> void concat_helper(std::vector<T>& l, const std::vector<T>& r) {
-    l.insert(l.end(), r.begin(), r.end());
+template <typename T>
+void concat_helper(std::vector<T>& l, const std::vector<T>& r) {
+  l.insert(l.end(), r.begin(), r.end());
 }
 
-template<typename T> void concat_helper(std::vector<T>& l, std::vector<T>&& r) {
-    l.insert(l.end(), std::make_move_iterator(r.begin()),
-             std::make_move_iterator(r.end()));
+template <typename T>
+void concat_helper(std::vector<T>& l, std::vector<T>&& r) {
+  l.insert(l.end(), std::make_move_iterator(r.begin()),
+           std::make_move_iterator(r.end()));
 }
-} // namespace internal
+}  // namespace internal
 
 /**
  * Gets the event stack from a vector of events and other arguments.
@@ -27,17 +29,17 @@ template<typename T> void concat_helper(std::vector<T>& l, std::vector<T>&& r) {
  * @tparam Args Types for variadic.
  * @return Vector of OpenCL events
  */
-template<typename T, typename... Args>
+template <typename T, typename... Args>
 std::vector<T> vec_concat(const std::vector<T> v1, Args&&... args) {
-    std::size_t s = v1.size();
-    // Hacks to expand the variadic template
-    auto dummy1 = { s += args.size()... };
-    std::vector<T> vec;
-    vec.reserve(s);
-    auto dummy2 = {
-      (internal::concat_helper(vec, std::forward<Args>(args)), 0)... };
-    vec.insert(vec.end(), v1.begin(), v1.end());
-    return std::move(vec);
+  std::size_t s = v1.size();
+  // Hacks to expand the variadic template
+  auto dummy1 = {s += args.size()...};
+  std::vector<T> vec;
+  vec.reserve(s);
+  auto dummy2
+      = {(internal::concat_helper(vec, std::forward<Args>(args)), 0)...};
+  vec.insert(vec.end(), v1.begin(), v1.end());
+  return std::move(vec);
 }
 
 }  // namespace math
