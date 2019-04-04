@@ -20,7 +20,7 @@
 namespace stan {
 namespace math {
 /**
- * Return the lower-triangular Cholesky factor (i.e., matrix
+ * Performs an in-place of the the lower-triangular Cholesky factor (i.e., matrix
  * square root) of the specified square, symmetric matrix.
  * The return value \f$L\f$ will be a lower-traingular matrix such that the
  * original matrix \f$A\f$ is given by
@@ -39,8 +39,6 @@ namespace math {
  * For a full guide to how this works
  * see the Cholesy decompostion chapter in the  reference report
  * <a href="https://goo.gl/6kWkJ5"> here</a>.
- * @param A Symmetric matrix on the OpenCL device.
- * @return Square root of matrix on the OpenCL device.
  * @throw std::domain_error if m is not
  *  positive definite (if m has more than 0 elements)
  */
