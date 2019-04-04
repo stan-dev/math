@@ -56,7 +56,8 @@ inline void matrix_cl::cholesky_decompose() {
     matrix_cl L(this->rows(), this->cols());
     try {
       opencl_kernels::cholesky_decompose(cl::NDRange(this->rows()),
-                                         cl::NDRange(this->rows()), *this, L, this->rows());
+                                         cl::NDRange(this->rows()), *this, L,
+                                         this->rows());
     } catch (const cl::Error& e) {
       check_opencl_error("cholesky_decompose", e);
     }
@@ -65,8 +66,8 @@ inline void matrix_cl::cholesky_decompose() {
   }
   // NOTE: The code in this section follows the naming conventions
   // in the report linked in the docs.
-  const int block
-      = std::floor(this->rows() / opencl_context.tuning_opts().cholesky_partition);
+  const int block = std::floor(
+      this->rows() / opencl_context.tuning_opts().cholesky_partition);
   // Subset the top left block of the input A into A_11
   matrix_cl A_11(block, block);
   A_11.sub_block(*this, 0, 0, 0, 0, block, block);
