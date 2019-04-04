@@ -29,11 +29,11 @@ TEST(MathMatrix, cholesky_decompose_cpu_vs_gpu_small) {
   stan::math::matrix_d m0_res = stan::math::cholesky_decompose(m0);
   stan::math::matrix_d m1_res = stan::math::cholesky_decompose(m1);
 
-  stan::math::matrix_cl m0_chol_gpu = stan::math::cholesky_decompose(m0_gpu);
-  stan::math::matrix_cl m1_chol_gpu = stan::math::cholesky_decompose(m1_gpu);
+  m0_gpu.cholesky_decompose();
+  m1_gpu.cholesky_decompose();
 
-  stan::math::copy(m0, m0_chol_gpu);
-  stan::math::copy(m1, m1_chol_gpu);
+  stan::math::copy(m0, m0_gpu);
+  stan::math::copy(m1, m1_gpu);
 
   EXPECT_MATRIX_NEAR(m0, m0_res, 1e-8);
   EXPECT_MATRIX_NEAR(m1, m1_res, 1e-8);

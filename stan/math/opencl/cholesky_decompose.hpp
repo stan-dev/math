@@ -44,57 +44,57 @@ namespace math {
  * @throw std::domain_error if m is not
  *  positive definite (if m has more than 0 elements)
  */
-inline matrix_cl cholesky_decompose(matrix_cl A) {
-  if (A.rows() == 0)
-    return A;
+inline void matrix_cl::cholesky_decompose() {
+  if (this->rows() == 0)
+    return;
   // Repeats the blocked cholesky decomposition until the size of the remaining
   // submatrix is smaller or equal to the minimum blocks size
   // or a heuristic of 100.
   // The Cholesky (OpenCL) algorithm only uses one local block so we need the
   // matrix To be less than the max thread block size.
-  if (A.rows() <= opencl_context.tuning_opts().cholesky_min_L11_size) {
-    matrix_cl L(A.rows(), A.cols());
+  if (this->rows() <= opencl_context.tuning_opts().cholesky_min_L11_size) {
+    matrix_cl L(this->rows(), this->cols());
     try {
-      opencl_kernels::cholesky_decompose(cl::NDRange(A.rows()),
-                                         cl::NDRange(A.rows()), A, L, A.rows());
+      opencl_kernels::cholesky_decompose(cl::NDRange(this->rows()),
+                                         cl::NDRange(this->rows()), *this, L, this->rows());
     } catch (const cl::Error& e) {
       check_opencl_error("cholesky_decompose", e);
     }
-    return L;
+    *this = L;
+    return;
   }
   // NOTE: The code in this section follows the naming conventions
   // in the report linked in the docs.
   const int block
-      = std::floor(A.rows() / opencl_context.tuning_opts().cholesky_partition);
+      = std::floor(this->rows() / opencl_context.tuning_opts().cholesky_partition);
   // Subset the top left block of the input A into A_11
   matrix_cl A_11(block, block);
-  A_11.sub_block(A, 0, 0, 0, 0, block, block);
+  A_11.sub_block(*this, 0, 0, 0, 0, block, block);
   // The following function either calls the
   // blocked cholesky recursively for the submatrix A_11
   // or calls the kernel  directly if the size of the block is small enough
-  matrix_cl L_11 = cholesky_decompose(A_11);
+  A_11.cholesky_decompose();
   // Copies L_11 back to the input matrix
-  A.sub_block(L_11, 0, 0, 0, 0, block, block);
+  this->sub_block(A_11, 0, 0, 0, 0, block, block);
 
-  const int block_subset = A.rows() - block;
+  const int block_subset = this->rows() - block;
   matrix_cl A_21(block_subset, block);
-  A_21.sub_block(A, block, 0, 0, 0, block_subset, block);
+  A_21.sub_block(*this, block, 0, 0, 0, block_subset, block);
   // computes A_21*((L_11^-1)^T)
   // and copies the resulting submatrix to the lower left hand corner of A
   matrix_cl L_21
       = opencl::multiply<TriangularViewCL::Entire, TriangularViewCL::Upper>(
-          A_21, transpose(lower_triangular_inverse(L_11)));
-  A.sub_block(L_21, 0, 0, block, 0, block_subset, block);
+          A_21, transpose(lower_triangular_inverse(A_11)));
+  this->sub_block(L_21, 0, 0, block, 0, block_subset, block);
   matrix_cl A_22(block_subset, block_subset);
-  A_22.sub_block(A, block, block, 0, 0, block_subset, block_subset);
+  A_22.sub_block(*this, block, block, 0, 0, block_subset, block_subset);
   // computes A_22 - L_21*(L_21^T)
   matrix_cl L_22 = A_22 - multiply_transpose(L_21);
   // copy L_22 into A's lower left hand corner
-  matrix_cl L_rem_11 = cholesky_decompose(L_22);
-  A.sub_block(L_rem_11, 0, 0, block, block, block_subset, block_subset);
-  check_nan("cholesky_decompose (OpenCL)", "Matrix m", A);
-  check_diagonal_zeros("cholesky_decompose (OpenCL)", "Matrix m", A);
-  return A;
+  L_22.cholesky_decompose();
+  this->sub_block(L_22, 0, 0, block, block, block_subset, block_subset);
+  check_nan("cholesky_decompose (OpenCL)", "Matrix m", *this);
+  check_diagonal_zeros("cholesky_decompose (OpenCL)", "Matrix m", *this);
 }
 
 }  // namespace math
