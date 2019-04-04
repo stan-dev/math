@@ -13,17 +13,7 @@
 namespace stan {
 namespace math {
 
-/**
- * Write the context of A into
- * <code>this</code> starting at the top left of <code>this</code>
- * @param A input matrix
- * @param A_i the offset row in A
- * @param A_j the offset column in A
- * @param this_i the offset row for the matrix to be subset into
- * @param this_j the offset col for the matrix to be subset into
- * @param nrows the number of rows in the submatrix
- * @param ncols the number of columns in the submatrix
- */
+
 /**
  * Write the context of A into
  * <code>this</code> starting at the top left of <code>this</code>

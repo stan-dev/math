@@ -2,20 +2,23 @@
 #define STAN_MATH_PRIM_ARR_FUN_VEC_CONCAT_HPP
 
 #include <type_traits>
+#include <iterator>
 #include <vector>
 
 namespace stan {
 namespace math {
 
-/**
- * Ends the recursion to extract the event stack.
- * @param v1 Events on the OpenCL event stack.
- * @return returns input vector.
- */
-template <typename T>
-inline const std::vector<T>& vec_concat(const std::vector<T>& v1) {
-  return v1;
+namespace internal {
+
+template<typename T> void concat_helper(std::vector<T>& l, const std::vector<T>& r) {
+    l.insert(l.end(), r.begin(), r.end());
 }
+
+template<typename T> void concat_helper(std::vector<T>& l, std::vector<T>&& r) {
+    l.insert(l.end(), std::make_move_iterator(r.begin()),
+             std::make_move_iterator(r.end()));
+}
+} // namespace internal
 
 /**
  * Gets the event stack from a vector of events and other arguments.
@@ -24,12 +27,17 @@ inline const std::vector<T>& vec_concat(const std::vector<T>& v1) {
  * @tparam Args Types for variadic.
  * @return Vector of OpenCL events
  */
-template <typename T, typename... Args>
-inline const std::vector<T> vec_concat(const std::vector<T>& v1,
-                                       const Args... args) {
-  std::vector<T> vec = vec_concat(args...);
-  vec.insert(vec.end(), v1.begin(), v1.end());
-  return vec;
+template<typename T, typename... Args>
+std::vector<T> vec_concat(const std::vector<T> v1, Args&&... args) {
+    std::size_t s = v1.size();
+    // Hacks to expand the variadic template
+    auto dummy1 = { s += args.size()... };
+    std::vector<T> vec;
+    vec.reserve(s);
+    auto dummy2 = {
+      (internal::concat_helper(vec, std::forward<Args>(args)), 0)... };
+    vec.insert(vec.end(), v1.begin(), v1.end());
+    return std::move(vec);
 }
 
 }  // namespace math

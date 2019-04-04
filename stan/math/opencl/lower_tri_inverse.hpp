@@ -69,7 +69,6 @@ inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
   zero_mat.zeros<stan::math::TriangularViewCL::Entire>();
   temp.zeros<stan::math::TriangularViewCL::Entire>();
   inv_padded.zeros<stan::math::TriangularViewCL::Entire>();
-  cl::Event assign_event;
 
   int work_per_thread
       = opencl_kernels::inv_lower_tri_multiply.make_functor.get_opts().at(
@@ -80,15 +79,13 @@ inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
   inv_padded.sub_block(inv_mat, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
   try {
     // create a batch of identity matrices to be used in the first step
-    cl::Event batch_event = opencl_kernels::batch_identity(
+    opencl_kernels::batch_identity(
         cl::NDRange(parts, thread_block_size_1D, thread_block_size_1D), temp,
         thread_block_size_1D, temp.size());
-    batch_event.wait();
     // spawn parts thread blocks, each responsible for one block
-    cl::Event diag_inv_event = opencl_kernels::diag_inv(
+    opencl_kernels::diag_inv(
         cl::NDRange(parts * thread_block_size_1D),
         cl::NDRange(thread_block_size_1D), inv_padded, temp, inv_padded.rows());
-    diag_inv_event.wait();
   } catch (cl::Error& e) {
     check_opencl_error("inverse step1", e);
   }
@@ -116,15 +113,12 @@ inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
     auto result_work_dim = result_matrix_dim / work_per_thread;
     auto result_ndrange
         = cl::NDRange(result_matrix_dim_x, result_work_dim, parts);
-    cl::Event inv_lower_tri_event = opencl_kernels::inv_lower_tri_multiply(
+    opencl_kernels::inv_lower_tri_multiply(
         result_ndrange, ndrange_2d, inv_padded, temp, inv_padded.rows(),
         result_matrix_dim);
-    inv_lower_tri_event.wait();
-
-    cl::Event neg_rect_event = opencl_kernels::neg_rect_lower_tri_multiply(
+    opencl_kernels::neg_rect_lower_tri_multiply(
         result_ndrange, ndrange_2d, inv_padded, temp, inv_padded.rows(),
         result_matrix_dim);
-    neg_rect_event.wait();
     // if this is the last submatrix, end
     if (parts == 1) {
       parts = 0;
