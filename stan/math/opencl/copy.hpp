@@ -156,7 +156,7 @@ inline matrix_cl packed_copy(const std::vector<double>& src, int rows) {
     cl::CommandQueue queue = opencl_context.queue();
     matrix_cl packed(packed_size, 1);
     cl::Event packed_event;
-    queue.enqueueWriteBuffer(packed.buffer(), CL_TRUE, 0,
+    queue.enqueueWriteBuffer(packed.buffer(), CL_FALSE, 0,
                              sizeof(double) * packed_size, src.data(), NULL,
                              &packed_event);
     packed.add_event<event_cl::write>(packed_event);
