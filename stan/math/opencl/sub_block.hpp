@@ -13,7 +13,6 @@
 namespace stan {
 namespace math {
 
-
 /**
  * Write the context of A into
  * <code>this</code> starting at the top left of <code>this</code>

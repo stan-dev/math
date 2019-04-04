@@ -83,9 +83,9 @@ inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
         cl::NDRange(parts, thread_block_size_1D, thread_block_size_1D), temp,
         thread_block_size_1D, temp.size());
     // spawn parts thread blocks, each responsible for one block
-    opencl_kernels::diag_inv(
-        cl::NDRange(parts * thread_block_size_1D),
-        cl::NDRange(thread_block_size_1D), inv_padded, temp, inv_padded.rows());
+    opencl_kernels::diag_inv(cl::NDRange(parts * thread_block_size_1D),
+                             cl::NDRange(thread_block_size_1D), inv_padded,
+                             temp, inv_padded.rows());
   } catch (cl::Error& e) {
     check_opencl_error("inverse step1", e);
   }
@@ -113,9 +113,9 @@ inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
     auto result_work_dim = result_matrix_dim / work_per_thread;
     auto result_ndrange
         = cl::NDRange(result_matrix_dim_x, result_work_dim, parts);
-    opencl_kernels::inv_lower_tri_multiply(
-        result_ndrange, ndrange_2d, inv_padded, temp, inv_padded.rows(),
-        result_matrix_dim);
+    opencl_kernels::inv_lower_tri_multiply(result_ndrange, ndrange_2d,
+                                           inv_padded, temp, inv_padded.rows(),
+                                           result_matrix_dim);
     opencl_kernels::neg_rect_lower_tri_multiply(
         result_ndrange, ndrange_2d, inv_padded, temp, inv_padded.rows(),
         result_matrix_dim);
