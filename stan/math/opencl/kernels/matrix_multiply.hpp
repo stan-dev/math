@@ -162,8 +162,8 @@ static const char* matrix_vector_multiply_kernel_code = STRINGIFY(
       const int gid = get_global_id(0);
 
       const int start = lower_upper_A == UPPER ? gid : 0;
-      const int stop = lower_upper_B == UPPER ? 1 :
-                      (lower_upper_A == LOWER ? gid + 1 : N);
+      const int stop
+          = lower_upper_B == UPPER ? 1 : (lower_upper_A == LOWER ? gid + 1 : N);
 
       double acc = 0;
       for (int i = start, j = M * start; i < stop; i++, j += M) {
@@ -193,7 +193,8 @@ static const char* row_vector_matrix_multiply_kernel_code = STRINGIFY(
      * @param[in] A row vector in row vector-matrix multiplication
      * @param[in] B matrix in row vector-matrix multiplication
      * @param[out] R the output vector
-     * @param[in] N Number of cols for row vector A and number of rows for matrix B
+     * @param[in] N Number of cols for row vector A and number of rows for
+     * matrix B
      * @param[in] K Number of cols for matrix B
      * @param[in] lower_upper_A the triangularity of A (lower, upper or none)
      * @param[in] lower_upper_B the triangularity of B (lower, upper or none)
@@ -207,8 +208,9 @@ static const char* row_vector_matrix_multiply_kernel_code = STRINGIFY(
       const int wgid = get_group_id(0);
 
       const int start = lower_upper_B == LOWER ? wgid : 0;
-      const int stop = lower_upper_A == LOWER ? 1 :
-                       (lower_upper_B == UPPER) ? wgid + 1 : N;
+      const int stop = lower_upper_A == LOWER
+                           ? 1
+                           : (lower_upper_B == UPPER) ? wgid + 1 : N;
 
       double acc = 0;
       for (int i = lid + start; i < stop; i += LOCAL_SIZE_) {
