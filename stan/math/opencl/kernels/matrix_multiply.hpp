@@ -141,6 +141,113 @@ const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int,
     matrix_multiply("matrix_multiply", matrix_multiply_kernel_code,
                     {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
 
+// \cond
+static const char* matrix_vector_multiply_kernel_code = STRINGIFY(
+    // \endcond
+    /**
+     * Matrix-vector multiplication R=A*B on the OpenCL device
+     *
+     * @param[in] A matrix in matrix-vector multiplication
+     * @param[in] B vector in matrix-vector multiplication
+     * @param[out] R the output vector
+     * @param[in] M Number of rows for matrix A
+     * @param[in] N Number of cols for matrix A and number of rows for vector B
+     * @param[in] lower_upper_A the triangularity of A (lower, upper or none)
+     * @param[in] lower_upper_B the triangularity of B (lower, upper or none)
+     */
+    __kernel void matrix_vector_multiply(
+        const __global double* A, const __global double* B, __global double* R,
+        const int M, const int N, unsigned int lower_upper_A,
+        unsigned int lower_upper_B) {
+      const int gid = get_global_id(0);
+
+      const int start = lower_upper_A == UPPER ? gid : 0;
+      const int stop
+          = lower_upper_B == UPPER ? 1 : (lower_upper_A == LOWER ? gid + 1 : N);
+
+      double acc = 0;
+      for (int i = start, j = M * start; i < stop; i++, j += M) {
+        acc += A[j + gid] * B[i];
+      }
+      R[gid] = acc;
+    }
+    // \cond
+);
+// \endcond
+
+/**
+ * See the docs for \link kernels/matrix_multiply.hpp matrix_vector_multiply()
+ * \endlink
+ */
+const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int,
+                          TriangularViewCL, TriangularViewCL>
+    matrix_vector_multiply("matrix_vector_multiply",
+                           matrix_vector_multiply_kernel_code);
+
+// \cond
+static const char* row_vector_matrix_multiply_kernel_code = STRINGIFY(
+    // \endcond
+    /**
+     * Row vector-matrix multiplication R=A*B on the OpenCL device
+     *
+     * @param[in] A row vector in row vector-matrix multiplication
+     * @param[in] B matrix in row vector-matrix multiplication
+     * @param[out] R the output vector
+     * @param[in] N Number of cols for row vector A and number of rows for
+     * matrix B
+     * @param[in] K Number of cols for matrix B
+     * @param[in] lower_upper_A the triangularity of A (lower, upper or none)
+     * @param[in] lower_upper_B the triangularity of B (lower, upper or none)
+     */
+    __kernel void row_vector_matrix_multiply(
+        const __global double* A, const __global double* B, __global double* R,
+        const int N, const int K, unsigned int lower_upper_A,
+        unsigned int lower_upper_B) {
+      const int lid = get_local_id(0);
+      const int gid = get_global_id(0);
+      const int wgid = get_group_id(0);
+
+      const int start = lower_upper_B == LOWER ? wgid : 0;
+      const int stop = lower_upper_A == LOWER
+                           ? 1
+                           : (lower_upper_B == UPPER) ? wgid + 1 : N;
+
+      double acc = 0;
+      for (int i = lid + start; i < stop; i += LOCAL_SIZE_) {
+        acc += A[i] * B[i + wgid * N];
+      }
+
+      __local double res_loc[LOCAL_SIZE_];
+      res_loc[lid] = acc;
+      barrier(CLK_LOCAL_MEM_FENCE);
+      for (int step = LOCAL_SIZE_ / REDUCTION_STEP_SIZE; step > 0;
+           step /= REDUCTION_STEP_SIZE) {
+        if (lid < step) {
+          for (int i = 1; i < REDUCTION_STEP_SIZE; i++) {
+            res_loc[lid] += res_loc[lid + step * i];
+          }
+        }
+        barrier(CLK_LOCAL_MEM_FENCE);
+      }
+      if (lid == 0) {
+        R[wgid] = res_loc[0];
+      }
+    }
+    // \cond
+);
+// \endcond
+
+/**
+ * See the docs for \link kernels/matrix_multiply.hpp
+ * row_vector_matrix_multiply() \endlink
+ */
+const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int,
+                         TriangularViewCL, TriangularViewCL>
+    row_vector_matrix_multiply("row_vector_matrix_multiply",
+                               row_vector_matrix_multiply_kernel_code,
+                               {{"LOCAL_SIZE_", 64},
+                                {"REDUCTION_STEP_SIZE", 4}});
+
 }  // namespace opencl_kernels
 }  // namespace math
 }  // namespace stan
