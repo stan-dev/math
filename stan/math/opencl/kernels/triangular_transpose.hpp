@@ -47,9 +47,8 @@ static const char* triangular_transpose_kernel_code = STRINGIFY(
  * See the docs for \link kernels/triangular_transpose.hpp
  * triangular_transpose() \endlink
  */
-const kernel_cl<write_buffer, int, int, TriangularMapCL>
-    triangular_transpose("triangular_transpose",
-                         triangular_transpose_kernel_code);
+const kernel_cl<write_buffer, int, int, TriangularMapCL> triangular_transpose(
+    "triangular_transpose", triangular_transpose_kernel_code);
 
 }  // namespace opencl_kernels
 }  // namespace math
