@@ -136,7 +136,7 @@ class opencl_context_base {
       }
       if (max_thread_block_size_ < base_opts_["LOCAL_SIZE_"]) {
         // must be a power of base_opts_["REDUCTION_STEP_SIZE"]
-        int p = std::log(max_thread_block_size_)
+        const int p = std::log(max_thread_block_size_)
                 / std::log(base_opts_["REDUCTION_STEP_SIZE"]);
         base_opts_["LOCAL_SIZE_"]
             = std::pow(base_opts_["REDUCTION_STEP_SIZE"], p);

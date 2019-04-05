@@ -38,7 +38,7 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
     return temp;
   }
   if (A.rows() == 1) {
-    int local_size
+    const int local_size
         = opencl_kernels::row_vector_matrix_multiply.make_functor.get_opts().at(
             "LOCAL_SIZE_");
     try {
