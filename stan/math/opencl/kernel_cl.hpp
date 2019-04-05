@@ -107,13 +107,12 @@ class kernel_functor {
 };
 
 /**
- * Creates functor for kernels that only need access to defining
- *  the global work size.
+ * Creates functor for kernels
  *
  * @tparam Args Parameter pack of all kernel argument types.
  */
 template <typename... Args>
-struct global_range_kernel {
+struct kernel_cl {
   const kernel_functor<const typename internal::to_buffer<Args>::type&...>
       make_functor;
   /**
@@ -123,7 +122,7 @@ struct global_range_kernel {
    * @param source A string literal containing the code for the kernel.
    * @param options The values of macros to be passed at compile time.
    */
-  global_range_kernel(const char* name, const char* source,
+  kernel_cl(const char* name, const char* source,
                       const std::map<const char*, int> options = {})
       : make_functor(name, source, options) {}
   /**
@@ -145,26 +144,7 @@ struct global_range_kernel {
     int dummy[] = {0, (assign_event<Args>(args, kern_event), 0)...};
     return kern_event;
   }
-};
-/**
- * Creates functor for kernels that need to define both
- *  local and global work size.
- * @tparam Args Parameter pack of all kernel argument types.
- */
-template <typename... Args>
-struct local_range_kernel {
-  const kernel_functor<const typename internal::to_buffer<Args>::type&...>
-      make_functor;
-  /**
-   * Creates kernels that need access to defining the global thread
-   * siez and the thread block size.
-   * @param name The name for the kernel
-   * @param source A string literal containing the code for the kernel.
-   * @param options The values of macros to be passed at compile time.
-   */
-  local_range_kernel(const char* name, const char* source,
-                     const std::map<const char*, int> options = {})
-      : make_functor(name, source, options) {}
+
   /**
    * Executes a kernel
    * @param global_thread_size The global work size.
@@ -185,6 +165,7 @@ struct local_range_kernel {
     int dummy[] = {0, (assign_event<Args>(args, kern_event), 0)...};
     return kern_event;
   }
+
 };
 
 }  // namespace opencl_kernels

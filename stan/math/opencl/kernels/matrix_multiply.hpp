@@ -137,7 +137,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/matrix_multiply.hpp matrix_multiply() \endlink
  */
-const local_range_kernel<read_buffer, read_buffer, write_buffer, int, int, int,
+const kernel_cl<read_buffer, read_buffer, write_buffer, int, int, int,
                          TriangularViewCL, TriangularViewCL>
     matrix_multiply("matrix_multiply", matrix_multiply_kernel_code,
                     {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
