@@ -40,6 +40,11 @@ namespace math {
 template <typename T>
 struct fvar {
   /**
+   * The type of this variable.
+   */
+  typedef T type;
+
+  /**
    * The value of this variable.
    */
   T val_;
