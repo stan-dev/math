@@ -127,8 +127,8 @@ class matrix_cl {
     cl::Context& ctx = opencl_context.context();
     try {
       // creates the OpenCL buffer of the provided size
-      oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE,
-                              sizeof(double) * rows_ * cols_);
+      oclBuffer_
+          = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * rows_ * cols_);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
     }

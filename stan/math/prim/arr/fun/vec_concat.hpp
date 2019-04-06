@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
- /**
+/**
  * Ends the recursion to extract the event stack.
  * @param v1 Events on the OpenCL event stack.
  * @return returns input vector.
@@ -17,7 +17,7 @@ inline const std::vector<T>& vec_concat(const std::vector<T>& v1) {
   return v1;
 }
 
- /**
+/**
  * Gets the event stack from a vector of events and other arguments.
  * @param v1 A event stack to roll up.
  * @param args variadic arcs passed down to the next recursion.
@@ -31,7 +31,7 @@ inline const std::vector<T> vec_concat(const std::vector<T>& v1,
   vec.insert(vec.end(), v1.begin(), v1.end());
   return vec;
 }
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif
