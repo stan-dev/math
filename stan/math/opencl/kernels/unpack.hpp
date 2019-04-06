@@ -60,8 +60,8 @@ static const char* unpack_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/unpack.hpp unpack() \endlink
  */
-const kernel_cl<write_buffer, read_buffer, int, int, TriangularViewCL>
-    unpack("unpack", unpack_kernel_code);
+const kernel_cl<write_buffer, read_buffer, int, int, TriangularViewCL> unpack(
+    "unpack", unpack_kernel_code);
 
 }  // namespace opencl_kernels
 }  // namespace math

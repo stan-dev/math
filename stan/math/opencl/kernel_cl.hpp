@@ -123,7 +123,7 @@ struct kernel_cl {
    * @param options The values of macros to be passed at compile time.
    */
   kernel_cl(const char* name, const char* source,
-                      const std::map<const char*, int> options = {})
+            const std::map<const char*, int> options = {})
       : make_functor(name, source, options) {}
   /**
    * Executes a kernel
@@ -165,7 +165,6 @@ struct kernel_cl {
     int dummy[] = {0, (assign_event<Args>(args, kern_event), 0)...};
     return kern_event;
   }
-
 };
 
 }  // namespace opencl_kernels
