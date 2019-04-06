@@ -2,8 +2,9 @@
 #define STAN_MATH_OPENCL_ERR_CHECK_DIAGONAL_ZEROS_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/kernels/check_diagonal_zeros.hpp>
+#include <stan/math/opencl/constants.hpp>
 #include <stan/math/opencl/copy.hpp>
+#include <stan/math/opencl/kernels/check_diagonal_zeros.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <vector>
 
@@ -31,7 +32,7 @@ inline void check_diagonal_zeros(const char* function, const char* name,
     copy(zeros_flag, zero_on_diagonal_flag);  // NOLINT
     cl::Event check_event = opencl_kernels::check_diagonal_zeros(
         cl::NDRange(y.rows(), y.cols()), y, zeros_flag, y.rows(), y.cols());
-    zeros_flag.add_event(check_event);
+    zeros_flag.add_event<eventCL::write>(check_event);
     copy(zero_on_diagonal_flag, zeros_flag);  // NOLINT
     //  if zeros were found on the diagonal
     if (zero_on_diagonal_flag) {

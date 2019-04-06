@@ -48,6 +48,10 @@ TEST(async_opencl, read_miss) {
   stan::math::matrix_d m1_result_test(size, size);
   stan::math::copy(m1_result_test, m1_result_cl);  // NOLINT
   EXPECT_MATRIX_NEAR(m1_result, m1_result_test, 1e-12)
+  m1 = m1 * 2;
+  stan::math::matrix_d m1_multiply_test(size, size);
+  stan::math::copy(m1_multiply_test, m1_cl);  // NOLINT
+  EXPECT_MATRIX_NEAR(m1, m1_multiply_test, 1e-12)
 }
 
 #endif

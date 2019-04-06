@@ -60,13 +60,13 @@ class matrix_cl {
    * @tparam event_type Specifies which event stack to return.
    *
    */
-  template <event_cl event_type = event_cl::write>
+  template <eventCL event_type = eventCL::write>
   inline const std::vector<cl::Event>& events() const {
     cl::Event assign_event;
     cl::CommandQueue queue = opencl_context.queue();
-    if (event_type == event_cl::read) {
+    if (event_type == eventCL::read) {
       return write_events_;
-    } else if (event_type == event_cl::write) {
+    } else if (event_type == eventCL::write) {
       return read_write_events_;
     }
   }
@@ -76,11 +76,11 @@ class matrix_cl {
    * @tparam event_type Specifies which event stack to add to.
    * @param new_event The event to be pushed on the event stack.
    */
-  template <event_cl event_type = event_cl::write>
+  template <eventCL event_type>
   inline void add_event(cl::Event new_event) const {
-    if (event_type == event_cl::read) {
+    if (event_type == eventCL::read) {
       this->read_write_events_.push_back(new_event);
-    } else if (event_type == event_cl::write) {
+    } else if (event_type == eventCL::write) {
       this->write_events_.push_back(new_event);
       this->read_write_events_.push_back(new_event);
     }
@@ -104,7 +104,7 @@ class matrix_cl {
       queue.enqueueCopyBuffer(A.buffer(), this->buffer(), 0, 0,
                               A.size() * sizeof(double), &A.events(),
                               &cstr_event);
-      this->add_event(cstr_event);
+      this->add_event<eventCL::write>(cstr_event);
     } catch (const cl::Error& e) {
       check_opencl_error("copy (OpenCL)->(OpenCL)", e);
     }
@@ -121,15 +121,16 @@ class matrix_cl {
    *
    */
   matrix_cl(const int& rows, const int& cols) : rows_(rows), cols_(cols) {
-    if (size() > 0) {
-      cl::Context& ctx = opencl_context.context();
-      try {
-        // creates the OpenCL buffer of the provided size
-        oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE,
-                                sizeof(double) * rows_ * cols_);
-      } catch (const cl::Error& e) {
-        check_opencl_error("matrix constructor", e);
-      }
+    if (size() == 0) {
+      return;
+    }
+    cl::Context& ctx = opencl_context.context();
+    try {
+      // creates the OpenCL buffer of the provided size
+      oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE,
+                              sizeof(double) * rows_ * cols_);
+    } catch (const cl::Error& e) {
+      check_opencl_error("matrix constructor", e);
     }
   }
   /**
@@ -146,30 +147,31 @@ class matrix_cl {
   template <int R, int C>
   explicit matrix_cl(const Eigen::Matrix<double, R, C>& A)
       : rows_(A.rows()), cols_(A.cols()) {
-    if (size() > 0) {
-      cl::Context& ctx = opencl_context.context();
-      cl::CommandQueue& queue = opencl_context.queue();
-      try {
-        // creates the OpenCL buffer to copy the Eigen
-        // matrix to the OpenCL device
-        oclBuffer_
-            = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
-        /**
-         * Writes the contents of A to the OpenCL buffer
-         * starting at the offset 0.
-         * CL_TRUE denotes that the call is blocking as
-         * we do not want to execute any further kernels
-         * on the device until we are sure that the data
-         * is finished transfering)
-         */
-        cl::Event transfer_event;
-        queue.enqueueWriteBuffer(oclBuffer_, CL_FALSE, 0,
-                                 sizeof(double) * A.size(), A.data(), NULL,
-                                 &transfer_event);
-        this->add_event(transfer_event);
-      } catch (const cl::Error& e) {
-        check_opencl_error("matrix constructor", e);
-      }
+    if (size() == 0) {
+      return;
+    }
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    try {
+      // creates the OpenCL buffer to copy the Eigen
+      // matrix to the OpenCL device
+      oclBuffer_
+          = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
+      /**
+       * Writes the contents of A to the OpenCL buffer
+       * starting at the offset 0.
+       * CL_TRUE denotes that the call is blocking as
+       * we do not want to execute any further kernels
+       * on the device until we are sure that the data
+       * is finished transfering)
+       */
+      cl::Event transfer_event;
+      queue.enqueueWriteBuffer(oclBuffer_, CL_FALSE, 0,
+                               sizeof(double) * A.size(), A.data(), NULL,
+                               &transfer_event);
+      this->add_event<eventCL::write>(transfer_event);
+    } catch (const cl::Error& e) {
+      check_opencl_error("matrix constructor", e);
     }
   }
 
@@ -183,8 +185,8 @@ class matrix_cl {
     cl::CommandQueue& queue = opencl_context.queue();
     queue.enqueueBarrierWithWaitList(&this->events(), &assign_event);
     assign_event.wait();
-    write_events_ = a.events<event_cl::write>();
-    read_write_events_ = a.events<event_cl::read>();
+    write_events_ = a.events<eventCL::write>();
+    read_write_events_ = a.events<eventCL::read>();
 
     oclBuffer_ = a.buffer();
     return *this;
