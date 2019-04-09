@@ -12,13 +12,11 @@ namespace opencl_kernels {
 // A read buffer will only add events to the read_write stack.
 struct read_buffer {
   typedef cl::Buffer buffer;
-  static const eventCL event_type = eventCL::read;
 };
 
 // Write buffers will add events to the write event stack.
 struct write_buffer {
   typedef cl::Buffer buffer;
-  static const eventCL event_type = eventCL::write;
 };
 
 namespace internal {
