@@ -61,7 +61,7 @@ class matrix_cl {
    *
    */
   inline const std::vector<cl::Event>& write_events() const {
-      return write_events_;
+    return write_events_;
   }
 
   /**
@@ -70,7 +70,7 @@ class matrix_cl {
    *
    */
   inline const std::vector<cl::Event>& read_write_events() const {
-      return read_write_events_;
+    return read_write_events_;
   }
 
   /**
