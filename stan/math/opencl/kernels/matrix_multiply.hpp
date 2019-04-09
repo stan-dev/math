@@ -181,7 +181,7 @@ static const char* matrix_vector_multiply_kernel_code = STRINGIFY(
  * \endlink
  */
 const kernel_cl<read_buffer, read_buffer, write_buffer, int, int,
-                          TriangularViewCL, TriangularViewCL>
+                TriangularViewCL, TriangularViewCL>
     matrix_vector_multiply("matrix_vector_multiply",
                            matrix_vector_multiply_kernel_code);
 
@@ -243,7 +243,7 @@ static const char* row_vector_matrix_multiply_kernel_code = STRINGIFY(
  * row_vector_matrix_multiply() \endlink
  */
 const kernel_cl<read_buffer, read_buffer, write_buffer, int, int,
-                         TriangularViewCL, TriangularViewCL>
+                TriangularViewCL, TriangularViewCL>
     row_vector_matrix_multiply("row_vector_matrix_multiply",
                                row_vector_matrix_multiply_kernel_code,
                                {{"LOCAL_SIZE_", 64},

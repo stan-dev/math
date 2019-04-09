@@ -48,9 +48,8 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
             "LOCAL_SIZE_");
     try {
       opencl_kernels::row_vector_matrix_multiply(
-          cl::NDRange(temp.cols() * local_size), cl::NDRange(local_size),
-          A, B, temp, B.rows(), B.cols(),
-          triangular_view_A, triangular_view_B);
+          cl::NDRange(temp.cols() * local_size), cl::NDRange(local_size), A, B,
+          temp, B.rows(), B.cols(), triangular_view_A, triangular_view_B);
     } catch (cl::Error& e) {
       check_opencl_error("row_vector - matrix multiply", e);
     }
@@ -59,8 +58,8 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   if (B.cols() == 1) {
     try {
       opencl_kernels::matrix_vector_multiply(
-          cl::NDRange(temp.rows()), A, B, temp,
-          A.rows(), A.cols(), triangular_view_A, triangular_view_B);
+          cl::NDRange(temp.rows()), A, B, temp, A.rows(), A.cols(),
+          triangular_view_A, triangular_view_B);
     } catch (cl::Error& e) {
       check_opencl_error("matrix - vector multiply", e);
     }
