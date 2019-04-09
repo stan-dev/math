@@ -45,7 +45,7 @@ inline void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
       cl::size_t<3> size
           = opencl::to_size_t<3>({nrows * sizeof(double), ncols, 1});
       std::vector<cl::Event> kernel_events = vec_concat(
-          A.events<eventCL::read>(), this->events<eventCL::write>());
+          A.write_events(), this->read_write_events());
       cl::Event copy_event;
       cmdQueue.enqueueCopyBufferRect(
           A.buffer(), this->buffer(), src_offset, dst_offset, size,
@@ -53,8 +53,8 @@ inline void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
           sizeof(double) * this->rows(),
           this->rows() * this->cols() * sizeof(double), &kernel_events,
           &copy_event);
-      A.add_event<eventCL::read>(copy_event);
-      this->add_event<eventCL::write>(copy_event);
+      A.add_read_event(copy_event);
+      this->add_write_event(copy_event);
     } else {
       opencl_kernels::sub_block(cl::NDRange(nrows, ncols), A, *this, A_i, A_j,
                                 this_i, this_j, nrows, ncols, A.rows(),

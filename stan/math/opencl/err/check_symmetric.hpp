@@ -35,7 +35,7 @@ inline void check_symmetric(const char* function, const char* name,
     cl::Event check_event = opencl_kernels::check_symmetric(
         cl::NDRange(y.rows(), y.cols()), y, symm_flag, y.rows(), y.cols(),
         math::CONSTRAINT_TOLERANCE);
-    symm_flag.add_event<eventCL::write>(check_event);
+    symm_flag.add_write_event(check_event);
     copy(symmetric_flag, symm_flag);  // NOLINT
     //  if the matrix is not symmetric
     if (!symmetric_flag) {

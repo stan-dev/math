@@ -14,31 +14,72 @@ namespace opencl_kernels {
 
 /**
  * Generic template for non-matrix_cl types
- * @tparam Any non-matrix-cl type will be declared here and not assign an event.
+ * @tparam T Any non-matrix-cl type will be declared here and not assigned an event.
+ * @param t A type that is not a matrix_cl.
+ * @param new_event An event to add to an event stack
  */
 template <typename T>
 inline void assign_event(const T& t, const cl::Event& new_event) {}
 
 /**
- * Adds event to matrices appropriate event stack.
+ * Generic template for matrix_cl types
  * @tparam buffer_type Whether the matrix_cl should add to it's read or write
  * stack.
  * @param m Matrix to add the event to it's event stack.
  * @param new_event The event to add to the matrices event stack.
  */
 template <typename buffer_type>
-inline void assign_event(const matrix_cl& m, const cl::Event& new_event) {
-  m.add_event<buffer_type::event_type>(new_event);
+inline void assign_event(const matrix_cl& m, const cl::Event& new_event) {}
+
+
+/**
+ * Adds event to matrices appropriate event stack.
+ * @param m Matrix to add the event to it's event stack.
+ * @param new_event The event to add to the matrices event stack.
+ */
+template <>
+inline void assign_event<read_buffer>(const matrix_cl& m, const cl::Event& new_event) {
+  m.add_read_event(new_event);
 }
 
 /**
  * Adds event to matrices appropriate event stack.
- * @param m Pointer to matrix to add the event to it's event stack.
+ * @param m Matrix to add the event to it's event stack.
+ * @param new_event The event to add to the matrices event stack.
+ */
+template <>
+inline void assign_event<write_buffer>(const matrix_cl& m, const cl::Event& new_event) {
+  m.add_write_event(new_event);
+}
+
+/**
+ * Generic template for matrix_cl pointer types
+ * @tparam buffer_type Whether the matrix_cl should add to it's read or write
+ * stack.
+ * @param m Matrix to add the event to it's event stack.
  * @param new_event The event to add to the matrices event stack.
  */
 template <typename buffer_type>
-inline void assign_event(const matrix_cl* m, const cl::Event& new_event) {
-  m->add_event<buffer_type::event_type>(new_event);
+inline void assign_event(const matrix_cl* m, const cl::Event& new_event) {}
+
+/**
+ * Adds event to matrices appropriate event stack.
+ * @param m Pointer to matrix_cl to add to write event stack.
+ * @param new_event The event to add to the matrices event stack.
+ */
+template <>
+inline void assign_event<read_buffer>(const matrix_cl* m, const cl::Event& new_event) {
+  m->add_read_event(new_event);
+}
+
+/**
+ * Adds event to matrices appropriate event stack.
+ * @param m Pointer to matrix_cl to add to write event stack.
+ * @param new_event The event to add to the matrices event stack.
+ */
+template <>
+inline void assign_event<write_buffer>(const matrix_cl* m, const cl::Event& new_event) {
+  m->add_write_event(new_event);
 }
 
 }  // namespace opencl_kernels

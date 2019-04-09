@@ -60,15 +60,17 @@ class matrix_cl {
    * @tparam event_type Specifies which event stack to return.
    *
    */
-  template <eventCL event_type = eventCL::write>
-  inline const std::vector<cl::Event>& events() const {
-    cl::Event assign_event;
-    cl::CommandQueue queue = opencl_context.queue();
-    if (event_type == eventCL::read) {
+  inline const std::vector<cl::Event>& write_events() const {
       return write_events_;
-    } else if (event_type == eventCL::write) {
+  }
+
+  /**
+   * Get the events from the event stacks.
+   * @tparam event_type Specifies which event stack to return.
+   *
+   */
+  inline const std::vector<cl::Event>& read_write_events() const {
       return read_write_events_;
-    }
   }
 
   /**
@@ -76,14 +78,13 @@ class matrix_cl {
    * @tparam event_type Specifies which event stack to add to.
    * @param new_event The event to be pushed on the event stack.
    */
-  template <eventCL event_type>
-  inline void add_event(cl::Event new_event) const {
-    if (event_type == eventCL::read) {
-      this->read_write_events_.push_back(new_event);
-    } else if (event_type == eventCL::write) {
-      this->write_events_.push_back(new_event);
-      this->read_write_events_.push_back(new_event);
-    }
+  inline void add_read_event(cl::Event new_event) const {
+    this->read_write_events_.push_back(new_event);
+  }
+
+  inline void add_write_event(cl::Event new_event) const {
+    this->write_events_.push_back(new_event);
+    this->read_write_events_.push_back(new_event);
   }
 
   const cl::Buffer& buffer() const { return oclBuffer_; }
@@ -102,9 +103,9 @@ class matrix_cl {
       oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size());
       cl::Event cstr_event;
       queue.enqueueCopyBuffer(A.buffer(), this->buffer(), 0, 0,
-                              A.size() * sizeof(double), &A.events(),
+                              A.size() * sizeof(double), &A.read_write_events(),
                               &cstr_event);
-      this->add_event<eventCL::write>(cstr_event);
+      this->add_write_event(cstr_event);
     } catch (const cl::Error& e) {
       check_opencl_error("copy (OpenCL)->(OpenCL)", e);
     }
@@ -169,7 +170,7 @@ class matrix_cl {
       queue.enqueueWriteBuffer(oclBuffer_, CL_FALSE, 0,
                                sizeof(double) * A.size(), A.data(), NULL,
                                &transfer_event);
-      this->add_event<eventCL::write>(transfer_event);
+      this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
     }
@@ -183,10 +184,10 @@ class matrix_cl {
     // Need to wait for all of matrices events before destroying old buffer
     cl::Event assign_event;
     cl::CommandQueue& queue = opencl_context.queue();
-    queue.enqueueBarrierWithWaitList(&this->events(), &assign_event);
+    queue.enqueueBarrierWithWaitList(&this->read_write_events(), &assign_event);
     assign_event.wait();
-    write_events_ = a.events<eventCL::write>();
-    read_write_events_ = a.events<eventCL::read>();
+    write_events_ = a.write_events();
+    read_write_events_ = a.read_write_events();
 
     oclBuffer_ = a.buffer();
     return *this;

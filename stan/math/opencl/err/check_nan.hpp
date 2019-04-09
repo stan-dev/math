@@ -34,7 +34,7 @@ inline void check_nan(const char* function, const char* name,
     copy(nan_chk, nan_flag);  // NOLINT
     cl::Event check_event = opencl_kernels::check_nan(
         cl::NDRange(y.rows(), y.cols()), y, nan_chk, y.rows(), y.cols());
-    nan_chk.add_event<eventCL::write>(check_event);
+    nan_chk.add_write_event(check_event);
     copy(nan_flag, nan_chk);  // NOLINT
     //  if NaN values were found in the matrix
     if (nan_flag) {
