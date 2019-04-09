@@ -34,7 +34,7 @@ namespace opencl {
 
 template <TriangularViewCL triangular_view_A = TriangularViewCL::Entire,
           TriangularViewCL triangular_view_B = TriangularViewCL::Entire>
-inline auto multiply(matrix_cl A, matrix_cl B) {
+inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   check_size_match("multiply ((OpenCL))", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
   matrix_cl temp(A.rows(), B.cols());
@@ -49,7 +49,7 @@ inline auto multiply(matrix_cl A, matrix_cl B) {
     try {
       opencl_kernels::row_vector_matrix_multiply(
           cl::NDRange(temp.cols() * local_size), cl::NDRange(local_size),
-          A.buffer(), B.buffer(), temp.buffer(), B.rows(), B.cols(),
+          A, B, temp, B.rows(), B.cols(),
           triangular_view_A, triangular_view_B);
     } catch (cl::Error& e) {
       check_opencl_error("row_vector - matrix multiply", e);
@@ -59,7 +59,7 @@ inline auto multiply(matrix_cl A, matrix_cl B) {
   if (B.cols() == 1) {
     try {
       opencl_kernels::matrix_vector_multiply(
-          cl::NDRange(temp.rows()), A.buffer(), B.buffer(), temp.buffer(),
+          cl::NDRange(temp.rows()), A, B, temp,
           A.rows(), A.cols(), triangular_view_A, triangular_view_B);
     } catch (cl::Error& e) {
       check_opencl_error("matrix - vector multiply", e);
@@ -92,7 +92,7 @@ inline auto multiply(matrix_cl A, matrix_cl B) {
  * @param scalar scalar
  * @return matrix multipled with scalar
  */
-inline matrix_cl multiply(matrix_cl A, const double scalar) {
+inline matrix_cl multiply(const matrix_cl& A, const double scalar) {
   matrix_cl temp(A.rows(), A.cols());
   if (A.size() == 0)
     return temp;
@@ -113,7 +113,7 @@ inline matrix_cl multiply(matrix_cl A, const double scalar) {
  * @param A matrix
  * @return matrix multipled with scalar
  */
-inline auto multiply(const double scalar, matrix_cl A) {
+inline auto multiply(const double scalar, const matrix_cl& A) {
   return multiply(A, scalar);
 }
 
