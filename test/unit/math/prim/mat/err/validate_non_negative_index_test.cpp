@@ -7,9 +7,9 @@ TEST(MathPrimMat, val_non_neg_index) {
   const int val_good = 1;
   const int val_bad = -1;
 
-  EXPECT_THROW(stan::math::validate_non_negative_index(var_name,
-                                                       expr_name, val_bad),
-               std::invalid_argument);
-  EXPECT_NO_THROW(stan::math::validate_non_negative_index(var_name,
-                                                          expr_name, val_good));
+  EXPECT_THROW(
+      stan::math::validate_non_negative_index(var_name, expr_name, val_bad),
+      std::invalid_argument);
+  EXPECT_NO_THROW(
+      stan::math::validate_non_negative_index(var_name, expr_name, val_good));
 }
