@@ -36,7 +36,7 @@ class ordered_constrain_op {
     if (N_ == 0)
       return y;
 
-    exp_x_ = ChainableStack::instance_->memalloc_.alloc_array<double>(N_ - 1);
+    exp_x_ = ChainableStack::instance().memalloc_.alloc_array<double>(N_ - 1);
 
     y[0] = x[0];
     for (int n = 1; n < N_; ++n) {

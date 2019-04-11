@@ -13,8 +13,7 @@ namespace Eigen {
  * gradient variables.
  */
 template <typename T>
-struct NumTraits<stan::math::fvar<T> >
-    : GenericNumTraits<stan::math::fvar<T> > {
+struct NumTraits<stan::math::fvar<T>> : GenericNumTraits<stan::math::fvar<T>> {
   enum {
     /**
      * stan::math::fvar requires initialization
@@ -54,21 +53,24 @@ struct NumTraits<stan::math::fvar<T> >
 };
 
 namespace internal {
-#if EIGEN_VERSION_AT_LEAST(3, 3, 0)
-#else
+
 /**
- * Implemented this for printing to stream.
+ * Scalar product traits specialization for Eigen for forward-mode
+ * autodiff variables.
  */
 template <typename T>
-struct significant_decimals_default_impl<stan::math::fvar<T>, false> {
-  static inline int run() {
-    using std::ceil;
-    using std::log;
-    return cast<double, int>(
-        ceil(-log(std::numeric_limits<double>::epsilon()) / log(10.0)));
-  }
+struct scalar_product_traits<stan::math::fvar<T>, double> {
+  typedef stan::math::fvar<T> ReturnType;
 };
-#endif
+
+/**
+ * Scalar product traits specialization for Eigen for forward-mode
+ * autodiff variables.
+ */
+template <typename T>
+struct scalar_product_traits<double, stan::math::fvar<T>> {
+  typedef stan::math::fvar<T> ReturnType;
+};
 }  // namespace internal
 
 }  // namespace Eigen

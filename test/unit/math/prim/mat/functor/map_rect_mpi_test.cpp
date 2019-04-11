@@ -2,7 +2,7 @@
 // MPI
 #ifdef STAN_MPI
 
-#include <stan/math/rev/mat.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
