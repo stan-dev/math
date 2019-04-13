@@ -58,8 +58,7 @@ void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
     dst.clear_read_write_events();
     queue.enqueueWriteBuffer(dst.buffer(), CL_FALSE, 0,
                              sizeof(double) * dst.size(), src.data(),
-                             &dst.read_write_events(),
-                             &copy_event);
+                             &dst.read_write_events(), &copy_event);
     dst.add_write_event(copy_event);
   } catch (const cl::Error& e) {
     check_opencl_error("copy Eigen->(OpenCL)", e);
@@ -209,7 +208,8 @@ inline void copy(matrix_cl& dst, const matrix_cl& src) {
     auto mat_events = vec_concat(dst.read_write_events(), src.write_events());
     cl::Event copy_event;
     queue.enqueueCopyBuffer(src.buffer(), dst.buffer(), 0, 0,
-                            sizeof(double) * src.size(), &mat_events, &copy_event);
+                            sizeof(double) * src.size(), &mat_events,
+                            &copy_event);
     dst.add_write_event(copy_event);
     src.add_read_event(copy_event);
   } catch (const cl::Error& e) {
