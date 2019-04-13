@@ -30,9 +30,8 @@ inline void check_diagonal_zeros(const char* function, const char* name,
     int zero_on_diagonal_flag = 0;
     matrix_cl zeros_flag(1, 1);
     copy(zeros_flag, zero_on_diagonal_flag);  // NOLINT
-    cl::Event check_event = opencl_kernels::check_diagonal_zeros(
-        cl::NDRange(y.rows(), y.cols()), y, zeros_flag, y.rows(), y.cols());
-    zeros_flag.add_write_event(check_event);
+    opencl_kernels::check_diagonal_zeros(cl::NDRange(y.rows(), y.cols()), y,
+     zeros_flag, y.rows(), y.cols());
     copy(zero_on_diagonal_flag, zeros_flag);  // NOLINT
     //  if zeros were found on the diagonal
     if (zero_on_diagonal_flag) {

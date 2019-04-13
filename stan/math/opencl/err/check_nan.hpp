@@ -25,18 +25,13 @@ inline void check_nan(const char* function, const char* name,
                       const matrix_cl& y) {
   if (y.size() == 0)
     return;
-
-  cl::CommandQueue cmd_queue = opencl_context.queue();
-  cl::Context& ctx = opencl_context.context();
   try {
     int nan_flag = 0;
     matrix_cl nan_chk(1, 1);
     copy(nan_chk, nan_flag);  // NOLINT
-    cl::Event check_event = opencl_kernels::check_nan(
-        cl::NDRange(y.rows(), y.cols()), y, nan_chk, y.rows(), y.cols());
-    nan_chk.add_write_event(check_event);
+    opencl_kernels::check_nan(cl::NDRange(y.rows(), y.cols()), y, nan_chk,
+    y.rows(), y.cols());
     copy(nan_flag, nan_chk);  // NOLINT
-    //  if NaN values were found in the matrix
     if (nan_flag) {
       domain_error(function, name, "has NaN values", "");
     }

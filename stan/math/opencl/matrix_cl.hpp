@@ -56,9 +56,25 @@ class matrix_cl {
   int size() const { return rows_ * cols_; }
 
   /**
+   * Clear the write events from the event stacks.
+   */
+  inline void clear_write_events() const {
+    write_events_.clear();
+    return;
+  }
+
+  /**
+   * Clear the read/write and write events from the event stacks.
+   */
+  inline void clear_read_write_events() const {
+    read_write_events_.clear();
+    write_events_.clear();
+    return;
+  }
+
+  /**
    * Get the events from the event stacks.
-   * @tparam event_type Specifies which event stack to return.
-   *
+   * @return The write event stack.
    */
   inline const std::vector<cl::Event>& write_events() const {
     return write_events_;
@@ -66,22 +82,24 @@ class matrix_cl {
 
   /**
    * Get the events from the event stacks.
-   * @tparam event_type Specifies which event stack to return.
-   *
+   * @return The read/write event stack.
    */
   inline const std::vector<cl::Event>& read_write_events() const {
     return read_write_events_;
   }
 
   /**
-   * Get the events from the event stacks.
-   * @tparam event_type Specifies which event stack to add to.
+   * Add an event to the read/write event stack.
    * @param new_event The event to be pushed on the event stack.
    */
   inline void add_read_event(cl::Event new_event) const {
     this->read_write_events_.push_back(new_event);
   }
 
+  /**
+   * Add an event to the read/write and write event stack.
+   * @param new_event The event to be pushed on the event stack.
+   */
   inline void add_write_event(cl::Event new_event) const {
     this->write_events_.push_back(new_event);
     this->read_write_events_.push_back(new_event);
