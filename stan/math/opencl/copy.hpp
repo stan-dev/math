@@ -128,7 +128,8 @@ inline std::vector<double> packed_copy(const matrix_cl& src) {
     stan::math::opencl_kernels::pack(cl::NDRange(src.rows(), src.rows()),
                                      packed, src, src.rows(), src.rows(),
                                      triangular_view);
-    auto mat_events = vec_concat(packed.read_write_events(), src.write_events());
+    auto mat_events
+        = vec_concat(packed.read_write_events(), src.write_events());
     cl::Event copy_event;
     queue.enqueueReadBuffer(packed.buffer(), CL_FALSE, 0,
                             sizeof(double) * packed_size, dst.data(),
