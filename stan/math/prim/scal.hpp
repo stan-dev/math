@@ -4,6 +4,9 @@
 #include <stan/math/version.hpp>
 
 #include <stan/math/prim/scal/meta/ad_promotable.hpp>
+#include <stan/math/prim/scal/meta/as_array_or_scalar.hpp>
+#include <stan/math/prim/scal/meta/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/scal/meta/as_scalar.hpp>
 #include <stan/math/prim/scal/meta/child_type.hpp>
 #include <stan/math/prim/scal/meta/contains_fvar.hpp>
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
@@ -65,10 +68,7 @@
 #include <stan/math/prim/scal/fun/acosh.hpp>
 #include <stan/math/prim/scal/fun/asinh.hpp>
 #include <stan/math/prim/scal/fun/atanh.hpp>
-#include <stan/math/prim/scal/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/scal/fun/as_bool.hpp>
-#include <stan/math/prim/scal/fun/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/scal/fun/as_scalar.hpp>
 #include <stan/math/prim/scal/fun/bessel_first_kind.hpp>
 #include <stan/math/prim/scal/fun/bessel_second_kind.hpp>
 #include <stan/math/prim/scal/fun/binary_log_loss.hpp>

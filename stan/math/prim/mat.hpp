@@ -6,6 +6,9 @@
 #include <stan/math/prim/arr/meta/is_vector.hpp>
 #include <stan/math/prim/arr/meta/length.hpp>
 
+#include <stan/math/prim/mat/meta/as_array_or_scalar.hpp>
+#include <stan/math/prim/mat/meta/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/mat/meta/as_scalar.hpp>
 #include <stan/math/prim/mat/meta/broadcast_array.hpp>
 #include <stan/math/prim/mat/meta/get.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
@@ -60,9 +63,6 @@
 #include <stan/math/prim/mat/fun/append_array.hpp>
 #include <stan/math/prim/mat/fun/append_col.hpp>
 #include <stan/math/prim/mat/fun/append_row.hpp>
-#include <stan/math/prim/mat/fun/as_array_or_scalar.hpp>
-#include <stan/math/prim/mat/fun/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/mat/fun/as_scalar.hpp>
 #include <stan/math/prim/mat/fun/asin.hpp>
 #include <stan/math/prim/mat/fun/asinh.hpp>
 #include <stan/math/prim/mat/fun/assign.hpp>
