@@ -379,6 +379,7 @@ class opencl_context {
     return {opencl_context_base::getInstance().platform_};
   }
 };
+
 static opencl_context opencl_context;
 }  // namespace math
 }  // namespace stan
