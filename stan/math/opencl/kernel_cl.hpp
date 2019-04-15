@@ -25,12 +25,12 @@ namespace opencl_kernels {
  * Compile an OpenCL kernel.
  *
  * @param name The name for the kernel
- * @param source A string literal containing the code for the kernel.
+ * @param sources A std::vector of strings containing the code for the kernel.
  * @param options The values of macros to be passed at compile time.
  * @note The macros defined in kernels/helpers.hpp are included in the kernel
  *  compilation for ease of writing and reading kernels.
  */
-inline auto compile_kernel(const char* name, const char* source,
+inline auto compile_kernel(const char* name, std::vector<const char*> sources,
                            std::map<const char*, int> options) {
   std::string kernel_opts = "";
   for (auto&& comp_opts : options) {
@@ -38,7 +38,9 @@ inline auto compile_kernel(const char* name, const char* source,
                    + std::to_string(comp_opts.second);
   }
   std::string kernel_source(opencl_kernels::helpers);
-  kernel_source.append(source);
+  for(const char* source : sources) {
+    kernel_source.append(source);
+  }
   cl::Program program;
   try {
     cl::Program::Sources src(1, std::make_pair(kernel_source.c_str(),
@@ -75,10 +77,10 @@ class kernel_functor {
   /**
    * functor to access the kernel compiler.
    * @param name The name for the kernel.
-   * @param source A string literal containing the code for the kernel.
+   * @param sources A std::vector of strings containing the code for the kernel.
    * @param options The values of macros to be passed at compile time.
    */
-  kernel_functor(const char* name, const char* source,
+  kernel_functor(const char* name, std::vector<const char*> sources,
                  std::map<const char*, int> options) {
     auto base_opts = opencl_context.base_opts();
     for (auto& it : options) {
@@ -86,7 +88,7 @@ class kernel_functor {
         base_opts[it.first] = it.second;
       }
     }
-    kernel_ = compile_kernel(name, source, base_opts);
+    kernel_ = compile_kernel(name, sources, base_opts);
     opts_ = base_opts;
   }
 
@@ -107,16 +109,26 @@ class kernel_functor {
 template <typename... Args>
 struct global_range_kernel {
   const kernel_functor<Args...> make_functor;
-  /**
-   * Creates functor for kernels that only need access to defining
-   *  the global work size.
-   * @param name The name for the kernel
-   * @param source A string literal containing the code for the kernel.
-   * @param options The values of macros to be passed at compile time.
-   */
-  global_range_kernel(const char* name, const char* source,
-                      const std::map<const char*, int> options = {})
-      : make_functor(name, source, options) {}
+    /**
+     * Creates functor for kernels that only need access to defining
+     *  the global work size.
+     * @param name The name for the kernel
+     * @param source A string literal containing the code for the kernel.
+     * @param options The values of macros to be passed at compile time.
+     */
+    global_range_kernel(const char* name, const char* source,
+                        const std::map<const char*, int> options = {})
+            : make_functor(name, {source}, options) {}
+    /**
+     * Creates functor for kernels that only need access to defining
+     *  the global work size.
+     * @param name The name for the kernel
+     * @param sources A std::vector of strings containing the code for the kernel.
+     * @param options The values of macros to be passed at compile time.
+     */
+    global_range_kernel(const char* name, std::vector<const char*> sources,
+                        const std::map<const char*, int> options = {})
+            : make_functor(name, sources, options) {}
   /**
    * Executes a kernel
    * @param global_thread_size The global work size.
@@ -137,16 +149,26 @@ struct global_range_kernel {
 template <typename... Args>
 struct local_range_kernel {
   const kernel_functor<Args...> make_functor;
-  /**
-   * Creates kernels that need access to defining the global thread
-   * siez and the thread block size.
-   * @param name The name for the kernel
-   * @param source A string literal containing the code for the kernel.
-   * @param options The values of macros to be passed at compile time.
-   */
-  local_range_kernel(const char* name, const char* source,
-                     const std::map<const char*, int> options = {})
-      : make_functor(name, source, options) {}
+    /**
+     * Creates kernels that need access to defining the global thread
+     * siez and the thread block size.
+     * @param name The name for the kernel
+     * @param source A string literal containing the code for the kernel.
+     * @param options The values of macros to be passed at compile time.
+     */
+    local_range_kernel(const char* name, const char* source,
+                       const std::map<const char*, int> options = {})
+            : make_functor(name, {source}, options) {}
+    /**
+     * Creates kernels that need access to defining the global thread
+     * siez and the thread block size.
+     * @param name The name for the kernel
+     * @param sources A std::vector of strings containing the code for the kernel.
+     * @param options The values of macros to be passed at compile time.
+     */
+    local_range_kernel(const char* name, std::vector<const char*> sources,
+                       const std::map<const char*, int> options = {})
+            : make_functor(name, sources, options) {}
   /**
    * Executes a kernel
    * @param global_thread_size The global work size.
