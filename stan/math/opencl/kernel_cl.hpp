@@ -37,7 +37,7 @@ inline auto compile_kernel(const char* name, std::vector<const char*> sources,
     kernel_opts += std::string(" -D") + comp_opts.first + "="
                    + std::to_string(comp_opts.second);
   }
-  std::string kernel_source(opencl_kernels::helpers);
+  std::string kernel_source;
   for(const char* source : sources) {
     kernel_source.append(source);
   }

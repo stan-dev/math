@@ -11,7 +11,7 @@ namespace opencl_kernels {
 /*
  * Defines some helper macros for the kernels
  */
-static const char* helpers =
+static const char* indexing_helpers =
     R"(
     // Matrix access helpers
   #ifndef A
@@ -37,11 +37,13 @@ static const char* helpers =
   #ifndef dst
   #define dst(i,j) dst[(j) * dst_rows + (i)]
   #endif
+  )";
 
+static const char* thread_block_helpers =
+        R"(
   // The local memory column for each thread block
   #define THREAD_BLOCK_SIZE_COL THREAD_BLOCK_SIZE/WORK_PER_THREAD
-
-  )";
+        )";
 }  // namespace opencl_kernels
 }  // namespace math
 }  // namespace stan

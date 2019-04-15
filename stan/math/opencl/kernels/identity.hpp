@@ -90,13 +90,13 @@ static const char* batch_identity_kernel_code = STRINGIFY(
  * See the docs for \link kernels/identity.hpp identity() \endlink
  */
 const global_range_kernel<cl::Buffer, int, int> identity("identity",
-                                                         identity_kernel_code);
+                                                         {indexing_helpers, identity_kernel_code});
 
 /**
  * See the docs for \link kernels/identity.hpp batch_identity() \endlink
  */
 const global_range_kernel<cl::Buffer, int, int> batch_identity(
-    "batch_identity", batch_identity_kernel_code);
+    "batch_identity", {indexing_helpers, batch_identity_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math
