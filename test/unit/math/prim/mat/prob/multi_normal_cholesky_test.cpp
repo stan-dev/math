@@ -243,3 +243,52 @@ TEST(ProbDistributionsMultiNormalCholesky,
 
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
+
+TEST(ProbDistributionsMultiNormalCholesky, WrongSize) {
+  vector<Matrix<double, Dynamic, 1> > y_3_3(3);
+  vector<Matrix<double, Dynamic, 1> > y_3_1(3);
+  vector<Matrix<double, Dynamic, 1> > y_3_2(3);
+  vector<Matrix<double, Dynamic, 1> > y_1_3(1);
+  vector<Matrix<double, Dynamic, 1> > y_2_3(2);
+  Matrix<double, Dynamic, 1> y_3(3);
+  Matrix<double, Dynamic, 1> y_2(2);
+  Matrix<double, Dynamic, 1> y_1(1);
+  y_3 << 2.0, -2.0, 11.0;
+  y_2 << 2.0, -2.0;
+  y_1 << 2.0;
+  y_3_3[0] = y_3;
+  y_3_3[1] = y_3;
+  y_3_3[2] = y_3;
+  y_3_1[0] = y_1;
+  y_3_1[1] = y_1;
+  y_3_1[2] = y_1;
+  y_3_2[0] = y_2;
+  y_3_2[1] = y_2;
+  y_3_2[2] = y_2;
+  y_1_3[0] = y_3;
+  y_2_3[0] = y_3;
+  y_2_3[1] = y_3;
+
+  vector<Matrix<double, Dynamic, 1> > mu_3_3(3);
+  Matrix<double, Dynamic, 1> mu_3(3);
+  mu_3 << 2.0, -2.0, 11.0;
+  mu_3_3[0] = mu_3;
+  mu_3_3[1] = mu_3;
+  mu_3_3[2] = mu_3;
+
+  Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
+  Sigma << 10.0, -3.0, 0.0, -3.0, 5.0, 0.0, 0.0, 0.0, 5.0;
+  Matrix<double, Dynamic, Dynamic> L = Sigma.llt().matrixL();
+
+  EXPECT_NO_THROW(stan::math::multi_normal_cholesky_lpdf(y_3_3, mu_3_3, L));
+  EXPECT_NO_THROW(stan::math::multi_normal_cholesky_lpdf(y_3, mu_3_3, L));
+
+  EXPECT_THROW(stan::math::multi_normal_cholesky_lpdf(y_1_3, mu_3_3, L),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::multi_normal_cholesky_lpdf(y_2_3, mu_3_3, L),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::multi_normal_cholesky_lpdf(y_3_1, mu_3_3, L),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::multi_normal_cholesky_lpdf(y_3_2, mu_3_3, L),
+               std::invalid_argument);
+}

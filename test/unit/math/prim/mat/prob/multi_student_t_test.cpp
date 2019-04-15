@@ -320,3 +320,53 @@ TEST(ProbDistributionsMultiStudentT, marginalTwoChiSquareGoodnessFitTest) {
 
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
+
+TEST(ProbDistributionsMultiStudentT, WrongSize) {
+  vector<Matrix<double, Dynamic, 1> > y_3_3(3);
+  vector<Matrix<double, Dynamic, 1> > y_3_1(3);
+  vector<Matrix<double, Dynamic, 1> > y_3_2(3);
+  vector<Matrix<double, Dynamic, 1> > y_1_3(1);
+  vector<Matrix<double, Dynamic, 1> > y_2_3(2);
+  Matrix<double, Dynamic, 1> y_3(3);
+  Matrix<double, Dynamic, 1> y_2(2);
+  Matrix<double, Dynamic, 1> y_1(1);
+  y_3 << 2.0, -2.0, 11.0;
+  y_2 << 2.0, -2.0;
+  y_1 << 2.0;
+  y_3_3[0] = y_3;
+  y_3_3[1] = y_3;
+  y_3_3[2] = y_3;
+  y_3_1[0] = y_1;
+  y_3_1[1] = y_1;
+  y_3_1[2] = y_1;
+  y_3_2[0] = y_2;
+  y_3_2[1] = y_2;
+  y_3_2[2] = y_2;
+  y_1_3[0] = y_3;
+  y_2_3[0] = y_3;
+  y_2_3[1] = y_3;
+
+  vector<Matrix<double, Dynamic, 1> > mu_3_3(3);
+  Matrix<double, Dynamic, 1> mu_3(3);
+  mu_3 << 2.0, -2.0, 11.0;
+  mu_3_3[0] = mu_3;
+  mu_3_3[1] = mu_3;
+  mu_3_3[2] = mu_3;
+
+  Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
+  Sigma << 10.0, -3.0, 0.0, -3.0, 5.0, 0.0, 0.0, 0.0, 5.0;
+
+  double nu = 4.0;
+
+  EXPECT_NO_THROW(stan::math::multi_student_t_lpdf(y_3_3, nu, mu_3_3, Sigma));
+  EXPECT_NO_THROW(stan::math::multi_student_t_lpdf(y_3, nu, mu_3_3, Sigma));
+
+  EXPECT_THROW(stan::math::multi_student_t_lpdf(y_1_3, nu, mu_3_3, Sigma),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::multi_student_t_lpdf(y_2_3, nu, mu_3_3, Sigma),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::multi_student_t_lpdf(y_3_1, nu, mu_3_3, Sigma),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::multi_student_t_lpdf(y_3_2, nu, mu_3_3, Sigma),
+               std::invalid_argument);
+}

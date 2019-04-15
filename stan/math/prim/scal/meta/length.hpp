@@ -4,7 +4,10 @@
 #include <cstdlib>
 
 namespace stan {
-
+/**
+ * Returns the length of primitive scalar types
+ * that are always of length 1.
+ */
 template <typename T>
 size_t length(const T& /*x*/) {
   return 1U;

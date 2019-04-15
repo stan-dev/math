@@ -7,6 +7,9 @@
 #include <stan/math/prim/arr/meta/length.hpp>
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/meta/as_array_or_scalar.hpp>
+#include <stan/math/prim/mat/meta/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/mat/meta/as_scalar.hpp>
 #include <stan/math/prim/mat/meta/broadcast_array.hpp>
 #include <stan/math/prim/mat/meta/get.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
@@ -24,6 +27,8 @@
 #include <stan/math/prim/mat/err/check_cholesky_factor.hpp>
 #include <stan/math/prim/mat/err/check_cholesky_factor_corr.hpp>
 #include <stan/math/prim/mat/err/check_column_index.hpp>
+#include <stan/math/prim/mat/err/check_consistent_size_mvt.hpp>
+#include <stan/math/prim/mat/err/check_consistent_sizes_mvt.hpp>
 #include <stan/math/prim/mat/err/check_corr_matrix.hpp>
 #include <stan/math/prim/mat/err/check_cov_matrix.hpp>
 #include <stan/math/prim/mat/err/check_finite.hpp>
