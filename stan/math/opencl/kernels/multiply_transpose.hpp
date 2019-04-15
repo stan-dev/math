@@ -115,7 +115,8 @@ static const char* multiply_transpose_kernel_code = STRINGIFY(
  * See the docs for \link kernels/multiply_transpose.hpp add() \endlink
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, int, int> multiply_transpose(
-    "multiply_transpose", {thread_block_helpers, multiply_transpose_kernel_code},
+    "multiply_transpose",
+    {thread_block_helpers, multiply_transpose_kernel_code},
     {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 4}});
 
 }  // namespace opencl_kernels

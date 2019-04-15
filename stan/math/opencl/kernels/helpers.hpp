@@ -40,7 +40,7 @@ static const char* indexing_helpers =
   )";
 
 static const char* thread_block_helpers =
-        R"(
+    R"(
   // The local memory column for each thread block
   #define THREAD_BLOCK_SIZE_COL THREAD_BLOCK_SIZE/WORK_PER_THREAD
         )";
