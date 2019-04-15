@@ -11,12 +11,21 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <stan/math/prim/mat/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/log_sum_exp.hpp>
-#include <stan/math/prim/mat/fun/value_of.hpp>
+#include <stan/math/prim/mat/fun/value_of_rec.hpp>
+#include <stan/math/prim/arr/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/mat/meta/is_vector.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/as_array_or_scalar.hpp>
+#include <stan/math/prim/scal/meta/as_scalar.hpp>
+#include <stan/math/prim/mat/meta/as_scalar.hpp>
+#include <stan/math/prim/arr/meta/as_scalar.hpp>
+#include <stan/math/prim/mat/meta/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/scal/meta/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/scal/fun/sum.hpp>
+#include <vector>
 #include <cmath>
 
 namespace stan {
@@ -63,11 +72,21 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
   typedef
       typename stan::partials_return_type<T_y, T_x, T_alpha, T_beta,
                                           T_precision>::type T_partials_return;
+  typedef typename std::conditional<
+      is_vector<T_precision>::value,
+      Eigen::Array<typename partials_return_type<T_precision>::type, -1, 1>,
+      typename partials_return_type<T_precision>::type>::type T_precision_val;
+  typedef typename std::conditional<
+      is_vector<T_y>::value || is_vector<T_precision>::value,
+      Eigen::Array<typename partials_return_type<T_y, T_precision>::type, -1,
+                   1>,
+      typename partials_return_type<T_y, T_precision>::type>::type T_sum_val;
 
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using std::exp;
+  using Eigen::exp;
+  using Eigen::log1p;
 
   if (!(stan::length(y) && stan::length(x) && stan::length(beta)
         && stan::length(phi)))
@@ -75,11 +94,10 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
 
   T_partials_return logp(0.0);
 
-  const size_t N = x.col(0).size();
-  const size_t M = x.row(0).size();
+  const size_t N = x.rows();
+  const size_t M = x.cols();
 
   check_nonnegative(function, "Failures variables", y);
-  check_finite(function, "Matrix of independent variables", x);
   check_finite(function, "Weight vector", beta);
   check_finite(function, "Intercept", alpha);
   check_positive_finite(function, "Precision parameter", phi);
@@ -95,107 +113,93 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
   if (!include_summand<propto, T_x, T_alpha, T_beta, T_precision>::value)
     return 0.0;
 
-  Array<T_partials_return, Dynamic, 1> y_arr(N, 1);
-  Array<T_partials_return, Dynamic, 1> phi_arr(N, 1);
-  {
-    scalar_seq_view<T_y> y_vec(y);
-    scalar_seq_view<T_precision> phi_vec(phi);
-    for (size_t n = 0; n < N; ++n) {
-      y_arr[n] = y_vec[n];
-      phi_arr[n] = value_of(phi_vec[n]);
-    }
-  }
+  const auto& x_val = value_of_rec(x);
+  const auto& y_val = value_of_rec(y);
+  const auto& beta_val = value_of_rec(beta);
+  const auto& alpha_val = value_of_rec(alpha);
+  const auto& phi_val = value_of_rec(phi);
 
-  Matrix<T_partials_return, Dynamic, 1> beta_dbl(M, 1);
-  {
-    scalar_seq_view<T_beta> beta_vec(beta);
-    for (size_t m = 0; m < M; ++m) {
-      beta_dbl[m] = value_of(beta_vec[m]);
-    }
-  }
+  const auto& y_val_vec = as_column_vector_or_scalar(y_val);
+  const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
+  const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
+  const auto& phi_val_vec = as_column_vector_or_scalar(phi_val);
 
-  Array<T_partials_return, Dynamic, 1> theta_dbl
-      = (value_of(x) * beta_dbl).array();
-  scalar_seq_view<T_alpha> alpha_vec(alpha);
-  for (size_t n = 0; n < N; ++n)
-    theta_dbl[n] += value_of(alpha_vec[n]);
-  Array<T_partials_return, Dynamic, 1> log_phi = phi_arr.log();
-  Array<T_partials_return, Dynamic, 1> logsumexp_eta_logphi
-      = theta_dbl.binaryExpr(log_phi, [](const T_partials_return& xx,
-                                         const T_partials_return& yy) {
-          return log_sum_exp(xx, yy);
-        });
-  Array<T_partials_return, Dynamic, 1> y_plus_phi = y_arr + phi_arr;
+  const auto& y_arr = as_array_or_scalar(y_val_vec);
+  const auto& phi_arr = as_array_or_scalar(phi_val_vec);
+
+  Array<T_partials_return, Dynamic, 1> theta = value_of(x) * beta_val_vec;
+  theta += as_array_or_scalar(alpha_val_vec);
+  check_finite(function, "Matrix of independent variables", theta);
+  T_precision_val log_phi = log(phi_arr);
+  Array<T_partials_return, Dynamic, 1> logsumexp_theta_logphi
+      = (theta > log_phi)
+            .select(theta + log1p(exp(log_phi - theta)),
+                    log_phi + log1p(exp(theta - log_phi)));
+
+  T_sum_val y_plus_phi = y_arr + phi_arr;
 
   // Compute the log-density.
   if (include_summand<propto>::value) {
-    logp -= (y_arr + Array<double, Dynamic, 1>::Ones(N, 1))
-                .unaryExpr(
-                    [](const T_partials_return& xx) { return lgamma(xx); })
-                .sum();
+    logp -= sum(lgamma(y_arr + 1));
   }
   if (include_summand<propto, T_precision>::value) {
-    for (size_t n = 0; n < N; ++n)
-      logp += multiply_log(phi_arr[n], phi_arr[n]) - lgamma(phi_arr[n]);
+    if (is_vector<T_precision>::value) {
+      scalar_seq_view<decltype(phi_val)> phi_vec(phi_val);
+      for (size_t n = 0; n < N; ++n)
+        logp += multiply_log(phi_vec[n], phi_vec[n]) - lgamma(phi_vec[n]);
+    } else {
+      logp += N
+              * (multiply_log(as_scalar(phi_val), as_scalar(phi_val))
+                 - lgamma(as_scalar(phi_val)));
+    }
   }
   if (include_summand<propto, T_x, T_alpha, T_beta, T_precision>::value)
-    logp -= (y_plus_phi * logsumexp_eta_logphi).sum();
+    logp -= sum(y_plus_phi * logsumexp_theta_logphi);
   if (include_summand<propto, T_x, T_alpha, T_beta>::value)
-    logp += (y_arr * theta_dbl).sum();
+    logp += sum(y_arr * theta);
   if (include_summand<propto, T_precision>::value) {
-    logp += y_plus_phi
-                .unaryExpr(
-                    [](const T_partials_return& xx) { return lgamma(xx); })
-                .sum();
+    logp += sum(lgamma(y_plus_phi));
   }
 
   // Compute the necessary derivatives.
   operands_and_partials<T_x, T_alpha, T_beta, T_precision> ops_partials(
       x, alpha, beta, phi);
-
   if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
-        && is_constant_struct<T_alpha>::value)) {
-    Matrix<T_partials_return, Dynamic, 1> theta_derivative(N, 1);
-    theta_derivative = (y_arr
-                        - (y_plus_phi
-                           / (phi_arr / (theta_dbl.exp())
-                              + Array<double, Dynamic, 1>::Ones(N, 1))))
-                           .matrix();
-    if (!is_constant_struct<T_beta>::value) {
-      ops_partials.edge3_.partials_
-          = value_of(x).transpose() * theta_derivative;
+        && is_constant_struct<T_alpha>::value
+        && is_constant_struct<T_precision>::value)) {
+    Array<T_partials_return, Dynamic, 1> theta_exp = theta.exp();
+    if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
+          && is_constant_struct<T_alpha>::value)) {
+      Matrix<T_partials_return, Dynamic, 1> theta_derivative
+          = y_arr - theta_exp * y_plus_phi / (theta_exp + phi_arr);
+      if (!is_constant_struct<T_beta>::value) {
+        ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
+      }
+      if (!is_constant_struct<T_x>::value) {
+        ops_partials.edge1_.partials_
+            = (beta_val_vec * theta_derivative.transpose()).transpose();
+      }
+      if (!is_constant_struct<T_alpha>::value) {
+        if (is_vector<T_alpha>::value)
+          ops_partials.edge2_.partials_ = theta_derivative;
+        else
+          ops_partials.edge2_.partials_[0] = sum(theta_derivative);
+      }
     }
-    if (!is_constant_struct<T_x>::value) {
-      ops_partials.edge1_.partials_ = theta_derivative * beta_dbl.transpose();
-    }
-    if (!is_constant_struct<T_alpha>::value) {
-      if (is_vector<T_alpha>::value)
-        ops_partials.edge2_.partials_ = theta_derivative;
-      else
-        ops_partials.edge2_.partials_[0] = theta_derivative.sum();
-    }
-  }
-  if (!is_constant_struct<T_precision>::value) {
-    if (is_vector<T_precision>::value) {
-      ops_partials.edge4_.partials_
-          = (Array<double, Dynamic, 1>::Ones(N, 1)
-             - y_plus_phi / (theta_dbl.exp() + phi_arr) + log_phi
-             - logsumexp_eta_logphi
-             - phi_arr.unaryExpr(
-                   [](const T_partials_return& xx) { return digamma(xx); })
-             + y_plus_phi.unaryExpr(
-                   [](const T_partials_return& xx) { return digamma(xx); }))
-                .matrix();
-    } else {
-      ops_partials.edge4_.partials_[0]
-          = (Array<double, Dynamic, 1>::Ones(N, 1)
-             - y_plus_phi / (theta_dbl.exp() + phi_arr) + log_phi
-             - logsumexp_eta_logphi
-             - phi_arr.unaryExpr(
-                   [](const T_partials_return& xx) { return digamma(xx); })
-             + y_plus_phi.unaryExpr(
-                   [](const T_partials_return& xx) { return digamma(xx); }))
-                .sum();
+    if (!is_constant_struct<T_precision>::value) {
+      if (is_vector<T_precision>::value) {
+        ops_partials.edge4_.partials_
+            = 1 - y_plus_phi / (theta_exp + phi_arr) + log_phi
+              - logsumexp_theta_logphi + as_array_or_scalar(digamma(y_plus_phi))
+              - as_array_or_scalar(digamma(phi_val_vec));
+      } else {
+        ops_partials.edge4_.partials_[0]
+            = N
+              + sum(-y_plus_phi / (theta_exp + phi_arr) + log_phi
+                    - logsumexp_theta_logphi
+                    + as_array_or_scalar(digamma(y_plus_phi))
+                    - as_array_or_scalar(digamma(phi_val_vec)));
+      }
     }
   }
   return ops_partials.build(logp);
