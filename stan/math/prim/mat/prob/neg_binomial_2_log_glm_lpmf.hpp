@@ -75,13 +75,12 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
   typedef typename std::conditional<
       is_vector<T_precision>::value,
       Eigen::Array<typename partials_return_type<T_precision>::type, -1, 1>,
-      typename partials_return_type<T_precision>::type>::type
-      T_precision_val;
+      typename partials_return_type<T_precision>::type>::type T_precision_val;
   typedef typename std::conditional<
       is_vector<T_y>::value || is_vector<T_precision>::value,
-      Eigen::Array<typename partials_return_type<T_y, T_precision>::type, -1, 1>,
-      typename partials_return_type<T_y, T_precision>::type>::type
-      T_sum_val;
+      Eigen::Array<typename partials_return_type<T_y, T_precision>::type, -1,
+                   1>,
+      typename partials_return_type<T_y, T_precision>::type>::type T_sum_val;
 
   using Eigen::Array;
   using Eigen::Dynamic;
@@ -195,10 +194,11 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
               - as_array_or_scalar(digamma(phi_val_vec));
       } else {
         ops_partials.edge4_.partials_[0]
-            = N + sum(-y_plus_phi / (theta_exp + phi_arr) + log_phi
-               - logsumexp_theta_logphi
-               + as_array_or_scalar(digamma(y_plus_phi))
-               - as_array_or_scalar(digamma(phi_val_vec)));
+            = N
+              + sum(-y_plus_phi / (theta_exp + phi_arr) + log_phi
+                    - logsumexp_theta_logphi
+                    + as_array_or_scalar(digamma(y_plus_phi))
+                    - as_array_or_scalar(digamma(phi_val_vec)));
       }
     }
   }

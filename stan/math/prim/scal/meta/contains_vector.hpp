@@ -8,6 +8,7 @@ namespace stan {
 /**
  * Metaprogram to determine if any of the
  * provided types is a std::vector.
+ * @tparam T Types to test
  */
 template <typename... T>
 using contains_vector = math::disjunction<is_vector<T>...>;

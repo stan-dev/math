@@ -89,14 +89,14 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   if (!include_summand<propto, T_x, T_alpha, T_beta>::value)
     return 0.0;
 
-  const auto& x_val = value_of_rec(x);
-  const auto& y_val = value_of_rec(y);
-  const auto& beta_val = value_of_rec(beta);
-  const auto& alpha_val = value_of_rec(alpha);
+  const auto &x_val = value_of_rec(x);
+  const auto &y_val = value_of_rec(y);
+  const auto &beta_val = value_of_rec(beta);
+  const auto &alpha_val = value_of_rec(alpha);
 
-  const auto& y_val_vec = as_column_vector_or_scalar(y_val);
-  const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
-  const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
+  const auto &y_val_vec = as_column_vector_or_scalar(y_val);
+  const auto &beta_val_vec = as_column_vector_or_scalar(beta_val);
+  const auto &alpha_val_vec = as_column_vector_or_scalar(alpha_val);
 
   T_y_val signs = 2 * as_array_or_scalar(y_val_vec) - 1;
 
@@ -109,9 +109,10 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   // And compute the derivatives wrt theta.
   static const double cutoff = 20.0;
   Eigen::Array<T_partials_return, Dynamic, 1> exp_m_ytheta = exp(-ytheta);
-  logp += sum((ytheta > cutoff)
-              .select(-exp_m_ytheta,
-                      (ytheta < -cutoff).select(ytheta, -log1p(exp_m_ytheta))));
+  logp += sum(
+      (ytheta > cutoff)
+          .select(-exp_m_ytheta,
+                  (ytheta < -cutoff).select(ytheta, -log1p(exp_m_ytheta))));
   if (!std::isfinite(logp)) {
     check_finite(function, "Weight vector", beta);
     check_finite(function, "Intercept", alpha);

@@ -6,7 +6,10 @@
 #include <vector>
 
 namespace stan {
-
+/**
+ * Extends std::true_type when instantiated with at least 1 template
+ * parameter of type std::vector<T>.
+ */
 template <typename T, typename... Ts>
 struct contains_std_vector<std::vector<T>, Ts...> : std::true_type {};
 

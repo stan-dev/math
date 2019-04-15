@@ -11,9 +11,7 @@ namespace math {
  * @param v Specified value.
  * @return Same value (the sum of one value).
  */
-inline double sum(double v) {
-  return v;
-}
+inline double sum(double v) { return v; }
 
 /**
  * Returns specified input value.
@@ -22,9 +20,7 @@ inline double sum(double v) {
  * @param v Specified value.
  * @return Same value (the sum of one value).
  */
-inline int sum(int v) {
-  return v;
-}
+inline int sum(int v) { return v; }
 
 }  // namespace math
 }  // namespace stan

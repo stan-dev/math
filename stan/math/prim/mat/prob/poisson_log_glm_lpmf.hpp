@@ -113,7 +113,8 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
     }
   }
   if (include_summand<propto, T_partials_return>::value) {
-    logp += sum(as_array_or_scalar(y_val_vec) * theta.array() - exp(theta.array()));
+    logp += sum(as_array_or_scalar(y_val_vec) * theta.array()
+                - exp(theta.array()));
   }
 
   // Compute the necessary derivatives.
