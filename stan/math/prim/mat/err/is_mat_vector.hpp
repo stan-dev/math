@@ -8,9 +8,9 @@ namespace stan {
 namespace math {
 
 /**
- * Return <code>true</code> if the runtime size of the matrix **y** 
+ * Return <code>true</code> if the runtime size of the matrix **y**
  * is a row or column vector.
- * @tparam T Scalar type of the matrix, requires class method 
+ * @tparam T Scalar type of the matrix, requires class method
  *   <code>.rows()</code> and <code>.cols()</code>
  * @tparam R Compile time rows of the matrix
  * @tparam C Compile time columns of the matrix

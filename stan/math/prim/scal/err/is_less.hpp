@@ -20,7 +20,7 @@ namespace math {
  * @tparam T_high Type of upper bound
  * @param y Variable to check
  * @param high Upper bound
- * @return <code>true</code> if <code>y</code> is less than low and no element 
+ * @return <code>true</code> if <code>y</code> is less than low and no element
  *   of <code>y</code> or <code>high</code> is NaN
  */
 template <typename T_y, typename T_high>

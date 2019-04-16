@@ -15,8 +15,7 @@ namespace math {
  * @return <code>true</code> if the index is in range
  **/
 inline bool is_range(int max, int index) {
-  return index >= error_index::value
-    && (index < max + error_index::value);
+  return index >= error_index::value && (index < max + error_index::value);
 }
 
 }  // namespace math

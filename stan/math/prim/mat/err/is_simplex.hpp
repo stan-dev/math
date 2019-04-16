@@ -31,7 +31,7 @@ inline bool is_simplex(const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   for (auto n = 0; n < theta.size(); ++n) {
     if (!(theta[n] >= 0))
       return false;
-    }
+  }
   return true;
 }
 

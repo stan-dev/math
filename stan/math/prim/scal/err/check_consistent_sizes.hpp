@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the dimension of <code>x1</code> is consistent with 
+ * Check if the dimension of <code>x1</code> is consistent with
  * <code>x2</code>.
  * Consistent size is defined as having the same size if vector-like or
  * being a scalar.
@@ -32,7 +32,7 @@ inline void check_consistent_sizes(const char* function, const char* name1,
 }
 
 /**
- * Check if the dimension of <code>x1</code>, <code>x2</code>, and 
+ * Check if the dimension of <code>x1</code>, <code>x2</code>, and
  * <code>x3</code> are consistent.
  * Consistent size is defined as having the same size if vector-like or
  * being a scalar.

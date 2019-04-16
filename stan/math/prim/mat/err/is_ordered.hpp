@@ -13,7 +13,7 @@ namespace math {
  * strictly increasing order.
  * @tparam T_y Type of scalar, require class method <code>.size()</code>
  * @param y Vector to test
- * @return <code>true</code> if the vector elements are ordered, if 
+ * @return <code>true</code> if the vector elements are ordered, if
  *   there are no duplicated values, and if no element is <code>NaN</code>
  */
 template <typename T_y>
@@ -27,7 +27,8 @@ inline bool is_ordered(const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y) {
     if (!(y[n] > y[n - 1])) {
       return false;
     }
-  } return true;
+  }
+  return true;
 }
 
 }  // namespace math

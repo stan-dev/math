@@ -156,8 +156,8 @@ TEST_F(ErrorHandlingMatrix, isPosDefinite_nan) {
 
   y << 2, -1, nan, -1, 2, -1, nan, -1, nan;
 
-  Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> >
-    llt_err2(y);
+  Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt_err2(
+      y);
   EXPECT_FALSE(is_pos_definite(llt_err2));
 
   Eigen::LDLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > ldlt_err2

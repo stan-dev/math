@@ -14,15 +14,16 @@ namespace math {
 
 /**
  * Return <code>true</code> if the specified matrix is positive definite.
- * @tparam T_y scalar type of the matrix, requires class method <code>.rows()</code>
+ * @tparam T_y scalar type of the matrix, requires class method
+ *<code>.rows()</code>
  * @param y Matrix to test
  * @return <code>true</code> if the matrix is square, or if the matrix does
  *   not have zero size, if the matrix is symmetric, or if it is positive
  *   semi-definite, or if no element of the matrix is <code>NaN</code>.
  **/
 template <typename T_y>
-inline bool is_pos_semidefinite(const Eigen::Matrix<T_y, Eigen::Dynamic,
-                                Eigen::Dynamic>& y) {
+inline bool is_pos_semidefinite(
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
   if (!is_symmetric(y))
     return false;
 
@@ -38,7 +39,7 @@ inline bool is_pos_semidefinite(const Eigen::Matrix<T_y, Eigen::Dynamic,
   LDLT<Matrix<double, Dynamic, Dynamic> > cholesky = value_of_rec(y).ldlt();
   if (cholesky.info() != Eigen::Success
       || (cholesky.vectorD().array() < 0.0).any())
-      return false;
+    return false;
   return is_not_nan(y);
 }
 

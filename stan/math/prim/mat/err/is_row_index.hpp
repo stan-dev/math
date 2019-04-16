@@ -22,7 +22,7 @@ namespace math {
 template <typename T_y, int R, int C>
 inline bool is_row_index(const Eigen::Matrix<T_y, R, C>& y, size_t i) {
   return i >= error_index::value
-    && i < static_cast<size_t>(y.rows()) + error_index::value;
+         && i < static_cast<size_t>(y.rows()) + error_index::value;
 }
 
 }  // namespace math
