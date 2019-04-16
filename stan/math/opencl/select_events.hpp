@@ -27,7 +27,7 @@ inline const std::vector<cl::Event> select_events(const T& t) {
  * @tparam event_buffer Whether the matrix is to be treated as read or write.
  * @param m A matrix_cl holding an event stack.
  * @return Depending on the template type will return either the read or
- * read_write event stacks.
+ * write event stacks.
  */
 template <typename event_buffer>
 inline const std::vector<cl::Event>& select_events(const matrix_cl& m) {}
@@ -46,12 +46,12 @@ inline const std::vector<cl::Event>& select_events<read_buffer>(
 /**
  * Gets the event stack for read and write buffers
  * @param m A matrix_cl holding an event stack.
- * @return The read and write event stack.
+ * @return The read event stack.
  */
 template <>
 inline const std::vector<cl::Event>& select_events<write_buffer>(
     const matrix_cl& m) {
-  return m.read_write_events();
+  return m.read_events();
 }
 
 /**
@@ -59,7 +59,7 @@ inline const std::vector<cl::Event>& select_events<write_buffer>(
  * @tparam event_buffer Whether the matrix is to be treated as read or write.
  * @param m A matrix_cl holding an event stack.
  * @return Depending on the template type will return either the read or
- * read_write event stacks.
+ * write event stacks.
  */
 template <typename event_buffer>
 inline const std::vector<cl::Event>& select_events(matrix_cl* const& m) {}
@@ -78,12 +78,12 @@ inline const std::vector<cl::Event>& select_events<read_buffer>(
 /**
  * Gets the event stack for write buffers
  * @param m Pointer to matrix_cl holding an event stack.
- * @return The read and write event stack.
+ * @return The read event stack.
  */
 template <>
 inline const std::vector<cl::Event>& select_events<write_buffer>(
     matrix_cl* const& m) {
-  return m->read_write_events();
+  return m->read_events();
 }
 
 }  // namespace opencl_kernels

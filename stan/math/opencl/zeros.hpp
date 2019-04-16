@@ -29,10 +29,8 @@ inline void matrix_cl::zeros() {
     return;
   cl::CommandQueue cmdQueue = opencl_context.queue();
   try {
-    cl::Event foo
-        = opencl_kernels::zeros(cl::NDRange(this->rows(), this->cols()), *this,
+    opencl_kernels::zeros(cl::NDRange(this->rows(), this->cols()), *this,
                                 this->rows(), this->cols(), triangular_view);
-    foo.wait();
   } catch (const cl::Error& e) {
     check_opencl_error("zeros", e);
   }

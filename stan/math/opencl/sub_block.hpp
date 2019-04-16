@@ -14,7 +14,7 @@ namespace stan {
 namespace math {
 
 /**
- * Write the context of A into
+ * Write the contents of A into
  * <code>this</code> starting at the top left of <code>this</code>
  * @param A input matrix
  * @param A_i the offset row in A
@@ -45,7 +45,7 @@ inline void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
       cl::size_t<3> size
           = opencl::to_size_t<3>({nrows * sizeof(double), ncols, 1});
       std::vector<cl::Event> kernel_events
-          = vec_concat(A.write_events(), this->read_write_events());
+          = vec_concat(A.write_events(), this->read_events());
       cl::Event copy_event;
       cmdQueue.enqueueCopyBufferRect(
           A.buffer(), this->buffer(), src_offset, dst_offset, size,
