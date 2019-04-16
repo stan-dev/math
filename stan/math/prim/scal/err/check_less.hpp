@@ -52,14 +52,14 @@ struct less<T_y, T_high, true> {
  * Check if <code>y</code> is strictly less than <code>high</code>.
  * This function is vectorized and will check each element of
  * <code>y</code> against each element of <code>high</code>.
- * @tparam T_y Type of y
+ * @tparam T_y Type of <code>y</code>
  * @tparam T_high Type of upper bound
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param high Upper bound
- * @throw <code>domain_error</code> if y is not less than low
- *   or if any element of y or high is NaN.
+ * @throw <code>domain_error</code> if <code>y</code> is not less than low
+ *   or if any element of <code>y</code> or <code>high</code> is NaN
  */
 template <typename T_y, typename T_high>
 inline void check_less(const char* function, const char* name, const T_y& y,

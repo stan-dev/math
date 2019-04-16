@@ -14,12 +14,12 @@ namespace math {
  * <code>high</code>.
  * This function is vectorized and will check each element of
  * <code>y</code> against each element of <code>high</code>.
- * @tparam T_y Type of y
+ * @tparam T_y Type of <code>y</code>
  * @tparam T_high Type of upper bound
  * @param y Variable to check
  * @param high Upper bound
- * @return <code>true</code> if y is less than or equal
- *   to low and if and element of y or high is NaN
+ * @return <code>true</code> if <code>y</code> is less than or equal
+ *   to high and if no element of <code>y</code> or <code>high</code> is NaN
  */
 template <typename T_y, typename T_high>
 inline bool is_less_or_equal(const T_y& y, const T_high& high) {

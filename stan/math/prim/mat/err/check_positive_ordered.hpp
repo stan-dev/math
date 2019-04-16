@@ -19,7 +19,7 @@ namespace math {
  * @param y Vector to test
  * @throw <code>std::domain_error</code> if the vector contains non-positive
  *   values, if the values are not ordered, if there are duplicated
- *   values, or if any element is <code>NaN</code>.
+ *   values, or if any element is <code>NaN</code>
  */
 template <typename T_y>
 void check_positive_ordered(const char* function, const char* name,

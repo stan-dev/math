@@ -14,9 +14,9 @@ namespace math {
  * Return <code>true</code> if <code>y</code> is finite.
  * This function is vectorized and will check each element of
  * <code>y</code>.
- * @tparam T_y Type of y
+ * @tparam T_y Type of <code>y</code>
  * @param y Variable to check
- * @throw <code>true</code> if y is not infinity, -infinity, or NaN
+ * @return <code>true</code> if <code>y</code> is not infinity, -infinity, or NaN
  */
 template <typename T_y>
 inline bool is_scal_finite(const T_y& y) {

@@ -15,9 +15,9 @@ namespace math {
  * This function is vectorized and will check each element of
  * <code>y</code>. If no element is <code>NaN</code>, this
  * function will return <code>true</code>.
- * @tparam T_y Type of y
+ * @tparam T_y Type of <code>y</code>
  * @param y Variable to check
- * @return <code>true</code> if no element of y is NaN
+ * @return <code>true</code> if no element of <code>y</code> is NaN
  */
 template <typename T_y>
 inline bool is_not_nan(const T_y& y) {

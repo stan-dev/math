@@ -12,7 +12,7 @@ namespace math {
  * Return <code>true</code> if <code>y</code> is positive.
  * This function is vectorized and will check each element of
  * <code>y</code>.
- * @tparam T_y Type of y
+ * @tparam T_y Type of <code>y</code>
  * @param y Variable to check
  * @return <code>true</code> if vector contains only positive elements
  */

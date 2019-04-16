@@ -21,7 +21,7 @@ namespace math {
  * @param name Variable name (for error messages)
  * @param x Matrix
  * @throw <code>std::invalid_argument</code> if x is not a row or column
- *   vector.
+ *   vector
  */
 template <typename T, int R, int C>
 inline void check_vector(const char* function, const char* name,

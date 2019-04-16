@@ -22,8 +22,8 @@ namespace math {
  * @tparam T_y Type of scalar of the matrix, requires class method
  *   <code>.rows()</code>
  * @param y Matrix to test
- * @return <code>true</code> if the matrix is square or if the matrix has non-0
- *   size, or if the matrix is symmetric, or if it is positive definite, or if
+ * @return <code>true</code> if the matrix is square and if the matrix has non-0
+ *   size, and the matrix is symmetric, and it is positive definite, and
  *   no element is <code>NaN</code>
  */
 template <typename T_y>

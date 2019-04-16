@@ -66,7 +66,7 @@ struct bounded<T_y, T_low, T_high, true> {
  * @param low Low bound
  * @param high High bound
  * @throw <code>std::domain_error</code> otherwise. This also throws
- *   if any of the arguments are NaN.
+ *   if any of the arguments are NaN
  */
 template <typename T_y, typename T_low, typename T_high>
 inline void check_bounded(const char* function, const char* name, const T_y& y,

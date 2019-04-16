@@ -36,11 +36,11 @@ struct not_nan<T_y, true> {
  * This function is vectorized and will check each element of
  * <code>y</code>. If any element is <code>NaN</code>, this
  * function will throw an exception.
- * @tparam T_y Type of y
+ * @tparam T_y Type of <code>y</code>
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
- * @throw <code>domain_error</code> if any element of y is NaN
+ * @throw <code>domain_error</code> if any element of <code>y</code> is NaN
  */
 template <typename T_y>
 inline void check_not_nan(const char* function, const char* name,

@@ -52,14 +52,14 @@ struct greater<T_y, T_low, true> {
  * Check if <code>y</code> is strictly greater than <code>low</code>.
  * This function is vectorized and will check each element of
  * <code>y</code> against each element of <code>low</code>.
- * @tparam T_y Type of y
+ * @tparam T_y Type of <code>y</code>
  * @tparam T_low Type of lower bound
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
- * @throw <code>domain_error</code> if y is not greater than low or
- *   if any element of y or low is NaN.
+ * @throw <code>domain_error</code> if <code>y</code> is not greater than low or
+ *   if any element of <code>y</code> or <code>low</code> is NaN
  */
 template <typename T_y, typename T_low>
 inline void check_greater(const char* function, const char* name, const T_y& y,

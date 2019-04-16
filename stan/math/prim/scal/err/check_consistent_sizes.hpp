@@ -8,11 +8,12 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the dimension of x1 is consistent with x2.
+ * Check if the dimension of <code>x1</code> is consistent with 
+ * <code>x2</code>.
  * Consistent size is defined as having the same size if vector-like or
  * being a scalar.
- * @tparam T1 Type of x1
- * @tparam T2 Type of x2
+ * @tparam T1 Type of <code>x1</code>
+ * @tparam T2 Type of <code>x2</code>
  * @param function Function name (for error messages)
  * @param name1 Variable name (for error messages)
  * @param x1 Variable to check for consistent size
@@ -31,12 +32,13 @@ inline void check_consistent_sizes(const char* function, const char* name1,
 }
 
 /**
- * Check if the dimension of x1, x2, and x3 areconsistent.
+ * Check if the dimension of <code>x1</code>, <code>x2</code>, and 
+ * <code>x3</code> are consistent.
  * Consistent size is defined as having the same size if vector-like or
  * being a scalar.
- * @tparam T1 Type of x1
- * @tparam T2 Type of x2
- * @tparam T3 Type of x3
+ * @tparam T1 Type of <code>x1</code>
+ * @tparam T2 Type of <code>x2</code>
+ * @tparam T3 Type of <code>x3</code>
  * @param function Function name (for error messages)
  * @param name1 Variable name (for error messages)
  * @param x1 Variable to check for consistent size
@@ -60,13 +62,14 @@ inline void check_consistent_sizes(const char* function, const char* name1,
 }
 
 /**
- * Check if the dimension of x1, x2, x3, and x4are consistent.
+ * Check if the dimension of <code>x1</code>, <code>x2</code>, <code>x3</code>,
+ * and <code>x4</code> are consistent.
  * Consistent size is defined as having the same size if
  * vector-like or being a scalar.
- * @tparam T1 Type of x1
- * @tparam T2 Type of x2
- * @tparam T3 Type of x3
- * @tparam T4 Type of x4
+ * @tparam T1 Type of <code>x1</code>
+ * @tparam T2 Type of <code>x2</code>
+ * @tparam T3 Type of <code>x3</code>
+ * @tparam T4 Type of <code>x4</code>
  * @param function Function name (for error messages)
  * @param name1 Variable name (for error messages)
  * @param x1 Variable to check for consistent size

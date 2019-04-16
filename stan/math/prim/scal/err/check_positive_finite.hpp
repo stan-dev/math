@@ -11,12 +11,12 @@ namespace math {
  * Check if <code>y</code> is positive and finite.
  * This function is vectorized and will check each element of
  * <code>y</code>.
- * @tparam T_y Type of y
+ * @tparam T_y Type of <code>y</code>
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
- * @throw <code>domain_error</code> if any element of y is not positive or
- *   if any element of y is NaN.
+ * @throw <code>domain_error</code> if any element of <code>y</code> is not
+ *   positive or if any element of <code>y</code> is NaN
  */
 template <typename T_y>
 inline void check_positive_finite(const char* function, const char* name,

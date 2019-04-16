@@ -10,7 +10,7 @@ namespace math {
 /**
  * Return <code>true</code> is the specified matrix is finite.
  * @tparam T Scalar type of the matrix, requires class method
- *<code>.allFinite()</code>
+ *  <code>.allFinite()</code>
  * @tparam R Compile time rows of the matrix
  * @tparam C Compile time columns of the matrix
  * @param y Matrix to test

@@ -21,10 +21,10 @@ namespace math {
  * @param name Variable name (for error messages)
  * @param y Matrix to test
  * @throw <code>std::invalid_argument</code> if the matrix is not square
- *   or if the matrix has 0 size.
+ *   or if the matrix has 0 size
  * @throw <code>std::domain_error</code> if the matrix is not symmetric,
  *   or if it is not positive semi-definite,
- *   or if any element of the matrix is <code>NaN</code>.
+ *   or if any element of the matrix is <code>NaN</code>
  */
 template <typename T_y>
 inline void check_pos_semidefinite(

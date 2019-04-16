@@ -35,11 +35,12 @@ struct finite<T_y, true> {
  * Check if <code>y</code> is finite.
  * This function is vectorized and will check each element of
  * <code>y</code>.
- * @tparam T_y Type of y
+ * @tparam T_y Type of <code>y</code>
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
- * @throw <code>domain_error</code> if y is infinity, -infinity, or NaN
+ * @throw <code>domain_error</code> if <code>y</code> is infinity, -infinity,
+ *   or NaN
  */
 template <typename T_y>
 inline void check_finite(const char* function, const char* name, const T_y& y) {

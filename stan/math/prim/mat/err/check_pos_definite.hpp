@@ -23,7 +23,7 @@ namespace math {
  * @param name Variable name (for error messages)
  * @param y Matrix to test
  * @throw <code>std::invalid_argument</code> if the matrix is not square
- * or if the matrix has 0 size.
+ * or if the matrix has 0 size
  * @throw <code>std::domain_error</code> if the matrix is not symmetric,
  * if it is not positive definite, or if any element is <code>NaN</code>
  */

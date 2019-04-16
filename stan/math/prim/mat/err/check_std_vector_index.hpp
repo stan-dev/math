@@ -19,7 +19,7 @@ namespace math {
  * @param name Variable name (for error messages)
  * @param y <code>std::vector</code> to test
  * @param i Index
- * @throw <code>std::out_of_range</code> if the index is out of range.
+ * @throw <code>std::out_of_range</code> if the index is out of range
  */
 template <typename T>
 inline void check_std_vector_index(const char* function, const char* name,

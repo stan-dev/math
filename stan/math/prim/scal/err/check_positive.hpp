@@ -44,12 +44,12 @@ struct positive<T_y, true> {
  * Check if <code>y</code> is positive.
  * This function is vectorized and will check each element of
  * <code>y</code>.
- * @tparam T_y Type of y
+ * @tparam T_y Type of <code>y</code>
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
- * @throw <code>domain_error</code> if y is negative or zero or
- *   if any element of y is NaN
+ * @throw <code>domain_error</code> if <code>y</code> is negative or zero or
+ *   if any element of <code>y</code> is NaN
  */
 template <typename T_y>
 inline void check_positive(const char* function, const char* name,
@@ -64,7 +64,7 @@ inline void check_positive(const char* function, const char* name,
  * @param expr Expression for the dimension size (for error messages)
  * @param size Size value to check
  * @throw <code>std::invalid_argument</code> if <code>size</code> is
- *   zero or negative.
+ *   zero or negative
  */
 inline void check_positive(const char* function, const char* name,
                            const char* expr, int size) {

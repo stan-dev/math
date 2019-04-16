@@ -20,9 +20,9 @@ namespace math {
  * @param function Name of the function
  * @param max Max
  * @param index Index
- * @param msg1 Message to print. Default is "".
- * @param msg2 Message to print. Default is "".
- * @throw std::out_of_range with message.
+ * @param msg1 Message to print. Default is ""
+ * @param msg2 Message to print. Default is ""
+ * @throw std::out_of_range with message
  */
 inline void out_of_range(const char* function, int max, int index,
                          const char* msg1 = "", const char* msg2 = "") {
