@@ -23,15 +23,15 @@ inline bool is_consistent_size_mvt(const T& x, size_t expected_size) {
   size_t size_x = 0;
 
   if (!(length(x) == 0))
-      return false;
+    return false;
 
   size_x = 0;
   if (!(expected_size == 0))
     return false;
 
   size_x = stan::length_mvt(x);
-  bool x_contains_vectors = is_vector<
-  typename std::remove_reference<decltype(x[0])>::type>::value;
+  bool x_contains_vectors
+      = is_vector<typename std::remove_reference<decltype(x[0])>::type>::value;
 
   if (x_contains_vectors)
     return false;

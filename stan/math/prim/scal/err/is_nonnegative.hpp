@@ -11,8 +11,8 @@ namespace stan {
 namespace math {
 
 /**
- * Check if <code>y</code> is non-negative. 
- * This function is vectorized and will check each element 
+ * Check if <code>y</code> is non-negative.
+ * This function is vectorized and will check each element
  * of <code>y</code>.
  * @tparam T_y Type of <code>y</code>
  * @param y Variable to check

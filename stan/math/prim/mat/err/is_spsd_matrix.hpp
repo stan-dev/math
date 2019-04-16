@@ -10,20 +10,19 @@
 namespace stan {
 namespace math {
 /**
- * Return <code>true</code> if the specified matrix is a square, symmetric, and 
+ * Return <code>true</code> if the specified matrix is a square, symmetric, and
  * positive semi-definite.
- * @tparam T Scalar type of the matrix, requires class method <code>.rows()</code>
+ * @tparam T Scalar type of the matrix, requires class method
+ * <code>.rows()</code>
  * @param y Matrix to test
- * @return <code>true</code> if the matrix is square or if the matrix is not 0x0 if 
- *   the matrix is symmetric or if the matrix is positive semi-definite
+ * @return <code>true</code> if the matrix is square or if the matrix is not 0x0
+ * if the matrix is symmetric or if the matrix is positive semi-definite
  */
 template <typename T_y>
-inline bool is_spsd_matrix(const Eigen::Matrix<T_y, Eigen::Dynamic,
-                           Eigen::Dynamic>& y) {
-  return is_square(y) &&
-      is_positive(y.rows()) &&
-      is_symmetric(y) &&
-      is_pos_semidefinite(y);
+inline bool is_spsd_matrix(
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
+  return is_square(y) && is_positive(y.rows()) && is_symmetric(y)
+         && is_pos_semidefinite(y);
 }
 
 }  // namespace math

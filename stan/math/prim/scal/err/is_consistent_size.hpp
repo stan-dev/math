@@ -8,8 +8,8 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the dimension of <code>x</code> is consistent, which is defined to 
- * be <code>expected_size</code> if <code>x</code> is a vector or 1 if 
+ * Check if the dimension of <code>x</code> is consistent, which is defined to
+ * be <code>expected_size</code> if <code>x</code> is a vector or 1 if
  * <code>x</code> is not a vector.
  * @tparam T Type of value
  * @param x Variable to check for consistent size
@@ -19,7 +19,7 @@ namespace math {
 template <typename T>
 inline bool is_consistent_size(const T& x, size_t expected_size) {
   return (!is_vector<T>::value
-      || (is_vector<T>::value && expected_size == stan::size_of(x)));
+          || (is_vector<T>::value && expected_size == stan::size_of(x)));
 }
 
 }  // namespace math

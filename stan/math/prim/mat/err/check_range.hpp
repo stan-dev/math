@@ -23,8 +23,7 @@ namespace math {
  */
 inline void check_range(const char* function, const char* name, int max,
                         int index, int nested_level, const char* error_msg) {
-  if ((index >= error_index::value)
-      && (index < max + error_index::value))
+  if ((index >= error_index::value) && (index < max + error_index::value))
     return;
 
   std::stringstream msg;

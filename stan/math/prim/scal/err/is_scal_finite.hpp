@@ -16,7 +16,8 @@ namespace math {
  * <code>y</code>.
  * @tparam T_y Type of <code>y</code>
  * @param y Variable to check
- * @return <code>true</code> if <code>y</code> is not infinity, -infinity, or NaN
+ * @return <code>true</code> if <code>y</code> is not infinity, -infinity, or
+ * NaN
  */
 template <typename T_y>
 inline bool is_scal_finite(const T_y& y) {

@@ -21,11 +21,13 @@ TEST(ErrorHandlingMatrix, checkStdVectorIndexMatrix) {
 
   y.resize(2);
   EXPECT_THROW(stan::math::check_std_vector_index("checkStdVectorIndexMatrix",
-                                            "i", y, i), std::out_of_range);
+                                                  "i", y, i),
+               std::out_of_range);
 
   i = 0;
   EXPECT_THROW(stan::math::check_std_vector_index("checkStdVectorIndexMatrix",
-                                            "i", y, i), std::out_of_range);
+                                                  "i", y, i),
+               std::out_of_range);
 }
 
 TEST(ErrorHandlingMatrix, checkStdVectorIndexMatrix_nan) {
@@ -47,9 +49,11 @@ TEST(ErrorHandlingMatrix, checkStdVectorIndexMatrix_nan) {
 
   y.resize(2);
   EXPECT_THROW(stan::math::check_std_vector_index("checkStdVectorIndexMatrix",
-                                            "i", y, i), std::out_of_range);
+                                                  "i", y, i),
+               std::out_of_range);
 
   i = 0;
   EXPECT_THROW(stan::math::check_std_vector_index("checkStdVectorIndexMatrix",
-                                            "i", y, i), std::out_of_range);
+                                                  "i", y, i),
+               std::out_of_range);
 }

@@ -26,13 +26,13 @@ namespace math {
  *   does meets convergence conditions, and if no coefficient is NaN
  */
 template <typename T_a1, typename T_a2, typename T_b1, typename T_z>
-inline bool is_2F1_converges(const T_a1& a1,
-                                const T_a2& a2, const T_b1& b1, const T_z& z) {
+inline bool is_2F1_converges(const T_a1& a1, const T_a2& a2, const T_b1& b1,
+                             const T_z& z) {
   using std::fabs;
   using std::floor;
 
   if (!(is_not_nan(a1) || is_not_nan(a2) || is_not_nan(b1) || is_not_nan(z)))
-      return false;
+    return false;
 
   int num_terms = 0;
   bool is_polynomial = false;

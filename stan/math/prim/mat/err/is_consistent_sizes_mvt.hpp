@@ -23,7 +23,7 @@ inline bool is_consistent_sizes_mvt(const T1& x1, const T2& x2) {
   using stan::length_mvt;
   size_t max_size = std::max(length_mvt(x1), length_mvt(x2));
   return (is_consistent_size_mvt(x1, max_size)
-    && check_consistent_size_mvt(x2, max_size));
+          && check_consistent_size_mvt(x2, max_size));
 }
 
 }  // namespace math

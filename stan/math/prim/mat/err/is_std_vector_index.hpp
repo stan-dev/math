@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return <code>true</code> if the specified index is a valid 
+ * Return <code>true</code> if the specified index is a valid
  * <code>std::</code> vector.
  * This check is 1-indexed by default. This behavior can be changed
  * by setting <code>stan::error_index::value</code>.
@@ -20,7 +20,7 @@ namespace math {
 template <typename T>
 inline bool is_std_vector_index(const std::vector<T>& y, int i) {
   return i >= static_cast<int>(stan::error_index::value)
-    && i < static_cast<int>(y.size() + stan::error_index::value);
+         && i < static_cast<int>(y.size() + stan::error_index::value);
 }
 
 }  // namespace math
