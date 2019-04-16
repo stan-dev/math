@@ -30,7 +30,7 @@ inline void matrix_cl::zeros() {
   cl::CommandQueue cmdQueue = opencl_context.queue();
   try {
     opencl_kernels::zeros(cl::NDRange(this->rows(), this->cols()), *this,
-                                this->rows(), this->cols(), triangular_view);
+                          this->rows(), this->cols(), triangular_view);
   } catch (const cl::Error& e) {
     check_opencl_error("zeros", e);
   }

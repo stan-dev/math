@@ -36,8 +36,8 @@ class matrix_cl {
   cl::Buffer oclBuffer_;
   const int rows_;
   const int cols_;
-  mutable std::vector<cl::Event> write_events_;       // Tracks write jobs
-  mutable std::vector<cl::Event> read_events_;  // Tracks reads
+  mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
+  mutable std::vector<cl::Event> read_events_;   // Tracks reads
 
  public:
   // Forward declare the methods that work in place on the matrix

@@ -59,8 +59,8 @@ void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
     cl::Event copy_event;
     cl::CommandQueue& queue = opencl_context.queue();
     queue.enqueueWriteBuffer(dst.buffer(), CL_FALSE, 0,
-                             sizeof(double) * dst.size(), src.data(),
-                             NULL, &copy_event);
+                             sizeof(double) * dst.size(), src.data(), NULL,
+                             &copy_event);
     dst.add_write_event(copy_event);
   } catch (const cl::Error& e) {
     check_opencl_error("copy Eigen->(OpenCL)", e);
@@ -130,8 +130,7 @@ inline std::vector<double> packed_copy(const matrix_cl& src) {
     stan::math::opencl_kernels::pack(cl::NDRange(src.rows(), src.rows()),
                                      packed, src, src.rows(), src.rows(),
                                      triangular_view);
-    auto mat_events
-        = vec_concat(packed.read_events(), src.write_events());
+    auto mat_events = vec_concat(packed.read_events(), src.write_events());
     cl::Event copy_event;
     queue.enqueueReadBuffer(packed.buffer(), CL_FALSE, 0,
                             sizeof(double) * packed_size, dst.data(),
@@ -262,8 +261,8 @@ inline void copy(matrix_cl& dst, const T& src) {
     dst.clear_read_events();
     cl::CommandQueue queue = opencl_context.queue();
     cl::Event copy_event;
-    queue.enqueueWriteBuffer(dst.buffer(), CL_FALSE, 0, sizeof(T), &src,
-                             NULL, &copy_event);
+    queue.enqueueWriteBuffer(dst.buffer(), CL_FALSE, 0, sizeof(T), &src, NULL,
+                             &copy_event);
     dst.add_write_event(copy_event);
   } catch (const cl::Error& e) {
     check_opencl_error("copy (OpenCL)->(OpenCL)", e);
