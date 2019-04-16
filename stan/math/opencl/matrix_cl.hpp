@@ -102,6 +102,9 @@ class matrix_cl {
     this->write_events_.push_back(new_event);
   }
 
+  /**
+   * Waits for the write events to finish before continuing.
+   */
   inline void wait_for_write_event() const {
     cl::CommandQueue queue = opencl_context.queue();
     cl::Event copy_event;
@@ -110,6 +113,9 @@ class matrix_cl {
     return;
   }
 
+  /**
+   * Waits for the read events to finish before continuing.
+   */
   inline void wait_for_read_event() const {
     cl::CommandQueue queue = opencl_context.queue();
     cl::Event copy_event;
