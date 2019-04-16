@@ -16,4 +16,3 @@ TEST(ErrorHandlingScalar, isNotNan) {
   x = std::numeric_limits<double>::quiet_NaN();
   EXPECT_FALSE(stan::math::is_not_nan(x));
 }
-
