@@ -9,7 +9,7 @@ namespace math {
 namespace opencl_kernels {
 
 /*
- * Defines some helper macros for the kernels
+ * Defines helper macros for common matrix indexing operations
  */
 static const char* indexing_helpers =
     R"(
@@ -39,6 +39,9 @@ static const char* indexing_helpers =
   #endif
   )";
 
+/*
+ * Defines a helper macro for kernels with 2D local size
+ */
 static const char* thread_block_helpers =
     R"(
   // The local memory column for each thread block

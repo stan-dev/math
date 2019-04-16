@@ -27,8 +27,6 @@ namespace opencl_kernels {
  * @param name The name for the kernel
  * @param sources A std::vector of strings containing the code for the kernel.
  * @param options The values of macros to be passed at compile time.
- * @note The macros defined in kernels/helpers.hpp are included in the kernel
- *  compilation for ease of writing and reading kernels.
  */
 inline auto compile_kernel(const char* name, std::vector<const char*> sources,
                            std::map<const char*, int> options) {
@@ -151,7 +149,7 @@ struct local_range_kernel {
   const kernel_functor<Args...> make_functor;
   /**
    * Creates kernels that need access to defining the global thread
-   * siez and the thread block size.
+   * size and the thread block size.
    * @param name The name for the kernel
    * @param source A string literal containing the code for the kernel.
    * @param options The values of macros to be passed at compile time.
@@ -161,7 +159,7 @@ struct local_range_kernel {
       : make_functor(name, {source}, options) {}
   /**
    * Creates kernels that need access to defining the global thread
-   * siez and the thread block size.
+   * size and the thread block size.
    * @param name The name for the kernel
    * @param sources A std::vector of strings containing the code for the kernel.
    * @param options The values of macros to be passed at compile time.
