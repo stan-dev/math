@@ -1,21 +1,19 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
-#include <vector>
 #include <limits>
 
 TEST(ErrorHandlingMatrix, isNonzeroSizeMatrix) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
-  using stan::math::is_nonzero_size;
 
   y.resize(3, 3);
-  EXPECT_TRUE(is_nonzero_size(y));
+  EXPECT_TRUE(stan::math::is_nonzero_size(y));
 
   y.resize(2, 3);
-  EXPECT_TRUE(is_nonzero_size(y));
+  EXPECT_TRUE(stan::math::is_nonzero_size(y));
 
   y.resize(0, 0);
-  EXPECT_FALSE(is_nonzero_size(y));
+  EXPECT_FALSE(stan::math::is_nonzero_size(y));
 }
 
 TEST(ErrorHandlingMatrix, isNonzeroSizeMatrix_nan) {

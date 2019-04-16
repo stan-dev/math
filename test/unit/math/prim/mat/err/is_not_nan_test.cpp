@@ -1,6 +1,5 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
-#include <stdexcept>
 #include <limits>
 
 TEST(ErrorHandlingMatrix, isNotNanEigenRow) {
