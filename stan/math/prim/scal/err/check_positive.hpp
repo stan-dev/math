@@ -3,16 +3,18 @@
 
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/err/domain_error_vec.hpp>
+#include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <stan/math/prim/scal/meta/value_type.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/get.hpp>
 #include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <type_traits>
+#include <string>
 
 namespace stan {
 namespace math {
 
-namespace internal {
+namespace {
 
 template <typename T_y, bool is_vec>
 struct positive {
@@ -36,27 +38,43 @@ struct positive<T_y, true> {
   }
 };
 
-}  // namespace internal
+}  // namespace
 
 /**
  * Check if <code>y</code> is positive.
- *
  * This function is vectorized and will check each element of
  * <code>y</code>.
- *
  * @tparam T_y Type of y
- *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
- *
  * @throw <code>domain_error</code> if y is negative or zero or
- *   if any element of y is NaN.
+ *   if any element of y is NaN
  */
 template <typename T_y>
 inline void check_positive(const char* function, const char* name,
                            const T_y& y) {
-  internal::positive<T_y, is_vector_like<T_y>::value>::check(function, name, y);
+  positive<T_y, is_vector_like<T_y>::value>::check(function, name, y);
+}
+
+/**
+ * Check if <code>size</code> is positive.
+ * @param function Function name (for error messages)
+ * @param name Variable name (for error messages)
+ * @param expr Expression for the dimension size (for error messages)
+ * @param size Size value to check
+ * @throw <code>std::invalid_argument</code> if <code>size</code> is
+ *   zero or negative.
+ */
+inline void check_positive(const char* function, const char* name,
+                           const char* expr, int size) {
+  if (size <= 0) {
+    std::stringstream msg;
+    msg << "; dimension size expression = " << expr;
+    std::string msg_str(msg.str());
+    invalid_argument(function, name, size, "must have a positive size, but is ",
+                     msg_str.c_str());
+  }
 }
 
 }  // namespace math

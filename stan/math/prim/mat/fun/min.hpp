@@ -19,11 +19,8 @@ namespace math {
  */
 inline int min(const std::vector<int>& x) {
   check_nonzero_size("min", "int vector", x);
-  int min = x[0];
-  for (size_t i = 1; i < x.size(); ++i)
-    if (x[i] < min)
-      min = x[i];
-  return min;
+  Eigen::Map<const Eigen::Matrix<int, Eigen::Dynamic, 1>> m(&x[0], x.size());
+  return m.minCoeff();
 }
 
 /**
@@ -37,11 +34,8 @@ template <typename T>
 inline T min(const std::vector<T>& x) {
   if (x.size() == 0)
     return std::numeric_limits<T>::infinity();
-  T min = x[0];
-  for (size_t i = 1; i < x.size(); ++i)
-    if (x[i] < min)
-      min = x[i];
-  return min;
+  Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>> m(&x[0], x.size());
+  return m.minCoeff();
 }
 
 /**

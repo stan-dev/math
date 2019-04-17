@@ -9,16 +9,12 @@ namespace math {
 
 /**
  * Check if <code>y</code> is positive and finite.
- *
  * This function is vectorized and will check each element of
  * <code>y</code>.
- *
  * @tparam T_y Type of y
- *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
- *
  * @throw <code>domain_error</code> if any element of y is not positive or
  *   if any element of y is NaN.
  */

@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-/**
+/*
  * Returns the natural logarithm of the difference of the
  * inverse logits of the specified arguments and its gradients.
  *
@@ -27,12 +27,12 @@ namespace math {
     \frac{\partial }{\partial x} = -\frac{e^y}{e^x-e^y}-\frac{e^y}{e^y+1}
    \f]
  *
- * @tparam T1 Type of x argument.
- * @tparam T2 Type of y argument.
- * @param x Argument.
- * @param y Argument.
+ * @tparam T1 Type of x argument
+ * @tparam T2 Type of y argument
+ * @param a Argument
+ * @param b Argument
  * @return Result of log difference of inverse logits of arguments
- *          and gradients.
+ *          and gradients
  */
 namespace internal {
 class log_inv_logit_diff_vv_vari : public op_vv_vari {

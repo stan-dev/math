@@ -13,15 +13,11 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the specified vector is sorted into
- * strictly increasing order.
- *
+ * Check if the specified vector is sorted into strictly increasing order.
  * @tparam T_y Type of scalar
- *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Vector to test
- *
  * @throw <code>std::domain_error</code> if the vector elements are
  *   not ordered, if there are duplicated
  *   values, or if any element is <code>NaN</code>.
@@ -29,10 +25,8 @@ namespace math {
 template <typename T_y>
 void check_ordered(const char* function, const char* name,
                    const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-
-  typedef typename index_type<Matrix<T_y, Dynamic, 1> >::type size_t;
+  typedef
+      typename index_type<Eigen::Matrix<T_y, Eigen::Dynamic, 1> >::type size_t;
 
   for (size_t n = 1; n < y.size(); n++) {
     if (!(y[n] > y[n - 1])) {
