@@ -21,7 +21,7 @@ namespace math {
  * occured. It outputs the OpenCL errors that are specified
  * in OpenCL 2.0. If no matching error number is found,
  * it throws the error with the number.
- * @param function the name of the function where the error occured
+ * @param function the name of the function where the error occurred
  * @param e The error number
  */
 inline void check_opencl_error(const char *function, const cl::Error &e) {
