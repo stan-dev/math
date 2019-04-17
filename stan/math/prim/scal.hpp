@@ -4,6 +4,9 @@
 #include <stan/math/version.hpp>
 
 #include <stan/math/prim/scal/meta/ad_promotable.hpp>
+#include <stan/math/prim/scal/meta/as_array_or_scalar.hpp>
+#include <stan/math/prim/scal/meta/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/scal/meta/as_scalar.hpp>
 #include <stan/math/prim/scal/meta/child_type.hpp>
 #include <stan/math/prim/scal/meta/contains_fvar.hpp>
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
@@ -52,12 +55,15 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/err/check_positive_size.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/err/domain_error_vec.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <stan/math/prim/scal/err/invalid_argument_vec.hpp>
+#include <stan/math/prim/scal/err/is_less_or_equal.hpp>
+#include <stan/math/prim/scal/err/is_not_nan.hpp>
+#include <stan/math/prim/scal/err/is_positive.hpp>
+#include <stan/math/prim/scal/err/is_scal_finite.hpp>
 #include <stan/math/prim/scal/err/is_size_match.hpp>
 #include <stan/math/prim/scal/err/out_of_range.hpp>
 
@@ -176,6 +182,7 @@
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/fun/sqrt.hpp>
 #include <stan/math/prim/scal/fun/step.hpp>
+#include <stan/math/prim/scal/fun/sum.hpp>
 #include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/prim/scal/fun/trigamma.hpp>
 #include <stan/math/prim/scal/fun/trunc.hpp>
