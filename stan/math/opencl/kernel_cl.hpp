@@ -28,7 +28,8 @@ namespace opencl_kernels {
  * @param sources A std::vector of strings containing the code for the kernel.
  * @param options The values of macros to be passed at compile time.
  */
-inline auto compile_kernel(const char* name, const std::vector<const char*>& sources,
+inline auto compile_kernel(const char* name,
+                           const std::vector<const char*>& sources,
                            std::map<const char*, int>& options) {
   std::string kernel_opts = "";
   for (auto&& comp_opts : options) {
