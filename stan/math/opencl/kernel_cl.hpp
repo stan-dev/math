@@ -28,8 +28,8 @@ namespace opencl_kernels {
  * @param sources A std::vector of strings containing the code for the kernel.
  * @param options The values of macros to be passed at compile time.
  */
-inline auto compile_kernel(const char* name, std::vector<const char*> sources,
-                           std::map<const char*, int> options) {
+inline auto compile_kernel(const char* name, const std::vector<const char*>& sources,
+                           std::map<const char*, int>& options) {
   std::string kernel_opts = "";
   for (auto&& comp_opts : options) {
     kernel_opts += std::string(" -D") + comp_opts.first + "="
@@ -78,8 +78,8 @@ class kernel_functor {
    * @param sources A std::vector of strings containing the code for the kernel.
    * @param options The values of macros to be passed at compile time.
    */
-  kernel_functor(const char* name, std::vector<const char*> sources,
-                 std::map<const char*, int> options) {
+  kernel_functor(const char* name, const std::vector<const char*>& sources,
+                 std::map<const char*, int>& options) {
     auto base_opts = opencl_context.base_opts();
     for (auto& it : options) {
       if (base_opts[it.first] > it.second) {
@@ -115,7 +115,7 @@ struct global_range_kernel {
    * @param options The values of macros to be passed at compile time.
    */
   global_range_kernel(const char* name, const char* source,
-                      const std::map<const char*, int> options = {})
+                      const std::map<const char*, int>& options = {})
       : make_functor(name, {source}, options) {}
   /**
    * Creates functor for kernels that only need access to defining
@@ -124,8 +124,8 @@ struct global_range_kernel {
    * @param sources A std::vector of strings containing the code for the kernel.
    * @param options The values of macros to be passed at compile time.
    */
-  global_range_kernel(const char* name, std::vector<const char*> sources,
-                      const std::map<const char*, int> options = {})
+  global_range_kernel(const char* name, const std::vector<const char*>& sources,
+                      const std::map<const char*, int>& options = {})
       : make_functor(name, sources, options) {}
   /**
    * Executes a kernel
@@ -155,7 +155,7 @@ struct local_range_kernel {
    * @param options The values of macros to be passed at compile time.
    */
   local_range_kernel(const char* name, const char* source,
-                     const std::map<const char*, int> options = {})
+                     const std::map<const char*, int>& options = {})
       : make_functor(name, {source}, options) {}
   /**
    * Creates kernels that need access to defining the global thread
@@ -164,8 +164,8 @@ struct local_range_kernel {
    * @param sources A std::vector of strings containing the code for the kernel.
    * @param options The values of macros to be passed at compile time.
    */
-  local_range_kernel(const char* name, std::vector<const char*> sources,
-                     const std::map<const char*, int> options = {})
+  local_range_kernel(const char* name, const std::vector<const char*>& sources,
+                     const std::map<const char*, int>& options = {})
       : make_functor(name, sources, options) {}
   /**
    * Executes a kernel
