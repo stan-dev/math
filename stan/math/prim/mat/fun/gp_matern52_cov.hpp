@@ -138,9 +138,9 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
   for (size_t i = 0; i < x_size; ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
-      typename return_type<T_x>::type sq_distance
+      typename return_type<T_x, T_l>::type sq_distance
           = squared_distance(x_new[i], x_new[j]);
-      typename return_type<T_x>::type dist = sqrt(sq_distance);
+      typename return_type<T_x, T_l>::type dist = sqrt(sq_distance);
       cov(i, j) = sigma_sq
                   * (1.0 + root_5 * dist + five_thirds * sq_distance)
                   * exp(neg_root_5 * dist);
@@ -285,9 +285,9 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      typename return_type<T_x1, T_x2>::type sq_distance
+      typename return_type<T_x1, T_x2, T_l>::type sq_distance
           = squared_distance(x1_new[i], x2_new[j]);
-      typename return_type<T_x1, T_x2>::type dist = sqrt(sq_distance);
+      typename return_type<T_x1, T_x2, T_l>::type dist = sqrt(sq_distance);
       cov(i, j) = sigma_sq
                   * (1.0 + root_5 * dist + five_thirds * sq_distance)
                   * exp(neg_root_5 * dist);
