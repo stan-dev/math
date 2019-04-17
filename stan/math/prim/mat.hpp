@@ -50,6 +50,18 @@
 #include <stan/math/prim/mat/err/check_unit_vector.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
+#include <stan/math/prim/mat/err/is_cholesky_factor_corr.hpp>
+#include <stan/math/prim/mat/err/is_cholesky_factor.hpp>
+#include <stan/math/prim/mat/err/is_column_index.hpp>
+#include <stan/math/prim/mat/err/is_corr_matrix.hpp>
+#include <stan/math/prim/mat/err/is_ldlt_factor.hpp>
+#include <stan/math/prim/mat/err/is_lower_triangular.hpp>
+#include <stan/math/prim/mat/err/is_mat_finite.hpp>
+#include <stan/math/prim/mat/err/is_matching_dims.hpp>
+#include <stan/math/prim/mat/err/is_pos_definite.hpp>
+#include <stan/math/prim/mat/err/is_square.hpp>
+#include <stan/math/prim/mat/err/is_symmetric.hpp>
+#include <stan/math/prim/mat/err/is_unit_vector.hpp>
 #include <stan/math/prim/mat/err/validate_non_negative_index.hpp>
 
 #include <stan/math/prim/mat/fun/LDLT_factor.hpp>

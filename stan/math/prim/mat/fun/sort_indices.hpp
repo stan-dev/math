@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-/**
+/*
  * A comparator that works for any container type that has the
  * brackets operator.
  *
