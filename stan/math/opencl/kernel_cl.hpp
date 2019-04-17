@@ -79,7 +79,7 @@ class kernel_functor {
    * @param options The values of macros to be passed at compile time.
    */
   kernel_functor(const char* name, const std::vector<const char*>& sources,
-                 std::map<const char*, int>& options) {
+                 const std::map<const char*, int>& options) {
     auto base_opts = opencl_context.base_opts();
     for (auto& it : options) {
       if (base_opts[it.first] > it.second) {
