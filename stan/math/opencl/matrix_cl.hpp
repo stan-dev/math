@@ -51,7 +51,7 @@ class matrix_cl {
   const cl::Buffer& buffer() const { return oclBuffer_; }
   matrix_cl() : rows_(0), cols_(0) {}
 
-  matrix_cl(cl::Buffer& A, const int& R, const int& C) : rows_(R), cols_(C) {
+  matrix_cl(cl::Buffer& A, const int R, const int C) : rows_(R), cols_(C) {
     oclBuffer_ = A;
   }
   template <typename T>
@@ -89,8 +89,8 @@ class matrix_cl {
   }
 
   template <typename T>
-  explicit matrix_cl(std::vector<T> A, int rows, int cols)
-      : rows_(rows), cols_(cols) {
+  explicit matrix_cl(std::vector<T> A, const int R, const int C)
+      : rows_(R), cols_(C) {
     if (A.size() == 0)
       return;
     // the context is needed to create the buffer object
@@ -108,8 +108,8 @@ class matrix_cl {
     }
   }
 
-  explicit matrix_cl(std::vector<double> A, int rows, int cols)
-      : rows_(rows), cols_(cols) {
+  explicit matrix_cl(std::vector<double> A, const int R, const int C)
+      : rows_(R), cols_(C) {
     if (A.size() == 0)
       return;
     // the context is needed to create the buffer object
@@ -153,7 +153,7 @@ class matrix_cl {
    * matrices do not have matching dimensions
    *
    */
-  matrix_cl(int rows, int cols) : rows_(rows), cols_(cols) {
+  matrix_cl(const int rows, const int cols) : rows_(rows), cols_(cols) {
     if (size() > 0) {
       cl::Context& ctx = opencl_context.context();
       try {
@@ -284,8 +284,9 @@ class matrix_cl {
    * @param ncols the number of columns in the submatrix
    */
   template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
-  void sub_block(const matrix_cl& A, size_t A_i, size_t A_j, size_t this_i,
-                 size_t this_j, size_t nrows, size_t ncols) {
+  void sub_block(const matrix_cl& A, const size_t A_i, const size_t A_j,
+                 const size_t this_i, const size_t this_j, const size_t nrows,
+                 const size_t ncols) {
     if (nrows == 0 || ncols == 0) {
       return;
     }
