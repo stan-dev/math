@@ -182,7 +182,7 @@ TEST(MathPrimMat, vec_eigen_vec_gp_exp_quad_cov2) {
       EXPECT_FLOAT_EQ(
           sigma * sigma * exp(squared_distance(x1[i], x2[j]) / (-2.0 * l * l)),
           cov(i, j))
-          << "index: (" << i << ", " << j << ") dist: " << squared_distance(x1[i], x2[j]);
+          << "index: (" << i << ", " << j << ")";
 
   Eigen::MatrixXd cov2;
   cov2 = stan::math::gp_exp_quad_cov(x2, x1, sigma, l);
@@ -193,7 +193,7 @@ TEST(MathPrimMat, vec_eigen_vec_gp_exp_quad_cov2) {
       EXPECT_FLOAT_EQ(
           sigma * sigma * exp(squared_distance(x2[i], x1[j]) / (-2.0 * l * l)),
           cov2(i, j))
-          << "index: (" << i << ", " << j << ") dist: " << squared_distance(x2[i], x1[j]);
+          << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(cov2(i, j), cov(j, i));
     }
 }
