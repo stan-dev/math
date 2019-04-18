@@ -62,7 +62,7 @@ inline
       && is_constant_struct<T_l>::value) {
     matrix_cl x_gpu(x);
     matrix_cl cov_gpu = gp_exp_quad_cov(x_gpu, sigma, length_scale);
-    copy(cov, cov_gpu);
+    copy(cov, cov_gpu); // NOLINT
   } else {
 #endif
     T_sigma sigma_sq = square(sigma);
@@ -127,7 +127,7 @@ inline
       && is_constant_struct<T_l>::value) {
     matrix_cl x_gpu(x_new);
     matrix_cl cov_gpu = gp_exp_quad_cov(x_gpu, sigma, 1);
-    copy(cov, cov_gpu);
+    copy(cov, cov_gpu); // NOLINT
   } else {
 #endif
     T_sigma sigma_sq = square(sigma);
@@ -196,7 +196,7 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     matrix_cl x1_gpu(x1);
     matrix_cl x2_gpu(x2);
     matrix_cl cov_gpu = gp_exp_quad_cov(x1_gpu, x2_gpu, sigma, length_scale);
-    copy(cov, cov_gpu);
+    copy(cov, cov_gpu); // NOLINT
   } else {
 #endif
     T_sigma sigma_sq = square(sigma);
@@ -276,7 +276,7 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
     matrix_cl x1_gpu(x1_new);
     matrix_cl x2_gpu(x2_new);
     matrix_cl cov_gpu = gp_exp_quad_cov(x1_gpu, x2_gpu, sigma, 1);
-    copy(cov, cov_gpu);
+    copy(cov, cov_gpu); // NOLINT
   } else {
 #endif
     T_s sigma_sq = square(sigma);
