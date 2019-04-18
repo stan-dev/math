@@ -41,7 +41,8 @@ static const char *is_zero_on_diagonal_kernel_code = STRINGIFY(
  * check_diagonal_zeros() \endlink
  */
 const kernel_cl<read_buffer, write_buffer, int, int> check_diagonal_zeros(
-    "is_zero_on_diagonal", is_zero_on_diagonal_kernel_code);
+    "is_zero_on_diagonal",
+                         {indexing_helpers, is_zero_on_diagonal_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

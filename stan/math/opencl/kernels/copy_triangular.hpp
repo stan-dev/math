@@ -55,7 +55,8 @@ static const char *copy_triangular_kernel_code = STRINGIFY(
  * See the docs for \link kernels/copy_triangular.hpp copy_triangular() \endlink
  */
 const kernel_cl<write_buffer, read_buffer, int, int, TriangularViewCL>
-    copy_triangular("copy_triangular", copy_triangular_kernel_code);
+    copy_triangular("copy_triangular",
+                    {indexing_helpers, copy_triangular_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

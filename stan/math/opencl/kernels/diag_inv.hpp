@@ -85,7 +85,8 @@ static const char* diag_inv_kernel_code = STRINGIFY(
  * \endlink
  */
 const kernel_cl<write_buffer, write_buffer, int> diag_inv(
-    "diag_inv", diag_inv_kernel_code, {{"THREAD_BLOCK_SIZE", 32}});
+    "diag_inv", {indexing_helpers, diag_inv_kernel_code},
+    {{"THREAD_BLOCK_SIZE", 32}});
 
 }  // namespace opencl_kernels
 }  // namespace math

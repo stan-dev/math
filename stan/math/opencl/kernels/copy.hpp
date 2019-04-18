@@ -39,7 +39,7 @@ static const char *copy_kernel_code = STRINGIFY(
  * See the docs for \link kernels/copy.hpp copy() \endlink
  */
 const kernel_cl<read_buffer, write_buffer, int, int> copy("copy",
-                                                          copy_kernel_code);
+ {indexing_helpers, copy_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

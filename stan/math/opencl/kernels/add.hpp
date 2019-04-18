@@ -40,7 +40,7 @@ static const char *add_kernel_code = STRINGIFY(
  * See the docs for \link kernels/add.hpp add() \endlink
  */
 const kernel_cl<write_buffer, read_buffer, read_buffer, int, int> add(
-    "add", add_kernel_code);
+    "add", {indexing_helpers, add_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

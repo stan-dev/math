@@ -68,7 +68,7 @@ static const char *sub_block_kernel_code = STRINGIFY(
  */
 const kernel_cl<read_buffer, write_buffer, int, int, int, int, int, int, int,
                 int, int, int, TriangularViewCL>
-    sub_block("sub_block", sub_block_kernel_code);
+    sub_block("sub_block", {indexing_helpers, sub_block_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

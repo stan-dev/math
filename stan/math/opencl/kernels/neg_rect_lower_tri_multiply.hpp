@@ -121,7 +121,8 @@ static const char* neg_rect_lower_tri_multiply_kernel_code = STRINGIFY(
  */
 const kernel_cl<write_buffer, read_buffer, int, int>
     neg_rect_lower_tri_multiply("neg_rect_lower_tri_multiply",
-                                neg_rect_lower_tri_multiply_kernel_code,
+                                {thread_block_helpers,
+                                 neg_rect_lower_tri_multiply_kernel_code},
                                 {{"THREAD_BLOCK_SIZE", 32},
                                  {"WORK_PER_THREAD", 8}});
 }  // namespace opencl_kernels

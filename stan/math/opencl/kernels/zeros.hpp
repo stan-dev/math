@@ -50,7 +50,7 @@ static const char* zeros_kernel_code = STRINGIFY(
  * See the docs for \link kernels/zeros.hpp zeros() \endlink
  */
 const kernel_cl<write_buffer, int, int, TriangularViewCL> zeros(
-    "zeros", zeros_kernel_code);
+    "zeros", {indexing_helpers, zeros_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math
