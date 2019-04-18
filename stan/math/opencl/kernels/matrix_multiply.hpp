@@ -138,7 +138,8 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int,
                          TriangularViewCL, TriangularViewCL>
-    matrix_multiply("matrix_multiply", matrix_multiply_kernel_code,
+    matrix_multiply("matrix_multiply",
+                    {thread_block_helpers, matrix_multiply_kernel_code},
                     {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
 
 // \cond

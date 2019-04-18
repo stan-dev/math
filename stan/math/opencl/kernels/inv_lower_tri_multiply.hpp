@@ -126,7 +126,8 @@ static const char* inv_lower_tri_multiply_kernel_code = STRINGIFY(
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, int, int>
     inv_lower_tri_multiply("inv_lower_tri_multiply",
-                           inv_lower_tri_multiply_kernel_code,
+                           {thread_block_helpers,
+                            inv_lower_tri_multiply_kernel_code},
                            {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
 
 }  // namespace opencl_kernels

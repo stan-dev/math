@@ -48,7 +48,7 @@ static const char* triangular_transpose_kernel_code = STRINGIFY(
  */
 const global_range_kernel<cl::Buffer, int, int, TriangularMapCL>
     triangular_transpose("triangular_transpose",
-                         triangular_transpose_kernel_code);
+                         {indexing_helpers, triangular_transpose_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

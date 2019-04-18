@@ -43,7 +43,7 @@ static const char *subtract_kernel_code = STRINGIFY(
  * See the docs for \link kernels/subtract.hpp subtract() \endlink
  */
 const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int>
-    subtract("subtract", subtract_kernel_code);
+    subtract("subtract", {indexing_helpers, subtract_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

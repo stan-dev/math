@@ -34,7 +34,7 @@ static const char *scalar_mul_diagonal_kernel_code = STRINGIFY(
  * See the docs for \link kernels/scalar_mul_diagonal.hpp add() \endlink
  */
 const global_range_kernel<cl::Buffer, double, int, int> scalar_mul_diagonal(
-    "scalar_mul_diagonal", scalar_mul_diagonal_kernel_code);
+    "scalar_mul_diagonal", {indexing_helpers, scalar_mul_diagonal_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math
