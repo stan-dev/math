@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-const char* gp_exp_quad_cov_kernel_code = STRINGIFY(
+static const char* gp_exp_quad_cov_kernel_code = STRINGIFY(
     // \endcond
     /**
      * GPU part of calculation of squared exponential kernel.
@@ -43,7 +43,7 @@ const char* gp_exp_quad_cov_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
-const char* gp_exp_quad_cov_2_kernel_code = STRINGIFY(
+static const char* gp_exp_quad_cov_2_kernel_code = STRINGIFY(
     // \endcond
     /**
      * GPU part of calculation of squared exponential kernel.
