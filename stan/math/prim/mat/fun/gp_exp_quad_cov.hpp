@@ -57,24 +57,24 @@ inline
     check_not_nan("gp_exp_quad_cov", "x", x[n]);
 
 #ifdef STAN_OPENCL
-  if(is_constant_struct<T_x>::value && is_constant_struct<T_sigma>::value && is_constant_struct<T_l>::value) {
+  if (is_constant_struct<T_x>::value && is_constant_struct<T_sigma>::value
+      && is_constant_struct<T_l>::value) {
     matrix_cl x_gpu(x);
     matrix_cl cov_gpu = gp_exp_quad_cov(x_gpu, sigma, length_scale);
     copy(cov, cov_gpu);
-  }
-  else {
+  } else {
 #endif
-  T_sigma sigma_sq = square(sigma);
-  T_l neg_half_inv_l_sq = -0.5 / square(length_scale);
+    T_sigma sigma_sq = square(sigma);
+    T_l neg_half_inv_l_sq = -0.5 / square(length_scale);
 
-  for (size_t j = 0; j < x_size; ++j) {
-    cov(j, j) = sigma_sq;
-    for (size_t i = j + 1; i < x_size; ++i) {
-      cov(i, j)
-          = sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
-      cov(j, i) = cov(i, j);
+    for (size_t j = 0; j < x_size; ++j) {
+      cov(j, j) = sigma_sq;
+      for (size_t i = j + 1; i < x_size; ++i) {
+        cov(i, j)
+            = sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
+        cov(j, i) = cov(i, j);
+      }
     }
-  }
 #ifdef STAN_OPENCL
   }
 #endif
@@ -119,25 +119,25 @@ inline
                    "number of length scales", l_size);
 
   std::vector<
-          Eigen::Matrix<typename return_type<T_x, T_l>::type, Eigen::Dynamic, 1>>
-          x_new = divide_columns(x, length_scale);
+      Eigen::Matrix<typename return_type<T_x, T_l>::type, Eigen::Dynamic, 1>>
+      x_new = divide_columns(x, length_scale);
 #ifdef STAN_OPENCL
-  if(is_constant_struct<T_x>::value && is_constant_struct<T_sigma>::value && is_constant_struct<T_l>::value) {
+  if (is_constant_struct<T_x>::value && is_constant_struct<T_sigma>::value
+      && is_constant_struct<T_l>::value) {
     matrix_cl x_gpu(x_new);
     matrix_cl cov_gpu = gp_exp_quad_cov(x_gpu, sigma, 1);
     copy(cov, cov_gpu);
-  }
-  else {
+  } else {
 #endif
-  T_sigma sigma_sq = square(sigma);
+    T_sigma sigma_sq = square(sigma);
 
-  for (size_t j = 0; j < x_size; ++j) {
-    cov(j, j) = sigma_sq;
-    for (size_t i = j + 1; i < x_size; ++i) {
-      cov(i, j) = sigma_sq * exp(-0.5 * squared_distance(x_new[i], x_new[j]));
-      cov(j, i) = cov(i, j);
+    for (size_t j = 0; j < x_size; ++j) {
+      cov(j, j) = sigma_sq;
+      for (size_t i = j + 1; i < x_size; ++i) {
+        cov(i, j) = sigma_sq * exp(-0.5 * squared_distance(x_new[i], x_new[j]));
+        cov(j, i) = cov(i, j);
+      }
     }
-  }
 #ifdef STAN_OPENCL
   }
 #endif
@@ -190,23 +190,23 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     check_not_nan(function_name, "x2", x2[i]);
 
 #ifdef STAN_OPENCL
-  if(is_constant_struct<T_x1>::value && is_constant_struct<T_x2>::value && is_constant_struct<T_sigma>::value && is_constant_struct<T_l>::value) {
+  if (is_constant_struct<T_x1>::value && is_constant_struct<T_x2>::value
+      && is_constant_struct<T_sigma>::value && is_constant_struct<T_l>::value) {
     matrix_cl x1_gpu(x1);
     matrix_cl x2_gpu(x2);
     matrix_cl cov_gpu = gp_exp_quad_cov(x1_gpu, x2_gpu, sigma, length_scale);
     copy(cov, cov_gpu);
-  }
-  else {
+  } else {
 #endif
-  T_sigma sigma_sq = square(sigma);
-  T_l neg_half_inv_l_sq = -0.5 / square(length_scale);
+    T_sigma sigma_sq = square(sigma);
+    T_l neg_half_inv_l_sq = -0.5 / square(length_scale);
 
-  for (size_t i = 0; i < x1.size(); ++i) {
-    for (size_t j = 0; j < x2.size(); ++j) {
-      cov(i, j)
-          = sigma_sq * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
+    for (size_t i = 0; i < x1.size(); ++i) {
+      for (size_t j = 0; j < x2.size(); ++j) {
+        cov(i, j) = sigma_sq
+                    * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
+      }
     }
-  }
 #ifdef STAN_OPENCL
   }
 #endif
@@ -263,28 +263,29 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
                    "number of length scales", l_size);
 
   std::vector<Eigen::Matrix<typename return_type<T_x1, T_l, T_s>::type,
-          Eigen::Dynamic, 1>>
-          x1_new = divide_columns(x1, length_scale);
+                            Eigen::Dynamic, 1>>
+      x1_new = divide_columns(x1, length_scale);
   std::vector<Eigen::Matrix<typename return_type<T_x2, T_l, T_s>::type,
-          Eigen::Dynamic, 1>>
-          x2_new = divide_columns(x2, length_scale);
+                            Eigen::Dynamic, 1>>
+      x2_new = divide_columns(x2, length_scale);
 
 #ifdef STAN_OPENCL
-  if(is_constant_struct<T_x1>::value && is_constant_struct<T_x2>::value && is_constant_struct<T_s>::value && is_constant_struct<T_l>::value) {
+  if (is_constant_struct<T_x1>::value && is_constant_struct<T_x2>::value
+      && is_constant_struct<T_s>::value && is_constant_struct<T_l>::value) {
     matrix_cl x1_gpu(x1_new);
     matrix_cl x2_gpu(x2_new);
     matrix_cl cov_gpu = gp_exp_quad_cov(x1_gpu, x2_gpu, sigma, 1);
     copy(cov, cov_gpu);
-  }
-  else {
+  } else {
 #endif
-  T_s sigma_sq = square(sigma);
+    T_s sigma_sq = square(sigma);
 
-  for (size_t i = 0; i < x1_size; ++i) {
-    for (size_t j = 0; j < x2_size; ++j) {
-      cov(i, j) = sigma_sq * exp(-0.5 * squared_distance(x1_new[i], x2_new[j]));
+    for (size_t i = 0; i < x1_size; ++i) {
+      for (size_t j = 0; j < x2_size; ++j) {
+        cov(i, j)
+            = sigma_sq * exp(-0.5 * squared_distance(x1_new[i], x2_new[j]));
+      }
     }
-  }
 #ifdef STAN_OPENCL
   }
 #endif

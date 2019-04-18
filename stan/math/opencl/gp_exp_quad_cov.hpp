@@ -18,12 +18,13 @@ namespace math {
  *
  * @return Squared distance between eleemnts of x.
  */
-inline matrix_cl gp_exp_quad_cov(matrix_cl& x, double sigma, double length_scale) {
+inline matrix_cl gp_exp_quad_cov(matrix_cl& x, double sigma,
+                                 double length_scale) {
   matrix_cl res(x.cols(), x.cols());
   try {
-    opencl_kernels::gp_exp_quad_cov(cl::NDRange(x.cols(), x.cols()),
-                                    x.buffer(), res.buffer(),
-                                    sigma * sigma, -0.5 / square(length_scale), x.cols(), x.rows());
+    opencl_kernels::gp_exp_quad_cov(
+        cl::NDRange(x.cols(), x.cols()), x.buffer(), res.buffer(),
+        sigma * sigma, -0.5 / square(length_scale), x.cols(), x.rows());
   } catch (const cl::Error& e) {
     check_opencl_error("gp_exp_quad_cov", e);
   }
@@ -43,13 +44,15 @@ inline matrix_cl gp_exp_quad_cov(matrix_cl& x, double sigma, double length_scale
  *
  * @return Squared distance between eleemnts of x and y.
  */
-inline matrix_cl gp_exp_quad_cov(matrix_cl& x, matrix_cl& y, double sigma, double length_scale) {
+inline matrix_cl gp_exp_quad_cov(matrix_cl& x, matrix_cl& y, double sigma,
+                                 double length_scale) {
   check_size_match("gp_exp_quad_cov", "x", x.rows(), "y", y.rows());
   matrix_cl res(x.cols(), y.cols());
   try {
-    opencl_kernels::gp_exp_quad_cov_2(cl::NDRange(x.cols(), y.cols()),
-                                      x.buffer(), y.buffer(), res.buffer(),
-                                      sigma * sigma, -0.5 / square(length_scale), x.cols(), y.cols(), x.rows());
+    opencl_kernels::gp_exp_quad_cov_2(
+        cl::NDRange(x.cols(), y.cols()), x.buffer(), y.buffer(), res.buffer(),
+        sigma * sigma, -0.5 / square(length_scale), x.cols(), y.cols(),
+        x.rows());
   } catch (const cl::Error& e) {
     check_opencl_error("gp_exp_quad_cov_2", e);
   }
