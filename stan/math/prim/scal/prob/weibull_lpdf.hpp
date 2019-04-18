@@ -47,16 +47,14 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_lpdf(
 
   using std::log;
 
-  if (size_zero(y, alpha, sigma))
-    return 0.0;
-
   T_partials_return logp(0.0);
   check_finite(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Scale parameter", sigma);
-
+  if (size_zero(y, alpha, sigma))
+    return 0.0;
   if (!include_summand<propto, T_y, T_shape, T_scale>::value)
     return 0.0;
 

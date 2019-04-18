@@ -37,7 +37,6 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_prec_lpdf(
   static const char* function = "multi_normal_prec_lpdf";
   typedef typename scalar_type<T_covar>::type T_covar_elem;
   typedef typename return_type<T_y, T_loc, T_covar>::type lp_type;
-  lp_type lp(0.0);
 
   check_positive(function, "Precision matrix rows", Sigma.rows());
   check_symmetric(function, "Precision matrix", Sigma);
@@ -54,6 +53,7 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_prec_lpdf(
     return 0.0;
   check_consistent_sizes_mvt(function, "y", y, "mu", mu);
 
+  lp_type lp(0.0);
   vector_seq_view<T_y> y_vec(y);
   vector_seq_view<T_loc> mu_vec(mu);
   size_t size_vec = max_size_mvt(y, mu);

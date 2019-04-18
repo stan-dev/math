@@ -11,6 +11,7 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/mat/meta/is_vector.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/sum.hpp>
 #include <stan/math/prim/scal/meta/as_array_or_scalar.hpp>
 #include <stan/math/prim/scal/meta/as_scalar.hpp>
@@ -70,9 +71,6 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using std::exp;
-
-  
 
   const size_t N = x.rows();
   const size_t M = x.cols();
@@ -86,8 +84,7 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
   if (is_vector<T_alpha>::value)
     check_consistent_sizes(function, "Vector of intercepts", alpha,
                            "Vector of dependent variables", y);
-
-  if (!length(y) || !length(x) || !length(beta) || !length(sigma))
+  if (size_zero(y, x, beta, sigma))
     return 0.0;
 
   if (!include_summand<propto, T_y, T_x, T_alpha, T_beta, T_scale>::value)

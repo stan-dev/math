@@ -59,13 +59,6 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
       typename stan::partials_return_type<T_y, T_scale_succ, T_scale_fail>::type
           T_partials_return;
 
-  using std::log;
-
-  if (size_zero(y, alpha, beta))
-    return 0.0;
-
-  T_partials_return logp(0.0);
-
   check_positive_finite(function, "First shape parameter", alpha);
   check_positive_finite(function, "Second shape parameter", beta);
   check_not_nan(function, "Random variable", y);
@@ -74,10 +67,13 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
                          "Second shape parameter", beta);
   check_nonnegative(function, "Random variable", y);
   check_less_or_equal(function, "Random variable", y, 1);
-
+  
+  if (size_zero(y, alpha, beta))
+    return 0.0;
   if (!include_summand<propto, T_y, T_scale_succ, T_scale_fail>::value)
     return 0.0;
 
+  T_partials_return logp(0.0);
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_scale_succ> alpha_vec(alpha);
   scalar_seq_view<T_scale_fail> beta_vec(beta);
@@ -101,7 +97,7 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
 
   for (size_t n = 0; n < length(y); n++) {
     if (include_summand<propto, T_y, T_scale_succ>::value)
-      log_y[n] = log(value_of(y_vec[n]));
+      log_y[n] = std::log(value_of(y_vec[n]));
     if (include_summand<propto, T_y, T_scale_fail>::value)
       log1m_y[n] = log1m(value_of(y_vec[n]));
   }

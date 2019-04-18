@@ -45,8 +45,7 @@ multi_gp_cholesky_lpdf(
   static const char* function = "multi_gp_cholesky_lpdf";
   typedef
       typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type T_lp;
-  T_lp lp(0.0);
-
+  
   check_size_match(function, "Size of random variable (rows y)", y.rows(),
                    "Size of kernel scales (w)", w.size());
   check_size_match(function, "Size of random variable", y.cols(),
@@ -55,6 +54,7 @@ multi_gp_cholesky_lpdf(
   check_positive(function, "Kernel scales", w);
   check_finite(function, "Random variable", y);
 
+  T_lp lp(0.0);
   if (y.rows() == 0)
     return lp;
 

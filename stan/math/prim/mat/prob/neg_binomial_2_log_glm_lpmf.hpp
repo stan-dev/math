@@ -102,14 +102,13 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
     check_consistent_sizes(function, "Vector of intercepts", alpha,
                            "Vector of dependent variables", y);
 
-  if (!length(y) || !length(x) || !length(beta) || !length(phi))
+  if (size_zero(y, x, beta, phi)
     return 0.0;
-
-  T_partials_return logp(0.0);
 
   if (!include_summand<propto, T_x, T_alpha, T_beta, T_precision>::value)
     return 0.0;
 
+  T_partials_return logp(0.0);
   const auto& x_val = value_of_rec(x);
   const auto& y_val = value_of_rec(y);
   const auto& beta_val = value_of_rec(beta);

@@ -8,6 +8,7 @@
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
@@ -75,7 +76,7 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
   if (is_vector<T_alpha>::value)
     check_consistent_sizes(function, "Vector of intercepts", alpha,
                            "Vector of dependent variables", y);
-  if (!length(y) || !length(x) || !length(beta))
+  if (size_zero(y, x, beta))
     return 0.0;
 
   if (!include_summand<propto, T_x, T_alpha, T_beta>::value)
