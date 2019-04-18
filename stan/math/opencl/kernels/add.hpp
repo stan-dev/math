@@ -39,7 +39,7 @@ static const char *add_kernel_code = STRINGIFY(
  * See the docs for \link kernels/add.hpp add() \endlink
  */
 const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int> add(
-    "add", add_kernel_code);
+    "add", {indexing_helpers, add_kernel_code});
 // \cond
 static const char *add_batch_kernel_code = STRINGIFY(
     // \endcond
@@ -71,12 +71,13 @@ static const char *add_batch_kernel_code = STRINGIFY(
     // \cond
 );
 // \endcond
+    
 
 /**
  * See the docs for \link kernels/add.hpp add_batch() \endlink
  */
 const global_range_kernel<cl::Buffer, cl::Buffer, int, int, int> add_batch(
-    "add_batch", add_batch_kernel_code);
+    "add_batch", {indexing_helpers, add_batch_kernel_code});
 }  // namespace opencl_kernels
 }  // namespace math
 }  // namespace stan

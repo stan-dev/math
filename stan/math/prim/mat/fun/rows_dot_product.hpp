@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_MAT_FUN_ROWS_DOT_PRODUCT_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 
 namespace stan {
@@ -22,11 +21,7 @@ inline Eigen::Matrix<double, R1, 1> rows_dot_product(
     const Eigen::Matrix<double, R1, C1>& v1,
     const Eigen::Matrix<double, R2, C2>& v2) {
   check_matching_sizes("rows_dot_product", "v1", v1, "v2", v2);
-  Eigen::Matrix<double, R1, 1> ret(v1.rows(), 1);
-  for (size_type j = 0; j < v1.rows(); ++j) {
-    ret(j) = v1.row(j).dot(v2.row(j));
-  }
-  return ret;
+  return (v1.cwiseProduct(v2)).rowwise().sum();
 }
 
 }  // namespace math
