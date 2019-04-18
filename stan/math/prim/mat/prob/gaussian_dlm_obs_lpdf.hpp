@@ -107,7 +107,7 @@ gaussian_dlm_obs_lpdf(
 
   T_lp lp(0.0);
   if (size_zero(y))
-    return lp;  
+    return lp;
 
   if (include_summand<propto>::value) {
     lp -= 0.5 * LOG_TWO_PI * r * T;

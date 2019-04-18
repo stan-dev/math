@@ -67,7 +67,7 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
                          "Second shape parameter", beta);
   check_nonnegative(function, "Random variable", y);
   check_less_or_equal(function, "Random variable", y, 1);
-  
+
   if (size_zero(y, alpha, beta))
     return 0.0;
   if (!include_summand<propto, T_y, T_scale_succ, T_scale_fail>::value)
