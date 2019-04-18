@@ -71,7 +71,6 @@ static const char *add_batch_kernel_code = STRINGIFY(
     // \cond
 );
 // \endcond
-    
 
 /**
  * See the docs for \link kernels/add.hpp add_batch() \endlink
