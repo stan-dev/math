@@ -47,18 +47,18 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
   using std::exp;
 
   size_t x_size = x.size();
-  for (size_t n = 0; n < x_size; ++n)
-    check_not_nan("gp_matern52_cov", "x", x[n]);
-
-  check_positive_finite("gp_matern52_cov", "magnitude", sigma);
-  check_positive_finite("gp_matern52_cov", "length scale", length_scale);
-
   Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x_size, x_size);
 
   if (x_size == 0)
     return cov;
+
+  for (size_t n = 0; n < x_size; ++n)
+    check_not_nan("gp_matern52_cov", "x", x[n]);
+
+  check_positive_finite("gp_matern52_cov", "magnitude", sigma);
+  check_positive_finite("gp_matern52_cov", "length scale", length_scale);
 
   T_s sigma_sq = square(sigma);
   T_l root_5_inv_l = sqrt(5.0) / length_scale;
@@ -111,6 +111,12 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
   using std::exp;
 
   size_t x_size = x.size();
+  Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
+                Eigen::Dynamic>
+      cov(x_size, x_size);
+  if (x_size == 0)
+    return cov;
+
   size_t l_size = length_scale.size();
   for (size_t n = 0; n < x_size; ++n)
     check_not_nan("gp_matern52_cov", "x", x[n]);
@@ -119,13 +125,6 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
   check_positive_finite("gp_matern52_cov", "length scale", length_scale);
   check_size_match("gp_matern52_cov", "x dimension", x[0].size(),
                    "number of length scales", l_size);
-
-  Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
-                Eigen::Dynamic>
-      cov(x_size, x_size);
-
-  if (x_size == 0)
-    return cov;
 
   T_s sigma_sq = square(sigma);
   double root_5 = sqrt(5.0);
@@ -141,7 +140,8 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
       typename return_type<T_x, T_l>::type sq_distance
           = squared_distance(x_new[i], x_new[j]);
       typename return_type<T_x, T_l>::type dist = sqrt(sq_distance);
-      cov(i, j) = sigma_sq * (1.0 + root_5 * dist + five_thirds * sq_distance)
+      cov(i, j) = sigma_sq
+                  * (1.0 + root_5 * dist + five_thirds * sq_distance)
                   * exp(neg_root_5 * dist);
       cov(j, i) = cov(i, j);
     }
@@ -180,6 +180,12 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
+  Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
+                Eigen::Dynamic, Eigen::Dynamic>
+      cov(x1_size, x2_size);
+
+  if (x1_size == 0 || x2_size == 0)
+    return cov;
 
   for (size_t n = 0; n < x1_size; ++n)
     check_not_nan("gp_matern52_cov", "x1", x1[n]);
@@ -188,13 +194,6 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   check_positive_finite("gp_matern52_cov", "magnitude", sigma);
   check_positive_finite("gp_matern52_cov", "length scale", length_scale);
-
-  Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
-                Eigen::Dynamic, Eigen::Dynamic>
-      cov(x1_size, x2_size);
-
-  if (x1_size == 0 || x2_size == 0)
-    return cov;
 
   T_s sigma_sq = square(sigma);
   T_l root_5_inv_l = sqrt(5.0) / length_scale;
@@ -251,6 +250,13 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
 
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
+  Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
+                Eigen::Dynamic, Eigen::Dynamic>
+      cov(x1_size, x2_size);
+
+  if (x1_size == 0 || x2_size == 0)
+    return cov;
+
   size_t l_size = length_scale.size();
 
   for (size_t n = 0; n < x1_size; ++n)
@@ -264,13 +270,6 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
                    "number of length scales", l_size);
   check_size_match("gp_matern52_cov", "x dimension", x2[0].size(),
                    "number of length scales", l_size);
-
-  Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
-                Eigen::Dynamic, Eigen::Dynamic>
-      cov(x1_size, x2_size);
-
-  if (x1_size == 0 || x2_size == 0)
-    return cov;
 
   T_s sigma_sq = square(sigma);
   double root_5 = sqrt(5.0);
@@ -287,7 +286,8 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
       typename return_type<T_x1, T_x2, T_l>::type sq_distance
           = squared_distance(x1_new[i], x2_new[j]);
       typename return_type<T_x1, T_x2, T_l>::type dist = sqrt(sq_distance);
-      cov(i, j) = sigma_sq * (1.0 + root_5 * dist + five_thirds * sq_distance)
+      cov(i, j) = sigma_sq
+                  * (1.0 + root_5 * dist + five_thirds * sq_distance)
                   * exp(neg_root_5 * dist);
     }
   }
