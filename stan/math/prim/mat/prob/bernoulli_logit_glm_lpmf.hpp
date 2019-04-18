@@ -70,7 +70,6 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   using Eigen::Matrix;
   using std::exp;
 
-
   const size_t N = x.rows();
   const size_t M = x.cols();
 
