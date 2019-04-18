@@ -36,7 +36,7 @@ static const char *scalar_mul_kernel_code = STRINGIFY(
  * See the docs for \link kernels/scalar_mul.hpp add() \endlink
  */
 const global_range_kernel<cl::Buffer, cl::Buffer, double, int, int> scalar_mul(
-    "scalar_mul", scalar_mul_kernel_code);
+    "scalar_mul", {indexing_helpers, scalar_mul_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math
