@@ -65,12 +65,6 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
 
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using std::exp;
-
-  if (!(stan::length(y) && stan::length(x) && stan::length(beta)))
-    return 0.0;
-
-  T_partials_return logp(0.0);
 
   const size_t N = x.rows();
   const size_t M = x.cols();
@@ -81,9 +75,13 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
   if (is_vector<T_alpha>::value)
     check_consistent_sizes(function, "Vector of intercepts", alpha,
                            "Vector of dependent variables", y);
+  if (!length(y) || !length(x) || !length(beta))
+    return 0.0;
 
   if (!include_summand<propto, T_x, T_alpha, T_beta>::value)
     return 0.0;
+
+  T_partials_return logp(0.0);
 
   const auto& x_val = value_of_rec(x);
   const auto& y_val = value_of_rec(y);
@@ -98,7 +96,7 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
   theta.array() += as_array_or_scalar(alpha_val_vec);
 
   Matrix<T_partials_return, Dynamic, 1> theta_derivative
-      = as_array_or_scalar(y_val_vec) - exp(theta.array());
+      = as_array_or_scalar(y_val_vec) - std::exp(theta.array());
   double theta_derivative_sum = sum(theta_derivative);
   if (!std::isfinite(theta_derivative_sum)) {
     check_finite(function, "Weight vector", beta);
@@ -114,7 +112,7 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
   }
   if (include_summand<propto, T_partials_return>::value) {
     logp += sum(as_array_or_scalar(y_val_vec) * theta.array()
-                - exp(theta.array()));
+                - std::exp(theta.array()));
   }
 
   // Compute the necessary derivatives.
