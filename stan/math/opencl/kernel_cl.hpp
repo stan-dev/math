@@ -124,7 +124,7 @@ struct kernel_cl {
    * @param options The values of macros to be passed at compile time.
    */
   kernel_cl(const char* name, const char* source,
-                      const std::map<const char*, int>& options = {})
+            const std::map<const char*, int>& options = {})
       : make_functor(name, {source}, options) {}
   /**
    * Creates functor for kernels that only need access to defining
@@ -134,7 +134,7 @@ struct kernel_cl {
    * @param options The values of macros to be passed at compile time.
    */
   kernel_cl(const char* name, const std::vector<const char*>& sources,
-                      const std::map<const char*, int>& options = {})
+            const std::map<const char*, int>& options = {})
       : make_functor(name, sources, options) {}
   /**
    * Executes a kernel
