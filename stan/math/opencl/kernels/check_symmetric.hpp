@@ -44,7 +44,8 @@ static const char *is_symmetric_kernel_code = STRINGIFY(
  * See the docs for \link kernels/check_symmetric.hpp check_symmetric() \endlink
  */
 const global_range_kernel<cl::Buffer, cl::Buffer, int, int, const double>
-    check_symmetric("is_symmetric", is_symmetric_kernel_code);
+    check_symmetric("is_symmetric",
+                    {indexing_helpers, is_symmetric_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math
