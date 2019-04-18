@@ -14,6 +14,7 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/meta/is_constant.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/gp_exp_quad_cov.hpp>
 #include <cmath>
 #include <vector>
