@@ -14,6 +14,7 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/meta/is_constant.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/opencl/gp_exp_quad_cov.hpp>
 #include <cmath>
 #include <vector>
 
@@ -55,6 +56,14 @@ inline
   for (size_t n = 0; n < x.size(); ++n)
     check_not_nan("gp_exp_quad_cov", "x", x[n]);
 
+#ifdef STAN_OPENCL
+  if(is_constant_struct<T_x>::value && is_constant_struct<T_sigma>::value && is_constant_struct<T_l>::value) {
+    matrix_cl x_gpu(x);
+    matrix_cl cov_gpu = gp_exp_quad_cov(x_gpu, sigma, length_scale);
+    copy(cov, cov_gpu);
+  }
+  else {
+#endif
   T_sigma sigma_sq = square(sigma);
   T_l neg_half_inv_l_sq = -0.5 / square(length_scale);
 
@@ -66,6 +75,9 @@ inline
       cov(j, i) = cov(i, j);
     }
   }
+#ifdef STAN_OPENCL
+  }
+#endif
   return cov;
 }
 
@@ -166,6 +178,15 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   for (size_t i = 0; i < x2_size; ++i)
     check_not_nan(function_name, "x2", x2[i]);
 
+#ifdef STAN_OPENCL
+  if(is_constant_struct<T_x1>::value && is_constant_struct<T_x2>::value && is_constant_struct<T_sigma>::value && is_constant_struct<T_l>::value) {
+    matrix_cl x1_gpu(x1);
+    matrix_cl x2_gpu(x2);
+    matrix_cl cov_gpu = gp_exp_quad_cov(x1_gpu, x2_gpu, sigma, length_scale);
+    copy(cov, cov_gpu);
+  }
+  else {
+#endif
   T_sigma sigma_sq = square(sigma);
   T_l neg_half_inv_l_sq = -0.5 / square(length_scale);
 
@@ -175,6 +196,9 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
           = sigma_sq * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
     }
   }
+#ifdef STAN_OPENCL
+  }
+#endif
   return cov;
 }
 

@@ -51,6 +51,64 @@ class matrix_cl {
 
   matrix_cl() : rows_(0), cols_(0) {}
 
+  explicit matrix_cl(const std::vector<double>& A) : rows_(1), cols_(A.size()) {
+    if (A.size() == 0)
+      return;
+    // the context is needed to create the buffer object
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    try {
+      oclBuffer_
+              = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
+      queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0,
+                               sizeof(double) * A.size(), A.data());
+    } catch (const cl::Error& e) {
+      check_opencl_error("matrix_cl(std::vector<T>) constructor", e);
+    }
+  }
+
+    /**
+   * Constructor for the matrix_cl that
+   * creates a copy of the Eigen matrix on the OpenCL device.
+   *
+   *
+   * @tparam R row type
+   * @tparam C column type
+   * @param A the Eigen matrix
+   *
+   * @throw <code>std::system_error</code> if the
+   * matrices do not have matching dimensions
+   */
+    template <int R, int T>
+    explicit matrix_cl(const std::vector<Eigen::Matrix<double, R, T>>& A)
+            : rows_(A.empty() ? 0 : A[0].size()), cols_(A.size()) {
+      if (size() > 0) {
+        cl::Context& ctx = opencl_context.context();
+        cl::CommandQueue& queue = opencl_context.queue();
+        try {
+          // creates the OpenCL buffer to copy the Eigen
+          // matrix to the OpenCL device
+          oclBuffer_
+                  = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size());
+          for(int i=0,start=0;i<cols_;i++,start+=rows_) {
+            check_size_match("matrix constructor", "input rows", A[i].size(), "matrix_cl rows", rows_);
+            /**
+            * Writes the contents of A[i] to the OpenCL buffer
+            * starting at the offset sizeof(double)*start.
+            * CL_TRUE denotes that the call is blocking as
+            * we do not want to execute any further kernels
+            * on the device until we are sure that the data
+            * is finished transfering
+            */
+            queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, sizeof(double)*start,
+                                    sizeof(double) * rows_, A[i].data());
+           }
+        } catch (const cl::Error& e) {
+          check_opencl_error("matrix constructor", e);
+        }
+      }
+    }
+
   matrix_cl(const matrix_cl& A) : rows_(A.rows()), cols_(A.cols()) {
     if (A.size() == 0)
       return;
