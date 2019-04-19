@@ -301,10 +301,9 @@ template <typename T = void>  // if this was non-templated overload or fully
                               // specialized template, the compiler could
                               // incorrectly resolve some called functions to
                               // prim implementation instead of arr
-                              inline Eigen::MatrixXd gp_exp_quad_cov(
-                                  const std::vector<Eigen::VectorXd> &x,
-                                  const double sigma,
-                                  const std::vector<double> &length_scale) {
+inline Eigen::MatrixXd gp_exp_quad_cov(
+    const std::vector<Eigen::VectorXd> &x, const double sigma,
+    const std::vector<double> &length_scale) {
   check_positive_finite("gp_exp_quad_cov", "magnitude", sigma);
   check_positive_finite("gp_exp_quad_cov", "length scale", length_scale);
 
@@ -392,11 +391,10 @@ template <typename T = void>  // if this was non-templated overload or fully
                               // specialized template, the compiler could
                               // incorrectly resolve some called functions to
                               // prim implementation instead of arr
-                              inline typename Eigen::MatrixXd gp_exp_quad_cov(
-                                  const std::vector<Eigen::VectorXd> &x1,
-                                  const std::vector<Eigen::VectorXd> &x2,
-                                  const double sigma,
-                                  const std::vector<double> &length_scale) {
+inline typename Eigen::MatrixXd gp_exp_quad_cov(
+    const std::vector<Eigen::VectorXd> &x1,
+    const std::vector<Eigen::VectorXd> &x2, const double sigma,
+    const std::vector<double> &length_scale) {
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
   size_t l_size = length_scale.size();
