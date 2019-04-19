@@ -124,7 +124,7 @@ struct coupled_ode_system<F, double, var> {
           double temp_deriv = theta_vars[j].adj();
           const size_t offset = N_ + N_ * j;
           for (size_t k = 0; k < N_; k++)
-            temp_deriv += z[offset + k] * y_vars[k].adj();
+            temp_deriv += z.at(offset + k) * y_vars[k].adj();
 
           dz_dt[offset + i] = temp_deriv;
         }
@@ -300,7 +300,7 @@ struct coupled_ode_system<F, var, double> {
           double temp_deriv = 0;
           const size_t offset = N_ + N_ * j;
           for (size_t k = 0; k < N_; k++)
-            temp_deriv += z[offset + k] * y_vars[k].adj();
+            temp_deriv += z.at(offset + k) * y_vars[k].adj();
 
           dz_dt[offset + i] = temp_deriv;
         }
@@ -496,7 +496,7 @@ struct coupled_ode_system<F, var, var> {
           double temp_deriv = 0;
           const size_t offset = N_ + N_ * j;
           for (size_t k = 0; k < N_; k++)
-            temp_deriv += z[offset + k] * y_vars[k].adj();
+            temp_deriv += z.at(offset + k) * y_vars[k].adj();
 
           dz_dt[offset + i] = temp_deriv;
         }
@@ -505,7 +505,7 @@ struct coupled_ode_system<F, var, var> {
           double temp_deriv = theta_vars[j].adj();
           const size_t offset = N_ + N_ * N_ + N_ * j;
           for (size_t k = 0; k < N_; k++)
-            temp_deriv += z[offset + k] * y_vars[k].adj();
+            temp_deriv += z.at(offset + k) * y_vars[k].adj();
 
           dz_dt[offset + i] = temp_deriv;
         }
