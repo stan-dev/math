@@ -44,7 +44,10 @@ const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int> add(
 static const char *add_batch_kernel_code = STRINGIFY(
     // \endcond
     /**
-     * Adds all the matrices in a batch
+     * Sums a batch of matrices. Buffer A contains
+     * batch_size matrices of size rows x cols. All elements
+     * at matching indices are summed up and stored to the
+     * resulting matrix B.
      *
      * @param[out] B buffer of the result matrix.
      * @param[in] A buffer containing the entire batch.
