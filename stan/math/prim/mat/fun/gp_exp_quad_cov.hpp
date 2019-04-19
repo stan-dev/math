@@ -262,8 +262,12 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <typename T_x, typename Cond = typename std::enable_if<is_constant<T_x>::value>::type>
-inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<T_x> &x, const double sigma, const double length_scale) {
+template <typename T_x,
+          typename Cond
+          = typename std::enable_if<is_constant<T_x>::value>::type>
+inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<T_x> &x,
+                                       const double sigma,
+                                       const double length_scale) {
   check_positive("gp_exp_quad_cov", "magnitude", sigma);
   check_positive("gp_exp_quad_cov", "length scale", length_scale);
 
@@ -293,8 +297,9 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<T_x> &x, const double s
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
-                    const double sigma, const std::vector<double> &length_scale) {
+inline Eigen::MatrixXd gp_exp_quad_cov(
+    const std::vector<Eigen::VectorXd> &x, const double sigma,
+    const std::vector<double> &length_scale) {
   check_positive_finite("gp_exp_quad_cov", "magnitude", sigma);
   check_positive_finite("gp_exp_quad_cov", "length scale", length_scale);
 
@@ -335,8 +340,13 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <typename T_x1, typename T_x2, typename Cond = typename std::enable_if<is_constant<T_x1>::value && is_constant<T_x2>::value>::type>
-inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2, const double sigma, const double length_scale) {
+template <typename T_x1, typename T_x2,
+          typename Cond = typename std::enable_if<
+              is_constant<T_x1>::value && is_constant<T_x2>::value>::type>
+inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<T_x1> &x1,
+                                                const std::vector<T_x2> &x2,
+                                                const double sigma,
+                                                const double length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive(function_name, "magnitude", sigma);
   check_positive(function_name, "length scale", length_scale);
@@ -373,10 +383,10 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<T_x1> &x1, con
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-inline typename Eigen::MatrixXd
-gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x1,
-                const std::vector<Eigen::VectorXd> &x2,
-                const double sigma, const std::vector<double> length_scale) {
+inline typename Eigen::MatrixXd gp_exp_quad_cov(
+    const std::vector<Eigen::VectorXd> &x1,
+    const std::vector<Eigen::VectorXd> &x2, const double sigma,
+    const std::vector<double> length_scale) {
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
   size_t l_size = length_scale.size();
