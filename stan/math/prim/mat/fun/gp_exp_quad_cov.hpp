@@ -18,6 +18,7 @@
 #include <stan/math/opencl/gp_exp_quad_cov.hpp>
 #include <cmath>
 #include <vector>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -57,28 +58,17 @@ inline
   for (size_t n = 0; n < x.size(); ++n)
     check_not_nan("gp_exp_quad_cov", "x", x[n]);
 
-#ifdef STAN_OPENCL
-  if (is_constant_struct<T_x>::value && is_constant_struct<T_sigma>::value
-      && is_constant_struct<T_l>::value) {
-    matrix_cl x_gpu(x);
-    matrix_cl cov_gpu = gp_exp_quad_cov(x_gpu, sigma, length_scale);
-    copy(cov, cov_gpu);  // NOLINT
-  } else {
-#endif
-    T_sigma sigma_sq = square(sigma);
-    T_l neg_half_inv_l_sq = -0.5 / square(length_scale);
+  T_sigma sigma_sq = square(sigma);
+  T_l neg_half_inv_l_sq = -0.5 / square(length_scale);
 
-    for (size_t j = 0; j < x_size; ++j) {
-      cov(j, j) = sigma_sq;
-      for (size_t i = j + 1; i < x_size; ++i) {
-        cov(i, j)
-            = sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
-        cov(j, i) = cov(i, j);
-      }
+  for (size_t j = 0; j < x_size; ++j) {
+    cov(j, j) = sigma_sq;
+    for (size_t i = j + 1; i < x_size; ++i) {
+      cov(i, j)
+          = sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
+      cov(j, i) = cov(i, j);
     }
-#ifdef STAN_OPENCL
   }
-#endif
   return cov;
 }
 
@@ -119,29 +109,18 @@ inline
   check_size_match("gp_exp_quad_cov", "x dimension", x[0].size(),
                    "number of length scales", l_size);
 
+  T_sigma sigma_sq = square(sigma);
   std::vector<
       Eigen::Matrix<typename return_type<T_x, T_l>::type, Eigen::Dynamic, 1>>
       x_new = divide_columns(x, length_scale);
-#ifdef STAN_OPENCL
-  if (is_constant_struct<T_x>::value && is_constant_struct<T_sigma>::value
-      && is_constant_struct<T_l>::value) {
-    matrix_cl x_gpu(x_new);
-    matrix_cl cov_gpu = gp_exp_quad_cov(x_gpu, sigma, 1);
-    copy(cov, cov_gpu);  // NOLINT
-  } else {
-#endif
-    T_sigma sigma_sq = square(sigma);
 
-    for (size_t j = 0; j < x_size; ++j) {
-      cov(j, j) = sigma_sq;
-      for (size_t i = j + 1; i < x_size; ++i) {
-        cov(i, j) = sigma_sq * exp(-0.5 * squared_distance(x_new[i], x_new[j]));
-        cov(j, i) = cov(i, j);
-      }
+  for (size_t j = 0; j < x_size; ++j) {
+    cov(j, j) = sigma_sq;
+    for (size_t i = j + 1; i < x_size; ++i) {
+      cov(i, j) = sigma_sq * exp(-0.5 * squared_distance(x_new[i], x_new[j]));
+      cov(j, i) = cov(i, j);
     }
-#ifdef STAN_OPENCL
   }
-#endif
   return cov;
 }
 
@@ -190,27 +169,15 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   for (size_t i = 0; i < x2_size; ++i)
     check_not_nan(function_name, "x2", x2[i]);
 
-#ifdef STAN_OPENCL
-  if (is_constant_struct<T_x1>::value && is_constant_struct<T_x2>::value
-      && is_constant_struct<T_sigma>::value && is_constant_struct<T_l>::value) {
-    matrix_cl x1_gpu(x1);
-    matrix_cl x2_gpu(x2);
-    matrix_cl cov_gpu = gp_exp_quad_cov(x1_gpu, x2_gpu, sigma, length_scale);
-    copy(cov, cov_gpu);  // NOLINT
-  } else {
-#endif
-    T_sigma sigma_sq = square(sigma);
-    T_l neg_half_inv_l_sq = -0.5 / square(length_scale);
+  T_sigma sigma_sq = square(sigma);
+  T_l neg_half_inv_l_sq = -0.5 / square(length_scale);
 
-    for (size_t i = 0; i < x1.size(); ++i) {
-      for (size_t j = 0; j < x2.size(); ++j) {
-        cov(i, j) = sigma_sq
-                    * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
-      }
+  for (size_t i = 0; i < x1.size(); ++i) {
+    for (size_t j = 0; j < x2.size(); ++j) {
+      cov(i, j)
+          = sigma_sq * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
     }
-#ifdef STAN_OPENCL
   }
-#endif
   return cov;
 }
 
@@ -263,6 +230,8 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
   check_size_match(function_name, "x dimension", x2[0].size(),
                    "number of length scales", l_size);
 
+  T_s sigma_sq = square(sigma);
+
   std::vector<Eigen::Matrix<typename return_type<T_x1, T_l, T_s>::type,
                             Eigen::Dynamic, 1>>
       x1_new = divide_columns(x1, length_scale);
@@ -270,28 +239,175 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
                             Eigen::Dynamic, 1>>
       x2_new = divide_columns(x2, length_scale);
 
-#ifdef STAN_OPENCL
-  if (is_constant_struct<T_x1>::value && is_constant_struct<T_x2>::value
-      && is_constant_struct<T_s>::value && is_constant_struct<T_l>::value) {
-    matrix_cl x1_gpu(x1_new);
-    matrix_cl x2_gpu(x2_new);
-    matrix_cl cov_gpu = gp_exp_quad_cov(x1_gpu, x2_gpu, sigma, 1);
-    copy(cov, cov_gpu);  // NOLINT
-  } else {
-#endif
-    T_s sigma_sq = square(sigma);
-
-    for (size_t i = 0; i < x1_size; ++i) {
-      for (size_t j = 0; j < x2_size; ++j) {
-        cov(i, j)
-            = sigma_sq * exp(-0.5 * squared_distance(x1_new[i], x2_new[j]));
-      }
+  for (size_t i = 0; i < x1_size; ++i) {
+    for (size_t j = 0; j < x2_size; ++j) {
+      cov(i, j) = sigma_sq * exp(-0.5 * squared_distance(x1_new[i], x2_new[j]));
     }
-#ifdef STAN_OPENCL
   }
-#endif
   return cov;
 }
+
+#ifdef STAN_OPENCL
+/**
+ * Returns a squared exponential kernel.
+ *
+ * @tparam T_x type for each scalar
+ * @tparam Cond condition
+ *
+ * @param x std::vector of scalars that can be used in square distance.
+ *    This function assumes each element of x is the same size.
+ * @param sigma marginal standard deviation or magnitude
+ * @param length_scale length scale
+ * @return squared distance
+ * @throw std::domain_error if sigma <= 0, l <= 0, or
+ *   x is nan or infinite
+ */
+template <typename T_x, typename Cond = typename std::enable_if<is_constant<T_x>::value>::type>
+inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<T_x> &x, const double sigma, const double length_scale) {
+  check_positive("gp_exp_quad_cov", "magnitude", sigma);
+  check_positive("gp_exp_quad_cov", "length scale", length_scale);
+
+  size_t x_size = x.size();
+  Eigen::MatrixXd cov(x_size, x_size);
+
+  if (x_size == 0)
+    return cov;
+
+  for (size_t n = 0; n < x.size(); ++n)
+    check_not_nan("gp_exp_quad_cov", "x", x[n]);
+
+  matrix_cl x_gpu(x);
+  matrix_cl cov_gpu = gp_exp_quad_cov(x_gpu, sigma, length_scale);
+  copy(cov, cov_gpu);  // NOLINT
+
+  return cov;
+}
+
+/**
+ * Returns a squared exponential kernel.
+ *
+ * @param x std::vector of Eigen vectors of scalars.
+ * @param sigma marginal standard deviation or magnitude
+ * @param length_scale std::vector length scale
+ * @return squared distance
+ * @throw std::domain_error if sigma <= 0, l <= 0, or
+ *   x is nan or infinite
+ */
+inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
+                    const double sigma, const std::vector<double> &length_scale) {
+  check_positive_finite("gp_exp_quad_cov", "magnitude", sigma);
+  check_positive_finite("gp_exp_quad_cov", "length scale", length_scale);
+
+  size_t x_size = x.size();
+  Eigen::MatrixXd cov(x_size, x_size);
+
+  if (x_size == 0)
+    return cov;
+
+  size_t l_size = length_scale.size();
+  check_size_match("gp_exp_quad_cov", "x dimension", x[0].size(),
+                   "number of length scales", l_size);
+
+  std::vector<Eigen::VectorXd> x_new = divide_columns(x, length_scale);
+
+  matrix_cl x_gpu(x_new);
+  matrix_cl cov_gpu = gp_exp_quad_cov(x_gpu, sigma, 1);
+  copy(cov, cov_gpu);  // NOLINT
+  return cov;
+}
+
+/**
+ * Returns a squared exponential kernel.
+ *
+ * This function is for the cross covariance matrix
+ * needed to compute posterior predictive density.
+ *
+ * @tparam T_x1 type of first std::vector of scalars
+ * @tparam T_x2 type of second std::vector of scalars
+ *    This function assumes each element of x1 and x2 are the same size.
+ * @tparam Cond condition
+ *
+ * @param x1 std::vector of elements that can be used in square distance
+ * @param x2 std::vector of elements that can be used in square distance
+ * @param sigma standard deviation
+ * @param length_scale length scale
+ * @return squared distance
+ * @throw std::domain_error if sigma <= 0, l <= 0, or
+ *   x is nan or infinite
+ */
+template <typename T_x1, typename T_x2, typename Cond = typename std::enable_if<is_constant<T_x1>::value && is_constant<T_x2>::value>::type>
+inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2, const double sigma, const double length_scale) {
+  const char *function_name = "gp_exp_quad_cov";
+  check_positive(function_name, "magnitude", sigma);
+  check_positive(function_name, "length scale", length_scale);
+
+  size_t x1_size = x1.size();
+  size_t x2_size = x2.size();
+  Eigen::MatrixXd cov(x1_size, x2_size);
+  if (x1_size == 0 || x2_size == 0)
+    return cov;
+
+  for (size_t i = 0; i < x1_size; ++i)
+    check_not_nan(function_name, "x1", x1[i]);
+  for (size_t i = 0; i < x2_size; ++i)
+    check_not_nan(function_name, "x2", x2[i]);
+
+  matrix_cl x1_gpu(x1);
+  matrix_cl x2_gpu(x2);
+  matrix_cl cov_gpu = gp_exp_quad_cov(x1_gpu, x2_gpu, sigma, length_scale);
+  copy(cov, cov_gpu);  // NOLINT
+  return cov;
+}
+
+/**
+ * Returns a squared exponential kernel.
+ *
+ * This function is for the cross covariance
+ * matrix needed to compute the posterior predictive density.
+ *
+ * @param x1 std::vector of Eigen vectors of scalars.
+ * @param x2 std::vector of Eigen vectors of scalars.
+ * @param sigma standard deviation
+ * @param length_scale std::vector of length scale
+ * @return squared distance
+ * @throw std::domain_error if sigma <= 0, l <= 0, or
+ *   x is nan or infinite
+ */
+inline typename Eigen::MatrixXd
+gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x1,
+                const std::vector<Eigen::VectorXd> &x2,
+                const double sigma, const std::vector<double> length_scale) {
+  size_t x1_size = x1.size();
+  size_t x2_size = x2.size();
+  size_t l_size = length_scale.size();
+
+  Eigen::MatrixXd cov(x1_size, x2_size);
+  if (x1_size == 0 || x2_size == 0)
+    return cov;
+
+  const char *function_name = "gp_exp_quad_cov";
+  for (size_t i = 0; i < x1_size; ++i)
+    check_not_nan(function_name, "x1", x1[i]);
+  for (size_t i = 0; i < x2_size; ++i)
+    check_not_nan(function_name, "x2", x2[i]);
+  check_positive_finite(function_name, "magnitude", sigma);
+  check_positive_finite(function_name, "length scale", length_scale);
+  check_size_match(function_name, "x dimension", x1[0].size(),
+                   "number of length scales", l_size);
+  check_size_match(function_name, "x dimension", x2[0].size(),
+                   "number of length scales", l_size);
+
+  std::vector<Eigen::VectorXd> x1_new = divide_columns(x1, length_scale);
+  std::vector<Eigen::VectorXd> x2_new = divide_columns(x2, length_scale);
+
+  matrix_cl x1_gpu(x1_new);
+  matrix_cl x2_gpu(x2_new);
+  matrix_cl cov_gpu = gp_exp_quad_cov(x1_gpu, x2_gpu, sigma, 1);
+  copy(cov, cov_gpu);  // NOLINT
+  return cov;
+}
+#endif
+
 }  // namespace math
 }  // namespace stan
 #endif
