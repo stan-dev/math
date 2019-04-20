@@ -104,11 +104,11 @@ gaussian_dlm_obs_lpdf(
   check_size_match(function, "rows of C0", C0.rows(), "rows of G", G.rows());
   check_pos_definite(function, "C0", C0);
   check_finite(function, "C0", C0);
-
-  T_lp lp(0.0);
+  
   if (size_zero(y))
-    return lp;
+    return 0;
 
+  T_lp lp(0);
   if (include_summand<propto>::value) {
     lp -= 0.5 * LOG_TWO_PI * r * T;
   }
@@ -230,8 +230,6 @@ gaussian_dlm_obs_lpdf(
   typedef
       typename return_type<T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0,
                                                      T_C0>::type>::type T_lp;
-  T_lp lp(0.0);
-
   using std::log;
 
   int r = y.rows();  // number of variables
@@ -266,8 +264,9 @@ gaussian_dlm_obs_lpdf(
   check_not_nan(function, "C0", C0);
 
   if (y.cols() == 0 || y.rows() == 0)
-    return lp;
+    return 0;
 
+  T_lp lp(0);
   if (include_summand<propto>::value) {
     lp += 0.5 * NEG_LOG_TWO_PI * r * T;
   }

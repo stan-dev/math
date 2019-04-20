@@ -81,12 +81,12 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
                            "Vector of dependent variables", y);
 
   if (size_zero(y, x, beta))
-    return 0.0;
+    return 0;
 
   if (!include_summand<propto, T_x, T_alpha, T_beta>::value)
-    return 0.0;
+    return 0;
 
-  T_partials_return logp(0.0);
+  T_partials_return logp(0);
   const auto &x_val = value_of_rec(x);
   const auto &y_val = value_of_rec(y);
   const auto &beta_val = value_of_rec(beta);

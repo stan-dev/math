@@ -31,19 +31,19 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_lpdf(
   static const char* function = "pareto_lpdf";
   typedef typename stan::partials_return_type<T_y, T_scale, T_shape>::type
       T_partials_return;
-
+  using std::log;
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Scale parameter", y_min);
   check_positive_finite(function, "Shape parameter", alpha);
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          y_min, "Shape parameter", alpha);
   if (size_zero(y, y_min, alpha))
-    return 0.0;
+    return 0;
 
   if (!include_summand<propto, T_y, T_scale, T_shape>::value)
-    return 0.0;
+    return 0;
 
-  T_partials_return logp(0.0);
+  T_partials_return logp(0);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_scale> y_min_vec(y_min);
@@ -62,7 +62,7 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_lpdf(
       log_y(length(y));
   if (include_summand<propto, T_y, T_shape>::value) {
     for (size_t n = 0; n < length(y); n++)
-      log_y[n] = std::log(value_of(y_vec[n]));
+      log_y[n] = log(value_of(y_vec[n]));
   }
 
   VectorBuilder<contains_nonconstant_struct<T_y, T_shape>::value,
@@ -78,7 +78,7 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_lpdf(
       log_y_min(length(y_min));
   if (include_summand<propto, T_scale, T_shape>::value) {
     for (size_t n = 0; n < length(y_min); n++)
-      log_y_min[n] = std::log(value_of(y_min_vec[n]));
+      log_y_min[n] = log(value_of(y_min_vec[n]));
   }
 
   VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
@@ -86,7 +86,7 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_lpdf(
       log_alpha(length(alpha));
   if (include_summand<propto, T_shape>::value) {
     for (size_t n = 0; n < length(alpha); n++)
-      log_alpha[n] = std::log(value_of(alpha_vec[n]));
+      log_alpha[n] = log(value_of(alpha_vec[n]));
   }
 
   for (size_t n = 0; n < N; n++) {

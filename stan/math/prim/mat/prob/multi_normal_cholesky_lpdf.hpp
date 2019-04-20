@@ -63,7 +63,7 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
   size_t number_of_y = length_mvt(y);
   size_t number_of_mu = length_mvt(mu);
   if (number_of_y == 0 || number_of_mu == 0)
-    return 0.0;
+    return 0;
   vector_seq_view<T_y> y_vec(y);
   vector_seq_view<T_loc> mu_vec(mu);
   const size_t size_vec = max_size_mvt(y, mu);
@@ -112,9 +112,9 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
   }
 
   if (unlikely(size_y == 0))
-    return T_return(0.0);
+    return T_return(0);
 
-  T_partials_return logp(0.0);
+  T_partials_return logp(0);
   operands_and_partials<T_y, T_loc, T_covar> ops_partials(y, mu, L);
 
   if (include_summand<propto>::value)

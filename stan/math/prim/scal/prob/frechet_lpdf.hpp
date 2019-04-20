@@ -34,7 +34,7 @@ typename return_type<T_y, T_shape, T_scale>::type frechet_lpdf(
   static const char* function = "frechet_lpdf";
   typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
       T_partials_return;
-
+  using std::log;
   check_positive(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Scale parameter", sigma);
@@ -42,11 +42,11 @@ typename return_type<T_y, T_shape, T_scale>::type frechet_lpdf(
                          alpha, "Scale parameter", sigma);
 
   if (size_zero(y, alpha, sigma))
-    return 0.0;
+    return 0;
   if (!include_summand<propto, T_y, T_shape, T_scale>::value)
-    return 0.0;
+    return 0;
 
-  T_partials_return logp(0.0);
+  T_partials_return logp(0);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_shape> alpha_vec(alpha);
@@ -58,21 +58,21 @@ typename return_type<T_y, T_shape, T_scale>::type frechet_lpdf(
       log_alpha(length(alpha));
   for (size_t i = 0; i < length(alpha); i++)
     if (include_summand<propto, T_shape>::value)
-      log_alpha[i] = std::log(value_of(alpha_vec[i]));
+      log_alpha[i] = log(value_of(alpha_vec[i]));
 
   VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,
                 T_y>
       log_y(length(y));
   for (size_t i = 0; i < length(y); i++)
     if (include_summand<propto, T_y, T_shape>::value)
-      log_y[i] = std::log(value_of(y_vec[i]));
+      log_y[i] = log(value_of(y_vec[i]));
 
   VectorBuilder<include_summand<propto, T_shape, T_scale>::value,
                 T_partials_return, T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++)
     if (include_summand<propto, T_shape, T_scale>::value)
-      log_sigma[i] = std::log(value_of(sigma_vec[i]));
+      log_sigma[i] = log(value_of(sigma_vec[i]));
 
   VectorBuilder<include_summand<propto, T_y, T_shape, T_scale>::value,
                 T_partials_return, T_y>

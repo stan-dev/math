@@ -58,12 +58,12 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_lpdf(
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Scale parameter", beta);
   if (size_zero(y, alpha, beta))
-    return 0.0;
+    return 0;
 
   if (!include_summand<propto, T_y, T_shape, T_scale>::value)
-    return 0.0;
+    return 0;
 
-  T_partials_return logp(0.0);
+  T_partials_return logp(0);
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   scalar_seq_view<T_scale> beta_vec(beta);
