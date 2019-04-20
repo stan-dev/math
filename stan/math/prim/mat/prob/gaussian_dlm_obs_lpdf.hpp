@@ -104,7 +104,7 @@ gaussian_dlm_obs_lpdf(
   check_size_match(function, "rows of C0", C0.rows(), "rows of G", G.rows());
   check_pos_definite(function, "C0", C0);
   check_finite(function, "C0", C0);
-  
+
   if (size_zero(y))
     return 0;
 
