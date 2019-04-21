@@ -24,7 +24,8 @@ TEST_F(StanAgradRevOde, coupled_ode_system_dv) {
   std::vector<double> z0;
   std::vector<double> y0;
   double t0;
-  std::vector<double> dz_dt(4, 0);
+  const size_t z_size = 4;
+  std::vector<double> dz_dt(z_size, 0);
 
   double gamma(0.15);
   t0 = 0;
@@ -93,6 +94,7 @@ TEST_F(StanAgradRevOde, initial_state_dv) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t z_size = N + N * M;
 
   std::vector<double> y0_d(N, 0.0);
   std::vector<var> theta_v(M, 0.0);
@@ -120,6 +122,7 @@ TEST_F(StanAgradRevOde, size_dv) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t z_size = N + N * M;
 
   std::vector<double> y0_d(N, 0.0);
   std::vector<var> theta_v(M, 0.0);
@@ -127,7 +130,7 @@ TEST_F(StanAgradRevOde, size_dv) {
   coupled_ode_system<mock_ode_functor, double, var> coupled_system_dv(
       base_ode, y0_d, theta_v, x, x_int, &msgs);
 
-  EXPECT_EQ(N + N * M, coupled_system_dv.size());
+  EXPECT_EQ(z_size, coupled_system_dv.size());
 }
 
 TEST_F(StanAgradRevOde, memory_recovery_dv) {
@@ -137,6 +140,7 @@ TEST_F(StanAgradRevOde, memory_recovery_dv) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t z_size = N + N * M;
 
   std::vector<double> y0_d(N, 0.0);
   std::vector<var> theta_v(M, 0.0);
@@ -144,8 +148,8 @@ TEST_F(StanAgradRevOde, memory_recovery_dv) {
   coupled_ode_system<mock_ode_functor, double, var> coupled_system_dv(
       base_ode, y0_d, theta_v, x, x_int, &msgs);
 
-  std::vector<double> z(3 + N * M, 0);
-  std::vector<double> dz_dt(3 + N * M, 0);
+  std::vector<double> z(z_size, 0);
+  std::vector<double> dz_dt(z_size, 0);
   double t = 10;
 
   EXPECT_TRUE(stan::math::empty_nested());
@@ -160,6 +164,8 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_dv) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t z_size = N + N * M;
+
   for (size_t n = 0; n < N + 1; n++) {
     std::stringstream scoped_message;
     scoped_message << "iteration " << n;
@@ -172,8 +178,8 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_dv) {
     coupled_ode_system<mock_throwing_ode_functor<std::logic_error>, double, var>
         coupled_system_dv(throwing_ode, y0_d, theta_v, x, x_int, &msgs);
 
-    std::vector<double> z(3 + N * M, 0);
-    std::vector<double> dz_dt(3 + N * M, 0);
+    std::vector<double> z(z_size, 0);
+    std::vector<double> dz_dt(z_size, 0);
     double t = 10;
 
     EXPECT_TRUE(stan::math::empty_nested());
@@ -194,7 +200,9 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vd) {
   std::vector<stan::math::var> y0_var;
   std::vector<double> y0_adj;
   double t0;
-  std::vector<double> dz_dt(6, 0);
+  const size_t N = 2;
+  const size_t z_size = N + N * N;
+  std::vector<double> dz_dt(z_size, 0);
 
   double gamma(0.15);
   t0 = 0;
@@ -295,6 +303,7 @@ TEST_F(StanAgradRevOde, size_vd) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t z_size = N + N * N;
 
   std::vector<var> y0_v(N, 0.0);
   std::vector<double> theta_d(M, 0.0);
@@ -302,7 +311,7 @@ TEST_F(StanAgradRevOde, size_vd) {
   coupled_ode_system<mock_ode_functor, var, double> coupled_system_vd(
       base_ode, y0_v, theta_d, x, x_int, &msgs);
 
-  EXPECT_EQ(N + N * N, coupled_system_vd.size());
+  EXPECT_EQ(z_size, coupled_system_vd.size());
 }
 
 TEST_F(StanAgradRevOde, memory_recovery_vd) {
@@ -312,6 +321,7 @@ TEST_F(StanAgradRevOde, memory_recovery_vd) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t z_size = N + N * N;
 
   std::vector<var> y0_v(N, 0.0);
   std::vector<double> theta_d(M, 0.0);
@@ -319,8 +329,8 @@ TEST_F(StanAgradRevOde, memory_recovery_vd) {
   coupled_ode_system<mock_ode_functor, var, double> coupled_system_vd(
       base_ode, y0_v, theta_d, x, x_int, &msgs);
 
-  std::vector<double> z(3 + N * N, 0);
-  std::vector<double> dz_dt(3 + N * N, 0);
+  std::vector<double> z(z_size, 0);
+  std::vector<double> dz_dt(z_size, 0);
   double t = 10;
 
   EXPECT_TRUE(stan::math::empty_nested());
@@ -335,6 +345,8 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vd) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t z_size = N + N * N;
+
   for (size_t n = 0; n < N + 1; n++) {
     std::stringstream scoped_message;
     scoped_message << "iteration " << n;
@@ -347,8 +359,8 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vd) {
     coupled_ode_system<mock_throwing_ode_functor<std::logic_error>, var, double>
         coupled_system_vd(throwing_ode, y0_v, theta_d, x, x_int, &msgs);
 
-    std::vector<double> z(3 + N * N, 0);
-    std::vector<double> dz_dt(3 + N * N, 0);
+    std::vector<double> z(z_size, 0);
+    std::vector<double> dz_dt(z_size, 0);
     double t = 10;
 
     EXPECT_TRUE(stan::math::empty_nested());
@@ -362,6 +374,10 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vd) {
 TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
   using stan::math::coupled_ode_system;
 
+  const size_t N = 2;
+  const size_t M = 1;
+  const size_t z_size = N + N * N + N * M;
+
   std::vector<stan::math::var> y0_var;
   y0_var.push_back(1.0);
   y0_var.push_back(0.5);
@@ -373,7 +389,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
   coupled_ode_system<harm_osc_ode_fun, stan::math::var, stan::math::var> system(
       harm_osc, y0_var, theta_var, x, x_int, &msgs);
 
-  std::vector<double> z0(8, 0);
+  std::vector<double> z0(z_size, 0);
   z0[0] = 1.0;
   z0[1] = 0.5;
   z0[2] = 1.0;
@@ -382,7 +398,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
   double t0;
   t0 = 0;
 
-  std::vector<double> dz_dt(2 + 2 * 2 + 2 * 1);
+  std::vector<double> dz_dt(z_size);
   system(z0, dz_dt, t0);
 
   std::vector<double> y0_double(2);
@@ -476,6 +492,7 @@ TEST_F(StanAgradRevOde, size_vv) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t z_size = N + N * N + N * M;
 
   std::vector<var> y0_v(N, 0.0);
   std::vector<var> theta_v(M, 0.0);
@@ -483,7 +500,7 @@ TEST_F(StanAgradRevOde, size_vv) {
   coupled_ode_system<mock_ode_functor, var, var> coupled_system_vv(
       base_ode, y0_v, theta_v, x, x_int, &msgs);
 
-  EXPECT_EQ(N + N * N + N * M, coupled_system_vv.size());
+  EXPECT_EQ(z_size, coupled_system_vv.size());
 }
 
 TEST_F(StanAgradRevOde, memory_recovery_vv) {
@@ -493,6 +510,7 @@ TEST_F(StanAgradRevOde, memory_recovery_vv) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t z_size = N + N * N + N * M;
 
   std::vector<var> y0_v(N, 0.0);
   std::vector<var> theta_v(M, 0.0);
@@ -500,8 +518,8 @@ TEST_F(StanAgradRevOde, memory_recovery_vv) {
   coupled_ode_system<mock_ode_functor, var, var> coupled_system_vv(
       base_ode, y0_v, theta_v, x, x_int, &msgs);
 
-  std::vector<double> z(3 + N * N + N * M, 0);
-  std::vector<double> dz_dt(3 + N * N + N * M, 0);
+  std::vector<double> z(z_size, 0);
+  std::vector<double> dz_dt(z_size, 0);
   double t = 10;
 
   EXPECT_TRUE(stan::math::empty_nested());
@@ -516,6 +534,8 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vv) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t z_size = N + N * N + N * M;
+
   for (size_t n = 0; n < N + 1; n++) {
     std::stringstream scoped_message;
     scoped_message << "iteration " << n;
@@ -528,8 +548,8 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vv) {
     coupled_ode_system<mock_throwing_ode_functor<std::logic_error>, var, var>
         coupled_system_vv(throwing_ode, y0_v, theta_v, x, x_int, &msgs);
 
-    std::vector<double> z(3 + N * N + N * M, 0);
-    std::vector<double> dz_dt(3 + N * N + N * M, 0);
+    std::vector<double> z(z_size, 0);
+    std::vector<double> dz_dt(z_size, 0);
     double t = 10;
 
     EXPECT_TRUE(stan::math::empty_nested());
