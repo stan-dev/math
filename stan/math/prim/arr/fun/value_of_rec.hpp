@@ -38,8 +38,7 @@ inline std::vector<double> value_of_rec(const std::vector<T>& x) {
  * @param x Specified std::vector.
  * @return Specified std::vector.
  */
-template <>
-inline std::vector<double> value_of_rec(const std::vector<double>& x) {
+inline const std::vector<double>& value_of_rec(const std::vector<double>& x) {
   return x;
 }
 

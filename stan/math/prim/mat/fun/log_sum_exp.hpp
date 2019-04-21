@@ -1,11 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_LOG_SUM_EXP_HPP
 #define STAN_MATH_PRIM_MAT_FUN_LOG_SUM_EXP_HPP
 
-#include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <boost/math/tools/promotion.hpp>
-#include <limits>
 #include <vector>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -26,20 +24,8 @@ namespace math {
  */
 template <int R, int C>
 double log_sum_exp(const Eigen::Matrix<double, R, C>& x) {
-  using std::exp;
-  using std::log;
-  using std::numeric_limits;
-  double max = -numeric_limits<double>::infinity();
-  for (int i = 0; i < x.size(); i++)
-    if (x(i) > max)
-      max = x(i);
-
-  double sum = 0.0;
-  for (int i = 0; i < x.size(); i++)
-    if (x(i) != -numeric_limits<double>::infinity())
-      sum += exp(x(i) - max);
-
-  return max + log(sum);
+  const double max = x.maxCoeff();
+  return max + std::log((x.array() - max).exp().sum());
 }
 
 }  // namespace math

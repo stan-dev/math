@@ -21,10 +21,8 @@ template <typename T>
 inline typename boost::math::tools::promote_args<T>::type mean(
     const std::vector<T>& v) {
   check_nonzero_size("mean", "v", v);
-  T sum(v[0]);
-  for (size_t i = 1; i < v.size(); ++i)
-    sum += v[i];
-  return sum / v.size();
+  Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>> m(&v[0], v.size());
+  return m.mean();
 }
 
 /**

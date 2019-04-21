@@ -10,25 +10,22 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Check if the specified vector is unit vector.
- *
  * A valid unit vector is one where the square of the elements
  * summed is equal to 1. This function tests that the sum is within the
- * tolerance specified by <code>CONSTRAINT_TOLERANCE</code>.  This
+ * tolerance specified by <code>CONSTRAINT_TOLERANCE</code>. This
  * function only accepts Eigen vectors, statically typed vectors,
  * not general matrices with 1 column.
- *
  * @tparam T_prob Scalar type of the vector
- *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
- * @param theta Vector to test.
- *
+ * @param theta Vector to test
  * @throw <code>std::invalid_argument</code> if <code>theta</code>
- *   is a 0-vector.
+ *   is a 0-vector
  * @throw <code>std::domain_error</code> if the vector is not a unit
- *   vector or if any element is <code>NaN</code>.
+ *   vector or if any element is <code>NaN</code>
  */
 template <typename T_prob>
 void check_unit_vector(const char* function, const char* name,
