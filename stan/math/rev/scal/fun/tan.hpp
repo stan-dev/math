@@ -7,13 +7,13 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class tan_vari : public op_v_vari {
  public:
   explicit tan_vari(vari* avi) : op_v_vari(std::tan(avi->val_), avi) {}
   void chain() { avi_->adj_ += adj_ * (1.0 + val_ * val_); }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Return the tangent of a radian-scaled variable (cmath).
@@ -42,7 +42,7 @@ class tan_vari : public op_v_vari {
  * @param a Variable for radians of angle.
  * @return Tangent of variable.
  */
-inline var tan(const var& a) { return var(new tan_vari(a.vi_)); }
+inline var tan(const var& a) { return var(new internal::tan_vari(a.vi_)); }
 
 }  // namespace math
 }  // namespace stan

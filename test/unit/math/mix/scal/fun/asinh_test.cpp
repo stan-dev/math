@@ -9,7 +9,7 @@ class AgradFwdAsinh : public testing::Test {
 };
 
 TEST_F(AgradFwdAsinh, FvarVar_1stDeriv) {
-  using boost::math::asinh;
+  using stan::math::asinh;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -26,7 +26,7 @@ TEST_F(AgradFwdAsinh, FvarVar_1stDeriv) {
 }
 
 TEST_F(AgradFwdAsinh, FvarVar_2ndDeriv) {
-  using boost::math::asinh;
+  using stan::math::asinh;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -43,7 +43,7 @@ TEST_F(AgradFwdAsinh, FvarVar_2ndDeriv) {
 }
 
 TEST_F(AgradFwdAsinh, FvarFvarVar_1stDeriv) {
-  using boost::math::asinh;
+  using stan::math::asinh;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -84,7 +84,7 @@ TEST_F(AgradFwdAsinh, FvarFvarVar_1stDeriv) {
 }
 
 TEST_F(AgradFwdAsinh, FvarFvarVar_2ndDeriv) {
-  using boost::math::asinh;
+  using stan::math::asinh;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -111,7 +111,7 @@ TEST_F(AgradFwdAsinh, FvarFvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(2.0 * -0.25601548, r[0]);
 }
 TEST_F(AgradFwdAsinh, FvarFvarVar_3rdDeriv) {
-  using boost::math::asinh;
+  using stan::math::asinh;
   using stan::math::fvar;
   using stan::math::var;
 

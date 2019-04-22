@@ -14,6 +14,7 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
+#include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
@@ -73,7 +74,6 @@ typename return_type<T_y, T_dof>::type chi_square_lpdf(const T_y& y,
     return 0.0;
 
   using boost::math::digamma;
-  using boost::math::lgamma;
   using std::log;
 
   VectorBuilder<include_summand<propto, T_y, T_dof>::value, T_partials_return,

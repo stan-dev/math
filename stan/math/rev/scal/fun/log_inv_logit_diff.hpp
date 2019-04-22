@@ -34,7 +34,7 @@ namespace math {
  * @return Result of log difference of inverse logits of arguments
  *          and gradients.
  */
-namespace {
+namespace internal {
 class log_inv_logit_diff_vv_vari : public op_vv_vari {
  public:
   log_inv_logit_diff_vv_vari(vari* avi, vari* bvi)
@@ -65,18 +65,18 @@ class log_inv_logit_diff_dv_vari : public op_dv_vari {
     bvi_->adj_ -= adj_ * (inv(expm1(ad_ - bvi_->val_)) + inv_logit(bvi_->val_));
   }
 };
-}  // namespace
+}  // namespace internal
 
 inline var log_inv_logit_diff(const var& a, double b) {
-  return var(new log_inv_logit_diff_vd_vari(a.vi_, b));
+  return var(new internal::log_inv_logit_diff_vd_vari(a.vi_, b));
 }
 
 inline var log_inv_logit_diff(const var& a, const var& b) {
-  return var(new log_inv_logit_diff_vv_vari(a.vi_, b.vi_));
+  return var(new internal::log_inv_logit_diff_vv_vari(a.vi_, b.vi_));
 }
 
 inline var log_inv_logit_diff(double a, const var& b) {
-  return var(new log_inv_logit_diff_dv_vari(a, b.vi_));
+  return var(new internal::log_inv_logit_diff_dv_vari(a, b.vi_));
 }
 
 }  // namespace math

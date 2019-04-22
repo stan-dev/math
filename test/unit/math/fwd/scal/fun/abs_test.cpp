@@ -40,8 +40,8 @@ TEST(AgradFwdAbs, Fvar) {
 
   fvar<double> z = std::numeric_limits<double>::quiet_NaN();
   fvar<double> g = abs(z);
-  EXPECT_TRUE(boost::math::isnan(g.val_));
-  EXPECT_TRUE(boost::math::isnan(g.d_));
+  EXPECT_TRUE(stan::math::is_nan(g.val_));
+  EXPECT_TRUE(stan::math::is_nan(g.d_));
 
   fvar<double> w = 0;
   fvar<double> h = abs(w);

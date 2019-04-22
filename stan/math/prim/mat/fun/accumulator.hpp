@@ -3,10 +3,8 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits/is_arithmetic.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <vector>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -41,14 +39,14 @@ class accumulator {
    * Add the specified arithmetic type value to the buffer after
    * static casting it to the class type <code>T</code>.
    *
-   * <p>See the Boost doc for <code>boost::is_arithmetic</code>
+   * <p>See the std library doc for <code>std::is_arithmetic</code>
    * for information on what counts as an arithmetic type.
    *
    * @tparam S Type of argument
    * @param x Value to add
    */
   template <typename S>
-  typename boost::enable_if<boost::is_arithmetic<S>, void>::type add(S x) {
+  typename std::enable_if<std::is_arithmetic<S>::value, void>::type add(S x) {
     buf_.push_back(static_cast<T>(x));
   }
 
@@ -58,16 +56,16 @@ class accumulator {
    * <p>This function is disabled if the type <code>S</code> is
    * arithmetic or if it's not the same as <code>T</code>.
    *
-   * <p>See the Boost doc for <code>boost::is_arithmetic</code>
+   * <p>See the std library doc for <code>std::is_arithmetic</code>
    * for information on what counts as an arithmetic type.
    *
    * @tparam S Type of argument
    * @param x Value to add
    */
   template <typename S>
-  typename boost::disable_if<
-      boost::is_arithmetic<S>,
-      typename boost::enable_if<boost::is_same<S, T>, void>::type>::type
+  typename std::enable_if<
+      !std::is_arithmetic<S>::value,
+      typename std::enable_if<std::is_same<S, T>::value, void>::type>::type
   add(const S& x) {
     buf_.push_back(x);
   }

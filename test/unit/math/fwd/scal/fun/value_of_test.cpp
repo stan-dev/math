@@ -22,6 +22,6 @@ TEST(AgradFwd, value_of_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   fvar<double> a = nan;
-  EXPECT_TRUE(boost::math::isnan(value_of(a)));
-  EXPECT_TRUE(boost::math::isnan(value_of(nan)));
+  EXPECT_TRUE(stan::math::is_nan(value_of(a)));
+  EXPECT_TRUE(stan::math::is_nan(value_of(nan)));
 }

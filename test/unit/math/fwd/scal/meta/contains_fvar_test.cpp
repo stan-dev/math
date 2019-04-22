@@ -7,4 +7,7 @@ TEST(MetaTraits, containsFvar) {
   EXPECT_TRUE((contains_fvar<fvar<double> >::value));
   EXPECT_TRUE((contains_fvar<double, fvar<double> >::value));
   EXPECT_TRUE((contains_fvar<fvar<fvar<double> > >::value));
+  bool temp = contains_fvar<double, double, double, double, double,
+                            fvar<fvar<double> > >::value;
+  EXPECT_TRUE(temp);
 }

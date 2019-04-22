@@ -24,6 +24,6 @@ TEST(AgradFwd, primitiveValueNanRevNested) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   fvar<var> a = nan;
-  EXPECT_TRUE(boost::math::isnan(primitive_value(a)));
-  EXPECT_TRUE(boost::math::isnan(primitive_value(nan)));
+  EXPECT_TRUE(stan::math::is_nan(primitive_value(a)));
+  EXPECT_TRUE(stan::math::is_nan(primitive_value(nan)));
 }

@@ -13,7 +13,7 @@ namespace math {
  * @param[in] x Argument.
  * @return Natural log of argument.
  */
-inline double log(int x) { return std::log(static_cast<double>(x)); }
+inline double log(int x) { return std::log(x); }
 
 }  // namespace math
 }  // namespace stan

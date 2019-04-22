@@ -30,8 +30,6 @@ typename return_type<T_y, T_scale>::type rayleigh_lccdf(const T_y& y,
   typedef
       typename stan::partials_return_type<T_y, T_scale>::type T_partials_return;
 
-  using stan::is_constant_struct;
-
   T_partials_return ccdf_log(0.0);
 
   if (size_zero(y, sigma))

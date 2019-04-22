@@ -4,7 +4,7 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdAtanh, Fvar) {
-  using boost::math::atanh;
+  using stan::math::atanh;
   using stan::math::fvar;
 
   fvar<double> x(0.5, 1.0);
@@ -21,7 +21,7 @@ TEST(AgradFwdAtanh, Fvar) {
 }
 
 TEST(AgradFwdAtanh, FvarFvarDouble) {
-  using boost::math::atanh;
+  using stan::math::atanh;
   using stan::math::fvar;
 
   fvar<fvar<double> > x;
