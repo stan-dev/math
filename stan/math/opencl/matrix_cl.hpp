@@ -128,9 +128,12 @@ class matrix_cl {
 
   matrix_cl() : rows_(0), cols_(0) {}
 
-  matrix_cl(const matrix_cl& A) : rows_(A.rows()), cols_(A.cols()),
-   write_events_(A.write_events()), read_events_(A.read_events()),
-   oclBuffer_(A.buffer()) {}
+  matrix_cl(const matrix_cl& A)
+      : rows_(A.rows()),
+        cols_(A.cols()),
+        write_events_(A.write_events()),
+        read_events_(A.read_events()),
+        oclBuffer_(A.buffer()) {}
   /**
    * Constructor for the matrix_cl that
    * only allocates the buffer on the OpenCL device.
