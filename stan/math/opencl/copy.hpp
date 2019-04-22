@@ -130,8 +130,8 @@ inline std::vector<double> packed_copy(const matrix_cl& src) {
     stan::math::opencl_kernels::pack(cl::NDRange(src.rows(), src.rows()),
                                      packed, src, src.rows(), src.rows(),
                                      triangular_view);
-    const std::vector<cl::Event> mat_events = vec_concat(packed.write_events(),
-     src.read_events());
+    const std::vector<cl::Event> mat_events
+        = vec_concat(packed.write_events(), src.read_events());
     cl::Event copy_event;
     queue.enqueueReadBuffer(packed.buffer(), CL_FALSE, 0,
                             sizeof(double) * packed_size, dst.data(),
@@ -210,8 +210,8 @@ inline void copy(matrix_cl& dst, const matrix_cl& src) {
      *  for explanation
      */
     cl::CommandQueue queue = opencl_context.queue();
-    const std::vector<cl::Event> mat_events = vec_concat(dst.read_events(),
-     src.write_events());
+    const std::vector<cl::Event> mat_events
+        = vec_concat(dst.read_events(), src.write_events());
     cl::Event copy_event;
     queue.enqueueCopyBuffer(src.buffer(), dst.buffer(), 0, 0,
                             sizeof(double) * src.size(), &mat_events,
