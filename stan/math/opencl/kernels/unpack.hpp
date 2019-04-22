@@ -60,7 +60,7 @@ static const char* unpack_kernel_code = STRINGIFY(
  * See the docs for \link kernels/unpack.hpp unpack() \endlink
  */
 const global_range_kernel<cl::Buffer, cl::Buffer, int, int, TriangularViewCL>
-    unpack("unpack", unpack_kernel_code);
+    unpack("unpack", {indexing_helpers, unpack_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

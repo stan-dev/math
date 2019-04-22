@@ -177,14 +177,15 @@ inline void copy(matrix_cl& dst, const matrix_cl& src) {
   if (src.size() == 0) {
     return;
   }
+  cl::CommandQueue queue = opencl_context.queue();
   try {
     /**
      * Copies the contents of the src buffer to the dst buffer
      * see the matrix_cl(matrix_cl&) constructor
      *  for explanation
      */
-    opencl_kernels::copy(cl::NDRange(dst.rows(), dst.cols()), src.buffer(),
-                         dst.buffer(), dst.rows(), dst.cols());
+    queue.enqueueCopyBuffer(src.buffer(), dst.buffer(), 0, 0,
+                            sizeof(double) * src.size());
   } catch (const cl::Error& e) {
     std::cout << e.err() << std::endl;
     check_opencl_error("copy (OpenCL)->(OpenCL)", e);

@@ -7,9 +7,10 @@
 namespace stan {
 
 /**
- * Metaprogram to determine if any of the
- * provided types have a base scalar
- * type that cannot be assigned to type double.
+ * Extends std::true_type when instantiated with at least 1
+ * template parameter that is a nonconstant struct.
+ * Extends std::false_type otherwise.
+ * @tparam T Types to test
  */
 template <typename... T>
 using contains_nonconstant_struct

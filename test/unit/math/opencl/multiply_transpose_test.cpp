@@ -103,4 +103,24 @@ TEST(AgradRevMatrix, multiply_transposed_big_non_square) {
   EXPECT_MATRIX_NEAR(m2, m2_gpu, 1e-10);
 }
 
+TEST(AgradRevMatrix, multiply_transposed_big_x) {
+  using stan::math::multiply;
+  stan::math::matrix_d m2, m2_gpu;
+
+  int size_x = 200;
+  int size_y = 50;
+  auto m1 = stan::math::matrix_d::Random(size_x, size_y).eval();
+  m2.resize(size_x, size_x);
+  m2_gpu.resize(size_x, size_x);
+
+  m2 = m1 * m1.transpose();
+
+  stan::math::matrix_cl m11(m1);
+  stan::math::matrix_cl m22(size_x, size_x);
+  m22 = stan::math::multiply_transpose(m11);
+  stan::math::copy(m2_gpu, m22);
+
+  EXPECT_MATRIX_NEAR(m2, m2_gpu, 1e-10);
+}
+
 #endif
