@@ -191,7 +191,7 @@ endif
 
 CXXFLAGS_TBB ?= -I $(TBB)/include
 LDFLAGS_TBB ?= -Wl,-L,"$(TBB_ABSOLUTE_PATH)/lib" -Wl,-rpath,"$(TBB_ABSOLUTE_PATH)/lib"
-LDLIBS_TBB ?= -ltbb -ltbbmalloc -ltbbmalloc_proxy
+LDLIBS_TBB ?= 
 
 
 ################################################################################
