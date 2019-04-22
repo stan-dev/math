@@ -52,9 +52,9 @@ void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
      * This means that future kernels need to know about the copy_event
      * So that they do not execute until this transfer finishes.
      */
-    dst.wait_for_read_event();
+    dst.wait_for_read_events();
     dst.clear_read_events();
-    dst.wait_for_write_event();
+    dst.wait_for_write_events();
     dst.clear_write_events();
     cl::Event copy_event;
     cl::CommandQueue& queue = opencl_context.queue();
@@ -137,6 +137,7 @@ inline std::vector<double> packed_copy(const matrix_cl& src) {
                             &mat_events, &copy_event);
     copy_event.wait();
     src.clear_write_events();
+    src.clear_read_events();
   } catch (const cl::Error& e) {
     check_opencl_error("packed_copy (OpenCL->std::vector)", e);
   }
@@ -257,7 +258,7 @@ inline void copy(matrix_cl& dst, const T& src) {
   check_size_match("copy ((OpenCL) -> (OpenCL))", "src.cols()", dst.cols(),
                    "dst.cols()", 1);
   try {
-    dst.wait_for_read_event();
+    dst.wait_for_read_events();
     dst.clear_read_events();
     cl::CommandQueue queue = opencl_context.queue();
     cl::Event copy_event;

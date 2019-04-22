@@ -105,7 +105,7 @@ class matrix_cl {
   /**
    * Waits for the write events to finish before continuing.
    */
-  inline void wait_for_write_event() const {
+  inline void wait_for_write_events() const {
     cl::CommandQueue queue = opencl_context.queue();
     cl::Event copy_event;
     queue.enqueueBarrierWithWaitList(&this->write_events(), &copy_event);
@@ -116,7 +116,7 @@ class matrix_cl {
   /**
    * Waits for the read events to finish before continuing.
    */
-  inline void wait_for_read_event() const {
+  inline void wait_for_read_events() const {
     cl::CommandQueue queue = opencl_context.queue();
     cl::Event copy_event;
     queue.enqueueBarrierWithWaitList(&this->read_events(), &copy_event);
@@ -219,10 +219,8 @@ class matrix_cl {
     check_size_match("assignment of (OpenCL) matrices", "source.cols()",
                      a.cols(), "destination.cols()", cols());
     // Need to wait for all of matrices events before destroying old buffer
-    cl::Event assign_event;
-    cl::CommandQueue& queue = opencl_context.queue();
-    queue.enqueueBarrierWithWaitList(&this->write_events(), &assign_event);
-    assign_event.wait();
+    this->wait_for_read_events();
+    this->wait_for_write_events();
     write_events_ = a.write_events();
     read_events_ = a.read_events();
 

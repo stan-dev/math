@@ -40,7 +40,7 @@ namespace math {
  * @throw std::domain_error if m is not
  *  positive definite (if m has more than 0 elements)
  */
-inline void cholesky_decompose(matrix_cl&& A) {
+inline void cholesky_decompose(matrix_cl& A) {
   if (A.rows() == 0)
     return;
   // Repeats the blocked cholesky decomposition until the size of the remaining
@@ -69,7 +69,7 @@ inline void cholesky_decompose(matrix_cl&& A) {
   // The following function either calls the
   // blocked cholesky recursively for the submatrix A_11
   // or calls the kernel  directly if the size of the block is small enough
-  cholesky_decompose(std::move(A_11));
+  cholesky_decompose(A_11);
   // Copies L_11 back to the input matrix
   A.sub_block(A_11, 0, 0, 0, 0, block, block);
 
@@ -87,7 +87,7 @@ inline void cholesky_decompose(matrix_cl&& A) {
   // computes A_22 - L_21*(L_21^T)
   matrix_cl L_22 = A_22 - multiply_transpose(L_21);
   // copy L_22 into A's lower left hand corner
-  cholesky_decompose(std::move(L_22));
+  cholesky_decompose(L_22);
   A.sub_block(L_22, 0, 0, block, block, block_subset, block_subset);
   check_nan("cholesky_decompose (OpenCL)", "Matrix m", A);
   check_diagonal_zeros("cholesky_decompose (OpenCL)", "Matrix m", A);
