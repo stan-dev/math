@@ -125,7 +125,7 @@ class cvodes_integrator {
         typename stan::return_type<T_initial, T_param, T_t0, T_ts>::type>>
         y;
     coupled_ode_observer<F, T_initial, T_param, T_t0, T_ts> observer(
-        f, y0, theta, t0, ts, x, x_int, msgs, y, false);
+        f, y0, theta, t0, ts, x, x_int, msgs, y);
 
     try {
       cvodes_check_flag(CVodeInit(cvodes_mem, &ode_data::cv_rhs, t0_dbl,

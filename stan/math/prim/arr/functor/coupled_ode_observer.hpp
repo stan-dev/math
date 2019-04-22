@@ -26,11 +26,7 @@ namespace math {
  *
  * The output of this class is for all time-points in the ts vector
  * which does not contain the initial time-point by the convention
- * used in stan-math. However, the odeint integrator always calls the
- * observer class at the initial time-point whereas our CVODES
- * integrator does not. To accomodate the different conventions the
- * constructor has the skip_first_state boolean to indicate which
- * convention to follow (true=odeint, false=CVODES convention).
+ * used in stan-math.
  *
  */
 template <typename F, typename T1, typename T2, typename T_t0, typename T_ts>
@@ -49,13 +45,11 @@ struct coupled_ode_observer {
   const std::vector<int>& x_int_;
   std::ostream* msgs_;
   std::vector<std::vector<return_t>>& y_;
-  const bool skip_first_state_;
   const std::size_t N_;
   const std::size_t M_;
   const std::size_t index_offset_theta_;
   // counter pointing to the element in the ts vector which is
-  // currently being referred to. Initialized to -1 when the first
-  // state is not skipped and -2 if the first state is skipped.
+  // currently being referred to. Initialized to -1.
   int n_;
 
   /**
@@ -77,18 +71,13 @@ struct coupled_ode_observer {
    * @param[in] x_int integer data vector for the ODE.
    * @param[out] msgs the print stream for warning messages.
    * @param[out] y reference to a vector of vector of the final return
-   * @param[in] skip_first_state optional parameter which allows to
-   * skip the recording of the first state (needed to interface with
-   * boosts integrators). Defaults to false.
-   * type.
    */
   coupled_ode_observer(const F& f, const std::vector<T1>& y0,
                        const std::vector<T2>& theta, const T_t0& t0,
                        const std::vector<T_ts>& ts,
                        const std::vector<double>& x,
                        const std::vector<int>& x_int, std::ostream* msgs,
-                       std::vector<std::vector<return_t>>& y,
-                       bool skip_first_state = false)
+                       std::vector<std::vector<return_t>>& y)
       : f_(f),
         y0_(y0),
         t0_(t0),
@@ -98,11 +87,10 @@ struct coupled_ode_observer {
         x_int_(x_int),
         msgs_(msgs),
         y_(y),
-        skip_first_state_(skip_first_state),
         N_(y0.size()),
         M_(theta.size()),
         index_offset_theta_(is_constant_struct<T1>::value ? 0 : N_ * N_),
-        n_(skip_first_state_ ? -2 : -1) {}
+        n_(-1) {}
 
   /**
    * Callback function for ODE solvers to record values. The coupled
@@ -118,10 +106,7 @@ struct coupled_ode_observer {
    * vector, respectively.
    */
   void operator()(const std::vector<double>& coupled_state, double t) {
-    if (n_++ == -2 && skip_first_state_) {
-      return;
-    }
-    check_less("coupled_ode_observer", "time-state number", n_, ts_.size());
+    check_less("coupled_ode_observer", "time-state number", ++n_, ts_.size());
 
     std::vector<return_t> yt;
     yt.reserve(N_);
