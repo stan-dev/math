@@ -84,8 +84,9 @@ struct coupled_ode_system<F, double, var> {
    * Assign the derivative vector with the system derivatives at
    * the specified state and time.
    *
-   * <p>The input state must be of size <code>size()</code>, and
-   * the output produced will be of the same size.
+   * <p>The input state <code>z</code> must be of size
+   * <code>size()</code>, and the output produced, <code>dz_dt</code>,
+   * will be of the same size.
    *
    * @param[in] z state of the coupled ode system.
    * @param[out] dz_dt populated with the derivatives of
@@ -262,6 +263,10 @@ struct coupled_ode_system<F, var, double> {
   /**
    * Calculates the derivative of the coupled ode system
    * with respect to the state y at time t.
+   *
+   * <p>The input state <code>z</code> must be of size
+   * <code>size()</code>, and the output produced, <code>dz_dt</code>,
+   * will be of the same size.
    *
    * @param[in] z the current state of the coupled, shifted ode
    * system. This is a a vector of double of length size().
@@ -457,6 +462,10 @@ struct coupled_ode_system<F, var, var> {
    * Populates the derivative vector with derivatives of the
    * coupled ODE system state with respect to time evaluated at the
    * specified state and specified time.
+   *
+   * <p>The input state <code>z</code> must be of size
+   * <code>size()</code>, and the output produced, <code>dz_dt</code>,
+   * will be of the same size.
    *
    * @param[in]  z the current state of the coupled, shifted ode system,
    * of size <code>size()</code>.
