@@ -20,8 +20,9 @@ static const char* gp_exp_quad_cov_kernel_code = STRINGIFY(
      * @param size number of elements in x
      * @param element_size the number of doubles that make one element of x
      */
-    __kernel void gp_exp_quad_cov(const __global double* x, __global double* res,
-                                  const double sigma_sq, const double neg_half_inv_l_sq,
+    __kernel void gp_exp_quad_cov(const __global double* x,
+                                  __global double* res, const double sigma_sq,
+                                  const double neg_half_inv_l_sq,
                                   const int size, const int element_size) {
       const int i = get_global_id(0);
       const int j = get_global_id(1);
@@ -61,10 +62,11 @@ static const char* gp_exp_quad_cov_cross_kernel_code = STRINGIFY(
      * @param element_size the number of doubles that make one element of x and
      * y
      */
-    __kernel void gp_exp_quad_cov_cross(const __global double* x1, const __global double* x2,
-                                    __global double* res, const double sigma_sq,
-                                        const double neg_half_inv_l_sq, const int size1,
-                                        const int size2, const int element_size) {
+    __kernel void gp_exp_quad_cov_cross(
+        const __global double* x1, const __global double* x2,
+        __global double* res, const double sigma_sq,
+        const double neg_half_inv_l_sq, const int size1, const int size2,
+        const int element_size) {
       const int i = get_global_id(0);
       const int j = get_global_id(1);
       if (i < size1 && j < size2) {
@@ -92,7 +94,8 @@ const global_range_kernel<cl::Buffer, cl::Buffer, double, double, int, int>
  */
 const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, double, double,
                           int, int, int>
-    gp_exp_quad_cov_cross("gp_exp_quad_cov_cross", gp_exp_quad_cov_cross_kernel_code, {});
+    gp_exp_quad_cov_cross("gp_exp_quad_cov_cross",
+                          gp_exp_quad_cov_cross_kernel_code, {});
 
 }  // namespace opencl_kernels
 }  // namespace math

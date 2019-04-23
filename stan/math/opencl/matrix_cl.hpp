@@ -51,7 +51,9 @@ class matrix_cl {
 
   matrix_cl() : rows_(0), cols_(0) {}
 
-  explicit matrix_cl(const std::vector<double>& A, bool is_row_vector=false) : rows_(is_row_vector ? A.size() : 1), cols_(is_row_vector ? 0 : A.size()) {
+  explicit matrix_cl(const std::vector<double>& A, bool is_row_vector = false)
+      : rows_(is_row_vector ? A.size() : 1),
+        cols_(is_row_vector ? 0 : A.size()) {
     if (A.size() == 0)
       return;
     // the context is needed to create the buffer object
@@ -101,7 +103,8 @@ class matrix_cl {
            * on the device until we are sure that the data
            * is finished transfering
            */
-          queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, sizeof(double) * offset_size,
+          queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE,
+                                   sizeof(double) * offset_size,
                                    sizeof(double) * rows_, A[i].data());
         }
       } catch (const cl::Error& e) {

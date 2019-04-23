@@ -264,8 +264,7 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
  *   x is nan or infinite
  */
 template <typename T_x,
-          typename
-          = typename std::enable_if_t<is_constant_struct<T_x>::value>>
+          typename = typename std::enable_if_t<is_constant_struct<T_x>::value>>
 inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<T_x> &x,
                                        const double sigma,
                                        const double length_scale) {
@@ -343,8 +342,9 @@ inline Eigen::MatrixXd gp_exp_quad_cov(
  *   x is nan or infinite
  */
 template <typename T_x1, typename T_x2,
-          typename = typename std::enable_if_t<
-                  is_constant_struct<T_x1>::value && is_constant_struct<T_x2>::value>>
+          typename
+          = typename std::enable_if_t<is_constant_struct<T_x1>::value
+                                      && is_constant_struct<T_x2>::value>>
 inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<T_x1> &x1,
                                                 const std::vector<T_x2> &x2,
                                                 const double sigma,

@@ -44,7 +44,8 @@ inline matrix_cl gp_exp_quad_cov(const matrix_cl& x, const double sigma,
  *
  * @return Squared distance between elements of x and y.
  */
-inline matrix_cl gp_exp_quad_cov(const matrix_cl& x, const matrix_cl& y, const double sigma,
+inline matrix_cl gp_exp_quad_cov(const matrix_cl& x, const matrix_cl& y,
+                                 const double sigma,
                                  const double length_scale) {
   check_size_match("gp_exp_quad_cov_cross", "x", x.rows(), "y", y.rows());
   matrix_cl res(x.cols(), y.cols());
