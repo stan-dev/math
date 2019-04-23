@@ -20,9 +20,9 @@ static const char* gp_exp_quad_cov_kernel_code = STRINGIFY(
      * @param size number of elements in x
      * @param element_size the number of doubles that make one element of x
      */
-    __kernel void gp_exp_quad_cov(__global double* x, __global double* res,
-                                  double sigma_sq, double neg_half_inv_l_sq,
-                                  int size, int element_size) {
+    __kernel void gp_exp_quad_cov(const __global double* x, __global double* res,
+                                  const double sigma_sq, const double neg_half_inv_l_sq,
+                                  const int size, const int element_size) {
       const int i = get_global_id(0);
       const int j = get_global_id(1);
       if (i < size && j < (size - 1) && i > j) {
@@ -43,7 +43,7 @@ static const char* gp_exp_quad_cov_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
-static const char* gp_exp_quad_cov_2_kernel_code = STRINGIFY(
+static const char* gp_exp_quad_cov_cross_kernel_code = STRINGIFY(
     // \endcond
     /**
      * GPU part of calculation of squared exponential kernel.
@@ -61,10 +61,10 @@ static const char* gp_exp_quad_cov_2_kernel_code = STRINGIFY(
      * @param element_size the number of doubles that make one element of x and
      * y
      */
-    __kernel void gp_exp_quad_cov_2(__global double* x1, __global double* x2,
-                                    __global double* res, double sigma_sq,
-                                    double neg_half_inv_l_sq, int size1,
-                                    int size2, int element_size) {
+    __kernel void gp_exp_quad_cov_cross(const __global double* x1, const __global double* x2,
+                                    __global double* res, const double sigma_sq,
+                                        const double neg_half_inv_l_sq, const int size1,
+                                        const int size2, const int element_size) {
       const int i = get_global_id(0);
       const int j = get_global_id(1);
       if (i < size1 && j < size2) {
@@ -87,12 +87,12 @@ const global_range_kernel<cl::Buffer, cl::Buffer, double, double, int, int>
     gp_exp_quad_cov("gp_exp_quad_cov", gp_exp_quad_cov_kernel_code, {});
 
 /**
- * See the docs for \link kernels/gp_exp_quad_cov.hpp gp_exp_quad_cov_2()
+ * See the docs for \link kernels/gp_exp_quad_cov.hpp gp_exp_quad_cov_cross()
  * \endlink
  */
 const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, double, double,
                           int, int, int>
-    gp_exp_quad_cov_2("gp_exp_quad_cov_2", gp_exp_quad_cov_2_kernel_code, {});
+    gp_exp_quad_cov_cross("gp_exp_quad_cov_cross", gp_exp_quad_cov_cross_kernel_code, {});
 
 }  // namespace opencl_kernels
 }  // namespace math

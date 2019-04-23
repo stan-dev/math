@@ -12,9 +12,11 @@
 #include <stan/math/prim/scal/fun/divide.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/meta/is_constant.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/mat/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/opencl/copy.hpp>
+#include <stan/math/opencl/err/check_nan.hpp>
 #include <stan/math/opencl/gp_exp_quad_cov.hpp>
 #include <cmath>
 #include <vector>
@@ -252,7 +254,6 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
  * Returns a squared exponential kernel.
  *
  * @tparam T_x type for each scalar
- * @tparam Cond condition
  *
  * @param x std::vector of scalars that can be used in square distance.
  *    This function assumes each element of x is the same size.
@@ -263,26 +264,24 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
  *   x is nan or infinite
  */
 template <typename T_x,
-          typename Cond
-          = typename std::enable_if<is_constant<T_x>::value>::type>
+          typename
+          = typename std::enable_if_t<is_constant_struct<T_x>::value>>
 inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<T_x> &x,
                                        const double sigma,
                                        const double length_scale) {
-  check_positive("gp_exp_quad_cov", "magnitude", sigma);
-  check_positive("gp_exp_quad_cov", "length scale", length_scale);
+  check_positive(__func__, "magnitude", sigma);
+  check_positive(__func__, "length scale", length_scale);
 
-  size_t x_size = x.size();
+  const size_t x_size = x.size();
   Eigen::MatrixXd cov(x_size, x_size);
 
   if (x_size == 0)
     return cov;
 
-  for (size_t n = 0; n < x.size(); ++n)
-    check_not_nan("gp_exp_quad_cov", "x", x[n]);
-
-  matrix_cl x_gpu(x);
-  matrix_cl cov_gpu = gp_exp_quad_cov(x_gpu, sigma, length_scale);
-  copy(cov, cov_gpu);  // NOLINT
+  matrix_cl x_cl(x);
+  check_nan(__func__, "x", x_cl);
+  matrix_cl cov_cl = gp_exp_quad_cov(x_cl, sigma, length_scale);
+  copy(cov, cov_cl);  // NOLINT
 
   return cov;
 }
@@ -304,24 +303,24 @@ template <typename T = void>  // if this was non-templated overload or fully
 inline Eigen::MatrixXd gp_exp_quad_cov(
     const std::vector<Eigen::VectorXd> &x, const double sigma,
     const std::vector<double> &length_scale) {
-  check_positive_finite("gp_exp_quad_cov", "magnitude", sigma);
-  check_positive_finite("gp_exp_quad_cov", "length scale", length_scale);
+  check_positive_finite(__func__, "magnitude", sigma);
+  check_positive_finite(__func__, "length scale", length_scale);
 
-  size_t x_size = x.size();
+  const size_t x_size = x.size();
   Eigen::MatrixXd cov(x_size, x_size);
 
   if (x_size == 0)
     return cov;
 
-  size_t l_size = length_scale.size();
-  check_size_match("gp_exp_quad_cov", "x dimension", x[0].size(),
-                   "number of length scales", l_size);
+  check_size_match(__func__, "x dimension", x[0].size(),
+                   "number of length scales", length_scale.size());
 
   std::vector<Eigen::VectorXd> x_new = divide_columns(x, length_scale);
 
-  matrix_cl x_gpu(x_new);
-  matrix_cl cov_gpu = gp_exp_quad_cov(x_gpu, sigma, 1);
-  copy(cov, cov_gpu);  // NOLINT
+  matrix_cl x_cl(x_new);
+  check_nan(__func__, "x", x_cl);
+  matrix_cl cov_cl = gp_exp_quad_cov(x_cl, sigma, 1);
+  copy(cov, cov_cl);  // NOLINT
   return cov;
 }
 
@@ -334,7 +333,6 @@ inline Eigen::MatrixXd gp_exp_quad_cov(
  * @tparam T_x1 type of first std::vector of scalars
  * @tparam T_x2 type of second std::vector of scalars
  *    This function assumes each element of x1 and x2 are the same size.
- * @tparam Cond condition
  *
  * @param x1 std::vector of elements that can be used in square distance
  * @param x2 std::vector of elements that can be used in square distance
@@ -345,31 +343,27 @@ inline Eigen::MatrixXd gp_exp_quad_cov(
  *   x is nan or infinite
  */
 template <typename T_x1, typename T_x2,
-          typename Cond = typename std::enable_if<
-              is_constant<T_x1>::value && is_constant<T_x2>::value>::type>
+          typename = typename std::enable_if_t<
+                  is_constant_struct<T_x1>::value && is_constant_struct<T_x2>::value>>
 inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<T_x1> &x1,
                                                 const std::vector<T_x2> &x2,
                                                 const double sigma,
                                                 const double length_scale) {
-  const char *function_name = "gp_exp_quad_cov";
-  check_positive(function_name, "magnitude", sigma);
-  check_positive(function_name, "length scale", length_scale);
+  check_positive_finite(__func__, "magnitude", sigma);
+  check_positive_finite(__func__, "length scale", length_scale);
 
-  size_t x1_size = x1.size();
-  size_t x2_size = x2.size();
+  const size_t x1_size = x1.size();
+  const size_t x2_size = x2.size();
   Eigen::MatrixXd cov(x1_size, x2_size);
   if (x1_size == 0 || x2_size == 0)
     return cov;
 
-  for (size_t i = 0; i < x1_size; ++i)
-    check_not_nan(function_name, "x1", x1[i]);
-  for (size_t i = 0; i < x2_size; ++i)
-    check_not_nan(function_name, "x2", x2[i]);
-
-  matrix_cl x1_gpu(x1);
-  matrix_cl x2_gpu(x2);
-  matrix_cl cov_gpu = gp_exp_quad_cov(x1_gpu, x2_gpu, sigma, length_scale);
-  copy(cov, cov_gpu);  // NOLINT
+  matrix_cl x1_cl(x1);
+  check_nan(__func__, "x1", x1_cl);
+  matrix_cl x2_cl(x2);
+  check_nan(__func__, "x2", x2_cl);
+  matrix_cl cov_cl = gp_exp_quad_cov(x1_cl, x2_cl, sigma, length_scale);
+  copy(cov, cov_cl);  // NOLINT
   return cov;
 }
 
@@ -395,33 +389,30 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
     const std::vector<Eigen::VectorXd> &x1,
     const std::vector<Eigen::VectorXd> &x2, const double sigma,
     const std::vector<double> &length_scale) {
-  size_t x1_size = x1.size();
-  size_t x2_size = x2.size();
-  size_t l_size = length_scale.size();
+  const size_t x1_size = x1.size();
+  const size_t x2_size = x2.size();
+  const size_t l_size = length_scale.size();
 
   Eigen::MatrixXd cov(x1_size, x2_size);
   if (x1_size == 0 || x2_size == 0)
     return cov;
 
-  const char *function_name = "gp_exp_quad_cov";
-  for (size_t i = 0; i < x1_size; ++i)
-    check_not_nan(function_name, "x1", x1[i]);
-  for (size_t i = 0; i < x2_size; ++i)
-    check_not_nan(function_name, "x2", x2[i]);
-  check_positive_finite(function_name, "magnitude", sigma);
-  check_positive_finite(function_name, "length scale", length_scale);
-  check_size_match(function_name, "x dimension", x1[0].size(),
+  check_positive_finite(__func__, "magnitude", sigma);
+  check_positive_finite(__func__, "length scale", length_scale);
+  check_size_match(__func__, "x1 dimension", x1[0].size(),
                    "number of length scales", l_size);
-  check_size_match(function_name, "x dimension", x2[0].size(),
+  check_size_match(__func__, "x2 dimension", x2[0].size(),
                    "number of length scales", l_size);
 
   std::vector<Eigen::VectorXd> x1_new = divide_columns(x1, length_scale);
   std::vector<Eigen::VectorXd> x2_new = divide_columns(x2, length_scale);
 
-  matrix_cl x1_gpu(x1_new);
-  matrix_cl x2_gpu(x2_new);
-  matrix_cl cov_gpu = gp_exp_quad_cov(x1_gpu, x2_gpu, sigma, 1);
-  copy(cov, cov_gpu);  // NOLINT
+  matrix_cl x1_cl(x1_new);
+  check_nan(__func__, "x1", x1_cl);
+  matrix_cl x2_cl(x2_new);
+  check_nan(__func__, "x2", x2_cl);
+  matrix_cl cov_cl = gp_exp_quad_cov(x1_cl, x2_cl, sigma, 1);
+  copy(cov, cov_cl);  // NOLINT
   return cov;
 }
 #endif

@@ -51,7 +51,7 @@ class matrix_cl {
 
   matrix_cl() : rows_(0), cols_(0) {}
 
-  explicit matrix_cl(const std::vector<double>& A) : rows_(1), cols_(A.size()) {
+  explicit matrix_cl(const std::vector<double>& A, bool is_row_vector=false) : rows_(is_row_vector ? A.size() : 1), cols_(is_row_vector ? 0 : A.size()) {
     if (A.size() == 0)
       return;
     // the context is needed to create the buffer object
@@ -63,7 +63,7 @@ class matrix_cl {
       queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0,
                                sizeof(double) * A.size(), A.data());
     } catch (const cl::Error& e) {
-      check_opencl_error("matrix_cl(std::vector<T>) constructor", e);
+      check_opencl_error("matrix_cl(std::vector<double>) constructor", e);
     }
   }
 
@@ -76,7 +76,7 @@ class matrix_cl {
    * @tparam C column type
    * @param A the Eigen matrix
    *
-   * @throw <code>std::system_error</code> if the
+   * @throw <code>std::invalid_argument</code> if the
    * matrices do not have matching dimensions
    */
   template <int R, int T>
@@ -90,7 +90,7 @@ class matrix_cl {
         // matrix to the OpenCL device
         oclBuffer_
             = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size());
-        for (int i = 0, start = 0; i < cols_; i++, start += rows_) {
+        for (int i = 0, offset_size = 0; i < cols_; i++, offset_size += rows_) {
           check_size_match("matrix constructor", "input rows", A[i].size(),
                            "matrix_cl rows", rows_);
           /**
@@ -101,7 +101,7 @@ class matrix_cl {
            * on the device until we are sure that the data
            * is finished transfering
            */
-          queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, sizeof(double) * start,
+          queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, sizeof(double) * offset_size,
                                    sizeof(double) * rows_, A[i].data());
         }
       } catch (const cl::Error& e) {
