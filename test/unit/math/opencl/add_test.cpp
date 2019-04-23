@@ -205,9 +205,8 @@ TEST(MathMatrixGPU, add_batch) {
   }
   stan::math::matrix_cl a_cl(a);
   stan::math::matrix_cl a_cl_res(size, size);
-  stan::math::opencl_kernels::add_batch(cl::NDRange(size, size),
-                                        a_cl_res, a_cl, size,
-                                        size, batch_size);
+  stan::math::opencl_kernels::add_batch(cl::NDRange(size, size), a_cl_res, a_cl,
+                                        size, size, batch_size);
   copy(a_res, a_cl_res);
   for (int k = 0; k < batch_size; k++) {
     for (int i = 0; i < size; i++)
