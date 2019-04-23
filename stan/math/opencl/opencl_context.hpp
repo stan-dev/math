@@ -179,13 +179,15 @@ class opencl_context_base {
          {"LOCAL_SIZE_", 64}};
   // TODO(Steve): Make these tunable during warmup
   struct tuning_struct {
-    // Used in stan/math/opencl/cholesky_decompose
+    // Used in math/opencl/cholesky_decompose
     int cholesky_min_L11_size = 256;
     int cholesky_partition = 4;
     int cholesky_size_worth_transfer = 1250;
     // Used in math/rev/mat/fun/cholesky_decompose
     int cholesky_rev_min_block_size = 512;
     int cholesky_rev_block_partition = 8;
+    // used in math/opencl/multiply
+    int multiply_split_upper_limit = 2000000;
   } tuning_opts_;
 
   static opencl_context_base& getInstance() {

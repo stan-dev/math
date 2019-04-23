@@ -32,7 +32,9 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
       // global thread index
       const int i = THREAD_BLOCK_SIZE * get_group_id(0) + thread_block_row;
       const int j = THREAD_BLOCK_SIZE * get_group_id(1) + thread_block_col;
-
+      // identify if the matrix multiply is split
+      const int split_id = get_global_id(2);
+      const int split_size = get_global_size(2);
       // local memory
       __local double A_local[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];
       __local double B_local[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];
@@ -41,9 +43,25 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
       for (int w = 0; w < WORK_PER_THREAD; w++) {
         acc[w] = 0.0;
       }
-
+      // the number of tiles for each scalar product in the matrix mulitply
       const int num_tiles = (K + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
-
+      // in case of splitting the matrix multiply we need
+      // use split_offset_tiles the threads assigned part
+      // of the scalar products, while the split_tiles
+      // determines the number of tiles a thread multiplies
+      // if split_size = 1, each thread calculates the
+      // the entire scalar product for all assigned
+      // elements of the resulting matrix, meaning that
+      // split_offset_tiles is 0 and split_tiles = num_tiles
+      int split_tiles = num_tiles / split_size;
+      const int split_remainder = num_tiles % split_size;
+      int split_offset_tiles = split_id * split_tiles;
+      if (split_id < split_remainder) {
+        split_offset_tiles = split_offset_tiles + split_id;
+        split_tiles++;
+      } else {
+        split_offset_tiles = split_offset_tiles + split_remainder;
+      }
       // This kernel is based on the well known
       // general matrix multiplication kernels that
       // use tiling for shared memory
@@ -67,9 +85,15 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
           = lower_upper_A == UPPER ? (i / THREAD_BLOCK_SIZE) : 0;
       const int start_tile_B
           = lower_upper_B == LOWER ? (j / THREAD_BLOCK_SIZE) : 0;
-      const int start_tile = max(start_tile_A, start_tile_B);
-      const int end_tile = min(end_tile_A, end_tile_B);  // NOLINT
-
+      // the starting and end tiles for a thread are determined by
+      // split_offset_tiles and split_tiles. If the input matrix is
+      // triangular some tiles can be skipped in which case we
+      // either start the scalar product at larger cols/rows
+      // or end them at smaller cols/rows.
+      int start_tile = max(start_tile_A, start_tile_B);
+      start_tile = max(start_tile, split_offset_tiles);
+      int end_tile = min(end_tile_A, end_tile_B);                      // NOLINT
+      end_tile = min(end_tile, split_offset_tiles + split_tiles - 1);  // NOLINT
       for (int tile_idx = start_tile; tile_idx <= end_tile; tile_idx++) {
         const int tiled_i = THREAD_BLOCK_SIZE * tile_idx + thread_block_row;
         const int tiled_j = THREAD_BLOCK_SIZE * tile_idx + thread_block_col;
@@ -125,7 +149,8 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
         // can be assigned elements in and out of
         // the allocated memory.
         if ((j + w * THREAD_BLOCK_SIZE_COL) < N && i < M) {
-          C[(j + w * THREAD_BLOCK_SIZE_COL) * M + i] = acc[w];
+          C[split_id * M * N + (j + w * THREAD_BLOCK_SIZE_COL) * M + i]
+              = acc[w];
         }
       }
     }
