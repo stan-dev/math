@@ -37,6 +37,30 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
     temp.zeros();
     return temp;
   }
+  if (A.rows() == 1) {
+    const int local_size
+        = opencl_kernels::row_vector_matrix_multiply.make_functor.get_opts().at(
+            "LOCAL_SIZE_");
+    try {
+      opencl_kernels::row_vector_matrix_multiply(
+          cl::NDRange(temp.cols() * local_size), cl::NDRange(local_size),
+          A.buffer(), B.buffer(), temp.buffer(), B.rows(), B.cols(),
+          triangular_view_A, triangular_view_B);
+    } catch (cl::Error& e) {
+      check_opencl_error("row_vector - matrix multiply", e);
+    }
+    return temp;
+  }
+  if (B.cols() == 1) {
+    try {
+      opencl_kernels::matrix_vector_multiply(
+          cl::NDRange(temp.rows()), A.buffer(), B.buffer(), temp.buffer(),
+          A.rows(), A.cols(), triangular_view_A, triangular_view_B);
+    } catch (cl::Error& e) {
+      check_opencl_error("matrix - vector multiply", e);
+    }
+    return temp;
+  }
   int local = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
       "THREAD_BLOCK_SIZE");
   int Mpad = ((A.rows() + local - 1) / local) * local;

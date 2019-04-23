@@ -84,7 +84,8 @@ static const char* diag_inv_kernel_code = STRINGIFY(
  * \endlink
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, int> diag_inv(
-    "diag_inv", diag_inv_kernel_code, {{"THREAD_BLOCK_SIZE", 32}});
+    "diag_inv", {indexing_helpers, diag_inv_kernel_code},
+    {{"THREAD_BLOCK_SIZE", 32}});
 
 }  // namespace opencl_kernels
 }  // namespace math
