@@ -28,7 +28,7 @@ class log_sum_exp_matrix_vari : public op_matrix_vari {
       : op_matrix_vari(log_sum_exp_as_double(x), x) {}
   void chain() {
     Eigen::Map<vector_vi> vis_map(vis_, size_);
-      vis_map.adj().array() += adj_ * (vis_map.val().array() - val_).exp();
+    vis_map.adj().array() += adj_ * (vis_map.val().array() - val_).exp();
   }
 };
 }  // namespace internal
