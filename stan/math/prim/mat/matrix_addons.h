@@ -4,16 +4,48 @@
  * depending on external code
  */
 template <typename T> 
-struct Hasd_ { 
+struct Hasd_ {
+  /**
+   * Removes pointer from input type (for vari*)
+   */
   typedef typename std::remove_pointer<T>::type decay_type;
-    struct Fallback { int d_; };
-    struct DerivedType : decay_type, Fallback { };
+  /**
+   * Struct with name of member ("d_") to be matched
+   */
+  struct Fallback { int d_; };
+  /**
+   * Struct inheriting both the template type (possibly containing
+   * member "d_") and the member name to be matched ("d_")
+   */
+  struct DerivedType : decay_type, Fallback { };
+  /**
+   * Struct templated on a type (C) and an object of that type
+   */
+  template<typename C, C> struct ChT; 
+  /**
+   * Declaration of a templated function that is instantiated by the member
+   * name to be matched in the Fallback class ("d_") and the address of member
+   * "d_" in class C.
+   * If instantiated with the DerivedType struct, there will be a substituion
+   * failure due to ambiguity if both decay_type and Fallback have member "d_"
+   *
+   * Returns reference to a char array of size 1
+   */
+  template<typename C> static char (&f(ChT<int Fallback::*, &C::d_>*))[1]; 
+  /**
+   * Instantiated if the previous template can't be instantiated due to ambiguity
+   * (i.e. if decay_type contains member "d_")
+   *
+   * Returns reference to a char array of size 2
+   */
+  template<typename C> static char (&f(...))[2]; 
 
-    template<typename C, C> struct ChT; 
-    template<typename C> static char (&f(ChT<int Fallback::*, &C::d_>*))[1]; 
-    template<typename C> static char (&f(...))[2]; 
-
-    static bool const value = sizeof(f<DerivedType>(0)) == 2;
+  /**
+   * TRUE if function result is of size 2. That is, the first template failed
+   * due to ambiguity (decay_type had member named "d_") and the second template
+   * was instantiated
+   */
+  static bool const value = sizeof(f<DerivedType>(0)) == 2;
 }; 
 
 /**
