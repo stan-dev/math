@@ -99,7 +99,7 @@ endif
 
 #workaround for non-depend targets tbb and tbbmalloc which both depend on version_string.ver
 #According to documentation, recursively invoked make commands can process their targets in parallel
-.NOTPARALLEL: $(TBB)/lib/tbb.def $(TBB)/lib/tbbmalloc.def $(TBB)/lib/tbbmallocproxy.def
+#.NOTPARALLEL: $(TBB)/lib/tbb.def $(TBB)/lib/tbbmalloc.def $(TBB)/lib/tbbmallocproxy.def
 
 $(TBB)/lib/tbb.def:
 	@mkdir -p $(TBB)/lib
