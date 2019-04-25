@@ -6,14 +6,11 @@
  * Re-implements std::void_t for pre-c++17 to detect ill-formed types
  * in SFINAE
  */
-template<class...>
-using void_t = void;
-
 template<class, class = void>
 struct Hasd_ : std::false_type
 { };
 template<class T>
-struct Hasd_<T, void_t<decltype(T::d_)>> : std::true_type
+struct Hasd_<T, decltype((void)(T::d_))> : std::true_type
 { };
 
 /**
