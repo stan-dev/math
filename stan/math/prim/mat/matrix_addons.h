@@ -1,52 +1,20 @@
 /**
  * Structure to determine whether input struct has member named "d_".
  * This is used to differentiate between var and fvar<T> without
- * depending on external code
+ * depending on external code.
+ *
+ * Re-implements std::void_t for pre-c++17 to detect ill-formed types
+ * in SFINAE
  */
-template <typename T> 
-struct Hasd_ {
-  /**
-   * Removes pointer from input type (for vari*)
-   */
-  typedef typename std::remove_pointer<T>::type decay_type;
-  /**
-   * Struct with name of member ("d_") to be matched
-   */
-  struct Fallback { int d_; };
-  /**
-   * Struct inheriting both the template type (possibly containing
-   * member "d_") and the member name to be matched ("d_")
-   */
-  struct DerivedType : decay_type, Fallback { };
-  /**
-   * Struct templated on a type (C) and an object of that type
-   */
-  template<typename C, C> struct ChT; 
-  /**
-   * Declaration of a templated function that is instantiated by the member
-   * name to be matched in the Fallback class ("d_") and the address of member
-   * "d_" in class C.
-   * If instantiated with the DerivedType struct, there will be a substituion
-   * failure due to ambiguity if both decay_type and Fallback have member "d_"
-   *
-   * Returns reference to a char array of size 1
-   */
-  template<typename C> static char (&f(ChT<int Fallback::*, &C::d_>*))[1]; 
-  /**
-   * Instantiated if the previous template can't be instantiated due to ambiguity
-   * (i.e. if decay_type contains member "d_")
-   *
-   * Returns reference to a char array of size 2
-   */
-  template<typename C> static char (&f(...))[2]; 
+template<class...>
+using void_t = void;
 
-  /**
-   * TRUE if function result is of size 2. That is, the first template failed
-   * due to ambiguity (decay_type had member named "d_") and the second template
-   * was instantiated
-   */
-  static bool const value = sizeof(f<DerivedType>(0)) == 2;
-}; 
+template<class, class = void>
+struct Hasd_ : std::false_type
+{ };
+template<class T>
+struct Hasd_<T, void_t<decltype(T::d_)>> : std::true_type
+{ };
 
 /**
  * Structure to return a view to the values in a var, vari*, and fvar<T>.
