@@ -64,16 +64,14 @@ struct AutodiffStackSingleton {
   static inline AutodiffStackStorage &instance() {
 #ifdef STAN_THREADS
     thread_local static AutodiffStackStorage instance_;
-    return instance_;
-#else
-    return *instance_;
 #endif
+    return instance_;
   }
 
 #ifndef STAN_THREADS
 
  private:
-  static AutodiffStackStorage *instance_;
+  static AutodiffStackStorage instance_;
 #endif
 };
 
@@ -81,10 +79,7 @@ struct AutodiffStackSingleton {
 template <typename ChainableT, typename ChainableAllocT>
 typename AutodiffStackSingleton<ChainableT,
                                 ChainableAllocT>::AutodiffStackStorage
-    *AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_
-    = new
-    typename AutodiffStackSingleton<ChainableT,
-                                    ChainableAllocT>::AutodiffStackStorage;
+    AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_;
 #endif
 
 }  // namespace math
