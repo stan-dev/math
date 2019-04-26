@@ -79,6 +79,9 @@ struct NumTraits<stan::math::var> : GenericNumTraits<stan::math::var> {
 };
 
 namespace internal {
+/**
+ * Workaround for Eigen removing pointer from vari* variables
+ */
 template <>
 struct remove_all<stan::math::vari*> {
   typedef stan::math::vari* type;

@@ -20,6 +20,9 @@ struct Hasd_<T, decltype((void)(T::d_))> : std::true_type
  * and/or whether the input has member ".d_" (i.e. fvar).
  *
  * The operators are overloaded for both const and non-const inputs
+ *
+ * For definitions of EIGEN_EMPTY_STRUCT_CTOR, EIGEN_DEVICE_FUNC, and
+ * EIGEN_STRONG_INLINE; see: https://eigen.tuxfamily.org/dox/XprHelper_8h_source.html
  */
 struct val_Op{
   EIGEN_EMPTY_STRUCT_CTOR(val_Op);
@@ -126,13 +129,13 @@ struct adj_Op {
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC
   EIGEN_STRONG_INLINE typename
-    std::enable_if_t<std::is_pointer<T>::value,const double&> const 
+    std::enable_if_t<std::is_pointer<T>::value, const double&> const 
     operator()(const Scalar &v) const { return v->adj_; }
 
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC
   EIGEN_STRONG_INLINE typename
-    std::enable_if_t<!std::is_pointer<T>::value,const double&> const 
+    std::enable_if_t<!std::is_pointer<T>::value, const double&> const 
     operator()(const Scalar &v) const { return v.vi_->adj_; }
 
   template<typename T = Scalar>
