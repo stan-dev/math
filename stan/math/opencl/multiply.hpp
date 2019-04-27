@@ -82,17 +82,18 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   }
   try {
     if (split <= 1) {
-      opencl_kernels::matrix_multiply(
-          cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt), A, B,
-          temp, A.rows(), B.cols(), B.rows(), triangular_view_A,
-          triangular_view_B);
+      opencl_kernels::matrix_multiply(cl::NDRange(Mpad, Npad / wpt),
+                                      cl::NDRange(local, local / wpt), A, B,
+                                      temp, A.rows(), B.cols(), B.rows(),
+                                      triangular_view_A, triangular_view_B);
     } else {
       matrix_cl tempSplit(A.rows(), B.cols() * split);
       opencl_kernels::matrix_multiply(cl::NDRange(Mpad, Npad / wpt, split),
-          cl::NDRange(local, local / wpt, 1), A, B, tempSplit, A.rows(),
-          B.cols(), B.rows(), triangular_view_A, triangular_view_B);
+                                      cl::NDRange(local, local / wpt, 1), A, B,
+                                      tempSplit, A.rows(), B.cols(), B.rows(),
+                                      triangular_view_A, triangular_view_B);
       opencl_kernels::add_batch(cl::NDRange(A.rows(), B.cols()), temp,
-       tempSplit, A.rows(), B.cols(), split);
+                                tempSplit, A.rows(), B.cols(), split);
     }
   } catch (cl::Error& e) {
     check_opencl_error("multiply", e);

@@ -53,11 +53,11 @@ void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
      * So that they do not execute until this transfer finishes.
      */
     dst.wait_for_read_events();
-    dst.clear_read_events();
     dst.wait_for_write_events();
+    dst.clear_read_events();
     dst.clear_write_events();
     cl::Event copy_event;
-    cl::CommandQueue& queue = opencl_context.queue();
+    const cl::CommandQueue& queue = opencl_context.queue();
     queue.enqueueWriteBuffer(dst.buffer(), CL_FALSE, 0,
                              sizeof(double) * dst.size(), src.data(), NULL,
                              &copy_event);
@@ -97,8 +97,8 @@ void copy(Eigen::Matrix<double, R, C>& dst, const matrix_cl& src) {
      * We do not want to pass data back to the CPU until all of the jobs
      * called on the source matrix are finished.
      */
-    cl::CommandQueue queue = opencl_context.queue();
     cl::Event copy_event;
+    const cl::CommandQueue queue = opencl_context.queue();
     queue.enqueueReadBuffer(src.buffer(), CL_FALSE, 0,
                             sizeof(double) * dst.size(), dst.data(),
                             &src.write_events(), &copy_event);
@@ -125,12 +125,13 @@ inline std::vector<double> packed_copy(const matrix_cl& src) {
     return dst;
   }
   try {
-    cl::CommandQueue queue = opencl_context.queue();
+    const cl::CommandQueue queue = opencl_context.queue();
     matrix_cl packed(packed_size, 1);
     stan::math::opencl_kernels::pack(cl::NDRange(src.rows(), src.rows()),
                                      packed, src, src.rows(), src.rows(),
                                      triangular_view);
-    auto mat_events = vec_concat(packed.read_events(), src.write_events());
+    const std::vector<cl::Event> mat_events
+        = vec_concat(packed.write_events(), src.read_events());
     cl::Event copy_event;
     queue.enqueueReadBuffer(packed.buffer(), CL_FALSE, 0,
                             sizeof(double) * packed_size, dst.data(),
@@ -167,9 +168,9 @@ inline matrix_cl packed_copy(const std::vector<double>& src, int rows) {
     return dst;
   }
   try {
-    cl::CommandQueue queue = opencl_context.queue();
     matrix_cl packed(packed_size, 1);
     cl::Event packed_event;
+    const cl::CommandQueue queue = opencl_context.queue();
     queue.enqueueWriteBuffer(packed.buffer(), CL_FALSE, 0,
                              sizeof(double) * packed_size, src.data(), NULL,
                              &packed_event);
@@ -209,7 +210,8 @@ inline void copy(matrix_cl& dst, const matrix_cl& src) {
      *  for explanation
      */
     cl::CommandQueue queue = opencl_context.queue();
-    auto mat_events = vec_concat(dst.read_events(), src.write_events());
+    const std::vector<cl::Event> mat_events
+        = vec_concat(dst.read_events(), src.write_events());
     cl::Event copy_event;
     queue.enqueueCopyBuffer(src.buffer(), dst.buffer(), 0, 0,
                             sizeof(double) * src.size(), &mat_events,
@@ -234,9 +236,9 @@ inline void copy(T& dst, const matrix_cl& src) {
   check_size_match("copy ((OpenCL) -> (OpenCL))", "src.cols()", src.cols(),
                    "dst.cols()", 1);
   try {
-    cl::CommandQueue queue = opencl_context.queue();
     cl::Event copy_event;
-    queue.enqueueReadBuffer(src.buffer(), CL_FALSE, 0, sizeof(int), &dst,
+    const cl::CommandQueue queue = opencl_context.queue();
+    queue.enqueueReadBuffer(src.buffer(), CL_FALSE, 0, sizeof(T), &dst,
                             &src.write_events(), &copy_event);
     copy_event.wait();
     src.clear_write_events();
@@ -259,9 +261,11 @@ inline void copy(matrix_cl& dst, const T& src) {
                    "dst.cols()", 1);
   try {
     dst.wait_for_read_events();
+    dst.wait_for_write_events();
     dst.clear_read_events();
-    cl::CommandQueue queue = opencl_context.queue();
+    dst.clear_write_events();
     cl::Event copy_event;
+    const cl::CommandQueue queue = opencl_context.queue();
     queue.enqueueWriteBuffer(dst.buffer(), CL_FALSE, 0, sizeof(T), &src, NULL,
                              &copy_event);
     dst.add_write_event(copy_event);

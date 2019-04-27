@@ -129,25 +129,12 @@ class matrix_cl {
 
   matrix_cl() : rows_(0), cols_(0) {}
 
-  matrix_cl(const matrix_cl& A) : rows_(A.rows()), cols_(A.cols()) {
-    if (A.size() == 0)
-      return;
-    // the context is needed to create the buffer object
-    cl::Context& ctx = opencl_context.context();
-    cl::CommandQueue queue = opencl_context.queue();
-    try {
-      // creates a read&write object for "size" double values
-      // in the provided context
-      oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size());
-      cl::Event cstr_event;
-      queue.enqueueCopyBuffer(A.buffer(), this->buffer(), 0, 0,
-                              A.size() * sizeof(double), &A.write_events(),
-                              &cstr_event);
-      this->add_write_event(cstr_event);
-    } catch (const cl::Error& e) {
-      check_opencl_error("copy (OpenCL)->(OpenCL)", e);
-    }
-  }
+  matrix_cl(const matrix_cl& A)
+      : rows_(A.rows()),
+        cols_(A.cols()),
+        write_events_(A.write_events()),
+        read_events_(A.read_events()),
+        oclBuffer_(A.buffer()) {}
   /**
    * Constructor for the matrix_cl that
    * only allocates the buffer on the OpenCL device.
