@@ -92,6 +92,7 @@ class matrix_cl {
    */
   inline void add_read_event(cl::Event new_event) const {
     this->read_events_.push_back(new_event);
+    this->write_events_.push_back(new_event);
   }
 
   /**
