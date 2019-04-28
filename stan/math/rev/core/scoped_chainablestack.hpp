@@ -23,6 +23,9 @@ class ScopedChainableStack {
   // tape to local_stack_ of this instance
   template <typename F>
   void execute(const F& f) {
+    // It's actually impossible to leave the stack in an active state
+    // behind, but if that happens, then we may not try-catch to
+    // ensure we deactivate.
     if (local_stack_.is_active()) {
       f();
       return;

@@ -80,6 +80,7 @@ namespace math {
 #define STAN_THREADS_DEF
 #endif
 
+// forward declarations to make these friends
 static void recover_memory();
 static void recover_memory_nested();
 static void start_nested();
@@ -175,7 +176,7 @@ static std::size_t get_new_stack_id() {
             "Root AutodiffStackStorage cannot be deactivated.");
       if (previous_active_stack_->is_active_)
         throw std::logic_error(
-            "Previous AutodiffStackStorage must be decactive already when "
+            "Previous AutodiffStackStorage must be deactive when "
             "reactivating.");
       previous_active_stack_->is_active_ = true;
       AutodiffStackSingleton_t::instance_ = previous_active_stack_;
@@ -187,7 +188,6 @@ static std::size_t get_new_stack_id() {
     void recover() {
       var_stack_.clear();
       var_nochain_stack_.clear();
-
       for (size_t i = 0; i != var_alloc_stack_.size(); ++i) {
         delete var_alloc_stack_[i];
       }
@@ -257,7 +257,7 @@ static std::size_t get_new_stack_id() {
     return *instance_;
   }
 
-  static AutodiffStackStorage *init() {
+  static void init() {
     if (!instance_) {
       std::cout << "Creating AD tape instance in init." << std::endl;
       AutodiffStackStorage *root_instance = new AutodiffStackStorage();
@@ -273,7 +273,6 @@ static std::size_t get_new_stack_id() {
       // instance_
       //    = local_queue.instance_stack_[local_queue.current_instance_].get();
     }
-    return instance_;
   }
 
  private:
