@@ -52,6 +52,7 @@ struct coupled_ode_system<F, double, var> {
   const size_t M_;
   const size_t size_;
   std::ostream* msgs_;
+  mutable ScopedChainableStack local_stack_;
 
   /**
    * Construct a coupled ODE system with the specified base
@@ -101,6 +102,7 @@ struct coupled_ode_system<F, double, var> {
                   double t) const {
     using std::vector;
 
+    /*
     try {
       start_nested();
 
@@ -136,6 +138,40 @@ struct coupled_ode_system<F, double, var> {
       throw;
     }
     recover_memory_nested();
+    */
+
+    local_stack_.execute([&] {
+      vector<var> y_vars(z.begin(), z.begin() + N_);
+
+      vector<var> theta_vars(theta_dbl_.begin(), theta_dbl_.end());
+
+      vector<var> dy_dt_vars = f_(t, y_vars, theta_vars, x_, x_int_, msgs_);
+
+      check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
+                       "states", N_);
+
+      for (size_t i = 0; i < N_; i++) {
+        dz_dt[i] = dy_dt_vars[i].val();
+        dy_dt_vars[i].grad();
+
+        for (size_t j = 0; j < M_; j++) {
+          // orders derivatives by equation (i.e. if there are 2 eqns
+          // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
+          // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
+          double temp_deriv = theta_vars[j].adj();
+          const size_t offset = N_ + N_ * j;
+          for (size_t k = 0; k < N_; k++)
+            temp_deriv += z[offset + k] * y_vars[k].adj();
+
+          dz_dt[offset + i] = temp_deriv;
+        }
+
+        // set_zero_all_adjoints_nested();
+        set_zero_all_adjoints();
+      }
+    });
+
+    local_stack_.recover();
   }
 
   /**

@@ -26,7 +26,10 @@ struct ScopedChainableStack {
   void execute(const F& f) {
     chainablequeue_t& local_queue = ChainableStack::queue();
 
+    chainablestack_t* current_stack = ChainableStack::instance_;
+
     try {
+      /*
       start_nested();
       // replace the nested AD tape with the local one from this
       // instance
@@ -43,25 +46,44 @@ struct ScopedChainableStack {
       local_queue.instance_stack_[nested_stack_instance] = nested_stack;
       ChainableStack::instance_ = nested_stack.get();
       recover_memory_nested();
+      */
+
+      // slimmer version
+      ChainableStack::instance_ = local_stack_.get();
+      f();
+      ChainableStack::instance_ = current_stack;
+
     } catch (const std::exception& e) {
-      local_queue.instance_stack_[local_queue.current_instance_].reset(
-          new chainablestack_t(ChainableStack::queue().stack_id_));
-      recover_memory_nested();
+      // local_queue.instance_stack_[local_queue.current_instance_].reset(
+      //    new chainablestack_t(ChainableStack::queue().stack_id_));
+      // recover_memory_nested();
+      ChainableStack::instance_ = current_stack;
       throw;
     }
   }
 
-  void append_to_stack(chainablestack_t& destination_stack) {
-    destination_stack.var_stack_.insert(destination_stack.var_stack_.end(),
-                                        local_stack_->var_stack_.begin(),
-                                        local_stack_->var_stack_.end());
+  void append_to_stack(chainablestack_t& target_stack) {
+    target_stack.var_stack_.insert(target_stack.var_stack_.end(),
+                                   local_stack_->var_stack_.begin(),
+                                   local_stack_->var_stack_.end());
     local_stack_->var_stack_.clear();
-    destination_stack.var_nochain_stack_.insert(
-        destination_stack.var_nochain_stack_.end(),
+    target_stack.var_nochain_stack_.insert(
+        target_stack.var_nochain_stack_.end(),
         local_stack_->var_nochain_stack_.begin(),
         local_stack_->var_nochain_stack_.end());
     local_stack_->var_nochain_stack_.clear();
-    destination_stack.memalloc_.store_stack(local_stack_->memalloc_);
+    target_stack.memalloc_.store_stack(local_stack_->memalloc_);
+  }
+
+  void recover() {
+    local_stack_->var_stack_.clear();
+    local_stack_->var_nochain_stack_.clear();
+
+    for (size_t i = 0; i < local_stack_->var_alloc_stack_.size(); ++i) {
+      delete local_stack_->var_alloc_stack_[i];
+    }
+    local_stack_->var_alloc_stack_.clear();
+    local_stack_->memalloc_.recover_all();
   }
 };
 

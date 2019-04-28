@@ -27,6 +27,7 @@ static inline void recover_memory_nested() {
       = ChainableStack::instance();
   ChainableStack::AutodiffStackQueue& queue = ChainableStack::queue();
 
+  /**/
   nested_stack.var_stack_.clear();
   nested_stack.var_nochain_stack_.clear();
 
@@ -35,8 +36,18 @@ static inline void recover_memory_nested() {
   }
   nested_stack.var_alloc_stack_.clear();
   nested_stack.memalloc_.recover_all();
+  /**/
+
+  /*
+  for (size_t i = 0; i < nested_stack.var_alloc_stack_.size(); ++i) {
+    delete nested_stack.var_alloc_stack_[i];
+  }
+  */
 
   --queue.current_instance_;
+  // for now also get entierly rid of the just dumped nested stack
+  // queue.instance_stack_.pop_back();
+
   ChainableStack::instance_
       = queue.instance_stack_[queue.current_instance_].get();
 
