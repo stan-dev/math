@@ -21,6 +21,7 @@ static inline void recover_memory() {
         "empty_nested() must be true"
         " before calling recover_memory()");
 
+  /*
   auto clean_instance = [](ChainableStack::AutodiffStackStorage& instance) {
     instance.var_stack_.clear();
     instance.var_nochain_stack_.clear();
@@ -36,6 +37,9 @@ static inline void recover_memory() {
   for (auto& instance_stack_ptr : ChainableStack::queue().instance_stack_) {
     clean_instance(*instance_stack_ptr);
   }
+  */
+
+  ChainableStack::instance().recover();
 
   // not needed, since this function may only be called if we are not nested
   // ChainableStack::queue().current_instance_ = 0;

@@ -63,7 +63,7 @@ struct parallel_map_impl<InputIt, UnaryFunction, var> {
 
     tls_scoped_stacks.combine_each(
         [&parent_stack](ScopedChainableStack& child_scoped_stack) {
-          child_scoped_stack.append_to_stack(parent_stack);
+          child_scoped_stack.append_to_parent();
         });
 
     return std::move(f_eval);

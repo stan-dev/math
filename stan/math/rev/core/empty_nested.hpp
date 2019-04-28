@@ -11,7 +11,9 @@ namespace math {
  */
 static inline bool empty_nested() {
   // return ChainableStack::instance().nested_var_stack_sizes_.empty();
-  return ChainableStack::queue().current_instance_ == 0;
+  // return ChainableStack::queue().current_instance_ == 0;
+  // if the root is active, then we do not have nesting
+  return ChainableStack::instance().is_root();
 }
 
 }  // namespace math

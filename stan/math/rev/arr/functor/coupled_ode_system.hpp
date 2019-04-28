@@ -166,8 +166,7 @@ struct coupled_ode_system<F, double, var> {
           dz_dt[offset + i] = temp_deriv;
         }
 
-        // set_zero_all_adjoints_nested();
-        set_zero_all_adjoints();
+        set_zero_all_adjoints_nested();
       }
     });
 

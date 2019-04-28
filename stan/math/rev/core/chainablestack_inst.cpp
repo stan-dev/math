@@ -23,8 +23,9 @@ class ad_tape_observer : public tbb::task_scheduler_observer {
  public:
   // affinity_mask_t m_mask; // HW affinity mask to be used with an arena
   ad_tape_observer() : tbb::task_scheduler_observer() {
-    std::cout << "Observer created" << std::endl;
+    std::cout << "Observer constructing..." << std::endl;
     observe(true);  // activate the observer
+    std::cout << "Observer created" << std::endl;
   }
 
   ~ad_tape_observer() { std::cout << "Observer destructed" << std::endl; }

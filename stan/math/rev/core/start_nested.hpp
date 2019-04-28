@@ -14,6 +14,7 @@ namespace math {
  * can find it.
  */
 static inline void start_nested() {
+  /*
   ChainableStack::AutodiffStackQueue& queue = ChainableStack::queue();
 
   const std::size_t next_instance = queue.current_instance_ + 1;
@@ -29,6 +30,11 @@ static inline void start_nested() {
   queue.instance_stack_[next_instance]->stack_id_ = current_stack_id;
   ChainableStack::instance_ = queue.instance_stack_[next_instance].get();
   queue.current_instance_ = next_instance;
+  */
+
+  ChainableStack::AutodiffStackStorage* nested_instance
+      = new ChainableStack::AutodiffStackStorage();
+  nested_instance->activate();
 
   /*
   ChainableStack::instance().nested_var_stack_sizes_.push_back(

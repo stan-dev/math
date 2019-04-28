@@ -80,6 +80,12 @@ namespace math {
 #define STAN_THREADS_DEF
 #endif
 
+static void recover_memory();
+static void recover_memory_nested();
+static void start_nested();
+static bool empty_nested();
+class ScopedChainableStack;
+
 template <typename ChainableT, typename ChainableAllocT>
 struct AutodiffStackSingleton {
   typedef AutodiffStackSingleton<ChainableT, ChainableAllocT>
@@ -90,16 +96,16 @@ struct AutodiffStackSingleton {
   ~AutodiffStackSingleton() {}
   */
 
-  static std::size_t get_new_stack_id() {
-    static std::atomic<std::size_t> stack_counter{0};
-    return stack_counter.fetch_add(1);
-    /*
-    static std::mutex stack_counter_mutex;
-    std::lock_guard<std::mutex> stack_counter_lock(stack_counter_mutex);
-    static std::size_t stack_counter = 0;
-    std::size_t new_stack_id = stack_count
-    */
-  }
+  /*
+static std::size_t get_new_stack_id() {
+  static std::atomic<std::size_t> stack_counter{0};
+  return stack_counter.fetch_add(1);
+  static std::mutex stack_counter_mutex;
+  std::lock_guard<std::mutex> stack_counter_lock(stack_counter_mutex);
+  static std::size_t stack_counter = 0;
+  std::size_t new_stack_id = stack_count
+}
+  */
 
   struct AutodiffStackStorage;
 
@@ -115,7 +121,13 @@ struct AutodiffStackSingleton {
   */
 
   struct AutodiffStackStorage {
-    explicit AutodiffStackStorage(std::size_t stack_id) : stack_id_(stack_id){};
+    // explicit AutodiffStackStorage(std::size_t stack_id) : stack_id_(stack_id)
+    // {};
+
+    AutodiffStackStorage()
+        : is_active_(false), is_root_(false), previous_active_stack_(nullptr) {}
+
+    ~AutodiffStackStorage() { recover(); }
 
     AutodiffStackStorage &operator=(const AutodiffStackStorage &) = delete;
 
@@ -124,7 +136,69 @@ struct AutodiffStackSingleton {
     std::vector<ChainableAllocT *> var_alloc_stack_;
     stack_alloc memalloc_;
 
-    std::size_t stack_id_;
+    // std::size_t stack_id_;
+
+    friend void recover_memory();
+    friend void recover_memory_nested();
+    friend void start_nested();
+    friend bool empty_nested();
+    friend class ScopedChainableStack;
+    friend class AutodiffStackSingleton;
+
+   protected:
+    bool is_active() const { return is_active_; }
+
+    bool is_root() const { return is_root_; }
+
+    // turns a given storage active and saves what was before active
+    void activate() {
+      if (is_active_)
+        throw std::logic_error(
+            "AutodiffStackStorage must not be active already when activating.");
+      previous_active_stack_ = AutodiffStackSingleton_t::instance_;
+      previous_active_stack_->is_active_ = false;
+      AutodiffStackSingleton_t::instance_ = this;
+      is_active_ = true;
+    }
+
+    // deactivates the current instance which is only allowed if
+    // - it is active
+    // - it is not the root instance which must persist
+    // - the previous stack must not be active atm
+    // it automatically activates the previously active instance
+    void deactivate() {
+      if (!is_active_)
+        throw std::logic_error(
+            "AutodiffStackStorage must be active already when deactivating.");
+      if (is_root())
+        throw std::logic_error(
+            "Root AutodiffStackStorage cannot be deactivated.");
+      if (previous_active_stack_->is_active_)
+        throw std::logic_error(
+            "Previous AutodiffStackStorage must be decactive already when "
+            "reactivating.");
+      previous_active_stack_->is_active_ = true;
+      AutodiffStackSingleton_t::instance_ = previous_active_stack_;
+      is_active_ = false;
+    }
+
+    // recover ressources such that they are freed, but still
+    // allocated for re-use at a later stage
+    void recover() {
+      var_stack_.clear();
+      var_nochain_stack_.clear();
+
+      for (size_t i = 0; i != var_alloc_stack_.size(); ++i) {
+        delete var_alloc_stack_[i];
+      }
+      var_alloc_stack_.clear();
+      memalloc_.recover_all();
+    }
+
+   private:
+    bool is_active_;
+    bool is_root_;
+    AutodiffStackStorage *previous_active_stack_;
 
     // nested positions
     /*
@@ -136,7 +210,7 @@ struct AutodiffStackSingleton {
     // creates a new nochain stack and returns a pointer to it. This
     // operation is thread-safe. Not really needed anymore as global
     // stack went away.
-    /**/
+    /*
     std::shared_ptr<AutodiffStackStorage> get_child_stack() const {
       return std::shared_ptr<AutodiffStackStorage>(
           new AutodiffStackStorage(stack_id_));
@@ -144,10 +218,13 @@ struct AutodiffStackSingleton {
       //    global_stack().emplace_back(std::shared_ptr<AutodiffStackStorage>(
       //        new AutodiffStackStorage(stack_id_))));
     }
-    /**/
+    */
   };
 
+  friend class AutodiffStackStorage;
+
   // the queue is used to keep record of nested AD tapes
+  /*
   struct AutodiffStackQueue {
     AutodiffStackQueue()
         : stack_id_(get_new_stack_id()),
@@ -166,10 +243,6 @@ struct AutodiffStackSingleton {
   explicit AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
   AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
 
-  constexpr static inline AutodiffStackStorage &instance() {
-    return *instance_;
-  }
-
   static inline AutodiffStackQueue &queue() {
     static
 #ifdef STAN_THREADS
@@ -178,16 +251,32 @@ struct AutodiffStackSingleton {
         AutodiffStackQueue queue_;
     return queue_;
   }
+  */
+
+  constexpr static inline AutodiffStackStorage &instance() {
+    return *instance_;
+  }
 
   static AutodiffStackStorage *init() {
     if (!instance_) {
-      AutodiffStackQueue &local_queue = queue();
-      instance_
-          = local_queue.instance_stack_[local_queue.current_instance_].get();
+      std::cout << "Creating AD tape instance in init." << std::endl;
+      AutodiffStackStorage *root_instance = new AutodiffStackStorage();
+      root_instance->is_root_ = true;
+      instance_ = root_instance;
+      root_instance->activate();
+      std::cout << "Root instance activated." << std::endl;
+      if (instance_->is_root())
+        std::cout << "Yep, we got root" << std::endl;
+      else
+        std::cout << "Nope, we do not have root" << std::endl;
+      // AutodiffStackQueue &local_queue = queue();
+      // instance_
+      //    = local_queue.instance_stack_[local_queue.current_instance_].get();
     }
     return instance_;
   }
 
+ private:
   static STAN_THREADS_DEF AutodiffStackStorage *instance_;
 };
 
