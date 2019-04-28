@@ -1,16 +1,11 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_RAYLEIGH_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_RAYLEIGH_LPDF_HPP
 
-#include <boost/random/uniform_real_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
@@ -31,7 +26,6 @@ typename return_type<T_y, T_scale>::type rayleigh_lpdf(const T_y& y,
   typedef
       typename stan::partials_return_type<T_y, T_scale>::type T_partials_return;
 
-  using std::log;
   using std::log;
 
   if (size_zero(y, sigma))
