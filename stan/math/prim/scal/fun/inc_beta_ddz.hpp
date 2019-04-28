@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_SCAL_FUN_INC_BETA_DERIVATIVES_HPP
 
 #include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <boost/math/special_functions/beta.hpp>
 #include <cmath>
 
