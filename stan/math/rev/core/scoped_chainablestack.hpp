@@ -22,13 +22,13 @@ class ScopedChainableStack {
   // execute in the current thread a nullary function and write the AD
   // tape to local_stack_ of this instance
   template <typename F>
-  void execute(const F& f) {
+  F execute(F f) {
     // It's actually impossible to leave the stack in an active state
     // behind, but if that happens, then we may not try-catch to
     // ensure we deactivate.
     if (local_stack_.is_active()) {
       f();
-      return;
+      return f;
     }
 
     try {
@@ -39,6 +39,7 @@ class ScopedChainableStack {
       local_stack_.deactivate();
       throw;
     }
+    return f;
   }
 
   void append_to_parent() {
