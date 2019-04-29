@@ -92,10 +92,10 @@ inline void assign_events(const T& new_event) {}
 
 template <typename T, typename... Args>
 inline void assign_events(const cl::Event& new_event,
-   internal::to_const_matrix_cl_v<T>& m,
-   internal::to_const_matrix_cl_v<Args>&... args) {
-    assign_event<T>(m, new_event);
-    assign_events<Args...>(new_event, args...);
+                          internal::to_const_matrix_cl_v<T>& m,
+                          internal::to_const_matrix_cl_v<Args>&... args) {
+  assign_event<T>(m, new_event);
+  assign_events<Args...>(new_event, args...);
 }
 
 }  // namespace opencl_kernels

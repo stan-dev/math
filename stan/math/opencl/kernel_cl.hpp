@@ -142,9 +142,8 @@ struct kernel_cl {
    * @param args The arguments to pass to the kernel.
    * @tparam Args Parameter pack of all kernel argument types.
    */
-  auto operator()(
-      cl::NDRange global_thread_size,
-      internal::to_const_matrix_cl_v<Args>&... args) const {
+  auto operator()(cl::NDRange global_thread_size,
+                  internal::to_const_matrix_cl_v<Args>&... args) const {
     auto f = make_functor();
     std::vector<cl::Event> kernel_events
         = vec_concat(select_events<Args>(args)...);
@@ -162,9 +161,8 @@ struct kernel_cl {
    * @param args The arguments to pass to the kernel.
    * @tparam Args Parameter pack of all kernel argument types.
    */
-  auto operator()(
-      cl::NDRange global_thread_size, cl::NDRange thread_block_size,
-      internal::to_const_matrix_cl_v<Args>&... args) const {
+  auto operator()(cl::NDRange global_thread_size, cl::NDRange thread_block_size,
+                  internal::to_const_matrix_cl_v<Args>&... args) const {
     auto f = make_functor();
     std::vector<cl::Event> kernel_events
         = vec_concat(select_events<Args>(args)...);
