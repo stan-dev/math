@@ -38,6 +38,7 @@ class matrix_cl {
   const int cols_;
   mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
   mutable std::vector<cl::Event> read_events_;   // Tracks reads
+  mutable std::vector<cl::Event> read_write_events_;   // Tracks reads
 
  public:
   // Forward declare the methods that work in place on the matrix
@@ -63,10 +64,18 @@ class matrix_cl {
   }
 
   /**
-   * Clear the read/write and write events from the event stacks.
+   * Clear the read events from the event stacks.
    */
   inline void clear_read_events() const {
     read_events_.clear();
+    return;
+  }
+
+  /**
+   * Clear the write events from the event stacks.
+   */
+  inline void clear_read_write_events() const {
+    read_write_events_.clear();
     return;
   }
 
@@ -87,12 +96,20 @@ class matrix_cl {
   }
 
   /**
-   * Add an event to the read/write event stack.
+   * Get the events from the event stacks.
+   * @return The read/write event stack.
+   */
+  inline const std::vector<cl::Event>& read_write_events() const {
+    return read_write_events_;
+  }
+
+  /**
+   * Add an event to the read event stack.
    * @param new_event The event to be pushed on the event stack.
    */
   inline void add_read_event(cl::Event new_event) const {
     this->read_events_.push_back(new_event);
-    this->write_events_.push_back(new_event);
+    this->read_write_events_.push_back(new_event);
   }
 
   /**
@@ -101,27 +118,44 @@ class matrix_cl {
    */
   inline void add_write_event(cl::Event new_event) const {
     this->write_events_.push_back(new_event);
+    this->read_write_events_.push_back(new_event);
   }
 
   /**
-   * Waits for the write events to finish before continuing.
+   * Waits for the write events and clears the read event stack.
    */
   inline void wait_for_write_events() const {
     cl::CommandQueue queue = opencl_context.queue();
     cl::Event copy_event;
     queue.enqueueBarrierWithWaitList(&this->write_events(), &copy_event);
     copy_event.wait();
+    write_events_.clear();
     return;
   }
 
   /**
-   * Waits for the read events to finish before continuing.
+   * Waits for the read events and clears the read event stack.
    */
   inline void wait_for_read_events() const {
     cl::CommandQueue queue = opencl_context.queue();
     cl::Event copy_event;
     queue.enqueueBarrierWithWaitList(&this->read_events(), &copy_event);
     copy_event.wait();
+    read_events_.clear();
+    return;
+  }
+
+  /**
+   * Waits for read and write events to finish and clears the read, write, and read/write event stacks.
+   */
+  inline void wait_for_read_write_events() const {
+    cl::CommandQueue queue = opencl_context.queue();
+    cl::Event copy_event;
+    queue.enqueueBarrierWithWaitList(&this->read_write_events(), &copy_event);
+    copy_event.wait();
+    read_write_events_.clear();
+    read_events_.clear();
+    write_events_.clear();
     return;
   }
 
@@ -134,6 +168,7 @@ class matrix_cl {
         cols_(A.cols()),
         write_events_(A.write_events()),
         read_events_(A.read_events()),
+        read_write_events_(A.read_write_events()),
         oclBuffer_(A.buffer()) {}
   /**
    * Constructor for the matrix_cl that
@@ -207,11 +242,7 @@ class matrix_cl {
     check_size_match("assignment of (OpenCL) matrices", "source.cols()",
                      a.cols(), "destination.cols()", cols());
     // Need to wait for all of matrices events before destroying old buffer
-    this->wait_for_read_events();
-    this->wait_for_write_events();
-    write_events_ = a.write_events();
-    read_events_ = a.read_events();
-
+    this->wait_for_read_write_events();
     oclBuffer_ = a.buffer();
     return *this;
   }

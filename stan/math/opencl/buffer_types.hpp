@@ -46,12 +46,12 @@ struct to_buffer<write_buffer> {
  * input's type.
  */
 template <typename T = cl::Buffer>
-struct to_matrix {
+struct to_matrix_cl {
   typedef T type;
 };
 
 template <>
-struct to_matrix<cl::Buffer> {
+struct to_matrix_cl<cl::Buffer> {
   typedef matrix_cl type;
 };
 
@@ -61,14 +61,18 @@ struct to_matrix<cl::Buffer> {
  * with the input's type.
  */
 template <>
-struct to_matrix<read_buffer> {
+struct to_matrix_cl<read_buffer> {
   typedef matrix_cl type;
 };
 
 template <>
-struct to_matrix<write_buffer> {
+struct to_matrix_cl<write_buffer> {
   typedef matrix_cl type;
 };
+
+// Alias for making const matrix_cl argument types
+template <typename T>
+using to_const_matrix_cl_v = const typename internal::to_matrix_cl<T>::type;
 
 }  // namespace internal
 }  // namespace opencl_kernels

@@ -144,15 +144,14 @@ struct kernel_cl {
    */
   auto operator()(
       cl::NDRange global_thread_size,
-      const typename internal::to_matrix<Args>::type&... args) const {
+      internal::to_const_matrix_cl_v<Args>&... args) const {
     auto f = make_functor();
     std::vector<cl::Event> kernel_events
         = vec_concat(select_events<Args>(args)...);
     cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
                           global_thread_size);
     cl::Event kern_event = f(eargs, get_kernel_arg(args)...);
-    // This is just a dummy to set off the variadic function
-    int dummy[] = {0, (assign_event<Args>(args, kern_event), 0)...};
+    assign_events<Args...>(kern_event, args...);
     return kern_event;
   }
 
@@ -165,15 +164,14 @@ struct kernel_cl {
    */
   auto operator()(
       cl::NDRange global_thread_size, cl::NDRange thread_block_size,
-      const typename internal::to_matrix<Args>::type&... args) const {
+      internal::to_const_matrix_cl_v<Args>&... args) const {
     auto f = make_functor();
     std::vector<cl::Event> kernel_events
         = vec_concat(select_events<Args>(args)...);
     cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
                           global_thread_size, thread_block_size);
     cl::Event kern_event = f(eargs, get_kernel_arg(args)...);
-    // This is just a dummy to set off the variadic function
-    int dummy[] = {0, (assign_event<Args>(args, kern_event), 0)...};
+    assign_events<Args...>(kern_event, args...);
     return kern_event;
   }
 };

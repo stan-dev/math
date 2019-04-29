@@ -51,7 +51,7 @@ inline const std::vector<cl::Event>& select_events<read_buffer>(
 template <>
 inline const std::vector<cl::Event>& select_events<write_buffer>(
     const matrix_cl& m) {
-  return m.read_events();
+  return m.read_write_events();
 }
 
 /**
@@ -83,7 +83,7 @@ inline const std::vector<cl::Event>& select_events<read_buffer>(
 template <>
 inline const std::vector<cl::Event>& select_events<write_buffer>(
     matrix_cl* const& m) {
-  return m->read_events();
+  return m->read_write_events();
 }
 
 }  // namespace opencl_kernels
