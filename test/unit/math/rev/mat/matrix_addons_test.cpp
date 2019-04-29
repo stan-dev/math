@@ -3,9 +3,9 @@
 #include <gtest/gtest.h>
 
 TEST(AgradRevMatrixAddons, var_matrix) {
+  using Eigen::MatrixXd;
   using stan::math::matrix_v;
   using stan::math::matrix_vi;
-  using Eigen::MatrixXd;
 
   MatrixXd vals = MatrixXd::Random(100, 100);
   MatrixXd derivs = MatrixXd::Random(100, 100);
@@ -44,9 +44,9 @@ TEST(AgradRevMatrixAddons, var_matrix) {
 }
 
 TEST(AgradRevMatrixAddons, var_vector) {
+  using Eigen::VectorXd;
   using stan::math::vector_v;
   using stan::math::vector_vi;
-  using Eigen::VectorXd;
 
   VectorXd vals = VectorXd::Random(100);
   VectorXd derivs = VectorXd::Random(100);
@@ -84,9 +84,9 @@ TEST(AgradRevMatrixAddons, var_vector) {
 }
 
 TEST(AgradRevMatrixAddons, var_row_vector) {
+  using Eigen::RowVectorXd;
   using stan::math::row_vector_v;
   using stan::math::row_vector_vi;
-  using Eigen::RowVectorXd;
 
   RowVectorXd vals = RowVectorXd::Random(100);
   RowVectorXd derivs = RowVectorXd::Random(100);
