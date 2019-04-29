@@ -54,20 +54,17 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_lpdf(
   typedef typename stan::partials_return_type<T_y, T_dof, T_scale>::type
       T_partials_return;
 
-  if (size_zero(y, nu, s))
-    return 0.0;
-
-  T_partials_return logp(0.0);
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_positive_finite(function, "Scale parameter", s);
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu, "Scale parameter",
                          s);
-
+  if (size_zero(y, nu, s))
+    return 0;
   if (!include_summand<propto, T_y, T_dof, T_scale>::value)
-    return 0.0;
-
+    return 0;
+  T_partials_return logp(0);
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_dof> nu_vec(nu);
   scalar_seq_view<T_scale> s_vec(s);
