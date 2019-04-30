@@ -4,7 +4,6 @@
 #include <stan/math/prim/scal/fun/grad_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/fun/lbeta.hpp>
-#include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <cmath>
 
 namespace stan {
