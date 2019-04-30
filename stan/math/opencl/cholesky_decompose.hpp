@@ -49,14 +49,12 @@ inline void cholesky_decompose(matrix_cl& A) {
   // The Cholesky (OpenCL) algorithm only uses one local block so we need the
   // matrix To be less than the max thread block size.
   if (A.rows() <= opencl_context.tuning_opts().cholesky_min_L11_size) {
-    matrix_cl L(A.rows(), A.cols());
     try {
       opencl_kernels::cholesky_decompose(cl::NDRange(A.rows()),
-                                         cl::NDRange(A.rows()), A, L, A.rows());
+                                         cl::NDRange(A.rows()), A, A.rows());
     } catch (const cl::Error& e) {
       check_opencl_error("cholesky_decompose", e);
     }
-    A = L;
     return;
   }
   // NOTE: The code in this section follows the naming conventions
