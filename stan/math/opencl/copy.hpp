@@ -134,7 +134,7 @@ inline std::vector<double> packed_copy(const matrix_cl& src) {
                             sizeof(double) * packed_size, dst.data(),
                             &mat_events, &copy_event);
     src.add_read_event(copy_event);
-    src.clear_read_write_events();
+    src.wait_for_read_write_events();
   } catch (const cl::Error& e) {
     check_opencl_error("packed_copy (OpenCL->std::vector)", e);
   }
