@@ -4,6 +4,7 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/scal/fun/abs.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 
 namespace stan {
 namespace math {

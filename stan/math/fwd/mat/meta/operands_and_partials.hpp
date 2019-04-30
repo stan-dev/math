@@ -3,6 +3,7 @@
 
 #include <stan/math/fwd/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/broadcast_array.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <vector>
 
 namespace stan {
