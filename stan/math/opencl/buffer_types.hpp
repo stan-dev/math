@@ -9,10 +9,10 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 
-// A read buffer will only add events to the read_write stack.
+// A read buffer will add events to the read and read_write stack.
 struct read_buffer {};
 
-// Write buffers will add events to the write event stack.
+// Write buffers will add events to the write and read_write event stack.
 struct write_buffer {};
 
 namespace internal {
