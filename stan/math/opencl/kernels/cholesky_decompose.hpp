@@ -34,20 +34,20 @@ static const char *cholesky_decompose_kernel_code = STRINGIFY(
       // The following code is the sequential version of the inplace
       // cholesky decomposition. Only the innermost loops are parallelized. The
       // rows are processed sequentially. This loop process all the rows:
-      for(int j = 0; j < rows; j++) {
-        if(local_index == 0){
+      for (int j = 0; j < rows; j++) {
+        if (local_index == 0) {
           double sum = 0.0;
-          for(int k = 0; k < j; k++) {
+          for (int k = 0; k < j; k++) {
             sum = sum + A(j, k) * A(j, k);
           }
           A(j, j) = sqrt(A(j, j) - sum);
         }
         barrier(CLK_LOCAL_MEM_FENCE);
-        if(local_index < j){
+        if (local_index < j) {
           A(local_index, j) = 0.0;
-        }else if(local_index > j) {
+        } else if (local_index > j) {
           double sum = 0.0;
-          for(int k = 0; k < j; k++)
+          for (int k = 0; k < j; k++)
             sum = sum + A(local_index, k) * A(j, k);
           A(local_index, j) = (A(local_index, j) - sum) / A(j, j);
         }
