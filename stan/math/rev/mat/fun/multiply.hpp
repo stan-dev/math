@@ -2,12 +2,8 @@
 #define STAN_MATH_REV_MAT_FUN_MULTIPLY_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/rev/scal/fun/value_of_rec.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/rev/mat/fun/to_var.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <boost/math/tools/promotion.hpp>
