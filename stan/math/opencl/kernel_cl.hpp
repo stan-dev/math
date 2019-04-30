@@ -7,7 +7,7 @@
 #include <stan/math/opencl/get_kernel_arg.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
 #include <stan/math/opencl/select_events.hpp>
-#include <stan/math/opencl/assign_events.hpp>
+#include <stan/math/opencl/assign_event.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
 #include <CL/cl.hpp>
@@ -150,7 +150,7 @@ struct kernel_cl {
     cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
                           global_thread_size);
     cl::Event kern_event = f(eargs, get_kernel_arg(args)...);
-    assign_events<Args...>(kern_event, args...);
+    assign_event<Args...>(kern_event, args...);
     return kern_event;
   }
 
@@ -169,7 +169,7 @@ struct kernel_cl {
     cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
                           global_thread_size, thread_block_size);
     cl::Event kern_event = f(eargs, get_kernel_arg(args)...);
-    assign_events<Args...>(kern_event, args...);
+    assign_event<Args...>(kern_event, args...);
     return kern_event;
   }
 };
