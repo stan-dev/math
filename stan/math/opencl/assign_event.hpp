@@ -38,7 +38,8 @@ inline void assign_new_event(const cl::Event& new_event, const matrix_cl& m);
  * @param new_event The event to add to the matrices event stack.
  */
 template <>
-inline void assign_new_event<read_buffer>(const cl::Event& new_event, const matrix_cl& m) {
+inline void assign_new_event<read_buffer>(const cl::Event& new_event,
+                                          const matrix_cl& m) {
   m.add_read_event(new_event);
 }
 
@@ -48,7 +49,8 @@ inline void assign_new_event<read_buffer>(const cl::Event& new_event, const matr
  * @param new_event The event to add to the matrices event stack.
  */
 template <>
-inline void assign_new_event<write_buffer>(const cl::Event& new_event, const matrix_cl& m) {
+inline void assign_new_event<write_buffer>(const cl::Event& new_event,
+                                           const matrix_cl& m) {
   m.add_write_event(new_event);
 }
 
@@ -68,7 +70,8 @@ inline void assign_new_event(const cl::Event& new_event, const matrix_cl* m);
  * @param new_event The event to add to the matrices event stack.
  */
 template <>
-inline void assign_new_event<read_buffer>(const cl::Event& new_event, const matrix_cl* m) {
+inline void assign_new_event<read_buffer>(const cl::Event& new_event,
+                                          const matrix_cl* m) {
   m->add_read_event(new_event);
 }
 
@@ -78,7 +81,8 @@ inline void assign_new_event<read_buffer>(const cl::Event& new_event, const matr
  * @param new_event The event to add to the matrices event stack.
  */
 template <>
-inline void assign_new_event<write_buffer>(const cl::Event& new_event, const matrix_cl* m) {
+inline void assign_new_event<write_buffer>(const cl::Event& new_event,
+                                           const matrix_cl* m) {
   m->add_write_event(new_event);
 }
 
@@ -88,8 +92,8 @@ inline void assign_event(const T& new_event) {}
 
 template <typename T, typename... Args>
 inline void assign_event(const cl::Event& new_event,
-                          internal::to_const_matrix_cl_v<T>& m,
-                          internal::to_const_matrix_cl_v<Args>&... args) {
+                         internal::to_const_matrix_cl_v<T>& m,
+                         internal::to_const_matrix_cl_v<Args>&... args) {
   assign_new_event<T>(new_event, m);
   assign_event<Args...>(new_event, args...);
 }
