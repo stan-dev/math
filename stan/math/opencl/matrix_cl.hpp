@@ -38,7 +38,6 @@ class matrix_cl {
   const int cols_;
   mutable std::vector<cl::Event> write_events_;       // Tracks write jobs
   mutable std::vector<cl::Event> read_events_;        // Tracks reads
-  mutable std::vector<cl::Event> read_write_events_;  // Tracks reads
 
  public:
   // Forward declare the methods that work in place on the matrix
@@ -75,7 +74,8 @@ class matrix_cl {
    * Clear the write events from the event stacks.
    */
   inline void clear_read_write_events() const {
-    read_write_events_.clear();
+    read_events_.clear();
+    write_events_.clear();
     return;
   }
 
@@ -99,8 +99,8 @@ class matrix_cl {
    * Get the events from the event stacks.
    * @return The read/write event stack.
    */
-  inline const std::vector<cl::Event>& read_write_events() const {
-    return read_write_events_;
+  inline const std::vector<cl::Event> read_write_events() const {
+    return vec_concat(this->read_events(), this->write_events());
   }
 
   /**
@@ -109,7 +109,6 @@ class matrix_cl {
    */
   inline void add_read_event(cl::Event new_event) const {
     this->read_events_.push_back(new_event);
-    this->read_write_events_.push_back(new_event);
   }
 
   /**
@@ -118,7 +117,6 @@ class matrix_cl {
    */
   inline void add_write_event(cl::Event new_event) const {
     this->write_events_.push_back(new_event);
-    this->read_write_events_.push_back(new_event);
   }
 
   /**
@@ -152,9 +150,9 @@ class matrix_cl {
   inline void wait_for_read_write_events() const {
     cl::CommandQueue queue = opencl_context.queue();
     cl::Event copy_event;
-    queue.enqueueBarrierWithWaitList(&this->read_write_events(), &copy_event);
+    const std::vector<cl::Event> mat_events = this->read_write_events();
+    queue.enqueueBarrierWithWaitList(&mat_events, &copy_event);
     copy_event.wait();
-    read_write_events_.clear();
     read_events_.clear();
     write_events_.clear();
     return;

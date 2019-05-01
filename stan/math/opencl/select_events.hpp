@@ -30,7 +30,7 @@ inline const std::vector<cl::Event> select_events(const T& t) {
  * write event stacks.
  */
 template <typename event_buffer>
-inline const std::vector<cl::Event>& select_events(const matrix_cl& m) {}
+inline const std::vector<cl::Event> select_events(const matrix_cl& m) {}
 
 /**
  * Gets the event stack for read_buffers
@@ -38,7 +38,7 @@ inline const std::vector<cl::Event>& select_events(const matrix_cl& m) {}
  * @return The write event stack.
  */
 template <>
-inline const std::vector<cl::Event>& select_events<read_buffer>(
+inline const std::vector<cl::Event> select_events<read_buffer>(
     const matrix_cl& m) {
   return m.write_events();
 }
@@ -49,7 +49,7 @@ inline const std::vector<cl::Event>& select_events<read_buffer>(
  * @return The read event stack.
  */
 template <>
-inline const std::vector<cl::Event>& select_events<write_buffer>(
+inline const std::vector<cl::Event> select_events<write_buffer>(
     const matrix_cl& m) {
   return m.read_write_events();
 }
@@ -62,7 +62,7 @@ inline const std::vector<cl::Event>& select_events<write_buffer>(
  * write event stacks.
  */
 template <typename event_buffer>
-inline const std::vector<cl::Event>& select_events(matrix_cl* const& m) {}
+inline const std::vector<cl::Event> select_events(matrix_cl* const& m) {}
 
 /**
  * Gets the event stack for read buffers
@@ -70,7 +70,7 @@ inline const std::vector<cl::Event>& select_events(matrix_cl* const& m) {}
  * @return The write event stack.
  */
 template <>
-inline const std::vector<cl::Event>& select_events<read_buffer>(
+inline const std::vector<cl::Event> select_events<read_buffer>(
     matrix_cl* const& m) {
   return m->write_events();
 }
@@ -81,7 +81,7 @@ inline const std::vector<cl::Event>& select_events<read_buffer>(
  * @return The read event stack.
  */
 template <>
-inline const std::vector<cl::Event>& select_events<write_buffer>(
+inline const std::vector<cl::Event> select_events<write_buffer>(
     matrix_cl* const& m) {
   return m->read_write_events();
 }
