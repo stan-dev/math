@@ -67,6 +67,8 @@ inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m_chol(m.rows(),
                                                                  m.cols());
     cholesky_decompose(m_cl);
+    check_nan("cholesky_decompose (OpenCL)", "Matrix m", m_cl);
+    check_diagonal_zeros("cholesky_decompose (OpenCL)", "Matrix m", m_cl);
     copy(m_chol, m_cl);  // NOLINT
     return m_chol;
   } else {

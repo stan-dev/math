@@ -87,8 +87,6 @@ inline void cholesky_decompose(matrix_cl& A) {
   // copy L_22 into A's lower left hand corner
   cholesky_decompose(L_22);
   A.sub_block(L_22, 0, 0, block, block, block_subset, block_subset);
-  check_nan("cholesky_decompose (OpenCL)", "Matrix m", A);
-  check_diagonal_zeros("cholesky_decompose (OpenCL)", "Matrix m", A);
 }
 
 }  // namespace math
