@@ -134,6 +134,13 @@ class opencl_context_base {
         base_opts_["THREAD_BLOCK_SIZE"] = thread_block_size_sqrt;
         base_opts_["WORK_PER_THREAD"] = 1;
       }
+      if (max_thread_block_size_ < base_opts_["LOCAL_SIZE_"]) {
+        // must be a power of base_opts_["REDUCTION_STEP_SIZE"]
+        const int p = std::log(max_thread_block_size_)
+                      / std::log(base_opts_["REDUCTION_STEP_SIZE"]);
+        base_opts_["LOCAL_SIZE_"]
+            = std::pow(base_opts_["REDUCTION_STEP_SIZE"], p);
+      }
       // Thread block size for the Cholesky
       // TODO(Steve): This should be tuned in a higher part of the stan language
       if (max_thread_block_size_ >= 256) {
@@ -167,16 +174,20 @@ class opencl_context_base {
          {"UPPER_TO_LOWER", static_cast<int>(TriangularMapCL::UpperToLower)},
          {"LOWER_TO_UPPER", static_cast<int>(TriangularMapCL::LowerToUpper)},
          {"THREAD_BLOCK_SIZE", 32},
-         {"WORK_PER_THREAD", 8}};
+         {"WORK_PER_THREAD", 8},
+         {"REDUCTION_STEP_SIZE", 4},
+         {"LOCAL_SIZE_", 64}};
   // TODO(Steve): Make these tunable during warmup
   struct tuning_struct {
-    // Used in stan/math/opencl/cholesky_decompose
+    // Used in math/opencl/cholesky_decompose
     int cholesky_min_L11_size = 256;
     int cholesky_partition = 4;
     int cholesky_size_worth_transfer = 1250;
     // Used in math/rev/mat/fun/cholesky_decompose
     int cholesky_rev_min_block_size = 512;
     int cholesky_rev_block_partition = 8;
+    // used in math/opencl/multiply
+    int multiply_split_upper_limit = 2000000;
   } tuning_opts_;
 
   static opencl_context_base& getInstance() {

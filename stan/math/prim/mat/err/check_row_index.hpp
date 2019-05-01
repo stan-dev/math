@@ -11,19 +11,15 @@ namespace math {
 
 /**
  * Check if the specified index is a valid row of the matrix
- *
  * This check is 1-indexed by default. This behavior can be changed
  * by setting <code>stan::error_index::value</code>.
- *
  * @tparam T Scalar type
  * @tparam R Compile time rows
  * @tparam C Compile time columns
- *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Matrix to test
  * @param i is index
- *
  * @throw <code>std::out_of_range</code> if the index is out of range.
  */
 template <typename T_y, int R, int C>

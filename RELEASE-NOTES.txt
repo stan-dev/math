@@ -1,6 +1,54 @@
 Stan Math Library Release Notes
 ======================================================================
 
+v2.19.1 (18 Apr 2019)
+======================================================================
+
+This is a release out of cycle to address a performance bug in v.2.19 (stan-dev/stan#2748)
+
+New Features
+------------
+- GLM Optimizations, especially for small number of attributes. ( #1185 )
+- Simplifies several prim/mat/fun functions using Eigen's vectorisation. (#1092)
+    The following functions have been changed to use Eigen under the hood, usage remain the same:
+    * add
+    * add_diag
+    * apply_scalar_unary
+    * cholesky_corr_constrain
+    * columns_dot_product
+    * cumulative_sum
+    * diag_post_multiply
+    * diag_pre_multiply
+    * divide_columns
+    * elt_divide
+    * elt_multiply
+    * log_softmax
+    * log_sum_exp
+    * max
+    * mean
+    * min
+    * prod
+    * quad_form
+    * quad_form_diag
+    * quad_form_sym
+    * rows_dot_product
+    * softmax
+    * subtract
+    * variance
+- Adds two new opencl kernels for operations matrix*vector and vector*matrix. (#1192)
+- OpenCL rectangular matrix multiply optimization (#1196)
+
+Bug Fixes
+---------
+- Fixing Missing bounds checks in some lpdfs (#1101)
+
+Other
+-----
+
+- Add option of having device functions shared across opencl kernels. (#1201)
+- New version of `to_size_t` to get rid of an `assert` (#1172)
+
+
 v2.19.0 (20 Mar 2019)
 ======================================================================
 Slow to arrive, but fast to compute: Stan has GPU support!

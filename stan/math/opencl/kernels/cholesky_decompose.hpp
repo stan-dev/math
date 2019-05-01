@@ -71,7 +71,7 @@ static const char *cholesky_decompose_kernel_code = STRINGIFY(
  * \endlink
  */
 const local_range_kernel<cl::Buffer, cl::Buffer, int> cholesky_decompose(
-    "cholesky_decompose", cholesky_decompose_kernel_code);
+    "cholesky_decompose", {indexing_helpers, cholesky_decompose_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

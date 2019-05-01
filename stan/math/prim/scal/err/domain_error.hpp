@@ -10,13 +10,10 @@ namespace math {
 
 /**
  * Throw a domain error with a consistently formatted message.
- *
  * This is an abstraction for all Stan functions to use when throwing
  * domain errors. This will allow us to change the behavior for all
  * functions at once.
- *
  * The message is: "<function>: <name> <msg1><y><msg2>"
- *
  * @tparam T Type of variable.
  * @param[in] function Name of the function.
  * @param[in] name Name of the variable.
@@ -37,13 +34,10 @@ inline void domain_error(const char* function, const char* name, const T& y,
 
 /**
  * Throw a domain error with a consistently formatted message.
- *
  * This is an abstraction for all Stan functions to use when throwing
  * domain errors. This will allow us to change the behavior for all
  * functions at once.
- *
  * The message is: * "<function>: <name> <msg1><y>"
- *
  * @tparam T Type of variable.
  * @param[in] function Name of the function.
  * @param[in] name Name of the variable.

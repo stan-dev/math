@@ -40,7 +40,7 @@ static const char *is_nan_kernel_code = STRINGIFY(
  * See the docs for \link kernels/check_nan.hpp is_nan() \endlink
  */
 const global_range_kernel<cl::Buffer, cl::Buffer, int, int> check_nan(
-    "is_nan", is_nan_kernel_code);
+    "is_nan", {indexing_helpers, is_nan_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math
