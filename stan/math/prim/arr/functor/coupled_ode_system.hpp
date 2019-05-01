@@ -9,15 +9,16 @@ namespace stan {
 namespace math {
 
 /**
- * Base template class for a coupled ordinary differential equation
- * system, which adds sensitivities to the base system.
+ * The <code>coupled_ode_system</code> represents the coupled ode
+ * system, which is the base ode and the sensitivities of the base ode
+ * (derivatives with respect to the parameters of the base ode).
  *
- * This template class declaration should not be instantiated
- * directly --- it is just here to serve as a base for its
- * specializations, some of which are defined in namespace
- * <code>stan::math</code>.
+ * This class provides a functor to be used by ode solvers, a function
+ * for the size of the coupled ode system, a function to retrieve the
+ * initial state, and a method to convert from the coupled ode system
+ * back to the base ode.
  *
- * @tparam F the functor for the base ode system
+ * @tparam F base ode system functor
  * @tparam T1 type of the initial state
  * @tparam T2 type of the parameters
  */
@@ -25,14 +26,13 @@ template <typename F, typename T1, typename T2>
 struct coupled_ode_system {};
 
 /**
- * The coupled ode system for known initial values and known
- * parameters.
+ * The <code>coupled_ode_system</code> specialization for for known
+ * initial values and known parameters.
  *
- * <p>This coupled system does not add anything to the base
- * system used to construct it, but is here for generality of the
- * integration implementation.
+ * For this case, there are no additional sensitivity parameters and
+ * the size of the coupled ode system is the size of the base ode.
  *
- * @tparam F type of system function for the base ODE system.
+ * @tparam F base ode system functor
  */
 template <typename F>
 class coupled_ode_system<F, double, double> {
@@ -52,8 +52,10 @@ class coupled_ode_system<F, double, double> {
    * function, initial state, parameters, data and a stream for
    * messages.
    *
-   * @param[in] f base ode system functor.
-   * @param[in] y0 initial state of the base ode.
+   *
+   *
+   * @param[in] f base ode system functor
+   * @param[in] y0 initial state of the base ode
    * @param[in] theta parameters of the base ode.
    * @param[in] x  real data.
    * @param[in] x_int integer data.

@@ -15,10 +15,6 @@
 namespace stan {
 namespace math {
 
-// This code is in this directory because it includes var
-// It is in namespace stan::math so that the partial template
-// specializations are treated as such.
-
 /**
  * The coupled ODE system for known initial values and unknown
  * parameters.
