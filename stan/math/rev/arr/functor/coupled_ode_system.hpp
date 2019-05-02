@@ -15,30 +15,32 @@
 namespace stan {
 namespace math {
 
-// This code is in this directory because it includes var
-// It is in namespace stan::math so that the partial template
-// specializations are treated as such.
-
 /**
- * The coupled ODE system for known initial values and unknown
- * parameters.
+ * The <code>coupled_ode_system</code> template specialization
+ * for known initial values and unknown parameters.
  *
- * <p>If the base ODE state is size N and there are M parameters,
- * the coupled system has N + N * M states.
- * <p>The first N states correspond to the base system's N states:
- * \f$ \frac{d x_n}{dt} \f$
+ * <p>This coupled ode system has N + N * M states where N is the size of
+ * the base ode system and M is the number of parameters.
+ *
+ * <p>For the coupled ode system, the first N states are the base
+ * system's states: \f$ \frac{d x_n}{dt} \f$.
  *
  * <p>The next M states correspond to the sensitivities of the
  * parameters with respect to the first base system equation:
  * \f[
- *   \frac{d x_{N+m}}{dt}
- *   = \frac{d}{dt} \frac{\partial x_1}{\partial \theta_m}
+ *  \frac{d x_{N + m}}{dt}
+ *  = \frac{d}{dt} \frac{\partial x_1}{\partial \theta_m}
  * \f]
+ * for \f$ m \in {1, \ldots, M} \f$].
  *
- * <p>The final M states correspond to the sensitivities with respect
- * to the second base system equation, etc.
+ * <p> The next M states correspond to the sensitivites with respect
+ * to the second base system equation, and so on through the last base
+ * system equation.
  *
- * @tparam F type of functor for the base ode system.
+ * @tparam F base ode system functor. Must provide
+ *   <code>operator()(double t, std::vector<double> y, std::vector<var> theta,
+ *          std::vector<double> x, std::vector<int>x_int, std::ostream*
+ * msgs)</code>
  */
 template <typename F>
 struct coupled_ode_system<F, double, var> {
@@ -54,16 +56,16 @@ struct coupled_ode_system<F, double, var> {
   std::ostream* msgs_;
 
   /**
-   * Construct a coupled ODE system with the specified base
-   * ODE system, base initial state, parameters, data, and a
-   * message stream.
+   * Construct a coupled ode system from the base system function,
+   * initial state of the base system, parameters, and a stream for
+   * messages.
    *
-   * @param[in] f the base ODE system functor.
-   * @param[in] y0 the initial state of the base ode.
-   * @param[in] theta parameters of the base ode.
-   * @param[in] x real data.
-   * @param[in] x_int integer data.
-   * @param[in, out] msgs stream to which messages are printed.
+   * @param[in] f the base ODE system functor
+   * @param[in] y0 the initial state of the base ode
+   * @param[in] theta parameters of the base ode
+   * @param[in] x real data
+   * @param[in] x_int integer data
+   * @param[in, out] msgs stream for messages
    */
   coupled_ode_system(const F& f, const std::vector<double>& y0,
                      const std::vector<var>& theta,
@@ -81,21 +83,18 @@ struct coupled_ode_system<F, double, var> {
         msgs_(msgs) {}
 
   /**
-   * Assign the derivative vector with the system derivatives at
-   * the specified state and time.
+   * Calculates the derivative of the coupled ode system with respect
+   * to time.
    *
-   * <p>The input state must be of size <code>size()</code>, and
-   * the output produced will be of the same size.
+   * This method uses nested autodiff and is not thread safe.
    *
-   * @param[in] z state of the coupled ode system.
-   * @param[out] dz_dt populated with the derivatives of
-   * the coupled system at the specified state and time.
-   * @param[in]  t time.
-   * @throw exception if the system function does not return the
-   * same number of derivatives as the state vector size.
-   *
-   * y is the base ODE system state
-   *
+   * @param[in] z state of the coupled ode system; this must be size
+   *   <code>size()</code>
+   * @param[out] dz_dt a vector of size <code>size()</code> with the
+   *    derivatives of the coupled system with respect to time
+   * @param[in] t time
+   * @throw exception if the base ode function does not return the
+   *    expected number of derivatives, N.
    */
   void operator()(const std::vector<double>& z, std::vector<double>& dz_dt,
                   double t) const {
@@ -146,17 +145,19 @@ struct coupled_ode_system<F, double, var> {
   size_t size() const { return size_; }
 
   /**
-   * Returns the initial state of the coupled system.  Because the
-   * initial values are known, the initial state of the coupled
-   * system is the same as the initial state of the base ODE
-   * system.
+   * Returns the initial state of the coupled system.
    *
-   * <p>This initial state returned is of size <code>size()</code>
-   * where the first N (base ODE system size) parameters are the
-   * initial conditions of the base ode system and the rest of the
-   * initial condition elements are 0.
+   * The initial state of the coupled ode system is the same
+   * as the base ode system. This is because the initial values
+   * are known.
    *
-   * @return the initial condition of the coupled system.
+   * There are N + N * M coupled states, where N is the number of base
+   * ode system states and M is the number of parameters. The first N
+   * correspond to the initial values provided. The next N * M states
+   * are all 0.
+   *
+   * @return the initial condition of the coupled system, a vector of
+   *   size N + N * M.
    */
   std::vector<double> initial_state() const {
     std::vector<double> state(size_, 0.0);
@@ -166,10 +167,12 @@ struct coupled_ode_system<F, double, var> {
   }
 
   /**
-   * Returns the base ODE system state corresponding to the
-   * specified coupled system state.
+   * Returns the states of the base system provided on construction.
    *
-   * @param y coupled states after solving the ode
+   * @param y the vector of coupled states after solving the ode. Each
+   *   inner vector is size <code>size()</code>.
+   * @return the states of the base ode system corresponding to
+   *   <code>y</code>. Each inner vector is size <code>N</code>.
    */
   std::vector<std::vector<var> > decouple_states(
       const std::vector<std::vector<double> >& y) const {
@@ -193,30 +196,31 @@ struct coupled_ode_system<F, double, var> {
 };
 
 /**
- * The coupled ODE system for unknown initial values and known
- * parameters.
+ * The <code>coupled_ode_system</code> template specialization
+ * for unknown initial values and known parameters.
  *
- * <p>If the original ODE has states of size N, the
- * coupled system has N + N * N states. (derivatives of each
- * state with respect to each initial value)
+ * <p>This coupled ode system has N + N * N states where N is the size
+ * of the base ode system.
  *
- * <p>The coupled system has N + N * N states, where N is the size of
- * the state vector in the base system.
+ * <p>For the coupled ode system, the first N states are the base
+ * system's states: \f$ \frac{d x_n}{dt} \f$.
  *
- * <p>The first N states correspond to the base system's N states:
- * \f$ \frac{d x_n}{dt} \f$
- *
- * <p>The next N states correspond to the sensitivities of the initial
- * conditions with respect to the to the first base system equation:
+ * <p>The next N states correspond to the sensitivities of the
+ * initial conditions with respect to the first base system equation:
  * \f[
- *  \frac{d x_{N+n}}{dt}
- *     = \frac{d}{dt} \frac{\partial x_1}{\partial y0_n}
+ *  \frac{d x_{N + n}}{dt}
+ *  = \frac{d}{dt} \frac{\partial x_1}{\partial \y0_m}
  * \f]
+ * for \f$ n \in {1, \ldots, N} \f$].
  *
- * <p>The next N states correspond to the sensitivities with respect
- * to the second base system equation, etc.
+ * <p> The next N states correspond to the sensitivites with respect
+ * to the second base system equation, and so on through the last base
+ * system equation.
  *
- * @tparam F type of base ODE system functor
+ * @tparam F base ode system functor. Must provide
+ *   <code>operator()(double t, std::vector<var> y, std::vector<double> theta,
+ *          std::vector<double> x, std::vector<int>x_int, std::ostream*
+ * msgs)</code>
  */
 template <typename F>
 struct coupled_ode_system<F, var, double> {
@@ -232,17 +236,16 @@ struct coupled_ode_system<F, var, double> {
   const size_t size_;
 
   /**
-   * Construct a coupled ODE system for an unknown initial state
-   * and known parameters givne the specified base system functor,
-   * base initial state, parameters, data, and an output stream
-   * for messages.
+   * Construct a coupled ode system from the base system function,
+   * initial state of the base system, parameters, and a stream for
+   * messages.
    *
-   * @param[in] f base ODE system functor.
-   * @param[in] y0 initial state of the base ODE.
-   * @param[in] theta system parameters.
-   * @param[in] x real data.
-   * @param[in] x_int integer data.
-   * @param[in, out] msgs output stream for messages.
+   * @param[in] f the base ODE system functor
+   * @param[in] y0 the initial state of the base ode
+   * @param[in] theta parameters of the base ode
+   * @param[in] x real data
+   * @param[in] x_int integer data
+   * @param[in, out] msgs stream for messages
    */
   coupled_ode_system(const F& f, const std::vector<var>& y0,
                      const std::vector<double>& theta,
@@ -260,20 +263,18 @@ struct coupled_ode_system<F, var, double> {
         size_(N_ + N_ * N_) {}
 
   /**
-   * Calculates the derivative of the coupled ode system
-   * with respect to the state y at time t.
+   * Calculates the derivative of the coupled ode system with respect
+   * to time.
    *
-   * @param[in] z the current state of the coupled, shifted ode
-   * system. This is a a vector of double of length size().
+   * This method uses nested autodiff and is not thread safe.
+   *
+   * @param[in] z state of the coupled ode syste; this must be
+   *   size <code>size()</code>
    * @param[out] dz_dt a vector of length size() with the
-   * derivatives of the coupled system evaluated with state y and
-   * time t.
-   * @param[in] t time.
-   * @throw exception if the system functor does not return a
-   * derivative vector of the same size as the state vector.
-   *
-   * y is the base ODE system state
-   *
+   *   derivatives of the coupled system with respect to time
+   * @param[in] t time
+   * @throw exception if the base ode function does not return the
+   *    expected number of derivatives, N.
    */
   void operator()(const std::vector<double>& z, std::vector<double>& dz_dt,
                   double t) const {
@@ -295,8 +296,9 @@ struct coupled_ode_system<F, var, double> {
 
         for (size_t j = 0; j < N_; j++) {
           // orders derivatives by equation (i.e. if there are 2 eqns
-          // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
-          // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
+          // (y1, y2) and 2 initial conditions (y0_a, y0_b), dy_dt will be
+          // ordered as: dy1_dt, dy2_dt, dy1_d{y0_a}, dy2_d{y0_a}, dy1_d{y0_b},
+          // dy2_d{y0_b}
           double temp_deriv = 0;
           const size_t offset = N_ + N_ * j;
           for (size_t k = 0; k < N_; k++)
@@ -331,6 +333,8 @@ struct coupled_ode_system<F, var, double> {
    * value of the initial state has been moved into the
    * parameters.
    *
+   * FIXME(syclik): this documentation is incorrect.
+   *
    * @return the initial condition of the coupled system.
    *   This is a vector of length size() where all elements
    *   are 0.
@@ -345,11 +349,12 @@ struct coupled_ode_system<F, var, double> {
   }
 
   /**
-   * Return the solutions to the basic ODE system, including
-   * appropriate autodiff partial derivatives, given the specified
-   * coupled system solution.
+   * Returns the states of the base system provided on construction.
    *
-   * @param y the vector of the coupled states after solving the ode
+   * @param y the vector of coupled states after solving the ode. Each
+   *   inner vector is size <code>size()</code>.
+   * @return the states of the base ode system corresponding to
+   *   <code>y</code>. Each inner vector is size <code>N</code>.
    */
   std::vector<std::vector<var> > decouple_states(
       const std::vector<std::vector<double> >& y) const {
@@ -376,19 +381,18 @@ struct coupled_ode_system<F, var, double> {
 };
 
 /**
- * The coupled ode system for unknown intial values and unknown
- * parameters.
+ * The <code>coupled_ode_system</code> template specialization
+ * for unknown initial values and unknown parameters.
  *
- * <p>The coupled system has N + N * (N + M) states, where N is
- * size of the base ODE state vector and M is the number of
- * parameters.
+ * <p>This coupled ode system has N + (N +  M) * N states where N is
+ * the size of the base ode system and M is the number of parameters.
  *
- * <p>The first N states correspond to the base system's N states:
- *   \f$ \frac{d x_n}{dt} \f$
+ * <p>For the coupled ode system, the first N states are the base
+ * system's states: \f$ \frac{d x_n}{dt} \f$.
  *
- * <p>The next N+M states correspond to the sensitivities of the
- * initial conditions, then to the parameters with respect to the
- * to the first base system equation:
+ * <p>The next N + M states correspond to the sensitivities of the
+ * initial conditions, then to the sensitivities of the parameters
+ * with respect to the to the first base system equation:
  *
  * \f[
  *   \frac{d x_{N + n}}{dt}
@@ -396,19 +400,19 @@ struct coupled_ode_system<F, var, double> {
  * \f]
  *
  * \f[
- *   \frac{d x_{N+N+m}}{dt}
+ *   \frac{d x_{N + N + m}}{dt}
  *     = \frac{d}{dt} \frac{\partial x_1}{\partial \theta_m}
  * \f]
  *
- * <p>The next N+M states correspond to the sensitivities with
- * respect to the second base system equation, etc.
+ * <p>The next N + M states correspond to the sensitivities
+ * of the initial conditions followed by the sensitivites of the
+ * parameters with respect to the second base system equation, and
+ * so on through the last base system equation.
  *
- * <p>If the original ode has a state vector of size N states and
- * a parameter vector of size M, the coupled system has N + N * (N
- * + M) states. (derivatives of each state with respect to each
- * initial value and each theta)
- *
- * @tparam F the functor for the base ode system
+ * @tparam F base ode system functor. Must provide
+ *   <code>operator()(double t, std::vector<var> y, std::vector<var> theta,
+ *          std::vector<double> x, std::vector<int>x_int, std::ostream*
+ * msgs)</code>
  */
 template <typename F>
 struct coupled_ode_system<F, var, var> {
@@ -425,17 +429,16 @@ struct coupled_ode_system<F, var, var> {
   std::ostream* msgs_;
 
   /**
-   * Construct a coupled ODE system with unknown initial value and
-   * known parameters, given the base ODE system functor, the
-   * initial state of the base ODE, the parameters, data, and an
-   * output stream to which to write messages.
+   * Construct a coupled ode system from the base system function,
+   * initial state of the base system, parameters, and a stream for
+   * messages.
    *
-   * @param[in] f the base ode system functor.
-   * @param[in] y0 the initial state of the base ode.
-   * @param[in] theta parameters of the base ode.
-   * @param[in] x real data.
-   * @param[in] x_int integer data.
-   * @param[in, out] msgs output stream to which to print messages.
+   * @param[in] f the base ODE system functor
+   * @param[in] y0 the initial state of the base ode
+   * @param[in] theta parameters of the base ode
+   * @param[in] x real data
+   * @param[in] x_int integer data
+   * @param[in, out] msgs stream for messages
    */
   coupled_ode_system(const F& f, const std::vector<var>& y0,
                      const std::vector<var>& theta,
@@ -454,20 +457,18 @@ struct coupled_ode_system<F, var, var> {
         msgs_(msgs) {}
 
   /**
-   * Populates the derivative vector with derivatives of the
-   * coupled ODE system state with respect to time evaluated at the
-   * specified state and specified time.
+   * Calculates the derivative of the coupled ode system with respect
+   * to time.
    *
-   * @param[in]  z the current state of the coupled, shifted ode system,
-   * of size <code>size()</code>.
-   * @param[in, out] dz_dt populate with the derivatives of the
-   * coupled system evaluated at the specified state and time.
-   * @param[in] t time.
-   * @throw exception if the base system does not return a
-   * derivative vector of the same size as the state vector.
+   * This method uses nested autodiff and is not thread safe.
    *
-   * y is the base ODE system state
-   *
+   * @param[in] z state of the coupled ode system; this must be size
+   *   <code>size()</code>
+   * @param[out] dz_dt a vector of size <code>size()</code> with the
+   *    derivatives of the coupled system with respect to time
+   * @param[in] t time
+   * @throw exception if the base ode function does not return the
+   *    expected number of derivatives, N.
    */
   void operator()(const std::vector<double>& z, std::vector<double>& dz_dt,
                   double t) const {
@@ -534,6 +535,8 @@ struct coupled_ode_system<F, var, var> {
    * a parameter, and hence the return of this function is a
    * vector of zeros.
    *
+   * FIXME(syclik): this documentation is incorrect
+   *
    * @return the initial condition of the coupled system.  This is
    * a vector of length size() where all elements are 0.
    */
@@ -547,11 +550,12 @@ struct coupled_ode_system<F, var, var> {
   }
 
   /**
-   * Return the basic ODE solutions given the specified coupled
-   * system solutions, including the partials versus the
-   * parameters encoded in the autodiff results.
+   * Returns the states of the base system provided on construction.
    *
-   * @param y the vector of the coupled states after solving the ode
+   * @param y the vector of coupled states after solving the ode. Each
+   *   inner vector is size <code>size()</code>.
+   * @return the states of the base ode system corresponding to
+   *   <code>y</code>. Each inner vector is size <code>N</code>.
    */
   std::vector<std::vector<var> > decouple_states(
       const std::vector<std::vector<double> >& y) const {
