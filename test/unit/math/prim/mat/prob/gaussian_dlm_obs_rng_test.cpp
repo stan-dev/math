@@ -332,7 +332,7 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, chiSquaredGoodnessOfFit) {
   Eigen::MatrixXd y_;
   for (int n = 0; n < N; ++n) {
     y_ = gaussian_dlm_obs_rng(FF_, GG_, V_, W_, m0_, C0_, T_, rng);
-    assert(y_.rows() == r && y_.cols() == T_);
+    ASSERT_TRUE(y_.rows() == r && y_.cols() == T_);
     samples.push_back(y_(0, T_ - 1));
   }
 

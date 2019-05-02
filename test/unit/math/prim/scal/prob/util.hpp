@@ -37,17 +37,17 @@ void assert_matches_bins(const std::vector<double>& samples,
                          const std::vector<double>& bin_boundaries,
                          const std::vector<double>& proportions,
                          double tolerance) {
-  assert(samples.size() > 0);
+  ASSERT_TRUE(samples.size() > 0);
   int N = samples.size();
   std::vector<double> mysamples = samples;
   std::sort(mysamples.begin(), mysamples.end());
 
-  assert(bin_boundaries.size() > 0);
-  assert(bin_boundaries.size() == proportions.size());
+  ASSERT_TRUE(bin_boundaries.size() > 0);
+  ASSERT_TRUE(bin_boundaries.size() == proportions.size());
   int K = bin_boundaries.size();
   std::vector<double> expected;
   for (int i = 0; i < K; i++) {
-    assert(proportions[i] >= 0 && proportions[i] <= 1);
+    ASSERT_TRUE(proportions[i] >= 0 && proportions[i] <= 1);
     expected.push_back(proportions[i] * N);
   }
 
