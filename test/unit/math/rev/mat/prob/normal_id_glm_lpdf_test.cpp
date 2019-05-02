@@ -11,7 +11,7 @@ using stan::math::var;
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles) {
-  Matrix<int, Dynamic, 1> y(3, 1);
+  Matrix<double, Dynamic, 1> y(3, 1);
   y << 51, 32, 12;
   Matrix<double, Dynamic, Dynamic> x(3, 2);
   x << -12, 46, -42, 24, 25, 27;
@@ -32,7 +32,7 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles) {
 //  from existing primitives.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles_rand) {
   for (size_t ii = 0; ii < 200; ii++) {
-    Matrix<int, Dynamic, 1> y(3, 1);
+    Matrix<double, Dynamic, 1> y(3, 1);
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<unsigned int, 1, 1>::Random(1, 1)[0] % 200;
     }
@@ -233,6 +233,69 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand_scal_beta) {
 
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
+TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_varying_intercept) {
+  for (size_t ii = 0; ii < 42; ii++) {
+    Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
+    Matrix<double, Dynamic, Dynamic> xreal
+        = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
+    Matrix<double, Dynamic, 1> betareal
+        = Matrix<double, Dynamic, Dynamic>::Random(2, 1);
+    Matrix<double, Dynamic, 1> alphareal
+        = Matrix<double, Dynamic, 1>::Random(3, 1);
+    double phireal = Matrix<double, Dynamic, 1>::Random(3, 1)[0] + 1;
+    Matrix<var, Dynamic, 1> y = yreal;
+    Matrix<var, Dynamic, 1> beta = betareal;
+    Matrix<var, Dynamic, 1> theta(3, 1);
+    Matrix<var, Dynamic, Dynamic> x = xreal;
+    Matrix<var, Dynamic, 1> alpha = alphareal;
+    var phi = phireal;
+    theta = (x * beta) + alpha;
+    var lp = stan::math::normal_lpdf(y, theta, phi);
+    lp.grad();
+
+    double lp_val = lp.val();
+    Matrix<double, Dynamic, 1> alpha_adj(3, 1);
+    Matrix<double, Dynamic, Dynamic> x_adj(3, 2);
+    Matrix<double, Dynamic, 1> beta_adj(2, 1);
+    double phi_adj = phi.adj();
+    Matrix<double, Dynamic, 1> y_adj(3, 1);
+    for (size_t i = 0; i < 2; i++) {
+      beta_adj[i] = beta[i].adj();
+      for (size_t j = 0; j < 3; j++) {
+        x_adj(j, i) = x(j, i).adj();
+      }
+    }
+    for (size_t j = 0; j < 3; j++) {
+      alpha_adj[j] = alpha[j].adj();
+      y_adj[j] = y[j].adj();
+    }
+
+    stan::math::recover_memory();
+
+    Matrix<var, Dynamic, 1> y2 = yreal;
+    Matrix<var, Dynamic, 1> beta2 = betareal;
+    Matrix<var, Dynamic, Dynamic> x2 = xreal;
+    Matrix<var, Dynamic, 1> alpha2 = alphareal;
+    var phi2 = phireal;
+    var lp2 = stan::math::normal_id_glm_lpdf(y2, x2, alpha2, beta2, phi2);
+    lp2.grad();
+    EXPECT_FLOAT_EQ(lp_val, lp2.val());
+    EXPECT_FLOAT_EQ(phi_adj, phi2.adj());
+    for (size_t i = 0; i < 2; i++) {
+      EXPECT_FLOAT_EQ(beta_adj[i], beta2[i].adj());
+    }
+    for (size_t j = 0; j < 3; j++) {
+      EXPECT_FLOAT_EQ(alpha_adj[j], alpha2[j].adj());
+      EXPECT_FLOAT_EQ(y_adj[j], y2[j].adj());
+      for (size_t i = 0; i < 2; i++) {
+        EXPECT_FLOAT_EQ(x_adj(j, i), x2(j, i).adj());
+      }
+    }
+  }
+}
+
+//  We check that the gradients of the new regression match those of one built
+//  from existing primitives.
 TEST(ProbDistributionsNormalIdGLM,
      glm_matches_normal_id_varying_intercept_and_scale) {
   for (size_t ii = 0; ii < 42; ii++) {
@@ -347,7 +410,7 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_error_checking) {
   Eigen::Matrix<double, -1, 1> y = Eigen::Matrix<double, -1, 1>::Random(N, 1);
   Eigen::Matrix<double, -1, 1> yw1 = Eigen::Matrix<double, -1, 1>::Random(W, 1);
   Eigen::Matrix<double, -1, 1> yw2
-      = Eigen::Matrix<double, -1, 1>::Random(W, 1) * NAN;
+      = Eigen::Matrix<double, -1, 1>::Random(N, 1) * NAN;
   Eigen::Matrix<double, -1, -1> x = Eigen::Matrix<double, -1, -1>::Random(N, M);
   Eigen::Matrix<double, -1, -1> xw1
       = Eigen::Matrix<double, -1, -1>::Random(W, M);

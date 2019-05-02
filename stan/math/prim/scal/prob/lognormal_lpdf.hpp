@@ -34,19 +34,16 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_lpdf(
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
 
-  using stan::is_constant_struct;
-
-  if (size_zero(y, mu, sigma))
-    return 0.0;
-
-  T_partials_return logp(0.0);
-
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
+  if (size_zero(y, mu, sigma))
+    return 0;
+
+  T_partials_return logp(0);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);

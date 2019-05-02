@@ -1,6 +1,135 @@
 Stan Math Library Release Notes
 ======================================================================
 
+v2.19.1 (18 Apr 2019)
+======================================================================
+
+This is a release out of cycle to address a performance bug in v.2.19 (stan-dev/stan#2748)
+
+New Features
+------------
+- GLM Optimizations, especially for small number of attributes. ( #1185 )
+- Simplifies several prim/mat/fun functions using Eigen's vectorisation. (#1092)
+    The following functions have been changed to use Eigen under the hood, usage remain the same:
+    * add
+    * add_diag
+    * apply_scalar_unary
+    * cholesky_corr_constrain
+    * columns_dot_product
+    * cumulative_sum
+    * diag_post_multiply
+    * diag_pre_multiply
+    * divide_columns
+    * elt_divide
+    * elt_multiply
+    * log_softmax
+    * log_sum_exp
+    * max
+    * mean
+    * min
+    * prod
+    * quad_form
+    * quad_form_diag
+    * quad_form_sym
+    * rows_dot_product
+    * softmax
+    * subtract
+    * variance
+- Adds two new opencl kernels for operations matrix*vector and vector*matrix. (#1192)
+- OpenCL rectangular matrix multiply optimization (#1196)
+
+Bug Fixes
+---------
+- Fixing Missing bounds checks in some lpdfs (#1101)
+
+Other
+-----
+
+- Add option of having device functions shared across opencl kernels. (#1201)
+- New version of `to_size_t` to get rid of an `assert` (#1172)
+
+
+v2.19.0 (20 Mar 2019)
+======================================================================
+Slow to arrive, but fast to compute: Stan has GPU support!
+
+Stan 2.19 brings GPU-optimized computation to Stan users. The first supported 
+function is Cholesky decomposition, the main bottleneck of many common
+statistical models. Activating GPU support is easy - only a few lines are added
+to the configuration and no changes have to be made to the Stan model. Cholesky
+decompositions of larger matrices (including their gradients, when dealing with
+parameters) are then automatically transferred to the GPU with speedups ranging
+from 10 to 30, depending on matrix size and GPU.
+
+Other GPU-optimized matrix algebra primitives and common statistical models are
+soon to follow: matrix multiplication, lower triangular inverse,
+eigendecomposition, GP covariance functions and several GLMs. The implementation
+is based on OpenCL, so it can be used with any GPU and GPU programming-savvy
+users can also add their own custom OpenCL kernels.
+
+New Features
+------------
+- GPU
+  - matrix multiplication (#974)
+  - inverse of lower triangular matrix (#1028)
+  - Operator overloading for GPU functions (#1056)
+  - Cholesky decomposition (#1058)
+  - specialized reverse-mode implementation for cholesky decompse (#1117)
+- Host doxygen API doc on https://mc-stan.org/math/ (#500)
+- Makefile completely rewritten (#581, #954, #1041, #1043, #1087)
+- Adding `beta_proportion` distribution (#1018)
+- adjoint vector-Jacobian product form of precomputed gradients for reverse (#876)
+- Add alternative inv_logit parameterization to prevent underflow (#874)
+
+
+Bug Fixes
+---------
+- Improved derivative for Gamma CDF w.r.t. alpha (#525)
+- `value_of` incorrectly returned the wrong type (#968)
+- `sum` incorrectly returned the wrong type (#987)
+- `matrix_exp` incorrectly passed the argument by values (#769)
+- Unit testing with Windows on Jenkins (#1046)
+- `gp_cov_exp_quad` was computing the ARD mixing up rows and cols (#984)
+- Fixing GoodGammaP for gcc 7.3 (#1063)
+
+Other
+-----
+
+- Clarity on what's being tested in Math (one compiler per OS) (#943)
+- Updated GitHub templates (#911)
+- Improve ODE speed (#1049)
+- Fix tests for threading (#1058)
+- Upgrade Google Test to v1.8.1 (#1051)
+- Upgrade Sundials to v4.1.0 (#1097)
+- Matrix exponential action:
+  - A fast implementation was implemented (#771), but it had errors (#)
+  - Currently, a slow implementation is in the codebase.
+- Improve the codebase:
+  - Code  spacing (#587)
+  - Using varidic template parameters for `return_type`, `partials_return_type`,
+    and `include_summands` (#977)
+  - Fixing math constants definitions for Windows (#986)
+  - Avoid ambiguous instantiation of `math::sqrt()` by implementing for `double`
+    and `int` (#712)
+  - Clean up GPU code:
+    - Seperate OpenCL kernel access into it's own class (#973)
+    - `read_only` and `write_only` decorators in GPU kernels fail in Windows (#1034)
+  - Fixing uninitialized values in tests:
+    - `bernoulli_logit_glm_lpdf` test (#995)
+    - `check_greater` test (#819)
+    - `gp_exponential_cov_test` failing (#1150)
+  - Updating template parameters of matern32 (#981)
+  - Update `gp_dot_prod_cov` (#979)
+  - Deprecating old GP covariance function names (#756)
+  - Fixed compiler warnings in `test-headers` (#1110)
+  - Adding required headers (#1106)
+  - Turn test-math-dependencies warnings into failures on Jenkins (#1078)
+  - Replace `boost::type_traits` with `std::` versions (#1126)
+  - Fix doxygen errors (#1139)za
+  - Clean up anaonymous namespace usage (#1006)
+  - Setting STAN_NUM_THREADS to illegal value should produce an error (#947)
+
+
 v.2.18.1 (24 December 2018)
 ======================================================================
 Bugfix release - major bug in threading where certain thread count and

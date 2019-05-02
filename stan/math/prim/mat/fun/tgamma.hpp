@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_TGAMMA_HPP
 
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
-#include <boost/math/special_functions/gamma.hpp>
+#include <stan/math/prim/scal/fun/tgamma.hpp>
 
 namespace stan {
 namespace math {
@@ -17,7 +17,6 @@ namespace math {
 struct tgamma_fun {
   template <typename T>
   static inline T fun(const T& x) {
-    using boost::math::tgamma;
     return tgamma(x);
   }
 };

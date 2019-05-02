@@ -3,25 +3,19 @@
 
 #include <stan/math/prim/scal/meta/is_fvar.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
+#include <stan/math/prim/scal/meta/disjunction.hpp>
 
 namespace stan {
 
 /**
- * Metaprogram to calculate the base scalar return type resulting
- * from promoting all the scalar types of the template parameters.
+ * Extends std::true_type when instantiated with at least 1
+ * template parameter that is a fvar. Extends std::false_type
+ * otherwise.
+ * @tparam T Types to test
  */
-template <typename T1, typename T2 = double, typename T3 = double,
-          typename T4 = double, typename T5 = double, typename T6 = double>
-struct contains_fvar {
-  enum {
-    value = is_fvar<typename scalar_type<T1>::type>::value
-            || is_fvar<typename scalar_type<T2>::type>::value
-            || is_fvar<typename scalar_type<T3>::type>::value
-            || is_fvar<typename scalar_type<T4>::type>::value
-            || is_fvar<typename scalar_type<T5>::type>::value
-            || is_fvar<typename scalar_type<T6>::type>::value
-  };
-};
+template <typename... T>
+using contains_fvar
+    = math::disjunction<is_fvar<typename scalar_type<T>::type>...>;
 
 }  // namespace stan
 #endif

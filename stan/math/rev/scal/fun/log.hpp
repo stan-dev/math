@@ -7,13 +7,13 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class log_vari : public op_v_vari {
  public:
   explicit log_vari(vari* avi) : op_v_vari(std::log(avi->val_), avi) {}
   void chain() { avi_->adj_ += adj_ / avi_->val_; }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Return the natural log of the specified variable (cmath).
@@ -43,7 +43,7 @@ class log_vari : public op_v_vari {
  * @param a Variable whose log is taken.
  * @return Natural log of variable.
  */
-inline var log(const var& a) { return var(new log_vari(a.vi_)); }
+inline var log(const var& a) { return var(new internal::log_vari(a.vi_)); }
 
 }  // namespace math
 }  // namespace stan

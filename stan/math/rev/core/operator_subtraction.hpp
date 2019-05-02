@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class subtract_vv_vari : public op_vv_vari {
  public:
   subtract_vv_vari(vari* avi, vari* bvi)
@@ -48,7 +48,7 @@ class subtract_dv_vari : public op_dv_vari {
       bvi_->adj_ -= adj_;
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Subtraction operator for variables (C++).
@@ -89,7 +89,7 @@ class subtract_dv_vari : public op_dv_vari {
  * the first.
  */
 inline var operator-(const var& a, const var& b) {
-  return var(new subtract_vv_vari(a.vi_, b.vi_));
+  return var(new internal::subtract_vv_vari(a.vi_, b.vi_));
 }
 
 /**
@@ -106,7 +106,7 @@ inline var operator-(const var& a, const var& b) {
 inline var operator-(const var& a, double b) {
   if (b == 0.0)
     return a;
-  return var(new subtract_vd_vari(a.vi_, b));
+  return var(new internal::subtract_vd_vari(a.vi_, b));
 }
 
 /**
@@ -121,7 +121,7 @@ inline var operator-(const var& a, double b) {
  * @return Result of sutracting a variable from a scalar.
  */
 inline var operator-(double a, const var& b) {
-  return var(new subtract_dv_vari(a, b.vi_));
+  return var(new internal::subtract_dv_vari(a, b.vi_));
 }
 
 }  // namespace math

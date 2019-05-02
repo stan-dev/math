@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 
 class log_softmax_elt_vari : public vari {
  private:
@@ -39,7 +39,7 @@ class log_softmax_elt_vari : public vari {
   }
 };
 
-}  // namespace
+}  // namespace internal
 
 /**
  * Return the softmax of the specified Eigen vector.  Softmax is
@@ -99,9 +99,9 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> log_softmax(
 
   Matrix<var, Dynamic, 1> log_softmax_alpha(alpha.size());
   for (int k = 0; k < log_softmax_alpha.size(); ++k)
-    log_softmax_alpha(k)
-        = var(new log_softmax_elt_vari(log_softmax_alpha_d[k], alpha_vi_array,
-                                       softmax_alpha_d_array, alpha.size(), k));
+    log_softmax_alpha(k) = var(new internal::log_softmax_elt_vari(
+        log_softmax_alpha_d[k], alpha_vi_array, softmax_alpha_d_array,
+        alpha.size(), k));
   return log_softmax_alpha;
 }
 
