@@ -18,9 +18,10 @@ namespace math {
  * initial state, and a class method to convert from the coupled ode system
  * back to the base ode.
  *
- * @tparam F base ode system functor. Must provide 
- *   <code>operator()(double t, std::vector<T1> y, std::vector<T2> theta, 
- *          std::vector<double> x, std::vector<int>x_int, std::ostream* msgs)</code>
+ * @tparam F base ode system functor. Must provide
+ *   <code>operator()(double t, std::vector<T1> y, std::vector<T2> theta,
+ *          std::vector<double> x, std::vector<int>x_int, std::ostream*
+ * msgs)</code>
  * @tparam T1 scalar type of the initial state
  * @tparam T2 scalar type of the parameters
  */
@@ -85,7 +86,8 @@ class coupled_ode_system<F, double, double> {
    * @param[in] y current state of the coupled ode. This must be the
    *   correct size, <code>N_</code>.
    * @param[out] dy_dt populated with derivatives of the coupled
-   *   system evaluated at specified state and time. This vector will be overwritten.
+   *   system evaluated at specified state and time. This vector will be
+   * overwritten.
    * @param[in] t time.
    * @throw exception if the system function does not return
    * a derivative vector of the same size as the state vector.

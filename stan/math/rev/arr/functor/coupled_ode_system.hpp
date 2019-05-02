@@ -30,16 +30,17 @@ namespace math {
  * \f[
  *  \frac{d x_{N + m}}{dt}
  *  = \frac{d}{dt} \frac{\partial x_1}{\partial \theta_m}
- * \f] 
+ * \f]
  * for \f$ m \in {1, \ldots, M} \f$].
  *
  * <p> The next M states correspond to the sensitivites with respect
  * to the second base system equation, and so on through the last base
  * system equation.
  *
- * @tparam F base ode system functor. Must provide 
- *   <code>operator()(double t, std::vector<double> y, std::vector<var> theta, 
- *          std::vector<double> x, std::vector<int>x_int, std::ostream* msgs)</code>
+ * @tparam F base ode system functor. Must provide
+ *   <code>operator()(double t, std::vector<double> y, std::vector<var> theta,
+ *          std::vector<double> x, std::vector<int>x_int, std::ostream*
+ * msgs)</code>
  */
 template <typename F>
 struct coupled_ode_system<F, double, var> {
@@ -209,16 +210,17 @@ struct coupled_ode_system<F, double, var> {
  * \f[
  *  \frac{d x_{N + n}}{dt}
  *  = \frac{d}{dt} \frac{\partial x_1}{\partial \y0_m}
- * \f] 
+ * \f]
  * for \f$ n \in {1, \ldots, N} \f$].
  *
  * <p> The next N states correspond to the sensitivites with respect
  * to the second base system equation, and so on through the last base
  * system equation.
  *
- * @tparam F base ode system functor. Must provide 
- *   <code>operator()(double t, std::vector<var> y, std::vector<double> theta, 
- *          std::vector<double> x, std::vector<int>x_int, std::ostream* msgs)</code>
+ * @tparam F base ode system functor. Must provide
+ *   <code>operator()(double t, std::vector<var> y, std::vector<double> theta,
+ *          std::vector<double> x, std::vector<int>x_int, std::ostream*
+ * msgs)</code>
  */
 template <typename F>
 struct coupled_ode_system<F, var, double> {
@@ -294,8 +296,9 @@ struct coupled_ode_system<F, var, double> {
 
         for (size_t j = 0; j < N_; j++) {
           // orders derivatives by equation (i.e. if there are 2 eqns
-          // (y1, y2) and 2 initial conditions (y0_a, y0_b), dy_dt will be ordered as:
-          // dy1_dt, dy2_dt, dy1_d{y0_a}, dy2_d{y0_a}, dy1_d{y0_b}, dy2_d{y0_b}
+          // (y1, y2) and 2 initial conditions (y0_a, y0_b), dy_dt will be
+          // ordered as: dy1_dt, dy2_dt, dy1_d{y0_a}, dy2_d{y0_a}, dy1_d{y0_b},
+          // dy2_d{y0_b}
           double temp_deriv = 0;
           const size_t offset = N_ + N_ * j;
           for (size_t k = 0; k < N_; k++)
@@ -322,7 +325,7 @@ struct coupled_ode_system<F, var, double> {
 
   /**
    * Returns the initial state of the coupled system.
-   * 
+   *
    * <p>Because the starting state is unknown, the coupled system
    * incorporates the initial conditions as parameters.  The
    * initial conditions for the coupled part of the system are set
@@ -406,9 +409,10 @@ struct coupled_ode_system<F, var, double> {
  * parameters with respect to the second base system equation, and
  * so on through the last base system equation.
  *
- * @tparam F base ode system functor. Must provide 
- *   <code>operator()(double t, std::vector<var> y, std::vector<var> theta, 
- *          std::vector<double> x, std::vector<int>x_int, std::ostream* msgs)</code>
+ * @tparam F base ode system functor. Must provide
+ *   <code>operator()(double t, std::vector<var> y, std::vector<var> theta,
+ *          std::vector<double> x, std::vector<int>x_int, std::ostream*
+ * msgs)</code>
  */
 template <typename F>
 struct coupled_ode_system<F, var, var> {
@@ -424,7 +428,7 @@ struct coupled_ode_system<F, var, var> {
   const size_t size_;
   std::ostream* msgs_;
 
-/**
+  /**
    * Construct a coupled ode system from the base system function,
    * initial state of the base system, parameters, and a stream for
    * messages.
@@ -532,7 +536,7 @@ struct coupled_ode_system<F, var, var> {
    * vector of zeros.
    *
    * FIXME(syclik): this documentation is incorrect
-   * 
+   *
    * @return the initial condition of the coupled system.  This is
    * a vector of length size() where all elements are 0.
    */
