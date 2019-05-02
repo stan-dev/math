@@ -327,17 +327,14 @@ struct coupled_ode_system<F, var, double> {
    * Returns the initial state of the coupled system.
    *
    * <p>Because the starting state is unknown, the coupled system
-   * incorporates the initial conditions as parameters.  The
-   * initial conditions for the coupled part of the system are set
-   * to zero along with the rest of the initial state, because the
-   * value of the initial state has been moved into the
-   * parameters.
-   *
-   * FIXME(syclik): this documentation is incorrect.
+   * incorporates the initial conditions as parameters.  At the initial
+   * time the Jacobian of the integrated function is the identity matrix.
    *
    * @return the initial condition of the coupled system.
-   *   This is a vector of length size() where all elements
-   *   are 0.
+   *   This is a vector of length size() where the first N values are
+   *   the initial condition of the base ODE and the remainder
+   *   correspond to the identity matrix which is the Jacobian of the
+   *   integrated function at the initial time-point.
    */
   std::vector<double> initial_state() const {
     std::vector<double> initial(size_, 0.0);
@@ -530,15 +527,20 @@ struct coupled_ode_system<F, var, var> {
   /**
    * Returns the initial state of the coupled system.
    *
-   * Because the initial state is unknown, the coupled system
-   * incorporates the initial condition offset from zero as
-   * a parameter, and hence the return of this function is a
-   * vector of zeros.
+   * <p>Because the starting state is unknown, the coupled system
+   * incorporates the initial conditions as parameters. At the initial
+   * time the Jacobian of the integrated function is the identity
+   * matrix. In addition the coupled system includes the Jacobian of
+   * the integrated function wrt to the parameters. This Jacobian is
+   * zero at the initial time-point.
    *
-   * FIXME(syclik): this documentation is incorrect
-   *
-   * @return the initial condition of the coupled system.  This is
-   * a vector of length size() where all elements are 0.
+   * @return the initial condition of the coupled system.  This is a
+   *   vector of length size() where the first N values are the
+   *   initial condition of the base ODE and the next N*N elements
+   *   correspond to the identity matrix which is the Jacobian of the
+   *   integrated function at the initial time-point. The last N*M
+   *   elements are all zero as these are the Jacobian wrt to the
+   *   parameters at the initial time-point, which is zero.
    */
   std::vector<double> initial_state() const {
     std::vector<double> initial(size_, 0.0);
