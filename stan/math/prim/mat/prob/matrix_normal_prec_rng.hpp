@@ -1,13 +1,14 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MATRIX_NORMAL_PREC_RNG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MATRIX_NORMAL_PREC_RNG_HPP
 
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/mat/err/check_pos_semidefinite.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {

@@ -1,21 +1,22 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_PREC_RNG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_PREC_RNG_HPP
 
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/meta/StdVectorBuilder.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
 
 /**
  * Return a multivariate normal random variate with the given location
- * and prescision using the specified random number generator.
+ * and precision using the specified random number generator.
  *
  * mu can be either an Eigen::VectorXd, an Eigen::RowVectorXd, or a
  * std::vector of either of those types.
