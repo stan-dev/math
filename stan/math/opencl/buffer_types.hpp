@@ -87,7 +87,7 @@ struct to_matrix_cl<in_out_buffer> {
 
 // Alias for making const matrix_cl argument types
 template <typename T>
-using to_const_matrix_cl_v = const typename internal::to_matrix_cl<T>::type;
+using to_const_matrix_cl_t = const typename internal::to_matrix_cl<T>::type;
 
 }  // namespace internal
 }  // namespace opencl_kernels

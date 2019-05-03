@@ -44,7 +44,7 @@ inline const cl::Buffer& get_kernel_args(const stan::math::matrix_cl& m) {
 }
 
 template <typename T>
-void assign_event(const cl::Event&, to_const_matrix_cl_v<T>&) {}
+void assign_event(const cl::Event&, to_const_matrix_cl_t<T>&) {}
 
 template <>
 void assign_event<in_buffer>(const cl::Event& e,
@@ -83,14 +83,14 @@ inline void assign_events(const Arg&) {}
  */
 template <typename Arg, typename... Args>
 inline void assign_events(const cl::Event& new_event,
-                          to_const_matrix_cl_v<Arg>& m,
-                          to_const_matrix_cl_v<Args>&... args) {
+                          to_const_matrix_cl_t<Arg>& m,
+                          to_const_matrix_cl_t<Args>&... args) {
   assign_event<Arg>(new_event, m);
   assign_events<Args...>(new_event, args...);
 }
 
 template <typename T>
-inline const std::vector<cl::Event> select_events(to_const_matrix_cl_v<T>& t) {
+inline const std::vector<cl::Event> select_events(to_const_matrix_cl_t<T>& t) {
   return std::vector<cl::Event>();
 }
 
@@ -222,7 +222,7 @@ struct kernel_cl {
    * @tparam Args Parameter pack of all kernel argument types.
    */
   auto operator()(cl::NDRange global_thread_size,
-                  internal::to_const_matrix_cl_v<Args>&... args) const {
+                  internal::to_const_matrix_cl_t<Args>&... args) const {
     using namespace internal;
     auto f = make_functor();
     const std::vector<cl::Event> kernel_events
@@ -242,7 +242,7 @@ struct kernel_cl {
    * @tparam Args Parameter pack of all kernel argument types.
    */
   auto operator()(cl::NDRange global_thread_size, cl::NDRange thread_block_size,
-                  internal::to_const_matrix_cl_v<Args>&... args) const {
+                  internal::to_const_matrix_cl_t<Args>&... args) const {
     using namespace internal;
     auto f = make_functor();
     const std::vector<cl::Event> kernel_events
