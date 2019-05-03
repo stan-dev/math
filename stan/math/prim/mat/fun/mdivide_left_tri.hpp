@@ -33,11 +33,11 @@ mdivide_left_tri(const Eigen::Matrix<T1, R1, C1> &A,
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "b", b);
   return promote_common<Eigen::Matrix<T1, R1, C1>, Eigen::Matrix<T2, R1, C1> >(
-           A)
-    .template triangularView<TriView>()
-    .solve(
-        promote_common<Eigen::Matrix<T1, R2, C2>, Eigen::Matrix<T2, R2, C2> >(
-            b));  
+             A)
+      .template triangularView<TriView>()
+      .solve(
+          promote_common<Eigen::Matrix<T1, R2, C2>, Eigen::Matrix<T2, R2, C2> >(
+              b));
 }
 
 /**
@@ -69,14 +69,14 @@ inline Eigen::Matrix<T, R1, C1> mdivide_left_tri(
  * match the size of A.
  */
 template <int TriView, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<double, R1, C2>
-mdivide_left_tri(const Eigen::Matrix<double, R1, C1> &A,
-                 const Eigen::Matrix<double, R2, C2> &b) {
+inline Eigen::Matrix<double, R1, C2> mdivide_left_tri(
+    const Eigen::Matrix<double, R1, C1> &A,
+    const Eigen::Matrix<double, R2, C2> &b) {
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "b", b);
 #ifdef STAN_OPENCL
-  if (A.rows() >= 
-      opencl_context.tuning_opts().lower_tri_inverse_size_worth_transfer) {
+  if (A.rows()
+      >= opencl_context.tuning_opts().lower_tri_inverse_size_worth_transfer) {
     matrix_cl A_cl(A);
     matrix_cl b_cl(b);
     matrix_cl A_inv_cl(A.rows(), A.cols());
@@ -91,7 +91,7 @@ mdivide_left_tri(const Eigen::Matrix<double, R1, C1> &A,
     return C;
   } else {
 #endif
-    return A.template triangularView<TriView>().solve(b);  
+    return A.template triangularView<TriView>().solve(b);
 #ifdef STAN_OPENCL
   }
 #endif
@@ -109,10 +109,10 @@ template <int TriView, int R1, int C1>
 inline Eigen::Matrix<double, R1, C1> mdivide_left_tri(
     const Eigen::Matrix<double, R1, C1> &A) {
   check_square("mdivide_left_tri", "A", A);
-  const int n = A.rows();  
+  const int n = A.rows();
 #ifdef STAN_OPENCL
-  if (A.rows() >= 
-      opencl_context.tuning_opts().lower_tri_inverse_size_worth_transfer) {
+  if (A.rows()
+      >= opencl_context.tuning_opts().lower_tri_inverse_size_worth_transfer) {
     matrix_cl A_cl(A);
     if (TriView == Eigen::Lower) {
       A_cl = lower_triangular_inverse(A_cl);
@@ -124,13 +124,13 @@ inline Eigen::Matrix<double, R1, C1> mdivide_left_tri(
     return A_inv;
   } else {
 #endif
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> b;
-  b.setIdentity(n, n);
-  A.template triangularView<TriView>().solveInPlace(b);
-  return b;
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> b;
+    b.setIdentity(n, n);
+    A.template triangularView<TriView>().solveInPlace(b);
+    return b;
 #ifdef STAN_OPENCL
   }
-#endif  
+#endif
 }
 
 }  // namespace math
