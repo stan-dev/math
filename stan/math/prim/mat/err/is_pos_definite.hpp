@@ -1,10 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_IS_POS_DEFINITE_HPP
 #define STAN_MATH_PRIM_MAT_ERR_IS_POS_DEFINITE_HPP
 
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
 #include <stan/math/prim/scal/err/is_positive.hpp>
 #include <stan/math/prim/scal/err/is_not_nan.hpp>
 #include <stan/math/prim/mat/err/is_symmetric.hpp>

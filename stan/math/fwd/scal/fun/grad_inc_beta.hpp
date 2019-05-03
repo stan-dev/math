@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_FWD_SCAL_FUN_GRAD_INC_BETA_HPP
 #define STAN_MATH_FWD_SCAL_FUN_GRAD_INC_BETA_HPP
 
-#include <stan/math/fwd/scal/fun/fabs.hpp>
 #include <stan/math/fwd/scal/fun/log.hpp>
 #include <stan/math/fwd/scal/fun/log1m.hpp>
 #include <stan/math/fwd/scal/fun/lbeta.hpp>

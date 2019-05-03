@@ -3,7 +3,6 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 
 namespace stan {
 namespace math {
