@@ -1,8 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_LOGNORMAL_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_LOGNORMAL_LPDF_HPP
 
-#include <boost/random/lognormal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -12,7 +10,6 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
@@ -56,7 +53,6 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_lpdf(
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
-  using std::log;
   using std::log;
 
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,

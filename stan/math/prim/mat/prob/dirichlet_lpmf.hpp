@@ -10,7 +10,6 @@
 #include <stan/math/prim/mat/fun/lgamma.hpp>
 #include <stan/math/prim/mat/fun/digamma.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
 #include <stan/math/prim/mat/meta/operands_and_partials.hpp>
 #include <stan/math/prim/mat/meta/is_constant_struct.hpp>
 #include <stan/math/prim/mat/meta/get.hpp>

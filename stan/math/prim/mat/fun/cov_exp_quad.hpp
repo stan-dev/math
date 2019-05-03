@@ -2,14 +2,9 @@
 #define STAN_MATH_PRIM_MAT_FUN_COV_EXP_QUAD_HPP
 
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/gp_exp_quad_cov.hpp>
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/fun/exp.hpp>
 #include <vector>
 #include <cmath>
 

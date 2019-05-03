@@ -4,7 +4,6 @@
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/crossprod.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/scal/prob/chi_square_rng.hpp>
 #include <stan/math/prim/scal/prob/normal_rng.hpp>
