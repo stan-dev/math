@@ -40,7 +40,7 @@ static const char *is_zero_on_diagonal_kernel_code = STRINGIFY(
  * See the docs for \link kernels/check_diagonal_zeros.hpp
  * check_diagonal_zeros() \endlink
  */
-const kernel_cl<read_buffer, write_buffer, int, int> check_diagonal_zeros(
+const kernel_cl<in_buffer, out_buffer, int, int> check_diagonal_zeros(
     "is_zero_on_diagonal", {indexing_helpers, is_zero_on_diagonal_kernel_code});
 
 }  // namespace opencl_kernels

@@ -7,13 +7,18 @@
 
 namespace stan {
 namespace math {
+class matrix_cl;
 namespace opencl_kernels {
 
-// A read buffer will add events to the read and read_write stack.
-struct read_buffer {};
+// An in_buffer signifies a cl::Buffer argument used as input.
+struct in_buffer {};
 
-// Write buffers will add events to the write and read_write event stack.
-struct write_buffer {};
+// An out_buffer signifies a cl::Buffer argument used as output.
+struct out_buffer {};
+
+// An in_out_buffer signifies a cl::Buffer argument used as both input and
+// output.
+struct in_out_buffer {};
 
 namespace internal {
 
@@ -30,12 +35,12 @@ struct to_buffer {
 };
 
 template <>
-struct to_buffer<read_buffer> {
+struct to_buffer<in_buffer> {
   typedef cl::Buffer type;
 };
 
 template <>
-struct to_buffer<write_buffer> {
+struct to_buffer<out_buffer> {
   typedef cl::Buffer type;
 };
 
@@ -61,12 +66,12 @@ struct to_matrix_cl<cl::Buffer> {
  * with the input's type.
  */
 template <>
-struct to_matrix_cl<read_buffer> {
+struct to_matrix_cl<in_buffer> {
   typedef matrix_cl type;
 };
 
 template <>
-struct to_matrix_cl<write_buffer> {
+struct to_matrix_cl<out_buffer> {
   typedef matrix_cl type;
 };
 

@@ -43,7 +43,7 @@ static const char *subtract_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/subtract.hpp subtract() \endlink
  */
-const kernel_cl<write_buffer, read_buffer, read_buffer, int, int> subtract(
+const kernel_cl<out_buffer, in_buffer, in_buffer, int, int> subtract(
     "subtract", {indexing_helpers, subtract_kernel_code});
 
 }  // namespace opencl_kernels

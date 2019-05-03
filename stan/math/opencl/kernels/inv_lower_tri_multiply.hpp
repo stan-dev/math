@@ -125,7 +125,7 @@ static const char* inv_lower_tri_multiply_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/inv_lower_tri_multiply.hpp add() \endlink
  */
-const kernel_cl<read_buffer, write_buffer, int, int> inv_lower_tri_multiply(
+const kernel_cl<in_buffer, out_buffer, int, int> inv_lower_tri_multiply(
     "inv_lower_tri_multiply",
     {thread_block_helpers, inv_lower_tri_multiply_kernel_code},
     {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});

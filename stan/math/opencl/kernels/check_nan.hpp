@@ -40,7 +40,7 @@ static const char *is_nan_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/check_nan.hpp is_nan() \endlink
  */
-const kernel_cl<read_buffer, write_buffer, int, int> check_nan(
+const kernel_cl<in_buffer, out_buffer, int, int> check_nan(
     "is_nan", {indexing_helpers, is_nan_kernel_code});
 
 }  // namespace opencl_kernels

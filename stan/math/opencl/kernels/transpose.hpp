@@ -37,7 +37,7 @@ static const char *transpose_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/transpose.hpp transpose() \endlink
  */
-const kernel_cl<write_buffer, read_buffer, int, int> transpose(
+const kernel_cl<out_buffer, in_buffer, int, int> transpose(
     "transpose", {indexing_helpers, transpose_kernel_code});
 
 }  // namespace opencl_kernels

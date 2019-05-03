@@ -47,7 +47,7 @@ static const char* triangular_transpose_kernel_code = STRINGIFY(
  * See the docs for \link kernels/triangular_transpose.hpp
  * triangular_transpose() \endlink
  */
-const kernel_cl<write_buffer, int, int, TriangularMapCL> triangular_transpose(
+const kernel_cl<out_buffer, int, int, TriangularMapCL> triangular_transpose(
     "triangular_transpose",
     {indexing_helpers, triangular_transpose_kernel_code});
 

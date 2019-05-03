@@ -66,8 +66,8 @@ static const char *sub_block_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/sub_block.hpp sub_block() \endlink
  */
-const kernel_cl<read_buffer, write_buffer, int, int, int, int, int, int, int,
-                int, int, int, TriangularViewCL>
+const kernel_cl<in_buffer, out_buffer, int, int, int, int, int, int, int, int,
+                int, int, TriangularViewCL>
     sub_block("sub_block", {indexing_helpers, sub_block_kernel_code});
 
 }  // namespace opencl_kernels

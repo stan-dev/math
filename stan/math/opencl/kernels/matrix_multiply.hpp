@@ -162,7 +162,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/matrix_multiply.hpp matrix_multiply() \endlink
  */
-const kernel_cl<read_buffer, read_buffer, write_buffer, int, int, int,
+const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, int,
                 TriangularViewCL, TriangularViewCL>
     matrix_multiply("matrix_multiply",
                     {thread_block_helpers, matrix_multiply_kernel_code},
@@ -206,8 +206,8 @@ static const char* matrix_vector_multiply_kernel_code = STRINGIFY(
  * See the docs for \link kernels/matrix_multiply.hpp matrix_vector_multiply()
  * \endlink
  */
-const kernel_cl<read_buffer, read_buffer, write_buffer, int, int,
-                TriangularViewCL, TriangularViewCL>
+const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, TriangularViewCL,
+                TriangularViewCL>
     matrix_vector_multiply("matrix_vector_multiply",
                            matrix_vector_multiply_kernel_code);
 
@@ -268,8 +268,8 @@ static const char* row_vector_matrix_multiply_kernel_code = STRINGIFY(
  * See the docs for \link kernels/matrix_multiply.hpp
  * row_vector_matrix_multiply() \endlink
  */
-const kernel_cl<read_buffer, read_buffer, write_buffer, int, int,
-                TriangularViewCL, TriangularViewCL>
+const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, TriangularViewCL,
+                TriangularViewCL>
     row_vector_matrix_multiply("row_vector_matrix_multiply",
                                row_vector_matrix_multiply_kernel_code,
                                {{"LOCAL_SIZE_", 64},
