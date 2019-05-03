@@ -92,12 +92,16 @@ rm -rf boost_${boost_old_version}/
 git commit -m "upgrading to boost v${boost_version}; removing old boost library"
 
 # 2. Modify makefiles and README with new version number
+# if the versions are the same we are only trimming files
+if [ "$boost_version" != "$boost_old_version" ]; then
+
 sed -i -e "s|lib/boost_${boost_old_version}|lib/boost_${boost_version}|g" ../README.md ../make/*
 sed -i -e "s|Boost (version ${boost_old_version})|Boost (version ${boost_version})|g" ../README.md
 rm -f ../README.md*-e ../make/*-e
 git add -u ../README.md ../make/*
 git commit -m "upgrading to boost v${boost_version}; modifying with new version number"
 
+fi
 # 3. Unpack the new Boost version.
 tar xvzf $boost_filename
 mv boost_${boost_version_underscore} boost_${boost_version}
