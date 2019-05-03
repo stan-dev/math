@@ -7,7 +7,6 @@
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/lower_tri_inverse.hpp>
 #include <boost/random/mersenne_twister.hpp>
-#include <gtest/gtest.h>
 #endif
 
 #define EXPECT_MATRIX_NEAR(A, B, DELTA) \
