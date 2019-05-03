@@ -31,17 +31,22 @@ namespace internal {
  */
 template <typename T = cl::Buffer>
 struct to_buffer {
-  typedef T type;
+  using type = T;
 };
 
 template <>
 struct to_buffer<in_buffer> {
-  typedef cl::Buffer type;
+  using type = cl::Buffer;
 };
 
 template <>
 struct to_buffer<out_buffer> {
-  typedef cl::Buffer type;
+  using type = cl::Buffer;
+};
+
+template <>
+struct to_buffer<in_out_buffer> {
+  using type = cl::Buffer;
 };
 
 /**
@@ -72,6 +77,11 @@ struct to_matrix_cl<in_buffer> {
 
 template <>
 struct to_matrix_cl<out_buffer> {
+  typedef matrix_cl type;
+};
+
+template <>
+struct to_matrix_cl<in_out_buffer> {
   typedef matrix_cl type;
 };
 
