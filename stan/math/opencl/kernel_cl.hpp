@@ -223,14 +223,13 @@ struct kernel_cl {
    */
   auto operator()(cl::NDRange global_thread_size,
                   internal::to_const_matrix_cl_t<Args>&... args) const {
-    using namespace internal;
     auto f = make_functor();
     const std::vector<cl::Event> kernel_events
-        = vec_concat(select_events<Args>(args)...);
+        = vec_concat(internal::select_events<Args>(args)...);
     cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
                           global_thread_size);
-    cl::Event kern_event = f(eargs, get_kernel_args(args)...);
-    assign_events<Args...>(kern_event, args...);
+    cl::Event kern_event = f(eargs, internal::get_kernel_args(args)...);
+    internal::assign_events<Args...>(kern_event, args...);
     return kern_event;
   }
 
@@ -243,14 +242,13 @@ struct kernel_cl {
    */
   auto operator()(cl::NDRange global_thread_size, cl::NDRange thread_block_size,
                   internal::to_const_matrix_cl_t<Args>&... args) const {
-    using namespace internal;
     auto f = make_functor();
     const std::vector<cl::Event> kernel_events
-        = vec_concat(select_events<Args>(args)...);
+        = vec_concat(internal::select_events<Args>(args)...);
     cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
                           global_thread_size, thread_block_size);
-    cl::Event kern_event = f(eargs, get_kernel_args(args)...);
-    assign_events<Args...>(kern_event, args...);
+    cl::Event kern_event = f(eargs, internal::get_kernel_args(args)...);
+    internal::assign_events<Args...>(kern_event, args...);
     return kern_event;
   }
 };
