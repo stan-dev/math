@@ -4,10 +4,7 @@
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/kernels/helpers.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/get_kernel_arg.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
-#include <stan/math/opencl/select_events.hpp>
-#include <stan/math/opencl/assign_event.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
 #include <CL/cl.hpp>
@@ -28,6 +25,88 @@
 namespace stan {
 namespace math {
 namespace opencl_kernels {
+namespace internal {
+/**
+ * Extracts the kernel's arguments, used in the global and local kernel
+ * constructor.
+ * @tparam For this general template the function will just return back the
+ * value passed in.
+ * @param t The type that will be returned.
+ * @return the input t.
+ */
+template <typename T>
+inline const T& get_kernel_args(const T& t) {
+  return t;
+}
+
+inline const cl::Buffer& get_kernel_args(const stan::math::matrix_cl& m) {
+  return m.buffer();
+}
+
+template <typename T>
+void assign_event(const cl::Event&, to_const_matrix_cl_v<T>&) {}
+
+template <>
+void assign_event<in_buffer>(const cl::Event& e,
+                             const stan::math::matrix_cl& m) {
+  m.add_read_event(e);
+}
+
+template <>
+void assign_event<out_buffer>(const cl::Event& e,
+                              const stan::math::matrix_cl& m) {
+  m.add_write_event(e);
+}
+
+template <>
+void assign_event<in_out_buffer>(const cl::Event& e,
+                                 const stan::math::matrix_cl& m) {
+  m.add_read_event(e);
+  m.add_write_event(e);
+}
+template <typename Arg, typename std::enable_if<std::is_same<
+                            Arg, cl::Event>::value>::type* = nullptr>
+inline void assign_events(const Arg&) {}
+
+/**
+ * Adds the event to any matrices in the arguments in the event vector specified
+ * by the buffer directionality.
+ * @tparam Arg Arguments given during kernel creation that specify the kernel
+ * signature.
+ * @tparam Args Arguments given during kernel creation that specify the kernel
+ * signature.
+ * @param new_event The cl::Event generated involving the arguments.
+ * @param m Arguments to the kernel that may be matrices or not. Non-matrices
+ * ignored.
+ * @param args Arguments to the kernel that may be matrices or not. Non-matrices
+ * ignored.
+ */
+template <typename Arg, typename... Args>
+inline void assign_events(const cl::Event& new_event,
+                          to_const_matrix_cl_v<Arg>& m,
+                          to_const_matrix_cl_v<Args>&... args) {
+  assign_event<Arg>(new_event, m);
+  assign_events<Args...>(new_event, args...);
+}
+
+template <typename T>
+inline const std::vector<cl::Event> select_events(to_const_matrix_cl_v<T>& t) {
+  return std::vector<cl::Event>();
+}
+
+template <>
+inline const std::vector<cl::Event> select_events<in_buffer>(
+    const stan::math::matrix_cl& m) {
+  return m.write_events();
+}
+
+template <>
+inline const std::vector<cl::Event> select_events<out_buffer>(
+    const stan::math::matrix_cl& m) {
+  return m.read_write_events();
+}
+
+}  // namespace internal
 
 /**
  * Compile an OpenCL kernel.
@@ -144,12 +223,13 @@ struct kernel_cl {
    */
   auto operator()(cl::NDRange global_thread_size,
                   internal::to_const_matrix_cl_v<Args>&... args) const {
+    using namespace internal;
     auto f = make_functor();
     const std::vector<cl::Event> kernel_events
         = vec_concat(select_events<Args>(args)...);
     cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
                           global_thread_size);
-    cl::Event kern_event = f(eargs, get_kernel_arg(args)...);
+    cl::Event kern_event = f(eargs, get_kernel_args(args)...);
     assign_events<Args...>(kern_event, args...);
     return kern_event;
   }
@@ -163,12 +243,13 @@ struct kernel_cl {
    */
   auto operator()(cl::NDRange global_thread_size, cl::NDRange thread_block_size,
                   internal::to_const_matrix_cl_v<Args>&... args) const {
+    using namespace internal;
     auto f = make_functor();
     const std::vector<cl::Event> kernel_events
         = vec_concat(select_events<Args>(args)...);
     cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
                           global_thread_size, thread_block_size);
-    cl::Event kern_event = f(eargs, get_kernel_arg(args)...);
+    cl::Event kern_event = f(eargs, get_kernel_args(args)...);
     assign_events<Args...>(kern_event, args...);
     return kern_event;
   }
