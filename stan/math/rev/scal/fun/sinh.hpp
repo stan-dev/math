@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_SCAL_FUN_SINH_HPP
 
 #include <stan/math/rev/core.hpp>
-#include <valarray>
 
 namespace stan {
 namespace math {

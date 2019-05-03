@@ -53,14 +53,7 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lpdf(
 
   typedef typename stan::partials_return_type<T_y, T_loc, T_prec>::type
       T_partials_return;
-
   using std::log;
-
-  if (size_zero(y, mu, kappa))
-    return 0.0;
-
-  T_partials_return logp(0.0);
-
   check_positive(function, "Location parameter", mu);
   check_less_or_equal(function, "Location parameter", mu, 1.0);
   check_positive_finite(function, "Precision parameter", kappa);
@@ -69,9 +62,11 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lpdf(
   check_less_or_equal(function, "Random variable", y, 1.0);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Precision parameter", kappa);
-
+  if (size_zero(y, mu, kappa))
+    return 0;
   if (!include_summand<propto, T_y, T_loc, T_prec>::value)
-    return 0.0;
+    return 0;
+  T_partials_return logp(0);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);

@@ -10,13 +10,8 @@
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/log1p.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <boost/random/cauchy_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <limits>
 
 namespace stan {
@@ -47,8 +42,6 @@ typename return_type<T_y, T_loc, T_scale>::type cauchy_cdf(
     return 1.0;
 
   static const char* function = "cauchy_cdf";
-
-  using boost::math::tools::promote_args;
 
   T_partials_return P(1.0);
 

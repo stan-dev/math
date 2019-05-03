@@ -8,6 +8,7 @@
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
@@ -67,11 +68,6 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
   using Eigen::Matrix;
   using std::exp;
 
-  if (!(stan::length(y) && stan::length(x) && stan::length(beta)))
-    return 0.0;
-
-  T_partials_return logp(0.0);
-
   const size_t N = x.rows();
   const size_t M = x.cols();
 
@@ -81,9 +77,13 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
   if (is_vector<T_alpha>::value)
     check_consistent_sizes(function, "Vector of intercepts", alpha,
                            "Vector of dependent variables", y);
+  if (size_zero(y, x, beta))
+    return 0;
 
   if (!include_summand<propto, T_x, T_alpha, T_beta>::value)
-    return 0.0;
+    return 0;
+
+  T_partials_return logp(0);
 
   const auto& x_val = value_of_rec(x);
   const auto& y_val = value_of_rec(y);

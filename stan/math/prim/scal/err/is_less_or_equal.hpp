@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/scal/meta/get.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {

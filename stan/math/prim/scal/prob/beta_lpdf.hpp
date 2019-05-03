@@ -15,17 +15,11 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/prim/scal/fun/lbeta.hpp>
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
-#include <stan/math/prim/scal/fun/inc_beta.hpp>
-#include <boost/math/special_functions/gamma.hpp>
-#include <boost/random/gamma_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -58,14 +52,7 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
   typedef
       typename stan::partials_return_type<T_y, T_scale_succ, T_scale_fail>::type
           T_partials_return;
-
   using std::log;
-
-  if (size_zero(y, alpha, beta))
-    return 0.0;
-
-  T_partials_return logp(0.0);
-
   check_positive_finite(function, "First shape parameter", alpha);
   check_positive_finite(function, "Second shape parameter", beta);
   check_not_nan(function, "Random variable", y);
@@ -75,9 +62,12 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
   check_nonnegative(function, "Random variable", y);
   check_less_or_equal(function, "Random variable", y, 1);
 
+  if (size_zero(y, alpha, beta))
+    return 0;
   if (!include_summand<propto, T_y, T_scale_succ, T_scale_fail>::value)
-    return 0.0;
+    return 0;
 
+  T_partials_return logp(0);
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_scale_succ> alpha_vec(alpha);
   scalar_seq_view<T_scale_fail> beta_vec(beta);

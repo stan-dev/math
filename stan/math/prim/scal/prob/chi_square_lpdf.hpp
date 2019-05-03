@@ -10,17 +10,12 @@
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <boost/random/chi_squared_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -52,15 +47,15 @@ typename return_type<T_y, T_dof>::type chi_square_lpdf(const T_y& y,
   typedef
       typename stan::partials_return_type<T_y, T_dof>::type T_partials_return;
 
-  if (size_zero(y, nu))
-    return 0.0;
-
-  T_partials_return logp(0.0);
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu);
+  if (size_zero(y, nu))
+    return 0;
+
+  T_partials_return logp(0);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_dof> nu_vec(nu);
@@ -73,7 +68,6 @@ typename return_type<T_y, T_dof>::type chi_square_lpdf(const T_y& y,
   if (!include_summand<propto, T_y, T_dof>::value)
     return 0.0;
 
-  using boost::math::digamma;
   using std::log;
 
   VectorBuilder<include_summand<propto, T_y, T_dof>::value, T_partials_return,

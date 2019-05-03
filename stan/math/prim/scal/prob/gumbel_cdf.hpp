@@ -1,8 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_GUMBEL_CDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_GUMBEL_CDF_HPP
 
-#include <boost/random/uniform_01.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -15,7 +13,6 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>

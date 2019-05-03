@@ -1,18 +1,13 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_GAMMA_LCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_GAMMA_LCDF_HPP
 
-#include <boost/random/gamma_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
-#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
@@ -23,7 +18,6 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <cmath>
 #include <limits>
@@ -40,9 +34,6 @@ typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lcdf(
       T_partials_return;
 
   static const char* function = "gamma_lcdf";
-
-  using boost::math::tools::promote_args;
-  using std::exp;
 
   T_partials_return P(0.0);
 
