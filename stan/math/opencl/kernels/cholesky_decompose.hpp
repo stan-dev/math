@@ -21,7 +21,7 @@ static const char *cholesky_decompose_kernel_code = STRINGIFY(
      * cholesky decompose.
      *
      * @param[in, out] A The input matrix and the result of the cholesky
-     *  decompisition
+     *  decomposition
      * @param rows The number of rows for A and B.
      * @note Code is a <code>const char*</code> held in
      * <code>cholesky_decompose_kernel_code.</code>
