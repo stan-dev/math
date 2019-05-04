@@ -67,7 +67,7 @@ inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m_chol(m.rows(),
                                                                  m.cols());
     m_cl = cholesky_decompose(m_cl);
-    m_chol = from_matrix_cl(m_cl);  // NOLINT
+    m_chol = from_matrix_cl(m_cl);
     return m_chol;
   } else {
     check_symmetric("cholesky_decompose", "m", m);
