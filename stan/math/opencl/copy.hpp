@@ -31,13 +31,10 @@ namespace math {
  * matrices do not have matching dimensions
  */
 template <int R, int C>
-void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
-  check_size_match("copy (Eigen -> (OpenCL))", "src.rows()", src.rows(),
-                   "dst.rows()", dst.rows());
-  check_size_match("copy (Eigen -> (OpenCL))", "src.cols()", src.cols(),
-                   "dst.cols()", dst.cols());
+inline matrix_cl to_matrix_cl(const Eigen::Matrix<double, R, C>& src) {
+  matrix_cl dst(src.rows(), src.cols());
   if (src.size() == 0) {
-    return;
+    return dst;
   }
   cl::CommandQueue queue = opencl_context.queue();
   try {
@@ -53,6 +50,7 @@ void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
   } catch (const cl::Error& e) {
     check_opencl_error("copy Eigen->(OpenCL)", e);
   }
+  return dst;
 }
 
 /**
@@ -166,7 +164,7 @@ inline matrix_cl packed_copy(const std::vector<double>& src, int rows) {
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
-inline void copy(matrix_cl& dst, const matrix_cl& src) {
+inline void copy_cl(matrix_cl& dst, const matrix_cl& src) {
   check_size_match("copy ((OpenCL) -> (OpenCL))", "src.rows()", src.rows(),
                    "dst.rows()", dst.rows());
   check_size_match("copy ((OpenCL) -> (OpenCL))", "src.cols()", src.cols(),
