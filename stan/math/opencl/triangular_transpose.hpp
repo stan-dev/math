@@ -25,7 +25,7 @@ namespace math {
  *
  */
 template <TriangularMapCL triangular_map>
-inline void matrix_cl::triangular_transpose() {
+inline void matrix_cl::triangular_transpose() try {
   if (size() == 0 || size() == 1) {
     return;
   }
@@ -34,14 +34,12 @@ inline void matrix_cl::triangular_transpose() {
                    "columns of ", "A", cols());
 
   cl::CommandQueue cmdQueue = opencl_context.queue();
-  try {
-    opencl_kernels::triangular_transpose(
+  opencl_kernels::triangular_transpose(
         cl::NDRange(this->rows(), this->cols()), *this, this->rows(),
         this->cols(), triangular_map);
   } catch (const cl::Error& e) {
     check_opencl_error("triangular_transpose", e);
   }
-}
 
 }  // namespace math
 }  // namespace stan

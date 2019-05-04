@@ -25,9 +25,9 @@ namespace internal {
 /**
  * meta template struct for changing read/write buffer argument types to
  * cl::Buffer types.
- * @tparam T A template typename that for cases of non-read/write buffer cases
+ * @tparam T A template typename that for cases of non-read/write buffers
  * will return a typedef holding only it's original type. For read and write
- * buffers this will return the a cl::Buffer.
+ * buffers this will return a cl::Buffer type.
  */
 template <typename T = cl::Buffer>
 struct to_buffer {
@@ -88,6 +88,10 @@ struct to_matrix_cl<in_out_buffer> {
 // Alias for making const matrix_cl argument types
 template <typename T>
 using to_const_matrix_cl_t = const typename internal::to_matrix_cl<T>::type;
+
+// Alias for making const cl::Buffer argument types
+template <typename T>
+using to_const_buffer_t = const typename internal::to_buffer<T>::type;
 
 }  // namespace internal
 }  // namespace opencl_kernels

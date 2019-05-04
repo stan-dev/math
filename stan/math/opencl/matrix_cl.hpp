@@ -112,10 +112,19 @@ class matrix_cl {
   }
 
   /**
-   * Add an event to the read/write and write event stack.
+   * Add an event to the write event stack.
    * @param new_event The event to be pushed on the event stack.
    */
   inline void add_write_event(cl::Event new_event) const {
+    this->write_events_.push_back(new_event);
+  }
+
+  /**
+   * Add an event to the read/write event stack.
+   * @param new_event The event to be pushed on the event stack.
+   */
+  inline void add_read_write_event(cl::Event new_event) const {
+    this->read_events_.push_back(new_event);
     this->write_events_.push_back(new_event);
   }
 

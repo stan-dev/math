@@ -27,7 +27,7 @@ namespace math {
 template <TriangularViewCL triangular_view>
 inline void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
                                  size_t this_i, size_t this_j, size_t nrows,
-                                 size_t ncols) {
+                                 size_t ncols) try {
   if (nrows == 0 || ncols == 0) {
     return;
   }
@@ -36,34 +36,32 @@ inline void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
     domain_error("sub_block", "submatrix in *this", " is out of bounds", "");
   }
   cl::CommandQueue cmdQueue = opencl_context.queue();
-  try {
-    if (triangular_view == TriangularViewCL::Entire) {
-      cl::size_t<3> src_offset
-          = opencl::to_size_t<3>({A_i * sizeof(double), A_j, 0});
-      cl::size_t<3> dst_offset
-          = opencl::to_size_t<3>({this_i * sizeof(double), this_j, 0});
-      cl::size_t<3> size
-          = opencl::to_size_t<3>({nrows * sizeof(double), ncols, 1});
-      std::vector<cl::Event> kernel_events
-          = vec_concat(A.write_events(), this->read_events());
-      cl::Event copy_event;
-      cmdQueue.enqueueCopyBufferRect(
-          A.buffer(), this->buffer(), src_offset, dst_offset, size,
-          A.rows() * sizeof(double), A.rows() * A.cols() * sizeof(double),
-          sizeof(double) * this->rows(),
-          this->rows() * this->cols() * sizeof(double), &kernel_events,
-          &copy_event);
-      A.add_read_event(copy_event);
-      this->add_write_event(copy_event);
-    } else {
-      opencl_kernels::sub_block(cl::NDRange(nrows, ncols), A, *this, A_i, A_j,
-                                this_i, this_j, nrows, ncols, A.rows(),
-                                A.cols(), this->rows(), this->cols(),
-                                triangular_view);
-    }
-  } catch (const cl::Error& e) {
-    check_opencl_error("copy_submatrix", e);
+  if (triangular_view == TriangularViewCL::Entire) {
+    cl::size_t<3> src_offset
+        = opencl::to_size_t<3>({A_i * sizeof(double), A_j, 0});
+    cl::size_t<3> dst_offset
+        = opencl::to_size_t<3>({this_i * sizeof(double), this_j, 0});
+    cl::size_t<3> size
+        = opencl::to_size_t<3>({nrows * sizeof(double), ncols, 1});
+    std::vector<cl::Event> kernel_events
+        = vec_concat(A.write_events(), this->read_write_events());
+    cl::Event copy_event;
+    cmdQueue.enqueueCopyBufferRect(
+        A.buffer(), this->buffer(), src_offset, dst_offset, size,
+        A.rows() * sizeof(double), A.rows() * A.cols() * sizeof(double),
+        sizeof(double) * this->rows(),
+        this->rows() * this->cols() * sizeof(double), &kernel_events,
+        &copy_event);
+    A.add_read_event(copy_event);
+    this->add_write_event(copy_event);
+  } else {
+    opencl_kernels::sub_block(cl::NDRange(nrows, ncols), A, *this, A_i, A_j,
+                              this_i, this_j, nrows, ncols, A.rows(),
+                              A.cols(), this->rows(), this->cols(),
+                              triangular_view);
   }
+} catch (const cl::Error& e) {
+  check_opencl_error("copy_submatrix", e);
 }
 
 }  // namespace math

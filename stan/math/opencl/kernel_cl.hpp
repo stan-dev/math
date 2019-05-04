@@ -44,29 +44,28 @@ inline const cl::Buffer& get_kernel_args(const stan::math::matrix_cl& m) {
 }
 
 template <typename T>
-void assign_event(const cl::Event&, to_const_matrix_cl_t<T>&) {}
+inline void assign_event(const cl::Event&, to_const_matrix_cl_t<T>&) {}
 
 template <>
-void assign_event<in_buffer>(const cl::Event& e,
+inline void assign_event<in_buffer>(const cl::Event& e,
                              const stan::math::matrix_cl& m) {
   m.add_read_event(e);
 }
 
 template <>
-void assign_event<out_buffer>(const cl::Event& e,
+inline void assign_event<out_buffer>(const cl::Event& e,
                               const stan::math::matrix_cl& m) {
   m.add_write_event(e);
 }
 
 template <>
-void assign_event<in_out_buffer>(const cl::Event& e,
+inline void assign_event<in_out_buffer>(const cl::Event& e,
                                  const stan::math::matrix_cl& m) {
-  m.add_read_event(e);
-  m.add_write_event(e);
+  m.add_read_write_event(e);
 }
-template <typename Arg, typename std::enable_if<std::is_same<
-                            Arg, cl::Event>::value>::type* = nullptr>
-inline void assign_events(const Arg&) {}
+
+template <typename T, typename std::enable_if_t<std::is_same<T, cl::Event>::value, int> = 0>
+inline void assign_events(const T&) {}
 
 /**
  * Adds the event to any matrices in the arguments in the event vector specified
@@ -105,6 +104,13 @@ inline const std::vector<cl::Event> select_events<out_buffer>(
     const stan::math::matrix_cl& m) {
   return m.read_write_events();
 }
+
+template <>
+inline const std::vector<cl::Event> select_events<in_out_buffer>(
+    const stan::math::matrix_cl& m) {
+  return m.read_write_events();
+}
+
 
 }  // namespace internal
 
@@ -183,7 +189,7 @@ class kernel_functor {
   /**
    * @return The options that the kernel was compiled with.
    */
-  const std::map<const char*, int>& get_opts() const { return opts_; }
+  inline const std::map<const char*, int>& get_opts() const { return opts_; }
 };
 
 /**
@@ -193,8 +199,7 @@ class kernel_functor {
  */
 template <typename... Args>
 struct kernel_cl {
-  const kernel_functor<const typename internal::to_buffer<Args>::type&...>
-      make_functor;
+  const kernel_functor<internal::to_const_buffer_t<Args>&...> make_functor;
   /**
    * Creates functor for kernels that only need access to defining
    *  the global work size.

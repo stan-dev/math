@@ -62,7 +62,7 @@ static const char *cholesky_decompose_kernel_code = STRINGIFY(
  * See the docs for \link kernels/cholesky_decompose.hpp cholesky_decompose()
  * \endlink
  */
-const kernel_cl<out_buffer, int> cholesky_decompose(
+const kernel_cl<in_out_buffer, int> cholesky_decompose(
     "cholesky_decompose", {indexing_helpers, cholesky_decompose_kernel_code});
 
 }  // namespace opencl_kernels
