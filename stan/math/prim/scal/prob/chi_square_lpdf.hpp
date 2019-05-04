@@ -10,17 +10,12 @@
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <boost/random/chi_squared_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -73,7 +68,6 @@ typename return_type<T_y, T_dof>::type chi_square_lpdf(const T_y& y,
   if (!include_summand<propto, T_y, T_dof>::value)
     return 0.0;
 
-  using boost::math::digamma;
   using std::log;
 
   VectorBuilder<include_summand<propto, T_y, T_dof>::value, T_partials_return,

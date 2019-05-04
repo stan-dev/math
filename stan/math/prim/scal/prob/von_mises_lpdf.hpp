@@ -5,8 +5,6 @@
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_greater.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/fun/log_modified_bessel_first_kind.hpp>

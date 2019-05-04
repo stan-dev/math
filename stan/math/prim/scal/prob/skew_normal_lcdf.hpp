@@ -11,12 +11,9 @@
 #include <stan/math/prim/scal/fun/owens_t.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <boost/math/distributions.hpp>
 #include <cmath>
 
 namespace stan {

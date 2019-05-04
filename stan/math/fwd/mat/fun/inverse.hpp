@@ -8,8 +8,6 @@
 #include <stan/math/fwd/mat/fun/multiply.hpp>
 #include <stan/math/prim/mat/fun/inverse.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
-#include <boost/math/tools/promotion.hpp>
-#include <vector>
 
 namespace stan {
 namespace math {

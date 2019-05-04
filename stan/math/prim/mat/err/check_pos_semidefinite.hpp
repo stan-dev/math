@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>

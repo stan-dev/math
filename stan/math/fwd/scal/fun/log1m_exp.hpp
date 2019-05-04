@@ -3,7 +3,6 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/scal/fun/expm1.hpp>
-#include <stan/math/fwd/scal/fun/log1m_exp.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/expm1.hpp>
 #include <stan/math/prim/scal/fun/log1m_exp.hpp>
