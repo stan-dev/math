@@ -125,19 +125,13 @@ void autocorrelation(const Eigen::MatrixBase<DerivedA>& y,
   freqvec = freqvec.cwiseAbs2();
 
   Eigen::Matrix<T, Eigen::Dynamic, 1> ac_tmp(N);
-  std::cout << "ac_tmp.size() = " << ac_tmp.size() << std::endl;
   fft.inv(ac_tmp, freqvec);
-  //fft.ClearFlag(fft.HalfSpectrum);
-
-  std::cout << "ac_tmp.size() = " << ac_tmp.size() << std::endl;
+  fft.ClearFlag(fft.HalfSpectrum);
 
   for (size_t i = 0; i < N; ++i)
     ac_tmp(i) /= (N - i);
 
-  std::cout << "Mt2 = " << Mt2 << std::endl;
-  std::cout << "ac.size() = " << ac.size() << std::endl;
-
-  ac = ac_tmp.array() / ac_tmp(0);
+  ac = ac_tmp.head(N).array() / ac_tmp(0);
 }
 
 /**
