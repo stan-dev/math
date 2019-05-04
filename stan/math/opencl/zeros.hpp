@@ -28,8 +28,8 @@ inline void matrix_cl::zeros() try {
   if (size() == 0)
     return;
   cl::CommandQueue cmdQueue = opencl_context.queue();
-    opencl_kernels::zeros(cl::NDRange(this->rows(), this->cols()), *this,
-                          this->rows(), this->cols(), triangular_view);
+  opencl_kernels::zeros(cl::NDRange(this->rows(), this->cols()), *this,
+                        this->rows(), this->cols(), triangular_view);
 } catch (const cl::Error& e) {
   check_opencl_error("zeros", e);
 }

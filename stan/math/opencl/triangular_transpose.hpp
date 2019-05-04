@@ -34,12 +34,12 @@ inline void matrix_cl::triangular_transpose() try {
                    "columns of ", "A", cols());
 
   cl::CommandQueue cmdQueue = opencl_context.queue();
-  opencl_kernels::triangular_transpose(
-        cl::NDRange(this->rows(), this->cols()), *this, this->rows(),
-        this->cols(), triangular_map);
-  } catch (const cl::Error& e) {
-    check_opencl_error("triangular_transpose", e);
-  }
+  opencl_kernels::triangular_transpose(cl::NDRange(this->rows(), this->cols()),
+                                       *this, this->rows(), this->cols(),
+                                       triangular_map);
+} catch (const cl::Error& e) {
+  check_opencl_error("triangular_transpose", e);
+}
 
 }  // namespace math
 }  // namespace stan
