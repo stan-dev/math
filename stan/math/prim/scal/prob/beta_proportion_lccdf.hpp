@@ -17,7 +17,6 @@
 #include <stan/math/prim/scal/meta/max_size.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
@@ -56,8 +55,6 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lccdf(
 
   if (size_zero(y, mu, kappa))
     return 0.0;
-
-  using boost::math::tools::promote_args;
 
   T_partials_return ccdf_log(0.0);
 

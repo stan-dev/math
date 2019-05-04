@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_MAT_FUN_TRACE_GEN_QUAD_FORM_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
