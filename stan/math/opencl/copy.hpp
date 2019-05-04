@@ -64,7 +64,8 @@ inline matrix_cl to_matrix_cl(const Eigen::Matrix<double, R, C>& src) {
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
-inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> from_matrix_cl(const matrix_cl& src) {
+inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> from_matrix_cl(
+    const matrix_cl& src) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> dst(src.rows(),
                                                             src.cols());
   if (src.size() == 0) {
