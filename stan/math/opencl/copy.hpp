@@ -24,9 +24,8 @@ namespace math {
  * on the OpenCL device.
  *
  * @tparam T type of data in the Eigen matrix
- * @param dst destination matrix on the OpenCL device
  * @param src source Eigen matrix
- *
+ * @return matrix_cl with a copy of the data in the source matrix
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
@@ -58,9 +57,8 @@ inline matrix_cl to_matrix_cl(const Eigen::Matrix<double, R, C>& src) {
  * on the OpenCL device to the destination Eigen
  * matrix.
  *
- * @param dst destination Eigen matrix
  * @param src source matrix on the OpenCL device
- *
+ * @return Eigen matrix with a copy of the data in the source matrix
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
