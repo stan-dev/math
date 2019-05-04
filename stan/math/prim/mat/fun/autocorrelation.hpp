@@ -124,7 +124,7 @@ void autocorrelation(const Eigen::MatrixBase<DerivedA>& y,
   // cwiseAbs2 == norm
   freqvec = freqvec.cwiseAbs2();
 
-  Eigen::Matrix<T, Eigen::Dynamic, 1> ac_tmp(N);
+  Eigen::Matrix<T, Eigen::Dynamic, 1> ac_tmp(Mt2);
   fft.inv(ac_tmp, freqvec);
   fft.ClearFlag(fft.HalfSpectrum);
 
