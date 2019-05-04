@@ -84,7 +84,7 @@ static const char* diag_inv_kernel_code = STRINGIFY(
  * See the docs for \link kernels/diag_inv.hpp add()
  * \endlink
  */
-const kernel_cl<out_buffer, out_buffer, int> diag_inv(
+const kernel_cl<in_out_buffer, in_out_buffer, int> diag_inv(
     "diag_inv", {indexing_helpers, diag_inv_kernel_code},
     {{"THREAD_BLOCK_SIZE", 32}});
 
