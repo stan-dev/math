@@ -60,21 +60,17 @@ void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
  * on the OpenCL device to the destination Eigen
  * matrix.
  *
- * @tparam T type of data in the Eigen matrix
  * @param dst destination Eigen matrix
  * @param src source matrix on the OpenCL device
  *
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
-template <int R, int C>
-void copy(Eigen::Matrix<double, R, C>& dst, const matrix_cl& src) {
-  check_size_match("copy ((OpenCL) -> Eigen)", "src.rows()", src.rows(),
-                   "dst.rows()", dst.rows());
-  check_size_match("copy ((OpenCL) -> Eigen)", "src.cols()", src.cols(),
-                   "dst.cols()", dst.cols());
+inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> from_matrix_cl(const matrix_cl& src) {
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> dst(src.rows(),
+                                                            src.cols());
   if (src.size() == 0) {
-    return;
+    return dst;
   }
   cl::CommandQueue queue = opencl_context.queue();
   try {
@@ -91,6 +87,7 @@ void copy(Eigen::Matrix<double, R, C>& dst, const matrix_cl& src) {
   } catch (const cl::Error& e) {
     check_opencl_error("copy (OpenCL)->Eigen", e);
   }
+  return dst;
 }
 
 /**
