@@ -48,23 +48,24 @@ inline void assign_event(const cl::Event&, to_const_matrix_cl_t<T>&) {}
 
 template <>
 inline void assign_event<in_buffer>(const cl::Event& e,
-                             const stan::math::matrix_cl& m) {
+                                    const stan::math::matrix_cl& m) {
   m.add_read_event(e);
 }
 
 template <>
 inline void assign_event<out_buffer>(const cl::Event& e,
-                              const stan::math::matrix_cl& m) {
+                                     const stan::math::matrix_cl& m) {
   m.add_write_event(e);
 }
 
 template <>
 inline void assign_event<in_out_buffer>(const cl::Event& e,
-                                 const stan::math::matrix_cl& m) {
+                                        const stan::math::matrix_cl& m) {
   m.add_read_write_event(e);
 }
 
-template <typename T, typename std::enable_if_t<std::is_same<T, cl::Event>::value, int> = 0>
+template <typename T,
+          typename std::enable_if_t<std::is_same<T, cl::Event>::value, int> = 0>
 inline void assign_events(const T&) {}
 
 /**
@@ -110,7 +111,6 @@ inline const std::vector<cl::Event> select_events<in_out_buffer>(
     const stan::math::matrix_cl& m) {
   return m.read_write_events();
 }
-
 
 }  // namespace internal
 
