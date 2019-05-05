@@ -44,7 +44,7 @@ TEST(MathMatrixCL, triangular_transpose_m_pass) {
 
   EXPECT_NO_THROW(
       m00.triangular_transpose<stan::math::TriangularMapCL::LowerToUpper>());
-  EXPECT_NO_THROW(m0_dst = from_matrix_cl(m00));
+  EXPECT_NO_THROW(m0_dst = stan::math::from_matrix_cl(m00));
   EXPECT_EQ(1, m0_dst(0, 0));
   EXPECT_EQ(3, m0_dst(0, 1));
   EXPECT_EQ(3, m0_dst(1, 0));
@@ -52,7 +52,7 @@ TEST(MathMatrixCL, triangular_transpose_m_pass) {
 
   EXPECT_NO_THROW(
       m11.triangular_transpose<stan::math::TriangularMapCL::UpperToLower>());
-  EXPECT_NO_THROW(m0_dst = from_matrix_cl(m11));
+  EXPECT_NO_THROW(m0_dst = stan::math::from_matrix_cl(m11));
   EXPECT_EQ(1, m0_dst(0, 0));
   EXPECT_EQ(2, m0_dst(0, 1));
   EXPECT_EQ(2, m0_dst(1, 0));

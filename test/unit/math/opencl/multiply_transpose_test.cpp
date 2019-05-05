@@ -98,7 +98,7 @@ TEST(AgradRevMatrix, multiply_transposed_big_non_square) {
   stan::math::matrix_cl m11(m1);
   stan::math::matrix_cl m22(size_x, size_x);
   m22 = stan::math::multiply_transpose(m11);
-  m2_cl = from_matrix_cl(m22);
+  m2_cl = stan::math::from_matrix_cl(m22);
 
   EXPECT_MATRIX_NEAR(m2, m2_cl, 1e-10);
 }
@@ -118,7 +118,7 @@ TEST(AgradRevMatrix, multiply_transposed_big_x) {
   stan::math::matrix_cl m11(m1);
   stan::math::matrix_cl m22(size_x, size_x);
   m22 = stan::math::multiply_transpose(m11);
-  m2_cl = from_matrix_cl(m22);
+  m2_cl = stan::math::from_matrix_cl(m22);
 
   EXPECT_MATRIX_NEAR(m2, m2_cl, 1e-10);
 }
