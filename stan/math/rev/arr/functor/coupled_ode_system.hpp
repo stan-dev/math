@@ -154,7 +154,6 @@ struct coupled_ode_system<F, double, var> {
       recover_memory_nested();
       throw;
     }
-
     recover_memory_nested();
   }
 
@@ -551,7 +550,6 @@ struct coupled_ode_system<F, var, var> {
       recover_memory_nested();
       throw;
     }
-
     recover_memory_nested();
   }
 
