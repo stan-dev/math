@@ -47,7 +47,7 @@ struct coupled_ode_system<F, double, var> {
   const F& f_;
   const std::vector<double>& y0_dbl_;
   const std::vector<var>& theta_;
-  std::vector<double> theta_adj_;
+  std::vector<var> theta_nochain_;
   const std::vector<double>& x_;
   const std::vector<int>& x_int_;
   const size_t N_;
@@ -74,23 +74,14 @@ struct coupled_ode_system<F, double, var> {
       : f_(f),
         y0_dbl_(y0),
         theta_(theta),
-        theta_adj_(theta.size()),
         x_(x),
         x_int_(x_int),
         N_(y0.size()),
         M_(theta.size()),
         size_(N_ + N_ * M_),
         msgs_(msgs) {
-    for (size_t j = 0; j < M_; ++j) {
-      theta_adj_[j] = theta_[j].adj();
-      theta_[j].vi_->set_zero_adjoint();
-    }
-  }
-
-  ~coupled_ode_system() {
-    for (size_t j = 0; j < M_; ++j) {
-      theta_[j].vi_->adj_ = theta_adj_[j];
-    }
+    for (const var& p : theta)
+      theta_nochain_.emplace_back(var(new vari(p.val(), false)));
   }
 
   /**
@@ -116,7 +107,7 @@ struct coupled_ode_system<F, double, var> {
 
       const vector<var> y_vars(z.begin(), z.begin() + N_);
 
-      vector<var> dy_dt_vars = f_(t, y_vars, theta_, x_, x_int_, msgs_);
+      vector<var> dy_dt_vars = f_(t, y_vars, theta_nochain_, x_, x_int_, msgs_);
 
       check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
                        "states", N_);
@@ -129,7 +120,7 @@ struct coupled_ode_system<F, double, var> {
           // orders derivatives by equation (i.e. if there are 2 eqns
           // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
           // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
-          double temp_deriv = theta_[j].adj();
+          double temp_deriv = theta_nochain_[j].adj();
           const size_t offset = N_ + N_ * j;
           for (size_t k = 0; k < N_; k++)
             temp_deriv += z[offset + k] * y_vars[k].adj();
@@ -143,7 +134,7 @@ struct coupled_ode_system<F, double, var> {
         // See efficiency note above on template specalization for more details
         // on this.
         for (size_t j = 0; j < M_; ++j)
-          theta_[j].vi_->set_zero_adjoint();
+          theta_nochain_[j].vi_->set_zero_adjoint();
       }
     } catch (const std::exception& e) {
       recover_memory_nested();
@@ -430,7 +421,7 @@ struct coupled_ode_system<F, var, var> {
   const F& f_;
   const std::vector<var>& y0_;
   const std::vector<var>& theta_;
-  std::vector<double> theta_adj_;
+  std::vector<var> theta_nochain_;
   const std::vector<double>& x_;
   const std::vector<int>& x_int_;
   const size_t N_;
@@ -457,23 +448,14 @@ struct coupled_ode_system<F, var, var> {
       : f_(f),
         y0_(y0),
         theta_(theta),
-        theta_adj_(theta.size()),
         x_(x),
         x_int_(x_int),
         N_(y0.size()),
         M_(theta.size()),
         size_(N_ + N_ * (N_ + M_)),
         msgs_(msgs) {
-    for (size_t j = 0; j < M_; ++j) {
-      theta_adj_[j] = theta_[j].adj();
-      theta_[j].vi_->set_zero_adjoint();
-    }
-  }
-
-  ~coupled_ode_system() {
-    for (size_t j = 0; j < M_; ++j) {
-      theta_[j].vi_->adj_ = theta_adj_[j];
-    }
+    for (const var& p : theta)
+      theta_nochain_.emplace_back(var(new vari(p.val(), false)));
   }
 
   /**
@@ -499,7 +481,7 @@ struct coupled_ode_system<F, var, var> {
 
       const vector<var> y_vars(z.begin(), z.begin() + N_);
 
-      vector<var> dy_dt_vars = f_(t, y_vars, theta_, x_, x_int_, msgs_);
+      vector<var> dy_dt_vars = f_(t, y_vars, theta_nochain_, x_, x_int_, msgs_);
 
       check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
                        "states", N_);
@@ -521,7 +503,7 @@ struct coupled_ode_system<F, var, var> {
         }
 
         for (size_t j = 0; j < M_; j++) {
-          double temp_deriv = theta_[j].adj();
+          double temp_deriv = theta_nochain_[j].adj();
           const size_t offset = N_ + N_ * N_ + N_ * j;
           for (size_t k = 0; k < N_; k++)
             temp_deriv += z[offset + k] * y_vars[k].adj();
@@ -535,7 +517,7 @@ struct coupled_ode_system<F, var, var> {
         // See efficiency note above on template specalization for more details
         // on this.
         for (size_t j = 0; j < M_; ++j)
-          theta_[j].vi_->set_zero_adjoint();
+          theta_nochain_[j].vi_->set_zero_adjoint();
       }
     } catch (const std::exception& e) {
       recover_memory_nested();
