@@ -56,8 +56,8 @@ void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
     const cl::CommandQueue& queue = opencl_context.queue();
     queue.enqueueWriteBuffer(dst.buffer(), CL_FALSE, 0,
                              sizeof(double) * dst.size(), src.data(),
-                             &dst.write_events(), &copy_event);
-    dst.add_write_event(copy_event);
+                             &dst.out_events(), &copy_event);
+    dst.add_out_event(copy_event);
   } catch (const cl::Error& e) {
     check_opencl_error("copy Eigen->(OpenCL)", e);
   }
@@ -97,9 +97,9 @@ void copy(Eigen::Matrix<double, R, C>& dst, const matrix_cl& src) {
     const cl::CommandQueue queue = opencl_context.queue();
     queue.enqueueReadBuffer(src.buffer(), CL_FALSE, 0,
                             sizeof(double) * dst.size(), dst.data(),
-                            &src.write_events(), &copy_event);
+                            &src.out_events(), &copy_event);
     copy_event.wait();
-    src.clear_write_events();
+    src.clear_out_events();
   } catch (const cl::Error& e) {
     check_opencl_error("copy (OpenCL)->Eigen", e);
   }
@@ -127,13 +127,13 @@ inline std::vector<double> packed_copy(const matrix_cl& src) {
                                      packed, src, src.rows(), src.rows(),
                                      triangular_view);
     const std::vector<cl::Event> mat_events
-        = vec_concat(packed.read_write_events(), src.write_events());
+        = vec_concat(packed.in_out_events(), src.out_events());
     cl::Event copy_event;
     queue.enqueueReadBuffer(packed.buffer(), CL_FALSE, 0,
                             sizeof(double) * packed_size, dst.data(),
                             &mat_events, &copy_event);
     copy_event.wait();
-    src.clear_write_events();
+    src.clear_out_events();
   } catch (const cl::Error& e) {
     check_opencl_error("packed_copy (OpenCL->std::vector)", e);
   }
@@ -169,7 +169,7 @@ inline matrix_cl packed_copy(const std::vector<double>& src, int rows) {
     queue.enqueueWriteBuffer(packed.buffer(), CL_FALSE, 0,
                              sizeof(double) * packed_size, src.data(), NULL,
                              &packed_event);
-    packed.add_write_event(packed_event);
+    packed.add_out_event(packed_event);
     stan::math::opencl_kernels::unpack(cl::NDRange(dst.rows(), dst.rows()), dst,
                                        packed, dst.rows(), dst.rows(),
                                        triangular_view);
@@ -206,13 +206,13 @@ inline void copy(matrix_cl& dst, const matrix_cl& src) {
      */
     cl::CommandQueue queue = opencl_context.queue();
     const std::vector<cl::Event> mat_events
-        = vec_concat(dst.read_write_events(), src.write_events());
+        = vec_concat(dst.in_out_events(), src.out_events());
     cl::Event copy_event;
     queue.enqueueCopyBuffer(src.buffer(), dst.buffer(), 0, 0,
                             sizeof(double) * src.size(), &mat_events,
                             &copy_event);
-    dst.add_write_event(copy_event);
-    src.add_read_event(copy_event);
+    dst.add_out_event(copy_event);
+    src.add_in_event(copy_event);
   } catch (const cl::Error& e) {
     check_opencl_error("copy (OpenCL)->(OpenCL)", e);
   }
@@ -234,9 +234,9 @@ inline void copy(T& dst, const matrix_cl& src) {
     cl::Event copy_event;
     const cl::CommandQueue queue = opencl_context.queue();
     queue.enqueueReadBuffer(src.buffer(), CL_FALSE, 0, sizeof(T), &dst,
-                            &src.write_events(), &copy_event);
+                            &src.out_events(), &copy_event);
     copy_event.wait();
-    src.clear_write_events();
+    src.clear_out_events();
   } catch (const cl::Error& e) {
     check_opencl_error("copy (OpenCL)->(OpenCL)", e);
   }
@@ -258,8 +258,8 @@ inline void copy(matrix_cl& dst, const T& src) {
     cl::Event copy_event;
     const cl::CommandQueue queue = opencl_context.queue();
     queue.enqueueWriteBuffer(dst.buffer(), CL_FALSE, 0, sizeof(T), &src,
-                             &dst.write_events(), &copy_event);
-    dst.add_write_event(copy_event);
+                             &dst.out_events(), &copy_event);
+    dst.add_out_event(copy_event);
   } catch (const cl::Error& e) {
     check_opencl_error("copy (OpenCL)->(OpenCL)", e);
   }
