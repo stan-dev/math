@@ -21,10 +21,11 @@ TEST_F(StanAgradRevOde, coupled_ode_system_dv) {
   harm_osc_ode_fun harm_osc;
 
   std::vector<stan::math::var> theta;
-  std::vector<double> coupled_y0;
+  std::vector<double> z0;
   std::vector<double> y0;
   double t0;
-  std::vector<double> dy_dt(4, 0);
+  const size_t z_size = 4;
+  std::vector<double> dz_dt(z_size, 0);
 
   double gamma(0.15);
   t0 = 0;
@@ -33,20 +34,20 @@ TEST_F(StanAgradRevOde, coupled_ode_system_dv) {
   y0.push_back(1.0);
   y0.push_back(0.5);
 
-  coupled_y0.push_back(1.0);
-  coupled_y0.push_back(0.5);
-  coupled_y0.push_back(1.0);
-  coupled_y0.push_back(2.0);
+  z0.push_back(1.0);
+  z0.push_back(0.5);
+  z0.push_back(1.0);
+  z0.push_back(2.0);
 
   coupled_ode_system<harm_osc_ode_fun, double, stan::math::var> system(
       harm_osc, y0, theta, x, x_int, &msgs);
 
-  system(coupled_y0, dy_dt, t0);
+  system(z0, dz_dt, t0);
 
-  EXPECT_FLOAT_EQ(0.5, dy_dt[0]);
-  EXPECT_FLOAT_EQ(-1.075, dy_dt[1]);
-  EXPECT_FLOAT_EQ(2, dy_dt[2]);
-  EXPECT_FLOAT_EQ(-1.8, dy_dt[3]);
+  EXPECT_FLOAT_EQ(0.5, dz_dt[0]);
+  EXPECT_FLOAT_EQ(-1.075, dz_dt[1]);
+  EXPECT_FLOAT_EQ(2, dz_dt[2]);
+  EXPECT_FLOAT_EQ(-1.8, dz_dt[3]);
 }
 TEST_F(StanAgradRevOde, initial_state_dv) {
   using stan::math::coupled_ode_system;
@@ -55,6 +56,7 @@ TEST_F(StanAgradRevOde, initial_state_dv) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t z_size = N + N * M;
 
   std::vector<double> y0_d(N, 0.0);
   std::vector<var> theta_v(M, 0.0);
@@ -82,6 +84,7 @@ TEST_F(StanAgradRevOde, size_dv) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t z_size = N + N * M;
 
   std::vector<double> y0_d(N, 0.0);
   std::vector<var> theta_v(M, 0.0);
@@ -89,7 +92,7 @@ TEST_F(StanAgradRevOde, size_dv) {
   coupled_ode_system<mock_ode_functor, double, var> coupled_system_dv(
       base_ode, y0_d, theta_v, x, x_int, &msgs);
 
-  EXPECT_EQ(N + N * M, coupled_system_dv.size());
+  EXPECT_EQ(z_size, coupled_system_dv.size());
 }
 
 TEST_F(StanAgradRevOde, memory_recovery_dv) {
@@ -99,6 +102,7 @@ TEST_F(StanAgradRevOde, memory_recovery_dv) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t z_size = N + N * M;
 
   std::vector<double> y0_d(N, 0.0);
   std::vector<var> theta_v(M, 0.0);
@@ -106,12 +110,12 @@ TEST_F(StanAgradRevOde, memory_recovery_dv) {
   coupled_ode_system<mock_ode_functor, double, var> coupled_system_dv(
       base_ode, y0_d, theta_v, x, x_int, &msgs);
 
-  std::vector<double> y(3, 0);
-  std::vector<double> dy_dt(3 + N * M, 0);
+  std::vector<double> z(z_size, 0);
+  std::vector<double> dz_dt(z_size, 0);
   double t = 10;
 
   EXPECT_TRUE(stan::math::empty_nested());
-  EXPECT_NO_THROW(coupled_system_dv(y, dy_dt, t));
+  EXPECT_NO_THROW(coupled_system_dv(z, dz_dt, t));
   EXPECT_TRUE(stan::math::empty_nested());
 }
 
@@ -122,6 +126,8 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_dv) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t z_size = N + N * M;
+
   for (size_t n = 0; n < N + 1; n++) {
     std::stringstream scoped_message;
     scoped_message << "iteration " << n;
@@ -134,12 +140,12 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_dv) {
     coupled_ode_system<mock_throwing_ode_functor<std::logic_error>, double, var>
         coupled_system_dv(throwing_ode, y0_d, theta_v, x, x_int, &msgs);
 
-    std::vector<double> y(3, 0);
-    std::vector<double> dy_dt(3 + N * M, 0);
+    std::vector<double> z(z_size, 0);
+    std::vector<double> dz_dt(z_size, 0);
     double t = 10;
 
     EXPECT_TRUE(stan::math::empty_nested());
-    EXPECT_THROW_MSG(coupled_system_dv(y, dy_dt, t), std::logic_error, message);
+    EXPECT_THROW_MSG(coupled_system_dv(z, dz_dt, t), std::logic_error, message);
     EXPECT_TRUE(stan::math::empty_nested());
   }
 }
@@ -152,23 +158,25 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vd) {
   harm_osc_ode_fun harm_osc;
 
   std::vector<double> theta;
-  std::vector<double> coupled_y0;
+  std::vector<double> z0;
   std::vector<stan::math::var> y0_var;
   std::vector<double> y0_adj;
   double t0;
-  std::vector<double> dy_dt(6, 0);
+  const size_t N = 2;
+  const size_t z_size = N + N * N;
+  std::vector<double> dz_dt(z_size, 0);
 
   double gamma(0.15);
   t0 = 0;
 
   theta.push_back(gamma);
 
-  coupled_y0.push_back(1.0);
-  coupled_y0.push_back(0.5);
-  coupled_y0.push_back(1.0);
-  coupled_y0.push_back(0.0);
-  coupled_y0.push_back(0.0);
-  coupled_y0.push_back(1.0);
+  z0.push_back(1.0);
+  z0.push_back(0.5);
+  z0.push_back(1.0);
+  z0.push_back(0.0);
+  z0.push_back(0.0);
+  z0.push_back(1.0);
 
   y0_var.push_back(1.0);
   y0_var.push_back(0.5);
@@ -176,14 +184,14 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vd) {
   coupled_ode_system<harm_osc_ode_fun, stan::math::var, double> system(
       harm_osc, y0_var, theta, x, x_int, &msgs);
 
-  system(coupled_y0, dy_dt, t0);
+  system(z0, dz_dt, t0);
 
-  EXPECT_FLOAT_EQ(0.5, dy_dt[0]);
-  EXPECT_FLOAT_EQ(-1.0 - 0.15 * 0.5, dy_dt[1]);
-  EXPECT_FLOAT_EQ(0.0 * 1.0 + 1.0 * 0.0, dy_dt[2]);
-  EXPECT_FLOAT_EQ(-1.0 * 1.0 - 0.15 * 0.0, dy_dt[3]);
-  EXPECT_FLOAT_EQ(0.0 * 0.0 + 1.0 * 1.0, dy_dt[4]);
-  EXPECT_FLOAT_EQ(-1.0 * 0.0 - 0.15 * 1.0, dy_dt[5]);
+  EXPECT_FLOAT_EQ(0.5, dz_dt[0]);
+  EXPECT_FLOAT_EQ(-1.0 - 0.15 * 0.5, dz_dt[1]);
+  EXPECT_FLOAT_EQ(0.0 * 1.0 + 1.0 * 0.0, dz_dt[2]);
+  EXPECT_FLOAT_EQ(-1.0 * 1.0 - 0.15 * 0.0, dz_dt[3]);
+  EXPECT_FLOAT_EQ(0.0 * 0.0 + 1.0 * 1.0, dz_dt[4]);
+  EXPECT_FLOAT_EQ(-1.0 * 0.0 - 0.15 * 1.0, dz_dt[5]);
 }
 TEST_F(StanAgradRevOde, initial_state_vd) {
   using stan::math::coupled_ode_system;
@@ -220,6 +228,7 @@ TEST_F(StanAgradRevOde, size_vd) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t z_size = N + N * N;
 
   std::vector<var> y0_v(N, 0.0);
   std::vector<double> theta_d(M, 0.0);
@@ -227,7 +236,7 @@ TEST_F(StanAgradRevOde, size_vd) {
   coupled_ode_system<mock_ode_functor, var, double> coupled_system_vd(
       base_ode, y0_v, theta_d, x, x_int, &msgs);
 
-  EXPECT_EQ(N + N * N, coupled_system_vd.size());
+  EXPECT_EQ(z_size, coupled_system_vd.size());
 }
 
 TEST_F(StanAgradRevOde, memory_recovery_vd) {
@@ -237,6 +246,7 @@ TEST_F(StanAgradRevOde, memory_recovery_vd) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t z_size = N + N * N;
 
   std::vector<var> y0_v(N, 0.0);
   std::vector<double> theta_d(M, 0.0);
@@ -244,12 +254,12 @@ TEST_F(StanAgradRevOde, memory_recovery_vd) {
   coupled_ode_system<mock_ode_functor, var, double> coupled_system_vd(
       base_ode, y0_v, theta_d, x, x_int, &msgs);
 
-  std::vector<double> y(3, 0);
-  std::vector<double> dy_dt(3 + N * N, 0);
+  std::vector<double> z(z_size, 0);
+  std::vector<double> dz_dt(z_size, 0);
   double t = 10;
 
   EXPECT_TRUE(stan::math::empty_nested());
-  EXPECT_NO_THROW(coupled_system_vd(y, dy_dt, t));
+  EXPECT_NO_THROW(coupled_system_vd(z, dz_dt, t));
   EXPECT_TRUE(stan::math::empty_nested());
 }
 
@@ -260,6 +270,8 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vd) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t z_size = N + N * N;
+
   for (size_t n = 0; n < N + 1; n++) {
     std::stringstream scoped_message;
     scoped_message << "iteration " << n;
@@ -272,12 +284,12 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vd) {
     coupled_ode_system<mock_throwing_ode_functor<std::logic_error>, var, double>
         coupled_system_vd(throwing_ode, y0_v, theta_d, x, x_int, &msgs);
 
-    std::vector<double> y(3, 0);
-    std::vector<double> dy_dt(3 + N * N, 0);
+    std::vector<double> z(z_size, 0);
+    std::vector<double> dz_dt(z_size, 0);
     double t = 10;
 
     EXPECT_TRUE(stan::math::empty_nested());
-    EXPECT_THROW_MSG(coupled_system_vd(y, dy_dt, t), std::logic_error, message);
+    EXPECT_THROW_MSG(coupled_system_vd(z, dz_dt, t), std::logic_error, message);
     EXPECT_TRUE(stan::math::empty_nested());
   }
 }
@@ -286,6 +298,10 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vd) {
 
 TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
   using stan::math::coupled_ode_system;
+
+  const size_t N = 2;
+  const size_t M = 1;
+  const size_t z_size = N + N * N + N * M;
 
   std::vector<stan::math::var> y0_var;
   y0_var.push_back(1.0);
@@ -298,17 +314,17 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
   coupled_ode_system<harm_osc_ode_fun, stan::math::var, stan::math::var> system(
       harm_osc, y0_var, theta_var, x, x_int, &msgs);
 
-  std::vector<double> coupled_y0(8, 0);
-  coupled_y0[0] = 1.0;
-  coupled_y0[1] = 0.5;
-  coupled_y0[2] = 1.0;
-  coupled_y0[5] = 1.0;
+  std::vector<double> z0(z_size, 0);
+  z0[0] = 1.0;
+  z0[1] = 0.5;
+  z0[2] = 1.0;
+  z0[5] = 1.0;
 
   double t0;
   t0 = 0;
 
-  std::vector<double> dy_dt(2 + 2 * 2 + 2 * 1);
-  system(coupled_y0, dy_dt, t0);
+  std::vector<double> dz_dt(z_size);
+  system(z0, dz_dt, t0);
 
   std::vector<double> y0_double(2);
   y0_double[0] = 1.0;
@@ -320,14 +336,14 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
   std::vector<double> dy_dt_base
       = harm_osc(0.0, y0_double, theta_double, x, x_int, &msgs);
 
-  EXPECT_FLOAT_EQ(dy_dt_base[0], dy_dt[0]);
-  EXPECT_FLOAT_EQ(dy_dt_base[1], dy_dt[1]);
-  EXPECT_FLOAT_EQ(0, dy_dt[2]);
-  EXPECT_FLOAT_EQ(-1, dy_dt[3]);
-  EXPECT_FLOAT_EQ(1, dy_dt[4]);
-  EXPECT_FLOAT_EQ(-0.15, dy_dt[5]);
-  EXPECT_FLOAT_EQ(0, dy_dt[6]);
-  EXPECT_FLOAT_EQ(-0.5, dy_dt[7]);
+  EXPECT_FLOAT_EQ(dy_dt_base[0], dz_dt[0]);
+  EXPECT_FLOAT_EQ(dy_dt_base[1], dz_dt[1]);
+  EXPECT_FLOAT_EQ(0, dz_dt[2]);
+  EXPECT_FLOAT_EQ(-1, dz_dt[3]);
+  EXPECT_FLOAT_EQ(1, dz_dt[4]);
+  EXPECT_FLOAT_EQ(-0.15, dz_dt[5]);
+  EXPECT_FLOAT_EQ(0, dz_dt[6]);
+  EXPECT_FLOAT_EQ(-0.5, dz_dt[7]);
 }
 TEST_F(StanAgradRevOde, initial_state_vv) {
   using stan::math::coupled_ode_system;
@@ -364,6 +380,7 @@ TEST_F(StanAgradRevOde, size_vv) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t z_size = N + N * N + N * M;
 
   std::vector<var> y0_v(N, 0.0);
   std::vector<var> theta_v(M, 0.0);
@@ -371,7 +388,7 @@ TEST_F(StanAgradRevOde, size_vv) {
   coupled_ode_system<mock_ode_functor, var, var> coupled_system_vv(
       base_ode, y0_v, theta_v, x, x_int, &msgs);
 
-  EXPECT_EQ(N + N * N + N * M, coupled_system_vv.size());
+  EXPECT_EQ(z_size, coupled_system_vv.size());
 }
 
 TEST_F(StanAgradRevOde, memory_recovery_vv) {
@@ -381,6 +398,7 @@ TEST_F(StanAgradRevOde, memory_recovery_vv) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t z_size = N + N * N + N * M;
 
   std::vector<var> y0_v(N, 0.0);
   std::vector<var> theta_v(M, 0.0);
@@ -388,12 +406,12 @@ TEST_F(StanAgradRevOde, memory_recovery_vv) {
   coupled_ode_system<mock_ode_functor, var, var> coupled_system_vv(
       base_ode, y0_v, theta_v, x, x_int, &msgs);
 
-  std::vector<double> y(3, 0);
-  std::vector<double> dy_dt(3 + N * N + N * M, 0);
+  std::vector<double> z(z_size, 0);
+  std::vector<double> dz_dt(z_size, 0);
   double t = 10;
 
   EXPECT_TRUE(stan::math::empty_nested());
-  EXPECT_NO_THROW(coupled_system_vv(y, dy_dt, t));
+  EXPECT_NO_THROW(coupled_system_vv(z, dz_dt, t));
   EXPECT_TRUE(stan::math::empty_nested());
 }
 
@@ -404,6 +422,8 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vv) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t z_size = N + N * N + N * M;
+
   for (size_t n = 0; n < N + 1; n++) {
     std::stringstream scoped_message;
     scoped_message << "iteration " << n;
@@ -416,12 +436,12 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vv) {
     coupled_ode_system<mock_throwing_ode_functor<std::logic_error>, var, var>
         coupled_system_vv(throwing_ode, y0_v, theta_v, x, x_int, &msgs);
 
-    std::vector<double> y(3, 0);
-    std::vector<double> dy_dt(3 + N * N + N * M, 0);
+    std::vector<double> z(z_size, 0);
+    std::vector<double> dz_dt(z_size, 0);
     double t = 10;
 
     EXPECT_TRUE(stan::math::empty_nested());
-    EXPECT_THROW_MSG(coupled_system_vv(y, dy_dt, t), std::logic_error, message);
+    EXPECT_THROW_MSG(coupled_system_vv(z, dz_dt, t), std::logic_error, message);
     EXPECT_TRUE(stan::math::empty_nested());
   }
 }

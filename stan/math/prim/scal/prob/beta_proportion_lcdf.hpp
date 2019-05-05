@@ -57,8 +57,6 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lcdf(
 
   static const char* function = "beta_proportion_lcdf";
 
-  using boost::math::tools::promote_args;
-
   T_partials_return cdf_log(0.0);
 
   check_positive(function, "Location parameter", mu);

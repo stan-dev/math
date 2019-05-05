@@ -4,10 +4,8 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/LDLT_factor.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
-#include <stan/math/prim/mat/fun/promote_common.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>
 #include <stan/math/fwd/mat/fun/to_fvar.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {
