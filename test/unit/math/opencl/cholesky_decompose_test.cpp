@@ -32,8 +32,8 @@ TEST(MathMatrix, cholesky_decompose_cpu_vs_cl_small) {
   stan::math::matrix_cl m0_chol_cl = stan::math::cholesky_decompose(m0_cl);
   stan::math::matrix_cl m1_chol_cl = stan::math::cholesky_decompose(m1_cl);
 
-  m0 = from_matrix_cl(m0_chol_cl);
-  m1 = from_matrix_cl(m1_chol_cl);
+  m0 = stan::math::from_matrix_cl(m0_chol_cl);
+  m1 = stan::math::from_matrix_cl(m1_chol_cl);
 
   EXPECT_MATRIX_NEAR(m0, m0_res, 1e-8);
   EXPECT_MATRIX_NEAR(m1, m1_res, 1e-8);

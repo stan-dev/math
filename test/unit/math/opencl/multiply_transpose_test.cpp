@@ -61,7 +61,7 @@ TEST(AgradRevMatrix, multiply_transposed_small) {
   stan::math::matrix_cl m11(m1);
   stan::math::matrix_cl m22(3, 3);
   m22 = stan::math::multiply_transpose(m11);
-  m2_cl = from_matrix_cl(m22);
+  m2_cl = stan::math::from_matrix_cl(m22);
 
   EXPECT_MATRIX_NEAR(m2, m2_cl, 1e-10);
 }
@@ -79,7 +79,7 @@ TEST(AgradRevMatrix, multiply_transposed_big) {
   stan::math::matrix_cl m11(m1);
   stan::math::matrix_cl m22(size, size);
   m22 = stan::math::multiply_transpose(m11);
-  m2_cl = from_matrix_cl(m22);
+  m2_cl = stan::math::from_matrix_cl(m22);
   EXPECT_MATRIX_NEAR(m2, m2_cl, 1e-10);
 }
 

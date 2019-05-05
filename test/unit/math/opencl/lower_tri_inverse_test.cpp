@@ -39,7 +39,7 @@ void inverse_test(int size) {
 
   stan::math::matrix_cl m2(m1);
   auto m3 = stan::math::lower_triangular_inverse(m2);
-  m1_cl = from_matrix_cl(m3);
+  m1_cl = stan::math::from_matrix_cl(m3);
   double max_error = 0;
   for (int i = 0; i < size; i++) {
     for (int j = 0; j <= i; j++) {

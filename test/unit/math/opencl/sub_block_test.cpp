@@ -50,7 +50,7 @@ TEST(MathMatrixCL, sub_block_lower_pass) {
   stan::math::matrix_cl d11(d1);
   stan::math::matrix_cl d22(d2);
   d22.sub_block<stan::math::TriangularViewCL::Lower>(d11, 0, 0, 0, 0, 3, 3);
-  d2 = from_matrix_cl(d22);
+  d2 = stan::math::from_matrix_cl(d22);
   EXPECT_EQ(1, d2(0, 0));
   EXPECT_EQ(15, d2(0, 1));
   EXPECT_EQ(14, d2(0, 2));

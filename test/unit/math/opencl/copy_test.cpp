@@ -26,10 +26,10 @@ TEST(MathMatrixCL, matrix_cl_copy) {
   // vector
   stan::math::matrix_cl d11(3, 1);
   stan::math::matrix_cl d111(3, 1);
-  EXPECT_NO_THROW(d11 = to_matrix_cl(d1));
-  EXPECT_NO_THROW(d111 = to_matrix_cl(d11));
-  EXPECT_NO_THROW(d1_a = from_matrix_cl(d11));
-  EXPECT_NO_THROW(d1_b = from_matrix_cl(d111));
+  EXPECT_NO_THROW(d11 = stan::math::to_matrix_cl(d1));
+  EXPECT_NO_THROW(d111 = stan::math::to_matrix_cl(d11));
+  EXPECT_NO_THROW(d1_a = stan::math::from_matrix_cl(d11));
+  EXPECT_NO_THROW(d1_b = stan::math::from_matrix_cl(d111));
   EXPECT_EQ(1, d1_a(0));
   EXPECT_EQ(2, d1_a(1));
   EXPECT_EQ(3, d1_a(2));
@@ -41,10 +41,10 @@ TEST(MathMatrixCL, matrix_cl_copy) {
   stan::math::matrix_cl d000;
   stan::math::matrix_cl d22(2, 3);
   stan::math::matrix_cl d222(2, 3);
-  EXPECT_NO_THROW(d22 = to_matrix_cl(d2));
-  EXPECT_NO_THROW(d222 = to_matrix_cl(d22));
-  EXPECT_NO_THROW(d2_a = from_matrix_cl(d22));
-  EXPECT_NO_THROW(d2_b = from_matrix_cl(d222));
+  EXPECT_NO_THROW(d22 = stan::math::to_matrix_cl(d2));
+  EXPECT_NO_THROW(d222 = stan::math::to_matrix_cl(d22));
+  EXPECT_NO_THROW(d2_a = stan::math::from_matrix_cl(d22));
+  EXPECT_NO_THROW(d2_b = stan::math::from_matrix_cl(d222));
   EXPECT_EQ(1, d2_a(0, 0));
   EXPECT_EQ(2, d2_a(0, 1));
   EXPECT_EQ(3, d2_a(0, 2));
@@ -58,9 +58,9 @@ TEST(MathMatrixCL, matrix_cl_copy) {
   EXPECT_EQ(5, d2_b(1, 1));
   EXPECT_EQ(6, d2_b(1, 2));
   // zero sized copy
-  EXPECT_NO_THROW(d00 = to_matrix_cl(d0));
-  EXPECT_NO_THROW(d0 = from_matrix_cl(d00));
-  EXPECT_NO_THROW(d000 = to_matrix_cl(d00));
+  EXPECT_NO_THROW(d00 = stan::math::to_matrix_cl(d0));
+  EXPECT_NO_THROW(d0 = stan::math::from_matrix_cl(d00));
+  EXPECT_NO_THROW(d000 = stan::math::to_matrix_cl(d00));
 }
 
 TEST(MathMatrixCL, barebone_buffer_copy) {
@@ -104,7 +104,7 @@ TEST(MathMatrixCL, matrix_cl_pack_unpack_copy_lower) {
   stan::math::matrix_d m_flat_cpu(size, size);
   auto m_cl = stan::math::packed_copy<stan::math::TriangularViewCL::Lower>(
       packed_mat, size);
-  m_flat_cpu = from_matrix_cl(m_cl);
+  m_flat_cpu = stan::math::from_matrix_cl(m_cl);
   size_t pos = 0;
   for (size_t j = 0; j < size; ++j) {
     for (size_t i = 0; i < j; i++) {
@@ -133,7 +133,7 @@ TEST(MathMatrixCL, matrix_cl_pack_unpack_copy_upper) {
   stan::math::matrix_d m_flat_cpu(size, size);
   auto m_cl = stan::math::packed_copy<stan::math::TriangularViewCL::Upper>(
       packed_mat, size);
-  m_flat_cpu = from_matrix_cl(m_cl);
+  m_flat_cpu = stan::math::from_matrix_cl(m_cl);
   size_t pos = 0;
   for (size_t j = 0; j < size; ++j) {
     for (size_t i = 0; i <= j; i++) {

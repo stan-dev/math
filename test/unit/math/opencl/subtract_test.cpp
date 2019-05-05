@@ -166,17 +166,17 @@ TEST(MathMatrixCL, subtract_value_check) {
   EXPECT_NO_THROW(rv33 = rv11 - rv22);
   EXPECT_NO_THROW(m33 = m11 - m22);
 
-  v3 = from_matrix_cl(v33);
+  v3 = stan::math::from_matrix_cl(v33);
   EXPECT_EQ(-9, v3(0));
   EXPECT_EQ(-98, v3(1));
   EXPECT_EQ(-997, v3(2));
 
-  rv3 = from_matrix_cl(rv33);
+  rv3 = stan::math::from_matrix_cl(rv33);
   EXPECT_EQ(-9, rv3(0));
   EXPECT_EQ(-98, rv3(1));
   EXPECT_EQ(-997, rv3(2));
 
-  m3 = from_matrix_cl(m33);
+  m3 = stan::math::from_matrix_cl(m33);
   EXPECT_EQ(-9, m3(0, 0));
   EXPECT_EQ(-98, m3(0, 1));
   EXPECT_EQ(-997, m3(0, 2));

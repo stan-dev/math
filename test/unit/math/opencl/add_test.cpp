@@ -208,7 +208,7 @@ TEST(MathMatrixCL, add_batch) {
   stan::math::opencl_kernels::add_batch(cl::NDRange(size, size),
                                         a_cl_res.buffer(), a_cl.buffer(), size,
                                         size, batch_size);
-  a_res = from_matrix_cl(a_cl_res);
+  a_res = stan::math::from_matrix_cl(a_cl_res);
   for (int k = 0; k < batch_size; k++) {
     for (int i = 0; i < size; i++)
       for (int j = 0; j < size; j++) {

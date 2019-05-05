@@ -34,7 +34,7 @@ TEST(MathMatrixCL, copy_triangular_m_pass) {
   EXPECT_NO_THROW(
       m00_dst
       = stan::math::copy_triangular<stan::math::TriangularViewCL::Upper>(m00));
-  EXPECT_NO_THROW(m0_dst = from_matrix_cl(m00_dst));
+  EXPECT_NO_THROW(m0_dst = stan::math::from_matrix_cl(m00_dst));
   EXPECT_EQ(1, m0_dst(0, 0));
   EXPECT_EQ(2, m0_dst(0, 1));
   EXPECT_EQ(0, m0_dst(1, 0));
@@ -43,7 +43,7 @@ TEST(MathMatrixCL, copy_triangular_m_pass) {
   EXPECT_NO_THROW(
       m00_dst
       = stan::math::copy_triangular<stan::math::TriangularViewCL::Lower>(m00));
-  EXPECT_NO_THROW(m0_dst = from_matrix_cl(m00_dst));
+  EXPECT_NO_THROW(m0_dst = stan::math::from_matrix_cl(m00_dst));
   EXPECT_EQ(1, m0_dst(0, 0));
   EXPECT_EQ(0, m0_dst(0, 1));
   EXPECT_EQ(3, m0_dst(1, 0));

@@ -20,7 +20,7 @@ TEST(MathMatrixCL, identity_m_value_check) {
 
   EXPECT_NO_THROW(m = stan::math::identity(2));
 
-  m0 = from_matrix_cl(m);
+  m0 = stan::math::from_matrix_cl(m);
   EXPECT_EQ(1, m0(0, 0));
   EXPECT_EQ(0, m0(0, 1));
   EXPECT_EQ(0, m0(1, 0));
