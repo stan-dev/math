@@ -37,6 +37,20 @@ namespace math {
  * to the second base system equation, and so on through the last base
  * system equation.
  *
+ * <p>Note: Calculating the sensitivity system requires the Jacobian
+ * of the base ODE RHS wrt to the parameters theta. The parameter
+ * vector theta is constant for successive calls to the exposed
+ * operator(). For this reason, the parameter vector theta is copied
+ * upon construction onto the nochain var autodiff tape which is used
+ * in the the nested autodiff performed in the operator() of this
+ * adaptor. Doing so reduces the size of the nested autodiff and
+ * speeds up autodiff. As a side effect, the parameter vector theta
+ * will remain on the nochain autodiff part of the autodiff tape being
+ * in use even after destruction of the given instance. Moreover, the
+ * adjoint zeroing for the nested system does not cover the theta
+ * parameter vector part of the nochain autodiff tape and is therefore
+ * set to zero using a dedicated loop.
+ *
  * @tparam F base ode system functor. Must provide
  *   <code>operator()(double t, std::vector<double> y, std::vector<var> theta,
  *          std::vector<double> x, std::vector<int>x_int, std::ostream*
@@ -410,6 +424,20 @@ struct coupled_ode_system<F, var, double> {
  * of the initial conditions followed by the sensitivites of the
  * parameters with respect to the second base system equation, and
  * so on through the last base system equation.
+ *
+ * <p>Note: Calculating the sensitivity system requires the Jacobian
+ * of the base ODE RHS wrt to the parameters theta. The parameter
+ * vector theta is constant for successive calls to the exposed
+ * operator(). For this reason, the parameter vector theta is copied
+ * upon construction onto the nochain var autodiff tape which is used
+ * in the the nested autodiff performed in the operator() of this
+ * adaptor. Doing so reduces the size of the nested autodiff and
+ * speeds up autodiff. As a side effect, the parameter vector theta
+ * will remain on the nochain autodiff part of the autodiff tape being
+ * in use even after destruction of the given instance. Moreover, the
+ * adjoint zeroing for the nested system does not cover the theta
+ * parameter vector part of the nochain autodiff tape and is therefore
+ * set to zero using a dedicated loop.
  *
  * @tparam F base ode system functor. Must provide
  *   <code>operator()(double t, std::vector<var> y, std::vector<var> theta,
