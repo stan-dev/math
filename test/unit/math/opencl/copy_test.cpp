@@ -27,7 +27,7 @@ TEST(MathMatrixCL, matrix_cl_copy) {
   stan::math::matrix_cl d11(3, 1);
   stan::math::matrix_cl d111(3, 1);
   EXPECT_NO_THROW(d11 = stan::math::to_matrix_cl(d1));
-  EXPECT_NO_THROW(d111 = stan::math::to_matrix_cl(d11));
+  EXPECT_NO_THROW(d111 = stan::math::copy_cl(d11));
   EXPECT_NO_THROW(d1_a = stan::math::from_matrix_cl(d11));
   EXPECT_NO_THROW(d1_b = stan::math::from_matrix_cl(d111));
   EXPECT_EQ(1, d1_a(0));
@@ -42,7 +42,7 @@ TEST(MathMatrixCL, matrix_cl_copy) {
   stan::math::matrix_cl d22(2, 3);
   stan::math::matrix_cl d222(2, 3);
   EXPECT_NO_THROW(d22 = stan::math::to_matrix_cl(d2));
-  EXPECT_NO_THROW(d222 = stan::math::to_matrix_cl(d22));
+  EXPECT_NO_THROW(d222 = stan::math::copy_cl(d22));
   EXPECT_NO_THROW(d2_a = stan::math::from_matrix_cl(d22));
   EXPECT_NO_THROW(d2_b = stan::math::from_matrix_cl(d222));
   EXPECT_EQ(1, d2_a(0, 0));
@@ -60,7 +60,7 @@ TEST(MathMatrixCL, matrix_cl_copy) {
   // zero sized copy
   EXPECT_NO_THROW(d00 = stan::math::to_matrix_cl(d0));
   EXPECT_NO_THROW(d0 = stan::math::from_matrix_cl(d00));
-  EXPECT_NO_THROW(d000 = stan::math::to_matrix_cl(d00));
+  EXPECT_NO_THROW(d000 = stan::math::copy_cl(d00));
 }
 
 TEST(MathMatrixCL, barebone_buffer_copy) {

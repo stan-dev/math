@@ -157,19 +157,15 @@ inline matrix_cl packed_copy(const std::vector<double>& src, int rows) {
  * destination matrix. Both matrices
  * are stored on the OpenCL device.
  *
- * @param dst destination matrix
  * @param src source matrix
- *
+ * @return matrix_cl with copies of values in the source matrix
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
-inline void copy_cl(matrix_cl& dst, const matrix_cl& src) {
-  check_size_match("copy ((OpenCL) -> (OpenCL))", "src.rows()", src.rows(),
-                   "dst.rows()", dst.rows());
-  check_size_match("copy ((OpenCL) -> (OpenCL))", "src.cols()", src.cols(),
-                   "dst.cols()", dst.cols());
+inline matrix_cl copy_cl(const matrix_cl& src) {
+  matrix_cl dst(src.rows(), src.cols());
   if (src.size() == 0) {
-    return;
+    return dst;
   }
   cl::CommandQueue queue = opencl_context.queue();
   try {
@@ -184,6 +180,7 @@ inline void copy_cl(matrix_cl& dst, const matrix_cl& src) {
     std::cout << e.err() << std::endl;
     check_opencl_error("copy (OpenCL)->(OpenCL)", e);
   }
+  return dst;
 }
 
 }  // namespace math
