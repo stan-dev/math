@@ -10,7 +10,7 @@ Required Libraries
 ------------------
 Stan Math depends on three libraries:
 
-- Boost (version 1.66.0): [Boost Home Page](http://www.boost.org)
+- Boost (version 1.69.0): [Boost Home Page](http://www.boost.org)
 - Eigen (version 3.3.3): [Eigen Home Page](http://eigen.tuxfamily.org/index.php?title=Main_Page)
 - SUNDIALS (version 4.1.0): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
 
@@ -53,10 +53,10 @@ The `-I` includes provide paths pointing to the four necessary includes:
 Note that the paths should *not* include the final directories `stan`, `Eigen`, or `boost` on the paths.  An example of a real instantiation:
 
 ```
-clang++ -std=c++1y -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.3.3/ -I ~/stan-dev/math/lib/boost_1.66.0/ -I ~/stan-dev/math/lib/sundials_4.1.0/include foo.cpp
+clang++ -std=c++1y -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.3.3/ -I ~/stan-dev/math/lib/boost_1.69.0/ -I ~/stan-dev/math/lib/sundials_4.1.0/include foo.cpp
 ```
 
-The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.3.3/Eigen` and `~stan-dev/math/lib/boost_1.66.0/boost` and `~stan-dev/math/lib/sundials_4.1.0/include`.
+The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.3.3/Eigen` and `~stan-dev/math/lib/boost_1.69.0/boost` and `~stan-dev/math/lib/sundials_4.1.0/include`.
 
 Other Compilers
 ---------------

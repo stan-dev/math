@@ -31,22 +31,19 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_lpdf(
   static const char* function = "pareto_lpdf";
   typedef typename stan::partials_return_type<T_y, T_scale, T_shape>::type
       T_partials_return;
-
   using std::log;
-
-  if (size_zero(y, y_min, alpha))
-    return 0.0;
-
-  T_partials_return logp(0.0);
-
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Scale parameter", y_min);
   check_positive_finite(function, "Shape parameter", alpha);
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          y_min, "Shape parameter", alpha);
+  if (size_zero(y, y_min, alpha))
+    return 0;
 
   if (!include_summand<propto, T_y, T_scale, T_shape>::value)
-    return 0.0;
+    return 0;
+
+  T_partials_return logp(0);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_scale> y_min_vec(y_min);

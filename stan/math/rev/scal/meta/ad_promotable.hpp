@@ -6,12 +6,23 @@
 
 namespace stan {
 namespace math {
-
+/**
+ * Template traits metaprogram to determine if a variable of one
+ * template type is promotable to var.
+ *
+ * <p>It will declare an enum <code>value</code> equal to
+ * <code>true</code> if the type is promotable to double,
+ * <code>false</code> otherwise.
+ *
+ * @tparam T promoted type
+ */
 template <typename T>
 struct ad_promotable<T, var> {
   enum { value = ad_promotable<T, double>::value };
 };
-
+/**
+ * A var type is promotable to itself.
+ */
 template <>
 struct ad_promotable<var, var> {
   enum { value = true };

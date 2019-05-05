@@ -15,20 +15,16 @@ namespace internal {
 
 // implemented using structs because there is no partial specialization
 // for templated functions
-//
 // default implementation works for scalar T_y. T_low and T_high can
 // be either scalar or vector
-//
 // throws if y, low, or high is nan
 template <typename T_y, typename T_low, typename T_high, bool y_is_vec>
 struct bounded {
   static void check(const char* function, const char* name, const T_y& y,
                     const T_low& low, const T_high& high) {
-    using stan::max_size;
-
     scalar_seq_view<T_low> low_vec(low);
     scalar_seq_view<T_high> high_vec(high);
-    for (size_t n = 0; n < max_size(low, high); n++) {
+    for (size_t n = 0; n < stan::max_size(low, high); n++) {
       if (!(low_vec[n] <= y && y <= high_vec[n])) {
         std::stringstream msg;
         msg << ", but must be in the interval ";
@@ -44,13 +40,10 @@ template <typename T_y, typename T_low, typename T_high>
 struct bounded<T_y, T_low, T_high, true> {
   static void check(const char* function, const char* name, const T_y& y,
                     const T_low& low, const T_high& high) {
-    using stan::get;
-    using stan::length;
-
     scalar_seq_view<T_low> low_vec(low);
     scalar_seq_view<T_high> high_vec(high);
-    for (size_t n = 0; n < length(y); n++) {
-      if (!(low_vec[n] <= get(y, n) && get(y, n) <= high_vec[n])) {
+    for (size_t n = 0; n < stan::length(y); n++) {
+      if (!(low_vec[n] <= stan::get(y, n) && stan::get(y, n) <= high_vec[n])) {
         std::stringstream msg;
         msg << ", but must be in the interval ";
         msg << "[" << low_vec[n] << ", " << high_vec[n] << "]";
@@ -63,19 +56,15 @@ struct bounded<T_y, T_low, T_high, true> {
 }  // namespace internal
 
 /**
- * Check if the value is between the low and high
- * values, inclusively.
- *
+ * Check if the value is between the low and high values, inclusively.
  * @tparam T_y Type of value
  * @tparam T_low Type of low value
  * @tparam T_high Type of high value
- *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Value to check
  * @param low Low bound
  * @param high High bound
- *
  * @throw <code>std::domain_error</code> otherwise. This also throws
  *   if any of the arguments are NaN.
  */

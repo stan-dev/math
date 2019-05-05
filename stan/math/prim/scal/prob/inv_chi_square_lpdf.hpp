@@ -54,14 +54,14 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lpdf(const T_y& y,
   typedef
       typename stan::partials_return_type<T_y, T_dof>::type T_partials_return;
 
-  if (size_zero(y, nu))
-    return 0.0;
-
-  T_partials_return logp(0.0);
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_not_nan(function, "Random variable", y);
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu);
+  if (size_zero(y, nu))
+    return 0;
+
+  T_partials_return logp(0);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_dof> nu_vec(nu);

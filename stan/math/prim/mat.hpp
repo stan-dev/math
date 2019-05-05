@@ -6,6 +6,9 @@
 #include <stan/math/prim/arr/meta/is_vector.hpp>
 #include <stan/math/prim/arr/meta/length.hpp>
 
+#include <stan/math/prim/mat/meta/as_array_or_scalar.hpp>
+#include <stan/math/prim/mat/meta/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/mat/meta/as_scalar.hpp>
 #include <stan/math/prim/mat/meta/broadcast_array.hpp>
 #include <stan/math/prim/mat/meta/get.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
@@ -23,6 +26,8 @@
 #include <stan/math/prim/mat/err/check_cholesky_factor.hpp>
 #include <stan/math/prim/mat/err/check_cholesky_factor_corr.hpp>
 #include <stan/math/prim/mat/err/check_column_index.hpp>
+#include <stan/math/prim/mat/err/check_consistent_size_mvt.hpp>
+#include <stan/math/prim/mat/err/check_consistent_sizes_mvt.hpp>
 #include <stan/math/prim/mat/err/check_corr_matrix.hpp>
 #include <stan/math/prim/mat/err/check_cov_matrix.hpp>
 #include <stan/math/prim/mat/err/check_finite.hpp>
@@ -44,6 +49,18 @@
 #include <stan/math/prim/mat/err/check_unit_vector.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
+#include <stan/math/prim/mat/err/is_cholesky_factor_corr.hpp>
+#include <stan/math/prim/mat/err/is_cholesky_factor.hpp>
+#include <stan/math/prim/mat/err/is_column_index.hpp>
+#include <stan/math/prim/mat/err/is_corr_matrix.hpp>
+#include <stan/math/prim/mat/err/is_ldlt_factor.hpp>
+#include <stan/math/prim/mat/err/is_lower_triangular.hpp>
+#include <stan/math/prim/mat/err/is_mat_finite.hpp>
+#include <stan/math/prim/mat/err/is_matching_dims.hpp>
+#include <stan/math/prim/mat/err/is_pos_definite.hpp>
+#include <stan/math/prim/mat/err/is_square.hpp>
+#include <stan/math/prim/mat/err/is_symmetric.hpp>
+#include <stan/math/prim/mat/err/is_unit_vector.hpp>
 #include <stan/math/prim/mat/err/validate_non_negative_index.hpp>
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
