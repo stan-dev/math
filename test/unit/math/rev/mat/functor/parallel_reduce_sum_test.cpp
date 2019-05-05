@@ -35,10 +35,9 @@ struct count_lpdf {
       : data_(data), lambda_(lambda) {}
 
   inline T operator()(std::size_t start, std::size_t end) const {
-    const std::size_t elems = end - start;
     std::vector<int> partial_data;
     partial_data.insert(partial_data.end(), data_.begin() + start,
-                        data_.begin() + end);
+                        data_.begin() + end + 1);
     return stan::math::poisson_lpmf(partial_data, lambda_);
   }
 };
@@ -62,11 +61,11 @@ struct fast_count_lpdf {
     stan::scalar_seq_view<T_n> n_vec(n_);
     stan::scalar_seq_view<T_rate> lambda_vec(lambda_);
     // size_t size = max_size(n_, lambda_);
-    std::size_t size = end - start;
+    std::size_t size = end - start + 1;
 
     stan::math::operands_and_partials<T_rate> ops_partials(lambda_);
 
-    for (std::size_t i = start; i != end; i++) {
+    for (std::size_t i = start; i != end + 1; i++) {
       if (!(lambda_vec[i] == 0 && n_vec[i] == 0)) {
         if (stan::math::include_summand<false>::value)
           logp -= stan::math::lgamma(n_vec[i] + 1.0);
@@ -150,6 +149,7 @@ TEST_F(benchmark, parallel_reduce_sum_d) {
 
   EXPECT_FLOAT_EQ(poisson_lpdf, poisson_lpdf_ref);
 }
+*/
 
 TEST_F(benchmark, parallel_reduce_sum_v) {
   typedef boost::counting_iterator<std::size_t> count_iter;
@@ -172,7 +172,6 @@ TEST_F(benchmark, parallel_reduce_sum_v) {
 
   EXPECT_FLOAT_EQ(poisson_lpdf.adj(), poisson_lpdf_ref.adj());
 }
-*/
 
 TEST_F(benchmark, fast_parallel_reduce_sum_speed) {
   typedef boost::counting_iterator<std::size_t> count_iter;

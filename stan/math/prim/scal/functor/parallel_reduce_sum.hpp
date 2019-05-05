@@ -37,10 +37,12 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, double> {
         : first_(other.first_), init_(other.init_), f_(other.f_), sum_(init_) {}
 
     void operator()(const tbb::blocked_range<size_t>& r) {
+      if (r.empty())
+        return;
       auto start = first_;
       std::advance(start, r.begin());
       auto end = first_;
-      std::advance(end, r.end());
+      std::advance(end, r.end() - 1);
       sum_ += f_(*start, *end);
     }
 

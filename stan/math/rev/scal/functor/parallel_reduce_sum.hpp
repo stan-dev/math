@@ -61,13 +61,15 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
     }
 
     void operator()(const tbb::blocked_range<size_t>& r) {
+      if (r.empty())
+        return;
       // std::cout << "Summing " << r.begin() << " - " << r.end() << " with
       // worker " << worker_id_ << std::endl;
       tls_scoped_stack_.local().execute([&] {
         auto start = first_;
         std::advance(start, r.begin());
         auto end = first_;
-        std::advance(end, r.end());
+        std::advance(end, r.end() - 1);
         sum_terms_.emplace_back(f_(*start, *end));
       });
     }
