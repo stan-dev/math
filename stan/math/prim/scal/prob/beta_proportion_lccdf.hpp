@@ -110,8 +110,7 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lccdf(
     const T_partials_return kappa_dbl = value_of(kappa_vec[n]);
     const T_partials_return mukappa_dbl = mu_dbl * kappa_dbl;
     const T_partials_return kappa_mukappa_dbl = kappa_dbl - mukappa_dbl;
-    const T_partials_return betafunc_dbl
-        = beta(mukappa_dbl, kappa_mukappa_dbl);
+    const T_partials_return betafunc_dbl = beta(mukappa_dbl, kappa_mukappa_dbl);
     const T_partials_return Pn
         = 1 - inc_beta(mukappa_dbl, kappa_mukappa_dbl, y_dbl);
 

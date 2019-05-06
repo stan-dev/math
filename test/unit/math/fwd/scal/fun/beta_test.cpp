@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 
 TEST(AgradFwdBeta, Fvar) {
-  using stan::math::fvar;
   using stan::math::beta;
+  using stan::math::fvar;
   using stan::math::lbeta;
   using std::exp;
 
@@ -30,8 +30,8 @@ TEST(AgradFwdBeta, Fvar) {
 }
 
 TEST(AgradFwdBeta, FvarFvarDouble) {
-  using stan::math::fvar;
   using stan::math::beta;
+  using stan::math::fvar;
   using stan::math::lbeta;
   using std::exp;
 

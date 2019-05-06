@@ -9,17 +9,13 @@ TEST(MathFunctions, beta) {
 }
 
 TEST(MathFunctions, beta_nan) {
-  using stan::math::NOT_A_NUMBER;
   using stan::math::INFTY;
+  using stan::math::NOT_A_NUMBER;
   using stan::math::beta;
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               beta(NOT_A_NUMBER, 2.16));
-  EXPECT_PRED1(boost::math::isnan<double>,
-               beta(1.65, NOT_A_NUMBER));
+  EXPECT_PRED1(boost::math::isnan<double>, beta(NOT_A_NUMBER, 2.16));
+  EXPECT_PRED1(boost::math::isnan<double>, beta(1.65, NOT_A_NUMBER));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               beta(INFTY, 2.16));
-  EXPECT_PRED1(boost::math::isnan<double>,
-               beta(1.65, INFTY));
+  EXPECT_PRED1(boost::math::isnan<double>, beta(INFTY, 2.16));
+  EXPECT_PRED1(boost::math::isnan<double>, beta(1.65, INFTY));
 }

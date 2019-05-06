@@ -4,9 +4,9 @@
 #include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRevBeta, beta_vv) {
-  using stan::math::var;
-  using stan::math::lbeta;
   using stan::math::beta;
+  using stan::math::lbeta;
+  using stan::math::var;
   using std::exp;
 
   AVAR x = 5.2;
@@ -31,9 +31,9 @@ TEST(AgradRevBeta, beta_vv) {
 }
 
 TEST(AgradRevBeta, beta_vd) {
-  using stan::math::var;
-  using stan::math::lbeta;
   using stan::math::beta;
+  using stan::math::lbeta;
+  using stan::math::var;
   using std::exp;
 
   AVAR x = 3.1;
@@ -54,9 +54,9 @@ TEST(AgradRevBeta, beta_vd) {
 }
 
 TEST(AgradRevBeta, beta_dv) {
-  using stan::math::var;
-  using stan::math::lbeta;
   using stan::math::beta;
+  using stan::math::lbeta;
+  using stan::math::var;
   using std::exp;
 
   double x = 7.5;

@@ -17,13 +17,15 @@ namespace math {
 
    \f[
     \frac{\partial }{\partial a} = \left(\psi^{\left(0\right)}\left(a\right)
-                                      - \psi^{\left(0\right)}\left(a + b\right)\right)
+                                      - \psi^{\left(0\right)}\left(a +
+ b\right)\right)
                                     * \mathrm{beta}(a,b)
    \f]
 
    \f[
     \frac{\partial }{\partial b} = \left(\psi^{\left(0\right)}\left(b\right)
-                                      - \psi^{\left(0\right)}\left(a + b\right)\right)
+                                      - \psi^{\left(0\right)}\left(a +
+ b\right)\right)
                                     * \mathrm{beta}(a,b)
    \f]
  *
@@ -49,21 +51,19 @@ class beta_vv_vari : public op_vv_vari {
 
 class beta_vd_vari : public op_vd_vari {
  public:
-  beta_vd_vari(vari* avi, double b)
-      : op_vd_vari(beta(avi->val_, b), avi, b) {}
+  beta_vd_vari(vari* avi, double b) : op_vd_vari(beta(avi->val_, b), avi, b) {}
   void chain() {
     avi_->adj_ += adj_ * (digamma(avi_->val_) - digamma(avi_->val_ + bd_))
-                          * beta(avi_->val_, bd_);
+                  * beta(avi_->val_, bd_);
   }
 };
 
 class beta_dv_vari : public op_dv_vari {
  public:
-  beta_dv_vari(double a, vari* bvi)
-      : op_dv_vari(beta(a, bvi->val_), a, bvi) {}
+  beta_dv_vari(double a, vari* bvi) : op_dv_vari(beta(a, bvi->val_), a, bvi) {}
   void chain() {
     bvi_->adj_ += adj_ * (digamma(bvi_->val_) - digamma(ad_ + bvi_->val_))
-                          * beta(ad_, bvi_->val_);
+                  * beta(ad_, bvi_->val_);
   }
 };
 }  // namespace internal

@@ -102,8 +102,8 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lccdf(
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
     const T_partials_return beta_dbl = value_of(beta_vec[n]);
-    const T_partials_return betafunc_dbl = stan::math::beta(alpha_dbl,
-                                                            beta_dbl);
+    const T_partials_return betafunc_dbl
+        = stan::math::beta(alpha_dbl, beta_dbl);
 
     const T_partials_return Pn = 1.0 - inc_beta(alpha_dbl, beta_dbl, y_dbl);
 

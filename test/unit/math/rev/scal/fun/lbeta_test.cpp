@@ -4,8 +4,8 @@
 #include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRevLbeta, lbeta_vv) {
-  using stan::math::var;
   using stan::math::lbeta;
+  using stan::math::var;
 
   AVAR x = 0.5;
   AVAR y = 1.2;
@@ -18,8 +18,8 @@ TEST(AgradRevLbeta, lbeta_vv) {
 }
 
 TEST(AgradRevLbeta, lbeta_vd) {
-  using stan::math::var;
   using stan::math::lbeta;
+  using stan::math::var;
 
   AVAR x = 6.7;
   double y = 3.1;
@@ -31,8 +31,8 @@ TEST(AgradRevLbeta, lbeta_vd) {
 }
 
 TEST(AgradRevLbeta, lbeta_dv) {
-  using stan::math::var;
   using stan::math::lbeta;
+  using stan::math::var;
 
   double x = 12.3;
   AVAR y = 4.8;

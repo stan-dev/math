@@ -50,8 +50,9 @@ template <typename T>
 inline fvar<T> beta(const fvar<T>& x1, const fvar<T>& x2) {
   const T beta_ab = beta(x1.val_, x2.val_);
   return fvar<T>(beta_ab,
-                 beta_ab * (x1.d_ * digamma(x1.val_) + x2.d_ * digamma(x2.val_)
-                            - (x1.d_ + x2.d_) * digamma(x1.val_ + x2.val_)));
+                 beta_ab
+                     * (x1.d_ * digamma(x1.val_) + x2.d_ * digamma(x2.val_)
+                        - (x1.d_ + x2.d_) * digamma(x1.val_ + x2.val_)));
 }
 
 template <typename T>
