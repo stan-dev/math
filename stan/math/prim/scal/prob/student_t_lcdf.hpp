@@ -10,7 +10,7 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/lbeta.hpp>
+#include <stan/math/prim/scal/fun/beta.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
@@ -96,7 +96,7 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lcdf(
     const T_partials_return q = nu_dbl / (t * t);
     const T_partials_return r = 1.0 / (1.0 + q);
     const T_partials_return J = 2 * r * r * q / t;
-    const T_partials_return betaNuHalf = exp(lbeta(0.5, 0.5 * nu_dbl));
+    const T_partials_return betaNuHalf = beta(0.5, 0.5 * nu_dbl);
     T_partials_return zJacobian = t > 0 ? -0.5 : 0.5;
 
     if (q < 2) {

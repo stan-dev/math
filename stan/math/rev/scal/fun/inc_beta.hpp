@@ -4,7 +4,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/rev/scal/fun/pow.hpp>
-#include <stan/math/prim/scal/fun/lbeta.hpp>
+#include <stan/math/prim/scal/fun/beta.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 
 namespace stan {
@@ -22,13 +22,13 @@ class inc_beta_vvv_vari : public op_vvv_vari {
     grad_reg_inc_beta(d_a, d_b, avi_->val_, bvi_->val_, cvi_->val_,
                       digamma(avi_->val_), digamma(bvi_->val_),
                       digamma(avi_->val_ + bvi_->val_),
-                      std::exp(lbeta(avi_->val_, bvi_->val_)));
+                      beta(avi_->val_, bvi_->val_));
 
     avi_->adj_ += adj_ * d_a;
     bvi_->adj_ += adj_ * d_b;
     cvi_->adj_ += adj_ * std::pow(1 - cvi_->val_, bvi_->val_ - 1)
                   * std::pow(cvi_->val_, avi_->val_ - 1)
-                  / std::exp(lbeta(avi_->val_, bvi_->val_));
+                  / beta(avi_->val_, bvi_->val_);
   }
 };
 

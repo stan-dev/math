@@ -33,7 +33,7 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fv_1stDeriv1) {
   using stan::math::digamma;
   using stan::math::exp;
   using stan::math::fvar;
-  using stan::math::lbeta;
+  using stan::math::beta;
   using stan::math::var;
 
   fvar<var> a = 1.0;
@@ -45,7 +45,7 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fv_1stDeriv1) {
   fvar<var> dig_a = digamma(a);
   fvar<var> dig_b = digamma(b);
   fvar<var> dig_sum = digamma(a + b);
-  fvar<var> beta_ab = exp(lbeta(a, b));
+  fvar<var> beta_ab = beta(a, b);
   fvar<var> g_a;
   fvar<var> g_b;
 
@@ -62,7 +62,7 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fv_1stDeriv2) {
   using stan::math::digamma;
   using stan::math::exp;
   using stan::math::fvar;
-  using stan::math::lbeta;
+  using stan::math::beta;
   using stan::math::var;
 
   fvar<var> a = 1.0;
@@ -74,7 +74,7 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fv_1stDeriv2) {
   fvar<var> dig_a = digamma(a);
   fvar<var> dig_b = digamma(b);
   fvar<var> dig_sum = digamma(a + b);
-  fvar<var> beta_ab = exp(lbeta(a, b));
+  fvar<var> beta_ab = beta(a, b);
   fvar<var> g_a;
   fvar<var> g_b;
 
@@ -90,7 +90,7 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fv_2ndDeriv1) {
   using stan::math::digamma;
   using stan::math::exp;
   using stan::math::fvar;
-  using stan::math::lbeta;
+  using stan::math::beta;
   using stan::math::var;
 
   fvar<var> a = 1.0;
@@ -102,7 +102,7 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fv_2ndDeriv1) {
   fvar<var> dig_a = digamma(a);
   fvar<var> dig_b = digamma(b);
   fvar<var> dig_sum = digamma(a + b);
-  fvar<var> beta_ab = exp(lbeta(a, b));
+  fvar<var> beta_ab = beta(a, b);
   fvar<var> g_a;
   fvar<var> g_b;
 
@@ -119,7 +119,7 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fv_2ndDeriv2) {
   using stan::math::digamma;
   using stan::math::exp;
   using stan::math::fvar;
-  using stan::math::lbeta;
+  using stan::math::beta;
   using stan::math::var;
 
   fvar<var> a = 1.0;
@@ -131,7 +131,7 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fv_2ndDeriv2) {
   fvar<var> dig_a = digamma(a);
   fvar<var> dig_b = digamma(b);
   fvar<var> dig_sum = digamma(a + b);
-  fvar<var> beta_ab = exp(lbeta(a, b));
+  fvar<var> beta_ab = beta(a, b);
   fvar<var> g_a;
   fvar<var> g_b;
 

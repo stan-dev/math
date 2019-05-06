@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/fun/grad_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
-#include <stan/math/prim/scal/fun/lbeta.hpp>
+#include <stan/math/prim/scal/fun/beta.hpp>
 #include <cmath>
 
 namespace stan {
@@ -36,7 +36,7 @@ void grad_reg_inc_beta(T& g1, T& g2, const T& a, const T& b, const T& z,
   T dBda = 0;
   T dBdb = 0;
   grad_inc_beta(dBda, dBdb, a, b, z);
-  T b1 = exp(lbeta(a, b)) * inc_beta(a, b, z);
+  T b1 = beta(a, b) * inc_beta(a, b, z);
   g1 = (dBda - b1 * (digammaA - digammaSum)) / betaAB;
   g2 = (dBdb - b1 * (digammaB - digammaSum)) / betaAB;
 }
