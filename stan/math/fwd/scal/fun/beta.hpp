@@ -48,7 +48,7 @@ namespace math {
  */
 template <typename T>
 inline fvar<T> beta(const fvar<T>& x1, const fvar<T>& x2) {
-  T beta_ab = beta(x1.val_, x2.val_);
+  const T beta_ab = beta(x1.val_, x2.val_);
   return fvar<T>(beta_ab,
                  beta_ab * (x1.d_ * digamma(x1.val_) + x2.d_ * digamma(x2.val_)
                             - (x1.d_ + x2.d_) * digamma(x1.val_ + x2.val_)));
@@ -56,16 +56,16 @@ inline fvar<T> beta(const fvar<T>& x1, const fvar<T>& x2) {
 
 template <typename T>
 inline fvar<T> beta(double x1, const fvar<T>& x2) {
-  T beta_ab = beta(x1, x2.val_);
+  const T beta_ab = beta(x1, x2.val_);
   return fvar<T>(beta_ab,
-                 x2.d_ * (digamma(x2.val_) - digamma(x1 + x2.val_) * beta_ab));
+                 x2.d_ * (digamma(x2.val_) - digamma(x1 + x2.val_)) * beta_ab);
 }
 
 template <typename T>
 inline fvar<T> beta(const fvar<T>& x1, double x2) {
-  T beta_ab = beta(x1.val_, x2);
+  const T beta_ab = beta(x1.val_, x2);
   return fvar<T>(beta_ab,
-                 x1.d_ * (digamma(x1.val_) - digamma(x1.val_ + x2) * beta_ab));
+                 x1.d_ * (digamma(x1.val_) - digamma(x1.val_ + x2)) * beta_ab);
 }
 }  // namespace math
 }  // namespace stan
