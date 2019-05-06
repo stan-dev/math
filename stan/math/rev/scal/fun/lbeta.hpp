@@ -37,10 +37,10 @@ class lbeta_vv_vari : public op_vv_vari {
   lbeta_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(lbeta(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
-    double digamma_ab = digamma(avi_->val_ + bvi_->val_);
-    avi_->adj_ += adj_ * digamma(avi_->val_) - digamma_ab;
+    const double digamma_ab = digamma(avi_->val_ + bvi_->val_);
+    avi_->adj_ += adj_ * (digamma(avi_->val_) - digamma_ab);
 
-    bvi_->adj_ += adj_ * digamma(bvi_->val_) - digamma_ab;
+    bvi_->adj_ += adj_ * (digamma(bvi_->val_) - digamma_ab);
   }
 };
 
@@ -49,7 +49,7 @@ class lbeta_vd_vari : public op_vd_vari {
   lbeta_vd_vari(vari* avi, double b)
       : op_vd_vari(lbeta(avi->val_, b), avi, b) {}
   void chain() {
-    avi_->adj_ += adj_ * digamma(avi_->val_) - digamma(avi_->val_ + bd_);
+    avi_->adj_ += adj_ * (digamma(avi_->val_) - digamma(avi_->val_ + bd_));
   }
 };
 
@@ -58,7 +58,7 @@ class lbeta_dv_vari : public op_dv_vari {
   lbeta_dv_vari(double a, vari* bvi)
       : op_dv_vari(lbeta(a, bvi->val_), a, bvi) {}
   void chain() {
-    bvi_->adj_ += adj_ * digamma(bvi_->val_) - digamma(ad_ + bvi_->val_);
+    bvi_->adj_ += adj_ * (digamma(bvi_->val_) - digamma(ad_ + bvi_->val_));
   }
 };
 }  // namespace internal

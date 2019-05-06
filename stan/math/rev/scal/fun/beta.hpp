@@ -39,8 +39,8 @@ class beta_vv_vari : public op_vv_vari {
   beta_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(beta(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
-    double beta_ab = beta(avi_->val_, bvi_->val_);
-    double digamma_ab = digamma(avi_->val_ + bvi_->val_);
+    const double beta_ab = beta(avi_->val_, bvi_->val_);
+    const double digamma_ab = digamma(avi_->val_ + bvi_->val_);
     avi_->adj_ += adj_ * (digamma(avi_->val_) - digamma_ab) * beta_ab;
 
     bvi_->adj_ += adj_ * (digamma(bvi_->val_) - digamma_ab) * beta_ab;
