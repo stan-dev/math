@@ -15,8 +15,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -48,7 +46,6 @@ typename return_type<T_y, T_loc, T_scale>::type normal_lpdf(
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
 
-  using std::log;
   using std::log;
 
   if (size_zero(y, mu, sigma))
