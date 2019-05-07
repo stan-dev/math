@@ -19,16 +19,17 @@ class inc_beta_vvv_vari : public op_vvv_vari {
   void chain() {
     double d_a;
     double d_b;
+    const double beta_ab = beta(avi_->val_, bvi_->val_);
     grad_reg_inc_beta(d_a, d_b, avi_->val_, bvi_->val_, cvi_->val_,
                       digamma(avi_->val_), digamma(bvi_->val_),
                       digamma(avi_->val_ + bvi_->val_),
-                      beta(avi_->val_, bvi_->val_));
+                      beta_ab);
 
     avi_->adj_ += adj_ * d_a;
     bvi_->adj_ += adj_ * d_b;
     cvi_->adj_ += adj_ * std::pow(1 - cvi_->val_, bvi_->val_ - 1)
                   * std::pow(cvi_->val_, avi_->val_ - 1)
-                  / beta(avi_->val_, bvi_->val_);
+                  / beta_ab;
   }
 };
 

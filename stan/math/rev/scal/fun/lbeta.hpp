@@ -8,29 +8,6 @@
 namespace stan {
 namespace math {
 
-/*
- * Returns the natural logarithm of the beta function and its gradients.
- *
-   \f[
-     \mathrm{lbeta}(a,b) = \ln\left(B\left(a,b\right)\right)
-   \f]
-
-   \f[
-    \frac{\partial }{\partial a} = \psi^{\left(0\right)}\left(a\right)
-                                      - \psi^{\left(0\right)}\left(a + b\right)
-   \f]
-
-   \f[
-    \frac{\partial }{\partial b} = \psi^{\left(0\right)}\left(b\right)
-                                      - \psi^{\left(0\right)}\left(a + b\right)
-   \f]
- *
- * @tparam T1 Type of a argument
- * @tparam T2 Type of b argument
- * @param a Argument
- * @param b Argument
- * @return Result of log beta function
- */
 namespace internal {
 class lbeta_vv_vari : public op_vv_vari {
  public:
@@ -63,14 +40,64 @@ class lbeta_dv_vari : public op_dv_vari {
 };
 }  // namespace internal
 
-inline var lbeta(const var& a, double b) {
-  return var(new internal::lbeta_vd_vari(a.vi_, b));
-}
+/*
+ * Returns the natural logarithm of the beta function and its gradients.
+ *
+   \f[
+     \mathrm{lbeta}(a,b) = \ln\left(B\left(a,b\right)\right)
+   \f]
 
+   \f[
+    \frac{\partial }{\partial a} = \psi^{\left(0\right)}\left(a\right)
+                                      - \psi^{\left(0\right)}\left(a + b\right)
+   \f]
+
+   \f[
+    \frac{\partial }{\partial b} = \psi^{\left(0\right)}\left(b\right)
+                                      - \psi^{\left(0\right)}\left(a + b\right)
+   \f]
+ * @param a var Argument
+ * @param b var Argument
+ * @return Result of log beta function
+ */
 inline var lbeta(const var& a, const var& b) {
   return var(new internal::lbeta_vv_vari(a.vi_, b.vi_));
 }
 
+/*
+ * Returns the natural logarithm of the beta function and its gradients.
+ *
+   \f[
+     \mathrm{lbeta}(a,b) = \ln\left(B\left(a,b\right)\right)
+   \f]
+
+   \f[
+    \frac{\partial }{\partial a} = \psi^{\left(0\right)}\left(a\right)
+                                      - \psi^{\left(0\right)}\left(a + b\right)
+   \f]
+ * @param a var Argument
+ * @param b double Argument
+ * @return Result of log beta function
+ */
+inline var lbeta(const var& a, double b) {
+  return var(new internal::lbeta_vd_vari(a.vi_, b));
+}
+
+/*
+ * Returns the natural logarithm of the beta function and its gradients.
+ *
+   \f[
+     \mathrm{lbeta}(a,b) = \ln\left(B\left(a,b\right)\right)
+   \f]
+
+   \f[
+    \frac{\partial }{\partial b} = \psi^{\left(0\right)}\left(b\right)
+                                      - \psi^{\left(0\right)}\left(a + b\right)
+   \f]
+ * @param a double Argument
+ * @param b var Argument
+ * @return Result of log beta function
+ */
 inline var lbeta(double a, const var& b) {
   return var(new internal::lbeta_dv_vari(a, b.vi_));
 }
