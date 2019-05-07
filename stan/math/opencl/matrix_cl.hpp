@@ -91,7 +91,9 @@ class matrix_cl {
    * Get the events from the event stacks.
    * @return The read/write event stack.
    */
-  inline const std::vector<cl::Event>& in_events() const { return in_events_; }
+  inline const std::vector<cl::Event>& in_events() const {
+    return in_events_;
+  }
 
   /**
    * Get the events from the event stacks.
