@@ -172,15 +172,6 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                stage('Windows Headers & Unit') {
-                    agent { label 'windows' }
-                    steps {
-                        deleteDirWin()
-                        unstash 'MathSetup'
-                        bat "make -j${env.PARALLEL} test-headers"
-                        runTestsWin("test/unit")
-                    }
-                }
             }
         }
         stage('Always-run tests part 2') {
@@ -224,6 +215,15 @@ pipeline {
                         runTests("test/unit -f map_rect")
                     }
                     post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Windows Headers & Unit') {
+                    agent { label 'windows' }
+                    steps {
+                        deleteDirWin()
+                        unstash 'MathSetup'
+                        bat "make -j${env.PARALLEL} test-headers"
+                        runTestsWin("test/unit")
+                    }
                 }
             }
         }
