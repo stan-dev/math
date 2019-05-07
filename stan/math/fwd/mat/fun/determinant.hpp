@@ -12,7 +12,7 @@ template <typename T, int R, int C>
 inline fvar<T> determinant(const Eigen::Matrix<fvar<T>, R, C>& m) {
   check_square("determinant", "m", m);
 
-  T vals = m.val().determinant();
+  const T vals = m.val().determinant();
   return fvar<T>(vals, vals * (m.val().inverse() * m.d()).trace());
 }
 
