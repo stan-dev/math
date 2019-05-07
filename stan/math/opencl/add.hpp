@@ -27,10 +27,9 @@ inline matrix_cl add(const matrix_cl& A, const matrix_cl& B) {
   if (C.size() == 0) {
     return C;
   }
-  cl::CommandQueue cmdQueue = opencl_context.queue();
   try {
-    opencl_kernels::add(cl::NDRange(A.rows(), A.cols()), C.buffer(), A.buffer(),
-                        B.buffer(), A.rows(), A.cols());
+    opencl_kernels::add(cl::NDRange(A.rows(), A.cols()), C, A, B, A.rows(),
+                        A.cols());
   } catch (const cl::Error& e) {
     check_opencl_error("add", e);
   }
