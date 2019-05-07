@@ -51,10 +51,11 @@ class matrix_cl {
 
   matrix_cl() : rows_(0), cols_(0) {}
 
-  explicit matrix_cl(const std::vector<double>& A, const int rows, const int cols)
+  explicit matrix_cl(const std::vector<double>& A, const int rows,
+                     const int cols)
       : rows_(rows), cols_(cols) {
     check_size_match("matrix constructor", "actual size", A.size(),
-                     "declared size (rows*cols)", rows*cols);
+                     "declared size (rows*cols)", rows * cols);
     if (A.size() == 0)
       return;
     // the context is needed to create the buffer object

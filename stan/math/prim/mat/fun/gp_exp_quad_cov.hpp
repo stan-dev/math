@@ -271,7 +271,7 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
   if (x_size == 0)
     return cov;
 
-  matrix_cl x_cl(x,1,x.size());
+  matrix_cl x_cl(x, 1, x.size());
   check_nan(function_name, "x", x_cl);
   matrix_cl cov_cl = gp_exp_quad_cov(x_cl, sigma, length_scale);
   copy(cov, cov_cl);  // NOLINT
@@ -374,9 +374,9 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
   if (x1_size == 0 || x2_size == 0)
     return cov;
 
-  matrix_cl x1_cl(x1,1,x1.size());
+  matrix_cl x1_cl(x1, 1, x1.size());
   check_nan(function_name, "x1", x1_cl);
-  matrix_cl x2_cl(x2,1,x2.size());
+  matrix_cl x2_cl(x2, 1, x2.size());
   check_nan(function_name, "x2", x2_cl);
   matrix_cl cov_cl = gp_exp_quad_cov(x1_cl, x2_cl, sigma, length_scale);
   copy(cov, cov_cl);  // NOLINT
@@ -398,10 +398,10 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x1,
-                                                const std::vector<Eigen::VectorXd> &x2,
-                                                const double sigma,
-                                                const double length_scale) {
+inline typename Eigen::MatrixXd gp_exp_quad_cov(
+    const std::vector<Eigen::VectorXd> &x1,
+    const std::vector<Eigen::VectorXd> &x2, const double sigma,
+    const double length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive_finite(function_name, "magnitude", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
