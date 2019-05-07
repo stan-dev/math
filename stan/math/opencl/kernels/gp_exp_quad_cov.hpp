@@ -92,8 +92,8 @@ const kernel_cl<cl::Buffer, cl::Buffer, double, double, int, int>
  * See the docs for \link kernels/gp_exp_quad_cov.hpp gp_exp_quad_cov_cross()
  * \endlink
  */
-const kernel_cl<cl::Buffer, cl::Buffer, cl::Buffer, double, double,
-                          int, int, int>
+const kernel_cl<cl::Buffer, cl::Buffer, cl::Buffer, double, double, int, int,
+                int>
     gp_exp_quad_cov_cross("gp_exp_quad_cov_cross",
                           gp_exp_quad_cov_cross_kernel_code, {});
 
