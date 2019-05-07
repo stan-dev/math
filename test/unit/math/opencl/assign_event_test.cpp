@@ -16,15 +16,15 @@ TEST(assign_event, correct_vectors) {
   // matrix_cl *mp = &m;
   cl::Event e;
   assign_events<in_buffer>(e, m);
-  EXPECT_EQ(m.in_events().size(), 1);
-  EXPECT_EQ(m.out_events().size(), 0);
+  EXPECT_EQ(m.read_events().size(), 1);
+  EXPECT_EQ(m.write_events().size(), 0);
 
   assign_events<out_buffer>(e, m);
-  EXPECT_EQ(m.in_events().size(), 1);
-  EXPECT_EQ(m.out_events().size(), 1);
+  EXPECT_EQ(m.read_events().size(), 1);
+  EXPECT_EQ(m.write_events().size(), 1);
 
   assign_events<in_out_buffer>(e, m);
-  EXPECT_EQ(m.in_events().size(), 2);
-  EXPECT_EQ(m.out_events().size(), 2);
+  EXPECT_EQ(m.read_events().size(), 2);
+  EXPECT_EQ(m.write_events().size(), 2);
 }
 #endif
