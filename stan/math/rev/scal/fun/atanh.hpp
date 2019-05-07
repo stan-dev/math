@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/scal/fun/atanh.hpp>
 #include <stan/math/rev/core.hpp>
-#include <limits>
 
 namespace stan {
 namespace math {
