@@ -49,19 +49,19 @@ inline void assign_event(const cl::Event&, to_const_matrix_cl_t<T>&) {}
 template <>
 inline void assign_event<in_buffer>(const cl::Event& e,
                                     const stan::math::matrix_cl& m) {
-  m.add_in_event(e);
+  m.add_read_event(e);
 }
 
 template <>
 inline void assign_event<out_buffer>(const cl::Event& e,
                                      const stan::math::matrix_cl& m) {
-  m.add_out_event(e);
+  m.add_write_event(e);
 }
 
 template <>
 inline void assign_event<in_out_buffer>(const cl::Event& e,
                                         const stan::math::matrix_cl& m) {
-  m.add_in_out_event(e);
+  m.add_read_write_event(e);
 }
 
 template <typename T,
@@ -97,19 +97,19 @@ inline const std::vector<cl::Event> select_events(to_const_matrix_cl_t<T>& t) {
 template <>
 inline const std::vector<cl::Event> select_events<in_buffer>(
     const stan::math::matrix_cl& m) {
-  return m.out_events();
+  return m.write_events();
 }
 
 template <>
 inline const std::vector<cl::Event> select_events<out_buffer>(
     const stan::math::matrix_cl& m) {
-  return m.in_out_events();
+  return m.read_write_events();
 }
 
 template <>
 inline const std::vector<cl::Event> select_events<in_out_buffer>(
     const stan::math::matrix_cl& m) {
-  return m.in_out_events();
+  return m.read_write_events();
 }
 
 }  // namespace internal

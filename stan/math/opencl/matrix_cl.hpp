@@ -36,8 +36,8 @@ class matrix_cl {
   cl::Buffer oclBuffer_;
   const int rows_;
   const int cols_;
-  mutable std::vector<cl::Event> out_events_;  // Tracks write jobs
-  mutable std::vector<cl::Event> in_events_;   // Tracks reads
+  mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
+  mutable std::vector<cl::Event> read_events_;   // Tracks reads
 
  public:
   // Forward declare the methods that work in place on the matrix
@@ -57,25 +57,25 @@ class matrix_cl {
   /**
    * Clear the write events from the event stacks.
    */
-  inline void clear_out_events() const {
-    out_events_.clear();
+  inline void clear_write_events() const {
+    write_events_.clear();
     return;
   }
 
   /**
    * Clear the read events from the event stacks.
    */
-  inline void clear_in_events() const {
-    in_events_.clear();
+  inline void clear_read_events() const {
+    read_events_.clear();
     return;
   }
 
   /**
    * Clear the write events from the event stacks.
    */
-  inline void clear_in_out_events() const {
-    in_events_.clear();
-    out_events_.clear();
+  inline void clear_read_write_events() const {
+    read_events_.clear();
+    write_events_.clear();
     return;
   }
 
@@ -83,72 +83,72 @@ class matrix_cl {
    * Get the events from the event stacks.
    * @return The write event stack.
    */
-  inline const std::vector<cl::Event>& out_events() const {
-    return out_events_;
+  inline const std::vector<cl::Event>& write_events() const {
+    return write_events_;
   }
 
   /**
    * Get the events from the event stacks.
    * @return The read/write event stack.
    */
-  inline const std::vector<cl::Event>& in_events() const {
-    return in_events_;
+  inline const std::vector<cl::Event>& read_events() const {
+    return read_events_;
   }
 
   /**
    * Get the events from the event stacks.
    * @return The read/write event stack.
    */
-  inline const std::vector<cl::Event> in_out_events() const {
-    return vec_concat(this->in_events(), this->out_events());
+  inline const std::vector<cl::Event> read_write_events() const {
+    return vec_concat(this->read_events(), this->write_events());
   }
 
   /**
    * Add an event to the read event stack.
    * @param new_event The event to be pushed on the event stack.
    */
-  inline void add_in_event(cl::Event new_event) const {
-    this->in_events_.push_back(new_event);
+  inline void add_read_event(cl::Event new_event) const {
+    this->read_events_.push_back(new_event);
   }
 
   /**
    * Add an event to the write event stack.
    * @param new_event The event to be pushed on the event stack.
    */
-  inline void add_out_event(cl::Event new_event) const {
-    this->out_events_.push_back(new_event);
+  inline void add_write_event(cl::Event new_event) const {
+    this->write_events_.push_back(new_event);
   }
 
   /**
    * Add an event to the read/write event stack.
    * @param new_event The event to be pushed on the event stack.
    */
-  inline void add_in_out_event(cl::Event new_event) const {
-    this->in_events_.push_back(new_event);
-    this->out_events_.push_back(new_event);
+  inline void add_read_write_event(cl::Event new_event) const {
+    this->read_events_.push_back(new_event);
+    this->write_events_.push_back(new_event);
   }
 
   /**
    * Waits for the write events and clears the read event stack.
    */
-  inline void wait_for_out_events() const {
+  inline void wait_for_write_events() const {
     cl::CommandQueue queue = opencl_context.queue();
     cl::Event copy_event;
-    queue.enqueueBarrierWithWaitList(&this->out_events(), &copy_event);
+    queue.enqueueBarrierWithWaitList(&this->write_events(), &copy_event);
     copy_event.wait();
-    out_events_.clear();
+    write_events_.clear();
     return;
   }
 
   /**
    * Waits for the read events and clears the read event stack.
    */
-  inline void wait_for_in_events() const {
+  inline void wait_for_read_events() const {
     cl::CommandQueue queue = opencl_context.queue();
     cl::Event copy_event;
-    queue.enqueueBarrierWithWaitList(&this->in_events(), &copy_event);
+    queue.enqueueBarrierWithWaitList(&this->read_events(), &copy_event);
     copy_event.wait();
-    in_events_.clear();
+    read_events_.clear();
     return;
   }
 
@@ -156,14 +156,14 @@ class matrix_cl {
    * Waits for read and write events to finish and clears the read, write, and
    * read/write event stacks.
    */
-  inline void wait_for_in_out_events() const {
+  inline void wait_for_read_write_events() const {
     cl::CommandQueue queue = opencl_context.queue();
     cl::Event copy_event;
-    const std::vector<cl::Event> mat_events = this->in_out_events();
+    const std::vector<cl::Event> mat_events = this->read_write_events();
     queue.enqueueBarrierWithWaitList(&mat_events, &copy_event);
     copy_event.wait();
-    in_events_.clear();
-    out_events_.clear();
+    read_events_.clear();
+    write_events_.clear();
     return;
   }
 
@@ -183,9 +183,9 @@ class matrix_cl {
       oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size());
       cl::Event cstr_event;
       queue.enqueueCopyBuffer(A.buffer(), this->buffer(), 0, 0,
-                              A.size() * sizeof(double), &A.out_events(),
+                              A.size() * sizeof(double), &A.write_events(),
                               &cstr_event);
-      this->add_out_event(cstr_event);
+      this->add_write_event(cstr_event);
     } catch (const cl::Error& e) {
       check_opencl_error("copy (OpenCL)->(OpenCL)", e);
     }
@@ -250,7 +250,7 @@ class matrix_cl {
       queue.enqueueWriteBuffer(oclBuffer_, CL_FALSE, 0,
                                sizeof(double) * A.size(), A.data(), NULL,
                                &transfer_event);
-      this->add_out_event(transfer_event);
+      this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
     }
@@ -262,7 +262,7 @@ class matrix_cl {
     check_size_match("assignment of (OpenCL) matrices", "source.cols()",
                      a.cols(), "destination.cols()", cols());
     // Need to wait for all of matrices events before destroying old buffer
-    this->wait_for_in_out_events();
+    this->wait_for_read_write_events();
     oclBuffer_ = a.buffer();
     return *this;
   }
