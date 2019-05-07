@@ -258,6 +258,10 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
+template <typename T = void>  // if this was non-templated overload or fully
+// specialized template, the compiler could
+// incorrectly resolve some called functions to
+// prim implementation instead of arr
 inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
                                        const double sigma,
                                        const double length_scale) {
@@ -294,6 +298,10 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
+template <typename T = void>  // if this was non-templated overload or fully
+// specialized template, the compiler could
+// incorrectly resolve some called functions to
+// prim implementation instead of arr
 inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
                                        const double sigma,
                                        const double length_scale) {
@@ -331,6 +339,10 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
+template <typename T = void>  // if this was non-templated overload or fully
+                              // specialized template, the compiler could
+                              // incorrectly resolve some called functions to
+                              // prim implementation instead of arr
 inline Eigen::MatrixXd gp_exp_quad_cov(
     const std::vector<Eigen::VectorXd> &x, const double sigma,
     const std::vector<double> &length_scale) {
@@ -376,6 +388,10 @@ inline Eigen::MatrixXd gp_exp_quad_cov(
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
+template <typename T = void>  // if this was non-templated overload or fully
+// specialized template, the compiler could
+// incorrectly resolve some called functions to
+// prim implementation instead of arr
 inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
                                                 const std::vector<double> &x2,
                                                 const double sigma,
@@ -418,6 +434,10 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
+template <typename T = void>  // if this was non-templated overload or fully
+// specialized template, the compiler could
+// incorrectly resolve some called functions to
+// prim implementation instead of arr
 inline typename Eigen::MatrixXd gp_exp_quad_cov(
     const std::vector<Eigen::VectorXd> &x1,
     const std::vector<Eigen::VectorXd> &x2, const double sigma,
@@ -461,6 +481,10 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
+template <typename T = void>  // if this was non-templated overload or fully
+                              // specialized template, the compiler could
+                              // incorrectly resolve some called functions to
+                              // prim implementation instead of arr
 inline typename Eigen::MatrixXd gp_exp_quad_cov(
     const std::vector<Eigen::VectorXd> &x1,
     const std::vector<Eigen::VectorXd> &x2, const double sigma,
