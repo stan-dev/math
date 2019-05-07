@@ -253,7 +253,39 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
 /**
  * Returns a squared exponential kernel.
  *
- * @tparam T_x type for each scalar
+ * @param x std::vector of scalars that can be used in square distance.
+ * @param sigma marginal standard deviation or magnitude
+ * @param length_scale length scale
+ * @return squared distance
+ * @throw std::domain_error if sigma <= 0, l <= 0, or
+ *   x is nan or infinite
+ */
+template <typename T = void>  // if this was non-templated overload or fully
+// specialized template, the compiler could
+// incorrectly resolve some called functions to
+// prim implementation instead of arr
+inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
+                                       const double sigma,
+                                       const double length_scale) {
+  check_positive(__func__, "magnitude", sigma);
+  check_positive(__func__, "length scale", length_scale);
+
+  const size_t x_size = x.size();
+  Eigen::MatrixXd cov(x_size, x_size);
+
+  if (x_size == 0)
+    return cov;
+
+  matrix_cl x_cl(x,1,x.size());
+  check_nan(__func__, "x", x_cl);
+  matrix_cl cov_cl = gp_exp_quad_cov(x_cl, sigma, length_scale);
+  copy(cov, cov_cl);  // NOLINT
+
+  return cov;
+}
+
+/**
+ * Returns a squared exponential kernel.
  *
  * @param x std::vector of scalars that can be used in square distance.
  *    This function assumes each element of x is the same size.
@@ -263,9 +295,11 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <typename T_x,
-          typename = typename std::enable_if_t<is_constant_struct<T_x>::value>>
-inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<T_x> &x,
+template <typename T = void>  // if this was non-templated overload or fully
+// specialized template, the compiler could
+// incorrectly resolve some called functions to
+// prim implementation instead of arr
+inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
                                        const double sigma,
                                        const double length_scale) {
   check_positive(__func__, "magnitude", sigma);
@@ -329,10 +363,6 @@ inline Eigen::MatrixXd gp_exp_quad_cov(
  * This function is for the cross covariance matrix
  * needed to compute posterior predictive density.
  *
- * @tparam T_x1 type of first std::vector of scalars
- * @tparam T_x2 type of second std::vector of scalars
- *    This function assumes each element of x1 and x2 are the same size.
- *
  * @param x1 std::vector of elements that can be used in square distance
  * @param x2 std::vector of elements that can be used in square distance
  * @param sigma standard deviation
@@ -341,12 +371,53 @@ inline Eigen::MatrixXd gp_exp_quad_cov(
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <typename T_x1, typename T_x2,
-          typename
-          = typename std::enable_if_t<is_constant_struct<T_x1>::value
-                                      && is_constant_struct<T_x2>::value>>
-inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<T_x1> &x1,
-                                                const std::vector<T_x2> &x2,
+template <typename T = void>  // if this was non-templated overload or fully
+// specialized template, the compiler could
+// incorrectly resolve some called functions to
+// prim implementation instead of arr
+inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
+                                                const std::vector<double> &x2,
+                                                const double sigma,
+                                                const double length_scale) {
+  check_positive_finite(__func__, "magnitude", sigma);
+  check_positive_finite(__func__, "length scale", length_scale);
+
+  const size_t x1_size = x1.size();
+  const size_t x2_size = x2.size();
+  Eigen::MatrixXd cov(x1_size, x2_size);
+  if (x1_size == 0 || x2_size == 0)
+    return cov;
+
+  matrix_cl x1_cl(x1,1,x1.size());
+  check_nan(__func__, "x1", x1_cl);
+  matrix_cl x2_cl(x2,1,x2.size());
+  check_nan(__func__, "x2", x2_cl);
+  matrix_cl cov_cl = gp_exp_quad_cov(x1_cl, x2_cl, sigma, length_scale);
+  copy(cov, cov_cl);  // NOLINT
+  return cov;
+}
+
+/**
+ * Returns a squared exponential kernel.
+ *
+ * This function is for the cross covariance matrix
+ * needed to compute posterior predictive density.
+ *
+ * @param x1 std::vector of elements that can be used in square distance
+ * @param x2 std::vector of elements that can be used in square distance
+ *    This function assumes each element of x1 and x2 are the same size.
+ * @param sigma standard deviation
+ * @param length_scale length scale
+ * @return squared distance
+ * @throw std::domain_error if sigma <= 0, l <= 0, or
+ *   x is nan or infinite
+ */
+template <typename T = void>  // if this was non-templated overload or fully
+// specialized template, the compiler could
+// incorrectly resolve some called functions to
+// prim implementation instead of arr
+inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x1,
+                                                const std::vector<Eigen::VectorXd> &x2,
                                                 const double sigma,
                                                 const double length_scale) {
   check_positive_finite(__func__, "magnitude", sigma);
