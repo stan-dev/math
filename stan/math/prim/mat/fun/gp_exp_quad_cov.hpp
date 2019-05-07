@@ -267,6 +267,10 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
 
   const size_t x_size = x.size();
   Eigen::MatrixXd cov(x_size, x_size);
+  if(x_size*x_size < opencl_context.tuning_opts().gp_exp_quad_cov_size){
+    //using explicit template args to call CPU function
+    return gp_exp_quad_cov<double, double, double>(x,sigma,length_scale);
+  }
 
   if (x_size == 0)
     return cov;
@@ -303,6 +307,12 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
   if (x_size == 0)
     return cov;
 
+  const size_t s = x[0].size();
+  if(x_size*x_size*opencl_context.tuning_opts().gp_exp_quad_cov_coeff1 + (x_size+x_size+1)*s*opencl_context.tuning_opts().gp_exp_quad_cov_coeff2 < 1){
+    //using explicit template args to call CPU function
+    return gp_exp_quad_cov<Eigen::VectorXd, double, double>(x,sigma,length_scale);
+  }
+
   matrix_cl x_cl(x);
   check_nan(function_name, "x", x_cl);
   matrix_cl cov_cl = gp_exp_quad_cov(x_cl, sigma, length_scale);
@@ -333,6 +343,12 @@ inline Eigen::MatrixXd gp_exp_quad_cov(
 
   if (x_size == 0)
     return cov;
+
+  const size_t s = x[0].size();
+  if(x_size*x_size*opencl_context.tuning_opts().gp_exp_quad_cov_coeff1 + (x_size+x_size+1)*s*opencl_context.tuning_opts().gp_exp_quad_cov_coeff2 < 1){
+    //using explicit template args to call CPU function
+    return gp_exp_quad_cov<double, double, double>(x,sigma,length_scale);
+  }
 
   check_size_match(function_name, "x dimension", x[0].size(),
                    "number of length scales", length_scale.size());
@@ -370,6 +386,10 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
 
   const size_t x1_size = x1.size();
   const size_t x2_size = x2.size();
+  if(x1_size*x2_size < opencl_context.tuning_opts().gp_exp_quad_cov_size){
+    //using explicit template args to call CPU function
+    return gp_exp_quad_cov<double, double, double, double>(x1, x2, sigma, length_scale);
+  }
   Eigen::MatrixXd cov(x1_size, x2_size);
   if (x1_size == 0 || x2_size == 0)
     return cov;
@@ -412,6 +432,12 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
   if (x1_size == 0 || x2_size == 0)
     return cov;
 
+  const size_t s = x1[0].size();
+  if(x1_size*x2_size*opencl_context.tuning_opts().gp_exp_quad_cov_coeff1 + (x1_size+x2_size+1)*s*opencl_context.tuning_opts().gp_exp_quad_cov_coeff2 < 1){
+    //using explicit template args to call CPU function
+    return gp_exp_quad_cov<Eigen::VectorXd, Eigen::VectorXd, double, double>(x1, x2, sigma, length_scale);
+  }
+
   matrix_cl x1_cl(x1);
   check_nan(function_name, "x1", x1_cl);
   matrix_cl x2_cl(x2);
@@ -447,6 +473,12 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
   Eigen::MatrixXd cov(x1_size, x2_size);
   if (x1_size == 0 || x2_size == 0)
     return cov;
+
+  const size_t s = x1[0].size();
+  if(x1_size*x2_size*opencl_context.tuning_opts().gp_exp_quad_cov_coeff1 + (x1_size+x2_size+1)*s*opencl_context.tuning_opts().gp_exp_quad_cov_coeff2 < 1){
+    //using explicit template args to call CPU function
+    return gp_exp_quad_cov<double, double, double, double>(x1, x2, sigma, length_scale);
+  }
 
   check_positive_finite(function_name, "magnitude", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
