@@ -197,7 +197,7 @@ class opencl_context_base {
     int multiply_split_upper_limit = 2000000;
     // used in math/prim/mat/fun/gp_exp_quad_cov
     int gp_exp_quad_cov_size = 466100;
-    // TODO: next two parameters need better tunning
+    // TODO(Tadej): next two parameters need better tunning
     double gp_exp_quad_cov_coeff1 = 1.44844624e-08;
     double gp_exp_quad_cov_coeff2 = 8.40013235e-07;
   } tuning_opts_;
