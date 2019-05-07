@@ -23,7 +23,7 @@ inline matrix_cl gp_exp_quad_cov(const matrix_cl& x, const double sigma,
   matrix_cl res(x.cols(), x.cols());
   try {
     opencl_kernels::gp_exp_quad_cov(
-        cl::NDRange(x.cols(), x.cols()), x.buffer(), res.buffer(),
+        cl::NDRange(x.cols(), x.cols()), x, res,
         sigma * sigma, -0.5 / square(length_scale), x.cols(), x.rows());
   } catch (const cl::Error& e) {
     check_opencl_error("gp_exp_quad_cov", e);
@@ -51,7 +51,7 @@ inline matrix_cl gp_exp_quad_cov(const matrix_cl& x, const matrix_cl& y,
   matrix_cl res(x.cols(), y.cols());
   try {
     opencl_kernels::gp_exp_quad_cov_cross(
-        cl::NDRange(x.cols(), y.cols()), x.buffer(), y.buffer(), res.buffer(),
+        cl::NDRange(x.cols(), y.cols()), x, y, res,
         sigma * sigma, -0.5 / square(length_scale), x.cols(), y.cols(),
         x.rows());
   } catch (const cl::Error& e) {

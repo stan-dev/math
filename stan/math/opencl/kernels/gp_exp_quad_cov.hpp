@@ -85,14 +85,14 @@ static const char* gp_exp_quad_cov_cross_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/gp_exp_quad_cov.hpp gp_exp_quad_cov() \endlink
  */
-const global_range_kernel<cl::Buffer, cl::Buffer, double, double, int, int>
+const kernel_cl<cl::Buffer, cl::Buffer, double, double, int, int>
     gp_exp_quad_cov("gp_exp_quad_cov", gp_exp_quad_cov_kernel_code, {});
 
 /**
  * See the docs for \link kernels/gp_exp_quad_cov.hpp gp_exp_quad_cov_cross()
  * \endlink
  */
-const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, double, double,
+const kernel_cl<cl::Buffer, cl::Buffer, cl::Buffer, double, double,
                           int, int, int>
     gp_exp_quad_cov_cross("gp_exp_quad_cov_cross",
                           gp_exp_quad_cov_cross_kernel_code, {});
