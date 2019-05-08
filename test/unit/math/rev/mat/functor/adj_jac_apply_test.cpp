@@ -1647,8 +1647,8 @@ struct SinCosFunctor {
     Eigen::VectorXd out(N_);
 
     if (needs_adj[0]) {
-      x1_mem_ = stan::math::ChainableStack::instance_->memalloc_
-                    .alloc_array<double>(N_);
+      x1_mem_ = stan::math::ChainableStack::instance()
+                    .memalloc_.alloc_array<double>(N_);
       std::copy(x1.data(), x1.data() + N_, x1_mem_);
     }
 
@@ -1656,8 +1656,8 @@ struct SinCosFunctor {
     EXPECT_FALSE(needs_adj[2]);
 
     if (needs_adj[3]) {
-      x4_mem_ = stan::math::ChainableStack::instance_->memalloc_
-                    .alloc_array<double>(N_);
+      x4_mem_ = stan::math::ChainableStack::instance()
+                    .memalloc_.alloc_array<double>(N_);
       std::copy(x4.data(), x4.data() + N_, x4_mem_);
     }
 
@@ -1890,8 +1890,8 @@ struct SinCosFunctor2 {
     Eigen::VectorXd out(N_);
 
     if (needs_adj[0]) {
-      x1_mem_ = stan::math::ChainableStack::instance_->memalloc_
-                    .alloc_array<double>(N_);
+      x1_mem_ = stan::math::ChainableStack::instance()
+                    .memalloc_.alloc_array<double>(N_);
       std::copy(x1.data(), x1.data() + N_, x1_mem_);
     }
 
@@ -2101,8 +2101,8 @@ struct SinCosFunctor3 {
     Eigen::VectorXd out(N_);
 
     if (needs_adj[1]) {
-      x1_mem_ = stan::math::ChainableStack::instance_->memalloc_
-                    .alloc_array<double>(N_);
+      x1_mem_ = stan::math::ChainableStack::instance()
+                    .memalloc_.alloc_array<double>(N_);
       std::copy(x1.data(), x1.data() + N_, x1_mem_);
     }
 
