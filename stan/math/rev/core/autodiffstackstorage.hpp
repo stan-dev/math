@@ -133,7 +133,6 @@ struct AutodiffStackSingleton {
   const bool own_instance_;
 };
 
-
 template <typename ChainableT, typename ChainableAllocT>
 STAN_THREADS_DEF
     typename AutodiffStackSingleton<ChainableT,
