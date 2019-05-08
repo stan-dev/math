@@ -136,8 +136,6 @@ const double SQRT_PI = std::sqrt(boost::math::constants::pi<double>());
 
 const double SQRT_2_TIMES_SQRT_PI = SQRT_2 * SQRT_PI;
 
-const double SQRT_2_OVER_SQRT_PI = SQRT_2 / SQRT_PI;
-
 const double TWO_OVER_SQRT_PI = 2.0 / SQRT_PI;
 
 const double NEG_TWO_OVER_SQRT_PI = -TWO_OVER_SQRT_PI;
