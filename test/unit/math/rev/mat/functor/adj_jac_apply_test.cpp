@@ -66,7 +66,7 @@ struct StdVectorSinFunctor {
     N_ = x.size();
     std::vector<double> out(N_);
 
-    x_ = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(
+    x_ = stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
         N_);
 
     for (int i = 0; i < N_; ++i) {
@@ -138,7 +138,7 @@ struct SinFunctor {
     N_ = x.size();
     Eigen::VectorXd out(N_);
     x_mem_
-        = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(
+        = stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
             N_);
 
     for (int n = 0; n < N_; ++n) {
@@ -235,7 +235,7 @@ struct RowVectorSinFunctor {
     N_ = x.size();
     Eigen::RowVectorXd out(N_);
     x_mem_
-        = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(
+        = stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
             N_);
 
     for (int n = 0; n < N_; ++n) {
@@ -334,7 +334,7 @@ struct MatrixSinFunctor {
     M_ = x.cols();
     Eigen::MatrixXd out(N_, M_);
     x_mem_
-        = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(
+        = stan::math::ChainableStack::instance().memalloc_.alloc_array<double>(
             N_ * M_);
 
     for (int n = 0; n < N_ * M_; ++n) {

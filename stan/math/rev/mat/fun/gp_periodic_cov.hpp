@@ -97,19 +97,19 @@ class gp_periodic_cov_vari : public vari {
         sigma_d_(value_of(sigma)),
         p_d_(value_of(p)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
-        dist_(ChainableStack::instance_->memalloc_.alloc_array<double>(
+        dist_(ChainableStack::instance().memalloc_.alloc_array<double>(
             size_ltri_)),
-        sin_2_dist_(ChainableStack::instance_->memalloc_.alloc_array<double>(
+        sin_2_dist_(ChainableStack::instance().memalloc_.alloc_array<double>(
             size_ltri_)),
-        sin_dist_sq_(ChainableStack::instance_->memalloc_.alloc_array<double>(
+        sin_dist_sq_(ChainableStack::instance().memalloc_.alloc_array<double>(
             size_ltri_)),
         l_vari_(l.vi_),
         sigma_vari_(sigma.vi_),
         p_vari_(p.vi_),
-        cov_lower_(ChainableStack::instance_->memalloc_.alloc_array<vari *>(
+        cov_lower_(ChainableStack::instance().memalloc_.alloc_array<vari *>(
             size_ltri_)),
         cov_diag_(
-            ChainableStack::instance_->memalloc_.alloc_array<vari *>(size_)) {
+            ChainableStack::instance().memalloc_.alloc_array<vari *>(size_)) {
     double neg_two_inv_l_sq = -2.0 / (l_d_ * l_d_);
     double pi_div_p = pi() / p_d_;
 
@@ -230,18 +230,18 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
         sigma_d_(sigma),
         p_d_(value_of(p)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
-        dist_(ChainableStack::instance_->memalloc_.alloc_array<double>(
+        dist_(ChainableStack::instance().memalloc_.alloc_array<double>(
             size_ltri_)),
-        sin_2_dist_(ChainableStack::instance_->memalloc_.alloc_array<double>(
+        sin_2_dist_(ChainableStack::instance().memalloc_.alloc_array<double>(
             size_ltri_)),
-        sin_dist_sq_(ChainableStack::instance_->memalloc_.alloc_array<double>(
+        sin_dist_sq_(ChainableStack::instance().memalloc_.alloc_array<double>(
             size_ltri_)),
         l_vari_(l.vi_),
         p_vari_(p.vi_),
-        cov_lower_(ChainableStack::instance_->memalloc_.alloc_array<vari *>(
+        cov_lower_(ChainableStack::instance().memalloc_.alloc_array<vari *>(
             size_ltri_)),
         cov_diag_(
-            ChainableStack::instance_->memalloc_.alloc_array<vari *>(size_)) {
+            ChainableStack::instance().memalloc_.alloc_array<vari *>(size_)) {
     double neg_two_inv_l_sq = -2.0 / (l_d_ * l_d_);
     double pi_div_p = pi() / p_d_;
 
