@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_FDIM_HPP
 
 #include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <boost/math/tools/promotion.hpp>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -22,10 +22,8 @@ namespace math {
 template <typename T1, typename T2>
 inline typename boost::math::tools::promote_args<T1, T2>::type fdim(T1 x,
                                                                     T2 y) {
-  typedef typename boost::math::tools::promote_args<T1, T2>::type return_t;
-  using std::numeric_limits;
   if (is_nan(x) || is_nan(y))
-    return numeric_limits<return_t>::quiet_NaN();
+    return NOT_A_NUMBER;
   return (x <= y) ? 0 : x - y;
 }
 

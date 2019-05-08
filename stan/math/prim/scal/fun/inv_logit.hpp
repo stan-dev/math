@@ -53,7 +53,7 @@ inline double inv_logit(double a) {
       return exp_a;
     return exp_a / (1 + exp_a);
   }
-  return 1 / (1 + exp(-a));
+  return inv(1 + exp(-a));
 }
 
 }  // namespace math

@@ -46,9 +46,9 @@ template <typename T, typename L, typename U>
 inline typename boost::math::tools::promote_args<T, L, U>::type lub_free(
     const T& y, const L& lb, const U& ub) {
   check_bounded<T, L, U>("lub_free", "Bounded variable", y, lb, ub);
-  if (lb == -std::numeric_limits<double>::infinity())
+  if (lb == NEGATIVE_INFTY)
     return ub_free(y, ub);
-  if (ub == std::numeric_limits<double>::infinity())
+  if (ub == INFTY)
     return lb_free(y, lb);
   return logit((y - lb) / (ub - lb));
 }

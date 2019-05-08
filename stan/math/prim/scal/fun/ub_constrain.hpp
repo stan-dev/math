@@ -3,8 +3,8 @@
 
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/scal/fun/identity_constrain.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <cmath>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -32,7 +32,7 @@ template <typename T, typename U>
 inline typename boost::math::tools::promote_args<T, U>::type ub_constrain(
     const T& x, const U& ub) {
   using std::exp;
-  if (ub == std::numeric_limits<double>::infinity())
+  if (ub == INFTY)
     return identity_constrain(x);
   return ub - exp(x);
 }
@@ -64,7 +64,7 @@ template <typename T, typename U>
 inline typename boost::math::tools::promote_args<T, U>::type ub_constrain(
     const T& x, const U& ub, T& lp) {
   using std::exp;
-  if (ub == std::numeric_limits<double>::infinity())
+  if (ub == INFTY)
     return identity_constrain(x, lp);
   lp += x;
   return ub - exp(x);
