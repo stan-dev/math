@@ -55,8 +55,7 @@ inline T trigamma_impl(const T& x) {
   // negative non-integers: use the reflection formula
   // see http://mathworld.wolfram.com/PolygammaFunction.html
   if ((x <= 0) && (floor(x) != x)) {
-    value = -trigamma_impl(-x + 1.0)
-            + square(pi() / sin(-pi() * x));
+    value = -trigamma_impl(-x + 1.0) + square(pi() / sin(-pi() * x));
     return value;
   }
 
