@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/scal/meta/get.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/value_type.hpp>
 
 namespace stan {
 namespace math {

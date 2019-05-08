@@ -3,10 +3,8 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/broadcast_array.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_consistent_size.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
@@ -22,7 +20,6 @@
 #include <stan/math/prim/mat/meta/is_vector.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -71,11 +68,6 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   using Eigen::Matrix;
   using std::exp;
 
-  if (size_zero(y, x, beta))
-    return 0.0;
-
-  T_partials_return logp(0.0);
-
   const size_t N = x.rows();
   const size_t M = x.cols();
 
@@ -86,9 +78,13 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
     check_consistent_sizes(function, "Vector of intercepts", alpha,
                            "Vector of dependent variables", y);
 
-  if (!include_summand<propto, T_x, T_alpha, T_beta>::value)
-    return 0.0;
+  if (size_zero(y, x, beta))
+    return 0;
 
+  if (!include_summand<propto, T_x, T_alpha, T_beta>::value)
+    return 0;
+
+  T_partials_return logp(0);
   const auto &x_val = value_of_rec(x);
   const auto &y_val = value_of_rec(y);
   const auto &beta_val = value_of_rec(beta);

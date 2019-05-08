@@ -4,6 +4,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/subtract.hpp>
 #include <stan/math/opencl/err/check_matching_dims.hpp>
+#include <stan/math/opencl/err/check_opencl.hpp>
 #include <CL/cl.hpp>
 
 namespace stan {
@@ -30,10 +31,9 @@ inline auto subtract(const matrix_cl& A, const matrix_cl& B) {
   if (A.size() == 0) {
     return C;
   }
-  cl::CommandQueue cmdQueue = opencl_context.queue();
   try {
-    opencl_kernels::subtract(cl::NDRange(A.rows(), A.cols()), C.buffer(),
-                             A.buffer(), B.buffer(), A.rows(), A.cols());
+    opencl_kernels::subtract(cl::NDRange(A.rows(), A.cols()), C, A, B, A.rows(),
+                             A.cols());
   } catch (cl::Error& e) {
     check_opencl_error("subtract", e);
   }

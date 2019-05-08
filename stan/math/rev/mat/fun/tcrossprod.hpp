@@ -2,15 +2,11 @@
 #define STAN_MATH_REV_MAT_FUN_TCROSSPROD_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/Eigen_NumTraits.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/rev/mat/fun/dot_product.hpp>
 #include <stan/math/rev/mat/fun/dot_self.hpp>
-#include <stan/math/rev/mat/fun/columns_dot_self.hpp>
-#include <boost/math/tools/promotion.hpp>
-#include <vector>
 
 namespace stan {
 namespace math {

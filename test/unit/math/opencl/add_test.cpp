@@ -1,5 +1,5 @@
 #ifdef STAN_OPENCL
-#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/add.hpp>
 #include <gtest/gtest.h>
@@ -189,5 +189,35 @@ TEST(MathMatrixGPU, add_value_check) {
   EXPECT_EQ(9, m3(2, 0));
   EXPECT_EQ(12, m3(2, 1));
   EXPECT_EQ(17, m3(2, 2));
+}
+
+TEST(MathMatrixGPU, add_batch) {
+  // used to represent 5 matrices of size 10x10
+  const int batch_size = 11;
+  const int size = 13;
+  stan::math::matrix_d a(size, size * batch_size);
+  stan::math::matrix_d a_res(size, size);
+  for (int k = 0; k < batch_size; k++) {
+    for (int i = 0; i < size; i++)
+      for (int j = 0; j < size; j++) {
+        a(i, k * size + j) = k;
+      }
+  }
+  stan::math::matrix_cl a_cl(a);
+  stan::math::matrix_cl a_cl_res(size, size);
+  stan::math::opencl_kernels::add_batch(cl::NDRange(size, size), a_cl_res, a_cl,
+                                        size, size, batch_size);
+  copy(a_res, a_cl_res);
+  for (int k = 0; k < batch_size; k++) {
+    for (int i = 0; i < size; i++)
+      for (int j = 0; j < size; j++) {
+        a(i, j) += a(i, k * size + j);
+      }
+  }
+  for (int i = 0; i < size; i++) {
+    for (int j = 0; j < size; j++) {
+      EXPECT_EQ(a(i, j), a_res(i, j));
+    }
+  }
 }
 #endif
