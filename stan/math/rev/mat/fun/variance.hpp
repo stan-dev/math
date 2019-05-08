@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUN_VARIANCE_HPP
 #define STAN_MATH_REV_MAT_FUN_VARIANCE_HPP
 
-#include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/mean.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <vector>

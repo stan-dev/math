@@ -1,12 +1,10 @@
 #ifndef STAN_MATH_REV_MAT_FUN_GP_EXP_QUAD_COV_HPP
 #define STAN_MATH_REV_MAT_FUN_GP_EXP_QUAD_COV_HPP
 
-#include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <stan/math/rev/core.hpp>

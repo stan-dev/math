@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/buffer_types.hpp>
 
 namespace stan {
 namespace math {
@@ -38,7 +39,7 @@ static const char *add_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/add.hpp add() \endlink
  */
-const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int> add(
+const kernel_cl<out_buffer, in_buffer, in_buffer, int, int> add(
     "add", {indexing_helpers, add_kernel_code});
 // \cond
 static const char *add_batch_kernel_code = STRINGIFY(
@@ -78,7 +79,7 @@ static const char *add_batch_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/add.hpp add_batch() \endlink
  */
-const global_range_kernel<cl::Buffer, cl::Buffer, int, int, int> add_batch(
+const kernel_cl<out_buffer, in_buffer, int, int, int> add_batch(
     "add_batch", {indexing_helpers, add_batch_kernel_code});
 }  // namespace opencl_kernels
 }  // namespace math

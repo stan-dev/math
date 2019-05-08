@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/scal/fun/log1m_exp.hpp>
 #include <boost/math/tools/promotion.hpp>
-#include <boost/throw_exception.hpp>
 #include <limits>
 #include <stdexcept>
 

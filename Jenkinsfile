@@ -162,30 +162,6 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                stage('Windows Headers & Unit') {
-                     agent { label 'windows' }
-                     steps {
-                         deleteDirWin()
-                         unstash 'MathSetup'
-                         bat "make -j${env.PARALLEL} test-headers"
-                         runTestsWin("test/unit")
-                     }
-                 }
-                 stage('Windows Threading') {
-                    agent { label 'windows' }
-                    steps {
-                        deleteDirWin()
-                        unstash 'MathSetup'
-                        bat "echo CXX=${env.CXX} -Werror > make/local"
-                        bat "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
-                        runTestsWin("test/unit -f thread")
-                        runTestsWin("test/unit -f map_rect")
-                    }
-                }
-            }
-        }
-        stage('Always-run tests part 2') {
-            parallel {
                 stage('Full unit with GPU') {
                     agent { label "gpu" }
                     steps {
@@ -199,6 +175,10 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
+            }
+        }
+        stage('Always-run tests part 2') {
+            parallel {
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
                     steps {
@@ -224,6 +204,39 @@ pipeline {
                         failure {
                             echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
                             }
+                    }
+                }
+                stage('Threading tests') {
+                    agent any
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh "echo CXX=${env.CXX} -Werror > make/local"
+                        sh "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
+                        runTests("test/unit -f thread")
+                        sh "find . -name *_test.xml | xargs rm"
+                        runTests("test/unit -f map_rect")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Windows Headers & Unit') {
+                    agent { label 'windows' }
+                    steps {
+                        deleteDirWin()
+                        unstash 'MathSetup'
+                        bat "make -j${env.PARALLEL} test-headers"
+                        runTestsWin("test/unit")
+                    }
+                }
+                stage('Windows Threading') {
+                    agent { label 'windows' }
+                    steps {
+                        deleteDirWin()
+                        unstash 'MathSetup'
+                        bat "echo CXX=${env.CXX} -Werror > make/local"
+                        bat "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
+                        runTestsWin("test/unit -f thread")
+                        runTestsWin("test/unit -f map_rect")
                     }
                 }
             }

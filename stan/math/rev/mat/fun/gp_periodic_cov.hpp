@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_REV_MAT_FUN_GP_PERIODIC_COV_HPP
 #define STAN_MATH_REV_MAT_FUN_GP_PERIODIC_COV_HPP
 
-#include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
