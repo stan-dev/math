@@ -49,13 +49,6 @@ class cvodes_integrator {
    * formula which is an implicit numerical integration scheme
    * appropiate for stiff ODE systems.
    *
-   * During ODE integration the global autodiff tape is continuously
-   * used. Thus, the overall autodiff tape is used and must not be
-   * used concurrently while ODE integration is executed. In
-   * particular, the adjoints of the parameter vector are used for
-   * Jacobian calculations. For details, please refer to the
-   * coupled_ode_system documentation.
-   *
    * @tparam F type of ODE system function.
    * @tparam T_initial type of scalars for initial values.
    * @tparam T_param type of scalars for parameters.
