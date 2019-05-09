@@ -242,7 +242,7 @@ inline T from_matrix_cl(const matrix_cl& src) {
  */
 template <typename T, std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
 inline matrix_cl to_matrix_cl(const T& src) {
-  matrix_cl dst(1,1);
+  matrix_cl dst(1, 1);
   check_size_match("copy ((OpenCL) -> (OpenCL))", "src.rows()", dst.rows(),
                    "dst.rows()", 1);
   check_size_match("copy ((OpenCL) -> (OpenCL))", "src.cols()", dst.cols(),
