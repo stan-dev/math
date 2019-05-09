@@ -55,7 +55,7 @@ static const char* pack_kernel_code = STRINGIFY(
  * See the docs for \link kernels/pack.hpp pack() \endlink
  */
 const global_range_kernel<cl::Buffer, cl::Buffer, int, int, TriangularViewCL>
-    pack("pack", pack_kernel_code);
+    pack("pack", {indexing_helpers, pack_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

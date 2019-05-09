@@ -52,22 +52,18 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_lpdf(
   typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
       T_partials_return;
 
-  using boost::math::tools::promote_args;
-
-  if (size_zero(y, alpha, beta))
-    return 0.0;
-
-  T_partials_return logp(0.0);
-
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Scale parameter", beta);
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Scale parameter", beta);
+  if (size_zero(y, alpha, beta))
+    return 0;
 
   if (!include_summand<propto, T_y, T_shape, T_scale>::value)
-    return 0.0;
+    return 0;
 
+  T_partials_return logp(0);
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   scalar_seq_view<T_scale> beta_vec(beta);

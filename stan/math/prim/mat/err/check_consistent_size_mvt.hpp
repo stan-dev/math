@@ -16,14 +16,11 @@ namespace math {
  * Check if the dimension of x is consistent, which is defined to be
  * <code>expected_size</code> if x is a vector of vectors or 1 if x is
  * a single vector.
- *
  * @tparam T Type of value
- *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param x Variable to check for consistent size
  * @param expected_size Expected size if x is a vector
- *
  * @throw <code>invalid_argument</code> if the size is inconsistent
  */
 template <typename T>

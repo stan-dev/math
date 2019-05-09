@@ -9,21 +9,16 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the dimension of x1 is consistent
- * with x2.
- *
+ * Check if the dimension of x1 is consistent with x2.
  * Consistent size is defined as having the same size if vector of
  * vectors or being a single vector.
- *
  * @tparam T1 Type of x1
  * @tparam T2 Type of x2
- *
  * @param function Function name (for error messages)
  * @param name1 Variable name (for error messages)
  * @param x1 Variable to check for consistent size
  * @param name2 Variable name (for error messages)
  * @param x2 Variable to check for consistent size
- *
  * @throw <code>invalid_argument</code> if sizes are inconsistent
  */
 template <typename T1, typename T2>
