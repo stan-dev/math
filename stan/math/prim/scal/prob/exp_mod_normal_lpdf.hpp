@@ -14,8 +14,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -30,8 +28,6 @@ exp_mod_normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
   typedef
       typename stan::partials_return_type<T_y, T_loc, T_scale,
                                           T_inv_scale>::type T_partials_return;
-
-  using std::log;
 
   if (size_zero(y, mu, sigma, lambda))
     return 0.0;
