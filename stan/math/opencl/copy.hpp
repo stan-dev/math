@@ -206,6 +206,7 @@ inline matrix_cl copy_cl(const matrix_cl& src) {
   } catch (const cl::Error& e) {
     check_opencl_error("copy (OpenCL)->(OpenCL)", e);
   }
+  return dst;
 }
 
 /**
