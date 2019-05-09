@@ -46,7 +46,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_dv) {
   coupled_ode_system<harm_osc_ode_fun, double, stan::math::var> system(
       harm_osc, y0, theta, x, x_int, &msgs);
 
-  EXPECT_EQ(stan::math::nested_size(), stack_size);
+  EXPECT_EQ(stack_size, stan::math::nested_size()) << "expecting no new things on the stack";
 
   system(z0, dz_dt, t0);
 
@@ -234,7 +234,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vd) {
   coupled_ode_system<harm_osc_ode_fun, stan::math::var, double> system(
       harm_osc, y0_var, theta, x, x_int, &msgs);
 
-  EXPECT_EQ(stan::math::nested_size(), stack_size);
+  EXPECT_EQ(stack_size, stan::math::nested_size()) << "expecting no new things on the stack";
 
   system(z0, dz_dt, t0);
 
@@ -409,7 +409,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
   coupled_ode_system<harm_osc_ode_fun, stan::math::var, stan::math::var> system(
       harm_osc, y0_var, theta_var, x, x_int, &msgs);
 
-  EXPECT_EQ(stan::math::nested_size(), stack_size);
+  EXPECT_EQ(stack_size, stan::math::nested_size()) << "expecting no new things on the stack";
 
   std::vector<double> z0(z_size, 0);
   z0[0] = 1.0;
