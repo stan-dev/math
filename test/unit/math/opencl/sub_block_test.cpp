@@ -2,6 +2,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/zeros.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 

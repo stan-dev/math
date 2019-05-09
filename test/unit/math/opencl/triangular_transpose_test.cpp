@@ -3,6 +3,7 @@
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/constants.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/triangular_transpose.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 
