@@ -13,7 +13,7 @@ struct StanMathOde : public ::testing::Test {
   std::vector<int> x_int;
 };
 
-TEST_F(StanMathOde, observe_states_dd) {
+TEST_F(StanMathOde, observe_states_dddd) {
   using stan::math::coupled_ode_system;
 
   harm_osc_ode_fun harm_osc;
@@ -49,9 +49,9 @@ TEST_F(StanMathOde, observe_states_dd) {
     observer(coupled_state, ts[t]);
   }
 
-  ASSERT_EQ(T, y.size());
+  EXPECT_EQ(T, y.size());
   for (int t = 0; t < T; t++)
-    ASSERT_EQ(2, y[t].size());
+    EXPECT_EQ(2, y[t].size());
 
   for (int t = 0; t < T; t++)
     for (int n = 0; n < 2; n++)

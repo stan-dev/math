@@ -48,9 +48,7 @@ struct coupled_ode_observer {
   const std::size_t N_;
   const std::size_t M_;
   const std::size_t index_offset_theta_;
-  // counter pointing to the element in the ts vector which is
-  // currently being referred to. Initialized to -1.
-  int n_;
+  int next_ts_index_;
 
   /**
    * Construct a coupled ODE observer for the specified coupled
@@ -90,7 +88,7 @@ struct coupled_ode_observer {
         N_(y0.size()),
         M_(theta.size()),
         index_offset_theta_(is_constant_struct<T1>::value ? 0 : N_ * N_),
-        n_(-1) {}
+        next_ts_index_(0) {}
 
   /**
    * Callback function for ODE solvers to record values. The coupled
@@ -102,22 +100,24 @@ struct coupled_ode_observer {
    * their respective sensitivites have been requested.
    *
    * @param coupled_state solution at the specified time.
-   * @param t time of solution. The time must correspond to the ts
-   * vector, respectively.
+   * @param t time of solution. The time must correspond to the
+   * element ts[next_ts_index_]
    */
   void operator()(const std::vector<double>& coupled_state, double t) {
-    check_less("coupled_ode_observer", "time-state number", ++n_, ts_.size());
+    check_less("coupled_ode_observer", "time-state number", next_ts_index_,
+               ts_.size());
 
     std::vector<return_t> yt;
     yt.reserve(N_);
 
-    ops_partials_t ops_partials(y0_, theta_, t0_, ts_[n_]);
+    ops_partials_t ops_partials(y0_, theta_, t0_, ts_[next_ts_index_]);
 
     std::vector<double> dy_dt;
     if (!is_constant_struct<T_ts>::value) {
       std::vector<double> y_dbl(coupled_state.begin(),
                                 coupled_state.begin() + N_);
-      dy_dt = f_(value_of(ts_[n_]), y_dbl, value_of(theta_), x_, x_int_, msgs_);
+      dy_dt = f_(value_of(ts_[next_ts_index_]), y_dbl, value_of(theta_), x_,
+                 x_int_, msgs_);
       check_size_match("coupled_ode_observer", "dy_dt", dy_dt.size(), "states",
                        N_);
     }
@@ -143,6 +143,7 @@ struct coupled_ode_observer {
     }
 
     y_.emplace_back(yt);
+    next_ts_index_++;
   }
 };
 

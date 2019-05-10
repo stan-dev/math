@@ -31,7 +31,7 @@ class ops_partials_edge<double, std::vector<var> > {
 
   void dump_partials(double* partials) {
     for (int i = 0; i < this->partials_.size(); ++i) {
-      partials[i] = this->partials_(i);
+      partials[i] = this->partials_[i];
     }
   }
   void dump_operands(vari** varis) {

@@ -16,7 +16,7 @@ struct StanRevOde : public ::testing::Test {
   std::vector<int> x_int;
 };
 
-TEST_F(StanRevOde, observe_states_dv) {
+TEST_F(StanRevOde, observe_states_dvdd) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
 
@@ -53,9 +53,9 @@ TEST_F(StanRevOde, observe_states_dv) {
     observer(coupled_state, ts[0]);
   }
 
-  ASSERT_EQ(T, y.size());
+  EXPECT_EQ(T, y.size());
   for (size_t t = 0; t < T; t++)
-    ASSERT_EQ(2U, y[t].size());
+    EXPECT_EQ(2U, y[t].size());
 
   for (size_t t = 0; t < T; t++) {
     for (size_t n = 0; n < 2; n++)
@@ -68,7 +68,7 @@ TEST_F(StanRevOde, observe_states_dv) {
   }
 }
 
-TEST_F(StanRevOde, observe_states_vd) {
+TEST_F(StanRevOde, observe_states_vddd) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
 
@@ -105,9 +105,9 @@ TEST_F(StanRevOde, observe_states_vd) {
     observer(coupled_state, ts[t]);
   }
 
-  ASSERT_EQ(T, y.size());
+  EXPECT_EQ(T, y.size());
   for (size_t t = 0; t < T; t++)
-    ASSERT_EQ(2U, y[t].size());
+    EXPECT_EQ(2U, y[t].size());
 
   for (size_t t = 0; t < T; t++) {
     for (size_t n = 0; n < 2; n++) {
@@ -122,7 +122,7 @@ TEST_F(StanRevOde, observe_states_vd) {
   }
 }
 
-TEST_F(StanRevOde, observe_states_vv) {
+TEST_F(StanRevOde, observe_states_vvdd) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
 
@@ -158,9 +158,9 @@ TEST_F(StanRevOde, observe_states_vv) {
     observer(coupled_state, ts[t]);
   }
 
-  ASSERT_EQ(T, y.size());
+  EXPECT_EQ(T, y.size());
   for (size_t t = 0; t < T; t++)
-    ASSERT_EQ(2U, y[t].size());
+    EXPECT_EQ(2U, y[t].size());
 
   for (size_t t = 0; t < T; t++) {
     for (size_t n = 0; n < 2; n++)
@@ -176,7 +176,7 @@ TEST_F(StanRevOde, observe_states_vv) {
   }
 }
 
-TEST_F(StanRevOde, observe_states_t0v) {
+TEST_F(StanRevOde, observe_states_ddvd) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
 
@@ -213,9 +213,9 @@ TEST_F(StanRevOde, observe_states_t0v) {
     observer(coupled_state, ts[0]);
   }
 
-  ASSERT_EQ(T, y.size());
+  EXPECT_EQ(T, y.size());
   for (size_t t = 0; t < T; t++)
-    ASSERT_EQ(2U, y[t].size());
+    EXPECT_EQ(2U, y[t].size());
 
   for (size_t t = 0; t < T; t++) {
     for (size_t n = 0; n < 2; n++)
@@ -228,7 +228,7 @@ TEST_F(StanRevOde, observe_states_t0v) {
   }
 }
 
-TEST_F(StanRevOde, observe_states_tsv) {
+TEST_F(StanRevOde, observe_states_dddv) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
 
@@ -265,9 +265,9 @@ TEST_F(StanRevOde, observe_states_tsv) {
     observer(coupled_state, value_of(ts[t]));
   }
 
-  ASSERT_EQ(T, y.size());
+  EXPECT_EQ(T, y.size());
   for (size_t t = 0; t < T; t++)
-    ASSERT_EQ(2U, y[t].size());
+    EXPECT_EQ(2U, y[t].size());
 
   for (size_t t = 0; t < T; t++) {
     for (size_t n = 0; n < 2; n++)
