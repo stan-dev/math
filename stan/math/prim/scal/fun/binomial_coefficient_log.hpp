@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/fun/inv.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <boost/math/tools/promotion.hpp>
 
 namespace stan {
@@ -68,7 +69,7 @@ binomial_coefficient_log(const T_N N, const T_n n) {
   } else {
     typename boost::math::tools::promote_args<T_N, T_n>::type N_minus_n = N - n;
     const double one_twelfth = inv(12);
-    return n * log(N_minus_n) + (N + 0.5) * log(N / N_minus_n) + one_twelfth / N
+    return multiply_log(n, N_minus_n) +  multiply_log((N + 0.5), N / N_minus_n) + one_twelfth / N
            - n - one_twelfth / N_minus_n - lgamma(n + 1);
   }
 }
