@@ -22,15 +22,15 @@ inline matrix_cl gp_exp_quad_cov(const matrix_cl& x, const double sigma,
                                  const double length_scale) try {
   matrix_cl res(x.cols(), x.cols());
   opencl_kernels::gp_exp_quad_cov(cl::NDRange(x.cols(), x.cols()), x, res,
-                                    sigma * sigma, -0.5 / square(length_scale),
-                                    x.cols(), x.rows());
+                                  sigma * sigma, -0.5 / square(length_scale),
+                                  x.cols(), x.rows());
   return res;
-  } catch (const cl::Error& e) {
-    check_opencl_error("gp_exp_quad_cov", e);
-    // check above causes termination so below will not happen
-    matrix_cl res(x.cols(), x.cols());
-    return res;
-  }
+} catch (const cl::Error& e) {
+  check_opencl_error("gp_exp_quad_cov", e);
+  // check above causes termination so below will not happen
+  matrix_cl res(x.cols(), x.cols());
+  return res;
+}
 
 /**
  * Squared exponential kernel on the GPU.
@@ -50,16 +50,16 @@ inline matrix_cl gp_exp_quad_cov(const matrix_cl& x, const matrix_cl& y,
                                  const double length_scale) try {
   check_size_match("gp_exp_quad_cov_cross", "x", x.rows(), "y", y.rows());
   matrix_cl res(x.cols(), y.cols());
-    opencl_kernels::gp_exp_quad_cov_cross(
-        cl::NDRange(x.cols(), y.cols()), x, y, res, sigma * sigma,
-        -0.5 / square(length_scale), x.cols(), y.cols(), x.rows());
+  opencl_kernels::gp_exp_quad_cov_cross(
+      cl::NDRange(x.cols(), y.cols()), x, y, res, sigma * sigma,
+      -0.5 / square(length_scale), x.cols(), y.cols(), x.rows());
   return res;
-  } catch (const cl::Error& e) {
-    check_opencl_error("gp_exp_quad_cov_cross", e);
-    // check above causes termination so below will not happen
-    matrix_cl res(x.cols(), x.cols());
-    return res;
-  }
+} catch (const cl::Error& e) {
+  check_opencl_error("gp_exp_quad_cov_cross", e);
+  // check above causes termination so below will not happen
+  matrix_cl res(x.cols(), x.cols());
+  return res;
+}
 
 }  // namespace math
 }  // namespace stan

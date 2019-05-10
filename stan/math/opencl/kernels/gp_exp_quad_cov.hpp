@@ -88,7 +88,6 @@ static const char* gp_exp_quad_cov_cross_kernel_code = STRINGIFY(
 );
 // \endcond
 
-
 /**
  * See the docs for \link kernels/gp_exp_quad_cov.hpp gp_exp_quad_cov_cross()
  * \endlink
