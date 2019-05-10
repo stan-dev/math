@@ -66,7 +66,7 @@ TEST_F(StanMathOde, observe_states_dddd) {
   // done with the expected string (I would have expected 10 instead
   // of 11).
   std::string message
-      = "coupled_ode_observer: time-state number is 11, but must be less than "
+      = "coupled_ode_observer: time-state number is 10, but must be less than "
         "10";
   std::vector<double> ys_coupled_0(coupled_system.size(), 0.0);
   EXPECT_THROW_MSG(observer(ys_coupled_0, 20.), std::logic_error, message);
