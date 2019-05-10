@@ -3,14 +3,10 @@
 
 #include <stan/math/prim/mat/err/check_simplex.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <boost/random/uniform_01.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <boost/math/tools/promotion.hpp>
 #include <cmath>
 #include <vector>
 
@@ -23,7 +19,6 @@ typename boost::math::tools::promote_args<T_prob>::type categorical_lpmf(
     int n, const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   static const char* function = "categorical_lpmf";
 
-  using boost::math::tools::promote_args;
   using std::log;
 
   int lb = 1;
@@ -50,7 +45,6 @@ typename boost::math::tools::promote_args<T_prob>::type categorical_lpmf(
     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   static const char* function = "categorical_lpmf";
 
-  using boost::math::tools::promote_args;
   using std::log;
 
   int lb = 1;

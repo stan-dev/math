@@ -10,15 +10,12 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/erf.hpp>
 #include <stan/math/prim/scal/fun/erfc.hpp>
-#include <stan/math/prim/scal/fun/owens_t.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <boost/math/distributions.hpp>
 #include <cmath>
 
 namespace stan {
@@ -53,8 +50,6 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type skew_normal_lpdf(
 
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(y, mu, sigma,
                                                                    alpha);
-
-  using std::log;
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);

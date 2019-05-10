@@ -2,7 +2,6 @@
 #define STAN_MATH_FWD_SCAL_FUN_INV_PHI_HPP
 
 #include <stan/math/fwd/core.hpp>
-
 #include <stan/math/prim/scal/fun/inv_Phi.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>

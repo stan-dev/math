@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_MAT_FUN_SUM_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/arr/fun/sum.hpp>
 
@@ -29,7 +28,7 @@ class sum_eigen_v_vari : public sum_v_vari {
   explicit sum_eigen_v_vari(const Eigen::Matrix<var, R1, C1>& v1)
       : sum_v_vari(
             sum_of_val(v1),
-            reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
+            reinterpret_cast<vari**>(ChainableStack::instance().memalloc_.alloc(
                 v1.size() * sizeof(vari*))),
             v1.size()) {
     for (size_t i = 0; i < length_; i++)

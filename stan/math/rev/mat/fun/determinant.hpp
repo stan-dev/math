@@ -3,10 +3,8 @@
 
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
-#include <vector>
 
 namespace stan {
 namespace math {
@@ -24,10 +22,10 @@ class determinant_vari : public vari {
       : vari(determinant_vari_calc(A)),
         rows_(A.rows()),
         cols_(A.cols()),
-        A_(reinterpret_cast<double*>(ChainableStack::instance_->memalloc_.alloc(
+        A_(reinterpret_cast<double*>(ChainableStack::instance().memalloc_.alloc(
             sizeof(double) * A.rows() * A.cols()))),
         adjARef_(
-            reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
+            reinterpret_cast<vari**>(ChainableStack::instance().memalloc_.alloc(
                 sizeof(vari*) * A.rows() * A.cols()))) {
     size_t pos = 0;
     for (size_type j = 0; j < cols_; j++) {

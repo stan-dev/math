@@ -4,7 +4,6 @@
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -12,11 +11,7 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <boost/random/lognormal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -32,7 +27,6 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_cdf(
 
   T_partials_return cdf = 1.0;
 
-  using boost::math::tools::promote_args;
   using std::exp;
   using std::log;
 

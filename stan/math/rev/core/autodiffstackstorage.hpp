@@ -84,6 +84,7 @@ namespace math {
  * [2] https://github.com/stan-dev/math/pull/826
  * [3]
  * http://discourse.mc-stan.org/t/potentially-dropping-support-for-older-versions-of-apples-version-of-clang/3780/
+ * [4] https://github.com/stan-dev/math/pull/1135
  */
 template <typename ChainableT, typename ChainableAllocT>
 struct AutodiffStackSingleton {
@@ -115,7 +116,9 @@ struct AutodiffStackSingleton {
   explicit AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
   AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
 
-  static STAN_THREADS_DEF AutodiffStackStorage *instance_;
+  static inline constexpr AutodiffStackStorage &instance() {
+    return *instance_;
+  }
 
  private:
   static bool init() {
@@ -126,7 +129,8 @@ struct AutodiffStackSingleton {
     return false;
   }
 
-  bool own_instance_;
+  static STAN_THREADS_DEF AutodiffStackStorage *instance_;
+  const bool own_instance_;
 };
 
 template <typename ChainableT, typename ChainableAllocT>

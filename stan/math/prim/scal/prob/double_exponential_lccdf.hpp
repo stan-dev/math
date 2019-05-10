@@ -11,12 +11,7 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/fun/sign.hpp>
-#include <boost/random/uniform_01.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -55,7 +50,6 @@ typename return_type<T_y, T_loc, T_scale>::type double_exponential_lccdf(
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale Parameter", sigma);
 
-  using std::exp;
   using std::exp;
   using std::log;
 

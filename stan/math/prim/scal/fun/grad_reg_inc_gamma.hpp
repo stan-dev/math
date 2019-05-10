@@ -7,7 +7,6 @@
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
 #include <cmath>
 #include <limits>
 

@@ -4,9 +4,6 @@
 #include <stan/math/prim/mat/err/check_consistent_sizes_mvt.hpp>
 #include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <stan/math/prim/mat/fun/multiply.hpp>
-#include <stan/math/prim/mat/fun/dot_product.hpp>
-#include <stan/math/prim/mat/fun/subtract.hpp>
 #include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 #include <stan/math/prim/mat/prob/multi_normal_log.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
@@ -19,7 +16,6 @@
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/meta/length_mvt.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <boost/math/special_functions/gamma.hpp>
 #include <cmath>
 #include <cstdlib>
 
