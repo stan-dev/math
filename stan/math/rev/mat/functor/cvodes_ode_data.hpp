@@ -148,11 +148,11 @@ class cvodes_ode_data {
    */
   inline void rhs(double t, const double y[], double dy_dt[]) const {
     const std::vector<double> y_vec(y, y + N_);
-    const std::vector<double> dy_dt_vec
+    const std::vector<double>& dy_dt_vec
         = f_(t, y_vec, theta_dbl_, x_, x_int_, msgs_);
     check_size_match("cvodes_ode_data", "dz_dt", dy_dt_vec.size(), "states",
                      N_);
-    std::copy(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
+    std::move(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
   }
 
   /**
@@ -163,14 +163,13 @@ class cvodes_ode_data {
    * y to be the initial of the coupled ode system.
    */
   inline int jacobian_states(double t, const double y[], SUNMatrix J) const {
-    const std::vector<double> y_vec(y, y + N_);
     start_nested();
-    std::vector<var> y_vec_var(y_vec.begin(), y_vec.end());
+    const std::vector<var> y_vec_var(y, y + N_);
     coupled_ode_system<F, var, double> ode_jacobian(f_, y_vec_var, theta_dbl_,
                                                     x_, x_int_, msgs_);
-    std::vector<double> jacobian_y(ode_jacobian.size(), 0);
+    std::vector<double>&& jacobian_y = std::vector<double>(ode_jacobian.size());
     ode_jacobian(ode_jacobian.initial_state(), jacobian_y, t);
-    std::copy(jacobian_y.begin() + N_, jacobian_y.end(), SM_DATA_D(J));
+    std::move(jacobian_y.begin() + N_, jacobian_y.end(), SM_DATA_D(J));
     recover_memory_nested();
     return 0;
   }
@@ -184,14 +183,14 @@ class cvodes_ode_data {
   inline void rhs_sens(double t, const double y[], N_Vector* yS,
                        N_Vector* ySdot) const {
     std::vector<double> z(coupled_state_.size());
-    std::vector<double> dz_dt(coupled_state_.size());
+    std::vector<double>&& dz_dt = std::vector<double>(coupled_state_.size());
     std::copy(y, y + N_, z.begin());
     for (std::size_t s = 0; s < S_; s++)
       std::copy(NV_DATA_S(yS[s]), NV_DATA_S(yS[s]) + N_,
                 z.begin() + (s + 1) * N_);
     coupled_ode_(z, dz_dt, t);
     for (std::size_t s = 0; s < S_; s++)
-      std::copy(dz_dt.begin() + (s + 1) * N_, dz_dt.begin() + (s + 2) * N_,
+      std::move(dz_dt.begin() + (s + 1) * N_, dz_dt.begin() + (s + 2) * N_,
                 NV_DATA_S(ySdot[s]));
   }
 };
