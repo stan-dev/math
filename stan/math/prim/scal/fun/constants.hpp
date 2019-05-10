@@ -8,8 +8,8 @@
 namespace stan {
 namespace math {
 
-  using std::log;
-  using std::sqrt;
+using std::log;
+using std::sqrt;
 
 /**
  * The base of the natural logarithm,
