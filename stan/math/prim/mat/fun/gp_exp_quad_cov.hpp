@@ -258,13 +258,10 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <typename T = void>  // if this was non-templated overload or fully
-// specialized template, the compiler could
-// incorrectly resolve some called functions to
-// prim implementation instead of arr
+template <>
 inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
-                                       const double sigma,
-                                       const double length_scale) {
+                                       const double& sigma,
+                                       const double& length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive(function_name, "magnitude", sigma);
   check_positive(function_name, "length scale", length_scale);
@@ -298,13 +295,10 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <typename T = void>  // if this was non-templated overload or fully
-// specialized template, the compiler could
-// incorrectly resolve some called functions to
-// prim implementation instead of arr
+template <>
 inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
-                                       const double sigma,
-                                       const double length_scale) {
+                                       const double& sigma,
+                                       const double& length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive(function_name, "magnitude", sigma);
   check_positive(function_name, "length scale", length_scale);
@@ -315,9 +309,9 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
   if (x_size == 0)
     return cov;
 
-  const size_t s = x[0].size();
+  const size_t inner_x1_size = x[0].size();
   if (x_size * x_size * opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
-          + (x_size + x_size + 1) * s
+          + (x_size + x_size + 1) * inner_x1_size
                 * opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
       < 1) {
     // using explicit template args to call CPU function
@@ -343,13 +337,10 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <typename T = void>  // if this was non-templated overload or fully
-                              // specialized template, the compiler could
-                              // incorrectly resolve some called functions to
-                              // prim implementation instead of arr
+template <>
 inline Eigen::MatrixXd gp_exp_quad_cov(
-    const std::vector<Eigen::VectorXd> &x, const double sigma,
-    const std::vector<double> &length_scale) {
+    const std::vector<Eigen::VectorXd>& x, const double& sigma,
+    const std::vector<double>& length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive_finite(function_name, "magnitude", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
@@ -360,9 +351,9 @@ inline Eigen::MatrixXd gp_exp_quad_cov(
   if (x_size == 0)
     return cov;
 
-  const size_t s = x[0].size();
+  const size_t inner_x1_size = x[0].size();
   if (x_size * x_size * opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
-          + (x_size + x_size + 1) * s
+          + (x_size + x_size + 1) * inner_x1_size
                 * opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
       < 1) {
     // using explicit template args to call CPU function
@@ -395,28 +386,23 @@ inline Eigen::MatrixXd gp_exp_quad_cov(
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <typename T = void>  // if this was non-templated overload or fully
-// specialized template, the compiler could
-// incorrectly resolve some called functions to
-// prim implementation instead of arr
-inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
-                                                const std::vector<double> &x2,
-                                                const double sigma,
-                                                const double length_scale) {
+template <>
+inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double>& x1,
+                                                const std::vector<double>& x2,
+                                                const double& sigma,
+                                                const double& length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive_finite(function_name, "magnitude", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
 
-  const size_t x1_size = x1.size();
-  const size_t x2_size = x2.size();
-  if (x1_size * x2_size < opencl_context.tuning_opts().gp_exp_quad_cov_size) {
+  Eigen::MatrixXd cov(x1.size(), x2.size());
+  if (cov.size() == 0)
+    return cov;
+  if (cov.size() < opencl_context.tuning_opts().gp_exp_quad_cov_size) {
     // using explicit template args to call CPU function
     return gp_exp_quad_cov<double, double, double, double>(x1, x2, sigma,
                                                            length_scale);
   }
-  Eigen::MatrixXd cov(x1_size, x2_size);
-  if (x1_size == 0 || x2_size == 0)
-    return cov;
 
   matrix_cl x1_cl(x1, 1, x1.size());
   check_nan(function_name, "x1", x1_cl);
@@ -442,14 +428,11 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <typename T = void>  // if this was non-templated overload or fully
-// specialized template, the compiler could
-// incorrectly resolve some called functions to
-// prim implementation instead of arr
+template <>
 inline typename Eigen::MatrixXd gp_exp_quad_cov(
-    const std::vector<Eigen::VectorXd> &x1,
-    const std::vector<Eigen::VectorXd> &x2, const double sigma,
-    const double length_scale) {
+    const std::vector<Eigen::VectorXd>& x1,
+    const std::vector<Eigen::VectorXd>& x2, const double& sigma,
+    const double& length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive_finite(function_name, "magnitude", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
@@ -457,12 +440,12 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
   const size_t x1_size = x1.size();
   const size_t x2_size = x2.size();
   Eigen::MatrixXd cov(x1_size, x2_size);
-  if (x1_size == 0 || x2_size == 0)
+  if (cov.size() == 0)
     return cov;
 
-  const size_t s = x1[0].size();
+  const size_t inner_x1_size = x1[0].size();
   if (x1_size * x2_size * opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
-          + (x1_size + x2_size + 1) * s
+          + (x1_size + x2_size + 1) * inner_x1_size
                 * opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
       < 1) {
     // using explicit template args to call CPU function
@@ -493,26 +476,23 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <typename T = void>  // if this was non-templated overload or fully
-                              // specialized template, the compiler could
-                              // incorrectly resolve some called functions to
-                              // prim implementation instead of arr
+template <>
 inline typename Eigen::MatrixXd gp_exp_quad_cov(
-    const std::vector<Eigen::VectorXd> &x1,
-    const std::vector<Eigen::VectorXd> &x2, const double sigma,
-    const std::vector<double> &length_scale) {
+    const std::vector<Eigen::VectorXd>& x1,
+    const std::vector<Eigen::VectorXd>& x2, const double& sigma,
+    const std::vector<double>& length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   const size_t x1_size = x1.size();
   const size_t x2_size = x2.size();
   const size_t l_size = length_scale.size();
 
   Eigen::MatrixXd cov(x1_size, x2_size);
-  if (x1_size == 0 || x2_size == 0)
+  if (cov.size() == 0)
     return cov;
 
-  const size_t s = x1[0].size();
+  const size_t inner_x1_size = x1[0].size();
   if (x1_size * x2_size * opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
-          + (x1_size + x2_size + 1) * s
+          + (x1_size + x2_size + 1) * inner_x1_size
                 * opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
       < 1) {
     // using explicit template args to call CPU function

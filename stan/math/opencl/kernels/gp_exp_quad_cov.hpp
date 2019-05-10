@@ -43,6 +43,12 @@ static const char* gp_exp_quad_cov_kernel_code = STRINGIFY(
 );
 // \endcond
 
+/**
+ * See the docs for \link kernels/gp_exp_quad_cov.hpp gp_exp_quad_cov() \endlink
+ */
+const kernel_cl<in_buffer, out_buffer, double, double, int, int>
+    gp_exp_quad_cov("gp_exp_quad_cov", gp_exp_quad_cov_kernel_code, {});
+
 // \cond
 static const char* gp_exp_quad_cov_cross_kernel_code = STRINGIFY(
     // \endcond
@@ -82,11 +88,6 @@ static const char* gp_exp_quad_cov_cross_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
- * See the docs for \link kernels/gp_exp_quad_cov.hpp gp_exp_quad_cov() \endlink
- */
-const kernel_cl<in_buffer, out_buffer, double, double, int, int>
-    gp_exp_quad_cov("gp_exp_quad_cov", gp_exp_quad_cov_kernel_code, {});
 
 /**
  * See the docs for \link kernels/gp_exp_quad_cov.hpp gp_exp_quad_cov_cross()
