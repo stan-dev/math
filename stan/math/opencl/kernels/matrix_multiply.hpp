@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/buffer_types.hpp>
 
 namespace stan {
 namespace math {
@@ -161,8 +162,8 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/matrix_multiply.hpp matrix_multiply() \endlink
  */
-const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int,
-                         TriangularViewCL, TriangularViewCL>
+const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, int,
+                TriangularViewCL, TriangularViewCL>
     matrix_multiply("matrix_multiply",
                     {thread_block_helpers, matrix_multiply_kernel_code},
                     {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
@@ -205,8 +206,8 @@ static const char* matrix_vector_multiply_kernel_code = STRINGIFY(
  * See the docs for \link kernels/matrix_multiply.hpp matrix_vector_multiply()
  * \endlink
  */
-const global_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int,
-                          TriangularViewCL, TriangularViewCL>
+const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, TriangularViewCL,
+                TriangularViewCL>
     matrix_vector_multiply("matrix_vector_multiply",
                            matrix_vector_multiply_kernel_code);
 
@@ -267,8 +268,8 @@ static const char* row_vector_matrix_multiply_kernel_code = STRINGIFY(
  * See the docs for \link kernels/matrix_multiply.hpp
  * row_vector_matrix_multiply() \endlink
  */
-const local_range_kernel<cl::Buffer, cl::Buffer, cl::Buffer, int, int,
-                         TriangularViewCL, TriangularViewCL>
+const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, TriangularViewCL,
+                TriangularViewCL>
     row_vector_matrix_multiply("row_vector_matrix_multiply",
                                row_vector_matrix_multiply_kernel_code,
                                {{"LOCAL_SIZE_", 64},
