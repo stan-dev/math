@@ -13,18 +13,11 @@
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/cholesky_decompose.hpp>
-#include <stan/math/opencl/constants.hpp>
-#include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/diagonal_multiply.hpp>
-#include <stan/math/opencl/lower_tri_inverse.hpp>
-#include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/multiply.hpp>
-#include <stan/math/opencl/opencl_context.hpp>
-#include <vector>
+#include <stan/math/opencl/opencl.hpp>
 #endif
 
 #include <algorithm>
+#include <vector>
 
 namespace stan {
 namespace math {

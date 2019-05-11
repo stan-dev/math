@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/buffer_types.hpp>
 
 namespace stan {
 namespace math {
@@ -83,7 +84,7 @@ static const char* diag_inv_kernel_code = STRINGIFY(
  * See the docs for \link kernels/diag_inv.hpp add()
  * \endlink
  */
-const local_range_kernel<cl::Buffer, cl::Buffer, int> diag_inv(
+const kernel_cl<in_out_buffer, in_out_buffer, int> diag_inv(
     "diag_inv", {indexing_helpers, diag_inv_kernel_code},
     {{"THREAD_BLOCK_SIZE", 32}});
 
