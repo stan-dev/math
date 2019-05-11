@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_FUN_OPENCL_COPY_HPP
-#define STAN_MATH_PRIM_MAT_FUN_OPENCL_COPY_HPP
+#ifndef STAN_MATH_OPENCL_COPY_HPP
+#define STAN_MATH_OPENCL_COPY_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/opencl_context.hpp>
@@ -28,11 +28,10 @@ namespace math {
  * the destination matrix that is stored
  * on the OpenCL device.
  *
- * @tparam T type of data in the Eigen matrix
+ * @tparam R Compile time rows of the Eigen matrix
+ * @tparam C Compile time columns of the Eigen matrix
  * @param src source Eigen matrix
  * @return matrix_cl with a copy of the data in the source matrix
- * @throw <code>std::invalid_argument</code> if the
- * matrices do not have matching dimensions
  */
 template <int R, int C>
 inline matrix_cl to_matrix_cl(const Eigen::Matrix<double, R, C>& src) {
@@ -67,8 +66,6 @@ inline matrix_cl to_matrix_cl(const Eigen::Matrix<double, R, C>& src) {
  *
  * @param src source matrix on the OpenCL device
  * @return Eigen matrix with a copy of the data in the source matrix
- * @throw <code>std::invalid_argument</code> if the
- * matrices do not have matching dimensions
  */
 inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> from_matrix_cl(
     const matrix_cl& src) {
@@ -211,7 +208,7 @@ inline matrix_cl copy_cl(const matrix_cl& src) {
 
 /**
  * Copy A 1 by 1 source matrix from the Device to  the host.
- * @tparam An arithmetic type to pass the value from the OpenCL matrix to.
+ * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
  * @param src A 1x1 matrix on the device.
  * @return dst Arithmetic to receive the matrix_cl value.
  */
@@ -237,7 +234,7 @@ inline T from_matrix_cl(const matrix_cl& src) {
 
 /**
  * Copy an arithmetic type to the device.
- * @tparam An arithmetic type to pass the value from the OpenCL matrix to.
+ * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
  * @param src Arithmetic to receive the matrix_cl value.
  * @return A 1x1 matrix on the device.
  */
