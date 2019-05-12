@@ -3,10 +3,11 @@
 
 #include <cmath>
 #include <cstddef>
+#include <type_traits>
 
 namespace stan {
 
-template <typename T>
+template <typename T, typename = std::enable_if_t<std::is_fundamental<T>::value>>
 inline T get(const T& x, size_t n) {
   return x;
 }
