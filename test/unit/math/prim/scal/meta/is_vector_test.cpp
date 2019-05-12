@@ -13,6 +13,7 @@ TEST(MetaTraits, is_vector) {
 
   bool temp = is_vector<double, int, double>::value;
   EXPECT_FALSE(temp);
-  temp = is_vector<double, int, const size_t, const size_t, const size_t>::value;
+  temp
+      = is_vector<double, int, const size_t, const size_t, const size_t>::value;
   EXPECT_FALSE(temp);
 }

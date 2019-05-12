@@ -58,7 +58,7 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
   static const char* function = "poisson_log_glm_lpmf";
 
-  using T_partials_return =  partials_return_type<T_y, T_x, T_alpha, T_beta>;
+  using T_partials_return = partials_return_type<T_y, T_x, T_alpha, T_beta>;
   using T_alpha_val = array_return_type<T_alpha>;
 
   using Eigen::Dynamic;

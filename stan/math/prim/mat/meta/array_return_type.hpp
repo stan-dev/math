@@ -16,9 +16,9 @@ namespace math {
  */
 template <typename... T>
 using array_return_type = typename std::conditional<
-      is_vector<T...>::value,
-      Eigen::Array<typename partials_return_type<T...>::type, -1, 1>,
-      typename partials_return_type<T...>::type>::type;
+    is_vector<T...>::value,
+    Eigen::Array<typename partials_return_type<T...>::type, -1, 1>,
+    typename partials_return_type<T...>::type>::type;
 
 }  // namespace math
 }  // namespace stan
