@@ -171,8 +171,7 @@ log_mix(const T_theta& theta,
 
   operands_and_partials<T_theta, T_lamvec_type> ops_partials(theta, lambda);
 
-  if (!(is_constant_struct<T_theta>::value
-        && is_constant_struct<T_lam>::value)) {
+  if (!is_constant_struct<T_theta, T_lam>::value) {
     T_partials_mat derivs
         = (lam_dbl - logp.transpose().replicate(M, 1))
               .unaryExpr([](T_partials_return x) { return exp(x); });

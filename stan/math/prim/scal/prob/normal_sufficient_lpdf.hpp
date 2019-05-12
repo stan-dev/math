@@ -114,7 +114,7 @@ typename return_type<T_y, T_s, T_loc, T_scale>::type normal_sufficient_lpdf(
     logp -= cons_expr / (2 * sigma_squared);
 
     // gradients
-    if (!is_constant_struct<T_y>::value || !is_constant_struct<T_loc>::value) {
+    if (!is_constant_struct<T_y, T_loc>::value) {
       const T_partials_return common_derivative
           = n_obs_dbl * (mu_dbl - y_bar_dbl) / sigma_squared;
       if (!is_constant_struct<T_y>::value)
