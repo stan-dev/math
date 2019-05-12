@@ -115,7 +115,7 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
   double y_minus_mu_over_sigma_squared_sum;  // the most efficient way to
                                              // calculate this depends on
                                              // template parameters
-  if (!is_constant_struct<T_y, T_x, T_beta_, T_alpha>::value) {
+  if (!is_constant_struct<T_y, T_x, T_beta, T_alpha>::value) {
     Matrix<T_partials_return, Dynamic, 1> mu_derivative
         = inv_sigma * y_minus_mu_over_sigma;
     if (!is_constant_struct<T_y>::value) {
