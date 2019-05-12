@@ -20,7 +20,7 @@ inline fvar<T> fmod(const fvar<T>& x1, const fvar<T>& x2) {
 template <typename T>
 inline fvar<T> fmod(const fvar<T>& x1, double x2) {
   using std::fmod;
-  if (unlikely(is_nan(value_of(x1.val_)) || is_nan(x2)))
+  if (unlikely(is_nan(value_of(x1.val_), x2)))
     return fvar<T>(fmod(x1.val_, x2), NOT_A_NUMBER);
   else
     return fvar<T>(fmod(x1.val_, x2), x1.d_ / x2);

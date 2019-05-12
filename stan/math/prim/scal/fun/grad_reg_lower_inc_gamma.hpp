@@ -110,7 +110,7 @@ typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
   using std::pow;
   typedef typename return_type<T1, T2>::type TP;
 
-  if (is_nan(a) || is_nan(z))
+  if (is_nan(a, z))
     return std::numeric_limits<TP>::quiet_NaN();
 
   check_positive_finite("grad_reg_lower_inc_gamma", "a", a);

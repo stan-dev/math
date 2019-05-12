@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_IS_NAN_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_IS_NAN_HPP
 
+#include <utility>
 #include <cmath>
 
 namespace stan {
@@ -14,8 +15,15 @@ namespace math {
  * @param x Value to test.
  * @return <code>true</code> if the value is NaN.
  */
-inline bool is_nan(double x) { return std::isnan(x); }
+template <typename T>
+inline bool is_nan(T x) {
+  return std::isnan(x);
+}
 
+template <typename T, typename... Ts>
+inline bool is_nan(T x, Ts... xs) {
+  return (is_nan(x) || is_nan(std::forward<Ts>(xs)...));
+}
 }  // namespace math
 }  // namespace stan
 
