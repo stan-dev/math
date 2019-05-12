@@ -10,17 +10,17 @@ namespace stan {
 //        extend to array/ptr types
 
 template <typename T>
-struct is_vector<Eigen::Matrix<T, Eigen::Dynamic, 1> > {
+struct is_vector_helper<Eigen::Matrix<T, Eigen::Dynamic, 1> > {
   enum { value = 1 };
   typedef T type;
 };
 template <typename T>
-struct is_vector<Eigen::Matrix<T, 1, Eigen::Dynamic> > {
+struct is_vector_helper<Eigen::Matrix<T, 1, Eigen::Dynamic> > {
   enum { value = 1 };
   typedef T type;
 };
 template <typename T>
-struct is_vector<Eigen::Block<T> > {
+struct is_vector_helper<Eigen::Block<T> > {
   enum { value = 1 };
   typedef T type;
 };

@@ -10,12 +10,12 @@ namespace stan {
 //   extend to array/ptr types
 
 template <typename T>
-struct is_vector<const T> {
+struct is_vector_helper<const T> {
   enum { value = is_vector<T>::value };
   typedef T type;
 };
 template <typename T>
-struct is_vector<std::vector<T> > {
+struct is_vector_helper<std::vector<T> > {
   enum { value = 1 };
   typedef T type;
 };

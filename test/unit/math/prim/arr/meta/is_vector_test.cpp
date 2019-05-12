@@ -10,4 +10,8 @@ TEST(MetaTraits, is_vector) {
   EXPECT_TRUE(is_vector<std::vector<int> >::value);
   EXPECT_TRUE(is_vector<std::vector<const double> >::value);
   EXPECT_TRUE(is_vector<std::vector<const int> >::value);
+  bool temp = is_vector<std::vector<const int>, std::vector<const int>, std::vector<const double> >::value;
+  EXPECT_TRUE(temp);
+  temp = is_vector<std::vector<const int>, double, double >::value;
+  EXPECT_TRUE(temp);
 }

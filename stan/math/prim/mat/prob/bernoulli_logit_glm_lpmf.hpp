@@ -10,6 +10,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
+#include <stan/math/prim/mat/meta/matrix_return_type.hpp>
 #include <stan/math/prim/scal/meta/as_array_or_scalar.hpp>
 #include <stan/math/prim/scal/meta/as_scalar.hpp>
 #include <stan/math/prim/mat/meta/as_scalar.hpp>
@@ -59,11 +60,7 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   static const char *function = "bernoulli_logit_glm_lpmf";
   typedef typename partials_return_type<T_y, T_x, T_alpha, T_beta>::type
       T_partials_return;
-  typedef typename std::conditional<
-      is_vector<T_y>::value,
-      Eigen::Matrix<typename partials_return_type<T_y>::type, -1, 1>,
-      typename partials_return_type<T_y>::type>::type T_y_val;
-
+  
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
@@ -94,7 +91,7 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   const auto &beta_val_vec = as_column_vector_or_scalar(beta_val);
   const auto &alpha_val_vec = as_column_vector_or_scalar(alpha_val);
 
-  T_y_val signs = 2 * as_array_or_scalar(y_val_vec) - 1;
+  matrix_return_type<T_y> signs = 2 * as_array_or_scalar(y_val_vec) - 1;
 
   Eigen::Array<T_partials_return, Dynamic, 1> ytheta = x_val * beta_val_vec;
   ytheta = as_array_or_scalar(signs)

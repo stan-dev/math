@@ -16,6 +16,7 @@
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/mat/meta/is_vector.hpp>
+#include <stan/math/prim/mat/meta/array_return_type.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/as_array_or_scalar.hpp>
 #include <stan/math/prim/scal/meta/as_scalar.hpp>
@@ -68,18 +69,10 @@ typename return_type<T_x, T_alpha, T_beta, T_precision>::type
 neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
                             const T_beta& beta, const T_precision& phi) {
   static const char* function = "neg_binomial_2_log_glm_lpmf";
-  typedef
-      typename stan::partials_return_type<T_y, T_x, T_alpha, T_beta,
-                                          T_precision>::type T_partials_return;
-  typedef typename std::conditional<
-      is_vector<T_precision>::value,
-      Eigen::Array<typename partials_return_type<T_precision>::type, -1, 1>,
-      typename partials_return_type<T_precision>::type>::type T_precision_val;
-  typedef typename std::conditional<
-      is_vector<T_y>::value || is_vector<T_precision>::value,
-      Eigen::Array<typename partials_return_type<T_y, T_precision>::type, -1,
-                   1>,
-      typename partials_return_type<T_y, T_precision>::type>::type T_sum_val;
+  using T_partials_return = stan::partials_return_type<T_y, T_x, T_alpha, T_beta,
+                                          T_precision>;
+  using T_precision_val = array_return_type<T_precision>;
+  using T_sum_val = array_return_type<T_y, T_precision>;
 
   using Eigen::Array;
   using Eigen::Dynamic;
