@@ -19,9 +19,9 @@ TEST(MetaTraits, is_vector) {
   EXPECT_FALSE(is_vector<const temp_matrix_d>::value);
 
   bool temp = is_vector<temp_matrix_d, temp_matrix_d, temp_matrix_d>::value;
-  EXPECT_TRUE(temp);
+  EXPECT_FALSE(temp);
   temp = is_vector<temp_matrix_d, double, double >::value;
-  EXPECT_TRUE(temp);
+  EXPECT_FALSE(temp);
   temp = is_vector<temp_matrix_d, temp_rowvec_d, double >::value;
   EXPECT_TRUE(temp);
   temp = is_vector<temp_matrix_d, temp_rowvec_d, temp_vec_d >::value;
