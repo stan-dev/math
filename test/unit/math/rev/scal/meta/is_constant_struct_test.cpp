@@ -11,6 +11,8 @@ TEST(MetaTraits, isConstantStruct) {
   EXPECT_FALSE(temp);
   temp = is_constant_struct<stan::math::var, double, double>::value;
   EXPECT_FALSE(temp);
-  temp = is_constant_struct<stan::math::var, stan::math::var, stan::math::var, stan::math::var, stan::math::var,double, double>::value;
+  temp = is_constant_struct<stan::math::var, stan::math::var, stan::math::var,
+                            stan::math::var, stan::math::var, double,
+                            double>::value;
   EXPECT_FALSE(temp);
 }
