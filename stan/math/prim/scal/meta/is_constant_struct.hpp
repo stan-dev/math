@@ -6,13 +6,17 @@
 
 namespace stan {
 
+template <typename T>
+struct is_constant_struct_helper {
+  enum { value = is_constant<T>::value };
+};
 /**
  * Metaprogram to determine if a type has a base scalar
  * type that can be assigned to type double.
  * @tparam T Types to test
  */
 template <typename... T>
-using is_constant_struct = math::conjunction<is_constant<T>...>;
+using is_constant_struct = math::conjunction<is_constant_struct_helper<T>...>;
 
 }  // namespace stan
 #endif

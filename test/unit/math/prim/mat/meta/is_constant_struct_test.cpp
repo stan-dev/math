@@ -28,4 +28,10 @@ TEST(MetaTraits, isConstantStruct) {
   EXPECT_TRUE(is_constant_struct<const_v1>::value);
   EXPECT_TRUE(is_constant_struct<const_v2>::value);
   EXPECT_TRUE(is_constant_struct<const_v3>::value);
+  bool temp = is_constant_struct<const_t1, const_t2>::value;
+  EXPECT_TRUE(temp);
+  temp = is_constant_struct<const_t2, const_t3, const_u1>::value;
+  EXPECT_TRUE(temp);
+  temp = is_constant_struct<const_u1, const_v1, const_v2, const_t2>::value;
+  EXPECT_TRUE(temp);
 }

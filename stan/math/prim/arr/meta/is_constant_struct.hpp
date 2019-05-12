@@ -9,12 +9,13 @@ namespace stan {
 /**
  * Defines a public enum named value and sets it to true(1)
  * if the type of the elements in the provided std::vector
- * is a constant struct, false(0) otherwise.
+ * is a constant struct, false(0) otherwise. This helper
+ * struct is used in the is_constant_struct metaprogram.
  * @tparam type of the elements in the std::vector
  */
 template <typename T>
-struct is_constant_struct<std::vector<T> > {
-  enum { value = is_constant_struct<T>::value };
+struct is_constant_struct_helper<std::vector<T> > {
+  enum { value = is_constant_struct_helper<T>::value };
 };
 
 }  // namespace stan
