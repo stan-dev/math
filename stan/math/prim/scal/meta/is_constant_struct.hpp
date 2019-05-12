@@ -5,7 +5,13 @@
 #include <stan/math/prim/scal/meta/conjunction.hpp>
 
 namespace stan {
-
+/**
+ * Defines a public enum named value and sets it to true(1)
+ * if the provided type is constant, false(0) otherwise.
+ * This helper struct is used in the
+ * is_constant_struct metaprogram.
+ * @tparam type to test
+ */
 template <typename T>
 struct is_constant_struct_helper {
   enum { value = is_constant<T>::value };
