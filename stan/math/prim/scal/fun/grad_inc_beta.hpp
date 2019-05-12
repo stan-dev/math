@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_GRAD_INC_BETA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_GRAD_INC_BETA_HPP
 
-#include <stan/math/prim/scal/fun/lbeta.hpp>
+#include <stan/math/prim/scal/fun/beta.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/fun/grad_2F1.hpp>
@@ -21,7 +21,7 @@ inline void grad_inc_beta(double& g1, double& g2, double a, double b,
 
   double c1 = log(z);
   double c2 = log1m(z);
-  double c3 = exp(lbeta(a, b)) * inc_beta(a, b, z);
+  double c3 = beta(a, b) * inc_beta(a, b, z);
   double C = exp(a * c1 + b * c2) / a;
   double dF1 = 0;
   double dF2 = 0;
