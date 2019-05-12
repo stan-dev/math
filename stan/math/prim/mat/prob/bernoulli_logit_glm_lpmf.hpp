@@ -58,9 +58,10 @@ template <bool propto, typename T_y, typename T_x, typename T_alpha,
 typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
     const T_y &y, const T_x &x, const T_alpha &alpha, const T_beta &beta) {
   static const char *function = "bernoulli_logit_glm_lpmf";
-  typedef typename partials_return_type<T_y, T_x, T_alpha, T_beta>::type
-      T_partials_return;
-  
+
+  using T_partials_return = partials_return_type<T_y, T_x, T_alpha, T_beta>;
+  using T_y_val = matrix_return_type<T_y>;
+
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
@@ -91,7 +92,7 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   const auto &beta_val_vec = as_column_vector_or_scalar(beta_val);
   const auto &alpha_val_vec = as_column_vector_or_scalar(alpha_val);
 
-  matrix_return_type<T_y> signs = 2 * as_array_or_scalar(y_val_vec) - 1;
+  T_y_val signs = 2 * as_array_or_scalar(y_val_vec) - 1;
 
   Eigen::Array<T_partials_return, Dynamic, 1> ytheta = x_val * beta_val_vec;
   ytheta = as_array_or_scalar(signs)
