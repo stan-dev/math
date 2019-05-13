@@ -55,14 +55,11 @@ inline bool is_3F2_converges(const T_a1& a1, const T_a2& a2, const T_a3& a3,
     num_terms = floor(fabs(value_of_rec(a3)));
   }
 
-  if (is_nonpositive_integer(b1)
-      && fabs(b1) <= num_terms
-      && is_nonpositive_integer(b2)
-      && fabs(b2) <= num_terms)
+  if (is_nonpositive_integer(b1) && fabs(b1) <= num_terms
+      && is_nonpositive_integer(b2) && fabs(b2) <= num_terms)
     return false;
 
-  if (!is_polynomial
-      && !(fabs(z) < 1.0)
+  if (!is_polynomial && !(fabs(z) < 1.0)
       && !(fabs(z) == 1.0 && b1 + b2 > a1 + a2 + a3))
     return false;
 

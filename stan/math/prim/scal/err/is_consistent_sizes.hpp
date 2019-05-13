@@ -19,9 +19,8 @@ namespace math {
  */
 template <typename T1, typename T2>
 inline bool is_consistent_sizes(const T1& x1, const T2& x2) {
-  return size_of(x1) > size_of(x2)
-    ? is_consistent_size(x2, size_of(x1))
-    : is_consistent_size(x1, size_of(x2));
+  return size_of(x1) > size_of(x2) ? is_consistent_size(x2, size_of(x1))
+                                   : is_consistent_size(x1, size_of(x2));
 }
 
 /**
@@ -80,7 +79,7 @@ inline bool is_consistent_sizes(const char* function, const T1& x1,
       std::max(size_of(x2),
                std::max(size_of(x3), std::max(size_of(x4), size_of(x5)))));
   return is_consistent_size(x1, max_size)
-          && is_consistent_sizes(x2, x3, x4, x5);
+         && is_consistent_sizes(x2, x3, x4, x5);
 }
 
 }  // namespace math
