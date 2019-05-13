@@ -51,15 +51,15 @@ TEST(MathGpu, transpose) {
   EXPECT_NO_THROW(rv00_dst = transpose(rv00));
   EXPECT_NO_THROW(m00_dst = transpose(m00));
 
-  EXPECT_NO_THROW(stan::math::copy(v0_dst, v00_dst));
+  EXPECT_NO_THROW(v0_dst = stan::math::from_matrix_cl(v00_dst));
   EXPECT_EQ(v0(0), v0_dst(0));
   EXPECT_EQ(v0(1), v0_dst(1));
   EXPECT_EQ(v0(2), v0_dst(2));
-  EXPECT_NO_THROW(stan::math::copy(rv0_dst, rv00_dst));
+  EXPECT_NO_THROW(rv0_dst = stan::math::from_matrix_cl(rv00_dst));
   EXPECT_EQ(rv0(0), rv0_dst(0));
   EXPECT_EQ(rv0(1), rv0_dst(1));
   EXPECT_EQ(rv0(2), rv0_dst(2));
-  EXPECT_NO_THROW(stan::math::copy(m0_dst, m00_dst));
+  EXPECT_NO_THROW(m0_dst = stan::math::from_matrix_cl(m00_dst));
   EXPECT_EQ(m0(0, 0), m0_dst(0, 0));
   EXPECT_EQ(m0(0, 1), m0_dst(1, 0));
   EXPECT_EQ(m0(0, 2), m0_dst(2, 0));
