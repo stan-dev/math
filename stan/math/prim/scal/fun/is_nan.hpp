@@ -21,7 +21,7 @@ inline bool is_nan(T x) {
 }
 
 /**
- * Returns true if the input is NaN and false otherwise.
+ * Returns <code>true</code> if any input is NaN and false otherwise.
  *
  * Delegates to <code>std::isnan</code>.
  *
