@@ -96,7 +96,7 @@ git commit -m "upgrading to sundials v${sundials_version}; removing old sundials
 sed -i -e "s|lib/sundials_${sundials_old_version}|lib/sundials_${sundials_version}|g" ../README.md ../make/*
 sed -i -e "s|SUNDIALS (version ${sundials_old_version})|SUNDIALS (version ${sundials_version})|g" ../README.md
 rm -f ../README.md*-e ../make/*-e
-git add ../README.md ../make/*
+git add -u ../README.md ../make/*
 git commit -m "upgrading to sundials v${sundials_version}; modifying with new version number"
 
 # 3. Unpack the new Sundials version.
