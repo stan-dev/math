@@ -13,6 +13,7 @@
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/mat/meta/is_vector.hpp>
+#include <stan/math/prim/mat/meta/array_return_type.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/as_array_or_scalar.hpp>
 #include <stan/math/prim/scal/meta/as_scalar.hpp>
