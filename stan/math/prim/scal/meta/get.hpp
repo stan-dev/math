@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_GET_HPP
 #define STAN_MATH_PRIM_SCAL_META_GET_HPP
 
-
 #include <cmath>
 #include <cstddef>
 #include <type_traits>
