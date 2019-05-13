@@ -4,7 +4,6 @@
 
 #include <cmath>
 #include <cstddef>
-#include <type_traits>
 
 namespace stan {
 
