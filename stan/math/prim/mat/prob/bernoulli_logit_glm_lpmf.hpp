@@ -59,7 +59,8 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
     const T_y &y, const T_x &x, const T_alpha &alpha, const T_beta &beta) {
   static const char *function = "bernoulli_logit_glm_lpmf";
 
-  typedef typename partials_return_type<T_y, T_x, T_alpha, T_beta>::type T_partials_return;
+  typedef typename partials_return_type<T_y, T_x, T_alpha, T_beta>::type
+      T_partials_return;
   using T_y_val = matrix_return_type<T_y>;
 
   using Eigen::Dynamic;
