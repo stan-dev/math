@@ -119,17 +119,19 @@ void autocorrelation(const Eigen::MatrixBase<DerivedA>& y,
   centered_signal.head(N) = y.array() - y.mean();
 
   Eigen::Matrix<std::complex<T>, Eigen::Dynamic, 1> freqvec(Mt2);
+  fft.SetFlag(fft.HalfSpectrum);
   fft.fwd(freqvec, centered_signal);
   // cwiseAbs2 == norm
   freqvec = freqvec.cwiseAbs2();
 
-  Eigen::Matrix<std::complex<T>, Eigen::Dynamic, 1> ac_tmp(Mt2);
+  Eigen::Matrix<T, Eigen::Dynamic, 1> ac_tmp(Mt2);
   fft.inv(ac_tmp, freqvec);
+  fft.ClearFlag(fft.HalfSpectrum);
 
   for (size_t i = 0; i < N; ++i)
     ac_tmp(i) /= (N - i);
 
-  ac = ac_tmp.head(N).real().array() / ac_tmp(0).real();
+  ac = ac_tmp.head(N).array() / ac_tmp(0);
 }
 
 /**

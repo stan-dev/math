@@ -9,7 +9,7 @@
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/lbeta.hpp>
+#include <stan/math/prim/scal/fun/beta.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -102,7 +102,7 @@ typename return_type<T_size1, T_size2>::type beta_binomial_cdf(
     C += lgamma(N_dbl + 2) - lgamma(N_dbl + alpha_dbl + beta_dbl);
     C = exp(C);
 
-    C *= F / exp(lbeta(alpha_dbl, beta_dbl));
+    C *= F / stan::math::beta(alpha_dbl, beta_dbl);
     C /= N_dbl + 1;
 
     const T_partials_return Pi = 1 - C;
