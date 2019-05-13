@@ -18,8 +18,8 @@ namespace math {
  */
 template <typename T>
 inline bool is_consistent_size(const T& x, size_t expected_size) {
-  return (!is_vector<T>::value
-          || (is_vector<T>::value && expected_size == stan::size_of(x)));
+  return !is_vector<T>::value
+          || (is_vector<T>::value && expected_size == stan::size_of(x));
 }
 
 }  // namespace math

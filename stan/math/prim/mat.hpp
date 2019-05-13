@@ -52,6 +52,9 @@
 #include <stan/math/prim/mat/err/is_cholesky_factor_corr.hpp>
 #include <stan/math/prim/mat/err/is_cholesky_factor.hpp>
 #include <stan/math/prim/mat/err/is_column_index.hpp>
+#include <stan/math/prim/mat/err/is_consistent_size_mvt.hpp>
+#include <stan/math/prim/mat/err/is_consistent_sizes_mvt.hpp>
+#include <stan/math/prim/mat/err/is_column_index.hpp>
 #include <stan/math/prim/mat/err/is_corr_matrix.hpp>
 #include <stan/math/prim/mat/err/is_ldlt_factor.hpp>
 #include <stan/math/prim/mat/err/is_lower_triangular.hpp>

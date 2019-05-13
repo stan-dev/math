@@ -7,7 +7,6 @@ namespace stan {
 /**
  * scalar_seq_view provides a uniform sequence-like wrapper around either a
  * scalar or a sequence of scalars.
- *
  * @tparam C the container type; will be the scalar type if wrapping a scalar
  * @tparam T the scalar type
  */
@@ -31,7 +30,6 @@ class scalar_seq_view {
 
 /**
  * This specialization handles wrapping a scalar as if it were a sequence.
- *
  * @tparam T the scalar type
  */
 template <typename T>

@@ -11,23 +11,22 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the hypergeometric function (3F2) called with
- * supplied arguments will converge, assuming arguments are
- * finite values.
- * @tparam T_a1 Type of <code>a1</code>
- * @tparam T_a2 Type of <code>a2</code>
- * @tparam T_a3 Type of <code>a3</code>
- * @tparam T_b1 Type of <code>b1</code>
- * @tparam T_b2 Type of <code>b2</code>
- * @tparam T_z Type of <code>z</code>
+ * Check if the hypergeometric function (3F2) called with supplied arguments
+ * will converge, assuming arguments are finite values.
+ * @tparam T_a1 Type of `a1`
+ * @tparam T_a2 Type of `a2`
+ * @tparam T_a3 Type of `a3`
+ * @tparam T_b1 Type of `b1`
+ * @tparam T_b2 Type of `b2`
+ * @tparam T_z Type of `z`
  * @param a1 Variable to check
  * @param a2 Variable to check
  * @param a3 Variable to check
  * @param b1 Variable to check
  * @param b2 Variable to check
  * @param z Variable to check
- * @return <code>true</code> if <code>3F2(a1, a2, a3, b1, b2, z)</code>
- *   meets convergence conditions, and no coefficient is NaN
+ * @return `true` if `3F2(a1, a2, a3, b1, b2, z)` meets convergence conditions,
+ *  and no coefficient is NaN
  */
 template <typename T_a1, typename T_a2, typename T_a3, typename T_b1,
           typename T_b2, typename T_z>
@@ -36,8 +35,8 @@ inline bool is_3F2_converges(const T_a1& a1, const T_a2& a2, const T_a3& a3,
   using std::fabs;
   using std::floor;
 
-  if (!(is_not_nan(a1) || is_not_nan(a2) || is_not_nan(a3) || is_not_nan(b1)
-        || is_not_nan(b2) || is_not_nan(z)))
+  if (!is_not_nan(a1) && !is_not_nan(a2) && !is_not_nan(a3) && !is_not_nan(b1)
+      && !is_not_nan(b2) && !is_not_nan(z))
     return false;
 
   int num_terms = 0;
@@ -56,11 +55,15 @@ inline bool is_3F2_converges(const T_a1& a1, const T_a2& a2, const T_a3& a3,
     num_terms = floor(fabs(value_of_rec(a3)));
   }
 
-  bool is_undefined = (is_nonpositive_integer(b1) && fabs(b1) <= num_terms)
-                      || (is_nonpositive_integer(b2) && fabs(b2) <= num_terms);
+  if (is_nonpositive_integer(b1)
+      && fabs(b1) <= num_terms
+      && is_nonpositive_integer(b2)
+      && fabs(b2) <= num_terms)
+    return false;
 
-  if (!((is_polynomial && !is_undefined) || (fabs(z) < 1.0 && !is_undefined)
-        || (fabs(z) == 1.0 && !is_undefined && b1 + b2 > a1 + a2 + a3)))
+  if (!is_polynomial
+      && !(fabs(z) < 1.0)
+      && !(fabs(z) == 1.0 && b1 + b2 > a1 + a2 + a3))
     return false;
 
   return true;

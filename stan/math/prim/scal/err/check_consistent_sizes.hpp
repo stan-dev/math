@@ -8,18 +8,17 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the dimension of <code>x1</code> is consistent with
- * <code>x2</code>.
+ * Check if the dimension of `x1` is consistent with `x2`.
  * Consistent size is defined as having the same size if vector-like or
  * being a scalar.
- * @tparam T1 Type of <code>x1</code>
- * @tparam T2 Type of <code>x2</code>
+ * @tparam T1 Type of `x1`
+ * @tparam T2 Type of `x2`
  * @param function Function name (for error messages)
  * @param name1 Variable name (for error messages)
  * @param x1 Variable to check for consistent size
  * @param name2 Variable name (for error messages)
  * @param x2 Variable to check for consistent size
- * @throw <code>invalid_argument</code> if sizes are inconsistent
+ * @throw `invalid_argument` if sizes are inconsistent
  */
 template <typename T1, typename T2>
 inline void check_consistent_sizes(const char* function, const char* name1,
@@ -32,13 +31,12 @@ inline void check_consistent_sizes(const char* function, const char* name1,
 }
 
 /**
- * Check if the dimension of <code>x1</code>, <code>x2</code>, and
- * <code>x3</code> are consistent.
+ * Check if the dimension of `x1`, `x2`, and `x3` are consistent.
  * Consistent size is defined as having the same size if vector-like or
  * being a scalar.
- * @tparam T1 Type of <code>x1</code>
- * @tparam T2 Type of <code>x2</code>
- * @tparam T3 Type of <code>x3</code>
+ * @tparam T1 Type of `x1`
+ * @tparam T2 Type of `x2`
+ * @tparam T3 Type of `x3`
  * @param function Function name (for error messages)
  * @param name1 Variable name (for error messages)
  * @param x1 Variable to check for consistent size
@@ -46,7 +44,7 @@ inline void check_consistent_sizes(const char* function, const char* name1,
  * @param x2 Variable to check for consistent size
  * @param name3 Variable name (for error messages)
  * @param x3 Variable to check for consistent size
- * @throw <code>invalid_argument</code> if sizes are inconsistent
+ * @throw `invalid_argument` if sizes are inconsistent
  */
 template <typename T1, typename T2, typename T3>
 inline void check_consistent_sizes(const char* function, const char* name1,
@@ -62,14 +60,13 @@ inline void check_consistent_sizes(const char* function, const char* name1,
 }
 
 /**
- * Check if the dimension of <code>x1</code>, <code>x2</code>, <code>x3</code>,
- * and <code>x4</code> are consistent.
+ * Check if the dimension of `x1`, `x2`, `x3`, and `x4` are consistent.
  * Consistent size is defined as having the same size if
  * vector-like or being a scalar.
- * @tparam T1 Type of <code>x1</code>
- * @tparam T2 Type of <code>x2</code>
- * @tparam T3 Type of <code>x3</code>
- * @tparam T4 Type of <code>x4</code>
+ * @tparam T1 Type of `x1`
+ * @tparam T2 Type of `x2`
+ * @tparam T3 Type of `x3`
+ * @tparam T4 Type of `x4`
  * @param function Function name (for error messages)
  * @param name1 Variable name (for error messages)
  * @param x1 Variable to check for consistent size
@@ -79,7 +76,7 @@ inline void check_consistent_sizes(const char* function, const char* name1,
  * @param x3 Variable to check for consistent size
  * @param name4 Variable name (for error messages)
  * @param x4 Variable to check for consistent size
- * @throw <code>invalid_argument</code> if sizes are inconsistent
+ * @throw `invalid_argument` if sizes are inconsistent
  */
 template <typename T1, typename T2, typename T3, typename T4>
 inline void check_consistent_sizes(const char* function, const char* name1,

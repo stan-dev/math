@@ -9,21 +9,20 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the dimension of x1 is consistent with x2.
+ * Check if the dimension of `x1` is consistent with `x2`.
  * Consistent size is defined as having the same size if vector of
  * vectors or being a single vector.
- * @tparam T1 Type of x1
- * @tparam T2 Type of x2
+ * @tparam T1 Type of `x1`
+ * @tparam T2 Type of `x2`
  * @param x1 Variable to check for consistent size
  * @param x2 Variable to check for consistent size
  * @return <code>true</code> if sizes are consistent
  */
 template <typename T1, typename T2>
 inline bool is_consistent_sizes_mvt(const T1& x1, const T2& x2) {
-  using stan::length_mvt;
-  size_t max_size = std::max(length_mvt(x1), length_mvt(x2));
-  return (is_consistent_size_mvt(x1, max_size)
-          && check_consistent_size_mvt(x2, max_size));
+  return length_mvt(x1) > length_mvt(x2)
+    ? is_consistent_size_mvt(x2, length_mvt(x1))
+    : is_consistent_size_mvt(x1, length_mvt(x2));
 }
 
 }  // namespace math

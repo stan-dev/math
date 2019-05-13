@@ -19,7 +19,7 @@ namespace math {
  * @throw <code>std::domain_error</code> if the matrix is not symmetric,
  *   if the matrix is not positive definite, or if any element of the matrix
  *   is nan
- **/
+ */
 template <typename T_y>
 inline void check_cov_matrix(
     const char* function, const char* name,

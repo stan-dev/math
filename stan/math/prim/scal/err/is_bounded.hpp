@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_ERR_IS_BOUNDED_HPP
 
 #include <stan/math/prim/scal/meta/max_size.hpp>
-#include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/get.hpp>
 
 namespace stan {
@@ -17,8 +17,8 @@ namespace math {
  * @param y Value to check
  * @param low Low bound
  * @param high High bound
- * @return <code>true</code> if the value provided is within the bound provided
- *   and none of the arguments are NaN
+ * @return `true` if the value provided is within the bound provided
+ *   and none of the arguments are `NaN`
  */
 template <typename T_y, typename T_low, typename T_high>
 inline bool is_bounded(const T_y& y, const T_low& low, const T_high& high) {
