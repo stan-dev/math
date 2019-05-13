@@ -69,8 +69,8 @@ typename return_type<T_x, T_alpha, T_beta, T_precision>::type
 neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
                             const T_beta& beta, const T_precision& phi) {
   static const char* function = "neg_binomial_2_log_glm_lpmf";
-  using T_partials_return
-      = stan::partials_return_type<T_y, T_x, T_alpha, T_beta, T_precision>;
+  typedef typename stan::partials_return_type<T_y, T_x, T_alpha, T_beta, T_precision>::type 
+  T_partials_return;
   using T_precision_val = array_return_type<T_precision>;
   using T_sum_val = array_return_type<T_y, T_precision>;
 
