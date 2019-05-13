@@ -85,10 +85,8 @@ inline Eigen::Matrix<double, R1, C2> mdivide_left_tri(
     } else {
       A_inv_cl = transpose(lower_triangular_inverse(transpose(A_cl)));
     }
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> C(A.rows(), b.cols());
     matrix_cl C_cl = A_inv_cl * b_cl;
-    copy(C, C_cl);  // NOLINT
-    return C;
+    return from_matrix_cl(C_cl);
   } else {
 #endif
     return A.template triangularView<TriView>().solve(b);
@@ -119,9 +117,7 @@ inline Eigen::Matrix<double, R1, C1> mdivide_left_tri(
     } else {
       A_cl = transpose(lower_triangular_inverse(transpose(A_cl)));
     }
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> A_inv(n, n);
-    copy(A_inv, A_cl);  // NOLINT
-    return A_inv;
+    return from_matrix_cl(A_cl);
   } else {
 #endif
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> b;
