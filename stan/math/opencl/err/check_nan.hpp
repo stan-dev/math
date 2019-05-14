@@ -28,10 +28,10 @@ inline void check_nan(const char* function, const char* name,
   try {
     int nan_flag = 0;
     matrix_cl nan_chk(1, 1);
-    copy(nan_chk, nan_flag);  // NOLINT
+    nan_chk = to_matrix_cl(nan_flag);
     opencl_kernels::check_nan(cl::NDRange(y.rows(), y.cols()), y, nan_chk,
                               y.rows(), y.cols());
-    copy(nan_flag, nan_chk);  // NOLINT
+    nan_flag = from_matrix_cl<int>(nan_chk);
     if (nan_flag) {
       domain_error(function, name, "has NaN values", "");
     }

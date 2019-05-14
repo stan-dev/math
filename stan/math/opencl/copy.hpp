@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_FUN_OPENCL_COPY_HPP
-#define STAN_MATH_PRIM_MAT_FUN_OPENCL_COPY_HPP
+#ifndef STAN_MATH_OPENCL_COPY_HPP
+#define STAN_MATH_OPENCL_COPY_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/opencl_context.hpp>
@@ -28,21 +28,16 @@ namespace math {
  * the destination matrix that is stored
  * on the OpenCL device.
  *
- * @tparam T type of data in the Eigen matrix
- * @param dst destination matrix on the OpenCL device
+ * @tparam R Compile time rows of the Eigen matrix
+ * @tparam C Compile time columns of the Eigen matrix
  * @param src source Eigen matrix
- *
- * @throw <code>std::invalid_argument</code> if the
- * matrices do not have matching dimensions
+ * @return matrix_cl with a copy of the data in the source matrix
  */
 template <int R, int C>
-void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
-  check_size_match("copy (Eigen -> (OpenCL))", "src.rows()", src.rows(),
-                   "dst.rows()", dst.rows());
-  check_size_match("copy (Eigen -> (OpenCL))", "src.cols()", src.cols(),
-                   "dst.cols()", dst.cols());
+inline matrix_cl to_matrix_cl(const Eigen::Matrix<double, R, C>& src) {
+  matrix_cl dst(src.rows(), src.cols());
   if (src.size() == 0) {
-    return;
+    return dst;
   }
   try {
     /**
@@ -61,6 +56,7 @@ void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
   } catch (const cl::Error& e) {
     check_opencl_error("copy Eigen->(OpenCL)", e);
   }
+  return dst;
 }
 
 /**
@@ -68,21 +64,15 @@ void copy(matrix_cl& dst, const Eigen::Matrix<double, R, C>& src) {
  * on the OpenCL device to the destination Eigen
  * matrix.
  *
- * @tparam T type of data in the Eigen matrix
- * @param dst destination Eigen matrix
  * @param src source matrix on the OpenCL device
- *
- * @throw <code>std::invalid_argument</code> if the
- * matrices do not have matching dimensions
+ * @return Eigen matrix with a copy of the data in the source matrix
  */
-template <int R, int C>
-void copy(Eigen::Matrix<double, R, C>& dst, const matrix_cl& src) {
-  check_size_match("copy ((OpenCL) -> Eigen)", "src.rows()", src.rows(),
-                   "dst.rows()", dst.rows());
-  check_size_match("copy ((OpenCL) -> Eigen)", "src.cols()", src.cols(),
-                   "dst.cols()", dst.cols());
+inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> from_matrix_cl(
+    const matrix_cl& src) {
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> dst(src.rows(),
+                                                            src.cols());
   if (src.size() == 0) {
-    return;
+    return dst;
   }
   try {
     /**
@@ -103,6 +93,7 @@ void copy(Eigen::Matrix<double, R, C>& dst, const matrix_cl& src) {
   } catch (const cl::Error& e) {
     check_opencl_error("copy (OpenCL)->Eigen", e);
   }
+  return dst;
 }
 
 /**
@@ -184,19 +175,15 @@ inline matrix_cl packed_copy(const std::vector<double>& src, int rows) {
  * destination matrix. Both matrices
  * are stored on the OpenCL device.
  *
- * @param dst destination matrix
  * @param src source matrix
- *
+ * @return matrix_cl with copies of values in the source matrix
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
-inline void copy(matrix_cl& dst, const matrix_cl& src) {
-  check_size_match("copy ((OpenCL) -> (OpenCL))", "src.rows()", src.rows(),
-                   "dst.rows()", dst.rows());
-  check_size_match("copy ((OpenCL) -> (OpenCL))", "src.cols()", src.cols(),
-                   "dst.cols()", dst.cols());
+inline matrix_cl copy_cl(const matrix_cl& src) {
+  matrix_cl dst(src.rows(), src.cols());
   if (src.size() == 0) {
-    return;
+    return dst;
   }
   try {
     /**
@@ -216,16 +203,18 @@ inline void copy(matrix_cl& dst, const matrix_cl& src) {
   } catch (const cl::Error& e) {
     check_opencl_error("copy (OpenCL)->(OpenCL)", e);
   }
+  return dst;
 }
 
 /**
  * Copy A 1 by 1 source matrix from the Device to  the host.
- * @tparam An arithmetic type to pass the value from the OpenCL matrix to.
- * @param dst Arithmetic to receive the matrix_cl value.
+ * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
  * @param src A 1x1 matrix on the device.
+ * @return dst Arithmetic to receive the matrix_cl value.
  */
 template <typename T, std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
-inline void copy(T& dst, const matrix_cl& src) {
+inline T from_matrix_cl(const matrix_cl& src) {
+  T dst;
   check_size_match("copy ((OpenCL) -> (OpenCL))", "src.rows()", src.rows(),
                    "dst.rows()", 1);
   check_size_match("copy ((OpenCL) -> (OpenCL))", "src.cols()", src.cols(),
@@ -240,16 +229,18 @@ inline void copy(T& dst, const matrix_cl& src) {
   } catch (const cl::Error& e) {
     check_opencl_error("copy (OpenCL)->(OpenCL)", e);
   }
+  return dst;
 }
 
 /**
  * Copy an arithmetic type to the device.
- * @tparam An arithmetic type to pass the value from the OpenCL matrix to.
+ * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
  * @param src Arithmetic to receive the matrix_cl value.
- * @param dst A 1x1 matrix on the device.
+ * @return A 1x1 matrix on the device.
  */
 template <typename T, std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
-inline void copy(matrix_cl& dst, const T& src) {
+inline matrix_cl to_matrix_cl(const T& src) {
+  matrix_cl dst(1, 1);
   check_size_match("copy ((OpenCL) -> (OpenCL))", "src.rows()", dst.rows(),
                    "dst.rows()", 1);
   check_size_match("copy ((OpenCL) -> (OpenCL))", "src.cols()", dst.cols(),
@@ -263,6 +254,7 @@ inline void copy(matrix_cl& dst, const T& src) {
   } catch (const cl::Error& e) {
     check_opencl_error("copy (OpenCL)->(OpenCL)", e);
   }
+  return dst;
 }
 
 }  // namespace math
