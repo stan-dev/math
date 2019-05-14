@@ -15,9 +15,11 @@
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/mat/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#ifdef STAN_OPENCL
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/err/check_nan.hpp>
 #include <stan/math/opencl/gp_exp_quad_cov.hpp>
+#endif
 #include <cmath>
 #include <vector>
 #include <type_traits>

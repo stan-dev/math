@@ -2,8 +2,8 @@
 #define TEST_UNIT_MATH_REV_ARR_UTIL_HPP
 
 #include <stan/math/rev/arr.hpp>
-#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 namespace test {

@@ -1,6 +1,6 @@
-#include <stan/math/rev/scal.hpp>
-#include <test/unit/math/rev/scal/util.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 
 TEST(AgradRev, log_inv_logit_diff) {

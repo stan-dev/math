@@ -1,8 +1,8 @@
-#include <stan/math/rev/scal.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/rev/scal/fun/nan_util.hpp>
-#include <test/unit/math/rev/scal/util.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/scal.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
+#include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <gtest/gtest.h>
 
 void test_logit(double u) {
   using stan::math::log;

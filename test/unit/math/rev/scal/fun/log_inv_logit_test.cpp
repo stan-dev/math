@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
-#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 void test_log_inv_logit(const double x) {
