@@ -283,7 +283,7 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
   matrix_cl x_cl(x, 1, x.size());
   check_nan(function_name, "x", x_cl);
   matrix_cl cov_cl = gp_exp_quad_cov(x_cl, sigma, length_scale);
-  copy(cov, cov_cl);  // NOLINT
+  cov = from_matrix_cl(cov_cl);  // NOLINT
 
   return cov;
 }
@@ -326,7 +326,7 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
   matrix_cl x_cl(x);
   check_nan(function_name, "x", x_cl);
   matrix_cl cov_cl = gp_exp_quad_cov(x_cl, sigma, length_scale);
-  copy(cov, cov_cl);  // NOLINT
+  cov = from_matrix_cl(cov_cl);  // NOLINT
 
   return cov;
 }
@@ -372,7 +372,7 @@ inline Eigen::MatrixXd gp_exp_quad_cov(
   matrix_cl x_cl(x_new);
   check_nan(function_name, "x", x_cl);
   matrix_cl cov_cl = gp_exp_quad_cov(x_cl, sigma, 1);
-  copy(cov, cov_cl);  // NOLINT
+  cov = from_matrix_cl(cov_cl);  // NOLINT
   return cov;
 }
 
@@ -413,7 +413,7 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
   matrix_cl x2_cl(x2, 1, x2.size());
   check_nan(function_name, "x2", x2_cl);
   matrix_cl cov_cl = gp_exp_quad_cov(x1_cl, x2_cl, sigma, length_scale);
-  copy(cov, cov_cl);  // NOLINT
+  cov = from_matrix_cl(cov_cl);  // NOLINT
   return cov;
 }
 
@@ -462,7 +462,7 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
   matrix_cl x2_cl(x2);
   check_nan(function_name, "x2", x2_cl);
   matrix_cl cov_cl = gp_exp_quad_cov(x1_cl, x2_cl, sigma, length_scale);
-  copy(cov, cov_cl);  // NOLINT
+  cov = from_matrix_cl(cov_cl);  // NOLINT
   return cov;
 }
 
@@ -519,7 +519,7 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
   matrix_cl x2_cl(x2_new);
   check_nan(function_name, "x2", x2_cl);
   matrix_cl cov_cl = gp_exp_quad_cov(x1_cl, x2_cl, sigma, 1);
-  copy(cov, cov_cl);  // NOLINT
+  cov = from_matrix_cl(cov_cl);  // NOLINT
   return cov;
 }
 #endif
