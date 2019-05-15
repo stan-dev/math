@@ -7,6 +7,9 @@
 #include <stan/math/prim/mat/fun/divide_columns.hpp>
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
 #include <stan/math/prim/mat/meta/is_constant_struct.hpp>
+#include <stan/math/opencl/copy.hpp>
+#include <stan/math/opencl/err/check_nan.hpp>
+#include <stan/math/opencl/gp_exp_quad_cov.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
@@ -15,9 +18,6 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/err/check_nan.hpp>
-#include <stan/math/opencl/gp_exp_quad_cov.hpp>
 #include <cmath>
 #include <vector>
 #include <type_traits>
