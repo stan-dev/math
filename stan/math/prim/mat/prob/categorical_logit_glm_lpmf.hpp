@@ -78,9 +78,10 @@ categorical_logit_glm_lpmf(
   Array<T_partials_return, Dynamic, Dynamic> lin
       = (x_val * beta_val).rowwise() + alpha_val_vec;
   Array<T_partials_return, Dynamic, 1> lin_max
-      = lin.rowwise().maxCoeff();  // This is used to prevent overflow when
-                                   // calculating softmax/log_sum_exp and similar
-                                   // expressions
+      = lin.rowwise()
+            .maxCoeff();  // This is used to prevent overflow when
+                          // calculating softmax/log_sum_exp and similar
+                          // expressions
   Array<T_partials_return, Dynamic, Dynamic> exp_lin
       = exp(lin.colwise() - lin_max);
   Array<T_partials_return, Dynamic, 1> inv_sum_exp_lin
