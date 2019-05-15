@@ -13,12 +13,11 @@ using namespace stan::math;
 
 namespace stan {
 namespace math {
-template<bool propto, typename T_x, typename T_alpha, typename T_beta>
+template <bool propto, typename T_x, typename T_alpha, typename T_beta>
 typename return_type<T_x, T_alpha, T_beta>::type
-categorical_logit_glm_simple_lpmf(const Matrix<int, Dynamic, 1>& y,
-                                  const Matrix<T_x, Dynamic, Dynamic>& x,
-                                  const T_alpha& alpha,
-                                  const Matrix<T_beta, Dynamic, Dynamic>& beta) {
+categorical_logit_glm_simple_lpmf(
+    const Matrix<int, Dynamic, 1>& y, const Matrix<T_x, Dynamic, Dynamic>& x,
+    const T_alpha& alpha, const Matrix<T_beta, Dynamic, Dynamic>& beta) {
   typedef typename return_type<T_x, T_beta>::type T_x_beta;
   typedef typename return_type<T_x, T_beta, T_alpha>::type T_return;
 
@@ -26,19 +25,24 @@ categorical_logit_glm_simple_lpmf(const Matrix<int, Dynamic, 1>& y,
 
   const auto& alpha_row = as_column_vector_or_scalar(alpha).transpose();
 
-  Eigen::Matrix<T_return, Dynamic, Dynamic> tmp = (x.template cast<T_x_beta>() * beta.template cast<T_x_beta>()).array().rowwise() + alpha_row.array();
+  Eigen::Matrix<T_return, Dynamic, Dynamic> tmp
+      = (x.template cast<T_x_beta>() * beta.template cast<T_x_beta>())
+            .array()
+            .rowwise()
+        + alpha_row.array();
 
   T_return lpmf = 0;
-  //iterate overt instances
+  // iterate overt instances
   for (int i = 0; i < N_instances; i++) {
     lpmf += categorical_logit_lpmf<propto>(y[i], tmp.row(i).transpose().eval());
   }
   return lpmf;
 }
-}
-}
+}  // namespace math
+}  // namespace stan
 
-TEST(ProbDistributionsCategoricalLogitGLM, glm_matches_categorical_logit_doubles) {
+TEST(ProbDistributionsCategoricalLogitGLM,
+     glm_matches_categorical_logit_doubles) {
   double eps = 1e-13;
   const size_t N_instances = 5;
   const size_t N_attributes = 2;
@@ -55,15 +59,17 @@ TEST(ProbDistributionsCategoricalLogitGLM, glm_matches_categorical_logit_doubles
 
   EXPECT_NEAR((categorical_logit_glm_simple_lpmf<false>(y, x, alpha, beta)),
               (stan::math::categorical_logit_glm_lpmf(y, x, alpha, beta)), eps);
-  EXPECT_NEAR(
-          (categorical_logit_glm_simple_lpmf<true>(y, x, alpha, beta)),
-          (stan::math::categorical_logit_glm_lpmf<true>(y, x, alpha, beta)), eps);
+  EXPECT_NEAR((categorical_logit_glm_simple_lpmf<true>(y, x, alpha, beta)),
+              (stan::math::categorical_logit_glm_lpmf<true>(y, x, alpha, beta)),
+              eps);
 
   EXPECT_NEAR((categorical_logit_glm_simple_lpmf<false>(y, x, alpha_vec, beta)),
-              (stan::math::categorical_logit_glm_lpmf(y, x, alpha_vec, beta)), eps);
+              (stan::math::categorical_logit_glm_lpmf(y, x, alpha_vec, beta)),
+              eps);
   EXPECT_NEAR(
-          (categorical_logit_glm_simple_lpmf<true>(y, x, alpha_vec, beta)),
-          (stan::math::categorical_logit_glm_lpmf<true>(y, x, alpha_vec, beta)), eps);
+      (categorical_logit_glm_simple_lpmf<true>(y, x, alpha_vec, beta)),
+      (stan::math::categorical_logit_glm_lpmf<true>(y, x, alpha_vec, beta)),
+      eps);
 }
 
 TEST(ProbDistributionsCategoricalLogitGLM, glm_matches_categorical_logit_vars) {
@@ -73,10 +79,12 @@ TEST(ProbDistributionsCategoricalLogitGLM, glm_matches_categorical_logit_vars) {
   const size_t N_classes = 3;
   Matrix<int, Dynamic, 1> y(N_instances);
   y << 1, 3, 1, 2, 2;
-  Matrix<var, Dynamic, Dynamic> x1(N_instances, N_attributes), x2(N_instances, N_attributes);
+  Matrix<var, Dynamic, Dynamic> x1(N_instances, N_attributes),
+      x2(N_instances, N_attributes);
   x1 << -12, 46, -42, 24, 25, 27, -14, -11, 5, 18;
   x2 << -12, 46, -42, 24, 25, 27, -14, -11, 5, 18;
-  Matrix<var, Dynamic, Dynamic> beta1(N_attributes, N_classes), beta2(N_attributes, N_classes);
+  Matrix<var, Dynamic, Dynamic> beta1(N_attributes, N_classes),
+      beta2(N_attributes, N_classes);
   beta1 << 0.3, 2, 0.4, -0.1, -1.3, 1;
   beta2 << 0.3, 2, 0.4, -0.1, -1.3, 1;
   Matrix<var, 1, Dynamic> alpha1(N_classes), alpha2(N_classes);
@@ -156,7 +164,8 @@ TEST(ProbDistributionsCategoricalLogitGLM, glm_matches_categorical_logit_vars) {
   }
 }
 
-TEST(ProbDistributionsCategoricalLogitGLM, glm_matches_categorical_logit_vars_big) {
+TEST(ProbDistributionsCategoricalLogitGLM,
+     glm_matches_categorical_logit_vars_big) {
   double eps = 1e-11;
   const size_t N_instances = 89;
   const size_t N_attributes = 23;
@@ -270,25 +279,41 @@ TEST(ProbDistributionsCategoricalLogitGLM, glm_interfaces) {
     alpha_vec_var.emplace_back(alpha_vec_double[i]);
   }
 
-  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(y, x_double, alpha_double, beta_double));
-  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(y, x_double, alpha_vec_double, beta_double));
+  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(
+      y, x_double, alpha_double, beta_double));
+  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(
+      y, x_double, alpha_vec_double, beta_double));
 
-  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(y, x_var, alpha_double, beta_double));
-  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(y, x_var, alpha_vec_double, beta_double));
-  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(y, x_double, alpha_var, beta_double));
-  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(y, x_double, alpha_vec_var, beta_double));
-  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(y, x_double, alpha_double, beta_var));
-  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(y, x_double, alpha_vec_double, beta_var));
+  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(y, x_var, alpha_double,
+                                                         beta_double));
+  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(
+      y, x_var, alpha_vec_double, beta_double));
+  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(y, x_double, alpha_var,
+                                                         beta_double));
+  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(
+      y, x_double, alpha_vec_var, beta_double));
+  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(
+      y, x_double, alpha_double, beta_var));
+  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(
+      y, x_double, alpha_vec_double, beta_var));
 
-  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(y, x_double, alpha_var, beta_var));
-  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(y, x_double, alpha_vec_var, beta_var));
-  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(y, x_var, alpha_double, beta_var));
-  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(y, x_var, alpha_vec_double, beta_var));
-  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(y, x_var, alpha_var, beta_double));
-  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(y, x_var, alpha_vec_var, beta_double));
+  EXPECT_NO_THROW(
+      stan::math::categorical_logit_glm_lpmf(y, x_double, alpha_var, beta_var));
+  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(
+      y, x_double, alpha_vec_var, beta_var));
+  EXPECT_NO_THROW(
+      stan::math::categorical_logit_glm_lpmf(y, x_var, alpha_double, beta_var));
+  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(
+      y, x_var, alpha_vec_double, beta_var));
+  EXPECT_NO_THROW(
+      stan::math::categorical_logit_glm_lpmf(y, x_var, alpha_var, beta_double));
+  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(
+      y, x_var, alpha_vec_var, beta_double));
 
-  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(y, x_var, alpha_var, beta_var));
-  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(y, x_var, alpha_vec_var, beta_var));
+  EXPECT_NO_THROW(
+      stan::math::categorical_logit_glm_lpmf(y, x_var, alpha_var, beta_var));
+  EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(
+      y, x_var, alpha_vec_var, beta_var));
 }
 
 TEST(ProbDistributionsCategoricalLogitGLM, glm_errors) {
@@ -333,18 +358,32 @@ TEST(ProbDistributionsCategoricalLogitGLM, glm_errors) {
   alpha_val2 << 0.5, -2, INFINITY;
 
   EXPECT_NO_THROW(stan::math::categorical_logit_glm_lpmf(y, x, alpha, beta));
-  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y_size, x, alpha, beta), std::invalid_argument);
-  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y_val1, x, alpha, beta), std::domain_error);
-  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y_val2, x, alpha, beta), std::domain_error);
-  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x_size1, alpha, beta), std::invalid_argument);
-  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x_size2, alpha, beta), std::invalid_argument);
-  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x_val1, alpha, beta), std::domain_error);
-  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x_val2, alpha, beta), std::domain_error);
-  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x, alpha_size, beta), std::invalid_argument);
-  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x, alpha_val1, beta), std::domain_error);
-  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x, alpha_val2, beta), std::domain_error);
-  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x, alpha, beta_size1), std::invalid_argument);
-  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x, alpha, beta_size2), std::invalid_argument);
-  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x, alpha, beta_val1), std::domain_error);
-  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x, alpha, beta_val2), std::domain_error);
+  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y_size, x, alpha, beta),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y_val1, x, alpha, beta),
+               std::domain_error);
+  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y_val2, x, alpha, beta),
+               std::domain_error);
+  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x_size1, alpha, beta),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x_size2, alpha, beta),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x_val1, alpha, beta),
+               std::domain_error);
+  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x_val2, alpha, beta),
+               std::domain_error);
+  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x, alpha_size, beta),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x, alpha_val1, beta),
+               std::domain_error);
+  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x, alpha_val2, beta),
+               std::domain_error);
+  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x, alpha, beta_size1),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x, alpha, beta_size2),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x, alpha, beta_val1),
+               std::domain_error);
+  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y, x, alpha, beta_val2),
+               std::domain_error);
 }
