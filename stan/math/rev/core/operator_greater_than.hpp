@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_CORE_OPERATOR_GREATER_THAN_HPP
 
 #include <stan/math/rev/core/var.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -22,7 +23,10 @@ namespace math {
  * @param b Second variable.
  * @return True if first variable's value is greater than second's.
  */
-inline bool operator>(const var& a, const var& b) { return a.val() > b.val(); }
+inline bool operator>(const var& a, const var& b) {
+  using std::isgreater;
+  return isgreater(a.val(), b.val()); 
+}
 
 /**
  * Greater than operator comparing variable's value and double
@@ -32,7 +36,10 @@ inline bool operator>(const var& a, const var& b) { return a.val() > b.val(); }
  * @param b Second value.
  * @return True if first variable's value is greater than second value.
  */
-inline bool operator>(const var& a, double b) { return a.val() > b; }
+inline bool operator>(const var& a, double b) {
+  using std::isgreater;
+  return isgreater(a.val(), b); 
+}
 
 /**
  * Greater than operator comparing a double and a variable's value
@@ -42,7 +49,10 @@ inline bool operator>(const var& a, double b) { return a.val() > b; }
  * @param b Second variable.
  * @return True if first value is greater than second variable's value.
  */
-inline bool operator>(double a, const var& b) { return a > b.val(); }
+inline bool operator>(double a, const var& b) {
+  using std::isgreater;
+  return isgreater(a, b.val()); 
+}
 
 }  // namespace math
 }  // namespace stan

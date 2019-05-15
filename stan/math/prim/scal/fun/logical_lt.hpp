@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOGICAL_LT_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOGICAL_LT_HPP
 
+#include <cmath>
+
 namespace stan {
 namespace math {
 
@@ -16,7 +18,8 @@ namespace math {
  */
 template <typename T1, typename T2>
 inline int logical_lt(T1 x1, T2 x2) {
-  return x1 < x2;
+  using std::isless;
+  return isless(x1, x2);
 }
 
 }  // namespace math

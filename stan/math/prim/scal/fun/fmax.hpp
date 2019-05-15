@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <boost/math/tools/promotion.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -18,11 +19,8 @@ namespace math {
 template <typename T1, typename T2>
 inline typename boost::math::tools::promote_args<T1, T2>::type fmax(
     const T1& x, const T2& y) {
-  if (is_nan(x))
-    return y;
-  if (is_nan(y))
-    return x;
-  return x > y ? x : y;
+  using std::fmax;
+  return fmax(x, y);
 }
 
 }  // namespace math

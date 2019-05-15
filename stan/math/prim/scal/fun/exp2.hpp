@@ -18,8 +18,8 @@ namespace math {
  * @return exponent base 2 of argument.
  */
 inline double exp2(double y) {
-  using std::pow;
-  return pow(2.0, y);
+  using std::exp2;
+  return exp2(y);
 }
 
 /**
@@ -29,7 +29,10 @@ inline double exp2(double y) {
  * @param y argument
  * @return exponent base 2 of argument
  */
-inline double exp2(int y) { return exp2(static_cast<double>(y)); }
+inline double exp2(int y) {
+  using std::exp2;
+  return exp2(y);
+}
 
 }  // namespace math
 }  // namespace stan
