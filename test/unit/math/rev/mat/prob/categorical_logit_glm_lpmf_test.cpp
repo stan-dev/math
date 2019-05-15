@@ -8,8 +8,8 @@
 #include <vector>
 #include <cmath>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 using Eigen::MatrixXd;
 using Eigen::RowVectorXd;
 using stan::math::var;
@@ -24,7 +24,8 @@ categorical_logit_glm_simple_lpmf(
 
   const size_t N_instances = x.rows();
 
-  const auto& alpha_row = stan::math::as_column_vector_or_scalar(alpha).transpose();
+  const auto& alpha_row
+      = stan::math::as_column_vector_or_scalar(alpha).transpose();
 
   Eigen::Matrix<T_return, Dynamic, Dynamic> tmp
       = (x.template cast<T_x_beta>() * beta.template cast<T_x_beta>())
@@ -35,7 +36,8 @@ categorical_logit_glm_simple_lpmf(
   T_return lpmf = 0;
   // iterate overt instances
   for (int i = 0; i < N_instances; i++) {
-    lpmf += stan::math::categorical_logit_lpmf<propto>(y[i], tmp.row(i).transpose().eval());
+    lpmf += stan::math::categorical_logit_lpmf<propto>(
+        y[i], tmp.row(i).transpose().eval());
   }
   return lpmf;
 }
