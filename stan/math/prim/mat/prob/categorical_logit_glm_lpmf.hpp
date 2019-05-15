@@ -91,7 +91,7 @@ categorical_logit_glm_lpmf(
   for (int i = 0; i < N_instances; i++) {
     logp += lin(i, y[i] - 1);
   }
-  // TODO maybe we can replace previous block with the following line when we
+  // TODO(Tadej) maybe we can replace previous block with the following line when we
   // have newer Eigen  T_partials_return logp = lin(Eigen::all,y-1).sum() +
   // log(inv_sum_exp_lin).sum() - lin_max.sum();
 
@@ -115,7 +115,7 @@ categorical_logit_glm_lpmf(
         = beta_y
           - (exp_lin.matrix() * beta_val.transpose()).array().colwise()
                 * inv_sum_exp_lin;
-    // TODO maybe we can replace previous block with the following line when we
+    // TODO(Tadej) maybe we can replace previous block with the following line when we
     // have newer Eigen  ops_partials.edge1_.partials_ = beta_val(y - 1, all) -
     // (exp_lin.matrix() * beta.transpose()).colwise() * inv_sum_exp_lin;
   }
@@ -136,7 +136,7 @@ categorical_logit_glm_lpmf(
       for (int i = 0; i < N_instances; i++) {
         beta_derivative.col(y[i] - 1) += x_val.row(i);
       }
-      // TODO maybe we can replace previous loop with the following line when we
+      // TODO(Tadej) maybe we can replace previous loop with the following line when we
       // have newer Eigen  ops_partials.edge3_.partials_(Eigen::all, y - 1) +=
       // x_val.colwise.sum().transpose();
 

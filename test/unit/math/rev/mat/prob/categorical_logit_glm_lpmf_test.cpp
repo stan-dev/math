@@ -8,22 +8,23 @@
 #include <vector>
 #include <cmath>
 
-using namespace Eigen;
-using namespace stan::math;
+using Eigen::Matrix;
+using Eigen::Dynamic;
+using Eigen::MatrixXd;
+using Eigen::RowVectorXd;
+using stan::math::var;
 
-namespace stan {
-namespace math {
 template <bool propto, typename T_x, typename T_alpha, typename T_beta>
-typename return_type<T_x, T_alpha, T_beta>::type
+typename stan::return_type<T_x, T_alpha, T_beta>::type
 categorical_logit_glm_simple_lpmf(
     const Matrix<int, Dynamic, 1>& y, const Matrix<T_x, Dynamic, Dynamic>& x,
     const T_alpha& alpha, const Matrix<T_beta, Dynamic, Dynamic>& beta) {
-  typedef typename return_type<T_x, T_beta>::type T_x_beta;
-  typedef typename return_type<T_x, T_beta, T_alpha>::type T_return;
+  typedef typename stan::return_type<T_x, T_beta>::type T_x_beta;
+  typedef typename stan::return_type<T_x, T_beta, T_alpha>::type T_return;
 
   const size_t N_instances = x.rows();
 
-  const auto& alpha_row = as_column_vector_or_scalar(alpha).transpose();
+  const auto& alpha_row = stan::math::as_column_vector_or_scalar(alpha).transpose();
 
   Eigen::Matrix<T_return, Dynamic, Dynamic> tmp
       = (x.template cast<T_x_beta>() * beta.template cast<T_x_beta>())
@@ -34,12 +35,10 @@ categorical_logit_glm_simple_lpmf(
   T_return lpmf = 0;
   // iterate overt instances
   for (int i = 0; i < N_instances; i++) {
-    lpmf += categorical_logit_lpmf<propto>(y[i], tmp.row(i).transpose().eval());
+    lpmf += stan::math::categorical_logit_lpmf<propto>(y[i], tmp.row(i).transpose().eval());
   }
   return lpmf;
 }
-}  // namespace math
-}  // namespace stan
 
 TEST(ProbDistributionsCategoricalLogitGLM,
      glm_matches_categorical_logit_doubles) {
