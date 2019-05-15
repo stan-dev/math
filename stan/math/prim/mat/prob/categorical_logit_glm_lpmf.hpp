@@ -14,14 +14,29 @@
 namespace stan {
 namespace math {
 
-template<bool propto, typename T_x, typename T_alpha, typename T_beta>
-typename return_type<T_x, T_alpha, T_beta>::type
+/**
+ * Returns the log PMF of the Generalized Linear Model (GLM)
+ * with categorical distribution and logit (softmax) link function.
+ *
+ * @tparam T_x_scalar type of a scalar in the matrix of independent variables (features);
+ * @tparam T_alpha type of the intercept(s); This can be Eigen::RowVector or std::vector
+ * @tparam T_beta_scalar type of a scalar in the matrix of weights
+ * @param y vector of classes; Values should be between 1 and number of classes, including endpoints
+ * @param x design matrix
+ * @param alpha intercept (in log odds)
+ * @param beta weight matrix
+ * @return log probability or log sum of probabilities
+ * @throw std::domain_error x, beta or alpha is infinite or y is not within bounds
+ * @throw std::invalid_argument if container sizes mismatch.
+ */
+template<bool propto, typename T_x_scalar, typename T_alpha, typename T_beta_scalar>
+typename return_type<T_x_scalar, T_alpha, T_beta_scalar>::type
 categorical_logit_glm_lpmf(const Eigen::Matrix<int, Eigen::Dynamic, 1>& y,
-                           const Eigen::Matrix<T_x, Eigen::Dynamic, Eigen::Dynamic>& x,
-                           const T_alpha& alpha, //RowVector<var> or std::vector    .... Matrix?
-                           const Eigen::Matrix<T_beta, Eigen::Dynamic, Eigen::Dynamic>& beta) {
+                           const Eigen::Matrix<T_x_scalar, Eigen::Dynamic, Eigen::Dynamic>& x,
+                           const T_alpha& alpha,
+                           const Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, Eigen::Dynamic>& beta) {
 
-  typedef typename stan::partials_return_type<T_x, T_alpha, T_beta>::type T_partials_return;
+  typedef typename stan::partials_return_type<T_x_scalar, T_alpha, T_beta_scalar>::type T_partials_return;
   static const char* function = "categorical_logit_glm_lpmf";
 
   using Eigen::Dynamic;
@@ -42,7 +57,7 @@ categorical_logit_glm_lpmf(const Eigen::Matrix<int, Eigen::Dynamic, 1>& y,
   if (size_zero(y, x, beta))
     return 0;
 
-  if (!include_summand<propto, T_x, T_alpha, T_beta>::value)
+  if (!include_summand<propto, T_x_scalar, T_alpha, T_beta_scalar>::value)
     return 0;
 
   const auto& x_val = value_of_rec(x);
@@ -70,9 +85,9 @@ categorical_logit_glm_lpmf(const Eigen::Matrix<int, Eigen::Dynamic, 1>& y,
   }
 
   // Compute the derivatives.
-  operands_and_partials<Matrix<T_x, Dynamic, Dynamic>, T_alpha, Matrix<T_beta, Dynamic, Dynamic>> ops_partials(x, alpha, beta);
+  operands_and_partials<Matrix<T_x_scalar, Dynamic, Dynamic>, T_alpha, Matrix<T_beta_scalar, Dynamic, Dynamic>> ops_partials(x, alpha, beta);
 
-  if (!is_constant_struct<T_x>::value) {
+  if (!is_constant_struct<T_x_scalar>::value) {
 
     Array<double, Dynamic, Dynamic> beta_y(N_instances, N_attributes);
     for (int i = 0; i < N_instances; i++) {
@@ -82,7 +97,7 @@ categorical_logit_glm_lpmf(const Eigen::Matrix<int, Eigen::Dynamic, 1>& y,
     //TODO maybe we can replace previous block with the following line when we have newer Eigen
     //ops_partials.edge1_.partials_ = beta_val(y - 1, all) - (exp_lin.matrix() * beta.transpose()).colwise() * inv_sum_exp_lin;
   }
-  if (!is_constant_struct<T_alpha>::value || !is_constant_struct<T_beta>::value) {
+  if (!is_constant_struct<T_alpha>::value || !is_constant_struct<T_beta_scalar>::value) {
     Array<T_partials_return, Dynamic, Dynamic> neg_softmax_lin = exp_lin.colwise() * -inv_sum_exp_lin;
     if (!is_constant_struct<T_alpha>::value) {
       ops_partials.edge2_.partials_ = neg_softmax_lin.colwise().sum();
@@ -90,7 +105,7 @@ categorical_logit_glm_lpmf(const Eigen::Matrix<int, Eigen::Dynamic, 1>& y,
         ops_partials.edge2_.partials_[y[i] - 1] += 1;
       }
     }
-    if (!is_constant_struct<T_beta>::value) {
+    if (!is_constant_struct<T_beta_scalar>::value) {
       Matrix<T_partials_return, Dynamic, Dynamic> beta_derivative = x_val.transpose() * neg_softmax_lin.matrix();
 
       for (int i = 0; i < N_instances; i++) {
