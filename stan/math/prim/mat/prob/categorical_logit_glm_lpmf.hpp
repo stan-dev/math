@@ -51,11 +51,11 @@ categorical_logit_glm_lpmf(const Eigen::Matrix<int, Eigen::Dynamic, 1>& y,
 
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val).transpose();
 
-  //TODO logsumexp/softmax overflow
-  Array<T_partials_return, Dynamic, Dynamic> lin = (x_val * beta_val).rowwise() + alpha_val_vec; //instances*classes TODO opt multiplication?
-  Array<T_partials_return, Dynamic, Dynamic> exp_lin = exp(lin); //instances*classes
-  Array<T_partials_return, Dynamic, 1> sum_exp_lin = exp_lin.rowwise().sum(); //instances
-  Array<T_partials_return, Dynamic, 1> log_sum_exp_lin = log(sum_exp_lin); //instances
+  Array<T_partials_return, Dynamic, Dynamic> lin = (x_val * beta_val).rowwise() + alpha_val_vec; //TODO opt multiplication?
+  Array<T_partials_return, Dynamic, 1> lin_max = lin.rowwise().maxCoeff(); //This is used to prevent overflow when calculating softmax/log_sum_exp and similar expressions
+  Array<T_partials_return, Dynamic, Dynamic> exp_lin = exp(lin.colwise() - lin_max);
+  Array<T_partials_return, Dynamic, 1> sum_exp_lin = exp_lin.rowwise().sum();
+  Array<T_partials_return, Dynamic, 1> log_sum_exp_lin = lin_max + log(sum_exp_lin);
 
   T_partials_return logp = -log_sum_exp_lin.sum();
   for (int i = 0; i < N_instances; i++) {
@@ -70,8 +70,8 @@ categorical_logit_glm_lpmf(const Eigen::Matrix<int, Eigen::Dynamic, 1>& y,
     check_finite(function, "Matrix of independent variables", x);
   }
 
-  Array<T_partials_return, Dynamic, Dynamic> softmax_lin = exp_lin.colwise() / sum_exp_lin; //instances*classes TODO multi instead of div
-  Matrix<T_partials_return, 1, Dynamic> sum_softmax_lin = softmax_lin.colwise().sum(); //classes
+  Array<T_partials_return, Dynamic, Dynamic> softmax_lin = exp_lin.colwise() / sum_exp_lin; //TODO multi instead of div
+  Matrix<T_partials_return, 1, Dynamic> sum_softmax_lin = softmax_lin.colwise().sum();
 
   // Compute the derivatives.
   operands_and_partials<Matrix<T_x, Dynamic, Dynamic>, T_alpha, Matrix<T_beta, Dynamic, Dynamic>> ops_partials(x, alpha, beta);
@@ -84,7 +84,7 @@ categorical_logit_glm_lpmf(const Eigen::Matrix<int, Eigen::Dynamic, 1>& y,
     }
     ops_partials.edge1_.partials_ = beta_y - (exp_lin.matrix() * beta_val.transpose()).array().colwise() / sum_exp_lin;
     //TODO replace previous block with the following line when we have newer Eigen
-    //ops_partials.edge1_.partials_ = beta_val(y-1,all) - (exp_lin*beta.transpose()).colwise() / sum_exp_lin;
+    //ops_partials.edge1_.partials_ = beta_val(y - 1, all) - (exp_lin.matrix() * beta.transpose()).colwise() / sum_exp_lin;
   }
   if (!is_constant_struct<T_alpha>::value) {
     ops_partials.edge2_.partials_ = -sum_softmax_lin;
@@ -100,9 +100,8 @@ categorical_logit_glm_lpmf(const Eigen::Matrix<int, Eigen::Dynamic, 1>& y,
     }
     ops_partials.edge3_.partials_ = std::move(beta_derivative);
     //TODO replace previous block with the following line when we have newer Eigen
-    //ops_partials.edge3_.partials_(Eigen::all, y-1) -= x_val.colwise.sum().transpose();
+    //ops_partials.edge3_.partials_(Eigen::all, y - 1) -= x_val.colwise.sum().transpose();
   }
-
   return ops_partials.build(logp);
 
 }
