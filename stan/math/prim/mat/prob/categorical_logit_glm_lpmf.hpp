@@ -51,27 +51,23 @@ categorical_logit_glm_lpmf(const Eigen::Matrix<int, Eigen::Dynamic, 1>& y,
 
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val).transpose();
 
-  Array<T_partials_return, Dynamic, Dynamic> lin = (x_val * beta_val).rowwise() + alpha_val_vec; //TODO opt multiplication?
+  Array<T_partials_return, Dynamic, Dynamic> lin = (x_val * beta_val).rowwise() + alpha_val_vec;
   Array<T_partials_return, Dynamic, 1> lin_max = lin.rowwise().maxCoeff(); //This is used to prevent overflow when calculating softmax/log_sum_exp and similar expressions
   Array<T_partials_return, Dynamic, Dynamic> exp_lin = exp(lin.colwise() - lin_max);
-  Array<T_partials_return, Dynamic, 1> sum_exp_lin = exp_lin.rowwise().sum();
-  Array<T_partials_return, Dynamic, 1> log_sum_exp_lin = lin_max + log(sum_exp_lin);
+  Array<T_partials_return, Dynamic, 1> inv_sum_exp_lin = 1 / exp_lin.rowwise().sum();
 
-  T_partials_return logp = -log_sum_exp_lin.sum();
+  T_partials_return logp = log(inv_sum_exp_lin).sum() - lin_max.sum();
   for (int i = 0; i < N_instances; i++) {
     logp += lin(i, y[i] - 1);
   }
-  //TODO replace previous block with the following line when we have newer Eigen
-  //T_partials_return logp = (lin(Eigen::all,y-1) - log_sum_exp_lin).sum();
+  //TODO maybe we can replace previous block with the following line when we have newer Eigen
+  //T_partials_return logp = lin(Eigen::all,y-1).sum() + log(inv_sum_exp_lin).sum() - lin_max.sum();
 
   if (!std::isfinite(logp)) {
     check_finite(function, "Weight vector", beta);
     check_finite(function, "Intercept", alpha);
     check_finite(function, "Matrix of independent variables", x);
   }
-
-  Array<T_partials_return, Dynamic, Dynamic> softmax_lin = exp_lin.colwise() / sum_exp_lin; //TODO multi instead of div
-  Matrix<T_partials_return, 1, Dynamic> sum_softmax_lin = softmax_lin.colwise().sum();
 
   // Compute the derivatives.
   operands_and_partials<Matrix<T_x, Dynamic, Dynamic>, T_alpha, Matrix<T_beta, Dynamic, Dynamic>> ops_partials(x, alpha, beta);
@@ -82,25 +78,29 @@ categorical_logit_glm_lpmf(const Eigen::Matrix<int, Eigen::Dynamic, 1>& y,
     for (int i = 0; i < N_instances; i++) {
       beta_y.row(i) = beta_val.col(y[i] - 1);
     }
-    ops_partials.edge1_.partials_ = beta_y - (exp_lin.matrix() * beta_val.transpose()).array().colwise() / sum_exp_lin;
-    //TODO replace previous block with the following line when we have newer Eigen
-    //ops_partials.edge1_.partials_ = beta_val(y - 1, all) - (exp_lin.matrix() * beta.transpose()).colwise() / sum_exp_lin;
+    ops_partials.edge1_.partials_ = beta_y - (exp_lin.matrix() * beta_val.transpose()).array().colwise() * inv_sum_exp_lin;
+    //TODO maybe we can replace previous block with the following line when we have newer Eigen
+    //ops_partials.edge1_.partials_ = beta_val(y - 1, all) - (exp_lin.matrix() * beta.transpose()).colwise() * inv_sum_exp_lin;
   }
-  if (!is_constant_struct<T_alpha>::value) {
-    ops_partials.edge2_.partials_ = -sum_softmax_lin;
-    for (int i = 0; i < N_instances; i++) {
-      ops_partials.edge2_.partials_[y[i] - 1] += 1;
+  if (!is_constant_struct<T_alpha>::value || !is_constant_struct<T_beta>::value) {
+    Array<T_partials_return, Dynamic, Dynamic> neg_softmax_lin = exp_lin.colwise() * -inv_sum_exp_lin;
+    if (!is_constant_struct<T_alpha>::value) {
+      ops_partials.edge2_.partials_ = neg_softmax_lin.colwise().sum();
+      for (int i = 0; i < N_instances; i++) {
+        ops_partials.edge2_.partials_[y[i] - 1] += 1;
+      }
     }
-  }
-  if (!is_constant_struct<T_beta>::value) {
+    if (!is_constant_struct<T_beta>::value) {
+      Matrix<T_partials_return, Dynamic, Dynamic> beta_derivative = x_val.transpose() * neg_softmax_lin.matrix();
 
-    Matrix<T_partials_return, Dynamic, Dynamic> beta_derivative = -x_val.transpose() * softmax_lin.matrix();
-    for (int i = 0; i < N_instances; i++) {
-      beta_derivative.col(y[i] - 1) += x_val.row(i);
+      for (int i = 0; i < N_instances; i++) {
+        beta_derivative.col(y[i] - 1) += x_val.row(i);
+      }
+      //TODO maybe we can replace previous loop with the following line when we have newer Eigen
+      //ops_partials.edge3_.partials_(Eigen::all, y - 1) += x_val.colwise.sum().transpose();
+
+      ops_partials.edge3_.partials_ = std::move(beta_derivative);
     }
-    ops_partials.edge3_.partials_ = std::move(beta_derivative);
-    //TODO replace previous block with the following line when we have newer Eigen
-    //ops_partials.edge3_.partials_(Eigen::all, y - 1) -= x_val.colwise.sum().transpose();
   }
   return ops_partials.build(logp);
 
