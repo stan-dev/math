@@ -2,7 +2,6 @@
 #define STAN_MATH_FWD_CORE_OPERATOR_LESS_THAN_OR_EQUAL_HPP
 
 #include <stan/math/fwd/core/fvar.hpp>
-#include <cmath>
 
 namespace stan {
 namespace math {
@@ -20,8 +19,7 @@ namespace math {
  */
 template <typename T>
 inline bool operator<=(const fvar<T>& x, const fvar<T>& y) {
-  using std::islessequal;
-  return islessequal(x.val_, y.val_);
+  return x.val_ <= y.val_;
 }
 
 /**
@@ -36,8 +34,7 @@ inline bool operator<=(const fvar<T>& x, const fvar<T>& y) {
  */
 template <typename T>
 inline bool operator<=(const fvar<T>& x, double y) {
-  using std::islessequal;
-  return islessequal(x.val_, y);
+  return x.val_ <= y;
 }
 
 /**
@@ -52,8 +49,7 @@ inline bool operator<=(const fvar<T>& x, double y) {
  */
 template <typename T>
 inline bool operator<=(double x, const fvar<T>& y) {
-  using std::islessequal;
-  return islessequal(x, y.val_);
+  return x <= y.val_;
 }
 }  // namespace math
 }  // namespace stan

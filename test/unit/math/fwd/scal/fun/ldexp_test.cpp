@@ -2,11 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
-class AgradFwdLdexp : public testing::Test {
-  void SetUp() {}
-};
-
-TEST_F(AgradFwdLdexp, Fvar) {
+TEST(AgradFwdLdexp, Fvar) {
   using stan::math::exp2;
   using stan::math::fvar;
   using stan::math::ldexp;
@@ -40,7 +36,7 @@ TEST_F(AgradFwdLdexp, Fvar) {
   EXPECT_FLOAT_EQ(exp2(5), f.d_);
 }
 
-TEST_F(AgradFwdLdexp, FvarFvarDouble) {
+TEST(AgradFwdLdexp, FvarFvarDouble) {
   using stan::math::exp2;
   using stan::math::fvar;
   using stan::math::ldexp;

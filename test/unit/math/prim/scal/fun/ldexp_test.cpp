@@ -19,7 +19,6 @@ TEST(MathFunctions, ldexp_double) {
 TEST(MathFunctions, ldexp_int) {
   using stan::math::ldexp;
 
-  // promotes results to double
   EXPECT_FLOAT_EQ(0.0, ldexp(static_cast<int>(0), 5));
   EXPECT_FLOAT_EQ(32.0, ldexp(static_cast<int>(1), 5));
   EXPECT_FLOAT_EQ(64.0, ldexp(static_cast<int>(2), 5));
