@@ -282,6 +282,7 @@
 #include <stan/math/prim/mat/prob/bernoulli_logit_glm_log.hpp>
 #include <stan/math/prim/mat/prob/bernoulli_logit_glm_lpmf.hpp>
 #include <stan/math/prim/mat/prob/categorical_log.hpp>
+#include <stan/math/prim/mat/prob/categorical_logit_glm_lpmf.hpp>
 #include <stan/math/prim/mat/prob/categorical_logit_log.hpp>
 #include <stan/math/prim/mat/prob/categorical_logit_lpmf.hpp>
 #include <stan/math/prim/mat/prob/categorical_logit_rng.hpp>
