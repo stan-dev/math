@@ -315,14 +315,6 @@ std::vector<double> adjoint_of_vv(const Eigen::Matrix<var, R, C>& A) {
   return ans;
 }
 
-template <int R, int C>
-std::vector<double> value_of_vv(const Eigen::Matrix<var, R, C>& A) {
-  std::vector<double> ans(A.size());
-  for (int i = 0; i < A.size(); i++) {
-    ans.push_back(A(i).vi_->val_);
-  }
-  return ans;
-}
 
 class var;
 template <>
@@ -335,8 +327,8 @@ class matrix_cl<var> {
    */
   const int rows_;
   const int cols_;
-  matrix_cl<double> val_;
-  matrix_cl<double> adj_;
+  mutable matrix_cl<double> val_;
+  mutable matrix_cl<double> adj_;
 
  public:
   int rows() const { return rows_; }
@@ -345,8 +337,8 @@ class matrix_cl<var> {
 
   int size() const { return rows_ * cols_; }
 
-  matrix_cl<double>& val() {return val_;}
-  matrix_cl<double>& adj() {return adj_;}
+  matrix_cl<double>& val() const {return val_;}
+  matrix_cl<double>& adj() const {return adj_;}
 
   template <int R, int C>
   explicit matrix_cl(const Eigen::Matrix<var, R, C>& A)
@@ -357,6 +349,11 @@ class matrix_cl<var> {
   explicit matrix_cl(const int& rows, const int& cols) :
   rows_(rows), cols_(cols), val_(rows, cols), adj_(rows, cols) {}
 
+  matrix_cl<var> operator=(const matrix_cl<var>& A) {
+    val_ = A.val();
+    adj_ = A.adj();
+    return *this;
+  }
 };
 
 }  // namespace math
