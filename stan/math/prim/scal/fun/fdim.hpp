@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_FDIM_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_FDIM_HPP
 
-#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <limits>
 
@@ -24,7 +24,7 @@ inline typename boost::math::tools::promote_args<T1, T2>::type fdim(T1 x,
                                                                     T2 y) {
   typedef typename boost::math::tools::promote_args<T1, T2>::type return_t;
   using std::numeric_limits;
-  if (is_nan(x, y))
+  if (is_any_nan(x, y))
     return numeric_limits<return_t>::quiet_NaN();
   return (x <= y) ? 0 : x - y;
 }

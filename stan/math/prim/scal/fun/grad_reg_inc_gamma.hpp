@@ -6,7 +6,7 @@
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <cmath>
 #include <limits>
 
@@ -51,7 +51,7 @@ typename return_type<T1, T2>::type grad_reg_inc_gamma(T1 a, T2 z, T1 g, T1 dig,
   using std::log;
   typedef typename return_type<T1, T2>::type TP;
 
-  if (is_nan(a, z, g, dig))
+  if (is_any_nan(a, z, g, dig))
     return std::numeric_limits<TP>::quiet_NaN();
 
   T2 l = log(z);

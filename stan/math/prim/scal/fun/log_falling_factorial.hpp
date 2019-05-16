@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LOG_FALLING_FACTORIAL_HPP
 
 #include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <limits>
@@ -54,7 +54,7 @@ namespace math {
 template <typename T1, typename T2>
 inline typename return_type<T1, T2>::type log_falling_factorial(const T1 x,
                                                                 const T2 n) {
-  if (is_nan(x, n))
+  if (is_any_nan(x, n))
     return std::numeric_limits<double>::quiet_NaN();
   static const char* function = "log_falling_factorial";
   check_positive(function, "first argument", x);

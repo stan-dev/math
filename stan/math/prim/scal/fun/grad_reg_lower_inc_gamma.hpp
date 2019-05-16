@@ -7,7 +7,7 @@
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
@@ -110,7 +110,7 @@ typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
   using std::pow;
   typedef typename return_type<T1, T2>::type TP;
 
-  if (is_nan(a, z))
+  if (is_any_nan(a, z))
     return std::numeric_limits<TP>::quiet_NaN();
 
   check_positive_finite("grad_reg_lower_inc_gamma", "a", a);
