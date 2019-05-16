@@ -22,12 +22,12 @@ namespace math {
  *    any element of the matrix is <code>NaN</code>.
  */
 inline void check_nan(const char* function, const char* name,
-                      const matrix_cl& y) {
+                      const matrix_cl<double>& y) {
   if (y.size() == 0)
     return;
   try {
     int nan_flag = 0;
-    matrix_cl nan_chk(1, 1);
+    matrix_cl<double> nan_chk(1, 1);
     nan_chk = to_matrix_cl(nan_flag);
     opencl_kernels::check_nan(cl::NDRange(y.rows(), y.cols()), y, nan_chk,
                               y.rows(), y.cols());

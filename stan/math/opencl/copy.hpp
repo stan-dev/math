@@ -34,8 +34,8 @@ namespace math {
  * @return matrix_cl with a copy of the data in the source matrix
  */
 template <int R, int C>
-inline matrix_cl to_matrix_cl(const Eigen::Matrix<double, R, C>& src) {
-  matrix_cl dst(src.rows(), src.cols());
+inline matrix_cl<double> to_matrix_cl(const Eigen::Matrix<double, R, C>& src) {
+  matrix_cl<double> dst(src.rows(), src.cols());
   if (src.size() == 0) {
     return dst;
   }
@@ -68,7 +68,7 @@ inline matrix_cl to_matrix_cl(const Eigen::Matrix<double, R, C>& src) {
  * @return Eigen matrix with a copy of the data in the source matrix
  */
 inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> from_matrix_cl(
-    const matrix_cl& src) {
+    const matrix_cl<double>& src) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> dst(src.rows(),
                                                             src.cols());
   if (src.size() == 0) {
@@ -105,7 +105,7 @@ inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> from_matrix_cl(
  * @return the packed std::vector
  */
 template <TriangularViewCL triangular_view>
-inline std::vector<double> packed_copy(const matrix_cl& src) {
+inline std::vector<double> packed_copy(const matrix_cl<double>& src) {
   const int packed_size = src.rows() * (src.rows() + 1) / 2;
   std::vector<double> dst(packed_size);
   if (dst.size() == 0) {
@@ -113,7 +113,7 @@ inline std::vector<double> packed_copy(const matrix_cl& src) {
   }
   try {
     const cl::CommandQueue queue = opencl_context.queue();
-    matrix_cl packed(packed_size, 1);
+    matrix_cl<double> packed(packed_size, 1);
     stan::math::opencl_kernels::pack(cl::NDRange(src.rows(), src.rows()),
                                      packed, src, src.rows(), src.rows(),
                                      triangular_view);
@@ -145,16 +145,16 @@ inline std::vector<double> packed_copy(const matrix_cl& src) {
  * for the packed triangular matrix
  */
 template <TriangularViewCL triangular_view>
-inline matrix_cl packed_copy(const std::vector<double>& src, int rows) {
+inline matrix_cl<double> packed_copy(const std::vector<double>& src, int rows) {
   const int packed_size = rows * (rows + 1) / 2;
   check_size_match("copy (packed std::vector -> OpenCL)", "src.size()",
                    src.size(), "rows * (rows + 1) / 2", packed_size);
-  matrix_cl dst(rows, rows);
+  matrix_cl<double> dst(rows, rows);
   if (dst.size() == 0) {
     return dst;
   }
   try {
-    matrix_cl packed(packed_size, 1);
+    matrix_cl<double> packed(packed_size, 1);
     cl::Event packed_event;
     const cl::CommandQueue queue = opencl_context.queue();
     queue.enqueueWriteBuffer(packed.buffer(), CL_FALSE, 0,
@@ -180,8 +180,8 @@ inline matrix_cl packed_copy(const std::vector<double>& src, int rows) {
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
-inline matrix_cl copy_cl(const matrix_cl& src) {
-  matrix_cl dst(src.rows(), src.cols());
+inline matrix_cl<double> copy_cl(const matrix_cl<double>& src) {
+  matrix_cl<double> dst(src.rows(), src.cols());
   if (src.size() == 0) {
     return dst;
   }
@@ -213,7 +213,7 @@ inline matrix_cl copy_cl(const matrix_cl& src) {
  * @return dst Arithmetic to receive the matrix_cl value.
  */
 template <typename T, std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
-inline T from_matrix_cl(const matrix_cl& src) {
+inline T from_matrix_cl(const matrix_cl<double>& src) {
   T dst;
   check_size_match("copy ((OpenCL) -> (OpenCL))", "src.rows()", src.rows(),
                    "dst.rows()", 1);
@@ -239,8 +239,8 @@ inline T from_matrix_cl(const matrix_cl& src) {
  * @return A 1x1 matrix on the device.
  */
 template <typename T, std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
-inline matrix_cl to_matrix_cl(const T& src) {
-  matrix_cl dst(1, 1);
+inline matrix_cl<double> to_matrix_cl(const T& src) {
+  matrix_cl<double> dst(1, 1);
   check_size_match("copy ((OpenCL) -> (OpenCL))", "src.rows()", dst.rows(),
                    "dst.rows()", 1);
   check_size_match("copy ((OpenCL) -> (OpenCL))", "src.cols()", dst.cols(),

@@ -7,7 +7,9 @@
 
 namespace stan {
 namespace math {
+template <typename T>
 class matrix_cl;
+
 namespace opencl_kernels {
 
 // An in_buffer signifies a cl::Buffer argument used as input.
@@ -62,7 +64,7 @@ struct to_matrix_cl {
 
 template <>
 struct to_matrix_cl<cl::Buffer> {
-  typedef matrix_cl type;
+  typedef matrix_cl<double> type;
 };
 
 /**
@@ -72,17 +74,17 @@ struct to_matrix_cl<cl::Buffer> {
  */
 template <>
 struct to_matrix_cl<in_buffer> {
-  typedef matrix_cl type;
+  typedef matrix_cl<double> type;
 };
 
 template <>
 struct to_matrix_cl<out_buffer> {
-  typedef matrix_cl type;
+  typedef matrix_cl<double> type;
 };
 
 template <>
 struct to_matrix_cl<in_out_buffer> {
-  typedef matrix_cl type;
+  typedef matrix_cl<double> type;
 };
 
 // Alias for making const matrix_cl argument types
