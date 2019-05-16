@@ -356,6 +356,47 @@ class matrix_cl<var> {
   }
 };
 
+template <typename T>
+class fvar;
+template <>
+template <typename T>
+class matrix_cl<fvar<T>> {
+ private:
+  /**
+   * cl::Buffer provides functionality for working with the OpenCL buffer.
+   * An OpenCL buffer allocates the memory in the device that
+   * is provided by the context.
+   */
+  const int rows_;
+  const int cols_;
+  mutable matrix_cl<T> val_;
+  mutable matrix_cl<T> d_;
+
+ public:
+  int rows() const { return rows_; }
+
+  int cols() const { return cols_; }
+
+  int size() const { return rows_ * cols_; }
+
+  matrix_cl<T>& val() const {return val_;}
+  matrix_cl<T>& d() const {return d_;}
+
+  template <int R, int C>
+  explicit matrix_cl(const Eigen::Matrix<fvar<T>, R, C>& A)
+      : rows_(A.rows()), cols_(A.cols()) {}
+
+  explicit matrix_cl(const int& rows, const int& cols) :
+  rows_(rows), cols_(cols) {}
+
+  matrix_cl<fvar<T>> operator=(const matrix_cl<fvar<T>>& A) {
+    val_ = A.val();
+    d_ = A.d();
+    return *this;
+  }
+};
+
+
 }  // namespace math
 }  // namespace stan
 
