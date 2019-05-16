@@ -42,6 +42,8 @@ struct count_lpdf {
   }
 };
 
+static std::mutex cout_mutex;
+
 // without copying
 template <typename T_rate>
 struct fast_count_lpdf {
@@ -55,6 +57,12 @@ struct fast_count_lpdf {
   inline T_rate operator()(std::size_t start, std::size_t end) const {
     typedef typename stan::partials_return_type<T_n, T_rate>::type
         T_partials_return;
+
+    {
+      std::lock_guard<std::mutex> cout_lock(cout_mutex);
+      std::cout << "Reducing range " << start << " - " << end << " start."
+                << std::endl;
+    }
 
     T_partials_return logp(0.0);
 
@@ -79,15 +87,22 @@ struct fast_count_lpdf {
         ops_partials.edge1_.partials_[i]
             += n_vec[i] / stan::math::value_of(lambda_vec[i]) - 1.0;
     }
+
+    {
+      std::lock_guard<std::mutex> cout_lock(cout_mutex);
+      std::cout << "Reducing range " << start << " - " << end << " end."
+                << std::endl;
+    }
+
     return ops_partials.build(logp);
   }
 };
 
-static std::mutex cout_mutex;
+// static std::mutex cout_mutex;
 
 struct benchmark : public ::testing::Test {
-  const std::size_t elems = 10000;
-  const std::size_t num_iter = 1000;
+  const std::size_t elems = 1000000000;
+  const std::size_t num_iter = 1;
   std::vector<int> data;
   double lambda_d = 10.0;
 
@@ -151,6 +166,7 @@ TEST_F(benchmark, parallel_reduce_sum_d) {
 }
 */
 
+/*
 TEST_F(benchmark, parallel_reduce_sum_v) {
   typedef boost::counting_iterator<std::size_t> count_iter;
   using stan::math::var;
@@ -172,7 +188,9 @@ TEST_F(benchmark, parallel_reduce_sum_v) {
 
   EXPECT_FLOAT_EQ(poisson_lpdf.adj(), poisson_lpdf_ref.adj());
 }
+*/
 
+/**/
 TEST_F(benchmark, fast_parallel_reduce_sum_speed) {
   typedef boost::counting_iterator<std::size_t> count_iter;
   using stan::math::var;
@@ -190,6 +208,7 @@ TEST_F(benchmark, fast_parallel_reduce_sum_speed) {
   }
 }
 
+/*
 TEST_F(benchmark, fast_count_serial) {
   typedef boost::counting_iterator<std::size_t> count_iter;
   using stan::math::var;
@@ -238,7 +257,9 @@ TEST_F(benchmark, count_serial) {
     stan::math::recover_memory();
   }
 }
+*/
 
+/*
 TEST_F(benchmark, serial) {
   typedef boost::counting_iterator<std::size_t> count_iter;
   using stan::math::var;
@@ -251,7 +272,9 @@ TEST_F(benchmark, serial) {
     stan::math::recover_memory();
   }
 }
+*/
 
+/*
 TEST_F(benchmark, parallel_reduce_sum_lambda) {
   typedef boost::counting_iterator<std::size_t> count_iter;
   using stan::math::var;
@@ -271,6 +294,7 @@ TEST_F(benchmark, parallel_reduce_sum_lambda) {
     stan::math::recover_memory();
   }
 }
+*/
 
 /*
 TEST(AgradAutoDiff, parallel_for_each) {
