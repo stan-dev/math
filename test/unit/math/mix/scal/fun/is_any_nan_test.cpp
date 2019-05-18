@@ -6,8 +6,8 @@
 
 TEST(AgradMixIsAnyNan, Fvar) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::is_any_nan;
+  using stan::math::var;
 
   double infinity = std::numeric_limits<double>::infinity();
   double nan = std::numeric_limits<double>::quiet_NaN();
@@ -31,8 +31,8 @@ TEST(AgradMixIsAnyNan, Fvar) {
 
 TEST(AgradMixIsAnyNan, FvarFvar) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::is_any_nan;
+  using stan::math::var;
 
   double infinity = std::numeric_limits<double>::infinity();
   double nan = std::numeric_limits<double>::quiet_NaN();

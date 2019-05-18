@@ -13,7 +13,8 @@ namespace math {
  * Delegates to <code>is_nan</code>.
  *
  * @param x Value to test.
- * @return <code>true</code> if the value is NaN and <code>false</code> otherwise.
+ * @return <code>true</code> if the value is NaN and <code>false</code>
+ * otherwise.
  */
 template <typename T>
 inline bool is_nan(const fvar<T>& x) {

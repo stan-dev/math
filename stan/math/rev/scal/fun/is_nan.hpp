@@ -14,7 +14,8 @@ namespace math {
  *
  * @param v Value to test.
  *
- * @return <code>true</code> if the value is NaN and <code>false</code> otherwise.
+ * @return <code>true</code> if the value is NaN and <code>false</code>
+ * otherwise.
  */
 inline bool is_nan(const var& v) { return is_nan(v.val()); }
 
