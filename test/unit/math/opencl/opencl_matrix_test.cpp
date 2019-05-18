@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <vector>
 
-TEST(MathMatrixGPU, matrix_cl_creation) {
+TEST(MathMatrixCL, matrix_cl_creation) {
   stan::math::vector_d d1;
   stan::math::matrix_d d2;
   stan::math::matrix_d d3;

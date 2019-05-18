@@ -53,7 +53,7 @@ TEST(ErrorHandlingScalarGPU, check_nan_positions) {
   EXPECT_THROW(check_nan(function, "xx_mat3", xx_mat3), std::domain_error);
 }
 
-TEST(ErrorHandlingScalarGPU, check_rv_v_symmetric_gpu) {
+TEST(ErrorHandlingScalarGPU, check_rv_v_symmetric_cl) {
   const char* function = "check_symmetric";
 
   stan::math::row_vector_d rv;

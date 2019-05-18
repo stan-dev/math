@@ -75,15 +75,15 @@ TEST(MathMatrix, multiply_scalar) {
 
   stan::math::matrix_cl v_cl(v);
   v_cl = v_cl * 2.0;
-  stan::math::copy(v_cl_res, v_cl);
+  v_cl_res = stan::math::from_matrix_cl(v_cl);
 
   stan::math::matrix_cl rv_cl(rv);
   rv_cl = rv_cl * 2.0;
-  stan::math::copy(rv_cl_res, rv_cl);
+  rv_cl_res = stan::math::from_matrix_cl(rv_cl);
 
   stan::math::matrix_cl m_cl(m);
   m_cl = m_cl * 2.0;
-  stan::math::copy(m_cl_res, m_cl);
+  m_cl_res = stan::math::from_matrix_cl(m_cl);
 
   v = v * 2.0;
   rv = rv * 2.0;
@@ -112,8 +112,8 @@ TEST(MathMatrix, row_vector_vector) {
 
   m0_cl = rv_cl * v_cl;
   m1_cl = v_cl * rv_cl;
-  stan::math::copy(m0_cl_res, m0_cl);
-  stan::math::copy(m1_cl_res, m1_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
+  m1_cl_res = stan::math::from_matrix_cl(m1_cl);
 
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
   EXPECT_MATRIX_NEAR(m1, m1_cl_res, 1e-10);
@@ -132,7 +132,7 @@ TEST(MathMatrix, matrix_vector_small) {
   stan::math::matrix_cl m0_cl(4, 1);
 
   m0_cl = m_cl * v_cl;
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
 
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 }
@@ -150,7 +150,7 @@ TEST(MathMatrix, matrix_vector_big) {
   stan::math::matrix_cl m0_cl(400, 1);
 
   m0_cl = m_cl * v_cl;
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
 
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 }
@@ -168,7 +168,7 @@ TEST(MathMatrix, row_vector_matrix_small) {
   stan::math::matrix_cl m0_cl(1, 4);
 
   m0_cl = rv_cl * m_cl;
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
 
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 }
@@ -186,7 +186,7 @@ TEST(MathMatrix, row_vector_matrix_big) {
   stan::math::matrix_cl m0_cl(1, 400);
 
   m0_cl = rv_cl * m_cl;
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
 
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 }
@@ -205,28 +205,28 @@ TEST(MathMatrix, matrix_vector_tri_small) {
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Entire,
                                        stan::math::TriangularViewCL::Lower>(
       m_cl, v_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = m.triangularView<Eigen::Lower>() * v;
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Lower,
                                        stan::math::TriangularViewCL::Entire>(
       m_cl, v_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = m * v.triangularView<Eigen::Upper>();
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Entire,
                                        stan::math::TriangularViewCL::Upper>(
       m_cl, v_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = m.triangularView<Eigen::Upper>() * v;
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Upper,
                                        stan::math::TriangularViewCL::Entire>(
       m_cl, v_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   // the cast is needed because operator* for for two triangular views does not
@@ -236,7 +236,7 @@ TEST(MathMatrix, matrix_vector_tri_small) {
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Lower,
                                        stan::math::TriangularViewCL::Lower>(
       m_cl, v_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(m.triangularView<Eigen::Upper>())
@@ -244,7 +244,7 @@ TEST(MathMatrix, matrix_vector_tri_small) {
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Upper,
                                        stan::math::TriangularViewCL::Upper>(
       m_cl, v_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(m.triangularView<Eigen::Lower>())
@@ -252,7 +252,7 @@ TEST(MathMatrix, matrix_vector_tri_small) {
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Lower,
                                        stan::math::TriangularViewCL::Upper>(
       m_cl, v_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(m.triangularView<Eigen::Upper>())
@@ -260,7 +260,7 @@ TEST(MathMatrix, matrix_vector_tri_small) {
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Upper,
                                        stan::math::TriangularViewCL::Lower>(
       m_cl, v_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 }
 
@@ -278,28 +278,28 @@ TEST(MathMatrix, matrix_vector_tri_big) {
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Entire,
                                        stan::math::TriangularViewCL::Lower>(
       m_cl, v_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = m.triangularView<Eigen::Lower>() * v;
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Lower,
                                        stan::math::TriangularViewCL::Entire>(
       m_cl, v_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = m * v.triangularView<Eigen::Upper>();
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Entire,
                                        stan::math::TriangularViewCL::Upper>(
       m_cl, v_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = m.triangularView<Eigen::Upper>() * v;
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Upper,
                                        stan::math::TriangularViewCL::Entire>(
       m_cl, v_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   // the cast is needed because operator* for for two triangular views does not
@@ -309,7 +309,7 @@ TEST(MathMatrix, matrix_vector_tri_big) {
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Lower,
                                        stan::math::TriangularViewCL::Lower>(
       m_cl, v_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(m.triangularView<Eigen::Upper>())
@@ -317,7 +317,7 @@ TEST(MathMatrix, matrix_vector_tri_big) {
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Upper,
                                        stan::math::TriangularViewCL::Upper>(
       m_cl, v_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(m.triangularView<Eigen::Lower>())
@@ -325,7 +325,7 @@ TEST(MathMatrix, matrix_vector_tri_big) {
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Lower,
                                        stan::math::TriangularViewCL::Upper>(
       m_cl, v_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(m.triangularView<Eigen::Upper>())
@@ -333,7 +333,7 @@ TEST(MathMatrix, matrix_vector_tri_big) {
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Upper,
                                        stan::math::TriangularViewCL::Lower>(
       m_cl, v_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 }
 
@@ -349,35 +349,35 @@ TEST(MathMatrix, row_vector_matrix_tri_small) {
 
   m0 = rv * m;
   m0_cl = rv_cl * m_cl;
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = rv * m.triangularView<Eigen::Lower>();
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Entire,
                                        stan::math::TriangularViewCL::Lower>(
       rv_cl, m_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = rv.triangularView<Eigen::Lower>() * m;
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Lower,
                                        stan::math::TriangularViewCL::Entire>(
       rv_cl, m_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = rv * m.triangularView<Eigen::Upper>();
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Entire,
                                        stan::math::TriangularViewCL::Upper>(
       rv_cl, m_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = rv.triangularView<Eigen::Upper>() * m;
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Upper,
                                        stan::math::TriangularViewCL::Entire>(
       rv_cl, m_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   // the cast is needed because operator* for for two triangular views does not
@@ -387,7 +387,7 @@ TEST(MathMatrix, row_vector_matrix_tri_small) {
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Lower,
                                        stan::math::TriangularViewCL::Lower>(
       rv_cl, m_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(rv.triangularView<Eigen::Upper>())
@@ -395,7 +395,7 @@ TEST(MathMatrix, row_vector_matrix_tri_small) {
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Upper,
                                        stan::math::TriangularViewCL::Upper>(
       rv_cl, m_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(rv.triangularView<Eigen::Lower>())
@@ -403,7 +403,7 @@ TEST(MathMatrix, row_vector_matrix_tri_small) {
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Lower,
                                        stan::math::TriangularViewCL::Upper>(
       rv_cl, m_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(rv.triangularView<Eigen::Upper>())
@@ -411,7 +411,7 @@ TEST(MathMatrix, row_vector_matrix_tri_small) {
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Upper,
                                        stan::math::TriangularViewCL::Lower>(
       rv_cl, m_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 }
 
@@ -427,35 +427,35 @@ TEST(MathMatrix, row_vector_matrix_tri_big) {
 
   m0 = rv * m;
   m0_cl = rv_cl * m_cl;
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = rv * m.triangularView<Eigen::Lower>();
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Entire,
                                        stan::math::TriangularViewCL::Lower>(
       rv_cl, m_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = rv.triangularView<Eigen::Lower>() * m;
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Lower,
                                        stan::math::TriangularViewCL::Entire>(
       rv_cl, m_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = rv * m.triangularView<Eigen::Upper>();
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Entire,
                                        stan::math::TriangularViewCL::Upper>(
       rv_cl, m_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = rv.triangularView<Eigen::Upper>() * m;
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Upper,
                                        stan::math::TriangularViewCL::Entire>(
       rv_cl, m_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   // the cast is needed because operator* for for two triangular views does not
@@ -465,7 +465,7 @@ TEST(MathMatrix, row_vector_matrix_tri_big) {
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Lower,
                                        stan::math::TriangularViewCL::Lower>(
       rv_cl, m_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(rv.triangularView<Eigen::Upper>())
@@ -473,7 +473,7 @@ TEST(MathMatrix, row_vector_matrix_tri_big) {
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Upper,
                                        stan::math::TriangularViewCL::Upper>(
       rv_cl, m_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(rv.triangularView<Eigen::Lower>())
@@ -481,7 +481,7 @@ TEST(MathMatrix, row_vector_matrix_tri_big) {
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Lower,
                                        stan::math::TriangularViewCL::Upper>(
       rv_cl, m_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(rv.triangularView<Eigen::Upper>())
@@ -489,7 +489,7 @@ TEST(MathMatrix, row_vector_matrix_tri_big) {
   m0_cl = stan::math::opencl::multiply<stan::math::TriangularViewCL::Upper,
                                        stan::math::TriangularViewCL::Lower>(
       rv_cl, m_cl);
-  stan::math::copy(m0_cl_res, m0_cl);
+  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 }
 
@@ -506,7 +506,7 @@ TEST(MathMatrix, multiply_small) {
 
   auto m33 = m11 * m22;
 
-  stan::math::copy(m3_cl_res, m33);
+  m3_cl_res = stan::math::from_matrix_cl(m33);
 
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
@@ -525,7 +525,7 @@ TEST(MathMatrix, multiply_big) {
 
   auto m33 = m11 * m22;
 
-  stan::math::copy(m3_cl_res, m33);
+  m3_cl_res = stan::math::from_matrix_cl(m33);
 
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
@@ -545,7 +545,7 @@ TEST(MathMatrix, lower_tri_rect_multiply_small) {
   auto m33 = stan::math::opencl::multiply<stan::math::TriangularViewCL::Lower>(
       m11, m22);
 
-  stan::math::copy(m3_cl_res, m33);
+  m3_cl_res = stan::math::from_matrix_cl(m33);
 
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
@@ -566,7 +566,7 @@ TEST(MathMatrix, lower_tri_rect_multiply_big) {
   auto m33 = stan::math::opencl::multiply<stan::math::TriangularViewCL::Lower>(
       m11, m22);
 
-  stan::math::copy(m3_cl_res, m33);
+  m3_cl_res = stan::math::from_matrix_cl(m33);
 
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
@@ -587,7 +587,7 @@ TEST(MathMatrix, lower_tri_rect_multiply_big_rect) {
   auto m33 = stan::math::opencl::multiply<stan::math::TriangularViewCL::Lower>(
       m11, m22);
 
-  stan::math::copy(m3_cl_res, m33);
+  m3_cl_res = stan::math::from_matrix_cl(m33);
 
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
@@ -606,7 +606,7 @@ TEST(MathMatrix, upper_tri_rect_multiply_small) {
   auto m33 = stan::math::opencl::multiply<stan::math::TriangularViewCL::Upper>(
       m11, m22);
 
-  stan::math::copy(m3_cl_res, m33);
+  m3_cl_res = stan::math::from_matrix_cl(m33);
 
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
@@ -627,7 +627,7 @@ TEST(MathMatrix, upper_tri_rect_multiply_big) {
   auto m33 = stan::math::opencl::multiply<stan::math::TriangularViewCL::Upper>(
       m11, m22);
 
-  stan::math::copy(m3_cl_res, m33);
+  m3_cl_res = stan::math::from_matrix_cl(m33);
 
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
@@ -647,7 +647,7 @@ TEST(MathMatrix, upper_tri_rect_multiply_big_rect) {
   auto m33 = stan::math::opencl::multiply<stan::math::TriangularViewCL::Upper>(
       m11, m22);
 
-  stan::math::copy(m3_cl_res, m33);
+  m3_cl_res = stan::math::from_matrix_cl(m33);
 
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
@@ -668,7 +668,7 @@ TEST(MathMatrix, rect_lower_tri_multiply_small) {
                                           stan::math::TriangularViewCL::Lower>(
       m11, m22);
 
-  stan::math::copy(m3_cl_res, m33);
+  m3_cl_res = stan::math::from_matrix_cl(m33);
 
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
@@ -690,7 +690,7 @@ TEST(MathMatrix, rect_lower_tri_multiply_big) {
                                           stan::math::TriangularViewCL::Lower>(
       m11, m22);
 
-  stan::math::copy(m3_cl_res, m33);
+  m3_cl_res = stan::math::from_matrix_cl(m33);
 
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
@@ -712,7 +712,7 @@ TEST(MathMatrix, rect_lower_tri_multiply_big_rect) {
                                           stan::math::TriangularViewCL::Lower>(
       m11, m22);
 
-  stan::math::copy(m3_cl_res, m33);
+  m3_cl_res = stan::math::from_matrix_cl(m33);
 
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
@@ -733,7 +733,7 @@ TEST(MathMatrix, rect_upper_tri_multiply_small) {
                                           stan::math::TriangularViewCL::Upper>(
       m11, m22);
 
-  stan::math::copy(m3_cl_res, m33);
+  m3_cl_res = stan::math::from_matrix_cl(m33);
 
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
@@ -755,7 +755,7 @@ TEST(MathMatrix, rect_upper_tri_multiply_big) {
                                           stan::math::TriangularViewCL::Upper>(
       m11, m22);
 
-  stan::math::copy(m3_cl_res, m33);
+  m3_cl_res = stan::math::from_matrix_cl(m33);
 
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
@@ -777,7 +777,7 @@ TEST(MathMatrix, rect_upper_tri_multiply_big_rect) {
                                           stan::math::TriangularViewCL::Upper>(
       m11, m22);
 
-  stan::math::copy(m3_cl_res, m33);
+  m3_cl_res = stan::math::from_matrix_cl(m33);
 
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
@@ -796,7 +796,7 @@ TEST(MathMatrix, multiply_big_split_4) {
 
   auto m33 = stan::math::opencl::multiply(m11, m22);
 
-  stan::math::copy(m3_cl_res, m33);
+  m3_cl_res = stan::math::from_matrix_cl(m33);
 
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
@@ -815,7 +815,7 @@ TEST(MathMatrix, multiply_big_split_11) {
 
   auto m33 = stan::math::opencl::multiply(m11, m22);
 
-  stan::math::copy(m3_cl_res, m33);
+  m3_cl_res = stan::math::from_matrix_cl(m33);
 
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
@@ -834,7 +834,7 @@ TEST(MathMatrix, multiply_small_split_big) {
 
   auto m33 = stan::math::opencl::multiply(m11, m22);
 
-  stan::math::copy(m3_cl_res, m33);
+  m3_cl_res = stan::math::from_matrix_cl(m33);
 
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }

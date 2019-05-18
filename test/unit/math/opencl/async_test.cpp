@@ -14,10 +14,10 @@ TEST(async_opencl, thrash_opencl) {
   stan::math::matrix_d m1 = stan::math::matrix_d::Random(size, size);
   stan::math::matrix_d m1_result = m1 + m1 * m1 - m1;
   stan::math::matrix_cl m1_cl(size, size);
-  stan::math::copy(m1_cl, m1);  // NOLINT
+  m1_cl = stan::math::to_matrix_cl(m1);
   stan::math::matrix_cl m1_result_cl = m1_cl + m1_cl * m1_cl - m1_cl;
   stan::math::matrix_d m1_result_test(size, size);
-  stan::math::copy(m1_result_test, m1_result_cl);  // NOLINT
+  m1_result_test = stan::math::from_matrix_cl(m1_result_cl);
   EXPECT_MATRIX_NEAR(m1_result, m1_result_test, 1e-12)
 }
 
@@ -28,11 +28,11 @@ TEST(async_opencl, assign_miss) {
   stan::math::matrix_d m1_result = m1 + m1 * m1 - m1;
   m1_result = m1_result + m1_result * m1_result - m1_result;
   stan::math::matrix_cl m1_cl(size, size);
-  stan::math::copy(m1_cl, m1);  // NOLINT
+  m1_cl = stan::math::to_matrix_cl(m1);
   stan::math::matrix_cl m1_result_cl = m1_cl + m1_cl * m1_cl - m1_cl;
   m1_result_cl = m1_result_cl + m1_result_cl * m1_result_cl - m1_result_cl;
   stan::math::matrix_d m1_result_test(size, size);
-  stan::math::copy(m1_result_test, m1_result_cl);  // NOLINT
+  m1_result_test = stan::math::from_matrix_cl(m1_result_cl);
   EXPECT_MATRIX_NEAR(m1_result, m1_result_test, 1e-12)
 }
 
@@ -42,15 +42,15 @@ TEST(async_opencl, read_miss) {
   stan::math::matrix_d m1 = stan::math::matrix_d::Random(size, size);
   stan::math::matrix_d m1_result = m1 + m1 * m1 - m1;
   stan::math::matrix_cl m1_cl(size, size);
-  stan::math::copy(m1_cl, m1);  // NOLINT
+  m1_cl = stan::math::to_matrix_cl(m1);
   stan::math::matrix_cl m1_result_cl = m1_cl + m1_cl * m1_cl - m1_cl;
   m1_cl = m1_cl * 2;
   stan::math::matrix_d m1_result_test(size, size);
-  stan::math::copy(m1_result_test, m1_result_cl);  // NOLINT
+  m1_result_test = stan::math::from_matrix_cl(m1_result_cl);
   EXPECT_MATRIX_NEAR(m1_result, m1_result_test, 1e-12)
   m1 = m1 * 2;
   stan::math::matrix_d m1_multiply_test(size, size);
-  stan::math::copy(m1_multiply_test, m1_cl);  // NOLINT
+  m1_multiply_test = stan::math::from_matrix_cl(m1_cl);
   EXPECT_MATRIX_NEAR(m1, m1_multiply_test, 1e-12)
 }
 
