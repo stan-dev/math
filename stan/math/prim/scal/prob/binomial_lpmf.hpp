@@ -7,24 +7,15 @@
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
-#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/inv_logit.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
-#include <stan/math/prim/scal/fun/log_inv_logit.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
-#include <stan/math/prim/scal/fun/lbeta.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/fun/inc_beta.hpp>
-#include <boost/random/binomial_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {

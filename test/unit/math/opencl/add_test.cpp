@@ -1,11 +1,11 @@
 #ifdef STAN_OPENCL
-#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/add.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 
-TEST(MathMatrixGPU, add_v_exception_pass) {
+TEST(MathMatrixCL, add_v_exception_pass) {
   stan::math::vector_d d1, d2;
 
   d1.resize(3);
@@ -16,7 +16,7 @@ TEST(MathMatrixGPU, add_v_exception_pass) {
   EXPECT_NO_THROW(d33 = d11 + d22);
 }
 
-TEST(MathMatrixGPU, add_v_exception_pass_zero) {
+TEST(MathMatrixCL, add_v_exception_pass_zero) {
   stan::math::vector_d d1, d2;
   d1.resize(0);
   d2.resize(0);
@@ -26,7 +26,7 @@ TEST(MathMatrixGPU, add_v_exception_pass_zero) {
   EXPECT_NO_THROW(d33 = d11 + d22);
 }
 
-TEST(MathMatrixGPU, add_v_exception_pass_invalid_arg) {
+TEST(MathMatrixCL, add_v_exception_pass_invalid_arg) {
   stan::math::row_vector_d d1, d2;
 
   d1.resize(2);
@@ -37,7 +37,7 @@ TEST(MathMatrixGPU, add_v_exception_pass_invalid_arg) {
   EXPECT_THROW(d33 = d11 + d22, std::invalid_argument);
 }
 
-TEST(MathMatrixGPU, add_rv_exception_pass) {
+TEST(MathMatrixCL, add_rv_exception_pass) {
   stan::math::row_vector_d d1, d2;
 
   d1.resize(3);
@@ -48,7 +48,7 @@ TEST(MathMatrixGPU, add_rv_exception_pass) {
   EXPECT_NO_THROW(d33 = d11 + d22);
 }
 
-TEST(MathMatrixGPU, add_rv_exception_pass_zero) {
+TEST(MathMatrixCL, add_rv_exception_pass_zero) {
   stan::math::row_vector_d d1, d2;
 
   d1.resize(0);
@@ -59,7 +59,7 @@ TEST(MathMatrixGPU, add_rv_exception_pass_zero) {
   EXPECT_NO_THROW(d33 = d11 + d22);
 }
 
-TEST(MathMatrixGPU, add_rv_exception_fail_invalid_arg) {
+TEST(MathMatrixCL, add_rv_exception_fail_invalid_arg) {
   stan::math::row_vector_d d1, d2;
 
   d1.resize(2);
@@ -70,7 +70,7 @@ TEST(MathMatrixGPU, add_rv_exception_fail_invalid_arg) {
   EXPECT_THROW(d33 = d11 + d22, std::invalid_argument);
 }
 
-TEST(MathMatrixGPU, add_m_exception_pass_simple) {
+TEST(MathMatrixCL, add_m_exception_pass_simple) {
   stan::math::matrix_d d1, d2;
 
   d1.resize(2, 3);
@@ -81,7 +81,7 @@ TEST(MathMatrixGPU, add_m_exception_pass_simple) {
   EXPECT_NO_THROW(d33 = d11 + d22);
 }
 
-TEST(MathMatrixGPU, add_m_exception_pass_zero) {
+TEST(MathMatrixCL, add_m_exception_pass_zero) {
   stan::math::matrix_d d1, d2;
   d1.resize(0, 0);
   d2.resize(0, 0);
@@ -91,7 +91,7 @@ TEST(MathMatrixGPU, add_m_exception_pass_zero) {
   EXPECT_NO_THROW(d33 = d11 + d22);
 }
 
-TEST(MathMatrixGPU, add_m_exception_fail_invalid_arg) {
+TEST(MathMatrixCL, add_m_exception_fail_invalid_arg) {
   stan::math::matrix_d d1, d2;
   d1.resize(2, 3);
   d2.resize(3, 3);
@@ -101,7 +101,7 @@ TEST(MathMatrixGPU, add_m_exception_fail_invalid_arg) {
   EXPECT_THROW(d33 = d11 + d22, std::invalid_argument);
 }
 
-TEST(MathMatrixGPU, add_non_matching_sizes_exception) {
+TEST(MathMatrixCL, add_non_matching_sizes_exception) {
   stan::math::vector_d v1(2);
   v1 << 1, 2;
   stan::math::vector_d v2(3);
@@ -134,7 +134,7 @@ TEST(MathMatrixGPU, add_non_matching_sizes_exception) {
   EXPECT_THROW(m33 = m11 + m22, std::invalid_argument);
 }
 
-TEST(MathMatrixGPU, add_value_check) {
+TEST(MathMatrixCL, add_value_check) {
   stan::math::vector_d v1(3);
   v1 << 1, 2, 3;
   stan::math::vector_d v2(3);
@@ -169,17 +169,17 @@ TEST(MathMatrixGPU, add_value_check) {
   EXPECT_NO_THROW(rv33 = rv11 + rv22);
   EXPECT_NO_THROW(m33 = m11 + m22);
 
-  stan::math::copy(v3, v33);
+  v3 = stan::math::from_matrix_cl(v33);
   EXPECT_EQ(11, v3(0));
   EXPECT_EQ(102, v3(1));
   EXPECT_EQ(1003, v3(2));
 
-  stan::math::copy(rv3, rv33);
+  rv3 = stan::math::from_matrix_cl(rv33);
   EXPECT_EQ(11, rv3(0));
   EXPECT_EQ(102, rv3(1));
   EXPECT_EQ(1003, rv3(2));
 
-  stan::math::copy(m3, m33);
+  m3 = stan::math::from_matrix_cl(m33);
   EXPECT_EQ(11, m3(0, 0));
   EXPECT_EQ(102, m3(0, 1));
   EXPECT_EQ(1003, m3(0, 2));
@@ -189,5 +189,35 @@ TEST(MathMatrixGPU, add_value_check) {
   EXPECT_EQ(9, m3(2, 0));
   EXPECT_EQ(12, m3(2, 1));
   EXPECT_EQ(17, m3(2, 2));
+}
+
+TEST(MathMatrixCL, add_batch) {
+  // used to represent 5 matrices of size 10x10
+  const int batch_size = 11;
+  const int size = 13;
+  stan::math::matrix_d a(size, size * batch_size);
+  stan::math::matrix_d a_res(size, size);
+  for (int k = 0; k < batch_size; k++) {
+    for (int i = 0; i < size; i++)
+      for (int j = 0; j < size; j++) {
+        a(i, k * size + j) = k;
+      }
+  }
+  stan::math::matrix_cl a_cl(a);
+  stan::math::matrix_cl a_cl_res(size, size);
+  stan::math::opencl_kernels::add_batch(cl::NDRange(size, size), a_cl_res, a_cl,
+                                        size, size, batch_size);
+  a_res = stan::math::from_matrix_cl(a_cl_res);
+  for (int k = 0; k < batch_size; k++) {
+    for (int i = 0; i < size; i++)
+      for (int j = 0; j < size; j++) {
+        a(i, j) += a(i, k * size + j);
+      }
+  }
+  for (int i = 0; i < size; i++) {
+    for (int j = 0; j < size; j++) {
+      EXPECT_EQ(a(i, j), a_res(i, j));
+    }
+  }
 }
 #endif

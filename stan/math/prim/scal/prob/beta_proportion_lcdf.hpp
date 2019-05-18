@@ -12,7 +12,7 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/lbeta.hpp>
+#include <stan/math/prim/scal/fun/beta.hpp>
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
@@ -56,8 +56,6 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lcdf(
     return 0.0;
 
   static const char* function = "beta_proportion_lcdf";
-
-  using boost::math::tools::promote_args;
 
   T_partials_return cdf_log(0.0);
 
@@ -113,8 +111,7 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lcdf(
     const T_partials_return kappa_dbl = value_of(kappa_vec[n]);
     const T_partials_return mukappa_dbl = mu_dbl * kappa_dbl;
     const T_partials_return kappa_mukappa_dbl = kappa_dbl - mukappa_dbl;
-    const T_partials_return betafunc_dbl
-        = exp(lbeta(mukappa_dbl, kappa_mukappa_dbl));
+    const T_partials_return betafunc_dbl = beta(mukappa_dbl, kappa_mukappa_dbl);
     const T_partials_return Pn
         = inc_beta(mukappa_dbl, kappa_mukappa_dbl, y_dbl);
 

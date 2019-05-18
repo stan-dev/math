@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/buffer_types.hpp>
 
 namespace stan {
 namespace math {
@@ -52,18 +53,30 @@ static const char* multiply_transpose_kernel_code = STRINGIFY(
           const int tiled_i = THREAD_BLOCK_SIZE * tile_ind + thread_block_row;
           const int tiled_j = THREAD_BLOCK_SIZE * tile_ind + thread_block_col;
           // if the data needs to be loaded to local memory
-
           // each thread copies WORK_PER_THREAD values to the
           // local memory
           for (int w = 0; w < WORK_PER_THREAD; w++) {
-            A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                   [thread_block_row]
-                = A[i + (tiled_j + w * THREAD_BLOCK_SIZE_COL) * M];
-            B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                   [thread_block_row]
-                = A[(j + w * THREAD_BLOCK_SIZE_COL) + tiled_i * M];
+            const A_temp_j = tiled_j + w * THREAD_BLOCK_SIZE_COL;
+            const AT_temp_j = j + w * THREAD_BLOCK_SIZE_COL;
+            if (A_temp_j >= N || i >= M) {
+              A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                     [thread_block_row]
+                  = 0.0;
+            } else {
+              A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                     [thread_block_row]
+                  = A[A_temp_j * M + i];
+            }
+            if (AT_temp_j >= M || tiled_i >= N) {
+              B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                     [thread_block_row]
+                  = 0.0;
+            } else {
+              B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                     [thread_block_row]
+                  = A[AT_temp_j + tiled_i * M];
+            }
           }
-
           // wait till all tile values are loaded to the local memory
           barrier(CLK_LOCAL_MEM_FENCE);
           // multiply the tile products
@@ -79,12 +92,18 @@ static const char* multiply_transpose_kernel_code = STRINGIFY(
           }
           barrier(CLK_LOCAL_MEM_FENCE);
         }
-        // save the values
+        // each thread saves WORK_PER_THREAD values to C
         for (int w = 0; w < WORK_PER_THREAD; w++) {
-          // each thread saves WORK_PER_THREAD values
-          if ((j + w * THREAD_BLOCK_SIZE_COL) <= i) {
-            B[i + (j + w * THREAD_BLOCK_SIZE_COL) * M] = acc[w];
-            B[(j + w * THREAD_BLOCK_SIZE_COL) + i * M] = acc[w];
+          // This prevents threads from accessing elements
+          // outside the allocated memory for C. The check
+          // is in the loop because some threads
+          // can be assigned elements in and out of
+          // the allocated memory.
+          if ((j + w * THREAD_BLOCK_SIZE_COL) < M && i < M) {
+            if ((j + w * THREAD_BLOCK_SIZE_COL) <= i) {
+              B[i + (j + w * THREAD_BLOCK_SIZE_COL) * M] = acc[w];
+              B[(j + w * THREAD_BLOCK_SIZE_COL) + i * M] = acc[w];
+            }
           }
         }
       }
@@ -96,8 +115,9 @@ static const char* multiply_transpose_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/multiply_transpose.hpp add() \endlink
  */
-const local_range_kernel<cl::Buffer, cl::Buffer, int, int> multiply_transpose(
-    "multiply_transpose", multiply_transpose_kernel_code,
+const kernel_cl<in_buffer, out_buffer, int, int> multiply_transpose(
+    "multiply_transpose",
+    {thread_block_helpers, multiply_transpose_kernel_code},
     {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 4}});
 
 }  // namespace opencl_kernels

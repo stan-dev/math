@@ -4,13 +4,7 @@
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/mat/err/check_simplex.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/mat/fun/sum.hpp>
 #include <stan/math/prim/mat/fun/cumulative_sum.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
 namespace math {

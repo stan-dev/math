@@ -13,17 +13,13 @@ namespace math {
 
 /**
  * Throw a domain error with a consistently formatted message.
- *
  * This is an abstraction for all Stan functions to use when throwing
  * domain errors. This will allow us to change the behavior for all
  * functions at once. (We've already changed behavior mulitple times up
  * to Stan v2.5.0.)
- *
- * The message is:
- * "<function>: <name>[<i+error_index>] <msg1><y>"
+ * The message is: "<function>: <name>[<i+error_index>] <msg1><y>"
  *    where error_index is the value of stan::error_index::value
  * which indicates whether the message should be 0 or 1 indexed.
- *
  * @tparam T Type of variable
  * @param function Name of the function
  * @param name Name of the variable
@@ -44,17 +40,13 @@ inline void domain_error_vec(const char* function, const char* name, const T& y,
 
 /**
  * Throw a domain error with a consistently formatted message.
- *
  * This is an abstraction for all Stan functions to use when throwing
  * domain errors. This will allow us to change the behavior for all
  * functions at once. (We've already changed behavior mulitple times up
  * to Stan v2.5.0.)
- *
- * The message is:
- * "<function>: <name>[<i+error_index>] <msg1><y>"
+ * The message is: "<function>: <name>[<i+error_index>] <msg1><y>"
  *   where error_index is the value of stan::error_index::value
  * which indicates whether the message should be 0 or 1 indexed.
- *
  * @tparam T Type of variable
  * @param function Name of the function
  * @param name Name of the variable

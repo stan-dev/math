@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/buffer_types.hpp>
 
 namespace stan {
 namespace math {
@@ -39,8 +40,8 @@ static const char *is_nan_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/check_nan.hpp is_nan() \endlink
  */
-const global_range_kernel<cl::Buffer, cl::Buffer, int, int> check_nan(
-    "is_nan", is_nan_kernel_code);
+const kernel_cl<in_buffer, out_buffer, int, int> check_nan(
+    "is_nan", {indexing_helpers, is_nan_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

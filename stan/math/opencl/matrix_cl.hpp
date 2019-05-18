@@ -2,15 +2,12 @@
 #define STAN_MATH_OPENCL_MATRIX_CL_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/constants.hpp>
+#include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/opencl/kernels/copy.hpp>
-#include <stan/math/opencl/kernels/sub_block.hpp>
-#include <stan/math/opencl/kernels/triangular_transpose.hpp>
-#include <stan/math/opencl/kernels/zeros.hpp>
+#include <stan/math/prim/arr/fun/vec_concat.hpp>
 #include <CL/cl.hpp>
 #include <iostream>
 #include <string>
@@ -39,13 +36,136 @@ class matrix_cl {
   cl::Buffer oclBuffer_;
   const int rows_;
   const int cols_;
+  mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
+  mutable std::vector<cl::Event> read_events_;   // Tracks reads
 
  public:
+  // Forward declare the methods that work in place on the matrix
+  template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
+  void zeros();
+  template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
+  void triangular_transpose();
+  template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
+  void sub_block(const matrix_cl& A, size_t A_i, size_t A_j, size_t this_i,
+                 size_t this_j, size_t nrows, size_t ncols);
   int rows() const { return rows_; }
 
   int cols() const { return cols_; }
 
   int size() const { return rows_ * cols_; }
+
+  /**
+   * Clear the write events from the event stacks.
+   */
+  inline void clear_write_events() const {
+    write_events_.clear();
+    return;
+  }
+
+  /**
+   * Clear the read events from the event stacks.
+   */
+  inline void clear_read_events() const {
+    read_events_.clear();
+    return;
+  }
+
+  /**
+   * Clear the write events from the event stacks.
+   */
+  inline void clear_read_write_events() const {
+    read_events_.clear();
+    write_events_.clear();
+    return;
+  }
+
+  /**
+   * Get the events from the event stacks.
+   * @return The write event stack.
+   */
+  inline const std::vector<cl::Event>& write_events() const {
+    return write_events_;
+  }
+
+  /**
+   * Get the events from the event stacks.
+   * @return The read/write event stack.
+   */
+  inline const std::vector<cl::Event>& read_events() const {
+    return read_events_;
+  }
+
+  /**
+   * Get the events from the event stacks.
+   * @return The read/write event stack.
+   */
+  inline const std::vector<cl::Event> read_write_events() const {
+    return vec_concat(this->read_events(), this->write_events());
+  }
+
+  /**
+   * Add an event to the read event stack.
+   * @param new_event The event to be pushed on the event stack.
+   */
+  inline void add_read_event(cl::Event new_event) const {
+    this->read_events_.push_back(new_event);
+  }
+
+  /**
+   * Add an event to the write event stack.
+   * @param new_event The event to be pushed on the event stack.
+   */
+  inline void add_write_event(cl::Event new_event) const {
+    this->write_events_.push_back(new_event);
+  }
+
+  /**
+   * Add an event to the read/write event stack.
+   * @param new_event The event to be pushed on the event stack.
+   */
+  inline void add_read_write_event(cl::Event new_event) const {
+    this->read_events_.push_back(new_event);
+    this->write_events_.push_back(new_event);
+  }
+
+  /**
+   * Waits for the write events and clears the read event stack.
+   */
+  inline void wait_for_write_events() const {
+    cl::CommandQueue queue = opencl_context.queue();
+    cl::Event copy_event;
+    queue.enqueueBarrierWithWaitList(&this->write_events(), &copy_event);
+    copy_event.wait();
+    write_events_.clear();
+    return;
+  }
+
+  /**
+   * Waits for the read events and clears the read event stack.
+   */
+  inline void wait_for_read_events() const {
+    cl::CommandQueue queue = opencl_context.queue();
+    cl::Event copy_event;
+    queue.enqueueBarrierWithWaitList(&this->read_events(), &copy_event);
+    copy_event.wait();
+    read_events_.clear();
+    return;
+  }
+
+  /**
+   * Waits for read and write events to finish and clears the read, write, and
+   * read/write event stacks.
+   */
+  inline void wait_for_read_write_events() const {
+    cl::CommandQueue queue = opencl_context.queue();
+    cl::Event copy_event;
+    const std::vector<cl::Event> mat_events = this->read_write_events();
+    queue.enqueueBarrierWithWaitList(&mat_events, &copy_event);
+    copy_event.wait();
+    read_events_.clear();
+    write_events_.clear();
+    return;
+  }
 
   const cl::Buffer& buffer() const { return oclBuffer_; }
 
@@ -56,13 +176,16 @@ class matrix_cl {
       return;
     // the context is needed to create the buffer object
     cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue queue = opencl_context.queue();
     try {
       // creates a read&write object for "size" double values
       // in the provided context
       oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size());
-
-      opencl_kernels::copy(cl::NDRange(rows_, cols_), A.buffer(),
-                           this->buffer(), rows_, cols_);
+      cl::Event cstr_event;
+      queue.enqueueCopyBuffer(A.buffer(), this->buffer(), 0, 0,
+                              A.size() * sizeof(double), &A.write_events(),
+                              &cstr_event);
+      this->add_write_event(cstr_event);
     } catch (const cl::Error& e) {
       check_opencl_error("copy (OpenCL)->(OpenCL)", e);
     }
@@ -78,16 +201,17 @@ class matrix_cl {
    * matrices do not have matching dimensions
    *
    */
-  matrix_cl(int rows, int cols) : rows_(rows), cols_(cols) {
-    if (size() > 0) {
-      cl::Context& ctx = opencl_context.context();
-      try {
-        // creates the OpenCL buffer of the provided size
-        oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE,
-                                sizeof(double) * rows_ * cols_);
-      } catch (const cl::Error& e) {
-        check_opencl_error("matrix constructor", e);
-      }
+  matrix_cl(const int& rows, const int& cols) : rows_(rows), cols_(cols) {
+    if (size() == 0) {
+      return;
+    }
+    cl::Context& ctx = opencl_context.context();
+    try {
+      // creates the OpenCL buffer of the provided size
+      oclBuffer_
+          = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * rows_ * cols_);
+    } catch (const cl::Error& e) {
+      check_opencl_error("matrix constructor", e);
     }
   }
   /**
@@ -104,27 +228,31 @@ class matrix_cl {
   template <int R, int C>
   explicit matrix_cl(const Eigen::Matrix<double, R, C>& A)
       : rows_(A.rows()), cols_(A.cols()) {
-    if (size() > 0) {
-      cl::Context& ctx = opencl_context.context();
-      cl::CommandQueue& queue = opencl_context.queue();
-      try {
-        // creates the OpenCL buffer to copy the Eigen
-        // matrix to the OpenCL device
-        oclBuffer_
-            = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
-        /**
-         * Writes the contents of A to the OpenCL buffer
-         * starting at the offset 0.
-         * CL_TRUE denotes that the call is blocking as
-         * we do not want to execute any further kernels
-         * on the device until we are sure that the data
-         * is finished transfering)
-         */
-        queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0,
-                                 sizeof(double) * A.size(), A.data());
-      } catch (const cl::Error& e) {
-        check_opencl_error("matrix constructor", e);
-      }
+    if (size() == 0) {
+      return;
+    }
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    try {
+      // creates the OpenCL buffer to copy the Eigen
+      // matrix to the OpenCL device
+      oclBuffer_
+          = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
+      /**
+       * Writes the contents of A to the OpenCL buffer
+       * starting at the offset 0.
+       * CL_TRUE denotes that the call is blocking as
+       * we do not want to execute any further kernels
+       * on the device until we are sure that the data
+       * is finished transfering)
+       */
+      cl::Event transfer_event;
+      queue.enqueueWriteBuffer(oclBuffer_, CL_FALSE, 0,
+                               sizeof(double) * A.size(), A.data(), NULL,
+                               &transfer_event);
+      this->add_write_event(transfer_event);
+    } catch (const cl::Error& e) {
+      check_opencl_error("matrix constructor", e);
     }
   }
 
@@ -133,105 +261,10 @@ class matrix_cl {
                      a.rows(), "destination.rows()", rows());
     check_size_match("assignment of (OpenCL) matrices", "source.cols()",
                      a.cols(), "destination.cols()", cols());
+    // Need to wait for all of matrices events before destroying old buffer
+    this->wait_for_read_write_events();
     oclBuffer_ = a.buffer();
     return *this;
-  }
-
-  /**
-   * Stores zeros in the matrix on the OpenCL device.
-   * Supports writing zeroes to the lower and upper triangular or
-   * the whole matrix.
-   *
-   * @tparam triangular_view Specifies if zeros are assigned to
-   * the entire matrix, lower triangular or upper triangular. The
-   * value must be of type TriangularViewCL
-   */
-  template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
-  void zeros() {
-    if (size() == 0)
-      return;
-    cl::CommandQueue cmdQueue = opencl_context.queue();
-    try {
-      opencl_kernels::zeros(cl::NDRange(this->rows(), this->cols()),
-                            this->buffer(), this->rows(), this->cols(),
-                            triangular_view);
-    } catch (const cl::Error& e) {
-      check_opencl_error("zeros", e);
-    }
-  }
-
-  /**
-   * Copies a lower/upper triangular of a matrix to it's upper/lower.
-   *
-   * @tparam triangular_map Specifies if the copy is
-   * lower-to-upper or upper-to-lower triangular. The value
-   * must be of type TriangularMap
-   *
-   * @throw <code>std::invalid_argument</code> if the matrix is not square.
-   *
-   */
-  template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
-  void triangular_transpose() {
-    if (size() == 0 || size() == 1) {
-      return;
-    }
-    check_size_match("triangular_transpose ((OpenCL))",
-                     "Expecting a square matrix; rows of ", "A", rows(),
-                     "columns of ", "A", cols());
-
-    cl::CommandQueue cmdQueue = opencl_context.queue();
-    try {
-      opencl_kernels::triangular_transpose(
-          cl::NDRange(this->rows(), this->cols()), this->buffer(), this->rows(),
-          this->cols(), triangular_map);
-    } catch (const cl::Error& e) {
-      check_opencl_error("triangular_transpose", e);
-    }
-  }
-  /**
-   * Write the context of A into
-   * <code>this</code> starting at the top left of <code>this</code>
-   * @param A input matrix
-   * @param A_i the offset row in A
-   * @param A_j the offset column in A
-   * @param this_i the offset row for the matrix to be subset into
-   * @param this_j the offset col for the matrix to be subset into
-   * @param nrows the number of rows in the submatrix
-   * @param ncols the number of columns in the submatrix
-   */
-  template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
-  void sub_block(const matrix_cl& A, size_t A_i, size_t A_j, size_t this_i,
-                 size_t this_j, size_t nrows, size_t ncols) {
-    if (nrows == 0 || ncols == 0) {
-      return;
-    }
-    if ((A_i + nrows) > A.rows() || (A_j + ncols) > A.cols()
-        || (this_i + nrows) > this->rows() || (this_j + ncols) > this->cols()) {
-      domain_error("sub_block", "submatrix in *this", " is out of bounds", "");
-    }
-    cl::CommandQueue cmdQueue = opencl_context.queue();
-    try {
-      if (triangular_view == TriangularViewCL::Entire) {
-        cl::size_t<3> src_offset
-            = opencl::to_size_t({A_i * sizeof(double), A_j, 0});
-        cl::size_t<3> dst_offset
-            = opencl::to_size_t({this_i * sizeof(double), this_j, 0});
-        cl::size_t<3> size
-            = opencl::to_size_t({nrows * sizeof(double), ncols, 1});
-        cmdQueue.enqueueCopyBufferRect(
-            A.buffer(), this->buffer(), src_offset, dst_offset, size,
-            A.rows() * sizeof(double), A.rows() * A.cols() * sizeof(double),
-            sizeof(double) * this->rows(),
-            this->rows() * this->cols() * sizeof(double));
-      } else {
-        opencl_kernels::sub_block(cl::NDRange(nrows, ncols), A.buffer(),
-                                  this->buffer(), A_i, A_j, this_i, this_j,
-                                  nrows, ncols, A.rows(), A.cols(),
-                                  this->rows(), this->cols(), triangular_view);
-      }
-    } catch (const cl::Error& e) {
-      check_opencl_error("copy_submatrix", e);
-    }
   }
 };
 

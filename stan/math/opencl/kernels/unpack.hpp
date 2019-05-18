@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/buffer_types.hpp>
 
 namespace stan {
 namespace math {
@@ -59,8 +60,8 @@ static const char* unpack_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/unpack.hpp unpack() \endlink
  */
-const global_range_kernel<cl::Buffer, cl::Buffer, int, int, TriangularViewCL>
-    unpack("unpack", unpack_kernel_code);
+const kernel_cl<out_buffer, in_buffer, int, int, TriangularViewCL> unpack(
+    "unpack", {indexing_helpers, unpack_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

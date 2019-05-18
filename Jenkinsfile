@@ -154,6 +154,7 @@ pipeline {
                         deleteDir()
                         unstash 'MathSetup'
                         sh "echo CXX=${MPICXX} >> make/local"
+                        sh "echo CXX_TYPE=gcc >> make/local"                        
                         sh "echo STAN_MPI=true >> make/local"
                         runTests("test/unit")
                     }
@@ -171,15 +172,6 @@ pipeline {
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Windows Headers & Unit') {
-                    agent { label 'windows' }
-                    steps {
-                        deleteDirWin()
-                        unstash 'MathSetup'
-                        bat "make -j${env.PARALLEL} test-headers"
-                        runTestsWin("test/unit")
-                    }
                 }
             }
         }
@@ -224,6 +216,15 @@ pipeline {
                         runTests("test/unit -f map_rect")
                     }
                     post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Windows Headers & Unit') {
+                    agent { label 'windows' }
+                    steps {
+                        deleteDirWin()
+                        unstash 'MathSetup'
+                        bat "mingw32-make -j${env.PARALLEL} test-headers"
+                        runTestsWin("test/unit")
+                    }
                 }
             }
         }
