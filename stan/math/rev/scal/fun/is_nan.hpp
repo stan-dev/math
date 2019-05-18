@@ -8,13 +8,13 @@ namespace stan {
 namespace math {
 
 /**
- * Returns 1 if the input's value is NaN and 0 otherwise.
+ * Returns true if the input's value is NaN and false otherwise.
  *
  * Delegates to <code>is_nan(double)</code>.
  *
  * @param v Value to test.
  *
- * @return <code>1</code> if the value is NaN and <code>0</code> otherwise.
+ * @return <code>true</code> if the value is NaN and <code>false</code> otherwise.
  */
 inline bool is_nan(const var& v) { return is_nan(v.val()); }
 

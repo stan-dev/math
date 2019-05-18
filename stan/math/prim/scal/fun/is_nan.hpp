@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_IS_NAN_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_IS_NAN_HPP
 
+#include <type_traits>
 #include <cmath>
 
 namespace stan {
@@ -15,9 +16,10 @@ namespace math {
  * @return <code>true</code> if the value is NaN.
  */
 template <typename T>
-inline bool is_nan(T x) {
-  return std::isnan(x);
-}
+inline typename std::enable_if_t<std::is_scalar<T>::value, bool>
+  is_nan(const T& x) {
+    return std::isnan(x);
+  }
 
 }  // namespace math
 }  // namespace stan
