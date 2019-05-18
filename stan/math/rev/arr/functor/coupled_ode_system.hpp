@@ -162,9 +162,7 @@ struct coupled_ode_system<F, double, var> {
     local_stack_.execute([&] {
       vector<var> y_vars(z.begin(), z.begin() + N_);
 
-      vector<var> theta_vars(theta_dbl_.begin(), theta_dbl_.end());
-
-      vector<var> dy_dt_vars = f_(t, y_vars, theta_vars, x_, x_int_, msgs_);
+      vector<var> dy_dt_vars = f_(t, y_vars, theta_nochain_, x_, x_int_, msgs_);
 
       check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
                        "states", N_);
@@ -177,7 +175,7 @@ struct coupled_ode_system<F, double, var> {
           // orders derivatives by equation (i.e. if there are 2 eqns
           // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
           // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
-          double temp_deriv = theta_vars[j].adj();
+          double temp_deriv = theta_nochain_[j].adj();
           const size_t offset = N_ + N_ * j;
           for (size_t k = 0; k < N_; k++)
             temp_deriv += z[offset + k] * y_vars[k].adj();
@@ -186,6 +184,8 @@ struct coupled_ode_system<F, double, var> {
         }
 
         set_zero_all_adjoints_nested();
+        for (size_t j = 0; j < M_; ++j)
+          theta_nochain_[j].vi_->set_zero_adjoint();
       }
     });
 
