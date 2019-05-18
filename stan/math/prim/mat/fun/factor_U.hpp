@@ -2,8 +2,6 @@
 #define STAN_MATH_PRIM_MAT_FUN_FACTOR_U_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-
 #include <cmath>
 #include <cstddef>
 #include <limits>

@@ -74,6 +74,7 @@
 #include <stan/math/prim/scal/fun/as_bool.hpp>
 #include <stan/math/prim/scal/fun/bessel_first_kind.hpp>
 #include <stan/math/prim/scal/fun/bessel_second_kind.hpp>
+#include <stan/math/prim/scal/fun/beta.hpp>
 #include <stan/math/prim/scal/fun/binary_log_loss.hpp>
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>

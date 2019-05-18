@@ -7,7 +7,6 @@
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <boost/math/special_functions/gamma.hpp>
-#include <valarray>
 
 namespace stan {
 namespace math {

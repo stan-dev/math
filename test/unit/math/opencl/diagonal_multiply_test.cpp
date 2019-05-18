@@ -26,7 +26,7 @@ TEST(MathMatrix, diagonal_multiply_value_check) {
   matrix_cl mm1(m1);
   matrix_cl mm1_dst(mm1.rows(), mm1.cols());
   EXPECT_NO_THROW(mm1_dst = stan::math::diagonal_multiply(mm1, 3.0));
-  stan::math::copy(m1_dst, mm1_dst);
+  m1_dst = stan::math::from_matrix_cl(mm1_dst);
   EXPECT_EQ(6.0, m1_dst(0, 0));
 
   matrix_d m2_dst(1, 3);
@@ -34,7 +34,7 @@ TEST(MathMatrix, diagonal_multiply_value_check) {
   matrix_cl mm2(m2);
   matrix_cl mm2_dst(mm2.rows(), mm2.cols());
   EXPECT_NO_THROW(mm2_dst = stan::math::diagonal_multiply(mm2, 3.0));
-  stan::math::copy(m2_dst, mm2_dst);
+  m2_dst = stan::math::from_matrix_cl(mm2_dst);
   EXPECT_EQ(6.0, m2_dst(0, 0));
   EXPECT_EQ(2.0, m2_dst(0, 1));
   EXPECT_EQ(2.0, m2_dst(0, 2));
@@ -44,7 +44,7 @@ TEST(MathMatrix, diagonal_multiply_value_check) {
   matrix_cl mm3(m3);
   matrix_cl mm3_dst(mm3.rows(), mm3.cols());
   EXPECT_NO_THROW(mm3_dst = stan::math::diagonal_multiply(mm3, 3.0));
-  stan::math::copy(m3_dst, mm3_dst);
+  m3_dst = stan::math::from_matrix_cl(mm3_dst);
   EXPECT_EQ(6.0, m3_dst(0, 0));
   EXPECT_EQ(2.0, m3_dst(0, 1));
   EXPECT_EQ(2.0, m3_dst(0, 2));

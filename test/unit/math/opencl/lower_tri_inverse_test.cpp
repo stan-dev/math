@@ -11,7 +11,7 @@
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-TEST(MathMatrixGPU, inverse_gpu_exception) {
+TEST(MathMatrixCL, inverse_cl_exception) {
   stan::math::matrix_d m1(2, 3);
   m1 << 1, 2, 3, 4, 5, 6;
   stan::math::matrix_cl m2(m1);
@@ -39,7 +39,7 @@ void inverse_test(int size) {
 
   stan::math::matrix_cl m2(m1);
   auto m3 = stan::math::lower_triangular_inverse(m2);
-  stan::math::copy(m1_cl, m3);
+  m1_cl = stan::math::from_matrix_cl(m3);
   double max_error = 0;
   for (int i = 0; i < size; i++) {
     for (int j = 0; j <= i; j++) {
@@ -50,15 +50,15 @@ void inverse_test(int size) {
   }
   EXPECT_LT(max_error, 1e-8);
 }
-TEST(MathMatrixGPU, inverse_gpu_small) { inverse_test(3); }
+TEST(MathMatrixCL, inverse_cl_small) { inverse_test(3); }
 
-TEST(MathMatrixGPU, inverse_gpu_1under_block_size) { inverse_test(31); }
+TEST(MathMatrixCL, inverse_cl_1under_block_size) { inverse_test(31); }
 
-TEST(MathMatrixGPU, inverse_gpu_1over_block_size) { inverse_test(33); }
+TEST(MathMatrixCL, inverse_cl_1over_block_size) { inverse_test(33); }
 
-TEST(MathMatrixGPU, inverse_gpu_big) { inverse_test(512); }
+TEST(MathMatrixCL, inverse_cl_big) { inverse_test(512); }
 
-TEST(MathMatrixGPU, inverse_gpu_big_2) { inverse_test(700); }
+TEST(MathMatrixCL, inverse_cl_big_2) { inverse_test(700); }
 
-TEST(MathMatrixGPU, inverse_gpu_big_3) { inverse_test(1500); }
+TEST(MathMatrixCL, inverse_cl_big_3) { inverse_test(1500); }
 #endif
