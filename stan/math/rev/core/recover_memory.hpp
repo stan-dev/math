@@ -39,7 +39,7 @@ static inline void recover_memory() {
   }
   */
 
-  ChainableStack::instance().recover();
+  ChainableStack::instance_->recover();
 
   // not needed, since this function may only be called if we are not nested
   // ChainableStack::queue().current_instance_ = 0;
@@ -91,6 +91,14 @@ std::for_each(ChainableStack::instance_.begin(),
                 local_instance.var_alloc_stack_.clear();
                 local_instance.memalloc_.recover_all();
               });
+
+  ChainableStack::instance_->var_stack_.clear();
+  ChainableStack::instance_->var_nochain_stack_.clear();
+  for (auto &x : ChainableStack::instance_->var_alloc_stack_) {
+    delete x;
+  }
+  ChainableStack::instance_->var_alloc_stack_.clear();
+  ChainableStack::instance_->memalloc_.recover_all();
 }
 */
 
