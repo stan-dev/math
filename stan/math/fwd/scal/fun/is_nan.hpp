@@ -2,6 +2,7 @@
 #define STAN_MATH_FWD_SCAL_FUN_IS_NAN_HPP
 
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/scal/meta/is_fvar.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 
 namespace stan {
@@ -17,9 +18,10 @@ namespace math {
  * otherwise.
  */
 template <typename T>
-inline bool is_nan(const fvar<T>& x) {
-  return is_nan(x.val());
-}
+inline typename std::enable_if_t<is_fvar<T>::value, bool>
+  is_nan(const T& x) {
+    return is_nan(x.val());
+  }
 
 }  // namespace math
 }  // namespace stan
