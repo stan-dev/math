@@ -18,10 +18,9 @@ namespace math {
  * otherwise.
  */
 template <typename T>
-inline typename std::enable_if_t<is_fvar<T>::value, bool>
-  is_nan(const T& x) {
-    return is_nan(x.val());
-  }
+inline typename std::enable_if_t<is_fvar<T>::value, bool> is_nan(const T& x) {
+  return is_nan(x.val());
+}
 
 }  // namespace math
 }  // namespace stan
