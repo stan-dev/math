@@ -41,11 +41,9 @@ const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
 // big fun to inline, but only called twice
 // inline char* eight_byte_aligned_malloc(tbb::scalable_allocator<char>&
 // allocator, size_t size, const void* hint) {
-inline char* eight_byte_aligned_malloc(
-    tbb::cache_aligned_allocator<char>& allocator, size_t size,
-    const void* hint) {
-  // char* ptr = static_cast<char*>(malloc(size));
-  char* ptr = allocator.allocate(size, hint);
+inline char* eight_byte_aligned_malloc(size_t size) {
+  char* ptr = static_cast<char*>(scalable_malloc(size));
+  // char* ptr = allocator.allocate(size, hint);
   if (!ptr)
     return ptr;  // malloc failed to alloc
   if (!is_aligned(ptr, 8U)) {
@@ -92,7 +90,7 @@ class stack_alloc {
   char* next_loc_;       // ptr to next available spot in cur
                          // block
   // tbb::scalable_allocator<char> allocator_;
-  tbb::cache_aligned_allocator<char> allocator_;
+  // tbb::cache_aligned_allocator<char> allocator_;
 
   // next three for keeping track of nested allocations on top of
   // stack:
@@ -130,8 +128,9 @@ class stack_alloc {
       size_t newsize = sizes_.back() * 2;
       if (newsize < len)
         newsize = len;
-      blocks_.push_back(internal::eight_byte_aligned_malloc(
-          allocator_, newsize, blocks_.back() + sizes_.back()));
+      // blocks_.push_back(internal::eight_byte_aligned_malloc(
+      //    allocator_, newsize, blocks_.back() + sizes_.back()));
+      blocks_.push_back(internal::eight_byte_aligned_malloc(newsize));
       if (!blocks_.back())
         throw std::bad_alloc();
       sizes_.push_back(newsize);
@@ -154,8 +153,7 @@ class stack_alloc {
    * aligned.
    */
   explicit stack_alloc(size_t initial_nbytes = internal::DEFAULT_INITIAL_NBYTES)
-      : blocks_(1, internal::eight_byte_aligned_malloc(allocator_,
-                                                       initial_nbytes, 0)),
+      : blocks_(1, internal::eight_byte_aligned_malloc(initial_nbytes)),
         sizes_(1, initial_nbytes),
         managed_blocks_(),
         managed_sizes_(),
@@ -187,10 +185,10 @@ class stack_alloc {
     /**/
     for (auto& block : blocks_)
       if (block)
-        free(block);
+        scalable_free(block);
     for (auto& block : managed_blocks_)
       if (block)
-        free(block);
+        scalable_free(block);
     /**/
   }
 
@@ -237,17 +235,17 @@ class stack_alloc {
    * be freed to the system.
    */
   inline void recover_all() {
-    /**/
+    /*
     for (std::size_t i = 0; i != managed_blocks_.size(); ++i) {
       if (managed_blocks_[i])
         allocator_.deallocate(managed_blocks_[i], managed_sizes_[i]);
     }
+    */
     /**/
-    /*
     for (auto& block : managed_blocks_)
       if (block)
-        free(block);
-    */
+        scalable_free(block);
+    /**/
     managed_blocks_.clear();
     managed_sizes_.clear();
     cur_block_ = 0;
@@ -293,17 +291,17 @@ class stack_alloc {
    */
   inline void free_all() {
     // frees all BUT the first (index 0) block
-    /*
+    /**/
     for (size_t i = 1; i < blocks_.size(); ++i)
       if (blocks_[i])
-        free(blocks_[i]);
-    */
+        scalable_free(blocks_[i]);
     /**/
+    /*
     for (std::size_t i = 1; i < blocks_.size(); ++i) {
       if (blocks_[i])
         allocator_.deallocate(blocks_[i], sizes_[i]);
     }
-    /**/
+    */
     sizes_.resize(1);
     blocks_.resize(1);
     recover_all();
@@ -365,8 +363,8 @@ class stack_alloc {
     other_stack.blocks_.resize(1);
     other_stack.managed_blocks_.clear();
     other_stack.managed_sizes_.clear();
-    other_stack.blocks_[0] = internal::eight_byte_aligned_malloc(
-        other_stack.allocator_, other_stack.sizes_[0], 0);
+    other_stack.blocks_[0]
+        = internal::eight_byte_aligned_malloc(other_stack.sizes_[0]);
     if (!other_stack.blocks_[0])
       throw std::bad_alloc();
     other_stack.recover_all();
