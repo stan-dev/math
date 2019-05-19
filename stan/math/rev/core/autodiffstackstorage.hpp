@@ -6,6 +6,8 @@
 #include <mutex>
 #include <atomic>
 #include <tbb/concurrent_vector.h>
+#include <tbb/cache_aligned_allocator.h>
+#include <tbb/scalable_allocator.h>
 
 namespace stan {
 namespace math {
@@ -194,9 +196,24 @@ static std::size_t get_new_stack_id() {
 
     AutodiffStackStorage &operator=(const AutodiffStackStorage &) = delete;
 
-    std::vector<ChainableT *> var_stack_;
-    std::vector<ChainableT *> var_nochain_stack_;
+    /*
+    std::vector<ChainableT *, tbb::cache_aligned_allocator<ChainableT *> >
+    var_stack_; std::vector<ChainableT *> var_nochain_stack_;
     std::vector<ChainableAllocT *> var_alloc_stack_;
+    */
+    /*
+    std::vector<ChainableT *, tbb::cache_aligned_allocator<ChainableT *> >
+    var_stack_; std::vector<ChainableT *,
+    tbb::cache_aligned_allocator<ChainableT *> > var_nochain_stack_;
+    std::vector<ChainableAllocT *, tbb::cache_aligned_allocator<ChainableAllocT
+    *> > var_alloc_stack_;
+    */
+    std::vector<ChainableT *, tbb::scalable_allocator<ChainableT *> >
+        var_stack_;
+    std::vector<ChainableT *, tbb::scalable_allocator<ChainableT *> >
+        var_nochain_stack_;
+    std::vector<ChainableAllocT *, tbb::scalable_allocator<ChainableAllocT *> >
+        var_alloc_stack_;
     stack_alloc memalloc_;
 
     // std::size_t stack_id_;

@@ -198,5 +198,5 @@ $(GTEST)/src/gtest-all.o: INC += $(INC_GTEST)
 ############################################################
 # Clean all libraries
 
-.PHONY: clean-libraries clean-sundials clean-mpi clean-tbb
-clean-libraries: clean-sundials clean-mpi clean-tbb
+.PHONY: clean-libraries clean-sundials clean-mpi clean-tbb clean-math
+clean-libraries: clean-sundials clean-mpi clean-tbb clean-math

@@ -24,7 +24,7 @@ static inline void recover_memory_nested() {
         " before calling recover_memory_nested()");
 
   ChainableStack::AutodiffStackStorage* nested_instance
-      = &ChainableStack::instance();
+      = ChainableStack::instance_;
 
   nested_instance->deactivate();
   delete nested_instance;

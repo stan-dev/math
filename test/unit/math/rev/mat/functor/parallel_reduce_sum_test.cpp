@@ -58,11 +58,13 @@ struct fast_count_lpdf {
     typedef typename stan::partials_return_type<T_n, T_rate>::type
         T_partials_return;
 
+    /*
     {
       std::lock_guard<std::mutex> cout_lock(cout_mutex);
       std::cout << "Reducing range " << start << " - " << end << " start."
                 << std::endl;
     }
+    */
 
     T_partials_return logp(0.0);
 
@@ -88,11 +90,13 @@ struct fast_count_lpdf {
             += n_vec[i] / stan::math::value_of(lambda_vec[i]) - 1.0;
     }
 
+    /*
     {
       std::lock_guard<std::mutex> cout_lock(cout_mutex);
       std::cout << "Reducing range " << start << " - " << end << " end."
                 << std::endl;
     }
+    */
 
     return ops_partials.build(logp);
   }
@@ -101,8 +105,8 @@ struct fast_count_lpdf {
 // static std::mutex cout_mutex;
 
 struct benchmark : public ::testing::Test {
-  const std::size_t elems = 1000000000;
-  const std::size_t num_iter = 1;
+  const std::size_t elems = 100000000;
+  const std::size_t num_iter = 10;
   std::vector<int> data;
   double lambda_d = 10.0;
 
@@ -203,7 +207,9 @@ TEST_F(benchmark, fast_parallel_reduce_sum_speed) {
     var poisson_lpdf = stan::math::parallel_reduce_sum(
         count_iter(0), count_iter(elems), var(0.0), reduce_op);
 
+    std::cout << "Calling grad" << std::endl;
     stan::math::grad(poisson_lpdf.vi_);
+    std::cout << "Stack size = " << stan::math::nested_size() << std::endl;
     stan::math::recover_memory();
   }
 }

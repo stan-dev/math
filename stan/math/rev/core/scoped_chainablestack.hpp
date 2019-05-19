@@ -14,7 +14,7 @@ class ScopedChainableStack {
   chainablestack_t local_stack_;
 
  public:
-  ScopedChainableStack() : parent_stack_(ChainableStack::instance()) {}
+  ScopedChainableStack() : parent_stack_(*ChainableStack::instance_) {}
 
   ScopedChainableStack(chainablestack_t& parent_stack)
       : parent_stack_(parent_stack) {}
@@ -41,6 +41,29 @@ class ScopedChainableStack {
     }
     return f;
   }
+
+  /*
+  template <typename F>
+  void execute(const F& f) {
+    // It's actually impossible to leave the stack in an active state
+    // behind, but if that happens, then we may not try-catch to
+    // ensure we deactivate.
+    if (local_stack_.is_active()) {
+      f();
+      //return f;
+    }
+
+    try {
+      local_stack_.activate();
+      f();
+      local_stack_.deactivate();
+    } catch (const std::exception& e) {
+      local_stack_.deactivate();
+      throw;
+    }
+    //return f;
+  }
+  */
 
   void append_to_parent() {
     parent_stack_.var_stack_.insert(parent_stack_.var_stack_.end(),

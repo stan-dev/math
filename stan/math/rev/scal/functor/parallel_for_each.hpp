@@ -44,7 +44,7 @@ struct parallel_map_impl<InputIt, UnaryFunction, var> {
 
     // All AD terms are written to thread-local AD tapes which are all
     // stored as part of the parent nochain stacks.
-    chainablestack_t& parent_stack = ChainableStack::instance();
+    chainablestack_t& parent_stack = *ChainableStack::instance_;
 
     tls_scoped_stack_t tls_scoped_stacks(
         [&parent_stack]() { return ScopedChainableStack(parent_stack); });

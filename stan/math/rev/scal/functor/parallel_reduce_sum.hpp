@@ -30,7 +30,7 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
       tls_scoped_stack_t;
 
   struct recursive_reducer {
-    InputIt first_;
+    const InputIt first_;
     const BinaryFunction& f_;
     tls_scoped_stack_t& tls_scoped_stack_;
     std::vector<var> sum_terms_;
@@ -96,7 +96,7 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
 
     // All AD terms are written to thread-local AD tapes which are all
     // stored as part of the parent nochain stacks.
-    chainablestack_t& parent_stack = ChainableStack::instance();
+    chainablestack_t& parent_stack = *ChainableStack::instance_;
 
     tls_scoped_stack_t child_stacks(
         [&parent_stack]() { return ScopedChainableStack(parent_stack); });
@@ -111,7 +111,7 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
     // tbb::simple_partitioner partitioner;
 
     // TODO: make grainsize a parameter??!!!
-    tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, num_jobs, 1000000),
+    tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, num_jobs, 100000),
                          worker, partitioner);
 
     child_stacks.combine_each(
