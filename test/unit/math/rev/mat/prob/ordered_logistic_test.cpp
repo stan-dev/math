@@ -296,3 +296,37 @@ TEST(ProbDistributionsOrdLog, intErrors) {
   EXPECT_FLOAT_EQ(std_c_v[3][1].adj(), 0.0);
   EXPECT_FLOAT_EQ(std_c_v[3][2].adj(), -0.70889017256612);
 }
+
+TEST(ProbDistributionsOrdLog, vv_vec_y1) {
+  using stan::math::ordered_logistic_lpmf;
+  using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_v;
+
+  std::vector<int> y{1, 1, 1, 1};
+
+  vector_v lam_v(4);
+  lam_v << -2.95, -1.68, 0.96, 2.68;
+
+  vector_v c_v(3);
+  c_v << -2.68, -1.53, 0.46;
+
+  vector_d c_adj(4);
+  c_adj << 0.4329070950345456674650,
+             0.7310585786300048792511,
+             0.9744192116879923125450,
+             0.9953210890136492969744;
+
+
+  AVAR out_v = ordered_logistic_lpmf(y, lam_v, c_v);
+  out_v.grad();
+
+  EXPECT_FLOAT_EQ(lam_v[0].adj(), -c_adj[0]);
+  EXPECT_FLOAT_EQ(lam_v[1].adj(), -c_adj[1]);
+  EXPECT_FLOAT_EQ(lam_v[2].adj(), -c_adj[2]);
+  EXPECT_FLOAT_EQ(lam_v[3].adj(), -c_adj[3]);
+
+  EXPECT_FLOAT_EQ(c_v[0].adj(), c_adj.sum());
+  EXPECT_FLOAT_EQ(c_v[1].adj(), 0.0);
+  EXPECT_FLOAT_EQ(c_v[2].adj(), 0.0);
+}
