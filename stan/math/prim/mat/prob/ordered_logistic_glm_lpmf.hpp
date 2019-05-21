@@ -101,8 +101,6 @@ ordered_logistic_glm_lpmf(
   check_finite(function, "Final cut-point", cuts[N_classes - 2]);
   check_finite(function, "First cut-point", cuts[0]);
 
-  //TODO big checks: x, beta
-
   if (size_zero(y, x, beta))
     return 0;
 
@@ -135,6 +133,10 @@ ordered_logistic_glm_lpmf(
   }
 
   Array<double, Dynamic, 1> location = x_val * beta_val_vec;
+  if(!location.allFinite()){
+    check_finite(function, "Weight vector", beta);
+    check_finite(function, "Matrix of independent variables", x);
+  }
 
   Array<double, Dynamic, 1> cut2 = location - cuts_y2; //y==1: INF
   Array<double, Dynamic, 1> cut1 = location - cuts_y1; //y==C: -INF
