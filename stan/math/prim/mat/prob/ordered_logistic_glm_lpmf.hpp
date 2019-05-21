@@ -151,13 +151,12 @@ ordered_logistic_glm_lpmf(
 
   operands_and_partials<Matrix<T_x, Dynamic, Dynamic>, T_beta, T_cuts> ops_partials(x, beta, cuts);
   if (!is_constant_struct<T_x>::value && !is_constant_struct<T_beta>::value && !is_constant_struct<T_cuts>::value) {
-    Array<double, Dynamic, 1> a = exp(cut1); //y==C: 0
-    Array<double, Dynamic, 1> b = exp(cut2); //y==1: INF
+    //TODO single fraction?
+    Array<double, Dynamic, 1> d1 = 1 / (1 + exp(cut2)) - 1 / (1 - exp(cuts_y1 - cuts_y2));
+    Array<double, Dynamic, 1> d2 = 1 / (1 - exp(cuts_y2 - cuts_y1)) - 1 / (1 + exp(cut1));
 
-    Array<double, Dynamic, 1> a_1p = a + 1;
-    Array<double, Dynamic, 1> b_1p = b + 1;
     if (!is_constant_struct<T_x>::value && !is_constant_struct<T_beta>::value) {
-      Matrix<double, 1, Dynamic> deriv_common = y.cwiseEqual(1).select(-a / a_1p, (1 - a * b) / (a_1p * b_1p));
+      Matrix<double, 1, Dynamic> deriv_common = d1 - d2;
       if (!is_constant_struct<T_x>::value) {
         ops_partials.edge1_.partials_ = (beta_val_vec * deriv_common).transpose();
       }
@@ -167,18 +166,9 @@ ordered_logistic_glm_lpmf(
       }
     }
     if (!is_constant_struct<T_cuts>::value) {
-      Array<double, Dynamic, 1> denom = 1 / (a_1p * b_1p * (b - a));
-      Array<double, Dynamic, 1> v1 = b_1p * b_1p * a * denom;
-      Array<double, Dynamic, 1> v2 = a_1p * a_1p * b * denom;
-
-      //TODO single fraction?
-      Array<double, Dynamic, 1> d1 = 1 / (1 - exp(cuts_y1 - cuts_y2)) - 1 / (1 + exp(cut2));
-      Array<double, Dynamic, 1> d2 = 1 / (1 - exp(cuts_y2 - cuts_y1)) - 1 / (1 + exp(cut1));
-
       //TODO iter over insts?
-      ops_partials.edge3_.partials_[0] = y.cwiseEqual(1).select(a / a_1p, 0).sum() - y.cwiseEqual(2).select(v2, 0).sum();
-      for (int c = 1; c < N_classes-1; c++) {
-        ops_partials.edge3_.partials_[c] = y.cwiseEqual(c + 1).select(v1, 0).sum() - y.cwiseEqual(c + 2).select(v2, 0).sum();
+      for (int c = 0; c < N_classes-1; c++) {
+        ops_partials.edge3_.partials_[c] = y.cwiseEqual(c + 1).select(d2, 0).sum() - y.cwiseEqual(c + 2).select(d1, 0).sum();
       }
     }
   }
