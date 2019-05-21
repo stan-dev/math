@@ -33,7 +33,7 @@ inline bool is_any_nan(const T& x) {
  */
 template <typename T, typename... Ts>
 inline bool is_any_nan(const T& x, const Ts&... xs) {
-  return (is_any_nan(x) || is_any_nan(std::forward<const Ts>(xs)...));
+  return is_any_nan(x) || is_any_nan(std::forward<const Ts>(xs)...);
 }
 }  // namespace math
 }  // namespace stan
