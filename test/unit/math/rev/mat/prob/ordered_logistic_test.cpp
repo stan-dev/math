@@ -298,8 +298,8 @@ TEST(ProbDistributionsOrdLog, intErrors) {
 }
 
 TEST(ProbDistributionsOrdLog, vv_vec_y1) {
-  using stan::math::ordered_logistic_lpmf;
   using stan::math::inv_logit;
+  using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_v;
@@ -316,7 +316,7 @@ TEST(ProbDistributionsOrdLog, vv_vec_y1) {
   out_v.grad();
 
   vector_d c_adj(4);
-  
+
   for (int i = 0; i < 4; ++i) {
     c_adj[i] = inv_logit(lam_v[i].val() - c_v[0].val());
     EXPECT_FLOAT_EQ(lam_v[i].adj(), -c_adj[i]);
