@@ -11,7 +11,7 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/lbeta.hpp>
+#include <stan/math/prim/scal/fun/beta.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <cmath>
@@ -82,7 +82,7 @@ typename return_type<T_prob>::type binomial_lcdf(const T_n& n, const T_N& N,
     const T_partials_return n_dbl = value_of(n_vec[i]);
     const T_partials_return N_dbl = value_of(N_vec[i]);
     const T_partials_return theta_dbl = value_of(theta_vec[i]);
-    const T_partials_return betafunc = exp(lbeta(N_dbl - n_dbl, n_dbl + 1));
+    const T_partials_return betafunc = beta(N_dbl - n_dbl, n_dbl + 1);
     const T_partials_return Pi
         = inc_beta(N_dbl - n_dbl, n_dbl + 1, 1 - theta_dbl);
 
