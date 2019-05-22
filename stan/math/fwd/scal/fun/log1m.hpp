@@ -3,7 +3,6 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 
 namespace stan {
 namespace math {

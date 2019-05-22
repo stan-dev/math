@@ -2,10 +2,11 @@
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/zeros.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 
-TEST(MathMatrixGPU, sub_block_pass) {
+TEST(MathMatrixCL, sub_block_pass) {
   stan::math::matrix_d d1;
   stan::math::matrix_d d2;
 
@@ -18,14 +19,14 @@ TEST(MathMatrixGPU, sub_block_pass) {
   stan::math::matrix_cl d11(d1);
   stan::math::matrix_cl d22(d2);
   d22.sub_block(d11, 0, 0, 0, 0, 2, 2);
-  stan::math::copy(d2, d22);
+  d2 = stan::math::from_matrix_cl(d22);
   EXPECT_EQ(1, d2(0, 0));
   EXPECT_EQ(2, d2(0, 1));
   EXPECT_EQ(4, d2(1, 0));
   EXPECT_EQ(5, d2(1, 1));
 }
 
-TEST(MathMatrixGPU, sub_block_exception) {
+TEST(MathMatrixCL, sub_block_exception) {
   stan::math::matrix_d d1;
   stan::math::matrix_d d2;
 
@@ -37,7 +38,7 @@ TEST(MathMatrixGPU, sub_block_exception) {
   EXPECT_THROW(d22.sub_block(d11, 4, 4, 0, 0, 2, 2), std::domain_error);
 }
 
-TEST(MathMatrixGPU, sub_block_lower_pass) {
+TEST(MathMatrixCL, sub_block_lower_pass) {
   stan::math::matrix_d d1;
   stan::math::matrix_d d2;
 
@@ -50,7 +51,7 @@ TEST(MathMatrixGPU, sub_block_lower_pass) {
   stan::math::matrix_cl d11(d1);
   stan::math::matrix_cl d22(d2);
   d22.sub_block<stan::math::TriangularViewCL::Lower>(d11, 0, 0, 0, 0, 3, 3);
-  stan::math::copy(d2, d22);
+  d2 = stan::math::from_matrix_cl(d22);
   EXPECT_EQ(1, d2(0, 0));
   EXPECT_EQ(15, d2(0, 1));
   EXPECT_EQ(14, d2(0, 2));

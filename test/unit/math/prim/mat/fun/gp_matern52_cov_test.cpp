@@ -510,3 +510,18 @@ TEST(MathPrimMat, ard_size_err_gp_matern52_cov) {
   EXPECT_THROW(stan::math::gp_matern52_cov(x_vec_1, x_vec_2, sigma, l),
                std::invalid_argument);
 }
+
+TEST(MathPrimMat, zero_size) {
+  double sigma = 0.2;
+
+  std::vector<double> l(0);
+
+  std::vector<Eigen::Matrix<double, -1, 1>> x(0);
+
+  Eigen::MatrixXd cov;
+  Eigen::MatrixXd cov2;
+  EXPECT_NO_THROW(cov = stan::math::gp_matern52_cov(x, sigma, l));
+  EXPECT_NO_THROW(cov2 = stan::math::gp_matern52_cov(x, x, sigma, l));
+  EXPECT_EQ(0, cov.rows());
+  EXPECT_EQ(0, cov.cols());
+}

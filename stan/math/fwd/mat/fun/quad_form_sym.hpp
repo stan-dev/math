@@ -4,7 +4,6 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/mat/fun/multiply.hpp>
 #include <stan/math/fwd/mat/fun/dot_product.hpp>
-#include <stan/math/prim/mat/fun/quad_form_sym.hpp>
 
 namespace stan {
 namespace math {

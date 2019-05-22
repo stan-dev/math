@@ -3,7 +3,6 @@
 
 #include <stan/math/rev/core.hpp>
 #include <cmath>
-#include <valarray>
 
 namespace stan {
 namespace math {

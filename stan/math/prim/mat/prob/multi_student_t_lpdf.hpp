@@ -4,9 +4,6 @@
 #include <stan/math/prim/mat/err/check_consistent_sizes_mvt.hpp>
 #include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <stan/math/prim/mat/fun/multiply.hpp>
-#include <stan/math/prim/mat/fun/dot_product.hpp>
-#include <stan/math/prim/mat/fun/subtract.hpp>
 #include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 #include <stan/math/prim/mat/prob/multi_normal_log.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
@@ -19,8 +16,6 @@
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/meta/length_mvt.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <boost/math/special_functions/gamma.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <cstdlib>
 
@@ -38,12 +33,9 @@ template <bool propto, typename T_y, typename T_dof, typename T_loc,
 typename return_type<T_y, T_dof, T_loc, T_scale>::type multi_student_t_lpdf(
     const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& Sigma) {
   static const char* function = "multi_student_t";
-
   using std::log;
-
   typedef typename scalar_type<T_scale>::type T_scale_elem;
   typedef typename return_type<T_y, T_dof, T_loc, T_scale>::type lp_type;
-  lp_type lp(0.0);
 
   check_not_nan(function, "Degrees of freedom parameter", nu);
   check_positive(function, "Degrees of freedom parameter", nu);
@@ -57,7 +49,7 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type multi_student_t_lpdf(
   size_t number_of_y = length_mvt(y);
   size_t number_of_mu = length_mvt(mu);
   if (number_of_y == 0 || number_of_mu == 0)
-    return 0.0;
+    return 0;
   check_consistent_sizes_mvt(function, "y", y, "mu", mu);
 
   vector_seq_view<T_y> y_vec(y);
@@ -113,7 +105,9 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type multi_student_t_lpdf(
   check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_Sigma);
 
   if (size_y == 0)
-    return lp;
+    return 0;
+
+  lp_type lp(0);
 
   if (include_summand<propto, T_dof>::value) {
     lp += lgamma(0.5 * (nu + size_y)) * size_vec;

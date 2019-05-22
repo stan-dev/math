@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_MAT_ERR_IS_MAT_FINITE_HPP
 
 #include <Eigen/Dense>
-#include <boost/math/special_functions/fpclassify.hpp>
 
 namespace stan {
 namespace math {
