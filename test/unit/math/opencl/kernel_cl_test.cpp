@@ -18,8 +18,7 @@ TEST(MathGpu, make_kernel) {
 
   stan::math::matrix_cl m00_dst(m0.cols(), m0.rows());
   stan::math::opencl_kernels::transpose(cl::NDRange(m00.rows(), m00.cols()),
-                                        m00_dst.buffer(), m00.buffer(),
-                                        m00.rows(), m00.cols());
-  copy(m0_dst, m00_dst);
+                                        m00_dst, m00, m00.rows(), m00.cols());
+  m0_dst = stan::math::from_matrix_cl(m00_dst);
 }
 #endif

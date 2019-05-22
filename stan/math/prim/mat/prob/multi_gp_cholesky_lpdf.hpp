@@ -9,8 +9,6 @@
 #include <stan/math/prim/mat/fun/dot_self.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_tri_low.hpp>
-#include <stan/math/prim/mat/fun/multiply.hpp>
-#include <stan/math/prim/mat/fun/row.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
 
 namespace stan {
