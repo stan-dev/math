@@ -257,17 +257,16 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <>
 inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
-                                       const double &sigma,
-                                       const double &length_scale) {
+                                       const double sigma,
+                                       const double length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive(function_name, "magnitude", sigma);
   check_positive(function_name, "length scale", length_scale);
 
   const size_t x_size = x.size();
   Eigen::MatrixXd cov(x_size, x_size);
-  if (x_size * x_size < opencl_context.tuning_opts().gp_exp_quad_cov_size) {
+  if (x_size * x_size < opencl_context.tuning_opts().gp_exp_quad_cov_size_worth_transfer) {
     // using explicit template args to call CPU function
     return gp_exp_quad_cov<double, double, double>(x, sigma, length_scale);
   }
@@ -278,7 +277,7 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
   matrix_cl x_cl(x, 1, x.size());
   check_nan(function_name, "x", x_cl);
   matrix_cl cov_cl = gp_exp_quad_cov(x_cl, sigma, length_scale);
-  cov = from_matrix_cl(cov_cl);  // NOLINT
+  cov = from_matrix_cl(cov_cl);
 
   return cov;
 }
@@ -294,10 +293,9 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <>
 inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
-                                       const double &sigma,
-                                       const double &length_scale) {
+                                       const double sigma,
+                                       const double length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive(function_name, "magnitude", sigma);
   check_positive(function_name, "length scale", length_scale);
@@ -309,9 +307,9 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
     return cov;
 
   const size_t inner_x1_size = x[0].size();
-  if (x_size * x_size * opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
-          + (x_size + x_size + 1) * inner_x1_size
-                * opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
+  if (static_cast<double>(x_size * x_size) / opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
+          + static_cast<double>((x_size + x_size + 1) * inner_x1_size)
+                / opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
       < 1) {
     // using explicit template args to call CPU function
     return gp_exp_quad_cov<Eigen::VectorXd, double, double>(x, sigma,
@@ -321,7 +319,7 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
   matrix_cl x_cl(x);
   check_nan(function_name, "x", x_cl);
   matrix_cl cov_cl = gp_exp_quad_cov(x_cl, sigma, length_scale);
-  cov = from_matrix_cl(cov_cl);  // NOLINT
+  cov = from_matrix_cl(cov_cl);
 
   return cov;
 }
@@ -336,7 +334,6 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <>
 inline Eigen::MatrixXd gp_exp_quad_cov(
     const std::vector<Eigen::VectorXd> &x, const double &sigma,
     const std::vector<double> &length_scale) {
@@ -351,9 +348,9 @@ inline Eigen::MatrixXd gp_exp_quad_cov(
     return cov;
 
   const size_t inner_x1_size = x[0].size();
-  if (x_size * x_size * opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
-          + (x_size + x_size + 1) * inner_x1_size
-                * opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
+  if (static_cast<double>(x_size * x_size) / opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
+          + static_cast<double>((x_size + x_size + 1) * inner_x1_size)
+                / opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
       < 1) {
     // using explicit template args to call CPU function
     return gp_exp_quad_cov<double, double, double>(x, sigma, length_scale);
@@ -367,7 +364,7 @@ inline Eigen::MatrixXd gp_exp_quad_cov(
   matrix_cl x_cl(x_new);
   check_nan(function_name, "x", x_cl);
   matrix_cl cov_cl = gp_exp_quad_cov(x_cl, sigma, 1);
-  cov = from_matrix_cl(cov_cl);  // NOLINT
+  cov = from_matrix_cl(cov_cl);
   return cov;
 }
 
@@ -385,11 +382,10 @@ inline Eigen::MatrixXd gp_exp_quad_cov(
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <>
 inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
                                                 const std::vector<double> &x2,
-                                                const double &sigma,
-                                                const double &length_scale) {
+                                                const double sigma,
+                                                const double length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive_finite(function_name, "magnitude", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
@@ -397,7 +393,7 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
   Eigen::MatrixXd cov(x1.size(), x2.size());
   if (cov.size() == 0)
     return cov;
-  if (cov.size() < opencl_context.tuning_opts().gp_exp_quad_cov_size) {
+  if (cov.size() < opencl_context.tuning_opts().gp_exp_quad_cov_size_worth_transfer) {
     // using explicit template args to call CPU function
     return gp_exp_quad_cov<double, double, double, double>(x1, x2, sigma,
                                                            length_scale);
@@ -408,7 +404,7 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
   matrix_cl x2_cl(x2, 1, x2.size());
   check_nan(function_name, "x2", x2_cl);
   matrix_cl cov_cl = gp_exp_quad_cov(x1_cl, x2_cl, sigma, length_scale);
-  cov = from_matrix_cl(cov_cl);  // NOLINT
+  cov = from_matrix_cl(cov_cl);
   return cov;
 }
 
@@ -427,11 +423,10 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <>
 inline typename Eigen::MatrixXd gp_exp_quad_cov(
     const std::vector<Eigen::VectorXd> &x1,
-    const std::vector<Eigen::VectorXd> &x2, const double &sigma,
-    const double &length_scale) {
+    const std::vector<Eigen::VectorXd> &x2, const double sigma,
+    const double length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive_finite(function_name, "magnitude", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
@@ -443,9 +438,9 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
     return cov;
 
   const size_t inner_x1_size = x1[0].size();
-  if (x1_size * x2_size * opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
-          + (x1_size + x2_size + 1) * inner_x1_size
-                * opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
+  if (static_cast<double>(x1_size * x2_size) / opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
+          + static_cast<double>((x1_size + x2_size + 1) * inner_x1_size)
+                / opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
       < 1) {
     // using explicit template args to call CPU function
     return gp_exp_quad_cov<Eigen::VectorXd, Eigen::VectorXd, double, double>(
@@ -457,7 +452,7 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
   matrix_cl x2_cl(x2);
   check_nan(function_name, "x2", x2_cl);
   matrix_cl cov_cl = gp_exp_quad_cov(x1_cl, x2_cl, sigma, length_scale);
-  cov = from_matrix_cl(cov_cl);  // NOLINT
+  cov = from_matrix_cl(cov_cl);
   return cov;
 }
 
@@ -475,10 +470,9 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <>
 inline typename Eigen::MatrixXd gp_exp_quad_cov(
     const std::vector<Eigen::VectorXd> &x1,
-    const std::vector<Eigen::VectorXd> &x2, const double &sigma,
+    const std::vector<Eigen::VectorXd> &x2, const double sigma,
     const std::vector<double> &length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   const size_t x1_size = x1.size();
@@ -490,9 +484,9 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
     return cov;
 
   const size_t inner_x1_size = x1[0].size();
-  if (x1_size * x2_size * opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
-          + (x1_size + x2_size + 1) * inner_x1_size
-                * opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
+  if (static_cast<double>(x1_size * x2_size) / opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
+          + static_cast<double>((x1_size + x2_size + 1) * inner_x1_size)
+                / opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
       < 1) {
     // using explicit template args to call CPU function
     return gp_exp_quad_cov<double, double, double, double>(x1, x2, sigma,
@@ -514,7 +508,7 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
   matrix_cl x2_cl(x2_new);
   check_nan(function_name, "x2", x2_cl);
   matrix_cl cov_cl = gp_exp_quad_cov(x1_cl, x2_cl, sigma, 1);
-  cov = from_matrix_cl(cov_cl);  // NOLINT
+  cov = from_matrix_cl(cov_cl);
   return cov;
 }
 #endif
