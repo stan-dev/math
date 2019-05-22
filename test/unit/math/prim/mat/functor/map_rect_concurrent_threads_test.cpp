@@ -8,15 +8,25 @@
 #undef STAN_MPI
 #endif
 
+#include <stdlib.h>
+
 #include <gtest/gtest.h>
-#include <stan/math/rev/mat.hpp>
+#include <stan/math/prim/mat.hpp>
 
 #include <test/unit/math/prim/mat/functor/hard_work.hpp>
-#include <test/unit/math/prim/mat/functor/utils_threads.hpp>
 
 #include <iostream>
 #include <vector>
 #include <string>
+
+// utility to set number of threads to use
+void set_n_threads(int num_threads) {
+  static char env_string[256];
+  std::string num_threads_str = std::to_string(num_threads);
+  snprintf(env_string, sizeof(env_string), "STAN_NUM_THREADS=%s",
+           num_threads_str.c_str());
+  putenv(env_string);
+}
 
 STAN_REGISTER_MAP_RECT(0, hard_work)
 STAN_REGISTER_MAP_RECT(1, hard_work)
