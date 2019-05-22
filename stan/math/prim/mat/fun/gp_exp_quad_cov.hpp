@@ -266,7 +266,8 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
 
   const size_t x_size = x.size();
   Eigen::MatrixXd cov(x_size, x_size);
-  if (x_size * x_size < opencl_context.tuning_opts().gp_exp_quad_cov_size_worth_transfer) {
+  if (x_size * x_size
+      < opencl_context.tuning_opts().gp_exp_quad_cov_size_worth_transfer) {
     // using explicit template args to call CPU function
     return gp_exp_quad_cov<double, double, double>(x, sigma, length_scale);
   }
@@ -307,7 +308,8 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
     return cov;
 
   const size_t inner_x1_size = x[0].size();
-  if (static_cast<double>(x_size * x_size) / opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
+  if (static_cast<double>(x_size * x_size)
+              / opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
           + static_cast<double>((x_size + x_size + 1) * inner_x1_size)
                 / opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
       < 1) {
@@ -348,7 +350,8 @@ inline Eigen::MatrixXd gp_exp_quad_cov(
     return cov;
 
   const size_t inner_x1_size = x[0].size();
-  if (static_cast<double>(x_size * x_size) / opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
+  if (static_cast<double>(x_size * x_size)
+              / opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
           + static_cast<double>((x_size + x_size + 1) * inner_x1_size)
                 / opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
       < 1) {
@@ -393,7 +396,8 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
   Eigen::MatrixXd cov(x1.size(), x2.size());
   if (cov.size() == 0)
     return cov;
-  if (cov.size() < opencl_context.tuning_opts().gp_exp_quad_cov_size_worth_transfer) {
+  if (cov.size()
+      < opencl_context.tuning_opts().gp_exp_quad_cov_size_worth_transfer) {
     // using explicit template args to call CPU function
     return gp_exp_quad_cov<double, double, double, double>(x1, x2, sigma,
                                                            length_scale);
@@ -438,7 +442,8 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
     return cov;
 
   const size_t inner_x1_size = x1[0].size();
-  if (static_cast<double>(x1_size * x2_size) / opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
+  if (static_cast<double>(x1_size * x2_size)
+              / opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
           + static_cast<double>((x1_size + x2_size + 1) * inner_x1_size)
                 / opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
       < 1) {
@@ -484,7 +489,8 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
     return cov;
 
   const size_t inner_x1_size = x1[0].size();
-  if (static_cast<double>(x1_size * x2_size) / opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
+  if (static_cast<double>(x1_size * x2_size)
+              / opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
           + static_cast<double>((x1_size + x2_size + 1) * inner_x1_size)
                 / opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
       < 1) {
