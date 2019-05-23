@@ -1,6 +1,7 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
 #include <Eigen/Core>
+#include <vector>
 
 using Eigen::Array;
 using Eigen::Dynamic;
