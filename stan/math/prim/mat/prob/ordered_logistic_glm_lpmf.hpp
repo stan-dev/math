@@ -75,13 +75,13 @@ void p(const matrix_cl& a) {
 }
 #endif
 
-template<bool propto, typename T_y, typename T_x, typename T_beta, typename T_cuts>
-typename stan::return_type<T_x, T_beta, T_cuts>::type
+template<bool propto, typename T_y, typename T_x_scalar, typename T_beta, typename T_cuts>
+typename stan::return_type<T_x_scalar, T_beta, T_cuts>::type
 ordered_logistic_glm_lpmf(
-        const T_y& y, const Eigen::Matrix<T_x, Eigen::Dynamic, Eigen::Dynamic>& x,
+        const T_y& y, const Eigen::Matrix<T_x_scalar, Eigen::Dynamic, Eigen::Dynamic>& x,
         const T_beta& beta, const T_cuts& cuts) {
   static const char* function = "ordered_logistic_glm_lpmf";
-  typedef typename partials_return_type<T_y, T_x, T_beta, T_cuts>::type
+  typedef typename partials_return_type<T_y, T_x_scalar, T_beta, T_cuts>::type
           T_partials_return;
 
   using Eigen::Dynamic;
@@ -104,7 +104,7 @@ ordered_logistic_glm_lpmf(
   if (size_zero(y, x, beta))
     return 0;
 
-  if (!include_summand<propto, T_x, T_beta, T_cuts>::value)
+  if (!include_summand<propto, T_x_scalar, T_beta, T_cuts>::value)
     return 0;
 
   T_partials_return logp(0);
@@ -119,13 +119,13 @@ ordered_logistic_glm_lpmf(
   Array<double, Dynamic, 1> cuts_y1(N_instances), cuts_y2(N_instances);
   for (int i = 0; i < N_instances; i++) {
     if (y[i] != N_classes) {
-      cuts_y1[i] = cuts_val_vec[y[i] - 1]; //y==C: INF
+      cuts_y1[i] = cuts_val_vec[y[i] - 1];
     }
     else{
       cuts_y1[i] = INFINITY;
     }
     if (y[i] != 1) {
-      cuts_y2[i] = cuts_val_vec[y[i] - 2]; //y==1: -INF
+      cuts_y2[i] = cuts_val_vec[y[i] - 2];
     }
     else{
       cuts_y2[i] = -INFINITY;
@@ -138,39 +138,40 @@ ordered_logistic_glm_lpmf(
     check_finite(function, "Matrix of independent variables", x);
   }
 
-  Array<double, Dynamic, 1> cut2 = location - cuts_y2; //y==1: INF
-  Array<double, Dynamic, 1> cut1 = location - cuts_y1; //y==C: -INF
+  Array<double, Dynamic, 1> cut2 = location - cuts_y2;
+  Array<double, Dynamic, 1> cut1 = location - cuts_y1;
 
-  //TODO eliminate -
-  //TODO select?
-  Array<double, Dynamic, 1> m_log_1p_exp_cut1 = -cut1 * (cut1 > 0.0).cast<double>() - (-cut1.abs()).exp().log1p();
-  Array<double, Dynamic, 1> m_log_1p_exp_m_cut2 = cut2 * (cut2 <= 0.0).cast<double>() - (-cut2.abs()).exp().log1p();
-  //TODO common subexpressions or move selects up?
+  //Not immediately evaluating next two expressions benefits performance
+  auto m_log_1p_exp_cut1 = -cut1 * (cut1 > 0.0).cast<double>() - (-cut1.abs()).exp().log1p();
+  auto m_log_1p_exp_m_cut2 = cut2 * (cut2 <= 0.0).cast<double>() - (-cut2.abs()).exp().log1p();
   logp = y.cwiseEqual(1).select(m_log_1p_exp_cut1,
                                 y.cwiseEqual(N_classes).select(m_log_1p_exp_m_cut2,
-                                                       m_log_1p_exp_m_cut2 + log1m_exp(cut1 - cut2).array() + m_log_1p_exp_cut1
+                                                               m_log_1p_exp_m_cut2 + log1m_exp(cut1 - cut2).array() + m_log_1p_exp_cut1
                                 )).sum();
 
-  operands_and_partials<Matrix<T_x, Dynamic, Dynamic>, T_beta, T_cuts> ops_partials(x, beta, cuts);
-  if (!is_constant_struct<T_x>::value && !is_constant_struct<T_beta>::value && !is_constant_struct<T_cuts>::value) {
-    //TODO single fraction?
+  operands_and_partials<Matrix<T_x_scalar, Dynamic, Dynamic>, T_beta, T_cuts> ops_partials(x, beta, cuts);
+  if (!is_constant_struct<T_x_scalar>::value || !is_constant_struct<T_beta>::value || !is_constant_struct<T_cuts>::value) {
     Array<double, Dynamic, 1> d1 = 1 / (1 + exp(cut2)) - 1 / (1 - exp(cuts_y1 - cuts_y2));
     Array<double, Dynamic, 1> d2 = 1 / (1 - exp(cuts_y2 - cuts_y1)) - 1 / (1 + exp(cut1));
 
-    if (!is_constant_struct<T_x>::value && !is_constant_struct<T_beta>::value) {
-      Matrix<double, 1, Dynamic> deriv_common = d1 - d2;
-      if (!is_constant_struct<T_x>::value) {
-        ops_partials.edge1_.partials_ = (beta_val_vec * deriv_common).transpose();
+    if (!is_constant_struct<T_x_scalar>::value || !is_constant_struct<T_beta>::value) {
+      Matrix<double, 1, Dynamic> location_derivative = d1 - d2;
+      if (!is_constant_struct<T_x_scalar>::value) {
+        ops_partials.edge1_.partials_ = (beta_val_vec * location_derivative).transpose();
       }
       if (!is_constant_struct<T_beta>::value) {
-        //TODO single transpose?
-        ops_partials.edge2_.partials_ = x_val.transpose() * deriv_common.transpose();
+        ops_partials.edge2_.partials_ = (location_derivative * x_val).transpose();
       }
     }
     if (!is_constant_struct<T_cuts>::value) {
-      //TODO iter over insts?
-      for (int c = 0; c < N_classes-1; c++) {
-        ops_partials.edge3_.partials_[c] = y.cwiseEqual(c + 1).select(d2, 0).sum() - y.cwiseEqual(c + 2).select(d1, 0).sum();
+      for(int i=0;i<N_instances;i++){
+        int c = y[i];
+        if(c!=N_classes) {
+          ops_partials.edge3_.partials_[c - 1] += d2[i];
+        }
+        if(c!=1){
+          ops_partials.edge3_.partials_[c - 2] -= d1[i];
+        }
       }
     }
   }
