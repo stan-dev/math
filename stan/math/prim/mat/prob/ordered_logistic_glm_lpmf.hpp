@@ -14,66 +14,12 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/mat/err/check_ordered.hpp>
+#include <stan/math/prim/arr/err/check_ordered.hpp>
 #include <stan/math/prim/scal/fun/log1p_exp.hpp>
 #include <cmath>
 
 namespace stan {
 namespace math {
-
-void s(const Eigen::MatrixXd& a) {
-  std::cout << "(" << a.rows() << ", " << a.cols() << std::endl;
-}
-void s(const Eigen::VectorXd& a) {
-  std::cout << "(" << a.rows() << ", " << a.cols() << std::endl;
-}
-void s(const Eigen::RowVectorXd& a) {
-  std::cout << "(" << a.rows() << ", " << a.cols() << std::endl;
-}
-
-void s(const Eigen::ArrayXXd& a) {
-  std::cout << "(" << a.rows() << ", " << a.cols() << std::endl;
-}
-void s(const Eigen::Array<double,Eigen::Dynamic,1>& a) {
-  std::cout << "(" << a.rows() << ", " << a.cols() << std::endl;
-}
-void s(const Eigen::Array<double,1,Eigen::Dynamic>& a) {
-  std::cout << "(" << a.rows() << ", " << a.cols() << std::endl;
-}
-
-
-void p(const Eigen::MatrixXd& a) {
-  s(a);
-  std::cout << a << std::endl;
-}
-void p(const Eigen::VectorXd& a) {
-  s(a);
-  std::cout << a << std::endl;
-}
-void p(const Eigen::RowVectorXd& a) {
-  s(a);
-  std::cout << a << std::endl;
-}
-
-void p(const Eigen::ArrayXXd& a) {
-  s(a);
-  std::cout << a << std::endl;
-}
-void p(const Eigen::Array<double,Eigen::Dynamic,1>& a) {
-  s(a);
-  std::cout << a << std::endl;
-}
-void p(const Eigen::Array<double,1,Eigen::Dynamic>& a) {
-  s(a);
-  std::cout << a << std::endl;
-}
-
-#ifdef STAN_OPENCL
-void p(const matrix_cl& a) {
-  Eigen::MatrixXd b(a.rows(), a.cols());
-  b = from_matrix_cl(a);
-  std::cout << b << std::endl;
-}
-#endif
 
 template<bool propto, typename T_y, typename T_x_scalar, typename T_beta, typename T_cuts>
 typename stan::return_type<T_x_scalar, T_beta, T_cuts>::type
@@ -101,7 +47,7 @@ ordered_logistic_glm_lpmf(
   check_finite(function, "Final cut-point", cuts[N_classes - 2]);
   check_finite(function, "First cut-point", cuts[0]);
 
-  if (size_zero(y, x, beta))
+  if (size_zero(y, x, beta, cuts))
     return 0;
 
   if (!include_summand<propto, T_x_scalar, T_beta, T_cuts>::value)
@@ -118,14 +64,15 @@ ordered_logistic_glm_lpmf(
 
   Array<double, Dynamic, 1> cuts_y1(N_instances), cuts_y2(N_instances);
   for (int i = 0; i < N_instances; i++) {
-    if (y[i] != N_classes) {
-      cuts_y1[i] = cuts_val_vec[y[i] - 1];
+    int c = y_vec[i];
+    if (c != N_classes) {
+      cuts_y1[i] = cuts_val_vec[c - 1];
     }
     else{
       cuts_y1[i] = INFINITY;
     }
-    if (y[i] != 1) {
-      cuts_y2[i] = cuts_val_vec[y[i] - 2];
+    if (c != 1) {
+      cuts_y2[i] = cuts_val_vec[c - 2];
     }
     else{
       cuts_y2[i] = -INFINITY;
@@ -144,8 +91,8 @@ ordered_logistic_glm_lpmf(
   //Not immediately evaluating next two expressions benefits performance
   auto m_log_1p_exp_cut1 = -cut1 * (cut1 > 0.0).cast<double>() - (-cut1.abs()).exp().log1p();
   auto m_log_1p_exp_m_cut2 = cut2 * (cut2 <= 0.0).cast<double>() - (-cut2.abs()).exp().log1p();
-  logp = y.cwiseEqual(1).select(m_log_1p_exp_cut1,
-                                y.cwiseEqual(N_classes).select(m_log_1p_exp_m_cut2,
+  logp = y_vec.cwiseEqual(1).select(m_log_1p_exp_cut1,
+                                    y_vec.cwiseEqual(N_classes).select(m_log_1p_exp_m_cut2,
                                                                m_log_1p_exp_m_cut2 + log1m_exp(cut1 - cut2).array() + m_log_1p_exp_cut1
                                 )).sum();
 
@@ -165,7 +112,7 @@ ordered_logistic_glm_lpmf(
     }
     if (!is_constant_struct<T_cuts>::value) {
       for(int i=0;i<N_instances;i++){
-        int c = y[i];
+        int c = y_vec[i];
         if(c!=N_classes) {
           ops_partials.edge3_.partials_[c - 1] += d2[i];
         }
