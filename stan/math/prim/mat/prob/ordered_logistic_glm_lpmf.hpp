@@ -15,7 +15,7 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/mat/err/check_ordered.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
-#include <stan/math/prim/scal/fun/log1p_exp.hpp>
+#include <stan/math/prim/mat/fun/log1m_exp.hpp>
 #include <cmath>
 
 namespace stan {
