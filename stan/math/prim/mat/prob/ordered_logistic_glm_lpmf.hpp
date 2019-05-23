@@ -21,6 +21,26 @@
 namespace stan {
 namespace math {
 
+/**
+ * Returns the log PMF of the ordinal regression Generalized Linear Model (GLM).
+ * This is equivalent to and faster than ordered_logistic_lpmf(y, x * beta, cuts).
+ *
+ * @tparam T_y type of integer vector of dependent variables (labels)
+ * @tparam T_x_scalar type of elements in the matrix of independent variables (features)
+ * @tparam T_beta T_beta type of the weight vector
+ * @tparam T_cuts T_beta type of the cutpoints vector
+ * @param y integer vector parameter
+ * @param x design matrix
+ * @param beta weight vector
+ * @param cuts vector of cutpoints
+ * @return log probability
+ * @throw std::domain_error If the outcome is not between 1 and
+ * the number of cutpoints plus 2; or if the cutpoint vector is not sorted in
+ * ascending order; or any input is not finite
+ * @throw std::invalid_argument If y and lambda are different
+ * lengths.
+ * @throw std::invalid_argument if container sizes mismatch.
+ */
 template<bool propto, typename T_y, typename T_x_scalar, typename T_beta, typename T_cuts>
 typename stan::return_type<T_x_scalar, T_beta, T_cuts>::type
 ordered_logistic_glm_lpmf(
