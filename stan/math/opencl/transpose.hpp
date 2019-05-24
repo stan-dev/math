@@ -17,8 +17,8 @@ namespace math {
  * @return transposed input matrix
  *
  */
-inline matrix_cl transpose(const matrix_cl& src) {
-  matrix_cl dst(src.cols(), src.rows());
+inline matrix_cl<double> transpose(const matrix_cl<double>& src) {
+  matrix_cl<double> dst(src.cols(), src.rows());
   if (dst.size() == 0)
     return dst;
   try {

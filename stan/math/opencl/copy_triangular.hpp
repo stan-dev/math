@@ -27,12 +27,12 @@ namespace math {
  *
  */
 template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
-inline matrix_cl copy_triangular(const matrix_cl& src) {
+inline matrix_cl<double> copy_triangular(const matrix_cl<double>& src) {
   if (src.size() == 0 || src.size() == 1) {
-    matrix_cl dst(src);
+    matrix_cl<double> dst(src);
     return dst;
   }
-  matrix_cl dst(src.rows(), src.cols());
+  matrix_cl<double> dst(src.rows(), src.cols());
   try {
     opencl_kernels::copy_triangular(cl::NDRange(dst.rows(), dst.cols()), dst,
                                     src, dst.rows(), dst.cols(),

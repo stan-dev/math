@@ -33,7 +33,7 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the matrix
  *    is not square
  */
-inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
+inline matrix_cl<double> lower_triangular_inverse(const matrix_cl<double>& A) {
   check_square("lower_triangular_inverse (OpenCL)", "A", A);
 
   int thread_block_2D_dim = 32;
@@ -62,10 +62,10 @@ inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
       = ((A.rows() + thread_block_size_1D - 1) / thread_block_size_1D)
         * thread_block_size_1D;
 
-  matrix_cl temp(A_rows_padded, A_rows_padded);
-  matrix_cl inv_padded(A_rows_padded, A_rows_padded);
-  matrix_cl inv_mat(A);
-  matrix_cl zero_mat(A_rows_padded - A.rows(), A_rows_padded);
+  matrix_cl<double> temp(A_rows_padded, A_rows_padded);
+  matrix_cl<double> inv_padded(A_rows_padded, A_rows_padded);
+  matrix_cl<double> inv_mat(A);
+  matrix_cl<double> zero_mat(A_rows_padded - A.rows(), A_rows_padded);
   zero_mat.zeros<stan::math::TriangularViewCL::Entire>();
   temp.zeros<stan::math::TriangularViewCL::Entire>();
   inv_padded.zeros<stan::math::TriangularViewCL::Entire>();

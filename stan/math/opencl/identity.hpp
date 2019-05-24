@@ -17,8 +17,8 @@ namespace math {
  * @return the identity matrix
  *
  */
-inline matrix_cl identity(int rows_cols) {
-  matrix_cl A(rows_cols, rows_cols);
+inline matrix_cl<double> identity(int rows_cols) {
+  matrix_cl<double> A(rows_cols, rows_cols);
   if (rows_cols == 0) {
     return A;
   }

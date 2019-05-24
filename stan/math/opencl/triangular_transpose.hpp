@@ -25,7 +25,7 @@ namespace math {
  *
  */
 template <TriangularMapCL triangular_map>
-inline void matrix_cl::triangular_transpose() try {
+inline void matrix_cl<double>::triangular_transpose() try {
   if (size() == 0 || size() == 1) {
     return;
   }

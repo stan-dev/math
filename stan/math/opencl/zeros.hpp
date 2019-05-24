@@ -24,7 +24,7 @@ namespace math {
  * value must be of type TriangularViewCL
  */
 template <TriangularViewCL triangular_view>
-inline void matrix_cl::zeros() try {
+inline void matrix_cl<double>::zeros() try {
   if (size() == 0)
     return;
   cl::CommandQueue cmdQueue = opencl_context.queue();

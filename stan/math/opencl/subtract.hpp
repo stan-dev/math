@@ -25,9 +25,9 @@ namespace math {
  * input matrices do not have matching dimensions.
  *
  */
-inline auto subtract(const matrix_cl& A, const matrix_cl& B) {
+inline matrix_cl<double> subtract(const matrix_cl<double>& A, const matrix_cl<double>& B) {
   check_matching_dims("subtract ((OpenCL))", "A", A, "B", B);
-  matrix_cl C(A.rows(), A.cols());
+  matrix_cl<double> C(A.rows(), A.cols());
   if (A.size() == 0) {
     return C;
   }
@@ -55,7 +55,7 @@ inline auto subtract(const matrix_cl& A, const matrix_cl& B) {
  * input matrices do not have matching dimensions.
  *
  */
-inline auto operator-(const matrix_cl& A, const matrix_cl& B) {
+inline matrix_cl<double> operator-(const matrix_cl<double>& A, const matrix_cl<double>& B) {
   return subtract(A, B);
 }
 }  // namespace math

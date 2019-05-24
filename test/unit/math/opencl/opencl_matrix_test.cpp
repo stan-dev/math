@@ -2,6 +2,7 @@
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/fwd/mat/fun/typedefs.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <gtest/gtest.h>
@@ -9,96 +10,146 @@
 #include <vector>
 
 TEST(MathMatrixCL, matrix_cl_double_creation) {
-  stan::math::vector_d d1;
-  stan::math::matrix_d d2;
-  stan::math::matrix_d d3;
+  stan::math::vector_d vec_1;
+  stan::math::matrix_d mat_1;
+  stan::math::matrix_d mat_2;
 
-  d1.resize(3);
-  d2.resize(2, 3);
+  vec_1.resize(3);
+  mat_1.resize(2, 3);
   EXPECT_NO_THROW(stan::math::matrix_cl<double> A(1, 1));
-  EXPECT_NO_THROW(stan::math::matrix_cl<double> d11(d1));
-  EXPECT_NO_THROW(stan::math::matrix_cl<double> d22(d2));
-  EXPECT_NO_THROW(stan::math::matrix_cl<double> d33(d3));
+  EXPECT_NO_THROW(stan::math::matrix_cl<double> vec_1cl(vec_1));
+  EXPECT_NO_THROW(stan::math::matrix_cl<double> mat_1cl(mat_1));
+  EXPECT_NO_THROW(stan::math::matrix_cl<double> mat_2cl(mat_2));
 }
 
 TEST(MathMatrixCL, matrix_cl_var_creation) {
-  stan::math::vector_v d1;
-  stan::math::matrix_v d2;
-  stan::math::matrix_v d3;
+  stan::math::vector_v vec_1;
+  stan::math::matrix_v mat_1;
+  stan::math::matrix_v mat_2;
 
-  d1.resize(3);
-  d2.resize(2, 3);
-  d3.resize(3, 3);
-  d1 << 1, 2, 3;
-  d2 << 1, 2, 3, 1, 2, 3;
-  d3 << 1, 2, 3, 1, 2, 3, 1, 2, 3;
+  vec_1.resize(3);
+  mat_1.resize(2, 3);
+  mat_2.resize(3, 3);
+  vec_1 << 1, 2, 3;
+  mat_1 << 1, 2, 3, 1, 2, 3;
+  mat_2 << 1, 2, 3, 1, 2, 3, 1, 2, 3;
 
   EXPECT_NO_THROW(stan::math::matrix_cl<stan::math::var> A(1, 1));
-  EXPECT_NO_THROW(stan::math::matrix_cl<stan::math::var> d22(d2));
-  EXPECT_NO_THROW(stan::math::matrix_cl<stan::math::var> d33(d3));
-  EXPECT_NO_THROW(stan::math::matrix_cl<stan::math::var> d11(d1));
+  EXPECT_NO_THROW(stan::math::matrix_cl<stan::math::var> d22(mat_1));
+  EXPECT_NO_THROW(stan::math::matrix_cl<stan::math::var> d33(mat_2));
+  EXPECT_NO_THROW(stan::math::matrix_cl<stan::math::var> d11(vec_1));
 }
 
 TEST(MathMatrixCL, matrix_cl_fvar_creation) {
-  stan::math::vector_fd d1;
-  stan::math::matrix_fd d2;
-  stan::math::matrix_fd d3;
+  stan::math::vector_fd vec_1;
+  stan::math::matrix_fd mat_1;
+  stan::math::matrix_fd mat_2;
 
-  d1.resize(3);
-  d2.resize(2, 3);
-  d3.resize(3, 3);
-  d1 << 1, 2, 3;
-  d2 << 1, 2, 3, 1, 2, 3;
-  d3 << 1, 2, 3, 1, 2, 3, 1, 2, 3;
+  vec_1.resize(3);
+  mat_1.resize(2, 3);
+  mat_2.resize(3, 3);
+  vec_1 << 1, 2, 3;
+  mat_1 << 1, 2, 3, 1, 2, 3;
+  mat_2 << 1, 2, 3, 1, 2, 3, 1, 2, 3;
 
   EXPECT_NO_THROW(stan::math::matrix_cl<stan::math::fvar<double>> A(1, 1));
-  EXPECT_NO_THROW(stan::math::matrix_cl<stan::math::fvar<double>> d22(d2));
-  EXPECT_NO_THROW(stan::math::matrix_cl<stan::math::fvar<double>> d33(d3));
-  EXPECT_NO_THROW(stan::math::matrix_cl<stan::math::fvar<double>> d11(d1));
+  EXPECT_NO_THROW(stan::math::matrix_cl<stan::math::fvar<double>> d22(mat_1));
+  EXPECT_NO_THROW(stan::math::matrix_cl<stan::math::fvar<double>> d33(mat_2));
+  EXPECT_NO_THROW(stan::math::matrix_cl<stan::math::fvar<double>> d11(vec_1));
 }
 
-/* This doesn't work yet.
 TEST(MathMatrixCL, matrix_cl_fvar_var_creation) {
   using stan::math::fvar;
   using stan::math::var;
   using stan::math::matrix_cl;
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  typedef Matrix<fvar<var>, Dynamic, Dynamic> matrix_fv;
+  typedef Matrix<fvar<var>, Dynamic, 1> vector_fv;
+  vector_fv vec_1(10);
+  matrix_fv mat_1(5, 2);
+  matrix_fv mat_2(10, 1);
 
-  typedef Eigen::Matrix<fvar<var>, Eigen::Dynamic, Eigen::Dynamic> matrix_fv;
-  typedef Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1> vector_fv;
-  vector_fv d1;
-  matrix_fv d2;
-  matrix_fv d3;
-
-  d1.resize(3);
-  d2.resize(2, 3);
-  d3.resize(3, 3);
-  d1 << 1, 2, 3;
-  d2 << 1, 2, 3, 1, 2, 3;
-  d3 << 1, 2, 3, 1, 2, 3, 1, 2, 3;
+  auto filler = 1.2;
+  for (size_t i = 0; i < 10; ++i) {
+    vec_1[i] = filler;
+    vec_1[i].d_ = filler;
+    mat_1(i) = filler;
+    mat_1(i).d_ = filler;
+    mat_2(i) = filler;
+    mat_2(i).d_ = filler;
+    filler++;
+  }
 
   EXPECT_NO_THROW(matrix_cl<fvar<var>> A(1, 1));
-  EXPECT_NO_THROW(matrix_cl<fvar<var>> d22(d2));
-  EXPECT_NO_THROW(matrix_cl<fvar<var>> d33(d3));
-  EXPECT_NO_THROW(matrix_cl<fvar<var>> d11(d1));
+  EXPECT_NO_THROW(matrix_cl<fvar<var>> d22(mat_1));
+  EXPECT_NO_THROW(matrix_cl<fvar<var>> d33(mat_2));
+  EXPECT_NO_THROW(matrix_cl<fvar<var>> d11(vec_1));
 }
 
-TEST(MathMatrixCL, matrix_cl_fvar_fvar_creation) {
-  stan::math::vector_ffd d1;
-  stan::math::matrix_ffd d2;
-  stan::math::matrix_ffd d3;
-
-  d1.resize(3);
-  d2.resize(2, 3);
-  d3.resize(3, 3);
-  d1 << 1, 2, 3;
-  d2 << 1, 2, 3, 1, 2, 3;
-  d3 << 1, 2, 3, 1, 2, 3, 1, 2, 3;
+TEST(MathMatrixCL, matrix_cl_fvar_fvar_double_creation) {
   using stan::math::fvar;
   using stan::math::matrix_cl;
-  EXPECT_NO_THROW(matrix_cl<fvar<fvar<double>>> A(1, 1));
-//  EXPECT_NO_THROW(matrix_cl<fvar<fvar<double>>> d22(d2));
-  EXPECT_NO_THROW(matrix_cl<fvar<fvar<double>>> d33(d3));
-  EXPECT_NO_THROW(matrix_cl<fvar<fvar<double>>> d11(d1));
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  typedef Matrix<fvar<fvar<double>>, Dynamic, Dynamic> matrix_fv;
+  typedef Matrix<fvar<fvar<double>>, Dynamic, 1> vector_fv;
+  typedef matrix_cl<fvar<fvar<double>>> matrix_ffv_cl;
+  vector_fv vec_1(10);
+  matrix_fv mat_1(5, 2);
+  matrix_fv mat_2(10, 1);
+
+  auto filler = 1.2;
+  for (size_t i = 0; i < 10; ++i) {
+    vec_1[i] = filler;
+    vec_1[i].d_.val_ = filler;
+    vec_1[i].d_.d_ = filler;
+    mat_1(i) = filler;
+    mat_1(i).d_.val_ = filler;
+    mat_1(i).d_.d_ = filler;
+    mat_2(i) = filler;
+    mat_2(i).d_.val_ = filler;
+    mat_2(i).d_.d_ = filler;
+    filler++;
+  }
+
+  EXPECT_NO_THROW(matrix_ffv_cl A(1, 1));
+  EXPECT_NO_THROW(matrix_ffv_cl d11(vec_1));
+  EXPECT_NO_THROW(matrix_ffv_cl d22(mat_1));
+  EXPECT_NO_THROW(matrix_ffv_cl d33(mat_2));
 }
-*/
+
+TEST(MathMatrixCL, matrix_cl_fvar_fvar_var_creation) {
+  using stan::math::fvar;
+  using stan::math::var;
+  using stan::math::matrix_cl;
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  typedef Matrix<fvar<fvar<var>>, Dynamic, Dynamic> matrix_fv;
+  typedef Matrix<fvar<fvar<var>>, Dynamic, 1> vector_fv;
+  typedef matrix_cl<fvar<fvar<var>>> matrix_ffv_cl;
+  vector_fv vec_1(10);
+  matrix_fv mat_1(5, 2);
+  matrix_fv mat_2(10, 1);
+
+  auto filler = 1.2;
+  for (size_t i = 0; i < 10; ++i) {
+    vec_1[i] = filler;
+    vec_1[i].d_ = filler;
+    vec_1[i].d_.d_ = filler;
+    mat_1(i) = filler;
+    mat_1(i).d_ = filler;
+    mat_1(i).d_.d_ = filler;
+    mat_2(i) = filler;
+    mat_2(i).d_ = filler;
+    mat_2(i).d_.d_ = filler;
+    filler++;
+  }
+
+  EXPECT_NO_THROW(matrix_ffv_cl A(1, 1));
+  EXPECT_NO_THROW(matrix_ffv_cl d11(vec_1));
+  EXPECT_NO_THROW(matrix_ffv_cl d22(mat_1));
+  EXPECT_NO_THROW(matrix_ffv_cl d33(mat_2));
+}
+
 #endif

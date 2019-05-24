@@ -25,7 +25,7 @@ namespace math {
  * @param ncols the number of columns in the submatrix
  */
 template <TriangularViewCL triangular_view>
-inline void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
+inline void matrix_cl<double>::sub_block(const matrix_cl<double>& A, size_t A_i, size_t A_j,
                                  size_t this_i, size_t this_j, size_t nrows,
                                  size_t ncols) try {
   if (nrows == 0 || ncols == 0) {

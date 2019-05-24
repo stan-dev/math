@@ -339,6 +339,7 @@ class matrix_cl<var> {
 
   matrix_cl<double>& val() const {return val_;}
   matrix_cl<double>& adj() const {return adj_;}
+  explicit matrix_cl() : rows_(0), cols_(0) {}
 
   template <int R, int C>
   explicit matrix_cl(const Eigen::Matrix<var, R, C>& A)
@@ -358,6 +359,11 @@ class matrix_cl<var> {
 
 template <typename T>
 class fvar;
+
+template <>
+template <typename T>
+class matrix_cl<fvar<T>>;
+
 template <>
 template <typename T>
 class matrix_cl<fvar<T>> {
@@ -381,7 +387,7 @@ class matrix_cl<fvar<T>> {
 
   matrix_cl<T>& val() const {return val_;}
   matrix_cl<T>& d() const {return d_;}
-
+  explicit matrix_cl() : rows_(0), cols_(0) {}
   template <int R, int C>
   explicit matrix_cl(const Eigen::Matrix<fvar<T>, R, C>& A)
       : rows_(A.rows()), cols_(A.cols()) {}

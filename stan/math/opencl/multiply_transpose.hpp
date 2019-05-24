@@ -21,8 +21,8 @@ namespace math {
  * @return the product of the input matrix and its transpose
  *
  */
-inline matrix_cl multiply_transpose(const matrix_cl& A) {
-  matrix_cl temp(A.rows(), A.rows());
+inline matrix_cl<double> multiply_transpose(const matrix_cl<double>& A) {
+  matrix_cl<double> temp(A.rows(), A.rows());
   if (A.size() == 0)
     return temp;
   // padding the matrices so the dimensions are divisible with local

@@ -33,10 +33,10 @@ namespace opencl {
 
 template <TriangularViewCL triangular_view_A = TriangularViewCL::Entire,
           TriangularViewCL triangular_view_B = TriangularViewCL::Entire>
-inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
+inline matrix_cl<double> multiply(const matrix_cl<double>& A, const matrix_cl<double>& B) {
   check_size_match("multiply ((OpenCL))", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
-  matrix_cl temp(A.rows(), B.cols());
+  matrix_cl<double> temp(A.rows(), B.cols());
   if (A.size() == 0 || B.size() == 0) {
     temp.zeros();
     return temp;
@@ -87,7 +87,7 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
                                       temp, A.rows(), B.cols(), B.rows(),
                                       triangular_view_A, triangular_view_B);
     } else {
-      matrix_cl tempSplit(A.rows(), B.cols() * split);
+      matrix_cl<double> tempSplit(A.rows(), B.cols() * split);
       opencl_kernels::matrix_multiply(cl::NDRange(Mpad, Npad / wpt, split),
                                       cl::NDRange(local, local / wpt, 1), A, B,
                                       tempSplit, A.rows(), B.cols(), B.rows(),
@@ -110,8 +110,8 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
  * @param scalar scalar
  * @return matrix multipled with scalar
  */
-inline matrix_cl multiply(const matrix_cl& A, const double scalar) {
-  matrix_cl temp(A.rows(), A.cols());
+inline matrix_cl<double> multiply(const matrix_cl<double>& A, const double scalar) {
+  matrix_cl<double> temp(A.rows(), A.cols());
   if (A.size() == 0)
     return temp;
   try {
@@ -131,7 +131,7 @@ inline matrix_cl multiply(const matrix_cl& A, const double scalar) {
  * @param A matrix
  * @return matrix multipled with scalar
  */
-inline auto multiply(const double scalar, const matrix_cl& A) {
+inline matrix_cl<double> multiply(const double scalar, const matrix_cl<double>& A) {
   return multiply(A, scalar);
 }
 
@@ -147,7 +147,7 @@ inline auto multiply(const double scalar, const matrix_cl& A) {
  * @throw <code>std::invalid_argument</code> if the
  *   number of columns in A and rows in B do not match
  */
-inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
+inline matrix_cl<double> multiply(const matrix_cl<double>& A, const matrix_cl<double>& B) {
   return opencl::multiply(A, B);
 }
 
@@ -163,13 +163,13 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
  * @throw <code>std::invalid_argument</code> if the
  *   number of columns in A and rows in B do not match
  */
-inline matrix_cl operator*(const matrix_cl& A, const matrix_cl& B) {
+inline matrix_cl<double> operator*(const matrix_cl<double>& A, const matrix_cl<double>& B) {
   return opencl::multiply(A, B);
 }
-inline matrix_cl operator*(const matrix_cl& B, const double scalar) {
+inline matrix_cl<double> operator*(const matrix_cl<double>& B, const double scalar) {
   return multiply(B, scalar);
 }
-inline matrix_cl operator*(const double scalar, const matrix_cl& B) {
+inline matrix_cl<double> operator*(const double scalar, const matrix_cl<double>& B) {
   return multiply(scalar, B);
 }
 }  // namespace math
