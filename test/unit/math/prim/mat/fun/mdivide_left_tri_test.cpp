@@ -44,7 +44,7 @@ TEST(MathMatrix, mdivide_left_tri_val) {
 }
 
 #ifdef STAN_OPENCL
-void mvidive_left_tri_lower_cl_test(int size) {
+void mdivide_left_tri_lower_cl_test(int size) {
   boost::random::mt19937 rng;
   auto m1 = stan::math::matrix_d(size, size);
   for (int i = 0; i < size; i++) {
