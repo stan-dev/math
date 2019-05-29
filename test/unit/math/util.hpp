@@ -71,6 +71,22 @@ struct serializer {
   }
 };
 
+template <typename U>
+void serialize(serializer<U>& s) {}
+
+template <typename U, typename T, typename... Ts>
+void serialize(serializer<U>& s, const T& x, const Ts... xs) {
+  s.write(x);
+  serialize(s, xs...);
+}
+
+template <typename U, typename... Ts>
+std::vector<U> serialize(const Ts... xs) {
+  serializer<U> s;
+  serialize(s, xs...);
+  return s.vals_;
+}
+
 }  // namespace test
 }  // namespace stan
 

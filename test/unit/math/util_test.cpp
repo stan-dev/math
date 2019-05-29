@@ -1,7 +1,7 @@
 #include <test/unit/math/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(test_unit_math_util, serialization) {
+TEST(test_unit_math_util, serializer_deserializer) {
   stan::test::serializer<double> s;
 
   s.write(3.2);
@@ -47,4 +47,19 @@ TEST(test_unit_math_util, serialization) {
   EXPECT_EQ(4, u(1, 1));
   EXPECT_EQ(5, u(2, 0));
   EXPECT_EQ(6, u(2, 1));
+}
+
+TEST(test_unit_math_util, serialize) {
+  std::vector<double> xs = stan::test::serialize<double>();
+  EXPECT_EQ(0, xs.size());
+
+  double a = 2;
+  std::vector<double> b{3, 4, 5};
+  Eigen::MatrixXd c(2, 3);
+  c << -1, -2, -3, -4, -5, -6;
+  std::vector<double> ys = stan::test::serialize<double>(a, b, c);
+
+  std::vector<double> expected{2, 3, 4, 5, -1, -4, -2, -5, -3, -6};
+  for (size_t i = 0; i < expected.size(); ++i)
+    EXPECT_EQ(expected[i], ys[i]);
 }
