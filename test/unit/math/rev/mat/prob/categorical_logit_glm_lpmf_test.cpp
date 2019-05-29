@@ -13,8 +13,8 @@ using Eigen::Matrix;
 using Eigen::MatrixXd;
 using Eigen::RowVectorXd;
 using Eigen::VectorXd;
-using stan::math::var;
 using stan::math::categorical_logit_glm_lpmf;
+using stan::math::var;
 using std::vector;
 
 template <bool propto, typename T_x, typename T_alpha, typename T_beta>
@@ -62,8 +62,7 @@ TEST(ProbDistributionsCategoricalLogitGLM,
   EXPECT_NEAR((categorical_logit_glm_simple_lpmf<false>(y, x, alpha, beta)),
               (categorical_logit_glm_lpmf(y, x, alpha, beta)), eps);
   EXPECT_NEAR((categorical_logit_glm_simple_lpmf<true>(y, x, alpha, beta)),
-              (categorical_logit_glm_lpmf<true>(y, x, alpha, beta)),
-              eps);
+              (categorical_logit_glm_lpmf<true>(y, x, alpha, beta)), eps);
 }
 
 TEST(ProbDistributionsCategoricalLogitGLM, glm_matches_categorical_logit_vars) {
@@ -126,11 +125,11 @@ TEST(ProbDistributionsCategoricalLogitGLM, single_instance) {
   const size_t N_classes = 3;
   vector<int> y{1};
   Matrix<var, Dynamic, Dynamic> x1(N_instances, N_attributes),
-          x2(N_instances, N_attributes);
+      x2(N_instances, N_attributes);
   x1 << -12, 46;
   x2 << -12, 46;
   Matrix<var, Dynamic, Dynamic> beta1(N_attributes, N_classes),
-          beta2(N_attributes, N_classes);
+      beta2(N_attributes, N_classes);
   beta1 << 0.3, 2, 0.4, -0.1, -1.3, 1;
   beta2 << 0.3, 2, 0.4, -0.1, -1.3, 1;
   Matrix<var, Dynamic, 1> alpha1(N_classes), alpha2(N_classes);
@@ -179,11 +178,11 @@ TEST(ProbDistributionsCategoricalLogitGLM, single_class) {
   const size_t N_classes = 1;
   vector<int> y{1, 1, 1, 1, 1};
   Matrix<var, Dynamic, Dynamic> x1(N_instances, N_attributes),
-          x2(N_instances, N_attributes);
+      x2(N_instances, N_attributes);
   x1 << -12, 46, -42, 24, 25, 27, -14, -11, 5, 18;
   x2 << -12, 46, -42, 24, 25, 27, -14, -11, 5, 18;
   Matrix<var, Dynamic, Dynamic> beta1(N_attributes, N_classes),
-          beta2(N_attributes, N_classes);
+      beta2(N_attributes, N_classes);
   beta1 << 0.3, 2;
   beta2 << 0.3, 2;
   Matrix<var, Dynamic, 1> alpha1(N_classes), alpha2(N_classes);
@@ -238,7 +237,7 @@ TEST(ProbDistributionsCategoricalLogitGLM, zero_attributes) {
 
   var res2 = categorical_logit_glm_lpmf(y, x, alpha, beta);
   res2.grad();
-  EXPECT_EQ(res2.val(),0);
+  EXPECT_EQ(res2.val(), 0);
   for (int i = 0; i < N_classes; i++) {
     EXPECT_EQ(alpha[i].adj(), 0);
   }
@@ -247,7 +246,7 @@ TEST(ProbDistributionsCategoricalLogitGLM, zero_attributes) {
 
   res2 = categorical_logit_glm_lpmf<true>(y, x, alpha, beta);
   res2.grad();
-  EXPECT_EQ(res2.val(),0);
+  EXPECT_EQ(res2.val(), 0);
   for (int i = 0; i < N_classes; i++) {
     EXPECT_EQ(alpha[i].adj(), 0);
   }
@@ -262,9 +261,9 @@ TEST(ProbDistributionsCategoricalLogitGLM, x_broadcasting) {
   Matrix<double, 1, Dynamic> x_double(N_attributes);
   x_double << -12, 46;
   Matrix<var, 1, Dynamic> x_row = x_double;
-  Matrix<var, Dynamic, Dynamic> x = x_double.replicate(N_instances,1);
+  Matrix<var, Dynamic, Dynamic> x = x_double.replicate(N_instances, 1);
   Matrix<var, Dynamic, Dynamic> beta1(N_attributes, N_classes),
-          beta2(N_attributes, N_classes);
+      beta2(N_attributes, N_classes);
   beta1 << 0.3, 2, 0.4, -0.1, -1.3, 1;
   beta2 << 0.3, 2, 0.4, -0.1, -1.3, 1;
   Matrix<var, Dynamic, 1> alpha1(N_classes), alpha2(N_classes);
@@ -316,18 +315,18 @@ TEST(ProbDistributionsCategoricalLogitGLM, y_broadcasting) {
   const size_t N_attributes = 2;
   const size_t N_classes = 3;
   Matrix<var, Dynamic, Dynamic> x1(N_instances, N_attributes),
-          x2(N_instances, N_attributes);
+      x2(N_instances, N_attributes);
   x1 << -12, 46, -42, 24, 25, 27, -14, -11, 5, 18;
   x2 << -12, 46, -42, 24, 25, 27, -14, -11, 5, 18;
   Matrix<var, Dynamic, Dynamic> beta1(N_attributes, N_classes),
-          beta2(N_attributes, N_classes);
+      beta2(N_attributes, N_classes);
   beta1 << 0.3, 2, 0.4, -0.1, -1.3, 1;
   beta2 << 0.3, 2, 0.4, -0.1, -1.3, 1;
   Matrix<var, Dynamic, 1> alpha1(N_classes), alpha2(N_classes);
   alpha1 << 0.5, -2, 4;
   alpha2 << 0.5, -2, 4;
 
-  for(int y_scal=1;y_scal<=N_classes;y_scal++){
+  for (int y_scal = 1; y_scal <= N_classes; y_scal++) {
     vector<int> y(N_instances, y_scal);
     var res1 = categorical_logit_glm_lpmf(y_scal, x1, alpha1, beta1);
     var res2 = categorical_logit_glm_lpmf(y, x2, alpha2, beta2);
@@ -436,74 +435,69 @@ TEST(ProbDistributionsCategoricalLogitGLM, glm_interfaces) {
   Matrix<var, Dynamic, Dynamic> beta_var = beta_double;
   Matrix<var, Dynamic, 1> alpha_var = alpha_double;
 
-  EXPECT_NO_THROW(categorical_logit_glm_lpmf(
-      y, x_double, alpha_double, beta_double));
-  EXPECT_NO_THROW(categorical_logit_glm_lpmf(y, x_var, alpha_double,
-                                                         beta_double));
-  EXPECT_NO_THROW(categorical_logit_glm_lpmf(y, x_double, alpha_var,
-                                                         beta_double));
-  EXPECT_NO_THROW(categorical_logit_glm_lpmf(
-      y, x_double, alpha_double, beta_var));
   EXPECT_NO_THROW(
-      categorical_logit_glm_lpmf(y, x_double, alpha_var, beta_var));
+      categorical_logit_glm_lpmf(y, x_double, alpha_double, beta_double));
   EXPECT_NO_THROW(
-      categorical_logit_glm_lpmf(y, x_var, alpha_double, beta_var));
+      categorical_logit_glm_lpmf(y, x_var, alpha_double, beta_double));
   EXPECT_NO_THROW(
-      categorical_logit_glm_lpmf(y, x_var, alpha_var, beta_double));
+      categorical_logit_glm_lpmf(y, x_double, alpha_var, beta_double));
   EXPECT_NO_THROW(
-      categorical_logit_glm_lpmf(y, x_var, alpha_var, beta_var));
-  
-  EXPECT_NO_THROW(categorical_logit_glm_lpmf(
-          y_scal, x_double, alpha_double, beta_double));
-  EXPECT_NO_THROW(categorical_logit_glm_lpmf(y_scal, x_var, alpha_double,
-                                                         beta_double));
-  EXPECT_NO_THROW(categorical_logit_glm_lpmf(y_scal, x_double, alpha_var,
-                                                         beta_double));
-  EXPECT_NO_THROW(categorical_logit_glm_lpmf(
-          y_scal, x_double, alpha_double, beta_var));
-  EXPECT_NO_THROW(
-          categorical_logit_glm_lpmf(y_scal, x_double, alpha_var, beta_var));
-  EXPECT_NO_THROW(
-          categorical_logit_glm_lpmf(y_scal, x_var, alpha_double, beta_var));
-  EXPECT_NO_THROW(
-          categorical_logit_glm_lpmf(y_scal, x_var, alpha_var, beta_double));
-  EXPECT_NO_THROW(
-          categorical_logit_glm_lpmf(y_scal, x_var, alpha_var, beta_var));
+      categorical_logit_glm_lpmf(y, x_double, alpha_double, beta_var));
+  EXPECT_NO_THROW(categorical_logit_glm_lpmf(y, x_double, alpha_var, beta_var));
+  EXPECT_NO_THROW(categorical_logit_glm_lpmf(y, x_var, alpha_double, beta_var));
+  EXPECT_NO_THROW(categorical_logit_glm_lpmf(y, x_var, alpha_var, beta_double));
+  EXPECT_NO_THROW(categorical_logit_glm_lpmf(y, x_var, alpha_var, beta_var));
 
-  EXPECT_NO_THROW(categorical_logit_glm_lpmf(
-          y, x_double_row, alpha_double, beta_double));
-  EXPECT_NO_THROW(categorical_logit_glm_lpmf(y, x_var_row, alpha_double,
-                                                         beta_double));
-  EXPECT_NO_THROW(categorical_logit_glm_lpmf(y, x_double_row, alpha_var,
-                                                         beta_double));
-  EXPECT_NO_THROW(categorical_logit_glm_lpmf(
-          y, x_double_row, alpha_double, beta_var));
   EXPECT_NO_THROW(
-          categorical_logit_glm_lpmf(y, x_double_row, alpha_var, beta_var));
+      categorical_logit_glm_lpmf(y_scal, x_double, alpha_double, beta_double));
   EXPECT_NO_THROW(
-          categorical_logit_glm_lpmf(y, x_var_row, alpha_double, beta_var));
+      categorical_logit_glm_lpmf(y_scal, x_var, alpha_double, beta_double));
   EXPECT_NO_THROW(
-          categorical_logit_glm_lpmf(y, x_var_row, alpha_var, beta_double));
+      categorical_logit_glm_lpmf(y_scal, x_double, alpha_var, beta_double));
   EXPECT_NO_THROW(
-          categorical_logit_glm_lpmf(y, x_var_row, alpha_var, beta_var));
+      categorical_logit_glm_lpmf(y_scal, x_double, alpha_double, beta_var));
+  EXPECT_NO_THROW(
+      categorical_logit_glm_lpmf(y_scal, x_double, alpha_var, beta_var));
+  EXPECT_NO_THROW(
+      categorical_logit_glm_lpmf(y_scal, x_var, alpha_double, beta_var));
+  EXPECT_NO_THROW(
+      categorical_logit_glm_lpmf(y_scal, x_var, alpha_var, beta_double));
+  EXPECT_NO_THROW(
+      categorical_logit_glm_lpmf(y_scal, x_var, alpha_var, beta_var));
 
+  EXPECT_NO_THROW(
+      categorical_logit_glm_lpmf(y, x_double_row, alpha_double, beta_double));
+  EXPECT_NO_THROW(
+      categorical_logit_glm_lpmf(y, x_var_row, alpha_double, beta_double));
+  EXPECT_NO_THROW(
+      categorical_logit_glm_lpmf(y, x_double_row, alpha_var, beta_double));
+  EXPECT_NO_THROW(
+      categorical_logit_glm_lpmf(y, x_double_row, alpha_double, beta_var));
+  EXPECT_NO_THROW(
+      categorical_logit_glm_lpmf(y, x_double_row, alpha_var, beta_var));
+  EXPECT_NO_THROW(
+      categorical_logit_glm_lpmf(y, x_var_row, alpha_double, beta_var));
+  EXPECT_NO_THROW(
+      categorical_logit_glm_lpmf(y, x_var_row, alpha_var, beta_double));
+  EXPECT_NO_THROW(
+      categorical_logit_glm_lpmf(y, x_var_row, alpha_var, beta_var));
 
-  EXPECT_NO_THROW(categorical_logit_glm_lpmf(
-          y_scal, x_double_row, alpha_double, beta_double));
-  EXPECT_NO_THROW(categorical_logit_glm_lpmf(y_scal, x_var_row, alpha_double,
-                                                         beta_double));
-  EXPECT_NO_THROW(categorical_logit_glm_lpmf(y_scal, x_double_row, alpha_var,
-                                                         beta_double));
-  EXPECT_NO_THROW(categorical_logit_glm_lpmf(
-          y_scal, x_double_row, alpha_double, beta_var));
+  EXPECT_NO_THROW(categorical_logit_glm_lpmf(y_scal, x_double_row, alpha_double,
+                                             beta_double));
   EXPECT_NO_THROW(
-          categorical_logit_glm_lpmf(y_scal, x_double_row, alpha_var, beta_var));
+      categorical_logit_glm_lpmf(y_scal, x_var_row, alpha_double, beta_double));
   EXPECT_NO_THROW(
-          categorical_logit_glm_lpmf(y_scal, x_var_row, alpha_double, beta_var));
+      categorical_logit_glm_lpmf(y_scal, x_double_row, alpha_var, beta_double));
   EXPECT_NO_THROW(
-          categorical_logit_glm_lpmf(y_scal, x_var_row, alpha_var, beta_double));
+      categorical_logit_glm_lpmf(y_scal, x_double_row, alpha_double, beta_var));
   EXPECT_NO_THROW(
-          categorical_logit_glm_lpmf(y_scal, x_var_row, alpha_var, beta_var));
+      categorical_logit_glm_lpmf(y_scal, x_double_row, alpha_var, beta_var));
+  EXPECT_NO_THROW(
+      categorical_logit_glm_lpmf(y_scal, x_var_row, alpha_double, beta_var));
+  EXPECT_NO_THROW(
+      categorical_logit_glm_lpmf(y_scal, x_var_row, alpha_var, beta_double));
+  EXPECT_NO_THROW(
+      categorical_logit_glm_lpmf(y_scal, x_var_row, alpha_var, beta_var));
 }
 
 TEST(ProbDistributionsCategoricalLogitGLM, glm_errors) {
