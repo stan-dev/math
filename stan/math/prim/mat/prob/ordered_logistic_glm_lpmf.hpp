@@ -124,9 +124,10 @@ ordered_logistic_glm_lpmf(
 
   // Not immediately evaluating next two expressions benefits performance
   auto m_log_1p_exp_cut1
-          = -cut1 * (cut1 > 0.0).cast<double>() - (-cut1.abs()).exp().log1p();
+          = (cut1 > 0.0).select(-cut1,0) - (-cut1.abs()).exp().log1p();
   auto m_log_1p_exp_m_cut2
-          = cut2 * (cut2 <= 0.0).cast<double>() - (-cut2.abs()).exp().log1p();
+          = (cut2 <= 0.0).select(cut2,0) - (-cut2.abs()).exp().log1p();
+
   if (is_vector<T_y>::value) {
     Eigen::Map<const Eigen::Matrix<int, Eigen::Dynamic, 1>> y_vec(&y_seq[0], y_seq.size());
     logp = y_vec.cwiseEqual(1)
