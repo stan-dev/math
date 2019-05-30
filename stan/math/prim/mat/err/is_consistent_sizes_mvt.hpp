@@ -21,8 +21,8 @@ namespace math {
 template <typename T1, typename T2>
 inline bool is_consistent_sizes_mvt(const T1& x1, const T2& x2) {
   return length_mvt(x1) > length_mvt(x2)
-    ? is_consistent_size_mvt(x2, length_mvt(x1))
-    : is_consistent_size_mvt(x1, length_mvt(x2));
+             ? is_consistent_size_mvt(x2, length_mvt(x1))
+             : is_consistent_size_mvt(x1, length_mvt(x2));
 }
 
 }  // namespace math

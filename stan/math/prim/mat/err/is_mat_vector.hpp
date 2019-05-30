@@ -19,9 +19,7 @@ namespace math {
  **/
 template <typename T, int R, int C>
 inline bool is_mat_vector(const Eigen::Matrix<T, R, C>& y) {
-  return R == 1 || C == 1
-    ? true
-    : y.rows() == 1 || y.cols() == 1;
+  return R == 1 || C == 1 ? true : y.rows() == 1 || y.cols() == 1;
 }
 
 }  // namespace math

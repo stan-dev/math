@@ -20,12 +20,9 @@ TEST(isConsistentSizesMvt, isConsistentSizesMvt) {
   EXPECT_TRUE(stan::math::is_consistent_sizes_mvt(good, good));
   EXPECT_TRUE(stan::math::is_consistent_sizes_mvt(good, good_single));
   EXPECT_TRUE(stan::math::is_consistent_sizes_mvt(good_single, good));
-  EXPECT_TRUE(stan::math::is_consistent_sizes_mvt(good_single,
-                                                      good_single));
-  EXPECT_TRUE(stan::math::is_consistent_sizes_mvt(good_single,
-                                                      bad_only_1));
-  EXPECT_TRUE(stan::math::is_consistent_sizes_mvt(good_single,
-                                                      bad_only_2));
+  EXPECT_TRUE(stan::math::is_consistent_sizes_mvt(good_single, good_single));
+  EXPECT_TRUE(stan::math::is_consistent_sizes_mvt(good_single, bad_only_1));
+  EXPECT_TRUE(stan::math::is_consistent_sizes_mvt(good_single, bad_only_2));
   EXPECT_FALSE(stan::math::is_consistent_sizes_mvt(good, bad_only_2));
   EXPECT_FALSE(stan::math::is_consistent_sizes_mvt(good, bad_only_1));
   EXPECT_FALSE(stan::math::is_consistent_sizes_mvt(bad_only_2, good));
