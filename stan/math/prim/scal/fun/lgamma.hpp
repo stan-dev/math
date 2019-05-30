@@ -29,6 +29,11 @@ namespace math {
    \end{cases}
 \f]
 *
+* Note: The use of std::lgamma is explicitly avoided here. The std
+* implementation is not suitable for concurrent use in threaded
+* programs as the exact behavior under threading is implementation
+* specific. See discussion under https://github.com/stan-dev/math/issues/1250
+*
 * @param x argument
 * @return natural logarithm of the gamma function applied to
 * argument
