@@ -28,6 +28,7 @@ TEST(MathFunctions, binomial_coefficient_log) {
 
   test_binom_coefficient(1e9, 1e5);
   // this overflows with boost lgamma and results in NaN comparisons
+  // TODO(SW): investigate
   // test_binom_coefficient(1e50, 1e45);
 }
 
