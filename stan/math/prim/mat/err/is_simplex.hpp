@@ -24,9 +24,8 @@ namespace math {
  */
 template <typename T_prob>
 inline bool is_simplex(const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
-  return is_nonzero_size(theta)
-    && fabs(1 - theta.sum()) < 1e-8
-    && (theta.array() >= 0).all();
+  return is_nonzero_size(theta) && fabs(1 - theta.sum()) < 1e-8
+         && (theta.array() >= 0).all();
 }
 
 }  // namespace math

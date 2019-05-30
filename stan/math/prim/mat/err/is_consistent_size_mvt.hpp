@@ -21,7 +21,8 @@ namespace math {
 template <typename T>
 inline bool is_consistent_size_mvt(const T& x, size_t expected_size) {
   return length(x) == expected_size
-    || !is_vector<typename std::remove_reference<decltype(x[0])>::type>::value;
+         || !is_vector<
+                typename std::remove_reference<decltype(x[0])>::type>::value;
 }
 
 }  // namespace math

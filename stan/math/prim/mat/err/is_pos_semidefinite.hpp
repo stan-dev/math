@@ -36,8 +36,7 @@ inline bool is_pos_semidefinite(
   using Eigen::LDLT;
   LDLT<Eigen::MatrixXd> cholesky = value_of_rec(y).ldlt();
   return cholesky.info() == Eigen::Success
-    && !(cholesky.vectorD().array() < 0).any()
-    && is_not_nan(y);
+         && !(cholesky.vectorD().array() < 0).any() && is_not_nan(y);
 }
 
 }  // namespace math
