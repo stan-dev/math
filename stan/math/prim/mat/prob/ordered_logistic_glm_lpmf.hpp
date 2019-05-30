@@ -28,7 +28,8 @@ namespace math {
  * This is equivalent to and faster than ordered_logistic_lpmf(y, x * beta,
  * cuts).
  *
- * @tparam T_y type of integer vector of classes. It can be either `std::vector<int>` or `int`.
+ * @tparam T_y type of integer vector of classes. It can be either
+ * `std::vector<int>` or `int`.
  * @tparam T_x_scalar type of elements in the matrix of independent variables
  * (features)
  * @tparam T_x_rows compile-time number of rows of `x`. It can be either
@@ -48,14 +49,13 @@ namespace math {
  * ascending order or any input is not finite
  * @throw std::invalid_argument if container sizes mismatch.
  */
-template <bool propto, typename T_y, typename T_x_scalar, int T_x_rows, typename T_beta_scalar,
-          typename T_cuts_scalar>
+template <bool propto, typename T_y, typename T_x_scalar, int T_x_rows,
+          typename T_beta_scalar, typename T_cuts_scalar>
 typename stan::return_type<T_x_scalar, T_beta_scalar, T_cuts_scalar>::type
 ordered_logistic_glm_lpmf(
-        const T_y& y,
-        const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
-        const Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, 1>& beta,
-        const Eigen::Matrix<T_cuts_scalar, Eigen::Dynamic,1>& cuts) {
+    const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
+    const Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, 1>& beta,
+    const Eigen::Matrix<T_cuts_scalar, Eigen::Dynamic, 1>& cuts) {
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -63,9 +63,10 @@ ordered_logistic_glm_lpmf(
   using std::exp;
   using std::isfinite;
 
-  typedef typename partials_return_type<T_y, T_x_scalar, T_beta_scalar, T_cuts_scalar>::type
-      T_partials_return;
-  typedef typename std::conditional<T_x_rows == 1, double, Array<double, Dynamic, 1>>::type T_location;
+  typedef typename partials_return_type<T_y, T_x_scalar, T_beta_scalar,
+                                        T_cuts_scalar>::type T_partials_return;
+  typedef typename std::conditional<T_x_rows == 1, double,
+                                    Array<double, Dynamic, 1>>::type T_location;
 
   static const char* function = "ordered_logistic_glm_lpmf";
 
@@ -73,7 +74,7 @@ ordered_logistic_glm_lpmf(
   const size_t N_attributes = x.cols();
   const size_t N_classes = length(cuts) + 1;
 
-  if(is_vector<T_y>::value && T_x_rows!=1) {
+  if (is_vector<T_y>::value && T_x_rows != 1) {
     check_consistent_size(function, "Vector of dependent variables", y,
                           N_instances);
   }
@@ -124,33 +125,35 @@ ordered_logistic_glm_lpmf(
 
   // Not immediately evaluating next two expressions benefits performance
   auto m_log_1p_exp_cut1
-          = (cut1 > 0.0).select(-cut1,0) - (-cut1.abs()).exp().log1p();
+      = (cut1 > 0.0).select(-cut1, 0) - (-cut1.abs()).exp().log1p();
   auto m_log_1p_exp_m_cut2
-          = (cut2 <= 0.0).select(cut2,0) - (-cut2.abs()).exp().log1p();
+      = (cut2 <= 0.0).select(cut2, 0) - (-cut2.abs()).exp().log1p();
 
   if (is_vector<T_y>::value) {
-    Eigen::Map<const Eigen::Matrix<int, Eigen::Dynamic, 1>> y_vec(&y_seq[0], y_seq.size());
+    Eigen::Map<const Eigen::Matrix<int, Eigen::Dynamic, 1>> y_vec(&y_seq[0],
+                                                                  y_seq.size());
     logp = y_vec.cwiseEqual(1)
-            .select(m_log_1p_exp_cut1,
-                    y_vec.cwiseEqual(N_classes).select(
-                            m_log_1p_exp_m_cut2,
-                            m_log_1p_exp_m_cut2 + log1m_exp(cut1 - cut2).array()
-                            + m_log_1p_exp_cut1))
-            .sum();
-  }
-  else {
+               .select(m_log_1p_exp_cut1,
+                       y_vec.cwiseEqual(N_classes).select(
+                           m_log_1p_exp_m_cut2,
+                           m_log_1p_exp_m_cut2 + log1m_exp(cut1 - cut2).array()
+                               + m_log_1p_exp_cut1))
+               .sum();
+  } else {
     if (y_seq[0] == 1) {
       logp = m_log_1p_exp_cut1.sum();
-    }
-    else if (y_seq[0] == N_classes) {
+    } else if (y_seq[0] == N_classes) {
       logp = m_log_1p_exp_m_cut2.sum();
-    }
-    else {
-      logp = (m_log_1p_exp_m_cut2 + log1m_exp(cut1 - cut2).array() + m_log_1p_exp_cut1).sum();
+    } else {
+      logp = (m_log_1p_exp_m_cut2 + log1m_exp(cut1 - cut2).array()
+              + m_log_1p_exp_cut1)
+                 .sum();
     }
   }
 
-  operands_and_partials<Matrix<T_x_scalar, T_x_rows, Dynamic>, Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, 1>, Eigen::Matrix<T_cuts_scalar, Eigen::Dynamic,1>>
+  operands_and_partials<Matrix<T_x_scalar, T_x_rows, Dynamic>,
+                        Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, 1>,
+                        Eigen::Matrix<T_cuts_scalar, Eigen::Dynamic, 1>>
       ops_partials(x, beta, cuts);
   if (!is_constant_struct<T_x_scalar>::value
       || !is_constant_struct<T_beta_scalar>::value
@@ -164,23 +167,22 @@ ordered_logistic_glm_lpmf(
         || !is_constant_struct<T_beta_scalar>::value) {
       Matrix<double, 1, Dynamic> location_derivative = d1 - d2;
       if (!is_constant_struct<T_x_scalar>::value) {
-        if(T_x_rows==1){
+        if (T_x_rows == 1) {
           ops_partials.edge1_.partials_
-                  = beta_val_vec * location_derivative.sum();
-        }
-        else {
+              = beta_val_vec * location_derivative.sum();
+        } else {
           ops_partials.edge1_.partials_
-                  = (beta_val_vec * location_derivative).transpose();
+              = (beta_val_vec * location_derivative).transpose();
         }
       }
       if (!is_constant_struct<T_beta_scalar>::value) {
-        if(T_x_rows==1){
+        if (T_x_rows == 1) {
           ops_partials.edge2_.partials_
-                  = (location_derivative * x_val.replicate(N_instances,1)).transpose();
-        }
-        else {
+              = (location_derivative * x_val.replicate(N_instances, 1))
+                    .transpose();
+        } else {
           ops_partials.edge2_.partials_
-                  = (location_derivative * x_val).transpose();
+              = (location_derivative * x_val).transpose();
         }
       }
     }
@@ -199,12 +201,13 @@ ordered_logistic_glm_lpmf(
   return ops_partials.build(logp);
 }
 
-template <typename T_y, typename T_x_scalar, int T_x_rows, typename T_beta_scalar,
-        typename T_cuts_scalar>
-typename stan::return_type<T_x_scalar, T_beta_scalar, T_cuts_scalar>::type ordered_logistic_glm_lpmf(
+template <typename T_y, typename T_x_scalar, int T_x_rows,
+          typename T_beta_scalar, typename T_cuts_scalar>
+typename stan::return_type<T_x_scalar, T_beta_scalar, T_cuts_scalar>::type
+ordered_logistic_glm_lpmf(
     const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
     const Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, 1>& beta,
-    const Eigen::Matrix<T_cuts_scalar, Eigen::Dynamic,1>& cuts) {
+    const Eigen::Matrix<T_cuts_scalar, Eigen::Dynamic, 1>& cuts) {
   return ordered_logistic_glm_lpmf<false>(y, x, beta, cuts);
 }
 

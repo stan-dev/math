@@ -59,8 +59,8 @@ TEST(ProbDistributionsOrderedLogisticGLM,
   beta << 1.1, 0.4;
   MatrixXd x(N, M);
   x << 1, 2, 3, 4, 5, 6, 7, 8, 9, 0;
-  for(int y_scal = 1; y_scal<=C; y_scal ++) {
-    vector<int> y(N,y_scal);
+  for (int y_scal = 1; y_scal <= C; y_scal++) {
+    vector<int> y(N, y_scal);
     EXPECT_FLOAT_EQ(ordered_logistic_glm_lpmf(y_scal, x, beta, cuts),
                     ordered_logistic_glm_lpmf(y, x, beta, cuts));
   }
@@ -99,7 +99,8 @@ TEST(ProbDistributionsOrderedLogisticGLM, glm_matches_ordered_logistic_vars) {
   }
 }
 
-TEST(ProbDistributionsOrderedLogisticGLM, glm_matches_ordered_logistic_vars_broadcast_y) {
+TEST(ProbDistributionsOrderedLogisticGLM,
+     glm_matches_ordered_logistic_vars_broadcast_y) {
   double eps = 1e-13;
   int N = 5;
   int M = 2;
@@ -114,8 +115,8 @@ TEST(ProbDistributionsOrderedLogisticGLM, glm_matches_ordered_logistic_vars_broa
   x1 << 1, 2, 3, 4, 5, 6, 7, 8, 9, 0;
   x2 << 1, 2, 3, 4, 5, 6, 7, 8, 9, 0;
 
-  for(int y_scal = 1; y_scal<=C; y_scal ++) {
-    vector<int> y(N,y_scal);
+  for (int y_scal = 1; y_scal <= C; y_scal++) {
+    vector<int> y(N, y_scal);
     var res1 = ordered_logistic_glm_lpmf(y, x1, beta1, cuts1);
     var res2 = ordered_logistic_glm_lpmf(y_scal, x2, beta2, cuts2);
     (res1 + res2).grad();
@@ -138,7 +139,8 @@ TEST(ProbDistributionsOrderedLogisticGLM, glm_matches_ordered_logistic_vars_broa
   }
 }
 
-TEST(ProbDistributionsOrderedLogisticGLM, glm_matches_ordered_logistic_vars_broadcast_x) {
+TEST(ProbDistributionsOrderedLogisticGLM,
+     glm_matches_ordered_logistic_vars_broadcast_x) {
   double eps = 1e-13;
   int N = 5;
   int M = 2;
@@ -153,7 +155,7 @@ TEST(ProbDistributionsOrderedLogisticGLM, glm_matches_ordered_logistic_vars_broa
   RowVectorXd x_double(M);
   x_double << 1, 2;
   Matrix<var, 1, Dynamic> x_row = x_double;
-  Matrix<var, Dynamic, Dynamic> x = x_double.replicate(N,1);
+  Matrix<var, Dynamic, Dynamic> x = x_double.replicate(N, 1);
 
   var res1 = ordered_logistic_glm_lpmf(y, x_row, beta1, cuts1);
   var res2 = ordered_logistic_glm_lpmf(y, x, beta2, cuts2);
@@ -175,7 +177,8 @@ TEST(ProbDistributionsOrderedLogisticGLM, glm_matches_ordered_logistic_vars_broa
   }
 }
 
-TEST(ProbDistributionsOrderedLogisticGLM, glm_matches_ordered_logistic_single_instance) {
+TEST(ProbDistributionsOrderedLogisticGLM,
+     glm_matches_ordered_logistic_single_instance) {
   double eps = 1e-13;
   int N = 1;
   int M = 2;
@@ -206,7 +209,8 @@ TEST(ProbDistributionsOrderedLogisticGLM, glm_matches_ordered_logistic_single_in
   }
 }
 
-TEST(ProbDistributionsOrderedLogisticGLM, glm_matches_ordered_logistic_no_attributes) {
+TEST(ProbDistributionsOrderedLogisticGLM,
+     glm_matches_ordered_logistic_no_attributes) {
   double eps = 1e-13;
   int N = 5;
   int M = 0;
@@ -227,7 +231,8 @@ TEST(ProbDistributionsOrderedLogisticGLM, glm_matches_ordered_logistic_no_attrib
   }
 }
 
-TEST(ProbDistributionsOrderedLogisticGLM, glm_matches_ordered_logistic_single_class) {
+TEST(ProbDistributionsOrderedLogisticGLM,
+     glm_matches_ordered_logistic_single_class) {
   double eps = 1e-13;
   int N = 5;
   int M = 2;
@@ -330,40 +335,49 @@ TEST(ProbDistributionsOrderedLogisticGLM, glm_interfaces) {
   EXPECT_NO_THROW(ordered_logistic_glm_lpmf(y, x_var, beta_var, cuts_double));
 
   EXPECT_NO_THROW(
-          ordered_logistic_glm_lpmf(y_scal, x_double, beta_double, cuts_double));
+      ordered_logistic_glm_lpmf(y_scal, x_double, beta_double, cuts_double));
   EXPECT_NO_THROW(
-          ordered_logistic_glm_lpmf(y_scal, x_var, beta_double, cuts_double));
+      ordered_logistic_glm_lpmf(y_scal, x_var, beta_double, cuts_double));
   EXPECT_NO_THROW(
-          ordered_logistic_glm_lpmf(y_scal, x_double, beta_var, cuts_double));
+      ordered_logistic_glm_lpmf(y_scal, x_double, beta_var, cuts_double));
   EXPECT_NO_THROW(
-          ordered_logistic_glm_lpmf(y_scal, x_double, beta_double, cuts_var));
-  EXPECT_NO_THROW(ordered_logistic_glm_lpmf(y_scal, x_double, beta_var, cuts_var));
-  EXPECT_NO_THROW(ordered_logistic_glm_lpmf(y_scal, x_var, beta_double, cuts_var));
-  EXPECT_NO_THROW(ordered_logistic_glm_lpmf(y_scal, x_var, beta_var, cuts_double));
+      ordered_logistic_glm_lpmf(y_scal, x_double, beta_double, cuts_var));
+  EXPECT_NO_THROW(
+      ordered_logistic_glm_lpmf(y_scal, x_double, beta_var, cuts_var));
+  EXPECT_NO_THROW(
+      ordered_logistic_glm_lpmf(y_scal, x_var, beta_double, cuts_var));
+  EXPECT_NO_THROW(
+      ordered_logistic_glm_lpmf(y_scal, x_var, beta_var, cuts_double));
 
   EXPECT_NO_THROW(
-          ordered_logistic_glm_lpmf(y, x_row_double, beta_double, cuts_double));
+      ordered_logistic_glm_lpmf(y, x_row_double, beta_double, cuts_double));
   EXPECT_NO_THROW(
-          ordered_logistic_glm_lpmf(y, x_row_var, beta_double, cuts_double));
+      ordered_logistic_glm_lpmf(y, x_row_var, beta_double, cuts_double));
   EXPECT_NO_THROW(
-          ordered_logistic_glm_lpmf(y, x_row_double, beta_var, cuts_double));
+      ordered_logistic_glm_lpmf(y, x_row_double, beta_var, cuts_double));
   EXPECT_NO_THROW(
-          ordered_logistic_glm_lpmf(y, x_row_double, beta_double, cuts_var));
-  EXPECT_NO_THROW(ordered_logistic_glm_lpmf(y, x_row_double, beta_var, cuts_var));
-  EXPECT_NO_THROW(ordered_logistic_glm_lpmf(y, x_row_var, beta_double, cuts_var));
-  EXPECT_NO_THROW(ordered_logistic_glm_lpmf(y, x_row_var, beta_var, cuts_double));
+      ordered_logistic_glm_lpmf(y, x_row_double, beta_double, cuts_var));
+  EXPECT_NO_THROW(
+      ordered_logistic_glm_lpmf(y, x_row_double, beta_var, cuts_var));
+  EXPECT_NO_THROW(
+      ordered_logistic_glm_lpmf(y, x_row_var, beta_double, cuts_var));
+  EXPECT_NO_THROW(
+      ordered_logistic_glm_lpmf(y, x_row_var, beta_var, cuts_double));
 
+  EXPECT_NO_THROW(ordered_logistic_glm_lpmf(y_scal, x_row_double, beta_double,
+                                            cuts_double));
   EXPECT_NO_THROW(
-          ordered_logistic_glm_lpmf(y_scal, x_row_double, beta_double, cuts_double));
+      ordered_logistic_glm_lpmf(y_scal, x_row_var, beta_double, cuts_double));
   EXPECT_NO_THROW(
-          ordered_logistic_glm_lpmf(y_scal, x_row_var, beta_double, cuts_double));
+      ordered_logistic_glm_lpmf(y_scal, x_row_double, beta_var, cuts_double));
   EXPECT_NO_THROW(
-          ordered_logistic_glm_lpmf(y_scal, x_row_double, beta_var, cuts_double));
+      ordered_logistic_glm_lpmf(y_scal, x_row_double, beta_double, cuts_var));
   EXPECT_NO_THROW(
-          ordered_logistic_glm_lpmf(y_scal, x_row_double, beta_double, cuts_var));
-  EXPECT_NO_THROW(ordered_logistic_glm_lpmf(y_scal, x_row_double, beta_var, cuts_var));
-  EXPECT_NO_THROW(ordered_logistic_glm_lpmf(y_scal, x_row_var, beta_double, cuts_var));
-  EXPECT_NO_THROW(ordered_logistic_glm_lpmf(y_scal, x_row_var, beta_var, cuts_double));
+      ordered_logistic_glm_lpmf(y_scal, x_row_double, beta_var, cuts_var));
+  EXPECT_NO_THROW(
+      ordered_logistic_glm_lpmf(y_scal, x_row_var, beta_double, cuts_var));
+  EXPECT_NO_THROW(
+      ordered_logistic_glm_lpmf(y_scal, x_row_var, beta_var, cuts_double));
 }
 
 TEST(ProbDistributionsOrderedLogisticGLM, glm_errors) {
