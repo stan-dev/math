@@ -34,14 +34,6 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
     const BinaryFunction& f_;
     tls_scoped_stack_t& tls_scoped_stack_;
     std::vector<var> sum_terms_;
-    /*
-    const std::size_t worker_id_;
-
-    static std::size_t get_worker_count() {
-      static std::atomic<std::size_t> worker_count{0};
-      return worker_count.fetch_add(1);
-    }
-    */
 
     recursive_reducer(InputIt first, const T& init, const BinaryFunction& f,
                       tls_scoped_stack_t& tls_scoped_stack)
@@ -104,14 +96,14 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
     recursive_reducer worker(first, init, f, child_stacks);
 
     // static tbb::affinity_partitioner partitioner;
-    // tbb::auto_partitioner partitioner;
-    tbb::static_partitioner partitioner;
+    tbb::auto_partitioner partitioner;
+    // tbb::static_partitioner partitioner;
     // it seems that best performance is attained with the simple
     // partititioner and a reasonable grainsize
     // tbb::simple_partitioner partitioner;
 
     // TODO: make grainsize a parameter??!!!
-    tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, num_jobs, 100000),
+    tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, num_jobs, 500),
                          worker, partitioner);
 
     child_stacks.combine_each(
@@ -122,6 +114,105 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
     return sum(worker.sum_terms_);
   }
 };
+
+/*
+template <class InputIt, class T, class BinaryFunction>
+struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
+  typedef ChainableStack::AutodiffStackStorage chainablestack_t;
+  typedef tbb::concurrent_vector<ScopedChainableStack>
+      scoped_stack_queue_t;
+
+  struct recursive_reducer {
+    const InputIt first_;
+    BinaryFunction f_;
+    chainablestack_t& parent_stack_;
+    scoped_stack_queue_t& scoped_stack_queue_;
+    ScopedChainableStack& scoped_stack_;
+    std::vector<var> sum_terms_;
+
+    recursive_reducer(InputIt first, const T& init, BinaryFunction f,
+                      chainablestack_t& parent_stack,
+                      scoped_stack_queue_t& scoped_stack_queue)
+        : first_(first),
+          f_(f),
+          parent_stack_(parent_stack),
+          scoped_stack_queue_(scoped_stack_queue),
+          scoped_stack_(*scoped_stack_queue_.emplace_back(parent_stack_)),
+          sum_terms_(1, init)  //,
+                               // worker_id_(get_worker_count())
+    {}
+
+    recursive_reducer(recursive_reducer& other, tbb::split)
+        : first_(other.first_),
+          f_(other.f_),
+          parent_stack_(other.parent_stack_),
+          scoped_stack_queue_(other.scoped_stack_queue_),
+          scoped_stack_(*scoped_stack_queue_.emplace_back(parent_stack_)) {
+      // std::cout << "Splitting off some work with worker id " << worker_id_ <<
+      // "..." << std::endl;
+    }
+
+    void operator()(const tbb::blocked_range<size_t>& r) {
+      if (r.empty())
+        return;
+      // std::cout << "Summing " << r.begin() << " - " << r.end() << " with
+      // worker " << worker_id_ << std::endl;
+      scoped_stack_.execute([&] {
+        auto start = first_;
+        std::advance(start, r.begin());
+        auto end = first_;
+        std::advance(end, r.end() - 1);
+        sum_terms_.emplace_back(f_(*start, *end));
+      });
+    }
+
+    void join(recursive_reducer& child) {
+      // std::cout << "Joining a child " << child.worker_id_ << " into worker "
+      // << worker_id_ << std::endl;
+      scoped_stack_.execute([&] {
+        if (child.sum_terms_.size() == 1) {
+          sum_terms_.emplace_back(child.sum_terms_[0]);
+        } else {
+          sum_terms_.emplace_back(sum(child.sum_terms_));
+        }
+        child.sum_terms_.clear();
+      });
+    }
+  };
+
+  T operator()(InputIt first, InputIt last, T init, BinaryFunction f) const {
+    const std::size_t num_jobs = std::distance(first, last);
+
+    // std::cout << "Running NEW var parallel_reduce_sum implementation ..."
+    //          << std::endl;
+
+    // All AD terms are written to thread-local AD tapes which are all
+    // stored as part of the parent nochain stacks.
+    chainablestack_t& parent_stack = *ChainableStack::instance_;
+
+    scoped_stack_queue_t child_stacks;
+
+    recursive_reducer worker(first, init, f, parent_stack, child_stacks);
+
+    //static tbb::affinity_partitioner partitioner;
+    tbb::auto_partitioner partitioner;
+    //tbb::static_partitioner partitioner;
+    // it seems that best performance is attained with the simple
+    // partititioner and a reasonable grainsize
+    //tbb::simple_partitioner partitioner;
+
+    // TODO: make grainsize a parameter??!!!
+    tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, num_jobs),
+                         worker, partitioner);
+
+    for(std::size_t i=0; i != child_stacks.size(); ++i) {
+      child_stacks[i].append_to_parent();
+    }
+
+    return sum(worker.sum_terms_);
+  }
+};
+*/
 
 }  // namespace internal
 }  // namespace math

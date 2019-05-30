@@ -4,7 +4,11 @@
 #include <stan/math/rev/core/nest_chainablestack.hpp>
 #include <stan/math/prim/scal/functor/parallel_reduce_sum.hpp>
 #include <stan/math/rev/scal/functor/parallel_reduce_sum.hpp>
+#include <stan/math/prim/scal/prob/normal_lpdf.hpp>
 #include <gtest/gtest.h>
+
+#include <boost/lexical_cast.hpp>
+#include <cstdlib>
 
 #define TBB_PREVIEW_LOCAL_OBSERVER 1
 
@@ -39,6 +43,23 @@ struct count_lpdf {
     partial_data.insert(partial_data.end(), data_.begin() + start,
                         data_.begin() + end + 1);
     return stan::math::poisson_lpmf(partial_data, lambda_);
+  }
+};
+
+template <typename T>
+struct gaussian_lpdf {
+  const std::vector<int>& data_;
+  const T& mu_;
+  const T& sigma_;
+
+  gaussian_lpdf(const std::vector<int>& data, const T& mu, const T& sigma)
+      : data_(data), mu_(mu), sigma_(sigma) {}
+
+  inline T operator()(std::size_t start, std::size_t end) const {
+    std::vector<int> partial_data;
+    partial_data.insert(partial_data.end(), data_.begin() + start,
+                        data_.begin() + end + 1);
+    return stan::math::normal_lpdf(partial_data, mu_, sigma_);
   }
 };
 
@@ -102,15 +123,94 @@ struct fast_count_lpdf {
   }
 };
 
+template <typename T_rate>
+struct fast_gen_count_lpdf {
+  typedef std::vector<int> T_n;
+  // const T_rate& lambda_;
+
+  fast_gen_count_lpdf() {}
+  // fast_gen_count_lpdf(const T_rate& lambda)
+  //    : lambda_(lambda) {}
+
+  inline T_rate operator()(std::size_t start, std::size_t end) const {
+    typedef typename stan::partials_return_type<T_n, T_rate>::type
+        T_partials_return;
+
+    stan::math::var lambda_ = 5.0;
+
+    /*
+    {
+      std::lock_guard<std::mutex> cout_lock(cout_mutex);
+      std::cout << "Reducing range " << start << " - " << end << " start."
+                << std::endl;
+    }
+    */
+
+    const std::size_t elems = end - start + 1;
+    std::vector<int> n_(elems);
+    for (std::size_t i = 0; i != elems; ++i)
+      n_[i] = start + i;
+
+    T_partials_return logp(0.0);
+
+    stan::scalar_seq_view<T_n> n_vec(n_);
+    stan::scalar_seq_view<T_rate> lambda_vec(lambda_);
+    // size_t size = max_size(n_, lambda_);
+    std::size_t size = end - start + 1;
+
+    stan::math::operands_and_partials<T_rate> ops_partials(lambda_);
+
+    for (std::size_t i = 0; i != elems; i++) {
+      if (!(lambda_vec[i] == 0 && n_vec[i] == 0)) {
+        if (stan::math::include_summand<false>::value)
+          logp -= stan::math::lgamma(n_vec[i] + 1.0);
+        if (stan::math::include_summand<false, T_rate>::value)
+          logp += stan::math::multiply_log(n_vec[i],
+                                           stan::math::value_of(lambda_vec[i]))
+                  - stan::math::value_of(lambda_vec[i]);
+      }
+
+      if (!stan::is_constant_struct<T_rate>::value)
+        ops_partials.edge1_.partials_[i]
+            += n_vec[i] / stan::math::value_of(lambda_vec[i]) - 1.0;
+    }
+
+    /*
+    {
+      std::lock_guard<std::mutex> cout_lock(cout_mutex);
+      std::cout << "Reducing range " << start << " - " << end << " end."
+                << std::endl;
+    }
+    */
+
+    return ops_partials.build(logp);
+  }
+};
+
 // static std::mutex cout_mutex;
 
 struct benchmark : public ::testing::Test {
-  const std::size_t elems = 100000000;
-  const std::size_t num_iter = 10;
+  std::size_t problem = 100000000;
+  // std::size_t problem = 1000000000;
+  std::size_t elems;
+  std::size_t num_iter;
   std::vector<int> data;
   double lambda_d = 10.0;
 
   virtual void SetUp() {
+    const char* env_num_iter = std::getenv("NUM_ITER");
+    if (env_num_iter != nullptr) {
+      num_iter = boost::lexical_cast<int>(env_num_iter);
+    } else {
+      num_iter = 10;
+    }
+
+    elems = problem / num_iter;
+
+    std::cout << "Benchmark total size  : " << problem << std::endl;
+    std::cout << "Benchmark iterations  : " << num_iter << std::endl;
+    std::cout << "Benchmark problem size: " << elems << std::endl;
+
     data.resize(elems);
     for (std::size_t i = 0; i != elems; ++i)
       data[i] = i;
@@ -194,7 +294,48 @@ TEST_F(benchmark, parallel_reduce_sum_v) {
 }
 */
 
-/**/
+/*
+TEST_F(benchmark, parallel_reduce_sum_speed) {
+  typedef boost::counting_iterator<std::size_t> count_iter;
+  using stan::math::var;
+
+  for (std::size_t i = 0; i != num_iter; ++i) {
+    var lambda = lambda_d;
+
+    count_lpdf<var> reduce_op(data, lambda);
+
+    var poisson_lpdf = stan::math::parallel_reduce_sum(
+        count_iter(0), count_iter(elems), var(0.0), reduce_op);
+
+    //std::cout << "Calling grad" << std::endl;
+    stan::math::grad(poisson_lpdf.vi_);
+    //std::cout << "Stack size = " << stan::math::nested_size() << std::endl;
+    stan::math::recover_memory();
+  }
+}
+*/
+
+TEST_F(benchmark, parallel_reduce_sum_speed_gauss) {
+  typedef boost::counting_iterator<std::size_t> count_iter;
+  using stan::math::var;
+
+  for (std::size_t i = 0; i != num_iter; ++i) {
+    var mu = lambda_d;
+    var sigma = 1.0;
+
+    gaussian_lpdf<var> reduce_op(data, mu, sigma);
+
+    var gaussian_lpdf = stan::math::parallel_reduce_sum(
+        count_iter(0), count_iter(elems), var(0.0), reduce_op);
+
+    // std::cout << "Calling grad" << std::endl;
+    stan::math::grad(gaussian_lpdf.vi_);
+    // std::cout << "Stack size = " << stan::math::nested_size() << std::endl;
+    stan::math::recover_memory();
+  }
+}
+
+/*
 TEST_F(benchmark, fast_parallel_reduce_sum_speed) {
   typedef boost::counting_iterator<std::size_t> count_iter;
   using stan::math::var;
@@ -213,7 +354,27 @@ TEST_F(benchmark, fast_parallel_reduce_sum_speed) {
     stan::math::recover_memory();
   }
 }
+*/
+/*
+TEST_F(benchmark, fast_gen_parallel_reduce_sum_speed) {
+  typedef boost::counting_iterator<std::size_t> count_iter;
+  using stan::math::var;
 
+  for (std::size_t i = 0; i != num_iter; ++i) {
+    var lambda = lambda_d;
+
+    fast_gen_count_lpdf<var> reduce_op;
+
+    var poisson_lpdf = stan::math::parallel_reduce_sum(
+        count_iter(0), count_iter(elems), var(0.0), reduce_op);
+
+    std::cout << "Calling grad" << std::endl;
+    stan::math::grad(poisson_lpdf.vi_);
+    std::cout << "Stack size = " << stan::math::nested_size() << std::endl;
+    stan::math::recover_memory();
+  }
+}
+*/
 /*
 TEST_F(benchmark, fast_count_serial) {
   typedef boost::counting_iterator<std::size_t> count_iter;
