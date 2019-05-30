@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
 
+#include <stan/math/prim/scal/meta/likely.hpp>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 
@@ -39,6 +40,8 @@ namespace math {
 * argument
 */
 inline double lgamma(double x) {
+  if (unlikely(x == 0.0))
+    return std::numeric_limits<double>::infinity();
   return boost::math::lgamma(x, boost_policy_t());
 }
 
@@ -50,7 +53,11 @@ inline double lgamma(double x) {
  * @return natural logarithm of the gamma function applied to
  * argument
  */
-inline double lgamma(int x) { return boost::math::lgamma(x, boost_policy_t()); }
+inline double lgamma(int x) {
+  if (unlikely(x == 0))
+    return std::numeric_limits<double>::infinity();
+  return boost::math::lgamma(x, boost_policy_t());
+}
 
 }  // namespace math
 }  // namespace stan
