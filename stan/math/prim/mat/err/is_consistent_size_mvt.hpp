@@ -20,10 +20,8 @@ namespace math {
  */
 template <typename T>
 inline bool is_consistent_size_mvt(const T& x, size_t expected_size) {
-  size_t size_x = stan::length_mvt(x);
-
-  if (length(x) == expected_size) return true;
-  return !is_vector<typename std::remove_reference<decltype(x[0])>::type>::value;
+  return length(x) == expected_size
+    || !is_vector<typename std::remove_reference<decltype(x[0])>::type>::value;
 }
 
 }  // namespace math

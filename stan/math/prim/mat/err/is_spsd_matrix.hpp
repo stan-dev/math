@@ -21,8 +21,9 @@ namespace math {
 template <typename T_y>
 inline bool is_spsd_matrix(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
-  return is_square(y) && is_positive(y.rows()) && is_symmetric(y)
-         && is_pos_semidefinite(y);
+  return is_positive(y.rows())
+    && is_symmetric(y)
+    && is_pos_semidefinite(y);
 }
 
 }  // namespace math

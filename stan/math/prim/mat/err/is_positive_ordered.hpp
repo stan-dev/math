@@ -20,11 +20,7 @@ namespace math {
 template <typename T_y>
 inline bool is_positive_ordered(
     const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y) {
-  if (y.size() == 0)
-    return true;
-  if (y[0] < 0)
-    return false;
-  return is_ordered(y);
+  return y.size() == 0 || (y[0] < 0 && is_ordered(y));
 }
 
 }  // namespace math

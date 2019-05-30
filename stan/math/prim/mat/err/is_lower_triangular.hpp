@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_IS_LOWER_TRIANGULAR_HPP
 #define STAN_MATH_PRIM_MAT_ERR_IS_LOWER_TRIANGULAR_HPP
 
-#include <Eigen/Dense>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {
 namespace math {

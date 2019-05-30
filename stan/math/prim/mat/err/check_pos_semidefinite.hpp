@@ -32,15 +32,15 @@ inline void check_pos_semidefinite(
   check_symmetric(function, name, y);
   check_positive(function, name, "rows", y.rows());
 
-  if (y.rows() == 1 && !(y(0, 0) >= 0.0))
+  if (y.rows() == 1 && !(y(0, 0) >= 0))
     domain_error(function, name, "is not positive semi-definite.", "");
 
   using Eigen::Dynamic;
   using Eigen::LDLT;
   using Eigen::Matrix;
-  LDLT<Matrix<double, Dynamic, Dynamic> > cholesky = value_of_rec(y).ldlt();
+  LDLT<Eigen::MatrixXd> cholesky = value_of_rec(y).ldlt();
   if (cholesky.info() != Eigen::Success
-      || (cholesky.vectorD().array() < 0.0).any())
+      || (cholesky.vectorD().array() < 0).any())
     domain_error(function, name, "is not positive semi-definite.", "");
   check_not_nan(function, name, y);
 }
