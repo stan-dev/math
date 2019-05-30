@@ -80,7 +80,8 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
     }
   };
 
-  T operator()(InputIt first, InputIt last, T init, BinaryFunction f) const {
+  T operator()(InputIt first, InputIt last, T init, BinaryFunction f,
+               std::size_t grainsize) const {
     const std::size_t num_jobs = std::distance(first, last);
 
     // std::cout << "Running NEW var parallel_reduce_sum implementation ..."
@@ -103,8 +104,9 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
     // tbb::simple_partitioner partitioner;
 
     // TODO: make grainsize a parameter??!!!
-    tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, num_jobs, 500),
-                         worker, partitioner);
+    tbb::parallel_reduce(
+        tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker,
+        partitioner);
 
     child_stacks.combine_each(
         [&parent_stack](ScopedChainableStack& child_scoped_stack) {

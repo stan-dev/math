@@ -49,15 +49,14 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, double> {
     void join(const recursive_reducer& child) { sum_ += child.sum_; }
   };
 
-  T operator()(InputIt first, InputIt last, T init, BinaryFunction f) const {
+  T operator()(InputIt first, InputIt last, T init, BinaryFunction f,
+               std::size_t grainsize) const {
     const std::size_t num_jobs = std::distance(first, last);
-
-    std::cout << "Running base parallel_reduce_sum implementation..."
-              << std::endl;
 
     recursive_reducer worker(first, init, f);
 
-    tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, num_jobs), worker);
+    tbb::parallel_reduce(
+        tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker);
 
     return std::move(worker.sum_);
   }
@@ -67,11 +66,11 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, double> {
 
 template <class InputIt, class T, class BinaryFunction>
 constexpr T parallel_reduce_sum(InputIt first, InputIt last, T init,
-                                BinaryFunction f) {
+                                BinaryFunction f, std::size_t grainsize = 1) {
   typedef T return_base_t;
   return internal::parallel_reduce_sum_impl<InputIt, T, BinaryFunction,
                                             return_base_t>()(first, last, init,
-                                                             f);
+                                                             f, grainsize);
 }
 
 }  // namespace math
