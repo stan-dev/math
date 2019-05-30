@@ -11,5 +11,5 @@ TEST(MathFunctions, lgammaStanMathUsing) { using stan::math::lgamma; }
 TEST(MathFunctions, lgamma_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   EXPECT_PRED1(boost::math::isnan<double>, stan::math::lgamma(nan));
-  EXPECT_PRED1(boost::math::isinf<double>, stan::math::lgamma(0));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::lgamma(0));
 }
