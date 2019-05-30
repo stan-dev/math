@@ -18,7 +18,8 @@ namespace math {
 typedef boost::math::policies::policy<
     boost::math::policies::overflow_error<
         boost::math::policies::errno_on_error>,
-    boost::math::policies::pole_error<boost::math::policies::errno_on_error> >
+    boost::math::policies::pole_error<boost::math::policies::errno_on_error>,
+    boost::math::policies::promote_double<false> >
     boost_policy_t;
 
 }  // namespace math
