@@ -17,8 +17,10 @@ TEST(MathMatrixCL, inverse_cl_exception) {
   stan::math::matrix_cl m2(m1);
   stan::math::matrix_cl m3(2, 3);
   using stan::math::tri_inverse;
-  EXPECT_THROW(m3 = tri_inverse<stan::math::TriangularViewCL::Lower>(m2), std::invalid_argument);
-  EXPECT_THROW(m3 = tri_inverse<stan::math::TriangularViewCL::Upper>(m2), std::invalid_argument);
+  EXPECT_THROW(m3 = tri_inverse<stan::math::TriangularViewCL::Lower>(m2),
+               std::invalid_argument);
+  EXPECT_THROW(m3 = tri_inverse<stan::math::TriangularViewCL::Upper>(m2),
+               std::invalid_argument);
 }
 
 void lower_inverse_test(int size) {

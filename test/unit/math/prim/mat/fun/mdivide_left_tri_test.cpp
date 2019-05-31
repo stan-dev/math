@@ -62,8 +62,7 @@ void mdivide_left_tri_lower_cl_test(int size) {
 
   stan::math::matrix_d m1_cpu = stan::math::mdivide_left_tri<Eigen::Lower>(m1);
 
-  stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
-      = 0;
+  stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer = 0;
 
   stan::math::matrix_d m1_cl = stan::math::mdivide_left_tri<Eigen::Lower>(m1);
 
@@ -97,8 +96,7 @@ void mdivide_left_tri_upper_cl_test(int size) {
 
   stan::math::matrix_d m1_cpu = stan::math::mdivide_left_tri<Eigen::Upper>(m1);
 
-  stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
-      = 0;
+  stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer = 0;
 
   stan::math::matrix_d m1_cl = stan::math::mdivide_left_tri<Eigen::Upper>(m1);
 
@@ -130,12 +128,13 @@ void mdivide_left_tri_cl_test(int size) {
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
       = size * 2;
 
-  stan::math::matrix_d m1_cpu = stan::math::mdivide_left_tri<Eigen::Lower>(m1, m1);
+  stan::math::matrix_d m1_cpu
+      = stan::math::mdivide_left_tri<Eigen::Lower>(m1, m1);
 
-  stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
-      = 0;
+  stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer = 0;
 
-  stan::math::matrix_d m1_cl = stan::math::mdivide_left_tri<Eigen::Lower>(m1, m1);
+  stan::math::matrix_d m1_cl
+      = stan::math::mdivide_left_tri<Eigen::Lower>(m1, m1);
 
   EXPECT_MATRIX_NEAR(m1_cpu, m1_cl, 1E-8);
 }

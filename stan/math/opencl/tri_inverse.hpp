@@ -72,7 +72,7 @@ inline matrix_cl tri_inverse(const matrix_cl& A) {
   zero_mat.zeros<stan::math::TriangularViewCL::Entire>();
   temp.zeros<stan::math::TriangularViewCL::Entire>();
   inv_padded.zeros<stan::math::TriangularViewCL::Entire>();
-  if(triangular_view == TriangularViewCL::Upper) {
+  if (triangular_view == TriangularViewCL::Upper) {
     inv_mat = transpose(inv_mat);
   }
   int work_per_thread
@@ -100,7 +100,7 @@ inline matrix_cl tri_inverse(const matrix_cl& A) {
   inv_padded.zeros<stan::math::TriangularViewCL::Upper>();
   if (parts == 1) {
     inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
-    if(triangular_view == TriangularViewCL::Upper) {
+    if (triangular_view == TriangularViewCL::Upper) {
       inv_mat = transpose(inv_mat);
     }
     return inv_mat;
@@ -141,7 +141,7 @@ inline matrix_cl tri_inverse(const matrix_cl& A) {
   }
   // un-pad and return
   inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
-  if(triangular_view == TriangularViewCL::Upper) {
+  if (triangular_view == TriangularViewCL::Upper) {
     inv_mat = transpose(inv_mat);
   }
   return inv_mat;
