@@ -5,7 +5,7 @@
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/multiply.hpp>
 #include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/lower_tri_inverse.hpp>
+#include <stan/math/opencl/tri_inverse.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #endif
 
@@ -57,12 +57,12 @@ void mdivide_left_tri_lower_cl_test(int size) {
     }
   }
 
-  stan::math::opencl_context.tuning_opts().lower_tri_inverse_size_worth_transfer
+  stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
       = size * 2;
 
   stan::math::matrix_d m1_cpu = stan::math::mdivide_left_tri<Eigen::Lower>(m1);
 
-  stan::math::opencl_context.tuning_opts().lower_tri_inverse_size_worth_transfer
+  stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
       = 0;
 
   stan::math::matrix_d m1_cl = stan::math::mdivide_left_tri<Eigen::Lower>(m1);
@@ -92,12 +92,12 @@ void mdivide_left_tri_upper_cl_test(int size) {
     }
   }
 
-  stan::math::opencl_context.tuning_opts().lower_tri_inverse_size_worth_transfer
+  stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
       = size * 2;
 
   stan::math::matrix_d m1_cpu = stan::math::mdivide_left_tri<Eigen::Upper>(m1);
 
-  stan::math::opencl_context.tuning_opts().lower_tri_inverse_size_worth_transfer
+  stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
       = 0;
 
   stan::math::matrix_d m1_cl = stan::math::mdivide_left_tri<Eigen::Upper>(m1);
@@ -127,12 +127,12 @@ void mdivide_left_tri_cl_test(int size) {
     }
   }
 
-  stan::math::opencl_context.tuning_opts().lower_tri_inverse_size_worth_transfer
+  stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
       = size * 2;
 
   stan::math::matrix_d m1_cpu = stan::math::mdivide_left_tri<Eigen::Lower>(m1, m1);
 
-  stan::math::opencl_context.tuning_opts().lower_tri_inverse_size_worth_transfer
+  stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
       = 0;
 
   stan::math::matrix_d m1_cl = stan::math::mdivide_left_tri<Eigen::Lower>(m1, m1);

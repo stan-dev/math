@@ -9,7 +9,7 @@
 #include <stan/math/opencl/cholesky_decompose.hpp>
 #include <stan/math/opencl/diagonal_multiply.hpp>
 #include <stan/math/opencl/identity.hpp>
-#include <stan/math/opencl/lower_tri_inverse.hpp>
+#include <stan/math/opencl/tri_inverse.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/multiply.hpp>
 #include <stan/math/opencl/multiply_transpose.hpp>

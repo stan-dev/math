@@ -1,13 +1,14 @@
-#ifndef STAN_MATH_OPENCL_LOWER_TRI_INVERSE_HPP
-#define STAN_MATH_OPENCL_LOWER_TRI_INVERSE_HPP
+#ifndef STAN_MATH_OPENCL_TRI_INVERSE_HPP
+#define STAN_MATH_OPENCL_TRI_INVERSE_HPP
 
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/constants.hpp>
 #include <stan/math/opencl/kernels/diag_inv.hpp>
 #include <stan/math/opencl/kernels/inv_lower_tri_multiply.hpp>
 #include <stan/math/opencl/kernels/neg_rect_lower_tri_multiply.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
-
+#include <stan/math/opencl/transpose.hpp>
 #include <stan/math/opencl/identity.hpp>
 #include <stan/math/opencl/err/check_square.hpp>
 #include <stan/math/opencl/sub_block.hpp>
@@ -19,7 +20,7 @@
 namespace stan {
 namespace math {
 /**
- * Computes the inverse of the lower triangular matrix
+ * Computes the inverse of a triangular matrix
  *
  * For a full guide to how this works and fits into Cholesky decompositions,
  * see the reference report
@@ -27,14 +28,16 @@ namespace math {
  * here</a> and kernel doc
  * <a href="https://github.com/stan-dev/math/wiki/GPU-Kernels">here</a>.
  *
+ * @tparam triangular_view the triangularity of the input matrix
  * @param A matrix on the OpenCL device
  * @return the inverse of A
  *
  * @throw <code>std::invalid_argument</code> if the matrix
  *    is not square
  */
-inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
-  check_square("lower_triangular_inverse (OpenCL)", "A", A);
+template <TriangularViewCL triangular_view>
+inline matrix_cl tri_inverse(const matrix_cl& A) {
+  check_square("tri_inverse (OpenCL)", "A", A);
 
   int thread_block_2D_dim = 32;
   int max_1D_thread_block_size = opencl_context.max_thread_block_size();
@@ -69,7 +72,9 @@ inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
   zero_mat.zeros<stan::math::TriangularViewCL::Entire>();
   temp.zeros<stan::math::TriangularViewCL::Entire>();
   inv_padded.zeros<stan::math::TriangularViewCL::Entire>();
-
+  if(triangular_view == TriangularViewCL::Upper) {
+    inv_mat = transpose(inv_mat);
+  }
   int work_per_thread
       = opencl_kernels::inv_lower_tri_multiply.make_functor.get_opts().at(
           "WORK_PER_THREAD");
@@ -95,6 +100,9 @@ inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
   inv_padded.zeros<stan::math::TriangularViewCL::Upper>();
   if (parts == 1) {
     inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
+    if(triangular_view == TriangularViewCL::Upper) {
+      inv_mat = transpose(inv_mat);
+    }
     return inv_mat;
   }
   parts = ceil(parts / 2.0);
@@ -132,7 +140,10 @@ inline matrix_cl lower_triangular_inverse(const matrix_cl& A) {
     inv_padded.zeros<stan::math::TriangularViewCL::Upper>();
   }
   // un-pad and return
-  inv_mat.sub_block(inv_padded, 0, 0, 0, 0, A.rows(), A.rows());
+  inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
+  if(triangular_view == TriangularViewCL::Upper) {
+    inv_mat = transpose(inv_mat);
+  }
   return inv_mat;
 }
 }  // namespace math
