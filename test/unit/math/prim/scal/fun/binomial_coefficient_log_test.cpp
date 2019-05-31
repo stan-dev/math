@@ -2,6 +2,7 @@
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <cmath>
 
 template <typename T_N, typename T_n>
 void test_binom_coefficient(const T_N& N, const T_n& n) {
@@ -27,9 +28,13 @@ TEST(MathFunctions, binomial_coefficient_log) {
   }
 
   test_binom_coefficient(1e9, 1e5);
+
+  // NOTE(SW): 2019-05-31 replaced large number test as
   // this overflows with boost lgamma and results in NaN comparisons
-  // TODO(SW): investigate
+  // which always fail
   // test_binom_coefficient(1e50, 1e45);
+  // 1E25 seems the largest number for lgamma from boost to handle
+  test_binom_coefficient(1e25, 1e20);
 }
 
 TEST(MathFunctions, binomial_coefficient_log_nan) {
