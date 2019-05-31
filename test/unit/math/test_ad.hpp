@@ -42,10 +42,71 @@ void expect_ad_helper(const G& g, const std::vector<double>& xs) {
   }
 }
 
+template <typename F, typename T1, typename T2>
+void expect_ad_vv(const F& f, const T1& x1, const T2& x2) {
+  std::vector<double> xs = serialize<double>(x1, x2);  // *****
+  try {
+    auto y = f(x1, x2);  // *****
+    std::vector<double> ys = serialize<double>(y);
+    for (size_t i = 0; i < ys.size(); ++i) {
+      auto g = [&](const auto& v) {
+        typedef typename scalar_type<decltype(v)>::type scalar_t;
+        deserializer<scalar_t> ds(to_std_vector(v));
+        auto x1ds = ds.read(x1);                       // *****
+        auto x2ds = ds.read(x2);                       // *****
+        return serialize<scalar_t>(f(x1ds, x2ds))[i];  // *****
+      };
+      expect_ad_helper(g, xs);
+    }
+  } catch (...) {
+    std::cout << "Errorful inputs not yet testable.";
+  }
+}
+
+template <typename F, typename T1, typename T2>
+void expect_ad_dv(const F& f, const T1& x1, const T2& x2) {
+  std::vector<double> xs = serialize<double>(x2);
+  try {
+    auto y = f(x1, x2);
+    std::vector<double> ys = serialize<double>(y);
+    for (size_t i = 0; i < ys.size(); ++i) {
+      auto g = [&](const auto& v) {
+        typedef typename scalar_type<decltype(v)>::type scalar_t;
+        deserializer<scalar_t> ds(to_std_vector(v));
+        auto x2ds = ds.read(x2);
+        return serialize<scalar_t>(f(x1, x2ds))[i];
+      };
+      expect_ad_helper(g, xs);
+    }
+  } catch (...) {
+    std::cout << "Errorful inputs not yet testable.";
+  }
+}
+
+template <typename F, typename T1, typename T2>
+void expect_ad_vd(const F& f, const T1& x1, const T2& x2) {
+  std::vector<double> xs = serialize<double>(x1);
+  try {
+    auto y = f(x1, x2);
+    std::vector<double> ys = serialize<double>(y);
+    for (size_t i = 0; i < ys.size(); ++i) {
+      auto g = [&](const auto& v) {
+        typedef typename scalar_type<decltype(v)>::type scalar_t;
+        deserializer<scalar_t> ds(to_std_vector(v));
+        auto x1ds = ds.read(x1);
+        return serialize<scalar_t>(f(x1ds, x2))[i];
+      };
+      expect_ad_helper(g, xs);
+    }
+  } catch (...) {
+    std::cout << "Errorful inputs not yet testable.";
+  }
+}
+
 // f : T -> U  and  x : T  for any Stan-legal types T, U
 // x will be double-based in the call, but f must be polymorphic
 template <typename F, typename T>
-void expect_ad(const F& f, const T& x) {
+void expect_ad_v(const F& f, const T& x) {
   std::vector<double> xs = serialize<double>(x);
   try {
     auto y = f(x);
@@ -66,8 +127,19 @@ void expect_ad(const F& f, const T& x) {
   }
 }
 
+// UNARY TEST FUNCTION
+template <typename F, typename T>
+void expect_ad(const F& f, const T& x) {
+  expect_ad_v(f, x);
+}
+
+// BINARY TEST FUNCTION
 template <typename F, typename T1, typename T2>
-void expect_binary_ad(const F& f, const T1& x1, const T2& x2) {}
+void expect_ad(const F& f, const T1& x1, const T2& x2) {
+  expect_ad_vv(f, x1, x2);
+  // expect_ad_vd(f, x1, x2);
+  // expect_ad_dv(f, x1, x2);
+}
 
 }  // namespace test
 }  // namespace stan
