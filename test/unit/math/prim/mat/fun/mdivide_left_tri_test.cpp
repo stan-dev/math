@@ -69,17 +69,17 @@ void mdivide_left_tri_lower_cl_test(int size) {
 
   EXPECT_MATRIX_NEAR(m1_cpu, m1_cl, 1E-8);
 }
-TEST(MathMatrixCL, mvidide_left_tri_lower_cl_small) {
-  mvidive_left_tri_lower_cl_test(3);
+TEST(MathMatrixCL, mdivide_left_tri_lower_cl_small) {
+  mdivide_left_tri_lower_cl_test(3);
 }
-TEST(MathMatrixCL, mvidide_left_tri_lower_cl_mid) {
-  mvidive_left_tri_lower_cl_test(100);
+TEST(MathMatrixCL, mdivide_left_tri_lower_cl_mid) {
+  mdivide_left_tri_lower_cl_test(100);
 }
-TEST(MathMatrixCL, mvidide_left_tri_lower_cl_big) {
-  mvidive_left_tri_lower_cl_test(500);
+TEST(MathMatrixCL, mdivide_left_tri_lower_cl_big) {
+  mdivide_left_tri_lower_cl_test(500);
 }
 
-void mvidive_left_tri_upper_cl_test(int size) {
+void mdivide_left_tri_upper_cl_test(int size) {
   boost::random::mt19937 rng;
   auto m1 = stan::math::matrix_d(size, size);
   for (int i = 0; i < size; i++) {
@@ -104,17 +104,17 @@ void mvidive_left_tri_upper_cl_test(int size) {
 
   EXPECT_MATRIX_NEAR(m1_cpu, m1_cl, 1E-8);
 }
-TEST(MathMatrixCL, mvidide_left_tri_upper_cl_small) {
-  mvidive_left_tri_upper_cl_test(3);
+TEST(MathMatrixCL, mdivide_left_tri_upper_cl_small) {
+  mdivide_left_tri_upper_cl_test(3);
 }
-TEST(MathMatrixCL, mvidide_left_tri_upper_cl_mid) {
-  mvidive_left_tri_upper_cl_test(100);
+TEST(MathMatrixCL, mdivide_left_tri_upper_cl_mid) {
+  mdivide_left_tri_upper_cl_test(100);
 }
-TEST(MathMatrixCL, mvidide_left_tri_upper_cl_big) {
-  mvidive_left_tri_upper_cl_test(500);
+TEST(MathMatrixCL, mdivide_left_tri_upper_cl_big) {
+  mdivide_left_tri_upper_cl_test(500);
 }
 
-void mvidive_left_tri_cl_test(int size) {
+void mdivide_left_tri_cl_test(int size) {
   boost::random::mt19937 rng;
   auto m1 = stan::math::matrix_d(size, size);
   for (int i = 0; i < size; i++) {
@@ -139,8 +139,7 @@ void mvidive_left_tri_cl_test(int size) {
 
   EXPECT_MATRIX_NEAR(m1_cpu, m1_cl, 1E-8);
 }
-TEST(MathMatrixCL, mvidide_left_tri_cl_small) { mvidive_left_tri_cl_test(3); }
-TEST(MathMatrixCL, mvidide_left_tri_cl_mid) { mvidive_left_tri_cl_test(100); }
-TEST(MathMatrixCL, mvidide_left_tri_cl_big) { mvidive_left_tri_cl_test(500); }
-
+TEST(MathMatrixCL, mdivide_left_tri_cl_small) { mdivide_left_tri_cl_test(3); }
+TEST(MathMatrixCL, mdivide_left_tri_cl_mid) { mdivide_left_tri_cl_test(100); }
+TEST(MathMatrixCL, mdivide_left_tri_cl_big) { mdivide_left_tri_cl_test(500); }
 #endif
