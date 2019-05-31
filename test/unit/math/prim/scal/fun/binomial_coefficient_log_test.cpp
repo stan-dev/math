@@ -33,8 +33,9 @@ TEST(MathFunctions, binomial_coefficient_log) {
   // this overflows with boost lgamma and results in NaN comparisons
   // which always fail
   // test_binom_coefficient(1e50, 1e45);
-  // 1E25 seems the largest number for lgamma from boost to handle
-  test_binom_coefficient(1e25, 1e20);
+  // 1E20 seems the largest number for lgamma from boost to handle on
+  // our platforms
+  test_binom_coefficient(1e20, 1e15);
 }
 
 TEST(MathFunctions, binomial_coefficient_log_nan) {
