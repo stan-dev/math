@@ -9,12 +9,28 @@ namespace stan {
 namespace test {
 
 template <typename T>
+Eigen::Matrix<T, -1, 1> to_eigen_vector(const std::vector<T>& x) {
+  return Eigen::Map<const Eigen::Matrix<T, -1, 1>>(x.data(), x.size());
+}
+
+template <typename T, int R, int C>
+std::vector<T> to_std_vector(const Eigen::Matrix<T, R, C>& x) {
+  std::vector<T> y;
+  y.reserve(x.size());
+  for (int i = 0; i < x.size(); ++i)
+    y.push_back(x(i));
+  return y;
+}
+
+template <typename T>
 struct deserializer {
   size_t position_;
 
   const std::vector<T> vals_;
 
   deserializer(const std::vector<T>& vals) : position_(0), vals_(vals) {}
+  deserializer(const Eigen::Matrix<T, -1, 1>& v_vals)
+      : position_(0), vals_(to_std_vector(v_vals)) {}
 
   template <typename U>
   T read(const U& x) {
@@ -69,6 +85,11 @@ struct serializer {
     for (int i = 0; i < x.size(); ++i)
       write(x(i));
   }
+
+  const std::vector<T>& array_vals() { return vals_; }
+  const Eigen::Matrix<T, -1, 1>& vector_vals() {
+    return to_eigen_vector(vals_);
+  }
 };
 
 template <typename U>
@@ -85,20 +106,6 @@ std::vector<U> serialize(const Ts... xs) {
   serializer<U> s;
   serialize(s, xs...);
   return s.vals_;
-}
-
-template <typename T>
-Eigen::Matrix<T, -1, 1> to_eigen_vector(const std::vector<T>& x) {
-  return Eigen::Map<const Eigen::Matrix<T, -1, 1>>(x.data(), x.size());
-}
-
-template <typename T, int R, int C>
-std::vector<T> to_std_vector(const Eigen::Matrix<T, R, C>& x) {
-  std::vector<T> y;
-  y.reserve(x.size());
-  for (int i = 0; i < x.size(); ++i)
-    y.push_back(x(i));
-  return y;
 }
 
 }  // namespace test

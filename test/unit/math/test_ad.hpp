@@ -41,7 +41,7 @@ void expect_ad_vv(const F& f, const T1& x1, const T2& x2) {
   auto h = [&](const int& i) {
     return [&](const auto& v) {
       typedef typename scalar_type<decltype(v)>::type scalar_t;
-      deserializer<scalar_t> ds(to_std_vector(v));
+      deserializer<scalar_t> ds(v);
       auto x1ds = ds.read(x1);
       auto x2ds = ds.read(x2);
       return serialize<scalar_t>(f(x1ds, x2ds))[i];
@@ -56,7 +56,7 @@ void expect_ad_vd(const F& f, const T1& x1, const T2& x2) {
   auto h = [&](const int& i) {
     return [&](const auto& v) {
       typedef typename scalar_type<decltype(v)>::type scalar_t;
-      deserializer<scalar_t> ds(to_std_vector(v));
+      deserializer<scalar_t> ds(v);
       auto x1ds = ds.read(x1);
       return serialize<scalar_t>(f(x1ds, x2))[i];
     };
@@ -70,7 +70,7 @@ void expect_ad_dv(const F& f, const T1& x1, const T2& x2) {
   auto h = [&](const int& i) {
     return [&](const auto& v) {
       typedef typename scalar_type<decltype(v)>::type scalar_t;
-      deserializer<scalar_t> ds(to_std_vector(v));
+      deserializer<scalar_t> ds(v);
       auto x2ds = ds.read(x2);
       return serialize<scalar_t>(f(x1, x2ds))[i];
     };
@@ -84,7 +84,7 @@ void expect_ad_v(const F& f, const T& x) {
   auto h = [&](const int& i) {
     return [&](const auto& v) {
       typedef typename scalar_type<decltype(v)>::type scalar_t;
-      deserializer<scalar_t> ds(to_std_vector(v));
+      deserializer<scalar_t> ds(v);
       return serialize<scalar_t>(f(ds.read(x)))[i];
     };
   };

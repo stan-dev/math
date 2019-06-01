@@ -47,3 +47,47 @@ TEST(test_unit_math_test_ad, test_ad_binary) {
   double y2 = std::numeric_limits<double>::quiet_NaN();
   stan::test::expect_ad(g, x, y2);
 }
+
+// OVERLOADED FUNCTION EXAMPLES THAT PASS AND FAIL AD TESTS
+
+// double overload matches template behavior
+template <typename T>
+T f_match(const T& x) {
+  return -2 * x;
+}
+double f_match(const double& x) { return -2 * x; }
+
+// double overload does not match template behavior for value
+template <typename T>
+T f_mismatch(const T& x) {
+  return -2 * x;
+}
+double f_mismatch(const double& x) { return 2 * x; }
+
+// double overload does not match template behavior for exceptionsalue
+template <typename T>
+T f_misthrow(const T& x) {
+  return -2 * x;
+}
+double f_misthrow(const double& x) {
+  throw std::runtime_error("f_misthrow(double) called");
+  return -2 * x;
+}
+
+TEST(test_unit_math_test_ad, test_ad_unary_fail) {
+  double x = 3.2;
+
+  // expect the matched function's test to succeed
+  auto f = [](const auto& u) { return f_match(u); };
+  stan::test::expect_ad(f, x);
+
+  // expect the mismatched function's test to fail
+  auto g = [](const auto& u) { return f_mismatch(u); };
+  // include following line to show value error behavior
+  // stan::test::expect_ad(g, x);
+
+  // expect the misthrown function's test to fail
+  auto h = [](const auto& u) { return f_misthrow(u); };
+  // include following line to show exception error behavior
+  // stan::test::expect_ad(h, x);
+}
