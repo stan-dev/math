@@ -11,85 +11,78 @@ namespace stan {
 namespace test {
 
 template <typename G>
-void expect_ad_derivatives(const G& g, const std::vector<double>& xs) {
-  static const bool TEST_DERIVS = true;
-  Eigen::VectorXd x = to_eigen_vector(xs);
+void expect_ad_derivatives(const G& g, const Eigen::VectorXd& x) {
   double gx = g(x);
-  stan::math::test::test_gradient(g, x, gx, TEST_DERIVS);
-  stan::math::test::test_gradient_fvar(g, x, gx, TEST_DERIVS);
-  stan::math::test::test_hessian(g, x, gx, TEST_DERIVS);
-  stan::math::test::test_hessian_fvar(g, x, gx, TEST_DERIVS);
-  stan::math::test::test_grad_hessian(g, x, gx, TEST_DERIVS);
+  stan::math::test::test_gradient(g, x, gx);
+  stan::math::test::test_gradient_fvar(g, x, gx);
+  stan::math::test::test_hessian(g, x, gx);
+  stan::math::test::test_hessian_fvar(g, x, gx);
+  stan::math::test::test_grad_hessian(g, x, gx);
 }
 
 template <typename F, typename H, typename... Ts>
-void expect_ad_helper(const F& f, const H& h, const std::vector<double>& x_sv,
+void expect_ad_helper(const F& f, const H& h, const Eigen::VectorXd& x,
                       Ts... xs) {
   size_t result_size;
   try {
     auto y = f(xs...);
     result_size = serialize<double>(y).size();
   } catch (...) {
-    stan::math::test::expect_all_throw(h(0), to_eigen_vector(x_sv));
+    stan::math::test::expect_all_throw(h(0), x);
+    return;
   }
   for (size_t i = 0; i < result_size; ++i)
-    expect_ad_derivatives(h(i), x_sv);
+    expect_ad_derivatives(h(i), x);
 }
 
 template <typename F, typename T1, typename T2>
 void expect_ad_vv(const F& f, const T1& x1, const T2& x2) {
   auto h = [&](const int& i) {
     return [&](const auto& v) {
-      typedef typename scalar_type<decltype(v)>::type scalar_t;
-      deserializer<scalar_t> ds(v);
+      auto ds = to_deserializer(v);
       auto x1ds = ds.read(x1);
       auto x2ds = ds.read(x2);
-      return serialize<scalar_t>(f(x1ds, x2ds))[i];
+      return serialize_return(f(x1ds, x2ds))[i];
     };
   };
-  std::vector<double> x_sv = serialize<double>(x1, x2);
-  expect_ad_helper(f, h, x_sv, x1, x2);
+  expect_ad_helper(f, h, serialize_args(x1, x2), x1, x2);
 }
 
 template <typename F, typename T1, typename T2>
 void expect_ad_vd(const F& f, const T1& x1, const T2& x2) {
   auto h = [&](const int& i) {
     return [&](const auto& v) {
-      typedef typename scalar_type<decltype(v)>::type scalar_t;
-      deserializer<scalar_t> ds(v);
+      auto ds = to_deserializer(v);
       auto x1ds = ds.read(x1);
-      return serialize<scalar_t>(f(x1ds, x2))[i];
+      return serialize_return(f(x1ds, x2))[i];
     };
   };
-  std::vector<double> x_sv = serialize<double>(x1);
-  expect_ad_helper(f, h, x_sv, x1, x2);
+  Eigen::VectorXd x = serialize_args(x1);
+  expect_ad_helper(f, h, serialize_args(x1), x1, x2);
 }
 
 template <typename F, typename T1, typename T2>
 void expect_ad_dv(const F& f, const T1& x1, const T2& x2) {
   auto h = [&](const int& i) {
     return [&](const auto& v) {
-      typedef typename scalar_type<decltype(v)>::type scalar_t;
-      deserializer<scalar_t> ds(v);
+      auto ds = to_deserializer(v);
       auto x2ds = ds.read(x2);
-      return serialize<scalar_t>(f(x1, x2ds))[i];
+      return serialize_return(f(x1, x2ds))[i];
     };
   };
-  std::vector<double> x_sv = serialize<double>(x2);
-  expect_ad_helper(f, h, x_sv, x1, x2);
+  expect_ad_helper(f, h, serialize_args(x2), x1, x2);
 }
 
 template <typename F, typename T>
-void expect_ad_v(const F& f, const T& x) {
+void expect_ad_v(const F& f, const T& x1) {
   auto h = [&](const int& i) {
     return [&](const auto& v) {
-      typedef typename scalar_type<decltype(v)>::type scalar_t;
-      deserializer<scalar_t> ds(v);
-      return serialize<scalar_t>(f(ds.read(x)))[i];
+      auto ds = to_deserializer(v);
+      auto x1ds = ds.read(x1);
+      return serialize_return(f(x1ds))[i];
     };
   };
-  std::vector<double> x_sv = serialize<double>(x);
-  expect_ad_helper(f, h, x_sv, x);
+  expect_ad_helper(f, h, serialize_args(x1), x1);
 }
 
 // CLIENT AUTODIFF TEST FUNCTIONS

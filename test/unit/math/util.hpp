@@ -24,6 +24,7 @@ std::vector<T> to_std_vector(const Eigen::Matrix<T, R, C>& x) {
 
 template <typename T>
 struct deserializer {
+  typedef T scalar_t;
   size_t position_;
 
   const std::vector<T> vals_;
@@ -56,12 +57,17 @@ struct deserializer {
 };
 
 template <typename T>
-deserializer<T> deserializer_factory(const std::vector<T>& vals) {
+deserializer<T> to_deserializer(const std::vector<T>& vals) {
+  return deserializer<T>(vals);
+}
+template <typename T>
+deserializer<T> to_deserializer(const Eigen::Matrix<T, -1, 1>& vals) {
   return deserializer<T>(vals);
 }
 
 template <typename T>
 struct serializer {
+  typedef T scalar_t;
   std::vector<T> vals_;
 
   serializer() : vals_() {}
@@ -93,19 +99,29 @@ struct serializer {
 };
 
 template <typename U>
-void serialize(serializer<U>& s) {}
+void serialize_helper(serializer<U>& s) {}
 
 template <typename U, typename T, typename... Ts>
-void serialize(serializer<U>& s, const T& x, const Ts... xs) {
+void serialize_helper(serializer<U>& s, const T& x, const Ts... xs) {
   s.write(x);
-  serialize(s, xs...);
+  serialize_helper(s, xs...);
 }
 
 template <typename U, typename... Ts>
 std::vector<U> serialize(const Ts... xs) {
   serializer<U> s;
-  serialize(s, xs...);
+  serialize_helper(s, xs...);
   return s.vals_;
+}
+
+template <typename T>
+std::vector<typename scalar_type<T>::type> serialize_return(const T& x) {
+  return serialize<typename scalar_type<T>::type>(x);
+}
+
+template <typename... Ts>
+Eigen::VectorXd serialize_args(const Ts... xs) {
+  return to_eigen_vector(serialize<double>(xs...));
 }
 
 }  // namespace test
