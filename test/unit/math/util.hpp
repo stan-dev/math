@@ -87,6 +87,20 @@ std::vector<U> serialize(const Ts... xs) {
   return s.vals_;
 }
 
+template <typename T>
+Eigen::Matrix<T, -1, 1> to_eigen_vector(const std::vector<T>& x) {
+  return Eigen::Map<const Eigen::Matrix<T, -1, 1>>(x.data(), x.size());
+}
+
+template <typename T, int R, int C>
+std::vector<T> to_std_vector(const Eigen::Matrix<T, R, C>& x) {
+  std::vector<T> y;
+  y.reserve(x.size());
+  for (int i = 0; i < x.size(); ++i)
+    y.push_back(x(i));
+  return y;
+}
+
 }  // namespace test
 }  // namespace stan
 
