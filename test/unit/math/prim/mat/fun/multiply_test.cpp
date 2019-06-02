@@ -133,3 +133,27 @@ TEST(AgradRevMatrix, multiply_vector_int) {
   EXPECT_EQ(4.0, prod_vec[1]);
   EXPECT_EQ(6.0, prod_vec[2]);
 }
+
+#ifdef STAN_OPENCL
+#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
+  for (int i = 0; i < A.size(); i++)    \
+    EXPECT_NEAR(A(i), B(i), DELTA);
+
+TEST(MathMatrix, multiply_opencl) {
+  stan::math::opencl_context.tuning_opts().multiply_result_size_worth_transfer = 1;
+  stan::math::opencl_context.tuning_opts().multiply_common_dim_worth_transfer = 1;
+  using stan::math::multiply;
+  int size = 512;
+  stan::math::matrix_d m1 = stan::math::matrix_d::Random(size, size).eval();
+  stan::math::matrix_d m2 = stan::math::matrix_d::Random(size, size).eval();
+
+  stan::math::matrix_d m3_cl = multiply(m1, m2);
+  // to make sure we dont use OpenCL
+  stan::math::opencl_context.tuning_opts().multiply_result_size_worth_transfer = INT_MAX;
+  stan::math::opencl_context.tuning_opts().multiply_common_dim_worth_transfer = INT_MAX;
+
+  stan::math::matrix_d m3 = multiply(m1, m2);
+
+  EXPECT_MATRIX_NEAR(m3_cl, m3, 1e-10);
+}
+#endif 

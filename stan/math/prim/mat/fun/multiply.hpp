@@ -54,7 +54,21 @@ inline Eigen::Matrix<double, R1, C2> multiply(
     const Eigen::Matrix<double, R1, C1>& m1,
     const Eigen::Matrix<double, R2, C2>& m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
-  return m1 * m2;
+#ifdef STAN_OPENCL
+  if (((m1.rows() * m2.cols()) >
+      opencl_context.tuning_opts().multiply_result_size_worth_transfer) &&
+      (m1.cols() >
+      opencl_context.tuning_opts().multiply_common_dim_worth_transfer)) {
+    matrix_cl m1_cl(m1);
+    matrix_cl m2_cl(m2);
+    matrix_cl m3_cl = m1_cl * m2_cl;
+    return from_matrix_cl(m3_cl);
+  } else {
+#endif
+    return m1 * m2;
+#ifdef STAN_OPENCL
+  }
+#endif
 }
 
 /**
