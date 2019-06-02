@@ -102,7 +102,8 @@ void expect_near(const std::string& msg, const Eigen::Matrix<T, R, C>& x1,
 template <typename F>
 void test_value(const F& f, const Eigen::VectorXd& x, double fx) {
   if (is_nan(fx))
-    EXPECT_TRUE(is_nan(f(x))) << "test_value is_nan(" << f(x) << std::endl;
+    EXPECT_TRUE(is_nan(f(x)))
+        << "test_value is_nan(" << f(x) << ")" << std::endl;
   else
     expect_near("test_value fx == f(x)", fx, f(x));
 }

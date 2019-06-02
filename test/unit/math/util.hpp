@@ -101,13 +101,14 @@ struct deserializer {
    * used for its shape---there is no relationship between the type of
    * argument and type of result.
    *
-   * @tparam U type of pattern scalar
+   * @tparam U type of pattern sequence elements
    * @param x pattern argument to determine result shape and size
    * @return deserialized value with shape and size matching argument
    */
   template <typename U>
-  std::vector<T> read(const std::vector<U>& x) {
-    std::vector<T> y;
+  typename stan::math::promote_scalar_type<T, std::vector<U>>::type read(
+      const std::vector<U>& x) {
+    typename stan::math::promote_scalar_type<T, std::vector<U>>::type y;
     y.reserve(x.size());
     for (size_t i = 0; i < x.size(); ++i)
       y.push_back(read(x[i]));

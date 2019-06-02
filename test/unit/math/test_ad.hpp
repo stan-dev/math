@@ -218,15 +218,69 @@ void expect_ad(const F& f, const T& x) {
  *
  * <p>Invokes Google test framework to raise error if test fails.
  *
- * @tparam F type of functor to test
- * @tparam T1 type of first argument
- * @tparam T2 type of second argument
+ * @tparam F type of polymorphic functor to test
+ * @tparam T1 type of double- or int-based first argument
+ * @tparam T2 type of double- or int-based second argument
  */
 template <typename F, typename T1, typename T2>
 void expect_ad(const F& f, const T1& x1, const T2& x2) {
   expect_ad_vv(f, x1, x2);
   expect_ad_vd(f, x1, x2);
   expect_ad_dv(f, x1, x2);
+}
+
+/**
+ * Test that the specified vectorized polymoprhic unary function
+ * produces autodiff results consistent with values determined by
+ * double in puts and derivatives consistent with finite differences
+ * of double inputs.
+ *
+ * <p>Tests all three possible instantiations of autodiff variables:
+ * first argument only, second argument only, and both arguments.
+ * Tests autodiff levels `rev`, `fvar<double>`, `fvar<fvar<double>>`,
+ * `fvar<rev>`, and `fvar<fvar<rev>>`.
+ *
+ * <p>Tests all vectorizations of the second argument, including
+ * primitive (`double` or `int`), `std::vector<double>` and all of the
+ * Eigen options, `Eigen::VectorXd`, `Eigen::RowVectorXd`, and
+ * `Eigen::MatrixXd`.   The vectorization tests are carried out by
+ * repeating the input multiple times.
+
+ * <p>Invokes Google test framework to raise error if test fails.
+ *
+ * @tparam F type of poymorphic, vectorized functor to test
+ * @tparam T1 type of first argument (integer or double)
+ */
+template <typename F, typename T1>
+void expect_ad_vectorized(const F& f, const T1& x1) {
+  using std::vector;
+  using Eigen::VectorXd;
+  using Eigen::RowVectorXd;
+  using Eigen::MatrixXd;
+  typedef vector<double> vector_dbl;
+  typedef vector<vector<double>> vector2_dbl;
+  typedef vector<vector<vector<double>>> vector3_dbl;
+
+  expect_ad(f, x1);
+  expect_ad(f, static_cast<double>(x1));
+  for (int i = 0; i < 4; ++i)
+    expect_ad(f, VectorXd::Constant(i, x1).eval());
+  for (int i = 0; i < 4; ++i)
+    expect_ad(f, RowVectorXd::Constant(i, x1).eval());
+  for (int i = 0; i < 4; ++i)
+    expect_ad(f, MatrixXd::Constant(i, i, x1).eval());
+  for (size_t i = 0; i < 4; ++i)
+    expect_ad(f, vector_dbl(i, x1));
+  for (size_t i = 0; i < 4; ++i)
+    expect_ad(f, vector<VectorXd>(i, VectorXd::Constant(i, x1).eval()));
+  for (size_t i = 0; i < 4; ++i)
+    expect_ad(f, vector<RowVectorXd>(i, RowVectorXd::Constant(i, x1).eval()));
+  for (size_t i = 0; i < 3; ++i)
+    expect_ad(f, vector<MatrixXd>(i, MatrixXd::Constant(i, i, x1).eval()));
+  for (int i = 0; i < 3; ++i)
+    expect_ad(f, vector2_dbl(i, vector_dbl(i, x1)));
+  for (int i = 0; i < 3; ++i)
+    expect_ad(f, vector3_dbl(i, vector2_dbl(i, vector_dbl(i, x1))));
 }
 
 }  // namespace test

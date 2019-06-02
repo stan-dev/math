@@ -74,6 +74,15 @@ double f_misthrow(const double& x) {
   return -2 * x;
 }
 
+// VECTORIZED FUNCTION EXAMPLE THAT PASSES
+
+TEST(test_unit_math_test_ad, expect_ad_vectorized) {
+  // log10() is vectorized
+  auto g = [](const auto& u) { return stan::math::log10(u); };
+
+  stan::test::expect_ad_vectorized(g, 3.2);
+}
+
 TEST(test_unit_math_test_ad, test_ad_unary_fail) {
   double x = 3.2;
 
