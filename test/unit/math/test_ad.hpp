@@ -10,6 +10,17 @@
 namespace stan {
 namespace test {
 
+/**
+ * For the specified functor and argument, test that automatic
+ * differentiation provides the value as the double-based version and
+ * the same derivatives as finite differences over the double version.
+ * The functor must be a map from Eigen vectors to scalars of the
+ * same scalar type.
+ *
+ * @tparam G type of polymorphic functor
+ * @param g polymorphic functor from vectors to scalars
+ * @param x argument to test
+ */
 template <typename G>
 void expect_ad_derivatives(const G& g, const Eigen::VectorXd& x) {
   double gx = g(x);
@@ -20,6 +31,24 @@ void expect_ad_derivatives(const G& g, const Eigen::VectorXd& x) {
   stan::math::test::test_grad_hessian(g, x, gx);
 }
 
+/**
+ * For the specified functor, serialized form of the functor,
+ * serialized argument and raw argument sequence, test that automatic
+ * differentiation at all levels provides the same answer as the
+ * double-based version with finite differences.
+ *
+ * @tparam F type of original functor applying to sequence of
+ * arguments
+ * @tparam H type of serialized functor applying to Eigen vector and
+ * returning a single component of the value
+ * @tparam Ts type pack for arguments to original functor with double
+ * scalar types
+ * @param f functor to evaluate
+ * @param h serialized functor returning a single component of
+ * original output
+ * @param x serialized input
+ * @param xs sequence of arguments with double-based scalars
+ */
 template <typename F, typename H, typename... Ts>
 void expect_ad_helper(const F& f, const H& h, const Eigen::VectorXd& x,
                       Ts... xs) {
@@ -35,6 +64,18 @@ void expect_ad_helper(const F& f, const H& h, const Eigen::VectorXd& x,
     expect_ad_derivatives(h(i), x);
 }
 
+/**
+ * Test that the specified binary functor and arguments produce for
+ * every autodiff type the same value as the double-based version and
+ * the same derivatives as finite differences when both arguments are
+ * autodiff variables.
+ *
+ * @tparam F type of functor to test
+ * @tparam T1 type of first argument with double-based scalar
+ * @tparam T2 type of second argument with double-based scalar
+ * @param x1 first argument
+ * @param x2 second argument
+ */
 template <typename F, typename T1, typename T2>
 void expect_ad_vv(const F& f, const T1& x1, const T2& x2) {
   auto h = [&](const int& i) {
@@ -48,6 +89,19 @@ void expect_ad_vv(const F& f, const T1& x1, const T2& x2) {
   expect_ad_helper(f, h, serialize_args(x1, x2), x1, x2);
 }
 
+/**
+ * Test that the specified binary functor and arguments produce for
+ * every autodiff type the same value as the double-based version and
+ * the same derivatives as finite differences when the first argument
+ * is an autodiff variable and the second double-based.
+ *
+ * @tparam F type of functor to test
+ * @tparam T1 type of first argument with double-based scalar
+ * @tparam T2 type of second argument with double-based scalar
+ * @param f functor to test
+ * @param x1 first argument
+ * @param x2 second argument
+ */
 template <typename F, typename T1, typename T2>
 void expect_ad_vd(const F& f, const T1& x1, const T2& x2) {
   auto h = [&](const int& i) {
@@ -61,6 +115,19 @@ void expect_ad_vd(const F& f, const T1& x1, const T2& x2) {
   expect_ad_helper(f, h, serialize_args(x1), x1, x2);
 }
 
+/**
+ * Test that the specified binary functor and arguments produce for
+ * every autodiff type the same value as the double-based version and
+ * the same derivatives as finite differences when the second argument
+ * is an autodiff variable and the first is double-based.
+ *
+ * @tparam F type of functor to test
+ * @tparam T1 type of first argument with double-based scalar
+ * @tparam T2 type of second argument with double-based scalar
+ * @param f functor to test
+ * @param x1 first argument
+ * @param x2 second argument
+ */
 template <typename F, typename T1, typename T2>
 void expect_ad_dv(const F& f, const T1& x1, const T2& x2) {
   auto h = [&](const int& i) {
@@ -73,8 +140,19 @@ void expect_ad_dv(const F& f, const T1& x1, const T2& x2) {
   expect_ad_helper(f, h, serialize_args(x2), x1, x2);
 }
 
-template <typename F, typename T>
-void expect_ad_v(const F& f, const T& x1) {
+/**
+ * Test that the specified unary functor and arguments produce for
+ * every autodiff type the same value as the double-based version and
+ * the same derivatives as finite differences when the first (and
+ * only) argument is an autodiff variable.
+ *
+ * @tparam F type of functor to test
+ * @tparam T1 type of first argument with double-based scalar
+ * @param f functor to test
+ * @param x1 first argument
+ */
+template <typename F, typename T1>
+void expect_ad_v(const F& f, const T1& x1) {
   auto h = [&](const int& i) {
     return [&](const auto& v) {
       auto ds = to_deserializer(v);
@@ -86,6 +164,8 @@ void expect_ad_v(const F& f, const T& x1) {
 }
 
 // CLIENT AUTODIFF TEST FUNCTIONS
+//
+// [this is for the Wiki, but I'm leaving it here for review]
 //
 // These are the public test functions that expect a functor
 // f encapsulating a polymorphic call to a Stan function and
@@ -107,13 +187,41 @@ void expect_ad_v(const F& f, const T& x1) {
 // Example use cases are provided in this directory in file
 //     test_ad_test.cpp.
 
-// Unary function autodiff tester
+/**
+ * Test that the specified polymorphic unary functor produces autodiff
+ * results consistent with values determined by double inputs and
+ * derivatives consistent with finite differences of double inputs.
+ *
+ * <p>Tests condition where argument is an autodiff variable.  Tests
+ * autodiff levels `rev`, `fvar<double>`, `fvar<fvar<double>>`,
+ * `fvar<rev>`, and `fvar<fvar<rev>>`.
+ *
+ * <p>Invokes Google test framework to raise error if test fails.
+ *
+ * @tparam F type of functor to test
+ * @tparam T type of argument
+ */
 template <typename F, typename T>
 void expect_ad(const F& f, const T& x) {
   expect_ad_v(f, x);
 }
 
-// Binary function autodiff tester
+/**
+ * Test that the specified polymorphic binary functor produces autodiff
+ * results consistent with values determined by double inputs and
+ * derivatives consistent with finite differences of double inputs.
+ *
+ * <p>Tests all three possible instantiations of autodiff variables:
+ * first argument only, second argument only, and both arguments.
+ * Tests autodiff levels `rev`, `fvar<double>`, `fvar<fvar<double>>`,
+ * `fvar<rev>`, and `fvar<fvar<rev>>`.
+ *
+ * <p>Invokes Google test framework to raise error if test fails.
+ *
+ * @tparam F type of functor to test
+ * @tparam T1 type of first argument
+ * @tparam T2 type of second argument
+ */
 template <typename F, typename T1, typename T2>
 void expect_ad(const F& f, const T1& x1, const T2& x2) {
   expect_ad_vv(f, x1, x2);
