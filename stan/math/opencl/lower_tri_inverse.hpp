@@ -2,16 +2,15 @@
 #define STAN_MATH_OPENCL_LOWER_TRI_INVERSE_HPP
 
 #ifdef STAN_OPENCL
+#include <stan/math/opencl/identity.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/sub_block.hpp>
+#include <stan/math/opencl/zeros.hpp>
+#include <stan/math/opencl/err/check_opencl.hpp>
+#include <stan/math/opencl/err/check_square.hpp>
 #include <stan/math/opencl/kernels/diag_inv.hpp>
 #include <stan/math/opencl/kernels/inv_lower_tri_multiply.hpp>
 #include <stan/math/opencl/kernels/neg_rect_lower_tri_multiply.hpp>
-#include <stan/math/opencl/err/check_opencl.hpp>
-
-#include <stan/math/opencl/identity.hpp>
-#include <stan/math/opencl/err/check_square.hpp>
-#include <stan/math/opencl/sub_block.hpp>
-#include <stan/math/opencl/zeros.hpp>
 
 #include <string>
 #include <vector>

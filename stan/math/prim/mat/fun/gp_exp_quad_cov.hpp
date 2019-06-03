@@ -1,13 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_GP_EXP_QUAD_COV_HPP
 #define STAN_MATH_PRIM_MAT_FUN_GP_EXP_QUAD_COV_HPP
 
-#ifdef STAN_OPENCL
-#include <stan/math/opencl/err/check_nan.hpp>
-#include <stan/math/opencl/gp_exp_quad_cov.hpp>
-#endif
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/divide_columns.hpp>
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
+#include <stan/math/prim/mat/fun/value_of_rec.hpp>
+#include <stan/math/prim/mat/meta/get.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
@@ -15,6 +13,10 @@
 #include <stan/math/prim/scal/fun/exp.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#ifdef STAN_OPENCL
+#include <stan/math/opencl/err/check_nan.hpp>
+#include <stan/math/opencl/gp_exp_quad_cov.hpp>
+#endif
 #include <cmath>
 #include <type_traits>
 #include <vector>
@@ -257,9 +259,10 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
-                                       const double sigma,
-                                       const double length_scale) {
+template <>
+inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double>& x,
+                                       const double& sigma,
+                                       const double& length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive(function_name, "magnitude", sigma);
   check_positive(function_name, "length scale", length_scale);
@@ -294,9 +297,10 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
-                                       const double sigma,
-                                       const double length_scale) {
+template <>
+inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd>& x,
+                                       const double& sigma,
+                                       const double& length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive(function_name, "magnitude", sigma);
   check_positive(function_name, "length scale", length_scale);
@@ -336,9 +340,10 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
+template <>
 inline Eigen::MatrixXd gp_exp_quad_cov(
-    const std::vector<Eigen::VectorXd> &x, const double &sigma,
-    const std::vector<double> &length_scale) {
+    const std::vector<Eigen::VectorXd>& x, const double& sigma,
+    const std::vector<double>& length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive_finite(function_name, "magnitude", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
@@ -385,10 +390,11 @@ inline Eigen::MatrixXd gp_exp_quad_cov(
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
+template <>
 inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
                                                 const std::vector<double> &x2,
-                                                const double sigma,
-                                                const double length_scale) {
+                                                const double& sigma,
+                                                const double& length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive_finite(function_name, "magnitude", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
@@ -427,10 +433,11 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
+template <>
 inline typename Eigen::MatrixXd gp_exp_quad_cov(
     const std::vector<Eigen::VectorXd> &x1,
-    const std::vector<Eigen::VectorXd> &x2, const double sigma,
-    const double length_scale) {
+    const std::vector<Eigen::VectorXd> &x2, const double& sigma,
+    const double& length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive_finite(function_name, "magnitude", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
@@ -475,10 +482,11 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
+template <>
 inline typename Eigen::MatrixXd gp_exp_quad_cov(
     const std::vector<Eigen::VectorXd> &x1,
-    const std::vector<Eigen::VectorXd> &x2, const double sigma,
-    const std::vector<double> &length_scale) {
+    const std::vector<Eigen::VectorXd> &x2, const double& sigma,
+    const std::vector<double>& length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   const size_t x1_size = x1.size();
   const size_t x2_size = x2.size();

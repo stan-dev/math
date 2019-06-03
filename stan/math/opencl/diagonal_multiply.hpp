@@ -4,7 +4,6 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/kernels/scalar_mul_diagonal.hpp>
-#include <Eigen/Dense>
 
 namespace stan {
 namespace math {

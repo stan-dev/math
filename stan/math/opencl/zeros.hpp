@@ -7,8 +7,6 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/kernels/zeros.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
-
 #include <CL/cl.hpp>
 
 namespace stan {

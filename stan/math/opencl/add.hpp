@@ -2,8 +2,8 @@
 #define STAN_MATH_OPENCL_ADD_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/kernels/add.hpp>
 #include <stan/math/opencl/err/check_matching_dims.hpp>
+#include <stan/math/opencl/kernels/add.hpp>
 #include <CL/cl.hpp>
 
 namespace stan {
