@@ -258,9 +258,9 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
  *   x is nan or infinite
  */
 template <>
-inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double>& x,
-                                       const double& sigma,
-                                       const double& length_scale) {
+inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
+                                       const double &sigma,
+                                       const double &length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive(function_name, "magnitude", sigma);
   check_positive(function_name, "length scale", length_scale);
@@ -296,9 +296,9 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double>& x,
  *   x is nan or infinite
  */
 template <>
-inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd>& x,
-                                       const double& sigma,
-                                       const double& length_scale) {
+inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
+                                       const double &sigma,
+                                       const double &length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive(function_name, "magnitude", sigma);
   check_positive(function_name, "length scale", length_scale);
@@ -340,8 +340,8 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd>& x,
  */
 template <>
 inline Eigen::MatrixXd gp_exp_quad_cov(
-    const std::vector<Eigen::VectorXd>& x, const double& sigma,
-    const std::vector<double>& length_scale) {
+    const std::vector<Eigen::VectorXd> &x, const double &sigma,
+    const std::vector<double> &length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive_finite(function_name, "magnitude", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
@@ -391,8 +391,8 @@ inline Eigen::MatrixXd gp_exp_quad_cov(
 template <>
 inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
                                                 const std::vector<double> &x2,
-                                                const double& sigma,
-                                                const double& length_scale) {
+                                                const double &sigma,
+                                                const double &length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive_finite(function_name, "magnitude", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
@@ -434,8 +434,8 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
 template <>
 inline typename Eigen::MatrixXd gp_exp_quad_cov(
     const std::vector<Eigen::VectorXd> &x1,
-    const std::vector<Eigen::VectorXd> &x2, const double& sigma,
-    const double& length_scale) {
+    const std::vector<Eigen::VectorXd> &x2, const double &sigma,
+    const double &length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive_finite(function_name, "magnitude", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
@@ -483,8 +483,8 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
 template <>
 inline typename Eigen::MatrixXd gp_exp_quad_cov(
     const std::vector<Eigen::VectorXd> &x1,
-    const std::vector<Eigen::VectorXd> &x2, const double& sigma,
-    const std::vector<double>& length_scale) {
+    const std::vector<Eigen::VectorXd> &x2, const double &sigma,
+    const std::vector<double> &length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   const size_t x1_size = x1.size();
   const size_t x2_size = x2.size();
