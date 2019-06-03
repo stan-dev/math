@@ -4,6 +4,7 @@
 #include <stan/math.hpp>
 #include <test/unit/math/util.hpp>
 #include <test/unit/math/mix/mat/util/autodiff_tester.hpp>
+#include <gtest/gtest.h>
 #include <string>
 #include <vector>
 
@@ -162,30 +163,6 @@ void expect_ad_v(const F& f, const T1& x1) {
   };
   expect_ad_helper(f, h, serialize_args(x1), x1);
 }
-
-// CLIENT AUTODIFF TEST FUNCTIONS
-//
-// [this is for the Wiki, but I'm leaving it here for review]
-//
-// These are the public test functions that expect a functor
-// f encapsulating a polymorphic call to a Stan function and
-// a sequence of arguments with double-based scalars.
-//
-// These functions evaluate that all levels of functional autodiff
-// provide the same answers as finite differences on the double-based
-// implementations, including exception behavior.  To completely
-// test a new differentiable function, a developer need only
-//
-// (a) independently test the double-based implementation, and
-//
-// (b) use these functions to provide arguments to test at all
-//     levels of autodiff.
-//
-// The underlying heavy lifting is provided in the file
-//     unit/math/mix/mat/util/autodiff_tester.hpp
-//
-// Example use cases are provided in this directory in file
-//     test_ad_test.cpp.
 
 /**
  * Test that the specified polymorphic unary functor produces autodiff
