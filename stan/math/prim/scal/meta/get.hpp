@@ -7,7 +7,8 @@
 
 namespace stan {
 
-template <typename T, std::enable_if_t<std::is_arithmetic<T>::value, T>* = nullptr>
+template <typename T,
+          std::enable_if_t<std::is_arithmetic<T>::value, T>* = nullptr>
 inline T get(const T& x, size_t n) {
   return x;
 }
