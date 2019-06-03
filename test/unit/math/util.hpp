@@ -70,14 +70,15 @@ struct deserializer {
    *
    * @param vals values to deserialize
    */
-  deserializer(const std::vector<T>& vals) : position_(0), vals_(vals) {}
+  explicit deserializer(const std::vector<T>& vals)
+      : position_(0), vals_(vals) {}
 
   /**
    * Construct a deserializer from the specified sequence of values.
    *
    * @param vals values to deserialize
    */
-  deserializer(const Eigen::Matrix<T, -1, 1>& v_vals)
+  explicit deserializer(const Eigen::Matrix<T, -1, 1>& v_vals)
       : position_(0), vals_(to_std_vector(v_vals)) {}
 
   /**

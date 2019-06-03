@@ -1,4 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
+#include <limits>
+#include <vector>
 
 TEST(test_unit_math_test_ad, test_ad_unary) {
   Eigen::MatrixXd x(2, 2);

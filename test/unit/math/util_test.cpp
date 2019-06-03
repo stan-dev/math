@@ -1,5 +1,6 @@
 #include <test/unit/math/util.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(test_unit_math_test_ad, to_std_vector) {
   Eigen::VectorXd u(0);
@@ -48,8 +49,7 @@ TEST(test_unit_math_util, serializer_deserializer) {
   for (size_t i = 0; i < expected.size(); ++i)
     EXPECT_EQ(expected[i], s.vals_[i]);
 
-  stan::test::deserializer<double> d
-      = stan::test::deserializer_factory(s.vals_);
+  stan::test::deserializer<double> d = stan::test::to_deserializer(s.vals_);
 
   EXPECT_EQ(3.2, d.read(0.0));
   EXPECT_EQ(-1, d.read(0.0));
