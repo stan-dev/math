@@ -33,11 +33,9 @@ namespace internal {
  *
  * @param x std::vector of scalars that can be used in square distance.
  *    This function assumes each element of x is the same size.
- * @param sigma marginal standard deviation or magnitude
- * @param length_scale length scale
+ * @param sigma_sq square root of the marginal standard deviation or magnitude
+ * @param neg_half_inv_l_sq The half negative inverse of the length scale
  * @return squared distance
- * @throw std::domain_error if sigma <= 0, l <= 0, or
- *   x is nan or infinite
  */
 template <typename T_x, typename T_sigma, typename T_l>
 inline typename Eigen::Matrix<return_type_t<T_x, T_sigma, T_l>, -1, -1>
@@ -64,10 +62,8 @@ gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma_sq,
  * @tparam T_sigma type of parameter sigma
  *
  * @param x std::vector of Eigen vectors of scalars.
- * @param sigma marginal standard deviation or magnitude
- * @param length_scale std::vector length scale
+ * @param sigma_sq square root of the marginal standard deviation or magnitude
  * @return squared distance
- * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
 template <typename T_x, typename T_sigma>
@@ -101,11 +97,9 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
  *
  * @param x1 std::vector of elements that can be used in square distance
  * @param x2 std::vector of elements that can be used in square distance
- * @param sigma standard deviation
- * @param length_scale length scale
+ * @param sigma_sq square root of the marginal standard deviation or magnitude
+ * @param neg_half_inv_l_sq The half negative inverse of the length scale
  * @return squared distance
- * @throw std::domain_error if sigma <= 0, l <= 0, or
- *   x is nan or infinite
  */
 template <typename T_x1, typename T_x2, typename T_sigma, typename T_l>
 inline typename Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma, T_l>, -1, -1>
@@ -135,8 +129,7 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  *
  * @param x1 std::vector of Eigen vectors of scalars.
  * @param x2 std::vector of Eigen vectors of scalars.
- * @param sigma standard deviation
- * @param length_scale std::vector of length scale
+ * @param sigma_sq square root of the marginal standard deviation or magnitude
  * @return squared distance
  */
 template <typename T_x1, typename T_x2, typename T_s>
