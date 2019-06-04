@@ -24,21 +24,21 @@ namespace math {
 
 namespace internal {
 
-  /**
-   * Returns a squared exponential kernel.
-   *
-   * @tparam T_x type for each scalar
-   * @tparam T_sigma type of parameter sigma
-   * @tparam T_l type of parameter length scale
-   *
-   * @param x std::vector of scalars that can be used in square distance.
-   *    This function assumes each element of x is the same size.
-   * @param sigma marginal standard deviation or magnitude
-   * @param length_scale length scale
-   * @return squared distance
-   * @throw std::domain_error if sigma <= 0, l <= 0, or
-   *   x is nan or infinite
-   */
+/**
+ * Returns a squared exponential kernel.
+ *
+ * @tparam T_x type for each scalar
+ * @tparam T_sigma type of parameter sigma
+ * @tparam T_l type of parameter length scale
+ *
+ * @param x std::vector of scalars that can be used in square distance.
+ *    This function assumes each element of x is the same size.
+ * @param sigma marginal standard deviation or magnitude
+ * @param length_scale length scale
+ * @return squared distance
+ * @throw std::domain_error if sigma <= 0, l <= 0, or
+ *   x is nan or infinite
+ */
 template <typename T_x, typename T_sigma, typename T_l>
 inline typename Eigen::Matrix<return_type_t<T_x, T_sigma, T_l>, -1, -1>
 gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma_sq,
@@ -49,8 +49,8 @@ gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma_sq,
   for (size_t j = 0; j < x_size; ++j) {
     cov(j, j) = sigma_sq;
     for (size_t i = j + 1; i < x_size; ++i) {
-      cov(i, j) = sigma_sq
-                  * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
+      cov(i, j)
+          = sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
       cov(j, i) = cov(i, j);
     }
   }
@@ -395,8 +395,8 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
                 / opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
       < 1) {
     for (size_t i = 0; i < x_size; ++i)
-        for (size_t j = 0; j < x[i].size(); ++j)
-      check_not_nan("gp_exp_quad_cov", "x", x[j][i]);
+      for (size_t j = 0; j < x[i].size(); ++j)
+        check_not_nan("gp_exp_quad_cov", "x", x[j][i]);
     cov = internal::gp_exp_quad_cov(x, square(sigma),
                                     -0.5 / square(length_scale));
     return cov;
@@ -485,7 +485,7 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
       < opencl_context.tuning_opts().gp_exp_quad_cov_size_worth_transfer) {
     for (size_t i = 0; i < x1.size(); ++i)
       check_not_nan(function_name, "x1", x1[i]);
-      for (size_t i = 0; i < x2.size(); ++i)
+    for (size_t i = 0; i < x2.size(); ++i)
       check_not_nan(function_name, "x2", x2[i]);
 
     cov = internal::gp_exp_quad_cov(x1, x2, square(sigma),
@@ -538,16 +538,16 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
           + static_cast<double>((x1_size + x2_size + 1) * inner_x1_size)
                 / opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
       < 1) {
-        for (size_t i = 0; i < x1.size(); ++i)
-            for (size_t j = 0; j < x2[i].size(); ++j)
-          check_not_nan(function_name, "x1", x1[i][j]);
-          for (size_t i = 0; i < x2.size(); ++i)
-              for (size_t j = 0; j < x2[i].size(); ++j)
-          check_not_nan(function_name, "x2", x2[i][j]);
+    for (size_t i = 0; i < x1.size(); ++i)
+      for (size_t j = 0; j < x2[i].size(); ++j)
+        check_not_nan(function_name, "x1", x1[i][j]);
+    for (size_t i = 0; i < x2.size(); ++i)
+      for (size_t j = 0; j < x2[i].size(); ++j)
+        check_not_nan(function_name, "x2", x2[i][j]);
 
-        cov = internal::gp_exp_quad_cov(x1, x2, square(sigma),
-                                        -0.5 / square(length_scale));
-        return cov;
+    cov = internal::gp_exp_quad_cov(x1, x2, square(sigma),
+                                    -0.5 / square(length_scale));
+    return cov;
   }
 
   matrix_cl x1_cl(x1);
@@ -576,8 +576,7 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
 template <>
 inline typename Eigen::MatrixXd gp_exp_quad_cov(
     const std::vector<Eigen::VectorXd> &x1,
-    const std::vector<Eigen::VectorXd> &x2,
-    const double &sigma,
+    const std::vector<Eigen::VectorXd> &x2, const double &sigma,
     const std::vector<double> &length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   const size_t x1_size = x1.size();
@@ -602,18 +601,17 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
           + static_cast<double>((x1_size + x2_size + 1) * inner_x1_size)
                 / opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
       < 1) {
-        for (size_t i = 0; i < x1.size(); ++i)
-            for (size_t j = 0; j < x2[i].size(); ++j)
-          check_not_nan(function_name, "x1", x1[i][j]);
-          for (size_t i = 0; i < x2.size(); ++i)
-              for (size_t j = 0; j < x2[i].size(); ++j)
-          check_not_nan(function_name, "x2", x2[i][j]);
+    for (size_t i = 0; i < x1.size(); ++i)
+      for (size_t j = 0; j < x2[i].size(); ++j)
+        check_not_nan(function_name, "x1", x1[i][j]);
+    for (size_t i = 0; i < x2.size(); ++i)
+      for (size_t j = 0; j < x2[i].size(); ++j)
+        check_not_nan(function_name, "x2", x2[i][j]);
 
-        cov = internal::gp_exp_quad_cov(divide_columns(x1, length_scale),
-                                        divide_columns(x2, length_scale),
-                                        square(sigma));
-        return cov;
-
+    cov = internal::gp_exp_quad_cov(divide_columns(x1, length_scale),
+                                    divide_columns(x2, length_scale),
+                                    square(sigma));
+    return cov;
   }
 
   matrix_cl x1_cl(divide_columns(x1, length_scale));
