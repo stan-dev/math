@@ -136,7 +136,7 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
         ops_partials.edge1_.partials_[n] -= d;
 
       if (!is_constant_struct<T_cut>::value)
-        ops_partials.edge2_.partials_vec_[n](0) = d;
+        ops_partials.edge2_.partials_vec_[n](0) += d;
 
     } else if (y_vec[n] == K) {
       logp -= log1p_exp(c_dbl[K - 2] - lam_dbl);

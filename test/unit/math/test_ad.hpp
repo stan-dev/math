@@ -230,10 +230,10 @@ void expect_ad(const F& f, const T1& x1, const T2& x2) {
  */
 template <typename F, typename T1>
 void expect_ad_vectorized(const F& f, const T1& x1) {
-  using std::vector;
-  using Eigen::VectorXd;
-  using Eigen::RowVectorXd;
   using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
+  using std::vector;
   typedef vector<double> vector_dbl;
   typedef vector<vector<double>> vector2_dbl;
   typedef vector<vector<vector<double>>> vector3_dbl;
