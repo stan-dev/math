@@ -230,10 +230,10 @@ void expect_ad(const F& f, const T1& x1, const T2& x2) {
  */
 template <typename F, typename T1>
 void expect_ad_vectorized(const F& f, const T1& x1) {
-  using Eigen::MatrixXd;
-  using Eigen::RowVectorXd;
-  using Eigen::VectorXd;
   using std::vector;
+  using Eigen::VectorXd;
+  using Eigen::RowVectorXd;
+  using Eigen::MatrixXd;
   typedef vector<double> vector_dbl;
   typedef vector<vector<double>> vector2_dbl;
   typedef vector<vector<vector<double>>> vector3_dbl;
@@ -260,6 +260,13 @@ void expect_ad_vectorized(const F& f, const T1& x1) {
     expect_ad(f, vector3_dbl(i, vector2_dbl(i, vector_dbl(i, x1))));
 }
 
+/**
+ * Return the sequence of common scalar arguments to test.  These
+ * include finite values that are positive, negative, and zero, as
+ * well as both positive and negative infinity, and not-a-number.
+ *
+ * @return sequence of common scalar arguments to test
+ */
 std::vector<double> common_args() {
   return std::vector<double>{-1.3,
                              0,
@@ -269,6 +276,16 @@ std::vector<double> common_args() {
                              stan::math::not_a_number()};
 }
 
+/**
+ * Test that the specified polymorphic unary function produces the
+ * same results, exceptions, and has derivatives consistent with
+ * finite differences as returned by the primitive version of the
+ * function, when applied to the common arguments as defined by
+ * `common_args()`.
+ *
+ * @tparam F type of polymorphic unary functor
+ * @param f unary functor to test
+ */
 template <typename F>
 void expect_common_unary(const F& f) {
   auto args = common_args();
@@ -276,6 +293,16 @@ void expect_common_unary(const F& f) {
     expect_ad(f, x1);
 }
 
+/**
+ * Test that the specified polymorphic unary function produces the
+ * same results, exceptions, and has derivatives consistent with
+ * finite differences as returned by the primitive version of the
+ * function, when applied to all pairs of common arguments as defined
+ * by `common_args()`.
+ *
+ * @tparam F type of polymorphic binary functor
+ * @param f functor to test
+ */
 template <typename F>
 void expect_common_binary(const F& f) {
   auto args = common_args();
