@@ -260,6 +260,30 @@ void expect_ad_vectorized(const F& f, const T1& x1) {
     expect_ad(f, vector3_dbl(i, vector2_dbl(i, vector_dbl(i, x1))));
 }
 
+std::vector<double> common_args() {
+  return std::vector<double>{-1.3,
+                             0,
+                             0.5,
+                             stan::math::positive_infinity(),
+                             stan::math::negative_infinity(),
+                             stan::math::not_a_number()};
+}
+
+template <typename F>
+void expect_common_unary(const F& f) {
+  auto args = common_args();
+  for (double x1 : args)
+    expect_ad(f, x1);
+}
+
+template <typename F>
+void expect_common_binary(const F& f) {
+  auto args = common_args();
+  for (double x1 : args)
+    for (double x2 : args)
+      expect_ad(f, x1, x2);
+}
+
 }  // namespace test
 }  // namespace stan
 
