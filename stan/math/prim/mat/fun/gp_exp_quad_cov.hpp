@@ -532,7 +532,7 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
                 / opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
       < 1) {
     for (size_t i = 0; i < x1.size(); ++i)
-      for (size_t j = 0; j < x2[i].size(); ++j)
+      for (size_t j = 0; j < x1[i].size(); ++j)
         check_not_nan(function_name, "x1", x1[i][j]);
     for (size_t i = 0; i < x2.size(); ++i)
       for (size_t j = 0; j < x2[i].size(); ++j)
