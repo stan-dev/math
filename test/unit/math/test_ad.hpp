@@ -129,7 +129,7 @@ void test_gradient_fvar(const F& f, const Eigen::VectorXd& x, double fx,
   Eigen::VectorXd grad_fd;
   double fx_fd;
   stan::math::finite_diff_gradient(f, x, fx_fd, grad_fd);
-  expect_near("gradeint_fvar gard_fd == grad_ad", grad_fd, grad_ad);
+  expect_near("gradeint_fvar grad_fd == grad_ad", grad_fd, grad_ad);
 }
 
 /**
@@ -230,13 +230,15 @@ void expect_ad_derivatives(const G& g, const Eigen::VectorXd& x) {
 }
 
 template <typename T, typename F>
-void expect_throw(const F& f, const Eigen::VectorXd& x) {
+void expect_throw(const F& f, const Eigen::VectorXd& x,
+                  const std::string& name_of_T) {
   Eigen::Matrix<T, -1, 1> x_t(x.rows());
   for (int i = 0; i < x.rows(); ++i)
     x_t(i) = x(i);
   try {
     f(x_t);
-    FAIL() << "double throws, expect autodiff version to throw";
+    FAIL() << "double throws, expect type " << name_of_T
+           << " version to throw for x = " << x;
   } catch (...) {
     SUCCEED();
   }
@@ -246,11 +248,11 @@ template <typename F>
 void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
   using stan::math::fvar;
   using stan::math::var;
-  expect_throw<var>(f, x);
-  expect_throw<fvar<double>>(f, x);
-  expect_throw<fvar<fvar<double>>>(f, x);
-  expect_throw<fvar<var>>(f, x);
-  expect_throw<fvar<fvar<var>>>(f, x);
+  expect_throw<var>(f, x, "var");
+  expect_throw<fvar<double>>(f, x, "fvar<double>");
+  expect_throw<fvar<fvar<double>>>(f, x, "fvar<fvar<double>>");
+  expect_throw<fvar<var>>(f, x, "fvar<var>");
+  expect_throw<fvar<fvar<var>>>(f, x, "fvar<fvar<var>>");
 }
 
 /**
@@ -266,7 +268,8 @@ void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
  * @tparam Ts type pack for arguments to original functor with double
  * scalar types
  * @param f functor to evaluate
- * @param h serialized functor returning a single component of
+ * @param h serialized functor taking an index and returning the function
+ * that returns that component of the original output
  * original output
  * @param x serialized input
  * @param xs sequence of arguments with double-based scalars
@@ -274,10 +277,15 @@ void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
 template <typename F, typename H, typename... Ts>
 void expect_ad_helper(const F& f, const H& h, const Eigen::VectorXd& x,
                       Ts... xs) {
+  std::cout << std::endl
+            << "try x with element = " << (x.size() > 0 ? x(0) : -12345)
+            << "; size = " << x.size() << std::endl;
   size_t result_size;
   try {
     auto y = f(xs...);
+    std::cout << "function succeeded" << std::endl;
     result_size = serialize<double>(y).size();
+    std::cout << "serialization succeeded" << std::endl;
   } catch (...) {
     expect_all_throw(h(0), x);
     return;
@@ -491,6 +499,16 @@ void expect_ad_vectorized(const F& f, const T1& x1) {
     expect_ad(f, vector3_dbl(i, vector2_dbl(i, vector_dbl(i, x1))));
 }
 
+std::vector<double> common_nonzero_args() {
+  return std::vector<double>{
+      // -1.3,
+      // 0.5,
+      stan::math::positive_infinity(),
+      // stan::math::negative_infinity(),
+      // stan::math::not_a_number()
+  };
+}
+
 /**
  * Return the sequence of common scalar arguments to test.  These
  * include finite values that are positive, negative, and zero, as
@@ -499,12 +517,9 @@ void expect_ad_vectorized(const F& f, const T1& x1) {
  * @return sequence of common scalar arguments to test
  */
 std::vector<double> common_args() {
-  return std::vector<double>{-1.3,
-                             0,
-                             0.5,
-                             stan::math::positive_infinity(),
-                             stan::math::negative_infinity(),
-                             stan::math::not_a_number()};
+  auto result = common_nonzero_args();
+  result.push_back(0);
+  return result;
 }
 
 /**
@@ -545,6 +560,13 @@ void expect_common_binary(const F& f) {
 template <typename F>
 void expect_common_unary_vectorized(const F& f) {
   auto args = common_args();
+  for (double x1 : args)
+    stan::test::expect_ad_vectorized(f, x1);
+}
+
+template <typename F>
+void expect_common_nonzero_unary_vectorized(const F& f) {
+  auto args = common_nonzero_args();
   for (double x1 : args)
     stan::test::expect_ad_vectorized(f, x1);
 }
