@@ -98,8 +98,8 @@ TEST(MathPrimMat, vec_double_gp_exp_quad_cov1) {
 
 TEST(MathPrimMat, vec_eigen_gp_exp_quad_cov1) {
   set_tuning_opts_to_use_gpu();
-  using std::exp;
   using stan::math::squared_distance;
+  using std::exp;
   double sigma = 0.2;
   double l = 5;
 
