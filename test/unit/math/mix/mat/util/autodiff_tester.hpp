@@ -379,17 +379,17 @@ void test_args(const std::vector<double>& xs) {
   test_args<F, is_comparison>(xs, xs);
 }
 
-template <typename F, bool is_comparison>
-void test_common_args() {
-  std::vector<double> xs;
-  xs.push_back(0.5);
-  xs.push_back(0);
-  xs.push_back(-1.3);
-  xs.push_back(stan::math::positive_infinity());
-  xs.push_back(stan::math::negative_infinity());
-  xs.push_back(stan::math::not_a_number());
-  test_args<F, is_comparison>(xs, xs);
-}
+// template <typename F, bool is_comparison>
+// void test_common_args() {
+//   std::vector<double> xs;
+//   xs.push_back(0.5);
+//   xs.push_back(0);
+//   xs.push_back(-1.3);
+//   xs.push_back(stan::math::positive_infinity());
+//   xs.push_back(stan::math::negative_infinity());
+//   xs.push_back(stan::math::not_a_number());
+//   test_args<F, is_comparison>(xs, xs);
+// }
 
 }  // namespace test
 }  // namespace math

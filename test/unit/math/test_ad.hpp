@@ -322,6 +322,16 @@ void expect_common_binary(const F& f) {
       expect_ad(f, x1, x2);
 }
 
+template <typename F, typename T1, typename T2>
+void expect_throw(const F& f, const T1& x1, const T2& x2) {
+  try {
+    auto y = f(x1, x2);
+    FAIL() << "Expected an exception to be thrown.";
+  } catch (...) {
+    SUCCEED();
+  }
+}
+
 /**
  * Test that the specified comparison function produces the same result when
  * applied to the specified double or integer values as it does when
