@@ -59,7 +59,7 @@ bool is_finite(const std::vector<T>& x) {
  */
 template <typename T1, typename T2>
 void expect_near(const std::string& msg, const T1& x1, const T2& x2,
-                 double tol = 1e-9) {
+                 double tol = 1e-7) {
   if (stan::math::is_nan(x1) || stan::math::is_nan(x2))
     EXPECT_TRUE(stan::math::is_nan(x1) && stan::math::is_nan(x2))
         << "expect_near(" << x1 << ", " << x2 << ")" << std::endl
@@ -204,7 +204,7 @@ void test_grad_hessian(const F& f, const Eigen::VectorXd& x, double fx,
   EXPECT_EQ(x.size(), grad_H_fd.size());
   for (size_t i = 0; i < grad_H_fd.size(); ++i)
     expect_near("grad hessian grad_H_fd[i] == grad_H_ad[i]", grad_H_fd[i],
-                grad_H_ad[i]);
+                grad_H_ad[i], 1e-5);
 }
 
 /**
@@ -540,6 +540,13 @@ void expect_common_binary(const F& f) {
   for (double x1 : args)
     for (double x2 : args)
       expect_ad(f, x1, x2);
+}
+
+template <typename F>
+void expect_common_unary_vectorized(const F& f) {
+  auto args = common_args();
+  for (double x1 : args)
+    stan::test::expect_ad_vectorized(f, x1);
 }
 
 template <typename F, typename T1, typename T2>
