@@ -16,7 +16,8 @@ namespace test {
  * differentiation provides the value as the double-based version and
  * the same derivatives as finite differences over the double version.
  * The functor must be a map from Eigen vectors to scalars of the
- * same scalar type.
+ * same scalar type and must be overloaded such that it applies to
+ * double and all autodiff types.
  *
  * @tparam G type of polymorphic functor
  * @param g polymorphic functor from vectors to scalars
@@ -188,6 +189,13 @@ void expect_ad(const F& f, const T& x) {
  * results consistent with values determined by double inputs and
  * derivatives consistent with finite differences of double inputs.
  *
+ * <p>Comparison operations (`operator==`, `operator!=`, etc.) are
+ * step functions when their inputs are equivalent, so their
+ * derivatives are undefined and should not be tested via finite
+ * differences.  The tests for derivatives can be turned off by
+ * setting the final argument `is_comparison` to `true`; it takes a
+ * default value of `false`.
+ *
  * <p>Tests all three possible instantiations of autodiff variables:
  * first argument only, second argument only, and both arguments.
  * Tests autodiff levels `rev`, `fvar<double>`, `fvar<fvar<double>>`,
@@ -195,9 +203,12 @@ void expect_ad(const F& f, const T& x) {
  *
  * <p>Invokes Google test framework to raise error if test fails.
  *
- * @tparam F type of polymorphic functor to test
+ * @tparam F type of binary polymorphic functor to test
  * @tparam T1 type of double- or int-based first argument
  * @tparam T2 type of double- or int-based second argument
+ * @param f functor to test
+ * param x1 first argument to test
+ * @param x2 second argument to test
  */
 template <typename F, typename T1, typename T2>
 void expect_ad(const F& f, const T1& x1, const T2& x2) {
@@ -309,6 +320,79 @@ void expect_common_binary(const F& f) {
   for (double x1 : args)
     for (double x2 : args)
       expect_ad(f, x1, x2);
+}
+
+/**
+ * Test that the specified comparison function produces the same result when
+ * applied to the specified double or integer values as it does when
+ * applied to their promotion to autodiff variables.  The return type
+ * for comparisons is boolean, so there are no derivatives to test.
+ *
+ * <p>Arguments are tested at autodiff levels: reverse (`var`),
+ * forward (`fvar<double>`), forward within forward
+ * (`fvar<fvar<double>>`), reverse within forward (`fvar<var>`), and
+ * reverse within forward within forward (`fvar<fvar<var>>`).  The
+ * specified functor must be overloaded to handle all of these
+ * possibilities in the first and/or second argument positions.
+ *
+ * <p>The values being tested (of types `T1` and `T2`) must be `int`
+ * or `double`.
+ *
+ * @tparam F type of polymorphic functor being tested
+ * @tparam T1 type of first argument being tested
+ * @tparam T2 type of second argument being tested
+ * @param f functor being tested
+ * @param x1 first value being tested
+ * @param x2 second value being tested
+ */
+template <typename F, typename T1, typename T2>
+void expect_values(const F& f, const T1& x1, const T2& x2) {
+  using stan::math::var;
+  using stan::math::fvar;
+  typedef var v;
+  typedef fvar<double> fd;
+  typedef fvar<fvar<double>> ffd;
+  typedef fvar<var> fv;
+  typedef fvar<fvar<var>> ffv;
+
+  // vv
+  EXPECT_EQ(f(x1, x2), f(v(x1), v(x2)));
+  EXPECT_EQ(f(x1, x2), f(fd(x1), fd(x2)));
+  EXPECT_EQ(f(x1, x2), f(ffd(x1), ffd(x2)));
+  EXPECT_EQ(f(x1, x2), f(fv(x1), fv(x2)));
+  EXPECT_EQ(f(x1, x2), f(ffv(x1), ffv(x2)));
+
+  // vd
+  EXPECT_EQ(f(x1, x2), f(v(x1), x2));
+  EXPECT_EQ(f(x1, x2), f(fd(x1), x2));
+  EXPECT_EQ(f(x1, x2), f(ffd(x1), x2));
+  EXPECT_EQ(f(x1, x2), f(fv(x1), x2));
+  EXPECT_EQ(f(x1, x2), f(ffv(x1), x2));
+
+  // dv
+  EXPECT_EQ(f(x1, x2), f(x1, v(x2)));
+  EXPECT_EQ(f(x1, x2), f(x1, fd(x2)));
+  EXPECT_EQ(f(x1, x2), f(x1, ffd(x2)));
+  EXPECT_EQ(f(x1, x2), f(x1, fv(x2)));
+  EXPECT_EQ(f(x1, x2), f(x1, ffv(x2)));
+}
+
+/**
+ * Test that the specified polymorphic unary function produces the
+ * same results and exceptions consistent with the primitive version
+ * of the function, when applied to all pairs of common arguments as
+ * defined by `common_args()`.  Derivatives are not tested, because
+ * comparison operators return boolean values.
+ *
+ * @tparam F type of polymorphic binary functor
+ * @param f functor to test
+ */
+template <typename F>
+void expect_common_comparison(const F& f) {
+  auto args = common_args();
+  for (double x1 : args)
+    for (double x2 : args)
+      expect_values(f, x1, x2);
 }
 
 }  // namespace test
