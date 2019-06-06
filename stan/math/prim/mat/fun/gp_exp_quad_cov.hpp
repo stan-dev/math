@@ -389,7 +389,7 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
       < 1) {
     for (size_t i = 0; i < x_size; ++i)
       for (size_t j = 0; j < x[i].size(); ++j)
-        check_not_nan("gp_exp_quad_cov", "x", x[j][i]);
+        check_not_nan("gp_exp_quad_cov", "x", x[i][j]);
     cov = internal::gp_exp_quad_cov(x, square(sigma),
                                     -0.5 / square(length_scale));
     return cov;
