@@ -17,9 +17,16 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the solution of the system Ax=b when A is triangular
- * @param A Triangular matrix.  Specify upper or lower with TriView
- * being Eigen::Upper or Eigen::Lower.
+ * Returns the solution of the system Ax=b when A is triangular.
+ * @tparam TriView Specifies whether A is upper (Eigen::Upper)
+ * or lower triangular (Eigen::Lower).
+ * @tparam T1 type of elements in A
+ * @tparam T2 type of elements in b
+ * @tparam R1 number of rows in A
+ * @tparam C1 number of columns in A
+ * @tparam R2 number of rows in b
+ * @tparam C2 number of columns in b
+ * @param A Triangular matrix.
  * @param b Right hand side matrix or vector.
  * @return x = A^-1 b, solution of the linear system.
  * @throws std::domain_error if A is not square or the rows of b don't
@@ -42,8 +49,10 @@ mdivide_left_tri(const Eigen::Matrix<T1, R1, C1> &A,
 
 /**
  * Returns the solution of the system Ax=b when A is triangular and b=I.
- * @param A Triangular matrix.  Specify upper or lower with TriView
- * being Eigen::Upper or Eigen::Lower.
+ * @tparam T type of elements in A
+ * @tparam R1 number of rows in A
+ * @tparam C1 number of columns in A
+ * @param A Triangular matrix.
  * @return x = A^-1 .
  * @throws std::domain_error if A is not square
  */
@@ -61,8 +70,13 @@ inline Eigen::Matrix<T, R1, C1> mdivide_left_tri(
 /**
  * Returns the solution of the system Ax=b when A is triangular
  * and A and b are matrices of doubles.
- * @param A Triangular matrix.  Specify upper or lower with TriView
- * being Eigen::Upper or Eigen::Lower.
+ * @tparam TriView Specifies whether A is upper (Eigen::Upper)
+ * or lower triangular (Eigen::Lower).
+ * @tparam R1 number of rows in A
+ * @tparam C1 number of columns in A
+ * @tparam R2 number of rows in b
+ * @tparam C2 number of columns in b
+ * @param A Triangular matrix.
  * @param b Right hand side matrix or vector.
  * @return x = A^-1 b, solution of the linear system.
  * @throws std::domain_error if A is not square or the rows of b don't
@@ -98,8 +112,11 @@ inline Eigen::Matrix<double, R1, C2> mdivide_left_tri(
 /**
  * Returns the solution of the system Ax=b when A is triangular, b=I and
  * both are matrices of doubles.
- * @param A Triangular matrix.  Specify upper or lower with TriView
- * being Eigen::Upper or Eigen::Lower.
+ * @tparam TriView Specifies whether A is upper (Eigen::Upper)
+ * or lower triangular (Eigen::Lower).
+ * @tparam R1 number of rows in A
+ * @tparam C1 number of columns in A
+ * @param A Triangular matrix.
  * @return x = A^-1 .
  * @throws std::domain_error if A is not square
  */
