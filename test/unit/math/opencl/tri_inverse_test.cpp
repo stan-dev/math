@@ -41,7 +41,7 @@ void lower_inverse_test(int size) {
   m1_cpu = stan::math::mdivide_left_tri<Eigen::Lower>(m1);
 
   stan::math::matrix_cl m2(m1);
-  auto m3 = stan::math::tri_inverse<stan::math::TriangularViewCL::Entire>(m2);
+  auto m3 = stan::math::tri_inverse<stan::math::TriangularViewCL::Lower>(m2);
   m1_cl = stan::math::from_matrix_cl(m3);
   double max_error = 0;
   for (int i = 0; i < size; i++) {
