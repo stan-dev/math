@@ -2,6 +2,8 @@
 #define STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SYSTEM_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/head.hpp>
+#include <stan/math/prim/mat/fun/tail.hpp>
 #include <stan/math/rev/mat/functor/jacobian.hpp>
 #include <iostream>
 #include <string>
@@ -18,9 +20,11 @@ namespace math {
  * @tparam F type for algebraic system functor
  * @tparam T0 type for unknowns
  * @tparam T1 type for auxiliary parameters
- * @tparam x_is_iv true if x is the independent variable
+ * @tparam iv_type 0 if y is the independent variables, 
+ *                 1 if x is the independent variable,
+ *                 2 if we need sensitivities for both x and y.
  */
-template <typename F, typename T0, typename T1, bool x_is_iv>
+template <typename F, typename T0, typename T1, int iv_type>
 struct system_functor {
   /** algebraic system functor */
   F f_;
@@ -32,6 +36,8 @@ struct system_functor {
   std::vector<double> dat_;
   /** integer data */
   std::vector<int> dat_int_;
+  /** number of states */
+  int n_states;
   /** stream message */
   std::ostream* msgs_;
 
@@ -41,7 +47,8 @@ struct system_functor {
                  const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
                  const std::vector<double>& dat,
                  const std::vector<int>& dat_int, std::ostream* msgs)
-      : f_(f), x_(x), y_(y), dat_(dat), dat_int_(dat_int), msgs_(msgs) {}
+      : f_(f), x_(x), y_(y), dat_(dat), dat_int_(dat_int), 
+        n_states(x.size()), msgs_(msgs) {}
 
   /**
    * An operator that takes in an independent variable. The
@@ -54,10 +61,15 @@ struct system_functor {
   template <typename T>
   inline Eigen::Matrix<T, Eigen::Dynamic, 1> operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& iv) const {
-    if (x_is_iv)
-      return f_(iv, y_, dat_, dat_int_, msgs_);
-    else
+    if (iv_type == 0)
       return f_(x_, iv, dat_, dat_int_, msgs_);
+    else if (iv_type == 1)
+      return f_(iv, y_, dat_, dat_int_, msgs_);
+    else {
+      return f_(head(iv, n_states),
+                tail(iv, iv.size() - n_states),
+                dat_, dat_int_, msgs_);
+    }
   }
 };
 

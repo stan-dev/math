@@ -10,6 +10,8 @@
 #include <stan/math/prim/scal/err/check_consistent_size.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
+#include <stan/math/prim/mat/fun/append_row.hpp>
+#include <stan/math/prim/mat/fun/block.hpp>
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <iostream>
 #include <string>
@@ -60,13 +62,23 @@ struct algebra_solver_vari : public vari {
     for (int i = 1; i < x.size(); ++i)
       theta_[i] = new vari(theta_dbl(i), false);
 
-    // Compute the Jacobian and store in array, using the
-    // implicit function theorem, i.e. Jx_y = Jf_y / Jf_x
-    typedef hybrj_functor_solver<Fs, F, double, double> f_y;
+    // compute Jacobian with respect to theta_dbl and y.
+    typedef hybrj_functor_solver<Fs, F, double, double> f_all;
+    MatrixXd Jacobian = f_all(fs, f, theta_dbl, value_of(y),
+                              dat, dat_int,
+                              msgs).get_jacobian(append_row(theta_dbl,
+                                                            value_of(y)));
     Map<MatrixXd>(&Jx_y_[0], x_size_, y_size_)
-        = -mdivide_left(fx.get_jacobian(theta_dbl),
-                        f_y(fs, f, theta_dbl, value_of(y), dat, dat_int, msgs)
-                            .get_jacobian(value_of(y)));
+        = - mdivide_left(block(Jacobian, 1, 1, x_size_, x_size_),
+                         block(Jacobian, 1, x_size_ + 1, x_size_, y_size_));
+
+    // Compute the Jacobian and store in array, using the
+    // implicit function theorem, i.e. Jx_y = - Jf_y / Jf_x
+    // typedef hybrj_functor_solver<Fs, F, double, double> f_y;
+    // Map<MatrixXd>(&Jx_y_[0], x_size_, y_size_)
+    //     = -mdivide_left(fx.get_jacobian(theta_dbl),
+    //                     f_y(fs, f, theta_dbl, value_of(y), dat, dat_int, msgs)
+    //                         .get_jacobian(value_of(y)));
   }
 
   void chain() {
@@ -244,7 +256,8 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver(
       = algebra_solver(f, x, value_of(y), dat, dat_int, 0, relative_tolerance,
                        function_tolerance, max_num_steps);
 
-  typedef system_functor<F, double, double, false> Fy;
+  // typedef system_functor<F, double, double, false> Fy;
+  typedef system_functor<F, double, double, 2> F_all;
 
   // TODO(charlesm93): a similar object gets constructed inside
   // the call to algebra_solver. Cache the previous result
@@ -254,9 +267,10 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver(
   Fx fx(Fs(), f, value_of(x), value_of(y), dat, dat_int, msgs);
 
   // Construct vari
-  algebra_solver_vari<Fy, F, T2, Fx>* vi0
-      = new algebra_solver_vari<Fy, F, T2, Fx>(Fy(), f, value_of(x), y, dat,
-                                               dat_int, theta_dbl, fx, msgs);
+  algebra_solver_vari<F_all, F, T2, Fx>* vi0
+      = new algebra_solver_vari<F_all, F, T2, Fx>(F_all(), f, value_of(x), y,
+                                                  dat, dat_int, theta_dbl,
+                                                  fx, msgs);
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta(x.size());
   theta(0) = var(vi0->theta_[0]);
   for (int i = 1; i < x.size(); ++i)
