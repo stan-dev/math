@@ -52,14 +52,45 @@ bool is_finite(const std::vector<T>& x) {
   return true;
 }
 
+template <typename T1, typename T2>
+void expect_near_relative(const std::string& msg, const T1& x1, const T2& x2,
+                          double tol = 1e-8) {
+  using stan::math::fabs;
+  if (x1 == 0 && x2 == 0)
+    return;
+  if (x1 == 0 || x2 == 0) {
+    EXPECT_NEAR(x1, x2, tol) << "expect_near_relative(" << x1 << ", " << x2
+                             << ", tolerance = " << tol << ")"
+                             << "    in: " << msg << std::endl;
+    return;
+  }
+  auto avg = 0.5 * (fabs(x1) + fabs(x2));
+  auto relative_diff = (x1 - x2) / avg;
+  EXPECT_NEAR(0, relative_diff, tol)
+      << "expect_near_relative(" << x1 << ", " << x2 << ", tolerance = " << tol
+      << ")"
+      << "; relative diff = " << relative_diff << std::endl
+      << "    in: " << msg << std::endl;
+}
+
 /**
- * Test that scalars x1 and x2 are within the specified
- * tolerance, with identity behavior for infinite and NaN
- * values.
+ * Test that scalars x1 and x2 are within the specified relative
+ * tolerance, with identity behavior for infinite and NaN values.
+ * Relative tolerance is calculated by comparing zero to
+ * `(x1 - x2) / (0.5 * fabs(x1) + fabs(x2))` up to the specified
+ * tolerance.
+ *
+ * @tparam T1 type of first argument
+ * @tparam T2 type of second argument
+ * @param msg message indicating what is being tested to print in case
+ * of error
+ * @param x1 first argument to test
+ * @param x2 second argument to test
+ * @param tol relative tolerance
  */
 template <typename T1, typename T2>
 void expect_near(const std::string& msg, const T1& x1, const T2& x2,
-                 double tol = 1e-7) {
+                 double tol = 1e-8) {
   if (stan::math::is_nan(x1) || stan::math::is_nan(x2))
     EXPECT_TRUE(stan::math::is_nan(x1) && stan::math::is_nan(x2))
         << "expect_near(" << x1 << ", " << x2 << ")" << std::endl
@@ -68,18 +99,16 @@ void expect_near(const std::string& msg, const T1& x1, const T2& x2,
     EXPECT_EQ(x1, x2) << "expect_near(" << x1 << ", " << x2 << ")" << std::endl
                       << msg << std::endl;
   else
-    EXPECT_NEAR(x1, x2, tol)
-        << "expect_near(" << x1 << ", " << x2 << ")" << std::endl
-        << msg << std::endl;
+    expect_near_relative(msg, x1, x2, tol);
 }
 
 /**
  * Tests that matrices (or vectors) x1 and x2 are same size and
- * have near values up to specified tolerance.
+ * have near values up to specified relative tolerance.
  */
 template <typename T, int R, int C>
 void expect_near(const std::string& msg, const Eigen::Matrix<T, R, C>& x1,
-                 const Eigen::Matrix<T, R, C>& x2, double tol = 1e-7) {
+                 const Eigen::Matrix<T, R, C>& x2, double tol = 1e-8) {
   EXPECT_EQ(x1.rows(), x2.rows()) << "expect_near rows expect_eq(" << x1.rows()
                                   << ", " << x2.rows() << ")" << std::endl
                                   << msg << std::endl;
@@ -102,13 +131,13 @@ void test_gradient(const F& f, const Eigen::VectorXd& x, double fx,
   Eigen::VectorXd grad_ad;
   double fx_ad = fx;
   stan::math::gradient<F>(f, x, fx_ad, grad_ad);
-  expect_near("test_gradient fx = fx_ad", fx, fx_ad);
+  expect_near("test_gradient fx = fx_ad", fx, fx_ad, 1e-8);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
     return;
   Eigen::VectorXd grad_fd;
   double fx_fd;
   stan::math::finite_diff_gradient(f, x, fx_fd, grad_fd);
-  expect_near("test gradient grad_fd == grad_ad", grad_fd, grad_ad);
+  expect_near("test gradient grad_fd == grad_ad", grad_fd, grad_ad, 1e-4);
 }
 
 /**
@@ -123,13 +152,13 @@ void test_gradient_fvar(const F& f, const Eigen::VectorXd& x, double fx,
   Eigen::VectorXd grad_ad;
   double fx_ad = fx;
   stan::math::gradient<double, F>(f, x, fx_ad, grad_ad);
-  expect_near("gradient_fvar fx == fx_ad", fx, fx_ad);
+  expect_near("gradient_fvar fx == fx_ad", fx, fx_ad, 1e-8);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
     return;
   Eigen::VectorXd grad_fd;
   double fx_fd;
   stan::math::finite_diff_gradient(f, x, fx_fd, grad_fd);
-  expect_near("gradeint_fvar grad_fd == grad_ad", grad_fd, grad_ad);
+  expect_near("gradeint_fvar grad_fd == grad_ad", grad_fd, grad_ad, 1e-4);
 }
 
 /**
@@ -145,15 +174,15 @@ void test_hessian_fvar(const F& f, const Eigen::VectorXd& x, double fx,
   Eigen::VectorXd grad_ad;
   Eigen::MatrixXd H_ad;
   stan::math::hessian<double, F>(f, x, fx_ad, grad_ad, H_ad);
-  expect_near("hessian_fvar fx == fx_ad", fx, fx_ad);
+  expect_near("hessian_fvar fx == fx_ad", fx, fx_ad, 1e-8);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
     return;
   double fx_fd;
   Eigen::VectorXd grad_fd;
   Eigen::MatrixXd H_fd;
   stan::math::finite_diff_hessian(f, x, fx_fd, grad_fd, H_fd);
-  expect_near("hessian fvar grad_fd == grad_ad", grad_fd, grad_ad);
-  expect_near("hessian fvar H_fd = H_ad", H_fd, H_ad);
+  expect_near("hessian fvar grad_fd == grad_ad", grad_fd, grad_ad, 1e-4);
+  expect_near("hessian fvar H_fd = H_ad", H_fd, H_ad, 1e-3);
 }
 
 /**
@@ -169,15 +198,15 @@ void test_hessian(const F& f, const Eigen::VectorXd& x, double fx,
   Eigen::VectorXd grad_ad;
   Eigen::MatrixXd H_ad;
   stan::math::hessian<F>(f, x, fx_ad, grad_ad, H_ad);
-  expect_near("hessian fx == fx_ad", fx, fx_ad);
+  expect_near("hessian fx == fx_ad", fx, fx_ad, 1e-8);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
     return;
   double fx_fd;
   Eigen::VectorXd grad_fd;
   Eigen::MatrixXd H_fd;
   stan::math::finite_diff_hessian(f, x, fx_fd, grad_fd, H_fd);
-  expect_near("hessian grad_fd = grad_ad", grad_fd, grad_ad);
-  expect_near("hessian grad_fd H_fd == H_ad", H_fd, H_ad);
+  expect_near("hessian grad_fd = grad_ad", grad_fd, grad_ad, 1e-4);
+  expect_near("hessian grad_fd H_fd == H_ad", H_fd, H_ad, 1e-3);
 }
 
 /**
@@ -193,18 +222,18 @@ void test_grad_hessian(const F& f, const Eigen::VectorXd& x, double fx,
   Eigen::MatrixXd H_ad;
   std::vector<Eigen::MatrixXd> grad_H_ad;
   stan::math::grad_hessian(f, x, fx_ad, H_ad, grad_H_ad);
-  expect_near("grad_hessian fx == fx_ad", fx, fx_ad);
+  expect_near("grad_hessian fx == fx_ad", fx, fx_ad, 1e-8);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
     return;
   double fx_fd;
   Eigen::MatrixXd H_fd;
   std::vector<Eigen::MatrixXd> grad_H_fd;
   stan::math::finite_diff_grad_hessian(f, x, fx_fd, H_fd, grad_H_fd);
-  expect_near("grad hessian H_fd == H_ad", H_fd, H_ad);
+  expect_near("grad hessian H_fd == H_ad", H_fd, H_ad, 1e-3);
   EXPECT_EQ(x.size(), grad_H_fd.size());
   for (size_t i = 0; i < grad_H_fd.size(); ++i)
     expect_near("grad hessian grad_H_fd[i] == grad_H_ad[i]", grad_H_fd[i],
-                grad_H_ad[i], 1e-5);
+                grad_H_ad[i], 1e-2);
 }
 
 /**
@@ -214,6 +243,11 @@ void test_grad_hessian(const F& f, const Eigen::VectorXd& x, double fx,
  * The functor must be a map from Eigen vectors to scalars of the
  * same scalar type and must be overloaded such that it applies to
  * double and all autodiff types.
+ *
+ * <p>All results are tested for relative tolerance at thresholds
+ * `1e-8` for values, `1e-7` for gradients (1st order derivatives),
+ * `1e-6` for Hessians (2nd order derivatives), and `1e-5` for
+ * gradients of Hessians (3rd order derivatives)
  *
  * @tparam G type of polymorphic functor
  * @param g polymorphic functor from vectors to scalars
@@ -277,15 +311,10 @@ void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
 template <typename F, typename H, typename... Ts>
 void expect_ad_helper(const F& f, const H& h, const Eigen::VectorXd& x,
                       Ts... xs) {
-  std::cout << std::endl
-            << "try x with element = " << (x.size() > 0 ? x(0) : -12345)
-            << "; size = " << x.size() << std::endl;
   size_t result_size;
   try {
     auto y = f(xs...);
-    std::cout << "function succeeded" << std::endl;
     result_size = serialize<double>(y).size();
-    std::cout << "serialization succeeded" << std::endl;
   } catch (...) {
     expect_all_throw(h(0), x);
     return;
@@ -500,13 +529,13 @@ void expect_ad_vectorized(const F& f, const T1& x1) {
 }
 
 std::vector<double> common_nonzero_args() {
-  return std::vector<double>{
-      // -1.3,
-      // 0.5,
-      stan::math::positive_infinity(),
-      // stan::math::negative_infinity(),
-      // stan::math::not_a_number()
-  };
+  return std::vector<double>{-1.3,
+                             0.49,
+                             0.99,
+                             1.01,
+                             stan::math::positive_infinity(),
+                             stan::math::negative_infinity(),
+                             stan::math::not_a_number()};
 }
 
 /**
