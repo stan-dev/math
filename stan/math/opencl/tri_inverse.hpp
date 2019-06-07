@@ -37,8 +37,8 @@ namespace math {
  */
 template <TriangularViewCL triangular_view>
 inline matrix_cl tri_inverse(const matrix_cl& A) {
-  static_assert(triangular_view != TriangularViewCL::Entire, 
-  "tri_inverse(OpenCL) only supports triangular input matrices");
+  static_assert(triangular_view != TriangularViewCL::Entire,
+                "tri_inverse(OpenCL) only supports triangular input matrices");
   check_square("tri_inverse (OpenCL)", "A", A);
 
   int thread_block_2D_dim = 32;
