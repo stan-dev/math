@@ -216,7 +216,7 @@ void test_gradient_fvar(const F& f, const Eigen::VectorXd& x, double fx,
   Eigen::VectorXd grad_fd;
   double fx_fd;
   stan::math::finite_diff_gradient(f, x, fx_fd, grad_fd);
-  expect_near("gradeint_fvar grad_fd == grad_ad", grad_fd, grad_ad, 1e-4);
+  expect_near("gradient_fvar grad_fd == grad_ad", grad_fd, grad_ad, 1e-4);
 }
 
 /**

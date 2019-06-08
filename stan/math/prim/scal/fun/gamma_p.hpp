@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_GAMMA_P_HPP
 
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
