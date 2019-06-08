@@ -4,6 +4,7 @@
 #include <stan/math/mix/mat.hpp>
 #include <test/unit/math/util.hpp>
 #include <gtest/gtest.h>
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -52,6 +53,26 @@ bool is_finite(const std::vector<T>& x) {
   return true;
 }
 
+/**
+ * Test that the specified values are within the specified tolerance
+ * on relative error, and if not, fail the embedded google test.
+ *
+ * <p>Relative error is defined to be the error `u - v` rescaled by the
+ * average absolute value,
+ * `rel_err(u, v) = (u - v) / (0.5 * (abs(u) * + abs(v))).`
+ *
+ * <p>If both `u` and `v` are zero, the error is defined to be zero.
+ * If only one of `u` or `v` is zero, the above definition always
+ * yields 1.  This is not a useful test, so we instead test absolute
+ * error in the case that one of the values is zero.
+ *
+ * @tparam T1 type of first argument
+ * @tparam T2 type of second argument
+ * @param msg failure message for reporting
+ * @param x1 first argument
+ * @param x2 second argument
+ * @param tol relative tolerance
+ */
 template <typename T1, typename T2>
 void expect_near_relative(const std::string& msg, const T1& x1, const T2& x2,
                           double tol = 1e-8) {
@@ -76,9 +97,8 @@ void expect_near_relative(const std::string& msg, const T1& x1, const T2& x2,
 /**
  * Test that scalars x1 and x2 are within the specified relative
  * tolerance, with identity behavior for infinite and NaN values.
- * Relative tolerance is calculated by comparing zero to
- * `(x1 - x2) / (0.5 * fabs(x1) + fabs(x2))` up to the specified
- * tolerance.
+ * Relative tolerance is defined in the documentation for
+ * `expect_near_relative`.
  *
  * @tparam T1 type of first argument
  * @tparam T2 type of second argument
@@ -104,7 +124,17 @@ void expect_near(const std::string& msg, const T1& x1, const T2& x2,
 
 /**
  * Tests that matrices (or vectors) x1 and x2 are same size and
- * have near values up to specified relative tolerance.
+ * have near values up to specified relative tolerance, accounting for
+ * infinite, not-a-number, and zero values as specified in
+ * `expect_near_relative`.
+ *
+ * @tparam T type of scalars in matrix
+ * @tparam R row specification of matrix
+ * @tparam C column specification of the matrix
+ * @param msg failure message
+ * @param x1 first matrix to test
+ * @param x2 second matrix to test
+ * @param tol relative tolerance
  */
 template <typename T, int R, int C>
 void expect_near(const std::string& msg, const Eigen::Matrix<T, R, C>& x1,
@@ -121,9 +151,21 @@ void expect_near(const std::string& msg, const Eigen::Matrix<T, R, C>& x1,
 }
 
 /**
- * Tests that the function f applied to the argument x yields
- * the value fx and the correct first-order derivatives as
- * calaculated with the gradient functional using var.
+ * Tests that the specified function applied to the specified argument
+ * yields the values and gradients consistent with finite differences
+ * applied to the `double` values.  Gradients are calculated using the
+ * functional `stan::math::gradient<F>`, which uses autodiff variables
+ * of type `stan::math::var.`
+ *
+ * <p>All tests are done using relative values and accounting for
+ * infinite, not-a-number, and zero values, as defined in the
+ * documentation for `expect_near`.
+ *
+ * @tparam F type of functor
+ * @param f functor to test
+ * @param x value to test
+ * @param fx expected value
+ * @param test_derivs `true` if derivatives should be tested
  */
 template <typename F>
 void test_gradient(const F& f, const Eigen::VectorXd& x, double fx,
@@ -141,10 +183,26 @@ void test_gradient(const F& f, const Eigen::VectorXd& x, double fx,
 }
 
 /**
- * Tests that the function f applied to the argument x yields
- * the value fx and correct first-order derivatives as
- * calculated by the gradient functionional using fvar<double>
- * scalars.
+ * Tests that the specified function applied to the specified argument
+ * yields the values and gradients consistent with finite differences
+ * applied to the `double` values.  Gradients are calculated using the
+ * functional `stan::math::gradient<double, F>`, which uses autodiff
+ * variables of type `stan::math::fvar<double>.`
+ *
+ * <p>The functor to test must define `T operator()(const
+ * Matrix<T, -1, 1>& x) const;` for relevant `double` and autodiff
+ * types.
+ *
+ *
+ * <p>All tests are done using relative values and accounting for
+ * infinite, not-a-number, and zero values, as defined in the
+ * documentation for `expect_near`.
+ *
+ * @tparam F type of functor
+ * @param f functor to test
+ * @param x value to test
+ * @param fx expected value
+ * @param test_derivs `true` if derivatives should be tested
  */
 template <typename F>
 void test_gradient_fvar(const F& f, const Eigen::VectorXd& x, double fx,
@@ -162,10 +220,26 @@ void test_gradient_fvar(const F& f, const Eigen::VectorXd& x, double fx,
 }
 
 /**
- * Tests that the function f applied to the argument x yields
- * the value fx and correct first- and second-order derivatives
- * as calculated by the hessian functional using fvar<var>
- * scalars.
+ * Tests that the specified function applied to the specified argument
+ * yields values, gradients, and Hessian consistent with finite
+ * differences applied to the `double` values.  The Hessian and
+ * gradients are calculated using the functional
+ * `stan::math::hessian<double, F>`, which uses autodiff variables of
+ * type `stan::math::fvar<fvar<double>>.`
+ *
+ * <p>The functor to test must define `T operator()(const
+ * Matrix<T, -1, 1>& x) const;` for relevant `double` and autodiff
+ * types.
+ *
+ * <p>All tests are done using relative values and accounting for
+ * infinite, not-a-number, and zero values, as defined in the
+ * documentation for `expect_near`.
+ *
+ * @tparam F type of functor
+ * @param f functor to test
+ * @param x value to test
+ * @param fx expected value
+ * @param test_derivs `true` if derivatives should be tested
  */
 template <typename F>
 void test_hessian_fvar(const F& f, const Eigen::VectorXd& x, double fx,
@@ -186,10 +260,26 @@ void test_hessian_fvar(const F& f, const Eigen::VectorXd& x, double fx,
 }
 
 /**
- * Tests that the function f applied to the argument x yields
- * the value fx and correct first- and second-order derivatives
- * as calculated by the hessian functional using
- * fvar<fvar<double>> scalars.
+ * Tests that the specified function applied to the specified argument
+ * yields values, gradients, and Hessian consistent with finite
+ * differences applied to the `double` values.  The Hessian and
+ * gradients are calculated using the functional
+ * `stan::math::hessian<F>`, which uses autodiff variables of
+ * type `stan::math::fvar<var>.`
+ *
+ * <p>The functor to test must define `T operator()(const
+ * Matrix<T, -1, 1>& x) const;` for relevant `double` and autodiff
+ * types.
+ *
+ * <p>All tests are done using relative values and accounting for
+ * infinite, not-a-number, and zero values, as defined in the
+ * documentation for `expect_near`.
+ *
+ * @tparam F type of functor
+ * @param f functor to test
+ * @param x value to test
+ * @param fx expected value
+ * @param test_derivs `true` if derivatives should be tested
  */
 template <typename F>
 void test_hessian(const F& f, const Eigen::VectorXd& x, double fx,
@@ -210,10 +300,26 @@ void test_hessian(const F& f, const Eigen::VectorXd& x, double fx,
 }
 
 /**
- * Tests that the function f applied to the argument x yields
- * the value fx and correct first-, second-, and third-order
- * derivatives as calculated by the hessian functional using
- * fvar<fvar<var>> scalars.
+ * Tests that the specified function applied to the specified argument
+ * yields values, Hessian, and gradient of Hessian consistent with finite
+ * differences applied to the `double` values.  The Hessian and
+ * gradient of Hessian are calculated using the functional
+ * `stan::math::grad_hessian<F>`, which uses autodiff variables of
+ * type `stan::math::fvar<fvar<var>>.`
+ *
+ * <p>The functor to test must define `T operator()(const
+ * Matrix<T, -1, 1>& x) const;` for relevant `double` and autodiff
+ * types.
+ *
+ * <p>All tests are done using relative values and accounting for
+ * infinite, not-a-number, and zero values, as defined in the
+ * documentation for `expect_near`.
+ *
+ * @tparam F type of functor
+ * @param f functor to test
+ * @param x value to test
+ * @param fx expected value
+ * @param test_derivs `true` if derivatives should be tested
  */
 template <typename F>
 void test_grad_hessian(const F& f, const Eigen::VectorXd& x, double fx,
@@ -239,15 +345,21 @@ void test_grad_hessian(const F& f, const Eigen::VectorXd& x, double fx,
 /**
  * For the specified functor and argument, test that automatic
  * differentiation provides the value as the double-based version and
- * the same derivatives as finite differences over the double version.
- * The functor must be a map from Eigen vectors to scalars of the
- * same scalar type and must be overloaded such that it applies to
- * double and all autodiff types.
+ * the same derivatives as finite differences over the double
+ * version.  It also tests that an autodiff version throws an
+ * exception if and only if the double-based version throws an
+ * exception.  It also ensures consistency of infinite, not-a-number,
+ * and zero results as defined by the function `expect_near`.
+ *
+ * <p>The functor to test must define `T operator()(const
+ * Matrix<T, -1, 1>& x) const;` for relevant `double` and autodiff types.
  *
  * <p>All results are tested for relative tolerance at thresholds
- * `1e-8` for values, `1e-7` for gradients (1st order derivatives),
- * `1e-6` for Hessians (2nd order derivatives), and `1e-5` for
- * gradients of Hessians (3rd order derivatives)
+ * `1e-8` for values, `1e-4` for gradients (1st order derivatives),
+ * `1e-3` for Hessians (2nd order derivatives), and `1e-2` for
+ * gradients of Hessians (3rd order derivatives).  The reason for such
+ * seemingly lax tests is that finite differences can be highly
+ * unstable.
  *
  * @tparam G type of polymorphic functor
  * @param g polymorphic functor from vectors to scalars
@@ -263,6 +375,18 @@ void expect_ad_derivatives(const G& g, const Eigen::VectorXd& x) {
   test_grad_hessian(g, x, gx);
 }
 
+/**
+ * Test that the specified functor applied to the specified value
+ * throws an exception, reporting the name of the expected exception
+ * type as provided in the case of failure and raising a google test
+ * error.
+ *
+ * @tparam T type of scalars to test
+ * @tparam F type of functor to test
+ * @param f functor to test
+ * @param x values to test
+ * @param name_of_T name of type of exception expected
+ */
 template <typename T, typename F>
 void expect_throw(const F& f, const Eigen::VectorXd& x,
                   const std::string& name_of_T) {
@@ -495,6 +619,8 @@ void expect_ad(const F& f, const T1& x1, const T2& x2) {
  *
  * @tparam F type of poymorphic, vectorized functor to test
  * @tparam T1 type of first argument (integer or double)
+ * @param f functor to test
+ * @param x1 value to test
  */
 template <typename F, typename T1>
 void expect_ad_vectorized(const F& f, const T1& x1) {
@@ -528,6 +654,13 @@ void expect_ad_vectorized(const F& f, const T1& x1) {
     expect_ad(f, vector3_dbl(i, vector2_dbl(i, vector_dbl(i, x1))));
 }
 
+/**
+ * Return a sequence of common non-zero arguments.  This includes
+ * positive, negative, positive infinite, negative infinity, and
+ * not-a-number values, but does not include zero.
+ *
+ * @return non-zero arguments
+ */
 std::vector<double> common_nonzero_args() {
   return std::vector<double>{-1.3,
                              0.49,
@@ -540,8 +673,7 @@ std::vector<double> common_nonzero_args() {
 
 /**
  * Return the sequence of common scalar arguments to test.  These
- * include finite values that are positive, negative, and zero, as
- * well as both positive and negative infinity, and not-a-number.
+ * include the values returned by `common_nonzero_args()` and zero.
  *
  * @return sequence of common scalar arguments to test
  */
@@ -586,6 +718,20 @@ void expect_common_binary(const F& f) {
       expect_ad(f, x1, x2);
 }
 
+/**
+ * Test that the specified vectorized unary function produces the same
+ * results and exceptions, and has derivatives consistent with finite
+ * differences as returned by the primitive version of the function
+ * when applied to all common arguments as defined by `common_args`.
+ *
+ * <p>The function must be defined from scalars to scalars and from
+ * containers to containers, always producing the same output type as
+ * input type.  The value for containers must be the same as applying
+ * the scalar function elementwise.
+ *
+ * @tparam F type of functor to test
+ * @param f functor to test
+ */
 template <typename F>
 void expect_common_unary_vectorized(const F& f) {
   auto args = common_args();
@@ -593,21 +739,26 @@ void expect_common_unary_vectorized(const F& f) {
     stan::test::expect_ad_vectorized(f, x1);
 }
 
+/**
+ * Test that the specified vectorized unary function produces the same
+ * results and exceptions, and has derivatives consistent with finite
+ * differences as returned by the primitive version of the function
+ * when applied to all common non-zero arguments as defined by
+ * `common_nonzero_args`.
+ *
+ * <p>The function must be defined from scalars to scalars and from
+ * containers to containers, always producing the same output type as
+ * input type.  The value for containers must be the same as applying
+ * the scalar function elementwise.
+ *
+ * @tparam F type of functor to test
+ * @param f functor to test
+ */
 template <typename F>
 void expect_common_nonzero_unary_vectorized(const F& f) {
   auto args = common_nonzero_args();
   for (double x1 : args)
     stan::test::expect_ad_vectorized(f, x1);
-}
-
-template <typename F, typename T1, typename T2>
-void expect_throw(const F& f, const T1& x1, const T2& x2) {
-  try {
-    auto y = f(x1, x2);
-    FAIL() << "Expected an exception to be thrown.";
-  } catch (...) {
-    SUCCEED();
-  }
 }
 
 /**
