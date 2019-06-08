@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_GAMMA_P_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_GAMMA_P_HPP
 
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
-// #include <exception>
 
 namespace stan {
 namespace math {
@@ -55,6 +55,10 @@ namespace math {
 
  */
 inline double gamma_p(double x, double a) {
+  if (is_nan(x))
+    return not_a_number();
+  if (is_nan(a))
+    return not_a_number();
   check_positive("gamma_p", "first argument (x)", x);
   check_positive("gamma_p", "second argument (a)", a);
   return boost::math::gamma_p(x, a, boost_policy_t());
