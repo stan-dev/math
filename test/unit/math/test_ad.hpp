@@ -624,10 +624,10 @@ void expect_ad(const F& f, const T1& x1, const T2& x2) {
  */
 template <typename F, typename T1>
 void expect_ad_vectorized(const F& f, const T1& x1) {
-  using std::vector;
-  using Eigen::VectorXd;
-  using Eigen::RowVectorXd;
   using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
+  using std::vector;
   typedef vector<double> vector_dbl;
   typedef vector<vector<double>> vector2_dbl;
   typedef vector<vector<vector<double>>> vector3_dbl;
@@ -786,8 +786,8 @@ void expect_common_nonzero_unary_vectorized(const F& f) {
  */
 template <typename F, typename T1, typename T2>
 void expect_values(const F& f, const T1& x1, const T2& x2) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
   typedef var v;
   typedef fvar<double> fd;
   typedef fvar<fvar<double>> ffd;
