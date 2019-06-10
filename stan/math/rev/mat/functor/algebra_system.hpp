@@ -3,6 +3,10 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/mat/functor/jacobian.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/err/check_consistent_size.hpp>
+#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
+#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -12,7 +16,7 @@ namespace math {
 
 /**
  * A functor that allows us to treat either x or y as
- * the independent variable. If x_is_dv = true, than the
+ * the independent variable. If x_is_iv = true, than the
  * Jacobian is computed w.r.t x, else it is computed
  * w.r.t y.
  * @tparam F type for algebraic system functor
@@ -83,6 +87,8 @@ struct nlo_functor {
 /**
  * A functor with the required operators to call Eigen's
  * algebraic solver.
+ * It is also used in the vari classes of the algebraic solvers
+ * to compute the requisite sensitivities.
  * @tparam S wrapper around the algebraic system functor. Has the
  * signature required for jacobian (i.e takes only one argument).
  * @tparam F algebraic system functor
@@ -148,6 +154,40 @@ struct hybrj_functor_solver : nlo_functor<double> {
    */
   Eigen::VectorXd get_value(const Eigen::VectorXd& iv) const { return fs_(iv); }
 };
+
+template <typename T>
+void algebra_solver_check(
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
+    const Eigen::VectorXd y,
+    const std::vector<double>& dat,
+    const std::vector<int>& dat_int,
+    double relative_tolerance, double function_tolerance,
+    long int max_num_steps) {  // NOLINT(runtime/int)
+  check_nonzero_size("algebra_solver", "initial guess", x);
+  for (int i = 0; i < x.size(); i++)
+    check_finite("algebra_solver", "initial guess", x(i));
+  for (int i = 0; i < y.size(); i++)
+    check_finite("algebra_solver", "parameter vector", y(i));
+  for (double i : dat)
+    check_finite("algebra_solver", "continuous data", i);
+  for (int x : dat_int)
+    check_finite("algebra_solver", "integer data", x);
+
+  if (relative_tolerance < 0)
+    invalid_argument("algebra_solver", "relative_tolerance,",
+                     relative_tolerance, "",
+                     ", must be greater than or equal to 0");
+  if (function_tolerance < 0)
+    invalid_argument("algebra_solver", "function_tolerance,",
+                     function_tolerance, "",
+                     ", must be greater than or equal to 0");
+  if (max_num_steps <= 0)
+    invalid_argument("algebra_solver", "max_num_steps,", max_num_steps, "",
+                     ", must be greater than 0");
+}
+
+
+
 
 }  // namespace math
 }  // namespace stan

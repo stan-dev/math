@@ -1,7 +1,8 @@
-#ifndef STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SOLVER_HPP
-#define STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SOLVER_HPP
+#ifndef STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SOLVER_NEWTON_HPP
+#define STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SOLVER_NEWTON_HPP
 
 #include <stan/math/rev/mat/functor/algebra_system.hpp>
+#include <stan/math/rev/mat/functor/algebra_solver.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
@@ -14,69 +15,12 @@
 namespace stan {
 namespace math {
 
-/**
- * The vari class for the algebraic solver. We compute the  Jacobian of
- * the solutions with respect to the parameters using the implicit
- * function theorem. The call to Jacobian() occurs outside the call to
- * chain() -- this prevents malloc issues.
- */
-template <typename Fs, typename F, typename T, typename Fx>
-struct algebra_solver_vari : public vari {
-  /** vector of parameters */
-  vari** y_;
-  /** number of parameters */
-  int y_size_;
-  /** number of unknowns */
-  int x_size_;
-  /** vector of solution */
-  vari** theta_;
-  /** Jacobian of the solution w.r.t parameters */
-  double* Jx_y_;
-
-  algebra_solver_vari(const Fs& fs, const F& f, const Eigen::VectorXd& x,
-                      const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
-                      const std::vector<double>& dat,
-                      const std::vector<int>& dat_int,
-                      const Eigen::VectorXd& theta_dbl, Fx& fx,
-                      std::ostream* msgs)
-      : vari(theta_dbl(0)),
-        y_(ChainableStack::instance().memalloc_.alloc_array<vari*>(y.size())),
-        y_size_(y.size()),
-        x_size_(x.size()),
-        theta_(
-            ChainableStack::instance().memalloc_.alloc_array<vari*>(x_size_)),
-        Jx_y_(ChainableStack::instance().memalloc_.alloc_array<double>(
-            x_size_ * y_size_)) {
-    using Eigen::Map;
-    using Eigen::MatrixXd;
-    for (int i = 0; i < y.size(); ++i)
-      y_[i] = y(i).vi_;
-
-    theta_[0] = this;
-    for (int i = 1; i < x.size(); ++i)
-      theta_[i] = new vari(theta_dbl(i), false);
-
-    // Compute the Jacobian and store in array, using the
-    // implicit function theorem, i.e. Jx_y = Jf_y / Jf_x
-    typedef hybrj_functor_solver<Fs, F, double, double> f_y;
-    Map<MatrixXd>(&Jx_y_[0], x_size_, y_size_)
-        = -mdivide_left(fx.get_jacobian(theta_dbl),
-                        f_y(fs, f, theta_dbl, value_of(y), dat, dat_int, msgs)
-                            .get_jacobian(value_of(y)));
-  }
-
-  void chain() {
-    for (int j = 0; j < y_size_; j++)
-      for (int i = 0; i < x_size_; i++)
-        y_[j]->adj_ += theta_[i]->adj_ * Jx_y_[j * x_size_ + i];
-  }
-};
 
 /**
  * Return the solution to the specified system of algebraic
  * equations given an initial guess, and parameters and data,
  * which get passed into the algebraic system.
- * Use Powell's dogleg solver.
+ * Use a Newton solver.
  *
  * The user can also specify the relative tolerance 
  * (xtol in Eigen's code), the function tolerance, 
@@ -119,7 +63,7 @@ struct algebra_solver_vari : public vari {
  * function tolerance.
  */
 template <typename F, typename T>
-Eigen::VectorXd algebra_solver(
+Eigen::VectorXd algebra_solver_newton(
     const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
     const Eigen::VectorXd& y, const std::vector<double>& dat,
     const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
@@ -128,51 +72,45 @@ Eigen::VectorXd algebra_solver(
   algebra_solver_check(x, y, dat, dat_int, 
                        relative_tolerance, function_tolerance, max_num_steps);
 
-  // Create functor for algebraic system
-  typedef system_functor<F, double, double, true> Fs;
-  typedef hybrj_functor_solver<Fs, F, double, double> Fx;
-  Fx fx(Fs(), f, value_of(x), y, dat, dat_int, msgs);
-  Eigen::HybridNonLinearSolver<Fx> solver(fx);
+  Eigen::VectorXd x_dbl = value_of(x);
+  Eigen::VectorXd fx;
+  Eigen::MatrixXd J;
+  Eigen::MatrixXd direction;
+
+  system_functor<F, T, double, true> system(f, x, y, dat, dat_int, msgs);
+
+  for (int i = 0; i <= max_num_steps; i++) {
+    if (i == max_num_steps) {
+      std::ostringstream message;
+      message << "algebra_solver_newton: max number of iterations: "
+              << max_num_steps << " exceeded.";
+      throw boost::math::evaluation_error(message.str());
+    }
+
+    jacobian(system, x_dbl, fx, J);
+    direction = - mdivide_left(J, fx);
+    x_dbl += direction;  // CHECK - add linesearch method?
+
+    // Check if the solution is acceptable
+    if (fx.norm() <= function_tolerance) break;
+  }
 
   // Check dimension unknowns equals dimension of system output
   check_matching_sizes("algebra_solver", "the algebraic system's output",
-                       fx.get_value(value_of(x)), "the vector of unknowns, x,",
+                       fx, "the vector of unknowns, x,",
                        x);
 
-  // Compute theta_dbl
-  Eigen::VectorXd theta_dbl = value_of(x);
-  solver.parameters.xtol = relative_tolerance;
-  solver.parameters.maxfev = max_num_steps;
-  solver.solve(theta_dbl);
+  // CHECK - do we need additional checks? Does the function break if
+  // we don't reach the max number of steps?
 
-  // Check if the max number of steps has been exceeded
-  if (solver.nfev >= max_num_steps) {
-    std::ostringstream message;
-    message << "algebra_solver: max number of iterations: " << max_num_steps
-            << " exceeded.";
-    throw boost::math::evaluation_error(message.str());
-  }
-
-  // Check solution is a root
-  double system_norm = fx.get_value(theta_dbl).stableNorm();
-  if (system_norm > function_tolerance) {
-    std::ostringstream message2;
-    message2 << "algebra_solver: the norm of the algebraic function is: "
-             << system_norm << " but should be lower than the function "
-             << "tolerance: " << function_tolerance << ". Consider "
-             << "decreasing the relative tolerance and increasing the "
-             << "max_num_steps.";
-    throw boost::math::evaluation_error(message2.str());
-  }
-
-  return theta_dbl;
+  return x_dbl;
 }
 
 /**
  * Return the solution to the specified system of algebraic
  * equations given an initial guess, and parameters and data,
  * which get passed into the algebraic system.
- * Use Powell's dogleg solver.
+ * Use a Newton solver.
  *
  * The user can also specify the relative tolerance 
  * (xtol in Eigen's code), the function tolerance, 
@@ -214,7 +152,7 @@ Eigen::VectorXd algebra_solver(
  * function tolerance.
  */
 template <typename F, typename T1, typename T2>
-Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver(
+Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_newton(
     const F& f, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
     const std::vector<double>& dat, const std::vector<int>& dat_int,
@@ -222,14 +160,11 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver(
     double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
   Eigen::VectorXd theta_dbl
-      = algebra_solver(f, x, value_of(y), dat, dat_int, 0, relative_tolerance,
-                       function_tolerance, max_num_steps);
+      = algebra_solver_newton(f, x, value_of(y), dat, dat_int, 0,
+                              relative_tolerance,
+                              function_tolerance, max_num_steps);
 
   typedef system_functor<F, double, double, false> Fy;
-
-  // TODO(charlesm93): a similar object gets constructed inside
-  // the call to algebra_solver. Cache the previous result
-  // and use it here (if possible).
   typedef system_functor<F, double, double, true> Fs;
   typedef hybrj_functor_solver<Fs, F, double, double> Fx;
   Fx fx(Fs(), f, value_of(x), value_of(y), dat, dat_int, msgs);
