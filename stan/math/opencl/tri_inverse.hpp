@@ -2,7 +2,6 @@
 #define STAN_MATH_OPENCL_TRI_INVERSE_HPP
 
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/identity.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/constants.hpp>
 #include <stan/math/opencl/kernels/diag_inv.hpp>
