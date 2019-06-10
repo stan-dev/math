@@ -281,6 +281,7 @@
 #include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
 #include <stan/math/prim/mat/prob/bernoulli_logit_glm_log.hpp>
 #include <stan/math/prim/mat/prob/bernoulli_logit_glm_lpmf.hpp>
+#include <stan/math/prim/mat/prob/bernoulli_logit_glm_rng.hpp>
 #include <stan/math/prim/mat/prob/categorical_log.hpp>
 #include <stan/math/prim/mat/prob/categorical_logit_log.hpp>
 #include <stan/math/prim/mat/prob/categorical_logit_lpmf.hpp>
@@ -292,6 +293,7 @@
 #include <stan/math/prim/mat/prob/dirichlet_rng.hpp>
 #include <stan/math/prim/mat/prob/gaussian_dlm_obs_log.hpp>
 #include <stan/math/prim/mat/prob/gaussian_dlm_obs_lpdf.hpp>
+#include <stan/math/prim/mat/prob/gaussian_dlm_obs_rng.hpp>
 #include <stan/math/prim/mat/prob/inv_wishart_log.hpp>
 #include <stan/math/prim/mat/prob/inv_wishart_lpdf.hpp>
 #include <stan/math/prim/mat/prob/inv_wishart_rng.hpp>
@@ -305,6 +307,7 @@
 #include <stan/math/prim/mat/prob/lkj_cov_lpdf.hpp>
 #include <stan/math/prim/mat/prob/matrix_normal_prec_log.hpp>
 #include <stan/math/prim/mat/prob/matrix_normal_prec_lpdf.hpp>
+#include <stan/math/prim/mat/prob/matrix_normal_prec_rng.hpp>
 #include <stan/math/prim/mat/prob/multi_gp_cholesky_log.hpp>
 #include <stan/math/prim/mat/prob/multi_gp_cholesky_lpdf.hpp>
 #include <stan/math/prim/mat/prob/multi_gp_log.hpp>
@@ -316,6 +319,7 @@
 #include <stan/math/prim/mat/prob/multi_normal_lpdf.hpp>
 #include <stan/math/prim/mat/prob/multi_normal_prec_log.hpp>
 #include <stan/math/prim/mat/prob/multi_normal_prec_lpdf.hpp>
+#include <stan/math/prim/mat/prob/multi_normal_prec_rng.hpp>
 #include <stan/math/prim/mat/prob/multi_normal_rng.hpp>
 #include <stan/math/prim/mat/prob/multi_student_t_log.hpp>
 #include <stan/math/prim/mat/prob/multi_student_t_lpdf.hpp>

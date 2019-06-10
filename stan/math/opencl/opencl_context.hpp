@@ -195,6 +195,9 @@ class opencl_context_base {
     int cholesky_rev_block_partition = 8;
     // used in math/opencl/multiply
     int multiply_split_upper_limit = 2000000;
+    // used in math/prim/mat/fun/mdivide_left_tri
+    // and math/rev/mat/fun/mdivide_left_tri
+    int tri_inverse_size_worth_transfer = 100;
   } tuning_opts_;
 
   static opencl_context_base& getInstance() {
