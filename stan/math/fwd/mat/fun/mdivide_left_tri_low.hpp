@@ -2,16 +2,13 @@
 #define STAN_MATH_FWD_MAT_FUN_MDIVIDE_LEFT_TRI_LOW_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/fwd/mat/fun/typedefs.hpp>
 #include <stan/math/fwd/mat/fun/to_fvar.hpp>
 #include <stan/math/fwd/mat/fun/multiply.hpp>
-#include <stan/math/fwd/mat/fun/inverse.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
-#include <vector>
 
 namespace stan {
 namespace math {

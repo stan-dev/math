@@ -7,8 +7,6 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
@@ -17,8 +15,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <boost/random/uniform_real_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
@@ -29,8 +25,6 @@ typename return_type<T_y, T_scale>::type rayleigh_lccdf(const T_y& y,
   static const char* function = "rayleigh_lccdf";
   typedef
       typename stan::partials_return_type<T_y, T_scale>::type T_partials_return;
-
-  using stan::is_constant_struct;
 
   T_partials_return ccdf_log(0.0);
 

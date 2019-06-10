@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_SCAL_FUN_FMA_HPP
 
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/fma.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/meta/likely.hpp>
@@ -11,7 +10,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class fma_vvv_vari : public op_vvv_vari {
  public:
   fma_vvv_vari(vari* avi, vari* bvi, vari* cvi)
@@ -83,7 +82,7 @@ class fma_ddv_vari : public op_ddv_vari {
       cvi_->adj_ += adj_;
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * The fused multiply-add function for three variables (C99).
@@ -104,7 +103,7 @@ class fma_ddv_vari : public op_ddv_vari {
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
 inline var fma(const var& a, const var& b, const var& c) {
-  return var(new fma_vvv_vari(a.vi_, b.vi_, c.vi_));
+  return var(new internal::fma_vvv_vari(a.vi_, b.vi_, c.vi_));
 }
 
 /**
@@ -124,7 +123,7 @@ inline var fma(const var& a, const var& b, const var& c) {
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
 inline var fma(const var& a, const var& b, double c) {
-  return var(new fma_vvd_vari(a.vi_, b.vi_, c));
+  return var(new internal::fma_vvd_vari(a.vi_, b.vi_, c));
 }
 
 /**
@@ -144,7 +143,7 @@ inline var fma(const var& a, const var& b, double c) {
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
 inline var fma(const var& a, double b, const var& c) {
-  return var(new fma_vdv_vari(a.vi_, b, c.vi_));
+  return var(new internal::fma_vdv_vari(a.vi_, b, c.vi_));
 }
 
 /**
@@ -166,7 +165,7 @@ inline var fma(const var& a, double b, const var& c) {
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
 inline var fma(const var& a, double b, double c) {
-  return var(new fma_vdd_vari(a.vi_, b, c));
+  return var(new internal::fma_vdd_vari(a.vi_, b, c));
 }
 
 /**
@@ -184,7 +183,7 @@ inline var fma(const var& a, double b, double c) {
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
 inline var fma(double a, const var& b, double c) {
-  return var(new fma_vdd_vari(b.vi_, a, c));
+  return var(new internal::fma_vdd_vari(b.vi_, a, c));
 }
 
 /**
@@ -202,7 +201,7 @@ inline var fma(double a, const var& b, double c) {
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
 inline var fma(double a, double b, const var& c) {
-  return var(new fma_ddv_vari(a, b, c.vi_));
+  return var(new internal::fma_ddv_vari(a, b, c.vi_));
 }
 
 /**
@@ -222,7 +221,7 @@ inline var fma(double a, double b, const var& c) {
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
 inline var fma(double a, const var& b, const var& c) {
-  return var(new fma_vdv_vari(b.vi_, a, c.vi_));  // a-b symmetry
+  return var(new internal::fma_vdv_vari(b.vi_, a, c.vi_));  // a-b symmetry
 }
 
 }  // namespace math

@@ -2,12 +2,9 @@
 #define STAN_MATH_REV_MAT_FUN_SQUARED_DISTANCE_HPP
 
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/sqrt.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/arr/meta/index_type.hpp>
 #include <stan/math/prim/scal/meta/index_type.hpp>
@@ -16,7 +13,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 
 class squared_distance_vv_vari : public vari {
  protected:
@@ -103,7 +100,7 @@ class squared_distance_vd_vari : public vari {
     }
   }
 };
-}  // namespace
+}  // namespace internal
 
 template <int R1, int C1, int R2, int C2>
 inline var squared_distance(const Eigen::Matrix<var, R1, C1>& v1,
@@ -111,7 +108,7 @@ inline var squared_distance(const Eigen::Matrix<var, R1, C1>& v1,
   check_vector("squared_distance", "v1", v1);
   check_vector("squared_distance", "v2", v2);
   check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-  return var(new squared_distance_vv_vari(v1, v2));
+  return var(new internal::squared_distance_vv_vari(v1, v2));
 }
 template <int R1, int C1, int R2, int C2>
 inline var squared_distance(const Eigen::Matrix<var, R1, C1>& v1,
@@ -119,7 +116,7 @@ inline var squared_distance(const Eigen::Matrix<var, R1, C1>& v1,
   check_vector("squared_distance", "v1", v1);
   check_vector("squared_distance", "v2", v2);
   check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-  return var(new squared_distance_vd_vari(v1, v2));
+  return var(new internal::squared_distance_vd_vari(v1, v2));
 }
 template <int R1, int C1, int R2, int C2>
 inline var squared_distance(const Eigen::Matrix<double, R1, C1>& v1,
@@ -127,7 +124,7 @@ inline var squared_distance(const Eigen::Matrix<double, R1, C1>& v1,
   check_vector("squared_distance", "v1", v1);
   check_vector("squared_distance", "v2", v2);
   check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-  return var(new squared_distance_vd_vari(v2, v1));
+  return var(new internal::squared_distance_vd_vari(v2, v1));
 }
 
 }  // namespace math

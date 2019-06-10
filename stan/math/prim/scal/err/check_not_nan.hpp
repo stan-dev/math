@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 template <typename T_y, bool is_vec>
 struct not_nan {
   static void check(const char* function, const char* name, const T_y& y) {
@@ -29,28 +29,23 @@ struct not_nan<T_y, true> {
     }
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
- * Check if <code>y</code> is not
- * <code>NaN</code>.
- *
+ * Check if <code>y</code> is not <code>NaN</code>.
  * This function is vectorized and will check each element of
  * <code>y</code>. If any element is <code>NaN</code>, this
  * function will throw an exception.
- *
  * @tparam T_y Type of y
- *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
- *
- * @throw <code>domain_error</code> if any element of y is NaN.
+ * @throw <code>domain_error</code> if any element of y is NaN
  */
 template <typename T_y>
 inline void check_not_nan(const char* function, const char* name,
                           const T_y& y) {
-  not_nan<T_y, is_vector_like<T_y>::value>::check(function, name, y);
+  internal::not_nan<T_y, is_vector_like<T_y>::value>::check(function, name, y);
 }
 
 }  // namespace math

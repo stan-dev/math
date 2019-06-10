@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_LPDF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_LPDF_HPP
 
+#include <stan/math/prim/mat/err/check_consistent_sizes_mvt.hpp>
 #include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/fun/trace_inv_quad_form_ldlt.hpp>
@@ -11,11 +12,10 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/meta/length_mvt.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/max_size_mvt.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
@@ -26,7 +26,6 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_lpdf(
   static const char* function = "multi_normal_lpdf";
   typedef typename scalar_type<T_covar>::type T_covar_elem;
   typedef typename return_type<T_y, T_loc, T_covar>::type lp_type;
-  lp_type lp(0.0);
 
   using Eigen::Dynamic;
 
@@ -37,6 +36,13 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_lpdf(
   check_ldlt_factor(function, "LDLT_Factor of covariance parameter",
                     ldlt_Sigma);
 
+  size_t number_of_y = length_mvt(y);
+  size_t number_of_mu = length_mvt(mu);
+  if (number_of_y == 0 || number_of_mu == 0)
+    return 0.0;
+  check_consistent_sizes_mvt(function, "y", y, "mu", mu);
+
+  lp_type lp(0.0);
   vector_seq_view<T_y> y_vec(y);
   vector_seq_view<T_loc> mu_vec(mu);
   size_t size_vec = max_size_mvt(y, mu);

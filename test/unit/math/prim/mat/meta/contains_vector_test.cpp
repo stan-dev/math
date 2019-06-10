@@ -24,4 +24,12 @@ TEST(MetaTraits, contains_vector) {
 
   temp = contains_vector<double, temp_matrix_d, temp_matrix_d>::value;
   EXPECT_FALSE(temp);
+
+  temp = contains_vector<double, double, temp_matrix_d, double, temp_matrix_d,
+                         double, double>::value;
+  EXPECT_FALSE(temp);
+
+  temp = contains_vector<double, double, temp_matrix_d, double, temp_matrix_d,
+                         double, temp_vec_d>::value;
+  EXPECT_TRUE(temp);
 }

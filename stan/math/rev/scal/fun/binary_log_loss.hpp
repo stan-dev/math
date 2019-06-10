@@ -2,14 +2,12 @@
 #define STAN_MATH_REV_SCAL_FUN_BINARY_LOG_LOSS_HPP
 
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
-#include <valarray>
 
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class binary_log_loss_1_vari : public op_v_vari {
  public:
   explicit binary_log_loss_1_vari(vari* avi)
@@ -23,7 +21,7 @@ class binary_log_loss_0_vari : public op_v_vari {
       : op_v_vari(-log1p(-avi->val_), avi) {}
   void chain() { avi_->adj_ += adj_ / (1.0 - avi_->val_); }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * The log loss function for variables (stan).
@@ -61,9 +59,9 @@ class binary_log_loss_0_vari : public op_v_vari {
  */
 inline var binary_log_loss(int y, const var& y_hat) {
   if (y == 0)
-    return var(new binary_log_loss_0_vari(y_hat.vi_));
+    return var(new internal::binary_log_loss_0_vari(y_hat.vi_));
   else
-    return var(new binary_log_loss_1_vari(y_hat.vi_));
+    return var(new internal::binary_log_loss_1_vari(y_hat.vi_));
 }
 
 }  // namespace math

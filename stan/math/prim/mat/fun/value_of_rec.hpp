@@ -41,7 +41,7 @@ inline Eigen::Matrix<double, R, C> value_of_rec(
  * @return Specified matrix.
  */
 template <int R, int C>
-inline typename Eigen::Matrix<double, R, C> value_of_rec(
+inline const Eigen::Matrix<double, R, C>& value_of_rec(
     const Eigen::Matrix<double, R, C>& x) {
   return x;
 }

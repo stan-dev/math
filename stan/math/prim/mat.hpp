@@ -6,6 +6,9 @@
 #include <stan/math/prim/arr/meta/is_vector.hpp>
 #include <stan/math/prim/arr/meta/length.hpp>
 
+#include <stan/math/prim/mat/meta/as_array_or_scalar.hpp>
+#include <stan/math/prim/mat/meta/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/mat/meta/as_scalar.hpp>
 #include <stan/math/prim/mat/meta/broadcast_array.hpp>
 #include <stan/math/prim/mat/meta/get.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
@@ -23,6 +26,8 @@
 #include <stan/math/prim/mat/err/check_cholesky_factor.hpp>
 #include <stan/math/prim/mat/err/check_cholesky_factor_corr.hpp>
 #include <stan/math/prim/mat/err/check_column_index.hpp>
+#include <stan/math/prim/mat/err/check_consistent_size_mvt.hpp>
+#include <stan/math/prim/mat/err/check_consistent_sizes_mvt.hpp>
 #include <stan/math/prim/mat/err/check_corr_matrix.hpp>
 #include <stan/math/prim/mat/err/check_cov_matrix.hpp>
 #include <stan/math/prim/mat/err/check_finite.hpp>
@@ -44,6 +49,18 @@
 #include <stan/math/prim/mat/err/check_unit_vector.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
+#include <stan/math/prim/mat/err/is_cholesky_factor_corr.hpp>
+#include <stan/math/prim/mat/err/is_cholesky_factor.hpp>
+#include <stan/math/prim/mat/err/is_column_index.hpp>
+#include <stan/math/prim/mat/err/is_corr_matrix.hpp>
+#include <stan/math/prim/mat/err/is_ldlt_factor.hpp>
+#include <stan/math/prim/mat/err/is_lower_triangular.hpp>
+#include <stan/math/prim/mat/err/is_mat_finite.hpp>
+#include <stan/math/prim/mat/err/is_matching_dims.hpp>
+#include <stan/math/prim/mat/err/is_pos_definite.hpp>
+#include <stan/math/prim/mat/err/is_square.hpp>
+#include <stan/math/prim/mat/err/is_symmetric.hpp>
+#include <stan/math/prim/mat/err/is_unit_vector.hpp>
 #include <stan/math/prim/mat/err/validate_non_negative_index.hpp>
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
@@ -125,6 +142,8 @@
 #include <stan/math/prim/mat/fun/get_base1_lhs.hpp>
 #include <stan/math/prim/mat/fun/get_lp.hpp>
 #include <stan/math/prim/mat/fun/gp_dot_prod_cov.hpp>
+#include <stan/math/prim/mat/fun/gp_exponential_cov.hpp>
+#include <stan/math/prim/mat/fun/gp_matern32_cov.hpp>
 #include <stan/math/prim/mat/fun/gp_matern52_cov.hpp>
 #include <stan/math/prim/mat/fun/gp_periodic_cov.hpp>
 #include <stan/math/prim/mat/fun/head.hpp>
@@ -262,6 +281,7 @@
 #include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
 #include <stan/math/prim/mat/prob/bernoulli_logit_glm_log.hpp>
 #include <stan/math/prim/mat/prob/bernoulli_logit_glm_lpmf.hpp>
+#include <stan/math/prim/mat/prob/bernoulli_logit_glm_rng.hpp>
 #include <stan/math/prim/mat/prob/categorical_log.hpp>
 #include <stan/math/prim/mat/prob/categorical_logit_log.hpp>
 #include <stan/math/prim/mat/prob/categorical_logit_lpmf.hpp>
@@ -273,6 +293,7 @@
 #include <stan/math/prim/mat/prob/dirichlet_rng.hpp>
 #include <stan/math/prim/mat/prob/gaussian_dlm_obs_log.hpp>
 #include <stan/math/prim/mat/prob/gaussian_dlm_obs_lpdf.hpp>
+#include <stan/math/prim/mat/prob/gaussian_dlm_obs_rng.hpp>
 #include <stan/math/prim/mat/prob/inv_wishart_log.hpp>
 #include <stan/math/prim/mat/prob/inv_wishart_lpdf.hpp>
 #include <stan/math/prim/mat/prob/inv_wishart_rng.hpp>
@@ -286,6 +307,7 @@
 #include <stan/math/prim/mat/prob/lkj_cov_lpdf.hpp>
 #include <stan/math/prim/mat/prob/matrix_normal_prec_log.hpp>
 #include <stan/math/prim/mat/prob/matrix_normal_prec_lpdf.hpp>
+#include <stan/math/prim/mat/prob/matrix_normal_prec_rng.hpp>
 #include <stan/math/prim/mat/prob/multi_gp_cholesky_log.hpp>
 #include <stan/math/prim/mat/prob/multi_gp_cholesky_lpdf.hpp>
 #include <stan/math/prim/mat/prob/multi_gp_log.hpp>
@@ -297,6 +319,7 @@
 #include <stan/math/prim/mat/prob/multi_normal_lpdf.hpp>
 #include <stan/math/prim/mat/prob/multi_normal_prec_log.hpp>
 #include <stan/math/prim/mat/prob/multi_normal_prec_lpdf.hpp>
+#include <stan/math/prim/mat/prob/multi_normal_prec_rng.hpp>
 #include <stan/math/prim/mat/prob/multi_normal_rng.hpp>
 #include <stan/math/prim/mat/prob/multi_student_t_log.hpp>
 #include <stan/math/prim/mat/prob/multi_student_t_lpdf.hpp>

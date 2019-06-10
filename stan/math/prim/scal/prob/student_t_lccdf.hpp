@@ -4,16 +4,13 @@
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/lbeta.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <stan/math/prim/scal/fun/beta.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
@@ -21,8 +18,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <boost/random/student_t_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <limits>
 
@@ -39,8 +34,6 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lccdf(
     return 0.0;
 
   static const char* function = "student_t_lccdf";
-
-  using std::exp;
 
   T_partials_return P(0.0);
 
@@ -103,7 +96,7 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lccdf(
     const T_partials_return q = nu_dbl / (t * t);
     const T_partials_return r = 1.0 / (1.0 + q);
     const T_partials_return J = 2 * r * r * q / t;
-    const T_partials_return betaNuHalf = exp(lbeta(0.5, 0.5 * nu_dbl));
+    const T_partials_return betaNuHalf = beta(0.5, 0.5 * nu_dbl);
     T_partials_return zJacobian = t > 0 ? -0.5 : 0.5;
 
     if (q < 2) {

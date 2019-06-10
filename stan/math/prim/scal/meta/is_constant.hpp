@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_IS_CONSTANT_HPP
 #define STAN_MATH_PRIM_SCAL_META_IS_CONSTANT_HPP
 
-#include <boost/type_traits/is_convertible.hpp>
+#include <type_traits>
 
 namespace stan {
 
@@ -24,7 +24,7 @@ struct is_constant {
    * A boolean constant with equal to <code>true</code> if the
    * type parameter <code>T</code> is a mathematical constant.
    */
-  enum { value = boost::is_convertible<T, double>::value };
+  enum { value = std::is_convertible<T, double>::value };
 };
 
 }  // namespace stan

@@ -16,16 +16,12 @@ namespace math {
 
 /**
  * Check if the specified matrix is symmetric.
- *
  * The error message is either 0 or 1 indexed, specified by
  * <code>stan::error_index::value</code>.
- *
- * @tparam T_y Type of scalar.
- *
+ * @tparam T_y Type of scalar
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Matrix to test
- *
  * @throw <code>std::invalid_argument</code> if the matrix is not square.
  * @throw <code>std::domain_error</code> if any element not on the
  *   main diagonal is <code>NaN</code>
@@ -36,11 +32,8 @@ inline void check_symmetric(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
   check_square(function, name, y);
 
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-  using std::fabs;
-
-  typedef typename index_type<Matrix<T_y, Dynamic, Dynamic> >::type size_type;
+  typedef typename index_type<
+      Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> >::type size_type;
 
   size_type k = y.rows();
   if (k == 1)

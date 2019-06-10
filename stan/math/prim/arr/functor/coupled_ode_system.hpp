@@ -9,30 +9,37 @@ namespace stan {
 namespace math {
 
 /**
- * Base template class for a coupled ordinary differential equation
- * system, which adds sensitivities to the base system.
+ * The <code>coupled_ode_system</code> represents the coupled ode
+ * system, which is the base ode and the sensitivities of the base ode
+ * (derivatives with respect to the parameters of the base ode).
  *
- * This template class declaration should not be instantiated
- * directly --- it is just here to serve as a base for its
- * specializations, some of which are defined in namespace
- * <code>stan::math</code>.
+ * This class provides a functor to be used by ode solvers, a class method
+ * for the size of the coupled ode system, a class method to retrieve the
+ * initial state, and a class method to convert from the coupled ode system
+ * back to the base ode.
  *
- * @tparam F the functor for the base ode system
- * @tparam T1 type of the initial state
- * @tparam T2 type of the parameters
+ * @tparam F base ode system functor. Must provide
+ *   <code>operator()(double t, std::vector<T1> y, std::vector<T2> theta,
+ *          std::vector<double> x, std::vector<int>x_int, std::ostream*
+ * msgs)</code>
+ * @tparam T1 scalar type of the initial state
+ * @tparam T2 scalar type of the parameters
  */
 template <typename F, typename T1, typename T2>
 struct coupled_ode_system {};
 
 /**
- * The coupled ode system for known initial values and known
- * parameters.
+ * <code>coupled_ode_system</code> specialization for for known
+ * initial values and known parameters.
  *
- * <p>This coupled system does not add anything to the base
- * system used to construct it, but is here for generality of the
- * integration implementation.
+ * For this case, the coupled ode is the same as the base ode. There
+ * are no sensitivity parameters and the size of the coupled ode
+ * system is the size of the base ode system.
  *
- * @tparam F type of system function for the base ODE system.
+ * @tparam F base ode system functor. Must provide
+ *   <code>operator()(double t, std::vector<double> y,
+ *   std::vector<double> theta, std::vector<double> x,
+ *   std::vector<int>x_int, std::ostream* msgs)</code>
  */
 template <typename F>
 class coupled_ode_system<F, double, double> {
@@ -48,16 +55,16 @@ class coupled_ode_system<F, double, double> {
   std::ostream* msgs_;
 
   /**
-   * Construct the coupled ODE system from the base system
-   * function, initial state, parameters, data and a stream for
-   * messages.
+   * Construct the coupled ode system from the base system function,
+   * initial state of the base system, parameters, data and a stream
+   * for messages.
    *
-   * @param[in] f base ode system functor.
-   * @param[in] y0 initial state of the base ode.
-   * @param[in] theta parameters of the base ode.
-   * @param[in] x  real data.
-   * @param[in] x_int integer data.
-   * @param[in, out] msgs print stream.
+   * @param[in] f base ode system functor
+   * @param[in] y0 initial state of the base ode
+   * @param[in] theta parameters of the base ode
+   * @param[in] x real data
+   * @param[in] x_int integer data
+   * @param[in, out] msgs stream for messages
    */
   coupled_ode_system(const F& f, const std::vector<double>& y0,
                      const std::vector<double>& theta,
@@ -74,16 +81,13 @@ class coupled_ode_system<F, double, double> {
         msgs_(msgs) {}
 
   /**
-   * Calculates the derivative of the coupled ode system with
-   * respect to the specified state at the specified time using
-   * the system state function.
+   * Calculates the derivative of the coupled ode system with respect to time.
    *
-   * The derivative vector created is the same length as the
-   * length as the state vector.
-   *
-   * @param[in] y current state of the coupled ode.
+   * @param[in] y current state of the coupled ode. This must be the
+   *   correct size, <code>N_</code>.
    * @param[out] dy_dt populated with derivatives of the coupled
-   * system evaluated at specified state and time.
+   *   system evaluated at specified state and time. This vector will be
+   * overwritten.
    * @param[in] t time.
    * @throw exception if the system function does not return
    * a derivative vector of the same size as the state vector.
@@ -103,14 +107,8 @@ class coupled_ode_system<F, double, double> {
   int size() const { return size_; }
 
   /**
-   * Returns the initial state of the coupled system, which is
-   * identical to the base ODE original state in this
-   * implementation because the initial state is known.
-   *
-   * The return value is a vector of length size() where the first
-   * N (base ode system size) parameters are the initial
-   * conditions of the base ode system and the rest of the initial
-   * conditions is 0.
+   * Returns the initial state of the coupled system. Here, it is
+   * identical to base ode state because the initial state is known.
    *
    * @return initial state of the coupled system
    */
@@ -119,21 +117,6 @@ class coupled_ode_system<F, double, double> {
     for (size_t n = 0; n < N_; n++)
       state[n] = y0_dbl_[n];
     return state;
-  }
-
-  /**
-   * Returns the base portion of the coupled state.
-   *
-   * <p>In this class's implementation, the coupled system is
-   * equivalent to the base system, so this function just returns
-   * its input.
-   *
-   * @param y the vector of the coupled states after solving the ode
-   * @return the decoupled states
-   */
-  std::vector<std::vector<double> > decouple_states(
-      const std::vector<std::vector<double> >& y) const {
-    return y;
   }
 };
 

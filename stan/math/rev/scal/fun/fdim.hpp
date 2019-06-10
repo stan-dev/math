@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class fdim_vv_vari : public op_vv_vari {
  public:
   fdim_vv_vari(vari* avi, vari* bvi)
@@ -46,7 +46,7 @@ class fdim_dv_vari : public op_dv_vari {
       bvi_->adj_ -= adj_;
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Return the positive difference between the first variable's the value
@@ -88,8 +88,9 @@ class fdim_dv_vari : public op_dv_vari {
  */
 inline var fdim(const var& a, const var& b) {
   // reversed test to get NaN vals automatically in second case
-  return (a.vi_->val_ <= b.vi_->val_) ? var(new vari(0.0))
-                                      : var(new fdim_vv_vari(a.vi_, b.vi_));
+  return (a.vi_->val_ <= b.vi_->val_)
+             ? var(new vari(0.0))
+             : var(new internal::fdim_vv_vari(a.vi_, b.vi_));
 }
 
 /**
@@ -107,7 +108,7 @@ inline var fdim(const var& a, const var& b) {
 inline var fdim(double a, const var& b) {
   // reversed test to get NaN vals automatically in second case
   return a <= b.vi_->val_ ? var(new vari(0.0))
-                          : var(new fdim_dv_vari(a, b.vi_));
+                          : var(new internal::fdim_dv_vari(a, b.vi_));
 }
 
 /**
@@ -124,7 +125,7 @@ inline var fdim(double a, const var& b) {
 inline var fdim(const var& a, double b) {
   // reversed test to get NaN vals automatically in second case
   return a.vi_->val_ <= b ? var(new vari(0.0))
-                          : var(new fdim_vd_vari(a.vi_, b));
+                          : var(new internal::fdim_vd_vari(a.vi_, b));
 }
 
 }  // namespace math

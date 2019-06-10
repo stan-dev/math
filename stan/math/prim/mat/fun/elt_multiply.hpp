@@ -25,11 +25,7 @@ Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R, C>
 elt_multiply(const Eigen::Matrix<T1, R, C>& m1,
              const Eigen::Matrix<T2, R, C>& m2) {
   check_matching_dims("elt_multiply", "m1", m1, "m2", m2);
-  Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R, C>
-      result(m1.rows(), m2.cols());
-  for (int i = 0; i < m1.size(); ++i)
-    result(i) = m1(i) * m2(i);
-  return result;
+  return m1.cwiseProduct(m2);
 }
 
 }  // namespace math
