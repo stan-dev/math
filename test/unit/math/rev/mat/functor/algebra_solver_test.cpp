@@ -54,12 +54,12 @@ TEST(MathMatrix, simple_Eq_tuned) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
         = simple_eq_test(simple_eq_functor(), y, true, xtol, ftol, maxfev);
 
-    Eigen::MatrixXd J(n_x, n_y);
-    J << 4, 5, 0, 0, 0, 1;
-
     AVEC y_vec = createAVEC(y(0), y(1), y(2));
     VEC g;
     theta(k).grad(y_vec, g);
+
+    Eigen::MatrixXd J(n_x, n_y);
+    J << 4, 5, 0, 0, 0, 1;
 
     for (int i = 0; i < n_y; i++)
       EXPECT_EQ(J(k, i), g[i]);
