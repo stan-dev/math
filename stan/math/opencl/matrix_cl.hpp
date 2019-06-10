@@ -306,16 +306,6 @@ class matrix_cl<double> {
   }
 };
 
-template <int R, int C>
-std::vector<double> adjoint_of_vv(const Eigen::Matrix<var, R, C>& A) {
-  std::vector<double> ans(A.size());
-  for (int i = 0; i < A.size(); i++) {
-    ans.push_back(A(i).vi_->adj_);
-  }
-  return ans;
-}
-
-
 class var;
 template <>
 class matrix_cl<var> {
@@ -344,8 +334,8 @@ class matrix_cl<var> {
   template <int R, int C>
   explicit matrix_cl(const Eigen::Matrix<var, R, C>& A)
       : rows_(A.rows()), cols_(A.cols()),
-      val_(value_of_rec(A)),
-      adj_(adjoint_of_vv(A), A.rows(), A.cols()) {}
+      val_(A.val().eval()),
+      adj_(A.adj().eval()) {}
 
   explicit matrix_cl(const int& rows, const int& cols) :
   rows_(rows), cols_(cols), val_(rows, cols), adj_(rows, cols) {}
@@ -360,11 +350,9 @@ class matrix_cl<var> {
 template <typename T>
 class fvar;
 
-template <>
 template <typename T>
 class matrix_cl<fvar<T>>;
 
-template <>
 template <typename T>
 class matrix_cl<fvar<T>> {
  private:
@@ -390,7 +378,7 @@ class matrix_cl<fvar<T>> {
   explicit matrix_cl() : rows_(0), cols_(0) {}
   template <int R, int C>
   explicit matrix_cl(const Eigen::Matrix<fvar<T>, R, C>& A)
-      : rows_(A.rows()), cols_(A.cols()) {}
+      : val_(A.val().eval()), d_(A.d().eval()), rows_(A.rows()), cols_(A.cols()) {}
 
   explicit matrix_cl(const int& rows, const int& cols) :
   rows_(rows), cols_(cols) {}
