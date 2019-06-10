@@ -39,7 +39,7 @@ static const char* inv_lower_tri_multiply_kernel_code = STRINGIFY(
      * @param rows The number of rows in a single matrix of the batch
      * @note Code is a <code>const char*</code> held in
      * <code>inv_lower_tri_multiply_kernel_code.</code>
-     *  Used in math/opencl/lower_tri_inverse.hpp.
+     *  Used in math/opencl/tri_inverse.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      */
     __kernel void inv_lower_tri_multiply(__global double* A,

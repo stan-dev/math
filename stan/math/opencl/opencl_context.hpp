@@ -200,6 +200,9 @@ class opencl_context_base {
     // TODO(Tadej): next two parameters need better tunning
     double gp_exp_quad_cov_coeff1 = 69000000;
     double gp_exp_quad_cov_coeff2 = 1200000;
+    // used in math/prim/mat/fun/mdivide_left_tri
+    // and math/rev/mat/fun/mdivide_left_tri
+    int tri_inverse_size_worth_transfer = 100;
   } tuning_opts_;
 
   static opencl_context_base& getInstance() {
