@@ -158,11 +158,13 @@ ordered_logistic_glm_lpmf(
   if (!is_constant_struct<T_x_scalar>::value
       || !is_constant_struct<T_beta_scalar>::value
       || !is_constant_struct<T_cuts_scalar>::value) {
+    Array<double, Dynamic, 1> exp_m_cut1 = exp(-cut1);
+    Array<double, Dynamic, 1> exp_m_cut2 = exp(-cut2);
+    Array<double, Dynamic, 1> exp_cuts_diff = exp(cuts_y2 - cuts_y1);
     Array<double, Dynamic, 1> d1
-        = 1 / (1 + exp(cut2)) - 1 / (1 - exp(cuts_y1 - cuts_y2));
+        = (cut2 > 0).select(exp_m_cut2 / (1 + exp_m_cut2), 1 / (1 + exp(cut2))) - exp_cuts_diff / (exp_cuts_diff - 1);
     Array<double, Dynamic, 1> d2
-        = 1 / (1 - exp(cuts_y2 - cuts_y1)) - 1 / (1 + exp(cut1));
-
+          = 1 / (1 - exp_cuts_diff) - (cut1 > 0).select(exp_m_cut1 / (1 + exp_m_cut1), 1 / (1 + exp(cut1)));
     if (!is_constant_struct<T_x_scalar>::value
         || !is_constant_struct<T_beta_scalar>::value) {
       Matrix<double, 1, Dynamic> location_derivative = d1 - d2;
