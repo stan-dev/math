@@ -368,7 +368,6 @@ class cholesky_opencl : public vari {
 
       R_adj = R_adj - transpose(C_adj) * B - D_adj * R;
       D_adj = diagonal_multiply(D_adj, 0.5);
-      D_adj.zeros<TriangularViewCL::Upper>();
 
       L_adj.sub_block(R_adj, 0, 0, j, 0, k_j_ind, j);
       L_adj.sub_block(D_adj, 0, 0, j, j, k_j_ind, k_j_ind);
