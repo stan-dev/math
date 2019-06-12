@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_GRAD_2F1_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_GRAD_2F1_HPP
 
-#include <stan/math/prim/scal/fun/sign.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/err/check_2F1_converges.hpp>
 #include <cmath>

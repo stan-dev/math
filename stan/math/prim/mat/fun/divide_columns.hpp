@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/divide.hpp>
-#include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <vector>
 
@@ -28,9 +27,11 @@ inline typename std::vector<Eigen::Matrix<
     typename return_type<T_x, T_v, double>::type, Eigen::Dynamic, 1>>
 divide_columns(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
                const std::vector<T_v> &vec) {
-  size_t N = x.size();
-  size_t D = x[0].size();
+  const size_t N = x.size();
+  const size_t D = x[0].size();
   check_size_match("divide_columns", "x dimension", D, "vector", vec.size());
+  Eigen::Map<const Eigen::Array<T_v, Eigen::Dynamic, 1>> v_vec(&vec[0],
+                                                               vec.size());
 
   std::vector<Eigen::Matrix<typename return_type<T_x, T_v, double>::type,
                             Eigen::Dynamic, 1>>
@@ -38,10 +39,8 @@ divide_columns(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
   for (size_t n = 0; n < N; ++n) {
     out[n].resize(D);
     check_size_match("divide_columns", "x dimension", x[n].size(), "vector",
-                     vec.size());
-    for (size_t d = 0; d < D; ++d) {
-      out[n][d] = divide(x[n][d], vec[d]);
-    }
+                     v_vec.size());
+    out[n] = x[n].array() / v_vec.array();
   }
   return out;
 }

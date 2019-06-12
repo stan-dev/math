@@ -15,15 +15,13 @@ namespace math {
  * <code>LDLT_factor</code> is invalid if it was constructed from
  * a matrix that is not positive definite.  The check is that the
  * <code>success()</code> method returns <code>true</code>.
- *
- * @tparam T type of scalar
- * @tparam R rows of the matrix
- * @tparam C columns of the matrix
- * @param[in] function function name for error messages
- * @param[in] name variable name for error messages
- * @param[in] A LDLT factor to check for validity
- * @throws <code>std::domain_error</code> if the LDLT factor is
- *   invalid.
+ * @tparam T Type of scalar
+ * @tparam R Rows of the matrix
+ * @tparam C Columns of the matrix
+ * @param[in] function Function name for error messages
+ * @param[in] name Variable name for error messages
+ * @param[in] A The LDLT factor to check for validity
+ * @throws <code>std::domain_error</code> if the LDLT factor is invalid
  */
 template <typename T, int R, int C>
 inline void check_ldlt_factor(const char* function, const char* name,

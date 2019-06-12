@@ -104,23 +104,23 @@ TEST(AgradFwdMatrixDistance, special_values_fd) {
 
   v1 << 0;
   v2 << std::numeric_limits<double>::quiet_NaN();
-  EXPECT_TRUE(boost::math::isnan(stan::math::distance(v1, v2)));
-  EXPECT_TRUE(boost::math::isnan(stan::math::distance(v2, v1)));
+  EXPECT_TRUE(stan::math::is_nan(stan::math::distance(v1, v2)));
+  EXPECT_TRUE(stan::math::is_nan(stan::math::distance(v2, v1)));
 
   v1 << 0;
   v2 << std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(boost::math::isinf(stan::math::distance(v1, v2)));
-  EXPECT_TRUE(boost::math::isinf(stan::math::distance(v2, v1)));
+  EXPECT_TRUE(stan::math::is_inf(stan::math::distance(v1, v2)));
+  EXPECT_TRUE(stan::math::is_inf(stan::math::distance(v2, v1)));
 
   v1 << std::numeric_limits<double>::infinity();
   v2 << std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(boost::math::isnan(stan::math::distance(v1, v2)));
-  EXPECT_TRUE(boost::math::isnan(stan::math::distance(v2, v1)));
+  EXPECT_TRUE(stan::math::is_nan(stan::math::distance(v1, v2)));
+  EXPECT_TRUE(stan::math::is_nan(stan::math::distance(v2, v1)));
 
   v1 << -std::numeric_limits<double>::infinity();
   v2 << std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(boost::math::isinf(stan::math::distance(v1, v2)));
-  EXPECT_TRUE(boost::math::isinf(stan::math::distance(v2, v1)));
+  EXPECT_TRUE(stan::math::is_inf(stan::math::distance(v1, v2)));
+  EXPECT_TRUE(stan::math::is_inf(stan::math::distance(v2, v1)));
 }
 
 TEST(AgradFwdMatrixDistance, vector_ffd_vector_ffd) {
@@ -222,21 +222,21 @@ TEST(AgradFwdMatrixDistance, special_values_ffd) {
 
   v1 << 0;
   v2 << std::numeric_limits<double>::quiet_NaN();
-  EXPECT_TRUE(boost::math::isnan(stan::math::distance(v1, v2)));
-  EXPECT_TRUE(boost::math::isnan(stan::math::distance(v2, v1)));
+  EXPECT_TRUE(stan::math::is_nan(stan::math::distance(v1, v2)));
+  EXPECT_TRUE(stan::math::is_nan(stan::math::distance(v2, v1)));
 
   v1 << 0;
   v2 << std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(boost::math::isinf(stan::math::distance(v1, v2)));
-  EXPECT_TRUE(boost::math::isinf(stan::math::distance(v2, v1)));
+  EXPECT_TRUE(stan::math::is_inf(stan::math::distance(v1, v2)));
+  EXPECT_TRUE(stan::math::is_inf(stan::math::distance(v2, v1)));
 
   v1 << std::numeric_limits<double>::infinity();
   v2 << std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(boost::math::isnan(stan::math::distance(v1, v2)));
-  EXPECT_TRUE(boost::math::isnan(stan::math::distance(v2, v1)));
+  EXPECT_TRUE(stan::math::is_nan(stan::math::distance(v1, v2)));
+  EXPECT_TRUE(stan::math::is_nan(stan::math::distance(v2, v1)));
 
   v1 << -std::numeric_limits<double>::infinity();
   v2 << std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(boost::math::isinf(stan::math::distance(v1, v2)));
-  EXPECT_TRUE(boost::math::isinf(stan::math::distance(v2, v1)));
+  EXPECT_TRUE(stan::math::is_inf(stan::math::distance(v1, v2)));
+  EXPECT_TRUE(stan::math::is_inf(stan::math::distance(v2, v1)));
 }

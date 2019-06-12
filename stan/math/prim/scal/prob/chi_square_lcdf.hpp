@@ -10,16 +10,13 @@
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
+#include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <boost/random/chi_squared_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <limits>
 
@@ -70,8 +67,6 @@ typename return_type<T_y, T_dof>::type chi_square_lcdf(const T_y& y,
       return ops_partials.build(negative_infinity());
   }
 
-  using boost::math::tgamma;
-  using std::exp;
   using std::exp;
   using std::log;
   using std::pow;

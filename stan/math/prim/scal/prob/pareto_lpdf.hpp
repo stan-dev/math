@@ -6,19 +6,14 @@
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <boost/random/exponential_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -31,22 +26,19 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_lpdf(
   static const char* function = "pareto_lpdf";
   typedef typename stan::partials_return_type<T_y, T_scale, T_shape>::type
       T_partials_return;
-
   using std::log;
-
-  if (size_zero(y, y_min, alpha))
-    return 0.0;
-
-  T_partials_return logp(0.0);
-
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Scale parameter", y_min);
   check_positive_finite(function, "Shape parameter", alpha);
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          y_min, "Shape parameter", alpha);
+  if (size_zero(y, y_min, alpha))
+    return 0;
 
   if (!include_summand<propto, T_y, T_scale, T_shape>::value)
-    return 0.0;
+    return 0;
+
+  T_partials_return logp(0);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_scale> y_min_vec(y_min);

@@ -28,7 +28,7 @@ class FrechetTestRig : public VectorRealRNGTestRig {
   std::vector<double> generate_quantiles(double alpha, double sigma,
                                          double) const {
     std::vector<double> quantiles;
-    double K = boost::math::round(2 * std::pow(N_, 0.4));
+    double K = stan::math::round(2 * std::pow(N_, 0.4));
     boost::math::weibull_distribution<> dist(alpha, 1.0 / sigma);
 
     for (int i = 1; i < K; ++i) {

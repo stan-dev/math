@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_REV_MAT_FUN_SIMPLEX_CONSTRAIN_HPP
 #define STAN_MATH_REV_MAT_FUN_SIMPLEX_CONSTRAIN_HPP
 
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
 #include <stan/math/rev/mat/functor/adj_jac_apply.hpp>
@@ -11,7 +10,7 @@
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class simplex_constrain_op {
   int N_;
   double* diag_;  // diagonal of the Jacobian of the operator
@@ -79,7 +78,7 @@ class simplex_constrain_op {
     return std::make_tuple(adj_times_jac);
   }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  * Return the simplex corresponding to the specified free vector.
@@ -94,7 +93,7 @@ class simplex_constrain_op {
  */
 inline Eigen::Matrix<var, Eigen::Dynamic, 1> simplex_constrain(
     const Eigen::Matrix<var, Eigen::Dynamic, 1>& y) {
-  return adj_jac_apply<simplex_constrain_op>(y);
+  return adj_jac_apply<internal::simplex_constrain_op>(y);
 }
 
 }  // namespace math

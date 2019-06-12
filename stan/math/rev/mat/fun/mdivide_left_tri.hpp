@@ -2,17 +2,15 @@
 #define STAN_MATH_REV_MAT_FUN_MDIVIDE_LEFT_TRI_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
-#include <vector>
 
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 template <int TriView, int R1, int C1, int R2, int C2>
 class mdivide_left_tri_vv_vari : public vari {
  public:
@@ -305,7 +303,7 @@ class mdivide_left_tri_vd_vari : public vari {
     }
   }
 };
-}  // namespace
+}  // namespace internal
 
 template <int TriView, int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
@@ -319,8 +317,8 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  mdivide_left_tri_vv_vari<TriView, R1, C1, R2, C2> *baseVari
-      = new mdivide_left_tri_vv_vari<TriView, R1, C1, R2, C2>(A, b);
+  internal::mdivide_left_tri_vv_vari<TriView, R1, C1, R2, C2> *baseVari
+      = new internal::mdivide_left_tri_vv_vari<TriView, R1, C1, R2, C2>(A, b);
 
   size_t pos = 0;
   for (size_type j = 0; j < res.cols(); j++)
@@ -342,8 +340,8 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  mdivide_left_tri_dv_vari<TriView, R1, C1, R2, C2> *baseVari
-      = new mdivide_left_tri_dv_vari<TriView, R1, C1, R2, C2>(A, b);
+  internal::mdivide_left_tri_dv_vari<TriView, R1, C1, R2, C2> *baseVari
+      = new internal::mdivide_left_tri_dv_vari<TriView, R1, C1, R2, C2>(A, b);
 
   size_t pos = 0;
   for (size_type j = 0; j < res.cols(); j++)
@@ -365,8 +363,8 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  mdivide_left_tri_vd_vari<TriView, R1, C1, R2, C2> *baseVari
-      = new mdivide_left_tri_vd_vari<TriView, R1, C1, R2, C2>(A, b);
+  internal::mdivide_left_tri_vd_vari<TriView, R1, C1, R2, C2> *baseVari
+      = new internal::mdivide_left_tri_vd_vari<TriView, R1, C1, R2, C2>(A, b);
 
   size_t pos = 0;
   for (size_type j = 0; j < res.cols(); j++)

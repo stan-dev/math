@@ -2,15 +2,10 @@
 #define STAN_MATH_REV_MAT_FUN_MULTIPLY_LOWER_TRI_SELF_TRANSPOSE_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/rev/mat/fun/dot_product.hpp>
 #include <stan/math/rev/mat/fun/dot_self.hpp>
-#include <stan/math/rev/mat/fun/columns_dot_self.hpp>
-#include <boost/math/tools/promotion.hpp>
-#include <vector>
 
 namespace stan {
 namespace math {
@@ -40,9 +35,10 @@ inline matrix_v multiply_lower_tri_self_transpose(const matrix_v& L) {
       vs[pos++] = L(m, n).vi_;
     }
   for (int m = 0, mpos = 0; m < K; ++m, mpos += (J < m) ? J : m) {
-    LLt(m, m) = var(new dot_self_vari(vs + mpos, (J < (m + 1)) ? J : (m + 1)));
+    LLt(m, m) = var(
+        new internal::dot_self_vari(vs + mpos, (J < (m + 1)) ? J : (m + 1)));
     for (int n = 0, npos = 0; n < m; ++n, npos += (J < n) ? J : n) {
-      LLt(m, n) = LLt(n, m) = var(new dot_product_vari<var, var>(
+      LLt(m, n) = LLt(n, m) = var(new internal::dot_product_vari<var, var>(
           vs + mpos, vs + npos, (J < (n + 1)) ? J : (n + 1)));
     }
   }

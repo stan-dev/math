@@ -10,8 +10,6 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
@@ -32,8 +30,6 @@ template <bool propto, typename T_y>
 typename return_type<T_y>::type std_normal_lpdf(const T_y& y) {
   static const char* function = "std_normal_lpdf";
   typedef typename stan::partials_return_type<T_y>::type T_partials_return;
-
-  using stan::is_constant_struct;
 
   if (size_zero(y))
     return 0.0;

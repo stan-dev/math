@@ -125,7 +125,7 @@ TEST(ProbDistributionsMultiNormalCholesky,
   mu[1] << -5.0, 1.0, 2.0;
   mu[2] << 0.0, -1.0, 7.0;
   int N = 10000;
-  int K = boost::math::round(2 * std::pow(N, 0.4));
+  int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::normal_distribution<> dist(2.0, 3.0);
   boost::math::chi_squared mydist(K - 1);
 
@@ -171,7 +171,7 @@ TEST(ProbDistributionsMultiNormalCholesky,
   mu[1] << 2.0, -2.0, 11.0;
   mu[2] << 0.0, -1.0, 7.0;
   int N = 10000;
-  int K = boost::math::round(2 * std::pow(N, 0.4));
+  int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::normal_distribution<> dist(-2.0, 2.0);
   boost::math::chi_squared mydist(K - 1);
 
@@ -212,7 +212,7 @@ TEST(ProbDistributionsMultiNormalCholesky,
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 2.0, -2.0, 11.0;
   int N = 10000;
-  int K = boost::math::round(2 * std::pow(N, 0.4));
+  int K = stan::math::round(2 * std::pow(N, 0.4));
   boost::math::normal_distribution<> dist(11.0, 4.0);
   boost::math::chi_squared mydist(K - 1);
 
@@ -242,4 +242,53 @@ TEST(ProbDistributionsMultiNormalCholesky,
     chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
 
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
+}
+
+TEST(ProbDistributionsMultiNormalCholesky, WrongSize) {
+  vector<Matrix<double, Dynamic, 1> > y_3_3(3);
+  vector<Matrix<double, Dynamic, 1> > y_3_1(3);
+  vector<Matrix<double, Dynamic, 1> > y_3_2(3);
+  vector<Matrix<double, Dynamic, 1> > y_1_3(1);
+  vector<Matrix<double, Dynamic, 1> > y_2_3(2);
+  Matrix<double, Dynamic, 1> y_3(3);
+  Matrix<double, Dynamic, 1> y_2(2);
+  Matrix<double, Dynamic, 1> y_1(1);
+  y_3 << 2.0, -2.0, 11.0;
+  y_2 << 2.0, -2.0;
+  y_1 << 2.0;
+  y_3_3[0] = y_3;
+  y_3_3[1] = y_3;
+  y_3_3[2] = y_3;
+  y_3_1[0] = y_1;
+  y_3_1[1] = y_1;
+  y_3_1[2] = y_1;
+  y_3_2[0] = y_2;
+  y_3_2[1] = y_2;
+  y_3_2[2] = y_2;
+  y_1_3[0] = y_3;
+  y_2_3[0] = y_3;
+  y_2_3[1] = y_3;
+
+  vector<Matrix<double, Dynamic, 1> > mu_3_3(3);
+  Matrix<double, Dynamic, 1> mu_3(3);
+  mu_3 << 2.0, -2.0, 11.0;
+  mu_3_3[0] = mu_3;
+  mu_3_3[1] = mu_3;
+  mu_3_3[2] = mu_3;
+
+  Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
+  Sigma << 10.0, -3.0, 0.0, -3.0, 5.0, 0.0, 0.0, 0.0, 5.0;
+  Matrix<double, Dynamic, Dynamic> L = Sigma.llt().matrixL();
+
+  EXPECT_NO_THROW(stan::math::multi_normal_cholesky_lpdf(y_3_3, mu_3_3, L));
+  EXPECT_NO_THROW(stan::math::multi_normal_cholesky_lpdf(y_3, mu_3_3, L));
+
+  EXPECT_THROW(stan::math::multi_normal_cholesky_lpdf(y_1_3, mu_3_3, L),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::multi_normal_cholesky_lpdf(y_2_3, mu_3_3, L),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::multi_normal_cholesky_lpdf(y_3_1, mu_3_3, L),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::multi_normal_cholesky_lpdf(y_3_2, mu_3_3, L),
+               std::invalid_argument);
 }

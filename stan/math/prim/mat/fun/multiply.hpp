@@ -4,8 +4,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
-#include <boost/type_traits/is_arithmetic.hpp>
-#include <boost/utility/enable_if.hpp>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -19,8 +18,8 @@ namespace math {
  * @return Product of matrix and scalar.
  */
 template <int R, int C, typename T>
-inline typename boost::enable_if_c<boost::is_arithmetic<T>::value,
-                                   Eigen::Matrix<double, R, C> >::type
+inline typename std::enable_if<std::is_arithmetic<T>::value,
+                               Eigen::Matrix<double, R, C> >::type
 multiply(const Eigen::Matrix<double, R, C>& m, T c) {
   return c * m;
 }
@@ -34,8 +33,8 @@ multiply(const Eigen::Matrix<double, R, C>& m, T c) {
  * @return Product of scalar and matrix.
  */
 template <int R, int C, typename T>
-inline typename boost::enable_if_c<boost::is_arithmetic<T>::value,
-                                   Eigen::Matrix<double, R, C> >::type
+inline typename std::enable_if<std::is_arithmetic<T>::value,
+                               Eigen::Matrix<double, R, C> >::type
 multiply(T c, const Eigen::Matrix<double, R, C>& m) {
   return c * m;
 }

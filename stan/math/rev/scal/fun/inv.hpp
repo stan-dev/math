@@ -3,18 +3,17 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/inv.hpp>
-#include <valarray>
 
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class inv_vari : public op_v_vari {
  public:
   explicit inv_vari(vari* avi) : op_v_vari(inv(avi->val_), avi) {}
   void chain() { avi_->adj_ -= adj_ / (avi_->val_ * avi_->val_); }
 };
-}  // namespace
+}  // namespace internal
 
 /**
  *
@@ -35,7 +34,7 @@ class inv_vari : public op_v_vari {
    \f]
  *
  */
-inline var inv(const var& a) { return var(new inv_vari(a.vi_)); }
+inline var inv(const var& a) { return var(new internal::inv_vari(a.vi_)); }
 
 }  // namespace math
 }  // namespace stan

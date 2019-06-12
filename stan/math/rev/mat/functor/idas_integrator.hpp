@@ -8,7 +8,6 @@
 #include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/rev/mat/functor/idas_forward_system.hpp>
 #include <idas/idas.h>
-#include <idas/idas_direct.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
 #include <nvector/nvector_serial.h>
@@ -141,7 +140,7 @@ class idas_integrator {
       CHECK_IDAS_CALL(IDASetUserData(mem, dae.to_user_data()));
 
       CHECK_IDAS_CALL(IDAInit(mem, dae.residual(), t0, yy, yp));
-      CHECK_IDAS_CALL(IDADlsSetLinearSolver(mem, LS, A));
+      CHECK_IDAS_CALL(IDASetLinearSolver(mem, LS, A));
       CHECK_IDAS_CALL(IDASStolerances(mem, rtol_, atol_));
       CHECK_IDAS_CALL(IDASetMaxNumSteps(mem, max_num_steps_));
 

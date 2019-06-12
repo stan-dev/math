@@ -29,7 +29,8 @@ namespace math {
  * @return lower bound constrained value correspdonding to inputs
  */
 template <typename T, typename L>
-inline T lb_constrain(const T& x, const L& lb) {
+inline typename boost::math::tools::promote_args<T, L>::type lb_constrain(
+    const T& x, const L& lb) {
   using std::exp;
   if (lb == -std::numeric_limits<double>::infinity())
     return identity_constrain(x);

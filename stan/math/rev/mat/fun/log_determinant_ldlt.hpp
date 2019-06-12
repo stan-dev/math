@@ -8,7 +8,7 @@
 
 namespace stan {
 namespace math {
-namespace {
+namespace internal {
 
 /**
  * Returns the log det of the matrix whose LDLT factorization is given
@@ -41,11 +41,11 @@ class log_det_ldlt_vari : public vari {
 
   const LDLT_alloc<R, C> *alloc_ldlt_;
 };
-}  // namespace
+}  // namespace internal
 
 template <int R, int C>
 var log_determinant_ldlt(LDLT_factor<var, R, C> &A) {
-  return var(new log_det_ldlt_vari<R, C>(A));
+  return var(new internal::log_det_ldlt_vari<R, C>(A));
 }
 
 }  // namespace math

@@ -4,7 +4,7 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdErf, Fvar) {
-  using boost::math::erf;
+  using stan::math::erf;
   using stan::math::fvar;
   using std::exp;
   using std::sqrt;
@@ -23,7 +23,7 @@ TEST(AgradFwdErf, Fvar) {
 }
 
 TEST(AgradFwdErf, FvarFvarDouble) {
-  using boost::math::erf;
+  using stan::math::erf;
   using stan::math::fvar;
   using std::exp;
   using std::sqrt;

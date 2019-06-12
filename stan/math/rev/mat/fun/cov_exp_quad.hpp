@@ -3,16 +3,12 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
+#include <stan/math/rev/mat/fun/gp_exp_quad_cov.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
-#include <boost/math/tools/promotion.hpp>
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits.hpp>
+#include <type_traits>
 #include <vector>
 #include <cmath>
 
@@ -152,8 +148,8 @@ class cov_exp_quad_vari<T_x, double, T_l> : public vari {
  * @deprecated use <code>gp_exp_quad_cov_vari</code>
  */
 template <typename T_x>
-inline typename boost::enable_if_c<
-    boost::is_same<typename scalar_type<T_x>::type, double>::value,
+inline typename std::enable_if<
+    std::is_same<typename scalar_type<T_x>::type, double>::value,
     Eigen::Matrix<var, -1, -1> >::type
 cov_exp_quad(const std::vector<T_x>& x, const var& sigma, const var& l) {
   return gp_exp_quad_cov(x, sigma, l);
@@ -163,8 +159,8 @@ cov_exp_quad(const std::vector<T_x>& x, const var& sigma, const var& l) {
  * @deprecated use <code>gp_exp_quad_cov_vari</code>
  */
 template <typename T_x>
-inline typename boost::enable_if_c<
-    boost::is_same<typename scalar_type<T_x>::type, double>::value,
+inline typename std::enable_if<
+    std::is_same<typename scalar_type<T_x>::type, double>::value,
     Eigen::Matrix<var, -1, -1> >::type
 cov_exp_quad(const std::vector<T_x>& x, double sigma, const var& l) {
   return gp_exp_quad_cov(x, sigma, l);

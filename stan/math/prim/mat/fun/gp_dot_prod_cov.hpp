@@ -9,7 +9,6 @@
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/meta/is_constant.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <vector>
 
@@ -42,9 +41,6 @@ Eigen::Matrix<typename return_type<T_x, T_sigma>::type, Eigen::Dynamic,
               Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
                 const T_sigma &sigma) {
-  using stan::math::dot_product;
-  using stan::math::square;
-
   check_not_nan("gp_dot_prod_cov", "sigma", sigma);
   check_nonnegative("gp_dot_prod_cov", "sigma", sigma);
   check_finite("gp_dot_prod_cov", "sigma", sigma);
@@ -100,9 +96,6 @@ template <typename T_x, typename T_sigma>
 Eigen::Matrix<typename return_type<T_x, T_sigma>::type, Eigen::Dynamic,
               Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
-  using stan::math::dot_product;
-  using stan::math::square;
-
   check_not_nan("gp_dot_prod_cov", "sigma", sigma);
   check_nonnegative("gp_dot_prod_cov", "sigma", sigma);
   check_finite("gp_dot_prod_cov", "sigma", sigma);
@@ -158,9 +151,6 @@ Eigen::Matrix<typename return_type<T_x1, T_x2, T_sigma>::type, Eigen::Dynamic,
 gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
                 const std::vector<Eigen::Matrix<T_x2, Eigen::Dynamic, 1>> &x2,
                 const T_sigma &sigma) {
-  using stan::math::dot_product;
-  using stan::math::square;
-
   check_not_nan("gp_dot_prod_cov", "sigma", sigma);
   check_nonnegative("gp_dot_prod_cov", "sigma", sigma);
   check_finite("gp_dot_prod_cov", "sigma", sigma);
@@ -219,8 +209,6 @@ Eigen::Matrix<typename return_type<T_x1, T_x2, T_sigma>::type, Eigen::Dynamic,
               Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 const T_sigma &sigma) {
-  using stan::math::square;
-
   check_not_nan("gp_dot_prod_cov", "sigma", sigma);
   check_nonnegative("gp_dot_prod_cov", "sigma", sigma);
   check_finite("gp_dot_prod_cov", "sigma", sigma);

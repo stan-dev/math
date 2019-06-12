@@ -25,7 +25,7 @@ class UniformTestRig : public VectorRealRNGTestRig {
   std::vector<double> generate_quantiles(double alpha, double beta,
                                          double unused) const {
     std::vector<double> quantiles;
-    double K = boost::math::round(2 * std::pow(N_, 0.4));
+    double K = stan::math::round(2 * std::pow(N_, 0.4));
     boost::math::uniform_distribution<> dist(alpha, beta);
 
     for (int i = 1; i < K; ++i) {

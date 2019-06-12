@@ -2,8 +2,8 @@
 #define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_MATCH_RETURN_T_HPP
 
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <gtest/gtest.h>
+#include <type_traits>
 
 namespace stan {
 
@@ -21,7 +21,7 @@ template <typename F, typename T_result_expected, typename T_arg>
 void expect_match_return_t() {
   using stan::math::apply_scalar_unary;
   typedef typename apply_scalar_unary<F, T_arg>::return_t result_t;
-  EXPECT_TRUE((boost::is_same<T_result_expected, result_t>::value));
+  EXPECT_TRUE((std::is_same<T_result_expected, result_t>::value));
 }
 
 }  // namespace test

@@ -6,7 +6,6 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/fwd/scal/fun/log.hpp>
 #include <stan/math/fwd/scal/fun/exp.hpp>
-#include <vector>
 
 namespace stan {
 namespace math {

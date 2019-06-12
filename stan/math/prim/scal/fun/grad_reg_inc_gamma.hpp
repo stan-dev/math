@@ -7,7 +7,6 @@
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
 #include <cmath>
 #include <limits>
 
@@ -23,7 +22,7 @@ namespace math {
  *
  * @param a   shape parameter, a > 0
  * @param z   location z >= 0
- * @param g   boost::math::tgamma(a) (precomputed value)
+ * @param g   stan::math::tgamma(a) (precomputed value)
  * @param dig boost::math::digamma(a) (precomputed value)
  * @param precision required precision; applies to series expansion only
  * @param max_steps number of steps to take.

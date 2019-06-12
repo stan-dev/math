@@ -1,9 +1,6 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_LOG_MIX_HPP
 #define STAN_MATH_REV_SCAL_FUN_LOG_MIX_HPP
 
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/log_mix.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
@@ -80,7 +77,6 @@ inline void log_mix_partial_helper(
 template <typename T_theta, typename T_lambda1, typename T_lambda2>
 inline typename return_type<T_theta, T_lambda1, T_lambda2>::type log_mix(
     const T_theta& theta, const T_lambda1& lambda1, const T_lambda2& lambda2) {
-  using stan::is_constant_struct;
   using std::log;
 
   operands_and_partials<T_theta, T_lambda1, T_lambda2> ops_partials(

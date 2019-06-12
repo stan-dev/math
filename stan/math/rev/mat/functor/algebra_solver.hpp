@@ -6,10 +6,6 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_consistent_size.hpp>
-#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <iostream>
 #include <string>
@@ -79,10 +75,12 @@ struct algebra_solver_vari : public vari {
 /**
  * Return the solution to the specified system of algebraic
  * equations given an initial guess, and parameters and data,
- * which get passed into the algebraic system. The user can
- * also specify the relative tolerance (xtol in Eigen's code),
- * the function tolerance, and the maximum number of steps
- * (maxfev in Eigen's code).
+ * which get passed into the algebraic system.
+ * Use Powell's dogleg solver.
+ *
+ * The user can also specify the relative tolerance 
+ * (xtol in Eigen's code), the function tolerance, 
+ * and the maximum number of steps (maxfev in Eigen's code).
  *
  * Throw an exception if the norm of f(x), where f is the
  * output of the algebraic system and x the proposed solution,
@@ -127,27 +125,8 @@ Eigen::VectorXd algebra_solver(
     const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
     double relative_tolerance = 1e-10, double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
-  check_nonzero_size("algebra_solver", "initial guess", x);
-  for (int i = 0; i < x.size(); i++)
-    check_finite("algebra_solver", "initial guess", x(i));
-  for (int i = 0; i < y.size(); i++)
-    check_finite("algebra_solver", "parameter vector", y(i));
-  for (double i : dat)
-    check_finite("algebra_solver", "continuous data", i);
-  for (int x : dat_int)
-    check_finite("algebra_solver", "integer data", x);
-
-  if (relative_tolerance < 0)
-    invalid_argument("algebra_solver", "relative_tolerance,",
-                     relative_tolerance, "",
-                     ", must be greater than or equal to 0");
-  if (function_tolerance < 0)
-    invalid_argument("algebra_solver", "function_tolerance,",
-                     function_tolerance, "",
-                     ", must be greater than or equal to 0");
-  if (max_num_steps <= 0)
-    invalid_argument("algebra_solver", "max_num_steps,", max_num_steps, "",
-                     ", must be greater than 0");
+  algebra_solver_check(x, y, dat, dat_int, 
+                       relative_tolerance, function_tolerance, max_num_steps);
 
   // Create functor for algebraic system
   typedef system_functor<F, double, double, true> Fs;
@@ -192,10 +171,12 @@ Eigen::VectorXd algebra_solver(
 /**
  * Return the solution to the specified system of algebraic
  * equations given an initial guess, and parameters and data,
- * which get passed into the algebraic system. The user can
- * also specify the relative tolerance (xtol in Eigen's code),
- * the function tolerance, and the maximum number of steps
- * (maxfev in Eigen's code).
+ * which get passed into the algebraic system.
+ * Use Powell's dogleg solver.
+ *
+ * The user can also specify the relative tolerance 
+ * (xtol in Eigen's code), the function tolerance, 
+ * and the maximum number of steps (maxfev in Eigen's code).
  *
  * Overload the previous definition to handle the case where y
  * is a vector of parameters (var). The overload calls the

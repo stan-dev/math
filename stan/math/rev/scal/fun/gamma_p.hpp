@@ -3,24 +3,20 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_lower_inc_gamma.hpp>
-#include <valarray>
 #include <limits>
 
 namespace stan {
 namespace math {
 
-namespace {
+namespace internal {
 class gamma_p_vv_vari : public op_vv_vari {
  public:
   gamma_p_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(gamma_p(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
-    using boost::math::lgamma;
     using std::exp;
     using std::fabs;
     using std::log;
@@ -96,18 +92,18 @@ class gamma_p_dv_vari : public op_dv_vari {
                              - lgamma(ad_));
   }
 };
-}  // namespace
+}  // namespace internal
 
 inline var gamma_p(const var& a, const var& b) {
-  return var(new gamma_p_vv_vari(a.vi_, b.vi_));
+  return var(new internal::gamma_p_vv_vari(a.vi_, b.vi_));
 }
 
 inline var gamma_p(const var& a, double b) {
-  return var(new gamma_p_vd_vari(a.vi_, b));
+  return var(new internal::gamma_p_vd_vari(a.vi_, b));
 }
 
 inline var gamma_p(double a, const var& b) {
-  return var(new gamma_p_dv_vari(a, b.vi_));
+  return var(new internal::gamma_p_dv_vari(a, b.vi_));
 }
 
 }  // namespace math
