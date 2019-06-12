@@ -1,14 +1,14 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/functor/algebra_solver.hpp>
 #include <stan/math/rev/mat/functor/algebra_solver_newton.hpp>
+#include <stan/math/rev/mat/fun/mdivide_left.hpp>
+#include <stan/math/rev/mat/fun/mdivide_left.hpp>
+#include <stan/math/rev/mat.hpp>  // CHECK -- do I need to include this?
 #include <stan/math/prim/mat/fun/head.hpp>
 #include <stan/math/prim/mat/fun/tail.hpp>
-#include <stan/math/rev/mat/fun/mdivide_left.hpp>
 #include <stan/math/prim/mat/fun/elt_multiply.hpp>
-#include <stan/math/rev/mat/fun/mdivide_left.hpp>
-// #include <stan/math/rev/mat/fun/multiply.hpp>  // wtf?
-
-#include <stan/math/rev/mat.hpp>
+#include <stan/math/laplace/lgp_dense_system.hpp>
+#include <stan/math/laplace/lgp_dense_newton_solver.hpp>
 
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/functor/util_algebra_solver.hpp>
@@ -19,8 +19,6 @@
 #include <fstream>
 #include <vector>
 #include <random>
-
-/* THIS TEST USES NEWTON's SOLVER, NOT POWELL's METHOD */
 
 /*
 TEST(MathMatrix, performance_test)  {
@@ -221,10 +219,9 @@ TEST(MathMatrix, optimization_inla) {
   Eigen::VectorXd sums(dim_theta);
   sums << 3, 10;
 
-
-  // APPROACH 1: compute the covariance function inside the function
-  // Test evaluation of gradient of the log density.
-
+  // Test evaluation of gradient of the log density, when using
+  // inla_functor.
+  // TO DO: do the same test on inla_functor2
   inla_functor system;
   vector<double> dat(dim_theta * 2);
   for (int i = 0; i < dim_theta; i++) dat[i] = n_samples(i);
@@ -234,15 +231,16 @@ TEST(MathMatrix, optimization_inla) {
   EXPECT_FLOAT_EQ(0.7644863, system(theta, phi, dat, dat_int)(0));
   EXPECT_FLOAT_EQ(-9.3293567, system(theta, phi, dat, dat_int)(1));
 
-  // Compute benchmark solution with Powell's method.
+  // Compute the solution and the sensitivities using Powell's
+  // method and use these results as a benchmark.
   Eigen::MatrixXd solver_gradient(2, 2);
   Eigen::VectorXd powell_solution;
   Eigen::VectorXd theta_0(dim_theta);  // initial guess
   theta_0 << 0, 0;
 
   for (int k = 0; k < dim_theta; k++) {
-    var sigma = 0.5;  // 1;
-    var corr = 0.9;  // 0.5;
+    var sigma = 0.5;
+    var corr = 0.9;
     Eigen::Matrix<var, Eigen::Dynamic, 1> phi_v(2);
     phi_v << sigma, corr;
 
@@ -256,10 +254,12 @@ TEST(MathMatrix, optimization_inla) {
     solver_gradient(k, 0) = g[0];
     solver_gradient(k, 1) = g[1];
   }
-
+  
+  ////////////////////////////////////////////////////////////////////////
+  // TEST: use Newton's solver and the inla_functor.
   for (int k = 0; k < dim_theta; k++) {
-    var sigma = 0.5;  // 1;
-    var corr = 0.9;  // 0.5;
+    var sigma = 0.5;
+    var corr = 0.9;
     Eigen::Matrix<var, Eigen::Dynamic, 1> phi_v(2);
     phi_v << sigma, corr;
 
@@ -276,7 +276,11 @@ TEST(MathMatrix, optimization_inla) {
     EXPECT_FLOAT_EQ(solver_gradient(k, 1), g[1]);
   }
 
-  // APPROACH 2: pre-compute the precision matrix (inverse covariance matrix)
+  ////////////////////////////////////////////////////////////////////////
+  // TEST: use the newton solver, this time with inla_functor2.
+  // In this configuration, the precision matrix (inverse covariance
+  // matrix) is pre-computed, to avoid doing an mdivide operation
+  // inside the algebraic operation.
   inla_functor2 system2;
   int triangle_size = 0.5 * dim_theta * (dim_theta + 1);
 
@@ -298,6 +302,33 @@ TEST(MathMatrix, optimization_inla) {
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
       = algebra_solver_newton(inla_functor2(), theta_0, parm, dat, dat_int);
+
+    AVEC parameters = createAVEC(phi_v(0), phi_v(1));
+    VEC g;
+    theta(k).grad(parameters, g);
+    EXPECT_FLOAT_EQ(powell_solution(0), theta(0).val());
+    EXPECT_FLOAT_EQ(powell_solution(1), theta(1).val());
+    EXPECT_FLOAT_EQ(solver_gradient(k, 0), g[0]);
+    EXPECT_FLOAT_EQ(solver_gradient(k, 1), g[1]);
+  }
+
+  ////////////////////////////////////////////////////////////////////////
+  // TEST: Use lgp_system function.
+  double tol = 1e-6;
+  int max_num_steps = 1e+3;
+  bool line_search = false;
+
+  for (int k = 0; k < dim_theta; k++) {
+    var sigma = 0.5;
+    var corr = 0.9;
+    Eigen::Matrix<var, Eigen::Dynamic, 1> phi_v(2);
+    phi_v << sigma, corr;
+
+    stan::math::lgp_dense_system<var> system_v(phi_v, n_samples, sums,
+                                               true);
+
+    Eigen::Matrix<var, Eigen::Dynamic, 1>
+      theta = lgp_dense_newton_solver(theta_0, system_v);
 
     AVEC parameters = createAVEC(phi_v(0), phi_v(1));
     VEC g;
@@ -384,7 +415,6 @@ TEST(MathMatrix, performance_test_inla)  {
 
     // solve algebraic equation
     VectorXd theta_0 = VectorXd::Zero(dim_theta);
-    theta_0(1) = 5;
     Matrix<var, Dynamic, 1> parm = phi;
 
     vector<double> dat(dim_theta * 2);
@@ -434,7 +464,7 @@ TEST(MathMatrix, performance_test_inla)  {
   }
 }  */
 
-
+/*
 TEST(MathMatrix, performance_test_inla2)  {
   // simple test for INLA problem with Poisson GLM.
   // This time precompute the precision matrix.
@@ -530,7 +560,6 @@ TEST(MathMatrix, performance_test_inla2)  {
 
     end = std::chrono::system_clock::now();
     elapsed_seconds_total = end - start;
-    elapsed_seconds_jacobian = end - start_jacobian;
 
     // compute Jacobian. Use a dummy variable to create the right
     // initial cotangent vector.
@@ -556,6 +585,115 @@ TEST(MathMatrix, performance_test_inla2)  {
     for (size_t i = 0; i < g.size(); i++) std::cout << g[i] << " ";
     std::cout << std::endl << std::endl;
   }
+} */
+
+TEST(MathMatrix, performance_test_inla3) {
+  // Use lgp_dense_newton_solver, which offers analytical
+  // derivatives (check!)
+  using stan::math::var;
+  using stan::math::append_row;
+  using std::vector;
+  using Eigen::VectorXd;
+  using Eigen::MatrixXd;
+  using Eigen::Matrix;
+  using Eigen::Dynamic;
+  using stan::math::head;
+  using stan::math::tail;
+
+  int dim_phi = 2;
+  Eigen::VectorXd phi(dim_phi);
+  phi << 0.5, 0.9;
+  bool space_matters = true;
+  
+  int n_dimensions = 5;
+  Eigen::VectorXd dimensions(n_dimensions);
+  dimensions << 10, 20, 50, 100, 500;
+  
+  // tuning parameter for the solver
+  double tol = 1e-6;
+  int max_num_steps = 1e+3;
+
+  std::string working_directory = "test/unit/math/rev/mat/functor/performance/";
+
+  // variables to meausre time
+  auto start = std::chrono::system_clock::now();
+  auto start_jacobian = std::chrono::system_clock::now();
+  auto end = std::chrono::system_clock::now();
+  std::chrono::duration<double> elapsed_seconds_total;
+  std::chrono::duration<double> elapsed_seconds_jacobian;
+
+  for (int k = 0; k < n_dimensions; k++) {
+    std::cout << "Dimension: " << dimensions(k) << std::endl;
+
+    int dim_theta = dimensions(k);
+    Eigen::VectorXd n_samples(dim_theta);
+    Eigen::VectorXd sums(dim_theta);
+
+    // read data from csv file to work out n_samples and sums.
+    std::ifstream input_data;
+    std::string dim_theta_string = std::to_string(dim_theta);
+    std::string file_m = working_directory + "data_cpp/m_" +
+      dim_theta_string + ".csv";
+    std::string file_sums = working_directory + "data_cpp/sums_" +
+      dim_theta_string + ".csv";
+
+    input_data.open(file_m);
+    double buffer = 0.0;
+    for (int n = 0; n < dim_theta; ++n) {
+      input_data >> buffer;
+      n_samples(n) = buffer;
+    }
+    input_data.close();
+
+    input_data.open(file_sums);
+    buffer = 0.0;
+    for (int n = 0; n < dim_theta; ++n) {
+      input_data >> buffer;
+      sums(n) = buffer;
+    }
+    input_data.close();
+
+    // solve algebraic equation
+    VectorXd theta_0 = VectorXd::Zero(dim_theta);
+    Matrix<var, Dynamic, 1> parm = phi;
+
+    vector<double> dat(dim_theta * 2);
+    for (int i = 0; i < dim_theta; i++) dat[i] = n_samples(i);
+    for (int i = 0; i < dim_theta; i++) dat[dim_theta + i] = sums(i);
+    vector<int> dat_int;
+
+    start = std::chrono::system_clock::now();
+
+    stan::math::lgp_dense_system<var> system_v(parm, n_samples, sums,
+                                               space_matters = true);
+    Eigen::Matrix<var, Eigen::Dynamic, 1>
+      theta = lgp_dense_newton_solver(theta_0, system_v);
+
+    end = std::chrono::system_clock::now();
+    elapsed_seconds_total = end - start;
+
+    // compute Jacobian. Use a dummy variable to create the right
+    // initial cotangent vector.
+    var dummy_cot = sum(theta);
+    VEC g;
+    AVEC parm_vec = createAVEC(parm(0), parm(1));
+
+    start_jacobian = std::chrono::system_clock::now();
+    dummy_cot.grad(parm_vec, g);
+    end = std::chrono::system_clock::now();
+
+    elapsed_seconds_total = end - start;
+    elapsed_seconds_jacobian = end - start_jacobian; 
+    std::cout << "Total time: " << elapsed_seconds_total.count() 
+              << std::endl
+              << "Jacobian time: "
+              << elapsed_seconds_jacobian.count()
+              << std::endl;
+
+    std::cout << "theta: " << std::endl;
+    for (int i = 0; i < theta.size(); i++) std::cout << theta(i).val() << " ";
+    std::cout << std::endl;
+    for (size_t i = 0; i < g.size(); i++) std::cout << g[i] << " ";
+    std::cout << std::endl << std::endl;
+  }
 }
-
-

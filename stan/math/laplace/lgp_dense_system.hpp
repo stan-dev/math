@@ -24,8 +24,6 @@ namespace math {
 //
 // FIX ME - decouple phi and rho in the global parameter to make
 // autodiff more efficient.
-// FIX ME - make the covariance structure more flexible, by
-// allowing for spatial structure.
 
 /**
 * A function to constructs the covariance matrix,
@@ -35,8 +33,8 @@ namespace math {
 */
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-covariance (Eigen::Matrix<T, Eigen::Dynamic, 1> phi, int M,
-            bool space_matters = false) {
+lgp_covariance (Eigen::Matrix<T, Eigen::Dynamic, 1> phi, int M,
+                bool space_matters = false) {
   using std::pow;
   T sigma = phi[0];
   T rho = phi[1];
@@ -86,7 +84,7 @@ struct lgp_dense_system {
     : phi_(phi), n_samples_(n_samples), sums_(sums),
       space_matters_(space_matters) {
     int M = n_samples.size();
-    Sigma_ = covariance(phi, M, space_matters_);
+    Sigma_ = lgp_covariance(phi, M, space_matters_);
   }
 
   /**
@@ -156,7 +154,7 @@ struct lgp_dense_system {
     inline Eigen::Matrix<T, Eigen::Dynamic, 1>
     operator ()(const Eigen::Matrix<T, Eigen::Dynamic, 1>& phi) const {
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-      Sigma = covariance(phi, M_, space_);
+      Sigma = lgp_covariance(phi, M_, space_);
 
       return - mdivide_left(Sigma, theta_);
     }
