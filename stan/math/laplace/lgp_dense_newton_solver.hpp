@@ -85,6 +85,7 @@ namespace math {
   template<typename T>  // template for variables
   Eigen::Matrix<T, Eigen::Dynamic, 1> lgp_dense_newton_solver(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta_0,  // initial guess
+    const Eigen::VectorXd& phi,
     const lgp_dense_system<double>& system,
     double tol = 1e-3,
     long int max_num_steps = 100,
@@ -166,28 +167,30 @@ namespace math {
    */
   template <typename T1, typename T2>
   Eigen::Matrix<T2, Eigen::Dynamic, 1> lgp_dense_newton_solver(
-    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_0,  // initial guess
-    const lgp_dense_system<T2>& system,
+    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_0,
+    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& phi,
+    const lgp_dense_system<double>& system,
     double tol = 1e-6,
     long int max_num_steps = 100,  // NOLINT(runtime/int)
     bool line_search = false,
     bool print_iteration = false) {
 
-    lgp_dense_system<double> 
-      system_dbl(value_of(system.get_phi()),
-                 system.get_n_samples(), 
-                 system.get_sums(),
-                 system.get_space_matters());
+    // lgp_dense_system<double> 
+    //   system_dbl(value_of(system.get_phi()),
+    //              system.get_n_samples(), 
+    //              system.get_sums(),
+    //              system.get_space_matters());
 
     Eigen::VectorXd theta_dbl 
-      = lgp_dense_newton_solver(value_of(theta_0), system_dbl, tol,
+      = lgp_dense_newton_solver(value_of(theta_0), value_of(phi), 
+                                system, tol,
                                 max_num_steps, line_search,
                                 print_iteration);
 
     // construct vari
     lgp_dense_newton_solver_vari<T2>* vi0
-      = new lgp_dense_newton_solver_vari<T2>(system.get_phi(), 
-                                             system_dbl, theta_dbl);
+      = new lgp_dense_newton_solver_vari<T2>(phi, 
+                                             system, theta_dbl);
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta(theta_dbl.size());
     theta(0) = var(vi0->theta_[0]);
@@ -215,17 +218,18 @@ namespace math {
     int print_iteration = 0,
     int space_matters = 0) {
 
-    return lgp_dense_newton_solver(theta_0,
-                                   lgp_dense_system<T2>(phi,
-                                                        to_vector(n_samples),
-                                                        to_vector(sums),
-                                                        space_matters),
+    return lgp_dense_newton_solver(theta_0, phi,
+                                   lgp_dense_system<double>(value_of(phi),
+                                                            to_vector(n_samples),
+                                                            to_vector(sums),
+                                                            space_matters),
                                    tol,
                                    max_num_steps,
                                    is_line_search,
                                    print_iteration);
   }
 
+  /////////////////////////////////////////////////////////////////////////////
   /**
    * Newton solver for computer experiment. Returns the solution
    * and returns by reference the number of iterations required to

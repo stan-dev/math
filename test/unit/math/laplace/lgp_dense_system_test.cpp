@@ -122,28 +122,27 @@ TEST(laplace, lgp_newton_solver) {
     solver_gradient(k, 0) = g[0];
     solver_gradient(k, 1) = g[1];
   }
-  
+
   // Test Newton solver with double arguments.
   Eigen::VectorXd phi_dbl(2);
   phi_dbl << 1, 0.5;
   lgp_dense_system<double> system(phi_dbl, n_samples, sums);
-  
-  Eigen::VectorXd theta_dbl = lgp_dense_newton_solver(theta_0, system);
-  
+
+  Eigen::VectorXd
+    theta_dbl = lgp_dense_newton_solver(theta_0, phi_dbl, system);
+
   EXPECT_FLOAT_EQ(powell_solution(0), theta_dbl(0));
   EXPECT_FLOAT_EQ(powell_solution(1), theta_dbl(1));
-  
+
   // Test Newton solver with double arguments, as well as optional
   // arguments: tolerance, max_num_steps and line search.
   double tol = 1e-3;
   int max_num_steps = 100;
   bool line_search = true;
-  theta_dbl = lgp_dense_newton_solver(theta_0, system,
+  theta_dbl = lgp_dense_newton_solver(theta_0, phi_dbl, system,
                                       tol, max_num_steps, line_search);
   EXPECT_FLOAT_EQ(powell_solution(0), theta_dbl(0));
   EXPECT_FLOAT_EQ(powell_solution(1), theta_dbl(1));
-
-  // std::cout << theta_dbl << std::endl;
 
   // Test lgp_dense_system computes the correct gradient
   Eigen::MatrixXd system_gradient = system.solver_gradient(powell_solution);
@@ -159,10 +158,10 @@ TEST(laplace, lgp_newton_solver) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> phi_v(2);
     phi_v << sigma, corr;
 
-    lgp_dense_system<var> system_v(phi_v, n_samples, sums);
+    lgp_dense_system<double> system_dbl(value_of(phi_v), n_samples, sums);
 
     Eigen::Matrix<var, Eigen::Dynamic, 1>
-      theta = lgp_dense_newton_solver(theta_0, system_v);
+      theta = lgp_dense_newton_solver(theta_0, phi_v, system_dbl);
 
     EXPECT_FLOAT_EQ(powell_solution(0), theta(0).val());
     EXPECT_FLOAT_EQ(powell_solution(1), theta(1).val());

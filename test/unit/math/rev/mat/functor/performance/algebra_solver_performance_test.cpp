@@ -3,7 +3,9 @@
 #include <stan/math/rev/mat/functor/algebra_solver_newton.hpp>
 #include <stan/math/rev/mat/fun/mdivide_left.hpp>
 #include <stan/math/rev/mat/fun/mdivide_left.hpp>
+// #include <stan/math/rev/mat/fun/multiply.hpp>
 #include <stan/math/rev/mat.hpp>  // CHECK -- do I need to include this?
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/head.hpp>
 #include <stan/math/prim/mat/fun/tail.hpp>
 #include <stan/math/prim/mat/fun/elt_multiply.hpp>
@@ -313,7 +315,7 @@ TEST(MathMatrix, optimization_inla) {
   }
 
   ////////////////////////////////////////////////////////////////////////
-  // TEST: Use lgp_system function.
+  // TEST: Use lgp_newton solver function.
   double tol = 1e-6;
   int max_num_steps = 1e+3;
   bool line_search = false;
@@ -324,11 +326,11 @@ TEST(MathMatrix, optimization_inla) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> phi_v(2);
     phi_v << sigma, corr;
 
-    stan::math::lgp_dense_system<var> system_v(phi_v, n_samples, sums,
+    stan::math::lgp_dense_system<double> system_dbl(value_of(phi_v), n_samples, sums,
                                                true);
 
     Eigen::Matrix<var, Eigen::Dynamic, 1>
-      theta = lgp_dense_newton_solver(theta_0, system_v);
+      theta = lgp_dense_newton_solver(theta_0, phi_v, system_dbl);
 
     AVEC parameters = createAVEC(phi_v(0), phi_v(1));
     VEC g;
@@ -540,7 +542,6 @@ TEST(MathMatrix, performance_test_inla2)  {
 
     start = std::chrono::system_clock::now();
 
-
     Eigen::Matrix<var, Eigen::Dynamic, 1> phi(dim_phi);
     phi << 0.5, 0.9;
     int triangle_size = 0.5 * dim_theta * (dim_theta + 1);
@@ -622,7 +623,7 @@ TEST(MathMatrix, performance_test_inla3) {
   std::chrono::duration<double> elapsed_seconds_total;
   std::chrono::duration<double> elapsed_seconds_jacobian;
 
-  for (int k = 0; k < n_dimensions; k++) {
+  for (int k = 0; k < n_dimensions - 1; k++) {
     std::cout << "Dimension: " << dimensions(k) << std::endl;
 
     int dim_theta = dimensions(k);
@@ -662,12 +663,17 @@ TEST(MathMatrix, performance_test_inla3) {
     for (int i = 0; i < dim_theta; i++) dat[dim_theta + i] = sums(i);
     vector<int> dat_int;
 
+    stan::math::lgp_dense_system<double> system_dbl(value_of(parm), n_samples, sums,
+                                               space_matters = true);
+
     start = std::chrono::system_clock::now();
 
-    stan::math::lgp_dense_system<var> system_v(parm, n_samples, sums,
-                                               space_matters = true);
-    Eigen::Matrix<var, Eigen::Dynamic, 1>
-      theta = lgp_dense_newton_solver(theta_0, system_v);
+    // Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
+    //   Q_ = stan::math::inverse_spd(stan::math::lgp_covariance(phi, 500, true));
+
+    // start = std::chrono::system_clock::now();
+    Eigen::Matrix<var, Eigen::Dynamic, 1> // theta = theta_0;
+      theta = lgp_dense_newton_solver(theta_0, phi, system_dbl);
 
     end = std::chrono::system_clock::now();
     elapsed_seconds_total = end - start;
@@ -690,10 +696,10 @@ TEST(MathMatrix, performance_test_inla3) {
               << elapsed_seconds_jacobian.count()
               << std::endl;
 
-    std::cout << "theta: " << std::endl;
-    for (int i = 0; i < theta.size(); i++) std::cout << theta(i).val() << " ";
-    std::cout << std::endl;
-    for (size_t i = 0; i < g.size(); i++) std::cout << g[i] << " ";
-    std::cout << std::endl << std::endl;
+    // std::cout << "theta: " << std::endl;
+    // for (int i = 0; i < theta.size(); i++) std::cout << theta(i).val() << " ";
+    // std::cout << std::endl;
+    // for (size_t i = 0; i < g.size(); i++) std::cout << g[i] << " ";
+    // std::cout << std::endl << std::endl;
   }
 }

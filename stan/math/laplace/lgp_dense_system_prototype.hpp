@@ -2,9 +2,7 @@
 #define STAN_MATH_LAPLACE_LGP_DENSE_SYSTEM_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-// #include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <stan/math/rev/mat/fun/mdivide_left.hpp>
-// #include <stan/math/rev/math/functor/jacobian.hpp>
 #include <stan/math/rev/mat.hpp>
 #include <iostream>
 #include <string>
@@ -18,7 +16,7 @@ namespace math {
   // EXPERIMENT.
   // Functors for finding the mode of the conditional density
   // when doing a Poisson model with a latent gaussian
-  // parameter. See Dan's experiment.
+  // parameter.
 
   /**
    * A function to constructs the covariance matrix,
