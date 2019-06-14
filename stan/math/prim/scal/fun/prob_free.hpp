@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_PROB_FREE_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_PROB_FREE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/fun/logit.hpp>
 
