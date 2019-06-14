@@ -37,7 +37,7 @@ namespace math {
  *    is not square
  */
 inline matrix_cl tri_inverse(const matrix_cl& A) {
-  check_triangular("tri_inverse (OpenCL)","A",A);
+  check_triangular("tri_inverse (OpenCL)", "A", A);
   check_square("tri_inverse (OpenCL)", "A", A);
 
   int thread_block_2D_dim = 32;

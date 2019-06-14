@@ -56,7 +56,9 @@ class matrix_cl {
 
   TriangularViewCL triangular_view() const { return triangular_view_; }
 
-  void triangular_view(TriangularViewCL triangular_view) {triangular_view_ = triangular_view; }
+  void triangular_view(TriangularViewCL triangular_view) {
+    triangular_view_ = triangular_view;
+  }
 
   /**
    * Clear the write events from the event stacks.
@@ -173,9 +175,11 @@ class matrix_cl {
 
   const cl::Buffer& buffer() const { return oclBuffer_; }
 
-  matrix_cl() : rows_(0), cols_(0), triangular_view_(TriangularViewCL::Diagonal) {}
+  matrix_cl()
+      : rows_(0), cols_(0), triangular_view_(TriangularViewCL::Diagonal) {}
 
-  matrix_cl(const matrix_cl& A) : rows_(A.rows()), cols_(A.cols()), triangular_view_(A.triangular_view_) {
+  matrix_cl(const matrix_cl& A)
+      : rows_(A.rows()), cols_(A.cols()), triangular_view_(A.triangular_view_) {
     if (A.size() == 0)
       return;
     // the context is needed to create the buffer object
@@ -205,7 +209,9 @@ class matrix_cl {
    * matrices do not have matching dimensions
    *
    */
-  matrix_cl(const int& rows, const int& cols, TriangularViewCL triangular_view = TriangularViewCL::Entire) : rows_(rows), cols_(cols), triangular_view_(triangular_view) {
+  matrix_cl(const int& rows, const int& cols,
+            TriangularViewCL triangular_view = TriangularViewCL::Entire)
+      : rows_(rows), cols_(cols), triangular_view_(triangular_view) {
     if (size() == 0) {
       return;
     }
@@ -230,7 +236,9 @@ class matrix_cl {
    * matrices do not have matching dimensions
    */
   template <int R, int C>
-  explicit matrix_cl(const Eigen::Matrix<double, R, C>& A, TriangularViewCL triangular_view = TriangularViewCL::Entire)
+  explicit matrix_cl(const Eigen::Matrix<double, R, C>& A,
+                     TriangularViewCL triangular_view
+                     = TriangularViewCL::Entire)
       : rows_(A.rows()), cols_(A.cols()), triangular_view_(triangular_view) {
     if (size() == 0) {
       return;

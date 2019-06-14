@@ -103,8 +103,7 @@ TEST(MathMatrixCL, matrix_cl_pack_unpack_copy_lower) {
       pos++;
     }
   }
-  packed_mat_dst
-      = stan::math::packed_copy(m_cl);
+  packed_mat_dst = stan::math::packed_copy(m_cl);
   for (size_t i = 0; i < packed_mat.size(); i++) {
     EXPECT_EQ(packed_mat[i], packed_mat_dst[i]);
   }

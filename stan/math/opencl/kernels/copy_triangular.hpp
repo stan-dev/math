@@ -38,10 +38,10 @@ static const char *copy_triangular_kernel_code = STRINGIFY(
       int i = get_global_id(0);
       int j = get_global_id(1);
       if (i < rows && j < cols) {
-        if((triangular_part & LOWER && j <= i) || (triangular_part & UPPER && j >= i) || j==i){
+        if ((triangular_part & LOWER && j <= i)
+            || (triangular_part & UPPER && j >= i) || j == i) {
           A(i, j) = B(i, j);
-        }
-        else{
+        } else {
           A(i, j) = 0;
         }
       }

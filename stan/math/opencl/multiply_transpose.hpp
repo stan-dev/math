@@ -22,7 +22,10 @@ namespace math {
  *
  */
 inline matrix_cl multiply_transpose(const matrix_cl& A) {
-  matrix_cl temp(A.rows(), A.rows(), A.triangular_view()==TriangularViewCL::Diagonal ? TriangularViewCL::Diagonal : TriangularViewCL::Entire);
+  matrix_cl temp(A.rows(), A.rows(),
+                 A.triangular_view() == TriangularViewCL::Diagonal
+                     ? TriangularViewCL::Diagonal
+                     : TriangularViewCL::Entire);
   if (A.size() == 0)
     return temp;
   // padding the matrices so the dimensions are divisible with local

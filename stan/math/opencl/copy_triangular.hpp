@@ -36,8 +36,7 @@ inline matrix_cl copy_triangular(const matrix_cl& src) {
   matrix_cl dst(src.rows(), src.cols(), dst_view);
   try {
     opencl_kernels::copy_triangular(cl::NDRange(dst.rows(), dst.cols()), dst,
-                                    src, dst.rows(), dst.cols(),
-                                    dst_view);
+                                    src, dst.rows(), dst.cols(), dst_view);
   } catch (const cl::Error& e) {
     check_opencl_error("copy_triangular", e);
   }

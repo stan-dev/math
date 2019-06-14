@@ -192,17 +192,17 @@ TEST(MathMatrixCL, add_value_check) {
 }
 
 TEST(MathMatrixCL, add_tri_value_check) {
-  Eigen::MatrixXd a(3,3);
-  a << 1,2,3,4,5,6,7,8,9;
-  Eigen::MatrixXd b = Eigen::MatrixXd::Ones(3,3)*-3;
+  Eigen::MatrixXd a(3, 3);
+  a << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  Eigen::MatrixXd b = Eigen::MatrixXd::Ones(3, 3) * -3;
   stan::math::matrix_cl a_cl(a);
   stan::math::matrix_cl b_cl(b);
-  stan::math::matrix_cl c_cl(3,3);
-  Eigen::MatrixXd c(3,3);
+  stan::math::matrix_cl c_cl(3, 3);
+  Eigen::MatrixXd c(3, 3);
 
   a_cl.triangular_view(stan::math::TriangularViewCL::Lower);
   b_cl.triangular_view(stan::math::TriangularViewCL::Lower);
-  c_cl = a_cl+b_cl;
+  c_cl = a_cl + b_cl;
   EXPECT_EQ(c_cl.triangular_view(), stan::math::TriangularViewCL::Lower);
   c = stan::math::from_matrix_cl(c_cl);
   EXPECT_EQ(-2, c(0, 0));
@@ -214,7 +214,7 @@ TEST(MathMatrixCL, add_tri_value_check) {
 
   a_cl.triangular_view(stan::math::TriangularViewCL::Lower);
   b_cl.triangular_view(stan::math::TriangularViewCL::Upper);
-  c_cl = a_cl+b_cl;
+  c_cl = a_cl + b_cl;
   EXPECT_EQ(c_cl.triangular_view(), stan::math::TriangularViewCL::Entire);
   c = stan::math::from_matrix_cl(c_cl);
   EXPECT_EQ(-2, c(0, 0));
@@ -229,7 +229,7 @@ TEST(MathMatrixCL, add_tri_value_check) {
 
   a_cl.triangular_view(stan::math::TriangularViewCL::Upper);
   b_cl.triangular_view(stan::math::TriangularViewCL::Lower);
-  c_cl = a_cl+b_cl;
+  c_cl = a_cl + b_cl;
   EXPECT_EQ(c_cl.triangular_view(), stan::math::TriangularViewCL::Entire);
   c = stan::math::from_matrix_cl(c_cl);
   EXPECT_EQ(-2, c(0, 0));
@@ -244,7 +244,7 @@ TEST(MathMatrixCL, add_tri_value_check) {
 
   a_cl.triangular_view(stan::math::TriangularViewCL::Entire);
   b_cl.triangular_view(stan::math::TriangularViewCL::Lower);
-  c_cl = a_cl+b_cl;
+  c_cl = a_cl + b_cl;
   EXPECT_EQ(c_cl.triangular_view(), stan::math::TriangularViewCL::Entire);
   c = stan::math::from_matrix_cl(c_cl);
   EXPECT_EQ(-2, c(0, 0));

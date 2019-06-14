@@ -58,11 +58,18 @@ inline void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
                               this_i, this_j, nrows, ncols, A.rows(), A.cols(),
                               this->rows(), this->cols(), A.triangular_view());
   }
-  //calculation of extreme sub- and super- diagonal written
+  // calculation of extreme sub- and super- diagonal written
   int diag_in_copy = A_i - A_j;
-  if(diag_in_copy > -static_cast<int>(nrows) && diag_in_copy < static_cast<int>(ncols)) {
-    int copy_low = static_cast<bool>(A.triangular_view_ & TriangularViewCL::Lower) ? 1-nrows : diag_in_copy;
-    int copy_high = static_cast<bool>(A.triangular_view_ & TriangularViewCL::Upper) ? ncols-1 : diag_in_copy;
+  if (diag_in_copy > -static_cast<int>(nrows)
+      && diag_in_copy < static_cast<int>(ncols)) {
+    int copy_low
+        = static_cast<bool>(A.triangular_view_ & TriangularViewCL::Lower)
+              ? 1 - nrows
+              : diag_in_copy;
+    int copy_high
+        = static_cast<bool>(A.triangular_view_ & TriangularViewCL::Upper)
+              ? ncols - 1
+              : diag_in_copy;
     int start = this_j - this_i;
     if (start + copy_low < 0) {
       triangular_view_ |= TriangularViewCL::Lower;

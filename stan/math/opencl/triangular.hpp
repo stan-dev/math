@@ -5,28 +5,30 @@ namespace stan {
 namespace math {
 enum class TriangularViewCL { Diagonal = 0, Lower = 1, Upper = 2, Entire = 3 };
 
-TriangularViewCL operator| (TriangularViewCL a, TriangularViewCL b){
+TriangularViewCL operator|(TriangularViewCL a, TriangularViewCL b) {
   typedef typename std::underlying_type<TriangularViewCL>::type underlying;
-  return static_cast<TriangularViewCL>(static_cast<underlying>(a) | static_cast<underlying>(b));
+  return static_cast<TriangularViewCL>(static_cast<underlying>(a)
+                                       | static_cast<underlying>(b));
 }
 
-TriangularViewCL operator|= (TriangularViewCL& a, TriangularViewCL b){
+TriangularViewCL operator|=(TriangularViewCL& a, TriangularViewCL b) {
   a = a | b;
   return a;
 }
 
-TriangularViewCL operator& (TriangularViewCL a, TriangularViewCL b){
+TriangularViewCL operator&(TriangularViewCL a, TriangularViewCL b) {
   typedef typename std::underlying_type<TriangularViewCL>::type underlying;
-  return static_cast<TriangularViewCL>(static_cast<underlying>(a) & static_cast<underlying>(b));
+  return static_cast<TriangularViewCL>(static_cast<underlying>(a)
+                                       & static_cast<underlying>(b));
 }
 
-TriangularViewCL operator&= (TriangularViewCL& a, TriangularViewCL b){
+TriangularViewCL operator&=(TriangularViewCL& a, TriangularViewCL b) {
   a = a & b;
   return a;
 }
 
-TriangularViewCL transpose(TriangularViewCL a){
-  switch (a){
+TriangularViewCL transpose(TriangularViewCL a) {
+  switch (a) {
     case TriangularViewCL::Lower:
       return TriangularViewCL::Upper;
     case TriangularViewCL::Upper:
@@ -36,8 +38,8 @@ TriangularViewCL transpose(TriangularViewCL a){
   }
 }
 
-TriangularViewCL invert(TriangularViewCL a){
-  switch (a){
+TriangularViewCL invert(TriangularViewCL a) {
+  switch (a) {
     case TriangularViewCL::Lower:
       return TriangularViewCL::Upper;
     case TriangularViewCL::Upper:

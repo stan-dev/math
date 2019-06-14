@@ -83,7 +83,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
       const int end_tile_B
           = lower_upper_B & LOWER ? (num_tiles - 1) : (j / THREAD_BLOCK_SIZE);
       const int start_tile_A
-          = lower_upper_A & LOWER ?  0 : (i / THREAD_BLOCK_SIZE);
+          = lower_upper_A & LOWER ? 0 : (i / THREAD_BLOCK_SIZE);
       const int start_tile_B
           = lower_upper_B & UPPER ? 0 : (j / THREAD_BLOCK_SIZE);
       // the starting and end tiles for a thread are determined by
@@ -235,8 +235,8 @@ static const char* row_vector_matrix_multiply_kernel_code = STRINGIFY(
       const int wgid = get_group_id(0);
 
       const int start = lower_upper_B & UPPER ? 0 : wgid;
-      const int stop = lower_upper_A & UPPER
-                           ? (lower_upper_B & LOWER) ? N : wgid + 1 : 1;
+      const int stop
+          = lower_upper_A & UPPER ? (lower_upper_B & LOWER) ? N : wgid + 1 : 1;
 
       double acc = 0;
       for (int i = lid + start; i < stop; i += LOCAL_SIZE_) {

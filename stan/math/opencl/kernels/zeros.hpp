@@ -33,7 +33,8 @@ static const char* zeros_kernel_code = STRINGIFY(
       int i = get_global_id(0);
       int j = get_global_id(1);
       if (i < rows && j < cols) {
-        if ((part == LOWER && j < i) ||  (part == UPPER && j > i) || (part==ENTIRE)) {
+        if ((part == LOWER && j < i) || (part == UPPER && j > i)
+            || (part == ENTIRE)) {
           A(i, j) = 0;
         }
       }
