@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_RK45_HPP
 #define STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_RK45_HPP
 
+
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
@@ -9,7 +11,6 @@
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <boost/version.hpp>
 #if BOOST_VERSION == 106400
 #include <boost/serialization/array_wrapper.hpp>
