@@ -24,6 +24,8 @@ namespace math {
     /** Jacobian of the solution with respect to the global parameter */
     Eigen::MatrixXd J_;
     // double* J_;
+    /** Jacobian of the system with respect to the unknown theta */
+    Eigen::MatrixXd J_f_theta_;
 
     lgp_dense_newton_solver_vari(const Eigen::Matrix<T,
                                    Eigen::Dynamic, 1>& phi,
@@ -48,6 +50,9 @@ namespace math {
       // the operator in the lgp_dense_system structure.
       J_ = system.solver_gradient(theta_dbl);
 
+      // Jacobian vector product
+      // J_f_theta_ = system.cond_hessian(theta_dbl);
+
       // CHECK - is the code below more memory efficient?
       // std::cout << system.solver_gradient(theta_dbl) << std::endl;
       // Map<VectorXd>(&J_[0], theta_size_) = system.solver_gradient(theta_dbl);
@@ -55,6 +60,14 @@ namespace math {
     }
 
     void chain() {
+      // SCHEME 1: use Jacobian-vector product 
+      // compute the initial cotangent vector
+      // Eigen::vectorXd J_l_theta(theta_size_);
+      // for (int i = 0; i < theta_size_; i++) J_l_theta(i) = theta_[i]->adj_;
+      // Eigen::vectorXd
+      //   init_cotangent = - mdivide_left(J_f_theta_, J_l_theta);
+
+      // SCHEME 2: use forward mode.
       for (int j = 0; j < phi_size_; j++)
         for (int i = 0; i < theta_size_; i++)
           phi_[j]->adj_ += theta_[i]->adj_ * J_(i, j);
@@ -174,28 +187,32 @@ namespace math {
     long int max_num_steps = 100,  // NOLINT(runtime/int)
     bool line_search = false,
     bool print_iteration = false) {
-
-    // lgp_dense_system<double> 
-    //   system_dbl(value_of(system.get_phi()),
-    //              system.get_n_samples(), 
-    //              system.get_sums(),
-    //              system.get_space_matters());
-
+    
+    auto start = std::chrono::system_clock::now();
     Eigen::VectorXd theta_dbl 
       = lgp_dense_newton_solver(value_of(theta_0), value_of(phi), 
                                 system, tol,
                                 max_num_steps, line_search,
                                 print_iteration);
+    auto end = std::chrono::system_clock::now();
+    auto elapsed_seconds = end - start;
+    std::cout << "Solving time: " << elapsed_seconds.count() / 1e6 << std::endl;
 
     // construct vari
+    start = std::chrono::system_clock::now();
+
     lgp_dense_newton_solver_vari<T2>* vi0
-      = new lgp_dense_newton_solver_vari<T2>(phi, 
+      = new lgp_dense_newton_solver_vari<T2>(phi,
                                              system, theta_dbl);
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta(theta_dbl.size());
     theta(0) = var(vi0->theta_[0]);
     for (int i = 1; i < theta_dbl.size(); i++)
       theta(i) = var(vi0->theta_[i]);
+
+    end = std::chrono::system_clock::now();
+    elapsed_seconds = end - start;
+    std::cout << "vari time: " << elapsed_seconds.count() / 1e6 << std::endl;
 
     return theta;
   }

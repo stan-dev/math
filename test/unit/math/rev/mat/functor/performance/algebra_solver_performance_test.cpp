@@ -204,7 +204,7 @@ struct inla_functor2 {
       stan::math::multiply(sigma_inv, theta);
   }
 };
-
+/*
 TEST(MathMatrix, optimization_inla) {
   using std::vector;
   using stan::math::var;
@@ -340,7 +340,7 @@ TEST(MathMatrix, optimization_inla) {
     EXPECT_FLOAT_EQ(solver_gradient(k, 0), g[0]);
     EXPECT_FLOAT_EQ(solver_gradient(k, 1), g[1]);
   }
-}
+} */
 
 /*
 TEST(MathMatrix, performance_test_inla)  {
@@ -623,7 +623,7 @@ TEST(MathMatrix, performance_test_inla3) {
   std::chrono::duration<double> elapsed_seconds_total;
   std::chrono::duration<double> elapsed_seconds_jacobian;
 
-  for (int k = 0; k < n_dimensions - 1; k++) {
+  for (int k = 0; k < n_dimensions; k++) {
     std::cout << "Dimension: " << dimensions(k) << std::endl;
 
     int dim_theta = dimensions(k);
@@ -662,18 +662,17 @@ TEST(MathMatrix, performance_test_inla3) {
     for (int i = 0; i < dim_theta; i++) dat[i] = n_samples(i);
     for (int i = 0; i < dim_theta; i++) dat[dim_theta + i] = sums(i);
     vector<int> dat_int;
-
+    
+    start = std::chrono::system_clock::now();
     stan::math::lgp_dense_system<double> system_dbl(value_of(parm), n_samples, sums,
                                                space_matters = true);
-
-    start = std::chrono::system_clock::now();
 
     // Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
     //   Q_ = stan::math::inverse_spd(stan::math::lgp_covariance(phi, 500, true));
 
     // start = std::chrono::system_clock::now();
     Eigen::Matrix<var, Eigen::Dynamic, 1> // theta = theta_0;
-      theta = lgp_dense_newton_solver(theta_0, phi, system_dbl);
+      theta = lgp_dense_newton_solver(theta_0, parm, system_dbl);
 
     end = std::chrono::system_clock::now();
     elapsed_seconds_total = end - start;
@@ -687,7 +686,7 @@ TEST(MathMatrix, performance_test_inla3) {
     start_jacobian = std::chrono::system_clock::now();
     dummy_cot.grad(parm_vec, g);
     end = std::chrono::system_clock::now();
-
+    
     elapsed_seconds_total = end - start;
     elapsed_seconds_jacobian = end - start_jacobian; 
     std::cout << "Total time: " << elapsed_seconds_total.count() 
@@ -696,10 +695,10 @@ TEST(MathMatrix, performance_test_inla3) {
               << elapsed_seconds_jacobian.count()
               << std::endl;
 
-    // std::cout << "theta: " << std::endl;
-    // for (int i = 0; i < theta.size(); i++) std::cout << theta(i).val() << " ";
-    // std::cout << std::endl;
-    // for (size_t i = 0; i < g.size(); i++) std::cout << g[i] << " ";
-    // std::cout << std::endl << std::endl;
+    std::cout << "theta: " << std::endl;
+    for (int i = 0; i < theta.size(); i++) std::cout << theta(i).val() << " ";
+    std::cout << std::endl;
+    for (size_t i = 0; i < g.size(); i++) std::cout << g[i] << " ";
+    std::cout << std::endl << std::endl;
   }
 }

@@ -2,26 +2,23 @@
 #define STAN_MATH_LAPLACE_LGP_DENSE_SYSTEM_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/rev/mat/fun/mdivide_left.hpp>
-#include <stan/math/rev/mat.hpp>
 #include <stan/math/prim/mat/fun/inverse_spd.hpp>
 #include <stan/math/prim/mat.hpp>
+#include <stan/math/fwd/mat/functor/jacobian.hpp>
+#include <stan/math/fwd/mat.hpp>
+#include <stan/math/rev/mat/fun/mdivide_left.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <cmath>
-// FIX ME - include specific files instead of rev/mat.hpp to
+// TO DO - include specific files instead of rev/mat.hpp to
 // improve compilation speed of unit tests.
 
 namespace stan {
 namespace math {
 
-// EXPERIMENT.
-// Functors for finding the mode of the conditional density
-// when doing a Poisson model with a latent gaussian
-// parameter. See Dan's experiment.
-//
-// FIX ME - find ways to generalize / allow the user to specify
+// TO DO - find ways to generalize / allow the user to specify
 // the input covariance matrix, and the parameters.
 
 /**
@@ -73,9 +70,7 @@ struct lgp_dense_system {
   Eigen::VectorXd n_samples_;  // number of samples for local parameter
   Eigen::VectorXd sums_;  // sums of observation for local parameter
   bool space_matters_;
-  // Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic> Q_;  // precision matrix
   Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic> Sigma_;  // covariance matrix
-  // Eigen::MatrixXd Sigma_;
 
   // Constructors
   lgp_dense_system() {}
@@ -86,7 +81,7 @@ struct lgp_dense_system {
                    bool space_matters = false)
     : phi_(phi), n_samples_(n_samples), sums_(sums),
       space_matters_(space_matters) {
-    std::cout << "Constructing the lgp_dense_system" << std::endl;
+    std::cout << "constructing system" << std::endl;
     int M = n_samples.size();
     Sigma_ = lgp_covariance(phi, M, space_matters_);
     // Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
@@ -142,7 +137,7 @@ struct lgp_dense_system {
       elt_multiply(n_samples_, exp(theta)).asDiagonal();
 
     // return - (first_term + Q_);
-    return - (first_term + inverse(Sigma_));
+    return - (first_term + inverse_spd(Sigma_));
   }
 
   /**
@@ -166,7 +161,6 @@ struct lgp_dense_system {
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
       Sigma = lgp_covariance(phi, M_, space_);
 
-      // return - multiply(Q_, theta_); -- CHECK - can we express this with Q?
       return - mdivide_left(Sigma, theta_);
     }
   };
@@ -184,10 +178,19 @@ struct lgp_dense_system {
     Eigen::VectorXd dummy;
     Eigen::MatrixXd phi_sensitivities;
     deriv_objective f(value_of(theta), theta.size(), space_matters_);
-    jacobian(f, phi_, dummy, phi_sensitivities);
+
+    auto start = std::chrono::system_clock::now();
+
+    jacobian_fwd(f, phi_, dummy, phi_sensitivities);
+
+    auto end = std::chrono::system_clock::now();
+    auto elapsed_seconds = end - start;
+
+    std::cout << "Time for phi_sensitivities: " 
+              << elapsed_seconds.count() / 1e6 
+              << std::endl;
 
     return - mdivide_left(cond_hessian(theta), phi_sensitivities);
-    // CHECK -- does this operation only happen once?
   }
 };
 

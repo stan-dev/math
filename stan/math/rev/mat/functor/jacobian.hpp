@@ -15,6 +15,7 @@ void jacobian(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
               Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& J) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  // std::cout << "using reverse mode" << std::endl;
   start_nested();
   try {
     Matrix<var, Dynamic, 1> x_var(x.size());
