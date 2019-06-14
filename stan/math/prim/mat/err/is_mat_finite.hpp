@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_IS_MAT_FINITE_HPP
 #define STAN_MATH_PRIM_MAT_ERR_IS_MAT_FINITE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <Eigen/Dense>
 
 namespace stan {
