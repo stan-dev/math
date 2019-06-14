@@ -1,9 +1,8 @@
 #ifndef STAN_MATH_PRIM_ARR_ERR_CHECK_ORDERED_HPP
 #define STAN_MATH_PRIM_ARR_ERR_CHECK_ORDERED_HPP
 
-#include <stan/math/prim/arr/meta/index_type.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/scal/meta/error_index.hpp>
 #include <sstream>
 #include <vector>
 #include <string>
