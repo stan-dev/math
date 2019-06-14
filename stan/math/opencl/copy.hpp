@@ -13,6 +13,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
+#include <stan/math/opencl/err/check_triangular.hpp>
 
 #include <CL/cl.hpp>
 #include <iostream>
@@ -100,12 +101,11 @@ inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> from_matrix_cl(
  * Packs the flat triagnular matrix on the OpenCL device and
  * copies it to the std::vector.
  *
- * @tparam triangular_view the triangularity of the source matrix
  * @param src the flat triangular source matrix on the OpenCL device
  * @return the packed std::vector
  */
-template <TriangularViewCL triangular_view>
 inline std::vector<double> packed_copy(const matrix_cl& src) {
+  check_triangular("packed_copy", "src", src);
   const int packed_size = src.rows() * (src.rows() + 1) / 2;
   std::vector<double> dst(packed_size);
   if (dst.size() == 0) {
@@ -116,7 +116,7 @@ inline std::vector<double> packed_copy(const matrix_cl& src) {
     matrix_cl packed(packed_size, 1);
     stan::math::opencl_kernels::pack(cl::NDRange(src.rows(), src.rows()),
                                      packed, src, src.rows(), src.rows(),
-                                     triangular_view);
+                                     src.triangular_view());
     const std::vector<cl::Event> mat_events
         = vec_concat(packed.read_write_events(), src.write_events());
     cl::Event copy_event;
@@ -149,7 +149,7 @@ inline matrix_cl packed_copy(const std::vector<double>& src, int rows) {
   const int packed_size = rows * (rows + 1) / 2;
   check_size_match("copy (packed std::vector -> OpenCL)", "src.size()",
                    src.size(), "rows * (rows + 1) / 2", packed_size);
-  matrix_cl dst(rows, rows);
+  matrix_cl dst(rows, rows, triangular_view);
   if (dst.size() == 0) {
     return dst;
   }
@@ -181,7 +181,7 @@ inline matrix_cl packed_copy(const std::vector<double>& src, int rows) {
  * matrices do not have matching dimensions
  */
 inline matrix_cl copy_cl(const matrix_cl& src) {
-  matrix_cl dst(src.rows(), src.cols());
+  matrix_cl dst(src.rows(), src.cols(), src.triangular_view());
   if (src.size() == 0) {
     return dst;
   }

@@ -2,7 +2,7 @@
 #define STAN_MATH_OPENCL_BUFFER_TYPES_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/constants.hpp>
+#include <stan/math/opencl/triangular.hpp>
 #include <CL/cl.hpp>
 
 namespace stan {

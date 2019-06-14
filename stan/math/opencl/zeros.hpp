@@ -3,7 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/constants.hpp>
+#include <stan/math/opencl/triangular.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/kernels/zeros.hpp>
@@ -23,13 +23,14 @@ namespace math {
  * the entire matrix, lower triangular or upper triangular. The
  * value must be of type TriangularViewCL
  */
-template <TriangularViewCL triangular_view>
+template <TriangularViewCL view>
 inline void matrix_cl::zeros() try {
   if (size() == 0)
     return;
+  triangular_view_ = invert(view);
   cl::CommandQueue cmdQueue = opencl_context.queue();
   opencl_kernels::zeros(cl::NDRange(this->rows(), this->cols()), *this,
-                        this->rows(), this->cols(), triangular_view);
+                        this->rows(), this->cols(), view);
 } catch (const cl::Error& e) {
   check_opencl_error("zeros", e);
 }

@@ -25,11 +25,25 @@ static const char *add_kernel_code = STRINGIFY(
      */
     __kernel void add(__global double *C, __global double *A,
                       __global double *B, unsigned int rows,
-                      unsigned int cols) {
+                      unsigned int cols, int part_A, int part_B) {
       const int i = get_global_id(0);
       const int j = get_global_id(1);
       if (i < rows && j < cols) {
-        C(i, j) = A(i, j) + B(i, j);
+        double a;
+        if((!(part_A & LOWER) && j<i) || (!(part_A & UPPER) && j>i)){
+          a=0;
+        }
+        else{
+          a=A(i, j);
+        }
+        double b;
+        if((!(part_B & LOWER) && j<i) || (!(part_B & UPPER) && j>i)){
+          b=0;
+        }
+        else{
+          b=B(i, j);
+        }
+        C(i, j) = a + b;
       }
     }
     // \cond
@@ -39,7 +53,7 @@ static const char *add_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/add.hpp add() \endlink
  */
-const kernel_cl<out_buffer, in_buffer, in_buffer, int, int> add(
+const kernel_cl<out_buffer, in_buffer, in_buffer, int, int, TriangularViewCL, TriangularViewCL> add(
     "add", {indexing_helpers, add_kernel_code});
 // \cond
 static const char *add_batch_kernel_code = STRINGIFY(

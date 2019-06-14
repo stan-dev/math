@@ -3,7 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/constants.hpp>
+#include <stan/math/opencl/triangular.hpp>
 #include <stan/math/opencl/kernels/triangular_transpose.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
@@ -37,6 +37,9 @@ inline void matrix_cl::triangular_transpose() try {
   opencl_kernels::triangular_transpose(cl::NDRange(this->rows(), this->cols()),
                                        *this, this->rows(), this->cols(),
                                        triangular_map);
+  triangular_view_ = (triangular_map == TriangularMapCL::LowerToUpper && !static_cast<bool>(triangular_view_ & TriangularViewCL::Lower)) ||
+                     (triangular_map == TriangularMapCL::UpperToLower && !static_cast<bool>(triangular_view_ & TriangularViewCL::Upper))
+                     ? TriangularViewCL::Diagonal : TriangularViewCL::Entire;
 } catch (const cl::Error& e) {
   check_opencl_error("triangular_transpose", e);
 }

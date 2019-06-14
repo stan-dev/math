@@ -31,12 +31,10 @@ namespace opencl {
  *   number of columns in A and rows in B do not match
  */
 
-template <TriangularViewCL triangular_view_A = TriangularViewCL::Entire,
-          TriangularViewCL triangular_view_B = TriangularViewCL::Entire>
 inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   check_size_match("multiply ((OpenCL))", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
-  matrix_cl temp(A.rows(), B.cols());
+  matrix_cl temp(A.rows(), B.cols(), A.triangular_view() | B.triangular_view());
   if (A.size() == 0 || B.size() == 0) {
     temp.zeros();
     return temp;
@@ -48,7 +46,7 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
     try {
       opencl_kernels::row_vector_matrix_multiply(
           cl::NDRange(temp.cols() * local_size), cl::NDRange(local_size), A, B,
-          temp, B.rows(), B.cols(), triangular_view_A, triangular_view_B);
+          temp, B.rows(), B.cols(), A.triangular_view(), B.triangular_view());
     } catch (cl::Error& e) {
       check_opencl_error("row_vector - matrix multiply", e);
     }
@@ -58,7 +56,7 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
     try {
       opencl_kernels::matrix_vector_multiply(
           cl::NDRange(temp.rows()), A, B, temp, A.rows(), A.cols(),
-          triangular_view_A, triangular_view_B);
+          A.triangular_view(), B.triangular_view());
     } catch (cl::Error& e) {
       check_opencl_error("matrix - vector multiply", e);
     }
@@ -85,13 +83,13 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
       opencl_kernels::matrix_multiply(cl::NDRange(Mpad, Npad / wpt),
                                       cl::NDRange(local, local / wpt), A, B,
                                       temp, A.rows(), B.cols(), B.rows(),
-                                      triangular_view_A, triangular_view_B);
+                                      A.triangular_view(), B.triangular_view());
     } else {
       matrix_cl tempSplit(A.rows(), B.cols() * split);
       opencl_kernels::matrix_multiply(cl::NDRange(Mpad, Npad / wpt, split),
                                       cl::NDRange(local, local / wpt, 1), A, B,
                                       tempSplit, A.rows(), B.cols(), B.rows(),
-                                      triangular_view_A, triangular_view_B);
+                                      A.triangular_view(), B.triangular_view());
       opencl_kernels::add_batch(cl::NDRange(A.rows(), B.cols()), temp,
                                 tempSplit, A.rows(), B.cols(), split);
     }
@@ -111,12 +109,12 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
  * @return matrix multipled with scalar
  */
 inline matrix_cl multiply(const matrix_cl& A, const double scalar) {
-  matrix_cl temp(A.rows(), A.cols());
+  matrix_cl temp(A.rows(), A.cols(), A.triangular_view());
   if (A.size() == 0)
     return temp;
   try {
     opencl_kernels::scalar_mul(cl::NDRange(A.rows(), A.cols()), temp, A, scalar,
-                               A.rows(), A.cols());
+                               A.rows(), A.cols(), A.triangular_view());
   } catch (const cl::Error& e) {
     check_opencl_error("multiply scalar", e);
   }

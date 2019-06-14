@@ -23,8 +23,10 @@ static const char *copy_triangular_kernel_code = STRINGIFY(
      * @param cols The number of cols of B.
      * @param lower_upper determines
      * which part of the matrix to copy:
-     *  LOWER: 0 - copies the lower triangular
-     *  UPPER: 1 - copes the upper triangular
+     *  ENTIRE: copies entire matrix
+     *  LOWER: copies the lower triangular
+     *  UPPER: copies the upper triangular
+     *  DIAGONAL: copies the diagonal
      * @note Code is a <code>const char*</code> held in
      * <code>copy_triangular_kernel_code.</code>
      * Used in math/opencl/copy_triangular_opencl.hpp.
@@ -32,17 +34,14 @@ static const char *copy_triangular_kernel_code = STRINGIFY(
      */
     __kernel void copy_triangular(__global double *A, __global double *B,
                                   unsigned int rows, unsigned int cols,
-                                  unsigned int lower_upper) {
+                                  unsigned int triangular_part) {
       int i = get_global_id(0);
       int j = get_global_id(1);
       if (i < rows && j < cols) {
-        if (!lower_upper && j <= i) {
+        if((triangular_part & LOWER && j <= i) || (triangular_part & UPPER && j >= i) || j==i){
           A(i, j) = B(i, j);
-        } else if (!lower_upper) {
-          A(i, j) = 0;
-        } else if (lower_upper && j >= i) {
-          A(i, j) = B(i, j);
-        } else if (lower_upper && j < i) {
+        }
+        else{
           A(i, j) = 0;
         }
       }

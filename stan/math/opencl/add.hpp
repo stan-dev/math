@@ -23,13 +23,13 @@ namespace math {
  */
 inline matrix_cl add(const matrix_cl& A, const matrix_cl& B) {
   check_matching_dims("add", "A", A, "B", B);
-  matrix_cl C(A.rows(), A.cols());
+  matrix_cl C(A.rows(), A.cols(), A.triangular_view() | B.triangular_view());
   if (C.size() == 0) {
     return C;
   }
   try {
     opencl_kernels::add(cl::NDRange(A.rows(), A.cols()), C, A, B, A.rows(),
-                        A.cols());
+                        A.cols(), A.triangular_view(), B.triangular_view());
   } catch (const cl::Error& e) {
     check_opencl_error("add", e);
   }

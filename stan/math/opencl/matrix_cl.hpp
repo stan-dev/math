@@ -2,7 +2,7 @@
 #define STAN_MATH_OPENCL_MATRIX_CL_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/constants.hpp>
+#include <stan/math/opencl/triangular.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
@@ -36,6 +36,7 @@ class matrix_cl {
   cl::Buffer oclBuffer_;
   const int rows_;
   const int cols_;
+  TriangularViewCL triangular_view_;
   mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
   mutable std::vector<cl::Event> read_events_;   // Tracks reads
 
@@ -45,7 +46,6 @@ class matrix_cl {
   void zeros();
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   void triangular_transpose();
-  template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
   void sub_block(const matrix_cl& A, size_t A_i, size_t A_j, size_t this_i,
                  size_t this_j, size_t nrows, size_t ncols);
   int rows() const { return rows_; }
@@ -53,6 +53,10 @@ class matrix_cl {
   int cols() const { return cols_; }
 
   int size() const { return rows_ * cols_; }
+
+  TriangularViewCL triangular_view() const { return triangular_view_; }
+
+  void triangular_view(TriangularViewCL triangular_view) {triangular_view_ = triangular_view; }
 
   /**
    * Clear the write events from the event stacks.
@@ -169,9 +173,9 @@ class matrix_cl {
 
   const cl::Buffer& buffer() const { return oclBuffer_; }
 
-  matrix_cl() : rows_(0), cols_(0) {}
+  matrix_cl() : rows_(0), cols_(0), triangular_view_(TriangularViewCL::Diagonal) {}
 
-  matrix_cl(const matrix_cl& A) : rows_(A.rows()), cols_(A.cols()) {
+  matrix_cl(const matrix_cl& A) : rows_(A.rows()), cols_(A.cols()), triangular_view_(A.triangular_view_) {
     if (A.size() == 0)
       return;
     // the context is needed to create the buffer object
@@ -201,7 +205,7 @@ class matrix_cl {
    * matrices do not have matching dimensions
    *
    */
-  matrix_cl(const int& rows, const int& cols) : rows_(rows), cols_(cols) {
+  matrix_cl(const int& rows, const int& cols, TriangularViewCL triangular_view = TriangularViewCL::Entire) : rows_(rows), cols_(cols), triangular_view_(triangular_view) {
     if (size() == 0) {
       return;
     }
@@ -226,8 +230,8 @@ class matrix_cl {
    * matrices do not have matching dimensions
    */
   template <int R, int C>
-  explicit matrix_cl(const Eigen::Matrix<double, R, C>& A)
-      : rows_(A.rows()), cols_(A.cols()) {
+  explicit matrix_cl(const Eigen::Matrix<double, R, C>& A, TriangularViewCL triangular_view = TriangularViewCL::Entire)
+      : rows_(A.rows()), cols_(A.cols()), triangular_view_(triangular_view) {
     if (size() == 0) {
       return;
     }
@@ -264,6 +268,7 @@ class matrix_cl {
     // Need to wait for all of matrices events before destroying old buffer
     this->wait_for_read_write_events();
     oclBuffer_ = a.buffer();
+    triangular_view_ = a.triangular_view_;
     return *this;
   }
 };

@@ -3,7 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/constants.hpp>
+#include <stan/math/opencl/triangular.hpp>
 #include <stan/math/opencl/kernels/sub_block.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
@@ -24,7 +24,6 @@ namespace math {
  * @param nrows the number of rows in the submatrix
  * @param ncols the number of columns in the submatrix
  */
-template <TriangularViewCL triangular_view>
 inline void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
                                  size_t this_i, size_t this_j, size_t nrows,
                                  size_t ncols) try {
@@ -36,7 +35,7 @@ inline void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
     domain_error("sub_block", "submatrix in *this", " is out of bounds", "");
   }
   cl::CommandQueue cmdQueue = opencl_context.queue();
-  if (triangular_view == TriangularViewCL::Entire) {
+  if (A.triangular_view() == TriangularViewCL::Entire) {
     cl::size_t<3> src_offset
         = opencl::to_size_t<3>({A_i * sizeof(double), A_j, 0});
     cl::size_t<3> dst_offset
@@ -57,7 +56,20 @@ inline void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
   } else {
     opencl_kernels::sub_block(cl::NDRange(nrows, ncols), A, *this, A_i, A_j,
                               this_i, this_j, nrows, ncols, A.rows(), A.cols(),
-                              this->rows(), this->cols(), triangular_view);
+                              this->rows(), this->cols(), A.triangular_view());
+  }
+  //calculation of extreme sub- and super- diagonal written
+  int diag_in_copy = A_i - A_j;
+  if(diag_in_copy > -static_cast<int>(nrows) && diag_in_copy < static_cast<int>(ncols)) {
+    int copy_low = static_cast<bool>(A.triangular_view_ & TriangularViewCL::Lower) ? 1-nrows : diag_in_copy;
+    int copy_high = static_cast<bool>(A.triangular_view_ & TriangularViewCL::Upper) ? ncols-1 : diag_in_copy;
+    int start = this_j - this_i;
+    if (start + copy_low < 0) {
+      triangular_view_ |= TriangularViewCL::Lower;
+    }
+    if (start + copy_high > 0) {
+      triangular_view_ |= TriangularViewCL::Upper;
+    }
   }
 } catch (const cl::Error& e) {
   check_opencl_error("copy_submatrix", e);

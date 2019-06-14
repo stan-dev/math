@@ -49,13 +49,17 @@ static const char *sub_block_kernel_code = STRINGIFY(
         unsigned int dst_cols, unsigned int triangular_view) {
       int i = get_global_id(0);
       int j = get_global_id(1);
-      if ((i + src_offset_i) < src_rows && (j + src_offset_j) < src_cols
-          && (i + dst_offset_i) < dst_rows && (j + dst_offset_j) < dst_cols) {
-        if ((triangular_view == LOWER && i >= j)
-            || (triangular_view == UPPER && i <= j)
-            || triangular_view == ENTIRE) {
-          dst((dst_offset_i + i), (dst_offset_j + j))
-              = src((src_offset_i + i), (src_offset_j + j));
+
+      int src_idx_i = i + src_offset_i;
+      int src_idx_j = j + src_offset_j;
+      int dst_idx_i = i + dst_offset_i;
+      int dst_idx_j = j + dst_offset_j;
+
+      if (src_idx_i < src_rows && src_idx_j < src_cols
+          && dst_idx_i < dst_rows && dst_idx_j < dst_cols) {
+        if ((triangular_view & LOWER && src_idx_i >= src_idx_j)
+            || (triangular_view & UPPER && src_idx_i <= src_idx_j)) {
+          dst(dst_idx_i, dst_idx_j) = src(src_idx_i, src_idx_j);
         }
       }
     }

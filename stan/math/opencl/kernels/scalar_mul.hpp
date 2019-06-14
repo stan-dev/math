@@ -22,11 +22,13 @@ static const char *scalar_mul_kernel_code = STRINGIFY(
      */
     __kernel void scalar_mul(__global double *A, const __global double *B,
                              const double scalar, const unsigned int rows,
-                             const unsigned int cols) {
+                             const unsigned int cols, int part) {
       int i = get_global_id(0);
       int j = get_global_id(1);
       if (i < rows && j < cols) {
-        A(i, j) = B(i, j) * scalar;
+        if(!((!(part & LOWER) && j<i) || (!(part & UPPER) && j>i))) {
+          A(i, j) = B(i, j) * scalar;
+        }
       }
     }
     // \cond
@@ -36,7 +38,7 @@ static const char *scalar_mul_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/scalar_mul.hpp add() \endlink
  */
-const kernel_cl<out_buffer, in_buffer, double, int, int> scalar_mul(
+const kernel_cl<out_buffer, in_buffer, double, int, int, TriangularViewCL> scalar_mul(
     "scalar_mul", {indexing_helpers, scalar_mul_kernel_code});
 
 }  // namespace opencl_kernels

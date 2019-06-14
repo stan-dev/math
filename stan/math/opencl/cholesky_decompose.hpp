@@ -55,6 +55,7 @@ inline void cholesky_decompose(matrix_cl& A) {
     } catch (const cl::Error& e) {
       check_opencl_error("cholesky_decompose", e);
     }
+    A.triangular_view(TriangularViewCL::Lower);
     return;
   }
   // NOTE: The code in this section follows the naming conventions
@@ -76,9 +77,7 @@ inline void cholesky_decompose(matrix_cl& A) {
   A_21.sub_block(A, block, 0, 0, 0, block_subset, block);
   // computes A_21*((L_11^-1)^T)
   // and copies the resulting submatrix to the lower left hand corner of A
-  matrix_cl L_21
-      = opencl::multiply<TriangularViewCL::Entire, TriangularViewCL::Upper>(
-          A_21, transpose(tri_inverse<TriangularViewCL::Lower>(A_11)));
+  matrix_cl L_21 = A_21 * transpose(tri_inverse(A_11));
   A.sub_block(L_21, 0, 0, block, 0, block_subset, block);
   matrix_cl A_22(block_subset, block_subset);
   A_22.sub_block(A, block, block, 0, 0, block_subset, block_subset);
@@ -87,6 +86,7 @@ inline void cholesky_decompose(matrix_cl& A) {
   // copy L_22 into A's lower left hand corner
   cholesky_decompose(L_22);
   A.sub_block(L_22, 0, 0, block, block, block_subset, block_subset);
+  A.triangular_view(TriangularViewCL::Lower);
 }
 
 }  // namespace math

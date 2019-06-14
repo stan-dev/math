@@ -375,7 +375,7 @@ class cholesky_opencl : public vari {
       L_adj.sub_block(B_adj, 0, 0, k, 0, m_k_ind, j);
       L_adj.sub_block(C_adj, 0, 0, k, j, m_k_ind, k_j_ind);
     }
-    L_adj_cpu = packed_copy<TriangularViewCL::Lower>(L_adj);
+    L_adj_cpu = packed_copy(L_adj);
     for (size_type j = 0; j < packed_size; ++j) {
       vari_ref_A_[j]->adj_ += L_adj_cpu[j];
     }

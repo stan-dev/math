@@ -1,0 +1,33 @@
+#ifndef STAN_MATH_OPENCL_ERR_CHECK_TRIANGULAR_HPP
+#define STAN_MATH_OPENCL_ERR_CHECK_TRIANGULAR_HPP
+#ifdef STAN_OPENCL
+
+#include <stan/math/opencl/triangular.hpp>
+#include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/prim/scal/err/invalid_argument.hpp>
+
+namespace stan{
+namespace math{
+
+/**
+ * Check if the <code>matrix_cl</code> is either upper triangular or lower triangular.
+ *
+ * @param function Function name (for error messages)
+ * @param name Variable name (for error messages)
+ * @param y <code>matrix_cl</code> to test
+ *
+ * @throw <code>std::invalid_argument</code> if the <code>matrix_cl</code>
+ *    is not triangular
+ */
+inline void check_triangular(const char* function, const char* name,
+                         const matrix_cl& A) {
+  if(A.triangular_view()!=TriangularViewCL::Lower && A.triangular_view()!=TriangularViewCL::Upper){
+    invalid_argument("tri_inverse(OpenCL)", "A.triangular_view()", static_cast<int>(A.triangular_view()), "is ", ". Only triangular input matrices are supported!");
+  }
+}
+
+}
+}
+
+#endif
+#endif

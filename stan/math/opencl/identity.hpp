@@ -18,7 +18,7 @@ namespace math {
  *
  */
 inline matrix_cl identity(int rows_cols) {
-  matrix_cl A(rows_cols, rows_cols);
+  matrix_cl A(rows_cols, rows_cols, TriangularViewCL::Diagonal);
   if (rows_cols == 0) {
     return A;
   }

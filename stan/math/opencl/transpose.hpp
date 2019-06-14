@@ -18,7 +18,7 @@ namespace math {
  *
  */
 inline matrix_cl transpose(const matrix_cl& src) {
-  matrix_cl dst(src.cols(), src.rows());
+  matrix_cl dst(src.cols(), src.rows(), transpose(src.triangular_view()));
   if (dst.size() == 0)
     return dst;
   try {

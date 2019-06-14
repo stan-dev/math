@@ -1,6 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
-#include <stan/math/opencl/constants.hpp>
+#include <stan/math/opencl/triangular.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/copy_triangular.hpp>
 #include <gtest/gtest.h>
