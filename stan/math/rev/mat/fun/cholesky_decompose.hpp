@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
 #define STAN_MATH_REV_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
