@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_LKJ_COV_LPDF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_LKJ_COV_LPDF_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
