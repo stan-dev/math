@@ -56,7 +56,8 @@ static const char *divide_column_scalar_kernel_code = STRINGIFY(
  * See the docs for \link kernels/add.hpp add() \endlink
  */
 const kernel_cl<out_buffer, double> divide_columns_scalar(
-    "divide_columns_scalar", {indexing_helpers, divide_column_scalar_kernel_code});
+    "divide_columns_scalar",
+    {indexing_helpers, divide_column_scalar_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math
