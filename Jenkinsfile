@@ -37,9 +37,9 @@ String stan_pr() { params.stan_pr ?: ( env.CHANGE_TARGET == "master" ? "downstre
 pipeline {
     agent none
     parameters {
-        string(defaultValue: '', name: 'cmdstan_pr',
+        string(defaultValue: 'PR-710', name: 'cmdstan_pr',  ## change default back to '' for merge
           description: 'PR to test CmdStan upstream against e.g. PR-630')
-        string(defaultValue: '', name: 'stan_pr',
+        string(defaultValue: 'PR-2769', name: 'stan_pr',    ## change default back to '' for merge
           description: 'PR to test Stan upstream against e.g. PR-630')
         booleanParam(defaultValue: false, description:
         'Run additional distribution tests on RowVectors (takes 5x as long)',
