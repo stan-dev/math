@@ -24,7 +24,7 @@ namespace math {
  */
 template <typename T_x, typename T_v>
 inline typename std::vector<Eigen::Matrix<
-    typename return_type<T_x, T_v, double>::type, Eigen::Dynamic, 1>>
+    return_type_t<T_x, T_v, double>, Eigen::Dynamic, 1>>
 divide_columns(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
                const std::vector<T_v> &vec) {
   const size_t N = x.size();
@@ -33,9 +33,7 @@ divide_columns(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
   Eigen::Map<const Eigen::Array<T_v, Eigen::Dynamic, 1>> v_vec(&vec[0],
                                                                vec.size());
 
-  std::vector<Eigen::Matrix<typename return_type<T_x, T_v, double>::type,
-                            Eigen::Dynamic, 1>>
-      out(N);
+  std::vector<Eigen::Matrix<return_type_t<T_x, T_v, double>, Eigen::Dynamic, 1>> out(N);
   for (size_t n = 0; n < N; ++n) {
     out[n].resize(D);
     check_size_match("divide_columns", "x dimension", x[n].size(), "vector",

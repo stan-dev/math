@@ -14,6 +14,7 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/err/check_nan.hpp>
 #include <stan/math/opencl/gp_exp_quad_cov.hpp>
+#include <stan/math/opencl/divide_columns.hpp>
 #endif
 #include <cmath>
 #include <type_traits>
@@ -353,6 +354,8 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
 
   const size_t x_size = x.size();
   Eigen::MatrixXd cov(x_size, x_size);
+  if (x_size == 0) return cov;
+
   if (x_size * x_size
       < opencl_context.tuning_opts().gp_exp_quad_cov_size_worth_transfer) {
     for (size_t n = 0; n < x_size; ++n)
@@ -362,9 +365,6 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
                                     -0.5 / square(length_scale));
     return cov;
   }
-
-  if (x_size == 0)
-    return cov;
 
   matrix_cl x_cl(x, 1, x.size());
   check_nan(function_name, "x", x_cl);
@@ -456,9 +456,10 @@ inline Eigen::MatrixXd gp_exp_quad_cov(
                                      square(sigma));
   }
 
-  std::vector<Eigen::VectorXd> x_new = divide_columns(x, length_scale);
-  matrix_cl x_cl(x_new);
+  matrix_cl x_cl(x);
   check_nan(function_name, "x", x_cl);
+  matrix_cl length_scale_cl(length_scale, length_scale.size(), 1);
+  divide_columns(x_cl, length_scale_cl);
   matrix_cl cov_cl = gp_exp_quad_cov(x_cl, sigma, 1);
   cov = from_matrix_cl(cov_cl);
   return cov;
@@ -488,8 +489,7 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
   check_positive_finite(function_name, "length scale", length_scale);
 
   Eigen::MatrixXd cov(x1.size(), x2.size());
-  if (cov.size() == 0)
-    return cov;
+  if (x1.size() == 0 || x1.size() == 0) return cov;
   if (cov.size()
       < opencl_context.tuning_opts().gp_exp_quad_cov_size_worth_transfer) {
     for (size_t i = 0; i < x1.size(); ++i)
@@ -531,20 +531,17 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
     const std::vector<Eigen::VectorXd> &x1,
     const std::vector<Eigen::VectorXd> &x2, const double &sigma,
     const double &length_scale) {
+
   const char *function_name = "gp_exp_quad_cov";
   check_positive_finite(function_name, "magnitude", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
 
-  const size_t x1_size = x1.size();
-  const size_t x2_size = x2.size();
-  Eigen::MatrixXd cov(x1_size, x2_size);
-  if (cov.size() == 0)
-    return cov;
+  Eigen::MatrixXd cov(x1.size(), x2.size());
+  if (x1.size() == 0 || x1.size() == 0) return cov;
 
-  const size_t inner_x1_size = x1[0].size();
-  if (static_cast<double>(x1_size * x2_size)
+  if (static_cast<double>(x1.size() * x2.size())
               / opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
-          + static_cast<double>((x1_size + x2_size + 1) * inner_x1_size)
+          + static_cast<double>((x1.size() + x2.size() + 1) * x1[0].size())
                 / opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
       < 1) {
     for (size_t i = 0; i < x1.size(); ++i)
@@ -590,8 +587,7 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
   size_t l_size = length_scale.size();
 
   Eigen::MatrixXd cov(x1_size, x2_size);
-  if (x1_size == 0 || x2_size == 0)
-    return cov;
+  if (x1_size == 0 || x2_size == 0) return cov;
 
   const char *function_name = "gp_exp_quad_cov";
   check_positive_finite(function_name, "magnitude", sigma);
@@ -615,12 +611,13 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
                                     square(sigma));
     return cov;
   }
-  std::vector<Eigen::VectorXd> x1_new = divide_columns(x1, length_scale);
-  std::vector<Eigen::VectorXd> x2_new = divide_columns(x2, length_scale);
-  matrix_cl x1_cl(x1_new);
+  matrix_cl x1_cl(x1);
   check_nan(function_name, "x1", x1_cl);
-  matrix_cl x2_cl(x2_new);
+  matrix_cl length_scale_cl(length_scale, length_scale.size(), 1);
+  divide_columns(x1_cl, length_scale_cl);
+  matrix_cl x2_cl(x2);
   check_nan(function_name, "x2", x2_cl);
+  divide_columns(x2_cl, length_scale_cl);
   matrix_cl cov_cl = gp_exp_quad_cov(x1_cl, x2_cl, sigma, 1);
   cov = from_matrix_cl(cov_cl);
   return cov;
