@@ -14,8 +14,8 @@ static const char *divide_columns_kernel_code = STRINGIFY(
     /**
      * Takes vector A and divides columns vector in A element-wise by the values
      * in vec
-     * @param A[out]  Matrix to be divided elementwise
-     * @param vec[in]  Vector to divide A by
+     * @param[out] A  Matrix to be divided elementwise
+     * @param[in] vec  Vector to divide A by
      * @param vec_size Size of elementwise divisor.
      * @note Code is a <code>const char*</code> held in
      * <code>divide_columns_vec_kernel_code.</code>
@@ -39,8 +39,8 @@ const kernel_cl<out_buffer, in_buffer, int> divide_columns_vec(
 static const char *divide_column_scalar_kernel_code = STRINGIFY(
     // \endcond
     /**
-     * Takes matrix @c A element-wise
-     * @param A[out]  Matrix to be divided elementwise
+     * Performs element-wise division on @c A
+     * @param[out] A  Matrix to be divided elementwise
      * @param divisor  element to divide A by elementwise
      * @note Code is a <code>const char*</code> held in
      * <code>divide_column_scalar_kernel_code.</code>
