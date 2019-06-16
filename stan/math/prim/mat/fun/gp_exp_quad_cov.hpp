@@ -354,7 +354,8 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
 
   const size_t x_size = x.size();
   Eigen::MatrixXd cov(x_size, x_size);
-  if (x_size == 0) return cov;
+  if (x_size == 0)
+    return cov;
 
   if (x_size * x_size
       < opencl_context.tuning_opts().gp_exp_quad_cov_size_worth_transfer) {
@@ -489,7 +490,8 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
   check_positive_finite(function_name, "length scale", length_scale);
 
   Eigen::MatrixXd cov(x1.size(), x2.size());
-  if (x1.size() == 0 || x1.size() == 0) return cov;
+  if (x1.size() == 0 || x1.size() == 0)
+    return cov;
   if (cov.size()
       < opencl_context.tuning_opts().gp_exp_quad_cov_size_worth_transfer) {
     for (size_t i = 0; i < x1.size(); ++i)
@@ -531,13 +533,13 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
     const std::vector<Eigen::VectorXd> &x1,
     const std::vector<Eigen::VectorXd> &x2, const double &sigma,
     const double &length_scale) {
-
   const char *function_name = "gp_exp_quad_cov";
   check_positive_finite(function_name, "magnitude", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
 
   Eigen::MatrixXd cov(x1.size(), x2.size());
-  if (x1.size() == 0 || x1.size() == 0) return cov;
+  if (x1.size() == 0 || x1.size() == 0)
+    return cov;
 
   if (static_cast<double>(x1.size() * x2.size())
               / opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
@@ -587,7 +589,8 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
   size_t l_size = length_scale.size();
 
   Eigen::MatrixXd cov(x1_size, x2_size);
-  if (x1_size == 0 || x2_size == 0) return cov;
+  if (x1_size == 0 || x2_size == 0)
+    return cov;
 
   const char *function_name = "gp_exp_quad_cov";
   check_positive_finite(function_name, "magnitude", sigma);

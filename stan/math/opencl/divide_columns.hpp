@@ -29,14 +29,13 @@ inline void divide_columns(const matrix_cl& A, const matrix_cl& B) try {
   }
   opencl_kernels::divide_columns_vec(cl::NDRange(A.size()), A, B, B.size());
   return;
-  } catch (const cl::Error& e) {
-    check_opencl_error("divide_columns", e);
-    return;
-  }
-
+} catch (const cl::Error& e) {
+  check_opencl_error("divide_columns", e);
+  return;
+}
 
 /**
-* Takes matrix @c A element-wise
+ * Takes matrix @c A element-wise
  *
  * @param A Matrix to divide
  * @param divisor scalar to divide by
@@ -50,11 +49,10 @@ inline void divide_columns(const matrix_cl& A, const double& divisor) try {
   }
   opencl_kernels::divide_columns_scalar(cl::NDRange(A.size()), A, divisor);
   return;
-  } catch (const cl::Error& e) {
-    check_opencl_error("divide_columns", e);
-    return;
-  }
-
+} catch (const cl::Error& e) {
+  check_opencl_error("divide_columns", e);
+  return;
+}
 
 }  // namespace math
 }  // namespace stan
