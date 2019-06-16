@@ -7,7 +7,6 @@ EIGEN ?= $(MATH)lib/eigen_3.3.3
 OPENCL ?= $(MATH)lib/opencl_1.2.8
 TBB ?= $(MATH)lib/tbb_2019_U6
 SUNDIALS ?= $(MATH)lib/sundials_4.1.0
-
 GTEST ?= $(MATH)lib/gtest_1.8.1
 CPPLINT ?= $(MATH)lib/cpplint_4.45
 
@@ -72,16 +71,27 @@ clean-sundials:
 ############################################################
 # TBB build rules
 #
-# TBB_CXX_TYPE can be icl, icc, gcc or clang; See tbb documentation for more info
-# for gcc and clang this is derived from stan makefile defaults automatically
+# TBB_CXX_TYPE can be icl, icc, gcc or clang; See tbb documentation for more info.
+# For gcc and clang this is derived from stan makefile defaults automatically.
 #
+# TBB_CC is the C compiler to be used, which is by default derived here from the
+# defined C++ compiler type. In case neither clang or gcc is used, then the CC
+# variable is used if defined.
+#
+# Note that the tbb targets must not be build in parallel (so no concurrent
+# build of tbb and tbbmalloc, for example). This is ensured here with proper 
+# dependencies.
+#
+# On windows the mingw32-make (part of RTools, for example) is required to build
+# the TBB as this make has proper POSIX extensions needed by the used downstream
+# TBB makefiles.
 
 ifeq ($(CXX_TYPE),mingw32-gcc)
   TBB_CXX_TYPE ?= gcc
 endif
 ifeq ($(CXX_TYPE),other)
   ifeq (,$(TBB_CXX_TYPE))
-    $(error "Need to set TBB_CXX_TYPE for non-standard compiler.")
+    $(error "Need to set TBB_CXX_TYPE for non-standard compiler other than gcc or clang.")
   endif
 endif
 TBB_CXX_TYPE ?= $(CXX_TYPE)
@@ -96,13 +106,8 @@ endif
 TBB_CC ?= $(CC)
 
 ifeq (,$(TBB_CC))
-  $(error "Need to set TBB_CC to C compiler command for non-standard compiler.")
+  $(error "Need to set TBB_CC to C compiler command for non-standard compiler other than gcc or clang.")
 endif
-
-#workaround for non-depend targets tbb and tbbmalloc which both depend on version_string.ver
-#According to documentation, recursively invoked make commands can process their targets in parallel
-#.NOTPARALLEL: $(TBB)/lib/tbb.def $(TBB)/lib/tbbmalloc.def $(TBB)/lib/tbbmallocproxy.def
-# ensure via dependencies that the tbbmalloc is build before the tbb
 
 $(TBB)/lib/tbb.def: $(TBB)/lib/tbbmalloc.def
 	@mkdir -p $(TBB)/lib
