@@ -178,7 +178,7 @@ void test_gradient(const F& f, const Eigen::VectorXd& x, double fx,
     return;
   Eigen::VectorXd grad_fd;
   double fx_fd;
-  stan::math::finite_diff_gradient(f, x, fx_fd, grad_fd);
+  stan::math::finite_diff_gradient_auto(f, x, fx_fd, grad_fd);
   expect_near("test gradient grad_fd == grad_ad", grad_fd, grad_ad, 1e-4);
 }
 
@@ -215,7 +215,7 @@ void test_gradient_fvar(const F& f, const Eigen::VectorXd& x, double fx,
     return;
   Eigen::VectorXd grad_fd;
   double fx_fd;
-  stan::math::finite_diff_gradient(f, x, fx_fd, grad_fd);
+  stan::math::finite_diff_gradient_auto(f, x, fx_fd, grad_fd);
   expect_near("gradient_fvar grad_fd == grad_ad", grad_fd, grad_ad, 1e-4);
 }
 
@@ -254,7 +254,7 @@ void test_hessian_fvar(const F& f, const Eigen::VectorXd& x, double fx,
   double fx_fd;
   Eigen::VectorXd grad_fd;
   Eigen::MatrixXd H_fd;
-  stan::math::finite_diff_hessian(f, x, fx_fd, grad_fd, H_fd);
+  stan::math::finite_diff_hessian_auto(f, x, fx_fd, grad_fd, H_fd);
   expect_near("hessian fvar grad_fd == grad_ad", grad_fd, grad_ad, 1e-4);
   expect_near("hessian fvar H_fd = H_ad", H_fd, H_ad, 1e-3);
 }
@@ -294,7 +294,7 @@ void test_hessian(const F& f, const Eigen::VectorXd& x, double fx,
   double fx_fd;
   Eigen::VectorXd grad_fd;
   Eigen::MatrixXd H_fd;
-  stan::math::finite_diff_hessian(f, x, fx_fd, grad_fd, H_fd);
+  stan::math::finite_diff_hessian_auto(f, x, fx_fd, grad_fd, H_fd);
   expect_near("hessian grad_fd = grad_ad", grad_fd, grad_ad, 1e-4);
   expect_near("hessian grad_fd H_fd == H_ad", H_fd, H_ad, 1e-3);
 }
@@ -334,7 +334,7 @@ void test_grad_hessian(const F& f, const Eigen::VectorXd& x, double fx,
   double fx_fd;
   Eigen::MatrixXd H_fd;
   std::vector<Eigen::MatrixXd> grad_H_fd;
-  stan::math::finite_diff_grad_hessian(f, x, fx_fd, H_fd, grad_H_fd);
+  stan::math::finite_diff_grad_hessian_auto(f, x, fx_fd, H_fd, grad_H_fd);
   expect_near("grad hessian H_fd == H_ad", H_fd, H_ad, 1e-3);
   EXPECT_EQ(x.size(), grad_H_fd.size());
   for (size_t i = 0; i < grad_H_fd.size(); ++i)
@@ -737,6 +737,36 @@ void expect_common_unary_vectorized(const F& f) {
   auto args = common_args();
   for (double x1 : args)
     stan::test::expect_ad_vectorized(f, x1);
+}
+
+/**
+ * Base case for variadic function testing any number of arguments.
+ * The base case always succeeds as there is nothing to test.
+ *
+ * @tparam F type of function to test
+ * @param f function to test
+ */
+template <typename F>
+void expect_unary_vectorized(const F& f) {}
+
+/**
+ * Recursive case for variadic unary vectorized function tests for the
+ * specified argument and pack of arguments.
+ *
+ * <p>This test delegates to `expect_ad_vectorized(F, double)`; see that
+ * function's documentation and requirements on the type of functions.
+ *
+ * @tparam F type of function to test
+ * @tparam T type of first argument to test
+ * @tparam Ts type of remaining arguments to test
+ * @param f function to test
+ * @param x argument to test
+ * @param xs arguments to test
+ */
+template <typename F, typename T, typename... Ts>
+void expect_unary_vectorized(const F& f, T x, Ts... xs) {
+  stan::test::expect_ad_vectorized(f, x);
+  expect_unary_vectorized(f, xs...);
 }
 
 /**
