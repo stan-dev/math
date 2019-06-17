@@ -53,8 +53,7 @@ inline void check_vector(const char* function, const char* name, T& x) {
       << " columns but it should be a vector so it should "
       << "either have 1 row or 1 column";
   std::string msg_str(msg.str());
-  invalid_argument(function, name, typeid(T).name(), "(",
-                   msg_str.c_str());
+  invalid_argument(function, name, typeid(T).name(), "(", msg_str.c_str());
 }
 
 }  // namespace math

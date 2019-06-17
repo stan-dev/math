@@ -5,12 +5,12 @@
 #include <gtest/gtest.h>
 #include <algorithm>
 
+using stan::math::divide_columns;
+using stan::math::from_matrix_cl;
+using stan::math::matrix_cl;
+using stan::math::matrix_d;
 using stan::math::row_vector_d;
 using stan::math::vector_d;
-using stan::math::matrix_cl;
-using stan::math::divide_columns;
-using stan::math::matrix_d;
-using stan::math::from_matrix_cl;
 
 TEST(MathMatrixCL, divide_columns_v_exception_pass) {
   vector_d d1, d2;
@@ -166,9 +166,7 @@ TEST(MathMatrixCL, divide_columns_value_vector_d_check) {
 TEST(MathMatrixCL, divide_columns_value_matrix_check) {
   matrix_d m1(3, 3);
   matrix_d m2(3, 1);
-  m1 << 10, 20, 30,
-        20, 40, 60,
-        30, 60, 90;
+  m1 << 10, 20, 30, 20, 40, 60, 30, 60, 90;
   m2 << 10, 10, 10;
   matrix_d m3(3, 3);
 
