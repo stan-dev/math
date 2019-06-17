@@ -686,7 +686,7 @@ TEST(MathMatrix, performance_test_inla3) {
     start_jacobian = std::chrono::system_clock::now();
     dummy_cot.grad(parm_vec, g);
     end = std::chrono::system_clock::now();
-    
+
     elapsed_seconds_total = end - start;
     elapsed_seconds_jacobian = end - start_jacobian; 
     std::cout << "Total time: " << elapsed_seconds_total.count() 

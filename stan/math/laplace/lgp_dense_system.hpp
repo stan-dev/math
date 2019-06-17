@@ -70,7 +70,7 @@ struct lgp_dense_system {
   Eigen::VectorXd n_samples_;  // number of samples for local parameter
   Eigen::VectorXd sums_;  // sums of observation for local parameter
   bool space_matters_;
-  Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic> Sigma_;  // covariance matrix
+  Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic> Q_;  // precision matrix
 
   // Constructors
   lgp_dense_system() {}
@@ -81,11 +81,8 @@ struct lgp_dense_system {
                    bool space_matters = false)
     : phi_(phi), n_samples_(n_samples), sums_(sums),
       space_matters_(space_matters) {
-    std::cout << "constructing system" << std::endl;
     int M = n_samples.size();
-    Sigma_ = lgp_covariance(phi, M, space_matters_);
-    // Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
-    //   Q_ = inverse_spd(lgp_covariance(phi, M, true));
+    Q_ = inverse_spd(lgp_covariance(phi, M, true));
   }
 
   /**
@@ -94,8 +91,7 @@ struct lgp_dense_system {
   Eigen::Matrix<T0, Eigen::Dynamic, 1> get_phi() const { return phi_; }
   Eigen::VectorXd get_n_samples() const { return n_samples_; }
   Eigen::VectorXd get_sums() const { return sums_; }
-  // Eigen::Matrix<T0, Eigen::Dynamic, 1> get_Q() const {return Q_; }
-  // Eigen::MatrixXd get_Sigma() const { return Sigma_; }
+  Eigen::Matrix<T0, Eigen::Dynamic, 1> get_Q() const {return Q_; }
   bool get_space_matters() const { return space_matters_; }
 
   /**
@@ -109,8 +105,7 @@ struct lgp_dense_system {
       Eigen::Matrix<T1, Eigen::Dynamic, 1> 
         poisson_term = elt_multiply(sums_, theta) - exp(theta);
       return sum(poisson_term) -
-        0.5 * theta.transpose() * mdivide_left(Sigma_, theta);
-      // 0.5 * theta.transpose() * multiply(Q_, theta);
+        0.5 * theta.transpose() * multiply(Q_, theta);
     }
 
   /**
@@ -121,8 +116,7 @@ struct lgp_dense_system {
                 Eigen::Dynamic, Eigen::Dynamic>
   cond_gradient(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta) const {
     return sums_ - elt_multiply(n_samples_, exp(theta)) -
-      mdivide_left(Sigma_, theta);
-      // multiply(Q_, theta);
+      multiply(Q_, theta);
   }
 
   /**
@@ -136,8 +130,7 @@ struct lgp_dense_system {
     Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> first_term = 
       elt_multiply(n_samples_, exp(theta)).asDiagonal();
 
-    // return - (first_term + Q_);
-    return - (first_term + inverse_spd(Sigma_));
+    return - (first_term + Q_);
   }
 
   /**
@@ -162,6 +155,7 @@ struct lgp_dense_system {
       Sigma = lgp_covariance(phi, M_, space_);
 
       return - mdivide_left(Sigma, theta_);
+      // CHECK - can we precompute the covariance or precision matrix?
     }
   };
 
@@ -179,16 +173,7 @@ struct lgp_dense_system {
     Eigen::MatrixXd phi_sensitivities;
     deriv_objective f(value_of(theta), theta.size(), space_matters_);
 
-    auto start = std::chrono::system_clock::now();
-
     jacobian_fwd(f, phi_, dummy, phi_sensitivities);
-
-    auto end = std::chrono::system_clock::now();
-    auto elapsed_seconds = end - start;
-
-    std::cout << "Time for phi_sensitivities: " 
-              << elapsed_seconds.count() / 1e6 
-              << std::endl;
 
     return - mdivide_left(cond_hessian(theta), phi_sensitivities);
   }

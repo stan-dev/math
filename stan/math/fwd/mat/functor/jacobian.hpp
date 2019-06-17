@@ -35,7 +35,6 @@ template <typename T, typename F>
 void jacobian_fwd(const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
                   Eigen::Matrix<T, Eigen::Dynamic, 1>& fx,
                   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& J) {
-  std::cout << "using fwd mode" << std::endl;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   Matrix<fvar<T>, Dynamic, 1> x_fvar(x.size());

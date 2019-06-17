@@ -188,19 +188,13 @@ namespace math {
     bool line_search = false,
     bool print_iteration = false) {
     
-    auto start = std::chrono::system_clock::now();
     Eigen::VectorXd theta_dbl 
       = lgp_dense_newton_solver(value_of(theta_0), value_of(phi), 
                                 system, tol,
                                 max_num_steps, line_search,
                                 print_iteration);
-    auto end = std::chrono::system_clock::now();
-    auto elapsed_seconds = end - start;
-    std::cout << "Solving time: " << elapsed_seconds.count() / 1e6 << std::endl;
 
     // construct vari
-    start = std::chrono::system_clock::now();
-
     lgp_dense_newton_solver_vari<T2>* vi0
       = new lgp_dense_newton_solver_vari<T2>(phi,
                                              system, theta_dbl);
@@ -209,10 +203,6 @@ namespace math {
     theta(0) = var(vi0->theta_[0]);
     for (int i = 1; i < theta_dbl.size(); i++)
       theta(i) = var(vi0->theta_[i]);
-
-    end = std::chrono::system_clock::now();
-    elapsed_seconds = end - start;
-    std::cout << "vari time: " << elapsed_seconds.count() / 1e6 << std::endl;
 
     return theta;
   }
