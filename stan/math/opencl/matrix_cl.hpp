@@ -201,9 +201,11 @@ class matrix_cl {
   /**
    * Constructor for the matrix_cl that
    * only allocates the buffer on the OpenCL device.
+   * Regardless of `triangular_view`, whole matrix is stored.
    *
    * @param rows number of matrix rows, must be greater or equal to 0
    * @param cols number of matrix columns, must be greater or equal to 0
+   * @param triangular_view which part of the matrix is used
    *
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
@@ -227,10 +229,11 @@ class matrix_cl {
   /**
    * Constructor for the matrix_cl that
    * creates a copy of the Eigen matrix on the OpenCL device.
-   *
+   * Regardless of `triangular_view`, whole matrix is stored.
    *
    * @tparam T type of data in the Eigen matrix
    * @param A the Eigen matrix
+   * @param triangular_view which part of the matrix is used
    *
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
