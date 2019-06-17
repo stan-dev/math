@@ -357,8 +357,7 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
   if (x_size == 0)
     return cov;
 
-  if (x_size * x_size
-      < opencl_context.tuning_opts().gp_exp_quad_cov_size_worth_transfer) {
+  if (x_size < opencl_context.tuning_opts().gp_exp_quad_cov_simple) {
     for (size_t n = 0; n < x_size; ++n)
       check_not_nan("gp_exp_quad_cov", "x", x[n]);
 
@@ -401,11 +400,7 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
     return cov;
 
   const size_t inner_x1_size = x[0].size();
-  if (static_cast<double>(x_size * x_size)
-              / opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
-          + static_cast<double>((x_size + x_size + 1) * inner_x1_size)
-                / opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
-      < 1) {
+  if (x_size * inner_x1_size < opencl_context.tuning_opts().gp_exp_quad_cov_vec) {
     for (size_t i = 0; i < x_size; ++i)
       check_not_nan("gp_exp_quad_cov", "x", x[i]);
     cov = internal::gp_exp_quad_cov(x, square(sigma),
@@ -448,11 +443,7 @@ inline Eigen::MatrixXd gp_exp_quad_cov(
   const size_t inner_x1_size = x[0].size();
   check_size_match(function_name, "x dimension", inner_x1_size,
                    "number of length scales", length_scale.size());
-  if (static_cast<double>(x_size * x_size)
-              / opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
-          + static_cast<double>((x_size + x_size + 1) * inner_x1_size)
-                / opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
-      < 1) {
+  if (x_size < opencl_context.tuning_opts().gp_exp_quad_cov_vec) {
     return internal::gp_exp_quad_cov(divide_columns(x, length_scale),
                                      square(sigma));
   }
@@ -492,8 +483,7 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
   Eigen::MatrixXd cov(x1.size(), x2.size());
   if (x1.size() == 0 || x1.size() == 0)
     return cov;
-  if (cov.size()
-      < opencl_context.tuning_opts().gp_exp_quad_cov_size_worth_transfer) {
+  if (cov.size() < opencl_context.tuning_opts().gp_exp_quad_cov_simple) {
     for (size_t i = 0; i < x1.size(); ++i)
       check_not_nan(function_name, "x1", x1[i]);
     for (size_t i = 0; i < x2.size(); ++i)
@@ -534,6 +524,10 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
     const std::vector<Eigen::VectorXd> &x2, const double &sigma,
     const double &length_scale) {
   const char *function_name = "gp_exp_quad_cov";
+  const int x1_size = x1.size();
+  const int x2_size = x2.size();
+  const int x1_inner_size = x1[0].size();
+  const int x2_inner_size = x1[0].size();
   check_positive_finite(function_name, "magnitude", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
 
@@ -541,11 +535,7 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
   if (x1.size() == 0 || x1.size() == 0)
     return cov;
 
-  if (static_cast<double>(x1.size() * x2.size())
-              / opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
-          + static_cast<double>((x1.size() + x2.size() + 1) * x1[0].size())
-                / opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
-      < 1) {
+  if (x1_size * x1_inner_size + x2_size * x2_inner_size < opencl_context.tuning_opts().gp_exp_quad_cov_vec) {
     for (size_t i = 0; i < x1.size(); ++i)
       check_not_nan(function_name, "x1", x1[i]);
     for (size_t i = 0; i < x2.size(); ++i)
@@ -586,6 +576,8 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
     const std::vector<double> &length_scale) {
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
+  const int x1_inner_size = x1[0].size();
+  const int x2_inner_size = x1[0].size();
   size_t l_size = length_scale.size();
 
   Eigen::MatrixXd cov(x1_size, x2_size);
@@ -600,11 +592,7 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
   check_size_match(function_name, "x dimension", x2[0].size(),
                    "number of length scales", l_size);
 
-  if (static_cast<double>(x1_size * x2_size)
-              / opencl_context.tuning_opts().gp_exp_quad_cov_coeff1
-          + static_cast<double>((x1_size + x2_size + 1) * x1[0].size())
-                / opencl_context.tuning_opts().gp_exp_quad_cov_coeff2
-      < 1) {
+ if (x1_size * x1_inner_size + x2_size * x2_inner_size + l_size < opencl_context.tuning_opts().gp_exp_quad_cov_vec) {
     for (size_t i = 0; i < x1_size; ++i)
       check_not_nan(function_name, "x1", x1[i]);
     for (size_t i = 0; i < x2_size; ++i)

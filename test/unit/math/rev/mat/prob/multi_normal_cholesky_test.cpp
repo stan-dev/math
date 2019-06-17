@@ -1,6 +1,7 @@
 #include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 
 using Eigen::Dynamic;
