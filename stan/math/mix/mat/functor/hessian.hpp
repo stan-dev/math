@@ -44,7 +44,8 @@ void hessian(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
              Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& H) {
   H.resize(x.size(), x.size());
   grad.resize(x.size());
-  // size 0 separate because nothing to loop over in main body
+
+  // need to compute fx even with size = 0
   if (x.size() == 0) {
     fx = f(x);
     return;
