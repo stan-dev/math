@@ -200,7 +200,7 @@ struct coupled_ode_system<F, double, var> {
  * initial conditions with respect to the first base system equation:
  * \f[
  *  \frac{d x_{N + n}}{dt}
- *  = \frac{d}{dt} \frac{\partial x_1}{\partial \y0_m}
+ *  = \frac{d}{dt} \frac{\partial x_1}{\partial y0_m}
  * \f]
  * for \f$ n \in {1, \ldots, N} \f$].
  *
