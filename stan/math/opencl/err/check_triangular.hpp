@@ -15,7 +15,7 @@ namespace math {
  *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
- * @param y <code>matrix_cl</code> to test
+ * @param A <code>matrix_cl</code> to test
  *
  * @throw <code>std::invalid_argument</code> if the <code>matrix_cl</code>
  *    is not triangular

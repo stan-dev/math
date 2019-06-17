@@ -103,6 +103,7 @@ inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> from_matrix_cl(
  *
  * @param src the flat triangular source matrix on the OpenCL device
  * @return the packed std::vector
+ * @throw <code>std::invalid_argument</code> if the matrix is not triangular
  */
 inline std::vector<double> packed_copy(const matrix_cl& src) {
   check_triangular("packed_copy", "src", src);

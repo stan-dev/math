@@ -29,7 +29,6 @@ namespace math {
  * here</a> and kernel doc
  * <a href="https://github.com/stan-dev/math/wiki/GPU-Kernels">here</a>.
  *
- * @tparam A.triangular_view() the triangularity of the input matrix
  * @param A matrix on the OpenCL device
  * @return the inverse of A
  *
