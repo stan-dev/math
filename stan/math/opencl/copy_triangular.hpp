@@ -5,6 +5,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/kernels/copy_triangular.hpp>
+#include <stan/math/opencl/err/check_opencl.hpp>
 #include <CL/cl.hpp>
 
 namespace stan {
@@ -32,11 +33,10 @@ inline matrix_cl copy_triangular(const matrix_cl& src) {
     return dst;
   }
   matrix_cl dst(src.rows(), src.cols());
-  cl::CommandQueue cmdQueue = opencl_context.queue();
   try {
-    opencl_kernels::copy_triangular(cl::NDRange(dst.rows(), dst.cols()),
-                                    dst.buffer(), src.buffer(), dst.rows(),
-                                    dst.cols(), triangular_view);
+    opencl_kernels::copy_triangular(cl::NDRange(dst.rows(), dst.cols()), dst,
+                                    src, dst.rows(), dst.cols(),
+                                    triangular_view);
   } catch (const cl::Error& e) {
     check_opencl_error("copy_triangular", e);
   }

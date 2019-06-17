@@ -13,18 +13,11 @@
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/cholesky_decompose.hpp>
-#include <stan/math/opencl/constants.hpp>
-#include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/diagonal_multiply.hpp>
-#include <stan/math/opencl/lower_tri_inverse.hpp>
-#include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/multiply.hpp>
-#include <stan/math/opencl/opencl_context.hpp>
-#include <vector>
+#include <stan/math/opencl/opencl.hpp>
 #endif
 
 #include <algorithm>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -306,7 +299,7 @@ class cholesky_opencl : public vari {
     L_adj = opencl::multiply<TriangularViewCL::Upper, TriangularViewCL::Entire>(
         transpose(L), L_adj);
     L_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
-    L = transpose(lower_triangular_inverse(L));
+    L = transpose(tri_inverse<TriangularViewCL::Lower>(L));
     L_adj = L
             * transpose(opencl::multiply<TriangularViewCL::Upper,
                                          TriangularViewCL::Entire>(L, L_adj));
@@ -367,7 +360,7 @@ class cholesky_opencl : public vari {
 
       C_adj
           = opencl::multiply<TriangularViewCL::Entire, TriangularViewCL::Lower>(
-              C_adj, lower_triangular_inverse(D));
+              C_adj, tri_inverse<TriangularViewCL::Lower>(D));
       B_adj = B_adj - C_adj * R;
       D_adj = D_adj - transpose(C_adj) * C;
 

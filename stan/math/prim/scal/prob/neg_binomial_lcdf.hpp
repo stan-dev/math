@@ -5,24 +5,16 @@
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/prim/scal/fun/lbeta.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/fun/beta.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
-#include <boost/math/special_functions/digamma.hpp>
-#include <boost/random/negative_binomial_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <limits>
 
@@ -51,7 +43,6 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_lcdf(
   scalar_seq_view<T_inv_scale> beta_vec(beta);
   size_t size = max_size(n, alpha, beta);
 
-  using std::exp;
   using std::exp;
   using std::log;
   using std::pow;
@@ -95,7 +86,7 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_lcdf(
     const T_partials_return p_dbl = beta_dbl / (1.0 + beta_dbl);
     const T_partials_return d_dbl = 1.0 / ((1.0 + beta_dbl) * (1.0 + beta_dbl));
     const T_partials_return Pi = inc_beta(alpha_dbl, n_dbl + 1.0, p_dbl);
-    const T_partials_return beta_func = exp(lbeta(n_dbl + 1, alpha_dbl));
+    const T_partials_return beta_func = stan::math::beta(n_dbl + 1, alpha_dbl);
 
     P += log(Pi);
 

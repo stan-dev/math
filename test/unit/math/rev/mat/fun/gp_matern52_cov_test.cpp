@@ -79,3 +79,11 @@ TEST(MathPrimMat, output_type_checking) {
                decltype(stan::math::gp_matern52_cov(
                    value_of(x), value_of(sigma), l))>::value));
 }
+
+TEST(MathRev, fails_to_compile) {
+  std::vector<Eigen::VectorXd> x(0);
+  stan::math::var sigma;
+  std::vector<stan::math::var> l;
+
+  stan::math::gp_matern52_cov(x, sigma, l);
+}

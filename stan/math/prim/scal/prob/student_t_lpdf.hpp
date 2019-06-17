@@ -12,17 +12,12 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/lbeta.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
-#include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <boost/random/student_t_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -86,7 +81,6 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lpdf(
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, nu, mu, sigma);
 
-  using std::log;
   using std::log;
 
   VectorBuilder<include_summand<propto, T_y, T_dof, T_loc, T_scale>::value,

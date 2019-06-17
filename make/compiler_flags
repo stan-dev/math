@@ -169,13 +169,14 @@ ifdef STAN_OPENCL
   OPENCL_DEVICE_ID ?= 0
   OPENCL_PLATFORM_ID ?= 0
 
-  CPPFLAGS_OPENCL ?= -DSTAN_OPENCL -DOPENCL_DEVICE_ID=$(OPENCL_DEVICE_ID) -DOPENCL_PLATFORM_ID=$(OPENCL_PLATFORM_ID) -DCL_USE_DEPRECATED_OPENCL_1_2_APIS
+  CPPFLAGS_OPENCL ?= -DSTAN_OPENCL -DOPENCL_DEVICE_ID=$(OPENCL_DEVICE_ID) -DOPENCL_PLATFORM_ID=$(OPENCL_PLATFORM_ID) -DCL_USE_DEPRECATED_OPENCL_1_2_APIS -D__CL_ENABLE_EXCEPTIONS -Wno-ignored-attributes
   CXXFLAGS_OPENCL ?= -I $(OPENCL)
 endif
 
 ################################################################################
 # Setup Intel TBB
 #
+# Sets up TBB CXXFLAGS_TBB and LDFLAGS_TBB to compile and link to TBB
 
 TBB_ABSOLUTE_PATH = $(abspath $(TBB))
 
@@ -244,8 +245,8 @@ print-compiler-flags:
 	@echo '  - CXXFLAGS_OS                 ' $(CXXFLAGS_OS)
 	@echo '  - CXXFLAGS_GTEST              ' $(CXXFLAGS_GTEST)
 	@echo '  - CXXFLAGS_OPENCL             ' $(CXXFLAGS_OPENCL)
-	@echo '  - CXXFLAGS_MPI                ' $(CXXFLAGS_MPI)
 	@echo '  - CXXFLAGS_TBB                ' $(CXXFLAGS_TBB)
+	@echo '  - CXXFLAGS_MPI                ' $(CXXFLAGS_MPI)
 	@echo '  - CFLAGS_SUNDIALS             ' $(CFLAGS_SUNDIALS)
 	@echo '  LDLIBS:'
 	@echo '  - LDLIBS_LANG                 ' $(LDLIBS_LANG)
@@ -255,8 +256,8 @@ print-compiler-flags:
 	@echo '  - LDLIBS_OS                   ' $(LDLIBS_OS)
 	@echo '  - LDLIBS_GTEST                ' $(LDLIBS_GTEST)
 	@echo '  - LDLIBS_OPENCL               ' $(LDLIBS_OPENCL)
-	@echo '  - LDLIBS_MPI                  ' $(LDLIBS_MPI)
 	@echo '  - LDLIBS_TBB                  ' $(LDLIBS_TBB)
+	@echo '  - LDLIBS_MPI                  ' $(LDLIBS_MPI)
 	@echo '  LDFLAGS:'
 	@echo '  - LDFLAGS_LANG                ' $(LDFLAGS_LANG)
 	@echo '  - LDFLAGS_WARNINGS            ' $(LDFLAGS_WARNINGS)
@@ -265,6 +266,6 @@ print-compiler-flags:
 	@echo '  - LDFLAGS_OS                  ' $(LDFLAGS_OS)
 	@echo '  - LDFLAGS_GTEST               ' $(LDFLAGS_GTEST)
 	@echo '  - LDFLAGS_OPENCL              ' $(LDFLAGS_OPENCL)
-	@echo '  - LDFLAGS_MPI                 ' $(LDFLAGS_MPI)
 	@echo '  - LDFLAGS_TBB                 ' $(LDFLAGS_TBB)
+	@echo '  - LDFLAGS_MPI                 ' $(LDFLAGS_MPI)
 	@echo ''

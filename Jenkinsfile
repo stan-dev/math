@@ -37,9 +37,9 @@ String stan_pr() { params.stan_pr ?: ( env.CHANGE_TARGET == "master" ? "downstre
 pipeline {
     agent none
     parameters {
-        string(defaultValue: '', name: 'cmdstan_pr',
+        string(defaultValue: 'PR-710', name: 'cmdstan_pr',
           description: 'PR to test CmdStan upstream against e.g. PR-630')
-        string(defaultValue: '', name: 'stan_pr',
+        string(defaultValue: 'PR-2769', name: 'stan_pr',
           description: 'PR to test Stan upstream against e.g. PR-630')
         booleanParam(defaultValue: false, description:
         'Run additional distribution tests on RowVectors (takes 5x as long)',
@@ -173,15 +173,6 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                stage('Windows Headers & Unit') {
-                    agent { label 'windows' }
-                    steps {
-                        deleteDirWin()
-                        unstash 'MathSetup'
-                        bat "mingw32-make -j${env.PARALLEL} test-headers"
-                        runTestsWin("test/unit")
-                    }
-                }
             }
         }
         stage('Always-run tests part 2') {
@@ -225,6 +216,15 @@ pipeline {
                         runTests("test/unit -f map_rect")
                     }
                     post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Windows Headers & Unit') {
+                    agent { label 'windows' }
+                    steps {
+                        deleteDirWin()
+                        unstash 'MathSetup'
+                        bat "mingw32-make -j${env.PARALLEL} test-headers"
+                        runTestsWin("test/unit")
+                    }
                 }
             }
         }

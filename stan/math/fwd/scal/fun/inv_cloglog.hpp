@@ -2,7 +2,6 @@
 #define STAN_MATH_FWD_SCAL_FUN_INV_CLOGLOG_HPP
 
 #include <stan/math/fwd/core.hpp>
-
 #include <stan/math/prim/scal/fun/inv_cloglog.hpp>
 
 namespace stan {

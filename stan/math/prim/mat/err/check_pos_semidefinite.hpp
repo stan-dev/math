@@ -1,14 +1,13 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_POS_SEMIDEFINITE_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_POS_SEMIDEFINITE_HPP
 
-#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <stan/math/prim/mat/err/constraint_tolerance.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/value_of_rec.hpp>
+#include <stan/math/prim/mat/meta/index_type.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <sstream>
 
 namespace stan {
@@ -44,6 +43,24 @@ inline void check_pos_semidefinite(
       || (cholesky.vectorD().array() < 0.0).any())
     domain_error(function, name, "is not positive semi-definite.", "");
   check_not_nan(function, name, y);
+}
+
+/**
+ * Check if the specified matrix is positive semidefinite
+ *
+ * @tparam Derived Derived type of the Eigen::LDLT transform.
+ * @param function Function name (for error messages)
+ * @param name Variable name (for error messages)
+ * @param cholesky Eigen::LDLT to test
+ * @throw <code>std::domain_error</code> if the matrix is not positive
+ *   semi-definite.
+ */
+template <typename Derived>
+inline void check_pos_semidefinite(const char* function, const char* name,
+                                   const Eigen::LDLT<Derived>& cholesky) {
+  if (cholesky.info() != Eigen::Success
+      || (cholesky.vectorD().array() < 0.0).any())
+    domain_error(function, name, "is not positive semi-definite.", "");
 }
 
 }  // namespace math

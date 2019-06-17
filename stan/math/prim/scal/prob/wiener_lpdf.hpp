@@ -42,7 +42,6 @@
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <boost/math/distributions.hpp>
 #include <algorithm>
 #include <cmath>
 #include <string>

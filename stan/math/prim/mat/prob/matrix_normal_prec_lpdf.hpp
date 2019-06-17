@@ -5,13 +5,9 @@
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/mat/fun/log.hpp>
-#include <stan/math/prim/mat/fun/log_determinant.hpp>
 #include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
 #include <stan/math/prim/mat/fun/subtract.hpp>
-#include <stan/math/prim/mat/fun/trace_quad_form.hpp>
 #include <stan/math/prim/mat/fun/trace_gen_quad_form.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
@@ -56,7 +52,7 @@ matrix_normal_prec_lpdf(
   check_ldlt_factor(function, "LDLT_Factor of Sigma", ldlt_Sigma);
   check_positive(function, "D rows", D.rows());
   check_finite(function, "D", D);
-  check_symmetric(function, "Sigma", D);
+  check_symmetric(function, "D", D);
 
   LDLT_factor<T_D, Eigen::Dynamic, Eigen::Dynamic> ldlt_D(D);
   check_ldlt_factor(function, "LDLT_Factor of D", ldlt_D);

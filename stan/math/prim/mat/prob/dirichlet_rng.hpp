@@ -5,15 +5,7 @@
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/mat/err/check_simplex.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/mat/fun/log_sum_exp.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-
 #include <cmath>
 
 namespace stan {
