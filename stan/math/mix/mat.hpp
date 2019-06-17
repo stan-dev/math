@@ -2,6 +2,7 @@
 #define STAN_MATH_MIX_MAT_HPP
 
 #include <stan/math/mix/mat/fun/typedefs.hpp>
+#include <stan/math/mix/meta.hpp>
 
 #include <stan/math/rev/mat.hpp>
 
