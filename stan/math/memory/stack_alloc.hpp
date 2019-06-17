@@ -4,7 +4,7 @@
 // TODO(Bob): <cstddef> replaces this ifdef in C++11, until then this
 //            is best we can do to get safe pointer casts to uints.
 #include <stdint.h>
-#include <stan/math/prim/scal/meta/likely.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <cstdlib>
 #include <cstddef>
 #include <sstream>
