@@ -4,6 +4,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/opencl/kernels/divide_columns.hpp>
+#include <stan/math/prim/mat/err/check_vector.hpp>
 #include <CL/cl.hpp>
 
 namespace stan {
@@ -22,11 +23,11 @@ namespace math {
  *
  */
 inline void divide_columns(const matrix_cl& A, const matrix_cl& B) try {
-  check_size_match("divide_columns", "A", A.rows(), "B", B.size());
-  check_size_match("divide_columns", "A", B.cols(), "B", 1);
   if (A.size() == 0 || B.size() == 0) {
     return;
   }
+  check_size_match("divide_columns", "A mod B", A.size() % B.size(), "B mod", 0);
+  check_vector("divide_columns", "B", B);
   opencl_kernels::divide_columns_vec(cl::NDRange(A.size()), A, B, B.size());
   return;
 } catch (const cl::Error& e) {

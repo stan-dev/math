@@ -6,6 +6,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <sstream>
 #include <string>
+#include <typeinfo>
 
 namespace stan {
 namespace math {
@@ -39,6 +40,20 @@ inline void check_vector(const char* function, const char* name,
       << "either have 1 row or 1 column";
   std::string msg_str(msg.str());
   invalid_argument(function, name, typename scalar_type<T>::type(), "(",
+                   msg_str.c_str());
+}
+
+template <typename T>
+inline void check_vector(const char* function, const char* name, T& x) {
+  if (x.rows() == 1 || x.cols() == 1)
+    return;
+
+  std::ostringstream msg;
+  msg << ") has " << x.rows() << " rows and " << x.cols()
+      << " columns but it should be a vector so it should "
+      << "either have 1 row or 1 column";
+  std::string msg_str(msg.str());
+  invalid_argument(function, name, typeid(T).name(), "(",
                    msg_str.c_str());
 }
 
