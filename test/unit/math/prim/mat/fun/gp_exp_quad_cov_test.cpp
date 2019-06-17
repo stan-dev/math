@@ -34,8 +34,7 @@ std::string pull_msg(std::vector<T_x1> x1, T_sigma sigma, T_l l) {
 
 void set_tuning_opts_to_use_gpu() {
 #ifdef STAN_OPENCL
-  stan::math::opencl_context.tuning_opts().gp_exp_quad_cov_simple
-      = 999999;
+  stan::math::opencl_context.tuning_opts().gp_exp_quad_cov_simple = 999999;
   stan::math::opencl_context.tuning_opts().gp_exp_quad_cov_vec = 99999;
 #endif
 }
