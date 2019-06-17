@@ -26,7 +26,8 @@ inline void divide_columns(const matrix_cl& A, const matrix_cl& B) try {
   if (A.size() == 0 || B.size() == 0) {
     return;
   }
-  check_size_match("divide_columns", "A mod B", A.size() % B.size(), "B mod", 0);
+  check_size_match("divide_columns", "A mod B", A.size() % B.size(), "B mod",
+                   0);
   check_vector("divide_columns", "B", B);
   opencl_kernels::divide_columns_vec(cl::NDRange(A.size()), A, B, B.size());
   return;
