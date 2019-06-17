@@ -5,7 +5,6 @@
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/arr/fun/sum.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 
 #include <vector>
 
