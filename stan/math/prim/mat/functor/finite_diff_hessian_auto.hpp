@@ -2,32 +2,12 @@
 #define STAN_MATH_PRIM_MAT_FUNCTOR_FINITE_DIFF_HESSIAN_AUTO_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/functor/finite_diff_hessian.hpp>
 #include <stan/math/prim/mat/functor/finite_diff_gradient_auto.hpp>
+#include <stan/math/prim/mat/functor/finite_diff_hessian_helper.hpp>
+#include <stan/math/prim/scal/fun/finite_diff_stepsize.hpp>
 
 namespace stan {
 namespace math {
-
-template <typename F>
-double finite_diff_(const F& f, const Eigen::VectorXd& x, int lambda,
-                    double epsilon) {
-  Eigen::VectorXd x_temp(x);
-
-  double grad = 0;
-  x_temp(lambda) = x(lambda) + 2 * epsilon;
-  grad = -f(x_temp);
-
-  x_temp(lambda) = x(lambda) + -2 * epsilon;
-  grad += f(x_temp);
-
-  x_temp(lambda) = x(lambda) + epsilon;
-  grad += 8 * f(x_temp);
-
-  x_temp(lambda) = x(lambda) + -epsilon;
-  grad -= 8 * f(x_temp);
-
-  return grad;
-}
 
 /**
  * Calculate the value and the Hessian of the specified function at
@@ -74,13 +54,13 @@ void finite_diff_hessian_auto(const F& f, const Eigen::VectorXd& x, double& fx,
       double epsilon = finite_diff_stepsize(x(i));
       x_temp(i) += 2 * epsilon;
       if (i != j) {
-        f_diff = -internal::finite_diff_grad4(f, x_temp, j, epsilon);
+        f_diff = -finite_diff_hessian_helper(f, x_temp, j, epsilon);
         x_temp(i) = x(i) + -2 * epsilon;
-        f_diff += internal::finite_diff_grad4(f, x_temp, j, epsilon);
+        f_diff += finite_diff_hessian_helper(f, x_temp, j, epsilon);
         x_temp(i) = x(i) + epsilon;
-        f_diff += 8 * internal::finite_diff_grad4(f, x_temp, j, epsilon);
+        f_diff += 8 * finite_diff_hessian_helper(f, x_temp, j, epsilon);
         x_temp(i) = x(i) + -epsilon;
-        f_diff -= 8 * internal::finite_diff_grad4(f, x_temp, j, epsilon);
+        f_diff -= 8 * finite_diff_hessian_helper(f, x_temp, j, epsilon);
         f_diff /= 12 * epsilon * 12 * epsilon;
       } else {
         f_diff = -f(x_temp);

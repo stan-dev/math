@@ -2,28 +2,12 @@
 #define STAN_MATH_PRIM_MAT_FUNCTOR_FINITE_DIFF_GRADIENT_AUTO_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/fun/finite_diff_stepsize.hpp>
 #include <cmath>
 #include <limits>
 
 namespace stan {
 namespace math {
-
-/**
- * Return the stepsize between finite difference evaluations.
- *
- * <p>The forumula used is `stepsize(u) = cbrt(epsilon) * max(1,
- * abs(u)).`
- *
- * @param u initial value to increment
- * @return stepsize away from u for finite differences
- */
-double finite_diff_stepsize(double u) {
-  using std::cbrt;
-  using std::numeric_limits;
-  using std::fmax;
-  static const double cbrt_epsilon = cbrt(numeric_limits<double>::epsilon());
-  return cbrt_epsilon * fmax(1, fabs(u));
-}
 
 /**
  * Calculate the value and the gradient of the specified function

@@ -3,48 +3,10 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/functor/finite_diff_gradient.hpp>
+#include <stan/math/prim/mat/functor/finite_diff_hessian_helper.hpp>
 
 namespace stan {
 namespace math {
-namespace internal {
-
-/**
- * Return the finite difference approximation to the gradient of the
- * specified function at the specified index of the specified argument
- * using the specified step size.
- *
- * <p>The functor must implement
- * <code>
- * double operator()(const Eigen::VectorXd&) const;
- * </code>
- *
- * @tparam F type of function
- * @param f function to differentiate
- * @param x argument to function
- * @param i dimensio of argument for derivative
- * @param epsilon step size for finite differences
- * @return derivative of f(x) with respect to x(i)
- */
-template <typename F>
-double finite_diff_grad4(const F& f, const Eigen::VectorXd& x, int i,
-                         double epsilon = 1e-03) {
-  Eigen::VectorXd x_temp(x);
-
-  x_temp(i) = x(i) + 2 * epsilon;
-  double grad = -f(x_temp);
-
-  x_temp(i) = x(i) + -2 * epsilon;
-  grad += f(x_temp);
-
-  x_temp(i) = x(i) + epsilon;
-  grad += 8 * f(x_temp);
-
-  x_temp(i) = x(i) + -epsilon;
-  grad -= 8 * f(x_temp);
-
-  return grad;
-}
-}  // namespace internal
 
 /**
  * Calculate the value and the Hessian of the specified function at
@@ -82,13 +44,13 @@ void finite_diff_hessian(const F& f, const Eigen::VectorXd& x, double& fx,
       double f_diff = 0;
       x_temp(i) += 2 * epsilon;
       if (i != j) {
-        f_diff = -internal::finite_diff_grad4(f, x_temp, j);
+        f_diff = -finite_diff_hessian_helper(f, x_temp, j);
         x_temp(i) = x(i) + -2 * epsilon;
-        f_diff += internal::finite_diff_grad4(f, x_temp, j);
+        f_diff += finite_diff_hessian_helper(f, x_temp, j);
         x_temp(i) = x(i) + epsilon;
-        f_diff += 8 * internal::finite_diff_grad4(f, x_temp, j);
+        f_diff += 8 * finite_diff_hessian_helper(f, x_temp, j);
         x_temp(i) = x(i) + -epsilon;
-        f_diff -= 8 * internal::finite_diff_grad4(f, x_temp, j);
+        f_diff -= 8 * finite_diff_hessian_helper(f, x_temp, j);
         f_diff /= 12 * epsilon * 12 * epsilon;
       } else {
         f_diff = -f(x_temp);
