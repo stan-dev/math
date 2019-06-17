@@ -20,6 +20,7 @@ TEST(laplace, lgp_performance_density) {
   using stan::math::exp;
   using stan::math::log_determinant;
   using stan::math::diag_post_multiply;
+  using stan::math::value_of;
 
   std::string data_directory = "test/unit/math/laplace/data_cpp/";
   int n_dimensions = 5;
@@ -87,12 +88,11 @@ TEST(laplace, lgp_performance_density) {
     phi << 0.5, 0.9;
 
     start = std::chrono::system_clock::now();
-    var target = 0;
+    var target = 1;
 
     // prior on phi
-    /*
     target += lognormal_lpdf(phi(0), -0.5, 0.5);
-    target += normal_lpdf(phi(1), 0.5, 0.1); */
+    target += normal_lpdf(phi(1), 0.5, 0.1);
 
     // find mode value for theta.
     Eigen::VectorXd theta_0 = Eigen::VectorXd::Zero(dim_theta);
@@ -103,52 +103,48 @@ TEST(laplace, lgp_performance_density) {
     for (int i = 0; i < N; i++)
       target += poisson_log_lpmf(y[i], theta(index[i] - 1));
 
+    //////////////////////////////////////////////////////////////////////
     // ratio of conditionals on theta
-    // Eigen::MatrixXd
-    //   Sigma = stan::math::lgp_covariance(value_of(phi), dim_theta, true);
-    // Eigen::MatrixXd Q = stan::math::inverse_spd(Sigma);
-
     Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
       Sigma = stan::math::lgp_covariance(phi, dim_theta, true);
-    // Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
-    //   Sigma_cho = stan::math::cholesky_decompose(
-    //     stan::math::lgp_covariance(phi, dim_theta, true)
-    //   );
-    // Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
-    //   Q = inverse(Sigma_cho);
-
-    // Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
-    //   Q = stan::math::inverse(Sigma);
-      // Q = stan::math::inverse_spd(Sigma);
-
     Eigen::Matrix<var, Eigen::Dynamic, 1> first_term(dim_theta);
     for (int i = 0; i < dim_theta; i++)  // FIX ME -- use dot_product
       first_term(i) = - n_samples[i] * exp(theta(i));
 
-    // Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
-    //   laplace_precision = stan::math::diag_matrix(first_term) + Q;
+    bool efficient = 1;
 
-    // CHECK - why does quad_form not return a scalar?
-    // target += - 0.5 * (stan::math::quad_form(Q, theta)(0));
-    target += multiply(transpose(theta),
-                       mdivide_left(Sigma, theta))(0);
-    target += log_determinant(Sigma);
+    if (efficient) {
+      target += - 0.5 * multiply(transpose(theta),
+                         mdivide_left(Sigma, theta))(0);
+      // target += -0.5 * log_determinant(Sigma);
+      {
+        Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
+          negative_Sigma = - Sigma;
+        Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
+          first_matrix = Eigen::MatrixXd::Identity(dim_theta, dim_theta) -
+            diag_post_multiply(Sigma, first_term);
 
-    {
-      Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
-        negative_Sigma = - Sigma;
-      Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
-        first_matrix = Eigen::MatrixXd::Identity(dim_theta, dim_theta) -
-          diag_post_multiply(transpose(Sigma), first_term);
-
-      target += log_determinant(first_matrix) -
-        log_determinant(negative_Sigma);
+        // target += -0.5 * (log_determinant(first_matrix) -
+        //   log_determinant(Sigma));
+        target += - 0.5 * log_determinant(first_matrix);
+      }
     }
-    // target += stan::math::log_determinant(laplace_precision);
+    
+    if (!efficient) {
+      // former (and much slower) method
+      Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
+        Q = stan::math::inverse(Sigma);
 
-    // target += - 0.5 * (stan::math::quad_form(Q, theta)(0) +
-    //   stan::math::log_determinant(Sigma) +
-    //   stan::math::log_determinant(laplace_precision));
+      Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
+        laplace_precision = stan::math::diag_matrix(first_term) - Q;
+
+      target += - 0.5 * (stan::math::quad_form(Q, theta)(0) +
+        log_determinant(Sigma) +
+        log_determinant(laplace_precision));
+      
+      // PRINT
+      std::cout << value_of(log_determinant(laplace_precision)) << std::endl;
+    }
 
     end = std::chrono::system_clock::now();
     elapsed_time_evaluation = end - start;
