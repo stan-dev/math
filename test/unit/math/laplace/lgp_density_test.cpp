@@ -15,7 +15,11 @@ TEST(laplace, lgp_performance_density) {
   using stan::math::to_vector;
   using stan::math::to_row_vector;
   using stan::math::elt_multiply;
+  using stan::math::multiply;
+  using stan::math::transpose;
   using stan::math::exp;
+  using stan::math::log_determinant;
+  using stan::math::diag_post_multiply;
 
   std::string data_directory = "test/unit/math/laplace/data_cpp/";
   int n_dimensions = 5;
@@ -24,7 +28,8 @@ TEST(laplace, lgp_performance_density) {
 
   auto start = std::chrono::system_clock::now();
   auto end = std::chrono::system_clock::now();
-  std::chrono::duration<double> elapsed_seconds;
+  std::chrono::duration<double> elapsed_time_evaluation;
+  std::chrono::duration<double> elapsed_time_jacobian;
 
   for (int k = 0; k < n_dimensions; k++) {
     int dim_theta = dimensions(k);
@@ -84,51 +89,85 @@ TEST(laplace, lgp_performance_density) {
     start = std::chrono::system_clock::now();
     var target = 0;
 
-    // phi(0) ~ logNormal(-0.5, 0.5)
+    // prior on phi
+    /*
     target += lognormal_lpdf(phi(0), -0.5, 0.5);
-
-    // phi(1) ~ normal(0.5, 0.1)
-    target += normal_lpdf(phi(1), 0.5, 0.1);
+    target += normal_lpdf(phi(1), 0.5, 0.1); */
 
     // find mode value for theta.
     Eigen::VectorXd theta_0 = Eigen::VectorXd::Zero(dim_theta);
     Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
       theta = lgp_dense_newton_solver(theta_0, phi, n_samples, sums);
 
-    // conditional likelihood
+    // likelihood of y conditional on phi and theta
     for (int i = 0; i < N; i++)
       target += poisson_log_lpmf(y[i], theta(index[i] - 1));
 
-    // third component
+    // ratio of conditionals on theta
+    // Eigen::MatrixXd
+    //   Sigma = stan::math::lgp_covariance(value_of(phi), dim_theta, true);
+    // Eigen::MatrixXd Q = stan::math::inverse_spd(Sigma);
+
     Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
       Sigma = stan::math::lgp_covariance(phi, dim_theta, true);
-    Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
-      Q = stan::math::inverse_spd(Sigma);
+    // Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
+    //   Sigma_cho = stan::math::cholesky_decompose(
+    //     stan::math::lgp_covariance(phi, dim_theta, true)
+    //   );
+    // Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
+    //   Q = inverse(Sigma_cho);
+
+    // Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
+    //   Q = stan::math::inverse(Sigma);
+      // Q = stan::math::inverse_spd(Sigma);
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> first_term(dim_theta);
     for (int i = 0; i < dim_theta; i++)  // FIX ME -- use dot_product
-      first_term(i) = n_samples[i] * exp(theta(i));
+      first_term(i) = - n_samples[i] * exp(theta(i));
 
-    Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
-      laplace_precision = stan::math::diag_matrix(first_term) + Q;
+    // Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
+    //   laplace_precision = stan::math::diag_matrix(first_term) + Q;
 
     // CHECK - why does quad_form not return a scalar?
-    target += - 0.5 * (stan::math::quad_form(Q, theta)(0) +
-      stan::math::log_determinant(Sigma) +
-      stan::math::log_determinant(laplace_precision));
+    // target += - 0.5 * (stan::math::quad_form(Q, theta)(0));
+    target += multiply(transpose(theta),
+                       mdivide_left(Sigma, theta))(0);
+    target += log_determinant(Sigma);
+
+    {
+      Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
+        negative_Sigma = - Sigma;
+      Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
+        first_matrix = Eigen::MatrixXd::Identity(dim_theta, dim_theta) -
+          diag_post_multiply(transpose(Sigma), first_term);
+
+      target += log_determinant(first_matrix) -
+        log_determinant(negative_Sigma);
+    }
+    // target += stan::math::log_determinant(laplace_precision);
+
+    // target += - 0.5 * (stan::math::quad_form(Q, theta)(0) +
+    //   stan::math::log_determinant(Sigma) +
+    //   stan::math::log_determinant(laplace_precision));
+
+    end = std::chrono::system_clock::now();
+    elapsed_time_evaluation = end - start;
 
     // Compute sensitivities
+    start = std::chrono::system_clock::now();
     VEC g;
     AVEC parm_vec = createAVEC(phi(0), phi(1));
     target.grad(parm_vec, g);
 
     end = std::chrono::system_clock::now();
-    elapsed_seconds = end - start;
+    elapsed_time_jacobian = end - start;
 
     std::cout << "dim theta: " << dim_theta << std::endl
               << "target: " << target << std::endl
               << "grad: " << g[0] << " " << g[1] << std::endl
-              << "elapsed time: " << elapsed_seconds.count() << std::endl
-              << std::endl;
+              << "evaluation time: " << elapsed_time_evaluation.count()
+              << std::endl
+              << "jacobian time: " << elapsed_time_jacobian.count()
+              << std::endl << std::endl;
   }
 }
