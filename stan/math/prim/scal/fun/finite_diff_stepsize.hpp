@@ -18,11 +18,9 @@ namespace math {
  * @return stepsize away from u for finite differences
  */
 inline double finite_diff_stepsize(double u) {
-  using std::cbrt;
-  using std::numeric_limits;
-  using std::fmax;
-  static const double cbrt_epsilon = cbrt(numeric_limits<double>::epsilon());
-  return cbrt_epsilon * fmax(1, fabs(u));
+  static const double cbrt_epsilon
+      = std::cbrt(std::numeric_limits<double>::epsilon());
+  return cbrt_epsilon * std::fmax(1, fabs(u));
 }
 }  // namespace math
 }  // namespace stan
