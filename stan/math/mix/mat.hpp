@@ -12,6 +12,7 @@
 
 #include <stan/math/mix/mat/functor/derivative.hpp>
 #include <stan/math/mix/mat/functor/finite_diff_grad_hessian.hpp>
+#include <stan/math/mix/mat/functor/finite_diff_grad_hessian_auto.hpp>
 #include <stan/math/mix/mat/functor/grad_hessian.hpp>
 #include <stan/math/mix/mat/functor/grad_tr_mat_times_hessian.hpp>
 #include <stan/math/mix/mat/functor/gradient_dot_vector.hpp>
