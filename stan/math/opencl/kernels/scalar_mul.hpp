@@ -19,6 +19,7 @@ static const char *scalar_mul_kernel_code = STRINGIFY(
      * @param[in] scalar the value with which to multiply A
      * @param[in] rows the number of rows in A
      * @param[in] cols the number of columns in A
+     * @param[in] part triangular part of the input matrix to use
      */
     __kernel void scalar_mul(__global double *A, const __global double *B,
                              const double scalar, const unsigned int rows,

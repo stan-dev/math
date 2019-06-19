@@ -21,7 +21,7 @@ static const char *copy_triangular_kernel_code = STRINGIFY(
      * @param[in] B The matrix to copy the triangular from.
      * @param rows The number of rows of B.
      * @param cols The number of cols of B.
-     * @param lower_upper determines
+     * @param triangular_part determines
      * which part of the matrix to copy:
      *  ENTIRE: copies entire matrix
      *  LOWER: copies the lower triangular

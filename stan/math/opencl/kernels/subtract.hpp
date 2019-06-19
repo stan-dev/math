@@ -22,6 +22,8 @@ static const char *subtract_kernel_code = STRINGIFY(
      * @param[in] A LHS input matrix.
      * @param rows The number of rows for matrix A.
      * @param cols The number of columns for matrix A.
+     * @param part_A triangular part of matrix A to use
+     * @param part_B triangular part of matrix B to use
      * @note Code is a <code>const char*</code> held in
      * <code>subtract_kernel_code.</code>
      * Used in math/opencl/subtract_opencl.hpp
