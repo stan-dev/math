@@ -60,6 +60,7 @@
 #include <stan/math/prim/scal/fun/falling_factorial.hpp>
 #include <stan/math/prim/scal/fun/fdim.hpp>
 #include <stan/math/prim/scal/fun/fill.hpp>
+#include <stan/math/prim/scal/fun/finite_diff_stepsize.hpp>
 #include <stan/math/prim/scal/fun/fma.hpp>
 #include <stan/math/prim/scal/fun/fmax.hpp>
 #include <stan/math/prim/scal/fun/fmin.hpp>
