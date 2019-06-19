@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_ARR_ERR_IS_ORDERED_HPP
 #define STAN_MATH_PRIM_ARR_ERR_IS_ORDERED_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <vector>
 #include <string>
 

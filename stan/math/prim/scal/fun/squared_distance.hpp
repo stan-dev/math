@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_SQUARED_DISTANCE_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_SQUARED_DISTANCE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 

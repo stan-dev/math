@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOWER_REG_INC_GAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOWER_REG_INC_GAMMA_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
@@ -11,7 +12,6 @@
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <limits>
 
 namespace stan {
