@@ -2,9 +2,9 @@
 #define STAN_MATH_OPENCL_DIVIDE_COLUMNS_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/opencl/kernels/divide_columns.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <CL/cl.hpp>
 
 namespace stan {
