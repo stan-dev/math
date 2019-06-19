@@ -135,8 +135,7 @@ inline auto compile_kernel(const char* name,
   }
   cl::Program program;
   try {
-    cl::Program::Sources src(1, std::make_pair(kernel_source.c_str(),
-                                               strlen(kernel_source.c_str())));
+    cl::Program::Sources src(1, kernel_source);
     program = cl::Program(opencl_context.context(), src);
     program.build({opencl_context.device()}, kernel_opts.c_str());
 
@@ -184,7 +183,7 @@ class kernel_functor {
     opts_ = base_opts;
   }
 
-  auto operator()() const { return cl::make_kernel<Args...>(kernel_); }
+  auto operator()() const { return cl::KernelFunctor<Args...>(kernel_); }
 
   /**
    * @return The options that the kernel was compiled with.

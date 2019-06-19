@@ -37,12 +37,9 @@ inline void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
   }
   cl::CommandQueue cmdQueue = opencl_context.queue();
   if (triangular_view == TriangularViewCL::Entire) {
-    cl::size_t<3> src_offset
-        = opencl::to_size_t<3>({A_i * sizeof(double), A_j, 0});
-    cl::size_t<3> dst_offset
-        = opencl::to_size_t<3>({this_i * sizeof(double), this_j, 0});
-    cl::size_t<3> size
-        = opencl::to_size_t<3>({nrows * sizeof(double), ncols, 1});
+    cl::array<size_t, 3> src_offset = {A_i * sizeof(double), A_j, 0};
+    cl::array<size_t, 3> dst_offset = {this_i * sizeof(double), this_j, 0};
+    cl::array<size_t, 3> size = {nrows * sizeof(double), ncols, 1};
     std::vector<cl::Event> kernel_events
         = vec_concat(A.write_events(), this->read_write_events());
     cl::Event copy_event;

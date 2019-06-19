@@ -5,13 +5,10 @@
 #include <fstream>
 
 TEST(MathGpu, to_size_t_test) {
-  cl::size_t<3> a = stan::math::opencl::to_size_t<3>({1, 2, 3});
+  cl::array<size_t, 3> a = stan::math::opencl::to_size_t<size_t, 3>({1, 2, 3});
   EXPECT_EQ(a[0], 1);
   EXPECT_EQ(a[1], 2);
   EXPECT_EQ(a[2], 3);
-
-  EXPECT_THROW(stan::math::opencl::to_size_t<4>({1, 2, 3, 4}),
-               std::domain_error);
 }
 
 TEST(MathGpu, getInfo) {
@@ -80,7 +77,7 @@ TEST(opencl_context, compile_kernel_rawcode) {
   const char* dummy_kernel_src
       = "__kernel void dummy(__global const int* foo) { };";
   cl::Program::Sources source(
-      1, std::make_pair(dummy_kernel_src, strlen(dummy_kernel_src)));
+      1, dummy_kernel_src);
   cl::Program program_ = cl::Program(cl, source);
   program_.build(dv);
   cl::Kernel dummy_kernel = cl::Kernel(program_, "dummy", NULL);
