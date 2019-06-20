@@ -5,7 +5,6 @@
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <cmath>
 
