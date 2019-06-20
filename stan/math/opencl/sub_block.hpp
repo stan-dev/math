@@ -60,10 +60,9 @@ inline void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
   }
   // calculation of extreme sub- and super- diagonal written
   int diag_in_copy = A_i - A_j;
-  int copy_low
-      = static_cast<bool>(A.triangular_view_ & TriangularViewCL::Lower)
-            ? 1 - nrows
-            : diag_in_copy;
+  int copy_low = static_cast<bool>(A.triangular_view_ & TriangularViewCL::Lower)
+                     ? 1 - nrows
+                     : diag_in_copy;
   int copy_high
       = static_cast<bool>(A.triangular_view_ & TriangularViewCL::Upper)
             ? ncols - 1
@@ -72,15 +71,19 @@ inline void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
 
   if (start + copy_low < 0) {
     triangular_view_ |= TriangularViewCL::Lower;
-  }
-  else if(this_i <= 1 && this_j == 0 && nrows + this_i >= rows_ && ncols >= std::min(rows_, cols_) - 1 && !static_cast<bool>(A.triangular_view_ & TriangularViewCL::Lower)){
+  } else if (this_i <= 1 && this_j == 0 && nrows + this_i >= rows_
+             && ncols >= std::min(rows_, cols_) - 1
+             && !static_cast<bool>(A.triangular_view_
+                                   & TriangularViewCL::Lower)) {
     triangular_view_ &= TriangularViewCL::Upper;
   }
 
   if (start + copy_high > 0) {
     triangular_view_ |= TriangularViewCL::Upper;
-  }
-  else if(this_i == 0 && this_j <= 1 && ncols + this_j >= cols_ && nrows >= std::min(rows_, cols_) - 1 && !static_cast<bool>(A.triangular_view_ & TriangularViewCL::Upper)){
+  } else if (this_i == 0 && this_j <= 1 && ncols + this_j >= cols_
+             && nrows >= std::min(rows_, cols_) - 1
+             && !static_cast<bool>(A.triangular_view_
+                                   & TriangularViewCL::Upper)) {
     triangular_view_ &= TriangularViewCL::Lower;
   }
 } catch (const cl::Error& e) {

@@ -60,8 +60,7 @@ static const char *sub_block_kernel_code = STRINGIFY(
         if ((triangular_view & LOWER && src_idx_i >= src_idx_j)
             || (triangular_view & UPPER && src_idx_i <= src_idx_j)) {
           dst(dst_idx_i, dst_idx_j) = src(src_idx_i, src_idx_j);
-        }
-        else{
+        } else {
           dst(dst_idx_i, dst_idx_j) = 0;
         }
       }

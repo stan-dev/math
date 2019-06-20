@@ -237,8 +237,6 @@ TEST(MathMatrixCL, sub_block_triangular) {
   EXPECT_EQ(c(2, 1), 1);
   EXPECT_EQ(c(2, 2), 1);
 
-
-
   a_cl = stan::math::to_matrix_cl(a);
   a_cl.triangular_view(stan::math::TriangularViewCL::Upper);
   b_cl.triangular_view(stan::math::TriangularViewCL::Lower);
