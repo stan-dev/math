@@ -296,13 +296,10 @@ class cholesky_opencl : public vari {
    * @param L_adj matrix of adjoints of L
    */
   inline void symbolic_rev(matrix_cl& L, matrix_cl& L_adj) {
-    L_adj = opencl::multiply<TriangularViewCL::Upper, TriangularViewCL::Entire>(
-        transpose(L), L_adj);
+    L_adj = transpose(L) * L_adj;
     L_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
-    L = transpose(tri_inverse<TriangularViewCL::Lower>(L));
-    L_adj = L
-            * transpose(opencl::multiply<TriangularViewCL::Upper,
-                                         TriangularViewCL::Entire>(L, L_adj));
+    L = transpose(tri_inverse(L));
+    L_adj = L * transpose(L * L_adj);
     L_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
   }
 
@@ -339,7 +336,7 @@ class cholesky_opencl : public vari {
       const int m_k_ind = M_ - k;
 
       matrix_cl R(k_j_ind, j);
-      matrix_cl D(k_j_ind, k_j_ind);
+      matrix_cl D(k_j_ind, k_j_ind, TriangularViewCL::Lower);
       matrix_cl B(m_k_ind, j);
       matrix_cl C(m_k_ind, k_j_ind);
 
@@ -358,9 +355,7 @@ class cholesky_opencl : public vari {
       B_adj.sub_block(L_adj, k, 0, 0, 0, m_k_ind, j);
       C_adj.sub_block(L_adj, k, j, 0, 0, m_k_ind, k_j_ind);
 
-      C_adj
-          = opencl::multiply<TriangularViewCL::Entire, TriangularViewCL::Lower>(
-              C_adj, tri_inverse<TriangularViewCL::Lower>(D));
+      C_adj = C_adj * tri_inverse(D);
       B_adj = B_adj - C_adj * R;
       D_adj = D_adj - transpose(C_adj) * C;
 
