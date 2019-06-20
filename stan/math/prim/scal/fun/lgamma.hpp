@@ -2,9 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/boost_policy.hpp>
-#include <boost/math/special_functions/gamma.hpp>
-#include <limits>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -31,19 +29,13 @@ namespace math {
    \end{cases}
 \f]
 *
-* Note: The use of std::lgamma is explicitly avoided here. The std
-* implementation is not suitable for concurrent use in threaded
-* programs as the exact behavior under threading is implementation
-* specific. See discussion under https://github.com/stan-dev/math/issues/1250
-*
 * @param x argument
 * @return natural logarithm of the gamma function applied to
 * argument
 */
 inline double lgamma(double x) {
-  if (unlikely(x == 0.0))
-    return std::numeric_limits<double>::infinity();
-  return boost::math::lgamma(x, boost_policy_t());
+  int sign = 0;
+  return lgamma_r(x, &sign);
 }
 
 /**
@@ -55,9 +47,8 @@ inline double lgamma(double x) {
  * argument
  */
 inline double lgamma(int x) {
-  if (unlikely(x == 0))
-    return std::numeric_limits<double>::infinity();
-  return boost::math::lgamma(x, boost_policy_t());
+  int sign = 0;
+  return lgamma_r(x, &sign);
 }
 
 }  // namespace math
