@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_GP_EXP_QUAD_COV_HPP
 #define STAN_MATH_PRIM_MAT_FUN_GP_EXP_QUAD_COV_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/divide_columns.hpp>
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
@@ -10,12 +11,12 @@
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/err/check_nan.hpp>
 #include <stan/math/opencl/gp_exp_quad_cov.hpp>
 #include <stan/math/opencl/divide_columns.hpp>
 #endif
+
 #include <cmath>
 #include <type_traits>
 #include <vector>

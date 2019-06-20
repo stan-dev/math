@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOG_SUM_EXP_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOG_SUM_EXP_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/log1p_exp.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <limits>

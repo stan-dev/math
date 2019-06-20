@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUNCTOR_FINITE_DIFF_GRADIENT_HPP
 #define STAN_MATH_PRIM_MAT_FUNCTOR_FINITE_DIFF_GRADIENT_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {
