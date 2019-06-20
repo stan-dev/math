@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_POS_SEMIDEFINITE_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_POS_SEMIDEFINITE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>

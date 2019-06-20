@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_DISTANCE_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_DISTANCE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/fun/abs.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 
 namespace stan {
 namespace math {

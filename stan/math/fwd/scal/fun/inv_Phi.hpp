@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_FWD_SCAL_FUN_INV_PHI_HPP
 #define STAN_MATH_FWD_SCAL_FUN_INV_PHI_HPP
 
+#include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/scal/fun/inv_Phi.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>

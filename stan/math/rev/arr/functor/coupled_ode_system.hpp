@@ -1,8 +1,7 @@
 #ifndef STAN_MATH_REV_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 #define STAN_MATH_REV_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/arr/meta/length.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
@@ -201,7 +200,7 @@ struct coupled_ode_system<F, double, var> {
  * initial conditions with respect to the first base system equation:
  * \f[
  *  \frac{d x_{N + n}}{dt}
- *  = \frac{d}{dt} \frac{\partial x_1}{\partial \y0_m}
+ *  = \frac{d}{dt} \frac{\partial x_1}{\partial y0_m}
  * \f]
  * for \f$ n \in {1, \ldots, N} \f$].
  *

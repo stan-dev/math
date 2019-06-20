@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOG_MIX_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOG_MIX_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/fun/log_sum_exp.hpp>

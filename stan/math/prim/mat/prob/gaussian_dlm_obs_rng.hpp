@@ -1,16 +1,15 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_GAUSSIAN_DLM_OBS_RNG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_GAUSSIAN_DLM_OBS_RNG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/err/check_cov_matrix.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_pos_semidefinite.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/meta/StdVectorBuilder.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <vector>

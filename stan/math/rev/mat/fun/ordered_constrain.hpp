@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUN_ORDERED_CONSTRAIN_HPP
 #define STAN_MATH_REV_MAT_FUN_ORDERED_CONSTRAIN_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/mat/functor/adj_jac_apply.hpp>
 #include <tuple>

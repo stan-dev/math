@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_CHECK_CONSISTENT_SIZE_MVT_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_CONSISTENT_SIZE_MVT_HPP
 
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/length_mvt.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <sstream>
 #include <string>
