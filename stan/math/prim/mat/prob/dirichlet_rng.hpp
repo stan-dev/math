@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_DIRICHLET_RNG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_DIRICHLET_RNG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>

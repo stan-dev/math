@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_LKJ_CORR_LPDF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_LKJ_CORR_LPDF_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/err/check_corr_matrix.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 
 namespace stan {

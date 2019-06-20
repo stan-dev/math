@@ -1,12 +1,12 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTINOMIAL_LPMF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTINOMIAL_LPMF_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/err/check_simplex.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <vector>
 
 namespace stan {

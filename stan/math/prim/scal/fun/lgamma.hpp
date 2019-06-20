@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
 
-#include <stan/math/prim/scal/meta/likely.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 #include <limits>
