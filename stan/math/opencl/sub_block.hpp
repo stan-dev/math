@@ -9,6 +9,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <CL/cl.hpp>
 #include <vector>
+#include <algorithm>
 
 namespace stan {
 namespace math {
