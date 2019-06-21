@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_IDAS_INTEGRATOR_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_IDAS_INTEGRATOR_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
-#include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/rev/mat/functor/idas_forward_system.hpp>
 #include <idas/idas.h>
 #include <sunmatrix/sunmatrix_dense.h>

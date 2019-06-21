@@ -1,8 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_LPMF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_LPMF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
@@ -13,13 +12,6 @@
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/max_size.hpp>
 #include <cmath>
 
 namespace stan {

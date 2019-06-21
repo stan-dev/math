@@ -11,7 +11,10 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the value of the normalized, lower-incomplete gamma function
+ * applied to the specified argument.
  *
+ * <p>This function is defined, including error conditions, as follows
    \f[
    \mbox{gamma\_p}(a, z) =
    \begin{cases}
@@ -52,8 +55,13 @@ namespace math {
    \f[
    \frac{\partial \, P(a, z)}{\partial z} = \frac{z^{a-1}e^{-z}}{\Gamma(a)}
    \f]
-   * @throws domain_error if x is at pole
-
+   *
+   * @param x first argument
+   * @param a second argument
+   * @return value of the normalized, lower-incomplete gamma function
+   * applied to x and a
+   * @throws std::domain_error if either argument is not positive or
+   * if x is at a pole of the function
  */
 inline double gamma_p(double x, double a) {
   if (is_nan(x))

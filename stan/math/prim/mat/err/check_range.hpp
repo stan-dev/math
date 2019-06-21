@@ -1,9 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_RANGE_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_RANGE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/out_of_range.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
-#include <stan/math/prim/scal/meta/error_index.hpp>
 #include <sstream>
 #include <string>
 
