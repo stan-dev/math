@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <cmath>
+#include <math.h>
 
 namespace stan {
 namespace math {
