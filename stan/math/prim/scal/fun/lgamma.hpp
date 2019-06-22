@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
 
-#if _REENTRANT & (__APPLE__ | __linux__)
+#if _REENTRANT & !__MINGW32__
 #include <cmath>
 #else
 #include <stan/math/prim/meta.hpp>
@@ -40,7 +40,7 @@ namespace math {
 * argument
 */
 inline double lgamma(double x) {
-#if _REENTRANT & (__APPLE__ | __linux__)
+#if _REENTRANT & !__MINGW32__
   int sign = 0;
   return lgamma_r(x, &sign);
 #else
@@ -59,7 +59,7 @@ inline double lgamma(double x) {
  * argument
  */
 inline double lgamma(int x) {
-#if _REENTRANT & (__APPLE__ | __linux__)
+#if _REENTRANT & !__MINGW32__
   int sign = 0;
   return lgamma_r(x, &sign);
 #else
