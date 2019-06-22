@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_ACOSH_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_ACOSH_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>

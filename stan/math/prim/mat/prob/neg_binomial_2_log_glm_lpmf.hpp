@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_NEG_BINOMIAL_2_LOG_GLM_LPMF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_NEG_BINOMIAL_2_LOG_GLM_LPMF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -14,15 +12,6 @@
 #include <stan/math/prim/mat/fun/lgamma.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/as_array_or_scalar.hpp>
-#include <stan/math/prim/scal/meta/as_scalar.hpp>
-#include <stan/math/prim/mat/meta/as_scalar.hpp>
-#include <stan/math/prim/arr/meta/as_scalar.hpp>
-#include <stan/math/prim/mat/meta/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/scal/meta/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/scal/fun/sum.hpp>
 #include <vector>
 #include <cmath>

@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_HPP
 #define STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/mat/fun/dims.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 
 #define STAN_REGISTER_MAP_RECT(CALLID, FUNCTOR)
 

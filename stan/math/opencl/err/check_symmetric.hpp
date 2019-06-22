@@ -29,11 +29,11 @@ inline void check_symmetric(const char* function, const char* name,
   try {
     int symmetric_flag = 1;
     matrix_cl symm_flag(1, 1);
-    copy(symm_flag, symmetric_flag);  // NOLINT
+    symm_flag = to_matrix_cl(symmetric_flag);
     opencl_kernels::check_symmetric(cl::NDRange(y.rows(), y.cols()), y,
                                     symm_flag, y.rows(), y.cols(),
                                     math::CONSTRAINT_TOLERANCE);
-    copy(symmetric_flag, symm_flag);  // NOLINT
+    symmetric_flag = from_matrix_cl<int>(symm_flag);
     if (!symmetric_flag) {
       domain_error(function, name, "is not symmetric", "");
     }

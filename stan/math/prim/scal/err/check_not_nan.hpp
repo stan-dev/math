@@ -1,8 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_CHECK_NOT_NAN_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_NOT_NAN_HPP
 
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/is_vector_like.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/err/domain_error_vec.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>

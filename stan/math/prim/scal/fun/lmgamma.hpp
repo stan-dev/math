@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LMGAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LMGAMMA_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>

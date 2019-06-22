@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_SCALED_INV_CHI_SQUARE_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_SCALED_INV_CHI_SQUARE_LPDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
@@ -12,10 +10,6 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <cmath>
 

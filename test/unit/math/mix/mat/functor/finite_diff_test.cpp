@@ -7,7 +7,7 @@ struct norm_functor {
   template <typename T>
   inline T operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
-    return stan::math::normal_log(inp_vec(0), inp_vec(1), inp_vec(2));
+    return stan::math::normal_lpdf(inp_vec(0), inp_vec(1), inp_vec(2));
   }
 };
 
@@ -107,6 +107,22 @@ TEST(AgradFiniteDiff, hessian) {
     }
     EXPECT_NEAR(grad_norm(i), fin_diff_grad_norm(i), 1e-10);
   }
+}
+
+TEST(AgradFiniteDiff, gradHessianResizingTest) {
+  // failed in 2.19 before grad_hess_fx.clear() was added
+  norm_functor f;
+  Eigen::VectorXd x(3);
+  x << 1, 2, 3;
+  double fx;
+  Eigen::MatrixXd hess(20, 2);
+  std::vector<Eigen::MatrixXd> grad_hess_fx;
+  for (int i = 0; i < 10; ++i)
+    grad_hess_fx.emplace_back(3, 3);
+  stan::math::finite_diff_grad_hessian(f, x, fx, hess, grad_hess_fx, 1e-5);
+  EXPECT_EQ(x.size(), grad_hess_fx.size());
+  EXPECT_EQ(x.size(), hess.rows());
+  EXPECT_EQ(x.size(), hess.cols());
 }
 
 TEST(AgradFiniteDiff, grad_hessian) {
