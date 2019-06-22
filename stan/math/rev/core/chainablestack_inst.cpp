@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_REV_CORE_CHAINABLESTACK_INST_CPP
 #define STAN_MATH_REV_CORE_CHAINABLESTACK_INST_CPP
 
+#warning "Init is part of header files! You do not need this!"
+
 #include <stan/math/parallel/get_num_threads.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 
