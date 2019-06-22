@@ -89,7 +89,7 @@ test-math-dependencies:
 ## excluding meta.hpp files and the /meta subfolder
 	@$(call math_warnings, 'meta', stan/math,\
              '<stan/math/.*/meta/.*hpp', 'File includes */meta/*.hpp header file. Should include meta.hpp',\
-             'stan/math/*/*/meta/*' '*/meta.hpp')             
+             'stan/math/*/*/meta/*' '*/meta.hpp')
 ## Check for files inside stan/math/*/arr that contain
 ##   stan/math/*/mat
 	@$(call math_warnings, 'arr', stan/math/*/arr,\
