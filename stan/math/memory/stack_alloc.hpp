@@ -145,7 +145,7 @@ class stack_alloc {
     // free ALL blocks
     for (auto& block : blocks_)
       if (block)
-        Eigen::internal::aligned_free(block);(block);
+        Eigen::internal::aligned_free(block);
   }
 
   /**
@@ -231,7 +231,7 @@ class stack_alloc {
     // frees all BUT the first (index 0) block
     for (size_t i = 1; i < blocks_.size(); ++i)
       if (blocks_[i])
-        Eigen::internal::aligned_free(block);(blocks_[i]);
+        Eigen::internal::aligned_free(blocks_[i]);
     sizes_.resize(1);
     blocks_.resize(1);
     recover_all();
