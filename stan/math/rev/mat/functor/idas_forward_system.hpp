@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_IDAS_FORWARD_SYSTEM_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_IDAS_FORWARD_SYSTEM_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>

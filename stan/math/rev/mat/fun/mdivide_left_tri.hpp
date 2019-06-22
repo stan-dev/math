@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUN_MDIVIDE_LEFT_TRI_HPP
 #define STAN_MATH_REV_MAT_FUN_MDIVIDE_LEFT_TRI_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>

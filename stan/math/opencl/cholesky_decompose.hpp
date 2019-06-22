@@ -6,7 +6,7 @@
 #include <stan/math/opencl/kernels/cholesky_decompose.hpp>
 #include <stan/math/opencl/multiply.hpp>
 #include <stan/math/opencl/multiply_transpose.hpp>
-#include <stan/math/opencl/lower_tri_inverse.hpp>
+#include <stan/math/opencl/tri_inverse.hpp>
 #include <stan/math/opencl/transpose.hpp>
 #include <stan/math/opencl/subtract.hpp>
 #include <stan/math/opencl/err/check_diagonal_zeros.hpp>
@@ -78,7 +78,7 @@ inline void cholesky_decompose(matrix_cl& A) {
   // and copies the resulting submatrix to the lower left hand corner of A
   matrix_cl L_21
       = opencl::multiply<TriangularViewCL::Entire, TriangularViewCL::Upper>(
-          A_21, transpose(lower_triangular_inverse(A_11)));
+          A_21, transpose(tri_inverse<TriangularViewCL::Lower>(A_11)));
   A.sub_block(L_21, 0, 0, block, 0, block_subset, block);
   matrix_cl A_22(block_subset, block_subset);
   A_22.sub_block(A, block, block, 0, 0, block_subset, block_subset);

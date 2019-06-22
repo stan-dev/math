@@ -1,8 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_IS_POSITIVE_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_IS_POSITIVE_HPP
 
-#include <stan/math/prim/scal/meta/get.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {

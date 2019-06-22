@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_CORR_CONSTRAIN_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_CORR_CONSTRAIN_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <cmath>

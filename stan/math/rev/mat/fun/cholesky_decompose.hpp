@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
 #define STAN_MATH_REV_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
@@ -299,7 +300,7 @@ class cholesky_opencl : public vari {
     L_adj = opencl::multiply<TriangularViewCL::Upper, TriangularViewCL::Entire>(
         transpose(L), L_adj);
     L_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
-    L = transpose(lower_triangular_inverse(L));
+    L = transpose(tri_inverse<TriangularViewCL::Lower>(L));
     L_adj = L
             * transpose(opencl::multiply<TriangularViewCL::Upper,
                                          TriangularViewCL::Entire>(L, L_adj));
@@ -360,7 +361,7 @@ class cholesky_opencl : public vari {
 
       C_adj
           = opencl::multiply<TriangularViewCL::Entire, TriangularViewCL::Lower>(
-              C_adj, lower_triangular_inverse(D));
+              C_adj, tri_inverse<TriangularViewCL::Lower>(D));
       B_adj = B_adj - C_adj * R;
       D_adj = D_adj - transpose(C_adj) * C;
 
