@@ -5,6 +5,7 @@
 //            is best we can do to get safe pointer casts to uints.
 #include <stdint.h>
 #include <stan/math/prim/meta.hpp>
+#include <Eigen/src/Core/util/Memory.h>
 #include <cstdlib>
 #include <cstddef>
 #include <sstream>
@@ -36,7 +37,7 @@ const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
 // FIXME: enforce alignment
 // big fun to inline, but only called twice
 inline char* eight_byte_aligned_malloc(size_t size) {
-  char* ptr = static_cast<char*>(malloc(size));
+  char* ptr = static_cast<char*>(Eigen::internal::aligned_malloc(size));
   if (!ptr)
     return ptr;  // malloc failed to alloc
   if (!is_aligned(ptr, 8U)) {
