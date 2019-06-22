@@ -1,8 +1,7 @@
-#ifndef STAN_MATH_PRIM_ARR_META_IS_CONSTANT_STRUCT_HPP
-#define STAN_MATH_PRIM_ARR_META_IS_CONSTANT_STRUCT_HPP
+#ifndef STAN_MATH_PRIM_ARR_META_IS_CONSTANT_HPP
+#define STAN_MATH_PRIM_ARR_META_IS_CONSTANT_HPP
 
 #include <stan/math/prim/scal/meta/is_constant.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <vector>
 
 namespace stan {
@@ -14,8 +13,8 @@ namespace stan {
  * @tparam type of the elements in the std::vector
  */
 template <typename T>
-struct is_constant_struct_helper<std::vector<T> > {
-  enum { value = is_constant_struct_helper<T>::value };
+struct is_constant<std::vector<T> > {
+  enum { value = is_constant<T>::value };
 };
 
 }  // namespace stan

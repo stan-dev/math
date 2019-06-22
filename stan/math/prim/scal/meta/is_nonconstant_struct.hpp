@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_IS_NONCONSTANT_STRUCT_HPP
 #define STAN_MATH_PRIM_SCAL_META_IS_NONCONSTANT_STRUCT_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/is_constant.hpp>
 
 namespace stan {
 

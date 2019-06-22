@@ -1,7 +1,6 @@
-#ifndef STAN_MATH_PRIM_MAT_META_IS_CONSTANT_STRUCT_HPP
-#define STAN_MATH_PRIM_MAT_META_IS_CONSTANT_STRUCT_HPP
+#ifndef STAN_MATH_PRIM_MAT_META_IS_CONSTANT_HPP
+#define STAN_MATH_PRIM_MAT_META_IS_CONSTANT_HPP
 
-#include <stan/math/prim/arr/meta/is_constant_struct.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/meta/is_constant.hpp>
 
@@ -16,8 +15,8 @@ namespace stan {
  * @tparam C number of columns in the provided matrix
  */
 template <typename T, int R, int C>
-struct is_constant_struct_helper<Eigen::Matrix<T, R, C> > {
-  enum { value = is_constant_struct_helper<T>::value };
+struct is_constant<Eigen::Matrix<T, R, C> > {
+  enum { value = is_constant<T>::value };
 };
 
 /**
@@ -28,8 +27,8 @@ struct is_constant_struct_helper<Eigen::Matrix<T, R, C> > {
  * @tparam type of the elements in the Eigen Block
  */
 template <typename T>
-struct is_constant_struct_helper<Eigen::Block<T> > {
-  enum { value = is_constant_struct_helper<T>::value };
+struct is_constant<Eigen::Block<T> > {
+  enum { value = is_constant<T>::value };
 };
 
 }  // namespace stan
