@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
 
-#if _POSIX_C_SOURCE >= 199506L 
+#if _POSIX_C_SOURCE >= 199506L
 #include <cmath>
 #else
 #include <stan/math/prim/meta.hpp>
@@ -40,7 +40,7 @@ namespace math {
 * argument
 */
 inline double lgamma(double x) {
-#if _POSIX_C_SOURCE >= 199506L 
+#if _POSIX_C_SOURCE >= 199506L
   int sign = 0;
   return lgamma_r(x, &sign);
 #else
@@ -59,7 +59,7 @@ inline double lgamma(double x) {
  * argument
  */
 inline double lgamma(int x) {
-#if _POSIX_C_SOURCE >= 199506L 
+#if _POSIX_C_SOURCE >= 199506L
   int sign = 0;
   return lgamma_r(x, &sign);
 #else
