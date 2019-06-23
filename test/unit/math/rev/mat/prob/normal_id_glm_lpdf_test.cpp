@@ -469,3 +469,36 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_error_checking) {
   EXPECT_THROW(stan::math::normal_id_glm_lpdf(y, x, alpha, beta, sigmaw3),
                std::domain_error);
 }
+
+TEST(ProbDistributionsNormalIdGlm, test_scalar_stdvec_rowvec) {
+  Matrix<double, Dynamic, 1> y(3, 1);
+  y << 51, 32, 12;
+  Matrix<double, Dynamic, Dynamic> x(3, 2);
+  x << -12, 46, -42, 24, 25, 27;
+  Matrix<double, Dynamic, 1> beta(2, 1);
+  beta << 0.3, 2;
+  double alpha = 0.3;
+  Matrix<double, Dynamic, 1> alphavec = alpha * Matrix<double, 3, 1>::Ones();
+  Matrix<double, Dynamic, 1> theta(3, 1);
+  theta = x * beta + alphavec;
+  double sigma = 10;
+  EXPECT_NO_THROW(stan::math::normal_id_glm_lpdf(y, x, alpha, beta, sigma));
+
+  std::vector<double> y2(3);
+  y2[0]= 1; y2[1] = 2; y2[2] = 3;
+  EXPECT_NO_THROW(stan::math::normal_id_glm_lpdf(y2, x, alpha, beta, sigma));
+
+  Matrix<double, 1, Dynamic> y3(1, 3);
+  y3 << 1, 2, 3;
+  EXPECT_NO_THROW(stan::math::normal_id_glm_lpdf(y3, x, alpha, beta, sigma));
+
+
+
+  Matrix<double, Dynamic, Dynamic> x2(1, 2);
+  x << -12, 46, -42, 24, 25, 27;
+  Matrix<double, Dynamic, 1> beta2(2, 1);
+  beta << 0.3, 2;
+
+  double y4 = 1;
+  EXPECT_NO_THROW(stan::math::normal_id_glm_lpdf(y4, x2, alpha, beta2, sigma));
+}
