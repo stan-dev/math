@@ -4,7 +4,7 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/fma.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <limits>
 
 namespace stan {
