@@ -485,14 +485,14 @@ TEST(ProbDistributionsNormalIdGlm, test_scalar_stdvec_rowvec) {
   EXPECT_NO_THROW(stan::math::normal_id_glm_lpdf(y, x, alpha, beta, sigma));
 
   std::vector<double> y2(3);
-  y2[0]= 1; y2[1] = 2; y2[2] = 3;
+  y2[0] = 1;
+  y2[1] = 2;
+  y2[2] = 3;
   EXPECT_NO_THROW(stan::math::normal_id_glm_lpdf(y2, x, alpha, beta, sigma));
 
   Matrix<double, 1, Dynamic> y3(1, 3);
   y3 << 1, 2, 3;
   EXPECT_NO_THROW(stan::math::normal_id_glm_lpdf(y3, x, alpha, beta, sigma));
-
-
 
   Matrix<double, Dynamic, Dynamic> x2(1, 2);
   x << -12, 46, -42, 24, 25, 27;
