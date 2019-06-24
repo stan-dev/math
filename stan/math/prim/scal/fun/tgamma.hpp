@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_TGAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_TGAMMA_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/is_nonpositive_integer.hpp>
 #include <cmath>

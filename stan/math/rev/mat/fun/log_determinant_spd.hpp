@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUN_LOG_DETERMINANT_SPD_HPP
 #define STAN_MATH_REV_MAT_FUN_LOG_DETERMINANT_SPD_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
@@ -43,12 +44,12 @@ inline var log_determinant_spd(const Eigen::Matrix<var, R, C>& m) {
                "log determininant of the matrix argument", val);
 
   vari** operands
-      = ChainableStack::instance().memalloc_.alloc_array<vari*>(m.size());
+      = ChainableStack::instance_->memalloc_.alloc_array<vari*>(m.size());
   for (int i = 0; i < m.size(); ++i)
     operands[i] = m(i).vi_;
 
   double* gradients
-      = ChainableStack::instance().memalloc_.alloc_array<double>(m.size());
+      = ChainableStack::instance_->memalloc_.alloc_array<double>(m.size());
   for (int i = 0; i < m.size(); ++i)
     gradients[i] = m_d(i);
 

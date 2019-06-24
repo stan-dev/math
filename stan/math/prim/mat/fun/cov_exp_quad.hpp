@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_COV_EXP_QUAD_HPP
 #define STAN_MATH_PRIM_MAT_FUN_COV_EXP_QUAD_HPP
 
-#include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/gp_exp_quad_cov.hpp>
 #include <stan/math/prim/mat/fun/squared_distance.hpp>

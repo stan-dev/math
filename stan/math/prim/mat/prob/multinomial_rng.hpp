@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTINOMIAL_RNG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTINOMIAL_RNG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/err/check_simplex.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/prob/binomial_rng.hpp>

@@ -1,6 +1,7 @@
 #ifdef STAN_MPI
 
 #ifndef STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_MPI_HPP
+#include <stan/math/prim/meta.hpp>
 #define STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_MPI_HPP
 
 #include <stan/math/prim/mat/functor/map_rect_concurrent.hpp>

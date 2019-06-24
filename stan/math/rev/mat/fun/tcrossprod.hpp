@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUN_TCROSSPROD_HPP
 #define STAN_MATH_REV_MAT_FUN_TCROSSPROD_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/Eigen_NumTraits.hpp>
@@ -30,7 +31,7 @@ inline matrix_v tcrossprod(const matrix_v& M) {
   matrix_v MMt(M.rows(), M.rows());
 
   vari** vs
-      = reinterpret_cast<vari**>(ChainableStack::instance().memalloc_.alloc(
+      = reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
           (M.rows() * M.cols()) * sizeof(vari*)));
   int pos = 0;
   for (int m = 0; m < M.rows(); ++m)

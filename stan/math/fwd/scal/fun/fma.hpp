@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_FWD_SCAL_FUN_FMA_HPP
 #define STAN_MATH_FWD_SCAL_FUN_FMA_HPP
 
+#include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/scal/fun/fma.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 
 namespace stan {
 namespace math {
