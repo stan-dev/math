@@ -1,6 +1,9 @@
 #ifndef STAN_MATH_OPENCL_TRIANGULAR_HPP
 #define STAN_MATH_OPENCL_TRIANGULAR_HPP
 #ifdef STAN_OPENCL
+
+#include <type_traits>
+
 namespace stan {
 namespace math {
 enum class TriangularViewCL { Diagonal = 0, Lower = 1, Upper = 2, Entire = 3 };
