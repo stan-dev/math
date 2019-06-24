@@ -95,20 +95,21 @@ TEST(laplace, lgp_performance_density) {
     target += normal_lpdf(phi(1), 0.5, 0.1);
 
     // find mode value for theta.
+    bool line_search = false;
     Eigen::VectorXd theta_0 = Eigen::VectorXd::Zero(dim_theta);
     Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
-      theta = lgp_dense_newton_solver(theta_0, phi, n_samples, sums);
+      theta = lgp_dense_newton_solver(theta_0, phi, n_samples, sums,
+                                      1e-3, 100, line_search);
 
     // likelihood of y conditional on phi and theta
     for (int i = 0; i < N; i++)
       target += poisson_log_lpmf(y[i], theta(index[i] - 1));
 
-    //////////////////////////////////////////////////////////////////////
     // ratio of conditionals on theta
     Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
       Sigma = stan::math::lgp_covariance(phi, dim_theta, true);
     Eigen::Matrix<var, Eigen::Dynamic, 1> first_term(dim_theta);
-    for (int i = 0; i < dim_theta; i++)  // FIX ME -- use dot_product
+    for (int i = 0; i < dim_theta; i++)  // CHECK -- use dot_product?
       first_term(i) = - n_samples[i] * exp(theta(i));
 
     bool efficient = 1;
