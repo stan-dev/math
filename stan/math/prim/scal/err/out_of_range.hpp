@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_OUT_OF_RANGE_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_OUT_OF_RANGE_HPP
 
-#include <stan/math/prim/scal/meta/error_index.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <typeinfo>
 #include <sstream>
 #include <stdexcept>

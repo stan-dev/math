@@ -1,8 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_COMBINE_HPP
 #define STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_COMBINE_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/arr/fun/sum.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 

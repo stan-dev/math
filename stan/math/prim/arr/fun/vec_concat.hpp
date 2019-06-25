@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_ARR_FUN_VEC_CONCAT_HPP
 #define STAN_MATH_PRIM_ARR_FUN_VEC_CONCAT_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <type_traits>
 #include <vector>
 

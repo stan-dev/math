@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_ORDERED_CONSTRAIN_HPP
 #define STAN_MATH_PRIM_MAT_FUN_ORDERED_CONSTRAIN_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
 #include <cmath>
 
 namespace stan {

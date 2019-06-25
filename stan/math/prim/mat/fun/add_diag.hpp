@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_ADD_DIAG_HPP
 #define STAN_MATH_PRIM_MAT_FUN_ADD_DIAG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <algorithm>
 
 namespace stan {

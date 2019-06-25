@@ -1,10 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_LPMF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_LPMF_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/size.hpp>
-#include <stan/math/prim/mat/meta/vector_seq_view.hpp>
-#include <stan/math/prim/mat/meta/length_mvt.hpp>
 #include <stan/math/prim/mat/err/check_ordered.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
 #include <stan/math/prim/scal/fun/log1p_exp.hpp>
@@ -16,12 +15,6 @@
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <vector>
 
 namespace stan {
@@ -136,7 +129,7 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
         ops_partials.edge1_.partials_[n] -= d;
 
       if (!is_constant_struct<T_cut>::value)
-        ops_partials.edge2_.partials_vec_[n](0) = d;
+        ops_partials.edge2_.partials_vec_[n](0) += d;
 
     } else if (y_vec[n] == K) {
       logp -= log1p_exp(c_dbl[K - 2] - lam_dbl);
