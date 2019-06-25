@@ -28,6 +28,10 @@ TEST(AgradRevMatrixAddons, var_matrix) {
   EXPECT_EQ(mat_in.adj().rows(), derivs.rows());
   EXPECT_EQ(mat_in.adj().cols(), derivs.cols());
 
+  const matrix_v const_mat_in = matrix_v::Random(100,100);
+
+  MatrixXd tri_out = const_mat_in.val().triangularView<Eigen::Upper>().solve(const_mat_in.adj().transpose());
+
   matrix_vi mat_vi = mat_in.vi();
 
   expect_matrix_eq(vals, mat_vi.val());
