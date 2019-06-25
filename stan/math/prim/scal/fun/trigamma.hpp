@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_TRIGAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_TRIGAMMA_HPP
 
+#include <stan/math/prim/meta.hpp>
 // Reference:
 //   BE Schneider,
 //   Algorithm AS 121:

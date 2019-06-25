@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LB_CONSTRAIN_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LB_CONSTRAIN_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/scal/fun/identity_constrain.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>

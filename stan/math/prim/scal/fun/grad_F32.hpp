@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_GRAD_F32_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_GRAD_F32_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/inv.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>

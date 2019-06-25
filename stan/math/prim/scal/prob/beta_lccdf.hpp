@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BETA_LCCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BETA_LCCDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -12,11 +10,7 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/lbeta.hpp>
-#include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/fun/beta.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <cmath>
@@ -102,7 +96,8 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lccdf(
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
     const T_partials_return beta_dbl = value_of(beta_vec[n]);
-    const T_partials_return betafunc_dbl = exp(lbeta(alpha_dbl, beta_dbl));
+    const T_partials_return betafunc_dbl
+        = stan::math::beta(alpha_dbl, beta_dbl);
 
     const T_partials_return Pn = 1.0 - inc_beta(alpha_dbl, beta_dbl, y_dbl);
 

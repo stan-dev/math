@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 #include <algorithm>
 
-TEST(MathMatrixGPU, subtract_v_exception_pass) {
+TEST(MathMatrixCL, subtract_v_exception_pass) {
   stan::math::vector_d d1, d2;
 
   d1.resize(3);
@@ -18,7 +18,7 @@ TEST(MathMatrixGPU, subtract_v_exception_pass) {
 
 // TODO(Steve): This should probably throw expection?
 // The dimensions do not match
-TEST(MathMatrixGPU, subtract_v_exception_pass_zero) {
+TEST(MathMatrixCL, subtract_v_exception_pass_zero) {
   stan::math::vector_d d1, d2;
   d1.resize(0);
   d2.resize(0);
@@ -28,7 +28,7 @@ TEST(MathMatrixGPU, subtract_v_exception_pass_zero) {
   EXPECT_NO_THROW(d33 = d11 - d22);
 }
 
-TEST(MathMatrixGPU, subtract_v_exception_fail_zero) {
+TEST(MathMatrixCL, subtract_v_exception_fail_zero) {
   stan::math::vector_d d1, d2;
   d1.resize(2);
   d2.resize(3);
@@ -38,7 +38,7 @@ TEST(MathMatrixGPU, subtract_v_exception_fail_zero) {
   EXPECT_THROW(d33 = d11 - d22, std::invalid_argument);
 }
 
-TEST(MathMatrixGPU, subtract_rv_exception_pass) {
+TEST(MathMatrixCL, subtract_rv_exception_pass) {
   stan::math::row_vector_d d1, d2;
 
   d1.resize(3);
@@ -49,7 +49,7 @@ TEST(MathMatrixGPU, subtract_rv_exception_pass) {
   EXPECT_NO_THROW(d33 = d11 - d22);
 }
 
-TEST(MathMatrixGPU, subtract_rv_exception_pass_zero) {
+TEST(MathMatrixCL, subtract_rv_exception_pass_zero) {
   stan::math::row_vector_d d1, d2;
   d1.resize(0);
   d2.resize(0);
@@ -59,7 +59,7 @@ TEST(MathMatrixGPU, subtract_rv_exception_pass_zero) {
   EXPECT_NO_THROW(d33 = d11 - d22);
 }
 
-TEST(MathMatrixGPU, subtract_rv_exception_fail_zero) {
+TEST(MathMatrixCL, subtract_rv_exception_fail_zero) {
   stan::math::row_vector_d d1, d2;
   d1.resize(2);
   d2.resize(3);
@@ -69,7 +69,7 @@ TEST(MathMatrixGPU, subtract_rv_exception_fail_zero) {
   EXPECT_THROW(d33 = d11 - d22, std::invalid_argument);
 }
 
-TEST(MathMatrixGPU, subtract_m_exception) {
+TEST(MathMatrixCL, subtract_m_exception) {
   stan::math::matrix_d d1, d2;
   d1.resize(2, 3);
   d2.resize(2, 3);
@@ -79,7 +79,7 @@ TEST(MathMatrixGPU, subtract_m_exception) {
   EXPECT_NO_THROW(d33 = d11 - d22);
 }
 
-TEST(MathMatrixGPU, subtract_m_exception_pass_zero) {
+TEST(MathMatrixCL, subtract_m_exception_pass_zero) {
   stan::math::matrix_d d1, d2;
   d1.resize(0, 0);
   d2.resize(0, 0);
@@ -89,7 +89,7 @@ TEST(MathMatrixGPU, subtract_m_exception_pass_zero) {
   EXPECT_NO_THROW(d33 = d11 - d22);
 }
 
-TEST(MathMatrixGPU, subtract_m_exception_fail) {
+TEST(MathMatrixCL, subtract_m_exception_fail) {
   stan::math::matrix_d d1, d2;
   d1.resize(2, 3);
   d2.resize(3, 3);
@@ -99,7 +99,7 @@ TEST(MathMatrixGPU, subtract_m_exception_fail) {
   EXPECT_THROW(d33 = d11 - d22, std::invalid_argument);
 }
 
-TEST(MathMatrixGPU, subtract_exception) {
+TEST(MathMatrixCL, subtract_exception) {
   stan::math::vector_d v1(2);
   v1 << 1, 2;
   stan::math::vector_d v2(3);
@@ -131,7 +131,7 @@ TEST(MathMatrixGPU, subtract_exception) {
   EXPECT_THROW(m33 = m11 - m22, std::invalid_argument);
 }
 
-TEST(MathMatrixGPU, subtract_value_check) {
+TEST(MathMatrixCL, subtract_value_check) {
   stan::math::vector_d v1(3);
   v1 << 1, 2, 3;
   stan::math::vector_d v2(3);
@@ -166,17 +166,17 @@ TEST(MathMatrixGPU, subtract_value_check) {
   EXPECT_NO_THROW(rv33 = rv11 - rv22);
   EXPECT_NO_THROW(m33 = m11 - m22);
 
-  stan::math::copy(v3, v33);
+  v3 = stan::math::from_matrix_cl(v33);
   EXPECT_EQ(-9, v3(0));
   EXPECT_EQ(-98, v3(1));
   EXPECT_EQ(-997, v3(2));
 
-  stan::math::copy(rv3, rv33);
+  rv3 = stan::math::from_matrix_cl(rv33);
   EXPECT_EQ(-9, rv3(0));
   EXPECT_EQ(-98, rv3(1));
   EXPECT_EQ(-997, rv3(2));
 
-  stan::math::copy(m3, m33);
+  m3 = stan::math::from_matrix_cl(m33);
   EXPECT_EQ(-9, m3(0, 0));
   EXPECT_EQ(-98, m3(0, 1));
   EXPECT_EQ(-997, m3(0, 2));

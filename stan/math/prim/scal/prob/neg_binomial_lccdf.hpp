@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_LCCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_LCCDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
@@ -11,12 +9,9 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/prim/scal/fun/lbeta.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/fun/beta.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <cmath>
 #include <limits>
 
@@ -88,7 +83,7 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_lccdf(
     const T_partials_return p_dbl = beta_dbl / (1.0 + beta_dbl);
     const T_partials_return d_dbl = 1.0 / ((1.0 + beta_dbl) * (1.0 + beta_dbl));
     const T_partials_return Pi = 1.0 - inc_beta(alpha_dbl, n_dbl + 1.0, p_dbl);
-    const T_partials_return beta_func = exp(lbeta(n_dbl + 1, alpha_dbl));
+    const T_partials_return beta_func = stan::math::beta(n_dbl + 1, alpha_dbl);
 
     P += log(Pi);
 

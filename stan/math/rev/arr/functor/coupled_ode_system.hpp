@@ -1,8 +1,7 @@
 #ifndef STAN_MATH_REV_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 #define STAN_MATH_REV_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/arr/meta/length.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
@@ -185,34 +184,6 @@ struct coupled_ode_system<F, double, var> {
       state[n] = y0_dbl_[n];
     return state;
   }
-
-  /**
-   * Returns the states of the base system provided on construction.
-   *
-   * @param y the vector of coupled states after solving the ode. Each
-   *   inner vector is size <code>size()</code>.
-   * @return the states of the base ode system corresponding to
-   *   <code>y</code>. Each inner vector is size <code>N</code>.
-   */
-  std::vector<std::vector<var> > decouple_states(
-      const std::vector<std::vector<double> >& y) const {
-    std::vector<var> temp_vars(N_);
-    std::vector<double> temp_gradients(M_);
-    std::vector<std::vector<var> > y_return(y.size());
-
-    for (size_t i = 0; i < y.size(); i++) {
-      // iterate over number of equations
-      for (size_t j = 0; j < N_; j++) {
-        // iterate over parameters for each equation
-        for (size_t k = 0; k < M_; k++)
-          temp_gradients[k] = y[i][y0_dbl_.size() + y0_dbl_.size() * k + j];
-
-        temp_vars[j] = precomputed_gradients(y[i][j], theta_, temp_gradients);
-      }
-      y_return[i] = temp_vars;
-    }
-    return y_return;
-  }
 };
 
 /**
@@ -229,7 +200,7 @@ struct coupled_ode_system<F, double, var> {
  * initial conditions with respect to the first base system equation:
  * \f[
  *  \frac{d x_{N + n}}{dt}
- *  = \frac{d}{dt} \frac{\partial x_1}{\partial \y0_m}
+ *  = \frac{d}{dt} \frac{\partial x_1}{\partial y0_m}
  * \f]
  * for \f$ n \in {1, \ldots, N} \f$].
  *
@@ -361,37 +332,6 @@ struct coupled_ode_system<F, var, double> {
     for (size_t i = 0; i < N_; i++)
       initial[N_ + i * N_ + i] = 1.0;
     return initial;
-  }
-
-  /**
-   * Returns the states of the base system provided on construction.
-   *
-   * @param y the vector of coupled states after solving the ode. Each
-   *   inner vector is size <code>size()</code>.
-   * @return the states of the base ode system corresponding to
-   *   <code>y</code>. Each inner vector is size <code>N</code>.
-   */
-  std::vector<std::vector<var> > decouple_states(
-      const std::vector<std::vector<double> >& y) const {
-    using std::vector;
-
-    vector<var> temp_vars(N_);
-    vector<double> temp_gradients(N_);
-    vector<vector<var> > y_return(y.size());
-
-    for (size_t i = 0; i < y.size(); i++) {
-      // iterate over number of equations
-      for (size_t j = 0; j < N_; j++) {
-        // iterate over parameters for each equation
-        for (size_t k = 0; k < N_; k++)
-          temp_gradients[k] = y[i][y0_.size() + y0_.size() * k + j];
-
-        temp_vars[j] = precomputed_gradients(y[i][j], y0_, temp_gradients);
-      }
-      y_return[i] = temp_vars;
-    }
-
-    return y_return;
   }
 };
 
@@ -585,40 +525,6 @@ struct coupled_ode_system<F, var, var> {
     for (size_t i = 0; i < N_; i++)
       initial[N_ + i * N_ + i] = 1.0;
     return initial;
-  }
-
-  /**
-   * Returns the states of the base system provided on construction.
-   *
-   * @param y the vector of coupled states after solving the ode. Each
-   *   inner vector is size <code>size()</code>.
-   * @return the states of the base ode system corresponding to
-   *   <code>y</code>. Each inner vector is size <code>N</code>.
-   */
-  std::vector<std::vector<var> > decouple_states(
-      const std::vector<std::vector<double> >& y) const {
-    using std::vector;
-
-    vector<var> vars = y0_;
-    vars.insert(vars.end(), theta_.begin(), theta_.end());
-
-    vector<var> temp_vars(N_);
-    vector<double> temp_gradients(N_ + M_);
-    vector<vector<var> > y_return(y.size());
-
-    for (size_t i = 0; i < y.size(); i++) {
-      // iterate over number of equations
-      for (size_t j = 0; j < N_; j++) {
-        // iterate over parameters for each equation
-        for (size_t k = 0; k < N_ + M_; k++)
-          temp_gradients[k] = y[i][N_ + N_ * k + j];
-
-        temp_vars[j] = precomputed_gradients(y[i][j], vars, temp_gradients);
-      }
-      y_return[i] = temp_vars;
-    }
-
-    return y_return;
   }
 };
 

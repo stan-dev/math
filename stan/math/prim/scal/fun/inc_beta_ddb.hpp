@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_INC_BETA_DDB_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_INC_BETA_DDB_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta_dda.hpp>
