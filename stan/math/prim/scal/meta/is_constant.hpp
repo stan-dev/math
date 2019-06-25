@@ -31,7 +31,7 @@ struct is_constant {
 /**
  * Metaprogram defining an enum <code>value</code> which
  * is <code>true</code> if all of the type parameters
- * are constant (i.e., primtive types) and 
+ * are constant (i.e., primtive types) and
  * <code>false</code> otherwise.
  */
 template <typename... T>

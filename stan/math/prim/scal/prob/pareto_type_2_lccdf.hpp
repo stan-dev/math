@@ -51,13 +51,12 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lccdf(
   VectorBuilder<true, T_partials_return, T_y, T_loc, T_scale, T_shape> ccdf_log(
       N);
 
-  VectorBuilder<
-      !is_constant_all<T_y, T_loc, T_scale, T_shape>::value,
-      T_partials_return, T_y, T_loc, T_scale, T_shape>
+  VectorBuilder<!is_constant_all<T_y, T_loc, T_scale, T_shape>::value,
+                T_partials_return, T_y, T_loc, T_scale, T_shape>
       a_over_lambda_plus_y(N);
 
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_y,
-                T_loc, T_scale, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_y, T_loc,
+                T_scale, T_shape>
       log_1p_y_over_lambda(N);
 
   for (size_t i = 0; i < N; i++) {

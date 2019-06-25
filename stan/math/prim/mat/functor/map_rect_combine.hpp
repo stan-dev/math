@@ -68,8 +68,7 @@ class map_rect_combine {
                       const std::vector<int>& world_f_out) {
     const std::size_t num_jobs = world_f_out.size();
     const std::size_t offset_job_params
-        = is_constant_all<T_shared_param>::value ? 1
-                                                    : 1 + num_shared_operands_;
+        = is_constant_all<T_shared_param>::value ? 1 : 1 + num_shared_operands_;
     const std::size_t size_world_f_out = sum(world_f_out);
 
     result_t out(size_world_f_out);

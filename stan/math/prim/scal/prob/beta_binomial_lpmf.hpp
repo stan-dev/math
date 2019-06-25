@@ -100,16 +100,16 @@ typename return_type<T_size1, T_size2>::type beta_binomial_lpmf(
     if (!is_constant_all<T_size1>::value)
       digamma_n_plus_alpha[i] = digamma(n_vec[i] + value_of(alpha_vec[i]));
 
-  VectorBuilder<!is_constant_all<T_size1, T_size2>::value,
-                T_partials_return, T_N, T_size1, T_size2>
+  VectorBuilder<!is_constant_all<T_size1, T_size2>::value, T_partials_return,
+                T_N, T_size1, T_size2>
       digamma_N_plus_alpha_plus_beta(max_size(N, alpha, beta));
   for (size_t i = 0; i < max_size(N, alpha, beta); i++)
     if (!is_constant_all<T_size1, T_size2>::value)
       digamma_N_plus_alpha_plus_beta[i]
           = digamma(N_vec[i] + value_of(alpha_vec[i]) + value_of(beta_vec[i]));
 
-  VectorBuilder<!is_constant_all<T_size1, T_size2>::value,
-                T_partials_return, T_size1, T_size2>
+  VectorBuilder<!is_constant_all<T_size1, T_size2>::value, T_partials_return,
+                T_size1, T_size2>
       digamma_alpha_plus_beta(max_size(alpha, beta));
   for (size_t i = 0; i < max_size(alpha, beta); i++)
     if (!is_constant_all<T_size1, T_size2>::value)

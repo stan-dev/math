@@ -95,11 +95,11 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lpdf(
   VectorBuilder<include_summand<propto, T_loc, T_prec>::value,
                 T_partials_return, T_loc, T_prec>
       lgamma_kappa_mukappa(N_mukappa);
-  VectorBuilder<!is_constant_all<T_loc, T_prec>::value,
-                T_partials_return, T_loc, T_prec>
+  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials_return,
+                T_loc, T_prec>
       digamma_mukappa(N_mukappa);
-  VectorBuilder<!is_constant_all<T_loc, T_prec>::value,
-                T_partials_return, T_loc, T_prec>
+  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials_return,
+                T_loc, T_prec>
       digamma_kappa_mukappa(N_mukappa);
 
   for (size_t n = 0; n < N_mukappa; n++) {

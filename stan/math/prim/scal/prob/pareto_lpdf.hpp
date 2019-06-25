@@ -54,8 +54,7 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_lpdf(
       log_y[n] = log(value_of(y_vec[n]));
   }
 
-  VectorBuilder<!is_constant_all<T_y, T_shape>::value,
-                T_partials_return, T_y>
+  VectorBuilder<!is_constant_all<T_y, T_shape>::value, T_partials_return, T_y>
       inv_y(length(y));
   if (!is_constant_all<T_y, T_shape>::value) {
     for (size_t n = 0; n < length(y); n++)

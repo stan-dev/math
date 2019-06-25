@@ -4,7 +4,7 @@
 
 template <typename... Ts>
 void expect_not_const() {
-  using stan::is_constant_all;  
+  using stan::is_constant_all;
   bool temp = is_constant_all<Ts...>::value;
   EXPECT_FALSE(temp);
 }
@@ -39,6 +39,6 @@ TEST(MetaTraits, isConstantStruct) {
   expect_not_const<var_v3>();
   expect_not_const<var_t1, var_t2, var_t3, double>();
   expect_not_const<var_t1, var_u2, var_v3, double>();
-  expect_not_const<var_t1, var_t2, var_t3, var_u1, var_u2, var_u3,
-                            var_v3, double>();
+  expect_not_const<var_t1, var_t2, var_t3, var_u1, var_u2, var_u3, var_v3,
+                   double>();
 }

@@ -8,11 +8,11 @@ TEST(MetaTraits, isConstantStruct) {
   EXPECT_TRUE(is_constant_all<vector<double>>::value);
   EXPECT_TRUE(is_constant_all<vector<vector<double>>>::value);
   EXPECT_TRUE(is_constant_all<vector<vector<vector<double>>>>::value);
-  bool temp = is_constant_all<vector<double>, vector<double>,
-                                 vector<double>>::value;
+  bool temp
+      = is_constant_all<vector<double>, vector<double>, vector<double>>::value;
   EXPECT_TRUE(temp);
-  temp = is_constant_all<vector<double>, vector<vector<double>>,
-                            vector<double>, vector<vector<double>>,
-                            vector<vector<vector<double>>>>::value;
+  temp = is_constant_all<vector<double>, vector<vector<double>>, vector<double>,
+                         vector<vector<double>>,
+                         vector<vector<vector<double>>>>::value;
   EXPECT_TRUE(temp);
 }

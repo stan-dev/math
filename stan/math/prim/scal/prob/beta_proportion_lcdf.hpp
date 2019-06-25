@@ -72,14 +72,14 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lcdf(
   using std::log;
   using std::pow;
 
-  VectorBuilder<!is_constant_all<T_loc, T_prec>::value,
-                T_partials_return, T_loc, T_prec>
+  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials_return,
+                T_loc, T_prec>
       digamma_mukappa(max_size(mu, kappa));
-  VectorBuilder<!is_constant_all<T_loc, T_prec>::value,
-                T_partials_return, T_loc, T_prec>
+  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials_return,
+                T_loc, T_prec>
       digamma_kappa_mukappa(max_size(mu, kappa));
-  VectorBuilder<!is_constant_all<T_loc, T_prec>::value,
-                T_partials_return, T_prec>
+  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials_return,
+                T_prec>
       digamma_kappa(length(kappa));
 
   if (!is_constant_all<T_loc, T_prec>::value) {

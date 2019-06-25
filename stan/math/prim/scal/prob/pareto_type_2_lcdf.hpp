@@ -55,8 +55,8 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lcdf(
   VectorBuilder<true, T_partials_return, T_y, T_loc, T_scale, T_shape>
       inv_p1_pow_alpha_minus_one(N);
 
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_y,
-                T_loc, T_scale, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_y, T_loc,
+                T_scale, T_shape>
       log_1p_y_over_lambda(N);
 
   for (size_t i = 0; i < N; i++) {

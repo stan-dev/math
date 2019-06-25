@@ -51,12 +51,12 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_cdf(
   VectorBuilder<true, T_partials_return, T_y, T_loc, T_scale, T_shape>
       p1_pow_alpha(N);
 
-  VectorBuilder<!is_constant_all<T_y, T_loc, T_scale>::value,
-                T_partials_return, T_y, T_loc, T_scale, T_shape>
+  VectorBuilder<!is_constant_all<T_y, T_loc, T_scale>::value, T_partials_return,
+                T_y, T_loc, T_scale, T_shape>
       grad_1_2(N);
 
-  VectorBuilder<!is_constant_all<T_shape, T_y>::value,
-                T_partials_return, T_y, T_loc, T_scale, T_shape>
+  VectorBuilder<!is_constant_all<T_shape, T_y>::value, T_partials_return, T_y,
+                T_loc, T_scale, T_shape>
       grad_3(N);
 
   for (size_t i = 0; i < N; i++) {

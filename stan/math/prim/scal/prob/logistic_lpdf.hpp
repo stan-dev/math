@@ -58,8 +58,7 @@ typename return_type<T_y, T_loc, T_scale>::type logistic_lpdf(
   VectorBuilder<!is_constant_all<T_loc>::value, T_partials_return, T_loc,
                 T_scale>
       exp_mu_div_sigma(max_size(mu, sigma));
-  VectorBuilder<!is_constant_all<T_loc>::value, T_partials_return, T_y,
-                T_scale>
+  VectorBuilder<!is_constant_all<T_loc>::value, T_partials_return, T_y, T_scale>
       exp_y_div_sigma(max_size(y, sigma));
   if (!is_constant_all<T_loc>::value) {
     for (size_t n = 0; n < max_size(mu, sigma); n++)
