@@ -87,6 +87,9 @@ CXXFLAGS_SUNDIALS ?= -pipe
 # LDFLAGS_MPI
 # LDLIBS_MPI
 
+# Eigen Flags
+CXXFLAGS_EIGEN ?= -DEIGEN_MAX_ALIGN_BYTES=64
+
 ################################################################################
 # Update compiler flags with operating system specific modifications
 ##
