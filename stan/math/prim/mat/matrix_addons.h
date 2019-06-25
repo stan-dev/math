@@ -7,11 +7,26 @@
  * in SFINAE
  */
 template<class, class = void>
-struct Hasd_ : std::false_type
+struct is_fvar : std::false_type
 { };
 template<class T>
-struct Hasd_<T, decltype((void)(T::d_))> : std::true_type
+struct is_fvar<T, decltype((void)(T::d_))> : std::true_type
 { };
+
+template<typename T>
+using rev_rtn_type = std::conditional_t<std::is_const<typename std::remove_reference<T>::type>::value,
+                                         const double&,
+                                         double&>;
+
+template<typename T>
+using vi_rtn_type = std::conditional_t<std::is_const<typename std::remove_reference<T>::type>::value,
+                                          const decltype(T::vi_)&,
+                                          decltype(T::vi_)&>;
+
+template<typename T>
+using fwd_rtn_type = std::conditional_t<std::is_const<typename std::remove_reference<T>::type>::value,
+                                         const decltype(T::val_)&,
+                                         decltype(T::val_)&>;
 
 /**
  * Structure to return a view to the values in a var, vari*, and fvar<T>.
@@ -28,35 +43,19 @@ struct val_Op{
   EIGEN_EMPTY_STRUCT_CTOR(val_Op);
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    typename std::enable_if_t<std::is_pointer<T>::value, const double&>
-      operator()(const Scalar &v) const { return v->val_; }
+    std::enable_if_t<std::is_pointer<T>::value, rev_rtn_type<T>>
+      operator()(T &v) const { return v->val_; }
 
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    typename std::enable_if_t<(!std::is_pointer<T>::value && !Hasd_<T>::value),
-                               const double&>
-      operator()(const Scalar &v) const { return v.vi_->val_; }
+    std::enable_if_t<(!std::is_pointer<T>::value && !is_fvar<T>::value),
+                               rev_rtn_type<T>>
+      operator()(T &v) const { return v.vi_->val_; }
 
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    typename std::enable_if_t<Hasd_<T>::value, const decltype(T::val_)&>
-      operator()(const Scalar &v) const { return v.val_; }
-
-  template<typename T = Scalar>
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    typename std::enable_if_t<std::is_pointer<T>::value, double&>
-      operator()(Scalar &v) const { return v->val_; }
-
-  template<typename T = Scalar>
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    typename std::enable_if_t<(!std::is_pointer<T>::value && !Hasd_<T>::value),
-                                                double&>
-      operator()(Scalar &v) { return v.vi_->val_; }
-
-  template<typename T = Scalar>
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    typename std::enable_if_t<Hasd_<T>::value, decltype(T::val_)&>
-      operator()(Scalar &v) { return v.val_; }
+    std::enable_if_t<is_fvar<T>::value, fwd_rtn_type<T>>
+      operator()(T &v) const { return v.val_; }
 };
 
 /**
@@ -87,14 +86,9 @@ val() { return CwiseUnaryView<val_Op, Derived>
  */
 struct d_Op {
   EIGEN_EMPTY_STRUCT_CTOR(d_Op);
-  typedef decltype(Scalar::d_) result_type;
-  EIGEN_DEVICE_FUNC
-  EIGEN_STRONG_INLINE const result_type& 
-    operator()(const Scalar &v) const { return v.d_; }
-
-  EIGEN_DEVICE_FUNC
-  EIGEN_STRONG_INLINE result_type& 
-    operator()(Scalar &v) const { return v.d_; }
+  template<typename T = Scalar>
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+    fwd_rtn_type<T> operator()(T &v) const { return v.d_; }
 };
 
 /**
@@ -127,28 +121,14 @@ d() { return CwiseUnaryView<d_Op, Derived>
 struct adj_Op {
   EIGEN_EMPTY_STRUCT_CTOR(adj_Op);
   template<typename T = Scalar>
-  EIGEN_DEVICE_FUNC
-  EIGEN_STRONG_INLINE typename
-    std::enable_if_t<std::is_pointer<T>::value, const double&> const 
-    operator()(const Scalar &v) const { return v->adj_; }
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+    std::enable_if_t<std::is_pointer<T>::value, rev_rtn_type<T>>
+      operator()(T &v) const { return v->adj_; }
 
   template<typename T = Scalar>
-  EIGEN_DEVICE_FUNC
-  EIGEN_STRONG_INLINE typename
-    std::enable_if_t<!std::is_pointer<T>::value, const double&> const 
-    operator()(const Scalar &v) const { return v.vi_->adj_; }
-
-  template<typename T = Scalar>
-  EIGEN_DEVICE_FUNC
-  EIGEN_STRONG_INLINE typename
-    std::enable_if_t<std::is_pointer<T>::value,double&>
-    operator()(Scalar &v) const { return v->adj_; }
-
-  template<typename T = Scalar>
-  EIGEN_DEVICE_FUNC
-  EIGEN_STRONG_INLINE typename
-    std::enable_if_t<!std::is_pointer<T>::value,double&>
-    operator()(Scalar &v) const { return v.vi_->adj_; }
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+    std::enable_if_t<!std::is_pointer<T>::value, rev_rtn_type<T>>
+      operator()(T &v) const { return v.vi_->adj_; }
 };
 
 /**
@@ -176,15 +156,10 @@ adj() { return CwiseUnaryView<adj_Op, Derived>
  * vari* (for writing to a non-const matrix)
  */
 struct vi_Op {
-  typedef decltype(Scalar::vi_) result_type;
   EIGEN_EMPTY_STRUCT_CTOR(vi_Op);
-  EIGEN_DEVICE_FUNC
-  EIGEN_STRONG_INLINE const result_type& 
-    operator()(const Scalar &v) const { return v.vi_; }
-
-  EIGEN_DEVICE_FUNC
-  EIGEN_STRONG_INLINE result_type& 
-    operator()(Scalar &v) const { return v.vi_; }
+  template<typename T = Scalar>
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+    vi_rtn_type<T> operator()(T &v) const { return v.vi_; }
 };
 
 /**
