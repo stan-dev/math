@@ -10,7 +10,7 @@
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/as_array_or_scalar.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/is_constant.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <Eigen/Core>
 

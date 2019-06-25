@@ -6,29 +6,30 @@
 
 namespace stan {
 /**
- * Defines a public enum named value and sets it to true(1)
- * if the type of the elements in the provided Eigen matrix
- * is a constant struct, false(0) otherwise. This helper
- * struct is used in the is_constant_struct metaprogram.
- * @tparam type of the elements in the Eigen matrix
- * @tparam R number of rows in the provided matrix
- * @tparam C number of columns in the provided matrix
+ * Defines a public enum named value and sets it to true
+ * if the type of the elements in the provided Eigen Matrix
+ * is constant, false otherwise. This is used in
+ * the is_constant_all metaprogram.
+ *
+ * @tparam T type of the elements in the Eigen Matrix
+ * @tparam R number of rows in the Eigen Matrix
+ * @tparam C number of cols in the eigen Matrix
  */
 template <typename T, int R, int C>
-struct is_constant_all<Eigen::Matrix<T, R, C> > {
-  enum { value = is_constant_all<T>::value };
+struct is_constant<Eigen::Matrix<T, R, C> > {
+  enum { value = is_constant<T>::value };
 };
 
 /**
- * Defines a public enum named value and sets it to true(1)
+ * Defines a public enum named value and sets it to true
  * if the type of the elements in the provided Eigen Block
- * is a constant struct, false(0) otherwise. This helper
- * struct is used in the is_constant_struct metaprogram.
+ * is constant, false otherwise. This is used in
+ * the is_constant_all metaprogram.
  * @tparam type of the elements in the Eigen Block
  */
 template <typename T>
-struct is_constant_all<Eigen::Block<T> > {
-  enum { value = is_constant_all<T>::value };
+struct is_constant<Eigen::Block<T> > {
+  enum { value = is_constant<T>::value };
 };
 
 }  // namespace stan

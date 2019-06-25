@@ -3,7 +3,7 @@
 
 #include <stan/math/mix/mat.hpp>
 
-using stan::is_constant_struct;
+using stan::is_constant_all;
 using stan::is_vector;
 using stan::math::fvar;
 using stan::math::var;
