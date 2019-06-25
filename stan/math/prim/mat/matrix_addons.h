@@ -1,10 +1,12 @@
+#ifndef STAN_MATH_PRIM_MAT_MATRIX_ADDONS_H
+#define STAN_MATH_PRIM_MAT_MATRIX_ADDONS_H
+
 /**
  * Structure to determine whether input struct has member named "d_".
  * This is used to differentiate between var and fvar<T> without
  * depending on external code.
  *
- * Re-implements std::void_t for pre-c++17 to detect ill-formed types
- * in SFINAE
+ * decltype((void)(T::d_)) is a replacement for std::void_t for pre C++-17
  */
 template<class, class = void>
 struct is_fvar : std::false_type
@@ -62,8 +64,7 @@ struct val_Op{
  * the values
  */
 inline const CwiseUnaryOp<val_Op, const Derived>
-val() const { return CwiseUnaryOp<val_Op, const Derived>
-    (derived(), val_Op());
+val() const { return CwiseUnaryOp<val_Op, const Derived>(derived());
 }
 
 /**
@@ -72,8 +73,7 @@ val() const { return CwiseUnaryOp<val_Op, const Derived>
  * values
  */
 inline CwiseUnaryView<val_Op, Derived>
-val() { return CwiseUnaryView<val_Op, Derived>
-    (derived(), val_Op());
+val() { return CwiseUnaryView<val_Op, Derived>(derived());
 }
 
 /**
@@ -91,8 +91,7 @@ struct d_Op {
  * and returning a const matrix of type T containing the tangents
  */
 inline const CwiseUnaryOp<d_Op, const Derived>
-d() const { return CwiseUnaryOp<d_Op, const Derived>
-    (derived(), d_Op());
+d() const { return CwiseUnaryOp<d_Op, const Derived>(derived());
 }
 
 /**
@@ -101,8 +100,7 @@ d() const { return CwiseUnaryOp<d_Op, const Derived>
  * be modified
  */
 inline CwiseUnaryView<d_Op, Derived>
-d() { return CwiseUnaryView<d_Op, Derived>
-    (derived(), d_Op());
+d() { return CwiseUnaryView<d_Op, Derived>(derived());
 }
 
 /**
@@ -128,8 +126,7 @@ struct adj_Op {
  * and returning a const matrix of type T containing the values
  */
 inline const CwiseUnaryOp<adj_Op, const Derived>
-adj() const { return CwiseUnaryOp<adj_Op, const Derived>
-    (derived(), adj_Op());
+adj() const { return CwiseUnaryOp<adj_Op, const Derived>(derived());
 }
 
 /**
@@ -138,8 +135,7 @@ adj() const { return CwiseUnaryOp<adj_Op, const Derived>
  * be modified
  */
 inline CwiseUnaryView<adj_Op, Derived>
-adj() { return CwiseUnaryView<adj_Op, Derived>
-    (derived(), adj_Op());
+adj() { return CwiseUnaryView<adj_Op, Derived>(derived());
 }
 /**
  * Structure to return vari* from a var.
@@ -156,8 +152,7 @@ struct vi_Op {
  * and returning a const matrix of vari*
  */
 inline const CwiseUnaryOp<vi_Op, const Derived>
-vi() const { return CwiseUnaryOp<vi_Op, const Derived>
-    (derived(), vi_Op());
+vi() const { return CwiseUnaryOp<vi_Op, const Derived>(derived());
 }
 
 /**
@@ -165,6 +160,7 @@ vi() const { return CwiseUnaryOp<vi_Op, const Derived>
  * and returning a view to a matrix of vari* that can be modified
  */
 inline CwiseUnaryView<vi_Op, Derived>
-vi() { return CwiseUnaryView<vi_Op, Derived>
-    (derived(), vi_Op());
+vi() { return CwiseUnaryView<vi_Op, Derived>(derived());
 }
+
+#endif
