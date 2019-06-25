@@ -57,11 +57,11 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_lccdf(
 
     ccdf_log -= pow_;
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] -= alpha_dbl / y_dbl * pow_;
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       ops_partials.edge2_.partials_[n] -= log(y_dbl / sigma_dbl) * pow_;
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n] += alpha_dbl / sigma_dbl * pow_;
   }
   return ops_partials.build(ccdf_log);

@@ -60,7 +60,7 @@ typename boost::math::tools::promote_args<T_y, T_shape>::type lkj_corr_lpdf(
     lp += do_lkj_constant(eta, K);
 
   if ((eta == 1.0)
-      && stan::is_constant<typename stan::scalar_type<T_shape> >::value)
+      && stan::is_constant_all<typename stan::scalar_type<T_shape> >::value)
     return lp;
 
   if (!include_summand<propto, T_y, T_shape>::value)

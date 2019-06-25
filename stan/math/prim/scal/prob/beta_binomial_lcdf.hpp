@@ -108,19 +108,19 @@ typename return_type<T_size1, T_size2>::type beta_binomial_lcdf(
     T_partials_return digammaOne = 0;
     T_partials_return digammaTwo = 0;
 
-    if (contains_nonconstant_struct<T_size1, T_size2>::value) {
+    if (!is_constant_all<T_size1, T_size2>::value) {
       digammaOne = digamma(mu + nu);
       digammaTwo = digamma(alpha_dbl + beta_dbl);
       grad_F32(dF, (T_partials_return)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2,
                1 - nu, (T_partials_return)1);
     }
-    if (!is_constant_struct<T_size1>::value) {
+    if (!is_constant_all<T_size1>::value) {
       const T_partials_return g = -C
                                   * (digamma(mu) - digammaOne + dF[1] / F
                                      - digamma(alpha_dbl) + digammaTwo);
       ops_partials.edge1_.partials_[i] += g / Pi;
     }
-    if (!is_constant_struct<T_size2>::value) {
+    if (!is_constant_all<T_size2>::value) {
       const T_partials_return g = -C
                                   * (digamma(nu) - digammaOne - dF[4] / F
                                      - digamma(beta_dbl) + digammaTwo);

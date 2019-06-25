@@ -15,8 +15,8 @@ namespace stan {
  * @tparam C number of columns in the provided matrix
  */
 template <typename T, int R, int C>
-struct is_constant<Eigen::Matrix<T, R, C> > {
-  enum { value = is_constant<T>::value };
+struct is_constant_all<Eigen::Matrix<T, R, C> > {
+  enum { value = is_constant_all<T>::value };
 };
 
 /**
@@ -27,8 +27,8 @@ struct is_constant<Eigen::Matrix<T, R, C> > {
  * @tparam type of the elements in the Eigen Block
  */
 template <typename T>
-struct is_constant<Eigen::Block<T> > {
-  enum { value = is_constant<T>::value };
+struct is_constant_all<Eigen::Block<T> > {
+  enum { value = is_constant_all<T>::value };
 };
 
 }  // namespace stan

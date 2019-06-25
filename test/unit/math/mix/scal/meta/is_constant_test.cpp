@@ -6,5 +6,5 @@ TEST(MetaTraits, isConstant) {
   using stan::math::fvar;
   using stan::math::var;
 
-  EXPECT_FALSE(is_constant<fvar<var> >::value);
+  EXPECT_FALSE(is_constant_all<fvar<var> >::value);
 }

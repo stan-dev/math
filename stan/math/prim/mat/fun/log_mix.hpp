@@ -73,12 +73,12 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
   T_partials_vec lam_deriv = theta_deriv.cwiseProduct(theta_dbl);
 
   operands_and_partials<T_theta, T_lam> ops_partials(theta, lambda);
-  if (!is_constant_struct<T_theta>::value) {
+  if (!is_constant_all<T_theta>::value) {
     for (int n = 0; n < N; ++n)
       ops_partials.edge1_.partials_[n] = theta_deriv[n];
   }
 
-  if (!is_constant_struct<T_lam>::value) {
+  if (!is_constant_all<T_lam>::value) {
     for (int n = 0; n < N; ++n)
       ops_partials.edge2_.partials_[n] = lam_deriv[n];
   }
@@ -159,16 +159,16 @@ log_mix(const T_theta& theta,
 
   operands_and_partials<T_theta, T_lamvec_type> ops_partials(theta, lambda);
 
-  if (!is_constant_struct<T_theta, T_lam>::value) {
+  if (!is_constant_all<T_theta, T_lam>::value) {
     T_partials_mat derivs
         = (lam_dbl - logp.transpose().replicate(M, 1))
               .unaryExpr([](T_partials_return x) { return exp(x); });
-    if (!is_constant_struct<T_theta>::value) {
+    if (!is_constant_all<T_theta>::value) {
       for (int m = 0; m < M; ++m)
         ops_partials.edge1_.partials_[m] = derivs.row(m).sum();
     }
 
-    if (!is_constant_struct<T_lam>::value) {
+    if (!is_constant_all<T_lam>::value) {
       for (int n = 0; n < N; ++n)
         ops_partials.edge2_.partials_vec_[n]
             = derivs.col(n).cwiseProduct(theta_dbl);
@@ -253,12 +253,12 @@ typename return_type<T_theta, std::vector<std::vector<T_lam> > >::type log_mix(
     lam_deriv.col(n) = derivs.col(n).cwiseProduct(theta_dbl);
 
   operands_and_partials<T_theta, T_lamvec_type> ops_partials(theta, lambda);
-  if (!is_constant_struct<T_theta>::value) {
+  if (!is_constant_all<T_theta>::value) {
     for (int m = 0; m < M; ++m)
       ops_partials.edge1_.partials_[m] = derivs.row(m).sum();
   }
 
-  if (!is_constant_struct<T_lam>::value) {
+  if (!is_constant_all<T_lam>::value) {
     for (int n = 0; n < N; ++n)
       for (int m = 0; m < M; ++m)
         ops_partials.edge2_.partials_vec_[n][m] = lam_deriv(m, n);

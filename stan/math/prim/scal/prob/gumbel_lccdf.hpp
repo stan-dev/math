@@ -66,11 +66,11 @@ typename return_type<T_y, T_loc, T_scale>::type gumbel_lccdf(
     const T_partials_return ccdf_log_ = 1.0 - exp(-exp(-scaled_diff));
     ccdf_log += log(ccdf_log_);
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] -= rep_deriv / ccdf_log_;
-    if (!is_constant_struct<T_loc>::value)
+    if (!is_constant_all<T_loc>::value)
       ops_partials.edge2_.partials_[n] += rep_deriv / ccdf_log_;
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n] += rep_deriv * scaled_diff / ccdf_log_;
   }
 

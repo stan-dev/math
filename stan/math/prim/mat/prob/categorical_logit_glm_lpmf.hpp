@@ -124,7 +124,7 @@ categorical_logit_glm_lpmf(
                         Matrix<T_beta_scalar, Dynamic, Dynamic>>
       ops_partials(x, alpha, beta);
 
-  if (!is_constant_struct<T_x_scalar>::value) {
+  if (!is_constant_all<T_x_scalar>::value) {
     if (T_x_rows == 1) {
       Array<double, 1, Dynamic> beta_y = beta_val.col(y_seq[0] - 1);
       for (int i = 1; i < N_instances; i++) {
@@ -149,11 +149,11 @@ categorical_logit_glm_lpmf(
       // inv_sum_exp_lin;
     }
   }
-  if (!is_constant_struct<T_alpha_scalar>::value
-      || !is_constant_struct<T_beta_scalar>::value) {
+  if (!is_constant_all<T_alpha_scalar>::value
+      || !is_constant_all<T_beta_scalar>::value) {
     Array<T_partials_return, T_x_rows, Dynamic> neg_softmax_lin
         = exp_lin.colwise() * -inv_sum_exp_lin;
-    if (!is_constant_struct<T_alpha_scalar>::value) {
+    if (!is_constant_all<T_alpha_scalar>::value) {
       if (T_x_rows == 1) {
         ops_partials.edge2_.partials_
             = neg_softmax_lin.colwise().sum() * N_instances;
@@ -164,7 +164,7 @@ categorical_logit_glm_lpmf(
         ops_partials.edge2_.partials_[y_seq[i] - 1] += 1;
       }
     }
-    if (!is_constant_struct<T_beta_scalar>::value) {
+    if (!is_constant_all<T_beta_scalar>::value) {
       Matrix<T_partials_return, Dynamic, Dynamic> beta_derivative;
       if (T_x_rows == 1) {
         beta_derivative

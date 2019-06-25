@@ -52,11 +52,11 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lccdf(
       N);
 
   VectorBuilder<
-      contains_nonconstant_struct<T_y, T_loc, T_scale, T_shape>::value,
+      !is_constant_all<T_y, T_loc, T_scale, T_shape>::value,
       T_partials_return, T_y, T_loc, T_scale, T_shape>
       a_over_lambda_plus_y(N);
 
-  VectorBuilder<!is_constant_struct<T_shape>::value, T_partials_return, T_y,
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_y,
                 T_loc, T_scale, T_shape>
       log_1p_y_over_lambda(N);
 
@@ -70,10 +70,10 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lccdf(
 
     ccdf_log[i] = -alpha_dbl * log_temp;
 
-    if (contains_nonconstant_struct<T_y, T_loc, T_scale, T_shape>::value)
+    if (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value)
       a_over_lambda_plus_y[i] = alpha_dbl / (y_dbl - mu_dbl + lambda_dbl);
 
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       log_1p_y_over_lambda[i] = log_temp;
   }
 
@@ -84,14 +84,14 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lccdf(
 
     P += ccdf_log[n];
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] -= a_over_lambda_plus_y[n];
-    if (!is_constant_struct<T_loc>::value)
+    if (!is_constant_all<T_loc>::value)
       ops_partials.edge2_.partials_[n] += a_over_lambda_plus_y[n];
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n]
           += a_over_lambda_plus_y[n] * (y_dbl - mu_dbl) / lambda_dbl;
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       ops_partials.edge4_.partials_[n] -= log_1p_y_over_lambda[n];
   }
   return ops_partials.build(P);

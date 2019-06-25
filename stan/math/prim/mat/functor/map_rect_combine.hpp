@@ -68,7 +68,7 @@ class map_rect_combine {
                       const std::vector<int>& world_f_out) {
     const std::size_t num_jobs = world_f_out.size();
     const std::size_t offset_job_params
-        = is_constant_struct<T_shared_param>::value ? 1
+        = is_constant_all<T_shared_param>::value ? 1
                                                     : 1 + num_shared_operands_;
     const std::size_t size_world_f_out = sum(world_f_out);
 
@@ -76,11 +76,11 @@ class map_rect_combine {
 
     for (std::size_t i = 0, ij = 0; i != num_jobs; ++i) {
       for (int j = 0; j != world_f_out[i]; ++j, ++ij) {
-        if (!is_constant_struct<T_shared_param>::value)
+        if (!is_constant_all<T_shared_param>::value)
           ops_partials_[i].edge1_.partials_
               = world_result.block(1, ij, num_shared_operands_, 1);
 
-        if (!is_constant_struct<T_job_param>::value)
+        if (!is_constant_all<T_job_param>::value)
           ops_partials_[i].edge2_.partials_
               = world_result.block(offset_job_params, ij, num_job_operands_, 1);
 

@@ -34,7 +34,7 @@ struct is_constant {
  * @tparam T Types to test
  */
 template <typename... T>
-using is_constant_struct = math::conjunction<is_constant<T>...>;
+using is_constant_all = math::conjunction<is_constant_all<T>...>;
 
 }  // namespace stan
 #endif

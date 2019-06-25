@@ -22,20 +22,20 @@ TEST(MetaTraits, isConstantStruct) {
   using stan::is_constant_struct;
   using std::vector;
 
-  EXPECT_FALSE(is_constant_struct<var_t1>::value);
-  EXPECT_FALSE(is_constant_struct<var_t2>::value);
-  EXPECT_FALSE(is_constant_struct<var_t3>::value);
-  EXPECT_FALSE(is_constant_struct<var_u1>::value);
-  EXPECT_FALSE(is_constant_struct<var_u2>::value);
-  EXPECT_FALSE(is_constant_struct<var_u3>::value);
-  EXPECT_FALSE(is_constant_struct<var_v1>::value);
-  EXPECT_FALSE(is_constant_struct<var_v2>::value);
-  EXPECT_FALSE(is_constant_struct<var_v3>::value);
-  bool temp = is_constant_struct<var_t1, var_t2, var_t3, double>::value;
+  EXPECT_FALSE(is_constant_all<var_t1>::value);
+  EXPECT_FALSE(is_constant_all<var_t2>::value);
+  EXPECT_FALSE(is_constant_all<var_t3>::value);
+  EXPECT_FALSE(is_constant_all<var_u1>::value);
+  EXPECT_FALSE(is_constant_all<var_u2>::value);
+  EXPECT_FALSE(is_constant_all<var_u3>::value);
+  EXPECT_FALSE(is_constant_all<var_v1>::value);
+  EXPECT_FALSE(is_constant_all<var_v2>::value);
+  EXPECT_FALSE(is_constant_all<var_v3>::value);
+  bool temp = is_constant_all<var_t1, var_t2, var_t3, double>::value;
   EXPECT_FALSE(temp);
-  temp = is_constant_struct<var_t1, var_u2, var_v3, double>::value;
+  temp = is_constant_all<var_t1, var_u2, var_v3, double>::value;
   EXPECT_FALSE(temp);
-  temp = is_constant_struct<var_t1, var_t2, var_t3, var_u1, var_u2, var_u3,
+  temp = is_constant_all<var_t1, var_t2, var_t3, var_u1, var_u2, var_u3,
                             var_v3, double>::value;
   EXPECT_FALSE(temp);
 }

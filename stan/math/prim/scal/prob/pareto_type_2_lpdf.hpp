@@ -77,9 +77,9 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lpdf(
       log_alpha[n] = log(value_of(alpha_vec[n]));
   }
 
-  VectorBuilder<!is_constant_struct<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       inv_alpha(length(alpha));
-  if (!is_constant_struct<T_shape>::value) {
+  if (!is_constant_all<T_shape>::value) {
     for (size_t n = 0; n < length(alpha); n++)
       inv_alpha[n] = 1 / value_of(alpha_vec[n]);
   }
@@ -101,14 +101,14 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lpdf(
     if (include_summand<propto, T_y, T_scale, T_shape>::value)
       logp -= (alpha_dbl + 1.0) * log1p_scaled_diff[n];
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] -= deriv_1_2;
-    if (!is_constant_struct<T_loc>::value)
+    if (!is_constant_all<T_loc>::value)
       ops_partials.edge2_.partials_[n] += deriv_1_2;
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n]
           -= alpha_div_sum * (mu_dbl - y_dbl) / lambda_dbl + inv_sum;
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       ops_partials.edge4_.partials_[n] += inv_alpha[n] - log1p_scaled_diff[n];
   }
   return ops_partials.build(logp);

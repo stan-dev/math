@@ -73,20 +73,20 @@ typename return_type<T_y, T_loc, T_scale>::type double_exponential_cdf(
     const T_partials_return inv_sigma = 1.0 / sigma_dbl;
 
     if (y_dbl < mu_dbl) {
-      if (!is_constant_struct<T_y>::value)
+      if (!is_constant_all<T_y>::value)
         ops_partials.edge1_.partials_[n] += inv_sigma * cdf;
-      if (!is_constant_struct<T_loc>::value)
+      if (!is_constant_all<T_loc>::value)
         ops_partials.edge2_.partials_[n] -= inv_sigma * cdf;
-      if (!is_constant_struct<T_scale>::value)
+      if (!is_constant_all<T_scale>::value)
         ops_partials.edge3_.partials_[n] -= scaled_diff * inv_sigma * cdf;
     } else {
       const T_partials_return rep_deriv
           = cdf * inv_sigma / (2.0 * exp_scaled_diff - 1.0);
-      if (!is_constant_struct<T_y>::value)
+      if (!is_constant_all<T_y>::value)
         ops_partials.edge1_.partials_[n] += rep_deriv;
-      if (!is_constant_struct<T_loc>::value)
+      if (!is_constant_all<T_loc>::value)
         ops_partials.edge2_.partials_[n] -= rep_deriv;
-      if (!is_constant_struct<T_scale>::value)
+      if (!is_constant_all<T_scale>::value)
         ops_partials.edge3_.partials_[n] -= rep_deriv * scaled_diff;
     }
   }

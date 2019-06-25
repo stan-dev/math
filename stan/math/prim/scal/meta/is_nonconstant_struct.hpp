@@ -12,7 +12,7 @@ namespace stan {
  */
 template <typename T>
 struct is_nonconstant_struct {
-  enum { value = !stan::is_constant_struct<T>::value };
+  enum { value = !stan::is_constant_all<T>::value };
 };
 
 }  // namespace stan

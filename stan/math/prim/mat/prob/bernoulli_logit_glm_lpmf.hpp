@@ -106,7 +106,7 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
 
   // Compute the necessary derivatives.
   operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
-  if (!is_constant_struct<T_beta, T_x, T_alpha>::value) {
+  if (!is_constant_all<T_beta, T_x, T_alpha>::value) {
     Matrix<T_partials_return, Dynamic, 1> theta_derivative
         = (ytheta > cutoff)
               .select(-exp_m_ytheta,
@@ -114,14 +114,14 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
                           .select(as_array_or_scalar(signs),
                                   as_array_or_scalar(signs) * exp_m_ytheta
                                       / (exp_m_ytheta + 1)));
-    if (!is_constant_struct<T_beta>::value) {
+    if (!is_constant_all<T_beta>::value) {
       ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
     }
-    if (!is_constant_struct<T_x>::value) {
+    if (!is_constant_all<T_x>::value) {
       ops_partials.edge1_.partials_
           = (beta_val_vec * theta_derivative.transpose()).transpose();
     }
-    if (!is_constant_struct<T_alpha>::value) {
+    if (!is_constant_all<T_alpha>::value) {
       if (is_vector<T_alpha>::value)
         ops_partials.edge2_.partials_ = theta_derivative;
       else

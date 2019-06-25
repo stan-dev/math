@@ -93,27 +93,27 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
   VectorBuilder<include_summand<propto, T_scale_succ>::value, T_partials_return,
                 T_scale_succ>
       lgamma_alpha(length(alpha));
-  VectorBuilder<!is_constant_struct<T_scale_succ>::value, T_partials_return,
+  VectorBuilder<!is_constant_all<T_scale_succ>::value, T_partials_return,
                 T_scale_succ>
       digamma_alpha(length(alpha));
   for (size_t n = 0; n < length(alpha); n++) {
     if (include_summand<propto, T_scale_succ>::value)
       lgamma_alpha[n] = lgamma(value_of(alpha_vec[n]));
-    if (!is_constant_struct<T_scale_succ>::value)
+    if (!is_constant_all<T_scale_succ>::value)
       digamma_alpha[n] = digamma(value_of(alpha_vec[n]));
   }
 
   VectorBuilder<include_summand<propto, T_scale_fail>::value, T_partials_return,
                 T_scale_fail>
       lgamma_beta(length(beta));
-  VectorBuilder<!is_constant_struct<T_scale_fail>::value, T_partials_return,
+  VectorBuilder<!is_constant_all<T_scale_fail>::value, T_partials_return,
                 T_scale_fail>
       digamma_beta(length(beta));
 
   for (size_t n = 0; n < length(beta); n++) {
     if (include_summand<propto, T_scale_fail>::value)
       lgamma_beta[n] = lgamma(value_of(beta_vec[n]));
-    if (!is_constant_struct<T_scale_fail>::value)
+    if (!is_constant_all<T_scale_fail>::value)
       digamma_beta[n] = digamma(value_of(beta_vec[n]));
   }
 
@@ -121,7 +121,7 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
                 T_partials_return, T_scale_succ, T_scale_fail>
       lgamma_alpha_beta(max_size(alpha, beta));
 
-  VectorBuilder<contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value,
+  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
                 T_partials_return, T_scale_succ, T_scale_fail>
       digamma_alpha_beta(max_size(alpha, beta));
 
@@ -130,7 +130,7 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
         = value_of(alpha_vec[n]) + value_of(beta_vec[n]);
     if (include_summand<propto, T_scale_succ, T_scale_fail>::value)
       lgamma_alpha_beta[n] = lgamma(alpha_beta);
-    if (contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value)
+    if (!is_constant_all<T_scale_succ, T_scale_fail>::value)
       digamma_alpha_beta[n] = digamma(alpha_beta);
   }
 
@@ -150,13 +150,13 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
     if (include_summand<propto, T_y, T_scale_fail>::value)
       logp += (beta_dbl - 1.0) * log1m_y[n];
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n]
           += (alpha_dbl - 1) / y_dbl + (beta_dbl - 1) / (y_dbl - 1);
-    if (!is_constant_struct<T_scale_succ>::value)
+    if (!is_constant_all<T_scale_succ>::value)
       ops_partials.edge2_.partials_[n]
           += log_y[n] + digamma_alpha_beta[n] - digamma_alpha[n];
-    if (!is_constant_struct<T_scale_fail>::value)
+    if (!is_constant_all<T_scale_fail>::value)
       ops_partials.edge3_.partials_[n]
           += log1m_y[n] + digamma_alpha_beta[n] - digamma_beta[n];
   }

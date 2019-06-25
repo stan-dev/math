@@ -72,17 +72,17 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lcdf(
   using std::log;
   using std::pow;
 
-  VectorBuilder<contains_nonconstant_struct<T_loc, T_prec>::value,
+  VectorBuilder<!is_constant_all<T_loc, T_prec>::value,
                 T_partials_return, T_loc, T_prec>
       digamma_mukappa(max_size(mu, kappa));
-  VectorBuilder<contains_nonconstant_struct<T_loc, T_prec>::value,
+  VectorBuilder<!is_constant_all<T_loc, T_prec>::value,
                 T_partials_return, T_loc, T_prec>
       digamma_kappa_mukappa(max_size(mu, kappa));
-  VectorBuilder<contains_nonconstant_struct<T_loc, T_prec>::value,
+  VectorBuilder<!is_constant_all<T_loc, T_prec>::value,
                 T_partials_return, T_prec>
       digamma_kappa(length(kappa));
 
-  if (contains_nonconstant_struct<T_loc, T_prec>::value) {
+  if (!is_constant_all<T_loc, T_prec>::value) {
     for (size_t i = 0; i < max_size(mu, kappa); i++) {
       const T_partials_return mukappa_dbl
           = value_of(mu_vec[i]) * value_of(kappa_vec[i]);
@@ -110,7 +110,7 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lcdf(
 
     cdf_log += log(Pn);
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] += pow(1 - y_dbl, kappa_mukappa_dbl - 1)
                                           * pow(y_dbl, mukappa_dbl - 1)
                                           / betafunc_dbl / Pn;
@@ -118,14 +118,14 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lcdf(
     T_partials_return g1 = 0;
     T_partials_return g2 = 0;
 
-    if (contains_nonconstant_struct<T_loc, T_prec>::value) {
+    if (!is_constant_all<T_loc, T_prec>::value) {
       grad_reg_inc_beta(g1, g2, mukappa_dbl, kappa_mukappa_dbl, y_dbl,
                         digamma_mukappa[n], digamma_kappa_mukappa[n],
                         digamma_kappa[n], betafunc_dbl);
     }
-    if (!is_constant_struct<T_loc>::value)
+    if (!is_constant_all<T_loc>::value)
       ops_partials.edge2_.partials_[n] += kappa_dbl * (g1 - g2) / Pn;
-    if (!is_constant_struct<T_prec>::value)
+    if (!is_constant_all<T_prec>::value)
       ops_partials.edge3_.partials_[n]
           += (g1 * mu_dbl + g2 * (1 - mu_dbl)) / Pn;
   }
