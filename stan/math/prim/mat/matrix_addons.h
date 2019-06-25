@@ -34,8 +34,6 @@ using fwd_rtn_type = std::conditional_t<std::is_const<typename std::remove_refer
  * check a combination of whether the input is a pointer (i.e. vari*)
  * and/or whether the input has member ".d_" (i.e. fvar).
  *
- * The operators are overloaded for both const and non-const inputs
- *
  * For definitions of EIGEN_EMPTY_STRUCT_CTOR, EIGEN_DEVICE_FUNC, and
  * EIGEN_STRONG_INLINE; see: https://eigen.tuxfamily.org/dox/XprHelper_8h_source.html
  */
@@ -49,7 +47,7 @@ struct val_Op{
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     std::enable_if_t<(!std::is_pointer<T>::value && !is_fvar<T>::value),
-                               rev_rtn_type<T>>
+                      rev_rtn_type<T>>
       operator()(T &v) const { return v.vi_->val_; }
 
   template<typename T = Scalar>
@@ -79,10 +77,7 @@ val() { return CwiseUnaryView<val_Op, Derived>
 }
 
 /**
- * Structure to return tangent from an fvar. The first definition takes
- * a const fvar and returns a const double (for reading from a const matrix).
- * The second definition takes a non-const fvar and returns a non-const
- * double (for writing to a non-const matrix)
+ * Structure to return tangent from an fvar.
  */
 struct d_Op {
   EIGEN_EMPTY_STRUCT_CTOR(d_Op);
@@ -113,10 +108,7 @@ d() { return CwiseUnaryView<d_Op, Derived>
 /**
  * Structure to return adjoints from var and vari*. Tests whether the variables
  * are pointers (i.e. vari*) to determine whether to return the adjoint or
- * first point to the underlying vari* (in the case of var). The first
- * definition takes a const var and returns a const double (for reading from
- * a const matrix). The second definition takes a non-const var and returns
- * a non-const double (for writing to a non-const matrix)
+ * first point to the underlying vari* (in the case of var).
  */
 struct adj_Op {
   EIGEN_EMPTY_STRUCT_CTOR(adj_Op);
@@ -150,10 +142,7 @@ adj() { return CwiseUnaryView<adj_Op, Derived>
     (derived(), adj_Op());
 }
 /**
- * Structure to return vari* from a var. The first definition takes
- * a const var and returns a const vari* (for reading from a const matrix).
- * The second definition takes a non-const var and returns a non-const
- * vari* (for writing to a non-const matrix)
+ * Structure to return vari* from a var.
  */
 struct vi_Op {
   EIGEN_EMPTY_STRUCT_CTOR(vi_Op);
