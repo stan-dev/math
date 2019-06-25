@@ -30,8 +30,8 @@ TEST(AgradRevMatrixAddons, var_matrix) {
 
   const matrix_v const_mat_in = matrix_v::Random(100, 100);
 
-  MatrixXd tri_out = const_mat_in.val().triangularView<Eigen::Upper>()
-                                 .solve(const_mat_in.adj().transpose());
+  MatrixXd tri_out = const_mat_in.val().triangularView<Eigen::Upper>().solve(
+      const_mat_in.adj().transpose());
 
   matrix_vi mat_vi = mat_in.vi();
 
