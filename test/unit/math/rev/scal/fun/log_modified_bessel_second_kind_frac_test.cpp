@@ -72,8 +72,6 @@ const char* computation_type_to_string(ComputationType c) {
       return "Asymp_v";
     case ComputationType::Asymp_z:
       return "Asymp_z";
-    case ComputationType::Asymp_small_z_relative:
-      return "Small_z";
     default:
       return "Unknown";
   }

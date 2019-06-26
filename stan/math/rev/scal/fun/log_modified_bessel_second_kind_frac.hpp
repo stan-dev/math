@@ -172,6 +172,8 @@ typename boost::math::tools::promote_args<T_v, T_z>::type compute_rothwell(
 // Formula 1.10 of
 // Temme, Journal of Computational Physics, vol 19, 324 (1975)
 // https://doi.org/10.1016/0021-9991(75)90082-0
+// Also found on wiki at 
+// https://en.wikipedia.org/w/index.php?title=Bessel_function&oldid=888330504#Asymptotic_forms
 template <typename T_v>
 T_v asymptotic_large_v(const T_v &v, const double &z) {
   using std::lgamma;
@@ -179,7 +181,7 @@ T_v asymptotic_large_v(const T_v &v, const double &z) {
 
   // return 0.5 * (log(stan::math::pi()) - log(2) - log(v)) - v * (log(z) -
   // log(2) - log(v));
-  return stan::math::LOG_2 - v * (log(z) - stan::math::LOG_2) + lgamma(v);
+  return lgamma(v) - stan::math::LOG_2 + v * (stan::math::LOG_2 - log(z));
 }
 
 // Formula 10.40.2 from https://dlmf.nist.gov/10.40
@@ -207,15 +209,6 @@ T_v asymptotic_large_z(const T_v &v, const double &z) {
   return 0.5 * (log(pi()) - log(2) - log(z)) - z + log(series_sum);
 }
 
-// From
-// https://en.wikipedia.org/w/index.php?title=Bessel_function&oldid=888330504#Asymptotic_forms
-template <typename T_v>
-T_v asymptotic_small_z_relative(const T_v &v, const double &z) {
-  using std::lgamma;
-  using std::log;
-  return lgamma(v) - log(2) + v * (log(2) - log(z));
-}
-
 ////////////////////////////////////////////////////////////////
 //                    CHOOSING AMONG FORMULAE                 //
 ////////////////////////////////////////////////////////////////
@@ -225,8 +218,7 @@ T_v asymptotic_small_z_relative(const T_v &v, const double &z) {
 enum class ComputationType {
   Rothwell,
   Asymp_v,
-  Asymp_z,
-  Asymp_small_z_relative
+  Asymp_z
 };
 
 const double rothwell_max_v = 50;
@@ -243,7 +235,7 @@ inline ComputationType choose_computation_type(const double &v,
       = rothwell_max_log_z_over_v / (v_ - 0.5) - log(2);
 
   if (v_ >= small_z_min_v && z * small_z_factor < sqrt(v_ + 1)) {
-    return ComputationType::Asymp_small_z_relative;
+    return ComputationType::Asymp_v;
   } else if (v_ < rothwell_max_v
              && (v_ <= 0.5 || log(z) < rothwell_log_z_boundary)) {
     return ComputationType::Rothwell;
@@ -282,7 +274,6 @@ T_v log_modified_bessel_second_kind_frac(const T_v &v, const double &z) {
   using besselk_internal::ComputationType;
   using besselk_internal::asymptotic_large_v;
   using besselk_internal::asymptotic_large_z;
-  using besselk_internal::asymptotic_small_z_relative;
   using besselk_internal::check_params;
   using besselk_internal::choose_computation_type;
   using besselk_internal::compute_rothwell;
@@ -305,9 +296,6 @@ T_v log_modified_bessel_second_kind_frac(const T_v &v, const double &z) {
     }
     case ComputationType::Asymp_z: {
       return asymptotic_large_z(v_, z);
-    }
-    case ComputationType::Asymp_small_z_relative: {
-      return asymptotic_small_z_relative(v_, z);
     }
     default: {
       stan::math::domain_error("log_modified_bessel_second_kind_frac",
