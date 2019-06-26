@@ -1,11 +1,10 @@
 #ifndef STAN_MATH_REV_MAT_FUN_DOT_SELF_HPP
 #define STAN_MATH_REV_MAT_FUN_DOT_SELF_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <vector>
 
 namespace stan {
@@ -24,7 +23,7 @@ class dot_self_vari : public vari {
   explicit dot_self_vari(const Eigen::DenseBase<Derived>& v)
       : vari(var_dot_self(v)), size_(v.size()) {
     v_ = reinterpret_cast<vari**>(
-        ChainableStack::instance().memalloc_.alloc(size_ * sizeof(vari*)));
+        ChainableStack::instance_->memalloc_.alloc(size_ * sizeof(vari*)));
     for (size_t i = 0; i < size_; i++)
       v_[i] = v[i].vi_;
   }
@@ -32,7 +31,7 @@ class dot_self_vari : public vari {
   explicit dot_self_vari(const Eigen::Matrix<var, R, C>& v)
       : vari(var_dot_self(v)), size_(v.size()) {
     v_ = reinterpret_cast<vari**>(
-        ChainableStack::instance().memalloc_.alloc(size_ * sizeof(vari*)));
+        ChainableStack::instance_->memalloc_.alloc(size_ * sizeof(vari*)));
     for (size_t i = 0; i < size_; ++i)
       v_[i] = v(i).vi_;
   }

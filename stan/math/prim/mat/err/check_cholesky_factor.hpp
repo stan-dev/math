@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_CHOLESKY_FACTOR_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_CHOLESKY_FACTOR_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
@@ -8,21 +9,17 @@
 
 namespace stan {
 namespace math {
+
 /**
- * Check if the specified matrix is a valid
- * Cholesky factor.
- *
+ * Check if the specified matrix is a valid Cholesky factor.
  * A Cholesky factor is a lower triangular matrix whose diagonal
  * elements are all positive.  Note that Cholesky factors need not
  * be square, but require at least as many rows M as columns N
  * (i.e., M &gt;= N).
- *
  * @tparam T_y Type of elements of Cholesky factor
- *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Matrix to test
- *
  * @throw <code>std::domain_error</code> if y is not a valid Choleksy
  *   factor, if number of rows is less than the number of columns,
  *   if there are 0 columns, or if any element in matrix is NaN

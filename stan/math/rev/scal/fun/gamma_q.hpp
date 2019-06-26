@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_GAMMA_Q_HPP
 #define STAN_MATH_REV_SCAL_FUN_GAMMA_Q_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <boost/math/special_functions/gamma.hpp>
-#include <valarray>
 
 namespace stan {
 namespace math {

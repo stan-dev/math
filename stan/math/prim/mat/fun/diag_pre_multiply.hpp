@@ -14,16 +14,9 @@ Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R2, C2>
 diag_pre_multiply(const Eigen::Matrix<T1, R1, C1>& m1,
                   const Eigen::Matrix<T2, R2, C2>& m2) {
   check_vector("diag_pre_multiply", "m1", m1);
-  int m2_rows = m2.rows();
   check_size_match("diag_pre_multiply", "m1.size()", m1.size(), "m2.rows()",
-                   m2_rows);
-  int m2_cols = m2.cols();
-  Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R2, C2>
-      result(m2_rows, m2_cols);
-  for (int j = 0; j < m2_cols; ++j)
-    for (int i = 0; i < m2_rows; ++i)
-      result(i, j) = m1(i) * m2(i, j);
-  return result;
+                   m2.rows());
+  return m1.asDiagonal() * m2;
 }
 
 }  // namespace math

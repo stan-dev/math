@@ -2,9 +2,7 @@
 #define STAN_MATH_REV_MAT_HPP
 
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/meta/is_var.hpp>
-#include <stan/math/rev/scal/meta/partials_type.hpp>
-#include <stan/math/rev/mat/meta/operands_and_partials.hpp>
+#include <stan/math/rev/meta.hpp>
 
 #include <stan/math/rev/mat/fun/Eigen_NumTraits.hpp>
 
@@ -68,6 +66,7 @@
 #include <stan/math/rev/mat/functor/integrate_ode_adams.hpp>
 #include <stan/math/rev/mat/functor/integrate_ode_bdf.hpp>
 #include <stan/math/rev/mat/functor/integrate_dae.hpp>
+#include <stan/math/rev/mat/functor/map_rect_concurrent.hpp>
 #include <stan/math/rev/mat/functor/map_rect_reduce.hpp>
 
 #endif

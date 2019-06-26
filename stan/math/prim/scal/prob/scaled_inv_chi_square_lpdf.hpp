@@ -1,27 +1,16 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_SCALED_INV_CHI_SQUARE_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_SCALED_INV_CHI_SQUARE_LPDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
-#include <boost/random/chi_squared_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -54,20 +43,17 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_lpdf(
   typedef typename stan::partials_return_type<T_y, T_dof, T_scale>::type
       T_partials_return;
 
-  if (size_zero(y, nu, s))
-    return 0.0;
-
-  T_partials_return logp(0.0);
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_positive_finite(function, "Scale parameter", s);
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu, "Scale parameter",
                          s);
-
+  if (size_zero(y, nu, s))
+    return 0;
   if (!include_summand<propto, T_y, T_dof, T_scale>::value)
-    return 0.0;
-
+    return 0;
+  T_partials_return logp(0);
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_dof> nu_vec(nu);
   scalar_seq_view<T_scale> s_vec(s);
@@ -112,14 +98,14 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_lpdf(
       log_half_nu(length(nu));
   VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
       lgamma_half_nu(length(nu));
-  VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digamma_half_nu_over_two(length(nu));
   for (size_t i = 0; i < length(nu); i++) {
     if (include_summand<propto, T_dof>::value)
       lgamma_half_nu[i] = lgamma(half_nu[i]);
     if (include_summand<propto, T_dof>::value)
       log_half_nu[i] = log(half_nu[i]);
-    if (!is_constant_struct<T_dof>::value)
+    if (!is_constant_all<T_dof>::value)
       digamma_half_nu_over_two[i] = digamma(half_nu[i]) * 0.5;
   }
 
@@ -136,17 +122,17 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_lpdf(
     if (include_summand<propto, T_dof, T_y, T_scale>::value)
       logp -= half_nu[n] * s_dbl * s_dbl * inv_y[n];
 
-    if (!is_constant_struct<T_y>::value) {
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
           += -(half_nu[n] + 1.0) * inv_y[n]
              + half_nu[n] * s_dbl * s_dbl * inv_y[n] * inv_y[n];
     }
-    if (!is_constant_struct<T_dof>::value) {
+    if (!is_constant_all<T_dof>::value) {
       ops_partials.edge2_.partials_[n]
           += 0.5 * log_half_nu[n] + 0.5 - digamma_half_nu_over_two[n] + log_s[n]
              - 0.5 * log_y[n] - 0.5 * s_dbl * s_dbl * inv_y[n];
     }
-    if (!is_constant_struct<T_scale>::value) {
+    if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           += nu_dbl / s_dbl - nu_dbl * inv_y[n] * s_dbl;
     }

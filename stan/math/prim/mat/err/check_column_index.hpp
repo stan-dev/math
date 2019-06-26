@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_COLUMN_INDEX_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_COLUMN_INDEX_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/out_of_range.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/meta/error_index.hpp>
 #include <sstream>
 #include <string>
 
@@ -11,25 +11,20 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the specified index is a valid
- * column of the matrix.
- *
- * By default, this is a 1-indexed check (as opposed to
+ * Check if the specified index is a valid column of the matrix.
+ * By default this is a 1-indexed check (as opposed to
  * 0-indexed). Behavior can be changed by setting
  * <code>stan::error_index::value</code>. This function will
  * throw an <code>std::out_of_range</code> exception if
  * the index is out of bounds.
- *
- * @tparam T_y Type of scalar.
+ * @tparam T_y Type of scalar
  * @tparam R Number of rows of the matrix
  * @tparam C Number of columns of the matrix
- *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
- * @param y Matrix
+ * @param y Matrix to test
  * @param i Index to check
- *
- * @throw std::out_of_range if index is an invalid column index
+ * @throw <code>std::out_of_range</code> if index is an invalid column
  */
 template <typename T_y, int R, int C>
 inline void check_column_index(const char* function, const char* name,

@@ -1,10 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_NORMAL_SUFFICIENT_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_NORMAL_SUFFICIENT_LPDF_HPP
 
-#include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/prob/normal_lpdf.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
@@ -12,9 +10,6 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/max_size.hpp>
 
 namespace stan {
 namespace math {
@@ -114,17 +109,17 @@ typename return_type<T_y, T_s, T_loc, T_scale>::type normal_sufficient_lpdf(
     logp -= cons_expr / (2 * sigma_squared);
 
     // gradients
-    if (!is_constant_struct<T_y>::value || !is_constant_struct<T_loc>::value) {
+    if (!is_constant_all<T_y, T_loc>::value) {
       const T_partials_return common_derivative
           = n_obs_dbl * (mu_dbl - y_bar_dbl) / sigma_squared;
-      if (!is_constant_struct<T_y>::value)
+      if (!is_constant_all<T_y>::value)
         ops_partials.edge1_.partials_[i] += common_derivative;
-      if (!is_constant_struct<T_loc>::value)
+      if (!is_constant_all<T_loc>::value)
         ops_partials.edge3_.partials_[i] -= common_derivative;
     }
-    if (!is_constant_struct<T_s>::value)
+    if (!is_constant_all<T_s>::value)
       ops_partials.edge2_.partials_[i] -= 0.5 / sigma_squared;
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge4_.partials_[i]
           += cons_expr / pow(sigma_dbl, 3) - n_obs_dbl / sigma_dbl;
   }

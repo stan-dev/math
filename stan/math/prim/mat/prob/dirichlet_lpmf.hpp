@@ -1,21 +1,13 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_DIRICHLET_LPMF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_DIRICHLET_LPMF_HPP
 
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/mat/err/check_simplex.hpp>
 #include <stan/math/prim/mat/fun/lgamma.hpp>
 #include <stan/math/prim/mat/fun/digamma.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/operands_and_partials.hpp>
-#include <stan/math/prim/mat/meta/is_constant_struct.hpp>
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 
 namespace stan {
 namespace math {
@@ -88,10 +80,10 @@ typename return_type<T_prob, T_prior_size>::type dirichlet_lpmf(
                                + theta_dbl.array().log();
 
   operands_and_partials<T_prob, T_prior_size> ops_partials(theta, alpha);
-  if (!is_constant_struct<T_prob>::value)
+  if (!is_constant_all<T_prob>::value)
     ops_partials.edge1_.partials_ = theta_deriv;
 
-  if (!is_constant_struct<T_prior_size>::value)
+  if (!is_constant_all<T_prior_size>::value)
     ops_partials.edge2_.partials_ = alpha_deriv;
 
   return ops_partials.build(lp);

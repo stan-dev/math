@@ -1,16 +1,11 @@
 #ifndef STAN_MATH_REV_MAT_FUN_SQUARED_DISTANCE_HPP
 #define STAN_MATH_REV_MAT_FUN_SQUARED_DISTANCE_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/sqrt.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
-#include <stan/math/prim/arr/meta/index_type.hpp>
-#include <stan/math/prim/scal/meta/index_type.hpp>
 #include <vector>
 
 namespace stan {
@@ -44,12 +39,12 @@ class squared_distance_vv_vari : public vari {
                            const Eigen::Matrix<var, R2, C2>& v2)
       : vari(var_squared_distance(v1, v2)), length_(v1.size()) {
     v1_ = reinterpret_cast<vari**>(
-        ChainableStack::instance().memalloc_.alloc(length_ * sizeof(vari*)));
+        ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
     for (size_t i = 0; i < length_; i++)
       v1_[i] = v1(i).vi_;
 
     v2_ = reinterpret_cast<vari**>(
-        ChainableStack::instance().memalloc_.alloc(length_ * sizeof(vari*)));
+        ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
     for (size_t i = 0; i < length_; i++)
       v2_[i] = v2(i).vi_;
   }
@@ -88,12 +83,12 @@ class squared_distance_vd_vari : public vari {
                            const Eigen::Matrix<double, R2, C2>& v2)
       : vari(var_squared_distance(v1, v2)), length_(v1.size()) {
     v1_ = reinterpret_cast<vari**>(
-        ChainableStack::instance().memalloc_.alloc(length_ * sizeof(vari*)));
+        ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
     for (size_t i = 0; i < length_; i++)
       v1_[i] = v1(i).vi_;
 
     v2_ = reinterpret_cast<double*>(
-        ChainableStack::instance().memalloc_.alloc(length_ * sizeof(double)));
+        ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(double)));
     for (size_t i = 0; i < length_; i++)
       v2_[i] = v2(i);
   }

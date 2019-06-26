@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_INTEGRATE_ODE_BDF_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_INTEGRATE_ODE_BDF_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/mat/functor/cvodes_integrator.hpp>
 #include <ostream>
 #include <vector>
@@ -8,10 +9,12 @@
 namespace stan {
 namespace math {
 
-template <typename F, typename T_initial, typename T_param>
-std::vector<std::vector<typename stan::return_type<T_initial, T_param>::type> >
-integrate_ode_bdf(const F& f, const std::vector<T_initial>& y0, double t0,
-                  const std::vector<double>& ts,
+template <typename F, typename T_initial, typename T_param, typename T_t0,
+          typename T_ts>
+std::vector<std::vector<
+    typename stan::return_type<T_initial, T_param, T_t0, T_ts>::type>>
+integrate_ode_bdf(const F& f, const std::vector<T_initial>& y0, const T_t0& t0,
+                  const std::vector<T_ts>& ts,
                   const std::vector<T_param>& theta,
                   const std::vector<double>& x, const std::vector<int>& x_int,
                   std::ostream* msgs = nullptr,

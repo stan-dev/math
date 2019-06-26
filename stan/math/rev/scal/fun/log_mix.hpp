@@ -1,14 +1,10 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_LOG_MIX_HPP
 #define STAN_MATH_REV_SCAL_FUN_LOG_MIX_HPP
 
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/log_mix.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <cmath>
 
 namespace stan {
@@ -109,13 +105,13 @@ inline typename return_type<T_theta, T_lambda1, T_lambda2>::type log_mix(
     one_m_t_prod_exp_lam2_m_lam1 = 1.0 - value_of(theta);
   }
 
-  if (!is_constant_struct<T_theta>::value)
+  if (!is_constant_all<T_theta>::value)
     ops_partials.edge1_.partials_[0]
         = one_m_exp_lam2_m_lam1 * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
-  if (!is_constant_struct<T_lambda1>::value)
+  if (!is_constant_all<T_lambda1>::value)
     ops_partials.edge2_.partials_[0]
         = theta_double * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
-  if (!is_constant_struct<T_lambda2>::value)
+  if (!is_constant_all<T_lambda2>::value)
     ops_partials.edge3_.partials_[0]
         = one_m_t_prod_exp_lam2_m_lam1
           * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;

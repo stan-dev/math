@@ -1,16 +1,13 @@
 #ifndef STAN_MATH_REV_MAT_FUN_COV_EXP_QUAD_HPP
 #define STAN_MATH_REV_MAT_FUN_COV_EXP_QUAD_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
+#include <stan/math/rev/mat/fun/gp_exp_quad_cov.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
-#include <stan/math/prim/scal/meta/scalar_type.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <type_traits>
 #include <vector>
 #include <cmath>
@@ -46,14 +43,14 @@ class cov_exp_quad_vari : public vari {
         l_d_(value_of(l)),
         sigma_d_(value_of(sigma)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
-        dist_(ChainableStack::instance().memalloc_.alloc_array<double>(
+        dist_(ChainableStack::instance_->memalloc_.alloc_array<double>(
             size_ltri_)),
         l_vari_(l.vi_),
         sigma_vari_(sigma.vi_),
-        cov_lower_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
+        cov_lower_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             size_ltri_)),
         cov_diag_(
-            ChainableStack::instance().memalloc_.alloc_array<vari*>(size_)) {
+            ChainableStack::instance_->memalloc_.alloc_array<vari*>(size_)) {
     double inv_half_sq_l_d = 0.5 / (l_d_ * l_d_);
     size_t pos = 0;
     for (size_t j = 0; j < size_ - 1; ++j) {
@@ -114,13 +111,13 @@ class cov_exp_quad_vari<T_x, double, T_l> : public vari {
         l_d_(value_of(l)),
         sigma_d_(value_of(sigma)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
-        dist_(ChainableStack::instance().memalloc_.alloc_array<double>(
+        dist_(ChainableStack::instance_->memalloc_.alloc_array<double>(
             size_ltri_)),
         l_vari_(l.vi_),
-        cov_lower_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
+        cov_lower_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             size_ltri_)),
         cov_diag_(
-            ChainableStack::instance().memalloc_.alloc_array<vari*>(size_)) {
+            ChainableStack::instance_->memalloc_.alloc_array<vari*>(size_)) {
     double inv_half_sq_l_d = 0.5 / (l_d_ * l_d_);
     size_t pos = 0;
     for (size_t j = 0; j < size_ - 1; ++j) {

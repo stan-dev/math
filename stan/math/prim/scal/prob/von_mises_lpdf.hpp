@@ -1,20 +1,13 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_VON_MISES_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_VON_MISES_LPDF_HPP
 
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_greater.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/fun/log_modified_bessel_first_kind.hpp>
 #include <stan/math/prim/scal/fun/modified_bessel_first_kind.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <cmath>
@@ -45,9 +38,9 @@ typename return_type<T_y, T_loc, T_scale>::type von_mises_lpdf(
   if (!include_summand<propto, T_y, T_loc, T_scale>::value)
     return logp;
 
-  const bool y_const = is_constant_struct<T_y>::value;
-  const bool mu_const = is_constant_struct<T_loc>::value;
-  const bool kappa_const = is_constant_struct<T_scale>::value;
+  const bool y_const = is_constant_all<T_y>::value;
+  const bool mu_const = is_constant_all<T_loc>::value;
+  const bool kappa_const = is_constant_all<T_scale>::value;
 
   const bool compute_bessel0 = include_summand<propto, T_scale>::value;
   const bool compute_bessel1 = !kappa_const;

@@ -1,30 +1,16 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_LPMF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_LPMF_HPP
 
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/prob/poisson_lpmf.hpp>
-#include <boost/math/special_functions/digamma.hpp>
-#include <boost/random/negative_binomial_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -53,7 +39,6 @@ typename return_type<T_location, T_precision>::type neg_binomial_2_lpmf(
   if (!include_summand<propto, T_location, T_precision>::value)
     return 0.0;
 
-  using std::log;
   using std::log;
 
   scalar_seq_view<T_n> n_vec(n);
@@ -104,10 +89,10 @@ typename return_type<T_location, T_precision>::type neg_binomial_2_lpmf(
       logp = poisson_lpmf(n_vec[i], mu__[i]);
     }
 
-    if (!is_constant_struct<T_location>::value)
+    if (!is_constant_all<T_location>::value)
       ops_partials.edge1_.partials_[i]
           += n_vec[i] / mu__[i] - (n_vec[i] + phi__[i]) / (mu__[i] + phi__[i]);
-    if (!is_constant_struct<T_precision>::value)
+    if (!is_constant_all<T_precision>::value)
       ops_partials.edge2_.partials_[i]
           += 1.0 - n_plus_phi[i] / (mu__[i] + phi__[i]) + log_phi[i]
              - log_mu_plus_phi[i] - digamma(phi__[i]) + digamma(n_plus_phi[i]);

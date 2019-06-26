@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_INV_PHI_HPP
 #define STAN_MATH_REV_SCAL_FUN_INV_PHI_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/inv_Phi.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/rev/scal/fun/square.hpp>
 
 namespace stan {
 namespace math {

@@ -1,6 +1,7 @@
 // Original code from which Stan's code is derived:
 // Copyright (c) 2013, Joachim Vandekerckhove.
 // All rights reserved.
+#include <stan/math/prim/meta.hpp>
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted
@@ -39,10 +40,6 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <boost/math/distributions.hpp>
 #include <algorithm>
 #include <cmath>
 #include <string>

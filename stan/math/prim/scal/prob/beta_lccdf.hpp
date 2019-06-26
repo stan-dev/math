@@ -1,31 +1,18 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BETA_LCCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BETA_LCCDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/prim/scal/fun/lbeta.hpp>
-#include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/fun/beta.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
-#include <boost/math/special_functions/gamma.hpp>
-#include <boost/random/gamma_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -61,8 +48,6 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lccdf(
 
   static const char* function = "beta_lccdf";
 
-  using boost::math::tools::promote_args;
-
   T_partials_return ccdf_log(0.0);
 
   check_positive_finite(function, "First shape parameter", alpha);
@@ -86,17 +71,17 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lccdf(
   using std::log;
   using std::pow;
 
-  VectorBuilder<contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value,
+  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
                 T_partials_return, T_scale_succ, T_scale_fail>
       digamma_alpha_vec(max_size(alpha, beta));
-  VectorBuilder<contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value,
+  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
                 T_partials_return, T_scale_succ, T_scale_fail>
       digamma_beta_vec(max_size(alpha, beta));
-  VectorBuilder<contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value,
+  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
                 T_partials_return, T_scale_succ, T_scale_fail>
       digamma_sum_vec(max_size(alpha, beta));
 
-  if (contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value) {
+  if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
     for (size_t i = 0; i < max_size(alpha, beta); i++) {
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
       const T_partials_return beta_dbl = value_of(beta_vec[i]);
@@ -111,13 +96,14 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lccdf(
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
     const T_partials_return beta_dbl = value_of(beta_vec[n]);
-    const T_partials_return betafunc_dbl = exp(lbeta(alpha_dbl, beta_dbl));
+    const T_partials_return betafunc_dbl
+        = stan::math::beta(alpha_dbl, beta_dbl);
 
     const T_partials_return Pn = 1.0 - inc_beta(alpha_dbl, beta_dbl, y_dbl);
 
     ccdf_log += log(Pn);
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] -= pow(1 - y_dbl, beta_dbl - 1)
                                           * pow(y_dbl, alpha_dbl - 1)
                                           / betafunc_dbl / Pn;
@@ -125,14 +111,14 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lccdf(
     T_partials_return g1 = 0;
     T_partials_return g2 = 0;
 
-    if (contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value) {
+    if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
       grad_reg_inc_beta(g1, g2, alpha_dbl, beta_dbl, y_dbl,
                         digamma_alpha_vec[n], digamma_beta_vec[n],
                         digamma_sum_vec[n], betafunc_dbl);
     }
-    if (!is_constant_struct<T_scale_succ>::value)
+    if (!is_constant_all<T_scale_succ>::value)
       ops_partials.edge2_.partials_[n] -= g1 / Pn;
-    if (!is_constant_struct<T_scale_fail>::value)
+    if (!is_constant_all<T_scale_fail>::value)
       ops_partials.edge3_.partials_[n] -= g2 / Pn;
   }
   return ops_partials.build(ccdf_log);

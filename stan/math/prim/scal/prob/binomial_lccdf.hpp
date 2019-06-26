@@ -1,29 +1,16 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BINOMIAL_LCCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BINOMIAL_LCCDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
-#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/inv_logit.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
-#include <stan/math/prim/scal/fun/log_inv_logit.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
-#include <stan/math/prim/scal/fun/lbeta.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/fun/beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
-#include <boost/random/binomial_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -70,7 +57,6 @@ typename return_type<T_prob>::type binomial_lccdf(const T_n& n, const T_N& N,
   size_t size = max_size(n, N, theta);
 
   using std::exp;
-  using std::exp;
   using std::log;
   using std::pow;
 
@@ -93,13 +79,13 @@ typename return_type<T_prob>::type binomial_lccdf(const T_n& n, const T_N& N,
     const T_partials_return n_dbl = value_of(n_vec[i]);
     const T_partials_return N_dbl = value_of(N_vec[i]);
     const T_partials_return theta_dbl = value_of(theta_vec[i]);
-    const T_partials_return betafunc = exp(lbeta(N_dbl - n_dbl, n_dbl + 1));
+    const T_partials_return betafunc = beta(N_dbl - n_dbl, n_dbl + 1);
     const T_partials_return Pi
         = 1.0 - inc_beta(N_dbl - n_dbl, n_dbl + 1, 1 - theta_dbl);
 
     P += log(Pi);
 
-    if (!is_constant_struct<T_prob>::value)
+    if (!is_constant_all<T_prob>::value)
       ops_partials.edge1_.partials_[i]
           += pow(theta_dbl, n_dbl) * pow(1 - theta_dbl, N_dbl - n_dbl - 1)
              / betafunc / Pi;

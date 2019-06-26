@@ -1,14 +1,13 @@
 #ifndef STAN_MATH_REV_MAT_FUN_GP_PERIODIC_COV_HPP
 #define STAN_MATH_REV_MAT_FUN_GP_PERIODIC_COV_HPP
 
-#include <boost/math/tools/promotion.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
-#include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <cmath>
@@ -98,19 +97,19 @@ class gp_periodic_cov_vari : public vari {
         sigma_d_(value_of(sigma)),
         p_d_(value_of(p)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
-        dist_(ChainableStack::instance().memalloc_.alloc_array<double>(
+        dist_(ChainableStack::instance_->memalloc_.alloc_array<double>(
             size_ltri_)),
-        sin_2_dist_(ChainableStack::instance().memalloc_.alloc_array<double>(
+        sin_2_dist_(ChainableStack::instance_->memalloc_.alloc_array<double>(
             size_ltri_)),
-        sin_dist_sq_(ChainableStack::instance().memalloc_.alloc_array<double>(
+        sin_dist_sq_(ChainableStack::instance_->memalloc_.alloc_array<double>(
             size_ltri_)),
         l_vari_(l.vi_),
         sigma_vari_(sigma.vi_),
         p_vari_(p.vi_),
-        cov_lower_(ChainableStack::instance().memalloc_.alloc_array<vari *>(
+        cov_lower_(ChainableStack::instance_->memalloc_.alloc_array<vari *>(
             size_ltri_)),
         cov_diag_(
-            ChainableStack::instance().memalloc_.alloc_array<vari *>(size_)) {
+            ChainableStack::instance_->memalloc_.alloc_array<vari *>(size_)) {
     double neg_two_inv_l_sq = -2.0 / (l_d_ * l_d_);
     double pi_div_p = pi() / p_d_;
 
@@ -231,18 +230,18 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
         sigma_d_(sigma),
         p_d_(value_of(p)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
-        dist_(ChainableStack::instance().memalloc_.alloc_array<double>(
+        dist_(ChainableStack::instance_->memalloc_.alloc_array<double>(
             size_ltri_)),
-        sin_2_dist_(ChainableStack::instance().memalloc_.alloc_array<double>(
+        sin_2_dist_(ChainableStack::instance_->memalloc_.alloc_array<double>(
             size_ltri_)),
-        sin_dist_sq_(ChainableStack::instance().memalloc_.alloc_array<double>(
+        sin_dist_sq_(ChainableStack::instance_->memalloc_.alloc_array<double>(
             size_ltri_)),
         l_vari_(l.vi_),
         p_vari_(p.vi_),
-        cov_lower_(ChainableStack::instance().memalloc_.alloc_array<vari *>(
+        cov_lower_(ChainableStack::instance_->memalloc_.alloc_array<vari *>(
             size_ltri_)),
         cov_diag_(
-            ChainableStack::instance().memalloc_.alloc_array<vari *>(size_)) {
+            ChainableStack::instance_->memalloc_.alloc_array<vari *>(size_)) {
     double neg_two_inv_l_sq = -2.0 / (l_d_ * l_d_);
     double pi_div_p = pi() / p_d_;
 

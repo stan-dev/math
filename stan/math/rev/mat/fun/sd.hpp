@@ -1,11 +1,10 @@
 #ifndef STAN_MATH_REV_MAT_FUN_SD_HPP
 #define STAN_MATH_REV_MAT_FUN_SD_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/mean.hpp>
 #include <stan/math/rev/core.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <cmath>
 #include <vector>
 
@@ -20,7 +19,7 @@ namespace internal {
 inline var calc_sd(size_t size, const var* dtrs) {
   using std::sqrt;
   vari** varis = reinterpret_cast<vari**>(
-      ChainableStack::instance().memalloc_.alloc(size * sizeof(vari*)));
+      ChainableStack::instance_->memalloc_.alloc(size * sizeof(vari*)));
   for (size_t i = 0; i < size; ++i)
     varis[i] = dtrs[i].vi_;
   double sum = 0.0;
@@ -35,7 +34,7 @@ inline var calc_sd(size_t size, const var* dtrs) {
   double variance = sum_of_squares / (size - 1);
   double sd = sqrt(variance);
   double* partials = reinterpret_cast<double*>(
-      ChainableStack::instance().memalloc_.alloc(size * sizeof(double)));
+      ChainableStack::instance_->memalloc_.alloc(size * sizeof(double)));
   if (sum_of_squares < 1e-20) {
     double grad_limit = 1 / std::sqrt(static_cast<double>(size));
     for (size_t i = 0; i < size; ++i)

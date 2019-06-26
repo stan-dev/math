@@ -1,14 +1,13 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_LKJ_COV_LPDF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_LKJ_COV_LPDF_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/prob/lognormal_lpdf.hpp>
 #include <stan/math/prim/mat/prob/lkj_corr_lpdf.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
 namespace math {
@@ -44,7 +43,7 @@ lkj_cov_lpdf(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
   for (unsigned int k = 0; k < K; k++) {
     lp += lognormal_lpdf<propto>(sds(k), mu(k), sigma(k));
   }
-  if (stan::is_constant<typename stan::scalar_type<T_shape> >::value
+  if (stan::is_constant_all<typename stan::scalar_type<T_shape> >::value
       && eta == 1.0) {
     // no need to rescale y into a correlation matrix
     lp += lkj_corr_lpdf<propto, T_y, T_shape>(y, eta);
@@ -87,7 +86,7 @@ lkj_cov_lpdf(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
   for (unsigned int k = 0; k < K; k++) {
     lp += lognormal_lpdf<propto>(sds(k), mu, sigma);
   }
-  if (stan::is_constant<typename stan::scalar_type<T_shape> >::value
+  if (stan::is_constant_all<typename stan::scalar_type<T_shape> >::value
       && eta == 1.0) {
     // no need to rescale y into a correlation matrix
     lp += lkj_corr_lpdf<propto>(y, eta);

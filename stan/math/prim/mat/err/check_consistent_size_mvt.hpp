@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_CHECK_CONSISTENT_SIZE_MVT_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_CONSISTENT_SIZE_MVT_HPP
 
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/length_mvt.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <sstream>
 #include <string>
@@ -16,14 +14,11 @@ namespace math {
  * Check if the dimension of x is consistent, which is defined to be
  * <code>expected_size</code> if x is a vector of vectors or 1 if x is
  * a single vector.
- *
  * @tparam T Type of value
- *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param x Variable to check for consistent size
  * @param expected_size Expected size if x is a vector
- *
  * @throw <code>invalid_argument</code> if the size is inconsistent
  */
 template <typename T>

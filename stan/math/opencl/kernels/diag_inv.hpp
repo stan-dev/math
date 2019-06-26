@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/buffer_types.hpp>
 
 namespace stan {
 namespace math {
@@ -35,7 +36,7 @@ static const char* diag_inv_kernel_code = STRINGIFY(
      * @param rows The number of rows for A.
      * @note Code is a <code>const char*</code> held in
      * <code>diag_inv_kernel_code.</code>
-     *  Used in math/opencl/lower_tri_inverse.hpp.
+     *  Used in math/opencl/tri_inverse.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      */
     __kernel void diag_inv(__global double* A, __global double* tmp_inv,
@@ -83,8 +84,9 @@ static const char* diag_inv_kernel_code = STRINGIFY(
  * See the docs for \link kernels/diag_inv.hpp add()
  * \endlink
  */
-const local_range_kernel<cl::Buffer, cl::Buffer, int> diag_inv(
-    "diag_inv", diag_inv_kernel_code, {{"THREAD_BLOCK_SIZE", 32}});
+const kernel_cl<in_out_buffer, in_out_buffer, int> diag_inv(
+    "diag_inv", {indexing_helpers, diag_inv_kernel_code},
+    {{"THREAD_BLOCK_SIZE", 32}});
 
 }  // namespace opencl_kernels
 }  // namespace math

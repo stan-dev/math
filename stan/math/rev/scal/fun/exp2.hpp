@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_EXP2_HPP
 #define STAN_MATH_REV_SCAL_FUN_EXP2_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <cmath>
-#include <valarray>
 
 namespace stan {
 namespace math {

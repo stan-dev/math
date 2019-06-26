@@ -1,22 +1,13 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BERNOULLI_CDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BERNOULLI_CDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/inv_logit.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <boost/random/bernoulli_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
@@ -73,11 +64,11 @@ typename return_type<T_prob>::type bernoulli_cdf(const T_n& n,
 
     P *= Pi;
 
-    if (!is_constant_struct<T_prob>::value)
+    if (!is_constant_all<T_prob>::value)
       ops_partials.edge1_.partials_[i] += -1 / Pi;
   }
 
-  if (!is_constant_struct<T_prob>::value) {
+  if (!is_constant_all<T_prob>::value) {
     for (size_t i = 0; i < stan::length(theta); ++i)
       ops_partials.edge1_.partials_[i] *= P;
   }

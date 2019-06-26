@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_STUDENT_T_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_STUDENT_T_LPDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -12,17 +10,8 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/lbeta.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
-#include <stan/math/prim/scal/fun/inc_beta.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <boost/random/student_t_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -87,7 +76,6 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lpdf(
   size_t N = max_size(y, nu, mu, sigma);
 
   using std::log;
-  using std::log;
 
   VectorBuilder<include_summand<propto, T_y, T_dof, T_loc, T_scale>::value,
                 T_partials_return, T_dof>
@@ -107,11 +95,11 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lpdf(
     }
   }
 
-  VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digamma_half_nu(length(nu));
-  VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digamma_half_nu_plus_half(length(nu));
-  if (!is_constant_struct<T_dof>::value) {
+  if (!is_constant_all<T_dof>::value) {
     for (size_t i = 0; i < length(nu); i++) {
       digamma_half_nu[i] = digamma(half_nu[i]);
       digamma_half_nu_plus_half[i] = digamma(half_nu[i] + 0.5);
@@ -166,13 +154,13 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lpdf(
     if (include_summand<propto, T_y, T_dof, T_loc, T_scale>::value)
       logp -= (half_nu[n] + 0.5) * log1p_exp[n];
 
-    if (!is_constant_struct<T_y>::value) {
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
           += -(half_nu[n] + 0.5) * 1.0
              / (1.0 + square_y_minus_mu_over_sigma__over_nu[n])
              * (2.0 * (y_dbl - mu_dbl) / square(sigma_dbl) / nu_dbl);
     }
-    if (!is_constant_struct<T_dof>::value) {
+    if (!is_constant_all<T_dof>::value) {
       const T_partials_return inv_nu = 1.0 / nu_dbl;
       ops_partials.edge2_.partials_[n]
           += 0.5 * digamma_half_nu_plus_half[n] - 0.5 * digamma_half_nu[n]
@@ -181,13 +169,13 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lpdf(
                    * (1.0 / (1.0 + square_y_minus_mu_over_sigma__over_nu[n])
                       * square_y_minus_mu_over_sigma__over_nu[n] * inv_nu);
     }
-    if (!is_constant_struct<T_loc>::value) {
+    if (!is_constant_all<T_loc>::value) {
       ops_partials.edge3_.partials_[n]
           -= (half_nu[n] + 0.5)
              / (1.0 + square_y_minus_mu_over_sigma__over_nu[n])
              * (2.0 * (mu_dbl - y_dbl) / (sigma_dbl * sigma_dbl * nu_dbl));
     }
-    if (!is_constant_struct<T_scale>::value) {
+    if (!is_constant_all<T_scale>::value) {
       const T_partials_return inv_sigma = 1.0 / sigma_dbl;
       ops_partials.edge4_.partials_[n]
           += -inv_sigma

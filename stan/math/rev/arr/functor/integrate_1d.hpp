@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_REV_ARR_FUNCTOR_integrate_1d_HPP
 #define STAN_MATH_REV_ARR_FUNCTOR_integrate_1d_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/arr/functor/integrate_1d.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/rev/scal/fun/is_nan.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/meta/is_var.hpp>
 #include <type_traits>
 #include <string>
 #include <vector>

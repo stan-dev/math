@@ -1,13 +1,12 @@
 #ifndef STAN_MATH_REV_MAT_FUN_DOT_PRODUCT_HPP
 #define STAN_MATH_REV_MAT_FUN_DOT_PRODUCT_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <type_traits>
 #include <vector>
@@ -84,7 +83,7 @@ class dot_product_vari : public vari {
                          vari** shared = nullptr) {
     if (shared == nullptr) {
       mem_v = reinterpret_cast<vari**>(
-          ChainableStack::instance().memalloc_.alloc(length_ * sizeof(vari*)));
+          ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
       for (size_t i = 0; i < length_; i++)
         mem_v[i] = inv[i].vi_;
     } else {
@@ -96,7 +95,7 @@ class dot_product_vari : public vari {
                          vari** shared = nullptr) {
     if (shared == nullptr) {
       mem_v = reinterpret_cast<vari**>(
-          ChainableStack::instance().memalloc_.alloc(length_ * sizeof(vari*)));
+          ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
       for (size_t i = 0; i < length_; i++)
         mem_v[i] = inv(i).vi_;
     } else {
@@ -108,7 +107,7 @@ class dot_product_vari : public vari {
                          double* shared = nullptr) {
     if (shared == nullptr) {
       mem_d = reinterpret_cast<double*>(
-          ChainableStack::instance().memalloc_.alloc(length_ * sizeof(double)));
+          ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(double)));
       for (size_t i = 0; i < length_; i++)
         mem_d[i] = ind[i];
     } else {
@@ -120,7 +119,7 @@ class dot_product_vari : public vari {
                          double* shared = nullptr) {
     if (shared == nullptr) {
       mem_d = reinterpret_cast<double*>(
-          ChainableStack::instance().memalloc_.alloc(length_ * sizeof(double)));
+          ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(double)));
       for (size_t i = 0; i < length_; i++)
         mem_d[i] = ind(i);
     } else {

@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_TO_ARRAY_1D_HPP
 #define STAN_MATH_PRIM_MAT_FUN_TO_ARRAY_1D_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <vector>
 
 namespace stan {

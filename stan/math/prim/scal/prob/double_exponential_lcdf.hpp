@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_DOUBLE_EXPONENTIAL_LCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_DOUBLE_EXPONENTIAL_LCDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -11,12 +9,6 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/fun/sign.hpp>
-#include <boost/random/uniform_01.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -55,7 +47,6 @@ typename return_type<T_y, T_loc, T_scale>::type double_exponential_lcdf(
                          mu, "Scale Parameter", sigma);
 
   using std::exp;
-  using std::exp;
   using std::log;
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
@@ -75,21 +66,21 @@ typename return_type<T_y, T_loc, T_scale>::type double_exponential_lcdf(
     if (y_dbl < mu_dbl) {
       cdf_log += log_half + scaled_diff;
 
-      if (!is_constant_struct<T_y>::value)
+      if (!is_constant_all<T_y>::value)
         ops_partials.edge1_.partials_[n] += inv_sigma;
-      if (!is_constant_struct<T_loc>::value)
+      if (!is_constant_all<T_loc>::value)
         ops_partials.edge2_.partials_[n] -= inv_sigma;
-      if (!is_constant_struct<T_scale>::value)
+      if (!is_constant_all<T_scale>::value)
         ops_partials.edge3_.partials_[n] -= scaled_diff * inv_sigma;
     } else {
       cdf_log += log1m(0.5 * exp(-scaled_diff));
 
       const T_partials_return rep_deriv = 1.0 / (2.0 * exp(scaled_diff) - 1.0);
-      if (!is_constant_struct<T_y>::value)
+      if (!is_constant_all<T_y>::value)
         ops_partials.edge1_.partials_[n] += rep_deriv * inv_sigma;
-      if (!is_constant_struct<T_loc>::value)
+      if (!is_constant_all<T_loc>::value)
         ops_partials.edge2_.partials_[n] -= rep_deriv * inv_sigma;
-      if (!is_constant_struct<T_scale>::value)
+      if (!is_constant_all<T_scale>::value)
         ops_partials.edge3_.partials_[n] -= rep_deriv * scaled_diff * inv_sigma;
     }
   }

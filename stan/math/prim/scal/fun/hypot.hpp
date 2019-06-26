@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_HYPOT_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_HYPOT_HPP
 
-#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <cmath>
 

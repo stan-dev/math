@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_OPENCL_OPENCL_CONTEXT_HPP
 #define STAN_MATH_OPENCL_OPENCL_CONTEXT_HPP
 #ifdef STAN_OPENCL
-#define __CL_ENABLE_EXCEPTIONS
 
 #define DEVICE_FILTER CL_DEVICE_TYPE_ALL
 #ifndef OPENCL_DEVICE_ID
@@ -11,8 +10,8 @@
 #error OPENCL_PLATFORM_ID_NOT_SET
 #endif
 
-#include <stan/math/prim/arr/err/check_opencl.hpp>
 #include <stan/math/opencl/constants.hpp>
+#include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/scal/err/system_error.hpp>
 
 #include <CL/cl.hpp>
@@ -119,11 +118,19 @@ class opencl_context_base {
       }
       device_ = devices_[OPENCL_DEVICE_ID];
       // context and queue
-      context_ = cl::Context(device_);
-      command_queue_ = cl::CommandQueue(context_, device_,
-                                        CL_QUEUE_PROFILING_ENABLE, nullptr);
+      cl_command_queue_properties device_properties;
+      device_.getInfo<cl_command_queue_properties>(CL_DEVICE_QUEUE_PROPERTIES,
+                                                   &device_properties);
       device_.getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
                               &max_thread_block_size_);
+
+      context_ = cl::Context(device_);
+      if (device_properties & CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE) {
+        command_queue_ = cl::CommandQueue(
+            context_, device_, CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE, nullptr);
+      } else {
+        command_queue_ = cl::CommandQueue(context_, device_, 0, nullptr);
+      }
       int thread_block_size_sqrt
           = static_cast<int>(sqrt(static_cast<double>(max_thread_block_size_)));
       // Does a compile time check of the maximum allowed
@@ -133,6 +140,13 @@ class opencl_context_base {
       if (thread_block_size_sqrt < base_opts_["THREAD_BLOCK_SIZE"]) {
         base_opts_["THREAD_BLOCK_SIZE"] = thread_block_size_sqrt;
         base_opts_["WORK_PER_THREAD"] = 1;
+      }
+      if (max_thread_block_size_ < base_opts_["LOCAL_SIZE_"]) {
+        // must be a power of base_opts_["REDUCTION_STEP_SIZE"]
+        const int p = std::log(max_thread_block_size_)
+                      / std::log(base_opts_["REDUCTION_STEP_SIZE"]);
+        base_opts_["LOCAL_SIZE_"]
+            = std::pow(base_opts_["REDUCTION_STEP_SIZE"], p);
       }
       // Thread block size for the Cholesky
       // TODO(Steve): This should be tuned in a higher part of the stan language
@@ -167,16 +181,23 @@ class opencl_context_base {
          {"UPPER_TO_LOWER", static_cast<int>(TriangularMapCL::UpperToLower)},
          {"LOWER_TO_UPPER", static_cast<int>(TriangularMapCL::LowerToUpper)},
          {"THREAD_BLOCK_SIZE", 32},
-         {"WORK_PER_THREAD", 8}};
+         {"WORK_PER_THREAD", 8},
+         {"REDUCTION_STEP_SIZE", 4},
+         {"LOCAL_SIZE_", 64}};
   // TODO(Steve): Make these tunable during warmup
   struct tuning_struct {
-    // Used in stan/math/opencl/cholesky_decompose
+    // Used in math/opencl/cholesky_decompose
     int cholesky_min_L11_size = 256;
     int cholesky_partition = 4;
     int cholesky_size_worth_transfer = 1250;
     // Used in math/rev/mat/fun/cholesky_decompose
     int cholesky_rev_min_block_size = 512;
     int cholesky_rev_block_partition = 8;
+    // used in math/opencl/multiply
+    int multiply_split_upper_limit = 2000000;
+    // used in math/prim/mat/fun/mdivide_left_tri
+    // and math/rev/mat/fun/mdivide_left_tri
+    int tri_inverse_size_worth_transfer = 100;
   } tuning_opts_;
 
   static opencl_context_base& getInstance() {

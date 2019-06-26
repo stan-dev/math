@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/scal/meta/is_constant.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {
@@ -22,7 +21,7 @@ namespace math {
  * The <code>value</code> enum will be <code>true</code> if the
  * <code>propto</code> parameter is <code>false</code> or if any
  * of the other template arguments are not constants as defined by
- * <code>stan::is_constant<T></code>.
+ * <code>stan::is_constant_all<T></code>.
  *
  * Example use: <code>include_summand<false, double, var, double, double></code>
  *
@@ -35,7 +34,7 @@ namespace math {
 template <bool propto, typename T = double, typename... T_pack>
 struct include_summand {
   enum {
-    value = (!stan::is_constant<typename scalar_type<T>::type>::value
+    value = (!stan::is_constant_all<typename scalar_type<T>::type>::value
              || include_summand<propto, T_pack...>::value)
   };
 };
@@ -49,7 +48,7 @@ struct include_summand<propto, T> {
    */
   enum {
     value
-    = (!propto || !stan::is_constant<typename scalar_type<T>::type>::value)
+    = (!propto || !stan::is_constant_all<typename scalar_type<T>::type>::value)
   };
 };
 

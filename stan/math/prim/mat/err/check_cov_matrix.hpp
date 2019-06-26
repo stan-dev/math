@@ -1,24 +1,20 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_COV_MATRIX_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_COV_MATRIX_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 
 namespace stan {
 namespace math {
 /**
- * Check if the specified matrix is a valid
- * covariance matrix.
- *
+ * Check if the specified matrix is a valid covariance matrix.
  * A valid covariance matrix is a square, symmetric matrix that is
  * positive definite.
- *
  * @tparam T Type of scalar.
- *
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Matrix to test
- *
  * @throw <code>std::invalid_argument</code> if the matrix is not square
  *   or if the matrix is 0x0
  * @throw <code>std::domain_error</code> if the matrix is not symmetric,

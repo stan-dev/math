@@ -1,10 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_LOGNORMAL_LCCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_LOGNORMAL_LCCDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -12,11 +9,6 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <boost/random/lognormal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -31,7 +23,6 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_lccdf(
 
   T_partials_return ccdf_log = 0.0;
 
-  using boost::math::tools::promote_args;
   using std::exp;
   using std::log;
 
@@ -71,11 +62,11 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_lccdf(
     const T_partials_return erfc_calc = erfc(scaled_diff);
     ccdf_log += log_half + log(erfc_calc);
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] -= rep_deriv / erfc_calc / y_dbl;
-    if (!is_constant_struct<T_loc>::value)
+    if (!is_constant_all<T_loc>::value)
       ops_partials.edge2_.partials_[n] += rep_deriv / erfc_calc;
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n]
           += rep_deriv * scaled_diff * SQRT_2 / erfc_calc;
   }

@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_REV_MAT_FUN_MDIVIDE_LEFT_HPP
 #define STAN_MATH_REV_MAT_FUN_MDIVIDE_LEFT_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
@@ -30,19 +30,19 @@ class mdivide_left_vv_vari : public vari {
         M_(A.rows()),
         N_(B.cols()),
         A_(reinterpret_cast<double *>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(double) * A.rows()
+            ChainableStack::instance_->memalloc_.alloc(sizeof(double) * A.rows()
                                                        * A.cols()))),
         C_(reinterpret_cast<double *>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(double) * B.rows()
+            ChainableStack::instance_->memalloc_.alloc(sizeof(double) * B.rows()
                                                        * B.cols()))),
         variRefA_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * A.rows()
+            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * A.rows()
                                                        * A.cols()))),
         variRefB_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
+            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))),
         variRefC_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
+            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))) {
     using Eigen::Map;
     using Eigen::Matrix;
@@ -125,16 +125,16 @@ class mdivide_left_dv_vari : public vari {
         M_(A.rows()),
         N_(B.cols()),
         A_(reinterpret_cast<double *>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(double) * A.rows()
+            ChainableStack::instance_->memalloc_.alloc(sizeof(double) * A.rows()
                                                        * A.cols()))),
         C_(reinterpret_cast<double *>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(double) * B.rows()
+            ChainableStack::instance_->memalloc_.alloc(sizeof(double) * B.rows()
                                                        * B.cols()))),
         variRefB_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
+            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))),
         variRefC_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
+            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))) {
     using Eigen::Map;
     using Eigen::Matrix;
@@ -208,16 +208,16 @@ class mdivide_left_vd_vari : public vari {
         M_(A.rows()),
         N_(B.cols()),
         A_(reinterpret_cast<double *>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(double) * A.rows()
+            ChainableStack::instance_->memalloc_.alloc(sizeof(double) * A.rows()
                                                        * A.cols()))),
         C_(reinterpret_cast<double *>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(double) * B.rows()
+            ChainableStack::instance_->memalloc_.alloc(sizeof(double) * B.rows()
                                                        * B.cols()))),
         variRefA_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * A.rows()
+            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * A.rows()
                                                        * A.cols()))),
         variRefC_(reinterpret_cast<vari **>(
-            ChainableStack::instance().memalloc_.alloc(sizeof(vari *) * B.rows()
+            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))) {
     using Eigen::Map;
     using Eigen::Matrix;

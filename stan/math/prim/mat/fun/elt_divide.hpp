@@ -3,7 +3,6 @@
 
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/divide.hpp>
 #include <stan/math/prim/mat/err/check_matching_dims.hpp>
 
 namespace stan {
@@ -25,11 +24,8 @@ Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R, C>
 elt_divide(const Eigen::Matrix<T1, R, C>& m1,
            const Eigen::Matrix<T2, R, C>& m2) {
   check_matching_dims("elt_divide", "m1", m1, "m2", m2);
-  Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R, C>
-      result(m1.rows(), m2.cols());
-  for (int i = 0; i < m1.size(); ++i)
-    result(i) = m1(i) / m2(i);
-  return result;
+
+  return m1.array() / m2.array();
 }
 
 /**
@@ -47,7 +43,7 @@ elt_divide(const Eigen::Matrix<T1, R, C>& m1,
 template <typename T1, typename T2, int R, int C>
 Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R, C>
 elt_divide(const Eigen::Matrix<T1, R, C>& m, T2 s) {
-  return divide(m, s);
+  return m.array() / s;
 }
 
 /**
@@ -65,11 +61,7 @@ elt_divide(const Eigen::Matrix<T1, R, C>& m, T2 s) {
 template <typename T1, typename T2, int R, int C>
 Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R, C>
 elt_divide(T1 s, const Eigen::Matrix<T2, R, C>& m) {
-  Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R, C>
-      result(m.rows(), m.cols());
-  for (int i = 0; i < m.size(); ++i)
-    result(i) = s / m(i);
-  return result;
+  return s / m.array();
 }
 
 }  // namespace math

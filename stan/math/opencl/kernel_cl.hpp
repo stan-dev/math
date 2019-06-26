@@ -3,11 +3,16 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/kernels/helpers.hpp>
+#include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/buffer_types.hpp>
+#include <stan/math/opencl/err/check_opencl.hpp>
+#include <stan/math/prim/arr/fun/vec_concat.hpp>
 #include <CL/cl.hpp>
 #include <string>
 #include <algorithm>
 #include <map>
 #include <vector>
+#include <utility>
 
 // Used for importing the OpenCL kernels at compile time.
 // There has been much discussion about the best ways to do this:
@@ -20,25 +25,114 @@
 namespace stan {
 namespace math {
 namespace opencl_kernels {
+namespace internal {
+/**
+ * Extracts the kernel's arguments, used in the global and local kernel
+ * constructor.
+ * @tparam For this general template the function will just return back the
+ * value passed in.
+ * @param t The type that will be returned.
+ * @return the input t.
+ */
+template <typename T>
+inline const T& get_kernel_args(const T& t) {
+  return t;
+}
+
+inline const cl::Buffer& get_kernel_args(const stan::math::matrix_cl& m) {
+  return m.buffer();
+}
+
+template <typename T>
+inline void assign_event(const cl::Event&, to_const_matrix_cl_t<T>&) {}
+
+template <>
+inline void assign_event<in_buffer>(const cl::Event& e,
+                                    const stan::math::matrix_cl& m) {
+  m.add_read_event(e);
+}
+
+template <>
+inline void assign_event<out_buffer>(const cl::Event& e,
+                                     const stan::math::matrix_cl& m) {
+  m.add_write_event(e);
+}
+
+template <>
+inline void assign_event<in_out_buffer>(const cl::Event& e,
+                                        const stan::math::matrix_cl& m) {
+  m.add_read_write_event(e);
+}
+
+template <typename T,
+          typename std::enable_if_t<std::is_same<T, cl::Event>::value, int> = 0>
+inline void assign_events(const T&) {}
+
+/**
+ * Adds the event to any matrices in the arguments in the event vector specified
+ * by the buffer directionality.
+ * @tparam Arg Arguments given during kernel creation that specify the kernel
+ * signature.
+ * @tparam Args Arguments given during kernel creation that specify the kernel
+ * signature.
+ * @param new_event The cl::Event generated involving the arguments.
+ * @param m Arguments to the kernel that may be matrices or not. Non-matrices
+ * ignored.
+ * @param args Arguments to the kernel that may be matrices or not. Non-matrices
+ * ignored.
+ */
+template <typename Arg, typename... Args>
+inline void assign_events(const cl::Event& new_event,
+                          to_const_matrix_cl_t<Arg>& m,
+                          to_const_matrix_cl_t<Args>&... args) {
+  assign_event<Arg>(new_event, m);
+  assign_events<Args...>(new_event, args...);
+}
+
+template <typename T>
+inline const std::vector<cl::Event> select_events(to_const_matrix_cl_t<T>& t) {
+  return std::vector<cl::Event>();
+}
+
+template <>
+inline const std::vector<cl::Event> select_events<in_buffer>(
+    const stan::math::matrix_cl& m) {
+  return m.write_events();
+}
+
+template <>
+inline const std::vector<cl::Event> select_events<out_buffer>(
+    const stan::math::matrix_cl& m) {
+  return m.read_write_events();
+}
+
+template <>
+inline const std::vector<cl::Event> select_events<in_out_buffer>(
+    const stan::math::matrix_cl& m) {
+  return m.read_write_events();
+}
+
+}  // namespace internal
 
 /**
  * Compile an OpenCL kernel.
  *
  * @param name The name for the kernel
- * @param source A string literal containing the code for the kernel.
+ * @param sources A std::vector of strings containing the code for the kernel.
  * @param options The values of macros to be passed at compile time.
- * @note The macros defined in kernels/helpers.hpp are included in the kernel
- *  compilation for ease of writing and reading kernels.
  */
-inline auto compile_kernel(const char* name, const char* source,
-                           std::map<const char*, int> options) {
+inline auto compile_kernel(const char* name,
+                           const std::vector<const char*>& sources,
+                           std::map<const char*, int>& options) {
   std::string kernel_opts = "";
   for (auto&& comp_opts : options) {
     kernel_opts += std::string(" -D") + comp_opts.first + "="
                    + std::to_string(comp_opts.second);
   }
-  std::string kernel_source(opencl_kernels::helpers);
-  kernel_source.append(source);
+  std::string kernel_source;
+  for (const char* source : sources) {
+    kernel_source.append(source);
+  }
   cl::Program program;
   try {
     cl::Program::Sources src(1, std::make_pair(kernel_source.c_str(),
@@ -75,18 +169,18 @@ class kernel_functor {
   /**
    * functor to access the kernel compiler.
    * @param name The name for the kernel.
-   * @param source A string literal containing the code for the kernel.
+   * @param sources A std::vector of strings containing the code for the kernel.
    * @param options The values of macros to be passed at compile time.
    */
-  kernel_functor(const char* name, const char* source,
-                 std::map<const char*, int> options) {
+  kernel_functor(const char* name, const std::vector<const char*>& sources,
+                 const std::map<const char*, int>& options) {
     auto base_opts = opencl_context.base_opts();
     for (auto& it : options) {
       if (base_opts[it.first] > it.second) {
         base_opts[it.first] = it.second;
       }
     }
-    kernel_ = compile_kernel(name, source, base_opts);
+    kernel_ = compile_kernel(name, sources, base_opts);
     opts_ = base_opts;
   }
 
@@ -95,18 +189,17 @@ class kernel_functor {
   /**
    * @return The options that the kernel was compiled with.
    */
-  const std::map<const char*, int>& get_opts() const { return opts_; }
+  inline const std::map<const char*, int>& get_opts() const { return opts_; }
 };
 
 /**
- * Creates functor for kernels that only need access to defining
- *  the global work size.
+ * Creates functor for kernels
  *
  * @tparam Args Parameter pack of all kernel argument types.
  */
 template <typename... Args>
-struct global_range_kernel {
-  const kernel_functor<Args...> make_functor;
+struct kernel_cl {
+  const kernel_functor<internal::to_const_buffer_t<Args>&...> make_functor;
   /**
    * Creates functor for kernels that only need access to defining
    *  the global work size.
@@ -114,39 +207,37 @@ struct global_range_kernel {
    * @param source A string literal containing the code for the kernel.
    * @param options The values of macros to be passed at compile time.
    */
-  global_range_kernel(const char* name, const char* source,
-                      const std::map<const char*, int> options = {})
-      : make_functor(name, source, options) {}
+  kernel_cl(const char* name, const char* source,
+            const std::map<const char*, int>& options = {})
+      : make_functor(name, {source}, options) {}
+  /**
+   * Creates functor for kernels that only need access to defining
+   *  the global work size.
+   * @param name The name for the kernel
+   * @param sources A std::vector of strings containing the code for the kernel.
+   * @param options The values of macros to be passed at compile time.
+   */
+  kernel_cl(const char* name, const std::vector<const char*>& sources,
+            const std::map<const char*, int>& options = {})
+      : make_functor(name, sources, options) {}
   /**
    * Executes a kernel
    * @param global_thread_size The global work size.
    * @param args The arguments to pass to the kernel.
    * @tparam Args Parameter pack of all kernel argument types.
    */
-  auto operator()(cl::NDRange global_thread_size, Args... args) const {
+  auto operator()(cl::NDRange global_thread_size,
+                  internal::to_const_matrix_cl_t<Args>&... args) const {
     auto f = make_functor();
-    cl::EnqueueArgs eargs(opencl_context.queue(), global_thread_size);
-    f(eargs, args...).wait();
+    const std::vector<cl::Event> kernel_events
+        = vec_concat(internal::select_events<Args>(args)...);
+    cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
+                          global_thread_size);
+    cl::Event kern_event = f(eargs, internal::get_kernel_args(args)...);
+    internal::assign_events<Args...>(kern_event, args...);
+    return kern_event;
   }
-};
-/**
- * Creates functor for kernels that need to define both
- *  local and global work size.
- * @tparam Args Parameter pack of all kernel argument types.
- */
-template <typename... Args>
-struct local_range_kernel {
-  const kernel_functor<Args...> make_functor;
-  /**
-   * Creates kernels that need access to defining the global thread
-   * siez and the thread block size.
-   * @param name The name for the kernel
-   * @param source A string literal containing the code for the kernel.
-   * @param options The values of macros to be passed at compile time.
-   */
-  local_range_kernel(const char* name, const char* source,
-                     const std::map<const char*, int> options = {})
-      : make_functor(name, source, options) {}
+
   /**
    * Executes a kernel
    * @param global_thread_size The global work size.
@@ -155,11 +246,15 @@ struct local_range_kernel {
    * @tparam Args Parameter pack of all kernel argument types.
    */
   auto operator()(cl::NDRange global_thread_size, cl::NDRange thread_block_size,
-                  Args... args) const {
+                  internal::to_const_matrix_cl_t<Args>&... args) const {
     auto f = make_functor();
-    cl::EnqueueArgs eargs(opencl_context.queue(), global_thread_size,
-                          thread_block_size);
-    f(eargs, args...).wait();
+    const std::vector<cl::Event> kernel_events
+        = vec_concat(internal::select_events<Args>(args)...);
+    cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
+                          global_thread_size, thread_block_size);
+    cl::Event kern_event = f(eargs, internal::get_kernel_args(args)...);
+    internal::assign_events<Args...>(kern_event, args...);
+    return kern_event;
   }
 };
 

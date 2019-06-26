@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_SYSTEM_ERROR_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_SYSTEM_ERROR_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <typeinfo>
 #include <sstream>
 #include <stdexcept>
@@ -10,13 +11,10 @@ namespace math {
 
 /**
  * Throw a system error with a consistently formatted message.
- *
  * This is an abstraction for all Stan functions to use when throwing
  * system errors. This will allow us to change the behavior for all
  * functions at once.
- *
  * The message is: "<function>: <name> <msg1><y><msg2>"
- *
  * @param[in] function Name of the function.
  * @param[in] name Name of the variable.
  * @param[in] y Error code.
@@ -34,13 +32,10 @@ inline void system_error(const char* function, const char* name, const int& y,
 
 /**
  * Throw a system error with a consistently formatted message.
- *
  * This is an abstraction for all Stan functions to use when throwing
  * system errors. This will allow us to change the behavior for all
  * functions at once.
- *
  * The message is: * "<function>: <name> <msg1><y>"
- *
  * @param[in] function Name of the function.
  * @param[in] name Name of the variable.
  * @param[in] y Error code.

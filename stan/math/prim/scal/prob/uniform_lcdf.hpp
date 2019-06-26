@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_UNIFORM_LCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_UNIFORM_LCDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
@@ -11,11 +9,6 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <boost/random/uniform_real_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -66,12 +59,12 @@ typename return_type<T_y, T_low, T_high>::type uniform_lcdf(
 
     cdf_log += log(cdf_log_);
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] += 1.0 / b_min_a / cdf_log_;
-    if (!is_constant_struct<T_low>::value)
+    if (!is_constant_all<T_low>::value)
       ops_partials.edge2_.partials_[n]
           += (y_dbl - beta_dbl) / b_min_a / b_min_a / cdf_log_;
-    if (!is_constant_struct<T_high>::value)
+    if (!is_constant_all<T_high>::value)
       ops_partials.edge3_.partials_[n] -= 1.0 / b_min_a;
   }
   return ops_partials.build(cdf_log);

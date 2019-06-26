@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/buffer_types.hpp>
 
 namespace stan {
 namespace math {
@@ -13,8 +14,8 @@ static const char *scalar_mul_kernel_code = STRINGIFY(
     /**
      * Multiplication of the matrix A with a scalar
      *
-     * @param[in] A input matrix
-     * @param[in] B output matrix
+     * @param[out] A output matrix
+     * @param[in] B input matrix
      * @param[in] scalar the value with which to multiply A
      * @param[in] rows the number of rows in A
      * @param[in] cols the number of columns in A
@@ -35,8 +36,8 @@ static const char *scalar_mul_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/scalar_mul.hpp add() \endlink
  */
-const global_range_kernel<cl::Buffer, cl::Buffer, double, int, int> scalar_mul(
-    "scalar_mul", scalar_mul_kernel_code);
+const kernel_cl<out_buffer, in_buffer, double, int, int> scalar_mul(
+    "scalar_mul", {indexing_helpers, scalar_mul_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

@@ -2,10 +2,7 @@
 #define STAN_MATH_REV_SCAL_HPP
 
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/meta/ad_promotable.hpp>
-#include <stan/math/rev/scal/meta/is_var.hpp>
-#include <stan/math/rev/scal/meta/partials_type.hpp>
-#include <stan/math/rev/scal/meta/operands_and_partials.hpp>
+#include <stan/math/rev/meta.hpp>
 
 #include <stan/math/prim/scal.hpp>
 
@@ -20,6 +17,7 @@
 #include <stan/math/rev/scal/fun/atanh.hpp>
 #include <stan/math/rev/scal/fun/bessel_first_kind.hpp>
 #include <stan/math/rev/scal/fun/bessel_second_kind.hpp>
+#include <stan/math/rev/scal/fun/beta.hpp>
 #include <stan/math/rev/scal/fun/binary_log_loss.hpp>
 #include <stan/math/rev/scal/fun/boost_fpclassify.hpp>
 #include <stan/math/rev/scal/fun/boost_isfinite.hpp>
@@ -59,6 +57,7 @@
 #include <stan/math/rev/scal/fun/is_inf.hpp>
 #include <stan/math/rev/scal/fun/is_nan.hpp>
 #include <stan/math/rev/scal/fun/is_uninitialized.hpp>
+#include <stan/math/rev/scal/fun/lbeta.hpp>
 #include <stan/math/rev/scal/fun/lgamma.hpp>
 #include <stan/math/rev/scal/fun/lmgamma.hpp>
 #include <stan/math/rev/scal/fun/log.hpp>

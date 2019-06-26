@@ -1,17 +1,13 @@
 #ifndef STAN_MATH_REV_MAT_FUN_ROWS_DOT_PRODUCT_HPP
 #define STAN_MATH_REV_MAT_FUN_ROWS_DOT_PRODUCT_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/err/check_vector.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/rev/mat/fun/dot_product.hpp>
 #include <type_traits>
-#include <vector>
 
 namespace stan {
 namespace math {
