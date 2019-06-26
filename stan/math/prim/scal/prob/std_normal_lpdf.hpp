@@ -41,7 +41,7 @@ typename return_type<T_y>::type std_normal_lpdf(const T_y& y) {
   for (size_t n = 0; n < length(y); n++) {
     const T_partials_return y_val = value_of(y_vec[n]);
     logp += y_val * y_val;
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] -= y_val;
   }
   logp *= -0.5;
