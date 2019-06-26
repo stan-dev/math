@@ -65,17 +65,17 @@ typename return_type<T_y, T_loc, T_scale>::type normal_lccdf(
 
     ccdf_log += log_half + log(one_m_erf);
 
-    if (contains_nonconstant_struct<T_y, T_loc, T_scale>::value) {
+    if (!is_constant_all<T_y, T_loc, T_scale>::value) {
       const T_partials_return rep_deriv_div_sigma
           = scaled_diff > 8.25 * INV_SQRT_2
                 ? std::numeric_limits<double>::infinity()
                 : SQRT_TWO_OVER_PI * exp(-scaled_diff * scaled_diff) / one_m_erf
                       / sigma_dbl;
-      if (!is_constant_struct<T_y>::value)
+      if (!is_constant_all<T_y>::value)
         ops_partials.edge1_.partials_[n] -= rep_deriv_div_sigma;
-      if (!is_constant_struct<T_loc>::value)
+      if (!is_constant_all<T_loc>::value)
         ops_partials.edge2_.partials_[n] += rep_deriv_div_sigma;
-      if (!is_constant_struct<T_scale>::value)
+      if (!is_constant_all<T_scale>::value)
         ops_partials.edge3_.partials_[n]
             += rep_deriv_div_sigma * scaled_diff * SQRT_2;
     }

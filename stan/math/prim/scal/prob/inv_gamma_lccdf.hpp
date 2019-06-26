@@ -57,12 +57,12 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_lccdf(
   using std::log;
   using std::pow;
 
-  VectorBuilder<!is_constant_struct<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       gamma_vec(stan::length(alpha));
-  VectorBuilder<!is_constant_struct<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       digamma_vec(stan::length(alpha));
 
-  if (!is_constant_struct<T_shape>::value) {
+  if (!is_constant_all<T_shape>::value) {
     for (size_t i = 0; i < stan::length(alpha); i++) {
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
       gamma_vec[i] = tgamma(alpha_dbl);
@@ -85,17 +85,17 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_lccdf(
 
     P += log(Pn);
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n]
           -= beta_dbl * y_inv_dbl * y_inv_dbl * exp(-beta_dbl * y_inv_dbl)
              * pow(beta_dbl * y_inv_dbl, alpha_dbl - 1) / tgamma(alpha_dbl)
              / Pn;
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       ops_partials.edge2_.partials_[n]
           -= grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_inv_dbl, gamma_vec[n],
                                 digamma_vec[n])
              / Pn;
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n]
           += y_inv_dbl * exp(-beta_dbl * y_inv_dbl)
              * pow(beta_dbl * y_inv_dbl, alpha_dbl - 1) / tgamma(alpha_dbl)

@@ -71,7 +71,7 @@ typename return_type<T_log_rate>::type poisson_log_lpmf(
         logp += n_vec[i] * value_of(alpha_vec[i]) - exp_alpha[i];
     }
 
-    if (!is_constant_struct<T_log_rate>::value)
+    if (!is_constant_all<T_log_rate>::value)
       ops_partials.edge1_.partials_[i] += n_vec[i] - exp_alpha[i];
   }
   return ops_partials.build(logp);

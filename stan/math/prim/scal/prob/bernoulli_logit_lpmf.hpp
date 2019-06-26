@@ -68,7 +68,7 @@ typename return_type<T_prob>::type bernoulli_logit_lpmf(const T_n& n,
     else
       logp -= log1p(exp_m_ntheta);
 
-    if (!is_constant_struct<T_prob>::value) {
+    if (!is_constant_all<T_prob>::value) {
       if (ntheta > cutoff)
         ops_partials.edge1_.partials_[n] -= exp_m_ntheta;
       else if (ntheta < -cutoff)

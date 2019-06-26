@@ -61,24 +61,24 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_cdf(
     const T_partials_return cdf_ = 0.5 * erfc(-scaled_diff);
     cdf *= cdf_;
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] += rep_deriv / cdf_ / y_dbl;
-    if (!is_constant_struct<T_loc>::value)
+    if (!is_constant_all<T_loc>::value)
       ops_partials.edge2_.partials_[n] -= rep_deriv / cdf_;
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n]
           -= rep_deriv * scaled_diff * SQRT_2 / cdf_;
   }
 
-  if (!is_constant_struct<T_y>::value) {
+  if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::length(y); ++n)
       ops_partials.edge1_.partials_[n] *= cdf;
   }
-  if (!is_constant_struct<T_loc>::value) {
+  if (!is_constant_all<T_loc>::value) {
     for (size_t n = 0; n < stan::length(mu); ++n)
       ops_partials.edge2_.partials_[n] *= cdf;
   }
-  if (!is_constant_struct<T_scale>::value) {
+  if (!is_constant_all<T_scale>::value) {
     for (size_t n = 0; n < stan::length(sigma); ++n)
       ops_partials.edge3_.partials_[n] *= cdf;
   }

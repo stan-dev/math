@@ -92,9 +92,9 @@ typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
     if (include_summand<propto, T_low, T_high>::value)
       logp -= log_beta_minus_alpha[n];
 
-    if (!is_constant_struct<T_low>::value)
+    if (!is_constant_all<T_low>::value)
       ops_partials.edge2_.partials_[n] += inv_beta_minus_alpha[n];
-    if (!is_constant_struct<T_high>::value)
+    if (!is_constant_all<T_high>::value)
       ops_partials.edge3_.partials_[n] -= inv_beta_minus_alpha[n];
   }
   return ops_partials.build(logp);

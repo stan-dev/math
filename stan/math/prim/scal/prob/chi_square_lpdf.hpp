@@ -80,14 +80,14 @@ typename return_type<T_y, T_dof>::type chi_square_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
       lgamma_half_nu(length(nu));
-  VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digamma_half_nu_over_two(length(nu));
 
   for (size_t i = 0; i < length(nu); i++) {
     T_partials_return half_nu = 0.5 * value_of(nu_vec[i]);
     if (include_summand<propto, T_dof>::value)
       lgamma_half_nu[i] = lgamma(half_nu);
-    if (!is_constant_struct<T_dof>::value)
+    if (!is_constant_all<T_dof>::value)
       digamma_half_nu_over_two[i] = digamma(half_nu) * 0.5;
   }
 
@@ -105,10 +105,10 @@ typename return_type<T_y, T_dof>::type chi_square_lpdf(const T_y& y,
     if (include_summand<propto, T_y>::value)
       logp -= half_y;
 
-    if (!is_constant_struct<T_y>::value) {
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += (half_nu - 1.0) * inv_y[n] - 0.5;
     }
-    if (!is_constant_struct<T_dof>::value) {
+    if (!is_constant_all<T_dof>::value) {
       ops_partials.edge2_.partials_[n] += NEG_LOG_TWO_OVER_TWO
                                           - digamma_half_nu_over_two[n]
                                           + log_y[n] * 0.5;

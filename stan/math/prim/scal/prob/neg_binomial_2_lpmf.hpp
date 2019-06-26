@@ -89,10 +89,10 @@ typename return_type<T_location, T_precision>::type neg_binomial_2_lpmf(
       logp = poisson_lpmf(n_vec[i], mu__[i]);
     }
 
-    if (!is_constant_struct<T_location>::value)
+    if (!is_constant_all<T_location>::value)
       ops_partials.edge1_.partials_[i]
           += n_vec[i] / mu__[i] - (n_vec[i] + phi__[i]) / (mu__[i] + phi__[i]);
-    if (!is_constant_struct<T_precision>::value)
+    if (!is_constant_all<T_precision>::value)
       ops_partials.edge2_.partials_[i]
           += 1.0 - n_plus_phi[i] / (mu__[i] + phi__[i]) + log_phi[i]
              - log_mu_plus_phi[i] - digamma(phi__[i]) + digamma(n_plus_phi[i]);
