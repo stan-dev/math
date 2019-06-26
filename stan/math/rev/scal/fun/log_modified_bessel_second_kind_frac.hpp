@@ -172,7 +172,7 @@ typename boost::math::tools::promote_args<T_v, T_z>::type compute_rothwell(
 // Formula 1.10 of
 // Temme, Journal of Computational Physics, vol 19, 324 (1975)
 // https://doi.org/10.1016/0021-9991(75)90082-0
-// Also found on wiki at 
+// Also found on wiki at
 // https://en.wikipedia.org/w/index.php?title=Bessel_function&oldid=888330504#Asymptotic_forms
 template <typename T_v>
 T_v asymptotic_large_v(const T_v &v, const double &z) {
@@ -215,11 +215,7 @@ T_v asymptotic_large_z(const T_v &v, const double &z) {
 
 // The code to choose computation method is separate, because it is
 // referenced from the test code.
-enum class ComputationType {
-  Rothwell,
-  Asymp_v,
-  Asymp_z
-};
+enum class ComputationType { Rothwell, Asymp_v, Asymp_z };
 
 const double rothwell_max_v = 50;
 const double rothwell_max_log_z_over_v = 300;
