@@ -52,6 +52,13 @@ $(CVODES_TESTS) : $(LIBSUNDIALS)
 IDAS_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *idas*_test.cpp) $(shell find test -name *_dae*_test.cpp))
 $(IDAS_TESTS) : $(LIBSUNDIALS)
 
+############################################################
+#
+# KINSOL tests
+##
+
+KINSOL_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *kinsol*_test.cpp))
+$(KINSOL_TESTS) : $(LIBSUNDIALS)
 
 ############################################################
 #
